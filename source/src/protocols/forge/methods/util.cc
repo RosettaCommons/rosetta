@@ -252,9 +252,7 @@ fold_tree_from_loops(
 	}
 
 	// post-modify tree with new loop jump/cuts for internal loop modeling
-	for ( Loops::const_iterator i = loops.begin(), ie = loops.end(); i != ie; ++i ) {
-		Loop const & loop = *i;
-
+	for ( auto const & loop : loops ) {
 		if ( lower_termini.find( loop.start() ) == lower_termini.end() && upper_termini.find( loop.stop() ) == upper_termini.end() ) {
 			ft.new_jump( loop.start() - 1, loop.stop() + 1, loop.cut() );
 		}
@@ -478,8 +476,7 @@ fill_non_loop_cst_set(
 
 	std::set<core::Size> loopRange;
 
-	for ( protocols::loops::Loops::const_iterator it = loops.begin(), ite = loops.end(); it != ite; ++it ) {
-		protocols::loops::Loop const & loop = *it;
+	for ( auto const & loop : loops ) {
 		for ( core::Size i = loop.start(); i<= loop.stop(); i++ ) {
 
 			loopRange.insert(i);
@@ -546,10 +543,7 @@ apply_transformation(
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
 
-	for ( std::list<core::Size>::const_iterator it = residue_list.begin();
-			it != residue_list.end();
-			++it ) {
-		core::Size ires = *it;
+	for ( unsigned long ires : residue_list ) {
 		for ( core::Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
 			ids.push_back(core::id::AtomID(iatom,ires));
 			positions.push_back(postT + (R*( mod_pose.xyz(core::id::AtomID(iatom,ires)) - preT )));

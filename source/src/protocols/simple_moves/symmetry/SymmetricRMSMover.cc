@@ -46,7 +46,7 @@ static basic::Tracer TR( "protocols.simple_moves.symmetry.SymmetricRMSMover" );
 SymmetricRMSMover::SymmetricRMSMover()
 : protocols::moves::Mover("SymmetricRMSMover") {}
 
-SymmetricRMSMover::~SymmetricRMSMover(){}
+SymmetricRMSMover::~SymmetricRMSMover()= default;
 
 void
 SymmetricRMSMover::apply( core::pose::Pose & pose )
@@ -62,7 +62,7 @@ SymmetricRMSMover::apply( core::pose::Pose & pose )
 	}
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const & > ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 

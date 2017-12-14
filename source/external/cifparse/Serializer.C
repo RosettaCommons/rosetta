@@ -139,7 +139,7 @@ POSSIBILITY THEREOF.
 */
 
 
-#include <string.h>
+#include <cstring>
 #include <fcntl.h>
 #include <sys/stat.h>
 
@@ -578,7 +578,7 @@ void Serializer::ReadStrings(vector<string>& theStrings, const UInt32 index)
 
     for (UInt32 i = 0; i < numStrings; ++i)
     {
-        theStrings.push_back("");
+        theStrings.emplace_back("");
 
 #ifndef VLAD_REPORTED_MEMORY_ACCESS_IN_PURIFY_IF_THIS_CODE_IS_ENABLED
         theStrings[i].reserve(stringSizes[i]);
@@ -830,9 +830,9 @@ UInt32 Serializer::UpdateStrings(const vector<string>& theStrings,
 
     UInt32 totalLength = 0;
 
-    for (UInt32 i = 0; i < theStrings.size(); i++)
+    for (const auto & theString : theStrings)
     {
-        totalLength += theStrings[i].size();
+        totalLength += theString.size();
     }
 
     totalLength += (theStrings.size() + 1) * UINT32_SIZE;
@@ -929,7 +929,7 @@ void Serializer::WriteUInt32sAtIndex(const vector<UInt32>& theWords,
 
     UInt32 wordsLeft = (_buffer + BLKSIZE - temp) / UINT32_SIZE;
 
-    for (UInt32 i = 0; i < theWords.size(); i++)
+    for (unsigned int theWord : theWords)
     {
         if (wordsLeft == 0)
         {
@@ -940,7 +940,7 @@ void Serializer::WriteUInt32sAtIndex(const vector<UInt32>& theWords,
         }
 
         // Write the current word
-        _PutUInt32(theWords[i], temp);
+        _PutUInt32(theWord, temp);
 
         temp += UINT32_SIZE;
         wordsLeft--;
@@ -978,7 +978,7 @@ void Serializer::WriteStringAtIndex(const string& theString,
 
     UInt32 octetsLeft = _buffer + BLKSIZE - temp;
 
-    for (UInt32 i = 0; i < theString.size(); i++)
+    for (char i : theString)
     {
         if (octetsLeft == 0)
         {
@@ -989,7 +989,7 @@ void Serializer::WriteStringAtIndex(const string& theString,
         }
 
         // Write the current character
-        *temp++ = theString[i];
+        *temp++ = i;
         octetsLeft--;
     }
 
@@ -1014,9 +1014,9 @@ void Serializer::WriteStringsAtIndex(const vector<string>& theStrings,
     char* temp = GetWritingPoint(index);
 
     UInt32 totalLength = 0;
-    for (UInt32 i = 0; i < theStrings.size(); i++)
+    for (const auto & theString : theStrings)
     {
-        totalLength += theStrings[i].size();
+        totalLength += theString.size();
     }
 
     // number of strings + size of each string
@@ -1034,7 +1034,7 @@ void Serializer::WriteStringsAtIndex(const vector<string>& theStrings,
 
     // Write the size of each string
     UInt32 wordsLeft = (_buffer + BLKSIZE - temp) / UINT32_SIZE;
-    for (UInt32 i = 0; i < theStrings.size(); i++)
+    for (const auto & theString : theStrings)
     {
         if (wordsLeft == 0)
         {
@@ -1045,16 +1045,16 @@ void Serializer::WriteStringsAtIndex(const vector<string>& theStrings,
         }
 
         // Write the current string size
-        _PutUInt32(theStrings[i].size(), temp);
+        _PutUInt32(theString.size(), temp);
 
         temp += UINT32_SIZE;
         wordsLeft--;
     }
 
     UInt32 octetsLeft = _buffer + BLKSIZE - temp;
-    for (UInt32 i = 0; i < theStrings.size(); i++)
+    for (const auto & theString : theStrings)
     {
-        for (UInt32 j = 0; j < theStrings[i].size(); j++)
+        for (char j : theString)
         {
             if (octetsLeft == 0)
             {
@@ -1063,7 +1063,7 @@ void Serializer::WriteStringsAtIndex(const vector<string>& theStrings,
                 temp = _buffer;
                 octetsLeft = BLKSIZE;
             }
-            *temp++ = theStrings[i][j]; //see if incrementing is faster
+            *temp++ = j; //see if incrementing is faster
             octetsLeft--;
         }
     }
@@ -1495,7 +1495,7 @@ void Serializer::GetLastDataBuffer(void)
     _currentOffset = _indices[_indices.size() - 1].offset
         + _indices[_indices.size() - 1].vLength;
 
-    int a1 = _buffer + _currentOffset - (char*)0; // word align the offset
+    int a1 = _buffer + _currentOffset - (char*)nullptr; // word align the offset
 
     UInt32 n = a1 % UINT32_SIZE;
 
@@ -1507,7 +1507,7 @@ void Serializer::GetLastDataBuffer(void)
         _currentOffset -= BLKSIZE;
         _currentBlock++;
 
-        a1 = _buffer + _currentOffset - (char*)0; // word align the offset
+        a1 = _buffer + _currentOffset - (char*)nullptr; // word align the offset
 
         n = a1 % UINT32_SIZE;
 

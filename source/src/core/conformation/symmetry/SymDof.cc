@@ -51,20 +51,7 @@ SymDof::SymDof()
 
 }
 
-SymDof::SymDof( SymDof const & src )
-: range2_is_bound_( src.range2_is_bound_ ),
-	allowed_dof_jumps_( src.allowed_dof_jumps_ ),
-	lower_range_dof_jumps1_( src.lower_range_dof_jumps1_ ),
-	upper_range_dof_jumps1_( src.upper_range_dof_jumps1_ ),
-	lower_range_dof_jumps2_( src.lower_range_dof_jumps2_ ),
-	upper_range_dof_jumps2_( src.upper_range_dof_jumps2_ ),
-	has_range1_lower_( src.has_range1_lower_ ),
-	has_range1_upper_( src.has_range1_upper_ ),
-	has_range2_lower_( src.has_range2_lower_ ),
-	has_range2_upper_( src.has_range2_upper_ ),
-	jump_dir_( src.jump_dir_ )
-{
-}
+SymDof::SymDof( SymDof const & /*src*/ ) = default;
 
 SymDof &
 SymDof::operator=( SymDof const & src ) {
@@ -84,7 +71,7 @@ SymDof::operator=( SymDof const & src ) {
 	return *this;
 }
 
-SymDof::~SymDof() {}
+SymDof::~SymDof() = default;
 
 // @details is df allowed to move?
 bool

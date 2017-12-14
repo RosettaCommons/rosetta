@@ -155,8 +155,7 @@ RotamerAssigningAnnealer::setup_rots_for_node(
 	}
 }
 
-RotamerAssigningAnnealer::~RotamerAssigningAnnealer()
-{}
+RotamerAssigningAnnealer::~RotamerAssigningAnnealer() = default;
 
 /// @brief pick a rotamer from a list
 ///

@@ -49,7 +49,7 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 
 
-ProteinBackboneTorsionAngleFeatures::ProteinBackboneTorsionAngleFeatures(){}
+ProteinBackboneTorsionAngleFeatures::ProteinBackboneTorsionAngleFeatures()= default;
 
 ProteinBackboneTorsionAngleFeatures::ProteinBackboneTorsionAngleFeatures( ProteinBackboneTorsionAngleFeatures const & ) :
 	FeaturesReporter()

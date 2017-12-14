@@ -44,8 +44,8 @@ namespace dunbrack {
 
 static basic::Tracer TR( "core.pack.dunbrack.DunbrackConstraint" );
 
-DunbrackConstraintCreator::DunbrackConstraintCreator() {}
-DunbrackConstraintCreator::~DunbrackConstraintCreator() {}
+DunbrackConstraintCreator::DunbrackConstraintCreator() = default;
+DunbrackConstraintCreator::~DunbrackConstraintCreator() = default;
 
 scoring::constraints::ConstraintOP
 DunbrackConstraintCreator::create_constraint() const {
@@ -65,7 +65,7 @@ DunbrackConstraint::DunbrackConstraint() :
 	rot_bin_( 0 )
 {}
 
-DunbrackConstraint::~DunbrackConstraint() {}
+DunbrackConstraint::~DunbrackConstraint() = default;
 
 std::string
 DunbrackConstraint::type() const {
@@ -93,7 +93,7 @@ DunbrackConstraint::operator == ( Constraint const & other_cst ) const
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	DunbrackConstraint const & other( static_cast< DunbrackConstraint const & > (other_cst) );
+	auto const & other( static_cast< DunbrackConstraint const & > (other_cst) );
 	if ( bonus_ != other.bonus_ ) return false;
 	if ( seqpos_ != other.seqpos_ ) return false;
 	if ( rot_vec_pos_ != other.rot_vec_pos_ ) return false;

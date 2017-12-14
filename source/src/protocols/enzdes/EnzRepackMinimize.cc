@@ -231,27 +231,27 @@ EnzRepackMinimize::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 
 	n_cycles_ = tag->getOption<core::Size>( "cycles", 1 );
 
-	minimize_in_stages_ = tag->getOption<bool>( "min_in_stages", 0 );
-	design_ = tag->getOption<bool>( "design", 0 );
-	repack_ = tag->getOption<bool>( "repack_only", 0 );
-	fix_catalytic_ = tag->getOption<bool>( "fix_catalytic", 0 );
-	cst_opt_ = tag->getOption<bool>( "cst_opt", 0 );
-	backrub_ = tag->getOption<bool>( "backrub", 0 );
+	minimize_in_stages_ = tag->getOption<bool>( "min_in_stages", false );
+	design_ = tag->getOption<bool>( "design", false );
+	repack_ = tag->getOption<bool>( "repack_only", false );
+	fix_catalytic_ = tag->getOption<bool>( "fix_catalytic", false );
+	cst_opt_ = tag->getOption<bool>( "cst_opt", false );
+	backrub_ = tag->getOption<bool>( "backrub", false );
 
 	if ( tag->hasOption( "minimize_rb" ) ) {
-		set_min_rb( tag->getOption<bool>( "minimize_rb", 1 ) );
+		set_min_rb( tag->getOption<bool>( "minimize_rb", true ) );
 	}
 	if ( tag->hasOption( "minimize_bb" ) ) {
-		set_min_bb(  tag->getOption<bool>( "minimize_bb", 0 ) );
+		set_min_bb(  tag->getOption<bool>( "minimize_bb", false ) );
 	}
 	if ( tag->hasOption( "minimize_sc" ) ) {
-		set_min_sc(  tag->getOption<bool>( "minimize_sc", 1 ) );
+		set_min_sc(  tag->getOption<bool>( "minimize_sc", true ) );
 	}
 	if ( tag->hasOption( "minimize_lig" ) ) {
-		set_min_lig(  tag->getOption<bool>( "minimize_lig", 0 ) );
+		set_min_lig(  tag->getOption<bool>( "minimize_lig", false ) );
 	}
 	if ( tag->hasOption( "minimize_prot_jumps" ) ) {
-		minimize_prot_jumps_ = tag->getOption<bool>( "minimize_prot_jumps", 0 );
+		minimize_prot_jumps_ = tag->getOption<bool>( "minimize_prot_jumps", false );
 	}
 
 	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();

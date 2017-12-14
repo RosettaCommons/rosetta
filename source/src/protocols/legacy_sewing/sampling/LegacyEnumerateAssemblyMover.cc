@@ -82,7 +82,6 @@ LegacyEnumerateAssemblyMover::fresh_instance() const {
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 LegacyEnumerateAssemblyMover::LegacyEnumerateAssemblyMover():
-	bogus_var_for_constructor_(10),
 	min_assembly_score_(-2.0),
 	models()
 {}
@@ -133,8 +132,8 @@ LegacyEnumerateAssemblyMover::generate_assembly(){
 
 	/////////////////// with each model, try to add every possible combination of n-terminal edges and c-terminal edges
 
-	std::map< int, Model >::iterator it = models.begin();
-	std::map< int, Model >::iterator it_end = models.end();
+	auto it = models.begin();
+	auto it_end = models.end();
 
 	for ( ; it != it_end; ++it ) { // 5,420 models with top8k // 22,356 models with 17k pdbs
 		Model const & cur_model = it->second;
@@ -244,7 +243,7 @@ LegacyEnumerateAssemblyMover::generate_assembly(){
 				++n_edge_it;
 			}
 
-			HashEdge const * const cur_edge_n = static_cast< HashEdge const * >(*n_edge_it);
+			auto const * const cur_edge_n = static_cast< HashEdge const * >(*n_edge_it);
 
 			AssemblyOP original_assembly = assembly->clone();
 
@@ -277,7 +276,7 @@ LegacyEnumerateAssemblyMover::generate_assembly(){
 					++c_edge_it;
 				}
 
-				HashEdge const * const cur_edge_c = static_cast< HashEdge const * >(*c_edge_it);
+				auto const * const cur_edge_c = static_cast< HashEdge const * >(*c_edge_it);
 
 				core::Size mobile_node_index_c = cur_edge_c->get_other_ind(c_term_node->get_node_index());
 				core::Size mobile_model_id_c( graph_->get_model_node(mobile_node_index_c)->model().model_id_ );

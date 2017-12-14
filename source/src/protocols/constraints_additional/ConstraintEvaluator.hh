@@ -57,12 +57,12 @@ namespace constraints_additional {
 
 class ConstraintEvaluator : public evaluation::PoseEvaluator {
 public:
-	ConstraintEvaluator( std::string tag, core::scoring::constraints::ConstraintSet const&, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
-	ConstraintEvaluator( std::string tag, core::scoring::constraints::ConstraintCOPs const&, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
+	ConstraintEvaluator( std::string const & tag, core::scoring::constraints::ConstraintSet const &, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
+	ConstraintEvaluator( std::string const & tag, core::scoring::constraints::ConstraintCOPs const &, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
 
 	//constructor for a late input of constraints --- in case pose is not known at construction
 	// ( will read only once with first pose that comes )
-	ConstraintEvaluator( std::string tag, std::string filename, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
+	ConstraintEvaluator( std::string const & tag, std::string const & filename, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
 
 	//sets xxx_cst and xxx_viol columns
 	void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const override;

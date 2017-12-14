@@ -99,8 +99,8 @@ FA_GrpElecEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
-FAElecContextData::FAElecContextData(){}
-FAElecContextData::~FAElecContextData(){}
+FAElecContextData::FAElecContextData()= default;
+FAElecContextData::~FAElecContextData()= default;
 
 void
 FAElecContextData::initialize( Size const nres )
@@ -688,7 +688,7 @@ FA_GrpElecEnergy::get_intrares_countpair(
 ) const
 {
 	utility_exit_with_message( "FA_GrpElecEnergy does not define intra-residue pair energies; do not call get_intrares_countpair()" );
-	return 0;
+	return nullptr;
 }
 
 etable::count_pair::CountPairFunctionCOP

@@ -40,6 +40,7 @@
 #include <numeric/random/random.functions.hh>
 #include <numeric/conversions.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
@@ -73,7 +74,7 @@ Transform::Transform(
 	core::Size const & cycles,
 	core::Real const & temp
 ) : Mover("Transform"),
-	grid_set_prototype_( grid_set_prototype )
+	grid_set_prototype_(std::move( grid_set_prototype ))
 	// & in class defaults
 {
 	transform_info_.chain = chain;

@@ -203,7 +203,7 @@ utility::vector1< bool > compute_unique_chains( Pose & pose ) {
 				TR << "sequences " << i << " and " << j << " have same length" << std::endl;
 
 				// go through sequence, std::string indexing from 0
-				for ( core::Size k = 0; k <= seq1.size(); ++k ) {
+				for ( core::Size k = 0; k < seq1.size(); ++k ) {
 					if ( seq1[ k ] == seq2[ k ] ) {
 						++num_ident_res;
 					}

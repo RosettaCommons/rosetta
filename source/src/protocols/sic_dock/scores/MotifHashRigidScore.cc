@@ -46,17 +46,17 @@ using std::endl;
 using utility::vector1;
 using basic::options::option;
 using namespace basic::options::OptionKeys;
-typedef core::Real Real;
-typedef core::Size Size;
-typedef core::pose::Pose Pose;
-typedef Xform Xform;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
-typedef utility::vector1<Vec> Vecs;
-typedef utility::vector1<Real> Reals;
-typedef utility::vector1<Size> Sizes;
-typedef numeric::Xforms Xforms;
-typedef utility::vector1<RigidScoreCOP> Scores;
+using Real = core::Real;
+using Size = core::Size;
+using Pose = core::pose::Pose;
+using Xform = Xform;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
+using Vecs = utility::vector1<Vec>;
+using Reals = utility::vector1<Real>;
+using Sizes = utility::vector1<Size>;
+using Xforms = numeric::Xforms;
+using Scores = utility::vector1<RigidScoreCOP>;
 
 
 MotifHashRigidScore::MotifHashRigidScore(
@@ -72,11 +72,11 @@ MotifHashRigidScore::MotifHashRigidScore(
 	xshe_(/* NULL */),
 	xshh_(/* NULL */),
 	xspp_(/* NULL */),
-	ssinfo1_(NULL),
-	ssinfo2_(NULL),
+	ssinfo1_(nullptr),
+	ssinfo2_(nullptr),
 	// nss1_(0),
 	// nss2_(0),
-	reshash_(NULL),
+	reshash_(nullptr),
 	nhashlookups_(0)
 {
 	core::scoring::dssp::Dssp(pose1_).insert_ss_into_pose_no_IG_helix(pose1_);
@@ -84,13 +84,13 @@ MotifHashRigidScore::MotifHashRigidScore(
 	ss1_ = pose1_.secstruct();
 	ss2_ = pose1_.secstruct();
 	utility_exit_with_message("MotifHashRigidScore is depricated");
-	xs_   = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_from_cli();
-	xshh_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_hh_from_cli();
-	xseh_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_eh_from_cli();
-	xshe_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_he_from_cli();
-	xsee_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_ee_from_cli();
-	xspp_ = NULL;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_sspair_from_cli();
-	mh_   = NULL;//core::scoring::motif::MotifHashManager::get_instance()->motif_hash_from_cli();
+	xs_   = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_from_cli();
+	xshh_ = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_hh_from_cli();
+	xseh_ = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_eh_from_cli();
+	xshe_ = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_he_from_cli();
+	xsee_ = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_ee_from_cli();
+	xspp_ = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_sspair_from_cli();
+	mh_   = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->motif_hash_from_cli();
 	for ( Size ir = 1; ir <= pose1_.size(); ++ir ) {
 		// if( pose1_.secstruct(ir)=='L' ) continue;
 		Vec  N = pose1_.residue(ir).xyz(1);
@@ -347,7 +347,7 @@ MotifHashRigidScore::show(
 	Xforms const & x2,
 	int width
 ) const {
-	show(out,x1,x2,NULL,width);
+	show(out,x1,x2,nullptr,width);
 }
 
 } // namespace scores

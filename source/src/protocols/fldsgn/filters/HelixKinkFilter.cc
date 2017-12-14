@@ -60,8 +60,8 @@ HelixKinkFilter::HelixKinkFilter():
 	bend_angle_( 20.0 ),
 	secstruct_( "" ),
 	string_resnums_( "" ),
-	select_resnums_( 0 ),
-	select_range_( 0 ),
+	select_resnums_( false ),
+	select_range_( false ),
 	helix_start_( 1 ),
 	helix_end_( 1 )
 {}

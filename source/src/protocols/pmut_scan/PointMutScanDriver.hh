@@ -40,7 +40,7 @@ namespace pmut_scan {
 class PointMutScanDriver {
 
 public:
-	PointMutScanDriver( utility::vector1< std::string > & pdb_file_names, bool double_mutant_scan, std::string list_file, bool output_mutant_structures );
+	PointMutScanDriver( utility::vector1< std::string > & pdb_file_names, bool double_mutant_scan, std::string const & list_file, bool output_mutant_structures );
 	virtual ~PointMutScanDriver();
 
 	//This protocol is its own Job Distributor - this fires it off from application-level

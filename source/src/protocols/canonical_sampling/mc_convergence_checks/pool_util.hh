@@ -38,7 +38,7 @@ public:
 	address_to_buf( utility::vector1< core::Size > & address, int* buf, core::Size start_index );
 
 	void
-	buf_to_address( utility::vector1< core::Size > & address, int* buf, core::Size start_index );
+	buf_to_address( utility::vector1< core::Size > & address, const int* buf, core::Size start_index );
 
 	void
 	farray_to_array( core::Size index,
@@ -60,7 +60,7 @@ public:
 	array_to_farray( core::Size index,
 		core::Size num_to_add,
 		FArray2D_double & coords,
-		double* coord_buf);
+		const double* coord_buf);
 
 	int* neighbor_addresses_;
 	double* coords_transfer_buffer_;

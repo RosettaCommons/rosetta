@@ -60,6 +60,7 @@
 #include <basic/Tracer.hh>
 
 //C++ headers
+#include <utility>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -86,7 +87,7 @@ namespace movers {
 
 RNA_Minimizer::RNA_Minimizer( options::RNA_MinimizerOptionsCOP options /* = 0 */ ):
 	Mover(),
-	options_( options ),
+	options_(std::move( options )),
 	coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
 	coord_cst_weight_( 1.0 ),
 	perform_minimizer_run_( true ),
@@ -119,16 +120,16 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 		}
 	}
 
-	if ( scorefxn_ == 0 ) scorefxn_ = get_rna_hires_scorefxn( contains_protein ); //->clone();
+	if ( scorefxn_ == nullptr ) scorefxn_ = get_rna_hires_scorefxn( contains_protein ); //->clone();
 
-	time_t pdb_start_time = time(NULL);
+	time_t pdb_start_time = time(nullptr);
 	scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
 	if ( pose.constraint_set()->has_constraints() ) {
 		if ( !scorefxn_->has_nonzero_weight( atom_pair_constraint ) )  scorefxn_->set_weight( atom_pair_constraint, 1.0 );
 		if ( !scorefxn_->has_nonzero_weight( base_pair_constraint ) )  scorefxn_->set_weight( base_pair_constraint, 1.0 );
 		if ( !scorefxn_->has_nonzero_weight( coordinate_constraint ) ) scorefxn_->set_weight( coordinate_constraint, 1.0 );
 	}
-	if ( options_ == 0 ) options_ = options::RNA_MinimizerOptionsOP( new options::RNA_MinimizerOptions );
+	if ( options_ == nullptr ) options_ = options::RNA_MinimizerOptionsOP( new options::RNA_MinimizerOptions );
 	if ( options_->vary_bond_geometry() ) scorefxn_->set_weight( rna_bond_geometry, 1.0 );
 	if ( include_default_linear_chainbreak_ && !scorefxn_->has_nonzero_weight( linear_chainbreak ) ) scorefxn_->set_weight( linear_chainbreak, 5.0 );
 
@@ -140,7 +141,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 
 	/////////////////////////////////////////////////////
 	kinematics::MoveMap mm;
-	if ( atom_level_domain_map_input_ != 0 ) {
+	if ( atom_level_domain_map_input_ != nullptr ) {
 		atom_level_domain_map_ = atom_level_domain_map_input_->clone();
 	} else {
 		atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) ); // initialized to let all dofs move.
@@ -235,7 +236,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 
 	}
 
-	time_t pdb_end_time = time(NULL);
+	time_t pdb_end_time = time(nullptr);
 
 	pose.constraint_set( save_pose_constraints );
 

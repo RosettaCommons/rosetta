@@ -38,7 +38,7 @@ using utility::vector1;
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
-typedef numeric::xyzVector< core::Real > xyzVec;
+using xyzVec = numeric::xyzVector<core::Real>;
 
 // ObjexxFCL Headers
 
@@ -415,7 +415,7 @@ randomize_motif_sequence(
 	using namespace chemical;
 
 	for ( Size i=motif_begin; i< motif_begin+motif_size; ++i ) {
-		AA const random_na( AA( first_DNA_aa + static_cast< int >( numeric::random::uniform() * 4 ) ) );
+		auto const random_na( AA( first_DNA_aa + static_cast< int >( numeric::random::uniform() * 4 ) ) );
 		debug_assert( random_na >= first_DNA_aa && random_na <= last_DNA_aa );
 
 		make_base_pair_mutation( pose, i, random_na );

@@ -39,8 +39,7 @@ DeNovoArchitect::DeNovoArchitect( std::string const & id ):
 	StructureArchitect( id )
 {}
 
-DeNovoArchitect::~DeNovoArchitect()
-{}
+DeNovoArchitect::~DeNovoArchitect() = default;
 
 components::StructureDataOP
 DeNovoArchitect::apply( core::pose::Pose const & pose ) const
@@ -55,8 +54,7 @@ DeNovoMotifArchitect::DeNovoMotifArchitect( std::string const & id ):
 	motifs_()
 {}
 
-DeNovoMotifArchitect::~DeNovoMotifArchitect()
-{}
+DeNovoMotifArchitect::~DeNovoMotifArchitect() = default;
 
 DeNovoArchitectOP
 DeNovoMotifArchitect::clone() const
@@ -139,9 +137,9 @@ DeNovoMotifArchitect::set_motifs( std::string const & motifs_str )
 {
 	MotifCOPs motif_vec;
 	utility::vector1< std::string > const motif_strs = utility::string_split( motifs_str, ',' );
-	for ( utility::vector1< std::string >::const_iterator ms=motif_strs.begin(); ms!=motif_strs.end(); ++ms ) {
+	for ( auto const & motif_str : motif_strs ) {
 		MotifOP newmotif( new Motif( id() ) );
-		newmotif->parse_motif( *ms );
+		newmotif->parse_motif( motif_str );
 		motif_vec.push_back( newmotif );
 	}
 	set_motifs( motif_vec );

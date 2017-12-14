@@ -345,7 +345,7 @@ RamaPrePro::read_canonical_rpp_tables( ) {
 	core::chemical::ResidueTypeSetCOP rts( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
 	//Read the score tables for this residue.
-	for ( core::Size i( static_cast<core::Size>( core::chemical::first_l_aa )); i<=static_cast<core::Size>( core::chemical::num_canonical_aas ); ++i ) { //Loop through the canonical amino acids.
+	for ( auto i( static_cast<core::Size>( core::chemical::first_l_aa )); i<=static_cast<core::Size>( core::chemical::num_canonical_aas ); ++i ) { //Loop through the canonical amino acids.
 		core::chemical::ResidueTypeCOP restype( rts->get_representative_type_aa(static_cast< core::chemical::AA >(i) ) );
 		runtime_assert( restype ); //There shouldn't be a problem getting the residue type.
 

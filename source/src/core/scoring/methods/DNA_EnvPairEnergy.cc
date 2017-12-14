@@ -16,7 +16,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <math.h>
+#include <cmath>
 
 // Unit headers
 #include <core/scoring/methods/DNA_EnvPairEnergy.hh>

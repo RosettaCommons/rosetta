@@ -80,7 +80,7 @@ void GridSet::set_qsar_map(qsarMapCOP qsar_map)
 
 bool GridSet::is_qsar_map_attached() const
 {
-	if ( qsar_map_ != 0 ) {
+	if ( qsar_map_ != nullptr ) {
 		return true;
 	} else {
 		return false;
@@ -112,7 +112,7 @@ void
 GridSet::make_new_grid(utility::tag::TagCOP tag)
 {
 	std::string name = tag->getOption< std::string >( "grid_name" );
-	core::Real weight = tag->getOption<core::Real>("weight", 1.0);
+	auto weight = tag->getOption<core::Real>("weight", 1.0);
 
 	if ( has_grid( name ) ) {
 		// Should we print an error message? The previous version did not.
@@ -372,8 +372,8 @@ GridSet::serialize() const
 void GridSet::deserialize(utility::json_spirit::mArray data)
 {
 	grids_.clear();
-	for ( utility::json_spirit::mArray::iterator it = data.begin(); it != data.end(); ++it ) {
-		utility::json_spirit::mArray grid_data(it->get_array());
+	for ( auto & it : data ) {
+		utility::json_spirit::mArray grid_data(it.get_array());
 		std::string grid_name = grid_data[0].get_str();
 		GridBaseOP grid(GridFactory::get_instance()->new_grid(grid_data[1].get_obj()));
 		grids_[grid_name] = grid;

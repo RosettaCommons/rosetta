@@ -44,7 +44,7 @@ namespace rotamer_recovery {
 
 static Tracer TR("protocol.moves.RRProtocolMinPack");
 
-RRProtocolMinPack::RRProtocolMinPack() {}
+RRProtocolMinPack::RRProtocolMinPack() = default;
 
 RRProtocolMinPack::RRProtocolMinPack( RRProtocolMinPack const & ) :
 	RRProtocol()

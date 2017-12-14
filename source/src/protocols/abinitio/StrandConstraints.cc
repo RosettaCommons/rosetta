@@ -66,7 +66,7 @@ StrandConstraints::~StrandConstraints() = default;
 Size register_cutoff( 5 );
 Size residue_cutoff( 5 );
 
-typedef utility::vector1< Size > SizeList;
+using SizeList = utility::vector1<Size>;
 bool AlternativePairings::compatible( core::scoring::dssp::StrandPairing const& strand_pairing ) const {
 	if ( pairings_.size() == 0 ) return true;
 	if ( strand_pairing.antiparallel() != antiparallel() ) return false;
@@ -108,7 +108,7 @@ void AlternativePairings::show( std::ostream& out ) const {
 	out << "\n\n Set of alternative strand pairings: \n";
 	for ( auto const & pairing : pairings_ ) {
 		out << pairing.weight() << " " << pairing.pairing() << " ";
-		for ( const auto & mit : pairing.models() ) {
+		for ( auto const & mit : pairing.models() ) {
 			out << mit << " ";
 		}
 		out << "\n";

@@ -42,8 +42,7 @@ FreeDOF_Options::FreeDOF_Options()
 }
 
 //Destructor
-FreeDOF_Options::~FreeDOF_Options()
-{}
+FreeDOF_Options::~FreeDOF_Options() = default;
 
 /////////////////////////////
 void FreeDOF_Options::initialize_from_options() {

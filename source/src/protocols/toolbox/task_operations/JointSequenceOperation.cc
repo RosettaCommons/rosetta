@@ -75,14 +75,14 @@ JointSequenceOperation::JointSequenceOperation():
 	TaskOperation(),
 	use_current_pose_(true),
 	use_natro_(false),
-	use_fasta_(false),
+	//use_fasta_(false),
 	ubr_(/* 0 */),
 	chain_(0)
 {
 }
 
 /// @brief destructor
-JointSequenceOperation::~JointSequenceOperation() {}
+JointSequenceOperation::~JointSequenceOperation() = default;
 
 /// @brief clone
 TaskOperationOP
@@ -97,7 +97,7 @@ void
 JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 {
 
-	core::conformation::symmetry::SymmetryInfoCOP syminfo = NULL;
+	core::conformation::symmetry::SymmetryInfoCOP syminfo = nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) syminfo = core::pose::symmetry::symmetry_info(pose);
 
 	core::Size start;
@@ -122,14 +122,14 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 
 
 	// Iter through native sequence
-	for ( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()), end = sequences_.end(); iter != end; ++iter ) {
+	for ( auto const & sequence : sequences_ ) {
 		//TR << "it " << **iter << " " << (*iter)->length() << " vs " << seq_length << std::endl;
-		if ( (*iter)->length() != seq_length ) {
+		if ( sequence->length() != seq_length ) {
 			std::string name("current pdb");
 			if ( pose.pdb_info() ) {
 				name = pose.pdb_info()->name();
 			}
-			TR.Warning << "considered sequence " << (*iter)->id() << " contains a different number of residues than " << name << std::endl;
+			TR.Warning << "considered sequence " << sequence->id() << " contains a different number of residues than " << name << std::endl;
 		}
 	}
 
@@ -148,9 +148,9 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 		if ( use_current_pose_ ) {
 			if ( pose.aa(ii) <= static_cast<int>(allowed.size()) ) allowed[ pose.aa(ii) ] = true;
 		}
-		for ( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()), end = sequences_.end(); iter != end; ++iter ) {
+		for ( auto const & sequence : sequences_ ) {
 			//if ( ii > (*iter)->length() ) continue; // ignore short references
-			char aa( (*(*iter))[ na_ii ] );
+			char aa( (*sequence)[ na_ii ] );
 			if ( core::chemical::oneletter_code_specifies_aa(aa) ) {
 				if ( core::chemical::aa_from_oneletter_code(aa)<=static_cast<int>(allowed.size()) ) {
 					//TR << "JointSeq: " << pose.aa(ii) << ii << " " << core::chemical::aa_from_oneletter_code(aa) << na_ii << std::endl;

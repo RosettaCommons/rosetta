@@ -41,7 +41,7 @@ GapCloser::GapCloser():
 	set_solution_picker(gap_solution_pickers::GapSolutionPickerOP(new gap_solution_pickers::RandomGapSolutionPicker));
 }
 
-GapCloser::~GapCloser(){}
+GapCloser::~GapCloser()= default;
 
 GapCloser::GapCloser( GapCloser const & ) {
 

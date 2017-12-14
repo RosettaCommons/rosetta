@@ -96,7 +96,7 @@ HBNetEnergy::HBNetEnergy ( core::scoring::methods::EnergyMethodOptions const &/*
 
 /// @brief Default destructor.
 ///
-HBNetEnergy::~HBNetEnergy() {}
+HBNetEnergy::~HBNetEnergy() = default;
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.

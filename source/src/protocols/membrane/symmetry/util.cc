@@ -60,7 +60,7 @@ symmetrize_spans(
 	if ( !is_symmetric( pose ) ) {
 		utility_exit_with_message( "Cannot create a symmetric spanning topology from an asymmetric pose!" );
 	}
-	SymmetricConformation & symm_conf ( dynamic_cast< SymmetricConformation & > ( pose.conformation()) );
+	auto & symm_conf ( dynamic_cast< SymmetricConformation & > ( pose.conformation()) );
 
 	// Create a new symmetric spanning topology object
 	SpanningTopologyOP symmetrized_topology = SpanningTopologyOP( new SpanningTopology() );

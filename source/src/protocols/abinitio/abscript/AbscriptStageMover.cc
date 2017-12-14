@@ -31,6 +31,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/vector0.hh>
 
 // Basic Headers
@@ -61,8 +62,8 @@ AbscriptStageMover::AbscriptStageMover( StageID stage,
 	core::Size cycles ):
 	stage_( stage ),
 	cycles_( cycles ),
-	score_( score ),
-	mc_( mc ),
+	score_(std::move( score )),
+	mc_(std::move( mc )),
 	temperature_( 2.0 ),
 	seqsep_slope_( 0.0 ),
 	seqsep_intcpt_( 0.0 ),
@@ -166,9 +167,8 @@ bool AbscriptStageMover::setup_stage( core::pose::Pose& pose, core::Real const& 
 
 	mc_->reset( pose );
 
-	for ( PreparerSet::const_iterator preparer = preparers_.begin();
-			preparer != preparers_.end(); ++preparer ) {
-		(*preparer)->prepare( pose, progress );
+	for ( auto const & preparer : preparers_ ) {
+		preparer->prepare( pose, progress );
 	}
 
 	( *score_ )( pose );

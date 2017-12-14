@@ -23,6 +23,7 @@
 #include <protocols/fldsgn/topology/Sheet.hh>
 
 // utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -64,10 +65,10 @@ BetaAlphaBetaMotif::BetaAlphaBetaMotif():
 
 /// @brief value constructor
 BetaAlphaBetaMotif::BetaAlphaBetaMotif(
-	Size const & strand1,
-	Size const & strand2,
-	Size const & helix,
-	Size const & cross_over ) :
+	Size const strand1,
+	Size const strand2,
+	Size const helix,
+	Size const cross_over ) :
 	strand1_( strand1 ),
 	strand2_( strand2 ),
 	helix_( helix ),
@@ -103,7 +104,7 @@ BetaAlphaBetaMotif::BetaAlphaBetaMotif( BetaAlphaBetaMotif const & s ):
 {}
 
 /// @brief destructor
-BetaAlphaBetaMotif::~BetaAlphaBetaMotif(){}
+BetaAlphaBetaMotif::~BetaAlphaBetaMotif()= default;
 
 /// @brief IO operator
 std::ostream & operator<<(std::ostream & out, const BetaAlphaBetaMotif & s ) {
@@ -265,7 +266,7 @@ BetaAlphaBetaMotif::calc_helix_cycle( SS_Info2_COP const ssinfo )
 	}
 
 	utility::vector1< std::map< Size, Real >::iterator > vec_ite;
-	std::map< Size, Real >::iterator it = pos_dist.begin(), end = pos_dist.end();
+	auto it = pos_dist.begin(), end = pos_dist.end();
 	while ( it != end ) {
 		vec_ite.push_back( it );
 		++it;
@@ -490,7 +491,7 @@ BetaAlphaBetaMotif::calc_geometry( SS_Info2_COP const ssinfo, SheetSetCOP const 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief default constructor
-BetaAlphaBetaMotifSet::BetaAlphaBetaMotifSet() {}
+BetaAlphaBetaMotifSet::BetaAlphaBetaMotifSet() = default;
 
 /// @brief value constructor
 BetaAlphaBetaMotifSet::BetaAlphaBetaMotifSet( BetaAlphaBetaMotifs const & bab_motifs ):
@@ -513,7 +514,7 @@ BetaAlphaBetaMotifSet::BetaAlphaBetaMotifSet( BetaAlphaBetaMotifSet const & s ):
 {}
 
 /// @brief destructor
-BetaAlphaBetaMotifSet::~BetaAlphaBetaMotifSet(){}
+BetaAlphaBetaMotifSet::~BetaAlphaBetaMotifSet()= default;
 
 /// @brief add BetaAlphaBetaMotif
 void
@@ -548,9 +549,8 @@ std::ostream & operator<<( std::ostream & out, const BetaAlphaBetaMotifSet & s )
 {
 	out << "### BetaAlphaBetaMotif Info " << std::endl;
 	out << "# helix,strand1-strand2.num_crossover hsheet_dist hs_angl hsheet_elev_angl hs1_dist hs2_dist helix_cycle " << std::endl;
-	for ( BetaAlphaBetaMotifs::const_iterator iter = s.bab_motifs().begin(),
-			iter_end = s.bab_motifs().end(); iter != iter_end; ++iter ) {
-		BetaAlphaBetaMotif const & bab( **iter );
+	for ( auto const & iter : s.bab_motifs() ) {
+		BetaAlphaBetaMotif const & bab( *iter );
 		out << bab;
 	}
 	return out;
@@ -621,8 +621,7 @@ BetaAlphaBetaMotifSet::calc_geometry( SS_Info2_COP const ssinfo,  SheetSetCOP co
 {
 	if ( ! ssinfo->bbpos_is_set() ) return;
 	runtime_assert( ssinfo->bbpos_is_set() );
-	for ( BetaAlphaBetaMotifs::iterator it=bab_motifs_.begin(), ite=bab_motifs_.end(); it!=ite; ++it ) {
-		BetaAlphaBetaMotifOP const babm( *it );
+	for ( auto babm : bab_motifs_ ) {
 		babm->calc_geometry( ssinfo, sheet_set );
 	}
 }

@@ -37,7 +37,7 @@ namespace optimize_weights {
 
 static basic::Tracer TR( "DDGBindOptEData" );
 
-typedef core::chemical::AA AA;
+using AA = core::chemical::AA;
 
 ///
 /// @brief

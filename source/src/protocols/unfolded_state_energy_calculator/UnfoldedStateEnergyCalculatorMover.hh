@@ -57,10 +57,10 @@ public:
 		core::scoring::ScoreFunctionCOP pack_scrfxn,
 		core::scoring::ScoreFunctionCOP score_scrfxn,
 		core::Size frag_length,
-		std::string mut_aa,
+		std::string const & mut_aa,
 		bool repack_fragments,
 		bool native_sequence,
-		std::string seq_match_seq,
+		std::string const & seq_match_seq,
 		Size seq_match_pos,
 		bool seq_match_frags
 	);

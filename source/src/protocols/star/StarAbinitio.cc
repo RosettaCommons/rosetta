@@ -82,7 +82,7 @@ namespace star {
 
 static basic::Tracer TR( "protocols.star.StarAbinitio" );
 
-typedef utility::vector1<double> Probabilities;
+using Probabilities = utility::vector1<double>;
 
 using core::Real;
 using core::Size;

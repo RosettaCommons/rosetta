@@ -96,7 +96,7 @@ void
 FileName::assign( std::string const & name_string )
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	// Local copy to cut up as we parse
 	string cut( name_string );

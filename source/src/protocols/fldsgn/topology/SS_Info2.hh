@@ -265,7 +265,7 @@ public: // constructor/destructor
 	Loop();
 
 	/// @brief value constructor
-	Loop( Size const & begin, Size const & end, String const & type="" );
+	Loop( Size const begin, Size const end, String const & type="" );
 
 	/// @brief copy constructor
 	Loop( Loop const & s );

@@ -57,10 +57,10 @@ EvaluatedTrialMover::EvaluatedTrialMover(
 	moves::MoverOP mover_in,
 	moves::MonteCarloOP mc_in,
 	evaluation::PoseEvaluatorOP evaluator_in,
-	std::string tag
+	std::string const & tag
 ) :
 	TrialMover( mover_in, mc_in),
-	tag_(std::move( tag ))
+	tag_( tag )
 {
 	using protocols::evaluation::PoseEvaluatorOP;
 	evaluator_ = evaluation::MetaPoseEvaluatorOP( new evaluation::MetaPoseEvaluator );

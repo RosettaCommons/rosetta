@@ -58,9 +58,9 @@ public:
 		input_pose_sequence_ = "";
 	}
 
-	std::string get_name() const { return "BBinMover"; }
+	std::string get_name() const override { return "BBinMover"; }
 
-	virtual ~JDmover(){};
+	~JDmover() override= default;
 
 	core::Real
 	periodic_range(
@@ -96,9 +96,9 @@ public:
 
 	}
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ){
+	apply( core::pose::Pose & pose ) override{
 
 		// initialize secondary structure from DSSP.
 		core::scoring::dssp::Dssp dssp_obj( pose );
@@ -157,19 +157,19 @@ public:
 	}
 
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new JDmover );
 	}
 
-	virtual
-	bool
-	reinitialize_for_each_job() const { return false; }
 
-	virtual
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
+
+
+	bool
+	reinitialize_for_new_input() const override { return false; }
 
 
 	Size get_input_pose_length() {
@@ -223,7 +223,7 @@ private:
 
 };
 
-typedef utility::pointer::shared_ptr< JDmover > JDmoverOP;
+using JDmoverOP = utility::pointer::shared_ptr<JDmover>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

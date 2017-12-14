@@ -116,7 +116,7 @@ NamedDihedralConstraint::remapped_clone(
 	if ( id1.valid() && id2.valid() && id3.valid() && id4.valid() ) {
 		return ConstraintOP( new NamedDihedralConstraint( atom1, atom2, atom3, atom4, func()->clone(), score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -144,7 +144,7 @@ bool NamedDihedralConstraint::operator == ( Constraint const & rhs ) const {
 	// through the mutual invocation of same_type_as_me
 	if ( ! DihedralConstraint::operator == ( rhs ) ) return false;
 
-	NamedDihedralConstraint const & rhs_napc( static_cast< NamedDihedralConstraint const & > ( rhs ) );
+	auto const & rhs_napc( static_cast< NamedDihedralConstraint const & > ( rhs ) );
 	if ( named_atom1_ != rhs_napc.named_atom1_ ) return false;
 	if ( named_atom2_ != rhs_napc.named_atom2_ ) return false;
 	if ( named_atom3_ != rhs_napc.named_atom3_ ) return false;
@@ -254,13 +254,7 @@ NamedDihedralConstraint::read_def(
 	}
 } // read_def
 
-NamedDihedralConstraint::NamedDihedralConstraint( NamedDihedralConstraint const & src ) :
-	DihedralConstraint( src ),
-	named_atom1_( src.named_atom1_ ),
-	named_atom2_( src.named_atom2_ ),
-	named_atom3_( src.named_atom3_ ),
-	named_atom4_( src.named_atom4_ )
-{}
+NamedDihedralConstraint::NamedDihedralConstraint( NamedDihedralConstraint const & /*src*/ ) = default;
 
 
 }

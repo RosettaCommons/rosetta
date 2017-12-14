@@ -22,6 +22,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/file/file_sys_util.hh> // file_exists, create_directory
+#include <utility/file/FileName.hh>
 
 // option key includes
 

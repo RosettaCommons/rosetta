@@ -114,8 +114,8 @@ LegacyRequirementSet::satisfies(
 	}
 
 	utility::vector1<SewSegment> segments = assembly->segments();
-	LegacyIntraSegmentRequirementsMap::const_iterator intra_it = intra_segment_requirements_.begin();
-	LegacyIntraSegmentRequirementsMap::const_iterator intra_it_end = intra_segment_requirements_.end();
+	auto intra_it = intra_segment_requirements_.begin();
+	auto intra_it_end = intra_segment_requirements_.end();
 
 	for ( ; intra_it != intra_it_end; ++intra_it ) {
 		if ( TR.Debug.visible() ) {
@@ -202,7 +202,7 @@ LegacyRequirementSet::violates(
 			}
 
 			//Get the requirements for this segment of the hypothetical assembly
-			LegacyIntraSegmentRequirementsMap::const_iterator intra_reqs_it = intra_segment_requirements_.find(i);
+			auto intra_reqs_it = intra_segment_requirements_.find(i);
 
 			//If there are no requirements for this index, then it passes
 			if ( intra_reqs_it == intra_segment_requirements_.end() ) {
@@ -251,16 +251,16 @@ LegacyRequirementSet::show(
 	out << "/////////// LEGACY_SEWING LegacyRequirementSet /////////////" << std::endl;
 
 	out << "/////// LegacyGlobal Assembly Requirements" << std::endl;
-	utility::vector1<LegacyGlobalRequirementOP>::const_iterator assem_it = global_requirements_.begin();
-	utility::vector1<LegacyGlobalRequirementOP>::const_iterator assem_it_end = global_requirements_.end();
+	auto assem_it = global_requirements_.begin();
+	auto assem_it_end = global_requirements_.end();
 	for ( ; assem_it != assem_it_end; ++assem_it ) {
 		(*assem_it)->show(out);
 	}
 
 	out << "/////// Intra Segment Requirements" << std::endl;
-	LegacyIntraSegmentRequirementsMap::const_iterator intra_it =
+	auto intra_it =
 		intra_segment_requirements_.begin();
-	LegacyIntraSegmentRequirementsMap::const_iterator intra_it_end =
+	auto intra_it_end =
 		intra_segment_requirements_.end();
 	for ( ; intra_it != intra_it_end; ++intra_it ) {
 		out << "/////// Segment " << intra_it->first << ":" << std::endl;

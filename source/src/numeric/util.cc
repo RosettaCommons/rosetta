@@ -38,12 +38,11 @@ numeric::Real median( utility::vector1< numeric::Real > const & values ) {
 }
 
 numeric::Real mean( utility::vector1< numeric::Real > const & values ) {
-	typedef utility::vector1< numeric::Real >::const_iterator iter;
 
 	numeric::Size const n_vals( values.size() );
 	numeric::Real total( 0.0 );
-	for ( iter it = values.begin(), end = values.end(); it != end; ++it ) {
-		total += *it;
+	for ( double value : values ) {
+		total += value;
 	}
 
 	return static_cast< numeric::Real > ( total / n_vals );
@@ -138,7 +137,7 @@ access_Real_MathNTensor( MathNTensorBaseOP< Real > tensorbase, utility::vector1<
 	}
 
 	//The following should never end up being called, and would produce a memory leak if it were:
-	Real * dummy = new Real(0.0);
+	auto * dummy = new Real(0.0);
 	return (*dummy);
 }
 
@@ -232,7 +231,7 @@ const_access_Real_MathNTensor( MathNTensorBaseCOP< Real > tensorbase, utility::v
 	}
 
 	//The following should never end up being called, and would produce a memory leak if it were:
-	Real * dummy = new Real(0.0);
+	auto * dummy = new Real(0.0);
 	return (*dummy);
 }
 

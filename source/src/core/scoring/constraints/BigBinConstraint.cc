@@ -66,7 +66,7 @@ bool BigBinConstraint::operator == ( Constraint const & other ) const
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	BigBinConstraint const & other_bbcst( static_cast< BigBinConstraint const & > (other) );
+	auto const & other_bbcst( static_cast< BigBinConstraint const & > (other) );
 	if ( C0_   != other_bbcst.C0_   ) return false;
 	if ( N1_   != other_bbcst.N1_   ) return false;
 	if ( CA1_  != other_bbcst.CA1_  ) return false;
@@ -162,7 +162,6 @@ void BigBinConstraint::read_def(
 
 	using core::id::AtomID;
 	using numeric::conversions::radians;
-	AtomID C0, N1, CA1, C1, N2, CA2;
 
 	std::string dummy;
 	in >> dummy >> res_ >> bin_ >> sdev_;
@@ -248,10 +247,8 @@ void
 BigBinConstraint::score(
 	func::XYZ_Func const & xyz, EnergyMap const & weights, EnergyMap & emap
 ) const {
-	using utility::vector1;
-	typedef vector1< ConstraintOP >::const_iterator iter;
-	for ( iter it = my_csts_.begin(), end = my_csts_.end(); it != end; ++it ) {
-		(*it)->score( xyz, weights, emap );
+	for ( auto const & my_cst : my_csts_ ) {
+		my_cst->score( xyz, weights, emap );
 	}
 }
 
@@ -264,10 +261,8 @@ BigBinConstraint::fill_f1_f2(
 	EnergyMap const & weights
 ) const {
 	// call fill_f1_f2 on my_csts_
-	using utility::vector1;
-	typedef vector1< ConstraintOP >::const_iterator iter;
-	for ( iter it = my_csts_.begin(), end = my_csts_.end(); it != end; ++it ) {
-		(*it)->fill_f1_f2( id, xyz, F1, F2, weights );
+	for ( auto const & my_cst : my_csts_ ) {
+		my_cst->fill_f1_f2( id, xyz, F1, F2, weights );
 	}
 }
 

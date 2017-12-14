@@ -42,7 +42,7 @@ class RestrictIdentitiesOperation : public core::pack::task::operation::TaskOper
 public:
 
 	RestrictIdentitiesOperation();
-	RestrictIdentitiesOperation( utility::vector1 < std::string > identities, bool prevent_repacking );
+	RestrictIdentitiesOperation( utility::vector1 < std::string > const & identities, bool prevent_repacking );
 	virtual core::pack::task::operation::TaskOperationOP clone() const;
 	virtual ~RestrictIdentitiesOperation();
 

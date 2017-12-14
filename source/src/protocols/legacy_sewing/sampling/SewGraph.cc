@@ -88,7 +88,7 @@ void
 ModelNode::copy_from(
 	utility::graph::Node const * source
 ){
-	ModelNode const * mn_source = static_cast< ModelNode const * > ( source );
+	auto const * mn_source = static_cast< ModelNode const * > ( source );
 	model_ = mn_source->model_;
 	segment_ids_ = mn_source->segment_ids_;
 }
@@ -98,8 +98,8 @@ operator<<(std::ostream& out, ModelNode const & node ) {
 	out << "Node " << node.get_node_index() << ": model_id ("
 		<< node.model().model_id_ << ") - segments (";
 	std::set< core::Size > const & segment_ids = node.segment_ids();
-	std::set< core::Size >::const_iterator it = segment_ids.begin();
-	std::set< core::Size >::const_iterator it_end = segment_ids.end();
+	auto it = segment_ids.begin();
+	auto it_end = segment_ids.end();
 	for ( ; it != it_end; ++it ) {
 		out << *it;
 		if ( it != --segment_ids.end() ) {
@@ -151,7 +151,7 @@ operator<<(std::ostream& out, HashEdge const & edge ) {
 SewGraph::~SewGraph() {
 	delete_everything();
 	delete hash_edge_pool_;
-	hash_edge_pool_ = 0;
+	hash_edge_pool_ = nullptr;
 }
 
 /// @details Notice that this does not call the parent( src ) copy constructor.
@@ -182,12 +182,12 @@ SewGraph::SewGraph(
 	hash_edge_pool_( new boost::unordered_object_pool< HashEdge > ( 256 ) )
 {
 
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	//first, figure out how many nodes we have (this is silly to do twice)
 	core::Size n_nodes = 0;
-	std::map< int, Model >::const_iterator models_it = models.begin();
-	std::map< int, Model >::const_iterator models_end = models.end();
+	auto models_it = models.begin();
+	auto models_end = models.end();
 	for ( ; models_it != models_end; ++models_it ) {
 		utility::vector1<core::Size> dim_sizes(segment_matches_per_edge, models_it->second.segments_.size());
 		for ( utility::LexicographicalIterator lex( dim_sizes ); ! lex.at_end(); ++lex ) {
@@ -240,7 +240,7 @@ SewGraph::SewGraph(
 			}
 
 			model_indices_[models_it->first].insert(counter);
-			ModelNode * node = static_cast< ModelNode * >( get_node( counter ) );
+			auto * node = static_cast< ModelNode * >( get_node( counter ) );
 			node->model(models_it->second);
 
 			std::set<core::Size> segments;
@@ -284,7 +284,7 @@ SewGraph::SewGraph(
 			}
 
 			model_indices_[models_it->first].insert(counter);
-			ModelNode * node = static_cast< ModelNode * >( get_node( counter ) );
+			auto * node = static_cast< ModelNode * >( get_node( counter ) );
 			node->model(models_it->second);
 
 			std::set<core::Size> segments;
@@ -296,7 +296,7 @@ SewGraph::SewGraph(
 		}
 	}
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR << "SewGraph initialized with " << num_nodes() << " nodes. (" << endtime-starttime << " seconds)" << std::endl;
 }
 
@@ -327,8 +327,8 @@ SewGraph::add_special_edges(){
 		std::set<core::Size> model_2_segs;
 
 		std::map< SegmentPair, core::Size > const & segment_pairs = it->second.segment_match_counts;
-		std::map< SegmentPair, core::Size >::const_iterator seg_it = segment_pairs.begin();
-		std::map< SegmentPair, core::Size >::const_iterator seg_it_end = segment_pairs.end();
+		auto seg_it = segment_pairs.begin();
+		auto seg_it_end = segment_pairs.end();
 		for ( ; seg_it != seg_it_end; ++seg_it ) {
 			model_1_segs.insert(seg_it->first.first);
 			model_2_segs.insert(seg_it->first.second);
@@ -354,7 +354,7 @@ SewGraph::add_special_edges(){
 		bp.first.resnum = resnum_1;
 		bp.second.model_id = model_id_2;
 		bp.second.resnum = resnum_2;
-		HashEdge * const e = static_cast< HashEdge * >( add_edge(n1->get_node_index(), n2->get_node_index()));
+		auto * const e = static_cast< HashEdge * >( add_edge(n1->get_node_index(), n2->get_node_index()));
 		e->basis_pair(bp);
 	}
 }//add_special_edges
@@ -390,7 +390,7 @@ SewGraph::find_hash_edge(
 	if ( edge ) {
 		return static_cast< HashEdge * > ( edge );
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -403,7 +403,7 @@ SewGraph::find_hash_edge(
 	if ( edge ) {
 		return static_cast< HashEdge const * > ( edge );
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -416,7 +416,7 @@ SewGraph::get_model_node(
 	if ( node ) {
 		return static_cast< ModelNode const * > ( node );
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -426,21 +426,21 @@ SewGraph::get_model_node(
 	std::set<core::Size> segment_ids
 ) const {
 
-	std::map< int, std::set<core::Size> >::const_iterator it =
+	auto it =
 		model_indices_.find(model_id);
 	if ( it == model_indices_.end() ) {
 		utility_exit_with_message("No nodes found for model id " + utility::to_string(model_id));
 	}
-	std::set<core::Size>::const_iterator node_it = it->second.begin();
-	std::set<core::Size>::const_iterator node_it_end = it->second.end();
+	auto node_it = it->second.begin();
+	auto node_it_end = it->second.end();
 	for ( ; node_it != node_it_end; ++node_it ) {
-		ModelNode const * node( static_cast< ModelNode const * >(get_node(*node_it)) );
+		auto const * node( static_cast< ModelNode const * >(get_node(*node_it)) );
 		if ( node->segment_ids() == segment_ids ) {
 			return node;
 		}
 	}
 	utility_exit_with_message("No node found with given model id and segment ids");
-	return 0;
+	return nullptr;
 
 }
 
@@ -521,7 +521,7 @@ SewGraph::generate_binary_score_file(
 		utility_exit_with_message("Couldn't open " + binary_filename + " for writing!");
 	}
 
-	boost::uint32_t n_nodes_with_edges = (boost::uint32_t)edges.size();
+	auto n_nodes_with_edges = (boost::uint32_t)edges.size();
 
 	// if(num_models > num_nodes()) {
 	//  utility_exit_with_message("Error converting scores to binary! There are more nodes in the score file than contained in the graph!");
@@ -558,11 +558,11 @@ SewGraph::generate_binary_score_file(
 	EdgeList::const_iterator it = edges.begin();
 	EdgeList::const_iterator it_end = edges.end();
 	for ( ; it != it_end; ++it ) {
-		boost::uint32_t num = (boost::uint32_t)it->second.size();
+		auto num = (boost::uint32_t)it->second.size();
 		if ( TR.Debug.visible() ) {
 			TR << "model " << it->first.first << " segments ";
-			std::set<core::Size>::const_iterator seg_it = it->first.second.begin();
-			std::set<core::Size>::const_iterator seg_it_end = it->first.second.end();
+			auto seg_it = it->first.second.begin();
+			auto seg_it_end = it->first.second.end();
 			for ( ; seg_it != seg_it_end; ++seg_it ) {
 				TR << *seg_it << " ";
 			}
@@ -574,20 +574,20 @@ SewGraph::generate_binary_score_file(
 	//Finally, write all the edges
 	it = edges.begin();
 	for ( ; it != it_end; ++it ) {
-		utility::vector1< std::pair< score_node, std::pair<core::Size,core::Size> > >::const_iterator edge_it = it->second.begin();
-		utility::vector1< std::pair< score_node, std::pair<core::Size,core::Size> > >::const_iterator edge_it_end = it->second.end();
+		auto edge_it = it->second.begin();
+		auto edge_it_end = it->second.end();
 		for ( ; edge_it != edge_it_end; ++edge_it ) {
 
-			std::set<core::Size>::const_iterator seg_it = edge_it->first.second.begin();
-			std::set<core::Size>::const_iterator seg_it_end = edge_it->first.second.end();
+			auto seg_it = edge_it->first.second.begin();
+			auto seg_it_end = edge_it->first.second.end();
 			for ( ; seg_it != seg_it_end; ++seg_it ) {
-				boost::int32_t seg_id = (boost::int32_t)*seg_it;
+				auto seg_id = (boost::int32_t)*seg_it;
 				binary_file.write( (char*) & seg_id , sizeof( boost::int32_t ));
 			}
 
 			boost::int32_t other_model_id = edge_it->first.first;
-			boost::int32_t resnum_1 = (boost::int32_t)edge_it->second.first;
-			boost::int32_t resnum_2 = (boost::int32_t)edge_it->second.second;
+			auto resnum_1 = (boost::int32_t)edge_it->second.first;
+			auto resnum_2 = (boost::int32_t)edge_it->second.second;
 			binary_file.write( (char*) & other_model_id , sizeof( boost::int32_t ));
 			binary_file.write( (char*) & resnum_1 , sizeof( boost::int32_t ));
 			binary_file.write( (char*) & resnum_2 , sizeof( boost::int32_t ));
@@ -619,19 +619,19 @@ SewGraph::report_binary_stats(
 	TR << "There are " << n_segments_per_node << " matching segments for each edge" << std::endl;
 
 	boost::uint32_t n_edges;
-	std::map< int, Model >::const_iterator it = models.begin();
-	std::map< int, Model >::const_iterator it_end = models.end();
+	auto it = models.begin();
+	auto it_end = models.end();
 	for ( ; it != it_end; ++it ) {
 		std::set<core::Size> const & nodes = model_indices_[it->first];
-		std::set<core::Size>::const_iterator n_it = nodes.begin();
-		std::set<core::Size>::const_iterator n_it_end = nodes.end();
+		auto n_it = nodes.begin();
+		auto n_it_end = nodes.end();
 		for ( ; n_it != n_it_end; ++n_it ) {
 			binary_file.read( (char*) &n_edges, sizeof( boost::uint32_t )  );
 			ModelNode const * const node = get_model_node(*n_it);
 			TR << "Model " << it->first << ", Segments ";
 			std::set<core::Size> const & segs = node->segment_ids();
-			std::set<core::Size>::const_iterator seg_it = segs.begin();
-			std::set<core::Size>::const_iterator seg_it_end = segs.end();
+			auto seg_it = segs.begin();
+			auto seg_it_end = segs.end();
 			for ( ; seg_it != seg_it_end; ++seg_it ) {
 				TR << *seg_it << " ";
 			}
@@ -646,8 +646,8 @@ SewGraph::report_binary_stats(
 		ModelNode const * const node = get_model_node(node_id);
 		TR << "Just added edges for model " << node->model().model_id_ << ", segments: ";
 		std::set<core::Size> const & segments = node->segment_ids();
-		std::set<core::Size>::const_iterator it = segments.begin();
-		std::set<core::Size>::const_iterator it_end = segments.end();
+		auto it = segments.begin();
+		auto it_end = segments.end();
 		for ( ; it != it_end; ++it ) {
 			TR << *it << std::endl;
 		}
@@ -662,7 +662,7 @@ SewGraph::get_node_indices_from_model_id(
 	int model_id
 ) const{
 
-	std::map< int, std::set<core::Size> >::const_iterator find_it = model_indices_.find(model_id);
+	auto find_it = model_indices_.find(model_id);
 	if ( find_it == model_indices_.end() ) {
 		utility_exit_with_message("Error: no model with model id " + utility::to_string(model_id) + " found in SewGraph");
 	}
@@ -675,8 +675,8 @@ SewGraph::add_all_model_edges_from_binary(
 	int model_id
 ){
 	std::set<core::Size> const & nodes = model_indices_[model_id];
-	std::set<core::Size>::const_iterator it = nodes.begin();
-	std::set<core::Size>::const_iterator it_end = nodes.end();
+	auto it = nodes.begin();
+	auto it_end = nodes.end();
 	for ( ; it != it_end; ++it ) {
 		add_edges_from_binary(filename, *it);
 	}
@@ -793,7 +793,7 @@ SewGraph::add_edges_from_binary(
 		bp.second.resnum = resnum_2;
 
 		ModelNode const * const other_node = get_model_node(other_model_id, segments);
-		HashEdge * const e = static_cast< HashEdge * >( add_edge(node_id, other_node->get_node_index()));
+		auto * const e = static_cast< HashEdge * >( add_edge(node_id, other_node->get_node_index()));
 		e->basis_pair(bp);
 	}
 
@@ -807,8 +807,8 @@ scores_to_alignments(
 	ScoreResults const & scores
 ){
 	utility::vector1<BasisPair> basis_pairs;
-	for ( ScoreResults::const_iterator it = scores.begin(); it != scores.end(); ++it ) {
-		basis_pairs.push_back(it->first);
+	for ( auto const & score : scores ) {
+		basis_pairs.push_back(score.first);
 	}
 	return basis_pairs;
 }
@@ -869,7 +869,7 @@ serialize_graph_json(
 		utility::graph::EdgeListConstIterator edge_it_end = model_node->const_upper_edge_list_end();
 		for ( ; edge_it != edge_it_end; ++edge_it ) {
 
-			HashEdge const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
+			auto const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
 			core::Size other_index = cur_edge->get_other_ind(i);
 			Model const & target_model = graph->get_model_node(other_index)->model();
 			TR << "Edge " << other_index << " " << target_model.model_id_ << std::endl;

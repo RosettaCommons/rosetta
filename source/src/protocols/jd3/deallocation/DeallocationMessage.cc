@@ -29,7 +29,7 @@ namespace deallocation {
 
 DeallocationMessage::DeallocationMessage() : type_( unassigned_deallocation_msg ) {}
 DeallocationMessage::DeallocationMessage( deallocation_msg_type msg_type ) : type_( msg_type ) {}
-DeallocationMessage::~DeallocationMessage() {}
+DeallocationMessage::~DeallocationMessage() = default;
 
 deallocation_msg_type
 DeallocationMessage::deallocation_type() const {

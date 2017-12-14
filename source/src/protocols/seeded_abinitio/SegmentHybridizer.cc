@@ -550,16 +550,16 @@ SegmentHybridizer::parse_my_tag( TagCOP const tag,
 	small_ = tag->getOption <core::Size>( "frag_smal", 3 );
 	nfrags_= tag->getOption<core::Size>( "nfrags", 50 );
 	cartfrag_overlap_ = tag->getOption<core::Size>("cartfrag_overlap" , 2 );
-	use_seq_ = tag->getOption<bool> ("use_seq", 0 );
+	use_seq_ = tag->getOption<bool> ("use_seq", false );
 	rms_ = tag->getOption<core::Real> ("rms_frags" , 0.5 );
-	auto_mm_= tag->getOption<bool>("auto_mm", 1 );
+	auto_mm_= tag->getOption<bool>("auto_mm", true );
 	tries_=tag->getOption<int>("frag_tries" , 100 );
 	mc_cycles_=tag->getOption<core::Size>("mc_cycles", 200 );
 	temp_=tag->getOption<core::Real>("temp", 2.0);
-	use_frags_=tag->getOption<bool>("use_frags", 1 );
+	use_frags_=tag->getOption<bool>("use_frags", true );
 	min_cycles_=tag->getOption<core::Size>("min_cycles", 5 );
-	all_movable_=tag->getOption<bool>("all_movable", 0 );
-	extra_min_=tag->getOption<bool>("extra_min", 0 );
+	all_movable_=tag->getOption<bool>("all_movable", false );
+	extra_min_=tag->getOption<bool>("extra_min", false );
 
 	/// read areas that are supposed to be remodeled
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );

@@ -74,11 +74,11 @@ calculate_inverting_virtuals(
 	utility::vector1< std::pair<bool,bool> > &inverted_jumps )
 {
 	// find all current_res -> other res jumps
-	for ( core::kinematics::FoldTree::EdgeList::const_iterator it = ft.begin(), it_end = ft.end(); it != it_end; ++it ) {
-		if ( it->is_polymer() ) continue;
+	for ( auto const & it : ft ) {
+		if ( it.is_polymer() ) continue;
 
-		int const upstream (it->start());
-		int const downstream (it->stop());
+		int const upstream (it.start());
+		int const downstream (it.stop());
 
 		// if downstream res is non-vrt, mark the subunit array
 		if (
@@ -89,29 +89,29 @@ calculate_inverting_virtuals(
 			//       within the ASU
 			mirrored_subs[ symm_info.subunit_index( downstream ) ] =
 				conf.residue_type(upstream).is_inverted_virtual_residue();
-			inverted_jumps[ it->label() ] = std::make_pair<bool,bool>(
+			inverted_jumps[ it.label() ] = std::make_pair<bool,bool>(
 				conf.residue_type(upstream).is_inverted_virtual_residue(),
 				conf.residue_type(upstream).is_inverted_virtual_residue() );
 		} else {
-			inverted_jumps[ it->label() ] = std::make_pair<bool,bool> (
+			inverted_jumps[ it.label() ] = std::make_pair<bool,bool> (
 				conf.residue_type(upstream).is_inverted_virtual_residue(),
 				conf.residue_type(downstream).is_inverted_virtual_residue() );
 		}
 	}
 
 	// now mark all intra-res jumps
-	for ( core::kinematics::FoldTree::EdgeList::const_iterator it = ft.begin(), it_end = ft.end(); it != it_end; ++it ) {
-		if ( it->is_polymer() ) continue;
+	for ( auto const & it : ft ) {
+		if ( it.is_polymer() ) continue;
 
-		int const upstream (it->start());
-		int const downstream (it->stop());
+		int const upstream (it.start());
+		int const downstream (it.stop());
 
 		// if downstream res is non-vrt, mark the subunit array
 		if (
 				downstream <= (int)symm_info.num_total_residues_without_pseudo() &&
 				upstream <= (int)symm_info.num_total_residues_without_pseudo()
 				) {
-			inverted_jumps[ it->label() ] = std::make_pair<bool,bool>(
+			inverted_jumps[ it.label() ] = std::make_pair<bool,bool>(
 				mirrored_subs[ symm_info.subunit_index(upstream) ],
 				mirrored_subs[ symm_info.subunit_index(downstream) ] );
 		}
@@ -399,9 +399,9 @@ setup_symmetric_conformation(
 				TR << " " << dofname;
 			}
 			TR << std::endl << "MULTICOMPONENT " << " contains virtuals:";
-			for ( std::map<std::string,char>::const_iterator j = symm_info.get_subunit_name_to_component().begin(); j != symm_info.get_subunit_name_to_component().end(); ++j ) {
-				if ( j->second != *i ) continue;
-				TR << " " << j->first;
+			for ( auto const & j : symm_info.get_subunit_name_to_component() ) {
+				if ( j.second != *i ) continue;
+				TR << " " << j.first;
 			}
 			TR << std::endl;
 		}
@@ -882,11 +882,11 @@ get_asymm_unit_fold_tree( core::conformation::Conformation const &conf ) {
 	conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 	Size nres_subunit ( symm_info->num_independent_residues() );
 
-	for ( core::kinematics::FoldTree::const_iterator it=f.begin(), eit=f.end(); it != eit; ++it ) {
-		if ( it->start() <= nres_subunit && it->stop() <= nres_subunit ) {
-			f_new.add_edge( *it );
-		} else if ( it->stop() <= nres_subunit ) { // this is the jump to the subunit
-			core::kinematics::Edge e_new = *it;
+	for ( auto const & it : f ) {
+		if ( it.start() <= nres_subunit && it.stop() <= nres_subunit ) {
+			f_new.add_edge( it );
+		} else if ( it.stop() <= nres_subunit ) { // this is the jump to the subunit
+			core::kinematics::Edge e_new = it;
 			e_new.start() = nres_subunit + 1;
 			f_new.add_edge( e_new );
 		}
@@ -1094,17 +1094,17 @@ show_foldtree(
 
 	// label real res by chain
 	std::map<Size,std::string> labels;
-	for ( std::map<char,std::pair<Size,Size> >::const_iterator i = chain2range.begin(); i != chain2range.end(); ++i ) {
+	for ( auto const & i : chain2range ) {
 		for ( Size is = 1; is <= nsub; ++is ) {
-			for ( Size ir = i->second.first; ir <= i->second.second; ++ir ) {
-				labels[(is-1)*nres_monomer+ir] = std::string("Sub") + ObjexxFCL::string_of(is) + std::string("") + i->first;
+			for ( Size ir = i.second.first; ir <= i.second.second; ++ir ) {
+				labels[(is-1)*nres_monomer+ir] = std::string("Sub") + ObjexxFCL::string_of(is) + std::string("") + i.first;
 			}
 		}
 	}
 	// label virtuals by name in symdef
 	Size Nreal = symm_conf.Symmetry_Info()->num_total_residues_without_pseudo();
-	for ( std::map<Size,std::string>::const_iterator i = symmdata.get_virtual_num_to_id().begin(); i != symmdata.get_virtual_num_to_id().end(); ++i ) {
-		labels[i->first+Nreal] = i->second;
+	for ( auto const & i : symmdata.get_virtual_num_to_id() ) {
+		labels[i.first+Nreal] = i.second;
 	}
 	std::map<Size,char> mark_jump_to_res;
 	for ( Size i = 1; i <= symm_conf.fold_tree().num_jump(); ++i ) {

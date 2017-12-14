@@ -11,10 +11,10 @@
 #define INCLUDED_numeric_geometry_hashing_xyzStripeHashWithMeta_hh
 
 #include <numeric/geometry/hashing/xyzStripeHashWithMeta.fwd.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
-#include <ObjexxFCL/format.hh>
+//#include <ObjexxFCL/format.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 namespace numeric {
@@ -207,7 +207,7 @@ public:
 	// neighbor_iterator const & neighbor_end() const { return neighbor_end_; }
 
 	bool sanity_check() const {
-		using namespace ObjexxFCL::format;
+		//using namespace ObjexxFCL::format;
 		for ( int ix = 0; ix < xdim_; ++ix ) {
 			for ( int iy = 0; iy < ydim_; ++iy ) {
 				for ( int iz = 0; iz < zdim_; ++iz ) {

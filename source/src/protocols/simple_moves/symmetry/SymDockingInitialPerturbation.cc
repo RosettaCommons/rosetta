@@ -47,6 +47,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -91,7 +92,7 @@ SymDockingInitialPerturbation::SymDockingInitialPerturbation(
 	protocols::moves::Mover::type( "SymmDockingInitialPerturbation" );
 }
 
-SymDockingInitialPerturbation::~SymDockingInitialPerturbation(){}
+SymDockingInitialPerturbation::~SymDockingInitialPerturbation()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -109,7 +110,7 @@ void SymDockingInitialPerturbation::apply( core::pose::Pose & pose )
 	// In the future this is specified in the symmetry definition file
 	//////////////////////////////////
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
@@ -165,7 +166,7 @@ SymDockingSlideIntoContact::SymDockingSlideIntoContact() : protocols::moves::Mov
 
 // constructor with arguments
 SymDockingSlideIntoContact::SymDockingSlideIntoContact(
-	std::map< Size, core::conformation::symmetry::SymDof > dofs
+	std::map< Size, core::conformation::symmetry::SymDof > const & dofs
 ) : protocols::moves::Mover(),
 	dofs_(dofs)
 {
@@ -175,14 +176,14 @@ SymDockingSlideIntoContact::SymDockingSlideIntoContact(
 	scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
 }
 
-SymDockingSlideIntoContact::~SymDockingSlideIntoContact(){}
+SymDockingSlideIntoContact::~SymDockingSlideIntoContact()= default;
 
 void SymDockingSlideIntoContact::apply( core::pose::Pose & pose )
 {
 	using namespace moves;
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	Size num_slide_moves(1);
@@ -227,7 +228,7 @@ SymDockingSlideIntoContact::get_name() const {
 
 
 FaSymDockingSlideTogether::FaSymDockingSlideTogether(
-	std::map< Size, core::conformation::symmetry::SymDof > dofs
+	std::map< Size, core::conformation::symmetry::SymDof > const & dofs
 ) : protocols::moves::Mover(),
 	dofs_(dofs),
 	tolerance_(0.2)
@@ -237,14 +238,14 @@ FaSymDockingSlideTogether::FaSymDockingSlideTogether(
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 }
 
-FaSymDockingSlideTogether::~FaSymDockingSlideTogether(){}
+FaSymDockingSlideTogether::~FaSymDockingSlideTogether()= default;
 
 void FaSymDockingSlideTogether::apply( core::pose::Pose & pose )
 {
 	using namespace core::scoring;
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	Size num_slide_moves(1);
@@ -292,7 +293,7 @@ FaSymDockingSlideTogether::get_name() const {
 }
 
 
-SymmetrySlider::~SymmetrySlider(){}
+SymmetrySlider::~SymmetrySlider()= default;
 
 SymmetrySlider::SymmetrySlider( core::pose::Pose & pose )
 {
@@ -334,7 +335,7 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
 	using namespace moves;
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
@@ -342,8 +343,8 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
 
 	// Save jumps that are allowed to move and have a translation dof
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
+	auto it_begin = dofs.begin();
+	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		core::conformation::symmetry::SymDof dof ( (*it).second );
 		if ( dof.allow_dof(1) || dof.allow_dof(2) || dof.allow_dof(3) ) {
@@ -420,7 +421,7 @@ void SymmetrySlider::slide_away( core::pose::Pose & pose )
 			// No point is sliding if we are already very_far_away
 			if ( very_far_away( pose ) ) break;
 			debug_assert( core::pose::symmetry::is_symmetric( pose ));
-			SymmetricConformation & symm_conf (
+			auto & symm_conf (
 				dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 			std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
@@ -535,7 +536,7 @@ SymmetrySlider::get_allow_slide_jump_map() const
 // There is no point of sliding away if the chains are already really_far_away...
 bool SymmetrySlider::very_far_away( core::pose::Pose & pose )
 {
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -543,7 +544,7 @@ bool SymmetrySlider::very_far_away( core::pose::Pose & pose )
 	// find the residues that are connected to the virtual residues defined by the jump. Calculate the
 	// distances of the CA's for these residues and use as a metric of distance
 	core::Real min_distance (1000);
-	for ( std::vector< Size>::const_iterator
+	for ( auto
 			clone     = symm_info->bb_clones( anchor_res.seqpos() ).begin(),
 			clone_end = symm_info->bb_clones( anchor_res.seqpos() ).end();
 			clone != clone_end; ++clone ) {
@@ -564,7 +565,7 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 	using namespace moves;
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
@@ -619,8 +620,8 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 			TR.Debug << "Reset slide. No contact was found after 200 steps..." << std::endl;
 			std::map< core::Size, core::kinematics::Jump > const & initial_jumps( InitialJumps_ );
 			std::map< core::Size, core::kinematics::Jump >::const_iterator it;
-			std::map< core::Size, core::kinematics::Jump >::const_iterator it_begin = initial_jumps.begin();
-			std::map< core::Size, core::kinematics::Jump >::const_iterator it_end = initial_jumps.end();
+			auto it_begin = initial_jumps.begin();
+			auto it_end = initial_jumps.end();
 			for ( it = it_begin; it != it_end; ++it ) {
 				TR.Debug << "Reset Jump (nbr): " << (*it).first << std::endl << (*it).second  << std::endl;
 				pose.set_jump( (*it).first, (*it).second );
@@ -703,7 +704,7 @@ SequentialSymmetrySlider::SequentialSymmetrySlider( SymmetrySlider const & Slide
 SequentialSymmetrySlider::SequentialSymmetrySlider(
 	core::pose::Pose & pose,
 	core::conformation::symmetry::SlideCriteriaType score_criteria,
-	std::string SlideCriteriaVal
+	std::string const & SlideCriteriaVal
 ) : SymmetrySlider( pose, score_criteria, SlideCriteriaVal )
 {
 	init();
@@ -713,8 +714,8 @@ void SequentialSymmetrySlider::init()
 {
 	std::map< core::Size, bool > const & allow_slide_jump_map( get_allow_slide_jump_map() );
 	std::map< core::Size, bool >::const_iterator it;
-	std::map< core::Size, bool >::const_iterator it_begin = allow_slide_jump_map.begin();
-	std::map< core::Size, bool >::const_iterator it_end = allow_slide_jump_map.end();
+	auto it_begin = allow_slide_jump_map.begin();
+	auto it_end = allow_slide_jump_map.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		if ( ( *it).second ) {
 			slide_order_.push_back( (*it).first );
@@ -754,12 +755,12 @@ void SequentialSymmetrySlider::select_jump()
 	}*/
 }
 
-OrderedSequentialSymmetrySlider::OrderedSequentialSymmetrySlider( core::pose::Pose & pose, std::vector<core::Size> slide_order ) :
+OrderedSequentialSymmetrySlider::OrderedSequentialSymmetrySlider( core::pose::Pose & pose, std::vector<core::Size> const & slide_order ) :
 	SymmetrySlider( pose ),
 	slide_order_( slide_order)
 {}
 
-OrderedSequentialSymmetrySlider::OrderedSequentialSymmetrySlider( SymmetrySlider const & Slide, std::vector<core::Size> slide_order ) :
+OrderedSequentialSymmetrySlider::OrderedSequentialSymmetrySlider( SymmetrySlider const & Slide, std::vector<core::Size> const & slide_order ) :
 	SymmetrySlider( Slide ),
 	slide_order_( slide_order)
 {}
@@ -767,8 +768,8 @@ OrderedSequentialSymmetrySlider::OrderedSequentialSymmetrySlider( SymmetrySlider
 OrderedSequentialSymmetrySlider::OrderedSequentialSymmetrySlider(
 	core::pose::Pose & pose,
 	core::conformation::symmetry::SlideCriteriaType score_criteria,
-	std::string SlideCriteriaVal,
-	std::vector<core::Size> slide_order
+	std::string const & SlideCriteriaVal,
+	std::vector<core::Size> const & slide_order
 ) : SymmetrySlider( pose, score_criteria, SlideCriteriaVal ),
 	slide_order_( slide_order)
 {}
@@ -812,8 +813,8 @@ void RandomSymmetrySlider::select_jump()
 {
 	std::map< core::Size, bool > const & allow_slide_jump_map( get_allow_slide_jump_map() );
 	std::map< core::Size, bool >::const_iterator it;
-	std::map< core::Size, bool >::const_iterator it_begin = allow_slide_jump_map.begin();
-	std::map< core::Size, bool >::const_iterator it_end = allow_slide_jump_map.end();
+	auto it_begin = allow_slide_jump_map.begin();
+	auto it_end = allow_slide_jump_map.end();
 	utility::vector1<core::Size> allowed;
 	for ( it = it_begin; it != it_end; ++it ) {
 		if ( ( *it).second ) {

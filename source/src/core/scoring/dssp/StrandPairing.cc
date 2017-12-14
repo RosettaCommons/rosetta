@@ -97,9 +97,8 @@ StrandPairingSet::StrandPairingSet( FArray2_float const &hbonds,
 }
 
 StrandPairingSet::StrandPairingSet( core::scoring::dssp::PairingList const& in_pairings ) {
-	for ( core::scoring::dssp::PairingList::const_iterator it = in_pairings.begin(), eit = in_pairings.end();
-			it != eit; ++it ) {
-		add_pairing( *it );
+	for ( auto const & in_pairing : in_pairings ) {
+		add_pairing( in_pairing );
 	}
 }
 
@@ -166,9 +165,8 @@ std::istream & operator>>( std::istream &is, StrandPairingSet &set ) {
 
 std::ostream & operator<<(std::ostream & out, const StrandPairingSet &sp) {
 	out << "STRAND_TOPOLGY " << sp.pairings_.size() << std::endl;
-	for ( StrandPairingSet::const_iterator it = sp.pairings_.begin(), end = sp.pairings_.end();
-			it != end; ++it ) {
-		out << *it << std::endl;
+	for ( auto const & pairing : sp.pairings_ ) {
+		out << pairing << std::endl;
 	}
 	return out;
 }
@@ -197,13 +195,11 @@ std::ostream & operator<<(std::ostream & out, const StrandPairingSet &sp) {
 void StrandPairingSet::add_pairing( Size res1, Size res2, bool antiparallel, Size pleating) {
 	bool addnew = true;
 	// tr.Trace << "add pairing " << res1 << " " << res2 << (antiparallel ? " anti " : " para ") <<  std::endl;
-	for ( iterator it = pairings_.begin(), end = pairings_.end();
-			it != end;
-			++it ) {
-		if ( it->extend(res1,res2,antiparallel,pleating) ) {
+	for ( auto & pairing : pairings_ ) {
+		if ( pairing.extend(res1,res2,antiparallel,pleating) ) {
 			addnew = false;
-			if ( !it->range_check() ) {
-				tr.Error << "just inconsistently added " << res1 << "-" << res2 << " to pairing " << *it << std::endl;
+			if ( !pairing.range_check() ) {
+				tr.Error << "just inconsistently added " << res1 << "-" << res2 << " to pairing " << pairing << std::endl;
 				utility_exit_with_message("Inconsistent strand pairing set encountered.");
 			}
 			break;
@@ -214,7 +210,7 @@ void StrandPairingSet::add_pairing( Size res1, Size res2, bool antiparallel, Siz
 	StrandPairing add(res1,res2, antiparallel, pleating);
 	runtime_assert( add.range_check() );
 	bool added = false;
-	for ( iterator it = pairings_.begin(), end = pairings_.end();
+	for ( auto it = pairings_.begin(), end = pairings_.end();
 			it != end;
 			++it ) {
 		if ( add < *it ) {
@@ -229,8 +225,8 @@ void StrandPairingSet::add_pairing( Size res1, Size res2, bool antiparallel, Siz
 }
 
 bool StrandPairingSet::merge(const StrandPairingSet &other, bool domerge) {
-	StrandPairings::iterator it = pairings_.begin(), end = pairings_.end();
-	StrandPairings::const_iterator oit = other.pairings_.begin();
+	auto it = pairings_.begin(), end = pairings_.end();
+	auto oit = other.pairings_.begin();
 	while ( it != end ) {
 		Size count = 0;
 		while ( oit != other.pairings_.end() && it->merge(*oit, domerge) ) {
@@ -254,10 +250,10 @@ bool StrandPairingSet::merge(const StrandPairingSet &other, bool domerge) {
 
 void StrandPairingSet::selfmerge() {
 	StrandPairings goodpairings(pairings_);
-	for (  StrandPairings::iterator it = pairings_.begin(), end = pairings_.end();
+	for (  auto it = pairings_.begin(), end = pairings_.end();
 			it != end;
 			++it ) {
-		for ( StrandPairings::iterator oit = pairings_.begin();
+		for ( auto oit = pairings_.begin();
 				oit != it;
 				++oit ) {
 			while ( oit != it && it->merge(*oit, true) )
@@ -267,10 +263,8 @@ void StrandPairingSet::selfmerge() {
 }
 
 bool StrandPairingSet::check_pleat() const {
-	for ( StrandPairings::const_iterator it = pairings_.begin(), end = pairings_.end();
-			it != end;
-			++it ) {
-		if ( !it->check_pleat() ) {
+	for ( auto const & pairing : pairings_ ) {
+		if ( !pairing.check_pleat() ) {
 			return false;
 		}
 	}
@@ -451,16 +445,16 @@ void StrandPairing::extend_to(Size res) {
 
 void StrandPairing::show_internals( std::ostream& out ) const {
 	out << "pairing1: ";
-	for ( Size i=0; i < pairing1.size(); i++ ) {
-		out << pairing1[ i ] << " ";
+	for ( unsigned long i : pairing1 ) {
+		out << i << " ";
 	}
 	out <<"\npairing2: ";
-	for ( Size i=0; i < pairing2.size(); i++ ) {
-		out << pairing2[ i ] << " ";
+	for ( unsigned long i : pairing2 ) {
+		out << i << " ";
 	}
 	out <<"\npairing2: ";
-	for ( Size i=0; i < pleating1.size(); i++ ) {
-		out << pleating1[ i ] << " ";
+	for ( unsigned long i : pleating1 ) {
+		out << i << " ";
 	}
 	out << std::endl;
 }
@@ -619,12 +613,10 @@ Size StrandPairing::get_pleating( Size res ) const {
 // unpaired)
 char StrandPairingSet::dssp_state( Size res ) const {
 	char state = ' ';
-	for ( StrandPairings::const_iterator it = pairings_.begin(), end = pairings_.end();
-			it != end;
-			++it ) {
-		if ( ! it->contains(res) ) continue;
+	for ( auto const & pairing : pairings_ ) {
+		if ( ! pairing.contains(res) ) continue;
 
-		if ( it->is_ladder() ) {
+		if ( pairing.is_ladder() ) {
 			state = 'E';
 		} else if ( state == ' ' ) {
 			state = 'B';
@@ -635,12 +627,10 @@ char StrandPairingSet::dssp_state( Size res ) const {
 
 char StrandPairingSet::featurizer_state(Size res) const {
 	char state = 'L';
-	for ( StrandPairings::const_iterator it = pairings_.begin(), end = pairings_.end();
-			it != end;
-			++it ) {
-		if ( ! it->contains(res) ) continue;
+	for ( auto const & pairing : pairings_ ) {
+		if ( ! pairing.contains(res) ) continue;
 
-		if ( it->is_bulge(res) ) {
+		if ( pairing.is_bulge(res) ) {
 			if ( state == 'e' ) {
 				state = 'B';
 			} else if ( state == 'b' ) {
@@ -667,7 +657,7 @@ bool StrandPairingSet::has_pairing( core::scoring::dssp::Pairing const& p ) cons
 
 bool StrandPairingSet::has_pairing( StrandPairing const& p ) const {
 	bool found ( false );
-	for ( StrandPairings::const_iterator it = pairings_.begin(), end = pairings_.end();
+	for ( auto it = pairings_.begin(), end = pairings_.end();
 			it != end && !found; ++it ) {
 		found = p.mergeable( *it );
 	}
@@ -683,9 +673,8 @@ bool StrandPairing::paired( Size res1, Size res2, bool antipar ) const {
 }
 
 bool StrandPairingSet::paired(Size res1, Size res2, bool antiparallel) const {
-	for ( StrandPairings::const_iterator it = pairings_.begin(), end = pairings_.end();
-			it != end; ++it ) {
-		if ( it->paired( res1, res2, antiparallel ) ) {
+	for ( auto const & pairing : pairings_ ) {
+		if ( pairing.paired( res1, res2, antiparallel ) ) {
 			return true;
 		}
 	}
@@ -696,19 +685,16 @@ bool StrandPairingSet::paired(Size res1, Size res2, bool antiparallel) const {
 // Handy function for getting out a list of easy-to-read beta pairings.
 //////////////////////////////////////////////////////////////////////////
 void StrandPairingSet::get_beta_pairs( core::scoring::dssp::PairingList & beta_pairs ) const {
-	for ( StrandPairings::const_iterator it = pairings_.begin(),
-			eit = pairings_.end(); it!=eit; ++it ) {
-		it->get_beta_pairs( beta_pairs );
+	for ( auto const & pairing : pairings_ ) {
+		pairing.get_beta_pairs( beta_pairs );
 	}
 }
 
-StrandPairingSet::~StrandPairingSet() {
-}
+StrandPairingSet::~StrandPairingSet() = default;
 
 StrandPairing::StrandPairing(Size res1, Size res2, bool antiparallel, Size pleating) :
 	begin1_( std::min( res1, res2 ) ), end1_(begin1_),
 	begin2_( std::max( res1, res2 ) ), end2_(begin2_),
-	pleat_weird( false ),
 	antipar(antiparallel)
 {
 	pairing1.push_back( antipar ? end2_ : begin2_ );
@@ -716,11 +702,10 @@ StrandPairing::StrandPairing(Size res1, Size res2, bool antiparallel, Size pleat
 	pleating1.push_back(pleating);
 }
 
-StrandPairing::StrandPairing() : begin1_(0),end1_(0), begin2_(0), end2_(0), pleat_weird(false), antipar(true) {
+StrandPairing::StrandPairing() : begin1_(0),end1_(0), begin2_(0), end2_(0), antipar(true) {
 }
 
-StrandPairing::~StrandPairing() {
-}
+StrandPairing::~StrandPairing() = default;
 
 Size StrandPairing::get_register() const {
 	if ( antipar ) {
@@ -812,9 +797,8 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 
 	if ( tr.Trace.visible() ) {
 		tr.Trace << " regs: ";
-		for ( utility::vector1< Size >::iterator it = regs.begin(), eit = regs.end();
-				it != eit; ++it ) {
-			tr.Trace << *it << " ";
+		for ( unsigned long & reg : regs ) {
+			tr.Trace << reg << " ";
 		}
 	}
 
@@ -829,9 +813,8 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 
 	if ( tr.Trace.visible() ) {
 		tr.Trace << " bulges: ";
-		for ( utility::vector1< Size >::iterator it = bulges.begin(), eit = bulges.end();
-				it != eit; ++it ) {
-			tr.Trace << *it << " ";
+		for ( unsigned long & bulge : bulges ) {
+			tr.Trace << bulge << " ";
 		}
 	}
 
@@ -842,8 +825,8 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 	}
 
 	// work out how many pairings we have.. then read pleatings
-	utility::vector1< Size >::iterator regit = regs.begin(), eregit = regs.end();
-	utility::vector1< Size >::iterator bulgeit = bulges.begin(), ebulgeit = bulges.end();
+	auto regit = regs.begin(), eregit = regs.end();
+	auto bulgeit = bulges.begin(), ebulgeit = bulges.end();
 	int dir = sp.antipar ? -1 : 1;
 	Size bulge = 0;
 	for ( Size pos1 = sp.begin1_,
@@ -862,7 +845,7 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 			//work out if we have a bulge on strand1, ie. their is no corresponding pairing on strand2
 			bool bulge2( false );
 			{
-				utility::vector1< Size >::iterator next_regit = regit;
+				auto next_regit = regit;
 				if ( next_regit != eregit ) ++next_regit;
 				if ( next_regit != eregit ) {
 					Size nex_reg = *next_regit;
@@ -938,8 +921,8 @@ std::ostream & operator<<(std::ostream & out, const StrandPairing &sp) {
 		out << " ";
 	}
 	out << " pleating: ";
-	for ( Size i = 0; i < sp.pleating1.size(); i++ ) {
-		out << sp.pleating1[i] << ' ';
+	for ( unsigned long i : sp.pleating1 ) {
+		out << i << ' ';
 	}
 	return out;
 }

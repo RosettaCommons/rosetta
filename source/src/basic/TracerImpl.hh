@@ -218,7 +218,7 @@ public: /// Inner Classes
 	class TracerProxyImpl : public otstream // std::ostringstream //
 	{
 	public:
-		TracerProxyImpl( TracerImpl & tracer, int priority, std::string const & channel );
+		TracerProxyImpl( TracerImpl & tracer, int priority, std::string channel );
 
 		virtual ~TracerProxyImpl();
 

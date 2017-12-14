@@ -20,6 +20,7 @@
 #include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.BulgeApplier" );
 
@@ -34,15 +35,14 @@ namespace screener {
 BulgeApplier::BulgeApplier( RNA_AtrRepCheckerOP atr_rep_checker,
 	RNA_BaseCentroidCheckerOP base_centroid_checker,
 	Size const moving_res ):
-	atr_rep_checker_( atr_rep_checker ),
-	base_centroid_checker_( base_centroid_checker ),
+	atr_rep_checker_(std::move( atr_rep_checker )),
+	base_centroid_checker_(std::move( base_centroid_checker )),
 	bulge_apply_mover_( modeler::rna::bulge::BulgeApplyMoverOP( new modeler::rna::bulge::BulgeApplyMover( moving_res ) ) ),
 	bulge_unapply_mover_( modeler::rna::bulge::BulgeUnApplyMoverOP( new modeler::rna::bulge::BulgeUnApplyMover( moving_res ) ) )
 {}
 
 //Destructor
-BulgeApplier::~BulgeApplier()
-{}
+BulgeApplier::~BulgeApplier() = default;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -52,8 +52,8 @@ BulgeApplier::add_mover( moves::CompositionMoverOP update_mover, moves::Composit
 		update_mover->add_mover( bulge_apply_mover_ );
 		restore_mover->add_mover( bulge_unapply_mover_ );
 	} else {
-		update_mover->add_mover( 0 );
-		restore_mover->add_mover( 0 );
+		update_mover->add_mover( nullptr );
+		restore_mover->add_mover( nullptr );
 	}
 }
 

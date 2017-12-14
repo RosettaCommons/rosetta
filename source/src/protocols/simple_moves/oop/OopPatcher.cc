@@ -147,7 +147,7 @@ OopPatcher::OopPatcher(
 
 }
 
-OopPatcher::~OopPatcher(){}
+OopPatcher::~OopPatcher()= default;
 
 }//oop
 }//simple_moves

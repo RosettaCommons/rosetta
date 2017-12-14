@@ -32,6 +32,7 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -59,7 +60,7 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(remembered_pose_) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -145,7 +146,7 @@ ReturnSidechainMover::ReturnSidechainMover(
 // constructor with pose
 ReturnSidechainMover::ReturnSidechainMover(
 	core::pose::Pose const & pose_in,
-	utility::vector1<bool> allow_chi_in,
+	utility::vector1<bool> const & allow_chi_in,
 	core::Size start_res,
 	core::Size end_res ) :
 	protocols::moves::Mover(),

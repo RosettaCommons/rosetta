@@ -52,7 +52,7 @@ namespace rotamer_recovery {
 
 static Tracer TR("protocol.moves.RRProtocolRotamerTrials");
 
-RRProtocolRotamerTrials::RRProtocolRotamerTrials() {}
+RRProtocolRotamerTrials::RRProtocolRotamerTrials() = default;
 
 RRProtocolRotamerTrials::RRProtocolRotamerTrials( RRProtocolRotamerTrials const & ) : RRProtocol() {}
 

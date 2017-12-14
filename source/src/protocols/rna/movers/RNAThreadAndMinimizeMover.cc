@@ -55,6 +55,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <utility>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>

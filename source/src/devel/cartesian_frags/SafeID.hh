@@ -86,9 +86,9 @@ public:
 class SafeBondID {
 public:
 
-	SafeBondID( SafeAtomID  a1, SafeAtomID  a2 ):
-		atom1(std::move( a1 )),
-		atom2(std::move( a2 ))
+	SafeBondID( SafeAtomID const & a1, SafeAtomID const & a2 ):
+		atom1( a1 ),
+		atom2( a2 )
 	{}
 
 

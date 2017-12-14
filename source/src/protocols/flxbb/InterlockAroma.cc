@@ -253,10 +253,10 @@ InterlockAroma::parse_my_tag(
 	}
 
 	// Exclude aromatic chi2 rotamers, of which angles are around 0
-	limit_aroma_chi2_ = tag->getOption<bool>( "limit_aroma_chi2", 1 );
+	limit_aroma_chi2_ = tag->getOption<bool>( "limit_aroma_chi2", true );
 
-	output_pdbs_ = tag->getOption<bool>( "output_pdbs", 0 );
-	verbose_     = tag->getOption<bool>( "verbose", 0 );
+	output_pdbs_ = tag->getOption<bool>( "output_pdbs", false );
+	verbose_     = tag->getOption<bool>( "verbose", false );
 
 }
 

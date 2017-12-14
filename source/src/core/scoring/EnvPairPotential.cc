@@ -306,7 +306,7 @@ EnvPairPotential::compute_centroid_environment(
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			conformation::Residue const & rsd2 ( pose.residue(j) );
 			if ( !rsd2.is_protein() ) continue;
@@ -362,7 +362,7 @@ EnvPairPotential::evaluate_env_and_cbeta_scores(
 		env_score = env_log_( rsd.aa(), static_cast< int >( fcen10 ) );
 
 		// interp1 rounds down to nearest (non-negative) integer.
-		int interp1 = static_cast< int >( fcen6 );
+		auto interp1 = static_cast< int >( fcen6 );
 		// note cen6 is always at least 1.0
 
 		// fraction remainder after nearest lower integer is removed
@@ -468,7 +468,7 @@ EnvPairPotential::evaluate_pair_and_cenpack_score(
 
 	// Adding a term that should help reproduce pairwise correlation function between centroids
 	//   as observed in the PDB.
-	int cendist_bin = static_cast <int> ( sqrt( cendist ) * 10 + 1); //Binned with 0.1 A width.
+	auto cendist_bin = static_cast <int> ( sqrt( cendist ) * 10 + 1); //Binned with 0.1 A width.
 
 	if ( cendist_bin > 120 )   cendist_bin = 120;
 	if ( cendist_bin <   1 )   cendist_bin = 1;

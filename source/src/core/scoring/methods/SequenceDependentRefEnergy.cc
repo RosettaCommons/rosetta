@@ -68,12 +68,12 @@ SequenceDependentRefEnergy::SequenceDependentRefEnergy( utility::vector1< utilit
 	parent( methods::EnergyMethodCreatorOP( new SequenceDependentRefEnergyCreator ) )
 {
 	aa_seq_weights_.clear();
-	for ( utility::vector1<utility::vector1< Real > >::const_iterator it = aa_seq_weights_in.begin(); it != aa_seq_weights_in.end(); ++it ) {
-		aa_seq_weights_.push_back(*it);
+	for ( auto const & it : aa_seq_weights_in ) {
+		aa_seq_weights_.push_back(it);
 	}
 }
 
-SequenceDependentRefEnergy::~SequenceDependentRefEnergy() {}
+SequenceDependentRefEnergy::~SequenceDependentRefEnergy() = default;
 
 
 void SequenceDependentRefEnergy::read_energy_weight_table() {
@@ -97,8 +97,8 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 		std::cout << "JL got " << seqpos << " line " << line << std::endl;
 		utility::vector1< std::string > const tokens ( utility::split( line ) );
 		utility::vector1< Real > energies;
-		for ( utility::vector1< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
-			energies.push_back( atof(it->c_str()) );
+		for ( auto const & token : tokens ) {
+			energies.push_back( atof(token.c_str()) );
 		}
 		aa_seq_weights_.push_back(energies);
 	}
@@ -117,8 +117,8 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 		std::cout << "JL got " << seqpos << " line " << line << std::endl;
 		utility::vector1< std::string > const tokens ( utility::split( line ) );
 		utility::vector1< Real > energies;
-		for ( utility::vector1< std::string >::const_iterator it = tokens.begin(); it != tokens.end(); ++it ) {
-			energies.push_back( atof(it->c_str()) );
+		for ( auto const & token : tokens ) {
+			energies.push_back( atof(token.c_str()) );
 		}
 		core::Size aa(0);
 		for ( utility::vector1< Real >::const_iterator it = energies.begin(); it != energies.end(); ++it ) {

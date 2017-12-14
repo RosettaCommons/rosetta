@@ -57,7 +57,7 @@ SimpleNode::SimpleNode( Graph* owner, Size node_id ):
 	initialize();
 }
 
-SimpleNode::~SimpleNode() {}
+SimpleNode::~SimpleNode() = default;
 
 void
 SimpleNode::initialize()
@@ -105,7 +105,7 @@ SimpleNode::commit_change_no_res_pointer_update()
 	current_one_body_energy_ = alternate_one_body_energy_;
 	for ( EdgeListIterator edge_itr = edge_list_begin(); edge_itr != edge_list_end(); ++edge_itr ) {
 		//update energies
-		SimpleEdge* current_edge(static_cast< SimpleEdge *>(*edge_itr));
+		auto* current_edge(static_cast< SimpleEdge *>(*edge_itr));
 		current_edge->commit_change();
 	}
 }
@@ -157,7 +157,7 @@ SimpleNode::set_current( conformation::ResidueCOP res, basic::datacache::BasicDa
 	//also update edge energies
 	for ( EdgeListIterator edge_itr = edge_list_begin(); edge_itr != edge_list_end(); ++edge_itr ) {
 		//update energies
-		SimpleEdge* current_edge(static_cast< SimpleEdge *>(*edge_itr));
+		auto* current_edge(static_cast< SimpleEdge *>(*edge_itr));
 		current_edge->update_current_energy();
 	}
 }
@@ -169,7 +169,7 @@ SimpleNode::set_alternate( conformation::ResidueCOP res, basic::datacache::Basic
 	setup_for_scoring_for_residue( res, residue_data_cache );
 
 	//TR.Debug << "setting res " << res->seqpos() << " to alternate: " << std::endl;
-	if ( alternate_residue_ != 0 && TR.Debug.visible() ) {
+	if ( alternate_residue_ != nullptr && TR.Debug.visible() ) {
 		// output statements like this are very expensive, even when muted!
 		TR.Debug << "setting res " << alternate_residue_->type().name() << " to new-res: " << res->type().name() << std::endl;
 	}
@@ -185,7 +185,7 @@ SimpleNode::set_alternate( conformation::ResidueCOP res, basic::datacache::Basic
 	for ( EdgeListIterator edge_itr = this->edge_list_begin();
 			edge_itr != this->edge_list_end();
 			++edge_itr ) {
-		SimpleEdge* current_edge(static_cast< SimpleEdge *>(*edge_itr));
+		auto* current_edge(static_cast< SimpleEdge *>(*edge_itr));
 		current_edge->update_proposed_energy();
 	}
 }
@@ -209,7 +209,7 @@ void SimpleNode::update_energies_after_passive_change()
 	//also update edge energies
 	for ( EdgeListIterator edge_itr = this->edge_list_begin();
 			edge_itr != this->edge_list_end(); ++edge_itr ) {
-		SimpleEdge* current_edge(static_cast< SimpleEdge *>(*edge_itr));
+		auto* current_edge(static_cast< SimpleEdge *>(*edge_itr));
 		current_edge->update_proposed_energy();
 	}
 }
@@ -293,7 +293,7 @@ SimpleNode::setup_for_scoring_for_residue( conformation::ResidueCOP res, basic::
 void
 SimpleNode::update_current_one_body_energy()
 {
-	SimpleInteractionGraph const * ig( static_cast< SimpleInteractionGraph const * >(Node::get_owner()));
+	auto const * ig( static_cast< SimpleInteractionGraph const * >(Node::get_owner()));
 	runtime_assert( ig );
 	EnergyMap emap;
 	ig->scorefunction().eval_ci_intrares_energy( *current_residue_, ig->pose(), emap );
@@ -308,7 +308,7 @@ SimpleNode::update_alternate_one_body_energy()
 {
 	debug_assert( dynamic_cast< SimpleInteractionGraph const * >(Node::get_owner()) );
 
-	SimpleInteractionGraph const * ig( static_cast< SimpleInteractionGraph const * >(Node::get_owner()));
+	auto const * ig( static_cast< SimpleInteractionGraph const * >(Node::get_owner()));
 	EnergyMap emap;
 	ig->scorefunction().eval_ci_intrares_energy( *alternate_residue_, ig->pose(), emap );
 	ig->scorefunction().eval_cd_intrares_energy( *alternate_residue_, ig->pose(), emap );
@@ -377,7 +377,7 @@ SimpleEdge::SimpleEdge( Graph* owner, Size res1, Size res2 ):
 	}
 }
 
-SimpleEdge::~SimpleEdge() {}
+SimpleEdge::~SimpleEdge() = default;
 
 Real
 SimpleEdge::get_current_energy() const
@@ -400,8 +400,8 @@ SimpleEdge::update_current_energy()
 void
 SimpleEdge::update_proposed_energy()
 {
-	SimpleNode * node1( static_cast< SimpleNode * > (this->get_node( (platform::Size) 0 )));
-	SimpleNode * node2( static_cast< SimpleNode * > (this->get_node( (platform::Size) 1 )));
+	auto * node1( static_cast< SimpleNode * > (this->get_node( (platform::Size) 0 )));
+	auto * node2( static_cast< SimpleNode * > (this->get_node( (platform::Size) 1 )));
 	bool use_current_node1 = true;
 	bool use_current_node2 = true;
 	if ( node1->moved() ) {
@@ -423,8 +423,8 @@ void
 SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 {
 	//  TR.Debug << "num nodes " << (this->get_owner())->num_nodes() << std::endl;
-	SimpleNode * node1( static_cast< SimpleNode * > (this->get_node( (platform::Size) 0 )));
-	SimpleNode * node2( static_cast< SimpleNode * > (this->get_node( (platform::Size) 1 )));
+	auto * node1( static_cast< SimpleNode * > (this->get_node( (platform::Size) 0 )));
+	auto * node2( static_cast< SimpleNode * > (this->get_node( (platform::Size) 1 )));
 	debug_assert( node1 && node2 );
 	conformation::ResidueCOP res1;
 	conformation::ResidueCOP res2;
@@ -473,7 +473,7 @@ SimpleEdge::compute_energy( bool use_current_node1, bool use_current_node2 )
 	// TR.Debug << res1->seqpos() << " using " << node1_used << " " << res2->seqpos() << " " << node2_used << std::endl;
 
 	debug_assert( dynamic_cast< SimpleInteractionGraph const * >(this->get_owner()) );
-	SimpleInteractionGraph const * ig( static_cast< SimpleInteractionGraph const * >(this->get_owner()));
+	auto const * ig( static_cast< SimpleInteractionGraph const * >(this->get_owner()));
 	pose::Pose const & pose = ig->pose();
 	scoring::ScoreFunction const & sfxn = ig->scorefunction();
 	EnergyMap emap; // APL Note: class TwoBodyEnergyMap has been deprecated / removed
@@ -532,7 +532,7 @@ SimpleEdge::get_bb_E( conformation::Residue const & r1, conformation::Residue co
 	Size const i2 = get_bb_index( r2 );
 
 	if ( ! bb_bbE_calced( i1, i2 ) ) {
-		SimpleInteractionGraph const * ig( static_cast< SimpleInteractionGraph const * >(this->get_owner()));
+		auto const * ig( static_cast< SimpleInteractionGraph const * >(this->get_owner()));
 		pose::Pose const & pose = ig->pose();
 		EnergyMap emap;
 		ig->scorefunction().eval_ci_2b_bb_bb( r1, r2, pose, emap );
@@ -598,7 +598,7 @@ SimpleInteractionGraph::SimpleInteractionGraph() :
 	// accumulated_ediff_(0)
 {}
 
-SimpleInteractionGraph::~SimpleInteractionGraph() {}
+SimpleInteractionGraph::~SimpleInteractionGraph() = default;
 
 void SimpleInteractionGraph::set_scorefunction( ScoreFunction const & sfxn )
 {
@@ -641,7 +641,7 @@ SimpleInteractionGraph::initialize(
 	copy_connectivity(*packer_neighbor_graph);
 	for ( EdgeListIter iter = edge_list_begin(), iter_end = edge_list_end();
 			iter != iter_end; ++iter ) {
-		SimpleEdge * existing_edge = static_cast< SimpleEdge * >( *iter );
+		auto * existing_edge = static_cast< SimpleEdge * >( *iter );
 		existing_edge->calc_short_range(true);
 		existing_edge->calc_long_range(false);
 	}
@@ -660,13 +660,13 @@ SimpleInteractionGraph::initialize(
 				Size node2 = rni->upper_neighbor_id();
 
 				if ( Graph::get_edge_exists( node1, node2 ) ) {
-					SimpleEdge * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( node1, node2 ) );
+					auto * existing_edge = static_cast< SimpleEdge * >( Graph::find_edge( node1, node2 ) );
 
 					if ( existing_edge ) {
 						existing_edge->calc_long_range(true);
 					}
 				} else {
-					SimpleEdge * new_edge = static_cast< SimpleEdge * > ( add_edge( node1, node2 ));
+					auto * new_edge = static_cast< SimpleEdge * > ( add_edge( node1, node2 ));
 					new_edge->calc_short_range(false);
 					new_edge->calc_long_range(true);
 				}
@@ -676,7 +676,7 @@ SimpleInteractionGraph::initialize(
 	}//it
 
 	for ( EdgeListIter iter = edge_list_begin(), iter_end = edge_list_end(); iter != iter_end; ++iter ) {
-		SimpleEdge * existing_edge = static_cast< SimpleEdge * >( *iter );
+		auto * existing_edge = static_cast< SimpleEdge * >( *iter );
 		existing_edge->compute_energy( true, true );
 	}
 
@@ -750,7 +750,7 @@ SimpleInteractionGraph::set_pose_no_initialize( pose::Pose const & pose )
 		set_num_nodes( pose.size() );
 	}
 	for ( Size ii = 1; ii <= pose_->size(); ++ii ) {
-		SimpleNode * newnode = static_cast< SimpleNode * >(get_node( ii ));
+		auto * newnode = static_cast< SimpleNode * >(get_node( ii ));
 		runtime_assert( newnode );
 		conformation::ResidueOP ii_res( new conformation::Residue( pose_->residue( ii ) ));
 		newnode->set_current( ii_res, *ii_res->nonconst_data_ptr() );
@@ -788,12 +788,12 @@ Real
 SimpleInteractionGraph::consider_substitution( Size node_id, conformation::ResidueCOP new_state, basic::datacache::BasicDataCache & residue_data_cache ){
 	Real current_energy = 0.0;
 
-	SimpleNode* thisnode = static_cast< SimpleNode *>(get_node( node_id ));
+	auto* thisnode = static_cast< SimpleNode *>(get_node( node_id ));
 
 	for ( EdgeListIterator edge_itr = thisnode->edge_list_begin();
 			edge_itr != thisnode->edge_list_end(); ++edge_itr ) {
 		//update energies
-		SimpleEdge* current_edge(static_cast< SimpleEdge *>(*edge_itr));
+		auto* current_edge(static_cast< SimpleEdge *>(*edge_itr));
 		current_energy += current_edge->get_current_energy();
 	}
 	current_energy += thisnode->current_one_body_energy();
@@ -804,7 +804,7 @@ SimpleInteractionGraph::consider_substitution( Size node_id, conformation::Resid
 	for ( EdgeListIterator edge_itr = thisnode->edge_list_begin();
 			edge_itr != thisnode->edge_list_end(); ++edge_itr ) {
 		//update energies
-		SimpleEdge* current_edge(static_cast< SimpleEdge *> (*edge_itr));
+		auto* current_edge(static_cast< SimpleEdge *> (*edge_itr));
 		alternate_energy += current_edge->get_proposed_energy();
 	}
 	alternate_energy += thisnode->proposed_one_body_energy();
@@ -817,7 +817,7 @@ SimpleInteractionGraph::total_energy() {
 	//iterate over node ids
 	Real total_energy = 0.0;
 	for ( Size node_itr = 1; node_itr <= pose_->size(); node_itr++ ) {
-		SimpleNode* thisnode = static_cast< SimpleNode *> (get_node( node_itr ));
+		auto* thisnode = static_cast< SimpleNode *> (get_node( node_itr ));
 		Real residue_energy = thisnode->one_body_energy();
 		for ( EdgeListIter edge_iter = thisnode->upper_edge_list_begin();
 				edge_iter != thisnode->upper_edge_list_end(); ++edge_iter ) {

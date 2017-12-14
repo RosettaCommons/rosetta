@@ -15,6 +15,7 @@
 
 // Package headers
 #include <core/scoring/func/Func.hh>
+#include <utility>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -36,11 +37,11 @@ DOF_Constraint::DOF_Constraint(
 	ScoreType t
 ) :
 	dof_id_( id ),
-	func_( func),
+	func_(std::move( func)),
 	score_type_(t)
 {}
 
-DOF_Constraint::~DOF_Constraint(){}
+DOF_Constraint::~DOF_Constraint()= default;
 
 
 /// @brief Returns the ScoreType

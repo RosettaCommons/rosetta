@@ -52,7 +52,7 @@ write_metric_value_vector1(
 	vector1<T> const & vec(metric_value.value());
 
 	os << type_name << "[";
-	for ( typename vector1<T>::const_iterator iter(vec.begin()), iter_end(vec.end()); iter != iter_end; ++iter ) {
+	for ( auto iter(vec.begin()), iter_end(vec.end()); iter != iter_end; ++iter ) {
 		os << ' ' << *iter;
 	}
 	os << " ]";
@@ -67,34 +67,34 @@ write_metric_value(
 	MetricValueBase const & metric_value
 )
 {
-	MetricValue<double> const * const metric_value_real( dynamic_cast<MetricValue<double> const * > (&metric_value) );
+	auto const * const metric_value_real( dynamic_cast<MetricValue<double> const * > (&metric_value) );
 	if ( metric_value_real ) return write_metric_value_scalar(os, *metric_value_real, "Real");
 
-	MetricValue<int> const * const metric_value_int( dynamic_cast<MetricValue<int> const * > (&metric_value) );
+	auto const * const metric_value_int( dynamic_cast<MetricValue<int> const * > (&metric_value) );
 	if ( metric_value_int ) return write_metric_value_scalar(os, *metric_value_int, "Int");
 
-	MetricValue<size_t> const * const metric_value_size( dynamic_cast<MetricValue<size_t> const * > (&metric_value) );
+	auto const * const metric_value_size( dynamic_cast<MetricValue<size_t> const * > (&metric_value) );
 	if ( metric_value_size ) return write_metric_value_scalar(os, *metric_value_size, "Size");
 
-	MetricValue<bool> const * const metric_value_bool( dynamic_cast<MetricValue<bool> const * > (&metric_value) );
+	auto const * const metric_value_bool( dynamic_cast<MetricValue<bool> const * > (&metric_value) );
 	if ( metric_value_bool ) return write_metric_value_scalar(os, *metric_value_bool, "Bool");
 
-	MetricValue<vector1<double> > const * const metric_value_vector_real(
+	auto const * const metric_value_vector_real(
 		dynamic_cast<MetricValue<vector1<double> > const * > (&metric_value)
 	);
 	if ( metric_value_vector_real ) return write_metric_value_vector1(os, *metric_value_vector_real, "Real");
 
-	MetricValue<vector1<int> > const * const metric_value_vector_int(
+	auto const * const metric_value_vector_int(
 		dynamic_cast<MetricValue<vector1<int> > const * > (&metric_value)
 	);
 	if ( metric_value_vector_int ) return write_metric_value_vector1(os, *metric_value_vector_int, "Int");
 
-	MetricValue<vector1<size_t> > const * const metric_value_vector_size(
+	auto const * const metric_value_vector_size(
 		dynamic_cast<MetricValue<vector1<size_t> > const * > (&metric_value)
 	);
 	if ( metric_value_vector_size ) return write_metric_value_vector1(os, *metric_value_vector_size, "Size");
 
-	MetricValue<vector1<bool> > const * const metric_value_vector_bool(
+	auto const * const metric_value_vector_bool(
 		dynamic_cast<MetricValue<vector1<bool> > const * > (&metric_value)
 	);
 	if ( metric_value_vector_bool ) return write_metric_value_vector1(os, *metric_value_vector_bool, "Bool");
@@ -119,7 +119,7 @@ read_metric_value_scalar(
 	MetricValueBase & metric_value
 )
 {
-	MetricValue<T> * const metric_value_typed( dynamic_cast<MetricValue<T> * > (&metric_value) );
+	auto * const metric_value_typed( dynamic_cast<MetricValue<T> * > (&metric_value) );
 	if ( !metric_value_typed ) return false;
 
 	T value;
@@ -149,7 +149,7 @@ read_metric_value_vector1(
 	MetricValueBase & metric_value
 )
 {
-	MetricValue<vector1<T> > * const metric_value_typed( dynamic_cast<MetricValue<vector1<T> > * > (&metric_value) );
+	auto * const metric_value_typed( dynamic_cast<MetricValue<vector1<T> > * > (&metric_value) );
 	if ( !metric_value_typed ) return false;
 
 	vector1<T> vec;
@@ -223,7 +223,7 @@ read_metric_value(
 
 	if ( read_metric_value_template(is, metric_value) ) return metric_value;
 
-	return NULL;
+	return nullptr;
 }
 
 

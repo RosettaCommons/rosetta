@@ -156,7 +156,7 @@ SidechainMover::SidechainMover(
 	if ( mover.scratch_ ) scratch_ = core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace(*mover.scratch_) );
 }
 
-SidechainMover::~SidechainMover() {}
+SidechainMover::~SidechainMover() = default;
 
 protocols::moves::MoverOP
 SidechainMover::clone() const
@@ -178,14 +178,13 @@ SidechainMover::parse_my_tag(
 	if ( tag->hasOption("task_operations") ) {
 
 		std::string const t_o_val( tag->getOption<std::string>("task_operations") );
-		typedef utility::vector1< std::string > StringVec;
+		using StringVec = utility::vector1<std::string>;
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
-		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-				t_o_key != end; ++t_o_key ) {
-			if ( data.has( "task_operations", *t_o_key ) ) {
-				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
+		for ( auto const & t_o_key : t_o_keys ) {
+			if ( data.has( "task_operations", t_o_key ) ) {
+				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", t_o_key ) );
 			} else {
-				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 
@@ -312,7 +311,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	core::chemical::ResidueTypeCOP residue_type;
 	do {
 		Size const restypenum(numeric::random::rg().random_range(1, residue_types.size()));
-		core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_types.begin());
+		auto iter(residue_types.begin());
 		for ( Size i = 1; i < restypenum; ++i ) ++iter;
 		residue_type = *iter;
 	}
@@ -860,7 +859,7 @@ SidechainMover::set_task(
 		// loop over all possible residue types and check if any have chi angles
 		residue_packed_[i] = false;
 		core::pack::task::ResidueLevelTask const & residue_task(task->residue_task(i));
-		for ( ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_task.allowed_residue_types_begin());
+		for ( auto iter(residue_task.allowed_residue_types_begin());
 				iter != residue_task.allowed_residue_types_end(); ++iter ) {
 
 			// temporarily exclude proline residues from side chain sampling
@@ -970,7 +969,7 @@ SidechainMover::dof_id_ranges(
 		// we only monitor DOFs of residues that won't change primary type
 		// check to see if pose residue type has the same name as all allowed residue types
 		core::pack::task::ResidueLevelTask const & residueleveltask(task_->residue_task(resnum));
-		for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+		for ( auto iter(residueleveltask.allowed_residue_types_begin());
 				iter != residueleveltask.allowed_residue_types_end(); ++iter ) {
 
 			if ( (*iter)->name3() != pose.residue_type(resnum).name3() ) {

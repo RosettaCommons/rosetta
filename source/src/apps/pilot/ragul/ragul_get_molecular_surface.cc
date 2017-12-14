@@ -102,8 +102,8 @@ int main( int argc, char * argv [] ) {
 		//core::Size selected_dots = 0;
 		core::pack::task::PackerTaskOP task;
 		task = core::pack::task::TaskFactory::create_packer_task( protein_pose );
-		for ( core::Size i = 0; i < surface_dots.size(); i++ ) {
-			if ( task->pack_residue(surface_dots[i].atom->nresidue) ) {
+		for ( auto & surface_dot : surface_dots ) {
+			if ( task->pack_residue(surface_dot.atom->nresidue) ) {
 				/*
 				std::cout<<i << " " <<
 				surface_dots[i].atom->nresidue << " " <<
@@ -119,7 +119,7 @@ int main( int argc, char * argv [] ) {
 				surface_dots[i].outnml.z() << " " <<
 				"\n";
 				*/
-				outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dots[i].coor.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dots[i].coor.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dots[i].coor.z()<<std::endl;
+				outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dot.coor.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dot.coor.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<surface_dot.coor.z()<<std::endl;
 			}
 		}
 

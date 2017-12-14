@@ -82,8 +82,7 @@ PreProlineFilter::PreProlineFilter() :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-PreProlineFilter::~PreProlineFilter()
-{}
+PreProlineFilter::~PreProlineFilter() = default;
 
 
 /// Return a copy of ourselves
@@ -191,8 +190,8 @@ PreProlineFilter::compute_simple(
 	utility::vector1< bool > const & selection ) const
 {
 	// as a simple first trial, only "B" and "E" torsion spaces should be allowed
-	core::Size bad_count = core::Size( 0.0 );
-	core::Size pro_count = core::Size( 0 );
+	auto bad_count = core::Size( 0.0 );
+	auto pro_count = core::Size( 0 );
 	std::string const & sequence = pose.sequence();
 	std::string const abegos = abego_str( core::sequence::get_abego( pose, 1 ) );
 	core::Size resi = 1;

@@ -54,7 +54,7 @@ public:
 	Rose(PoseCOP p, core::id::AtomID_Map<Real>  const & clash_atoms  );
 
 	inline
-	Rose(RCR r, XCR x_in) : p(r.p), h(r.h), x(std::move(x_in)) {}
+	Rose(RCR r, XCR x_in) : p(r.p), h(r.h), x(x_in) {}
 
 	virtual ~Rose() = default;
 

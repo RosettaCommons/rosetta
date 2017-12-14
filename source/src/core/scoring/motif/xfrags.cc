@@ -238,8 +238,7 @@ bool write_xfres_binary( ostream & out , vector1<Xfres> const & xfres){
 	uint64_t n = xfres.size();
 	out.write((char*)&n,sizeof(uint64_t));
 	cout << "write_xfres_binary " << n << endl;
-	for ( vector1<Xfres>::const_iterator i = xfres.begin(); i != xfres.end(); ++i ) {
-		Xfres const & sm( *i );
+	for ( auto const & sm : xfres ) {
 		out.write((char*)&sm,sizeof(Xfres));
 		if ( !out.good() ) return false;
 	}
@@ -266,10 +265,10 @@ bool write_xfres_binary( string  const & fname , vector1<Xfres> const & xfres){
 bool read_xfres_binary( vector1<string> const & fnames, vector1<Xfres> & xfres){
 	Size count = 0;
 	TR << "Nfiles: " << fnames.size() << endl;
-	for ( vector1<string>::const_iterator i = fnames.begin(); i != fnames.end(); ++i ) {
+	for ( auto const & fname : fnames ) {
 		if ( ++count %50 == 0 ) { TR << "... read " << count << endl; }
-		if ( !read_xfres_binary(*i,xfres) ) {
-			TR.Error << "read_xfres_binary(fnames): error reading file "+*i << endl;
+		if ( !read_xfres_binary(fname,xfres) ) {
+			TR.Error << "read_xfres_binary(fnames): error reading file "+fname << endl;
 			return false;
 		}
 	}
@@ -364,7 +363,7 @@ void    Xfrag::insert (Pose & pose, vector1<Xfres> const & xfres, Size lowres, S
 	}
 	core::conformation::ResidueOP dummyres = core::conformation::ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "GLY" ) );
 	for ( Size ir=2; ir <= size(); ++ir ) pose.append_polymer_residue_after_seqpos(*dummyres,lowres-2+ir,true);
-	vector1<Xfres>::const_iterator ifrag = xfres.begin() + position();
+	auto ifrag = xfres.begin() + position();
 	for ( Size ir=1; ir <= size(); ++ir,++ifrag ) {
 		Size resno = lowres+ir-1;
 		pose.set_phi  (resno,ifrag->phi());
@@ -419,8 +418,7 @@ bool write_xfrag_binary( ostream & out , vector1<Xfrag> const & xfrag){
 	uint64_t n = xfrag.size();
 	out.write((char*)&n,sizeof(uint64_t));
 	cout << "write_xfrag_binary " << n << endl;
-	for ( vector1<Xfrag>::const_iterator i = xfrag.begin(); i != xfrag.end(); ++i ) {
-		Xfrag const & sm( *i );
+	for ( auto const & sm : xfrag ) {
 		out.write((char*)&sm,sizeof(Xfrag));
 		if ( !out.good() ) return false;
 	}
@@ -447,10 +445,10 @@ bool write_xfrag_binary( string  const & fname , vector1<Xfrag> const & xfrag){
 bool read_xfrag_binary( vector1<string> const & fnames, vector1<Xfrag> & xfrag){
 	Size count = 0;
 	TR << "Nfiles: " << fnames.size() << endl;
-	for ( vector1<string>::const_iterator i = fnames.begin(); i != fnames.end(); ++i ) {
+	for ( auto const & fname : fnames ) {
 		if ( ++count %50 == 0 ) { TR << "... read " << count << endl; }
-		if ( !read_xfrag_binary(*i,xfrag) ) {
-			TR.Error << "read_xfrag_binary(fnames): error reading file "+*i << endl;
+		if ( !read_xfrag_binary(fname,xfrag) ) {
+			TR.Error << "read_xfrag_binary(fnames): error reading file "+fname << endl;
 			return false;
 		}
 	}
@@ -503,10 +501,10 @@ bool write_xfrag_binary(        string  const & fname , vector1<Xfrag> const & x
 bool read_xfrag_binary (vector1<string> const & fnames, vector1<Xfrag>       & xfrag, vector1<Xfres>       & xfres){
 	Size count = 0;
 	TR << "Nfiles: " << fnames.size() << endl;
-	for ( vector1<string>::const_iterator i = fnames.begin(); i != fnames.end(); ++i ) {
+	for ( auto const & fname : fnames ) {
 		if ( ++count %50 == 0 ) { TR << "... read " << count << endl; }
-		if ( !read_xfrag_binary(*i,xfrag,xfres) ) {
-			TR.Error << "read_xfrag_binary(fnames): error reading file "+*i << endl;
+		if ( !read_xfrag_binary(fname,xfrag,xfres) ) {
+			TR.Error << "read_xfrag_binary(fnames): error reading file "+fname << endl;
 			return false;
 		}
 	}

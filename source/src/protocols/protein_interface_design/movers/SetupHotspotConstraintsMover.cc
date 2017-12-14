@@ -21,6 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
@@ -88,7 +89,7 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover(
 	core::Real const & bump_cutoff,
 	bool const apply_ambiguous_constraints,
 	bool const colonyE,
-	std::string const & stub_energy_fxn
+	std::string  stub_energy_fxn
 ) :
 	protocols::moves::Mover( "SetupHotspotConstraintMover" ),
 	chain_to_design_(chain_to_design),
@@ -98,7 +99,7 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover(
 	bump_cutoff_(bump_cutoff),
 	apply_ambiguous_constraints_(apply_ambiguous_constraints),
 	colonyE_( colonyE),
-	stub_energy_fxn_( stub_energy_fxn)
+	stub_energy_fxn_(std::move( stub_energy_fxn))
 {
 	//  packer_task_ = packer_task->clone();
 	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_set ) );
@@ -153,13 +154,13 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 
 	CB_force_constant_ = tag->getOption<Real>( "cb_force", 0.5 );
 	worst_allowed_stub_bonus_ = tag->getOption<Real>( "worst_allowed_stub_bonus", 0 );
-	apply_self_energies_ = tag->getOption<bool>( "apply_stub_self_energies", 0 );
+	apply_self_energies_ = tag->getOption<bool>( "apply_stub_self_energies", false );
 	bump_cutoff_ = tag->getOption<Real>( "apply_stub_bump_cutoff", 10. );
-	apply_ambiguous_constraints_ = tag->getOption<bool>( "pick_best_energy_constraint", 1 );
-	core::Real const bb_stub_cst_weight( tag->getOption< core::Real >( "backbone_stub_constraint_weight", 1.0 ) );
+	apply_ambiguous_constraints_ = tag->getOption<bool>( "pick_best_energy_constraint", true );
+	auto const bb_stub_cst_weight( tag->getOption< core::Real >( "backbone_stub_constraint_weight", 1.0 ) );
 	stub_energy_fxn_ = tag->getOption<std::string>( "stubscorefxn", "backbone_stub_constraint" ) ;
 
-	colonyE_ = tag->getOption<bool>( "colonyE", 0 );
+	colonyE_ = tag->getOption<bool>( "colonyE", false );
 
 	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new hotspot_hashing::HotspotStubSet );
 	if ( tag->hasOption( "stubfile" ) ) {
@@ -173,7 +174,7 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 			for ( TagCOP const curr_tag2 : branch_tags2 ) {
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				std::string const nickname( curr_tag2->getOption< std::string >( "nickname" ) );
-				core::Size const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );
+				auto const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );
 				hotspot_hashing::HotspotStubSetOP temp_stubset( new hotspot_hashing::HotspotStubSet );
 				temp_stubset->read_data( file_name );
 				temp_stubset->remove_random_stubs_from_set( temp_stubset->size() - stub_num );
@@ -217,7 +218,7 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 	TR.flush();
 }
 
-SetupHotspotConstraintsMover::~SetupHotspotConstraintsMover() {}
+SetupHotspotConstraintsMover::~SetupHotspotConstraintsMover() = default;
 
 std::string SetupHotspotConstraintsMover::get_name() const {
 	return mover_name();

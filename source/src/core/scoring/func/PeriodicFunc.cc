@@ -12,7 +12,7 @@
 /// @author Florian Richter, floric@u.washington.edu
 
 #include <core/scoring/func/PeriodicFunc.hh>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 
 #ifdef SERIALIZATION
@@ -36,7 +36,7 @@ bool PeriodicFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	PeriodicFunc const & other_downcast( static_cast< PeriodicFunc const & > (other) );
+	auto const & other_downcast( static_cast< PeriodicFunc const & > (other) );
 	if ( x0_         != other_downcast.x0_         ) return false;
 	if ( k_          != other_downcast.k_          ) return false;
 	if ( n_periodic_ != other_downcast.n_periodic_ ) return false;

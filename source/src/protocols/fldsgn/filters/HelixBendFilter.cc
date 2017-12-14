@@ -54,8 +54,7 @@ HelixBendFilter::HelixBendFilter():
 	filter_status_(false)
 {}
 
-HelixBendFilter::~HelixBendFilter()
-{}
+HelixBendFilter::~HelixBendFilter() = default;
 
 // @brief set secondary structure
 void HelixBendFilter::secstruct( std::string const & ss )

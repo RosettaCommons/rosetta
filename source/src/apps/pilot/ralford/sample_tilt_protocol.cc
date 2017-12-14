@@ -73,11 +73,11 @@ public:
 		init_options();
 	}
 
-	virtual ~SampleTiltProtocol() {};
+	~SampleTiltProtocol() override = default;
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ) {
+	apply( core::pose::Pose & pose ) override {
 
 		using namespace core;
 		using namespace core::scoring;
@@ -205,7 +205,7 @@ public:
 		membrane12_out.close();
 	}
 
-	std::string get_name() const { return "SampleTiltProtocol"; }
+	std::string get_name() const override { return "SampleTiltProtocol"; }
 
 	void
 	register_options() {
@@ -244,8 +244,8 @@ private:
 };
 
 
-typedef utility::pointer::shared_ptr< SampleTiltProtocol > SampleTiltProtocolOP;
-typedef utility::pointer::shared_ptr< SampleTiltProtocol const  > SampleTiltProtocolCOP;
+using SampleTiltProtocolOP = utility::pointer::shared_ptr<SampleTiltProtocol>;
+using SampleTiltProtocolCOP = utility::pointer::shared_ptr<const SampleTiltProtocol>;
 
 ///////////////////////////////////////////////////////////////////////////////
 int

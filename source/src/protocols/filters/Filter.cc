@@ -35,7 +35,7 @@ namespace filters {
 
 using namespace core;
 typedef std::pair< std::string const, FilterCOP > StringFilter_pair;
-typedef utility::tag::TagCOP TagCOP;
+using TagCOP = utility::tag::TagCOP;
 
 FilterCollection::~FilterCollection() = default;
 
@@ -65,9 +65,9 @@ Filter::Filter()
 	scorename_("defaultscorename")
 {}
 
-Filter::Filter( std::string  type )
+Filter::Filter( std::string const & type )
 : utility::pointer::ReferenceCount(),
-	type_(std::move( type )),
+	type_( type ),
 	scorename_("defaultscorename")
 {}
 

@@ -144,8 +144,8 @@ LegacyRepeatAssemblyMover::dfs_cycle_finder(
 	debug_assert( model_nodes.find( reference_node->get_node_index() ) != model_nodes.end() );
 	model_nodes.erase(model_nodes.find(reference_node->get_node_index()));
 
-	std::set<core::Size>::const_iterator it = model_nodes.begin();
-	std::set<core::Size>::const_iterator it_end = model_nodes.end();
+	auto it = model_nodes.begin();
+	auto it_end = model_nodes.end();
 	for ( ; it != it_end; ++it ) {
 		reference_node = graph_->get_model_node(*it);
 		visited_nodes.push_back(reference_node);
@@ -171,7 +171,7 @@ LegacyRepeatAssemblyMover::dfs_cycle_finder(
 		numeric::random::random_permutation(traversal_order, numeric::random::rg());
 
 
-		core::Size starttime = time(NULL);
+		core::Size starttime = time(nullptr);
 		//Temporary workaround for a bug where excess recursion takes a ton of time.
 		core::Size n_recursions = 0;
 		core::Size max_recursions = 10;
@@ -185,7 +185,7 @@ LegacyRepeatAssemblyMover::dfs_cycle_finder(
 			for ( core::Size j=0; j<traversal_order[i]; ++j ) {
 				++edge_it;
 			}
-			HashEdge const * cur_edge = static_cast< HashEdge const * >(*edge_it);
+			auto const * cur_edge = static_cast< HashEdge const * >(*edge_it);
 			ModelNode const * other_node = graph_->get_model_node(cur_edge->get_other_ind(reference_node->get_node_index()));
 
 			//check to see if we have a cycle of sufficient size back to the first node
@@ -234,7 +234,7 @@ LegacyRepeatAssemblyMover::dfs_cycle_finder(
 
 		}
 		//if this other model node didn't find a cycle, pop it back before trying the next one
-		core::Size endtime = time(NULL);
+		core::Size endtime = time(nullptr);
 		TR << visited_nodes.size() << "-" << n_recursions << ": Tested " << num_edges << " edges in " << endtime - starttime << " seconds" << std::endl;
 		visited_nodes.pop_back();
 	}
@@ -266,7 +266,7 @@ LegacyRepeatAssemblyMover::generate_assembly(){
 		}
 		graph_->drop_all_edges();
 
-		core::Size starttime = time(NULL);
+		core::Size starttime = time(nullptr);
 		TR << "Trying to find cycle from start node " << node->get_node_index()
 			<< " (model " << node->model().model_id_ << ")" << std::endl;
 
@@ -276,7 +276,7 @@ LegacyRepeatAssemblyMover::generate_assembly(){
 		utility::vector1<ModelNode const *> cycle;
 		std::pair< bool, AssemblyOP > result = dfs_cycle_finder(node, cycle, assembly);
 		if ( result.first ) {
-			core::Size endtime = time(NULL);
+			core::Size endtime = time(nullptr);
 			TR << "Successfully found cycle in " << endtime - starttime << " seconds" << std::endl;
 			AssemblyOP repeat_assembly = result.second;
 			repeat_assembly->to_pose(core::chemical::FA_STANDARD, false).dump_pdb("pre_repeat.pdb");
@@ -289,14 +289,14 @@ LegacyRepeatAssemblyMover::generate_assembly(){
 				return repeat_assembly;
 			}
 		} else {
-			core::Size endtime = time(NULL);
+			core::Size endtime = time(nullptr);
 			TR << "No cycle found with starting node " << node->get_node_index()
 				<< "(model " << node->model().model_id_ << "): " << endtime - starttime
 				<< " seconds" << std::endl;
 		}
 	}
 	TR << "No cycles found" << std::endl;
-	return 0;
+	return nullptr;
 }
 
 

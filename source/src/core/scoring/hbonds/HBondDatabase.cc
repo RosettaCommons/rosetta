@@ -38,6 +38,7 @@
 
 
 // Utility Headers
+#include <utility>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
@@ -86,20 +87,20 @@ HBondDatabase::HBondDatabase():
 	params_database_tag_(""),
 	HBFadeInterval_lookup_by_name_(),
 	HBFadeInterval_lookup_(),
-	AHdist_short_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	AHdist_long_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH2_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosAHD_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	AHdist_short_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	AHdist_long_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH2_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosAHD_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
 	HBPoly1D_lookup_by_name_(),
 	HBPoly1D_lookup_(),
-	AHdist_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH2_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosAHD_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosAHD_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	chi_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	AHdist_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH_short_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH_long_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH2_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosAHD_short_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosAHD_long_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	chi_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
 	don_strength_lookup_(hbdon_MAX, 1.0),
 	acc_strength_lookup_(hbacc_MAX, 1.0),
 	weight_type_lookup_(HB_EVAL_TYPE_COUNT, hbw_NONE)
@@ -118,20 +119,20 @@ HBondDatabase::HBondDatabase(
 	params_database_tag_( hbond_params_database_tag ),
 	HBFadeInterval_lookup_by_name_(),
 	HBFadeInterval_lookup_(),
-	AHdist_short_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	AHdist_long_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH2_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosAHD_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	AHdist_short_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	AHdist_long_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH2_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosAHD_fade_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
 	HBPoly1D_lookup_by_name_(),
 	HBPoly1D_lookup_(),
-	AHdist_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosBAH2_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosAHD_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	cosAHD_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
-	chi_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	AHdist_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH_short_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH_long_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosBAH2_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosAHD_short_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	cosAHD_long_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
+	chi_poly_lookup_(HB_EVAL_TYPE_COUNT, nullptr),
 	don_strength_lookup_(hbdon_MAX, 1.0),
 	acc_strength_lookup_(hbacc_MAX, 1.0),
 	weight_type_lookup_(HB_EVAL_TYPE_COUNT, hbw_NONE)
@@ -196,7 +197,7 @@ HBondDatabase::get_database( string const & tag ){
 }
 
 
-HBondDatabase::~HBondDatabase(){}
+HBondDatabase::~HBondDatabase()= default;
 
 
 /// @details initialize hydrogen bond parameters
@@ -826,7 +827,7 @@ HBondDatabase::HBFadeInterval_from_name(
 		stringstream message;
 		message << "Fade Interval '" << name << "' has not been defined.";
 		utility_exit_with_message( message.str() );
-		return NULL;
+		return nullptr;
 	} else {
 		return it->second;
 	}
@@ -958,7 +959,7 @@ HBondDatabase::HBPoly1D_from_name(
 		stringstream message;
 		message << "1d Polynomial '" << name << "' has not been defined.";
 		utility_exit_with_message( message.str() );
-		return NULL;
+		return nullptr;
 	} else {
 		return it->second;
 	}

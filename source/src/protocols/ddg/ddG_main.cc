@@ -68,8 +68,8 @@ static basic::Tracer TR( "pilot_apps.fix_bb_monomer_ddg" );
 using namespace core;
 using namespace scoring;
 
-typedef utility::vector1<core::chemical::AA> mutations;
-typedef utility::vector1<double> ddgs;
+using mutations = utility::vector1<core::chemical::AA>;
+using ddgs = utility::vector1<double>;
 
 namespace protocols {
 void
@@ -391,7 +391,7 @@ ddG_main()
 			if ( protein_interface.is_interface(i) ) { //is interface residue
 				for ( Size j =1; j <= 20 ; j++ ) { //iterate through all amino acids
 					residues_to_mutate = all_unk; //mutate each interface residue one at a time
-					core::chemical::AA curr_aa = (core::chemical::AA)j;
+					auto curr_aa = (core::chemical::AA)j;
 					if ( curr_aa != pose.aa(i) && (pose.aa(i) != aa_unk)/*this hopefully will never happen?*/ ) {
 						residues_to_mutate[i]=curr_aa;
 						ddg::ddGMover interface_mutation(score_structure_scorefxn,minimize_sfxn,residues_to_mutate);

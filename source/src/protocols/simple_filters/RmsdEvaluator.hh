@@ -70,7 +70,7 @@ private:
 
 class SelectRmsdEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-	SelectRmsdEvaluator( core::pose::PoseCOP, core::scoring::ResidueSelection selection, std::string tag = "", bool CAonly=true  );
+	SelectRmsdEvaluator( core::pose::PoseCOP, core::scoring::ResidueSelection const & selection, std::string tag = "", bool CAonly=true  );
 	SelectRmsdEvaluator( core::pose::PoseCOP, utility::vector1< core::Size> const& selection, std::string tag = "", bool CAonly=true  );
 
 	//work it out by yourself from missing density == whacky random coords
@@ -91,7 +91,7 @@ private:
 
 class SelectGdtEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-	SelectGdtEvaluator( core::pose::PoseCOP, core::scoring::ResidueSelection selection, std::string tag = "" );
+	SelectGdtEvaluator( core::pose::PoseCOP, core::scoring::ResidueSelection const & selection, std::string tag = "" );
 	SelectGdtEvaluator( core::pose::PoseCOP, utility::vector1< core::Size> const& selection, std::string tag = "" );
 
 	//work it out by yourself from missing density == whacky random coords
@@ -111,7 +111,7 @@ private:
 
 class SelectMaxsubEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-	SelectMaxsubEvaluator( core::pose::PoseCOP, core::scoring::ResidueSelection selection, std::string tag = "", core::Real rmsd_threshold = 4.0  );
+	SelectMaxsubEvaluator( core::pose::PoseCOP, core::scoring::ResidueSelection const & selection, std::string tag = "", core::Real rmsd_threshold = 4.0  );
 	SelectMaxsubEvaluator( core::pose::PoseCOP, utility::vector1< core::Size> const& selection, std::string tag = "", core::Real rmsd_threshold = 4.0  );
 
 	//work it out by yourself from missing density == whacky random coords

@@ -78,12 +78,11 @@ poses_from_cmd_line(
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
 
-	typedef vector1< string >::const_iterator iter;
-	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
-		if ( file_exists(*it) ) {
+	for ( auto const & it : fn_list ) {
+		if ( file_exists(it) ) {
 			Pose pose;
-			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
-			string name = utility::file_basename( *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, it , core::import_pose::PDB_file);
+			string name = utility::file_basename( it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
 		}
@@ -131,7 +130,7 @@ main( int argc, char * argv [] ) {
 
 		// read in alignments, fix and output each one
 		vector1< std::string > align_fns = option[ in::file::alignment ]();
-		typedef vector1< string >::const_iterator aln_iter;
+		using aln_iter = vector1<string>::const_iterator;
 		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
 				aln_fn != aln_end; ++aln_fn
 				) {
@@ -139,16 +138,13 @@ main( int argc, char * argv [] ) {
 				option[ cm::aln_format ](), *aln_fn
 			);
 
-			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-					end = alns.end();
-					it != end; ++it
-					) {
-				string const template_id( it->sequence(2)->id().substr(0,5) );
-				string const template_id_full( it->sequence(2)->id());
-				tr << *it << std::endl;
-				tr << "template " << it->sequence(2)->id() << " => " << template_id << std::endl;
-				string target_ungapped(it->sequence(1)->ungapped_sequence());
-				string template_ungapped( it->sequence(2)->ungapped_sequence() );
+			for ( auto & aln : alns ) {
+				string const template_id( aln.sequence(2)->id().substr(0,5) );
+				string const template_id_full( aln.sequence(2)->id());
+				tr << aln << std::endl;
+				tr << "template " << aln.sequence(2)->id() << " => " << template_id << std::endl;
+				string target_ungapped(aln.sequence(1)->ungapped_sequence());
+				string template_ungapped( aln.sequence(2)->ungapped_sequence() );
 				map< string, Pose >::iterator pose_it = poses.find( template_id );
 				if ( pose_it == poses.end() ) {
 					string msg( "Error: can't find pose (id = " + template_id + ")");
@@ -162,14 +158,14 @@ main( int argc, char * argv [] ) {
 
 					SequenceOP t_target_seq( new Sequence(
 						target_ungapped,
-						it->sequence(1)->id(),
-						it->sequence(1)->start()
+						aln.sequence(1)->id(),
+						aln.sequence(1)->start()
 						) );
 
 					SequenceOP t_align_seq( new Sequence(
 						template_ungapped,
 						template_id + "_align_seq",
-						it->sequence(2)->start()
+						aln.sequence(2)->start()
 						) );
 
 					SequenceOP t_pdb_seq( new Sequence (
@@ -189,9 +185,9 @@ main( int argc, char * argv [] ) {
 						tr.Warning << "alignment: " << std::endl << intermediate << std::endl;
 					}
 
-					SequenceMapping query_to_fullseq = it->sequence_mapping(1,2);
-					tr.Debug << "Query:    " << it->sequence( query_index_ ) << std::endl;
-					tr.Debug << "Template: " << it->sequence( template_index_ ) << std::endl;
+					SequenceMapping query_to_fullseq = aln.sequence_mapping(1,2);
+					tr.Debug << "Query:    " << aln.sequence( query_index_ ) << std::endl;
+					tr.Debug << "Template: " << aln.sequence( template_index_ ) << std::endl;
 					tr.Debug << "Original Mapping:" << query_index_ << "-->" << template_index_
 						<< std::endl;
 
@@ -211,7 +207,7 @@ main( int argc, char * argv [] ) {
 
 					SequenceAlignment new_aln = mapping_to_alignment(query_to_pdbseq,t_target_seq,t_pdb_seq_out);
 
-					new_aln.scores( it->scores() );
+					new_aln.scores( aln.scores() );
 					std::map< std::string, core::Real > scores( new_aln.scores() );
 					new_aln.printGrishinFormat(output);
 				} // if found a template pdb

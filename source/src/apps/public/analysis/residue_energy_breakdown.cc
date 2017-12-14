@@ -115,7 +115,7 @@ main( int argc, char* argv [] ) {
 			//One body energies
 			for ( Size ii = 1; ii <= current_pose.size(); ++ii ) {
 				EnergyNode const * node(egraph.get_energy_node(ii));
-				runtime_assert( node != 0 );
+				runtime_assert( node != nullptr );
 				EnergyMap unwt_residue1b;
 				scorefxn->eval_ci_1b(current_pose.residue(ii), current_pose, unwt_residue1b);
 				scorefxn->eval_cd_1b(current_pose.residue(ii), current_pose, unwt_residue1b);
@@ -131,8 +131,8 @@ main( int argc, char* argv [] ) {
 				ss->add_string_value( "resi2", "--" );
 				ss->add_string_value( "pdbid2", "--" );
 				ss->add_string_value( "restype2", "onebody" );
-				for ( ScoreTypes::const_iterator iter( scoretypes.begin() ); iter != scoretypes.end(); ++iter ) {
-					ss->add_energy(  name_from_score_type( *iter ), residue1b[ *iter ] );
+				for ( auto scoretype : scoretypes ) {
+					ss->add_energy(  name_from_score_type( scoretype ), residue1b[ scoretype ] );
 				} // for non-zero score types
 				ss->add_energy( "total", residue1b.sum() );
 				sfd.write_silent_struct( *ss, option[ out::file::silent ]() );
@@ -146,7 +146,7 @@ main( int argc, char* argv [] ) {
 
 					// Short Range
 					EnergyEdge const * edge(egraph.find_energy_edge(ii, jj));
-					if ( edge != 0 ) {
+					if ( edge != nullptr ) {
 						EnergyMap unwt_pair_energies( edge->fill_energy_map() );
 						pair_energies += unwt_pair_energies * weights;
 						output = true;
@@ -178,9 +178,9 @@ main( int argc, char* argv [] ) {
 					ss->add_string_value( "restype2", current_pose.residue_type(jj).name3() );
 
 					bool nonzero(false);
-					for ( ScoreTypes::const_iterator iter( scoretypes.begin() ); iter != scoretypes.end(); ++iter ) {
-						ss->add_energy(  name_from_score_type( *iter ), pair_energies[ *iter ] );
-						if ( pair_energies[ *iter ] <= -0.001 || 0.001 <= pair_energies[ *iter ] ) {
+					for ( auto scoretype : scoretypes ) {
+						ss->add_energy(  name_from_score_type( scoretype ), pair_energies[ scoretype ] );
+						if ( pair_energies[ scoretype ] <= -0.001 || 0.001 <= pair_energies[ scoretype ] ) {
 							nonzero = true;
 						}
 					} // for non-zero score types

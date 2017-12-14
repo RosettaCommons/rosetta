@@ -26,14 +26,14 @@ namespace graph {
 
 //dummy! please do not call these
 HBondNode::HBondNode() :
-	utility::graph::Node( 0, 0 ),
+	utility::graph::Node( nullptr, 0 ),
 	mres_id_( 0 ),
 	rotamer_id_( 0 ),
 	ids_of_clashing_nodes_()
 { runtime_assert( false ); }
 
 HBondNode::HBondNode( const HBondNode&  ) :
-	utility::graph::Node( 0, 0 ),
+	utility::graph::Node( nullptr, 0 ),
 	mres_id_( 0 ),
 	rotamer_id_( 0 ),
 	ids_of_clashing_nodes_()
@@ -56,13 +56,12 @@ HBondNode::HBondNode( utility::graph::Graph* owner, core::Size node_id, core::Si
 {}
 
 //Destructor
-HBondNode::~HBondNode()
-{}
+HBondNode::~HBondNode() = default;
 
 void HBondNode::copy_from( utility::graph::Node const * source ){
 	utility::graph::Node::copy_from( source );
 
-	HBondNode const * src = dynamic_cast< HBondNode const * >( source );
+	auto const * src = dynamic_cast< HBondNode const * >( source );
 	debug_assert( src );
 
 	mres_id_ = src->mres_id_;
@@ -98,13 +97,12 @@ HBondEdge::HBondEdge( utility::graph::Graph* owner, core::Size first_node_ind, c
 {}
 
 //Destructor
-HBondEdge::~HBondEdge()
-{}
+HBondEdge::~HBondEdge() = default;
 
 void HBondEdge::copy_from( utility::graph::Edge const * source ){
 	utility::graph::Edge::copy_from( source );
 
-	HBondEdge const * src = dynamic_cast< HBondEdge const * >( source );
+	auto const * src = dynamic_cast< HBondEdge const * >( source );
 	debug_assert( src );
 	energy_ = src->energy_;
 }

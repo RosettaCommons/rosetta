@@ -30,8 +30,8 @@ AnnotatedSequence::AnnotatedSequence()
 : map_is_clean_( true )
 {}
 
-AnnotatedSequence::AnnotatedSequence( std::string  str_in )
-: std::string(std::move( str_in )),
+AnnotatedSequence::AnnotatedSequence( std::string const & str_in )
+: std::string( str_in ),
 	map_is_clean_( false )
 {}
 

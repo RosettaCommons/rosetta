@@ -57,8 +57,7 @@ namespace pcs2 {
 
 using namespace protocols;
 
-PcsGridSearchParameter::~PcsGridSearchParameter(){
-}
+PcsGridSearchParameter::~PcsGridSearchParameter()= default;
 
 PcsGridSearchParameter &
 PcsGridSearchParameter::operator=(PcsGridSearchParameter const & other){

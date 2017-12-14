@@ -71,8 +71,7 @@ FASTERNode::FASTERNode(
 ///
 /// not responsible for any dynamically allocated memory, so node does nothing
 /// it's member variables, of course, are implicitly destructed
-FASTERNode::~FASTERNode()
-{}
+FASTERNode::~FASTERNode() = default;
 
 /// @brief prints a description of the node and all of it's one-body energies
 void FASTERNode::print() const
@@ -195,7 +194,7 @@ void FASTERNode::assign_zero_state()
 
 	curr_state_one_body_energy_ = core::PackerEnergy( 0.0 );
 	//fills from [1] to end
-	std::vector< core::PackerEnergy >::iterator position1 = curr_state_two_body_energies_.begin();
+	auto position1 = curr_state_two_body_energies_.begin();
 	++position1;
 	std::fill( position1, curr_state_two_body_energies_.end(), core::PackerEnergy( 0.0 ));
 	curr_state_total_energy_ = core::PackerEnergy( 0.0 );
@@ -267,9 +266,9 @@ void FASTERNode::commit_considered_substitution()
 	curr_state_total_energy_ = alternate_state_total_energy_;
 
 	//copies from [1] to end
-	std::vector< core::PackerEnergy >::iterator alt_position1 = alternate_state_two_body_energies_.begin();
+	auto alt_position1 = alternate_state_two_body_energies_.begin();
 	++alt_position1;
-	std::vector< core::PackerEnergy >::iterator curr_position1 = curr_state_two_body_energies_.begin();
+	auto curr_position1 = curr_state_two_body_energies_.begin();
 	++curr_position1;
 
 	std::copy( alt_position1, alternate_state_two_body_energies_.end(), curr_position1 );
@@ -357,7 +356,7 @@ void FASTERNode::update_internal_vectors()
 
 	edge_matrix_ptrs_.clear();
 	edge_matrix_ptrs_.reserve( get_num_incident_edges() + 1);
-	edge_matrix_ptrs_.push_back( FArray2A< core::PackerEnergy >() ); //occupy the 0th position
+	edge_matrix_ptrs_.emplace_back( ); //occupy the 0th position
 
 	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		edge_matrix_ptrs_.push_back( get_incident_faster_edge(ii)->get_edge_table_ptr() );
@@ -642,9 +641,9 @@ void FASTERNode::tell_neighbors_to_prep_for_relaxation()
 			neighbor_relaxed_in_sBR_[ ii ] = false;
 		}
 		//std::cout << "neighbors: ";
-		for ( int ii = 0; ii < num_to_relax; ++ii ) {
+		for ( int ii : which10 ) {
 			//std::cout << which10[ ii ] << " " ;
-			neighbor_relaxed_in_sBR_[ which10[ ii ] ] = true;
+			neighbor_relaxed_in_sBR_[ ii ] = true;
 		}
 		//std::cout << std::endl;
 	} else {
@@ -705,7 +704,7 @@ FASTERNode::get_deltaE_for_relaxed_state_following_perturbation()
 
 	have_contributed_deltaE_following_perturbation_ = true;
 
-	core::PackerEnergy deltaE = core::PackerEnergy( 0.0 );
+	auto deltaE = core::PackerEnergy( 0.0 );
 	if ( perturbed_ ) {
 		for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 			deltaE += get_incident_faster_edge( ii )->get_deltaE_for_perturbation();
@@ -772,8 +771,7 @@ FASTEREdge::FASTEREdge(
 
 /// @brief destructor.  All dynamically allocated memory is managed by the objects contained
 /// inside the FASTEREdge, so there is no work to be (explicitly) done.
-FASTEREdge::~FASTEREdge()
-{}
+FASTEREdge::~FASTEREdge() = default;
 
 /// @brief adds the input energy to the two body energy for state1 on the node with the
 /// smaller index and state2 on the node with the larger index.
@@ -1132,7 +1130,7 @@ FASTERInteractionGraph::FASTERInteractionGraph(int num_nodes) :
 void
 FASTERInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base )
 {
-	rotamer_set::RotamerSets const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
+	auto const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
 	for ( uint ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {
 		set_num_states_for_node( ii, rot_sets.rotamer_set_for_moltenresidue( ii )->num_rotamers() );
 	}
@@ -1267,7 +1265,7 @@ void FASTERInteractionGraph::update_internal_energy_totals()
 	}
 
 	//int counter = 0;
-	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		//std::cout << " ig_edge " << ++counter  << " =" <<
 		//((FASTEREdge*) *iter)->get_current_two_body_energy();
@@ -1285,7 +1283,7 @@ void FASTERInteractionGraph::update_internal_energy_totals()
 int FASTERInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		sum += ((FASTEREdge*) *iter)->get_two_body_table_size();
 	}
@@ -1313,11 +1311,11 @@ FASTERInteractionGraph::count_dynamic_memory() const
 
 void FASTERInteractionGraph::prepare_for_FASTER()
 {
-	for ( std::list< EdgeBase* >::iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end();
 			//note: no increment statement here
 			) {
-		std::list< EdgeBase* >::iterator next_iter = iter;
+		auto next_iter = iter;
 		++next_iter;
 		//edges sometimes delete themselves, invalidating iterators, so
 		//get the next iterator before calling prepare_for_simulated_annealing
@@ -1356,7 +1354,7 @@ core::PackerEnergy FASTERInteractionGraph::get_energy_following_relaxation()
 		energy_total += get_faster_node( ii )->get_one_body_energy_for_relaxed_state();
 	}
 
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+	for ( auto edge_iter = get_edge_list_begin();
 			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		energy_total += ((FASTEREdge*) (*edge_iter))->get_two_body_energies_for_relaxed_states();
 	}
@@ -1498,14 +1496,14 @@ void FASTERInteractionGraph::print_current_state_assignment() const
 core::PackerEnergy
 FASTERInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 {
-	core::PackerEnergy esum = core::PackerEnergy( 0.0 );
+	auto esum = core::PackerEnergy( 0.0 );
 	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
 		if ( get_vertex_member_of_energy_sum_group( ii, group_id ) ) {
 			esum += get_faster_node( ii )->get_one_body_energy_current_state();
 		}
 	}
 
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+	for ( auto edge_iter = get_edge_list_begin();
 			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
@@ -1536,8 +1534,8 @@ FASTERInteractionGraph::swap_edge_energies(
 /// @param num_states - [in] - the total number of states for the new node
 NodeBase* FASTERInteractionGraph::create_new_node( int node_index, int num_states)
 {
-	FASTERNode* new_node = new FASTERNode(this, node_index, num_states);
-	debug_assert( new_node != NULL );
+	auto* new_node = new FASTERNode(this, node_index, num_states);
+	debug_assert( new_node != nullptr );
 	return new_node;
 }
 

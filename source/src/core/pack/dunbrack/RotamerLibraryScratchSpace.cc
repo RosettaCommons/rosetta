@@ -35,7 +35,7 @@ RotamerLibraryScratchSpace::RotamerLibraryScratchSpace() :
 {
 }
 
-RotamerLibraryScratchSpace::~RotamerLibraryScratchSpace() {}
+RotamerLibraryScratchSpace::~RotamerLibraryScratchSpace() = default;
 
 }
 }

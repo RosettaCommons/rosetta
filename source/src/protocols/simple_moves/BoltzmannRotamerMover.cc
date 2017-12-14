@@ -123,21 +123,7 @@ BoltzmannRotamerMover::BoltzmannRotamerMover(
 }
 
 // copy constructor
-BoltzmannRotamerMover::BoltzmannRotamerMover( BoltzmannRotamerMover const & rval ):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( rval ),
-	scorefxn_( rval.scorefxn_ ),
-	task_( rval.task_ ),
-	factory_( rval.factory_ ),
-	show_packer_task_( rval.show_packer_task_ ),
-	resnum_( rval.resnum_ ),
-	ligand_resnum_( rval.ligand_resnum_ ),
-	ligand_weight_( rval.ligand_weight_ ),
-	temperature_( rval.temperature_ ),
-	bias_sampling_( rval.bias_sampling_ ),
-	randomize_resnum_( rval.randomize_resnum_ ),
-	bump_check_( rval.bump_check_ )
-{}
+BoltzmannRotamerMover::BoltzmannRotamerMover( BoltzmannRotamerMover const & /*rval*/ ) = default;
 
 // destructor
 BoltzmannRotamerMover::~BoltzmannRotamerMover()= default;
@@ -418,7 +404,7 @@ BoltzmannRotamerMover::parse_my_tag(
 	using core::pack::task::TaskFactory;
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
-	show_packer_task_ = tag->getOption<bool>( "show_packer_task", 0 );
+	show_packer_task_ = tag->getOption<bool>( "show_packer_task", false );
 	set_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 }
 

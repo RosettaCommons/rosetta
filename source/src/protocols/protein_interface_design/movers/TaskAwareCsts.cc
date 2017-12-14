@@ -69,7 +69,7 @@ TaskAwareCsts::TaskAwareCsts() :
 }
 
 
-TaskAwareCsts::~TaskAwareCsts() {}
+TaskAwareCsts::~TaskAwareCsts() = default;
 
 void
 TaskAwareCsts::apply( core::pose::Pose & pose )

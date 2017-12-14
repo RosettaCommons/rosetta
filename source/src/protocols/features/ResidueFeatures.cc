@@ -70,7 +70,7 @@ using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;
 
-ResidueFeatures::ResidueFeatures() {}
+ResidueFeatures::ResidueFeatures() = default;
 
 ResidueFeatures::ResidueFeatures( ResidueFeatures const & ) :
 	FeaturesReporter()

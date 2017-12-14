@@ -61,8 +61,8 @@ public:
 	RBSegmentMover() {}
 
 	/// @brief constructor
-	RBSegmentMover( RBSegment  seg ) :
-		segment_(std::move(seg)) { }
+	RBSegmentMover( RBSegment const & seg ) :
+		segment_(seg) { }
 
 	/// @brief Apply the rigid-body fragment mover to a pose.  Must be defined by derived classes.
 	void apply( core::pose::Pose & pose ) override = 0;

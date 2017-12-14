@@ -152,7 +152,7 @@ public:
 		core::Real const rot_mag_in,
 		core::Real const trans_mag_in,
 		Partner const partner_in,
-		utility::vector1< bool > ok_for_centroid_calculation
+		utility::vector1< bool > const & ok_for_centroid_calculation
 	);
 
 	// constructor with arguments (movable jumps defined by a movemap)

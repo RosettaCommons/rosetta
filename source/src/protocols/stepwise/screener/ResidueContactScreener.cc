@@ -38,8 +38,7 @@ ResidueContactScreener::ResidueContactScreener(  pose::Pose & screening_pose,
 {}
 
 //Destructor
-ResidueContactScreener::~ResidueContactScreener()
-{}
+ResidueContactScreener::~ResidueContactScreener() = default;
 
 ///////////////////////////////////////////////////////////
 bool

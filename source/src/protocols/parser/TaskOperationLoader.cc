@@ -34,8 +34,8 @@ namespace parser {
 
 static basic::Tracer TR( "protocols.jd2.parser.TaskOperationLoader" );
 
-TaskOperationLoader::TaskOperationLoader() {}
-TaskOperationLoader::~TaskOperationLoader() {}
+TaskOperationLoader::TaskOperationLoader() = default;
+TaskOperationLoader::~TaskOperationLoader() = default;
 
 void TaskOperationLoader::load_data(
 	core::pose::Pose const &,
@@ -57,7 +57,7 @@ void TaskOperationLoader::load_data(
 			utility_exit_with_message("Duplicate definition of TaskOperation with name " + name);
 		}
 		TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, data, subtag ) );
-		runtime_assert( new_t_o != 0 );
+		runtime_assert( new_t_o != nullptr );
 		data.add("task_operations", name, new_t_o );
 		TR << "Defined TaskOperation named \"" << name << "\" of type " << type << std::endl;
 	}

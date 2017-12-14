@@ -76,7 +76,7 @@ GlycanResidueSelector::GlycanResidueSelector( core::Size root_residue, bool incl
 
 /// @brief Destructor.
 ///
-GlycanResidueSelector::~GlycanResidueSelector() {}
+GlycanResidueSelector::~GlycanResidueSelector() = default;
 
 void
 GlycanResidueSelector::set_select_from_branch_residues(utility::vector1<bool> root_residues){

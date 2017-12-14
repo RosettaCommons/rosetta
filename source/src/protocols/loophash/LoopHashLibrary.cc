@@ -638,7 +638,7 @@ LoopHashLibrary::apply_random(
 				++it ) {
 
 			//LeapIndex *cp = (LeapIndex*)(*it);
-			core::Size retrieve_index = (core::Size) (*it);
+			auto retrieve_index = (core::Size) (*it);
 			LeapIndex cp = hashmap.get_peptide( retrieve_index );
 
 			// Also retrieve the backbone structures
@@ -663,7 +663,7 @@ LoopHashLibrary::apply_random(
 		fir = ir;
 		fjr = jr;
 
-		core::Size retrieve_index = (core::Size) (filter_leap_index_bucket[loop_choice]);
+		auto retrieve_index = (core::Size) (filter_leap_index_bucket[loop_choice]);
 		LeapIndex cp = hashmap.get_peptide( retrieve_index );
 
 
@@ -759,7 +759,7 @@ LoopHashLibrary::get_all(
 					++it ) {
 
 				// Get the actual strucure index (not just the bin index)
-				core::Size retrieve_index = (core::Size) (*it);
+				auto retrieve_index = (core::Size) (*it);
 				LeapIndex cp = hashmap.get_peptide( retrieve_index );
 
 				// Retrieve the actual backbone structure
@@ -1080,7 +1080,7 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 						++it ) {
 					sani_count++;
 
-					core::Size retrieve_index = (core::Size) (*it);
+					auto retrieve_index = (core::Size) (*it);
 					LeapIndex cp = hashmap.get_peptide( retrieve_index );
 
 					// Also retrieve the backbone structures

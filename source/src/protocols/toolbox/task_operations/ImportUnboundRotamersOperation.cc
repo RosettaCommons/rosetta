@@ -65,7 +65,7 @@ ImportUnboundRotamersOperation::ImportUnboundRotamersOperation():
 {}
 
 /// @brief destructor
-ImportUnboundRotamersOperation::~ImportUnboundRotamersOperation(){}
+ImportUnboundRotamersOperation::~ImportUnboundRotamersOperation()= default;
 
 /// @brief clone
 TaskOperationOP

@@ -40,6 +40,7 @@
 #include <numeric/random/random.hh>
 
 // utility headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -125,17 +126,11 @@ SegmentRebuild::SegmentRebuild(
 
 
 /// @brief copy constructor
-SegmentRebuild::SegmentRebuild( SegmentRebuild const & rval ) :
-	Super( rval ),
-	interval_( rval.interval_ ),
-	ss_( rval.ss_ ),
-	aa_( rval.aa_ ),
-	keep_known_bb_torsions_at_junctions_( rval.keep_known_bb_torsions_at_junctions_ )
-{}
+SegmentRebuild::SegmentRebuild( SegmentRebuild const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-SegmentRebuild::~SegmentRebuild() {}
+SegmentRebuild::~SegmentRebuild() = default;
 
 
 /// @brief copy assignment
@@ -759,7 +754,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	// don't cause any rigid body shifts.
 	FoldTree ft = pose.fold_tree();
 	bool ft_was_altered = false;
-	for ( FoldTree::const_iterator e = pose.fold_tree().begin(), ee = pose.fold_tree().end(); e != ee; ++e ) {
+	for ( auto e = pose.fold_tree().begin(), ee = pose.fold_tree().end(); e != ee; ++e ) {
 		if ( e->label() > 0 ) {
 			Edge tmp = *e;
 			order( tmp );

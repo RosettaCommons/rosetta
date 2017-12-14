@@ -29,6 +29,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_JumpMover" );
 
@@ -46,14 +47,13 @@ namespace movers {
 //constructor
 RNA_JumpMover::RNA_JumpMover( RNA_JumpLibraryCOP rna_jump_library,
 	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ):
-	rna_jump_library_( rna_jump_library ),
-	atom_level_domain_map_( atom_level_domain_map )
+	rna_jump_library_(std::move( rna_jump_library )),
+	atom_level_domain_map_(std::move( atom_level_domain_map ))
 {
 }
 
 //Destructor
-RNA_JumpMover::~RNA_JumpMover()
-{}
+RNA_JumpMover::~RNA_JumpMover() = default;
 
 /////////////////////////////////////////////////////////
 bool
@@ -157,7 +157,7 @@ RNA_JumpMover::add_new_RNA_jump(
 	bool const forward2 = check_forward_backward( pose, jump_pos2 );
 
 	std::string atom_name1, atom_name2;
-	runtime_assert( rna_jump_library_ != 0 );
+	runtime_assert( rna_jump_library_ != nullptr );
 	kinematics::Jump const new_jump = rna_jump_library_->get_random_base_pair_jump(
 		pose.residue_type(jump_pos1),
 		pose.residue_type(jump_pos2),

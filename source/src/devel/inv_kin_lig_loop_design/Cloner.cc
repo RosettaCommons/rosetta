@@ -414,7 +414,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 	//core::conformation::ResidueOPs::iterator iter = pose0->res_begin();
 
 	Residue* r_prev = nullptr; // apl -- this has got to go
-	Residue* r = const_cast< core::conformation::Residue * > ( & pose0->residue( 1 ) );// apl -- this has got to go
+	auto* r = const_cast< core::conformation::Residue * > ( & pose0->residue( 1 ) );// apl -- this has got to go
 
 	Segment segment;
 
@@ -571,8 +571,8 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 
 		for ( int i = 0; i < static_cast<int>(size); ++i ) {
 
-			Residue* r0 = const_cast<Residue*>(&(segments[k].pose->residue( segments[k].lo_res->seqpos() + i ) ) ); // this has got to go
-			Residue* r1 = const_cast<Residue*>(& (rval->residue(begin + i)) ); // this has got to go
+			auto* r0 = const_cast<Residue*>(&(segments[k].pose->residue( segments[k].lo_res->seqpos() + i ) ) ); // this has got to go
+			auto* r1 = const_cast<Residue*>(& (rval->residue(begin + i)) ); // this has got to go
 			//cout << "clones: " << r0 << "\t" << r1 << endl;
 			clones[ r0 ] = r1;
 		}

@@ -926,9 +926,8 @@ parse_out_non_standard_residues( vector1< core::sequence::SequenceOP > & fasta_s
 		SequenceOP new_sequence( new Sequence( sequence, fasta_sequences[n]->id()) );
 		new_sequence->spacer_positions( fasta_sequences[n]->spacer_positions() );
 		fasta_sequences_new.push_back( new_sequence );
-		for ( std::map< Size, std::string >::iterator it = non_standard_residues_local.begin(),
-				end = non_standard_residues_local.end(); it != end; ++it ) {
-			non_standard_residues[ it->first + offset ] = it->second;
+		for ( auto & it : non_standard_residues_local ) {
+			non_standard_residues[ it.first + offset ] = it.second;
 		}
 
 		offset += sequence.size();

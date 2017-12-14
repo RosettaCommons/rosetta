@@ -167,7 +167,7 @@ void determine_atom_level_edge_info_for_all_edges(
 ){
 	for ( utility::graph::EdgeListIterator it = hb_graph.edge_list_begin();
 			it != hb_graph.edge_list_end(); ++it ) {
-		AtomLevelHBondEdge * edge = static_cast< AtomLevelHBondEdge * >( *it );
+		auto * edge = static_cast< AtomLevelHBondEdge * >( *it );
 
 		if ( skip_edges_with_degree_zero ) {
 			if (
@@ -307,7 +307,7 @@ void determine_atom_level_node_info_for_all_nodes(
 ){
 	core::Size const num_nodes = hb_graph.num_nodes();
 	for ( unsigned int ii=1; ii <= num_nodes; ++ii ) {
-		AtomLevelHBondNode * al_node = static_cast< AtomLevelHBondNode * >( hb_graph.get_node( ii ) );
+		auto * al_node = static_cast< AtomLevelHBondNode * >( hb_graph.get_node( ii ) );
 		if ( skip_nodes_with_no_edges && al_node->num_edges() == 0 ) {
 			continue;
 		}

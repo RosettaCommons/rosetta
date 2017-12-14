@@ -23,6 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -61,7 +62,7 @@ NonResidueTypeConstraint::NonResidueTypeConstraint(
 NonResidueTypeConstraint::NonResidueTypeConstraint(
 	core::pose::Pose const &,
 	Size seqpos,
-	std::string AAname,
+	std::string const & AAname,
 	core::Real favor_non_native_bonus
 ):
 	Constraint( core::scoring::res_type_constraint ),
@@ -72,8 +73,8 @@ NonResidueTypeConstraint::NonResidueTypeConstraint(
 
 NonResidueTypeConstraint::NonResidueTypeConstraint(
 	Size seqpos,
-	std::string aa_in,
-	std::string name3_in,
+	std::string const & aa_in,
+	std::string const & name3_in,
 	core::Real bonus_in
 ):
 	Constraint( core::scoring::res_type_constraint ),
@@ -84,7 +85,7 @@ NonResidueTypeConstraint::NonResidueTypeConstraint(
 {}
 
 
-NonResidueTypeConstraint::~NonResidueTypeConstraint() {}
+NonResidueTypeConstraint::~NonResidueTypeConstraint() = default;
 
 ConstraintOP
 NonResidueTypeConstraint::clone() const
@@ -114,7 +115,7 @@ NonResidueTypeConstraint::remap_resid( core::id::SequenceMapping const &seqmap )
 	if ( newseqpos != 0 ) {
 		return ConstraintOP( new NonResidueTypeConstraint( newseqpos, AAname, rsd_type_name3_, favor_non_native_bonus_ ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -160,7 +161,7 @@ bool NonResidueTypeConstraint::operator == ( Constraint const & rhs ) const
 	if ( ! same_type_as_me( rhs ) ) return false;
 	if ( ! rhs.same_type_as_me( *this ) ) return false;
 
-	NonResidueTypeConstraint const & rhs_nrtc( static_cast< NonResidueTypeConstraint const & > ( rhs ) );
+	auto const & rhs_nrtc( static_cast< NonResidueTypeConstraint const & > ( rhs ) );
 	if ( seqpos_ != rhs_nrtc.seqpos_ ) return false;
 	if ( AAname != rhs_nrtc.AAname ) return false;
 	if ( rsd_type_name3_ != rhs_nrtc.rsd_type_name3_ ) return false;

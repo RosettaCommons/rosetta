@@ -242,7 +242,7 @@ using namespace basic::options;
 // evaluates the PCA
 class PcaEvaluator : public PoseEvaluator {
 public:
-	PcaEvaluator ( PCA_OP pca ) : pca_(std::move( pca )) {}
+	explicit PcaEvaluator ( PCA_OP pca ) : pca_(std::move( pca )) {}
 	void apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss ) const override;
 	core::Size size() const override { return 2; };
 	std::string name( core::Size ) const override { return "pca1"; };
@@ -618,7 +618,7 @@ public:
 		core::kinematics::MoveMapCOP movemap
 	) : ClassicAbinitio( fragset_large, fragset_large, movemap ) {};
 
-	Stage1Sampler( protocols::simple_moves::FragmentMoverOP brute_move_large )
+	explicit Stage1Sampler( protocols::simple_moves::FragmentMoverOP brute_move_large )
 	: ClassicAbinitio( brute_move_large, brute_move_large, brute_move_large, 1 /*dummy*/ ) {};
 
 	void apply( core::pose::Pose &pose ) override;
@@ -788,7 +788,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 
 	// get input tags
 	SilentFileData sfd( *silent_options_ );
-	typedef utility::vector1< std::string > TagList;
+	using TagList = utility::vector1<std::string>;
 	TagList input_tags;
 	//WRONG -- these tags are the ones in file --- while after "read_file" tags might be renamed use .tags() after reading
 	// input_tags = sfd.read_tags_fast( *(option [ in::file::silent ]().begin())  );
@@ -800,7 +800,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 	int const nstruct = std::max( 1, option [ out::nstruct ]() );
 
 	// create jobs
-	typedef utility::vector1< BasicJobOP > JobList;
+	using JobList = utility::vector1<BasicJobOP>;
 	JobList input_jobs;
 	for ( TagList::const_iterator it = input_tags.begin(), eit = input_tags.end(); it!=eit; ++it ) {
 		BasicJobOP job( new BasicJob( *it, "rerun", nstruct) );
@@ -1643,7 +1643,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 	if ( option[ in::file::tags ].user() ) {
 		// get input tags
-		typedef utility::vector1< std::string > TagList;
+		using TagList = utility::vector1<std::string>;
 		TagList input_tags;
 		utility::io::izstream tag_file( option[ in::file::tagfile ]() );
 

@@ -340,17 +340,17 @@ MakeBundle::parse_my_tag(
 
 			//Major helix params:
 			if ( branch_tag->hasOption( "r0" ) ) {
-				core::Real const r0val( branch_tag->getOption<core::Real>("r0", 0) );
+				auto const r0val( branch_tag->getOption<core::Real>("r0", 0) );
 				helix(helix_index)->set_r0(r0val);
 				if ( TR.visible() ) TR << "\tSet r0 value (major helix radius) to " << r0val << "." << std::endl;
 			}
 			if ( branch_tag->hasOption( "omega0" ) ) {
-				core::Real const omega0val( branch_tag->getOption<core::Real>("omega0", 0) );
+				auto const omega0val( branch_tag->getOption<core::Real>("omega0", 0) );
 				helix(helix_index)->set_omega0( convert_angle(omega0val) );
 				if ( TR.visible() ) TR << "\tSet omega0 value (major helix turn per residue) to " << omega0val << "." << std::endl;
 			}
 			if ( branch_tag->hasOption( "delta_omega0" ) ) {
-				core::Real const delta_omega0val( branch_tag->getOption<core::Real>("delta_omega0", 0) );
+				auto const delta_omega0val( branch_tag->getOption<core::Real>("delta_omega0", 0) );
 				helix(helix_index)->set_delta_omega0( convert_angle(delta_omega0val) );
 				if ( TR.visible() ) TR << "\tSet delta_omega0 value (major helix rotation) to " << delta_omega0val << "." << std::endl;
 			}
@@ -361,22 +361,22 @@ MakeBundle::parse_my_tag(
 			//Set residue_name, invert, and helix_length for this helix:
 			set_other_helix_params_from_tag(helix_index, branch_tag);
 			if ( branch_tag->hasOption( "delta_t" ) ) {
-				core::Real const delta_tval( branch_tag->getOption<core::Real>("delta_t", 0) );
+				auto const delta_tval( branch_tag->getOption<core::Real>("delta_t", 0) );
 				helix(helix_index)->set_delta_t(delta_tval);
 				if ( TR.visible() ) TR << "\tSet delta_t value (residue offset) to " << delta_tval << "." << std::endl;
 			}
 			if ( branch_tag->hasOption( "z1_offset" ) ) {
-				core::Real const z1_offsetval( branch_tag->getOption<core::Real>("z1_offset", 0) );
+				auto const z1_offsetval( branch_tag->getOption<core::Real>("z1_offset", 0) );
 				helix(helix_index)->set_z1_offset(z1_offsetval);
 				if ( TR.visible() ) TR << "\tSet z1 offset value (helix offset along the minor helix axis) to " << z1_offsetval << "." << std::endl;
 			}
 			if ( branch_tag->hasOption( "z0_offset" ) ) {
-				core::Real const z0_offsetval( branch_tag->getOption<core::Real>("z0_offset", 0) );
+				auto const z0_offsetval( branch_tag->getOption<core::Real>("z0_offset", 0) );
 				helix(helix_index)->set_z0_offset(z0_offsetval);
 				if ( TR.visible() ) TR << "\tSet z0 offset value (helix offset along the major helix axis) to " << z0_offsetval << "." << std::endl;
 			}
 			if ( branch_tag->hasOption( "epsilon" ) ) {
-				core::Real const epsilonval( branch_tag->getOption<core::Real>("epsilon", 1.0) );
+				auto const epsilonval( branch_tag->getOption<core::Real>("epsilon", 1.0) );
 				helix(helix_index)->set_epsilon(epsilonval);
 				if ( TR.visible() ) TR << "\tSet epsilon value (bundle lateral squash factor) to " << epsilonval << "." << std::endl;
 			}
@@ -427,17 +427,17 @@ void MakeBundle::set_helix_params_from_tag ( core::Size const helix_index, utili
 void MakeBundle::set_minor_helix_params_from_tag( core::Size const helix_index, utility::tag::TagCOP tag )
 {
 	if ( tag->hasOption( "omega1" ) ) {
-		core::Real const omega1val( tag->getOption<core::Real>("omega1", 0) );
+		auto const omega1val( tag->getOption<core::Real>("omega1", 0) );
 		helix(helix_index)->set_omega1( convert_angle(omega1val) );
 		if ( TR.visible() ) TR << "\tSet omega1 value (minor helix turn per residue) to " << omega1val << "." << std::endl;
 	}
 	if ( tag->hasOption( "z1" ) ) {
-		core::Real const z1val( tag->getOption<core::Real>("z1", 0) );
+		auto const z1val( tag->getOption<core::Real>("z1", 0) );
 		helix(helix_index)->set_z1(z1val);
 		if ( TR.visible() ) TR << "\tSet z1 value (minor helix rise per residue) to " << z1val << "." << std::endl;
 	}
 	if ( tag->hasOption( "delta_omega1" ) ) {
-		core::Real const deltaomega1val( tag->getOption<core::Real>("delta_omega1", 0) );
+		auto const deltaomega1val( tag->getOption<core::Real>("delta_omega1", 0) );
 		helix(helix_index)->set_delta_omega1_all( convert_angle(deltaomega1val) );
 		if ( TR.visible() ) TR << "\tSet delta_omega1 value (minor helix rotation) to " << deltaomega1val << "." << std::endl;
 	}
@@ -467,7 +467,7 @@ void MakeBundle::set_other_helix_params_from_tag( core::Size const helix_index, 
 		}
 	}
 	if ( tag->hasOption( "repeating_unit_offset" ) ) {
-		core::Size const repeat_offset( tag->getOption<core::Size>("repeating_unit_offset", 0 ) );
+		auto const repeat_offset( tag->getOption<core::Size>("repeating_unit_offset", 0 ) );
 		helix(helix_index)->set_repeating_unit_offset(repeat_offset);
 		if ( TR.visible() ) TR << "\tSet repeat unit offset for this helix to " << repeat_offset << "." << std::endl;
 	}
@@ -477,7 +477,7 @@ void MakeBundle::set_other_helix_params_from_tag( core::Size const helix_index, 
 		if ( TR.visible() ) TR << "\tSet invert value (should the helix be flipped?) to " << (invertval ? "true" : "false") << "." << std::endl;
 	}
 	if ( tag->hasOption( "helix_length" ) ) {
-		core::Size const helixlength( tag->getOption<core::Size>("helix_length", 0) );
+		auto const helixlength( tag->getOption<core::Size>("helix_length", 0) );
 		helix(helix_index)->set_helix_length(helixlength);
 		if ( TR.visible() ) TR << "\tSet helix length to " << helixlength << "." << std::endl;
 	}
@@ -579,7 +579,7 @@ void MakeBundle::set_other_defaults_from_tag( utility::tag::TagCOP tag )
 		}
 	}
 	if ( tag->hasOption( "repeating_unit_offset" ) ) {
-		core::Size const repeat_offset( tag->getOption<core::Size>("repeating_unit_offset", 0 ) );
+		auto const repeat_offset( tag->getOption<core::Size>("repeating_unit_offset", 0 ) );
 		set_default_repeating_unit_offset(repeat_offset);
 		if ( TR.visible() ) TR << "Default repeat unit offset set to " << repeat_offset << "." << std::endl;
 	}

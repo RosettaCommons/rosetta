@@ -30,11 +30,12 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.phosphate.PhosphateMover" );
 
 using namespace core;
-typedef  utility::vector1< Real >  TorsionList;
+using TorsionList = utility::vector1<Real>;
 
 namespace protocols {
 namespace stepwise {
@@ -47,7 +48,7 @@ PhosphateMover::PhosphateMover( Size const sample_res,
 	PhosphateTerminus const which_terminus,
 	scoring::ScoreFunctionCOP scorefxn ):
 	phosphate_move_( PhosphateMove( sample_res, which_terminus ) ),
-	scorefxn_( scorefxn )
+	scorefxn_(std::move( scorefxn ))
 {
 	initialize_variables();
 }
@@ -56,7 +57,7 @@ PhosphateMover::PhosphateMover( Size const sample_res,
 PhosphateMover::PhosphateMover( PhosphateMove const & phosphate_move,
 	scoring::ScoreFunctionCOP scorefxn ):
 	phosphate_move_( phosphate_move ),
-	scorefxn_( scorefxn )
+	scorefxn_(std::move( scorefxn ))
 {
 	initialize_variables();
 }
@@ -72,8 +73,7 @@ PhosphateMover::initialize_variables(){
 }
 
 //Destructor
-PhosphateMover::~PhosphateMover()
-{}
+PhosphateMover::~PhosphateMover() = default;
 
 /////////////////////
 std::string

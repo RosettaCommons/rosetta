@@ -39,7 +39,7 @@ void MC_Comb::init() {
 		rotamer->init();
 	}
 	set_init( true );
-	if ( update_pose_ != 0 ) set_update_pose( update_pose_ ); // in case any rotamers got created by init()
+	if ( update_pose_ != nullptr ) set_update_pose( update_pose_ ); // in case any rotamers got created by init()
 	reset();
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -92,9 +92,9 @@ void MC_Comb::show( std::ostream & out, Size const indent ) const {
 MC_SamplerOP
 MC_Comb::find( core::id::TorsionID const & torsion_id ) {
 	for ( auto rotamer : rotamer_list_ ) {
-		if ( rotamer->find( torsion_id ) != 0 ) return rotamer->find( torsion_id );
+		if ( rotamer->find( torsion_id ) != nullptr ) return rotamer->find( torsion_id );
 	}
-	return 0;
+	return nullptr;
 }
 
 } //sampler

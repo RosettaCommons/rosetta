@@ -52,7 +52,7 @@ public:
 
 	/// @brief Copy constructor
 	///
-	ResidueSpanSelector( ResidueSpanSelector const &src);
+	ResidueSpanSelector( ResidueSpanSelector const & src);
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.

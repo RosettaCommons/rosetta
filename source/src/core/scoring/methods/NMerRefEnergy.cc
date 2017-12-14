@@ -88,12 +88,12 @@ NMerRefEnergy::NMerRefEnergy( std::map< std::string, core::Real > const & nmer_r
 	NMerRefEnergy::initialize_from_options();
 
 	nmer_ref_energies_.clear();
-	for ( std::map< std::string, Real >::const_iterator it = nmer_ref_energies_in.begin(); it != nmer_ref_energies_in.end(); ++it ) {
-		nmer_ref_energies_.insert( *it );
+	for ( auto const & it : nmer_ref_energies_in ) {
+		nmer_ref_energies_.insert( it );
 	}
 }
 
-NMerRefEnergy::~NMerRefEnergy() {}
+NMerRefEnergy::~NMerRefEnergy() = default;
 
 void NMerRefEnergy::read_nmer_tables_from_options() {
 

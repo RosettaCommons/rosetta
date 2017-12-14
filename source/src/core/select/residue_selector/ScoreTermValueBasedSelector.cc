@@ -43,7 +43,7 @@ namespace residue_selector {
 
 ScoreTermValueBasedSelector::ScoreTermValueBasedSelector():ResidueSelector() {}
 
-ScoreTermValueBasedSelector::~ScoreTermValueBasedSelector() {}
+ScoreTermValueBasedSelector::~ScoreTermValueBasedSelector() = default;
 
 ResidueSelectorOP
 ScoreTermValueBasedSelector::clone() const {
@@ -61,8 +61,8 @@ ResidueSubset ScoreTermValueBasedSelector::apply(const core::pose::Pose &pose) c
 		}
 	} else if ( residue_nums_string_ != "" ) {
 		std::set< Size > const pose_residue_indices( get_resnum_list( residue_nums_string_, pose ) );
-		for ( std::set< Size >::const_iterator iter = pose_residue_indices.begin(); iter != pose_residue_indices.end(); ++iter ) {
-			input_residues_subset[*iter] = true;
+		for ( unsigned long pose_residue_indice : pose_residue_indices ) {
+			input_residues_subset[pose_residue_indice] = true;
 		}
 	}
 
@@ -76,7 +76,7 @@ ResidueSubset ScoreTermValueBasedSelector::apply(const core::pose::Pose &pose) c
 			// handle per residue total score here
 			if ( score_type_ == core::scoring::ScoreType::end_of_score_type_enumeration ) {
 				for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-					core::scoring::ScoreType score_type = core::scoring::ScoreType(i);
+					auto score_type = core::scoring::ScoreType(i);
 					weight = score_fxn_->get_weight(score_type);
 					if ( weight != 0 ) {
 						weighted_score += weight * pose.energies().residue_total_energies(res_index)[ score_type ];

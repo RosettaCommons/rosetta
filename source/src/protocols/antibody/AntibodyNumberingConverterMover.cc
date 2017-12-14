@@ -95,7 +95,7 @@ AntibodyNumberingConverterMover::set_from_scheme( AntibodyNumberingSchemeEnum co
 }
 
 
-AntibodyNumberingConverterMover::~AntibodyNumberingConverterMover(){}
+AntibodyNumberingConverterMover::~AntibodyNumberingConverterMover()= default;
 
 void
 AntibodyNumberingConverterMover::parse_my_tag(

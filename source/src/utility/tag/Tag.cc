@@ -365,9 +365,9 @@ struct error_report_parser {
 	//   char const* eol_msg;
 	//   char const* msg;
 	vector< file_position >& errors;
-	error_report_parser( vector<file_position>& errors ) : errors(errors) {}
+	explicit error_report_parser( vector<file_position>& errors ) : errors(errors) {}
 
-	typedef boost::spirit::classic::nil_t result_t;
+	using result_t = boost::spirit::classic::nil_t;
 
 	template <typename ScannerT>
 	int operator()(ScannerT const& scan, result_t&) const {
@@ -405,7 +405,7 @@ struct tag_grammar : public grammar<tag_grammar,tag_closure::context_t> {
 		rule<Scanner,name_and_options_closure::context_t> open_tag;
 		rule<Scanner,string_closure::context_t> close_tag;
 
-		definition( tag_grammar const& self) {
+		explicit definition( tag_grammar const& self) {
 
 			top
 				= !xml_schema_tag >> *misc >> tag[ self.value = arg1 ] >> *misc
@@ -516,7 +516,7 @@ void Tag::read(std::istream& in ) {
 	string str;
 	while ( in.peek() != EOF ) str.push_back(in.get());
 
-	typedef position_iterator<char const*> iterator_t;
+	using iterator_t = position_iterator<const char *>;
 	iterator_t begin(str.c_str(), str.c_str() + str.size(), "istream"); // is this remotely correct?
 	iterator_t end;
 	//begin.set_tabchars(8); // ??? what does this do

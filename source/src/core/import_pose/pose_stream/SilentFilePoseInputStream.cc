@@ -49,8 +49,8 @@ namespace pose_stream {
 
 static basic::Tracer tr( "core.io.pose_stream.silent" );
 
-typedef std::string string;
-typedef utility::file::FileName FileName;
+using string = std::string;
+using FileName = utility::file::FileName;
 using core::io::silent::SilentFileOptions;
 
 SilentFilePoseInputStream::SilentFilePoseInputStream()

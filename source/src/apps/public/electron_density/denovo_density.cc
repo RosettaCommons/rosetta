@@ -181,7 +181,7 @@ struct CAtrace {
 		idx_ = 0;
 	}
 
-	CAtrace(core::pose::Pose pose, std::string tag, core::Real score, core::Real rms) {
+	CAtrace(core::pose::Pose const & pose, std::string const & tag, core::Real score, core::Real rms) {
 		cas_.reserve( pose.size() );
 		for ( int i=1; i<=(int)pose.size(); ++i ) {
 			if ( pose.residue(i).is_protein() ) cas_.push_back( pose.residue(i).xyz(2) );
@@ -200,7 +200,7 @@ struct CAtrace {
 
 // per fragment info
 struct FragID {
-	FragID( int pos, std::string tag) {
+	FragID( int pos, std::string const & tag) {
 		pos_=pos;
 		tag_=tag;
 	}
@@ -400,8 +400,8 @@ void DockFragmentsMover::process_fragfile() {
 	}
 	runtime_assert( nmer_target.size() == 2);
 
-	core::Size nmer_target_big = (core::Size) std::max( nmer_target[1],nmer_target[2] );
-	core::Size nmer_target_small = (core::Size) std::min( nmer_target[1],nmer_target[2] );
+	auto nmer_target_big = (core::Size) std::max( nmer_target[1],nmer_target[2] );
+	auto nmer_target_small = (core::Size) std::min( nmer_target[1],nmer_target[2] );
 
 	if ( nmer_target_big<nmer_ ) {
 		TR << "Chopping to " << nmer_target_big << " mers" << std::endl;
@@ -470,9 +470,9 @@ void DockFragmentsMover::run() {
 
 	core::Real STRAND_LONGFRAG_CUT = 0.5; // if at least this percent of fragdata is extended, use shortfrags
 
-	for ( std::map<core::Size, core::fragment::Frame>::iterator it=library_.begin(); it!=library_.end(); ++it ) {
-		core::Size idx = it->first;
-		core::fragment::Frame &f = it->second;
+	for ( auto & it : library_ ) {
+		core::Size idx = it.first;
+		core::fragment::Frame &f = it.second;
 
 		// foreach fragment
 		core::Size nres=0,nstrand=0;
@@ -549,7 +549,7 @@ void DockFragmentsMover::run() {
 	dock.setNormScores(option[ norm_scores ]());
 	dock.setClusterOversamp(option[ clust_oversample ]()); //y
 
-	int maxRotPerTrans = (int)std::ceil( (core::Real)option[ n_filtered ]() / (core::Real)option[ n_to_search ]() );
+	auto maxRotPerTrans = (int)std::ceil( (core::Real)option[ n_filtered ]() / (core::Real)option[ n_to_search ]() );
 	dock.setMaxRotPerTrans( maxRotPerTrans );
 
 	if ( option[ out::file::silent ].user() ) {
@@ -571,8 +571,8 @@ void DockFragmentsMover::run() {
 	}
 
 	// for each position
-	for ( std::map<core::Size, core::fragment::Frame>::iterator it=library_.begin(); it!=library_.end(); ++it ) {
-		core::Size idx = it->first;
+	for ( auto & it : library_ ) {
+		core::Size idx = it.first;
 		core::fragment::Frame frame;
 		if ( use_big[idx] ) {
 			frame = library_[idx];
@@ -853,7 +853,7 @@ ScoreFragmentSetMover::overlap_score(
 	core::Real overlap_ij = 0.0;
 
 	if ( offset<mersize ) {
-		for ( int i=(int)(offset+1); i<=(int)mersize; ++i ) {
+		for ( auto i=(int)(offset+1); i<=(int)mersize; ++i ) {
 			int j = i-offset;
 			//core::Real dist = (pose1.cas_[i] - pose2.cas_[j]).length();
 			core::Real dist = std::sqrt( symminfo.min_symm_dist2( pose1.cas_[i] , pose2.cas_[j] ) );
@@ -1187,7 +1187,7 @@ FragmentAssemblyMover::run( ) {
 
 		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
 			std::string tag = iter->decoy_tag();
-			utility::vector1< std::string >::iterator tag_it = std::find( tags_to_fetch.begin(), tags_to_fetch.end(), tag );
+			auto tag_it = std::find( tags_to_fetch.begin(), tags_to_fetch.end(), tag );
 			if ( tag_it == tags_to_fetch.end() ) continue;
 			int index = std::distance (tags_to_fetch.begin(), tag_it)+1; // +1 for 1-indexing
 

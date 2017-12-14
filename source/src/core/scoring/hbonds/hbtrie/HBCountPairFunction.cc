@@ -40,7 +40,7 @@ namespace hbtrie {
 using namespace trie;
 using namespace etable::etrie;
 
-HBCountPairFunction::~HBCountPairFunction() {}
+HBCountPairFunction::~HBCountPairFunction() = default;
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(

@@ -44,8 +44,8 @@ namespace constraints {
 
 class BoundFunc : public func::Func {
 public:
-	BoundFunc( Real const lb, Real const ub, Real sd, std::string type );
-	BoundFunc( Real const lb, Real const ub, Real sd, Real rswitch, std::string type );
+	BoundFunc( Real const lb, Real const ub, Real sd, std::string const & type );
+	BoundFunc( Real const lb, Real const ub, Real sd, Real rswitch, std::string const & type );
 
 	virtual
 	func::FuncOP clone() const;

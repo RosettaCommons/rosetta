@@ -30,6 +30,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
@@ -82,10 +83,10 @@ JumpClaim::JumpClaim( ClientMoverOP owner,
 
 
 JumpClaim::JumpClaim( ClientMoverOP owner,
-	std::string const& jump_label,
-	LocalPosition const& jpos1,
-	LocalPosition const& jpos2,
-	LocalPosition const& cutp ):
+	std::string const & jump_label,
+	LocalPosition const & jpos1,
+	LocalPosition const & jpos2,
+	LocalPosition const & cutp ):
 	EnvClaim( owner ),
 	label_( jump_label ),
 	pos1_( jpos1 ),

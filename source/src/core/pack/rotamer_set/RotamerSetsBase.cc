@@ -26,8 +26,8 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-RotamerSetsBase::RotamerSetsBase() {}
-RotamerSetsBase::~RotamerSetsBase() {}
+RotamerSetsBase::RotamerSetsBase() = default;
+RotamerSetsBase::~RotamerSetsBase() = default;
 
 
 } // namespace rotamer_set

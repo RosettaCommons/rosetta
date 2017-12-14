@@ -25,6 +25,7 @@
 #include <core/select/residue_selector/util.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
@@ -58,14 +59,14 @@ AntibodyRegionSelector::AntibodyRegionSelector():
 
 AntibodyRegionSelector::AntibodyRegionSelector( AntibodyInfoCOP ab_info ):
 	ResidueSelector(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 }
 
 AntibodyRegionSelector::AntibodyRegionSelector( AntibodyInfoCOP ab_info, AntibodyRegionEnum region ):
 	ResidueSelector(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	region_ = region;
@@ -87,7 +88,7 @@ AntibodyRegionSelector::set_defaults(){
 
 /// @brief Destructor.
 ///
-AntibodyRegionSelector::~AntibodyRegionSelector() {}
+AntibodyRegionSelector::~AntibodyRegionSelector() = default;
 
 AntibodyRegionSelector::AntibodyRegionSelector( AntibodyRegionSelector const & src):
 	ResidueSelector(),

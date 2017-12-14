@@ -70,7 +70,7 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <utility>
 
 //Auto Headers
@@ -112,7 +112,7 @@ public:
 
 	ExposedStrandMover();
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
 	virtual void print_sheets(
 		core::pose::Pose & pose,
@@ -144,15 +144,15 @@ public:
 
 	virtual bool is_exposed( pose::Pose & pose, Size & resid, vector1< Real > sasa_values );
 
-	virtual MoverOP clone() const {
+	MoverOP clone() const override {
 		return MoverOP( new ExposedStrandMover( *this ) );
 	}
 
-	virtual std::string get_name() const{
+	std::string get_name() const override{
 		return "ExposedStrandMover";
 	}
 
-	virtual MoverOP fresh_instance() const {
+	MoverOP fresh_instance() const override {
 		return clone();
 	}
 
@@ -580,8 +580,8 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
 			}
 
 			// look for fragments that are beta_length in the given regions
-			Size nfrags_pose   = Size( floor( (pose_sheet_length-beta_length_+2)/2 ) );
-			Size nfrags_native =  Size( floor( (native_sheet_length-beta_length_+2)/2 ) );
+			auto nfrags_pose   = Size( floor( (pose_sheet_length-beta_length_+2)/2 ) );
+			auto nfrags_native =  Size( floor( (native_sheet_length-beta_length_+2)/2 ) );
 
 			Size native_current (native_start), pose_current;
 			for ( Size jj = 1; jj<=nfrags_native; ++jj ) {

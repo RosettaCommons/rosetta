@@ -92,7 +92,7 @@ bool BBTorsionSRFD::steal( pose::Pose const& pose, Size seqpos ) {
 
 bool BBTorsionSRFD::is_compatible( SingleResidueFragData const& aSRFD) const {
 	if ( dynamic_cast< BBTorsionSRFD const* > ( & aSRFD ) ) {
-		BBTorsionSRFD const & bbtsrfd = static_cast< BBTorsionSRFD const & > ( aSRFD );
+		auto const & bbtsrfd = static_cast< BBTorsionSRFD const & > ( aSRFD );
 		return bbtsrfd.nbb() == nbb();
 	};
 	return false; //wrong SRFD-type (cast not successfull)

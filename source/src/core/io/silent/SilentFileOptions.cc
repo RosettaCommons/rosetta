@@ -159,7 +159,7 @@ void SilentFileOptions::append_attributes_for_tag_parsing(
 )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 
 	// Create a restriction that lists all of the available silent-file types
 	utility::vector1< std::string > ss_names = SilentStructFactory::get_instance()->get_ss_names();

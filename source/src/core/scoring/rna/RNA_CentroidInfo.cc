@@ -61,7 +61,7 @@ RNA_CentroidInfo::RNA_CentroidInfo( RNA_CentroidInfo const & src ) :
 	calculated_ = src.calculated_;
 }
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

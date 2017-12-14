@@ -150,8 +150,8 @@ SymmetricMotifFilter::SymmetricMotifFilter() :
 	set_defaults();
 }
 
-SymmetricMotifFilter::SymmetricMotifFilter( utility::vector1<core::pose::PoseOP> reference_motifs, std::string symm_type_in)
-: protocols::filters::Filter( "SymmetricMotif" ), symm_type_(std::move(symm_type_in))
+SymmetricMotifFilter::SymmetricMotifFilter( utility::vector1<core::pose::PoseOP> const & reference_motifs, std::string const & symm_type_in)
+: protocols::filters::Filter( "SymmetricMotif" ), symm_type_(symm_type_in)
 {
 	ref_motifs_ = reference_motifs;
 	process_motifs();
@@ -246,7 +246,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 	core::Size nres = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres = symm_info->num_independent_residues();

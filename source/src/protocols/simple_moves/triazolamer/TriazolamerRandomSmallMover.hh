@@ -37,8 +37,8 @@ public:
 	TriazolamerRandomSmallMover(
 	);
 
-	TriazolamerRandomSmallMover( utility::vector1< core::Size > triazolamer_seq_positions );
-	TriazolamerRandomSmallMover( utility::vector1< core::Size > triazolamer_seq_positions, core::Real max_small_angle );
+	TriazolamerRandomSmallMover( utility::vector1< core::Size > const & triazolamer_seq_positions );
+	TriazolamerRandomSmallMover( utility::vector1< core::Size > const & triazolamer_seq_positions, core::Real max_small_angle );
 
 	virtual ~TriazolamerRandomSmallMover();
 

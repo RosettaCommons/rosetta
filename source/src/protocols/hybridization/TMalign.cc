@@ -84,7 +84,7 @@ double d0A, d0B;
 // double TM3, TM4, TM5;
 
 //public:
-TMalign::TMalign(){}
+TMalign::TMalign()= default;
 
 void TMalign::PrintErrorAndQuit(std::string sErrorString) {
 	std::cout << sErrorString << std::endl;
@@ -820,7 +820,7 @@ int  TMalign::score_fun8(
 
 	int i, n_cut, inc=0;
 
-	while ( 1 ) {
+	while ( true ) {
 		n_cut=0;
 		score_sum=0;
 		for ( i=0; i<n_ali; i++ ) {
@@ -908,7 +908,7 @@ double  TMalign::TMscore8_search(
 		iL_max=Lali-L_frag;
 
 		i=0;
-		while ( 1 ) {
+		while ( true ) {
 			//extract the fragment starting from position i
 			ka=0;
 			for ( k=0; k<L_frag; k++ ) {
@@ -1066,7 +1066,7 @@ double  TMalign::get_score_fast(
 
 	//second iteration
 	double d002t=d002;
-	while ( 1 ) {
+	while ( true ) {
 		j=0;
 		for ( k=0; k<n_ali; k++ ) {
 			if ( dis[k]<=d002t ) {
@@ -1098,7 +1098,7 @@ double  TMalign::get_score_fast(
 		//third iteration
 		d002t=d002+1;
 
-		while ( 1 ) {
+		while ( true ) {
 			j=0;
 			for ( k=0; k<n_ali; k++ ) {
 				if ( dis[k]<=d002t ) {
@@ -1636,8 +1636,8 @@ double  TMalign::get_initial_fgt(
 
 	int L0=getmin(x_len, y_len); //non-redundant to get_initial1
 	if ( L_fr==L0 ) {
-		int n1= (int)(L0*0.1); //my index starts from 0
-		int n2= (int)(L0*0.89);
+		auto n1= (int)(L0*0.1); //my index starts from 0
+		auto n2= (int)(L0*0.89);
 
 		int j=0;
 		for ( int i=n1; i<= n2; i++ ) {
@@ -1653,7 +1653,7 @@ double  TMalign::get_initial_fgt(
 	if ( Lx<Ly || (Lx==Ly && x_len<=y_len) ) {
 		int L1=L_fr;
 		int min_len=getmin(L1, y_len);
-		int min_ali= (int) (min_len/2.5);              //minimum size of considered fragment
+		auto min_ali= (int) (min_len/2.5);              //minimum size of considered fragment
 		if ( min_ali<=fra_min1 )  min_ali=fra_min1;
 		int n1, n2;
 		n1 = -y_len+min_ali;
@@ -1683,7 +1683,7 @@ double  TMalign::get_initial_fgt(
 	} else {
 		int L2=L_fr;
 		int min_len=getmin(x_len, L2);
-		int min_ali= (int) (min_len/2.5);              //minimum size of considered fragment
+		auto min_ali= (int) (min_len/2.5);              //minimum size of considered fragment
 		if ( min_ali<=fra_min1 )  min_ali=fra_min1;
 		int n1, n2;
 		n1 = -L2+min_ali;

@@ -26,6 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -81,7 +82,7 @@ ResidueSelectorOP ResidueIndexSelector::clone() const { return ResidueSelectorOP
 
 
 
-ResidueIndexSelector::~ResidueIndexSelector() {}
+ResidueIndexSelector::~ResidueIndexSelector() = default;
 
 ResidueSubset
 ResidueIndexSelector::apply( core::pose::Pose const & pose ) const

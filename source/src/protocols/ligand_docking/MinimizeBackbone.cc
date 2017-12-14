@@ -96,11 +96,7 @@ MinimizeBackbone::MinimizeBackbone(InterfaceBuilderOP interface_builder):
 	interface_builder_(std::move(interface_builder))
 {}
 
-MinimizeBackbone::MinimizeBackbone(MinimizeBackbone const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	interface_builder_(that.interface_builder_)
-{}
+MinimizeBackbone::MinimizeBackbone(MinimizeBackbone const & /*that*/) = default;
 
 MinimizeBackbone::~MinimizeBackbone() = default;
 
@@ -272,7 +268,7 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 
 		runtime_assert( cut_start <= cut_end );
 
-		core::Size cutpt = Size(numeric::random::rg().random_range(cut_start, cut_end)); // cut is made between cutpt and cutpt+1
+		auto cutpt = Size(numeric::random::rg().random_range(cut_start, cut_end)); // cut is made between cutpt and cutpt+1
 
 		loops.push_back(protocols::loops::Loop(start, stop, cutpt));
 		// also need to set up residue variants so chainbreak score works correctly!
@@ -447,7 +443,7 @@ core::Size find_peptide_attach_pt (
 	std::map<core::Size, core::Size>::const_iterator const end =
 		jump_to_attach.end();
 	for ( ; index != end; ++index ) {
-		int const attach_pt = (int) index->second;
+		auto const attach_pt = (int) index->second;
 
 		if ( start < attach_pt && attach_pt < stop ) {
 			return index->second;

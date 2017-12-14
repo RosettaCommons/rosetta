@@ -34,7 +34,7 @@ namespace methods {
 
 ShortRangeTwoBodyEnergy::ShortRangeTwoBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 
-ShortRangeTwoBodyEnergy::~ShortRangeTwoBodyEnergy() {}
+ShortRangeTwoBodyEnergy::~ShortRangeTwoBodyEnergy() = default;
 
 bool
 ShortRangeTwoBodyEnergy::divides_backbone_and_sidechain_energetics() const

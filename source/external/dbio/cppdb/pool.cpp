@@ -21,7 +21,7 @@
 #include <cppdb/utils.h>
 #include <cppdb/driver_manager.h>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace cppdb {
 
@@ -50,8 +50,7 @@ namespace cppdb {
 	}
 		
 	pool::~pool()
-	{
-	}
+	= default;
 
 	ref_ptr<backend::connection> pool::open()
 	{
@@ -71,10 +70,10 @@ namespace cppdb {
 	ref_ptr<backend::connection> pool::get()
 	{
 		if(limit_ == 0)
-			return 0;
+			return nullptr;
 		ref_ptr<backend::connection> c;
 		pool_type garbage;
-		std::time_t now = time(0);
+		std::time_t now = time(nullptr);
 		{
 			mutex::guard l(lock_);
 			// Nothing there should throw so it is safe
@@ -107,7 +106,7 @@ namespace cppdb {
 		if(limit_ == 0)
 			return;
 		pool_type garbage;
-		std::time_t now = time(0);
+		std::time_t now = time(nullptr);
 		{
 			mutex::guard l(lock_);
 			// under lock do all very fast
@@ -143,7 +142,7 @@ namespace cppdb {
 	
 	void pool::gc()
 	{
-		put(0);
+		put(nullptr);
 	}
 
 	void pool::clear()

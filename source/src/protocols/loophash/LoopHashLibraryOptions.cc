@@ -27,7 +27,7 @@ namespace protocols {
 namespace loophash {
 
 ///// LoopHashLibraryOptionsCreator /////
-LoopHashLibraryOptionsCreator::LoopHashLibraryOptionsCreator() {}
+LoopHashLibraryOptionsCreator::LoopHashLibraryOptionsCreator() = default;
 
 LoopHashLibraryOptionsCreator::~LoopHashLibraryOptionsCreator() = default;
 
@@ -44,7 +44,7 @@ LoopHashLibraryOptionsCreator::options_type() const {
 }
 
 ///// LoopHashLibraryOptions /////
-LoopHashLibraryOptions::LoopHashLibraryOptions() {}
+LoopHashLibraryOptions::LoopHashLibraryOptions() = default;
 LoopHashLibraryOptions::~LoopHashLibraryOptions() = default;
 
 /// @details Read the resource definitions file's tag and parse the loop_sizes option to generate a vector of valid

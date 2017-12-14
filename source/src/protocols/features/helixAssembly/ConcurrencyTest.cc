@@ -12,9 +12,9 @@
 /// @brief
 /// @author Tim Jacobs
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
 
 #include <protocols/features/helixAssembly/ConcurrencyTest.hh>
 
@@ -34,7 +34,7 @@
 
 //C++
 #include <string>
-#include <math.h>
+#include <cmath>
 
 //External Headers
 #include <cppdb/frontend.h>

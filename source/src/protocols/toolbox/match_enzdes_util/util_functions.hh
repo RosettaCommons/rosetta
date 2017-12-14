@@ -74,11 +74,11 @@ cst_residue_in_pose(
 
 std::string
 assemble_remark_line(
-	std::string chainA,
-	std::string resA,
+	std::string const & chainA,
+	std::string const & resA,
 	int seqposA,
-	std::string chainB,
-	std::string resB,
+	std::string const & chainB,
+	std::string const & resB,
 	int seqposB,
 	core::Size cst_block,
 	core::Size ex_geom_id = 1

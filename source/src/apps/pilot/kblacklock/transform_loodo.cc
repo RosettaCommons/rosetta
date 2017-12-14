@@ -46,8 +46,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
-typedef numeric::xyzVector<core::Real> Vector;
-typedef numeric::xyzMatrix<core::Real> Matrix;
+using Vector = numeric::xyzVector<core::Real>;
+using Matrix = numeric::xyzMatrix<core::Real>;
 
 basic::Tracer TR("PDBTransform");
 
@@ -123,8 +123,8 @@ int main( int argc, char * argv [] ) {
 			boost::split( stubvec, stub, boost::is_any_of(" "));
 
 			utility::vector1<core::Real> SV;
-			for ( std::vector< std::string >::iterator i = stubvec.begin(); i != stubvec.end(); ++i ) {
-				float f = boost::lexical_cast<float>(*i);
+			for ( auto & i : stubvec ) {
+				auto f = boost::lexical_cast<float>(i);
 				SV.push_back(f);
 			}
 

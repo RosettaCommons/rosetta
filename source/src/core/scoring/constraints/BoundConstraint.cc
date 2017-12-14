@@ -19,6 +19,7 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 
 // ObjexxFCL Headers
@@ -47,11 +48,11 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-BoundFunc::BoundFunc( Real const lb, Real const ub, Real sd, std::string type ):
+BoundFunc::BoundFunc( Real const lb, Real const ub, Real sd, std::string const & type ):
 	lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( 0.5 ), type_( type )
 {}
 
-BoundFunc::BoundFunc( Real const lb, Real const ub, Real sd, Real rswitch, std::string type ) :
+BoundFunc::BoundFunc( Real const lb, Real const ub, Real sd, Real rswitch, std::string const & type ) :
 	lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( rswitch ), type_( type )
 {}
 
@@ -63,7 +64,7 @@ bool BoundFunc::operator==( Func const & rhs ) const
 	if ( !     same_type_as_me(   rhs ) ) return false;
 	if ( ! rhs.same_type_as_me( *this ) ) return false;
 
-	BoundFunc const & rhs_bound( static_cast< BoundFunc const & > (rhs) );
+	auto const & rhs_bound( static_cast< BoundFunc const & > (rhs) );
 	if ( lb_ != rhs_bound.lb_ ) return false;
 	if ( ub_ != rhs_bound.ub_ ) return false;
 	if ( sd_ != rhs_bound.sd_ ) return false;
@@ -197,7 +198,7 @@ bool PeriodicBoundFunc::operator == ( Func const & rhs ) const {
 	if ( !     same_type_as_me(   rhs ) ) return false;
 	if ( ! rhs.same_type_as_me( *this ) ) return false;
 
-	PeriodicBoundFunc const & rhs_pbf( static_cast< PeriodicBoundFunc const & > ( rhs ) );
+	auto const & rhs_pbf( static_cast< PeriodicBoundFunc const & > ( rhs ) );
 	if ( periodicity_ != rhs_pbf.periodicity_ ) return false;
 
 	return parent::operator == ( rhs );
@@ -258,7 +259,7 @@ bool OffsetPeriodicBoundFunc::operator == ( Func const & rhs ) const {
 	if ( !     same_type_as_me(   rhs ) ) return false;
 	if ( ! rhs.same_type_as_me( *this ) ) return false;
 
-	OffsetPeriodicBoundFunc const & rhs_opbf( static_cast< OffsetPeriodicBoundFunc const & > ( rhs ) );
+	auto const & rhs_opbf( static_cast< OffsetPeriodicBoundFunc const & > ( rhs ) );
 	if ( periodicity_ != rhs_opbf.periodicity_ ) return false;
 	if ( offset_ != rhs_opbf.offset_ ) return false;
 

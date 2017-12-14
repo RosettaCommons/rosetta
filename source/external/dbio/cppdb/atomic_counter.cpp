@@ -17,7 +17,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 #define CPPDB_SOURCE
 #include <cppdb/atomic_counter.h>
-#include <string.h>
+#include <cstring>
 
 #if defined(CPPDB_DISABLE_THREAD_SAFETY)
 
@@ -147,7 +147,7 @@ namespace cppdb {
 	atomic_counter::atomic_counter(long value) 
 	{
 		mutex_ = new pthread_mutex_t; 
-		pthread_mutex_init(MUTEX,0);
+		pthread_mutex_init(MUTEX,nullptr);
 		value_.l=value;
 	}
 
@@ -155,7 +155,7 @@ namespace cppdb {
 	{
 		pthread_mutex_destroy(MUTEX);
 		delete MUTEX;
-		mutex_ = 0;
+		mutex_ = nullptr;
 	}
 
 	long atomic_counter::inc()

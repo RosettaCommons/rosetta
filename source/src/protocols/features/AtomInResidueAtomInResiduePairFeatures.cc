@@ -65,7 +65,7 @@ using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
 
-AtomInResidueAtomInResiduePairFeatures::AtomInResidueAtomInResiduePairFeatures(){}
+AtomInResidueAtomInResiduePairFeatures::AtomInResidueAtomInResiduePairFeatures()= default;
 
 AtomInResidueAtomInResiduePairFeatures::AtomInResidueAtomInResiduePairFeatures( AtomInResidueAtomInResiduePairFeatures const & ) :
 	FeaturesReporter()
@@ -197,7 +197,7 @@ AtomInResidueAtomInResiduePairFeatures::report_atom_pairs(
 				for ( Size atmNum2=1; atmNum2 <= res2.natoms(); ++atmNum2 ) {
 					Vector const & atm2_xyz( res2.xyz(atmNum2) );
 
-					Size const dist_bin(static_cast<Size>(ceil(atm1_xyz.distance(atm2_xyz))));
+					auto const dist_bin(static_cast<Size>(ceil(atm1_xyz.distance(atm2_xyz))));
 					if ( dist_bin < 15 ) {
 						counts(res1.aa(), atmNum1, res2.aa(), atmNum2, dist_bin) += 1;
 					}

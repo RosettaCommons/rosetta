@@ -21,7 +21,7 @@
 #include <numeric/kdtree/KDTree.fwd.hh>
 #include <numeric/kdtree/KDPoint.fwd.hh>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #ifdef PYROSETTA

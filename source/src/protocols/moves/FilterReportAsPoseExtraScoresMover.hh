@@ -42,7 +42,7 @@ public:
 	FilterReportAsPoseExtraScoresMover();
 
 	/// @details with args: takes filter and the string to report by
-	FilterReportAsPoseExtraScoresMover( protocols::filters::FilterOP filter, std::string report_as );
+	FilterReportAsPoseExtraScoresMover( protocols::filters::FilterOP filter, std::string const & report_as );
 
 	// copy constructor (not needed unless you need deep copies)
 	//NOT defined, which means filter_ will do shallow copies; change that if you need it.

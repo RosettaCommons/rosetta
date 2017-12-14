@@ -117,8 +117,7 @@ FastDesign::FastDesign(
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-FastDesign::~FastDesign()
-{}
+FastDesign::~FastDesign() = default;
 
 // XRW TEMP std::string
 // XRW TEMP FastDesign::mover_name()
@@ -170,13 +169,13 @@ FastDesign::parse_my_tag(
 
 	// parse constraint generators
 	utility::vector1< std::string > const cgs = utility::string_split( tag->getOption< std::string >( "cgs", "" ), ',' );
-	for ( utility::vector1< std::string >::const_iterator cg=cgs.begin(); cg!=cgs.end(); ++cg ) {
-		if ( cg->empty() ) continue;
+	for ( auto const & cg : cgs ) {
+		if ( cg.empty() ) continue;
 		protocols::constraint_generator::ConstraintGeneratorCOP new_cg =
-			data.get_ptr< protocols::constraint_generator::ConstraintGenerator const >( "CONSTRAINT_GENERATORS", *cg );
+			data.get_ptr< protocols::constraint_generator::ConstraintGenerator const >( "CONSTRAINT_GENERATORS", cg );
 		if ( !new_cg ) {
 			std::stringstream msg;
-			msg << "FastDesign: Could not find a constraint generator named " << *cg << " in the data map.  Ensure it has been defined in an AddConstraints mover before being referenced by FastDesign."
+			msg << "FastDesign: Could not find a constraint generator named " << cg << " in the data map.  Ensure it has been defined in an AddConstraints mover before being referenced by FastDesign."
 				<< std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
@@ -260,7 +259,7 @@ FastDesign::set_constraint_weight(
 	core::Real const weight,
 	core::pose::Pose & pose ) const
 {
-	runtime_assert( local_scorefxn != 0 );
+	runtime_assert( local_scorefxn != nullptr );
 	if ( cgs_.size() ) {
 		protocols::constraint_generator::RemoveConstraints rm_csts( cgs_, true );
 
@@ -312,7 +311,7 @@ FastDesign::create_default_task_factory() const
 		if ( get_movemap() ) {
 			core::pack::task::operation::PreventRepackingOP turn_off_packing( new core::pack::task::operation::PreventRepacking() );
 			core::kinematics::MoveMap const & mm = *get_movemap();
-			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator mm_torsion=mm.movemap_torsion_id_begin();
+			for ( auto mm_torsion=mm.movemap_torsion_id_begin();
 					mm_torsion!=mm.movemap_torsion_id_end(); ++mm_torsion ) {
 				// skip if this residue and torsion are allowed to move
 				if ( mm_torsion->second ) continue;
@@ -361,16 +360,16 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 			TR << "Calling correction for beta_nov16, " << FastRelax::default_repeats() << " repeats..." << std::endl;
 			filelines.push_back( "repeat "+ObjexxFCL::string_of(FastRelax::default_repeats()));
 
-			filelines.push_back( "reference 0.3     3.1     -2.6     -2.55    4.8     -0.5    0.7      4.5     -1.6     4.0     3.9     -1.7     -2.0     -1.5     -1.0     -2.0    -2.0     4.0     9.0     3.7" );
-			filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
-			filelines.push_back( "reference 2.2619  4.8148  -1.6204  -1.6058  2.7602  1.0350  1.3406   2.5006  -0.6895  1.9223  2.3633  -0.3009  -4.2787   0.1077   0.0423  -0.4390 -0.7333  3.2371  4.7077  2.3379" );
-			filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
-			filelines.push_back( "reference 2.2619  4.5648  -1.6204  -1.6158  2.5602  1.1350  1.2406   2.3006  -0.7895  1.7223  2.1633  -0.3009  -4.3787   0.1077   0.0423  -0.4390 -0.7333  3.1371  4.4077  2.1379" );
-			filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
-			filelines.push_back( "reference 2.2619  4.3148  -1.6204  -1.6358  1.9602  1.4350  0.8406   1.8006  -0.8895  1.3223  1.4633  -0.3009  -4.6787  -0.1077  -0.1423  -0.5390 -0.9333  2.7371  3.7077  1.7379" );
-			filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
-			filelines.push_back( "accept_to_best"                  );
-			filelines.push_back( "endrepeat "                      );
+			filelines.emplace_back("reference 0.3     3.1     -2.6     -2.55    4.8     -0.5    0.7      4.5     -1.6     4.0     3.9     -1.7     -2.0     -1.5     -1.0     -2.0    -2.0     4.0     9.0     3.7" );
+			filelines.emplace_back("ramp_repack_min 0.02  0.01     1.0"      );
+			filelines.emplace_back("reference 2.2619  4.8148  -1.6204  -1.6058  2.7602  1.0350  1.3406   2.5006  -0.6895  1.9223  2.3633  -0.3009  -4.2787   0.1077   0.0423  -0.4390 -0.7333  3.2371  4.7077  2.3379" );
+			filelines.emplace_back("ramp_repack_min 0.250 0.01     0.5"      );
+			filelines.emplace_back("reference 2.2619  4.5648  -1.6204  -1.6158  2.5602  1.1350  1.2406   2.3006  -0.7895  1.7223  2.1633  -0.3009  -4.3787   0.1077   0.0423  -0.4390 -0.7333  3.1371  4.4077  2.1379" );
+			filelines.emplace_back("ramp_repack_min 0.550 0.01     0.0"      );
+			filelines.emplace_back("reference 2.2619  4.3148  -1.6204  -1.6358  1.9602  1.4350  0.8406   1.8006  -0.8895  1.3223  1.4633  -0.3009  -4.6787  -0.1077  -0.1423  -0.5390 -0.9333  2.7371  3.7077  1.7379" );
+			filelines.emplace_back("ramp_repack_min 1     0.00001  0.0"      );
+			filelines.emplace_back("accept_to_best"                  );
+			filelines.emplace_back("endrepeat "                      );
 		}
 	}
 

@@ -98,11 +98,11 @@ utility::json_spirit::Value CompoundInterpolator::serialize() const
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
 	std::vector<Value> interpolator_data;
-	for ( utility::vector1<interp_range>::const_iterator it = interpolators_.begin(); it != interpolators_.end(); ++it ) {
-		Pair ub("ub",Value(it->ub));
-		Pair lb("lb",Value(it->lb));
-		Pair interpolator("interp",it->interp->serialize());
-		interpolator_data.push_back(Value(utility::tools::make_vector(ub,lb,interpolator)));
+	for ( auto const & it : interpolators_ ) {
+		Pair ub("ub",Value(it.ub));
+		Pair lb("lb",Value(it.lb));
+		Pair interpolator("interp",it.interp->serialize());
+		interpolator_data.emplace_back(utility::tools::make_vector(ub,lb,interpolator));
 	}
 
 	Pair inter_list("interp_list",Value(interpolator_data));
@@ -117,8 +117,8 @@ void CompoundInterpolator::deserialize(utility::json_spirit::mObject data)
 {
 	interpolators_.clear();
 	utility::json_spirit::mArray interpolator_data(data["interp_list"].get_array());
-	for ( utility::json_spirit::mArray::iterator it = interpolator_data.begin(); it != interpolator_data.end(); ++it ) {
-		utility::json_spirit::mObject interpolator_record(it->get_obj());
+	for ( auto & it : interpolator_data ) {
+		utility::json_spirit::mObject interpolator_record(it.get_obj());
 		InterpolatorOP current_interpolator( new SimpleInterpolator() );
 		current_interpolator->deserialize(interpolator_record["interp"].get_obj());
 		add_range(current_interpolator,data["lb"].get_real(),data["ub"].get_real());
@@ -131,7 +131,7 @@ bool CompoundInterpolator::operator == ( Interpolator const & other ) const
 {
 	if ( ! Interpolator::operator==( other ) ) return false;
 
-	CompoundInterpolator const & other_downcast( static_cast< CompoundInterpolator const & > ( other ) );
+	auto const & other_downcast( static_cast< CompoundInterpolator const & > ( other ) );
 	if ( interpolators_.size() != other_downcast.interpolators_.size() ) return false;
 	for ( platform::Size ii = 1; ii <= interpolators_.size(); ++ii ) {
 		if ( interpolators_[ii].lb != other_downcast.interpolators_[ii].lb ) return false;

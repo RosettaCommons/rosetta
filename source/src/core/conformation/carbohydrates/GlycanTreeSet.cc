@@ -215,7 +215,7 @@ GlycanTreeSet::has_exocyclic_glycosidic_linkage(core::Size resnum) const {
 	return get_node( resnum )->has_exocyclic_linkage();
 }
 
-GlycanTreeSet::~GlycanTreeSet(){}
+GlycanTreeSet::~GlycanTreeSet()= default;
 
 //GlycanTreeSet::GlycanTreeSet( GlycanTreeSet const & ) {
 

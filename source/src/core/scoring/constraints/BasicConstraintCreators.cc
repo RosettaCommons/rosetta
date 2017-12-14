@@ -43,8 +43,8 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-AmbiguousConstraintCreator::AmbiguousConstraintCreator() {}
-AmbiguousConstraintCreator::~AmbiguousConstraintCreator() {}
+AmbiguousConstraintCreator::AmbiguousConstraintCreator() = default;
+AmbiguousConstraintCreator::~AmbiguousConstraintCreator() = default;
 
 ConstraintOP AmbiguousConstraintCreator::create_constraint() const {
 	return ConstraintOP( new AmbiguousConstraint );
@@ -55,8 +55,8 @@ std::string AmbiguousConstraintCreator::keyname() const
 	return "AmbiguousConstraint";
 }
 
-AmbiguousNMRConstraintCreator::AmbiguousNMRConstraintCreator() {}
-AmbiguousNMRConstraintCreator::~AmbiguousNMRConstraintCreator() {}
+AmbiguousNMRConstraintCreator::AmbiguousNMRConstraintCreator() = default;
+AmbiguousNMRConstraintCreator::~AmbiguousNMRConstraintCreator() = default;
 
 ConstraintOP AmbiguousNMRConstraintCreator::create_constraint() const {
 	return ConstraintOP( new AmbiguousNMRConstraint );
@@ -67,8 +67,8 @@ std::string AmbiguousNMRConstraintCreator::keyname() const
 	return "AmbiguousNMRConstraint";
 }
 
-AmbiguousNMRDistanceConstraintCreator::AmbiguousNMRDistanceConstraintCreator() {}
-AmbiguousNMRDistanceConstraintCreator::~AmbiguousNMRDistanceConstraintCreator() {}
+AmbiguousNMRDistanceConstraintCreator::AmbiguousNMRDistanceConstraintCreator() = default;
+AmbiguousNMRDistanceConstraintCreator::~AmbiguousNMRDistanceConstraintCreator() = default;
 
 ConstraintOP AmbiguousNMRDistanceConstraintCreator::create_constraint() const {
 	return ConstraintOP( new AmbiguousNMRDistanceConstraint );
@@ -79,8 +79,8 @@ std::string AmbiguousNMRDistanceConstraintCreator::keyname() const
 	return "AmbiguousNMRDistance";
 }
 
-AngleConstraintCreator::AngleConstraintCreator() {}
-AngleConstraintCreator::~AngleConstraintCreator() {}
+AngleConstraintCreator::AngleConstraintCreator() = default;
+AngleConstraintCreator::~AngleConstraintCreator() = default;
 
 ConstraintOP AngleConstraintCreator::create_constraint() const {
 	return ConstraintOP( new AngleConstraint( id::AtomID(), id::AtomID(), id::AtomID(), nullptr ) ) ;
@@ -91,8 +91,8 @@ std::string AngleConstraintCreator::keyname() const
 	return "Angle";
 }
 
-AtomPairConstraintCreator::AtomPairConstraintCreator() {}
-AtomPairConstraintCreator::~AtomPairConstraintCreator() {}
+AtomPairConstraintCreator::AtomPairConstraintCreator() = default;
+AtomPairConstraintCreator::~AtomPairConstraintCreator() = default;
 
 ConstraintOP AtomPairConstraintCreator::create_constraint() const {
 	return ConstraintOP( new AtomPairConstraint( id::AtomID(), id::AtomID(), nullptr ) );
@@ -103,8 +103,8 @@ std::string AtomPairConstraintCreator::keyname() const
 	return "AtomPair";
 }
 
-BasePairConstraintCreator::BasePairConstraintCreator() {}
-BasePairConstraintCreator::~BasePairConstraintCreator() {}
+BasePairConstraintCreator::BasePairConstraintCreator() = default;
+BasePairConstraintCreator::~BasePairConstraintCreator() = default;
 
 ConstraintOP BasePairConstraintCreator::create_constraint() const {
 	//return ConstraintOP( dynamic_cast< Constraint * >( new BasePairConstraint ) ); //BasePairConstraintOP( new BasePairConstraint( 0,0)));
@@ -116,8 +116,8 @@ std::string BasePairConstraintCreator::keyname() const
 	return "BasePair";
 }
 
-BigBinConstraintCreator::BigBinConstraintCreator() {}
-BigBinConstraintCreator::~BigBinConstraintCreator() {}
+BigBinConstraintCreator::BigBinConstraintCreator() = default;
+BigBinConstraintCreator::~BigBinConstraintCreator() = default;
 
 ConstraintOP BigBinConstraintCreator::create_constraint() const {
 	return ConstraintOP( new BigBinConstraint );
@@ -128,8 +128,8 @@ std::string BigBinConstraintCreator::keyname() const
 	return "BigBin";
 }
 
-CoordinateConstraintCreator::CoordinateConstraintCreator() {}
-CoordinateConstraintCreator::~CoordinateConstraintCreator() {}
+CoordinateConstraintCreator::CoordinateConstraintCreator() = default;
+CoordinateConstraintCreator::~CoordinateConstraintCreator() = default;
 
 ConstraintOP CoordinateConstraintCreator::create_constraint() const {
 	return ConstraintOP( new CoordinateConstraint );
@@ -140,8 +140,8 @@ std::string CoordinateConstraintCreator::keyname() const
 	return "CoordinateConstraint";
 }
 
-DihedralConstraintCreator::DihedralConstraintCreator() {}
-DihedralConstraintCreator::~DihedralConstraintCreator() {}
+DihedralConstraintCreator::DihedralConstraintCreator() = default;
+DihedralConstraintCreator::~DihedralConstraintCreator() = default;
 
 ConstraintOP DihedralConstraintCreator::create_constraint() const {
 	return ConstraintOP( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), nullptr ) );
@@ -152,8 +152,8 @@ std::string DihedralConstraintCreator::keyname() const
 	return "Dihedral";
 }
 
-DihedralPairConstraintCreator::DihedralPairConstraintCreator() {}
-DihedralPairConstraintCreator::~DihedralPairConstraintCreator() {}
+DihedralPairConstraintCreator::DihedralPairConstraintCreator() = default;
+DihedralPairConstraintCreator::~DihedralPairConstraintCreator() = default;
 
 ConstraintOP DihedralPairConstraintCreator::create_constraint() const {
 	return ConstraintOP( new DihedralPairConstraint(
@@ -166,8 +166,8 @@ std::string DihedralPairConstraintCreator::keyname() const
 	return "DihedralPair";
 }
 
-KofNConstraintCreator::KofNConstraintCreator() {}
-KofNConstraintCreator::~KofNConstraintCreator() {}
+KofNConstraintCreator::KofNConstraintCreator() = default;
+KofNConstraintCreator::~KofNConstraintCreator() = default;
 
 ConstraintOP KofNConstraintCreator::create_constraint() const {
 	return ConstraintOP( new KofNConstraint );
@@ -178,8 +178,8 @@ std::string KofNConstraintCreator::keyname() const
 	return "KofNConstraint";
 }
 
-LocalCoordinateConstraintCreator::LocalCoordinateConstraintCreator() {}
-LocalCoordinateConstraintCreator::~LocalCoordinateConstraintCreator() {}
+LocalCoordinateConstraintCreator::LocalCoordinateConstraintCreator() = default;
+LocalCoordinateConstraintCreator::~LocalCoordinateConstraintCreator() = default;
 
 ConstraintOP LocalCoordinateConstraintCreator::create_constraint() const {
 	return ConstraintOP( new LocalCoordinateConstraint );
@@ -190,8 +190,8 @@ std::string LocalCoordinateConstraintCreator::keyname() const
 	return "LocalCoordinateConstraint";
 }
 
-MultiConstraintCreator::MultiConstraintCreator() {}
-MultiConstraintCreator::~MultiConstraintCreator() {}
+MultiConstraintCreator::MultiConstraintCreator() = default;
+MultiConstraintCreator::~MultiConstraintCreator() = default;
 
 ConstraintOP MultiConstraintCreator::create_constraint() const {
 	return ConstraintOP( new MultiConstraint );
@@ -202,8 +202,8 @@ std::string MultiConstraintCreator::keyname() const
 	return "MultiConstraint";
 }
 
-SiteConstraintCreator::SiteConstraintCreator() {}
-SiteConstraintCreator::~SiteConstraintCreator() {}
+SiteConstraintCreator::SiteConstraintCreator() = default;
+SiteConstraintCreator::~SiteConstraintCreator() = default;
 
 ConstraintOP SiteConstraintCreator::create_constraint() const {
 	return ConstraintOP( new SiteConstraint );
@@ -214,8 +214,8 @@ std::string SiteConstraintCreator::keyname() const
 	return "SiteConstraint";
 }
 
-SiteConstraintResiduesCreator::SiteConstraintResiduesCreator() {}
-SiteConstraintResiduesCreator::~SiteConstraintResiduesCreator() {}
+SiteConstraintResiduesCreator::SiteConstraintResiduesCreator() = default;
+SiteConstraintResiduesCreator::~SiteConstraintResiduesCreator() = default;
 
 ConstraintOP SiteConstraintResiduesCreator::create_constraint() const {
 	return ConstraintOP( new SiteConstraintResidues );
@@ -226,8 +226,8 @@ std::string SiteConstraintResiduesCreator::keyname() const
 	return "SiteConstraintResidues";
 }
 
-FabConstraintCreator::FabConstraintCreator() {}
-FabConstraintCreator::~FabConstraintCreator() {}
+FabConstraintCreator::FabConstraintCreator() = default;
+FabConstraintCreator::~FabConstraintCreator() = default;
 
 ConstraintOP FabConstraintCreator::create_constraint() const {
 	return ConstraintOP( new FabConstraint );
@@ -238,8 +238,8 @@ std::string FabConstraintCreator::keyname() const
 	return "FabConstraint";
 }
 
-NamedAngleConstraintCreator::NamedAngleConstraintCreator() {}
-NamedAngleConstraintCreator::~NamedAngleConstraintCreator() {}
+NamedAngleConstraintCreator::NamedAngleConstraintCreator() = default;
+NamedAngleConstraintCreator::~NamedAngleConstraintCreator() = default;
 
 ConstraintOP NamedAngleConstraintCreator::create_constraint() const {
 	return ConstraintOP( new NamedAngleConstraint( id::NamedAtomID(), id::NamedAtomID(), id::NamedAtomID(), nullptr ) ) ;

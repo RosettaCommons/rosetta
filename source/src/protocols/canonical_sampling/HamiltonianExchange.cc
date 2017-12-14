@@ -443,14 +443,14 @@ using namespace core::scoring;
 class PatchOperation {
 public:
 
-	PatchOperation( ScoreType st, std::string  op, Real wt ) :
+	PatchOperation( ScoreType st, std::string const & op, Real wt ) :
 		score_type_( st ),
-		op_ (std::move( op )),
+		op_ ( op ),
 		wt_ ( wt ),
 		is_file_ (false)
 	{}
 
-	PatchOperation( std::string  file ) : file_(std::move( file )) {
+	explicit PatchOperation( std::string const & file ) : file_( file ) {
 		is_file_ = true; //cheap Polymorphism
 	}
 
@@ -516,7 +516,7 @@ bool HamiltonianExchange::initialize_exchange_schedule_from_file( std::string co
 }
 
 bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
-	typedef utility::vector1< PatchOperation > PatchOperationList;
+	using PatchOperationList = utility::vector1<PatchOperation>;
 	PatchOperationList global_patch_operations;
 
 	clear();

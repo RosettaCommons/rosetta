@@ -40,7 +40,7 @@
 
 //C library
 #include <string>
-#include <math.h> // for round
+#include <cmath> // for round
 
 //External Headers
 #include <cppdb/frontend.h>
@@ -806,7 +806,7 @@ Size
 StrandBundleFeatures::round(
 	Real x)
 {
-	Size rounded = static_cast <Size> (floor(x+.5));
+	auto rounded = static_cast <Size> (floor(x+.5));
 	return rounded;
 } //round
 

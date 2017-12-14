@@ -16,6 +16,7 @@
 #include <numeric/polynomial.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -57,7 +58,7 @@ Polynomial_1d::Polynomial_1d(
 	Real const root2,
 	Size degree,
 	vector1< Real > const & coefficients):
-	polynomial_name_(polynomial_name),
+	polynomial_name_(std::move(polynomial_name)),
 	xmin_(xmin), xmax_(xmax), min_val_(min_val), max_val_(max_val), root1_(root1), root2_(root2),
 	degree_(degree),
 	coefficients_(coefficients)
@@ -65,7 +66,7 @@ Polynomial_1d::Polynomial_1d(
 	check_invariants();
 }
 
-Polynomial_1d::Polynomial_1d(Polynomial_1d const & src):
+Polynomial_1d::Polynomial_1d( Polynomial_1d const & src ) :
 	utility::pointer::ReferenceCount( src ),
 	polynomial_name_(src.polynomial_name_),
 	xmin_(src.xmin_), xmax_(src.xmax_),
@@ -77,7 +78,7 @@ Polynomial_1d::Polynomial_1d(Polynomial_1d const & src):
 	check_invariants();
 }
 
-Polynomial_1d::~Polynomial_1d(){}
+Polynomial_1d::~Polynomial_1d() = default;
 
 void
 Polynomial_1d::check_invariants() const

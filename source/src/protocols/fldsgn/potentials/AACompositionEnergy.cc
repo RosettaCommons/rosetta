@@ -24,6 +24,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -62,14 +63,11 @@ AACompositionEnergy::AACompositionEnergy( std::map< AA, std::pair< Real, Real > 
 
 
 /// @brief copy constructor
-AACompositionEnergy::AACompositionEnergy( AACompositionEnergy const & src ):
-	parent( src ),
-	comp_constraint_aas_( src.comp_constraint_aas_ )
-{}
+AACompositionEnergy::AACompositionEnergy( AACompositionEnergy const & /*src*/ ) = default;
 
 
 /// @brief
-AACompositionEnergy::~AACompositionEnergy() {}
+AACompositionEnergy::~AACompositionEnergy() = default;
 
 
 /// @brief clone
@@ -106,7 +104,7 @@ AACompositionEnergy::residue_energy(
 	std::map< AA, Size > hist;
 	Size total_types( core::chemical::num_aa_types );
 	for ( Size i=1; i<=total_types; i++ ) {
-		AA aa = AA( i );
+		auto aa = AA( i );
 		hist.insert( std::map< AA, Size >::value_type( aa, 0 ) );
 	}
 	for ( Size i=1; i<=pose.size(); i++ ) {
@@ -114,7 +112,7 @@ AACompositionEnergy::residue_energy(
 	}
 
 
-	std::map< AA, std::pair< Real, Real > >::const_iterator itr( comp_constraint_aas_.find( rsd.aa() ) );
+	auto itr( comp_constraint_aas_.find( rsd.aa() ) );
 	if ( itr != comp_constraint_aas_.end() ) {
 		// histgoram if the residue at rsd.seqpos() is mutated to rsd.aa()
 		hist[ itr->first ] ++;
@@ -128,8 +126,8 @@ AACompositionEnergy::residue_energy(
 
 		std::pair< Real, Real > thresholds( itr->second );
 #ifndef WIN32
-		Size const lower = (Size)round( thresholds.first * pose.size() );
-		Size const upper = (Size)round( thresholds.second * pose.size() );
+		auto const lower = (Size)round( thresholds.first * pose.size() );
+		auto const upper = (Size)round( thresholds.second * pose.size() );
 #else
 		Size const lower = (Size)double( thresholds.first * pose.size() + 0.5 );
 		Size const upper = (Size)double( thresholds.second * pose.size() + 0.5 );

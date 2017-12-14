@@ -32,6 +32,7 @@
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <core/kinematics/Jump.hh>
@@ -69,13 +70,7 @@ InterlockingAromaFilter::InterlockingAromaFilter( String const & ss ):
 
 
 // @brief copy constructor
-InterlockingAromaFilter::InterlockingAromaFilter( InterlockingAromaFilter const & rval ):
-	Super( rval ),
-	filter_value_( rval.filter_value_ ),
-	contact_dist2_( rval.contact_dist2_ ),
-	input_ss_( rval.input_ss_ ),
-	verbose_( rval.verbose_ )
-{}
+InterlockingAromaFilter::InterlockingAromaFilter( InterlockingAromaFilter const & /*rval*/ ) = default;
 
 
 // @brief set filter value ( defalt 0 )
@@ -269,7 +264,7 @@ InterlockingAromaFilter::parse_my_tag(
 	contact_distance( tag->getOption<Real>( "dist", 5.5 ) );
 
 	// set threshold
-	verbose_ = tag->getOption<bool>( "verbose", 1 );
+	verbose_ = tag->getOption<bool>( "verbose", true );
 }
 
 // XRW TEMP protocols::filters::FilterOP

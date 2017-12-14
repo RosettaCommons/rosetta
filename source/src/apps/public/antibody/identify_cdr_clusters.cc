@@ -52,18 +52,18 @@ using namespace protocols::antibody::clusters;
 //
 class IdentifyCDRClusters : public protocols::moves::Mover{
 public:
-	IdentifyCDRClusters(){};
+	IdentifyCDRClusters()= default;
 
-	virtual ~IdentifyCDRClusters(){};
+	~IdentifyCDRClusters() override= default;
 
-	virtual
+
 	std::string
-	get_name() const {
+	get_name() const override {
 		return "IdentifyCDRClusters";
 	}
 
 	void
-	apply(core::pose::Pose & pose){
+	apply(core::pose::Pose & pose) override{
 
 
 		AntibodyInfoOP ab_info( new AntibodyInfo(pose, North) );
@@ -72,7 +72,7 @@ public:
 
 		std::cout << std::endl;
 		for ( core::Size i = 1; i<= core::Size(ab_info->get_total_num_CDRs()); ++i ) {
-			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
+			auto cdr_name = static_cast<CDRNameEnum>(i);
 			CDRClusterCOP result = ab_info->get_CDR_cluster(cdr_name);
 			std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result->cluster()) +" "+utility::to_string(result->normalized_distance_in_degrees());
 			std::cout << output << std::endl;

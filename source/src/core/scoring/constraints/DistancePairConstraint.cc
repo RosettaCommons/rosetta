@@ -68,7 +68,7 @@ DistancePairConstraint::remap_resid(
 			remap_b1, remap_b2,
 			this->func_ ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -97,7 +97,7 @@ ConstraintOP DistancePairConstraint::remapped_clone( pose::Pose const& src, pose
 	if (    id1.valid() && id2.valid() &&  id3.valid() && id4.valid() ) {
 		return ConstraintOP( new DistancePairConstraint( id1, id2, id3, id4, func_, score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -298,7 +298,7 @@ bool DistancePairConstraint::operator == ( Constraint const & rhs ) const
 	if ( !     same_type_as_me(   rhs ) ) return false;
 	if ( ! rhs.same_type_as_me( *this ) ) return false;
 
-	DistancePairConstraint const & rhs_dpc( static_cast< DistancePairConstraint const & > ( rhs ));
+	auto const & rhs_dpc( static_cast< DistancePairConstraint const & > ( rhs ));
 	if ( atomA1_      != rhs_dpc.atomA1_ ) return false;
 	if ( atomA2_      != rhs_dpc.atomA2_ ) return false;
 	if ( atomB1_      != rhs_dpc.atomB1_ ) return false;

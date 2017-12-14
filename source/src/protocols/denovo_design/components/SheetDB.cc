@@ -85,8 +85,8 @@ SheetDB::set_sheetlist(
 	std::string const rev_len = reverse_lengths( canonical.first, canonical.second );
 	std::string const rev_or = reverse_orientations( canonical.first );
 	SheetList newlist;
-	for ( SheetList::const_iterator s=list.begin(), end=list.end(); s != end; ++s ) {
-		newlist.push_back( reverse_chains( **s ) );
+	for ( auto const & s : list ) {
+		newlist.push_back( reverse_chains( *s ) );
 	}
 	set_sheetlist_as_is( newlist, nstrands, rev_or, rev_len );
 }
@@ -99,7 +99,7 @@ SheetDB::set_sheetlist_as_is(
 	std::string const & orientations,
 	std::string const & lengths )
 {
-	MapByStrands::iterator m1 = sheet_db_.find( nstrands );
+	auto m1 = sheet_db_.find( nstrands );
 	if ( m1 == sheet_db_.end() ) {
 		MapByOrientations newmap;
 		sheet_db_[nstrands] = newmap;
@@ -108,7 +108,7 @@ SheetDB::set_sheetlist_as_is(
 
 	debug_assert( m1 != sheet_db_.end() );
 	MapByOrientations & omap = m1->second;
-	MapByOrientations::iterator m2 = omap.find( orientations );
+	auto m2 = omap.find( orientations );
 	if ( m2 == omap.end() ) {
 		MapByLengths newmap;
 		omap[orientations] = newmap;
@@ -219,7 +219,7 @@ SheetDB::add_sheet(
 
 	core::util::switch_to_residue_type_set( *pose, core::chemical::CENTROID_t );
 
-	MapByStrands::iterator m1 = sheet_db_.find( nstrands );
+	auto m1 = sheet_db_.find( nstrands );
 	if ( m1 == sheet_db_.end() ) {
 		MapByOrientations newmap;
 		sheet_db_[nstrands] = newmap;
@@ -227,7 +227,7 @@ SheetDB::add_sheet(
 	}
 	debug_assert( m1 != sheet_db_.end() );
 	MapByOrientations & omap = m1->second;
-	MapByOrientations::iterator m2 = omap.find( orientations );
+	auto m2 = omap.find( orientations );
 	if ( m2 == omap.end() ) {
 		MapByLengths newmap;
 		omap[orientations] = newmap;
@@ -236,7 +236,7 @@ SheetDB::add_sheet(
 	debug_assert( m2 != omap.end() );
 
 	MapByLengths & lmap = m2->second;
-	MapByLengths::iterator m3 = lmap.find( lengths_shifts );
+	auto m3 = lmap.find( lengths_shifts );
 	if ( m3 == lmap.end() ) {
 		SheetList newlist;
 		lmap[lengths_shifts] = newlist;
@@ -252,12 +252,12 @@ std::string
 orientations_str( StrandOrientations const & orientations )
 {
 	std::stringstream output;
-	for ( StrandOrientations::const_iterator o=orientations.begin(); o!=orientations.end(); ++o ) {
-		if ( *o == UP ) output << "1";
-		else if ( *o == DOWN ) output << "0";
+	for ( auto orientation : orientations ) {
+		if ( orientation == UP ) output << "1";
+		else if ( orientation == DOWN ) output << "0";
 		else {
 			std::stringstream msg;
-			msg << "Invalid orientation type " << *o << std::endl;
+			msg << "Invalid orientation type " << orientation << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
 	}
@@ -307,23 +307,23 @@ SheetDB::sheet_list_const( Lengths const & lengths, StrandOrientations const & o
 SheetList
 SheetDB::sheet_list( core::Size const nstrands, std::string const & orientations ) const
 {
-	MapByStrands::const_iterator it1 = sheet_db_.find( nstrands );
+	auto it1 = sheet_db_.find( nstrands );
 	if ( it1 == sheet_db_.end() ) {
 		return SheetList();
 	}
 	debug_assert( it1 != sheet_db_.end() );
 	MapByOrientations const & omap = it1->second;
-	MapByOrientations::const_iterator it2 = omap.find( orientations );
+	auto it2 = omap.find( orientations );
 	if ( it2 == omap.end() ) {
 		return SheetList();
 	}
 	debug_assert( it2 != omap.end() );
 	MapByLengths const & lmap = it2->second;
 	SheetList retval;
-	for ( MapByLengths::const_iterator it3 = lmap.begin(); it3 != lmap.end(); ++it3 ) {
-		SheetList const & sheetlist = it3->second;
-		for ( SheetList::const_iterator s = sheetlist.begin(); s != sheetlist.end(); ++s ) {
-			retval.push_back( *s );
+	for ( auto const & it3 : lmap ) {
+		SheetList const & sheetlist = it3.second;
+		for ( auto const & s : sheetlist ) {
+			retval.push_back( s );
 		}
 	}
 	return retval;
@@ -371,15 +371,15 @@ SheetDB::load_sheetlist_from_file( core::Size const nstrands, std::string const 
 bool
 SheetDB::has_data( core::Size const nstrands, std::string const & orient, std::string const & strandinfo ) const
 {
-	MapByStrands::const_iterator it1 = sheet_db_.find( nstrands );
+	auto it1 = sheet_db_.find( nstrands );
 	if ( it1 == sheet_db_.end() ) {
 		return false;
 	}
-	MapByOrientations::const_iterator it2 = it1->second.find( orient );
+	auto it2 = it1->second.find( orient );
 	if ( it2 == it1->second.end() ) {
 		return false;
 	}
-	MapByLengths::const_iterator it3 = it2->second.find( strandinfo );
+	auto it3 = it2->second.find( strandinfo );
 	if ( it3 == it2->second.end() ) {
 		return false;
 	}
@@ -395,7 +395,7 @@ SheetDB::sheet_list( core::Size const nstrands, std::string const & in_orientati
 		return sheet_list_const( nstrands, in_orientations, in_strandinfo );
 	}
 
-	MapByStrands::iterator it1 = sheet_db_.find( nstrands );
+	auto it1 = sheet_db_.find( nstrands );
 	if ( it1 == sheet_db_.end() ) {
 		load_sheetlist_from_file( nstrands, in_orientations, in_strandinfo );
 		it1 = sheet_db_.find( nstrands );
@@ -405,7 +405,7 @@ SheetDB::sheet_list( core::Size const nstrands, std::string const & in_orientati
 	}
 	debug_assert( it1 != sheet_db_.end() );
 	MapByOrientations & omap = it1->second;
-	MapByOrientations::iterator it2 = omap.find( in_orientations );
+	auto it2 = omap.find( in_orientations );
 	if ( it2 == omap.end() ) {
 		// try to load/save the list from file
 		load_sheetlist_from_file( nstrands, in_orientations, in_strandinfo );
@@ -416,7 +416,7 @@ SheetDB::sheet_list( core::Size const nstrands, std::string const & in_orientati
 	}
 	debug_assert( it2 != omap.end() );
 	MapByLengths & lmap = it2->second;
-	MapByLengths::iterator it3 = lmap.find( in_strandinfo );
+	auto it3 = lmap.find( in_strandinfo );
 	if ( it3 == lmap.end() ) {
 		// if not found in memory, try to load the list from file
 		load_sheetlist_from_file( nstrands, in_orientations, in_strandinfo );
@@ -432,19 +432,19 @@ SheetDB::sheet_list( core::Size const nstrands, std::string const & in_orientati
 SheetList
 SheetDB::sheet_list_const( core::Size const nstrands, std::string const & in_orientations, std::string const & in_strandinfo ) const
 {
-	MapByStrands::const_iterator it1 = sheet_db_.find( nstrands );
+	auto it1 = sheet_db_.find( nstrands );
 	if ( it1 == sheet_db_.end() ) {
 		return SheetList();
 	}
 	debug_assert( it1 != sheet_db_.end() );
 	MapByOrientations const & omap = it1->second;
-	MapByOrientations::const_iterator it2 = omap.find( in_orientations );
+	auto it2 = omap.find( in_orientations );
 	if ( it2 == omap.end() ) {
 		return SheetList();
 	}
 	debug_assert( it2 != omap.end() );
 	MapByLengths const & lmap = it2->second;
-	MapByLengths::const_iterator it3 = lmap.find( in_strandinfo );
+	auto it3 = lmap.find( in_strandinfo );
 	if ( it3 == lmap.end() ) {
 		return SheetList();
 	}
@@ -457,20 +457,20 @@ utility::vector1< std::string >
 SheetDB::lengths_shifts( core::Size const nstrands, std::string const & orientations ) const
 {
 	utility::vector1< std::string > retval;
-	MapByStrands::const_iterator it1 = sheet_db_.find( nstrands );
+	auto it1 = sheet_db_.find( nstrands );
 	if ( it1 == sheet_db_.end() ) {
 		return retval;
 	}
 
 	debug_assert( it1 != sheet_db_.end() );
-	MapByOrientations::const_iterator it2 = it1->second.find( orientations );
+	auto it2 = it1->second.find( orientations );
 	if ( it2 == it1->second.end() ) {
 		return retval;
 	}
 
 	debug_assert( it2 != it1->second.end() );
-	MapByLengths::const_iterator it3_end = it2->second.end();
-	for ( MapByLengths::const_iterator it3 = it2->second.begin(); it3 != it3_end; ++it3 ) {
+	auto it3_end = it2->second.end();
+	for ( auto it3 = it2->second.begin(); it3 != it3_end; ++it3 ) {
 		retval.push_back( it3->first );
 	}
 	return retval;
@@ -481,13 +481,13 @@ utility::vector1< std::string >
 SheetDB::orientations( core::Size const nstrands ) const
 {
 	utility::vector1< std::string > retval;
-	MapByStrands::const_iterator it1 = sheet_db_.find( nstrands );
+	auto it1 = sheet_db_.find( nstrands );
 	if ( it1 == sheet_db_.end() ) {
 		return retval;
 	}
 	debug_assert( it1 != sheet_db_.end() );
-	MapByOrientations::const_iterator it2_end = it1->second.end();
-	for ( MapByOrientations::const_iterator it2 = it1->second.begin(); it2 != it2_end; ++it2 ) {
+	auto it2_end = it1->second.end();
+	for ( auto it2 = it1->second.begin(); it2 != it2_end; ++it2 ) {
 		retval.push_back( it2->first );
 	}
 	return retval;
@@ -498,8 +498,8 @@ utility::vector1< core::Size >
 SheetDB::nstrand_values() const
 {
 	utility::vector1< core::Size > retval;
-	for ( MapByStrands::const_iterator it = sheet_db_.begin(); it != sheet_db_.end(); ++it ) {
-		retval.push_back( it->first );
+	for ( auto const & it : sheet_db_ ) {
+		retval.push_back( it.first );
 	}
 	return retval;
 }
@@ -1157,15 +1157,15 @@ find_orientations_and_lengths( core::pose::Pose const & pose )
 	parsed.insert( 1 ); // strand 1 is always "true" (aka up)
 	shifts[1] = 0;
 	lengths[1] = sheet_ss_info->strand(1)->length();
-	for ( protocols::fldsgn::topology::StrandPairings::const_iterator p = pairs.begin(); p != pairs.end(); ++p ) {
-		core::Size const s1 = (*p)->s1();
-		core::Size const s2 = (*p)->s2();
-		char const orient = (*p)->orient();
+	for ( auto const & pair : pairs ) {
+		core::Size const s1 = pair->s1();
+		core::Size const s2 = pair->s2();
+		char const orient = pair->orient();
 		core::Size const len1 = sheet_ss_info->strand(s1)->length();
 		core::Size const len2 = sheet_ss_info->strand(s2)->length();
-		int const shift = (*p)->rgstr_shift();
+		int const shift = pair->rgstr_shift();
 		TR << "s1=" << s1 << " s2=" << s2 << " len1=" << len1 << " len2=" << len2 << " orient=" << orient << " shift=" << shift << std::endl;
-		debug_assert( (*p)->begin1() < (*p)->end1() );
+		debug_assert( pair->begin1() < pair->end1() );
 		debug_assert( s1 > 0 );
 		debug_assert( s2 > 0 );
 		debug_assert( s1 <= strand_count );

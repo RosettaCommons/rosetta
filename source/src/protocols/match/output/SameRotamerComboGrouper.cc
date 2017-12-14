@@ -32,7 +32,7 @@ namespace output {
 SameRotamerComboGrouper::SameRotamerComboGrouper() : n_geometric_constraints_( 0 ) {}
 SameRotamerComboGrouper::SameRotamerComboGrouper( Size ncst ) : n_geometric_constraints_( ncst ) {}
 
-SameRotamerComboGrouper::~SameRotamerComboGrouper() {}
+SameRotamerComboGrouper::~SameRotamerComboGrouper() = default;
 
 SameRotamerComboGrouper::Size
 SameRotamerComboGrouper::assign_group_for_match(

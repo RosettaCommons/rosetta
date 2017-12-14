@@ -62,7 +62,7 @@ PhiSelector::PhiSelector() :
 
 /// @brief Destructor.
 ///
-PhiSelector::~PhiSelector() {}
+PhiSelector::~PhiSelector() = default;
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).

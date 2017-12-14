@@ -25,6 +25,7 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
@@ -88,15 +89,12 @@ ReadResfileFromDB::ReadResfileFromDB(
 	string const & database_table) :
 	parent(),
 	database_table_(database_table),
-	db_session_(db_session)
+	db_session_(std::move(db_session))
 {}
 
-ReadResfileFromDB::ReadResfileFromDB(ReadResfileFromDB const & src) : TaskOperation(src),
-	database_table_(src.database_table_),
-	db_session_(src.db_session_)
-{}
+ReadResfileFromDB::ReadResfileFromDB(ReadResfileFromDB const & /*src*/) = default;
 
-ReadResfileFromDB::~ReadResfileFromDB() {}
+ReadResfileFromDB::~ReadResfileFromDB() = default;
 
 TaskOperationOP ReadResfileFromDB::clone() const {
 	return TaskOperationOP( new ReadResfileFromDB( *this ) );

@@ -57,9 +57,9 @@ static basic::Tracer tr( "protocols.simple_moves.ExtendedPoseMover" );
 namespace protocols {
 namespace simple_moves {
 
-ExtendedPoseMover::ExtendedPoseMover(std::string  sequence,
-	std::string  residue_type_set)
-: sequence_(std::move(sequence)), residue_type_set_(std::move(residue_type_set)) {}
+ExtendedPoseMover::ExtendedPoseMover(std::string const & sequence,
+	std::string const & residue_type_set)
+: sequence_(sequence), residue_type_set_(residue_type_set) {}
 
 bool ExtendedPoseMover::valid() const {
 	return sequence() != "";
@@ -156,7 +156,7 @@ std::string ExtendedPoseMover::mover_name() {
 void ExtendedPoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList attlist;
 	attlist
 		+ Attr( "fasta", xs_string, "Fasta file name (complete sequence?)" )

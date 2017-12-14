@@ -949,10 +949,10 @@ hbond_compute_energy(
 
 	// The function takes in single precision and computes in double
 	// precision To help numeric stability
-	double const dAHdis = static_cast<double>(AHdis);
-	double const dxD    = static_cast<double>(xD);
-	double const dxH    = static_cast<double>(xH);
-	double const dxH2   = static_cast<double>(xH2);
+	auto const dAHdis = static_cast<double>(AHdis);
+	auto const dxD    = static_cast<double>(xD);
+	auto const dxH    = static_cast<double>(xH);
+	auto const dxH2   = static_cast<double>(xH2);
 	double  Pr(0.0),  PSxD(0.0),  PSxH(0.0),  PLxD(0.0),  PLxH(0.0),  PxH2(0.0); // values of polynomials
 	double dPr(0.0), dPSxD(0.0), dPSxH(0.0), dPLxD(0.0), dPLxH(0.0), dPxH2(0.0); // derivatives of polynomials
 	double  FSr(0.0),  FLr(0.0),  FxD(0.0),  FxH(0.0),  FxH2(0.0); // values of fading intervals

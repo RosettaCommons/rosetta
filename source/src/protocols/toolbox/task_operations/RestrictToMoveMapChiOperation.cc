@@ -94,7 +94,7 @@ RestrictToMoveMapChiOperation::clone() const {
 	return TaskOperationOP( new RestrictToMoveMapChiOperation( *this ) );
 }
 
-RestrictToMoveMapChiOperation::~RestrictToMoveMapChiOperation(){}
+RestrictToMoveMapChiOperation::~RestrictToMoveMapChiOperation()= default;
 
 /* AMW: No Creator (had been commented out to save PyRosetta build)
 void RestrictToMoveMapChiOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

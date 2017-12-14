@@ -508,8 +508,8 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 
 		// try to avoid putting the vrt too close to termini
 		int i_min = 1;
-		int r_start = (int)std::floor(   nres/3. );
-		int r_end   = (int)std::ceil ( 2.*nres/3. );
+		auto r_start = (int)std::floor(   nres/3. );
+		auto r_end   = (int)std::ceil ( 2.*nres/3. );
 		core::Real d_min = 99999, this_d;
 		for ( int i=r_start; i<=r_end; ++i ) {
 			core::conformation::Residue const & rsd( new_query_pose.residue(i) );

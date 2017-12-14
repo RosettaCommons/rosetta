@@ -24,6 +24,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/filters/Filter.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 //// C++ headers
@@ -59,15 +60,10 @@ NcontactsFilter::NcontactsFilter(
 {}
 
 /// @brief copy constructor
-NcontactsFilter::NcontactsFilter( NcontactsFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
-	Super( rval ),
-	report_type_( rval.report_type_ ),
-	filter_value_( rval.filter_value_ )
-{}
+NcontactsFilter::NcontactsFilter( NcontactsFilter const & /*rval*/ ) = default;
 
 /// @brief destructor
-NcontactsFilter::~NcontactsFilter(){}
+NcontactsFilter::~NcontactsFilter()= default;
 
 /// @brief
 NcontactsFilter::Real

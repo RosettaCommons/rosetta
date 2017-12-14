@@ -150,9 +150,9 @@ POSSIBILITY THEREOF.
   PURPOSE:    A DDL 2.1 compliant CIF file parser.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include "CifScannerBase.h"
 #include "CifScannerInt.h"
 #include "CifParserBase.h"
@@ -205,7 +205,7 @@ CifScanner::CifScanner(istream *in) {
 */
 
 void CifScanner::Clear(void) {
-  _tBuf=NULL;
+  _tBuf=nullptr;
   _isText = false;
   errorLog.clear();
   NDBlineNo=1;
@@ -214,7 +214,7 @@ void CifScanner::Clear(void) {
 
 void CifScanner::Reset(void) {
 if (_tBuf) delete _tBuf;
-  _tBuf=NULL;
+  _tBuf=nullptr;
   Clear();
 }
 

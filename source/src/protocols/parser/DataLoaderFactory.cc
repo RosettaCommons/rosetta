@@ -29,14 +29,14 @@
 namespace protocols {
 namespace parser {
 
-DataLoaderFactory::~DataLoaderFactory() {}
+DataLoaderFactory::~DataLoaderFactory() = default;
 
 void
 DataLoaderFactory::factory_register( DataLoaderCreatorOP creator )
 {
 	//std::cout << "DataLoaderFactory::factory_register of " << creator->keyname() << std::endl;
 
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const loader_type( creator->keyname() );
 	if ( loader_type == "UNDEFINED NAME" ) {
 		utility_exit_with_message("Can't map derived DataLoader with undefined type name.");
@@ -55,7 +55,7 @@ DataLoaderFactory::newDataLoader( std::string const & loader_type ) const
 
 	//std::cout << "DataLoaderFactory::newDataLoader of " << loader_type << std::endl;
 
-	LoaderMap::const_iterator iter( dataloader_creator_map_.find( loader_type ) );
+	auto iter( dataloader_creator_map_.find( loader_type ) );
 	if ( iter != dataloader_creator_map_.end() ) {
 		if ( ! iter->second ) {
 			utility_exit_with_message( "Error: DataLoaderCreatorOP prototype for " + loader_type + " is NULL!" );
@@ -63,7 +63,7 @@ DataLoaderFactory::newDataLoader( std::string const & loader_type ) const
 		return iter->second->create_loader();
 	} else {
 		utility_exit_with_message( loader_type + " is not known to the DataLoaderFactory. Was it registered via a DataLoaderRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
-		return NULL;
+		return nullptr;
 	}
 
 }
@@ -81,7 +81,7 @@ DataLoaderFactory::data_loader_ct_namer( std::string const & loader_name )
 }
 
 
-DataLoaderFactory::DataLoaderFactory() {}
+DataLoaderFactory::DataLoaderFactory() = default;
 
 } //namespace parser
 } //namespace protocols

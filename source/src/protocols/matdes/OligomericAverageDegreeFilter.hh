@@ -65,7 +65,7 @@ public:// constructor/destructor
 	OligomericAverageDegreeFilter();
 
 	// @brief constructor with arguments
-	OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string dof_names, bool mcomp );
+	OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string const & dof_names, bool mcomp );
 
 	// @brief copy constructor
 	OligomericAverageDegreeFilter( OligomericAverageDegreeFilter const & rval );

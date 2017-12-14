@@ -54,15 +54,15 @@ class ChunkTrialMover: public protocols::moves::Mover
 
 public:
 	ChunkTrialMover(
-		utility::vector1 < core::pose::PoseCOP > const & template_poses,
-		utility::vector1 < protocols::loops::Loops > const & template_chunks,
+		utility::vector1< core::pose::PoseCOP > const & template_poses,
+		utility::vector1< protocols::loops::Loops > const & template_chunks,
 		bool random_template = true,
 		AlignOption align_option = all_chunks,
 		utility::vector1<bool> residue_sample_template=utility::vector1<bool>() );
 
 	void
 	get_alignment_from_template(
-		core::pose::PoseCOP  template_pose,
+		core::pose::PoseCOP template_pose,
 		std::map <core::Size, core::Size> & seqpos_alignment );
 
 	void apply(core::pose::Pose & pose) override;

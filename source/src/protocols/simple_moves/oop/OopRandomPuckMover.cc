@@ -38,6 +38,7 @@
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 #include <core/types.hh>
+#include <utility>
 
 // C++ Headers
 
@@ -124,7 +125,7 @@ OopRandomPuckMover::OopRandomPuckMover(
 }
 
 OopRandomPuckMover::OopRandomPuckMover(
-	utility::vector1< core::Size > oop_seq_positions
+	utility::vector1< core::Size > const & oop_seq_positions
 ): Mover(), oop_seq_positions_(oop_seq_positions)
 {
 	Mover::type( "OopRandomPuckMover" );
@@ -133,7 +134,7 @@ OopRandomPuckMover::OopRandomPuckMover(
 	available_moves_.push_back("OOP_PUCK_MINUS");
 }
 
-OopRandomPuckMover::~OopRandomPuckMover(){}
+OopRandomPuckMover::~OopRandomPuckMover()= default;
 
 }//oop
 }//simple_moves

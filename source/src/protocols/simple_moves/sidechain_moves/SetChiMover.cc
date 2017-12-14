@@ -62,7 +62,7 @@ static basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SetChiMover" );
 // XRW TEMP  return "SetChiMover";
 // XRW TEMP }
 
-SetChiMover::~SetChiMover() {}
+SetChiMover::~SetChiMover() = default;
 
 /// @brief default ctor
 SetChiMover::SetChiMover() :

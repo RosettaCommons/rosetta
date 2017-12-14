@@ -189,9 +189,9 @@ HbondsToResidueFilter::parse_my_tag(
 
 	set_partners( tag->getOption<core::Size>( "partners" ) );
 	set_energy_cutoff( tag->getOption<core::Real>( "energy_cutoff", -0.5 ) );
-	set_bb_bb( tag->getOption<bool>( "bb_bb", 0 ) );
-	set_backbone( tag->getOption<bool>( "backbone", 0 ) );
-	set_sidechain( tag->getOption<bool>( "sidechain", 1 ) );
+	set_bb_bb( tag->getOption<bool>( "bb_bb", false ) );
+	set_backbone( tag->getOption<bool>( "backbone", false ) );
+	set_sidechain( tag->getOption<bool>( "sidechain", true ) );
 	set_resnum( tag->getOption<std::string>( "residue" ) );
 
 	if ( tag->hasOption("scorefxn") ) {
@@ -292,7 +292,7 @@ HbondsToResidueFilter::set_selector(
 	return;
 }
 
-HbondsToResidueFilter::~HbondsToResidueFilter() {}
+HbondsToResidueFilter::~HbondsToResidueFilter() = default;
 
 std::string HbondsToResidueFilter::name() const {
 	return class_name();

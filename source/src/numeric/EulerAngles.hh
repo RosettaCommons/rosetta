@@ -21,7 +21,7 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
+//#include <numeric/xyz.functions.hh>
 
 #include <numeric/constants.hh>
 #include <numeric/conversions.hh>

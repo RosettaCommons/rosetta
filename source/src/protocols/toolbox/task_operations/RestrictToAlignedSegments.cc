@@ -83,7 +83,7 @@ RestrictToAlignedSegmentsOperation::RestrictToAlignedSegmentsOperation()
 	repack_shell_ = 6.0;
 }
 
-RestrictToAlignedSegmentsOperation::~RestrictToAlignedSegmentsOperation() {}
+RestrictToAlignedSegmentsOperation::~RestrictToAlignedSegmentsOperation() = default;
 
 core::pack::task::operation::TaskOperationOP RestrictToAlignedSegmentsOperation::clone() const
 {

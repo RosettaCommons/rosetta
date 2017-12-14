@@ -44,8 +44,8 @@ namespace peptide_deriver {
 PeptideDeriverMarkdownStreamOutputter::PeptideDeriverMarkdownStreamOutputter(utility::io::orstream & out, std::string prefix) {
 	out_p_ = &out;
 	prefix_ = prefix;
-	for ( core::Size method = 0; method < NUM_CYCLIZATION_METHODS; ++method ) {
-		cyc_report_info_set_[method] = CyclizedReportInfoOP( new CyclizedReportInfo() );
+	for ( auto & method : cyc_report_info_set_ ) {
+		method = CyclizedReportInfoOP( new CyclizedReportInfo() );
 	}
 }
 
@@ -57,7 +57,7 @@ PeptideDeriverMarkdownStreamOutputter::PeptideDeriverMarkdownStreamOutputter( Pe
 	}
 }
 
-PeptideDeriverMarkdownStreamOutputter::~PeptideDeriverMarkdownStreamOutputter(){}
+PeptideDeriverMarkdownStreamOutputter::~PeptideDeriverMarkdownStreamOutputter()= default;
 
 
 
@@ -73,9 +73,9 @@ void PeptideDeriverMarkdownStreamOutputter::clear_buffers() {
 	header_.str("");
 	best_linear_peptides_.str("");
 
-	for ( core::Size method = 0; method < NUM_CYCLIZATION_METHODS; ++method ) {
-		cyc_report_info_set_[method]->best_cyclic_peptides_.str("");
-		cyc_report_info_set_[method]->cyclic_peptides_.str("");
+	for ( auto & method : cyc_report_info_set_ ) {
+		method->best_cyclic_peptides_.str("");
+		method->cyclic_peptides_.str("");
 	}
 	all_peptides_.str("");
 	footer_.str("");
@@ -120,13 +120,13 @@ void PeptideDeriverMarkdownStreamOutputter::end_structure() {
 
 	( * out_p_ ) << header_.str() << std::endl << std::endl
 		<< best_linear_peptides_.str() << std::endl << std::endl;
-	for ( core::Size method = 0; method < NUM_CYCLIZATION_METHODS; ++method ) {
-		( * out_p_ ) << cyc_report_info_set_[method]->best_cyclic_peptides_.str() << std::endl;
+	for ( auto & method : cyc_report_info_set_ ) {
+		( * out_p_ ) << method->best_cyclic_peptides_.str() << std::endl;
 	}
 	( * out_p_ ) << std::endl << all_peptides_.str() << std::endl;
 
-	for ( core::Size method = 0; method < NUM_CYCLIZATION_METHODS; ++method ) {
-		( * out_p_ ) << cyc_report_info_set_[method]->cyclic_peptides_.str() << std::endl;
+	for ( auto & method : cyc_report_info_set_ ) {
+		( * out_p_ ) << method->cyclic_peptides_.str() << std::endl;
 	}
 	( * out_p_ ) << std::endl << footer_.str() << std::endl;
 
@@ -147,8 +147,8 @@ void PeptideDeriverMarkdownStreamOutputter::begin_receptor_partner_pair(char con
 
 void PeptideDeriverMarkdownStreamOutputter::peptide_length(core::Size const pep_length) {
 	current_pep_length_ = pep_length;
-	for ( core::Size method = 0; method < NUM_CYCLIZATION_METHODS; ++method ) {
-		cyc_report_info_set_[method]->cyclic_peptide_encountered_for_current_pep_length = false;
+	for ( auto & method : cyc_report_info_set_ ) {
+		method->cyclic_peptide_encountered_for_current_pep_length = false;
 	}
 	all_peptides_ << prefix_ << ( boost::format("### Receptor= %1% Partner= %2% Peptide_length= %3%")
 		% current_receptor_chain_letter_

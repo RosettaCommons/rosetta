@@ -68,7 +68,7 @@ DunbrackRotamerLibrarySpecification::DunbrackRotamerLibrarySpecification( std::i
 	aa( aa_from_name( tag ) );
 }
 
-DunbrackRotamerLibrarySpecification::~DunbrackRotamerLibrarySpecification() {}
+DunbrackRotamerLibrarySpecification::~DunbrackRotamerLibrarySpecification() = default;
 
 void
 DunbrackRotamerLibrarySpecification::aa( AA aa_setting ) {

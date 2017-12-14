@@ -41,8 +41,7 @@ PoseArchitect::PoseArchitect( std::string const & id_value ):
 	add_padding_( true )
 {}
 
-PoseArchitect::~PoseArchitect()
-{}
+PoseArchitect::~PoseArchitect() = default;
 
 DeNovoArchitectOP
 PoseArchitect::clone() const
@@ -107,7 +106,7 @@ PoseArchitect::design( core::pose::Pose const & pose, core::Real & ) const
 	}
 
 	// add template segments
-	for ( SegmentNameList::const_iterator s=sd->segments_begin(); s!=sd->segments_end(); ++s ) {
+	for ( auto s=sd->segments_begin(); s!=sd->segments_end(); ++s ) {
 		core::Size const start = sd->segment( *s ).start();
 		core::Size const stop = sd->segment( *s ).stop();
 		sd->set_template_pose( *s, pose, start, stop );

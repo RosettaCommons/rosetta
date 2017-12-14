@@ -82,7 +82,7 @@ namespace frag_picker {
 namespace scores {
 
 /// @details Auto-generated virtual destructor
-FragmentScoreManager::~FragmentScoreManager() {}
+FragmentScoreManager::~FragmentScoreManager() = default;
 
 /// @brief creates an empty score map
 /// @details this is the recommended way to create FragmentScoreMap objects since FragmentScoreManager knows exactly
@@ -148,7 +148,7 @@ void FragmentScoreManager::do_caching(VallChunkOP chunk) {
 		if ( ( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ) ) continue;
 		CachingScoringMethodOP score =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
-		if ( score != 0 ) {
+		if ( score != nullptr ) {
 			score->do_caching(chunk);
 		}
 	}
@@ -159,7 +159,7 @@ void FragmentScoreManager::clean_up() {
 	for ( core::Size iScore = 1; iScore <= scores_.size(); ++iScore ) {
 		CachingScoringMethodOP score =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
-		if ( score != 0 ) {
+		if ( score != nullptr ) {
 			score->clean_up();
 		}
 	}
@@ -279,7 +279,7 @@ bool FragmentScoreManager::score_fragment_from_cache(
 		}
 		CachingScoringMethodOP s =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
-		if ( s != 0 ) {
+		if ( s != nullptr ) {
 			if ( !s->cached_score(candidate, empty_map) ) {
 				return false;
 			}
@@ -354,7 +354,7 @@ void FragmentScoreManager::create_scoring_method(
 	std::string const & score_name, core::Size priority, core::Real weight,
 	core::Real lowest, bool use_lowest, FragmentPickerOP picker, std::string config_line) {
 
-	std::map<std::string, MakeFragmentScoringMethodOP>::iterator m =
+	auto m =
 		registered_makers_.find(score_name);
 	if ( m == registered_makers_.end() ) {
 		utility_exit_with_message("[ERROR]: unknown score type " + score_name

@@ -70,9 +70,7 @@ RNA_ChemicalMappingEnergy::RNA_ChemicalMappingEnergy():
 {
 }
 
-RNA_ChemicalMappingEnergy::~RNA_ChemicalMappingEnergy()
-{
-}
+RNA_ChemicalMappingEnergy::~RNA_ChemicalMappingEnergy() = default;
 
 /// clone
 methods::EnergyMethodOP

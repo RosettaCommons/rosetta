@@ -125,7 +125,7 @@ private:
 	void deallocate_buffers();
 	void allocate_buffers( core::Size );
 	void setup_exchange_schedule( Size nlevels );
-	void shuffle_temperatures( double *energies );
+	void shuffle_temperatures( const double *energies );
 
 private:
 	static bool options_registered_;

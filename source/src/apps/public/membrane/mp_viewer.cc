@@ -61,11 +61,11 @@ public:
 		Mover() {}
 
 	/// @brief Get Mover Name
-	std::string get_name() const { return "ViewMembraneProteinMover"; }
+	std::string get_name() const override { return "ViewMembraneProteinMover"; }
 
 	/// @brief Setup the Membrane Framework. Flags should take care of the rest
 	/// of visualization
-	void apply( Pose & pose ) {
+	void apply( Pose & pose ) override {
 
 		using namespace basic::options;
 		using namespace protocols::membrane;
@@ -89,8 +89,8 @@ public:
 };
 
 // Hook Mover into Rosetta
-typedef utility::pointer::shared_ptr< ViewMembraneProteinMover > ViewMembraneProteinMoverOP;
-typedef utility::pointer::shared_ptr< ViewMembraneProteinMover const > ViewMembraneProteinMoverCOP;
+using ViewMembraneProteinMoverOP = utility::pointer::shared_ptr<ViewMembraneProteinMover>;
+using ViewMembraneProteinMoverCOP = utility::pointer::shared_ptr<const ViewMembraneProteinMover>;
 
 /// @brief Main method
 int

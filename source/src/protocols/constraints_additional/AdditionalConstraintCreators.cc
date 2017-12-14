@@ -28,7 +28,7 @@ namespace protocols {
 namespace constraints_additional {
 
 
-BindingSiteConstraintCreator::BindingSiteConstraintCreator() {}
+BindingSiteConstraintCreator::BindingSiteConstraintCreator() = default;
 BindingSiteConstraintCreator::~BindingSiteConstraintCreator() = default;
 
 core::scoring::constraints::ConstraintOP
@@ -41,7 +41,7 @@ std::string BindingSiteConstraintCreator::keyname() const
 	return "BindingSite";
 }
 
-SequenceCoupling1BDConstraintCreator::SequenceCoupling1BDConstraintCreator() {}
+SequenceCoupling1BDConstraintCreator::SequenceCoupling1BDConstraintCreator() = default;
 SequenceCoupling1BDConstraintCreator::~SequenceCoupling1BDConstraintCreator() = default;
 
 core::scoring::constraints::ConstraintOP
@@ -55,7 +55,7 @@ SequenceCoupling1BDConstraintCreator::keyname() const
 {
 	return "SequenceCoupling1BD";
 }
-SequenceCouplingConstraintCreator::SequenceCouplingConstraintCreator() {}
+SequenceCouplingConstraintCreator::SequenceCouplingConstraintCreator() = default;
 SequenceCouplingConstraintCreator::~SequenceCouplingConstraintCreator() = default;
 
 core::scoring::constraints::ConstraintOP
@@ -70,7 +70,7 @@ SequenceCouplingConstraintCreator::keyname() const
 	return "SequenceCoupling";
 }
 
-NamedAtomPairConstraintCreator::NamedAtomPairConstraintCreator() {}
+NamedAtomPairConstraintCreator::NamedAtomPairConstraintCreator() = default;
 NamedAtomPairConstraintCreator::~NamedAtomPairConstraintCreator() = default;
 
 core::scoring::constraints::ConstraintOP

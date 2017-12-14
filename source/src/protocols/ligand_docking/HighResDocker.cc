@@ -117,8 +117,8 @@ HighResDocker::HighResDocker(
 	Size repack_every_Nth,
 	core::scoring::ScoreFunctionOP score_fxn,
 	MoveMapBuilderOP movemap_builder,
-	std::string resfile
-): num_cycles_(num_cycles), repack_every_Nth_(repack_every_Nth), score_fxn_(std::move(score_fxn)), movemap_builder_(std::move(movemap_builder)), resfile_(std::move(resfile)){}
+	std::string const & resfile
+): num_cycles_(num_cycles), repack_every_Nth_(repack_every_Nth), score_fxn_(std::move(score_fxn)), movemap_builder_(std::move(movemap_builder)), resfile_( resfile ){}
 
 HighResDocker::HighResDocker(HighResDocker const & that):
 	//utility::pointer::ReferenceCount(),

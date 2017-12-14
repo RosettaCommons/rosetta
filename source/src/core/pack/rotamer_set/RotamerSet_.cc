@@ -87,12 +87,12 @@ RotamerSet_::RotamerSet_()
 :
 	n_residue_types_( 0 ),
 	n_residue_groups_( 0 ),
-	cached_tries_( scoring::methods::n_energy_methods, 0 ),
+	cached_tries_( scoring::methods::n_energy_methods, nullptr ),
 	id_for_current_rotamer_( 0 ),
 	rotamer_offsets_require_update_( false )
 {}
 
-RotamerSet_::~RotamerSet_() {}
+RotamerSet_::~RotamerSet_() = default;
 
 void
 RotamerSet_::build_rotamers(
@@ -105,7 +105,7 @@ RotamerSet_::build_rotamers(
 {
 	using namespace chemical;
 
-	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
+	for ( auto
 			allowed_iter = the_task.residue_task( resid() ).allowed_residue_types_begin(),
 			allowed_end = the_task.residue_task( resid() ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
@@ -122,7 +122,7 @@ RotamerSet_::build_rotamers(
 		push_back_rotamer( rot );
 	}
 
-	for ( RotSetOperationListIterator
+	for ( auto
 			rotsetop_iter = the_task.residue_task( resid() ).rotamer_set_operation_begin(),
 			rotsetop_end = the_task.residue_task( resid() ).rotamer_set_operation_end();
 			rotsetop_iter != rotsetop_end; ++rotsetop_iter ) {
@@ -696,7 +696,7 @@ RotamerSet_::compute_one_body_energies(
 	// long-range energy interactions with background
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = sf.long_range_energies_begin(),
 			lr_end  = sf.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
@@ -776,7 +776,7 @@ RotamerSet_::compute_one_and_two_body_energies(
 			EnergyMap emap2b;
 			sf.eval_ci_2b( neighbor, *rotamers_[ ii ], pose, emap2b );
 			sf.eval_cd_2b( neighbor, *rotamers_[ ii ], pose, emap2b );
-			core::PackerEnergy neighbor_energy = static_cast< core::PackerEnergy > (sf.weights().dot( emap2b ));
+			auto neighbor_energy = static_cast< core::PackerEnergy > (sf.weights().dot( emap2b ));
 			one_body_energies[ ii ] += neighbor_energy;
 			two_body_energies[ ii ][ jj ] = neighbor_energy;
 		}
@@ -785,7 +785,7 @@ RotamerSet_::compute_one_and_two_body_energies(
 	// long-range energy interactions with background
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = sf.long_range_energies_begin(),
 			lr_end  = sf.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
@@ -900,7 +900,7 @@ RotamerSet_::compute_one_body_energy_maps(
 	sf.evaluate_rotamer_intrares_energy_maps( *this, pose, energies );
 
 	// Long Range Interactions
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = sf.long_range_energies_begin(),
 			lr_end  = sf.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
@@ -994,7 +994,7 @@ void
 RotamerSet_::drop_rotamer( Size rot_id )
 {
 	debug_assert( rot_id <= rotamers_.size() );
-	utility::vector1< conformation::ResidueOP > copy_rotamers( rotamers_.size() - 1, 0 );
+	utility::vector1< conformation::ResidueOP > copy_rotamers( rotamers_.size() - 1, nullptr );
 	Size count_copy( 1 );
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
 		if ( ii != rot_id ) {
@@ -1029,7 +1029,7 @@ RotamerSet_::drop_rotamers( utility::vector1< bool > const & rotamers_to_delete 
 			if ( ii == id_for_current_rotamer_ ) {
 				current_rotamer_copy_ = rotamers_[ ii ];
 			}
-			rotamers_[ ii ] = 0;
+			rotamers_[ ii ] = nullptr;
 			++n_dropped;
 		}
 	}
@@ -1045,10 +1045,10 @@ RotamerSet_::drop_rotamers( utility::vector1< bool > const & rotamers_to_delete 
 		id_for_current_rotamer_ = 1;
 		current_rotamer_copy_.reset();
 	} else {
-		utility::vector1< conformation::ResidueOP > new_rotamers( rotamers_to_delete.size() - n_dropped, 0 );
+		utility::vector1< conformation::ResidueOP > new_rotamers( rotamers_to_delete.size() - n_dropped, nullptr );
 		Size count_new = 1;
 		for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
-			if ( rotamers_[ ii ] != 0 ) {
+			if ( rotamers_[ ii ] != nullptr ) {
 				new_rotamers[ count_new ] = rotamers_[ ii ];
 				if ( ii == id_for_current_rotamer_ ) {
 					id_for_current_rotamer_ = count_new;
@@ -1250,7 +1250,7 @@ RotamerSet_::filter_water_rotamers(
 	utility::vector1< conformation::ResidueOP > const & new_rotamers,
 	utility::vector1< conformation::ResidueOP > & filtered_rotamers
 ){
-	WaterPackingInfo const & water_info
+	auto const & water_info
 		( static_cast< WaterPackingInfo const & >(
 		pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
 
@@ -1341,7 +1341,7 @@ RotamerSet_::build_dependent_rotamers(
 {
 	using namespace chemical;
 	conformation::Residue const & existing_residue( pose.residue( resid() ) );
-	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
+	for ( auto
 			allowed_iter = the_task.residue_task( resid() ).allowed_residue_types_begin(),
 			allowed_end = the_task.residue_task( resid() ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
@@ -1351,7 +1351,7 @@ RotamerSet_::build_dependent_rotamers(
 
 	// hydrate/SPaDES protocol
 	if ( basic::options::option[ basic::options::OptionKeys::score::water_hybrid_sf ] ) {
-		WaterPackingInfo const & water_info
+		auto const & water_info
 			( static_cast< WaterPackingInfo const & >(
 			pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
 
@@ -1645,7 +1645,7 @@ sort_new_rotamers_into_rotset_vector(
 		}
 	}
 
-	ResidueType const * last_rt( 0 );
+	ResidueType const * last_rt( nullptr );
 	for ( Size ii = 1; ii <= rotamers.size(); ++ii ) {
 
 		if ( last_rt != & rotamers[ ii ]->type() ) {

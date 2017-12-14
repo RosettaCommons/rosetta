@@ -76,7 +76,7 @@ SnugDockProtocol & SnugDockProtocol::operator=( SnugDockProtocol const & rhs ) {
 }
 
 //destructor
-SnugDockProtocol::~SnugDockProtocol() {}
+SnugDockProtocol::~SnugDockProtocol() = default;
 
 /// @brief Each derived class must specify its name.
 std::string SnugDockProtocol::get_name() const {

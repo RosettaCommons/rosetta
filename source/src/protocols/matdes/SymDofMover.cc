@@ -61,8 +61,8 @@ using namespace core;
 using namespace utility;
 using core::pose::Pose;
 
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
 
 // -------------  Mover Creator -------------
 // XRW TEMP std::string
@@ -470,7 +470,7 @@ SymDofMover::apply(Pose & pose) {
 		if ( symname[0]=='P' && symname[2]=='_' && symname[5]=='.' ) {
 			TR << "try to setup P6 sym" << std::endl;
 			using namespace core::conformation::symmetry;
-			SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
+			auto const & symm_conf ( dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 			std::map< Size, SymDof > dofs ( symm_info->get_dofs() );
 			std::map< Size, SymDof >::iterator it;

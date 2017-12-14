@@ -52,7 +52,7 @@ ClassicMatchAlgorithm::ClassicMatchAlgorithm( Size geom_cst_id ) :
 	completed_first_round1_hit_building_( false )
 {}
 
-ClassicMatchAlgorithm::~ClassicMatchAlgorithm() {}
+ClassicMatchAlgorithm::~ClassicMatchAlgorithm() = default;
 
 DownstreamAlgorithmOP
 ClassicMatchAlgorithm::clone() const {
@@ -81,20 +81,14 @@ ClassicMatchAlgorithm::build_hits_at_all_positions(
 		/// enough if the strategy is to build round1 hits twice.
 		std::list< DownstreamBuilderOP > const & dsbuilders(
 			matcher.downstream_builders( geom_cst_id() ));
-		for ( std::list< DownstreamBuilderOP >::const_iterator
-				iter = dsbuilders.begin(),
-				iter_end = dsbuilders.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->set_occupied_space_hash( 0 );
+		for ( auto const & dsbuilder : dsbuilders ) {
+			dsbuilder->set_occupied_space_hash( nullptr );
 		}
 	} else {
 		std::list< DownstreamBuilderOP > const & dsbuilders(
 			matcher.downstream_builders( geom_cst_id() ));
-		for ( std::list< DownstreamBuilderOP >::const_iterator
-				iter = dsbuilders.begin(),
-				iter_end = dsbuilders.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->set_occupied_space_hash( matcher.occ_space_hash() );
+		for ( auto const & dsbuilder : dsbuilders ) {
+			dsbuilder->set_occupied_space_hash( matcher.occ_space_hash() );
 		}
 	}
 
@@ -166,11 +160,8 @@ ClassicMatchAlgorithm::respond_to_primary_hitlist_change(
 		/// The first geometric constraint inserts hits into the occupied space grid;
 		/// the later geometric constraints merely mark voxels already present in the
 		/// occupied space grid with 1.
-		for ( Matcher::HitListConstIterator
-				iter = matcher.hits( geom_cst_id() ).begin(),
-				iter_end = matcher.hits( geom_cst_id() ).end();
-				iter != iter_end; ++iter ) {
-			occspace->insert_hit_geometry( iter->second() );
+		for ( auto const & iter : matcher.hits( geom_cst_id() ) ) {
+			occspace->insert_hit_geometry( iter.second() );
 		}
 
 	} else {
@@ -184,11 +175,8 @@ ClassicMatchAlgorithm::respond_to_primary_hitlist_change(
 
 		/// Prepare to clear the cobwebs.  Note which voxels in the occ_space_hash_
 		/// could lead to matches, and which voxels could not possibly lead to matches.
-		for ( Matcher::HitListConstIterator
-				iter = matcher.hits( geom_cst_id() ).begin(),
-				iter_end = matcher.hits( geom_cst_id() ).end();
-				iter != iter_end; ++iter ) {
-			occspace->note_hit_geometry( iter->second() );
+		for ( auto const & iter : matcher.hits( geom_cst_id() ) ) {
+			occspace->note_hit_geometry( iter.second() );
 		}
 
 		occspace->drop_unsatisfied_voxels();
@@ -212,13 +200,13 @@ ClassicMatchAlgorithm::respond_to_peripheral_hitlist_change( Matcher & matcher )
 		return;
 	}
 
-	Matcher::HitListIterator iter = matcher.hit_list_begin(   geom_cst_id() );
-	Matcher::HitListIterator iter_end = matcher.hit_list_end( geom_cst_id() );
+	auto iter = matcher.hit_list_begin(   geom_cst_id() );
+	auto iter_end = matcher.hit_list_end( geom_cst_id() );
 
 	Size drop_count( 0 );
 
 	while ( iter != iter_end  ) {
-		Matcher::HitListIterator iter_next = iter;
+		auto iter_next = iter;
 		++iter_next;
 		if ( ! occspace->previous_round_geometry_still_matchable( iter->second() ) ) {
 			matcher.erase_hit( *this, geom_cst_id(), iter );

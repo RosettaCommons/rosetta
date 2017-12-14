@@ -260,41 +260,41 @@ create_records_from_sfr(
 		R = RecordCollection::record_from_record_type( HELIX );
 		//type is utility::vector1< HELIXInformation >
 		auto const helixvec(sfr.HELIXInformations());
-		for ( auto it(helixvec.begin()); it != helixvec.end(); ++it ) {
+		for ( auto const & it : helixvec ) {
 			R["type"].value = "HELIX ";
-			R["serNum"].value = pad_left(it->helixID, 3);
-			R["helixID"].value = it->helix_name;
-			R["initResName"].value = it->name3_1;
-			R["initChainID"].value = std::string( 1, it->chainID1 );
-			R["initSeqNum"].value = pad_left( it->seqNum1, 4 );
-			R["initICode"].value = std::string( 1, it->icode1 );
-			R["endResName"].value = it->name3_2;
-			R["endChainID"].value = std::string( 1, it->chainID2 );
-			R["endSeqNum"].value = pad_left( it->seqNum2, 4 );
-			R["endICode"].value = std::string( 1, it->icode2 );
-			R["helixClass"].value = pad_left(it->helixClass, 2 );
-			R["comment"].value = it->comment;
-			R["length"].value = pad_left( it->length, 5 );
+			R["serNum"].value = pad_left(it.helixID, 3);
+			R["helixID"].value = it.helix_name;
+			R["initResName"].value = it.name3_1;
+			R["initChainID"].value = std::string( 1, it.chainID1 );
+			R["initSeqNum"].value = pad_left( it.seqNum1, 4 );
+			R["initICode"].value = std::string( 1, it.icode1 );
+			R["endResName"].value = it.name3_2;
+			R["endChainID"].value = std::string( 1, it.chainID2 );
+			R["endSeqNum"].value = pad_left( it.seqNum2, 4 );
+			R["endICode"].value = std::string( 1, it.icode2 );
+			R["helixClass"].value = pad_left(it.helixClass, 2 );
+			R["comment"].value = it.comment;
+			R["length"].value = pad_left( it.length, 5 );
 			VR.push_back(R);
 		}
 
 		R = RecordCollection::record_from_record_type( SHEET );
 		//type is utility::vector1< SHEETInformation >
 		auto const sheetvec(sfr.SHEETInformations());
-		for ( auto it(sheetvec.begin()); it != sheetvec.end(); ++it ) {
+		for ( auto const & it : sheetvec ) {
 			R["type"].value = "SHEET ";
-			R["strand"].value = pad_left(it->strand_num, 3);
-			R["sheetID"].value = it->sheetID;
-			R["numStrands"].value = pad_left( it->num_strands, 2);
-			R["initResName"].value = it->name3_1;
-			R["initChainID"].value = std::string( 1, it->chainID1 );
-			R["initSeqNum"].value = pad_left( it->seqNum1, 4 );
-			R["initICode"].value = std::string( 1, it->icode1 );
-			R["endResName"].value = it->name3_2;
-			R["endChainID"].value = std::string( 1, it->chainID2 );
-			R["endSeqNum"].value = pad_left( it->seqNum2, 4 );
-			R["endICode"].value = std::string( 1, it->icode2 );
-			R["sense"].value = pad_left(it->strandClass, 2);
+			R["strand"].value = pad_left(it.strand_num, 3);
+			R["sheetID"].value = it.sheetID;
+			R["numStrands"].value = pad_left( it.num_strands, 2);
+			R["initResName"].value = it.name3_1;
+			R["initChainID"].value = std::string( 1, it.chainID1 );
+			R["initSeqNum"].value = pad_left( it.seqNum1, 4 );
+			R["initICode"].value = std::string( 1, it.icode1 );
+			R["endResName"].value = it.name3_2;
+			R["endChainID"].value = std::string( 1, it.chainID2 );
+			R["endSeqNum"].value = pad_left( it.seqNum2, 4 );
+			R["endICode"].value = std::string( 1, it.icode2 );
+			R["sense"].value = pad_left(it.strandClass, 2);
 			//There are other fields, but we have no values for them, let's try skipping them wholesale and see what happens
 			VR.push_back(R);
 		}
@@ -476,8 +476,8 @@ create_records_from_sfr(
 		out << "##Begin comments##" << std::endl;
 		using namespace std;
 		map< string, string > const comments = sfr.pdb_comments();
-		for ( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
-			out << i->first<<" "<<i->second << std::endl;
+		for ( auto const & comment : comments ) {
+			out << comment.first<<" "<<comment.second << std::endl;
 		}
 		out << "##End comments##" << std::endl;
 

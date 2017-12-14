@@ -338,7 +338,7 @@ void Matcher::add_external_geometry_samples_for_constraint(
 	}
 
 	runtime_assert( dynamic_cast< downstream::ClassicMatchAlgorithm * > ( & build_set.algorithm() ) );
-	downstream::ClassicMatchAlgorithm & algorithm( static_cast< downstream::ClassicMatchAlgorithm & > (build_set.algorithm() ) );
+	auto & algorithm( static_cast< downstream::ClassicMatchAlgorithm & > (build_set.algorithm() ) );
 
 	algorithm.add_external_geom_sampler(
 		exgeom_list,
@@ -390,7 +390,7 @@ void Matcher::add_secondary_upstream_match_geometry_for_constraint(
 	}
 
 	runtime_assert( dynamic_cast< downstream::SecondaryMatcherToUpstreamResidue * > ( & build_set.algorithm() ) );
-	downstream::SecondaryMatcherToUpstreamResidue & algorithm( static_cast< downstream::SecondaryMatcherToUpstreamResidue & > (build_set.algorithm() ) );
+	auto & algorithm( static_cast< downstream::SecondaryMatcherToUpstreamResidue & > (build_set.algorithm() ) );
 
 	algorithm.add_target_restype( target_restype );
 
@@ -460,7 +460,7 @@ Matcher::add_secondary_downstream_match_geometry_for_constraint(
 	}
 
 	runtime_assert( dynamic_cast< downstream::SecondaryMatcherToDownstreamResidue * > ( & build_set.algorithm() ) );
-	downstream::SecondaryMatcherToDownstreamResidue & algorithm( static_cast< downstream::SecondaryMatcherToDownstreamResidue & > (build_set.algorithm() ) );
+	auto & algorithm( static_cast< downstream::SecondaryMatcherToDownstreamResidue & > (build_set.algorithm() ) );
 
 	/*
 	GeometrySecMatchRPEOP geom_evaluator = new GeometrySecMatchRPE( *mcfi, target_atids, candidate_atids );
@@ -503,7 +503,7 @@ void Matcher::set_hash_euclidean_bin_width( Real width )
 void Matcher::set_hash_euler_bin_width( Real width )
 {
 	//std::fill( euler_bin_widths_.begin(), euler_bin_widths_.end(), width );
-	core::Size ndiv = static_cast< Size > ( 180 / width );
+	auto ndiv = static_cast< Size > ( 180 / width );
 	if ( std::abs( ndiv * width - 180.0 ) > 1e-6 ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "Please use a eulerian bin width that evenly divides 180, e.g. 10, 9, or 4.5" );
 	}
@@ -522,7 +522,7 @@ void Matcher::set_hash_euler_bin_widths( Vector widths )
 	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		core::Real width = widths( ii );
 		core::Real span = ii == 3 ? 180 : 360;
-		core::Size ndiv = static_cast< Size > ( span / width );
+		auto ndiv = static_cast< Size > ( span / width );
 		if ( std::abs( ndiv * width - span ) > 1e-6 ) {
 			err_message << "Please use a eulerian bin width that evenly divides " << span << "; ";
 			err_message << " width for euler angle " << ii << " set to " << width << "\n";
@@ -923,28 +923,28 @@ void Matcher::initialize_from_file(
 										case 2 : {
 											switch ( dun_rotlib->nbb() ) {
 											case 1 : {
-												SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * sr2 =
+												auto const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
 												break;
 											}
 											case 2 : {
-												SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * sr2 =
+												auto const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
 												break;
 											}
 											case 3 : {
-												SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * sr2 =
+												auto const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
 												break;
 											}
 											case 4 : {
-												SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * sr2 =
+												auto const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
@@ -960,28 +960,28 @@ void Matcher::initialize_from_file(
 										case 3 : {
 											switch ( dun_rotlib->nbb() ) {
 											case 1 : {
-												SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * sr2 =
+												auto const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
 												break;
 											}
 											case 2 : {
-												SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * sr2 =
+												auto const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
 												break;
 											}
 											case 3 : {
-												SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * sr2 =
+												auto const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
 												break;
 											}
 											case 4 : {
-												SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * sr2 =
+												auto const * sr2 =
 													dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR > const * >
 													( dun_rotlib.get() );
 												failed_cast = sr2 == nullptr;
@@ -1193,8 +1193,8 @@ void Matcher::initialize_from_file(
 						} else {
 							// ugh, exgs_list is a vector of pointers, but it needs to be a vector of exgs. Let's populate a new vector here
 							utility::vector1< ExternalGeomSampler > exgs_list_to_pass;
-							for ( auto exgs_ptr = exgs_list.cbegin(); exgs_ptr != exgs_list.cend(); ++exgs_ptr ) {
-								exgs_list_to_pass.push_back( *(*exgs_ptr) );
+							for ( const auto & exgs_ptr : exgs_list ) {
+								exgs_list_to_pass.push_back( *exgs_ptr );
 							}
 
 							add_external_geometry_samples_for_constraint(
@@ -2377,7 +2377,7 @@ Matcher::subsample_hits(
 					// pick a random number between 0 and len-1 and increment through the list of hits
 					// that many times to pick a single random hit.
 					auto hit_iter = matches[ ii ].begin();
-					Size nsteps = static_cast< Size > ( numeric::random::rg().uniform() * len );
+					auto nsteps = static_cast< Size > ( numeric::random::rg().uniform() * len );
 					for ( Size jj = 1; jj <= nsteps; ++jj ) ++hit_iter;
 					subsamples[ ii ].push_back( * hit_iter );
 				}
@@ -2397,7 +2397,7 @@ Matcher::subsample_hits(
 						// pick a random number between 0 and len-1 and increment through the list of hits
 						// that many times to pick a single random hit.
 						auto hit_iter = builditer->second.begin();
-						Size nsteps = static_cast< Size > ( numeric::random::rg().uniform() * len );
+						auto nsteps = static_cast< Size > ( numeric::random::rg().uniform() * len );
 						for ( Size jj = 1; jj <= nsteps; ++jj ) ++hit_iter;
 						subsamples[ ii ].push_back( * hit_iter );
 					}
@@ -2660,9 +2660,9 @@ Matcher::process_matches_where_one_geomcst_defines_downstream_location(
 ) const
 {
 	typedef utility::fixedsizearray1< Size, 2 > Size2;
-	typedef utility::OrderedTuple< Size2 > Size2Tuple;
+	using Size2Tuple = utility::OrderedTuple<Size2>;
 	typedef std::map< Size2Tuple, Hit const * > UpstreamRotamerRepresentativeMap;
-	typedef UpstreamRotamerRepresentativeMap::const_iterator UpRotRepMapConstIterator;
+	using UpRotRepMapConstIterator = UpstreamRotamerRepresentativeMap::const_iterator;
 
 	utility::vector1< UpstreamRotamerRepresentativeMap > upstream_rotamer_representatives( n_geometric_constraints_ );
 

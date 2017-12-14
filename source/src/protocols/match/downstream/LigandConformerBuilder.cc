@@ -111,7 +111,7 @@ LigandConformerBuilder::LigandConformerBuilder( LigandConformerBuilder const & o
 //}
 
 
-LigandConformerBuilder::~LigandConformerBuilder() {}
+LigandConformerBuilder::~LigandConformerBuilder() = default;
 
 DownstreamBuilderOP
 LigandConformerBuilder::clone() const
@@ -520,7 +520,7 @@ LigandConformerBuilder::initialize_upstream_residue(
 void
 LigandConformerBuilder::ignore_h_collisions( bool setting )
 {
-	if ( downstream_restype_ != 0 ) {
+	if ( downstream_restype_ != nullptr ) {
 		utility_exit_with_message( "ERROR: ignore_h_collisions_ must be set before the downstream restype is initialized" );
 	} else {
 		ignore_h_collisions_ = setting;
@@ -646,7 +646,7 @@ void
 LigandConformerBuilder::initialize_upstream_nonbonded_min_separation_d2()
 {
 	runtime_assert( bbgrid_set() );
-	runtime_assert( lig_conformers_[ 1 ] != 0 );
+	runtime_assert( lig_conformers_[ 1 ] != nullptr );
 
 	for ( Size ii = 1; ii <= lig_conformers_[ 1 ]->n_collision_check_atoms(); ++ii ) {
 		Size ii_restype_id = lig_conformers_[ 1 ]->collision_check_id_2_restype_id( ii );
@@ -679,12 +679,12 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 	SingleResidueRotamerLibraryFactory const & rotlib( *SingleResidueRotamerLibraryFactory::get_instance() );
 	SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get( residue.type() ) );
 
-	if ( res_rotlib != 0 ) {
+	if ( res_rotlib != nullptr ) {
 		SingleLigandRotamerLibraryCOP lig_rotlib( utility::pointer::dynamic_pointer_cast< SingleLigandRotamerLibrary const > ( res_rotlib ));
 
 		// RM: Dependance on SingleLigandRotamerLibrary here is poor - ideally this should be generalized to work with
 		// any type of SingleResidueRotamerLibrary
-		if ( lig_rotlib == 0 ) {
+		if ( lig_rotlib == nullptr ) {
 			utility_exit_with_message( "Failed to retrieve a ligand rotamer library for "
 				+ residue.name() + ". Did you mean to remove the -match::enumerate_ligand_rotamers flag from your command line?");
 		}

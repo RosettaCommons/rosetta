@@ -50,7 +50,7 @@ public:
 	/// @brief Default constructor
 	/// <region> describes the contiguous stretch of residues.
 	/// <movable> describes the modifiable degrees of freedom in the system.
-	Chunk(const RegionOP& region, const MoveMapOP& movable);
+	Chunk( RegionOP region, MoveMapOP movable);
 
 	/// @brief Copy constructor
 	Chunk(const Chunk& other);

@@ -521,7 +521,7 @@ void FloppyTailMover::low_res( core::pose::Pose & pose ) {
 	///////////////////////////////////for loop///////////////////////////////////////////////////
 	protocols::moves::PDBDumpMover cen_out("cen_cycle");
 	core::Size const perturb_applies = option[ FloppyTail::perturb_cycles ].value(); //default 5
-	core::Size shear_on_cyc(core::Size(core::Real(perturb_applies) * option[ FloppyTail::shear_on ]));
+	auto shear_on_cyc(core::Size(core::Real(perturb_applies) * option[ FloppyTail::shear_on ]));
 	if ( shear_on_cyc == 0 ) shear_on_cyc = 1; //0 should mean shear on immediately, but the if below never sees 0.
 	TR << "shear on at " << shear_on_cyc << std::endl;
 	TR << "   Current     Low    total cycles =" << perturb_applies << std::endl;
@@ -667,7 +667,7 @@ void FloppyTailMover::high_res( core::pose::Pose & pose ){
 	core::Size const refine_applies = option[ FloppyTail::refine_cycles ].value(); //default 5
 	core::Size const repack_cycles = option[ FloppyTail::refine_repack_cycles ].value();
 	core::Size const min_cycles = repack_cycles/2;
-	core::Size const switch_movemaps(core::Size(core::Real(refine_applies) * option[ FloppyTail::short_tail::short_tail_off ]));
+	auto const switch_movemaps(core::Size(core::Real(refine_applies) * option[ FloppyTail::short_tail::short_tail_off ]));
 	TR << "   Current     Low    total cycles =" << refine_applies << std::endl;
 	for ( core::Size i(1); i <= refine_applies; ++i ) {
 		if ( i == switch_movemaps ) {

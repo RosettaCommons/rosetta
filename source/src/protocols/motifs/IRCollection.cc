@@ -48,7 +48,7 @@ namespace motifs {
 
 static basic::Tracer irt( "protocols.motifs.IRCollection", basic::t_info );
 
-IRCollection::IRCollection() {}
+IRCollection::IRCollection() = default;
 
 IRCollection::IRCollection( core::pose::Pose & pose, MotifLibrary & motifs, utility::vector1< core::Size > const & build_sites )
 {

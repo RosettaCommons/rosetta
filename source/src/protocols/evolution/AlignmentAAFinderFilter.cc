@@ -62,7 +62,7 @@
 namespace protocols {
 namespace evolution {
 
-typedef utility::vector1< bool > bools;
+using bools = utility::vector1<bool>;
 using namespace std;
 using namespace core::scoring;
 
@@ -102,7 +102,7 @@ AlignmentAAFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 		utility_exit_with_message( "Outfile pathname not found" );;
 	}
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
-	protocols::moves::Movers_map::const_iterator mover_it( movers.find( relax_mover_name ) );
+	auto mover_it( movers.find( relax_mover_name ) );
 	if ( mover_it == movers.end() ) {
 		utility_exit_with_message( "Relax mover "+relax_mover_name+" not found" );
 	}
@@ -182,8 +182,8 @@ AlignmentAAFinder::apply( core::pose::Pose const & p ) const {
 
 	std::string pose_ss_aln;
 	core::Size ss_counter = 0;
-	for ( core::Size i = 0; i < target_sequence.length(); ++i ) {
-		if ( target_sequence[i] == '-' || ss_counter > pose_ss.size() ) pose_ss_aln += '-';
+	for ( char i : target_sequence ) {
+		if ( i == '-' || ss_counter > pose_ss.size() ) pose_ss_aln += '-';
 		else {
 			pose_ss_aln += pose_ss[ss_counter];
 			++ss_counter;
@@ -310,7 +310,7 @@ AlignmentAAFinder::apply( core::pose::Pose const & p ) const {
 	}
 	outfile.close();
 
-	return( 1 );
+	return( true );
 }
 
 void

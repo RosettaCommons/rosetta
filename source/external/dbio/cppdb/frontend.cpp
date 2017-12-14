@@ -31,7 +31,7 @@ namespace cppdb {
 		}
 		void done()
 		{
-			conn_ = 0;
+			conn_ = nullptr;
 		}
 		~throw_guard()
 		{
@@ -479,8 +479,7 @@ namespace cppdb {
 	struct session::data {};
 
 	session::session()
-	{
-	}
+	= default;
 	session::session(session const &other) :
 		conn_(other.conn_)
 	{
@@ -498,8 +497,7 @@ namespace cppdb {
 		once(f);
 	}
 	session::~session()
-	{
-	}
+	= default;
 	session::session(connection_info const &ci)
 	{
 		open(ci);

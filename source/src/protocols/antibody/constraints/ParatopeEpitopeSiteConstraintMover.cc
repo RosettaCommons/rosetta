@@ -29,6 +29,7 @@
 #include <protocols/antibody/util.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -67,7 +68,7 @@ ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover(AntibodyI
 	interface_distance_ = 10.0;
 }
 
-ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info, vector1<CDRNameEnum> paratope_cdrs, vector1<bool> epitope_residues):
+ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info, vector1<CDRNameEnum> paratope_cdrs, vector1<bool> const & epitope_residues):
 	protocols::moves::Mover(),
 	epitope_residues_(epitope_residues),
 	current_func_(/* NULL */)
@@ -77,7 +78,7 @@ ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover(AntibodyI
 	interface_distance_ = 10.0;
 }
 
-ParatopeEpitopeSiteConstraintMover::~ParatopeEpitopeSiteConstraintMover(){}
+ParatopeEpitopeSiteConstraintMover::~ParatopeEpitopeSiteConstraintMover()= default;
 
 ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover( ParatopeEpitopeSiteConstraintMover const & src ):
 	protocols::moves::Mover( src ),
@@ -99,7 +100,7 @@ ParatopeEpitopeSiteConstraintMover::set_defaults(){
 	paratope_cdrs_.resize(6, true);
 	paratope_residues_.clear();
 	epitope_residues_.clear();
-	current_func_ = NULL;
+	current_func_ = nullptr;
 	interface_distance_ = 10.0;
 }
 
@@ -218,7 +219,7 @@ ParatopeEpitopeSiteConstraintMover::paratope_residues_from_cdrs(core::pose::Pose
 	vector1<bool> residues(pose.size(), false);
 	for ( core::Size i = 1; i <= paratope_cdrs.size(); ++i ) {
 		if ( paratope_cdrs[i] ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+			auto cdr = static_cast<CDRNameEnum>(i);
 			core::Size cdr_start = ab_info_->get_CDR_start(cdr, pose);
 			core::Size cdr_end = ab_info_->get_CDR_end(cdr, pose);
 			for ( core::Size x = cdr_start; x <= cdr_end; ++x ) {

@@ -39,13 +39,13 @@ public:
 
 	SecStructMinimizeMover(
 		core::scoring::ScoreFunctionOP  score_fxn,
-		std::string  dihedral_pattern,
-		std::string  alpha_beta_pattern
+		std::string const & dihedral_pattern,
+		std::string const & alpha_beta_pattern
 	):
 		constrain_( false ),
 		score_fxn_(std::move( score_fxn )),
-		dihedral_pattern_(std::move( dihedral_pattern )),
-		alpha_beta_pattern_(std::move( alpha_beta_pattern ))
+		dihedral_pattern_( dihedral_pattern ),
+		alpha_beta_pattern_( alpha_beta_pattern )
 	{}
 
 	//destructor

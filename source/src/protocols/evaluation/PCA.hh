@@ -67,7 +67,7 @@ private:
 	void jacobi(double a[6][6],double d[],double v[6][6],int *nrot);
 	void calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R);
 	void rotate_vec(int natoms,rvec *x,matrix R);
-	void add_vec( int natoms, rvec *x, rvec transvec );
+	void add_vec( int natoms, rvec *x, rvec const transvec );
 	void oprod(const rvec a,const rvec b,rvec c);
 	CoordVector xref_;
 	CoordVector xav_;

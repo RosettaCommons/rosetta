@@ -28,7 +28,7 @@ WTEBiasEnergy::WTEBiasEnergy( core::Size stride, core::Real omega, core::Real ga
 	Parent( stride,omega,gamma)
 {}
 
-WTEBiasEnergy::WTEBiasEnergy() {}
+WTEBiasEnergy::WTEBiasEnergy() = default;
 
 
 Real WTEBiasEnergy::extract_collective_var( core::pose::Pose const& pose ) const {

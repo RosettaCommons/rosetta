@@ -48,8 +48,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 
+#include <utility>
 #include <utility/exit.hh>
-#include <time.h>
+#include <ctime>
 
 #include <string>
 
@@ -82,7 +83,7 @@ StepWiseWorkingParametersSetup::StepWiseWorkingParametersSetup( utility::vector1
 	utility::vector1< core::Size > const & input_res,
 	utility::vector1< core::Size > const & input_res2,
 	utility::vector1< core::Size > const & cutpoint_open,
-	Size const & user_specified_cutpoint_closed ):
+	Size const user_specified_cutpoint_closed ):
 	moving_res_( moving_res_list[1] ),
 	moving_res_list_( moving_res_list ),
 	cutpoint_open_( cutpoint_open ),
@@ -132,8 +133,7 @@ StepWiseWorkingParametersSetup::StepWiseWorkingParametersSetup( utility::vector1
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWiseWorkingParametersSetup::~StepWiseWorkingParametersSetup()
-{}
+StepWiseWorkingParametersSetup::~StepWiseWorkingParametersSetup() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void

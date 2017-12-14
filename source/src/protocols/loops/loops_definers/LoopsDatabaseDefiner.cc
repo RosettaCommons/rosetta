@@ -58,12 +58,9 @@ LoopsDatabaseDefiner::LoopsDatabaseDefiner() :
 	database_table_()
 {}
 
-LoopsDatabaseDefiner::~LoopsDatabaseDefiner() {}
+LoopsDatabaseDefiner::~LoopsDatabaseDefiner() = default;
 
-LoopsDatabaseDefiner::LoopsDatabaseDefiner(LoopsDatabaseDefiner const & src) : LoopsDefiner(src),
-	db_session_(src.db_session_),
-	database_table_(src.database_table_)
-{}
+LoopsDatabaseDefiner::LoopsDatabaseDefiner(LoopsDatabaseDefiner const & /*src*/) = default;
 
 
 /// @brief Create another loops definer of the type matching the most-derived

@@ -34,15 +34,15 @@
 
 static basic::Tracer TR( "rama" );
 
-typedef core::Size Size;
-typedef std::string String;
+using Size = core::Size;
+using String = std::string;
 using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 class ThisApplication  {
 public:
-	ThisApplication(){};
+	ThisApplication()= default;
 	static void register_options();
 };
 

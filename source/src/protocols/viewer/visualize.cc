@@ -51,7 +51,7 @@ void print_node(
 	int residue_num,
 	int atom_num,
 	core::conformation::Conformation const & conf,
-	std::string extras = "" //< P for points, color, width/radius, etc.
+	std::string const & extras = "" //< P for points, color, width/radius, etc.
 )
 {
 	// atom_num is often 0 in fold tree, means no specific atom.
@@ -74,7 +74,7 @@ void print_node(
 	int residue_num,
 	std::string atom_name,
 	core::conformation::Conformation const & conf,
-	std::string extras = "" //< P for points, color, width/radius, etc.
+	std::string const & extras = "" //< P for points, color, width/radius, etc.
 )
 {
 	// atom_num is often 0 in fold tree, means no specific atom.

@@ -47,9 +47,7 @@ public:
 
 	/// @brief Assign a name to an instance of the resource options object.
 	/// Usefull for identifying flaws in input files defining ResourceOptions.
-	ResourceOptions(
-		std::string const & name
-	);
+	ResourceOptions( std::string const & name );
 
 	~ResourceOptions() override;
 

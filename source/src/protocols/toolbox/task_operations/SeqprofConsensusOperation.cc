@@ -114,7 +114,7 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 
 
 /// @brief destructor
-SeqprofConsensusOperation::~SeqprofConsensusOperation() {}
+SeqprofConsensusOperation::~SeqprofConsensusOperation() = default;
 
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
@@ -161,7 +161,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		for ( ConstraintCOP const c : constraints ) {
 			if ( c->type() == "SequenceProfile" ) {
 				SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
-				runtime_assert( seqprof_cst != 0 );
+				runtime_assert( seqprof_cst != nullptr );
 				core::Size const seqpos( seqprof_cst->seqpos() );
 				SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
 				seqprof->prof_row( seqprof_pos->profile()[ seqpos ], seqpos );
@@ -186,7 +186,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		last_res = asymmetric_unit_res <= seqprof->profile().size() ? pose.size() : seqprof->profile().size();
 		tr<<" Pose is SYMMETRIC!!!"<<std::endl;
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		asymmetric_unit_res = SymmConf.Symmetry_Info()->num_independent_residues();
 		//  task.request_symmetrize_by_intersection();
@@ -199,12 +199,12 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	/// These are used in the following loop to restrict conservation profiles differently
 	utility::vector1< core::Size > designable_interface, designable_aligned_segments;
 	designable_interface.clear(); designable_aligned_segments.clear();
-	if ( protein_interface_design() != NULL ) {
+	if ( protein_interface_design() != nullptr ) {
 		core::pack::task::TaskFactoryOP temp_tf( new core::pack::task::TaskFactory );
 		temp_tf->push_back( protein_interface_design_ );
 		designable_interface = protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ );
 	}
-	if ( restrict_to_aligned_segments() != NULL ) {
+	if ( restrict_to_aligned_segments() != nullptr ) {
 		core::pack::task::TaskFactoryOP temp_tf( new core::pack::task::TaskFactory );
 		temp_tf->push_back( restrict_to_aligned_segments_ );
 		designable_aligned_segments = protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ );
@@ -222,9 +222,9 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	for ( core::Size i = resi_begin; i <= resi_end; ++i ) {
 
 		core::Real position_min_prob = min_aa_probability_;
-		if ( protein_interface_design() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ) {
+		if ( protein_interface_design() != nullptr && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ) {
 			position_min_prob = conservation_cutoff_protein_interface_design();
-		} else if ( restrict_to_aligned_segments() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() ) {
+		} else if ( restrict_to_aligned_segments() != nullptr && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() ) {
 			position_min_prob = conservation_cutoff_aligned_segments();
 		}
 
@@ -273,7 +273,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	if ( basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value() ) {
 		for ( core::Size i = resi_begin; i <= resi_end; ++i ) {
 			//for all non interface reisdues we allow only reidues that acctualy appear in native proteins.
-			if ( protein_interface_design() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ) {
+			if ( protein_interface_design() != nullptr && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ) {
 				tr <<"Residue "<<i<<" is in the interface, not applying occurrence data"<<std::endl;
 				continue;
 			}
@@ -302,7 +302,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 				}
 			} else { //if profile doesn't have probability data we revert to using pssm data
 				core::Real position_min_prob = min_aa_probability_;
-				if ( restrict_to_aligned_segments() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() ) {
+				if ( restrict_to_aligned_segments() != nullptr && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() ) {
 					position_min_prob = conservation_cutoff_aligned_segments();
 				}
 				utility::vector1< Real > const & pos_profile( (seqprof->profile())[ i - resi_begin + 1 ] );
@@ -344,8 +344,8 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 void
 SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 {
-	restrict_to_repacking_=tag->getOption< bool >("restrict_to_repacking", 1  );
-	convert_scores_to_probabilities( tag->getOption< bool >("convert_scores_to_probabilities", 1  ) );
+	restrict_to_repacking_=tag->getOption< bool >("restrict_to_repacking", true  );
+	convert_scores_to_probabilities( tag->getOption< bool >("convert_scores_to_probabilities", true  ) );
 	if ( tag->hasOption("filename") ) {
 		seqprof_filename_ = tag->getOption< String >( "filename" );
 		tr<<"Loading seqprof from a file named: "<<seqprof_filename_<<std::endl;
@@ -501,8 +501,7 @@ RestrictConservedLowDdgOperation::RestrictConservedLowDdgOperation()
 	}
 }
 
-RestrictConservedLowDdgOperation::~RestrictConservedLowDdgOperation()
-{}
+RestrictConservedLowDdgOperation::~RestrictConservedLowDdgOperation() = default;
 
 core::pack::task::operation::TaskOperationOP
 RestrictConservedLowDdgOperation::clone() const
@@ -593,7 +592,7 @@ RestrictConservedLowDdgOperation::position_untouchable(
 		else return false;
 	}
 
-	std::map< core::Size, core::io::PositionDdGInfo::PositionDdGInfoOP >::const_iterator posddg_it( position_ddGs_.find( seqpos ) );
+	auto posddg_it( position_ddGs_.find( seqpos ) );
 
 	//note: if the position wasn't found, this could mean that the predictions file
 	//was incomplete or that the ddG protocol couldn't calculate a proper ddG,
@@ -608,7 +607,7 @@ RestrictConservedLowDdgOperation::position_untouchable(
 
 	core::io::PositionDdGInfo::PositionDdGInfo const & pos_ddg( *(posddg_it->second) );
 	if ( seqprof_wt != pos_ddg.wt_aa() ) utility_exit_with_message ("The wildtype aa for position "+utility::to_string( seqpos ) + " is different in the ddG file and the pssm file. Something's unclean somewhere." );
-	std::map< core::chemical::AA, core::Real >::const_iterator ala_it( pos_ddg.mutation_ddGs().find( core::chemical::aa_ala ) );
+	auto ala_it( pos_ddg.mutation_ddGs().find( core::chemical::aa_ala ) );
 	if ( ala_it ==  pos_ddg.mutation_ddGs().end() ) utility_exit_with_message("The ddG of mutating to Ala was not found for position "+utility::to_string( seqpos )+" in file "+ddG_predictions_filename_ + ".");
 
 	if ( (ala_it->second > ddG_cutoff_) && ( (seqprof()->profile())[ seqpos ][ seqprof_wt ] > conservation_cutoff_) ) {
@@ -629,10 +628,10 @@ RestrictConservedLowDdgOperation::position_ala_ddG( core::Size seqpos ) const
 {
 	if ( seqprof_wt_aa( seqpos ) == core::chemical::aa_ala ) return 0.0;
 
-	std::map< core::Size, core::io::PositionDdGInfo::PositionDdGInfoOP >::const_iterator posddg_it( position_ddGs_.find( seqpos ) );
+	auto posddg_it( position_ddGs_.find( seqpos ) );
 	if ( posddg_it == position_ddGs_.end() ) utility_exit_with_message("no ddg information read for sequence position "+ utility::to_string( seqpos ) );
 	core::io::PositionDdGInfo::PositionDdGInfo const & pos_ddg( *(posddg_it->second) );
-	std::map< core::chemical::AA, core::Real >::const_iterator ala_it( pos_ddg.mutation_ddGs().find( core::chemical::aa_ala ) );
+	auto ala_it( pos_ddg.mutation_ddGs().find( core::chemical::aa_ala ) );
 	if ( ala_it ==  pos_ddg.mutation_ddGs().end() ) utility_exit_with_message("The ddG of mutating to Ala was not found for position "+utility::to_string( seqpos )+" in file "+ddG_predictions_filename_ + ".");
 	return ala_it->second;
 }

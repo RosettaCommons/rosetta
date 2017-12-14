@@ -182,7 +182,7 @@ main( int argc, char * argv [] )
 		if ( max_resi < surface.size() ) {
 			std::set<std::string> indeces;
 			for ( core::Size i = 0; i < max_resi; i++ ) {
-				int r=(int) (numeric::random::uniform() * surface.size());
+				auto r=(int) (numeric::random::uniform() * surface.size());
 				std::string rname(surface[r]);
 				if ( indeces.find(surface[r]) == indeces.end() ) {
 					indeces.insert(surface[r]);
@@ -198,7 +198,7 @@ main( int argc, char * argv [] )
 							break;
 						}
 					}
-					for ( std::vector<std::string>::iterator it2=surface.begin(); it2 != surface.end(); it2++ ) {
+					for ( auto it2=surface.begin(); it2 != surface.end(); it2++ ) {
 						core::Size(pos2) = 0;
 						for ( Size j = 1; j <= pose.size(); ++j ) {
 							std::ostringstream residuestream;
@@ -222,12 +222,12 @@ main( int argc, char * argv [] )
 				}
 			}
 			//sort (indeces.begin(), indeces.end());
-			for ( std::set<std::string>::iterator it=indeces.begin(); it != indeces.end(); it++ ) {
-				os<<*it<<std::endl;
+			for ( auto const & indece : indeces ) {
+				os<<indece<<std::endl;
 			}
 		} else {
-			for ( std::vector<std::string>::iterator it=surface.begin(); it != surface.end(); it++ ) {
-				os<<*it<<std::endl;
+			for ( auto & it : surface ) {
+				os<<it<<std::endl;
 			}
 		}
 

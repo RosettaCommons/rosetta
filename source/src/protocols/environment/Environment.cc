@@ -60,7 +60,7 @@ Environment::Environment( std::string name ):
 
 Environment::~Environment() {
 	for ( Conformation * conf : pconfs_ ) {
-		ProtectedConformation * pconf = dynamic_cast< ProtectedConformation * >( conf );
+		auto * pconf = dynamic_cast< ProtectedConformation * >( conf );
 		if ( pconf ) {
 			pconf->env_destruction();
 		}
@@ -110,7 +110,7 @@ core::pose::Pose Environment::start( core::pose::Pose const & in_pose ){
 	Conformation const* in_conf = &in_pose.conformation();
 
 	//figure out if we've got a superenvironment... also initialize Annotations object
-	ProtectedConformation const* conf_ptr = dynamic_cast<ProtectedConformation const*>( in_conf );
+	auto const* conf_ptr = dynamic_cast<ProtectedConformation const*>( in_conf );
 	if ( conf_ptr ) {
 		set_superenv( conf_ptr->environment() );
 

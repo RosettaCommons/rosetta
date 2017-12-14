@@ -80,11 +80,7 @@ CenHBEnergy::clone() const {
 }
 
 /// @details  copy c-tor
-CenHBEnergy::CenHBEnergy( CenHBEnergy const & src ):
-	parent( src ),
-	potential_( src.potential_ ),
-	soft_( src.soft_ )
-{ }
+CenHBEnergy::CenHBEnergy( CenHBEnergy const & /*src*/ ) = default;
 
 
 /////////////////////////////////////////////////////////////////////////////

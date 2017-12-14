@@ -41,7 +41,7 @@ class MotifHitsRotamersOperation : public core::pack::rotamer_set::RotamerSetOpe
 {
 public:
 
-	MotifHitsRotamersOperation(core::scoring::motif::MotifHits const &  motif_hits);
+	MotifHitsRotamersOperation(core::scoring::motif::MotifHits const & motif_hits);
 
 	virtual ~MotifHitsRotamersOperation(){}
 

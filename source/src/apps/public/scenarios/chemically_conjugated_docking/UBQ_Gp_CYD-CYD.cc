@@ -107,8 +107,7 @@ static basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ
 
 class UBQ_GTPase_disulfide_Mover : public protocols::moves::Mover {
 public:
-	UBQ_GTPase_disulfide_Mover()
-	: init_for_input_yet_(false),
+	UBQ_GTPase_disulfide_Mover():
 		fullatom_scorefunction_(/* NULL */),
 		task_factory_(/* NULL */),
 		disulfide_mm_(/* NULL */),
@@ -437,11 +436,11 @@ public:
 		core::scoring::constraints::add_constraints_from_cmdline_to_pose( starting_pose_ ); //protected internally if no constraints
 
 	}
-	virtual ~UBQ_GTPase_disulfide_Mover(){};
+	~UBQ_GTPase_disulfide_Mover() override= default;
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ){
+	apply( core::pose::Pose & pose ) override{
 		if ( !init_for_input_yet_ ) init_on_new_input();
 
 		pose = starting_pose_;
@@ -680,26 +679,26 @@ public:
 		return;
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new UBQ_GTPase_disulfide_Mover );
 	}
 
-	virtual
-	bool
-	reinitialize_for_each_job() const { return false; }
 
-	virtual
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
 
-	virtual
+
+	bool
+	reinitialize_for_new_input() const override { return false; }
+
+
 	std::string
-	get_name() const { return "UBQ_GTPase_disulfide_Mover"; }
+	get_name() const override { return "UBQ_GTPase_disulfide_Mover"; }
 
 private:
-	bool init_for_input_yet_;
+	bool init_for_input_yet_{false};
 
 	core::scoring::ScoreFunctionOP fullatom_scorefunction_;
 	core::pack::task::TaskFactoryOP task_factory_;
@@ -724,7 +723,7 @@ private:
 	utility::vector1< core::Size > extra_bodies_chains_;
 };
 
-typedef utility::pointer::shared_ptr< UBQ_GTPase_disulfide_Mover > UBQ_GTPase_disulfide_MoverOP;
+using UBQ_GTPase_disulfide_MoverOP = utility::pointer::shared_ptr<UBQ_GTPase_disulfide_Mover>;
 
 int main( int argc, char* argv[] )
 {

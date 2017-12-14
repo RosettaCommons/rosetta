@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
 		}
 
 		//Loop through loop library (hashes) and figure out, for the RT, does it return any hashes? (i.e., is there a loop in the DB that has this RT)
-		for ( std::vector< core::Size >::const_iterator jt = library->hash_sizes().begin(); jt != library->hash_sizes().end(); ++jt ) {
+		for ( auto jt = library->hash_sizes().begin(); jt != library->hash_sizes().end(); ++jt ) {
 			core::Size loop_size = *jt;
 			if ( rt_exists==true ) {
 				// Get the fragment bucket

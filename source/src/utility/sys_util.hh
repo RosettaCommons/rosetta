@@ -17,10 +17,10 @@
 
 
 // Package headers
-#include <utility/exit.hh> // For historic reasons (exit used to be here)
+//#include <utility/exit.hh> // For historic reasons (exit used to be here)
 
 // C++ headers
-#include <string>
+#include <iosfwd>
 
 
 namespace utility {

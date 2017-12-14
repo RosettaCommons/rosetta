@@ -58,11 +58,11 @@ class ScoreFunctionFingerprintMover : public protocols::moves::Mover
 {
 public:
 	ScoreFunctionFingerprintMover();
-	virtual ~ScoreFunctionFingerprintMover();
-	virtual std::string get_name() const;
+	~ScoreFunctionFingerprintMover() override;
+	std::string get_name() const override;
 
 	void sfxn( scoring::ScoreFunctionOP sfxn );
-	virtual void apply( pose::Pose & pose );
+	void apply( pose::Pose & pose ) override;
 
 	utility::vector1< std::list< std::string > > lines_for_jobs() const;
 
@@ -74,8 +74,8 @@ private:
 
 ////// Implementation ////////
 
-ScoreFunctionFingerprintMover::ScoreFunctionFingerprintMover() {}
-ScoreFunctionFingerprintMover::~ScoreFunctionFingerprintMover() {}
+ScoreFunctionFingerprintMover::ScoreFunctionFingerprintMover() = default;
+ScoreFunctionFingerprintMover::~ScoreFunctionFingerprintMover() = default;
 
 std::string
 ScoreFunctionFingerprintMover::get_name() const
@@ -94,7 +94,7 @@ ScoreFunctionFingerprintMover::sfxn( scoring::ScoreFunctionOP sfxn )
 	utility::vector1< std::pair< std::string, std::string > > version_term_lines;
 	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 		if ( sfxn_->weights()[ ScoreType(ii) ] == 0.0 ) continue;
-		for ( ScoreFunction::AllMethodsIterator iter = sfxn_->all_energies_begin(),
+		for ( auto iter = sfxn_->all_energies_begin(),
 				iter_end = sfxn_->all_energies_end(); iter != iter_end; ++iter ) {
 			ScoreTypes const & iter_types = (*iter)->score_types();
 			bool found( false );
@@ -150,7 +150,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 				iter != iter_end; ++iter ) {
 			Size jj( (*iter)->get_second_node_ind() );
 
-			EnergyEdge const * eedge = static_cast< EnergyEdge const * > ( *iter );
+			auto const * eedge = static_cast< EnergyEdge const * > ( *iter );
 			EnergyMap emap = eedge->fill_energy_map();
 
 			for ( Size kk = 1; kk <= scoring::n_score_types; ++kk ) { // this can be more efficient...
@@ -165,7 +165,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 		}
 	}
 
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = sfxn_->long_range_energies_begin(),
 			lr_end  = sfxn_->long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
@@ -214,7 +214,7 @@ ScoreFunctionFingerprintMover::lines_for_jobs() const
 	return lines_for_jobs_;
 }
 
-typedef utility::pointer::shared_ptr< ScoreFunctionFingerprintMover > ScoreFunctionFingerprintMoverOP;
+using ScoreFunctionFingerprintMoverOP = utility::pointer::shared_ptr<ScoreFunctionFingerprintMover>;
 
 int main( int argc, char ** argv )
 {

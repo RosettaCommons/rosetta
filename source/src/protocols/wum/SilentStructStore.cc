@@ -85,7 +85,7 @@ SilentStructStore::~SilentStructStore() = default;
 class sort_SilentStructOPs
 {
 public:
-	sort_SilentStructOPs(std::string field = "score" ): field_(std::move(field)) {}
+	explicit sort_SilentStructOPs(std::string const & field = "score" ): field_(field) {}
 
 	bool operator () (const SilentStructOP& left, const SilentStructOP& right)
 	{
@@ -228,7 +228,7 @@ SilentStructStore::get_pose( core::Size index,  core::pose::Pose &pose ) const {
 // @brief GEt a random structure
 SilentStructCOP SilentStructStore::get_struct_random() const{
 	runtime_assert( store_.size() > 0 );
-	core::Size choice=core::Size( numeric::random::rg().random_range(0,(store_.size()-1)));
+	auto choice=core::Size( numeric::random::rg().random_range(0,(store_.size()-1)));
 	runtime_assert( choice < store_.size() );
 	return store_[ choice ];
 }
@@ -289,16 +289,16 @@ SilentStructStore::mem_footprint() const {
 
 
 void
-SilentStructStore::sort_by( std::string field )
+SilentStructStore::sort_by( std::string const & field )
 {
 	if ( store_.size() == 0 ) return;
-	sort_SilentStructOPs sort_by_field = field;
+	sort_SilentStructOPs sort_by_field( field );
 	std::sort( store_.begin(), store_.end(), sort_by_field );
 }
 
 
 void
-SilentStructStore::all_add_energy( std::string scorename, core::Real value, core::Real weight )
+SilentStructStore::all_add_energy( std::string const & scorename, core::Real value, core::Real weight )
 {
 	for ( auto & it : store_ ) {
 		it->add_energy( scorename, value, weight );
@@ -353,7 +353,7 @@ generate_unique_structure_id(){
 		MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &mpi_rank ) );
 		MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &mpi_npes ) );
 #endif
-	int width = int(floor(log(float(mpi_npes))/log(62.0)) + 1.0);  // 62 is the base of the coded number below.
+	auto width = int(floor(log(float(mpi_npes))/log(62.0)) + 1.0);  // 62 is the base of the coded number below.
 	unique_count++;
 	return encode_alphanum( unique_count ) + encode_alphanum( mpi_rank, width, '0' );
 }

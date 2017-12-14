@@ -37,16 +37,14 @@ FillAUTOTaskOperation::FillAUTOTaskOperation():
 	TaskOperation()
 {}
 
-FillAUTOTaskOperation::~FillAUTOTaskOperation() {}
+FillAUTOTaskOperation::~FillAUTOTaskOperation() = default;
 
 TaskOperationOP
 FillAUTOTaskOperation::clone() const {
 	return TaskOperationOP( new FillAUTOTaskOperation( *this ) );
 }
 
-FillAUTOTaskOperation::FillAUTOTaskOperation( FillAUTOTaskOperation const & src ):
-	TaskOperation(src)
-{}
+FillAUTOTaskOperation::FillAUTOTaskOperation( FillAUTOTaskOperation const & /*src*/ ) = default;
 
 //parse_tag is a no-op
 void

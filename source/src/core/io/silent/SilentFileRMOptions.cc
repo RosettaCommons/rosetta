@@ -40,9 +40,9 @@ using std::stringstream;
 using utility::tag::TagCOP;
 
 ///// SilentFileRMOptionsCreator /////
-SilentFileRMOptionsCreator::SilentFileRMOptionsCreator() {}
+SilentFileRMOptionsCreator::SilentFileRMOptionsCreator() = default;
 
-SilentFileRMOptionsCreator::~SilentFileRMOptionsCreator() {}
+SilentFileRMOptionsCreator::~SilentFileRMOptionsCreator() = default;
 
 ResourceOptionsOP
 SilentFileRMOptionsCreator::create_options() const {
@@ -66,7 +66,7 @@ SilentFileRMOptions::SilentFileRMOptions(
 	options_( new SilentFileOptions )
 {}
 
-SilentFileRMOptions::~SilentFileRMOptions() {}
+SilentFileRMOptions::~SilentFileRMOptions() = default;
 
 SilentFileRMOptions::SilentFileRMOptions(
 	SilentFileRMOptions const & src

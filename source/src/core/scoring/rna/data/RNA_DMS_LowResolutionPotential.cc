@@ -45,7 +45,7 @@
 
 using utility::tools::make_vector1;
 using utility::vector1;
-typedef  numeric::xyzMatrix< core::Real > Matrix;
+using Matrix = numeric::xyzMatrix<core::Real>;
 using namespace basic::options;
 
 //////////////////////////////////////////////////////
@@ -84,8 +84,7 @@ RNA_DMS_LowResolutionPotential::RNA_DMS_LowResolutionPotential():
 }
 
 //Destructor
-RNA_DMS_LowResolutionPotential::~RNA_DMS_LowResolutionPotential()
-{}
+RNA_DMS_LowResolutionPotential::~RNA_DMS_LowResolutionPotential() = default;
 
 //////////////////////////////////////////////////////////////////////////////////
 void

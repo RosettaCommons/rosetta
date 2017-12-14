@@ -161,13 +161,13 @@ public:
 	//! @brief the usual constructor
 	GasteigerAtomTypeData
 	(
-		const std::string &NAME,
+		std::string const & NAME,
 		const ElementOP &ELEMENT_TYPE,
 		const HybridOrbitalType &HYBRIDIZATION,
 		const core::Size &HYBRID_ORBITALS_IN_SIGMA_BONDS,
 		const core::Size &HYBRID_ORBITALS_NONBINDING,
-		const std::set< AtomicOrbitalTypes > &PI_ORBITALS_IN_BONDS,
-		const std::set< AtomicOrbitalTypes > &ATOMIC_ORBITALS_NONBINDING,
+		std::set< AtomicOrbitalTypes > const & PI_ORBITALS_IN_BONDS,
+		std::set< AtomicOrbitalTypes > const & ATOMIC_ORBITALS_NONBINDING,
 		const core::Real &SIGMA_VALENCE_STATE_IONIZATION_POTENTIAL,
 		const core::Real &SIGMA_VALENCE_STATE_ELECTRON_AFFINITY,
 		const core::Real &PI_VALENCE_STATE_IONIZATION_POTENTIAL,
@@ -180,13 +180,13 @@ public:
 	//! @brief the usual constructor, with element set.
 	GasteigerAtomTypeData
 	(
-		const std::string &NAME,
+		std::string const & NAME,
 		const std::string &ELEMENT,
 		const HybridOrbitalType &HYBRIDIZATION,
 		const core::Size &HYBRID_ORBITALS_IN_SIGMA_BONDS,
 		const core::Size &HYBRID_ORBITALS_NONBINDING,
-		const std::set< AtomicOrbitalTypes > &PI_ORBITALS_IN_BONDS,
-		const std::set< AtomicOrbitalTypes > &ATOMIC_ORBITALS_NONBINDING,
+		std::set< AtomicOrbitalTypes > const & PI_ORBITALS_IN_BONDS,
+		std::set< AtomicOrbitalTypes > const & ATOMIC_ORBITALS_NONBINDING,
 		const core::Real &SIGMA_VALENCE_STATE_IONIZATION_POTENTIAL,
 		const core::Real &SIGMA_VALENCE_STATE_ELECTRON_AFFINITY,
 		const core::Real &PI_VALENCE_STATE_IONIZATION_POTENTIAL,
@@ -200,9 +200,9 @@ public:
 	//! @brief constructor from just an element type and charge
 	GasteigerAtomTypeData
 	(
-		const std::string &NAME,
+		std::string const & NAME,
 		ElementOP ELEMENT_TYPE,
-		const short &CHARGE
+		const short CHARGE
 	);
 
 

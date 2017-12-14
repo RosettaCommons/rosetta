@@ -121,18 +121,18 @@ public:
 	CovalentPeptidomimeticCreator(): Mover( "CovalentPeptidomimeticCreator" ){}
 
 	//default dtor
-	virtual ~CovalentPeptidomimeticCreator(){}
+	~CovalentPeptidomimeticCreator() override= default;
 
 	//methods
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	void update_hydrogens( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "CovalentPeptidomimeticCreator"; }
+	std::string get_name() const override { return "CovalentPeptidomimeticCreator"; }
 
 };
 
-typedef utility::pointer::shared_ptr< CovalentPeptidomimeticCreator > CovalentPeptidomimeticCreatorOP;
-typedef utility::pointer::shared_ptr< CovalentPeptidomimeticCreator const >CovalentPeptidomimeticCreatorCOP;
+using CovalentPeptidomimeticCreatorOP = utility::pointer::shared_ptr<CovalentPeptidomimeticCreator>;
+using CovalentPeptidomimeticCreatorCOP = utility::pointer::shared_ptr<const CovalentPeptidomimeticCreator>;
 
 
 

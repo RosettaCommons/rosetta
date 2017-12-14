@@ -47,7 +47,7 @@ ABEGO_SS_Config::ABEGO_SS_Config(std::string & file_name) : source_file_name_(fi
 			+ file_name);
 	}
 	std::string line;
-	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+	using tokenizer = boost::tokenizer<boost::char_separator<char> >;
 	boost::char_separator<char> sep(", :");
 	while ( data ) {
 		getline(data, line);

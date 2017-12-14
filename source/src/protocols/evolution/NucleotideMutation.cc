@@ -54,9 +54,9 @@
 
 #include <utility/vector0.hh>
 #include <map>
-#include <math.h>
+#include <cmath>
 
-#include <time.h>
+#include <ctime>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
@@ -73,7 +73,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace core::kinematics;
 
-typedef utility::vector1< bool > bools;
+using bools = utility::vector1<bool>;
 
 
 static basic::Tracer TR( "protocols.evolution.NucleotideMutation" );
@@ -108,7 +108,7 @@ NucleotideMutation::NucleotideMutation() :
 }
 
 
-NucleotideMutation::~NucleotideMutation() {}
+NucleotideMutation::~NucleotideMutation() = default;
 
 void
 NucleotideMutation::add_nt_seq_to_pose( core::pose::Pose & pose ){
@@ -123,8 +123,8 @@ NucleotideMutation::add_nt_seq_to_pose( core::pose::Pose & pose ){
 		core::pose::add_comment(pose, "nt_seq", init_sequence());
 	} else {
 		TR << "Initializing nucleotide sequence with random codons " << std::endl;
-		for ( size_t i = 0; i < aa_sequence.length(); i++ ) {
-			string nt = NucleotideTools::aa2randomCodon( aa_sequence[i] );
+		for ( char i : aa_sequence ) {
+			string nt = NucleotideTools::aa2randomCodon( i );
 			nt_sequence.append( nt );
 		}
 		core::pose::add_comment(pose, "nt_seq", nt_sequence);

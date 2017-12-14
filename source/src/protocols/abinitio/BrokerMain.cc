@@ -221,7 +221,7 @@ void Broker_main() {
 	common_setup();
 	AbrelaxMoverOP m( new AbrelaxMover() );
 	protocols::jd2::JobDistributor* jd2( protocols::jd2::JobDistributor::get_instance() );
-	protocols::jd2::archive::MPIArchiveJobDistributor* archive_jd = dynamic_cast< protocols::jd2::archive::MPIArchiveJobDistributor* >( jd2 );
+	auto* archive_jd = dynamic_cast< protocols::jd2::archive::MPIArchiveJobDistributor* >( jd2 );
 	if ( archive_jd && archive_jd->is_archive_rank() ) {
 		archive_jd->set_archive( protocols::jd2::archive::ArchiveBaseOP( new IterativeAbrelax ) );
 	}

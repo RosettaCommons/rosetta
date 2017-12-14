@@ -41,13 +41,10 @@ namespace task_operations {
 static basic::Tracer TR( "protocols.toolbox.task_operations.STMStoredTask" );
 
 // @brief default constructor
-STMStoredTask::STMStoredTask() {}
+STMStoredTask::STMStoredTask() = default;
 
 // @brief copy constructor
-STMStoredTask::STMStoredTask(const STMStoredTask & rval) :
-	basic::datacache::CacheableData( rval ),
-	tasks_( rval.tasks_)
-{ }
+STMStoredTask::STMStoredTask(const STMStoredTask & /*rval*/) = default;
 
 // @brief setter
 void STMStoredTask::set_task( core::pack::task::PackerTaskOP task, std::string const & task_name ) {

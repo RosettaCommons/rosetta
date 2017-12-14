@@ -84,7 +84,7 @@ ChainbreakDistFunc::clone() const { return core::scoring::func::FuncOP( new Chai
 bool
 ChainbreakDistFunc::operator == ( core::scoring::func::Func const & other ) const {
 	if ( !same_type_as_me( other ) || !other.same_type_as_me(*this) ) return false;
-	ChainbreakDistFunc const & other_downcast( static_cast< ChainbreakDistFunc const & > (other) );
+	auto const & other_downcast( static_cast< ChainbreakDistFunc const & > (other) );
 	return d2target_ == other_downcast.d2target_;
 }
 
@@ -464,7 +464,7 @@ JumpSample::generate_jump_frags(
 	// find out how many different kind of fragments are we interested in:
 	// max of four: A 1 , A 2, P 1, P 2
 	runtime_assert( has_orientation_and_pleating() );
-	typedef utility::vector1< Size > JumpList;
+	using JumpList = utility::vector1<Size>;
 	typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
 	Size jump_nr ( 1 );

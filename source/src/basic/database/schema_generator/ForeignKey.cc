@@ -14,6 +14,7 @@
 
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
+#include <utility>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
@@ -36,9 +37,9 @@ using std::string;
 using utility::vector1;
 
 ForeignKey::ForeignKey(
-	Column column,
-	std::string reference_table,
-	std::string reference_column) :
+	Column const & column,
+	std::string const & reference_table,
+	std::string const & reference_column) :
 	columns_(),
 	reference_columns_(),
 	reference_table_(reference_table),
@@ -49,9 +50,9 @@ ForeignKey::ForeignKey(
 }
 
 ForeignKey::ForeignKey(
-	Column column,
-	string reference_table,
-	string reference_column,
+	Column const & column,
+	string const & reference_table,
+	string const & reference_column,
 	bool defer) :
 	columns_(),
 	reference_columns_(),
@@ -63,9 +64,9 @@ ForeignKey::ForeignKey(
 }
 
 ForeignKey::ForeignKey(
-	Columns columns,
-	string reference_table,
-	vector1<string> reference_columns,
+	Columns const & columns,
+	string const & reference_table,
+	vector1<string> const & reference_columns,
 	bool defer) :
 	columns_(columns),
 	reference_columns_(reference_columns),

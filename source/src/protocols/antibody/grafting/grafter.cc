@@ -131,7 +131,7 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 	};
 
 	for(auto &j : J) {
-		char chain_lower = char(std::tolower(j.chain));
+		auto chain_lower = char(std::tolower(j.chain));
 		TR << "Adjusting fr" << chain_lower << " template sequence [" << j.pose->pdb_info()->name() << "]..." << std::endl;
 
 		AntibodyChainNumbering::NumberingVector numbering = j.numbering.all();
@@ -380,7 +380,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		cst_mover.set_use_cluster_csts( false );
 
 		for (core::Size i = 1; i <= CDRNameEnum_proto_total; ++i){
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+			auto cdr = static_cast<CDRNameEnum>(i);
 			cst_mover.set_cdr(cdr);
 			cst_mover.apply(*result);
 		}

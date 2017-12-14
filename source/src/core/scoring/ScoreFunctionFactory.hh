@@ -168,15 +168,15 @@ list_read_options_in_get_score_function( utility::options::OptionKeyList & opts 
 /// and so that a record of the old behavior is still preserved in the code to ease the process of
 /// reverting the change to get_score_function if that were the wrong behavior.
 core::scoring::ScoreFunctionOP get_score_function_legacy(
-	std::string pre_talaris_2013_weight_set,
-	std::string pre_talaris_2013_patch_file = ""
+	std::string const & pre_talaris_2013_weight_set,
+	std::string const & pre_talaris_2013_patch_file = ""
 );
 
 
 core::scoring::ScoreFunctionOP get_score_function_legacy(
 	utility::options::OptionCollection const & options,
-	std::string pre_talaris_2013_weight_set,
-	std::string pre_talaris_2013_patch_file = ""
+	std::string const & pre_talaris_2013_weight_set,
+	std::string const & pre_talaris_2013_patch_file = ""
 );
 
 

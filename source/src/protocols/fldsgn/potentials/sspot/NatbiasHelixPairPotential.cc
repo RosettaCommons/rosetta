@@ -77,8 +77,7 @@ NatbiasHelixPairPotential::NatbiasHelixPairPotential( NatbiasHelixPairPotential 
 
 
 /// @brief default destructor
-NatbiasHelixPairPotential::~NatbiasHelixPairPotential()
-{}
+NatbiasHelixPairPotential::~NatbiasHelixPairPotential() = default;
 
 /// @brief set HelixPairingSet
 void
@@ -132,9 +131,9 @@ NatbiasHelixPairPotential::show( Pose const & pose ) const
 	Size num( 0 );
 	HelixPairings const & hpairs = hpairset_->helix_pairings();
 	TR << "name distance cross_angle align_angle score " << std::endl;
-	for ( HelixPairings::const_iterator it=hpairs.begin(), ite=hpairs.end() ; it != ite; ++it ) {
+	for ( const auto & it : hpairs ) {
 		num++;
-		HelixPairing const & hpair( **it );
+		HelixPairing const & hpair( *it );
 		TR << hpair << " " << hh_scores_[ num ] << std::endl;
 	}
 
@@ -168,11 +167,11 @@ NatbiasHelixPairPotential::score( SS_Info2_COP const ss_info, Real & hh_score ) 
 	Size num( 0 );
 
 	hh_scores_.resize( hpairset_->helix_pairings().size() );
-	for ( HelixPairings::const_iterator it=hpairs.begin(), ite=hpairs.end(); it != ite; ++it ) {
+	for ( const auto & it : hpairs ) {
 
 		num++;
 		hh_scores_[ num ] = 0.0;
-		HelixPairing const & hpair( **it );
+		HelixPairing const & hpair( *it );
 
 		// check bending of helix and give high penalty if helix bend is big
 		if ( helices[ hpair.h1() ]->bend() > bend_angle_ ) hh_scores_[ num ] += 10.0;

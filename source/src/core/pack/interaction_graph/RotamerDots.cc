@@ -188,7 +188,7 @@ DotSphere::DotSphere() :
 }
 
 ///
-DotSphere::~DotSphere() {}
+DotSphere::~DotSphere() = default;
 
 ///
 /// @brief
@@ -473,8 +473,8 @@ Real RotamerDots::probe_radius_ = 1.4;
 bool RotamerDots::sasa_arrays_initialized_ = false;
 utility::vector1< core::Vector > RotamerDots::dot_coords_( 0 );
 
-ObjexxFCL::FArray2D_int const *   RotamerDots::lg_angles_( 0 );
-ObjexxFCL::FArray2D_ubyte const * RotamerDots::lg_masks_( 0 );
+ObjexxFCL::FArray2D_int const *   RotamerDots::lg_angles_( nullptr );
+ObjexxFCL::FArray2D_ubyte const * RotamerDots::lg_masks_( nullptr );
 
 ///
 RotamerDots::RotamerDots():
@@ -663,7 +663,7 @@ RotamerDots::rotamer() const {
 /// Is the state of this RotamerDots object unassigned?
 ///
 bool RotamerDots::state_unassigned() const {
-	if ( rotamer_ == 0 ) {
+	if ( rotamer_ == nullptr ) {
 		return true;
 	}
 	return false;
@@ -682,7 +682,7 @@ Size RotamerDots::get_num_atoms() const {
 /// Return the xyz coordinates of an atom in this RotamerDots instance.
 ///
 numeric::xyzVector< Real > RotamerDots::get_atom_coords_xyz( Size atom_index ) const {
-	if ( rotamer_ == 0 ) {
+	if ( rotamer_ == nullptr ) {
 		return numeric::xyzVector< Real >(0,0,0);
 	}
 
@@ -700,7 +700,7 @@ numeric::xyzVector< Real > RotamerDots::get_atom_coords_xyz( Size atom_index ) c
 /// right type.
 ///
 Real RotamerDots::get_atom_radius( Size atom_index ) const {
-	if ( rotamer_ == 0 ) {
+	if ( rotamer_ == nullptr ) {
 		return 0.0;
 	}
 
@@ -1568,7 +1568,7 @@ RotamerDotsRadiusData::get_NACCESS_SASA_radii_with_expanded_polars() const
 //----------------------------------------------------------------------------//
 
 ///
-RotamerDotsCache::RotamerDotsCache() {}
+RotamerDotsCache::RotamerDotsCache() = default;
 
 ///
 RotamerDotsCache::RotamerDotsCache( Size num_atoms ) {
@@ -1579,21 +1579,16 @@ RotamerDotsCache::RotamerDotsCache( Size num_atoms ) {
 /// @brief
 /// copy constructor
 ///
-RotamerDotsCache::RotamerDotsCache( RotamerDotsCache const & rhs ) :
-	atom_counts_( rhs.atom_counts_ )
-{}
+RotamerDotsCache::RotamerDotsCache( RotamerDotsCache const & /*rhs*/ ) = default;
 
 ///
-RotamerDotsCache::~RotamerDotsCache() {}
+RotamerDotsCache::~RotamerDotsCache() = default;
 
 ///
 /// @brief
 /// assignment operator
 ///
-RotamerDotsCache & RotamerDotsCache::operator=( RotamerDotsCache const & rhs ) {
-	atom_counts_ = rhs.atom_counts_;
-	return *this;
-}
+RotamerDotsCache & RotamerDotsCache::operator=( RotamerDotsCache const & /*rhs*/ ) = default;
 
 ///
 void RotamerDotsCache::resize( Size num_atoms ) {
@@ -1692,7 +1687,7 @@ InvRotamerDots::InvRotamerDots( InvRotamerDots const & src ) :
 	radii_( src.radii_ )
 {}
 
-InvRotamerDots::~InvRotamerDots() {}
+InvRotamerDots::~InvRotamerDots() = default;
 
 InvRotamerDots &
 InvRotamerDots::operator= ( InvRotamerDots const & rhs ) {
@@ -1804,8 +1799,8 @@ InvRotamerDots::write_circle_intersection_mask_to_kinemage(
 	Real const step_size1 = rad1 * 0.02;
 	Real const step_size2 = rad2 * 0.02;
 
-	Size const nsteps1 = (Size)(ceil( max_dist_from_dot_to_intersection / step_size1 ));
-	Size const nsteps2 = (Size)(ceil( max_dist_from_dot_to_intersection / step_size2 ));
+	auto const nsteps1 = (Size)(ceil( max_dist_from_dot_to_intersection / step_size1 ));
+	auto const nsteps2 = (Size)(ceil( max_dist_from_dot_to_intersection / step_size2 ));
 
 	int degree_of_overlap1, degree_of_overlap1_stepped, degree_of_overlap2, degree_of_overlap2_stepped;
 	int aphi_1_2, aphi_2_1;
@@ -1921,8 +1916,8 @@ InvRotamerDots::overlap_exposed(
 	Real const step_size1 = rad1 * 0.02;
 	Real const step_size2 = rad2 * 0.02;
 
-	Size const nsteps1 = (Size)(ceil( max_dist_from_dot_to_intersection / step_size1 ));
-	Size const nsteps2 = (Size)(ceil( max_dist_from_dot_to_intersection / step_size2 ));
+	auto const nsteps1 = (Size)(ceil( max_dist_from_dot_to_intersection / step_size1 ));
+	auto const nsteps2 = (Size)(ceil( max_dist_from_dot_to_intersection / step_size2 ));
 
 	int degree_of_overlap1, degree_of_overlap2;
 	int aphi_1_2, aphi_2_1;

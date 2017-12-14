@@ -69,7 +69,7 @@ methods::EnergyMethodOP symEnergy::clone() const
 void symEnergy::setup_for_scoring(pose::Pose &pose, const ScoreFunction &) const
 {
 	using namespace methods;
-	if ( pose.energies().long_range_container(sym_bonus_lr) == 0 ) {
+	if ( pose.energies().long_range_container(sym_bonus_lr) == nullptr ) {
 		DenseEnergyContainerOP lr_container( new DenseEnergyContainer(pose.size(), symE_bonus) );
 		pose.energies().set_long_range_container(sym_bonus_lr, lr_container);
 	} else {

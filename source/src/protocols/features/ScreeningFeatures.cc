@@ -48,10 +48,7 @@ using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;
 
-ScreeningFeatures::ScreeningFeatures()
-{
-
-}
+ScreeningFeatures::ScreeningFeatures() = default;
 
 ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & ) = default;
 

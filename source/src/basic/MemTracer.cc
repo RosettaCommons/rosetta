@@ -10,7 +10,7 @@
 // Unit header
 #include <basic/MemTracer.hh>
 
-#include <stdio.h>              // for fclose, fopen, fscanf, snprintf, EOF
+#include <cstdio>              // for fclose, fopen, fscanf, snprintf, EOF
 #ifndef WIN32
 #include <sys/resource.h>       // for getrusage, rusage, RUSAGE_SELF
 #include <unistd.h>             // for getpagesize, getpid
@@ -56,7 +56,7 @@ void get_usage_from_procfilesystem( std::ostream& mem_report ) {
 	page_sz = 1;
 #endif
 
-	unsigned pid = (unsigned)getpid();
+	auto pid = (unsigned)getpid();
 	snprintf(buf, 30, "/proc/%u/statm", pid );
 	FILE* pf = fopen(buf, "r");
 	int const width( 4);

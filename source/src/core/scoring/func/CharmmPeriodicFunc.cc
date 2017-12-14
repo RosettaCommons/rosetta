@@ -14,7 +14,7 @@
 
 #include <core/scoring/func/CharmmPeriodicFunc.hh>
 
-#include <math.h>
+#include <cmath>
 
 #include <iostream>
 
@@ -39,7 +39,7 @@ bool CharmmPeriodicFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	CharmmPeriodicFunc const & other_downcast( static_cast< CharmmPeriodicFunc const & > (other) );
+	auto const & other_downcast( static_cast< CharmmPeriodicFunc const & > (other) );
 
 	if ( x0_         != other_downcast.x0_         ) return false;
 	if ( k_          != other_downcast.k_          ) return false;

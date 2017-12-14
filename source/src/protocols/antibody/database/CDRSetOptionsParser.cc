@@ -57,7 +57,7 @@ CDRSetOptionsParser::CDRSetOptionsParser():
 }
 
 
-CDRSetOptionsParser::~CDRSetOptionsParser() {}
+CDRSetOptionsParser::~CDRSetOptionsParser() = default;
 
 CDRSetOptionsParser::CDRSetOptionsParser( CDRSetOptionsParser const & src ):
 	instructions_path_(src.instructions_path_),
@@ -79,7 +79,7 @@ utility::vector1<CDRSetOptionsOP>
 CDRSetOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRSetOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		antibody_options.push_back(parse_default_and_user_options(cdr, filename));
 	}
 	return antibody_options;
@@ -102,7 +102,7 @@ utility::vector1<CDRSetOptionsOP>
 CDRSetOptionsParser::parse_options(std::string const & filename) {
 	utility::vector1<CDRSetOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		antibody_options.push_back(parse_options(cdr, filename));
 	}
 	return antibody_options;

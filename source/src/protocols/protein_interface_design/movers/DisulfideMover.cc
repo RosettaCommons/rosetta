@@ -107,11 +107,7 @@ DisulfideMover::DisulfideMover() :
 {}
 
 /// @brief copy ctor
-DisulfideMover::DisulfideMover(DisulfideMover const& dm) :
-	//utility::pointer::ReferenceCount(),
-	parent( dm ),
-	rb_jump_(dm.rb_jump_)
-{}
+DisulfideMover::DisulfideMover(DisulfideMover const& /*dm*/) = default;
 
 /// @brief Constructor with a single target residue
 DisulfideMover::DisulfideMover( core::Size targetResidue ) :
@@ -131,7 +127,7 @@ DisulfideMover::DisulfideMover( utility::vector1<core::Size> const& targetResidu
 	target_residues( ResidueSelectorOP( new ResidueIndexSelector(targetResidues) ) );
 }
 
-DisulfideMover::~DisulfideMover() {}
+DisulfideMover::~DisulfideMover() = default;
 
 /// @brief Modify the pose to define a disulfide bond between the two specified
 ///   residues.
@@ -160,7 +156,7 @@ void DisulfideMover::apply( Pose & pose ) {
 	allowed_aas_[ chemical::aa_gly ] = false;
 	allowed_aas_[ chemical::aa_pro ] = false;
 
-	PoseOP best_pose = 0;
+	PoseOP best_pose = nullptr;
 
 	for ( vector1< pair<Size,Size> >::const_iterator
 			disulf = potential_disulfides.begin(),
@@ -269,17 +265,15 @@ void DisulfideMover::disulfide_list( Pose const& const_pose,
 	// divide the targets by interface
 	vector1<Size> lower_targets;
 	vector1<Size> upper_targets;
-	for ( vector1<Size>::const_iterator target = targets.begin(),
-			end_target = targets.end();
-			target != end_target; ++target ) {
-		if ( find(pairs[1].begin(), pairs[1].end(), static_cast<int>(*target)) != pairs[1].end() ) {
+	for ( unsigned long target : targets ) {
+		if ( find(pairs[1].begin(), pairs[1].end(), static_cast<int>(target)) != pairs[1].end() ) {
 			//lower partner
-			lower_targets.push_back(*target);
-		} else if ( find(pairs[2].begin(), pairs[2].end(), static_cast<int>(*target)) != pairs[2].end() ) {
+			lower_targets.push_back(target);
+		} else if ( find(pairs[2].begin(), pairs[2].end(), static_cast<int>(target)) != pairs[2].end() ) {
 			//upper partner
-			upper_targets.push_back(*target);
+			upper_targets.push_back(target);
 		} else { //Target not in the interface
-			TR.Debug << "Target "<< *target
+			TR.Debug << "Target "<< target
 				<< " does not lie on the protein interface." << std::endl;
 			continue; //ignore this target
 		}

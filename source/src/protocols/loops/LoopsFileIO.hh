@@ -55,9 +55,9 @@ public:
 	LoopFromFileData();
 
 	LoopFromFileData(
-		core::pose::ResidueIndexDescriptionFromFile start_res,
-		core::pose::ResidueIndexDescriptionFromFile cutpoint_res,
-		core::pose::ResidueIndexDescriptionFromFile end_res,
+		core::pose::ResidueIndexDescriptionFromFile const & start_res,
+		core::pose::ResidueIndexDescriptionFromFile const & cutpoint_res,
+		core::pose::ResidueIndexDescriptionFromFile const & end_res,
 		core::Real skip_rate,
 		bool extended,
 		bool prohibit_single_residue_loops = true

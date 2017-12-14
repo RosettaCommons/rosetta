@@ -86,9 +86,6 @@ private:
 	/// newly generated foldtree OP
 	core::kinematics::FoldTreeOP fold_tree_;
 
-	/// is there a second target chain to add
-	bool add_target_; //= false; not implemented
-
 	///check whether there is a second target chain loaded
 	bool pdb_contains_target_;// = false;
 

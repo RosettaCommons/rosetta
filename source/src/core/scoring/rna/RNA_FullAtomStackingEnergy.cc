@@ -142,20 +142,7 @@ RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy( methods::EnergyMethodOpt
 {}
 
 /// copy c-tor
-RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy( RNA_FullAtomStackingEnergy const & src ):
-	ContextDependentTwoBodyEnergy( src ),
-	prefactor_    ( src.prefactor_ ),
-	stack_cutoff_ ( src.stack_cutoff_ ), //Encompass next base stack
-	dist_cutoff_  ( src.dist_cutoff_ ), //  (Do not go to next-nearest base stack!)
-	sol_prefactor_      ( src.sol_prefactor_     ), // Penalize displacement of water that was stacked
-	sol_stack_cutoff_   ( src.sol_stack_cutoff_  ), //
-	sol_dist_cutoff_    ( src.sol_dist_cutoff_   ), // how far to penalize displacement
-	lr_prefactor_       ( src.lr_prefactor_      ), // water-mediated stacking
-	lr_stack_cutoff_    ( src.lr_stack_cutoff_     ), //
-	lr_dist_cutoff_     ( src.lr_dist_cutoff_     ),//
-	base_base_only_( src.base_base_only_ )
-{
-}
+RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy( RNA_FullAtomStackingEnergy const & /*src*/ ) = default;
 
 //clone
 methods::EnergyMethodOP
@@ -669,7 +656,7 @@ RNA_FullAtomStackingEnergy::get_intrares_countpair(
 ) const
 {
 	utility_exit_with_message( "FA_ElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
-	return 0;
+	return nullptr;
 }
 
 etable::count_pair::CountPairFunctionCOP

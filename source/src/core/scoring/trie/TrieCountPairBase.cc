@@ -32,7 +32,7 @@ namespace core {
 namespace scoring {
 namespace trie {
 
-TrieCountPairBase::~TrieCountPairBase() {}
+TrieCountPairBase::~TrieCountPairBase() = default;
 
 
 void

@@ -38,7 +38,7 @@ class RemoveConstraints : public protocols::moves::Mover {
 public:
 	RemoveConstraints();
 	RemoveConstraints(
-		ConstraintGeneratorCOPs const & generators,
+		ConstraintGeneratorCOPs generators,
 		bool const exception_on_failure );
 
 	// destructor (important for properly forward-declaring smart-pointer members)

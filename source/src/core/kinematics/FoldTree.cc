@@ -57,7 +57,7 @@ namespace core {
 namespace kinematics {
 
 // @brief Auto-generated virtual destructor
-FoldTree::~FoldTree() {}
+FoldTree::~FoldTree() = default;
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -264,8 +264,8 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 	utility::vector1< Edge > new_edges, remove_edges;
 	Size const original_root( root() );
 	for ( auto & it : *this ) {
-		core::Size const start( (core::Size)it.start() );
-		core::Size const stop( (core::Size)it.stop() );
+		auto const start( (core::Size)it.start() );
+		auto const stop( (core::Size)it.stop() );
 		if ( it.label() != Edge::PEPTIDE ) continue;
 		if ( (start <= pos1 && stop >= pos1) || (stop <= pos1 && start >= pos1) ) { // edges not always in sequential order (eg - jump in middle of chain)
 			//TR.Debug << "start-pos1-stop " << start <<" " << pos1 << " " << stop << std::endl;
@@ -1011,7 +1011,7 @@ FoldTree::delete_segment(
 			}
 		}
 		if ( pos1 != pos2 ) {
-			new_edge_list_.push_back( Edge( pos1, pos2, it->label() ) );
+			new_edge_list_.emplace_back( pos1, pos2, it->label() );
 			//std::cout << "remap edge: " << *it << ' ' << pos1 << ' ' << pos2 <<
 			//std::endl;
 		}
@@ -1426,7 +1426,7 @@ FoldTree::tree_from_jumps_and_cuts(
 
 	// make a list of the unique jump_points in increasing order:
 	// so we can construct the peptide edges
-	typedef std::list< int > Int_list;
+	using Int_list = std::list<int>;
 	Int_list vertex_list;
 	// vertex_list.push_back( 1 );
 	FArray1D_bool is_cut( nres_in, false ); // keep track of cuts
@@ -1552,7 +1552,7 @@ FoldTree::random_tree_from_jump_points(
 
 	// make a list of the unique jump_points in increasing order:
 	// so we can construct the peptide edges
-	typedef std::list< Size > Int_list;
+	using Int_list = std::list<Size>;
 	Int_list jump_list;
 	// jump_list.push_back( 1 );
 	for ( Size i = 1; i <= num_jump_in; ++i ) {

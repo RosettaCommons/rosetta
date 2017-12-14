@@ -30,8 +30,7 @@ FastForwardToNextResidueAlternative::FastForwardToNextResidueAlternative( Size c
 {}
 
 //Destructor
-FastForwardToNextResidueAlternative::~FastForwardToNextResidueAlternative()
-{}
+FastForwardToNextResidueAlternative::~FastForwardToNextResidueAlternative() = default;
 
 ////////////////////////////////////////////////////////////////////////////
 // kind of sly -- this normally would be in fast_forward(),

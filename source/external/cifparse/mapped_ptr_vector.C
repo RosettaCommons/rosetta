@@ -160,10 +160,7 @@ using std::make_pair;
 
 template <typename T, typename StringCompareT>
 mapped_ptr_vector<T, StringCompareT>::mapped_ptr_vector()
-{
-
-
-}
+= default;
 
 
 template <typename T, typename StringCompareT>
@@ -314,9 +311,9 @@ template <typename T, typename StringCompareT>
 void mapped_ptr_vector<T, StringCompareT>::push_back(const vector<string>& names)
 {
 
-    for (unsigned int nameI = 0; nameI < names.size(); ++nameI)
+    for (const auto & name : names)
     {
-        push_back(names[nameI], 0);
+        push_back(name, 0);
     }
 
 }

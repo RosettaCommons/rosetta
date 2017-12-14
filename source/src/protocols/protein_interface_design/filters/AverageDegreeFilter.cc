@@ -83,7 +83,7 @@ AverageDegreeFilter::distance_threshold( core::Real const d ){
 
 core::Real
 AverageDegreeFilter::compute( core::pose::Pose const & pose ) const{
-	runtime_assert( task_factory() != 0 );
+	runtime_assert( task_factory() != nullptr );
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 	core::Size count_residues( 0 );
 	core::Size count_neighbors( 0 );
@@ -144,7 +144,7 @@ AverageDegreeFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new AverageDegreeFilter() );
 }
 
-AverageDegreeFilter::~AverageDegreeFilter(){}
+AverageDegreeFilter::~AverageDegreeFilter()= default;
 
 protocols::filters::FilterOP
 AverageDegreeFilter::clone() const{

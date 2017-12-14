@@ -175,16 +175,16 @@ public:
 	HbsDockDesignMinimizeMover(): Mover("HbsDockDesignMinimizeMover"){}
 
 	//default dtor
-	virtual ~HbsDockDesignMinimizeMover(){}
+	~HbsDockDesignMinimizeMover() override= default;
 
 	//methods
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "HbsDockDesignMinimizeMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "HbsDockDesignMinimizeMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< HbsDockDesignMinimizeMover > HbsDockDesignMinimizeMoverOP;
-typedef utility::pointer::shared_ptr< HbsDockDesignMinimizeMover const > HbsDockDesignMinimizeMoverCOP;
+using HbsDockDesignMinimizeMoverOP = utility::pointer::shared_ptr<HbsDockDesignMinimizeMover>;
+using HbsDockDesignMinimizeMoverCOP = utility::pointer::shared_ptr<const HbsDockDesignMinimizeMover>;
 
 
 int

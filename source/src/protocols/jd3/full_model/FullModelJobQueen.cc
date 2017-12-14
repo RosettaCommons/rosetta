@@ -74,15 +74,9 @@ namespace protocols {
 namespace jd3 {
 namespace full_model {
 
-PreliminaryLarvalJob::PreliminaryLarvalJob() {}
+PreliminaryLarvalJob::PreliminaryLarvalJob() = default;
 PreliminaryLarvalJob::~PreliminaryLarvalJob() = default;
-PreliminaryLarvalJob::PreliminaryLarvalJob( PreliminaryLarvalJob const & src ) :
-	inner_job( src.inner_job ),
-	job_tag( src.job_tag ),
-	job_options( src.job_options ),
-	full_model_inputter( src.full_model_inputter )
-{
-}
+PreliminaryLarvalJob::PreliminaryLarvalJob( PreliminaryLarvalJob const & /*src*/ ) = default;
 
 PreliminaryLarvalJob &
 PreliminaryLarvalJob::operator = ( PreliminaryLarvalJob const & rhs )
@@ -589,17 +583,17 @@ FullModelJobQueen::result_outputter(
 	output::OutputSpecification const & spec
 )
 {
-	typedef output::MultipleOutputSpecification MOS;
-	typedef pose_outputters::PoseOutputSpecification POS;
-	typedef output::MultipleOutputter MO;
-	typedef output::MultipleOutputterOP MOOP;
+	using MOS = output::MultipleOutputSpecification;
+	using POS = pose_outputters::PoseOutputSpecification;
+	using MO = output::MultipleOutputter;
+	using MOOP = output::MultipleOutputterOP;
 	debug_assert( dynamic_cast< MOS const * > ( &spec ) );
-	MOS const & mo_spec( static_cast< MOS const & > (spec) );
+	auto const & mo_spec( static_cast< MOS const & > (spec) );
 	MOOP outputters( new MO );
 	for ( Size ii = 1; ii <= mo_spec.output_specifications().size(); ++ii ) {
 		output::OutputSpecification const & ii_spec( *mo_spec.output_specifications()[ ii ] );
 		debug_assert( dynamic_cast< POS const * > (&ii_spec) );
-		POS const & ii_pos( static_cast< POS const & > (ii_spec) );
+		auto const & ii_pos( static_cast< POS const & > (ii_spec) );
 		// Note assumption that there is always a primary pose outputter -- return here
 		// when trying to implement the -no_output option for JD3
 		pose_outputters::PoseOutputterOP ii_outputter;
@@ -1136,7 +1130,7 @@ FullModelJobQueen::pose_for_job(
 	FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
-	FullModelInputSource const & input_source = dynamic_cast< FullModelInputSource const & >( inner_job->input_source() );
+	auto const & input_source = dynamic_cast< FullModelInputSource const & >( inner_job->input_source() );
 
 	if ( input_pose_index_map_.count( input_source.pose_id() ) ) {
 		core::pose::PoseOP pose( new core::pose::Pose );
@@ -1571,7 +1565,7 @@ FullModelJobQueen::determine_preliminary_job_list_from_command_line()
 	core::Size count_prelim_nodes( 0 );
 	for ( auto const & input_pose : input_poses ) {
 		PreliminaryLarvalJob prelim_job;
-		Size nstruct = nstruct_for_job( 0 );
+		Size nstruct = nstruct_for_job( nullptr );
 		FullModelInnerLarvalJobOP inner_job( create_inner_larval_job( nstruct, ++count_prelim_nodes ) );
 		inner_job->input_source( input_pose.first );
 		inner_job->outputter( outputter->class_key() );

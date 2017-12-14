@@ -99,7 +99,7 @@ SequenceDistance::compute(
 	std::string pose_sequence = pose.sequence(); // we already this in pose_sequence, but I need to use pose for something, otherwise compiler warning... Silly.
 
 	for ( core::Size i=1; i <= pose_sequence.length(); i++ ) {
-		if ( pose_sequence[i] != target_seq()[i] ) distance++;
+		if ( pose_sequence[i] != target_seq()[i-1] ) distance++;
 	}
 
 	//TR << "The sequence distance is " << distance << std::endl;

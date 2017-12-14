@@ -56,8 +56,7 @@ MgScanner::MgScanner():
 {}
 
 //Destructor
-MgScanner::~MgScanner()
-= default;
+MgScanner::~MgScanner() = default;
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -202,7 +201,7 @@ MgScanner::cluster_mg() {
 	std::list< std::pair< Real, pose::PoseOP > > mg_energy_pose_list;
 	Size const mg_res = get_unique_mg_res( *mg_poses_[ 1 ] );
 	for ( Size n = 1; n <= mg_poses_.size(); n++ ) {
-		mg_energy_pose_list.push_back( std::make_pair( getPoseExtraScore( *mg_poses_[ n ], "mg_score" ), mg_poses_[ n ] ) );
+		mg_energy_pose_list.emplace_back( getPoseExtraScore( *mg_poses_[ n ], "mg_score" ), mg_poses_[ n ] );
 	}
 	mg_energy_pose_list.sort();
 

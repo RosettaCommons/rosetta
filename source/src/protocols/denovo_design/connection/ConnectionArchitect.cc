@@ -58,8 +58,7 @@ ConnectionArchitect::ConnectionArchitect( std::string const & id_value ):
 {
 }
 
-ConnectionArchitect::~ConnectionArchitect()
-{}
+ConnectionArchitect::~ConnectionArchitect() = default;
 
 ConnectionArchitectOP
 ConnectionArchitect::clone() const
@@ -286,7 +285,7 @@ ConnectionArchitect::set_motifs( std::string const & motif_str, std::string cons
 	}
 
 	MotifCOPs motifs;
-	for ( MotifCOPs::const_iterator m_it=str_motifs.begin(); m_it!=str_motifs.end(); ++m_it ) {
+	for ( auto m_it=str_motifs.begin(); m_it!=str_motifs.end(); ++m_it ) {
 		debug_assert( *m_it );
 		MotifCOP m = *m_it;
 		if ( bridge_ && cutpoints.empty() ) {
@@ -325,9 +324,9 @@ ConnectionArchitect::parse_motif_string( std::string const & motif_str ) const
 {
 	MotifCOPs motifs;
 	utility::vector1< std::string > const motif_strs = utility::string_split( motif_str, ',' );
-	for ( utility::vector1< std::string >::const_iterator mstr=motif_strs.begin(); mstr!=motif_strs.end(); ++mstr ) {
+	for ( auto const & motif_str : motif_strs ) {
 		MotifOP newmotif( new Motif( id() ) );
-		newmotif->parse_motif( *mstr );
+		newmotif->parse_motif( motif_str );
 		motifs.push_back( newmotif );
 	}
 	return motifs;
@@ -347,23 +346,23 @@ ConnectionArchitect::compute_connection_candidates(
 	LengthSet const cutpoint_set = cutpoints();
 
 	MotifOPs candidates;
-	for ( SegmentPairs::const_iterator pair=seg_pairs.begin(); pair!=seg_pairs.end(); ++pair ) {
-		TR.Debug << "Looking at pair " << *pair << std::endl;
+	for ( auto const & seg_pair : seg_pairs ) {
+		TR.Debug << "Looking at pair " << seg_pair << std::endl;
 		//if ( ! pair_allowed( pair->first, pair->second ) ) {
 		//  TR.Debug << "ConnectionArchitect: Connection to segments " << pair->first
 		//   << ", " << pair->second << " DISALLOWED by user setting." << std::endl;
 		//  continue;
 		//}
 
-		MotifOPs const motifs = motifs_for_pair( *pair, sd, length_set, cutpoint_set );
+		MotifOPs const motifs = motifs_for_pair( seg_pair, sd, length_set, cutpoint_set );
 
 		// if nothing is specified, try using an empty motif
 		debug_assert( !motifs.empty() );
-		for ( MotifOPs::const_iterator m=motifs.begin(); m!=motifs.end(); ++m ) {
-			if ( connectable( sd, **m ) ) {
-				TR.Debug << "c1, c2, len : connectable " << pair->first << " <--> "
-					<< pair->second << ", " << **m << std::endl;
-				candidates.push_back( *m );
+		for ( auto const & motif : motifs ) {
+			if ( connectable( sd, *motif ) ) {
+				TR.Debug << "c1, c2, len : connectable " << seg_pair.first << " <--> "
+					<< seg_pair.second << ", " << *motif << std::endl;
+				candidates.push_back( motif );
 			}
 		}
 	}
@@ -380,7 +379,7 @@ ConnectionArchitect::segment_pairs( components::StructureData const & sd ) const
 
 	// determine alternate id -- strip off all parent names
 	std::string alt_id = id();
-	for ( SegmentNameList::const_iterator c=sd.segments_begin(); c!=sd.segments_end(); ++c ) {
+	for ( auto c=sd.segments_begin(); c!=sd.segments_end(); ++c ) {
 		if ( boost::ends_with( *c, id() ) ) {
 			alt_id = *c;
 		}
@@ -460,9 +459,9 @@ ConnectionArchitect::combine_segment_names(
 {
 	SegmentPairs pairs;
 
-	for ( SegmentNames::const_iterator s1=seg1s.begin(); s1!=seg1s.end(); ++s1 ) {
-		for ( SegmentNames::const_iterator s2=seg2s.begin(); s2!=seg2s.end(); ++s2 ) {
-			pairs.push_back( std::make_pair( *s1, *s2 ) );
+	for ( auto const & seg1 : seg1s ) {
+		for ( auto const & seg2 : seg2s ) {
+			pairs.push_back( std::make_pair( seg1, seg2 ) );
 		}
 	}
 	return pairs;
@@ -475,9 +474,9 @@ ConnectionArchitect::available_upper_termini( components::StructureData const & 
 	if ( segment1_ids_.empty() ) {
 		local_ids = sd.available_upper_termini();
 	} else {
-		for ( SegmentNames::const_iterator s=segment1_ids_.begin(); s!=segment1_ids_.end(); ++s ) {
-			if ( sd.has_free_upper_terminus( *s ) ) {
-				local_ids.push_back( *s );
+		for ( auto const & segment1_id : segment1_ids_ ) {
+			if ( sd.has_free_upper_terminus( segment1_id ) ) {
+				local_ids.push_back( segment1_id );
 			}
 		}
 	}
@@ -495,9 +494,9 @@ ConnectionArchitect::available_lower_termini( components::StructureData const & 
 	if ( segment2_ids_.empty() ) {
 		local_ids = sd.available_lower_termini();
 	} else {
-		for ( SegmentNames::const_iterator s=segment2_ids_.begin(); s!=segment2_ids_.end(); ++s ) {
-			if ( sd.has_free_lower_terminus( *s ) ) {
-				local_ids.push_back( *s );
+		for ( auto const & segment2_id : segment2_ids_ ) {
+			if ( sd.has_free_lower_terminus( segment2_id ) ) {
+				local_ids.push_back( segment2_id );
 			}
 		}
 	}
@@ -519,7 +518,7 @@ ConnectionArchitect::LengthSet
 ConnectionArchitect::lengths() const
 {
 	LengthSet length_set;
-	for ( MotifCOPs::const_iterator m=motifs_.begin(); m!=motifs_.end(); ++m ) {
+	for ( auto m=motifs_.begin(); m!=motifs_.end(); ++m ) {
 		debug_assert( *m );
 		length_set.insert( (*m)->length() );
 	}
@@ -531,7 +530,7 @@ ConnectionArchitect::LengthSet
 ConnectionArchitect::cutpoints() const
 {
 	LengthSet cutpoint_set;
-	for ( MotifCOPs::const_iterator m=motifs_.begin(); m!=motifs_.end(); ++m ) {
+	for ( auto m=motifs_.begin(); m!=motifs_.end(); ++m ) {
 		debug_assert( *m );
 		if ( (*m)->cutpoint() ) cutpoint_set.insert( (*m)->cutpoint() );
 	}
@@ -551,8 +550,8 @@ ConnectionArchitect::motifs_for_pair(
 		core::Size const res2 = sd.segment( pair.second ).start();
 		all_motifs = ideal_abego_->generate( sd.abego( res1 ), sd.abego( res2 ), length_set, cutpoint_set );
 	} else {
-		for ( MotifCOPs::const_iterator m=motifs_.begin(); m!=motifs_.end(); ++m ) {
-			all_motifs.push_back( (*m)->clone() );
+		for ( auto const & motif : motifs_ ) {
+			all_motifs.push_back( motif->clone() );
 		}
 	}
 
@@ -647,7 +646,7 @@ calc_approx_loop_length( std::string const & abego )
 	for ( std::string::const_iterator a=abego.begin(); next!=abego.end(); ++a, ++next ) {
 		std::stringstream dyad;
 		dyad << *a << *next;
-		std::map< std::string, core::Real >::const_iterator d = distmap.find(dyad.str());
+		auto d = distmap.find(dyad.str());
 		if ( d == distmap.end() ) {
 			max_dist += 3.8;
 		} else {
@@ -709,8 +708,8 @@ AreConnectablePredicate::connected_movable_groups( components::StructureData con
 {
 	SegmentNameList const & segments = sd.connected_segments( seg_name, true );
 	MovableGroupSet mgs;
-	for ( SegmentNameList::const_iterator s=segments.begin(); s!=segments.end(); ++s ) {
-		mgs.insert( sd.segment( *s ).movable_group() );
+	for ( auto const & segment : segments ) {
+		mgs.insert( sd.segment( segment ).movable_group() );
 	}
 	return mgs;
 }

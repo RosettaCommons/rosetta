@@ -28,9 +28,9 @@ namespace locator {
 
 static Tracer file_list_tracer("basic.resource_manager.locator.FileListResourceLocator");
 
-FileListResourceLocatorCreator::FileListResourceLocatorCreator() {}
+FileListResourceLocatorCreator::FileListResourceLocatorCreator() = default;
 
-FileListResourceLocatorCreator::~FileListResourceLocatorCreator(){}
+FileListResourceLocatorCreator::~FileListResourceLocatorCreator()= default;
 
 ResourceLocatorOP
 FileListResourceLocatorCreator::create_resource_locator() const
@@ -51,10 +51,7 @@ FileListResourceLocator::FileListResourceLocator() :
 
 }
 
-FileListResourceLocator::~FileListResourceLocator()
-{
-
-}
+FileListResourceLocator::~FileListResourceLocator() = default;
 
 FileListResourceLocator::FileListResourceLocator(
 	FileListResourceLocator const & /*src*/

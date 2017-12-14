@@ -32,8 +32,7 @@ LoopClosePotentialEvaluator::LoopClosePotentialEvaluator( core::Real const & loo
 {}
 
 //Destructor
-LoopClosePotentialEvaluator::~LoopClosePotentialEvaluator()
-{}
+LoopClosePotentialEvaluator::~LoopClosePotentialEvaluator() = default;
 
 } //evaluator
 } //loop_graph

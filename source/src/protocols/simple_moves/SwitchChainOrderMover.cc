@@ -181,7 +181,7 @@ SwitchChainOrderMover::parse_my_tag(
 		}
 	}
 
-	if ( tag->getOption<bool>("invert_chains", 0) ) {
+	if ( tag->getOption<bool>("invert_chains", false) ) {
 		// Invert the chain selection
 		utility::vector1<core::Size> inverted_chain_ids_;
 		for ( core::Size i=1 ; i <= pose.conformation().num_chains() ; i++ ) {

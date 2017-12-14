@@ -25,6 +25,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
@@ -82,7 +83,7 @@ FixbbLinkingRotamerSimAnnealer::FixbbLinkingRotamerSimAnnealer(
 	current_rot_index,
 	calc_rot_freq,
 	rot_freq
-	), ig_(ig)
+	), ig_(std::move(ig))
 {
 	setup_rotamer_links( rotamer_links );
 }
@@ -151,8 +152,7 @@ FixbbLinkingRotamerSimAnnealer::setup_rotamer_links(
 
 
 /// @brief virtual destructor
-FixbbLinkingRotamerSimAnnealer::~FixbbLinkingRotamerSimAnnealer()
-{}
+FixbbLinkingRotamerSimAnnealer::~FixbbLinkingRotamerSimAnnealer() = default;
 
 
 void FixbbLinkingRotamerSimAnnealer::run()
@@ -310,7 +310,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			bool found_rotamer = false;
 			Size num_linked_res =0;
 
-			for ( utility::vector1<int>::iterator itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; ++itr ) { // go through each linked residue
+			for ( auto itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; ++itr ) { // go through each linked residue
 				num_linked_res++;
 				TR.Debug << "analyzing num_linked_res: " << num_linked_res << std::endl;
 				if ( ( *itr != 0 ) && ( *itr != moltenres_id ) ) { //skip this step if residue is self
@@ -324,7 +324,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 					//pick a rotamer at a linked position
 					RotamerSetCOP other_rotamer_set( rotamer_sets()->rotamer_set_for_moltenresidue( *itr ) );
 					//ResidueCOP other_rotamer( other_prevrotamer_state == 0 ? ResidueCOP(0) : other_rotamer_set->rotamer( other_prevrotamer_state ) );
-					ResidueCOP other_rotamer( ResidueCOP(0) );
+					ResidueCOP other_rotamer( ResidueCOP(nullptr) );
 
 					utility::vector1<int> passed_states;
 
@@ -371,7 +371,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 					if ( quasiflag ) { //if quasisymmetric case, RNG pick a rotamer from the newly compiled list of similar AAs
 						TR.Debug << "QUASIBYPASS: number of states with similar AA: " << passed_states.size() << std::endl;
-						int ranrotamer2 = static_cast<int>( numeric::random::rg().random_range(1, passed_states.size() ));
+						auto ranrotamer2 = static_cast<int>( numeric::random::rg().random_range(1, passed_states.size() ));
 						found_rotamer = true; //flags this rotamer to be "same" for the sake of code downstream
 						resid_states[*itr] = passed_states[ ranrotamer2 ]; //record state of "other rotamer"
 					}
@@ -398,9 +398,9 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			if ( ( !found_rotamer ) && ( ! ( quasiflag ) ) ) { // any of the linked position without the same rotamer should be passed (don't do this for quasisymmetry)
 				//invalidate all the linked positions
 				TR.Debug << "invalidate " ;
-				for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
-					rot_valid[ rotamer_sets()->moltenres_rotid_2_rotid( (*it).first, (*it).second ) ] = false;
-					TR.Debug << (*it).first << "(" << (*it).second << ")"  ;
+				for ( auto & resid_state : resid_states ) {
+					rot_valid[ rotamer_sets()->moltenres_rotid_2_rotid( resid_state.first, resid_state.second ) ] = false;
+					TR.Debug << resid_state.first << "(" << resid_state.second << ")"  ;
 				}
 				TR.Debug << std::endl;
 				continue;
@@ -409,12 +409,12 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			//score the good rotamers and pass through metropolis
 
 			core::PackerEnergy totalenergy = 0.0; //reset totalenergy
-			for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
+			for ( auto & resid_state : resid_states ) {
 				core::PackerEnergy delta_energy_temp( 0.0 ), previous_energy_for_node_temp( 0.0 ); //initialize to zero?
-				ig_->consider_substitution( (*it).first, (*it).second, delta_energy_temp, previous_energy_for_node_temp );
+				ig_->consider_substitution( resid_state.first, resid_state.second, delta_energy_temp, previous_energy_for_node_temp );
 
 				currentenergy = ig_->commit_considered_substitution();
-				TR.Debug << "current energy(" << *it << "): " << currentenergy << std::endl;
+				TR.Debug << "current energy(" << resid_state << "): " << currentenergy << std::endl;
 				totalenergy += currentenergy;
 				TR.Debug << "total energy: " << totalenergy << std::endl;
 				delta_energy_accumulated += delta_energy_temp;
@@ -434,9 +434,9 @@ void FixbbLinkingRotamerSimAnnealer::run()
 				}
 
 				//set state
-				for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
-					TR.Debug << "resid_states " << *it << " first(residue): " << (*it).first << " second(rotamer): " << (*it).second << std::endl;
-					state_on_node( (*it).first ) = (*it).second;
+				for ( auto & resid_state : resid_states ) {
+					TR.Debug << "resid_states " << resid_state << " first(residue): " << resid_state.first << " second(rotamer): " << resid_state.second << std::endl;
+					state_on_node( resid_state.first ) = resid_state.second;
 				}
 
 				TR.Debug << "current (avg) energy: " << avgenergy << " best energy: " << bestenergy() << std::endl;
@@ -455,10 +455,10 @@ void FixbbLinkingRotamerSimAnnealer::run()
 				}
 				//revert changes:
 
-				for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
+				for ( auto & resid_state : resid_states ) {
 
 					core::PackerEnergy dE, oldE;
-					ig_->consider_substitution( (*it).first,  state_on_node((*it).first),
+					ig_->consider_substitution( resid_state.first,  state_on_node(resid_state.first),
 						dE, oldE );
 					currentenergy = ig_->commit_considered_substitution();
 				}

@@ -34,6 +34,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
+#include <utility>
 #include <utility/pointer/owning_ptr.hh>
 
 // Mover headers
@@ -154,11 +155,11 @@ OopCreatorMover::OopCreatorMover(
 	bool final_mc,
 	bool final_correct_oop_post
 ): Mover("OopCreatorMover"),
-	oop_plus_positions_ (oop_plus_positions),
-	oop_minus_positions_ (oop_minus_positions),
-	oop_d_plus_positions_ (oop_d_plus_positions),
-	oop_d_minus_positions_ (oop_d_minus_positions),
-	oop_low_e_puck_positions_ (oop_low_e_puck_positions),
+	oop_plus_positions_ (std::move(oop_plus_positions)),
+	oop_minus_positions_ (std::move(oop_minus_positions)),
+	oop_d_plus_positions_ (std::move(oop_d_plus_positions)),
+	oop_d_minus_positions_ (std::move(oop_d_minus_positions)),
+	oop_low_e_puck_positions_ (std::move(oop_low_e_puck_positions)),
 	prepend_n_residues_ (prepend_n_residues),
 	append_n_residues_ (append_n_residues),
 	final_repack_ (final_repack),

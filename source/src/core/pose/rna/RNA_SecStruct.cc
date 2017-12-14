@@ -98,8 +98,7 @@ RNA_SecStruct::RNA_SecStruct( pose::Pose const & )
 }
 
 //Destructor
-RNA_SecStruct::~RNA_SecStruct()
-{}
+RNA_SecStruct::~RNA_SecStruct() = default;
 
 void
 RNA_SecStruct::set_basepairs_from_secstruct() {
@@ -125,11 +124,11 @@ RNA_SecStruct::set_basepairs_from_secstruct() {
 		Size count( 0 );
 		vector1< Size > left_brackets;
 
-		for ( Size i = 0; i < secstruct_.size(); i++ ) {
-			if ( core::sequence::spacers.has_value( secstruct_[i] ) ) continue;
+		for ( char i : secstruct_ ) {
+			if ( core::sequence::spacers.has_value( i ) ) continue;
 			count++;
-			if ( secstruct_[i] == left_bracket_char ) left_brackets.push_back( count );
-			if ( secstruct_[i] == right_bracket_char ) {
+			if ( i == left_bracket_char ) left_brackets.push_back( count );
+			if ( i == right_bracket_char ) {
 				if ( left_brackets.size() == 0 ) {
 					utility_exit_with_message( "Number of right brackets does not match left brackets" );
 				}

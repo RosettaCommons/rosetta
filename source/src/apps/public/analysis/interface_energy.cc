@@ -219,7 +219,7 @@ int main( int argc, char * argv [] )
 		// method (i=1,...,N; the ci_lr_2b_methods order is assumed). Each super-block
 		// is composed of blocks in the same way as the output of short-range energies
 		// (described above).
-		for ( core::scoring::ScoreFunction::CI_LR_2B_Methods::const_iterator
+		for ( auto
 				iter = scorefxn->ci_lr_2b_methods_begin(),
 				iter_end = scorefxn->ci_lr_2b_methods_end();
 				iter != iter_end; ++iter ) {
@@ -275,7 +275,7 @@ int main( int argc, char * argv [] )
 		// method (i=1,...,N; the cd_lr_2b_methods order is assumed). Each super-block
 		// is composed of blocks in the same way as the output of short-range energies
 		// (described above).
-		for ( core::scoring::ScoreFunction::CD_LR_2B_Methods::const_iterator
+		for ( auto
 				iter = scorefxn->cd_lr_2b_methods_begin(),
 				iter_end = scorefxn->cd_lr_2b_methods_end();
 				iter != iter_end; ++iter ) {

@@ -37,7 +37,7 @@ std::string ToUpper( std::string s ) {
 #ifdef WIN32
 	for ( size_t i = 0; i < s.size(); ++i ) s[i] = toupper( s[i] );
 #else
-	for ( size_t i = 0; i < s.size(); ++i ) s[i] = std::toupper( s[i] );
+	for ( char & i : s ) i = std::toupper( i );
 #endif
 	// std::transform( s.begin(), s.end(), s.begin(), std::toupper );
 	return s;

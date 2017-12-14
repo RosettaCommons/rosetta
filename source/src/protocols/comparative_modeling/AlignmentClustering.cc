@@ -443,7 +443,6 @@ vector1< SequenceAlignment > AlignmentClustering::generateRankedAlignments(map <
 	vector1<SequenceAlignment> rankedAlignments;
 	multimap<Real,string> rankedTemplate_map; //templates are from ev_map or hh_map
 	map<string,Real> template_map;
-	vector1<SequenceAlignment>::iterator start_rankedAln,stop_rankedAln;
 	map<string,SequenceAlignment>::iterator start_alns, stop_alns;
 	//mjo commenting out 'hhsearch_ranking' because it is unused and causes a warning
 	//bool hhsearch_ranking = 0;

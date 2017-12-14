@@ -622,7 +622,7 @@ Energies::show( std::ostream & out ) const
 	out << "E       "; // "E" plus spaces to account for "(i)" plus the four character alignment of the residue number
 	for ( EnergyMap::const_iterator it=total_energies_.begin(),
 			it_end = total_energies_.end(); it != it_end; ++it ) {
-		ScoreType const scoretype = ScoreType( it - total_energies_.begin() + 1 ); // hacky
+		auto const scoretype = ScoreType( it - total_energies_.begin() + 1 ); // hacky
 		if ( scorefxn_weights_[ scoretype ] != 0 ) {
 			out << A(14, name_from_score_type(scoretype));
 		}
@@ -634,7 +634,7 @@ Energies::show( std::ostream & out ) const
 		out << "E(i)" << I(4,i);
 		EnergyMap const & emap( residue_total_energies_[i] );
 		for ( EnergyMap::const_iterator it = emap.begin(), it_end = emap.end(); it != it_end; ++it ) {
-			ScoreType const scoretype = ScoreType( it - emap.begin() + 1 ); // hacky
+			auto const scoretype = ScoreType( it - emap.begin() + 1 ); // hacky
 			if ( scorefxn_weights_[ scoretype ] != 0 ) {
 				out << F(14,2,*it);
 			}
@@ -645,7 +645,7 @@ Energies::show( std::ostream & out ) const
 	// show the total energies
 	for ( EnergyMap::const_iterator it=total_energies_.begin(),
 			it_end = total_energies_.end(); it != it_end; ++it ) {
-		ScoreType const scoretype = ScoreType( it - total_energies_.begin() + 1 ); // hacky
+		auto const scoretype = ScoreType( it - total_energies_.begin() + 1 ); // hacky
 		if ( scorefxn_weights_[ scoretype ] != 0 ) {
 			//out << "total_energy " << scoretype << ' ' << F(12,3,*it) << std::endl;
 			out << "total_energy" << A(14, name_from_score_type(scoretype)) << F(12,3,*it) << std::endl;
@@ -665,7 +665,7 @@ Energies::show( std::ostream & out, Size res ) const
 	out << "E       "; // "E" plus spaces to account for "(i)" plus the four character alignment of the residue number
 	for ( EnergyMap::const_iterator it=total_energies_.begin(),
 			it_end = total_energies_.end(); it != it_end; ++it ) {
-		ScoreType const scoretype = ScoreType( it - total_energies_.begin() + 1 ); // hacky
+		auto const scoretype = ScoreType( it - total_energies_.begin() + 1 ); // hacky
 		if ( scorefxn_weights_[ scoretype ] != 0 ) {
 			out << A(14, name_from_score_type(scoretype));
 		}
@@ -675,7 +675,7 @@ Energies::show( std::ostream & out, Size res ) const
 	out << "E(i)" << I(4,res);
 	EnergyMap const & emap( residue_total_energies_[res] );
 	for ( EnergyMap::const_iterator it = emap.begin(), it_end = emap.end(); it != it_end; ++it ) {
-		ScoreType const scoretype = ScoreType( it - emap.begin() + 1 ); // hacky
+		auto const scoretype = ScoreType( it - emap.begin() + 1 ); // hacky
 		if ( scorefxn_weights_[ scoretype ] != 0 ) {
 			out << F(14,2,*it);
 		}
@@ -995,7 +995,7 @@ Energies::accumulate_residue_total_energies() const
 				irue = energy_graph_->get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
 
-			EnergyEdge const & edge( static_cast< EnergyEdge const & > (**iru) );
+			auto const & edge( static_cast< EnergyEdge const & > (**iru) );
 
 			Size const j( edge.get_second_node_ind() );
 
@@ -1059,7 +1059,7 @@ Energies::accumulate_residue_total_energy() const
 				iru  = energy_graph_->get_node(ii)->const_upper_edge_list_begin(),
 				irue = energy_graph_->get_node(ii)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const & edge( static_cast< EnergyEdge const & > (**iru) );
+			auto const & edge( static_cast< EnergyEdge const & > (**iru) );
 			Size const jj( edge.get_second_node_ind() );
 
 			Real half = 0.5 * edge.dot( scorefxn_weights_ );

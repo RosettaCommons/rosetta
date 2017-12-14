@@ -16,7 +16,7 @@
 namespace protocols {
 namespace filters {
 
-FilterCreator::FilterCreator() {}
+FilterCreator::FilterCreator() = default;
 FilterCreator::~FilterCreator() = default;
 
 } //namespace filters

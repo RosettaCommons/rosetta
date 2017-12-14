@@ -49,7 +49,7 @@ RNA_IdealCoord::RNA_IdealCoord():
 	init();
 }
 
-RNA_IdealCoord::~RNA_IdealCoord() {}
+RNA_IdealCoord::~RNA_IdealCoord() = default;
 
 /////////////////////////////////////////////////////
 bool RNA_IdealCoord::is_torsion_exists(

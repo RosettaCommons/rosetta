@@ -53,7 +53,7 @@ DeclareStructureDataCovalentBondMover::DeclareStructureDataCovalentBondMover():
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-DeclareStructureDataCovalentBondMover::~DeclareStructureDataCovalentBondMover(){}
+DeclareStructureDataCovalentBondMover::~DeclareStructureDataCovalentBondMover()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///
@@ -84,7 +84,7 @@ DeclareStructureDataCovalentBondMover::apply( core::pose::Pose & pose )
 	}
 
 	std::string const seg1 = res1_strs[1];
-	core::Size const res1 = boost::lexical_cast< core::Size >(res1_strs[2]);
+	auto const res1 = boost::lexical_cast< core::Size >(res1_strs[2]);
 	std::string const a1 = res_plus_atom1[2];
 
 	utility::vector1< std::string > res_plus_atom2 = utility::string_split( atom2_, ',' );
@@ -100,7 +100,7 @@ DeclareStructureDataCovalentBondMover::apply( core::pose::Pose & pose )
 	}
 
 	std::string const seg2 = res2_strs[1];
-	core::Size const res2 = boost::lexical_cast< core::Size >(res2_strs[2]);
+	auto const res2 = boost::lexical_cast< core::Size >(res2_strs[2]);
 	std::string const a2 = res_plus_atom2[2];
 
 	components::StructureData perm = components::StructureDataFactory::get_instance()->get_from_pose( pose );

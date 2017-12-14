@@ -36,11 +36,9 @@ VaryLoopLengthMover::VaryLoopLengthMover():
 	protocols::moves::Mover( "VaryLoopLengthMover" )
 {}
 
-VaryLoopLengthMover::~VaryLoopLengthMover(){}
+VaryLoopLengthMover::~VaryLoopLengthMover()= default;
 
-VaryLoopLengthMover::VaryLoopLengthMover( VaryLoopLengthMover const & src ):
-	protocols::moves::Mover( src )
-{}
+VaryLoopLengthMover::VaryLoopLengthMover( VaryLoopLengthMover const & /*src*/ ) = default;
 
 ///////////////////////////////////////////////////////////////////////////
 std::string
@@ -82,7 +80,7 @@ VaryLoopLengthMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_mo
 	using namespace core::pose::full_model_info;
 	FullModelParametersCOP full_model_parameters( const_full_model_info( pose ).full_model_parameters() );
 	FullModelParametersCOP parent_full_model_parameters( full_model_parameters->parent_full_model_parameters() );
-	runtime_assert( parent_full_model_parameters != 0 );
+	runtime_assert( parent_full_model_parameters != nullptr );
 
 	// which parent_full_model residues are being modeled in current full_model_parameters:
 	utility::vector1< Size > const & slice_res_list( full_model_parameters->slice_res_list() );
@@ -142,7 +140,7 @@ VaryLoopLengthMover::update_full_model_parameters( pose::Pose & pose, pose::full
 	FullModelParametersCOP full_model_parameters( const_full_model_info( pose ).full_model_parameters() );
 
 	// better be derived from same parent full_model with maximal loop lengths.
-	runtime_assert( full_model_parameters->parent_full_model_parameters() != 0 );
+	runtime_assert( full_model_parameters->parent_full_model_parameters() != nullptr );
 	runtime_assert( full_model_parameters->parent_full_model_parameters() ==
 		full_model_parameters_new->parent_full_model_parameters() );
 

@@ -48,7 +48,7 @@ ResidueVector::from_subset( ResidueSubset const & subset )
 	}
 }
 
-ResidueVector::~ResidueVector() {}
+ResidueVector::~ResidueVector() = default;
 
 } //namespace residue_selector
 } //namespace select

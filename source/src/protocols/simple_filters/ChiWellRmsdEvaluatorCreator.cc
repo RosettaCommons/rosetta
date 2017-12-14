@@ -79,7 +79,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		}
 
-		typedef utility::vector1< std::string > RmsdVector;
+		using RmsdVector = utility::vector1<std::string>;
 		RmsdVector const& rmsd( option[ OptionKeys::evaluation::chirmsd ]() );
 
 		//the ultimate in RMSD technology:

@@ -108,8 +108,7 @@ VirtualSugarJustInTimeInstantiator::VirtualSugarJustInTimeInstantiator( working_
 {}
 
 //Destructor
-VirtualSugarJustInTimeInstantiator::~VirtualSugarJustInTimeInstantiator()
-{}
+VirtualSugarJustInTimeInstantiator::~VirtualSugarJustInTimeInstantiator() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

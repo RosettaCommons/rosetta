@@ -13,7 +13,7 @@
 
 #include <protocols/antibody/clusters/CDRCluster.hh>
 #include <core/pose/PDBInfo.hh>
-#include <math.h>
+#include <cmath>
 #include <numeric/NumericTraits.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -40,7 +40,6 @@ CDRCluster::CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, cor
 	cluster_(cluster),
 	distance_(distance),
 	start_(start),
-	length_(cdr_length),
 	cis_trans_match_(cis_trans_match)
 {
 	end_ = start+cdr_length-1;
@@ -48,32 +47,14 @@ CDRCluster::CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, cor
 	set_pdb_numbering(pose, start, end_);
 }
 
-CDRCluster::CDRCluster(const CDRCluster& src):
-	utility::pointer::ReferenceCount(src),
-	cdr_(src.cdr_),
-	cluster_(src.cluster_),
-	distance_(src.distance_),
-	normalized_distance_(src.normalized_distance_),
-	pdb_start_(src.pdb_start_),
-	pdb_end_(src.pdb_end_),
-	pdb_start_insertion_code_(src.pdb_start_insertion_code_),
-	pdb_end_insertion_code_(src.pdb_end_insertion_code_),
-	start_(src.start_),
-	end_(src.end_),
-	length_(src.length_),
-	chain_(src.chain_),
-	cis_trans_match_(src.cis_trans_match_)
-
-{
-
-}
+CDRCluster::CDRCluster(const CDRCluster& /*src*/) = default;
 
 CDRClusterOP
 CDRCluster::clone() const {
 	return CDRClusterOP( new CDRCluster(*this) );
 }
 
-CDRCluster::~CDRCluster(){}
+CDRCluster::~CDRCluster()= default;
 
 core::Real
 CDRCluster::normalized_distance_in_degrees() const {
@@ -116,7 +97,6 @@ protocols::antibody::clusters::CDRCluster::save( Archive & arc ) const {
 	arc( CEREAL_NVP( pdb_end_insertion_code_ ) ); // char
 	arc( CEREAL_NVP( start_ ) ); // core::Size
 	arc( CEREAL_NVP( end_ ) ); // core::Size
-	arc( CEREAL_NVP( length_ ) ); // core::Size
 	arc( CEREAL_NVP( chain_ ) ); // char
 	arc( CEREAL_NVP( cis_trans_match_ ) ); // _Bool
 }
@@ -135,7 +115,6 @@ protocols::antibody::clusters::CDRCluster::load( Archive & arc ) {
 	arc( pdb_end_insertion_code_ ); // char
 	arc( start_ ); // core::Size
 	arc( end_ ); // core::Size
-	arc( length_ ); // core::Size
 	arc( chain_ ); // char
 	arc( cis_trans_match_ ); // _Bool
 }

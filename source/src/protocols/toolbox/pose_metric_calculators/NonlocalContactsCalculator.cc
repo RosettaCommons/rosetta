@@ -16,6 +16,7 @@
 
 //#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/chemical/ResidueType.hh>
+#include <utility>
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -120,7 +121,7 @@ NonlocalContactsCalculator::NonlocalContactsCalculator(
 	residue_nlscore_.clear();
 }
 
-NonlocalContactsCalculator::~NonlocalContactsCalculator(){}
+NonlocalContactsCalculator::~NonlocalContactsCalculator()= default;
 
 
 void
@@ -218,7 +219,7 @@ NonlocalContactsCalculator::recompute( Pose const & this_pose )
 
 			//TR << other_res << " - " << i << " is bigger than " << min_seq_separation_ << std::endl;
 			//downcast to energy edge
-			EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+			auto const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 
 			//to do: get the long range energies
 

@@ -1538,7 +1538,7 @@ write_topology_file(
 /// @brief Callback class for write_graphviz - outputs properties for the nodes and edges.
 class GraphvizPropertyWriter {
 public:
-	GraphvizPropertyWriter( ResidueType const & rsd ):
+	explicit GraphvizPropertyWriter( ResidueType const & rsd ):
 		rsd_(rsd)
 	{}
 

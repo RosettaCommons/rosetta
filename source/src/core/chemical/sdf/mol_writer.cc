@@ -98,7 +98,7 @@ void MolWriter::output_residue(std::ostream & output_stream, core::conformation:
 	}
 	prepared_lines.insert(prepared_lines.end(),job_data.begin(),job_data.end());
 	if ( ctab_mode_ == V2000 ) {
-		prepared_lines.push_back("$$$$\n");
+		prepared_lines.emplace_back("$$$$\n");
 	}
 
 
@@ -210,7 +210,7 @@ std::list<std::string> MolWriter::compose_ctab(core::conformation::Residue const
 	if ( ctab_mode_ == V3000 ) {
 		lines.push_back(end_header);
 	}
-	lines.push_back("M  END\n");
+	lines.emplace_back("M  END\n");
 
 	return lines;
 }
@@ -395,7 +395,7 @@ std::list<std::string> MolWriter::compose_typeinfo(core::conformation::Residue c
 
 	lines.push_back(header);
 	lines.push_back(type_data);
-	lines.push_back("\n");
+	lines.emplace_back("\n");
 
 	return lines;
 }
@@ -409,14 +409,14 @@ std::list<std::string> MolWriter::compose_nbr_atom(core::conformation::Residue c
 
 	lines.push_back(header);
 	lines.push_back(nbr_atom);
-	lines.push_back("\n");
+	lines.emplace_back("\n");
 
 	std::string header2 = "> <Rosetta nbr_radius>\n";
 	std::string nbr_radius = utility::to_string<core::Real>(residue.nbr_radius()) + "\n";
 
 	lines.push_back(header2);
 	lines.push_back(nbr_radius);
-	lines.push_back("\n");
+	lines.emplace_back("\n");
 
 	return lines;
 }
@@ -431,7 +431,7 @@ std::list<std::string> MolWriter::compose_naming(core::conformation::Residue con
 
 	lines.push_back(header);
 	lines.push_back(name);
-	lines.push_back("\n");
+	lines.emplace_back("\n");
 
 	if ( residue.name3() != residue.name().substr(0,3) || residue.name1() != 'Z' ) {
 		std::string header2 = "> <Rosetta IO_string>\n";
@@ -439,7 +439,7 @@ std::list<std::string> MolWriter::compose_naming(core::conformation::Residue con
 
 		lines.push_back(header2);
 		lines.push_back(io_string);
-		lines.push_back("\n");
+		lines.emplace_back("\n");
 	}
 	if ( restype.interchangeability_group() != restype.name3() ) {
 		std::string header3 = "> <Rosetta Interchangeability Group>\n";
@@ -447,7 +447,7 @@ std::list<std::string> MolWriter::compose_naming(core::conformation::Residue con
 
 		lines.push_back(header3);
 		lines.push_back(group);
-		lines.push_back("\n");
+		lines.emplace_back("\n");
 	}
 	if ( restype.aa() != core::chemical::aa_unk ) {
 		std::string header4 = "> <Rosetta AA>\n";
@@ -455,7 +455,7 @@ std::list<std::string> MolWriter::compose_naming(core::conformation::Residue con
 
 		lines.push_back(header4);
 		lines.push_back(aa);
-		lines.push_back("\n");
+		lines.emplace_back("\n");
 	}
 
 	return lines;
@@ -477,7 +477,7 @@ std::list<std::string> MolWriter::compose_rosetta_properties(core::conformation:
 			lines.push_back( property_line );
 		}
 
-		lines.push_back( "\n" );
+		lines.emplace_back("\n" );
 	}
 
 	return lines;
@@ -492,7 +492,7 @@ std::list<std::string> MolWriter::compose_job_info()
 		std::string header("> <"+header_name+">\n");
 		lines.push_back(header);
 		lines.push_back(data);
-		lines.push_back("\n");
+		lines.emplace_back("\n");
 	}
 	return lines;
 }

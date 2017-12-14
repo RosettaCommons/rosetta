@@ -62,7 +62,7 @@ operator<<( std::ostream & os, TripletID const & id )
 }
 
 /// @brief Auto-generated virtual destructor
-HSSTriplet::~HSSTriplet() {}
+HSSTriplet::~HSSTriplet() = default;
 
 
 /// @value constructor
@@ -295,8 +295,7 @@ HSSTripletSet::HSSTripletSet( String const & s )
 /// @brief value constructor
 HSSTripletSet::HSSTripletSet( HSSTriplets const & s )
 {
-	for ( HSSTriplets::const_iterator it=s.begin(), ite=s.end(); it!= ite; ++it ) {
-		HSSTripletOP const hss( *it );
+	for ( auto hss : s ) {
 		push_back( hss );
 	}
 }
@@ -311,16 +310,15 @@ HSSTripletSet::HSSTripletSet( HSSTripletSet const & s ) :
 
 
 /// @brief destructor
-HSSTripletSet::~HSSTripletSet(){}
+HSSTripletSet::~HSSTripletSet()= default;
 
 
 /// @brief IO Operator
 std::ostream & operator<<(std::ostream & out, const HSSTripletSet & s )
 {
 	out << "#### HSSTriplet Info " << std::endl;
-	for ( HSSTriplets::const_iterator iter = s.hss_triplets().begin(),
-			iter_end = s.hss_triplets().end(); iter != iter_end; ++iter ) {
-		HSSTriplet const & hss( **iter );
+	for ( auto const & iter : s.hss_triplets() ) {
+		HSSTriplet const & hss( *iter );
 		out << hss << std::endl;
 	}
 	return out;
@@ -331,8 +329,7 @@ std::ostream & operator<<(std::ostream & out, const HSSTripletSet & s )
 void
 HSSTripletSet::add_hsstriplets( HSSTriplets const & s )
 {
-	for ( HSSTriplets::const_iterator it=s.begin(), ite=s.end(); it!= ite; ++it ) {
-		HSSTripletOP const hss( *it );
+	for ( auto hss : s ) {
 		push_back( hss );
 	}
 }
@@ -342,7 +339,7 @@ void
 HSSTripletSet::push_back( HSSTripletOP const hsop )
 {
 	TripletID const hs_id( *hsop );
-	TripletMap::iterator triplet = helix2hss_.find( hs_id );
+	auto triplet = helix2hss_.find( hs_id );
 	if ( triplet != helix2hss_.end() ) {
 		TR.Warning <<  "Triplet "  <<  hs_id << " is already defined in HSSTriplet.  It will not be added to the set" << std::endl;
 		debug_assert( false );
@@ -366,8 +363,8 @@ HSSTriplets
 HSSTripletSet::hss_triplets( Size const helix ) const
 {
 	HSSTriplets triplets;
-	for ( HSSTriplets::const_iterator hss=begin(); hss!=end(); ++hss ) {
-		if ( (*hss)->helix() == helix ) triplets.push_back( *hss );
+	for ( auto const & hss : *this ) {
+		if ( hss->helix() == helix ) triplets.push_back( hss );
 	}
 	return triplets;
 }
@@ -378,7 +375,7 @@ HSSTripletOP
 HSSTripletSet::hss_triplet( Size const helix, Size const s1, Size const s2 ) const
 {
 	TripletID const hs_id( helix, s1, s2 );
-	TripletMap::const_iterator hss_it = helix2hss_.find( hs_id );
+	auto hss_it = helix2hss_.find( hs_id );
 	if ( hss_it == helix2hss_.end() ) {
 		std::stringstream msg;
 		msg << "HSSTripletSet::hss_triplet(): Cannot find a HSS Triplet with parameters "

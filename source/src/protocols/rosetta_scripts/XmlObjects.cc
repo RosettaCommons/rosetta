@@ -63,10 +63,10 @@ namespace rosetta_scripts {
 using namespace core;
 
 
-XmlObjects::XmlObjects(){}
+XmlObjects::XmlObjects()= default;
 
 
-XmlObjects::~XmlObjects(){}
+XmlObjects::~XmlObjects()= default;
 
 XmlObjects::XmlObjects( XmlObjects const & src ) {
 	*this = src;

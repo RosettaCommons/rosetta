@@ -75,7 +75,7 @@ RestrictToLoopsAndNeighbors & RestrictToLoopsAndNeighbors::operator=( RestrictTo
 }
 
 //destructor
-RestrictToLoopsAndNeighbors::~RestrictToLoopsAndNeighbors() {}
+RestrictToLoopsAndNeighbors::~RestrictToLoopsAndNeighbors() = default;
 
 //@brief clone operator, calls the copy constructor
 TaskOperationOP

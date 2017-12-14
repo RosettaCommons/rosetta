@@ -69,7 +69,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 
 //Definition of new OptionKeys
@@ -131,8 +131,8 @@ out.close();
 inline std::string
 remove_dashes( std::string const & s ){
 	std::string s_out( "" );
-	for ( Size i = 0; i < s.size(); i++ ) {
-		if ( s[i] != '-' ) s_out += s[i];
+	for ( char i : s ) {
+		if ( i != '-' ) s_out += i;
 	}
 	return s_out;
 }

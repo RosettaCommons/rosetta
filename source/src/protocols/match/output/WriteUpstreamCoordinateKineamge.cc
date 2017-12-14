@@ -24,6 +24,7 @@
 #include <core/conformation/Residue.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/string_util.hh>
 
@@ -47,7 +48,7 @@ void print_node(
 	int atom_num,
 	core::Vector const & atom_xyz,
 	core::chemical::ResidueType const & res,
-	std::string extras = "" //< P for points, color, width/radius, etc.
+	std::string const & extras = "" //< P for points, color, width/radius, etc.
 )
 {
 	// atom_num is often 0 in fold tree, means no specific atom.
@@ -69,7 +70,7 @@ void print_node(
 	int residue_num,
 	int atom_num,
 	core::conformation::Residue const & res,
-	std::string extras = "" //< P for points, color, width/radius, etc.
+	std::string const & extras = "" //< P for points, color, width/radius, etc.
 )
 {
 	print_node( out, residue_num, atom_num, res.xyz( atom_num ), res.type(), extras );
@@ -81,7 +82,7 @@ void print_node(
 	int residue_num,
 	std::string atom_name,
 	core::conformation::Residue const & res,
-	std::string extras = "" //< P for points, color, width/radius, etc.
+	std::string const & extras = "" //< P for points, color, width/radius, etc.
 )
 {
 	// atom_num is often 0 in fold tree, means no specific atom.
@@ -147,8 +148,7 @@ ResidueKinemageWriter::write_rsd_coords(
 	if ( ! is_instance ) {
 		for ( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i ) {
 			core::conformation::Residue::AtomIndices const & nbrs = rsd.nbrs(atom_i);
-			for ( core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j ) {
-				core::Size atom_j = *j;
+			for ( unsigned long atom_j : nbrs ) {
 				if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 				bool const is_H = rsd.atom_is_hydrogen(atom_j) || rsd.atom_is_hydrogen(atom_i);
 
@@ -538,13 +538,13 @@ void WriteUpstreamHitKinemage::write_virtual_atoms( bool setting )
 }
 
 
-DownstreamCoordinateKinemageWriter::DownstreamCoordinateKinemageWriter() {}
-DownstreamCoordinateKinemageWriter::~DownstreamCoordinateKinemageWriter() {}
+DownstreamCoordinateKinemageWriter::DownstreamCoordinateKinemageWriter() = default;
+DownstreamCoordinateKinemageWriter::~DownstreamCoordinateKinemageWriter() = default;
 
 
-SingleDownstreamResidueWriter::SingleDownstreamResidueWriter() {}
+SingleDownstreamResidueWriter::SingleDownstreamResidueWriter() = default;
 
-SingleDownstreamResidueWriter::~SingleDownstreamResidueWriter() {}
+SingleDownstreamResidueWriter::~SingleDownstreamResidueWriter() = default;
 
 
 void
@@ -584,8 +584,7 @@ SingleDownstreamResidueWriter::write_downstream_coordinates(
 
 	for ( core::Size atom_i = 1; atom_i <= restype_->natoms(); ++atom_i ) {
 		core::chemical::AtomIndices const & nbrs = restype_->nbrs(atom_i);
-		for ( core::chemical::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j ) {
-			core::Size atom_j = *j;
+		for ( unsigned long atom_j : nbrs ) {
 			if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 			bool const is_H = restype_->atom_is_hydrogen(atom_j) || restype_->atom_is_hydrogen(atom_i);
 			/// no backbone hydrogens...

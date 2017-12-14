@@ -49,7 +49,7 @@ namespace topology_broker {
 
 using namespace core;
 
-CutBiasClaimer::CutBiasClaimer() {}
+CutBiasClaimer::CutBiasClaimer() = default;
 
 CutBiasClaimer::CutBiasClaimer( core::fragment::SecondaryStructure const& ss )
 {

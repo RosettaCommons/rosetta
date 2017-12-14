@@ -134,7 +134,7 @@ class ParticleSwarmMinimizer : public utility::pointer::ReferenceCount
 {
 public:
 
-	ParticleSwarmMinimizer(Multivec p_min, Multivec p_max);
+	ParticleSwarmMinimizer(Multivec const & p_min, Multivec const & p_max);
 	~ParticleSwarmMinimizer() override;
 
 	ParticleOPs run(Size num_cycles, Multifunc & f_fitness, Size num_part = 50);

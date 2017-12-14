@@ -57,7 +57,7 @@ void* rBroker_main_local( void* ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 	}
-	return 0;
+	return nullptr;
 }
 
 int main( int argc, char * argv [] ) {

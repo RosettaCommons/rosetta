@@ -69,16 +69,16 @@ LoopFromFileData::LoopFromFileData() :
 {}
 
 LoopFromFileData::LoopFromFileData(
-	ResidueIndexDescriptionFromFile  start_res,
-	ResidueIndexDescriptionFromFile  cutpoint_res,
-	ResidueIndexDescriptionFromFile  end_res,
+	ResidueIndexDescriptionFromFile const & start_res,
+	ResidueIndexDescriptionFromFile const & cutpoint_res,
+	ResidueIndexDescriptionFromFile const & end_res,
 	core::Real skip_rate,
 	bool extended,
 	bool prohibit_single_residue_loops
 ) :
-	start_res_(std::move( start_res )),
-	cutpoint_res_(std::move( cutpoint_res )),
-	end_res_(std::move( end_res )),
+	start_res_( start_res ),
+	cutpoint_res_( cutpoint_res ),
+	end_res_( end_res ),
 	skip_rate_( skip_rate ),
 	extended_( extended ),
 	prohibit_single_residue_loops_( prohibit_single_residue_loops )

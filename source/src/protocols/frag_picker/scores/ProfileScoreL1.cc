@@ -45,7 +45,7 @@ using namespace basic::options::OptionKeys;
 static basic::Tracer trProfScoreL1(
 	"protocols.frag_picker.scores.ProfileScoreL1");
 
-ProfileScoreL1::~ProfileScoreL1() {}
+ProfileScoreL1::~ProfileScoreL1() = default;
 
 ProfileScoreL1::ProfileScoreL1(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	core::sequence::SequenceProfileOP query_profile, utility::vector1<core::Size> & frag_sizes,

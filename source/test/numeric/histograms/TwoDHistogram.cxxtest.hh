@@ -50,8 +50,8 @@ public:
 
 
 		//make key
-		std::pair<platform::Size, platform::Size> key_values(1,2);
-		std::pair<platform::Real, platform::Real> key_values_real(1.5,2.5);
+		//std::pair<platform::Size, platform::Size> key_values(1,2);
+		//std::pair<platform::Real, platform::Real> key_values_real(1.5,2.5);
 
 		//make counts
 		platform::Size counts(50);

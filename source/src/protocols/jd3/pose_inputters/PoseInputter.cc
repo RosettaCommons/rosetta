@@ -20,8 +20,8 @@ namespace jd3 {
 namespace pose_inputters {
 
 
-PoseInputter::PoseInputter() {}
-PoseInputter::~PoseInputter() {}
+PoseInputter::PoseInputter() = default;
+PoseInputter::~PoseInputter() = default;
 
 }
 } // namespace jd3

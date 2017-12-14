@@ -72,7 +72,7 @@ LoopOver::LoopOver(
 	ms_whenfail_( ms_whenfail )
 {}
 
-LoopOver::~LoopOver() {}
+LoopOver::~LoopOver() = default;
 
 void
 LoopOver::apply( core::pose::Pose & pose )
@@ -126,7 +126,7 @@ LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols
 	using namespace filters;
 
 	TR<<"loop\n";
-	drift_ = tag->getOption< bool >( "drift", 1 );
+	drift_ = tag->getOption< bool >( "drift", true );
 	std::string const mover_name( tag->getOption< std::string >( "mover_name" ));
 	std::string const filter_name( tag->getOption< std::string >( "filter_name", "false_filter" ) );
 	max_iterations_ = tag->getOption< core::Size >( "iterations", 10 );
@@ -134,8 +134,8 @@ LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols
 	std::string const mover_status( tag->getOption< std::string >( "ms_whenfail", "MS_SUCCESS" ));
 	ms_whenfail_ = protocols::moves::mstype_from_name( mover_status );
 
-	Movers_map::const_iterator find_mover( movers.find( mover_name ) );
-	Filters_map::const_iterator find_filter( filters.find( filter_name ));
+	auto find_mover( movers.find( mover_name ) );
+	auto find_filter( filters.find( filter_name ));
 	if ( find_mover == movers.end() ) {
 		TR<<"WARNING WARNING!!! mover not found in map. skipping:\n"<<tag<<std::endl;
 		runtime_assert( find_mover != movers.end() );

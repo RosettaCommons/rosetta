@@ -37,6 +37,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.antibody.design.AntibodySeqDesignTFCreator" );
 
@@ -53,7 +54,7 @@ using namespace protocols::antibody::task_operations;
 
 AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info, bool force_north_paper_db ):
 	utility::pointer::ReferenceCount(),
-	ab_info_( ab_info ),
+	ab_info_(std::move( ab_info )),
 	force_north_paper_db_(force_north_paper_db)
 {
 	stem_size_ = 2;
@@ -65,7 +66,7 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info,
 	const utility::vector1<CDRSeqDesignOptionsOP> design_options,
 	bool force_north_paper_db, core::Size stem_size):
 	utility::pointer::ReferenceCount(),
-	ab_info_( ab_info ),
+	ab_info_(std::move( ab_info )),
 	stem_size_(stem_size),
 	force_north_paper_db_(force_north_paper_db)
 
@@ -78,7 +79,7 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info,
 
 }
 
-AntibodySeqDesignTFCreator::~AntibodySeqDesignTFCreator() {}
+AntibodySeqDesignTFCreator::~AntibodySeqDesignTFCreator() = default;
 
 AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodySeqDesignTFCreator const & src ):
 	utility::pointer::ReferenceCount(),
@@ -118,7 +119,7 @@ void
 AntibodySeqDesignTFCreator::setup_default_options(){
 	cdr_design_options_.clear();
 	for ( core::Size i = 1; i <= 8; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		CDRSeqDesignOptionsOP options( new CDRSeqDesignOptions( cdr ) );
 		cdr_design_options_.push_back( options );
 	}
@@ -127,7 +128,7 @@ AntibodySeqDesignTFCreator::setup_default_options(){
 	design_framework_ = false;
 
 	for ( core::Size i = 1; i <= 8; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		if ( ! ab_info_->has_CDR( cdr ) ) {
 			cdr_design_options_[ cdr ]->design( false);
 		}
@@ -168,7 +169,7 @@ void
 AntibodySeqDesignTFCreator::set_cdr_design_options( const utility::vector1<CDRSeqDesignOptionsOP> design_options ){
 	cdr_design_options_ = design_options;
 	for ( core::Size i = 1; i <= 8; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		if ( ! ab_info_->has_CDR( cdr ) ) {
 			cdr_design_options_[ cdr ]->design( false);
 		}
@@ -285,7 +286,7 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 	//Create a vector of CDRs that should only min.
 	utility::vector1<bool> only_min_cdrs(core::Size(CDRNameEnum_proto_total), false);
 	for ( CDRNameEnum const & cdr_i : ab_info_->get_all_cdrs( true /*include cdr4 */) ) {
-		core::Size i = core::Size( cdr_i );
+		auto i = core::Size( cdr_i );
 		if ( neighbor_cdr_min[ i ] && (! local_options[ i ]->design()) && ab_info_->has_CDR( cdr_i ) ) {
 			only_min_cdrs[ i ] = true;
 		}
@@ -482,7 +483,7 @@ AntibodySeqDesignTFCreator::get_design_cdr_loops(const core::pose::Pose& pose, c
 
 	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 		if ( cdr_design_options_[ i ]->design() ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+			auto cdr = static_cast<CDRNameEnum>( i );
 			if ( TR.Debug.visible() ) {
 				TR.Debug << "Design on: " << ab_info_->get_CDR_name( cdr ) << std::endl;
 			}
@@ -517,7 +518,7 @@ AntibodySeqDesignTFCreator::generate_task_op_all_cdr_design( const core::pose::P
 
 	utility::vector1< bool > cdrs(8, true);
 	for ( core::Size i = 1; i <= 8; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		if ( ! ab_info_->has_CDR( cdr ) ) {
 			cdrs[ i ] = false;
 		}

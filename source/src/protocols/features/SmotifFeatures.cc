@@ -58,8 +58,7 @@ namespace features {
 static basic::Tracer TR( "protocols.features.SmotifFeatures" );
 
 
-SmotifFeatures::SmotifFeatures()
-{}
+SmotifFeatures::SmotifFeatures() = default;
 
 SmotifFeatures::SmotifFeatures(core::scoring::ScoreFunctionOP /*scfxn*/)
 {

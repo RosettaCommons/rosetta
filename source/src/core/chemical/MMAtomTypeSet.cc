@@ -21,6 +21,7 @@
 
 // C++ headers
 #include <iostream>
+#include <utility>
 #include <utility/io/izstream.hh>
 
 #include <utility/vector1.hh>

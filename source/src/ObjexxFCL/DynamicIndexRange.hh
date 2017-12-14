@@ -701,8 +701,8 @@ public: // Predicate
 	bool
 	legal() const
 	{
-		return ( ( ( l_ >= l_min ) && ( u_ <= u_max ) && ( l_ - 2 <= u_ ) ) ||
-		 ( ! ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) ) );
+		return ( ( ( l_ >= l_min ) && /*( u_ <= u_max ) &&*/ ( l_ - 2 <= u_ ) ) ||
+			( ! ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) ) );
 	}
 
 
@@ -1094,8 +1094,8 @@ private: // Functions
 	bool
 	legal_dynamic() const
 	{
-		return ( ( ( l_ >= l_min ) && ( u_ <= u_max ) && ( l_ - 2 <= u_ ) ) ||
-		 ( ! ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) ) );
+		return ( ( ( l_ >= l_min ) /*&& ( u_ <= u_max )*/ && ( l_ - 2 <= u_ ) ) ||
+			( ! ( ( l_dim_p_ ? l_dim_p_->initialized_ : true ) && ( u_dim_p_ ? u_dim_p_->initialized_ : true ) ) ) );
 	}
 
 

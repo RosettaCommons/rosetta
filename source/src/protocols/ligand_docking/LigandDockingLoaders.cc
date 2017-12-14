@@ -37,7 +37,7 @@ namespace ligand_docking {
 
 static basic::Tracer TR( "protocols.ligand_docking.LigandDockingLoaders" );
 
-InterfaceBuilderLoader::InterfaceBuilderLoader() {}
+InterfaceBuilderLoader::InterfaceBuilderLoader() = default;
 InterfaceBuilderLoader::~InterfaceBuilderLoader() = default;
 
 void InterfaceBuilderLoader::load_data(
@@ -106,7 +106,7 @@ InterfaceBuilderLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefini
 	InterfaceBuilderLoader::provide_xml_schema( xsd );
 }
 
-MoveMapBuilderLoader::MoveMapBuilderLoader() {}
+MoveMapBuilderLoader::MoveMapBuilderLoader() = default;
 MoveMapBuilderLoader::~MoveMapBuilderLoader() = default;
 
 void MoveMapBuilderLoader::load_data(
@@ -172,7 +172,7 @@ void MoveMapBuilderLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDef
 }
 
 
-LigandAreaLoader::LigandAreaLoader() {}
+LigandAreaLoader::LigandAreaLoader() = default;
 LigandAreaLoader::~LigandAreaLoader() = default;
 
 void LigandAreaLoader::load_data(

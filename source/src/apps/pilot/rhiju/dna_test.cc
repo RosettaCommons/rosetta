@@ -85,7 +85,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <time.h>
+#include <ctime>
 
 using namespace core;
 using namespace protocols;
@@ -99,7 +99,7 @@ using ObjexxFCL::format::F;
 
 
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 
 ///////////////////////////////////////////////////////////////

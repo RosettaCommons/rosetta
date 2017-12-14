@@ -140,7 +140,7 @@ ThermalSamplingMover::ThermalSamplingMover( ThermalSamplingMover const & src ):
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-ThermalSamplingMover::~ThermalSamplingMover(){}
+ThermalSamplingMover::~ThermalSamplingMover()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

@@ -52,13 +52,13 @@ public:
 	// atoms.
 	Motif(
 		std::string const & resname1,
-		std::string res1_atom1,
-		std::string res1_atom2,
-		std::string res1_atom3,
+		std::string const & res1_atom1,
+		std::string const & res1_atom2,
+		std::string const & res1_atom3,
 		std::string const & resname2,
-		std::string res2_atom1,
-		std::string res2_atom2,
-		std::string res2_atom3,
+		std::string const & res2_atom1,
+		std::string const & res2_atom2,
+		std::string const & res2_atom3,
 		core::kinematics::Jump const & orientation
 	);
 

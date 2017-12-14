@@ -55,7 +55,7 @@ using namespace core;
 static basic::Tracer TR( "FragInsertAndAlignMover" );
 
 
-FragInsertAndAlignMover::FragInsertAndAlignMover() {}
+FragInsertAndAlignMover::FragInsertAndAlignMover() = default;
 FragInsertAndAlignMover::~FragInsertAndAlignMover() = default;
 
 

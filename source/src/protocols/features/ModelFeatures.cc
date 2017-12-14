@@ -305,7 +305,7 @@ ModelFeatures::report_features(
 							iter != iter_end; ++iter ) {
 						core::Size jj = (*iter)->get_other_ind(ii);
 						if ( jj >= it2->begin && jj <= it2->end ) {
-							const core::scoring::EnergyEdge* ee =
+							const auto* ee =
 								dynamic_cast< const core::scoring::EnergyEdge* > (*iter);
 
 							core::Real atr_energy = (*ee)[core::scoring::fa_atr];

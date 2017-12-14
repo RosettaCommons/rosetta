@@ -91,5 +91,5 @@ my_main( void* )
 	protocols::coupled_moves::CoupledMovesProtocolOP coupled_moves( new protocols::coupled_moves::CoupledMovesProtocol );
 	protocols::jd2::JobDistributor::get_instance()->go( coupled_moves );
 
-	return 0;
+	return nullptr;
 }

@@ -70,12 +70,12 @@ SetTemperatureFactor::SetTemperatureFactor() :
 }
 
 
-SetTemperatureFactor::~SetTemperatureFactor() {}
+SetTemperatureFactor::~SetTemperatureFactor() = default;
 
 void
 SetTemperatureFactor::apply( core::pose::Pose & pose )
 {
-	ResId * resid = dynamic_cast< ResId *>( filter_.get() );
+	auto * resid = dynamic_cast< ResId *>( filter_.get() );
 	runtime_assert( resid );
 
 	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
@@ -96,7 +96,7 @@ void
 SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	std::string const filter_name( tag->getOption<std::string>( "filter" ) );
-	protocols::filters::Filters_map::const_iterator find_ap_filter( filters.find( filter_name));
+	auto find_ap_filter( filters.find( filter_name));
 	bool const ap_filter_found( find_ap_filter != filters.end() );
 	runtime_assert( ap_filter_found );
 	filter( find_ap_filter->second->clone() );
@@ -111,7 +111,7 @@ SetTemperatureFactor::clone() const {
 void
 SetTemperatureFactor::filter( protocols::filters::FilterOP filter )
 {
-	ResId * resid = dynamic_cast< ResId *>( filter.get() );
+	auto * resid = dynamic_cast< ResId *>( filter.get() );
 	if ( !resid ) {
 		utility_exit_with_message( "filter must be derived from ResId class for this to work." );
 	}

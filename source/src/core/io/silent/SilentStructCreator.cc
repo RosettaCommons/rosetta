@@ -18,8 +18,8 @@ namespace core {
 namespace io {
 namespace silent {
 
-SilentStructCreator::SilentStructCreator() {}
-SilentStructCreator::~SilentStructCreator() {}
+SilentStructCreator::SilentStructCreator() = default;
+SilentStructCreator::~SilentStructCreator() = default;
 
 } //namespace silent
 } //namespace io

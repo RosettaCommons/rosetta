@@ -39,7 +39,7 @@ CacheableResidueTypeSets::CacheableResidueTypeSets():
 	res_type_sets_(TYPE_SET_MODES_LENGTH, nullptr)
 {}
 
-CacheableResidueTypeSets::~CacheableResidueTypeSets(){}
+CacheableResidueTypeSets::~CacheableResidueTypeSets()= default;
 
 CacheableResidueTypeSets::CacheableResidueTypeSets( CacheableResidueTypeSets const & other ) :
 	basic::datacache::CacheableData(*this),

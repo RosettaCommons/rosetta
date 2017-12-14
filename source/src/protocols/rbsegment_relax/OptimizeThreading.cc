@@ -159,7 +159,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 
 		// see if there is a cut between the two and use that instead
 		bool found_cuts = false;
-		for ( int k=(int)j0stop; k<(int)j1start; ++k ) {
+		for ( auto k=(int)j0stop; k<(int)j1start; ++k ) {
 			if ( pose.fold_tree().is_cutpoint( k ) ) {
 				segments.push_back( RBResidueRange( prevcut, k ) );
 				TR << "Add segment: " << prevcut << " , " << k << std::endl;

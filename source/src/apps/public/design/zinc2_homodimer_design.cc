@@ -60,9 +60,9 @@ using basic::Error;
 using basic::Warning;
 static basic::Tracer TR( "apps.pilot.bder.zinc2_homodimer_design" );
 
-typedef numeric::xyzVector<core::Real> point;
-typedef point axis;
-typedef core::pose::Pose Pose;
+using point = numeric::xyzVector<core::Real>;
+using axis = point;
+using Pose = core::pose::Pose;
 
 using namespace core;
 
@@ -101,11 +101,11 @@ public:
 		TR << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
 
 	}
-	virtual ~zinc2_homodimer_design(){};
+	~zinc2_homodimer_design() override= default;
 
-	virtual
+
 	void
-	apply( Pose & pose ){
+	apply( Pose & pose ) override{
 
 		setup( pose );
 		design_symmetric_homodimer_metal_interface( pose );
@@ -277,7 +277,7 @@ public:
 
 		Pose const designable_start_pose( pose );
 
-		Size nstruct_it = (Size) basic::options::option[nstruct_iterations];
+		auto nstruct_it = (Size) basic::options::option[nstruct_iterations];
 		for ( Size n(1); n <= nstruct_it; n++ ) { //home-made nstruct
 			std::stringstream ss;
 			ss << n;
@@ -289,7 +289,7 @@ public:
 
 			protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose , *fa_metal_sym_scorefxn_ , 0.6 ) );
 
-			Size repackmin_it = (Size) basic::options::option[ repackmin_iterations ];
+			auto repackmin_it = (Size) basic::options::option[ repackmin_iterations ];
 			for ( Size i(1); i <= repackmin_it; ++i ) {
 				TR << "Repackmin cycle " << i << " out of " << repackmin_it << std::endl;
 
@@ -327,9 +327,9 @@ public:
 	}//design_symmetric_homodimer_metal_interface
 
 
-	virtual
+
 	std::string
-	get_name() const { return "zinc2_homodimer_design"; }
+	get_name() const override { return "zinc2_homodimer_design"; }
 
 
 private:
@@ -355,7 +355,7 @@ private:
 };
 
 
-typedef utility::pointer::shared_ptr< zinc2_homodimer_design > zinc2_homodimer_designOP;
+using zinc2_homodimer_designOP = utility::pointer::shared_ptr<zinc2_homodimer_design>;
 
 int main( int argc, char* argv[] )
 {

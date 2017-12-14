@@ -14,8 +14,8 @@
 #include <numeric/prob_util.hh>
 
 // C/C++ headers
-#include <fstream>
 #include <iostream>
+#include <fstream>
 #include <string>
 
 // Utility headers

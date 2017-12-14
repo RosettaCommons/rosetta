@@ -128,17 +128,17 @@ public:
 	operator=( MPDomainAssembly const & src );
 
 	/// @brief Destructor
-	~MPDomainAssembly();
+	~MPDomainAssembly() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Get Membrane protein interface statistics
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -192,7 +192,7 @@ private: // data
 	std::string full_seq_;
 
 	/// @brief Number of the pose in the -in:file:l list that is the TM domain
-	core::Size tmpdb_;
+	core::Size tmpdb_{};
 
 	/// @brief Vector of pose input files
 	utility::vector1< std::string > infiles_;
@@ -234,7 +234,6 @@ MPDomainAssembly::MPDomainAssembly() :
 	frag9_fn_(),
 	frag3_fn_(),
 	full_seq_(),
-	tmpdb_(),
 	infiles_(),
 	poses_(),
 	sequences_(),
@@ -278,7 +277,7 @@ MPDomainAssembly::operator=( MPDomainAssembly const & src )
 }
 
 /// @brief Destructor
-MPDomainAssembly::~MPDomainAssembly() {}
+MPDomainAssembly::~MPDomainAssembly() = default;
 
 /////////////////////
 /// Mover Methods ///
@@ -352,10 +351,10 @@ void MPDomainAssembly::apply( Pose & pose ) {
 		TR << "sequence: " << sequences_[i] << std::endl;
 
 		// go through the sequence itself
-		for ( core::Size j = 0; j <= this_seq.size(); ++j ) {
+		for ( core::Size j = 0; j < this_seq.size(); ++j ) {
 
 			// go through the full-length sequence
-			for ( core::Size k = 0; k <= full_seq_.size(); ++k ) {
+			for ( core::Size k = 0; k < full_seq_.size(); ++k ) {
 
 				core::Size matches = 0;
 
@@ -962,7 +961,7 @@ void MPDomainAssembly::print_score( Pose & pose, core::scoring::ScoreFunctionOP 
 
 //////////////////////////////////////////////////////////////////////
 
-typedef utility::pointer::shared_ptr< MPDomainAssembly > MPDomainAssemblyOP;
+using MPDomainAssemblyOP = utility::pointer::shared_ptr<MPDomainAssembly>;
 
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// MAIN ///////////////////////////////////

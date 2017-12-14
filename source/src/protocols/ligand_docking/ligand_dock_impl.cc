@@ -152,7 +152,7 @@ private:
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraints_;
 };
 
-typedef utility::pointer::shared_ptr< LigandDockMain > LigandDockMainOP;
+using LigandDockMainOP = utility::pointer::shared_ptr<LigandDockMain>;
 
 } //namespace ligand_docking
 } //namespace protocols

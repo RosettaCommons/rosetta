@@ -80,13 +80,13 @@ public:
 	// constructor
 
 	SilentFileData( SilentFileOptions const & options );
-	SilentFileData( std::string const& filename, SilentFileOptions const & options );
+	SilentFileData( std::string const & filename, SilentFileOptions const & options );
 
 	SilentFileData(
-		const std::string &filename,
-		bool  store_argv_in_file,
-		bool  strict_column_mode,
-		const std::string & silent_struct_type,
+		std::string const & filename,
+		bool const store_argv_in_file,
+		bool const strict_column_mode,
+		std::string const & silent_struct_type,
 		SilentFileOptions const & options
 	);
 

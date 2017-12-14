@@ -97,7 +97,7 @@ AAProb::operator=( AAProb const & object_to_copy )
 
 
 /// @brief Destructor
-AAProb::~AAProb() {}
+AAProb::~AAProb() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////

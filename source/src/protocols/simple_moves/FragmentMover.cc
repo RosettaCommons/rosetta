@@ -60,7 +60,7 @@ static basic::Tracer tr( "protocols.simple_moves.FragmentMover" );
 FragmentMover::~FragmentMover() = default;
 
 /// @brief Empty constructor
-FragmentMover::FragmentMover(std::string type) {
+FragmentMover::FragmentMover(std::string const & type) {
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb(true); // standard MoveMap
 
@@ -70,8 +70,8 @@ FragmentMover::FragmentMover(std::string type) {
 
 FragmentMover::FragmentMover(
 	core::fragment::FragSetCOP fragset,
-	std::string type ) :
-	fragset_(std::move( fragset ))
+	std::string const & type ) :
+	fragset_( std::move( fragset ) )
 {
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( true ); //standard movemap
@@ -84,9 +84,9 @@ FragmentMover::FragmentMover(
 FragmentMover::FragmentMover(
 	core::fragment::FragSetCOP fragset,
 	core::kinematics::MoveMapCOP movemap,
-	std::string type
+	std::string const & type
 ) :
-	fragset_(std::move( fragset ))
+	fragset_( std::move( fragset ) )
 {
 	protocols::moves::Mover::type( type );
 	set_movemap( movemap );
@@ -190,8 +190,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 	set_defaults();
 }
 
-ClassicFragmentMover::~ClassicFragmentMover()
-= default;
+ClassicFragmentMover::~ClassicFragmentMover() = default;
 
 // alternative Constructor to be used by derived classes
 ClassicFragmentMover::ClassicFragmentMover(
@@ -537,8 +536,7 @@ LoggedFragmentMover::LoggedFragmentMover(
 ) : ClassicFragmentMover( fragset, movemap, "ClassicFragmentMover" )
 {}
 
-LoggedFragmentMover::~LoggedFragmentMover()
-= default;
+LoggedFragmentMover::~LoggedFragmentMover() = default;
 
 std::string
 LoggedFragmentMover::get_name() const {

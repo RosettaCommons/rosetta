@@ -33,6 +33,7 @@
 
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/func/XYZ_Func.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -57,7 +58,7 @@ namespace scoring {
 namespace constraints {
 
 /// @details Auto-generated virtual destructor
-Obsolet_NamedAtomPairConstraint::~Obsolet_NamedAtomPairConstraint() {}
+Obsolet_NamedAtomPairConstraint::~Obsolet_NamedAtomPairConstraint() = default;
 
 NamedAtomPairConstraint::NamedAtomPairConstraint(
 	id::NamedAtomID const& a1,
@@ -98,7 +99,7 @@ ConstraintOP NamedAtomPairConstraint::remapped_clone( pose::Pose const&, pose::P
 	if ( id1.valid() && id2.valid() ) {
 		return ConstraintOP( new NamedAtomPairConstraint( named_atom1, named_atom2, get_func().clone(), score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -107,7 +108,7 @@ bool NamedAtomPairConstraint::operator == ( Constraint const & rhs ) const {
 	// through the mutual invocation of same_type_as_me
 	if ( ! AtomPairConstraint::operator == ( rhs ) ) return false;
 
-	NamedAtomPairConstraint const & rhs_napc( static_cast< NamedAtomPairConstraint const & > ( rhs ) );
+	auto const & rhs_napc( static_cast< NamedAtomPairConstraint const & > ( rhs ) );
 	if ( named_atom1_ != rhs_napc.named_atom1_ ) return false;
 	if ( named_atom2_ != rhs_napc.named_atom2_ ) return false;
 	if ( type1_id_ != rhs_napc.type1_id_ ) return false;
@@ -125,8 +126,8 @@ bool NamedAtomPairConstraint::same_type_as_me( Constraint const & other ) const
 void
 NamedAtomPairConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFunction const& ) const {
 	// if ( pose_chemical_checksum_ == pose.get_current_chemical_checksum() )
-	core::Size type1_id_now = (core::Size)&( xyz.residue( named_atom1_.rsd() ).type() );
-	core::Size type2_id_now = (core::Size)&( xyz.residue( named_atom2_.rsd() ).type() );
+	auto type1_id_now = (core::Size)&( xyz.residue( named_atom1_.rsd() ).type() );
+	auto type2_id_now = (core::Size)&( xyz.residue( named_atom2_.rsd() ).type() );
 	if ( type1_id_ != type1_id_now || type2_id_ != type2_id_now ) {
 		atom1( id::AtomID( xyz.residue( named_atom1_.rsd() ).atom_index( named_atom1_.atom() ), named_atom1_.rsd() ));
 		atom2( id::AtomID( xyz.residue( named_atom2_.rsd() ).atom_index( named_atom2_.atom() ), named_atom2_.rsd() ));
@@ -239,7 +240,7 @@ Obsolet_NamedAtomPairConstraint::Obsolet_NamedAtomPairConstraint(
 	AtomPairConstraintOP cst ) :
 	atom1_( atom1 ),
 	atom2_( atom2 ),
-	cst_( cst )
+	cst_(std::move( cst ))
 {}
 
 AtomPairConstraintOP
@@ -253,7 +254,7 @@ Obsolet_NamedAtomPairConstraint::mapto(
 	if ( id1.valid() && id2.valid() ) {
 		return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
 	}
-	return NULL; // if translation not possible
+	return nullptr; // if translation not possible
 }
 
 Obsolet_NamedAtomPairConstraintOP
@@ -266,7 +267,7 @@ Obsolet_NamedAtomPairConstraint::mapto( id::SequenceMapping const& map ) const
 	if ( id1.valid() && id2.valid() ) {
 		return Obsolet_NamedAtomPairConstraintOP( new Obsolet_NamedAtomPairConstraint( id1, id2, cst_ ) );
 	}
-	return NULL;
+	return nullptr;
 }
 
 AtomPairConstraintOP
@@ -276,7 +277,7 @@ Obsolet_NamedAtomPairConstraint::mapto( core::pose::Pose const& pose ) const {
 	if ( id1.valid() && id2.valid() ) {
 		return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
 	}
-	return NULL;
+	return nullptr;
 }
 
 std::ostream& operator<< ( std::ostream& out, Obsolet_NamedAtomPairConstraint const& cst ) {

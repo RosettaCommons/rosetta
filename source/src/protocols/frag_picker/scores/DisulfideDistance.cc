@@ -29,6 +29,7 @@
 #include <basic/prof.hh>
 
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -40,7 +41,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 DisulfideDistance::DisulfideDistance(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-	utility::vector1< core::Size > disulfide_data, core::Size largest_fragment) :
+	utility::vector1< core::Size > const & disulfide_data, core::Size largest_fragment) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "DisulfideDistance"),
 	disulfide_data_(disulfide_data),
 	largest_fragment_(largest_fragment)
@@ -194,8 +195,8 @@ FragmentScoringMethodOP MakeDisulfideDistance::make(core::Size priority,
 
 		for ( core::Size i = 1; i <= disulfides_in_file.size(); ++i ) {
 
-			core::Size l = static_cast< core::Size > ( disulfides_in_file[i].first );
-			core::Size u = static_cast< core::Size > ( disulfides_in_file[i].second );
+			auto l = static_cast< core::Size > ( disulfides_in_file[i].first );
+			auto u = static_cast< core::Size > ( disulfides_in_file[i].second );
 
 			disulfide_data[u] = l;
 			disulfide_data[l] = u;
@@ -222,7 +223,7 @@ FragmentScoringMethodOP MakeDisulfideDistance::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read disulfide connectivity file. Provide a connectivity file with -in::fix_disulf <file>\n");
 
-	return NULL;
+	return nullptr;
 
 }
 

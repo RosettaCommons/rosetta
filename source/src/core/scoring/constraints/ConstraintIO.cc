@@ -153,7 +153,7 @@ ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 	if ( res1>pose.size() || res2> pose.size() ) {
 		tr.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
-		return NULL;
+		return nullptr;
 	}
 
 	id::AtomID atom1( pose.residue_type( res1 ).atom_index( name1 ), res1 );
@@ -269,7 +269,7 @@ ConstraintOP ConstraintIO::parse_coordinate_constraint(
 		tr.Warning  << "ignored constraint (no such atom in pose!)"
 			<< fixed_res_name << " " << other_res_name << " "
 			<< fixed_res << " " << other_res << std::endl;
-		return NULL;
+		return nullptr;
 	}
 
 	id::AtomID atom1( pose.residue_type( fixed_res ).atom_index( fixed_res_name ), fixed_res );
@@ -426,7 +426,7 @@ ConstraintSetOP ConstraintIO::read_constraints(
 			/// never call this function if you have constructed an izstream
 			/// and you haven't deteremined that indeed the file format its representing
 			/// is the old style (as opposed to the new style) constraint format.
-			debug_assert( dynamic_cast< zlib_stream::zip_istream * > ( &data ) == 0 );
+			debug_assert( dynamic_cast< zlib_stream::zip_istream * > ( &data ) == nullptr );
 
 			data.seekg( original_pos );
 			return read_constraints_new( data, cset, pose, force_pdb_info_mapping );
@@ -543,12 +543,12 @@ ConstraintIO::read_individual_constraint_new(
 		if ( !data.good() && !data.eof() ) {
 			error_msg += "reading of " + tag + " failed.\n";
 			tr.Error << error_msg << std::endl;
-			cst_op = NULL;
+			cst_op = nullptr;
 		}
 	} else {
 		error_msg += "constraint type " + tag + " not known.\n";
 		tr.Error << error_msg << std::endl;
-		cst_op = NULL;
+		cst_op = nullptr;
 	}
 	if ( !cst_op ) {
 		using namespace basic::options;
@@ -587,15 +587,15 @@ ConstraintIO::read_individual_constraint_new(
 			while ( data.good() && (data.get() != '\n') ) {}
 			continue;
 		}
-		if ( data.eof() ) return NULL;
+		if ( data.eof() ) return nullptr;
 		data >> tag;
 		if ( data.fail() ) {
 			tr.Error << "can't read constraint type" << std::endl;
-			return NULL;
+			return nullptr;
 		}
 		break;
 	}
-	if ( ( tag.substr(0,3) == "END" )||( tag.substr(0,3) == "End" ) ) return NULL; // stopper for MultiConstraint or AmbiguousConstraint
+	if ( ( tag.substr(0,3) == "END" )||( tag.substr(0,3) == "End" ) ) return nullptr; // stopper for MultiConstraint or AmbiguousConstraint
 	return read_individual_constraint_new( data, pose, func_factory, tag, force_pdb_info_mapping );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////

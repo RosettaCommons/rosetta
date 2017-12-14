@@ -65,7 +65,7 @@ ResidueSelectorOP BondedResidueSelector::clone() const {
 }
 
 
-BondedResidueSelector::~BondedResidueSelector() {}
+BondedResidueSelector::~BondedResidueSelector() = default;
 
 ResidueSubset
 BondedResidueSelector::apply( core::pose::Pose const & pose ) const
@@ -79,13 +79,13 @@ BondedResidueSelector::apply( core::pose::Pose const & pose ) const
 	// set subset to input_set.
 	get_input_set(pose, subset, input_set_tmp);
 	//Get all residues bonded to residues in input_set_
-	for ( std::set< core::Size>::const_iterator it = input_set_tmp.begin(); it != input_set_tmp.end(); ++it ) {
+	for ( unsigned long it : input_set_tmp ) {
 		//First we need to get all the AtomIDs for this residue
 		//Format = (atomno, resno)
-		for ( core::Size atomnum = 1; atomnum <= pose.residue(*it).natoms(); ++atomnum ) {
+		for ( core::Size atomnum = 1; atomnum <= pose.residue(it).natoms(); ++atomnum ) {
 
 			//This method returns an AtomID
-			utility::vector1< core::id::AtomID > bonded_atoms = pose.conformation().bonded_neighbor_all_res( core::id::AtomID( atomnum, *it ) );
+			utility::vector1< core::id::AtomID > bonded_atoms = pose.conformation().bonded_neighbor_all_res( core::id::AtomID( atomnum, it ) );
 			//This will probably end up being redundant, but we're just changing a boolean value, so that's okay
 			for ( core::Size i = 1; i <= bonded_atoms.size(); ++i ) {
 				subset[ bonded_atoms[ i ].rsd() ] = true;
@@ -114,7 +114,7 @@ BondedResidueSelector::parse_my_tag(
 		std::string selector_str;
 		try {
 			selector_str = tag->getOption< std::string >( "residue_selector" );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access option 'selector' from BondedResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -124,7 +124,7 @@ BondedResidueSelector::parse_my_tag(
 		try {
 			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
 			set_input_set_selector( selector );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from BondedResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -149,7 +149,7 @@ BondedResidueSelector::parse_my_tag(
 	} else { // do not get input_set from ResidueSelectors but load resnums string instead
 		try {
 			set_input_set ( tag->getOption< std::string >( "resnums" ) );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream err_msg;
 			err_msg << "Failed to access option 'resnums' from BondedResidueSelector::parse_my_tag.\n";
 			err_msg << e.msg();
@@ -178,14 +178,13 @@ BondedResidueSelector::get_input_set(
 		std::set< Size > const res_vec( get_resnum_list( input_set_str_, pose ) );
 		input_set.insert( input_set_.begin(), input_set_.end() );
 		input_set.insert( res_vec.begin(), res_vec.end() );
-		for ( std::set< Size >::const_iterator it = input_set.begin();
-				it != input_set.end(); ++it ) {
-			if ( *it == 0 || *it > subset.size() ) {
+		for ( unsigned long it : input_set ) {
+			if ( it == 0 || it > subset.size() ) {
 				std::stringstream err_msg;
-				err_msg << "Residue " << *it << " not found in pose!\n";
+				err_msg << "Residue " << it << " not found in pose!\n";
 				throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
 			}
-			subset[ *it ] = true; // may want to use a tmp subset so we don't wind up with a half-set subset
+			subset[ it ] = true; // may want to use a tmp subset so we don't wind up with a half-set subset
 		}
 	}
 }

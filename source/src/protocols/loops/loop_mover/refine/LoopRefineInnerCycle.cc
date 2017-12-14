@@ -71,7 +71,7 @@ LoopRefineInnerCycle & LoopRefineInnerCycle::operator=( LoopRefineInnerCycle con
 }
 
 //destructor
-LoopRefineInnerCycle::~LoopRefineInnerCycle() {}
+LoopRefineInnerCycle::~LoopRefineInnerCycle() = default;
 
 /// @brief Each derived class must specify its name.
 std::string LoopRefineInnerCycle::get_name() const
@@ -131,7 +131,7 @@ void LoopRefineInnerCycle::setup_objects( Pose const & /* pose */ )
 
 void LoopRefineInnerCycle::init()
 {
-	init( LoopMover_Refine_CCDAP(), NULL, NULL, NULL );
+	init( LoopMover_Refine_CCDAP(), nullptr, nullptr, nullptr );
 }
 
 void LoopRefineInnerCycle::init(
@@ -226,7 +226,7 @@ void LoopRefineInnerCycle::set_movemap( core::kinematics::MoveMapOP movemap )
 Loops LoopRefineInnerCycle::get_one_random_loop() const
 {
 	LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
-	Loops::const_iterator it( loop_mover_op->loops()->one_random_loop() );
+	auto it( loop_mover_op->loops()->one_random_loop() );
 	Loops one_loop;
 	one_loop.add_loop( it );
 	return one_loop;

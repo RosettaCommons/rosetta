@@ -135,8 +135,8 @@ void DesignContrast::setNames () {
 	if ( option[ in::file::l ].active() ) {
 		list_file_names_ = option[ in::file::l ]().vector(); // make the copy of list file
 	}
-	for ( vector1< utility::file::FileName >::iterator i = list_file_names_.begin(), i_end = list_file_names_.end(); i != i_end; ++i ) {
-		std::string listname( i->name() );
+	for ( auto & list_file_name : list_file_names_ ) {
+		std::string listname( list_file_name.name() );
 		utility::io::izstream data( listname.c_str() );
 		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + listname + '\n' );

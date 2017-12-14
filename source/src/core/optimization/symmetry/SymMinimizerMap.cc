@@ -36,6 +36,7 @@
 #include <numeric/conversions.hh>
 
 #include <core/scoring/DerivVectorPair.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
@@ -65,7 +66,7 @@ SymMinimizerMap::SymMinimizerMap(
 	bool const new_sym_min // =false
 ) :
 	pose_( pose ),
-	symm_info_( symm_info ),
+	symm_info_(std::move( symm_info )),
 	res_interacts_with_asymmetric_unit_( pose.size(), false ),
 	// n_dof_nodes_( 0 ),
 	n_independent_dof_nodes_( 0 ),
@@ -76,7 +77,7 @@ SymMinimizerMap::SymMinimizerMap(
 	//std::cout << "SymMinimizerMap ctor: " << std::endl;
 	//std::cout << pose.conformation().fold_tree() << std::endl;
 
-	DOF_NodeOP tmp(0);
+	DOF_NodeOP tmp(nullptr);
 	pose::initialize_dof_id_map( dof_node_pointer_, pose, tmp );
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
@@ -135,7 +136,7 @@ SymMinimizerMap::SymMinimizerMap(
 
 }
 
-SymMinimizerMap::~SymMinimizerMap() {}
+SymMinimizerMap::~SymMinimizerMap() = default;
 
 void
 SymMinimizerMap::add_torsion(
@@ -167,7 +168,7 @@ SymMinimizerMap::add_torsion(
 		} else {
 
 			if ( new_torsion.type() >= id::RB1 ) { // We have a jump
-				conformation::symmetry::SymmetricConformation const & symm_conf (
+				auto const & symm_conf (
 					dynamic_cast< conformation::symmetry::SymmetricConformation const & > ( pose_.conformation()) );
 				debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 				if ( symm_info_->get_dof_derivative_weight( new_torsion, symm_conf ) != 0.0 ) {
@@ -218,7 +219,7 @@ SymMinimizerMap::copy_dofs_from_pose(
 ) const
 {
 	int imap = 1;
-	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
+	for ( auto it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
 		if ( new_sym_min_ && dof_node.dependent() ) { --imap; continue; }
@@ -234,7 +235,7 @@ SymMinimizerMap::copy_dofs_to_pose(
 ) const
 {
 	int imap = 1;
-	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
+	for ( auto it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
 		if ( new_sym_min_ && dof_node.dependent() ) { --imap; continue; }
@@ -246,10 +247,10 @@ SymMinimizerMap::copy_dofs_to_pose(
 DOF_NodeOP
 SymMinimizerMap::dof_node_from_id( DOF_ID const &id ) const
 {
-	DOF_NodeOP node = 0;
+	DOF_NodeOP node = nullptr;
 	if ( id.valid() ) {
 		node = dof_node_pointer_[ id ];
-		if ( node == 0 ) {
+		if ( node == nullptr ) {
 			std::cerr << "DOF_ID does not exist in map! torsion= " << id << std::endl;
 			utility_exit();
 		}
@@ -330,7 +331,7 @@ SymMinimizerMap::reset_jump_rb_deltas(
 ) const
 {
 	int imap = 1;
-	for ( const_iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
+	for ( auto it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 			it != it_end; ++it, ++imap ) {
 		DOF_Node const & dof_node( **it );
 		if ( new_sym_min_ && dof_node.dependent() ) { --imap; continue; }
@@ -353,7 +354,7 @@ SymMinimizerMap::add_new_dof_node(
 	bool dependent
 )
 {
-	DOF_NodeOP dof_node( new DOF_Node( new_torsion, DOF_NodeOP( 0 ) ) );
+	DOF_NodeOP dof_node( new DOF_Node( new_torsion, DOF_NodeOP( nullptr ) ) );
 	dof_node->dependent( false ); // only used if new_sym_min_
 
 	if ( parent.valid() ) {

@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 //C++ header
-#include <stdio.h>
+#include <cstdio>
 // amw remove me
 #include <iomanip>
 

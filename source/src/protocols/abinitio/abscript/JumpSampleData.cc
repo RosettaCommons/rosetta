@@ -21,6 +21,7 @@
 
 // Basic Headers
 #include <basic/Tracer.hh>
+#include <utility>
 
 //option includes
 
@@ -63,8 +64,8 @@ JumpSampleData::JumpSampleData( std::istream &in ) :
 	jump_sample_ = jumping::JumpSample( ft );
 }
 
-JumpSampleData::JumpSampleData( std::string const& moverkey,
-	jumping::JumpSample const& jump_sample ) :
+JumpSampleData::JumpSampleData( std::string const & moverkey,
+	jumping::JumpSample const & jump_sample ) :
 	Parent(),
 	jump_sample_( jump_sample ),
 	moverkey_( moverkey )

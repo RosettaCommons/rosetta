@@ -15,16 +15,13 @@
 #define INCLUDED_numeric_kdtree_util_hh
 
 #include <numeric/types.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 #include <numeric/kdtree/KDTree.fwd.hh>
 #include <numeric/kdtree/KDNode.fwd.hh>
 #include <numeric/kdtree/KDPoint.fwd.hh>
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
-#include <numeric/kdtree/WrappedReal.hh>
-
-#include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 
 #include <iostream>

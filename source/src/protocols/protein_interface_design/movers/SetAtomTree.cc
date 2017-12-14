@@ -92,7 +92,7 @@ SetAtomTree::SetAtomTree() :
 	start_tree_at_chain_ = '\0';
 }
 
-SetAtomTree::~SetAtomTree() {}
+SetAtomTree::~SetAtomTree() = default;
 
 protocols::moves::MoverOP
 SetAtomTree::clone() const {
@@ -123,8 +123,8 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 		runtime_assert( fold_tree_->check_fold_tree() );
 		return;
 	}
-	docking_ft_ = tag->getOption< bool >("docking_ft", 0 );
-	simple_ft( tag->getOption< bool >( "simple_ft", 0 ) );
+	docking_ft_ = tag->getOption< bool >("docking_ft", false );
+	simple_ft( tag->getOption< bool >( "simple_ft", false ) );
 	jump_ = tag->getOption< core::Size >( "jump", 1);
 	if ( docking_ft_ ) return;
 	/// resnum & pdb_num are now equivalent
@@ -227,13 +227,13 @@ SetAtomTree::set_ab_fold_tree( core::pose::Pose & pose)
 	ft.add_edge(cys_pos[4],conf.chain_end(host_chain_), -1);
 	ft.add_edge(cys_pos[2],cys_pos[4], 1);
 
-	core::Size AB_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, conf.chain_begin(host_chain_), conf.chain_end(host_chain_) );
+	auto AB_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, conf.chain_begin(host_chain_), conf.chain_end(host_chain_) );
 	TR<<"Antibody center of mass is residue: "<<AB_CoM<<std::endl;
 	core::Size cys_CoM=find_nearest_disulfide(pose, AB_CoM);
 	TR<<"Antibody cysteine center of mass: "<<cys_CoM<<std::endl;
 	if ( conf.num_chains()>1 ) {
 
-		core::Size Lig_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, conf.chain_begin(conf.num_chains()+1-host_chain_), conf.chain_end(conf.num_chains()+1-host_chain_) );
+		auto Lig_CoM = (core::Size ) core::pose::residue_center_of_mass( pose, conf.chain_begin(conf.num_chains()+1-host_chain_), conf.chain_end(conf.num_chains()+1-host_chain_) );
 		ft.add_edge(cys_CoM,Lig_CoM, 2);
 		ft.add_edge(conf.chain_begin(conf.num_chains()+1-host_chain_),Lig_CoM, -1);
 		ft.add_edge(Lig_CoM, conf.chain_end(conf.num_chains()+1-host_chain_),-1);
@@ -296,10 +296,10 @@ SetAtomTree::apply( core::pose::Pose & pose )
 			ccm.bond_length( 15.0 );
 			ccm.chain_id( 1 );
 			core::Size const cut( ccm.chain_cut( pose ) );
-			core::Size const CoM1 = (core::Size ) core::pose::residue_center_of_mass( pose, 1, cut );
-			core::Size const CoM2 = (core::Size ) core::pose::residue_center_of_mass( pose, cut + 1, pose.conformation().chain_end( 1 ) );
-			core::Size const CoM3 = (core::Size ) core::pose::residue_center_of_mass( pose, pose.conformation().chain_begin( 2 ), pose.conformation().chain_end( 2 ) );
-			core::Size const CoM1_full_length = (core::Size ) core::pose::residue_center_of_mass( pose, pose.conformation().chain_begin( 1 ), pose.conformation().chain_end( 1 ) );
+			auto const CoM1 = (core::Size ) core::pose::residue_center_of_mass( pose, 1, cut );
+			auto const CoM2 = (core::Size ) core::pose::residue_center_of_mass( pose, cut + 1, pose.conformation().chain_end( 1 ) );
+			auto const CoM3 = (core::Size ) core::pose::residue_center_of_mass( pose, pose.conformation().chain_begin( 2 ), pose.conformation().chain_end( 2 ) );
+			auto const CoM1_full_length = (core::Size ) core::pose::residue_center_of_mass( pose, pose.conformation().chain_begin( 1 ), pose.conformation().chain_end( 1 ) );
 			TR<<"CoM1/CoM2/CoM3/CoM1_full_length/cut: "<<CoM1<<'/'<<CoM2<<'/'<<CoM3<<'/'<<'/'<<CoM1_full_length<<'/'<<cut<<std::endl;
 			core::kinematics::FoldTree new_ft;
 			new_ft.clear();
@@ -332,9 +332,9 @@ SetAtomTree::apply( core::pose::Pose & pose )
 			ccm.bond_length( 10.0 );
 			ccm.chain_id( 1 );
 			core::Size const cut( ccm.chain_cut( pose ) );
-			core::Size const CoM1 = (core::Size ) residue_center_of_mass( pose, 1, cut );
-			core::Size const CoM2 = (core::Size ) residue_center_of_mass( pose, cut + 1, pose.conformation().chain_end( 1 ) );
-			core::Size const CoM1_full_length = (core::Size ) residue_center_of_mass( pose, pose.conformation().chain_begin( 1 ), pose.conformation().chain_end( 1 ) );
+			auto const CoM1 = (core::Size ) residue_center_of_mass( pose, 1, cut );
+			auto const CoM2 = (core::Size ) residue_center_of_mass( pose, cut + 1, pose.conformation().chain_end( 1 ) );
+			auto const CoM1_full_length = (core::Size ) residue_center_of_mass( pose, pose.conformation().chain_begin( 1 ), pose.conformation().chain_end( 1 ) );
 			TR<<"CoM1/CoM2/CoM1_full_length/cut: "<<CoM1<<'/'<<CoM2<<'/'<<'/'<<CoM1_full_length<<'/'<<cut<<std::endl;
 			core::kinematics::FoldTree new_ft;
 			new_ft.clear();

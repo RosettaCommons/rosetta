@@ -49,7 +49,7 @@ SilentFilePoseOutputSpecification::SilentFilePoseOutputSpecification(
 	outputter_type( SilentFilePoseOutputter::keyname() );
 }
 
-SilentFilePoseOutputSpecification::~SilentFilePoseOutputSpecification() {}
+SilentFilePoseOutputSpecification::~SilentFilePoseOutputSpecification() = default;
 
 
 core::io::silent::SilentFileOptions const &

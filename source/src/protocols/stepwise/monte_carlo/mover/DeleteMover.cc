@@ -81,8 +81,7 @@ DeleteMover::DeleteMover( ):
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-DeleteMover::~DeleteMover()
-{}
+DeleteMover::~DeleteMover() = default;
 
 protocols::moves::MoverOP
 DeleteMover::clone() const {
@@ -199,7 +198,7 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 		Size const sliced_out_pose_idx = full_model_info.get_idx_for_other_pose( *sliced_out_pose_op );
 		switch_focus_to_other_pose( pose, sliced_out_pose_idx );
 	} else if ( full_model_info.other_pose_list().size() > 0 ) { // switch focus randomly.
-		switch_focus_among_poses_randomly( pose, 0, true /*force_switch*/ );
+		switch_focus_among_poses_randomly( pose, nullptr, true /*force_switch*/ );
 	} else {
 		pose_is_alone = true;
 	}

@@ -382,7 +382,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	using namespace protocols::toolbox::task_operations;
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
@@ -535,7 +535,7 @@ void SymDockingHiRes::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	using namespace core::conformation::symmetry;
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );

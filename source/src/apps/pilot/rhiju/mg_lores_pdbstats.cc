@@ -78,7 +78,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

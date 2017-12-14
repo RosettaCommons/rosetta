@@ -34,6 +34,7 @@
 #include <numeric/trig.functions.hh>
 #include <numeric/deriv/angle_deriv.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/assert.hh>
 
@@ -65,7 +66,7 @@ AngleConstraint::AngleConstraint(
 	atom1_(a1),
 	atom2_(a2),
 	atom3_(a3),
-	func_( func_in )
+	func_(std::move( func_in ))
 {}
 
 AngleConstraint::AngleConstraint(
@@ -73,7 +74,7 @@ AngleConstraint::AngleConstraint(
 	ScoreType scoretype /* = angle_constraint */
 ):
 	Constraint( scoretype ),
-	func_( func_in )
+	func_(std::move( func_in ))
 {}
 
 std::string AngleConstraint::type() const {
@@ -91,7 +92,7 @@ bool AngleConstraint::operator == ( Constraint const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	AngleConstraint const & other_ang( static_cast< AngleConstraint const & > (other));
+	auto const & other_ang( static_cast< AngleConstraint const & > (other));
 	if ( atom1_ != other_ang.atom1_ ) return false;
 	if ( atom2_ != other_ang.atom2_ ) return false;
 	if ( atom3_ != other_ang.atom3_ ) return false;
@@ -208,7 +209,7 @@ AngleConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, 
 	if ( id1.valid() && id2.valid() && id3.valid() ) {
 		return ConstraintOP( new AngleConstraint( id1, id2, id3, func_, score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -524,7 +525,7 @@ AngleConstraint::remap_resid(
 			remap_a3( atom3_.atomno(), seqmap[atom3_.rsd()] );
 		return ConstraintOP( new AngleConstraint( remap_a1, remap_a2, remap_a3, this->func_ ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

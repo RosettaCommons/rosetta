@@ -46,7 +46,7 @@ StringResourceStream::StringResourceStream(
 	stream_(contents)
 {}
 
-StringResourceStream::~StringResourceStream() {}
+StringResourceStream::~StringResourceStream() = default;
 
 void
 StringResourceStream::fill(

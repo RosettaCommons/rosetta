@@ -310,7 +310,7 @@ void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol
 			it != eit; ++it ) {
 		Real score = ( (*it)->topology_score() - mean_topol ) / std_topol * wTopol
 			+ ( (*it)->external_score() - mean_extern ) / std_extern * wExtern;
-		weight_list.push_back( std::make_pair( score, *it ) );
+		weight_list.emplace_back( score, *it );
 	}
 	weight_list.sort();
 	weight_list.reverse();
@@ -456,8 +456,8 @@ Templates::add_target_constraints( scoring::constraints::ConstraintSetOP cstset,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	typedef Template::NamedAtomPairConstraintList NamedAtomPairConstraintList;
-	typedef Template::AtomPairConstraintList AtomPairConstraintList;
+	using NamedAtomPairConstraintList = Template::NamedAtomPairConstraintList;
+	using AtomPairConstraintList = Template::AtomPairConstraintList;
 	AtomPairConstraintList full_list;
 	// take constraint sets from each template
 	TemplateList cst_list;

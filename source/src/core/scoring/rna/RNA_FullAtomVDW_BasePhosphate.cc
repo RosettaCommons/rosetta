@@ -94,8 +94,8 @@ RNA_FullAtomVDW_BasePhosphateCreator::score_types_for_method() const {
 RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
 	methods::EnergyMethodOptions const & options
 ):
-	parent( methods::EnergyMethodCreatorOP( new RNA_FullAtomVDW_BasePhosphateCreator ) ),
-	options_( options )
+	parent( methods::EnergyMethodCreatorOP( new RNA_FullAtomVDW_BasePhosphateCreator ) )
+	//options_( options )
 {
 	etable::Etable const & etable = *(ScoringManager::get_instance()->etable( options ).lock());
 	if ( options.analytic_etable_evaluation() ) {
@@ -111,7 +111,7 @@ RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
 }
 
 
-RNA_FullAtomVDW_BasePhosphate::~RNA_FullAtomVDW_BasePhosphate() {}
+RNA_FullAtomVDW_BasePhosphate::~RNA_FullAtomVDW_BasePhosphate() = default;
 
 
 /// clone
@@ -182,7 +182,7 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 	// get hydrogen interaction cutoff
 	Real const Hydrogen_interaction_cutoff2 = ( etable_evaluator_->hydrogen_interaction_cutoff2() );
 
-	typedef utility::vector1< Size > const & vect;
+	using vect = const utility::vector1<Size> &;
 
 	vect rhbegin( rsd.attached_H_begin() );
 	vect rhend(   rsd.attached_H_end()   );

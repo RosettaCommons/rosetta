@@ -60,7 +60,7 @@ using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
 
-BatchFeatures::BatchFeatures(){}
+BatchFeatures::BatchFeatures()= default;
 
 BatchFeatures::BatchFeatures( BatchFeatures const & ) : utility::pointer::ReferenceCount() {}
 

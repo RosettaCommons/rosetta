@@ -237,8 +237,8 @@ SwapSegment::parse_my_tag(
 
 	TR<<"SwapSegment mover has been instantiated" <<std::endl;
 
-	copy_sidechains_ = tag->getOption< bool > ("copy_sidechains", 1 );
-	swap_segment_ = tag->getOption< bool > ("swap_segment", 0 );
+	copy_sidechains_ = tag->getOption< bool > ("copy_sidechains", true );
+	swap_segment_ = tag->getOption< bool > ("swap_segment", false );
 	swap_chain_ = tag->getOption< core::Size > ("swap_chain", 0 );
 	from_chain_ = tag->getOption< core::Size > ("from_chain", 1 );
 	to_chain_ = tag->getOption< core::Size > ("to_chain", 1 );
@@ -263,7 +263,7 @@ SwapSegment::parse_my_tag(
 	//use the input pdb too ( todo )
 
 	if ( tag->hasOption( "previously_grown") ) {
-		previously_grown_ = tag->getOption< bool > ("previously_grown", 0 );
+		previously_grown_ = tag->getOption< bool > ("previously_grown", false );
 		TR<<"decoy was previously changed in its length, aka was \"grown\" "<<std::endl;
 	}
 

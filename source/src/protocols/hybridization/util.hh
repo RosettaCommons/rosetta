@@ -47,17 +47,17 @@ core::Size get_num_residues_prot( core::pose::Pose const & pose );
 // constraint loading and generation
 void setup_centroid_constraints(
 	core::pose::Pose &pose,
-	utility::vector1 < core::pose::PoseCOP > templates,
-	utility::vector1 < core::Real > template_weights,
-	std::string cen_cst_file,
-	std::set< core::Size > ignore_res_for_AUTO = std::set<core::Size>());
+	utility::vector1< core::pose::PoseCOP > const & templates,
+	utility::vector1< core::Real > const & template_weights,
+	std::string const & cen_cst_file,
+	std::set< core::Size > const & ignore_res_for_AUTO = std::set<core::Size>());
 
 void setup_fullatom_constraints(
 	core::pose::Pose &pose,
-	utility::vector1 < core::pose::PoseCOP > templates,
-	utility::vector1 < core::Real > template_weights,
-	std::string cen_cst_file,
-	std::string fa_cst_file  );
+	utility::vector1< core::pose::PoseCOP > const & templates,
+	utility::vector1< core::Real > const & template_weights,
+	std::string const & cen_cst_file,
+	std::string const & fa_cst_file  );
 
 void setup_constraints(
 	core::pose::Pose &pose,

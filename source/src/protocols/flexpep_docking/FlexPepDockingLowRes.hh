@@ -51,7 +51,7 @@ public:
 	//            The FoldTree rigid body jump over
 	//            which rigid-body pertrubations are made
 	FlexPepDockingLowRes(
-		FlexPepDockingFlags flags_in,
+		FlexPepDockingFlags const & flags_in,
 		core::scoring::ScoreFunctionOP scorefxn_in,
 		core::kinematics::MoveMapOP movemap_in,
 		Size const rb_jump_in = 1

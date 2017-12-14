@@ -116,7 +116,7 @@ void invert_include_residues( Size nres, core::scoring::ResidueSelectionVector c
 }
 
 //@detail find residues that don't have missing density
-void find_existing_residues(  core::pose::PoseCOP pose, std::string tag, core::scoring::ResidueSelection& selection ) {
+void find_existing_residues(  core::pose::PoseCOP pose, std::string const & tag, core::scoring::ResidueSelection& selection ) {
 	for ( Size pos = 1; pos <= pose->size(); pos++ ) {
 		if ( pose->residue_type( pos ).is_protein() && pose->residue_type( pos ).has("CA") ) {
 			numeric::xyzVector< core::Real> ca_pos = pose->residue( pos ).atom("CA").xyz();

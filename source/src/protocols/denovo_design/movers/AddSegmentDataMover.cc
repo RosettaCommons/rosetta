@@ -45,7 +45,7 @@ AddSegmentDataMover::AddSegmentDataMover():
 
 }
 
-AddSegmentDataMover::~AddSegmentDataMover(){}
+AddSegmentDataMover::~AddSegmentDataMover()= default;
 
 void
 AddSegmentDataMover::parse_my_tag(

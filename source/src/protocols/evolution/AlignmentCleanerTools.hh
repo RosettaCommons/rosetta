@@ -20,11 +20,11 @@ namespace protocols {
 namespace evolution {
 namespace AlignmentCleanerTools {
 
-void thread_sequence_on_pose( core::pose::Pose & pose, std::string const thread_seq, core::scoring::ScoreFunctionOP scorefxn );
+void thread_sequence_on_pose( core::pose::Pose & pose, std::string const & thread_seq, core::scoring::ScoreFunctionOP scorefxn );
 
-std::tuple< std::string, std::string > indel_motif(std::string const aln_seq, core::Size const motif_radius, core::Size const aln_resi, std::string const pose_ss_aln);
+std::tuple< std::string, std::string > indel_motif(std::string const & aln_seq, core::Size const motif_radius, core::Size const aln_resi, std::string const & pose_ss_aln);
 
-core::Real indel_motif_seq_id( std::string motif1, std::string motif2 );
+core::Real indel_motif_seq_id( std::string const & motif1, std::string const & motif2 );
 
 std::string short_ss_loop_filter( std::string ss, core::Size min_loop_length);
 

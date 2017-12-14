@@ -867,7 +867,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 			// The fourth paramter is the minimization
 			if ( cmd.nparams >= 4 ) {
-				Size const iter_cmd = (Size)(cmd.param4);
+				auto const iter_cmd = (Size)(cmd.param4);
 				max_iter( iter_cmd );
 				//Size const original_iter = max_iter();
 				//max_iter( original_iter );
@@ -1179,17 +1179,17 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 // Batch Relax stuff
 
 struct SRelaxPose {
-	SRelaxPose(): active(true), accept_count(0){}
+	SRelaxPose() = default;
 
 	core::Real initial_score;
 	core::Real initial_rms;
-	bool active;
+	bool active{true};
 	SilentStructOP current_struct;
 	SilentStructOP start_struct;
 	SilentStructOP best_struct;
 	core::Real current_score;
 	core::Real best_score;
-	core::Size accept_count;
+	core::Size accept_count = 0;
 	std::vector< core::Real > best_score_log;
 	std::vector< core::Real > curr_score_log;
 
@@ -1476,7 +1476,7 @@ void FastRelax::batch_apply(
 			}
 
 			std::sort( energies.begin(), energies.end() );
-			core::Size cutoff_index = core::Size( floor(core::Real(energies.size()) * (reduce_factor)) );
+			auto cutoff_index = core::Size( floor(core::Real(energies.size()) * (reduce_factor)) );
 			TR.Debug << "Energies: cutoff index " << cutoff_index << std::endl;
 			core::Real cutoff_energy = energies[ cutoff_index ];
 			TR.Debug << "Energies: cutoff " << cutoff_energy << std::endl;

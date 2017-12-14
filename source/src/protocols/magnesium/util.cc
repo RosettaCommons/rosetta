@@ -48,7 +48,7 @@ using namespace ObjexxFCL::format;
 using core::Real;
 using core::Size;
 using utility::vector1;
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 namespace protocols {
 namespace magnesium {

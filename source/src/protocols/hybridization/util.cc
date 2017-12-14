@@ -86,7 +86,7 @@ get_num_residues_nonvirt( core::pose::Pose const & pose ) {
 	core::Size nres_tgt = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres_tgt = symm_info->num_independent_residues();
@@ -100,7 +100,7 @@ get_num_residues_prot( core::pose::Pose const & pose ) {
 	core::Size nres_tgt = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres_tgt = symm_info->num_independent_residues();
@@ -111,10 +111,10 @@ get_num_residues_prot( core::pose::Pose const & pose ) {
 
 void setup_centroid_constraints(
 	core::pose::Pose &pose,
-	utility::vector1 < core::pose::PoseCOP > templates,
-	utility::vector1 < core::Real > template_weights,
-	std::string cen_cst_file,
-	std::set< core::Size > ignore_res_for_AUTO) {
+	utility::vector1< core::pose::PoseCOP > const & templates,
+	utility::vector1< core::Real > const & template_weights,
+	std::string const & cen_cst_file,
+	std::set< core::Size > const & ignore_res_for_AUTO) {
 	if ( cen_cst_file == "AUTO" ) {
 		// automatic constraints
 		generate_centroid_constraints( pose, templates, template_weights, ignore_res_for_AUTO );
@@ -127,10 +127,10 @@ void setup_centroid_constraints(
 
 void setup_fullatom_constraints(
 	core::pose::Pose &pose,
-	utility::vector1 < core::pose::PoseCOP > templates,
-	utility::vector1 < core::Real > template_weights,
-	std::string cen_cst_file,
-	std::string fa_cst_file  ) {
+	utility::vector1< core::pose::PoseCOP > const & templates,
+	utility::vector1< core::Real > const & template_weights,
+	std::string const & cen_cst_file,
+	std::string const & fa_cst_file  ) {
 
 	// use fa if specified, otherwise centroid
 	if ( fa_cst_file == "AUTO" ) {
@@ -168,7 +168,7 @@ void generate_centroid_constraints(
 {
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -277,7 +277,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}

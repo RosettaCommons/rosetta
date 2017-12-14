@@ -57,7 +57,7 @@ namespace fldsgn {
 
 class MyAtom {
 public:
-	typedef core::Size Size;
+	using Size = core::Size;
 	MyAtom(){
 		for ( Size j=1; j<= 50 ; ++j ) {
 			atom_hydrophobic_.push_back(false);

@@ -36,6 +36,7 @@
 #include <numeric/HomogeneousTransform.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -97,7 +98,7 @@ add_relevant_restypes_to_subset(
 
 
 GeomSampleInfo::GeomSampleInfo(
-	std::string tag ) :
+	std::string const & tag ) :
 	tag_(tag), function_tag_( "default" ), ideal_val_(0.0), tolerance_(0.0), periodicity_(360.0),
 	force_const_(0.0), num_steps_(0), step_size_(0.0)
 {}
@@ -131,7 +132,7 @@ GeomSampleInfo::GeomSampleInfo( GeomSampleInfo const & gsi ) :
 	step_size_(gsi.step_size_)
 {}
 
-GeomSampleInfo::~GeomSampleInfo() {}
+GeomSampleInfo::~GeomSampleInfo() = default;
 
 bool
 GeomSampleInfo::read_data( std::istringstream & line_stream )
@@ -220,7 +221,7 @@ GeomSampleInfo::create_sample_vector() const
 	//through user input of unforeseen weirdness
 	std::set< core::Real > seen_values;
 
-	for ( int i =  (int) -( num_ideal_val/2) ; i <= (int) ( num_ideal_val/2); ++i ) {
+	for ( auto i =  (int) -( num_ideal_val/2) ; i <= (int) ( num_ideal_val/2); ++i ) {
 
 		core::Real val = ideal_val_ + ( i * periodicity_ );
 
@@ -249,7 +250,7 @@ GeomSampleInfo::create_sample_vector() const
 
 		tr.Debug << *val_it << ", ";
 
-		for ( int i = (int) -num_steps_; i <= (int) num_steps_; ++i ) {
+		for ( auto i = (int) -num_steps_; i <= (int) num_steps_; ++i ) {
 
 			core::Real val =  *val_it + ( i * step_size_ );
 
@@ -280,7 +281,7 @@ MatchConstraintFileInfo::MatchConstraintFileInfo(
 :
 	index_( index ),
 	is_covalent_(false),
-	restype_set_( restype_set ),
+	restype_set_(std::move( restype_set )),
 	native_ (false)
 {
 	allowed_seqpos_.clear();
@@ -288,7 +289,7 @@ MatchConstraintFileInfo::MatchConstraintFileInfo(
 	constraints_.clear();
 }
 
-MatchConstraintFileInfo::~MatchConstraintFileInfo() {}
+MatchConstraintFileInfo::~MatchConstraintFileInfo() = default;
 
 
 utility::vector1< core::chemical::ResidueTypeCOP > const
@@ -305,7 +306,7 @@ MatchConstraintFileInfo::template_atom_inds(
 	core::chemical::ResidueType const & restype
 ) const
 {
-	std::map< core::Size, EnzCstTemplateResOP >::const_iterator map_it =  enz_template_res_.find( which_cstres );
+	auto map_it =  enz_template_res_.find( which_cstres );
 	if ( map_it == enz_template_res_.end() ) {
 		utility_exit_with_message( "template res with code blabla not found in MatchConstraintFileInfo ");
 	}
@@ -315,7 +316,7 @@ MatchConstraintFileInfo::template_atom_inds(
 EnzCstTemplateResCOP
 MatchConstraintFileInfo::enz_cst_template_res( core::Size template_res ) const
 {
-	std::map< core::Size, EnzCstTemplateResOP >::const_iterator map_it =  enz_template_res_.find( template_res );
+	auto map_it =  enz_template_res_.find( template_res );
 	if ( map_it == enz_template_res_.end() ) {
 		utility_exit_with_message( "template res with code blabla not found in MatchConstraintFileInfo ");
 	}
@@ -450,11 +451,11 @@ void MatchConstraintFileInfo::initialize_from_tag( utility::tag::TagCOP const ta
 			// iterate over the components of the combination to create GeomSampleInfo instancees with the ctor:
 			utility::vector1< utility::tag::TagCOP > const combination_tags( branch_tag->getTags() );
 			for ( auto const & combination_tag : combination_tags ) {
-				core::Real x0 = combination_tag->getOption< core::Real >( "x0", 0. );
-				core::Real xtol = combination_tag->getOption< core::Real >( "xtol", 0. );
-				core::Real k = combination_tag->getOption< core::Real >( "k", 0. );
-				core::Real periodicity = combination_tag->getOption< core::Real >( "periodicity", 0. );
-				core::Size noSamples = combination_tag->getOption< core::Size >( "noSamples", 0 );
+				auto x0 = combination_tag->getOption< core::Real >( "x0", 0. );
+				auto xtol = combination_tag->getOption< core::Real >( "xtol", 0. );
+				auto k = combination_tag->getOption< core::Real >( "k", 0. );
+				auto periodicity = combination_tag->getOption< core::Real >( "periodicity", 0. );
+				auto noSamples = combination_tag->getOption< core::Size >( "noSamples", 0 );
 				GeomSampleInfoOP gsi( new GeomSampleInfo( x0, xtol, k, periodicity, noSamples ) );
 
 				gsi->tag( combination_tag->getName() );  // this will let us keep track of which gsi is which
@@ -505,7 +506,7 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 
 				line_stream >> map_id;
 
-				std::map< core::Size, EnzCstTemplateResOP >::iterator map_it = enz_template_res_.find( map_id );
+				auto map_it = enz_template_res_.find( map_id );
 
 				if ( map_it == enz_template_res_.end() ) {
 
@@ -580,26 +581,23 @@ MatchConstraintFileInfo::process_data()
 
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 
-	for ( std::map< core::Size, EnzCstTemplateResOP >::iterator map_it = enz_template_res_.begin();
-			map_it != enz_template_res_.end(); ++map_it ) {
+	for ( auto & enz_template_re : enz_template_res_ ) {
 
 		utility::vector1< std::string > const & res_name3s =
-			map_it->second->allowed_res_types();
+			enz_template_re.second->allowed_res_types();
 		std::set< core::chemical::ResidueTypeCOP > restypes_this_res;
 		for ( core::Size j = 1; j <= res_name3s.size(); ++j ) {
 			add_relevant_restypes_to_subset( restypes_this_res, res_name3s[j], restype_set_ );
 		}
 
-		for ( std::set< core::chemical::ResidueTypeCOP >::iterator
-				set_it  = restypes_this_res.begin();
-				set_it != restypes_this_res.end(); ++set_it ) {
-			if ( map_it->second->compatible_restype( *set_it ) ) {
-				map_it->second->determine_atom_inds_for_restype( *set_it );
+		for ( auto const & restypes_this_re : restypes_this_res ) {
+			if ( enz_template_re.second->compatible_restype( restypes_this_re ) ) {
+				enz_template_re.second->determine_atom_inds_for_restype( restypes_this_re );
 			}
 		}
 
-		if ( map_it->second->atom_inds_for_restype_begin() == map_it->second->atom_inds_for_restype_end() ) {
-			tr.Warning << "No appropriate atoms found for entry " << map_it->first << " in constraint " << index_ << std::endl;
+		if ( enz_template_re.second->atom_inds_for_restype_begin() == enz_template_re.second->atom_inds_for_restype_end() ) {
+			tr.Warning << "No appropriate atoms found for entry " << enz_template_re.first << " in constraint " << index_ << std::endl;
 		}
 	} //loop over all Enz_cst_template-res
 
@@ -779,7 +777,7 @@ MatchConstraintFileInfo::diversify_backbone_only_rotamers( utility::vector1< cor
 
 bool
 MatchConstraintFileInfo::process_algorithm_info(
-	std::string tag,
+	std::string const & tag,
 	utility::io::izstream & data
 ) {
 
@@ -859,7 +857,7 @@ MatchConstraintFileInfo::create_exgs() const
 			tr.Warning << "." << std::endl;
 
 			//std::cerr << "setting external geom sampler to null pointer" << std::endl;
-			exgs = NULL;
+			exgs = nullptr;
 		}
 		if ( exgs ) {
 			exgs_list.push_back( exgs );
@@ -872,12 +870,12 @@ MatchConstraintFileInfo::create_exgs() const
 MatchConstraintFileInfoList::MatchConstraintFileInfoList(
 	core::chemical::ResidueTypeSetCOP restype_set
 ) :
-	restype_set_( restype_set )
+	restype_set_(std::move( restype_set ))
 {
 	mcfis_.clear();
 }
 
-MatchConstraintFileInfoList::~MatchConstraintFileInfoList() {}
+MatchConstraintFileInfoList::~MatchConstraintFileInfoList() = default;
 
 /// @brief temporary implementation for now, only one MCFI supported
 bool
@@ -910,7 +908,7 @@ void MatchConstraintFileInfoList::add_mcfi( MatchConstraintFileInfoOP mcfi )
 utility::vector1< MatchConstraintFileInfoCOP > const &
 MatchConstraintFileInfoList::mcfis_for_upstream_restype( core::chemical::ResidueTypeCOP restype ) const
 {
-	std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > >::const_iterator
+	auto
 		mcfi_it = mcfis_for_restype_.find( restype );
 	if ( mcfi_it == mcfis_for_restype_.end() ) {
 		utility_exit_with_message( " could not find mcfi list for given restype" );
@@ -974,23 +972,22 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 
 		//add the restypes_this_mcfi to the total set of upstream residue
 		//(if they haven't already been added)
-		for ( std::set< core::chemical::ResidueTypeCOP >::iterator set_it = restypes_this_mcfi.begin();
-				set_it != restypes_this_mcfi.end(); ++set_it ) {
+		for ( auto const & set_it : restypes_this_mcfi ) {
 			//build the restype_to_mcfi mapping
-			std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > >::iterator
-				res_mcfi_it = mcfis_for_restype_.find( *set_it );
+			auto
+				res_mcfi_it = mcfis_for_restype_.find( set_it );
 			if ( res_mcfi_it == mcfis_for_restype_.end() ) {
 				std::pair<core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > >
-					to_insert ( *set_it, utility::vector1< MatchConstraintFileInfoCOP >() );
+					to_insert ( set_it, utility::vector1< MatchConstraintFileInfoCOP >() );
 				mcfis_for_restype_.insert( to_insert );
-				res_mcfi_it = mcfis_for_restype_.find( *set_it );
+				res_mcfi_it = mcfis_for_restype_.find( set_it );
 			}
 
 			res_mcfi_it->second.push_back( mcfis_[i] );
 			//restype_to_mcfi mapping updated
 
-			if ( std::find( restype_temp_set.begin(), restype_temp_set.end(), *set_it ) == restype_temp_set.end() ) {
-				restype_temp_set.push_back( *set_it );
+			if ( std::find( restype_temp_set.begin(), restype_temp_set.end(), set_it ) == restype_temp_set.end() ) {
+				restype_temp_set.push_back( set_it );
 			}
 
 		} //loop over restypes this mcfi

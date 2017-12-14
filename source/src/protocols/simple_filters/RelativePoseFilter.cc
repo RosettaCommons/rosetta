@@ -302,7 +302,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 	relax_mover( parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
 	filter( parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
 	filter_name( tag->getOption< std::string> ( "name", "" ) );
-	baseline( tag->getOption< bool >( "baseline", 1 ));
+	baseline( tag->getOption< bool >( "baseline", true ));
 	if ( baseline() ) {
 		relax_mover()->apply( *pose() );
 		baseline_val( filter()->report_sm( *pose() ) );
@@ -352,7 +352,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}
 	scorefxn( parse_score_function( tag, data ) );
 	packing_shell( tag->getOption( "packing_shell", packing_shell() ));
-	rtmin( tag->getOption< bool >("rtmin", 0 ) );
+	rtmin( tag->getOption< bool >("rtmin", false ) );
 	runtime_assert( packing_shell() >= 0 );
 	thread( tag->getOption< bool >( "thread", thread() ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );

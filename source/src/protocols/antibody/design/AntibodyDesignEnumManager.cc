@@ -30,7 +30,7 @@ AntibodyDesignEnumManager::AntibodyDesignEnumManager() {
 	setup();
 }
 
-AntibodyDesignEnumManager::~AntibodyDesignEnumManager() { }
+AntibodyDesignEnumManager::~AntibodyDesignEnumManager() = default;
 
 void
 AntibodyDesignEnumManager::setup() {
@@ -129,7 +129,7 @@ AntibodyDesignEnumManager::seq_design_strategy_string_to_enum(std::string const 
 		utility_exit_with_message("Strategy not present!" +s);
 	}
 
-	std::map<std::string, SeqDesignStrategyEnum>::const_iterator iter(
+	auto iter(
 		seq_design_strategy_to_enum_.find(s));
 	return iter->second;
 }
@@ -142,7 +142,7 @@ AntibodyDesignEnumManager::seq_design_strategy_enum_to_string(SeqDesignStrategyE
 bool
 AntibodyDesignEnumManager::seq_design_strategy_is_present(std::string const &seq_design_strategy) const {
 
-	std::map<std::string, SeqDesignStrategyEnum>::const_iterator iter(
+	auto iter(
 		seq_design_strategy_to_enum_.find(seq_design_strategy));
 	return iter != seq_design_strategy_to_enum_.end();
 }
@@ -156,7 +156,7 @@ AntibodyDesignEnumManager::design_protocol_string_to_enum(std::string const &des
 		utility_exit_with_message("Design Protocol not present! "+ s );
 	}
 
-	std::map<std::string, AntibodyDesignProtocolEnum>::const_iterator iter(design_protocol_to_enum_.find(s));
+	auto iter(design_protocol_to_enum_.find(s));
 	return iter->second;
 }
 
@@ -168,7 +168,7 @@ AntibodyDesignEnumManager::design_protocol_enum_to_string(AntibodyDesignProtocol
 bool
 AntibodyDesignEnumManager::design_protocol_is_present(std::string const & design_protocol) const {
 
-	std::map<std::string, AntibodyDesignProtocolEnum>::const_iterator iter(
+	auto iter(
 		design_protocol_to_enum_.find(design_protocol));
 	return iter != design_protocol_to_enum_.end();
 }
@@ -190,7 +190,7 @@ AntibodyDesignEnumManager::min_type_string_to_enum(std::string const & min_type)
 	if ( ! min_type_is_present( s ) ) {
 		utility_exit_with_message("MinType not present! "+s);
 	}
-	std::map<std::string, MinTypeEnum>::const_iterator iter(min_type_to_enum_.find(s));
+	auto iter(min_type_to_enum_.find(s));
 	return iter->second;
 }
 
@@ -202,7 +202,7 @@ AntibodyDesignEnumManager::min_type_enum_to_string(MinTypeEnum const min_type) c
 bool
 AntibodyDesignEnumManager::min_type_is_present(std::string const & min_type) const {
 
-	std::map<std::string, MinTypeEnum>::const_iterator iter(min_type_to_enum_.find(min_type));
+	auto iter(min_type_to_enum_.find(min_type));
 	return iter != min_type_to_enum_.end();
 }
 

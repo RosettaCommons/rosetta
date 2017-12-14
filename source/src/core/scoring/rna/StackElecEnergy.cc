@@ -283,7 +283,7 @@ StackElecEnergy::get_intrares_countpair(
 	ScoreFunction const &
 ) const {
 	utility_exit_with_message( "StackElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
-	return 0;
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -346,7 +346,7 @@ StackElecEnergy::residue_pair_energy_ext(
 	if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) return;
 
 	//debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
+	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
 	if ( neighbs.size() <= 0 ) return;
@@ -564,9 +564,7 @@ StackElecEnergy::eval_atom_derivative(
 	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
 	AtomNeighbors const & nbrs( nblist.atom_neighbors( i, m ) );
 
-	for ( scoring::AtomNeighbors::const_iterator it2 = nbrs.begin(),
-			it2e = nbrs.end(); it2 != it2e; ++it2 ) {
-		scoring::AtomNeighbor const & nbr( *it2 );
+	for ( auto const & nbr : nbrs ) {
 		Size const j( nbr.rsd() );
 		if ( i == j ) continue;
 		Size const n( nbr.atomno() );
@@ -732,10 +730,7 @@ StackElecEnergy::finalize_total_energy(
 			kinematics::Stub stub_i = base_stubs[i];
 			Matrix const M_i ( stub_i.M );
 			AtomNeighbors const & nbrs( nblist.upper_atom_neighbors( i, ii ) );
-			for ( AtomNeighbors::const_iterator nbr_iter = nbrs.begin(),
-					nbr_end = nbrs.end(); nbr_iter != nbr_end; ++nbr_iter ) {
-				AtomNeighbor const & nbr( *nbr_iter );
-
+			for ( auto const & nbr : nbrs ) {
 				Size const  j( nbr.rsd() );
 				if ( i == j ) continue;
 				Size const jj( nbr.atomno() );

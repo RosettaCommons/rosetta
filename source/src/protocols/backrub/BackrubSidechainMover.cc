@@ -135,7 +135,7 @@ BackrubSidechainMover::parse_my_tag(
 	if ( tag->hasOption("task_operations") ) {
 
 		std::string const t_o_val( tag->getOption<std::string>("task_operations") );
-		typedef utility::vector1< std::string > StringVec;
+		using StringVec = utility::vector1<std::string>;
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 		for ( auto const & t_o_key : t_o_keys ) {
 			if ( data.has( "task_operations", t_o_key ) ) {
@@ -443,7 +443,7 @@ BackrubSidechainMover::setup_histograms()
 	core::pose::Pose const & pose(*backrub_mover_->get_input_pose());
 
 	core::Real max_angle_disp(ceil(numeric::conversions::degrees(backrub_mover_->max_angle_disp_7())));
-	core::Size const num_bins(static_cast<core::Size>(2*max_angle_disp));
+	auto const num_bins(static_cast<core::Size>(2*max_angle_disp));
 	numeric::conversions::to_radians(max_angle_disp);
 
 	proposal_hists_.resize(valid_segments_.size());
@@ -509,9 +509,9 @@ BackrubSidechainMover::update_type()
 
 	char bin_letters[] = {'p', 't', 'm'};
 
-	core::Size chi1_pre_bin(static_cast<core::Size>(floor(numeric::nonnegative_principal_angle_radians(last_chi1_pre_)/numeric::constants::r::pi_2_over_3)));
+	auto chi1_pre_bin(static_cast<core::Size>(floor(numeric::nonnegative_principal_angle_radians(last_chi1_pre_)/numeric::constants::r::pi_2_over_3)));
 	if ( chi1_pre_bin == 3 ) chi1_pre_bin = 2;
-	core::Size chi1_post_bin(static_cast<core::Size>(floor(numeric::nonnegative_principal_angle_radians(last_chi1_post_)/numeric::constants::r::pi_2_over_3)));
+	auto chi1_post_bin(static_cast<core::Size>(floor(numeric::nonnegative_principal_angle_radians(last_chi1_post_)/numeric::constants::r::pi_2_over_3)));
 	if ( chi1_post_bin == 3 ) chi1_post_bin = 2;
 
 	mt << "brsc_" << bin_letters[chi1_pre_bin] << bin_letters[chi1_post_bin] << "_"

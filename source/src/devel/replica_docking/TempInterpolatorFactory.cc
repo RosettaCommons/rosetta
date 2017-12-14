@@ -37,7 +37,7 @@ namespace replica_docking {
 
 static basic::Tracer TR( "devel.replica_docking.TempInterpolatorFactory" );
 
-TempInterpolatorFactory::TempInterpolatorFactory(){}
+TempInterpolatorFactory::TempInterpolatorFactory()= default;
 
 TempInterpolatorFactory::~TempInterpolatorFactory() = default;
 
@@ -53,8 +53,8 @@ TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagCOP tag, core::S
 		return TempInterpolatorBaseOP( new TempFixValue( tag->getOption< core::Real >( "value" ) ) );
 	} else {
 		if ( tag->hasOption( "start" ) && tag->hasOption( "end" ) ) {
-			core::Real start = tag->getOption< core::Real >( "start" );
-			core::Real end = tag->getOption< core::Real >( "end" );
+			auto start = tag->getOption< core::Real >( "start" );
+			auto end = tag->getOption< core::Real >( "end" );
 			return TempInterpolatorBaseOP( new TempInterpolator( n_levels, start, end, curve ) );
 		} else {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: start and end value must be given for linear and expotential interpolation !" );
@@ -69,7 +69,7 @@ TempInterpolatorFactory::attributes_for_interpolators(
 )
 {
 	using namespace utility::tag;
-	typedef utility::tag::XMLSchemaAttribute Attr;
+	using Attr = utility::tag::XMLSchemaAttribute;
 
 	XMLSchemaRestriction temp_interpolator_type;
 	temp_interpolator_type.name( "temp_interpolator_type" );

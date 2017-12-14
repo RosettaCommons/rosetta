@@ -39,7 +39,7 @@ public:
 	/// @brief  creates a Calpha distance based scoring function.
 	/// @details Scores distance matches for short range disulfides (ie: within fragment)
 	DisulfideDistance(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-		utility::vector1< core::Size > disulfide_data, core::Size largest_fragment);
+		utility::vector1< core::Size > const & disulfide_data, core::Size largest_fragment);
 
 	void do_caching(VallChunkOP);
 	void clean_up();

@@ -43,7 +43,7 @@ ExecutionResult execute(std::string const & message, std::string const & command
 		char buffer[256];
 
 		while ( !feof(pipe) ) {
-			if ( fgets(buffer, 256, pipe) != NULL ) r.output += buffer;
+			if ( fgets(buffer, 256, pipe) != nullptr ) r.output += buffer;
 		}
 
 		r.result = pclose(pipe);

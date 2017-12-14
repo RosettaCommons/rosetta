@@ -45,8 +45,7 @@ StepWiseBasicOptions::StepWiseBasicOptions()
 }
 
 //Destructor
-StepWiseBasicOptions::~StepWiseBasicOptions()
-{}
+StepWiseBasicOptions::~StepWiseBasicOptions() = default;
 
 /// @brief copy constructor
 StepWiseBasicOptions::StepWiseBasicOptions( StepWiseBasicOptions const & src ) :

@@ -29,6 +29,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
@@ -83,7 +84,7 @@ SymRotamerTrialsMover::SymRotamerTrialsMover(
 	protocols::moves::Mover::type( "SymRotamerTrials" );
 }
 
-SymRotamerTrialsMover::~SymRotamerTrialsMover() {}
+SymRotamerTrialsMover::~SymRotamerTrialsMover() = default;
 
 void
 SymRotamerTrialsMover::apply( core::pose::Pose & pose )
@@ -110,7 +111,7 @@ SymRotamerTrialsMover::make_symmetric_task(
 )
 {
 	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -183,7 +184,7 @@ SymEnergyCutRotamerTrialsMover::SymEnergyCutRotamerTrialsMover(
 	PackerTask & task_in,
 	protocols::moves::MonteCarloOP mc_in,
 	core::Real energycut_in
-) : SymRotamerTrialsMover(scorefxn_in, task_in), mc_( mc_in ), energycut_( energycut_in )
+) : SymRotamerTrialsMover(scorefxn_in, task_in), mc_(std::move( mc_in )), energycut_( energycut_in )
 {
 	protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
 }
@@ -194,12 +195,12 @@ SymEnergyCutRotamerTrialsMover::SymEnergyCutRotamerTrialsMover(
 	TaskFactoryCOP factory_in,
 	protocols::moves::MonteCarloOP mc_in,
 	core::Real energycut_in
-) : SymRotamerTrialsMover(scorefxn_in, factory_in), mc_( mc_in ), energycut_( energycut_in )
+) : SymRotamerTrialsMover(scorefxn_in, factory_in), mc_(std::move( mc_in )), energycut_( energycut_in )
 {
 	protocols::moves::Mover::type( "SymEnergyCutRotamerTrials" );
 }
 
-SymEnergyCutRotamerTrialsMover::~SymEnergyCutRotamerTrialsMover() {}
+SymEnergyCutRotamerTrialsMover::~SymEnergyCutRotamerTrialsMover() = default;
 
 void
 SymEnergyCutRotamerTrialsMover::apply( core::pose::Pose & pose )
@@ -257,7 +258,7 @@ SymEnergyCutRotamerTrialsMover::make_symmetric_task(
 {
 	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 	if ( task->symmetrize_by_union() || task->symmetrize_by_intersection() ) return; // new machinery
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 

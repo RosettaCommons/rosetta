@@ -688,7 +688,7 @@ get_res_num_from_pdb_info( pose::Pose const & pose ) {
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
 
-	if ( ( pdb_info != 0 ) && !pdb_info->obsolete() ) {
+	if ( ( pdb_info != nullptr ) && !pdb_info->obsolete() ) {
 		for ( Size n = 1; n <= pose.size(); n++ ) resnum.push_back( pdb_info->number( n ) );
 	} else {
 		for ( Size n = 1; n <= pose.size(); n++ ) resnum.push_back( n );
@@ -704,7 +704,7 @@ get_chains_from_pdb_info( pose::Pose const & pose ) {
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
 
-	if ( ( pdb_info != 0 ) && !pdb_info->obsolete() ) {
+	if ( ( pdb_info != nullptr ) && !pdb_info->obsolete() ) {
 		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( pdb_info->chain( n ) );
 	} else {
 		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( ' ' );
@@ -719,7 +719,7 @@ get_segids_from_pdb_info( pose::Pose const & pose ) {
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
 
-	if ( ( pdb_info != 0 ) && !pdb_info->obsolete() ) {
+	if ( ( pdb_info != nullptr ) && !pdb_info->obsolete() ) {
 		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( pdb_info->segmentID( n ) );
 	} else {
 		for ( Size n = 1; n <= pose.size(); n++ ) chains.push_back( "    " );
@@ -904,8 +904,8 @@ get_chain_connections( pose::Pose const & pose ) {
 		for ( Size k = 1; k <= pose_domain_map.size(); k++ ) {
 			if ( pose_domain_map[ k ] == n ) chains_in_pose.insert( chains_full[ k ] );
 		}
-		for ( std::set< Size >::const_iterator it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
-			for ( std::set< Size >::const_iterator it2 = it1; it2 != end; ++it2 ) {
+		for ( auto it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
+			for ( auto it2 = it1; it2 != end; ++it2 ) {
 				if ( it1 != it2 ) chain_connections.push_back( std::make_pair( *it1, *it2 ) );
 			}
 		}
@@ -995,7 +995,7 @@ append_virtual_residue_to_full_model_info( pose::Pose & pose )
 	new_full_model_parameters->set_conventional_segids( new_conventional_segids );
 	new_full_model_parameters->set_non_standard_residue_map( new_non_standard_residue_map );
 	for ( Size n = 1; n < LAST_TYPE; n++ ) {
-		FullModelParameterType type = static_cast< FullModelParameterType >( n );
+		auto type = static_cast< FullModelParameterType >( n );
 		new_full_model_parameters->set_parameter_as_res_list( type, full_model_parameters->get_res_list( type )  );
 	} // may need to treate WORKING_RES specially.
 

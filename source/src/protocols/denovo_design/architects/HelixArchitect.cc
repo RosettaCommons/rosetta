@@ -38,8 +38,7 @@ HelixArchitect::HelixArchitect( std::string const & id_value ):
 {
 }
 
-HelixArchitect::~HelixArchitect()
-{}
+HelixArchitect::~HelixArchitect() = default;
 
 DeNovoArchitectOP
 HelixArchitect::clone() const
@@ -112,11 +111,11 @@ HelixArchitect::set_lengths( Lengths const & lengths )
 	lengths_ = lengths;
 	// add motifs
 	motifs_.clear();
-	for ( Lengths::const_iterator l=lengths.begin(); l!=lengths.end(); ++l ) {
+	for ( unsigned long length : lengths ) {
 		std::stringstream ss;
-		ss << 'L' << std::string( *l, 'H' ) << 'L';
+		ss << 'L' << std::string( length, 'H' ) << 'L';
 		std::stringstream abego;
-		abego << 'X' << std::string( *l, 'A' ) << 'X';
+		abego << 'X' << std::string( length, 'A' ) << 'X';
 
 		components::SegmentOP motif( new components::Segment( id() ) );
 		motif->extend( ss.str(), abego.str() );

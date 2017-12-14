@@ -35,7 +35,7 @@ namespace rosetta_scripts {
 
 static basic::Tracer TR( "protocols.rosetta_scripts.PoseSelectorFactory" );
 
-PoseSelectorFactory::PoseSelectorFactory(){}
+PoseSelectorFactory::PoseSelectorFactory()= default;
 
 PoseSelectorFactory::~PoseSelectorFactory()= default;
 

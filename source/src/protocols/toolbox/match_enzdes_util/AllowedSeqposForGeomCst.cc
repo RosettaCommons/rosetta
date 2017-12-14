@@ -26,6 +26,7 @@
 #include <basic/Tracer.hh>
 
 //utility headers
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/string_util.hh>
@@ -45,9 +46,9 @@ AllowedSeqposForGeomCst::AllowedSeqposForGeomCst(
 : seqpos_for_geomcst_( seqpos_for_geomcst )
 {}
 
-AllowedSeqposForGeomCst::AllowedSeqposForGeomCst(){}
+AllowedSeqposForGeomCst::AllowedSeqposForGeomCst()= default;
 
-AllowedSeqposForGeomCst::~AllowedSeqposForGeomCst(){}
+AllowedSeqposForGeomCst::~AllowedSeqposForGeomCst()= default;
 
 
 /// @details this function supports two behaviours

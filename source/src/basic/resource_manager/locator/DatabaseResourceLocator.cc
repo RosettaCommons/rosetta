@@ -16,6 +16,7 @@
 #include <basic/resource_manager/locator/DatabaseResourceLocatorCreator.hh>
 
 //project headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <basic/resource_manager/locator/StringResourceStream.hh>
@@ -49,9 +50,9 @@ static Tracer TR("basic.resource_manager.locator.DatabaseResourceLocator");
 
 
 ///// DatabaseResourceLocatorCreator /////
-DatabaseResourceLocatorCreator::DatabaseResourceLocatorCreator() {}
+DatabaseResourceLocatorCreator::DatabaseResourceLocatorCreator() = default;
 
-DatabaseResourceLocatorCreator::~DatabaseResourceLocatorCreator() {}
+DatabaseResourceLocatorCreator::~DatabaseResourceLocatorCreator() = default;
 
 ResourceLocatorOP
 DatabaseResourceLocatorCreator::create_resource_locator() const {
@@ -102,7 +103,7 @@ DatabaseResourceLocator::type() const {
 }
 
 
-DatabaseResourceLocator::~DatabaseResourceLocator() {}
+DatabaseResourceLocator::~DatabaseResourceLocator() = default;
 
 /// @brief Create a ResourceStream object from the given resource
 /// source, so that its stream can be passed to the ResourceLoader

@@ -22,6 +22,7 @@
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <numeric/UniformRotationSampler.hh>
+#include <utility>
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
 
@@ -29,7 +30,7 @@ static basic::Tracer TR( "protocols.magnesium.MgWaterHydrogenPacker" );
 
 using namespace core;
 using utility::vector1;
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 namespace protocols {
 namespace magnesium {
@@ -49,8 +50,7 @@ MgWaterHydrogenPacker::MgWaterHydrogenPacker( utility::vector1< Size > const & m
 {}
 
 //Destructor
-MgWaterHydrogenPacker::~MgWaterHydrogenPacker()
-= default;
+MgWaterHydrogenPacker::~MgWaterHydrogenPacker() = default;
 
 ///////////////////////////////////////////
 // go over each Mg(2+)

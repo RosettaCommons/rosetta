@@ -226,7 +226,7 @@ public:
 class XMLSchemaAttribute : public XMLSchemaTopLevelElement {
 public:
 	XMLSchemaAttribute();
-	XMLSchemaAttribute( std::string const & name, XMLSchemaType type, std::string const & desc );
+	XMLSchemaAttribute( std::string const & name, XMLSchemaType const & type, std::string const & desc );
 	//XMLSchemaAttribute( std::string const & name, XMLSchemaType type, std::string const & default_value ); // temp -- find attribtues w/ default values
 	//static XMLSchemaAttribute required_attribute( std::string const & name, XMLSchemaType type );
 	static XMLSchemaAttribute required_attribute( std::string const & name, XMLSchemaType type, std::string const & desc );

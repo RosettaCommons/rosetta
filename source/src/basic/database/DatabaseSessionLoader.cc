@@ -38,13 +38,13 @@ DatabaseSessionLoader::create_resource(
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "DatabaseSessionLoader expected to be given a DatabaseSessionOptions object, " \
 			"but was given a non-DatabaseSessionOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
-	DatabaseSessionOptions const & database_options = static_cast< DatabaseSessionOptions const & > ( options );
+	auto const & database_options = static_cast< DatabaseSessionOptions const & > ( options );
 	return database_options.database_session();
 }
 
 
 ///// DatabaseSessionOptionsCreator /////
-DatabaseSessionOptionsCreator::DatabaseSessionOptionsCreator() {}
+DatabaseSessionOptionsCreator::DatabaseSessionOptionsCreator() = default;
 
 DatabaseSessionOptionsCreator::~DatabaseSessionOptionsCreator() = default;
 

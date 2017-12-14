@@ -22,6 +22,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/stream_util.hh>
 #include <utility/string_util.hh>

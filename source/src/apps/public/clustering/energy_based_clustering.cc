@@ -69,7 +69,7 @@
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers:
-#include <stdio.h>
+#include <cstdio>
 
 static basic::Tracer TR( "apps.public.clustering.energy_based_clustering" );
 

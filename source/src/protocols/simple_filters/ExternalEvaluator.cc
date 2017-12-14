@@ -67,9 +67,9 @@ using namespace core;
 using namespace std;
 
 
-ExternalEvaluator::ExternalEvaluator( std::string tag, std::string command )
+ExternalEvaluator::ExternalEvaluator( std::string const & tag, std::string const & command )
 : evaluation::SingleValuePoseEvaluator<core::Real>( tag ),
-	command_(std::move( command ))
+	command_( command )
 {
 	// this probably shouldn't go on BOINC
 #ifndef WIN32

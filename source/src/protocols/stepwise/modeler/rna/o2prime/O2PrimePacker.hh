@@ -36,7 +36,7 @@ public:
 	//constructor
 	O2PrimePacker( core::pose::Pose const & pose,
 		core::scoring::ScoreFunctionCOP const & scorefxn,
-		utility::vector1< core::Size > moving_res ,
+		utility::vector1< core::Size > const & moving_res ,
 		bool const pack_virtual_o2prime_hydrogen = false );
 
 	//destructor

@@ -72,7 +72,7 @@ SecondaryMatcherToUpstreamResidue::SecondaryMatcherToUpstreamResidue(
 {
 }
 
-SecondaryMatcherToUpstreamResidue::~SecondaryMatcherToUpstreamResidue() {}
+SecondaryMatcherToUpstreamResidue::~SecondaryMatcherToUpstreamResidue() = default;
 
 DownstreamAlgorithmOP
 SecondaryMatcherToUpstreamResidue::clone() const
@@ -171,11 +171,10 @@ SecondaryMatcherToUpstreamResidue::respond_to_primary_hitlist_change(
 
 	boost::unordered_map< Size2Tuple, bool, hash_upstream_hit > targets_hits_matched;
 	Matcher::HitList const & my_hits = matcher.hits( geom_cst_id() );
-	for ( Matcher::HitListConstIterator iter = my_hits.begin(), iter_end = my_hits.end();
-			iter != iter_end; ++iter ) {
+	for ( auto const & my_hit : my_hits ) {
 		Size2 target_hit;
-		target_hit[ 1 ] = static_cast< Size > ( iter->second()[ 1 ] );
-		target_hit[ 2 ] = static_cast< Size > ( iter->second()[ 2 ] );
+		target_hit[ 1 ] = static_cast< Size > ( my_hit.second()[ 1 ] );
+		target_hit[ 2 ] = static_cast< Size > ( my_hit.second()[ 2 ] );
 		boost::unordered_map< Size2Tuple, bool, hash_upstream_hit >::const_iterator
 			hash_iter = targets_hits_matched.find( target_hit );
 		if ( hash_iter == targets_hits_matched.end() ) {
@@ -183,12 +182,12 @@ SecondaryMatcherToUpstreamResidue::respond_to_primary_hitlist_change(
 		}
 	}
 
-	Matcher::HitListIterator target_hit_iter = matcher.hit_list_begin( target_geomcst_id_ );
-	Matcher::HitListIterator target_hit_iter_end = matcher.hit_list_end( target_geomcst_id_ );
+	auto target_hit_iter = matcher.hit_list_begin( target_geomcst_id_ );
+	auto target_hit_iter_end = matcher.hit_list_end( target_geomcst_id_ );
 
 	Size drop_count( 0 );
 	while ( target_hit_iter != target_hit_iter_end ) {
-		Matcher::HitListIterator target_hit_iter_next = target_hit_iter;
+		auto target_hit_iter_next = target_hit_iter;
 		++target_hit_iter_next;
 
 		Size2 target_hit;
@@ -226,11 +225,10 @@ SecondaryMatcherToUpstreamResidue::respond_to_peripheral_hitlist_change(
 
 	boost::unordered_map< Size2Tuple, bool, hash_upstream_hit > target_hit_hash;
 	Matcher::HitList const & target_hits( matcher.hits( target_geomcst_id_ ));
-	for ( Matcher::HitListConstIterator iter = target_hits.begin(), iter_end = target_hits.end();
-			iter != iter_end; ++iter ) {
+	for ( auto const & iter : target_hits ) {
 		Size2 target_hit;
-		target_hit[ 1 ] = iter->first()[ 1 ];
-		target_hit[ 2 ] = iter->first()[ 2 ];
+		target_hit[ 1 ] = iter.first()[ 1 ];
+		target_hit[ 2 ] = iter.first()[ 2 ];
 		boost::unordered_map< Size2Tuple, bool, hash_upstream_hit >::const_iterator
 			hash_iter = target_hit_hash.find( target_hit );
 		if ( hash_iter == target_hit_hash.end() ) {
@@ -238,12 +236,12 @@ SecondaryMatcherToUpstreamResidue::respond_to_peripheral_hitlist_change(
 		}
 	}
 
-	Matcher::HitListIterator hit_iter = matcher.hit_list_begin( geom_cst_id() );
-	Matcher::HitListIterator hit_iter_end = matcher.hit_list_end( geom_cst_id() );
+	auto hit_iter = matcher.hit_list_begin( geom_cst_id() );
+	auto hit_iter_end = matcher.hit_list_end( geom_cst_id() );
 
 	Size drop_count( 0 );
 	while ( hit_iter != hit_iter_end ) {
-		Matcher::HitListIterator hit_iter_next = hit_iter;
+		auto hit_iter_next = hit_iter;
 		++hit_iter_next;
 
 		Size2 target_hit;
@@ -300,7 +298,7 @@ SecondaryMatcherToUpstreamResidue::build(
 					target_geomcst_coords_->coord( ii, jj, kk ));
 			}
 
-			for ( EvaluatorSet::const_iterator eval_iter = respair_evaluators_[ ii ].begin(),
+			for ( auto eval_iter = respair_evaluators_[ ii ].begin(),
 					eval_iter_end = respair_evaluators_[ ii ].end();
 					eval_iter != eval_iter_end; ++eval_iter ) {
 
@@ -351,11 +349,10 @@ SecondaryMatcherToUpstreamResidue::prepare_for_match_enumeration( Matcher const 
 {
 	my_hits_for_target_hit_map_.clear();
 	Matcher::HitList const & hits( matcher.hits( geom_cst_id() ));
-	for ( Matcher::HitListConstIterator iter = hits.begin(), iter_end = hits.end();
-			iter != iter_end; ++iter ) {
+	for ( auto const & hit : hits ) {
 		Size2 target_hit;
-		target_hit[ 1 ] = static_cast< Size > ( iter->second()[ 1 ] );
-		target_hit[ 2 ] = static_cast< Size > ( iter->second()[ 2 ] );
+		target_hit[ 1 ] = static_cast< Size > ( hit.second()[ 1 ] );
+		target_hit[ 2 ] = static_cast< Size > ( hit.second()[ 2 ] );
 		std::map< Size2Tuple, HitPtrListOP >::const_iterator list_iter =
 			my_hits_for_target_hit_map_.find( target_hit );
 		if ( list_iter == my_hits_for_target_hit_map_.end() ) {
@@ -363,7 +360,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_match_enumeration( Matcher const 
 			list_iter = my_hits_for_target_hit_map_.find( target_hit );
 			//std::cout << "add to map " << target_hit[ 1 ] << " " << target_hit[ 2 ] << std::endl;
 		}
-		list_iter->second->val().push_back( & (*iter ) ); /// add a pointer to the matcher's hit
+		list_iter->second->val().push_back( & hit ); /// add a pointer to the matcher's hit
 	}
 }
 
@@ -373,11 +370,11 @@ SecondaryMatcherToUpstreamResidue::hits_to_include_with_partial_match(
 	match_dspos1 const & m
 ) const
 {
-	HitPtrListCOP hitptrlist( 0 );
+	HitPtrListCOP hitptrlist( nullptr );
 	Size2 target_hit;
 	target_hit[ 1 ] = static_cast< Size > ( m.upstream_hits[ target_geomcst_id_ ].scaffold_build_id() );
 	target_hit[ 2 ] = static_cast< Size > ( m.upstream_hits[ target_geomcst_id_ ].upstream_conf_id() );
-	std::map< Size2Tuple, HitPtrListOP >::const_iterator list_iter =
+	auto list_iter =
 		my_hits_for_target_hit_map_.find( target_hit );
 	if ( list_iter != my_hits_for_target_hit_map_.end() ) {
 		hitptrlist = list_iter->second;
@@ -463,11 +460,10 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation(
 
 	std::list< DownstreamAlgorithmOP > const & dsalgs = matcher.nonconst_downstream_algorithms( geom_cst_id() );
 	std::list< SecondaryMatcherToUpstreamResidueOP > secmatch_algs;
-	for ( std::list< DownstreamAlgorithmOP >::const_iterator iter = dsalgs.begin(),
-			iter_end = dsalgs.end(); iter != iter_end; ++iter ) {
+	for ( auto const & dsalg : dsalgs ) {
 		SecondaryMatcherToUpstreamResidueOP secmatcher =
-			utility::pointer::dynamic_pointer_cast< SecondaryMatcherToUpstreamResidue > ( *iter );
-		runtime_assert( secmatcher != 0 );
+			utility::pointer::dynamic_pointer_cast< SecondaryMatcherToUpstreamResidue > ( dsalg );
+		runtime_assert( secmatcher != nullptr );
 		secmatcher->smUR_pose_build_resids_ = matcher.get_pose_build_resids();
 		secmatch_algs.push_back( secmatcher );
 		secmatcher->reorder_restypes( *usbuilder );
@@ -552,7 +548,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation_at_target_build_po
 
 	std::list< Hit > unique_upstream_hits;
 	Size last_conf_id( 0 );
-	for ( Matcher::HitListConstIterator iter = target_hits_for_focused_build_point_begin_;
+	for ( auto iter = target_hits_for_focused_build_point_begin_;
 			iter != target_hits_for_focused_build_point_end_; ++iter ) {
 		//get_all_hits_for_clash_cheicking
 		if ( last_conf_id != iter->upstream_conf_id() ) {
@@ -586,13 +582,11 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation_at_target_build_po
 	/// to the same TargetRotamerCoords object.
 
 	std::list< DownstreamAlgorithmOP > const & dsalgs = matcher.nonconst_downstream_algorithms( geom_cst_id() );
-	for ( std::list< DownstreamAlgorithmOP >::const_iterator
-			iter = dsalgs.begin(), iter_end = dsalgs.end();
-			iter != iter_end; ++iter ) {
-		if ( iter->get() != this ) {
+	for ( auto const & dsalg : dsalgs ) {
+		if ( dsalg.get() != this ) {
 			SecondaryMatcherToUpstreamResidueOP other =
-				utility::pointer::dynamic_pointer_cast< SecondaryMatcherToUpstreamResidue > ( *iter );
-			runtime_assert( other != 0 );
+				utility::pointer::dynamic_pointer_cast< SecondaryMatcherToUpstreamResidue > ( dsalg );
+			runtime_assert( other != nullptr );
 			//TR << "SecondaryMatcherToUpstreamResidue * other" << other << std::endl;
 			other->set_target_rotamer_coords( target_geomcst_coords_ );
 		}
@@ -695,7 +689,7 @@ TargetRotamerCoords::TargetRotamerCoords() :
 {
 }
 
-TargetRotamerCoords::~TargetRotamerCoords() {}
+TargetRotamerCoords::~TargetRotamerCoords() = default;
 
 void TargetRotamerCoords::set_num_restypes( Size n_restypes )
 {

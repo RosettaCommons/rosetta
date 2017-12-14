@@ -129,11 +129,8 @@ bool is_donor_h(AtomID const& aid, Pose const& ps) {
 	Residue const& rsd = ps.residue(aid.rsd());
 	Size const HATM = aid.atomno();
 
-	for ( core::chemical::AtomIndices::const_iterator
-			hnum = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end();
-			hnum != hnume; ++hnum ) {
+	for ( unsigned long hatm : rsd.Hpos_polar() ) {
 
-		Size const hatm(*hnum);
 		if ( hatm == HATM ) {
 			return true;
 		}
@@ -155,11 +152,8 @@ bool is_acceptor(AtomID const& aid, Pose const& ps) {
 	Residue const& rsd = ps.residue(aid.rsd());
 	Size const AATM = aid.atomno();
 
-	for ( core::chemical::AtomIndices::const_iterator
-			anum = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end();
-			anum != anume; ++anum ) {
+	for ( unsigned long aatm : rsd.accpt_pos() ) {
 
-		Size const aatm(*anum);
 		if ( aatm == AATM ) {
 			return true;
 		}
@@ -393,7 +387,7 @@ int main( int argc, char * argv [] )
 						// the neighbor residue's ith acceptor atom that does form an hbond
 						// (i=1,...,Q, where Q is the number of such acceptor atoms in the
 						// neighbor residue).
-						for ( core::chemical::AtomIndices::const_iterator
+						for ( auto
 								anum = rnb.accpt_pos().begin(), anume = rnb.accpt_pos().end();
 								anum != anume; ++anum ) {
 
@@ -410,7 +404,7 @@ int main( int argc, char * argv [] )
 						// with the neighbor residue's ith donor atom that does form an hbond
 						// (i=1,...,R, where R is the number of such donor atoms in the
 						// neighbor residue).
-						for ( core::chemical::AtomIndices::const_iterator
+						for ( auto
 								hnum = rnb.Hpos_polar().begin(), hnume = rnb.Hpos_polar().end();
 								hnum != hnume; ++hnum ) {
 

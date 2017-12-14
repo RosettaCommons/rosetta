@@ -768,7 +768,7 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 			TR.Debug << "torsion "<< i << std::endl;
 			Angle torsion_mean;
 			if ( i <= 3 ) {  // phi, psi, or omega1
-				MainchainTorsionType torsion_type = static_cast< MainchainTorsionType >( i );
+				auto torsion_type = static_cast< MainchainTorsionType >( i );
 				torsion_mean = basic::periodic_range( conformer.get_torsion_mean( torsion_type ), 360);
 			} else {
 				torsion_mean = basic::periodic_range( conformer.get_torsion_mean( omega_dihedral, i - 2 ), 360);
@@ -789,7 +789,7 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 
 
 			if ( i <= 3 ) { // phi, psi, or omega1
-				MainchainTorsionType torsion_type = static_cast< MainchainTorsionType >( i );
+				auto torsion_type = static_cast< MainchainTorsionType >( i );
 				mean = conformer.get_torsion_mean( torsion_type );
 				sd = conformer.get_torsion_sd( torsion_type );
 				conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
@@ -858,10 +858,10 @@ find_neighbor( Pose &pose, core::Size res_pos, core::Size atom_nr, std::pair<cor
 		conformation::ResidueOP res( new conformation::Residue( pose.residue( i ) ) );
 		chemical::ResidueTypeOP RT( new chemical::ResidueType( pose.residue_type( i ) ) );
 		// Loop through main chain atoms of potential neighbor residue
-		for ( utility::vector1< core::Size >::const_iterator mc_atom = RT->mainchain_atoms().begin(); mc_atom != RT->mainchain_atoms().end(); ++mc_atom ) {
-			core::Real distance = pose.residue(res_pos).xyz( atom_nr ).distance(pose.residue( i ).xyz( *mc_atom ));
+		for ( unsigned long mc_atom : RT->mainchain_atoms() ) {
+			core::Real distance = pose.residue(res_pos).xyz( atom_nr ).distance(pose.residue( i ).xyz( mc_atom ));
 			if ( (distance < max_cutoff) | (distance > min_cutoff) ) {
-				neighbor = std::make_pair(i,*mc_atom);
+				neighbor = std::make_pair(i,mc_atom);
 			}
 		}
 	}
@@ -881,7 +881,7 @@ setup_existing_glycans(Pose &pose)
 		if ( res->is_carbohydrate() ) {
 			//core::Size chain = res->chain();
 			chemical::ResidueTypeOP RT( new chemical::ResidueType( pose.residue_type(res_pos) ) );
-			for ( utility::vector1< Size >::const_iterator atom = RT->mainchain_atoms().begin(); atom != RT->mainchain_atoms().end(); ++atom ) {
+			for ( auto atom = RT->mainchain_atoms().begin(); atom != RT->mainchain_atoms().end(); ++atom ) {
 				// Find the fisrt exocyclic oxigen
 				std::string atom_name = RT->atom_name(*atom);
 				if ( atom_name.find('O') != std::string::npos ) {  // is oxigen

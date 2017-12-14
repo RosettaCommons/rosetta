@@ -54,8 +54,7 @@ namespace protocols {
 namespace unfolded_state_energy_calculator {
 
 /// @brief dtor
-UnfoldedStateEnergyCalculatorMover::~UnfoldedStateEnergyCalculatorMover()
-= default;
+UnfoldedStateEnergyCalculatorMover::~UnfoldedStateEnergyCalculatorMover() = default;
 
 /// @brief cctor
 UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover( UnfoldedStateEnergyCalculatorMover const & usecm ) :
@@ -83,10 +82,10 @@ UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover(
 	core::scoring::ScoreFunctionCOP pack_scrfxn,
 	core::scoring::ScoreFunctionCOP score_scrfxn,
 	core::Size frag_length,
-	std::string mut_aa,
+	std::string const & mut_aa,
 	bool repack_fragments,
 	bool native_sequence,
-	std::string sequence_match_sequence,
+	std::string const & sequence_match_sequence,
 	Size sequence_match_position,
 	bool sequence_matched_fragments
 ):
@@ -95,10 +94,10 @@ UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover(
 	pack_scrfxn_(std::move( pack_scrfxn )),
 	score_scrfxn_(std::move( score_scrfxn )),
 	frag_length_( frag_length ),
-	mut_aa_(std::move( mut_aa )),
+	mut_aa_( mut_aa ),
 	repack_fragments_( repack_fragments ),
 	native_sequence_( native_sequence ),
-	sequence_match_sequence_(std::move( sequence_match_sequence )),
+	sequence_match_sequence_( sequence_match_sequence ),
 	sequence_match_position_( sequence_match_position ),
 	sequence_matched_fragments_( sequence_matched_fragments )
 {}

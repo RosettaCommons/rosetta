@@ -351,8 +351,8 @@ void IdealizeHelicesMover::parse_my_tag(
 			using namespace core::fragment;
 			std::string start_i = (*tag_it)->getOption<std::string>( "start" );
 			std::string end_i = (*tag_it)->getOption<std::string>( "end" );
-			int startres = (int)core::pose::parse_resnum( start_i, pose );
-			int stopres = (int)core::pose::parse_resnum( end_i, pose );
+			auto startres = (int)core::pose::parse_resnum( start_i, pose );
+			auto stopres = (int)core::pose::parse_resnum( end_i, pose );
 			helices_.push_back( std::make_pair( startres, stopres ) );
 		}
 	}

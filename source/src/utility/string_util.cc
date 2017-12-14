@@ -23,13 +23,13 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <locale>
+//#include <locale>
 
 // C/C++ headers
 #include <fstream>
-#include <iostream>
+//#include <iostream>
 #include <iomanip>
-#include <sstream>
+//#include <sstream>
 #include <string>
 #include <cmath>
 #include <boost/uuid/sha1.hpp>
@@ -81,12 +81,12 @@ std::vector< std::string > split_by_newlines( std::string const & s )
 	platform::Size start=0, i=0;
 	while ( start < s.size() ) {
 		if ( s[i] == '\n' || s[i] == '\r' /* || i==s.size()-1 */ ) {
-			r.push_back( std::string(s.begin()+start, s.begin()+i) );
+			r.emplace_back(s.begin()+start, s.begin()+i );
 			start = i+1;
 		}
 		i++;
 		if ( i == s.size() ) {
-			r.push_back( std::string(s.begin()+start, s.begin()+i) );
+			r.emplace_back(s.begin()+start, s.begin()+i );
 			break;
 		}
 	}
@@ -162,7 +162,7 @@ std::string join(utility::vector1<std::string> const & s, std::string const & co
 	std::ostringstream os;
 	// TL: if s is empty, we can't dereference s.begin()
 	if ( s.empty() ) return "";
-	utility::vector1<std::string>::const_iterator begin= s.begin();
+	auto begin= s.begin();
 	os << *begin++;
 	for ( ; begin != s.end(); ++begin ) {
 		os<< connector<< *begin;
@@ -174,7 +174,7 @@ std::string join(std::vector<std::string> const & s, std::string const & connect
 	std::ostringstream os;
 	// TL: if s is empty, we can't dereference s.begin()
 	if ( s.empty() ) return "";
-	utility::vector1<std::string>::const_iterator begin= s.begin();
+	auto begin= s.begin();
 	os << *begin++;
 	for ( ; begin != s.end(); ++begin ) {
 		os<< connector<< *begin;
@@ -340,8 +340,8 @@ std::string fmt_real ( platform::Real num, platform::Size pad_left_n, std::size_
 // @brief Reads an unsigned int from string <x>, writing the result
 // to output parameter <y>, which must be non-NULL. The result is
 // undefined if the input string is malformed.
-void string2uint(const std::string& x, unsigned int* y) {
-	debug_assert(y != NULL);
+void string2uint(const std::string& x, unsigned int* const y) {
+	debug_assert(y != nullptr);
 	std::stringstream ss(x);
 	ss >> *y;
 }
@@ -420,7 +420,7 @@ strip( std::string const & s, std::string const & drop )
 }
 
 std::string
-pad_left( std::string s, platform::Size const newlen, char pad_with ){
+pad_left( std::string const & s, platform::Size const newlen, char pad_with ){
 
 	std::ostringstream converter;
 	converter << std::setfill( pad_with ) << std::setw( newlen ) << std::right << s;
@@ -429,7 +429,7 @@ pad_left( std::string s, platform::Size const newlen, char pad_with ){
 }
 
 std::string
-pad_right( std::string s, platform::Size const newlen, char pad_with ){
+pad_right( std::string const & s, platform::Size const newlen, char pad_with ){
 
 	std::ostringstream converter;
 	converter << std::setfill( pad_with ) << std::setw( newlen ) << std::left << s;
@@ -482,8 +482,7 @@ st = st_to_add + st;
 bool is_string_numeric(std::string const & input)
 {
 	std::locale loc;
-	for ( platform::Size i = 0 ; i < input.size(); ++i ) {
-		char current = input[i];
+	for ( char current : input ) {
 		if ( std::isdigit(current,loc) || current == '-' || current == '+' || current =='E' ||current=='e' ) {
 			continue;
 		} else {
@@ -584,8 +583,8 @@ std::string string_to_sha1(std::string const & input_string)
 
 	output_hash << std::hex;
 
-	for ( int i = 0; i < 20 ; ++i ) {
-		output_hash << ((hash[i] & 0x000000F0) >> 4) <<  (hash[i] & 0x0000000F);
+	for ( char i : hash ) {
+		output_hash << ((i & 0x000000F0) >> 4) <<  (i & 0x0000000F);
 	}
 
 	return output_hash.str();
@@ -895,8 +894,8 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 		}
 	}
 
-	for ( platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
-		resnum.push_back( resnum_from_tag[ n ] );
+	for ( int n : resnum_from_tag ) {
+		resnum.push_back( n );
 		chains.push_back( chain );
 		segids.push_back( segid );
 	}
@@ -926,8 +925,8 @@ get_resnum_and_segid_from_one_tag( std::string const & tag,
 
 	resnum_from_tag = ObjexxFCL::ints_of( tag.substr( found_colon + 1 ), string_is_ok );
 
-	for ( platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
-		resnum.push_back( resnum_from_tag[ n ] );
+	for ( int n : resnum_from_tag ) {
+		resnum.push_back( n );
 		segids.push_back( segid );
 	}
 

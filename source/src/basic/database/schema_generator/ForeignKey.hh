@@ -34,20 +34,20 @@ class ForeignKey
 public:
 
 	ForeignKey(
-		Column column,
-		std::string reference_table,
-		std::string reference_column);
+		Column const & column,
+		std::string const & reference_table,
+		std::string const & reference_column);
 
 	ForeignKey(
-		Column column,
-		std::string reference_table,
-		std::string reference_column,
+		Column const & column,
+		std::string const & reference_table,
+		std::string const & reference_column,
 		bool defer);
 
 	ForeignKey(
-		Columns columns,
-		std::string reference_table,
-		utility::vector1<std::string> reference_columns,
+		Columns const & columns,
+		std::string const & reference_table,
+		utility::vector1<std::string> const & reference_columns,
 		bool defer);
 
 	Columns

@@ -17,6 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <core/id/TorsionID.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.sampler.protein.ProteinMainChainStepWiseSampler" );
 
@@ -41,12 +42,10 @@ ProteinMainChainStepWiseSampler::ProteinMainChainStepWiseSampler(
 }
 
 //////////////////////////////////////////////////////////////////////////
-ProteinMainChainStepWiseSampler::ProteinMainChainStepWiseSampler()
-{}
+ProteinMainChainStepWiseSampler::ProteinMainChainStepWiseSampler() = default;
 
 //////////////////////////////////////////////////////////////////////////
-ProteinMainChainStepWiseSampler::~ProteinMainChainStepWiseSampler()
-{}
+ProteinMainChainStepWiseSampler::~ProteinMainChainStepWiseSampler() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void
@@ -67,7 +66,7 @@ ProteinMainChainStepWiseSampler::find( TorsionID const & torsion_id ) {
 	for ( auto which_torsion_id : which_torsions_ ) {
 		if ( which_torsion_id == torsion_id ) return std::dynamic_pointer_cast< ProteinMainChainStepWiseSampler >( shared_from_this() );
 	}
-	return 0;
+	return nullptr;
 }
 ///////////////////////////////////////////////////////////////////////////
 

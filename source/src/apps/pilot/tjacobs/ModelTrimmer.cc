@@ -86,7 +86,7 @@ main( int argc, char * argv [] ) {
 
 		// Create a comments stream and write the date to it
 		std::stringstream comments;
-		time_t t = time(0);   // get time now
+		time_t t = time(nullptr);   // get time now
 		struct tm * now = localtime( & t );
 		comments << "#Model file created on " << (now->tm_year + 1900) << '-'
 			<< (now->tm_mon + 1) << '-'
@@ -108,10 +108,10 @@ main( int argc, char * argv [] ) {
 		comments << "#Any model with L segment at terminal segment has been removed" << std::endl;
 
 		std::string remove_any_dssp = option[legacy_sewing::remove_any_dssp];
-		for ( core::Size i=0; i<remove_any_dssp.length(); ++i ) {
-			if ( remove_any_dssp[i] != 'H' && remove_any_dssp[i] != 'E' && remove_any_dssp[i] != 'L' ) {
+		for ( char i : remove_any_dssp ) {
+			if ( i != 'H' && i != 'E' && i != 'L' ) {
 				std::stringstream err;
-				err << "invalid DSSP character " << remove_any_dssp[i] << ". Please use only H(helix),E(strand), or L(loop).";
+				err << "invalid DSSP character " << i << ". Please use only H(helix),E(strand), or L(loop).";
 				utility_exit_with_message(err.str());
 			}
 		}
@@ -180,8 +180,8 @@ main( int argc, char * argv [] ) {
 		}
 
 		models = read_model_file(model_filename);
-		std::map< int, Model >::iterator it = models.begin();
-		std::map< int, Model >::iterator it_end = models.end();
+		auto it = models.begin();
+		auto it_end = models.end();
 		while ( it != it_end ) {
 			Model model = it->second;
 			if ( TR.Debug.visible() ) {

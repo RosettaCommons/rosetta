@@ -72,7 +72,7 @@ SymmetricRotamerSet_::SymmetricRotamerSet_()
 : RotamerSet_()
 {}
 
-SymmetricRotamerSet_::~SymmetricRotamerSet_() {}
+SymmetricRotamerSet_::~SymmetricRotamerSet_() = default;
 
 // @ details The packer's 1-body is a combination of the rotamer internal energies (the
 // context dependent and independent one body energies), the intra-residue
@@ -101,7 +101,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 	}
 
 	// find SymmInfo
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -216,7 +216,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 		// long-range energy interactions with background
 		// Iterate across the long range energy functions and use the iterators generated
 		// by the LRnergy container object
-		for ( ScoreFunction::LR_2B_MethodIterator
+		for ( auto
 				lr_iter = sf.long_range_energies_begin(),
 				lr_end  = sf.long_range_energies_end();
 				lr_iter != lr_end; ++lr_iter ) {
@@ -336,15 +336,12 @@ SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner(
 
 	RotamerSetFactory rsf;
 	RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( pose.residue( sympos ) );
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
 
 	core::conformation::symmetry::MirrorSymmetricConformationCOP mirrorconf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::MirrorSymmetricConformation const>( pose.conformation_ptr() ) );
 
-	for ( Rotamers::const_iterator
-			rot     = rotset_in.begin(),
-			rot_end = rotset_in.end();
-			rot != rot_end; ++rot ) {
+	for ( const auto & rot : rotset_in ) {
 
 		bool mirrored(false);
 		if ( mirrorconf ) { //If this is a mirror symmetric conformation, figure out whether this subunit is mirrored:
@@ -359,9 +356,9 @@ SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner(
 		// set_up_mirror_types_if_has_mirror_symmetry=false.
 		conformation::ResidueOP target_rsd;
 		if ( set_up_mirror_types_if_has_mirror_symmetry && mirrored ) {
-			target_rsd = (*rot)->clone_flipping_chirality( *pose.residue_type_set_for_pose( (*rot)->type().mode() ) );
+			target_rsd = rot->clone_flipping_chirality( *pose.residue_type_set_for_pose( rot->type().mode() ) );
 		} else {
-			target_rsd = (*rot)->clone();
+			target_rsd = rot->clone();
 		}
 
 		// peptoids have a different orientation function due to the placement of the first side chain atom
@@ -393,7 +390,7 @@ SymmetricRotamerSet_::orient_rotamer_to_symmetric_partner(
 	bool const set_up_mirror_types_if_has_mirror_symmetry
 ) const {
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
 
 	core::conformation::symmetry::MirrorSymmetricConformationCOP mirrorconf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::MirrorSymmetricConformation const>( pose.conformation_ptr() ) );
@@ -428,7 +425,7 @@ void
 SymmetricRotamerSet_::initialize_pose_for_rotset_creation(
 	pose::Pose & pose
 ) const {
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation() ) );
 	SymmConf.recalculate_transforms();
 }

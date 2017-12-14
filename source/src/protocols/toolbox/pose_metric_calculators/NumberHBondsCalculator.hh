@@ -51,7 +51,7 @@ class NumberHBondsCalculator : public core::pose::metrics::EnergyDependentCalcul
 public:
 
 	NumberHBondsCalculator();
-	NumberHBondsCalculator( std::set< core::Size > special_region );
+	NumberHBondsCalculator( std::set< core::Size > const & special_region );
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const;
 

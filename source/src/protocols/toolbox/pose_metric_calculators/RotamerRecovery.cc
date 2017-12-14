@@ -187,7 +187,7 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 
 
 	core::Size total(0);
-	utility::vector1< core::pose::Pose >::iterator other_poses_itr( compared_poses.begin() ), other_poses_last( compared_poses.end() );
+	auto other_poses_itr( compared_poses.begin() ), other_poses_last( compared_poses.end() );
 	while (  (other_poses_itr != other_poses_last ) ) {
 		core::pose::Pose pose( *other_poses_itr );
 

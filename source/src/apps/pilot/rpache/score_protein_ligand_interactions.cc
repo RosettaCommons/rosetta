@@ -46,7 +46,7 @@
 #include <core/import_pose/import_pose.hh>
 
 //C++ Headers
-#include <math.h>
+#include <cmath>
 
 
 static basic::Tracer TR( "pilot_apps.score_protein_ligand_interactions" );
@@ -116,8 +116,8 @@ int main( int argc, char * argv [] )
 								+ utility::to_string(pose.pdb_info()->number(i)) + ' '
 								+ pose.residue(j).name3() + ' '
 								+ utility::to_string(pose.pdb_info()->number(j)) + ' ';
-							ligand_interactions.push_back(std::make_pair(total_energy,interaction_string + utility::to_string(total_energy) + ' ' + energymap.weighted_string_of(score_fxn->weights())));
-							ligand_interactions_2b.push_back(std::make_pair(two_body_interaction_energy,interaction_string + utility::to_string(two_body_interaction_energy) + ' ' + energymap.weighted_string_of(score_fxn->weights())));
+							ligand_interactions.emplace_back(total_energy,interaction_string + utility::to_string(total_energy) + ' ' + energymap.weighted_string_of(score_fxn->weights()));
+							ligand_interactions_2b.emplace_back(two_body_interaction_energy,interaction_string + utility::to_string(two_body_interaction_energy) + ' ' + energymap.weighted_string_of(score_fxn->weights()));
 						}
 					}
 				}

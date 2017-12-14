@@ -67,7 +67,7 @@ public:// constructor/destructor
 	GetRBDOFValues();
 
 	// @brief constructor with arguments
-	GetRBDOFValues( int jump, std::string dof_name, bool verb, char ax, bool disp, bool ang, core::Real init_d, core::Real init_a, bool get_init );
+	GetRBDOFValues( int jump, std::string const & dof_name, bool verb, char ax, bool disp, bool ang, core::Real init_d, core::Real init_a, bool get_init );
 
 	// @brief copy constructor
 	GetRBDOFValues( GetRBDOFValues const & rval );

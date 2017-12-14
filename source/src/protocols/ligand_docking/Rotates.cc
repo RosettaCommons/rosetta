@@ -114,8 +114,8 @@ Rotates::parse_my_tag(
 
 	std::string const distribution_str= tag->getOption<std::string>("distribution");
 	Distribution distribution= get_distribution(distribution_str);
-	core::Size const degrees = tag->getOption<core::Size>("degrees");
-	core::Size const cycles = tag->getOption<core::Size>("cycles");
+	auto const degrees = tag->getOption<core::Size>("degrees");
+	auto const cycles = tag->getOption<core::Size>("cycles");
 
 	for ( std::string const & chain : chain_strs ) {
 		utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);

@@ -61,7 +61,7 @@ bool MixtureFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	MixtureFunc const & other_downcast( static_cast< MixtureFunc const & > (other) );
+	auto const & other_downcast( static_cast< MixtureFunc const & > (other) );
 	if ( rmax_           != other_downcast.rmax_           ) return false;
 	if ( fmax_           != other_downcast.fmax_           ) return false;
 	if ( anchor_         != other_downcast.anchor_         ) return false;

@@ -77,11 +77,11 @@ public:
 		set_fail_bad_input_ = false;
 	}
 
-	virtual ~JDtestmover(){};
+	~JDtestmover() override = default;
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ){
+	apply( core::pose::Pose & pose ) override{
 		static int counter(0);
 		++counter;
 
@@ -149,25 +149,25 @@ public:
 		return;
 	}
 
-	virtual
+
 	std::string
-	get_name() const {
+	get_name() const override {
 		return "JDtestmover";
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new JDtestmover );
 	}
 
-	virtual
-	bool
-	reinitialize_for_each_job() const { return false; }
 
-	virtual
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
+
+
+	bool
+	reinitialize_for_new_input() const override { return false; }
 
 	bool set_fail_no_retry_;
 	bool set_fail_bad_input_;
@@ -183,7 +183,7 @@ private:
 
 };
 
-typedef utility::pointer::shared_ptr< JDtestmover > JDtestmoverOP;
+using JDtestmoverOP = utility::pointer::shared_ptr<JDtestmover>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

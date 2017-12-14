@@ -138,7 +138,6 @@ MinMover::MinMover(
 	movemap_(std::move( movemap_in )),
 	scorefxn_(std::move( scorefxn_in )),
 	min_options_(/* 0 */),
-	threshold_(1000000.0), // TODO: line can be deleted?
 	abs_score_convergence_threshold_(0.0),
 	cartesian_(false),
 	dof_tasks_()
@@ -376,7 +375,7 @@ void MinMover::parse_opts(
 	if ( cartesian() && !tag->hasOption("type") ) {
 		min_type( "lbfgs_armijo_nonmonotone" );
 	}
-	if ( ( tag->getOption<bool>("bondangle",0) ||tag->getOption<bool>("bondlength",0) )
+	if ( ( tag->getOption<bool>("bondangle",false) ||tag->getOption<bool>("bondlength",false) )
 			&& !tag->hasOption("type") ) {
 		min_type( "lbfgs_armijo_nonmonotone" );
 	}
@@ -439,7 +438,7 @@ MinMover::parse_dof_task_type(
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using std::string;
-	typedef utility::vector1< std::string > StringVec;
+	using StringVec = utility::vector1<std::string>;
 
 	TaskFactoryOP task_factory( new TaskFactory() );
 	string const t_o_val( tag->getOption<string>(tag_name) );

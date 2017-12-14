@@ -33,8 +33,7 @@ NullPoseFolder::NullPoseFolder():
 {
 }
 
-NullPoseFolder::~NullPoseFolder()
-{}
+NullPoseFolder::~NullPoseFolder() = default;
 
 NullPoseFolder::PoseFolderOP
 NullPoseFolder::clone() const

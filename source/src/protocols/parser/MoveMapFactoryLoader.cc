@@ -35,8 +35,8 @@ namespace parser {
 
 static basic::Tracer TR( "protocols.jd2.parser.MoveMapFactoryLoader" );
 
-MoveMapFactoryLoader::MoveMapFactoryLoader() {}
-MoveMapFactoryLoader::~MoveMapFactoryLoader() {}
+MoveMapFactoryLoader::MoveMapFactoryLoader() = default;
+MoveMapFactoryLoader::~MoveMapFactoryLoader() = default;
 
 void MoveMapFactoryLoader::load_data(
 	core::pose::Pose const &,
@@ -52,7 +52,7 @@ void MoveMapFactoryLoader::load_data(
 		}
 		std::string const & name( subtag->getOption<std::string>("name") );
 		MoveMapFactoryOP new_mmf( new MoveMapFactory );
-		runtime_assert( new_mmf != 0 );
+		runtime_assert( new_mmf != nullptr );
 		new_mmf->parse_my_tag( subtag, data );
 		data.add( mmf_cat_in_datamap(), name, new_mmf );
 		TR << "Defined MoveMap named \"" << name << "\"" << std::endl;

@@ -35,7 +35,7 @@ namespace core {
 namespace pack {
 namespace scmin {
 
-optimization::DOF_NodeOP dummy_nodeop( new optimization::DOF_Node(id::DOF_ID(),NULL) );
+optimization::DOF_NodeOP dummy_nodeop( new optimization::DOF_Node(id::DOF_ID(),nullptr) );
 
 
 CartSCMinMinimizerMap::CartSCMinMinimizerMap() :
@@ -46,7 +46,7 @@ CartSCMinMinimizerMap::CartSCMinMinimizerMap() :
 	residue_coord_workspace_.reserve(40);
 }
 
-CartSCMinMinimizerMap::~CartSCMinMinimizerMap() {}
+CartSCMinMinimizerMap::~CartSCMinMinimizerMap() = default;
 
 void CartSCMinMinimizerMap::set_total_residue( Size total_residue )
 {
@@ -76,7 +76,7 @@ void CartSCMinMinimizerMap::clear_active_dofs()
 {
 	for ( Size ii = 1; ii <= nactive_residues_; ++ii ) {
 		domain_map_( active_residues_[ ii ] ) = 1;
-		atcs_for_residues_[ active_residues_[ ii ]] = 0;
+		atcs_for_residues_[ active_residues_[ ii ]] = nullptr;
 		active_residue_index_for_res_[ active_residues_[ ii ] ] = 0;
 		active_residues_[ ii ] = 0;
 	}
@@ -166,10 +166,10 @@ CartSCMinMinimizerMap::setup( AtomTreeCollectionOP trees )
 
 		/////////////////////
 		// (1) cartesian dofs ...
-		int stop1  = (int)iires.nheavyatoms();
+		auto stop1  = (int)iires.nheavyatoms();
 		int start1 = std::min( (int)iires.first_sidechain_atom(), stop1+1 );
-		int start2 = (int)iires.first_sidechain_hydrogen();
-		int stop2  = (int)iires.natoms();
+		auto start2 = (int)iires.first_sidechain_hydrogen();
+		auto stop2  = (int)iires.natoms();
 		int natoms_to_add = (stop1-start1+1)+(stop2-start2+1);
 
 		if ( (int)moving_atoms_[iiresid].size() < natoms_to_add ) {

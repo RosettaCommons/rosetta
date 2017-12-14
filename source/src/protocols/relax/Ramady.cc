@@ -156,7 +156,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 	for ( Size j=1; j<= pose.size(); ++j ) {
 		EnergyMap & emap( energies.onebody_energies( j ) );
 		if (  emap[ rama ] > limit_rama_min ) {
-			rama_list.push_back( std::make_pair( j, emap[ rama ] ) );
+			rama_list.emplace_back( j, emap[ rama ] );
 		}
 	}
 

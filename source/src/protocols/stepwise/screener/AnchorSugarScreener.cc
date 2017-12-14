@@ -25,6 +25,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.AnchorSugarScreener" );
 
@@ -42,14 +43,14 @@ AnchorSugarScreener::AnchorSugarScreener( SugarModeling const & anchor_sugar_mod
 	pose::Pose & sugar_screening_pose,
 	bool const is_prepend,
 	RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
-	utility::vector1< RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
+	utility::vector1< RNA_AtrRepCheckerOP > const & atr_rep_checkers_for_anchor_sugar_models,
 	TagDefinitionOP tag_definition ):
 	anchor_sugar_modeling_( anchor_sugar_modeling ),
-	chain_closable_geometry_to_anchor_checker_( chain_closable_geometry_to_anchor_checker ),
+	chain_closable_geometry_to_anchor_checker_(std::move( chain_closable_geometry_to_anchor_checker )),
 	sugar_screening_pose_( sugar_screening_pose ),
-	atr_rep_checker_with_instantiated_sugar_( atr_rep_checker_with_instantiated_sugar ),
+	atr_rep_checker_with_instantiated_sugar_(std::move( atr_rep_checker_with_instantiated_sugar )),
 	atr_rep_checkers_for_anchor_sugar_models_( atr_rep_checkers_for_anchor_sugar_models ),
-	tag_definition_( tag_definition ),
+	tag_definition_(std::move( tag_definition )),
 	is_prepend_( is_prepend ),
 	moving_atom_name_( ( is_prepend ) ? " O3'" : " C5'" ),
 	reference_atom_name_( ( is_prepend ) ? " C5'" : " O3'" ),
@@ -57,8 +58,7 @@ AnchorSugarScreener::AnchorSugarScreener( SugarModeling const & anchor_sugar_mod
 {}
 
 //Destructor
-AnchorSugarScreener::~AnchorSugarScreener()
-{}
+AnchorSugarScreener::~AnchorSugarScreener() = default;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ AnchorSugarScreener::check_screen(){
 
 		bool const ok = chain_closable_geometry_to_anchor_checker_->check_screen( sugar_screening_pose_ );
 		//   TR << "DIST_SQUARED " << chain_closable_geometry_to_anchor_checker_->dist_squared() << " " << ok << std::endl;
-		if ( !ok ) return 0;
+		if ( !ok ) return false;
 
 		if ( atr_rep_checker_with_instantiated_sugar_ &&
 				!atr_rep_checker_with_instantiated_sugar_->check_screen( sugar_screening_pose_ ) ) return false; // wait a minute... why is this in here? oh, because base can move in different sampled sugar modeling conformations.
@@ -114,8 +114,8 @@ AnchorSugarScreener::check_screen(){
 void
 AnchorSugarScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
 	if ( !anchor_sugar_modeling_.sample_sugar ) {
-		update_mover->add_mover( 0 );
-		restore_mover->add_mover( 0 );
+		update_mover->add_mover( nullptr );
+		restore_mover->add_mover( nullptr );
 		return;
 	}
 
@@ -130,7 +130,7 @@ AnchorSugarScreener::add_mover( moves::CompositionMoverOP update_mover, moves::C
 
 	simple_moves::CopyDofMoverOP copy_dof_mover( new simple_moves::CopyDofMover( anchor_sugar_modeling_pose, res_map ) );
 	update_mover->add_mover( copy_dof_mover );
-	restore_mover->add_mover( 0 );
+	restore_mover->add_mover( nullptr );
 }
 
 

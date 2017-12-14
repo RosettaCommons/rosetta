@@ -14,8 +14,8 @@
 #ifndef __WIN32__
 #include <sys/resource.h>
 #endif
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 #include <protocols/cluster/calibur/jacobi.hh>
 #include <protocols/cluster/calibur/cubic.hh>
 #include <protocols/cluster/calibur/rmsd.hh>
@@ -244,11 +244,11 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	}
 	double mag; // get the magnitude of the singular vector to normalize it
 	mag = sqrt(V0[0]*V0[0] + V0[1]*V0[1] + V0[2]*V0[2]);
-	for ( int i=0; i < 3; i++ ) V0[i] /= mag;
+	for ( double & i : V0 ) i /= mag;
 	mag = sqrt(V1[0]*V1[0] + V1[1]*V1[1] + V1[2]*V1[2]);
-	for ( int i=0; i < 3; i++ )  V1[i] /= mag;
+	for ( double & i : V1 )  i /= mag;
 	mag = sqrt(V2[0]*V2[0] + V2[1]*V2[1] + V2[2]*V2[2]);
-	for ( int i=0; i < 3; i++ )  V2[i] /= mag;
+	for ( double & i : V2 )  i /= mag;
 
 #ifdef __DEBUG_RMSD__
 	std::cout << "	[" << U0[0] << " " << U1[0] << " " << U2[0] << "]" << std::endl;
@@ -474,16 +474,16 @@ double RMSD( std::vector<double> & coords1, std::vector<double> & coords2, int n
 	}
 	double mag; // get the magnitude of the singular vector to normalize it
 	mag = sqrt(V0[0]*V0[0] + V0[1]*V0[1] + V0[2]*V0[2]);
-	for ( int i=0; i < 3; i++ ) {
-		V0[i] /= mag;
+	for ( double & i : V0 ) {
+		i /= mag;
 	}
 	mag = sqrt(V1[0]*V1[0] + V1[1]*V1[1] + V1[2]*V1[2]);
-	for ( int i=0; i < 3; i++ ) {
-		V1[i] /= mag;
+	for ( double & i : V1 ) {
+		i /= mag;
 	}
 	mag = sqrt(V2[0]*V2[0] + V2[1]*V2[1] + V2[2]*V2[2]);
-	for ( int i=0; i < 3; i++ ) {
-		V2[i] /= mag;
+	for ( double & i : V2 ) {
+		i /= mag;
 	}
 
 #ifdef __DEBUG_RMSD__

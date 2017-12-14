@@ -34,6 +34,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
@@ -52,16 +53,16 @@ LabelPoseFromResidueSelectorMover::LabelPoseFromResidueSelectorMover():
 	reverse_( default_reverse() )
 {}
 
-LabelPoseFromResidueSelectorMover::LabelPoseFromResidueSelectorMover( core::select::residue_selector::ResidueSelectorCOP const & selector ):
+LabelPoseFromResidueSelectorMover::LabelPoseFromResidueSelectorMover( core::select::residue_selector::ResidueSelectorCOP selector ):
 	protocols::moves::Mover( mover_name() ),
-	selector_( selector ),
+	selector_(std::move( selector )),
 	label_( default_label() ),
 	reverse_( default_reverse() )
 {}
 
-LabelPoseFromResidueSelectorMover::LabelPoseFromResidueSelectorMover( core::select::residue_selector::ResidueSelectorCOP const & selector, std::string const & label ):
+LabelPoseFromResidueSelectorMover::LabelPoseFromResidueSelectorMover( core::select::residue_selector::ResidueSelectorCOP selector, std::string const & label ):
 	protocols::moves::Mover( mover_name() ),
-	selector_( selector ),
+	selector_(std::move( selector )),
 	label_( label ),
 	reverse_( default_reverse() )
 {}

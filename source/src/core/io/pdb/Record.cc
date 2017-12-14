@@ -25,8 +25,8 @@ namespace pdb {
 std::ostream &
 operator<<( std::ostream & os, Record const & record )
 {
-	for ( Record::const_iterator field = record.begin(), end = record.end(); field != end; ++field ) {
-		os << "<Record>{" << field->first << ":" << field->second << "}" << std::endl;
+	for ( auto const & field : record ) {
+		os << "<Record>{" << field.first << ":" << field.second << "}" << std::endl;
 	}
 	return os;
 }

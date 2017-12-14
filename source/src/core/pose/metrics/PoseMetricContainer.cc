@@ -55,7 +55,7 @@ namespace metrics {
 
 /// @brief default constructor
 PoseMetricContainer::PoseMetricContainer() :
-	pose_ptr_( NULL ),
+	pose_ptr_( nullptr ),
 	structure_is_outdated_( true ),
 	energies_are_outdated_( true )
 {}
@@ -65,7 +65,7 @@ PoseMetricContainer::PoseMetricContainer() :
 /// @warning observation of subject Pose in src not duplicated
 PoseMetricContainer::PoseMetricContainer( PoseMetricContainer const & src ) :
 	ReferenceCount(),
-	pose_ptr_( NULL ), // this is correct behavior
+	pose_ptr_( nullptr ), // this is correct behavior
 	structure_is_outdated_( src.structure_is_outdated_ ),
 	energies_are_outdated_( src.energies_are_outdated_ )
 {
@@ -138,7 +138,7 @@ void PoseMetricContainer::detach_from() {
 		pose_ptr_->detach_destruction_obs( &PoseMetricContainer::on_pose_destruction_change, this );
 	}
 
-	pose_ptr_ = NULL;
+	pose_ptr_ = nullptr;
 }
 
 
@@ -241,8 +241,8 @@ void PoseMetricContainer::add_calculator( std::string const & calculator_name ) 
 
 /// @brief clone calculators, primarily for copy
 void PoseMetricContainer::clone_calculators( Name2Calculator const & calcs ) {
-	for ( Name2Calculator::const_iterator i = calcs.begin(), ie = calcs.end(); i != ie; ++i ) {
-		metric_calculators_.insert( std::make_pair( i->first, i->second->clone() ) );
+	for ( auto const & calc : calcs ) {
+		metric_calculators_.insert( std::make_pair( calc.first, calc.second->clone() ) );
 	}
 }
 

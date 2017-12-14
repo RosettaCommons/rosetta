@@ -50,10 +50,10 @@ public:
 	typedef core::pose::metrics::StructureDependentCalculator parent;
 
 	/// @brief ctor for positions, dist_cutoff will be initialized using default value from option system
-	NeighborhoodByDistanceCalculator(std::set< core::Size > central_residues);
+	NeighborhoodByDistanceCalculator(std::set< core::Size > const & central_residues);
 
 	/// @brief ctor for positions, with custom dist_cutoff supplied by user
-	NeighborhoodByDistanceCalculator(std::set< core::Size > central_residues, core::Real dist_cutoff);
+	NeighborhoodByDistanceCalculator(std::set< core::Size > const & central_residues, core::Real dist_cutoff);
 
 	/// @brief copy ctor
 	NeighborhoodByDistanceCalculator( NeighborhoodByDistanceCalculator const & calculator );

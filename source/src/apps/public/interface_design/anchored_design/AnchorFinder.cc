@@ -81,13 +81,13 @@ public:
 		}
 	}
 
-	virtual ~AnchorFinderMover(){
+	~AnchorFinderMover() override{
 		out.close();
 	};
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ) {
+	apply( core::pose::Pose & pose ) override {
 
 		core::pose::remove_nonprotein_residues( pose );
 		core::pose::remove_ligand_canonical_residues( pose );
@@ -202,23 +202,23 @@ public:
 		return;
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new AnchorFinderMover );
 	}
 
-	virtual
-	bool
-	reinitialize_for_each_job() const { return false; }
 
-	virtual
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
 
-	virtual
+
+	bool
+	reinitialize_for_new_input() const override { return false; }
+
+
 	std::string
-	get_name() const { return "AnchorFinderMover"; }
+	get_name() const override { return "AnchorFinderMover"; }
 
 private:
 
@@ -227,7 +227,7 @@ private:
 	std::ostringstream outcopy;
 };
 
-typedef utility::pointer::shared_ptr< AnchorFinderMover > AnchorFinderMoverOP;
+using AnchorFinderMoverOP = utility::pointer::shared_ptr<AnchorFinderMover>;
 
 int main( int argc, char* argv[] )
 {

@@ -36,6 +36,7 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/options/OptionCollection.hh>
@@ -70,7 +71,7 @@ using namespace utility::tag;
 
 /// BEGIN RestrictToRepacking
 
-RestrictToRepacking::~RestrictToRepacking() {}
+RestrictToRepacking::~RestrictToRepacking() = default;
 
 TaskOperationOP RestrictToRepacking::clone() const
 {
@@ -109,7 +110,7 @@ std::string RestrictToRepackingCreator::keyname() const {
 }
 
 /// BEGIN RestrictResidueToRepacking
-RestrictResidueToRepacking::~RestrictResidueToRepacking() {}
+RestrictResidueToRepacking::~RestrictResidueToRepacking() = default;
 
 TaskOperationOP RestrictResidueToRepacking::clone() const
 {
@@ -119,10 +120,9 @@ TaskOperationOP RestrictResidueToRepacking::clone() const
 void
 RestrictResidueToRepacking::apply( pose::Pose const &, PackerTask & task ) const
 {
-	for ( utility::vector1< core::Size >::const_iterator it(residues_to_restrict_to_repacking_.begin()), end(residues_to_restrict_to_repacking_.end());
-			it != end; ++it ) {
+	for ( unsigned long it : residues_to_restrict_to_repacking_ ) {
 		//debug_assert( *it ); //begin/end can't return NULL anyway?
-		task.nonconst_residue_task(*it).restrict_to_repacking();
+		task.nonconst_residue_task(it).restrict_to_repacking();
 	}
 	return;
 }
@@ -179,7 +179,7 @@ RestrictAbsentCanonicalAAS::RestrictAbsentCanonicalAAS( core::Size resid, utilit
 	include_residue( resid );
 }
 
-RestrictAbsentCanonicalAAS::~RestrictAbsentCanonicalAAS(){}
+RestrictAbsentCanonicalAAS::~RestrictAbsentCanonicalAAS()= default;
 
 
 TaskOperationOP RestrictAbsentCanonicalAAS::clone() const
@@ -273,18 +273,18 @@ DisallowIfNonnative::DisallowIfNonnative():
 	allowed_aas_( invert_vector( disallowed_aas_ ) )
 {}
 
-DisallowIfNonnative::DisallowIfNonnative( utility::vector1< bool > disallowed_aas):
+DisallowIfNonnative::DisallowIfNonnative( utility::vector1< bool > const & disallowed_aas):
 	disallowed_aas_( disallowed_aas ),
 	allowed_aas_( invert_vector(disallowed_aas) )
 {}
 
-DisallowIfNonnative::DisallowIfNonnative( utility::vector1< bool > disallowed_aas, utility::vector1<core::Size> res_selection):
+DisallowIfNonnative::DisallowIfNonnative( utility::vector1< bool > const & disallowed_aas, utility::vector1<core::Size> const & res_selection):
 	residue_selection_( res_selection ),
 	disallowed_aas_( disallowed_aas ),
 	allowed_aas_( invert_vector(disallowed_aas) )
 {}
 
-DisallowIfNonnative::~DisallowIfNonnative(){}
+DisallowIfNonnative::~DisallowIfNonnative()= default;
 
 TaskOperationOP DisallowIfNonnative::clone() const
 {
@@ -331,13 +331,12 @@ DisallowIfNonnative::disallow_aas( utility::vector1< bool > const & cannonical_d
 void DisallowIfNonnative::disallow_aas( std::string const & aa_string ){
 	using namespace chemical;
 	utility::vector1< bool > aa_vector ( chemical::num_canonical_aas, false );
-	for ( std::string::const_iterator it( aa_string.begin() ), end( aa_string.end() );
-			it != end; ++it ) {
-		if ( oneletter_code_specifies_aa( *it ) ) {
-			aa_vector[ aa_from_oneletter_code( *it ) ] = true;
+	for ( char it : aa_string ) {
+		if ( oneletter_code_specifies_aa( it ) ) {
+			aa_vector[ aa_from_oneletter_code( it ) ] = true;
 		} else {
 			std::ostringstream os;
-			os << "aa letter " << *it << " does not not correspond to a canonical AA";
+			os << "aa letter " << it << " does not not correspond to a canonical AA";
 			utility_exit_with_message( os.str() );
 		}
 	}
@@ -388,7 +387,7 @@ void DisallowIfNonnativeCreator::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 
 //BEGIN RotamerExplosion
-RotamerExplosion::RotamerExplosion(){}
+RotamerExplosion::RotamerExplosion()= default;
 
 RotamerExplosion::RotamerExplosion( core::Size const resid, ExtraRotSample const sample_level, core::Size const chi ) :
 	resid_( resid ),
@@ -396,7 +395,7 @@ RotamerExplosion::RotamerExplosion( core::Size const resid, ExtraRotSample const
 	sample_level_( sample_level )
 {}
 
-RotamerExplosion::~RotamerExplosion() {}
+RotamerExplosion::~RotamerExplosion() = default;
 
 TaskOperationOP RotamerExplosion::clone() const
 {
@@ -466,7 +465,7 @@ void RotamerExplosionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 /// BEGIN InitializeFromCommandline
 
-InitializeFromCommandline::~InitializeFromCommandline() {}
+InitializeFromCommandline::~InitializeFromCommandline() = default;
 
 TaskOperationOP InitializeFromCommandline::clone() const
 {
@@ -507,7 +506,7 @@ void InitializeFromCommandlineCreator::provide_xml_schema( utility::tag::XMLSche
 
 /// BEGIN UseMultiCoolAnnealer
 
-UseMultiCoolAnnealer::~UseMultiCoolAnnealer() {}
+UseMultiCoolAnnealer::~UseMultiCoolAnnealer() = default;
 
 UseMultiCoolAnnealer::UseMultiCoolAnnealer()
 : parent(),
@@ -569,8 +568,7 @@ void UseMultiCoolAnnealerCreator::provide_xml_schema( utility::tag::XMLSchemaDef
 
 /// BEGIN InitializeFromOptionCollection
 
-InitializeFromOptionCollection::InitializeFromOptionCollection()
-{}
+InitializeFromOptionCollection::InitializeFromOptionCollection() = default;
 
 InitializeFromOptionCollection::InitializeFromOptionCollection( utility::options::OptionCollectionCOP options )
 {
@@ -583,7 +581,7 @@ InitializeFromOptionCollection::InitializeFromOptionCollection(
 	options_( src.options_ )
 {}
 
-InitializeFromOptionCollection::~InitializeFromOptionCollection() {}
+InitializeFromOptionCollection::~InitializeFromOptionCollection() = default;
 
 TaskOperationOP InitializeFromOptionCollection::clone() const
 {
@@ -641,7 +639,7 @@ void InitializeFromOptionCollectionCreator::provide_xml_schema( utility::tag::XM
 
 /// BEGIN InitializeExtraRotsFromCommandline
 
-InitializeExtraRotsFromCommandline::~InitializeExtraRotsFromCommandline() {}
+InitializeExtraRotsFromCommandline::~InitializeExtraRotsFromCommandline() = default;
 
 TaskOperationOP InitializeExtraRotsFromCommandline::clone() const
 {
@@ -678,7 +676,7 @@ void InitializeExtraRotsFromCommandlineCreator::provide_xml_schema( utility::tag
 
 /// BEGIN IncludeCurrent
 
-IncludeCurrent::~IncludeCurrent() {}
+IncludeCurrent::~IncludeCurrent() = default;
 
 
 TaskOperationOP IncludeCurrent::clone() const
@@ -738,7 +736,7 @@ ExtraRotamersGeneric::ExtraRotamersGeneric() :
 	sampling_data_()
 {}
 
-ExtraRotamersGeneric::~ExtraRotamersGeneric() {}
+ExtraRotamersGeneric::~ExtraRotamersGeneric() = default;
 
 
 TaskOperationOP ExtraRotamersGeneric::clone() const
@@ -990,7 +988,7 @@ ReadResfile::ReadResfile( ReadResfile const &src ) :
 }
 
 
-ReadResfile::~ReadResfile() {}
+ReadResfile::~ReadResfile() = default;
 
 
 TaskOperationOP ReadResfile::clone() const
@@ -1186,7 +1184,7 @@ ReadResfileAndObeyLengthEvents::ReadResfileAndObeyLengthEvents( std::string cons
 	apply_default_commands_to_inserts_(false)
 {}
 
-ReadResfileAndObeyLengthEvents::~ReadResfileAndObeyLengthEvents(){}
+ReadResfileAndObeyLengthEvents::~ReadResfileAndObeyLengthEvents()= default;
 
 TaskOperationOP ReadResfileAndObeyLengthEvents::clone() const
 {
@@ -1257,7 +1255,7 @@ ReadResfileAndObeyLengthEvents::parse_tag( TagCOP tag , DataMap & datamap )
 {
 	parent::parse_tag( tag, datamap );
 	if ( tag->hasOption("default_commands_for_inserts") ) {
-		apply_default_commands_to_inserts_ = tag->getOption<bool>("default_commands_for_inserts",1);
+		apply_default_commands_to_inserts_ = tag->getOption<bool>("default_commands_for_inserts",true);
 	}
 }
 
@@ -1300,14 +1298,11 @@ void ReadResfileAndObeyLengthEventsCreator::provide_xml_schema( utility::tag::XM
 
 /// BEGIN SetRotamerCouplings
 
-SetRotamerCouplings::SetRotamerCouplings()
-{}
+SetRotamerCouplings::SetRotamerCouplings() = default;
 
-SetRotamerCouplings::~SetRotamerCouplings()
-{}
+SetRotamerCouplings::~SetRotamerCouplings() = default;
 
-SetRotamerCouplings::SetRotamerCouplings( SetRotamerCouplings const & src )
-:
+SetRotamerCouplings::SetRotamerCouplings( SetRotamerCouplings const & src ) :
 	parent(),
 	rotamer_couplings_( src.rotamer_couplings_ )
 {}
@@ -1359,11 +1354,9 @@ void SetRotamerCouplingsCreator::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 /// BEGIN SetRotamerLinks
 
-SetRotamerLinks::SetRotamerLinks()
-{}
+SetRotamerLinks::SetRotamerLinks() = default;
 
-SetRotamerLinks::~SetRotamerLinks()
-{}
+SetRotamerLinks::~SetRotamerLinks() = default;
 
 SetRotamerLinks::SetRotamerLinks( SetRotamerLinks const & src )
 :
@@ -1421,11 +1414,10 @@ AppendRotamer::AppendRotamer()
 : rotamer_operation_(/* 0 */)
 {}
 
-AppendRotamer::~AppendRotamer()
-{}
+AppendRotamer::~AppendRotamer() = default;
 
 AppendRotamer::AppendRotamer( rotamer_set::RotamerOperationOP rotamer_operation )
-: rotamer_operation_( rotamer_operation )
+: rotamer_operation_(std::move( rotamer_operation ))
 {}
 
 AppendRotamer::AppendRotamer( AppendRotamer const & src )
@@ -1477,11 +1469,10 @@ AppendRotamerSet::AppendRotamerSet()
 : rotamer_set_operation_(/* 0 */)
 {}
 
-AppendRotamerSet::~AppendRotamerSet()
-{}
+AppendRotamerSet::~AppendRotamerSet() = default;
 
 AppendRotamerSet::AppendRotamerSet( rotamer_set::RotamerSetOperationOP rotamer_set_operation )
-: rotamer_set_operation_( rotamer_set_operation )
+: rotamer_set_operation_(std::move( rotamer_set_operation ))
 {}
 
 AppendRotamerSet::AppendRotamerSet( AppendRotamerSet const & src )
@@ -1531,25 +1522,21 @@ void AppendRotamerSetCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 /// BEGIN AppendResidueRotamerSet
 
 AppendResidueRotamerSet::AppendResidueRotamerSet()
-: parent(),
+:
+	parent(),
 	resnum_(0),
 	rotamer_set_operation_(/* 0 */)
 {}
 
-AppendResidueRotamerSet::~AppendResidueRotamerSet()
-{}
+AppendResidueRotamerSet::~AppendResidueRotamerSet() = default;
 
 AppendResidueRotamerSet::AppendResidueRotamerSet( core::Size resnum,
 	rotamer_set::RotamerSetOperationOP rotamer_set_operation )
 : resnum_(resnum),
-	rotamer_set_operation_( rotamer_set_operation )
+	rotamer_set_operation_(std::move( rotamer_set_operation ))
 {}
 
-AppendResidueRotamerSet::AppendResidueRotamerSet( AppendResidueRotamerSet const & src )
-: parent(src),
-	resnum_( src.resnum_ ),
-	rotamer_set_operation_( src.rotamer_set_operation_ )
-{}
+AppendResidueRotamerSet::AppendResidueRotamerSet( AppendResidueRotamerSet const & /*src*/ ) = default;
 
 TaskOperationOP AppendResidueRotamerSet::clone() const
 {
@@ -1597,7 +1584,7 @@ void AppendResidueRotamerSetCreator::provide_xml_schema( utility::tag::XMLSchema
 
 /// BEGIN PreserveCBeta
 
-PreserveCBeta::~PreserveCBeta() {}
+PreserveCBeta::~PreserveCBeta() = default;
 
 TaskOperationOP PreserveCBeta::clone() const
 {
@@ -1631,7 +1618,7 @@ void PreserveCBetaCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 }
 
 /// BEGIN PreventRepacking
-PreventRepacking::~PreventRepacking() {}
+PreventRepacking::~PreventRepacking() = default;
 
 TaskOperationOP PreventRepacking::clone() const
 {
@@ -1686,7 +1673,7 @@ void PreventRepackingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 }
 
 // BEGIN RestrictYSDesign
-RestrictYSDesign::~RestrictYSDesign() {}
+RestrictYSDesign::~RestrictYSDesign() = default;
 RestrictYSDesign::RestrictYSDesign() : gly_switch_( false )  {}
 RestrictYSDesign::RestrictYSDesign( RestrictYSDesign const & src ) :
 	parent(), YSresids_( src.YSresids_ ), gly_switch_( src.gly_switch_ )
@@ -1699,11 +1686,11 @@ RestrictYSDesign::RestrictYSDesign( utility::vector1< core::Size > const & resid
 void
 RestrictYSDesign::apply( pose::Pose const &, PackerTask & task ) const {
 	utility::vector1<bool> restrict_to_aa( 20, false );
-	for ( utility::vector1<core::Size>::const_iterator res_it=YSresids_.begin(); res_it!=YSresids_.end(); ++res_it ) {
+	for ( unsigned long YSresid : YSresids_ ) {
 		if ( gly_switch_ ) restrict_to_aa[chemical::aa_from_name( "GLY" )] = true;
 		restrict_to_aa[chemical::aa_from_name( "TYR" )] = true;
 		restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
-		task.nonconst_residue_task(*res_it).restrict_absent_canonical_aas( restrict_to_aa );
+		task.nonconst_residue_task(YSresid).restrict_absent_canonical_aas( restrict_to_aa );
 	}
 }
 
@@ -1752,7 +1739,7 @@ ExtraRotamers::ExtraRotamers( core::Size const resid, core::Size const chi, core
 	level_( level )
 {}
 
-ExtraRotamers::~ExtraRotamers() {}
+ExtraRotamers::~ExtraRotamers() = default;
 
 TaskOperationOP ExtraRotamers::clone() const
 {
@@ -1840,14 +1827,14 @@ void ExtraRotamersCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 // This class could easily be expanded ...
 // Someone has probably already written this, and should replace this
 // dinky thing.
-ExtraChiCutoff::ExtraChiCutoff() {}
+ExtraChiCutoff::ExtraChiCutoff() = default;
 
 ExtraChiCutoff::ExtraChiCutoff( core::Size const resid, core::Size const extrachi_cutoff):
 	resid_( resid ),
 	extrachi_cutoff_( extrachi_cutoff )
 {}
 
-ExtraChiCutoff::~ExtraChiCutoff() {}
+ExtraChiCutoff::~ExtraChiCutoff() = default;
 
 TaskOperationOP ExtraChiCutoff::clone() const
 {

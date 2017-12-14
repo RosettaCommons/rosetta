@@ -57,16 +57,7 @@ HolesFilter::HolesFilter():
 {}
 
 // @brief copy constructor
-HolesFilter::HolesFilter( HolesFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
-	Super( rval ),
-	filtered_value_( rval.filtered_value_ ),
-	cmd_( rval.cmd_ ),
-	exclude_bb_atoms_( rval.exclude_bb_atoms_ ),
-	normalize_per_atom_( rval.normalize_per_atom_ ),
-	normalize_per_residue_( rval.normalize_per_residue_ ),
-	residue_selector_( rval.residue_selector_ )
-{}
+HolesFilter::HolesFilter( HolesFilter const & /*rval*/ ) = default;
 
 // @brief set filtered value
 void HolesFilter::filtered_value( Real const & value )

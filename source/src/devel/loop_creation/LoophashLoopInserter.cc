@@ -289,7 +289,7 @@ LoophashLoopInserter::find_fragments(
 				it != leap_index_bucket.end();
 				++it ) {
 			// Get the actual strucure index (not just the bin index)
-			core::Size retrieve_index = (core::Size) (*it);
+			auto retrieve_index = (core::Size) (*it);
 			LeapIndex cp = hashmap.get_peptide( retrieve_index );
 
 			// Retrieve the backbone structure for the pre and post-loop segments

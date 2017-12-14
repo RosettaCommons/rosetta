@@ -26,6 +26,7 @@
 #include <protocols/loops/loops_main.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -54,14 +55,14 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors():
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 }
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1<bool> const & cdrs):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	cdrs_ = cdrs;
@@ -69,7 +70,7 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, 
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1<bool> const & cdrs, bool allow_cdr_design):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	set_cdrs( cdrs );
@@ -83,7 +84,7 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(
 	bool allow_neighbor_framework_design,
 	bool allow_neighbor_antigen_design):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	set_cdrs( cdrs );
@@ -111,7 +112,7 @@ RestrictToCDRsAndNeighbors::clone() const {
 	return TaskOperationOP(new RestrictToCDRsAndNeighbors( *this ));
 }
 
-RestrictToCDRsAndNeighbors::~RestrictToCDRsAndNeighbors() {}
+RestrictToCDRsAndNeighbors::~RestrictToCDRsAndNeighbors() = default;
 
 void
 RestrictToCDRsAndNeighbors::set_defaults() {

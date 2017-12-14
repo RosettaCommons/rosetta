@@ -104,7 +104,7 @@ private:
 	std::deque< core::Size > sub_ndx_deque_;
 };
 
-std::string lib_full_path(std::string tag);
+std::string lib_full_path(std::string const & tag);
 
 }//mc_conv
 }//moves

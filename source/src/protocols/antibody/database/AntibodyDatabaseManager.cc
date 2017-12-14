@@ -33,6 +33,7 @@
 #include <core/chemical/AA.hh>
 
 //Database Headers
+#include <utility>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <protocols/features/ProteinSilentReport.hh>
 #include <protocols/features/util.hh>
@@ -84,7 +85,7 @@ typedef std::map< CDRNameEnum, vector1<CDRDBPose> > CDRDBPoseSet;
 
 AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool force_north_paper_db):
 	utility::pointer::ReferenceCount(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	using namespace basic::options;
 
@@ -121,7 +122,7 @@ AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool f
 }
 
 
-AntibodyDatabaseManager::~AntibodyDatabaseManager(){}
+AntibodyDatabaseManager::~AntibodyDatabaseManager()= default;
 
 AntibodyDatabaseManager::AntibodyDatabaseManager( AntibodyDatabaseManager const & src ):
 	db_path_( src.db_path_ ),
@@ -165,7 +166,7 @@ AntibodyDatabaseManager::get_cluster_totals() const {
 	if ( use_h3_graft_outliers_ && !use_outliers_ ) {
 		utility::vector1<core::Size> totals_w_outliers = get_cluster_totals(true);
 		for ( core::Size i = 1; i <= core::Size(CDRClusterEnum_stop); ++i ) {
-			CDRClusterEnum cluster = static_cast<CDRClusterEnum>( i );
+			auto cluster = static_cast<CDRClusterEnum>( i );
 			if ( ab_info_->get_cdr_enum_for_cluster(cluster) == h3 ) {
 				totals[ cluster ] = totals_w_outliers[ cluster ];
 			}
@@ -297,7 +298,7 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 	for ( core::Size i=1; i<=CDRNameEnum_total; ++i ) {
 
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		CDRSetOptionsOP options = instructions[cdr]->clone();
 
 		if ( !options->load() ) {
@@ -363,7 +364,7 @@ AntibodyDatabaseManager::load_cdr_poses(
 			CDRClusterEnum current_cluster;
 
 			if ( pose.data().has(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
-				BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
+				auto const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 				current_cluster = cluster_cache.get_cluster(cdr)->cluster();
 			} else {
 				current_cluster = ab_info_->get_CDR_cluster(cdr)->cluster();
@@ -674,7 +675,7 @@ AntibodyDatabaseManager::load_cdr_design_data(
 	vector1<bool>cdrs_to_load(6, true);
 
 	for ( core::Size i = 1; i<=CDRNameEnum_total; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 
 		CDRSeqDesignOptionsCOP options = instructions[cdr];
 
@@ -707,7 +708,7 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 	vector1<bool> cdrs_with_no_data(8, false);
 
 	for ( core::Size i = 1; i <= CDRNameEnum_total; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		if ( ! cdrs[ cdr ] || ! ab_info_->has_CDR(cdr) ) continue;
 
 		// Load data from either the stored DataCache or AntibodyInfo.
@@ -715,7 +716,7 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 
 		if ( pose.data().has(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
 			//TR <<"Setting up profile data for cluster from pose datacache "<< ab_info_->get_CDR_name( cdr ) << std::endl;
-			BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
+			auto const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 			cluster = cluster_cache.get_cluster(cdr)->cluster();
 		} else {
 			cluster = ab_info_->get_CDR_cluster(cdr)->cluster();
@@ -797,7 +798,7 @@ AntibodyDatabaseManager::load_cdr_sequences(
 
 	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs( true /* include CDR4 */)); ++i ) {
 		if ( ! cdrs[ i ] ) { continue; }
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 
 		if ( cdr == l4 || cdr == h4 ) {
 			TR << "Skipping L4/H4 sequence loading.  No profiles exist!" << std::endl;
@@ -807,7 +808,7 @@ AntibodyDatabaseManager::load_cdr_sequences(
 		CDRClusterEnum current_cluster;
 
 		if ( pose.data().has(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
-			BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
+			auto const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 			current_cluster = cluster_cache.get_cluster(cdr)->cluster();
 		} else {
 			current_cluster = ab_info_->get_CDR_cluster(cdr)->cluster();
@@ -987,7 +988,7 @@ AntibodyDatabaseManager::check_for_graft_instruction_inconsistencies(AntibodyCDR
 
 	//Double check to make sure everything is kosher before grabbing Poses.
 	for ( core::Size i=1; i<=CDRNameEnum_total; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		CDRSetOptionsCOP options = instructions[cdr];
 		if ( has_vec_inconsistency(options->include_only_clusters(), options->exclude_clusters()) ) {
 			utility_exit_with_message("Inconsistency in CLUSTERs option. Cannot leave out and include option.");

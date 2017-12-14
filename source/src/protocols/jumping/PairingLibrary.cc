@@ -396,14 +396,14 @@ PairingLibrary::read_from_file_no_filters( std::string const& fn)
 
 		// bw for TMH the jump library are specific to the positions. these are defined in the template file to 1 or 2.
 		if ( pos1==0 && pos2 == 1 ) {
-			const int o_key = (int)o;
+			const auto o_key = (int)o;
 			const int p_key = 0; //p1;
 
 			// This is for generic use in case pos1,pos2 from pairings_file is not defined in the jump library.
 			pairings_[ std::make_pair( o_key, p_key ) ].push_back( t );
 			++num_of_pairings_;
 		} else {
-			const int o_key = (int)o;
+			const auto o_key = (int)o;
 			const int p_key = 0; //p1;
 			std::cout << t.rt_ << "\n";
 
@@ -439,7 +439,7 @@ PairingLibrary::get_random_beta_sheet_jump(
 
 	const int ntemplates ( templates.size() );
 
-	int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
+	auto const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
 	const PairingTemplate &t ( templates[ index ] );
 
 	return t.rt_;
@@ -464,14 +464,14 @@ PairingLibrary::get_random_tmh_jump(int const orientation,
 
 	const int ntemplates ( templates.size() );
 	if ( ntemplates>0 ) {
-		int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
+		auto const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
 		const PairingTemplate &t ( templates[ index ] );
 		return t.rt_;
 	} else { // use the generic key
 		std::cout << "No key found for " << pos1 << ' ' << pos2 << " using the generic template\n";
 		const PairingTemplateList & templates_generic( pairings_.find( generic_key )->second );
 		const int ntemplates_generic ( templates_generic.size() );
-		int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
+		auto const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
 		const PairingTemplate &t ( templates[ index ] );
 		return t.rt_;
 	}
@@ -498,7 +498,7 @@ PairingLibrary::set_tmh_jump(core::pose::Pose pose,
 
 	const int ntemplates ( templates.size() );
 	if ( ntemplates>0 ) {
-		int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
+		auto const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
 		const PairingTemplate &t ( templates[ index ] );
 		std::cout << jump_number << "\n";
 		std::cout << t.rt_;
@@ -519,7 +519,7 @@ PairingLibrary::set_tmh_jump(core::pose::Pose pose,
 		std::cout << "No key found for " << pos1 << ' ' << pos2 << " using the generic template\n";
 		const PairingTemplateList & templates_generic( pairings_.find( generic_key )->second );
 		const int ntemplates_generic ( templates_generic.size() );
-		int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
+		auto const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
 		const PairingTemplate &t ( templates[ index ] );
 		std::cout << jump_number << "\n";
 		std::cout << t.rt_;
@@ -602,7 +602,7 @@ PairingLibrary::generate_jump_frags(
 
 	// find out how many different kind of fragments are we interested in:
 	// max of four: A 1 , A 2, P 1, P 2
-	typedef utility::vector1< Size > JumpList;
+	using JumpList = utility::vector1<Size>;
 	typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
 	Size jump_nr ( 1 );

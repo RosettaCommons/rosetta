@@ -26,7 +26,7 @@
 namespace protocols {
 namespace jd3 {
 
-JobResult::JobResult() {}
+JobResult::JobResult() = default;
 JobResult::~JobResult() = default;
 
 

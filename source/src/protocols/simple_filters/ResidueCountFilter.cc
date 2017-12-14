@@ -62,7 +62,7 @@ ResidueCountFilter::ResidueCountFilter() :
 	min_residue_count_(0),
 	enable_min_residue_count_(false),
 	count_as_percentage_(false), // for a user who does not use rosetta_scripts, count_as_percentage_ = false by default here
-	packable_( 0 ),
+	packable_( false ),
 	task_factory_( /* NULL */ ),
 	selector_()
 {}
@@ -150,7 +150,7 @@ ResidueCountFilter::parse_my_tag(
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}
 	residue_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
-	packable( tag->getOption< bool >( "packable", 0 ) );
+	packable( tag->getOption< bool >( "packable", false ) );
 }
 
 bool

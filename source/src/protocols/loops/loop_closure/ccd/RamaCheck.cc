@@ -73,7 +73,7 @@ RamaCheckBase::operator=( RamaCheckBase const & object_to_copy )
 }
 
 // Destructor
-RamaCheckBase::~RamaCheckBase() {}
+RamaCheckBase::~RamaCheckBase() = default;
 
 /// @details Print the RamaCheck's basic information and details about the instance's configuration.
 void RamaCheckBase::show( std::ostream & output ) const
@@ -307,7 +307,7 @@ RamaCheck1B::operator=( RamaCheck1B const & object_to_copy )
 }
 
 // Destructor
-RamaCheck1B::~RamaCheck1B() {}
+RamaCheck1B::~RamaCheck1B() = default;
 
 std::string RamaCheck1B::name() const
 {
@@ -379,7 +379,7 @@ RamaCheck2B::operator=( RamaCheck2B const & object_to_copy )
 }
 
 // Destructor
-RamaCheck2B::~RamaCheck2B() {}
+RamaCheck2B::~RamaCheck2B() = default;
 
 std::string RamaCheck2B::name() const
 {

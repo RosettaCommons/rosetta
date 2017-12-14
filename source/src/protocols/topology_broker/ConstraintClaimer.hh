@@ -57,7 +57,7 @@ class ConstraintClaimer : public TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
 	ConstraintClaimer(); //for factory
-	ConstraintClaimer( std::string cst_file, std::string tag = "" );
+	ConstraintClaimer( std::string const & cst_file, std::string const & tag = "" );
 	ConstraintClaimer( bool CmdFlag, bool centroid = true, bool fullatom = false );
 
 	TopologyClaimerOP clone() const override {

@@ -50,8 +50,8 @@ class FragmentClaimer : public virtual TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
 	FragmentClaimer(); //for factory
-	FragmentClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
-	FragmentClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight, std::string label, core::fragment::FragSetOP fags );
+	FragmentClaimer( simple_moves::FragmentMoverOP, std::string const & mover_tag, weights::AbinitioMoverWeightOP weight );
+	FragmentClaimer( simple_moves::FragmentMoverOP, std::string const & mover_tag, weights::AbinitioMoverWeightOP weight, std::string label, core::fragment::FragSetOP fags );
 	FragmentClaimer( simple_moves::FragmentMoverOP );
 	FragmentClaimer( FragmentClaimer const & src );
 

@@ -150,7 +150,7 @@ Torsion::fresh_instance() const{
 	return protocols::filters::FilterOP( new Torsion() );
 }
 
-Torsion::~Torsion(){}
+Torsion::~Torsion()= default;
 
 protocols::filters::FilterOP
 Torsion::clone() const{

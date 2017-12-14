@@ -81,7 +81,7 @@ namespace lkball {
 //bool const sidechain_only_hack( false ); // make this configurable
 
 /// @details Auto-generated virtual destructor
-LKB_ResidueInfo::~LKB_ResidueInfo() {}
+LKB_ResidueInfo::~LKB_ResidueInfo() = default;
 
 
 static basic::Tracer TR("core.scoring.methods.LK_BallInfo" );
@@ -314,7 +314,7 @@ setup_water_builders_for_residue_type(
 	utility::vector1< Vector > all_waters; // for debugging
 
 	// donors
-	for ( chemical::AtomIndices::const_iterator
+	for ( auto
 			hnum  = rsd->Hpos_polar().begin(),
 			hnume = rsd->Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const hatm( *hnum );
@@ -341,7 +341,7 @@ setup_water_builders_for_residue_type(
 
 	// acceptors
 	if ( !no_acceptor_waters ) {
-		for ( chemical::AtomIndices::const_iterator
+		for ( auto
 				anum  = rsd->accpt_pos().begin(),
 				anume = rsd->accpt_pos().end(); anum != anume; ++anum ) {
 			Size const aatm( *anum );
@@ -721,18 +721,7 @@ LKB_ResidueInfo::initialize( ResidueType const & rsd )
 	atom_weights_ = LKBallDatabase::get_instance()->get_atom_weights( rsd );
 }
 
-LKB_ResidueInfo::LKB_ResidueInfo( LKB_ResidueInfo const & src ):
-	basic::datacache::CacheableData( src ),
-	rsd_type_( src.rsd_type_ ),
-	water_builders_list_( src.water_builders_list_ ),
-	n_attached_waters_( src.n_attached_waters_ ),
-	waters_( src.waters_ ),
-	dwater_datom1_( src.dwater_datom1_ ),
-	dwater_datom2_( src.dwater_datom2_ ),
-	dwater_datom3_( src.dwater_datom3_ ),
-	atom_weights_( src.atom_weights_ ), // added 5/20/13
-	has_waters_( src.has_waters_ )
-{}
+LKB_ResidueInfo::LKB_ResidueInfo( LKB_ResidueInfo const & /*src*/ ) = default;
 
 basic::datacache::CacheableDataOP
 LKB_ResidueInfo::clone() const

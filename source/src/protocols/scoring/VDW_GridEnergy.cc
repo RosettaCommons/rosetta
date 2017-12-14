@@ -75,7 +75,7 @@ VDW_GridEnergy::VDW_GridEnergy() :
 	clash_penalty_( 1.0 ) /*Totally made up for now*/
 {}
 
-VDW_GridEnergy::~VDW_GridEnergy() {}
+VDW_GridEnergy::~VDW_GridEnergy() = default;
 
 /// clone
 core::scoring::methods::EnergyMethodOP

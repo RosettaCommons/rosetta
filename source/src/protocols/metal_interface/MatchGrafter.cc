@@ -43,20 +43,16 @@ using basic::Error;
 using basic::Warning;
 static basic::Tracer TR( "protocols.metal_interface.MatchGrafter" );
 
-typedef core::pose::Pose Pose;
-typedef numeric::xyzVector<core::Real> point;
+using Pose = core::pose::Pose;
+using point = numeric::xyzVector<core::Real>;
 
 namespace protocols {
 namespace metal_interface {
 
 
-MatchGrafter::MatchGrafter() // default constructor
-// : metalsite_atoms_ ( 5, 0 ), metalsite_residues_ ( 5, 0 )
-{
-}
+MatchGrafter::MatchGrafter() = default;
 
-MatchGrafter::~MatchGrafter()
-= default;
+MatchGrafter::~MatchGrafter() = default;
 
 
 /// @brief Takes match pose (2 residues + zinc) and partner pose, grafts match onto partner, returns grafted partner

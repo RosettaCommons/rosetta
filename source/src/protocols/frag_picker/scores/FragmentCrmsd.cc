@@ -58,7 +58,7 @@ using namespace ObjexxFCL;
 static basic::Tracer trRmsScore(
 	"protocols.frag_picker.scores.FragmentCrmsd");
 
-FragmentCrmsd::~FragmentCrmsd() {}
+FragmentCrmsd::~FragmentCrmsd() = default;
 
 FragmentCrmsd::FragmentCrmsd(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, core::pose::PoseOP reference_pose) :
@@ -241,7 +241,7 @@ FragmentScoringMethodOP MakeFragmentCrmsd::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read a reference structure. Provide it with in::file::s flag");
 
-	return NULL;
+	return nullptr;
 }
 
 } // scores

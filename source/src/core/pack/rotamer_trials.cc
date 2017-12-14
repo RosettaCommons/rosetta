@@ -61,8 +61,8 @@
 namespace core {
 namespace pack {
 
-typedef conformation::symmetry::SymmetricConformation SymmetricConformation;
-typedef conformation::symmetry::SymmetryInfo SymmetryInfo;
+using SymmetricConformation = conformation::symmetry::SymmetricConformation;
+using SymmetryInfo = conformation::symmetry::SymmetryInfo;
 
 
 static basic::Tracer TR( "core.pack.rotamer_trials" );
@@ -258,7 +258,7 @@ symmetric_rotamer_trials(
 			pose.replace_residue ( resid, *newresidue, false );
 			scfxn.update_residue_for_packing( pose, resid );
 			// clone to symmetrical positions
-			SymmetricConformation const & SymmConf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+			auto const & SymmConf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 			SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 			//fpd replace_residue is symmetric now ... still need to update scorefxn though
@@ -298,7 +298,7 @@ symmetric_repackable_residues(
 	using namespace conformation::symmetry;
 
 	// find SymmInfo
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 

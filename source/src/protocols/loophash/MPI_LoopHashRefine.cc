@@ -312,13 +312,13 @@ MPI_LoopHashRefine::add_structure_to_library_add_n_replace( core::io::silent::Si
 		core::Real the_rms;
 		// downcast
 		if ( option[ OptionKeys::lh::bss]() ) {
-			core::io::silent::BinarySilentStruct *jt_pss = dynamic_cast < core::io::silent::BinarySilentStruct * > ( &(*(*jt)) );
-			core::io::silent::BinarySilentStruct *ss = dynamic_cast < core::io::silent::BinarySilentStruct * > ( &(pss) );
+			auto *jt_pss = dynamic_cast < core::io::silent::BinarySilentStruct * > ( &(*(*jt)) );
+			auto *ss = dynamic_cast < core::io::silent::BinarySilentStruct * > ( &(pss) );
 			if ( jt_pss == nullptr || ss == nullptr ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Binary Protein SilentStructs " );
 			the_rms = ss->CA_rmsd( *jt_pss );
 		} else {
-			core::io::silent::ProteinSilentStruct *jt_pss = dynamic_cast < core::io::silent::ProteinSilentStruct * > ( &(*(*jt)) );
-			core::io::silent::ProteinSilentStruct *ss = dynamic_cast < core::io::silent::ProteinSilentStruct * > ( &(pss) );
+			auto *jt_pss = dynamic_cast < core::io::silent::ProteinSilentStruct * > ( &(*(*jt)) );
+			auto *ss = dynamic_cast < core::io::silent::ProteinSilentStruct * > ( &(pss) );
 			if ( jt_pss == nullptr || ss == nullptr ) utility_exit_with_message( "FATAL ERROR:  This code only runs with Protein SilentStructs " );
 			the_rms = ss->CA_rmsd( *jt_pss );
 		}

@@ -161,15 +161,11 @@ string CIF_ITEM;
 
 
 DataInfo::DataInfo()
-{
-
-}
+= default;
 
 
 DataInfo::~DataInfo()
-{
-
-}
+= default;
 
 
 bool DataInfo::IsUnknownValueAllowed(const string& catName, 
@@ -263,9 +259,9 @@ bool DataInfo::AreAllKeyItems(const string& catName,
  
     unsigned int keyCount = 0;
 
-    for (unsigned int i = 0; i < attributes.size(); ++i)
+    for (const auto & attribute : attributes)
     {
-        if (IsKeyItem(catName, attributes[i]))
+        if (IsKeyItem(catName, attribute))
         {
             keyCount++;
             continue;
@@ -307,12 +303,12 @@ void DataInfo::GetItemsTypes(vector<eTypeCode>& itemsTypes,
 {
     itemsTypes.clear();
 
-    for (unsigned int i = 0; i < attribsNames.size(); ++i)
+    for (const auto & attribsName : attribsNames)
     {
         string cifItem;
-        CifString::MakeCifItem(cifItem, catName, attribsNames[i]);
+        CifString::MakeCifItem(cifItem, catName, attribsName);
 
-        if (!MustConvertItem(catName, attribsNames[i]))
+        if (!MustConvertItem(catName, attribsName))
         {
             itemsTypes.push_back(eTYPE_CODE_NONE);
 
@@ -425,10 +421,8 @@ void DataInfo::GetMandatoryItems(vector<string>& mandItemsNames,
     mandItemsNames.clear();
 
     const vector<string>& itemsNames = GetItemsNames();
-    for (unsigned int itemI = 0; itemI < itemsNames.size(); ++itemI)
+    for (const auto & itemName : itemsNames)
     {
-        const string& itemName = itemsNames[itemI];
-
         string currCatName;
         CifString::GetCategoryFromCifItem(currCatName, itemName);
         if (currCatName != catName)
@@ -518,11 +512,11 @@ void DataInfo::StandardizeEnumItem(string& value,
       CifString::CIF_DDL_CATEGORY_ITEM_ENUMERATION,
       CifString::CIF_DDL_ITEM_VALUE);
 
-    for (unsigned int i = 0; i < enums.size(); ++i)
+    for (const auto & i : enums)
     {
-        if (String::IsCiEqual(value, enums[i]))
+        if (String::IsCiEqual(value, i))
         {
-            value = enums[i];
+            value = i;
             break;
         }
     }

@@ -46,7 +46,7 @@ using namespace basic;
 namespace protocols {
 namespace noesy_assign {
 
-ProtonResonance::ProtonResonance() {}
+ProtonResonance::ProtonResonance() = default;
 
 ProtonResonance::ProtonResonance(
 	core::Size label,

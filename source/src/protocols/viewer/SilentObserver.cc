@@ -44,7 +44,7 @@ namespace viewer {
 
 
 /// @brief default constructor
-SilentObserver::SilentObserver() {}
+SilentObserver::SilentObserver() = default;
 
 /// @brief constructor
 SilentObserver::SilentObserver( std::string const & name_in, bool fullatom = false ) :

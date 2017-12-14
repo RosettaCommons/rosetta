@@ -13,6 +13,7 @@
 /// @author Tim Jacobs
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
+#include <utility>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <basic/database/schema_generator/Column.hh>
 
@@ -20,14 +21,14 @@ namespace basic {
 namespace database {
 namespace schema_generator {
 
-PrimaryKey::PrimaryKey(){}
+PrimaryKey::PrimaryKey()= default;
 
 PrimaryKey::PrimaryKey(Column column){
 	columns_.push_back(column);
 }
 
 PrimaryKey::PrimaryKey(Columns columns):
-	columns_( columns )
+	columns_(std::move( columns ))
 {}
 
 void PrimaryKey::add_column(Column column){
@@ -45,7 +46,7 @@ PrimaryKey::print(
 ) const {
 	std::string primary_key_string = "PRIMARY KEY (";
 
-	for ( Columns::const_iterator it=columns_.begin(); it != columns_.end(); ++it ) {
+	for ( auto it=columns_.begin(); it != columns_.end(); ++it ) {
 		if ( it!=columns_.begin() ) {
 			primary_key_string += ", ";
 		}

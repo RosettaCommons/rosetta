@@ -65,7 +65,7 @@ RotMatrix::operator=(RotMatrix const & object_to_copy)
 }
 
 // Destructor
-RotMatrix::~RotMatrix() {}
+RotMatrix::~RotMatrix() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////

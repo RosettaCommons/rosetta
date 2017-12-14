@@ -26,6 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

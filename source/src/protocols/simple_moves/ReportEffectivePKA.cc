@@ -108,7 +108,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 
 	core::conformation::symmetry::SymmetryInfoOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}

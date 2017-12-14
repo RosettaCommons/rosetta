@@ -55,7 +55,7 @@ Size positive_pow( Size mantissa, Size exponent )
 }
 
 /// @details Fun Fact: virtual destructor must still be defined even if it's abstract
-RotamerBuildingData::~RotamerBuildingData() {}
+RotamerBuildingData::~RotamerBuildingData() = default;
 
 /// @details alternative interpolate_rotamers that uses polylinear interpolation
 template < Size N >
@@ -121,7 +121,7 @@ DunbrackRotamerSampleData::DunbrackRotamerSampleData( bool is_nrchi_sample ) :
 	nrchi_probability_( 0.0 )
 {}
 
-DunbrackRotamerSampleData::~DunbrackRotamerSampleData() {}
+DunbrackRotamerSampleData::~DunbrackRotamerSampleData() = default;
 
 void DunbrackRotamerSampleData::set_nrchi_sample( bool setting )
 {

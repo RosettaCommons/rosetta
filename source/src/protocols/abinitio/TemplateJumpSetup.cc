@@ -64,7 +64,7 @@ TemplateJumpSetup::TemplateJumpSetup(
 	TemplatesCOP templates,
 	core::fragment::SecondaryStructureCOP secstruct,
 	PairingStatisticsCOP strand_stats,
-	core::scoring::dssp::PairingsList const& helix_pairings
+	core::scoring::dssp::PairingsList const & helix_pairings
 ) : templates_(std::move( templates )),
 	secstruct_(std::move( secstruct )),
 	strand_stats_(std::move( strand_stats )),

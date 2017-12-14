@@ -87,7 +87,7 @@ polymeric_termini_incomplete( conformation::Residue res ) {
 // @brief Auto-generated virtual destructor
 Ramachandran::~Ramachandran() = default;
 
-typedef Ramachandran R;
+using R = Ramachandran;
 
 Real const R::binw_( 10.0 );
 Real const R::rama_sampling_thold_( 0.00075 ); // only sample torsions with Rama prob above this value
@@ -411,8 +411,8 @@ Ramachandran::phipsi_in_allowed_rama(
 	phi = numeric::nonnegative_principal_angle_degrees(phi);
 	psi = numeric::nonnegative_principal_angle_degrees(psi);
 
-	Size phi_bin = static_cast< Size > ( phi / binw_ );
-	Size psi_bin = static_cast< Size > ( psi / binw_ );
+	auto phi_bin = static_cast< Size > ( phi / binw_ );
+	auto psi_bin = static_cast< Size > ( psi / binw_ );
 
 	return ram_probabil_(phi_bin+1, psi_bin+1, 3, aa ) > rama_sampling_thold_;
 }

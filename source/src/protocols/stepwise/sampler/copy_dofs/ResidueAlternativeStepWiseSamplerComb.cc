@@ -29,12 +29,10 @@ namespace sampler {
 namespace copy_dofs {
 
 //Constructor
-ResidueAlternativeStepWiseSamplerComb::ResidueAlternativeStepWiseSamplerComb()
-{}
+ResidueAlternativeStepWiseSamplerComb::ResidueAlternativeStepWiseSamplerComb() = default;
 
 //Destructor
-ResidueAlternativeStepWiseSamplerComb::~ResidueAlternativeStepWiseSamplerComb()
-{}
+ResidueAlternativeStepWiseSamplerComb::~ResidueAlternativeStepWiseSamplerComb() = default;
 
 /// @brief Add one more rotamer sampler to this sampler
 void

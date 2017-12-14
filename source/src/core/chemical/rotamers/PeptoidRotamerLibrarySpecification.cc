@@ -18,6 +18,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
@@ -57,8 +58,7 @@ PeptoidRotamerLibrarySpecificationCreator::keyname() const {
 
 // Specification Functions
 
-PeptoidRotamerLibrarySpecification::PeptoidRotamerLibrarySpecification()
-{}
+PeptoidRotamerLibrarySpecification::PeptoidRotamerLibrarySpecification() = default;
 
 PeptoidRotamerLibrarySpecification::PeptoidRotamerLibrarySpecification(std::string const & peptoid_rotlib_path ) :
 	peptoid_rotlib_path_( peptoid_rotlib_path )
@@ -79,7 +79,7 @@ PeptoidRotamerLibrarySpecification::PeptoidRotamerLibrarySpecification( std::ist
 	TR.Debug << "Read " << peptoid_rotlib_n_bins_per_rot_.size() << " entries for Peptoid rotamer library specification with path " << peptoid_rotlib_path_ << std::endl;
 }
 
-PeptoidRotamerLibrarySpecification::~PeptoidRotamerLibrarySpecification() {}
+PeptoidRotamerLibrarySpecification::~PeptoidRotamerLibrarySpecification() = default;
 
 std::string
 PeptoidRotamerLibrarySpecification::keyname() const {

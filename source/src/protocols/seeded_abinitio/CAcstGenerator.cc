@@ -323,9 +323,9 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 		template_presence_ = true;
 	}
 
-	add_cst_seed_ = tag->getOption< bool >("add_cst_seed", 0 ); ///header
+	add_cst_seed_ = tag->getOption< bool >("add_cst_seed", false ); ///header
 
-	replace_ = tag->getOption< bool >("replace", 1 );
+	replace_ = tag->getOption< bool >("replace", true );
 
 	seq_separation_ = tag->getOption< core::Size >( "seq_separation", 6 );
 

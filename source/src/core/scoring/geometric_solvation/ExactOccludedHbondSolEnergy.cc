@@ -276,7 +276,7 @@ WaterWeightGridSet::Grid const &
 WaterWeightGridSet::get_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const {
 
 	// Check that we have weights for this Hbond type
-	all_water_weights_iterator curr_water_weights_iter = all_water_weights_.find( hbond_eval_type );
+	auto curr_water_weights_iter = all_water_weights_.find( hbond_eval_type );
 	if ( curr_water_weights_iter == all_water_weights_.end( ) ) {
 		TR.Fatal << "Could not look up map element" << std::endl;
 		TR.Fatal << "get_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
@@ -290,7 +290,7 @@ core::Real
 WaterWeightGridSet::get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const {
 
 	// Check that we have weights for this Hbond type
-	sum_water_weights_iterator curr_sum_water_weights_iter = sum_all_water_weights_.find( hbond_eval_type );
+	auto curr_sum_water_weights_iter = sum_all_water_weights_.find( hbond_eval_type );
 	if ( curr_sum_water_weights_iter == sum_all_water_weights_.end( ) ) {
 		TR.Fatal << "Could not look up map element" << std::endl;
 		TR.Fatal << "get_sum_water_weight_grid hbond_eval_type " << hbond_eval_type << std::endl;
@@ -329,7 +329,7 @@ void WaterWeightGridSet::print_water_weight_grid_xz_plane(
 }
 
 
-ExactOccludedHbondSolEnergy::~ExactOccludedHbondSolEnergy() {}
+ExactOccludedHbondSolEnergy::~ExactOccludedHbondSolEnergy() = default;
 
 
 void ExactOccludedHbondSolEnergy::allocate_grid_of_occluded_sites() {
@@ -471,7 +471,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 	if ( polar_rsd.has_variant_type( chemical::REPLONLY ) ) return;
 	if ( polar_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
 
-	core::Size polar_resnum = (core::Size) polar_rsd.seqpos();
+	auto polar_resnum = (core::Size) polar_rsd.seqpos();
 	core::Real residue_geosol(0.);
 
 	// loop over donors in polar_rsd
@@ -785,7 +785,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	if ( polar_rsd.is_repulsive( polar_atomno ) ) return 0.0;
 
 	// note: the "restrict_to_single_occluding_residue / atom" options are so that pairwise additivity can be enforced (for parameterization / analysis)
-	core::Size const polar_resnum = (core::Size) polar_rsd.seqpos();
+	auto const polar_resnum = (core::Size) polar_rsd.seqpos();
 
 	// jumpout immediately if we're not including self but the single requested residue is self
 	if ( restrict_to_single_occluding_residue && ! exact_occ_self_res_occ_ && ( polar_resnum == single_occluding_resinx ) ) {

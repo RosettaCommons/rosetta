@@ -32,8 +32,8 @@ xyzStripeHash::xyzStripeHash(
 ):
 	grid_size_(grid_size),
 	grid_size2_(grid_size*grid_size),
-	grid_balls_(NULL),
-	grid_stripe_(NULL)//,
+	grid_balls_(nullptr),
+	grid_stripe_(nullptr)//,
 	// neighbor_end_(*this)
 {
 	if ( balls.size() ) init(balls);
@@ -79,15 +79,15 @@ xyzStripeHash::init(
 	zdim_ = static_cast<int>((zmx-zmn+0.0001)/grid_size_+0.999999);
 	assert(xdim_ < 9999); assert(ydim_ < 9999); assert(zdim_ < 9999);
 	int const gsize = xdim_*ydim_*zdim_;
-	ushort2 *gindex  = new ushort2[gsize];
-	ushort2 *gstripe = new ushort2[gsize];
+	auto *gindex  = new ushort2[gsize];
+	auto *gstripe = new ushort2[gsize];
 	for ( int i = 0; i < gsize; ++i ) { gindex[i].y = 0; gindex[i].x = 0; }
 	//TR<<"atom "<<nballs_<<" grid1 "<<xdim_*ydim_*zdim_<<" "<<xdim_<<" "<<ydim_<<" "<<zdim_<<std::endl;
 
 	for ( int i = 1; i <= nballs_; ++i ) {
-		int ix = static_cast<int>((balls[i].x()-xmn/*+FUDGE*/)/grid_size_);
-		int iy = static_cast<int>((balls[i].y()-ymn/*+FUDGE*/)/grid_size_);
-		int iz = static_cast<int>((balls[i].z()-zmn/*+FUDGE*/)/grid_size_);
+		auto ix = static_cast<int>((balls[i].x()-xmn/*+FUDGE*/)/grid_size_);
+		auto iy = static_cast<int>((balls[i].y()-ymn/*+FUDGE*/)/grid_size_);
+		auto iz = static_cast<int>((balls[i].z()-zmn/*+FUDGE*/)/grid_size_);
 		assert(ix >= 0); assert(iy >= 0); assert(iz >= 0); assert(ix < xdim_); assert(iy < ydim_); assert(iz < zdim_);
 		int ig = ix+xdim_*iy+xdim_*ydim_*iz;
 		assert(ig>=0);assert(ig<9999999);
@@ -98,7 +98,7 @@ xyzStripeHash::init(
 	for ( int iz = 0; iz < zdim_; ++iz ) {
 		for ( int iy = 0; iy < ydim_; ++iy ) {
 			for ( int ix = 0; ix < xdim_; ++ix ) {
-				int const ixl = (int)numeric::max(      0 ,(int)ix-1 );
+				auto const ixl = (int)numeric::max(      0 ,(int)ix-1 );
 				int const ixu =       numeric::min(xdim_-1u,     ix+1u);
 				int const ig0 = xdim_*iy+xdim_*ydim_*iz;
 				gstripe[ix+ig0].x = gindex[ixl+ig0].x;
@@ -111,14 +111,14 @@ xyzStripeHash::init(
 	//       int i = ix+xdim_*iy+xdim_*ydim_*iz;
 	//       TR<<ix<<" "<<iy<<" "<<iz<<" "<<I(3,gindex[i].x)<<" "<<I(3,gindex[i].y) <<" "<<I(3,grid_stripe_[i].x)<<" "<<I(3,grid_stripe_[i].y)<<std::endl;
 	//     }
-	Ball *gatom = new Ball[nballs_+4]; // space for 4 overflow balls
+	auto *gatom = new Ball[nballs_+4]; // space for 4 overflow balls
 	for ( int i=0; i<4; ++i ) {gatom[nballs_+i].x()=9e9;gatom[nballs_+i].y()=9e9;gatom[nballs_+i].z()=9e9;}
-	ushort *gridc = new ushort[gsize];
+	auto *gridc = new ushort[gsize];
 	for ( int i = 0; i < gsize; ++i ) gridc[i] = 0;
 	for ( int i = 1; i <= nballs_; ++i ) {
-		int const ix = static_cast<int>((balls[i].x()-xmn/*+FUDGE*/)/grid_size_);
-		int const iy = static_cast<int>((balls[i].y()-ymn/*+FUDGE*/)/grid_size_);
-		int const iz = static_cast<int>((balls[i].z()-zmn/*+FUDGE*/)/grid_size_);
+		auto const ix = static_cast<int>((balls[i].x()-xmn/*+FUDGE*/)/grid_size_);
+		auto const iy = static_cast<int>((balls[i].y()-ymn/*+FUDGE*/)/grid_size_);
+		auto const iz = static_cast<int>((balls[i].z()-zmn/*+FUDGE*/)/grid_size_);
 		int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
 		int const idx = gindex[ig].x + gridc[ig];
 		gatom[ idx ].x() = balls[i].x()-xmn/*+FUDGE*/;

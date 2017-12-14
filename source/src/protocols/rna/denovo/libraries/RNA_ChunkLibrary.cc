@@ -108,7 +108,7 @@ RNA_ChunkLibrary::RNA_ChunkLibrary(
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // destructor
-RNA_ChunkLibrary::~RNA_ChunkLibrary(){}
+RNA_ChunkLibrary::~RNA_ChunkLibrary()= default;
 
 /// @brief clone the ChunkLibrary
 RNA_ChunkLibraryOP
@@ -149,7 +149,7 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 
 	// atom_level_domain_map keeps track of where chunks are placed -- only allow
 	// fragment insertions *outside* these regions.
-	if ( atom_level_domain_map_ == 0 ) {
+	if ( atom_level_domain_map_ == nullptr ) {
 		atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose, true /*map_to_vanilla*/, allow_insert_res ) );
 	}
 	covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
@@ -333,7 +333,7 @@ RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ) const {
 			TR << TR.Red  << "////////////////////////////////////////////////////////////////////" << std::endl;
 			TR << TR.Red << "Pose FOLD-TREE " << pose.fold_tree() << std::endl;
 			TR << TR.Red << "Chunk Set mapping: " << std::endl;
-			for ( auto it = chunk_set.res_map().begin(); it != chunk_set.res_map().end(); it++ ) TR << TR.Red << " pose " << it->first << " to chunk " << it->second << std::endl;
+			for ( auto it : chunk_set.res_map() ) TR << TR.Red << " pose " << it.first << " to chunk " << it.second << std::endl;
 			;
 			print_backtrace( "FoldTree in pose does not have the right number of jumps to match chunk_res" );
 			//utility_exit_with_message( "FoldTree in pose does not have the right number of jumps to match chunk_res" );

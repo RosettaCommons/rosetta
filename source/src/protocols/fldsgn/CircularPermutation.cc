@@ -310,7 +310,7 @@ CircularPermutation::parse_my_tag(
 	new_terminal_pos_ = ( tag->getOption<Size>( "pos", 0 ) );
 
 	// ignore chain
-	ignore_chain_ = ( tag->getOption<bool>( "ignore_chain", 0 ) );
+	ignore_chain_ = ( tag->getOption<bool>( "ignore_chain", false ) );
 
 	// split chain
 	split_ = ( tag->getOption<Size>( "split_chain", 0 ) );

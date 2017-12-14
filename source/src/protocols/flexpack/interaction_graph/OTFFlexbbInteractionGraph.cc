@@ -50,7 +50,7 @@ OTFFlexbbNode::OTFFlexbbNode(
 	rotamer_is_glycine_( num_states, (unsigned char) 0 )
 {}
 
-OTFFlexbbNode::~OTFFlexbbNode() {}
+OTFFlexbbNode::~OTFFlexbbNode() = default;
 
 void
 OTFFlexbbNode::print() const
@@ -180,7 +180,7 @@ OTFFlexbbEdge::OTFFlexbbEdge( OTFFlexbbInteractionGraph * owner, int node1, int 
 
 }
 
-OTFFlexbbEdge::~OTFFlexbbEdge() {}
+OTFFlexbbEdge::~OTFFlexbbEdge() = default;
 
 
 /// @details compute sc/sc energy while node 0 (first node) is
@@ -233,7 +233,7 @@ OTFFlexbbEdge::compute_samebbconf_alternate_state_energy_first_node()
 
 	if ( lr_energies_exist_ ) {
 		EnergyMap emap;
-		for ( ScoreFunction::LR_2B_MethodIterator iter = sfxn_->long_range_energies_begin(),
+		for ( auto iter = sfxn_->long_range_energies_begin(),
 				iter_end = sfxn_->long_range_energies_end();
 				iter != iter_end; ++iter ) {
 			(*iter)->residue_pair_energy( alt_rot(0), alt_rot(1), *pose_, *sfxn_, emap );
@@ -325,7 +325,7 @@ OTFFlexbbEdge::compute_samebbconf_alternate_state_energy_second_node()
 
 	if ( lr_energies_exist_ ) {
 		EnergyMap emap;
-		for ( ScoreFunction::LR_2B_MethodIterator iter = sfxn_->long_range_energies_begin(),
+		for ( auto iter = sfxn_->long_range_energies_begin(),
 				iter_end = sfxn_->long_range_energies_end();
 				iter != iter_end; ++iter ) {
 			(*iter)->residue_pair_energy( alt_rot(0), alt_rot(1), *pose_, *sfxn_, emap );
@@ -414,7 +414,7 @@ OTFFlexbbEdge::compute_altbbconf_alternate_state_energy()
 
 	if ( lr_energies_exist_ ) {
 		EnergyMap emap;
-		for ( ScoreFunction::LR_2B_MethodIterator iter = sfxn_->long_range_energies_begin(),
+		for ( auto iter = sfxn_->long_range_energies_begin(),
 				iter_end = sfxn_->long_range_energies_end();
 				iter != iter_end; ++iter ) {
 			(*iter)->residue_pair_energy( alt_rot(0), alt_rot(1), *pose_, *sfxn_, emap );
@@ -662,8 +662,7 @@ OTFFlexbbInteractionGraph::OTFFlexbbInteractionGraph( int num_nodes ) :
 	alternate_pose_energy_( 0.0 )
 {}
 
-OTFFlexbbInteractionGraph::~OTFFlexbbInteractionGraph()
-{}
+OTFFlexbbInteractionGraph::~OTFFlexbbInteractionGraph() = default;
 
 void
 OTFFlexbbInteractionGraph::initialize(

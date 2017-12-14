@@ -18,13 +18,14 @@
 
 #include <string>
 #include <sstream>
+#include <utility>
 
 namespace basic {
 namespace database {
 namespace schema_generator {
 
 /// @details Auto-generated virtual destructor
-Constraint::~Constraint() {}
+Constraint::~Constraint() = default;
 
 using std::string;
 using std::stringstream;
@@ -33,7 +34,7 @@ using platform::Real;
 
 
 Constraint::Constraint(
-	Column column
+	Column const & column
 ) :
 	columns_()
 {
@@ -41,20 +42,20 @@ Constraint::Constraint(
 }
 
 Constraint::Constraint(
-	Columns columns
+	Columns const & columns
 ) :
-	columns_(columns)
+	columns_(std::move(columns))
 {}
 
 
 UniqueConstraint::UniqueConstraint(
-	Column column
+	Column const & column
 ) :
 	Constraint(column)
 {}
 
 UniqueConstraint::UniqueConstraint(
-	Columns columns
+	Columns const & columns
 ) :
 	Constraint(columns)
 {}
@@ -79,7 +80,7 @@ UniqueConstraint::print(
 
 
 GreaterThanConstraint::GreaterThanConstraint(
-	Column column,
+	Column const & column,
 	platform::Real value
 ) :
 	Constraint(column),

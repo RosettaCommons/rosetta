@@ -49,7 +49,7 @@ namespace flexpack {
 
 static basic::Tracer tr( "protocols.flexpack.FlexPacker" );
 
-typedef core::PackerEnergy PackerEnergy;
+using PackerEnergy = core::PackerEnergy;
 
 
 FlexPacker::FlexPacker(
@@ -133,7 +133,7 @@ FlexPacker::apply(
 	using namespace core::scoring;
 	oc_sfxn.set_energy_method_options( scorefxn_->energy_method_options() );
 	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
-		ScoreType iist = (ScoreType) ii;
+		auto iist = (ScoreType) ii;
 		if ( scorefxn_->weights()[ iist ] != 0.0 ) {
 			oc_sfxn.set_weight( iist, scorefxn_->weights()[ iist ] );
 		}

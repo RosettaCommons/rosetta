@@ -42,7 +42,7 @@ bool CircularSigmoidalFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	CircularSigmoidalFunc const & other_downcast( static_cast< CircularSigmoidalFunc const & > (other) );
+	auto const & other_downcast( static_cast< CircularSigmoidalFunc const & > (other) );
 	if ( xC_     != other_downcast.xC_     ) return false;
 	if ( m_      != other_downcast.m_      ) return false;
 	if ( o1_     != other_downcast.o1_     ) return false;

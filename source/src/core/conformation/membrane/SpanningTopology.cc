@@ -109,12 +109,7 @@ SpanningTopology::SpanningTopology(
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this object copying over all private fields
-SpanningTopology::SpanningTopology( SpanningTopology const & src ) :
-	utility::pointer::ReferenceCount( src ),
-	topology_( src.topology_ ),
-	nres_topo_( src.nres_topo_ ),
-	structure_based_( src.structure_based_ )
-{}
+SpanningTopology::SpanningTopology( SpanningTopology const & /*src*/ ) = default;
 
 /// @brief Assignment Operator
 /// @details Overload assignemnt operator - required Rosetta method
@@ -135,7 +130,7 @@ SpanningTopology::operator=( SpanningTopology const & src ) {
 }
 
 /// @brief Destructor
-SpanningTopology::~SpanningTopology(){}
+SpanningTopology::~SpanningTopology()= default;
 
 ///////////////
 /// Methods ///

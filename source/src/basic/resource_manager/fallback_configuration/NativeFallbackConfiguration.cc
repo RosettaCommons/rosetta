@@ -30,8 +30,7 @@ using basic::resource_manager::ResourceDescription;
 using basic::resource_manager::ResourceTag;
 using basic::resource_manager::ResourceOptionsTag;
 
-NativeFallbackConfiguration::NativeFallbackConfiguration()
-{}
+NativeFallbackConfiguration::NativeFallbackConfiguration() = default;
 
 bool
 NativeFallbackConfiguration::fallback_specified( ResourceDescription const & ) const
@@ -56,7 +55,7 @@ basic::resource_manager::ResourceOptionsOP
 NativeFallbackConfiguration::get_resource_options( ResourceDescription const & ) const
 {
 	// use the default options.
-	return 0;
+	return nullptr;
 }
 
 std::string

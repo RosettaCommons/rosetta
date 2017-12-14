@@ -24,6 +24,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -62,7 +63,7 @@ ReferenceEnergy::ReferenceEnergy( utility::vector1< Real > const & aa_weights_in
 	aa_weights_( aa_weights_in )
 {}
 
-ReferenceEnergy::~ReferenceEnergy() {}
+ReferenceEnergy::~ReferenceEnergy() = default;
 
 EnergyMethodOP
 ReferenceEnergy::clone() const

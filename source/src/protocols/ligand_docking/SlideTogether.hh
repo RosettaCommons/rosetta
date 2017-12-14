@@ -41,7 +41,7 @@ class SlideTogether : public protocols::moves::Mover
 {
 public:
 	SlideTogether();
-	SlideTogether(std::string chain);
+	SlideTogether(std::string const & chain);
 
 	~SlideTogether() override;
 	SlideTogether(SlideTogether const & that);

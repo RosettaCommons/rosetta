@@ -52,13 +52,12 @@ namespace cenrot {
 static basic::Tracer TR("core.pack.dunbrack.cenrot.CenrotLibrary");
 
 CenrotLibrary::CenrotLibrary():
-	cenrot_libraries_( chemical::num_canonical_aas, 0 )
+	cenrot_libraries_( chemical::num_canonical_aas, nullptr )
 {
 	this->create_centroid_rotamer_libraries_from_ASCII();
 }
 
-CenrotLibrary::~CenrotLibrary()
-{}
+CenrotLibrary::~CenrotLibrary() = default;
 
 
 void
@@ -71,7 +70,7 @@ CenrotLibrary::add_cenrot_residue_library(
 		TR.Error << "Cannot add centroid Dunbrack rotamer library of type " << aa << " not a canonical amino acid." << std::endl;
 		utility_exit_with_message("Cannot add a non-canonical centroid Dunbrack library.");
 	}
-	if ( cenrot_libraries_[ aa ] != 0 ) {
+	if ( cenrot_libraries_[ aa ] != nullptr ) {
 		TR.Error << "Cannot add cenroid Dunbrack rotamer library of type " << aa << ": library already loaded." << std::endl;
 		utility_exit_with_message("Can't add centroid rsd library twice");
 	}
@@ -86,7 +85,7 @@ CenrotLibrary::get_cenrot_library_by_aa( chemical::AA const & aa ) const
 	}
 	TR.Error << "Cannot get centroid Dunbrack rotamer library of type " << aa << ": not a canonical amino acid." << std::endl;
 	utility_exit_with_message("Cannot get non-canonical centroid Dunbrack library.");
-	return 0;
+	return nullptr;
 }
 
 

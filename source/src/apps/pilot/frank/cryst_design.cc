@@ -115,7 +115,7 @@
 
 #include <fstream>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 #include <sstream>
 #include <string>
@@ -235,7 +235,7 @@ core::Real interp_linear(
 	fpart[0] = idxX[0]-pt000[0]; neg_fpart[0] = 1-fpart[0];
 	fpart[1] = idxX[1]-pt000[1]; neg_fpart[1] = 1-fpart[1];
 	fpart[2] = idxX[2]-pt000[2]; neg_fpart[2] = 1-fpart[2];
-	S retval = (S)0.0;
+	auto retval = (S)0.0;
 
 	// bound check
 	if ( pt000[0] < -srcgrid[0]/2 || pt000[0] > srcgrid[0]/2 ) return 0.0;
@@ -417,11 +417,11 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 class CrystRMS : public protocols::moves::Mover {
 public:
-	CrystRMS() { }
+	CrystRMS() = default;
 
-	virtual std::string get_name() const { return "CrystRMS"; }
+	std::string get_name() const override { return "CrystRMS"; }
 
-	void apply( Pose & pose) {
+	void apply( Pose & pose) override {
 		if ( !native ) {
 			native = core::pose::PoseOP( new core::pose::Pose() );
 			core::import_pose::pose_from_file( *native, option[in::file::native]() , core::import_pose::PDB_file);
@@ -454,7 +454,7 @@ public:
 		NOFILT_ = option[crystdock::nofilt]();
 	}
 
-	virtual std::string get_name() const { return "CrystDesign"; }
+	std::string get_name() const override { return "CrystDesign"; }
 
 	void
 	filter_and_report( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf, bool &pass, bool &need_greedy, bool runfilter, bool report ) {
@@ -469,7 +469,7 @@ public:
 		need_greedy=false;
 
 		//
-		SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		//core::Size nsubunits = symm_info->subunits();
 		core::Size nres_asu = symm_info->num_independent_residues();
@@ -609,7 +609,7 @@ public:
 		///
 		/// SETUP
 		///
-		SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info = ( SymmConf.Symmetry_Info() );
 		core::Size nres_asu = symm_info->num_independent_residues();
 
@@ -722,7 +722,7 @@ public:
 		utility::vector1<int> fixedres = option[crystdock::fixedres];
 
 		// symminfo
-		SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		//core::Size nsubunits = symm_info->subunits();
 		core::Size nres_asu = symm_info->num_independent_residues();
@@ -757,7 +757,7 @@ public:
 					iru  = energy_graph.get_node(i)->edge_list_begin(),
 					irue = energy_graph.get_node(i)->edge_list_end();
 					iru != irue; ++iru ) {
-				EnergyEdge & edge( static_cast< EnergyEdge & > (**iru) );
+				auto & edge( static_cast< EnergyEdge & > (**iru) );
 
 				Size const j = edge.get_other_ind( i );
 				conformation::Residue const & rsd2( pose.residue( j ) );
@@ -805,7 +805,7 @@ public:
 		core::Real b=0.28;
 
 		// symminfo
-		SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		//core::Size nsubunits = symm_info->subunits();
 		core::Size nres_asu = symm_info->num_independent_residues();
@@ -864,7 +864,7 @@ public:
 		using namespace core::conformation::symmetry;
 
 		//
-		SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		//core::Size nsubunits = symm_info->subunits();
 		core::Size nres_asu = symm_info->num_independent_residues();
@@ -980,7 +980,7 @@ public:
 		using namespace core::conformation::symmetry;
 
 		//
-		SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		//core::Size nsubunits = symm_info->subunits();
 		core::Size nres_asu = symm_info->num_independent_residues();
@@ -1075,7 +1075,7 @@ public:
 		}
 	}
 
-	void apply( Pose & pose) {
+	void apply( Pose & pose) override {
 		using namespace core;
 		using namespace core::scoring;
 		using namespace core::chemical;
@@ -1105,7 +1105,7 @@ public:
 		setup_.apply( pose );
 
 		//
-		SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		//core::Size nsubunits = symm_info->subunits();
 		core::Size nres_asu = symm_info->num_independent_residues();
@@ -1213,9 +1213,9 @@ public:
 		relax_=relax;
 	}
 
-	virtual std::string get_name() const { return "CrystRelax"; }
+	std::string get_name() const override { return "CrystRelax"; }
 
-	void apply( Pose & pose) {
+	void apply( Pose & pose) override {
 		using namespace core;
 		using namespace core::scoring;
 		using namespace core::conformation::symmetry;
@@ -1266,7 +1266,7 @@ public:
 class CrystCluster : public protocols::moves::Mover {
 private:
 public:
-	CrystCluster() {}
+	CrystCluster() = default;
 
 	Pose
 	transform_pdb( Pose const &pose, SpacegroupHit sh ) {
@@ -1276,7 +1276,7 @@ public:
 		return posecopy;
 	}
 
-	void apply( Pose & pose) {
+	void apply( Pose & pose) override {
 		numeric::xyzVector<Real> native_shift = center_pose_at_origin( pose );
 
 		std::string infile = option[ crystdock::hits_in ];
@@ -1325,7 +1325,7 @@ public:
 		}
 	}
 
-	virtual std::string get_name() const { return "CrystSlideDock"; }
+	std::string get_name() const override { return "CrystSlideDock"; }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1369,7 +1369,7 @@ public:
 		using namespace core::conformation::symmetry;
 
 		core::scoring::motif::MotifHashManager & mman(*core::scoring::motif::MotifHashManager::get_instance());
-		SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		core::Size nsubunits = symm_info->subunits();
 
@@ -1399,7 +1399,7 @@ public:
 					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->upper_edge_list_end();
 					iru != irue; ++iru ) {
-				EnergyEdge & edge( static_cast< EnergyEdge & > (**iru) );
+				auto & edge( static_cast< EnergyEdge & > (**iru) );
 
 				Size const j( edge.get_second_node_ind() );
 				conformation::Residue const & rsd2( pose.residue( j ) );
@@ -1480,7 +1480,7 @@ public:
 	}
 
 
-	void apply( Pose & pose) {
+	void apply( Pose & pose) override {
 		numeric::xyzVector<Real> native_shift = center_pose_at_origin( pose );
 
 		std::string infile = option[ crystdock::hits_in ];
@@ -1674,7 +1674,7 @@ public:
 		}
 	}
 
-	virtual std::string get_name() const { return "CrystSlideDock"; }
+	std::string get_name() const override { return "CrystSlideDock"; }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1726,7 +1726,7 @@ public:
 		eval_native_ = option[ crystdock::eval_native ]();
 	}
 
-	virtual std::string get_name() const { return "CrystFFTDock"; }
+	std::string get_name() const override { return "CrystFFTDock"; }
 
 	// write density grids in MRC format for debugging
 	void
@@ -1802,7 +1802,7 @@ public:
 		numeric::xyzVector<Real> T,
 		FArray3D<Real> const &r_rho_ca);
 
-	void apply( Pose & pose);
+	void apply( Pose & pose) override;
 };
 
 // write density grids in MRC --  debugging only for now
@@ -2078,9 +2078,9 @@ CrystFFTDock::resample_maps_and_get_self(
 		xmax = std::max( xmax, std::abs(boundbox[0] )); ymax = std::max( ymax, std::abs(boundbox[1] )); zmax = std::max( zmax, std::abs(boundbox[2] ));
 	}
 
-	int AMAX = (int)std::ceil( 0.5*(xmax/grid_[0]-1) );
-	int BMAX = (int)std::ceil( 0.5*(ymax/grid_[1]-1) );
-	int CMAX = (int)std::ceil( 0.5*(zmax/grid_[2]-1) );
+	auto AMAX = (int)std::ceil( 0.5*(xmax/grid_[0]-1) );
+	auto BMAX = (int)std::ceil( 0.5*(ymax/grid_[1]-1) );
+	auto CMAX = (int)std::ceil( 0.5*(zmax/grid_[2]-1) );
 
 	// calculate base transformation
 	for ( int z=1; z<=grid_[2]; ++z ) {
@@ -2674,7 +2674,7 @@ CrystFFTDock::get_interfaces_allatom(
 					if ( contact>mininterface_ ) {
 						// make minipose & score
 						core::pose::Pose poseCopy = pose;
-						Real motif_score = (Real)contact;
+						auto motif_score = (Real)contact;
 						allInterfaces.push_back( SingleInterface( R_i, T_i, motif_score ) );
 					}
 				}
@@ -2849,7 +2849,7 @@ CrystFFTDock::apply( Pose & pose) {
 		IDB.add_interface( InterfaceHit( 1e9, native_shift[0],native_shift[1],native_shift[2], 0, iinfo ) );
 	}
 
-	for ( int ctr=(int)rot_lb; ctr<=(int)rot_ub ; ++ctr ) {
+	for ( auto ctr=(int)rot_lb; ctr<=(int)rot_ub ; ++ctr ) {
 		TR << "Rotation " << ctr << " of " << urs.nrots() << std::endl;
 		urs.get(ctr, r_local);
 
@@ -2906,9 +2906,9 @@ CrystFFTDock::apply( Pose & pose) {
 			// all the magic is in here
 			do_convolution( r_rho_ca, working_s, s_i, conv_out);
 
-			for ( int z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z ) {
-				for ( int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y ) {
-					for ( int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x ) {
+			for ( auto z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z ) {
+				for ( auto y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y ) {
+					for ( auto x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x ) {
 						collision_map(x,y,z) += conv_out(x,y,z);
 					}
 				}
@@ -2930,9 +2930,9 @@ CrystFFTDock::apply( Pose & pose) {
 			// do CB fft
 			transform_map( r_rho_cb, s_inv, t_inv, working_s);
 			do_convolution( r_rho_cb, working_s, s_i, conv_out);
-			for ( int z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z ) {
-				for ( int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y ) {
-					for ( int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x ) {
+			for ( auto z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z ) {
+				for ( auto y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y ) {
+					for ( auto x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x ) {
 						if ( conv_out(x,y,z)*voxel_volume > mininterface_ ) {
 							sum_interface_area(x,y,z) += conv_out(x,y,z)*voxel_volume;
 							ambiguous_interface_map(x,y,z).push_back( s );
@@ -2982,9 +2982,9 @@ CrystFFTDock::apply( Pose & pose) {
 
 		// finally add nonclashing interfaces to the DB
 		Real mininterfacesum_filter = std::max( 3*mininterface_, mininterface_sum_);
-		for ( int z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z ) {
-			for ( int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y ) {
-				for ( int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x ) {
+		for ( auto z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z ) {
+			for ( auto y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y ) {
+				for ( auto x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x ) {
 					if ( collision_map(x,y,z) < maxclash ) {
 						nnonclashing++;
 					}
@@ -3121,7 +3121,7 @@ my_main( void* ) {
 	// main loop
 	protocols::jd2::JobDistributor::get_instance()->go( seq );
 
-	return 0;
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

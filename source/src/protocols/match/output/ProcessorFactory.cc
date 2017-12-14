@@ -70,9 +70,9 @@ namespace output {
 
 static basic::Tracer TR( "protocols.match.output.ProcessorFactory" );
 
-ProcessorFactory::ProcessorFactory() {}
+ProcessorFactory::ProcessorFactory() = default;
 
-ProcessorFactory::~ProcessorFactory() {}
+ProcessorFactory::~ProcessorFactory() = default;
 
 MatchProcessorOP
 ProcessorFactory::create_processor(
@@ -153,7 +153,7 @@ ProcessorFactory::create_grouper(
 		return rot_grouper;
 	} else {
 		utility_exit_with_message( "Could not recognize requested MatchGrouper named: " + mtask->grouper_name() );
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -176,7 +176,7 @@ ProcessorFactory::create_evaluator(
 		return rms_eval;
 	} else {
 		utility_exit_with_message( "Could not recognize requested MatchEvaluator named: " + mtask->evaluator_name() );
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -189,11 +189,8 @@ ProcessorFactory::create_filters(
 {
 	if ( ! mtask->filter_names().empty() ) {
 		std::cerr << "ERROR: match::output::ProcessorFactory currently lacks logic to instantiate any of the desired filters" << std::endl;
-		for ( std::list< std::string >::const_iterator
-				filtiter = mtask->filter_names().begin(),
-				filtiter_end = mtask->filter_names().end();
-				filtiter != filtiter_end; ++filtiter ) {
-			std::cerr << "Requested filter '" << *filtiter << "' cannot be instantiated" << std::endl;
+		for ( auto const & filtiter : mtask->filter_names() ) {
+			std::cerr << "Requested filter '" << filtiter << "' cannot be instantiated" << std::endl;
 		}
 		utility_exit_with_message( "Processor factory cannot create requested filter(s)" );
 
@@ -291,14 +288,14 @@ ProcessorFactory::create_output_writer(
 				"_" );
 		}
 
-		runtime_assert( matcher->downstream_builder( 1 /* wrong */ ) != 0 );
+		runtime_assert( matcher->downstream_builder( 1 /* wrong */ ) != nullptr );
 		for ( Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
 			pdb_writer->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
 		}
 		return pdb_writer;
 	} else {
 		utility_exit_with_message( "Could not recognize requested OutputWriter named: '" + mtask->output_writer_name() + "'" );
-		return 0;
+		return nullptr;
 
 	}
 

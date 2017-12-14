@@ -41,7 +41,7 @@ std::string LoopHashLibraryLoaderCreator::loader_type() const
 }
 
 
-LoopHashLibraryLoader::LoopHashLibraryLoader() {}
+LoopHashLibraryLoader::LoopHashLibraryLoader() = default;
 
 /// @details Ensure the %ResourceOptions is a LoopHashLibraryOptions instance and construct a new LoopHashLibrary from
 /// it.  The locator_id and istream are not used.
@@ -56,7 +56,7 @@ LoopHashLibraryLoader::create_resource(
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "LoopHashLibraryLoader expected to be given a LoopHashLibraryOptions object, " \
 			"but was given a non-LoopHashLibraryOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
-	LoopHashLibraryOptions const & lh_opts = static_cast< LoopHashLibraryOptions const & > ( options );
+	auto const & lh_opts = static_cast< LoopHashLibraryOptions const & > ( options );
 	LoopHashLibraryOP lh_library( new LoopHashLibrary( lh_opts.loop_sizes() ) );
 	lh_library->load_mergeddb();
 	return lh_library;

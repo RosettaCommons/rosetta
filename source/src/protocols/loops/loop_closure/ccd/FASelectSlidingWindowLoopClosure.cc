@@ -100,7 +100,7 @@ FASelectSlidingWindowLoopClosure::FASelectSlidingWindowLoopClosure() :
 	set_defaults();
 }
 
-FASelectSlidingWindowLoopClosure::~FASelectSlidingWindowLoopClosure() {}
+FASelectSlidingWindowLoopClosure::~FASelectSlidingWindowLoopClosure() = default;
 
 std::string
 FASelectSlidingWindowLoopClosure::get_name() const {
@@ -123,7 +123,7 @@ void FASelectSlidingWindowLoopClosure::register_options() {
 void
 FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_cut ) {
 	using namespace fragment;
-	runtime_assert( closure_fragments() != 0 );
+	runtime_assert( closure_fragments() != nullptr );
 	// in case that we jump out... add extra scrores
 	core::pose::setPoseExtraScore( more_cut, "post_relax_looprms", -1 );
 	core::pose::setPoseExtraScore( more_cut, "fa_score", -1 );
@@ -161,7 +161,7 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 	///* score 10% frags with full-atom
 	std::string frag_file=basic::options::option[ basic::options::OptionKeys::out::file::silent ]()+"_best_frags";
 
-	FragList::iterator frag_list_it = scored_frags.begin();
+	auto frag_list_it = scored_frags.begin();
 	for ( Size ct = 1; ct <= Ntest; ct ++, ++frag_list_it ) {
 		FragID const& frag( frag_list_it->second );
 

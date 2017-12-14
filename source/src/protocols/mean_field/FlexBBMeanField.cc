@@ -86,7 +86,7 @@ FlexBBMeanField::FlexBBMeanField(core::uint option, core::pose::PoseOPs & poses,
 }
 
 // Destructor
-FlexBBMeanField::~FlexBBMeanField() {}
+FlexBBMeanField::~FlexBBMeanField() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////

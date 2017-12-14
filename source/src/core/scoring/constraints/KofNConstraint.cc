@@ -172,9 +172,9 @@ KofNConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weight
 	utility::vector1<EnergyMap> tmp_EMaps;
 
 	// step 1 score
-	for ( ConstraintCOPs::const_iterator member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ) {
+	for ( auto const & member_it : member_constraints() ) {
 		EnergyMap emap_i;
-		(*member_it)->score(xyz_func, weights, emap_i);
+		member_it->score(xyz_func, weights, emap_i);
 
 		tmp_EMaps.push_back( emap_i );
 		all_scores.push_back( calculate_total_cst_score( weights, emap_i ) );
@@ -223,13 +223,13 @@ KofNConstraint::calculate_total_cst_score( EnergyMap const & weights, EnergyMap 
 ConstraintOP
 KofNConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const {
 	ConstraintCOPs new_csts;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); ++cst_it ) {
-		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
+	for ( auto const & cst_it : member_constraints() ) {
+		ConstraintOP new_cst = cst_it->remap_resid( seqmap );
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
 	if ( new_csts.size() > 0 ) {
 		return ConstraintOP( new KofNConstraint( new_csts ) );
-	} else return NULL;
+	} else return nullptr;
 }
 
 
@@ -259,8 +259,8 @@ KofNConstraint::show( std::ostream& out) const
 		active_constraints_[i]->show(out);
 	}
 	out << "KofNConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
-		(*cst_it)->show(out);
+	for ( auto const & cst_it : member_constraints() ) {
+		cst_it->show(out);
 	}
 	out << " ...all member constraints of this KofNConstraint shown." << std::endl;
 }
@@ -273,8 +273,8 @@ KofNConstraint::active_constraints() const {
 void
 KofNConstraint::show_def( std::ostream& out, pose::Pose const& pose ) const {
 	out << type() << " " << K_ << std::endl;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
-		(*cst_it)->show_def( out, pose );
+	for ( auto const & cst_it : member_constraints() ) {
+		cst_it->show_def( out, pose );
 	}
 	out << "End_"<< type() << std::endl;
 }
@@ -300,7 +300,7 @@ void
 KofNConstraint::read_def( std::istream& data, core::pose::Pose const& pose,func::FuncFactory const& func_factory ) {
 	data >> K_;
 	ConstraintOP constr;
-	while ( ( constr = ConstraintIO::read_individual_constraint_new( data, pose, func_factory ) ) != 0 ) {
+	while ( ( constr = ConstraintIO::read_individual_constraint_new( data, pose, func_factory ) ) != nullptr ) {
 		add_individual_constraint(constr);
 	}
 	TR << "Read K of N constraints! K = " << K_ << " N = " << member_constraints().size() << std::endl;
@@ -310,7 +310,7 @@ bool KofNConstraint::operator == ( Constraint const & rhs ) const
 {
 	if ( ! MultiConstraint::operator == ( rhs ) ) return false;
 
-	KofNConstraint const & rhs_kofn( static_cast< KofNConstraint const & > ( rhs ));
+	auto const & rhs_kofn( static_cast< KofNConstraint const & > ( rhs ));
 	if ( cst_score_types_ != rhs_kofn.cst_score_types_ ) return false;
 	if ( K_ != rhs_kofn.K_ ) return false;
 

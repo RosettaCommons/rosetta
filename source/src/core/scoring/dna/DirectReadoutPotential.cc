@@ -86,8 +86,8 @@ DirectReadoutPotential::DirectReadoutPotential()
 						else if ( d==2 ) {  lib_aa_list=C_bins[x_bin][y_bin][z_bin];  }
 						else {  lib_aa_list=T_bins[x_bin][y_bin][z_bin];  }
 
-						for ( Size i=0; i<lib_aa_list.length(); i++ ) {
-							int const aa( chemical::aa_from_oneletter_code( lib_aa_list[i] ) );
+						for ( char i : lib_aa_list ) {
+							int const aa( chemical::aa_from_oneletter_code( i ) );
 							if ( aa == p ) { num_of_aa++; } //***need to convert to_comp to its aa_number-1
 						}
 
@@ -201,7 +201,7 @@ DirectReadoutPotential::get_xy_bin(Real coord) const
 {
 	if ( coord <= -13.5 || coord >= 13.5 )  {  return -99;  }
 	Real c = coord - ( -13.5 );
-	int bin = int(floor( c/3 ));
+	auto bin = int(floor( c/3 ));
 	return bin;
 }
 
@@ -210,7 +210,7 @@ DirectReadoutPotential::get_z_bin(Real coord) const
 {
 	if ( coord <= -6 || coord >= 6 )  {  return -99;  }
 	Real c = coord - ( -6 );
-	int bin = int(floor( c/3 ));
+	auto bin = int(floor( c/3 ));
 	return bin;
 }
 

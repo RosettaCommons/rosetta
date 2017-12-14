@@ -73,16 +73,7 @@ NamedAngleConstraint::NamedAngleConstraint(
 {
 }
 
-NamedAngleConstraint::NamedAngleConstraint(NamedAngleConstraint const & other) :
-	AngleConstraint( other ),
-	named_atom1_( other.named_atom1_ ),
-	named_atom2_( other.named_atom2_ ),
-	named_atom3_( other.named_atom3_ ),
-	type1_id_( other.type1_id_ ),
-	type2_id_( other.type2_id_ ),
-	type3_id_( other.type3_id_ )
-{
-}
+NamedAngleConstraint::NamedAngleConstraint(NamedAngleConstraint const & /*other*/) = default;
 
 
 
@@ -125,7 +116,7 @@ NamedAngleConstraint::remapped_clone(
 	if ( id1.valid() && id2.valid() && id3.valid() ) {
 		return ConstraintOP( new NamedAngleConstraint( atom1, atom2, atom3, func()->clone(), score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -152,7 +143,7 @@ bool NamedAngleConstraint::operator == ( Constraint const & rhs ) const {
 	// through the mutual invocation of same_type_as_me
 	if ( ! AngleConstraint::operator == ( rhs ) ) return false;
 
-	NamedAngleConstraint const & rhs_napc( static_cast< NamedAngleConstraint const & > ( rhs ) );
+	auto const & rhs_napc( static_cast< NamedAngleConstraint const & > ( rhs ) );
 	if ( named_atom1_ != rhs_napc.named_atom1_ ) return false;
 	if ( named_atom2_ != rhs_napc.named_atom2_ ) return false;
 	if ( named_atom3_ != rhs_napc.named_atom3_ ) return false;
@@ -172,9 +163,9 @@ bool NamedAngleConstraint::same_type_as_me( Constraint const & other ) const
 void
 NamedAngleConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFunction const& ) const {
 	// if ( pose_chemical_checksum_ == pose.get_current_chemical_checksum() )
-	core::Size type1_id_now = (core::Size)&( xyz.residue( named_atom1_.rsd() ).type() );
-	core::Size type2_id_now = (core::Size)&( xyz.residue( named_atom2_.rsd() ).type() );
-	core::Size type3_id_now = (core::Size)&( xyz.residue( named_atom3_.rsd() ).type() );
+	auto type1_id_now = (core::Size)&( xyz.residue( named_atom1_.rsd() ).type() );
+	auto type2_id_now = (core::Size)&( xyz.residue( named_atom2_.rsd() ).type() );
+	auto type3_id_now = (core::Size)&( xyz.residue( named_atom3_.rsd() ).type() );
 	if ( type1_id_ != type1_id_now || type2_id_ != type2_id_now  || type3_id_ != type3_id_now ) {
 		atom1( id::AtomID( xyz.residue( named_atom1_.rsd() ).atom_index( named_atom1_.atom() ), named_atom1_.rsd() ));
 		atom2( id::AtomID( xyz.residue( named_atom2_.rsd() ).atom_index( named_atom2_.atom() ), named_atom2_.rsd() ));

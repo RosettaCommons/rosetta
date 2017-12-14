@@ -31,7 +31,7 @@ StepWiseSamplerComb::StepWiseSamplerComb():
 	is_empty_( false )
 {}
 
-StepWiseSamplerComb::~StepWiseSamplerComb(){}
+StepWiseSamplerComb::~StepWiseSamplerComb()= default;
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerComb::init() {
 	runtime_assert( !rotamer_list_.empty() );

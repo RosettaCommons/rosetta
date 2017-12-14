@@ -51,7 +51,7 @@ public:
 	typedef numeric::expression_parser::ExpressionCOP ExpressionCOP;
 
 public:
-	VectorExpression( std::string name );
+	VectorExpression( std::string const & name );
 	~VectorExpression() override;
 
 	/// @brief DO NOT CALL THIS FUNCTION.  Vector expressions return

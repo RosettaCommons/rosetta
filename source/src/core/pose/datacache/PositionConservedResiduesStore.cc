@@ -30,7 +30,7 @@ namespace core {
 namespace pose {
 namespace datacache {
 
-PositionConservedResiduesStore::PositionConservedResiduesStore() {}
+PositionConservedResiduesStore::PositionConservedResiduesStore() = default;
 
 basic::datacache::CacheableDataOP PositionConservedResiduesStore::clone() const {
 	return basic::datacache::CacheableDataOP( new PositionConservedResiduesStore(*this) );

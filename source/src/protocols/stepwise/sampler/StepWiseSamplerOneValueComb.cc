@@ -26,7 +26,7 @@ StepWiseSamplerOneValueComb::StepWiseSamplerOneValueComb():
 	StepWiseSamplerSizedComb()
 {}
 
-StepWiseSamplerOneValueComb::~StepWiseSamplerOneValueComb(){}
+StepWiseSamplerOneValueComb::~StepWiseSamplerOneValueComb()= default;
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ StepWiseSamplerOneValueComb::get_value_list( utility::vector1< Size > const & id
 
 	for ( Size n = 1; n <= id_list.size(); n++ ) {
 		if ( id_list[n] == id_list_cached_[n] ) continue;
-		StepWiseSamplerOneValue * rotamer_one_value = static_cast< StepWiseSamplerOneValue * >( rotamer_list_[n].get() );
+		auto * rotamer_one_value = static_cast< StepWiseSamplerOneValue * >( rotamer_list_[n].get() );
 		value_list_cached_[n] = rotamer_one_value->value( id_list[n] );
 	}
 

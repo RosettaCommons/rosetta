@@ -124,7 +124,7 @@ BinTransitionData::BinTransitionData( BinTransitionData const &src ): //TODO -- 
 
 /// @brief Default destructor for BinTransitionData
 ///
-BinTransitionData::~BinTransitionData() {}
+BinTransitionData::~BinTransitionData() = default;
 
 /// @brief Clone operation for BinTransitionData.
 /// @details Returns an owning pointer to a copy of this object.

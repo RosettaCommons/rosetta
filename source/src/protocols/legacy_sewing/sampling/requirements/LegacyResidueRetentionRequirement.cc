@@ -89,8 +89,8 @@ bool
 LegacyResidueRetentionRequirement::violates(
 	AssemblyCOP assembly
 ) const {
-	std::set<core::Size>::const_iterator it = required_resnums_.begin();
-	std::set<core::Size>::const_iterator it_end = required_resnums_.end();
+	auto it = required_resnums_.begin();
+	auto it_end = required_resnums_.end();
 	for ( ; it != it_end; ++it ) {
 
 		bool found = false;
@@ -150,8 +150,8 @@ LegacyResidueRetentionRequirement::show(
 ) const {
 	out << "/////// LegacyResidueRetentionRequirement - Assembly must have a segment with ID " << model_id_
 		<< " and residues ";
-	std::set<core::Size>::const_iterator it = required_resnums_.begin();
-	std::set<core::Size>::const_iterator it_end = required_resnums_.end();
+	auto it = required_resnums_.begin();
+	auto it_end = required_resnums_.end();
 	for ( ; it != it_end; ++it ) {
 		out << " " << *it;
 	}

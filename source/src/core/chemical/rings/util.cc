@@ -30,7 +30,7 @@
 #include <numeric/constants.hh>
 
 // C++ header
-#include <math.h>
+#include <cmath>
 
 
 // Construct tracer.

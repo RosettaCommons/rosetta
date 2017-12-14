@@ -973,7 +973,7 @@ advance_euler_angles(
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-MatchOutputTracker::MatchOutputTracker() {}
+MatchOutputTracker::MatchOutputTracker() = default;
 
 void
 MatchOutputTracker::note_output_match( match_lite const & m )

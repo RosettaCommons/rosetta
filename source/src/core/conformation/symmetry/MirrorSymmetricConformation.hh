@@ -22,7 +22,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryTransform.hh>
+//#include <core/conformation/symmetry/SymmetryTransform.hh>
 
 #include <utility/vector1.hh>
 

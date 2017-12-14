@@ -125,8 +125,7 @@ DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation( std::s
 }
 
 // destructor
-DesignBySecondaryStructureOperation::~DesignBySecondaryStructureOperation()
-{}
+DesignBySecondaryStructureOperation::~DesignBySecondaryStructureOperation() = default;
 
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
@@ -168,7 +167,7 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 	std::string pred_ss( "" );
 	utility::vector1< core::Real > psipred_prob;
 	if ( ! psipred_interface_ ) {
-		runtime_assert( ss_predictor_ != 0 );
+		runtime_assert( ss_predictor_ != nullptr );
 		std::string sequence( "" );
 		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( pose.residue( i ).is_protein() ) {
@@ -254,7 +253,7 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 			// mutate the residue to all allowable positions and check psipred
 			core::pack::task::ResidueLevelTask const & res_task( task.nonconst_residue_task( resids_to_design[i] ) );
 			utility::vector1< char > types;
-			for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter it=res_task.allowed_residue_types_begin(); it != res_task.allowed_residue_types_end(); ++it ) {
+			for ( auto it=res_task.allowed_residue_types_begin(); it != res_task.allowed_residue_types_end(); ++it ) {
 				types.push_back( (*it)->name1() );
 			}
 			for ( core::Size j=1; j<=types.size(); ++j ) {

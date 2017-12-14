@@ -116,8 +116,8 @@
 //Added by Parin
 //#include <core/scoring/ScoreType.hh>
 #include <list>
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 
 
 using namespace core;
@@ -132,7 +132,7 @@ using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::modeler::rna;
 using namespace protocols::stepwise::legacy::modeler::rna;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 static basic::Tracer TR( "swa_rna_util" );
 

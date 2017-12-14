@@ -94,17 +94,17 @@ public:
 	operator=( MPInterfaceStatistics const & src );
 
 	/// @brief Destructor
-	~MPInterfaceStatistics();
+	~MPInterfaceStatistics() override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Get Membrane protein interface statistics
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -196,7 +196,7 @@ private: // methods
 private: // data
 
 	/// @brief Membrane protein?
-	bool membrane_;
+	bool membrane_{};
 
 	/// @brief scorefunction
 	core::scoring::ScoreFunctionOP sfxn_;
@@ -238,7 +238,6 @@ private: // data
 /// @brief Construct a Default Membrane Position Mover
 MPInterfaceStatistics::MPInterfaceStatistics() :
 	Mover(),
-	membrane_(),
 	sfxn_(),
 	partner_(),
 	partners_(),
@@ -253,20 +252,7 @@ MPInterfaceStatistics::MPInterfaceStatistics() :
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
-MPInterfaceStatistics::MPInterfaceStatistics( MPInterfaceStatistics const & src ) :
-	Mover( src ),
-	membrane_( src.membrane_ ),
-	sfxn_( src.sfxn_ ),
-	partner_( src.partner_ ),
-	partners_( src.partners_ ),
-	jumps_( src.jumps_ ),
-	interfaces_( src.interfaces_ ),
-	chains_( src.chains_ ),
-	uniq_( src.uniq_ ),
-	in_mem_( src.in_mem_ ),
-	intf_( src.intf_ ),
-	exposed_( src.exposed_ )
-{}
+MPInterfaceStatistics::MPInterfaceStatistics( MPInterfaceStatistics const & /*src*/ ) = default;
 
 /// @brief Assignment Operator
 /// @details Make a deep copy of this mover object, overriding the assignment operator
@@ -283,7 +269,7 @@ MPInterfaceStatistics::operator=( MPInterfaceStatistics const & src )
 }
 
 /// @brief Destructor
-MPInterfaceStatistics::~MPInterfaceStatistics() {}
+MPInterfaceStatistics::~MPInterfaceStatistics() = default;
 
 /////////////////////
 /// Mover Methods ///
@@ -340,7 +326,7 @@ void MPInterfaceStatistics::apply( Pose & pose ) {
 
 		// cast ints in vector to core::Sizes
 		for ( core::Size i = 1; i <= jumps.size(); ++i ) {
-			core::Size thisjump = static_cast< core::Size >( jumps[ i ] );
+			auto thisjump = static_cast< core::Size >( jumps[ i ] );
 			jumps_.push_back( thisjump );
 		}
 
@@ -441,10 +427,10 @@ utility::vector1< bool > MPInterfaceStatistics::get_chains_from_cmd( Pose & pose
 		core::Size res_chain = pose.residue( r ).chain();
 
 		// go through chains in string, 0-indexed
-		for ( core::Size c = 0; c < chains_.size(); ++c ) {
+		for ( char c : chains_ ) {
 
 			// get chain
-			core::Size chain = get_chain_id_from_chain( chains_[ c ], pose );
+			core::Size chain = get_chain_id_from_chain( c, pose );
 
 			// if residue chain is the same as in user-provided string, set to true
 			if ( res_chain == chain ) {
@@ -505,7 +491,7 @@ utility::vector1< bool > MPInterfaceStatistics::get_chains_from_cmd( Pose & pose
 
 //////////////////////////////////////////////////////////////////////
 
-typedef utility::pointer::shared_ptr< MPInterfaceStatistics > MPInterfaceStatisticsOP;
+using MPInterfaceStatisticsOP = utility::pointer::shared_ptr<MPInterfaceStatistics>;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -530,10 +516,10 @@ Real MPInterfaceStatistics::get_size( Pose & pose ) {
 		Pose subpose;
 
 		// go through chains in partner, string indexes from 0
-		for ( core::Size c = 0; c < partners_[ p ].size(); ++c ) {
+		for ( char c : partners_[ p ] ) {
 
 			// get chainID from chain
-			core::Size chainid( get_chain_id_from_chain( partners_[ p ][ c ], pose ) );
+			core::Size chainid( get_chain_id_from_chain( c, pose ) );
 
 			// go through pose chains to find pose chain in vector
 			for ( core::Size i = 1; i <= pose_chains.size(); ++i ) {

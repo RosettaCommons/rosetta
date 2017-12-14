@@ -287,8 +287,8 @@ ArchiveManager::ArchiveManager( core::Size archive_rank, core::Size jd_master_ra
 
 core::Size ArchiveManager::unfinished_batches() const {
 	Size unfinished_batches( 0 );
-	for ( BatchList::const_iterator it = batches().begin(); it != batches().end(); ++it ) {
-		if ( !it->has_finished() && !it->is_cancelled() && it->valid() ) ++unfinished_batches;
+	for ( auto const & it : batches() ) {
+		if ( !it.has_finished() && !it.is_cancelled() && it.valid() ) ++unfinished_batches;
 	}
 	return unfinished_batches;
 }
@@ -458,8 +458,8 @@ void
 ArchiveManager::idle() {
 
 	{ //save archive
-		static time_t last_save( time(NULL) );
-		time_t now( time( NULL ) );
+		static time_t last_save( time(nullptr) );
+		time_t now( time( nullptr ) );
 		Size const elapsedtime( now - last_save );
 		if ( elapsedtime > save_archive_time_interval_ ) {
 			save_archive();
@@ -478,9 +478,9 @@ ArchiveManager::idle() {
 	// if ( !the_archive().finished() && the_archive().ready_for_batch() ) {
 	//  the_archive().generate_batch();
 	// } else {
-	time_t before( time(NULL) );
+	time_t before( time(nullptr) );
 	the_archive().idle();
-	time_t after( time( NULL ) );
+	time_t after( time( nullptr ) );
 	if ( after-before > 1 ) tr.Debug << "spend " << after-before << " seconds in archives idle method... " << std::endl;
 	//sleep some more if idle didn't use much time
 	if ( after-before < 5 ) sleep( (5 - ( after - before )) );
@@ -500,7 +500,7 @@ void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
 
 	tr.Debug << "found " << tags_in_file.size() << " decoys in " << batch.silent_out() << std::endl;
 
-	utility::vector1< std::string >::iterator iter = tags_in_file.begin();
+	auto iter = tags_in_file.begin();
 	std::string unread_tag = "none";
 	for ( Size ct = 1;
 			iter != tags_in_file.end() && ct <= batch.decoys_returned();
@@ -654,9 +654,9 @@ ArchiveManager::queue_batch( Batch const& batch ) {
 }
 
 void BaseArchiveManager::cancel_batches_previous_to( core::Size batch_id, bool allow_reading_of_decoys ) {
-	for ( BatchList::iterator it = batches_.begin(); it!=batches_.end(); ++it ) {
-		if ( it->id() == batch_id ) break;
-		cancel_batch( *it, allow_reading_of_decoys );
+	for ( auto & batche : batches_ ) {
+		if ( batche.id() == batch_id ) break;
+		cancel_batch( batche, allow_reading_of_decoys );
 	}
 }
 

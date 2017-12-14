@@ -133,7 +133,7 @@ public:
 
 private:
 	core::Size type_, res1_, res2_;
-	core::Real Jdipolar_, Reduced_Jdipolar_;
+	core::Real Jdipolar_;
 
 };
 
@@ -146,9 +146,9 @@ public:
 	RDC_data(){}
 
 	RDC_data(
-		std::string filename
+		std::string const & filename
 	) :
-		filename_(std::move( filename ))
+		filename_( filename )
 	{
 		read_RDC_file( filename_ );
 	}

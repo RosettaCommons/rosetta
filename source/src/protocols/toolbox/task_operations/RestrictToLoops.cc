@@ -74,7 +74,7 @@ RestrictToLoops::RestrictToLoops( RestrictToLoops const & rhs ) : parent(rhs) {
 	copy(*this, rhs);
 }
 
-RestrictToLoops::~RestrictToLoops() {}
+RestrictToLoops::~RestrictToLoops() = default;
 
 RestrictToLoops & RestrictToLoops::operator = ( RestrictToLoops const & rhs ) {
 	if ( this == &rhs ) return *this;
@@ -122,7 +122,7 @@ void RestrictToLoops::provide_attributes( AttributeList & attributes ) {
 void RestrictToLoops::init() {
 	set_design_loop( false );
 	set_restrict_only_design_to_loops( false );
-	set_loops( NULL );
+	set_loops( nullptr );
 }
 
 void RestrictToLoops::copy( RestrictToLoops & lhs, RestrictToLoops const & rhs ) {

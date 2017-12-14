@@ -36,8 +36,8 @@ class MetricCalculatorFitnessFunction : public SingleStateFitnessFunction {
 public:
 	MetricCalculatorFitnessFunction() : SingleStateFitnessFunction() {}
 	MetricCalculatorFitnessFunction(
-		std::string calculator_name,
-		std::string key
+		std::string const & calculator_name,
+		std::string const & key
 	);
 
 	~MetricCalculatorFitnessFunction() override = default;

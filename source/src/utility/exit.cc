@@ -33,14 +33,12 @@
 #endif
 
 #include <string>
-#include <sstream>
 #include <vector>
+#include <sstream>
 
 #ifndef _WIN32
 #include <unistd.h>
 #endif
-
-#include <cstdio>
 
 #ifdef _WIN32
 #include <io.h>
@@ -59,7 +57,7 @@ struct UtilityExitException : excn::Exception //noboday should be allowed to thr
 
 
 /// Place holder for 'end-action' of utility::exit(…)
-static void (*main_exit_callback)(void) = 0;
+static void (*main_exit_callback)(void) = nullptr;
 
 void set_main_exit_callback( UtilityExitCallBack my_callback )
 {
@@ -69,7 +67,7 @@ void set_main_exit_callback( UtilityExitCallBack my_callback )
 /// Array to hold all additional exit-callbacks
 std::vector< UtilityExitCallBack > & get_all_exit_callbacks()
 {
-	static std::vector< UtilityExitCallBack > * all_CB = new std::vector< UtilityExitCallBack >;
+	static auto * all_CB = new std::vector< UtilityExitCallBack >;
 	return *all_CB;
 }
 
@@ -80,7 +78,7 @@ void add_exit_callback( UtilityExitCallBack cb)
 
 void remove_exit_callback( UtilityExitCallBack cb )
 {
-	for ( std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it ) {
+	for ( auto it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it ) {
 		if ( (*it) == cb ) {
 			get_all_exit_callbacks().erase(it);
 			break;
@@ -101,7 +99,7 @@ exit(
 {
 
 	// Calling all preset exit-callback's
-	for ( std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it ) {
+	for ( auto it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it ) {
 		(*it)();
 	}
 

@@ -55,7 +55,7 @@ WriteToDB_AA_to_terminal_loops (
 	core::pose::Pose & dssp_pose,
 	core::Size sandwich_PK_id_counter,
 	core::Size sw_can_by_sh_id,
-	std::string tag,
+	std::string const & tag,
 	bool starting_loop,
 	core::Size residue_begin,
 	core::Size residue_end);
@@ -68,7 +68,7 @@ WriteToDB_ending_loop(
 	core::pose::Pose & dssp_pose,
 	core::Size sandwich_PK_id_counter,
 	core::Size sw_can_by_sh_id,
-	std::string tag,
+	std::string const & tag,
 	core::Size max_starting_loop_size_);
 
 core::Size
@@ -111,7 +111,7 @@ WriteToDB_min_avg_dis_between_sheets_by_cen_res (
 	utility::sql_database::sessionOP db_session,
 	core::Size sw_can_by_sh_id,
 	core::pose::Pose & dssp_pose,
-	utility::vector1<core::Size> all_distinct_sheet_ids,
+	utility::vector1<core::Size> const & all_distinct_sheet_ids,
 	core::Size min_num_strands_in_sheet_);
 
 
@@ -121,14 +121,14 @@ WriteToDB_min_dis_between_sheets_by_all_res (
 	utility::sql_database::sessionOP db_session,
 	core::Size sw_can_by_sh_id,
 	core::pose::Pose & dssp_pose,
-	utility::vector1<core::Size> all_distinct_sheet_ids);
+	utility::vector1<core::Size> const & all_distinct_sheet_ids);
 
 core::Size
 WriteToDB_number_of_AAs_in_a_pair_of_edge_strands (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
-	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+	utility::vector1<SandwichFragment> const & bs_of_sw_can_by_sh,
 	core::Size max_num_sw_per_pdb_,
 	core::Real min_CA_CA_dis_,
 	core::Real max_CA_CA_dis_);
@@ -208,20 +208,20 @@ WriteToDB_rkde(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::Size rkde_PK_id_counter,
-	std::string tag,
+	std::string const & tag,
 	core::Size residue_number,
-	std::string residue_type);
+	std::string const & residue_type);
 
 core::Size
 WriteToDB_rkde_in_strands(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::Size rkde_in_strands_PK_id_counter,
-	std::string tag,
+	std::string const & tag,
 	core::Size sw_can_by_sh_id,
 	core::Size residue_number,
-	std::string residue_type,
-	std::string heading_direction);
+	std::string const & residue_type,
+	std::string const & heading_direction);
 
 core::Size
 WriteToDB_sheet (
@@ -236,7 +236,7 @@ WriteToDB_sheet_antiparallel(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::Size sheet_id,
-	std::string antiparallel);
+	std::string const & antiparallel);
 
 
 core::Size
@@ -245,19 +245,19 @@ WriteToDB_sheet_connectivity(
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
 	core::Size sandwich_PK_id_counter,
-	std::string tag,
+	std::string const & tag,
 	core::Size sw_can_by_sh_id,
-	std::string loop_kind,
+	std::string const & loop_kind,
 	core::Size intra_sheet_con_id,
 	core::Size inter_sheet_con_id,
-	std::string LR,
-	std::string cano_LR,
-	std::string PA_by_preceding_E,
-	std::string PA_by_following_E,
-	std::string cano_PA,
-	std::string heading_direction,
-	std::string heading_parallel,
-	std::string cano_parallel_EE,
+	std::string const & LR,
+	std::string const & cano_LR,
+	std::string const & PA_by_preceding_E,
+	std::string const & PA_by_following_E,
+	std::string const & cano_PA,
+	std::string const & heading_direction,
+	std::string const & heading_parallel,
+	std::string const & cano_parallel_EE,
 	core::Size loop_size,
 	core::Size start_res,
 	core::Size end_res);
@@ -275,7 +275,7 @@ WriteToDB_shortest_dis_between_facing_aro_in_sw (
 	utility::sql_database::sessionOP db_session,
 	core::Size sw_can_by_sh_id,
 	core::pose::Pose const & pose,
-	utility::vector1<core::Size> all_distinct_sheet_ids,
+	utility::vector1<core::Size> const & all_distinct_sheet_ids,
 	core::Size min_num_strands_in_sheet_);
 
 core::Size
@@ -285,14 +285,14 @@ WriteToDB_starting_loop(
 	core::pose::Pose & dssp_pose,
 	core::Size sandwich_PK_id_counter,
 	core::Size sw_can_by_sh_id,
-	std::string tag,
+	std::string const & tag,
 	core::Size max_starting_loop_size_);
 
 core::Size
 Run_WriteToDB_sandwich(
-	std::string tag,
+	std::string const & tag,
 	core::pose::Pose & dssp_pose,
-	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+	utility::vector1<SandwichFragment> const & bs_of_sw_can_by_sh,
 	core::Size max_num_sw_per_pdb_,
 	StructureID struct_id,
 	utility::sql_database::sessionOP  db_session,
@@ -307,12 +307,12 @@ WriteToDB_sandwich(
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
 	core::Size sandwich_PK_id_counter,
-	std::string tag,
+	std::string const & tag,
 	core::Size sw_can_by_sh_id,
 	core::Size sheet_id,
-	std::string sheet_antiparellel,
+	std::string const & sheet_antiparellel,
 	core::Size sandwich_bs_id,
-	std::string strand_is_at_edge,
+	std::string const & strand_is_at_edge,
 	core::Size component_size,
 	core::Size residue_begin,
 	core::Size residue_end);
@@ -334,7 +334,7 @@ WriteToDB_sw_can_by_sh (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::Size sw_can_by_sh_PK_id_counter,
-	std::string tag,
+	std::string const & tag,
 	core::Size sw_can_by_sh_id_counter,
 	core::Size sheet_id,
 	core::Size num_strands_from_sheet);
@@ -359,7 +359,7 @@ WriteToDB_turn_AA(
 	core::Size i,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string turn_type);
+	std::string const & turn_type);
 
 
 std::string
@@ -377,7 +377,7 @@ WriteToDB_whether_sw_is_not_connected_with_continuous_atoms(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::Size sw_can_by_sh_id,
-	std::string sw_is_not_connected_with_continuous_atoms);
+	std::string const & sw_is_not_connected_with_continuous_atoms);
 
 
 } //namespace strand_assembly

@@ -177,7 +177,7 @@ private:
 	// outputs
 	core::Size dump_every_, report_every_;
 	core::Size report_thermodynamics_;
-	core::Size report_water_;
+	//core::Size report_water_;
 	std::string rg_atom1_, rg_atom2_;
 	std::string report_silent_, report_scorefile_;
 	ThermodynamicData thermodynamic_data_;

@@ -78,7 +78,7 @@ my_main( void *)
 {
 	protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it. That means that this can only be used with parser=true
 	protocols::jd2::JobDistributor::get_instance()->go(mover);
-	return 0 ;
+	return nullptr ;
 }
 
 /// NOTE! THIS FUNCTION IS NOW BROKEN -- APL

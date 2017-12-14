@@ -50,15 +50,14 @@ DeNovoArchitectFactory::DeNovoArchitectFactory():
 	add_creator( DeNovoArchitectCreatorOP( new StrandArchitectCreator ) );
 }
 
-DeNovoArchitectFactory::~DeNovoArchitectFactory()
-{}
+DeNovoArchitectFactory::~DeNovoArchitectFactory() = default;
 
 DeNovoArchitectOP
 DeNovoArchitectFactory::create_instance(
 	std::string const & architect_name,
 	std::string const & architect_id ) const
 {
-	ArchitectCreatorMap::const_iterator arch = creators_.find( architect_name );
+	auto arch = creators_.find( architect_name );
 	if ( arch == creators_.end() ) {
 		std::stringstream msg;
 		msg << "DeNovoArchitectFactory::create_instance(): No architect of type "
@@ -66,7 +65,7 @@ DeNovoArchitectFactory::create_instance(
 		msg << "ID value was " << architect_id << std::endl;
 		msg << "You need to register DeNovoArchitects in protocols/denovo_design/architects/DeNovoArchitectFactory.cc" << std::endl;
 		msg << "Registered architects: ";
-		for ( ArchitectCreatorMap::const_iterator a=creators_.begin(); a!=creators_.end(); ++a ) {
+		for ( auto a=creators_.begin(); a!=creators_.end(); ++a ) {
 			if ( a != creators_.begin() ) msg << ", ";
 			msg << a->first;
 		}

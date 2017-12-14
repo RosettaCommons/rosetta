@@ -43,7 +43,7 @@ public: // Creation
 	///
 	FitSimpleHelixMultiFunc(
 		core::pose::Pose const &pose,
-		std::string atom_name,
+		std::string const & atom_name,
 		core::Size const first_res_index,
 		core::Size const res_per_repeat,
 		core::Size const start_index,

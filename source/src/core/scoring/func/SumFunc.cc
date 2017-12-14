@@ -46,7 +46,7 @@ bool SumFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	SumFunc const & other_downcast( static_cast< SumFunc const & > (other) );
+	auto const & other_downcast( static_cast< SumFunc const & > (other) );
 	if ( funcs_.size() != other_downcast.funcs_.size() ) return false;
 	for ( Size ii = 1; ii <= funcs_.size(); ++ii ) {
 		if ( funcs_[ ii ] == other_downcast.funcs_[ ii ] ) continue;
@@ -64,10 +64,8 @@ bool SumFunc::same_type_as_me( Func const & other ) const
 Real
 SumFunc::func( Real const x ) const {
 	Real f( 0.0 );
-	for ( utility::vector1< FuncOP >::const_iterator it = funcs_.begin(), end = funcs_.end();
-			it != end; ++it
-			) {
-		f += (*it)->func( x );
+	for ( auto const & func : funcs_ ) {
+		f += func->func( x );
 	}
 
 	return f;
@@ -76,10 +74,8 @@ SumFunc::func( Real const x ) const {
 Real
 SumFunc::dfunc( Real const x ) const {
 	Real df( 0.0 );
-	for ( utility::vector1< FuncOP >::const_iterator it = funcs_.begin(), end = funcs_.end();
-			it != end; ++it
-			) {
-		df += (*it)->dfunc( x );
+	for ( auto const & func : funcs_ ) {
+		df += func->dfunc( x );
 	}
 
 	return df;

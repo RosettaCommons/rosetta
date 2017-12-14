@@ -97,8 +97,7 @@ ResidueTotalScoresFeatures::ResidueTotalScoresFeatures( ResidueTotalScoresFeatur
 	scfxn_(src.scfxn_)
 {}
 
-ResidueTotalScoresFeatures::~ResidueTotalScoresFeatures()
-= default;
+ResidueTotalScoresFeatures::~ResidueTotalScoresFeatures() = default;
 
 // XRW TEMP string
 // XRW TEMP ResidueTotalScoresFeatures::type_name() const { return "ResidueTotalScoresFeatures"; }

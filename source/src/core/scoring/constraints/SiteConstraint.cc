@@ -84,8 +84,8 @@ SiteConstraint::show( std::ostream& out) const
 	//out << "AmbiguousConstraint Active constraint:" << std::endl;
 	//active_constraint()->show(out);
 	out << "SiteConstraint is an AmbiguousConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
-		( *cst_it )->show( out );
+	for ( auto const & cst_it : member_constraints() ) {
+		cst_it->show( out );
 	}
 
 	out << " ...all member constraints of this SiteConstraint shown." << std::endl;

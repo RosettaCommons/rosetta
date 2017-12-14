@@ -56,7 +56,7 @@ static basic::Tracer favor_nonnative_residue_tracer( "protocols.protein_interfac
 // XRW TEMP  return "FavorNonNativeResiduePreCycle";
 // XRW TEMP }
 
-FavorNonNativeResiduePreCycle::~FavorNonNativeResiduePreCycle() {}
+FavorNonNativeResiduePreCycle::~FavorNonNativeResiduePreCycle() = default;
 
 void
 FavorNonNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )

@@ -48,15 +48,15 @@ class BuriedUnsatisfiedPolarsCalculator : public core::pose::metrics::EnergyDepe
 public:
 
 	BuriedUnsatisfiedPolarsCalculator(
-		std::string sasa_calc,
-		std::string hbond_calc,
+		std::string const & sasa_calc,
+		std::string const & hbond_calc,
 		core::Real burial_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff]
 	);
 
 
 	BuriedUnsatisfiedPolarsCalculator(
-		std::string sasa_calc,
-		std::string hbond_calc,
+		std::string const & sasa_calc,
+		std::string const & hbond_calc,
 		std::set< core::Size > const & special_region,
 		core::Real burial_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff]
 	);

@@ -58,7 +58,7 @@ using std::string;
 using utility::vector1;
 static basic::Tracer TR( "protocols.frags.TorsionFragment" );
 
-typedef utility::vector1< core::Size > Sizes;
+using Sizes = utility::vector1<core::Size>;
 
 
 /// these will go into a helper file soon
@@ -849,7 +849,7 @@ insert_fragment(
 	while ( ntries < 1000 && nfrags <= 0 ) {
 		++ntries;
 		// choose a window in the insertable region
-		int const pos ( static_cast<int>( numeric::random::uniform() * ( region_size - actual_frag_size + 1) ) );
+		auto const pos ( static_cast<int>( numeric::random::uniform() * ( region_size - actual_frag_size + 1) ) );
 		insert_pos = ( desired_insert_pos == 0 ? begin + pos : desired_insert_pos );
 		runtime_assert ( 1<= insert_pos && insert_pos <= frag_nres );
 		// choose a fragment from the library at that window position

@@ -19,6 +19,7 @@
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/filters/BasicFilterCreators.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
@@ -50,8 +51,8 @@ namespace filters {
 
 using namespace core;
 typedef std::pair< std::string const, FilterCOP > StringFilter_pair;
-typedef utility::tag::TagCOP TagCOP;
-typedef core::pose::Pose Pose;
+using TagCOP = utility::tag::TagCOP;
+using Pose = core::pose::Pose;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -61,7 +62,7 @@ StochasticFilter::~StochasticFilter() = default;
 StochasticFilter::StochasticFilter( core::Real const confidence, FilterOP subfilter, bool run_subfilter_on ):
 	Filter( "Stochastic" ),
 	confidence_( confidence ),
-	subfilter_( subfilter ),
+	subfilter_(std::move( subfilter )),
 	run_subfilter_on_( run_subfilter_on )
 {}
 
@@ -140,9 +141,9 @@ CompoundFilter::CompoundFilter() :
 {}
 CompoundFilter::~CompoundFilter() = default;
 
-CompoundFilter::CompoundFilter( CompoundStatement  compound_statement ) :
+CompoundFilter::CompoundFilter( CompoundStatement const & compound_statement ) :
 	Filter( "CompoundStatement" ),
-	compound_statement_(std::move( compound_statement )),
+	compound_statement_( compound_statement ),
 	invert_(false),
 	reset_filters_(false)
 {}
@@ -662,8 +663,8 @@ IfThenFilter::parse_my_tag(
 		if ( tag_ptr->hasOption("valuefilter") ) {
 			valuefilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "valuefilter" ), filters);
 		}
-		core::Real value( tag_ptr->getOption<core::Real>( "value", 0 ) );
-		core::Real weight( tag_ptr->getOption<core::Real>( "weight", 1 ) );
+		auto value( tag_ptr->getOption<core::Real>( "value", 0 ) );
+		auto weight( tag_ptr->getOption<core::Real>( "weight", 1 ) );
 
 		if ( tagname == "IF" || tagname == "ELIF" ) {
 			if ( ! tag_ptr->hasOption("testfilter") )  {

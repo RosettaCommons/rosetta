@@ -249,7 +249,7 @@ void MultipleOutputWrapper::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	using namespace utility::tag;
 	RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( xsd );
 
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList attlist;
 	attlist
 		+ optional_name_attribute()

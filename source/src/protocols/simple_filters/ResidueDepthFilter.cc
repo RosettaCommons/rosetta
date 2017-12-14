@@ -753,7 +753,7 @@ ResidueDepthFilter::read_db( std::string const infile )
 
 			bool add( true );
 			ResidueDepthFrag frag;
-			int res0 = int(db_[ipdb][ires]->ires);
+			auto res0 = int(db_[ipdb][ires]->ires);
 
 			for ( int k = -4; k <= 4; ++k ) {
 				ResidueDepthDataCOP rdr = db_[ipdb][core::Size(ires+k)];
@@ -1013,7 +1013,7 @@ ResidueDepthFilter::get_residue_similarity( conformation::Residue const &rsd,
 			// TODO
 		}
 
-		sortable.push_back( std::make_pair( rms, i ) ); // trick for sorting...
+		sortable.emplace_back( rms, i ); // trick for sorting...
 	}
 
 	TR << "skiped " << npass << " out of " << close_ids.size() << std::endl;
@@ -1257,7 +1257,7 @@ ResidueDepthFilter::parse_my_tag( utility::tag::TagCOP tag,
 		utility::vector1< std::string> evalres_str
 			= utility::string_split(tag->getOption<std::string>( "evalres" ), ',');
 		for ( core::Size i = 1; i <= evalres_str.size(); ++i ) {
-			Size ires = (Size)(int_of( evalres_str[i] ));
+			auto ires = (Size)(int_of( evalres_str[i] ));
 			evalres_[ires] = true;
 		}
 	}

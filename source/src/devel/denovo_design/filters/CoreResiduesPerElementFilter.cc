@@ -82,8 +82,7 @@ CoreResiduesPerElementFilter::CoreResiduesPerElementFilter() :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-CoreResiduesPerElementFilter::~CoreResiduesPerElementFilter()
-{}
+CoreResiduesPerElementFilter::~CoreResiduesPerElementFilter() = default;
 
 
 /// Return a copy of ourselves
@@ -165,28 +164,28 @@ CoreResiduesPerElementFilter::compute( core::pose::Pose const & pose ) const
 	} else {
 		core::Size helixcount = 0;
 		core::Size strandcount = 0;
-		for ( protocols::fldsgn::topology::Strands::const_iterator s=ssinfo.strands().begin(), ends=ssinfo.strands().end(); s!=ends; ++s ) {
+		for ( auto const & s : ssinfo.strands() ) {
 			++strandcount;
-			debug_assert( (*s)->end() >= (*s)->begin() );
+			debug_assert( s->end() >= s->begin() );
 			// skip strands less than 3 residues
-			if ( ((*s)->end() - (*s)->begin()) < min_strand_len ) {
+			if ( (s->end() - s->begin()) < min_strand_len ) {
 				continue;
 			}
-			core::Size found = evaluate_element( work, scn, (*s)->begin(), (*s)->end() );
+			core::Size found = evaluate_element( work, scn, s->begin(), s->end() );
 			TR << "Core/boundary residues found in strand " << strandcount << ": " << found << std::endl;
 			if ( !found ) {
 				++badelements;
 			}
 		}
 
-		for ( protocols::fldsgn::topology::Helices::const_iterator h=ssinfo.helices().begin(), endh=ssinfo.helices().end(); h!=endh; ++h ) {
+		for ( auto const & h : ssinfo.helices() ) {
 			++helixcount;
-			debug_assert( (*h)->end() >= (*h)->begin() );
+			debug_assert( h->end() >= h->begin() );
 			// skip helices less than 4 residues
-			if ( ((*h)->end() - (*h)->begin()) < min_helix_len ) {
+			if ( (h->end() - h->begin()) < min_helix_len ) {
 				continue;
 			}
-			core::Size found = evaluate_element( work, scn, (*h)->begin(), (*h)->end() );
+			core::Size found = evaluate_element( work, scn, h->begin(), h->end() );
 			TR << "Core/boundary residues found in helix " << helixcount << ": " << found << std::endl;
 			if ( !found ) {
 				++badelements;
@@ -250,10 +249,10 @@ CoreResiduesPerElementFilter::evaluate_element(
 	// eventually, make these options
 
 	core::Size found = 0;
-	for ( utility::vector1< core::Size >::const_iterator r=residues.begin(), endr=residues.end(); r!=endr; ++r ) {
+	for ( unsigned long residue : residues ) {
 		core::scoring::EnergyMap emap;
-		scn.residue_energy( pose.residue(*r), pose, emap );
-		TR.Debug << "Res " << *r << " " << pose.residue(*r).name() << " score=" << emap[ core::scoring::sidechain_neighbors ] << std::endl;
+		scn.residue_energy( pose.residue(residue), pose, emap );
+		TR.Debug << "Res " << residue << " " << pose.residue(residue).name() << " score=" << emap[ core::scoring::sidechain_neighbors ] << std::endl;
 		if ( emap[ core::scoring::sidechain_neighbors ] <= -core_cutoff_ ) {
 			++found;
 		}

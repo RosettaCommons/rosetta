@@ -72,7 +72,7 @@ ResidueNameSelector::ResidueNameSelector( std::string const & res_name_str ):
 }
 
 
-ResidueNameSelector::~ResidueNameSelector() {}
+ResidueNameSelector::~ResidueNameSelector() = default;
 
 ResidueSubset
 ResidueNameSelector::apply( core::pose::Pose const & pose ) const

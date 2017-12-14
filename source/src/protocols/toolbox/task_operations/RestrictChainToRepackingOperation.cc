@@ -46,14 +46,14 @@ namespace task_operations {
 using namespace core::pack::task::operation;
 
 
-RestrictChainToRepackingOperation::RestrictChainToRepackingOperation() {}
+RestrictChainToRepackingOperation::RestrictChainToRepackingOperation() = default;
 
 RestrictChainToRepackingOperation::RestrictChainToRepackingOperation( core::Size const chain )
 : parent(), chain_( chain )
 {
 }
 
-RestrictChainToRepackingOperation::~RestrictChainToRepackingOperation() {}
+RestrictChainToRepackingOperation::~RestrictChainToRepackingOperation() = default;
 
 core::pack::task::operation::TaskOperationOP RestrictChainToRepackingOperation::clone() const
 {

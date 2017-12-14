@@ -89,7 +89,7 @@ MembraneData::MembraneData() :
 }
 
 /// @brief Destructor
-MembraneData::~MembraneData() {}
+MembraneData::~MembraneData() = default;
 
 /// @brief Finalize Setup of MP Base Potential Class
 void

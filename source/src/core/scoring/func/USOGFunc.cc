@@ -19,6 +19,7 @@
 #include <core/types.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -46,9 +47,9 @@ namespace func {
 
 Real USOGFunc::background_prob = exp(-10.); // the maximum constraint penalty == -log(background_prob)
 
-USOGFunc::USOGFunc(const utility::vector1<core::Real>& means,
-	const utility::vector1<core::Real>& std_devs,
-	const utility::vector1<core::Real>& weights)
+USOGFunc::USOGFunc(utility::vector1<core::Real> const & means,
+	utility::vector1<core::Real> const & std_devs,
+	utility::vector1<core::Real> const & weights)
 : means_(means), std_devs_(std_devs), weights_(weights) {
 	if ( means_.size() != std_devs_.size() || means_.size() != weights_.size() ) {
 		utility_exit_with_message("Unequal number of means, std_devs, weights");
@@ -70,7 +71,7 @@ bool USOGFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	USOGFunc const & other_downcast( static_cast< USOGFunc const & > (other) );
+	auto const & other_downcast( static_cast< USOGFunc const & > (other) );
 	if ( means_    != other_downcast.means_    ) return false;
 	if ( std_devs_ != other_downcast.std_devs_ ) return false;
 	if ( weights_  != other_downcast.weights_  ) return false;

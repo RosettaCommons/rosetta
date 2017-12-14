@@ -109,7 +109,7 @@ GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const 
 }
 
 /// @brief Destructor for GeneralizedKICperturber mover.
-GeneralizedKICperturber::~GeneralizedKICperturber() {}
+GeneralizedKICperturber::~GeneralizedKICperturber() = default;
 
 /// @brief Clone function for GeneralizedKICperturber:
 /// @details Returns an owning pointer to a copy of this perturber.

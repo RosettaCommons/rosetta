@@ -22,6 +22,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -51,14 +52,14 @@ DisableCDRsOperation::DisableCDRsOperation():
 
 DisableCDRsOperation::DisableCDRsOperation(AntibodyInfoCOP ab_info):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 }
 
 DisableCDRsOperation::DisableCDRsOperation(AntibodyInfoCOP ab_info, const utility::vector1<bool>& cdrs):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	set_cdrs( cdrs );
@@ -71,7 +72,7 @@ DisableCDRsOperation::DisableCDRsOperation(
 	bool disable_packing_and_design):
 
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	set_cdrs( cdrs );
@@ -94,7 +95,7 @@ DisableCDRsOperation::set_defaults() {
 
 }
 
-DisableCDRsOperation::~DisableCDRsOperation() {}
+DisableCDRsOperation::~DisableCDRsOperation() = default;
 
 DisableCDRsOperation::DisableCDRsOperation(DisableCDRsOperation const & src):
 	core::pack::task::operation::TaskOperation( src ),
@@ -179,7 +180,7 @@ DisableCDRsOperation::apply(const core::pose::Pose& pose, core::pack::task::Pack
 
 	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
 
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 
 
 		if ( ! cdrs_[ i ] ) continue;

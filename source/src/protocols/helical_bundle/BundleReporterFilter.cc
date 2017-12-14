@@ -135,7 +135,7 @@ BundleReporterFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		}
 	}
 	if ( filter_behaviour() == brf_filter_by_energy ) {
-		core::Real const thresh( tag->getOption<core::Real>( "threshold", 0.0 ) );
+		auto const thresh( tag->getOption<core::Real>( "threshold", 0.0 ) );
 		set_score_type_threshold( thresh );
 		if ( TR.visible() ) TR << "Energy threshold for filtering set to " << thresh << ".  (Energies above this will result in the filter returning FALSE)." << std::endl;
 	}

@@ -43,8 +43,7 @@ CompoundArchitect::CompoundArchitect( std::string const & id_value ):
 {
 }
 
-CompoundArchitect::~CompoundArchitect()
-{}
+CompoundArchitect::~CompoundArchitect() = default;
 
 CompoundArchitect::DeNovoArchitectOP
 CompoundArchitect::clone() const
@@ -153,7 +152,7 @@ CompoundArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 void
 CompoundArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	for ( utility::tag::Tag::tags_t::const_iterator t=tag->getTags().begin(); t!=tag->getTags().end(); ++t ) {
+	for ( auto t=tag->getTags().begin(); t!=tag->getTags().end(); ++t ) {
 		if ( (*t)->getName() == "Architects" ) parse_architect_tags( *t, data );
 		else if ( (*t)->getName() == "Connections" ) parse_connection_tags( *t, data );
 		else if ( (*t)->getName() == "Pairing" ) parse_pairing_tags( **t );
@@ -170,8 +169,8 @@ CompoundArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMa
 void
 CompoundArchitect::parse_architect_tags( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	for ( utility::tag::Tag::tags_t::const_iterator t=tag->getTags().begin(); t!=tag->getTags().end(); ++t ) {
-		parse_architect_tag( *t, data );
+	for ( auto const & t : tag->getTags() ) {
+		parse_architect_tag( t, data );
 	}
 }
 
@@ -185,8 +184,8 @@ CompoundArchitect::parse_architect_tag( utility::tag::TagCOP tag, basic::datacac
 void
 CompoundArchitect::parse_connection_tags( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	for ( utility::tag::Tag::tags_t::const_iterator t=tag->getTags().begin(); t!=tag->getTags().end(); ++t ) {
-		parse_connection_tag( *t, data );
+	for ( auto const & t : tag->getTags() ) {
+		parse_connection_tag( t, data );
 	}
 }
 
@@ -278,8 +277,8 @@ CompoundArchitect::parse_connection_tag( utility::tag::TagCOP tag, basic::dataca
 void
 CompoundArchitect::parse_pairing_tags( utility::tag::Tag const & tag )
 {
-	for ( utility::tag::Tag::tags_t::const_iterator t=tag.getTags().begin(); t!=tag.getTags().end(); ++t ) {
-		parse_pairing_tag( **t );
+	for ( auto const & t : tag.getTags() ) {
+		parse_pairing_tag( *t );
 	}
 }
 
@@ -295,18 +294,18 @@ CompoundArchitect::StructureDataOP
 CompoundArchitect::design( core::pose::Pose const & pose, core::Real & random ) const
 {
 	StructureDataOP sd( new StructureData( id() ) );
-	for ( DeNovoArchitectCOPs::const_iterator a=architects_.begin(); a!=architects_.end(); ++a ) {
-		StructureDataOP sub_sd = (*a)->design( pose, random );
+	for ( auto const & architect : architects_ ) {
+		StructureDataOP sub_sd = architect->design( pose, random );
 		if ( !sub_sd ) {
 			std::stringstream msg;
-			msg << class_name() << "::design(): Architect " << (*a)->id()
+			msg << class_name() << "::design(): Architect " << architect->id()
 				<< " did not produce a StructureData object. Current SD ="
 				<< *sd << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
 		if ( sub_sd->segments_begin() == sub_sd->segments_end() ) {
 			std::stringstream msg;
-			msg << class_name() << "::design(): Architect " << (*a)->id()
+			msg << class_name() << "::design(): Architect " << architect->id()
 				<< " produced a StructureData object without segments. Current SD ="
 				<< *sd << " Architect-produced SD = " << *sub_sd << std::endl;
 			utility_exit_with_message( msg.str() );
@@ -314,12 +313,12 @@ CompoundArchitect::design( core::pose::Pose const & pose, core::Real & random ) 
 		sd->merge( *sub_sd );
 	}
 
-	for ( connection::ConnectionArchitectCOPs::const_iterator c=connections_.begin(); c!=connections_.end(); ++c ) {
-		(*c)->apply( *sd, random );
+	for ( auto const & connection : connections_ ) {
+		connection->apply( *sd, random );
 	}
 
-	for ( components::SegmentPairingCOPs::const_iterator p=pairings_.begin(); p!=pairings_.end(); ++p ) {
-		sd->add_pairing( **p );
+	for ( auto const & pairing : pairings_ ) {
+		sd->add_pairing( *pairing );
 	}
 	return sd;
 }

@@ -60,7 +60,7 @@ public:
 	SimPDBOP mPDB;
 	Stru(SimPDBOP pdb, int len, bool use_sig);
 	~Stru();
-	double dist(double x, double y, double z, double *zz);
+	double dist(double x, double y, double z, double const *zz);
 	double dist(double x, double y, double z);
 };
 

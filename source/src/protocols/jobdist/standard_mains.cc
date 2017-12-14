@@ -82,7 +82,7 @@
 namespace protocols {
 namespace jobdist {
 
-typedef utility::pointer::shared_ptr< BaseJobDistributor > BaseJobDistributorOP;
+using BaseJobDistributorOP = utility::pointer::shared_ptr<BaseJobDistributor>;
 
 static basic::Tracer TR( "protocols.jobdist.main" );
 ////////////////////////////////////////////////////////////////////////////////////////////////

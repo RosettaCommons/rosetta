@@ -22,6 +22,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/file/file_sys_util.hh> // file_exists, create_directory
+#include <utility/file/FileName.hh>
 
 // option key includes
 
@@ -104,7 +105,7 @@ bool SequenceCouplingConstraint::operator == ( core::scoring::constraints::Const
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( other ) ) return false;
 
-	SequenceCouplingConstraint const & other_downcast( static_cast< SequenceCouplingConstraint const & > ( other ) );
+	auto const & other_downcast( static_cast< SequenceCouplingConstraint const & > ( other ) );
 	if ( seqpos1_ != other_downcast.seqpos1_ ) return false;
 	if ( seqpos2_ != other_downcast.seqpos2_ ) return false;
 	return sequence_coupling_ == other_downcast.sequence_coupling_ ||

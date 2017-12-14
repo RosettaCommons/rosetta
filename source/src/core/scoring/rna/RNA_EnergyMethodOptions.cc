@@ -46,8 +46,7 @@ RNA_EnergyMethodOptions::RNA_EnergyMethodOptions():
 }
 
 //Destructor
-RNA_EnergyMethodOptions::~RNA_EnergyMethodOptions()
-{}
+RNA_EnergyMethodOptions::~RNA_EnergyMethodOptions() = default;
 
 /////////////////////////////
 void RNA_EnergyMethodOptions::initialize_from_options() {

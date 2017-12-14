@@ -77,7 +77,7 @@ LoopRefineInnerCycleFactory::LoopRefineInnerCycleFactory()
 	setup_known_types();
 }
 
-LoopRefineInnerCycleFactory::~LoopRefineInnerCycleFactory() {}
+LoopRefineInnerCycleFactory::~LoopRefineInnerCycleFactory() = default;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

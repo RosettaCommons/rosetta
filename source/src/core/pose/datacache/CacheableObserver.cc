@@ -40,14 +40,12 @@ CacheableObserver::CacheableObserver() :
 
 
 /// @brief copy constructor
-CacheableObserver::CacheableObserver( CacheableObserver const & rval ) :
-	Super( rval )
-{}
+CacheableObserver::CacheableObserver( CacheableObserver const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
 /// @warning Derived classes must remember to detach on destruction!
-CacheableObserver::~CacheableObserver() {}
+CacheableObserver::~CacheableObserver() = default;
 
 
 /// @brief copy assignment

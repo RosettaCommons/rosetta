@@ -46,7 +46,7 @@
 #include <utility/io/ozstream.hh>
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -55,8 +55,8 @@ using namespace ObjexxFCL::format;
 static basic::Tracer TR( "app.public.iterhybrid_selector" );
 
 void
-get_gremlin_d_and_width( std::string const aa1,
-	std::string const aa2,
+get_gremlin_d_and_width( std::string const & aa1,
+	std::string const & aa2,
 	core::Real &d0,
 	core::Real &width )
 {
@@ -145,7 +145,7 @@ core::Real
 distance( core::io::silent::SilentStructCOP ss1,
 	core::io::silent::SilentStructCOP ss2,
 	//core::Size const nres,
-	std::string const mode="Score",
+	std::string const & mode="Score",
 	core::Real const dbase2 = 4.0
 )
 {
@@ -209,7 +209,7 @@ check_redundant( core::Size iss,
 // assume already sorted
 void
 retag( protocols::wum::SilentStructStore &library_inout,
-	std::string const scorename )
+	std::string const & scorename )
 {
 	library_inout.sort_by( scorename ); // sort again
 
@@ -224,7 +224,7 @@ retag( protocols::wum::SilentStructStore &library_inout,
 }
 
 protocols::wum::SilentStructStore
-read_library_simple( std::string const silentfile )
+read_library_simple( std::string const & silentfile )
 {
 
 	protocols::wum::SilentStructStore library;
@@ -241,11 +241,11 @@ read_library_simple( std::string const silentfile )
 }
 
 protocols::wum::SilentStructStore
-read_silent_input_as_library( std::string const silentfile,
+read_silent_input_as_library( std::string const & silentfile,
 	core::pose::Pose const &pose0,
 	utility::vector1< core::Real > &scores,
 	core::Real const dcut_ref,
-	std::string const scorename,
+	std::string const & scorename,
 	core::Size const keep_topn )
 {
 	protocols::wum::SilentStructStore library_in;
@@ -363,7 +363,7 @@ energy_cluster( protocols::wum::SilentStructStore const &library_in,
 	core::Size const npick,
 	utility::vector1< core::Real > const &scores,
 	core::Real const dcut_in,
-	std::string const scorename
+	std::string const & scorename
 )
 {
 
@@ -510,7 +510,7 @@ void report_and_dump( protocols::wum::SilentStructStore const & library_inout,
 	}
 
 	core::Size i( 0 );
-	for ( protocols::wum::SilentStructStore::const_iterator it = library_inout.begin();
+	for ( auto it = library_inout.begin();
 			it != library_inout.end(); ++it, ++i ) {
 		core::io::silent::SilentStructOP ss( *it );
 		if ( prefix != "" ) {

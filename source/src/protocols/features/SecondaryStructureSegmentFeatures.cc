@@ -46,8 +46,7 @@
 namespace protocols {
 namespace features {
 
-SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures()
-{}
+SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures() = default;
 
 SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(core::scoring::ScoreFunctionOP /*scfxn*/)
 {

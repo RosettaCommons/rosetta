@@ -31,7 +31,7 @@ void*
 my_main( void *)
 {
 	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignProtocol ));
-	return 0 ;
+	return nullptr ;
 }
 
 //Description:  This application will become the Rosetta Antibody Designer.  Main code is handled through AntibodyDesignProtocol

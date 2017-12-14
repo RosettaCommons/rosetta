@@ -68,7 +68,7 @@ MatchScoreWriter::operator=(MatchScoreWriter const & object_to_copy)
 }
 
 // Destructor
-MatchScoreWriter::~MatchScoreWriter() {}
+MatchScoreWriter::~MatchScoreWriter() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////

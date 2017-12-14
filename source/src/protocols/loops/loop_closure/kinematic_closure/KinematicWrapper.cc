@@ -26,6 +26,7 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 //#include <utility/vector1.hh>
@@ -133,14 +134,13 @@ void KinematicWrapper::respect_this_movemap( core::kinematics::MoveMapCOP mm )
 {
 	init_allowed_pos(); //reset the vector
 
-	typedef utility::vector1<core::Size>::iterator iter;
-	for ( iter i(allowed_positions_.begin()); i!= allowed_positions_.end(); ) {
+	for ( auto i(allowed_positions_.begin()); i!= allowed_positions_.end(); ) {
 		if ( mm->get_bb(*i) ) ++i;
 		else i = allowed_positions_.erase(i);
 	}
 
 	TR << "respect_this_movemap has restricted loop pivots to these positions:";
-	for ( iter i(allowed_positions_.begin()); i!= allowed_positions_.end(); ++i ) TR << " " << *i;
+	for ( unsigned long & allowed_position : allowed_positions_ ) TR << " " << allowed_position;
 	TR << std::endl;
 
 	return;
@@ -152,7 +152,7 @@ KinematicWrapper::KinematicWrapper(
 	KinematicMoverOP kinmover_in,
 	protocols::loops::Loop loop_in,
 	core::Size cycles
-) : Mover(), kinmover_(kinmover_in), loop_begin_(loop_in.start()), loop_end_(loop_in.stop()),
+) : Mover(), kinmover_(std::move(kinmover_in)), loop_begin_(loop_in.start()), loop_end_(loop_in.stop()),
 	limit_( (cycles == 0) ? option[OptionKeys::loops::kinematic_wrapper_cycles].value() : cycles) //option or parameter
 {
 	ctor();
@@ -164,7 +164,7 @@ KinematicWrapper::KinematicWrapper(
 	core::Size loop_begin,
 	core::Size loop_end,
 	core::Size cycles
-) : Mover(), kinmover_(kinmover_in), loop_begin_(loop_begin), loop_end_(loop_end),
+) : Mover(), kinmover_(std::move(kinmover_in)), loop_begin_(loop_begin), loop_end_(loop_end),
 	limit_( (cycles == 0) ? option[OptionKeys::loops::kinematic_wrapper_cycles].value() : cycles) //option or parameter
 {
 	ctor();
@@ -188,7 +188,7 @@ void KinematicWrapper::init_allowed_pos(){
 	return;
 }
 
-KinematicWrapper::~KinematicWrapper(){}
+KinematicWrapper::~KinematicWrapper()= default;
 
 } // namespace kinematic_closure
 } // namespace loop_closure

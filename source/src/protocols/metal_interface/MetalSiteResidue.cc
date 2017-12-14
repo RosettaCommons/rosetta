@@ -20,17 +20,14 @@
 #include <utility/vector1.hh>
 
 
-typedef numeric::xyzVector<core::Real> point;
+using point = numeric::xyzVector<core::Real>;
 
 namespace protocols {
 namespace metal_interface {
 
-MetalSiteResidue::MetalSiteResidue()
-{
-}
+MetalSiteResidue::MetalSiteResidue() = default;
 
-MetalSiteResidue::~MetalSiteResidue()
-= default;
+MetalSiteResidue::~MetalSiteResidue() = default;
 
 
 core::Size

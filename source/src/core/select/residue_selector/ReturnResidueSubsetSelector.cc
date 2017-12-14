@@ -28,6 +28,7 @@
 #include <core/pose/Pose.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
@@ -63,15 +64,10 @@ ReturnResidueSubsetSelector::set_residue_subset( ResidueSubset const & subset ){
 
 /// @brief Destructor.
 ///
-ReturnResidueSubsetSelector::~ReturnResidueSubsetSelector() {}
+ReturnResidueSubsetSelector::~ReturnResidueSubsetSelector() = default;
 
 ///@brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
-ReturnResidueSubsetSelector::ReturnResidueSubsetSelector(ReturnResidueSubsetSelector const & src):
-	ResidueSelector( src ),
-	subset_( src.subset_ )
-{
-
-}
+ReturnResidueSubsetSelector::ReturnResidueSubsetSelector(ReturnResidueSubsetSelector const & /*src*/) = default;
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).

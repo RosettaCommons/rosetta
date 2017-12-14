@@ -86,8 +86,7 @@ namespace fold_from_loops {
 
 static basic::Tracer TR( "FoldFromLoopsMover" );
 
-FoldFromLoopsMover::FoldFromLoopsMover()
-{}
+FoldFromLoopsMover::FoldFromLoopsMover() = default;
 
 FoldFromLoopsMover::~FoldFromLoopsMover() = default;
 

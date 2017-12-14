@@ -24,6 +24,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -58,7 +59,7 @@ ResiduePDBInfoHasLabelSelector::ResiduePDBInfoHasLabelSelector( std::string cons
 {
 }
 
-ResiduePDBInfoHasLabelSelector::~ResiduePDBInfoHasLabelSelector() {}
+ResiduePDBInfoHasLabelSelector::~ResiduePDBInfoHasLabelSelector() = default;
 
 ResidueSubset
 ResiduePDBInfoHasLabelSelector::apply( core::pose::Pose const & pose ) const

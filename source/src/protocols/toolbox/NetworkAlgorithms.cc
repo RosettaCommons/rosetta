@@ -38,9 +38,7 @@ namespace protocols {
 namespace toolbox {
 
 /// @brief default constructor
-ResidueNetwork::ResidueNetwork()
-{
-}
+ResidueNetwork::ResidueNetwork() = default;
 
 /// @brief destructor
 ResidueNetwork::~ResidueNetwork() = default;
@@ -71,7 +69,7 @@ ResidueNetwork::average_shortest_path_length() const
 	core::Real total_path_length = 0.0;
 
 	//iterate over all starting notes
-	for ( const auto & it : nodes_ ) {
+	for ( auto const & it : nodes_ ) {
 		dijkstras (it->resi);
 
 		//add the paths from resi it to all other residues

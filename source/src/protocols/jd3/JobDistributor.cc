@@ -18,7 +18,7 @@
 namespace protocols {
 namespace jd3 {
 
-JobDistributor::JobDistributor() {}
+JobDistributor::JobDistributor() = default;
 
 JobDistributor::~JobDistributor() = default;
 

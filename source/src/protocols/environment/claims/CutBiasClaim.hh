@@ -54,19 +54,19 @@ class CutBiasClaim : public EnvClaim {
 public:
 	CutBiasClaim( ClientMoverOP owner,
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap const& );
+		basic::datacache::DataMap const & );
 
 	CutBiasClaim( ClientMoverOP owner,
-		std::string const& label,
-		core::fragment::SecondaryStructure const& ss );
+		std::string const & label,
+		core::fragment::SecondaryStructure const & ss );
 
 	CutBiasClaim( ClientMoverOP owner,
-		std::string const& label,
-		std::map< LocalPosition, core::Real > const& biases );
+		std::string const & label,
+		std::map< LocalPosition, core::Real > const & biases );
 
 	CutBiasClaim( ClientMoverOP owner,
-		std::string const& label,
-		std::pair< core::Size, core::Size > const& range,
+		std::string const & label,
+		std::pair< core::Size, core::Size > const & range,
 		core::Real bias );
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

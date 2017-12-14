@@ -44,7 +44,7 @@ class SingleGrid : public GridBase
 {
 public:
 
-	SingleGrid(std::string type);
+	SingleGrid(std::string const & type);
 	~SingleGrid() override;
 	/// @brief Make a copy of the grid, respecting the subclassing.
 	GridBaseOP clone() const override =0;

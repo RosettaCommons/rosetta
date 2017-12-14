@@ -59,27 +59,18 @@ namespace crosslinker {
 /////////////////////
 
 /// @brief Default constructor
-TMA_Helper::TMA_Helper() //:
-//TODO initialize data here
-{
-
-}
+TMA_Helper::TMA_Helper() = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
 ////////////////////////////////////////////////////////////////////////////////
-TMA_Helper::TMA_Helper( TMA_Helper const &src ) :
-	CrosslinkerMoverHelper( src )
-	//TODO copy data here
-{
-
-}
+TMA_Helper::TMA_Helper( TMA_Helper const &/*src*/ ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer
 /// members)
 ////////////////////////////////////////////////////////////////////////////////
-TMA_Helper::~TMA_Helper(){}
+TMA_Helper::~TMA_Helper()= default;
 
 //////////////////////
 /// Public Methods ///

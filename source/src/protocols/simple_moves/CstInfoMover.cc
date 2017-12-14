@@ -46,15 +46,9 @@ CstInfoMover::CstInfoMover():
 	recursive_( false )
 {}
 
-CstInfoMover::~CstInfoMover(){}
+CstInfoMover::~CstInfoMover()= default;
 
-CstInfoMover::CstInfoMover( CstInfoMover const & src ):
-	protocols::moves::Mover( src ),
-	cst_file_( src.cst_file_ ),
-	dump_cst_file_( src.dump_cst_file_ ),
-	prefix_( src.prefix_ ),
-	recursive_( src.recursive_ )
-{}
+CstInfoMover::CstInfoMover( CstInfoMover const & /*src*/ ) = default;
 
 void
 CstInfoMover::parse_my_tag(

@@ -77,7 +77,7 @@ DdGScan::DdGScan():
 	task_factory_( /* NULL */ ),
 	repeats_( 3 ),
 	scorefxn_( /* NULL */ ),
-	report_diffs_( 1 ),
+	report_diffs_( true ),
 	write2pdb_( false )
 {
 	initialize();
@@ -145,8 +145,8 @@ DdGScan::parse_my_tag(
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
-	report_diffs( tag->getOption< bool >( "report_diffs", 1 ) );
-	write2pdb( tag->getOption< bool >( "write2pdb", 0 ) );
+	report_diffs( tag->getOption< bool >( "report_diffs", true ) );
+	write2pdb( tag->getOption< bool >( "write2pdb", false ) );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 
 	// Handle definition of a special ddG mover

@@ -37,7 +37,7 @@ static basic::Tracer TR( "core.import_pose.PoseFromPDBLoader" );
 namespace core {
 namespace import_pose {
 
-PoseFromPDBLoader::PoseFromPDBLoader() {}
+PoseFromPDBLoader::PoseFromPDBLoader() = default;
 PoseFromPDBLoader::~PoseFromPDBLoader() = default;
 
 utility::pointer::ReferenceCountOP
@@ -47,7 +47,7 @@ PoseFromPDBLoader::create_resource(
 	std::istream & istream
 ) const
 {
-	ImportPoseOptions const * pose_opts_ptr = dynamic_cast< ImportPoseOptions const * > ( &options );
+	auto const * pose_opts_ptr = dynamic_cast< ImportPoseOptions const * > ( &options );
 	if ( ! pose_opts_ptr ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "PoseFromPDBLoader expected to be given a ImportPoseOptions object, " \
 			"but was given a non-ImportPoseOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );

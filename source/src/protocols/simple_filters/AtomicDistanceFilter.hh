@@ -37,7 +37,7 @@ private:
 public:
 	/// @brief default ctor
 	AtomicDistanceFilter();
-	AtomicDistanceFilter( core::Size const res1, core::Size const res2, std::string atom_desig1="CB", std::string atom_desig2="CB", bool as_type1=false, bool as_type2=false, core::Real const distance=4.0);
+	AtomicDistanceFilter( core::Size const res1, core::Size const res2, std::string const & atom_desig1="CB", std::string const & atom_desig2="CB", bool as_type1=false, bool as_type2=false, core::Real const distance=4.0);
 	bool apply( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;

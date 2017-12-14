@@ -66,14 +66,14 @@ using namespace core::scoring;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-typedef std::string String;
+using String = std::string;
 
 
 static basic::Tracer TR( "foldptn" );
 
 class ThisApplication  {
 public:
-	ThisApplication(){};
+	ThisApplication()= default;
 	static void register_options();
 };
 
@@ -97,19 +97,19 @@ class Foldptn : public protocols::moves::Mover {
 public: // typedef
 
 
-	typedef protocols::parser::BluePrint BluePrint;
-	typedef protocols::parser::BluePrintOP BluePrintOP;
-	typedef protocols::fldsgn::topology::SS_Info2 SS_Info2;
-	typedef protocols::fldsgn::topology::SS_Info2_OP SS_Info2_OP;
-	typedef protocols::fldsgn::topology::StrandPairingSet StrandPairingSet;
-	typedef protocols::fldsgn::topology::StrandPairingSetOP StrandPairingSetOP;
-	typedef protocols::fldsgn::topology::SheetSet SheetSet;
-	typedef protocols::fldsgn::topology::SheetSetOP SheetSetOP;
-	typedef protocols::fldsgn::topology::SheetFoldType SheetFoldType;
-	typedef protocols::fldsgn::topology::SheetFoldTypeManager SheetFoldTypeManager;
-	typedef protocols::fldsgn::topology::BetaAlphaBetaMotif BetaAlphaBetaMotif;
-	typedef protocols::fldsgn::topology::BetaAlphaBetaMotifs BetaAlphaBetaMotifs;
-	typedef protocols::fldsgn::topology::BetaAlphaBetaMotifSet BetaAlphaBetaMotifSet;
+	using BluePrint = protocols::parser::BluePrint;
+	using BluePrintOP = protocols::parser::BluePrintOP;
+	using SS_Info2 = protocols::fldsgn::topology::SS_Info2;
+	using SS_Info2_OP = protocols::fldsgn::topology::SS_Info2_OP;
+	using StrandPairingSet = protocols::fldsgn::topology::StrandPairingSet;
+	using StrandPairingSetOP = protocols::fldsgn::topology::StrandPairingSetOP;
+	using SheetSet = protocols::fldsgn::topology::SheetSet;
+	using SheetSetOP = protocols::fldsgn::topology::SheetSetOP;
+	using SheetFoldType = protocols::fldsgn::topology::SheetFoldType;
+	using SheetFoldTypeManager = protocols::fldsgn::topology::SheetFoldTypeManager;
+	using BetaAlphaBetaMotif = protocols::fldsgn::topology::BetaAlphaBetaMotif;
+	using BetaAlphaBetaMotifs = protocols::fldsgn::topology::BetaAlphaBetaMotifs;
+	using BetaAlphaBetaMotifSet = protocols::fldsgn::topology::BetaAlphaBetaMotifSet;
 
 
 public: // constructor/deconstructor
@@ -151,13 +151,13 @@ public: // constructor/deconstructor
 
 	}
 
-	virtual ~Foldptn(){};
+	~Foldptn() override= default;
 
-	virtual std::string get_name() const { return ""; }
+	std::string get_name() const override { return ""; }
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const
+	fresh_instance() const override
 	{
 		return protocols::moves::MoverOP( new Foldptn );
 	}
@@ -166,9 +166,9 @@ public: // constructor/deconstructor
 public: // apply
 
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose )
+	apply( core::pose::Pose & pose ) override
 	{
 		using core::util::switch_to_residue_type_set;
 		using namespace ObjexxFCL::format;
@@ -194,9 +194,8 @@ public: // apply
 		// calc bab
 		bool lefty = false;
 		BetaAlphaBetaMotifSet babset( ssinfo_, sheet_set );
-		for ( BetaAlphaBetaMotifs::const_iterator iter = babset.bab_motifs().begin(),
-				iter_end = babset.bab_motifs().end(); iter != iter_end; ++iter ) {
-			BetaAlphaBetaMotif bab( **iter );
+		for ( auto const & iter : babset.bab_motifs() ) {
+			BetaAlphaBetaMotif bab( *iter );
 			bab.calc_geometry( ssinfo_, sheet_set );
 			if ( bab.is_lefthanded() ) lefty = true;
 		}
@@ -278,7 +277,7 @@ private: // data
 
 };
 
-typedef utility::pointer::shared_ptr< Foldptn > FoldptnOP;
+using FoldptnOP = utility::pointer::shared_ptr<Foldptn>;
 
 
 int

@@ -66,9 +66,9 @@ MakePolyXMover::MakePolyXMover():
 	selector_( new core::select::residue_selector::TrueResidueSelector )
 {}
 
-MakePolyXMover::MakePolyXMover( std::string aa, bool keep_pro, bool keep_gly, bool keep_disulfide_cys ):
+MakePolyXMover::MakePolyXMover( std::string const & aa, bool keep_pro, bool keep_gly, bool keep_disulfide_cys ):
 	protocols::moves::Mover( MakePolyXMover::mover_name() ),
-	aa_(std::move( aa )),
+	aa_( aa ),
 	keep_pro_( keep_pro ),
 	keep_gly_( keep_gly ),
 	keep_disulfide_cys_( keep_disulfide_cys ),
@@ -114,9 +114,9 @@ MakePolyXMover::parse_my_tag(
 	Pose const & )
 {
 	aa_ = tag->getOption<std::string>( "aa", "ALA" );
-	keep_pro_  = tag->getOption<bool>( "keep_pro", 0 );
-	keep_gly_  = tag->getOption<bool>( "keep_gly", 1 );
-	keep_disulfide_cys_  = tag->getOption<bool>( "keep_disulfide_cys", 0 );
+	keep_pro_  = tag->getOption<bool>( "keep_pro", false );
+	keep_gly_  = tag->getOption<bool>( "keep_gly", true );
+	keep_disulfide_cys_  = tag->getOption<bool>( "keep_disulfide_cys", false );
 
 	ResidueSelectorCOP selector = core::select::residue_selector::parse_residue_selector( tag, data );
 	if ( selector ) selector_ = selector;

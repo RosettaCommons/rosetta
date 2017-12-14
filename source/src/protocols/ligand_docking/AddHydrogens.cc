@@ -68,11 +68,7 @@ AddHydrogens::AddHydrogens():
 	Mover::type( "AddHydrogens" );
 }
 
-AddHydrogens::AddHydrogens(AddHydrogens const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	chain_(that.chain_)
-{}
+AddHydrogens::AddHydrogens(AddHydrogens const & /*that*/) = default;
 
 AddHydrogens::~AddHydrogens() = default;
 

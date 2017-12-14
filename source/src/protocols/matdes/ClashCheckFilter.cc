@@ -70,15 +70,15 @@ ClashCheckFilter::ClashCheckFilter():
 	sym_dof_names_( "" ),
 	nsub_bblock_( 1 ),
 	threshold_( 0 ),
-	verbose_( 0 ),
-	write_( 0 )
+	verbose_( false ),
+	write_( false )
 {}
 
 // @brief constructor with arguments
-ClashCheckFilter::ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string  s, core::Size const n, core::Size const t, bool const v, bool const w ):
+ClashCheckFilter::ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string  const & s, core::Size const n, core::Size const t, bool const v, bool const w ):
 	task_factory_(std::move( task_factory )),
 	clash_dist_( c ),
-	sym_dof_names_(std::move( s )),
+	sym_dof_names_( s ),
 	nsub_bblock_( n ),
 	threshold_( t ),
 	verbose_( v ),
@@ -127,7 +127,7 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 	using namespace core::pose::symmetry;
 	using core::id::AtomID;
 	using namespace utility;
-	typedef vector1<Size> Sizes;
+	using Sizes = vector1<Size>;
 
 	SymmetryInfoCOP sym_info = symmetry_info(pose);
 	vector1<bool> indy_resis = sym_info->independent_residues();
@@ -264,8 +264,8 @@ ClashCheckFilter::parse_my_tag(
 	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "" );
 	nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
 	threshold_ = tag->getOption<core::Size>( "cutoff", 0 );
-	verbose_ = tag->getOption< bool >( "verbose", 0 );
-	write_ = tag->getOption< bool >("write2pdb", 0);
+	verbose_ = tag->getOption< bool >( "verbose", false );
+	write_ = tag->getOption< bool >("write2pdb", false);
 }
 
 core::Real

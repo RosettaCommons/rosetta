@@ -379,7 +379,6 @@ private:
 	core::Real chainbreak_weight_;
 	core::Real linear_chainbreak_weight_;
 	bool close_loops_;
-	bool close_loops_in_last_round_;
 	bool close_loops_after_each_move_;
 
 	bool allow_bulge_, allow_consecutive_bulges_;
@@ -449,7 +448,6 @@ private:
 
 	bool simple_rmsd_cutoff_relax_;
 
-	bool refine_from_silent_;
 	bool refine_pose_;
 	bool override_refine_pose_rounds_;
 	bool refine_native_get_good_FT_;

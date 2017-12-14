@@ -324,7 +324,7 @@ core::pose::PoseOP MergePDBMover::get_additional_output(){
 		}
 	}
 	set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
-	return NULL;
+	return nullptr;
 }
 
 
@@ -350,7 +350,7 @@ void MergePDBMover::apply( Pose & pose )
 	}
 
 	core::pose::PoseOP tmpPoseOP=get_additional_output();
-	if ( tmpPoseOP!=NULL ) {
+	if ( tmpPoseOP!=nullptr ) {
 		pose=*tmpPoseOP;
 	}
 }

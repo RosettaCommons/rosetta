@@ -141,7 +141,7 @@ LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
 }
 
 //destructor
-LoopMover_Perturb_CCD::~LoopMover_Perturb_CCD() {}
+LoopMover_Perturb_CCD::~LoopMover_Perturb_CCD() = default;
 
 // XRW TEMP std::string
 // XRW TEMP LoopMover_Perturb_CCD::get_name() const {

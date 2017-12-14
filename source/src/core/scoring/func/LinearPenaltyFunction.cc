@@ -39,7 +39,7 @@ bool LinearPenaltyFunction::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	LinearPenaltyFunction const & other_downcast( static_cast< LinearPenaltyFunction const & > (other) );
+	auto const & other_downcast( static_cast< LinearPenaltyFunction const & > (other) );
 	if ( x_middle_   != other_downcast.x_middle_   ) return false;
 	if ( well_depth_ != other_downcast.well_depth_ ) return false;
 	if ( half_width_ != other_downcast.half_width_ ) return false;

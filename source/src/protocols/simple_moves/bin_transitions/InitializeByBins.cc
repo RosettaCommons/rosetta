@@ -94,7 +94,7 @@ InitializeByBins::InitializeByBins( InitializeByBins const &src ) :
 
 /// @brief Destructor.
 ///
-InitializeByBins::~InitializeByBins() {}
+InitializeByBins::~InitializeByBins() = default;
 
 // XRW TEMP std::string
 // XRW TEMP InitializeByBins::get_name() const {

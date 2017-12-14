@@ -72,7 +72,7 @@ public:
 	//constructor
 	Attachment();
 
-	Attachment( Size const & attachment_res,
+	Attachment( Size const attachment_res,
 		AttachmentType const attachment_type );
 
 	Attachment( Attachment const & src );
@@ -86,7 +86,7 @@ public:
 
 public:
 
-	void set_attached_res( Size const & setting ){ attached_res_ = setting; }
+	void set_attached_res( Size const setting ){ attached_res_ = setting; }
 	Size attached_res() const { return attached_res_; }
 
 	void set_attachment_type( AttachmentType const & setting ){ attachment_type_ = setting; }
@@ -130,7 +130,7 @@ public:
 
 	StepWiseMove( StepWiseMove const & src );
 
-	StepWiseMove( utility::vector1< std::string > swa_move_string_vector,
+	StepWiseMove( utility::vector1< std::string > const & swa_move_string_vector,
 		core::pose::full_model_info::FullModelParametersCOP full_model_parameters = 0 /* to convert resnum, chain to Rosetta res */ );
 
 	friend

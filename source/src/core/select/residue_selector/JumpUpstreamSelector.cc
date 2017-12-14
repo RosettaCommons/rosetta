@@ -67,7 +67,7 @@ JumpUpstreamSelector::JumpUpstreamSelector( int jump )
 }
 
 
-JumpUpstreamSelector::~JumpUpstreamSelector() {}
+JumpUpstreamSelector::~JumpUpstreamSelector() = default;
 
 ResidueSubset
 JumpUpstreamSelector::apply( core::pose::Pose const & pose ) const

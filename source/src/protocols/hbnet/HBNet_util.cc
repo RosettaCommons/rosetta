@@ -63,7 +63,7 @@ print_list_to_string( hbond_net_struct const & network, bool chainid/* true */, 
 	utility::vector1< HBondResStructCOP > const residues( (network.asymm_residues.empty()) ? network.residues : network.asymm_residues );
 	std::stringstream ret_str;
 	Size count(0);
-	for ( const auto & residue : residues ) {
+	for ( auto const & residue : residues ) {
 		if ( count > 0 ) {
 			ret_str << ",";
 		}
@@ -74,7 +74,7 @@ print_list_to_string( hbond_net_struct const & network, bool chainid/* true */, 
 		ret_str << residue->resnum;
 		count++;
 	}
-	//    for ( const auto & waterrot : network.waterrots ) {
+	//    for ( auto const & waterrot : network.waterrots ) {
 	//        ret_str << ",";
 	//        ret_str << waterrot->name1() << "_";
 	//        ret_str << waterrot->seqpos();
@@ -100,7 +100,7 @@ print_list_to_string( Pose const & pose, hbond_net_struct const & network, bool 
 	utility::vector1< HBondResStructCOP > const residues( (network.asymm_residues.empty()) ? network.residues : network.asymm_residues );
 	std::stringstream ret_str;
 	Size count(0);
-	for ( const auto & residue : residues ) {
+	for ( auto const & residue : residues ) {
 		if ( count > 0 ) {
 			ret_str << ",";
 		}
@@ -119,7 +119,7 @@ print_list_to_string( Pose const & pose, hbond_net_struct const & network, bool 
 		}
 		count++;
 	}
-	//    for ( const auto & waterrot : network.waterrots ) {
+	//    for ( auto const & waterrot : network.waterrots ) {
 	//        ret_str << ",";
 	//        if ( chainid ) {
 	//            if ( use_pdb_numbering && ( waterrot->seqpos() <= total ) && pose.pdb_info()->chain(waterrot->seqpos()) ) {
@@ -224,7 +224,7 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 	//            }
 	//        }
 	//    }
-	for ( const auto & resnum : resnums ) {
+	for ( auto const & resnum : resnums ) {
 		//std::cout << "getting hbonds for residue " << res_i;
 		utility::vector1< HBondCOP > hbonds_for_res_i( full_hbond_set->residue_hbonds(resnum, false) );
 		for ( auto & ih : hbonds_for_res_i ) {
@@ -241,7 +241,7 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 bool
 hbond_exists_in_vector( utility::vector1<HBondCOP> const & hbond_vec, HBondCOP h2 )
 {
-	for ( const auto & h1 : hbond_vec ) {
+	for ( auto const & h1 : hbond_vec ) {
 		if ( h1->acc_res() == h2->acc_res() && h1->don_res() == h2->don_res() && h1->acc_atm() == h2->acc_atm() && h1->don_hatm() == h2->don_hatm() ) {
 			return true;
 		}
@@ -400,7 +400,7 @@ network_contains_aa( char aa_one_letter, hbond_net_struct const & i )
 bool
 network_contains_aa( char aa_one_letter, utility::vector1< HBondResStructCOP > const & residues )
 {
-	for ( const auto & residue : residues ) {
+	for ( auto const & residue : residues ) {
 		if ( residue->aa == aa_one_letter ) {
 			return true;
 		}

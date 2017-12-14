@@ -39,7 +39,7 @@ public:
 	// func_switch setting
 
 	MinimizerOptions(
-		std::string min_type_in,
+		std::string const & min_type_in,
 		Real const minimize_tolerance_in,
 		bool const use_nblist_in, // see core/scoring/NeighborList.hh
 		bool const deriv_check_in = false,

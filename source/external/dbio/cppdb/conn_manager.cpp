@@ -23,10 +23,10 @@
 
 namespace cppdb {
 	struct connections_manager::data{};
-	connections_manager::connections_manager() {}
+	connections_manager::connections_manager() = default;
 // Borland erros on hidden destructors in classes without only static methods.
 #ifndef __BORLANDC__
-	connections_manager::~connections_manager() {}
+	connections_manager::~connections_manager() = default;
 #endif
 
 	connections_manager &connections_manager::instance()
@@ -48,7 +48,7 @@ namespace cppdb {
 		/// seems we may be using pool
 		if(cs.find("@pool_size")!=std::string::npos) {
 			mutex::guard l(lock_);
-			connections_type::iterator pool_ptr = connections_.find(cs);
+			auto pool_ptr = connections_.find(cs);
 			if(pool_ptr!=connections_.end())
 				p = pool_ptr->second;
 		}
@@ -83,20 +83,20 @@ namespace cppdb {
 		pools_.reserve(100);
 		{
 			mutex::guard l(lock_);
-			for(connections_type::iterator p=connections_.begin();p!=connections_.end();++p) {
-				pools_.push_back(p->second);
+			for(auto & connection : connections_) {
+				pools_.push_back(connection.second);
 			}
 		}
-		for(unsigned i=0;i<pools_.size();i++) {
-			pools_[i]->gc();
+		for(auto & pool : pools_) {
+			pool->gc();
 		}
 		pools_.clear();
 		{
 			mutex::guard l(lock_);
-			for(connections_type::iterator p=connections_.begin();p!=connections_.end();) {
+			for(auto p=connections_.begin();p!=connections_.end();) {
 				if(p->second->use_count() == 1) {
 					pools_.push_back(p->second);
-					connections_type::iterator tmp = p;
+					auto tmp = p;
 					++p;
 					connections_.erase(tmp);
 				}

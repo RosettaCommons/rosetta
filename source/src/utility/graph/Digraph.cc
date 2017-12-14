@@ -159,8 +159,7 @@ DirectedEdgeList::size() const
 
 /// @brief
 /// virtual destructor
-DirectedNode::~DirectedNode()
-{}
+DirectedNode::~DirectedNode() = default;
 
 /// @brief
 /// Main constructor, no default constructor nor copy constructor
@@ -277,7 +276,7 @@ DirectedEdge * DirectedNode::find_edge_to(platform::Size other_node)
 			return (*iter);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 /// @details Constant time if each vertex has a constant number of edges.  DirectedEdges are
@@ -309,7 +308,7 @@ DirectedEdge * DirectedNode::find_edge_from( platform::Size other_node )
 			return (*iter);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 
@@ -462,8 +461,8 @@ platform::Size DirectedEdge::count_dynamic_memory() const
 Digraph::~Digraph()
 {
 	delete_everything();
-	delete edge_list_element_pool_; edge_list_element_pool_ = 0;
-	delete edge_pool_; edge_pool_ = 0;
+	delete edge_list_element_pool_; edge_list_element_pool_ = nullptr;
+	delete edge_pool_; edge_pool_ = nullptr;
 }
 
 /// @brief default constructor; creates an empty graph (no nodes, no edges)
@@ -475,7 +474,7 @@ Digraph::Digraph() :
 	edge_list_element_pool_( new boost::unordered_object_pool< DirectedEdgeListElement > ( 256 ) ),
 	edge_list_( *edge_list_element_pool_ ),
 	edge_pool_( new boost::unordered_object_pool< DirectedEdge > ( 256 ) ),
-	focused_edge_( 0 )
+	focused_edge_( nullptr )
 {}
 
 /// @details Do not call this constructor from a derived class in the initialization list,
@@ -486,12 +485,12 @@ Digraph::Digraph() :
 Digraph::Digraph( platform::Size num_nodes ) :
 	parent(),
 	num_nodes_(num_nodes),
-	nodes_(num_nodes, (DirectedNode*) 0),
+	nodes_(num_nodes, (DirectedNode*) nullptr),
 	num_edges_( 0 ),
 	edge_list_element_pool_( new boost::unordered_object_pool< DirectedEdgeListElement > ( 256 ) ),
 	edge_list_( *edge_list_element_pool_ ),
 	edge_pool_( new boost::unordered_object_pool< DirectedEdge > ( 256 ) ),
-	focused_edge_( 0 )
+	focused_edge_( nullptr )
 {
 	for ( platform::Size ii = 1; ii <= num_nodes; ++ii ) {
 		nodes_[ ii ] = create_new_node( ii );
@@ -510,12 +509,12 @@ Digraph::Digraph( Digraph const & source ) :
 	parent(),
 	utility::pointer::enable_shared_from_this< Digraph >(),
 	num_nodes_( source.num_nodes_ ),
-	nodes_( num_nodes_, (DirectedNode *) 0 ),
+	nodes_( num_nodes_, (DirectedNode *) nullptr ),
 	num_edges_( 0 ),
 	edge_list_element_pool_( new boost::unordered_object_pool< DirectedEdgeListElement > ( 256 ) ),
 	edge_list_( *edge_list_element_pool_ ),
 	edge_pool_( new boost::unordered_object_pool< DirectedEdge > ( 256 ) ),
-	focused_edge_( 0 )
+	focused_edge_( nullptr )
 {
 	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) {
 		nodes_[ ii ] = create_new_node( ii );
@@ -644,7 +643,7 @@ void Digraph::add_node() {
 bool Digraph::get_edge_exists(platform::Size tail_node, platform::Size head_node) const
 {
 	DirectedEdge const * edge = find_edge( tail_node, head_node );
-	return (edge != NULL);
+	return (edge != nullptr);
 }
 
 /// @brief deletes all edges adjacent to the node specified
@@ -720,7 +719,7 @@ void Digraph::output_dimacs(std::ostream & os) const
 /// @param citer - [in] - the iterator in the const edge list pointing at the edge that's deleting itself
 void Digraph::drop_edge( DirectedEdgeListIter iter )
 {
-	if ( *iter == focused_edge_ ) focused_edge_ = NULL; //invalidate focused_edge_
+	if ( *iter == focused_edge_ ) focused_edge_ = nullptr; //invalidate focused_edge_
 
 	--num_edges_;
 	edge_list_.erase(iter);
@@ -740,10 +739,10 @@ void Digraph::delete_everything()
 		delete_edge( *iter );
 		iter = next_iter;
 	}
-	for ( platform::Size ii = 1; ii <= num_nodes_; ii++ ) { delete nodes_[ii]; nodes_[ii] = 0; }
+	for ( platform::Size ii = 1; ii <= num_nodes_; ii++ ) { delete nodes_[ii]; nodes_[ii] = nullptr; }
 	num_nodes_ = 0;
 	nodes_.resize( 0 );
-	focused_edge_ = 0;
+	focused_edge_ = nullptr;
 }
 
 /// @brief
@@ -759,7 +758,7 @@ void Digraph::delete_everything()
 /// head_node - [in] - index of the head node
 DirectedEdge const * Digraph::find_edge(platform::Size tail_node, platform::Size head_node) const
 {
-	if ( focused_edge_ == NULL || !( focused_edge_->same_edge(tail_node, head_node)) ) {
+	if ( focused_edge_ == nullptr || !( focused_edge_->same_edge(tail_node, head_node)) ) {
 		if ( nodes_[ tail_node ]->outdegree() < nodes_[ head_node ]->indegree() ) {
 			focused_edge_ = nodes_[tail_node]->find_edge_to(head_node);
 		} else {
@@ -781,7 +780,7 @@ DirectedEdge const * Digraph::find_edge(platform::Size tail_node, platform::Size
 /// head_node - [in] - index of the second node
 DirectedEdge * Digraph::find_edge(platform::Size tail_node, platform::Size head_node)
 {
-	if ( focused_edge_ == NULL || !( focused_edge_->same_edge(tail_node, head_node)) ) {
+	if ( focused_edge_ == nullptr || !( focused_edge_->same_edge(tail_node, head_node)) ) {
 		if ( nodes_[ tail_node ]->outdegree() < nodes_[ head_node ]->indegree() ) {
 			focused_edge_ = nodes_[tail_node]->find_edge_to(head_node);
 		} else {

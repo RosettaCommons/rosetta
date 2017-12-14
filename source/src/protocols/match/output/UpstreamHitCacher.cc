@@ -24,6 +24,7 @@
 #include <core/conformation/Residue.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>
 
@@ -40,7 +41,7 @@ namespace output {
 
 
 UpstreamHitCacher::UpstreamHitCacher( MatcherCOP matcher ) :
-	matcher_( matcher ),
+	matcher_(std::move( matcher )),
 	n_geometric_constraints_( matcher_ ? matcher_->n_geometric_constraints() : 0 ),
 	n_confs_to_cache_( 100 ),
 	index_for_rotamer_( n_geometric_constraints_ ),
@@ -52,7 +53,7 @@ UpstreamHitCacher::UpstreamHitCacher( MatcherCOP matcher ) :
 	resize_arrays();
 }
 
-UpstreamHitCacher::~UpstreamHitCacher() {}
+UpstreamHitCacher::~UpstreamHitCacher() = default;
 
 void
 UpstreamHitCacher::set_cache_size( Size n_rotamers_to_cache )
@@ -101,7 +102,7 @@ UpstreamHitCacher::process_hit(
 
 		if ( upstream_confs_[ cst_id ][ next ] ) {
 			// erase the entry for this rotamer in the index_for_rotamer_ map;
-			std::map< ScaffoldRotamerTuple, Size >::iterator iter =
+			auto iter =
 				index_for_rotamer_[ cst_id ].find( scafrot_pair_for_conf_[ cst_id ][ next ] );
 			runtime_assert( iter != index_for_rotamer_[ cst_id ].end() );
 			index_for_rotamer_[ cst_id ].erase( iter );
@@ -146,7 +147,7 @@ UpstreamHitCacher::resize_arrays()
 UpstreamHitCacher::Size
 UpstreamHitCacher::already_in_queue( Size cst_id, ScaffoldRotamerTuple const & rotid ) const
 {
-	std::map< ScaffoldRotamerTuple, Size >::const_iterator iter = index_for_rotamer_[ cst_id ].find( rotid );
+	auto iter = index_for_rotamer_[ cst_id ].find( rotid );
 	if ( iter == index_for_rotamer_[ cst_id ].end() ) {
 		return 0;
 	} else {

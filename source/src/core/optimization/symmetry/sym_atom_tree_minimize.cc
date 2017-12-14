@@ -64,7 +64,7 @@ namespace symmetry {
 
 static basic::Tracer TR( "core.optimization.symmetry.sym_atom_tree_minimize" );
 
-typedef id::DOF_ID DOF_ID;
+using DOF_ID = id::DOF_ID;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ atom_tree_dfunc(
 	using namespace conformation::symmetry;
 	// Initialize symmetry
 	debug_assert (pose::symmetry::is_symmetric( pose ) );
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -174,10 +174,10 @@ atom_tree_dfunc(
 	if ( symm_min_map.new_sym_min() ) { // only need this if we've got dependent dofs in the dof nodes list
 		pose::initialize_dof_id_map( independent_dof_node_index, pose, int(0) );
 		Size imap(0);
-		for ( SymMinimizerMap::const_iterator it = symm_min_map.begin(); it!= symm_min_map.end(); ++it ) {
-			if ( (*it)->dependent() ) continue;
+		for ( auto const & it : symm_min_map ) {
+			if ( it->dependent() ) continue;
 			++imap;
-			independent_dof_node_index[ (*it)->dof_id() ] = imap;
+			independent_dof_node_index[ it->dof_id() ] = imap;
 		}
 		runtime_assert( imap == symm_min_map.nangles() ); // sanity check
 	}
@@ -186,7 +186,7 @@ atom_tree_dfunc(
 	/////////////////////////////////////////////////////////////////////////////
 	// now loop over the torsions in the map
 	int imap( 1 ); // for indexing into de_dvars( imap )
-	for ( SymMinimizerMap::const_iterator it=symm_min_map.begin(), ite=symm_min_map.end();
+	for ( auto it=symm_min_map.begin(), ite=symm_min_map.end();
 			it != ite; ++it, ++imap ) {
 
 		DOF_Node const & dof_node( **it );
@@ -236,13 +236,13 @@ atom_tree_get_atompairE_deriv(
 	using namespace scoring;
 	using namespace scoring::symmetry;
 
-	SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 
-	SymmetricEnergies const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
+	auto const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
 
 	debug_assert( symm_energies.minimization_graph() );
 	debug_assert( symm_energies.derivative_graph() );
@@ -267,7 +267,7 @@ atom_tree_get_atompairE_deriv(
 	for ( utility::graph::Node::EdgeListConstIter
 			edgeit = mingraph->const_edge_list_begin(), edgeit_end = mingraph->const_edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
-		MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+		auto const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 
 		EnergyMap respair_weight_scaled = scorefxn.weights();
 		if ( symm_min_map.new_sym_min() ) {
@@ -294,7 +294,7 @@ atom_tree_get_atompairE_deriv(
 		for ( utility::graph::Node::EdgeListConstIter
 				edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
-			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+			auto const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 
 			EnergyMap respair_weight_scaled = scorefxn.weights();
 			respair_weight_scaled *= minedge.dweight();
@@ -313,7 +313,7 @@ atom_tree_get_atompairE_deriv(
 	}
 
 	// Loop over all dofs in the symmetric movemap
-	for ( MinimizerMap::const_iterator iter = symm_min_map.begin(), iter_e = symm_min_map.end();
+	for ( auto iter = symm_min_map.begin(), iter_e = symm_min_map.end();
 			iter != iter_e; ++iter ) {
 		DOF_Node & dof_node( **iter );
 
@@ -321,7 +321,7 @@ atom_tree_get_atompairE_deriv(
 
 		Vector f1(0,0,0), f2(0,0,0);
 		// loop through atoms first moved by this torsion
-		for ( DOF_Node::AtomIDs::const_iterator it1=dof_node.atoms().begin(),
+		for ( auto it1=dof_node.atoms().begin(),
 				it1e = dof_node.atoms().end(); it1 != it1e; ++it1 ) {
 			id::AtomID const & atom_id( *it1 );
 
@@ -332,7 +332,7 @@ atom_tree_get_atompairE_deriv(
 			scorefxn.eval_npd_atom_derivative( atom_id, pose, symm_min_map.domain_map(), dof_node.F1(), dof_node.F2() );
 		} // atom1
 	}
-	for ( MinimizerMap::const_iterator iter = symm_min_map.dependent_begin(), iter_e = symm_min_map.dependent_end();
+	for ( auto iter = symm_min_map.dependent_begin(), iter_e = symm_min_map.dependent_end();
 			iter != iter_e; ++iter ) {
 		runtime_assert( !symm_min_map.new_sym_min() ); // we dont have these guys in new_sym_min approach
 		DOF_Node & dof_node( **iter );
@@ -341,10 +341,7 @@ atom_tree_get_atompairE_deriv(
 
 		Vector f1(0,0,0), f2(0,0,0);
 		// loop through atoms first moved by this torsion
-		for ( DOF_Node::AtomIDs::const_iterator it1=dof_node.atoms().begin(),
-				it1e = dof_node.atoms().end(); it1 != it1e; ++it1 ) {
-			id::AtomID const & atom_id( *it1 );
-
+		for ( auto atom_id : dof_node.atoms() ) {
 			/// Most of the derivative evaluation has already taken place by the time we get here.
 			f1 += symm_min_map.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f1();
 			f2 += symm_min_map.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f2();
@@ -369,7 +366,7 @@ atom_tree_get_atompairE_deriv(
 // temporary!
 class MinDebug {
 public:
-	MinDebug( Size const nangles ):
+	explicit MinDebug( Size const nangles ):
 		abs_deriv_dev( nangles ),
 		rel_deriv_dev( nangles )
 	{}
@@ -436,7 +433,7 @@ numerical_derivative_check(
 	Real const f00 = func( vars );
 	Size ii( 1 ); // for indexing into dE_dvars[ ii ]
 
-	for ( MinimizerMap::const_iterator iter= min_map.begin(),
+	for ( auto iter= min_map.begin(),
 			iter_end= min_map.end(); iter != iter_end; ++iter, ++ii ) {
 		DOF_Node const & dof_node( **iter );
 		if ( min_map.new_sym_min() && dof_node.dependent() ) { --ii; continue; }

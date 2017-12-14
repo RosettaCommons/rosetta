@@ -161,8 +161,8 @@ MPCbetaEnergy::compute_mpcbeta_score(
 
 	// interp1 rounds down to nearest (non-negative) integer.
 	// note cen6 is always at least 1.0
-	int const interp1 = static_cast< int >( fcen6 );
-	int const interp3 = static_cast< int >( fcen12 );
+	auto const interp1 = static_cast< int >( fcen6 );
+	auto const interp3 = static_cast< int >( fcen12 );
 
 	// lower bound
 	Real const interp2 = fcen6-interp1;

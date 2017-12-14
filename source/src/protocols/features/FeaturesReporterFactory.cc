@@ -53,7 +53,7 @@ using utility::tag::TagCOP;
 static basic::Tracer tr( "protocols.features.FeaturesReporterFactory" );
 
 /// @details Private constructor insures correctness of singleton.
-FeaturesReporterFactory::FeaturesReporterFactory() {}
+FeaturesReporterFactory::FeaturesReporterFactory() = default;
 
 FeaturesReporterFactory::~FeaturesReporterFactory() = default;
 

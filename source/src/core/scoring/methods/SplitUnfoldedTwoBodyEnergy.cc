@@ -50,9 +50,7 @@ SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & labe
 {
 }
 
-SplitUnfoldedTwoBodyEnergy::~SplitUnfoldedTwoBodyEnergy()
-{
-}
+SplitUnfoldedTwoBodyEnergy::~SplitUnfoldedTwoBodyEnergy() = default;
 
 EnergyMethodOP SplitUnfoldedTwoBodyEnergy::clone() const
 {

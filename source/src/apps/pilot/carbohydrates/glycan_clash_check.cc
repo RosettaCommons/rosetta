@@ -48,7 +48,7 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
-#include <math.h>
+#include <cmath>
 
 static basic::Tracer TR("glycan_clash_check");
 
@@ -82,33 +82,10 @@ public:  // Standard methods
 	}
 
 	/// @brief  Copy constructor.
-	GlycanClashCheckMover( GlycanClashCheckMover const & src ) :
-		Mover( src ),
-		branches_(src.branches_),
-		branch_point_resnums_(src.branch_point_resnums_),
-		chains_(src.chains_),
-		chain_nums_(src.chain_nums_),
-		branch_residues_(src.branch_residues_),
-		glycan_glycan_res_atomic_clashes_(src.glycan_glycan_res_atomic_clashes_),
-		glycan_chain_res_atomic_clashes_(src.glycan_chain_res_atomic_clashes_),
-		glycan_glycan_res_soft_atomic_clashes_(src.glycan_glycan_res_soft_atomic_clashes_),
-		glycan_chain_res_soft_atomic_clashes_(src.glycan_chain_res_soft_atomic_clashes_),
-		soft_clash_percent_(src.soft_clash_percent_),
-		ignore_hydrogens_(src.ignore_hydrogens_),
-		ignore_full_res_output_(src.ignore_full_res_output_),
-		output_per_glycan_data_(src.output_per_glycan_data_),
-		glycan_resnums_(src.glycan_resnums_),
-		chain_resnums_(src.chain_resnums_),
-		score_data_(src.score_data_),
-		res_data_(src.res_data_),
-		pymol_print_(src.pymol_print_),
-		lj_n_(src.lj_n_)
-	{
-
-	}
+	GlycanClashCheckMover( GlycanClashCheckMover const & /*src*/ ) = default;
 
 	// Destructor
-	virtual ~GlycanClashCheckMover() {}
+	~GlycanClashCheckMover() override = default;
 
 
 public:  // Standard Rosetta methods
@@ -116,9 +93,9 @@ public:  // Standard Rosetta methods
 
 
 	/// @brief  Generate string representation of DockGlycansProtocol for debugging purposes.
-	virtual
+
 	void
-	show( std::ostream & output=std::cout ) const
+	show( std::ostream & output=std::cout ) const override
 	{
 		protocols::moves::Mover::show( output );  // name, type, tag
 	}
@@ -126,29 +103,29 @@ public:  // Standard Rosetta methods
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	virtual
+
 	std::string
-	get_name() const
+	get_name() const override
 	{
 		return type();
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	clone() const
+	clone() const override
 	{
 		return protocols::moves::MoverOP( new GlycanClashCheckMover( *this ) );
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const
+	fresh_instance() const override
 	{
 		return protocols::moves::MoverOP( new GlycanClashCheckMover );
 	}
 
-	virtual bool
-	reinitialize_for_each_job() const {
+	bool
+	reinitialize_for_each_job() const override {
 		return true;
 	}
 
@@ -158,9 +135,9 @@ public:  // Standard Rosetta methods
 
 
 	/// @brief  Apply the corresponding protocol to <pose>.
-	virtual
+
 	void
-	apply( core::pose::Pose & pose )
+	apply( core::pose::Pose & pose ) override
 	{
 		branch_residues_.clear();
 		branch_point_resnums_.clear();
@@ -406,22 +383,22 @@ private:  // Private methods
 		core::Size overall_res_clashes_3 = 0;
 		core::Size overall_res_clashes_5 = 0;
 
-		for ( branch_it_type it = data.begin(); it != data.end(); ++it ) {
-			prefix = main_prefix + "_Branch-" + it->first;
+		for ( auto const & it : data ) {
+			prefix = main_prefix + "_Branch-" + it.first;
 
 			//TR << "Reporting " << clash_type << " data_type: "<< data_type << " branch_name: " << it->first << std::endl;
 
 			//Total - just imagine how easy this is in python.  Then be sad.
-			core::Size atom_clashes = total_atom_clashes( it->second);
+			core::Size atom_clashes = total_atom_clashes( it.second);
 			overall_atom_clashes += atom_clashes;
 
-			core::Size res_clashes_1 = total_residue_clashes( it->second, 1);
+			core::Size res_clashes_1 = total_residue_clashes( it.second, 1);
 			overall_res_clashes_1 += res_clashes_1;
 
-			core::Size res_clashes_3 = total_residue_clashes( it->second, 3);
+			core::Size res_clashes_3 = total_residue_clashes( it.second, 3);
 			overall_res_clashes_3 += res_clashes_3;
 
-			core::Size res_clashes_5 = total_residue_clashes( it->second, 5);
+			core::Size res_clashes_5 = total_residue_clashes( it.second, 5);
 			overall_res_clashes_5 += res_clashes_5;
 
 			if ( output_per_glycan_data_ ) {
@@ -432,8 +409,8 @@ private:  // Private methods
 			}
 
 			if ( ! ignore_full_res_output_ ) {
-				for ( core::Size resnum = 1; resnum <= it->second.size(); ++resnum ) {
-					if ( ! branch_residues_[it->first].has_value( resnum ) ) continue;
+				for ( core::Size resnum = 1; resnum <= it.second.size(); ++resnum ) {
+					if ( ! branch_residues_[it.first].has_value( resnum ) ) continue;
 					std::string chain = utility::to_string(pose.pdb_info()->chain( resnum ));
 					std::string pdb_num = utility::to_string(pose.pdb_info()->number( resnum ));
 					std::string pdb_name =  pdb_num + chain;
@@ -442,11 +419,11 @@ private:  // Private methods
 						pdb_name = pdb_name+"-"+icode;
 					}
 					//TR << main_prefix+"_"+pdb_name+"_total_atom_clashes " << it->second[ resnum ] << std::endl;
-					res_data_[main_prefix+"_"+pdb_name+"_total_atom_clashes"] = it->second[ resnum ];
+					res_data_[main_prefix+"_"+pdb_name+"_total_atom_clashes"] = it.second[ resnum ];
 
 					std::string pymol_entry = "( resid " +pdb_num+" and chain "+chain+")";
 
-					if ( it->second[resnum] > 0 && ! pymol_print_[main_prefix].has_value( pymol_entry ) ) {
+					if ( it.second[resnum] > 0 && ! pymol_print_[main_prefix].has_value( pymol_entry ) ) {
 						pymol_print_[main_prefix].push_back( pymol_entry );
 					}
 				}
@@ -585,7 +562,7 @@ private:  // Private data
 
 };
 
-typedef utility::pointer::shared_ptr< GlycanClashCheckMover > GlycanClashCheckMoverOP;
+using GlycanClashCheckMoverOP = utility::pointer::shared_ptr<GlycanClashCheckMover>;
 
 
 

@@ -44,11 +44,11 @@ class CoMTrackerCM : public environment::ClientMover {
 public:
 	CoMTrackerCM();
 
-	CoMTrackerCM( std::string name, // move-constructed
+	CoMTrackerCM( std::string const &name,
 		core::select::residue_selector::ResidueSelectorCOP mobile_selector,
-		std::string stationary_label ); // move-constructed
+		std::string const & stationary_label );
 
-	CoMTrackerCM( std::string name, // move-constructed
+	CoMTrackerCM( std::string const & name,
 		core::select::residue_selector::ResidueSelectorCOP mobile_selector );
 
 

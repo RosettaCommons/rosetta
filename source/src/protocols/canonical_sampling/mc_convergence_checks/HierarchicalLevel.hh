@@ -48,7 +48,7 @@ class HierarchicalLevel : public Pool_RMSD {
 
 public:
 
-	HierarchicalLevel(core::Size nlevels, std::string filename);
+	HierarchicalLevel(core::Size nlevels, std::string const & filename);
 
 	HierarchicalLevel( core::Size nlevels );
 

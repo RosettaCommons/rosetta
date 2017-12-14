@@ -44,7 +44,7 @@ namespace fragment {
 //static basic::Tracer tr("core.fragment");
 using namespace kinematics;
 
-FragSetCollection::FragSetCollection() {}
+FragSetCollection::FragSetCollection() = default;
 FragSetCollection::~FragSetCollection() = default;
 FragSetCollection::FragSetCollection( FragSetCollection const & ) = default;
 

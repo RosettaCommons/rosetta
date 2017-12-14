@@ -144,7 +144,7 @@ LipidAccInfo::operator=( LipidAccInfo const & src ) {
 }
 
 /// @brief Destructor
-LipidAccInfo::~LipidAccInfo() {}
+LipidAccInfo::~LipidAccInfo() = default;
 
 /// @brief Access Lipid exposed surface area per-residue
 utility::vector1< core::Real > LipidAccInfo::lipid_exposure() { return lipid_exposure_; }

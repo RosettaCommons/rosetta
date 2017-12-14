@@ -36,7 +36,7 @@ RotamerSet::RotamerSet() :
 	//data_cache_( RotamerSetCacheableDataType::num_cacheable_data_types )
 {}
 
-RotamerSet::~RotamerSet() {}
+RotamerSet::~RotamerSet() = default;
 
 void RotamerSet::set_resid( Size resid ) { resid_ = resid; }
 

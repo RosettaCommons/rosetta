@@ -321,7 +321,7 @@ class ISTable
     **
     **  \exception: None
     */
-    ISTable(const std::string& name,
+    ISTable(std::string const & name,
       const Char::eCompareType colCaseSense = Char::eCASE_SENSITIVE);
 
     /** 
@@ -344,7 +344,7 @@ class ISTable
     **
     **  \exception: None
     */
-    ISTable(const std::string& name, eOrientation orient,
+    ISTable(std::string const & name, eOrientation orient,
       const Char::eCompareType colCaseSense = Char::eCASE_SENSITIVE);
 
     /**

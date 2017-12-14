@@ -52,10 +52,10 @@ public:
 		basic::datacache::DataMap const& );
 
 	JumpClaim( ClientMoverOP owner,
-		std::string const& label,
-		LocalPosition const& jpos1,
-		LocalPosition const& jpos2,
-		LocalPosition const& cutp = core::environment::NO_POSITION );
+		std::string const & label,
+		LocalPosition const & pos1,
+		LocalPosition const & pos2,
+		LocalPosition const & cutp = core::environment::NO_POSITION );
 
 	virtual void yield_elements( core::environment::FoldTreeSketch const& fts, ResidueElements& elements ) const;
 

@@ -59,7 +59,7 @@ using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
 
-ProteinBackboneAtomAtomPairFeatures::ProteinBackboneAtomAtomPairFeatures(){}
+ProteinBackboneAtomAtomPairFeatures::ProteinBackboneAtomAtomPairFeatures()= default;
 
 ProteinBackboneAtomAtomPairFeatures::ProteinBackboneAtomAtomPairFeatures( ProteinBackboneAtomAtomPairFeatures const & ) :
 	FeaturesReporter()

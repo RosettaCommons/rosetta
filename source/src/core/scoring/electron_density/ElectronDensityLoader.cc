@@ -40,9 +40,9 @@ using std::istream;
 using std::string;
 
 ///// ElectronDensityLoaderCreator /////
-ElectronDensityLoaderCreator::ElectronDensityLoaderCreator() {}
+ElectronDensityLoaderCreator::ElectronDensityLoaderCreator() = default;
 
-ElectronDensityLoaderCreator::~ElectronDensityLoaderCreator() {}
+ElectronDensityLoaderCreator::~ElectronDensityLoaderCreator() = default;
 
 ResourceLoaderOP
 ElectronDensityLoaderCreator::create_resource_loader() const {
@@ -55,9 +55,9 @@ ElectronDensityLoaderCreator::loader_type() const {
 }
 
 //// ElectronDensityLoader /////
-ElectronDensityLoader::ElectronDensityLoader() {}
+ElectronDensityLoader::ElectronDensityLoader() = default;
 
-ElectronDensityLoader::~ElectronDensityLoader() {}
+ElectronDensityLoader::~ElectronDensityLoader() = default;
 
 ElectronDensityLoader::ElectronDensityLoader(
 	ElectronDensityLoader const &) : basic::resource_manager::ResourceLoader() {}
@@ -75,7 +75,7 @@ ElectronDensityLoader::create_resource(
 			"but was given a ResourceOptions of type '" + options.type() + "', "
 			"which has the name '" + options.name() + "'." );
 	}
-	ElectronDensityOptions const & resource_options(
+	auto const & resource_options(
 		static_cast< ElectronDensityOptions const & >( options ));
 
 	ElectronDensityOP electron_density( new ElectronDensity() );

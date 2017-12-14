@@ -350,9 +350,9 @@ void ITTable::GetColumn(vector<string>& col, const unsigned int colIndex,
 
     col.clear();
 
-    for (unsigned int index = 0; index < rowIndex.size(); ++index)
+    for (unsigned int index : rowIndex)
     {
-        col.push_back(operator()(rowIndex[index], colIndex));
+        col.push_back(operator()(index, colIndex));
     }
 
 }
@@ -655,7 +655,7 @@ void ITTable::FindDuplicateRows(const vector<unsigned int>& colIndices,
         pos = tmpindex.find(value);
         if (pos != tmpindex.end())
         {
-            duplRows.push_back(make_pair(realRowIndex, pos->second));
+            duplRows.emplace_back(realRowIndex, pos->second);
         }
         else
         {
@@ -669,9 +669,9 @@ void ITTable::FindDuplicateRows(const vector<unsigned int>& colIndices,
     if (!keep)
     {
         vector<unsigned int> duplRowIndices;
-        for (unsigned int rowI = 0; rowI < duplRows.size(); rowI++)
+        for (auto & duplRow : duplRows)
         {
-            duplRowIndices.push_back(duplRows[rowI].first);
+            duplRowIndices.push_back(duplRow.first);
         }
 
         DeleteRows(duplRowIndices);
@@ -683,9 +683,9 @@ void ITTable::FindDuplicateRows(const vector<unsigned int>& colIndices,
 bool ITTable::AreListsOfColumnsValid(const vector<unsigned int>& colIndices)
 {
 
-    for (unsigned int index = 0; index < colIndices.size(); index++)
+    for (unsigned int colIndice : colIndices)
     {
-        if (colIndices[index] >= GetNumColumns())
+        if (colIndice >= GetNumColumns())
         {
             return(false);
         }
@@ -827,12 +827,11 @@ void ITTable::InsertIndexEntry(const unsigned int indexIndex,
     // the value by one
     // VLAD IMPROVE. This and below for loop can be made into a method
     // IndexSearchForRow()
-    for (tIndex::iterator pos = _indices[indexIndex].begin();
-      pos != _indices[indexIndex].end(); ++pos)
+    for (auto & pos : _indices[indexIndex])
     {
-        if (pos->second >= rowIndex)
+        if (pos.second >= rowIndex)
         {
-            ++(pos->second);
+            ++(pos.second);
         }
     }
 
@@ -882,7 +881,7 @@ void ITTable::DeleteIndexEntry(const unsigned int indexIndex,
         return;
     }
 
-    for (tIndex::iterator pos = _indices[indexIndex].begin();
+    for (auto pos = _indices[indexIndex].begin();
       pos != _indices[indexIndex].end(); ++pos)
     {
         if (pos->second == rowIndex)
@@ -896,12 +895,11 @@ void ITTable::DeleteIndexEntry(const unsigned int indexIndex,
     // the value by one
     // VLAD IMPROVE. This and below for loop can be made into a method
     // IndexSearchForRow()
-    for (tIndex::iterator pos = _indices[indexIndex].begin();
-      pos != _indices[indexIndex].end(); ++pos)
+    for (auto & pos : _indices[indexIndex])
     {
-        if (pos->second >= rowIndex)
+        if (pos.second >= rowIndex)
         {
-            --(pos->second);
+            --(pos.second);
         }
     }
 
@@ -962,7 +960,7 @@ void ITTable::UpdateIndex(const unsigned int indexIndex,
 
     // See if a pair with the row having rowIndex already exists. If it
     // does delete it first.
-    for (tIndex::iterator pos = _indices[indexIndex].begin();
+    for (auto pos = _indices[indexIndex].begin();
       pos != _indices[indexIndex].end(); ++pos)
     {
         if (pos->second == rowIndex)
@@ -1094,7 +1092,7 @@ bool ITTable::IsColumnInIndex(const unsigned int indexIndex,
   const unsigned int colIndex)
 {
 
-    vector<unsigned int>::iterator pos =
+    auto pos =
       find(_listsOfColumns[indexIndex].begin(),
       _listsOfColumns[indexIndex].end(), colIndex);
 
@@ -1185,9 +1183,9 @@ string ITTable::SubRowValue(const vector<unsigned int>& colIndices,
 
     string value;
 
-    for (unsigned int index = 0; index < colIndices.size(); index++)
+    for (unsigned int colIndice : colIndices)
     {
-        AppendToAndDelimit(value, CellValue(colIndices[index], rowIndex));
+        AppendToAndDelimit(value, CellValue(colIndice, rowIndex));
     }
 
     return(value);
@@ -1201,9 +1199,9 @@ string ITTable::AggregateRow(const vector<unsigned int>& colIndices,
 
     string value;
 
-    for (unsigned int index = 0; index < colIndices.size(); index++)
+    for (unsigned int colIndice : colIndices)
     {
-        AppendToAndDelimit(value, operator()(rowIndex, colIndices[index]));
+        AppendToAndDelimit(value, operator()(rowIndex, colIndice));
     }
 
     return(value);
@@ -1214,7 +1212,7 @@ string ITTable::AggregateRow(const vector<unsigned int>& colIndices,
 void ITTable::Init()
 {
 
-    _ser = NULL;
+    _ser = nullptr;
 
 }
 
@@ -1349,7 +1347,7 @@ void ITTable::Search(vector<unsigned int>& res, const vector<string>& targets,
            break;
     }
 
-    for (tIndex::iterator pos = start; pos != afterLast; ++pos)
+    for (auto pos = start; pos != afterLast; ++pos)
     {
         res.push_back(pos->second);
     }
@@ -1385,7 +1383,7 @@ unsigned int ITTable::FindFirst(const vector<string>& targets,
 
     // Assume that it is not found
 
-    tIndex::iterator pos = _indices[indexNum].find(value);
+    auto pos = _indices[indexNum].find(value);
     if (pos != _indices[indexNum].end())
     {
         // Found
@@ -1658,12 +1656,12 @@ void ITTable::UpdateColListOnColInsert(const unsigned int colIndex)
 
     // Updating lists of columns. If a column in the list has column
     // index >= colIndex then increment it by 1
-    for (unsigned int i = 0; i < _listsOfColumns.size(); i++)
+    for (auto & _listsOfColumn : _listsOfColumns)
     {
-        for (unsigned int j = 0; j < _listsOfColumns[i].size(); j++)
+        for (unsigned int & j : _listsOfColumn)
         {
-            if (_listsOfColumns[i][j] >= colIndex)
-                _listsOfColumns[i][j]++;
+            if (j >= colIndex)
+                j++;
         }
     }
 
@@ -1675,12 +1673,12 @@ void ITTable::UpdateColListOnColDelete(const unsigned int colIndex)
 
     // Updating lists of columns. If a column in the list has column
     // index >= colIndex then decrement it by 1
-    for (unsigned int i = 0; i < _listsOfColumns.size(); i++)
+    for (auto & _listsOfColumn : _listsOfColumns)
     {
-        for (unsigned int j = 0; j < _listsOfColumns[i].size(); j++)
+        for (unsigned int & j : _listsOfColumn)
         {
-            if (_listsOfColumns[i][j] >= colIndex)
-                _listsOfColumns[i][j]--;
+            if (j >= colIndex)
+                j--;
         }
     }
 
@@ -1761,7 +1759,7 @@ void ITTable::FillColumn(const unsigned int colIndex,
     GetColumn(saveColumn, colIndex);
 
     unsigned int rowI = 0;
-    for (vector<string>::const_iterator currIter = colBeg; currIter < colEnd;
+    for (auto currIter = colBeg; currIter < colEnd;
       ++currIter, ++rowI)
     {
         if (_orient == eCOLUMN_WISE)
@@ -2027,9 +2025,9 @@ void ITTable::CreateColumn(const unsigned int atColIndex,
 void ITTable::VerifyColumnsIndices(const vector<unsigned int>& colIndices)
 {
 
-    for (unsigned int index = 0; index < colIndices.size(); index++)
+    for (unsigned int colIndice : colIndices)
     {
-        if (colIndices[index] >= GetNumColumns())
+        if (colIndice >= GetNumColumns())
         {
             // Wrong column index.
             throw out_of_range("Invalid column index in "\
@@ -2081,10 +2079,9 @@ void ITTable::GetColumn(vector<string>& col, const unsigned int colIndex,
 
     col.reserve(_indices[indexIndex].size());
 
-    for (tIndex::iterator pos = _indices[indexIndex].begin();
-      pos != _indices[indexIndex].end(); ++pos)
+    for (auto & pos : _indices[indexIndex])
     {
-        col.push_back(operator()(pos->second, colIndex));
+        col.push_back(operator()(pos.second, colIndex));
     }
 
 }

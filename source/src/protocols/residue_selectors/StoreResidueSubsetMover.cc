@@ -62,17 +62,16 @@ StoreResidueSubsetMover::StoreResidueSubsetMover():
 
 StoreResidueSubsetMover::StoreResidueSubsetMover(
 	core::select::residue_selector::ResidueSelectorCOP selector,
-	std::string  subset_name,
+	std::string const & subset_name,
 	bool const overwrite ):
 	protocols::moves::Mover(),
 	selector_(std::move( selector )),
-	subset_name_(std::move( subset_name )),
+	subset_name_( subset_name ),
 	overwrite_( overwrite )
 {}
 
 // @brief destructor
-StoreResidueSubsetMover::~StoreResidueSubsetMover()
-= default;
+StoreResidueSubsetMover::~StoreResidueSubsetMover() = default;
 
 void
 StoreResidueSubsetMover::apply( core::pose::Pose & pose )

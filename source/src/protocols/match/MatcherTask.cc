@@ -337,7 +337,7 @@ MatcherTask::append_upstream_resiue_as_defining_active_site(
 		TR << "overriding gridlig_active_site_definition_ by appending res/radius pair: " << resid << " " << radius << std::endl;
 		gridlig_active_site_definition_ = false;
 	}
-	upstream_resids_and_radii_defining_active_site_.push_back( std::make_pair( resid, radius ) );
+	upstream_resids_and_radii_defining_active_site_.emplace_back( resid, radius );
 }
 
 void
@@ -1444,7 +1444,7 @@ MatcherTask::initialize_active_site_definition_from_command_line()
 				utility_exit_with_message( "Problem reading active_site_definition " + filename );
 			}
 			TR << "Including sphere of radius " << radius << " surrounding scaffold residue " << resid << " in active site definition" << std::endl;
-			upstream_resids_and_radii_defining_active_site_.push_back( std::make_pair( resid, radius ));
+			upstream_resids_and_radii_defining_active_site_.emplace_back( resid, radius );
 		}
 		if ( upstream_resids_and_radii_defining_active_site_.empty() ) {
 			if ( ! downstream_atoms_required_inside_active_site_.empty() ) {

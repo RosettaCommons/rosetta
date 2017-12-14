@@ -80,7 +80,7 @@ class HBondReporter : public protocols::moves::Mover {
 public:
 
 
-	HBondReporter() : allowNonProtein_( true ), relevant_chains_("*") {
+	HBondReporter() : relevant_chains_("*") {
 		scfxn = core::scoring::ScoreFunctionOP( new ScoreFunction );
 		scfxn->set_weight( core::scoring::hbond_lr_bb, 1.17 );
 		scfxn->set_weight( core::scoring::hbond_sr_bb, 0.585 );
@@ -89,11 +89,11 @@ public:
 	}
 
 
-	virtual ~HBondReporter(){};
+	~HBondReporter() override= default;
 
 
-	virtual
-	std::string get_name() const {
+
+	std::string get_name() const override {
 		return "HBondReporter";
 	}
 
@@ -211,8 +211,8 @@ public:
 	///
 	///
 	///
-	virtual void
-	apply( pose::Pose& pose ) {
+	void
+	apply( pose::Pose& pose ) override {
 
 		TR << "getting hbonds for " << pose_name(pose) << std::endl;
 
@@ -381,7 +381,7 @@ public:
 	}
 
 private:
-	bool allowNonProtein_;
+	bool allowNonProtein_{ true };
 	core::scoring::ScoreFunctionOP scfxn;
 	std::string relevant_chains_;
 

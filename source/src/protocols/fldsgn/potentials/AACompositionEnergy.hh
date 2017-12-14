@@ -69,7 +69,7 @@ public: // constructor/destructor
 	AACompositionEnergy();
 
 	/// @brief value constructor
-	AACompositionEnergy( std::map< AA, std::pair< Real, Real >  > const & comp_constraint_aas );
+	AACompositionEnergy( std::map< AA, std::pair< Real, Real > > const & comp_constraint_aas );
 
 	/// @brief copy constructor
 	AACompositionEnergy( AACompositionEnergy const & src );

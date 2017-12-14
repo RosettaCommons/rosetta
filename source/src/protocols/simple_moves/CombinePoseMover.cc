@@ -127,7 +127,7 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 			= numeric::random::rg().uniform()*(maxfrac_crossover_ - minfrac_crossover_) + minfrac_crossover_;
 
 		// Get Starting/Ending seqpos
-		Size n_crossover = (Size)(nres*f_crossover);
+		auto n_crossover = (Size)(nres*f_crossover);
 
 		Size res1( numeric::random::rg().uniform()*( nres - n_crossover ) );
 		Size res2( res1 + n_crossover - 1 );

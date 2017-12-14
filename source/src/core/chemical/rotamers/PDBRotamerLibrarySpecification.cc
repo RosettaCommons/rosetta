@@ -16,6 +16,7 @@
 #include <core/chemical/rotamers/PDBRotamerLibrarySpecificationCreator.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 #ifdef    SERIALIZATION
@@ -50,10 +51,9 @@ PDBRotamerLibrarySpecificationCreator::keyname() const {
 
 // Specification Functions
 
-PDBRotamerLibrarySpecification::PDBRotamerLibrarySpecification()
-{}
+PDBRotamerLibrarySpecification::PDBRotamerLibrarySpecification() = default;
 
-PDBRotamerLibrarySpecification::PDBRotamerLibrarySpecification( std::string library_file ):
+PDBRotamerLibrarySpecification::PDBRotamerLibrarySpecification( std::string const & library_file ):
 	pdb_rotamers_file_(library_file)
 {}
 
@@ -63,7 +63,7 @@ PDBRotamerLibrarySpecification::PDBRotamerLibrarySpecification(std::istream & in
 		utility_exit_with_message("Must provide a file name with PDB Rotamers input");
 	}
 }
-PDBRotamerLibrarySpecification::~PDBRotamerLibrarySpecification() {}
+PDBRotamerLibrarySpecification::~PDBRotamerLibrarySpecification() = default;
 
 std::string
 PDBRotamerLibrarySpecification::keyname() const {

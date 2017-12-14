@@ -13,6 +13,7 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- Added human-readable XML schema output.
 
 // Unit headers
+#include <utility>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Package headers
@@ -169,7 +170,7 @@ XMLSchemaAttribute::XMLSchemaAttribute() :
 
 XMLSchemaAttribute::XMLSchemaAttribute(
 	std::string const & name,
-	XMLSchemaType type,
+	XMLSchemaType const & type,
 	std::string const & description
 ) :
 	name_( name ),
@@ -579,12 +580,12 @@ std::ostream & operator << ( std::ostream & os, XMLSchemaRestrictionType type ) 
 	return os;
 }
 
-XMLSchemaRestriction::XMLSchemaRestriction() {}
+XMLSchemaRestriction::XMLSchemaRestriction() = default;
 
 void XMLSchemaRestriction::name( std::string const & setting ) { name_ = setting; }
 void XMLSchemaRestriction::base_type( XMLSchemaType setting ) { base_type_ = setting; }
 void XMLSchemaRestriction::add_restriction( XMLSchemaRestrictionType type, std::string const & value ) {
-	restrictions_.push_back( std::make_pair( type, value ) );
+	restrictions_.emplace_back( type, value );
 }
 
 std::string const & XMLSchemaRestriction::element_name() const {
@@ -801,7 +802,7 @@ std::ostream & operator << ( std::ostream & os, XMLSchemaModelGroupType type ) {
 }
 
 
-XMLSchemaComplexType::XMLSchemaComplexType() {}
+XMLSchemaComplexType::XMLSchemaComplexType() = default;
 
 XMLSchemaComplexType & XMLSchemaComplexType::name( std::string const & setting ) { name_ = setting; return *this; }
 XMLSchemaComplexType & XMLSchemaComplexType::description( std::string const & setting ) {
@@ -926,7 +927,7 @@ void XMLSchemaElement::prepare_for_output( XMLSchemaDefinition & xsd ) const
 
 //////////////////////////////// XMLSchemaDefinition /////////////////////////////////////////////
 
-XMLSchemaDefinition::XMLSchemaDefinition() {}
+XMLSchemaDefinition::XMLSchemaDefinition() = default;
 
 XMLSchemaDefinition::~XMLSchemaDefinition() = default;
 
@@ -1005,7 +1006,7 @@ XMLSchemaSimpleSubelementList::ElementSummary::ElementSummary() :
 	max_occurs( xsminmax_unspecified )
 {}
 
-XMLSchemaSimpleSubelementList::XMLSchemaSimpleSubelementList() {}
+XMLSchemaSimpleSubelementList::XMLSchemaSimpleSubelementList() = default;
 
 XMLSchemaSimpleSubelementList::~XMLSchemaSimpleSubelementList() = default;
 
@@ -1345,9 +1346,9 @@ XMLSchemaSimpleSubelementList::element_summary_as_group_subelement(
 class XMLSchemaComplexTypeGeneratorImpl : public utility::pointer::ReferenceCount
 {
 public:
-	typedef boost::function< std::string ( std::string const & ) >     DerivedNameFunction;
-	typedef boost::function< std::string () >                          NameFunction;
-	typedef std::list< XMLSchemaSimpleSubelementList::ElementSummary > ElementSummaries;
+	using DerivedNameFunction = boost::function<std::string (const std::string &)>;
+	using NameFunction = boost::function<std::string ()>;
+	using ElementSummaries = std::list<XMLSchemaSimpleSubelementList::ElementSummary>;
 
 	enum SetOfSubelementsBehavior { ss_repeatable, ss_optional, ss_required, ss_pick_one_opt, ss_pick_one_req };
 
@@ -1450,7 +1451,7 @@ private:
 
 private:
 
-	CTGenSubelementBehavior subelement_behavior_;
+	CTGenSubelementBehavior subelement_behavior_{ se_none };
 	std::string element_name_;
 	std::string description_;
 	DerivedNameFunction complex_type_naming_function_;
@@ -1459,15 +1460,12 @@ private:
 	SubelementSets subelement_sets_;
 
 	AttributeList attributes_;
-	int repeatable_min_occurs_;
-	int repeatable_max_occurs_;
+	int repeatable_min_occurs_ = 0;
+	int repeatable_max_occurs_{ xsminmax_unbounded };
 };
 
 XMLSchemaComplexTypeGeneratorImpl::XMLSchemaComplexTypeGeneratorImpl() :
-	subelement_behavior_( se_none ),
-	description_( "(not yet set)" ),
-	repeatable_min_occurs_( 0 ),
-	repeatable_max_occurs_( xsminmax_unbounded )
+	description_( "(not yet set)" )
 {}
 
 
@@ -2270,7 +2268,7 @@ CTGenSubelementBehavior XMLSchemaComplexTypeGenerator::subelement_behavior() con
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-XMLSchemaRepeatableCTNode::XMLSchemaRepeatableCTNode() {}
+XMLSchemaRepeatableCTNode::XMLSchemaRepeatableCTNode() = default;
 XMLSchemaRepeatableCTNode::~XMLSchemaRepeatableCTNode() = default;
 
 XMLSchemaRepeatableCTNode &

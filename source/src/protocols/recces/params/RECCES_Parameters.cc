@@ -44,8 +44,7 @@ RECCES_Parameters::RECCES_Parameters( core::pose::Pose const & pose )
 }
 
 //Destructor
-RECCES_Parameters::~RECCES_Parameters()
-{}
+RECCES_Parameters::~RECCES_Parameters() = default;
 
 } //params
 } //recces

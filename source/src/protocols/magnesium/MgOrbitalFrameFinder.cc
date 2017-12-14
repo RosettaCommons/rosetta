@@ -33,13 +33,10 @@ namespace protocols {
 namespace magnesium {
 
 //Constructor
-MgOrbitalFrameFinder::MgOrbitalFrameFinder()
-//  legacy_mode_( true )
-{}
+MgOrbitalFrameFinder::MgOrbitalFrameFinder() = default;
 
 //Destructor
-MgOrbitalFrameFinder::~MgOrbitalFrameFinder()
-= default;
+MgOrbitalFrameFinder::~MgOrbitalFrameFinder() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
 void

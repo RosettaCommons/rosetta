@@ -92,8 +92,7 @@ TopologyClaimerFactory::TopologyClaimerFactory() {
 	add_type(TopologyClaimerOP( new BasicJumpClaimer() ));
 }
 
-TopologyClaimerFactory::~TopologyClaimerFactory() {
-}
+TopologyClaimerFactory::~TopologyClaimerFactory() = default;
 
 void TopologyClaimerFactory::add_type(TopologyClaimerOP claimer) {
 	add_type(claimer->type(), claimer);

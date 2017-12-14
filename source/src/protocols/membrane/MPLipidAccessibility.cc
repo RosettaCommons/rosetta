@@ -75,7 +75,7 @@ MPLipidAccessibility::MPLipidAccessibility() : protocols::moves::Mover() {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-MPLipidAccessibility::~MPLipidAccessibility(){}
+MPLipidAccessibility::~MPLipidAccessibility()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Show the contents of the Mover

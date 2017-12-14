@@ -103,7 +103,7 @@ GlycanTreeMinMover::GlycanTreeMinMover( GlycanTreeMinMover const & src ):
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-GlycanTreeMinMover::~GlycanTreeMinMover(){}
+GlycanTreeMinMover::~GlycanTreeMinMover()= default;
 
 
 ///@brief Minimize Rings? Default False

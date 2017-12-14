@@ -137,29 +137,10 @@ FullModelParameters::FullModelParameters( pose::Pose const & pose,
 }
 
 // copy
-FullModelParameters::FullModelParameters( FullModelParameters const & src ) :
-	ReferenceCount( src ),
-	utility::pointer::enable_shared_from_this< FullModelParameters >( src ),
-	full_sequence_( src.full_sequence_ ),
-	global_sequence_( src.global_sequence_ ),
-	global_mapping_( src.global_mapping_ ),
-	conventional_numbering_( src.conventional_numbering_ ),
-	conventional_chains_( src.conventional_chains_ ),
-	conventional_segids_( src.conventional_segids_ ),
-	non_standard_residue_map_( src.non_standard_residue_map_ ),
-	cst_string_( src.cst_string_ ),
-	cst_set_( src.cst_set_ ),
-	full_model_pose_for_constraints_( src.full_model_pose_for_constraints_ ),
-	parameter_values_at_res_( src.parameter_values_at_res_ ),
-	parameter_values_as_res_lists_( src.parameter_values_as_res_lists_ ),
-	slice_res_list_( src.slice_res_list_ ),
-	parent_full_model_parameters_( src.parent_full_model_parameters_ )
-{
-}
+FullModelParameters::FullModelParameters( FullModelParameters const & /*src*/ ) = default;
 
 //Destructor
-FullModelParameters::~FullModelParameters()
-{}
+FullModelParameters::~FullModelParameters() = default;
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -536,7 +517,7 @@ operator <<( std::ostream & os, FullModelParameters const & t )
 	}
 
 	for ( Size n = 1; n < LAST_TYPE; n++ ) {
-		FullModelParameterType type = static_cast< FullModelParameterType >( n );
+		auto type = static_cast< FullModelParameterType >( n );
 		std::map< Size, utility::vector1< Size > > const & res_lists = t.get_parameter_as_res_lists( type );
 		runtime_assert( res_lists.size() > 0 );
 
@@ -623,7 +604,7 @@ operator >>( std::istream & is, FullModelParameters & t )
 			Size idx = ( cols.size() == 1 ) ? 1 : ObjexxFCL::int_of( cols[1] );
 			std::vector< int > const resnum =  ObjexxFCL::ints_of( cols[ cols.size() ], ok );
 			if ( ok ) {
-				for ( Size q = 0; q < resnum.size(); q++ ) parameter_values_at_res[ resnum[q] ] = idx;
+				for ( int q : resnum ) parameter_values_at_res[ q ] = idx;
 			}
 			if ( is.fail() ) break;
 		}
@@ -684,8 +665,8 @@ operator!=(
 void
 FullModelParameters::read_cst_file( std::string const & cst_file ) {
 	cst_string_ = "";
-	full_model_pose_for_constraints_ = 0;
-	cst_set_ = 0;
+	full_model_pose_for_constraints_ = nullptr;
+	cst_set_ = nullptr;
 	runtime_assert( utility::file::file_exists( cst_file ) );
 	utility::io::izstream data( cst_file.c_str() );
 	while ( data.good() ) {
@@ -703,7 +684,7 @@ void
 FullModelParameters::update_pose_and_cst_set_from_cst_string( chemical::ResidueTypeSet const & rsd_type_set ) const {
 	using namespace core::scoring::constraints;
 
-	if ( full_model_pose_for_constraints_ != 0 && cst_set_ != 0 ) return;
+	if ( full_model_pose_for_constraints_ != nullptr && cst_set_ != nullptr ) return;
 
 	std::istringstream data( cst_string_ );
 
@@ -725,14 +706,14 @@ FullModelParameters::update_pose_and_cst_set_from_cst_string( chemical::ResidueT
 ////////////////////////////////////////////////////
 scoring::constraints::ConstraintSetCOP
 FullModelParameters::cst_set() const {
-	runtime_assert( cst_set_ != 0 ); // make sure that update_pose_and_cst_set_from_cst_string() has been called;
+	runtime_assert( cst_set_ != nullptr ); // make sure that update_pose_and_cst_set_from_cst_string() has been called;
 	return cst_set_;
 }
 
 ////////////////////////////////////////////////////
 Pose const &
 FullModelParameters::full_model_pose_for_constraints() const {
-	runtime_assert( full_model_pose_for_constraints_ != 0 ); // make sure that update_pose_and_cst_set_from_cst_string() has been called;
+	runtime_assert( full_model_pose_for_constraints_ != nullptr ); // make sure that update_pose_and_cst_set_from_cst_string() has been called;
 	return *full_model_pose_for_constraints_;
 }
 
@@ -832,7 +813,7 @@ FullModelParameters::slice( utility::vector1< Size > const & slice_res ) const
 	// following asserts may not actually be necessary -- perhaps at some
 	// future time we'll want to have recursive slicing.
 	runtime_assert( slice_res_list_.size() == 0 );
-	runtime_assert( parent_full_model_parameters_ == 0 );
+	runtime_assert( parent_full_model_parameters_ == nullptr );
 
 	std::string full_sequence_new;
 	utility::vector1< int >  conventional_numbering_new; // permits user to use numbering other than 1, 2, 3...
@@ -842,7 +823,7 @@ FullModelParameters::slice( utility::vector1< Size > const & slice_res ) const
 
 	std::map< FullModelParameterType, utility::vector1< Size > > parameter_values_at_res_new;
 	for ( Size q = 1; q < LAST_TYPE; q++ ) {
-		FullModelParameterType type = static_cast< FullModelParameterType >( q );
+		auto type = static_cast< FullModelParameterType >( q );
 		parameter_values_at_res_new[ type ] = utility::vector1< Size >();
 	}
 
@@ -863,7 +844,7 @@ FullModelParameters::slice( utility::vector1< Size > const & slice_res ) const
 		chains_new.push_back( chains[ n ] );
 
 		for ( Size q = 1; q < LAST_TYPE; q++ ) {
-			FullModelParameterType type = static_cast< FullModelParameterType >( q );
+			auto type = static_cast< FullModelParameterType >( q );
 			parameter_values_at_res_new[ type ].push_back( get_parameter( type )[ n ] );
 		}
 	}
@@ -874,7 +855,7 @@ FullModelParameters::slice( utility::vector1< Size > const & slice_res ) const
 	full_model_parameters_new->set_conventional_segids( conventional_segids_new );
 	full_model_parameters_new->set_non_standard_residue_map( non_standard_residue_map_new );
 	for ( Size q = 1; q < LAST_TYPE; q++ ) {
-		FullModelParameterType type = static_cast< FullModelParameterType >( q );
+		auto type = static_cast< FullModelParameterType >( q );
 		full_model_parameters_new->set_parameter( type, parameter_values_at_res_new[ type ] );
 	}
 	full_model_parameters_new->set_parameter_as_res_list( CUTPOINT_OPEN, get_cutpoint_open_from_chains( chains_new ) );
@@ -893,7 +874,7 @@ FullModelParameters::full_annotated_sequence() const
 	std::string annotated_sequence = "";
 	for ( Size n = 1; n <= full_sequence_.size(); n++ ) {
 		annotated_sequence += full_sequence_[ n - 1 ];
-		std::map< Size, std::string >::const_iterator it =  non_standard_residue_map_.find( n );
+		auto it =  non_standard_residue_map_.find( n );
 		if ( it == non_standard_residue_map_.end() ) continue;
 		annotated_sequence += "[" + it->second + "]";
 	}

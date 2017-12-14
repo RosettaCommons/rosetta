@@ -38,16 +38,16 @@ using basic::options::option;
 using namespace basic::options::OptionKeys;
 using ObjexxFCL::format::F;
 using ObjexxFCL::format::I;
-typedef core::Real Real;
-typedef core::Size Size;
-typedef core::pose::Pose Pose;
-typedef Xform Xform;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
-typedef utility::vector1<Vec> Vecs;
-typedef utility::vector1<Real> Reals;
-typedef utility::vector1<Size> Sizes;
-typedef numeric::Xforms Xforms;
+using Real = core::Real;
+using Size = core::Size;
+using Pose = core::pose::Pose;
+using Xform = Xform;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
+using Vecs = utility::vector1<Vec>;
+using Reals = utility::vector1<Real>;
+using Sizes = utility::vector1<Size>;
+using Xforms = numeric::Xforms;
 
 
 // byp tilt 32.5
@@ -119,17 +119,17 @@ using std::endl;
 using utility::vector1;
 using basic::options::option;
 using namespace basic::options::OptionKeys;
-typedef core::Real Real;
-typedef core::Size Size;
-typedef core::pose::Pose Pose;
-typedef Xform Xform;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
-typedef utility::vector1<Vec> Vecs;
-typedef utility::vector1<Real> Reals;
-typedef utility::vector1<Size> Sizes;
-typedef numeric::Xforms Xforms;
-typedef utility::vector1<RigidScoreCOP> Scores;
+using Real = core::Real;
+using Size = core::Size;
+using Pose = core::pose::Pose;
+using Xform = Xform;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
+using Vecs = utility::vector1<Vec>;
+using Reals = utility::vector1<Real>;
+using Sizes = utility::vector1<Size>;
+using Xforms = numeric::Xforms;
+using Scores = utility::vector1<RigidScoreCOP>;
 
 
 TrisBpyScore::TrisBpyScore(
@@ -153,8 +153,7 @@ TrisBpyScore::TrisBpyScore(
 
 }
 
-TrisBpyScore::~TrisBpyScore(){
-}
+TrisBpyScore::~TrisBpyScore()= default;
 
 void TrisBpyScore::show(std::ostream & out, int /*width*/) const {
 	out << " bpy_cbc bpy_err crl";
@@ -208,7 +207,7 @@ TrisBpyScore::score_extra( Xforms const & x1s, Xforms const & x2s, Real&cbc,Real
 				Vec const nbrcb[6] = { xclash*nbr[0],xclash*nbr[1],xclash*nbr[2],xclash*nbr[3],xclash*nbr[4],xclash*nbr[5] };
 				// for(int jr=   1; jr <= ir-3       ; ++jr) for(int inbr=0; inbr<6; ++inbr) cbc += CBScore_dist_score(cb_[jr].distance_squared(nbrcb[inbr]),6.0,12.0);
 				// for(int jr=ir+3; jr <= bbx_.size(); ++jr) for(int inbr=0; inbr<6; ++inbr) cbc += CBScore_dist_score(cb_[jr].distance_squared(nbrcb[inbr]),6.0,12.0);
-				for ( int jr=4; jr <= (int)bbx_.size()-3; ++jr ) for ( int inbr=0; inbr<6; ++inbr ) cbc += CBScore_dist_score(cb_[jr].distance_squared(nbrcb[inbr]),7.0,15.0);
+				for ( int jr=4; jr <= (int)bbx_.size()-3; ++jr ) for ( auto const & inbr : nbrcb ) cbc += CBScore_dist_score(cb_[jr].distance_squared(inbr),7.0,15.0);
 				if ( cbc < min_bpy_contacts_ ) continue;
 				// if(numeric::random::uniform()<01.01){
 				//  #ifdef USE_OPENMP

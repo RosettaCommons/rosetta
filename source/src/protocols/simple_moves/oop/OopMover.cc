@@ -118,7 +118,7 @@ OopMover::OopMover(
 
 }
 
-OopMover::~OopMover(){}
+OopMover::~OopMover()= default;
 
 void OopMover::update_hydrogens_( core::pose::Pose & pose )
 {

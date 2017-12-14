@@ -51,8 +51,8 @@ std::map<core::id::AtomID, core::id::AtomID>
 largest_continuous_atom_map(
 	std::map<core::id::AtomID, core::id::AtomID> const & atom_map
 ) {
-	std::map<core::id::AtomID, core::id::AtomID>::const_iterator it = atom_map.begin();
-	std::map<core::id::AtomID, core::id::AtomID>::const_iterator it_end = atom_map.end();
+	auto it = atom_map.begin();
+	auto it_end = atom_map.end();
 
 	//Find the largest continuous stretch of atoms in the alignment
 	core::Size prev_resnum_1(0);

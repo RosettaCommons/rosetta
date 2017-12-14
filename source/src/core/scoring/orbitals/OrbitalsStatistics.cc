@@ -183,8 +183,8 @@ void OrbitalsStatistics::increment_histogram_bin(
 	if ( angle >= .91 && angle <= 1 ) {
 		angle = .95;
 	}
-	core::SSize new_angle= static_cast<core::SSize> (round(angle/.1));
-	core::Size new_dist= static_cast<core::Size> (round(distance/.1));
+	auto new_angle= static_cast<core::SSize> (round(angle/.1));
+	auto new_dist= static_cast<core::Size> (round(distance/.1));
 	std::pair< core::Size, core::SSize> new_pair(new_dist, new_angle);
 	histogram.increase_count(new_pair);
 	// std::cout << " outputing paired distance that was put in increment_histogram_bind "<<histogram.lookup_counts(new_pair) << std::endl;;
@@ -231,7 +231,7 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 
 			numeric::xyzVector<core::Real> res2_H_xyz;
 			//iterate through atoms with orbitals
-			for ( core::chemical::AtomIndices::const_iterator
+			for ( auto
 					atom_index  =  resid1.atoms_with_orb_index().begin(),
 					atom_end = resid1.atoms_with_orb_index().end();
 					atom_index != atom_end; ++atom_index
@@ -240,18 +240,13 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 
 				utility::vector1<core::Size> const & orbital_indices(resid1.bonded_orbitals(*atom_index));
 				//iterate through the orbitals
-				for (
-						utility::vector1<core::Size>::const_iterator
-						orbital_index = orbital_indices.begin(),
-						orbital_end = orbital_indices.end();
-						orbital_index != orbital_end; ++orbital_index
-						) {
-					numeric::xyzVector<core::Real> orb_xyz = resid1.orbital_xyz(*orbital_index);
+				for ( unsigned long orbital_indice : orbital_indices ) {
+					numeric::xyzVector<core::Real> orb_xyz = resid1.orbital_xyz(orbital_indice);
 					numeric::xyzVector<core::Real> bonded_atom_xyz(resid1.atom(*atom_index).xyz());
 					if ( basic::options::option[basic::options::OptionKeys::orbitals::Hpol] ) {
 						//iterate only throught the sidechain polar hydrogens
 						for (
-								core::chemical::AtomIndices::const_iterator
+								auto
 								hpol_index = resid2.Hpol_index().begin(),
 								hpol_end = resid2.Hpol_index().end(); hpol_index != hpol_end; ++hpol_index
 								) {
@@ -264,7 +259,7 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 							angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
 							angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
 							low_D = container;
-							orbital_type = resid1.orbital_type(*orbital_index).name();
+							orbital_type = resid1.orbital_type(orbital_indice).name();
 							res2name= resid2.name3();
 							res2seqpos=resid2.seqpos();
 							atom_index_min_dist=*hpol_index;
@@ -272,7 +267,7 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 					}  // end if Hpol
 					//haro
 					if ( basic::options::option[basic::options::OptionKeys::orbitals::Haro] ) {
-						for ( core::chemical::AtomIndices::const_iterator
+						for ( auto
 								haro_index = resid2.Haro_index().begin(),
 								haro_end = resid2.Haro_index().end(); haro_index != haro_end; ++haro_index ) {
 							res2_H_xyz = resid2.atom( *haro_index ).xyz();
@@ -282,7 +277,7 @@ OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 
 							angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
 							angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
-							orbital_type = resid1.orbital_type(*orbital_index).name();
+							orbital_type = resid1.orbital_type(orbital_indice).name();
 							low_D = container;
 							res2name= resid2.name3();
 							res2seqpos=resid2.seqpos();
@@ -376,7 +371,7 @@ void OrbitalsStatistics::bb_stats(
 
 			numeric::xyzVector<core::Real> res2_H_xyz;
 			//iterate through atoms with orbitals
-			for ( core::chemical::AtomIndices::const_iterator
+			for ( auto
 					atom_index  =  resid1.atoms_with_orb_index().begin(),
 					atom_end = resid1.atoms_with_orb_index().end();
 					atom_index != atom_end; ++atom_index
@@ -385,19 +380,14 @@ void OrbitalsStatistics::bb_stats(
 
 				utility::vector1<core::Size> const & orbital_indices(resid1.bonded_orbitals(*atom_index));
 				//iterate through the orbitals
-				for (
-						utility::vector1<core::Size>::const_iterator
-						orbital_index = orbital_indices.begin(),
-						orbital_end = orbital_indices.end();
-						orbital_index != orbital_end; ++orbital_index
-						) {
+				for ( unsigned long orbital_indice : orbital_indices ) {
 
-					numeric::xyzVector<core::Real> orb_xyz = resid1.orbital_xyz(*orbital_index);
+					numeric::xyzVector<core::Real> orb_xyz = resid1.orbital_xyz(orbital_indice);
 					numeric::xyzVector<core::Real> bonded_atom_xyz(resid1.atom(*atom_index).xyz());
 					if ( basic::options::option[basic::options::OptionKeys::orbitals::Hpol] ) {
 						//iterate only throught the sidechain polar hydrogens
 						for (
-								core::chemical::AtomIndices::const_iterator
+								auto
 								hpol_index = resid2.Hpol_index().begin(),
 								hpol_end = resid2.Hpol_index().end(); hpol_index != hpol_end; ++hpol_index
 								) {
@@ -409,7 +399,7 @@ void OrbitalsStatistics::bb_stats(
 							angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
 							angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
 							low_D = container;
-							orbital_type = resid1.orbital_type(*orbital_index).name();
+							orbital_type = resid1.orbital_type(orbital_indice).name();
 							res2name= resid2.name3();
 							res2seqpos=resid2.seqpos();
 							atom_index_min_dist=*hpol_index;
@@ -417,7 +407,7 @@ void OrbitalsStatistics::bb_stats(
 					}
 					//haro
 					if ( basic::options::option[basic::options::OptionKeys::orbitals::Haro] ) {
-						for ( core::chemical::AtomIndices::const_iterator
+						for ( auto
 								haro_index = resid2.Haro_index().begin(),
 								haro_end = resid2.Haro_index().end(); haro_index != haro_end; ++haro_index ) {
 							res2_H_xyz = resid2.atom( *haro_index ).xyz();
@@ -427,7 +417,7 @@ void OrbitalsStatistics::bb_stats(
 
 							angle = cos_of(bonded_atom_xyz, orb_xyz, res2_H_xyz );
 							angle2 = cos_of(DHO_atom_xyz, res2_H_xyz, orb_xyz);
-							orbital_type = resid1.orbital_type(*orbital_index).name();
+							orbital_type = resid1.orbital_type(orbital_indice).name();
 							low_D = container;
 							res2name= resid2.name3();
 							res2seqpos=resid2.seqpos();

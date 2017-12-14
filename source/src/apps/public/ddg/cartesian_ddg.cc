@@ -78,8 +78,8 @@ using namespace conformation;
 using namespace kinematics;
 using namespace ObjexxFCL::format;
 
-typedef utility::vector1< core::chemical::AA > mutations;
-typedef utility::vector1< bool > bools;
+using mutations = utility::vector1<core::chemical::AA>;
+using bools = utility::vector1<bool>;
 
 void
 find_neighbors(

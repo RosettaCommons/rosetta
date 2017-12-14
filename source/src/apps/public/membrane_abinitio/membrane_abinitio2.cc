@@ -29,7 +29,7 @@ my_main( void *)
 {
 	protocols::abinitio::AbrelaxApplication abrelax;
 	abrelax.run();
-	return 0 ;
+	return nullptr ;
 }
 
 int

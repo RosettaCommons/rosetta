@@ -91,7 +91,7 @@ void PCA::rotate_vec(int natoms,rvec *x,matrix R)
 	}
 }
 
-void PCA::add_vec( int natoms, rvec *x, rvec transvec ) {
+void PCA::add_vec( int natoms, rvec *x, const rvec transvec ) {
 	for ( int i=0; i<natoms; i++ ) {
 		for ( int j = 0; j< DIM; j++ ) {
 			x[i][j]+=transvec[j];

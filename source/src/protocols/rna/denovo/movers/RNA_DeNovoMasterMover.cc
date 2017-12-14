@@ -39,6 +39,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_DeNovoMasterMover" );
 
@@ -74,15 +75,15 @@ RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( options::RNA_FragmentMonteCarloOpt
 	base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
 	libraries::RNA_ChunkLibraryOP rna_chunk_library ):
-	options_( options ),
+	options_(std::move( options )),
 	frag_size_( 3 ),
 	jump_change_frequency_( 0.1 ), //  maybe updated based on options, or if rigid-body sampling
 	dock_into_density_freq_( 0.2 ),
 	close_loops_( false ),
 	do_rnp_docking_( false ),
 	move_type_( "" ),
-	rna_chunk_library_( rna_chunk_library ),
-	rna_loop_closer_( rna_loop_closer )
+	rna_chunk_library_(std::move( rna_chunk_library )),
+	rna_loop_closer_(std::move( rna_loop_closer ))
 {
 	RNA_Fragments const & all_rna_fragments_( RNA_LibraryManager::get_instance()->rna_fragment_library( options_->all_rna_fragments_file() ) );
 	rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, atom_level_domain_map, options_->symm_hack_arity() ) );
@@ -95,8 +96,7 @@ RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( options::RNA_FragmentMonteCarloOpt
 }
 
 //Destructor
-RNA_DeNovoMasterMover::~RNA_DeNovoMasterMover()
-{}
+RNA_DeNovoMasterMover::~RNA_DeNovoMasterMover() = default;
 
 void
 RNA_DeNovoMasterMover::apply( core::pose::Pose & pose ) {

@@ -24,6 +24,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
@@ -85,7 +86,7 @@ FixbbCoupledRotamerSimAnnealer::FixbbCoupledRotamerSimAnnealer(
 	current_rot_index,
 	calc_rot_freq,
 	rot_freq
-	), ig_(ig)
+	), ig_(std::move(ig))
 {
 	setup_rotamer_couplings( rotamer_couplings );
 }
@@ -143,8 +144,7 @@ FixbbCoupledRotamerSimAnnealer::setup_rotamer_couplings(
 
 
 /// @brief virtual destructor
-FixbbCoupledRotamerSimAnnealer::~FixbbCoupledRotamerSimAnnealer()
-{}
+FixbbCoupledRotamerSimAnnealer::~FixbbCoupledRotamerSimAnnealer() = default;
 
 
 void FixbbCoupledRotamerSimAnnealer::run()
@@ -224,7 +224,7 @@ void FixbbCoupledRotamerSimAnnealer::run()
 				// check if new rotamer is compatible with current rotamer
 				int const other_prevrotamer_state( state_on_node( other_moltenres_id ) );
 				RotamerSetCOP other_rotamer_set( rotamer_sets()->rotamer_set_for_moltenresidue( other_moltenres_id ) );
-				conformation::ResidueCOP other_rotamer( other_prevrotamer_state == 0 ? conformation::ResidueCOP(0) :
+				conformation::ResidueCOP other_rotamer( other_prevrotamer_state == 0 ? conformation::ResidueCOP(nullptr) :
 					other_rotamer_set->rotamer( other_prevrotamer_state ) );
 
 				if ( !( other_rotamer && (*matcher)( *new_rotamer, *other_rotamer ) ) ) {

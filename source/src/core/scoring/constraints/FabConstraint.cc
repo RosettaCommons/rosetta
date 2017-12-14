@@ -77,8 +77,8 @@ void
 FabConstraint::show(std::ostream& out) const
 {
 	out << "FabConstraint is an AmbiguousConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
-		( *cst_it )->show( out );
+	for ( auto const & cst_it : member_constraints() ) {
+		cst_it->show( out );
 	}
 
 	out << " ...all member constraints of this FabConstraint shown." << std::endl;

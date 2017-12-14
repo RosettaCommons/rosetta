@@ -52,7 +52,7 @@ CDRClusterFeatures::CDRClusterFeatures():
 	numbering_scheme_(AHO_Scheme)
 {
 	for ( core::Size i = 1; i <= 6; ++i ) {
-		CDRNameEnum cdr = static_cast< CDRNameEnum >(i);
+		auto cdr = static_cast< CDRNameEnum >(i);
 		cdrs_.push_back(cdr);
 	}
 }
@@ -63,7 +63,7 @@ CDRClusterFeatures::CDRClusterFeatures():
 //cdrs_(src.cdrs_)
 //{}
 
-CDRClusterFeatures::~CDRClusterFeatures(){}
+CDRClusterFeatures::~CDRClusterFeatures()= default;
 
 // XRW TEMP std::string
 // XRW TEMP CDRClusterFeatures::type_name() const {
@@ -170,7 +170,7 @@ CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vect
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 
 	for ( core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		CDRClusterCOP cluster = ab_info->get_CDR_cluster(cdr);
 
 		//Short-circuit evaluation here:

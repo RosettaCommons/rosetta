@@ -51,9 +51,9 @@ using utility::vector1;
 static basic::Tracer tr( "protocols.loops.loops_definers.LoopsDefinerFactory" );
 
 /// @details Private constructor insures correctness of singleton.
-LoopsDefinerFactory::LoopsDefinerFactory() {}
+LoopsDefinerFactory::LoopsDefinerFactory() = default;
 
-LoopsDefinerFactory::~LoopsDefinerFactory() {}
+LoopsDefinerFactory::~LoopsDefinerFactory() = default;
 
 void
 LoopsDefinerFactory::factory_register(
@@ -66,7 +66,7 @@ bool
 LoopsDefinerFactory::has_type (
 	string const & type_name
 ) const {
-	LoopsDefinerCreatorMap::const_iterator iter = types_.find( type_name );
+	auto iter = types_.find( type_name );
 	return iter != types_.end();
 }
 
@@ -93,14 +93,14 @@ LoopsDefinerFactory::create_loops_definer(
 		}
 		utility_exit_with_message(error_msg.str());
 	}
-	return 0;
+	return nullptr;
 }
 
 vector1< string >
 LoopsDefinerFactory::get_all_loops_definer_names(
 ) const {
 	vector1< string > collection;
-	LoopsDefinerCreatorMap::const_iterator iter = types_.begin(), end = types_.end();
+	auto iter = types_.begin(), end = types_.end();
 	while ( iter != end ) {
 		collection.push_back(iter->first);
 		++iter;

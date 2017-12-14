@@ -57,8 +57,7 @@ namespace jd3 {
 
 /// @brief
 /// virtual destructor
-JobDirectedNode::~JobDirectedNode()
-{}
+JobDirectedNode::~JobDirectedNode() = default;
 
 /// @brief
 /// Main constructor, no default constructor nor copy constructor
@@ -86,7 +85,7 @@ void JobDirectedNode::all_jobs_completed( bool setting )
 	if ( all_jobs_completed_ ) {
 		for ( DirectedEdgeListIter iter = outgoing_edge_list_begin();
 				iter != outgoing_edge_list_end(); ++iter ) {
-			JobDirectedNode * neighb = static_cast< JobDirectedNode * >
+			auto * neighb = static_cast< JobDirectedNode * >
 				( (*iter)->get_head_node() );
 			debug_assert( neighb->n_predecessors_w_outstanding_jobs_ > 0 );
 			--neighb->n_predecessors_w_outstanding_jobs_;
@@ -104,7 +103,7 @@ void JobDirectedNode::copy_from( DirectedNode const * source )
 {
 	debug_assert( dynamic_cast< JobDirectedNode const * > ( source ) );
 	parent::copy_from( source );
-	JobDirectedNode const * job_source = static_cast< JobDirectedNode const * > ( source );
+	auto const * job_source = static_cast< JobDirectedNode const * > ( source );
 	all_jobs_completed_ = job_source->all_jobs_completed_;
 	all_jobs_started_   = job_source->all_jobs_started_;
 }
@@ -149,7 +148,7 @@ platform::Size JobDirectedNode::count_dynamic_memory() const
 //--------------------------------------------------------------------------------------------//
 
 /// @brief destructor
-JobDirectedEdge::~JobDirectedEdge() {}
+JobDirectedEdge::~JobDirectedEdge() = default;
 
 /// @brief main constructor for edge, no default nor copy constructors
 ///
@@ -200,7 +199,7 @@ platform::Size JobDirectedEdge::count_dynamic_memory() const
 JobDigraph::~JobDigraph()
 {
 	delete_everything();
-	delete job_edge_pool_; job_edge_pool_ = 0;
+	delete job_edge_pool_; job_edge_pool_ = nullptr;
 }
 
 /// @brief default constructor; creates an empty graph (no nodes, no edges)
@@ -280,7 +279,7 @@ JobDirectedEdge * JobDigraph::find_job_edge(platform::Size tail_node, platform::
 
 void JobDigraph::delete_edge( utility::graph::DirectedEdge * edge )
 {
-	JobDirectedEdge * job_edge = static_cast< JobDirectedEdge * > ( edge );
+	auto * job_edge = static_cast< JobDirectedEdge * > ( edge );
 	job_edge_pool_->destroy( job_edge );
 }
 

@@ -41,7 +41,7 @@ using namespace basic::options::OptionKeys;
 static basic::Tracer trGunnScore(
 	"protocols.frag_picker.scores.GunnCostScore");
 
-GunnCostScore::~GunnCostScore() {}
+GunnCostScore::~GunnCostScore() = default;
 
 GunnCostScore::GunnCostScore(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, core::pose::PoseOP reference_pose,
@@ -187,7 +187,7 @@ FragmentScoringMethodOP MakeGunnCostScore::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read a reference structure. Provide it with in::file::s flag");
 
-	return NULL;
+	return nullptr;
 }
 
 } // scores

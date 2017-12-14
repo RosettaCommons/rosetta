@@ -30,7 +30,7 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <math.h>
+#include <cmath>
 
 #include <utility/vector1.hh>
 
@@ -47,7 +47,7 @@ MMLJScore::MMLJScore( MMLJLibrary const & mmljl ) :
 	mm_lj_library_( mmljl )
 { }
 
-MMLJScore::~MMLJScore() {}
+MMLJScore::~MMLJScore() = default;
 
 /// @details blah
 Energy

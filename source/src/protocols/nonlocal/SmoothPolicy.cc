@@ -30,7 +30,7 @@
 namespace protocols {
 namespace nonlocal {
 
-typedef utility::vector1<core::Real> ScoreList;
+using ScoreList = utility::vector1<core::Real>;
 
 /// @brief Convenience method for retrieving the single highest-weighted sample
 core::Size make_selection(numeric::random::WeightedReservoirSampler<core::Size>* sampler) {

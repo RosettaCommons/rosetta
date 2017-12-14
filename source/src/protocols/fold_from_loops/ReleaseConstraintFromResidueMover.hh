@@ -35,7 +35,7 @@ class ReleaseConstraintFromResidueMover : public protocols::moves::Mover {
 
 public:
 	ReleaseConstraintFromResidueMover();
-	ReleaseConstraintFromResidueMover( core::select::residue_selector::ResidueSelectorCOP const & selector );
+	ReleaseConstraintFromResidueMover( core::select::residue_selector::ResidueSelectorCOP selector );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
 	~ReleaseConstraintFromResidueMover() override;

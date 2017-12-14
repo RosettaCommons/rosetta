@@ -24,7 +24,7 @@
 namespace core {
 namespace import_pose {
 
-PDBSilentStructCreator::PDBSilentStructCreator() {}
+PDBSilentStructCreator::PDBSilentStructCreator() = default;
 
 PDBSilentStructCreator::~PDBSilentStructCreator() = default;
 

@@ -314,7 +314,7 @@ private:
 private:
 	OrbitalsLookup const & lookup_table_;
 	core::Real const max_orbital_dist_squared_;//defaault 4A or 16A squared. based on statistics
-	core::Real nbr_distance_squared_;//default 10A or 100A squared
+	//core::Real nbr_distance_squared_;//default 10A or 100A squared
 	std::map<core::chemical::orbitals::orbital_type_enum, core::Real> min_orb_dist_enum_map_;
 	core::Real max_dist_squared_; //the maximum distance squared which orbitals are scored. based on atom distance
 

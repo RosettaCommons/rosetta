@@ -254,7 +254,7 @@ FragmentScoringMethodOP MakeCSScore::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read CS data. Provide a chemical shifts file in TALOS format.");
 
-	return NULL;
+	return nullptr;
 }
 
 } // scores

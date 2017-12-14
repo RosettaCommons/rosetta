@@ -100,7 +100,7 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		TR.Info << "setting up symmetric idealize " << std::endl;
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -204,7 +204,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 	//fpd symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -299,8 +299,8 @@ IdealizeMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 	if ( tag->hasOption( "ignore_residues_in_csts" ) ) {
 		ignore_residues_in_csts( core::pose::get_resnum_selector( tag, "ignore_residues_in_csts") );
 	}
-	impose_constraints( tag->getOption< bool >( "impose_constraints", 1 ) );
-	constraints_only( tag->getOption< bool >( "constraints_only", 0 ) );
+	impose_constraints( tag->getOption< bool >( "impose_constraints", true ) );
+	constraints_only( tag->getOption< bool >( "constraints_only", false ) );
 	if ( tag->hasOption( "pos_list" ) ) {
 		pos_list_ = utility::string_split( tag->getOption< std::string >( "pos_list", "" ), ',', core::Size() );
 	}

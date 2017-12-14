@@ -68,7 +68,7 @@ CountPairGeneric::CountPairGeneric(
 
 	if ( res1.is_pseudo_bonded( res2 ) ) {
 		PseudoBondCollectionCOP pbc = res1.get_pseudobonds_to_residue( res2.seqpos() );
-		for ( PseudoBondCollection::PBIter pb_iter = pbc->iter_begin(),
+		for ( auto pb_iter = pbc->iter_begin(),
 				pb_iter_end = pbc->iter_end(); pb_iter != pb_iter_end; ++pb_iter ) {
 			++n_pconnect_;
 
@@ -122,7 +122,7 @@ CountPairGeneric::CountPairGeneric(
 	}
 }
 
-CountPairGeneric::~CountPairGeneric() {}
+CountPairGeneric::~CountPairGeneric() = default;
 
 // Generic crossover behavior must be specified
 // Unneccessary use of the letter x

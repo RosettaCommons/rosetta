@@ -89,20 +89,10 @@ QuickRelaxPartnersSeparately::QuickRelaxPartnersSeparately() :
 {}
 
 /// @brief Copy Constructor
-QuickRelaxPartnersSeparately::QuickRelaxPartnersSeparately( QuickRelaxPartnersSeparately const & src ) :
-	protocols::moves::Mover( src ),
-	native_( src.native_ ),
-	partners_( src.partners_ ),
-	jump_( src.jump_ ),
-	jumps_( src.jumps_ ),
-	topo_( src.topo_ ),
-	topo_up_( src.topo_up_ ),
-	topo_down_( src.topo_down_ ),
-	sfxn_( src.sfxn_ )
-{}
+QuickRelaxPartnersSeparately::QuickRelaxPartnersSeparately( QuickRelaxPartnersSeparately const & /*src*/ ) = default;
 
 /// @brief Destructor
-QuickRelaxPartnersSeparately::~QuickRelaxPartnersSeparately() {}
+QuickRelaxPartnersSeparately::~QuickRelaxPartnersSeparately() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

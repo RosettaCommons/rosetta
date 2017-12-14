@@ -21,8 +21,8 @@ namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-LoopsDatabaseDefinerCreator::LoopsDatabaseDefinerCreator() {}
-LoopsDatabaseDefinerCreator::~LoopsDatabaseDefinerCreator() {}
+LoopsDatabaseDefinerCreator::LoopsDatabaseDefinerCreator() = default;
+LoopsDatabaseDefinerCreator::~LoopsDatabaseDefinerCreator() = default;
 
 LoopsDefinerOP
 LoopsDatabaseDefinerCreator::create_loops_definer() const {

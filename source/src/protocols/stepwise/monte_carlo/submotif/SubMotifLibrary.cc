@@ -31,6 +31,7 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/database/open.hh>
+#include <utility>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
@@ -73,7 +74,7 @@ SubMotifLibrary::SubMotifLibrary(
 	bool const include_submotifs_from_jump_library,
 	bool const use_first_jump_for_submotif,
 	utility::vector1< std::string > const & exclude_submotif_list ):
-	rsd_set_( rsd_set ),
+	rsd_set_(std::move( rsd_set )),
 	include_submotifs_from_jump_library_( include_submotifs_from_jump_library ),
 	use_first_jump_for_submotif_( use_first_jump_for_submotif ),
 	exclude_submotif_list_( exclude_submotif_list )
@@ -82,9 +83,7 @@ SubMotifLibrary::SubMotifLibrary(
 }
 
 //Destructor
-SubMotifLibrary::~SubMotifLibrary()
-{
-}
+SubMotifLibrary::~SubMotifLibrary() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // pose is only used to figure out if we're doing an RNA only run, which can

@@ -27,17 +27,17 @@ namespace ligand_docking {
 
 UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	protocols::moves::MoverOP child_mover,
-	Restraints restraints
+	Restraints const & restraints
 ):
 	Mover(),
 	child_mover_(std::move(child_mover)),
-	restraints_(restraints)
+	restraints_( restraints )
 {
 }
 
 UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	protocols::moves::MoverOP child_mover,
-	std::set<ResidueTorsionRestraintsOP> restraints
+	std::set<ResidueTorsionRestraintsOP> const & restraints
 ):
 	Mover(),
 	child_mover_(std::move(child_mover))
@@ -49,7 +49,7 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 
 UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	protocols::moves::MoverOP child_mover,
-	MinimizeLigandOPs minimize_ligands
+	MinimizeLigandOPs const & minimize_ligands
 ):
 	Mover(),
 	child_mover_(std::move(child_mover))

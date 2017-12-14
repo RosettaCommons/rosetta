@@ -66,18 +66,18 @@ OligomericAverageDegreeFilter::OligomericAverageDegreeFilter():
 	jump_set_( false ),
 	jump_id_( 1 ),
 	sym_dof_names_( "" ),
-	multicomp_( 0 )
+	multicomp_( false )
 {}
 
 
 // @brief constructor with arguments
-OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string  dof_names, bool mcomp ):
+OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, bool jump_set, core::Size jump, std::string const & dof_names, bool mcomp ):
 	task_factory_(std::move( task_factory )),
 	threshold_( t ),
 	distance_threshold_( d ),
 	jump_set_( jump_set ),
 	jump_id_( jump ),
-	sym_dof_names_(std::move( dof_names )),
+	sym_dof_names_( dof_names ),
 	multicomp_( mcomp )
 {}
 
@@ -264,9 +264,9 @@ OligomericAverageDegreeFilter::parse_my_tag(
 		jump_id( tag->getOption< core::Size >( "jump", 1 ) );
 	}
 	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
-	write2pdb( tag->getOption< bool >("write2pdb", 0) );
-	verbose( tag->getOption< bool >("verbose", 0) );
-	multicomp( tag->getOption< bool >("multicomp", 0) );
+	write2pdb( tag->getOption< bool >("write2pdb", false) );
+	verbose( tag->getOption< bool >("verbose", false) );
+	multicomp( tag->getOption< bool >("multicomp", false) );
 	TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
 }
 

@@ -104,7 +104,7 @@ using utility::tag::TagOP;
 using utility::tag::TagCOP;
 using utility::tag::TagCAP;
 
-typedef utility::vector0< TagCOP > TagCOPs;
+using TagCOPs = utility::vector0<TagCOP>;
 
 void
 RosettaScriptsParser::list_options_read( utility::options::OptionKeyList & read_options ){

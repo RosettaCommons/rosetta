@@ -35,7 +35,7 @@ namespace func {
 //////////////////////////////////////////////////////////////////////////////////
 
 
-XYZ_Func::~XYZ_Func(){}
+XYZ_Func::~XYZ_Func()= default;
 
 ResidueXYZ::ResidueXYZ( Residue const & rsd_in ): rsd_( rsd_in ) {}
 
@@ -54,7 +54,7 @@ ResidueXYZ::residue( Size ASSERT_ONLY( seqpos ) ) const {
 }
 
 
-ResidueXYZ::~ResidueXYZ(){}
+ResidueXYZ::~ResidueXYZ()= default;
 
 ResiduePairXYZ::ResiduePairXYZ( Residue const & rsd1_in, Residue const & rsd2_in )
 :
@@ -77,7 +77,7 @@ ResiduePairXYZ::residue( Size seqpos ) const {
 	return (Size) rsd1_.seqpos() == seqpos ? rsd1_ : rsd2_;
 }
 
-ResiduePairXYZ::~ResiduePairXYZ() {}
+ResiduePairXYZ::~ResiduePairXYZ() = default;
 
 ConformationXYZ::ConformationXYZ( Conformation const & conformation_in ): conformation_( conformation_in ) {}
 
@@ -94,7 +94,7 @@ ConformationXYZ::residue( Size seqpos ) const {
 	return conformation_.residue( seqpos );
 }
 
-ConformationXYZ::~ConformationXYZ() {}
+ConformationXYZ::~ConformationXYZ() = default;
 
 } // constraints
 } // scoring

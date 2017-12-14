@@ -204,7 +204,7 @@ RemodelLoopMover::RemodelLoopMover( RemodelLoopMover const & rval ) :
 
 
 /// @brief default destructor
-RemodelLoopMover::~RemodelLoopMover() {}
+RemodelLoopMover::~RemodelLoopMover() = default;
 
 
 /// @brief clone this object
@@ -414,7 +414,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 			lower_termini.insert( pose.conformation().chain_begin( i ) );
 			upper_termini.insert( pose.conformation().chain_end( i ) );
 		}
-		for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
+		for ( auto l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
 			Loop & loop = *l;
 			if ( loop.start() == 1 && loop.stop() == segment_length+2 ) { // +2 for the padded shadow residues from repeat interval setup
 				break;  //don't need to do anything about foldtree if fully de novo
@@ -459,7 +459,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		repeat_pose.fold_tree(f);
 		TR << "REPEAT POSE FT: " <<  repeat_pose.fold_tree() << std::endl;
 
-		for ( Loops::iterator l = repeat_loops->v_begin(), le = repeat_loops->v_end(); l != le; ++l ) {
+		for ( auto l = repeat_loops->v_begin(), le = repeat_loops->v_end(); l != le; ++l ) {
 			Loop & loop = *l;
 			for ( Size jxn=loop.start(); jxn <=loop.stop(); jxn++ ) {
 				//std::cout << "GEN fix junction at " << jxn << std::endl;
@@ -580,7 +580,7 @@ void RemodelLoopMover::repeat_sync( //utility function
 
 	utility::vector1<Size> linkPositions;
 
-	for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
+	for ( auto l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
 
 		//collect the movable positions
@@ -728,7 +728,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		upper_termini.insert( pose.conformation().chain_end( i ) );
 	}
 
-	for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
+	for ( auto l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
 		if ( loop.start() == 1 && loop.stop() == segment_length+2 ) { // padded 2 shadow residues
 			break;  //don't need to do anything about foldtree if fully de novo
@@ -797,7 +797,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 
 	repeat_pose.fold_tree(f);
 
-	for ( Loops::iterator l = repeat_loops->v_begin(), le = repeat_loops->v_end(); l != le; ++l ) {
+	for ( auto l = repeat_loops->v_begin(), le = repeat_loops->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
 		for ( Size jxn=loop.start(); jxn <=loop.stop(); jxn++ ) {
 			//std::cout << "fix junction at " << jxn << std::endl;
@@ -1471,9 +1471,9 @@ void RemodelLoopMover::randomize_stage( Pose & pose ) {
 	Size const n_moveable = count_moveable_residues( movemap, 1, unit_length_ );
 
 	// insert random number of fragments = n_frag_movers * moveable_residues
-	for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
+	for ( auto & frag_mover : frag_movers ) {
 		for ( Size j = 0; j < n_moveable; ++j ) {
-			(*i)->apply( pose );
+			frag_mover->apply( pose );
 		}
 	}
 
@@ -1526,8 +1526,8 @@ void RemodelLoopMover::insert_random_smallestmer_per_loop(
 	// insert fragments
 	FragmentMoverOPs frag_movers = create_per_loop_fragment_movers( loops_to_model, smallestmer_size );
 
-	for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
-		(*i)->apply( pose );
+	for ( auto & frag_mover : frag_movers ) {
+		frag_mover->apply( pose );
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			//Pose temp_pose(pose);
 			repeat_propagation(pose, repeat_pose_, option[OptionKeys::remodel::repeat_structure]);
@@ -1594,7 +1594,7 @@ void RemodelLoopMover::set_segment_stage(
 	// setup loops
 	loops::LoopsOP loops_to_model( new loops::Loops() );
 	//find terminal loops and skip them; loophash can't handle terminal loops
-	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
+	for ( auto l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
 		bool skip_loop = false;
 		if ( l->is_terminal( pose ) || l->start() == 1 ) {
 			skip_loop = true;
@@ -1614,7 +1614,7 @@ void RemodelLoopMover::set_segment_stage(
 
 	//find the loopsize
 
-	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
+	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
 		Size db_to_use = loop.stop() - loop.start() + 2; // +2 for the strange way loophash RT is setup.
 		loopsizes.push_back(db_to_use);
@@ -1677,7 +1677,7 @@ void RemodelLoopMover::set_segment_stage(
 
 	Size loop_number = 1; // for lh_filter_string index
 
-	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l, loop_number++ ) {
+	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l, loop_number++ ) {
 		Loop & loop = *l;
 
 		utility::vector1<core::Size> local_loopsizes;
@@ -1867,7 +1867,7 @@ void RemodelLoopMover::loophash_stage(
 	loops::LoopsOP loops_to_model( new loops::Loops() );
 
 	//find terminal loops and skip them; loophash can't handle terminal loops
-	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
+	for ( auto l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
 		bool skip_loop = false;
 		if ( l->is_terminal( pose ) || l->start() == 1 ) {
 			skip_loop = true;
@@ -1895,7 +1895,7 @@ void RemodelLoopMover::loophash_stage(
 
 	//find the loopsize
 
-	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
+	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
 		Size db_to_use = loop.stop() - loop.start() + 2; // +2 for the strange way loophash RT is setup.
 		loopsizes.push_back(db_to_use);
@@ -1912,7 +1912,7 @@ void RemodelLoopMover::loophash_stage(
 
 	Size loop_number = 1; // for lh_filter_string index
 
-	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l, loop_number++ ) {
+	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l, loop_number++ ) {
 		Loop & loop = *l;
 
 		utility::vector1<core::Size> local_loopsizes;
@@ -2102,16 +2102,16 @@ void RemodelLoopMover::loophash_stage(
 
 			// fragments
 			if ( option[OptionKeys::remodel::lh_filter_string].user() ) {
-				for ( std::vector< BackboneSegment >::iterator i = bs_vec_.begin(), ie = bs_vec_.end(); i != ie; ++i ) {
+				for ( auto & i : bs_vec_ ) {
 					//if ( loop.is_terminal( pose ) || numeric::random::rg().uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
 
 					//again, no shuffling in early development stage
 					//random_permutation( bs_vec_.begin(), bs_vec_.end(), numeric::random::rg() );
 
-					std::vector<core::Real> phi = (*i).phi();
-					std::vector<core::Real> psi = (*i).psi();
-					std::vector<core::Real> omega = (*i).omega();
-					Size seg_length = (*i).length();
+					std::vector<core::Real> phi = i.phi();
+					std::vector<core::Real> psi = i.psi();
+					std::vector<core::Real> omega = i.omega();
+					Size seg_length = i.length();
 
 					//check sec. struct at stub.
 					//Size idxresStart = (int)loop.start()-1;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
@@ -2357,13 +2357,13 @@ void RemodelLoopMover::abinitio_stage(
 		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 			// fragments
 			random_permutation( frag_movers.begin(), frag_movers.end(), numeric::random::rg() );
-			for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
+			for ( auto & frag_mover : frag_movers ) {
 				if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-					(*i)->apply( repeat_pose_ );
+					frag_mover->apply( repeat_pose_ );
 					repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 					mc.boltzmann( repeat_pose_, stage_name );
 				} else {
-					(*i)->apply( pose );
+					frag_mover->apply( pose );
 					mc.boltzmann( pose, stage_name );
 				}
 			}
@@ -2755,22 +2755,22 @@ void RemodelLoopMover::simultaneous_stage(
 			if ( numeric::random::rg().uniform() * n_standard_cycles > outer || pose.fold_tree().num_cutpoint() == 0 ) {
 				// fragments
 				random_permutation( frag_movers.begin(), frag_movers.end(), numeric::random::rg() );
-				for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
+				for ( auto & frag_mover : frag_movers ) {
 					if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-						(*i)->apply( repeat_pose_ );
+						frag_mover->apply( repeat_pose_ );
 						repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 						mc.boltzmann( repeat_pose_, "simul_frag" );
 					} else {
-						(*i)->apply( pose );
+						frag_mover->apply( pose );
 						mc.boltzmann( pose, "simul_frag" );
 					}
 				}
 			} else {
 				// per-loop ccd
 				random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), numeric::random::rg() );
-				for ( Loops::const_iterator l = loops_to_model->begin(), le = loops_to_model->end(); l != le; ++l ) {
-					if ( !l->is_terminal( pose ) ) {
-						CCDLoopClosureMover ccd_mover( *l, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
+				for ( const auto & l : *loops_to_model ) {
+					if ( !l.is_terminal( pose ) ) {
+						CCDLoopClosureMover ccd_mover( l, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
 						ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 						if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 							if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
@@ -2789,8 +2789,8 @@ void RemodelLoopMover::simultaneous_stage(
 			}
 
 			if ( apply_user_provided_movers && ( inner % user_provided_movers_apply_cycle_ == 0 ) ) {
-				for ( utility::vector1< moves::MoverOP >::iterator move_it( user_provided_movers_.begin() ); move_it != user_provided_movers_.end(); ++move_it ) {
-					(*move_it)->apply( pose );
+				for ( auto & user_provided_mover : user_provided_movers_ ) {
+					user_provided_mover->apply( pose );
 					mc.boltzmann( pose, "user_provided_simul" );
 					//if( inner % 50 == 0 ){
 					// static Size simulposecount = 0;
@@ -2867,7 +2867,7 @@ void RemodelLoopMover::independent_stage(
 	loops::LoopsOP loops_to_model( new loops::Loops() );
 
 	// filter for non-terminal loops
-	for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
+	for ( auto l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			//take out the terminal loop in repeat cases
 			if ( !l->is_terminal( pose ) ) {
@@ -2912,7 +2912,7 @@ void RemodelLoopMover::independent_stage(
 	Size const max_outer_cycles = independent_cycles();
 
 	// per-loop frag + ccd_move
-	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
+	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
 
 		// alter cutpoint to one before the end of the loop (either direction,
@@ -3015,13 +3015,13 @@ void RemodelLoopMover::independent_stage(
 				// fragments
 				if ( loop.is_terminal( pose ) || numeric::random::rg().uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
 					random_permutation( frag_movers.begin(), frag_movers.end(), numeric::random::rg() );
-					for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
+					for ( auto & frag_mover : frag_movers ) {
 						if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-							(*i)->apply( repeat_pose_ );
+							frag_mover->apply( repeat_pose_ );
 							repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 							mc.boltzmann( repeat_pose_, "frag" );
 						} else {
-							(*i)->apply( pose );
+							frag_mover->apply( pose );
 							mc.boltzmann( pose, "frag" );
 						}
 					}
@@ -3043,8 +3043,8 @@ void RemodelLoopMover::independent_stage(
 				}
 
 				if ( apply_user_provided_movers && ( inner % user_provided_movers_apply_cycle_ == 0 ) ) {
-					for ( utility::vector1< moves::MoverOP >::iterator move_it( user_provided_movers_.begin() ); move_it != user_provided_movers_.end(); ++move_it ) {
-						(*move_it)->apply( pose );
+					for ( auto & user_provided_mover : user_provided_movers_ ) {
+						user_provided_mover->apply( pose );
 						mc.boltzmann( pose, "user_provided_indep" );
 						//if( inner % 50 == 0 ){
 						// static Size indepposecount = 0;
@@ -3140,7 +3140,7 @@ void RemodelLoopMover::boost_closure_stage(
 	// filter for non-terminal loops that are within tolerance
 	//Real const cbreak_tolerance = 1.0;
 	Real const cbreak_tolerance = option[OptionKeys::remodel::RemodelLoopMover::threshold_for_boost_closure];
-	for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
+	for ( auto l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
 		if ( !l->is_terminal( pose ) ) {
 			Real const cbreak = linear_chainbreak( pose, l->cut() );
 			if ( cbreak < cbreak_tolerance ) {
@@ -3172,9 +3172,7 @@ void RemodelLoopMover::boost_closure_stage(
 	Real const frag_mover_probability = 0.25; // do 1-mer insertions only 25% of the time
 
 	// 1-mer frag + ccd_move
-	for ( Loops::const_iterator l = loops_to_model->begin(), le = loops_to_model->end(); l != le; ++l ) {
-		Loop const & loop = *l;
-
+	for ( const auto & loop : *loops_to_model ) {
 		// movemap
 		MoveMap movemap;
 		mark_loop_moveable( loop, movemap, true );
@@ -3390,16 +3388,16 @@ bool RemodelLoopMover::check_closure_criteria(
 		if ( option[OptionKeys::remodel::lh_closure_filter].user() ) {
 			TR << "using cbreak filter under bypass_closure." << std::endl;
 			bool all_loops_pass = true;
-			for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
+			for ( const auto & l : *loops_ ) {
 				Real cbreak = 0.0;
-				if ( !l->is_terminal( pose ) ) {
-					cbreak = linear_chainbreak( pose, l->cut() );
+				if ( !l.is_terminal( pose ) ) {
+					cbreak = linear_chainbreak( pose, l.cut() );
 					TR << "chain break " << cbreak << std::endl;
 					all_loops_pass &= ( cbreak <= max_linear_chainbreak_ );
 				}
 
 				if ( show_in_tracer && TR.visible() ) {
-					TR << format % l->start() % l->stop() % l->cut() % cbreak << std::endl;
+					TR << format % l.start() % l.stop() % l.cut() % cbreak << std::endl;
 				}
 			}
 			return all_loops_pass;
@@ -3416,15 +3414,15 @@ bool RemodelLoopMover::check_closure_criteria(
 
 	bool all_loops_pass = true;
 
-	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
+	for ( const auto & l : *loops_ ) {
 		Real cbreak = 0.0;
-		if ( !l->is_terminal( pose ) ) {
-			cbreak = linear_chainbreak( pose, l->cut() );
+		if ( !l.is_terminal( pose ) ) {
+			cbreak = linear_chainbreak( pose, l.cut() );
 			all_loops_pass &= ( cbreak <= max_linear_chainbreak_ );
 		}
 
 		if ( show_in_tracer && TR.visible() ) {
-			TR << format % l->start() % l->stop() % l->cut() % cbreak << std::endl;
+			TR << format % l.start() % l.stop() % l.cut() % cbreak << std::endl;
 		}
 	}
 
@@ -3546,9 +3544,9 @@ RemodelLoopMover::FragmentMoverOPs RemodelLoopMover::create_per_loop_fragment_mo
 	// want to allow an equal probability of movement per-loop, rather than
 	// per-residue.
 	FragmentMoverOPs frag_movers;
-	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le; ++l ) {
+	for ( const auto & l : *loops ) {
 		MoveMap mm;
-		mark_loop_moveable( *l, mm, true );
+		mark_loop_moveable( l, mm, true );
 		enforce_false_movemap( mm );
 		create_fragment_movers( mm, frag_movers, largest_frag_size );
 	}
@@ -3576,8 +3574,8 @@ void RemodelLoopMover::mark_loops_moveable(
 	bool const allow_omega
 )
 {
-	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le; ++l ) {
-		mark_loop_moveable( *l, movemap, allow_omega );
+	for ( const auto & l : *loops ) {
+		mark_loop_moveable( l, movemap, allow_omega );
 	}
 }
 

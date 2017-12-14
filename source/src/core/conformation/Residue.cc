@@ -984,7 +984,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 	//If they deviate from less than a threshold value from the input position, preserve the input position;
 	//otherwise, keep the idealized position.
 	if ( rsd_type_.is_polymer() ) {
-		core::Real const thresh_sq( static_cast<core::Real>( pow(static_cast<core::Real>(option[OptionKeys::packing::mainchain_h_rebuild_threshold]()),2.0) ) );
+		auto const thresh_sq( static_cast<core::Real>( pow(static_cast<core::Real>(option[OptionKeys::packing::mainchain_h_rebuild_threshold]()),2.0) ) );
 		for ( core::Size i=1, imax=natoms(); i<=imax; ++i ) {
 			if ( !rsd_type_.atom_is_hydrogen(i) ) continue; //Skip non-hydrogen atoms.
 			if ( !rsd_type_.atom_is_backbone(i) && !(rsd_type_.atom_name(i) == " O2'") && !(rsd_type_.atom_name(i) == "HO2'") ) continue; //Skip non-backbone atoms, preserving special-case RNA atoms.

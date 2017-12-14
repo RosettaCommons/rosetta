@@ -200,8 +200,8 @@ void
 write_binary(const std::vector<std::string> & x, BUFFER & buf)
 {
 	write_binary((unsigned int)(x.size()), buf);
-	for ( unsigned int ii = 0; ii < x.size(); ++ ii ) {
-		write_binary(std::string(x[ii]), buf);
+	for ( auto const & ii : x ) {
+		write_binary(std::string(ii), buf);
 	}
 }
 
@@ -212,10 +212,10 @@ read_binary(std::vector<std::string> & x, BUFFER & buf)
 	read_binary(size, buf);
 
 	x.resize(size);
-	for ( unsigned int ii = 0; ii < x.size(); ++ ii ) {
+	for ( auto & ii : x ) {
 		std::string x_ii;
 		read_binary(x_ii, buf);
-		x[ii] = x_ii;
+		ii = x_ii;
 	}
 }
 
@@ -223,8 +223,8 @@ void
 write_binary(const std::string & x, BUFFER & buf)
 {
 	write_binary((unsigned int)(x.size()), buf);
-	for ( unsigned int ii = 0; ii < x.size(); ++ ii ) {
-		write_binary(x[ii], buf);
+	for ( char ii : x ) {
+		write_binary(ii, buf);
 	}
 }
 
@@ -235,10 +235,10 @@ read_binary(std::string & x, BUFFER & buf)
 	read_binary(size, buf);
 
 	x.resize(size);
-	for ( unsigned int ii = 0; ii < x.size(); ++ ii ) {
+	for ( char & ii : x ) {
 		char x_ii(0);
 		read_binary(x_ii, buf);
-		x[ii] = x_ii;
+		ii = x_ii;
 	}
 }
 
@@ -443,8 +443,8 @@ read_binary(core::pose::Pose & pose, BUFFER & buf)
 		}
 
 		// set atom xyz
-		for ( AtomVector::iterator ii = atom_vec.begin(); ii != atom_vec.end(); ++ ii ) {
-			pose.set_xyz(ii->first, ii->second);
+		for ( auto & ii : atom_vec ) {
+			pose.set_xyz(ii.first, ii.second);
 		}
 
 	} break;

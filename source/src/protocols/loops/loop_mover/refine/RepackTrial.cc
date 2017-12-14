@@ -80,7 +80,7 @@ RepackTrial & RepackTrial::operator=( RepackTrial const & rhs ){
 }
 
 //destructor
-RepackTrial::~RepackTrial() {}
+RepackTrial::~RepackTrial() = default;
 
 /// @brief Each derived class must specify its name.
 // XRW TEMP std::string RepackTrial::get_name() const

@@ -20,18 +20,17 @@ namespace annealing {
 
 /// @brief Constructor.
 ///
-ResidueArrayAnnealableEnergy::ResidueArrayAnnealableEnergy() {}
+ResidueArrayAnnealableEnergy::ResidueArrayAnnealableEnergy() = default;
 
 /// @brief Copy constructor.
 ///
-ResidueArrayAnnealableEnergy::ResidueArrayAnnealableEnergy( ResidueArrayAnnealableEnergy const &/*src*/ )
+ResidueArrayAnnealableEnergy::ResidueArrayAnnealableEnergy( ResidueArrayAnnealableEnergy const &/*src*/ ) = default;
 //TODO -- copy private member variables here.
-{}
 
 
 /// @brief Destructor.
 ///
-ResidueArrayAnnealableEnergy::~ResidueArrayAnnealableEnergy() {}
+ResidueArrayAnnealableEnergy::~ResidueArrayAnnealableEnergy() = default;
 
 /// @brief ResidueArrayAnnealableEnergy objects may optionally cache data within the EnergyMethod prior to a packer run.
 /// This function is defined as doing nothing by default, but can be redefined on a per-EnergyMethod basis to cache whatever

@@ -24,6 +24,7 @@
 
 // Utility Headers
 #include <core/types.hh>
+#include <utility>
 #include <utility/vector1_bool.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -84,7 +85,7 @@ void RestrictToInterfaceOperation::make_name( core::Size upper_chain, core::Size
 		+ '_' + utility::to_string( lower_chain );
 }
 
-RestrictToInterfaceOperation::~RestrictToInterfaceOperation() {}
+RestrictToInterfaceOperation::~RestrictToInterfaceOperation() = default;
 
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceOperation::clone() const

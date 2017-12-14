@@ -39,8 +39,7 @@ Loop::Loop():
 
 
 //Destructor
-Loop::~Loop()
-{}
+Loop::~Loop() = default;
 
 /// @brief copy constructor
 Loop::Loop( Loop const & src ):

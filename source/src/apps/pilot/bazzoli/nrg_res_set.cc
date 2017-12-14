@@ -164,7 +164,7 @@ int main( int argc, char * argv [] )
 
 				Size ni = (*nit)->get_other_ind(ri);
 
-				core::scoring::EnergyEdge const* edge( static_cast< core::scoring::EnergyEdge const*> (*nit) );
+				auto const* edge( static_cast< core::scoring::EnergyEdge const*> (*nit) );
 				core::scoring::EnergyMap dnrg = edge->fill_energy_map();
 
 				if ( in_set(rset, ni) ) {
@@ -184,7 +184,7 @@ int main( int argc, char * argv [] )
 		TR << "##### RESIDUE LONG-RANGE ENERGIES #####\n" << std::endl;
 		for ( Size lr = 1; lr <= core::scoring::methods::n_long_range_types; lr++ ) {
 
-			LongRangeEnergyType lr_type = LongRangeEnergyType( lr );
+			auto lr_type = LongRangeEnergyType( lr );
 			core::scoring::LREnergyContainerCOP lrec = ps.energies().long_range_container( lr_type );
 			TR << "#### LR energy " << lr << " ####\n" << std::endl;
 

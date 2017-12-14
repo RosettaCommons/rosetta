@@ -35,7 +35,7 @@ namespace protocols {
 namespace jd3 {
 namespace standard {
 
-MoverAndPoseJob::MoverAndPoseJob() {}
+MoverAndPoseJob::MoverAndPoseJob() = default;
 MoverAndPoseJob::~MoverAndPoseJob() = default;
 
 CompletedJobOutput
@@ -131,7 +131,7 @@ void MoverAndPoseJob::finalize_job_result( PoseJobResultOP ) {}
 void MoverAndPoseJob::finalize_job_summary( EnergyJobSummaryOP ) {}
 
 
-PoseJobResult::PoseJobResult() {}
+PoseJobResult::PoseJobResult() = default;
 PoseJobResult::~PoseJobResult() = default;
 
 JobStatus PoseJobResult::status() const { return jd3_job_status_success; }
@@ -141,7 +141,7 @@ core::pose::PoseCOP PoseJobResult::pose() const { return pose_; }
 void PoseJobResult::pose( core::pose::PoseOP setting ) { pose_ = setting; }
 
 EnergyJobSummary::EnergyJobSummary() : energy_( 0.0 ) {}
-EnergyJobSummary::~EnergyJobSummary() {}
+EnergyJobSummary::~EnergyJobSummary() = default;
 
 core::Real
 EnergyJobSummary::energy() const

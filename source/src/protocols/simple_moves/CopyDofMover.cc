@@ -43,10 +43,10 @@ namespace simple_moves {
 using namespace core;
 
 //Constructor
-CopyDofMover::CopyDofMover( pose::Pose const & template_pose, std::map< Size, Size > res_map ):
+CopyDofMover::CopyDofMover( pose::Pose const & template_pose, std::map< Size, Size > const & res_map ):
 	template_pose_( template_pose ),
 	template_mini_pose_( template_pose ),
-	res_map_(std::move( res_map )),
+	res_map_( res_map ),
 	backbone_only_( false ),
 	side_chain_only_( false ),
 	ignore_virtual_( false ),

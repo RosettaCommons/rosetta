@@ -80,7 +80,7 @@ private:
 public:
 	//PCS_data_per_lanthanides_Ts4(std::string, PCS_file_data_Ts4 & P_f_d, core::Real const weight);
 
-	PCS_data_per_lanthanides_Ts4(std::string, core::Real const weight, utility::vector1< PCS_line_data_Ts4 > & PCS_d_l_a);
+	PCS_data_per_lanthanides_Ts4(std::string const &, core::Real const weight, utility::vector1< PCS_line_data_Ts4 > & PCS_d_l_a);
 
 public:
 	// Default constructor is private, except for serialization - see below

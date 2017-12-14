@@ -77,7 +77,7 @@ EtableOptions::EtableOptions( EtableOptions const & src ) :
 	*this = src;
 }
 
-EtableOptions::~EtableOptions(){}
+EtableOptions::~EtableOptions()= default;
 
 EtableOptions &
 EtableOptions::operator=( EtableOptions const & src )

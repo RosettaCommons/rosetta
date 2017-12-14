@@ -43,6 +43,7 @@
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.hybridization.ChunkTrialMover" );
 
@@ -60,8 +61,8 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 ChunkTrialMover::ChunkTrialMover(
-	utility::vector1 < core::pose::PoseCOP > const & template_poses,
-	utility::vector1 < protocols::loops::Loops > const & template_chunks,
+	utility::vector1< core::pose::PoseCOP > const & template_poses,
+	utility::vector1< protocols::loops::Loops > const & template_chunks,
 	bool random_template,
 	AlignOption align_option,
 	utility::vector1<bool> sampling_chunk_in ) :

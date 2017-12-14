@@ -263,7 +263,7 @@ void BuildFullModel::make_built_residues_virtual(
 		if ( start_info.res_list().has_value( full_model_res ) || other_idx ) {
 			// re-apply variants of residue in start_pose, to residue in full_model_pose
 			// AMW: this is not good. Not necessary and typically destructive
-			/*ResidueOP start_rsd = 0;
+			/*ResidueOP start_rsd = nullptr;
 			if ( other_idx ) {
 			FullModelInfo const & other_info = const_full_model_info( *other_ops[other_idx] );
 			start_rsd = ResidueOP( new Residue( other_ops[other_idx]->residue( other_info.full_to_sub( full_model_res ) ) ) );

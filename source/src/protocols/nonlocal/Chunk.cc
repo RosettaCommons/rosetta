@@ -47,7 +47,7 @@ Chunk::~Chunk() = default;
 /// distribution. Affects the width of the distribution.
 #define SD_MULTIPLIER 1.0
 
-typedef boost::math::normal Normal;
+using Normal = boost::math::normal;
 using core::Size;
 using core::kinematics::MoveMapCOP;
 using utility::pointer::ReferenceCount;
@@ -57,8 +57,8 @@ using utility::pointer::ReferenceCount;
 // Remember: scoped_ptr's aren't copyable. We need to allocate new memory for
 // <sampler_> in the copy constructor and assignment operator.
 
-Chunk::Chunk(RegionOP const & region, MoveMapOP const & movable)
-: ReferenceCount(), region_(region), movable_(movable) {
+Chunk::Chunk(RegionOP  region, MoveMapOP  movable)
+: ReferenceCount(), region_(std::move(region)), movable_(std::move(movable)) {
 	using namespace boost::accumulators;
 
 	// compute normal distribution parameters
@@ -96,8 +96,8 @@ Chunk& Chunk::operator=(const Chunk& other) {
 
 Size Chunk::choose() const {
 	debug_assert(valid());
-	while ( 1 ) {
-		Size insert_pos = static_cast<Size>(sampler_->sample());
+	while ( true ) {
+		auto insert_pos = static_cast<Size>(sampler_->sample());
 
 		// restrict samples to the closed interval [start(), stop()]
 		if ( insert_pos < start() || insert_pos > stop() ) {

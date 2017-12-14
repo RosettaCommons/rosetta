@@ -125,16 +125,16 @@ public:
 	HbsDesignMover(): Mover("HbsDesignMover"){}
 
 	//default dtor
-	virtual ~HbsDesignMover(){}
+	~HbsDesignMover() override= default;
 
 	//methods
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "HbsDesignMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "HbsDesignMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< HbsDesignMover > HbsDesignMoverOP;
-typedef utility::pointer::shared_ptr< HbsDesignMover const > HbsDesignMoverCOP;
+using HbsDesignMoverOP = utility::pointer::shared_ptr<HbsDesignMover>;
+using HbsDesignMoverCOP = utility::pointer::shared_ptr<const HbsDesignMover>;
 
 
 int

@@ -63,7 +63,7 @@ DownstreamAlgorithm::operator = ( DownstreamAlgorithm const & rhs )
 }
 
 
-DownstreamAlgorithm::~DownstreamAlgorithm() {}
+DownstreamAlgorithm::~DownstreamAlgorithm() = default;
 
 /// @details By initializing local std::list< Hit > variables inside the loop
 /// over all of the build points, and then splicing them into a central vector

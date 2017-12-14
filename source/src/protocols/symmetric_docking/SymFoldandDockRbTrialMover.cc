@@ -111,7 +111,7 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	using namespace core::conformation::symmetry;
 	using namespace basic::options;
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );

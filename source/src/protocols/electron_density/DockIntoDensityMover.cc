@@ -238,7 +238,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 	core::Real extent = get_radius( pose, com );
 
 	// grid spacing == delR
-	core::Size ngrid = (core::Size) std::ceil( extent / delR_ + 2);
+	auto ngrid = (core::Size) std::ceil( extent / delR_ + 2);
 	pose_1dspec.clear();
 	pose_1dspec.resize(ngrid, 0.0);
 	utility::vector1< core::Real > pose_1dspec_for_nrsteps = pose_1dspec;
@@ -256,7 +256,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 			core::conformation::Atom const & atom( rsd.atom(j) );
 			core::Real binnum = ( atom.xyz()-residue_CA.xyz() ).length() / delR_ + 1.0;
 			core::Real fpart = binnum - std::floor(binnum);
-			core::Size binint = (core::Size) std::floor(binnum);
+			auto binint = (core::Size) std::floor(binnum);
 			pose_1dspec[binint] += (1-fpart);
 			pose_1dspec[binint+1] += (fpart);
 		}
@@ -269,7 +269,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 				core::conformation::Atom const & atom( rsd.atom(j) );
 				core::Real binnum = ( atom.xyz()-com ).length() / delR_ + 1.0;
 				core::Real fpart = binnum - std::floor(binnum);
-				core::Size binint = (core::Size) std::floor(binnum);
+				auto binint = (core::Size) std::floor(binnum);
 				pose_1dspec[binint] += (1-fpart);
 				pose_1dspec[binint+1] += (fpart);
 			}
@@ -284,7 +284,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 			core::conformation::Atom const & atom( rsd.atom(j) );
 			core::Real binnum = ( atom.xyz()-com ).length() / delR_ + 1.0;
 			core::Real fpart = binnum - std::floor(binnum);
-			core::Size binint = (core::Size) std::floor(binnum);
+			auto binint = (core::Size) std::floor(binnum);
 			pose_1dspec_for_nrsteps[binint] += (1-fpart);
 			pose_1dspec_for_nrsteps[binint+1] += (fpart);
 			massSum += 1;
@@ -849,7 +849,7 @@ DockIntoDensityMover::do_filter( RefinementResultDB & results ) {
 	core::Size neighbor_average=20;
 	if ( normscores_ && results_sort.size()>neighbor_average ) {
 		core::Real scoreSumAll=0, scoreSumAll2=0;
-		core::Size nneigh = (core::Size)neighbor_average;
+		auto nneigh = (core::Size)neighbor_average;
 
 		utility::vector1< core::Real > newscores(results_sort.size(),0);
 		for ( core::Size i=1; i<=results_sort.size(); ++i ) {

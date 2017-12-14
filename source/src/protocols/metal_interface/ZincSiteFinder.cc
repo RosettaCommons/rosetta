@@ -31,7 +31,7 @@
 
 static basic::Tracer TR( "protocols.metal_interface.ZincSiteFinder" );
 
-typedef numeric::xyzVector<core::Real> point;
+using point = numeric::xyzVector<core::Real>;
 using namespace core;
 
 namespace protocols {
@@ -49,8 +49,7 @@ ZincSiteFinder::ZincSiteFinder( core::Size zinc_res ) // constructor for known z
 	msr_.clear();
 }
 
-ZincSiteFinder::~ZincSiteFinder() // destructor
-= default;
+ZincSiteFinder::~ZincSiteFinder() = default;
 
 
 void

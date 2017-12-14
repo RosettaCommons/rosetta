@@ -49,7 +49,7 @@ RemodelEnzdesCstModule::RemodelEnzdesCstModule(RemodelData external_data)
 
 }
 
-RemodelEnzdesCstModule::~RemodelEnzdesCstModule(){}
+RemodelEnzdesCstModule::~RemodelEnzdesCstModule()= default;
 
 void
 RemodelEnzdesCstModule::apply(core::pose::Pose & pose)
@@ -126,9 +126,9 @@ RemodelEnzdesCstModule::blueprint_cst_definition(core::pose::Pose & pose ){
 	utility::vector1<core::Size> position;
 
 
-	for ( core::Size i = 0, ie = remodel_data_.blueprint.size(); i < ie ; i++ ) {
-		if ( remodel_data_.blueprint[i].has_constraints ) {
-			for ( std::vector<std::string>::iterator it = remodel_data_.blueprint[i].constraint_definition.begin(), end = remodel_data_.blueprint[i].constraint_definition.end(); it != end; ++it ) {
+	for ( auto & i : remodel_data_.blueprint ) {
+		if ( i.has_constraints ) {
+			for ( auto it = i.constraint_definition.begin(), end = i.constraint_definition.end(); it != end; ++it ) {
 				//casting, sort of....
 				core::Size found_start = (*it).find_first_of("0123456789");
 				core::Size found_end = (*it).find_last_of("0123456789");
@@ -142,7 +142,7 @@ RemodelEnzdesCstModule::blueprint_cst_definition(core::pose::Pose & pose ){
 				core::Size bufferLength = (*it).length();
 
 				role.push_back((*it).substr(bufferLength-1,1));
-				position.push_back(remodel_data_.blueprint[i].index);
+				position.push_back(i.index);
 			}
 		}
 	}

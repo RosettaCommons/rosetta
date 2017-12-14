@@ -52,7 +52,7 @@ SurfaceCalculator::SurfaceCalculator( bool remove_nonprotein_res )
 : total_surface_energy_(0.0), remove_nonprotein_res_(remove_nonprotein_res )
 {}
 
-SurfaceCalculator::~SurfaceCalculator(){}
+SurfaceCalculator::~SurfaceCalculator()= default;
 
 void
 SurfaceCalculator::lookup( std::string const & key, basic::MetricValueBase* valptr ) const {

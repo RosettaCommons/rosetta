@@ -37,6 +37,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 // Numeric headers
@@ -65,13 +66,7 @@ namespace pcsTs4 {
 
 static basic::Tracer TR_PCS_d_i_Ts4( "protocols.scoring.methods.pcsTs4.PCS_data_input_Ts4" );
 
-PCS_line_data_Ts4::PCS_line_data_Ts4(PCS_line_data_Ts4 const & other):
-	residue_num_(other.residue_num_),
-	atom_name_(other.atom_name_),
-	PCS_experimental_(other.PCS_experimental_),
-	PCS_tolerance_(other.PCS_tolerance_)
-{
-}
+PCS_line_data_Ts4::PCS_line_data_Ts4(PCS_line_data_Ts4 const & /*other*/) = default;
 
 PCS_line_data_Ts4 &
 PCS_line_data_Ts4::operator=( PCS_line_data_Ts4 const & other )
@@ -82,11 +77,9 @@ PCS_line_data_Ts4::operator=( PCS_line_data_Ts4 const & other )
 	return *this;
 }
 
-PCS_line_data_Ts4::~PCS_line_data_Ts4(){
-}
+PCS_line_data_Ts4::~PCS_line_data_Ts4()= default;
 
-PCS_file_data_Ts4::~PCS_file_data_Ts4(){
-}
+PCS_file_data_Ts4::~PCS_file_data_Ts4()= default;
 
 PCS_file_data_Ts4::PCS_file_data_Ts4(PCS_file_data_Ts4 const & other):
 	filename_(other.filename_), weight_(other.weight_)
@@ -107,8 +100,7 @@ PCS_data_input_Ts4::PCS_data_input_Ts4(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_data_input_Ts4 class" );
 }
 
-PCS_data_input_Ts4::~PCS_data_input_Ts4(){
-}
+PCS_data_input_Ts4::~PCS_data_input_Ts4()= default;
 
 PCS_data_input_Ts4::PCS_data_input_Ts4(PCS_data_input_Ts4 const & other){
 	PCS_filename_and_data_ = other.PCS_filename_and_data_;
@@ -144,7 +136,7 @@ PCS_line_data_Ts4::PCS_tolerance() const{
 }
 
 PCS_line_data_Ts4::PCS_line_data_Ts4(core::Size residue_num,
-	std::string atom_name,
+	std::string const & atom_name,
 	core::Real PCS_experimental,
 	core::Real PCS_tolerance
 ) :
@@ -269,13 +261,11 @@ operator<<(std::ostream & out,  const PCS_data_input_Ts4 &PCS_d_i ){
 }
 
 
-PCS_data_input_manager_Ts4::PCS_data_input_manager_Ts4(){
-
-}
+PCS_data_input_manager_Ts4::PCS_data_input_manager_Ts4()= default;
 
 PCS_data_input_manager_Ts4 *
 PCS_data_input_manager_Ts4::get_instance(){
-	if ( instance_ == 0 ) {
+	if ( instance_ == nullptr ) {
 		instance_ = new PCS_data_input_manager_Ts4();
 	}
 	return instance_;
@@ -307,7 +297,7 @@ PCS_data_input_manager_Ts4::get_input_data(utility::vector1<std::string> const &
 	return(pcs_d_i);
 }
 
-PCS_data_input_manager_Ts4 * PCS_data_input_manager_Ts4::instance_( 0 );
+PCS_data_input_manager_Ts4 * PCS_data_input_manager_Ts4::instance_( nullptr );
 
 }//namespace pcsTs4
 }//namespace methods

@@ -259,7 +259,7 @@ MgEnergy::eval_residue_pair(
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs) const
 {
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( mg_pair_nblist ) ) );
+	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( mg_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 	for ( Size k = 1, kend = neighbs.size(); k <= kend; ++k ) {
 		Size const ii = neighbs[ k ].atomno1();

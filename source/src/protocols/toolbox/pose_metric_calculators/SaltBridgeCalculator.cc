@@ -117,7 +117,7 @@ void SaltBridgeCalculator::recompute(core::pose::Pose const & pose){
 					bool get_out_of_loop=false;
 					//start iteration through acceptor heavy atoms
 					for (
-							core::chemical::AtomIndices::const_iterator
+							auto
 							anum  = acceptor.accpt_pos().begin(),
 							anume = acceptor.accpt_pos().end(); anum != anume; ++anum ) {
 						core::Size const acc_atm( *anum );
@@ -125,7 +125,7 @@ void SaltBridgeCalculator::recompute(core::pose::Pose const & pose){
 
 						for
 							(
-									core::chemical::AtomIndices::const_iterator
+									auto
 									don_num = donate.Hpos_polar_sc().begin(),
 									don_nume = donate.Hpos_polar_sc().end();
 									don_num != don_nume; ++don_num

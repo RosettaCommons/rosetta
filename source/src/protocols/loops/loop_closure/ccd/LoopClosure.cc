@@ -49,6 +49,7 @@
 #include <string>
 
 #include <core/fragment/FragData.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -68,11 +69,11 @@ LoopClosure::LoopClosure(
 	Loop loop_def,
 	kinematics::MoveMapCOP movemap
 ) : loop_ ( loop_def ),
-	scorefxn_( scorefxn ),
-	movemap_( movemap ),
+	scorefxn_(std::move( scorefxn )),
+	movemap_(std::move( movemap )),
 	frag_mover_( /* NULL */ ),
 	ccd_mover_( /* NULL */ ),
-	fragset_( fragset ),
+	fragset_(std::move( fragset )),
 	bEnableCcdMoves_( loop_def.size() >= 10 ? true : false ),
 	bRampChainbreak_( false )
 {
@@ -100,9 +101,9 @@ void LoopClosure::set_movemap( core::kinematics::MoveMapCOP mm ) { movemap_ = mm
 void LoopClosure::set_fragset( core::fragment::FragSetCOP frags ) { fragset_ = frags; }
 
 void LoopClosure::init() {
-	runtime_assert( fragset_ != 0 );
-	runtime_assert( movemap_ != 0 );
-	runtime_assert( scorefxn_ != 0 );
+	runtime_assert( fragset_ != nullptr );
+	runtime_assert( movemap_ != nullptr );
+	runtime_assert( scorefxn_ != nullptr );
 
 	//make movemap that only allows bb moves within loop ( if master movemap allows the move, too ).
 	kinematics::MoveMapOP loop_movemap( new kinematics::MoveMap );
@@ -126,7 +127,7 @@ void LoopClosure::init() {
 	closure_frame_ = core::fragment::FrameOP( new Frame( loop_.start(), FragDataCOP( FragDataOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) ) );
 }
 
-LoopClosure::~LoopClosure() {}
+LoopClosure::~LoopClosure() = default;
 
 void LoopClosure::set_cycles( core::Real cycle_ratio ) {
 	nr_fragments_ = static_cast< int > (100*cycle_ratio);

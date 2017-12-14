@@ -67,7 +67,7 @@ MainChainTorsionSet::MainChainTorsionSet( utility::fixedsizearray1< core::Real, 
 }
 
 
-MainChainTorsionSet::~MainChainTorsionSet(){}
+MainChainTorsionSet::~MainChainTorsionSet()= default;
 
 // ASSUME alpha
 core::Real MainChainTorsionSet::phi() const{ return mainchain_dihedral_values_[ 1 ]; }

@@ -43,6 +43,7 @@
 
 
 //C++ headers
+#include <utility>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -81,8 +82,8 @@ namespace movers {
 
 RNA_Relaxer::RNA_Relaxer( RNA_FragmentMoverOP rna_fragment_mover, RNA_MinimizerOP rna_minimizer ):
 	Mover(),
-	rna_fragment_mover_( rna_fragment_mover ),
-	rna_minimizer_( rna_minimizer ),
+	rna_fragment_mover_(std::move( rna_fragment_mover )),
+	rna_minimizer_(std::move( rna_minimizer )),
 	relax_cycles_( 50 ),
 	max_frag_size_( 3 ),
 	num_find_fragment_tries_( 100 ),
@@ -93,9 +94,7 @@ RNA_Relaxer::RNA_Relaxer( RNA_FragmentMoverOP rna_fragment_mover, RNA_MinimizerO
 	Mover::type("RNA_Relaxer");
 }
 
-RNA_Relaxer::~RNA_Relaxer()
-{
-}
+RNA_Relaxer::~RNA_Relaxer() = default;
 
 /// @details  Apply the RNA full atom relaxer.
 ///
@@ -111,7 +110,7 @@ void RNA_Relaxer::apply( core::pose::Pose & pose )
 	// rna_minimizer_->use_coordinate_constraints( false );
 	//rna_minimizer_->skip_o2prime_trials( true );
 
-	time_t pdb_start_time = time(NULL);
+	time_t pdb_start_time = time(nullptr);
 
 	ScoreFunctionOP scorefxn;
 
@@ -145,7 +144,7 @@ void RNA_Relaxer::apply( core::pose::Pose & pose )
 
 	pose = monte_carlo_->lowest_score_pose();
 
-	time_t pdb_end_time = time(NULL);
+	time_t pdb_end_time = time(nullptr);
 
 	scorefxn->show( TR, pose );
 

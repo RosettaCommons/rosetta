@@ -127,8 +127,7 @@ private: //enum for atomID vector for tracking bonds near the thioester
 	};
 
 public:
-	UBQ_E2Mover()
-	: init_for_input_yet_(false),
+	UBQ_E2Mover() :
 		fullatom_scorefunction_(/* NULL */),
 		task_factory_(/* NULL */),
 		thioester_mm_(/* NULL */),
@@ -136,9 +135,7 @@ public:
 		atomIDs(8, core::id::AtomID::BOGUS_ATOM_ID() ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
 		IAM_(protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover )),
-		two_ubiquitins_(false),
-		extra_bodies_chains_(), //uninitializable
-		ubq2_lys_pos_in_complex_(0)
+		extra_bodies_chains_() //uninitializable
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
@@ -544,11 +541,11 @@ public:
 		}
 	}
 
-	virtual ~UBQ_E2Mover(){};
+	~UBQ_E2Mover() override= default;
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ){
+	apply( core::pose::Pose & pose ) override{
 		if ( !init_for_input_yet_ ) init_on_new_input();
 
 		pose = starting_pose_;
@@ -812,26 +809,26 @@ public:
 		return;
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new UBQ_E2Mover );
 	}
 
-	virtual
-	bool
-	reinitialize_for_each_job() const { return false; }
 
-	virtual
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
 
-	virtual
+
+	bool
+	reinitialize_for_new_input() const override { return false; }
+
+
 	std::string
-	get_name() const { return "UBQ_E2Mover"; }
+	get_name() const override { return "UBQ_E2Mover"; }
 
 private:
-	bool init_for_input_yet_;
+	bool init_for_input_yet_{false};
 
 	core::scoring::ScoreFunctionOP fullatom_scorefunction_;
 	core::pack::task::TaskFactoryOP task_factory_;
@@ -851,17 +848,17 @@ private:
 	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 
 	/// @brief used for two-ubiquitins mode
-	bool two_ubiquitins_;
+	bool two_ubiquitins_ = false;
 
 	/// @brief used to track which chains are "extra" nonmoving bodies in extra bodies mode
 	utility::vector1< core::Size > extra_bodies_chains_;
 
 	/// @brief the lysine attachment position for the second ubiquitin (the second moving chain), in the whole complex numbering
-	core::Size ubq2_lys_pos_in_complex_;
+	core::Size ubq2_lys_pos_in_complex_ = 0;
 
 };
 
-typedef utility::pointer::shared_ptr< UBQ_E2Mover > UBQ_E2MoverOP;
+using UBQ_E2MoverOP = utility::pointer::shared_ptr<UBQ_E2Mover>;
 
 int main( int argc, char* argv[] )
 {

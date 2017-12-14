@@ -378,7 +378,7 @@ Real
 EllipsoidalRandomizationMover::single_beta_sample( double alpha_param, double beta_param )
 {
 #ifndef  __native_client__
-	typedef boost::math::beta_distribution< double > Mybeta;
+	using Mybeta = boost::math::beta_distribution<double>;
 
 	using core::Real;
 	using numeric::random::DistributionSampler;

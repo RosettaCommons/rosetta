@@ -62,8 +62,7 @@ GridSearchIteratorCA::GridSearchIteratorCA()
 	utility_exit_with_message( "You shouldn't call the empty constructor for GridSearchIteratorCA class" );
 }
 
-GridSearchIteratorCA::~GridSearchIteratorCA(){
-}
+GridSearchIteratorCA::~GridSearchIteratorCA()= default;
 
 GridSearchIteratorCA::GridSearchIteratorCA(GridSearchIteratorCA const & other)
 {

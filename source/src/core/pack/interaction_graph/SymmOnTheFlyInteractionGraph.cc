@@ -64,8 +64,7 @@ SymmOnTheFlyNode::SymmOnTheFlyNode(
 }
 
 /// @details
-SymmOnTheFlyNode::~SymmOnTheFlyNode()
-{}
+SymmOnTheFlyNode::~SymmOnTheFlyNode() = default;
 
 /// @details avoid polymorphic lookup later by nabbing rotamers now.
 void
@@ -463,7 +462,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 						this_rotamer.seqpos(), other_rotamer.seqpos() ) );
 				}
 				if ( lr_iijj_score_multiply != 0 ) {
-					for ( ScoreFunction::LR_2B_MethodIterator
+					for ( auto
 							iter = get_on_the_fly_owner()->score_function().long_range_energies_begin(),
 							iter_end = get_on_the_fly_owner()->score_function().long_range_energies_end();
 							iter != iter_end; ++iter ) {
@@ -636,7 +635,7 @@ SymmOnTheFlyEdge::SymmOnTheFlyEdge(
 }
 
 
-SymmOnTheFlyEdge::~SymmOnTheFlyEdge(){}
+SymmOnTheFlyEdge::~SymmOnTheFlyEdge()= default;
 
 void
 SymmOnTheFlyEdge::add_ProCorrection_values(
@@ -699,7 +698,7 @@ SymmOnTheFlyEdge::set_residues_adjacent_for_subunit_pair(
 
 	//if ( target_edge ) { std::cout << "SymmOnTheFlyEdge " << get_first_node_ind() << " " << get_second_node_ind() << " set_residues_adjacent_for_subunit_pair " << asu_node_index << " " << other_node_subunit << std::endl; }
 
-	Size const score_multiply =
+	auto const score_multiply =
 		Size( get_otf_owner()->symm_info().score_multiply(
 		get_otf_owner()->symm_info().last_independent_residue(),
 		get_otf_owner()->symm_info().equivalent_residue_on_subunit( other_node_subunit, get_otf_owner()->symm_info().last_independent_residue() )));
@@ -749,8 +748,7 @@ SymmOnTheFlyInteractionGraph::SymmOnTheFlyInteractionGraph(int num_nodes )
 	num_restype_groups_( 0 )
 {}
 
-SymmOnTheFlyInteractionGraph::~SymmOnTheFlyInteractionGraph()
-{}
+SymmOnTheFlyInteractionGraph::~SymmOnTheFlyInteractionGraph() = default;
 
 bool
 SymmOnTheFlyInteractionGraph::distinguish_backbone_and_sidechain_for_node( int node_ind ) const
@@ -770,7 +768,7 @@ SymmOnTheFlyInteractionGraph::initialize(
 	rotamer_set::RotamerSetsBase const & rot_sets_base
 )
 {
-	rotamer_set::RotamerSets const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
+	auto const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
 
 	// determine max # of residue types
 	Size max_nrestype_groups = 0;
@@ -825,7 +823,7 @@ SymmOnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 	using conformation::symmetry::SymmetricConformation;
 	using id::AtomID;
 
-	SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose_->conformation()) );
+	auto & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose_->conformation()) );
 	symm_info_ = symm_conf.Symmetry_Info();
 
 	// ok, now figure out the HTs to translate from the reference frame to all of
@@ -922,7 +920,7 @@ SymmOnTheFlyInteractionGraph::set_residues_adjacent_for_subunit_pair_for_edge(
 	int other_node_subunit
 )
 {
-	SymmOnTheFlyEdge * edge = static_cast< SymmOnTheFlyEdge * > ( find_edge( node1, node2 ) );
+	auto * edge = static_cast< SymmOnTheFlyEdge * > ( find_edge( node1, node2 ) );
 	if ( edge ) {
 		edge->set_residues_adjacent_for_subunit_pair( asu_node_index, other_node_subunit );
 	}
@@ -967,8 +965,8 @@ SymmOnTheFlyInteractionGraph::add_ProCorrection_values_for_edge(
 	core::PackerEnergy sc_probb_E
 )
 {
-	SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
-	if ( edge != 0 ) {
+	auto* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != nullptr ) {
 		edge->add_ProCorrection_values(
 			node_not_neccessarily_proline, state,
 			bb_regbb_E, bb_probb_E, sc_regbb_E, sc_probb_E );
@@ -987,8 +985,8 @@ SymmOnTheFlyInteractionGraph::add_GlyCorrection_values_for_edge(
 	core::PackerEnergy sc_glybb_E
 )
 {
-	SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
-	if ( edge != 0 ) {
+	auto* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != nullptr ) {
 		edge->add_GlyCorrection_values(
 			node_not_neccessarily_glycine, state,
 			bb_regbb_E, bb_glybb_E, sc_regbb_E, sc_glybb_E );
@@ -1001,8 +999,8 @@ SymmOnTheFlyInteractionGraph::note_short_range_interactions_exist_for_edge(
 	int node2
 )
 {
-	SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
-	if ( edge != 0 ) {
+	auto* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != nullptr ) {
 		edge->note_short_range_interactions_exist();
 	}
 }
@@ -1013,8 +1011,8 @@ SymmOnTheFlyInteractionGraph::note_long_range_interactions_exist_for_edge(
 	int node2
 )
 {
-	SymmOnTheFlyEdge* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
-	if ( edge != 0 ) {
+	auto* edge = (SymmOnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != nullptr ) {
 		edge->note_long_range_interactions_exist( );
 	}
 }

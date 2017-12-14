@@ -88,7 +88,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/sort_predicates.hh>
-#include <math.h>
+#include <cmath>
 
 
 //tracers
@@ -97,8 +97,8 @@ using basic::Warning;
 static basic::Tracer TR( "apps.public.design.supercharge" );
 
 using namespace core;
-typedef core::pose::Pose Pose;
-typedef std::set< Size > SizeSet;
+using Pose = core::pose::Pose;
+using SizeSet = std::set<Size>;
 
 //local options
 namespace local {
@@ -141,13 +141,13 @@ basic::options::BooleanOptionKey const compare_residue_energies_mut("compare_res
 /// @brief Adds charged residues to a protein surface
 class supercharge : public protocols::moves::Mover {
 public:
-	supercharge(){}
-	virtual ~supercharge(){};
+	supercharge()= default;
+	~supercharge() override= default;
 
 
-	virtual
+
 	void
-	apply( Pose & pose ) {
+	apply( Pose & pose ) override {
 		using namespace basic::options;
 		out_path_ = basic::options::option[ OptionKeys::out::path::path ]();
 
@@ -645,9 +645,9 @@ public:
 		core::scoring::hbonds::HBondSet hbond_set;
 		hbond_set.setup_for_residue_pair_energies( pose, false, false );
 
-		for ( SizeSet::const_iterator it(surface_res_.begin()), end(surface_res_.end()); it!=end; ++it ) {
+		for ( unsigned long surface_re : surface_res_ ) {
 
-			char NATAA_oneletter = pose.residue(*it).name1();
+			char NATAA_oneletter = pose.residue(surface_re).name1();
 
 			//gly, pro, and cys are specialized residues that might be better of unchanged
 			if ( option[local::dont_mutate_glyprocys] ) {
@@ -659,19 +659,19 @@ public:
 			//if same-charge, leave as NATAA
 			if ( option[local::dont_mutate_correct_charge] ) {
 				if ( option[local::include_arg] && NATAA_oneletter == 'R' ) {
-					OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
+					OutputResfile << "   " << pose.pdb_info()->pose2pdb(surface_re) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
 					continue;
 				}
 				if ( option[local::include_lys] && NATAA_oneletter == 'K' ) {
-					OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
+					OutputResfile << "   " << pose.pdb_info()->pose2pdb(surface_re) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
 					continue;
 				}
 				if ( option[local::include_asp] && NATAA_oneletter == 'D' ) {
-					OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
+					OutputResfile << "   " << pose.pdb_info()->pose2pdb(surface_re) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
 					continue;
 				}
 				if ( option[local::include_glu] && NATAA_oneletter == 'E' ) {
-					OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
+					OutputResfile << "   " << pose.pdb_info()->pose2pdb(surface_re) /*prints resnum and chain*/ << "  NATAA  #same charge" << std::endl;
 					continue;
 				}
 			}
@@ -686,15 +686,15 @@ public:
 					if ( hbond->energy() > -0.5 ) { // a fun semi-arbitrary value for hbond strength cutoff
 						continue;
 					}
-					if ( hbond->don_res() == *it && !hbond->don_hatm_is_backbone() ) {
+					if ( hbond->don_res() == surface_re && !hbond->don_hatm_is_backbone() ) {
 
-						OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATRO  #has sc hbond energy=" << hbond->energy() << std::endl;
+						OutputResfile << "   " << pose.pdb_info()->pose2pdb(surface_re) /*prints resnum and chain*/ << "  NATRO  #has sc hbond energy=" << hbond->energy() << std::endl;
 
 						found_sc_hbond = true;
 						break;
 					}
-					if ( hbond->acc_res() == *it && !hbond->acc_atm_is_protein_backbone() ) {
-						OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  NATRO  #has sc hbond energy=" << hbond->energy() << std::endl;
+					if ( hbond->acc_res() == surface_re && !hbond->acc_atm_is_protein_backbone() ) {
+						OutputResfile << "   " << pose.pdb_info()->pose2pdb(surface_re) /*prints resnum and chain*/ << "  NATRO  #has sc hbond energy=" << hbond->energy() << std::endl;
 						found_sc_hbond = true;
 						break;
 					}
@@ -722,7 +722,7 @@ public:
 			}
 
 			// print lines in the resfile uch as:  3  A  PIKAA NRK
-			OutputResfile << "   " << pose.pdb_info()->pose2pdb(*it) /*prints resnum and chain*/ << "  PIKAA ";
+			OutputResfile << "   " << pose.pdb_info()->pose2pdb(surface_re) /*prints resnum and chain*/ << "  PIKAA ";
 			for ( core::Size j(1); j<=PIKAA_residues.size(); ++j ) {
 				OutputResfile << PIKAA_residues[j];
 			}
@@ -933,7 +933,7 @@ public:
 
 		if ( ! option[local::target_net_charge_active] ) {
 
-			Size nstruct = (Size) option[local::nstruct].value();
+			auto nstruct = (Size) option[local::nstruct].value();
 			for ( Size i=1; i <= nstruct; ++i ) {
 				ss_i << i;
 				if ( i < 10 ) { i_string = "000" + ss_i.str(); }
@@ -1348,9 +1348,9 @@ public:
 	}
 
 
-	virtual
+
 	std::string
-	get_name() const { return "supercharge"; }
+	get_name() const override { return "supercharge"; }
 
 
 private:
@@ -1364,7 +1364,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
-typedef utility::pointer::shared_ptr< supercharge > superchargeOP;
+using superchargeOP = utility::pointer::shared_ptr<supercharge>;
 
 int main( int argc, char* argv[] )
 {

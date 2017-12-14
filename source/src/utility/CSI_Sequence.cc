@@ -14,8 +14,6 @@
 
 #include <utility/CSI_Sequence.hh>
 
-#include <ostream>
-
 #ifndef WIN32
 #include <unistd.h>
 #else
@@ -39,7 +37,7 @@ bool stdout_is_tty() {
 bool & CSI_Sequence::suppress_CSI_seq() {
 	// This is a deliberately leaked pointer to a heap bool to insure that it lasts until the very end of the program,
 	// as colored text can potentially be output as a result of object destructors during program tear-down.
-	static bool * do_suppression( new bool(!stdout_is_tty()) ); // Initial value, may be reset
+	static auto * do_suppression( new bool(!stdout_is_tty()) ); // Initial value, may be reset
 	return *do_suppression;
 }
 

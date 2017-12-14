@@ -339,8 +339,8 @@ core::Real score_mapping( NameBimap const & mapping, ResidueInformation const & 
 	return score;
 }
 
-typedef boost::undirected_graph<AtomInformation /*Node information only*/ > AtomInfoGraph;
-typedef AtomInfoGraph::vertex_descriptor AIVD;
+using AtomInfoGraph = boost::undirected_graph<AtomInformation>;
+using AIVD = AtomInfoGraph::vertex_descriptor;
 
 class GeometricRenameIsomorphismCallback {
 public:
@@ -431,7 +431,7 @@ private:
 /// @brief Callback class for writing graphviz info
 class GraphvizPropertyWriter {
 public:
-	GraphvizPropertyWriter( AtomInfoGraph const & aigraph ):
+	explicit GraphvizPropertyWriter( AtomInfoGraph const & aigraph ):
 		aigraph_(aigraph)
 	{}
 
@@ -454,7 +454,7 @@ remap_names_on_geometry( NameBimap & mapping,
 	std::map< std::string, AIVD > name_aivd_map;
 	utility::vector1< AIVD > small_order;
 
-	for ( utility::vector1< AtomInformation >::const_iterator iter=rinfo.atoms().begin(), iter_end=rinfo.atoms().end();
+	for ( auto iter=rinfo.atoms().begin(), iter_end=rinfo.atoms().end();
 			iter != iter_end; ++iter ) {
 		if ( ! rinfo.xyz().count( iter->name ) ) {
 			continue; // Only look at atoms with coordinates

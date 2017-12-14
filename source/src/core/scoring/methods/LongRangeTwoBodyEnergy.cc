@@ -26,7 +26,7 @@ namespace methods {
 
 LongRangeTwoBodyEnergy::LongRangeTwoBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 
-LongRangeTwoBodyEnergy::~LongRangeTwoBodyEnergy() {}
+LongRangeTwoBodyEnergy::~LongRangeTwoBodyEnergy() = default;
 
 }
 }

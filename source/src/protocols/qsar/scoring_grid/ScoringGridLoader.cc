@@ -38,8 +38,8 @@ namespace scoring_grid {
 
 static basic::Tracer TR( "protocols.qsar.scoring_grid.ScoringGridLoader" );
 
-ScoringGridLoader::ScoringGridLoader() {}
-ScoringGridLoader::~ScoringGridLoader() {}
+ScoringGridLoader::ScoringGridLoader() = default;
+ScoringGridLoader::~ScoringGridLoader() = default;
 
 void ScoringGridLoader::load_data(
 	core::pose::Pose const &,
@@ -48,7 +48,7 @@ void ScoringGridLoader::load_data(
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagCOP > TagCOPs;
+	using TagCOPs = utility::vector0<TagCOP>;
 
 	TagCOPs const sub_tags( tag->getTags() );
 
@@ -84,7 +84,7 @@ void ScoringGridLoader::load_data(
 void ScoringGridLoader::parse_gridset_tag( utility::tag::TagCOP tag, utility::tag::TagCOP parent, basic::datacache::DataMap & data ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagCOP > TagCOPs;
+	using TagCOPs = utility::vector0<TagCOP>;
 
 	// Initialize the prototype grid set
 	qsar::scoring_grid::GridSetOP grid_set( new qsar::scoring_grid::GridSet );

@@ -238,7 +238,7 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 	if ( individual_hbonds_ ) {
 		for ( core::Size i=1; i<=total_residue; ++i ) {
 			if ( packer_task->being_packed( i ) ) {
-				bool flag = 0;
+				bool flag = false;
 				core::Real resi_hbond_bb_sc_energy = 0;
 				for ( core::Size j=1; j<=total_residue; j++ ) {
 					for ( Size ihb = 1; ihb <= hbset.nhbonds(); ++ihb ) {
@@ -246,7 +246,7 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 						if ( hb.don_res()==i && hb.acc_res()==j ) {
 							if ( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {
 								if ( flag == 0 ) interface_size++;
-								flag=1;
+								flag=true;
 								resi_hbond_bb_sc_energy += hb.energy();
 								//TR << "Donor sc resi: " << i << p.residue(i).name3() << ". Acceptor bb resi: " << j << p.residue(j).name3() << " Energy = " << hb.energy() << std::endl;
 							}
@@ -254,7 +254,7 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 						if ( hb.don_res()==j && hb.acc_res()==i ) {
 							if ( hb.don_hatm_is_protein_backbone() && !hb.acc_atm_is_protein_backbone() ) {
 								if ( flag == 0 ) interface_size++;
-								flag=1;
+								flag=true;
 								resi_hbond_bb_sc_energy += hb.energy();
 								//TR << "Acceptor sc resi: " << i << p.residue(i).name3() << ". Donor bb resi: " << j << p.residue(j).name3() << " Energy = " << hb.energy() << std::endl;
 							}
@@ -357,7 +357,7 @@ TaskAwareScoreTypeFilter::parse_my_tag( utility::tag::TagCOP tag,
 	sym_dof_names( tag->getOption< std::string >( "sym_dof_names", "" ) );
 	jump( tag->getOption< core::Size >( "jump", 0 ) );
 	mode( tag->getOption< std::string >( "mode", "average" ) );
-	write2pdb( tag->getOption< bool >("write2pdb", 0) );
+	write2pdb( tag->getOption< bool >("write2pdb", false) );
 	individual_hbonds(tag->getOption< bool >("individual_hbonds", false ));
 	if ( !((mode() == "average") || (mode() == "total") || (mode() == "individual")) ) {
 		utility_exit_with_message( "InputError: The specified mode for the TaskAwareScoreTypeFilter does not match either average, total, or individual." );

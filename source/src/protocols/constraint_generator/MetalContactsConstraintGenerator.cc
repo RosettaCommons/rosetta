@@ -70,8 +70,7 @@ MetalContactsConstraintGenerator::MetalContactsConstraintGenerator():
 {
 }
 
-MetalContactsConstraintGenerator::~MetalContactsConstraintGenerator()
-{}
+MetalContactsConstraintGenerator::~MetalContactsConstraintGenerator() = default;
 
 MetalContactsConstraintGenerator::MetalContactsConstraintGenerator( MetalContactsConstraintGenerator const & src ):
 	protocols::constraint_generator::ConstraintGenerator( src )

@@ -276,7 +276,7 @@ private:
 
 class SelectedResPredicate: public Predicate {
 public:
-	SelectedResPredicate( std::list< core::Size >  selected, PredicateCOP predicate ) : selected_(std::move(selected)), pred_(std::move(predicate)) {}
+	SelectedResPredicate( std::list< core::Size > const & selected, PredicateCOP predicate ) : selected_(selected), pred_(std::move(predicate)) {}
 	~SelectedResPredicate() override = default;
 	bool operator()(
 		core::pose::Pose const & pose1,
@@ -473,7 +473,7 @@ core::Real
 CA_gdtmm(
 	core::pose::Pose const& pose1,
 	core::pose::Pose const& pose2,
-	std::list<Size> residue_selection,
+	std::list<Size> const & residue_selection,
 	core::Real& m_1_1,
 	core::Real& m_2_2,
 	core::Real& m_3_3,
@@ -486,7 +486,7 @@ core::Real
 CA_gdtmm(
 	core::pose::Pose const& pose1,
 	core::pose::Pose const& pose2,
-	std::list<Size> residue_selection
+	std::list<Size> const & residue_selection
 );
 
 /// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
@@ -508,7 +508,7 @@ CA_gdttm(
 	core::pose::Pose const& pose2,
 	core::Real &gdttm_score,
 	core::Real &gdtha_score,
-	std::list< Size > residue_selection //the std::list can be sorted! -- note std::sort can be applied to vectors
+	std::list< Size > const & residue_selection //the std::list can be sorted! -- note std::sort can be applied to vectors
 );
 
 void

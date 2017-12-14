@@ -320,7 +320,7 @@ protected:
 
 private:
 	void get_energy_for_state_pair(
-		int nodes_states[ 2 ],
+		int const nodes_states[ 2 ],
 		SparseMatrixIndex sparse_matrix_indices[ 2 ]
 	);
 

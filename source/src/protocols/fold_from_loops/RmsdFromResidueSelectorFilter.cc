@@ -76,7 +76,7 @@ RmsdFromResidueSelectorFilter::RmsdFromResidueSelectorFilter() :
 {
 }
 
-RmsdFromResidueSelectorFilter::~RmsdFromResidueSelectorFilter() {}
+RmsdFromResidueSelectorFilter::~RmsdFromResidueSelectorFilter() = default;
 
 
 core::Real

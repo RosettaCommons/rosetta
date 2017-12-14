@@ -26,7 +26,7 @@ namespace task_operations {
 using namespace core::pack::task::operation;
 using namespace utility::tag;
 
-InterfaceTaskOperation::~InterfaceTaskOperation(){}
+InterfaceTaskOperation::~InterfaceTaskOperation()= default;
 
 /* AMW No creator exists, perhaps because base class.
 void InterfaceTaskOperationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

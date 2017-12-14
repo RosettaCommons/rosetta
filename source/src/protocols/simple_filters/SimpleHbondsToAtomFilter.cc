@@ -49,8 +49,7 @@ SimpleHbondsToAtomFilter::SimpleHbondsToAtomFilter():
 	hb_e_cutoff_( -0.5 )
 {}
 
-SimpleHbondsToAtomFilter::~SimpleHbondsToAtomFilter()
-{}
+SimpleHbondsToAtomFilter::~SimpleHbondsToAtomFilter() = default;
 
 // Setters and getters
 

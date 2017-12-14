@@ -554,7 +554,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	if ( docking_lowres_mover_ ) {
 		// pass the ensemble movers to the lowres protocol
 		if ( if_ensemble_ && docking_lowres_mover_->get_name() == "DockingLowResEnsemble" ) {
-			DockingLowResEnsemble* ensemble_mover = dynamic_cast< DockingLowResEnsemble* >(docking_lowres_mover_.get());
+			auto* ensemble_mover = dynamic_cast< DockingLowResEnsemble* >(docking_lowres_mover_.get());
 
 			ensemble_mover->set_ensemble1( ensemble1_ );
 			ensemble_mover->set_ensemble2( ensemble2_ );
@@ -1173,13 +1173,13 @@ DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 	}
 	//initialize other flags to control behavior
 	//do high res step or not
-	set_low_res_protocol_only( tag->getOption<bool>( "low_res_protocol_only", 0 ) );
+	set_low_res_protocol_only( tag->getOption<bool>( "low_res_protocol_only", false ) );
 	//skip the low res step if true
-	set_docking_local_refine( tag->getOption<bool>( "docking_local_refine", 0 ) );
+	set_docking_local_refine( tag->getOption<bool>( "docking_local_refine", false ) );
 	//minimze final full atom structure?
-	set_dock_min( tag->getOption<bool>( "dock_min", 0 ) );
+	set_dock_min( tag->getOption<bool>( "dock_min", false ) );
 	//ignore the default docking task and define your own
-	set_ignore_default_docking_task( tag->getOption<bool>( "ignore_default_docking_task", 0 ) );
+	set_ignore_default_docking_task( tag->getOption<bool>( "ignore_default_docking_task", false ) );
 	if ( tag->hasOption( "task_operations" ) ) {
 		set_task_factory(protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}

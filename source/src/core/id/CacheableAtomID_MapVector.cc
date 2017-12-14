@@ -32,7 +32,7 @@
 namespace core {
 namespace id {
 
-CacheableAtomID_MapVector::CacheableAtomID_MapVector() {}
+CacheableAtomID_MapVector::CacheableAtomID_MapVector() = default;
 
 CacheableAtomID_MapVector::~CacheableAtomID_MapVector()= default;
 

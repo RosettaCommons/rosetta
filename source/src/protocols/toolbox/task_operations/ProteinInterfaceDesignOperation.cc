@@ -70,19 +70,19 @@ std::string ProteinInterfaceDesignOperationCreator::keyname() const
 }
 
 ProteinInterfaceDesignOperation::ProteinInterfaceDesignOperation() :
-	repack_chain1_( 1 ),
-	repack_chain2_( 1 ),
-	design_chain1_( 0 ),
-	design_chain2_( 1 ),
-	allow_all_aas_( 0 ),
-	design_all_aas_( 0 ),
+	repack_chain1_( true ),
+	repack_chain2_( true ),
+	design_chain1_( false ),
+	design_chain2_( true ),
+	allow_all_aas_( false ),
+	design_all_aas_( false ),
 	interface_distance_cutoff_( 8.0 ),
 	jump_( 1 ),
 	modify_before_jump_( true ),
 	modify_after_jump_ ( true )
 {}
 
-ProteinInterfaceDesignOperation::~ProteinInterfaceDesignOperation() {}
+ProteinInterfaceDesignOperation::~ProteinInterfaceDesignOperation() = default;
 
 core::pack::task::operation::TaskOperationOP ProteinInterfaceDesignOperation::clone() const
 {
@@ -229,8 +229,8 @@ ProteinInterfaceDesignOperation::parse_tag( TagCOP tag , DataMap & )
 	design_all_aas( tag->getOption< core::Size >( "design_all_aas", 0 ) );
 	jump( tag->getOption< core::Size >( "jump", 1 ) );
 	interface_distance_cutoff( tag->getOption< core::Real >( "interface_distance_cutoff", 8.0 ) );
-	modify_before_jump( tag->getOption< bool >( "modify_before_jump", 1 ) );
-	modify_after_jump(  tag->getOption< bool >( "modify_after_jump",  1 ) );
+	modify_before_jump( tag->getOption< bool >( "modify_before_jump", true ) );
+	modify_after_jump(  tag->getOption< bool >( "modify_after_jump",  true ) );
 }
 
 void ProteinInterfaceDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

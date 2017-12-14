@@ -24,7 +24,7 @@ namespace fldsgn {
 namespace topology {
 
 /// @details Auto-generated virtual destructor
-DimerPairing::~DimerPairing() {}
+DimerPairing::~DimerPairing() = default;
 
 
 /// @brief
@@ -106,7 +106,7 @@ DimerPairings::finalize( SS_Info2 const & ss_info )
 {
 	std::sort( begin(), end(), pointer_sorter );
 
-	for ( iterator it=begin(), ite=end(); it!=ite ; ++it ) {
+	for ( auto it=begin(), ite=end(); it!=ite ; ++it ) {
 
 		DimerPairing const & pairing( **it );
 		if ( !pairing.valid() ) continue;
@@ -122,7 +122,7 @@ DimerPairings::finalize( SS_Info2 const & ss_info )
 		Size const strand2( ss_info.strand_id( pairing.res2() ) );
 		runtime_assert( strand2 > strand1 );
 
-		iterator it2( it );
+		auto it2( it );
 		++it2;
 		for ( ; it2 != ite; ++it2 ) {
 
@@ -160,10 +160,10 @@ std::ostream& operator<<( std::ostream & out, const DimerPairings &dps )
 		<< RJ(9, "score") << std::endl;
 
 	core::Size count( 0 );
-	for ( DimerPairings::const_iterator it=dps.begin(), eit=dps.end(); it!=eit; ++it ) {
-		if ( !( **it).valid() ) continue;
+	for ( auto const & dp : dps ) {
+		if ( !( *dp).valid() ) continue;
 		out << I( 4, count++ ) << ' ' ;
-		out << (**it);
+		out << (*dp);
 	}
 	return out;
 }

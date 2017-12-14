@@ -29,6 +29,7 @@
 #include <basic/datacache/DataMap.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -81,14 +82,14 @@ FragQualCalculator::FragQualCalculator():
 
 /// @brief value constructor
 FragQualCalculator::FragQualCalculator(
-	FragSetOP const & frag,
+	FragSetOP frag,
 	Real const rmsd,
 	Real const ratio ):
 	rmsd_cutoff_goodfrag_( rmsd ),
 	ratio_cutoff_goodfrag_( ratio ),
 	total_goodfrags_( 0 ),
 	coverage_( 0 ),
-	frag_( frag ),
+	frag_(std::move( frag )),
 	begin_( 0 ),
 	end_( 0 ),
 	verbose_( false )
@@ -111,7 +112,7 @@ FragQualCalculator::FragQualCalculator( FragQualCalculator const & rval ):
 {}
 
 /// @brief destructor
-FragQualCalculator::~FragQualCalculator(){}
+FragQualCalculator::~FragQualCalculator()= default;
 
 
 /// @brief set fragments
@@ -274,7 +275,7 @@ FragQualCalculator::parse_my_tag(
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "fragsets " + fset_string + " not found in basic::datacache::DataMap.");
 	}
 
-	verbose_ = tag->getOption<bool>( "verbose", 0 );
+	verbose_ = tag->getOption<bool>( "verbose", false );
 }
 
 

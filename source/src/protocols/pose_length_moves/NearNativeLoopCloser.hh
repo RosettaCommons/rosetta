@@ -65,7 +65,7 @@ private:
 	void trimRegion(core::pose::PoseOP & poseOP, Size resStart, Size resStop);
 	void extendRegion(bool towardCTerm, Size resStart, Size numberAddRes,core::pose::PoseOP & poseOP);
 	void assign_phi_psi_omega_from_lookback(Size db_index, Size fragment_index, core::pose::PoseOP & poseOP);
-	std::vector<core::Real> get_center_of_mass(core::Real* coordinates, int number_of_atoms);
+	std::vector<core::Real> get_center_of_mass( const core::Real* coordinates, int number_of_atoms);
 	void output_fragment_debug(std::vector< numeric::xyzVector<numeric::Real> > coordinates, std::string filename);
 	void add_coordinate_csts_from_lookback(Size stub_ss_index_match, Size fragment_index, Size pose_residue, bool match_stub_alone, core::pose::PoseOP & poseOP);
 	void add_dihedral_csts_from_lookback(Size stub_ss_index_match,Size fragment_index,Size pose_residue,core::pose::PoseOP & poseOP);

@@ -46,13 +46,13 @@ SplineGenerator::SplineGenerator():
 
 }
 
-SplineGenerator::~SplineGenerator() {}
+SplineGenerator::~SplineGenerator() = default;
 
 void
 SplineGenerator::add_known_value(
 	Real x, Real y
 ) {
-	assert( interpolator_ == (InterpolatorOP)NULL );
+	assert( interpolator_ == (InterpolatorOP)nullptr );
 	assert( lbx_ < x && x < ubx_ );
 	points_.push_back( Point(x,y) );
 }
@@ -61,7 +61,7 @@ void
 SplineGenerator::add_known_value(
 	Real x, Real y, Real dy
 ) {
-	assert( interpolator_ == (InterpolatorOP)NULL );
+	assert( interpolator_ == (InterpolatorOP)nullptr );
 	assert( lbx_ < x && x < ubx_ );
 	points_.push_back( Point(x,y,dy) );
 }
@@ -74,7 +74,7 @@ void SplineGenerator::add_boundary_function(std::string const & tag, Real const 
 InterpolatorOP
 SplineGenerator::get_interpolator()
 {
-	if ( interpolator_ == (InterpolatorOP)NULL ) {
+	if ( interpolator_ == (InterpolatorOP)nullptr ) {
 		std::sort( points_.begin(), points_.end(), OrderPoint() );
 		bool compound = false;
 		for ( size_t i = 1; i <= points_.size(); ++i ) {
@@ -116,8 +116,8 @@ SplineGenerator::get_interpolator()
 			}
 			interpolator_ = InterpolatorOP(interp);
 		}
-		std::map<std::string, LinearFunction>::iterator lower_bound(boundary_functions_.find("lb_function"));
-		std::map<std::string, LinearFunction>::iterator upper_bound(boundary_functions_.find("ub_function"));
+		auto lower_bound(boundary_functions_.find("lb_function"));
+		auto upper_bound(boundary_functions_.find("ub_function"));
 		if ( lower_bound != boundary_functions_.end() ) {
 			interpolator_->set_lb_function(lower_bound->second.cutoff,lower_bound->second.slope,lower_bound->second.intercept);
 		}

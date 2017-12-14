@@ -60,8 +60,7 @@ TransientCutpointHandler::TransientCutpointHandler( Size const sample_suite, Siz
 {}
 
 //Destructor
-TransientCutpointHandler::~TransientCutpointHandler()
-{}
+TransientCutpointHandler::~TransientCutpointHandler() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void

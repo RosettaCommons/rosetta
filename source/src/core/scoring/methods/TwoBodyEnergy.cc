@@ -39,7 +39,7 @@ static basic::Tracer TR( "core.scoring.methods.TwoBodyEnergy" );
 
 TwoBodyEnergy::TwoBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 
-TwoBodyEnergy::~TwoBodyEnergy() {}
+TwoBodyEnergy::~TwoBodyEnergy() = default;
 
 bool
 TwoBodyEnergy::defines_score_for_residue_pair(

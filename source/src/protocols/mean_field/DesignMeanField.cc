@@ -69,7 +69,7 @@ DesignMeanField::DesignMeanField( Size option,
 {}
 
 // Destructor
-DesignMeanField::~DesignMeanField() {}
+DesignMeanField::~DesignMeanField() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////

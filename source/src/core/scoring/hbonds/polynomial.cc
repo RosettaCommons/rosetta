@@ -62,10 +62,7 @@ Polynomial_1d::Polynomial_1d(
 	geometric_dimension_(geometric_dimension)
 {}
 
-Polynomial_1d::Polynomial_1d(Polynomial_1d const & src):
-	numeric::Polynomial_1d(src),
-	geometric_dimension_(src.geometric_dimension_)
-{}
+Polynomial_1d::Polynomial_1d(Polynomial_1d const & /*src*/) = default;
 
 HBGeoDimType
 Polynomial_1d::geometric_dimension() const

@@ -92,6 +92,8 @@
 [core/scoring/PairEPotential.hh:58]: (style) Consecutive return, break, continue, goto or throw statements are unnecessary.
 [core/scoring/saxs/FormFactor.cc:35]: (warning) Member variable 'FormFactor::glob_flag_' is not initialized in the constructor.
 [core/scoring/saxs/FormFactor.cc:39]: (performance) Variable 'name_' is assigned in constructor body. Consider performing initialization in initialization list.
+[core/scoring/SS_Info.fwd.hh:25] -> [protocols/fldsgn/topology/SS_Info2.fwd.hh:46]: (style) The struct 'Strands' forward declaration is unnecessary. Type struct is already declared earlier.
+[core/scoring/SS_Info.fwd.hh:26] -> [protocols/fldsgn/topology/SS_Info2.fwd.hh:45]: (style) The struct 'Helices' forward declaration is unnecessary. Type struct is already declared earlier.
 [core/scoring/TenANeighborGraph.cc:170]: (style) 'operator=' should return reference to 'this' instance.
 [core/scoring/TwelveANeighborGraph.cc:122]: (style) 'operator=' should return reference to 'this' instance.
 [core/sequence/DP_Matrix.hh:67]: (warning) Member variable 'Cell::coords_' is not assigned a value in 'Cell::operator='.
@@ -101,6 +103,7 @@
 [ObjexxFCL/ObserverMulti.hh:73]: (warning) Member variable 'ObserverMulti::observers_p_' is not assigned a value in 'ObserverMulti::operator='.
 [ObjexxFCL/ObserverSingle.hh:70]: (warning) Member variable 'ObserverSingle::observer_p_' is not assigned a value in 'ObserverSingle::operator='.
 [protocols/antibody/design/CDRGraftDesignOptions.cc:50]: (warning) Member variable 'CDRGraftDesignOptions::cdr_' is not initialized in the constructor.
+[protocols/antibody/grafting/scs_subst_mat.cc:96] -> [protocols/antibody/grafting/scs_subst_mat.cc:96]: (style) Same expression on both sides of '<'.
 [protocols/canonical_sampling/ParallelTempering.cc:118]: (warning) Member variable 'ParallelTempering::rank_' is not initialized in the constructor.
 [protocols/canonical_sampling/TemperingBase.cc:101]: (warning) Member variable 'TemperingBase::stats_line_output_' is not initialized in the constructor.
 [protocols/canonical_sampling/TemperingBase.cc:101]: (warning) Member variable 'TemperingBase::stats_silent_output_' is not initialized in the constructor.
@@ -138,6 +141,7 @@
 [protocols/loophash/BackboneDB.hh:72]: (performance) Variable 'phi_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/loophash/BackboneDB.hh:73]: (performance) Variable 'psi_' is assigned in constructor body. Consider performing initialization in initialization list.
 [protocols/loophash/BackboneDB.hh:74]: (performance) Variable 'omega_' is assigned in constructor body. Consider performing initialization in initialization list.
+[protocols/loops/Loops.fwd.hh:24] -> [protocols/fldsgn/topology/SS_Info2.fwd.hh:47]: (style) The class 'Loops' forward declaration is unnecessary. Type class is already declared earlier.
 [protocols/match/downstream/DownstreamAlgorithm.hh:60]: (style) 'DownstreamAlgorithm::operator=' should return 'DownstreamAlgorithm &'.
 [protocols/match/output/MatchConsolidator.hh:86]: (style) Unused private function: 'MatchConsolidator::end_processing_of_regular_match_groups'
 [protocols/match/output/MatchConsolidator.hh:87]: (style) Unused private function: 'MatchConsolidator::end_processing_of_match_dspos1_groups'

@@ -85,7 +85,7 @@ SymAtomTreeMinimizer::run(
 		make_semisymmetric_movemap( pose, move_map, semisym_move_map );
 	}
 
-	SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+	auto const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	debug_assert( conformation::symmetry::is_symmetric( symm_conf ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -173,7 +173,7 @@ SymAtomTreeMinimizer::make_semisymmetric_movemap(
 {
 	using namespace core::conformation::symmetry;
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
@@ -215,7 +215,7 @@ SymAtomTreeMinimizer::make_asymmetric_movemap(
 {
 	using namespace core::conformation::symmetry;
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	debug_assert( conformation::symmetry::is_symmetric( SymmConf ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
@@ -223,43 +223,37 @@ SymAtomTreeMinimizer::make_asymmetric_movemap(
 	//
 	using namespace core::kinematics;
 
-	for ( MoveMap::TorsionTypeMap::const_iterator it=move_map_sym.torsion_type_begin(), it_end=move_map_sym.torsion_type_end();
+	for ( auto it=move_map_sym.torsion_type_begin(), it_end=move_map_sym.torsion_type_end();
 			it !=it_end; it++ ) {
 		move_map_asym.set( it->first, it->second );
 	}
 
-	for ( MoveMap::DOF_TypeMap::const_iterator it=move_map_sym.dof_type_begin(), it_end=move_map_sym.dof_type_begin();
+	for ( auto it=move_map_sym.dof_type_begin(), it_end=move_map_sym.dof_type_begin();
 			it !=it_end; it++ ) {
 		move_map_asym.set( it->first, it->second );
 	}
 
 	// iterate (and symmetrize)
 	// 1) MoveMapTorsionIDs
-	for ( MoveMap::MoveMapTorsionID_Map::const_iterator it=move_map_sym.movemap_torsion_id_begin(), it_end=move_map_sym.movemap_torsion_id_end();
+	for ( auto it=move_map_sym.movemap_torsion_id_begin(), it_end=move_map_sym.movemap_torsion_id_end();
 			it !=it_end; it++ ) {
 		Size res = it->first.first;
 		if ( it->first.second == id::JUMP ) {
 			int const jnr ( res );
 			if ( symm_info->jump_is_independent( jnr ) ) {
 				move_map_asym.set( it->first, it->second );
-				for ( std::vector< Size>::const_iterator
-						clone     = symm_info->jump_clones( jnr ).begin(),
-						clone_end = symm_info->jump_clones( jnr ).end();
-						clone != clone_end; ++clone ) {
+				for ( unsigned long clone : symm_info->jump_clones( jnr ) ) {
 					MoveMap::MoveMapTorsionID mmid_new = it->first;
-					mmid_new.first = *clone;
+					mmid_new.first = clone;
 					move_map_asym.set( mmid_new, it->second );
 				}
 			}
 		} else {
 			if ( symm_info->bb_is_independent( res ) ) {
 				move_map_asym.set( it->first, it->second );
-				for ( std::vector< Size>::const_iterator
-						clone     = symm_info->bb_clones( res ).begin(),
-						clone_end = symm_info->bb_clones( res ).end();
-						clone != clone_end; ++clone ) {
+				for ( unsigned long clone : symm_info->bb_clones( res ) ) {
 					MoveMap::MoveMapTorsionID mmid_new = it->first;
-					mmid_new.first = *clone;
+					mmid_new.first = clone;
 					move_map_asym.set( mmid_new, it->second );
 				}
 			}
@@ -267,31 +261,25 @@ SymAtomTreeMinimizer::make_asymmetric_movemap(
 	}
 
 	// 2) TorsionIDs
-	for ( MoveMap::TorsionID_Map::const_iterator it=move_map_sym.torsion_id_begin(), it_end=move_map_sym.torsion_id_end();
+	for ( auto it=move_map_sym.torsion_id_begin(), it_end=move_map_sym.torsion_id_end();
 			it !=it_end; it++ ) {
 		Size res = it->first.rsd();
 		if ( it->first.type() == id::JUMP ) {
 			int const jnr ( res ); // i think...
 			if ( symm_info->jump_is_independent( jnr ) ) {
 				move_map_asym.set( it->first, it->second );
-				for ( std::vector< Size>::const_iterator
-						clone     = symm_info->jump_clones( jnr ).begin(),
-						clone_end = symm_info->jump_clones( jnr ).end();
-						clone != clone_end; ++clone ) {
+				for ( unsigned long clone : symm_info->jump_clones( jnr ) ) {
 					MoveMap::TorsionID mmid_new = it->first;
-					mmid_new.rsd() = *clone;
+					mmid_new.rsd() = clone;
 					move_map_asym.set( mmid_new, it->second );
 				}
 			}
 		} else {
 			if ( symm_info->bb_is_independent( res ) ) {
 				move_map_asym.set( it->first, it->second );
-				for ( std::vector< Size>::const_iterator
-						clone     = symm_info->bb_clones( res ).begin(),
-						clone_end = symm_info->bb_clones( res ).end();
-						clone != clone_end; ++clone ) {
+				for ( unsigned long clone : symm_info->bb_clones( res ) ) {
 					MoveMap::TorsionID mmid_new = it->first;
-					mmid_new.rsd() = *clone;
+					mmid_new.rsd() = clone;
 					move_map_asym.set( mmid_new, it->second );
 				}
 			}
@@ -299,18 +287,15 @@ SymAtomTreeMinimizer::make_asymmetric_movemap(
 	}
 
 	// 3) DOF_IDs
-	for ( MoveMap::DOF_ID_Map::const_iterator it=move_map_sym.dof_id_begin(), it_end=move_map_sym.dof_id_end();
+	for ( auto it=move_map_sym.dof_id_begin(), it_end=move_map_sym.dof_id_end();
 			it !=it_end; it++ ) {
 		Size res = it->first.rsd();
 		if ( it->first.type() >= id::RB1 && it->first.type() <= id::RB6 ) {
 			int const jnr ( pose.fold_tree().get_jump_that_builds_residue( res ) );
 			if ( symm_info->jump_is_independent( jnr ) ) {
 				move_map_asym.set( it->first, it->second );
-				for ( std::vector< Size>::const_iterator
-						clone     = symm_info->jump_clones( jnr ).begin(),
-						clone_end = symm_info->jump_clones( jnr ).end();
-						clone != clone_end; ++clone ) {
-					Size resnum = pose.fold_tree().downstream_jump_residue(*clone);
+				for ( unsigned long clone : symm_info->jump_clones( jnr ) ) {
+					Size resnum = pose.fold_tree().downstream_jump_residue(clone);
 					MoveMap::DOF_ID mmid_new ( id::AtomID( it->first.atomno(), resnum ), it->first.type() );
 					move_map_asym.set( mmid_new, it->second );
 				}
@@ -318,11 +303,8 @@ SymAtomTreeMinimizer::make_asymmetric_movemap(
 		} else {
 			if ( symm_info->bb_is_independent( res ) ) {
 				move_map_asym.set( it->first, it->second );
-				for ( std::vector< Size>::const_iterator
-						clone     = symm_info->bb_clones( res ).begin(),
-						clone_end = symm_info->bb_clones( res ).end();
-						clone != clone_end; ++clone ) {
-					MoveMap::DOF_ID mmid_new ( id::AtomID( it->first.atomno(), *clone ), it->first.type() );
+				for ( unsigned long clone : symm_info->bb_clones( res ) ) {
+					MoveMap::DOF_ID mmid_new ( id::AtomID( it->first.atomno(), clone ), it->first.type() );
 					move_map_asym.set( mmid_new, it->second );
 				}
 			}
@@ -330,7 +312,7 @@ SymAtomTreeMinimizer::make_asymmetric_movemap(
 	}
 
 	// 4) JumpIDs -- not sure how much these are used ... and if this logic is right ...
-	for ( MoveMap::JumpID_Map::const_iterator it=move_map_sym.jump_id_begin(), it_end=move_map_sym.jump_id_end();
+	for ( auto it=move_map_sym.jump_id_begin(), it_end=move_map_sym.jump_id_end();
 			it !=it_end; it++ ) {
 		Size res1 = it->first.rsd1(), res2 = it->first.rsd2();
 
@@ -340,13 +322,10 @@ SymAtomTreeMinimizer::make_asymmetric_movemap(
 
 		if ( jnr != 0 && symm_info->jump_is_independent( jnr ) ) {
 			move_map_asym.set_jump( it->first, it->second );
-			for ( std::vector< Size>::const_iterator
-					clone     = symm_info->jump_clones( jnr ).begin(),
-					clone_end = symm_info->jump_clones( jnr ).end();
-					clone != clone_end; ++clone ) {
+			for ( unsigned long clone : symm_info->jump_clones( jnr ) ) {
 				id::JumpID mmid_new(
-					pose.fold_tree().upstream_jump_residue(*clone),
-					pose.fold_tree().downstream_jump_residue(*clone) );
+					pose.fold_tree().upstream_jump_residue(clone),
+					pose.fold_tree().downstream_jump_residue(clone) );
 				move_map_asym.set_jump( mmid_new, it->second );
 			}
 		}

@@ -45,7 +45,7 @@ using namespace basic;
 namespace protocols {
 namespace noesy_assign {
 
-FloatingResonance::FloatingResonance() {}
+FloatingResonance::FloatingResonance() = default;
 
 FloatingResonance::FloatingResonance( Resonance const& resin, FloatList const& partner, ResonanceList* reslist ) :
 	Resonance( resin ),

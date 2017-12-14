@@ -157,10 +157,10 @@ class ContactPartner{
 
 public:
 	/// @brief Default constructor
-	ContactPartner(core::Size seqpos = 0, std::string resname = "", std::string aname= "") :
+	ContactPartner(core::Size seqpos = 0, std::string const & resname = "", std::string const & aname= "") :
 		seqpos_(seqpos),
-		resname_(std::move(resname)),
-		atomname_(std::move(aname)){}
+		resname_(resname),
+		atomname_(aname){}
 
 	/// @brief Returns string representation of the ContactPartner
 	std::string string_rep() const;
@@ -182,9 +182,9 @@ class Contact{
 
 public:
 	/// @brief Default constructor
-	Contact(ContactPartner p1 = ContactPartner(), ContactPartner p2 = ContactPartner()) :
-		partner1_(std::move(p1)),
-		partner2_(std::move(p2)),
+	Contact(ContactPartner const & p1 = ContactPartner(), ContactPartner const & p2 = ContactPartner()) :
+		partner1_(p1),
+		partner2_(p2),
 		count_(0),
 		distance_(0.0){}
 

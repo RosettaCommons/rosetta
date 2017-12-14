@@ -104,8 +104,8 @@ using utility::operator <<;
 
 class compute_Irmsd : public protocols::moves::Mover {
 public:
-	compute_Irmsd(){}
-	void apply( pose::Pose & pose) {
+	compute_Irmsd()= default;
+	void apply( pose::Pose & pose) override {
 
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
 
@@ -115,7 +115,7 @@ public:
 			set_native_pose( native_pose );
 		} else {
 			throw ( CREATE_EXCEPTION(utility::excn::BadInput, "native expected for this app") );
-			set_native_pose(NULL);
+			set_native_pose(nullptr);
 		}
 
 		//std::string partners_="_";
@@ -191,7 +191,7 @@ public:
 
 	}//end of apply
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "compute_Irmsd";
 	}
 };
@@ -212,7 +212,7 @@ my_main( void* ) {
 		excn.show( std::cerr );
 	}
 
-	return 0;
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

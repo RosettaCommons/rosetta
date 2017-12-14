@@ -48,7 +48,7 @@ ResidueAtomTreeCollectionMomento::ResidueAtomTreeCollectionMomento() :
 	natoms_( 0 )
 {}
 
-ResidueAtomTreeCollectionMomento::~ResidueAtomTreeCollectionMomento(){}
+ResidueAtomTreeCollectionMomento::~ResidueAtomTreeCollectionMomento()= default;
 
 ResidueAtomTreeCollectionMomento::ResidueAtomTreeCollectionMomento(
 	ResidueAtomTreeCollectionMomento const & src
@@ -102,7 +102,7 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 	Size const resid( orig_res.seqpos() );
 
 	Size ii( 0 );
-	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
+	for ( auto
 			allowed_iter = rltask.allowed_residue_types_begin(),
 			allowed_end = rltask.allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
@@ -149,8 +149,7 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 	}
 }
 
-ResidueAtomTreeCollection::~ResidueAtomTreeCollection()
-{}
+ResidueAtomTreeCollection::~ResidueAtomTreeCollection() = default;
 
 
 void ResidueAtomTreeCollection::set_active_restype_index( Size restype_index )
@@ -415,7 +414,7 @@ AtomTreeCollection::AtomTreeCollection(
 	res_collections_[ 1 ] = ResidueAtomTreeCollectionOP( new ResidueAtomTreeCollection( rltask, pose.conformation(), pose.residue( resid ) ) );
 }
 
-AtomTreeCollection::~AtomTreeCollection() {}
+AtomTreeCollection::~AtomTreeCollection() = default;
 
 ResidueAtomTreeCollection &
 AtomTreeCollection::moltenres_atomtree_collection( Size moltenresid )

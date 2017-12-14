@@ -25,8 +25,8 @@ namespace protocols {
 namespace multistate_design {
 
 MetricCalculatorFitnessFunction::MetricCalculatorFitnessFunction(
-	std::string  calculator_name,
-	std::string  key
+	std::string const & calculator_name,
+	std::string const & key
 ) :
 	SingleStateFitnessFunction(),
 	calculator_name_(std::move(calculator_name)),

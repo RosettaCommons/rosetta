@@ -61,15 +61,15 @@ public:
 		scorefxn_->set_weight( core::scoring::pddf_score, 1.0 );
 	}
 
-	virtual ~RescorePDDF() {}
+	~RescorePDDF() override = default;
 
-	virtual void apply( core::pose::Pose & pose ) {
+	void apply( core::pose::Pose & pose ) override {
 		core::Real score = (*scorefxn_)(pose);
 		trRescorePDDF << "PDDF score: "<< score<<std::endl;
 		//core::scoring::EnergyMap emap = pose.energies().total_energies();  // unused ~Labonte
 	}
 
-	virtual std::string get_name() const { return "RescorePDDF"; }
+	std::string get_name() const override { return "RescorePDDF"; }
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -86,9 +86,9 @@ public:
 		pddf_score_ = new protocols::scoring::methods::saxs::PDDFEnergy();
 	}
 
-	virtual ~PrintPDDF() {}
+	~PrintPDDF() override = default;
 
-	virtual void apply( core::pose::Pose & pose ) {
+	void apply( core::pose::Pose & pose ) override {
 
 		pddf_score_->compute_pddf_without_ff(pose);
 		utility::vector1<Real> & d = pddf_score_->get_dist_bins();
@@ -97,7 +97,7 @@ public:
 			std::cout << d[i]<<" "<<pddf[i]<<std::endl;
 		}
 	}
-	virtual std::string get_name() const { return "PrintPDDF"; }
+	std::string get_name() const override { return "PrintPDDF"; }
 
 
 private:

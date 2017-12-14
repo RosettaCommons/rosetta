@@ -52,14 +52,14 @@ class SemiExplicitWaterUnsatisfiedPolarsCalculator : public core::pose::metrics:
 public:
 
 	SemiExplicitWaterUnsatisfiedPolarsCalculator(
-		std::string hbond_calc,
+		std::string const & hbond_calc,
 		core::scoring::ScoreFunctionOP scorefxn,
 		core::Real semiexpl_water_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff]
 	);
 
 
 	SemiExplicitWaterUnsatisfiedPolarsCalculator(
-		std::string hbond_calc,
+		std::string const & hbond_calc,
 		core::scoring::ScoreFunctionOP scorefxn,
 		std::set< core::Size > const & special_region,
 		core::Real semiexpl_water_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff]

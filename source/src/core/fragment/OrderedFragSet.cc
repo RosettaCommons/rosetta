@@ -50,7 +50,7 @@ static basic::Tracer tr( "core.fragments" );
 // preliminary reader method --- reads classic rosetta++ frag files
 
 
-OrderedFragSet::OrderedFragSet() {}
+OrderedFragSet::OrderedFragSet() = default;
 OrderedFragSet::~OrderedFragSet() = default;
 
 FragSetOP OrderedFragSet::clone() const {

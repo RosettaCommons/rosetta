@@ -71,7 +71,7 @@ ResidueDecompositionCalculator::print(
 		for ( core::Size i = 1; i <= residue_decomposition_.size(); ++i ) {
 			if ( i > 1 ) sstream << ", ";
 			sstream << "Set " << i << " (" << set_names_[i] << "): [";
-			for ( std::set<core::Size>::const_iterator iter = residue_decomposition_[i].begin();
+			for ( auto iter = residue_decomposition_[i].begin();
 					iter != residue_decomposition_[i].end(); ++iter ) {
 				if ( iter != residue_decomposition_[i].begin() ) sstream << ", ";
 				sstream << *iter;
@@ -143,7 +143,7 @@ ResidueDecompositionCalculator::residue_decomposition_to_set_numbers(
 	residue_set_numbers_.assign(this_pose.size(), 0);
 
 	for ( core::Size i = 1; i <= residue_decomposition_.size(); ++i ) {
-		for ( std::set<core::Size>::iterator iter = residue_decomposition_[i].begin(); iter != residue_decomposition_[i].end(); ++iter ) {
+		for ( auto iter = residue_decomposition_[i].begin(); iter != residue_decomposition_[i].end(); ++iter ) {
 			if ( *iter <= residue_set_numbers_.size() ) residue_set_numbers_[*iter] = i;
 		}
 	}

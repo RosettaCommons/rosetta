@@ -19,6 +19,7 @@
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pdb_writer.hh>
+#include <utility>
 #include <utility/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -64,7 +65,7 @@ AddGood2BPairEnergyRotamers::AddGood2BPairEnergyRotamers( AddGood2BPairEnergyRot
 {}
 
 
-AddGood2BPairEnergyRotamers::~AddGood2BPairEnergyRotamers(){}
+AddGood2BPairEnergyRotamers::~AddGood2BPairEnergyRotamers()= default;
 
 core::pack::rotamer_set::RotamerSetOperationOP
 AddGood2BPairEnergyRotamers::clone() const{
@@ -111,7 +112,7 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 	tr << "Beginning pdb position " <<  this_pdbpos << ", existing interactions is " << existing_score << "and existing rotamer set contains " << rotamer_set.num_rotamers() << " of " << rotamer_set.get_n_residue_groups() << " residue types." << std::endl;
 	//2.
 	core::pack::task::PackerTaskOP ptask_copy( ptask.clone() );
-	core::pack::task::ExtraRotSample rot_explosion_sample( static_cast<core::pack::task::ExtraRotSample>(ex_level_) );
+	auto rot_explosion_sample( static_cast<core::pack::task::ExtraRotSample>(ex_level_) );
 	ptask_copy->nonconst_residue_task( seqpos_).or_ex1( true ); ptask_copy->nonconst_residue_task( seqpos_).or_ex1_sample_level( rot_explosion_sample );
 	ptask_copy->nonconst_residue_task( seqpos_).or_ex2( true ); ptask_copy->nonconst_residue_task( seqpos_).or_ex2_sample_level( rot_explosion_sample );
 	ptask_copy->nonconst_residue_task( seqpos_).or_ex3( true ); ptask_copy->nonconst_residue_task( seqpos_).or_ex3_sample_level( rot_explosion_sample );
@@ -139,7 +140,7 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 			number_passing_cutoff++;
 			//4. checking for rotamers existing twice
 			if ( ! this->rotamer_set_contains_rotamer( rotamer_set, *candidate_rot ) ) {
-				rots_to_keep.push_back( std::pair< Real, core::conformation::ResidueCOP > (this_score,candidate_rot) );
+				rots_to_keep.emplace_back(this_score,candidate_rot );
 			}
 		}
 	}//loop over all extra rotamers
@@ -163,7 +164,7 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 		for ( std::list< std::pair< Real, core::conformation::ResidueCOP > >::const_iterator list_it( rots_to_keep.begin() ), list_end( rots_to_keep.end() ); list_it != list_end; list_it++ ) {
 
 			std::string cur_name3( list_it->second->name3() );
-			std::map< std::string, std::list< std::pair< Real, core::conformation::ResidueCOP > > >::iterator map_it( restype_map.find( cur_name3 ) );
+			auto map_it( restype_map.find( cur_name3 ) );
 			if ( map_it == restype_map.end() ) {
 				restype_map.insert( std::pair< std::string, std::list< std::pair< Real, core::conformation::ResidueCOP > > >( cur_name3, std::list< std::pair< Real, core::conformation::ResidueCOP > > () ) );
 				map_it = restype_map.find( cur_name3 );
@@ -176,7 +177,7 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 			std::ofstream file_out(filename.c_str() );
 			Size atcounter(0);
 			Size modelcounter(0);
-			std::list< std::pair< Real, core::conformation::ResidueCOP > >::const_iterator list_it( map_it->second.begin() ), list_end( map_it->second.end() );
+			auto list_it( map_it->second.begin() ), list_end( map_it->second.end() );
 			for ( ; list_it != list_end; ++list_it ) {
 				modelcounter++;
 				core::conformation::Residue curres( *(list_it->second) );
@@ -210,11 +211,11 @@ AddGood2BPairEnergyRotamers::get_res_res_score(
 	sfxn.eval_ci_2b( rsd1, rsd2, pose, tbemap );
 	sfxn.eval_cd_2b( rsd1, rsd2, pose, tbemap );
 
-	for ( ScoreFunction::CI_LR_2B_Methods::const_iterator iter = sfxn.ci_lr_2b_methods_begin(),
+	for ( auto iter = sfxn.ci_lr_2b_methods_begin(),
 			iter_end = sfxn.ci_lr_2b_methods_end(); iter != iter_end; ++iter ) {
 		(*iter)->residue_pair_energy( rsd1, rsd2, pose, sfxn, tbemap );
 	}
-	for ( ScoreFunction::CD_LR_2B_Methods::const_iterator iter = sfxn.cd_lr_2b_methods_begin(),
+	for ( auto iter = sfxn.cd_lr_2b_methods_begin(),
 			iter_end = sfxn.cd_lr_2b_methods_end(); iter != iter_end; ++iter ) {
 		(*iter)->residue_pair_energy( rsd1, rsd2, pose, sfxn, tbemap );
 	}

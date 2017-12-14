@@ -62,7 +62,7 @@ ProteinBackboneBuildPoint::ProteinBackboneBuildPoint( Size index ) :
 	HA_pos_( 0.0, 0.0, 0.0 )
 {}
 
-ProteinBackboneBuildPoint::~ProteinBackboneBuildPoint() {}
+ProteinBackboneBuildPoint::~ProteinBackboneBuildPoint() = default;
 
 /// Setters
 void ProteinBackboneBuildPoint::phi( Real setting ) { phi_ = setting; }
@@ -81,7 +81,7 @@ OriginalBackboneBuildPoint::OriginalBackboneBuildPoint( Size index ):
 	original_resid_( 0 )
 {}
 
-OriginalBackboneBuildPoint::~OriginalBackboneBuildPoint() {}
+OriginalBackboneBuildPoint::~OriginalBackboneBuildPoint() = default;
 
 OriginalBackboneBuildPoint::OriginalBackboneBuildPoint(
 	core::conformation::Residue const & res
@@ -108,7 +108,7 @@ OriginalBackboneBuildPoint::initialize_from_residue(
 	core::conformation::Residue const & res
 )
 {
-	typedef numeric::HomogeneousTransform< core::Real > HTReal;
+	using HTReal = numeric::HomogeneousTransform<core::Real>;
 
 	input_conformation_ = core::conformation::ResidueOP( new core::conformation::Residue( res ) );
 

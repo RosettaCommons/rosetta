@@ -64,7 +64,7 @@ ResidueSelectorFactory::provide_xml_schema(
 		std::string err_msg =  "No ResidueSelectorCreator with the name '" + selector_name + "' has been registered with the ResidueSelectorFactory";
 		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 	}
-	std::map< std::string, ResidueSelectorCreatorOP >::const_iterator iter = creator_map_.find( selector_name );
+	auto iter = creator_map_.find( selector_name );
 	iter->second->provide_xml_schema( xsd );
 }
 
@@ -78,7 +78,7 @@ ResidueSelectorOP ResidueSelectorFactory::new_residue_selector(
 		std::string err_msg =  "No ResidueSelectorCreator with the name '" + selector_name + "' has been registered with the ResidueSelectorFactory";
 		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 	}
-	std::map< std::string, ResidueSelectorCreatorOP >::const_iterator iter = creator_map_.find( selector_name );
+	auto iter = creator_map_.find( selector_name );
 	ResidueSelectorOP new_selector = iter->second->create_residue_selector();
 	new_selector->parse_my_tag( tag, datamap );
 	return new_selector;

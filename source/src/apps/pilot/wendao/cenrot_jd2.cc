@@ -242,13 +242,13 @@ catch (utility::excn::Exception const & e) {
 class OutputCenrotIntCoord : public Mover
 {
 public:
-	OutputCenrotIntCoord() {}
-	virtual std::string get_name() const
+	OutputCenrotIntCoord() = default;
+	std::string get_name() const override
 	{
 		return "OutputCenrotIntCoordMover";
 	}
 
-	void apply( Pose & p )
+	void apply( Pose & p ) override
 	{
 		for ( core::Size i=1; i<= p.size(); ++i ) {
 			Residue const & rsd( p.residue(i) );
@@ -274,12 +274,12 @@ public:
 class ClearPoseHeader : public Mover
 {
 public:
-	ClearPoseHeader() {}
-	virtual std::string get_name() const
+	ClearPoseHeader() = default;
+	std::string get_name() const override
 	{
 		return "ClearPoseHeaderMover";
 	}
-	void apply( Pose &pose )
+	void apply( Pose &pose ) override
 	{
 		clearPoseExtraScores(pose);
 	}
@@ -291,7 +291,7 @@ private:
 	core::scoring::ScoreFunctionOP scfxn_;
 
 public:
-	virtual std::string get_name() const
+	std::string get_name() const override
 	{
 		return "RepackCenrotMover";
 	}
@@ -301,7 +301,7 @@ public:
 		scfxn_ = in_score;
 	}
 
-	void apply( Pose & p )
+	void apply( Pose & p ) override
 	{
 		using namespace core::pack::task;
 		TaskFactoryOP main_task_factory( new TaskFactory );
@@ -335,7 +335,7 @@ private:
 			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
 		);
 
-		assert( residue_cenrot_library != 0 );
+		assert( residue_cenrot_library != nullptr );
 
 		utility::vector1< CentroidRotamerSampleData > samples(
 			residue_cenrot_library->get_rotamer_samples(mobile_res)
@@ -352,13 +352,13 @@ private:
 	}
 
 public:
-	CenRotSidechainMover() {}
+	CenRotSidechainMover() = default;
 
-	virtual std::string get_name() const {return "CenRotSidechainMover";}
+	std::string get_name() const override {return "CenRotSidechainMover";}
 
-	virtual core::Real last_proposal_density_ratio() {return 1.0;}
+	core::Real last_proposal_density_ratio() override {return 1.0;}
 
-	void apply( Pose &pose )
+	void apply( Pose &pose ) override
 	{
 		//radomly select a residue
 		Size const nres( pose.size() );
@@ -391,17 +391,17 @@ private:
 	Real mc_temp_;
 	Real sc_prob_;
 
-	bool first_run_;
+	bool first_run_{true};
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 	MonteCarloOP mc_;
 	BBG8T3AMoverOP bbgmover_;
 
-	typedef utility::pointer::shared_ptr< CenRotSidechainMover > CenRotSidechainMoverOP;
+	using CenRotSidechainMoverOP = utility::pointer::shared_ptr<CenRotSidechainMover>;
 	CenRotSidechainMoverOP sidechainmover_;
 
 public:
-	CenRotCanonicalMover():first_run_(true)
+	CenRotCanonicalMover()
 	{
 		using namespace core::pack::task;
 
@@ -417,7 +417,7 @@ public:
 		sc_prob_ = option[canonical_sc_prob];
 	}
 
-	void apply( Pose &pose )
+	void apply( Pose &pose ) override
 	{
 		mc_temp_ = option[relax_temp];
 
@@ -459,7 +459,7 @@ public:
 		mc_->reset_counters();
 	}
 
-	virtual std::string get_name() const {return "CenRotCanonicalMover";}
+	std::string get_name() const override {return "CenRotCanonicalMover";}
 };
 
 //////////////////////////////////////////////////////////
@@ -487,7 +487,7 @@ public:
 		}
 	}
 
-	void apply( Pose &pose )
+	void apply( Pose &pose ) override
 	{
 		init(pose);
 
@@ -538,7 +538,7 @@ public:
 		dssp.insert_ss_into_pose( pose );
 	}
 
-	virtual std::string get_name() const {return "CenRotRBRelaxMover";}
+	std::string get_name() const override {return "CenRotRBRelaxMover";}
 };
 
 //////////////////////////////////////////////////////////
@@ -561,7 +561,7 @@ private:
 	Size outer_cycles_;
 
 	Real temperature_;
-	bool first_run_;
+	bool first_run_{true};
 
 	Real rot_magnitude_;
 	Real trans_magnitude_;
@@ -569,7 +569,7 @@ private:
 	bool do_repack_;
 
 public:
-	CenRotDockingMover():first_run_(true)
+	CenRotDockingMover()
 	{
 		//setup score functions and movers
 		scorefxn_dock_ = core::scoring::get_score_function();
@@ -692,9 +692,9 @@ public:
 		first_run_ = false;
 	}
 
-	virtual std::string get_name() const {return "CenRotDockingMover";}
+	std::string get_name() const override {return "CenRotDockingMover";}
 
-	void apply( Pose &pose ) {
+	void apply( Pose &pose ) override {
 		// only setup once for jd2
 		temperature_ = option[relax_temp]; // init temp
 		if ( first_run_ ) setup(pose);
@@ -775,9 +775,9 @@ public:
 		outer_cycles_ = option[relax_cycle_number];
 	}
 
-	virtual std::string get_name() const {return "SmoothFragRepackMover";}
+	std::string get_name() const override {return "SmoothFragRepackMover";}
 
-	void apply( Pose &p )
+	void apply( Pose &p ) override
 	{
 		Real temperature = option[relax_temp]; // init temp
 		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( p, (*scorefxn_), temperature ) );
@@ -807,8 +807,8 @@ private:
 	pose::PoseOP native_pose_;
 
 public:
-	RescoreCenrot() {}
-	virtual std::string get_name() const
+	RescoreCenrot() = default;
+	std::string get_name() const override
 	{
 		return "RescoreCenrotMover";
 	}
@@ -822,7 +822,7 @@ public:
 		native_pose_ = in_pose;
 	}
 
-	void apply( Pose &p )
+	void apply( Pose &p ) override
 	{
 		//setup the ss correctly
 		core::scoring::dssp::Dssp dssp( p );
@@ -849,9 +849,9 @@ public:
 class RepackMinCenrotMover : public Mover
 {
 public:
-	virtual std::string get_name() const {return "RepackMinCenrotMover";}
+	std::string get_name() const override {return "RepackMinCenrotMover";}
 
-	void apply( Pose & p ) {
+	void apply( Pose & p ) override {
 		using namespace core::id;
 		using namespace core::pack::task;
 
@@ -912,10 +912,10 @@ public:
 class MinCenrotMover : public Mover
 {
 public:
-	MinCenrotMover(){}
-	virtual std::string get_name() const { return "MinCenrotMover"; }
+	MinCenrotMover()= default;
+	std::string get_name() const override { return "MinCenrotMover"; }
 
-	void apply( core::pose::Pose & pose) {
+	void apply( core::pose::Pose & pose) override {
 		using namespace core;
 		using namespace core::id;
 
@@ -987,9 +987,9 @@ public:
 		}
 	}
 
-	virtual std::string get_name() const { return "CenRotRelaxMover"; }
+	std::string get_name() const override { return "CenRotRelaxMover"; }
 
-	void apply( core::pose::Pose & pose) {
+	void apply( core::pose::Pose & pose) override {
 		using namespace core;
 		using namespace core::id;
 
@@ -1081,16 +1081,16 @@ public:
 };
 
 
-typedef utility::pointer::shared_ptr< RepackCenrotMover > RepackCenrotMoverOP;
-typedef utility::pointer::shared_ptr< RepackCenrotMover > RepackCenrotMoverOP;
-typedef utility::pointer::shared_ptr< RepackMinCenrotMover > RepackMinCenrotMoverOP;
-typedef utility::pointer::shared_ptr< CenRotRelaxMover > CenRotRelaxMoverOP;
-typedef utility::pointer::shared_ptr< SmoothFragRepackMover > SmoothFragRepackMoverOP;
-typedef utility::pointer::shared_ptr< CenRotDockingMover > CenRotDockingMoverOP;
-typedef utility::pointer::shared_ptr< CenRotRBRelaxMover > CenRotRBRelaxMoverOP;
-typedef utility::pointer::shared_ptr< RescoreCenrot > RescoreCenrotOP;
-typedef utility::pointer::shared_ptr< MinCenrotMover > MinCenrotMoverOP;
-typedef utility::pointer::shared_ptr< CenRotCanonicalMover > CenRotCanonicalMoverOP;
+using RepackCenrotMoverOP = utility::pointer::shared_ptr<RepackCenrotMover>;
+using RepackCenrotMoverOP = utility::pointer::shared_ptr<RepackCenrotMover>;
+using RepackMinCenrotMoverOP = utility::pointer::shared_ptr<RepackMinCenrotMover>;
+using CenRotRelaxMoverOP = utility::pointer::shared_ptr<CenRotRelaxMover>;
+using SmoothFragRepackMoverOP = utility::pointer::shared_ptr<SmoothFragRepackMover>;
+using CenRotDockingMoverOP = utility::pointer::shared_ptr<CenRotDockingMover>;
+using CenRotRBRelaxMoverOP = utility::pointer::shared_ptr<CenRotRBRelaxMover>;
+using RescoreCenrotOP = utility::pointer::shared_ptr<RescoreCenrot>;
+using MinCenrotMoverOP = utility::pointer::shared_ptr<MinCenrotMover>;
+using CenRotCanonicalMoverOP = utility::pointer::shared_ptr<CenRotCanonicalMover>;
 
 ///////////////////////////////////////////////////////////////////
 void*
@@ -1186,5 +1186,5 @@ my_main( void* ) {
 
 	protocols::jd2::JobDistributor::get_instance()->go( do_cenrot );
 
-	return 0;
+	return nullptr;
 }

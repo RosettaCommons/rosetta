@@ -53,13 +53,11 @@ NoRepackDisulfides::NoRepackDisulfides() :
 
 
 /// @brief copy constructor
-NoRepackDisulfides::NoRepackDisulfides( NoRepackDisulfides const & rval ) :
-	Super( rval )
-{}
+NoRepackDisulfides::NoRepackDisulfides( NoRepackDisulfides const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-NoRepackDisulfides::~NoRepackDisulfides() {}
+NoRepackDisulfides::~NoRepackDisulfides() = default;
 
 /// @brief clone this object
 NoRepackDisulfides::TaskOperationOP NoRepackDisulfides::clone() const {

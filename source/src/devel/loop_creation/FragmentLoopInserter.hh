@@ -95,8 +95,6 @@ private:
 	core::Real max_rms_;
 
 	utility::vector1<core::Size> loop_sizes_;
-	bool pack_;
-	bool design_;
 
 	//a map from loop anchor size to fragments that pass RMS requirements. loop anchor size
 	//is needed so that if the loop anchor is changed, invalid fragments aren't returned.
@@ -106,7 +104,6 @@ private:
 	//torsions of the input pose (within loophash min and max rms)
 	core::Size num_flanking_residues_to_match_;
 
-	bool modify_flanking_regions_;
 };
 
 } //loop creation

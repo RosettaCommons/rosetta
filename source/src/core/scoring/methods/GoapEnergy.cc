@@ -76,8 +76,8 @@ GoapEnergyCreator::score_types_for_method() const {
 //////////////////////////////////////////////////////
 ///////////// Start GoapRsdType
 
-GoapRsdType::GoapRsdType(){}
-GoapRsdType::~GoapRsdType(){}
+GoapRsdType::GoapRsdType()= default;
+GoapRsdType::~GoapRsdType()= default;
 
 void
 GoapRsdType::setup_rsdtype( chemical::ResidueTypeCOP rsd ){
@@ -165,7 +165,7 @@ GoapEnergy::GoapEnergy( EnergyMethodOptions const & ):
 	read_Goap_parameters();
 }
 
-GoapEnergy::~GoapEnergy(){}
+GoapEnergy::~GoapEnergy()= default;
 
 //////////////////////////////////////////////////////
 ///////////// Setup functions
@@ -408,7 +408,7 @@ GoapEnergy::read_potential_values( std::string const & distance_file,
 
 		if ( read_type == 1 ) {
 			linestream >> i1 >> dis; // dis = min distance
-			Size const idis = (Size)( dis*2 );
+			auto const idis = (Size)( dis*2 );
 			distbin_map_[ idis ] = i1; // Store which bin it is for Size(distance*2)
 
 		} else if ( read_type == 2 ) {
@@ -561,7 +561,7 @@ GoapEnergy::get_distance_score( Real const dist,
 	Size const atype1,
 	Size const atype2 ) const
 {
-	Size const kbin = (Size)(dist*2);
+	auto const kbin = (Size)(dist*2);
 	Size const binno = distbin_map( kbin );
 	if ( binno == 0 ) return 0.0;
 
@@ -591,7 +591,7 @@ GoapEnergy::get_angle_score( Real const dist,
 {
 	Real score( 0.0 );
 
-	Size const kbin = (Size)(dist*2);
+	auto const kbin = (Size)(dist*2);
 	Size const binno = distbin_map( kbin );
 	if ( binno == 0 ) return 0.0;
 

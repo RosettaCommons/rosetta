@@ -58,7 +58,7 @@ CDRSetOptions::CDRSetOptions(const CDRSetOptions& src):
 
 }
 
-CDRSetOptions::~CDRSetOptions(){}
+CDRSetOptions::~CDRSetOptions()= default;
 
 void
 CDRSetOptions::set_defaults() {

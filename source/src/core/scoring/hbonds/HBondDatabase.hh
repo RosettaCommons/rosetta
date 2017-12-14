@@ -48,7 +48,6 @@ private:
 
 	HBondDatabase();
 	HBondDatabase(
-		//HBondOptionsCOP hbondoptions
 		std::string const & hbond_params_database_tag
 	);
 

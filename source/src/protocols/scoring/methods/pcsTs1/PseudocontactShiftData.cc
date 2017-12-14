@@ -54,6 +54,7 @@
 // C++ headers
 #include <iostream>
 #include <iomanip>
+#include <utility>
 
 namespace protocols {
 namespace scoring {
@@ -65,8 +66,7 @@ using namespace ObjexxFCL;
 static basic::Tracer TR_pcs_d_p_l_Ts1( "protocols.scoring.methods.pcsTs1.PCS_data_per_lanthanides_Ts1" );
 static basic::Tracer TR_pcs_d_Ts1( "protocols.scoring.methods.pcsTs1.PCS_data_Ts1" );
 
-PCS_data_per_lanthanides_Ts1::~PCS_data_per_lanthanides_Ts1(){
-}
+PCS_data_per_lanthanides_Ts1::~PCS_data_per_lanthanides_Ts1()= default;
 
 PCS_data_per_lanthanides_Ts1::PCS_data_per_lanthanides_Ts1(PCS_data_per_lanthanides_Ts1 const &other):
 	filename_(other.filename_), svd_s_(other.svd_s_),  weight_(other.weight_)
@@ -113,8 +113,7 @@ PCS_data_Ts1::PCS_data_Ts1(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_data_Ts1 class" );
 }
 
-PCS_data_Ts1::~PCS_data_Ts1(){
-}
+PCS_data_Ts1::~PCS_data_Ts1()= default;
 
 PCS_data_Ts1 &
 PCS_data_Ts1::operator=( PCS_data_Ts1 const &other )
@@ -344,7 +343,7 @@ PCS_data_Ts1::where_is_line(PCS_line_data_Ts1 & P_l_d){
 }
 
 
-PCS_data_per_lanthanides_Ts1::PCS_data_per_lanthanides_Ts1(std::string filename,
+PCS_data_per_lanthanides_Ts1::PCS_data_per_lanthanides_Ts1(std::string const & filename,
 	core::Real const weight,
 	utility::vector1< PCS_line_data_Ts1 > & PCS_d_l_a):
 	filename_(filename), svd_s_(basic::svd::SVD_Solver(PCS_d_l_a.size(), 5)), weight_(weight)
@@ -354,7 +353,6 @@ PCS_data_per_lanthanides_Ts1::PCS_data_per_lanthanides_Ts1(std::string filename,
 	using namespace basic::options::OptionKeys;
 
 	core::Size i;
-	utility::vector1<PCS_line_data_Ts1>::iterator it;
 
 	n_pcs_ =  PCS_d_l_a.size();
 	A_index_.resize(n_pcs_);

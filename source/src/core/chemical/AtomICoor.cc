@@ -430,8 +430,8 @@ AtomICoor::build(
 	return built_stub.spherical( phi_, theta_, d_ );
 }
 
-typedef basic::datacache::DataMapObj< std::set< std::string > > AtomMemo;
-typedef utility::pointer::shared_ptr< AtomMemo > AtomMemoOP;
+using AtomMemo = basic::datacache::DataMapObj<std::set<std::string> >;
+using AtomMemoOP = utility::pointer::shared_ptr<AtomMemo>;
 
 //Memoized version, implementation of the general interface found below.
 

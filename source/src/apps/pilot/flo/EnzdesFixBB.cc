@@ -77,7 +77,7 @@ main( int argc, char * argv [])
 
 		devel::init(argc, argv);
 
-		time_t overall_start_time = time(NULL);
+		time_t overall_start_time = time(nullptr);
 		utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
 
 		//#ifndef USEMPI
@@ -131,13 +131,13 @@ main( int argc, char * argv [])
 		jobdist.startup();
 
 		while ( jobdist.next_job(curr_job, curr_nstruct) ) {
-			time_t pdb_start_time = time(NULL);
+			time_t pdb_start_time = time(nullptr);
 			tr << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 
 			if ( curr_nstruct == 1 ) prevstruct = 0;
 
 			// we read each PDB just once to save on disk I/O
-			if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+			if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
 				input_pose = core::pose::PoseOP( new core::pose::Pose() );
 				//core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 				protocols::enzdes::enzutil::read_pose_from_file(  *input_pose, curr_job->input_tag() );
@@ -217,13 +217,13 @@ main( int argc, char * argv [])
 
 			prev_job = curr_job; // pointer assignment, not a copy op
 			num_structures_processed += 1;
-			time_t pdb_end_time = time(NULL);
+			time_t pdb_end_time = time(nullptr);
 			//std::cerr << curr_job->output_tag(curr_nstruct) << " done." << std::endl;
 			tr << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 		} // loop over jobs and nstructs
 		jobdist.shutdown();
 
-		time_t overall_end_time = time(NULL);
+		time_t overall_end_time = time(nullptr);
 		tr << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
 		if ( num_structures_processed == 0 ) {
 			basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them or to use the -overwrite flag?" << std::endl;

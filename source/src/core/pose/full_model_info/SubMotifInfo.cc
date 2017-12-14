@@ -19,6 +19,7 @@
 // Project headers
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 
 // C++
@@ -66,7 +67,7 @@ SubMotifInfo::SubMotifInfo() :
 SubMotifInfo::SubMotifInfo(
 	utility::vector1< Size > const & res_list,
 	std::string const & tag,
-	bool const & seed /*= false*/
+	bool const seed /*= false*/
 ) :
 	res_list_( res_list ),
 	tag_( tag ),
@@ -83,8 +84,7 @@ SubMotifInfo::SubMotifInfo( SubMotifInfo const & src ) :
 
 //////////////////////////////////////////////////////////////////////////////
 // @brief Destructor
-SubMotifInfo::~SubMotifInfo()
-{}
+SubMotifInfo::~SubMotifInfo() = default;
 
 
 utility::vector1< Size >

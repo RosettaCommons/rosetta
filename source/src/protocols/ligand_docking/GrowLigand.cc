@@ -80,19 +80,14 @@ GrowLigand::GrowLigand():
 	set_fragments();
 }
 
-GrowLigand::GrowLigand(std::string chain):
+GrowLigand::GrowLigand(std::string const & chain):
 	Mover("GrowLigand"),
-	chain_(std::move(chain))
+	chain_(chain)
 {
 	set_fragments();
 }
 
-GrowLigand::GrowLigand(GrowLigand const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	chain_(that.chain_),
-	fragments_(that.fragments_)
-{}
+GrowLigand::GrowLigand(GrowLigand const & /*that*/) = default;
 
 GrowLigand::~GrowLigand() = default;
 

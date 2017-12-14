@@ -48,9 +48,7 @@ StepWiseRNA_ModelerOptions::StepWiseRNA_ModelerOptions()
 
 /////////////////////////////////////////////////////////////////////////////////////
 //Destructor
-StepWiseRNA_ModelerOptions::~StepWiseRNA_ModelerOptions()
-{
-}
+StepWiseRNA_ModelerOptions::~StepWiseRNA_ModelerOptions() = default;
 
 /// @brief copy constructor
 StepWiseRNA_ModelerOptions::StepWiseRNA_ModelerOptions( StepWiseRNA_ModelerOptions const & src ) :

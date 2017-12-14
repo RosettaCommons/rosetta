@@ -46,7 +46,7 @@ bool SmoothStepFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	SmoothStepFunc const & other_downcast( static_cast< SmoothStepFunc const & > (other) );
+	auto const & other_downcast( static_cast< SmoothStepFunc const & > (other) );
 	if ( low_         != other_downcast.low_         ) return false;
 	if ( high_        != other_downcast.high_        ) return false;
 	return true;

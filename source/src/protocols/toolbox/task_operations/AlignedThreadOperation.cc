@@ -53,7 +53,7 @@ AlignedThreadOperation::AlignedThreadOperation() :
 	start_res_( 1 )
 {}
 
-AlignedThreadOperation::~AlignedThreadOperation() {}
+AlignedThreadOperation::~AlignedThreadOperation() = default;
 
 core::pack::task::operation::TaskOperationOP
 AlignedThreadOperationCreator::create_task_operation() const

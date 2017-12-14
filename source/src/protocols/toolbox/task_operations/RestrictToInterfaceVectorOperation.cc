@@ -148,7 +148,7 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
 
 
 //class member functions
-RestrictToInterfaceVectorOperation::~RestrictToInterfaceVectorOperation() {}
+RestrictToInterfaceVectorOperation::~RestrictToInterfaceVectorOperation() = default;
 
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceVectorOperation::clone() const
@@ -165,17 +165,17 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 	//if the jump constructor then itterate through jumps, make union
 	if ( jump_active_ ) {
 		utility::vector1_bool repack_full(pose.size(), false);
-		for ( utility::vector1_int::const_iterator jj = movable_jumps().begin() ; jj != movable_jumps().end() ; ++jj ) {
+		for ( int jj : movable_jumps() ) {
 			//std::cout << "Calculating interface for jump: " <<*jj << std::endl;
 			//run detection based on jump
-			if ( *jj == 0 || core::Size(*jj) > pose.num_jump() ) {
-				TR.Error << "In RestrictToInterfaceVectorOperation: Jump " << *jj << " not found in pose with " << pose.num_jump() << " jumps." << std::endl;
+			if ( jj == 0 || core::Size(jj) > pose.num_jump() ) {
+				TR.Error << "In RestrictToInterfaceVectorOperation: Jump " << jj << " not found in pose with " << pose.num_jump() << " jumps." << std::endl;
 				utility_exit_with_message("Specified jump does not exist.");
 			}
 			utility::vector1_bool repack =
 				core::select::util::calc_interface_vector(
 				pose,
-				*jj,
+				jj,
 				CB_dist_cutoff_,
 				nearby_atom_cutoff_,
 				vector_angle_cutoff_,
@@ -192,13 +192,8 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 		//vector for filling packertask
 		utility::vector1_bool repack_full(pose.size(),false);
 
-		for ( utility::vector1<core::Size>::const_iterator lower_chain_it = lower_chains_.begin();
-				lower_chain_it != lower_chains_.end(); ++lower_chain_it ) {
-			core::Size current_lower_chain = *lower_chain_it;
-
-			for ( utility::vector1<core::Size>::const_iterator upper_chain_it = upper_chains_.begin();
-					upper_chain_it != upper_chains_.end(); ++upper_chain_it ) {
-				core::Size current_upper_chain = *upper_chain_it;
+		for ( unsigned long current_lower_chain : lower_chains_ ) {
+			for ( unsigned long current_upper_chain : upper_chains_ ) {
 				TR.Debug << "calculating_interface between: " << current_lower_chain << " " << current_upper_chain <<std::endl;
 				if ( current_lower_chain == 0 || current_lower_chain > pose.conformation().num_chains() ||
 						current_upper_chain == 0 || current_upper_chain > pose.conformation().num_chains() ) {

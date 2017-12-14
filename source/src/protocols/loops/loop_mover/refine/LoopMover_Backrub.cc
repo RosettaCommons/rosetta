@@ -101,10 +101,10 @@ LoopMover_Refine_Backrub::LoopMover_Refine_Backrub(
 }
 
 //destructor
-LoopMover_Refine_Backrub::~LoopMover_Refine_Backrub(){}
+LoopMover_Refine_Backrub::~LoopMover_Refine_Backrub()= default;
 
 void LoopMover_Refine_Backrub::set_task_factory( core::pack::task::TaskFactoryOP value ){ task_factory = value;}
-bool LoopMover_Refine_Backrub::get_task_factory(){return task_factory != 0;}
+bool LoopMover_Refine_Backrub::get_task_factory(){return task_factory != nullptr;}
 
 
 void LoopMover_Refine_Backrub::apply(
@@ -147,7 +147,7 @@ void LoopMover_Refine_Backrub::apply(
 
 	// scorefxn
 	scoring::ScoreFunctionOP score_fxn;
-	if ( scorefxn() != 0 ) {
+	if ( scorefxn() != nullptr ) {
 		score_fxn = scorefxn()->clone();
 	} else {
 		score_fxn = get_score_function();
@@ -166,10 +166,10 @@ void LoopMover_Refine_Backrub::apply(
 	// set backrub segments
 	Size const nres( pose.size() );
 	utility::vector1< bool > is_loop( nres, false );
-	for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
-		for ( core::Size seg_start = it->start(); seg_start <= it->stop(); ++seg_start ) {
+	for ( const auto & it : *loops() ) {
+		for ( core::Size seg_start = it.start(); seg_start <= it.stop(); ++seg_start ) {
 			is_loop[seg_start] = true;
-			for ( core::Size seg_end = seg_start + 2; seg_end <= it->stop(); ++seg_end ) {
+			for ( core::Size seg_end = seg_start + 2; seg_end <= it.stop(); ++seg_end ) {
 				id::AtomID start_atom_id = id::AtomID( pose.residue( seg_start ).atom_index("CA") , seg_start );
 				id::AtomID end_atom_id = id::AtomID( pose.residue( seg_end ).atom_index("CA"), seg_end );
 				// add segment to the mover
@@ -195,7 +195,7 @@ void LoopMover_Refine_Backrub::apply(
 	bool const fix_natsc = option[OptionKeys::loops::fix_natsc];
 	// the following TaskFactory usage allows user-defined PackerTask creation on-demand
 	using namespace pack::task;
-	if ( task_factory == 0 ) {
+	if ( task_factory == nullptr ) {
 		task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
 		// TaskOperations replace the following kind of code:
 		// base_packer_task->initialize_from_command_line().or_include_current( true );

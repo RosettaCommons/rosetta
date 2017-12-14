@@ -167,7 +167,7 @@ get_interface_residues( core::pose::Pose & pose, utility::vector1< bool > &inter
 				iru  = energy_graph.get_node(i)->edge_list_begin(),
 				irue = energy_graph.get_node(i)->edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge & edge( static_cast< EnergyEdge & > (**iru) );
+			auto & edge( static_cast< EnergyEdge & > (**iru) );
 
 			Size const j = edge.get_other_ind( i );
 			conformation::Residue const & rsd2( pose_working.residue( j ) );
@@ -269,7 +269,7 @@ public:
 
 	///
 	void
-	apply(core::pose::Pose &pose) {
+	apply(core::pose::Pose &pose) override {
 		// load packer task from command line
 		core::Size nres = pose.size();
 
@@ -344,7 +344,7 @@ public:
 		} // foreach res
 	}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "Packing_energies";
 	}
 
@@ -402,7 +402,7 @@ public:
 
 	///
 	void
-	apply(core::pose::Pose &pose) {
+	apply(core::pose::Pose &pose) override {
 		core::scoring::dssp::Dssp dssp( pose );
 		dssp.insert_ss_into_pose( pose );
 
@@ -485,7 +485,7 @@ public:
 		} // foreach res
 	}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "SSM_energies";
 	}
 

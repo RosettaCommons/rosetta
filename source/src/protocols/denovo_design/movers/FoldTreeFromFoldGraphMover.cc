@@ -33,6 +33,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "protocols.denovo_design.movers.FoldTreeFromFoldGraphMover" );
@@ -57,7 +58,7 @@ FoldTreeFromFoldGraphMover::FoldTreeFromFoldGraphMover(
 {
 }
 
-FoldTreeFromFoldGraphMover::~FoldTreeFromFoldGraphMover(){}
+FoldTreeFromFoldGraphMover::~FoldTreeFromFoldGraphMover()= default;
 
 void
 FoldTreeFromFoldGraphMover::parse_my_tag(
@@ -188,7 +189,7 @@ void
 FoldTreeFromFoldGraphMover::prepare_termini_for_remodel( core::pose::Pose & pose, components::StructureData const & sd ) const
 {
 	// this will be a vector of the centers of the area between loops, used for constructing fold tree
-	for ( protocols::loops::Loops::const_iterator l=loops_.begin(); l!=loops_.end(); ++l ) {
+	for ( auto l=loops_.begin(); l!=loops_.end(); ++l ) {
 		TR << "Loop: " << *l << std::endl;
 		debug_assert( l->is_terminal(pose) || ( l->cut() >= 1 ) );
 		debug_assert( l->is_terminal(pose) || ( l->cut() <= pose.size() ) );
@@ -203,7 +204,7 @@ FoldTreeFromFoldGraphMover::prepare_termini_for_remodel( core::pose::Pose & pose
 		// find the closest two safe residues to the loop and add a jump between them.
 		core::Size saferes1 = 0;
 		core::Size saferes1_dist = 0;
-		for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+		for ( auto s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
 			components::Segment const & seg = sd.segment( *s );
 			if ( seg.safe() >= l->start() ) break;
 
@@ -215,7 +216,7 @@ FoldTreeFromFoldGraphMover::prepare_termini_for_remodel( core::pose::Pose & pose
 
 		core::Size saferes2_dist = 0;
 		core::Size saferes2 = 0;
-		for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+		for ( auto s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
 			components::Segment const & seg = sd.segment( *s );
 			if ( seg.safe() <= l->start() ) continue;
 

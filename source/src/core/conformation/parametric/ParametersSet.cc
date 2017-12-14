@@ -71,7 +71,7 @@ ParametersSet::ParametersSet( ParametersSet const & src ) :
 	}
 }
 
-ParametersSet::~ParametersSet() {}
+ParametersSet::~ParametersSet() = default;
 
 
 /// @brief make a copy of this residue( allocate actual memory for it )

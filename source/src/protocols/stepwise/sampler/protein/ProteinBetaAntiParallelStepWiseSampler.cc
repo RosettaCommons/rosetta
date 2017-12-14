@@ -51,8 +51,7 @@ ProteinBetaAntiParallelStepWiseSampler::ProteinBetaAntiParallelStepWiseSampler(
 }
 
 //Destructor
-ProteinBetaAntiParallelStepWiseSampler::~ProteinBetaAntiParallelStepWiseSampler()
-{}
+ProteinBetaAntiParallelStepWiseSampler::~ProteinBetaAntiParallelStepWiseSampler() = default;
 
 /////////////////////////////////////////////////////////////////////////////////////
 Size

@@ -56,8 +56,8 @@ operator<< (
 	SimplePDB const & pdb
 ) {
 	out << "SimplePDB:" << std::endl;
-	for ( SPAtomCIter i = pdb.atoms_.begin(); i != pdb.atoms_.end(); ++i ) {
-		out << "  " << *i << std::endl;
+	for ( auto const & atom : pdb.atoms_ ) {
+		out << "  " << atom << std::endl;
 	}
 	return out;
 }
@@ -69,7 +69,7 @@ void read_stoopid(char * buf, size_t start, size_t end, T & field ) {
 		return;
 	}
 	char smbuf[99];
-	for ( int i = 0; i < 99; ++i ) smbuf[i] = 0;
+	for ( char & i : smbuf ) i = 0;
 	strncpy(smbuf,buf+start,end-start+1);
 	std::istringstream iss(smbuf);
 	iss >> field;

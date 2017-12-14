@@ -28,6 +28,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 #include <utility/assert.hh> //ASSERT_ONLY makes release build happy
@@ -62,7 +63,7 @@ namespace pack {
 namespace task {
 
 /// @details Auto-generated virtual destructor
-ResfileCommand::~ResfileCommand() {}
+ResfileCommand::~ResfileCommand() = default;
 
 static basic::Tracer TR( "core.pack.task.ResfileReader" );
 
@@ -75,6 +76,7 @@ using std::stringstream;
 using utility::vector1;
 using core::pose::Pose;
 
+// Moves fname
 ResfileContents::ResfileContents(
 	Pose const & pose,
 	std::string const & fname,
@@ -130,7 +132,7 @@ ResfileContents::ResfileContents(
 }
 
 
-ResfileContents::~ResfileContents() {}
+ResfileContents::~ResfileContents() = default;
 
 std::list< ResfileCommandCOP > const &
 ResfileContents::default_commands() const
@@ -358,7 +360,7 @@ ResfileContents::parse_resid(
 		// wait to the next token to figure that out.
 		try {
 			pose::parse_PDBnum_icode(token, fname_initialized_from_, lineno, PDBnum, icode);
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			onError( e.msg() );
 		}
 	}
@@ -385,7 +387,7 @@ ResfileContents::parse_resid(
 
 		try {
 			pose::parse_PDBnum_icode(token, fname_initialized_from_, lineno, PDBnum_end, icode_end);
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			onError( e.msg() );
 		}
 
@@ -432,7 +434,7 @@ ResfileContents::locate_resid(
 ) const {
 
 	Size resid(0);
-	if ( pose.pdb_info() == 0 ) {
+	if ( pose.pdb_info() == nullptr ) {
 		if ( 1 <= PDBnum && PDBnum <= pose.size() ) {
 			resid = PDBnum;
 		}
@@ -1135,7 +1137,7 @@ EX::initialize_from_tokens(
 
 			++which_token;
 			chi_sample_level_ = static_cast< ExtraRotSample >( atoi( get_token( which_token, tokens ).c_str() ) );
-			if ( chi_sample_level_ >= ExtraRotSampleCardinality || chi_sample_level_ < 0 ) {
+			if ( chi_sample_level_ >= ExtraRotSampleCardinality ) { //|| chi_sample_level_ < 0 ) {
 				std::stringstream err_msg;
 				err_msg  << "Extra rotamer sample level " << get_token( which_token, tokens ) << " is not in the range [0-" << ExtraRotSampleCardinality <<"] for residue " << resid << ".";
 				onError(err_msg.str());
@@ -1544,10 +1546,8 @@ parse_resfile_string(
 			contents.specialized_commands_exist_for_residue( ii ) ?
 			contents.commands_for_residue( ii ) : contents.default_commands() );
 
-		for ( std::list< ResfileCommandCOP >::const_iterator
-				iter = ii_command_list.begin(), iter_end = ii_command_list.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->residue_action( the_task, ii );
+		for ( auto const & iter : ii_command_list ) {
+			iter->residue_action( the_task, ii );
 		}
 	}
 }

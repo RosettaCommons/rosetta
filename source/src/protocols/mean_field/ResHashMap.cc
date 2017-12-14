@@ -42,7 +42,7 @@ ResHashMap::ResHashMap() : utility::pointer::ReferenceCount(),
 {}
 
 // Destructor
-ResHashMap::~ResHashMap() {}
+ResHashMap::~ResHashMap() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////

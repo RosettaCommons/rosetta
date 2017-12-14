@@ -680,7 +680,7 @@ GlobalResidueTypeSet::place_adducts() {
 	}
 }
 
-GlobalResidueTypeSet::~GlobalResidueTypeSet() {}
+GlobalResidueTypeSet::~GlobalResidueTypeSet() = default;
 
 //////////////////////////////////////////////////////////////////////////////
 // The useful stuff:  Accessor functions

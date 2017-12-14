@@ -30,7 +30,7 @@ namespace protocols {
 namespace electron_density {
 
 // docks the pose into the map using the protocol specified in -edensity::realign
-core::Real dockPoseIntoMap( core::pose::Pose & pose , std::string align_in="");
+core::Real dockPoseIntoMap( core::pose::Pose & pose , std::string const & align_in="");
 
 // find N residues with worst agreement to density
 protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real frac, int max_helix, int max_strand );

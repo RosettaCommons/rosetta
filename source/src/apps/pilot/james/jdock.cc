@@ -54,11 +54,11 @@ public:
 
 	SetupMover() : Mover("SetupMover") {}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "SetupMover";
 	}
 
-	void apply( core::pose::Pose & pose ) {
+	void apply( core::pose::Pose & pose ) override {
 		using core::Size;
 		using core::Real;
 		using std::string;

@@ -34,10 +34,10 @@ public:
 		//utility::pointer::ReferenceCount(),
 		protocols::filters::Filter( "CompleteConnections" ) {}
 
-	CompleteConnectionsFilter(std::string chain) :
+	CompleteConnectionsFilter(std::string const & chain) :
 		//utility::pointer::ReferenceCount(),
 		protocols::filters::Filter( "CompleteConnections" ),
-		chain_(std::move(chain))
+		chain_(chain)
 	{}
 
 	CompleteConnectionsFilter( CompleteConnectionsFilter const & init ) :

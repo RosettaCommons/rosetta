@@ -32,41 +32,41 @@ namespace format {
 // Bite Explicit Specializations
 
 
-	/// @brief Assign Stream Bite to Value: byte Specialization
-	template<>
-	void
-	Bite< byte >::assign( std::stringstream & ss ) const
-	{
-		if ( is_blank_string( ss.str() ) ) {
-			t_ = 0;
-		} else {
-			ss >> t_;
-			if ( ss.fail() ) t_ = 0;
-		}
+/// @brief Assign Stream Bite to Value: byte Specialization
+template<>
+void
+Bite< byte >::assign( std::stringstream & ss ) const
+{
+	if ( is_blank_string( ss.str() ) ) {
+		t_ = 0;
+	} else {
+		ss >> t_;
+		if ( ss.fail() ) t_ = 0;
 	}
+}
 
 
-	/// @brief Assign Stream Bite to Value: ubyte Specialization
-	template<>
-	void
-	Bite< ubyte >::assign( std::stringstream & ss ) const
-	{
-		if ( is_blank_string( ss.str() ) ) {
-			t_ = 0;
-		} else {
-			ss >> t_;
-			if ( ss.fail() ) t_ = 0;
-		}
+/// @brief Assign Stream Bite to Value: ubyte Specialization
+template<>
+void
+Bite< ubyte >::assign( std::stringstream & ss ) const
+{
+	if ( is_blank_string( ss.str() ) ) {
+		t_ = 0;
+	} else {
+		ss >> t_;
+		if ( ss.fail() ) t_ = 0;
 	}
+}
 
 
-	/// @brief Assign Stream Bite to Value: Fstring Specialization
-	template<>
-	void
-	Bite< Fstring >::assign( std::stringstream & ss ) const
-	{
-		t_ = ss.str();
-	}
+/// @brief Assign Stream Bite to Value: Fstring Specialization
+template<>
+void
+Bite< Fstring >::assign( std::stringstream & ss ) const
+{
+	t_ = ss.str();
+}
 
 
 // Bite Makers
@@ -135,8 +135,8 @@ SS( std::complex< float > const & t )
 {
 	std::ostringstream fmt_stream;
 	fmt_stream << std::left << std::noshowpoint << std::uppercase << std::setprecision( 9 ) << " ("
-	 << ( t.real() < 0.0f ? "" : " " ) << t.real() << ','
-	 << ( t.imag() < 0.0f ? "" : " " ) << t.imag() << ')';
+		<< ( t.real() < 0.0f ? "" : " " ) << t.real() << ','
+		<< ( t.imag() < 0.0f ? "" : " " ) << t.imag() << ')';
 	return fmt_stream.str();
 }
 
@@ -148,8 +148,8 @@ SS( std::complex< double > const & t )
 {
 	std::ostringstream fmt_stream;
 	fmt_stream << std::left << std::noshowpoint << std::uppercase << std::setprecision( 9 ) << " ("
-	 << ( t.real() < 0.0 ? "" : " " ) << t.real() << ','
-	 << ( t.imag() < 0.0 ? "" : " " ) << t.imag() << ')';
+		<< ( t.real() < 0.0 ? "" : " " ) << t.real() << ','
+		<< ( t.imag() < 0.0 ? "" : " " ) << t.imag() << ')';
 	return fmt_stream.str();
 }
 
@@ -161,8 +161,8 @@ SS( std::complex< long double > const & t )
 {
 	std::ostringstream fmt_stream;
 	fmt_stream << std::left << std::noshowpoint << std::uppercase << std::setprecision( 9 ) << " ("
-	 << ( t.real() < 0.0l ? "" : " " ) << t.real() << ','
-	 << ( t.imag() < 0.0l ? "" : " " ) << t.imag() << ')';
+		<< ( t.real() < 0.0l ? "" : " " ) << t.real() << ','
+		<< ( t.imag() < 0.0l ? "" : " " ) << t.imag() << ')';
 	return fmt_stream.str();
 }
 
@@ -314,7 +314,7 @@ E( int const w, int const d, float const & t )
 	if ( w <= 0 ) return std::string();
 	std::ostringstream fmt_stream;
 	fmt_stream << std::scientific << std::showpoint << std::uppercase
-	 << std::setprecision( std::max( std::min( d, w-7 ), 0 ) ) << std::setw( w ) << t;
+		<< std::setprecision( std::max( std::min( d, w-7 ), 0 ) ) << std::setw( w ) << t;
 	return fmt_stream.str();
 }
 
@@ -326,7 +326,7 @@ E( int const w, int const d, double const & t )
 	if ( w <= 0 ) return std::string();
 	std::ostringstream fmt_stream;
 	fmt_stream << std::scientific << std::showpoint << std::uppercase
-	 << std::setprecision( std::max( std::min( d, w-7 ), 0 ) ) << std::setw( w ) << t;
+		<< std::setprecision( std::max( std::min( d, w-7 ), 0 ) ) << std::setw( w ) << t;
 	return fmt_stream.str();
 }
 
@@ -338,7 +338,7 @@ E( int const w, int const d, long double const & t )
 	if ( w <= 0 ) return std::string();
 	std::ostringstream fmt_stream;
 	fmt_stream << std::scientific << std::showpoint << std::uppercase
-	 << std::setprecision( std::max( std::min( d, w-7 ), 0 ) ) << std::setw( w ) << t;
+		<< std::setprecision( std::max( std::min( d, w-7 ), 0 ) ) << std::setw( w ) << t;
 	return fmt_stream.str();
 }
 
@@ -350,8 +350,8 @@ E( int const w, int const d, std::complex< float > const & t )
 	if ( w <= 0 ) return std::string();
 	std::ostringstream fmt_stream;
 	fmt_stream << std::scientific << std::showpoint << std::uppercase
-	 << std::setprecision( std::max( std::min( d, w-7 ), 0 ) )
-	 << '(' << std::setw( w ) << t.real() << ',' << std::setw( w ) << t.imag() << ')';
+		<< std::setprecision( std::max( std::min( d, w-7 ), 0 ) )
+		<< '(' << std::setw( w ) << t.real() << ',' << std::setw( w ) << t.imag() << ')';
 	return fmt_stream.str();
 }
 
@@ -363,8 +363,8 @@ E( int const w, int const d, std::complex< double > const & t )
 	if ( w <= 0 ) return std::string();
 	std::ostringstream fmt_stream;
 	fmt_stream << std::scientific << std::showpoint << std::uppercase
-	 << std::setprecision( std::max( std::min( d, w-7 ), 0 ) )
-	 << '(' << std::setw( w ) << t.real() << ',' << std::setw( w ) << t.imag() << ')';
+		<< std::setprecision( std::max( std::min( d, w-7 ), 0 ) )
+		<< '(' << std::setw( w ) << t.real() << ',' << std::setw( w ) << t.imag() << ')';
 	return fmt_stream.str();
 }
 
@@ -376,8 +376,8 @@ E( int const w, int const d, std::complex< long double > const & t )
 	if ( w <= 0 ) return std::string();
 	std::ostringstream fmt_stream;
 	fmt_stream << std::scientific << std::showpoint << std::uppercase
-	 << std::setprecision( std::max( std::min( d, w-7 ), 0 ) )
-	 << '(' << std::setw( w ) << t.real() << ',' << std::setw( w ) << t.imag() << ')';
+		<< std::setprecision( std::max( std::min( d, w-7 ), 0 ) )
+		<< '(' << std::setw( w ) << t.real() << ',' << std::setw( w ) << t.imag() << ')';
 	return fmt_stream.str();
 }
 
@@ -390,7 +390,7 @@ F( int const w, int const d, float const & t )
 	int const p( w - 3 + ( t >= 0.0f ? 1 : 0 ) + ( std::abs( t ) < 1.0f - 0.5f/std::pow( 10.0f, std::max( d, 0 ) ) ? 1 : 0 ) );
 	std::stringstream fmt_stream;
 	fmt_stream << std::fixed << std::showpoint
-	 << std::setprecision( std::max( std::min( d, p ), 0 ) ) << std::setw( w ) << t;
+		<< std::setprecision( std::max( std::min( d, p ), 0 ) ) << std::setw( w ) << t;
 	if ( ( t < 0.0f ) && ( t >= -0.5f ) ) { // Remove sign from -0.0
 		float x;
 		fmt_stream >> x;
@@ -415,7 +415,7 @@ F( int const w, int const d, double const & t )
 	int const p( w - 3 + ( t >= 0.0 ? 1 : 0 ) + ( std::abs( t ) < 1.0 - 0.5/std::pow( 10.0, std::max( d, 0 ) ) ? 1 : 0 ) );
 	std::stringstream fmt_stream;
 	fmt_stream << std::fixed << std::showpoint
-	 << std::setprecision( std::max( std::min( d, p ), 0 ) ) << std::setw( w ) << t;
+		<< std::setprecision( std::max( std::min( d, p ), 0 ) ) << std::setw( w ) << t;
 	if ( ( t < 0.0 ) && ( t >= -0.5 ) ) { // Remove sign from -0.0
 		double x;
 		fmt_stream >> x;
@@ -440,7 +440,7 @@ F( int const w, int const d, long double const & t )
 	int const p( w - 3 + ( t >= 0.0l ? 1 : 0 ) + ( std::abs( t ) < 1.0l - 0.5l/std::pow( 10.0l, std::max( d, 0 ) ) ? 1 : 0 ) );
 	std::stringstream fmt_stream;
 	fmt_stream << std::fixed << std::showpoint
-	 << std::setprecision( std::max( std::min( d, p ), 0 ) ) << std::setw( w ) << t;
+		<< std::setprecision( std::max( std::min( d, p ), 0 ) ) << std::setw( w ) << t;
 	if ( ( t < 0.0L ) && ( t >= -0.5L ) ) { // Remove sign from -0.0
 		long double x;
 		fmt_stream >> x;
@@ -493,7 +493,7 @@ G( int const w, int const d, float const & t )
 	} else if ( m >= std::pow( 10.0, d ) - 0.5 ) {
 		return E( w, d, t );
 	} else {
-		int const i( static_cast< int >( std::floor( std::log10( m / ( 0.1 - 0.5 / std::pow( 10.0, d+1 ) ) ) ) ) );
+		auto const i( static_cast< int >( std::floor( std::log10( m / ( 0.1 - 0.5 / std::pow( 10.0, d+1 ) ) ) ) ) );
 		return F( w-4, d-i, t ) + std::string( 4, ' ' );
 	}
 }
@@ -511,7 +511,7 @@ G( int const w, int const d, double const & t )
 	} else if ( m >= std::pow( 10.0, d ) - 0.5 ) {
 		return E( w, d, t );
 	} else {
-		int const i( static_cast< int >( std::floor( std::log10( m / ( 0.1 - 0.5 / std::pow( 10.0, d+1 ) ) ) ) ) );
+		auto const i( static_cast< int >( std::floor( std::log10( m / ( 0.1 - 0.5 / std::pow( 10.0, d+1 ) ) ) ) ) );
 		return F( w-4, d-i, t ) + std::string( 4, ' ' );
 	}
 }
@@ -529,7 +529,7 @@ G( int const w, int const d, long double const & t )
 	} else if ( m >= std::pow( 10.0L, d ) - 0.5L ) {
 		return E( w, d, t );
 	} else {
-		int const i( static_cast< int >( std::floor( std::log10( m / ( 0.1l - 0.5l / std::pow( 10.0l, d+1 ) ) ) ) ) );
+		auto const i( static_cast< int >( std::floor( std::log10( m / ( 0.1l - 0.5l / std::pow( 10.0l, d+1 ) ) ) ) ) );
 		return F( w-4, d-i, t ) + std::string( 4, ' ' );
 	}
 }

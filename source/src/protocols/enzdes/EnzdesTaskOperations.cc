@@ -138,7 +138,7 @@ SetCatalyticResPackBehavior::apply(
 					if ( basic::options::option[basic::options::OptionKeys::enzdes::ex_catalytic_rot].user() &&
 							pose.residue_type( i ).is_protein() ) {
 
-						core::pack::task::ExtraRotSample cat_rot_sample( static_cast<core::pack::task::ExtraRotSample>(basic::options::option[basic::options::OptionKeys::enzdes::ex_catalytic_rot].value() ) );
+						auto cat_rot_sample( static_cast<core::pack::task::ExtraRotSample>(basic::options::option[basic::options::OptionKeys::enzdes::ex_catalytic_rot].value() ) );
 						if ( pose.residue_type( i ).nchi() >= 1 ) {
 							task.nonconst_residue_task(i).or_ex1( true );
 							task.nonconst_residue_task(i).or_ex1_sample_level( cat_rot_sample );
@@ -166,7 +166,7 @@ SetCatalyticResPackBehavior::apply(
 void
 SetCatalyticResPackBehavior::parse_tag( TagCOP tag , DataMap & )
 {
-	if ( tag->hasOption("fix_catalytic_aa") ) fix_catalytic_aa_ = tag->getOption<bool>( "fix_catalytic_aa", 1);
+	if ( tag->hasOption("fix_catalytic_aa") ) fix_catalytic_aa_ = tag->getOption<bool>( "fix_catalytic_aa", true);
 	if ( tag->hasOption("behavior_non_catalytic") ) behavior_non_catalytic_ = tag->getOption<std::string>("behavior_non_catalytic" );
 
 }
@@ -298,9 +298,9 @@ DetectProteinLigandInterface::parse_tag( TagCOP tag , DataMap & )
 	cut3_ = tag->getOption< core::Real >( "cut3", 10.0 );
 	cut4_ = tag->getOption< core::Real >( "cut4", 12.0 );
 	arg_sweep_cutoff_ = tag->getOption< core::Real >( "arg_sweep_cutoff", 3.7 );
-	design_ = tag->getOption< bool >( "design", 1 );
+	design_ = tag->getOption< bool >( "design", true );
 	resfilename_ =  tag->getOption< std::string >( "resfile", "");
-	no_design_cys_ = ! ( tag->getOption< bool >( "design_to_cys", 0 ) );
+	no_design_cys_ = ! ( tag->getOption< bool >( "design_to_cys", false ) );
 	if ( tag->hasOption("segment_interface") ) add_observer_cache_segs_to_interface_ = tag->getOption< bool >( "segment_interface", true );
 
 	if ( tag->hasOption("catres_interface") )  catalytic_res_part_of_interface_ = tag->getOption< bool >( "catres_interface", true );
@@ -538,7 +538,7 @@ DetectProteinLigandInterface::find_design_interface(
 			//tr << "Rsd has " << targ_rsd.nheavyatoms() << " heavy atoms " << std::endl;
 			for ( core::Size k = targ_res_atom_start, k_end = targ_rsd.nheavyatoms(); k <= k_end; ++k ) {
 				//tr << "Current heavy is " << targ_rsd.atom_name( k ) << std::endl;
-				core::Vector prot_cb, prot_ca;
+				core::Vector prot_cb( 0 ), prot_ca( 0 );
 				if ( prot_rsd.has("CB") ) prot_cb = prot_rsd.xyz("CB");
 				if ( prot_rsd.has("CA") ) prot_ca = prot_rsd.xyz("CA"); // GLY
 				core::Real ca_dist2 = targ_rsd.xyz(k).distance_squared( prot_ca );
@@ -663,7 +663,7 @@ DetectProteinLigandInterface::find_design_interface_arg_sweep(
 			}
 			// tr.Info << "on protein resi number " << i << " , close_to_lig is " << close_to_lig << " and dis2 from arginine rotamer sweep is " << dis2 << std::endl ;
 			for ( core::Size k = targ_res_atom_start, k_end = targ_rsd.nheavyatoms(); k <= k_end; ++k ) { //Now looping over atoms in ligand, I don't need to do that
-				core::Vector prot_cb, prot_ca;
+				core::Vector prot_cb( 0 ), prot_ca( 0 );
 				if ( prot_rsd.has("CB") ) prot_cb = prot_rsd.xyz("CB");
 				if ( prot_rsd.has("CA") ) prot_ca = prot_rsd.xyz("CA"); // GLY
 				core::Real ca_dist2 = targ_rsd.xyz(k).distance_squared( prot_ca );
@@ -866,7 +866,7 @@ std::string AddRigidBodyLigandConfsCreator::keyname() const
 	return AddRigidBodyLigandConfs::keyname();
 }
 
-AddRigidBodyLigandConfs::AddRigidBodyLigandConfs(){}
+AddRigidBodyLigandConfs::AddRigidBodyLigandConfs()= default;
 
 AddRigidBodyLigandConfs::~AddRigidBodyLigandConfs()= default;
 
@@ -925,7 +925,7 @@ AddLigandMotifRotamers::register_options()
 	basic::options::option.add_relevant( basic::options::OptionKeys::enzdes::run_ligand_motifs );
 }
 
-AddLigandMotifRotamers::AddLigandMotifRotamers(){}
+AddLigandMotifRotamers::AddLigandMotifRotamers()= default;
 
 AddLigandMotifRotamers::~AddLigandMotifRotamers()= default;
 

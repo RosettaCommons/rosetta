@@ -506,14 +506,14 @@ pad_dash_right ( Size npad, std::string s ) {
 }
 
 struct Node;
-typedef utility::pointer::shared_ptr< Node > NodeOP;
-typedef utility::pointer::weak_ptr< Node > NodeAP;
+using NodeOP = utility::pointer::shared_ptr<Node>;
+using NodeAP = utility::pointer::weak_ptr<Node>;
 
 struct Node {
-	Node( std::string _name, Size _jnum, Size _jumpfrom, Size _jumpto, char _jumpmark = ( char )NULL, Size _follows = 0 )
-	: name(std::move( _name )), jnum( _jnum ), jumpfrom( _jumpfrom ), jumpto( _jumpto ), prefix_len( 8 ), follows( _follows ), jumpmark( _jumpmark ), parent() {}
+	Node( std::string const & _name, Size _jnum, Size _jumpfrom, Size _jumpto, char _jumpmark = ( char )NULL, Size _follows = 0 )
+	: name( _name ), jnum( _jnum ), jumpfrom( _jumpfrom ), jumpto( _jumpto ), prefix_len( 8 ), follows( _follows ), jumpmark( _jumpmark ), parent() {}
 
-	~Node() {}
+	~Node() = default;
 
 	void
 	setparent( NodeOP p ) {
@@ -567,7 +567,7 @@ struct TreeVizBuilder {
 	utility::vector1< Size > lb_, ub_;
 	FoldTree const & ft;
 
-	TreeVizBuilder( core::kinematics::FoldTree const & _ft ) : ft( _ft ) {
+	explicit TreeVizBuilder( core::kinematics::FoldTree const & _ft ) : ft( _ft ) {
 		lb_.resize( ft.nres(), 0 );
 		ub_.resize( ft.nres(), 0 );
 	}
@@ -577,7 +577,7 @@ struct TreeVizBuilder {
 		if ( lb_[ res ] == 0 ) {
 			lb_[ res ] = 1, ub_[ res ] = ft.nres();
 			for ( Size i = 1; i <= ft.num_cutpoint(); ++i ) {
-				Size c = ( Size ) ft.cutpoint( i );
+				auto c = ( Size ) ft.cutpoint( i );
 				if ( c <  res ) lb_[ res ] = std::max( lb_[ res ], c + 1 );
 				if ( c >= res ) ub_[ res ] = std::min( ub_[ res ], c     );
 			}
@@ -687,7 +687,7 @@ visualize_fold_tree(
 		Size jnum = tvb.get_jump_num_to_contig_of_resi( ir );
 		Size jumpfrom = ( jnum && !tvb.is_single( ft.upstream_jump_residue( jnum ) ) ) ? ft.  upstream_jump_residue( jnum ) : 0;
 		Size jumpto   = ( jnum && !tvb.is_single( ft.downstream_jump_residue( jnum ) ) ) ? ft.downstream_jump_residue( jnum ) : 0;
-		char markjump = ( char )NULL;
+		auto markjump = ( char )NULL;
 		for ( Size jr = lb; jr <= ub; ++jr ) if ( mark_jump_to_res.count( jr ) ) markjump = mark_jump_to_res.find( jr )->second;
 		Size follows = jump_follows.find( jnum ) != jump_follows.end() ? jump_follows.find( jnum )->second : ( Size ) 0;
 		nodemap[ res_to_nodename[ ir ] ] = NodeOP( new Node( res_to_nodename[ ir ], jnum, jumpfrom, jumpto, markjump, follows ) );
@@ -775,7 +775,7 @@ utility::vector1< core::Size >
 get_residues_from_movemap_with_id( id::TorsionType query_torsion, MoveMap const & movemap){
 	utility::vector1< core::Size > residues;
 
-	typedef id::TorsionType TorsionType;
+	using TorsionType = id::TorsionType;
 	typedef std::pair< Size, TorsionType > MoveMapTorsionID;
 
 	for ( auto it = movemap.movemap_torsion_id_begin(), it_end = movemap.movemap_torsion_id_end();

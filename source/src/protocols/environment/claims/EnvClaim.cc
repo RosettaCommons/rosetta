@@ -33,6 +33,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/excn/Exceptions.hh>
@@ -145,11 +146,11 @@ bool EnvClaim::is_claim( std::string const& name ) {
 
 EnvClaim::EnvClaim( ClientMoverOP owner ):
 	ReferenceCount(),
-	claim_source_( owner )
+	claim_source_(std::move( owner ))
 {}
 
 /// @details Auto-generated virtual destructor
-EnvClaim::~EnvClaim() {}
+EnvClaim::~EnvClaim() = default;
 
 void EnvClaim::show( std::ostream& os ) const {
 	os << "owned by, " << owner()->type() << ";";
@@ -232,9 +233,9 @@ extern std::ostream& operator<<( std::ostream& os, EnvClaim const& claim ) {
 }
 
 extern std::ostream& operator<<( std::ostream& os, EnvClaims const& claims ) {
-	for ( EnvClaims::const_iterator it = claims.begin(); it != claims.end(); ++it ) {
-		if ( *it ) {
-			os << **it << "\n";
+	for ( auto const & claim : claims ) {
+		if ( claim ) {
+			os << *claim << "\n";
 		} else {
 			os << "No-Claim\n";
 		}

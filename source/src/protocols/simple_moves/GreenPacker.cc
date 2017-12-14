@@ -862,7 +862,7 @@ GreenPacker::add_precomputed_energies(
 
 			debug_assert( dynamic_cast< PrecomputedPairEnergiesEdge const * > ( & edge ) );
 
-			PrecomputedPairEnergiesEdge const & precomp_edge(
+			auto const & precomp_edge(
 				static_cast< PrecomputedPairEnergiesEdge const & > ( edge ) );
 
 			if ( !pig->get_edge_exists( ii_moltenres_curr, jj_moltenres_curr ) ) {

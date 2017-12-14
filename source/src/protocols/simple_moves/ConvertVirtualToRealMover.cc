@@ -24,6 +24,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 // Protocol headers
@@ -48,12 +49,12 @@ ConvertVirtualToRealMover::ConvertVirtualToRealMover():
 
 ConvertVirtualToRealMover::ConvertVirtualToRealMover( core::select::residue_selector::ResidueSelectorCOP selector):
 	protocols::moves::Mover( ConvertVirtualToRealMover::mover_name() ),
-	selector_(selector)
+	selector_(std::move(selector))
 {
 
 }
 
-ConvertVirtualToRealMover::~ConvertVirtualToRealMover(){}
+ConvertVirtualToRealMover::~ConvertVirtualToRealMover()= default;
 
 ConvertVirtualToRealMover::ConvertVirtualToRealMover( ConvertVirtualToRealMover const & src ):
 	Mover( src )

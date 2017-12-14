@@ -81,8 +81,7 @@ sequence_from_entity(
 	return sequence;
 }
 
-PackingJobRecord::PackingJobRecord()
-{}
+PackingJobRecord::PackingJobRecord() = default;
 
 void PackingJobRecord::state_index( core::Size setting )
 {
@@ -395,7 +394,7 @@ MMTDriver::initial_handshake() {
 	for ( core::Size ii = 1; ii <= n_workers_; ++ii ) {
 		TR << "Beginning handshake with node " << ii << std::endl;
 		utility::send_integer_to_node( ii, handshake_begin );
-		mmt_message message = mmt_message( utility::receive_integer_from_node( ii ) );
+		auto message = mmt_message( utility::receive_integer_from_node( ii ) );
 		if ( message == handshake_acknowledged ) {
 			core::Size ii_capacity = utility::receive_integer_from_node( ii );
 			node_stats_[ ii ].mpi_id_ = ii;
@@ -465,7 +464,7 @@ MMTDriver::optimize_generation()
 
 		// wait for a message
 		core::Size communicating_node = utility::receive_integer_from_anyone();
-		mmt_message mess = mmt_message( utility::receive_integer_from_node( communicating_node ) );
+		auto mess = mmt_message( utility::receive_integer_from_node( communicating_node ) );
 
 		if ( mess == requesting_new_job ) {
 			if ( ! this_gen_work_->unassigned_jobs_remain() ) {
@@ -671,7 +670,7 @@ MMTDriver::retrieve_pdb_from_node(
 	send_state_info_to_node( node, state_index );
 	send_sequence_to_node( node, sequence );
 
-	mmt_message retrieval_status = mmt_message( utility::receive_integer_from_node( node ) );
+	auto retrieval_status = mmt_message( utility::receive_integer_from_node( node ) );
 	if ( retrieval_status == error ) {
 		std::string emsg = utility::receive_string_from_node( node );
 		// oh no! -- spin_down_everything_but_node( node );

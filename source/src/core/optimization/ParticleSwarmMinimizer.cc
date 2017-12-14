@@ -15,6 +15,7 @@
 
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
@@ -48,7 +49,7 @@ bool cmp_particles(ParticleOP a, ParticleOP b)
 }
 
 
-ParticleSwarmMinimizer::ParticleSwarmMinimizer(Multivec p_min, Multivec p_max):
+ParticleSwarmMinimizer::ParticleSwarmMinimizer(Multivec const & p_min, Multivec const & p_max):
 	utility::pointer::ReferenceCount(),
 	size_(p_min.size()),
 	C_inertia_start_(0.9),

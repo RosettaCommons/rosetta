@@ -36,7 +36,7 @@ namespace rotamers {
 class PDBRotamerLibrarySpecification : public RotamerLibrarySpecification {
 public:
 	PDBRotamerLibrarySpecification();
-	PDBRotamerLibrarySpecification(std::string library_filename);
+	PDBRotamerLibrarySpecification(std::string const & library_filename);
 	PDBRotamerLibrarySpecification(std::istream & input);
 	virtual ~PDBRotamerLibrarySpecification();
 

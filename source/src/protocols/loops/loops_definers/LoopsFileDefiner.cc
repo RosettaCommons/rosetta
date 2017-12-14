@@ -48,11 +48,9 @@ LoopsFileDefiner::LoopsFileDefiner() :
 	loop_list_()
 {}
 
-LoopsFileDefiner::~LoopsFileDefiner() {}
+LoopsFileDefiner::~LoopsFileDefiner() = default;
 
-LoopsFileDefiner::LoopsFileDefiner(LoopsFileDefiner const & src) : LoopsDefiner(src),
-	loop_list_(src.loop_list_)
-{}
+LoopsFileDefiner::LoopsFileDefiner(LoopsFileDefiner const & /*src*/) = default;
 
 /// @brief Create another loops definer of the type matching the most-derived
 /// version of the class.
@@ -106,7 +104,7 @@ std::string LoopsFileDefiner::class_name()
 void LoopsFileDefiner::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 
 	AttributeList attributes;
 	attributes + Attr::required_attribute( "filename", xs_string, "The file from which the loops should be read" );

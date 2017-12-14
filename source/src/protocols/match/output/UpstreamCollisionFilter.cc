@@ -28,6 +28,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
@@ -47,7 +48,7 @@ MatchCollisionFilter::MatchCollisionFilter(
 	UpstreamHitCacherOP coordinate_cacher
 ) :
 	MatchFilter( filter_name ),
-	cacher_( coordinate_cacher ),
+	cacher_(std::move( coordinate_cacher )),
 	filter_by_lj_( false ),
 	wfa_atr_( 0.8 ),
 	wfa_rep_( 0.44 ),
@@ -60,7 +61,7 @@ MatchCollisionFilter::MatchCollisionFilter(
 	bump_grid_( BumpGridOP( new BumpGrid ) )
 {}
 
-MatchCollisionFilter::~MatchCollisionFilter(){}
+MatchCollisionFilter::~MatchCollisionFilter()= default;
 
 void MatchCollisionFilter::set_filter_by_lj( bool setting )
 {
@@ -151,8 +152,7 @@ UpstreamCollisionFilter::UpstreamCollisionFilter(
 	std::cout << "Created UpstreamCollisionFilter" << std::endl;
 }
 
-UpstreamCollisionFilter::~UpstreamCollisionFilter()
-{}
+UpstreamCollisionFilter::~UpstreamCollisionFilter() = default;
 
 /// @brief Either sphere-overlap checks the atom pairs in the match residues, or
 /// evaluates the Etable energies.  Returns false if any atom pair collides more than

@@ -99,8 +99,7 @@ LoopGraph::LoopGraph():
 }
 
 //Destructor
-LoopGraph::~LoopGraph()
-{}
+LoopGraph::~LoopGraph() = default;
 
 /////////////////////////////////////////////////////////////////////
 void
@@ -159,7 +158,7 @@ using namespace boost;
 
 struct cycle_printer
 {
-	cycle_printer( utility::vector1< utility::vector1< Size > > & cycles ):
+	explicit cycle_printer( utility::vector1< utility::vector1< Size > > & cycles ):
 		cycles_( cycles )
 	{
 	}
@@ -192,7 +191,7 @@ void
 LoopGraph::figure_out_loop_cycles_tiernan() {
 	loop_cycles_.clear();
 
-	typedef boost::directed_graph<> Graph;
+	using Graph = boost::directed_graph<>;
 	Size const num_domains = loops_from_domain_.size();
 	Graph g( num_domains );
 	for ( Size n = 1; n <= loops_.size(); n++ ) {

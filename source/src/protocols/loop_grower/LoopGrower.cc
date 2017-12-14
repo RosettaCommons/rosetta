@@ -318,7 +318,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	// reshuffle the foldtree
 	ObjexxFCL::FArray2D< Size > fjumps( 2, ncuts );
 	for ( int i=1; i<=ncuts; ++i ) {
-		int cut_i = (int) fcuts(i);
+		auto cut_i = (int) fcuts(i);
 
 		fjumps(1,i) = cut_i;
 		fjumps(2,i) = cut_i+1;
@@ -477,7 +477,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	//this sets us up to use the second pass filter with cenrot
 	if ( fafilter_ && cenrot_ ) {
 		cenrotfilter_ = true;
-		cenrot_ = 0;
+		cenrot_ = false;
 	}
 	if ( fafilter_ ) {
 		fafilter_pmcycles_ = pack_min_cycles_;
@@ -662,7 +662,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 				if ( fafilter_ ) {
 					bool minimize = minimize_;
 					if ( cenrotfilter_ ) {
-						cenrot_ = 1;
+						cenrot_ = true;
 					} else {
 						pack_min_cycles_ = fafilter_pmcycles_;
 						if ( minimize_ == false ) {
@@ -670,7 +670,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 						}
 					}
 					rescoresolutionset( solutionset, pose, pose_cen, torsionrangelo, torsionrangehi );
-					cenrot_ = 0;
+					cenrot_ = false;
 					pack_min_cycles_ = 0;
 					minimize_ = minimize;
 				} else {
@@ -1136,13 +1136,13 @@ LoopGrower::fafilter( LoopPartialSolutionStore &solutionset, core::pose::Pose &f
 		solutionset.filter(cenpose, maxbeam, total_lower, torsionrangelo, torsionrangehi, cycle );
 	}
 	if ( cenrotfilter_ ) {
-		cenrot_ = 1;
+		cenrot_ = true;
 	} else {
 		pack_min_cycles_ = fafilter_pmcycles_;
 	}
 	rescoresolutionset( solutionset, fapose, cenpose, torsionrangelo, torsionrangehi );
 	pack_min_cycles_ = 0;
-	cenrot_ = 0;
+	cenrot_ = false;
 	if ( native_ ) {
 		LoopPartialSolution rmslps;
 		LoopPartialSolutionStore updaterms = solutionset;
@@ -2200,7 +2200,7 @@ LoopGrower::check_auto_stop(core::pose::Pose & pose, Size lower_res, Size upper_
 	utility::vector1< core::Real > dens_scores;
 	for ( Size i=lower_res; i<=upper_res; i++ ) {
 		core::conformation::Residue currentres = pose.residue(i);
-		Real resdens = density_weight*-core::scoring::electron_density::getDensityMap().matchResFast( i, currentres, pose, NULL );
+		Real resdens = density_weight*-core::scoring::electron_density::getDensityMap().matchResFast( i, currentres, pose, nullptr );
 		dens_scores.push_back(resdens);
 	}
 	Real minE = 1e5;
@@ -2722,8 +2722,7 @@ LoopGrower::GDThatonative( core::pose::Pose const &pose, int natlow, int nathi, 
 		if ( (rescount > stoplow) && (rescount < starthi) ) continue;
 		if ( (rescount > stophi) && (stophi !=0) ) break;
 
-		for ( Size ii=0; ii < 5; ii++ ) {
-			std::string atomname = atomnames[ii];
+		for ( auto atomname : atomnames ) {
 			if ( pose.residue(rescount).name3() == "GLY" && atomname == "CB" ) {
 				continue;
 			}
@@ -2805,9 +2804,9 @@ LoopGrower::check_coordinates(core::pose::Pose& pose, Size lower_pose, Size uppe
 	Size fastares = lower_fasta;
 	for ( Size i=lower_pose; i<=upper_pose; i++ ) {
 		bool inradius = false;
-		for ( Size j=0; j<1; j++ ) {
-			core::Vector atomcoords = pose.residue(i).atom(atomnames[j]).xyz();
-			core::Size atomnumber = pose.residue(i).atom_index(atomnames[j]);
+		for ( const auto & atomname : atomnames ) {
+			core::Vector atomcoords = pose.residue(i).atom(atomname).xyz();
+			core::Size atomnumber = pose.residue(i).atom_index(atomname);
 			std::pair< Size, Size > atomid = std::make_pair(fastares,atomnumber);
 			for ( Size k=1; k<=scoringcoords_[atomid].size(); k++ ) {
 				core::Vector storedcoords = scoringcoords_[atomid][k];
@@ -3030,7 +3029,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 			if ( skeleton_file_ != "" ) {
 				atomdens = density_weight*-skeleton_.matchAtomFast( i, j, currentres, pose );
 			} else {
-				atomdens = density_weight*-core::scoring::electron_density::getDensityMap().matchAtomFast( i, j, currentres, pose, NULL );
+				atomdens = density_weight*-core::scoring::electron_density::getDensityMap().matchAtomFast( i, j, currentres, pose, nullptr );
 			}
 			total_fast_dens += atomdens;
 			//track the backbone and sc density seperately
@@ -3161,7 +3160,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 			if ( includesheets == 2 && i > rangehi && i <= total_residues_+5 ) continue;
 			core::conformation::Residue currentres = pose.residue(i);
 			core::scoring::electron_density::getDensityMap().setSCscaling( 0.2 );
-			Real residuedens = windowdensweight_ * -core::scoring::electron_density::getDensityMap().matchRes(i, currentres, pose, 0, false);
+			Real residuedens = windowdensweight_ * -core::scoring::electron_density::getDensityMap().matchRes(i, currentres, pose, nullptr, false);
 			totalresdens += residuedens;
 		}
 		//this deals with really bad cases they may get a negative score due to the way continuous density is calculated. This code just gives them a poor score rather than using those equations
@@ -3307,8 +3306,8 @@ LoopGrower::add_fragment_csts( core::pose::Pose &pose, Size startfasta, Size end
 			core::Real phi = std::fmod( res_i->torsion(1), 360.0 ); if ( phi<0 ) phi +=360.0;
 			core::Real psi = std::fmod( res_i->torsion(2), 360.0 ); if ( psi<0 ) psi +=360.0;
 
-			core::Size phibin = (core::Size) std::floor( phi/10.0 ); if ( phibin == 36 ) phibin=0;
-			core::Size psibin = (core::Size) std::floor( psi/10.0 ); if ( psibin == 36 ) psibin=0;
+			auto phibin = (core::Size) std::floor( phi/10.0 ); if ( phibin == 36 ) phibin=0;
+			auto psibin = (core::Size) std::floor( psi/10.0 ); if ( psibin == 36 ) psibin=0;
 
 			phi_distr[pos][phibin+1]+=1.0;
 			psi_distr[pos][psibin+1]+=1.0;
@@ -3357,7 +3356,7 @@ LoopGrower::add_fragment_csts( core::pose::Pose &pose, Size startfasta, Size end
 
 	// finally .. add constraints
 	Size pos = startlower;
-	for ( int i=(int)startfasta; i<=(int)endfasta; ++i ) {
+	for ( auto i=(int)startfasta; i<=(int)endfasta; ++i ) {
 		using namespace core::scoring::func;
 		using namespace core::scoring::constraints;
 

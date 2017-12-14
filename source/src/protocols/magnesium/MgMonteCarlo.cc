@@ -39,7 +39,7 @@ static basic::Tracer TR( "protocols.magnesium.MgMonteCarlo" );
 
 using namespace core;
 using utility::vector1;
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 namespace protocols {
 namespace magnesium {
@@ -53,8 +53,7 @@ MgMonteCarlo::MgMonteCarlo():
 {}
 
 //Destructor
-MgMonteCarlo::~MgMonteCarlo()
-= default;
+MgMonteCarlo::~MgMonteCarlo() = default;
 
 void
 MgMonteCarlo::apply( pose::Pose & pose ) {

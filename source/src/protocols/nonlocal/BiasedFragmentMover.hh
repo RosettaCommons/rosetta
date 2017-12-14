@@ -51,7 +51,7 @@ class BiasedFragmentMover : public protocols::moves::Mover {
 public:
 	/// @brief Creates a new BiasedFragmentMover that selects uniformly from the
 	/// available fragments at the selected insertion position.
-	BiasedFragmentMover(const PolicyOP& policy, const Probabilities& probs);
+	BiasedFragmentMover( PolicyOP const & policy, Probabilities const & probs);
 
 	~BiasedFragmentMover() override = default;
 

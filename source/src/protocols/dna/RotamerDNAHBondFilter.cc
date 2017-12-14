@@ -77,7 +77,7 @@ RotamerDNAHBondFilter::operator() (
 
 	bool filter(false);
 
-	typedef utility::vector1< Real > Reals;
+	using Reals = utility::vector1<Real>;
 	Reals const & ex_chi_steps( chi_set->ex_chi_steps );
 
 	Size const nchi( ex_chi_steps.size() );

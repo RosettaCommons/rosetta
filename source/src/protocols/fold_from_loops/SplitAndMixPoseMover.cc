@@ -50,7 +50,7 @@ namespace fold_from_loops {
 static basic::Tracer TR( "protocols.fold_from_loops.SplitAndMixPoseMover", basic::t_trace );
 
 SplitAndMixPoseMover::SplitAndMixPoseMover():
-	selector_( NULL ),
+	selector_( nullptr ),
 	ranges_( new core::select::residue_selector::ResidueRanges ),
 	order_( utility::vector1< core::Size >() ),
 	merge_chains_( default_merge_chains() ),
@@ -97,7 +97,7 @@ SplitAndMixPoseMover::count_segments( core::pose::Pose const & pose )
 void
 SplitAndMixPoseMover::apply( core::pose::Pose & pose )
 {
-	if ( selector_ != NULL ) {
+	if ( selector_ != nullptr ) {
 		count_segments( pose );
 		utility::vector1< core::pose::PoseOP > pose_list = split_pose( pose );
 		if ( pose_list.size() > 0 ) {

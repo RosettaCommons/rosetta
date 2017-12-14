@@ -77,8 +77,7 @@ MolFileIOAtom::MolFileIOAtom() :
 	//atom_real_data_()
 {}
 
-MolFileIOAtom::~MolFileIOAtom()
-{}
+MolFileIOAtom::~MolFileIOAtom() = default;
 
 MolFileIOBond::MolFileIOBond() :
 	index_( utility::get_undefined_size() ),
@@ -88,8 +87,7 @@ MolFileIOBond::MolFileIOBond() :
 	//bond_real_data_()
 {}
 
-MolFileIOBond::~MolFileIOBond()
-{}
+MolFileIOBond::~MolFileIOBond() = default;
 
 MolFileIOMolecule::MolFileIOMolecule() :
 	name_(""),
@@ -101,14 +99,13 @@ MolFileIOMolecule::MolFileIOMolecule() :
 	//molecule_real_data_()
 {}
 
-MolFileIOMolecule::~MolFileIOMolecule()
-{}
+MolFileIOMolecule::~MolFileIOMolecule() = default;
 
 /// @brief Retrieve a modifiable atom by index
 MolFileIOAtomOP
 MolFileIOMolecule::atom_index( core::Size index ) {
 	if ( index_atom_map_.count(index) == 0 ) {
-		return 0; // If not found return default constructor of OP == null pointer
+		return nullptr; // If not found return default constructor of OP == null pointer
 	}
 	debug_assert( has(molgraph_, index_atom_map_[index] ) );
 	debug_assert( molgraph_[ index_atom_map_[index] ] );
@@ -228,12 +225,12 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		if ( restype->atom( ii ).ideal_xyz().is_zero() ) { ++n_no_coords; }
 		if ( restype->nbonds( ii ) > 10 ) {
 			TR << "Input molecular structure '" << restype->name() << "' has too many bonds (" << restype->nbonds( ii ) << ") on atom " << restype->atom(ii).name() << std::endl;
-			return ResidueTypeOP( 0 );
+			return ResidueTypeOP( nullptr );
 		}
 	}
 	if ( n_no_coords > 1 ) {
 		TR << "Input molecular structure '" << restype->name() << "' has too many zero coordinate atoms (" << n_no_coords << "): cannot convert to ResidueType." << std::endl;
-		return ResidueTypeOP( 0 );
+		return ResidueTypeOP( nullptr );
 	}
 
 	// ///////////////////////

@@ -76,7 +76,7 @@ InterGroupInterfaceByVectorSelector::InterGroupInterfaceByVectorSelector( InterG
 /// @details Copy this object and return an owning pointer to the new object.
 ResidueSelectorOP InterGroupInterfaceByVectorSelector::clone() const { return ResidueSelectorOP( new InterGroupInterfaceByVectorSelector(*this) ); }
 
-InterGroupInterfaceByVectorSelector::~InterGroupInterfaceByVectorSelector() {}
+InterGroupInterfaceByVectorSelector::~InterGroupInterfaceByVectorSelector() = default;
 
 ResidueSubset
 InterGroupInterfaceByVectorSelector::apply( core::pose::Pose const & pose ) const

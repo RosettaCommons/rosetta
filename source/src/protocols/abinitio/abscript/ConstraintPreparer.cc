@@ -186,7 +186,7 @@ void ConstraintPreparer::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 void ConstraintPreparer::cst_file( std::string const& filename ){
-	constraints_ = NULL;
+	constraints_ = nullptr;
 	filename_ = filename;
 }
 

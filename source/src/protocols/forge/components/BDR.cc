@@ -102,7 +102,7 @@ BDR::BDR( BDR const & rval ) :
 
 
 /// @brief default destructor
-BDR::~BDR() {}
+BDR::~BDR() = default;
 
 
 /// @brief clone this object
@@ -375,7 +375,7 @@ bool BDR::design_refine(
 	using protocols::forge::methods::linear_chainbreak;
 	using protocols::loops::remove_cutpoint_variants;
 
-	typedef protocols::forge::build::BuildManager::Positions Positions;
+	using Positions = protocols::forge::build::BuildManager::Positions;
 
 	// collect new regions/positions
 	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
@@ -466,7 +466,7 @@ bool BDR::design_refine(
 
 	// evaluate all chainbreaks using linear chainbreak
 	bool cbreaks_pass = true;
-	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
+	for ( auto l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = linear_chainbreak( pose, l->cut() );
 			TR << "design_refine: final chainbreak = " << c << std::endl;
@@ -609,8 +609,8 @@ utility::vector1< bool > const & BDR::allowed_surface_aa() {
 	static String surface_aa = "ADEGHIKLMNPQRSTV";
 	static utility::vector1< bool > v( 20, false );
 
-	for ( Size i = 0, ie = surface_aa.length(); i < ie; ++i ) {
-		v[ aa_from_oneletter_code( surface_aa.at( i ) ) ] = true;
+	for ( char i : surface_aa ) {
+		v[ aa_from_oneletter_code( i ) ] = true;
 	}
 
 	return v;

@@ -72,7 +72,7 @@ private:
 
 	// data
 	/// @brief initialized_ is true if init() has been called, false otherwise.
-	bool initialized_;
+	//bool initialized_;
 	mutable float handedness_score_;
 
 	// methods

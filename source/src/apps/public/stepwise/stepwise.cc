@@ -136,13 +136,13 @@ public:
 		add_option( basic::options::OptionKeys::stepwise::superimpose_over_all );
 	}
 
-	virtual
+
 	JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP larval_job,
 		utility::options::OptionCollectionCOP job_options,
 		utility::vector1< JobResultCOP > const & // input_job_results
-	) {
+	) override {
 		using namespace core::scoring;
 		using namespace core::pose;
 		using namespace core::chemical;
@@ -186,7 +186,7 @@ public:
 		// actual pose to be sampled... do not score pose is user has specified a move
 		if ( pose->size() > 0 && test_move.move_type() == NO_MOVE ) ( *scorefxn )( *pose );
 		Vector center_vector = ( align_pose != nullptr ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
-		protocols::viewer::add_conformation_viewer ( pose->conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
+		protocols::viewer::add_conformation_viewer ( pose->conformation(), "current", 500, 500, false, ( align_pose != nullptr ), center_vector );
 
 		StepWiseMonteCarloOP stepwise_monte_carlo( new StepWiseMonteCarlo( scorefxn ) );
 		stepwise_monte_carlo->set_align_pose( align_pose ); //allows for alignment to be to non-native
@@ -276,8 +276,8 @@ stepwise_monte_carlo_legacy()
 
 	// actual pose to be sampled... do not score pose is user has specified a move
 	if ( pose.size() > 0 && test_move.move_type() == NO_MOVE ) ( *scorefxn )( pose );
-	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
-	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
+	Vector center_vector = ( align_pose != nullptr ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
+	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != nullptr ), center_vector );
 	if ( option[ pymol_observer ].value() ) {
 		protocols::moves::AddPyMOLObserver( pose, true );
 	}

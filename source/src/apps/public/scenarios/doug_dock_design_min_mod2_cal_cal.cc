@@ -179,18 +179,18 @@ public:
 	DougsDockDesignMinimizeMagicMover(): Mover("DougsDockDesignMinimizeMagicMover"){}
 
 	// dtor
-	virtual ~DougsDockDesignMinimizeMagicMover(){}
+	~DougsDockDesignMinimizeMagicMover() override= default;
 
 	// methods
 	void setup_pert_foldtree( core::pose::Pose & pose );
 	void setup_filter_stats();
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "DougsDockDesignMinimizeMagicMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "DougsDockDesignMinimizeMagicMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< DougsDockDesignMinimizeMagicMover > DougsDockDesignMinimizeMagicMoverOP;
-typedef utility::pointer::shared_ptr< DougsDockDesignMinimizeMagicMover const > DougsDockDesignMinimizeMagicMoverCOP;
+using DougsDockDesignMinimizeMagicMoverOP = utility::pointer::shared_ptr<DougsDockDesignMinimizeMagicMover>;
+using DougsDockDesignMinimizeMagicMoverCOP = utility::pointer::shared_ptr<const DougsDockDesignMinimizeMagicMover>;
 
 int
 main( int argc, char* argv[] )

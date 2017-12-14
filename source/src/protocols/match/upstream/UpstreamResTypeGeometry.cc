@@ -32,7 +32,7 @@ namespace match {
 namespace upstream {
 
 /// @details Auto-generated virtual destructor
-UpstreamResTypeGeometry::~UpstreamResTypeGeometry() {}
+UpstreamResTypeGeometry::~UpstreamResTypeGeometry() = default;
 
 
 UpstreamResTypeGeometry::UpstreamResTypeGeometry() :

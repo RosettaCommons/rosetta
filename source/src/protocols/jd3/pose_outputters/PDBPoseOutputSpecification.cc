@@ -47,7 +47,7 @@ PDBPoseOutputSpecification::PDBPoseOutputSpecification(
 	outputter_type( PDBPoseOutputter::keyname() );
 }
 
-PDBPoseOutputSpecification::~PDBPoseOutputSpecification() {}
+PDBPoseOutputSpecification::~PDBPoseOutputSpecification() = default;
 
 
 core::io::StructFileRepOptionsCOP

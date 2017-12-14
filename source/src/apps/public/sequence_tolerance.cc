@@ -129,7 +129,7 @@ sequence_tolerance_main( void * )
 	basic::prof_reset();
 
 	// get filenames
-	typedef utility::vector1< utility::file::FileName > Filenames;
+	using Filenames = utility::vector1<utility::file::FileName>;
 	Filenames pdbnames;
 
 	if ( !option[ in::file::s ].user() ) return nullptr;
@@ -308,7 +308,7 @@ sequence_tolerance_main( void * )
 	if ( option[ OptionKeys::out::prefix ].user() ) prefix = option[ out::prefix ]();
 
 	// sort local copy of sequence/fitness cache
-	typedef GeneticAlgorithm::TraitEntityHashMap TraitEntityHashMap;
+	using TraitEntityHashMap = GeneticAlgorithm::TraitEntityHashMap;
 	TraitEntityHashMap const & cache( ga.entity_cache() );
 	utility::vector1< Entity::OP > sortable;
 	//  std::copy( cache.begin(), cache.end(), sortable.begin() ); // FAIL(?)

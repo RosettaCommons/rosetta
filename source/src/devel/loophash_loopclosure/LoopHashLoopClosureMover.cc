@@ -97,9 +97,7 @@ std::ostream& operator<< (std::ostream& out , const MyLoop & loop ) {
 // XRW TEMP  return "LoopHashLoopClosureMover";
 // XRW TEMP }
 
-LoopHashLoopClosureMover::LoopHashLoopClosureMover()
-{
-}
+LoopHashLoopClosureMover::LoopHashLoopClosureMover() = default;
 LoopHashLoopClosureMover::~LoopHashLoopClosureMover() = default;
 void
 LoopHashLoopClosureMover::apply( core::pose::Pose & pose )
@@ -365,7 +363,7 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 	TR << "remodel::RemodelLoopMover::use_loop_hash = true" << std::endl;
 
 	// loop extension limit
-	Size loophash_ex_limit = tag->getOption<Size>( "loophash_ex_limit", 4 );
+	auto loophash_ex_limit = tag->getOption<Size>( "loophash_ex_limit", 4 );
 	option[ remodel::lh_ex_limit ]( loophash_ex_limit );
 	TR << "remodel::lh_ex_limit = " << loophash_ex_limit << std::endl;
 
@@ -458,7 +456,7 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 		TR << "remodel::lh_filter_string = " << abego << std::endl;
 	}
 
-	numeric::Real linear_chainbreak = tag->getOption<numeric::Real>("max_linear_chainbreak", 0.07);
+	auto linear_chainbreak = tag->getOption<numeric::Real>("max_linear_chainbreak", 0.07);
 	option[ remodel::RemodelLoopMover::max_linear_chainbreak ]( linear_chainbreak );
 	TR << "remodel::max_linear_chainbreak = " << linear_chainbreak << std::endl;
 
@@ -475,12 +473,12 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 	TR << "packing::use_input_sc = " << (option[packing::use_input_sc].value()? "true" : "false") << std::endl;
 
 	// number of trajectories
-	Size num_trajectory = tag->getOption<Size>("num_trajectory", 1);
+	auto num_trajectory = tag->getOption<Size>("num_trajectory", 1);
 	option[ remodel::num_trajectory ]( num_trajectory );
 	TR << "remodel::num_trajectory = " << num_trajectory << std::endl;
 
 	// keep the top n scores
-	Size num_save_top = tag->getOption<Size>("save_top", 1);
+	auto num_save_top = tag->getOption<Size>("save_top", 1);
 	option[ remodel::save_top ](num_save_top);
 	TR << "remodel::save_top = " << num_save_top << std::endl;
 

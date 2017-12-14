@@ -84,7 +84,7 @@ Pose read_pose() {
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Convert one to three letter code
-std::string one2three( std::string one ) {
+std::string one2three( std::string const & one ) {
 
 	// error checking
 	if ( one == "B" || one == "J" || one == "O" || one == "U" || one == "X" || one == "Z" ) {

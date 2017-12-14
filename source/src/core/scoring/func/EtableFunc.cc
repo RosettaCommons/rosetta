@@ -48,7 +48,7 @@ bool EtableFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	EtableFunc const & other_downcast( static_cast< EtableFunc const & > (other) );
+	auto const & other_downcast( static_cast< EtableFunc const & > (other) );
 	if ( func_     != other_downcast.func_     ) return false;
 	if ( min_      != other_downcast.min_      ) return false;
 	if ( max_      != other_downcast.max_      ) return false;
@@ -77,7 +77,7 @@ Real
 EtableFunc::func( Real const x ) const {
 	// find the appopriate index into func_
 	Real index = ( x - min_ ) / stepsize_;
-	Size x_lower_idx = (Size) (index);
+	auto x_lower_idx = (Size) (index);
 	Size x_upper_idx = x_lower_idx + 1;
 
 	Real x_lower = min_ + (x_lower_idx * stepsize_);
@@ -93,11 +93,8 @@ EtableFunc::dfunc( Real const ) const {
 
 void EtableFunc::show_definition( std::ostream& out ) const {
 	out << "ETABLEFUNC " << min_ << ' ' << max_;
-	for ( utility::vector1< core::Real >::const_iterator f_it = func_.begin(), f_end = func_.end();
-			f_it != f_end;
-			++f_it
-			) {
-		out << ' ' << *f_it;
+	for ( double f_it : func_ ) {
+		out << ' ' << f_it;
 	} // for func_ and dfunc_
 
 	out << "\n";

@@ -191,7 +191,7 @@ WriteToDB_AA_to_terminal_loops (
 	Pose & dssp_pose,
 	Size sandwich_PK_id_counter,
 	Size sw_can_by_sh_id,
-	string tag,
+	string const & tag,
 	bool starting_loop,
 	Size residue_begin,
 	Size residue_end)
@@ -253,7 +253,7 @@ WriteToDB_ending_loop (
 	Pose & dssp_pose,
 	Size sandwich_PK_id_counter,
 	Size sw_can_by_sh_id,
-	string tag,
+	string const & tag,
 	Size max_starting_loop_size_)
 {
 	string select_string =
@@ -281,7 +281,7 @@ WriteToDB_ending_loop (
 
 	bool there_is_an_ending_loop = false;
 
-	for ( Size ii = static_cast<Size>(ending_res_of_any_strand+1) ; ii <= dssp_pose.size() && ii <= static_cast<Size>((static_cast<Size>(ending_res_of_any_strand) + static_cast<Size>(max_starting_loop_size_))); ii++ ) {
+	for ( auto ii = static_cast<Size>(ending_res_of_any_strand+1) ; ii <= dssp_pose.size() && ii <= static_cast<Size>((static_cast<Size>(ending_res_of_any_strand) + static_cast<Size>(max_starting_loop_size_))); ii++ ) {
 		//for( Size ii = (ending_res_of_any_strand+1) ; ii <= dssp_pose.size() && ii <= (ending_res_of_any_strand + max_starting_loop_size_); ii++ )
 		char res_ss( dssp_pose.secstruct( ii ) ) ;
 
@@ -637,7 +637,7 @@ WriteToDB_min_avg_dis_between_sheets_by_cen_res (
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
 	Pose & dssp_pose,
-	utility::vector1<Size> all_distinct_sheet_ids,
+	utility::vector1<Size> const & all_distinct_sheet_ids,
 	Size min_num_strands_in_sheet_)
 {
 
@@ -683,7 +683,7 @@ WriteToDB_min_dis_between_sheets_by_all_res (
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
 	Pose & dssp_pose,
-	utility::vector1<Size> all_distinct_sheet_ids)
+	utility::vector1<Size> const & all_distinct_sheet_ids)
 {
 
 	//// <begin> calculate minimum distance between sheets
@@ -764,7 +764,7 @@ WriteToDB_number_of_AAs_in_a_pair_of_edge_strands (
 	StructureID struct_id,
 	sessionOP db_session,
 	core::pose::Pose const & pose,
-	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+	utility::vector1<SandwichFragment> const & bs_of_sw_can_by_sh,
 	Size max_num_sw_per_pdb_,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_)
@@ -1294,9 +1294,9 @@ WriteToDB_rkde(
 	StructureID struct_id,
 	sessionOP db_session,
 	Size rkde_PK_id_counter,
-	string tag,
+	string const & tag,
 	Size residue_number,
-	string residue_type)
+	string const & residue_type)
 {
 	string insert = "INSERT INTO rkde (struct_id, rkde_PK_id, tag, residue_number, residue_type)  VALUES (?,?,?,\t?,?);";
 
@@ -1319,11 +1319,11 @@ WriteToDB_rkde_in_strands(
 	StructureID struct_id,
 	sessionOP db_session,
 	Size rkde_in_strands_PK_id_counter,
-	string tag,
+	string const & tag,
 	Size sw_can_by_sh_id,
 	Size residue_number,
-	string residue_type,
-	string heading_direction) {
+	string const & residue_type,
+	string const & heading_direction) {
 	string insert = "INSERT INTO rkde_in_strands (struct_id, rkde_in_strands_PK_id, tag, sw_can_by_sh_id, residue_number, residue_type,\theading_direction)  VALUES (?,?,?,?,\t?,?,?);";
 
 	statement insert_stmt(basic::database::safely_prepare_statement(insert, db_session));
@@ -1365,7 +1365,7 @@ WriteToDB_sheet_antiparallel(
 	StructureID struct_id,
 	sessionOP db_session,
 	Size sheet_id,
-	string antiparallel)
+	string const & antiparallel)
 {
 	string select_string =
 		"UPDATE sheet set sheet_antiparallel = ?\t"
@@ -1414,19 +1414,19 @@ WriteToDB_sheet_connectivity(
 	sessionOP db_session,
 	Pose const & pose,
 	Size sandwich_PK_id_counter,
-	string tag,
+	string const & tag,
 	Size sw_can_by_sh_id,
-	string loop_kind,
+	string const & loop_kind,
 	Size intra_sheet_con_id,
 	Size inter_sheet_con_id,
-	string LR,
-	string canonical_LR,
-	string PA_by_preceding_E,
-	string PA_by_following_E,
-	string cano_PA,
-	string heading_direction,
-	string parallel_EE,
-	string cano_parallel_EE,
+	string const & LR,
+	string const & canonical_LR,
+	string const & PA_by_preceding_E,
+	string const & PA_by_following_E,
+	string const & cano_PA,
+	string const & heading_direction,
+	string const & parallel_EE,
+	string const & cano_parallel_EE,
 	Size loop_size,
 	Size start_res,
 	Size end_res)
@@ -1511,7 +1511,7 @@ WriteToDB_shortest_dis_between_facing_aro_in_sw (
 	Size sw_can_by_sh_id,
 	Pose const & pose,
 	// Pose & dssp_pose,
-	utility::vector1<Size> all_distinct_sheet_ids,
+	utility::vector1<Size> const & all_distinct_sheet_ids,
 	Size min_num_strands_in_sheet_)
 {
 
@@ -1558,7 +1558,7 @@ WriteToDB_starting_loop (
 	Pose & dssp_pose,
 	Size sandwich_PK_id_counter,
 	Size sw_can_by_sh_id,
-	string tag,
+	string const & tag,
 	Size max_starting_loop_size_)
 {
 	string select_string =
@@ -1668,9 +1668,9 @@ WriteToDB_sw_res_size (
 // (begin) Run_WriteToDB_sandwich
 Size
 Run_WriteToDB_sandwich(
-	string tag,
+	string const & tag,
 	Pose & dssp_pose,
-	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+	utility::vector1<SandwichFragment> const & bs_of_sw_can_by_sh,
 	Size max_num_sw_per_pdb_,
 	StructureID struct_id, // needed argument
 	sessionOP db_session,
@@ -1722,12 +1722,12 @@ WriteToDB_sandwich (
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
 	Size sandwich_PK_id_counter,
-	string tag,
+	string const & tag,
 	Size sw_can_by_sh_id,
 	Size sheet_id,
-	string sheet_antiparallel,
+	string const & sheet_antiparallel,
 	Size sandwich_bs_id,
-	string strand_is_at_edge,
+	string const & strand_is_at_edge,
 	Size component_size,
 	Size residue_begin,
 	Size residue_end)
@@ -1897,7 +1897,7 @@ WriteToDB_sw_can_by_sh (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_PK_id_counter,
-	string tag,
+	string const & tag,
 	Size sw_can_by_sh_id_counter,
 	Size sheet_id,
 	Size num_strands_from_sheet)
@@ -2247,7 +2247,7 @@ WriteToDB_turn_AA(
 	Size i,
 	StructureID struct_id,
 	sessionOP db_session,
-	string turn_type)
+	string const & turn_type)
 {
 	string canonical_turn_AA = "F_canonical_turn_AA";
 	if ( turn_type == "I" ) {
@@ -2480,7 +2480,7 @@ WriteToDB_whether_sw_is_not_connected_with_continuous_atoms (
 	StructureID struct_id,
 	sessionOP db_session,
 	Size sw_can_by_sh_id,
-	string sw_is_not_connected_with_continuous_atoms)
+	string const & sw_is_not_connected_with_continuous_atoms)
 {
 	string update =
 		"UPDATE sandwich set multimer_is_suspected = ?\t"

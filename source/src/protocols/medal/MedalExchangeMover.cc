@@ -242,7 +242,7 @@ void MedalExchangeMover::apply(Pose& pose) {
 	// Sampling parameters
 	const Real temp = option[OptionKeys::abinitio::temperature]();
 	const Size num_fragments = option[OptionKeys::cm::sanitize::num_fragments]();
-	const Size num_cycles = static_cast<Size>(aligned->nr_residues() * 50 * option[OptionKeys::abinitio::increase_cycles]());
+	const auto num_cycles = static_cast<Size>(aligned->nr_residues() * 50 * option[OptionKeys::abinitio::increase_cycles]());
 
 	PolicyOP policy = PolicyFactory::get_policy("uniform", fragments_, num_fragments);
 	MoverOP fragment_mover( new BiasedFragmentMover(policy, probs) );

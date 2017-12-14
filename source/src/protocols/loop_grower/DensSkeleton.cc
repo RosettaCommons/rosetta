@@ -311,7 +311,7 @@ DensSkeleton::path_length(utility::vector1< numeric::xyzVector< int > > path, nu
 
 core::Real
 DensSkeleton::matchAtomFast( core::Size resid, core::Size atomid, core::conformation::Residue & res, core::pose::Pose& pose ){
-	return density_.matchAtomFast(resid, atomid, res, pose, NULL);
+	return density_.matchAtomFast(resid, atomid, res, pose, nullptr);
 }
 
 } //loop_grower

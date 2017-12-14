@@ -61,7 +61,7 @@ private:
 	void duplicate_residues_by_type(Pose & pose, Pose & repeat_pose);
 	void copy_phi_psi_omega(Pose & pose, Pose & repeat_pose);
 	void add_caps(Pose & pose, Pose & repeat_pose);
-	std::vector<core::Real> get_center_of_mass(core::Real* coordinates, int number_of_atoms);
+	std::vector<core::Real> get_center_of_mass( const core::Real* coordinates, int number_of_atoms);
 	void repeat_ligand(Pose & pose, Pose & repeat_pose);
 	utility::vector1<core::Size> initial_constrained_residues(const Pose & pose);
 	void fix_ligand_residues(Pose & pose, Pose & repeat_pose);

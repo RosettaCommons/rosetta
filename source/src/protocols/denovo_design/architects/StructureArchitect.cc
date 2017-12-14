@@ -22,6 +22,7 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -33,8 +34,7 @@ namespace denovo_design {
 namespace architects {
 
 // Defined to prevent pure virtual destructor error at run time.
-StructureArchitect::~StructureArchitect()
-{}
+StructureArchitect::~StructureArchitect() = default;
 
 StructureArchitect::StructureArchitect( std::string const & id ):
 	utility::pointer::ReferenceCount(),
@@ -42,8 +42,7 @@ StructureArchitect::StructureArchitect( std::string const & id ):
 {}
 
 /// @brief private constructor -- should never be called
-StructureArchitect::StructureArchitect()
-{}
+StructureArchitect::StructureArchitect() = default;
 
 void
 StructureArchitect::parse_my_tag(

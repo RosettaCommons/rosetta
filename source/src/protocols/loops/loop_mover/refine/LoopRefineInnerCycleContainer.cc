@@ -72,7 +72,7 @@ LoopRefineInnerCycleContainer & LoopRefineInnerCycleContainer::operator=( LoopRe
 }
 
 //destructor
-LoopRefineInnerCycleContainer::~LoopRefineInnerCycleContainer() {}
+LoopRefineInnerCycleContainer::~LoopRefineInnerCycleContainer() = default;
 
 /// @brief Each derived class must specify its name.
 // XRW TEMP std::string LoopRefineInnerCycleContainer::get_name() const
@@ -168,8 +168,8 @@ void LoopRefineInnerCycleContainer::set_mc( moves::MonteCarloOP mc)
 {
 	LoopRefineInnerCycle::set_mc( mc );
 
-	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
-		(*it)->set_mc( mc );
+	for ( auto & it : inner_cycle_list_ ) {
+		it->set_mc( mc );
 	}
 }
 
@@ -177,8 +177,8 @@ void LoopRefineInnerCycleContainer::set_scorefxn( core::scoring::ScoreFunctionOP
 {
 	LoopRefineInnerCycle::set_scorefxn( scorefxn );
 
-	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
-		(*it)->set_scorefxn( scorefxn );
+	for ( auto & it : inner_cycle_list_ ) {
+		it->set_scorefxn( scorefxn );
 	}
 }
 
@@ -186,8 +186,8 @@ void LoopRefineInnerCycleContainer::set_task_factory( core::pack::task::TaskFact
 {
 	LoopRefineInnerCycle::set_task_factory( tf );
 
-	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
-		(*it)->set_task_factory( tf );
+	for ( auto & it : inner_cycle_list_ ) {
+		it->set_task_factory( tf );
 	}
 }
 
@@ -195,8 +195,8 @@ void LoopRefineInnerCycleContainer::set_loop_mover( LoopMover_Refine_CCDAP new_o
 {
 	LoopRefineInnerCycle::set_loop_mover( new_owner_in_town );
 
-	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
-		(*it)->set_loop_mover( new_owner_in_town );
+	for ( auto & it : inner_cycle_list_ ) {
+		it->set_loop_mover( new_owner_in_town );
 	}
 }
 
@@ -204,8 +204,8 @@ void LoopRefineInnerCycleContainer::set_native_pose( PoseCOP pose )
 {
 	moves::Mover::set_native_pose( pose );
 
-	for ( InnerCycleList::iterator it = inner_cycle_list_.begin(); it != inner_cycle_list_.end(); ++it ) {
-		(*it)->set_native_pose( pose );
+	for ( auto & it : inner_cycle_list_ ) {
+		it->set_native_pose( pose );
 	}
 }
 void

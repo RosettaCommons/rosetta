@@ -120,7 +120,7 @@ bool rama_list_pred( const std::pair < core::Size, core::Real > &left, const std
 
 class MinTestMover : public protocols::moves::Mover {
 public:
-	MinTestMover(){}
+	MinTestMover()= default;
 
 	// TO DO make symm-friendly
 	void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::pose::Pose &constraint_pose ){
@@ -208,8 +208,8 @@ public:
 		std::vector < std::pair < core::Size, core::Real > > rama_list;
 
 		TR << "INITIAL: " << std::endl;
-		for ( Size g=0; g<rama_list.size(); g++ ) {
-			TR << "RAMALIST: " << rama_list[g].first << "  " << rama_list[g].second << std::endl;
+		for ( auto & g : rama_list ) {
+			TR << "RAMALIST: " << g.first << "  " << g.second << std::endl;
 		}
 
 		kinematics::MoveMap my_mm;
@@ -226,7 +226,7 @@ public:
 			for ( Size j=1; j<= pose.size(); ++j ) {
 				EnergyMap & emap( energies.onebody_energies( j ) );
 				if (  emap[ rama ] > limit_rama_min ) {
-					rama_list.push_back( std::make_pair( j, emap[ rama ] ) );
+					rama_list.emplace_back( j, emap[ rama ] );
 				}
 			}
 			if ( rama_list.size() == 0 ) return;
@@ -248,7 +248,7 @@ public:
 				core::Real diffphi =  ok_phi[a]  - curphi; while ( diffphi > 180 ) diffphi-=360.0;  while ( diffphi < -180 ) diffphi += 360.0;
 				core::Real diffpsi =  ok_psi[a]  - curpsi; while ( diffpsi > 180 ) diffpsi-=360.0;  while ( diffpsi < -180 ) diffpsi += 360.0;
 				core::Real dist = sqrt( diffphi*diffphi + diffpsi * diffpsi );
-				core::Size nsteps = (core::Size) std::ceil ( dist / stepsize );
+				auto nsteps = (core::Size) std::ceil ( dist / stepsize );
 
 				core::Real stepphi = diffphi / nsteps;
 				core::Real steppsi = diffpsi / nsteps;
@@ -285,15 +285,15 @@ public:
 		for ( Size j=1; j<= pose.size(); ++j ) {
 			EnergyMap & emap( energies.onebody_energies( j ) );
 			if (  emap[ rama ] > limit_rama_min ) {
-				rama_list.push_back( std::make_pair( j, emap[ rama ] ) );
+				rama_list.emplace_back( j, emap[ rama ] );
 			}
 		}
 		if ( rama_list.size() == 0 ) return;
 		std::sort(rama_list.begin(), rama_list.end(), rama_list_pred);
 
 		TR << "FINAL: " << std::endl;
-		for ( Size g=0; g<rama_list.size(); g++ ) {
-			TR << "RAMALIST: " << rama_list[g].first << "  " << rama_list[g].second << std::endl;
+		for ( auto & g : rama_list ) {
+			TR << "RAMALIST: " << g.first << "  " << g.second << std::endl;
 		}
 	}
 
@@ -336,7 +336,7 @@ public:
 		core::pose::symmetry::set_asymm_unit_fold_tree( pose , f );
 	}
 
-	void apply( core::pose::Pose & pose) {
+	void apply( core::pose::Pose & pose) override {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace core::pack;
@@ -513,7 +513,7 @@ public:
 		core::pose::setPoseExtraScore( pose, "nE", nE);
 	}
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "MinTestMover";
 	}
 };
@@ -540,7 +540,7 @@ my_main( void* ) {
 		excn.show( std::cerr );
 	}
 
-	return 0;
+	return nullptr;
 }
 
 

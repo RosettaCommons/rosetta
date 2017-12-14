@@ -58,7 +58,7 @@ using namespace basic::options::OptionKeys;
 static basic::Tracer trDMEScore(
 	"protocols.frag_picker.scores.FragmentDME");
 
-FragmentDME::~FragmentDME() {}
+FragmentDME::~FragmentDME() = default;
 
 FragmentDME::FragmentDME(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, core::pose::PoseOP reference_pose) :
@@ -257,7 +257,7 @@ FragmentScoringMethodOP MakeFragmentDME::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read a reference structure. Provide it with in::file::s flag");
 
-	return NULL;
+	return nullptr;
 }
 
 } // scores

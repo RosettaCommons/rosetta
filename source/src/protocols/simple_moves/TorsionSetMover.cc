@@ -16,6 +16,7 @@
 #include <protocols/simple_moves/TorsionSetMover.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.simple_moves.TorsionSetMover" );
 
@@ -28,8 +29,8 @@ namespace simple_moves {
 TorsionSetMover::TorsionSetMover(
 	utility::vector1< id::TorsionID >  torsion_ids,
 	utility::vector1< Real > torsion_values ):
-	torsion_ids_( torsion_ids ),
-	torsion_values_( torsion_values )
+	torsion_ids_(std::move( torsion_ids )),
+	torsion_values_(std::move( torsion_values ))
 {
 	runtime_assert( torsion_ids_.size() == torsion_values_.size() );
 }

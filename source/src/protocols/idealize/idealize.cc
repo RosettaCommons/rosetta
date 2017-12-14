@@ -217,7 +217,7 @@ basic_idealize(
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		TR.Info << "setting up symmetric idealize " << std::endl;
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}

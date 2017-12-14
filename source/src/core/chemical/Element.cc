@@ -77,19 +77,19 @@ Element::Element
 	const core::Size ATOMIC_NUMBER,
 	const core::Size PERIOD,
 	const core::Size MAIN_GROUP,
-	std::string CHEMICAL_SYMBOL,
-	std::string CHEMICAL_NAME,
+	std::string const & CHEMICAL_SYMBOL,
+	std::string const & CHEMICAL_NAME,
 	const core::Real MASS,
 	const core::Real COVALENT_RADIUS,
 	const core::Real VDW_RADIUS,
-	ElectronConfiguration ELECTRON_CONFIGURATION
+	ElectronConfiguration const & ELECTRON_CONFIGURATION
 ) :
 	atomic_number_( ATOMIC_NUMBER),
 	period_( PERIOD),
 	main_group_( MAIN_GROUP),
-	chemical_symbol_(std::move( CHEMICAL_SYMBOL)),
-	chemical_name_(std::move( CHEMICAL_NAME)),
-	electron_configuration_(std::move( ELECTRON_CONFIGURATION)),
+	chemical_symbol_( CHEMICAL_SYMBOL),
+	chemical_name_( CHEMICAL_NAME),
+	electron_configuration_( ELECTRON_CONFIGURATION),
 	properties_(NumberOfProperties, utility::get_undefined_real() )
 {
 	element_ = core::chemical::element::elements_from_name(chemical_symbol_);

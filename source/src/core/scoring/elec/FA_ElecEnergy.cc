@@ -132,19 +132,19 @@ CountPairRepMap::get_map( chemical::ResidueType const & restype ) {
 		// make parameters
 		std::map<core::Size,core::Size> rsd_map;
 
-		std::map< std::string, std::map<std::string,std::string> >::const_iterator name_iter = cp_byname().find( restype.name3() );
+		auto name_iter = cp_byname().find( restype.name3() );
 
 		if ( name_iter == cp_byname().end() ) {
 			TR.Trace << "Warning!  Unable to find countpair representatives for restype " << restype.name3() << std::endl;
 		} else {
 			std::map<std::string,std::string> const & atms = name_iter->second;
-			for ( std::map<std::string,std::string>::const_iterator atom_iter = atms.begin(), atom_iter_end = atms.end(); atom_iter!=atom_iter_end; ++atom_iter ) {
-				if ( restype.has(atom_iter->first) && restype.has(atom_iter->second) ) {
-					core::Size idx1 = restype.atom_index(atom_iter->first);
-					core::Size idx2 = restype.atom_index(atom_iter->second);
+			for ( auto const & atm : atms ) {
+				if ( restype.has(atm.first) && restype.has(atm.second) ) {
+					core::Size idx1 = restype.atom_index(atm.first);
+					core::Size idx2 = restype.atom_index(atm.second);
 					rsd_map.insert( std::make_pair(idx1,idx2) );
 				} else {
-					TR.Trace << "Warning!  Unable to find atompair " << atom_iter->first << "," << atom_iter->second  << " for " << restype.name3() << " (" << restype.name() << ")" << std::endl;
+					TR.Trace << "Warning!  Unable to find atompair " << atm.first << "," << atm.second  << " for " << restype.name3() << " (" << restype.name() << ")" << std::endl;
 				}
 			}
 		}
@@ -266,7 +266,7 @@ FA_ElecEnergy::get_countpair_representative_atom(
 
 	debug_assert( cp_rep_map_ != nullptr );
 	std::map<core::Size,core::Size> const &mapping_i = cp_rep_map_->get_map( restype );
-	std::map<core::Size,core::Size>::const_iterator iter_map_i = mapping_i.find(atm_i);
+	auto iter_map_i = mapping_i.find(atm_i);
 	if ( iter_map_i == mapping_i.end() ) {
 		return atm_i;
 	} else {
@@ -394,7 +394,7 @@ FA_ElecEnergy::update_residue_for_packing(
 	trie::RotamerTrieBaseOP one_rotamer_trie = create_rotamer_trie( rsd, pose );
 
 	// grab non-const & of the cached tries and replace resid's trie with a new one.
-	TrieCollection & trie_collection
+	auto & trie_collection
 		( static_cast< TrieCollection & > (pose.energies().data().get( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION )));
 	trie_collection.trie( resid, one_rotamer_trie );
 }
@@ -629,7 +629,7 @@ FA_ElecEnergy::residue_pair_energy_ext(
 
 	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( elec_pair_nblist ) ));
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
+	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	Real dsq, score( 0.0 );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
@@ -742,7 +742,7 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( elec_pair_nblist ) ));
 
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
+	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
 	weight_triple wtrip;
@@ -897,9 +897,7 @@ FA_ElecEnergy::eval_atom_derivative(
 	weight_triple wtrip;
 	setup_weight_triple( weights, wtrip );
 
-	for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(),
-			it2e=nbrs.end(); it2 != it2e; ++it2 ) {
-		scoring::AtomNeighbor const & nbr( *it2 );
+	for ( auto const & nbr : nbrs ) {
 		Size const j( nbr.rsd() );
 		Size const jj( nbr.atomno() );
 		conformation::Residue const & jrsd( pose.residue( j ) );
@@ -1153,10 +1151,7 @@ FA_ElecEnergy::finalize_total_energy(
 		for ( Size ii=1, ii_end=ires.natoms(); ii<= ii_end; ++ii ) {
 			AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
 			int ii_isbb = ires.atom_is_backbone( ii );
-			for ( AtomNeighbors::const_iterator nbr_iter=nbrs.begin(),
-					nbr_end=nbrs.end(); nbr_iter!= nbr_end; ++nbr_iter ) {
-				AtomNeighbor const & nbr( *nbr_iter );
-
+			for ( auto const & nbr : nbrs ) {
 				Size const  j( nbr.rsd() );
 				Size const jj( nbr.atomno() );
 
@@ -1283,7 +1278,7 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	RotamerTrieBaseCOP trie2 = ( static_cast< TrieCollection const & >
 		( pose.energies().data().get( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
-	if ( trie2 == NULL ) return;
+	if ( trie2 == nullptr ) return;
 
 	//fpd get rid of mutable data, use evaluator instead
 	electrie::ElecTrieEvaluator eleceval(

@@ -78,7 +78,7 @@ RemodelAccumulator::RemodelAccumulator( RemodelWorkingSet & working_model)
 /// @brief copy constructor
 
 /// @brief default destructor
-RemodelAccumulator::~RemodelAccumulator(){}
+RemodelAccumulator::~RemodelAccumulator()= default;
 
 /// @brief clone this object
 RemodelAccumulator::MoverOP RemodelAccumulator::clone() const {
@@ -186,7 +186,7 @@ void RemodelAccumulator::keep_top_pose( core::Size num_to_keep)
 {
 	// TR << "sorted size " << pose_store_.size() << std::endl;
 	if ( pose_store_.size() > num_to_keep )  {
-		std::multimap<core::Real, core::pose::PoseOP>::iterator worst_structure = --pose_store_.end();
+		auto worst_structure = --pose_store_.end();
 		//delete (*worst_structure).second; // deletes Pose allocated on heap
 		pose_store_.erase( worst_structure );
 		// TR << "sorted size " << pose_store_.size() << std::endl;
@@ -196,8 +196,8 @@ void RemodelAccumulator::keep_top_pose( core::Size num_to_keep)
 
 std::vector<core::pose::PoseOP> RemodelAccumulator::contents_in_pose_store(){
 	std::vector<core::pose::PoseOP> dummy_return;
-	for ( std::multimap<core::Real, core::pose::PoseOP>::iterator it= pose_store_.begin(), end = pose_store_.end(); it != end; ++it ) {
-		dummy_return.push_back(it->second);
+	for ( auto & it : pose_store_ ) {
+		dummy_return.push_back(it.second);
 	}
 	return dummy_return;
 }
@@ -213,13 +213,13 @@ void RemodelAccumulator::write_checkpoint(core::Size progress_point){
 	core::Size num_report =option[OptionKeys::remodel::save_top];
 
 	core::Size filecount = 1;
-	for ( std::multimap<core::Real, core::pose::PoseOP>::iterator it= pose_store_.begin(), end = pose_store_.end(); it != end; ++it ) {
+	for ( auto & it : pose_store_ ) {
 		if ( filecount <= num_report ) {
 			std::stringstream sstream;
 			std::string num(ObjexxFCL::lead_zero_string_of(filecount,3));
 			sstream << "ck_" << num << ".pdb";
 
-			it->second->dump_pdb(sstream.str());
+			it.second->dump_pdb(sstream.str());
 		}
 		filecount++;
 	}
@@ -339,8 +339,8 @@ void RemodelAccumulator::run_cluster(){
 	cluster_->set_score_function( sfxn_ );
 	cluster_->set_cluster_radius( radius );
 
-	for ( std::multimap<core::Real, core::pose::PoseOP>::iterator it = pose_store_.begin(), end = pose_store_.end(); it != end ; ++it ) {
-		cluster_->apply((*(*it).second));
+	for ( auto & it : pose_store_ ) {
+		cluster_->apply((*it.second));
 	}
 
 	cluster_->do_clustering(option[OptionKeys::cluster::max_total_cluster]);

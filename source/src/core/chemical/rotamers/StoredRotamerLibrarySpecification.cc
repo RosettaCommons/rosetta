@@ -60,15 +60,14 @@ StoredRotamerLibrarySpecificationCreator::keyname() const {
 
 // Specification Functions
 
-StoredRotamerLibrarySpecification::StoredRotamerLibrarySpecification()
-{}
+StoredRotamerLibrarySpecification::StoredRotamerLibrarySpecification() = default;
 
 //NOTE You can use SingleLigandRotamerLibrary's utility function rotamer_information_from_PDB_stream to get objects you can pass to add_rotamers and set_reference_energy; see this class's unit test for an example.  The utility function can't be called here due to library level rules.
 StoredRotamerLibrarySpecification::StoredRotamerLibrarySpecification(std::istream & ) {
 	utility_exit_with_message("Cannot currently instantiate a StoredRotamerLibrarySpecification from an input stream.");
 }
 
-StoredRotamerLibrarySpecification::~StoredRotamerLibrarySpecification() {}
+StoredRotamerLibrarySpecification::~StoredRotamerLibrarySpecification() = default;
 
 /// @brief Add a particular rotamer to the list
 void

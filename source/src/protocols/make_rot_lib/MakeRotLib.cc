@@ -457,7 +457,7 @@ calc_centroids(RotVec & rotamers, RotVec & centroids)
 	// find mean of all pts in cluster
 	// set centroid to this mean
 
-	typedef vector1<Real> rvec;
+	using rvec = vector1<Real>;
 
 	Size ncluster( centroids.size() );
 	Size nchi( rotamers[1].get_num_chi() );

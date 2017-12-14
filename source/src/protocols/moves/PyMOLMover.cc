@@ -832,8 +832,8 @@ PyMOLMover::send_movemap( core::pose::Pose const &pose, core::kinematics::MoveMa
 	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		data.push_back( "00");
 	}
-	for ( auto i = data.begin(); i != data.end(); ++i ) {
-		std::cout << *i << ' ';
+	for ( auto & i : data ) {
+		std::cout << i << ' ';
 	}
 	for ( core::Size i=1 ; i <=pose.size(); ++ i ) {
 		int num = 11 + int(movemap.get_bb(i)) * 10 + int(movemap.get_chi(i));
@@ -1095,7 +1095,7 @@ PyMOLMover::parse_my_tag(
 	keep_history(tag->getOption<bool>( "keep_history", keep_history_ ) );
 
 	std::string address = tag->getOption<std::string>("address", _default_address_);
-	unsigned int port = tag->getOption<unsigned int>("port", _default_port_);
+	auto port = tag->getOption<unsigned int>("port", _default_port_);
 
 	//TR << "Settin addres to: " << address << std::endl;
 	//TR << "Settin port to: " << port << std::endl;

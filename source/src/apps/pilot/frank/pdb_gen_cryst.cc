@@ -65,7 +65,7 @@
 
 #include <fstream>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <cmath>
 
 #include <sstream>
@@ -108,14 +108,14 @@ static basic::Tracer TR( "cryst.gen" );
 //this is safe and convenient but not exactly efficient
 inline std::string formatstr(const char* fmt, ...){
 	int size = 512;
-	char* buffer = 0;
+	char* buffer = nullptr;
 	buffer = new char[size];
 	va_list vl;
 	va_start(vl, fmt);
 	int nsize = vsnprintf(buffer, size, fmt, vl);
 	if ( size<=nsize ) { //fail delete buffer and try again
 		delete[] buffer;
-		buffer = 0;
+		buffer = nullptr;
 		buffer = new char[nsize+1]; //+1 for /0
 		nsize = vsnprintf(buffer, size, fmt, vl);
 	}

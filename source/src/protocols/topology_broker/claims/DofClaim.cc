@@ -47,7 +47,7 @@ namespace topology_broker {
 namespace claims {
 
 /// @details Auto-generated virtual destructor
-DofClaim::~DofClaim() {}
+DofClaim::~DofClaim() = default;
 
 using namespace core;
 
@@ -61,9 +61,9 @@ extern std::ostream& operator<<( std::ostream& os, DofClaim const& dof ) {
 }
 
 extern std::ostream& operator<<( std::ostream& os, DofClaims const& dofs ) {
-	for ( DofClaims::const_iterator it = dofs.begin(); it != dofs.end(); ++it ) {
-		if ( *it ) {
-			os << **it << "\n";
+	for ( auto const & dof : dofs ) {
+		if ( dof ) {
+			os << *dof << "\n";
 		} else {
 			os << "No-Claim\n";
 		}

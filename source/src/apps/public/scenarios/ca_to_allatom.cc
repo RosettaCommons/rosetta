@@ -137,16 +137,16 @@ numeric::xyzVector< core::Real > recenter_with_missing( core::pose::Pose &pose) 
 class CaToAllAtom : public protocols::moves::Mover{
 public:
 	CaToAllAtom();
-	virtual ~CaToAllAtom();
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	~CaToAllAtom() override;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 private:
 	core::scoring::ScoreFunctionOP scorefxn_cst_;
 	core::pose::Pose native_pose_;
 
 };
 
-typedef utility::pointer::shared_ptr< CaToAllAtom > CaToAllAtomOP;
+using CaToAllAtomOP = utility::pointer::shared_ptr<CaToAllAtom>;
 
 CaToAllAtom::CaToAllAtom(){
 	// RB scoring function; get from command line
@@ -165,7 +165,7 @@ CaToAllAtom::CaToAllAtom(){
 	}
 }
 
-CaToAllAtom::~CaToAllAtom(){}
+CaToAllAtom::~CaToAllAtom()= default;
 
 void CaToAllAtom::apply( core::pose::Pose & pose ){
 	// load rbsegs
@@ -305,7 +305,7 @@ ca_to_allatom_main( void * )
 	CaToAllAtomOP ca_to_all_atom( new CaToAllAtom() );
 	protocols::jd2::JobDistributor::get_instance()->go( ca_to_all_atom );
 
-	return 0;
+	return nullptr;
 }
 
 

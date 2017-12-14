@@ -43,8 +43,8 @@ InputSource::InputSource() :
 	pose_id_( 0 )
 {}
 
-InputSource::InputSource( std::string origin ) :
-	origin_(std::move( origin )),
+InputSource::InputSource( std::string const & origin ) :
+	origin_( origin ),
 	pose_id_( 0 )
 {}
 

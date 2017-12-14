@@ -82,7 +82,7 @@ public:
 
 	// constructor with arguments
 	SymDockingSlideIntoContact(
-		std::map< Size, core::conformation::symmetry::SymDof > dofs
+		std::map< Size, core::conformation::symmetry::SymDof > const & dofs
 	);
 	// destructor
 	~SymDockingSlideIntoContact();
@@ -110,7 +110,7 @@ class FaSymDockingSlideTogether : public moves::Mover
 {
 public:
 	FaSymDockingSlideTogether(
-		std::map< Size, core::conformation::symmetry::SymDof > dofs
+		std::map< Size, core::conformation::symmetry::SymDof > const & dofs
 	);
 
 	~FaSymDockingSlideTogether();
@@ -202,7 +202,7 @@ public:
 	SequentialSymmetrySlider(
 		core::pose::Pose & pose,
 		core::conformation::symmetry::SlideCriteriaType score_criteria,
-		std::string SlideCriteriaVal = "AUTOMATIC"
+		std::string const & SlideCriteriaVal = "AUTOMATIC"
 	);
 	void init();
 	void select_jump();
@@ -221,13 +221,13 @@ typedef utility::pointer::shared_ptr< OrderedSequentialSymmetrySlider const > Or
 class OrderedSequentialSymmetrySlider : public SymmetrySlider
 {
 public:
-	OrderedSequentialSymmetrySlider( core::pose::Pose & pose, std::vector<core::Size> slide_order );
-	OrderedSequentialSymmetrySlider( SymmetrySlider const & Slider, std::vector<core::Size> slide_order );
+	OrderedSequentialSymmetrySlider( core::pose::Pose & pose, std::vector<core::Size> const & slide_order );
+	OrderedSequentialSymmetrySlider( SymmetrySlider const & Slider, std::vector<core::Size> const & slide_order );
 	OrderedSequentialSymmetrySlider(
 		core::pose::Pose & pose,
 		core::conformation::symmetry::SlideCriteriaType score_criteria,
-		std::string SlideCriteriaVal = "AUTOMATIC",
-		std::vector<core::Size> slide_order = std::vector<core::Size>()
+		std::string const & SlideCriteriaVal = "AUTOMATIC",
+		std::vector<core::Size> const & slide_order = std::vector<core::Size>()
 	);
 
 	void select_jump();

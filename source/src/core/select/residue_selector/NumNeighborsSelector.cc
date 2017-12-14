@@ -53,7 +53,7 @@ NumNeighborsSelector::NumNeighborsSelector() :
 	threshold_( 17 ),
 	distance_cutoff_( 10.0 )
 {}
-NumNeighborsSelector::~NumNeighborsSelector() {}
+NumNeighborsSelector::~NumNeighborsSelector() = default;
 
 /// @brief Copy constructor
 ///
@@ -92,7 +92,7 @@ NumNeighborsSelector::apply( core::pose::Pose const & pose ) const
 		utility::vector1< Size > non_water_neighbor_count( pose.size(), 0 );
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue_type(ii).aa() == chemical::aa_h2o ) continue;
-			for ( conformation::PointGraph::VertexClass::UpperEdgeListIter
+			for ( auto
 					iter = pg->get_vertex(ii).upper_edge_list_begin(),
 					iter_end = pg->get_vertex(ii).upper_edge_list_end();
 					iter != iter_end; ++iter ) {

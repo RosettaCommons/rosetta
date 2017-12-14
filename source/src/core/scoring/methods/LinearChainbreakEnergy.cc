@@ -90,7 +90,7 @@ LinearChainbreakEnergy& LinearChainbreakEnergy::operator=(const LinearChainbreak
 	return *this;
 }
 
-LinearChainbreakEnergy::~LinearChainbreakEnergy() {}
+LinearChainbreakEnergy::~LinearChainbreakEnergy() = default;
 
 void LinearChainbreakEnergy::initialize(Size allowable_sequence_sep) {
 	allowable_sequence_sep_ = allowable_sequence_sep;

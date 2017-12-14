@@ -20,7 +20,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 // C++ headers
 #include <iosfwd>

@@ -21,6 +21,7 @@
 
 
 //parsing
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
@@ -83,11 +84,11 @@ DisulfideFilter::DisulfideFilter( core::Size targetResidue ) :
 /// @brief Constructor with multiple target residues
 DisulfideFilter::DisulfideFilter( core::select::residue_selector::ResidueSelectorCOP targetResidues ) :
 	parent( "DisulfideFilter" ),
-	targets_(targetResidues),
+	targets_(std::move(targetResidues)),
 	rb_jump_(1)
 {}
 
-DisulfideFilter::~DisulfideFilter() {}
+DisulfideFilter::~DisulfideFilter() = default;
 
 /// @return Whether a disulfide bond is possible between any of the targets
 bool DisulfideFilter::apply(Pose const & pose ) const

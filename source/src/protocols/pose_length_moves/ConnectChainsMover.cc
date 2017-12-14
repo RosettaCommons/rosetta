@@ -95,7 +95,7 @@ void ConnectChainsMover::parse_input(vector1<std::string> & individual_chains,ve
 			}
 		}
 	}
-	for ( const auto & iter : tmp_chains_set ) {
+	for ( auto const & iter : tmp_chains_set ) {
 		individual_chains.push_back(iter);
 		TR << "chains" << iter << std::endl;
 	}

@@ -45,10 +45,10 @@ namespace operation {
 
 static basic::Tracer TR( "core.pack.task.operation.TaskOperationFactory" );
 
-TaskOperationFactory::~TaskOperationFactory(){}
+TaskOperationFactory::~TaskOperationFactory()= default;
 
 /// @brief the default TaskOperations are now initialized in core/init/init.cc via the registrator/creator scheme
-TaskOperationFactory::TaskOperationFactory() {}
+TaskOperationFactory::TaskOperationFactory() = default;
 
 void
 TaskOperationFactory::factory_register( TaskOperationCreatorOP creator )
@@ -63,7 +63,7 @@ TaskOperationFactory::factory_register( TaskOperationCreatorOP creator )
 void
 TaskOperationFactory::add_creator( TaskOperationCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	task_operation_creator_map_[ creator->keyname() ] = creator;
 }
 
@@ -109,13 +109,13 @@ TaskOperationFactory::provide_xml_schema(
 	std::string const &task_operation_name,
 	utility::tag::XMLSchemaDefinition & xsd
 ) const {
-	TaskOperationCreatorMap::const_iterator iter( task_operation_creator_map_.find( task_operation_name ) );
+	auto iter( task_operation_creator_map_.find( task_operation_name ) );
 	if ( iter != task_operation_creator_map_.end() ) {
 		iter->second->provide_xml_schema( xsd );
 	} else {
 		TR << "Available options: ";
-		for ( TaskOperationCreatorMap::const_iterator to_iter = task_operation_creator_map_.begin(); to_iter != task_operation_creator_map_.end(); ++to_iter ) {
-			TR << to_iter->first << ", ";
+		for ( const auto & to_iter : task_operation_creator_map_ ) {
+			TR << to_iter.first << ", ";
 		}
 		TR << std::endl;
 		utility_exit_with_message( task_operation_name + " is not known to the TaskOperationFactory. Was its taskOperationCreator class registered at initialization?" );
@@ -129,20 +129,20 @@ TaskOperationFactory::newTaskOperation(
 	TagCOP tag /* = boost::shared_ptr< Tag >() */
 ) const
 {
-	TaskOperationCreatorMap::const_iterator iter( task_operation_creator_map_.find( type ) );
+	auto iter( task_operation_creator_map_.find( type ) );
 	if ( iter != task_operation_creator_map_.end() ) {
 		TaskOperationOP task_operation( iter->second->create_task_operation() );
 		// parse tag if tag pointer is pointing to one
-		if ( tag.get() != NULL ) task_operation->parse_tag( tag, datamap );
+		if ( tag.get() != nullptr ) task_operation->parse_tag( tag, datamap );
 		return task_operation;
 	} else {
 		TR<<"Available options: ";
-		for ( TaskOperationCreatorMap::const_iterator to_iter = task_operation_creator_map_.begin(); to_iter != task_operation_creator_map_.end(); ++to_iter ) {
-			TR<<to_iter->first<<", ";
+		for ( const auto & to_iter : task_operation_creator_map_ ) {
+			TR<<to_iter.first<<", ";
 		}
 		TR<<std::endl;
 		utility_exit_with_message( type + " is not known to the TaskOperationFactory. Was its taskOperationCreator class registered at initialization?" );
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -150,23 +150,23 @@ TaskOperationFactory::newTaskOperation(
 void
 TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, basic::datacache::DataMap & datamap, TagCOP tag ) const
 {
-	typedef utility::vector0< TagCOP > TagCOPs;
+	using TagCOPs = utility::vector0<TagCOP>;
 	TR.Trace << "Tag name " << tag->getName();
 	if ( tag->getTags().empty() ) { TR.Trace << " (empty)" << std::endl; return; }
 	else TR.Trace << std::endl;
 	TagCOPs const subtags( tag->getTags() );
 	if ( tag->getName() == "TASKOPERATIONS" ) {
-		for ( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
-			std::string const type( (*tp)->getName() );
-			TaskOperationOP new_to = newTaskOperation( type, datamap, *tp );
-			runtime_assert( new_to != 0 );
+		for ( const auto & subtag : subtags ) {
+			std::string const type( subtag->getName() );
+			TaskOperationOP new_to = newTaskOperation( type, datamap, subtag );
+			runtime_assert( new_to != nullptr );
 			tops.push_back( new_to );
 			TR << "Created and parsed anonymous TaskOperation of type " << type << std::endl;
 		}
 	}
 	// recurse
-	for ( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
-		newTaskOperations( tops, datamap, *tp );
+	for ( const auto & subtag : subtags ) {
+		newTaskOperations( tops, datamap, subtag );
 	}
 }
 

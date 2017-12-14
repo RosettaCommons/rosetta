@@ -113,18 +113,18 @@ public:
 	CovalentPeptidomimeticDockDesign(): Mover( "CovalentPeptidomimeticDockDesign" ){}
 
 	//default dtor
-	virtual ~CovalentPeptidomimeticDockDesign(){}
+	~CovalentPeptidomimeticDockDesign() override= default;
 
 	//methods
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	void update_hydrogens( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "CovalentPeptidomimeticDockDesign"; }
+	std::string get_name() const override { return "CovalentPeptidomimeticDockDesign"; }
 
 };
 
-typedef utility::pointer::shared_ptr< CovalentPeptidomimeticDockDesign > CovalentPeptidomimeticDockDesignOP;
-typedef utility::pointer::shared_ptr< CovalentPeptidomimeticDockDesign const > CovalentPeptidomimeticDockDesignCOP;
+using CovalentPeptidomimeticDockDesignOP = utility::pointer::shared_ptr<CovalentPeptidomimeticDockDesign>;
+using CovalentPeptidomimeticDockDesignCOP = utility::pointer::shared_ptr<const CovalentPeptidomimeticDockDesign>;
 
 int main ( int argc, char* argv[] )
 {

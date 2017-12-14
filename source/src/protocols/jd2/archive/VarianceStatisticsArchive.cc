@@ -58,7 +58,7 @@ bool VarianceStatisticsArchive::add_evaluated_structure(
 		//replace with random element
 		Size rg_pos( static_cast< int >( numeric::random::rg().uniform() * decoys().size() ) );
 		runtime_assert( rg_pos < decoys().size() );
-		SilentStructs::iterator it=decoys().begin();
+		auto it=decoys().begin();
 		while ( rg_pos-- > 0 ) {
 			++it;
 		}

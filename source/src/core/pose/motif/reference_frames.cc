@@ -30,15 +30,15 @@ using namespace core::chemical;
 using core::Size;
 using core::Real;
 using std::string;
-typedef xyzTransform<Real> Xform;
-typedef xyzVector<Real> Vec;
-typedef Pose const & PoseCR;
-typedef Size const & SizeCR;
+using Xform = xyzTransform<Real>;
+using Vec = xyzVector<Real>;
+using PoseCR = const Pose &;
+using SizeCR = const Size &;
 using utility::tools::make_vector1;
 using core::id::AtomID;
 using std::cout;
 using std::endl;
-typedef utility::vector1<core::id::AtomID> AIDs;
+using AIDs = utility::vector1<core::id::AtomID>;
 
 
 static

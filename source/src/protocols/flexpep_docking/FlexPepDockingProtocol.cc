@@ -157,8 +157,7 @@ FlexPepDockingProtocol::FlexPepDockingProtocol(
 }
 
 // empty destructor - for good includiong of OP clasesses
-FlexPepDockingProtocol::~FlexPepDockingProtocol()
-= default;
+FlexPepDockingProtocol::~FlexPepDockingProtocol() = default;
 
 // cloner
 protocols::moves::MoverOP FlexPepDockingProtocol::clone() const
@@ -708,7 +707,7 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 	Vector third_pc_axis(peptide_eigenvectors.col_z()[0], peptide_eigenvectors.col_z()[1], peptide_eigenvectors.col_z()[2] );
 
 	if ( pcs_num == 1 ) {
-		Size rand_num = (Size)(numeric::random::uniform() + 0.5);
+		auto rand_num = (Size)(numeric::random::uniform() + 0.5);
 		float rot_angle = 180.0*(rand_num);
 		TR << "Flipping the peptide " << std::endl;
 		rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
@@ -716,7 +715,7 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 	}
 
 	if ( pcs_num == 2 ) {
-		Size rand_num = (Size)(numeric::random::random_range(1,4) + 0.5);
+		auto rand_num = (Size)(numeric::random::random_range(1,4) + 0.5);
 		float rot_angle = 90.0*(rand_num);
 		TR << "Flipping the peptide " << std::endl;
 		rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
@@ -978,7 +977,7 @@ FlexPepDockingProtocol::randomlySlidePeptideJump(core::pose::Pose & pose){
 
 	using namespace core::kinematics;
 	using namespace numeric;
-	Size new_rand_cut = (Size)(numeric::random::uniform()*(flags_.peptide_nres()));
+	auto new_rand_cut = (Size)(numeric::random::uniform()*(flags_.peptide_nres()));
 	FoldTree f = pose.fold_tree();
 	f.slide_jump(rb_jump_, //along which jump
 		f.upstream_jump_residue(rb_jump_),//keep prot anchor

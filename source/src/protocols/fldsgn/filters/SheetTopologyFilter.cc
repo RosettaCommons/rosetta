@@ -39,6 +39,7 @@
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
@@ -87,14 +88,7 @@ SheetTopologyFilter::SheetTopologyFilter( String const & sheet_topology ):
 {}
 
 // @brief copy constructor
-SheetTopologyFilter::SheetTopologyFilter( SheetTopologyFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
-	Super( rval ),
-	filtered_sheet_topology_( rval.filtered_sheet_topology_ ),
-	secstruct_input_( rval.secstruct_input_ ),
-	ignore_register_shift_( rval.ignore_register_shift_ ),
-	use_dssp_( rval.use_dssp_ )
-{}
+SheetTopologyFilter::SheetTopologyFilter( SheetTopologyFilter const & /*rval*/ ) = default;
 
 // @brief set filtered sheet_topology by SrandPairingSetOP
 void SheetTopologyFilter::filtered_sheet_topology( StrandPairingSetOP const & sps )
@@ -119,12 +113,12 @@ compute_max_strand( std::string const & sheet_topology )
 {
 	core::Size max_strand = 0;
 	utility::vector1< std::string > const pairs = utility::string_split( sheet_topology, ';' );
-	for ( utility::vector1< std::string >::const_iterator p=pairs.begin(); p!=pairs.end(); ++p ) {
-		std::string const strands = *( utility::string_split( *p, '.' ).begin() );
+	for ( auto const & pair : pairs ) {
+		std::string const strands = *( utility::string_split( pair, '.' ).begin() );
 		utility::vector1< std::string > const strandlist = utility::string_split( strands, '-' );
 		debug_assert( strandlist.size() == 2 );
-		for ( utility::vector1< std::string >::const_iterator s=strandlist.begin(); s!=strandlist.end(); ++s ) {
-			core::Size const strand = boost::lexical_cast< core::Size >( *s );
+		for ( auto const & s : strandlist ) {
+			auto const strand = boost::lexical_cast< core::Size >( s );
 			if ( strand > max_strand ) max_strand = strand;
 		}
 		tr << "strands = " << strands << std::endl;
@@ -290,8 +284,8 @@ core::Size
 SheetTopologyFilter::count_residue_pairings( ResiduePairingSets const & pair_sets ) const
 {
 	core::Size count = 0;
-	for ( ResiduePairingSets::const_iterator pset=pair_sets.begin(); pset!=pair_sets.end(); ++pset ) {
-		count += pset->size();
+	for ( auto const & pair_set : pair_sets ) {
+		count += pair_set.size();
 	}
 	return count;
 }
@@ -303,13 +297,13 @@ SheetTopologyFilter::count_good_pairings(
 	ResiduePairingSet const & pose_pair_set ) const
 {
 	core::Size good_pairings = 0;
-	for ( ResiduePairingSet::const_iterator filt_pair=filtered_pair_set.begin(); filt_pair!=filtered_pair_set.end(); ++filt_pair ) {
-		if ( pose_pair_set.find( *filt_pair ) == pose_pair_set.end() ) {
-			tr.Debug << "Filtered pairing " << *filt_pair << " not present in pose pairings." << std::endl;
+	for ( auto const & filt_pair : filtered_pair_set ) {
+		if ( pose_pair_set.find( filt_pair ) == pose_pair_set.end() ) {
+			tr.Debug << "Filtered pairing " << filt_pair << " not present in pose pairings." << std::endl;
 			continue;
 		}
 
-		tr.Debug << "Filtered pairing " << *filt_pair << " found in pose pairings." << std::endl;
+		tr.Debug << "Filtered pairing " << filt_pair << " found in pose pairings." << std::endl;
 		++good_pairings;
 	}
 	return good_pairings;
@@ -423,9 +417,9 @@ remove_register_shifts( std::string const & pair_str )
 {
 	std::stringstream newstr;
 	utility::vector1< std::string > const pairs = utility::string_split( pair_str, ';' );
-	for ( utility::vector1< std::string >::const_iterator p=pairs.begin(); p!=pairs.end(); ++p ) {
+	for ( auto const & pair : pairs ) {
 		if ( !newstr.str().empty() ) newstr << ';';
-		newstr << remove_register_shift_single_pair( *p );
+		newstr << remove_register_shift_single_pair( pair );
 	}
 	return newstr.str();
 }
@@ -474,7 +468,7 @@ SheetTopologyFilter::compute_residue_pairings(
 	using topology::StrandPairings;
 
 	ResiduePairingSets pairing_sets;
-	for ( StrandPairings::const_iterator pair=spairset.begin(); pair!=spairset.end(); ++pair ) {
+	for ( auto pair=spairset.begin(); pair!=spairset.end(); ++pair ) {
 		debug_assert( *pair );
 		tr << "Computing residue pairings for " << **pair << std::endl;
 		pairing_sets.push_back( compute_paired_residues( **pair, ss_info ) );
@@ -491,10 +485,10 @@ SheetTopologyFilter::replace_register_shifts(
 {
 	using topology::StrandPairings;
 	topology::StrandPairingSet new_pairset;
-	for ( StrandPairings::const_iterator pair=filtered_spairset.begin(); pair!=filtered_spairset.end(); ++pair ) {
-		topology::StrandPairingOP pose_pair = find_pairing( spairset, (*pair)->s1(), (*pair)->s2() );
+	for ( auto const & pair : filtered_spairset ) {
+		topology::StrandPairingOP pose_pair = find_pairing( spairset, pair->s1(), pair->s2() );
 		if ( !pose_pair ) continue;
-		if ( (*pair)->rgstr_shift() != 99 ) {
+		if ( pair->rgstr_shift() != 99 ) {
 			new_pairset.push_back( pose_pair );
 			continue;
 		}
@@ -511,10 +505,10 @@ find_pairing( topology::StrandPairingSet & spairset, core::Size const s1, core::
 {
 	using topology::StrandPairings;
 
-	for ( StrandPairings::const_iterator p=spairset.begin(); p!=spairset.end(); ++p ) {
-		if ( (*p)->s1() != s1 ) continue;
-		if ( (*p)->s2() != s2 ) continue;
-		return *p;
+	for ( auto const & p : spairset ) {
+		if ( p->s1() != s1 ) continue;
+		if ( p->s2() != s2 ) continue;
+		return p;
 	}
 	return topology::StrandPairingOP();
 }
@@ -525,7 +519,7 @@ find_pairing_idx( topology::StrandPairingSet & spairset, core::Size const s1, co
 {
 	using topology::StrandPairings;
 	core::Size idx = 1;
-	for ( StrandPairings::const_iterator p=spairset.begin(); p!=spairset.end(); ++p, ++idx ) {
+	for ( auto p=spairset.begin(); p!=spairset.end(); ++p, ++idx ) {
 		if ( (*p)->s1() != s1 ) continue;
 		if ( (*p)->s2() != s2 ) continue;
 		return idx;

@@ -65,14 +65,14 @@ public:
 
 	/// ctor from atom list + input pose
 	BindingSiteConstraint(
-		utility::vector1< AtomID > const & atms,
+		utility::vector1< AtomID > atms,
 		core::pose::Pose const &start_pose,
 		core::scoring::ScoreType scoretype = core::scoring::atom_pair_constraint   /// ? TO DO -- give own scoretype
 	);
 
 	/// ctor from a vector of atom positions (in lieu of a pose)
 	BindingSiteConstraint(
-		utility::vector1< AtomID > const & atms,
+		utility::vector1< AtomID > atms,
 		ObjexxFCL::FArray2D< core::Real >  tgt_pos,
 		ObjexxFCL::FArray2D< core::Real >  tgt_pos_centroid,
 		core::scoring::ScoreType scoretype = core::scoring::atom_pair_constraint   /// ? TO DO -- give own scoretype

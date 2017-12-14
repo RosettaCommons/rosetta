@@ -27,7 +27,7 @@ namespace scoring {
 
 static basic::Tracer TR("protocols.legacy_sewing.scoring.LegacyBlosumScorer");
 
-LegacyBlosumScorer::LegacyBlosumScorer() {}
+LegacyBlosumScorer::LegacyBlosumScorer() = default;
 
 core::Real
 LegacyBlosumScorer::score( AssemblyCOP /*assembly*/ ){

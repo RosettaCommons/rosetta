@@ -147,7 +147,7 @@ Size DisulfideFile::resnum_to_rosetta_num(Pose const& pose, ResNum const& resnum
 
 	//PDB number
 	PDBInfoCOP info( pose.pdb_info() );
-	if ( info == 0 ) {
+	if ( info == nullptr ) {
 		TR.Error << "PDB Number expected from format, but no PDB Info present."
 			<< std::endl;
 		utility_exit();

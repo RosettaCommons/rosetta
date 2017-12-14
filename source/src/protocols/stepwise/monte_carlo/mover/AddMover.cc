@@ -33,6 +33,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
@@ -79,14 +80,13 @@ namespace mover {
 //////////////////////////////////////////////////////////////////////////
 //constructor!
 AddMover::AddMover( scoring::ScoreFunctionCOP scorefxn ):
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	rna_torsion_mover_( rna::RNA_TorsionMoverOP( new rna::RNA_TorsionMover ) )
 {}
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-AddMover::~AddMover()
-{}
+AddMover::~AddMover() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void
@@ -472,7 +472,7 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 void
 AddMover::sample_by_swa( pose::Pose & pose, Size const res_to_add ) const{
 	using namespace core::pose::full_model_info;
-	runtime_assert( stepwise_modeler_ != 0 );
+	runtime_assert( stepwise_modeler_ != nullptr );
 	stepwise_modeler_->set_moving_res_and_reset( res_to_add );
 	if ( !minimize_single_res_ ) stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 

@@ -40,9 +40,7 @@ static basic::Tracer TR( "core.indexed_structure_store.StructureStoreManager" );
 using namespace basic::options;
 using utility::vector1;
 
-StructureStoreManager::StructureStoreManager()
-{
-}
+StructureStoreManager::StructureStoreManager() = default;
 
 FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_name)
 {

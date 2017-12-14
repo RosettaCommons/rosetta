@@ -113,7 +113,7 @@ SymAtomTreeMultifunc::dump( Multivec const & vars, Multivec const & /*vars2*/ ) 
 	}
 
 	if ( check_hbonds ) {
-		scoring::hbonds::HBondSet const & hbond_set
+		auto const & hbond_set
 			( static_cast< scoring::hbonds::HBondSet const & >
 			( pose_.energies().data().get( scoring::EnergiesCacheableDataType::HBOND_SET )));
 

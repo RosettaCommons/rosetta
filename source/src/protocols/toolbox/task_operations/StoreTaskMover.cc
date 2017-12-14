@@ -47,17 +47,17 @@ namespace toolbox {
 namespace task_operations {
 
 // @brief default constructor
-StoreTaskMover::StoreTaskMover() {}
+StoreTaskMover::StoreTaskMover() = default;
 
 // @brief destructor
-StoreTaskMover::~StoreTaskMover() {}
+StoreTaskMover::~StoreTaskMover() = default;
 
 void
 StoreTaskMover::apply( core::pose::Pose & pose )
 {
 
 	// Create the PackerTask using the TaskFactory created in parse_my_tag
-	runtime_assert( task_factory_ != 0 );
+	runtime_assert( task_factory_ != nullptr );
 	core::pack::task::PackerTaskOP  task = task_factory_->create_task_and_apply_taskoperations( pose );
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?

@@ -39,7 +39,7 @@ class GrowLigand : public protocols::moves::Mover{
 
 public:
 	GrowLigand();
-	GrowLigand(std::string chain);
+	GrowLigand(std::string const & chain);
 	~GrowLigand() override;
 	GrowLigand(GrowLigand const & that);
 	void apply( core::pose::Pose & pose ) override;

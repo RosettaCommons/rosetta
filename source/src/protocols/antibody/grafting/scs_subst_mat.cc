@@ -93,7 +93,7 @@ void SCS_SubstitutionMatrix::select_template(
 	core::sequence::MatrixScoringScheme substitution_matrix_reader;
 	substitution_matrix_reader.read_from_database( subst_mat_name ); // probably makes more sense to lazily load and keep these around
 
-	typedef utility::vector1< utility::vector1< core::Real > > SubstitionMatrix;
+	using SubstitionMatrix = utility::vector1<utility::vector1<core::Real> >;
 	SubstitionMatrix subst_mat = substitution_matrix_reader.scoring_matrix();
 
 	std::map< string, std::map<string, core::Real> > search_results;

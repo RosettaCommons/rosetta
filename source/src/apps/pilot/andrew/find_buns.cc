@@ -162,8 +162,8 @@ write_buns_and_dots_kinemage(
 	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) rotamer_dots[ ii ]->write_dot_kinemage( fout );
 	fout << "@group { BUns } dominant\n";
 	fout << "@balllist radius= 0.6 color= white\n";
-	for ( std::list< core::id::AtomID >::const_iterator iter = buns.begin(); iter != buns.end(); ++iter ) {
-		fout << "{" << iter->rsd() << " " << pose.residue( iter->rsd() ).atom_name( iter->atomno() ) << "} P " << pose.xyz( *iter ).x() << " " << pose.xyz( *iter ).y() << " " << pose.xyz( *iter ).z() << "\n";
+	for ( auto bun : buns ) {
+		fout << "{" << bun.rsd() << " " << pose.residue( bun.rsd() ).atom_name( bun.atomno() ) << "} P " << pose.xyz( bun ).x() << " " << pose.xyz( bun ).y() << " " << pose.xyz( bun ).z() << "\n";
 	}
 
 

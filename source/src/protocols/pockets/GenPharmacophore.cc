@@ -137,7 +137,7 @@ void SmallMol::add_atom(string line) {
 }
 
 void SmallMol::update_center() {
-	int size = (int)coordinates.size();
+	auto size = (int)coordinates.size();
 	core::Real total_x = 0.0, total_y = 0.0, total_z = 0.0;
 	for ( int i = 0; i < size; i++ ) {
 		vector<core::Real> &current_atom = coordinates[i];

@@ -136,7 +136,7 @@ core::Size current_replica() {
 	JobDistributor* jd
 		= JobDistributor::get_instance();
 	if ( jd ) {
-		MPIMultiCommJobDistributor* mpi_jd = dynamic_cast< MPIMultiCommJobDistributor* >( jd );
+		auto* mpi_jd = dynamic_cast< MPIMultiCommJobDistributor* >( jd );
 		if ( mpi_jd ) {
 			return mpi_jd->sub_rank()+1;
 		}

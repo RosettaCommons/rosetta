@@ -60,12 +60,7 @@ AddHydrogen::AddHydrogen(core::Size const residue_index, core::Size const connec
 	Mover::type( "AddHydrogen" );
 }
 
-AddHydrogen::AddHydrogen(AddHydrogen const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	residue_index_(that.residue_index_),
-	connection_id_(that.connection_id_)
-{}
+AddHydrogen::AddHydrogen(AddHydrogen const & /*that*/) = default;
 
 AddHydrogen::~AddHydrogen() = default;
 

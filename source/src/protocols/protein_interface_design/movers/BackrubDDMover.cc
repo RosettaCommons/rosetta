@@ -96,8 +96,8 @@ namespace movers {
 
 static basic::Tracer TR( "protocols.protein_interface_design.BackrubDDMover" );
 
-typedef core::Real Real;
-typedef core::pose::Pose Pose;
+using Real = core::Real;
+using Pose = core::pose::Pose;
 
 // XRW TEMP std::string
 // XRW TEMP BackrubDDMoverCreator::keyname() const
@@ -174,7 +174,7 @@ BackrubDDMover::BackrubDDMover
 	residues_ = ResidueSelectorOP( new ResidueIndexSelector( residues ) );
 }
 
-BackrubDDMover::~BackrubDDMover() {}
+BackrubDDMover::~BackrubDDMover() = default;
 
 protocols::moves::MoverOP
 BackrubDDMover::clone() const {
@@ -320,12 +320,12 @@ BackrubDDMover::apply( Pose & pose )
 	//as well as 1 before and 1 residue after that one
 	using namespace core::scoring;
 	for ( utility::vector1< core::Size > ::const_iterator prev_rep = prevent_repacking_.begin(); prev_rep!=prevent_repacking_.end(); ++prev_rep ) {
-		utility::vector1< core::Size >::iterator it = std::find( resnums.begin(), resnums.end(),*prev_rep );
+		auto it = std::find( resnums.begin(), resnums.end(),*prev_rep );
 		if ( it != resnums.end() ) {
 			resnums.erase( it );
-			utility::vector1< core::Size >::iterator it_next = std::find( resnums.begin(), resnums.end(),*prev_rep+1 );
+			auto it_next = std::find( resnums.begin(), resnums.end(),*prev_rep+1 );
 			if ( it_next != resnums.end() ) resnums.erase( it_next );
-			utility::vector1< core::Size >::iterator it_previous = std::find( resnums.begin(), resnums.end(),*prev_rep-1 );
+			auto it_previous = std::find( resnums.begin(), resnums.end(),*prev_rep-1 );
 			if ( it_previous != resnums.end() ) resnums.erase( it_previous );
 		}
 	}
@@ -414,8 +414,8 @@ void BackrubDDMover::parse_my_tag(
 	core::pose::Pose const & )
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ));
-	backrub_partner1_ = tag->getOption<bool>( "partner1", 0 );
-	backrub_partner2_ = tag->getOption<bool>( "partner2", 1 );
+	backrub_partner1_ = tag->getOption<bool>( "partner1", false );
+	backrub_partner2_ = tag->getOption<bool>( "partner2", true );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff", 8.0 );
 	backrub_moves_ = tag->getOption<core::Size>( "moves", 1000 );
 	sidechain_move_prob_ = tag->getOption<core::Real>( "sc_move_probability", 0.25 );
@@ -431,9 +431,8 @@ void BackrubDDMover::parse_my_tag(
 	scorefxn_repack_->set_energy_method_options( emo );
 
 	utility::vector0< TagCOP > const & backrub_tags( tag->getTags() );
-	for ( utility::vector0< TagCOP >::const_iterator br_it=backrub_tags.begin(); br_it!=backrub_tags.end(); ++br_it ) {
+	for ( auto br_tag_ptr : backrub_tags ) {
 		using namespace core::select::residue_selector;
-		TagCOP const br_tag_ptr = *br_it;
 		if ( br_tag_ptr->getName() == "residue" ) {
 			ResidueSelectorOP res_select( new ResidueIndexSelector( core::pose::get_resnum_string( br_tag_ptr ) ) );
 			add_selector( res_select );

@@ -83,7 +83,7 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 
 	// symmetrize?
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & symm_conf (
+		auto const & symm_conf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -194,7 +194,7 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 
 	// symmetrize?
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & symm_conf (
+		auto const & symm_conf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 

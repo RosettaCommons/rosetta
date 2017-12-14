@@ -533,8 +533,8 @@ parse_length_string( std::string const & len_str )
 		if ( ranges.size() == 1 ) {
 			retval.push_back( boost::lexical_cast< core::Size >( ranges[1] ) );
 		} else if ( ranges.size() == 2 ) {
-			core::Size const start( boost::lexical_cast< core::Size >( ranges[1] ) );
-			core::Size const end( boost::lexical_cast< core::Size >( ranges[2] ) );
+			auto const start( boost::lexical_cast< core::Size >( ranges[1] ) );
+			auto const end( boost::lexical_cast< core::Size >( ranges[2] ) );
 			for ( core::Size i=start; i<=end; ++i ) {
 				retval.push_back( i );
 			}
@@ -559,7 +559,7 @@ extract_int( core::Real & num, core::Size const m, core::Size const n )
 	TR.Debug << "num: " << num << " m: " << m << " n: " << n << std::endl;
 	core::Size const len( n-m+1 );
 	num *= len;
-	int const val( static_cast< int >(num) );
+	auto const val( static_cast< int >(num) );
 	num -= val;
 	TR.Debug << "num: " << num << " len: " << len << " val: " << val << std::endl;
 	debug_assert( val >= 0 );
@@ -674,7 +674,7 @@ get_resid(
 	std::string const & resid_str )
 {
 	std::stringstream target_stream( resid_str );
-	core::Size const target_resid = boost::lexical_cast< core::Size >( perm.substitute_variables( target_stream ) );
+	auto const target_resid = boost::lexical_cast< core::Size >( perm.substitute_variables( target_stream ) );
 	if ( ( target_resid == 0 ) || ( target_resid > perm.pose_length() ) ) {
 		std::stringstream msg;
 		msg << "get_resid(): Invalid residue string (" << resid_str
@@ -797,7 +797,7 @@ symmetric_secstruct( core::pose::Pose const & pose, std::string const & asymm_se
 	using core::kinematics::FoldTree;
 
 	Conformation const & conf( pose.conformation() );
-	SymmetricConformation const & symm_conf( dynamic_cast< SymmetricConformation const & >( conf ) );
+	auto const & symm_conf( dynamic_cast< SymmetricConformation const & >( conf ) );
 	SymmetryInfo const & symm_info( *symm_conf.Symmetry_Info() );
 	core::Size const nres_subunit( symm_info.num_independent_residues() );
 	core::Size const nsubunits( symm_info.subunits() );
@@ -846,7 +846,7 @@ symmetric_fold_tree( core::pose::Pose const & pose, core::kinematics::FoldTree c
 	using core::kinematics::FoldTree;
 
 	Conformation const & conf( pose.conformation() );
-	SymmetricConformation const & symm_conf( dynamic_cast< SymmetricConformation const & >( conf ) );
+	auto const & symm_conf( dynamic_cast< SymmetricConformation const & >( conf ) );
 	SymmetryInfo const & symm_info( *symm_conf.Symmetry_Info() );
 	core::Size const nres_subunit( symm_info.num_independent_residues() );
 	core::Size const nsubunits( symm_info.subunits() );
@@ -941,7 +941,7 @@ symmetric_residue_subset( core::pose::Pose const & pose, core::select::residue_s
 	using core::kinematics::FoldTree;
 
 	Conformation const & conf( pose.conformation() );
-	SymmetricConformation const & symm_conf( dynamic_cast< SymmetricConformation const & >( conf ) );
+	auto const & symm_conf( dynamic_cast< SymmetricConformation const & >( conf ) );
 	SymmetryInfo const & symm_info( *symm_conf.Symmetry_Info() );
 	core::Size const nres_subunit( symm_info.num_independent_residues() );
 	core::Size const nsubunits( symm_info.subunits() );

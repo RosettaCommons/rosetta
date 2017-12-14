@@ -132,9 +132,9 @@ main( int argc, char * argv [] )
 
 				protocols::relax::FastRelax relax( scorefxn,  option[ OptionKeys::relax::sequence_file ]() );
 				TR << "BATCHSIZE: " <<  relax_structs.size() << std::endl;
-				long starttime = time(NULL);
+				long starttime = time(nullptr);
 				relax.batch_apply( relax_structs );
-				long endtime = time(NULL);
+				long endtime = time(nullptr);
 				TR << "TIME: " << endtime - starttime << " seconds" << std::endl;
 
 				// Now save the resulting decoys

@@ -106,7 +106,7 @@ ConstraintSet &
 MaxSeqSepConstraintSet::operator = ( ConstraintSet const & rhs )
 {
 	if ( this != &rhs ) {
-		MaxSeqSepConstraintSet const * msscs_rhs = dynamic_cast< MaxSeqSepConstraintSet const * > ( & rhs );
+		auto const * msscs_rhs = dynamic_cast< MaxSeqSepConstraintSet const * > ( & rhs );
 		if ( ! msscs_rhs ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "MaxSeqSepConstraintSet handed a non MaxSeqSepConstraintSet in operator =" );
 		}
@@ -132,7 +132,7 @@ MaxSeqSepConstraintSet::clone() const {
 }
 
 void MaxSeqSepConstraintSet::detached_copy( ConstraintSet const & src ) {
-	MaxSeqSepConstraintSet const * msscs_src = dynamic_cast< MaxSeqSepConstraintSet const * > ( & src );
+	auto const * msscs_src = dynamic_cast< MaxSeqSepConstraintSet const * > ( & src );
 	if ( ! msscs_src ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "MaxSeqSepConstraintSet handed a non MaxSeqSepConstraintSet in detatched_copy" );
 	}
@@ -153,7 +153,7 @@ MaxSeqSepConstraintSet::detached_clone() const
 bool
 MaxSeqSepConstraintSet::same_type_as_me( ConstraintSet const & other, bool recurse /* = true */ ) const
 {
-	MaxSeqSepConstraintSet const * msscs_other = dynamic_cast< MaxSeqSepConstraintSet const * > ( & other );
+	auto const * msscs_other = dynamic_cast< MaxSeqSepConstraintSet const * > ( & other );
 	if ( ! msscs_other ) return false;
 	if ( recurse ) {
 		return other.same_type_as_me( *this, false );
@@ -246,7 +246,7 @@ MaxSeqSepConstraintSet::eval_non_residue_pair_energy(
 	}
 }
 
-MaxSeqSepConstraintSet::MaxSeqSepConstraintSet() {}
+MaxSeqSepConstraintSet::MaxSeqSepConstraintSet() = default;
 
 } //abinitio
 } //protocols

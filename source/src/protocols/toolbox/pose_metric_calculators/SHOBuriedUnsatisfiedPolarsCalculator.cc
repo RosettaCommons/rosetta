@@ -24,6 +24,7 @@
 #include <core/id/AtomID.hh>
 #include <core/chemical/AtomType.hh>
 #include <basic/MetricValue.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -71,7 +72,7 @@ static basic::Tracer TR("protocols.toolbox.pose_metric_calculators.SHOBuriedUnsa
 ///  with any scoring functions using SHO.
 ///
 SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
-	core::Real sho_cutoff, std::string tgt_amino, std::string tgt_atom,
+	core::Real sho_cutoff, std::string const & tgt_amino, std::string const & tgt_atom,
 	core::scoring::ScoreFunctionCOP sfxn) :
 
 	sho_meth_(create_ExactSHOEnergy_from_cmdline(sfxn->energy_method_options())),
@@ -97,7 +98,7 @@ SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
 ///   with any scoring functions using SHO.
 ///
 SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
-	Real sho_cutoff, utility::vector1<Size> const& tgt_res_idxs,
+	Real sho_cutoff, utility::vector1<Size> const & tgt_res_idxs,
 	core::scoring::ScoreFunctionCOP sfxn) :
 
 	sho_meth_(create_ExactSHOEnergy_from_cmdline(sfxn->energy_method_options())),
@@ -177,7 +178,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 		core::conformation::Residue const& rsd = ps.residue(i);
 
 		// donors
-		for ( core::chemical::AtomIndices::const_iterator
+		for ( auto
 				hnum = rsd.Hpos_polar().begin(),
 				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 
@@ -187,7 +188,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 		}
 
 		// acceptors
-		for ( core::chemical::AtomIndices::const_iterator
+		for ( auto
 				anum = rsd.accpt_pos().begin(),
 				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 
@@ -257,20 +258,14 @@ void SHOBuriedUnsatisfiedPolarsCalculator::residue_partition(
 	core::conformation::Residue const& rsd = ps.residue(tgtidx);
 
 	// donors
-	for ( core::chemical::AtomIndices::const_iterator
-			hnum = rsd.Hpos_polar().begin(),
-			hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+	for ( unsigned long h : rsd.Hpos_polar() ) {
 
-		Size const h( *hnum );
 		assign_atom(AtomID(h, tgtidx));
 	}
 
 	// acceptors
-	for ( core::chemical::AtomIndices::const_iterator
-			anum = rsd.accpt_pos().begin(),
-			anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
+	for ( unsigned long acc : rsd.accpt_pos() ) {
 
-		Size const acc( *anum );
 		assign_atom(AtomID(acc, tgtidx));
 	}
 }

@@ -14,7 +14,7 @@
 
 #include <core/scoring/func/AmberPeriodicFunc.hh>
 
-#include <math.h>
+#include <cmath>
 
 #include <iostream>
 
@@ -39,7 +39,7 @@ bool AmberPeriodicFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	AmberPeriodicFunc const & other_downcast( static_cast< AmberPeriodicFunc const & > (other) );
+	auto const & other_downcast( static_cast< AmberPeriodicFunc const & > (other) );
 	if ( x0_         != other_downcast.x0_         ) return false;
 	if ( k_          != other_downcast.k_          ) return false;
 	if ( n_periodic_ != other_downcast.n_periodic_ ) return false;

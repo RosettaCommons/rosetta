@@ -112,10 +112,10 @@ Real RmsdEvaluator::apply( core::pose::Pose& pose ) const {
 }
 
 
-SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, std::list< Size >  selection, std::string tag, bool CAonly )
+SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, std::list< Size > const & selection, std::string tag, bool CAonly )
 : evaluation::SingleValuePoseEvaluator< Real >( "rms"+tag ),
 	rmsd_pose_(std::move( pose )),
-	selection_(std::move( selection )),
+	selection_( selection ),
 	tag_ ( tag ),
 	CAonly_( CAonly )
 {
@@ -175,10 +175,10 @@ SelectRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 }
 
 SelectGdtEvaluator::~SelectGdtEvaluator()= default;
-SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, std::list< Size >  selection, std::string tag )
+SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, std::list< Size > const & selection, std::string tag )
 : evaluation::SingleValuePoseEvaluator< Real >( "gdtmm"+tag ),
 	rmsd_pose_(std::move( pose )),
-	selection_(std::move( selection )),
+	selection_( selection ),
 	tag_ ( tag )
 {
 
@@ -225,10 +225,10 @@ SelectGdtEvaluator::apply( core::pose::Pose& pose ) const {
 }
 
 
-SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, std::list< Size >  selection, std::string tag, core::Real rmsd_threshold )
+SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, std::list< Size > const & selection, std::string tag, core::Real rmsd_threshold )
 : evaluation::SingleValuePoseEvaluator< Real >( "maxsub"+tag ),
 	rmsd_pose_(std::move( pose )),
-	selection_(std::move( selection )),
+	selection_( selection ),
 	tag_ ( tag ),
 	rmsd_threshold_( rmsd_threshold )
 {

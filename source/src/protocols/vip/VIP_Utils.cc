@@ -34,7 +34,7 @@ std::string base_name(const std::string& str) {
 	}
 	return str.substr(begin,end);}
 
-std::string get_out_tag(std::string fname) {
+std::string get_out_tag(std::string const & fname) {
 	std::string base = base_name(fname);
 	std::transform( base.begin(), base.end(), base.begin(), tolower );
 	if ( system( ("mkdir -p out/" + base.substr(1,2)).c_str() ) == -1 ) {

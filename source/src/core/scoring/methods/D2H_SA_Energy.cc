@@ -118,8 +118,8 @@ D2H_SA_Energy::D2H_SA_Energy() :
 	}
 	// std::cout << sd << " " << mean << " "<< sd2 << " " << "\n";
 	utility::vector1 < core::Size > keys;
-	for ( std::map<Size, Real>::iterator i = data_map.begin(); i != data_map.end(); ++i ) {
-		keys.push_back(i->first);
+	for ( auto & i : data_map ) {
+		keys.push_back(i.first);
 	}
 	sort(keys.begin(), keys.end());
 	for ( Size i=1; i<=keys.size(); i++ ) {
@@ -170,7 +170,7 @@ D2H_SA_Energy::finalize_total_energy(
 	Size chain_for_rsa(1);
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		using namespace core::conformation::symmetry;
-		SymmetricConformation const & symm_conf(dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+		auto const & symm_conf(dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		chain_for_rsa=pose.residue(symm_info->bb_follows(1)).chain();
 		//for(Size i=1;i<=nres;i++) {

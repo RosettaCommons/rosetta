@@ -40,7 +40,7 @@ public:
 	MSDMover();
 
 	MSDMover( protocols::moves::MoverOP mover,
-		utility::vector1< std::string > resfiles);
+		utility::vector1< std::string > const & resfiles);
 
 	~MSDMover() override;
 

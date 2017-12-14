@@ -52,7 +52,7 @@ void print_chis( std::ostream & out, ResidueType const & res );
 
 
 /// @brief Replaces the deprecated "_p:" linker connecting ResidueType base names with their patch names with ":".
-std::string fixup_patches( std::string string_in );
+std::string fixup_patches( std::string const & string_in );
 
 
 /// @brief  Are these two residues patched in exactly the same way, ignoring any VariantTypes in the list of exceptions?

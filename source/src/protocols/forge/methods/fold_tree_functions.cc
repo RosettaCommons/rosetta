@@ -99,17 +99,17 @@ closest_larger_peptide_vertex(
 
 	std::vector< Size > peptide_vertices;
 
-	for ( FoldTree::const_iterator e = ft.begin(), ee = ft.end(); e != ee; ++e ) {
-		if ( e->label() == Edge::PEPTIDE ) {
-			peptide_vertices.push_back( e->start() );
-			peptide_vertices.push_back( e->stop() );
+	for ( auto const & e : ft ) {
+		if ( e.label() == Edge::PEPTIDE ) {
+			peptide_vertices.push_back( e.start() );
+			peptide_vertices.push_back( e.stop() );
 		}
 	}
 
 	// run through in sorted order
 	Size count = 0;
 	std::sort( peptide_vertices.begin(), peptide_vertices.end() );
-	std::vector< Size >::iterator last = std::unique( peptide_vertices.begin(), peptide_vertices.end() );
+	auto last = std::unique( peptide_vertices.begin(), peptide_vertices.end() );
 	peptide_vertices.erase( last, peptide_vertices.end() );
 
 	for ( std::vector< Size >::const_iterator i = peptide_vertices.begin(), ie = peptide_vertices.end(); i != ie; ++i ) {
@@ -145,17 +145,17 @@ closest_smaller_peptide_vertex(
 
 	std::vector< Size > peptide_vertices;
 
-	for ( FoldTree::const_iterator e = ft.begin(), ee = ft.end(); e != ee; ++e ) {
-		if ( e->label() == Edge::PEPTIDE ) {
-			peptide_vertices.push_back( e->start() );
-			peptide_vertices.push_back( e->stop() );
+	for ( auto const & e : ft ) {
+		if ( e.label() == Edge::PEPTIDE ) {
+			peptide_vertices.push_back( e.start() );
+			peptide_vertices.push_back( e.stop() );
 		}
 	}
 
 	// run through in backwards sorted order
 	Size count = 0;
 	std::sort( peptide_vertices.begin(), peptide_vertices.end() );
-	std::vector< Size >::iterator last = std::unique( peptide_vertices.begin(), peptide_vertices.end() );
+	auto last = std::unique( peptide_vertices.begin(), peptide_vertices.end() );
 	peptide_vertices.erase( last, peptide_vertices.end() );
 	for ( std::vector< Size >::const_reverse_iterator i = peptide_vertices.rbegin(), ie = peptide_vertices.rend(); i != ie; ++i ) {
 		if ( *i < v ) {
@@ -180,8 +180,8 @@ vertex_exists(
 	using core::Size;
 	using core::kinematics::FoldTree;
 
-	for ( FoldTree::const_iterator e = ft.begin(), ee = ft.end(); e != ee; ++e ) {
-		if ( static_cast< Size >( e->start() ) == v || static_cast< Size >( e->stop() ) == v ) {
+	for ( auto const & e : ft ) {
+		if ( static_cast< Size >( e.start() ) == v || static_cast< Size >( e.stop() ) == v ) {
 			return true;
 		}
 	}
@@ -203,13 +203,13 @@ utility::vector1< core::kinematics::Edge > jumps_connected_to_position(
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
-	typedef utility::vector1< Edge > Edges;
+	using Edges = utility::vector1<Edge>;
 
 	Edges jump_edges;
 
-	for ( FoldTree::const_iterator e = ft.begin(), ee = ft.end(); e != ee; ++e ) {
-		if ( e->label() > 0 && ( static_cast< Size >( e->start() ) == pos || static_cast< Size >( e->stop() ) == pos ) ) {
-			jump_edges.push_back( *e );
+	for ( auto const & e : ft ) {
+		if ( e.label() > 0 && ( static_cast< Size >( e.start() ) == pos || static_cast< Size >( e.stop() ) == pos ) ) {
+			jump_edges.push_back( e );
 		}
 	}
 
@@ -235,11 +235,11 @@ core::Size find_connecting_jump(
 
 	// add all regular edges sans jumps to union-find to construct continuous segments
 	DisjointSets uf( ft.nres() );
-	for ( FoldTree::const_iterator e = ft.begin(), ee = ft.end(); e != ee; ++e ) {
-		Edge edge( *e );
+	for ( auto const & e : ft ) {
+		Edge edge( e );
 		order( edge );
 
-		if ( e->label() < 0 ) {
+		if ( e.label() < 0 ) {
 			union_interval( edge.start(), edge.start(), edge.stop(), uf );
 		}
 	}
@@ -274,7 +274,7 @@ bool remove_cutpoint(
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
-	typedef utility::vector1< Edge > EdgeList;
+	using EdgeList = utility::vector1<Edge>;
 
 	if ( !ft.is_cutpoint( v ) ) {
 		return false;
@@ -287,11 +287,11 @@ bool remove_cutpoint(
 	DisjointSets uf( ft.nres() );
 	EdgeList jump_edges;
 
-	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( ft ).begin(), ee = static_cast< FoldTree const & >( ft ).end(); e != ee; ++e ) {
-		Edge edge( *e );
+	for ( auto const & e : static_cast< FoldTree const & >( ft ) ) {
+		Edge edge( e );
 		order( edge );
 
-		if ( e->label() > 0 ) {
+		if ( e.label() > 0 ) {
 			jump_edges.push_back( edge );
 		} else {
 			union_interval( edge.start(), edge.start(), edge.stop(), uf );
@@ -338,7 +338,7 @@ void remove_cutpoints(
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
-	typedef utility::vector1< Edge > EdgeList;
+	using EdgeList = utility::vector1<Edge>;
 
 	// first:
 	// - add all regular edges sans jumps to union-find to construct continuous
@@ -347,11 +347,11 @@ void remove_cutpoints(
 	DisjointSets uf( ft.nres() );
 	EdgeList jump_edges;
 
-	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( ft ).begin(), ee = static_cast< FoldTree const & >( ft ).end(); e != ee; ++e ) {
-		Edge edge( *e );
+	for ( auto const & e : static_cast< FoldTree const & >( ft ) ) {
+		Edge edge( e );
 		order( edge );
 
-		if ( e->label() > 0 ) {
+		if ( e.label() > 0 ) {
 			jump_edges.push_back( edge );
 		} else {
 			union_interval( edge.start(), edge.start(), edge.stop(), uf );
@@ -359,9 +359,8 @@ void remove_cutpoints(
 	}
 
 	// run through all cutpoints
-	for ( utility::vector1< Size >::const_iterator i = cutpoints.begin(), ie = cutpoints.end(); i != ie; ++i ) {
+	for ( unsigned long v : cutpoints ) {
 		// find the representatives of section containing cutpoint and cutpoint+1
-		Size const v = *i;
 		Size const left_root = uf.ds_find( v );
 		Size const right_root = uf.ds_find( v + 1 );
 
@@ -409,8 +408,8 @@ shift_jumps(
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
-	typedef utility::vector1< Edge > EdgeList;
-	typedef utility::vector1< Size > NodeList;
+	using EdgeList = utility::vector1<Edge>;
+	using NodeList = utility::vector1<Size>;
 	typedef std::map< Size, Size > Root2Jump;
 	typedef std::map< Size, NodeList > Root2Nodes;
 
@@ -420,15 +419,15 @@ shift_jumps(
 	EdgeList jump_edges;
 
 	// separate edges into categories; construct continuous segments using union-find
-	for ( FoldTree::const_iterator e = ft.begin(), ee = ft.end(); e != ee; ++e ) {
-		if ( e->label() > 0 ) { // jump edge
+	for ( auto const & e : ft ) {
+		if ( e.label() > 0 ) { // jump edge
 
-			jump_edges.push_back( *e );
+			jump_edges.push_back( e );
 			order( jump_edges.back() );
 
 		} else { // regular edge
 
-			regular_edges.push_back( *e );
+			regular_edges.push_back( e );
 			order( regular_edges.back() );
 			union_interval( regular_edges.back().start(), regular_edges.back().start(), regular_edges.back().stop(), uf );
 
@@ -438,8 +437,8 @@ shift_jumps(
 	// pick a single jump point per segment
 	Root2Jump r2j;
 	Root2Nodes r2n = uf.sets();
-	for ( Root2Nodes::iterator i = r2n.begin(), ie = r2n.end(); i != ie; ++i ) {
-		NodeList & nodes = i->second;
+	for ( auto & i : r2n ) {
+		NodeList & nodes = i.second;
 		NodeList fixed;
 
 		// find all useable fixed positions for jump
@@ -451,28 +450,28 @@ shift_jumps(
 
 		// pick fixed position for jump
 		if ( !fixed.empty() ) {
-			r2j[ i->first ] = fixed[ numeric::random::rg().random_range( 1, fixed.size() ) ];
+			r2j[ i.first ] = fixed[ numeric::random::rg().random_range( 1, fixed.size() ) ];
 		}
 	}
 
 	// swap all jump points, split any necessary regular edges
-	for ( EdgeList::iterator e = jump_edges.begin(), ee = jump_edges.end(); e != ee; ++e ) {
-		Root2Jump::const_iterator new_start = r2j.find( uf.ds_find( e->start() ) );
-		Root2Jump::const_iterator new_stop = r2j.find( uf.ds_find( e->stop() ) );
+	for ( auto & jump_edge : jump_edges ) {
+		Root2Jump::const_iterator new_start = r2j.find( uf.ds_find( jump_edge.start() ) );
+		Root2Jump::const_iterator new_stop = r2j.find( uf.ds_find( jump_edge.stop() ) );
 
 		// swap start
 		if ( new_start != r2j.end() ) {
-			e->start() = new_start->second;
+			jump_edge.start() = new_start->second;
 		}
 
 		// swap stop
 		if ( new_stop != r2j.end() ) {
-			e->stop() = new_stop->second;
+			jump_edge.stop() = new_stop->second;
 		}
 
 		// split facets if necessary
-		add_vertex( e->start(), regular_edges );
-		add_vertex( e->stop(), regular_edges );
+		add_vertex( jump_edge.start(), regular_edges );
+		add_vertex( jump_edge.stop(), regular_edges );
 	}
 
 	// add all regular edges
@@ -516,7 +515,7 @@ fold_tree_from_pose(
 	using core::kinematics::FoldTree;
 
 	//typedef utility::vector1< Edge > Edges;
-	typedef utility::vector1< Size > Nodes;
+	using Nodes = utility::vector1<Size>;
 	typedef std::map< Size, Nodes > Root2Nodes;
 
 	FoldTree ft;
@@ -581,8 +580,8 @@ fold_tree_from_pose(
 
 	// run through each component, adding polymer edges and assigning jumps
 	Size jump_count = 0;
-	for ( Root2Nodes::iterator i = r2n.begin(), ie = r2n.end(); i != ie; ++i ) {
-		Nodes & nodes = i->second;
+	for ( auto & i : r2n ) {
+		Nodes & nodes = i.second;
 		std::sort( nodes.begin(), nodes.end() );
 		bool const component_contains_ft_root = std::find( nodes.begin(), nodes.end(), ft_root ) != nodes.end();
 
@@ -627,8 +626,8 @@ fold_tree_from_pose(
 				}
 
 				Root2Nodes indexed_r2n = indexed_uf.sets();
-				for ( Root2Nodes::iterator j = indexed_r2n.begin(), je = indexed_r2n.end(); j != je; ++j ) {
-					Nodes subsection = j->second;
+				for ( auto & j : indexed_r2n ) {
+					Nodes subsection = j.second;
 					std::sort( subsection.begin(), subsection.end() );
 					Size const ss_begin = polymer_vertices[ *subsection.begin() ];
 					Size const ss_end = polymer_vertices[ *subsection.rbegin() ];
@@ -790,8 +789,7 @@ merge(
 	FoldTree new_ft = left_tree;
 
 	// add all shifted edges from right_tree
-	for ( FoldTree::const_iterator r = right_tree.begin(), re = right_tree.end(); r != re; ++r ) {
-		Edge new_edge = *r;
+	for ( auto new_edge : right_tree ) {
 		new_edge.start() += left_tree.nres();
 		new_edge.stop() += left_tree.nres();
 		if ( new_edge.label() > 0 ) {
@@ -806,7 +804,7 @@ merge(
 
 	// split edge originating from left tree
 	if ( !vertex_exists( jleft, new_ft ) ) {
-		FoldTree::const_iterator f = facet_containing_position(
+		auto f = facet_containing_position(
 			jleft,
 			static_cast< FoldTree const & >( new_ft ).begin(),
 			static_cast< FoldTree const & >( new_ft ).end(),
@@ -822,7 +820,7 @@ merge(
 
 	// split edge originating from right tree
 	if ( !vertex_exists( jright, new_ft ) ) {
-		FoldTree::const_iterator f = facet_containing_position(
+		auto f = facet_containing_position(
 			jright,
 			static_cast< FoldTree const & >( new_ft ).begin(),
 			static_cast< FoldTree const & >( new_ft ).end(),
@@ -883,7 +881,7 @@ replace(
 	using core::kinematics::MoveMap;
 
 	//typedef utility::vector1< Edge > EdgeList;
-	typedef utility::vector1< Size > NodeList;
+	using NodeList = utility::vector1<Size>;
 	typedef std::map< Size, NodeList > Root2Nodes;
 
 	debug_assert( replace_begin <= replace_end );
@@ -909,14 +907,13 @@ replace(
 	FoldTree new_ft;
 
 	// left section
-	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( aft ).begin(),
-			ee = static_cast< FoldTree const & >( aft ).end(); e != ee; ++e ) {
-		if ( e->label() < 0 && e->start() < replace_begin && e->stop() < replace_begin ) {
-			Edge new_edge = *e;
+	for ( auto const & e : static_cast< FoldTree const & >( aft ) ) {
+		if ( e.label() < 0 && e.start() < replace_begin && e.stop() < replace_begin ) {
+			Edge new_edge = e;
 			order( new_edge ); // for union_interval
 
 			new_ft.add_edge( new_edge );
-			tracking_ft.delete_edge( *e );
+			tracking_ft.delete_edge( e );
 
 			union_interval( new_edge.start(), new_edge.start(), new_edge.stop(), uf );
 		}
@@ -925,16 +922,15 @@ replace(
 	TR.Debug << "new_ft after left: " << new_ft << std::endl;
 
 	// right section, shifted to take into account replacement tree
-	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( aft ).begin(),
-			ee = static_cast< FoldTree const & >( aft ).end(); e != ee; ++e ) {
-		if ( e->label() < 0 && e->start() >= replace_begin && e->stop() >= replace_begin ) {
-			Edge new_edge = *e;
+	for ( auto const & e : static_cast< FoldTree const & >( aft ) ) {
+		if ( e.label() < 0 && e.start() >= replace_begin && e.stop() >= replace_begin ) {
+			Edge new_edge = e;
 			order( new_edge ); // for union_interval
 			new_edge.start() += replacement_tree.nres();
 			new_edge.stop() += replacement_tree.nres();
 
 			new_ft.add_edge( new_edge );
-			tracking_ft.delete_edge( *e );
+			tracking_ft.delete_edge( e );
 
 			union_interval( new_edge.start(), new_edge.start(), new_edge.stop(), uf );
 		}
@@ -943,10 +939,9 @@ replace(
 	TR.Debug << "new_ft after right: " << new_ft << std::endl;
 
 	// jumps
-	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( aft ).begin(),
-			ee = static_cast< FoldTree const & >( aft ).end(); e != ee; ++e ) {
-		if ( e->label() > 0 ) {
-			Edge new_edge = *e;
+	for ( auto const & e : static_cast< FoldTree const & >( aft ) ) {
+		if ( e.label() > 0 ) {
+			Edge new_edge = e;
 
 			if ( new_edge.start() >= replace_begin ) {
 				new_edge.start() += replacement_tree.nres();
@@ -957,7 +952,7 @@ replace(
 			}
 
 			new_ft.add_edge( new_edge );
-			tracking_ft.delete_edge( *e );
+			tracking_ft.delete_edge( e );
 
 			uf.ds_union( new_edge.start(), new_edge.stop() );
 		}
@@ -968,9 +963,7 @@ replace(
 	TR.Debug << "new_ft after jump: " << new_ft << std::endl;
 
 	// run through remaining edges, splitting if necessary
-	for ( FoldTree::const_iterator e = static_cast< FoldTree const & >( tracking_ft ).begin(),
-			ee = static_cast< FoldTree const & >( tracking_ft ).end(); e != ee; ++e ) {
-		Edge edge = *e;
+	for ( auto edge : static_cast< FoldTree const & >( tracking_ft ) ) {
 		order( edge ); // for union_interval
 
 		if ( edge.stop() == replace_begin ) { // on right vertex
@@ -1016,8 +1009,7 @@ replace(
 	Size const jshift = new_ft.num_jump();
 
 	// add edges from replacement tree
-	for ( FoldTree::const_iterator e = replacement_tree.begin(), ee = replacement_tree.end(); e != ee; ++e ) {
-		Edge new_edge = *e;
+	for ( auto new_edge : replacement_tree ) {
 		new_edge.start() +=  rshift;
 		new_edge.stop() += rshift;
 		if ( new_edge.label() > 0 ) {
@@ -1054,9 +1046,9 @@ replace(
 	// find disconnected components and make jumps from final_root to an
 	// allowed residue governed by the MoveMap
 	Root2Nodes r2n = uf.sets();
-	for ( Root2Nodes::iterator i = r2n.begin(), ie = r2n.end(); i != ie; ++i ) {
-		if ( i->first != uf.ds_find( final_ft_root ) ) {
-			NodeList & nodes = i->second;
+	for ( auto & i : r2n ) {
+		if ( i.first != uf.ds_find( final_ft_root ) ) {
+			NodeList & nodes = i.second;
 			NodeList fixed;
 
 			// find all useable fixed positions for jump
@@ -1088,7 +1080,7 @@ replace(
 			}
 
 			// split existing edge if necessary
-			FoldTree::const_iterator f_connecting = facet_containing_position(
+			auto f_connecting = facet_containing_position(
 				new_edge.stop(),
 				static_cast< FoldTree const & >( new_ft ).begin(),
 				static_cast< FoldTree const & >( new_ft ).end(),

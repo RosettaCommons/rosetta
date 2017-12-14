@@ -454,20 +454,20 @@ CloseFold::parse_my_tag(
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
 	data.add( "loops", "found_loops", loops_ );
 
-	chainbreakweights_ = tag->getOption< bool >("add_chainbreakterm" , 1 );
+	chainbreakweights_ = tag->getOption< bool >("add_chainbreakterm" , true );
 
 	//get secondary structure either from input template, a string in the xml or through the
-	use_cutpoints_ = tag->getOption< bool >( "cutpoint_based" , 1 );
+	use_cutpoints_ = tag->getOption< bool >( "cutpoint_based" , true );
 
 	fa_scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "fa_scorefxn", data )->clone();
 
 	cen_scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "cen_scorefxn", data, "score4L" )->clone();
 
 	//options for fast closure
-	kic_ = tag->getOption< bool > ("use_kic" , 0 );
-	idealize_ = tag->getOption< bool >( "idealize" , 1 );
+	kic_ = tag->getOption< bool > ("use_kic" , false );
+	idealize_ = tag->getOption< bool >( "idealize" , true );
 
-	ccd_ = tag->getOption< bool >("use_ccd", 1 );
+	ccd_ = tag->getOption< bool >("use_ccd", true );
 
 	//options for quick closure
 	trials_ = tag->getOption< core::Size >("trials_ccd" , 3 );

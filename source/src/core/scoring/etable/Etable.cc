@@ -72,7 +72,7 @@ namespace scoring {
 namespace etable {
 
 /// @details Auto-generated virtual destructor
-Etable::~Etable() {}
+Etable::~Etable() = default;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -504,11 +504,11 @@ Etable::make_pairenergy_table()
 	if ( option[ score::input_etables ].user() ) {
 		string tag = option[ score::input_etables ];
 		TR << "INPUT ETABLES " << tag << std::endl;
-		for ( map<string,FArray3D<Real>*>::iterator i = etables.begin(); i != etables.end(); ++i ) {
-			string ename = i->first;
+		for ( auto & etable : etables ) {
+			string ename = etable.first;
 			string fname = tag+"."+ename+".etable";
 			std::ifstream input( fname.c_str() ); // TODO sheffler: figure out how to do this the right way
-			input_etable(*(i->second),ename,input);
+			input_etable(*(etable.second),ename,input);
 			input.close();
 		}
 	}
@@ -516,12 +516,12 @@ Etable::make_pairenergy_table()
 	if ( option[ score::output_etables ].user() ) {
 		string header = option[ score::output_etables ];
 		TR << "OUTPUT ETABLES " << header << std::endl;
-		for ( map<string,FArray3D<Real>*>::iterator i = etables.begin(); i != etables.end(); ++i ) {
-			string ename = i->first;
+		for ( auto & etable : etables ) {
+			string ename = etable.first;
 			string fname = header+"."+ename+".etable";
 			TR << "output_etable: writing etable: " << ename << " to " << fname << std::endl;
 			ofstream out(fname.c_str());
-			output_etable(*(i->second),ename,out);
+			output_etable(*(etable.second),ename,out);
 			out.close();
 		}
 	}
@@ -540,7 +540,7 @@ Etable::calculate_normal_disbins() const
 	if ( add_long_range_damping_ ) {
 		Real const dif = max_dis_ - long_range_damping_length_;
 		damping_thresh_dis2 = max_dis2_ - ( dif * dif );
-		int damping_disbins = static_cast< int >( damping_thresh_dis2*bins_per_A2_ );
+		auto damping_disbins = static_cast< int >( damping_thresh_dis2*bins_per_A2_ );
 		normal_disbins = etable_disbins_-damping_disbins;
 	} else {
 		normal_disbins = etable_disbins_;
@@ -766,7 +766,7 @@ Etable::modify_pot_one_pair(
 
 
 		Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0; //SGM Off-by-1 bug fix: Add + 1.0: Index 1 is at distance^2==0
-		int const ibin( static_cast< int >( bin ) );
+		auto const ibin( static_cast< int >( bin ) );
 		for ( int k = 1; k <= etable_disbins_; ++k ) {
 			Real const dis = std::sqrt( ( k - 1 ) * .05f ); //SGM Off-by-1 bug fix: k -> ( k - 1 )
 
@@ -1741,7 +1741,7 @@ void Etable::interpolated_analytic_etable_evaluation(
 	core::conformation::Atom at2_lo( at2 ), at2_hi( at2 );
 	dis2 = at1.xyz().distance_squared( at2.xyz() );
 	Real d2dummy;
-	int dis2bin = (int) ( dis2 * bins_per_A2_ );
+	auto dis2bin = (int) ( dis2 * bins_per_A2_ );
 
 	Real dis2lo = Real(dis2bin) / bins_per_A2_;
 	Real dis2hi = Real(dis2bin  + 1 )/bins_per_A2_;

@@ -228,7 +228,7 @@ bool LoopRebuild::build_random_loops( core::pose::Pose & pose ) {
 	std::vector< int > free_res; // stores residue numbers in real loops
 	for ( auto const & it : Loops_in_ ) {
 		TR.Debug << "Loop res " <<  it.start() << " " <<  it.stop() << std::endl;
-		for ( int k = (int)it.start(); k <= (int)it.stop(); ++k ) {
+		for ( auto k = (int)it.start(); k <= (int)it.stop(); ++k ) {
 			free_res.push_back(k);
 		}
 	}
@@ -814,7 +814,7 @@ bool LoopRebuild::select_one_loop(
 	int & combine_interval,
 	int & loop_counter
 ) {
-	int const num_loops = (int)(Loops_in_.size() );
+	auto const num_loops = (int)(Loops_in_.size() );
 
 	// make how many loop combination(s) per structure on average
 	core::Real const loop_combine_rate( get_loop_combine_rate() );
@@ -879,7 +879,7 @@ bool LoopRebuild::select_one_loop(
 			}
 
 			for ( int ll = 0; ll < combine_interval; ++ll ) {
-				for ( int k  = (int)Loops_in_[ selected_loop +ll ].stop();
+				for ( auto k  = (int)Loops_in_[ selected_loop +ll ].stop();
 						k <= (int)Loops_in_[ selected_loop +ll + 1 ].start(); ++k ) {
 					inter_res.push_back(k);
 				}
@@ -1052,7 +1052,7 @@ void LoopRebuild::barcode_extend_stems(
 	int const & total_combine,
 	int const & backward_combine
 ) {
-	int const num_loop( static_cast<int>( Loops_in_.size() ) );
+	auto const num_loop( static_cast<int>( Loops_in_.size() ) );
 	// further extend loop regions, and add barcode constraints on these
 	// extended regions
 	int barcst_begin ( old_loop_begin );

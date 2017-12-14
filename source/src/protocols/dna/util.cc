@@ -48,7 +48,7 @@ using utility::string_split;
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
-typedef numeric::xyzVector< core::Real > xyzVec;
+using xyzVec = numeric::xyzVector<core::Real>;
 
 
 #include <algorithm> // std::min
@@ -84,7 +84,7 @@ using namespace ObjexxFCL::format;
 
 static basic::Tracer TR( "protocols.dna.util", basic::t_info );
 
-typedef utility::vector1< std::string > Strings;
+using Strings = utility::vector1<std::string>;
 
 /// @details checks c-beta (except glycine) to base atom-atom distances, not including ribose or phosphate backbone.
 /// @author ashworth
@@ -755,7 +755,7 @@ load_dna_design_defs_from_file(
 void
 load_dna_design_defs_from_options(
 	DnaDesignDefOPs & defs,
-	std::string pdb_prefix /* = std::string() */
+	std::string const & pdb_prefix /* = std::string() */
 )
 {
 	if ( option[ OptionKeys::dna::design::dna_defs ].user() ) {

@@ -123,26 +123,10 @@ MPFindInterfaceMover::MPFindInterfaceMover() :
 {}
 
 /// @brief Copy Constructor
-MPFindInterfaceMover::MPFindInterfaceMover( MPFindInterfaceMover const & src ) :
-	protocols::moves::Mover( src ),
-	mode_lowres_ ( src.mode_lowres_ ),
-	native_( src.native_ ),
-	partners_( src.partners_ ),
-	jump_( src.jump_ ),
-	jumps_( src.jumps_ ),
-	topo_( src.topo_ ),
-	topo_up_( src.topo_up_ ),
-	topo_down_( src.topo_down_ ),
-	sfxn_lowres_( src.sfxn_lowres_ ),
-	sfxn_hires_( src.sfxn_hires_ ),
-	sfxn_pack_ ( src.sfxn_pack_ ),
-	flips_( src.flips_ ),
-	flexible_bb_( src.flexible_bb_ ),
-	flexible_sc_( src.flexible_sc_ )
-{}
+MPFindInterfaceMover::MPFindInterfaceMover( MPFindInterfaceMover const & /*src*/ ) = default;
 
 /// @brief Destructor
-MPFindInterfaceMover::~MPFindInterfaceMover() {}
+MPFindInterfaceMover::~MPFindInterfaceMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
@@ -769,9 +753,9 @@ std::pair< core::Real, core::Real > MPFindInterfaceMover::fractions_small_residu
 	}
 
 	// get fractions
-	core::Real frct_small_intf = static_cast< core::Real > ( small_intf_res );
+	auto frct_small_intf = static_cast< core::Real > ( small_intf_res );
 	frct_small_intf /= cnt_intf_res;
-	core::Real frct_small_nonintf = static_cast< core::Real > ( small_nonintf_res );
+	auto frct_small_nonintf = static_cast< core::Real > ( small_nonintf_res );
 	frct_small_nonintf /= cnt_nonintf_res;
 
 	TR << "frct_small_intf " << frct_small_intf << " frct_small_nonintf " << frct_small_nonintf << std::endl;

@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Conformation.hh>
+#include <utility>
 
 namespace core {
 namespace pack {
@@ -33,17 +34,17 @@ BareMinimumPDEdge::BareMinimumPDEdge( interaction_graph::InteractionGraphBase* o
 }
 
 
-BareMinimumPDEdge::~BareMinimumPDEdge(){}
+BareMinimumPDEdge::~BareMinimumPDEdge()= default;
 
 void BareMinimumPDEdge::add_to_two_body_energy(int const rot1, int const rot2, PackerEnergy const twobody ){
-	MCHBNetInteractionGraph * owner = static_cast< MCHBNetInteractionGraph * > ( get_owner() );
+	auto * owner = static_cast< MCHBNetInteractionGraph * > ( get_owner() );
 	unsigned int const offset1 = owner->rotamer_sets()->nrotamer_offset_for_moltenres( get_first_node_ind() );
 	unsigned int const offset2 = owner->rotamer_sets()->nrotamer_offset_for_moltenres( get_second_node_ind() );
 	owner->eval_rot_pair( offset1 + rot1, offset2 + rot2, twobody );
 }
 
 void BareMinimumPDEdge::add_to_two_body_energies( ObjexxFCL::FArray2< PackerEnergy > const & res_res_energy_array ){
-	MCHBNetInteractionGraph * owner = static_cast< MCHBNetInteractionGraph * > ( get_owner() );
+	auto * owner = static_cast< MCHBNetInteractionGraph * > ( get_owner() );
 	unsigned int const offset1 = owner->rotamer_sets()->nrotamer_offset_for_moltenres( get_first_node_ind() );
 	unsigned int const offset2 = owner->rotamer_sets()->nrotamer_offset_for_moltenres( get_second_node_ind() );
 	unsigned int const nrot1 = owner->rotamer_sets()->nrotamers_for_moltenres( get_first_node_ind() );
@@ -59,15 +60,14 @@ void BareMinimumPDEdge::add_to_two_body_energies( ObjexxFCL::FArray2< PackerEner
 //Constructor
 MCHBNetInteractionGraph::MCHBNetInteractionGraph( scoring::hbonds::graph::AbstractHBondGraphOP hbond_graph, rotamer_set::RotamerSetsCOP rotamer_sets, float hbond_threshold, float clash_threshold ) :
 	interaction_graph::PDInteractionGraph( rotamer_sets->nmoltenres() ),
-	hbond_graph_( hbond_graph ),
+	hbond_graph_(std::move( hbond_graph )),
 	rotamer_sets_( rotamer_sets ),
 	hbond_threshold_( hbond_threshold ),
 	clash_threshold_( clash_threshold )
 {}
 
 //Destructor
-MCHBNetInteractionGraph::~MCHBNetInteractionGraph()
-{}
+MCHBNetInteractionGraph::~MCHBNetInteractionGraph() = default;
 
 void
 MCHBNetInteractionGraph::find_symmetric_hbonds(
@@ -97,7 +97,7 @@ MCHBNetInteractionGraph::find_symmetric_hbonds(
 		for ( core::Size rot = 1; rot <= rotamer_sets_->nrotamers_for_moltenres( mres ); ++rot ) {
 			core::Real const one_body_1 = get_one_body_energy_for_node_state( mres, rot ) / scmult_1b;
 			if ( one_body_1 < hb_threshold ) {
-				scoring::hbonds::graph::HBondEdge * new_edge = static_cast< scoring::hbonds::graph::HBondEdge * >( hbond_graph_->add_edge( offset_for_mres + rot, offset_for_mres + rot ) );
+				auto * new_edge = static_cast< scoring::hbonds::graph::HBondEdge * >( hbond_graph_->add_edge( offset_for_mres + rot, offset_for_mres + rot ) );
 				new_edge->set_energy( one_body_1 );
 			}
 		}//rot

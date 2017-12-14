@@ -33,7 +33,7 @@ namespace scoring {
 namespace etable {
 namespace etrie {
 
-GenericResidueConnectionData::GenericResidueConnectionData() {}
+GenericResidueConnectionData::GenericResidueConnectionData() = default;
 
 GenericResidueConnectionData::GenericResidueConnectionData( Size n_connections ) :
 	path_distances_to_connection_points_( n_connections, 0 )

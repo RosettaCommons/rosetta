@@ -57,7 +57,7 @@ GlycanNode::GlycanNode():
 
 }
 
-GlycanNode::~GlycanNode(){}
+GlycanNode::~GlycanNode()= default;
 
 // Copy constructor
 //GlycanNode::GlycanNode( GlycanNode const & ) {

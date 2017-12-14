@@ -136,15 +136,14 @@ main( int argc, char* argv [] ) {
 			//TR.Debug << "read " << alns.size() << " alignments from " << *file_it
 			// << std::endl;
 
-			typedef vector1< SequenceAlignment >::iterator align_iter;
-			for ( align_iter it = alns.begin(), end = alns.end(); it != end; ++it ) {
+			for ( auto & aln : alns ) {
 				//TR.Debug << "processing alignment between " << it->sequence(1)->id()
 				// << " and " << it->sequence(2)->id() << std::endl;
 
-				std::string const aln_id = it->sequence(2)->id();
+				std::string const aln_id = aln.sequence(2)->id();
 				std::string const template_id = aln_id.substr(0,5);
 
-				map< string, Pose >::iterator pose_it = poses.find( template_id );
+				auto pose_it = poses.find( template_id );
 				if ( pose_it == poses.end() ) {
 					//print_seq_map( std::cerr, seqs );
 					string msg( "Error: can't find seq (id = " + template_id + ")" );
@@ -159,18 +158,18 @@ main( int argc, char* argv [] ) {
 					core::pose::Pose pose = pose_it->second;;
 					utility::vector1< int > burial = calculate_burial( pose, 8 );
 
-					for ( Size ii = 1; ii <= it->length(); ++ii ) {
-						for ( Size jj = ii+1; jj <= it->length(); ++jj ) {
-							if ( it->is_gapped( ii ) || it->is_gapped(jj) ) continue;
+					for ( Size ii = 1; ii <= aln.length(); ++ii ) {
+						for ( Size jj = ii+1; jj <= aln.length(); ++jj ) {
+							if ( aln.is_gapped( ii ) || aln.is_gapped(jj) ) continue;
 
-							Size const q_resi( it->sequence(1)->resnum(ii) );
-							Size const q_resj( it->sequence(1)->resnum(jj) );
-							Size const t_resi( it->sequence(2)->resnum(ii) );
-							Size const t_resj( it->sequence(2)->resnum(jj) );
+							Size const q_resi( aln.sequence(1)->resnum(ii) );
+							Size const q_resj( aln.sequence(1)->resnum(jj) );
+							Size const t_resi( aln.sequence(2)->resnum(ii) );
+							Size const t_resj( aln.sequence(2)->resnum(jj) );
 
 							bool const identity(
-								it->sequence(1)->at(ii) == it->sequence(2)->at(ii) &&
-								it->sequence(1)->at(jj) == it->sequence(2)->at(jj)
+								aln.sequence(1)->at(ii) == aln.sequence(2)->at(ii) &&
+								aln.sequence(1)->at(jj) == aln.sequence(2)->at(jj)
 							);
 							const core::conformation::Residue& resi = pose.residue(t_resi);
 							const core::conformation::Residue& resj = pose.residue(t_resj);

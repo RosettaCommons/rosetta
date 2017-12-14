@@ -36,7 +36,7 @@
 namespace protocols {
 namespace surface_docking {
 
-SurfaceVectorLoader::SurfaceVectorLoader() {}
+SurfaceVectorLoader::SurfaceVectorLoader() = default;
 SurfaceVectorLoader::~SurfaceVectorLoader() = default;
 
 /// @details Takes a locator id and istream, ensures that the correct number of points are present and performs error

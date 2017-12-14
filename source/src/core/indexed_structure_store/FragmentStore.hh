@@ -43,9 +43,9 @@ struct FragmentSpecification
 
 	}
 
-	FragmentSpecification(numeric::Size fragment_length, std::vector<std::string> fragment_atoms) :
+	FragmentSpecification(numeric::Size fragment_length, std::vector<std::string> const & fragment_atoms) :
 		fragment_length(fragment_length),
-		fragment_atoms(std::move(fragment_atoms))
+		fragment_atoms(fragment_atoms)
 	{
 
 	}

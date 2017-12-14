@@ -150,9 +150,9 @@ TemperingBase::parse_my_tag(
 		if ( !success ) tr.Info << "cannot read temperatures from file, will initialize from options... " << std::endl;
 	}
 	if ( !success ) {
-		Real temp_low = tag->getOption< Real >( "temp_low", 0.6 );
-		Real temp_high = tag->getOption< Real >( "temp_high", 3.0 );
-		Size temp_levels = tag->getOption< Size >( "temp_levels", 10 );
+		auto temp_low = tag->getOption< Real >( "temp_low", 0.6 );
+		auto temp_high = tag->getOption< Real >( "temp_high", 3.0 );
+		auto temp_levels = tag->getOption< Size >( "temp_levels", 10 );
 		InterpolationType temp_interpolation = interpolation_type_string_to_enum(tag->getOption< std::string >( "temp_interpolation", "linear" ));
 		generate_temp_range( temp_low, temp_high, temp_levels, temp_interpolation );
 	}

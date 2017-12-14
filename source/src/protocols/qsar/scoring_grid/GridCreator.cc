@@ -17,9 +17,8 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-GridCreator::GridCreator() {}
-GridCreator::~GridCreator()
-{ }
+GridCreator::GridCreator() = default;
+GridCreator::~GridCreator() = default;
 
 }
 }

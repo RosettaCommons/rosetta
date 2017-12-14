@@ -25,6 +25,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 
@@ -51,10 +52,10 @@ namespace pose_stream {
 
 static basic::Tracer tr( "core.io.pose_stream.lazy_silent_file" );
 
-typedef std::string string;
-typedef utility::file::FileName FileName;
+using string = std::string;
+using FileName = utility::file::FileName;
 
-LazySilentFilePoseInputStream::LazySilentFilePoseInputStream( utility::vector1< FileName > fns ):
+LazySilentFilePoseInputStream::LazySilentFilePoseInputStream( utility::vector1< FileName > const & fns ):
 	filenames_( fns ),
 	current_filename_( filenames_.begin() ),
 	sfd_( core::io::silent::SilentFileOptions() )

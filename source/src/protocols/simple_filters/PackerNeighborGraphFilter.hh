@@ -49,8 +49,8 @@ class RegionalConnections {
 public:
 
 	RegionalConnections(
-		std::set< core::Size >  reg1,
-		std::set< core::Size >  reg2,
+		std::set< core::Size > const & reg1,
+		std::set< core::Size > const & reg2,
 		core::Size required_cons
 	) : region1_(std::move( reg1 )), region2_(std::move( reg2 )), required_connections_( required_cons ), num_cons_( 0 )
 	{}
@@ -101,7 +101,7 @@ public:
 	PackerNeighborGraphFilter(
 		core::pack::task::PackerTaskCOP task,
 		core::scoring::ScoreFunctionCOP sfxn
-	) : task_(std::move( task )), sfxn_(std::move( sfxn )), task_invalidated_( false ) {}
+	) : task_(std::move( task )), sfxn_(std::move( sfxn ))/*, task_invalidated_( false )*/ {}
 
 
 	PackerNeighborGraphFilter();
@@ -156,7 +156,7 @@ private:
 
 	utility::vector1< RegionalConnections > required_connections_between_regions_;
 
-	bool task_invalidated_;
+	//bool task_invalidated_;
 
 };
 

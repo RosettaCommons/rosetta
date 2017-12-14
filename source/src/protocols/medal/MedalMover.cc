@@ -76,7 +76,7 @@
 namespace protocols {
 namespace medal {
 
-typedef boost::function<void(const core::pose::Pose&)> Trigger;
+using Trigger = boost::function<void (const core::pose::Pose &)>;
 
 static basic::Tracer TR( "protocols.medal.MedalMover" );
 

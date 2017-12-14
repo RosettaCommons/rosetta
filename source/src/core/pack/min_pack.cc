@@ -153,7 +153,7 @@ create_minimization_graph(
 		Size const node1 = (*eiter)->get_first_node_ind();
 		Size const node2 = (*eiter)->get_second_node_ind();
 
-		scoring::MinimizationEdge & minedge( static_cast< scoring::MinimizationEdge & > (**eiter) );
+		auto & minedge( static_cast< scoring::MinimizationEdge & > (**eiter) );
 
 		sfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
 			pose.residue( node1 ), pose.residue( node2 ),
@@ -591,7 +591,7 @@ void compare_mingraph_and_energy_graph(
 	EnergyMap min_node_1b;
 	eval_res_onebody_energies_for_minnode( * mingraph.get_minimization_node( resid ), pose.residue( resid ), pose, sfxn, min_node_1b );
 	for ( Size kk = 1; kk <= total_score; ++kk ) {
-		ScoreType kkst = ScoreType(kk);
+		auto kkst = ScoreType(kk);
 		if ( sfxn.weights()[ kkst ] != 0.0 ) {
 			if ( std::abs( one_body_emap[ kkst ] - min_node_1b[ kkst ] ) > 1e-10 ) {
 				std::cout << "   one body discrepancy " << kkst << ": " << one_body_emap[ kkst ] << " " << min_node_1b[ kkst ] << std::endl;
@@ -606,8 +606,8 @@ void compare_mingraph_and_energy_graph(
 		Size ii( (*iter)->get_first_node_ind() );
 		Size jj( (*iter)->get_second_node_ind() );
 		if ( ii != resid && jj != resid ) continue; // only compare nodes that are involved in the current optimization
-		MinimizationEdge const * minedge = static_cast< MinimizationEdge const * > ( mingraph.find_edge( ii, jj ) );
-		EnergyEdge const * eedge = static_cast< EnergyEdge const * > ( *iter );
+		auto const * minedge = static_cast< MinimizationEdge const * > ( mingraph.find_edge( ii, jj ) );
+		auto const * eedge = static_cast< EnergyEdge const * > ( *iter );
 		EnergyMap emap = eedge->fill_energy_map();
 
 		if ( ! minedge ) {
@@ -624,7 +624,7 @@ void compare_mingraph_and_energy_graph(
 		EnergyMap emap2;
 		eval_res_pair_energy_for_minedge( *minedge, pose.residue(ii), pose.residue(jj), pose, sfxn, emap2 );
 		for ( Size kk = 1; kk <= total_score; ++kk ) {
-			ScoreType kkst = ScoreType(kk);
+			auto kkst = ScoreType(kk);
 			if ( sfxn.weights()[ kkst ] != 0.0 ) {
 				if ( std::abs( emap[ kkst ] - emap2[ kkst ] ) > 1e-10 ) {
 					std::cout << "   " << ii << " " << jj << " " << kkst << " discrepancy: " << emap[ kkst ] << " " << emap2[ kkst ] << std::endl;
@@ -677,7 +677,7 @@ assign_random_rotamers(
 	/// of waiting until each residue has an assigned rotamer.
 	for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
 		Size const ii_resid = rotsets->moltenres_2_resid( ii );
-		Size const ii_rotamer_on_moltenres = static_cast< Size > ( rotsets->nrotamers_for_moltenres( ii ) * numeric::random::rg().uniform() + 1 );
+		auto const ii_rotamer_on_moltenres = static_cast< Size > ( rotsets->nrotamers_for_moltenres( ii ) * numeric::random::rg().uniform() + 1 );
 
 		/// This is an aborted call; this function knows not to attempt to minimize until curr_state has
 		/// no unassigned residues.
@@ -856,7 +856,7 @@ min_pack_optimize(
 		Real ii_temperature = temps[ ii ];
 		/// 6.
 		for ( Size jj = 1, jj_end = n_inner_iterations( ii_temperature, rotsets->nrotamers() ); jj <= jj_end; ++jj ) {
-			Size const jj_ranrotamer = static_cast< Size > ( rotsets->nrotamers() * numeric::random::rg().uniform() + 1 );
+			auto const jj_ranrotamer = static_cast< Size > ( rotsets->nrotamers() * numeric::random::rg().uniform() + 1 );
 			Size const jj_moltenres_id = rotsets->moltenres_for_rotamer( jj_ranrotamer );
 			Size const jj_resid = rotsets->moltenres_2_resid(  jj_moltenres_id );
 			Size const jj_rotamer_state_on_moltenres = rotsets->rotid_on_moltenresidue( jj_ranrotamer );
@@ -1081,8 +1081,8 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 		Size ii( (*iter)->get_first_node_ind() );
 		Size jj( (*iter)->get_second_node_ind() );
 		if ( ii != resid && jj != resid ) continue; // only compare nodes that are involved in the current optimization
-		SimpleEdge const * simple_edge = static_cast< SimpleEdge const * > ( ig.find_edge( ii, jj ) );
-		EnergyEdge const * eedge = static_cast< EnergyEdge const * > ( *iter );
+		auto const * simple_edge = static_cast< SimpleEdge const * > ( ig.find_edge( ii, jj ) );
+		auto const * eedge = static_cast< EnergyEdge const * > ( *iter );
 		EnergyMap emap = eedge->fill_energy_map();
 		Real edge_energy = sfxn.weights().dot( emap );
 		if ( ! simple_edge ) {
@@ -1253,7 +1253,7 @@ off_rotamer_pack_optimize(
 		Size const jj_end = n_inner_iterations( ii_temperature, n_sample_rots );
 		for ( Size jj = 1; jj <= jj_end; ++jj ) {
 
-			Size const random_sample_rot = static_cast< Size > ( n_sample_rots * numeric::random::rg().uniform() + 1 );
+			auto const random_sample_rot = static_cast< Size > ( n_sample_rots * numeric::random::rg().uniform() + 1 );
 			Size const ran_moltres = rotsets.moltenres_for_sample_rot( random_sample_rot );
 			Size const ran_res = rotsets.moltenresid_2_resid( ran_moltres );
 			Size const ranrot_on_moltenres = rotsets.full_sample_rot_index_2_moltenres_sample_rot_index( random_sample_rot );

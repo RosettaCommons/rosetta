@@ -43,14 +43,14 @@ namespace core {
 namespace scoring {
 namespace func {
 
-ScalarWeightedFunc::~ScalarWeightedFunc() {}
+ScalarWeightedFunc::~ScalarWeightedFunc() = default;
 
 bool ScalarWeightedFunc::operator == ( Func const & other ) const
 {
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	ScalarWeightedFunc const & other_downcast( static_cast< ScalarWeightedFunc const & > (other) );
+	auto const & other_downcast( static_cast< ScalarWeightedFunc const & > (other) );
 	if ( weight_ != other_downcast.weight_ ) return false;
 
 	return func_to_weight_ == other_downcast.func_to_weight_ ||

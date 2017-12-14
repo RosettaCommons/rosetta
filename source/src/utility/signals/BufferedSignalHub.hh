@@ -152,7 +152,7 @@ protected: // methods
 	/// @brief release the signals in the buffer
 	inline
 	void release_buffer() {
-		for ( typename Buffer::iterator i = buffer_.begin(), ie = buffer_.end(), j; i != ie; ++i ) {
+		for ( typename Buffer::iterator i = buffer_.begin(), ie = buffer_.end(); i != ie; ++i ) {
 			this->operator ()( *i );
 		}
 

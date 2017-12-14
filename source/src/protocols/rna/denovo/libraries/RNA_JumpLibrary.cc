@@ -16,6 +16,7 @@
 // Rosetta Headers
 #include <protocols/rna/denovo/libraries/RNA_JumpLibrary.hh>
 
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
@@ -40,10 +41,10 @@ namespace denovo {
 namespace libraries {
 
 /// @details Auto-generated virtual destructor
-RNA_JumpLibrary::~RNA_JumpLibrary() {}
+RNA_JumpLibrary::~RNA_JumpLibrary() = default;
 
 /// @details Auto-generated virtual destructor
-RNA_PairingTemplate::~RNA_PairingTemplate() {}
+RNA_PairingTemplate::~RNA_PairingTemplate() = default;
 
 
 static basic::Tracer tr( "protocols.rna.denovo.libraries.RNA_JumpLibrary" );
@@ -122,12 +123,12 @@ RNA_JumpLibrary::read_jumps_from_file() const
 		is.read( tmpbuf, 1 );
 		is.read( tmpbuf, 4 );
 		std::string atom_name1 = "";
-		for ( int n=0; n <4; n++ ) atom_name1 += tmpbuf[n];
+		for ( char n : tmpbuf ) atom_name1 += n;
 
 		is.read( tmpbuf, 1 );
 		is.read( tmpbuf, 4 );
 		std::string atom_name2 = "";
-		for ( int n=0; n <4; n++ ) atom_name2 += tmpbuf[n];
+		for ( char n : tmpbuf ) atom_name2 += n;
 
 		//  std::cout << "READ IN ATOM NAMES? " << atom_name1 << " " << atom_name2 << std::endl;
 

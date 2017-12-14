@@ -81,6 +81,7 @@
 #include <numeric/xyz.functions.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector1.hh>
@@ -113,13 +114,13 @@ using namespace ObjexxFCL;
 
 
 PoseFromSFRBuilder::PoseFromSFRBuilder( chemical::ResidueTypeSetCOP rts, StructFileRepOptions const & options ) :
-	residue_type_set_( rts ),
+	residue_type_set_(std::move( rts )),
 	options_( options ),
 	coordinates_assigned_( false ),
 	outputted_ignored_water_warning_( false )
 {}
 
-PoseFromSFRBuilder::~PoseFromSFRBuilder() {}
+PoseFromSFRBuilder::~PoseFromSFRBuilder() = default;
 
 /// @details The process of building a Pose occurs in several phases.  First, in the setup() function,
 /// the builder converts the SFR into a vector of ResidueInformation objects -- renaming some atoms along
@@ -229,7 +230,7 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 	// Likewise, prune LINK records that refer to saccharides unless the -include sugars flag is on.
 	// And LINK records to or from unrecognized residues?
 	using namespace core::chemical;
-	typedef utility::vector1< LinkInformation > LinkInformationVect;
+	using LinkInformationVect = utility::vector1<LinkInformation>;
 	typedef std::map< std::string, utility::vector1< LinkInformation > > LinkMap;
 
 	// AMW: In CIF nomenclature, LINKs to be handled:
@@ -237,14 +238,10 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 	// 1  1 "O3'" v A   76   ? ? C     v FME 77   ? ? 1.56
 
 	LinkMap pruned_links;
-	for ( LinkMap::const_iterator iter = sfr.link_map().begin(), iter_end = sfr.link_map().end();
-			iter != iter_end; ++iter ) {
-		std::string const & resID1 = iter->first;
-		LinkInformationVect const & links = iter->second;
-		for ( LinkInformationVect::const_iterator link_iter = links.begin(), link_iter_end = links.end();
-				link_iter != link_iter_end; ++link_iter ) {
-			LinkInformation const & link = *link_iter;
-
+	for ( const auto & iter : sfr.link_map() ) {
+		std::string const & resID1 = iter.first;
+		LinkInformationVect const & links = iter.second;
+		for ( const auto & link : links ) {
 			bool const link_has_metal( NomenclatureManager::is_metal( link.resName1 ) ||
 				NomenclatureManager::is_metal( link.resName2 ) );
 			bool const link_has_sugar( NomenclatureManager::is_sugar( link.resName1 ) ||
@@ -450,7 +447,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		ResidueTypeCOP rsd_type_cop = get_rsd_type( name3, ii, known_connect_atoms_on_this_residue,
 			resid, is_lower_terminus, is_upper_terminus, is_d_aa, is_l_aa );
 
-		if ( rsd_type_cop == 0 ) {
+		if ( rsd_type_cop == nullptr ) {
 			std::string variant;
 			if ( is_lower_terminus ) {
 				variant += " lower-terminal";
@@ -523,7 +520,7 @@ void PoseFromSFRBuilder::pass_3_verify_sufficient_backbone_atoms()
 					utility_exit_with_message("quitting due to missing heavy atoms");
 				}
 				// Designate that this residue should not be included in the Pose by setting the residue_type pointer to 0
-				residue_types_[ ii ] = 0;
+				residue_types_[ ii ] = nullptr;
 				residue_was_recognized_[ ii ] = false;
 			}
 		}
@@ -1026,9 +1023,8 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 
 	if ( options_.pdb_comments() ) {
 		std::map< std::string, std::string > const & pdb_comments( sfr_.pdb_comments() );
-		for ( std::map< std::string, std::string >::const_iterator it = pdb_comments.begin(), end = pdb_comments.end();
-				it != end; ++it ) {
-			core::pose::add_comment( pose, it->first, it->second );
+		for ( const auto & pdb_comment : pdb_comments ) {
+			core::pose::add_comment( pose, pdb_comment.first, pdb_comment.second );
 		}
 	}
 
@@ -1110,19 +1106,19 @@ PoseFromSFRBuilder::build_pdb_info_2_temps( pose::Pose & pose )
 	for ( core::Size ii = 1; ii <= pose.size(); ii++ ) {
 		ResidueTemps const & res_temps( rinfos_[ pose_to_rinfo_[ ii ] ].temps() );
 		NameBimap const & namemap( remapped_atom_names_[ pose_to_rinfo_[ ii ] ] );
-		for ( ResidueTemps::const_iterator iter = res_temps.begin(); iter != res_temps.end(); ++iter ) {
+		for ( const auto & res_temp : res_temps ) {
 			// namemap should only include atoms which have a presence in both rinfo and pose
-			if ( namemap.left.count( iter->first ) ) {
-				std::string const & pose_atom_name( namemap.left.find(iter->first)->second );
+			if ( namemap.left.count( res_temp.first ) ) {
+				std::string const & pose_atom_name( namemap.left.find(res_temp.first)->second );
 				if ( pose.residue( ii ).type().has( pose_atom_name ) ) { // There are issues with terminus patching which means atoms can sometimes disappear
 					core::Size jj = pose.residue( ii ).type().atom_index( pose_atom_name );
-					pdb_info->temperature( ii, jj, iter->second );
+					pdb_info->temperature( ii, jj, res_temp.second );
 				}
 			} else {
-				if ( ( iter->first )[ 0 ] == 'H' || ( ( iter->first )[ 0 ] == ' ' && ( iter->first )[ 1 ] == 'H' ) ) {
+				if ( ( res_temp.first )[ 0 ] == 'H' || ( ( res_temp.first )[ 0 ] == ' ' && ( res_temp.first )[ 1 ] == 'H' ) ) {
 					// Don't warn for missing temperatures on hydrogens.
 				} else {
-					TR.Warning << "can't find pose atom for file-residue " << ii << " atom " << iter->first << " (trying to store temperature in PDBInfo)" << std::endl;
+					TR.Warning << "can't find pose atom for file-residue " << ii << " atom " << res_temp.first << " (trying to store temperature in PDBInfo)" << std::endl;
 				}
 			}
 		}
@@ -1270,14 +1266,14 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 	}
 
 	if ( options_.remember_unrecognized_res() ) {
-		for ( std::map<std::string, Vector>::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
+		for ( const auto & iter : xyz ) {
 			if ( unrecognized_atoms_.size() > 5000 ) {
 				utility_exit_with_message("can't handle more than 5000 atoms worth of unknown residues\n");
 			}
-			TR << "remember unrecognized atom " << pdb_residue_index << " " << rosetta_residue_name3 << " " << stripped_whitespace(iter->first)
-				<< " temp " << rtemp.find(iter->first)->second << std::endl;
+			TR << "remember unrecognized atom " << pdb_residue_index << " " << rosetta_residue_name3 << " " << stripped_whitespace(iter.first)
+				<< " temp " << rtemp.find(iter.first)->second << std::endl;
 
-			core::pose::UnrecognizedAtomRecord ua( pdb_residue_index, rosetta_residue_name3, stripped_whitespace(iter->first), iter->second, rtemp.find(iter->first)->second );
+			core::pose::UnrecognizedAtomRecord ua( pdb_residue_index, rosetta_residue_name3, stripped_whitespace(iter.first), iter.second, rtemp.find(iter.first)->second );
 
 			unrecognized_atoms_.push_back( ua );
 		}
@@ -1299,7 +1295,7 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 	// this residue list is only used to see if there are any residue_types with name3 at all:
 	ResidueTypeCOPs rsd_type_list;
 	ResidueTypeCOP  rsd_type = ResidueTypeFinder( *residue_type_set_ ).name3( rosetta_residue_name3 ).get_representative_type();
-	if ( rsd_type != 0 ) rsd_type_list.push_back( rsd_type );
+	if ( rsd_type != nullptr ) rsd_type_list.push_back( rsd_type );
 	return is_residue_type_recognized( pdb_residue_index, rosetta_residue_name3, rsd_type_list );
 }
 
@@ -1519,7 +1515,7 @@ void PoseFromSFRBuilder::fill_name_map( Size seqpos )
 	} else {
 		name_map.clear();
 		// Using names as-is, except for canonicalizing
-		for ( utility::vector1< AtomInformation >::const_iterator
+		for ( auto
 				iter=rinfo.atoms().begin(), iter_end=rinfo.atoms().end(); iter!= iter_end; ++iter ) {
 			std::string const & name ( iter->name );
 			if ( ! rinfo.xyz().count( name ) ) { // Only map atoms with coordinates.

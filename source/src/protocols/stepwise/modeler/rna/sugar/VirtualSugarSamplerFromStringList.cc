@@ -33,6 +33,7 @@
 #include <fstream>
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.VirtualSugarSamplerFromStringList" );
 
@@ -60,8 +61,7 @@ VirtualSugarSamplerFromStringList::VirtualSugarSamplerFromStringList( working_pa
 }
 
 //Destructor
-VirtualSugarSamplerFromStringList::~VirtualSugarSamplerFromStringList()
-{}
+VirtualSugarSamplerFromStringList::~VirtualSugarSamplerFromStringList() = default;
 
 /////////////////////
 std::string

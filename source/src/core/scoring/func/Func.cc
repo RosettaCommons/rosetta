@@ -44,7 +44,7 @@ namespace func {
 static basic::Tracer tr( "core.scoring.constraints.Func" );
 
 /// @details Auto-generated virtual destructor
-Func::~Func() {}
+Func::~Func() = default;
 
 bool
 Func::operator != ( Func const & other ) const {

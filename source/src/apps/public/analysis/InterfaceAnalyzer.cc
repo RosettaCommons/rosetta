@@ -59,20 +59,20 @@ public:
 
 	IAMover();
 
-	virtual ~IAMover() {};
+	~IAMover() override = default;
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual
+
 	std::string
-	get_name() const {
+	get_name() const override {
 		return "IAMover";
 	}
 
-	virtual bool reinitialize_for_each_job() const { return true; }
+	bool reinitialize_for_each_job() const override { return true; }
 
-	virtual bool reinitialize_for_new_input() const { return true; }
-	virtual protocols::moves::MoverOP fresh_instance() const {return protocols::moves::MoverOP( new IAMover );}
+	bool reinitialize_for_new_input() const override { return true; }
+	protocols::moves::MoverOP fresh_instance() const override {return protocols::moves::MoverOP( new IAMover );}
 
 
 	void assign_IA_mover(core::pose::Pose & pose);

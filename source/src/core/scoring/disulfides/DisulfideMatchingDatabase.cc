@@ -54,7 +54,7 @@ DisulfideMatchingDatabase::DisulfideMatchingDatabase()
 /**
 * Deconstructor
 */
-DisulfideMatchingDatabase::~DisulfideMatchingDatabase() {}
+DisulfideMatchingDatabase::~DisulfideMatchingDatabase() = default;
 
 void
 DisulfideMatchingDatabase::read_disulfide_database() const{

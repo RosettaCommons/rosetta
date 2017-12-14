@@ -18,7 +18,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-FourAtomsConstraintData::~FourAtomsConstraintData() {}
+FourAtomsConstraintData::~FourAtomsConstraintData() = default;
 
 /// @brief makes a new object
 FourAtomsConstraintData::FourAtomsConstraintData(core::scoring::func::FuncOP function,

@@ -146,7 +146,7 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose
 						DistributionSampler<normal> sampler(distribution);
 
 						// Clamp insertion position to closed interval [start, stop]
-						Size position = static_cast<Size>(sampler.sample());
+						auto position = static_cast<Size>(sampler.sample());
 						position = numeric::clamp<core::Size>(position, 1, cut_residues.size());
 
 						cut = cut_residues[position];
@@ -218,7 +218,7 @@ core::Size HybridizeFoldtreeDynamic::choose_anchor_position(const protocols::loo
 	DistributionSampler<normal> sampler(distribution);
 
 	// Clamp insertion position to closed interval [start, stop]
-	Size position = static_cast<Size>(sampler.sample());
+	auto position = static_cast<Size>(sampler.sample());
 	return numeric::clamp<core::Size>(position, chunk.start(), chunk.stop());
 }
 
@@ -270,7 +270,7 @@ void HybridizeFoldtreeDynamic::initialize(
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		num_nonvirt_residues_ = symm_info->num_independent_residues();

@@ -57,11 +57,7 @@ MiniRelax::MiniRelax(
 	scorefxn_(std::move(scorefxn_in))
 {}
 
-MiniRelax::MiniRelax( MiniRelax const & other ) :
-	//utility::pointer::ReferenceCount(),
-	parent( other ),
-	scorefxn_( other.scorefxn_ )
-{}
+MiniRelax::MiniRelax( MiniRelax const & /*other*/ ) = default;
 
 MiniRelax::~MiniRelax() = default;
 

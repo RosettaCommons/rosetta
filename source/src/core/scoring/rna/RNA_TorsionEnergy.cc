@@ -27,6 +27,7 @@
 // Utility headers
 
 #include <core/scoring/EnergyMap.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 // C++
@@ -60,9 +61,9 @@ RNA_TorsionEnergy::RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
 	RNA_TorsionPotentialOP rna_torsion_potential /* = 0 */ ) :
 	parent( methods::EnergyMethodCreatorOP( new RNA_TorsionEnergyCreator ) ),
 	options_( options ),
-	rna_torsion_potential_( rna_torsion_potential )
+	rna_torsion_potential_(std::move( rna_torsion_potential ))
 {
-	if ( rna_torsion_potential_ == 0 ) rna_torsion_potential_ = RNA_TorsionPotentialOP( new RNA_TorsionPotential( options ) );
+	if ( rna_torsion_potential_ == nullptr ) rna_torsion_potential_ = RNA_TorsionPotentialOP( new RNA_TorsionPotential( options ) );
 }
 
 /// clone

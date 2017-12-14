@@ -159,10 +159,9 @@ cull_violators(
 	core::Real threshold
 ) {
 	culled_list.clear();
-	for ( ConstraintCOPs::const_iterator it = target_list.begin(),
-			eit = target_list.end(); it != eit; ++it ) {
-		if ( (*it)->show_violations( tr.Debug, filter_pose, 1, threshold ) == 0 ) {
-			culled_list.push_back( *it );
+	for ( auto const & it : target_list ) {
+		if ( it->show_violations( tr.Debug, filter_pose, 1, threshold ) == 0 ) {
+			culled_list.push_back( it );
 		}
 	}
 }
@@ -517,7 +516,7 @@ bool combinable( Constraint const& cst, utility::vector1< Size > exclude_res ) {
 /// @brief combine constraints randomly into AmbiguousConstraints N -> 1 this greatly decreases the odds to have a wrong constraint
 void choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp, ConstraintCOPs& in ) {
 	for ( utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
-		Constraint& cst = const_cast< Constraint& >( (**it) );
+		auto& cst = const_cast< Constraint& >( (**it) );
 		cst.choose_effective_sequence_separation( sp, numeric::random::rg() );
 	}
 }
@@ -554,19 +553,19 @@ void combine_constraints(
 	tr.Trace << "combine within bins..."<< std::endl;
 	// combine constraints within bins
 	utility::vector1< ConstraintCOP > out;
-	for ( SeqSepMap::iterator bin_it=seq_sep_map.begin(); bin_it != seq_sep_map.end(); ++bin_it ) {
+	for ( auto & bin_it : seq_sep_map ) {
 		// random permutation within bin... ensures random combination
-		random_permutation( bin_it->second, numeric::random::rg() ); //I don't think a single pass of pairwise exchanges is enough to randomize the vector.
-		random_permutation( bin_it->second, numeric::random::rg() );
-		random_permutation( bin_it->second, numeric::random::rg() );
+		random_permutation( bin_it.second, numeric::random::rg() ); //I don't think a single pass of pairwise exchanges is enough to randomize the vector.
+		random_permutation( bin_it.second, numeric::random::rg() );
+		random_permutation( bin_it.second, numeric::random::rg() );
 
 		// combine bin
-		for ( utility::vector1< ConstraintCOP >::const_iterator it = bin_it->second.begin(); it != bin_it->second.end();
+		for ( utility::vector1< ConstraintCOP >::const_iterator it = bin_it.second.begin(); it != bin_it.second.end();
 				//DO NOT INCREMENT, already incremented in next loop -- gives segfaults otherwise
 				) {
 			Size ct( combine_ratio );
 			MultiConstraintOP combined_cst( new AmbiguousConstraint );
-			for ( ; ct > 0 && it != bin_it->second.end(); ++it ) {
+			for ( ; ct > 0 && it != bin_it.second.end(); ++it ) {
 				tr.Trace << " add constraint " << ct << std::endl;
 				//check if constraint is combinable:
 				if ( combinable( **it, exclude_res ) ) {
@@ -579,7 +578,7 @@ void combine_constraints(
 			//fill up with more constraints if ct is not 0 yet.
 			if ( ct > 0 ) {
 				tr.Trace << " fill last Ambiguous constraint " << ct << std::endl;
-				for ( ConstraintCOPs::const_iterator it2 = bin_it->second.begin(); ct > 0 && it2 != bin_it->second.end(); ++it2 ) {
+				for ( ConstraintCOPs::const_iterator it2 = bin_it.second.begin(); ct > 0 && it2 != bin_it.second.end(); ++it2 ) {
 					if ( combinable( **it2, exclude_res ) ) {
 						--ct;
 						combined_cst->add_individual_constraint( *it2 );
@@ -661,7 +660,7 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 		cst_in_casted = utility::pointer::dynamic_pointer_cast< AmbiguousNMRConstraint const >( *it );
 		if ( cst_in_casted ) {
 			tr.Debug << "casted to AmbiguousNMRConstraint: " << std::endl;
-			for ( utility::vector1< ConstraintCOP >::const_iterator multi_it = cst_in_casted->member_constraints().begin(); multi_it != cst_in_casted->member_constraints().end(); ++multi_it ) {
+			for ( auto multi_it = cst_in_casted->member_constraints().begin(); multi_it != cst_in_casted->member_constraints().end(); ++multi_it ) {
 				count_constraint( *multi_it, cst_in_casted->member_constraints().size() > 1 , count_matrix, influence_width, total_residue );
 			}
 		} else {
@@ -683,7 +682,7 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 		cst_in_casted = utility::pointer::dynamic_pointer_cast< AmbiguousNMRConstraint const >( *it );
 		bool keep( false );
 		if ( cst_in_casted ) {
-			for ( utility::vector1< ConstraintCOP >::const_iterator multi_it = cst_in_casted->member_constraints().begin(); multi_it != cst_in_casted->member_constraints().end(); ++multi_it ) {
+			for ( auto multi_it = cst_in_casted->member_constraints().begin(); multi_it != cst_in_casted->member_constraints().end(); ++multi_it ) {
 				keep |= keep_constraint( *multi_it,  cst_in_casted->member_constraints().size() > 1, count_matrix, influence_width, total_residue );
 			}
 		} else {
@@ -723,18 +722,15 @@ void drop_constraints( ConstraintCOPs& in, core::Real drop_rate ) {
 void
 print_atom_pair_constraints( pose::Pose const & pose, std::ostream & out /* = std::cout */ ){
 	ConstraintSetCOP cst_set = pose.constraint_set();
-	typedef ResidueConstraints::const_iterator ResiduePairConstraintsIterator;
 	// should probably do intra-residue too. Oh well.
 	for ( Size n = 1; n <= pose.size(); n++ ) {
-		for ( ResiduePairConstraintsIterator
+		for ( auto
 				iter = cst_set->residue_pair_constraints_begin( n ),
 				iter_end = cst_set->residue_pair_constraints_end( n );
 				iter  != iter_end; ++iter ) {
 			ConstraintsOP csts = iter->second;
-			for ( ConstraintCOPs::const_iterator it=csts->begin(), ite = csts->end();
-					it != ite;
-					++it ) {
-				Constraint const & cst( **it );
+			for ( auto const & it : *csts ) {
+				Constraint const & cst( *it );
 				if ( cst.type() == "AtomPair" ) cst.show_def( out, pose );
 			}
 		}

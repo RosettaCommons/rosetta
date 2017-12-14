@@ -119,7 +119,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 
 	switch ( n_rotlib_chi ) {
 	case 1 : {
-		RotamericSingleResiduePeptoidLibrary< ONE, THREE > * r1 =
+		auto * r1 =
 			new RotamericSingleResiduePeptoidLibrary< ONE, THREE >();
 		r1->set_n_chi_bins( peptoid_libspec->peptoid_rotlib_n_bin_per_rot() );
 		r1->read_from_file( rotlib_in );
@@ -127,7 +127,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 		break;
 	}
 	case 2 : {
-		RotamericSingleResiduePeptoidLibrary< TWO, THREE > * r2 =
+		auto * r2 =
 			new RotamericSingleResiduePeptoidLibrary< TWO, THREE >();
 		r2->set_n_chi_bins( peptoid_libspec->peptoid_rotlib_n_bin_per_rot() );
 		r2->read_from_file( rotlib_in );
@@ -135,7 +135,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 		break;
 	}
 	case 3 : {
-		RotamericSingleResiduePeptoidLibrary< THREE, THREE > * r3 =
+		auto * r3 =
 			new RotamericSingleResiduePeptoidLibrary< THREE, THREE >();
 		r3->set_n_chi_bins( peptoid_libspec->peptoid_rotlib_n_bin_per_rot() );
 		r3->read_from_file( rotlib_in );
@@ -143,7 +143,7 @@ SingleResiduePeptoidLibraryCreator::create( core::chemical::ResidueType const & 
 		break;
 	}
 	case 4 : {
-		RotamericSingleResiduePeptoidLibrary< FOUR, THREE > * r4 =
+		auto * r4 =
 			new RotamericSingleResiduePeptoidLibrary< FOUR, THREE >();
 		r4->set_n_chi_bins( peptoid_libspec->peptoid_rotlib_n_bin_per_rot() );
 		r4->read_from_file( rotlib_in );

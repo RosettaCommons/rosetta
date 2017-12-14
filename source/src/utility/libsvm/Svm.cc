@@ -10,8 +10,8 @@
 
 #include "Svm.hh"
 int libsvm_version = LIBSVM_VERSION;
-typedef float Qfloat;
-typedef signed char schar;
+using Qfloat = float;
+using schar = signed char;
 #ifndef min
 template <class T> static inline T min(T x,T y) { return (x<y)?x:y; }
 #endif
@@ -193,13 +193,13 @@ public:
 	virtual Qfloat *get_Q(int column, int len) const = 0;
 	virtual double *get_QD() const = 0;
 	virtual void swap_index(int i, int j) const = 0;
-	virtual ~QMatrix() {}
+	virtual ~QMatrix() = default;
 };
 
 class Kernel: public QMatrix {
 public:
 	Kernel(int l, svm_node * const * x, const svm_parameter& param);
-	~Kernel();
+	~Kernel() override;
 
 	static double k_function(const svm_node *x, const svm_node *y,
 		const svm_parameter& param);
@@ -970,7 +970,7 @@ double Solver::calculate_rho()
 class Solver_NU: public Solver
 {
 public:
-	Solver_NU() {}
+	Solver_NU() = default;
 	void Solve(int l, const QMatrix& Q, const double *p, const schar *y,
 		double *alpha, double Cp, double Cn, double eps,
 		SolutionInfo* si, int shrinking)
@@ -1485,7 +1485,7 @@ static void solve_one_class(
 	auto *ones = new schar[l];
 	int i;
 
-	int n = (int)(param->nu*prob->l); // # of alpha's at upper bound
+	auto n = (int)(param->nu*prob->l); // # of alpha's at upper bound
 
 	for ( i=0; i<n; i++ ) {
 		alpha[i] = 1;
@@ -1597,7 +1597,7 @@ static decision_function svm_train_one(
 	const svm_problem *prob, const svm_parameter *param,
 	double Cp, double Cn)
 {
-	double *alpha = Malloc(double,prob->l);
+	auto *alpha = Malloc(double,prob->l);
 	Solver::SolutionInfo si;
 	switch(param->svm_type)
 			{
@@ -1666,7 +1666,7 @@ static void sigmoid_train(
 	double eps=1e-5;
 	double hiTarget=(prior1+1.0)/(prior1+2.0);
 	double loTarget=1/(prior0+2.0);
-	double *t=Malloc(double,l);
+	auto *t=Malloc(double,l);
 	double fApB,p,q;
 	double newA,newB,newf,d1,d2;
 	int iter;
@@ -1773,8 +1773,8 @@ static void multiclass_probability(int k, double **r, double *p)
 {
 	int t,j;
 	int iter = 0, max_iter=max(100,k);
-	double **Q=Malloc(double *,k);
-	double *Qp=Malloc(double,k);
+	auto **Q=Malloc(double *,k);
+	auto *Qp=Malloc(double,k);
 	double eps=0.005/k;
 
 	for ( t=0; t<k; t++ ) {
@@ -1834,8 +1834,8 @@ static void svm_binary_svc_probability(
 {
 	int i;
 	int nr_fold = 5;
-	int *perm = Malloc(int,prob->l);
-	double *dec_values = Malloc(double,prob->l);
+	auto *perm = Malloc(int,prob->l);
+	auto *dec_values = Malloc(double,prob->l);
 
 	// random shuffle
 	for ( i=0; i<prob->l; i++ ) perm[i]=i;
@@ -1919,7 +1919,7 @@ static double svm_svr_probability(
 {
 	int i;
 	int nr_fold = 5;
-	double *ymv = Malloc(double,prob->l);
+	auto *ymv = Malloc(double,prob->l);
 	double mae = 0;
 
 	svm_parameter newparam = *param;
@@ -1954,13 +1954,13 @@ static void svm_group_classes(const svm_problem *prob, int *nr_class_ret, int **
 	int l = prob->l;
 	int max_nr_class = 16;
 	int nr_class = 0;
-	int *label = Malloc(int,max_nr_class);
-	int *count = Malloc(int,max_nr_class);
-	int *data_label = Malloc(int,l);
+	auto *label = Malloc(int,max_nr_class);
+	auto *count = Malloc(int,max_nr_class);
+	auto *data_label = Malloc(int,l);
 	int i;
 
 	for ( i = 0; i < l; i++ ) {
-		int this_label = ( int )prob->y[ i ];
+		auto this_label = ( int )prob->y[ i ];
 		int j;
 		for ( j = 0; j < nr_class; j++ ) {
 			if ( this_label == label[ j ] ) {
@@ -1973,14 +1973,14 @@ static void svm_group_classes(const svm_problem *prob, int *nr_class_ret, int **
 			if ( nr_class == max_nr_class ) {
 				max_nr_class *= 2;
 				// AMW cppcheck notes that we need to check for realloc success
-				int *new_label_data = static_cast< int * >( realloc( label, max_nr_class * sizeof( int ) ) );
+				auto *new_label_data = static_cast< int * >( realloc( label, max_nr_class * sizeof( int ) ) );
 				if ( new_label_data == nullptr ) {
 					info( "\n\n!!! Critical memory error in svm_group_classes, label allocation !!!\n\n" );
 				} else {
 					label = new_label_data;
 				}
 
-				int *new_count_data = static_cast< int * >( realloc( count, max_nr_class * sizeof( int ) ) );
+				auto *new_count_data = static_cast< int * >( realloc( count, max_nr_class * sizeof( int ) ) );
 				if ( new_count_data == nullptr ) {
 					info( "\n\n!!! Critical memory error in svm_group_classes, count allocation !!!\n\n" );
 				} else {
@@ -1993,7 +1993,7 @@ static void svm_group_classes(const svm_problem *prob, int *nr_class_ret, int **
 		}
 	}
 
-	int *start = Malloc(int,nr_class);
+	auto *start = Malloc(int,nr_class);
 	start[0] = 0;
 	for ( i = 1; i < nr_class; i++ ) {
 		start[ i ] = start[ i - 1 ] + count[ i - 1 ];
@@ -2019,7 +2019,7 @@ static void svm_group_classes(const svm_problem *prob, int *nr_class_ret, int **
 //
 svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 {
-	svm_model *model = Malloc(svm_model,1);
+	auto *model = Malloc(svm_model,1);
 	model->param = *param;
 	model->free_sv = 0; // XXX
 
@@ -2071,7 +2071,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 		int *label = nullptr;
 		int *start = nullptr;
 		int *count = nullptr;
-		int *perm = Malloc(int,l);
+		auto *perm = Malloc(int,l);
 
 		// group training data of the same class
 		svm_group_classes(prob,&nr_class,&label,&start,&count,perm);
@@ -2079,7 +2079,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 			info("WARNING: training data in only one class. See README for details.\n");
 		}
 
-		svm_node **x = Malloc(svm_node *,l);
+		auto **x = Malloc(svm_node *,l);
 		int i;
 		for ( i=0; i<l; i++ ) {
 			x[i] = prob->x[perm[i]];
@@ -2087,7 +2087,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 
 		// calculate weighted C
 
-		double *weighted_C = Malloc(double, nr_class);
+		auto *weighted_C = Malloc(double, nr_class);
 		for ( i=0; i<nr_class; i++ ) {
 			weighted_C[i] = param->C;
 		}
@@ -2107,11 +2107,11 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 
 		// train k*(k-1)/2 models
 
-		bool *nonzero = Malloc(bool,l);
+		auto *nonzero = Malloc(bool,l);
 		for ( i=0; i<l; i++ ) {
 			nonzero[i] = false;
 		}
-		decision_function *f = Malloc(decision_function,nr_class*(nr_class-1)/2);
+		auto *f = Malloc(decision_function,nr_class*(nr_class-1)/2);
 
 		double *probA=nullptr,*probB=nullptr;
 		if ( param->probability ) {
@@ -2186,7 +2186,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 		}
 
 		int total_sv = 0;
-		int *nz_count = Malloc(int,nr_class);
+		auto *nz_count = Malloc(int,nr_class);
 		model->nSV = Malloc(int,nr_class);
 		for ( i=0; i<nr_class; i++ ) {
 			int nSV = 0;
@@ -2213,7 +2213,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 			}
 		}
 
-		int *nz_start = Malloc(int,nr_class);
+		auto *nz_start = Malloc(int,nr_class);
 		nz_start[0] = 0;
 		for ( i=1; i<nr_class; i++ ) {
 			nz_start[i] = nz_start[i-1]+nz_count[i-1];
@@ -2276,9 +2276,9 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, int nr_fold, double *target)
 {
 	int i;
-	int *fold_start = Malloc(int,nr_fold+1);
+	auto *fold_start = Malloc(int,nr_fold+1);
 	int l = prob->l;
-	int *perm = Malloc(int,l);
+	auto *perm = Malloc(int,l);
 	int nr_class;
 
 	// stratified cv may not give leave-one-out rate
@@ -2291,9 +2291,9 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 		svm_group_classes(prob,&nr_class,&label,&start,&count,perm);
 
 		// random shuffle and then data grouped by fold using the array perm
-		int *fold_count = Malloc(int,nr_fold);
+		auto *fold_count = Malloc(int,nr_fold);
 		int c;
-		int *index = Malloc(int,l);
+		auto *index = Malloc(int,l);
 		for ( i=0; i<l; i++ ) {
 			index[i]=perm[i];
 		}
@@ -2367,7 +2367,7 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 		struct svm_model *submodel = svm_train(&subprob,param);
 		if ( param->probability &&
 				(param->svm_type == C_SVC || param->svm_type == NU_SVC) ) {
-			double *prob_estimates=Malloc(double,svm_get_nr_class(submodel));
+			auto *prob_estimates=Malloc(double,svm_get_nr_class(submodel));
 			for ( j=begin; j<end; j++ ) {
 				target[perm[j]] = svm_predict_probability(submodel,prob->x[perm[j]],prob_estimates);
 			}
@@ -2453,18 +2453,18 @@ double svm_predict_values(const svm_model *model, const svm_node *x, double* dec
 		int nr_class = model->nr_class;
 		int l = model->l;
 
-		double *kvalue = Malloc(double,l);
+		auto *kvalue = Malloc(double,l);
 		for ( i=0; i<l; i++ ) {
 			kvalue[i] = Kernel::k_function(x,model->SV[i],model->param);
 		}
 
-		int *start = Malloc(int,nr_class);
+		auto *start = Malloc(int,nr_class);
 		start[0] = 0;
 		for ( i=1; i<nr_class; i++ ) {
 			start[i] = start[i-1]+model->nSV[i-1];
 		}
 
-		int *vote = Malloc(int,nr_class);
+		auto *vote = Malloc(int,nr_class);
 		for ( i=0; i<nr_class; i++ ) {
 			vote[i] = 0;
 		}
@@ -2536,11 +2536,11 @@ double svm_predict_probability(
 			model->probA!=nullptr && model->probB!=nullptr ) {
 		int i;
 		int nr_class = model->nr_class;
-		double *dec_values = Malloc(double, nr_class*(nr_class-1)/2);
+		auto *dec_values = Malloc(double, nr_class*(nr_class-1)/2);
 		svm_predict_values(model, x, dec_values);
 
 		double min_prob=1e-7;
-		double **pairwise_prob=Malloc(double *,nr_class);
+		auto **pairwise_prob=Malloc(double *,nr_class);
 		for ( i=0; i<nr_class; i++ ) {
 			pairwise_prob[i]=Malloc(double,nr_class);
 		}
@@ -2692,10 +2692,10 @@ static char* readline(FILE *input)
 	while ( strrchr(line,'\n') == nullptr )
 			{
 		max_line_len *= 2;
-		char * newline = (char *) realloc(line,max_line_len);
+		auto * newline = (char *) realloc(line,max_line_len);
 		assert( newline ); // realloc returns a null pointer and doesn't free the memory on failure.
 		line = newline;
-		int len = (int) strlen(line);
+		auto len = (int) strlen(line);
 		if ( fgets(line+len,max_line_len-len,input) == nullptr ) {
 			break;
 		}
@@ -2713,7 +2713,7 @@ svm_model *svm_load_model(const char *model_file_name)
 
 	// read parameters
 
-	svm_model *model = Malloc(svm_model,1);
+	auto *model = Malloc(svm_model,1);
 	svm_parameter& param = model->param;
 	model->rho = nullptr;
 	model->probA = nullptr;
@@ -2722,7 +2722,7 @@ svm_model *svm_load_model(const char *model_file_name)
 	model->nSV = nullptr;
 
 	char cmd[81];
-	while ( 1 )
+	while ( true )
 			{
 		if ( fscanf(fp,"%80s",cmd) == EOF ) {
 			std::cout << "Warning! End of file reached without any matches." << std::endl;
@@ -2833,7 +2833,7 @@ svm_model *svm_load_model(const char *model_file_name)
 				}
 			}
 		} else if ( strcmp(cmd,"SV")==0 ) {
-			while ( 1 )
+			while ( true )
 					{
 				int c = getc(fp);
 				if ( c==EOF || c=='\n' ) break;
@@ -2864,7 +2864,7 @@ svm_model *svm_load_model(const char *model_file_name)
 	while ( readline(fp)!=nullptr )
 			{
 		p = strtok(line,":");
-		while ( 1 )
+		while ( true )
 				{
 			p = strtok(nullptr,":");
 			if ( p == nullptr ) {
@@ -2900,7 +2900,7 @@ svm_model *svm_load_model(const char *model_file_name)
 			model->sv_coef[k][i] = strtod(p,&endptr);
 		}
 
-		while ( 1 )
+		while ( true )
 				{
 			idx = strtok(nullptr, ":");
 			val = strtok(nullptr, " \t");
@@ -3062,12 +3062,12 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 		int l = prob->l;
 		int max_nr_class = 16;
 		int nr_class = 0;
-		int *label = Malloc(int,max_nr_class);
-		int *count = Malloc(int,max_nr_class);
+		auto *label = Malloc(int,max_nr_class);
+		auto *count = Malloc(int,max_nr_class);
 
 		int i;
 		for ( i=0; i<l; i++ ) {
-			int this_label = (int)prob->y[i];
+			auto this_label = (int)prob->y[i];
 			int j;
 			for ( j=0; j<nr_class; j++ ) {
 				if ( this_label == label[j] ) {
@@ -3079,14 +3079,14 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 				if ( nr_class == max_nr_class ) {
 					max_nr_class *= 2;
 					// AMW cppcheck notes that we need to check for realloc success
-					int *new_label_data = static_cast< int * >( realloc( label, max_nr_class * sizeof( int ) ) );
+					auto *new_label_data = static_cast< int * >( realloc( label, max_nr_class * sizeof( int ) ) );
 					if ( new_label_data == nullptr ) {
 						info( "\n\n!!! Critical memory error in svm_group_classes, label allocation !!!\n\n" );
 					} else {
 						label = new_label_data;
 					}
 
-					int *new_count_data = static_cast< int * >( realloc( count, max_nr_class * sizeof( int ) ) );
+					auto *new_count_data = static_cast< int * >( realloc( count, max_nr_class * sizeof( int ) ) );
 					if ( new_count_data == nullptr ) {
 						info( "\n\n!!! Critical memory error in svm_group_classes, count allocation !!!\n\n" );
 					} else {

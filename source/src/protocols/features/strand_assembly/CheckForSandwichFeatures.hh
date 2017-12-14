@@ -101,28 +101,28 @@ std::string
 check_canonicalness_of_LR(
 	core::Size loop_size,
 	bool intra_sheet,
-	std::string LR);
+	std::string const & LR);
 
 std::string
 check_canonicalness_of_PA(
 	core::Size loop_size,
 	bool intra_sheet,
-	std::string PA_by_preceding_E,
-	std::string PA_by_following_E,
+	std::string const & PA_by_preceding_E,
+	std::string const & PA_by_following_E,
 	core::Real check_canonicalness_cutoff_);
 
 std::string
 check_canonicalness_of_parallel_EE(
 	core::Size loop_size,
 	bool intra_sheet,
-	std::string parallel_EE);
+	std::string const & parallel_EE);
 
 std::string
 check_heading_direction ( // for example, positive,
 	core::pose::Pose & dssp_pose,
 	core::Size preceding_E,
 	core::Size following_E,
-	std::string check_heading_direction_by_);
+	std::string const & check_heading_direction_by_);
 
 bool
 check_helix_existence(
@@ -188,7 +188,7 @@ check_whether_sw_is_not_connected_with_continuous_atoms(
 
 bool
 check_whether_this_pdb_should_be_excluded (
-	std::string tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
+	std::string const & tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
 
 bool
 check_whether_this_sheet_is_too_short(
@@ -422,7 +422,7 @@ get_sheet_antiparallel_info(
 
 core::Real
 get_shortest_among_4_vals(
-	core::Real arr_dis_inter_sheet[]);
+	const core::Real arr_dis_inter_sheet[]);
 
 
 core::Size
@@ -472,8 +472,8 @@ utility::vector1<core::Size>
 get_vector_of_strand_AA_distribution (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	std::string heading_direction, // like core_heading, surface_heading
-	std::string strand_location // like edge_strand, core_strand
+	std::string const & heading_direction, // like core_heading, surface_heading
+	std::string const & strand_location // like edge_strand, core_strand
 );
 
 core::Size
@@ -537,8 +537,8 @@ retrieve_residue_num_of_rkde(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::Size sw_can_by_sh_id,
-	std::string dssp_code,
-	std::string heading_direction);
+	std::string const & dssp_code,
+	std::string const & heading_direction);
 
 float
 round_to_float(

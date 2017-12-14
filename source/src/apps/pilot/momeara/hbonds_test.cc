@@ -83,23 +83,23 @@ main( int argc, char * argv [] )
 			list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
 		}
 
-		for ( std::vector< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
-			std::string filename( i->name() );
+		for ( auto & list_file_name : list_file_names ) {
+			std::string filename( list_file_name.name() );
 			std::ifstream data( filename.c_str() );
 			if ( !data.good() ) {
 				utility_exit_with_message( "Unable to open file: " + filename + '\n' );
 			}
 			std::string line;
 			while ( getline(data, line) ) {
-				pdb_file_names.push_back( FileName(line) );
+				pdb_file_names.emplace_back(line );
 			}
 			data.close();
 		}
 
 
 		// run dump_hbonds for each name in list
-		for ( std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i ) {
-			dump_hbonds( i->name() );
+		for ( auto & pdb_file_name : pdb_file_names ) {
+			dump_hbonds( pdb_file_name.name() );
 		}
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

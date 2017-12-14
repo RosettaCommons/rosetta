@@ -160,7 +160,7 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	core::Size polar_resnum = (core::Size) polar_rsd.seqpos();
+	auto polar_resnum = (core::Size) polar_rsd.seqpos();
 	core::Real residue_geosol(0.), energy(0.);
 
 	if ( polar_rsd.has_variant_type( chemical::REPLONLY ) ) return;

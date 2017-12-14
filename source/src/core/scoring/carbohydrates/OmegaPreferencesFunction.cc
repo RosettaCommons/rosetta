@@ -44,8 +44,7 @@ OmegaPreferencesFunction::OmegaPreferencesFunction()
 	init();
 }
 
-OmegaPreferencesFunction::~OmegaPreferencesFunction()
-{}
+OmegaPreferencesFunction::~OmegaPreferencesFunction() = default;
 
 
 // Other Public Methods ///////////////////////////////////////////////////////
@@ -133,7 +132,7 @@ OmegaPreferencesFunction::setup_for_sampling( core::Real step_size ){
 		//TR << "linkage: " << i << std::endl;
 		//std::cout << "Angle,Energy,Probability"<<std::endl;
 
-		OmegaPreferenceType preference_type = static_cast< OmegaPreferenceType >( i );
+		auto preference_type = static_cast< OmegaPreferenceType >( i );
 
 		OmegaPreferenceSamplingData sampling_data;
 

@@ -53,7 +53,7 @@ namespace topology_broker {
 using namespace core;
 
 
-AsymFoldandDockClaimer::AsymFoldandDockClaimer() {}
+AsymFoldandDockClaimer::AsymFoldandDockClaimer() = default;
 
 AsymFoldandDockClaimer::AsymFoldandDockClaimer( pose::Pose const& input_pose ) :
 	input_pose_(input_pose)

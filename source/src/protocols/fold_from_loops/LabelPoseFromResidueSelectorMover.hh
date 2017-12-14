@@ -35,8 +35,8 @@ class LabelPoseFromResidueSelectorMover : public protocols::moves::Mover {
 
 public:
 	LabelPoseFromResidueSelectorMover();
-	LabelPoseFromResidueSelectorMover( core::select::residue_selector::ResidueSelectorCOP const & selector );
-	LabelPoseFromResidueSelectorMover( core::select::residue_selector::ResidueSelectorCOP const & selector, std::string const & string );
+	LabelPoseFromResidueSelectorMover( core::select::residue_selector::ResidueSelectorCOP selector );
+	LabelPoseFromResidueSelectorMover( core::select::residue_selector::ResidueSelectorCOP selector, std::string const & string );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
 	~LabelPoseFromResidueSelectorMover() override;
@@ -68,7 +68,7 @@ public:
 	residue_selector( core::select::residue_selector::ResidueSelector const & selector );
 
 	void
-	label( std::string  const & label );
+	label( std::string const & label );
 
 	void
 	reverse( bool pick );

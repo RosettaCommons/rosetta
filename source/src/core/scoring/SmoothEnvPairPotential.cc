@@ -307,7 +307,7 @@ SmoothEnvPairPotential::compute_centroid_environment(
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			conformation::Residue const & rsd2 ( pose.residue(j) );
 			if ( !rsd2.is_protein() ) continue;
@@ -371,7 +371,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			conformation::Residue const & rsd2 ( pose.residue(j) );
 			if ( !rsd2.is_protein() ) continue;
@@ -388,7 +388,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 
 	// symetrize cenlist (if necessary)
 	if ( symminfo ) {
-		core::conformation::symmetry::SymmetricConformation const &symmconf =
+		auto const &symmconf =
 			dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
 		for ( Size i = 1; i <= nres; ++i ) {
 			conformation::Residue const & rsd1 ( pose.residue(i) );
@@ -498,7 +498,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 			iru  = energy_graph.get_node(position)->const_edge_list_begin(),
 			irue = energy_graph.get_node(position)->const_edge_list_end();
 			iru != irue; ++iru ) {
-		EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+		auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 		Size const j( edge->get_other_ind(position) );
 		conformation::Residue const & rsd2 ( pose.residue(j) );
 		if ( !rsd2.is_protein() ) continue;

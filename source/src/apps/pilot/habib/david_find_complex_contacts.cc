@@ -104,7 +104,7 @@ main( int argc, char * argv [] )
 					iru  = energy_graph.get_node( i )->edge_list_begin(),
 					irue = energy_graph.get_node( i )->edge_list_end();
 					iru != irue; ++iru ) {
-				EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+				auto * edge( static_cast< EnergyEdge *> (*iru) );
 				Size const j( edge->get_other_ind( i ) );
 				//Size const j( edge->get_first_node_ind() );
 

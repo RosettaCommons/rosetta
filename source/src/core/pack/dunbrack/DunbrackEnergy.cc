@@ -71,7 +71,7 @@ DunbrackEnergy::DunbrackEnergy() :
 	parent( EnergyMethodCreatorOP( new DunbrackEnergyCreator ) )
 {}
 
-DunbrackEnergy::~DunbrackEnergy() {}
+DunbrackEnergy::~DunbrackEnergy() = default;
 
 /// clone
 EnergyMethodOP

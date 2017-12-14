@@ -64,7 +64,6 @@ public:
 	B2OP clone() const { return B2OP( new B2( *this ) ); }
 
 private:
-	int some_int_;
 	A a_instance_;
 
 };

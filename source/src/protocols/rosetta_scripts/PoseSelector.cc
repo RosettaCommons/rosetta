@@ -37,9 +37,7 @@ static basic::Tracer TR( "protocols.rosetta_scripts.PoseSelector" );
 namespace protocols {
 namespace rosetta_scripts {
 
-PoseSelector::PoseSelector()
-{
-}
+PoseSelector::PoseSelector() = default;
 
 PoseSelector::~PoseSelector() = default;
 

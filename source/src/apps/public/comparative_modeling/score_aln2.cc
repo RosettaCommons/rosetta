@@ -88,12 +88,11 @@ poses_from_cmd_line(
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
 
-	typedef vector1< string >::const_iterator iter;
-	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
-		if ( file_exists(*it) ) {
+	for ( auto const & it : fn_list ) {
+		if ( file_exists(it) ) {
 			Pose pose;
-			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
-			string name = utility::file_basename( *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, it , core::import_pose::PDB_file);
+			string name = utility::file_basename( it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
 		}
@@ -109,9 +108,8 @@ void print_seq_map(
 	using std::map;
 	using std::string;
 	using core::sequence::CompositeSequenceOP;
-	typedef map< string, CompositeSequenceOP >::const_iterator iter;
-	for ( iter it = seqs.begin(), end = seqs.end(); it != end; ++it ) {
-		out << it->first << " => " << *it->second << std::endl;
+	for ( auto const & seq : seqs ) {
+		out << seq.first << " => " << *seq.second << std::endl;
 	}
 }
 
@@ -249,7 +247,7 @@ main( int argc, char* argv [] ) {
 		SilentFileOptions opts; // initialized from the command line
 		SilentFileData sfd(opts);
 
-		typedef vector1< string >::const_iterator aln_iter;
+		using aln_iter = vector1<string>::const_iterator;
 		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
 				aln_fn != aln_end; ++aln_fn
 				) {
@@ -257,15 +255,12 @@ main( int argc, char* argv [] ) {
 				option[ cm::aln_format ](), *aln_fn
 			);
 
-			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-					end = alns.end();
-					it != end; ++it
-					) {
-				string const template_id( it->sequence(2)->id().substr(0,5) );
-				tr << *it << std::endl;
-				tr << "id " << it->sequence(2)->id() << " => " << template_id
+			for ( auto & aln : alns ) {
+				string const template_id( aln.sequence(2)->id().substr(0,5) );
+				tr << aln << std::endl;
+				tr << "id " << aln.sequence(2)->id() << " => " << template_id
 					<< std::endl;
-				string const ungapped_query( it->sequence(1)->ungapped_sequence() );
+				string const ungapped_query( aln.sequence(1)->ungapped_sequence() );
 
 				SilentStructOP ss_out( new ScoreFileSilentStruct(opts) );
 				map< string, CompositeSequenceOP >::iterator seq_it = seqs.find( template_id );
@@ -288,13 +283,13 @@ main( int argc, char* argv [] ) {
 					//std::cout << "template sequence length " << template_seq->sequence().length() << std::endl;
 					//std::cout << std::endl;
 
-					SequenceAlignment rescore_aln = steal_alignment( *it, my_seqs );
+					SequenceAlignment rescore_aln = steal_alignment( aln, my_seqs );
 					std::cout << "stolen alignment:" << std::endl;
 					std::cout << rescore_aln << std::endl;
 					rescore_aln.score( rescore_aln.calculate_score_sum_of_pairs( ss ) );
 					//string const ungapped_templ( it->sequence(2)->ungapped_sequence() );
 					if ( option[ run::debug ]() ) {
-						string const id_out( it->sequence(2)->id() );
+						string const id_out( aln.sequence(2)->id() );
 						save_per_residue_scores( id_out + ".dat", rescore_aln, ss, id_out );
 					}
 
@@ -321,17 +316,17 @@ main( int argc, char* argv [] ) {
 							*(rsd_set_from_cmd_line().lock())
 						);
 						template_pose = pose_it->second;
-						PartialThreadingMover mover(*it,template_pose);
+						PartialThreadingMover mover(aln,template_pose);
 						Align_RmsdEvaluator eval( native_pose, "ali", true );
 						eval.apply(query_pose,"ali",*ss_out);
 						if ( option[ run::debug ]() ) {
-							string const id_out( it->sequence(2)->id() );
+							string const id_out( aln.sequence(2)->id() );
 							query_pose.dump_pdb(id_out + ".pdb");
 						}
 					} // template pdb check
 				} // have native
 				ss_out->scoreline_prefix( "" );
-				ss_out->decoy_tag( it->sequence(2)->id() );
+				ss_out->decoy_tag( aln.sequence(2)->id() );
 				ss_out->add_energy( "n_ali_query", ungapped_query.length() );
 				ss_out->add_string_value( "template", template_id );
 				sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );

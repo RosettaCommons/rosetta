@@ -25,10 +25,10 @@ namespace protocols {
 namespace backrub {
 
 bool
-read_fold_tree_from_file( core::kinematics::FoldTree & foldtree, std::string filepath );
+read_fold_tree_from_file( core::kinematics::FoldTree & foldtree, std::string const & filepath );
 
 bool
-read_fold_tree_from_file( core::pose::Pose & pose, std::string filepath );
+read_fold_tree_from_file( core::pose::Pose & pose, std::string const & filepath );
 
 void
 append_fold_tree_to_file( core::kinematics::FoldTree const & foldtree, std::string file_path );

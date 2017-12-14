@@ -20,6 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/conformation/Conformation.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
@@ -95,7 +96,7 @@ RmsdFilter::RmsdFilter(
 	selection_( core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector(selection) ) ),
 	superimpose_(superimpose),
 	threshold_(threshold),
-	reference_pose_(reference_pose),
+	reference_pose_(std::move(reference_pose)),
 	selection_from_segment_cache_(false),
 	specify_both_spans_( false ),
 	CA_only_ ( true ),
@@ -111,7 +112,7 @@ RmsdFilter::RmsdFilter(
 }
 
 
-RmsdFilter::~RmsdFilter() {}
+RmsdFilter::~RmsdFilter() = default;
 
 protocols::filters::FilterOP
 RmsdFilter::clone() const {
@@ -413,7 +414,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 		}
 	}
 
-	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
+	symmetry_ = tag->getOption<bool>( "symmetry", false );
 	superimpose_on_all( tag->getOption< bool >( "superimpose_on_all", false ) );
 
 	std::string chains = tag->getOption<std::string>( "chains", "" );
@@ -425,8 +426,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	}
 
 	utility::vector0< utility::tag::TagCOP > const rmsd_tags( tag->getTags() );
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator it=rmsd_tags.begin(); it!=rmsd_tags.end(); ++it ) {
-		utility::tag::TagCOP const rmsd_tag = *it;
+	for ( auto rmsd_tag : rmsd_tags ) {
 		if ( rmsd_tag->getName() == "residue" ) {
 			ResidueSelectorOP res_select( new ResidueIndexSelector( core::pose::get_resnum_string( rmsd_tag ) ) );
 			add_selector( res_select );
@@ -454,7 +454,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 		}
 	}
 
-	superimpose_ = tag->getOption<bool>( "superimpose", 1 );
+	superimpose_ = tag->getOption<bool>( "superimpose", true );
 	threshold_ = tag->getOption<core::Real>( "threshold", 5 );
 	///
 	if ( tag->hasOption("by_aln") ) {
@@ -467,7 +467,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	}
 
 	if ( tag->hasOption("rms_residues_from_pose_cache") ) {
-		selection_from_segment_cache_ = tag->getOption<bool>( "rms_residues_from_pose_cache", 1 );
+		selection_from_segment_cache_ = tag->getOption<bool>( "rms_residues_from_pose_cache", true );
 		if ( selection_ != nullptr ) std::cerr << "Warning: in rmsd filter tag, both a span selection and the instruction to set the residues from the pose cache is given. Incompatible, defined span will be ignored." << std::endl;
 	}
 

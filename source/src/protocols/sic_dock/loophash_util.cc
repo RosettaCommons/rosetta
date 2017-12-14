@@ -30,17 +30,17 @@ using numeric::min;
 using core::id::AtomID;
 using std::cout;
 using std::endl;
-typedef core::Real Real;
-typedef core::Size Size;
-typedef core::pose::Pose Pose;
-typedef Xform Xform;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
-typedef utility::vector1<Vec> Vecs;
-typedef utility::vector1<Real> Reals;
-typedef utility::vector1<Size> Sizes;
-typedef numeric::Xforms Xforms;
-typedef utility::vector1<RigidScoreCOP> Scores;
+using Real = core::Real;
+using Size = core::Size;
+using Pose = core::pose::Pose;
+using Xform = Xform;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
+using Vecs = utility::vector1<Vec>;
+using Reals = utility::vector1<Real>;
+using Sizes = utility::vector1<Size>;
+using Xforms = numeric::Xforms;
+using Scores = utility::vector1<RigidScoreCOP>;
 
 Vec3
 get_leap_lower_stub(

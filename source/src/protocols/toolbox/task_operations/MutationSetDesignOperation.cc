@@ -44,7 +44,7 @@ return MutationSetDesignOperation::keyname();
 }
 */
 
-MutationSetDesignOperation::~MutationSetDesignOperation(){}
+MutationSetDesignOperation::~MutationSetDesignOperation()= default;
 
 MutationSetDesignOperation::MutationSetDesignOperation():
 	TaskOperation()
@@ -69,17 +69,7 @@ MutationSetDesignOperation::MutationSetDesignOperation(
 }
 
 
-MutationSetDesignOperation::MutationSetDesignOperation(MutationSetDesignOperation const & src):
-	TaskOperation(src),
-	add_to_allowed_aas_(src.add_to_allowed_aas_),
-	include_native_aa_(src.include_native_aa_),
-	mutation_sets_(src.mutation_sets_),
-	weights_(src.weights_),
-	picking_rounds_(src.picking_rounds_),
-	sample_index_(src.sample_index_)
-{
-
-}
+MutationSetDesignOperation::MutationSetDesignOperation(MutationSetDesignOperation const & /*src*/) = default;
 
 TaskOperationOP
 MutationSetDesignOperation::clone() const{
@@ -227,7 +217,7 @@ MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task
 
 		if ( add_to_allowed_aas_ ) {
 			for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
-				core::chemical::AA amino = static_cast<core::chemical::AA>(aa_num);
+				auto amino = static_cast<core::chemical::AA>(aa_num);
 				if ( pose_allowed_aminos[ i ][ aa_num ] ) {
 					task.nonconst_residue_task(i).allow_aa(amino);
 				}

@@ -52,9 +52,9 @@ operator<<( std::ostream & os, ScoreRmsPoint const & score )
 	return os;
 }
 
-ScoreRmsPoints::ScoreRmsPoints( ScoreRmsPoint  bg_val ):
+ScoreRmsPoints::ScoreRmsPoints( ScoreRmsPoint const & bg_val ):
 	utility::vector1< ScoreRmsPoint >(),
-	bg_(std::move( bg_val ))
+	bg_( bg_val )
 {}
 
 ScoreRmsPoint const &
@@ -77,8 +77,7 @@ RotamerBoltzmannWeightEvaluator::RotamerBoltzmannWeightEvaluator( core::Real con
 	include_bg_( include_bg_point_in_sum )
 {}
 
-RotamerBoltzmannWeightEvaluator::~RotamerBoltzmannWeightEvaluator()
-= default;
+RotamerBoltzmannWeightEvaluator::~RotamerBoltzmannWeightEvaluator() = default;
 
 EnergyLandscapeEvaluatorOP
 RotamerBoltzmannWeightEvaluator::clone() const
@@ -109,8 +108,7 @@ MulliganPNearEvaluator::MulliganPNearEvaluator( core::Real const temperature, co
 	lambda_sq_( lambda*lambda )
 {}
 
-MulliganPNearEvaluator::~MulliganPNearEvaluator()
-= default;
+MulliganPNearEvaluator::~MulliganPNearEvaluator() = default;
 
 EnergyLandscapeEvaluatorOP
 MulliganPNearEvaluator::clone() const

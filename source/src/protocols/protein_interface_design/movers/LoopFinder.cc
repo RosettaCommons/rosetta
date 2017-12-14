@@ -42,6 +42,7 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <basic/datacache/DataMap.hh>
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -109,7 +110,7 @@ LoopFinder::LoopFinder(
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops( *loops ) );
 }
 
-LoopFinder::~LoopFinder() {}
+LoopFinder::~LoopFinder() = default;
 
 protocols::moves::MoverOP LoopFinder::clone() const {
 	return( protocols::moves::MoverOP( new LoopFinder( *this ) ) );
@@ -141,7 +142,7 @@ LoopFinder::apply( core::pose::Pose & pose )
 	}
 
 	if ( all_loops->size() > 0 ) {
-		for ( Loops::const_iterator it = all_loops->begin(); it != all_loops->end(); ++it ) {
+		for ( auto it = all_loops->begin(); it != all_loops->end(); ++it ) {
 			LoopCOP loop( LoopOP( new Loop(*it) ) );
 			if ( pose.residue( loop->start() ).is_upper_terminus() || pose.residue( loop->stop() ).is_lower_terminus() ) continue; // skip if terminal loop
 			if ( loop->size() < min_length_ || loop->size() > max_length_ ) continue; // skip this loop
@@ -203,8 +204,8 @@ void
 LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	interface_ = tag->getOption<Size>( "interface", 1 );
-	ch1_ = tag->getOption<bool>( "ch1", 0 );
-	ch2_ = tag->getOption<bool>( "ch2", 1 );
+	ch1_ = tag->getOption<bool>( "ch1", false );
+	ch2_ = tag->getOption<bool>( "ch2", true );
 	min_length_ = tag->getOption<core::Size>( "min_length", 3 );
 	max_length_ = tag->getOption<core::Size>( "max_length", 1000 );
 	iface_cutoff_ = tag->getOption<core::Real>( "iface_cutoff", 8.0 );

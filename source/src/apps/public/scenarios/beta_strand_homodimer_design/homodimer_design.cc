@@ -121,9 +121,9 @@ public:
 
 	HDdesignMover();
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual ~HDdesignMover(){};
+	~HDdesignMover() override= default;
 
 	void cloak_and_setup(core::pose::Pose & pose);
 
@@ -138,16 +138,16 @@ public:
 	core::Real calc_bb_E(core::pose::Pose & pose,
 		core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn);
 
-	virtual MoverOP clone() const {
+	MoverOP clone() const override {
 		return MoverOP( new HDdesignMover( *this ) );
 	}
 
-	virtual MoverOP fresh_instance() const {
+	MoverOP fresh_instance() const override {
 		return MoverOP( new HDdesignMover );
 	}
-	virtual
+
 	std::string
-	get_name() const {
+	get_name() const override {
 		return "HDdesignMover";
 	}
 
@@ -297,9 +297,8 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 #ifndef NDEBUG
 	std::set< Size > interface_set = ( interface_mv.value() );
 	TR<< "Interface residues are: \n";
-	for ( std::set< core::Size >::const_iterator it(interface_set.begin()), end(interface_set.end());
-			it != end; ++it ) {
-		TR << *it << ", ";
+	for ( unsigned long it : interface_set ) {
+		TR << it << ", ";
 	}
 	TR << std::endl;
 	TR<< "Fold tree for pose: \n" << pose.fold_tree() << std::endl;

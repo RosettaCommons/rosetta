@@ -48,8 +48,8 @@ SequenceRecoveryFilter::SequenceRecoveryFilter() :
 	scorefxn_( core::scoring::get_score_function() ),
 	rate_threshold_( 0.0 ),
 	mutation_threshold_( 100 ),
-	mutations_( 0 ),
-	verbose_( 0 )
+	mutations_( false ),
+	verbose_( false )
 {}
 
 core::pack::task::TaskFactoryOP
@@ -177,8 +177,8 @@ SequenceRecoveryFilter::apply(core::pose::Pose const & pose ) const
 
 core::Real
 SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & write ) const{
-	runtime_assert( task_factory() != 0 );
-	runtime_assert( reference_pose() != 0 );
+	runtime_assert( task_factory() != nullptr );
+	runtime_assert( reference_pose() != nullptr );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
 	if ( core::pose::symmetry::is_symmetric( *reference_pose() ) ) {
@@ -258,8 +258,8 @@ void
 SequenceRecoveryFilter::write_to_pdb( std::map< core::Size, std::string > const & res_names1, std::map< core::Size, std::string > const & res_names2 ) const {
 
 	std::string user_name = this->get_user_defined_name();
-	std::map< Size, std::string >::const_iterator it_name1 = res_names1.begin();
-	std::map< Size, std::string >::const_iterator it_name2 = res_names2.begin();
+	auto it_name1 = res_names1.begin();
+	auto it_name2 = res_names2.begin();
 	while ( it_name1 != res_names1.end() ) {
 		std::string output_string = "SequenceRecoveryFilter " + user_name + ": " + it_name2->second + ObjexxFCL::string_of( it_name1->first ) + it_name1->second;
 		protocols::jd2::add_string_to_current_job( output_string );
@@ -292,9 +292,9 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP tag,
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	rate_threshold( tag->getOption< core::Real >( "rate_threshold", 0.0 ) );
 	mutation_threshold( tag->getOption< core::Size >( "mutation_threshold", 100 ) );
-	mutations( tag->getOption< bool >( "report_mutations", 0 ) );
-	verbose( tag->getOption< bool >( "verbose", 0 ) );
-	write2pdb( tag->getOption< bool >( "write2pdb", 0 ) );
+	mutations( tag->getOption< bool >( "report_mutations", false ) );
+	verbose( tag->getOption< bool >( "verbose", false ) );
+	write2pdb( tag->getOption< bool >( "write2pdb", false ) );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -317,7 +317,7 @@ SequenceRecoveryFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new SequenceRecoveryFilter() );
 }
 
-SequenceRecoveryFilter::~SequenceRecoveryFilter(){}
+SequenceRecoveryFilter::~SequenceRecoveryFilter()= default;
 
 
 protocols::filters::FilterOP

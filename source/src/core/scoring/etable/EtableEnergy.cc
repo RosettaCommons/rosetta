@@ -142,15 +142,7 @@ TableLookupEtableEnergy::TableLookupEtableEnergy(
 	nonprot_intrares_evaluator_.set_scoretypes( fa_intra_atr_nonprotein, fa_intra_rep_nonprotein, fa_intra_sol_nonprotein );
 }
 
-TableLookupEtableEnergy::TableLookupEtableEnergy(
-	TableLookupEtableEnergy const & src
-) :
-	BaseEtableEnergy< TableLookupEtableEnergy >( src ),
-	intrares_evaluator_( src.intrares_evaluator_ ),
-	interres_evaluator_( src.interres_evaluator_ ),
-	nonprot_intrares_evaluator_( src.nonprot_intrares_evaluator_ )
-{
-}
+TableLookupEtableEnergy::TableLookupEtableEnergy( TableLookupEtableEnergy const & /*src*/ ) = default;
 
 methods::EnergyMethodOP
 TableLookupEtableEnergy::clone() const {
@@ -268,15 +260,7 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 	nonprot_intrares_evaluator_.set_scoretypes( fa_intra_atr_nonprotein, fa_intra_rep_nonprotein, fa_intra_sol_nonprotein );
 }
 
-AnalyticEtableEnergy::AnalyticEtableEnergy(
-	AnalyticEtableEnergy const & src
-) :
-	BaseEtableEnergy< AnalyticEtableEnergy >( src ),
-	intrares_evaluator_( src.intrares_evaluator_ ),
-	interres_evaluator_( src.interres_evaluator_ ),
-	nonprot_intrares_evaluator_( src.nonprot_intrares_evaluator_ )
-{
-}
+AnalyticEtableEnergy::AnalyticEtableEnergy( AnalyticEtableEnergy const & /*src*/ ) = default;
 
 methods::EnergyMethodOP
 AnalyticEtableEnergy::clone() const {
@@ -374,7 +358,7 @@ EtableEvaluator::EtableEvaluator( Etable const & etable ) :
 	hydrogen_interaction_cutoff2_( etable.hydrogen_interaction_cutoff2() )
 {}
 
-EtableEvaluator::~EtableEvaluator() {}
+EtableEvaluator::~EtableEvaluator() = default;
 
 TableLookupEvaluator::TableLookupEvaluator(
 	Etable const & etable_in
@@ -388,11 +372,11 @@ TableLookupEvaluator::TableLookupEvaluator(
 	dljrep_( etable_in.dljrep() ),
 	dsolv_( etable_in.dsolv() ),
 	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
-	etable_bins_per_A2_( etable_in.get_bins_per_A2() ),
-	dis2_step_( 1.0 / (Real) etable_bins_per_A2_ )
+	etable_bins_per_A2_( etable_in.get_bins_per_A2() )
+	//dis2_step_( 1.0 / (Real) etable_bins_per_A2_ )
 {}
 
-TableLookupEvaluator::~TableLookupEvaluator() {}
+TableLookupEvaluator::~TableLookupEvaluator() = default;
 
 
 /// @details atom-pair-energy inline type resolution function
@@ -490,7 +474,7 @@ AnalyticEtableEvaluator::AnalyticEtableEvaluator( Etable const & etable ) :
 	safe_max_dis2_( etable.get_safe_max_dis2() )
 {}
 
-AnalyticEtableEvaluator::~AnalyticEtableEvaluator() {}
+AnalyticEtableEvaluator::~AnalyticEtableEvaluator() = default;
 
 
 /// @details atom-pair-energy inline type resolution function

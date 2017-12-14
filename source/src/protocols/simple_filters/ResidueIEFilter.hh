@@ -35,8 +35,8 @@ public:
 	ResidueIEFilter();
 
 	ResidueIEFilter(
-		std::string resnums, // move-constructed
-		std::string restype, // move-constructed
+		std::string const & resnums,
+		std::string const & restype,
 		core::scoring::ScoreFunctionCOP scorefxn,
 		core::scoring::ScoreType const score_type = core::scoring::total_score,
 		core::Real const threshold = 0.0,

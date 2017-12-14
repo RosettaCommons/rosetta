@@ -21,6 +21,7 @@
 // Project headers
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <utility>
 #include <utility/file/file_sys_util.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -80,7 +81,7 @@ HotspotHasherMover::HotspotHasherMover(
 	std::string const & hashout_fname
 ) :
 	protocols::moves::Mover( HotspotHasherMover::mover_name() ),
-	scorefxn_(scorefxn),
+	scorefxn_(std::move(scorefxn)),
 	resnames_(resnames),
 	n_stubs_(n_stubs),
 	target_resnum_(target_resnum),
@@ -91,7 +92,7 @@ HotspotHasherMover::HotspotHasherMover(
 	hotspot_filter_ = hotspot_filter;
 }
 
-HotspotHasherMover::~HotspotHasherMover() {}
+HotspotHasherMover::~HotspotHasherMover() = default;
 
 protocols::moves::MoverOP
 HotspotHasherMover::clone() const {
@@ -102,24 +103,24 @@ void HotspotHasherMover::apply( core::pose::Pose & pose ) {
 
 	// finding a request for ALL adds the main 18 aa's to
 	if ( std::find( resnames_.begin(), resnames_.end(), "ALL" ) != resnames_.end() ) {
-		resnames_.push_back( "ALA" );
-		resnames_.push_back( "ARG" );
-		resnames_.push_back( "ASN" );
-		resnames_.push_back( "ASP" );
-		resnames_.push_back( "GLU" );
-		resnames_.push_back( "GLN" );
-		resnames_.push_back( "HIS" );
-		resnames_.push_back( "ILE" );
-		resnames_.push_back( "LEU" );
-		resnames_.push_back( "LYS" );
-		resnames_.push_back( "MET" );
-		resnames_.push_back( "PHE" );
-		resnames_.push_back( "PRO" );
-		resnames_.push_back( "SER" );
-		resnames_.push_back( "THR" );
-		resnames_.push_back( "TRP" );
-		resnames_.push_back( "TYR" );
-		resnames_.push_back( "VAL" );
+		resnames_.emplace_back("ALA" );
+		resnames_.emplace_back("ARG" );
+		resnames_.emplace_back("ASN" );
+		resnames_.emplace_back("ASP" );
+		resnames_.emplace_back("GLU" );
+		resnames_.emplace_back("GLN" );
+		resnames_.emplace_back("HIS" );
+		resnames_.emplace_back("ILE" );
+		resnames_.emplace_back("LEU" );
+		resnames_.emplace_back("LYS" );
+		resnames_.emplace_back("MET" );
+		resnames_.emplace_back("PHE" );
+		resnames_.emplace_back("PRO" );
+		resnames_.emplace_back("SER" );
+		resnames_.emplace_back("THR" );
+		resnames_.emplace_back("TRP" );
+		resnames_.emplace_back("TYR" );
+		resnames_.emplace_back("VAL" );
 	}
 
 	protocols::hotspot_hashing::HotspotStubSet stubset;
@@ -227,7 +228,7 @@ HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & 
 
 	// filter
 	std::string const hotspot_filter_name( tag->getOption<std::string>( "hotspot_filter", "true_filter" ) );
-	protocols::filters::Filters_map::const_iterator find_filter( filters.find( hotspot_filter_name ));
+	auto find_filter( filters.find( hotspot_filter_name ));
 	bool const filter_found( find_filter != filters.end() );
 	if ( filter_found ) {
 		hotspot_filter_ = find_filter->second->clone();
@@ -242,8 +243,7 @@ HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & 
 
 	// residues
 	utility::vector0< TagCOP > const & hasher_tags( tag->getTags() );
-	for ( utility::vector0< TagCOP >::const_iterator hash_it=hasher_tags.begin(); hash_it!=hasher_tags.end(); ++hash_it ) {
-		TagCOP const hash_tag_ptr = *hash_it;
+	for ( auto hash_tag_ptr : hasher_tags ) {
 		std::string tag_name = hash_tag_ptr->getName();
 		if ( tag_name == "residue" ) {
 			std::string resname( hash_tag_ptr->getOption< std::string >( "type", "" ) );

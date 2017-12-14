@@ -59,7 +59,7 @@ CarbohydrateInfo::CarbohydrateInfo( CarbohydrateInfo const & object_to_copy,
 }
 
 // Destructor
-CarbohydrateInfo::~CarbohydrateInfo() {}
+CarbohydrateInfo::~CarbohydrateInfo() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////

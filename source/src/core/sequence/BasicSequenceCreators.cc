@@ -28,7 +28,7 @@ namespace core {
 namespace sequence {
 
 // class def for SimpleSequence
-SimpleSequenceCreator::SimpleSequenceCreator() {}
+SimpleSequenceCreator::SimpleSequenceCreator() = default;
 SimpleSequenceCreator::~SimpleSequenceCreator() = default;
 SequenceOP SimpleSequenceCreator::create_sequence() const {
 	return SequenceOP( new Sequence );
@@ -38,7 +38,7 @@ std::string SimpleSequenceCreator::keyname() const {
 	return "sequence";
 }
 
-SequenceCouplingCreator::SequenceCouplingCreator() {}
+SequenceCouplingCreator::SequenceCouplingCreator() = default;
 SequenceCouplingCreator::~SequenceCouplingCreator() = default;
 SequenceOP SequenceCouplingCreator::create_sequence() const {
 	return SequenceOP( new SequenceCoupling );
@@ -47,7 +47,7 @@ SequenceOP SequenceCouplingCreator::create_sequence() const {
 std::string SequenceCouplingCreator::keyname() const {
 	return "sequence_coupling";
 }
-SequenceProfileCreator::SequenceProfileCreator() {}
+SequenceProfileCreator::SequenceProfileCreator() = default;
 SequenceProfileCreator::~SequenceProfileCreator() = default;
 SequenceOP SequenceProfileCreator::create_sequence() const {
 	return SequenceOP( new SequenceProfile );
@@ -57,7 +57,7 @@ std::string SequenceProfileCreator::keyname() const {
 	return "sequence_profile";
 }
 
-CompositeSequenceCreator::CompositeSequenceCreator() {}
+CompositeSequenceCreator::CompositeSequenceCreator() = default;
 CompositeSequenceCreator::~CompositeSequenceCreator() = default;
 SequenceOP CompositeSequenceCreator::create_sequence() const {
 	return SequenceOP( new CompositeSequence );
@@ -67,7 +67,7 @@ std::string CompositeSequenceCreator::keyname() const {
 	return "composite_sequence";
 }
 
-ChemicalShiftSequenceCreator::ChemicalShiftSequenceCreator() {}
+ChemicalShiftSequenceCreator::ChemicalShiftSequenceCreator() = default;
 ChemicalShiftSequenceCreator::~ChemicalShiftSequenceCreator() = default;
 SequenceOP ChemicalShiftSequenceCreator::create_sequence() const {
 	return SequenceOP( new ChemicalShiftSequence );

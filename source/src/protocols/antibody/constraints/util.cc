@@ -52,9 +52,8 @@ using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;
 using utility::vector1;
 
-// AMW: do not pass constraint_type by reference, it'll kill a unit test
 bool
-cdr_has_res_constraints(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRNameEnum cdr, std::string const constraint_type){
+cdr_has_res_constraints(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRNameEnum cdr, std::string const & constraint_type){
 	using namespace core::scoring::constraints;
 
 	core::Size start_res = ab_info->get_CDR_start(cdr, pose);

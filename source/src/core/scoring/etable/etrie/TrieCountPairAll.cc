@@ -26,7 +26,7 @@ namespace etrie {
 
 using namespace trie;
 
-TrieCountPairAll::~TrieCountPairAll() {}
+TrieCountPairAll::~TrieCountPairAll() = default;
 
 void
 TrieCountPairAll::print()

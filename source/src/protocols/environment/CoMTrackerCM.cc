@@ -100,19 +100,19 @@ CoMTrackerCM::CoMTrackerCM():
 	ClientMover()
 {}
 
-CoMTrackerCM::CoMTrackerCM( std::string  name,
+CoMTrackerCM::CoMTrackerCM( std::string const & name,
 	core::select::residue_selector::ResidueSelectorCOP mobile_selector,
-	std::string  stationary_label ):
+	std::string const & stationary_label ):
 	ClientMover(),
-	name_(std::move( name )),
-	stationary_label_(std::move( stationary_label )),
+	name_( name ),
+	stationary_label_( stationary_label ),
 	mobile_selector_(std::move( mobile_selector ))
 {}
 
-CoMTrackerCM::CoMTrackerCM( std::string  name,
+CoMTrackerCM::CoMTrackerCM( std::string const & name,
 	core::select::residue_selector::ResidueSelectorCOP mobile_selector ):
 	ClientMover(),
-	name_(std::move( name )),
+	name_( name ),
 	stationary_label_( GENERATE_STATIONARY_ATTACHMENT_POINT ),
 	mobile_selector_(std::move( mobile_selector ))
 {}

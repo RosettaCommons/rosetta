@@ -19,6 +19,7 @@
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
 #include <protocols/moves/ReplicaExchangeMC.hh>
+#include <utility>
 #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
@@ -32,7 +33,7 @@ namespace moves {
 ReplicaExchangeMC::ReplicaExchangeMC(
 	Pose const & init_pose, // PoseCOP init_pose,
 	ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
-	utility::vector1<core::Real> const &tlist,
+	utility::vector1<core::Real> const & tlist,
 	core::Size nint
 ):MonteCarlo(init_pose, scorefxn, 0.0),
 	rank_(0),
@@ -51,7 +52,7 @@ ReplicaExchangeMC::ReplicaExchangeMC(
 
 ReplicaExchangeMC::ReplicaExchangeMC(
 	ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
-	utility::vector1<core::Real> const &tlist,
+	utility::vector1<core::Real> const & tlist,
 	core::Size nint
 ):MonteCarlo(scorefxn, 0.0),
 	rank_(0),
@@ -133,7 +134,7 @@ ReplicaExchangeMC::~ReplicaExchangeMC()
 	if ( T_rev!=nullptr ) delete [] T_rev;
 }
 
-void ReplicaExchangeMC::build_temperature_list(double *elist)
+void ReplicaExchangeMC::build_temperature_list(const double *elist)
 {
 	static int flag=-1;
 	int nlist=(3+flag)/2; // 1 or 2, switch

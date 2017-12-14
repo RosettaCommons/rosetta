@@ -35,7 +35,7 @@ AtomPropertiesManager::string_from_property( AtomProperty const property )
 
 // Private methods ////////////////////////////////////////////////////////////
 // Empty constructor
-AtomPropertiesManager::AtomPropertiesManager() {}
+AtomPropertiesManager::AtomPropertiesManager() = default;
 
 }  // namespace chemical
 }  // namespace core

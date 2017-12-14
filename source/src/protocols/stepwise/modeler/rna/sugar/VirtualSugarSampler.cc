@@ -125,8 +125,7 @@ VirtualSugarSampler::VirtualSugarSampler( working_parameters::StepWiseWorkingPar
 {}
 
 //Destructor
-VirtualSugarSampler::~VirtualSugarSampler()
-{}
+VirtualSugarSampler::~VirtualSugarSampler() = default;
 
 /////////////////////
 std::string
@@ -270,8 +269,8 @@ VirtualSugarSampler::setup_sugar_conformations( utility::vector1< PoseOP > & pos
 		sampler.apply( pose );
 
 		if ( do_minimize_ ) minimize_sugar( pose ); // remove clashes; show in graphics too.
-		if ( ( chain_closable_geometry_checker != 0 ) && !chain_closable_geometry_checker->check_screen( pose ) ) continue;
-		if ( ( atr_rep_checker != 0 ) &&  !atr_rep_checker->check_screen( pose ) ) continue;
+		if ( ( chain_closable_geometry_checker != nullptr ) && !chain_closable_geometry_checker->check_screen( pose ) ) continue;
+		if ( ( atr_rep_checker != nullptr ) &&  !atr_rep_checker->check_screen( pose ) ) continue;
 
 		tag_into_pose( pose, tag_from_pose( pose_init ) + '_' + ObjexxFCL::string_of( count ) );
 		pose_list.push_back( pose.clone() );

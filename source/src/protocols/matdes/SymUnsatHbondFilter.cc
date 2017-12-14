@@ -31,6 +31,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <ObjexxFCL/format.hh>
@@ -78,10 +79,10 @@ SymUnsatHbondFilter::SymUnsatHbondFilter():
 	upper_threshold_( 20 ),
 	jump_num_( 1 ),
 	sym_dof_names_( "" ),
-	verbose_( 0 ),
-	write2pdb_( 0 ),
+	verbose_( false ),
+	write2pdb_( false ),
 	mode_( "bound_vs_unbound" ),
-	compare_to_ref_( 0 ),
+	compare_to_ref_( false ),
 	reference_pose_( /* NULL */ )
 {}
 
@@ -95,7 +96,7 @@ SymUnsatHbondFilter::SymUnsatHbondFilter( core::Size const upper_cutoff, core::S
 	write2pdb_( write ),
 	mode_( mode ),
 	compare_to_ref_( compare_to_ref ),
-	reference_pose_( reference_pose )
+	reference_pose_(std::move( reference_pose ))
 {}
 
 // @brief copy constructor
@@ -374,8 +375,8 @@ SymUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 	upper_threshold( tag->getOption<core::Size>( "cutoff", 20 ) );
 	jump_num( tag->getOption<core::Size>( "jump", 1 ) );
 	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
-	verbose( tag->getOption< bool >( "verbose", 0 ) );
-	write2pdb( tag->getOption< bool >("write2pdb", 0) );
+	verbose( tag->getOption< bool >( "verbose", false ) );
+	write2pdb( tag->getOption< bool >("write2pdb", false) );
 	mode( tag->getOption< std::string >( "mode" , "bound_vs_unbound" ) );
 	if ( (mode_ == "unbound_design_vs_reference") || mode_ == "unbound_mutated_sidechains" || (mode_ == "all") ) {
 		compare_to_ref(true);

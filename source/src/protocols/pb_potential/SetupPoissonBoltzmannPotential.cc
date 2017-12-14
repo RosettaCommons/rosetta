@@ -51,16 +51,15 @@
 namespace protocols {
 namespace pb_potential {
 
-typedef SetupPoissonBoltzmannPotential SetupPB;
-typedef SetupPoissonBoltzmannPotentialCreator SetupPBCreator;
-typedef core::Size Size;
+using SetupPB = SetupPoissonBoltzmannPotential;
+using SetupPBCreator = SetupPoissonBoltzmannPotentialCreator;
+using Size = core::Size;
 
 static basic::Tracer TR( "protocols.pb_potential.SetupPoissonBoltzmannPotential" );
 
 const std::string SetupPoissonBoltzmannPotential::DEFAULT_APBS_PATH = "apbs";
 
-SetupPoissonBoltzmannPotential::SetupPoissonBoltzmannPotential()
-{}
+SetupPoissonBoltzmannPotential::SetupPoissonBoltzmannPotential() = default;
 
 SetupPoissonBoltzmannPotential::~SetupPoissonBoltzmannPotential() = default;
 
@@ -167,7 +166,7 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 	}
 	//int apbs_debug;
 	if ( tag->hasOption("apbs_debug") ) {
-		int apbs_debug = tag->getOption<int>( "apbs_debug" );
+		auto apbs_debug = tag->getOption<int>( "apbs_debug" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::apbs_debug]( apbs_debug );
 	}
 	//-------------------------------------------------------------------------
@@ -188,7 +187,7 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
 	if ( scorefxn_name != "" ) {
-		core::scoring::ScoreFunction * scorefxn = data_map.get<core::scoring::ScoreFunction*>("scorefxns", scorefxn_name);
+		auto * scorefxn = data_map.get<core::scoring::ScoreFunction*>("scorefxns", scorefxn_name);
 		TR << "Scorefxn weigths: " << scorefxn->serialize_weights() << std::endl;
 		if ( scorefxn->get_weight(core::scoring::PB_elec) == 0. ) {
 			TR.Error << "PB_elec term is required.  Not found in the scorefxn.  Terminating the program..." << std::endl;

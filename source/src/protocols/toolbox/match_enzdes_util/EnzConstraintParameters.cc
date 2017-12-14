@@ -59,6 +59,7 @@
 #include <numeric/constants.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
@@ -95,18 +96,18 @@ namespace match_enzdes_util {
 using namespace ObjexxFCL;
 
 CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo(
-	std::string resA_base_in,
-	std::string resB_base_in,
-	std::string resA_var_in,
-	std::string resB_var_in,
+	std::string const & resA_base_in,
+	std::string const & resB_base_in,
+	std::string const & resA_var_in,
+	std::string const & resB_var_in,
 	core::Size Apos_in,
 	core::Size Bpos_in,
 	core::chemical::ResidueTypeSetCOP restype_set_in
 ) : ReferenceCount(),
-	resA_basename_(resA_base_in), resB_basename_(resB_base_in),
-	resA_varname_(resA_var_in), resB_varname_(resB_var_in),
+	resA_basename_(resA_base_in), resB_basename_(std::move(resB_base_in)),
+	resA_varname_(resA_var_in), resB_varname_(std::move(resB_var_in)),
 	resA_seqpos_(Apos_in), resB_seqpos_(Bpos_in),
-	restype_set_(restype_set_in)
+	restype_set_( std::move( restype_set_in ) )
 {}
 
 
@@ -118,7 +119,7 @@ CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo( CovalentConnection
 	restype_set_(other.restype_set_)
 {}
 
-CovalentConnectionReplaceInfo::~CovalentConnectionReplaceInfo(){}
+CovalentConnectionReplaceInfo::~CovalentConnectionReplaceInfo()= default;
 
 void
 CovalentConnectionReplaceInfo::remove_covalent_connection_from_pose(
@@ -171,9 +172,9 @@ CovalentConnectionReplaceInfo::remap_resid(
 
 EnzConstraintParameters::EnzConstraintParameters()
 : utility::pointer::ReferenceCount(),
-	resA_(/* NULL */), resB_(NULL), mcfi_(NULL),disAB_(NULL),
-	angleA_(/* NULL */), angleB_(NULL), torsionA_(NULL),
-	torsionB_(/* NULL */), torsionAB_(NULL),
+	resA_(/* NULL */), resB_(nullptr), mcfi_(nullptr),disAB_(nullptr),
+	angleA_(/* NULL */), angleB_(nullptr), torsionA_(nullptr),
+	torsionB_(/* NULL */), torsionAB_(nullptr),
 	ndisAB_(0), nangleA_(0), nangleB_(0), ntorsionA_(0),
 	ntorsionB_(0), ntorsionAB_(0),
 	is_covalent_(false), empty_(true),
@@ -181,7 +182,7 @@ EnzConstraintParameters::EnzConstraintParameters()
 	enz_io_( /* NULL */),
 	cst_block_(0)
 {}
-EnzConstraintParameters::~EnzConstraintParameters(){}
+EnzConstraintParameters::~EnzConstraintParameters()= default;
 
 void EnzConstraintParameters::init(
 	core::Size cst_block,
@@ -196,7 +197,7 @@ void EnzConstraintParameters::init(
 
 	resA_->set_param_index( 1 );
 	resB_->set_param_index( 2 );
-	disAB_ = NULL; angleA_ = NULL; angleB_ = NULL; torsionA_ = NULL; torsionB_ = NULL; torsionAB_ = NULL;
+	disAB_ = nullptr; angleA_ = nullptr; angleB_ = nullptr; torsionA_ = nullptr; torsionB_ = nullptr; torsionAB_ = nullptr;
 	is_covalent_ = false;
 	empty_ = true;
 }
@@ -287,7 +288,7 @@ EnzConstraintParameters::convert_GeomSampleInfo_to_FuncOP(
 	core::Real const rad_per_deg = numeric::constants::f::degrees_to_radians;
 	core::Real const twopi = numeric::constants::f::pi_2;
 
-	core::scoring::func::FuncOP to_return( NULL );
+	core::scoring::func::FuncOP to_return( nullptr );
 
 	//check if this gsi has a force constant resp. if it even exists
 	//if not, return right away. this will lead to no constraints being produced
@@ -336,7 +337,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 	bool all_constraints_empty = true;
 
 	EnzdesCstParamCacheOP param_cache(get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
-	runtime_assert( param_cache != 0 );
+	runtime_assert( param_cache != nullptr );
 	param_cache->active_pose_constraints_.clear();
 	if ( param_cache->covalent_connections_.size() != 0 ) remove_covalent_connections_from_pose( pose );
 
@@ -344,9 +345,9 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 	//std::cerr << "generating constraints for block " << cst_block_ << ". There are " << resA_->respos_map_size() << " positions in resA and " << resB_->respos_map_size() << " positions in resB." << std::endl;
 
-	for ( std::map< Size, EnzCstTemplateResAtomsOP  >::const_iterator resApos_it = param_cache->template_res_cache_[1]->seqpos_map_begin(), resApos_end = param_cache->template_res_cache_[1]->seqpos_map_end(); resApos_it != resApos_end; ++resApos_it ) {
+	for ( auto resApos_it = param_cache->template_res_cache_[1]->seqpos_map_begin(), resApos_end = param_cache->template_res_cache_[1]->seqpos_map_end(); resApos_it != resApos_end; ++resApos_it ) {
 
-		for ( std::map< Size, EnzCstTemplateResAtomsOP  >::const_iterator resBpos_it = param_cache->template_res_cache_[2]->seqpos_map_begin(), resBpos_end = param_cache->template_res_cache_[2]->seqpos_map_end(); resBpos_it != resBpos_end; ++resBpos_it ) {
+		for ( auto resBpos_it = param_cache->template_res_cache_[2]->seqpos_map_begin(), resBpos_end = param_cache->template_res_cache_[2]->seqpos_map_end(); resBpos_it != resBpos_end; ++resBpos_it ) {
 
 			//std::cerr << "making stuff between resA " << resApos_it->first << " and resB " << resBpos_it->first << std::endl;
 
@@ -367,7 +368,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					utility::vector1< ConstraintCOP > this_pair_csts;
 
-					if ( disAB_ != 0 ) {
+					if ( disAB_ != nullptr ) {
 						all_constraints_empty = false;
 						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], disAB_) ) );
 						number_constraints_added++;
@@ -380,7 +381,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 						//debug stuff over
 					}
 
-					if ( angleA_ != 0 ) {
+					if ( angleA_ != nullptr ) {
 						all_constraints_empty = false;
 						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new AngleConstraint( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], angleA_) ) );
 						number_constraints_added++;
@@ -395,7 +396,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 						//debug stuff over
 					}
 
-					if ( angleB_ != 0 ) {
+					if ( angleB_ != nullptr ) {
 						all_constraints_empty = false;
 						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new AngleConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], angleB_) ) );
 						number_constraints_added++;
@@ -411,7 +412,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					}
 
-					if ( torsionA_ != 0 ) {
+					if ( torsionA_ != nullptr ) {
 						all_constraints_empty = false;
 						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( resApos_it->second->atom3_[ambig_resA_count], resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], torsionA_) ) );
 						number_constraints_added++;
@@ -428,7 +429,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					}
 
-					if ( torsionB_ != 0 ) {
+					if ( torsionB_ != nullptr ) {
 						all_constraints_empty = false;
 						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], resBpos_it->second->atom3_[ambig_resB_count], torsionB_) ) );
 						number_constraints_added++;
@@ -444,7 +445,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 						//debug stuff over
 					}
 
-					if ( torsionAB_ != 0 ) {
+					if ( torsionAB_ != nullptr ) {
 						all_constraints_empty = false;
 						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], torsionAB_) ) );
 						number_constraints_added++;
@@ -719,14 +720,14 @@ EnzConstraintParameters::update_pdb_remarks(
 	Remarks & rems(pose.pdb_info()->remarks() );
 	EnzdesCstParamCacheOP param_cache( get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 
-	for ( std::vector< core::io::RemarkInfo >::iterator remark_it = rems.begin(), end = rems.end(); remark_it != end; ++remark_it ) {
+	for ( auto & rem : rems ) {
 
 		bool remark_changed(false);
 		std::string chainA(""), chainB(""), resA(""), resB("");
 		core::Size cst_block(0), exgeom_id( 0 );
 		int rem_pdbposA(0), rem_pdbposB(0);
 
-		if ( !split_up_remark_line( remark_it->value, chainA, resA, rem_pdbposA, chainB, resB, rem_pdbposB, cst_block, exgeom_id ) ) continue;
+		if ( !split_up_remark_line( rem.value, chainA, resA, rem_pdbposA, chainB, resB, rem_pdbposB, cst_block, exgeom_id ) ) continue;
 
 		if ( cst_block != cst_block_ ) continue;
 
@@ -769,7 +770,7 @@ EnzConstraintParameters::update_pdb_remarks(
 		}
 
 		if ( remark_changed ) {
-			remark_it->value = assemble_remark_line( chainA, resA, rem_pdbposA, chainB, resB, rem_pdbposB, cst_block, exgeom_id );
+			rem.value = assemble_remark_line( chainA, resA, rem_pdbposA, chainB, resB, rem_pdbposB, cst_block, exgeom_id );
 		}
 	}
 	return true;
@@ -819,7 +820,7 @@ EnzConstraintParameters::get_missing_template_res( core::pose::Pose const & pose
 		utility_exit_with_message("Error: no template residue is missing in the pose, this shouldn't have happened... \n");
 	}
 	//unreachable
-	return NULL;
+	return nullptr;
 }
 
 EnzCstTemplateResCOP
@@ -838,7 +839,7 @@ EnzConstraintParameters::get_missing_template_other_res( core::pose::Pose const 
 	}
 
 	//unreachable
-	return NULL;
+	return nullptr;
 }
 
 
@@ -883,9 +884,8 @@ void
 EnzConstraintParameters::remove_covalent_connections_from_pose( core::pose::Pose & pose ) const {
 
 	EnzdesCstParamCacheOP param_cache( get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
-	for ( utility::vector1< CovalentConnectionReplaceInfoCOP >::iterator cov_it = param_cache->covalent_connections_.begin();
-			cov_it != param_cache->covalent_connections_.end(); ++cov_it ) {
-		(*cov_it)->remove_covalent_connection_from_pose( pose );
+	for ( auto & covalent_connection : param_cache->covalent_connections_ ) {
+		covalent_connection->remove_covalent_connection_from_pose( pose );
 	}
 	param_cache->covalent_connections_.clear();
 }

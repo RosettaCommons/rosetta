@@ -71,7 +71,7 @@ CrystalContactsOperation::CrystalContactsOperation( core::Real all_gap, core::Re
 	atoms_to_atoms_(atoms_to_atoms)           // contact determined by atom to atom distances (any atom to any atom)
 {}
 
-CrystalContactsOperation::~CrystalContactsOperation() {}
+CrystalContactsOperation::~CrystalContactsOperation() = default;
 
 TaskOperationOP CrystalContactsOperation::clone() const
 {
@@ -193,11 +193,11 @@ CrystalContactsOperation::parse_tag( TagCOP tag, DataMap & )
 	all_gap_ = tag->getOption<core::Real>("all_gap", 0.5);
 	polar_gap_ = tag->getOption<core::Real>("polar_gap", 2.5);
 	max_buried_sasa_ = tag->getOption<core::Real>("max_buried_sasa", 0.01);
-	invert_ = tag->getOption< bool >("invert",0);
+	invert_ = tag->getOption< bool >("invert",false);
 
-	nbr_radius_to_nbr_radius_ = tag->getOption<bool>("nbr_radius_to_nbr_radius", 0);
-	nbr_radius_to_atoms_ = tag->getOption<bool>("nbr_radius_to_atoms", 1);
-	atoms_to_atoms_ = tag->getOption<bool>("atoms_to_atoms", 0);
+	nbr_radius_to_nbr_radius_ = tag->getOption<bool>("nbr_radius_to_nbr_radius", false);
+	nbr_radius_to_atoms_ = tag->getOption<bool>("nbr_radius_to_atoms", true);
+	atoms_to_atoms_ = tag->getOption<bool>("atoms_to_atoms", false);
 }
 
 void CrystalContactsOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

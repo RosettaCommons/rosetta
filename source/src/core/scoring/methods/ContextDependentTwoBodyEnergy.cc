@@ -29,7 +29,7 @@ namespace methods {
 
 ContextDependentTwoBodyEnergy::ContextDependentTwoBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 
-ContextDependentTwoBodyEnergy::~ContextDependentTwoBodyEnergy() {}
+ContextDependentTwoBodyEnergy::~ContextDependentTwoBodyEnergy() = default;
 
 
 EnergyMethodType

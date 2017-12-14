@@ -130,7 +130,7 @@ bool BackboneStubLinearConstraint::operator == ( Constraint const & other_cst ) 
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	BackboneStubLinearConstraint const & other( static_cast< BackboneStubLinearConstraint const & > (other_cst) );
+	auto const & other( static_cast< BackboneStubLinearConstraint const & > (other_cst) );
 
 	if ( superposition_bonus_ != other.superposition_bonus_ ) return false;
 	if ( CB_force_constant_ != other.CB_force_constant_ ) return false;
@@ -480,7 +480,7 @@ ConstraintOP BackboneStubLinearConstraint::remapped_clone( pose::Pose const& /*s
 	if ( smap ) {
 		new_seqpos = (*smap)[ seqpos_ ];
 		new_fixed_atom_id.rsd() = (*smap)[ fixed_atom_id_.rsd() ];
-		if ( new_seqpos == 0 ) return NULL;
+		if ( new_seqpos == 0 ) return nullptr;
 	}
 
 	// make an alanine

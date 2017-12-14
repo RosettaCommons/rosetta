@@ -34,8 +34,8 @@ namespace environment {
 
 core::Size EnvCore::current_maximum_id_ = 0;
 
-EnvCore::EnvCore( std::string  name ):
-	name_(std::move( name )),
+EnvCore::EnvCore( std::string const & name ):
+	name_( name ),
 	id_( generate_id() )
 {}
 

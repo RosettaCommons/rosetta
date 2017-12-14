@@ -93,7 +93,7 @@ class StepWiseRNA_CombineLongLoopFilterer: public utility::pointer::ReferenceCou
 public:
 
 	//constructor!
-	StepWiseRNA_CombineLongLoopFilterer( working_parameters::StepWiseWorkingParametersCOP const & working_parameters, bool const combine_helical_silent_file );
+	StepWiseRNA_CombineLongLoopFilterer( working_parameters::StepWiseWorkingParametersCOP working_parameters, bool const combine_helical_silent_file );
 
 	//destructor -- necessary?
 	virtual ~StepWiseRNA_CombineLongLoopFilterer();

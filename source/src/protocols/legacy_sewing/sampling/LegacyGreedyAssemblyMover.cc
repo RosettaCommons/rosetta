@@ -79,7 +79,7 @@ LegacyGreedyAssemblyMover::fresh_instance() const {
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 LegacyGreedyAssemblyMover::LegacyGreedyAssemblyMover():
-	best_complete_assembly_(0),
+	best_complete_assembly_(nullptr),
 	best_score_(10000),
 	cycles_(1000),
 	max_edges_per_node_(300)
@@ -91,7 +91,7 @@ LegacyGreedyAssemblyMover::generate_assembly(){
 	using namespace basic::options::OptionKeys;
 
 	//Main loop
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 	core::Size cur_cycle=1;
 
 	for ( cur_cycle=1; cur_cycle <= cycles_; ++cur_cycle ) {
@@ -109,7 +109,7 @@ LegacyGreedyAssemblyMover::generate_assembly(){
 		while ( requirement_set_->can_be_added_to(assembly) ) {
 			TR << "Looking to add edge " << assembly->path().size()+1 << std::endl;
 			core::Real best_edge_score_ = 10000;
-			AssemblyOP best_edge_assembly_ = 0;
+			AssemblyOP best_edge_assembly_ = nullptr;
 
 			ModelNode const * reference_node = graph_->get_model_node(assembly->get_next_reference_node(graph_));
 			graph_->add_edges_from_binary(edge_file_, reference_node->get_node_index());
@@ -140,7 +140,7 @@ LegacyGreedyAssemblyMover::generate_assembly(){
 				}
 
 				//Cast the edge to a proper HashEdge, check if the new model satisfies requirements, and follow it
-				HashEdge const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
+				auto const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
 				assembly->follow_edge(graph_, cur_edge, reference_node->get_node_index());
 				if ( !requirement_set_->violates(assembly) ) {
 					core::Real edge_score = assembly_scorefxn_->score(assembly);
@@ -153,7 +153,7 @@ LegacyGreedyAssemblyMover::generate_assembly(){
 			}
 
 			//If we couldn't find an edge that satisfies node requirements, go to the next cycle
-			if ( best_edge_assembly_ == 0 ) { break; }
+			if ( best_edge_assembly_ == nullptr ) { break; }
 
 			//Revert to the best scoring Assembly for the most recent edge addition, check to see if
 			//this assembly is complete. If so, check to see if it's the best one and continue on
@@ -169,7 +169,7 @@ LegacyGreedyAssemblyMover::generate_assembly(){
 		}// While can be added to
 	}//Cycles
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR << "Completed " << cur_cycle << " cycles in " << endtime - starttime << " seconds" << std::endl;
 	return best_complete_assembly_;
 }

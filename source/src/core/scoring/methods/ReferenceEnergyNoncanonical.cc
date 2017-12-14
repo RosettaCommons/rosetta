@@ -24,6 +24,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -67,7 +68,7 @@ ReferenceEnergyNoncanonical::ReferenceEnergyNoncanonical( utility::vector1< Real
 }
 
 
-ReferenceEnergyNoncanonical::~ReferenceEnergyNoncanonical() {}
+ReferenceEnergyNoncanonical::~ReferenceEnergyNoncanonical() = default;
 
 EnergyMethodOP
 ReferenceEnergyNoncanonical::clone() const

@@ -52,8 +52,7 @@ CycpepSymmetryFilter::CycpepSymmetryFilter():
 
 }
 
-CycpepSymmetryFilter::~CycpepSymmetryFilter()
-{}
+CycpepSymmetryFilter::~CycpepSymmetryFilter() = default;
 
 void
 CycpepSymmetryFilter::parse_my_tag(

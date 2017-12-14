@@ -49,8 +49,7 @@ static basic::Tracer TR( "protocols.cyclic_peptide.CreateTorsionConstraint" );
 namespace protocols {
 namespace cyclic_peptide {
 
-CreateTorsionConstraint::CreateTorsionConstraint() //:
-{}
+CreateTorsionConstraint::CreateTorsionConstraint() = default;
 CreateTorsionConstraint::~CreateTorsionConstraint()= default;
 
 void CreateTorsionConstraint::set(

@@ -77,7 +77,7 @@ using namespace core;
 using namespace protocols;
 using namespace numeric::conversions;
 using utility::vector1;
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 using namespace basic::options::OptionKeys;
 using namespace basic::options;
 

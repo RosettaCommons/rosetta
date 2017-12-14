@@ -12,14 +12,14 @@
 
 
 #include <vector>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <math.h>
-#include <assert.h>
-#include <time.h>
+#include <cmath>
+#include <cassert>
+#include <ctime>
 #ifndef __WIN32__
 #include <sys/resource.h>
 #endif

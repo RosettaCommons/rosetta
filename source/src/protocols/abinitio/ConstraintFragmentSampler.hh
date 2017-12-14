@@ -186,8 +186,6 @@ private:
 	constraints_additional::MaxSeqSepConstraintSetOP constraints_;
 	core::Real constraint_weight_;
 
-	bool bMinTrial_;
-
 	core::Real max_seq_sep_fudge_;
 	core::Real seq_sep_stage1_;
 	core::Real seq_sep_stage3_;

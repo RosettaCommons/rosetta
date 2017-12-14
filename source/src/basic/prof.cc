@@ -16,7 +16,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <string>
-#include <time.h>
+#include <ctime>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -356,7 +356,7 @@ void prof_show() {
 	tt << A(12,"clock") << ' ' << A(9,"ncalls") << ' ' << A(9,"bad_calls") << ' ' << A(12,"c/call") << ' ' <<
 		"tag" << '\n';
 	for ( int i=1; i<= n_prof_tags; ++i ) {
-		ProfTag const tag( static_cast< ProfTag >( i ) );
+		auto const tag( static_cast< ProfTag >( i ) );
 		double const t( total_clock[ tag ] );
 		int const ncalls( calls[tag] );
 		int const bcalls( bad_calls[tag] );

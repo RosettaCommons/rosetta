@@ -66,9 +66,9 @@ ICoorOrbitalData::ICoorOrbitalData():
 	stub1_(0),
 	stub2_(0),
 	stub3_(0),
-	vertex1_(0),
-	vertex2_(0),
-	vertex3_(0)
+	vertex1_(nullptr),
+	vertex2_(nullptr),
+	vertex3_(nullptr)
 {}
 
 

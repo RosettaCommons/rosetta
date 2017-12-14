@@ -67,7 +67,7 @@ public:
 	DnaInterfacePacker(
 		ScoreFunctionOP,
 		bool minimize = false,
-		std::string filename_root = "dnapacker"
+		std::string const & filename_root = "dnapacker"
 	);
 
 	~DnaInterfacePacker() override; // important for properly "releasing" owning pointer data

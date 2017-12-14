@@ -76,7 +76,7 @@ replace_residue_keeping_all_atom_positions(
 
 	for ( core::Size at_ct = 1; at_ct <= pose.residue(res_pos).natoms(); at_ct++ ) {
 
-		std::map< std::string, core::PointPosition>::iterator xyz_map_it = atom_name_to_xyz.find( pose.residue(res_pos).atom_name(at_ct) );
+		auto xyz_map_it = atom_name_to_xyz.find( pose.residue(res_pos).atom_name(at_ct) );
 
 
 		if ( xyz_map_it != atom_name_to_xyz.end() ) {
@@ -140,16 +140,16 @@ constrain_pose_res_to_invrots(
 		core::id::AtomID rem_CB( cur_remodel_res->type().atom_index("CB"), seqpos[i] );
 		core::id::AtomID rem_N( cur_remodel_res->type().atom_index("N"), seqpos[i] );
 
-		for ( std::list< core::conformation::ResidueCOP >::const_iterator invrot_it( invrots.begin() ), invrot_end( invrots.end() ); invrot_it != invrot_end; ++invrot_it ) {
+		for ( auto const & invrot : invrots ) {
 
 			utility::vector1< ConstraintCOP > cur_res_invrot_csts;
-			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, seqpos[i], fixed_pt, **invrot_it, -20.0, 0.8) ) );
+			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, seqpos[i], fixed_pt, *invrot, -20.0, 0.8) ) );
 
 			//old style: coordinate constraints for all atoms, backbone stub csts
 			// might be working better
-			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CA, fixed_pt, (*invrot_it)->xyz("CA"), constraint_func ) ) );
-			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CB, fixed_pt, (*invrot_it)->xyz("CB"), constraint_func ) ) );
-			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_N, fixed_pt, (*invrot_it)->xyz("N"), constraint_func ) ) );
+			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CA, fixed_pt, invrot->xyz("CA"), constraint_func ) ) );
+			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CB, fixed_pt, invrot->xyz("CB"), constraint_func ) ) );
+			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_N, fixed_pt, invrot->xyz("N"), constraint_func ) ) );
 
 			all_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint( cur_res_invrot_csts ) ) );
 		}// loop over invrots
@@ -171,11 +171,11 @@ cst_residue_in_pose(
 {
 
 	EnzdesCacheableObserverCOP enz_ob( get_enzdes_observer( pose ) );
-	if ( !enz_ob ) return NULL;
+	if ( !enz_ob ) return nullptr;
 
 	EnzCstTemplateResCacheCOP res_cache( enz_ob->cst_cache()->param_cache( geomcst )->template_res_cache( geomcst_template_res) );
-	runtime_assert( res_cache != 0 );
-	if ( res_cache->not_in_pose() ) return NULL;
+	runtime_assert( res_cache != nullptr );
+	if ( res_cache->not_in_pose() ) return nullptr;
 
 	runtime_assert( res_cache->seqpos_map_size() == 1 );
 
@@ -185,11 +185,11 @@ cst_residue_in_pose(
 
 std::string
 assemble_remark_line(
-	std::string chainA,
-	std::string resA,
+	std::string const & chainA,
+	std::string const & resA,
 	int seqposA,
-	std::string chainB,
-	std::string resB,
+	std::string const & chainB,
+	std::string const & resB,
 	int seqposB,
 	core::Size cst_block,
 	core::Size ex_geom_id
@@ -298,10 +298,8 @@ sort_residue_type_pointers_by_name( utility::vector1< core::chemical::ResidueTyp
 
 	//finally put all the restypes into the storage vector
 	utility::vector1< core::chemical::ResidueTypeCOP > restype_set_sorted;
-	for ( utility::vector1< std::pair< std::string, core::chemical::ResidueTypeCOP > >::iterator
-			set_it = restype_temp_set_with_name.begin();
-			set_it != restype_temp_set_with_name.end(); ++set_it ) {
-		restype_set_sorted.push_back( (*set_it).second );
+	for ( auto & set_it : restype_temp_set_with_name ) {
+		restype_set_sorted.push_back( set_it.second );
 	}
 
 	return restype_set_sorted;

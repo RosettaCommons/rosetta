@@ -181,11 +181,11 @@ int main( int argc, char * argv [] ) {
 				utility_exit_with_message( "Unable to open file: " + ligand_pdb_list_file_name + '\n' );
 			}
 			while ( getline( ligand_data, ligand_line ) ) {
-				input_ligand_pdb_file_names.push_back( FileName( ligand_line ) );
+				input_ligand_pdb_file_names.emplace_back( ligand_line );
 			}
 			ligand_data.close();
 			// iterate over FileName vector and read in the input LIGAND PDB files
-			std::vector< FileName >::iterator ligand_pdb( input_ligand_pdb_file_names.begin() ), ligand_last_pdb(input_ligand_pdb_file_names.end());
+			auto ligand_pdb( input_ligand_pdb_file_names.begin() ), ligand_last_pdb(input_ligand_pdb_file_names.end());
 			while ( ligand_pdb != ligand_last_pdb ) {
 				// check to make sure the file exists
 				if ( !file_exists( *ligand_pdb ) ) {

@@ -62,7 +62,7 @@ using namespace core;
 using namespace scoring;
 
 //typedef utility::vector1<core::scoring::RDC> RDC_lines;
-typedef utility::vector1< core::scoring::ResidualDipolarCoupling::RDC_lines > RDC_lines_collection;
+using RDC_lines_collection = utility::vector1<core::scoring::ResidualDipolarCoupling::RDC_lines>;
 //typedef core::Real Tensor[3][3];
 //typedef core::Real rvec[3];
 

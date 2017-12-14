@@ -92,7 +92,7 @@ PlacementAuctionMover::PlacementAuctionMover() :
 	simple_moves::DesignRepackMover( PlacementAuctionMover::mover_name() )
 {}
 
-PlacementAuctionMover::~PlacementAuctionMover() {}
+PlacementAuctionMover::~PlacementAuctionMover() = default;
 
 protocols::moves::MoverOP
 PlacementAuctionMover::clone() const {
@@ -247,7 +247,7 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 			//Insert all auctioned postiions to be used by PlaceSimultaneousMover
 			core::Real best_combined_energy=100;
 			//TR<<"Total possiblitly found: " << size() <<std::endl;
-			for ( ResidueAuction::iterator lowest_energy = begin(); lowest_energy != end(); ++lowest_energy ) {
+			for ( auto lowest_energy = begin(); lowest_energy != end(); ++lowest_energy ) {
 				if ( lowest_energy->first <= best_combined_energy ) {
 					saved_auction.insert(*lowest_energy);
 					core::Size const position( lowest_energy->second.first );
@@ -296,8 +296,8 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 				}
 			}
 
-			for ( ResidueAuction::iterator energy_set_pair = begin(); energy_set_pair != end(); /*incrementing done within the loop*/ ) {
-				ResidueAuction::iterator next_it = energy_set_pair;
+			for ( auto energy_set_pair = begin(); energy_set_pair != end(); /*incrementing done within the loop*/ ) {
+				auto next_it = energy_set_pair;
 				core::Size const erased_pos( energy_set_pair->second.first );
 				HotspotStubSetCOP erased_stubset( energy_set_pair->second.second.first );
 

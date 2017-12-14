@@ -496,7 +496,7 @@ RNA_CS_residue_parameters::RNA_CS_residue_parameters( chemical::AA const & res_a
 
 
 //destructor
-RNA_CS_residue_parameters::~RNA_CS_residue_parameters(){}
+RNA_CS_residue_parameters::~RNA_CS_residue_parameters()= default;
 
 ////////////////////////////////////////////////////////////
 std::string const
@@ -621,7 +621,7 @@ RNA_CS_parameters::RNA_CS_parameters():
 
 
 //destructor
-RNA_CS_parameters::~RNA_CS_parameters(){}
+RNA_CS_parameters::~RNA_CS_parameters()= default;
 
 ////////////////////////////////////////////////////////////
 RNA_CS_residue_parameters const &

@@ -39,18 +39,14 @@ EnableMultiCoolAnnealer::EnableMultiCoolAnnealer():
 	history_size_( 0 )
 {}
 
-EnableMultiCoolAnnealer::~EnableMultiCoolAnnealer() {}
+EnableMultiCoolAnnealer::~EnableMultiCoolAnnealer() = default;
 
 TaskOperationOP
 EnableMultiCoolAnnealer::clone() const {
 	return TaskOperationOP( new EnableMultiCoolAnnealer( *this ) );
 }
 
-EnableMultiCoolAnnealer::EnableMultiCoolAnnealer( EnableMultiCoolAnnealer const & src ):
-	TaskOperation(src),
-	increase_history_size_( src.increase_history_size_ ),
-	history_size_( src.history_size_ )
-{}
+EnableMultiCoolAnnealer::EnableMultiCoolAnnealer( EnableMultiCoolAnnealer const & /*src*/ ) = default;
 
 void
 EnableMultiCoolAnnealer::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )

@@ -44,7 +44,7 @@ namespace pack {
 namespace rotamer_set {
 
 /// @details Auto-generated virtual destructor
-ContinuousRotamerSets::~ContinuousRotamerSets() {}
+ContinuousRotamerSets::~ContinuousRotamerSets() = default;
 
 
 ContinuousRotamerSet::ContinuousRotamerSet() :
@@ -56,7 +56,7 @@ ContinuousRotamerSet::ContinuousRotamerSet() :
 	n_samplingrots_total_( 0 )
 {}
 
-ContinuousRotamerSet::~ContinuousRotamerSet() {}
+ContinuousRotamerSet::~ContinuousRotamerSet() = default;
 
 void ContinuousRotamerSet::build_rotamers(
 	pose::Pose const & pose,
@@ -77,7 +77,7 @@ void ContinuousRotamerSet::build_rotamers(
 	/// for the ideal rotamer.
 
 	Size count_allowed( 0 );
-	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
+	for ( auto
 			allowed_iter = task.residue_task( resid ).allowed_residue_types_begin(),
 			allowed_end = task.residue_task( resid ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
@@ -100,7 +100,7 @@ void ContinuousRotamerSet::build_rotamers(
 	}
 
 	Size count_restype_ind( 0 );
-	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
+	for ( auto
 			allowed_iter = task.residue_task( resid ).allowed_residue_types_begin(),
 			allowed_end = task.residue_task( resid ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {

@@ -51,7 +51,7 @@ core::Real residue_rotamer_recovery( Pose & pose, Pose & ref_pose, core::Real di
 
 	// initialize variables
 	core::Real recovered( 0.0 );
-	core::Real nres( static_cast< Real >( nres_protein( pose ) ) );
+	auto nres( static_cast< Real >( nres_protein( pose ) ) );
 
 	// go through residues
 	for ( core::Size i = 1; i <= nres; ++i ) {
@@ -95,7 +95,7 @@ core::Real rotamer_recovery( Pose & pose, Pose & ref_pose, core::Real difference
 	// initialize variables
 	core::Real nrotamers( 0.0 );
 	core::Real recovered( 0.0 );
-	core::Real nres( static_cast< core::Real > ( nres_protein( pose ) ) );
+	auto nres( static_cast< core::Real > ( nres_protein( pose ) ) );
 
 	// go through residues
 	for ( core::Size i = 1; i <= nres; ++i ) {

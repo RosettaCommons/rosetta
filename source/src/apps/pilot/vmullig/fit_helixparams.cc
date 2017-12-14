@@ -414,7 +414,7 @@ main( int argc, char * argv [] )
 		utility::vector1<std::string> const restypes( option[residue_type]() );
 		core::Size const residues_per_repeat( restypes.size() ); //How many residues are there per repeating unit?
 		runtime_assert_string_msg( option[repeats]()>0, "Error in user input from command-line flags.  The number of repeats must be greater than zero." );
-		core::Size const nrepeats( static_cast<core::Size>(option[repeats]()) );
+		auto const nrepeats( static_cast<core::Size>(option[repeats]()) );
 		utility::vector1<core::Real> const mainchaintorsions( option[mainchain_torsions]() );
 
 		utility::vector1<core::Real> const r1guesses( option[r1_guesses]() );

@@ -50,7 +50,7 @@
 
 using namespace core;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 namespace protocols {
 namespace rna {

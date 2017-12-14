@@ -51,7 +51,7 @@ EtableAtom::EtableAtom( conformation::Residue const & res, Size atom_index )
 	is_wat_( false )
 {}
 
-EtableAtom::~EtableAtom() {}
+EtableAtom::~EtableAtom() = default;
 
 /// @brief send a description of the atom to standard out
 void

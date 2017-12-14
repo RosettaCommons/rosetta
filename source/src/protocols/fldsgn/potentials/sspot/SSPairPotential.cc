@@ -69,8 +69,7 @@ SSPairPotential::SSPairPotential():
 }
 
 /// @brief destructor
-SSPairPotential::~SSPairPotential()
-{}
+SSPairPotential::~SSPairPotential() = default;
 
 /// @brief return score of phitheta
 core::Real
@@ -86,13 +85,13 @@ SSPairPotential::calc_phithetascore( Size const strand_seqsep, Real const phi, R
 			istrand_seqsep = 1;
 		}
 	}
-	Size iphi = static_cast< Size >( 1 + ( phi + 180.0 )/10 );
+	auto iphi = static_cast< Size >( 1 + ( phi + 180.0 )/10 );
 	if ( iphi > 36 ) {
 		iphi = 36;
 	} else if ( iphi < 1 ) {
 		iphi = 1;
 	}
-	Size itheta = static_cast< Size >( 1 + ( theta/5 ) );
+	auto itheta = static_cast< Size >( 1 + ( theta/5 ) );
 	if ( itheta > 36 ) {
 		itheta = 36;
 	} else if ( itheta < 1 ) {
@@ -340,8 +339,8 @@ SSPairPotential::score(
 	} // for( istrand )
 
 	dimer_pairs.finalize( ss_info );
-	for ( DimerPairings::iterator it= dimer_pairs.begin(), ite= dimer_pairs.end(); it != ite; ++it ) {
-		DimerPairing const & pairing( **it );
+	for ( auto & dimer_pair : dimer_pairs ) {
+		DimerPairing const & pairing( *dimer_pair );
 		if ( !pairing.valid() ) continue;
 		ss_score += pairing.score();
 
@@ -368,7 +367,7 @@ void
 SSPairPotential::load_phi_theta_bins( String const & ss_filename )
 {
 	using ObjexxFCL::format::skip;
-	typedef ObjexxFCL::FArray3D< Real > FArray3D_real;
+	using FArray3D_real = ObjexxFCL::FArray3D<Real>;
 	FArray3D_real pts_SS( 36, 36, 3 );
 
 	FArray1D_int iptsn( 36 );

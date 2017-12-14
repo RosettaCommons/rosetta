@@ -145,7 +145,7 @@ get_cdr_loops(
 	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 		if ( cdrs[ i ] ) {
 			//TR <<"CDR: " << i << std::endl;
-			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+			auto cdr = static_cast<CDRNameEnum>( i );
 			//TR << "Getting CDR Loop: "<<ab_info->get_CDR_name( cdr ) << std::endl;
 			if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L' ) continue;
 
@@ -260,10 +260,8 @@ bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_in
 
 	bool closed_cutpoints = true;
 
-	for ( loops::Loops::const_iterator it=antibody_info->get_AllCDRs_in_loopsop()->begin(),
-			it_end=antibody_info->get_AllCDRs_in_loopsop()->end(),
-			it_next; it != it_end; ++it ) {
-		Size cutpoint   = it->cut();
+	for ( auto const & elem : *( antibody_info->get_AllCDRs_in_loopsop() ) ) {
+		Size cutpoint   = elem.cut();
 		//Real separation = 10.00; // an unlikely high number
 		Real separation = cutpoint_separation( pose, cutpoint );
 
@@ -429,7 +427,7 @@ void
 check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
 
 	for ( core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		check_fix_aho_cdr_numbering(ab_info, cdr, pose);
 	}
 

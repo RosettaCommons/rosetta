@@ -59,7 +59,7 @@ void test( std::string fname ) {
 	// for( Size i = 1; i <= sv.surf.size(); i++ ) {
 	//  std::cerr << i << " " << sv.surf[id::AtomID(2,i)] << " " << sv.vol[id::AtomID(2,i)] << std::endl;
 	// }
-	Real cps = Real(CLOCKS_PER_SEC);
+	auto cps = Real(CLOCKS_PER_SEC);
 	std::cerr << "tot SASA & SAV  " << sv.tot_surf <<" "<< sv.tot_vol <<" time: "<< Real(t2-t1)/cps << std::endl;
 	std::cerr << "tot SASA (dots) " << tot_sasa                       <<" time: "<< Real(t3-t2)/cps << std::endl;
 
@@ -95,9 +95,9 @@ main (int argc, char *argv[])
 			}
 		}
 
-		for ( std::map<std::string,utility::io::ozstream*>::iterator i = outs.begin(); i != outs.end(); ++i ) {
-			i->second->close();
-			delete i->second;
+		for ( auto & out : outs ) {
+			out.second->close();
+			delete out.second;
 		}
 
 		return 0;

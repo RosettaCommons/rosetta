@@ -97,7 +97,7 @@ Span::operator=( Span const & src ) {
 }
 
 /// @brief Destructor
-Span::~Span(){}
+Span::~Span()= default;
 
 //////////////////
 /// Accessors  ///

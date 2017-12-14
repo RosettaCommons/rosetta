@@ -193,7 +193,7 @@ MMLJEnergyIntra::eval_intrares_energy_ext(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	debug_assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > ( res_data_cache.get_data( mm_lj_intra_nblist ) ) );
-	ResidueNblistData const & nblist( static_cast< ResidueNblistData const & > ( res_data_cache.get_data_ref( mm_lj_intra_nblist ) ) );
+	auto const & nblist( static_cast< ResidueNblistData const & > ( res_data_cache.get_data_ref( mm_lj_intra_nblist ) ) );
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
@@ -232,7 +232,7 @@ MMLJEnergyIntra::eval_intrares_derivatives(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	debug_assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > ( res_data_cache.get_data( mm_lj_intra_nblist ) ) );
-	ResidueNblistData const & nblist( static_cast< ResidueNblistData const & > ( res_data_cache.get_data_ref( mm_lj_intra_nblist ) ) );
+	auto const & nblist( static_cast< ResidueNblistData const & > ( res_data_cache.get_data_ref( mm_lj_intra_nblist ) ) );
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 

@@ -47,8 +47,7 @@ SampleApplier::SampleApplier( pose::Pose & pose,
 }
 
 //Destructor
-SampleApplier::~SampleApplier()
-{}
+SampleApplier::~SampleApplier() = default;
 
 void
 SampleApplier::get_update( sampler::StepWiseSamplerOP sampler ){

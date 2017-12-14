@@ -78,6 +78,7 @@
 #include <ObjexxFCL/format.hh>
 
 //utility headers
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
 
@@ -173,11 +174,11 @@ DiffAtomSasaFilter::DiffAtomSasaFilter(
 	std::string const & atomname2,
 	std::string const & sample_type ) :
 	Filter( "DiffAtomBurial" ),
-	resid1_(std::move(resid1)),
-	resid2_(std::move(resid2)),
-	aname1_(std::move( atomname1 )),
-	aname2_(std::move( atomname2 )),
-	sample_type_(std::move( sample_type ))
+	resid1_(resid1),
+	resid2_(resid2),
+	aname1_( atomname1 ),
+	aname2_( atomname2 ),
+	sample_type_( sample_type )
 {}
 
 bool
@@ -456,7 +457,7 @@ LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::Data
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 
 	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
-	include_cstE_ = tag->getOption<bool>( "include_cstE" , 0 );
+	include_cstE_ = tag->getOption<bool>( "include_cstE" , false );
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 0 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
 
@@ -464,7 +465,7 @@ LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::Data
 
 LigInterfaceEnergyFilter::~LigInterfaceEnergyFilter() = default;
 
-EnzScoreFilter::EnzScoreFilter( std::string const & resnum, std::string const & cstid, core::scoring::ScoreFunctionOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE ) : Filter( "EnzScore" ), resnum_( resnum ), cstid_(std::move( cstid )), score_type_( score_type ), threshold_( threshold ),  whole_pose_ ( whole_pose ), is_cstE_ ( is_cstE ) {
+EnzScoreFilter::EnzScoreFilter( std::string const & resnum, std::string const & cstid, core::scoring::ScoreFunctionOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_pose, bool const is_cstE ) : Filter( "EnzScore" ), resnum_( resnum ), cstid_( cstid ), score_type_( score_type ), threshold_( threshold ),  whole_pose_ ( whole_pose ), is_cstE_ ( is_cstE ) {
 
 	using namespace core::scoring;
 
@@ -602,10 +603,10 @@ RepackWithoutLigandFilter::RepackWithoutLigandFilter(
 	core::Real energy_thresh,
 	core::select::residue_selector::ResidueSelectorCOP rms_target_res  ) :
 	Filter( "RepackWithoutLigand" ),
-	scorefxn_(std::move(scorefxn)),
+	scorefxn_( std::move( scorefxn ) ),
 	rms_threshold_( rms_thresh ),
 	energy_threshold_( energy_thresh ),
-	target_res_( rms_target_res )
+	target_res_( std::move( rms_target_res ) )
 {}
 
 bool
@@ -1019,7 +1020,7 @@ EnzdesScorefileFilter::initialize_value_evaluators_from_file( std::string const 
 			}
 
 			std::string param_name( tokens[2] );
-			core::Real param_cutoff( core::Real(atof(tokens[5].c_str()) ) );
+			auto param_cutoff( core::Real(atof(tokens[5].c_str()) ) );
 			ValueEvaluator::CompareMode mode(ValueEvaluator::SMALLER);
 			if ( tokens[4] == "<" ) mode = ValueEvaluator::SMALLER;
 			else if ( tokens[4] == "=" ) mode = ValueEvaluator::EQUALS;

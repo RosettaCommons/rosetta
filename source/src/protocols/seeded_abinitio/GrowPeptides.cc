@@ -101,8 +101,7 @@ using namespace core;
 // XRW TEMP }
 
 
-GrowPeptides::GrowPeptides()
-{}
+GrowPeptides::GrowPeptides() = default;
 
 GrowPeptides::~GrowPeptides() = default;
 
@@ -358,9 +357,9 @@ GrowPeptides::parse_my_tag(
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	TR<<"scoring with following scorefunction: " << *scorefxn_ <<std::endl;
 
-	fetch_foldtree = tag->getOption< bool >( "SeedFoldTree", 0 );
+	fetch_foldtree = tag->getOption< bool >( "SeedFoldTree", false );
 
-	ddg_ = tag->getOption< bool >( "ddg_based", 0 );
+	ddg_ = tag->getOption< bool >( "ddg_based", false );
 
 	//add_chainbreakterm_ = tag->getOption< bool >( "add_chainbreakterm", 1 );
 
@@ -373,12 +372,12 @@ GrowPeptides::parse_my_tag(
 		TR<<"extending peptide c-terminally by " << extend_cterm << std::endl;
 	}
 
-	all_ala_N = tag->getOption< bool >("all_ala_N" , 0 );
+	all_ala_N = tag->getOption< bool >("all_ala_N" , false );
 	if ( all_ala_N ) {
 		TR<<"N-terminally added amino acids are all ALA" <<std::endl;
 	}
 
-	all_ala_C = tag->getOption< bool >("all_ala_C", 0 );
+	all_ala_C = tag->getOption< bool >("all_ala_C", false );
 	if ( all_ala_C ) {
 		TR<<"C-terminally added amino acids are all ALA" <<std::endl;
 	}
@@ -391,7 +390,7 @@ GrowPeptides::parse_my_tag(
 		csequence_ = ( tag->getOption< std::string >( "cseq" ) );
 	}
 
-	output_centroid = tag->getOption< bool >( "output_centroid", 0 );
+	output_centroid = tag->getOption< bool >( "output_centroid", false );
 
 	if ( tag->hasOption( "template_pdb" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
@@ -432,7 +431,7 @@ GrowPeptides::parse_my_tag(
 			TR <<"parsing seeds: \n"<< begin <<" and " << end <<std::endl;
 
 			if ( btag->hasOption( "anchor" ) ) {
-				Size anchor_res = btag->getOption< core::Size >("anchor", 0 );
+				auto anchor_res = btag->getOption< core::Size >("anchor", 0 );
 				TR<<"anchor residue: " << anchor_res << std::endl;
 				anchors_.push_back( anchor_res );
 				anchor_specified_ = true;

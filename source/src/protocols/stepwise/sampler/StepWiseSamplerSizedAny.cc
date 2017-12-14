@@ -34,7 +34,7 @@ StepWiseSamplerSizedAny::StepWiseSamplerSizedAny():
 	size_( 0 )
 {}
 
-StepWiseSamplerSizedAny::~StepWiseSamplerSizedAny(){}
+StepWiseSamplerSizedAny::~StepWiseSamplerSizedAny()= default;
 
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerSizedAny::init() {

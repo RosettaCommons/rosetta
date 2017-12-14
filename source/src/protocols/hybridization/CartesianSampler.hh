@@ -191,11 +191,6 @@ private:
 	// scorefunctions
 	core::scoring::ScoreFunctionOP scorefxn_, fa_scorefxn_, mc_scorefxn_;  // mc_scorefxn allows us to minimize and eval with different scorefxns
 
-	// ligands
-	bool add_hetatm_;
-	core::Real hetatm_self_cst_weight_;
-	core::Real hetatm_prot_cst_weight_;
-
 }; //class CartesianSampler
 
 } // hybridize

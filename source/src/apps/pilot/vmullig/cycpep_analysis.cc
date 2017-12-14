@@ -32,7 +32,7 @@
 #include <numeric/angle.functions.hh>
 
 #include <utility/vector1.hh>
-#include <stdio.h>
+#include <cstdio>
 
 //Tracer:
 static basic::Tracer TR( "apps.pilot.vmullig.cycpep_analysis" );

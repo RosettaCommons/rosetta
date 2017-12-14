@@ -45,8 +45,8 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using core::pose::xyzStripeHashPose;
-typedef numeric::xyzVector<platform::Real> Vec;
-typedef numeric::xyzMatrix<platform::Real> Mat;
+using Vec = numeric::xyzVector<platform::Real>;
+using Mat = numeric::xyzMatrix<platform::Real>;
 
 inline double dist_score( double const & sqdist, double const & start, double const & stop ) {
 	if ( sqdist > stop*stop ) {
@@ -183,16 +183,16 @@ fill_plane_hash(
 	int const xsize = xub-xlb+1;
 	int const ysize = yub-ylb+1;
 	for ( auto const & ia : pb ) {
-		int const ix = (int)((ia.x()/BIN)-xlb+0.999999999);
-		int const iy = (int)((ia.y()/BIN)-ylb+0.999999999);
+		auto const ix = (int)((ia.x()/BIN)-xlb+0.999999999);
+		auto const iy = (int)((ia.y()/BIN)-ylb+0.999999999);
 		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
 		if ( ha(ix,iy).z() < ia.z() ) ha(ix,iy) = ia;
 		// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize) && ha(ix,iy).z() < ia->z();
 		// ha(ix,iy) = test ? *ia : ha(ix,iy);
 	}
 	for ( auto const & ib : pa ) {
-		int const ix = (int)((ib.x()/BIN)-xlb+0.999999999);
-		int const iy = (int)((ib.y()/BIN)-ylb+0.999999999);
+		auto const ix = (int)((ib.x()/BIN)-xlb+0.999999999);
+		auto const iy = (int)((ib.y()/BIN)-ylb+0.999999999);
 		if ( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
 		if ( hb(ix,iy).z() > ib.z() ) hb(ix,iy) = ib;
 		// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) && hb(ix,iy).z() > ib->z();

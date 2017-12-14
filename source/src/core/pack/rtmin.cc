@@ -329,7 +329,7 @@ RTMin::rtmin(
 					scminmap->set_natoms_for_residue( jjresid, bgres[ jjresid ]->natoms() );
 				}
 				Residue const & jjrsd( * bgres[ jjresid ] );
-				MinimizationEdge & min_edge( static_cast< MinimizationEdge & > ( **eiter ));
+				auto & min_edge( static_cast< MinimizationEdge & > ( **eiter ));
 				//std::cout << "Minedge " << iiresid << " " << jjresid << std::endl;
 				if ( jjresid < iiresid ) {
 					if ( residue_is_inactive_neighbor[ jjresid ] || ! active_residue_has_been_visited[ jjresid ] ) {
@@ -685,7 +685,7 @@ void reinitialize_mingraph_neighborhood_for_residue(
 			eiter_end = mingraph.get_node( resid )->edge_list_end();
 			eiter != eiter_end; ++eiter ) {
 		Size iiresid = (*eiter)->get_other_ind( resid );
-		scoring::MinimizationEdge & min_edge( static_cast< scoring::MinimizationEdge & > ( **eiter ));
+		auto & min_edge( static_cast< scoring::MinimizationEdge & > ( **eiter ));
 		if ( resid <= iiresid ) {
 			min_edge.reinitialize_active_energy_methods( rsd, *bgres[ iiresid ], pose, true);
 			min_edge.setup_for_minimizing( rsd, *bgres[ iiresid ], pose, scorefxn, scminmap );

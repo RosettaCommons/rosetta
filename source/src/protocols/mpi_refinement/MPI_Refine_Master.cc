@@ -458,7 +458,7 @@ MPI_Refine_Master::process_inbound_wus(){
 
 		// Terminate if gets termination WU
 		if ( next_wu->get_wu_type() == "terminate" ) {
-			int i_rank = (int)( next_wu->last_received_from());
+			auto i_rank = (int)( next_wu->last_received_from());
 
 			if ( i_rank == (int)(my_emperor()) ) {
 				TR << "Got termination signal from Emperor!" << std::endl;
@@ -798,9 +798,9 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 			// nstruct, cartesian
 			// don't minimize here; let's use rerelax
 			if ( params.relax_type == 1 ) { // cartesian combine
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_CombinePose( params.nperrun, 1 ) );
+				new_wu = WorkUnit_SamplerOP( new WorkUnit_CombinePose( params.nperrun, true ) );
 			} else { // torsion combine
-				new_wu = WorkUnit_SamplerOP( new WorkUnit_CombinePose( params.nperrun, 0 ) );
+				new_wu = WorkUnit_SamplerOP( new WorkUnit_CombinePose( params.nperrun, false ) );
 			}
 			new_wu->set_wu_type("combine");
 			new_wu->decoys().add( ss );
@@ -1144,7 +1144,7 @@ MPI_Refine_Master::get_average_structure( SilentStructStore &decoys,
 	for ( core::Size j = 1; j <= scores_touse.size(); ++j ) {
 		std::vector< core::Real > scores_j( scores_touse[j] );
 		std::sort( scores_j.begin(), scores_j.end() );
-		core::Size icut = (core::Size)(0.5*scores_j.size()+0.50);
+		auto icut = (core::Size)(0.5*scores_j.size()+0.50);
 		scores_cut[j] = scores_j[icut];
 	}
 

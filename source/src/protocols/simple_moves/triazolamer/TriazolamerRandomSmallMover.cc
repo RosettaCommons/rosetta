@@ -36,6 +36,7 @@
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 #include <core/types.hh>
+#include <utility>
 
 // C++ Headers
 
@@ -114,17 +115,17 @@ TriazolamerRandomSmallMover::TriazolamerRandomSmallMover(
 	Mover::type( "TriazolamerRandomSmallMover" );
 }
 
-TriazolamerRandomSmallMover::TriazolamerRandomSmallMover( utility::vector1< core::Size > triazolamer_seq_positions ): Mover(), triazolamer_seq_positions_(triazolamer_seq_positions), max_small_angle_(0.0)
+TriazolamerRandomSmallMover::TriazolamerRandomSmallMover( utility::vector1< core::Size > const & triazolamer_seq_positions ): Mover(), triazolamer_seq_positions_(triazolamer_seq_positions), max_small_angle_(0.0)
 {
 	Mover::type( "TriazolamerRandomSmallMover" );
 }
 
-TriazolamerRandomSmallMover::TriazolamerRandomSmallMover( utility::vector1< core::Size > triazolamer_seq_positions, core::Real max_small_angle ): Mover(), triazolamer_seq_positions_(triazolamer_seq_positions), max_small_angle_( max_small_angle )
+TriazolamerRandomSmallMover::TriazolamerRandomSmallMover( utility::vector1< core::Size > const & triazolamer_seq_positions, core::Real max_small_angle ): Mover(), triazolamer_seq_positions_(triazolamer_seq_positions), max_small_angle_( max_small_angle )
 {
 	Mover::type( "TriazolamerRandomSmallMover" );
 }
 
-TriazolamerRandomSmallMover::~TriazolamerRandomSmallMover(){}
+TriazolamerRandomSmallMover::~TriazolamerRandomSmallMover()= default;
 
 
 }//triazolamer

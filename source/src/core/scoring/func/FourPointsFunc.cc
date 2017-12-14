@@ -37,7 +37,7 @@ void FourPointsFunc::xyz( Size atomno, Vector const & coord )
 	points_[ atomno ] = coord;
 }
 
-FourPointsFunc::~FourPointsFunc() {}
+FourPointsFunc::~FourPointsFunc() = default;
 
 Vector const &
 FourPointsFunc::operator()( AtomID const & id ) const
@@ -57,7 +57,7 @@ FourPointsFunc::residue( Size ) const
 	utility_exit_with_message( "FourPointsFunc does not implement a residue() method" );
 
 	// unreachable -- appease compiler
-	chemical::ResidueType rt( NULL, NULL, NULL, NULL );
+	chemical::ResidueType rt( nullptr, nullptr, nullptr, nullptr );
 	static conformation::Residue r( rt, true );
 	return r;
 }

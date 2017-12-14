@@ -18,8 +18,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-SandwichFragment::SandwichFragment()
-{}
+SandwichFragment::SandwichFragment() = default;
 
 // 1 parameter
 SandwichFragment::SandwichFragment(
@@ -78,8 +77,7 @@ SandwichFragment::SandwichFragment(
 	pdb_source_("")
 {}
 
-SandwichFragment::~SandwichFragment()
-{}
+SandwichFragment::~SandwichFragment() = default;
 
 core::Size
 SandwichFragment::get_start() const

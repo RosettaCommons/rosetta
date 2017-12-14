@@ -108,7 +108,7 @@ GlycanTree::clone() const {
 }
 
 
-GlycanTree::~GlycanTree(){}
+GlycanTree::~GlycanTree()= default;
 
 void
 GlycanTree::setup_glycan_nodes(conformation::Conformation const & conf, Size const start_pos) {

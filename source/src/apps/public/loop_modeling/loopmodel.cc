@@ -31,7 +31,7 @@ static basic::Tracer TR( "apps.public.loops.loopmodel" );
 void *
 LoopBuild_main_local( void* ) {
 	protocols::loop_build::LoopBuild_main( false );
-	return 0;
+	return nullptr;
 }
 
 ////////////////////////////////////////////////////////

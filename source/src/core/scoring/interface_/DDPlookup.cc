@@ -126,7 +126,7 @@ DDPlookup::DDPlookup(std::string const & filename)
 	for ( core::Size i=1; i<=max_aa; i++ ) {
 		lookup_table_[i] = new numeric::interpolation::spline::SplineGenerator*[max_aa+1];
 		for ( core::Size j=1; j<=max_aa; j++ ) {
-			utility::vector1<core::Real>::iterator lower_bound_y_iterator(std::min_element(known_values[i][j].begin(),known_values[i][j].end()));
+			auto lower_bound_y_iterator(std::min_element(known_values[i][j].begin(),known_values[i][j].end()));
 
 			core::Real lower_bound_x = 0 - stepsize/2;
 			core::Real upper_bound_x = distance_bin[n_bins] + stepsize/2;

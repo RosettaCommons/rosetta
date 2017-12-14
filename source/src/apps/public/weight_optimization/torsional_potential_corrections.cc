@@ -67,6 +67,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -112,7 +113,7 @@
 
 #include <fstream>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <cmath>
 
 #include <sstream>
@@ -145,22 +146,22 @@ OPT_1GRP_KEY(Real, tors, scale)
 static basic::Tracer TR( "torsion.corrections" );
 
 struct FragInfo {
-	FragInfo ( ) : weight_(0), center_(0) {}
+	FragInfo() = default;
 
-	FragInfo ( core::pose::PoseOP pose, core::Real weight, core::Size center, std::string tag ) :
-		pose_(pose), weight_(weight), center_(center), tag_(tag) {}
+	FragInfo ( core::pose::PoseOP pose, core::Real weight, core::Size center, std::string const & tag ) :
+		pose_(std::move(pose)), weight_(weight), center_(center), tag_(tag) {}
 
 	core::pose::PoseOP pose_;
-	core::Size weight_;
-	core::Size center_;
+	core::Size weight_ = 0;
+	core::Size center_ = 0;
 	std::string tag_;
 };
 
 struct ScoreFragInfo {
-	ScoreFragInfo() : phibin_(0),psibin_(0),rotidx_(0), weight_(0), fragscore_(0) {}
+	ScoreFragInfo() = default;
 
 	ScoreFragInfo(
-		std::string id, int aa, core::Size phibin, core::Size psibin,
+		std::string const & id, int aa, core::Size phibin, core::Size psibin,
 		core::Size rotidx, core::Size r1, core::Size r2, core::Size r3, core::Size r4,
 		core::Size weight, core::Real fragscore
 	) {
@@ -176,10 +177,10 @@ struct ScoreFragInfo {
 
 	std::string id_;
 	int aa_;
-	core::Size phibin_,psibin_,rotidx_;
+	core::Size phibin_ = 0, psibin_ = 0, rotidx_ = 0;
 	core::Size rotid_[4];
-	core::Size weight_;
-	core::Real fragscore_;
+	core::Size weight_ = 0;
+	core::Real fragscore_ = 0;
 };
 
 core::Size
@@ -296,7 +297,7 @@ mutate_to_ala(core::pose::Pose &pose, int center) {
 template
 <class C>
 void
-dump_table( ObjexxFCL::FArray2D<C> table, std::string filename, std::string tag ) {
+dump_table( ObjexxFCL::FArray2D<C> const & table, std::string const & filename, std::string const & tag ) {
 	std::ofstream outtable( filename.c_str(), std::ofstream::out | std::ofstream::app );
 
 	outtable << tag << " = [ ...\n";
@@ -393,9 +394,9 @@ correct_rama() {
 	/////
 	// 2 normalize, apply convolution
 	utility::vector1< core::Real > probSums(20, 0 );
-	for ( std::map< int ,ObjexxFCL::FArray2D<core::Real> >::iterator it=ramaEsum.begin(); it!=ramaEsum.end(); ++it ) {
-		int aa = it->first;
-		ObjexxFCL::FArray2D<core::Real> &data = it->second;
+	for ( auto & it : ramaEsum ) {
+		int aa = it.first;
+		ObjexxFCL::FArray2D<core::Real> &data = it.second;
 		ObjexxFCL::FArray2D<core::Real> &dataMin = ramaEmin[aa];
 		ObjexxFCL::FArray2D<core::Real> &dataMax = ramaEmax[aa];
 
@@ -429,9 +430,9 @@ correct_rama() {
 			}
 		}
 	}
-	for ( std::map< int,ObjexxFCL::FArray2D<core::Real> >::iterator it=ramaEsum.begin(); it!=ramaEsum.end(); ++it ) {
-		int aa = it->first;
-		ObjexxFCL::FArray2D<core::Real> &data = it->second;
+	for ( auto & it : ramaEsum ) {
+		int aa = it.first;
+		ObjexxFCL::FArray2D<core::Real> &data = it.second;
 
 		for ( int i=1; i<=36; ++i ) {
 			for ( int j=1; j<=36; ++j ) {
@@ -562,10 +563,10 @@ calc_rama_scores() {
 		}
 
 		core::scoring::EnergyMap weights = pose.energies().weights();
-		typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
+		using ScoreTypeVec = utility::vector1<core::scoring::ScoreType>;
 		ScoreTypeVec score_types;
 		for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-			core::scoring::ScoreType ii = core::scoring::ScoreType(i);
+			auto ii = core::scoring::ScoreType(i);
 			if ( weights[ii] != 0 ) score_types.push_back(ii);
 		}
 
@@ -674,7 +675,7 @@ correct_dunbrack() {
 				}
 			} else {
 				// hardcoded: semirot chi
-				core::chemical::AA aa = (core::chemical::AA) currentfrag[1].aa_;
+				auto aa = (core::chemical::AA) currentfrag[1].aa_;
 				bool semichi_is_2=true;
 				if ( aa==aa_gln || aa==aa_glu ) semichi_is_2=false;
 
@@ -784,9 +785,9 @@ correct_dunbrack() {
 	// rotameric p-p smoothing
 	utility::vector1< ObjexxFCL::FArray2D<core::Real> > probSums(20, ObjexxFCL::FArray2D<core::Real>(36,36) );
 	for ( int i=1; i<=20; ++i ) { probSums[i] = 0.0; };
-	for ( std::map< std::pair< int, int >,ObjexxFCL::FArray2D<core::Real> >::iterator it=rotEsum.begin(); it!=rotEsum.end(); ++it ) {
-		std::pair< int, int > rottag = it->first;
-		ObjexxFCL::FArray2D<core::Real> &data = it->second;
+	for ( auto & it : rotEsum ) {
+		std::pair< int, int > rottag = it.first;
+		ObjexxFCL::FArray2D<core::Real> &data = it.second;
 
 		for ( int i=1; i<=36; ++i ) {
 			for ( int j=1; j<=36; ++j ) {
@@ -810,9 +811,9 @@ correct_dunbrack() {
 			}
 		}
 	}
-	for ( std::map< std::pair< int, int >,ObjexxFCL::FArray2D<core::Real> >::iterator it=rotEsum.begin(); it!=rotEsum.end(); ++it ) {
-		std::pair< int, int > rottag = it->first;
-		ObjexxFCL::FArray2D<core::Real> &data = it->second;
+	for ( auto & it : rotEsum ) {
+		std::pair< int, int > rottag = it.first;
+		ObjexxFCL::FArray2D<core::Real> &data = it.second;
 
 		for ( int i=1; i<=36; ++i ) {
 			for ( int j=1; j<=36; ++j ) {
@@ -837,10 +838,10 @@ correct_dunbrack() {
 	/////
 	// semirotameric p-p smoothing
 	for ( int i=1; i<=20; ++i ) { probSums[i] = 0.0; };
-	for ( std::map< std::pair< int, int >, utility::vector1< ObjexxFCL::FArray2D<core::Real> > >::iterator it=semirotEsum.begin(); it!=semirotEsum.end(); ++it ) {
-		std::pair< int, int > rottag = it->first;
+	for ( auto & it : semirotEsum ) {
+		std::pair< int, int > rottag = it.first;
 		for ( int k=1; k<=36; ++k ) {
-			ObjexxFCL::FArray2D<core::Real> &data = it->second[k];
+			ObjexxFCL::FArray2D<core::Real> &data = it.second[k];
 			for ( int i=1; i<=36; ++i ) {
 				for ( int j=1; j<=36; ++j ) {
 					//core::Size count = rotcount[rottag.first](i,j) + MEST;
@@ -862,10 +863,10 @@ correct_dunbrack() {
 			}
 		}
 	}
-	for ( std::map< std::pair< int, int >, utility::vector1< ObjexxFCL::FArray2D<core::Real> > >::iterator it=semirotEsum.begin(); it!=semirotEsum.end(); ++it ) {
+	for ( auto & it : semirotEsum ) {
 		for ( int k=1; k<=36; ++k ) {
-			ObjexxFCL::FArray2D<core::Real> &data = it->second[k];
-			std::pair< int, int > rottag = it->first;
+			ObjexxFCL::FArray2D<core::Real> &data = it.second[k];
+			std::pair< int, int > rottag = it.first;
 
 			for ( int i=1; i<=36; ++i ) {
 				for ( int j=1; j<=36; ++j ) {
@@ -1250,7 +1251,7 @@ calc_scores() {
 		std::string fragtag = fields[1];
 		core::Size phibin = atoi( fields[2].c_str() );
 		core::Size psibin = atoi( fields[3].c_str() );
-		core::chemical::AA aa = (core::chemical::AA) atoi( fields[4].c_str() );
+		auto aa = (core::chemical::AA) atoi( fields[4].c_str() );
 		core::Size weight = atoi( fields[5].c_str() );
 		core::Size center = atoi( fields[6].c_str() );
 
@@ -1453,8 +1454,8 @@ make_fragments() {
 							iru  = energy_graph.get_node(j)->const_edge_list_begin(),
 							irue = energy_graph.get_node(j)->const_edge_list_end();
 							iru != irue; ++iru ) {
-						EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-						int k=(int)edge->get_other_ind(j);
+						auto const * edge( static_cast< EnergyEdge const *> (*iru) );
+						auto k=(int)edge->get_other_ind(j);
 
 						core::conformation::Residue const &rsd_k( pose.residue(k) );
 

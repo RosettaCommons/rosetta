@@ -68,8 +68,8 @@ static basic::Tracer TR( "apps.public.ddg.ddg_monomer" );
 using namespace core;
 using namespace scoring;
 
-typedef utility::vector1< core::chemical::AA > mutations;
-typedef utility::vector1< double > ddgs;
+using mutations = utility::vector1<core::chemical::AA>;
+using ddgs = utility::vector1<double>;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief print ddGs
@@ -425,7 +425,7 @@ main( int argc, char * argv [] )
 				if ( storage_task->design_residue(i) ) {
 
 					// iterate over allowed residues to mutate into
-					for ( ResidueLevelTask::ResidueTypeCOPListConstIter aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
+					for ( auto aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
 							aa_end(storage_task->residue_task(i).allowed_residue_types_end());
 							aa_iter != aa_end; ++aa_iter ) {
 
@@ -517,7 +517,7 @@ main( int argc, char * argv [] )
 					for ( Size j =1; j <= 20 ; j++ ) { //iterate through all amino acids
 
 						residues_to_mutate = all_unk; //mutate each interface residue one at a time
-						core::chemical::AA curr_aa = (core::chemical::AA)j;
+						auto curr_aa = (core::chemical::AA)j;
 
 						// if the current AA isn't already in the pose and if the pose AA isn't unknown
 						if ( curr_aa != pose.aa(i) && (pose.aa(i) != aa_unk) ) {

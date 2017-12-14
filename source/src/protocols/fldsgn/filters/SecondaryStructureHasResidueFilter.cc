@@ -80,9 +80,9 @@ SecondaryStructureHasResidueFilter::parse_my_tag(
 	max_helix_length_ = tag->getOption<core::Size>( "max_helix_length", 9999 );
 	max_sheet_length_ = tag->getOption<core::Size>( "max_sheet_length", 9999 );
 	max_loop_length_ = tag->getOption<core::Size>( "max_loop_length", 9999 );
-	filter_helix_ = tag->getOption<bool>( "filter_helix", 1 );
-	filter_sheet_ = tag->getOption<bool>( "filter_sheet", 1 );
-	filter_loop_ = tag->getOption<bool>( "filter_loop", 0 );
+	filter_helix_ = tag->getOption<bool>( "filter_helix", true );
+	filter_sheet_ = tag->getOption<bool>( "filter_sheet", true );
+	filter_loop_ = tag->getOption<bool>( "filter_loop", false );
 	//chrisk get aa1 res list string here
 	req_residue_str_ = tag->getOption< std::string >( "required_restypes", "VILMFYW" );
 	threshold_ = tag->getOption< core::Real >( "secstruct_fraction_threshold", 1.0 );

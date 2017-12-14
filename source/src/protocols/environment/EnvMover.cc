@@ -123,7 +123,7 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
 	Filters_map const & filters,
 	moves::Movers_map const & movers,
 	core::pose::Pose const& pose ) {
-	typedef utility::vector0< TagCOP > TagCOPs;
+	using TagCOPs = utility::vector0<TagCOP>;
 
 	env_ = EnvironmentOP( new Environment( tag->getOption<std::string>( "name" ) ) );
 

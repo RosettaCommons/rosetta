@@ -57,7 +57,7 @@ using utility::vector1;
 
 
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -338,9 +338,9 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 			if ( pose1.sequence()[ n-1 ] == 'X' ) {
 				std::stringstream ss;
 				ss << "X[" <<  pose1.residue_type( n ).name() << "]";
-				resnum_seq_list.push_back( std::make_pair( resnum1[n], ss.str() ) );
+				resnum_seq_list.emplace_back( resnum1[n], ss.str() );
 			} else {
-				resnum_seq_list.push_back( std::make_pair( resnum1[n], std::string(1,pose1.sequence()[ n-1]) ) );
+				resnum_seq_list.emplace_back( resnum1[n], std::string(1,pose1.sequence()[ n-1]) );
 			}
 		}
 	}
@@ -350,9 +350,9 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 			if ( pose2.sequence()[ n-1 ] == 'X' ) {
 				std::stringstream ss;
 				ss << "X[" <<  pose2.residue_type( n ).name() << "]";
-				resnum_seq_list.push_back( std::make_pair( resnum2[n], ss.str() ) );
+				resnum_seq_list.emplace_back( resnum2[n], ss.str() );
 			} else {
-				resnum_seq_list.push_back( std::make_pair( resnum2[n], std::string(1,pose2.sequence()[ n-1]) ) );
+				resnum_seq_list.emplace_back( resnum2[n], std::string(1,pose2.sequence()[ n-1]) );
 			}
 		}
 	}

@@ -63,9 +63,9 @@
 
 //Stream headers+basic headers
 #include <basic/Tracer.hh>
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <sstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -107,7 +107,7 @@ moves::MoverOP PeptideCyclizeMover::fresh_instance() const
 
 ///@brief destructor of the mover
 //
-PeptideCyclizeMover::~PeptideCyclizeMover(){}
+PeptideCyclizeMover::~PeptideCyclizeMover()= default;
 
 /// @brief Constructor for PeptideCyclizeMover.
 ///

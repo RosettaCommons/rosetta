@@ -37,7 +37,7 @@ namespace task_operations {
 
 RestrictOperationsBase::RestrictOperationsBase() : parent() {}
 
-RestrictOperationsBase::~RestrictOperationsBase() {}
+RestrictOperationsBase::~RestrictOperationsBase() = default;
 
 void
 RestrictOperationsBase::run_calculator(
@@ -49,15 +49,15 @@ RestrictOperationsBase::run_calculator(
 	runtime_assert(residues.size() == pose.size());
 
 	//find the set of residues
-	typedef std::set< core::Size > SizeSet;
+	using SizeSet = std::set<core::Size>;
 	basic::MetricValue< SizeSet > mv_sizeset;
 	pose.metric(calculator, calculation, mv_sizeset);
 	SizeSet const & sizeset(mv_sizeset.value());
 
 	//insert this into the vector
-	for ( SizeSet::const_iterator it(sizeset.begin()), end(sizeset.end()) ; it != end; ++it ) {
+	for ( unsigned long it : sizeset ) {
 		//TR << *it << std::endl;
-		residues[*it] = true;
+		residues[it] = true;
 	}
 
 	return;

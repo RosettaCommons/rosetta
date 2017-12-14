@@ -89,7 +89,7 @@ void define_interface( core::pose::Pose & ref_pose ) {
 			iru  = energy_graph.get_node( lig_res_num )->lower_edge_list_begin(),
 			irue = energy_graph.get_node( lig_res_num )->lower_edge_list_end();
 			iru != irue; ++iru ) {
-		EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+		auto * edge( static_cast< EnergyEdge *> (*iru) );
 		Size const j( edge->get_first_node_ind() );
 
 		// the pair energies cached in the link

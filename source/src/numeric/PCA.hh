@@ -37,7 +37,7 @@ namespace numeric {
 template< typename T >
 inline
 xyzVector< T >
-first_principal_component( utility::vector1< xyzVector< T > > const & coords ){
+first_principal_component( utility::vector1< xyzVector< T > > const & coords ) {
 	return principal_components(coords).col(1);
 }
 

@@ -67,7 +67,7 @@ public:
 template <class T >
 class SingleValuePoseEvaluator : public PoseEvaluator {
 public:
-	SingleValuePoseEvaluator( std::string name = "UNSPECIFIED_SingleValuePoseEvaluator" ) : name_(std::move( name )) {};
+	SingleValuePoseEvaluator( std::string const & name = "UNSPECIFIED_SingleValuePoseEvaluator" ) : name_( name ) {};
 
 	/// @brief evaluate pose and store values in Silent_Struct
 	/// why is this specific to a specific type of SilentStruct? that seems needlessly pointless and overly constraining.

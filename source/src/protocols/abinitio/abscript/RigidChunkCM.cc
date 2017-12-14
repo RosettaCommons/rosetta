@@ -100,11 +100,11 @@ class ResidueChunkSelection {
 	typedef utility::vector1< std::pair< core::Size, core::Size > > ChunkList;
 
 public:
-	typedef ChunkList::iterator iterator;
-	typedef ChunkList::const_iterator const_iterator;
+	using iterator = ChunkList::iterator;
+	using const_iterator = ChunkList::const_iterator;
 
 public:
-	ResidueChunkSelection( utility::vector1< bool > sele ) {
+	explicit ResidueChunkSelection( utility::vector1< bool > const & sele ) {
 
 		core::Size sele_start = 0;
 		for ( core::Size i = 1; i <= sele.size(); ++i ) {
@@ -220,7 +220,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 					<< "' is not combinable with input templates." << std::endl;
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 			}
-			template_ = NULL;
+			template_ = nullptr;
 		} else {
 			core::pose::PoseOP p( new core::pose::Pose() );
 			core::import_pose::pose_from_file( *p,
@@ -251,8 +251,8 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 		// to build a constructor for ResidueIndexSelector that takes a loops object, but the Loops
 		// object is in protocols.3 and ResidueIndexSelector is in core.4. Lamesauce.
 		std::stringstream ss;
-		for ( loops::Loops::const_iterator loop = region_in.begin(); loop != region_in.end(); ++loop ) {
-			ss << loop->start() << "-" << loop->stop() << ",";
+		for ( auto const & loop : region_in ) {
+			ss << loop.start() << "-" << loop.stop() << ",";
 		}
 		ResidueSelectorCOP sele( new ResidueIndexSelector( ss.str() ) );
 		templ_selector( sele );
@@ -675,7 +675,7 @@ void RigidChunkCM::initialize( Pose& pose ){
 				tr.Trace << "Replacing simulation " << pose.residue( sim_pos ).name3() << sim_pos
 					<< " with template " << templ_res.name3() << templ_pos << std::endl;
 
-				ProtectedConformation const& conf = static_cast< ProtectedConformation const& >( pose.conformation() );
+				auto const& conf = static_cast< ProtectedConformation const& >( pose.conformation() );
 				pose.replace_residue( sim_pos, *conf.match_variants( sim_pos, templ_res ) , false );
 
 				debug_assert( reference.residue( sim_pos ).is_lower_terminus() == pose.residue( sim_pos ).is_lower_terminus() );
@@ -810,9 +810,9 @@ loops::Loops RigidChunkCM::select_parts( loops::Loops const& rigid_core, core::S
 	}
 
 	for ( Size attempts = 1; attempts <= 50 && current_rigid_core.size() != 0; ++attempts ) {
-		for ( loops::Loops::const_iterator it = rigid_core.begin(); it != rigid_core.end(); ++it ) {
-			if ( numeric::random::rg().uniform() >= it->skip_rate() )  {
-				current_rigid_core.push_back( *it );
+		for ( auto const & it : rigid_core ) {
+			if ( numeric::random::rg().uniform() >= it.skip_rate() )  {
+				current_rigid_core.push_back( it );
 			}
 		}
 	}

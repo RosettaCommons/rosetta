@@ -65,8 +65,7 @@ DensePDNode::DensePDNode(InteractionGraphBase * owner, int node_id, int num_stat
 ///
 /// not responsible for any dynamically allocated memory, so node does nothing
 /// it's member variables, of course, are implicitly destructed
-DensePDNode::~DensePDNode()
-{}
+DensePDNode::~DensePDNode() = default;
 
 /// @brief prints a description of the node and all of it's one-body energies
 void DensePDNode::print() const
@@ -168,7 +167,7 @@ void DensePDNode::assign_zero_state()
 
 	curr_state_one_body_energy_ = 0.0f;
 	//fills from [1] to end
-	std::vector< core::PackerEnergy >::iterator position1 = curr_state_two_body_energies_.begin();
+	auto position1 = curr_state_two_body_energies_.begin();
 	++position1;
 	std::fill( position1,
 		curr_state_two_body_energies_.end(),
@@ -241,9 +240,9 @@ void DensePDNode::commit_considered_substitution()
 	curr_state_total_energy_ = alternate_state_total_energy_;
 
 	//copies from [1] to end
-	std::vector< core::PackerEnergy >::iterator alt_position1 = alternate_state_two_body_energies_.begin();
+	auto alt_position1 = alternate_state_two_body_energies_.begin();
 	++alt_position1;
-	std::vector< core::PackerEnergy >::iterator curr_position1 = curr_state_two_body_energies_.begin();
+	auto curr_position1 = curr_state_two_body_energies_.begin();
 	++curr_position1;
 
 	std::copy( alt_position1,
@@ -275,7 +274,7 @@ void DensePDNode::update_internal_vectors()
 
 	edge_matrix_ptrs_.clear();
 	edge_matrix_ptrs_.reserve( get_num_incident_edges() + 1);
-	edge_matrix_ptrs_.push_back( FArray2A< core::PackerEnergy >() ); //occupy the 0th position
+	edge_matrix_ptrs_.emplace_back( ); //occupy the 0th position
 
 	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		edge_matrix_ptrs_.push_back( get_incident_dpd_edge(ii)->get_edge_table_ptr() );
@@ -377,8 +376,7 @@ DensePDEdge::DensePDEdge
 
 /// @brief destructor.  All dynamically allocated memory is managed by the objects contained
 /// inside the DensePDEdge, so there is no work to be (explicitly) done.
-DensePDEdge::~DensePDEdge()
-{}
+DensePDEdge::~DensePDEdge() = default;
 
 /// @brief adds the input energy to the two body energy for state1 on the node with the
 /// smaller index and state2 on the node with the larger index.
@@ -672,7 +670,7 @@ void
 DensePDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base )
 {
 	// We'll get a std::bad_cast exception if this reference conversion doesn't work
-	rotamer_set::FixbbRotamerSets const & rot_sets( dynamic_cast< rotamer_set::FixbbRotamerSets const & > ( rot_sets_base) );
+	auto const & rot_sets( dynamic_cast< rotamer_set::FixbbRotamerSets const & > ( rot_sets_base) );
 	for ( uint ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {
 		set_num_states_for_node( ii, rot_sets.rotamer_set_for_moltenresidue( ii )->num_rotamers() );
 	}
@@ -806,7 +804,7 @@ void DensePDInteractionGraph::update_internal_energy_totals()
 	}
 
 	//int counter = 0;
-	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		//std::cerr << " ig_edge " << ++counter  << " =" <<
 		//((DensePDEdge*) *iter)->get_current_two_body_energy();
@@ -824,7 +822,7 @@ void DensePDInteractionGraph::update_internal_energy_totals()
 int DensePDInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		sum += ((DensePDEdge*) *iter)->get_two_body_table_size();
 	}
@@ -896,7 +894,7 @@ DensePDInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 		}
 	}
 
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+	for ( auto edge_iter = get_edge_list_begin();
 			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
@@ -942,8 +940,8 @@ DensePDInteractionGraph::get_aa_submatrix_energies_for_edge(
 /// @param num_states - [in] - the total number of states for the new node
 NodeBase* DensePDInteractionGraph::create_new_node( int node_index, int num_states)
 {
-	DensePDNode* new_node = new DensePDNode(this, node_index, num_states);
-	debug_assert( new_node != NULL );
+	auto* new_node = new DensePDNode(this, node_index, num_states);
+	debug_assert( new_node != nullptr );
 	return new_node;
 }
 

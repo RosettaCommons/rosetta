@@ -17,7 +17,7 @@
 namespace protocols {
 namespace docking {
 
-RigidBodyInfo::RigidBodyInfo() {}
+RigidBodyInfo::RigidBodyInfo() = default;
 
 RigidBodyInfo::~RigidBodyInfo() = default;
 

@@ -25,9 +25,9 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <ObjexxFCL/format.hh>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <protocols/relax/FastRelax.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/uniform.hh>
@@ -282,7 +282,7 @@ int main( int argc, char * argv [] ) {
 		core::Real R1;// = static_cast<core::Real>(option[v_R1]());
 		core::Real omega1;// = 14.0*numeric::constants::d::pi/17.8;
 
-		core::Real R0 = static_cast<core::Real>(option[v_R0]());
+		auto R0 = static_cast<core::Real>(option[v_R0]());
 		core::Real omega0;// = 3.231/360.0*2.0*numeric::constants::d::pi;
 		core::Real phi0 = 0;
 		core::Real phi1 = 0;
@@ -306,7 +306,7 @@ int main( int argc, char * argv [] ) {
 		for ( core::Size i = 1; i <= requested_types.size(); ++i ) {
 			// grab the new residue
 			chemical::ResidueType const & rsd_type = *requested_types[ i ];
-			core::conformation::ResidueOP new_rsd( NULL );
+			core::conformation::ResidueOP new_rsd( nullptr );
 			new_rsd = conformation::ResidueFactory::create_residue ( rsd_type );
 			if ( i>1 ) mypose.append_residue_by_bond( *new_rsd, true );
 			else {

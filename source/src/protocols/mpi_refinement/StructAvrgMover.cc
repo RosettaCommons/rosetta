@@ -473,7 +473,7 @@ StructAvrgMover::shave_poses( utility::vector1< pose::Pose > &poses,
 
 	// Sort to get rmsd cut
 	std::sort( rmsds.begin(), rmsds.end() );
-	Size const icut = (Size)( (1.0 - frac)*rmsds.size() );
+	auto const icut = (Size)( (1.0 - frac)*rmsds.size() );
 	Real const rmsdcut = rmsds[icut];
 
 	utility::vector1< pose::Pose > poses_shaved;

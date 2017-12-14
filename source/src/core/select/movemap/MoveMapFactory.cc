@@ -30,6 +30,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
@@ -43,24 +44,24 @@ namespace movemap {
 MoveMapFactory::MMResAction::MMResAction() : action( mm_enable ) {}
 MoveMapFactory::MMResAction::MMResAction( move_map_action act, residue_selector::ResidueSelectorCOP sel ) :
 	action( act ),
-	selector( sel )
+	selector(std::move( sel ))
 {}
-MoveMapFactory::MMResAction::~MMResAction() {}
+MoveMapFactory::MMResAction::~MMResAction() = default;
 
 MoveMapFactory::MMResIndexAction::MMResIndexAction() : index(0), action( mm_enable ) {}
 MoveMapFactory::MMResIndexAction::MMResIndexAction( Size ind, move_map_action act, residue_selector::ResidueSelectorCOP sel ) :
 	index( ind ),
 	action( act ),
-	selector( sel )
+	selector(std::move( sel ))
 {}
-MoveMapFactory::MMResIndexAction::~MMResIndexAction() {}
+MoveMapFactory::MMResIndexAction::~MMResIndexAction() = default;
 
 MoveMapFactory::MMJumpAction::MMJumpAction() : action( mm_enable ) {}
 MoveMapFactory::MMJumpAction::MMJumpAction( move_map_action act, jump_selector::JumpSelectorCOP sel) :
 	action( act ),
-	selector( sel )
+	selector(std::move( sel ))
 {}
-MoveMapFactory::MMJumpAction::~MMJumpAction() {}
+MoveMapFactory::MMJumpAction::~MMJumpAction() = default;
 
 MoveMapFactory::MoveMapFactory() = default;
 
@@ -361,7 +362,7 @@ void MoveMapFactory::parse_my_tag(
 				throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find the (required) residue_selector for a Backbone sub-element of the MoveMapFactory" );
 			}
 			if ( subtag->hasOption( "bb_tor_index" ) ) {
-				Size index = subtag->getOption< Size >( "bb_tor_index" );
+				auto index = subtag->getOption< Size >( "bb_tor_index" );
 				MMResIndexAction action;
 				action.index = index;
 				action.selector = selector;

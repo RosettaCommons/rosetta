@@ -101,24 +101,24 @@ ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile() :
 {}
 
 ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile(
-	std::string fname,
+	std::string const & fname,
 	core::Size linenum,
 	core::Size pose_index
 ) :
 	ResidueIndexDescription( pose_index ),
-	fname_(std::move( fname )),
+	fname_( fname ),
 	linenum_( linenum )
 {}
 
 ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile(
-	std::string fname,
+	std::string const & fname,
 	core::Size linenum,
 	char chain,
 	int  resindex,
 	char insertion_code
 ) :
 	ResidueIndexDescription( chain, resindex, insertion_code ),
-	fname_(std::move( fname )),
+	fname_( fname ),
 	linenum_( linenum )
 {}
 

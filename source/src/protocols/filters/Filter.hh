@@ -48,7 +48,7 @@ namespace filters {
 class Filter : public utility::pointer::ReferenceCount {
 public:
 	Filter();
-	Filter( std::string ); // move-constructed
+	Filter( std::string const & );
 	Filter( Filter const & );
 	~Filter() override;
 	// allows reporting of filter values to a stream

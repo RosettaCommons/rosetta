@@ -33,6 +33,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 #include <basic/options/option.hh>
@@ -103,7 +104,7 @@ LoopMover::LoopMover( protocols::loops::LoopsFileData const & loops_from_file ) 
 
 LoopMover::LoopMover( protocols::loops::GuardedLoopsFromFileOP guarded_loops ) :
 	Mover(),
-	guarded_loops_( guarded_loops )
+	guarded_loops_(std::move( guarded_loops ))
 {
 	init();
 }
@@ -118,7 +119,7 @@ void LoopMover::init()
 }
 
 // destructor
-LoopMover::~LoopMover(){}
+LoopMover::~LoopMover()= default;
 
 void
 LoopMover::set_guarded_loops_not_in_charge()
@@ -331,11 +332,11 @@ LoopMover::torsion_features_string( core::pose::Pose const & pose ) const
 	// currently this generates one string for all loops, so the user has to map the positions --
 	// alternatively one could return a vector of torsion feature strings or some other more complex construct
 	// note: won't work properly for multiple loops at the moment -- TODO
-	for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
+	for ( auto const & it : *loops() ) {
 		if ( torsion_bins.size() != 0 ) {
 			torsion_bins.push_back( core::conformation::ppo_torbin_U ); // next loop
 		}
-		for ( core::Size i = it->start(), l_end = it->stop(); i <= l_end; i++ ) {
+		for ( core::Size i = it.start(), l_end = it.stop(); i <= l_end; i++ ) {
 			torsion_bins.push_back( core::conformation::get_torsion_bin(pose.phi(i), pose.psi(i), pose.omega(i) ));
 			//std::cerr << i << " " << pose.phi(i) << " " << pose.psi(i) << " " <<  pose.omega(i) << " " << torsion_bins << std::endl; // debugging
 		}

@@ -635,10 +635,8 @@ bool CDRH3Modeler::cutpoints_separation() {
 
 	bool closed_cutpoints = true;
 
-	for ( loops::Loops::const_iterator it=antibody_in_.all_cdr_loops.begin(),
-			it_end=antibody_in_.all_cdr_loops.end(),
-			it_next; it != it_end; ++it ) {
-		Size cutpoint   = it->cut();
+	for ( auto const & elem : antibody_in_.all_cdr_loops ) {
+		Size cutpoint   = elem.cut();
 		//Real separation = 10.00; // an unlikely high number
 		Real separation = cutpoint_separation( antibody_in_.Fv, cutpoint );
 

@@ -67,7 +67,7 @@ bool CircularSplineFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	CircularSplineFunc const & other_downcast( static_cast< CircularSplineFunc const & > (other) );
+	auto const & other_downcast( static_cast< CircularSplineFunc const & > (other) );
 	if ( weight_ != other_downcast.weight_ ) return false;
 	if ( spline_ != other_downcast.spline_ ) return false;
 	if ( convert_to_degrees_ != other_downcast.convert_to_degrees_ ) return false;

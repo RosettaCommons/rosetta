@@ -36,7 +36,7 @@ std::map< std::string, ScoreType > ScoreTypeManager::name2score_type_;
 utility::vector1< std::string > ScoreTypeManager::score_type2name_;
 
 
-void fill_score_range(std::map< std::string, ScoreType > & M, std::string prefix, int first, int last)
+void fill_score_range(std::map< std::string, ScoreType > & M, std::string const & prefix, int first, int last)
 {
 	M[ prefix + "_first" ] = ScoreType(first);
 	M[ prefix + "_last" ] = ScoreType(last);

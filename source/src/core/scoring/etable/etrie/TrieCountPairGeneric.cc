@@ -78,7 +78,7 @@ TrieCountPairGeneric::TrieCountPairGeneric(
 		using namespace conformation;
 		Size count = 0;
 		PseudoBondCollectionCOP pbs = res1.get_pseudobonds_to_residue( res2.seqpos() );
-		for ( PseudoBondCollection::PBIter pbiter = pbs->iter_begin(), pbiter_end = pbs->iter_end();
+		for ( auto pbiter = pbs->iter_begin(), pbiter_end = pbs->iter_end();
 				pbiter != pbiter_end; ++pbiter ) {
 			++count;
 			connection_gaps_[ nbonded + count ] = pbiter->nbonds();

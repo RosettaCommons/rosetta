@@ -48,9 +48,7 @@ namespace pose_selectors {
 // LogicalSelector base class
 
 // Selector
-LogicalSelector::LogicalSelector()
-{
-}
+LogicalSelector::LogicalSelector() = default;
 
 
 LogicalSelector::~LogicalSelector() = default;

@@ -15,6 +15,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/thread/backwards_thread_local.hh> //For THREAD_LOCAL
 
 namespace basic {

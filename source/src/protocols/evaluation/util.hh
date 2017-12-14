@@ -44,7 +44,7 @@ namespace evaluation {
 void register_options();
 
 //@detail find residues that don't have missing density
-void find_existing_residues(  core::pose::PoseCOP pose, std::string tag, core::scoring::ResidueSelection& selection );
+void find_existing_residues(  core::pose::PoseCOP pose, std::string const & tag, core::scoring::ResidueSelection& selection );
 void invert_include_residues( core::Size nres, core::scoring::ResidueSelectionVector const& include_list, core::scoring::ResidueSelectionVector& exclude_list );
 void evaluate_pose( core::pose::Pose& pose, PoseEvaluator& eval, std::ostream& );
 

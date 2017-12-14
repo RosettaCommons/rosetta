@@ -669,7 +669,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 core::scoring::ScoreFunctionOP
 SandwichFeatures::generate_scorefxn( bool fullatom ) {
-	core::scoring::ScoreFunctionOP scorefxn( NULL );
+	core::scoring::ScoreFunctionOP scorefxn( nullptr );
 	if ( fullatom ) {
 		scorefxn = core::scoring::get_score_function();
 	} else {
@@ -972,7 +972,7 @@ SandwichFeatures::report_features(
 {
 		TR.Info << "======================= <begin> report_features of SandwichFeatures =========================" << endl;
 
-		unit_test_pass_identifier = 1; // assumed to pass unit_test now
+		unit_test_pass_identifier = true; // assumed to pass unit_test now
 
 		string tag = get_tag(struct_id, db_session);
 		bool canonical_sw_extracted_from_this_pdb_file = false;
@@ -1235,10 +1235,10 @@ SandwichFeatures::report_features(
 
 			// <begin> unit_test specific for 3b83
 			if ( (i == 1) && (num_strands_i != 3) ) {
-				unit_test_pass_identifier = 0;
+				unit_test_pass_identifier = false;
 			}
 			if ( (i == 2) && (num_strands_i != 5) ) {
-				unit_test_pass_identifier = 0;
+				unit_test_pass_identifier = false;
 			}
 			// <end> unit_test specific for 3b83
 
@@ -1348,8 +1348,8 @@ SandwichFeatures::report_features(
 					}
 
 					Real sum = 0;
-					for ( Size k=0; k<array_avg_dis_sheet_i_j.size(); ++k ) {
-						sum += array_avg_dis_sheet_i_j[k];
+					for ( double k : array_avg_dis_sheet_i_j ) {
+						sum += k;
 					}
 					avg_dis_between_sheets = sum / array_avg_dis_sheet_i_j.size();
 
@@ -1701,7 +1701,7 @@ SandwichFeatures::report_features(
 						if ( do_not_write_resfile_of_sandwich_that_has_non_canonical_LR_ && canonical_LR == "F_LR" ) {
 							TR.Info << "This sandwich has non-canonical hairpin chirality " << endl;
 							TR.Info << "So don't write resfile for this sandwich for subsequent design" << endl;
-							write_resfile_ = 0;
+							write_resfile_ = false;
 							TR.Info << "this pdb file fails to pass ChiralitySandwichFilter, this procedure is obviously risky when extracting multiple sandwiches from raw pdb files, so use this ChiralitySandwichFilter only when each pdb file has 1 sandwich" << endl;
 							//return 1; // which means this sandwich fail to pass ChiralitySandwichFilter
 							//       TR.Info << "this sandwich has non-canonical hairpin chirality, so delete " << vec_sw_can_by_sh_id[ii] << " sw_can_by_sh_id" << endl;
@@ -1878,7 +1878,7 @@ SandwichFeatures::report_features(
 
 			TR.Info << "chance_of_being_canonical_sw: " << chance_of_being_canonical_sw << endl;
 			if ( (!unit_test_pass_identifier) || (!chance_of_being_canonical_sw) ) {
-				unit_test_pass_identifier = 0;
+				unit_test_pass_identifier = false;
 			}
 
 			if ( chance_of_being_canonical_sw ) {

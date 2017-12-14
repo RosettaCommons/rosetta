@@ -117,7 +117,7 @@ SSs::one_random_ss_element() const {
 	Size const size = sss_.size();
 	runtime_assert( size > 0 );
 	Size index =0;
-	Size const end = static_cast< Size >( numeric::random::uniform()*size );
+	auto const end = static_cast< Size >( numeric::random::uniform()*size );
 	auto it = sss_.begin();
 	while ( index != end ) { ++index; ++it; }
 	return it;

@@ -50,7 +50,7 @@ FullModelInputterFactory::FullModelInputterFactory() :
 void
 FullModelInputterFactory::factory_register( FullModelInputterCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const full_model_inputter_type( creator->keyname() );
 	if ( full_model_inputter_creator_map_.find( full_model_inputter_type ) != full_model_inputter_creator_map_.end() ) {
 		std::string err_msg = "FullModelInputterFactory::factory_register already has a full_model_inputter creator with name \""
@@ -70,7 +70,7 @@ FullModelInputterFactory::factory_register( FullModelInputterCreatorOP creator )
 FullModelInputterOP
 FullModelInputterFactory::new_full_model_inputter( std::string const & full_model_inputter_type ) const
 {
-	FullModelInputterMap::const_iterator iter( full_model_inputter_creator_map_.find( full_model_inputter_type ) );
+	auto iter( full_model_inputter_creator_map_.find( full_model_inputter_type ) );
 	if ( iter != full_model_inputter_creator_map_.end() ) {
 		if ( ! iter->second ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: FullModelInputterCreatorOP prototype for " + full_model_inputter_type + " is NULL!" );

@@ -48,8 +48,7 @@ using basic::resource_manager::ResourceTag;
 using basic::resource_manager::ResourceOptionsTag;
 
 
-LoopsFileFallbackConfiguration::LoopsFileFallbackConfiguration()
-{}
+LoopsFileFallbackConfiguration::LoopsFileFallbackConfiguration() = default;
 
 /// @details Return true if the user has set the "-loops:loop_file" flag and false otherwise.
 bool

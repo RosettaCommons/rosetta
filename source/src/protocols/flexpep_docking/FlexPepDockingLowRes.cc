@@ -66,11 +66,11 @@ static basic::Tracer TR( "protocols.flexPepDockingLowRes" );
 //            The FoldTree rigid body jump over
 //            which rigid-body pertrubations are made
 FlexPepDockingLowRes::FlexPepDockingLowRes
-( FlexPepDockingFlags flags_in,
+( FlexPepDockingFlags const & flags_in,
 	core::scoring::ScoreFunctionOP scorefxn_in,
 	core::kinematics::MoveMapOP movemap_in,
 	Size const rb_jump_in )
-: flags_(std::move(flags_in)),
+: flags_(flags_in),
 	movemap_(std::move(movemap_in)),
 	rb_jump_(rb_jump_in)
 {
@@ -97,8 +97,7 @@ FlexPepDockingLowRes::FlexPepDockingLowRes
 
 
 // empty destructor - for good inclusion of OP clasesses
-FlexPepDockingLowRes::~FlexPepDockingLowRes()
-= default;
+FlexPepDockingLowRes::~FlexPepDockingLowRes() = default;
 
 
 ///////////////////////////////////////////////

@@ -30,7 +30,7 @@ namespace methods {
 
 ContextDependentLRTwoBodyEnergy::ContextDependentLRTwoBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 
-ContextDependentLRTwoBodyEnergy::~ContextDependentLRTwoBodyEnergy() {}
+ContextDependentLRTwoBodyEnergy::~ContextDependentLRTwoBodyEnergy() = default;
 
 }
 }

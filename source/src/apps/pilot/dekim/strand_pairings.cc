@@ -65,14 +65,14 @@ class MyMover : public Mover {
 public:
 	MyMover();
 
-	virtual void apply( core::pose::Pose& pose );
-	std::string get_name() const { return "StrandPairingsMover"; }
+	void apply( core::pose::Pose& pose ) override;
+	std::string get_name() const override { return "StrandPairingsMover"; }
 
-	virtual MoverOP clone() const {
+	MoverOP clone() const override {
 		return MoverOP( new MyMover( *this ) );
 	}
 
-	virtual MoverOP fresh_instance() const {
+	MoverOP fresh_instance() const override {
 		return MoverOP( new MyMover );
 	}
 
@@ -95,11 +95,10 @@ void MyMover::apply( core::pose::Pose& pose ) {
 	core::scoring::dssp::StrandPairingSet strand_pairings( pose );
 	TR.Info << strand_pairings << std::endl;
 
-	for ( core::scoring::dssp::StrandPairingSet::const_iterator it = strand_pairings.begin();
-			it != strand_pairings.end();  it++ ) {
+	for ( auto const & strand_pairing : strand_pairings ) {
 		core::scoring::dssp::PairingList beta_pairs;
 
-		it->get_beta_pairs( beta_pairs );
+		strand_pairing.get_beta_pairs( beta_pairs );
 		for ( core::scoring::dssp::PairingList::const_iterator iti = beta_pairs.begin(), eiti = beta_pairs.end();
 				iti != eiti; ++iti ) {
 			TR.Info << *iti << std::endl;

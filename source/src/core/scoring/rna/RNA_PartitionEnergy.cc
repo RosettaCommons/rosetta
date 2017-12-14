@@ -154,7 +154,7 @@ RNA_PartitionEnergy::get_partition_score_from_cache(
 	std::string const & sequence,
 	Real & partition_score
 ) const {
-	std::map< std::string, Real >::iterator it = partition_cache_.find(sequence);
+	auto it = partition_cache_.find(sequence);
 	if ( it == partition_cache_.end() ) {
 		get_partition_score(sequence, partition_score);
 		partition_cache_[ sequence ] = partition_score;
@@ -174,7 +174,7 @@ RNA_PartitionEnergy::exec_cmd(
 		TR.Error << "Partition function shell command failed to run!" << std::endl;
 	}
 	while ( !feof(pipe.get()) ) {
-		if ( fgets(buffer.data(), 128, pipe.get()) != NULL ) {
+		if ( fgets(buffer.data(), 128, pipe.get()) != nullptr ) {
 			cmd_result += buffer.data();
 		}
 	}

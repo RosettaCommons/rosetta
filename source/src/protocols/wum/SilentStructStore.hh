@@ -35,7 +35,7 @@ namespace wum {
 class find_SilentStructOPs
 {
 public:
-	find_SilentStructOPs(std::string field, core::Real value ): field_(std::move(field)), value_(value) {}
+	find_SilentStructOPs(std::string const & field, core::Real value ): field_(field), value_(value) {}
 
 	bool operator () (const core::io::silent::SilentStructOP& check);
 
@@ -71,7 +71,7 @@ public:
 	/// @brief Returns an iterator to the end of the members of this container.
 	const_iterator end() const { return store_.end(); }
 
-	void sort_by( std::string field = "score" );
+	void sort_by( std::string const & field = "score" );
 
 public:
 
@@ -154,7 +154,7 @@ public:
 	void erase( iterator it ) { store_.erase(it); }
 
 	/// Manipulators:
-	void all_add_energy( std::string scorename, core::Real value, core::Real weight = 1.0 );
+	void all_add_energy( std::string const & scorename, core::Real value, core::Real weight = 1.0 );
 
 	/// Manipulators:
 	void all_sort_silent_scores( );

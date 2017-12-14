@@ -109,7 +109,7 @@ core::conformation::ConformationOP ProtectedConformation::clone() const {
 //// SECURITY OVERLOADS  ///////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 Conformation& ProtectedConformation::operator=( Conformation const& src ){
-	ProtectedConformation const * conf = dynamic_cast< ProtectedConformation const* >( &src );
+	auto const * conf = dynamic_cast< ProtectedConformation const* >( &src );
 
 	unlocks_ = conf->unlocks_;
 	annotations_ = conf->annotations_;

@@ -263,7 +263,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 
 	// additional setup for symmetric poses
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & symm_conf (
+		auto const & symm_conf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -298,7 +298,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	//  b) normalization for non-etable derivs
 
 	for ( int ii=1; ii<=(int)core::scoring::n_score_types; ++ii ) {
-		core::scoring::ScoreType st_ii = (core::scoring::ScoreType)ii;
+		auto st_ii = (core::scoring::ScoreType)ii;
 
 		if ( reference_scorefxn->get_weight( (core::scoring::ScoreType)ii ) == 0.0 ) continue;
 
@@ -420,7 +420,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 
 	core::Real symmscale=1.0;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & symm_conf (
+		auto const & symm_conf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		symmscale = symm_info->score_multiply_factor();
@@ -462,7 +462,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 				iru  = energy_graph.get_node(ires)->const_edge_list_begin(),
 				irue = energy_graph.get_node(ires)->const_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size jres=edge->get_other_ind(ires);
 			core::conformation::Residue const &rsd2( pose.residue(jres) );
 
@@ -906,7 +906,7 @@ void FitBfactorsMover::parse_my_tag(
 	runtime_assert( adp_strat=="individual" || adp_strat=="group" || adp_strat=="randomize" );
 
 	if ( adp_strat=="group" ) {
-		Size group_adp_strat = tag->getOption<Size>("group_adp_mode", 1);
+		auto group_adp_strat = tag->getOption<Size>("group_adp_mode", 1);
 		runtime_assert( group_adp_strat==1 || group_adp_strat==2 );
 		if ( group_adp_strat==1 ) {
 			adp_strategy_ = "group1";

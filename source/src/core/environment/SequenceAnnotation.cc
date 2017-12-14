@@ -33,11 +33,11 @@ static basic::Tracer tr( "core.environment.SequenceAnnotation", basic::t_info );
 namespace core {
 namespace environment {
 
-typedef utility::vector1< core::Size > vector1_size;
+using vector1_size = utility::vector1<core::Size>;
 
 class LengthChecker {
 public:
-	LengthChecker( core::Size l ): l_( l ) {}
+	explicit LengthChecker( core::Size l ): l_( l ) {}
 	void operator() ( core::Size i ) {
 		if ( i > l_ || i < 1 ) {
 			throw CREATE_EXCEPTION(utility::excn::RangeError,  "Residue "+utility::to_string( i )+

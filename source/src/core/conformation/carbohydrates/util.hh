@@ -26,11 +26,11 @@
 #include <core/id/TorsionID.fwd.hh>
 
 // Utility Header
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 // C++ Header
 #include <set>
-#include <string>
+#include <iosfwd>
 #include <utility>
 
 namespace core {

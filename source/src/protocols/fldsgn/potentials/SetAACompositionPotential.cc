@@ -80,17 +80,11 @@ SetAACompositionPotential::SetAACompositionPotential() :
 
 
 /// @Brief copy constructor
-SetAACompositionPotential::SetAACompositionPotential( SetAACompositionPotential const & rval ) :
-	Super( rval ),
-	comp_constraint_aas_( rval.comp_constraint_aas_ ),
-	weight_( rval.weight_ ),
-	sfx_( rval.sfx_ ),
-	loaded_( rval.loaded_ )
-{}
+SetAACompositionPotential::SetAACompositionPotential( SetAACompositionPotential const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-SetAACompositionPotential::~SetAACompositionPotential() {}
+SetAACompositionPotential::~SetAACompositionPotential() = default;
 
 
 /// @brief clone this object
@@ -128,8 +122,8 @@ SetAACompositionPotential::set_parameters( String const & file )
 		runtime_assert( tokens.size() == 3 );
 
 		core::chemical::AA const aa = core::chemical::aa_from_name( tokens[1] );
-		Real const lower_threshold = boost::lexical_cast<Real>( tokens[2] );
-		Real const upper_threshold = boost::lexical_cast<Real>( tokens[3] );
+		auto const lower_threshold = boost::lexical_cast<Real>( tokens[2] );
+		auto const upper_threshold = boost::lexical_cast<Real>( tokens[3] );
 
 		runtime_assert( lower_threshold <= upper_threshold );
 
@@ -141,7 +135,7 @@ SetAACompositionPotential::set_parameters( String const & file )
 
 
 	Real checkL( 0.0 ), checkU( 0.0 );
-	std::map< AA, std::pair< Real, Real > >::iterator it = comp_constraint_aas_.begin();
+	auto it = comp_constraint_aas_.begin();
 	while ( it != comp_constraint_aas_.end() ) {
 		AA aa( it->first );
 		checkL += comp_constraint_aas_[ aa ].first;

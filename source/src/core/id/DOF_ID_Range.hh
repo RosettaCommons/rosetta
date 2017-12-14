@@ -47,11 +47,11 @@ public: // Creation
 	DOF_ID_Range(){};
 
 	DOF_ID_Range(
-		DOF_ID  dof_id,
+		DOF_ID const & dof_id,
 		Real const & min,
 		Real const & max
 	):
-		dof_id_(std::move( dof_id )),
+		dof_id_( dof_id ),
 		min_( min ),
 		max_( max )
 	{};

@@ -99,10 +99,10 @@ ScoreFunctionFeatures::ScoreFunctionFeatures() :
 
 ScoreFunctionFeatures::ScoreFunctionFeatures(
 	ScoreFunctionOP scfxn,
-	std::string  scfxn_name
+	std::string const & scfxn_name
 ) :
 	scfxn_(std::move(scfxn)),
-	scfxn_name_(std::move(scfxn_name))
+	scfxn_name_(scfxn_name)
 {
 	if ( scfxn_ == nullptr ) {
 		utility_exit_with_message( "ScoreFunctionFeatures may not be constructed with a null-pointer ScoreFunctionOP" );
@@ -230,7 +230,7 @@ ScoreFunctionFeatures::insert_score_function_weights_rows(
 	statement stmt(safely_prepare_statement(statement_string, db_session));
 
 	for ( Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
-		ScoreType type(static_cast<ScoreType>(score_type_id));
+		auto type(static_cast<ScoreType>(score_type_id));
 
 		Real const weight( scfxn_->weights()[type] );
 		if ( !weight ) continue;

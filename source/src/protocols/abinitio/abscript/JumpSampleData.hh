@@ -40,8 +40,8 @@ class JumpSampleData : public basic::datacache::WriteableCacheableData {
 public:
 	JumpSampleData( std::istream &in );
 
-	JumpSampleData( std::string const& moverkey,
-		jumping::JumpSample const& );
+	JumpSampleData( std::string const & moverkey,
+		jumping::JumpSample const & );
 
 	void write( std::ostream &out ) const;
 

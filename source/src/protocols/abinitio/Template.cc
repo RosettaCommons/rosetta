@@ -100,8 +100,8 @@ dump_movemap( kinematics::MoveMap const& mm, Size nres, std::ostream& out ) {
 	out << std::endl;
 }
 
-Template::Template( std::string  name, pose::PoseCOP pose, core::sequence::DerivedSequenceMapping const& mapping )
-: name_ (std::move( name ))
+Template::Template( std::string const & name, pose::PoseCOP pose, core::sequence::DerivedSequenceMapping const& mapping )
+: name_ ( name )
 {
 	tr.Error << "STUB ERROR: Template::Template(pose, mapping) constructure,  not really finished yet !!! " << std::endl;
 	pose_ = pose;
@@ -199,7 +199,7 @@ Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFrag
 	// get vector of boolean for residues that are aligned
 	// change that into vector of max_frag_length
 	// [ a a _ _ a a a a a _ _ a ] --> 2 1 0 0 5 4 3 2 1 0 0 x
-	typedef utility::vector1< Size > FragLengthMap;
+	using FragLengthMap = utility::vector1<Size>;
 	FrameList template_frames;
 	Size const nres( std::min( pose_->size(), reverse_mapping_.size1() ) );
 	FragLengthMap frag_length( nres, 0);
@@ -368,7 +368,7 @@ void Template::read_constraints( std::string const& cst_file ) {
 
 void Template::_read_constraints( std::string const& cst_file ) const {
 	ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( cst_file, ConstraintSetOP( new ConstraintSet ), *pose_ );
-	typedef utility::vector1< ConstraintCOP > FlatList;
+	using FlatList = utility::vector1<ConstraintCOP>;
 	FlatList all_cst = cstset->get_all_constraints();
 	for ( FlatList::const_iterator it = all_cst.begin(),
 			eit = all_cst.end(); it!=eit; ++it ) {

@@ -62,7 +62,7 @@ LocalBackboneMover::LocalBackboneMover():
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-LocalBackboneMover::~LocalBackboneMover(){}
+LocalBackboneMover::~LocalBackboneMover()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

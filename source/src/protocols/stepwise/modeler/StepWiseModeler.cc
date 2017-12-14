@@ -40,6 +40,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <utility>
 #include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 
@@ -68,7 +69,7 @@ namespace modeler {
 
 //Constructor
 StepWiseModeler::StepWiseModeler( Size const moving_res, core::scoring::ScoreFunctionCOP scorefxn ):
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	figure_out_prepack_res_( false ),
 	prepack_res_was_inputted_( false )
 {
@@ -78,14 +79,13 @@ StepWiseModeler::StepWiseModeler( Size const moving_res, core::scoring::ScoreFun
 //Constructor
 StepWiseModeler::StepWiseModeler( core::scoring::ScoreFunctionCOP scorefxn ):
 	moving_res_( 0 ),
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	figure_out_prepack_res_( false ),
 	prepack_res_was_inputted_( false )
 {}
 
 //Destructor
-StepWiseModeler::~StepWiseModeler()
-{}
+StepWiseModeler::~StepWiseModeler() = default;
 
 //////////////////////////////////////////////////////////////////////////////
 StepWiseModeler::StepWiseModeler( StepWiseModeler const & src ):
@@ -234,7 +234,7 @@ StepWiseModeler::initialize_working_parameters_and_root( pose::Pose & pose ){
 	look_for_precompute_move( pose );
 	figure_out_moving_res_list( pose );
 
-	if ( working_parameters_ != 0 ) return;
+	if ( working_parameters_ != nullptr ) return;
 
 	revise_root_and_moving_res_list( pose, moving_res_list_ ); // specify reference_res_? [i.e. anchor_res?]
 
@@ -306,7 +306,7 @@ StepWiseModeler::look_for_precompute_move( pose::Pose & pose ) {
 	//              -- rhiju, feb 2015
 	//////////////////////////////////////////////////////////////
 	if ( moving_res_ == 0 ) return; // a deletion -- don't trigger any kind of structural change.
-	if ( precomputed_library_mover_ == 0 ) return;
+	if ( precomputed_library_mover_ == nullptr ) return;
 	if ( !precomputed_library_mover_->has_precomputed_move( pose ) ) return;
 
 	precomputed_library_mover_->apply( pose );

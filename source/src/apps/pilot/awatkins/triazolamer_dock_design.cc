@@ -169,16 +169,16 @@ public:
 	TrizaolamerDockDesignMinimizeMover(): Mover("TrizaolamerDockDesignMinimizeMover"){}
 
 	//default dtor
-	virtual ~TrizaolamerDockDesignMinimizeMover(){}
+	~TrizaolamerDockDesignMinimizeMover() override= default;
 
 	//methods
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "TrizaolamerDockDesignMinimizeMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "TrizaolamerDockDesignMinimizeMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< TrizaolamerDockDesignMinimizeMover > TrizaolamerDockDesignMinimizeMoverOP;
-typedef utility::pointer::shared_ptr< TrizaolamerDockDesignMinimizeMover const > TrizaolamerDockDesignMinimizeMoverCOP;
+using TrizaolamerDockDesignMinimizeMoverOP = utility::pointer::shared_ptr<TrizaolamerDockDesignMinimizeMover>;
+using TrizaolamerDockDesignMinimizeMoverCOP = utility::pointer::shared_ptr<const TrizaolamerDockDesignMinimizeMover>;
 
 
 int

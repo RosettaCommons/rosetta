@@ -68,7 +68,7 @@ LayerSelector::LayerSelector( LayerSelector const &src ) :
 
 /// @brief Destructor.
 ///
-LayerSelector::~LayerSelector() {}
+LayerSelector::~LayerSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
@@ -85,9 +85,9 @@ LayerSelector::apply( core::pose::Pose const & pose ) const
 	if ( cache_selection_ && srbl_->is_selection_initialized() ) {
 		ResidueSubset cached_subset( nres, false );
 		const utility::vector1< Size >* layer_selections[3] = { &srbl_->selected_core_residues(), &srbl_->selected_boundary_residues(), &srbl_->selected_surface_residues() };
-		for ( int layer_idx= 0; layer_idx < 3; layer_idx++ ) {
-			for ( Size i = 1; i <= layer_selections[layer_idx]->size(); i++ ) {
-				Size residue_index = (*layer_selections[layer_idx])[i];
+		for ( auto & layer_selection : layer_selections ) {
+			for ( Size i = 1; i <= layer_selection->size(); i++ ) {
+				Size residue_index = (*layer_selection)[i];
 				runtime_assert(residue_index <= nres);
 				cached_subset[residue_index] = true;
 			}

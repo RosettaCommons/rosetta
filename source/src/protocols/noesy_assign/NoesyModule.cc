@@ -143,9 +143,9 @@ NoesyModule::~NoesyModule() = default;
 
 
 ///Constructor   - read input files / requires options to be initialized
-NoesyModule::NoesyModule( std::string  fasta_sequence ) :
+NoesyModule::NoesyModule( std::string const & fasta_sequence ) :
 	crosspeaks_( /* NULL */ ),
-	sequence_(std::move( fasta_sequence ))
+	sequence_( fasta_sequence )
 	//  main_resonances_( new ResonanceList( fasta_sequence ) )
 {
 	read_input_files();

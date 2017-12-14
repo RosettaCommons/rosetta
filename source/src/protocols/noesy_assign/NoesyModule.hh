@@ -62,7 +62,7 @@ public:
 public:
 
 	/// @brief constructor  -- initialize with fast-sequence
-	NoesyModule( std::string fasta_sequence );
+	NoesyModule( std::string const & fasta_sequence );
 
 	/// @brief assign NOE data, use models provided by DecoyIterator for scoring and restraint exclusion, if cycle=0 read cycle from cmd-line
 	template< class DecoyIterator >

@@ -36,7 +36,7 @@ static basic::Tracer trFormFactorManager( "core.scoring.saxs.FormFactorManager" 
 FormFactorManager* FormFactorManager::singleton_;
 
 FormFactorManager* FormFactorManager::get_manager() {
-	if ( singleton_ == 0 ) {
+	if ( singleton_ == nullptr ) {
 		singleton_ = new FormFactorManager();
 	}
 
@@ -109,7 +109,7 @@ FormFactorOP FormFactorManager::get_ff(std::string atom_name) {
 	}
 
 	trFormFactorManager.Debug << "The manager knows nothing about this atom: "<<atom_name<<std::endl;
-	return 0;
+	return nullptr;
 }
 
 

@@ -222,16 +222,16 @@ void ParentChild::GetComboKeys(const string& parCatName,
     // Return result will have keys that may have single or multipe occurences
 
     vector<string> keyList;
-    keyList.push_back("keyGroup");
-    keyList.push_back("parCategory");
+    keyList.emplace_back("keyGroup");
+    keyList.emplace_back("parCategory");
 
     vector<string> keyTarget;
-    keyTarget.push_back("1");
+    keyTarget.emplace_back("1");
     keyTarget.push_back(parCatName);
 
     vector<string> groupList;
-    groupList.push_back("keyGroup");
-    groupList.push_back("parKeyCifItem");
+    groupList.emplace_back("keyGroup");
+    groupList.emplace_back("parKeyCifItem");
 
     vector<unsigned int> groupOne;
 
@@ -240,12 +240,12 @@ void ParentChild::GetComboKeys(const string& parCatName,
     vector<string> firstComboKey;
 
     // Fill in the first combo key and find out the order of parent keys
-    for (unsigned int itemI = 0; itemI < groupOne.size(); ++itemI)
+    for (unsigned int itemI : groupOne)
     {
-        firstComboKey.push_back(keysTable(groupOne[itemI],
+        firstComboKey.push_back(keysTable(itemI,
           "childKeyCifItem"));
 
-        parKeys.push_back(keysTable(groupOne[itemI],
+        parKeys.push_back(keysTable(itemI,
           "parKeyCifItem"));
     }
 
@@ -289,7 +289,7 @@ void ParentChild::UpdateParComboKeys(const string& parName,
     }
 
     // Search for the parent
-    map<string, vector<vector<string> > >::iterator pos =
+    auto pos =
       _parComboKeys.find(parName);
     if (pos != _parComboKeys.end())
     {
@@ -325,8 +325,7 @@ void ParentChild::UpdateRelations(vector<string>& parKeys,
     }
 
     // Search for the parent
-    map<vector<string>,
-      vector<vector<vector<string> > > >::iterator pos =
+    auto pos =
       _relations.find(parKeys);
     if (pos != _relations.end())
     {
@@ -364,8 +363,8 @@ void ParentChild::AddParentCategoryToItemLinkedGroup(
     for (unsigned int rowI = 0; rowI < itemLinkedGroup.GetNumRows(); ++rowI)
     {
         vector<string> searchCol;
-        searchCol.push_back("child_category_id");
-        searchCol.push_back("link_group_id");
+        searchCol.emplace_back("child_category_id");
+        searchCol.emplace_back("link_group_id");
 
         vector<string> searchVal;
         searchVal.push_back(itemLinkedGroup(rowI, "category_id"));
@@ -400,9 +399,9 @@ void ParentChild::CreateAllRelations(
     for (unsigned int rowI = 0; rowI < itemLinkedGroup.GetNumRows(); ++rowI)
     {
         vector<string> searchCol;
-        searchCol.push_back("child_category_id");
-        searchCol.push_back("link_group_id");
-        searchCol.push_back("parent_category_id");
+        searchCol.emplace_back("child_category_id");
+        searchCol.emplace_back("link_group_id");
+        searchCol.emplace_back("parent_category_id");
 
         vector<string> searchVal;
         searchVal.push_back(itemLinkedGroup(rowI, "category_id"));
@@ -413,9 +412,9 @@ void ParentChild::CreateAllRelations(
         itemLinkedGroupList.Search(found, searchVal, searchCol);
 
         vector<string> parKeys;
-        for (unsigned int foundI = 0; foundI < found.size(); ++foundI)
+        for (unsigned int foundI : found)
         {
-            parKeys.push_back(itemLinkedGroupList(found[foundI],
+            parKeys.push_back(itemLinkedGroupList(foundI,
               "parent_name")); 
         }
 
@@ -434,13 +433,11 @@ void ParentChild::CreateAllRelations(
         UpdateParComboKeys(itemLinkedGroup(rowI, "parent_category_id"),
           parKeys);
 
-        for (map<string, vector<vector<string> > >::iterator pos =
-          childrenKeys.begin();
-          pos != childrenKeys.end(); ++pos)
+        for (auto & childrenKey : childrenKeys)
         {
             // pos->first is child name
             // pos->second are vector of childs combo keys
-            UpdateRelations(parKeys, pos->second);
+            UpdateRelations(parKeys, childrenKey.second);
         }
     }
 }
@@ -455,7 +452,7 @@ void ParentChild::ISTableFindPairs(
 
     // Find all the combo keys in which the first parent key exists.
     vector<string> searchCol;
-    searchCol.push_back("parent_name");
+    searchCol.emplace_back("parent_name");
 
     vector<string> searchVal;
     searchVal.push_back(parKeys[0]);
@@ -463,35 +460,35 @@ void ParentChild::ISTableFindPairs(
     vector<unsigned int> found1;
     itemLinkedGroupList.Search(found1, searchVal, searchCol);
 
-    for (unsigned int found1I = 0; found1I < found1.size(); ++found1I)
+    for (unsigned int found1I : found1)
     {
         // See if parent key of this group matches the input parent key.
         vector<string> searchCol2;
-        searchCol2.push_back("parent_category_id");
-        searchCol2.push_back("link_group_id");
-        searchCol2.push_back("child_category_id");
+        searchCol2.emplace_back("parent_category_id");
+        searchCol2.emplace_back("link_group_id");
+        searchCol2.emplace_back("child_category_id");
 
         vector<string> searchVal2;
         searchVal2.push_back(parCatName);
-        searchVal2.push_back(itemLinkedGroupList(found1[found1I],
+        searchVal2.push_back(itemLinkedGroupList(found1I,
           "link_group_id"));
-        searchVal2.push_back(itemLinkedGroupList(found1[found1I],
+        searchVal2.push_back(itemLinkedGroupList(found1I,
           "child_category_id"));
 
         vector<unsigned int> found2;
         itemLinkedGroupList.Search(found2, searchVal2, searchCol2);
 
         vector<string> foundParKeys;
-        for (unsigned int found2I = 0; found2I < found2.size(); ++found2I)
+        for (unsigned int found2I : found2)
         {
-            foundParKeys.push_back(itemLinkedGroupList(found2[found2I],
+            foundParKeys.push_back(itemLinkedGroupList(found2I,
               "parent_name"));
         }
 
         if (!KeysMatch(parKeys, foundParKeys))
             continue;
 
-        string currChildCat = itemLinkedGroupList(found1[found1I],
+        string currChildCat = itemLinkedGroupList(found1I,
           "child_category_id");
 
         // The position of child key elements is relevant to the parent keys
@@ -501,11 +498,11 @@ void ParentChild::ISTableFindPairs(
         // child key.
         multimap<string, string, StringLess> keysMap;
 
-        for (unsigned int found2I = 0; found2I < found2.size(); ++found2I)
+        for (unsigned int found2I : found2)
         {
             multimap<string, string, StringLess>::value_type
-              valuePair(itemLinkedGroupList(found2[found2I],
-              "parent_name"), itemLinkedGroupList(found2[found2I],
+              valuePair(itemLinkedGroupList(found2I,
+              "parent_name"), itemLinkedGroupList(found2I,
               "child_name"));
             keysMap.insert(valuePair);
         }
@@ -517,24 +514,24 @@ void ParentChild::ISTableFindPairs(
         // Order number different than 0 can happen for parent keys that have
         // multiple child keys.
         map<string, unsigned int, StringLess> parKeysMap;
-        for (unsigned int parKeyI = 0; parKeyI < parKeys.size(); ++parKeyI)
+        for (const auto & parKey : parKeys)
         {
             unsigned int orderNum = 0;
 
-            if (!(parKeysMap.find(parKeys[parKeyI]) == parKeysMap.end()))
+            if (!(parKeysMap.find(parKey) == parKeysMap.end()))
             {
-                orderNum = parKeysMap[parKeys[parKeyI]];
+                orderNum = parKeysMap[parKey];
             }
  
             map<string, unsigned int, StringLess>::value_type
-              valuePair(parKeys[parKeyI], orderNum + 1);
+              valuePair(parKey, orderNum + 1);
             parKeysMap.insert(valuePair);
 
             pair<multimap<string, string, StringLess>::iterator,
               multimap<string, string, StringLess>::iterator> range;
 
-            range = keysMap.equal_range(parKeys[parKeyI]);
-            for (multimap<string, string, StringLess>::iterator it =
+            range = keysMap.equal_range(parKey);
+            for (auto it =
               range.first; it != range.second; ++it)
             {
                 if (static_cast<unsigned int>(distance(range.first, it)) ==
@@ -558,8 +555,7 @@ void ParentChild::UpdateMap(
   const string& childCat, vector<string>& childKeys)
 {
     // Search for the parent
-    map<string,
-      vector<vector<string> > >::iterator pos =
+    auto pos =
       childrenKeys.find(childCat);
     if (pos != childrenKeys.end())
     {
@@ -591,34 +587,25 @@ void ParentChild::GetParents(vector<vector<string> >& parParKeys,
   vector<vector<string > >& comboComboKeys, const string& childCat)
 {
     // For every parent with combo keys
-    for (map<string, vector<vector<string> > >::iterator pos =
-      _parComboKeys.begin(); pos != _parComboKeys.end(); ++pos)
+    for (auto & _parComboKey : _parComboKeys)
     {
-        vector<vector<string> >& parKeys = pos->second;
+        vector<vector<string> >& parKeys = _parComboKey.second;
 
         // For every combo parent key
-        for (unsigned int parKeysI = 0; parKeysI < parKeys.size(); ++parKeysI)
+        for (auto & parKey : parKeys)
         {
-            vector<string>& parKey = parKeys[parKeysI];
-
             // See if it exists in children
 
-            for (map<vector<string>,
-              vector<vector<vector<string> > > >::iterator pos2 =
-              _relations.begin(); pos2 != _relations.end(); ++pos2)
+            for (auto & _relation : _relations)
             {
-                if (pos2->first != parKey)
+                if (_relation.first != parKey)
                     continue;
 
                 vector<vector<vector<string> > >& childrenComboKeys =
-                  pos2->second;
+                  _relation.second;
 
-                for (unsigned int chComboI = 0; chComboI <
-                   childrenComboKeys.size(); ++chComboI)
+                for (auto & childComboKeys : childrenComboKeys)
                 {
-                    vector<vector<string> >& childComboKeys =
-                      childrenComboKeys[chComboI];
- 
                     // Find the child category of these childCombo Keys
                     string childCatName;
                     CifString::GetCategoryFromCifItem(childCatName,
@@ -627,10 +614,10 @@ void ParentChild::GetParents(vector<vector<string> >& parParKeys,
                     if (childCatName != childCat)
                         continue;
 
-                    for (unsigned int kI = 0; kI < childComboKeys.size(); ++kI)
+                    for (const auto & childComboKey : childComboKeys)
                     {
                         parParKeys.push_back(parKey);
-                        comboComboKeys.push_back(childComboKeys[kI]);
+                        comboComboKeys.push_back(childComboKey);
                     }
                     // WARNIIIIIIIIIIIIIIIIIIINIG
                     // break;
@@ -715,17 +702,17 @@ void ParentChild::GetLinkGroupIdLabel(string& linkGroupIdLabel,
     CifString::GetCategoryFromCifItem(childCatName, childKeys[0]);
 
     vector<string> searchCol;
-    searchCol.push_back("child_category_id");
-    searchCol.push_back("child_name");
-    searchCol.push_back("parent_name");
-    searchCol.push_back("parent_category_id");
+    searchCol.emplace_back("child_category_id");
+    searchCol.emplace_back("child_name");
+    searchCol.emplace_back("parent_name");
+    searchCol.emplace_back("parent_category_id");
 
     vector<string> searchCol2;
-    searchCol2.push_back("child_category_id");
-    searchCol2.push_back("link_group_id");
-    searchCol2.push_back("child_name");
-    searchCol2.push_back("parent_name");
-    searchCol2.push_back("parent_category_id");
+    searchCol2.emplace_back("child_category_id");
+    searchCol2.emplace_back("link_group_id");
+    searchCol2.emplace_back("child_name");
+    searchCol2.emplace_back("parent_name");
+    searchCol2.emplace_back("parent_category_id");
 
     vector<string> searchVal;
     searchVal.push_back(childCatName);
@@ -736,9 +723,9 @@ void ParentChild::GetLinkGroupIdLabel(string& linkGroupIdLabel,
     vector<unsigned int> found1;
     _groupListTableP->Search(found1, searchVal, searchCol);
 
-    for (unsigned int found1I = 0; found1I < found1.size(); ++found1I)
+    for (unsigned int found1I : found1)
     {
-        string currLinkGroupId = (*_groupListTableP)(found1[found1I],
+        string currLinkGroupId = (*_groupListTableP)(found1I,
           "link_group_id");
 
         bool matched = true;
@@ -766,9 +753,9 @@ void ParentChild::GetLinkGroupIdLabel(string& linkGroupIdLabel,
         {
             // Find the label for this linkGroupId
             vector<string> searchCol3;
-            searchCol3.push_back("category_id");
-            searchCol3.push_back("link_group_id");
-            searchCol3.push_back("parent_category_id");
+            searchCol3.emplace_back("category_id");
+            searchCol3.emplace_back("link_group_id");
+            searchCol3.emplace_back("parent_category_id");
 
             vector<string> searchVal3;
             searchVal3.push_back(childCatName);
@@ -794,33 +781,29 @@ void ParentChild::GetLinkGroupIdLabel(string& linkGroupIdLabel,
 bool ParentChild::IsParKeyPresent(const vector<string>& parKey,
   const string& childCatName)
 {
-    for (map<string, vector<vector<string> > >::iterator pos =
-      _parComboKeys.begin(); pos != _parComboKeys.end(); ++pos)
+    for (auto & _parComboKey : _parComboKeys)
     {
-        vector<vector<string> >& second = pos->second;
+        vector<vector<string> >& second = _parComboKey.second;
 
-        for (vector<vector<string> >::iterator pos2 = second.begin();
-          pos2 != second.end(); ++pos2)
+        for (auto & pos2 : second)
         {
-            if (*pos2 == parKey)
+            if (pos2 == parKey)
             {
                 // Get its children and see if they belong to this child
                 // Search for the parent
-                for (map<vector<string>,
-                  vector<vector<vector<string> > > >::iterator pos3 =
-                  _relations.begin(); pos3 != _relations.end(); ++pos3)
+                for (auto & _relation : _relations)
                 {
-                    const vector<string>& pK = pos3->first;
+                    const vector<string>& pK = _relation.first;
                     if (pK != parKey)
                         continue;
     
-                    vector<vector<vector<string> > >& cccK = pos3->second;
+                    vector<vector<vector<string> > >& cccK = _relation.second;
     
-                    for (unsigned int cccI = 0; cccI < cccK.size(); ++cccI)
+                    for (auto & cccI : cccK)
                     {
                         string cCat;
                         CifString::GetCategoryFromCifItem(cCat,
-                          cccK[cccI][0][0]);
+                          cccI[0][0]);
 
                         if (childCatName == cCat)
                             return (true);
@@ -841,9 +824,9 @@ bool ParentChild::IsInParentComboKeys(const std::string& itemName)
 
     const vector<vector<string> >& parComboKeys = GetComboKeys(catName);
 
-    for (unsigned int keyI = 0; keyI < parComboKeys.size(); ++keyI)
+    for (const auto & parComboKey : parComboKeys)
     {
-        if (GenCont::IsInVector(itemName, parComboKeys[keyI]))
+        if (GenCont::IsInVector(itemName, parComboKey))
         {
             return (true);
         }

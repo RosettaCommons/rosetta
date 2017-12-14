@@ -41,19 +41,15 @@ namespace moves {
 
 FilterReportAsPoseExtraScoresMover::FilterReportAsPoseExtraScoresMover():
 	protocols::moves::Mover( FilterReportAsPoseExtraScoresMover::mover_name() )
-{
-
-}
+{}
 
 FilterReportAsPoseExtraScoresMover::FilterReportAsPoseExtraScoresMover(
 	protocols::filters::FilterOP filter,
-	std::string report_as ):
+	std::string const & report_as ):
 	protocols::moves::Mover( FilterReportAsPoseExtraScoresMover::mover_name() ),
 	filter_(std::move(filter)),
-	report_as_(std::move(report_as))
-{
-
-}
+	report_as_(report_as)
+{}
 
 FilterReportAsPoseExtraScoresMover::~FilterReportAsPoseExtraScoresMover()= default;
 

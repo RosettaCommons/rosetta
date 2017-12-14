@@ -18,6 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.PoseSelectionScreener" );
 
@@ -32,14 +33,13 @@ PoseSelectionScreener::PoseSelectionScreener( pose::Pose & pose,
 	scoring::ScoreFunctionCOP scorefxn,
 	modeler::align::StepWiseClustererOP stepwise_clusterer ):
 	pose_( pose ),
-	scorefxn_( scorefxn ),
-	stepwise_clusterer_( stepwise_clusterer )
+	scorefxn_(std::move( scorefxn )),
+	stepwise_clusterer_(std::move( stepwise_clusterer ))
 {
 }
 
 //Destructor
-PoseSelectionScreener::~PoseSelectionScreener()
-{}
+PoseSelectionScreener::~PoseSelectionScreener() = default;
 
 bool
 PoseSelectionScreener::check_screen(){

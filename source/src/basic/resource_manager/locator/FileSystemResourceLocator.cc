@@ -46,9 +46,9 @@ static Tracer TR("basic.resource_manager.locator.FileSystemResourceLocator");
 
 
 ///// FileSystemResourceLocatorCreator /////
-FileSystemResourceLocatorCreator::FileSystemResourceLocatorCreator() {}
+FileSystemResourceLocatorCreator::FileSystemResourceLocatorCreator() = default;
 
-FileSystemResourceLocatorCreator::~FileSystemResourceLocatorCreator() {}
+FileSystemResourceLocatorCreator::~FileSystemResourceLocatorCreator() = default;
 
 ResourceLocatorOP
 FileSystemResourceLocatorCreator::create_resource_locator() const {
@@ -102,7 +102,7 @@ FileStream::FileStream(
 	}
 }
 
-FileStream::~FileStream() {}
+FileStream::~FileStream() = default;
 
 void
 FileStream::open(
@@ -187,7 +187,7 @@ FileSystemResourceLocator::get_open_mode() const {
 	return open_mode_;
 }
 
-FileSystemResourceLocator::~FileSystemResourceLocator() {}
+FileSystemResourceLocator::~FileSystemResourceLocator() = default;
 
 /// @brief
 ResourceStreamOP

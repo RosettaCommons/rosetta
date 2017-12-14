@@ -17,6 +17,7 @@
 
 // Utility headers
 #include <core/chemical/ResidueType.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
@@ -94,7 +95,7 @@ NCAARotamerLibrarySpecification::NCAARotamerLibrarySpecification( std::istream &
 	TR.Debug << "Read " << ncaa_rotlib_n_bins_per_rot_.size() << " entries for NCAA rotamer library specification with path " << ncaa_rotlib_path_ << std::endl;
 }
 
-NCAARotamerLibrarySpecification::~NCAARotamerLibrarySpecification() {}
+NCAARotamerLibrarySpecification::~NCAARotamerLibrarySpecification() = default;
 
 std::string
 NCAARotamerLibrarySpecification::keyname() const {

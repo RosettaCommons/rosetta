@@ -47,10 +47,10 @@ static basic::Tracer TR("protocols.hbnet.HBNetTaskOperations");
 
 /// @brief sets allowed residue types to constrain HBNet residues in downstream design;
 ///         add this Taskop to any design movers downstream of HBNet
-ConstrainHBondNetwork::ConstrainHBondNetwork(){}
+ConstrainHBondNetwork::ConstrainHBondNetwork()= default;
 
 //destructor
-ConstrainHBondNetwork::~ConstrainHBondNetwork(){}
+ConstrainHBondNetwork::~ConstrainHBondNetwork()= default;
 
 core::pack::task::operation::TaskOperationOP
 ConstrainHBondNetwork::clone() const
@@ -69,7 +69,7 @@ ConstrainHBondNetwork::apply(
 	core::scoring::constraints::ConstraintSetCOP cst_op(pose.constraint_set()); //needs to be COP
 
 	protocols::toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
-	protocols::toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache(0);
+	protocols::toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache(nullptr);
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP cstio;
 	if ( enz_obs ) {
 		cst_cache = enz_obs->cst_cache();

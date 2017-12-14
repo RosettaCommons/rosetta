@@ -30,14 +30,14 @@ RotamerOperation::RotamerOperation() :
 	utility::pointer::ReferenceCount()
 {}
 
-RotamerOperation::~RotamerOperation() {}
+RotamerOperation::~RotamerOperation() = default;
 
 
 RotamerSetOperation::RotamerSetOperation() :
 	utility::pointer::ReferenceCount()
 {}
 
-RotamerSetOperation::~RotamerSetOperation() {}
+RotamerSetOperation::~RotamerSetOperation() = default;
 
 core::Real
 RotamerSetOperation::increase_packer_residue_radius(

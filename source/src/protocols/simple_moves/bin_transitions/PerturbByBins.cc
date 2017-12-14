@@ -98,7 +98,7 @@ PerturbByBins::PerturbByBins( PerturbByBins const &src ) :
 
 /// @brief Destructor.
 ///
-PerturbByBins::~PerturbByBins() {}
+PerturbByBins::~PerturbByBins() = default;
 
 // XRW TEMP std::string
 // XRW TEMP PerturbByBins::get_name() const {

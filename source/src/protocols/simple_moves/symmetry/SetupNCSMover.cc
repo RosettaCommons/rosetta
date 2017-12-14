@@ -139,7 +139,7 @@ SetupNCSMover::SetupNCSMover( utility::vector1<std::string> src, utility::vector
 	set_defaults();
 }
 
-SetupNCSMover::~SetupNCSMover(){}
+SetupNCSMover::~SetupNCSMover()= default;
 
 void SetupNCSMover::set_defaults() {
 	wt_ = 0.01;  //fpd this seems reasonable in fullatom

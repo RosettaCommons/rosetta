@@ -41,7 +41,7 @@ namespace simple_moves {
 class SwitchResidueTypeSetMover : public moves::Mover {
 public:
 	SwitchResidueTypeSetMover();
-	SwitchResidueTypeSetMover( std::string );
+	SwitchResidueTypeSetMover( std::string const & );
 
 	std::string get_residue_type_set() const;
 

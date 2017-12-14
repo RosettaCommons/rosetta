@@ -37,6 +37,7 @@
 
 
 //C++ headers
+#include <utility>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -69,12 +70,12 @@ namespace denovo {
 namespace movers {
 
 //////////////////////////////////////////////////////////////////////////////////////////
-RNA_HelixMover::RNA_HelixMover(  utility::vector1< utility::vector1< Size > > helix_regions,
+RNA_HelixMover::RNA_HelixMover(  utility::vector1< utility::vector1< Size > > const & helix_regions,
 	protocols::rna::denovo::base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
 	bool const & move_first_rigid_body ):
 	Mover(),
 	helix_regions_( helix_regions ),
-	rna_base_pair_handler_( rna_base_pair_handler ),
+	rna_base_pair_handler_(std::move( rna_base_pair_handler )),
 	pose_is_set_( false ),
 	move_first_rigid_body_( move_first_rigid_body ),
 	rot_mag_( 10.0 ),
@@ -84,9 +85,7 @@ RNA_HelixMover::RNA_HelixMover(  utility::vector1< utility::vector1< Size > > he
 	get_helix_ends();
 }
 
-RNA_HelixMover::~RNA_HelixMover()
-{
-}
+RNA_HelixMover::~RNA_HelixMover() = default;
 
 /// @details  Apply the RNA helix mover
 ///

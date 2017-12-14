@@ -101,7 +101,7 @@ BundleParameters::BundleParameters( BundleParameters const & src ) :
 {
 }
 
-BundleParameters::~BundleParameters() {}
+BundleParameters::~BundleParameters() = default;
 
 
 /// @brief make a copy of this residue( allocate actual memory for it )

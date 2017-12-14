@@ -69,7 +69,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <cifparse/CifFile.h>
-typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
+using CifFileOP = utility::pointer::shared_ptr<CifFile>;
 
 // C++ headers
 #include <cstdlib>
@@ -294,53 +294,53 @@ dump_cif(
 	struct_conn->AddColumn( "conn_type_id" );
 
 	for ( std::map< std::string, utility::vector1< SSBondInformation > >::const_iterator iter = sfr->ssbond_map().begin(), end = sfr->ssbond_map().end(); iter != end; ++iter ) {
-		for ( utility::vector1< SSBondInformation >::const_iterator iter2 = iter->second.begin(), end2 = iter->second.end(); iter2 != end2; ++iter2 ) {
+		for ( auto const & iter2 : iter->second ) {
 			std::vector< std::string > vec;
 
-			vec.push_back( iter2->name1 );
-			vec.push_back( iter2->resName1 );
-			vec.push_back( std::string(1,iter2->chainID1) );
+			vec.push_back( iter2.name1 );
+			vec.push_back( iter2.resName1 );
+			vec.emplace_back(1,iter2.chainID1 );
 			std::stringstream ss;
-			ss << iter2->resSeq1;
+			ss << iter2.resSeq1;
 			vec.push_back( ss.str() );
-			vec.push_back( std::string(1,iter2->iCode1) );
-			vec.push_back( iter2->name2 );
-			vec.push_back( iter2->resName2 );
-			vec.push_back( std::string(1,iter2->chainID2) );
+			vec.emplace_back(1,iter2.iCode1 );
+			vec.push_back( iter2.name2 );
+			vec.push_back( iter2.resName2 );
+			vec.emplace_back(1,iter2.chainID2 );
 			ss.str( std::string() );
-			ss << iter2->resSeq2;
+			ss << iter2.resSeq2;
 			vec.push_back( ss.str() );
-			vec.push_back( std::string(1,iter2->iCode2) );
+			vec.emplace_back(1,iter2.iCode2 );
 			ss.str( std::string() );
-			ss << iter2->length;
+			ss << iter2.length;
 			vec.push_back( ss.str() );
-			vec.push_back( "disulf" );
+			vec.emplace_back("disulf" );
 
 			struct_conn->AddRow( vec );
 		}
 	}
 
 	for ( std::map< std::string, utility::vector1< LinkInformation > >::const_iterator iter = sfr->link_map().begin(), end = sfr->link_map().end(); iter != end; ++iter ) {
-		for ( utility::vector1< LinkInformation >::const_iterator iter2 = iter->second.begin(), end2 = iter->second.end(); iter2 != end2; ++iter2 ) {
+		for ( auto const & iter2 : iter->second ) {
 			std::vector< std::string > vec;
-			vec.push_back( iter2->name1 );
-			vec.push_back( iter2->resName1 );
-			vec.push_back( std::string(1,iter2->chainID1 ) );
+			vec.push_back( iter2.name1 );
+			vec.push_back( iter2.resName1 );
+			vec.emplace_back(1,iter2.chainID1 );
 			std::stringstream ss;
-			ss << iter2->resSeq1;
+			ss << iter2.resSeq1;
 			vec.push_back( ss.str() );
-			vec.push_back( std::string(1,iter2->iCode1 ) );
-			vec.push_back( iter2->name2 );
-			vec.push_back( iter2->resName2 );
-			vec.push_back( std::string(1,iter2->chainID2) );
+			vec.emplace_back(1,iter2.iCode1 );
+			vec.push_back( iter2.name2 );
+			vec.push_back( iter2.resName2 );
+			vec.emplace_back(1,iter2.chainID2 );
 			ss.str( std::string() );
-			ss << iter2->resSeq2;
+			ss << iter2.resSeq2;
 			vec.push_back( ss.str() );
-			vec.push_back( std::string(1,iter2->iCode2) );
+			vec.emplace_back(1,iter2.iCode2 );
 			ss.str( std::string() );
-			ss << iter2->length;
+			ss << iter2.length;
 			vec.push_back( ss.str() );
-			vec.push_back( "covale" );
+			vec.emplace_back("covale" );
 
 			struct_conn->AddRow( vec );
 		}
@@ -409,18 +409,18 @@ dump_cif(
 			AtomInformation const & ai = sfr->chains()[ i ][j];
 
 			std::vector< std::string > vec;
-			vec.push_back( ai.isHet ? "HETATM" : "ATOM" );
+			vec.emplace_back(ai.isHet ? "HETATM" : "ATOM" );
 			std::stringstream ss;
 			ss << ai.serial;
 			vec.push_back( ss.str() );
 			vec.push_back( utility::strip(ai.name) );
-			vec.push_back( std::string(1, ai.altLoc == ' ' ? '?' : ai.altLoc ) );
+			vec.emplace_back(1, ai.altLoc == ' ' ? '?' : ai.altLoc );
 			vec.push_back( ai.resName );
-			vec.push_back( std::string(1, ai.chainID == ' ' ? '?' : ai.chainID ) );
+			vec.emplace_back(1, ai.chainID == ' ' ? '?' : ai.chainID );
 			ss.str(std::string());
 			ss << ai.resSeq;
 			vec.push_back( ss.str() );
-			vec.push_back( std::string(1, ai.iCode == ' ' ? '?' : ai.iCode ) );
+			vec.emplace_back(1, ai.iCode == ' ' ? '?' : ai.iCode );
 
 			// NOTE: we will never be writing out "     nan" here.
 			ss.str(std::string());
@@ -463,11 +463,11 @@ dump_cif(
 
 		//Add the Score Weights as a Row
 		std::vector< std::string > weights;
-		weights.push_back("weights");
+		weights.emplace_back("weights");
 		for ( core::Size i = 1; i <= sfr->score_table_weights().size(); ++i ) {
 			weights.push_back( to_string( sfr->score_table_weights()[ i ] ) );
 		}
-		weights.push_back("NA");
+		weights.emplace_back("NA");
 		pose_energies->AddRow(weights);
 		//Add the rest of the Rows
 		for ( core::Size i = 1; i <= sfr->score_table_lines().size(); ++i ) {
@@ -481,21 +481,19 @@ dump_cif(
 		ISTable* pose_cache = new ISTable( "pose_cache_data" );
 
 		if ( sfr->pose_cache_string_data().size() > 0 ) {
-			typedef std::map<std::string, std::string>::iterator it_type;
-			for ( it_type it = sfr->pose_cache_string_data().begin(); it != sfr->pose_cache_string_data().end(); ++it ) {
+			for ( auto & it : sfr->pose_cache_string_data() ) {
 				std::vector< std::string > row(2, "");
-				row[0] = it->first;
-				row[1] = it->second;
+				row[0] = it.first;
+				row[1] = it.second;
 				pose_cache->AddRow( row );
 			}
 		}
 
 		if ( sfr->pose_cache_float_data().size() > 0 ) {
-			typedef std::map<std::string, float>::iterator it_type;
-			for ( it_type it = sfr->pose_cache_float_data().begin(); it != sfr->pose_cache_float_data().end(); ++it ) {
+			for ( auto & it : sfr->pose_cache_float_data() ) {
 				std::vector< std::string> row(2, "");
-				row[0] = it->first;
-				row[1] = utility::to_string( it->second ); //PDB Writing of this data had no rounding of decimal places, so I'm not doing it here either (JAB).
+				row[0] = it.first;
+				row[1] = utility::to_string( it.second ); //PDB Writing of this data had no rounding of decimal places, so I'm not doing it here either (JAB).
 				pose_cache->AddRow( row );
 			}
 		}
@@ -512,10 +510,10 @@ dump_cif(
 
 		using namespace std;
 		map< string, string > const comments = sfr->pdb_comments();
-		for ( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ) {
+		for ( auto const & comment : comments ) {
 			std::vector< std::string > row(2, "");
-			row[0] = i->first;
-			row[1] = i->second;
+			row[0] = comment.first;
+			row[1] = comment.second;
 			pose_comments->AddRow( row );
 		}
 
@@ -548,14 +546,14 @@ dump_cif(
 		if ( ! sfr->foldtree_string().empty() ) {
 			std::vector< std::string > out;
 
-			out.push_back("fold_tree");
+			out.emplace_back("fold_tree");
 			out.push_back(sfr->foldtree_string());
 			rosetta_additional->AddRow(out);
 		}
 		if ( ! sfr->additional_string_output().empty() ) {
 			std::vector< std::string > out;
 
-			out.push_back( "etc" );
+			out.emplace_back("etc" );
 			out.push_back( sfr->additional_string_output() );
 			rosetta_additional->AddRow( std::vector< std::string >( 1, sfr->additional_string_output() ) );
 		}

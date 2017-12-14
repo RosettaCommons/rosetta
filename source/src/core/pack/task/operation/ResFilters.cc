@@ -27,6 +27,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
@@ -805,7 +806,7 @@ ChainIs::ChainIs()
 : parent()
 {}
 
-ChainIs::ChainIs( char const & chain )
+ChainIs::ChainIs( char const chain )
 : parent(),
 	chain_( chain )
 {}
@@ -865,7 +866,7 @@ ChainIsnt::ChainIsnt()
 : parent()
 {}
 
-ChainIsnt::ChainIsnt( char const & chain )
+ChainIsnt::ChainIsnt( char const chain )
 : parent( chain )
 {}
 

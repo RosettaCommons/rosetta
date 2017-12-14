@@ -80,15 +80,15 @@ public:
 		parser_ = RosettaScriptsParserOP( new RosettaScriptsParser() );
 	}
 
-	~ParsedProtocolJobQueen() {}
+	~ParsedProtocolJobQueen() override = default;
 
-	virtual
+
 	protocols::jd3::JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP larval_job,
 		utility::options::OptionCollectionCOP job_options,
 		utility::vector1< protocols::jd3::JobResultCOP > const &
-	)
+	) override
 	{
 
 		TR << "Completing larval job maturation" << std::endl;

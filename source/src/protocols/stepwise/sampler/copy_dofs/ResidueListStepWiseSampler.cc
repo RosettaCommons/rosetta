@@ -18,6 +18,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.sampler.rigid_body.ResidueListStepWiseSampler" );
 
@@ -27,14 +28,13 @@ namespace sampler {
 namespace copy_dofs {
 
 //Constructor
-ResidueListStepWiseSampler::ResidueListStepWiseSampler( utility::vector1< core::conformation::ResidueOP > copy_dofs ):
+ResidueListStepWiseSampler::ResidueListStepWiseSampler( utility::vector1< core::conformation::ResidueOP > const & copy_dofs ):
 	copy_dofs_( copy_dofs )
 {
 }
 
 //Destructor
-ResidueListStepWiseSampler::~ResidueListStepWiseSampler()
-{}
+ResidueListStepWiseSampler::~ResidueListStepWiseSampler() = default;
 
 core::conformation::ResidueOP
 ResidueListStepWiseSampler::get_residue_at_origin(){

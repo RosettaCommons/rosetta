@@ -96,9 +96,9 @@ public:
 
 	CalcsTestMover();
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual std::string get_name() const{
+	std::string get_name() const override{
 		return "CalcsTestMover";
 	}
 
@@ -122,11 +122,11 @@ public:
 
 	virtual core::Size satisfaction_cutoff( std::string atom_type );
 
-	virtual MoverOP clone() const {
+	MoverOP clone() const override {
 		return MoverOP( new CalcsTestMover( *this ) );
 	}
 
-	virtual MoverOP fresh_instance() const {
+	MoverOP fresh_instance() const override {
 		return clone();
 	}
 

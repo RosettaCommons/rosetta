@@ -40,7 +40,7 @@ namespace output {
 SameChiBinComboGrouper::SameChiBinComboGrouper() : n_geometric_constraints_( 0 ) {}
 SameChiBinComboGrouper::SameChiBinComboGrouper( Size ncst ) : n_geometric_constraints_( ncst ) {}
 
-SameChiBinComboGrouper::~SameChiBinComboGrouper() {}
+SameChiBinComboGrouper::~SameChiBinComboGrouper() = default;
 
 SameChiBinComboGrouper::Size
 SameChiBinComboGrouper::assign_group_for_match(

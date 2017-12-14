@@ -37,6 +37,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
@@ -66,13 +67,7 @@ PCS_line_data::PCS_line_data() :
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_line_data class" );
 }
 
-PCS_line_data::PCS_line_data(PCS_line_data const & other):
-	residue_num_(other.residue_num_),
-	atom_name_(other.atom_name_),
-	PCS_experimental_(other.PCS_experimental_),
-	PCS_tolerance_(other.PCS_tolerance_)
-{
-}
+PCS_line_data::PCS_line_data(PCS_line_data const & /*other*/) = default;
 
 PCS_line_data &
 PCS_line_data::operator=( PCS_line_data const & other )
@@ -83,8 +78,7 @@ PCS_line_data::operator=( PCS_line_data const & other )
 	return *this;
 }
 
-PCS_line_data::~PCS_line_data(){
-}
+PCS_line_data::~PCS_line_data()= default;
 
 PCS_file_data::PCS_file_data():
 	filename_(""), weight_(0)
@@ -92,8 +86,7 @@ PCS_file_data::PCS_file_data():
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_file_data class" );
 }
 
-PCS_file_data::~PCS_file_data(){
-}
+PCS_file_data::~PCS_file_data()= default;
 
 PCS_file_data::PCS_file_data(PCS_file_data const & other):
 	filename_(other.filename_), weight_(other.weight_)
@@ -114,8 +107,7 @@ PCS_data_input::PCS_data_input(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_data_input class" );
 }
 
-PCS_data_input::~PCS_data_input(){
-}
+PCS_data_input::~PCS_data_input()= default;
 
 PCS_data_input::PCS_data_input(PCS_data_input const & other){
 	PCS_filename_and_data_ = other.PCS_filename_and_data_;
@@ -151,7 +143,7 @@ PCS_line_data::PCS_tolerance() const{
 }
 
 PCS_line_data::PCS_line_data(core::Size residue_num,
-	std::string atom_name,
+	std::string const & atom_name,
 	core::Real PCS_experimental,
 	core::Real PCS_tolerance
 ) :
@@ -276,9 +268,7 @@ operator<<(std::ostream & out,  const PCS_data_input &PCS_d_i ){
 }
 
 
-PCS_data_input_manager::PCS_data_input_manager(){
-
-}
+PCS_data_input_manager::PCS_data_input_manager()= default;
 
 PCS_data_input
 PCS_data_input_manager::get_input_data(utility::vector1<std::string> const & filenames, utility::vector1<core::Real> const & weight){

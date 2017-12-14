@@ -57,9 +57,7 @@ using namespace core;
 //using namespace scoring::constraints;
 
 
-PcsEnergyController::PcsEnergyController()
-{
-}
+PcsEnergyController::PcsEnergyController() = default;
 
 PcsEnergyController::PcsEnergyController(PcsEnergyController const &):
 	TopologyClaimer()

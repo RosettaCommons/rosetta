@@ -323,10 +323,10 @@ void ZincHeterodimerMover::generate_factory(){
 /// @details constructor
 ZincHeterodimerMover::ZincHeterodimerMover(
 	utility::vector1< core::Size > const & metal_site,
-	core::kinematics::Edge  fixed_to_metal,
-	core::kinematics::Edge  metal_to_mobile )
+	core::kinematics::Edge const & fixed_to_metal,
+	core::kinematics::Edge const & metal_to_mobile )
 : Mover(), centroid_scorefunction_(/* NULL */), fullatom_scorefunction_(nullptr), factory_(nullptr),
-	fixed_to_metal_(std::move(fixed_to_metal)), metal_to_mobile_(std::move(metal_to_mobile)), metal_site_(metal_site)
+	fixed_to_metal_(fixed_to_metal), metal_to_mobile_(metal_to_mobile), metal_site_(metal_site)
 {
 	Mover::type( "ZincHeterodimerMover" );
 	generate_scorefunctions();

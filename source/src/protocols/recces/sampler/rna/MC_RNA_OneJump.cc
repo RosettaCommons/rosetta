@@ -65,8 +65,7 @@ MC_RNA_OneJump::MC_RNA_OneJump( core::pose::Pose const & pose,
 }
 
 //Destructor
-MC_RNA_OneJump::~MC_RNA_OneJump()
-{}
+MC_RNA_OneJump::~MC_RNA_OneJump() = default;
 
 ///////////////////////////////////////////////////////////////////////////
 void
@@ -80,7 +79,7 @@ MC_RNA_OneJump::operator++()
 
 	// following few lines are from protocols/rigid/UniformRigidBodyMover.cc -- I'm not sure if
 	//  its "kosher", however. Would be better to write myself in terms of, say, Euler angles or quaternions.
-	core::Real theta = random_rotation_angle<core::Real>( rotation_mag_, numeric::random::rg() );
+	auto theta = random_rotation_angle<core::Real>( rotation_mag_, numeric::random::rg() );
 	xyzVector<core::Real> axis = random_point_on_unit_sphere<core::Real>( numeric::random::rg() );
 	xyzMatrix<core::Real> delta_rot = rotation_matrix_radians( axis, theta );
 	active_jump_.rotation_by_matrix( stored_upstream_stub_, stored_base_centroid_, delta_rot );
@@ -106,7 +105,7 @@ MC_RNA_OneJump::apply( core::pose::Pose & pose )
 void
 MC_RNA_OneJump::update()
 {
-	if ( update_pose_ != 0 ) {
+	if ( update_pose_ != nullptr ) {
 		active_jump_ = update_pose_->jump( jump_num_ );
 		scratch_pose_->set_jump( 1, active_jump_ );
 	}
@@ -159,7 +158,7 @@ MC_RNA_OneJump::find( core::id::TorsionID const & torsion_id ) {
 			torsion_id.type() == core::id::TorsionType::JUMP ) {
 		return std::dynamic_pointer_cast< MC_RNA_OneJump >( shared_from_this() );
 	}
-	return 0;
+	return nullptr;
 }
 
 

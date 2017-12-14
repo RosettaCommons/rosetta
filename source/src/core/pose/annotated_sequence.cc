@@ -548,8 +548,7 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			vector1< string > const branch_atom_names( last_residue.type().branch_connect_atom_names() );
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint i( 1 ); i <= n_branches; ++i ) {
-				branch_points.push_back(
-					make_pair( pose.size(), branch_atom_names[ i ] ) );
+				branch_points.emplace_back( pose.size(), branch_atom_names[ i ] );
 			}
 		}
 	}
@@ -582,9 +581,7 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			vector1< string > const branch_atom_names( new_rsd->type().branch_connect_atom_names() );
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint j( 1 ); j <= n_branches; ++j ) {
-				branch_points.push_back(
-					//make_pair( pose.residue( pose.size() ).seqpos(), branch_atom_names[ j ] ) );
-					make_pair( pose.size(), branch_atom_names[ j ] ) );
+				branch_points.emplace_back( pose.size(), branch_atom_names[ j ] );
 			}
 		}
 	}

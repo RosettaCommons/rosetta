@@ -138,7 +138,7 @@ IndelOptimizationMover::apply(
 		TR << "Partners will be " << partners << std::endl;
 	}
 
-	Size cutpoint = Size( ( loop_start + loop_end ) / 2 );
+	auto cutpoint = Size( ( loop_start + loop_end ) / 2 );
 	if ( cutpoint == loop_start ) ++cutpoint;
 	if ( cutpoint == loop_end   ) --cutpoint;
 	//protocols::loops::Loop loop( loop_start, loop_end, cutpoint );

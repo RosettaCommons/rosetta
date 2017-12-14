@@ -71,7 +71,7 @@
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
 
 #include <utility/vector1.hh>
-#include <stdio.h>
+#include <cstdio>
 
 //Tracer:
 static basic::Tracer TR( "apps.public.cyclic_peptide.simple_cycpep_predict" );

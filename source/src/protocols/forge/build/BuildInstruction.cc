@@ -23,6 +23,7 @@
 #include <basic/Tracer.hh>
 
 // utility headers
+#include <utility>
 #include <utility/signals/Link.hh>
 
 // C++ headers
@@ -64,7 +65,7 @@ BuildInstruction::BuildInstruction(
 	Super(),
 	state_( BuildInstructionState::READY ),
 	original_interval_( i ),
-	rts_( rts ),
+	rts_(std::move( rts )),
 	detach_after_modify_( true )
 {}
 
@@ -217,8 +218,8 @@ void BuildInstruction::reset_accounting() {
 /// @remarks This function will automatically be checked within modify()
 ///  prior to running modify_impl().
 bool BuildInstruction::dependencies_satisfied() const {
-	for ( BuildInstructionCAPs::const_iterator i = dependencies_.begin(), ie = dependencies_.end(); i != ie; ++i ) {
-		protocols::forge::build::BuildInstructionCOP instruction(*i);
+	for ( auto const & dependencie : dependencies_ ) {
+		protocols::forge::build::BuildInstructionCOP instruction(dependencie);
 		if ( !instruction->modify_was_successful() ) { // some instruction has not completed yet
 			return false;
 		}

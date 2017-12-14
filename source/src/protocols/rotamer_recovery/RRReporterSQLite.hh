@@ -50,8 +50,8 @@ public: // constructors destructors
 	RRReporterSQLite();
 
 	RRReporterSQLite(
-		std::string database_name,
-		std::string database_pq_schema = "",
+		std::string const & database_name,
+		std::string const & database_pq_schema = "",
 		OutputLevel output_level = protocols::rotamer_recovery::OL_full
 	);
 

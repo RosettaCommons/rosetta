@@ -22,7 +22,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/types.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 #include <map>
 
 namespace core {
@@ -119,9 +119,9 @@ void
 calculate_inverting_virtuals(
 	core::kinematics::FoldTree const & ft,
 	Conformation const & conf,
-	SymmetryInfo const &symm_info,
-	utility::vector1<bool> &mirrored_subs,
-	utility::vector1< std::pair<bool,bool> > &mirrored_jumps );
+	SymmetryInfo const & symm_info,
+	utility::vector1< bool > & mirrored_subs,
+	utility::vector1< std::pair< bool, bool > > & mirrored_jumps );
 
 
 } // symmetry

@@ -200,7 +200,7 @@ DesignTask::add_task_operation( TaskOperationOP const top )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief default constructor
-DesignTask_Layer::DesignTask_Layer() {}
+DesignTask_Layer::DesignTask_Layer() = default;
 
 /// @brief value constructor
 DesignTask_Layer::DesignTask_Layer(
@@ -262,7 +262,7 @@ void DesignTask_Layer::setup( pose::Pose const & pose, pack::task::PackerTaskOP 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief default constructor
-DesignTask_Normal::DesignTask_Normal() {}
+DesignTask_Normal::DesignTask_Normal() = default;
 
 /// @brief value constructor
 DesignTask_Normal::DesignTask_Normal(

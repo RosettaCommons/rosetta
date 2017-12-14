@@ -49,7 +49,7 @@ public:
 		utility::vector1< core::Size > const & input_res,
 		utility::vector1< core::Size > const & input_res2,
 		utility::vector1< core::Size > const & cutpoint_open,
-		Size const & cutpoint_closed );
+		Size const cutpoint_closed );
 
 
 	//destructor -- necessary? yes of course it is

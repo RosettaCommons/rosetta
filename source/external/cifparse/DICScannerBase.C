@@ -151,9 +151,9 @@ POSSIBILITY THEREOF.
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include "DICScannerBase.h"
 #include "DICScannerInt.h"
 #include "DICParserBase.h"
@@ -214,7 +214,7 @@ DICScanner::DICScanner(istream *in) {
 
 void DICScanner::Clear(void) {
 //if (_tBuf) delete _tBuf;
-  _tBuf=NULL;
+  _tBuf=nullptr;
   _isText = false;
   NDBlineNo=1;
 }
@@ -222,7 +222,7 @@ void DICScanner::Clear(void) {
 
 void DICScanner::Reset(void) {
 if (_tBuf) delete _tBuf;
-  _tBuf=NULL;
+  _tBuf=nullptr;
   Clear();
 }
 

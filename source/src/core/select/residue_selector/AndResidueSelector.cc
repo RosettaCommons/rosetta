@@ -46,7 +46,7 @@ namespace select {
 namespace residue_selector {
 
 
-AndResidueSelector::AndResidueSelector() {}
+AndResidueSelector::AndResidueSelector() = default;
 
 /// @brief Copy constructor
 ///
@@ -58,7 +58,7 @@ AndResidueSelector::AndResidueSelector( AndResidueSelector const &src) :
 /// @details Copy this object and return an owning pointer to the new object.
 ResidueSelectorOP AndResidueSelector::clone() const { return ResidueSelectorOP( new AndResidueSelector(*this) ); }
 
-AndResidueSelector::~AndResidueSelector() {}
+AndResidueSelector::~AndResidueSelector() = default;
 
 AndResidueSelector::AndResidueSelector(ResidueSelectorCOP selector1)
 {

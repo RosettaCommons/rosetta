@@ -125,7 +125,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	//sort scores
 	std::sort(scores.begin(), scores.end());
 	//figure out the score cut
-	Size keepNumb = (Size)floor( ( (Real) scores.size() )*(1-scoreCutPct) );
+	auto keepNumb = (Size)floor( ( (Real) scores.size() )*(1-scoreCutPct) );
 	Size maxByTime = keepNumb;
 	//in boinc maxtime should be set.
 	if ( runTime!=-1 ) {

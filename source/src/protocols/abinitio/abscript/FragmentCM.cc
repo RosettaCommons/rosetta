@@ -41,6 +41,7 @@
 #include <basic/datacache/WriteableCacheableMap.hh>
 
 // utility/basic headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/option.hh>
@@ -96,14 +97,14 @@ FragmentCM::FragmentCM():
 FragmentCM::FragmentCM( simple_moves::FragmentMoverOP mover,
 	core::select::residue_selector::ResidueSelectorCOP selector ):
 	ClientMover(),
-	selector_( selector ),
+	selector_(std::move( selector )),
 	bInitialize_( true ),
 	bYieldCutBias_( false )
 {
 	set_mover( mover );
 }
 
-FragmentCM::~FragmentCM() {}
+FragmentCM::~FragmentCM() = default;
 
 void FragmentCM::set_selector( core::select::residue_selector::ResidueSelectorCOP selector ) {
 	if ( Parent::state_check( __FUNCTION__, ( selector.get() == selector_.get() ) ) ) {
@@ -255,7 +256,7 @@ void FragmentCM::yield_cut_bias( bool setting ){
 }
 
 void FragmentCM::passport_updated() {
-	if ( mover()==NULL ) {
+	if ( mover()==nullptr ) {
 		tr.Warning << "error in " << get_name() << " mover is null or not cofigured " << std::endl;
 		return;
 	}

@@ -133,7 +133,7 @@ NPDHBondEnergy::NPDHBondEnergy( NPDHBondEnergy const & src ):
 {
 }
 
-NPDHBondEnergy::~NPDHBondEnergy() {}
+NPDHBondEnergy::~NPDHBondEnergy() = default;
 
 /// clone
 methods::EnergyMethodOP
@@ -185,7 +185,7 @@ NPDHBondEnergy::finalize_total_energy(
 
 	// iterate across the hbonds in the cached hbond set
 	// and increment their weighted energies into the totals emap
-	NPDHBondSet const & hbond_set = static_cast< NPDHBondSet const & > ( pose.energies().data().get( NPD_HBOND_SET ) );
+	auto const & hbond_set = static_cast< NPDHBondSet const & > ( pose.energies().data().get( NPD_HBOND_SET ) );
 	for ( Size ii = 1; ii <= hbond_set.nhbonds(); ++ii ) {
 		HBond const & ii_hb( hbond_set.hbond( ii ) );
 		if ( ii_hb.energy() > 0 ) continue;
@@ -211,7 +211,7 @@ NPDHBondEnergy::eval_atom_derivative(
 
 	// ok -- iterate across all the hbonds for this residue and calculate
 	// the per-atom derivatives
-	NPDHBondSet const & hbond_set = static_cast< NPDHBondSet const & > ( pose.energies().data().get( NPD_HBOND_SET ) );
+	auto const & hbond_set = static_cast< NPDHBondSet const & > ( pose.energies().data().get( NPD_HBOND_SET ) );
 	utility::vector1< HBondCOP > res_hbonds = hbond_set.residue_hbonds( atom_id.rsd(), false );
 	if ( res_hbonds.size() == 0 ) return;
 

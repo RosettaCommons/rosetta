@@ -30,7 +30,7 @@ using core::Size;
 using core::Real;
 
 /// @details Auto-generated virtual destructor
-ABEGO_SS_Map::~ABEGO_SS_Map() {}
+ABEGO_SS_Map::~ABEGO_SS_Map() = default;
 
 char ABEGO_SS_Map::all_abego_[6] = {'X','A','B','E','G','O'};
 char ABEGO_SS_Map::all_ss_[4] = {'X','H','E','L'};

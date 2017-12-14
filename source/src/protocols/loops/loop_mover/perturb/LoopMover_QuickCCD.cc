@@ -138,7 +138,7 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 }
 
 //destructors
-LoopMover_Perturb_QuickCCD::~LoopMover_Perturb_QuickCCD(){}
+LoopMover_Perturb_QuickCCD::~LoopMover_Perturb_QuickCCD()= default;
 
 // XRW TEMP std::string
 // XRW TEMP LoopMover_Perturb_QuickCCD::get_name() const {
@@ -224,10 +224,8 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	//    (so that insertions will happen when scoring subunit is not 1st)
 
 	utility::vector1< FragmentMoverOP > fragmover;
-	for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
-			it = frag_libs().begin(), it_end = frag_libs().end();
-			it != it_end; ++it ) {
-		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, frag_mover_movemap ) );
+	for ( const auto & it : frag_libs() ) {
+		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( it, frag_mover_movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
 		fragmover.push_back( cfm );
@@ -266,7 +264,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	mc_->reset( pose );
 	mc_->set_temperature( temperature );
 
-	int   starttime    = time(NULL);
+	int   starttime    = time(nullptr);
 	int   frag_count   = 0;
 	scorefxn()->show_line_headers( tr().Info );
 	tr().Info << std::endl;
@@ -283,7 +281,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 
 	// for symmetric case, upweight the chainbreak by # of monomers
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		core::conformation::symmetry::SymmetricConformation const & symm_conf (
+		auto const & symm_conf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		scorefxn()->set_weight( chainbreak, symm_info->subunits() );
@@ -331,7 +329,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 		} // for c3 in cycles3
 	} // for c2 in cycles2
 
-	int looptime = time(NULL) - starttime;
+	int looptime = time(nullptr) - starttime;
 	tr() << "FragCount: " << frag_count << std::endl;
 	tr() << "Looptime " << looptime << std::endl;
 

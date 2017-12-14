@@ -120,7 +120,7 @@ read_DNA_rotlib(
 		while ( string::npos != pos || string::npos != last_pos ) {
 			// Found a token, add it to the vector.
 			const string next_dih( line.substr( last_pos, pos-last_pos) );
-			dihedrals->push_back( strtod( next_dih.c_str(), NULL) );
+			dihedrals->push_back( strtod( next_dih.c_str(), nullptr) );
 
 			// Skip delimiters.  Note the "not_of"
 			last_pos = line.find_first_not_of( delimiters, pos );
@@ -244,9 +244,7 @@ build_lib_dna_rotamers(
 		mm.set( TorsionID(seqpos  , BB, 3), true );
 		mm.set( TorsionID(seqpos  , BB, 4), true );
 
-		for ( utility::vector1< DihedralSet* >::const_iterator lib_iter = library.begin(), end = library.end(); lib_iter != end; ++lib_iter ) {
-
-			DihedralSet const *dihedrals(*lib_iter);
+		for ( auto dihedrals : library ) {
 
 			// Set mainchain dihedral angles (zeta, alpha - epsilon)
 			Size const nbb( rsd.n_mainchain_atoms() );
@@ -599,8 +597,8 @@ build_dna_rotamers(
 
 		// Close stream and free library memory
 		lib_stream.close();
-		for ( utility::vector1< DihedralSet* >::iterator lib_iter = library.begin(), end = library.end(); lib_iter!=end; ++lib_iter ) {
-			delete( *lib_iter );
+		for ( auto & lib_iter : library ) {
+			delete lib_iter;
 		}
 
 	} else {
@@ -802,7 +800,7 @@ build_fixed_O_water_rotamers_independent(
 		Residue const & rsd( pose.residue(i) );
 
 		// donors
-		for ( chemical::AtomIndices::const_iterator
+		for ( auto
 				hnum  = rsd.Hpos_polar().begin(),
 				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			Vector const & xyz( rsd.xyz( rsd.atom_base( *hnum ) ) );
@@ -812,7 +810,7 @@ build_fixed_O_water_rotamers_independent(
 		}
 
 		// acceptors
-		for ( chemical::AtomIndices::const_iterator
+		for ( auto
 				anum  = rsd.accpt_pos().begin(),
 				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Vector const & xyz( rsd.xyz( *anum ) );
@@ -1540,7 +1538,7 @@ build_moving_O_bridge_waters(
 	// look for donors or acceptors that could be making an interaction with the water
 	//
 	// donors
-	for ( chemical::AtomIndices::const_iterator
+	for ( auto
 			hnum  = rsd2.Hpos_polar().begin(),
 			hnume = rsd2.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const hatm( *hnum );
@@ -1563,7 +1561,7 @@ build_moving_O_bridge_waters(
 	}
 
 	// acceptors
-	for ( chemical::AtomIndices::const_iterator
+	for ( auto
 			anum  = rsd2.accpt_pos().begin(),
 			anume = rsd2.accpt_pos().end(); anum != anume; ++anum ) {
 		Size const aatm( *anum );
@@ -1949,7 +1947,7 @@ build_independent_water_rotamers(
 
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) {
-		WaterPackingInfo const & water_info
+		auto const & water_info
 			( static_cast< WaterPackingInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
 
 		// hydrate/SPaDES protocol
@@ -1990,7 +1988,7 @@ build_dependent_water_rotamers(
 {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) {
 
-		WaterPackingInfo const & water_info
+		auto const & water_info
 			( static_cast< WaterPackingInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) );
 
 		// hydrate/SPaDES protocol

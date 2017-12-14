@@ -30,7 +30,7 @@ static basic::Tracer TR( "protocols.evolution.AlignmentCleanerTools" );
 
 
 void
-thread_sequence_on_pose(core::pose::Pose & pose, std::string const thread_seq, core::scoring::ScoreFunctionOP scorefxn)
+thread_sequence_on_pose(core::pose::Pose & pose, std::string const & thread_seq, core::scoring::ScoreFunctionOP scorefxn)
 {
 	// Now we thread on the sequence
 	using namespace protocols::toolbox::task_operations;
@@ -58,7 +58,7 @@ thread_sequence_on_pose(core::pose::Pose & pose, std::string const thread_seq, c
 
 
 std::tuple< std::string, std::string >
-indel_motif(std::string const aln_seq, core::Size const motif_radius, core::Size const aln_resi, std::string const pose_ss_aln)
+indel_motif(std::string const & aln_seq, core::Size const motif_radius, core::Size const aln_resi, std::string const & pose_ss_aln)
 {
 	// Find the motif sequence downstream
 	core::Size first_pos = aln_resi;
@@ -89,7 +89,7 @@ indel_motif(std::string const aln_seq, core::Size const motif_radius, core::Size
 }
 
 core::Real
-indel_motif_seq_id( std::string motif1, std::string motif2)
+indel_motif_seq_id( std::string const & motif1, std::string const & motif2)
 {
 	core::Size len = motif1.length();
 	core::Size identities = 0;

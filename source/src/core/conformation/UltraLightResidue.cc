@@ -16,6 +16,7 @@
 #include <core/conformation/Conformation.hh>
 
 #include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
 #include <numeric/xyzTransform.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/model_quality/rms.hh>
@@ -24,7 +25,7 @@
 namespace core {
 namespace conformation {
 
-UltraLightResidue::UltraLightResidue(ResidueCOP residue)
+UltraLightResidue::UltraLightResidue( ResidueCOP residue )
 {
 	residue_ = residue;
 	core::Size resnum = residue->seqpos();
@@ -36,7 +37,7 @@ UltraLightResidue::UltraLightResidue(ResidueCOP residue)
 		id::AtomID new_atom_id(atom_index,resnum);
 		atom_ids_.push_back(new_atom_id);
 	}
-	center_ =numeric::center_of_mass(coords_);
+	center_ = numeric::center_of_mass(coords_);
 }
 
 UltraLightResidue::UltraLightResidue(UltraLightResidue const & src) : ReferenceCount(),
@@ -85,7 +86,6 @@ void UltraLightResidue::transform(numeric::xyzMatrix<core::Real> const & rotatio
 
 void UltraLightResidue::align_to_residue(UltraLightResidue const & other_residue)
 {
-
 	center_ = numeric::center_of_mass(coords_);
 
 	utility::vector1<PointPosition> reference_coords(other_residue.coords_vector()); //FOR RMSD COMPARISON AT THE END
@@ -167,8 +167,8 @@ void UltraLightResidue::slide(core::Vector const & translation_vector)
 	for ( auto & coord : coords_ ) {
 		coord = translation_vector+coord;
 	}
-	for ( utility::vector1<PointPosition>::iterator it = heavy_coords_.begin(); it != heavy_coords_.end(); ++it ) {
-		*it = translation_vector+(*it);
+	for ( auto & heavy_coord : heavy_coords_ ) {
+		heavy_coord = translation_vector + heavy_coord;
 	}
 	center_ = numeric::center_of_mass(coords_);
 }

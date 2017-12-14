@@ -32,6 +32,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 // Random number generator
@@ -112,14 +113,7 @@ RigidBodyMover::RigidBodyMover(
 	}
 }
 
-RigidBodyMover::RigidBodyMover( RigidBodyMover const & src ) :
-	//utility::pointer::ReferenceCount(), parent( src ),
-	protocols::canonical_sampling::ThermodynamicMover( src ),
-	rb_jump_( src.rb_jump_ ),
-	dir_( src.dir_ ),
-	rot_center_( src.rot_center_ ),
-	freeze_(src.freeze_)
-{}
+RigidBodyMover::RigidBodyMover( RigidBodyMover const & /*src*/ ) = default;
 
 RigidBodyMover::~RigidBodyMover() = default;
 
@@ -177,7 +171,7 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 	core::Real const rot_mag_in,
 	core::Real const trans_mag_in,
 	Partner const partner_in,
-	utility::vector1< bool > ok_for_centroid_calculation
+	utility::vector1< bool > const & ok_for_centroid_calculation
 ):
 	RigidBodyMover( rb_jump_in ),
 	rot_mag_( rot_mag_in ),
@@ -344,7 +338,7 @@ RigidBodyPerturbRandomJumpMover::RigidBodyPerturbRandomJumpMover(
 void
 RigidBodyPerturbRandomJumpMover::apply(core::pose::Pose& pose)
 {
-	core::Size random_jump_num = static_cast<core::Size>(numeric::random::rg().random_range(1,num_jump_));
+	auto random_jump_num = static_cast<core::Size>(numeric::random::rg().random_range(1,num_jump_));
 	RigidBodyPerturbMover RBMover(random_jump_num,rot_mag_in_,trans_mag_in_);
 	RBMover.apply(pose);
 }
@@ -437,15 +431,7 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	dir_ = dir_in;
 }
 
-RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
-	RigidBodyPerturbNoCenterMover const & src
-) :
-	//utility::pointer::ReferenceCount(),
-	Parent( src ),
-	rot_mag_( src.rot_mag_ ),
-	trans_mag_( src.trans_mag_ ),
-	movable_jumps_( src.movable_jumps_ )
-{}
+RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover( RigidBodyPerturbNoCenterMover const & /*src*/ ) = default;
 
 RigidBodyPerturbNoCenterMover::~RigidBodyPerturbNoCenterMover() = default;
 
@@ -636,14 +622,7 @@ RigidBodySpinMover::RigidBodySpinMover(
 	moves::Mover::type( "RigidBodySpin" );
 }
 
-RigidBodySpinMover::RigidBodySpinMover( RigidBodySpinMover const & src ) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	spin_axis_( src.spin_axis_ ),
-	update_spin_axis_( src.update_spin_axis_ ),
-	spin_mag_( src.spin_mag_ ),
-	default_spin_mag_( src.default_spin_mag_ )
-{}
+RigidBodySpinMover::RigidBodySpinMover( RigidBodySpinMover const & /*src*/ ) = default;
 
 RigidBodySpinMover::~RigidBodySpinMover() = default;
 
@@ -1028,13 +1007,7 @@ RigidBodyTransMover::RigidBodyTransMover( core::Vector const & trans_axis, int c
 	vary_stepsize_ = vary_stepsize;
 }
 
-RigidBodyTransMover::RigidBodyTransMover( RigidBodyTransMover const & src ) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	step_size_( src.step_size_ ),
-	trans_axis_( src.trans_axis_ ),
-	vary_stepsize_ ( src.vary_stepsize_ )
-{}
+RigidBodyTransMover::RigidBodyTransMover( RigidBodyTransMover const & /*src*/ ) = default;
 
 RigidBodyTransMover::~RigidBodyTransMover() = default;
 
@@ -1194,14 +1167,7 @@ UniformSphereTransMover::UniformSphereTransMover(
 	reset_trans_axis(); // start with a random trans_axis, freeze is valid without first calling apply
 }
 
-UniformSphereTransMover::UniformSphereTransMover( UniformSphereTransMover const & src ) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	step_size_( src.step_size_ ),
-	random_step_(src.random_step_),
-	trans_axis_(src.trans_axis_)
-
-{}
+UniformSphereTransMover::UniformSphereTransMover( UniformSphereTransMover const & /*src*/ ) = default;
 
 UniformSphereTransMover::~UniformSphereTransMover() = default;
 
@@ -1254,11 +1220,7 @@ RigidBodyDofRandomizeMover::RigidBodyDofRandomizeMover(
 }
 
 
-RigidBodyDofRandomizeMover::RigidBodyDofRandomizeMover( RigidBodyDofRandomizeMover const & src ) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	dof_( src.dof_ )
-{}
+RigidBodyDofRandomizeMover::RigidBodyDofRandomizeMover( RigidBodyDofRandomizeMover const & /*src*/ ) = default;
 
 RigidBodyDofRandomizeMover::~RigidBodyDofRandomizeMover() = default;
 
@@ -1358,13 +1320,7 @@ RigidBodyDofSeqRandomizeMover::RigidBodyDofSeqRandomizeMover(
 	dofs_ = dofs;
 }
 
-RigidBodyDofSeqRandomizeMover::RigidBodyDofSeqRandomizeMover(
-	RigidBodyDofSeqRandomizeMover const & src
-) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	dofs_( src.dofs_ )
-{}
+RigidBodyDofSeqRandomizeMover::RigidBodyDofSeqRandomizeMover( RigidBodyDofSeqRandomizeMover const & /*src*/ ) = default;
 
 RigidBodyDofSeqRandomizeMover::~RigidBodyDofSeqRandomizeMover() = default;
 
@@ -1574,14 +1530,7 @@ RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover(
 }
 
 
-RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover( RigidBodyDofSeqTransMover const & src ) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	dofs_( src.dofs_ ),
-	rb_jumps_( src.rb_jumps_ ),
-	step_size_( src.step_size_ ),
-	trans_axis_( src.trans_axis_ )
-{}
+RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover( RigidBodyDofSeqTransMover const & /*src*/ ) = default;
 
 RigidBodyDofSeqTransMover::~RigidBodyDofSeqTransMover() = default;
 
@@ -1659,14 +1608,7 @@ RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover(
 	rb_jumps_ = trans_jumps;
 }
 
-RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover( RigidBodyDofRandomTransMover const & src ) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	dofs_( src.dofs_ ),
-	rb_jumps_( src.rb_jumps_ ),
-	step_size_( src.step_size_ ),
-	trans_axis_( src.trans_axis_ )
-{}
+RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover( RigidBodyDofRandomTransMover const & /*src*/ ) = default;
 
 RigidBodyDofRandomTransMover::~RigidBodyDofRandomTransMover() = default;
 
@@ -1675,7 +1617,7 @@ void RigidBodyDofRandomTransMover::apply( core::pose::Pose & pose )
 {
 
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
-	utility::vector1< int >::iterator start, end, it;
+	utility::vector1< int >::iterator start, end;
 	start = rb_jumps_.begin();
 	end = rb_jumps_.end();
 
@@ -1768,13 +1710,7 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 	}
 }
 
-RigidBodyDofPerturbMover::RigidBodyDofPerturbMover( RigidBodyDofPerturbMover const & src ) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	dof_( src.dof_ ),
-	rot_mag_( src.rot_mag_ ),
-	trans_mag_( src.trans_mag_ )
-{}
+RigidBodyDofPerturbMover::RigidBodyDofPerturbMover( RigidBodyDofPerturbMover const & /*src*/ ) = default;
 
 RigidBodyDofPerturbMover::~RigidBodyDofPerturbMover() = default;
 
@@ -1853,16 +1789,7 @@ RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover(
 	dofs_ = dofs;
 }
 
-RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover(
-	RigidBodyDofSeqPerturbMover const & src
-) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	dofs_( src.dofs_ ),
-	rb_jumps_( src.rb_jumps_ ),
-	rot_mag_( src.rot_mag_ ),
-	trans_mag_( src.trans_mag_ )
-{}
+RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover( RigidBodyDofSeqPerturbMover const & /*src*/ ) = default;
 
 RigidBodyDofSeqPerturbMover::~RigidBodyDofSeqPerturbMover() = default;
 

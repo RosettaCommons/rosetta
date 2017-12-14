@@ -116,7 +116,6 @@ private:
 	core::Size start_;
 	core::Size end_;
 
-	core::Size length_;
 	char chain_;
 
 	bool cis_trans_match_;

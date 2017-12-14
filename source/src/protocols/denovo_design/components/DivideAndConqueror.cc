@@ -27,6 +27,7 @@
 
 // Boost headers
 #include <boost/assign.hpp>
+#include <utility>
 
 static basic::Tracer TR( "protocols.denovo_design.components.DivideAndConqueror" );
 
@@ -39,7 +40,7 @@ std::ostream &
 operator<<( std::ostream & os, SegmentPairSet const & pairs )
 {
 	os << "[ ";
-	for ( SegmentPairSet::const_iterator p=pairs.begin(); p!=pairs.end(); ++p ) {
+	for ( auto p=pairs.begin(); p!=pairs.end(); ++p ) {
 		if ( p != pairs.begin() ) os << ", ";
 		os << p->first << "<-->" << p->second;
 	}
@@ -54,7 +55,7 @@ DivideAndConqueror::DivideAndConqueror():
 {
 }
 
-DivideAndConqueror::~DivideAndConqueror(){}
+DivideAndConqueror::~DivideAndConqueror()= default;
 
 void
 DivideAndConqueror::set_start_segments( SegmentNameSet const & start_seg )
@@ -95,7 +96,7 @@ DivideAndConqueror::divide_and_conquer( StructureData const & sd ) const
 	TR.Debug << unordered_solutions << std::endl;
 
 	// catch case where we are only building one segment
-	SegmentNameList::const_iterator next = ++sd.segments_begin();
+	auto next = ++sd.segments_begin();
 	if ( next == sd.segments_end() ) {
 		StructureSlices const slices = boost::assign::list_of (StructureSlice( sd.segments_begin(), sd.segments_end()));
 		return BuildPhases( slices );
@@ -103,8 +104,8 @@ DivideAndConqueror::divide_and_conquer( StructureData const & sd ) const
 
 	// enumerate all possible build orders
 	FoldingSolutions solutions;
-	for ( FoldingSolutions::const_iterator solution=unordered_solutions.begin(); solution!=unordered_solutions.end(); ++solution ) {
-		FoldingSolutions const sol_list = all_permutations( *solution, solution->end() );
+	for ( auto const & unordered_solution : unordered_solutions ) {
+		FoldingSolutions const sol_list = all_permutations( unordered_solution, unordered_solution.end() );
 		solutions.insert( solutions.end(), sol_list.begin(), sol_list.end() );
 	}
 
@@ -154,7 +155,7 @@ DivideAndConqueror::all_permutations(
 
 	// make a copy of list without the chosen item
 	StructureSlices slices_copy;
-	for ( StructureSlices::const_iterator slice=slices.begin(); slice!=slices.end(); ++slice ) {
+	for ( auto slice=slices.begin(); slice!=slices.end(); ++slice ) {
 		if ( ( chosen_item != slices.end() ) && ( slice == chosen_item ) ) continue;
 		slices_copy.push_back( *slice );
 	}
@@ -165,11 +166,11 @@ DivideAndConqueror::all_permutations(
 		FoldingSolutions const permutations = all_permutations( slices_copy, slice );
 
 		// Add x to the beginning of each permutation of copy list
-		for ( FoldingSolutions::const_iterator p=permutations.begin(); p!=permutations.end(); ++p ) {
+		for ( auto const & permutation : permutations ) {
 			StructureSlices new_list;
 			if ( chosen_item != slices.end() ) new_list.push_back( *chosen_item );
-			for ( StructureSlices::const_iterator t=p->begin(); t!=p->end(); ++t ) {
-				new_list.push_back( *t );
+			for ( auto const & t : permutation ) {
+				new_list.push_back( t );
 			}
 			retval.push_back( new_list );
 		}
@@ -179,7 +180,7 @@ DivideAndConqueror::all_permutations(
 
 class StructureSlicePredicate {
 public:
-	StructureSlicePredicate() {};
+	StructureSlicePredicate() = default;
 
 	bool
 	operator()( StructureData const & sd, StructureSlice const & slice ) const;
@@ -207,18 +208,19 @@ DivideAndConqueror::compute_all_units(
 	SegmentNameSet const & paired_segments,
 	SegmentNameList::const_iterator start_seg ) const
 {
-	SegmentNameList::const_iterator next_segment = start_seg;
+	auto next_segment = start_seg;
 	++next_segment;
 	if ( next_segment == sd.segments_end() ) return FoldingSolutions();
 
 	// Create list of slices starting at start_seg at which we might stop building
-	StructureSlicePredicate const slice_ok;
+	// AMW: this had been 'const' but it has no private data. clang doesn't like that.
+	StructureSlicePredicate slice_ok;
 
 	StructureSlices slices;
-	for ( SegmentNameList::const_iterator stop_seg=start_seg; stop_seg!=sd.segments_end(); ++stop_seg ) {
+	for ( auto stop_seg=start_seg; stop_seg!=sd.segments_end(); ++stop_seg ) {
 		if ( stop_seg == start_seg ) continue;
 		if ( paired_segments.find( *stop_seg ) == paired_segments.end() ) continue;
-		SegmentNameList::const_iterator next = stop_seg;
+		auto next = stop_seg;
 		if ( next != sd.segments_end() ) ++next;
 		StructureSlice const newslice( start_seg, next );
 		if ( slice_ok( sd, newslice ) ) {
@@ -253,8 +255,8 @@ DivideAndConqueror::compute_all_units(
 BuildPhases::BuildPhases( StructureSlices const & slices ):
 	utility::vector1< SegmentNames >()
 {
-	for ( StructureSlices::const_iterator slice=slices.begin(); slice!=slices.end(); ++slice ) {
-		push_back( SegmentNames( slice->first, slice->second ) );
+	for ( auto const & slice : slices ) {
+		push_back( SegmentNames( slice.first, slice.second ) );
 	}
 }
 
@@ -264,7 +266,7 @@ BuildPhases::BuildPhases( BuildPhases::const_iterator const & begin_it, BuildPha
 
 SegmentPairSet::SegmentPairSet( components::StructureData const & sd )
 {
-	for ( SegmentPairingCOPs::const_iterator p=sd.pairings_begin(); p!=sd.pairings_end(); ++p ) {
+	for ( auto p=sd.pairings_begin(); p!=sd.pairings_end(); ++p ) {
 		if ( (*p)->type() != SegmentPairing::STRAND ) continue;
 		SegmentPair const pair = std::make_pair( *(*p)->segments().begin(), *( (*p)->segments().begin() + 1 ) );
 		insert( pair );
@@ -275,9 +277,9 @@ SegmentNameSet
 SegmentPairSet::segment_name_set() const
 {
 	SegmentNameSet visited;
-	for ( SegmentPairSet::const_iterator pair=begin(); pair!=end(); ++pair ) {
-		visited.insert( pair->first );
-		visited.insert( pair->second );
+	for ( auto const & pair : *this ) {
+		visited.insert( pair.first );
+		visited.insert( pair.second );
 	}
 	return visited;
 }
@@ -349,8 +351,10 @@ SolutionPredicate::check_stop_segment( StructureSlices const & slices ) const
 bool
 SolutionPredicate::check_template_poses( StructureSlices const & slices ) const
 {
-	StructureSlicePredicate const slice_ok;
-	for ( StructureSlices::const_iterator slice=slices.begin(); slice!=slices.end(); ++slice ) {
+	// AMW: this had been 'const' but it has no private data. clang doesn't like that.
+	// (when using default construction)
+	StructureSlicePredicate slice_ok;
+	for ( auto slice=slices.begin(); slice!=slices.end(); ++slice ) {
 		if ( slice_ok( *sd_, *slice ) ) continue;
 
 		TR.Debug << slices << " contains a slice that doesn't build any segments." << std::endl;
@@ -369,7 +373,7 @@ SolutionPredicate::check_basic_connectivity( StructureSlices const & slices ) co
 
 	SegmentNameSet visited( slices.begin()->first, slices.begin()->second );
 
-	for ( StructureSlices::const_iterator slice=++slices.begin(); slice!=slices.end(); ++slice ) {
+	for ( auto slice=++slices.begin(); slice!=slices.end(); ++slice ) {
 		if ( slice->first == slice->second ) {
 			TR.Debug << slices << " is bad because it contains an empty build segment" << std::endl;
 			return false;
@@ -398,7 +402,7 @@ SolutionPredicate::check_for_unpaired_segments( StructureSlices const & slices )
 	SegmentNameSet const in_pair = pairs_.segment_name_set();
 	SegmentNameSet visited;
 
-	for ( StructureSlices::const_iterator slice=slices.begin(); slice!=slices.end(); ++slice ) {
+	for ( auto slice=slices.begin(); slice!=slices.end(); ++slice ) {
 		TR << "Looking at slice " << *slice << std::endl;
 
 		// 1. add segement names to visited list
@@ -427,16 +431,16 @@ SolutionPredicate::count_visited_pairs_with_segment(
 	SegmentNameSet const & visited ) const
 {
 	core::Size count = 0;
-	for ( SegmentPairSet::const_iterator p=pairs_.begin(); p!=pairs_.end(); ++p ) {
+	for ( auto const & pair : pairs_ ) {
 		// if this segment has nothing to do with the pairing, skip over it
-		if ( ( p->first != segment_name ) && ( p->second != segment_name ) ) continue;
+		if ( ( pair.first != segment_name ) && ( pair.second != segment_name ) ) continue;
 
 		if ( visited.find( segment_name ) == visited.end() ) continue;
 
 		// Find pairing partner
 		SegmentName partner;
-		if ( p->first == segment_name ) partner = p->second;
-		else partner = p->first;
+		if ( pair.first == segment_name ) partner = pair.second;
+		else partner = pair.first;
 
 		if ( visited.find( partner ) == visited.end() ) continue;
 		count += 1;

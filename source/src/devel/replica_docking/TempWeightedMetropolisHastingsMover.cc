@@ -96,7 +96,7 @@ TempWeightedMetropolisHastingsMover::add_mover(
 	for ( auto const& wc_tag : wc_tags ) {
 		TempInterpolatorBaseOP wc=nullptr;
 		if ( wc_tag->getName() == "Interp" && wc_tag->getOption< std::string >("key") == "weight" ) {
-			core::Size dim=wc_tag->getOption< core::Size >( "dim",1 );
+			auto dim=wc_tag->getOption< core::Size >( "dim",1 );
 			tr.Debug << "dim" << dim << " nlevels_per_dim" << tempering()->nlevels_per_dim(dim) << std::endl;
 
 			if ( tempering()->nlevels_per_dim(dim) > 1 ) {

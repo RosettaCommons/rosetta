@@ -41,7 +41,7 @@ public:
 
 	StructPerturberCM();
 
-	StructPerturberCM( std::string const& label,
+	StructPerturberCM( std::string const & label,
 		core::Real magnitude );
 
 	virtual ~StructPerturberCM() {};

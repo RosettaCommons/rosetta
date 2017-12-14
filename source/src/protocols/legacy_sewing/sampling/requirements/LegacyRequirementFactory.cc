@@ -49,9 +49,9 @@ namespace requirements {
 static basic::Tracer tr("protocols.legacy_sewing.sampling.requirements.LegacyRequirementFactory");
 
 /// @details Private constructor insures correctness of singleton.
-LegacyRequirementFactory::LegacyRequirementFactory() {}
+LegacyRequirementFactory::LegacyRequirementFactory() = default;
 
-LegacyRequirementFactory::~LegacyRequirementFactory() {}
+LegacyRequirementFactory::~LegacyRequirementFactory() = default;
 
 void
 LegacyRequirementFactory::factory_register(
@@ -90,7 +90,7 @@ LegacyRequirementFactory::get_global_requirement(
 		}
 		utility_exit_with_message(error_msg.str());
 	}
-	return 0;
+	return nullptr;
 }
 
 
@@ -116,7 +116,7 @@ LegacyRequirementFactory::get_intra_segment_requirement(
 		}
 		utility_exit_with_message(error_msg.str());
 	}
-	return 0;
+	return nullptr;
 }
 
 

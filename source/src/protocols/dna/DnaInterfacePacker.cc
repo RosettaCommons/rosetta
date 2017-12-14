@@ -160,12 +160,12 @@ DnaInterfacePacker::DnaInterfacePacker()
 DnaInterfacePacker::DnaInterfacePacker(
 	ScoreFunctionOP scorefxn_in,
 	bool minimize,
-	std::string filename_root
+	std::string const & filename_root
 ) : protocols::simple_moves::PackRotamersMover( std::string("DnaInterfacePacker") ),
 	reference_pose_(/* 0 */),
 	dna_chains_(/* 0 */),
 	minimize_( minimize ),
-	filename_root_(std::move( filename_root )),
+	filename_root_( filename_root ),
 	binding_E_(false),
 	probe_specificity_(false),
 	reversion_scan_(false),
@@ -775,7 +775,7 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 			single_sequence.push_back( pose.residue_type_ptr(index) );
 		}
 		// alter dna types according to this dna sequence
-		for ( const auto & it : dna_sequence ) {
+		for ( auto const & it : dna_sequence ) {
 			single_sequence[ it.first ] = it.second;
 		}
 		// populate rot_to_pack with only the rotamers that reflect single_sequence
@@ -878,7 +878,7 @@ public:
 	ResidueTypeCOP type;
 	Real dscore_bound, dspec_bound, dscore_binding, dspec_binding;
 };
-typedef vector1< Reversion > Reversions;
+using Reversions = vector1<Reversion>;
 
 void
 DnaInterfacePacker::reversion_scan(

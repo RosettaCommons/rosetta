@@ -32,6 +32,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -81,7 +82,7 @@ NeighborhoodResidueSelector::NeighborhoodResidueSelector( ResidueSubset const & 
 
 NeighborhoodResidueSelector::NeighborhoodResidueSelector( ResidueSelectorCOP selector, Real distance, bool include_focus ):
 	ResidueSelector(),
-	focus_selector_(selector)
+	focus_selector_(std::move(selector))
 {
 	set_defaults();
 	set_distance( distance );
@@ -101,7 +102,7 @@ NeighborhoodResidueSelector::NeighborhoodResidueSelector( NeighborhoodResidueSel
 	if ( src.focus_selector_ ) focus_selector_ = src.focus_selector_->clone();
 }
 
-NeighborhoodResidueSelector::~NeighborhoodResidueSelector() {}
+NeighborhoodResidueSelector::~NeighborhoodResidueSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
@@ -156,7 +157,7 @@ void
 NeighborhoodResidueSelector::clear_focus(){
 	focus_str_ = "";
 	focus_.clear();
-	focus_selector_ = NULL;
+	focus_selector_ = nullptr;
 }
 
 void
@@ -219,10 +220,9 @@ NeighborhoodResidueSelector::get_focus(
 		focus_set = true;
 	} else if ( focus_str_ != "" ) {
 		std::set< Size > const res_vec( get_resnum_list( focus_str_, pose ) );
-		for ( std::set< Size >::const_iterator it = res_vec.begin();
-				it != res_vec.end(); ++it ) {
+		for ( unsigned long it : res_vec ) {
 
-			focus[ *it ] = true;
+			focus[ it ] = true;
 			focus_set = true;
 		}
 	}

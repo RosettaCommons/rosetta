@@ -25,8 +25,7 @@ ConstraintNode::ConstraintNode( utility::graph::Graph* owner, Size node_id )
 {}
 
 
-ConstraintNode::~ConstraintNode()
-{}
+ConstraintNode::~ConstraintNode() = default;
 
 void
 ConstraintNode::copy_from( Node const * source )
@@ -46,8 +45,7 @@ ConstraintNode::count_dynamic_memory() const
 	return parent::count_dynamic_memory();
 }
 
-ConstraintEdge::~ConstraintEdge()
-{}
+ConstraintEdge::~ConstraintEdge() = default;
 
 ConstraintEdge::ConstraintEdge( utility::graph::Graph * owner, Size first_node_ind, Size second_node_ind)
 :
@@ -87,7 +85,7 @@ ConstraintEdge::ConstraintEdge( utility::graph::Graph * owner, ConstraintEdge co
 void
 ConstraintEdge::copy_from( utility::graph::Edge const * source )
 {
-	ConstraintEdge const * cst_source = static_cast< ConstraintEdge const * > ( source );
+	auto const * cst_source = static_cast< ConstraintEdge const * > ( source );
 
 	bond_geometry_energy_ = cst_source->bond_geometry_energy_;
 	rna_bond_geometry_energy_ = cst_source->rna_bond_geometry_energy_;

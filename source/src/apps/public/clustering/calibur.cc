@@ -17,8 +17,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/keys/cluster.OptionKeys.gen.hh>
 
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 
 //Calibur Includes - Note this is EXTERNAL and is written outside of the coding conventions for SPEED.
 // If you are intrepid, please convert these to Rosetta proper if possible!

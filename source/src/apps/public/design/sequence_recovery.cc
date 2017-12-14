@@ -86,7 +86,7 @@ IntegerOptionKey const se_cutoff( "sequence_recovery::se_cutoff" );
 
 std::string usage_string;
 
-void init_usage_prompt( std::string exe ) {
+void init_usage_prompt( std::string const & exe ) {
 
 	// place the prompt up here so that it gets updated easily; global this way, but that's ok
 	std::stringstream usage_stream;
@@ -120,8 +120,8 @@ core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_f
 		TaskOperationFactory::TaskOperationOPs tops;
 		basic::datacache::DataMap dm; // empty data map! any TaskOperation that tries to retrieve data out of this datamap will fail to find it.
 		TaskOperationFactory::get_instance()->newTaskOperations( tops, dm, tagfile_name );
-		for ( TaskOperationFactory::TaskOperationOPs::iterator it( tops.begin() ), itend( tops.end() ); it != itend; ++it ) {
-			task_factory_->push_back( *it );
+		for ( auto & top : tops ) {
+			task_factory_->push_back( top );
 		}
 	} else {
 		task_factory_->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
@@ -210,8 +210,8 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 	Size core_cutoff = 24;
 
 	// iterate through all the structures
-	utility::vector1< core::pose::Pose >::iterator native_itr( native_poses.begin() ), native_last( native_poses.end() );
-	utility::vector1< core::pose::Pose >::iterator redesign_itr( redesign_poses.begin() ), redesign_last( redesign_poses.end() );
+	auto native_itr( native_poses.begin() ), native_last( native_poses.end() );
+	auto redesign_itr( redesign_poses.begin() ), redesign_last( redesign_poses.end() );
 
 	while ( ( native_itr != native_last ) && (redesign_itr != redesign_last ) ) {
 
@@ -236,59 +236,59 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 		utility::vector1< chemical::AA > native_sequence( nres );
 
 		// iterate over designable positions
-		for ( std::set< core::Size >::const_iterator it = design_set.begin(), end = design_set.end(); it != end; ++it ) {
+		for ( unsigned long it : design_set ) {
 
-			if ( ! native_pose.residue(*it).is_protein() ) {
-				native_sequence[ *it ] = chemical::aa_unk;
+			if ( ! native_pose.residue(it).is_protein() ) {
+				native_sequence[ it ] = chemical::aa_unk;
 				continue;
 			}
 			//figure out info about the native pose
-			native_sequence[ *it ] = native_pose.residue( *it ).aa();
-			n_native[ native_pose.residue(*it).aa() ]++;
+			native_sequence[ it ] = native_pose.residue( it ).aa();
+			n_native[ native_pose.residue(it).aa() ]++;
 
 			//determine core/surface
-			if ( num_neighbors[*it] >= core_cutoff ) {
-				n_native_core[ native_pose.residue(*it).aa() ]++;
+			if ( num_neighbors[it] >= core_cutoff ) {
+				n_native_core[ native_pose.residue(it).aa() ]++;
 				n_total_core++;
 			}
 
-			if ( num_neighbors[*it] < surface_exposed_cutoff ) {
-				n_native_surface[ native_pose.residue(*it).aa() ]++;
+			if ( num_neighbors[it] < surface_exposed_cutoff ) {
+				n_native_surface[ native_pose.residue(it).aa() ]++;
 				n_total_surface++;
 			}
 
 		} // end finding native seq
 
 		/// measure seq recov
-		for ( std::set< core::Size >::const_iterator it = design_set.begin(), end = design_set.end(); it != end; ++it ) {
+		for ( unsigned long it : design_set ) {
 
 			// don't worry about recovery of non-protein residues
-			if ( redesign_pose.residue( *it ).is_protein() ) {
+			if ( redesign_pose.residue( it ).is_protein() ) {
 				n_total++;
 
 				// increment the designed count
-				n_designed[ redesign_pose.residue(*it).aa() ]++;
+				n_designed[ redesign_pose.residue(it).aa() ]++;
 
-				if ( num_neighbors[*it] >= core_cutoff ) { n_designed_core[ redesign_pose.residue(*it).aa() ]++; }
-				if ( num_neighbors[*it] < surface_exposed_cutoff ) { n_designed_surface[ redesign_pose.residue(*it).aa() ]++; }
+				if ( num_neighbors[it] >= core_cutoff ) { n_designed_core[ redesign_pose.residue(it).aa() ]++; }
+				if ( num_neighbors[it] < surface_exposed_cutoff ) { n_designed_surface[ redesign_pose.residue(it).aa() ]++; }
 
 				// then check if it's the same
-				if ( native_sequence[ *it ] == redesign_pose.residue(*it).aa() ) {
-					n_correct[ redesign_pose.residue(*it).aa() ]++;
+				if ( native_sequence[ it ] == redesign_pose.residue(it).aa() ) {
+					n_correct[ redesign_pose.residue(it).aa() ]++;
 
-					if ( num_neighbors[*it] >= core_cutoff ) {
-						n_correct_core[ redesign_pose.residue(*it).aa() ]++;
+					if ( num_neighbors[it] >= core_cutoff ) {
+						n_correct_core[ redesign_pose.residue(it).aa() ]++;
 						n_correct_total_core++;
 					}
-					if ( num_neighbors[*it] < surface_exposed_cutoff ) {
-						n_correct_surface[ redesign_pose.residue(*it).aa() ]++;
+					if ( num_neighbors[it] < surface_exposed_cutoff ) {
+						n_correct_surface[ redesign_pose.residue(it).aa() ]++;
 						n_correct_total_surface++;
 					}
 					n_correct_total++;
 				}
 
 				// set the substitution matrix for this go round
-				sub_matrix( native_pose.residue(*it).aa(), redesign_pose.residue(*it).aa() )++;
+				sub_matrix( native_pose.residue(it).aa(), redesign_pose.residue(it).aa() )++;
 			}
 
 		} // end measure seq reovery
@@ -434,7 +434,7 @@ int main( int argc, char* argv[] ) {
 			utility_exit_with_message( "Unable to open file: " + native_pdb_list_file_name + '\n' );
 		}
 		while ( getline( native_data, native_line ) ) {
-			native_pdb_file_names.push_back( FileName( native_line ) );
+			native_pdb_file_names.emplace_back( native_line );
 		}
 
 		native_data.close();
@@ -448,7 +448,7 @@ int main( int argc, char* argv[] ) {
 			utility_exit_with_message( "Unable to open file: " + redesign_pdb_list_file_name + '\n' );
 		}
 		while ( getline( redesign_data, redesign_line ) ) {
-			redesign_pdb_file_names.push_back( FileName( redesign_line ) );
+			redesign_pdb_file_names.emplace_back( redesign_line );
 		}
 		redesign_data.close();
 
@@ -461,8 +461,8 @@ int main( int argc, char* argv[] ) {
 		utility::vector1< pose::Pose > native_poses;
 		utility::vector1< pose::Pose > redesign_poses;
 
-		std::vector< FileName >::iterator native_pdb( native_pdb_file_names.begin() ), native_last_pdb(native_pdb_file_names.end());
-		std::vector< FileName >::iterator redesign_pdb( redesign_pdb_file_names.begin() ), redesign_last_pdb(redesign_pdb_file_names.end());
+		auto native_pdb( native_pdb_file_names.begin() ), native_last_pdb(native_pdb_file_names.end());
+		auto redesign_pdb( redesign_pdb_file_names.begin() ), redesign_last_pdb(redesign_pdb_file_names.end());
 
 		while ( ( native_pdb != native_last_pdb ) && ( redesign_pdb != redesign_last_pdb ) ) {
 

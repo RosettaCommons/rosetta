@@ -57,7 +57,7 @@ namespace datacache {
 class DiagnosticData : public CacheableData
 {
 public:
-	DiagnosticData( std::map < std::string, double >  data_in );
+	DiagnosticData( std::map < std::string, double > const & data_in );
 	~DiagnosticData() override;
 	CacheableDataOP clone() const override;
 	virtual std::map < std::string, double > const & data() const;

@@ -104,8 +104,8 @@ public:
 	core::Real score_;
 };
 
-typedef utility::vector1< hbgeom_to_measure > hbgeoms_to_measure;
-typedef numeric::HomogeneousTransform< core::Real > HTReal;
+using hbgeoms_to_measure = utility::vector1<hbgeom_to_measure>;
+using HTReal = numeric::HomogeneousTransform<core::Real>;
 
 
 void
@@ -229,7 +229,7 @@ write_score_types_to_database(
 
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for ( core::Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
-		ScoreType type(static_cast<ScoreType>(score_type_id));
+		auto type(static_cast<ScoreType>(score_type_id));
 		std::string const score_type( ScoreTypeManager::name_from_score_type(type) );
 		stmt.bind(1,score_type);
 		basic::database::safely_write_to_database(stmt);
@@ -476,7 +476,7 @@ write_respair_scores_to_database(
 	// pose.residue( res2ind ).atom( "1HD2" ).xyz() ) << " ";
 
 	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
-		ScoreType iist = ScoreType(ii);
+		auto iist = ScoreType(ii);
 		if ( (sfxn.weights())[ iist ] == 0 ) continue;
 		score_name = ScoreTypeManager::name_from_score_type( iist );
 		score_val = emap[ iist ];
@@ -976,7 +976,7 @@ create_mingraph_for_focused_residue_pair(
 		pose.residue( res1_index ), pose.residue( res2_index ),
 		* mingraph->find_minimization_edge( res1_index, res2_index ),
 		* minimizer_map, pose, true, false,
-		static_cast< scoring::EnergyEdge const * > ( 0 ), dummy );
+		static_cast< scoring::EnergyEdge const * > ( nullptr ), dummy );
 
 }
 
@@ -1001,7 +1001,7 @@ gradient_magnitude_for_conformation(
 	minnode1.setup_for_derivatives( pose.residue( res1_index ), pose.residue_data( res1_index ), pose, sfxn );
 	minnode2.setup_for_derivatives( pose.residue( res2_index ), pose.residue_data( res2_index ), pose, sfxn );
 
-	core::scoring::MinimizationEdge & minedge = static_cast< core::scoring::MinimizationEdge & >
+	auto & minedge = static_cast< core::scoring::MinimizationEdge & >
 		( *mingraph->find_minimization_edge( res1_index, res2_index ) );
 
 	minedge.setup_for_minimizing(
@@ -1131,7 +1131,7 @@ output_local_minima(
 
 	core::pose::initialize_atomid_map( bfactors, pose, core::Real(0.0) );
 
-	core::Size max_digits( core::Size( std::ceil( std::log10( local_minima.size() ) ) ) );
+	auto max_digits( core::Size( std::ceil( std::log10( local_minima.size() ) ) ) );
 	core::Size count( 0 );
 	for ( std::list< local_minimum >::const_iterator
 			iter = local_minima.begin(), iter_end = local_minima.end();

@@ -21,6 +21,7 @@
 
 #include <core/chemical/gasteiger/util.hh>
 
+#include <utility>
 #include <utility/numbers.hh>
 #include <utility/exit.hh>
 #include <utility/tools/make_vector.hh>
@@ -115,24 +116,24 @@ GasteigerAtomTypeData::GasteigerAtomTypeData() :
 	pi_contribution_( Zero)
 {
 	// make all the properties undefined
-	for ( int property_number( 0); property_number < NumberOfProperties; ++property_number ) {
-		properties_[ property_number] = utility::get_undefined_real();
+	for ( double & propertie : properties_ ) {
+		propertie = utility::get_undefined_real();
 	}
 }
 
 //! @brief destructor
-GasteigerAtomTypeData::~GasteigerAtomTypeData() {}
+GasteigerAtomTypeData::~GasteigerAtomTypeData() = default;
 
 //! @brief the usual constructor
 GasteigerAtomTypeData::GasteigerAtomTypeData
 (
-	const std::string &NAME,
+	std::string const & NAME,
 	const ElementOP &ELEMENT_TYPE,
 	const HybridOrbitalType &HYBRIDIZATION,
 	const core::Size &HYBRID_ORBITALS_IN_SIGMA_BONDS,
 	const core::Size &HYBRID_ORBITALS_NONBINDING,
-	const std::set< AtomicOrbitalTypes > &PI_ORBITALS_IN_BONDS,
-	const std::set< AtomicOrbitalTypes > &ATOMIC_ORBITALS_NONBINDING,
+	std::set< AtomicOrbitalTypes > const & PI_ORBITALS_IN_BONDS,
+	std::set< AtomicOrbitalTypes > const & ATOMIC_ORBITALS_NONBINDING,
 	const core::Real &SIGMA_VALENCE_STATE_IONIZATION_POTENTIAL,
 	const core::Real &SIGMA_VALENCE_STATE_ELECTRON_AFFINITY,
 	const core::Real &PI_VALENCE_STATE_IONIZATION_POTENTIAL,
@@ -164,13 +165,13 @@ GasteigerAtomTypeData::GasteigerAtomTypeData
 //! @brief the usual constructor
 GasteigerAtomTypeData::GasteigerAtomTypeData
 (
-	const std::string &NAME,
+	std::string const & NAME,
 	const std::string &ELEMENT,
 	const HybridOrbitalType &HYBRIDIZATION,
 	const core::Size &HYBRID_ORBITALS_IN_SIGMA_BONDS,
 	const core::Size &HYBRID_ORBITALS_NONBINDING,
-	const std::set< AtomicOrbitalTypes > &PI_ORBITALS_IN_BONDS,
-	const std::set< AtomicOrbitalTypes > &ATOMIC_ORBITALS_NONBINDING,
+	std::set< AtomicOrbitalTypes > const & PI_ORBITALS_IN_BONDS,
+	std::set< AtomicOrbitalTypes > const & ATOMIC_ORBITALS_NONBINDING,
 	const core::Real &SIGMA_VALENCE_STATE_IONIZATION_POTENTIAL,
 	const core::Real &SIGMA_VALENCE_STATE_ELECTRON_AFFINITY,
 	const core::Real &PI_VALENCE_STATE_IONIZATION_POTENTIAL,
@@ -203,9 +204,9 @@ GasteigerAtomTypeData::GasteigerAtomTypeData
 //! @brief constructor from just an element type and charge
 GasteigerAtomTypeData::GasteigerAtomTypeData
 (
-	const std::string &NAME,
+	std::string const & NAME,
 	const ElementOP ELEMENT_TYPE,
-	const short &CHARGE
+	const short CHARGE
 ) :
 	name_( NAME ),
 	element_type_( ELEMENT_TYPE),
@@ -225,8 +226,8 @@ GasteigerAtomTypeData::GasteigerAtomTypeData
 	pi_contribution_( Zero)
 {
 	// make all the properties undefined
-	for ( int property_number( 0); property_number < NumberOfProperties; ++property_number ) {
-		properties_[ property_number] = utility::get_undefined_real();
+	for ( double & propertie : properties_ ) {
+		propertie = utility::get_undefined_real();
 	}
 }
 

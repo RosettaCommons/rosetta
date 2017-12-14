@@ -109,9 +109,9 @@ using namespace core::chemical;
 namespace protocols {
 namespace noesy_assign {
 
-typedef utility::vector1< core::Size > SizeList;
+using SizeList = utility::vector1<core::Size>;
 typedef utility::vector1< std::pair< std::string, SizeList> > AtomGrps;
-typedef utility::vector1< AtomGrps > GroupList;
+using GroupList = utility::vector1<AtomGrps>;
 typedef std::map< core::id::AtomID,  FragsToAtomDist::DistanceRecord > InnerMap;
 typedef std::map< core::id::AtomID, InnerMap > DistanceMap;
 

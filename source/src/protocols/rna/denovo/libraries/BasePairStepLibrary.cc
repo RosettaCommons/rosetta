@@ -91,7 +91,7 @@ BasePairStepLibrary::BasePairStepLibrary( bool const canonical /* = true */ ):
 }
 
 //Destructor
-BasePairStepLibrary::~BasePairStepLibrary(){}
+BasePairStepLibrary::~BasePairStepLibrary()= default;
 
 //////////////////////////////////////////////////////////
 void
@@ -185,7 +185,7 @@ BasePairStepLibrary::initialize_data( BasePairStepSequence const & base_pair_ste
 
 	} else {
 		mini_pose_lists_[ base_pair_step_sequence ] = utility::vector1< pose::MiniPoseOP >(); // empty
-		scratch_poses_[   base_pair_step_sequence ] = 0;
+		scratch_poses_[   base_pair_step_sequence ] = nullptr;
 	}
 }
 

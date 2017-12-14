@@ -68,13 +68,7 @@ CompoundTranslate::CompoundTranslate():
 	Mover("CompoundTranslate")
 {}
 
-CompoundTranslate::CompoundTranslate(CompoundTranslate const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	translates_(that.translates_),
-	randomize_order_(that.randomize_order_),
-	allow_overlap_(that.allow_overlap_)
-{}
+CompoundTranslate::CompoundTranslate(CompoundTranslate const & /*that*/) = default;
 
 CompoundTranslate::~CompoundTranslate() = default;
 

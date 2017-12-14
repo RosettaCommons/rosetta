@@ -62,8 +62,7 @@ TensorsOptimizer_Ts4::TensorsOptimizer_Ts4(PCS_data_Ts4 const & pcs_d):
 {
 }
 
-TensorsOptimizer_Ts4::~TensorsOptimizer_Ts4(){
-}
+TensorsOptimizer_Ts4::~TensorsOptimizer_Ts4()= default;
 
 core::Real
 TensorsOptimizer_Ts4::operator ()( core::optimization::Multivec const & vars ) const{

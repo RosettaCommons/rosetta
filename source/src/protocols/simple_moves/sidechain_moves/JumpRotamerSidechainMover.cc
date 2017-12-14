@@ -210,8 +210,8 @@ JumpRotamerSidechainMover::compute_rotdensities(
 	}
 
 	Real norm_prob=0;
-	for ( RotamerList::const_iterator it = rotamers.begin(); it!=rotamers.end(); ++it ) {
-		norm_prob += it->probability();
+	for ( auto const & rotamer : rotamers ) {
+		norm_prob += rotamer.probability();
 	}
 	if ( std::abs( norm_prob - 1.0 ) > 0.00001 ) {
 		tr.Warning << "ALARM: probs are not normalized correctly: " << norm_prob << std::endl;

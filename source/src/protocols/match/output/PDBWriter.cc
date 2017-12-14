@@ -39,6 +39,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -70,7 +71,7 @@ PDBWriter::PDBWriter() :
 	upstream_only_geom_cst_.clear();
 }
 
-PDBWriter::~PDBWriter() {}
+PDBWriter::~PDBWriter() = default;
 
 
 void
@@ -263,7 +264,7 @@ PDBWriter::assemble_remark_lines(
 		core::io::RemarkInfo ri;
 		ri.num = 666; /// really now?
 		std::string upname3( upstream_matchres[ i ]->name3() );
-		std::map< core::Size, core::Size >::const_iterator red_it = redundant_upstream_res.find( i );
+		auto red_it = redundant_upstream_res.find( i );
 		if ( red_it != redundant_upstream_res.end() ) {
 			upname3 = upstream_matchres[ red_it->second ]->name3();
 		}
@@ -272,7 +273,7 @@ PDBWriter::assemble_remark_lines(
 		std::string targ_resname( ds_resname );
 		std::string targ_chain("X");
 		int targ_seqpos(0);
-		std::map< core::Size, core::Size >::const_iterator upstream_only_it(upstream_only_geom_cst_.find( i ) );
+		auto upstream_only_it(upstream_only_geom_cst_.find( i ) );
 		if ( upstream_only_it != upstream_only_geom_cst_.end() ) {
 			targ_resname = upstream_matchres[ upstream_only_it->second ]->name3();
 			targ_chain =  utility::to_string( orig_upstream_pose_->pdb_info()->chain( upstream_matchres[ upstream_only_it->second ]->seqpos() ) );
@@ -283,10 +284,9 @@ PDBWriter::assemble_remark_lines(
 		rems.push_back( ri );
 
 	}
-	for ( core::io::Remarks::const_iterator r = orig_upstream_pose_->pdb_info()->remarks().begin();
-			r != orig_upstream_pose_->pdb_info()->remarks().end(); ++r ) {
-		if ( r->num != 666 ) {
-			rems.push_back( *r );
+	for ( auto const & r : orig_upstream_pose_->pdb_info()->remarks() ) {
+		if ( r.num != 666 ) {
+			rems.push_back( r );
 		}
 	}
 	outpose.pdb_info()->remarks( rems );
@@ -401,7 +401,7 @@ PDBWriter::assemble_outtag(
 	//  utility::to_string( upstream_matchres[i]->seqpos() );
 	//}
 
-	std::map< std::string, SizePair >::iterator map_it = signature_map_.find( signature );
+	auto map_it = signature_map_.find( signature );
 	if ( map_it == signature_map_.end() ) {
 		core::Size num_this_um = signature_map_.size() + 1;
 		signature_map_[ signature ] = SizePair( num_this_um, 1 );
@@ -419,12 +419,12 @@ PDBWriter::assemble_outtag(
 
 CloudPDBWriter::CloudPDBWriter( MatchGrouperOP grouper ) :
 	PDBWriter(),
-	grouper_(grouper)
+	grouper_(std::move(grouper))
 {
 	clear_match_data();
 }
 
-CloudPDBWriter::~CloudPDBWriter() {}
+CloudPDBWriter::~CloudPDBWriter() = default;
 
 void
 CloudPDBWriter::prepare_for_output_writing()
@@ -693,7 +693,7 @@ PoseMatchOutputWriter::PoseMatchOutputWriter( MatchGrouperOP grouper )
 : parent( grouper )
 {}
 
-PoseMatchOutputWriter::~PoseMatchOutputWriter(){}
+PoseMatchOutputWriter::~PoseMatchOutputWriter()= default;
 
 /// @brief this function doesn't do anything, but needs
 /// to exist to suppress the unwanted call to the base
@@ -742,7 +742,7 @@ PoseMatchOutputWriter::insert_match_into_pose(
 
 		utility::vector1< core::conformation::ResidueCOP > additional_lig_confs;
 		for ( core::Size i = 1; i <= num_geom_cst(); ++i ) {
-			for ( std::set< downstream_hit >::const_iterator ds_hits_it( match_groups_dshits()[match_group][i].begin()), ds_hits_end( match_groups_dshits()[match_group][i].end() ); ds_hits_it != ds_hits_end; ++ds_hits_it ) {
+			for ( auto ds_hits_it( match_groups_dshits()[match_group][i].begin()), ds_hits_end( match_groups_dshits()[match_group][i].end() ); ds_hits_it != ds_hits_end; ++ds_hits_it ) {
 				additional_lig_confs.push_back( dsbuilders()[i]->downstream_pose_from_hit( fake_hit(*(ds_hits_it)) )->residue(1).get_self_ptr() );
 				if ( additional_lig_confs.size() > 99 ) break;
 			}

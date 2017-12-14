@@ -22,6 +22,7 @@
 #include <ostream>
 #include <string>
 
+#include <utility>
 #include <utility/assert.hh>
 
 namespace core {
@@ -29,7 +30,7 @@ namespace scoring {
 namespace hbonds {
 
 /// @details Auto-generated virtual destructor
-FadeInterval::~FadeInterval() {}
+FadeInterval::~FadeInterval() = default;
 
 using std::string;
 using std::ostream;

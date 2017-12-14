@@ -34,7 +34,7 @@ namespace protocols {
 namespace match {
 namespace upstream {
 
-ProteinSCSampler::~ProteinSCSampler() {}
+ProteinSCSampler::~ProteinSCSampler() = default;
 
 DunbrackSCSampler::DunbrackSCSampler() :
 	desymmeterize_( false )
@@ -62,12 +62,12 @@ DunbrackSCSampler::samples(
 	SingleResidueRotamerLibraryFactory const & rotlibfact( *SingleResidueRotamerLibraryFactory::get_instance() );
 	SingleResidueRotamerLibraryCOP res_rotlib( rotlibfact.get( restype ) );
 
-	if ( res_rotlib != 0 ) {
+	if ( res_rotlib != nullptr ) {
 
 		SingleResidueDunbrackLibraryCOP dun_rotlib(
 			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( res_rotlib ));
 
-		if ( dun_rotlib == 0 ) {
+		if ( dun_rotlib == nullptr ) {
 			utility_exit_with_message( "ERROR: Failed to retrieve a Dunbrack rotamer library for AA: " +
 				utility::to_string( restype.aa() ) +  " named " +  restype.name() );
 		}
@@ -80,7 +80,7 @@ DunbrackSCSampler::samples(
 			}
 		}
 
-		ProteinBackboneBuildPoint const & bb(
+		auto const & bb(
 			static_cast< ProteinBackboneBuildPoint const & >
 			( bb_conf ));
 

@@ -22,6 +22,7 @@
 
 #include <core/conformation/Conformation.hh>
 
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 
 // tracer
@@ -76,7 +77,7 @@ void DofPassport::render_movemap( core::kinematics::MoveMapOP mm ) const {
 
 		// false if no bb torsions
 		Size const n_bbs = conf_->residue( seqpos ).mainchain_torsions().size();
-		bool seqpos_access = (bool) n_bbs;
+		auto seqpos_access = (bool) n_bbs;
 
 		for ( Size i = 1; i <= n_bbs; ++i ) {
 			id::TorsionID t_id = id::TorsionID( seqpos, id::BB, i );

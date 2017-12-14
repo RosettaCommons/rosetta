@@ -102,12 +102,12 @@ Atom_::show() const
 	}
 
 	std::cout << "   CHILDREN: ";
-	for ( Atoms::const_iterator it= atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
-		std::cout << (*it)->id() << ' ';
+	for ( auto const & atom : atoms_ ) {
+		std::cout << atom->id() << ' ';
 	}
 	std::cout << std::endl;
-	for ( Atoms::const_iterator it= atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
-		(*it)->show();
+	for ( auto const & atom : atoms_ ) {
+		atom->show();
 	}
 }
 
@@ -138,16 +138,16 @@ Atom_::show(int const & n_level) const
 	}
 
 	TR << "   CHILDREN: ";
-	for ( Atoms::const_iterator it= atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
-		TR << (*it)->id() << ' ';
+	for ( auto const & atom : atoms_ ) {
+		TR << atom->id() << ' ';
 	}
 	TR << std::endl;
 
 	//TR << "Yifan debug: " << n_level << std::endl;
 	if ( n_level > 0 ) {
 		int const next_level(n_level - 1);
-		for ( Atoms::const_iterator it= atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
-			(*it)->show(next_level);
+		for ( auto const & atom : atoms_ ) {
+			atom->show(next_level);
 		}
 	}
 }
@@ -205,8 +205,8 @@ Atom_::update_domain_map(
 	}
 
 
-	for ( Atoms::const_iterator it= atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
-		(*it)->update_domain_map( color, biggest_color, domain_map, dof_moved, atom_moved );
+	for ( auto const & atom : atoms_ ) {
+		atom->update_domain_map( color, biggest_color, domain_map, dof_moved, atom_moved );
 	}
 }
 
@@ -277,7 +277,7 @@ Atom_::insert_atom(
 	atom->parent( get_self_weak_ptr() ); // Note: you cannot give "this" to the child, or the reference-count information will be lost with boost::weak_ptr
 
 	debug_assert( index >= 0 );
-	Atoms::iterator pos( atoms_.begin() + index );
+	auto pos( atoms_.begin() + index );
 	if ( atom->is_jump() ) {
 		if ( pos > nonjump_atoms_begin() ) pos = nonjump_atoms_begin();
 	} else {
@@ -305,7 +305,7 @@ Atom_::replace_atom(
 	debug_assert( ( old_atom->is_jump() && new_atom->is_jump() ) ||
 		( !old_atom->is_jump() && !new_atom->is_jump() ) );
 
-	Atoms::iterator iter( std::find( atoms_.begin(), atoms_.end(), old_atom ) );
+	auto iter( std::find( atoms_.begin(), atoms_.end(), old_atom ) );
 	if ( iter == atoms_.end() ) {
 		TR.Fatal << "old_atom not present in atoms list! " << atoms_.size() << std::endl;
 		utility_exit_with_message("'Replacing' an atom which doesn't currently exist.");
@@ -329,10 +329,10 @@ Atom_::get_nonjump_atom(
 	Size const index
 ) const
 {
-	Atoms::const_iterator iter( nonjump_atoms_begin() );
+	auto iter( nonjump_atoms_begin() );
 	iter += index;
 	if ( iter >= atoms_.end() ) {
-		return 0;
+		return nullptr;
 	} else {
 		return *iter;
 	}
@@ -406,12 +406,12 @@ Atom_::dihedral_between_bonded_children(
 	}
 
 	// keep track of which atoms we've seen and in what order
-	Atom const * first_atom( 0 );
-	Atom const * second_atom( 0 );
+	Atom const * first_atom( nullptr );
+	Atom const * second_atom( nullptr );
 
 	Real phi_offset(0.0);
 
-	for ( Atoms_ConstIterator it=nonjump_atoms_begin(),
+	for ( auto it=nonjump_atoms_begin(),
 			it_end=atoms_end(); it != it_end; ++it ) {
 		if ( first_atom ) phi_offset += (*it)->dof(PHI);
 
@@ -510,7 +510,7 @@ Atom_::previous_sibling() const
 	if ( parent_op ) {
 		return parent_op->previous_child( get_self_ptr() );
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -522,13 +522,13 @@ Atom_::previous_child(
 ) const
 {
 	//std::cout << "atoms_.size() = " << atoms_.size() << std::endl;
-	Atoms::const_iterator iter( std::find( atoms_.begin(), atoms_.end(), child ) );
+	auto iter( std::find( atoms_.begin(), atoms_.end(), child ) );
 	if ( iter == atoms_.end() ) {
 		std::cerr << "child not present in atoms list! " << atoms_.size() << std::endl;
 		utility_exit();
 	}
 	if ( iter == atoms_.begin() ) {
-		return 0;
+		return nullptr;
 	} else {
 		--iter;
 		return *iter;
@@ -550,7 +550,7 @@ Atom_::next_child(
 	}
 	++iter;
 	if ( iter == atoms_.end() ) {
-		return 0;
+		return nullptr;
 	} else {
 		return *iter;
 	}
@@ -587,8 +587,8 @@ Atom_::stub_defined() const
 
 	if ( is_jump() ) {
 		AtomCOP first = get_nonjump_atom(0);
-		if ( first != 0 &&
-				( first->get_nonjump_atom(0) != 0 || get_nonjump_atom(1) != 0 ) ) {
+		if ( first != nullptr &&
+				( first->get_nonjump_atom(0) != nullptr || get_nonjump_atom(1) != nullptr ) ) {
 			return true;
 		} else {
 			return false;
@@ -615,7 +615,7 @@ Atom_::update_child_torsions(
 {
 	Stub my_stub( this->get_stub() );
 	bool found( false );
-	for ( Atoms::iterator it = atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
+	for ( auto it = atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
 		if ( *it == child ) {
 			(*it)->update_internal_coords( my_stub );
 			// phi torsion for the atom after child may have changed
@@ -650,8 +650,8 @@ Atom_::transform_Ax_plus_b_recursive(
 {
 	position_ = A * position_ + b;
 
-	for ( Atoms::iterator it = atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
-		(*it)->transform_Ax_plus_b_recursive( A, b, res_change_list );
+	for ( auto & atom : atoms_ ) {
+		atom->transform_Ax_plus_b_recursive( A, b, res_change_list );
 	}
 	res_change_list.mark_residue_moved( atom_id_ );
 }
@@ -685,7 +685,7 @@ Atom_::atom_is_on_path_from_root( AtomCOP atm ) const
 Atom_::Atoms_ConstIterator
 Atom_::nonjump_atoms_begin() const
 {
-	Atoms::const_iterator iter( atoms_.begin() );
+	auto iter( atoms_.begin() );
 	while ( iter != atoms_.end() && (*iter)->is_jump() ) ++iter;
 	return iter;
 }
@@ -695,7 +695,7 @@ Atom_::nonjump_atoms_begin() const
 Atom_::Atoms_Iterator
 Atom_::nonjump_atoms_begin()
 {
-	Atoms::iterator iter( atoms_.begin() );
+	auto iter( atoms_.begin() );
 	while ( iter != atoms_.end() && (*iter)->is_jump() ) ++iter;
 	return iter;
 }
@@ -717,20 +717,20 @@ Atom_::dfs(
 	res_change_list.mark_residue_moved( atom_id_ );
 	if ( start_atom_index == dof_refold_index_ ) {
 		/// This is the root atom for a new subtree dfs.
-		for ( Atoms_ConstIterator iter = atoms_.begin(), iter_e = atoms_.end(); iter != iter_e; ++iter ) {
-			(*iter)->dfs( changeset, res_change_list, start_atom_index );
+		for ( auto const & atom : atoms_ ) {
+			atom->dfs( changeset, res_change_list, start_atom_index );
 		}
 
 	} else if ( dof_refold_index_ != 0 ) {
 		changeset[ dof_refold_index_ ].reached_ = true;
 		if ( dof_refold_index_ > start_atom_index ) {
 			//recurse -- the subtree rooted from here won't be reached otherwise.
-			for ( Atoms_ConstIterator iter = atoms_.begin(), iter_e = atoms_.end(); iter != iter_e; ++iter ) {
-				(*iter)->dfs( changeset, res_change_list, start_atom_index );
+			for ( auto const & atom : atoms_ ) {
+				atom->dfs( changeset, res_change_list, start_atom_index );
 			}
 		}
 	} else { // dof_refold_index() == 0 -- recurse.
-		for ( Atoms_ConstIterator iter = atoms_begin(), iter_e = atoms_end(); iter != iter_e; ++iter ) {
+		for ( auto iter = atoms_begin(), iter_e = atoms_end(); iter != iter_e; ++iter ) {
 			(*iter)->dfs( changeset, res_change_list, start_atom_index );
 		}
 	}
@@ -776,7 +776,7 @@ Atom_::raw_previous_sibling() const
 	if ( raw_parent_ ) {
 		return raw_parent_->raw_previous_child( this );
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -788,7 +788,7 @@ Atom_::raw_previous_child(
 	for ( Size ii = 0; ii < atoms_.size(); ++ii ) {
 		if ( atoms_[ ii ].get() == child ) {
 			if ( ii == 0 ) {
-				return 0;
+				return nullptr;
 			} else {
 				return atoms_[ ii-1 ].get();
 			}
@@ -796,7 +796,7 @@ Atom_::raw_previous_child(
 	}
 	std::cerr << "child not present in atoms list! " << atoms_.size() << std::endl;
 	utility_exit();
-	return 0;
+	return nullptr;
 }
 
 
@@ -838,10 +838,10 @@ Atom_::raw_get_nonjump_atom(
 	Size const i
 ) const
 {
-	Atoms::const_iterator iter( nonjump_atoms_begin() );
+	auto iter( nonjump_atoms_begin() );
 	iter += i;
 	if ( iter >= atoms_.end() ) {
-		return 0;
+		return nullptr;
 	} else {
 		return iter->get();
 	}

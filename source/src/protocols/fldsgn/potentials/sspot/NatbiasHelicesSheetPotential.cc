@@ -77,8 +77,7 @@ NatbiasHelicesSheetPotential::NatbiasHelicesSheetPotential( NatbiasHelicesSheetP
 {}
 
 /// @brief default destructor
-NatbiasHelicesSheetPotential::~NatbiasHelicesSheetPotential()
-{}
+NatbiasHelicesSheetPotential::~NatbiasHelicesSheetPotential() = default;
 
 /// @brief set parameters
 void
@@ -289,12 +288,12 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 
 		Size num( 0 );
 		HelixPairings const & hpairs = hpairset_->helix_pairings();
-		for ( HelixPairings::const_iterator it=hpairs.begin(), ite=hpairs.end(); it != ite; ++it ) {
+		for ( const auto & it : hpairs ) {
 
 			num++;
 			hh_scores_[ num ] = 0.0;
 
-			HelixPairing const & hpair( **it );
+			HelixPairing const & hpair( *it );
 
 			runtime_assert( helices.size() >= hpair.h1() && helices.size() >= hpair.h2() );
 

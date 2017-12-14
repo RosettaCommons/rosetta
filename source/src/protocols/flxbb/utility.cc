@@ -50,12 +50,12 @@ namespace flxbb {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef core::Size Size;
-typedef core::Real Real;
-typedef std::string String;
-typedef core::pose::Pose Pose;
-typedef protocols::parser::BluePrintOP BluePrintOP;
-typedef core::scoring::constraints::ConstraintOPs ConstraintOPs;
+using Size = core::Size;
+using Real = core::Real;
+using String = std::string;
+using Pose = core::pose::Pose;
+using BluePrintOP = protocols::parser::BluePrintOP;
+using ConstraintOPs = core::scoring::constraints::ConstraintOPs;
 
 ConstraintOPs
 constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const coef, Real const condist )

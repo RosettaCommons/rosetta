@@ -60,23 +60,11 @@ CDRGraftDesignOptions::CDRGraftDesignOptions(CDRNameEnum cdr):
 	set_defaults();
 }
 
-CDRGraftDesignOptions::CDRGraftDesignOptions(CDRGraftDesignOptions const & src):
-	utility::pointer::ReferenceCount(src),
-	cdr_(src.cdr_),
-	design_(src.design_),
-	mintype_(src.mintype_),
-	min_neighbor_sc_(src.min_neighbor_sc_),
-	min_sc_(src.min_sc_),
-	min_rb_(src.min_rb_),
-	neighbor_min_(src.neighbor_min_),
-	cdr_weight_(src.cdr_weight_)
-{
-
-}
+CDRGraftDesignOptions::CDRGraftDesignOptions(CDRGraftDesignOptions const & /*src*/) = default;
 
 
 
-CDRGraftDesignOptions::~CDRGraftDesignOptions() {}
+CDRGraftDesignOptions::~CDRGraftDesignOptions() = default;
 
 CDRGraftDesignOptionsOP
 CDRGraftDesignOptions::clone() const {
@@ -156,7 +144,7 @@ CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser():
 	ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager() );
 }
 
-CDRGraftDesignOptionsParser::~CDRGraftDesignOptionsParser() {}
+CDRGraftDesignOptionsParser::~CDRGraftDesignOptionsParser() = default;
 
 CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser( CDRGraftDesignOptionsParser const & src ):
 	instructions_path_( src.instructions_path_ ),
@@ -178,7 +166,7 @@ utility::vector1<CDRGraftDesignOptionsOP>
 CDRGraftDesignOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRGraftDesignOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= 6; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_default_and_user_options( cdr, filename ) );
 	}
 	return antibody_options;
@@ -201,7 +189,7 @@ utility::vector1<CDRGraftDesignOptionsOP>
 CDRGraftDesignOptionsParser::parse_options(std::string const & filename) {
 	utility::vector1<CDRGraftDesignOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= 6; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_options( cdr, filename ) );
 	}
 	return antibody_options;

@@ -46,7 +46,7 @@ class PartialSecondarySimilarity: public CachingScoringMethod {
 public:
 
 	PartialSecondarySimilarity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-		core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name,
+		core::fragment::SecondaryStructureOP query_prediction, std::string const & prediction_name,
 		core::Size sequence_length, core::Size longest_vall_chunk);
 
 	~PartialSecondarySimilarity() {}

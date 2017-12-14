@@ -61,7 +61,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <list>
-#include <time.h>
+#include <ctime>
 
 using namespace core;
 using namespace core::chemical::rna;
@@ -79,7 +79,7 @@ namespace modeler {
 namespace rna {
 
 // @brief Auto-generated virtual destructor
-SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
+SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() = default;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -109,8 +109,7 @@ StepWiseRNA_Clusterer::StepWiseRNA_Clusterer( core::io::silent::SilentFileDataOP
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWiseRNA_Clusterer::~StepWiseRNA_Clusterer()
-{}
+StepWiseRNA_Clusterer::~StepWiseRNA_Clusterer() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void

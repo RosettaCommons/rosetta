@@ -42,7 +42,7 @@ public:
 
 	ScoreFunctionFeatures(
 		core::scoring::ScoreFunctionOP scfxn,
-		std::string scfxn_name);
+		std::string const & scfxn_name);
 
 	ScoreFunctionFeatures( ScoreFunctionFeatures const & src );
 

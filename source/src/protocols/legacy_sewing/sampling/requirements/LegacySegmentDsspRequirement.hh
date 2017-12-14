@@ -39,7 +39,7 @@ public:
 
 	///@brief explicit constructor
 	LegacySegmentDsspRequirement(
-		std::set<std::string> valid_dssp_codes
+		std::set<std::string> const & valid_dssp_codes
 	);
 
 	///@brief Does the segment have a valid DSSP code?

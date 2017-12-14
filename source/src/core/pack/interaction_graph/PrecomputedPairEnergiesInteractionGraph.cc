@@ -38,9 +38,9 @@ void PrecomputedPairEnergiesInteractionGraph::add_to_two_body_energies_for_edge
 	FArray2< core::PackerEnergy > const & oversized_res_res_energy_array
 )
 {
-	PrecomputedPairEnergiesEdge* edge =
+	auto* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if ( edge == NULL ) {
+	if ( edge == nullptr ) {
 		std::cerr << "WARNING:: you've input edge energies for an edge that does not exist" << std::endl;
 		return;
 	}
@@ -63,9 +63,9 @@ PrecomputedPairEnergiesInteractionGraph::add_to_two_body_energies_for_edge
 	core::PackerEnergy const two_body_energy
 )
 {
-	PrecomputedPairEnergiesEdge* edge =
+	auto* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if ( edge == NULL ) {
+	if ( edge == nullptr ) {
 		std::cerr << "WARNING:: you've input edge energies for an edge that does not exist" << std::endl;
 		return;
 	}
@@ -86,9 +86,9 @@ void PrecomputedPairEnergiesInteractionGraph::set_two_body_energy_for_edge(
 	core::PackerEnergy const two_body_energy
 )
 {
-	PrecomputedPairEnergiesEdge* edge =
+	auto* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if ( edge == NULL ) {
+	if ( edge == nullptr ) {
 		std::cerr << "WARNING:: you've input edge energies for an edge that does not exist" << std::endl;
 		return;
 	}
@@ -109,9 +109,9 @@ void PrecomputedPairEnergiesInteractionGraph::clear_two_body_energy_for_edge(
 	int state_node2
 )
 {
-	PrecomputedPairEnergiesEdge* edge =
+	auto* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if ( edge == NULL ) return;
+	if ( edge == nullptr ) return;
 	edge->set_two_body_energy( state_node1, state_node2, 0 );
 }
 
@@ -127,9 +127,9 @@ void PrecomputedPairEnergiesInteractionGraph::declare_edge_energies_final
 	int node2
 )
 {
-	PrecomputedPairEnergiesEdge* edge =
+	auto* edge =
 		(PrecomputedPairEnergiesEdge*) find_edge( node1, node2 );
-	if ( edge == NULL ) {
+	if ( edge == nullptr ) {
 		return;
 	}
 	edge->declare_energies_final();

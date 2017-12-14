@@ -141,7 +141,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 	repack_non_ala_ = repack_non_ala;
 }
 
-DesignMinimizeHbonds::~DesignMinimizeHbonds() {}
+DesignMinimizeHbonds::~DesignMinimizeHbonds() = default;
 
 protocols::moves::MoverOP
 DesignMinimizeHbonds::clone() const {
@@ -221,9 +221,8 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 				(partner1( i ) && repack_partner1_ )) || ((!partner1(i) && repack_partner2_) && //designable
 				( !( !repack_non_ala_ && (restype != chemical::aa_ala) ) || (restype == chemical::aa_pro) || (restype == chemical::aa_gly) || pose.residue(i).has_variant_type( chemical::DISULFIDE ) )) ) { // design-allowed residues
 			core::conformation::Residue const resi( pose.residue( i ) );
-			for ( utility::vector1< Size >::const_iterator target_it = target_res.begin();
-					target_it!=target_res.end(); ++target_it ) {
-				core::conformation::Residue const res_target( pose.residue( *target_it ) );
+			for ( unsigned long target_re : target_res ) {
+				core::conformation::Residue const res_target( pose.residue( target_re ) );
 
 				Real const distance( resi.xyz( resi.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
 				Real const distance_cutoff( interface_distance_cutoff_ );
@@ -240,9 +239,8 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 
 	{ // replace any positions that were mutated but did not hbond with their previous identities
 		std::set< core::Size > hbonded_residues;
-		for ( utility::vector1< core::Size >::const_iterator target_it = target_res.begin();
-				target_it!=target_res.end(); ++target_it ) {
-			std::list< core::Size > new_list( hbonded( pose, *target_it, potential_hbond_partners, bb_hbond_, sc_hbond_,
+		for ( unsigned long target_re : target_res ) {
+			std::list< core::Size > new_list( hbonded( pose, target_re, potential_hbond_partners, bb_hbond_, sc_hbond_,
 				hbond_energy_threshold_ ));
 			hbonded_residues.insert( new_list.begin(), new_list.end() );
 		}
@@ -278,12 +276,12 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 void
 DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const & movers, core::pose::Pose const & pose )
 {
-	core::Real const hbond_weight( tag->getOption<core::Real>( "hbond_weight", 3.0 ) );
+	auto const hbond_weight( tag->getOption<core::Real>( "hbond_weight", 3.0 ) );
 	TR<<"DesignMinimizeHbonds with the following parameters: "<<std::endl;
 	donors_ = tag->getOption<bool>( "donors" );
 	acceptors_ = tag->getOption<bool>( "acceptors" );
-	bb_hbond_ = tag->getOption<bool>( "bb_hbond", 0 );
-	sc_hbond_ = tag->getOption<bool>( "sc_hbond", 1 ) ;
+	bb_hbond_ = tag->getOption<bool>( "bb_hbond", false );
+	sc_hbond_ = tag->getOption<bool>( "sc_hbond", true ) ;
 	hbond_energy_threshold_ = tag->getOption<core::Real>( "hbond_energy", -0.5 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
 

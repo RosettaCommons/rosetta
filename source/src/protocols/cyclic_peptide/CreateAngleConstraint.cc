@@ -49,9 +49,8 @@ static basic::Tracer TR( "protocols.cyclic_peptide.CreateAngleConstraint" );
 namespace protocols {
 namespace cyclic_peptide {
 
-CreateAngleConstraint::CreateAngleConstraint() //:
-{}
-CreateAngleConstraint::~CreateAngleConstraint()= default;
+CreateAngleConstraint::CreateAngleConstraint() = default;
+CreateAngleConstraint::~CreateAngleConstraint() = default;
 
 
 void CreateAngleConstraint::set(utility::vector1<Size> res_center,

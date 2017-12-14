@@ -116,7 +116,7 @@ void hankel_set_alpha(
 
 void c_mult_ip(
 	core::Real *one ,
-	core::Real *two
+	const core::Real *two
 );
 
 void hankel_r_mult(

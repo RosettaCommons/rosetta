@@ -49,8 +49,7 @@ AlignRMSD_Screener::AlignRMSD_Screener( pose::Pose const & align_pose,
 }
 
 //Destructor
-AlignRMSD_Screener::~AlignRMSD_Screener()
-{}
+AlignRMSD_Screener::~AlignRMSD_Screener() = default;
 
 bool
 AlignRMSD_Screener::check_screen(){

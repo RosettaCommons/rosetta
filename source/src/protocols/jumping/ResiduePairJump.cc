@@ -59,7 +59,7 @@ namespace protocols {
 namespace jumping {
 
 
-ResiduePairJumpSingle::ResiduePairJumpSingle() {}
+ResiduePairJumpSingle::ResiduePairJumpSingle() = default;
 
 ResiduePairJumpSingle::~ResiduePairJumpSingle() = default;
 
@@ -122,7 +122,7 @@ ResiduePairJumpSingle::residueType() const
 
 
 // empty constructor
-ResiduePairJump::ResiduePairJump() {}
+ResiduePairJump::ResiduePairJump() = default;
 ResiduePairJump::~ResiduePairJump() = default;
 
 // constructed by two input ResidueTypes
@@ -444,7 +444,7 @@ ResiduePairJump::build_sidechain_rotamers()
 void
 ResiduePairJump::build_cst_conformer_jumps()
 {
-	typedef  numeric::xyzVector< core::Real > Vector;
+	using Vector = numeric::xyzVector<core::Real>;
 
 	// generate all combinations of cst_conformers
 	diversify_cst_conformers();

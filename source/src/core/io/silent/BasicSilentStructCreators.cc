@@ -34,8 +34,8 @@ namespace io {
 namespace silent {
 
 
-ProteinSilentStruct_SinglePrecCreator::ProteinSilentStruct_SinglePrecCreator() {}
-ProteinSilentStruct_SinglePrecCreator::~ProteinSilentStruct_SinglePrecCreator() {}
+ProteinSilentStruct_SinglePrecCreator::ProteinSilentStruct_SinglePrecCreator() = default;
+ProteinSilentStruct_SinglePrecCreator::~ProteinSilentStruct_SinglePrecCreator() = default;
 SilentStructOP ProteinSilentStruct_SinglePrecCreator::create_silent_struct( SilentFileOptions const & opts ) const {
 	return SilentStructOP( new ProteinSilentStruct_SinglePrec( opts ) );
 }
@@ -45,8 +45,8 @@ std::string ProteinSilentStruct_SinglePrecCreator::keyname() const {
 }
 
 // class def for ProteinSilentStruct
-ProteinSilentStructCreator::ProteinSilentStructCreator() {}
-ProteinSilentStructCreator::~ProteinSilentStructCreator() {}
+ProteinSilentStructCreator::ProteinSilentStructCreator() = default;
+ProteinSilentStructCreator::~ProteinSilentStructCreator() = default;
 SilentStructOP ProteinSilentStructCreator::create_silent_struct( SilentFileOptions const & opts ) const {
 	return SilentStructOP( new ProteinSilentStruct( opts ) );
 }
@@ -56,8 +56,8 @@ std::string ProteinSilentStructCreator::keyname() const {
 }
 
 // class def for RNA_SilentStruct
-RNA_SilentStructCreator::RNA_SilentStructCreator() {}
-RNA_SilentStructCreator::~RNA_SilentStructCreator() {}
+RNA_SilentStructCreator::RNA_SilentStructCreator() = default;
+RNA_SilentStructCreator::~RNA_SilentStructCreator() = default;
 SilentStructOP RNA_SilentStructCreator::create_silent_struct( SilentFileOptions const & opts ) const {
 	return SilentStructOP( new RNA_SilentStruct( opts ) );
 }
@@ -67,8 +67,8 @@ std::string RNA_SilentStructCreator::keyname() const {
 }
 
 // class def for BinarySilentStruct
-BinarySilentStructCreator::BinarySilentStructCreator() {}
-BinarySilentStructCreator::~BinarySilentStructCreator() {}
+BinarySilentStructCreator::BinarySilentStructCreator() = default;
+BinarySilentStructCreator::~BinarySilentStructCreator() = default;
 SilentStructOP BinarySilentStructCreator::create_silent_struct( SilentFileOptions const & opts ) const {
 	return SilentStructOP( new BinarySilentStruct( opts ) );
 }
@@ -78,8 +78,8 @@ std::string BinarySilentStructCreator::keyname() const {
 }
 
 // class def for ScoreFileSilentStruct
-ScoreFileSilentStructCreator::ScoreFileSilentStructCreator() {}
-ScoreFileSilentStructCreator::~ScoreFileSilentStructCreator() {}
+ScoreFileSilentStructCreator::ScoreFileSilentStructCreator() = default;
+ScoreFileSilentStructCreator::~ScoreFileSilentStructCreator() = default;
 SilentStructOP ScoreFileSilentStructCreator::create_silent_struct( SilentFileOptions const & opts ) const {
 	return SilentStructOP( new ScoreFileSilentStruct( opts ) );
 }
@@ -89,8 +89,8 @@ std::string ScoreFileSilentStructCreator::keyname() const {
 }
 
 // class def for ScoreJumpFileSilentStruct
-ScoreJumpFileSilentStructCreator::ScoreJumpFileSilentStructCreator() {}
-ScoreJumpFileSilentStructCreator::~ScoreJumpFileSilentStructCreator() {}
+ScoreJumpFileSilentStructCreator::ScoreJumpFileSilentStructCreator() = default;
+ScoreJumpFileSilentStructCreator::~ScoreJumpFileSilentStructCreator() = default;
 SilentStructOP ScoreJumpFileSilentStructCreator::create_silent_struct( SilentFileOptions const & opts ) const {
 	return SilentStructOP( new ScoreJumpFileSilentStruct( opts ) );
 }
@@ -101,8 +101,8 @@ std::string ScoreJumpFileSilentStructCreator::keyname() const {
 
 
 // class def for ProteinSilentStruct
-RigidBodySilentStructCreator::RigidBodySilentStructCreator() {}
-RigidBodySilentStructCreator::~RigidBodySilentStructCreator() {}
+RigidBodySilentStructCreator::RigidBodySilentStructCreator() = default;
+RigidBodySilentStructCreator::~RigidBodySilentStructCreator() = default;
 SilentStructOP RigidBodySilentStructCreator::create_silent_struct( SilentFileOptions const & opts ) const {
 	return SilentStructOP( new RigidBodySilentStruct( opts ) );
 }

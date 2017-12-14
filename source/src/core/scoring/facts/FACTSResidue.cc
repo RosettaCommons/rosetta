@@ -54,8 +54,8 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
 #include <utility/assert.hh>
 #include <utility/assert.hh>
 

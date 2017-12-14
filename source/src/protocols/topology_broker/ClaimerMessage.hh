@@ -61,7 +61,7 @@ class ClaimerMessage { //: public utility::pointer::ReferenceCount {
 	typedef utility::vector1< TopologyClaimerCAP > TopologyClaimerCAPs;
 public:
 	ClaimerMessage();
-	ClaimerMessage( std::string label );
+	ClaimerMessage( std::string const & label );
 	virtual ~ClaimerMessage();
 
 	/// @brief name of Claimer

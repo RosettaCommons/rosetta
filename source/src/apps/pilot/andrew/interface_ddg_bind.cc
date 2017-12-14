@@ -68,16 +68,16 @@ class InterfaceDDGBindInnerJob;
 class InterfaceDDGBindJobInputter;
 class InterfaceDDGMover;
 
-typedef utility::pointer::shared_ptr< CloseContactWithResidue > CloseContactWithResidueOP;
-typedef utility::pointer::shared_ptr< CloseContactWithResidue const > CloseContactWithResidueCOP;
-typedef utility::pointer::shared_ptr< InterfaceDDGMutationTask > InterfaceDDGMutationTaskOP;
-typedef utility::pointer::shared_ptr< InterfaceDDGMutationTask const > InterfaceDDGMutationTaskCOP;
-typedef utility::pointer::shared_ptr< InterfaceDDGBindInnerJob > InterfaceDDGBindInnerJobOP;
-typedef utility::pointer::shared_ptr< InterfaceDDGBindInnerJob const > InterfaceDDGBindInnerJobCOP;
-typedef utility::pointer::shared_ptr< InterfaceDDGBindJobInputter > InterfaceDDGBindJobInputterOP;
-typedef utility::pointer::shared_ptr< InterfaceDDGBindJobInputter const > InterfaceDDGBindJobInputterCOP;
-typedef utility::pointer::shared_ptr< InterfaceDDGMover > InterfaceDDGMoverOP;
-typedef utility::pointer::shared_ptr< InterfaceDDGMover const > InterfaceDDGMoverCOP;
+using CloseContactWithResidueOP = utility::pointer::shared_ptr<CloseContactWithResidue>;
+using CloseContactWithResidueCOP = utility::pointer::shared_ptr<const CloseContactWithResidue>;
+using InterfaceDDGMutationTaskOP = utility::pointer::shared_ptr<InterfaceDDGMutationTask>;
+using InterfaceDDGMutationTaskCOP = utility::pointer::shared_ptr<const InterfaceDDGMutationTask>;
+using InterfaceDDGBindInnerJobOP = utility::pointer::shared_ptr<InterfaceDDGBindInnerJob>;
+using InterfaceDDGBindInnerJobCOP = utility::pointer::shared_ptr<const InterfaceDDGBindInnerJob>;
+using InterfaceDDGBindJobInputterOP = utility::pointer::shared_ptr<InterfaceDDGBindJobInputter>;
+using InterfaceDDGBindJobInputterCOP = utility::pointer::shared_ptr<const InterfaceDDGBindJobInputter>;
+using InterfaceDDGMoverOP = utility::pointer::shared_ptr<InterfaceDDGMover>;
+using InterfaceDDGMoverCOP = utility::pointer::shared_ptr<const InterfaceDDGMover>;
 
 // Macro headers
 OPT_1GRP_KEY( File, interface_ddg, jobs )
@@ -91,17 +91,17 @@ public:
 	CloseContactWithResidue( core::Size seqpos ) : seqpos_( seqpos ) {}
 
 	core::select::residue_selector::ResidueSelectorOP
-	clone() const {
+	clone() const override {
 		return core::select::residue_selector::ResidueSelectorOP( new CloseContactWithResidue( seqpos_ ));
 	}
 
-	std::string get_name() const { return "CloseContactWithResidue"; }
+	std::string get_name() const override { return "CloseContactWithResidue"; }
 
-	virtual
+
 	core::select::residue_selector::ResidueSubset
 	apply(
 		core::pose::Pose const & pose
-	) const
+	) const override
 	{
 		core::select::residue_selector::ResidueSubset subset( pose.size(), false );
 		subset[ seqpos_ ] = true;
@@ -147,9 +147,9 @@ public:
 	InterfaceDDGMutationTask();
 	InterfaceDDGMutationTask( core::Size seqpos, bool complex );
 	InterfaceDDGMutationTask( core::Size seqpos, bool complex, core::chemical::AA new_aa );
-	virtual ~InterfaceDDGMutationTask();
+	~InterfaceDDGMutationTask() override;
 
-	virtual basic::datacache::CacheableDataOP clone() const;
+	basic::datacache::CacheableDataOP clone() const override;
 
 	/// @brief should the complex be modeled or should it be separated?
 	bool complex() const;
@@ -165,10 +165,10 @@ public:
 	core::chemical::AA new_aa() const;
 
 private:
-	core::Size seqpos_;
-	bool wt_;
-	bool complex_;
-	core::chemical::AA new_aa_;
+	core::Size seqpos_{ 0 };
+	bool wt_{ false };
+	bool complex_{ false };
+	core::chemical::AA new_aa_{ core::chemical::aa_unk };
 };
 
 
@@ -180,7 +180,7 @@ public:
 		core::Size nstruct
 	);
 
-	virtual ~InterfaceDDGBindInnerJob();
+	~InterfaceDDGBindInnerJob() override;
 
 	//InterfaceDDGMutationTask const & mutation() const;
 	//void mutation( InterfaceDDGMutationTask const & mut );
@@ -201,7 +201,7 @@ public:
 	core::pose::ResidueIndexDescription const & residue_index_description() const;
 	core::chemical::AA new_aa() const;
 
-	virtual bool same( protocols::jd2::InnerJob const & other ) const;
+	bool same( protocols::jd2::InnerJob const & other ) const override;
 	InterfaceDDGBindInnerJobOP reference_job() const;
 	void reference_job( InterfaceDDGBindInnerJobOP setting );
 
@@ -221,11 +221,11 @@ class InterfaceDDGBindJobInputter : public protocols::jd2::JobInputter
 {
 public:
 	InterfaceDDGBindJobInputter();
-	virtual ~InterfaceDDGBindJobInputter();
+	~InterfaceDDGBindJobInputter() override;
 
-	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
-	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );
-	virtual protocols::jd2::JobInputterInputSource::Enum input_source() const;
+	void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job ) override;
+	void fill_jobs( protocols::jd2::JobsContainer & jobs ) override;
+	protocols::jd2::JobInputterInputSource::Enum input_source() const override;
 };
 
 // class InterfaceDDGBindJobInputterCreator : public protocols::jd2::JobInputterCreator {
@@ -239,10 +239,10 @@ class InterfaceDDGMover : public protocols::moves::Mover
 {
 public:
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual protocols::moves::MoverOP clone() const;
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	void apply( core::pose::Pose & pose ) override;
+	protocols::moves::MoverOP clone() const override;
+	std::string get_name() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void sfxn( core::scoring::ScoreFunctionOP sfxn );
 
@@ -270,12 +270,7 @@ private:
 ////////////////// InterfaceDDGMutationTask /////////////////////////
 
 
-InterfaceDDGMutationTask::InterfaceDDGMutationTask() :
-	seqpos_( 0 ),
-	wt_( false ),
-	complex_( false ),
-	new_aa_( core::chemical::aa_unk )
-{}
+InterfaceDDGMutationTask::InterfaceDDGMutationTask() = default;
 
 InterfaceDDGMutationTask::InterfaceDDGMutationTask( core::Size seqpos, bool complex ) :
 	seqpos_( seqpos ),
@@ -291,7 +286,7 @@ InterfaceDDGMutationTask::InterfaceDDGMutationTask( core::Size seqpos, bool comp
 	new_aa_( new_aa )
 {}
 
-InterfaceDDGMutationTask::~InterfaceDDGMutationTask() {}
+InterfaceDDGMutationTask::~InterfaceDDGMutationTask() = default;
 
 basic::datacache::CacheableDataOP
 InterfaceDDGMutationTask::clone() const {
@@ -329,7 +324,7 @@ InterfaceDDGBindInnerJob::InterfaceDDGBindInnerJob(
 	new_aa_( core::chemical::aa_unk )
 {}
 
-InterfaceDDGBindInnerJob::~InterfaceDDGBindInnerJob() {}
+InterfaceDDGBindInnerJob::~InterfaceDDGBindInnerJob() = default;
 
 // InterfaceDDGMutationTask const &
 // InterfaceDDGBindInnerJob::mutation() const {
@@ -398,7 +393,7 @@ InterfaceDDGBindInnerJob::new_aa() const
 bool
 InterfaceDDGBindInnerJob::same( protocols::jd2::InnerJob const & other ) const
 {
-	InterfaceDDGBindInnerJob const * other_ptr = dynamic_cast< InterfaceDDGBindInnerJob const * > ( &other );
+	auto const * other_ptr = dynamic_cast< InterfaceDDGBindInnerJob const * > ( &other );
 	return other_ptr && InnerJob::same( other );;
 }
 
@@ -415,9 +410,9 @@ void InterfaceDDGBindInnerJob::reference_job( InterfaceDDGBindInnerJobOP setting
 
 ////////////////// InterfaceDDGBindJobInputter /////////////////////////
 
-InterfaceDDGBindJobInputter::InterfaceDDGBindJobInputter() {}
+InterfaceDDGBindJobInputter::InterfaceDDGBindJobInputter() = default;
 
-InterfaceDDGBindJobInputter::~InterfaceDDGBindJobInputter() {}
+InterfaceDDGBindJobInputter::~InterfaceDDGBindJobInputter() = default;
 
 void
 InterfaceDDGBindJobInputter::pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job )

@@ -45,7 +45,7 @@ bool SkipViolFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	SkipViolFunc const & other_downcast( static_cast< SkipViolFunc const & > (other) );
+	auto const & other_downcast( static_cast< SkipViolFunc const & > (other) );
 	if ( weight_      != other_downcast.weight_      ) return false;
 	if ( count_viols_ != other_downcast.count_viols_ ) return false;
 

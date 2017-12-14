@@ -240,7 +240,7 @@ utility::vector1< core::Size >
 fix_glycan_order( utility::vector1< core::io::ResidueInformation > & rinfos,
 	utility::vector1< core::Size > const & glycan_positions,
 	StructFileRepOptions const & options,
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > known_links )
+	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & known_links )
 
 {
 	utility::vector1< core::Size > chain_ends;
@@ -262,7 +262,7 @@ find_carbohydrate_order( utility::vector1< core::io::ResidueInformation > const 
 	utility::vector1< core::Size > & chain_ends, // return-by-reference for (non-reducing) end sugars
 	// map of anomeric positions to where they are connected to
 	std::map< std::pair< core::Size, std::string >, std::pair< core::Size, std::string > > const & link_map,
-	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > known_links )
+	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & known_links )
 {
 	std::set< core::Size > roots; // Sorted!
 	for ( core::Size resi: glycan_positions ) {

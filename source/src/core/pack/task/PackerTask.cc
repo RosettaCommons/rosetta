@@ -29,7 +29,7 @@ namespace core {
 namespace pack {
 namespace task {
 
-PackerTask::~PackerTask() {}
+PackerTask::~PackerTask() = default;
 
 }
 }

@@ -116,11 +116,11 @@ void Prepare(){
 		// read chainbreaks
 		std::string fulllength_clean;
 		std::string seq = sequence->sequence();
-		for ( int i=0; i<(int)seq.length(); ++i ) {
-			if ( seq[i] == '/' ) {
+		for ( char i : seq ) {
+			if ( i == '/' ) {
 				cbreaks.push_back(fulllength_clean.length());
 			} else {
-				fulllength_clean += seq[i];
+				fulllength_clean += i;
 			}
 		}
 		sequence = core::sequence::SequenceOP(new core::sequence::Sequence( fulllength_clean, "target" ));

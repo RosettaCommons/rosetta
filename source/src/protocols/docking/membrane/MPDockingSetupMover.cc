@@ -88,16 +88,10 @@ MPDockingSetupMover::MPDockingSetupMover() :
 {}
 
 /// @brief Copy Constructor
-MPDockingSetupMover::MPDockingSetupMover( MPDockingSetupMover const & src ) :
-	protocols::moves::Mover( src ),
-	poses_( src.poses_ ),
-	spanfiles_( src.spanfiles_ ),
-	optimize1_( src.optimize1_ ),
-	optimize2_( src.optimize2_ )
-{}
+MPDockingSetupMover::MPDockingSetupMover( MPDockingSetupMover const & /*src*/ ) = default;
 
 /// @brief Destructor
-MPDockingSetupMover::~MPDockingSetupMover() {}
+MPDockingSetupMover::~MPDockingSetupMover() = default;
 
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP

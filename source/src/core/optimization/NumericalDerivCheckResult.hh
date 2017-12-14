@@ -144,8 +144,8 @@ public:
 	{}
 
 	DOF_DataPoint(
-		id::DOF_ID  dof_id,
-		id::DOF_ID  parent_id,
+		id::DOF_ID const & dof_id,
+		id::DOF_ID const & parent_id,
 		Size   natoms,
 		Real   num_deriv,
 		Real   ana_deriv,
@@ -155,8 +155,8 @@ public:
 		Real   f22,
 		Real   dof_val
 	) :
-		dof_id_(std::move( dof_id )),
-		parent_id_(std::move( parent_id )),
+		dof_id_( dof_id ),
+		parent_id_( parent_id ),
 		natoms_( natoms ),
 		num_deriv_( num_deriv ),
 		ana_deriv_( ana_deriv ),

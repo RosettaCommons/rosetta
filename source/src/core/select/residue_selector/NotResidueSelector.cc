@@ -48,8 +48,8 @@ namespace select {
 namespace residue_selector {
 
 
-NotResidueSelector::NotResidueSelector() {}
-NotResidueSelector::~NotResidueSelector() {}
+NotResidueSelector::NotResidueSelector() = default;
+NotResidueSelector::~NotResidueSelector() = default;
 
 /// @brief Copy constructor
 ///

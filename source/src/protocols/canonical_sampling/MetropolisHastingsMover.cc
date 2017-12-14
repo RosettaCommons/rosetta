@@ -461,14 +461,14 @@ MetropolisHastingsMover::parse_my_tag(
 
 	///checkpoint interval
 	if ( tag->hasOption("checkpoint_interval") ) {
-		core::Size const checkpoint_interval( tag->getOption< core::Size >( "checkpoint_interval")); // every 6 minutes
+		auto const checkpoint_interval( tag->getOption< core::Size >( "checkpoint_interval")); // every 6 minutes
 		protocols::checkpoint::checkpoint_with_interval( checkpoint_interval );
 	}
 
 	//monte-carlo
 	//read tag scorefxn
 	core::scoring::ScoreFunctionOP score_fxn(protocols::rosetta_scripts::parse_score_function(tag, data));
-	core::Real const temperature(tag->getOption< core::Real >( "temperature", 0.6 ) );
+	auto const temperature(tag->getOption< core::Real >( "temperature", 0.6 ) );
 
 	bool wte_sampling( tag->getOption< bool >( "wte", false ) );
 	if ( wte_sampling ) {
@@ -519,7 +519,7 @@ MetropolisHastingsMover::parse_my_tag(
 		TemperatureControllerOP temp_controller( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::TemperatureController > ( mover ) );
 		//figure out if ThermodynamicMover or ThermodynamicObserver
 		if ( th_mover ) { //it's a mover
-			core::Real const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
+			auto const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
 			add_mover( th_mover, weight, subtag );
 			//    add_mover( th_mover, weight );
 		} else if ( th_observer ) { //its an observer

@@ -187,7 +187,7 @@ CarbohydrateInfoManager::branch_variant_type_from_position( core::uint const pos
 
 // Private methods ////////////////////////////////////////////////////////////
 // Empty constructor
-CarbohydrateInfoManager::CarbohydrateInfoManager() {}
+CarbohydrateInfoManager::CarbohydrateInfoManager() = default;
 
 // Get the map of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root requested,
 // creating them if necessary.
@@ -277,8 +277,8 @@ CarbohydrateInfoManager::ring_affixes()
 	// Only create list one time, as needed.
 	if ( ring_affixes_.empty() ) {
 		Map const & map( ring_size_to_morphemes_map() );
-		for ( Map::const_iterator it( map.begin() ), it_end( map.end() ); it != it_end; ++it ) {
-			char affix( it->second.first );
+		for ( auto const & it : map ) {
+			char affix( it.second.first );
 			if ( affix != '\0' ) {
 				ring_affixes_.push_back( affix );
 			}
@@ -342,9 +342,8 @@ CarbohydrateInfoManager::affix_to_patch_map()
 	// Only create map one time, as needed.
 	if ( affix_to_patch_map_.empty() ) {
 		SugarModificationsNomenclatureTable const & table( nomenclature_table() );
-		for ( SugarModificationsNomenclatureTable::const_iterator it( table.begin() ), it_end( table.end() );
-				it != it_end; ++it ) {
-			affix_to_patch_map_[ it->second.short_affix ] = it->second.patch_name;
+		for ( auto const & it : table ) {
+			affix_to_patch_map_[ it.second.short_affix ] = it.second.patch_name;
 		}
 	}
 #endif
@@ -377,9 +376,8 @@ CarbohydrateInfoManager::affix_to_position_map()
 	// Only create map one time, as needed.
 	if ( affix_to_position_map_.empty() ) {
 		SugarModificationsNomenclatureTable const & table( nomenclature_table() );
-		for ( SugarModificationsNomenclatureTable::const_iterator it( table.begin() ), it_end( table.end() );
-				it != it_end; ++it ) {
-			affix_to_position_map_[ it->second.short_affix ] = it->second.default_position;
+		for ( auto const & it : table ) {
+			affix_to_position_map_[ it.second.short_affix ] = it.second.default_position;
 		}
 	}
 #endif
@@ -413,9 +411,8 @@ CarbohydrateInfoManager::affix_to_position_inherency_map()
 	// Only create map one time, as needed.
 	if ( affix_to_position_inherency_map_.empty() ) {
 		SugarModificationsNomenclatureTable const & table( nomenclature_table() );
-		for ( SugarModificationsNomenclatureTable::const_iterator it( table.begin() ), it_end( table.end() );
-				it != it_end; ++it ) {
-			affix_to_position_inherency_map_[ it->second.short_affix ] = it->second.has_inherent_position;
+		for ( auto const & it : table ) {
+			affix_to_position_inherency_map_[ it.second.short_affix ] = it.second.has_inherent_position;
 		}
 	}
 #endif

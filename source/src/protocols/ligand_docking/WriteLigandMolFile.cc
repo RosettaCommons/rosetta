@@ -62,8 +62,7 @@ WriteLigandMolFile::WriteLigandMolFile() :
 {
 
 }
-WriteLigandMolFile::~WriteLigandMolFile()
-= default;
+WriteLigandMolFile::~WriteLigandMolFile() = default;
 
 WriteLigandMolFile::WriteLigandMolFile(WriteLigandMolFile const & that) :
 	Mover("WriteLigandMolFile"),chain_(that.chain_),

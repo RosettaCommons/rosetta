@@ -49,7 +49,7 @@ PertMinMover::PertMinMover():
 	sc_only_(false)
 {}
 
-PertMinMover::~PertMinMover(){}
+PertMinMover::~PertMinMover()= default;
 
 PertMinMover::PertMinMover( PertMinMover const & ) = default;
 

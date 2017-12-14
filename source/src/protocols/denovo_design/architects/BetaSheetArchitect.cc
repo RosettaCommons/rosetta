@@ -55,8 +55,7 @@ BetaSheetArchitect::BetaSheetArchitect( std::string const & id_value ):
 {
 }
 
-BetaSheetArchitect::~BetaSheetArchitect()
-{}
+BetaSheetArchitect::~BetaSheetArchitect() = default;
 
 BetaSheetArchitect::DeNovoArchitectOP
 BetaSheetArchitect::clone() const
@@ -160,7 +159,7 @@ BetaSheetArchitect::design( core::pose::Pose const &, core::Real & random ) cons
 void
 BetaSheetArchitect::set_strand_extensions( std::string const & extensions_str )
 {
-	typedef utility::vector1< std::string > Strings;
+	using Strings = utility::vector1<std::string>;
 	Strings const extensions = csv_to_container< Strings >( extensions_str, ';' );
 	for ( std::string const & s : extensions ) {
 		Strings const name_length = csv_to_container< Strings >( s, ',' );
@@ -171,7 +170,7 @@ BetaSheetArchitect::set_strand_extensions( std::string const & extensions_str )
 				<< " fields, but two are required (name and length)" << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
-		core::Size const len = boost::lexical_cast< core::Size >( *name_length.rbegin() );
+		auto const len = boost::lexical_cast< core::Size >( *name_length.rbegin() );
 		add_strand_extension( *name_length.begin(), len );
 	}
 }
@@ -187,15 +186,15 @@ BetaSheetArchitect::add_register_shifts( std::string const & val )
 
 	RegisterShifts retval;
 	utility::vector1< std::string > const str_shifts( utility::string_split( val, ',' ) );
-	for ( utility::vector1< std::string >::const_iterator s=str_shifts.begin(); s!=str_shifts.end(); ++s ) {
-		TR.Debug << *s << " " << val << std::endl;
-		if ( s->empty() ) continue;
-		utility::vector1< std::string > const ranges( utility::string_split( *s, ':' ) );
+	for ( auto const & str_shift : str_shifts ) {
+		TR.Debug << str_shift << " " << val << std::endl;
+		if ( str_shift.empty() ) continue;
+		utility::vector1< std::string > const ranges( utility::string_split( str_shift, ':' ) );
 		if ( ranges.size() == 1 ) {
 			retval.push_back( boost::lexical_cast< RegisterShift >( ranges[1] ) );
 		} else if ( ranges.size() == 2 ) {
-			RegisterShift const start( boost::lexical_cast< RegisterShift >( ranges[1] ) );
-			RegisterShift const end( boost::lexical_cast< RegisterShift >( ranges[2] ) );
+			auto const start( boost::lexical_cast< RegisterShift >( ranges[1] ) );
+			auto const end( boost::lexical_cast< RegisterShift >( ranges[2] ) );
 			for ( RegisterShift i=start; i<=end; ++i ) {
 				retval.push_back( i );
 			}
@@ -217,10 +216,10 @@ BetaSheetArchitect::add_orientations( std::string const & orientations_str )
 
 	StrandOrientations retval;
 	utility::vector1< std::string > const str_orients( utility::string_split( orientations_str, ',' ) );
-	for ( utility::vector1< std::string >::const_iterator s=str_orients.begin(); s!=str_orients.end(); ++s ) {
-		TR.Debug << *s << " " << orientations_str << std::endl;
-		if ( s->empty() ) continue;
-		utility::vector1< std::string > const ranges( utility::string_split( *s, ':' ) );
+	for ( auto const & str_orient : str_orients ) {
+		TR.Debug << str_orient << " " << orientations_str << std::endl;
+		if ( str_orient.empty() ) continue;
+		utility::vector1< std::string > const ranges( utility::string_split( str_orient, ':' ) );
 		// check input string to make sure only "A", "P" are specified
 		for ( core::Size i=1; i<=ranges.size(); ++i ) {
 			if ( ( ranges[i] != "U" ) && ( ranges[i] != "D" ) ) {
@@ -300,7 +299,7 @@ fill_orientation_info( BetaSheetArchitect::PairingsInfoVector const & by_strand 
 	if ( by_strand.empty() ) return BetaSheetArchitect::PairingsInfoVector();
 
 	// compute list for remaining strands
-	BetaSheetArchitect::PairingsInfoVector::const_iterator remaining_it = by_strand.begin();
+	auto remaining_it = by_strand.begin();
 	++remaining_it;
 	BetaSheetArchitect::PairingsInfoVector const remaining( remaining_it, by_strand.end() );
 	BetaSheetArchitect::PairingsInfoVector const combos = fill_orientation_info( remaining );
@@ -409,8 +408,8 @@ BetaSheetArchitect::combine_permutations( components::StructureDataCOPs const & 
 {
 	StructureDataOP new_perm( new StructureData( this->id() ) );
 	debug_assert( chain.size() == strands_.size() );
-	StrandArchitectOPs::const_iterator s=strands_.begin();
-	for ( components::StructureDataCOPs::const_iterator m=chain.begin(); m!=chain.end(); ++m, ++s ) {
+	auto s=strands_.begin();
+	for ( auto m=chain.begin(); m!=chain.end(); ++m, ++s ) {
 		new_perm->merge( **m );
 	}
 	return new_perm;
@@ -432,7 +431,7 @@ BetaSheetArchitect::modify_and_add_permutation( components::StructureData const 
 
 		core::Size const total_size = perm.pose_length();
 		core::Size sheet_idx = 1;
-		for ( components::SheetList::const_iterator s=list.begin(); s!=list.end(); ++s, ++sheet_idx ) {
+		for ( auto s=list.begin(); s!=list.end(); ++s, ++sheet_idx ) {
 			if ( (*s)->size() != total_size ) {
 				std::stringstream msg;
 				msg << "Sheet from DB with length " << (*s)->size() << " and lengths=" << retrieve_lengths( perm ) << " does not match SD: " << perm << std::endl;
@@ -482,8 +481,8 @@ Lengths
 BetaSheetArchitect::retrieve_lengths( StructureData const & perm ) const
 {
 	Lengths lengths;
-	for ( StrandArchitectOPs::const_iterator c=strands_.begin(); c!=strands_.end(); ++c ) {
-		lengths.push_back( perm.segment( (*c)->id() ).elem_length() );
+	for ( auto const & strand : strands_ ) {
+		lengths.push_back( perm.segment( strand->id() ).elem_length() );
 	}
 	return lengths;
 }
@@ -493,8 +492,8 @@ BetaSheetArchitect::RegisterShifts
 BetaSheetArchitect::retrieve_register_shifts( StructureData const & perm ) const
 {
 	RegisterShifts shifts;
-	StrandArchitectOPs::const_iterator prev = strands_.end();
-	for ( StrandArchitectOPs::const_iterator c=strands_.begin(); c!=strands_.end(); ++c ) {
+	auto prev = strands_.end();
+	for ( auto c=strands_.begin(); c!=strands_.end(); ++c ) {
 		if ( c == strands_.begin() ) {
 			shifts.push_back( 0 );
 		} else {
@@ -523,14 +522,14 @@ BetaSheetArchitect::retrieve_orientations( StructureData const & perm ) const
 	typedef std::map< std::string, StrandOrientation > OrientationMap;
 
 	OrientationMap orients;
-	for ( SegmentPairingCOPs::const_iterator p=perm.pairings_begin(); p!=perm.pairings_end(); ++p ) {
+	for ( auto p=perm.pairings_begin(); p!=perm.pairings_end(); ++p ) {
 		if ( (*p)->type() != components::SegmentPairing::STRAND ) continue;
 		debug_assert( utility::pointer::dynamic_pointer_cast< components::StrandPairing const >( *p ) );
 		components::StrandPairingCOP spair = utility::pointer::static_pointer_cast< components::StrandPairing const >( *p );
 		debug_assert( spair->segments().size() == 2 );
 		std::string const & seg1 = *( spair->segments().begin() );
 		std::string const & seg2 = *( spair->segments().rbegin() );
-		OrientationMap::iterator o = orients.find( seg1 );
+		auto o = orients.find( seg1 );
 		if ( (o != orients.end()) && (o->second != spair->orient1()) ) {
 			std::stringstream msg;
 			msg << class_name() << ": Different orientations are specified in the pairings for "
@@ -571,7 +570,7 @@ BetaSheetArchitect::retrieve_orientations( StructureData const & perm ) const
 core::Size
 BetaSheetArchitect::extension_length( std::string const & strand ) const
 {
-	StrandExtensionsMap::const_iterator e = extensions_.find( strand );
+	auto e = extensions_.find( strand );
 	if ( e == extensions_.end() ) return 0;
 	else return e->second;
 }

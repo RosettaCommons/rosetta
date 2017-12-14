@@ -173,7 +173,7 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 
 	if ( tag->hasOption("scorefxns") ) {
 		std::string const sf_val( tag->getOption<std::string>("scorefxns") );
-		typedef utility::vector1< std::string > StringVec;
+		using StringVec = utility::vector1<std::string>;
 		StringVec const sf_keys( utility::string_split( sf_val, ',' ) );
 		for ( auto const & sf_key : sf_keys ) {
 			ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", sf_key ) );
@@ -258,7 +258,7 @@ std::string FavorSequenceProfile::mover_name() {
 void FavorSequenceProfile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 
 	XMLSchemaRestriction scaling_type;
 	scaling_type.name( "favor_seqprof_scaling_type" );

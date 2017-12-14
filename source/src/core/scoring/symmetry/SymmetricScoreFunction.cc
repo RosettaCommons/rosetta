@@ -184,7 +184,7 @@ SymmetricScoreFunction::operator()( pose::Pose & pose ) const
 
 	// give energyfunctions a chance update/finalize energies
 	// etable nblist calculation is performed here
-	for ( AllMethodsIterator iter=all_energies_begin(),
+	for ( auto iter=all_energies_begin(),
 			iter_end= all_energies_end(); iter != iter_end; ++iter ) {
 		(*iter)->finalize_total_energy( pose, *this, pose.energies().finalized_energies() );
 	}
@@ -234,18 +234,17 @@ SymmetricScoreFunction::setup_for_minimizing(
 	/// 4. Run setup-for-minimization on the edges of the mingraph; dropping edges with no active 2b enmeths.
 	/// 5. Let whole-structure energies initialize themselves
 
-	SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	auto & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfo const & symm_info( * symm_conf.Symmetry_Info() );
-	SymmetricEnergies & symm_energies( dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
+	auto & symm_energies( dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
 
 	MinimizationGraphOP g( new MinimizationGraph( pose.size() ) );
 	MinimizationGraphOP dg( new MinimizationGraph( pose.size() ) ); // derivative graph
 
 	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
-	for ( AllMethods::const_iterator iter=all_methods().begin(),
-			iter_end= all_methods().end(); iter != iter_end; ++iter ) {
-		if ( (*iter)->defines_high_order_terms( pose ) || (*iter)->minimize_in_whole_structure_context( pose ) ) {
-			eval_derivs_with_pose_enmeths.push_back( *iter );
+	for ( auto const & iter : all_methods() ) {
+		if ( iter->defines_high_order_terms( pose ) || iter->minimize_in_whole_structure_context( pose ) ) {
+			eval_derivs_with_pose_enmeths.push_back( iter );
 		}
 	}
 
@@ -303,7 +302,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 		// if ( new_sym_min ) { // new way
 		// } else { // classic way
 		if ( edge_weight != 0.0 ) {
-			MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+			auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 			setup_for_minimizing_sr2b_enmeths_for_minedge(
 				pose.residue( node1 ), pose.residue( node2 ),
 				minedge, min_map, pose, res_moving_wrt_eachother, true,
@@ -311,7 +310,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 			minedge.weight( edge_weight );
 			minedge.dweight( edge_dweight );
 		} else {
-			MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**dedge_iter) );
+			auto & minedge( static_cast< MinimizationEdge & > (**dedge_iter) );
 			setup_for_minimizing_sr2b_enmeths_for_minedge(
 				pose.residue( node1 ), pose.residue( node2 ),
 				minedge, min_map, pose, res_moving_wrt_eachother, false,
@@ -329,7 +328,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 	///    v.   adding a new edge if necessary,
 	///    vi.  and prepare the minimization data for this edge
 
-	for ( LR_2B_MethodIterator
+	for ( auto
 			iter = long_range_energies_begin(),
 			iter_end = long_range_energies_end();
 			iter != iter_end; ++iter ) {
@@ -381,7 +380,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
 
-		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+		auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 
 		utility::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
 		++edge_iter_next;
@@ -404,7 +403,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
 
-		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+		auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 
 		utility::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
 		++edge_iter_next;
@@ -449,11 +448,11 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 	// cached energies object
 	Energies & energies( pose.energies() );
 
-	EnergyMap & total_energies( const_cast< EnergyMap & > ( energies.total_energies() ) );
+	auto & total_energies( const_cast< EnergyMap & > ( energies.total_energies() ) );
 
-	SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	auto & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfo const & symm_info( * symm_conf.Symmetry_Info() );
-	SymmetricEnergies & symm_energies( dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
+	auto & symm_energies( dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
 
 	// the neighbor/energy links
 	EnergyGraph & energy_graph( energies.energy_graph() );
@@ -476,7 +475,7 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 			Size const node2 = (*edge_iter)->get_second_node_ind();
 			conformation::Residue const & rsd1( pose.residue( node1 ));
 			conformation::Residue const & rsd2( pose.residue( node2 ));
-			MinimizationEdge const & minedge( static_cast< MinimizationEdge const & > (**edge_iter) );
+			auto const & minedge( static_cast< MinimizationEdge const & > (**edge_iter) );
 			eval_weighted_res_pair_energy_for_minedge( minedge, rsd1, rsd2, pose, *this, total_energies, scratch_emap );
 		}
 		total_energies +=  scratch_emap;
@@ -489,7 +488,7 @@ SymmetricScoreFunction::eval_twobody_neighbor_energies( pose::Pose & pose ) cons
 					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->upper_edge_list_end();
 					iru != irue; ++iru ) {
-				EnergyEdge & edge( static_cast< EnergyEdge & > (**iru) );
+				auto & edge( static_cast< EnergyEdge & > (**iru) );
 
 				Size const j( edge.get_second_node_ind() );
 				conformation::Residue const & resu( pose.residue( j ) );
@@ -556,13 +555,13 @@ SymmetricScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) co
 	if ( minimizing ) return; // long range energies are handled as part of the 2-body energies in the minimization graph
 
 	// find SymmInfo
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	EnergyMap & total_energies(const_cast< EnergyMap & > (pose.energies().total_energies()));
+	auto & total_energies(const_cast< EnergyMap & > (pose.energies().total_energies()));
 
-	for ( CI_LR_2B_MethodIterator iter=ci_lr_2b_methods_begin(),
+	for ( auto iter=ci_lr_2b_methods_begin(),
 			iter_end = ci_lr_2b_methods_end(); iter != iter_end; ++iter ) {
 
 		LREnergyContainerOP lrec = pose.energies().nonconst_long_range_container( (*iter)->long_range_type() );
@@ -598,7 +597,7 @@ SymmetricScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) co
 	}
 
 	//fpd CD LR methods should always be computed
-	for ( CD_LR_2B_MethodIterator iter = cd_lr_2b_methods_begin(),
+	for ( auto iter = cd_lr_2b_methods_begin(),
 			iter_end = cd_lr_2b_methods_end(); iter != iter_end; ++iter ) {
 
 		LREnergyContainerOP lrec
@@ -632,7 +631,7 @@ SymmetricScoreFunction::eval_onebody_energies( pose::Pose & pose ) const {
 	EnergyMap & totals( energies.total_energies() );
 
 	// find SymmInfo
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -691,11 +690,8 @@ SymmetricScoreFunction::eval_onebody_energies( pose::Pose & pose ) const {
 			totals += emap;
 
 			energies.reset_res_moved( i ); // mark one body energies as having been calculated
-			for ( std::vector< Size>::const_iterator
-					clone     = symm_info->bb_clones( i ).begin(),
-					clone_end = symm_info->bb_clones( i ).end();
-					clone != clone_end; ++clone ) {
-				energies.reset_res_moved( *clone );
+			for ( unsigned long clone : symm_info->bb_clones( i ) ) {
+				energies.reset_res_moved( clone );
 			}
 		}
 		//std::cout << "totals: "<<  i  << totals;
@@ -705,11 +701,11 @@ SymmetricScoreFunction::eval_onebody_energies( pose::Pose & pose ) const {
 
 void
 SymmetricScoreFunction::setup_for_derivatives( pose::Pose & pose ) const {
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-	SymmetricEnergies & symm_energies( dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
+	auto & symm_energies( dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
 
 	/// 1. Call setup_for_derivatives on the (active) nodes of the scoring graph; a node is active
 	/// if it's part of the asymmetric unit, or if it has any edge
@@ -723,7 +719,7 @@ SymmetricScoreFunction::setup_for_derivatives( pose::Pose & pose ) const {
 	for ( utility::graph::Graph::EdgeListIter
 			edgeit = g->edge_list_begin(), edgeit_end = g->edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
-		MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
+		auto & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
 		minedge.setup_for_derivatives(
 			pose.residue(minedge.get_first_node_ind()),
 			pose.residue(minedge.get_second_node_ind()),
@@ -743,7 +739,7 @@ SymmetricScoreFunction::setup_for_derivatives( pose::Pose & pose ) const {
 	for ( utility::graph::Graph::EdgeListIter
 			edgeit = dg->edge_list_begin(), edgeit_end = dg->edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
-		MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
+		auto & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
 		minedge.setup_for_derivatives(
 			pose.residue(minedge.get_first_node_ind()),
 			pose.residue(minedge.get_second_node_ind()),
@@ -751,7 +747,7 @@ SymmetricScoreFunction::setup_for_derivatives( pose::Pose & pose ) const {
 	}
 
 	/// 5. Whole-pose-context energies should be allowed to setup for derivatives now.
-	for ( MinimizationGraph::Energies::const_iterator
+	for ( auto
 			iter     = g->whole_pose_context_enmeths_begin(),
 			iter_end = g->whole_pose_context_enmeths_end();
 			iter != iter_end; ++iter ) {
@@ -770,13 +766,13 @@ SymmetricScoreFunction::eval_npd_atom_derivative(
 ) const {
 	//std::cout << "SymmetricScoreFunction::eval_atom_derivative " << atom_id.rsd() << " " << atom_id.atomno() << " " << F1.x() << " " << F2.x() << std::endl;
 
-	SymmetricEnergies const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
+	auto const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
 
 	debug_assert( pose.energies().minimization_graph() );
 	MinimizationGraphCOP mingraph  = symm_energies.minimization_graph();
 
 	/// 3. Whole-pose-context energies should have their contribution calculated here.
-	for ( MinimizationGraph::Energies::const_iterator
+	for ( auto
 			iter     = mingraph->whole_pose_context_enmeths_begin(),
 			iter_end = mingraph->whole_pose_context_enmeths_end();
 			iter != iter_end; ++iter ) {
@@ -809,10 +805,10 @@ SymmetricScoreFunction::intersubunit_hbond_energy(
 ) const {
 	using EnergiesCacheableDataType::HBOND_SET;
 
-	hbonds::HBondSet const & hbond_set(
+	auto const & hbond_set(
 		static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( HBOND_SET )));
 
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -858,10 +854,10 @@ void
 SymmetricScoreFunction::symmetrical_allow_hbonds( pose::Pose & pose ) const {
 	using EnergiesCacheableDataType::HBOND_SET;
 
-	hbonds::HBondSet & hbond_set
+	auto & hbond_set
 		( static_cast< hbonds::HBondSet & > ( pose.energies().data().get( HBOND_SET )));
 
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -870,13 +866,13 @@ SymmetricScoreFunction::symmetrical_allow_hbonds( pose::Pose & pose ) const {
 		Size acc( hbond.acc_res() );
 		Size don( hbond.don_res() );
 		if ( symm_info->fa_is_independent( acc ) ) {
-			for ( std::vector<Size>::const_iterator clone=symm_info->bb_clones(acc).begin(), clone_end=symm_info->bb_clones(acc).end();
+			for ( auto clone=symm_info->bb_clones(acc).begin(), clone_end=symm_info->bb_clones(acc).end();
 					clone != clone_end; ++clone ) {
 				hbond_set.set_backbone_backbone_acceptor( *clone, hbond_set.acc_bbg_in_bb_bb_hbond( acc ) );
 			}
 		}
 		if ( symm_info->fa_is_independent( don ) ) {
-			for ( std::vector<Size>::const_iterator clone=symm_info->bb_clones(don).begin(), clone_end=symm_info->bb_clones(don).end();
+			for ( auto clone=symm_info->bb_clones(don).begin(), clone_end=symm_info->bb_clones(don).end();
 					clone != clone_end; ++clone ) {
 				hbond_set.set_backbone_backbone_acceptor( *clone, hbond_set.acc_bbg_in_bb_bb_hbond( don ) );
 			}
@@ -889,11 +885,11 @@ void
 SymmetricScoreFunction::set_symmetric_residue_neighbors_hbonds( pose::Pose & pose ) const {
 	using EnergiesCacheableDataType::HBOND_SET;
 
-	hbonds::HBondSet & hbond_set
+	auto & hbond_set
 		( static_cast< hbonds::HBondSet & >
 		( pose.energies().data().get( HBOND_SET )));
 
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -922,7 +918,7 @@ SymmetricScoreFunction::set_symmetric_cenlist( pose::Pose & pose ) const {
 		)
 	);
 
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -964,7 +960,7 @@ SymmetricScoreFunction::correct_finalize_score( pose::Pose & pose ) const {
 	EnergyMap delta_energy( pose.energies().total_energies() );
 	EnergyMap interface_energies;//, etable_energy;
 
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	Real const factor ( symm_info->score_multiply_factor() - 1 );
@@ -993,7 +989,7 @@ SymmetricScoreFunction::correct_finalize_score( pose::Pose & pose ) const {
 	}
 
 	// whole structure energy correction
-	for ( WS_MethodIterator iter=ws_methods_begin(),
+	for ( auto iter=ws_methods_begin(),
 			iter_end = ws_methods_end(); iter != iter_end; ++iter ) {
 		ScoreTypes type_i = (*iter)->score_types();
 		for ( Size j=1; j<=type_i.size(); ++j ) {

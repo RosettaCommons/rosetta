@@ -41,9 +41,9 @@ typedef utility::pointer::shared_ptr< RamaScore const > RamaScoreCOP;
 class RamaScore: public CachingScoringMethod {
 public:
 
-	RamaScore(core::Size, core::Real, bool, std::string&,std::string);
+	RamaScore(core::Size, core::Real, bool, std::string&,std::string const &);
 
-	RamaScore(core::Size, core::Real, bool, std::string&, core::fragment::SecondaryStructureOP,std::string);
+	RamaScore(core::Size, core::Real, bool, std::string&, core::fragment::SecondaryStructureOP,std::string const &);
 
 	void SetupRamaTables();
 

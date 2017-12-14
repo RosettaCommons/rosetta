@@ -34,6 +34,7 @@
 #include <basic/Tracer.hh>
 
 //utility headers
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
@@ -55,7 +56,7 @@ InvrotTree::InvrotTree()
 	invrot_tree_constraints_.clear();
 }
 
-InvrotTree::~InvrotTree() {}
+InvrotTree::~InvrotTree() = default;
 
 core::scoring::constraints::ConstraintCOP
 InvrotTree::get_constraint_for_target_state( Size target_state ) const {
@@ -151,10 +152,10 @@ InvrotTree::add_to_targets( InvrotTargetOP invrot_target )
 
 
 TheozymeInvrotTree::TheozymeInvrotTree( EnzConstraintIOCOP enzcst_io )
-: InvrotTree(), enzcst_io_(enzcst_io)
+: InvrotTree(), enzcst_io_(std::move(enzcst_io))
 {}
 
-TheozymeInvrotTree::~TheozymeInvrotTree(){}
+TheozymeInvrotTree::~TheozymeInvrotTree()= default;
 
 
 bool

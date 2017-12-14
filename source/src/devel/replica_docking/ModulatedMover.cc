@@ -133,7 +133,7 @@ ModulatedMover::parse_my_tag(
 		Interpolators interpolators;
 		tr.Debug << "subtag->getName() " << subtag->getName() << std::endl;
 		if ( subtag->getName() == "Interp" && subtag->getOption< std::string >("key")!="weight" ) { //// weight is interpreted in TempWeightedMetropolisHastingsMover
-			core::Size dim = subtag->getOption< core::Size >( "dim", 1);
+			auto dim = subtag->getOption< core::Size >( "dim", 1);
 			tr.Debug << "dim "<< dim << " nlevels_per_dim " << tempering_->nlevels_per_dim( dim ) << std::endl;
 			if ( tempering_->exchange_grid_dim()==1 || dim==1 ) {
 				interps_1_[ subtag->getOption< std::string >( "key" ) ] = TempInterpolatorFactory::get_instance()->new_tempInterpolator( subtag, tempering_->nlevels_per_dim( 1 ) );
@@ -269,7 +269,7 @@ std::string ModulatedMover::mover_name() {
 void ModulatedMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList attlist;
 	attlist + Attr::required_attribute( "tempering", xs_string, "The previously declared HamiltonianExchange mover that will be used manage temperature and scorefunction exchanging" )
 		+ required_name_attribute();

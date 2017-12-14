@@ -37,11 +37,11 @@ class Schema
 public:
 
 	Schema(
-		std::string table_name);
+		std::string const & table_name);
 
 	Schema(
-		std::string table_name,
-		PrimaryKey primary_key);
+		std::string const & table_name,
+		PrimaryKey const & primary_key);
 
 	Schema(
 		Schema const & src);

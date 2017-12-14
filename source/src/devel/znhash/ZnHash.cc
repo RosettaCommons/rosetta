@@ -1073,7 +1073,7 @@ ZnCoordinationConstraint::operator == ( Constraint const & other_cst ) const
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	ZnCoordinationConstraint const & other( static_cast< ZnCoordinationConstraint const & > (other_cst) );
+	auto const & other( static_cast< ZnCoordinationConstraint const & > (other_cst) );
 	return zn_score_ == other.zn_score_;
 }
 

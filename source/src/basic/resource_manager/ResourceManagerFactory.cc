@@ -30,7 +30,7 @@
 namespace basic {
 namespace resource_manager {
 
-ResourceManagerFactory::ResourceManagerFactory() {}
+ResourceManagerFactory::ResourceManagerFactory() = default;
 
 ResourceManager *
 ResourceManagerFactory::create_resource_manager_from_options_system() const

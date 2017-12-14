@@ -33,6 +33,7 @@
 #include <protocols/optimize_weights/OptEData.hh>
 
 /// Utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
@@ -516,7 +517,7 @@ OptEMultifunc::mpi_receive_dfunc(
 #endif
 }
 
-WrapperOptEMultifunc::WrapperOptEMultifunc() {}
+WrapperOptEMultifunc::WrapperOptEMultifunc() = default;
 
 void WrapperOptEMultifunc::init(
 	ScoreTypes const & free_score_list,
@@ -852,8 +853,7 @@ void OptEVariableExpression::update_value_from_list(
 	set_value( value_vector[ id_ ] );
 }
 
-WrappedOptEExpressionCreator::WrappedOptEExpressionCreator()
-{}
+WrappedOptEExpressionCreator::WrappedOptEExpressionCreator() = default;
 
 WrappedOptEExpressionCreator::WrappedOptEExpressionCreator(
 	WrapperOptEMultifuncAP multifunc

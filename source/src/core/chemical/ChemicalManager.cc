@@ -79,7 +79,7 @@ namespace chemical {
 static basic::Tracer TR( "core.chemical.ChemicalManager" );
 
 /// @brief private constructor to guarantee the singleton
-ChemicalManager::ChemicalManager(){}
+ChemicalManager::ChemicalManager()= default;
 
 /// @details if the tag is not in the map, input it from a database file and add it
 /// to the map for future look-up.

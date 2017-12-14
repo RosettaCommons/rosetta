@@ -56,6 +56,7 @@
 
 
 //C++ headers
+#include <utility>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -90,9 +91,9 @@ namespace movers {
 //////////////////////////////////////////////////////////////////////////////////////////
 RNP_HighResMover::RNP_HighResMover( RNA_FragmentMoverOP rna_fragment_mover, protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer, options::RNA_FragmentMonteCarloOptionsCOP options ):
 	Mover(),
-	rna_fragment_mover_( rna_fragment_mover ),
-	rna_loop_closer_( rna_loop_closer ),
-	options_( options ),
+	rna_fragment_mover_(std::move( rna_fragment_mover )),
+	rna_loop_closer_(std::move( rna_loop_closer )),
+	options_(std::move( options )),
 	fragment_cycles_( 200 ),
 	frag_size_( 1 ),
 	is_init_( false ),
@@ -102,9 +103,7 @@ RNP_HighResMover::RNP_HighResMover( RNA_FragmentMoverOP rna_fragment_mover, prot
 	Mover::type("RNP_HighResMover");
 }
 
-RNP_HighResMover::~RNP_HighResMover()
-{
-}
+RNP_HighResMover::~RNP_HighResMover() = default;
 
 // initialize, this is going to set up the rnp docking mover and the rnp docking ft
 // this class can then store the mover and the fold tree
@@ -153,7 +152,7 @@ void RNP_HighResMover::apply( core::pose::Pose & pose )
 	//check that we've actually initialized stuff
 	if ( !is_init_ ) utility_exit_with_message( "RNP_HighResMover has not been initialized before apply!" );
 
-	time_t pdb_start_time = time(NULL);
+	time_t pdb_start_time = time(nullptr);
 
 	ScoreFunctionOP scorefxn;
 
@@ -237,7 +236,7 @@ void RNP_HighResMover::apply( core::pose::Pose & pose )
 
 	pose = monte_carlo_->lowest_score_pose();
 
-	time_t pdb_end_time = time(NULL);
+	time_t pdb_end_time = time(nullptr);
 
 	scorefxn->show( TR, pose );
 

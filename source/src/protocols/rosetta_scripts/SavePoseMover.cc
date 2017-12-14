@@ -73,7 +73,7 @@ SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_
 
 
 	if ( tag->hasOption("restore_pose") ) {
-		restore_pose_ = tag->getOption<bool>("restore_pose",1);
+		restore_pose_ = tag->getOption<bool>("restore_pose",true);
 	}
 }
 

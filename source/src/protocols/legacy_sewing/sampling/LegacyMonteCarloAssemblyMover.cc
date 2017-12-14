@@ -116,7 +116,7 @@ LegacyMonteCarloAssemblyMover::generate_assembly(){
 	core::Real best_score = 10000;
 
 	//Main loop
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 	core::Real random_action = numeric::random::rg().uniform();
 	core::Real current_add_probability = 0.0;
 	core::Real current_delete_probability = 0.0;
@@ -202,7 +202,7 @@ LegacyMonteCarloAssemblyMover::generate_assembly(){
 		++cur_cycle;
 	}
 
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR << "Completed " << cur_cycle << " cycles (" << total_attempts_counter << " total attempts) in " << endtime - starttime << " seconds" << std::endl;
 	return best_complete_assembly;
 } //generate_assembly
@@ -272,12 +272,12 @@ LegacyMonteCarloAssemblyMover::add_edge(
 		}
 
 		//Cast the edge to a proper HashEdge and follow it
-		HashEdge const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
+		auto const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
 
 		//Initialize an empty starting Assembly and add it to the list
 
 		if ( ! option[basic::options::OptionKeys::legacy_sewing::may_add_already_added_model].user() ) {
-			option[basic::options::OptionKeys::legacy_sewing::may_add_already_added_model].value( 0 );
+			option[basic::options::OptionKeys::legacy_sewing::may_add_already_added_model].value( false );
 		}
 		bool may_add_already_added_model = option[ basic::options::OptionKeys::legacy_sewing::may_add_already_added_model];
 		// as of 2016/1/2, turning on may_add_already_added_model resulted in

@@ -55,7 +55,7 @@ PositionDdGInfo::PositionDdGInfo(
 	wt_aa_(wt_aa)
 {}
 
-PositionDdGInfo::~PositionDdGInfo(){}
+PositionDdGInfo::~PositionDdGInfo()= default;
 
 /// @details doesn't check whether something for this mutation already exists,
 /// so previously added stuff will be overwritten
@@ -65,7 +65,7 @@ PositionDdGInfo::add_mutation_ddG(
 	core::Real ddG
 )
 {
-	std::map< core::chemical::AA, core::Real >::iterator map_it = mutation_ddGs_.find( aa );
+	auto map_it = mutation_ddGs_.find( aa );
 	if ( map_it == mutation_ddGs_.end() ) {
 		mutation_ddGs_.insert( std::pair< core::chemical::AA, core::Real >(aa, ddG) );
 	} else map_it->second = ddG;
@@ -99,7 +99,7 @@ read_ddg_predictions_file( std::string filename )
 		core::chemical::AA wt_aa( core::chemical::aa_from_oneletter_code( wt_res[0] ) );
 		core::chemical::AA mut_aa( core::chemical::aa_from_oneletter_code( mut_res[0] ) );
 
-		std::map< core::Size, PositionDdGInfoOP >::iterator muts_it( to_return.find( mut_seqpos ));
+		auto muts_it( to_return.find( mut_seqpos ));
 		if ( muts_it == to_return.end() ) {
 			PositionDdGInfoOP pos_info( new PositionDdGInfo( mut_seqpos, wt_aa ) );
 			to_return.insert( std::pair< core::Size, PositionDdGInfoOP >( mut_seqpos, pos_info ) );

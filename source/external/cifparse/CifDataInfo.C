@@ -158,7 +158,7 @@ CifDataInfo::CifDataInfo(DicFile& dictFile) : _dictFile(dictFile)
 
 #ifndef VLAD_VERSION
     ISTable* dictTableP = block.GetTablePtr("dictionary");
-    if (dictTableP == NULL)
+    if (dictTableP == nullptr)
     {
         cout << "CRITICAL: CANNOT FIND DDL CATEGORY: " << "dictionary" << endl;
         return;
@@ -168,7 +168,7 @@ CifDataInfo::CifDataInfo(DicFile& dictFile) : _dictFile(dictFile)
 
 #ifndef VLAD_CAT_NAMES
     ISTable* categoryTableP = block.GetTablePtr("category");
-    if (categoryTableP == NULL)
+    if (categoryTableP == nullptr)
     {
         cout << "CRITICAL: CANNOT FIND DDL CATEGORY: " << "category" << endl;
         return;
@@ -179,7 +179,7 @@ CifDataInfo::CifDataInfo(DicFile& dictFile) : _dictFile(dictFile)
 
 #ifndef VLAD_ITEM_NAMES
     ISTable* itemTableP = block.GetTablePtr("item");
-    if (itemTableP == NULL)
+    if (itemTableP == nullptr)
     {
         cout << "CRITICAL: CANNOT FIND DDL CATEGORY: " << "item" << endl;
         return;
@@ -233,7 +233,7 @@ const vector<string>& CifDataInfo::GetCatKeys(const string& catName)
 
     Block& block = _dictFile.GetBlock(_dictFile.GetFirstBlockName());
     ISTable* catKeyTableP = block.GetTablePtr("category_key");
-    if (catKeyTableP == NULL)
+    if (catKeyTableP == nullptr)
     {
         cout << "CRITICAL: CANNOT FIND DDL CATEGORY: " << "category_key" <<
           endl;
@@ -243,15 +243,15 @@ const vector<string>& CifDataInfo::GetCatKeys(const string& catName)
     vector<unsigned int> found;
 
     vector<string> searchCols;
-    searchCols.push_back("id");
+    searchCols.emplace_back("id");
 
     vector<string> searchVals;
     searchVals.push_back(catName);
 
     catKeyTableP->Search(found, searchVals, searchCols);
-    for (unsigned int foundI = 0; foundI < found.size(); ++foundI)
+    for (unsigned int foundI : found)
     {
-        _catKeyItems.push_back((*catKeyTableP)(found[foundI], "name"));
+        _catKeyItems.push_back((*catKeyTableP)(foundI, "name"));
     }
 
     return (_catKeyItems);
@@ -265,7 +265,7 @@ const vector<string>& CifDataInfo::GetCatAttribute(const string& catName,
 
     Block& block = _dictFile.GetBlock(_dictFile.GetFirstBlockName());
     ISTable* ddlCatP = block.GetTablePtr(refCatName);
-    if (ddlCatP == NULL)
+    if (ddlCatP == nullptr)
     {
         cout << "CRITICAL: CANNOT FIND DDL CATEGORY: " << refCatName << endl;
         return (_catAttrib);
@@ -274,15 +274,15 @@ const vector<string>& CifDataInfo::GetCatAttribute(const string& catName,
     vector<unsigned int> found;
 
     vector<string> searchCols;
-    searchCols.push_back("id");
+    searchCols.emplace_back("id");
 
     vector<string> searchVals;
     searchVals.push_back(catName);
 
     ddlCatP->Search(found, searchVals, searchCols);
-    for (unsigned int foundI = 0; foundI < found.size(); ++foundI)
+    for (unsigned int foundI : found)
     {
-        _catAttrib.push_back((*ddlCatP)(found[foundI], refAttrName));
+        _catAttrib.push_back((*ddlCatP)(foundI, refAttrName));
     }
 
     return (_catAttrib);
@@ -302,7 +302,7 @@ const vector<string>& CifDataInfo::GetItemAttribute(const string& itemName,
 
     Block& block = _dictFile.GetBlock(_dictFile.GetFirstBlockName());
     ISTable* ddlCatP = block.GetTablePtr(refCatName);
-    if (ddlCatP == NULL)
+    if (ddlCatP == nullptr)
     {
         cout << "CRITICAL: CANNOT FIND DDL CATEGORY: " << refCatName << endl;
         return (_itemAttrib);
@@ -311,15 +311,15 @@ const vector<string>& CifDataInfo::GetItemAttribute(const string& itemName,
     vector<unsigned int> found;
 
     vector<string> searchCols;
-    searchCols.push_back("name");
+    searchCols.emplace_back("name");
 
     vector<string> searchVals;
     searchVals.push_back(itemName);
 
     ddlCatP->Search(found, searchVals, searchCols);
-    for (unsigned int foundI = 0; foundI < found.size(); ++foundI)
+    for (unsigned int foundI : found)
     {
-        _itemAttrib.push_back((*ddlCatP)(found[foundI], refAttrName));
+        _itemAttrib.push_back((*ddlCatP)(foundI, refAttrName));
     }
 
     return (_itemAttrib);
@@ -337,7 +337,7 @@ const vector<string>& CifDataInfo::GetItemAttributeForItemTypeListCat(
     ISTable* itemTypeListTableP = block.GetTablePtr("item_type_list");
 
     vector<string> searchCol1;
-    searchCol1.push_back("name");
+    searchCol1.emplace_back("name");
 
     vector<string> valuesCol1;
     valuesCol1.push_back(itemName);
@@ -357,7 +357,7 @@ const vector<string>& CifDataInfo::GetItemAttributeForItemTypeListCat(
     ItemTypeLTarget.push_back(typeCode);
 
     vector<string> ItemTypeLList;
-    ItemTypeLList.push_back("code");
+    ItemTypeLList.emplace_back("code");
 
     unsigned int iOut = itemTypeListTableP->FindFirst(ItemTypeLTarget,
       ItemTypeLList);
@@ -377,7 +377,7 @@ void CifDataInfo::GetCatItemsNames(vector<string>& itemsNames,
 
     Block& block = _dictFile.GetBlock(_dictFile.GetFirstBlockName());
     ISTable* itemCatP = block.GetTablePtr("item");
-    if (itemCatP == NULL)
+    if (itemCatP == nullptr)
     {
         cout << "CRITICAL: CANNOT FIND DDL CATEGORY: " << "item" << endl;
         return;

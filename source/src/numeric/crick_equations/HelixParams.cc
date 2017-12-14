@@ -16,6 +16,7 @@
 
 // Unit headers
 #include <numeric/types.hh>
+#include <numeric/xyzVector.hh>
 
 //Project headers
 #include <numeric/crick_equations/HelixParams.hh>

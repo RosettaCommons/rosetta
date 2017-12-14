@@ -25,7 +25,7 @@ namespace utility {
 
 platform::Size const subset_mapping::UNMAPPED = 0;
 
-subset_mapping::subset_mapping() {}
+subset_mapping::subset_mapping() = default;
 subset_mapping::subset_mapping( platform::Size source_enumeration_size ) : src_2_dst_( source_enumeration_size, UNMAPPED ) {}
 subset_mapping::subset_mapping( subset_mapping const & src ) : ReferenceCount(), src_2_dst_( src.src_2_dst_ ), dst_2_src_( src.dst_2_src_ ) {}
 subset_mapping & subset_mapping::operator = ( subset_mapping const & rhs )
@@ -37,7 +37,7 @@ subset_mapping & subset_mapping::operator = ( subset_mapping const & rhs )
 	return *this;
 }
 
-subset_mapping::~subset_mapping() {}
+subset_mapping::~subset_mapping() = default;
 
 void subset_mapping::set_source_size( platform::Size src_size )
 {

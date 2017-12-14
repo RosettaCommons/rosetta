@@ -63,6 +63,7 @@
 
 //#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/file/FileName.hh>
 #include <sstream>
 
@@ -86,7 +87,7 @@ using utility::vector1;
 
 GeneralAntibodyModeler::GeneralAntibodyModeler(AntibodyInfoOP ab_info) :
 	utility::pointer::ReferenceCount(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 
 
@@ -110,7 +111,7 @@ GeneralAntibodyModeler::set_defaults(){
 
 }
 
-GeneralAntibodyModeler::~GeneralAntibodyModeler(){}
+GeneralAntibodyModeler::~GeneralAntibodyModeler()= default;
 
 GeneralAntibodyModeler::GeneralAntibodyModeler( GeneralAntibodyModeler const & src ):
 	utility::pointer::ReferenceCount(),
@@ -194,7 +195,7 @@ GeneralAntibodyModeler::setup_task_operations(){
 void
 GeneralAntibodyModeler::set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool setting) {
 	for ( core::SSize i=cdr_start; i<=cdr_end; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		set_cdr(cdr, setting);
 	}
 }
@@ -292,7 +293,7 @@ GeneralAntibodyModeler::get_cdr_loops(Pose const & pose) const {
 
 	for ( Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include_cdr4 */)); ++i ) {
 		if ( model_cdrs_[i] ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+			auto cdr = static_cast<CDRNameEnum>(i);
 			Size start = ab_info_->get_CDR_start(cdr, pose);
 			Size stop =  ab_info_->get_CDR_end(cdr, pose);
 			Size cutpoint = (stop-start)/2+start;
@@ -310,7 +311,7 @@ GeneralAntibodyModeler::get_cdr_loops_with_overhang(Pose const & pose) const {
 
 	for ( Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include_cdr4 */)); ++i ) {
 		if ( model_cdrs_[i] ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+			auto cdr = static_cast<CDRNameEnum>(i);
 			protocols::loops::Loop cdr_loop = get_cdr_loop_with_overhang(pose, cdr);
 			cdr_loops->add_loop(cdr_loop);
 		}
@@ -348,7 +349,7 @@ GeneralAntibodyModeler::get_cdrs_movemap_with_overhang(Pose  & pose, bool min_bb
 	MoveMapOP mm( new MoveMap() );
 	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include_cdr4 */) ); ++i ) {
 		if ( model_cdrs_[i] ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+			auto cdr = static_cast<CDRNameEnum>(i);
 			protocols::loops::Loop cdr_loop = ab_info_->get_CDR_loop(cdr, pose, overhangs_[ cdr ]);
 
 			vector1<bool> all_included_res(pose.size(), false);

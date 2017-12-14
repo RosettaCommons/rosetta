@@ -73,7 +73,7 @@ private:
 
 public:
 	/// @brief Constructor
-	ResonanceList( std::string sequence );
+	ResonanceList( std::string const & sequence );
 
 	~ResonanceList() override;
 

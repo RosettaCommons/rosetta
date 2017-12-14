@@ -30,7 +30,7 @@ SSManager::SSManager() : utility::pointer::ReferenceCount()
 {
 }
 // @brief Auto-generated virtual destructor
-SSManager::~SSManager() {}
+SSManager::~SSManager() = default;
 
 
 /// @brief transform ss index to symbol

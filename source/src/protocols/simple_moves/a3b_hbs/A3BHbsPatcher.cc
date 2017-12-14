@@ -178,7 +178,7 @@ A3BHbsPatcher::A3BHbsPatcher(
 
 }
 
-A3BHbsPatcher::~A3BHbsPatcher(){}
+A3BHbsPatcher::~A3BHbsPatcher()= default;
 
 }//hbs
 }//simple_moves

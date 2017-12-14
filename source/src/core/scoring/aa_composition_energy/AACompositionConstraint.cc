@@ -61,7 +61,7 @@ AACompositionConstraint::AACompositionConstraint( AACompositionConstraint const 
 
 /// @brief Destructor
 ///
-AACompositionConstraint::~AACompositionConstraint() {}
+AACompositionConstraint::~AACompositionConstraint() = default;
 
 /// @brief Clone operator
 ///

@@ -149,7 +149,7 @@ VLB & VLB::operator=( VLB const & init ) {
 }
 
 
-VLB::~VLB() {}
+VLB::~VLB() = default;
 
 void
 VLB::parse_my_tag(
@@ -168,8 +168,7 @@ VLB::parse_my_tag(
 
 	BuildInstructionOP instruction;
 	utility::vector0< TagCOP > const & tags( tag->getTags() );
-	for ( utility::vector0< TagCOP >::const_iterator it=tags.begin(); it!=tags.end(); ++it ) {
-		TagCOP const tag = *it;
+	for ( auto tag : tags ) {
 		if ( tag->getName() == "Bridge" ) {
 			// connect two contiguous but disjoint sections of a Pose into one continuous section
 			string const res1( tag->getOption< std::string >( "left" ) );

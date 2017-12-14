@@ -562,7 +562,7 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		utility::vector1 < core::Real > const user_set_dihedrals( option[basic::options::OptionKeys::cyclic_peptide::user_set_alpha_dihedrals]() );
 		runtime_assert_string_msg( user_set_dihedrals.size() % 4 == 0, "Error in simple_cycpep_predict app: the \"-user_set_alpha_dihedrals\" option must be followed by one or more groups of four numbers.  Each group must consist of a sequence position, then phi/psi/omega values." );
 		for ( core::Size i=1, imax=user_set_dihedrals.size(); i<=imax; i+=4 ) {
-			core::Size const seqpos( static_cast< core::Size >( user_set_dihedrals[i] ) );
+			auto const seqpos( static_cast< core::Size >( user_set_dihedrals[i] ) );
 			runtime_assert_string_msg( user_set_alpha_dihedrals_.count(seqpos) == 0, "Error in simple_cycpep_predict app: a residue index was specified more than once with the \"-user_set_alpha_dihedrals\" option." );
 			utility::vector1< core::Real > phipsiomegavect;
 			phipsiomegavect.reserve(3);
@@ -1636,7 +1636,7 @@ SimpleCycpepPredictApplication::do_cyclic_permutation (
 	utility::vector1 <std::string> &resnames_copy
 ) const {
 	core::Size const nname( resnames.size() );//Number of residue names
-	core::Size const offset( static_cast<core::Size>(numeric::random::rg().random_range(0,resnames.size()-1)) );
+	auto const offset( static_cast<core::Size>(numeric::random::rg().random_range(0,resnames.size()-1)) );
 
 	resnames_copy.clear();
 	resnames_copy.resize(nname, "");

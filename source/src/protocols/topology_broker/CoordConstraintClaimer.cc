@@ -87,8 +87,8 @@ CoordConstraintClaimer::CoordConstraintClaimer() :
 	bLocal_( false )
 {}
 
-CoordConstraintClaimer::CoordConstraintClaimer( std::string filename ) :
-	filename_(std::move( filename )),
+CoordConstraintClaimer::CoordConstraintClaimer( std::string const & filename ) :
+	filename_( filename ),
 	constraints_( /* NULL */ ),
 	root_( 1 ),
 	bRegenerateFromInputPose_ ( false ),

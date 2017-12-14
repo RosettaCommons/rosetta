@@ -201,7 +201,6 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunc
 	utility::vector0< utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator > > bessel_order_splines;
 	Size lsum=0;
 	for ( Size l=0; l <= lmax; ++l ) {
-		std::complex< float > GNLR(0,0);
 		Size max_b_order( nvals[l].size() );
 		for ( Size b_order=1; b_order <= max_b_order; ++b_order ) {
 			ObjexxFCL::FArray1D < float > Ia, Ra;
@@ -295,7 +294,7 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 {
 
 	// Are we symmetric?
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	const core::conformation::symmetry::SymmetryInfo *symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
 			pose.conformation()).Symmetry_Info().get();
@@ -306,7 +305,7 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 	}
 
 	utility::vector1< OneGaussianScattering > sig_centroid_(setup_centroid_scatter( pose ));
-	utility::vector1< OneGaussianScattering >::iterator sig_centroid( sig_centroid_.begin() );
+	auto sig_centroid( sig_centroid_.begin() );
 
 	core::Real minX, minY, minZ, maxX, maxY, maxZ;
 	find_min_xyz(pose, minX, minY, minZ, maxX, maxY, maxZ);
@@ -411,9 +410,9 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 				atmi_xyz_[1] =  atm_i.xyz()[1];
 				atmi_xyz_[2] =  atm_i.xyz()[2];
 			}
-			int gridX =  int( ( atmi_xyz_[0] - minX )/grid_reso + 0.5 );
-			int gridY =  int( ( atmi_xyz_[1] - minY )/grid_reso + 0.5 );
-			int gridZ =  int( ( atmi_xyz_[2] - minZ )/grid_reso + 0.5 );
+			auto gridX =  int( ( atmi_xyz_[0] - minX )/grid_reso + 0.5 );
+			auto gridY =  int( ( atmi_xyz_[1] - minY )/grid_reso + 0.5 );
+			auto gridZ =  int( ( atmi_xyz_[2] - minZ )/grid_reso + 0.5 );
 
 
 			for ( core::Size pos = 0; pos < grid_pos_x.size(); ++pos ) {
@@ -448,9 +447,9 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 				core::Real y = sin(phi)*r;
 				core::Real z = zc(k) + minZZ;
 
-				int xindex = int(( x - minX )/grid_reso + 0.5 );
-				int yindex = int(( y - minY )/grid_reso + 0.5 );
-				int zindex = int(( z - minZ )/grid_reso + 0.5 );
+				auto xindex = int(( x - minX )/grid_reso + 0.5 );
+				auto yindex = int(( y - minY )/grid_reso + 0.5 );
+				auto zindex = int(( z - minZ )/grid_reso + 0.5 );
 
 				if ( xindex > grid_points ||
 						yindex > grid_points ||

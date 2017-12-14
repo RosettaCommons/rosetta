@@ -100,14 +100,14 @@ class NCMinimize : public moves::Mover {
 public:
 	NCMinimize();
 
-	~NCMinimize();
+	~NCMinimize() override;
 
-	virtual MoverOP clone() const;
-	virtual MoverOP fresh_instance() const;
+	MoverOP clone() const override;
+	MoverOP fresh_instance() const override;
 
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
-	virtual void test_move( Pose & pose )
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
+	void test_move( Pose & pose ) override
 	{
 		apply(pose);
 	}
@@ -126,7 +126,7 @@ NCMinimize::NCMinimize() :
 
 }
 
-NCMinimize::~NCMinimize() {}
+NCMinimize::~NCMinimize() = default;
 
 MoverOP NCMinimize::clone() const {
 	return MoverOP( new NCMinimize( *this ) );
@@ -232,8 +232,8 @@ main( int argc, char * argv [] )
 							}
 						}
 					} else {
-						for ( int i = 0; i< (int) resid.length(); ++i ) {
-							if ( !(resid[i] >='0' && resid[i] <='9') ) {
+						for ( char i : resid ) {
+							if ( !(i >='0' && i <='9') ) {
 								throw ( CREATE_EXCEPTION(utility::excn::BadInput, " invalid exemplar_target_pdb_num " + resid_c));
 							}
 						}

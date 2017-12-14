@@ -101,7 +101,7 @@ UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const Energy
 	TR.Debug << "instantiating class with weights: " << score_type_weights_.show_nonzero()  << std::endl;
 }
 
-UnfoldedStateEnergy::~UnfoldedStateEnergy() {}
+UnfoldedStateEnergy::~UnfoldedStateEnergy() = default;
 
 EnergyMethodOP
 UnfoldedStateEnergy::clone() const {

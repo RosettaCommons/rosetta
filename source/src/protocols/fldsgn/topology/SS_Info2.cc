@@ -22,6 +22,7 @@
 
 /// C++ Headers
 #include <iostream>
+#include <utility>
 #include <utility/assert.hh>
 
 // Numeric
@@ -100,7 +101,7 @@ SS_Base::SS_Base( SS_Base const & s ):
 
 
 /// @brief destructor
-SS_Base::~SS_Base(){}
+SS_Base::~SS_Base()= default;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,13 +118,11 @@ Strand::Strand( Size const & begin, Size const & end ):
 
 
 /// @brief copy constructor
-Strand::Strand( Strand const & s ):
-	SS_Base( s )
-{}
+Strand::Strand( Strand const & /*s*/ ) = default;
 
 
 /// @brief destructor
-Strand::~Strand(){}
+Strand::~Strand()= default;
 
 
 /// @brief
@@ -174,14 +173,11 @@ Helix::Helix( Size const & begin, Size const & end ):
 
 
 /// @brief copy constructor
-Helix::Helix( Helix const & s ):
-	SS_Base( s ),
-	bend_( s.bend_ )
-{}
+Helix::Helix( Helix const & /*s*/ ) = default;
 
 
 /// @brief destructor
-Helix::~Helix(){}
+Helix::~Helix()= default;
 
 
 /// @brief
@@ -252,21 +248,18 @@ Loop::Loop():
 
 
 /// @brief value constructor
-Loop::Loop( Size const & begin, Size const & end, String const & type ):
+Loop::Loop( Size const begin, Size const end, String const & type ):
 	SS_Base( begin, end ),
 	type_( type )
 {}
 
 
 /// @brief copy constructor
-Loop::Loop( Loop const & s ):
-	SS_Base( s ),
-	type_( s.type_ )
-{}
+Loop::Loop( Loop const & /*s*/ ) = default;
 
 
 /// @brief destructor
-Loop::~Loop(){}
+Loop::~Loop()= default;
 
 
 /// @brief
@@ -316,7 +309,7 @@ SS_Info2::SS_Info2( SS_Info2 const & s ):
 
 
 /// @brief destructor
-SS_Info2::~SS_Info2(){}
+SS_Info2::~SS_Info2()= default;
 
 
 /// @brief make clone
@@ -416,15 +409,15 @@ std::ostream & operator<<(std::ostream & out, const SS_Info2 & ssinfo )
 {
 	Size count( 0 );
 	out << "#### SS_Info " << std::endl;
-	for ( Helices::const_iterator it=ssinfo.helices_.begin(), ite=ssinfo.helices_.end(); it != ite; ++it ) {
+	for ( auto const & helice : ssinfo.helices_ ) {
 		count ++;
-		Helix const & hx( **it );
+		Helix const & hx( *helice );
 		out << "# Helix  " << count << ": " << hx << std::endl;
 	}
 	count = 0;
-	for ( Strands::const_iterator it=ssinfo.strands_.begin(), ite=ssinfo.strands_.end(); it != ite; ++it ) {
+	for ( auto const & strand : ssinfo.strands_ ) {
 		count ++;
-		Strand const & st( **it );
+		Strand const & st( *strand );
 		out << "# Strand " << count << ": " << st << std::endl;
 	}
 	return out;
@@ -446,16 +439,12 @@ SS_Info2::set_SSorient( Pose const & pose )
 void
 SS_Info2::set_SSorient()
 {
-	for ( Strands::iterator iter = strands_.begin(),
-			iter_end = strands_.end(); iter != iter_end; ++iter ) {
-		StrandOP & st( *iter );
+	for ( auto & st : strands_ ) {
 		if (  st->length() >= 2 ) {
 			st->calc_geometry( bb_pos_ );
 		}
 	} // Strands
-	for ( Helices::iterator iter = helices_.begin(),
-			iter_end = helices_.end(); iter != iter_end; ++iter ) {
-		HelixOP & hx( *iter );
+	for ( auto & hx : helices_ ) {
 		if (  hx->length() >= 4 ) {
 			hx->calc_geometry( bb_pos_ );
 		}

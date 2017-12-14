@@ -60,7 +60,7 @@ using basic::Tracer;
 
 static Tracer TR("protocols.features.ResidueSecondaryStructureFeatures");
 
-ResidueSecondaryStructureFeatures::ResidueSecondaryStructureFeatures() {}
+ResidueSecondaryStructureFeatures::ResidueSecondaryStructureFeatures() = default;
 
 ResidueSecondaryStructureFeatures::ResidueSecondaryStructureFeatures(ResidueSecondaryStructureFeatures const &) :
 	FeaturesReporter()

@@ -40,7 +40,7 @@ PoseInserter::PoseInserter( Pose & pose_to_modify, Size resid_to_replace ) :
 	resid_to_replace_( resid_to_replace )
 {}
 
-PoseInserter::~PoseInserter() {}
+PoseInserter::~PoseInserter() = default;
 
 /// @brief Take a conformation::Residue from the upstream builder and
 /// call Pose::replace_residue at a particular position.

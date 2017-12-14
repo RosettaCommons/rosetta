@@ -51,7 +51,7 @@ namespace scoring {
 namespace rna {
 namespace data {
 
-typedef numeric::xyzVector< core::Real > Vector;
+using Vector = numeric::xyzVector<core::Real>;
 
 /// @details This must return a fresh instance of the RNA_DataBackboneEnergy class,
 /// never an instance already in use

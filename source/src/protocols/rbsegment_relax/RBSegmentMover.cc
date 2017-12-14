@@ -282,26 +282,18 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 
 		Size nres_seg  = i_end - i_start + 1;
 
-		numeric::xyzVector< Real > C1,N1,C2,N2, CA1, CA2;
-		numeric::xyzMatrix< Real > R, R1;
-
-		// avoid compiler warning
-		R.xx(0.0);R.xy(0.0);R.xz(0.0);
-		R.yx(0.0);R.yy(0.0);R.yz(0.0);
-		R.zx(0.0);R.zy(0.0);R.zz(0.0);
-		R1.xx(0.0);R1.xy(0.0);R1.xz(0.0);
-		R1.yx(0.0);R1.yy(0.0);R1.yz(0.0);
-		R1.zx(0.0);R1.zy(0.0);R1.zz(0.0);
+		numeric::xyzVector< Real > C1,N1,C2,N2;
+		numeric::xyzMatrix< Real > R( 0 ), R1( 0 );
 
 		for ( core::uint i = 0; i < nres_seg - mag; ++i ) {
 			// "transform" r_i to r_j
 			Size r_i = (dir == 1) ? i_start + i : i_end - i;
 			Size r_j = r_i + dir * mag;
 
-			CA1 = pose.residue(r_i).atom("CA").xyz();
+			numeric::xyzVector< Real > CA1 = pose.residue(r_i).atom("CA").xyz();
 			C1 = pose.residue(r_i).atom("C").xyz() - CA1;  // offset from CA
 			N1 = pose.residue(r_i).atom("N").xyz() - CA1;  // offset from CA
-			CA2 = pose.residue(r_j).atom("CA").xyz();
+			numeric::xyzVector< Real > CA2 = pose.residue(r_j).atom("CA").xyz();
 			C2 = pose.residue(r_j).atom("C").xyz() - CA2;  // offset from CA
 			N2 = pose.residue(r_j).atom("N").xyz() - CA2;  // offset from CA
 
@@ -340,11 +332,11 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 				}
 			}
 
+			numeric::xyzVector< Real > CA1 = pose.residue(r_i).atom("CA").xyz();
+			numeric::xyzVector< Real > CA2 = ref_pose_.residue(r_j).atom("CA").xyz();
 			if ( r_j <= static_cast<int>(nres) && r_j >= 1 && !crosses_cut ) {
-				CA1 = pose.residue(r_i).atom("CA").xyz();
 				C1 = pose.residue(r_i).atom("C").xyz() - CA1;  // offset from CA
 				N1 = pose.residue(r_i).atom("N").xyz() - CA1;  // offset from CA
-				CA2 = ref_pose_.residue(r_j).atom("CA").xyz();
 				C2 = ref_pose_.residue(r_j).atom("C").xyz() - CA2;  // offset from CA
 				N2 = ref_pose_.residue(r_j).atom("N").xyz() - CA2;  // offset from CA
 

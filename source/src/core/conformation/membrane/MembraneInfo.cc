@@ -47,6 +47,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -78,8 +79,8 @@ MembraneInfo::MembraneInfo() :
 	membrane_core_( 0 ),
 	membrane_rsd_num_( 0 ),
 	membrane_jump_( 0 ),
-	lipid_acc_data_( 0 ),
-	spanning_topology_( 0 )
+	lipid_acc_data_( nullptr ),
+	spanning_topology_( nullptr )
 {}
 
 /// @brief Create MembraneInfo from initialized data
@@ -100,8 +101,8 @@ MembraneInfo::MembraneInfo(
 	membrane_core_( membrane_core ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
-	lipid_acc_data_( 0 ),
-	spanning_topology_( topology )
+	lipid_acc_data_( nullptr ),
+	spanning_topology_(std::move( topology ))
 {}
 
 /// @brief Create MembraneInfo from initialized data with lipophilicity
@@ -123,8 +124,8 @@ MembraneInfo::MembraneInfo(
 	membrane_core_( membrane_core ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
-	lipid_acc_data_( lips ),
-	spanning_topology_( topology )
+	lipid_acc_data_(std::move( lips )),
+	spanning_topology_(std::move( topology ))
 {}
 
 /// @brief Create a deep copy of all data in this object.
@@ -161,7 +162,7 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 }
 
 /// @brief Destructor
-MembraneInfo::~MembraneInfo() {}
+MembraneInfo::~MembraneInfo() = default;
 
 /// @brief Generate a string representation of information represented by ths MembraneInfo
 void
@@ -339,7 +340,7 @@ bool
 MembraneInfo::include_lips() const {
 
 	// If lips initialized, return true
-	if ( lipid_acc_data_ != 0 ) {
+	if ( lipid_acc_data_ != nullptr ) {
 		return true;
 	}
 

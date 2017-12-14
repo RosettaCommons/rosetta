@@ -119,7 +119,7 @@ NormalMode::solve( pose::Pose const &pose )
 	prepare_coord( pose );
 
 	set_harmonic_constant_map( pose );
-	typedef utility::vector1< utility::vector1< Real > > NM_Matrix;
+	using NM_Matrix = utility::vector1<utility::vector1<Real> >;
 	NM_Matrix U, U_cart;
 
 	Size n;

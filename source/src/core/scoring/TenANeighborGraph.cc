@@ -53,7 +53,7 @@ void
 TenANeighborNode::copy_from( Node const * source )
 {
 	debug_assert( dynamic_cast< TenANeighborNode const * > (source) );
-	TenANeighborNode const * tAsource( static_cast< TenANeighborNode const * > (source) );
+	auto const * tAsource( static_cast< TenANeighborNode const * > (source) );
 	neighbor_mass_           = tAsource->neighbor_mass_;
 	sum_of_neighbors_masses_ = tAsource->sum_of_neighbors_masses_;
 	since_last_sonm_update_  = tAsource->since_last_sonm_update_;
@@ -65,7 +65,7 @@ TenANeighborNode::neighbor_mass( Real mass ) {
 	neighbor_mass_ = mass;
 	for ( EdgeListConstIter eiter = const_edge_list_begin(),
 			eiter_end = const_edge_list_end(); eiter != eiter_end; ++eiter ) {
-		TenANeighborNode const * tenaneighb =
+		auto const * tenaneighb =
 			static_cast< TenANeighborNode const * > ((*eiter)->get_other_node( get_node_index() ));
 		tenaneighb->update_neighbor_mass_sum();
 	}
@@ -90,7 +90,7 @@ TenANeighborNode::update_neighbor_mass_sum() const
 	sum_of_neighbors_masses_ = 0.0;
 	for ( EdgeListConstIter eiter = const_edge_list_begin(),
 			eiter_end = const_edge_list_end(); eiter != eiter_end; ++eiter ) {
-		TenANeighborNode const * tenaneighb =
+		auto const * tenaneighb =
 			static_cast< TenANeighborNode const * > ((*eiter)->get_other_node( get_node_index() ));
 		sum_of_neighbors_masses_ += tenaneighb->neighbor_mass_;
 	}

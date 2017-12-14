@@ -58,7 +58,7 @@ full_name(
 ///
 /// dir like chemical/carbohydrates/linkage_conformers/
 std::string
-find_database_path( std::string dir, std::string filename);
+find_database_path( std::string const & dir, std::string const & filename );
 
 /// @brief Find a path to a file.
 ///
@@ -67,7 +67,7 @@ find_database_path( std::string dir, std::string filename);
 ///
 /// dir like chemical/carbohydrates/linkage_conformers/
 std::string
-find_database_path( std::string dir, std::string filename, std::string ext);
+find_database_path( std::string const & dir, std::string const & filename, std::string const & ext );
 
 
 /// @brief Does cache file (absolute path) exist?

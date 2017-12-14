@@ -20,6 +20,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/stream_util.hh>
 
 // Boost headers
@@ -120,8 +121,7 @@ IdealAbegoGenerator::IdealAbegoGenerator( std::string const & segment_name_val )
 {
 }
 
-IdealAbegoGenerator::~IdealAbegoGenerator()
-{}
+IdealAbegoGenerator::~IdealAbegoGenerator() = default;
 
 IdealAbegoGeneratorOP
 IdealAbegoGenerator::clone() const
@@ -157,9 +157,9 @@ IdealAbegoGenerator::generate(
 		if ( extend_ss_ ) {
 			retval = extract_ideal_motifs( alpha_alpha, lenset );
 			if ( match_ss_to_abego_ ) {
-				for ( MotifOPs::iterator m=retval.begin(); m!=retval.end(); ++m ) {
-					note_fwd_element_extensions( **m, 'H', 'A' );
-					note_rev_element_extensions( **m, 'H', 'A' );
+				for ( auto & m : retval ) {
+					note_fwd_element_extensions( *m, 'H', 'A' );
+					note_rev_element_extensions( *m, 'H', 'A' );
 				}
 			}
 		} else {
@@ -169,8 +169,8 @@ IdealAbegoGenerator::generate(
 		if ( extend_ss_ ) {
 			retval = extract_ideal_motifs( ab, lenset );
 			if ( match_ss_to_abego_ ) {
-				for ( MotifOPs::iterator m=retval.begin(); m!=retval.end(); ++m ) {
-					note_fwd_element_extensions( **m, 'H', 'A' );
+				for ( auto & m : retval ) {
+					note_fwd_element_extensions( *m, 'H', 'A' );
 				}
 			}
 		} else {
@@ -180,8 +180,8 @@ IdealAbegoGenerator::generate(
 		if ( extend_ss_ ) {
 			retval = extract_ideal_motifs( ba, lenset );
 			if ( match_ss_to_abego_ ) {
-				for ( MotifOPs::iterator m=retval.begin(); m!=retval.end(); ++m ) {
-					note_rev_element_extensions( **m, 'H', 'A' );
+				for ( auto & m : retval ) {
+					note_rev_element_extensions( *m, 'H', 'A' );
 				}
 			}
 		} else {
@@ -196,9 +196,9 @@ IdealAbegoGenerator::generate(
 	} else {
 		// by default, throw 'X' abegos
 		TR.Warning << "using idealized_abego, but secondary structure combination we are connecting (" << abego1 << " --> " << abego2 << " is not AA, AB, BA, or BB. Loop will be all LX" << std::endl;
-		for ( LengthSet::const_iterator l=lenset.begin(); l!=lenset.end(); ++l ) {
-			std::string const secstruct( *l, 'L' );
-			std::string const abego( *l, 'X' );
+		for ( unsigned long l : lenset ) {
+			std::string const secstruct( l, 'L' );
+			std::string const abego( l, 'X' );
 			retval.push_back( MotifOP( new Motif( segment_name_, secstruct, abego, false, false ) ) );
 		}
 	}
@@ -222,11 +222,11 @@ IdealAbegoGenerator::MotifOPs
 IdealAbegoGenerator::add_cutpoints( MotifOPs const & orig, LengthSet const & cutpoint_set ) const
 {
 	MotifOPs retval;
-	for ( MotifOPs::const_iterator m=orig.begin(); m!=orig.end(); ++m ) {
-		for ( LengthSet::const_iterator c=cutpoint_set.begin(); c!=cutpoint_set.end(); ++c ) {
-			if ( *c > (*m)->elem_length() ) continue;
-			MotifOP newmotif( new Motif( **m ) );
-			newmotif->set_cutpoint( *c );
+	for ( auto const & m : orig ) {
+		for ( unsigned long c : cutpoint_set ) {
+			if ( c > m->elem_length() ) continue;
+			MotifOP newmotif( new Motif( *m ) );
+			newmotif->set_cutpoint( c );
 			retval.push_back( newmotif );
 		}
 	}
@@ -239,11 +239,11 @@ IdealAbegoGenerator::extract_ideal_motifs(
 	LengthSet const & lenset ) const
 {
 	MotifOPs retval;
-	for ( Abegos::const_iterator abego=abegolist.begin(); abego!=abegolist.end(); ++abego ) {
-		if ( lenset.find( abego->size() + 2 ) == lenset.end() ) continue;
-		std::string const secstruct( 2 + abego->size(), 'L' );
+	for ( auto const & abego : abegolist ) {
+		if ( lenset.find( abego.size() + 2 ) == lenset.end() ) continue;
+		std::string const secstruct( 2 + abego.size(), 'L' );
 		std::stringstream abego_str;
-		abego_str << 'X' << *abego << 'X';
+		abego_str << 'X' << abego << 'X';
 		MotifOP m( new Motif( segment_name_, secstruct, abego_str.str(), false, false ) );
 		retval.push_back( m );
 	}
@@ -267,7 +267,7 @@ IdealAbegoGenerator::note_fwd_element_extensions(
 	char const element_abego ) const
 {
 	// starting at beginning, locate extending elements
-	components::SegmentResid const length = static_cast< components::SegmentResid >( motif.elem_length() );
+	auto const length = static_cast< components::SegmentResid >( motif.elem_length() );
 	for ( components::SegmentResid resid=1; resid<=length; ++resid ) {
 		if ( motif.abego( resid ) != element_abego ) break;
 		motif.set_ss( resid, sschar );
@@ -281,7 +281,7 @@ IdealAbegoGenerator::note_rev_element_extensions(
 	char const element_abego ) const
 {
 	// starting at end, locate extending elements
-	components::SegmentResid const length = static_cast< components::SegmentResid >( motif.elem_length() );
+	auto const length = static_cast< components::SegmentResid >( motif.elem_length() );
 	for ( components::SegmentResid resid=length; resid>=1; --resid ) {
 		if ( motif.abego( resid ) != element_abego ) break;
 		motif.set_ss( resid, sschar );

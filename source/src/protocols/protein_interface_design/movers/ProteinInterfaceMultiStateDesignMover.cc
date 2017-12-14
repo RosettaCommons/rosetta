@@ -136,7 +136,7 @@ ProteinInterfaceMultiStateDesignMover::ProteinInterfaceMultiStateDesignMover() :
 	state_unbound_.clear();
 }
 
-ProteinInterfaceMultiStateDesignMover::~ProteinInterfaceMultiStateDesignMover(){}
+ProteinInterfaceMultiStateDesignMover::~ProteinInterfaceMultiStateDesignMover()= default;
 
 void
 part_complex( core::pose::PoseOP pose, core::Size const rb_jump ){
@@ -324,9 +324,8 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 			// to avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 			std::set< core::chemical::AA > aaset;
 			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
-			for ( std::list< ResidueTypeCOP >::const_iterator t( allowed.begin() ), end( allowed.end() );
-					t != end; ++t ) {
-				core::chemical::AA aa( (*t)->aa() );
+			for ( auto const & t : allowed ) {
+				core::chemical::AA aa( t->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
@@ -458,11 +457,11 @@ ProteinInterfaceMultiStateDesignMover::output_results( Pose & pose )
 	std::string prefix("result");
 	if ( option[ OptionKeys::out::prefix ].user() ) prefix = option[ OptionKeys::out::prefix ]();
 
-	typedef GeneticAlgorithm::TraitEntityHashMap TraitEntityHashMap;
+	using TraitEntityHashMap = GeneticAlgorithm::TraitEntityHashMap;
 	TraitEntityHashMap const & cache( gen_alg_->entity_cache() );
 	utility::vector1<Entity::OP> sortable;
-	for ( TraitEntityHashMap::const_iterator it( cache.begin() ), end( cache.end() ); it != end; ++it ) {
-		sortable.push_back( it->second );
+	for ( auto const & it : cache ) {
+		sortable.push_back( it.second );
 	}
 	std::sort( sortable.begin(), sortable.end(), lt_OP_deref< Entity > );
 
@@ -486,10 +485,9 @@ ProteinInterfaceMultiStateDesignMover::output_results( Pose & pose )
 		extra_lines.push_back( ms_info.str() );
 		ms_info.str(""); // funky way to 'empty' ostringstream
 		ms_info << "REMARK MultiState Sequence:";
-		for ( EntityElements::const_iterator pos( entity.traits().begin() ), end( entity.traits().end() );
-				pos != end; ++pos ) {
-			ms_info << " " << (*pos)->to_string();
-			TR(t_info) << (*pos)->to_string() << " ";
+		for ( auto const & pos : entity.traits() ) {
+			ms_info << " " << pos->to_string();
+			TR(t_info) << pos->to_string() << " ";
 		}
 		TR(t_info) << "fitness " << F(5,4,entity.fitness()) << '\n';
 		extra_lines.push_back( ms_info.str() );
@@ -550,9 +548,9 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	if ( tf ) task_factory( tf );
 	rb_jump_ = tag->getOption< core::Size >( "rb_jump", 1 );
 
-	unfolded_ = tag->getOption< bool >( "unfolded", 1 );
-	unbound_ = tag->getOption< bool >( "unbound", 1 );
-	input_is_positive_ = tag->getOption< bool >( "input_is_positive", 1 );
+	unfolded_ = tag->getOption< bool >( "unfolded", true );
+	unbound_ = tag->getOption< bool >( "unbound", true );
+	input_is_positive_ = tag->getOption< bool >( "input_is_positive", true );
 	use_unbound_for_sequence_profile_ = tag->getOption< bool >( "unbound_for_sequence_profile", unbound_ );
 	bump_threshold_ = tag->getOption< core::Real >( "profile_bump_threshold", 1.0 );
 	/// Read additional positive and negative states
@@ -566,8 +564,8 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
 		}
 		std::string const fname( btag->getOption< std::string >( "pdb" ) );
-		bool const unbound( btag->getOption< bool >( "unbound", 0 ) );
-		bool const unfolded( btag->getOption< bool >( "unfolded", 0 ) );
+		bool const unbound( btag->getOption< bool >( "unbound", false ) );
+		bool const unfolded( btag->getOption< bool >( "unfolded", false ) );
 
 		core::pose::PoseOP new_pose( new core::pose::Pose );
 		state_poses_.push_back( new_pose );
@@ -615,9 +613,9 @@ ProteinInterfaceMultiStateDesignMover::add_states(
 	using namespace core::pose;
 	using namespace protocols::multistate_design;
 
-	runtime_assert( multistate_packer_ != 0 );
+	runtime_assert( multistate_packer_ != nullptr );
 
-	runtime_assert( task_factory() != 0 );
+	runtime_assert( task_factory() != nullptr );
 	PackerTaskCOP ptask = task_factory()->create_task_and_apply_taskoperations( pose );
 
 	Pose const bound( pose );

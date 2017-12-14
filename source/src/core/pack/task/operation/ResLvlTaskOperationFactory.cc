@@ -50,15 +50,15 @@ ResLvlTaskOperationFactory::factory_register( ResLvlTaskOperationCreatorOP creat
 	add_creator( creator );
 }
 
-ResLvlTaskOperationFactory::ResLvlTaskOperationFactory() {}
+ResLvlTaskOperationFactory::ResLvlTaskOperationFactory() = default;
 
-ResLvlTaskOperationFactory::~ResLvlTaskOperationFactory(){}
+ResLvlTaskOperationFactory::~ResLvlTaskOperationFactory()= default;
 
 /// @brief add a ResLvlTaskOperation prototype, using its default type name as the map key
 void
 ResLvlTaskOperationFactory::add_creator( ResLvlTaskOperationCreatorOP rltoc )
 {
-	runtime_assert( rltoc != 0 );
+	runtime_assert( rltoc != nullptr );
 	rltoc_map_[ rltoc->keyname() ] = rltoc;
 }
 
@@ -75,7 +75,7 @@ ResLvlTaskOperationFactory::provide_xml_schema(
 	std::string const &task_operation_name,
 	utility::tag::XMLSchemaDefinition & xsd
 ) const {
-	RLTOC_Map::const_iterator iter( rltoc_map_.find( task_operation_name ) );
+	auto iter( rltoc_map_.find( task_operation_name ) );
 	if ( iter != rltoc_map_.end() ) {
 		iter->second->provide_xml_schema( xsd );
 	} else {
@@ -88,13 +88,13 @@ ResLvlTaskOperationFactory::provide_xml_schema(
 ResLvlTaskOperationOP
 ResLvlTaskOperationFactory::newRLTO( std::string const & type ) const
 {
-	RLTOC_Map::const_iterator iter( rltoc_map_.find( type ) );
+	auto iter( rltoc_map_.find( type ) );
 	if ( iter != rltoc_map_.end() ) {
 		ResLvlTaskOperationOP rlto( iter->second->create_res_level_task_operation() );
 		return rlto;
 	} else {
 		utility_exit_with_message( type + " is not known to the ResLvlTaskOperationFactory. Was its ResLvlTaskOperationCreator class registered at initialization?" );
-		return NULL;
+		return nullptr;
 	}
 }
 

@@ -134,7 +134,6 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 	Real neighbor_count(0);
 	Vector neighbor_vector_sum(0,0,0);
 
-	conformation::ResidueOPs::iterator poseIT;
 	//use the coordinates of residue neighbor atom for all calcuations
 	Vector current_vector(current_residue.nbr_atom_xyz());
 

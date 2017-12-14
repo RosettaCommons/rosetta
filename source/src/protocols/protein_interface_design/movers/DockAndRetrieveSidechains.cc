@@ -72,7 +72,7 @@ DockAndRetrieveSidechains::DockAndRetrieveSidechains() :
 	protocols::moves::Mover( DockAndRetrieveSidechains::mover_name() )
 {}
 
-DockAndRetrieveSidechains::~DockAndRetrieveSidechains() {}
+DockAndRetrieveSidechains::~DockAndRetrieveSidechains() = default;
 
 protocols::moves::MoverOP
 DockAndRetrieveSidechains::clone() const{
@@ -126,14 +126,14 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 {
 	std::string const score_low( tag->getOption<string>( "score_low", "score_docking_low" ) );
 	std::string const score_high( protocols::rosetta_scripts::get_score_function_name( tag, "score_high" ) );
-	low_res_protocol_only_ = !tag->getOption< bool >( "fullatom", 0 );
-	conserve_foldtree_ = tag->getOption< bool >( "conserve_foldtree", 0 );
-	bool const local_refine( tag->getOption<bool>( "local_refine", 0 ));
-	bool const view( tag->getOption<bool>( "view", 0 ) );
-	bool const design( tag->getOption<bool>( "design", 0 ) );
-	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
+	low_res_protocol_only_ = !tag->getOption< bool >( "fullatom", false );
+	conserve_foldtree_ = tag->getOption< bool >( "conserve_foldtree", false );
+	bool const local_refine( tag->getOption<bool>( "local_refine", false ));
+	bool const view( tag->getOption<bool>( "view", false ) );
+	bool const design( tag->getOption<bool>( "design", false ) );
+	symmetry_ = tag->getOption<bool>( "symmetry", false );
 	//allow replacement of the default DockingTask with whatever you give it. Does not work with symmetry yet.
-	bool const ignore_default_docking_task( tag->getOption<bool>( "ignore_default_docking_task", 0 ) );
+	bool const ignore_default_docking_task( tag->getOption<bool>( "ignore_default_docking_task", false ) );
 
 	if ( symmetry_ ) {
 		using namespace core::scoring::symmetry;
@@ -161,7 +161,7 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 		movable_jumps.push_back( std::atoi( it->c_str() ));
 	}
 	//core::Size const rb_jump( tag->getOption< core::Size >( "rb_jump", 1 ) );
-	bool const optimize_foldtree = tag->getOption<bool>( "optimize_fold_tree", 1 );
+	bool const optimize_foldtree = tag->getOption<bool>( "optimize_fold_tree", true );
 	docking_mover_ = protocols::docking::DockingProtocolOP( new protocols::docking::DockingProtocol( movable_jumps, low_res_protocol_only_, local_refine, optimize_foldtree, scorelo, scorehi ) );
 
 	docking_mover_->set_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );

@@ -73,7 +73,6 @@ private:
 	core::Size loopLengthRangeHigh_;
 	core::Real rmsThreshold_;
 	core::Real max_vdw_change_;
-	bool idealExtension_;
 	bool ideal_;
 	bool reject_failed_loops_;
 	core::Size firstResidue_;

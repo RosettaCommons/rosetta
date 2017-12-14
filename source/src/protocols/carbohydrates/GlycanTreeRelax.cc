@@ -92,7 +92,7 @@ GlycanTreeRelax::GlycanTreeRelax( GlycanTreeRelax const & src ):
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-GlycanTreeRelax::~GlycanTreeRelax(){}
+GlycanTreeRelax::~GlycanTreeRelax()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

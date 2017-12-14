@@ -28,6 +28,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -76,7 +77,7 @@ MSDMover::MSDMover() :
 	debug_( false )
 {}
 
-MSDMover::MSDMover( protocols::moves::MoverOP mover, utility::vector1< std::string > resfiles ) :
+MSDMover::MSDMover( protocols::moves::MoverOP mover, utility::vector1< std::string > const & resfiles ) :
 	design_mover_(std::move( mover )),
 	resfiles_( resfiles ),
 	weight_(0.5),

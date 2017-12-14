@@ -27,6 +27,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -60,7 +61,7 @@ AddCDRProfilesOperation::AddCDRProfilesOperation():
 
 AddCDRProfilesOperation::AddCDRProfilesOperation(AntibodyInfoCOP ab_info):
 	TaskOperation(),
-	ab_info_(ab_info),
+	ab_info_(std::move(ab_info)),
 	profile_sets_task_(/* NULL */)
 {
 	set_defaults();
@@ -68,7 +69,7 @@ AddCDRProfilesOperation::AddCDRProfilesOperation(AntibodyInfoCOP ab_info):
 
 AddCDRProfilesOperation::AddCDRProfilesOperation(AntibodyInfoCOP ab_info, const utility::vector1<bool>& cdrs):
 	TaskOperation(),
-	ab_info_(ab_info),
+	ab_info_(std::move(ab_info)),
 	profile_sets_task_(/* NULL */)
 {
 	set_defaults();
@@ -100,7 +101,7 @@ AddCDRProfilesOperation::set_defaults(){
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 
 	for ( core::Size i = 1; i <=CDRNameEnum_proto_total; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		CDRSeqDesignOptionsOP opt = CDRSeqDesignOptionsOP(new CDRSeqDesignOptions(cdr));
 		if ( cdr == l4 || cdr == h4 ) {
 			opt->design(false);
@@ -147,7 +148,7 @@ AddCDRProfilesOperation::clone() const{
 	return TaskOperationOP( new AddCDRProfilesOperation( *this ));
 }
 
-AddCDRProfilesOperation::~AddCDRProfilesOperation(){}
+AddCDRProfilesOperation::~AddCDRProfilesOperation()= default;
 
 void
 AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&){
@@ -208,7 +209,7 @@ void AddCDRProfilesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 void
 AddCDRProfilesOperation::set_cdr_only(CDRNameEnum cdr){
 	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
-		CDRNameEnum current_cdr = static_cast<CDRNameEnum>( i );
+		auto current_cdr = static_cast<CDRNameEnum>( i );
 
 		if ( current_cdr == cdr ) {
 			seq_design_options_[ i ]->design(true);
@@ -476,7 +477,7 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	core::Size cons_task_residues = 0;
 
 	for ( core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs(true /* Include DE */)); ++i ) {
-		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
+		auto cdr = static_cast< CDRNameEnum >( i );
 		if ( (no_data_cdrs[ i ]  && seq_design_options_[ i ]->fallback_strategy() == seq_design_conservative) || (seq_design_options_[ i ]->design() && seq_design_options_[ i ]->design_strategy() == seq_design_conservative) ) {
 
 			TR << "Using conservative op for " << local_ab_info->get_CDR_name(cdr) << std::endl;
@@ -507,7 +508,7 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	core::Size restrict_residues = 0;
 	//TR << "No data cdrs: " << utility::to_string(no_data_cdrs) << std::endl;
 	for ( core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs()); ++i ) {
-		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
+		auto cdr = static_cast< CDRNameEnum >( i );
 		if ( (no_data_cdrs[ cdr ] && seq_design_options_[ i ]->fallback_strategy() == seq_design_none) || (seq_design_options_[ i ]->design() && seq_design_options_[ i ]->design_strategy() == seq_design_none) ) {
 			TR << "Disabling design for " << local_ab_info->get_CDR_name(cdr) << std::endl;
 

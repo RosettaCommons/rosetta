@@ -90,7 +90,7 @@ core::Vector centroid_by_residues(core::conformation::ResidueCOPs residue_c_poin
 		atom_count = atom_count + residue_pointer->natoms();
 
 		for (
-				core::conformation::Atoms::const_iterator atom = residue_pointer->atom_begin(),
+				auto atom = residue_pointer->atom_begin(),
 				end = residue_pointer->atom_end();
 				atom != end;
 				++atom

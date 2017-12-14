@@ -33,8 +33,7 @@ RNA_ChainClosableGeometryResidueBasedScreener::RNA_ChainClosableGeometryResidueB
 {}
 
 //Destructor
-RNA_ChainClosableGeometryResidueBasedScreener::~RNA_ChainClosableGeometryResidueBasedScreener()
-{}
+RNA_ChainClosableGeometryResidueBasedScreener::~RNA_ChainClosableGeometryResidueBasedScreener() = default;
 
 ///////////////////////////////////////////////////////////////////
 void

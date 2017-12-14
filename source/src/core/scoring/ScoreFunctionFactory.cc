@@ -501,16 +501,16 @@ list_read_options_in_get_score_function( utility::options::OptionKeyList & opts 
 }
 
 core::scoring::ScoreFunctionOP get_score_function_legacy(
-	std::string pre_talaris_2013_weight_set,
-	std::string pre_talaris_2013_patch_file
+	std::string const & pre_talaris_2013_weight_set,
+	std::string const & pre_talaris_2013_patch_file
 )
 {
 	return get_score_function_legacy( basic::options::option, pre_talaris_2013_weight_set, pre_talaris_2013_patch_file );
 }
 core::scoring::ScoreFunctionOP get_score_function_legacy(
 	utility::options::OptionCollection const & options,
-	std::string pre_talaris_2013_weight_set,
-	std::string pre_talaris_2013_patch_file
+	std::string const & pre_talaris_2013_weight_set,
+	std::string const &  pre_talaris_2013_patch_file
 )
 {
 	if ( options[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ) {

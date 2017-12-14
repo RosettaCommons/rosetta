@@ -36,6 +36,7 @@ class FileConstraintGenerator : public protocols::constraint_generator::Constrai
 public:
 	FileConstraintGenerator();
 
+	// Moves, so by-value
 	FileConstraintGenerator( std::string const & filename );
 
 	virtual ~FileConstraintGenerator();

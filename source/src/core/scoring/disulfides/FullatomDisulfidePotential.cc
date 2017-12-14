@@ -165,7 +165,7 @@ FullatomDisulfidePotential::FullatomDisulfidePotential() :
 	mest_ = exp(-20.0);
 }
 
-FullatomDisulfidePotential::~FullatomDisulfidePotential() {}
+FullatomDisulfidePotential::~FullatomDisulfidePotential() = default;
 
 void
 FullatomDisulfidePotential::print_score_functions() const
@@ -706,14 +706,14 @@ CBSG_Dihedral_Func::CBSG_Dihedral_Func() :
 	csf_cbang3_(-1.25,1.5,-5,0.0)
 {}
 
-CBSG_Dihedral_Func::~CBSG_Dihedral_Func() {}
+CBSG_Dihedral_Func::~CBSG_Dihedral_Func() = default;
 
 bool CBSG_Dihedral_Func::operator == ( Func const & other ) const
 {
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	CBSG_Dihedral_Func const & other_downcast( static_cast< CBSG_Dihedral_Func const & > (other) );
+	auto const & other_downcast( static_cast< CBSG_Dihedral_Func const & > (other) );
 	if ( csf_cbang1_ != other_downcast.csf_cbang1_ ) return false;
 	if ( csf_cbang2_ != other_downcast.csf_cbang2_ ) return false;
 	if ( csf_cbang3_ != other_downcast.csf_cbang3_ ) return false;
@@ -755,14 +755,14 @@ SGSG_Dihedral_Func::SGSG_Dihedral_Func() :
 	csf_cbang2b_(-1.517302, 0.9, -20, 0.0)
 {}
 
-SGSG_Dihedral_Func::~SGSG_Dihedral_Func() {}
+SGSG_Dihedral_Func::~SGSG_Dihedral_Func() = default;
 
 bool SGSG_Dihedral_Func::operator == ( Func const & other ) const
 {
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	SGSG_Dihedral_Func const & other_downcast( static_cast< SGSG_Dihedral_Func const & > (other) );
+	auto const & other_downcast( static_cast< SGSG_Dihedral_Func const & > (other) );
 	if ( csf_cbang1a_ != other_downcast.csf_cbang1a_ ) return false;
 	if ( csf_cbang2a_ != other_downcast.csf_cbang2a_ ) return false;
 	if ( csf_cbang1b_ != other_downcast.csf_cbang1b_ ) return false;
@@ -797,14 +797,14 @@ CB_Angle_Func::CB_Angle_Func() :
 	csf_cbang2_( 1.819120, 0.208961, -50, 0.0)
 {}
 
-CB_Angle_Func::~CB_Angle_Func() {}
+CB_Angle_Func::~CB_Angle_Func() = default;
 
 bool CB_Angle_Func::operator == ( Func const & other ) const
 {
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	CB_Angle_Func const & other_downcast( static_cast< CB_Angle_Func const & > (other) );
+	auto const & other_downcast( static_cast< CB_Angle_Func const & > (other) );
 	if ( csf_cbang1_ != other_downcast.csf_cbang1_ ) return false;
 	if ( csf_cbang2_ != other_downcast.csf_cbang2_ ) return false;
 
@@ -833,9 +833,9 @@ CB_Angle_Func::dfunc( Real const ang ) const
 
 //////////////////
 
-SG_Dist_Func::SG_Dist_Func() {}
+SG_Dist_Func::SG_Dist_Func() = default;
 
-SG_Dist_Func::~SG_Dist_Func() {}
+SG_Dist_Func::~SG_Dist_Func() = default;
 
 bool SG_Dist_Func::operator == ( Func const & other ) const
 {
@@ -903,8 +903,8 @@ numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type
 SG_Dist_Func::fa_ssdist_scores()
 {
 	using namespace numeric::interpolation;
-	static HistogramCOP<Real,Real>::Type scores(0); // NEEDS FIXING: static in multi-threading?
-	if ( scores == 0 ) {
+	static HistogramCOP<Real,Real>::Type scores(nullptr); // NEEDS FIXING: static in multi-threading?
+	if ( scores == nullptr ) {
 		utility::io::izstream scores_stream;
 		basic::database::open( scores_stream, "scoring/score_functions/disulfides/fa_SS_distance_score");
 		scores = HistogramCOP<Real,Real>::Type( HistogramOP<Real, Real>::Type( new Histogram<Real,Real>( scores_stream() ) ) );

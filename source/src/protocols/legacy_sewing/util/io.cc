@@ -40,7 +40,7 @@ static basic::Tracer TR( "protocols.legacy_sewing.io" );
 void
 write_native_residue_file(
 	NativeRotamersMap native_residue_map,
-	std::string filename
+	std::string const & filename
 ){
 	utility::io::ozstream native_residue_file;
 	native_residue_file.open(filename);
@@ -48,8 +48,8 @@ write_native_residue_file(
 	for ( NativeRotamersMap::const_iterator pos_it=native_residue_map.begin();
 			pos_it != native_residue_map.end(); ++pos_it ) {
 		native_residue_file << "RESNUM " << pos_it->first << std::endl;
-		utility::vector1< std::pair<bool, core::conformation::ResidueOP> >::const_iterator res_it = pos_it->second.begin();
-		utility::vector1< std::pair<bool, core::conformation::ResidueOP> >::const_iterator res_it_end = pos_it->second.end();
+		auto res_it = pos_it->second.begin();
+		auto res_it_end = pos_it->second.end();
 		for ( ; res_it != res_it_end; ++res_it ) {
 			native_residue_file << "RESIDUE " << res_it->second->type().name() << " " << res_it->first << std::endl;
 			if ( res_it->first ) {
@@ -68,7 +68,7 @@ write_native_residue_file(
 
 NativeRotamersMap
 read_native_residue_file(
-	std::string filename
+	std::string const & filename
 ) {
 	utility::io::izstream file(filename);
 	if ( !file.good() ) {
@@ -81,7 +81,7 @@ read_native_residue_file(
 	std::string line;
 
 	core::Size cur_resnum = 0;
-	core::conformation::ResidueOP cur_residue = 0;
+	core::conformation::ResidueOP cur_residue = nullptr;
 	bool save_chis = false;
 	while ( getline( file, line ) ) {
 		utility::vector1<std::string> tokens = utility::string_split(line);
@@ -93,7 +93,7 @@ read_native_residue_file(
 			}
 			std::istringstream(tokens[2]) >> cur_resnum;
 		} else if ( tokens[1]=="RESIDUE" ) {
-			if ( cur_residue != 0 ) {
+			if ( cur_residue != nullptr ) {
 				rotamers[cur_resnum].push_back(std::make_pair(save_chis, cur_residue));
 			}
 			core::chemical::ResidueType const & res_type = res_type_set->name_map(tokens[2]);
@@ -125,12 +125,12 @@ write_hashing_scores_to_file(
 	utility::io::ozstream file;
 	file.open_append(filename);
 
-	for ( ScoreResults::const_iterator it = scores.begin(); it != scores.end(); ++it ) {
-		BasisPair const & basis_residues = it->first;
+	for ( auto const & score : scores ) {
+		BasisPair const & basis_residues = score.first;
 
-		std::map< SegmentPair, core::Size > const & segment_matches = it->second.segment_match_counts;
-		std::map< SegmentPair, core::Size >::const_iterator seg_it = segment_matches.begin();
-		std::map< SegmentPair, core::Size >::const_iterator seg_it_end = segment_matches.end();
+		std::map< SegmentPair, core::Size > const & segment_matches = score.second.segment_match_counts;
+		auto seg_it = segment_matches.begin();
+		auto seg_it_end = segment_matches.end();
 		core::Size sum=0;
 		std::stringstream model_1_segments;
 		std::stringstream model_2_segments;
@@ -162,7 +162,7 @@ write_hashing_scores_to_file(
 std::string
 see_whether_model_is_H_bonded_by_terminal_strands(
 	Model model,
-	std::string P_PA){
+	std::string const & P_PA){
 	if ( !utility::file::file_exists( model.pdb_code_ ) ) {
 		std::stringstream err;
 		err << "You must provide pdb files to make pose as defined in your input model file";
@@ -203,7 +203,7 @@ see_whether_model_is_H_bonded_by_terminal_strands(
 			pose_for_sw,
 			strand_i,
 			strand_j,
-			1, //  find anti-parallel sheet
+			true, //  find anti-parallel sheet
 			3.5, //  min_CA_CA_dis_,
 			6.2, //  max_CA_CA_dis_,
 			120, //  min_C_O_N_angle_
@@ -217,7 +217,7 @@ see_whether_model_is_H_bonded_by_terminal_strands(
 			pose_for_sw,
 			strand_i,
 			strand_j,
-			0, // find parallel sheet
+			false, // find parallel sheet
 			3.5, //  min_CA_CA_dis_,
 			6.2, //  max_CA_CA_dis_,
 			120, //  min_C_O_N_angle_

@@ -75,8 +75,7 @@ TensorsOptimizerSvd::TensorsOptimizerSvd(PcsDataCenter /*const*/ & pcs_d_c):
 {
 }
 
-TensorsOptimizerSvd::~TensorsOptimizerSvd(){
-}
+TensorsOptimizerSvd::~TensorsOptimizerSvd()= default;
 
 
 bool

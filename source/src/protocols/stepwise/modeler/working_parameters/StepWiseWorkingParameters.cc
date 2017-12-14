@@ -46,8 +46,7 @@ StepWiseWorkingParameters::StepWiseWorkingParameters():
 {}
 
 //Destructor
-StepWiseWorkingParameters::~StepWiseWorkingParameters()
-{}
+StepWiseWorkingParameters::~StepWiseWorkingParameters() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // RNA stuff

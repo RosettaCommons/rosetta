@@ -48,8 +48,8 @@ namespace loops_definers {
 
 static basic::Tracer TR( "protocols.loops.loops_definers.LoopsDefinerLoader" );
 
-LoopsDefinerLoader::LoopsDefinerLoader() {}
-LoopsDefinerLoader::~LoopsDefinerLoader() {}
+LoopsDefinerLoader::LoopsDefinerLoader() = default;
+LoopsDefinerLoader::~LoopsDefinerLoader() = default;
 
 void LoopsDefinerLoader::load_data(
 	Pose const & pose,

@@ -177,7 +177,7 @@ void HelixNCapperMover::get_Ncap_scores() {
 						iru  = energy_graph.get_node(ires)->const_upper_edge_list_begin(),
 						irue = energy_graph.get_node(ires)->const_upper_edge_list_end();
 						iru != irue; ++iru ) {
-					EnergyEdge const & edge( static_cast< EnergyEdge const &> (**iru) );
+					auto const & edge( static_cast< EnergyEdge const &> (**iru) );
 					Size const other_resid( edge.get_second_node_ind() );
 
 					if ( (ires != resid) && (other_resid != resid) ) continue;

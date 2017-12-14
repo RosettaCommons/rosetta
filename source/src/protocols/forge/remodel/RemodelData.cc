@@ -179,16 +179,16 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 			}
 
 			// check for the presence of special tokens, like CST, DM_, DS_, in the blueprint file
-			for ( std::vector< std::string >::iterator it = split_info.begin(), end = split_info.end(); it != end; ++it ) {
+			for ( auto & it : split_info ) {
 
-				TR_REMODEL << "Found token " << *it << " on blueprint line '" << line.index << "'" << std::endl;
+				TR_REMODEL << "Found token " << it << " on blueprint line '" << line.index << "'" << std::endl;
 
-				if ( (*it).substr(0,3) == "CST" ) {
-					TR_REMODEL << "constraint found " << *it <<  std::endl;
+				if ( it.substr(0,3) == "CST" ) {
+					TR_REMODEL << "constraint found " << it <<  std::endl;
 					line.has_constraints=true;
-					line.constraint_definition.push_back(*it);
+					line.constraint_definition.push_back(it);
 				}
-				if ( (*it).substr(0,3) == "DM_" ) {
+				if ( it.substr(0,3) == "DM_" ) {
 					disulfMobileRange.push_back(line.index);
 					TR_REMODEL << "Added line " << line.index << " to disulfMobileRange while reading blueprint file." << std::endl;
 					if ( disulfMobileRange.size() > 2 ) {
@@ -197,7 +197,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 						utility::exit( __FILE__, __LINE__, err_message.str() );
 					}
 				}
-				if ( (*it).substr(0,3) == "DS_" ) {
+				if ( it.substr(0,3) == "DS_" ) {
 					disulfLandingRange.push_back(line.index);
 					if ( disulfLandingRange.size() > 2 ) {
 						std::ostringstream err_message;
@@ -502,22 +502,22 @@ void RemodelData::translateDSSP_ABEGO( std::string & ss, std::string & abego ) {
 
 	if ( abego_switch ) { //need to make a new string with DSSP assignment and swap
 		//found_idx = ss.find_first_of("abegoABEGO"); // this substitution use all 5 regions
-		for ( core::Size idx = 0; idx < ss.length(); idx++ ) {
-			if ( ss[idx] == 'A' || ss[idx] == 'a' ) {
+		for ( char & s : ss ) {
+			if ( s == 'A' || s == 'a' ) {
 				trans_ss.push_back('D');
-			} else if ( ss[idx] == 'B' || ss[idx] == 'b' ) {
+			} else if ( s == 'B' || s == 'b' ) {
 				trans_ss.push_back('D');
-			} else if ( ss[idx] == 'E' || ss[idx] == 'e' ) {
+			} else if ( s == 'E' || s == 'e' ) {
 				trans_ss.push_back('D');
-			} else if ( ss[idx] == 'G' || ss[idx] == 'g' ) {
+			} else if ( s == 'G' || s == 'g' ) {
 				trans_ss.push_back('D');
-			} else if ( ss[idx] == 'O' || ss[idx] == 'o' ) {
+			} else if ( s == 'O' || s == 'o' ) {
 				trans_ss.push_back('D');
-			} else if ( ss[idx] == '.' ) {
+			} else if ( s == '.' ) {
 				trans_ss.push_back('.');
-				ss[idx]= 'X';
+				s= 'X';
 			} else { // could have other characters like I, or D so leave them alone
-				trans_ss.push_back(ss[idx]);
+				trans_ss.push_back(s);
 			}
 		}
 		trans_ss.swap(ss);

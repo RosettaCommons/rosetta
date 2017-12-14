@@ -59,7 +59,7 @@ bool ScoreFileData::write_struct(
 	bool success = false;
 	utility::io::ozstream output;
 
-	runtime_assert( s != 0 );
+	runtime_assert( s != nullptr );
 
 	if ( ! utility::file::file_exists( filename_ ) ) {
 		output.open( filename_ );
@@ -85,7 +85,7 @@ bool ScoreFileData::write_pose(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	RawStructOP outputter(NULL);
+	RawStructOP outputter(nullptr);
 	std::string format = option[ out::file::scorefile_format ].value();
 
 	if ( format == "text" ) {

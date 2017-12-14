@@ -82,8 +82,7 @@ SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 	secstruct_("")
 {}
 
-SSPredictionFilter::~SSPredictionFilter()
-{}
+SSPredictionFilter::~SSPredictionFilter() = default;
 
 // virtual functions that need to be overridden
 bool
@@ -172,7 +171,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const
 	wanted_ss = pruned_ss;
 
 	if ( use_svm_ ) {
-		runtime_assert( ss_predictor_ != 0 );
+		runtime_assert( ss_predictor_ != nullptr );
 		std::string sequence;
 		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( pose.residue( i ).is_protein() ) sequence += pose.residue( i ).name1();
@@ -196,7 +195,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const
 			return count / sequence.size();
 		}
 	} else {
-		runtime_assert( psipred_interface_ != 0 );
+		runtime_assert( psipred_interface_ != nullptr );
 		PsiPredResult const psipred_result = psipred_interface_->run_psipred( pose, wanted_ss );
 		if ( use_probability_ ) {
 			TR << "Blueprint SS = " << wanted_ss << std::endl;

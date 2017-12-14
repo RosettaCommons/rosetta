@@ -33,7 +33,7 @@ ShearFreePeptideMover::ShearFreePeptideMover(Size seqpos, Real torsion_degree, b
 
 }
 
-ShearFreePeptideMover::~ShearFreePeptideMover(){}
+ShearFreePeptideMover::~ShearFreePeptideMover()= default;
 
 void
 ShearFreePeptideMover::apply(FreePeptide &free_peptide){

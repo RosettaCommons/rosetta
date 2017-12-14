@@ -122,9 +122,9 @@ private:
 	struct Taskop_id_name_factory_ {
 		Taskop_id_name_factory_(
 			Size i,
-			std::string n,
+			std::string const & n,
 			core::pack::task::TaskFactoryCOP t
-		) : id(i), name(std::move(n)), tf(std::move(t)) {}
+		) : id(i), name(n), tf(t) {}
 		core::Size id;
 		std::string name;
 		core::pack::task::TaskFactoryCOP tf;

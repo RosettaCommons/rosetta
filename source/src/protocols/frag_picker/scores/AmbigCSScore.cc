@@ -261,7 +261,7 @@ FragmentScoringMethodOP MakeAmbigCSScore::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read ambiguous CS data. Provide two chemical shifts file in TALOS format using flags -in::file::ambig_talos_cs_A and in::file::ambig_talos_cs_B");
 
-	return NULL;
+	return nullptr;
 }
 
 } // scores

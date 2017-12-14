@@ -37,8 +37,8 @@ namespace parser {
 
 static basic::Tracer TR( "protocols.jd2.parser.ResidueSelectorLoader" );
 
-ResidueSelectorLoader::ResidueSelectorLoader() {}
-ResidueSelectorLoader::~ResidueSelectorLoader() {}
+ResidueSelectorLoader::ResidueSelectorLoader() = default;
+ResidueSelectorLoader::~ResidueSelectorLoader() = default;
 
 void ResidueSelectorLoader::load_data(
 	core::pose::Pose const &,
@@ -48,7 +48,7 @@ void ResidueSelectorLoader::load_data(
 {
 	using namespace utility::tag;
 	using core::select::residue_selector::ResidueSelectorOP;
-	typedef utility::vector0< TagCOP > TagCOPs;
+	using TagCOPs = utility::vector0<TagCOP>;
 
 	TagCOPs const & selector_tags( tag->getTags() );
 	for ( core::Size ii = 0; ii < selector_tags.size(); ++ii ) {

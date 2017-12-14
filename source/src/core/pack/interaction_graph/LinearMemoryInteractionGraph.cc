@@ -64,8 +64,7 @@ LinearMemNode::LinearMemNode(
 	rhq_.num_elements( num_states );
 }
 
-LinearMemNode::~LinearMemNode()
-{}
+LinearMemNode::~LinearMemNode() = default;
 
 void
 LinearMemNode::prepare_for_simulated_annealing()
@@ -454,7 +453,7 @@ LinearMemNode::project_deltaE_for_substitution
 			{ //scope
 				scoring::EnergyGraph const & energygraph = get_on_the_fly_owner()->pose().energies().energy_graph();
 				for ( Size ii = 1; ii <= (Size) get_num_incident_edges(); ++ii ) {
-					Size const other_node_index = (Size) get_index_of_adjacent_node( ii );
+					auto const other_node_index = (Size) get_index_of_adjacent_node( ii );
 					if ( curr_state_two_body_energies_[ ii ] == 0 ) continue;
 					bool found_similar_edge( false );
 
@@ -528,7 +527,7 @@ LinearMemNode::project_deltaE_for_substitution
 			{ //scope
 				scoring::EnergyGraph const & energygraph = get_on_the_fly_owner()->pose().energies().energy_graph();
 				for ( Size ii = 1; ii <= (Size) get_num_incident_edges(); ++ii ) {
-					Size const other_node_index = (Size) get_index_of_adjacent_node( ii );
+					auto const other_node_index = (Size) get_index_of_adjacent_node( ii );
 					if ( alternate_state_two_body_energies_[ ii ] == 0 ) continue;
 					bool found_similar_edge( false );
 
@@ -803,8 +802,7 @@ LinearMemEdge::LinearMemEdge(
 	store_rpes_[ 0 ] = store_rpes_[ 1 ] = true;
 }
 
-LinearMemEdge::~LinearMemEdge()
-{}
+LinearMemEdge::~LinearMemEdge() = default;
 
 void
 LinearMemEdge::set_sparse_aa_info(
@@ -899,10 +897,10 @@ void
 LinearMemEdge::set_edge_weight( Real weight )
 {
 	Real const reweight_factor = weight / edge_weight();
-	for ( int ii = 0; ii < 2; ++ii ) {
-		for ( Size jj = 1; jj <= stored_rpes_[ ii ].size(); ++jj ) {
-			if ( stored_rpes_[ ii ][ jj ] != NOT_YET_COMPUTED_ENERGY ) {
-				stored_rpes_[ ii ][ jj ] *= reweight_factor;
+	for ( auto & stored_rpe : stored_rpes_ ) {
+		for ( Size jj = 1; jj <= stored_rpe.size(); ++jj ) {
+			if ( stored_rpe[ jj ] != NOT_YET_COMPUTED_ENERGY ) {
+				stored_rpe[ jj ] *= reweight_factor;
 			}
 		}
 	}
@@ -1214,8 +1212,7 @@ LinearMemoryInteractionGraph::LinearMemoryInteractionGraph(
 }
 
 
-LinearMemoryInteractionGraph::~LinearMemoryInteractionGraph()
-{}
+LinearMemoryInteractionGraph::~LinearMemoryInteractionGraph() = default;
 
 void
 LinearMemoryInteractionGraph::blanket_assign_state_0()
@@ -1317,7 +1314,7 @@ int
 LinearMemoryInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		sum += ((LinearMemEdge*) *iter)->get_two_body_table_size();
 	}
@@ -1333,7 +1330,7 @@ LinearMemoryInteractionGraph::print_current_state_assignment() const
 		get_linmem_node(ii)->print();
 	}
 
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		((LinearMemEdge*) (*iter))->print_current_energy();
 	}
@@ -1355,7 +1352,7 @@ LinearMemoryInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 		}
 	}
 
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+	for ( auto edge_iter = get_edge_list_begin();
 			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
@@ -1435,7 +1432,7 @@ LinearMemoryInteractionGraph::update_internal_energy_totals()
 			get_one_body_energy_current_state();
 	}
 
-	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		total_energy_current_state_assignment_ +=
 			((LinearMemEdge*) *iter)->get_current_two_body_energy();

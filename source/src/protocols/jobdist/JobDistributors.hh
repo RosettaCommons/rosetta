@@ -97,7 +97,7 @@ protected:
 
 public:
 
-	BaseJobDistributor(JobVector jobs);
+	BaseJobDistributor(JobVector const & jobs);
 	BaseJobDistributor( BaseJobDistributor const & );
 	~BaseJobDistributor() override;
 

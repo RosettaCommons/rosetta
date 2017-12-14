@@ -457,8 +457,8 @@ MembranePotential::evaluate_cbeta(
 
 	Size const TMHs (MembraneTopology_from_pose( pose ).tmh_inserted() );
 	// interp1 rounds down to nearest (non-negative) integer.
-	int const interp1 = static_cast< int >( fcen6 );
-	int const interp3 = static_cast< int >( fcen12 );
+	auto const interp1 = static_cast< int >( fcen6 );
+	auto const interp3 = static_cast< int >( fcen12 );
 	// note cen6 is always at least 1.0
 	// lower bound
 	Real const interp2 = fcen6-interp1;
@@ -884,7 +884,7 @@ void MembranePotential::score_normal_center(
 		// Symmetry
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			using namespace core::conformation::symmetry;
-			SymmetricConformation const & symm_conf ( dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+			auto const & symm_conf ( dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 			if ( !symm_info->bb_is_independent(pose.residue(i).seqpos()) ) {
 				rsdSeq = symm_info->bb_follows(pose.residue(i).seqpos());
@@ -1062,7 +1062,7 @@ MembranePotential::non_helix_in_membrane_penalty(pose::Pose const & pose, Vector
 		Size rsdSeq(i);
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			using namespace core::conformation::symmetry;
-			SymmetricConformation const & symm_conf (
+			auto const & symm_conf (
 				dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 			if ( !symm_info->bb_is_independent(pose.residue(i).seqpos()) ) {
@@ -1113,7 +1113,7 @@ MembranePotential::termini_penalty(pose::Pose const & pose, Vector const & norma
 		Size rsdSeq(i);
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			using namespace core::conformation::symmetry;
-			SymmetricConformation const & symm_conf (
+			auto const & symm_conf (
 				dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 			if ( !symm_info->bb_is_independent(pose.residue(i).seqpos()) ) {

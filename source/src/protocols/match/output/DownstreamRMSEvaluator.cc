@@ -33,9 +33,9 @@ namespace match {
 namespace output {
 
 
-DownstreamRMSEvaluator::DownstreamRMSEvaluator() {}
+DownstreamRMSEvaluator::DownstreamRMSEvaluator() = default;
 
-DownstreamRMSEvaluator::~DownstreamRMSEvaluator() {}
+DownstreamRMSEvaluator::~DownstreamRMSEvaluator() = default;
 
 void
 DownstreamRMSEvaluator::set_downstream_pose( core::pose::PoseCOP dspose )

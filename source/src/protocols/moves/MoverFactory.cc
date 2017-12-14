@@ -92,7 +92,7 @@ MoverFactory::provide_xml_schema(
 	std::string const &mover_name,
 	utility::tag::XMLSchemaDefinition & xsd
 ) const {
-	MoverMap::const_iterator iter( mover_creator_map_.find( mover_name ) );
+	auto iter( mover_creator_map_.find( mover_name ) );
 	if ( iter != mover_creator_map_.end() ) {
 		if ( ! iter->second ) {
 			utility_exit_with_message( "Error: MoverCreatorOP prototype for " + mover_name + " is NULL!" );
@@ -100,8 +100,8 @@ MoverFactory::provide_xml_schema(
 		iter->second->provide_xml_schema( xsd );
 	} else {
 		TR << "Available movers: ";
-		for ( MoverMap::const_iterator filt_it = mover_creator_map_.begin(); filt_it != mover_creator_map_.end(); ++filt_it ) {
-			TR << filt_it->first << ", ";
+		for ( auto const & filt_it : mover_creator_map_ ) {
+			TR << filt_it.first << ", ";
 		}
 		TR << std::endl;
 		utility_exit_with_message( mover_name + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );

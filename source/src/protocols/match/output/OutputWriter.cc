@@ -34,7 +34,7 @@ OutputWriter::OutputWriter()
 : cst_io_(/* NULL */)
 {}
 
-OutputWriter::~OutputWriter() {}
+OutputWriter::~OutputWriter() = default;
 
 protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP
 OutputWriter::cst_io() const
@@ -71,8 +71,8 @@ OutputWriter::determine_redundant_upstream_matchres(
 			cst_io_->mcfi_list( i )->mcfi( m.upstream_hits[i].external_geom_id() );
 		bool bb_interaction( cur_mcfi->is_backbone( cur_mcfi->upstream_res() ) );
 
-		std::map< Size, Size >::iterator seen_it = seen_scafpos_to_geom_cst.find( this_scafpos );
-		std::map< Size, Size >::iterator bb_seen_it = bb_scafpos_to_geom_cst.find( this_scafpos );
+		auto seen_it = seen_scafpos_to_geom_cst.find( this_scafpos );
+		auto bb_seen_it = bb_scafpos_to_geom_cst.find( this_scafpos );
 
 		//first case: this residue position has already been seen,
 		//so either this or the previously seen constraint are redundant

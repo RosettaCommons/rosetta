@@ -20,7 +20,7 @@
 #include <numeric/kdtree/KDPoint.fwd.hh>
 #include <numeric/kdtree/KDNode.fwd.hh>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace numeric {
 namespace kdtree {

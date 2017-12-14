@@ -44,8 +44,8 @@ namespace topology_broker {
 using namespace core;
 using namespace scoring::constraints;
 using namespace scoring;
-ConstraintEvaluatorWrapper::ConstraintEvaluatorWrapper( std::string  name, ConstraintClaimerCOP claimer ) :
-	name_(std::move( name )),
+ConstraintEvaluatorWrapper::ConstraintEvaluatorWrapper( std::string const & name, ConstraintClaimerCOP claimer ) :
+	name_( name ),
 	claimer_(std::move( claimer ))
 {}
 

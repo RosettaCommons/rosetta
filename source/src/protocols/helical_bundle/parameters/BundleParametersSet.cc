@@ -59,15 +59,9 @@ BundleParametersSet::BundleParametersSet() :
 {
 }
 
-BundleParametersSet::BundleParametersSet( BundleParametersSet const & src ) :
-	core::conformation::parametric::ParametersSet(src),
-	bundle_symmetry_( src.bundle_symmetry_ ),
-	bundle_symmetry_copies_( src.bundle_symmetry_copies_ ),
-	n_helices_(src.n_helices_)
-{
-}
+BundleParametersSet::BundleParametersSet( BundleParametersSet const & /*src*/ ) = default;
 
-BundleParametersSet::~BundleParametersSet() {}
+BundleParametersSet::~BundleParametersSet() = default;
 
 
 /// @brief make a copy of this residue( allocate actual memory for it )

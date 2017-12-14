@@ -74,7 +74,7 @@ using namespace core;
 
 static basic::Tracer TR( "protocols.rna.movers.RNA_LoopCloser" );
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 namespace protocols {
 namespace rna {
@@ -139,7 +139,7 @@ RNA_LoopCloser::get_cutpoints_closed( pose::Pose const & pose ) const {
 		Size const j = core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, i );
 		runtime_assert( pose.residue_type( j ).has_variant_type( chemical::CUTPOINT_UPPER )  );
 
-		if ( atom_level_domain_map_ != 0 ) {
+		if ( atom_level_domain_map_ != nullptr ) {
 			Size const domain1( atom_level_domain_map_->get_domain( NamedAtomID( "OVL1", i ), pose ) );
 			Size const domain2( atom_level_domain_map_->get_domain( NamedAtomID( "OVU1", j ), pose ) );
 			if ( domain1 == domain2 && domain1 > 0 && domain1 != denovo::libraries::ROSETTA_LIBRARY_DOMAIN ) {

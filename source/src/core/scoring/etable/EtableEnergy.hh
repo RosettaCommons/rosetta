@@ -818,7 +818,7 @@ private:
 	Real safe_max_dis2_;
 
 	int etable_bins_per_A2_;
-	Real dis2_step_;
+	//Real dis2_step_;
 
 };
 

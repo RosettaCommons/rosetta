@@ -170,28 +170,28 @@ using std::sort;
 
 
 CifParentChild::CifParentChild(Block& block) : ParentChild(),
-  _parChildTableP(NULL), _inParChildGroupP(NULL), _inParChildGroupListP(NULL)
+  _parChildTableP(nullptr), _inParChildGroupP(nullptr), _inParChildGroupListP(nullptr)
 {
     _parChildTableP = block.GetTablePtr("item_linked");
 
     _inParChildGroupP = block.GetTablePtr("pdbx_item_linked_group");
     _inParChildGroupListP = block.GetTablePtr("pdbx_item_linked_group_list");
 
-    if ((_inParChildGroupP == NULL) && (_inParChildGroupListP != NULL))
+    if ((_inParChildGroupP == nullptr) && (_inParChildGroupListP != nullptr))
     {
         throw EmptyValueException("Empty item linked group table",
           "CifParentChild::CifParentChild");
     }
 
-    if ((_inParChildGroupP != NULL) && (_inParChildGroupListP == NULL))
+    if ((_inParChildGroupP != nullptr) && (_inParChildGroupListP == nullptr))
     {
         throw EmptyValueException("Empty item linked group list table",
           "CifParentChild::CifParentChild");
     }
 
-    if (_inParChildGroupP != NULL)
+    if (_inParChildGroupP != nullptr)
         *_groupTableP = *_inParChildGroupP;
-    if (_inParChildGroupListP != NULL)
+    if (_inParChildGroupListP != nullptr)
         *_groupListTableP = *_inParChildGroupListP;
 
     Init(block);
@@ -217,21 +217,21 @@ CifParentChild::CifParentChild(Block& block, ISTable* parChildTableP) :
 
     vector<vector<string> > items;
 
-    for (unsigned int catI = 0; catI < cats.size(); ++catI)
+    for (const auto & cat : cats)
     {
         vector<string> searchValue;
-        searchValue.push_back(cats[catI]);
+        searchValue.push_back(cat);
    
         vector<string> searchCols;
-        searchCols.push_back("category_id");
+        searchCols.emplace_back("category_id");
   
         vector<unsigned int> found;
         itemP->Search(found, searchValue, searchCols);
 
         vector<string> cifItemNames;
-        for (unsigned int foundI = 0; foundI < found.size(); ++foundI)
+        for (unsigned int foundI : found)
         {
-           cifItemNames.push_back((*itemP)(found[foundI], "name"));
+           cifItemNames.push_back((*itemP)(foundI, "name"));
         } 
 
         items.push_back(cifItemNames);
@@ -260,21 +260,21 @@ void CifParentChild::Init(Block& block)
 
     vector<vector<string> > items;
 
-    for (unsigned int catI = 0; catI < cats.size(); ++catI)
+    for (const auto & cat : cats)
     {
         vector<string> searchValue;
-        searchValue.push_back(cats[catI]);
+        searchValue.push_back(cat);
    
         vector<string> searchCols;
-        searchCols.push_back("category_id");
+        searchCols.emplace_back("category_id");
   
         vector<unsigned int> found;
         itemP->Search(found, searchValue, searchCols);
 
         vector<string> cifItemNames;
-        for (unsigned int foundI = 0; foundI < found.size(); ++foundI)
+        for (unsigned int foundI : found)
         {
-           cifItemNames.push_back((*itemP)(found[foundI], "name"));
+           cifItemNames.push_back((*itemP)(foundI, "name"));
         } 
 
         items.push_back(cifItemNames);
@@ -289,9 +289,7 @@ void CifParentChild::Init(Block& block)
 
 
 CifParentChild::~CifParentChild()
-{
-
-}
+= default;
 
 
 void CifParentChild::BuildOldTables(const vector<string>& cats, 
@@ -313,45 +311,44 @@ void CifParentChild::BuildOldTables(const vector<string>& cats,
             continue;
         }
 
-        for (map<string, unsigned int>::iterator pos = maxKeyGroups.begin();
-          pos != maxKeyGroups.end(); ++pos)
+        for (auto & maxKeyGroup : maxKeyGroups)
         {
             // pos->first is parent name
             // pos->second is number of parent's groups
-            for (unsigned int groupI = 0; groupI < pos->second; ++groupI,
+            for (unsigned int groupI = 0; groupI < maxKeyGroup.second; ++groupI,
               ++groupNum)
             {
                 vector<string> newGroupRow;
                 newGroupRow.push_back(cats[catI]);
                 newGroupRow.push_back(String::IntToString(groupNum));
-                newGroupRow.push_back(cats[catI] + ":" + pos->first + ":" +
+                newGroupRow.push_back(cats[catI] + ":" + maxKeyGroup.first + ":" +
                   String::IntToString(groupNum));
                 newGroupRow.push_back(CifString::InapplicableValue);
                 newGroupRow.push_back(CifString::InapplicableValue);
                 _groupTableP->AddRow(newGroupRow);
 
                 vector<string> searchCol;
-                searchCol.push_back("keyGroup");
-                searchCol.push_back("parCategory");
+                searchCol.emplace_back("keyGroup");
+                searchCol.emplace_back("parCategory");
 
                 vector<string> searchVal;
                 searchVal.push_back(String::IntToString(groupI + 1));
-                searchVal.push_back(pos->first);
+                searchVal.push_back(maxKeyGroup.first);
 
                 vector<unsigned int> found;
                 keysTableP->Search(found, searchVal, searchCol);
 
-                for (unsigned int foundI = 0; foundI < found.size(); ++foundI)
+                for (unsigned int foundI : found)
                 {
                     vector<string> newGroupListRow;
                     newGroupListRow.push_back(cats[catI]);
                     newGroupListRow.\
                       push_back(String::IntToString(groupNum));
                     newGroupListRow.push_back\
-                      ((*keysTableP)(found[foundI], "childKeyCifItem"));
+                      ((*keysTableP)(foundI, "childKeyCifItem"));
                     newGroupListRow.push_back\
-                      ((*keysTableP)(found[foundI], "parKeyCifItem"));
-                    newGroupListRow.push_back(pos->first);
+                      ((*keysTableP)(foundI, "parKeyCifItem"));
+                    newGroupListRow.push_back(maxKeyGroup.first);
                     _groupListTableP->AddRow(newGroupListRow);
                 } // (for every parent/child pair in a group)
             } // for (all group numbers in a parent)
@@ -365,7 +362,7 @@ void CifParentChild::BuildOldTables(const vector<string>& cats,
 void CifParentChild::BuildNewTables(const vector<string>& cats, 
   const vector<vector<string> >& items)
 {
-    if (_parChildTableP == NULL)
+    if (_parChildTableP == nullptr)
     {
         return;
     }
@@ -380,15 +377,15 @@ void CifParentChild::BuildNewTables(const vector<string>& cats,
         const vector<string>& cifItemNames = items[catI];
 
         vector<string> childSearchCol;
-        childSearchCol.push_back("child_name");
+        childSearchCol.emplace_back("child_name");
 
-        for (unsigned int childI = 0; childI < cifItemNames.size(); ++childI)
+        for (const auto & cifItemName : cifItemNames)
         {
             // Check if item has already been processed
             vector<string> childTarget;
-            childTarget.push_back(cifItemNames[childI]);
+            childTarget.push_back(cifItemName);
 
-            if (_groupListTableP != NULL)
+            if (_groupListTableP != nullptr)
             {
                 unsigned int row =
                   _groupListTableP->FindFirst(childTarget,
@@ -401,9 +398,9 @@ void CifParentChild::BuildNewTables(const vector<string>& cats,
             vector<unsigned int> parLoc;
             _parChildTableP->Search(parLoc, childTarget, childSearchCol);
 
-            for (unsigned int parI = 0; parI < parLoc.size(); ++parI)
+            for (unsigned int parI : parLoc)
             {
-                const string& parentItem = (*_parChildTableP)(parLoc[parI],
+                const string& parentItem = (*_parChildTableP)(parI,
                   "parent_name");
 
                 string parCatName;
@@ -420,7 +417,7 @@ void CifParentChild::BuildNewTables(const vector<string>& cats,
                 cout << "Info: Creating a new group \"" <<
                   String::IntToString(maxGroupNum[cats[catI]]) <<
                   "\" for child category \"" << cats[catI] <<
-                  "\" for child item \"" << cifItemNames[childI] <<
+                  "\" for child item \"" << cifItemName <<
                   "\" and parent item \"" << parentItem <<
                   "\", from \"item_linked\" table, as these "\
                   "are not defined in group tables." << endl;
@@ -440,7 +437,7 @@ void CifParentChild::BuildNewTables(const vector<string>& cats,
                 row.push_back(cats[catI]);
                 row.push_back(String::IntToString(
                   maxGroupNum[cats[catI]]));
-                row.push_back(cifItemNames[childI]);
+                row.push_back(cifItemName);
                 row.push_back(parentItem);
                 row.push_back(parCatName);
                 _groupListTableP->AddRow(row);
@@ -507,11 +504,10 @@ int CifParentChild::CheckParentChild(Block& block, ISTable& catTable,
 #endif
 
         vector<string> parKeyItems;
-        for (unsigned int parKeyItemsI = 0; parKeyItemsI < parKeys.size();
-          ++parKeyItemsI)
+        for (const auto & parKey : parKeys)
         {
             string tmpItem;
-            CifString::GetItemFromCifItem(tmpItem, parKeys[parKeyItemsI]);
+            CifString::GetItemFromCifItem(tmpItem, parKey);
             parKeyItems.push_back(tmpItem);
         }
 
@@ -854,10 +850,10 @@ int CifParentChild::CheckParentChild(Block& block, ISTable& catTable,
 
 void CifParentChild::WriteGroupTables(Block& block)
 {
-    ISTable* tmpGroupTableP = new ISTable();
+    auto* tmpGroupTableP = new ISTable();
     *tmpGroupTableP = *_groupTableP;
 
-    ISTable* tmpGroupListTableP = new ISTable();
+    auto* tmpGroupListTableP = new ISTable();
     *tmpGroupListTableP = *_groupListTableP;
 
     tmpGroupTableP->DeleteColumn("parent_category_id");
@@ -876,7 +872,7 @@ ISTable* CifParentChild::CreateKeysTableOld(const vector<string>& cifItemNames,
     // This table will have four columns: child key CIF item, group number
     // parent key CIF item and parent category name
 
-    ISTable* keysTableP = new ISTable();
+    auto* keysTableP = new ISTable();
 
     keysTableP->AddColumn("childKeyCifItem");
     keysTableP->AddColumn("keyGroup");
@@ -893,23 +889,23 @@ void CifParentChild::FillKeysTableOld(ISTable& keysTable,
   const vector<string>& cifItemNames, map<string, unsigned int>& maxKeyGroups)
 {
     vector<string> keyList;
-    keyList.push_back("parKeyCifItem");
+    keyList.emplace_back("parKeyCifItem");
 
-    for (unsigned int cifItemI = 0; cifItemI < cifItemNames.size(); ++cifItemI)
+    for (const auto & cifItemName : cifItemNames)
     {
         // cifItemNames are child's items
         vector<string> parCifItems;
-        GetParentCifItems(parCifItems, cifItemNames[cifItemI]);
+        GetParentCifItems(parCifItems, cifItemName);
 
         sort(parCifItems.begin(), parCifItems.end());
 
-        for (unsigned int parI = 0; parI < parCifItems.size(); ++parI)
+        for (const auto & parCifItem : parCifItems)
         {
             string parCatName;
-            CifString::GetCategoryFromCifItem(parCatName, parCifItems[parI]);
+            CifString::GetCategoryFromCifItem(parCatName, parCifItem);
 
             vector<string> keyTarget;
-            keyTarget.push_back(parCifItems[parI]);
+            keyTarget.push_back(parCifItem);
 
             vector<unsigned int> parents;
             keysTable.Search(parents, keyTarget, keyList);
@@ -929,9 +925,9 @@ void CifParentChild::FillKeysTableOld(ISTable& keysTable,
 
             vector<string> row;
 
-            row.push_back(cifItemNames[cifItemI]);
+            row.push_back(cifItemName);
             row.push_back(newKeyGroup);
-            row.push_back(parCifItems[parI]);
+            row.push_back(parCifItem);
             row.push_back(parCatName);
 
             keysTable.AddRow(row);
@@ -949,14 +945,14 @@ void CifParentChild::GetParentCifItems(vector<string>& parCifItems,
     childCifItem.push_back(cifItemName);
 
     vector<string> childNameCol;
-    childNameCol.push_back("child_name");
+    childNameCol.emplace_back("child_name");
 
     vector<unsigned int> parLoc;
     _parChildTableP->Search(parLoc, childCifItem, childNameCol);
 
-    for (unsigned int parLocI = 0; parLocI < parLoc.size(); ++parLocI)
+    for (unsigned int parLocI : parLoc)
     {
-        parCifItems.push_back((*_parChildTableP)(parLoc[parLocI],
+        parCifItems.push_back((*_parChildTableP)(parLocI,
           "parent_name"));
     }
 }
@@ -965,7 +961,7 @@ void CifParentChild::GetParentCifItems(vector<string>& parCifItems,
 unsigned int CifParentChild::LastGroupNum(const string& childCat)
 {
     vector<string> searchCol;
-    searchCol.push_back("category_id");
+    searchCol.emplace_back("category_id");
 
     vector<string> searchVal;
     searchVal.push_back(childCat);
@@ -976,10 +972,10 @@ unsigned int CifParentChild::LastGroupNum(const string& childCat)
 
     _groupTableP->Search(found, searchVal, searchCol);
 
-    for (unsigned int foundI = 0; foundI < found.size(); ++foundI)
+    for (unsigned int foundI : found)
     {
         unsigned int currGroupNum =
-          String::StringToInt((*_groupTableP)(found[foundI],
+          String::StringToInt((*_groupTableP)(foundI,
           "link_group_id"));
 
         if (currGroupNum > lastGroupNum)

@@ -32,6 +32,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -55,7 +56,7 @@ using core::conformation::Conformation;
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
 	core::select::residue_selector::ResidueSelectorCOP selector ) :
 	EnvClaim( owner ),
-	selector_( selector ),
+	selector_(std::move( selector )),
 	c_str_( MUST_CONTROL ),
 	i_str_( DOES_NOT_CONTROL ),
 	claim_sidechain_( false ),

@@ -38,7 +38,7 @@ namespace select {
 namespace jump_selector {
 
 
-OrJumpSelector::OrJumpSelector() {}
+OrJumpSelector::OrJumpSelector() = default;
 
 /// @brief Copy constructor
 ///
@@ -46,7 +46,7 @@ OrJumpSelector::OrJumpSelector( OrJumpSelector const &src) :
 	selectors_( src.selectors_ )
 {}
 
-OrJumpSelector::~OrJumpSelector() {}
+OrJumpSelector::~OrJumpSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.

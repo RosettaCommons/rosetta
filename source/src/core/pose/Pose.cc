@@ -207,7 +207,7 @@ Pose::operator=( Pose const & src )
 	// We are specifically NOT cloning any PyMOLObserver objects from src,
 	// as this behavior is confusing to users (whom normally create these observers
 	// interactively, and are thus surprised when more than one exists because of cloning).
-	core::pose::datacache::CacheableObserverOP pymol_observer = 0;
+	core::pose::datacache::CacheableObserverOP pymol_observer = nullptr;
 	bool was_pymol_observer_attached = false;
 	if ( observer_cache_ ) {
 		if ( observer_cache_->has( datacache::CacheableObserverType::PYMOL_OBSERVER ) ) {

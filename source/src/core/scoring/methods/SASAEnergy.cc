@@ -76,11 +76,7 @@ SASAEnergyCreator::score_types_for_method() const {
 }
 
 
-SASAEnergy::SASAEnergy( SASAEnergy const & src ):
-	parent( src ),
-	potential_( src.potential_ ),
-	exclude_DNA_DNA_( src.exclude_DNA_DNA_ )
-{}
+SASAEnergy::SASAEnergy( SASAEnergy const & /*src*/ ) = default;
 
 
 SASAEnergy::SASAEnergy( EnergyMethodOptions const & options ):
@@ -159,7 +155,7 @@ SASAEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
@@ -189,7 +185,7 @@ SASAEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) co
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );

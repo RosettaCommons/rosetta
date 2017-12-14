@@ -126,7 +126,7 @@ void CatPiCalculator::recompute(core::pose::Pose const & pose){
 						if ( acceptor.atom_name(acc_atm) == " CB " ) continue; //not interested in the cb atom
 						for
 							(
-									core::chemical::AtomIndices::const_iterator
+									auto
 									don_num = donate.Hpos_polar_sc().begin(),
 									don_nume = donate.Hpos_polar_sc().end();
 									don_num != don_nume; ++don_num

@@ -149,7 +149,7 @@ SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, BluePrint
 }
 
 /// @brief default destructor
-SetSecStructEnergies::~SetSecStructEnergies() {}
+SetSecStructEnergies::~SetSecStructEnergies() = default;
 
 /// @brief clone this object
 SetSecStructEnergies::MoverOP
@@ -239,7 +239,7 @@ void SetSecStructEnergies::apply( Pose & pose )
 	//     the potentials need to be re-created.
 	//if ( loaded_ ) return;
 
-	runtime_assert( sfx_ != 0 );
+	runtime_assert( sfx_ != nullptr );
 	runtime_assert( sfx_orig_ );
 
 	// reset to original so this can be called repeatedly
@@ -450,7 +450,7 @@ SetSecStructEnergies::get_secstruct( core::pose::Pose const & pose ) const
 			symm_setup_mover->apply( scratch );
 		}
 
-		SymmetricConformation & symm_conf ( dynamic_cast<SymmetricConformation & > ( scratch.conformation()) );
+		auto & symm_conf ( dynamic_cast<SymmetricConformation & > ( scratch.conformation()) );
 		SymmetryInfoOP syminfo( symm_conf.Symmetry_Info() );
 		return symmetric_secstruct( syminfo, secstruct );
 	}

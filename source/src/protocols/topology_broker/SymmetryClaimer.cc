@@ -23,6 +23,7 @@
 
 // Project Headers
 #include <core/conformation/symmetry/SymmData.hh>
+#include <core/conformation/symmetry/VirtualCoordinate.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>

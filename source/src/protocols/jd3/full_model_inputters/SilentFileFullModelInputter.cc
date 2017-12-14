@@ -61,7 +61,7 @@ SilentFileFullModelInputter::SilentFileFullModelInputter()
 	tr.Debug << "Instantiate SilentFileFullModelInputter" << std::endl;
 }
 
-SilentFileFullModelInputter::~SilentFileFullModelInputter() {}
+SilentFileFullModelInputter::~SilentFileFullModelInputter() = default;
 
 bool SilentFileFullModelInputter::job_available_on_command_line() const
 {
@@ -168,7 +168,7 @@ void
 SilentFileFullModelInputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList attributes;
 	attributes
 		+ Attr::required_attribute( "silent_files", xs_string, "Comma-separated list of silent files to use" )

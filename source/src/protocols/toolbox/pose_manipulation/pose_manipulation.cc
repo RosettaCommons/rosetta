@@ -145,13 +145,12 @@ construct_poly_uniq_restype_pose(
 
 	conformation::Residue const replace_res( restype, true );
 
-	for ( utility::vector1< Size >::const_iterator pos_it = positions.begin();
-			pos_it != positions.end(); ++pos_it ) {
+	for ( unsigned long position : positions ) {
 
-		if ( replace_res.type().is_alpha_aa() && !pose.residue_type( *pos_it ).is_alpha_aa() ) continue;
-		if ( replace_res.type().is_beta_aa() && !pose.residue_type( *pos_it ).is_beta_aa() ) continue;
+		if ( replace_res.type().is_alpha_aa() && !pose.residue_type( position ).is_alpha_aa() ) continue;
+		if ( replace_res.type().is_beta_aa() && !pose.residue_type( position ).is_beta_aa() ) continue;
 
-		chemical::ResidueType const & cur_restype = pose.residue_type( *pos_it );
+		chemical::ResidueType const & cur_restype = pose.residue_type( position );
 
 
 		if ( ( keep_pro && ( cur_restype.aa() == chemical::aa_pro || cur_restype.aa() == chemical::aa_dpr || cur_restype.aa() == chemical::aa_b3p ) )
@@ -163,7 +162,7 @@ construct_poly_uniq_restype_pose(
 		utility::vector1< std::string > current_variants;
 
 		if ( TR.Debug.visible() ) {
-			TR.Debug << "replacing: " << *pos_it << std::endl;
+			TR.Debug << "replacing: " << position << std::endl;
 		}
 
 		// either we don't want to keep disulfide cys or the current restype is not cys
@@ -181,9 +180,9 @@ construct_poly_uniq_restype_pose(
 
 			conformation::Residue const var_replace_res( *var_replace_type, true );
 
-			pose.replace_residue( *pos_it, var_replace_res, true );
+			pose.replace_residue( position, var_replace_res, true );
 		} else {
-			pose.replace_residue( *pos_it, replace_res, true);
+			pose.replace_residue( position, replace_res, true);
 		}
 
 	} //iterator over positions to replace
@@ -222,10 +221,9 @@ construct_poly_XXX_pose(
 
 	conformation::Residue const replace_res( restype_set->name_map( aa ), true );
 
-	for ( utility::vector1< Size >::const_iterator pos_it = positions.begin();
-			pos_it != positions.end(); ++pos_it ) {
+	for ( unsigned long position : positions ) {
 
-		chemical::ResidueType const & cur_restype = pose.residue_type( *pos_it );
+		chemical::ResidueType const & cur_restype = pose.residue_type( position );
 
 		if ( ( keep_pro && ( cur_restype.aa() == chemical::aa_pro ) )
 				||( keep_gly && ( cur_restype.aa() == chemical::aa_gly ) )
@@ -248,9 +246,9 @@ construct_poly_XXX_pose(
 
 			runtime_assert( var_replace_type->name3() == aa );
 			conformation::Residue const var_replace_res( *var_replace_type, true );
-			pose.replace_residue( *pos_it, var_replace_res, true );
+			pose.replace_residue( position, var_replace_res, true );
 		} else {
-			pose.replace_residue( *pos_it, replace_res, true);
+			pose.replace_residue( position, replace_res, true);
 		}
 	} //iterator over positions to replace
 } // construct_poly_XXX_pose function
@@ -355,10 +353,10 @@ superimpose_pose_on_subset_CA(
 
 	core::pose::initialize_atomid_map( atom_map, pose, AtomID::BOGUS_ATOM_ID() );
 
-	for ( utility::vector1< core::Size >::const_iterator res_it = positions.begin(); res_it != positions.end(); ++res_it ) {
+	for ( unsigned long position : positions ) {
 
-		AtomID id1( pose.residue( *res_it + offset).atom_index("CA"), *res_it + offset );
-		AtomID id2( ref_pose.residue( *res_it ).atom_index("CA"), *res_it );
+		AtomID id1( pose.residue( position + offset).atom_index("CA"), position + offset );
+		AtomID id2( ref_pose.residue( position ).atom_index("CA"), position );
 
 		atom_map.set( id1, id2);
 

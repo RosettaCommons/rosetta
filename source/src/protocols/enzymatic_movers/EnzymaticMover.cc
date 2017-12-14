@@ -74,7 +74,7 @@ EnzymaticMover::operator=( EnzymaticMover const & object_to_copy )
 }
 
 // Destructor
-EnzymaticMover::~EnzymaticMover() {}
+EnzymaticMover::~EnzymaticMover() = default;
 
 
 // Standard Rosetta methods ///////////////////////////////////////////////////

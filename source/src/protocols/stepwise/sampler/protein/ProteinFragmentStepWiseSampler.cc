@@ -47,8 +47,7 @@ ProteinFragmentStepWiseSampler::ProteinFragmentStepWiseSampler( std::string cons
 }
 
 //Destructor
-ProteinFragmentStepWiseSampler::~ProteinFragmentStepWiseSampler()
-{}
+ProteinFragmentStepWiseSampler::~ProteinFragmentStepWiseSampler() = default;
 
 /////////////////////////////////////////////////////////////////////////
 void

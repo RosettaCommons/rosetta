@@ -37,8 +37,7 @@ namespace jd2 {
 
 static basic::Tracer TR( "protocols.jd2.JobOutputterFactory" );
 
-JobOutputterFactory::JobOutputterFactory()
-{}
+JobOutputterFactory::JobOutputterFactory() = default;
 
 JobOutputterFactory::~JobOutputterFactory()= default;
 

@@ -128,7 +128,7 @@ struct Hit{
 	Real rmsd_norm;
 	Real score;
 	std::string aa;
-	Hit(Real cend_i,Real rmsd_i,std::string aa_i){
+	Hit(Real cend_i,Real rmsd_i,std::string const & aa_i){
 		cend = cend_i;
 		rmsd = rmsd_i;
 		aa = aa_i;

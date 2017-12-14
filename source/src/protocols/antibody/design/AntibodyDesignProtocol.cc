@@ -94,7 +94,7 @@ AntibodyDesignProtocol::AntibodyDesignProtocol() : protocols::moves::Mover(),
 }
 
 
-AntibodyDesignProtocol::~AntibodyDesignProtocol(){}
+AntibodyDesignProtocol::~AntibodyDesignProtocol()= default;
 
 AntibodyDesignProtocol::AntibodyDesignProtocol( AntibodyDesignProtocol const & src ):
 	protocols::moves::Mover( src ),
@@ -333,7 +333,7 @@ AntibodyDesignProtocol::reorder_poses(utility::vector1<core::pose::PoseOP>& pose
 
 	for ( core::Size i = 1; i <= poses.size(); ++i ) {
 		core::Real scU = (*scorefxn_)(*poses[i]);
-		vector1<core::pose::PoseOP>::iterator pose_it = sorted_poses.begin();
+		auto pose_it = sorted_poses.begin();
 
 		for ( core::Size x = 1; x <= sorted_poses.size(); ++x ) {
 			core::Real scS = (*scorefxn_)(*sorted_poses[x]);

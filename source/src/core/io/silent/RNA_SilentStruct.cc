@@ -150,7 +150,7 @@ bool RNA_SilentStruct::init_from_lines(
 	SilentFileData & container
 ) {
 	utility::vector1< std::string > energy_names_;
-	utility::vector1< std::string >::const_iterator iter = lines.begin();
+	auto iter = lines.begin();
 	if ( iter->substr(0,9) != "SEQUENCE:" ) {
 		// get sequence and scorename data from the silent-file data object, because I don't have it!
 		EnergyNamesOP enames = EnergyNamesOP(
@@ -214,7 +214,7 @@ bool RNA_SilentStruct::init_from_lines(
 	// resize myself appropriately, according to length of sequence
 	resize( sequence().length() );
 
-	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end; ++iter ) {
+	for ( auto end = lines.end(); iter != end; ++iter ) {
 		std::string tag;
 		std::istringstream line_stream( *iter );
 
@@ -233,7 +233,7 @@ bool RNA_SilentStruct::init_from_lines(
 			for ( energy_iter = energy_names_.begin(); energy_iter != energy_names_.end(); ++energy_iter ) {
 				line_stream >> tag;
 				if ( *energy_iter != "description" ) { // currently the only text-based field, might change in future.
-					Real score_val = (Real) float_of( tag );
+					auto score_val = (Real) float_of( tag );
 					add_energy( *energy_iter, score_val );
 				} else {
 					line_stream >> tag;

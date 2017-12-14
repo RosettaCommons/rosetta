@@ -16,6 +16,7 @@
 
 // Project headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/io/izstream.hh>
 
 // C++ headers

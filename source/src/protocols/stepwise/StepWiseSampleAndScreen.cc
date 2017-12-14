@@ -57,7 +57,7 @@ namespace stepwise {
 
 //Constructor
 StepWiseSampleAndScreen::StepWiseSampleAndScreen( sampler::StepWiseSamplerOP sampler,
-	utility::vector1< screener::StepWiseScreenerOP > screeners ):
+	utility::vector1< screener::StepWiseScreenerOP > const & screeners ):
 	sampler_(std::move( sampler )),
 	screeners_( screeners ),
 	max_ntries_( 0 ),
@@ -69,8 +69,7 @@ StepWiseSampleAndScreen::StepWiseSampleAndScreen( sampler::StepWiseSamplerOP sam
 }
 
 //Destructor
-StepWiseSampleAndScreen::~StepWiseSampleAndScreen()
-= default;
+StepWiseSampleAndScreen::~StepWiseSampleAndScreen() = default;
 
 //////////////////////////////////////////////////////////////////////
 void

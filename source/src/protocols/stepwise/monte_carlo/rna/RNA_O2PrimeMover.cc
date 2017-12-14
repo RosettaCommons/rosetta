@@ -27,6 +27,7 @@
 #include <basic/Tracer.hh>
 
 #include <numeric/random/random.hh>
+#include <utility>
 
 
 using namespace core;
@@ -51,7 +52,7 @@ RNA_O2PrimeMover::RNA_O2PrimeMover( scoring::ScoreFunctionOP scorefxn ,
 	bool const sample_all_o2prime,
 	Real const sample_range_small,
 	Real const sample_range_large ):
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	sample_all_o2prime_( sample_all_o2prime ),
 	sample_range_small_( sample_range_small ),
 	sample_range_large_( sample_range_large )
@@ -59,8 +60,7 @@ RNA_O2PrimeMover::RNA_O2PrimeMover( scoring::ScoreFunctionOP scorefxn ,
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-RNA_O2PrimeMover::~RNA_O2PrimeMover()
-{}
+RNA_O2PrimeMover::~RNA_O2PrimeMover() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void

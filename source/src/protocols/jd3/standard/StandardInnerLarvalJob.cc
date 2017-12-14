@@ -49,10 +49,7 @@ StandardInnerLarvalJob::StandardInnerLarvalJob( core::Size nstruct, core::Size p
 	prelim_job_node_( prelim_job_node )
 {}
 
-StandardInnerLarvalJob::StandardInnerLarvalJob( StandardInnerLarvalJob const & src ) :
-	InnerLarvalJob( src ),
-	prelim_job_node_( src.prelim_job_node_ )
-{}
+StandardInnerLarvalJob::StandardInnerLarvalJob( StandardInnerLarvalJob const & /*src*/ ) = default;
 
 
 StandardInnerLarvalJob::~StandardInnerLarvalJob() = default;
@@ -64,7 +61,7 @@ bool
 StandardInnerLarvalJob::operator == ( InnerLarvalJob const & other ) const
 {
 	if ( InnerLarvalJob::operator == ( other ) ) {
-		StandardInnerLarvalJob const & other_std = static_cast< StandardInnerLarvalJob const & > ( other );
+		auto const & other_std = static_cast< StandardInnerLarvalJob const & > ( other );
 		return prelim_job_node_ == other_std.prelim_job_node_;
 	}
 	return false;

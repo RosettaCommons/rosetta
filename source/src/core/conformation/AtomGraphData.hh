@@ -23,8 +23,8 @@ class AtomGraphVertexData : public PointGraphVertexData
 {
 public:
 	AtomGraphVertexData() : PointGraphVertexData(), residue_id_(0),atom_radius_squared_(0.0) {}
-	AtomGraphVertexData( numeric::xyzVector<core::Real> const & coors,std::string atom_name, core::Size residue_id)
-	: PointGraphVertexData(coors),atom_name_(std::move(atom_name)),residue_id_(residue_id) {}
+	AtomGraphVertexData( numeric::xyzVector<core::Real> const & coors,std::string const & atom_name, core::Size residue_id)
+	: PointGraphVertexData(coors),atom_name_(atom_name),residue_id_(residue_id) {}
 
 	std::string & atom_name() {return atom_name_;}
 	std::string const & atom_name() const {return atom_name_;}

@@ -75,7 +75,7 @@ GeneralizedKICselector::GeneralizedKICselector( GeneralizedKICselector const &sr
 {}
 
 /// @brief Destructor for GeneralizedKICselector mover.
-GeneralizedKICselector::~GeneralizedKICselector() {}
+GeneralizedKICselector::~GeneralizedKICselector() = default;
 
 /// @brief Clone function for GeneralizedKICselector:
 /// @details Returns an owning pointer to a copy of this selector.

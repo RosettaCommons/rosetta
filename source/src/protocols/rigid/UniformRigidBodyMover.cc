@@ -96,7 +96,7 @@ void UniformRigidBodyMover::apply( core::pose::Pose& pose ){
 
 	xyzVector<core::Real> delta_trans = random_translation( translation_mag_, numeric::random::rg() );
 
-	core::Real theta = random_rotation_angle<core::Real>( rotation_mag_, numeric::random::rg() );
+	auto theta = random_rotation_angle<core::Real>( rotation_mag_, numeric::random::rg() );
 
 	xyzVector<core::Real> axis = random_point_on_unit_sphere<core::Real>( numeric::random::rg() );
 

@@ -15,6 +15,7 @@
 #include <core/pack/interaction_graph/MultiplexedAnnealableGraph.hh>
 
 /// Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 //STL Headers
@@ -39,10 +40,7 @@ MultiplexedAnnealableGraph::MultiplexedAnnealableGraph():
 
 /// @brief Copy constructor.
 ///
-MultiplexedAnnealableGraph::MultiplexedAnnealableGraph(MultiplexedAnnealableGraph const & other) :
-	AnnealableGraphBase(other),
-	subgraphs(other.subgraphs)
-{}
+MultiplexedAnnealableGraph::MultiplexedAnnealableGraph(MultiplexedAnnealableGraph const & /*other*/) = default;
 
 /// @brief Setup constructor.
 ///
@@ -53,8 +51,7 @@ MultiplexedAnnealableGraph::MultiplexedAnnealableGraph(SubgraphContainer const &
 
 /// @brief Destructor.
 ///
-MultiplexedAnnealableGraph::~MultiplexedAnnealableGraph()
-{}
+MultiplexedAnnealableGraph::~MultiplexedAnnealableGraph() = default;
 
 
 int MultiplexedAnnealableGraph::get_num_nodes() const

@@ -262,7 +262,7 @@ public:
 	typedef JumpList::iterator iterator;
 
 	JumpSelector();
-	JumpSelector( std::string ss );
+	JumpSelector( std::string const & ss );
 	~JumpSelector() override;
 
 	//@brief add a new jump to the list

@@ -36,7 +36,7 @@ namespace task_operations {
 
 class SelectBySASAOperation : public core::pack::task::operation::TaskOperation {
 public:
-	SelectBySASAOperation( std::string mode = "sc", std::string state = "monomer", core::Real probe_radius = 2.2, core::Real core_asa = 0, core::Real surface_asa = 30, std::string jump_nums = "1", std::string sym_dof_names = "", bool core = 0, bool boundary = 0, bool surface = 0, bool verbose = 0 );
+	SelectBySASAOperation( std::string const & mode = "sc", std::string const & state = "monomer", core::Real probe_radius = 2.2, core::Real core_asa = 0, core::Real surface_asa = 30, std::string const & jump_nums = "1", std::string const & sym_dof_names = "", bool core = 0, bool boundary = 0, bool surface = 0, bool verbose = 0 );
 
 	virtual ~SelectBySASAOperation();
 

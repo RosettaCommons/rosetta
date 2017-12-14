@@ -92,7 +92,7 @@ void SimulateMPIMessage::set_doubles_msg( utility::vector1< double > const & set
 }
 
 // initialize private static data
-SimulateMPIData * SimulateMPI::simulation_( 0 );
+SimulateMPIData * SimulateMPI::simulation_( nullptr );
 int SimulateMPI::rank_( 0 );
 
 SimulateMPIData::SimulateMPIData( platform::Size nprocs ) :
@@ -120,7 +120,7 @@ void SimulateMPIData::queue_message( SimulateMPIMessageOP msg )
 SimulateMPIMessageOP
 SimulateMPIData::pop_next_message_for_node_of_type( platform::Size dst, simulate_mpi_message_type msg_type )
 {
-	SimulateMPIMessageOP most_recent_message( 0 );
+	SimulateMPIMessageOP most_recent_message( nullptr );
 	platform::Size most_recent_index( 0 ); // this is an impossible message index
 
 	for ( platform::Size ii = 0; ii < mpi_nprocs_; ++ii ) {
@@ -181,11 +181,11 @@ SimulateMPIData::messages_for_node( platform::Size dst ) const
 /// return.
 void SimulateMPIData::clear_processed_msgs( MsgQueue & message_queue )
 {
-	for ( MsgQueue::iterator iter = message_queue.begin(),
+	for ( auto iter = message_queue.begin(),
 			iter_end = message_queue.end();
 			iter != iter_end; /*noinc*/ ) {
 		if ( (*iter)->processed() ) {
-			MsgQueue::iterator next_iter = iter;
+			auto next_iter = iter;
 			++next_iter;
 			message_queue.erase( iter );
 			iter = next_iter;

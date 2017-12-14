@@ -55,8 +55,7 @@ BuriedSurfaceAreaFilter::BuriedSurfaceAreaFilter():
 
 }
 
-BuriedSurfaceAreaFilter::~BuriedSurfaceAreaFilter()
-{}
+BuriedSurfaceAreaFilter::~BuriedSurfaceAreaFilter() = default;
 
 void
 BuriedSurfaceAreaFilter::parse_my_tag(

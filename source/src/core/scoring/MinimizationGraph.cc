@@ -56,7 +56,7 @@ void MinimizationNode::print() const
 /// invoked by copy ctor and operator= methods from Graph base class
 void MinimizationNode::copy_from( parent const * source )
 {
-	MinimizationNode const & mn_source = static_cast< MinimizationNode const & > ( * source );
+	auto const & mn_source = static_cast< MinimizationNode const & > ( * source );
 
 	res_min_data_ = mn_source.res_min_data_; // deep copy
 
@@ -483,7 +483,7 @@ void MinimizationEdge::copy_from( parent const * source )
 {
 	//MinimizationEdge const * ee = static_cast< MinimizationEdge const * > ( source );
 	// down_cast is *supposed* to assert the dynamic cast in debug builds; doesn't work for some reason
-	MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( * source );
+	auto const & minedge = static_cast< MinimizationEdge const & > ( * source );
 
 	res_pair_min_data_ = minedge.res_pair_min_data_;
 	twobody_enmeths_ = minedge.twobody_enmeths_;

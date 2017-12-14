@@ -81,7 +81,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::RestrictIdentitiesAtAlignedPositi
 	res_ids_.clear();
 }
 
-RestrictIdentitiesAtAlignedPositionsOperation::~RestrictIdentitiesAtAlignedPositionsOperation() {}
+RestrictIdentitiesAtAlignedPositionsOperation::~RestrictIdentitiesAtAlignedPositionsOperation() = default;
 
 core::pack::task::operation::TaskOperationOP RestrictIdentitiesAtAlignedPositionsOperation::clone() const
 {

@@ -118,7 +118,7 @@ MDBase::report_silent( core::pose::Pose &pose,
 {
 	using namespace core;
 
-	Size timeid = (Size)( cummulative_time()*1000.0 );
+	auto timeid = (Size)( cummulative_time()*1000.0 );
 
 	// pose should contain up-to-date score info
 	io::silent::SilentFileOptions opts;

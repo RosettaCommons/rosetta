@@ -136,9 +136,7 @@ void MotifGraftMover::init_parameters(
 }
 
 /**@brief MotifGraftMover Destructor**/
-MotifGraftMover::~MotifGraftMover()
-{
-}
+MotifGraftMover::~MotifGraftMover() = default;
 
 /**@brief Apply mover function**/
 void MotifGraftMover::apply(core::pose::Pose & pose)
@@ -190,7 +188,7 @@ core::pose::PoseOP MotifGraftMover::get_additional_output()
 	if ( motif_match_results_.size() == 0 ) {
 		TR.Debug << "No additional output." << std::endl;
 		set_last_move_status(protocols::moves::MS_SUCCESS);
-		return NULL;
+		return nullptr;
 	} else if ( motif_match_results_.size() == 1 ) {
 		// Last iteration, do not create a new pose reference
 		work_pose = gp_p_target_pose_;
@@ -496,7 +494,7 @@ void MotifGraftMover::test_epigraft_and_contextStructure_clashes(
 	}
 
 	//Iterate the fragments
-	utility::vector1< motif2scaffold_data >::iterator it_fragments = v_m2s_data.begin();
+	auto it_fragments = v_m2s_data.begin();
 	while ( it_fragments != v_m2s_data.end() )
 			{
 		core::Size motif_scaffold_clash_count   = 0;
@@ -893,7 +891,7 @@ void MotifGraftMover::get_motif_scaffold_superposition_and_RMSD(
 	numeric::xyzVector< core::Real >  TvecA;
 	numeric::xyzVector< core::Real >  TvecB;
 	//Iterate the fragments combinations
-	utility::vector1< motif2scaffold_data >::iterator it_fragments = v_m2s_data.begin();
+	auto it_fragments = v_m2s_data.begin();
 	while ( it_fragments != v_m2s_data.end() )
 			{
 		utility::vector1< core::Size > positions_to_alignA;

@@ -40,7 +40,7 @@ namespace rna {
 class RNA_KIC_Sampler : public StepWiseSampler {
 public:
 	RNA_KIC_Sampler(
-		core::pose::PoseOP const & ref_pose,
+		core::pose::PoseOP ref_pose,
 		core::Size const moving_suite,
 		core::Size const chainbreak_suite
 	);

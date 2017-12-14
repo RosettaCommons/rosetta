@@ -61,7 +61,7 @@ EXCN_Env_Security_Exception::EXCN_Env_Security_Exception(
 ):
 	Parent(file, line, env ),
 	id_( dof ),
-	pass_( pass )
+	pass_(std::move( pass ))
 {
 	std::ostringstream msg;
 

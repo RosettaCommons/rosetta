@@ -40,12 +40,11 @@ AgglomerativeHierarchicalClusterer::cluster(
 		active_indexes.sort();
 		ClusterOptions co( 0, 0, 0, 0, 99999999999.0);
 
-		for ( std::list< Size >::iterator it1 = active_indexes.begin() ; it1 != active_indexes.end(); ++it1 ) {
+		for ( auto it1 = active_indexes.begin() ; it1 != active_indexes.end(); ++it1 ) {
 			utility::vector1<Size> members1;
 			Size node1 = *it1;
 			nodes[node1]->copy_leaf_ids( members1 );
-			for ( std::list< Size >::iterator it2 = active_indexes.begin() ; it2 != active_indexes.end(); ++it2 ) {
-				Size node2 = *it2;
+			for ( unsigned long node2 : active_indexes ) {
 				if ( node1 <= node2 ) break;
 				utility::vector1< Size > members2;
 				nodes[ node2 ]->copy_leaf_ids( members2 );
@@ -64,8 +63,8 @@ AgglomerativeHierarchicalClusterer::cluster(
 
 	assert(active_indexes.size() == n_clusters);
 	utility::vector1<ClusteringTreeNodeOP> out;
-	for ( std::list< Size >::iterator it = active_indexes.begin() ; it != active_indexes.end(); ++it ) {
-		out.push_back(nodes[*it]);
+	for ( unsigned long & active_indexe : active_indexes ) {
+		out.push_back(nodes[active_indexe]);
 	}
 
 	return out;
@@ -77,10 +76,10 @@ void SingleLinkClusterer::comparator(
 	utility::vector1<Size> const & members2,
 	ClusterOptions & co
 ) {
-	for ( utility::vector1< Size >::const_iterator m1 = members1.begin(); m1 != members1.end(); ++m1 ) {
-		for ( utility::vector1< Size >::const_iterator m2 = members2.begin(); m2 != members2.end(); ++m2 ) {
-			if ( distance_matrix[ *m1 ][ *m2 ] < co.min_ ) {
-				co.min_ = distance_matrix[ *m1 ][ *m2 ];
+	for ( unsigned long m1 : members1 ) {
+		for ( unsigned long m2 : members2 ) {
+			if ( distance_matrix[ m1 ][ m2 ] < co.min_ ) {
+				co.min_ = distance_matrix[ m1 ][ m2 ];
 				co.min_i_ = co.node1_;
 				co.min_j_ = co.node2_;
 			}
@@ -96,9 +95,9 @@ void AverageLinkClusterer::comparator(
 ) {
 	Real dist = 0.0;
 	Real n = 0.0;
-	for ( utility::vector1< Size >::const_iterator m1 = members1.begin(); m1 != members1.end(); ++m1 ) {
-		for ( utility::vector1< Size >::const_iterator m2 = members2.begin(); m2 != members2.end(); ++m2 ) {
-			dist += distance_matrix[ *m1 ][ *m2 ];
+	for ( unsigned long m1 : members1 ) {
+		for ( unsigned long m2 : members2 ) {
+			dist += distance_matrix[ m1 ][ m2 ];
 			n++;
 		}
 	}
@@ -117,10 +116,10 @@ void CompleteLinkClusterer::comparator(
 	ClusterOptions & co
 ) {
 	Real max = -9999999999.0;
-	for ( utility::vector1< Size >::const_iterator m1 = members1.begin(); m1 != members1.end(); ++m1 ) {
-		for ( utility::vector1< Size >::const_iterator m2 = members2.begin(); m2 != members2.end(); ++m2 ) {
-			if ( distance_matrix[ *m1 ][ *m2 ] > max ) {
-				max = distance_matrix[ *m1 ][ *m2 ];
+	for ( unsigned long m1 : members1 ) {
+		for ( unsigned long m2 : members2 ) {
+			if ( distance_matrix[ m1 ][ m2 ] > max ) {
+				max = distance_matrix[ m1 ][ m2 ];
 			}
 		}
 	}

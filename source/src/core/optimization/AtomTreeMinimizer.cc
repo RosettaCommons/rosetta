@@ -48,8 +48,7 @@ namespace optimization {
 
 static basic::Tracer TR( "core.optimization.AtomTreeMinimizer" );
 
-AtomTreeMinimizer::AtomTreeMinimizer()
-{}
+AtomTreeMinimizer::AtomTreeMinimizer() = default;
 
 AtomTreeMinimizer::~AtomTreeMinimizer() = default;
 

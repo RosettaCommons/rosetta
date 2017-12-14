@@ -44,7 +44,7 @@ MakeAsymmetricStructureDataMover::MakeAsymmetricStructureDataMover():
 
 }
 
-MakeAsymmetricStructureDataMover::~MakeAsymmetricStructureDataMover(){}
+MakeAsymmetricStructureDataMover::~MakeAsymmetricStructureDataMover()= default;
 
 void
 MakeAsymmetricStructureDataMover::parse_my_tag(
@@ -118,7 +118,7 @@ MakeAsymmetricStructureDataMover::apply( core::pose::Pose & pose )
 	core::Size subunit = 1;
 	core::Size resid = 0;
 	while ( resid + sd.pose_length() <= pose.size() ) {
-		for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+		for ( auto s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
 			components::Segment newseg = sd.segment( *s );
 			newseg.set_id( new_id( subunit, *s ) );
 			if ( !newseg.lower_segment().empty() ) {

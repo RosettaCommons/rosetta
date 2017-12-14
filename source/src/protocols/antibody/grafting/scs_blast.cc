@@ -109,7 +109,7 @@ void SCS_Base::report(SCS_ResultsOP r, uint n)
 
 		for(auto &j : J) {
 			if( SCS_ResultOP p = s.*j.region ) {
-				SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p.get() );
+				auto const *br = dynamic_cast< SCS_BlastResult const *>( p.get() );
 
 				*this << "\t" << j.name << "\n";
 				*this << "\t\tpdb: " << br->pdb << "\n";
@@ -139,7 +139,7 @@ void SCS_Base::report(SCS_ResultsOP r, uint n)
 
 		for(auto &p : (*r).*j.region) {
 			if(p) {
-				SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p.get() );
+				auto const *br = dynamic_cast< SCS_BlastResult const *>( p.get() );
 
 				utility::json_spirit::Object jbr;
 				jbr.push_back( utility::json_spirit::Pair("pdb", br->pdb) );

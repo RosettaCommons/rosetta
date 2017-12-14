@@ -62,7 +62,7 @@ public:
 
 	}
 
-	virtual ~PDBDiagnosticMover(){};
+	~PDBDiagnosticMover() override= default;
 
 	///@details this function sums statistics: for each is_?? function in ResidueType, it accumulates how many residues of the Pose have that quality, and dumps that data to the scorefile via the Job's interface.
 	void residue_type_statistics( core::pose::Pose const & pose, protocols::jd2::JobOP job_me, core::Size const nres ){
@@ -201,9 +201,9 @@ public:
 	}
 
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ){
+	apply( core::pose::Pose & pose ) override{
 
 		//Diagnostic plan:
 		//1) try reading PDB in (done by JD, already complete at this step)
@@ -267,31 +267,31 @@ public:
 		return;
 	}
 
-	virtual
+
 	std::string
-	get_name() const {
+	get_name() const override {
 		return "PDBDiagnosticMover";
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new PDBDiagnosticMover );
 	}
 
-	virtual
-	bool
-	reinitialize_for_each_job() const { return true; }
 
-	virtual
 	bool
-	reinitialize_for_new_input() const { return true; }
+	reinitialize_for_each_job() const override { return true; }
+
+
+	bool
+	reinitialize_for_new_input() const override { return true; }
 
 private:
 
 };
 
-typedef utility::pointer::shared_ptr< PDBDiagnosticMover > PDBDiagnosticMoverOP;
+using PDBDiagnosticMoverOP = utility::pointer::shared_ptr<PDBDiagnosticMover>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

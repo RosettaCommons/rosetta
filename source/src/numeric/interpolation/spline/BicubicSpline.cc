@@ -203,10 +203,10 @@ Real BicubicSpline::F( Real x, Real y ) const
 	}
 
 	//determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0] for the correct supporting points
-	int i( int (floor( (x-start_[ 0])/delta_[ 0])+1));
+	auto i( int (floor( (x-start_[ 0])/delta_[ 0])+1));
 
 	//determine j with start_[ 1]+(j-1)*delta_[ 1] < y < start_[ 1]+j*delta_[ 1] for the correct supporting points
-	int j( int (floor( (y-start_[ 1])/delta_[ 1])+1));
+	auto j( int (floor( (y-start_[ 1])/delta_[ 1])+1));
 
 	const Real dxp( ( x-start_[ 0])/delta_[ 0] - floor( ( x-start_[ 0]) / delta_[ 0]));
 	const Real dxm( 1 - dxp);
@@ -290,11 +290,11 @@ Real BicubicSpline::dFdx( Real x, Real y ) const
 	}
 
 	// determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0] for the correct supporting points
-	int i( int( floor( ( x - start_[ 0]) / delta_[ 0])));
+	auto i( int( floor( ( x - start_[ 0]) / delta_[ 0])));
 	while ( start_[ 0] + i * delta_[ 0] < x ) { i++;}
 
 	// determine j with start_[ 1]+(j-1)*delta_[ 1] < y < start_[ 1]+j*delta_[ 1] for the correct supporting points
-	int j( int( floor( ( y - start_[ 1]) / delta_[ 1])));
+	auto j( int( floor( ( y - start_[ 1]) / delta_[ 1])));
 	while ( start_[ 1] + j * delta_[ 1] < y ) { j++;}
 
 	//see F(x, y) for a short explanation of the values
@@ -382,7 +382,7 @@ Real BicubicSpline::dFdy( Real const x, Real const y) const
 	}
 
 	//determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0] for the correct supporting points
-	int i( int( floor( ( x - start_[ 0])/delta_[ 0])));
+	auto i( int( floor( ( x - start_[ 0])/delta_[ 0])));
 	while ( start_[ 0] + i * delta_[ 0] < x ) { i++;}
 	if ( !i ) {
 		while ( start_[ 0] + i * delta_[ 0] > x ) { i--;}
@@ -390,7 +390,7 @@ Real BicubicSpline::dFdy( Real const x, Real const y) const
 	}
 
 	//determine j with start_[ 1]+(j-1)*delta_[ 1] < y < start_[ 1]+j*delta_[ 1] for the correct supporting points
-	int j( int( floor( ( y - start_[ 1])/delta_[ 1])));
+	auto j( int( floor( ( y - start_[ 1])/delta_[ 1])));
 	while ( start_[ 1] + j * delta_[ 1] < y ) {j++;}
 	if ( !j ) {
 		while  ( start_[ 1]+j*delta_[ 1]>y ) {j--;}
@@ -472,7 +472,7 @@ std::pair<Real, MathVector<Real> > BicubicSpline::FdF( const MathVector< Real> &
 		}
 	} else {
 		//determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0] for the correct supporting points
-		int    i(int (floor( (x-start_[ 0])/delta_[ 0])));
+		auto    i(int (floor( (x-start_[ 0])/delta_[ 0])));
 		while  ( start_[ 0]+i*delta_[ 0]<x ) i++;
 		if ( !i ) {
 			while  ( start_[ 0]+i*delta_[ 0]>x ) i--;
@@ -480,7 +480,7 @@ std::pair<Real, MathVector<Real> > BicubicSpline::FdF( const MathVector< Real> &
 		}
 
 		//determine j with start_[ 1]+(j-1)*delta_[ 1] < y < start_[ 1]+j*delta_[ 1] for the correct supporting points
-		int    j(int (floor( (y-start_[ 1])/delta_[ 1])));
+		auto    j(int (floor( (y-start_[ 1])/delta_[ 1])));
 		while  ( start_[ 1]+j*delta_[ 1]<y ) j++;
 		if ( !j ) {
 			while  ( start_[ 1]+j*delta_[ 1]>y ) j--;

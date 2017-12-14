@@ -35,6 +35,7 @@
 #include <numeric/angle.functions.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <boost/foreach.hpp>
 

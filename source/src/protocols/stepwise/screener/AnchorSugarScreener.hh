@@ -48,7 +48,7 @@ public:
 		core::pose::Pose & sugar_screening_pose,
 		bool const is_prepend,
 		modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_with_instantiated_sugar,
-		utility::vector1< modeler::rna::checker::RNA_AtrRepCheckerOP > atr_rep_checkers_for_anchor_sugar_models,
+		utility::vector1< modeler::rna::checker::RNA_AtrRepCheckerOP > const & atr_rep_checkers_for_anchor_sugar_models,
 		TagDefinitionOP tag_definition );
 
 	//destructor

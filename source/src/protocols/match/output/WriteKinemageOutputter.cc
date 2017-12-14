@@ -35,7 +35,7 @@ namespace protocols {
 namespace match {
 namespace output {
 
-WriteKinemageOutputter::~WriteKinemageOutputter() {}
+WriteKinemageOutputter::~WriteKinemageOutputter() = default;
 
 
 void

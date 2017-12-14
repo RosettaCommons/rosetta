@@ -40,7 +40,7 @@ RNA_FittedTorsionInfo::RNA_FittedTorsionInfo():
 	init_rna_torsion_gaussian_parameters();
 }
 
-RNA_FittedTorsionInfo::~RNA_FittedTorsionInfo(){}
+RNA_FittedTorsionInfo::~RNA_FittedTorsionInfo()= default;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void

@@ -45,7 +45,7 @@ using namespace basic;
 namespace protocols {
 namespace noesy_assign {
 
-LabelResonance::LabelResonance() {}
+LabelResonance::LabelResonance() = default;
 
 LabelResonance::LabelResonance(
 	core::Size label,

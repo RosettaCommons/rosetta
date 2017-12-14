@@ -18,6 +18,7 @@
 #include <numeric/types.hh>
 
 /// Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
@@ -124,7 +125,7 @@ LiteralToken::value( numeric::Real setting )
 
 
 VariableToken::VariableToken() : name_() {}
-VariableToken::VariableToken( std::string const & name ) : name_( name ) {}
+VariableToken::VariableToken( std::string  name ) : name_(std::move( name )) {}
 
 TokenType
 VariableToken::type() const
@@ -150,8 +151,8 @@ void VariableToken::name( std::string const & name )
 }
 
 FunctionToken::FunctionToken() : name_(), nargs_( 0 ) {}
-FunctionToken::FunctionToken( std::string const & name, numeric::Size nargs ) :
-	name_( name ),
+FunctionToken::FunctionToken( std::string  name, numeric::Size nargs ) :
+	name_(std::move( name )),
 	nargs_( nargs )
 {}
 
@@ -214,7 +215,7 @@ SimpleToken::set_token_type( TokenType setting )
 }
 
 
-TokenSet::TokenSet() {}
+TokenSet::TokenSet() = default;
 
 /// @details Appends the new token to the list and resets
 /// the token iterator to the beginning of the list
@@ -1132,7 +1133,7 @@ void ASTPrinter::finish_indented_line()
 }
 
 //// Expression visitor
-ExpressionCreator::ExpressionCreator() {}
+ExpressionCreator::ExpressionCreator() = default;
 
 ExpressionCreator::~ExpressionCreator() = default;
 
@@ -1381,7 +1382,7 @@ ExpressionCreator::handle_function_expression(
 	return nullptr;
 }
 
-SimpleExpressionCreator::SimpleExpressionCreator() {}
+SimpleExpressionCreator::SimpleExpressionCreator() = default;
 
 SimpleExpressionCreator::SimpleExpressionCreator(
 	std::list< std::string > const & varnames
@@ -1513,15 +1514,15 @@ LiteralExpression::active_variables() const
 	return empty;
 }
 
-VariableExpression::VariableExpression( std::string const & name )
+VariableExpression::VariableExpression( std::string  name )
 :
-	name_( name ),
+	name_(std::move( name )),
 	value_( 0 )
 {}
 
-VariableExpression::VariableExpression( std::string const & name, numeric::Real value )
+VariableExpression::VariableExpression( std::string  name, numeric::Real value )
 :
-	name_( name ),
+	name_(std::move( name )),
 	value_( value )
 {}
 

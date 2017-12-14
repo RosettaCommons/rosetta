@@ -198,7 +198,7 @@ MMLJEnergyInter::create_rotamer_trie(
 	} else {
 		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
 		utility_exit();
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -225,7 +225,7 @@ MMLJEnergyInter::create_rotamer_trie(
 	} else {
 		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
 		utility_exit();
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -255,7 +255,7 @@ MMLJEnergyInter::update_residue_for_packing(
 	trie::RotamerTrieBaseOP one_rotamer_trie = create_rotamer_trie( pose.residue( resid ), pose );
 
 	// grab non-const & of the cached tries and replace resid's trie with a new one.
-	TrieCollection & trie_collection
+	auto & trie_collection
 		( static_cast< TrieCollection & > (pose.energies().data().get( EnergiesCacheableDataType::MM_LJ_TRIE_COLLECTION )));
 	trie_collection.trie( resid, one_rotamer_trie );
 }
@@ -369,8 +369,7 @@ MMLJEnergyInter::eval_atom_derivative(
 		scoring::AtomNeighbors const & nbrs( nblist.atom_neighbors( id ) );
 
 		// iterate over all of atom1's neighbors using the neighbor list
-		for ( scoring::AtomNeighbors::const_iterator iter=nbrs.begin(), iter_end=nbrs.end(); iter != iter_end; ++iter ) {
-			scoring::AtomNeighbor const & nbr( *iter );
+		for ( auto const & nbr : nbrs ) {
 			conformation::Atom const & atom2( pose.residue( nbr.rsd() ).atom( nbr.atomno() ) );
 
 			// calculate f1 and f2

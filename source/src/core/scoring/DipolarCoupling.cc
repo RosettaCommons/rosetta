@@ -175,7 +175,7 @@ void DipolarCoupling::read_DC_file( ) {
 }
 
 
-std::string element_string_dc(std::string atom) {
+std::string element_string_dc(std::string const & atom) {
 	if ( atom == "HN" || atom == "H" || atom == "HA" ) {
 		return "H";
 	}

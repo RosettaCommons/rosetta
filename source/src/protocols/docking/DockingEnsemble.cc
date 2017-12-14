@@ -63,16 +63,16 @@ DockingEnsemble::DockingEnsemble(
 	Size start_res,
 	Size end_res,
 	Size jump_id,
-	std::string ensemble_file_path,
-	std::string partner,
+	std::string const & ensemble_file_path,
+	std::string const & partner,
 	core::scoring::ScoreFunctionCOP scorefxn_low,
 	core::scoring::ScoreFunctionCOP scorefxn_high
 ) :
 	start_res_(start_res),
 	end_res_(end_res),
 	jump_id_(jump_id),
-	ensemble_file_path_(std::move(ensemble_file_path)),
-	partner_(std::move(partner))
+	ensemble_file_path_(ensemble_file_path),
+	partner_(partner)
 {
 	// initialize current conf_num to zero
 	conf_num_ = 0;

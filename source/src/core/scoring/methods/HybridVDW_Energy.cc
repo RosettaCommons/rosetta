@@ -74,10 +74,7 @@ HybridVDW_Energy::clone() const
 }
 
 /// @details  copy c-tor
-HybridVDW_Energy::HybridVDW_Energy( HybridVDW_Energy const & src ):
-	parent( src ),
-	atom_vdw_( src.atom_vdw_ )
-{}
+HybridVDW_Energy::HybridVDW_Energy( HybridVDW_Energy const & /*src*/ ) = default;
 
 
 /////////////////////////////////////////////////////////////////////////////

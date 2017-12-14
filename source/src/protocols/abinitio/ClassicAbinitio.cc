@@ -817,11 +817,11 @@ void ClassicAbinitio::set_default_options() {
 /// @detail
 /// calls of operator ( pose ) compare the
 class hConvergenceCheck;
-typedef  utility::pointer::shared_ptr< hConvergenceCheck >  hConvergenceCheckOP;
+using hConvergenceCheckOP = utility::pointer::shared_ptr<hConvergenceCheck>;
 
 class hConvergenceCheck : public moves::PoseCondition {
 public:
-	hConvergenceCheck() : bInit_( false ), ct_( 0 ) {}
+	hConvergenceCheck()= default;
 	void reset() { ct_ = 0; bInit_ = false; }
 	void set_trials( moves::TrialMoverOP trin ) {
 		trials_ = trin;
@@ -831,8 +831,8 @@ public:
 	bool operator() ( const core::pose::Pose & pose ) override;
 private:
 	pose::Pose very_old_pose_;
-	bool bInit_;
-	Size ct_;
+	bool bInit_{ false };
+	Size ct_ = 0;
 	moves::TrialMoverOP trials_;
 	Size last_move_;
 };
@@ -1283,7 +1283,7 @@ void ClassicAbinitio::output_debug_structure( core::pose::Pose & pose, std::stri
 	if ( option[ basic::options::OptionKeys::abinitio::log_frags ].user() ) {
 		std::string filename = prefix + "_" + get_current_tag() + "_" + std::string( option[ basic::options::OptionKeys::abinitio::log_frags ]() );
 		utility::io::ozstream output( filename );
-		simple_moves::LoggedFragmentMover& log_frag = dynamic_cast< simple_moves::LoggedFragmentMover& > (*brute_move_large_);
+		auto& log_frag = dynamic_cast< simple_moves::LoggedFragmentMover& > (*brute_move_large_);
 		log_frag.show( output );
 		log_frag.clear();
 	}

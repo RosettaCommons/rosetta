@@ -44,11 +44,11 @@ namespace disulfides {
 class DisulfMinData : public basic::datacache::CacheableData
 {
 public:
-	typedef basic::datacache::CacheableDataOP CacheableDataOP;
+	using CacheableDataOP = basic::datacache::CacheableDataOP;
 public:
 	DisulfMinData( conformation::Residue const & res1, conformation::Residue const & res2 );
-	virtual ~DisulfMinData();
-	CacheableDataOP clone() const;
+	~DisulfMinData() override;
+	CacheableDataOP clone() const override;
 
 	/// @brief which_res should be 1 or 2
 	void set_res_inds( Size which_res, DisulfideAtomIndices const & dais );
@@ -59,8 +59,8 @@ private:
 	DisulfideAtomIndices res2_inds_;
 };
 
-typedef utility::pointer::shared_ptr< DisulfMinData > DisulfMinDataOP;
-typedef utility::pointer::shared_ptr< DisulfMinData const > DisulfMinDataCOP;
+using DisulfMinDataOP = utility::pointer::shared_ptr<DisulfMinData>;
+using DisulfMinDataCOP = utility::pointer::shared_ptr<const DisulfMinData>;
 
 
 DisulfMinData::DisulfMinData(
@@ -71,7 +71,7 @@ DisulfMinData::DisulfMinData(
 	res2_inds_( res2 )
 {}
 
-DisulfMinData::~DisulfMinData() {}
+DisulfMinData::~DisulfMinData() = default;
 
 DisulfMinData::CacheableDataOP DisulfMinData::clone() const { return DisulfMinData::CacheableDataOP( new DisulfMinData( *this ) ); }
 
@@ -119,8 +119,7 @@ FullatomDisulfideEnergy::FullatomDisulfideEnergy( FullatomDisulfidePotential con
 	potential_( potential )
 {}
 
-FullatomDisulfideEnergy::~FullatomDisulfideEnergy()
-{}
+FullatomDisulfideEnergy::~FullatomDisulfideEnergy() = default;
 
 // EnergyMethod Methods:
 
@@ -137,7 +136,7 @@ FullatomDisulfideEnergy::ensure_lrenergy_container_is_up_to_date(
 {
 	using namespace methods;
 
-	if ( pose.energies().long_range_container( fa_disulfide_energy ) == 0 ) {
+	if ( pose.energies().long_range_container( fa_disulfide_energy ) == nullptr ) {
 		FullatomDisulfideEnergyContainerOP dec( new FullatomDisulfideEnergyContainer( pose ) );
 		pose.energies().set_long_range_container( fa_disulfide_energy, dec );
 	} else {

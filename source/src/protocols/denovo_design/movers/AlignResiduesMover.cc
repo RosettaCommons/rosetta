@@ -62,7 +62,7 @@ AlignResiduesMover::AlignResiduesMover():
 {
 }
 
-AlignResiduesMover::~AlignResiduesMover(){}
+AlignResiduesMover::~AlignResiduesMover()= default;
 
 AlignResiduesMover::ResidueSelectorCOPs
 parse_residue_selectors( std::string const & selector_name_str, basic::datacache::DataMap const & data )
@@ -71,10 +71,10 @@ parse_residue_selectors( std::string const & selector_name_str, basic::datacache
 	if ( selector_name_str.empty() ) return selectors;
 
 	utility::vector1< std::string > const selector_names = utility::string_split( selector_name_str, ',' );
-	for ( utility::vector1< std::string >::const_iterator sname=selector_names.begin(); sname!=selector_names.end(); ++sname ) {
-		core::select::residue_selector::ResidueSelectorCOP s = protocols::rosetta_scripts::get_residue_selector( *sname, data );
+	for ( auto const & selector_name : selector_names ) {
+		core::select::residue_selector::ResidueSelectorCOP s = protocols::rosetta_scripts::get_residue_selector( selector_name, data );
 		if ( !s ) {
-			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "target_selector named " + *sname + " could not be found in the RosettaScripts XML" );
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "target_selector named " + selector_name + " could not be found in the RosettaScripts XML" );
 		}
 		selectors.push_back( s->clone() );
 	}
@@ -160,7 +160,7 @@ AlignResiduesMover::apply( core::pose::Pose & pose )
 	ResidueVectors const target_subsets = compute_target_residues( pose );
 
 	core::select::residue_selector::ResidueVector template_resids;
-	for ( ResidueVectors::const_iterator temp=template_subsets.begin(), targ=target_subsets.begin();
+	for ( auto temp=template_subsets.begin(), targ=target_subsets.begin();
 			(temp!=template_subsets.end()) && (targ!=target_subsets.end()); ++temp, ++targ ) {
 		template_resids.push_back( align_residues( pose, template_resids.size() + 1, *temp, *targ ) );
 	}
@@ -176,7 +176,7 @@ AlignResiduesMover::ResidueVectors
 compute_residues_from_selectors( core::pose::Pose const & pose, AlignResiduesMover::ResidueSelectorCOPs const & selectors )
 {
 	AlignResiduesMover::ResidueVectors retval;
-	for ( AlignResiduesMover::ResidueSelectorCOPs::const_iterator s=selectors.begin(); s!=selectors.end(); ++s ) {
+	for ( auto s=selectors.begin(); s!=selectors.end(); ++s ) {
 		debug_assert( *s );
 		retval.push_back( core::select::residue_selector::ResidueVector( (*s)->apply( pose ) ) );
 	}
@@ -232,7 +232,7 @@ AlignResiduesMover::delete_residues(
 	if ( resids.empty() ) return;
 
 	std::stringstream resid_str;
-	for ( core::select::residue_selector::ResidueVector::const_iterator r=resids.begin(); r!=resids.end(); ++r ) {
+	for ( auto r=resids.begin(); r!=resids.end(); ++r ) {
 		if ( r != resids.begin() ) resid_str << ',';
 		resid_str << *r;
 	}

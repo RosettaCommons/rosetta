@@ -87,30 +87,28 @@ class MyScoreMover : public Mover {
 public:
 	MyScoreMover();
 
-	virtual void apply( core::pose::Pose& pose );
-	std::string get_name() const { return "NonLocalFragsScoreMover"; }
+	void apply( core::pose::Pose& pose ) override;
+	std::string get_name() const override { return "NonLocalFragsScoreMover"; }
 
-	virtual MoverOP clone() const {
+	MoverOP clone() const override {
 		return MoverOP( new MyScoreMover( *this ) );
 	}
 
-	virtual MoverOP fresh_instance() const {
+	MoverOP fresh_instance() const override {
 		return MoverOP( new MyScoreMover );
 	}
 
 private:
 	core::scoring::ScoreFunctionOP sfxn_;
-	bool has_native_;
+	bool has_native_{false};
 	core::pose::Pose native_;
-	bool has_rdc_;
+	bool has_rdc_{false};
 	core::scoring::ResidualDipolarCouplingOP rdc_file_;
 	core::scoring::ResidualDipolarCoupling::RDC_lines rdc_raw_data_;
 
 };
 
-MyScoreMover::MyScoreMover():
-	has_native_(false),
-	has_rdc_(false)
+MyScoreMover::MyScoreMover()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

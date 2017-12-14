@@ -13,7 +13,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <math.h>
+#include <cmath>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -409,23 +409,22 @@ main( int argc, char * argv [] )
 
 core::Real interface_residue_ddg (core::pose::Pose const & pose, core::Size resno){
 	core::Real out=0;
-	for ( std::set<std::string>::iterator it=interface.begin(); it!=interface.end();
-			++it ) {
+	for ( auto const & it : interface ) {
 		char * token;
-		char * str = new char[it->length()+1];
-		strcpy (str, it->c_str());
+		char * str = new char[it.length()+1];
+		strcpy (str, it.c_str());
 		token = strtok (str, " ");
 		int token_count=0;
-		while ( token != NULL ) {
+		while ( token != nullptr ) {
 			if ( token_count==0 ) {
 				if ( pose.pdb_info()->number(resno) == atoi(token) ) {
 					token_count++;
-					token = strtok (NULL, " ");
+					token = strtok (nullptr, " ");
 				} else { break; }
 			} else if ( token_count == 1 ) {
 				if ( pose.pdb_info()->chain(resno) == token[0] ) {
 					token_count++;
-					token = strtok (NULL, " ");
+					token = strtok (nullptr, " ");
 				} else { break; }
 			} else if ( token_count == 5 ) {
 				out=(core::Real)atof(token);
@@ -433,7 +432,7 @@ core::Real interface_residue_ddg (core::pose::Pose const & pose, core::Size resn
 				break;
 			} else {
 				token_count++;
-				token = strtok (NULL, " ");
+				token = strtok (nullptr, " ");
 			}
 		}
 		delete[] str;
@@ -444,18 +443,17 @@ core::Real interface_residue_ddg (core::pose::Pose const & pose, core::Size resn
 bool is_interface_residue (const char chain, const int resno){
 	bool out=false;
 	if ( chains.count(chain)==0 ) return out;
-	for ( std::set<std::string>::iterator it=interface.begin(); it!=interface.end();
-			++it ) {
+	for ( auto const & it : interface ) {
 		char * token;
-		char * str = new char[it->length()+1];
-		strcpy (str, it->c_str());
+		char * str = new char[it.length()+1];
+		strcpy (str, it.c_str());
 		token = strtok (str, " ");
 		int token_count=0;
-		while ( token != NULL ) {
+		while ( token != nullptr ) {
 			if ( token_count==0 ) {
 				if ( resno == atoi(token) ) {
 					token_count++;
-					token = strtok (NULL, " ");
+					token = strtok (nullptr, " ");
 				} else { break; }
 			} else if ( token_count == 1 ) {
 				if ( chain == token[0] ) {

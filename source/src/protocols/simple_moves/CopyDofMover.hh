@@ -33,7 +33,7 @@ class CopyDofMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	CopyDofMover( core::pose::Pose const & template_pose, std::map< Size, Size > res_map );
+	CopyDofMover( core::pose::Pose const & template_pose, std::map< Size, Size > const & res_map );
 
 	//destructor
 	~CopyDofMover() override;

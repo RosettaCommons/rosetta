@@ -19,7 +19,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-ScoreNormalizationOP get_score_normalization_function(std::string norm_tag)
+ScoreNormalizationOP get_score_normalization_function(std::string const & norm_tag)
 {
 	if ( norm_tag == "HeavyAtomNormalization" ) return ScoreNormalizationOP( new HeavyAtomNormalization );
 	if ( norm_tag == "AllAtomNormalization" ) return ScoreNormalizationOP( new AllAtomNormalization );
@@ -27,7 +27,7 @@ ScoreNormalizationOP get_score_normalization_function(std::string norm_tag)
 	if ( norm_tag == "MolecularWeightNormalization" ) return ScoreNormalizationOP( new MolecularWeightNormalization );
 
 	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, norm_tag+" is not a valid Score Normalization method");
-	return NULL;
+	return nullptr;
 }
 
 core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) const

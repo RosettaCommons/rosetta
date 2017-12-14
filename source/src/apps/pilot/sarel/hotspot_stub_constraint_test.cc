@@ -41,9 +41,9 @@
 
 static basic::Tracer TR( "apps.pilot_apps.sarel.hotspot_stub_constraint_test" );
 
-typedef core::Size Size;
-typedef core::Real Real;
-typedef core::pose::Pose Pose;
+using Size = core::Size;
+using Real = core::Real;
+using Pose = core::pose::Pose;
 
 
 void run_test() {

@@ -35,8 +35,7 @@ StubApplier::StubApplier( kinematics::Stub & stub ):
 {}
 
 //Destructor
-StubApplier::~StubApplier()
-{}
+StubApplier::~StubApplier() = default;
 
 ///////////////////////////////////////////////////////////////////
 void

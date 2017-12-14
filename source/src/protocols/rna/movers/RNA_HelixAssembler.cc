@@ -75,7 +75,7 @@ using ObjexxFCL::string_of;
 
 static basic::Tracer TR( "protocols.rna.movers.RNA_HelixAssembler" );
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 namespace protocols {
 namespace rna {
@@ -117,7 +117,7 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	initialize_minimizer();
 }
 
-RNA_HelixAssembler::~RNA_HelixAssembler(){}
+RNA_HelixAssembler::~RNA_HelixAssembler()= default;
 
 protocols::moves::MoverOP RNA_HelixAssembler::clone() const
 {

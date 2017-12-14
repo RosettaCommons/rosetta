@@ -62,6 +62,7 @@
 #include <numeric/xyzMatrix.fwd.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tools/make_vector1.hh>
 #include <utility/tag/Tag.hh>
 
@@ -559,7 +560,7 @@ DockingSlideIntoContact::DockingSlideIntoContact(
 	core::Vector const & slide_axis,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::scoring::ScoreType scoretype_for_contact
-): Mover(), rb_jump_(rb_jump), slide_axis_(slide_axis), scorefxn_(scorefxn), scoretype_for_contact_(scoretype_for_contact)
+): Mover(), rb_jump_(rb_jump), slide_axis_(slide_axis), scorefxn_(std::move(scorefxn)), scoretype_for_contact_(scoretype_for_contact)
 {
 	Mover::type( "DockingSlideIntoContact" );
 	threshold_ = 0.1;
@@ -572,7 +573,7 @@ DockingSlideIntoContact::DockingSlideIntoContact(
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::scoring::ScoreType scoretype_for_contact,
 	core::Real threshold
-): Mover(), rb_jump_(rb_jump), slide_axis_(slide_axis), scorefxn_(scorefxn), scoretype_for_contact_(scoretype_for_contact), threshold_(threshold)
+): Mover(), rb_jump_(rb_jump), slide_axis_(slide_axis), scorefxn_(std::move(scorefxn)), scoretype_for_contact_(scoretype_for_contact), threshold_(threshold)
 {
 	Mover::type( "DockingSlideIntoContact" );
 	use_delta_ = false;
@@ -824,8 +825,8 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact(
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 }
 
-FaDockingSlideIntoContact::FaDockingSlideIntoContact( utility::vector1<core::Size> rb_jumps):
-	Mover(), rb_jumps_(rb_jumps),tolerance_(0.2),slide_axis_(0.0){
+FaDockingSlideIntoContact::FaDockingSlideIntoContact( utility::vector1<core::Size> const & rb_jumps):
+	Mover(), rb_jumps_( rb_jumps ),tolerance_(0.2),slide_axis_(0.0){
 	Mover::type( "FaDockingSlideIntoContact" );
 	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );

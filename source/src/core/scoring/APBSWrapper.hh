@@ -65,7 +65,7 @@ public:
 //--------------------------------------------------------------------------------------
 class  APBSResult  : public utility::pointer::ReferenceCount {
 public:
-	APBSResult(int nsims, int natoms, int grid_dimes[3],
+	APBSResult(int nsims, int natoms, int const grid_dimes[3],
 		int calcforce, int calcenergy,
 		int write_pot, int write_charge, int write_smol,
 		int write_kappa, int write_diel, int write_atompot ) ;

@@ -39,7 +39,7 @@ bool KarplusFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	KarplusFunc const & other_downcast( static_cast< KarplusFunc const & > (other) );
+	auto const & other_downcast( static_cast< KarplusFunc const & > (other) );
 	if ( A_      != other_downcast.A_      ) return false;
 	if ( B_      != other_downcast.B_      ) return false;
 	if ( C_      != other_downcast.C_      ) return false;

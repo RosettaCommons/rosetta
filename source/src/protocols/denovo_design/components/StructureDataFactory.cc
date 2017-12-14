@@ -292,7 +292,7 @@ add_segments_for_chain(
 	for ( SegmentNames::const_iterator ss=ss_segments.begin(), ab=abego_segments.begin();
 			(ss!=ss_segments.end()) && (ab!=abego_segments.end()); ++ss, ++ab ) {
 		bool const nterm_included = ( ss != ss_segments.begin() );
-		SegmentNames::const_iterator next = ss;
+		auto next = ss;
 		++next;
 		bool const cterm_included = ( next != ss_segments.end() );
 
@@ -487,7 +487,7 @@ StructureDataFactory::create_from_remarks( core::io::Remarks const & rem ) const
 	TR.Debug << "Parsing " << rem.size() << " remarks!" << std::endl;
 	// create list of strings
 	utility::vector1< std::string > lines;
-	for ( core::io::Remarks::const_iterator it_rem=rem.begin(); it_rem!=rem.end(); ++it_rem ) {
+	for ( auto it_rem=rem.begin(); it_rem!=rem.end(); ++it_rem ) {
 		TR.Debug << "checking " << *it_rem << std::endl;
 		if ( it_rem->num != REMARK_NUM ) {
 			continue;
@@ -553,7 +553,7 @@ get_writeable_cacheable_map( core::pose::Pose const & pose )
 	debug_assert( pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
 	basic::datacache::CacheableData const & cachable = pose.data().get( CacheableDataType::WRITEABLE_DATA );
 	debug_assert( dynamic_cast< WriteableCacheableMap const * >(&cachable) == &cachable );
-	WriteableCacheableMap const & writeable = static_cast< WriteableCacheableMap const & >( cachable );
+	auto const & writeable = static_cast< WriteableCacheableMap const & >( cachable );
 	return writeable;
 }
 
@@ -566,7 +566,7 @@ get_writeable_cacheable_map( core::pose::Pose & pose )
 	debug_assert( pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
 	basic::datacache::CacheableData & cachable = pose.data().get( CacheableDataType::WRITEABLE_DATA );
 	debug_assert( dynamic_cast< WriteableCacheableMap * >(&cachable) == &cachable );
-	WriteableCacheableMap & writeable = static_cast< WriteableCacheableMap & >( cachable );
+	auto & writeable = static_cast< WriteableCacheableMap & >( cachable );
 	return writeable;
 }
 
@@ -604,7 +604,7 @@ StructureDataFactory::retrieve_cached_data_ptr( core::pose::Pose & pose ) const
 	}
 
 	WriteableCacheableMap const & wmap = get_writeable_cacheable_map( pose );
-	WriteableCacheableDataMap::const_iterator dat = wmap.find( StructureData::class_name() );
+	auto dat = wmap.find( StructureData::class_name() );
 	if ( dat == wmap.end() ) {
 		std::stringstream msg;
 		msg << "StructureDataFactory::retrieve_cached_data_ptr(): No StructureData object was found in the pose!"
@@ -638,7 +638,7 @@ StructureDataFactory::retrieve_cached_data( core::pose::Pose const & pose ) cons
 	}
 
 	WriteableCacheableMap const & wmap = get_writeable_cacheable_map( pose );
-	WriteableCacheableDataMap::const_iterator dat = wmap.find( StructureData::class_name() );
+	auto dat = wmap.find( StructureData::class_name() );
 	if ( dat == wmap.end() ) {
 		std::stringstream msg;
 		msg << "StructureDataFactory::retrieve_cached_data(): No StructureData object was found in the pose!"
@@ -665,7 +665,7 @@ StructureDataFactory::clear_cached_data( core::pose::Pose & pose ) const
 
 	basic::datacache::CacheableData & cached = pose.data().get( CacheableDataType::WRITEABLE_DATA );
 	debug_assert( dynamic_cast< WriteableCacheableMap * >( &cached ) == &cached );
-	WriteableCacheableMap & wmap = static_cast< WriteableCacheableMap & >( cached );
+	auto & wmap = static_cast< WriteableCacheableMap & >( cached );
 	wmap.map().erase( StructureData::class_name() );
 }
 
@@ -684,7 +684,7 @@ StructureDataFactory::set_cached_data( core::pose::Pose & pose, StructureData co
 	debug_assert( pose.data().has( CacheableDataType::WRITEABLE_DATA ) );
 	basic::datacache::CacheableData & cached = pose.data().get( CacheableDataType::WRITEABLE_DATA );
 	debug_assert( dynamic_cast< WriteableCacheableMap * >( &cached ) == &cached );
-	WriteableCacheableMap & wmap = static_cast< WriteableCacheableMap & >( cached );
+	auto & wmap = static_cast< WriteableCacheableMap & >( cached );
 
 	// Create data set if necessary
 	wmap[ StructureData::class_name() ].clear();

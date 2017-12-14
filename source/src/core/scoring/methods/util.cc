@@ -136,7 +136,7 @@ create_long_range_energy_container(
 	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );

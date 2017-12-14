@@ -41,6 +41,7 @@
 #include <basic/Tracer.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
@@ -58,9 +59,9 @@ namespace atom_tree_diffs {
 /// @details Obviously, all entries in the map must have that score type present, or this dies a horrible death.
 class ScoreLessThanComparator {
 public:
-	typedef ScoresPairList::value_type value_type;
+	using value_type = ScoresPairList::value_type;
 	ScoreLessThanComparator(std::string const & score_name, bool reverse=false): score_name_(score_name), reverse_(reverse) {}
-	~ScoreLessThanComparator() {}
+	~ScoreLessThanComparator() = default;
 	bool operator() (value_type a, value_type b)
 	{ return reverse_ ^ (a.second[score_name_] < b.second[score_name_]); }
 private:
@@ -176,7 +177,7 @@ void AtomTreeDiff::sort_by(
 
 void AtomTreeDiff::read_pose(std::string const & tag, core::pose::Pose & pose_out)
 {
-	if ( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == NULL ) {
+	if ( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == nullptr ) {
 		utility_exit_with_message("No reference pose available for "+tag);
 	}
 	read_pose( tag, pose_out, *(ref_poses_[tag]) );
@@ -203,7 +204,7 @@ void AtomTreeDiff::read_pose(std::string const & tag, core::pose::Pose & pose_ou
 // For reasons I don't understand, GCC will not compile this if I mark this "const":
 core::pose::PoseCOP AtomTreeDiff::ref_pose_for(std::string const & tag)
 {
-	if ( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == NULL ) {
+	if ( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == nullptr ) {
 		utility_exit_with_message("No reference pose available for "+tag);
 	}
 	return ref_poses_[tag];
@@ -614,10 +615,10 @@ void map_of_weighted_scores(
 	/// Now handled automatically.  sfxn.accumulate_residue_total_energies( pose );
 
 	// Which score terms to use
-	typedef utility::vector1<ScoreType> ScoreTypeVec;
+	using ScoreTypeVec = utility::vector1<ScoreType>;
 	ScoreTypeVec score_types;
 	for ( int i = 1; i <= n_score_types; ++i ) {
-		ScoreType ii = ScoreType(i);
+		auto ii = ScoreType(i);
 		if ( sfxn.has_nonzero_weight(ii) ) score_types.push_back(ii);
 	}
 

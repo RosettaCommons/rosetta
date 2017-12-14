@@ -89,7 +89,7 @@ MPSymDockMover::MPSymDockMover() :
 	protocols::moves::Mover() {}
 
 /// @brief Destructor
-MPSymDockMover::~MPSymDockMover() {}
+MPSymDockMover::~MPSymDockMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
@@ -183,7 +183,7 @@ MPSymDockMover::apply( Pose & pose ) {
 
 	// Setup repulsives based slide criteria (better for membranes than
 	// initial contact scoring)
-	SymmetricConformation & symm_conf ( dynamic_cast< SymmetricConformation & > ( pose.conformation()) );
+	auto & symm_conf ( dynamic_cast< SymmetricConformation & > ( pose.conformation()) );
 	symm_conf.Symmetry_Info()->get_slide_info().set_SlideCriteriaType( FA_REP_SCORE );
 
 	// Setup a docking protocol, don't apply filters during docking runs

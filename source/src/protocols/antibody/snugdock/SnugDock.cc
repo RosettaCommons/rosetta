@@ -91,7 +91,7 @@ SnugDock & SnugDock::operator=( SnugDock const & rhs ) {
 }
 
 //destructor
-SnugDock::~SnugDock() {}
+SnugDock::~SnugDock() = default;
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP

@@ -450,7 +450,7 @@ void MultiplePoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 	RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( xsd );
 
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList attlist;
 	attlist
 		+ Attr( "max_input_poses", xsct_non_negative_integer, "XSD TO DO" )

@@ -37,7 +37,7 @@ namespace select {
 namespace jump_selector {
 
 
-AndJumpSelector::AndJumpSelector() {}
+AndJumpSelector::AndJumpSelector() = default;
 
 /// @brief Copy constructor
 ///
@@ -49,7 +49,7 @@ AndJumpSelector::AndJumpSelector( AndJumpSelector const &src) :
 /// @details Copy this object and return an owning pointer to the new object.
 JumpSelectorOP AndJumpSelector::clone() const { return JumpSelectorOP( new AndJumpSelector(*this) ); }
 
-AndJumpSelector::~AndJumpSelector() {}
+AndJumpSelector::~AndJumpSelector() = default;
 
 AndJumpSelector::AndJumpSelector(JumpSelectorCOP selector1)
 {

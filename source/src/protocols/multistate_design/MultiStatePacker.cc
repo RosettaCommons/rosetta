@@ -90,7 +90,7 @@ bool PosType::operator <  ( EntityElement const & rhs ) const
 		if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
 			utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
 		}
-		PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
+		auto const & pt_rhs( static_cast< PosType const & > ( rhs ) );
 		return type_ < pt_rhs.type_;
 	}
 	return false;
@@ -102,7 +102,7 @@ bool PosType::operator == ( EntityElement const & rhs ) const
 		if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
 			utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
 		}
-		PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
+		auto const & pt_rhs( static_cast< PosType const & > ( rhs ) );
 		if ( type_ == pt_rhs.type_ ) {
 			return true;
 		}
@@ -119,7 +119,7 @@ PosType::operator =  ( EntityElement const & rhs )
 		if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
 			utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
 		}
-		PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
+		auto const & pt_rhs( static_cast< PosType const & > ( rhs ) );
 
 		type_ = pt_rhs.type_;
 	}
@@ -195,7 +195,7 @@ MultiStatePacker::evaluate(
 		if ( E < bestE || i == 0 ) {
 			bestE = E;
 			if ( dynamic_cast< protocols::multistate_design::MultiStateEntity * >( &entity ) ) {
-				protocols::multistate_design::MultiStateEntity & multi_state_entity =
+				auto & multi_state_entity =
 					static_cast< protocols::multistate_design::MultiStateEntity & >( entity );
 				multi_state_entity.single_state_entity_data()[single_state_num].fitness(E);
 				for ( auto const & iter : metric_value_getters() ) {

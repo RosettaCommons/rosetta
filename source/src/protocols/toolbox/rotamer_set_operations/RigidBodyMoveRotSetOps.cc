@@ -91,7 +91,7 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 	int nneighbs( pose.energies().tenA_neighbor_graph().get_node( sequence_position )->num_neighbors_counting_self() );
 	bool buried( nneighbs >= int(ptask.residue_task( sequence_position ).extrachi_cutoff()) );
 	if ( cast_succesful ) {
-		core::pack::rotamer_set::RotamerSet_ & rotset ( static_cast< core::pack::rotamer_set::RotamerSet_ & > (rotamer_set) );
+		auto & rotset ( static_cast< core::pack::rotamer_set::RotamerSet_ & > (rotamer_set) );
 		for ( Size ii = 1; ii <= concrete_residue->nchi(); ++ii ) {
 			rotset.set_extra_samples( ptask, nneighbs, ii, concrete_residue, extra_chi_steps[ ii ] );
 		}
@@ -133,7 +133,7 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 			core::conformation::ResidueOP new_rot = suggested_rotamers_this_rbconf[j];
 
 			if ( ptask.bump_check() && cast_succesful ) {
-				core::pack::rotamer_set::RotamerSet_ & rotset ( static_cast< core::pack::rotamer_set::RotamerSet_ & > (rotamer_set) );
+				auto & rotset ( static_cast< core::pack::rotamer_set::RotamerSet_ & > (rotamer_set) );
 				core::PackerEnergy bumpenergy = rotset.bump_check( new_rot, sfxn, pose, ptask, packer_neighbor_graph );
 				BumpSelectorDecision decision =  bump_selector_.iterate_bump_selector( bumpenergy );
 				switch ( decision ) {
@@ -204,11 +204,7 @@ RigidBodyMoveRSO::RigidBodyMoveRSO( core::Size seqpos )
 	rigid_body_confs_.clear();
 }
 
-RigidBodyMoveRSO::RigidBodyMoveRSO( RigidBodyMoveRSO const & other )
-: parent( other ),
-	seqpos_(other.seqpos_),
-	rigid_body_confs_(other.rigid_body_confs_)
-{}
+RigidBodyMoveRSO::RigidBodyMoveRSO( RigidBodyMoveRSO const & /*other*/ ) = default;
 
 core::pack::rotamer_set::RotamerSetOperationOP
 RigidBodyMoveRSO::clone() const{

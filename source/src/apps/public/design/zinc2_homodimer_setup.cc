@@ -61,9 +61,9 @@ Chain2Chain2Chain2
 #include <utility/vector0.hh>
 
 
-typedef core::pose::Pose Pose;
-typedef numeric::xyzVector<core::Real> point;
-typedef point axis;
+using Pose = core::pose::Pose;
+using point = numeric::xyzVector<core::Real>;
+using axis = point;
 
 using namespace core;
 using basic::Warning;
@@ -116,11 +116,11 @@ public:
 		TR << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
 	}
 
-	virtual ~zinc2_homodimer_setup(){};
+	~zinc2_homodimer_setup() override= default;
 
 
-	virtual void
-	apply( Pose & pose/*monomer*/ ){
+	void
+	apply( Pose & pose/*monomer*/ ) override{
 
 		Pose grafted_monomer = setup_grafted_monomer( pose );
 
@@ -288,7 +288,7 @@ public:
 
 			ZnZn_axis_rollmover->apply( homodimer );
 
-			Size angle = core::Size(i*grid_angle);
+			auto angle = core::Size(i*grid_angle);
 			std::stringstream ss_angle;
 			ss_angle << angle;
 			//std::string name = "homodimer_" + ss_angle.str() + ".pdb";
@@ -401,9 +401,9 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	virtual
+
 	std::string
-	get_name() const { return "zinc2_homodimer_setup"; }
+	get_name() const override { return "zinc2_homodimer_setup"; }
 
 
 private:
@@ -425,7 +425,7 @@ private:
 
 };
 
-typedef utility::pointer::shared_ptr< zinc2_homodimer_setup > zinc2_homodimer_setupOP;
+using zinc2_homodimer_setupOP = utility::pointer::shared_ptr<zinc2_homodimer_setup>;
 
 
 int

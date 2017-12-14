@@ -47,13 +47,12 @@ utility::vector1< std::string > load_s_and_l()
 	if ( option[ in::file::list ].active() ) {
 		vector1< std::string > better_list_file_names;
 		better_list_file_names= option[in::file::list ]().vector(); // make a copy (-list)
-		for ( vector1< std::string >::iterator i = better_list_file_names.begin(), i_end = better_list_file_names.end(); i != i_end; ++i ) {
-			list_file_names.push_back(*i); // make a copy (-l)
+		for ( auto & better_list_file_name : better_list_file_names ) {
+			list_file_names.push_back(better_list_file_name); // make a copy (-l)
 		}
 	}
 
-	for ( vector1< std::string >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
-		std::string filename( *i );
+	for ( auto filename : list_file_names ) {
 		utility::io::izstream data( filename.c_str() );
 		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + filename + '\n' );

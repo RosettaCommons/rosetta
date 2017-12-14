@@ -53,7 +53,7 @@ namespace protocols {
 namespace match {
 namespace downstream {
 static basic::Tracer TR( "core.protocols.match.downstream" );
-ScoringSecMatchRPE::~ScoringSecMatchRPE() {}
+ScoringSecMatchRPE::~ScoringSecMatchRPE() = default;
 
 
 void
@@ -104,15 +104,14 @@ ScoringSecMatchRPE::ScoringSecMatchRPE(
 	std::string const keywordCutOff ("cutoff:");
 	std::string const keywordTotal_score ("total_score");
 
-	for ( utility::vector1< std::string >::iterator it_line=vLineString.begin(), end_line =vLineString.end();
-			it_line != end_line; ++it_line ) {
+	for ( auto & it_line : vLineString ) {
 
 		//if line contain CONSTRINAT SCORING_SECMATCH keyword
-		if ( (*it_line).find(keywordSCORING) != std::string::npos ) {
+		if ( it_line.find(keywordSCORING) != std::string::npos ) {
 
 			//parse each line into words
-			utility::vector1<std::string> vString = utility::string_split( *it_line );
-			for ( utility::vector1< std::string >::iterator it=vString.begin(), end = vString.end(); it != end; ++it ) {
+			utility::vector1<std::string> vString = utility::string_split( it_line );
+			for ( auto it=vString.begin(), end = vString.end(); it != end; ++it ) {
 
 				//weigh file ex. standard.wts
 				if ( (*it).find(keywordFilename) != std::string::npos ) {
@@ -387,10 +386,9 @@ ScoringSecMatchRPE::eval_cd_2b_residues(
 	//Check each score type
 	if ( cutoff_scoreType_flag_ ) {
 
-		utility::vector1< core::scoring::ScoreType >::const_iterator sco_it = secmatch_scotypes_cutoff_.begin();
+		auto sco_it = secmatch_scotypes_cutoff_.begin();
 
-		for ( utility::vector1< core::Real >::const_iterator real_it = secmatch_value_cutoff_.begin();
-				real_it != secmatch_value_cutoff_.end(); ++real_it ) {
+		for ( double real_it : secmatch_value_cutoff_ ) {
 
 			//if scoretype is not 2b type, we skip and continue
 			//We will skip scoretype that is not 2b type to calculate the total score
@@ -422,7 +420,7 @@ ScoringSecMatchRPE::eval_cd_2b_residues(
 			//core::Real tmp_cutoff ( *real_it );
 			core::Real checkCutoff = emap[ *sco_it ] * sfxn_->weights()[ *sco_it ];
 			TR << "sco_it:" << *sco_it << " checkCutoff:" << checkCutoff << std::endl;
-			if ( checkCutoff > *real_it ) return false ;
+			if ( checkCutoff > real_it ) return false ;
 			++sco_it;
 
 		}

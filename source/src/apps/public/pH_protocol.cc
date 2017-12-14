@@ -125,17 +125,17 @@ public:
 	}
 
 	void
-	set_file_name(std::string pdb_file_name){
+	set_file_name(std::string const & pdb_file_name){
 		pdb_file_name_ = pdb_file_name;
 	}
 
 	void
-	set_res_no(utility::vector1< core::Real > pdb_res_nos){
+	set_res_no(utility::vector1< core::Real > const & pdb_res_nos){
 		pdb_res_nos_ = pdb_res_nos;
 	}
 
 	void
-	set_chain_no(std::string pdb_chain_no){
+	set_chain_no(std::string const & pdb_chain_no){
 		pdb_chain_no_ = pdb_chain_no;
 	}
 
@@ -184,7 +184,7 @@ public:
 	}
 
 	void
-	prepack_pose(core::pose::Pose & pose, std::string pdbname ){
+	prepack_pose(core::pose::Pose & pose, std::string const & pdbname ){
 		using namespace core;
 		using namespace scoring;
 
@@ -207,7 +207,7 @@ public:
 
 
 	void
-	relax_pose(core::pose::Pose & pose, std::string pdbname){
+	relax_pose(core::pose::Pose & pose, std::string const & pdbname){
 		using namespace core;
 		using namespace scoring;
 
@@ -479,7 +479,7 @@ private:
 	core::Size neighbor_count_;
 };
 
-typedef utility::pointer::shared_ptr< PhProtocol > PhProtocolOP;
+using PhProtocolOP = utility::pointer::shared_ptr<PhProtocol>;
 
 ///////////////////////////////////////////////////////////////////////////////
 int

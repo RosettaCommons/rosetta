@@ -18,8 +18,8 @@ namespace protocols {
 namespace jd3 {
 namespace output {
 
-ResultOutputter::ResultOutputter() {}
-ResultOutputter::~ResultOutputter() {}
+ResultOutputter::ResultOutputter() = default;
+ResultOutputter::~ResultOutputter() = default;
 
 } // namespace output
 } // namespace jd3

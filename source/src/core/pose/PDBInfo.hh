@@ -66,13 +66,13 @@ public:
 
 	UnrecognizedAtomRecord(
 		Size res_num,
-		std::string res_name,
-		std::string atom_name,
+		std::string const & res_name,
+		std::string const & atom_name,
 		numeric::xyzVector<Real> coords,
 		Real temp
 	) : res_num_(res_num),
-		res_name_(std::move(res_name)),
-		atom_name_(std::move(atom_name)),
+		res_name_(res_name),
+		atom_name_(atom_name),
 		coords_(coords),
 		temp_(temp)
 	{}

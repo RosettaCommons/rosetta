@@ -75,7 +75,7 @@ ElecDensAtomwiseEnergy::ElecDensAtomwiseEnergy() :
 	get_density_map();
 }
 
-ElecDensAtomwiseEnergy::~ElecDensAtomwiseEnergy() {}
+ElecDensAtomwiseEnergy::~ElecDensAtomwiseEnergy() = default;
 
 /// clone
 methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
@@ -112,7 +112,7 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );

@@ -137,7 +137,6 @@ private:
 	bool boundary_his_must_to_hbond_pos_charge_;
 	bool only_start_at_interface_pairs_;
 	bool use_aa_dependent_weights_;
-	core::Size runcount_;
 	core::Size min_networks_per_pose_;
 	core::Size max_networks_per_pose_;
 	core::Size combos_;

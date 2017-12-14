@@ -178,14 +178,14 @@ std::string
 design_protocol_to_string(AntibodyDesignProtocolEnum const design_type);
 
 SeqDesignStrategyEnum
-seq_design_strategy_to_enum(std::string const strategy);
+seq_design_strategy_to_enum(std::string const & strategy);
 
 std::string
 seq_design_strategy_to_string(SeqDesignStrategyEnum strategy);
 
 /// @brief Convert an ab_dock_chain (L_H/ LH_A, etc. to the full dock chain string)
 std::string
-get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, std::string ab_dock_chains);
+get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, std::string const & ab_dock_chains);
 
 
 /// Move this somewhere in pose or pose_selection.  PDBInfo's ResidueKey should be public and passed around in the first place.

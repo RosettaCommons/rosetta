@@ -41,8 +41,7 @@ RigidBodyStepWiseSamplerValueRange::RigidBodyStepWiseSamplerValueRange():
 {}
 
 //Destructor
-RigidBodyStepWiseSamplerValueRange::~RigidBodyStepWiseSamplerValueRange()
-{}
+RigidBodyStepWiseSamplerValueRange::~RigidBodyStepWiseSamplerValueRange() = default;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void

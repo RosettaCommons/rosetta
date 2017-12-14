@@ -60,25 +60,23 @@ class MyScoreMover : public Mover {
 public:
 	MyScoreMover();
 
-	virtual void apply( core::pose::Pose& pose );
-	std::string get_name() const { return "MyScoreMover"; }
+	void apply( core::pose::Pose& pose ) override;
+	std::string get_name() const override { return "MyScoreMover"; }
 
-	virtual MoverOP clone() const { return MoverOP( new MyScoreMover( *this )); }
+	MoverOP clone() const override { return MoverOP( new MyScoreMover( *this )); }
 
-	virtual MoverOP fresh_instance() const { return MoverOP( new MyScoreMover ); }
+	MoverOP fresh_instance() const override { return MoverOP( new MyScoreMover ); }
 
 	void set_keep_input_scores(){ keep_scores_flag_ = true; }
 	void set_skip_scoring(){ skip_scoring_ = true; }
 private:
 	core::scoring::ScoreFunctionOP sfxn_;
 
-	bool keep_scores_flag_;   // retains the previous scores from the input silent file or whatever
-	bool skip_scoring_;       // skips the actual scoring call, calling evaluators only
+	bool keep_scores_flag_{false};   // retains the previous scores from the input silent file or whatever
+	bool skip_scoring_{false};       // skips the actual scoring call, calling evaluators only
 };
 
-MyScoreMover::MyScoreMover():
-	keep_scores_flag_(false),
-	skip_scoring_(false)
+MyScoreMover::MyScoreMover()
 {
 	//using namespace basic::options;
 	//using namespace basic::options::OptionKeys;
@@ -133,16 +131,16 @@ main( int argc, char * argv [] )
 
 		scoremover->apply(pose);
 
-		typedef core::conformation::symmetry::SymmetricConformation SymmetricConformation;
+		using SymmetricConformation = core::conformation::symmetry::SymmetricConformation;
 
-		SymmetricConformation & symm_conf (
+		auto & symm_conf (
 			dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 		std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
 		std::map< Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
 		std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
-		std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
-		std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
+		auto it_begin = dofs.begin();
+		auto it_end = dofs.end();
 
 		for ( it = it_begin; it != it_end; ++it ) {
 			core::conformation::symmetry::SymDof dof ( (*it).second );

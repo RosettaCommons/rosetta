@@ -80,7 +80,7 @@ HotspotDisjointedFoldTreeMover::HotspotDisjointedFoldTreeMover( ) :
 {
 }
 
-HotspotDisjointedFoldTreeMover::~HotspotDisjointedFoldTreeMover( ) {}
+HotspotDisjointedFoldTreeMover::~HotspotDisjointedFoldTreeMover( ) = default;
 
 // XRW TEMP std::string HotspotDisjointedFoldTreeMover::get_name() const {
 // XRW TEMP  return HotspotDisjointedFoldTreeMover::mover_name();

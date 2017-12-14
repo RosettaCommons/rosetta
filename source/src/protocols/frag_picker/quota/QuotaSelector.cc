@@ -54,7 +54,7 @@ core::Size QuotaSelector::next_from_pool( ScoredCandidatesVector1 const& pool,co
 	recently_taken++;
 
 	for ( core::Size i=recently_taken; i<=pool.size(); i++ ) {
-		if ( pool[i].first == 0 ) {
+		if ( pool[i].first == nullptr ) {
 			trQuotaSelector.Warning << "Fragment candidate at pos. " << i
 				<< " from a pool is null - nothing to select\n"
 				<< " maybe your vall database is to small?" << std::endl;

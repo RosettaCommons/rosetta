@@ -151,7 +151,7 @@ FreePeptide::FreePeptide(core::pose::Pose const& pose, Size pivot1, Size pivot2)
 
 }
 
-FreePeptide::~FreePeptide(){}
+FreePeptide::~FreePeptide()= default;
 
 FreePeptideOP
 FreePeptide::clone() const {

@@ -31,6 +31,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -62,7 +63,7 @@ namespace scoring {
 namespace hbonds {
 
 /// @details Auto-generated virtual destructor
-HBond::~HBond() {}
+HBond::~HBond() = default;
 
 using namespace ObjexxFCL::format;
 
@@ -458,7 +459,7 @@ HBondSet::HBondSet():
 	atom_map_init_( false )
 {}
 
-HBondSet::~HBondSet() {}
+HBondSet::~HBondSet() = default;
 
 HBondSet::HBondSet( Size const nres ):
 	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions() ) ) ),
@@ -839,7 +840,7 @@ HBondSet::setup_atom_map() const // lazy updating
 		AtomID const acc_atom( hb->acc_atm() , hb->acc_res() );
 		for ( Size r=1; r<= 2; ++r ) {
 			AtomID const & atom( r == 1 ? don_atom : acc_atom );
-			HBondAtomMap::iterator iter( atom_map_.find( atom ) );
+			auto iter( atom_map_.find( atom ) );
 			if ( iter == atom_map_.end() ) {
 				atom_map_.insert
 					( std::make_pair( atom, utility::vector1< HBondCOP >() ));

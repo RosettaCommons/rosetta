@@ -28,8 +28,7 @@ namespace etable {
 namespace count_pair {
 
 // @brief virtual destrutor
-CountPairCrossover34::~CountPairCrossover34()
-{}
+CountPairCrossover34::~CountPairCrossover34() = default;
 
 
 } // namespace count_pair

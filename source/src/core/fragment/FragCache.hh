@@ -133,8 +133,8 @@ public:
 	typedef utility::vector1< ScoredFrag> ScoredList;
 
 public:
-	CacheWrapper( std::string tag ) :
-		tag_ (std::move( tag )),
+	CacheWrapper( std::string const & tag ) :
+		tag_ ( tag ),
 		new_cache_ ( new TCacheUnit )
 	{};
 

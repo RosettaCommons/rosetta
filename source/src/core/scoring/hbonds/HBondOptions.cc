@@ -37,6 +37,7 @@
 #include <string>
 #include <iostream>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
@@ -59,13 +60,13 @@ namespace scoring {
 namespace hbonds {
 
 /// @details delegating constructor passing in the global option collection
-HBondOptions::HBondOptions( std::string params_db_tag ) :
+HBondOptions::HBondOptions( std::string const & params_db_tag ) :
 	HBondOptions( basic::options::option, params_db_tag )
 {}
 
 HBondOptions::HBondOptions(
 	utility::options::OptionCollection const & options,
-	std::string params_db_tag
+	std::string const & params_db_tag
 ):
 	exclude_DNA_DNA_( true ),
 	exclude_intra_res_protein_( true ),
@@ -190,7 +191,7 @@ HBondOptions::HBondOptions( HBondOptions const & src ):
 	*this = src;
 }
 
-HBondOptions::~HBondOptions(){}
+HBondOptions::~HBondOptions()= default;
 
 /// copy operator
 HBondOptions &

@@ -86,8 +86,7 @@ StepWiseMonteCarlo::StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn
 }
 
 //Destructor
-StepWiseMonteCarlo::~StepWiseMonteCarlo()
-{}
+StepWiseMonteCarlo::~StepWiseMonteCarlo() = default;
 
 /////////////////////////////////////////////////////////////////////////////
 void

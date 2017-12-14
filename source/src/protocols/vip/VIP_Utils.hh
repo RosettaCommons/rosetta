@@ -23,7 +23,7 @@ namespace protocols {
 namespace vip {
 
 std::string base_name(const std::string& str);
-std::string get_out_tag(std::string fname);
+std::string get_out_tag(std::string const & fname);
 core::Real output_packstat( core::pose::Pose & );
 void set_local_movemap( core::pose::Pose & pose, core::Size position, core::kinematics::MoveMapOP mmap );
 

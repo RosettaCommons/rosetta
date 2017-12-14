@@ -62,12 +62,9 @@ namespace pcs2 {
 
 static basic::Tracer TR_PcsEnergyParameterManager( "protocols.scoring.methods.pcs.PcsEnergyParameterManager" );
 
-PcsEnergyParameterManager::PcsEnergyParameterManager(){
+PcsEnergyParameterManager::PcsEnergyParameterManager()= default;
 
-}
-
-PcsEnergyParameterManager::~PcsEnergyParameterManager(){
-}
+PcsEnergyParameterManager::~PcsEnergyParameterManager()= default;
 
 void
 PcsEnergyParameterManager::re_init(){

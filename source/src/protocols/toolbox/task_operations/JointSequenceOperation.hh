@@ -100,7 +100,7 @@ private:
 
 	bool use_current_pose_;
 	bool use_natro_; // set only with use_natro(), bookkeeping of ubr_
-	bool use_fasta_;
+	//bool use_fasta_;
 	core::pack::rotamer_set::UnboundRotamersOperationOP ubr_;
 	std::vector<core::sequence::SequenceOP> sequences_;
 	/// @brief Which chain to operate on

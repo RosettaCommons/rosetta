@@ -22,7 +22,7 @@ namespace datacache {
 
 static basic::Tracer TR( "basic.datacache.DataMap" );
 
-DataMap::DataMap() {}
+DataMap::DataMap() = default;
 DataMap::~DataMap() = default;
 
 bool

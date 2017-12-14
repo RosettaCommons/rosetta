@@ -17,6 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.Scorer" );
 
@@ -33,13 +34,12 @@ Scorer::Scorer():
 Scorer::Scorer( core::pose::Pose & pose,
 	core::scoring::ScoreFunctionCOP scorefxn ):
 	pose_( pose ),
-	scorefxn_( scorefxn )
+	scorefxn_(std::move( scorefxn ))
 {
 }
 
 //Destructor
-Scorer::~Scorer()
-{}
+Scorer::~Scorer() = default;
 
 ////////////////////////////////////////////////////////
 bool

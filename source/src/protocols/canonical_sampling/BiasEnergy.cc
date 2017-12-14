@@ -256,9 +256,9 @@ BiasEnergy::parse_my_tag(
 	stride_ = tag->getOption< core::Size >( "wte_stride", 10 );
 	omega_ = tag->getOption< core::Real >( "wte_omega", 1.0 );
 	gamma_ = tag->getOption< core::Real >( "wte_gamma", 10.0 );
-	core::Real const grid_min( tag->getOption< core::Real >( "wte_grid_min", -10 ) );
-	core::Real const grid_max( tag->getOption< core::Real >( "wte_grid_max", 1000 ) );
-	core::Size const grid_size( tag->getOption< core::Size >( "wte_grid_size", 100 ) );
+	auto const grid_min( tag->getOption< core::Real >( "wte_grid_min", -10 ) );
+	auto const grid_max( tag->getOption< core::Real >( "wte_grid_max", 1000 ) );
+	auto const grid_size( tag->getOption< core::Size >( "wte_grid_size", 100 ) );
 	bias_grid_ = HistogramFloatOP( new Histogram<float>( grid_min, grid_max, grid_size ) );
 	count_grid_ = HistogramIntOP( new Histogram<int>( grid_min, grid_max, grid_size ) );
 	grid_output_file_ = tag->getOption< std::string >( "wte_output", "wte_bias.grid" );

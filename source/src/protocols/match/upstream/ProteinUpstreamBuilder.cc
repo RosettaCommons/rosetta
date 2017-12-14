@@ -48,7 +48,7 @@ namespace match {
 namespace upstream {
 
 /// @details Auto-generated virtual destructor
-FullChiSampleSet::~FullChiSampleSet() {}
+FullChiSampleSet::~FullChiSampleSet() = default;
 
 static basic::Tracer TR( "protocols.match.upstream.ProteinUpstreamBuilder" );
 
@@ -66,7 +66,7 @@ SampleStrategyData::SampleStrategyData() :
 {}
 
 
-SampleStrategyData::~SampleStrategyData() {}
+SampleStrategyData::~SampleStrategyData() = default;
 
 void
 SampleStrategyData::set_strategy( ChiStrategy setting )
@@ -187,7 +187,7 @@ BuildSet::BuildSet() :
 	fa_dun_cutoff_(0.0)
 {}
 
-BuildSet::~BuildSet() {}
+BuildSet::~BuildSet() = default;
 
 BuildSet::BuildSet( BuildSet const & other ) : parent() {
 	(*this) = other;
@@ -667,7 +667,7 @@ FullChiSampleSet::ex_level_from_flags( Size chi )
 ProteinUpstreamBuilder::ProteinUpstreamBuilder() : use_input_sc_( false ), avoid_building_any_rotamers_dueto_native_( false )
 {}
 
-ProteinUpstreamBuilder::~ProteinUpstreamBuilder() {}
+ProteinUpstreamBuilder::~ProteinUpstreamBuilder() = default;
 
 UpstreamBuilderOP
 ProteinUpstreamBuilder::clone() const {
@@ -729,7 +729,7 @@ ProteinUpstreamBuilder::build(
 		bool check_fa_dun( build_sets_[ii].check_fa_dun() );
 		core::Real fa_dun_cutoff( build_sets_[ii].fa_dun_cutoff() );
 		if ( check_fa_dun ) {
-			ProteinBackboneBuildPoint const & bb(
+			auto const & bb(
 				static_cast< ProteinBackboneBuildPoint const & >
 				( build_point ));
 			rescoords.mainchain_torsions()[1] = bb.phi();
@@ -885,7 +885,7 @@ ProteinUpstreamBuilder::build(
 		/// avoid_building_any_rotamers_dueto_native_ specific usage of native residue only.
 		if ( use_input_sc_ || avoid_building_any_rotamers_dueto_native_ ) {
 
-			OriginalBackboneBuildPoint const * orig =
+			auto const * orig =
 				dynamic_cast< OriginalBackboneBuildPoint const * > ( & build_point );
 			if ( orig && & (orig->input_conformation().type()) == & (build_sets_[ ii ].restype()) ) {
 				/// restype match
@@ -907,7 +907,7 @@ ProteinUpstreamBuilder::build(
 	} //ii loop over build sets
 
 	debug_assert( dynamic_cast< ProteinBackboneBuildPoint const * > ( & build_point ) );
-	ProteinBackboneBuildPoint const & bb( static_cast< ProteinBackboneBuildPoint const & >
+	auto const & bb( static_cast< ProteinBackboneBuildPoint const & >
 		( build_point ) );
 
 	TR << "Considered " << n_possible_hits << " downstream conformations at residue " << bb.original_insertion_point()  << " and found " << local_hit_list.size() << " hits." << std::endl;
@@ -1012,7 +1012,7 @@ ProteinUpstreamBuilder::recover_hits(
 					/// Maybe this writes a kinemage file, or inserts the residue into a Pose.
 					processor.process_hit( *hit_iter, rescoords );
 
-					std::list< Hit >::const_iterator last_hit = hit_iter;
+					auto last_hit = hit_iter;
 					++hit_iter;
 					if ( hit_iter == hits_end ) return;
 					runtime_assert( hit_iter->scaffold_build_id() == last_hit->scaffold_build_id() );
@@ -1035,7 +1035,7 @@ ProteinUpstreamBuilder::recover_hits(
 		/// Is the hit from the input side chain?
 		//Kui Native 110809 - need more testing for native 2nd matching
 		if ( use_input_sc_ || avoid_building_any_rotamers_dueto_native_ ) {
-			OriginalBackboneBuildPoint const * orig =
+			auto const * orig =
 				dynamic_cast< OriginalBackboneBuildPoint const * > ( & build_point );
 			if ( orig && & (orig->input_conformation().type()) == & (build_sets_[ ii ].restype()) ) {
 				/// restype match
@@ -1180,7 +1180,7 @@ ProteinUpstreamBuilder::initialize_rescoords(
 
 	}
 
-	ProteinBackboneBuildPoint const & bb( static_cast< ProteinBackboneBuildPoint const & >
+	auto const & bb( static_cast< ProteinBackboneBuildPoint const & >
 		( build_point ) );
 
 	UpstreamResTypeGeometry const & geom( build_sets_[ build_set_id ].restype_geometry() );

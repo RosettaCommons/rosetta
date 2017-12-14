@@ -44,7 +44,7 @@ namespace datacache {
 
 static basic::Tracer TR( "basic.datacache.ConstDataMap" );
 
-ConstDataMap::ConstDataMap() {}
+ConstDataMap::ConstDataMap() = default;
 ConstDataMap::ConstDataMap( ConstDataMap const & src ) : data_map_( src.data_map_ ) {}
 
 ConstDataMap::~ConstDataMap() = default;

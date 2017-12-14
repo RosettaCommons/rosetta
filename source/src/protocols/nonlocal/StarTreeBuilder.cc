@@ -175,7 +175,7 @@ core::Size StarTreeBuilder::choose_anchor_position(const protocols::loops::Loop&
 	DistributionSampler<normal> sampler(distribution);
 
 	// Clamp insertion position to closed interval [start, stop]
-	Size position = static_cast<Size>(sampler.sample());
+	auto position = static_cast<Size>(sampler.sample());
 	return numeric::clamp<Size>(position, chunk.start(), chunk.stop());
 }
 

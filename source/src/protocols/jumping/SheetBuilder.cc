@@ -51,6 +51,7 @@
 //// C++ headers
 #include <cstdlib>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -126,7 +127,7 @@ using namespace core;
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-SheetBuilder::SheetBuilder( core::fragment::SecondaryStructureOP ss, core::scoring::dssp::PairingsList const& pairings, SheetTopology const& sheet_topol) :
+SheetBuilder::SheetBuilder( core::fragment::SecondaryStructureOP ss, core::scoring::dssp::PairingsList const & pairings, SheetTopology const & sheet_topol) :
 	total_residue_( ss->total_residue() ),
 	pairings_( pairings ),
 	same_strand_( SameStrandOP( new SameStrand( ss ) ) ),

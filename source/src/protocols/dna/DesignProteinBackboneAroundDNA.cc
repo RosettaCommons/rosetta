@@ -114,11 +114,11 @@ DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA() :
 {}
 
 DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA(
-	std::string  type,
+	std::string const & type,
 	ScoreFunctionCOP scorefxn
 ) :
 	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNA::mover_name() ),
-	type_(std::move(type)),
+	type_(type),
 	gapspan_( option[ OptionKeys::loops::gapspan ]() ),
 	spread_( option[ OptionKeys::loops::spread ]() ),
 	cycles_outer_( option[ OptionKeys::run::cycles_outer ]() ),

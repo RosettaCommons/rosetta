@@ -153,7 +153,7 @@ SelectResiduesByLayer::SelectResiduesByLayer( String const &pick ) : utility::po
 }
 
 /// @brief destructor
-SelectResiduesByLayer::~SelectResiduesByLayer() {}
+SelectResiduesByLayer::~SelectResiduesByLayer() = default;
 
 /// @brief Clone operator.
 /// @details Construct a copy of this object and return an owning pointer to the copy.

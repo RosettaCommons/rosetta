@@ -91,21 +91,21 @@ void register_options() {
 class RDCToolMover;
 
 // Types
-typedef  utility::pointer::shared_ptr< RDCToolMover >  RDCToolMoverOP;
-typedef  utility::pointer::shared_ptr< RDCToolMover const >  RDCToolMoverCOP;
+using RDCToolMoverOP = utility::pointer::shared_ptr<RDCToolMover>;
+using RDCToolMoverCOP = utility::pointer::shared_ptr<const RDCToolMover>;
 
 class RDCToolMover : public moves::Mover {
 public:
 	RDCToolMover() : myRDCs_( /* NULL */ ) {};
-	virtual void apply( core::pose::Pose& );
-	virtual std::string get_name() const {
+	void apply( core::pose::Pose& ) override;
+	std::string get_name() const override {
 		return "RDC-Tool";
 	}
 
 	void dump_averages();
 private:
 	ResidualDipolarCouplingOP myRDCs_;
-	typedef utility::vector1< core::Real > RDC_Vector;
+	using RDC_Vector = utility::vector1<core::Real>;
 	RDC_Vector average_RDCs_;
 	RDC_Vector var_RDCs_;
 	RDC_Vector av_dev_RDCs_;

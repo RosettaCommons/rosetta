@@ -14,6 +14,7 @@
 #include <protocols/simple_filters/SidechainRmsdFilter.hh>
 #include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>

@@ -22,6 +22,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -49,14 +50,14 @@ DisableAntibodyRegionOperation::DisableAntibodyRegionOperation():
 
 DisableAntibodyRegionOperation::DisableAntibodyRegionOperation(AntibodyInfoCOP ab_info):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 }
 
 DisableAntibodyRegionOperation::DisableAntibodyRegionOperation(AntibodyInfoCOP ab_info, AntibodyRegionEnum region):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	region_ = region;
@@ -64,14 +65,14 @@ DisableAntibodyRegionOperation::DisableAntibodyRegionOperation(AntibodyInfoCOP a
 
 DisableAntibodyRegionOperation::DisableAntibodyRegionOperation(AntibodyInfoCOP ab_info, AntibodyRegionEnum region, bool disable_packing_and_design):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	region_ = region;
 	disable_packing_and_design_ = disable_packing_and_design;
 }
 
-DisableAntibodyRegionOperation::~DisableAntibodyRegionOperation() {}
+DisableAntibodyRegionOperation::~DisableAntibodyRegionOperation() = default;
 
 TaskOperationOP
 DisableAntibodyRegionOperation::clone() const {

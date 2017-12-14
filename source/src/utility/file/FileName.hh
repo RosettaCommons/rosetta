@@ -25,7 +25,6 @@
 
 // C++ headers
 #include <iosfwd>
-#include <string>
 #include <vector>
 
 

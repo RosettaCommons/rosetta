@@ -135,7 +135,7 @@ get_bridge_res( pose::Pose const & pose,
 
 	for ( Size n = 1; n <= cutpoints_closed.size(); n++ ) {
 
-		int cutpoint_closed = static_cast<int>( cutpoints_closed[ n ] );
+		auto cutpoint_closed = static_cast<int>( cutpoints_closed[ n ] );
 		if ( !pose.residue_type( cutpoint_closed ).is_protein() ) continue;
 
 		// as in protein SWA, choose two bridge residues for CCD closure on the 'other side' of sampled residue.

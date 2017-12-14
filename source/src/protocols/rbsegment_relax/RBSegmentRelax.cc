@@ -74,7 +74,7 @@ static basic::Tracer TS( "protocols.moves.RBSegmentRelax" );
 using namespace core;
 using basic::Error;
 
-RBSegmentRelax::RBSegmentRelax() {}
+RBSegmentRelax::RBSegmentRelax() = default;
 RBSegmentRelax::~RBSegmentRelax() = default;
 
 RBSegmentRelax::RBSegmentRelax(

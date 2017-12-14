@@ -21,6 +21,7 @@
 #include <core/pose/copydofs/util.hh>
 #include <core/scoring/constraints/util.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.packer.SideChainCopier" );
 
@@ -52,8 +53,7 @@ SideChainCopier::SideChainCopier( core::pose::Pose const & reference_pose,
 }
 
 //Destructor
-SideChainCopier::~SideChainCopier()
-{}
+SideChainCopier::~SideChainCopier() = default;
 
 //////////////////////////////////////////////////////////////////////////////////
 void

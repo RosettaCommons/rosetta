@@ -53,12 +53,13 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 
+#include <utility>
 #include <utility/file/FileName.hh>
 #include <utility/exit.hh>
-#include <time.h>
+#include <ctime>
 
 #include <string>
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -85,9 +86,9 @@ namespace rna {
 
 //////////////////////////////////////////////////////////////////////////
 //constructor!
-StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( working_parameters::StepWiseWorkingParametersCOP const & working_parameters, bool const combine_helical_silent_file ):
+StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( working_parameters::StepWiseWorkingParametersCOP  working_parameters, bool const combine_helical_silent_file ):
 	rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ),
-	working_parameters_( working_parameters ),
+	working_parameters_(std::move( working_parameters )),
 	// verbose_( true ), //Parin Mar 22, 2010
 	filter_for_previous_contact_( false ),
 	filter_for_previous_clash_( false ),
@@ -156,8 +157,7 @@ StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( workin
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //destructor
-StepWiseRNA_CombineLongLoopFilterer::~StepWiseRNA_CombineLongLoopFilterer()
-{}
+StepWiseRNA_CombineLongLoopFilterer::~StepWiseRNA_CombineLongLoopFilterer() = default;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

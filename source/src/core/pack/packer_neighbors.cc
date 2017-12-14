@@ -84,7 +84,7 @@ create_packer_graph(
 		/// OK -- rewriting this function to be symmetry aware
 		conformation::symmetry::SymmetryInfoCOP symm_info;
 		if ( dynamic_cast< conformation::symmetry::SymmetricConformation const * > ( & pose.conformation() ) ) {
-			conformation::symmetry::SymmetricConformation const & symmconf(
+			auto const & symmconf(
 				static_cast< conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ));
 			symm_info = symmconf.Symmetry_Info();
 		}

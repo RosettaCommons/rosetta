@@ -88,10 +88,10 @@ make_message( int length, const char * message, va_list args ) {
 }
 
 void handle_structured_xml_error( void * ctxt, xmlErrorPtr error ) {
-	XMLErrorHandler * handler = static_cast< XMLErrorHandler * > ( ctxt );
+	auto * handler = static_cast< XMLErrorHandler * > ( ctxt );
 	std::ostringstream oss;
 	if ( error->node ) {
-		xmlNode * node( ( xmlNode * ) error->node );
+		auto * node( ( xmlNode * ) error->node );
 		//oss << "Node " << node->content << " on line " << node->line << " of type " << element_type_name( node->type ) << "\n";
 		oss << "From line " << xmlGetLineNo(node) << ":\n";
 	}
@@ -114,7 +114,7 @@ void handle_xml_error( void * ctxt, char const * message, ... )
 	std::string formatted_string( formatted_message );
 	delete [] formatted_message;
 
-	XMLErrorHandler * handler = static_cast< XMLErrorHandler * > ( ctxt );
+	auto * handler = static_cast< XMLErrorHandler * > ( ctxt );
 	handler->handle_xml_error( formatted_string, 0 );
 }
 
@@ -132,7 +132,7 @@ void handle_xml_warning( void * ctxt, char const * message, ... )
 	std::string formatted_string( formatted_message );
 	delete [] formatted_message;
 
-	XMLErrorHandler * handler = static_cast< XMLErrorHandler * > ( ctxt );
+	auto * handler = static_cast< XMLErrorHandler * > ( ctxt );
 	handler->handle_xml_warning( formatted_string, 0 );
 }
 

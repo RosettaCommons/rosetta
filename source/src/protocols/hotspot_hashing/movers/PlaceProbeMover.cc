@@ -18,6 +18,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
 
@@ -70,12 +71,12 @@ PlaceProbeMover::PlaceProbeMover() :
 {}
 
 PlaceProbeMover::PlaceProbeMover(
-	std::string residue_name,
+	std::string const & residue_name,
 	core::conformation::ResidueCOP target_residue,
 	core::Size search_partition,
 	core::Size total_search_partition) :
 	residue_name_(residue_name),
-	target_residue_(target_residue),
+	target_residue_(std::move(target_residue)),
 	current_mode_(RunAll),
 	search_partition_(search_partition),
 	total_search_partition_(total_search_partition),

@@ -83,7 +83,7 @@ namespace legacy_sewing  {
 
 static basic::Tracer TR("protocols.legacy_sewing.Assembly");
 
-Assembly::Assembly(){}
+Assembly::Assembly()= default;
 
 ///@brief Only used to add the first model to the Assembly, subsequent models
 ///should be added using the follow_edge function
@@ -253,8 +253,8 @@ Assembly::create_chimera_segment(
 			<< " -> " << mobile_segment.model_id_ << ", " << mobile_segment.segment_id_ << std::endl;
 
 		TR.Debug << "Full Atom Map: " << std::endl;
-		std::map<core::id::AtomID, core::id::AtomID>::const_iterator it = atom_map.begin();
-		std::map<core::id::AtomID, core::id::AtomID>::const_iterator it_end = atom_map.end();
+		auto it = atom_map.begin();
+		auto it_end = atom_map.end();
 		for ( ; it != it_end; ++it ) {
 			TR.Debug << "\t" << it->first.rsd() << ":" << it->first.atomno() << " -> "
 				<< it->second.rsd() << ":" << it->second.atomno() << std::endl;
@@ -363,11 +363,11 @@ Assembly::get_chimera_segments(
 	utility::vector1<SewSegment> chimera_segs;
 
 	bool reference_is_nter = false;
-	std::map<SegmentPair, AtomMap>::const_iterator it = segment_matches.begin();
-	std::map<SegmentPair, AtomMap>::const_iterator it_end = segment_matches.end();
+	auto it = segment_matches.begin();
+	auto it_end = segment_matches.end();
 	for ( ; it != it_end; ++it ) {
-		std::map<SewSegment, SewSegment>::const_iterator it2 = matching_segments.begin();
-		std::map<SewSegment, SewSegment>::const_iterator it2_end = matching_segments.end();
+		auto it2 = matching_segments.begin();
+		auto it2_end = matching_segments.end();
 
 		//it2->first = reference segment in assembly
 		//it2->second = mobile segment
@@ -571,8 +571,8 @@ Assembly::follow_edge(
 	//cases, this causes two segments that previously had no overlapping atoms, to have overlapping atoms.
 	//It's reasonable to assume that any overlaps of 2 atoms or less are the result of this happening, and therefore
 	//we delete them here.
-	std::map< SegmentPair, AtomMap >::iterator it = edge_score.second.segment_matches.begin();
-	std::map< SegmentPair, AtomMap >::iterator it_end = edge_score.second.segment_matches.end();
+	auto it = edge_score.second.segment_matches.begin();
+	auto it_end = edge_score.second.segment_matches.end();
 	for ( ; it != it_end; ) {
 		if ( it->second.size() <= 2 ) {
 			edge_score.second.segment_matches.erase(it++);
@@ -611,9 +611,9 @@ Assembly::map_residues(
 	Model mobile_model,
 	AtomMap const & atom_alignments
 ) {
-	for ( AtomMap::const_iterator it = atom_alignments.begin(); it != atom_alignments.end(); ++it ) {
+	for ( auto const & atom_alignment : atom_alignments ) {
 
-		SewResidue * ref_res = 0;
+		SewResidue * ref_res = nullptr;
 		for ( core::Size seg_i=1; seg_i<=all_segments_.size(); ++seg_i ) {
 			for ( core::Size seg_j=1; seg_j<=all_segments_[seg_i].size(); ++seg_j ) {
 				SewSegment & cur_seg = all_segments_[seg_i][seg_j];
@@ -622,8 +622,8 @@ Assembly::map_residues(
 					for ( core::Size atom_i=1; atom_i<=cur_res.basis_atoms_.size(); ++atom_i ) {
 						SewAtom const & cur_atom = cur_res.basis_atoms_[atom_i];
 						if ( reference_model_id == cur_seg.model_id_ &&
-								it->first.rsd() == cur_res.resnum_ &&
-								it->first.atomno() == cur_atom.atomno_ ) {
+								atom_alignment.first.rsd() == cur_res.resnum_ &&
+								atom_alignment.first.atomno() == cur_atom.atomno_ ) {
 							ref_res = &cur_res;
 							break;
 						}
@@ -631,24 +631,24 @@ Assembly::map_residues(
 				}
 			}
 		}
-		runtime_assert(ref_res != 0);
+		runtime_assert(ref_res != nullptr);
 
-		SewResidue * mobile_res = 0;
+		SewResidue * mobile_res = nullptr;
 		for ( core::Size seg_i=1; seg_i<=mobile_model.segments_.size(); ++seg_i ) {
 			SewSegment & cur_seg = mobile_model.segments_[seg_i];
 			for ( core::Size res_i=1; res_i<=cur_seg.residues_.size(); ++res_i ) {
 				SewResidue & cur_res = cur_seg.residues_[res_i];
 				for ( core::Size atom_i=1; atom_i<=cur_res.basis_atoms_.size(); ++atom_i ) {
 					SewAtom const & cur_atom = cur_res.basis_atoms_[atom_i];
-					if ( it->second.rsd() == cur_res.resnum_ &&
-							it->second.atomno() == cur_atom.atomno_ ) {
+					if ( atom_alignment.second.rsd() == cur_res.resnum_ &&
+							atom_alignment.second.atomno() == cur_atom.atomno_ ) {
 						mobile_res = &cur_res;
 						break;
 					}
 				}
 			}
 		}
-		runtime_assert(mobile_res != 0);
+		runtime_assert(mobile_res != nullptr);
 
 		//Add the entire set of residues matched to the reference to the newly matched residue
 		mobile_res->matched_residues_.push_back(*ref_res);
@@ -788,7 +788,7 @@ Assembly::align_model(
 	utility::vector1< numeric::xyzVector< core::Real > > reference_coords;
 	utility::vector1< numeric::xyzVector< core::Real > > mobile_coords;
 
-	for ( AtomMap::const_iterator it = atom_alignments.begin(); it != atom_alignments.end(); ++it ) {
+	for ( auto const & atom_alignment : atom_alignments ) {
 
 		for ( core::Size seg_i=1; seg_i<=all_segments_.size(); ++seg_i ) {
 			for ( core::Size seg_j=1; seg_j<=all_segments_[seg_i].size(); ++seg_j ) {
@@ -805,8 +805,8 @@ Assembly::align_model(
 					for ( core::Size atom_i=1; atom_i<=cur_res.basis_atoms_.size(); ++atom_i ) {
 						SewAtom const & cur_atom = cur_res.basis_atoms_[atom_i];
 						if ( reference_model_id == cur_seg.model_id_ &&
-								it->first.rsd() == cur_res.resnum_ &&
-								it->first.atomno() == cur_atom.atomno_ ) {
+								atom_alignment.first.rsd() == cur_res.resnum_ &&
+								atom_alignment.first.atomno() == cur_atom.atomno_ ) {
 							reference_coords.push_back(cur_atom.coords_);
 						}
 					}
@@ -817,8 +817,8 @@ Assembly::align_model(
 		ModelIterator<SewSegment> mobile_it = mobile_model.model_begin();
 		ModelIterator<SewSegment> mobile_end = mobile_model.model_end();
 		for ( ; mobile_it != mobile_end; ++mobile_it ) {
-			if ( it->second.rsd() == mobile_it.residue()->resnum_ &&
-					it->second.atomno() == mobile_it.atom()->atomno_ ) {
+			if ( atom_alignment.second.rsd() == mobile_it.residue()->resnum_ &&
+					atom_alignment.second.atomno() == mobile_it.atom()->atomno_ ) {
 				mobile_coords.push_back(mobile_it.atom()->coords_);
 			}
 		}
@@ -870,9 +870,9 @@ Assembly::to_pose(
 
 	core::Size nres = 0;
 	std::string sequence = "";
-	for ( utility::vector1<SewSegment>::const_iterator seg_it = segments_.begin(); seg_it != segments_.end(); ++seg_it ) {
-		for ( core::Size res_i=1; res_i<=seg_it->residues_.size(); ++res_i ) {
-			sequence += res_type_set->name_map(seg_it->residues_[res_i].residue_type_).name1();
+	for ( auto const & segment : segments_ ) {
+		for ( core::Size res_i=1; res_i<=segment.residues_.size(); ++res_i ) {
+			sequence += res_type_set->name_map(segment.residues_[res_i].residue_type_).name1();
 			++nres;
 		}
 	}
@@ -975,8 +975,8 @@ Assembly::to_multichain_pose(
 
 	std::string sequence = "";
 	std::set<core::Size> all_model_ids = model_ids();
-	std::set<core::Size>::const_iterator it = all_model_ids.begin();
-	std::set<core::Size>::const_iterator it_end = all_model_ids.end();
+	auto it = all_model_ids.begin();
+	auto it_end = all_model_ids.end();
 	for ( ; it != it_end; ++it ) {
 		utility::vector1<SewSegment> model_segs = get_model_segments(*it);
 		for ( core::Size seg_i=1; seg_i<=model_segs.size(); ++seg_i ) {
@@ -1163,7 +1163,7 @@ Assembly::get_next_reference_node(
 		utility_exit_with_message("No available nodes to choose from!");
 	}
 	core::Size rand_index = numeric::random::random_range(0, (int)available_nodes_.size()-1);
-	std::set<core::Size>::const_iterator it = available_nodes_.begin();
+	auto it = available_nodes_.begin();
 	std::advance(it, rand_index);
 	return *it;
 }
@@ -1256,8 +1256,8 @@ Assembly::natives_select(
 	std::stringstream pymol_select;
 
 	std::set<core::Size> native_positions_set = native_positions(pose);
-	std::set<core::Size>::const_iterator it = native_positions_set.begin();
-	std::set<core::Size>::const_iterator it_end = native_positions_set.end();
+	auto it = native_positions_set.begin();
+	auto it_end = native_positions_set.end();
 	// /object-name/segi-identifier/chain-identifier/resi-identifier/name-identifier
 	pymol_select << "select " << object_name << "_natives, /" << object_name << "///";
 	for ( ; it != it_end; ++it ) {
@@ -1352,7 +1352,7 @@ operator<<(std::ostream& out, Assembly const & assembly ) {
 
 ModelConstIterator<SewSegment>
 Assembly::assembly_begin() const {
-	utility::vector1<SewSegment>::const_iterator seg_it = segments_.begin();
+	auto seg_it = segments_.begin();
 	utility::vector1<SewResidue>::const_iterator res_it;
 	utility::vector1<SewAtom>::const_iterator atom_it;
 
@@ -1371,7 +1371,7 @@ Assembly::assembly_begin() const {
 
 ModelIterator<SewSegment>
 Assembly::assembly_begin() {
-	utility::vector1<SewSegment>::iterator seg_it = segments_.begin();
+	auto seg_it = segments_.begin();
 	utility::vector1<SewResidue>::iterator res_it;
 	utility::vector1<SewAtom>::iterator atom_it;
 
@@ -1390,7 +1390,7 @@ Assembly::assembly_begin() {
 
 ModelConstIterator<SewSegment>
 Assembly::assembly_end() const {
-	utility::vector1<SewSegment>::const_iterator seg_it = segments_.end();
+	auto seg_it = segments_.end();
 	utility::vector1<SewResidue>::const_iterator res_it;
 	utility::vector1<SewAtom>::const_iterator atom_it;
 
@@ -1411,7 +1411,7 @@ Assembly::assembly_end() const {
 
 ModelIterator<SewSegment>
 Assembly::assembly_end() {
-	utility::vector1<SewSegment>::iterator seg_it = segments_.end();
+	auto seg_it = segments_.end();
 	utility::vector1<SewResidue>::iterator res_it;
 	utility::vector1<SewAtom>::iterator atom_it;
 

@@ -19,7 +19,7 @@ namespace protocols {
 namespace match {
 namespace output {
 
-MatchEvaluator::~MatchEvaluator() {}
+MatchEvaluator::~MatchEvaluator() = default;
 
 }
 }

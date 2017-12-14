@@ -27,6 +27,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
 #include <protocols/loops/Loops.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/forge/methods/util.hh>
@@ -113,7 +114,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopRemodel"
 // XRW TEMP  return "LoopRemodel";
 // XRW TEMP }
 
-LoopRemodel::~LoopRemodel() {}
+LoopRemodel::~LoopRemodel() = default;
 
 protocols::moves::MoverOP
 LoopRemodel::clone() const {
@@ -216,7 +217,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				inner_mc.set_autotemp( true, mc_kt );
 				for ( core::Size j = 1; j <= inner_cycles; ++j ) {
 					TR.Debug << "inner_cycle " << j << " kt=" << inner_mc.temperature() << std::endl;
-					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
+					for ( auto it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						// make a temporary loop/loops set to use in this scope
 						Loop loop( *it );
 
@@ -259,7 +260,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
 
 				if ( design() ) {
-					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
+					for ( auto it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						Loop loop( *it );
 						for ( core::Size i = 1; i <= pose.size(); ++i ) {
 							if ( i >= loop.start() && i <= loop.stop() ) continue; // design
@@ -290,7 +291,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 			if ( protocol_ == "kinematic" ) {
 				if ( perturb_ ) {
-					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
+					for ( auto it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						it->set_extended( true ); // set all loops to extended (needed for kinematic mover to really perturb)
 					}
 					protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb( loops, lores_score_ );
@@ -321,7 +322,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				}
 				if ( perturb_ ) {
 					//protocols::loops::LoopMover_Perturb_QuickCCD perturb(*loops, lores_score_ );
-					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
+					for ( auto it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						it->set_extended( true ); // set all loops to extended (needed for CCD mover to really perturb)
 					}
 					protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD perturb( loops, lores_score_ );
@@ -399,9 +400,9 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 		if ( frag_length == 3 ) frag3_ = core::fragment::FragSetOP( new ConstantLengthFragSet( frag_length ) );
 		else if ( frag_length == 9 ) frag9_ = core::fragment::FragSetOP( new ConstantLengthFragSet( frag_length ) );
 
-		for ( Loops::const_iterator it = loops->begin(); it != loops->end(); ++it ) {
+		for ( auto const & it : *loops ) {
 			// make a temporary loop/loops set to use in this scope
-			LoopCOP loop( LoopOP( new Loop(*it ) ) );
+			LoopCOP loop( LoopOP( new Loop(it ) ) );
 			if ( loop->size() < frag_length ) continue; // fragment extends past loop
 
 			for ( core::Size i=loop->start(); i <= loop->stop() - frag_length; ++i ) {
@@ -451,19 +452,19 @@ void
 LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
-	perturb_ = tag->getOption<bool>( "perturb", 0 );
-	refine_ = tag->getOption<bool>( "refine", 1 );
+	perturb_ = tag->getOption<bool>( "perturb", false );
+	refine_ = tag->getOption<bool>( "refine", true );
 
 	hires_score_ = protocols::rosetta_scripts::parse_score_function( tag, "refine_score", data )->clone();
 	lores_score_ = protocols::rosetta_scripts::parse_score_function( tag, "perturb_score", data, "score4L" )->clone();
 
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
-	bool auto_loops = tag->getOption<bool>( "auto_loops", 0 );
-	bool const des = tag->getOption<bool>( "design", 0 );
+	bool auto_loops = tag->getOption<bool>( "auto_loops", false );
+	bool const des = tag->getOption<bool>( "design", false );
 	design( des ); // set baseclass design flag
 
-	hurry_ = tag->getOption<bool>( "hurry", 0 );
+	hurry_ = tag->getOption<bool>( "hurry", false );
 	cycles_ = tag->getOption<Size>( "cycles", 10 );
 	runtime_assert( cycles_ > 0 );
 

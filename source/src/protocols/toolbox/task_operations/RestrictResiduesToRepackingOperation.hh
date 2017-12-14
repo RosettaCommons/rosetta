@@ -44,7 +44,7 @@ public:
 
 	RestrictResiduesToRepackingOperation();
 
-	RestrictResiduesToRepackingOperation( utility::vector1 < core::Size > residues );
+	RestrictResiduesToRepackingOperation( utility::vector1< core::Size > const & residues );
 
 	utility::vector1< core::Size > get_residues() const;
 

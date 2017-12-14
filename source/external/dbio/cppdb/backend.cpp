@@ -27,18 +27,17 @@ namespace cppdb {
 	namespace backend {
 		//result
 		struct result::data {};
-		result::result() {}
-		result::~result() {}
+		result::result() = default;
+		result::~result() = default;
 		
 		//statement
 		struct statement::data {};
 
-		statement::statement() : cache_(0) 
+		statement::statement() : cache_(nullptr) 
 		{
 		}
 		statement::~statement()
-		{
-		}
+		= default;
 		void statement::cache(statements_cache *c)
 		{
 			cache_ = c;
@@ -49,7 +48,7 @@ namespace cppdb {
 			if(!p)
 				return;
 			statements_cache *cache = p->cache_;
-			p->cache_ = 0;
+			p->cache_ = nullptr;
 			if(cache) 
 				cache->put(p);
 			else
@@ -61,15 +60,11 @@ namespace cppdb {
 
 		struct statements_cache::data {
 
-			data() : 
-				size(0),
-				max_size(0) 
-			{
-			}
+			data()= default;
 
 			struct entry;
 			typedef std::map<std::string,entry> statements_type;
-			typedef std::list<statements_type::iterator> lru_type;
+			using lru_type = std::list<statements_type::iterator>;
 			struct entry {
 				ref_ptr<statement> stat;
 				lru_type::iterator lru_ptr;
@@ -77,8 +72,8 @@ namespace cppdb {
 			
 			statements_type statements;
 			lru_type lru;
-			size_t size;
-			size_t max_size;
+			size_t size{0};
+			size_t max_size{0};
 
 
 			void insert(ref_ptr<statement> st)
@@ -109,7 +104,7 @@ namespace cppdb {
 			ref_ptr<statement> fetch(std::string const &query)
 			{
 				ref_ptr<statement> st;
-				statements_type::iterator p = statements.find(query);
+				auto p = statements.find(query);
 				if(p==statements.end())
 					return st;
 				st=p->second.stat;
@@ -128,8 +123,7 @@ namespace cppdb {
 		}; // data
 
 		statements_cache::statements_cache() 
-		{
-		}
+		= default;
 		void statements_cache::set_size(size_t n)
 		{
 			if(n!=0 && !active()) {
@@ -149,7 +143,7 @@ namespace cppdb {
 		ref_ptr<statement> statements_cache::fetch(std::string const &q)
 		{
 			if(!active())
-				return 0;
+				return nullptr;
 			return d->fetch(q);
 		}
 		void statements_cache::clear()
@@ -157,12 +151,11 @@ namespace cppdb {
 			d->clear();
 		}
 		statements_cache::~statements_cache()
-		{
-		}
+		= default;
 
 		bool statements_cache::active()
 		{
-			return d.get()!=0;
+			return d.get()!=nullptr;
 		}
 
 		//////////////
@@ -170,12 +163,12 @@ namespace cppdb {
 		//////////////
 		
 		struct connection::data {
-			typedef std::list<connection_specific_data *> conn_specific_type;
+			using conn_specific_type = std::list<connection_specific_data *>;
 			conn_specific_type conn_specific;
 			~data()
 			{
-				for(conn_specific_type::iterator p=conn_specific.begin();p!=conn_specific.end();++p)
-					delete *p;
+				for(auto & p : conn_specific)
+					delete p;
 			}
 		};
 		ref_ptr<statement> connection::prepare(std::string const &q) 
@@ -214,7 +207,7 @@ namespace cppdb {
 
 		connection::connection(connection_info const &info) :
 			d(new connection::data),
-			pool_(0),
+			pool_(nullptr),
 			once_called_(0),
 			recyclable_(1)
 		{
@@ -231,8 +224,7 @@ namespace cppdb {
 				throw cppdb_error("cppdb::backend::connection: @use_prepared should be either 'on' or 'off'");
 		}
 		connection::~connection()
-		{
-		}
+		= default;
 
 		bool connection::once_called() const
 		{
@@ -249,11 +241,11 @@ namespace cppdb {
 				if(typeid(p_ref) == type)
 					return *p;
 			}
-			return 0;
+			return nullptr;
 		}
 		connection_specific_data *connection::connection_specific_release(std::type_info const &type)
 		{
-			for(data::conn_specific_type::iterator p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
+			for(auto p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
 				const connection_specific_data& p_ref = **p;
 				if(typeid(p_ref) == type) {
 					connection_specific_data *ptr = *p;
@@ -261,7 +253,7 @@ namespace cppdb {
 					return ptr;
 				}
 			}
-			return 0;
+			return nullptr;
 		}
 		void connection::connection_specific_reset(std::type_info const &type,connection_specific_data *ptr)
 		{
@@ -274,7 +266,7 @@ namespace cppdb {
 					+ type.name()
 				);
 			}
-			for(data::conn_specific_type::iterator p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
+			for(auto p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
 				const connection_specific_data& p_ref = **p;
 				if(typeid(p_ref) == type) {
 					delete *p;
@@ -286,7 +278,7 @@ namespace cppdb {
 				}
 			}
 			if(ptr) {
-				d->conn_specific.push_back(0);
+				d->conn_specific.push_back(nullptr);
 				d->conn_specific.back() = tmp.release();
 			}
 		}
@@ -323,7 +315,7 @@ namespace cppdb {
 			if(!c)
 				return;
 			ref_ptr<pool> p = c->pool_;
-			c->pool_ = 0;
+			c->pool_ = nullptr;
 			if(p && c->recyclable())
 				p->put(c);
 			else {
@@ -355,8 +347,7 @@ namespace cppdb {
 		{
 		}
 		static_driver::~static_driver()
-		{
-		}
+		= default;
 		bool static_driver::in_use()
 		{
 			return true;
@@ -371,11 +362,9 @@ namespace cppdb {
 	struct connection_specific_data::data {};
 
 	connection_specific_data::connection_specific_data()
-	{
-	}
+	= default;
 	connection_specific_data::~connection_specific_data()
-	{
-	}
+	= default;
 	
 	
 } // cppdb

@@ -79,14 +79,7 @@ MPRangeRelaxMover::MPRangeRelaxMover() : protocols::moves::Mover()
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-MPRangeRelaxMover::MPRangeRelaxMover( MPRangeRelaxMover const & src ) :
-	protocols::moves::Mover( src ),
-	native_( src.native_ ),
-	sfxn_( src.sfxn_ ),
-	center_resnumber_( src.center_resnumber_ ),
-	set_tm_helical_( src.set_tm_helical_ ),
-	optmem_( src.optmem_ )
-{}
+MPRangeRelaxMover::MPRangeRelaxMover( MPRangeRelaxMover const & /*src*/ ) = default;
 
 /// @brief Assignment Operator
 MPRangeRelaxMover & MPRangeRelaxMover::operator = ( MPRangeRelaxMover const & src ) {
@@ -101,7 +94,7 @@ MPRangeRelaxMover & MPRangeRelaxMover::operator = ( MPRangeRelaxMover const & sr
 }
 
 /// @brief Destructor
-MPRangeRelaxMover::~MPRangeRelaxMover() {}
+MPRangeRelaxMover::~MPRangeRelaxMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
@@ -207,7 +200,7 @@ void MPRangeRelaxMover::apply( Pose & pose ) {
 	relax->add_membrane_again( false );
 	relax->set_scorefunction( sfxn_ );
 	// relax->optimize_membrane( optmem_ );
-	if ( native_ != 0 ) {
+	if ( native_ != nullptr ) {
 		relax->set_native( native_ );
 	} else {
 		relax->set_native( pose.clone() );
@@ -234,7 +227,7 @@ void MPRangeRelaxMover::optimize_membrane( bool yesno ) {
 void MPRangeRelaxMover::set_defaults() {
 
 	// native
-	native_ = 0;
+	native_ = nullptr;
 
 	// create scorefunction
 	sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );

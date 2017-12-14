@@ -107,7 +107,7 @@ private:
 
 private:
 
-	etable::MembEtable const & memb_etable_;
+	//etable::MembEtable const & memb_etable_;
 
 	//taken from the MembEtable
 	ObjexxFCL::FArray1< Real > const & lk_dgrefce_;

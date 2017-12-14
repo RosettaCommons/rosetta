@@ -184,7 +184,7 @@ DatabaseJobInputter::set_struct_ids_from_strings(
 
 	for ( core::Size i=1; i<=struct_id_strings.size(); ++i ) {
 		try{
-			StructureID struct_id = boost::lexical_cast<StructureID>(struct_id_strings[i]);
+			auto struct_id = boost::lexical_cast<StructureID>(struct_id_strings[i]);
 			tag_structures_[struct_id_strings[i]] = struct_id;
 		}
 catch(...){

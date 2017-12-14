@@ -442,7 +442,7 @@ BackboneGridSampler::parse_my_tag(
 		runtime_assert_string_msg( tag->hasOption("scorefxn" ), "In BackboneGridSampler::parse_my_tag(): A \"scorefxn\" option must be specified!");
 		set_sfxn(protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", data_map )->clone()); // The scorefunction.
 		if ( tag->hasOption("max_samples") ) {
-			core::Size const val( tag->getOption<core::Size>("max_samples", 10000) );
+			auto const val( tag->getOption<core::Size>("max_samples", 10000) );
 			if ( TR.visible() ) TR << "Setting maximum number of samples to " << val << "." << std::endl;
 			set_max_samples(val);
 		}
@@ -482,7 +482,7 @@ BackboneGridSampler::parse_my_tag(
 		bool nstructmode = tag->getOption<bool>("nstruct_mode", false);
 		if ( TR.visible() ) TR << "Setting nstruct mode to " << (nstructmode ? "true." : "false.") << "  This means that " << (nstructmode ? "each job will sample a different set of mainchain torsion values." : "every job will sample all sets of mainchain torsion values.") << std::endl;
 		set_nstruct_mode(nstructmode);
-		core::Size nstructrepeats( tag->getOption<core::Size>( "nstruct_repeats", 1 ) );
+		auto nstructrepeats( tag->getOption<core::Size>( "nstruct_repeats", 1 ) );
 		if ( nstructrepeats<1 ) nstructrepeats=1;
 		if ( TR.visible() ) TR << "Setting nstruct repeats to " << nstructrepeats << "." << std::endl;
 		set_nstruct_repeats(nstructrepeats);
@@ -527,11 +527,11 @@ BackboneGridSampler::parse_my_tag(
 				if ( !branch_tag->hasOption("index") ) {
 					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a mainchain torsion index with an \"index\" option.\n" );
 				}
-				core::Size index( branch_tag->getOption<core::Size>( "index", 0 ) );
-				core::Size resindex( branch_tag->getOption<core::Size>( "res_index", 1 ) );
+				auto index( branch_tag->getOption<core::Size>( "index", 0 ) );
+				auto resindex( branch_tag->getOption<core::Size>( "res_index", 1 ) );
 
 				if ( branch_tag->hasOption("value") ) {
-					core::Real val( branch_tag->getOption<core::Real>( "value", 0 ) );
+					auto val( branch_tag->getOption<core::Real>( "value", 0 ) );
 					if ( TR.visible() ) {
 						TR << "Adding mainchain torsion index " << index << " for residue " << resindex << " in the repeating unit to be fixed to " << val << " degrees." << std::endl;
 						TR.flush();
@@ -547,8 +547,8 @@ BackboneGridSampler::parse_my_tag(
 					if ( !branch_tag->hasOption("samples") ) {
 						utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify the number of samples for a mainchain torsion with a \"samples\" option.\n" );
 					}
-					core::Real start( branch_tag->getOption<core::Real>( "start", -180.0 ) );
-					core::Real end( branch_tag->getOption<core::Real>( "end", 180.0 ) );
+					auto start( branch_tag->getOption<core::Real>( "start", -180.0 ) );
+					auto end( branch_tag->getOption<core::Real>( "end", 180.0 ) );
 					core::Size samples( branch_tag->getOption<core::Real>( "samples", 2 ) );
 					if ( TR.visible() ) {
 						TR << "Adding mainchain torsion index " << index << " to sample angle range " << start << " to end " << end << " with " << samples << " sample(s)." << std::endl;

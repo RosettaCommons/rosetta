@@ -46,8 +46,7 @@ UnfoldedStateEnergyCalculatorJobDistributor::UnfoldedStateEnergyCalculatorJobDis
 {}
 
 /// @brief dtor (don't put anything in here)
-UnfoldedStateEnergyCalculatorJobDistributor::~UnfoldedStateEnergyCalculatorJobDistributor()
-= default;
+UnfoldedStateEnergyCalculatorJobDistributor::~UnfoldedStateEnergyCalculatorJobDistributor() = default;
 
 /// @brief
 void

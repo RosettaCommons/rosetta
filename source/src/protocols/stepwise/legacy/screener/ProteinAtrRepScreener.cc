@@ -18,6 +18,7 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.legacy.screener.ProteinAtrRepScreener" );
 
@@ -38,12 +39,11 @@ namespace screener {
 ProteinAtrRepScreener::ProteinAtrRepScreener( pose::Pose & pose_atr_rep_screen,
 	modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker ):
 	stepwise::screener::SampleApplier( pose_atr_rep_screen ),
-	atr_rep_checker_( atr_rep_checker )
+	atr_rep_checker_(std::move( atr_rep_checker ))
 {}
 
 //Destructor
-ProteinAtrRepScreener::~ProteinAtrRepScreener()
-{}
+ProteinAtrRepScreener::~ProteinAtrRepScreener() = default;
 
 bool
 ProteinAtrRepScreener::check_screen(){

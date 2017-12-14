@@ -41,7 +41,7 @@ namespace topology_broker {
 class ConstraintEvaluatorWrapper : public evaluation::PoseEvaluator {
 
 public:
-	ConstraintEvaluatorWrapper( std::string name, ConstraintClaimerCOP claimer ); //for factory
+	ConstraintEvaluatorWrapper( std::string const & name, ConstraintClaimerCOP claimer ); //for factory
 
 	using evaluation::PoseEvaluator::apply;
 

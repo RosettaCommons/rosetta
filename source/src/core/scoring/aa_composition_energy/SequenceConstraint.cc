@@ -55,7 +55,7 @@ SequenceConstraint::SequenceConstraint( SequenceConstraint const &src ):
 
 /// @brief Destructor
 ///
-SequenceConstraint::~SequenceConstraint() {}
+SequenceConstraint::~SequenceConstraint() = default;
 
 
 } // aa_composition_energy

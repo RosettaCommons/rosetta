@@ -511,7 +511,7 @@ void reorder_membrane_foldtree( core::pose::Pose & pose ) {
 ///
 ///  iJ = interface jump, will be returned from the function
 ///
-core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, std::string const partners ) {
+core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, std::string const & partners ) {
 
 	using namespace utility;
 	using namespace core;
@@ -715,7 +715,7 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose )
 	core::Size root_anchor( rsd_closest_to_pose_tm_com( pose ) );
 
 	// get chain for pose TM COM
-	core::Size root_anchor_chain( static_cast< core::Size >( pose.chain(root_anchor) ) );
+	auto root_anchor_chain( static_cast< core::Size >( pose.chain(root_anchor) ) );
 
 	// push back root anchor into anchors vector
 	anchors.push_back( root_anchor );
@@ -1023,10 +1023,10 @@ core::Size setup_foldtree_pose_com( core::pose::Pose & pose ) {
 	utility::vector1< core::Size > anchors;
 
 	// get rsd nearest pose COM
-	core::Size root_anchor( static_cast< core::Size >( residue_center_of_mass( pose, 1, pose.size() ) ) );
+	auto root_anchor( static_cast< core::Size >( residue_center_of_mass( pose, 1, pose.size() ) ) );
 
 	// get chain for pose COM
-	core::Size root_anchor_chain( static_cast< core::Size >( pose.chain(root_anchor) ) );
+	auto root_anchor_chain( static_cast< core::Size >( pose.chain(root_anchor) ) );
 
 	// push back root anchor into anchors vector
 	anchors.push_back( root_anchor );
@@ -1781,7 +1781,7 @@ void split_topology_by_jump_noshift(
 	//   for downstream partner and false for upstream
 
 	// find chain of downstream residue number
-	core::Size res_downstream = static_cast< core::Size > ( pose.fold_tree().downstream_jump_residue( jumpnum ) );
+	auto res_downstream = static_cast< core::Size > ( pose.fold_tree().downstream_jump_residue( jumpnum ) );
 	core::Size chain_downstream = pose.chain( res_downstream );
 
 	// go through TMspans

@@ -71,10 +71,10 @@ ScoreMap::score_map_from_scored_pose(
 
 	// Which score terms to use
 	core::scoring::EnergyMap weights = pose.energies().weights();
-	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
+	using ScoreTypeVec = utility::vector1<core::scoring::ScoreType>;
 	ScoreTypeVec score_types;
 	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
+		auto ii = core::scoring::ScoreType(i);
 		if ( weights[ii] != 0 ) score_types.push_back(ii);
 	}
 
@@ -133,12 +133,10 @@ ScoreMap::add_arbitrary_string_data_from_pose(
 		basic::datacache::CacheableStringMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-		debug_assert( data.get() != NULL );
+		debug_assert( data.get() != nullptr );
 
-		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
-				it != end;
-				++it ) {
-			string_map[it->first] = it->second;
+		for ( auto const & it : data->map() ) {
+			string_map[it.first] = it.second;
 		}
 	}
 }
@@ -153,12 +151,10 @@ ScoreMap::add_arbitrary_score_data_from_pose(
 		basic::datacache::CacheableStringFloatMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-		debug_assert( data.get() != NULL );
+		debug_assert( data.get() != nullptr );
 
-		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
-				it != end;
-				++it ) {
-			score_map[it->first] = it->second;
+		for ( auto const & it : data->map() ) {
+			score_map[it.first] = it.second;
 		}
 	}
 }

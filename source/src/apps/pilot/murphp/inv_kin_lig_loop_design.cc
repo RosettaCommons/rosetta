@@ -89,7 +89,7 @@ int main( int argc, char ** argv ) {
 
 		// Step 0.a - read in parameters
 		string const infile = tag->getTag("io")->getOption<string>("infile","in.pdb");
-		int const nstruct = tag->getTag("io")->getOption<int>("nstruct",1000);
+		auto const nstruct = tag->getTag("io")->getOption<int>("nstruct",1000);
 		string const output_prefix = tag->getTag("io")->getOption<string>("output_prefix","xxx");
 
 		// Step 1 - initialize pose0 and pose1
@@ -111,7 +111,7 @@ int main( int argc, char ** argv ) {
 		jobdist.startup();
 		while ( jobdist.next_job(curr_job, curr_nstruct) ) {
 
-			time_t pdb_start_time = time(NULL);
+			time_t pdb_start_time = time(nullptr);
 
 			cout << "Starting " << curr_job->output_tag(curr_nstruct) << " ...\n";
 
@@ -167,7 +167,7 @@ int main( int argc, char ** argv ) {
 			// Add to silent file
 			jobdist.dump_pose_and_map( curr_job->output_tag(curr_nstruct), *pose1 );
 
-			time_t pdb_end_time = time(NULL);
+			time_t pdb_end_time = time(nullptr);
 			cout << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds.\n";
 		} // loop over jobs and nstructs
 		jobdist.shutdown();

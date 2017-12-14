@@ -59,7 +59,7 @@ CloseContactResidueSelector::CloseContactResidueSelector():
 
 /// @brief Destructor.
 ///
-CloseContactResidueSelector::~CloseContactResidueSelector() {}
+CloseContactResidueSelector::~CloseContactResidueSelector() = default;
 
 /// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 CloseContactResidueSelector::CloseContactResidueSelector(CloseContactResidueSelector const & ) = default;

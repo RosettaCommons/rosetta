@@ -26,6 +26,7 @@
 
 // Utility Headers
 #include <core/types.hh>
+#include <utility>
 #include <utility/vector1_bool.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
@@ -48,7 +49,7 @@ namespace task_operations {
 using namespace core::pack::task::operation;
 using namespace utility::tag;
 
-RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation() {}
+RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation() = default;
 
 /// @details this ctor assumes a pregenerated Neighborhood and Neighbors calculators - if you want a particular non-default cutoff distance, assemble those calculators separately then pass them to this operation.
 RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::string const & calculator )
@@ -73,7 +74,7 @@ RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::set< core
 	make_calculator( central_residues, dist_cutoff );
 }
 
-RestrictToNeighborhoodOperation::~RestrictToNeighborhoodOperation() {}
+RestrictToNeighborhoodOperation::~RestrictToNeighborhoodOperation() = default;
 
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToNeighborhoodOperation::clone() const
@@ -134,8 +135,8 @@ void RestrictToNeighborhoodOperation::make_calculator( std::set< core::Size > co
 void RestrictToNeighborhoodOperation::make_name( std::set< core::Size > const & central_residues ) {
 	calculator_name_ = "RTNhO_calculator";
 
-	for ( SizeSet::const_iterator it(central_residues.begin()), end(central_residues.end()) ; it != end; ++it ) {
-		calculator_name_ += '_' + utility::to_string( *it );
+	for ( unsigned long central_residue : central_residues ) {
+		calculator_name_ += '_' + utility::to_string( central_residue );
 	}
 
 }

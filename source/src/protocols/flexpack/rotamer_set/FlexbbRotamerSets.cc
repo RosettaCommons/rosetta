@@ -22,6 +22,7 @@
 /// Project headers
 #include <core/conformation/Residue.hh>
 #include <core/fragment/Frame.hh>
+#include <utility>
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -78,11 +79,11 @@ using namespace ObjexxFCL;
 static basic::Tracer TR( "protocols.flexpack.rotamer_set.FlexbbRotamerSets" );
 
 FlexbbRotamerSets::FlexbbRotamerSets( core::pack::task::PackerTaskCOP task ) :
-	task_( task )
+	task_(std::move( task ))
 {
 }
 
-FlexbbRotamerSets::~FlexbbRotamerSets() {}
+FlexbbRotamerSets::~FlexbbRotamerSets() = default;
 
 
 FlexbbRotamerSetCOP
@@ -232,10 +233,9 @@ FlexbbRotamerSets::determine_res_cb_deviation(
 
 	//utility::vector1< core::conformation::ResidueCOP > const & confs_this_position = conformations_for_flexible_segments[ resid ];
 
-	for ( utility::vector1< core::conformation::ResidueCOP >::const_iterator res_it = conformations_for_flexible_segments_[ moltenres ].begin();
-			res_it != conformations_for_flexible_segments_[ moltenres ].end(); ++res_it ) {
+	for ( auto const & res_it : conformations_for_flexible_segments_[ moltenres ] ) {
 
-		core::Distance sq_dist = cur_xyz.distance_squared( (*res_it)->xyz( (*res_it)->nbr_atom() ) );
+		core::Distance sq_dist = cur_xyz.distance_squared( res_it->xyz( res_it->nbr_atom() ) );
 
 		if ( sq_dist > max_sq_dist ) max_sq_dist = sq_dist;
 	}
@@ -595,13 +595,13 @@ FlexbbRotamerSets::precompute_energies(
 
 	/// Dispatch based on the downcast.
 	if ( dynamic_cast< OTFFlexbbInteractionGraph * > ( &flexbb_ig ) ) {
-		OTFFlexbbInteractionGraph & otfig =
+		auto & otfig =
 			static_cast< OTFFlexbbInteractionGraph & > ( flexbb_ig );
 
 		compute_one_body_energies_for_otf_ig( pose, sfxn, flexpack_neighbor_graph, otfig );
 	} else {
 		debug_assert( dynamic_cast< PrecomputedFlexbbInteractionGraph * > ( &flexbb_ig ) );
-		PrecomputedFlexbbInteractionGraph & precomp_ig =
+		auto & precomp_ig =
 			static_cast< PrecomputedFlexbbInteractionGraph & > ( flexbb_ig );
 
 		precompute_all_energies( pose, sfxn, flexpack_neighbor_graph, precomp_ig );
@@ -704,7 +704,7 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 	/// Long range interactions
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = sfxn.long_range_energies_begin(),
 			lr_end  = sfxn.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
@@ -987,7 +987,7 @@ FlexbbRotamerSets::compute_onebody_interactions_with_background(
 		/// For the sake of reducing memory load, clear the tries out as soon as
 		/// the one body energies are finished being calculated.
 		for ( Size jj = 1; jj <= core::scoring::methods::n_energy_methods; ++jj ) {
-			(const_cast< FlexbbRotamerSet & > (*iirotset)).store_trie( jj, 0 );
+			(const_cast< FlexbbRotamerSet & > (*iirotset)).store_trie( jj, nullptr );
 		}
 	}
 

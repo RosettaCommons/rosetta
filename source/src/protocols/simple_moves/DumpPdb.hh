@@ -35,7 +35,7 @@ class DumpPdb : public protocols::moves::Mover
 {
 public:
 	DumpPdb();
-	DumpPdb( std::string fname ); // argument is moved
+	DumpPdb( std::string const & fname );
 	~DumpPdb() override;
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override {

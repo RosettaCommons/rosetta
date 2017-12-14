@@ -47,8 +47,7 @@ LongestContinuousPolarSegmentFilter::LongestContinuousPolarSegmentFilter():
 {}
 
 /// @brief Destructor.
-LongestContinuousPolarSegmentFilter::~LongestContinuousPolarSegmentFilter()
-{}
+LongestContinuousPolarSegmentFilter::~LongestContinuousPolarSegmentFilter() = default;
 
 /// @brief Parse tag to allow RosettaScripts XML to call this mover.
 void

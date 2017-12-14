@@ -102,15 +102,7 @@ ShortBackrubMover::ShortBackrubMover( core::pose::PoseOP pose ) : protocols::mov
 
 
 // copy constructor
-ShortBackrubMover::ShortBackrubMover( ShortBackrubMover const & rval ):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( rval ),
-	backrubmover_( rval.backrubmover_ ),
-	resnum_( rval.resnum_ ),
-	rotation_std_dev_( rval.rotation_std_dev_ ),
-	randomize_resnum_( rval.randomize_resnum_ ),
-	uniform_backrub_( rval.uniform_backrub_ )
-{}
+ShortBackrubMover::ShortBackrubMover( ShortBackrubMover const & /*rval*/ ) = default;
 
 // destructor
 ShortBackrubMover::~ShortBackrubMover()= default;

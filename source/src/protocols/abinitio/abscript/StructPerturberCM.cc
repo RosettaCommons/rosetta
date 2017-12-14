@@ -29,6 +29,7 @@
 
 
 //Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 
@@ -60,7 +61,7 @@ StructPerturberCM::StructPerturberCM():
 	Parent()
 {}
 
-StructPerturberCM::StructPerturberCM( std::string const& label,
+StructPerturberCM::StructPerturberCM( std::string const & label,
 	core::Real magnitude ):
 	magnitude_( magnitude ),
 	label_( label )
@@ -95,9 +96,8 @@ void StructPerturberCM::apply( core::pose::Pose& pose ){
 		core::kinematics::MoveMapOP mm = passport()->render_movemap();
 
 		for ( Size i = 1; i <= pose.size(); ++i ) {
-			for ( DofPassport::const_iterator it = passport()->begin();
-					it != passport()->end(); ++it ) {
-				pose.set_dof( *it, pose.dof( *it) + ( numeric::random::rg().gaussian() * magnitude_ ) );
+			for ( auto const & it : *passport() ) {
+				pose.set_dof( it, pose.dof( it) + ( numeric::random::rg().gaussian() * magnitude_ ) );
 			}
 		}
 	} else {

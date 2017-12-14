@@ -111,8 +111,8 @@ JumpSetup::read_file( std::string fname ) {
 
 JumpSelector::JumpSelector()
 : total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
-JumpSelector::JumpSelector( std::string ss )
-: secstruct_(std::move( ss)), total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
+JumpSelector::JumpSelector( std::string const & ss )
+: secstruct_( ss), total_weight_( 0 ), min_loop_length_( 5 ), loop_extension_(2), nr_jumps_min_(3), nr_jumps_max_(6) {}
 
 JumpSelector::~JumpSelector() = default;
 
@@ -200,8 +200,8 @@ fill_tags_( FArray1D_int& tags, Size fill_pos, int tag, Size nres ) {
 
 JumpSample
 JumpSelector::create_jump_sample( ) const {
-	typedef utility::vector1< Interval > CutList;
-	typedef utility::vector1< Interval > JumpList;
+	using CutList = utility::vector1<Interval>;
+	using JumpList = utility::vector1<Interval>;
 	JumpList jump_list;
 	//init tag-array
 	// negative for loop regions
@@ -297,7 +297,7 @@ JumpSelector::create_jump_sample( ) const {
 		tr.Warning << "failed to find " << nr_jumps << " jumps in "
 			<<attempts<<" attempts. Only " << nr << " possible jumps found\n";
 	}
-	typedef utility::vector1< CutList > MetaCutList; //take as many cuts from MetaCutList as jumps -- take one cutregion from each MetaCuts
+	using MetaCutList = utility::vector1<CutList>; //take as many cuts from MetaCutList as jumps -- take one cutregion from each MetaCuts
 	// determine cut-regions
 	// not quite optimal, yet
 	// a 1 CC 2 CC 2 CC 1  jump-setup will always be cut in first two loops, but it should sample both cut possibilities for jump 1

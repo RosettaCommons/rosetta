@@ -243,14 +243,13 @@ void print_atom_pdbid(AtomID const& aid, Pose const& ps, std::ostream& os) {
 ///
 void print_hb_partners(HB_Partners const& ptns, Pose const& ps, std::ostream& os) {
 
-	for ( HB_Partners::const_iterator i=ptns.begin(), END=ptns.end();
-			i != END; ++i ) {
+	for ( auto const & ptn : ptns ) {
 
 		os << "H-bond partners of ";
-		print_atom_pdbid(i->first, ps, os);
+		print_atom_pdbid(ptn.first, ps, os);
 		os << ':' << std::endl;
 
-		vector1<AtomID> const& pv = i->second;
+		vector1<AtomID> const& pv = ptn.second;
 		Size const NP = pv.size();
 		for ( Size j=1; j<=NP; ++j ) {
 			print_atom_pdbid(pv[j], ps, os);
@@ -289,11 +288,8 @@ void don_store_hbs(AtomID const& don, Pose const& ps,
 		Size nri((*nit)->get_other_ind(dri));
 		Residue const& ngb = ps.residue(nri);
 
-		for ( core::chemical::AtomIndices::const_iterator
-				anum = ngb.accpt_pos().begin(), anume = ngb.accpt_pos().end();
-				anum != anume; ++anum ) {
+		for ( auto const aai : ngb.accpt_pos() ) {
 
-			Size aai(*anum);
 			AtomID acc(aai, nri);
 
 			if ( is_hbond(don, acc, ps, database, hbond_set) ) {
@@ -334,11 +330,8 @@ void acc_store_hbs(AtomID const& acc, Pose const& ps,
 		Size nri((*nit)->get_other_ind(ari));
 		Residue const& ngb = ps.residue(nri);
 
-		for ( core::chemical::AtomIndices::const_iterator
-				dnum = ngb.Hpos_polar().begin(), dnume = ngb.Hpos_polar().end();
-				dnum != dnume; ++dnum ) {
+		for ( auto const dai : ngb.Hpos_polar() ) {
 
-			Size dai(*dnum);
 			AtomID don(dai, nri);
 
 			if ( is_hbond(don, acc, ps, database, hbond_set) ) {
@@ -376,11 +369,8 @@ void cnlres_store_hbs(const Size ridx, const char newaa, Pose const& ps,
 	}
 
 	// donors
-	for ( core::chemical::AtomIndices::const_iterator
-			dnum = res.Hpos_polar().begin(), dnume = res.Hpos_polar().end();
-			dnum != dnume; ++dnum ) {
+	for ( auto const didx : res.Hpos_polar() ) {
 
-		Size const didx = *dnum;
 		if ( !(res.atom_is_backbone(didx)) ) {
 			AtomID don(didx, ridx);
 			don_store_hbs(don, ps, database, hbond_set, hbptns);
@@ -388,11 +378,8 @@ void cnlres_store_hbs(const Size ridx, const char newaa, Pose const& ps,
 	}
 
 	// acceptors
-	for ( core::chemical::AtomIndices::const_iterator
-			anum = res.accpt_pos().begin(), anume = res.accpt_pos().end();
-			anum != anume; ++anum ) {
+	for ( auto const aidx : res.accpt_pos() ) {
 
-		Size const aidx = *anum;
 		if ( !(res.atom_is_backbone(aidx)) ) {
 			AtomID acc(aidx, ridx);
 			acc_store_hbs(acc, ps, database, hbond_set, hbptns);
@@ -503,7 +490,7 @@ void prune_away_cnl(HB_Partners& hbptns, vector1<CnlRes> const& cnl,
 
 		found_cnl = false;
 
-		for ( HB_Partners::iterator i=hbptns.begin(), END=hbptns.end();
+		for ( auto i=hbptns.begin(), END=hbptns.end();
 				i != END; ++i ) {
 			if ( in_cnl(i->first, cnl, ps) ) {
 				hbptns.erase(i);
@@ -560,20 +547,15 @@ Size hbonds_to_ptnres(AtomID const& rep, Size ptnidx, Pose const& ps,
 	// atom 'rep' represents acceptors
 	if ( rres.heavyatom_is_an_acceptor(raidx) ) {
 
-		for ( core::chemical::AtomIndices::const_iterator
-				anum = rres.accpt_pos().begin(), anume = rres.accpt_pos().end();
-				anum != anume; ++anum ) {
+		for ( auto const aai : rres.accpt_pos() ) {
 
-			Size aai(*anum);
 			if ( rep_hb_atom(aai, rres) == raidx ) {
 
 				AtomID acc(aai, rridx);
 
-				for ( core::chemical::AtomIndices::const_iterator
-						dnum = pres.Hpos_polar().begin(), dnume = pres.Hpos_polar().end();
-						dnum != dnume; ++dnum ) {
+				for ( unsigned long dnum : pres.Hpos_polar() ) {
 
-					AtomID don(*dnum, ptnidx);
+					AtomID don(dnum, ptnidx);
 
 					if ( is_hbond(don, acc, ps, database, hbond_set) ) {
 						print_atom_pdbid(don, ps, os);
@@ -588,20 +570,15 @@ Size hbonds_to_ptnres(AtomID const& rep, Size ptnidx, Pose const& ps,
 	// atom 'rep' represents donors
 	if ( rres.heavyatom_has_polar_hydrogens(raidx) ) {
 
-		for ( core::chemical::AtomIndices::const_iterator
-				dnum = rres.Hpos_polar().begin(), dnume = rres.Hpos_polar().end();
-				dnum != dnume; ++dnum ) {
+		for ( auto const dai : rres.Hpos_polar() ) {
 
-			Size dai(*dnum);
 			if ( rep_hb_atom(dai, rres) == raidx ) {
 
 				AtomID don(dai, rridx);
 
-				for ( core::chemical::AtomIndices::const_iterator
-						anum = pres.accpt_pos().begin(), anume = pres.accpt_pos().end();
-						anum != anume; ++anum ) {
+				for ( unsigned long anum : pres.accpt_pos() ) {
 
-					AtomID acc(*anum, ptnidx);
+					AtomID acc(anum, ptnidx);
 
 					if ( is_hbond(don, acc, ps, database, hbond_set) ) {
 						print_atom_pdbid(acc, ps, os);

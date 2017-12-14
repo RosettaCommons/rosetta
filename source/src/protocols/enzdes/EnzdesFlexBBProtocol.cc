@@ -299,7 +299,7 @@ EnzdesFlexBBProtocol::apply(
 		//do a repack without constraints
 		if ( ! basic::options::option[basic::options::OptionKeys::enzdes::no_unconstrained_repack] ) {
 			PackerTaskOP repack_task = create_enzdes_pack_task( pose, false );
-			enzdes_pack( pose, repack_task, scorefxn_, basic::options::option[basic::options::OptionKeys::enzdes::cst_min].user(), 1, true, false );
+			enzdes_pack( pose, repack_task, scorefxn_, basic::options::option[basic::options::OptionKeys::enzdes::cst_min].user(), true, true, false );
 		}
 
 	} //if cst_design
@@ -898,7 +898,7 @@ EnzdesFlexBBProtocol::generate_alc_ensemble_for_region(
 			newfrag->steal( local_pose, *flex_regions_[region] );
 			//newfrag->apply( pose,  *flex_regions_[region] );
 			//pose.dump_pdb( "test_sweep_after_apply_stolen_" + utility::to_string( count_output ) + ".pdb" );
-			scored_confs.push_back( std::make_pair( score, newfrag ) );
+			scored_confs.emplace_back( score, newfrag );
 
 			mc_temp = mc_temp - mc_decrement;
 			mc.set_temperature( mc_temp );
@@ -1672,7 +1672,7 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 		for ( ig->reset_edge_list_iterator_for_node( moltenid ); !ig->edge_list_iterator_at_end(); ig->increment_edge_list_iterator() ) {
 
 			//core::pack::interaction_graph::PDEdge const & cur_edge = (core::pack::interaction_graph::PDEdge) ig->get_edge();
-			core::pack::interaction_graph::PDEdge const & cur_edge =  static_cast< core::pack::interaction_graph::PDEdge const & > ( ig->get_edge() );
+			auto const & cur_edge =  static_cast< core::pack::interaction_graph::PDEdge const & > ( ig->get_edge() );
 
 			core::Size targ_moltenid = cur_edge.get_other_ind( moltenid );
 
@@ -1734,7 +1734,7 @@ EnzdesFlexibleRegion::extract_lig_designability_score(
 			core::Size other_res = (*egraph_it)->get_other_ind( design_target );
 			if ( !this->contains_seqpos( other_res ) ) continue;
 
-			EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+			auto const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 
 			per_res_design_target_interactionE += Eedge->dot( cur_weights );
 
@@ -1759,7 +1759,7 @@ EnzdesFlexibleRegion::extract_lig_designability_score(
 			if ( !this->contains_seqpos( other_res )
 					&& ( interacting_neighbors.find( other_res) == interacting_neighbors.end() ) ) interacting_neighbors.insert( other_res );
 
-			EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+			auto const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 
 			av_background_interactionE += Eedge->dot( cur_weights );
 

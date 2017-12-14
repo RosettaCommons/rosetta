@@ -338,7 +338,7 @@ void ClusterBase::calculate_distance_matrix() {
 	tr.Info << "Calculating RMS matrix: " << std::endl;
 
 	Real hist_resolution = 0.25;
-	int   hist_size = int(20.0 / hist_resolution);
+	auto   hist_size = int(20.0 / hist_resolution);
 
 	std::vector<int> histcount(hist_size,0);
 
@@ -351,7 +351,7 @@ void ClusterBase::calculate_distance_matrix() {
 				distance_matrix( i+1, j+1 ) = dist;
 				distance_matrix( j+1, i+1 ) = dist;
 				//    tr.Info << "( " << i+1 << ";" << j+1 << " ) " << dist << std::endl;
-				int histbin = int(dist/hist_resolution);
+				auto histbin = int(dist/hist_resolution);
 				if ( histbin < hist_size ) histcount[histbin]+=1;
 
 				// print some stats of progress

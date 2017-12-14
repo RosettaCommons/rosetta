@@ -229,7 +229,6 @@ public:
 			native_poses[ ii ] = input_poses[ ii ];
 		}
 
-		utility::vector1< Mutant >::const_iterator it;
 		driver.make_specific_mutant( mutant_poses, native_poses, m );
 
 		// assert that the native poses are not changed

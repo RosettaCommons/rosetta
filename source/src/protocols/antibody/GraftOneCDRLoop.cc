@@ -33,7 +33,7 @@ namespace antibody {
 using namespace core;
 
 
-GraftOneCDRLoop::GraftOneCDRLoop() {}
+GraftOneCDRLoop::GraftOneCDRLoop() = default;
 
 
 GraftOneCDRLoop::GraftOneCDRLoop( CDRNameEnum const & cdr_name,

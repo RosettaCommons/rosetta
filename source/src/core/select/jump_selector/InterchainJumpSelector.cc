@@ -38,10 +38,9 @@ namespace core {
 namespace select {
 namespace jump_selector {
 
-InterchainJumpSelector::InterchainJumpSelector()
-{}
+InterchainJumpSelector::InterchainJumpSelector() = default;
 
-InterchainJumpSelector::~InterchainJumpSelector() {}
+InterchainJumpSelector::~InterchainJumpSelector() = default;
 
 /// @brief Copy constructor
 InterchainJumpSelector::InterchainJumpSelector( InterchainJumpSelector const & )

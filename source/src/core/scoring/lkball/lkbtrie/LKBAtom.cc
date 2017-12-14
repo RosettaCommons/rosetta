@@ -40,7 +40,7 @@ namespace lkbtrie {
 
 LKBAtom::LKBAtom() : n_attached_waters_( 0 ) {}
 
-LKBAtom::~LKBAtom() {}
+LKBAtom::~LKBAtom() = default;
 
 /// @brief send a description of the atom to standard out
 void

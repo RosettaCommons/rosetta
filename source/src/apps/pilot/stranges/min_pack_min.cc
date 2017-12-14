@@ -92,19 +92,19 @@ public:
 
 	MinPackMinMover();
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual MoverOP clone() const {
+	MoverOP clone() const override {
 		return MoverOP( new MinPackMinMover( *this ) );
 	}
 
-	virtual
+
 	std::string
-	get_name() const {
+	get_name() const override {
 		return "MinPackMinMover";
 	}
 
-	virtual MoverOP fresh_instance() const {
+	MoverOP fresh_instance() const override {
 		return MoverOP( new MinPackMinMover );
 	}
 

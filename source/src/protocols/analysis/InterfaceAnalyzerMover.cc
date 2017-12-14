@@ -164,7 +164,7 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 //Alternate constructor for multichain poses
 //Takes a set of ints for the chain nums
 InterfaceAnalyzerMover::InterfaceAnalyzerMover(
-	std::set<int> fixed_chains,
+	std::set<int> const & fixed_chains,
 	bool const tracer,
 	core::scoring::ScoreFunctionCOP sf,
 	bool compute_packstat,
@@ -174,7 +174,7 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 ) :
 	Mover(),
 	interface_jump_(1),
-	fixed_chains_(std::move(fixed_chains)),
+	fixed_chains_(fixed_chains),
 	tracer_(tracer),
 	compute_packstat_(compute_packstat),
 	explicit_constructor_(true),

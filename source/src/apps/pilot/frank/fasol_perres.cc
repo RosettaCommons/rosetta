@@ -111,8 +111,8 @@ OPT_1GRP_KEY(Boolean, fasol, classic)
 
 class FaSolReporter : public protocols::moves::Mover {
 public:
-	FaSolReporter(){}
-	void apply( core::pose::Pose & pose) {
+	FaSolReporter()= default;
+	void apply( core::pose::Pose & pose) override {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
@@ -190,8 +190,8 @@ public:
 						iru  = energy_graph.get_node(ires)->const_edge_list_begin(),
 						irue = energy_graph.get_node(ires)->const_edge_list_end();
 						iru != irue; ++iru ) {
-					EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-					int jres=(int)edge->get_other_ind(ires);
+					auto const * edge( static_cast< EnergyEdge const *> (*iru) );
+					auto jres=(int)edge->get_other_ind(ires);
 					core::conformation::Residue const &rsd2( pose.residue(jres) );
 					if ( !rsd2.is_protein() ) continue;
 
@@ -286,7 +286,7 @@ public:
 				<< " " << pose.residue(ires).name1() << " " << fa_sol_i+lk_ball_i << " " << fa_atr_i+fa_rep_i << " " << burial_i << std::endl;
 		}
 	}
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "FaSolReporter";
 	}
 };
@@ -305,7 +305,7 @@ my_main( void* ) {
 		excn.show( std::cerr );
 	}
 
-	return 0;
+	return nullptr;
 }
 
 

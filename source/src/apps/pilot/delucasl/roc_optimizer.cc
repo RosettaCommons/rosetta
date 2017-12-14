@@ -205,7 +205,7 @@ protocols::moves::MoverOP setup_slide_mover()
 protocols::moves::MoverOP setup_score_mover( protocols::qsar::scoring_grid::GridSetCOP grid_set )
 {
 	std::vector<std::string> chains;
-	chains.push_back("X");
+	chains.emplace_back("X");
 
 	core::scoring::ScoreFunctionOP score_fxn(core::scoring::get_score_function_legacy( "score12prime.wts" ));
 
@@ -330,9 +330,9 @@ void dump_curve_to_db(
 	std::string insert_string = "INSERT INTO roc_curve VALUES(NULL,?,?,?);";
 	cppdb::statement insert_statement(basic::database::safely_prepare_statement(insert_string,db_session));
 	insert_statement.bind(1,curve_id);
-	for ( utility::vector1<std::pair<platform::Real, platform::Real> >::const_iterator curve_it = curve.begin(); curve_it != curve.end(); ++curve_it ) {
-		insert_statement.bind(2,curve_it->first);
-		insert_statement.bind(3,curve_it->second);
+	for ( auto const & curve_it : curve ) {
+		insert_statement.bind(2,curve_it.first);
+		insert_statement.bind(3,curve_it.second);
 		basic::database::safely_write_to_database(insert_statement);
 	}
 }

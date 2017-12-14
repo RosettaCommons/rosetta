@@ -203,7 +203,7 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 	} else {
 		find_hits_end_time = time(nullptr);
 	}
-	long find_hits_time = (long)(find_hits_end_time - matcher_start_time );
+	auto find_hits_time = (long)(find_hits_end_time - matcher_start_time );
 	time_t matcher_end_time = time(nullptr);
 	std::string const success_str( processor->match_processing_successful() ? "successful." : "not sucessful." );
 	tr << "Matcher ran for " << (long)(matcher_end_time - matcher_start_time)
@@ -293,7 +293,7 @@ MatcherMover::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	incorporate_matches_into_pose_ = tag->getOption<bool>( "incorporate_matches_into_pose", 1 );
+	incorporate_matches_into_pose_ = tag->getOption<bool>( "incorporate_matches_into_pose", true );
 	if ( tag->hasOption( "residues_for_geomcsts" ) ) {
 		std::string const selector_str = tag->getOption< std::string >( "residues_for_geomcsts" );
 		utility::vector1< std::string > const selector_strs = utility::string_split( selector_str, ',' );

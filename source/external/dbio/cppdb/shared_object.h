@@ -28,7 +28,7 @@ namespace cppdb {
 	///
 	class CPPDB_API shared_object : public ref_counted {
 		shared_object() : handle_(0) {}
-		shared_object(std::string name,void *h);
+		shared_object(std::string const & name,void *h);
 		shared_object(shared_object const &);
 		void operator=(shared_object const &);
 	public:

@@ -41,19 +41,18 @@ static basic::Tracer TR( "protocols.match.output.MatchProcessor" );
 
 MatchProcessor::MatchProcessor()
 : match_processing_successful_(false), writer_(/* NULL */),
-	num_matches_processed_(0), up_down_filt_(/* NULL */), up_coll_filt_(NULL)
+	num_matches_processed_(0), up_down_filt_(/* NULL */), up_coll_filt_(nullptr)
 {
 	filter_failcounts_.clear();
 }
 
 
-MatchProcessor::~MatchProcessor()
-{}
+MatchProcessor::~MatchProcessor() = default;
 
 void
 MatchProcessor::begin_processing()
 {
-	runtime_assert( writer_ != 0 );
+	runtime_assert( writer_ != nullptr );
 	num_matches_processed_ = 0;
 	match_processing_successful_ = false;
 	filter_failcounts_.clear();
@@ -96,7 +95,7 @@ MatchProcessor::output_writer()
 void
 MatchProcessor::note_filter_fail( std::string filter_name )
 {
-	std::map< std::string, core::Size >::iterator map_it( filter_failcounts_.find( filter_name ) );
+	auto map_it( filter_failcounts_.find( filter_name ) );
 	if ( map_it == filter_failcounts_.end() ) {
 		filter_failcounts_.insert( std::pair< std::string, core::Size >( filter_name, 1 ) );
 	} else map_it->second++;

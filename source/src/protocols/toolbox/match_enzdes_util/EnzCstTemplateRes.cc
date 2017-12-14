@@ -31,6 +31,7 @@
 
 
 // Utility Headers
+#include <utility>
 #include <utility/string_util.hh>
 #include <iostream>
 #include <string>
@@ -68,10 +69,10 @@ namespace toolbox {
 namespace match_enzdes_util {
 
 /// @details Auto-generated virtual destructor
-EnzCstTemplateRes::~EnzCstTemplateRes() {}
+EnzCstTemplateRes::~EnzCstTemplateRes() = default;
 
 /// @details Auto-generated virtual destructor
-EnzCstTemplateResAtoms::~EnzCstTemplateResAtoms() {}
+EnzCstTemplateResAtoms::~EnzCstTemplateResAtoms() = default;
 
 
 void
@@ -88,13 +89,12 @@ EnzCstTemplateResAtoms::remap_atomid_vector(
 	std::vector< core::id::AtomID > & atomid_vec
 )
 {
-	for ( std::vector< core::id::AtomID >::iterator vec_it = atomid_vec.begin();
-			vec_it != atomid_vec.end(); ++vec_it ) {
+	for ( auto & vec_it : atomid_vec ) {
 
-		core::Size newpos = smap[ vec_it->rsd() ];
+		core::Size newpos = smap[ vec_it.rsd() ];
 		if ( newpos == 0 ) utility_exit_with_message("A catalytic residue is apparently missing from the pose");
 
-		*vec_it = core::id::AtomID( vec_it->atomno(), newpos );
+		vec_it = core::id::AtomID( vec_it.atomno(), newpos );
 	}
 }
 
@@ -104,7 +104,7 @@ EnzCstTemplateRes::EnzCstTemplateRes(
 ) : rb_minimizable_(true), is_backbone_(false),
 	identical_tag_found_(false), corresponding_res_block_(0),
 	corresponding_res_num_in_block_(0),
-	restype_set_(src_restype_set), enz_io_param_( /* NULL */ )
+	restype_set_(std::move(src_restype_set)), enz_io_param_( /* NULL */ )
 {
 	clear_all();
 }
@@ -119,8 +119,8 @@ EnzCstTemplateRes::EnzCstTemplateRes(
 	identical_tag_found_(false),
 	corresponding_res_block_(0),
 	corresponding_res_num_in_block_(0),
-	restype_set_(src_restype_set),
-	enz_io_param_( src_enzio_param)
+	restype_set_(std::move(src_restype_set)),
+	enz_io_param_(std::move( src_enzio_param))
 {
 	clear_all();
 }
@@ -148,7 +148,7 @@ EnzCstTemplateRes::EnzCstTemplateRes(
 	corresponding_res_block_(other->corresponding_res_block_),
 	corresponding_res_num_in_block_(other->corresponding_res_num_in_block_),
 	restype_set_(other->restype_set_),
-	enz_io_param_(new_ref_param),
+	enz_io_param_(std::move(new_ref_param)),
 	param_index_(other->param_index_)
 {
 }
@@ -162,11 +162,11 @@ void EnzCstTemplateRes::initialize_from_params( std::string const & a1, std::str
 	atom3_.push_back(a3);
 
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
-	for ( std::vector< std::string >::const_iterator it = allowed_3res.begin(); it != allowed_3res.end(); ++it ) {
-		if ( restype_set->has_name3( *it ) ) {
-			allowed_res_types_.push_back( *it );
+	for ( auto const & allowed_3re : allowed_3res ) {
+		if ( restype_set->has_name3( allowed_3re ) ) {
+			allowed_res_types_.push_back( allowed_3re );
 		} else {
-			utility_exit_with_message("Error in input: Residue with 3-letter code "+*it+" is unknown.");
+			utility_exit_with_message("Error in input: Residue with 3-letter code "+allowed_3re+" is unknown.");
 		}
 	}
 }
@@ -226,12 +226,12 @@ EnzCstTemplateRes::read_params(std::istringstream & line_stream)
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 
 	//first process 3-letter code input
-	for ( std::vector< std::string >::iterator it = allowed_3res_raw.begin(); it != allowed_3res_raw.end(); ++it ) {
-		if ( it->size() == 2 ) *it = " " + *it;
-		if ( restype_set->has_name3( *it ) ) {
-			allowed_res_types_.push_back( *it );
+	for ( auto & it : allowed_3res_raw ) {
+		if ( it.size() == 2 ) it = " " + it;
+		if ( restype_set->has_name3( it ) ) {
+			allowed_res_types_.push_back( it );
 		} else {
-			utility_exit_with_message("Error in cstfile: Residue with 3-letter code "+*it+" is unknown.");
+			utility_exit_with_message("Error in cstfile: Residue with 3-letter code "+it+" is unknown.");
 		}
 	}
 	//and now do the same for 1-letter code input (only canonical aas will work)
@@ -267,8 +267,8 @@ void EnzCstTemplateRes::show_params() const
 	tr.Info << "Parameters read for template residue: atom ids are :";
 	for ( core::Size i = 1; i <= atom1_.size(); ++i ) tr.Info << " (" << atom1_[i] << " " << atom2_[i] << " " << atom3_[i] << ")";
 	tr.Info << ", first atom name is " << at1_type_  <<" and allowed residues are: ";
-	for ( utility::vector1< std::string >::const_iterator res_it = allowed_res_types_.begin(); res_it != allowed_res_types_.end(); ++res_it ) {
-		tr.Info << *res_it << ", ";
+	for ( auto const & allowed_res_type : allowed_res_types_ ) {
+		tr.Info << allowed_res_type << ", ";
 	}
 	tr.Info <<  std::endl ;
 }
@@ -292,26 +292,26 @@ void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
 
 	//then check whether residues specified in the pdbfile were in the list specified in the cstfile,
 	//and for each residue, check whether the atoms specified in the cst file actually match atoms in this residue type
-	for ( std::map< Size, EnzCstTemplateResAtomsOP >::iterator respos_it = template_cache->seqpos_map_.begin(); respos_it != template_cache->seqpos_map_.end(); ++respos_it ) {
+	for ( auto & respos_it : template_cache->seqpos_map_ ) {
 
-		ResidueTypeCOP cur_res = pose.residue_type_ptr( respos_it->first );
-		std::string cur_res_name3 = pose.residue( respos_it->first ).name3();
+		ResidueTypeCOP cur_res = pose.residue_type_ptr( respos_it.first );
+		std::string cur_res_name3 = pose.residue( respos_it.first ).name3();
 		//utility::trim( cur_res_name3 );
 
 		//tr.Info << "resis in pose " << pose.residue( respos_it->first ).name3() << " " << respos_it->first <<";";
 
 		if ( std::find( allowed_res_types_.begin(), allowed_res_types_.end(), cur_res_name3 ) == allowed_res_types_.end() ) {
-			std::cerr << "Error: residue " << pose.residue( respos_it->first).name3() << respos_it->first << "found in pdb header is not allowed by data in cstfile." << std::endl;
+			std::cerr << "Error: residue " << pose.residue( respos_it.first).name3() << respos_it.first << "found in pdb header is not allowed by data in cstfile." << std::endl;
 			std::cerr << "Allowed restypes:";
-			for ( utility::vector1< std::string >::const_iterator iter = allowed_res_types_.begin(); iter != allowed_res_types_.end(); ++iter ) {
-				std::cerr << " " << *iter;
+			for ( auto const & allowed_res_type : allowed_res_types_ ) {
+				std::cerr << " " << allowed_res_type;
 			}
 			std::cerr << std::endl;
 			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		}
 
 		//now assign the atoms based on the cst file input, input of atom name takes priority  over input of atom type
-		std::map< core::chemical::ResidueTypeCOP, utility::vector1< utility::vector1< core::Size > > >::iterator res_aid_it = atom_inds_for_restype_.find( cur_res );
+		auto res_aid_it = atom_inds_for_restype_.find( cur_res );
 
 		if ( res_aid_it == atom_inds_for_restype_.end() ) {
 			this->determine_atom_inds_for_restype( cur_res );
@@ -319,21 +319,21 @@ void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
 		}
 
 		for ( core::Size at1_ct = 1; at1_ct <= res_aid_it->second[1].size(); ++at1_ct ) {
-			core::id::AtomID at1id( res_aid_it->second[1][at1_ct], respos_it->first);
-			respos_it->second->atom1_.push_back( at1id );
+			core::id::AtomID at1id( res_aid_it->second[1][at1_ct], respos_it.first);
+			respos_it.second->atom1_.push_back( at1id );
 			//tr << "for pose residue " << respos_it->first << " atom1, pushed back id " << res_aid_it->second[1][at1_ct] << std::endl;
 		}
 
 		for ( core::Size at2_ct = 1; at2_ct <= res_aid_it->second[2].size(); ++at2_ct ) {
-			core::id::AtomID at2id( res_aid_it->second[2][at2_ct], respos_it->first);
-			respos_it->second->atom2_.push_back( at2id );
+			core::id::AtomID at2id( res_aid_it->second[2][at2_ct], respos_it.first);
+			respos_it.second->atom2_.push_back( at2id );
 
 			//tr << "for pose residue " << respos_it->first << " atom2, pushed back id " << res_aid_it->second[2][at2_ct] << std::endl;
 		}
 
 		for ( core::Size at3_ct = 1; at3_ct <= res_aid_it->second[3].size(); ++at3_ct ) {
-			core::id::AtomID at3id( res_aid_it->second[3][at3_ct], respos_it->first);
-			respos_it->second->atom3_.push_back( at3id );
+			core::id::AtomID at3id( res_aid_it->second[3][at3_ct], respos_it.first);
+			respos_it.second->atom3_.push_back( at3id );
 			//tr << "for pose residue " << respos_it->first << " atom3, pushed back id " << res_aid_it->second[3][at3_ct] << std::endl;
 		}
 
@@ -349,7 +349,7 @@ EnzCstTemplateRes::get_template_atoms_at_pos( core::pose::Pose const & pose, cor
 
 	EnzCstTemplateResCacheCOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_.lock()->cst_block() )->template_res_cache( param_index_ ) );
 
-	std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator at_it = template_cache->seqpos_map_.find( seqpos );
+	auto at_it = template_cache->seqpos_map_.find( seqpos );
 
 	if ( at_it == template_cache->seqpos_map_.end() ) {
 		utility_exit_with_message("Error: could not find template atoms in EnzCstTemplateRes.\n");
@@ -399,7 +399,7 @@ EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 		EnzCstTemplateResCacheCOP corresponding_res_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( corresponding_res->enz_io_param_.lock()->cst_block() )->template_res_cache( corresponding_res->param_index_ ) );
 
 		//found the right template residue, now get the positions in the pose where it is
-		for ( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = corresponding_res_cache->seqpos_map_begin();
+		for ( auto pos_it = corresponding_res_cache->seqpos_map_begin();
 				pos_it != corresponding_res_cache->seqpos_map_end(); ++pos_it ) {
 			template_cache->add_position_in_pose( pos_it->first );
 		}
@@ -415,7 +415,7 @@ EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 	utility::vector1< core::Size > found_positions;
 	for ( Size i = 1; i <= pose.size(); ++i ) {
 		std::string cur_res_name3 = pose.residue( i ).name3();
-		utility::vector1< std::string >::iterator resfind = find( allowed_res_types_.begin(), allowed_res_types_.end(), cur_res_name3);
+		auto resfind = find( allowed_res_types_.begin(), allowed_res_types_.end(), cur_res_name3);
 
 		if ( resfind != allowed_res_types_.end() ) found_positions.push_back( i );
 	}
@@ -549,20 +549,20 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 
 
 		//now we have to find the base atoms for each possible atoms for atom1
-		for ( utility::vector1< core::Size >::iterator at_it = at1_ids.begin(); at_it != at1_ids.end(); ++at_it ) {
+		for ( unsigned long & at1_id : at1_ids ) {
 
-			Size id_firstbase = restype->atom_base( *at_it );
+			Size id_firstbase = restype->atom_base( at1_id );
 			Size id_secondbase = restype->atom_base( id_firstbase );
 
 			//ATTENTION: BACKBONE CONSTRAINT SPECIAL CASE: if an nbb or a CA atom are constrained
 			//the secondbase will be identical to the first atom, i.e. this torsion will be undefined
 			//to circumvent this, we set the id_secondbase to 3, the C atom
-			if ( ( *at_it == 1) && ( id_firstbase == 2 ) && (id_secondbase == 1 ) ) id_secondbase = 3;
-			else if ( ( *at_it == 2) && ( id_firstbase == 1) && (id_secondbase == 2 ) ) id_secondbase = 3;
+			if ( ( at1_id == 1) && ( id_firstbase == 2 ) && (id_secondbase == 1 ) ) id_secondbase = 3;
+			else if ( ( at1_id == 2) && ( id_firstbase == 1) && (id_secondbase == 2 ) ) id_secondbase = 3;
 
 			//ATTENTION: HISTIDINE SPECIAL CASE: if the first atom happens to be the ND1, we set the second base
 			//to be the CD2. this ensures that torsion B is identical for ND1 and NE2, so only one cst file needed
-			if ( restype->name3() == "HIS" && restype->atom_name( *at_it ) == " ND1" ) {
+			if ( restype->name3() == "HIS" && restype->atom_name( at1_id ) == " ND1" ) {
 				id_secondbase = restype->atom_index( " CD2");
 			}
 
@@ -694,8 +694,8 @@ EnzCstTemplateRes::identical_info_consistency_check() const
 	if ( corresponding_res_num_in_block_ == 1 ) residue_names_to_match = corresponding_pair->resA()->allowed_res_types();
 	else residue_names_to_match = corresponding_pair->resB()->allowed_res_types();
 
-	for ( utility::vector1< std::string >::const_iterator restype_it = allowed_res_types_.begin();  restype_it != allowed_res_types_.end(); ++restype_it ) {
-		utility::vector1< std::string >::const_iterator resfind = find(residue_names_to_match.begin(), residue_names_to_match.end(), *restype_it );
+	for ( auto const & allowed_res_type : allowed_res_types_ ) {
+		utility::vector1< std::string >::const_iterator resfind = find(residue_names_to_match.begin(), residue_names_to_match.end(), allowed_res_type );
 
 		if ( resfind == residue_names_to_match.end() ) {
 			utility_exit_with_message("Error in cstfile 'identical' tag for Cstblock "+utility::to_string( enz_io_param_.lock()->cst_block() ) + " Allowed residue types for this cst block is not identical to the allowed residue types for the other cst_block.\n");

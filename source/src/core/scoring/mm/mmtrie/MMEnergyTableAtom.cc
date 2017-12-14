@@ -51,7 +51,7 @@ MMEnergyTableAtom::MMEnergyTableAtom( conformation::Residue const & res, Size at
 	is_wat_( false ) // hydrate/SPaDES protocol
 {}
 
-MMEnergyTableAtom::~MMEnergyTableAtom() {}
+MMEnergyTableAtom::~MMEnergyTableAtom() = default;
 
 /// @brief send a description of the atom to standard out
 void

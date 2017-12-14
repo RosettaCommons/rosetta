@@ -106,8 +106,7 @@ SixDTransRotPotential::SixDTransRotPotential( numeric::MathNTensor< core::Real, 
 }
 
 //Destructor
-SixDTransRotPotential::~SixDTransRotPotential()
-{}
+SixDTransRotPotential::~SixDTransRotPotential() = default;
 
 ///////////////////////////////////////////////////////////////////////////////////
 void

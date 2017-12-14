@@ -18,6 +18,7 @@
 #include <numeric/NumericTraits.hh>
 #include <numeric/util.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <string>
 
@@ -64,12 +65,12 @@ public:
 	typedef std::map<std::string,numeric::Real> Varmap;
 
 	// Setup the grammar of the calculator
-	CalculatorParser(Varmap variables) :
+	explicit CalculatorParser(Varmap const & variables) :
 		CalculatorParser::base_type(parser_)
 	{
 
-		for ( Varmap::iterator iter(variables.begin()); iter != variables.end(); ++iter ) {
-			add_symbol(iter->first,iter->second);
+		for ( auto & variable : variables ) {
+			add_symbol(variable.first,variable.second);
 		}
 
 		using namespace boost::spirit::qi;
@@ -151,7 +152,7 @@ void do_add_symbol(CalculatorParser & cp, std::string name, double value) {
 
 //--------- Functions for externally visible calculator object ----------------///
 
-Calculator::~Calculator() {}
+Calculator::~Calculator() = default;
 
 Calculator::Calculator(std::string const & equation):
 	equation_(equation)

@@ -62,7 +62,7 @@ Size
 get_position_in_vector( utility::vector1< std::string> & vec, std::string const & element )
 {
 	Size count( 1 );
-	for ( utility::vector1<std::string>::iterator iter = vec.begin(); iter < vec.end(); ++iter ) {
+	for ( auto iter = vec.begin(); iter < vec.end(); ++iter ) {
 		if ( *iter == element ) return count;
 		count++;
 	}
@@ -114,7 +114,7 @@ CarbonHBondPotential::read_potential()
 		if ( bin_width_ < 0.00001 ) bin_width_ = bin_max - bin_min;
 		if ( bin_max > max_dist_ ) max_dist_ = bin_max;
 
-		Size const bin = static_cast<Size>( bin_max/bin_width_ + 0.001 );
+		auto const bin = static_cast<Size>( bin_max/bin_width_ + 0.001 );
 		if ( bin <= num_bins_ )  {
 			carbon_hbond_parameter_[pos]( bin ) = value;
 		}

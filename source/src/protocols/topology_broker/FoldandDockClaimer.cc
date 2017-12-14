@@ -55,7 +55,7 @@ namespace topology_broker {
 using namespace core;
 
 
-FoldandDockClaimer::FoldandDockClaimer() {}
+FoldandDockClaimer::FoldandDockClaimer() = default;
 
 FoldandDockClaimer::FoldandDockClaimer( pose::Pose const& input_pose ) :
 	input_pose_(input_pose)

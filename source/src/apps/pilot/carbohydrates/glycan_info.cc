@@ -85,7 +85,7 @@ public:  // Standard methods
 	}
 
 	// Destructor
-	virtual ~GlycanInfoMover() {}
+	~GlycanInfoMover() override = default;
 
 
 public:  // Standard Rosetta methods
@@ -93,9 +93,9 @@ public:  // Standard Rosetta methods
 
 
 	/// @brief  Generate string representation of DockGlycansProtocol for debugging purposes.
-	virtual
+
 	void
-	show( std::ostream & output=std::cout ) const
+	show( std::ostream & output=std::cout ) const override
 	{
 		protocols::moves::Mover::show( output );  // name, type, tag
 	}
@@ -103,23 +103,23 @@ public:  // Standard Rosetta methods
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	virtual
+
 	std::string
-	get_name() const
+	get_name() const override
 	{
 		return type();
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	clone() const
+	clone() const override
 	{
 		return protocols::moves::MoverOP( new GlycanInfoMover( *this ) );
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const
+	fresh_instance() const override
 	{
 		return protocols::moves::MoverOP( new GlycanInfoMover );
 	}
@@ -143,9 +143,9 @@ public:  // Standard Rosetta methods
 		return outstring;
 	}
 	/// @brief  Apply the corresponding protocol to <pose>.
-	virtual
+
 	void
-	apply( core::pose::Pose & pose )
+	apply( core::pose::Pose & pose ) override
 	{
 		using namespace core::pose::carbohydrates;
 
@@ -186,8 +186,8 @@ public:  // Standard Rosetta methods
 		}
 	}
 
-	virtual bool
-	reinitialize_for_each_job() const {
+	bool
+	reinitialize_for_each_job() const override {
 		return true;
 	}
 
@@ -228,7 +228,7 @@ private:  // Private data
 
 };
 
-typedef utility::pointer::shared_ptr< GlycanInfoMover > GlycanInfoMoverOP;
+using GlycanInfoMoverOP = utility::pointer::shared_ptr<GlycanInfoMover>;
 
 int
 main( int argc, char * argv [] )

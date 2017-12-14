@@ -38,14 +38,14 @@ namespace task {
 
 static basic::Tracer tr( "core.pack.task.IGEdgeReweightContainer" );
 
-IGEdgeReweighter::~IGEdgeReweighter() {}
+IGEdgeReweighter::~IGEdgeReweighter() = default;
 
 IGEdgeReweightContainer::IGEdgeReweightContainer( Size nres )
 {
 	nres_ = nres;
 	edge_reweighters_.clear();
 }
-IGEdgeReweightContainer::~IGEdgeReweightContainer() {}
+IGEdgeReweightContainer::~IGEdgeReweightContainer() = default;
 
 
 Real
@@ -62,12 +62,9 @@ IGEdgeReweightContainer::res_res_weight(
 	Real reweight = 1.0;
 	bool firstpass = true;
 
-	for ( utility::vector1< IGEdgeReweighterOP >::const_iterator re_it = edge_reweighters_.begin();
-			re_it != edge_reweighters_.end();
-			++re_it
-			) {
+	for ( auto const & edge_reweighter : edge_reweighters_ ) {
 
-		Real weight_this_upweighter = (*re_it)->get_edge_reweight( pose, task, res1id, res2id );
+		Real weight_this_upweighter = edge_reweighter->get_edge_reweight( pose, task, res1id, res2id );
 
 		if ( firstpass ) {
 			reweight = weight_this_upweighter;

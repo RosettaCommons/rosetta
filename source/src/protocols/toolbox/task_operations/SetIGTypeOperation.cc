@@ -38,7 +38,7 @@ SetIGTypeOperation::SetIGTypeOperation():
 	double_lazy_(false)
 {}
 
-SetIGTypeOperation::~SetIGTypeOperation(){}
+SetIGTypeOperation::~SetIGTypeOperation()= default;
 
 core::pack::task::operation::TaskOperationOP SetIGTypeOperation::clone() const
 {

@@ -118,7 +118,7 @@ public:
 		EnergyMap & emap
 	);
 
-	virtual ~LK_BallInvoker() {}
+	~LK_BallInvoker() override = default;
 
 protected:
 	inline LK_BallEnergy const & lk_ball() const;
@@ -152,7 +152,7 @@ public:
 		EnergyMap & emap
 	);
 
-	virtual ~LK_Ball_RPE_Invoker() {}
+	~LK_Ball_RPE_Invoker() override = default;
 
 	void invoke( etable::count_pair::CountPairFunction const & cp ) override;
 };
@@ -169,7 +169,7 @@ public:
 		EnergyMap & emap
 	);
 
-	virtual ~LK_Ball_BB_BB_E_Invoker() {}
+	~LK_Ball_BB_BB_E_Invoker() override = default;
 
 	void invoke( etable::count_pair::CountPairFunction const & cp ) override;
 };
@@ -186,7 +186,7 @@ public:
 		EnergyMap & emap
 	);
 
-	virtual ~LK_Ball_BB_SC_E_Invoker() {}
+	~LK_Ball_BB_SC_E_Invoker() override = default;
 
 	void invoke( etable::count_pair::CountPairFunction const & cp ) override;
 };
@@ -203,7 +203,7 @@ public:
 		EnergyMap & emap
 	);
 
-	virtual ~LK_Ball_SC_SC_E_Invoker() {}
+	~LK_Ball_SC_SC_E_Invoker() override = default;
 
 	void invoke( etable::count_pair::CountPairFunction const & cp ) override;
 };
@@ -493,7 +493,7 @@ update_cached_lkb_resinfo(
 	using conformation::residue_datacache::LK_BALL_INFO;
 	if ( residue_data_cache.has( LK_BALL_INFO ) ) {
 		debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( residue_data_cache.get_ptr( LK_BALL_INFO )));
-		LKB_ResidueInfo & info( static_cast< LKB_ResidueInfo & > ( residue_data_cache.get( LK_BALL_INFO )));
+		auto & info( static_cast< LKB_ResidueInfo & > ( residue_data_cache.get( LK_BALL_INFO )));
 		info.build_waters( rsd, compute_derivs ); // update the coordinates for the existing lkb-resinfo object
 	} else {
 		LKB_ResidueInfoOP info( new LKB_ResidueInfo( rsd ) );
@@ -525,8 +525,8 @@ class LKB_ResPairMinData : public basic::datacache::CacheableData {
 public:
 	LKB_ResPairMinData();
 	LKB_ResPairMinData( LKB_ResPairMinData const & src );
-	virtual ~LKB_ResPairMinData() {}
-	virtual basic::datacache::CacheableDataOP clone() const
+	~LKB_ResPairMinData() override = default;
+	basic::datacache::CacheableDataOP clone() const override
 	{ return basic::datacache::CacheableDataOP( new LKB_ResPairMinData( *this ) ); }
 
 	void
@@ -546,15 +546,13 @@ private:
 	LKB_ResidueInfoCOP res1_data_;
 	LKB_ResidueInfoCOP res2_data_;
 
-	bool initialized_;
+	bool initialized_{ false };
 };
 
-typedef utility::pointer::shared_ptr< LKB_ResPairMinData >       LKB_ResPairMinDataOP;
-typedef utility::pointer::shared_ptr< LKB_ResPairMinData const > LKB_ResPairMinDataCOP;
+using LKB_ResPairMinDataOP = utility::pointer::shared_ptr<LKB_ResPairMinData>;
+using LKB_ResPairMinDataCOP = utility::pointer::shared_ptr<const LKB_ResPairMinData>;
 
-LKB_ResPairMinData::LKB_ResPairMinData():
-	initialized_( false )
-{}
+LKB_ResPairMinData::LKB_ResPairMinData()= default;
 
 LKB_ResPairMinData::LKB_ResPairMinData( LKB_ResPairMinData const & src ) :
 	res1_data_( src.res1_data_ ),
@@ -800,7 +798,7 @@ LK_BallEnergy::update_residue_for_packing(
 	LKBRotamerTrieOP one_rotamer_trie = create_rotamer_trie( pose.residue( resid ) );
 
 	// grab non-const & of the cached tries and replace resid's trie with a new one.
-	TrieCollection & trie_collection
+	auto & trie_collection
 		( static_cast< TrieCollection & > (pose.energies().data().get( EnergiesCacheableDataType::LKB_TRIE_COLLECTION )));
 	trie_collection.trie( resid, one_rotamer_trie );
 }
@@ -1162,11 +1160,11 @@ LK_BallEnergy::backbone_backbone_energy(
 	using conformation::residue_datacache::LK_BALL_INFO;
 
 	/// if we got here we should have come through packing...
-	debug_assert( rsd1.data_ptr() != 0 &&
-		rsd1.data().get_const_ptr( LK_BALL_INFO ) != 0 &&
+	debug_assert( rsd1.data_ptr() != nullptr &&
+		rsd1.data().get_const_ptr( LK_BALL_INFO ) != nullptr &&
 		dynamic_cast< LKB_ResidueInfo const * > ( rsd1.data().get_raw_const_ptr( LK_BALL_INFO )));
-	debug_assert( rsd2.data_ptr() != 0 &&
-		rsd2.data().get_const_ptr( LK_BALL_INFO ) != 0 &&
+	debug_assert( rsd2.data_ptr() != nullptr &&
+		rsd2.data().get_const_ptr( LK_BALL_INFO ) != nullptr &&
 		dynamic_cast< LKB_ResidueInfo const * > ( rsd2.data().get_raw_const_ptr( LK_BALL_INFO )));
 
 	using namespace etable::count_pair;
@@ -1198,11 +1196,11 @@ LK_BallEnergy::backbone_sidechain_energy(
 	using conformation::residue_datacache::LK_BALL_INFO;
 
 	/// if we got here we should have come through packing...
-	debug_assert( rsd1.data_ptr() != 0 &&
-		rsd1.data().get_const_ptr( LK_BALL_INFO ) != 0 &&
+	debug_assert( rsd1.data_ptr() != nullptr &&
+		rsd1.data().get_const_ptr( LK_BALL_INFO ) != nullptr &&
 		dynamic_cast< LKB_ResidueInfo const * > ( rsd1.data().get_raw_const_ptr( LK_BALL_INFO )));
-	debug_assert( rsd2.data_ptr() != 0 &&
-		rsd2.data().get_const_ptr( LK_BALL_INFO ) != 0 &&
+	debug_assert( rsd2.data_ptr() != nullptr &&
+		rsd2.data().get_const_ptr( LK_BALL_INFO ) != nullptr &&
 		dynamic_cast< LKB_ResidueInfo const * > ( rsd2.data().get_raw_const_ptr( LK_BALL_INFO )));
 
 	using namespace etable::count_pair;
@@ -1230,11 +1228,11 @@ LK_BallEnergy::sidechain_sidechain_energy(
 	using conformation::residue_datacache::LK_BALL_INFO;
 
 	/// if we got here we should have come through packing...
-	debug_assert( rsd1.data_ptr() != 0 &&
-		rsd1.data().get_const_ptr( LK_BALL_INFO ) != 0 &&
+	debug_assert( rsd1.data_ptr() != nullptr &&
+		rsd1.data().get_const_ptr( LK_BALL_INFO ) != nullptr &&
 		dynamic_cast< LKB_ResidueInfo const * > ( rsd1.data().get_raw_const_ptr( LK_BALL_INFO )));
-	debug_assert( rsd2.data_ptr() != 0 &&
-		rsd2.data().get_const_ptr( LK_BALL_INFO ) != 0 &&
+	debug_assert( rsd2.data_ptr() != nullptr &&
+		rsd2.data().get_const_ptr( LK_BALL_INFO ) != nullptr &&
 		dynamic_cast< LKB_ResidueInfo const * > ( rsd2.data().get_raw_const_ptr( LK_BALL_INFO )));
 
 	using namespace etable::count_pair;
@@ -1944,7 +1942,7 @@ LK_BallEnergy::evaluate_rotamer_background_energies(
 	RotamerTrieBaseCOP trie2 = ( static_cast< TrieCollection const & >
 		( pose.energies().data().get( EnergiesCacheableDataType::LKB_TRIE_COLLECTION )) ).trie( rsd.seqpos() );
 
-	if ( trie2 == NULL ) return;
+	if ( trie2 == nullptr ) return;
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( pose.residue( set.resid() ), rsd, trie1, trie2, pose, sfxn );
@@ -2008,7 +2006,7 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( rsd1 ) );
 	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( rsd2 ) );
 
-	ResiduePairNeighborList const & nblist =
+	auto const & nblist =
 		static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( lkball_nblist ));
 
 	bool use_lkbr_uncpl = (weights[core::scoring::lk_ball_bridge_uncpl]!=0);

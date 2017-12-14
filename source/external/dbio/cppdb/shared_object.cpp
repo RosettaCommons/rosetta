@@ -18,6 +18,7 @@
 #define CPPDB_SOURCE
 #include <cppdb/shared_object.h>
 #include <string>
+#include <utility>
 
 #if defined(CPPDB_DISABLE_SHARED_OBJECT_LOADING)
 // Disable shared object loading by simply asserting false when
@@ -72,7 +73,7 @@
 #	include <dlfcn.h>
 #endif
 namespace cppdb {
-	shared_object::shared_object(std::string name,void *h) :
+	shared_object::shared_object(std::string const & name,void *h) :
 		dlname_(name),
 		handle_(h)
 	{
@@ -90,7 +91,7 @@ namespace cppdb {
 		}
 		try {
 			dl.reset(new shared_object(name,h));
-			h=0;
+			h=nullptr;
 			return dl;
 		}
 		catch(...) {

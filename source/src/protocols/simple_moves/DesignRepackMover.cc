@@ -336,15 +336,15 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 		bool const repack( tag->getOption< bool >( "repack" ) );
 		repack_partner1_ = repack_partner2_ = repack;
 	} else {
-		repack_partner1_ = tag->getOption<bool>( "repack_partner1", 1 );
-		repack_partner2_ = tag->getOption<bool>( "repack_partner2", 1 );
+		repack_partner1_ = tag->getOption<bool>( "repack_partner1", true );
+		repack_partner2_ = tag->getOption<bool>( "repack_partner2", true );
 	}
 	if ( !tag->hasOption( "design_partner1" ) && !tag->hasOption( "design_partner2" ) && tag->hasOption( "design" ) ) {
 		bool const design( tag->getOption< bool >( "design" ) );
 		design_partner1_ = design_partner2_ = design;
 	} else {
-		design_partner1_ = tag->getOption<bool>( "design_partner1", 0 );
-		design_partner2_ = tag->getOption<bool>( "design_partner2", 1 );
+		design_partner1_ = tag->getOption<bool>( "design_partner1", false );
+		design_partner2_ = tag->getOption<bool>( "design_partner2", true );
 	}
 	TR<<"design partner1: "<<design_partner1_<<'\n';
 	TR<<"design partner2: "<<design_partner2_<<'\n';
@@ -353,13 +353,13 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 
 	runtime_assert( !( design_partner1_ && !repack_partner1_ ) );
 	runtime_assert( !( design_partner2_ && !repack_partner2_ ) );
-	optimize_foldtree_ = tag->getOption<bool>( "optimize_fold_tree", 1 );
+	optimize_foldtree_ = tag->getOption<bool>( "optimize_fold_tree", true );
 	if ( tag->hasOption( "minimize_rb" ) ) {
-		min_rb( tag->getOption<bool>( "minimize_rb", 1 ) );
+		min_rb( tag->getOption<bool>( "minimize_rb", true ) );
 	}
 
 	if ( tag->hasOption( "minimize_bb" ) ) {
-		utility::vector1< bool > minbb( pose.size(), tag->getOption<bool>( "minimize_bb", 1 ) );
+		utility::vector1< bool > minbb( pose.size(), tag->getOption<bool>( "minimize_bb", true ) );
 		min_bb( minbb );
 	}
 
@@ -367,19 +367,19 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 		utility::vector1< bool > minbb( pose.size(), true );
 		if ( tag->hasOption( "minimize_bb_ch1" ) ) {
 			for ( core::Size res_it=pose.conformation().chain_begin( 1 ); res_it<=pose.conformation().chain_end( 1 ); ++res_it ) {
-				minbb[ res_it ]=tag->getOption<bool>( "minimize_bb_ch1", 1 );
+				minbb[ res_it ]=tag->getOption<bool>( "minimize_bb_ch1", true );
 			}
 		}
 		if ( tag->hasOption( "minimize_bb_ch2" ) ) {
 			for ( core::Size res_it=pose.conformation().chain_begin( 2 ); res_it<=pose.conformation().chain_end( 2 ); ++res_it ) {
-				minbb[ res_it ]=tag->getOption<bool>( "minimize_bb_ch2", 1 );
+				minbb[ res_it ]=tag->getOption<bool>( "minimize_bb_ch2", true );
 			}
 		}
 		min_bb( minbb );
 	}//end specificatino of bb mininization
 
 	if ( tag->hasOption( "minimize_sc" ) ) {
-		utility::vector1< bool > minsc( pose.size(), tag->getOption< bool >( "minimize_sc", 1 ));
+		utility::vector1< bool > minsc( pose.size(), tag->getOption< bool >( "minimize_sc", true ));
 		min_sc( minsc );
 	}
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
@@ -395,9 +395,9 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 		target_residues( core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( utility::join(target_res_vec,",") ) ) );
 	}
 
-	repack_non_ala_ = tag->getOption<bool>( "repack_non_ala", 1 );
+	repack_non_ala_ = tag->getOption<bool>( "repack_non_ala", true );
 
-	symmetry_ = tag->getOption< bool >( "symmetry", 0 );
+	symmetry_ = tag->getOption< bool >( "symmetry", false );
 
 	if ( symmetry_ ) {
 		using namespace core::scoring::symmetry;
@@ -408,7 +408,7 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 		scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
 		scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
 	}
-	automatic_repacking_definition_ = tag->getOption<bool>( "automatic_repacking_definition", 1 );
+	automatic_repacking_definition_ = tag->getOption<bool>( "automatic_repacking_definition", true );
 	TR<<"repack scorefxn "<<scorefxn_repack<<" and minimize scorefxn "<<scorefxn_minimize<<" automatic_repacking_definition set to "<<automatic_repacking_definition_<<" optimize fold tree="<<optimize_foldtree_<< std::endl;
 }
 

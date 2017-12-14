@@ -40,7 +40,7 @@ BBDihedralSamplerBase::BBDihedralSamplerBase( core::id::MainchainTorsionType tor
 
 }
 
-BBDihedralSamplerBase::~BBDihedralSamplerBase(){}
+BBDihedralSamplerBase::~BBDihedralSamplerBase()= default;
 
 BBDihedralSamplerBase::BBDihedralSamplerBase( BBDihedralSamplerBase const & src ):
 	torsion_type_(src.torsion_type_),
@@ -52,7 +52,7 @@ BBDihedralSamplerBase::BBDihedralSamplerBase( BBDihedralSamplerBase const & src 
 BBDihedralSamplerBaseOP
 BBDihedralSamplerBase::clone() const {
 	utility_exit_with_message( "clone has been called on a BBDihedralSampler which has not overridden the base class implementation.");
-	return BBDihedralSamplerBaseOP(NULL);
+	return BBDihedralSamplerBaseOP(nullptr);
 }
 
 
@@ -69,18 +69,14 @@ BBDihedralSampler::BBDihedralSampler( core::id::MainchainTorsionType torsion_typ
 
 }
 
-BBDihedralSampler::~BBDihedralSampler(){}
+BBDihedralSampler::~BBDihedralSampler()= default;
 
-BBDihedralSampler::BBDihedralSampler( BBDihedralSampler const & src ):
-	BBDihedralSamplerBase( src )
-{
-
-}
+BBDihedralSampler::BBDihedralSampler( BBDihedralSampler const & /*src*/ ) = default;
 
 BBDihedralSamplerOP
 BBDihedralSampler::clone() const {
 	utility_exit_with_message( "clone has been called on a BBDihedralSampler which has not overridden the base class implementation.");
-	return BBDihedralSamplerOP(NULL);
+	return BBDihedralSamplerOP(nullptr);
 }
 
 
@@ -98,18 +94,14 @@ BBDihedralSampler2D::BBDihedralSampler2D( core::id::MainchainTorsionType torsion
 
 }
 
-BBDihedralSampler2D::~BBDihedralSampler2D(){}
+BBDihedralSampler2D::~BBDihedralSampler2D()= default;
 
-BBDihedralSampler2D::BBDihedralSampler2D( BBDihedralSampler2D const & src ):
-	BBDihedralSamplerBase( src )
-{
-
-}
+BBDihedralSampler2D::BBDihedralSampler2D( BBDihedralSampler2D const & /*src*/ ) = default;
 
 BBDihedralSampler2DOP
 BBDihedralSampler2D::clone() const {
 	utility_exit_with_message( "clone has been called on a BBDihedralSampler which has not overridden the base class implementation.");
-	return BBDihedralSampler2DOP(NULL);
+	return BBDihedralSampler2DOP(nullptr);
 }
 
 
@@ -127,18 +119,14 @@ BBDihedralSampler3D::BBDihedralSampler3D( core::id::MainchainTorsionType torsion
 
 }
 
-BBDihedralSampler3D::~BBDihedralSampler3D(){}
+BBDihedralSampler3D::~BBDihedralSampler3D()= default;
 
-BBDihedralSampler3D::BBDihedralSampler3D( BBDihedralSampler3D const & src ):
-	BBDihedralSamplerBase( src )
-{
-
-}
+BBDihedralSampler3D::BBDihedralSampler3D( BBDihedralSampler3D const & /*src*/ ) = default;
 
 BBDihedralSampler3DOP
 BBDihedralSampler3D::clone() const {
 	utility_exit_with_message( "clone has been called on a BBDihedralSampler which has not overridden the base class implementation.");
-	return BBDihedralSampler3DOP(NULL);
+	return BBDihedralSampler3DOP(nullptr);
 }
 
 
@@ -156,18 +144,14 @@ BBDihedralSamplerND::BBDihedralSamplerND( core::id::MainchainTorsionType torsion
 
 }
 
-BBDihedralSamplerND::~BBDihedralSamplerND(){}
+BBDihedralSamplerND::~BBDihedralSamplerND()= default;
 
-BBDihedralSamplerND::BBDihedralSamplerND( BBDihedralSamplerND const & src ):
-	BBDihedralSamplerBase( src )
-{
-
-}
+BBDihedralSamplerND::BBDihedralSamplerND( BBDihedralSamplerND const & /*src*/ ) = default;
 
 BBDihedralSamplerNDOP
 BBDihedralSamplerND::clone() const {
 	utility_exit_with_message( "clone has been called on a BBDihedralSampler which has not overridden the base class implementation.");
-	return BBDihedralSamplerNDOP(NULL);
+	return BBDihedralSamplerNDOP(nullptr);
 }
 
 } //protocols

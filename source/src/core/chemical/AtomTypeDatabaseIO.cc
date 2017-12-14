@@ -52,7 +52,7 @@ using basic::database::safely_write_to_database;
 using cppdb::statement;
 using cppdb::result;
 
-AtomTypeDatabaseIO::AtomTypeDatabaseIO() {}
+AtomTypeDatabaseIO::AtomTypeDatabaseIO() = default;
 
 AtomTypeDatabaseIO::~AtomTypeDatabaseIO() = default;
 

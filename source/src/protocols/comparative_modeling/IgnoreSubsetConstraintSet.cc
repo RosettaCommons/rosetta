@@ -60,11 +60,11 @@ namespace comparative_modeling {
 using namespace core;
 
 IgnoreSubsetConstraintSet::IgnoreSubsetConstraintSet(
-	std::set< int > residues_to_ignore,
+	std::set< int > const & residues_to_ignore,
 	ConstraintSet const & other
 ) :
 	ConstraintSet( other ),
-	ignore_list_(std::move( residues_to_ignore ))
+	ignore_list_( residues_to_ignore )
 {}
 
 /// @copy constructor. Does nothing.
@@ -79,7 +79,7 @@ ConstraintSet &
 IgnoreSubsetConstraintSet::operator = ( ConstraintSet const & rhs )
 {
 	if ( this != & rhs ) {
-		IgnoreSubsetConstraintSet const * iscs_rhs = dynamic_cast< IgnoreSubsetConstraintSet const * > ( & rhs );
+		auto const * iscs_rhs = dynamic_cast< IgnoreSubsetConstraintSet const * > ( & rhs );
 		if ( ! iscs_rhs ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "IgnoreSubsetConstraintSet handed a non IgnoreSubsetConstraintSet in operator =" );
 		}
@@ -95,7 +95,7 @@ IgnoreSubsetConstraintSet::clone() const {
 }
 
 void IgnoreSubsetConstraintSet::detached_copy( ConstraintSet const & src ) {
-	IgnoreSubsetConstraintSet const * iscs_src = dynamic_cast< IgnoreSubsetConstraintSet const * > ( & src );
+	auto const * iscs_src = dynamic_cast< IgnoreSubsetConstraintSet const * > ( & src );
 	if ( ! iscs_src ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "IgnoreSubsetConstraintSet handed a non IgnoreSubsetConstraintSet in detatched_copy" );
 	}
@@ -115,7 +115,7 @@ IgnoreSubsetConstraintSet::detached_clone() const
 bool
 IgnoreSubsetConstraintSet::same_type_as_me( ConstraintSet const & other, bool recurse /* = true */ ) const
 {
-	IgnoreSubsetConstraintSet const * iscs_other = dynamic_cast< IgnoreSubsetConstraintSet const * > ( &other );
+	auto const * iscs_other = dynamic_cast< IgnoreSubsetConstraintSet const * > ( &other );
 	if ( ! iscs_other ) return false;
 	if ( recurse ) {
 		return other.same_type_as_me( *this, false );

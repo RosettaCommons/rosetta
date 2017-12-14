@@ -92,7 +92,7 @@ EnergyBasedClusteringProtocol::EnergyBasedClusteringProtocol(
 	n_clusters_from_last_run_(0)
 {}
 
-EnergyBasedClusteringProtocol::~EnergyBasedClusteringProtocol(){}
+EnergyBasedClusteringProtocol::~EnergyBasedClusteringProtocol()= default;
 
 EnergyBasedClusteringProtocolOP
 EnergyBasedClusteringProtocol::clone() const {
@@ -1013,7 +1013,7 @@ EnergyBasedClusteringProtocol::parse_extra_atom_list (
 	for ( core::Size i(1), imax(tags.size()); i<=imax; ++i ) { //Loop through each tag
 		core::Size const colonposition( tags[i].find( ':' ));
 		std::string const resstring( tags[i].substr( 0, colonposition ) );
-		core::Size const res( static_cast<core::Size>( atoi( resstring.c_str() ) ) ); //The residue number
+		auto const res( static_cast<core::Size>( atoi( resstring.c_str() ) ) ); //The residue number
 		std::string const atomname( tags[i].substr( colonposition + 1) ); //The atom name
 		TR << "\tResidue " << res << ", Atom " << atomname << "\n";
 		extra_atom_list.push_back( core::id::NamedAtomID( atomname, res ) );

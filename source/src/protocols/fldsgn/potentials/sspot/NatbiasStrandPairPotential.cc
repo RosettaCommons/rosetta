@@ -82,8 +82,7 @@ NatbiasStrandPairPotential::NatbiasStrandPairPotential( StrandPairingSetOP const
 }
 
 /// @brief destructor
-NatbiasStrandPairPotential::~NatbiasStrandPairPotential()
-{}
+NatbiasStrandPairPotential::~NatbiasStrandPairPotential() = default;
 
 /// @brief
 void
@@ -95,13 +94,13 @@ NatbiasStrandPairPotential::set_native_spairset( StrandPairingSetOP const spairs
 core::Real
 NatbiasStrandPairPotential::calc_phithetascore( Real const phi, Real const theta ) const
 {
-	Size iphi = static_cast< Size >( 1 + ( phi + 180.0 )/10 );
+	auto iphi = static_cast< Size >( 1 + ( phi + 180.0 )/10 );
 	if ( iphi > 36 ) {
 		iphi = 36;
 	} else if ( iphi < 1 ) {
 		iphi = 1;
 	}
-	Size itheta = static_cast< Size >( 1 + ( theta/5 ) );
+	auto itheta = static_cast< Size >( 1 + ( theta/5 ) );
 	if ( itheta > 36 ) {
 		itheta = 36;
 	} else if ( itheta < 1 ) {
@@ -378,7 +377,7 @@ void
 NatbiasStrandPairPotential::load_phi_theta_bins( String const & ss_filename )
 {
 	using ObjexxFCL::format::skip;
-	typedef ObjexxFCL::FArray3D< Real > FArray3D_real;
+	using FArray3D_real = ObjexxFCL::FArray3D<Real>;
 	FArray3D_real pts_SS( 36, 36, 3 );
 
 	FArray1D_int iptsn( 36 );

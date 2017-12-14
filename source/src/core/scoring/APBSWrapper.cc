@@ -168,7 +168,7 @@ PQR::PQR(core::pose::Pose const & pose, int natoms,
 
 PQR::~PQR() = default;
 
-APBSResult::APBSResult(int nsims, int natoms, int grid_dimes[3],
+APBSResult::APBSResult(int nsims, int natoms, const int grid_dimes[3],
 	int calcforce, int calcenergy,
 	int write_pot, int write_charge, int write_smol,
 	int write_kappa, int write_diel, int write_atompot )

@@ -215,7 +215,7 @@ FragmentScoringMethodOP MakePCS_FragDistance::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read PCS_frag_cst file. Provide a connectivity file with -in::PCS_frag_cst <file>\n");
 
-	return NULL;
+	return nullptr;
 
 }
 

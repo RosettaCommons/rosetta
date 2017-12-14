@@ -361,7 +361,7 @@ class CombinedTaskOperation : public core::pack::task::operation::TaskOperation 
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 	typedef utility::vector1< TaskOperationOP > VecTaskOP;
 public:
-	CombinedTaskOperation(VecTaskOP ops);
+	CombinedTaskOperation(VecTaskOP const & ops);
 	/// @brief apply
 	void apply( Pose const & pose, core::pack::task::PackerTask & task ) const override;
 	/// @brief make clone

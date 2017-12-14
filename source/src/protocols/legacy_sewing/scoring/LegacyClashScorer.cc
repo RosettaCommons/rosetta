@@ -37,7 +37,7 @@ namespace scoring {
 
 static basic::Tracer TR("protocols.legacy_sewing.scoring.LegacyClashScorer");
 
-LegacyClashScorer::LegacyClashScorer(){}
+LegacyClashScorer::LegacyClashScorer()= default;
 
 
 

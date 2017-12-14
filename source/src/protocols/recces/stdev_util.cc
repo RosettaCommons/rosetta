@@ -80,7 +80,7 @@ set_gaussian_stdevs_recces_turner_from_secstruct(
 		if ( rna_secstruct.in_helix( i ) )            stdev = bp_stdev;
 		else  stdev = dangling_stdev;
 		MC_SamplerOP torsion_sampler = sampler->find( TorsionID( i, TorsionType::CHI, 1 ) );
-		runtime_assert( torsion_sampler != 0 ); // these all move in RECCES
+		runtime_assert( torsion_sampler != nullptr ); // these all move in RECCES
 		std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
 	}
 
@@ -98,7 +98,7 @@ set_gaussian_stdevs_recces_turner_from_secstruct(
 		vector1< TorsionID > suite_torsion_ids = get_suite_torsion_ids( i );
 		for ( auto bb_torsion_id : suite_torsion_ids ) {
 			MC_SamplerOP torsion_sampler = sampler->find( bb_torsion_id );
-			runtime_assert( torsion_sampler != 0 ); // these all move in RECCES
+			runtime_assert( torsion_sampler != nullptr ); // these all move in RECCES
 			std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
 		}
 	}
@@ -141,7 +141,7 @@ set_gaussian_stdevs_recces_turner_legacy(
 		if ( bp_res.has_value(i) )            stdev = bp_stdev;
 		else  stdev = dangling_stdev;
 		MC_SamplerOP torsion_sampler = sampler->find( TorsionID( i, TorsionType::CHI, 1 ) );
-		runtime_assert( torsion_sampler != 0 ); // these all move in RECCES
+		runtime_assert( torsion_sampler != nullptr ); // these all move in RECCES
 		std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
 	}
 
@@ -159,7 +159,7 @@ set_gaussian_stdevs_recces_turner_legacy(
 		vector1< TorsionID > suite_torsion_ids = get_suite_torsion_ids( i );
 		for ( auto bb_torsion_id : suite_torsion_ids ) {
 			MC_SamplerOP torsion_sampler = sampler->find( bb_torsion_id );
-			runtime_assert( torsion_sampler != 0 ); // these all move in RECCES
+			runtime_assert( torsion_sampler != nullptr ); // these all move in RECCES
 			std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
 		}
 	}
@@ -220,13 +220,13 @@ void set_gaussian_stdevs_thermal_sampler(
 		chi_stdev = -1 ;
 		standard_bb_stdev = -1 ;
 	}
-	if ( internal_bb_sampler != 0 ) {
+	if ( internal_bb_sampler != nullptr ) {
 		for ( Size i = 1; i <= internal_bb_sampler->num_rotamers(); ++i ) {
 			runtime_assert(  (*internal_bb_sampler)[i]->type() == toolbox::MC_RNA_KIC );
 			std::dynamic_pointer_cast< MC_RNA_KIC_Sampler >( (*internal_bb_sampler)[i] )->set_gaussian_stdev( internal_bb_stdev );
 		}
 	}
-	if ( chi_sampler != 0 ) {
+	if ( chi_sampler != nullptr ) {
 		for ( Size i = 1; i <= chi_sampler->num_rotamers(); ++i ) {
 			runtime_assert(  (*chi_sampler)[i]->type() == toolbox::MC_ONE_TORSION );
 			if ( is_free[i] ) {
@@ -236,7 +236,7 @@ void set_gaussian_stdevs_thermal_sampler(
 			}
 		}
 	}
-	if ( standard_bb_sampler != 0 ) standard_bb_sampler->set_gaussian_stdev( standard_bb_stdev );
+	if ( standard_bb_sampler != nullptr ) standard_bb_sampler->set_gaussian_stdev( standard_bb_stdev );
 }
 
 //////////////////////////////////////////////////////////////////////////////

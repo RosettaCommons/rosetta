@@ -66,25 +66,11 @@ SymmetricCycpepAlign::SymmetricCycpepAlign():
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
-SymmetricCycpepAlign::SymmetricCycpepAlign( SymmetricCycpepAlign const & src ):
-	protocols::moves::Mover( src ),
-	symmetry_repeats_(src.symmetry_repeats_),
-	mirror_symmetry_(src.mirror_symmetry_),
-	auto_detect_symmetry_(src.auto_detect_symmetry_),
-	angle_threshold_(src.angle_threshold_),
-	trim_to_single_repeat_(src.trim_to_single_repeat_),
-	repeat_to_preserve_(src.repeat_to_preserve_),
-	last_symmetry_repeats_(src.last_symmetry_repeats_),
-	last_symmetry_mirror_(src.last_symmetry_mirror_),
-	invert_(src.invert_)
-	//TODO copy vars here
-{
-
-}
+SymmetricCycpepAlign::SymmetricCycpepAlign( SymmetricCycpepAlign const & /*src*/ ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-SymmetricCycpepAlign::~SymmetricCycpepAlign(){}
+SymmetricCycpepAlign::~SymmetricCycpepAlign()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

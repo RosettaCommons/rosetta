@@ -37,6 +37,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 // Numeric headers
@@ -56,13 +57,7 @@ namespace pcsTs1 {
 
 static basic::Tracer TR_PCS_d_i_Ts1( "protocols.scoring.methods.pcsTs1.PCS_data_input_Ts1" );
 
-PCS_line_data_Ts1::PCS_line_data_Ts1(PCS_line_data_Ts1 const & other):
-	residue_num_(other.residue_num_),
-	atom_name_(other.atom_name_),
-	PCS_experimental_(other.PCS_experimental_),
-	PCS_tolerance_(other.PCS_tolerance_)
-{
-}
+PCS_line_data_Ts1::PCS_line_data_Ts1(PCS_line_data_Ts1 const & /*other*/) = default;
 
 PCS_line_data_Ts1 &
 PCS_line_data_Ts1::operator=( PCS_line_data_Ts1 const & other )
@@ -73,11 +68,9 @@ PCS_line_data_Ts1::operator=( PCS_line_data_Ts1 const & other )
 	return *this;
 }
 
-PCS_line_data_Ts1::~PCS_line_data_Ts1(){
-}
+PCS_line_data_Ts1::~PCS_line_data_Ts1()= default;
 
-PCS_file_data_Ts1::~PCS_file_data_Ts1(){
-}
+PCS_file_data_Ts1::~PCS_file_data_Ts1()= default;
 
 PCS_file_data_Ts1::PCS_file_data_Ts1(PCS_file_data_Ts1 const & other):
 	filename_(other.filename_), weight_(other.weight_)
@@ -98,8 +91,7 @@ PCS_data_input_Ts1::PCS_data_input_Ts1(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_data_input_Ts1 class" );
 }
 
-PCS_data_input_Ts1::~PCS_data_input_Ts1(){
-}
+PCS_data_input_Ts1::~PCS_data_input_Ts1()= default;
 
 PCS_data_input_Ts1::PCS_data_input_Ts1(PCS_data_input_Ts1 const & other){
 	PCS_filename_and_data_ = other.PCS_filename_and_data_;
@@ -135,7 +127,7 @@ PCS_line_data_Ts1::PCS_tolerance() const{
 }
 
 PCS_line_data_Ts1::PCS_line_data_Ts1(core::Size residue_num,
-	std::string atom_name,
+	std::string const & atom_name,
 	core::Real PCS_experimental,
 	core::Real PCS_tolerance
 ) :
@@ -260,13 +252,11 @@ operator<<(std::ostream & out,  const PCS_data_input_Ts1 &PCS_d_i ){
 }
 
 
-PCS_data_input_manager_Ts1::PCS_data_input_manager_Ts1(){
-
-}
+PCS_data_input_manager_Ts1::PCS_data_input_manager_Ts1()= default;
 
 PCS_data_input_manager_Ts1 *
 PCS_data_input_manager_Ts1::get_instance(){
-	if ( instance_ == 0 ) {
+	if ( instance_ == nullptr ) {
 		instance_ = new PCS_data_input_manager_Ts1();
 	}
 	return instance_;
@@ -298,7 +288,7 @@ PCS_data_input_manager_Ts1::get_input_data(utility::vector1<std::string> const &
 	return(pcs_d_i);
 }
 
-PCS_data_input_manager_Ts1 * PCS_data_input_manager_Ts1::instance_( 0 );
+PCS_data_input_manager_Ts1 * PCS_data_input_manager_Ts1::instance_( nullptr );
 
 }//namespace pcsTs1
 }//namespace methods

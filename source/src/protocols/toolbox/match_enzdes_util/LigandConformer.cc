@@ -43,24 +43,9 @@ LigandConformer::LigandConformer() :
 	ignore_h_collisions_( false )
 {}
 
-LigandConformer::LigandConformer( LigandConformer const & other ) :
-	parent( other ),
-	ligand_restype_( other.ligand_restype_ ),
-	orientation_atoms_( other.orientation_atoms_ ),
-	oats_in_D3_frame_( other.oats_in_D3_frame_ ),
-	oframe_in_D3frame_( other.oframe_in_D3frame_ ),
-	points_in_global_orintation_frame_( other.points_in_global_orintation_frame_ ),
-	atoms_123_( other.atoms_123_ ),
-	d12_( other.d12_ ),
-	d23_( other.d23_ ),
-	ang123_( other.ang123_ ),
-	points_in_D3_frame_( other.points_in_D3_frame_ ),
-	ignore_h_collisions_( other.ignore_h_collisions_ ),
-	collision_check_id_2_restype_id_( other.collision_check_id_2_restype_id_ ),
-	restype_id_2_collision_check_id_( other.restype_id_2_collision_check_id_ )
-{}
+LigandConformer::LigandConformer( LigandConformer const & /*other*/ ) = default;
 
-LigandConformer::~LigandConformer() {}
+LigandConformer::~LigandConformer() = default;
 
 LigandConformer::Real
 LigandConformer::atom1_atom2_distance() const
@@ -313,7 +298,7 @@ LigandConformer::frame_from_global_orientation(
 void
 LigandConformer::ignore_h_collisions( bool setting )
 {
-	if ( ligand_restype_ != 0 ) {
+	if ( ligand_restype_ != nullptr ) {
 		utility_exit_with_message( "ERROR: ignore_h_collisions_ must be set before the downstream restype is initialized" );
 	} else {
 		ignore_h_collisions_ = setting;

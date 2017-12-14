@@ -166,7 +166,7 @@ DicFile::DicFile(const eFileMode fileMode, const string& objFileName,
   const bool verbose, const Char::eCompareType caseSense,
   const unsigned int maxLineLength, const string& nullValue) :
   CifFile(fileMode, objFileName, verbose, caseSense, maxLineLength, nullValue),
-  _formatP(NULL)
+  _formatP(nullptr)
 {
 
     _formatP = new ISTable("ddlformat");
@@ -181,7 +181,7 @@ DicFile::DicFile(const eFileMode fileMode, const string& objFileName,
 DicFile::DicFile(const bool verbose,
   const Char::eCompareType caseSense, const unsigned int maxLineLength,
   const string& nullValue) : CifFile(verbose, caseSense, maxLineLength,
-  nullValue), _formatP(NULL)
+  nullValue), _formatP(nullptr)
 {
 
     _formatP = new ISTable("ddlformat");
@@ -196,7 +196,7 @@ DicFile::DicFile(const bool verbose,
 DicFile::~DicFile()
 {
 
-    if (_formatP != NULL)
+    if (_formatP != nullptr)
     {
         delete(_formatP);
     }
@@ -219,7 +219,7 @@ int DicFile::WriteFormatted(const string& cifFileName, ISTable* formatP)
 
     ofstream cifo(cifFileName.c_str(), ios::out | ios::trunc);
 
-    if (formatP != NULL)
+    if (formatP != nullptr)
         iret = WriteFormatted(cifo, formatP);
     else
         iret = WriteFormatted(cifo, _formatP);
@@ -247,7 +247,7 @@ int DicFile::WriteFormatted(const string& cifFileName, TableFile* ddl,
 
     ofstream cifo(cifFileName.c_str(), ios::out | ios::trunc);
 
-    if (formatP != NULL)
+    if (formatP != nullptr)
         iret = WriteFormatted(cifo, ddl, formatP);
     else
         iret = WriteFormatted(cifo, ddl, _formatP);
@@ -262,11 +262,11 @@ int DicFile::WriteFormatted(const string& cifFileName, TableFile* ddl,
 int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
 {
 
-  ISTable *tblP = NULL;
-  ISTable *cattbl = NULL;
-  ISTable *cattbl2 = NULL;
-  ISTable *itemtbl = NULL;
-  ISTable *itemtblddl = NULL;
+  ISTable *tblP = nullptr;
+  ISTable *cattbl = nullptr;
+  ISTable *cattbl2 = nullptr;
+  ISTable *itemtbl = nullptr;
+  ISTable *itemtblddl = nullptr;
   
   
   unsigned int numColumn;
@@ -274,7 +274,7 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
   int k, ilen;
   unsigned int linePos;
   int i2,i3,i4;
-  int cwid, *cwidth=NULL;
+  int cwid, *cwidth=nullptr;
   string categoryName;
   string categoryName2;
   string catName;
@@ -304,10 +304,10 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
   vector<string> targetitem;
 
   listitem2.clear();
-  listitem2.push_back("category_id");
+  listitem2.emplace_back("category_id");
 
-  list.push_back("dbName");
-  list.push_back("type");
+  list.emplace_back("dbName");
+  list.emplace_back("type");
 
   /* 
      This is loop for all datablocks - we have to assume that dictionary might have more then one datablock
@@ -331,16 +331,16 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
     */
 
     target.push_back(loopBlockName);
-    target.push_back("data");
+    target.emplace_back("data");
 
     formatP->Search(listOut, target, list);
 
     if (!listOut.empty())
     {
-      for (unsigned int l = 0; l < listOut.size(); ++l)
+      for (unsigned int l : listOut)
       {
         //format->GetCell(categoryName, string("catName"), listOut[l]);
-        categoryName = (*formatP)(listOut[l], "catName");
+        categoryName = (*formatP)(l, "catName");
 
         tblP = block.GetTablePtr(categoryName);
 
@@ -472,12 +472,12 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
     // target for format-seaching category for category save frame
     target.clear();
     target.push_back(loopBlockName);
-    target.push_back("category");
+    target.emplace_back("category");
 
     // target for format-seaching category for item save frame
     target2.clear();
     target2.push_back(loopBlockName);
-    target2.push_back("item");
+    target2.emplace_back("item");
 
     // Creates index on table item, in ddl and dictionary, on column named name
     // Assumtion that ddl has table item, and that table hase column name
@@ -487,7 +487,7 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
     Block& firstBlock = ddl->GetBlock(BlockName);
     itemtblddl=firstBlock.GetTablePtr("item");
     listitem.clear();
-    listitem.push_back("name");
+    listitem.emplace_back("name");
 
     // Creates index on table category, in ddl and dictionary, on column 
     // named id and index on columns id+implicit_key
@@ -495,22 +495,22 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
     // and implicit_key
     cattbl=block.GetTablePtr("category");
     listcat.clear();
-    listcat.push_back("id");
+    listcat.emplace_back("id");
     listcat.clear();
-    listcat.push_back("implicit_key");
+    listcat.emplace_back("implicit_key");
 
     // creating indices for all tables on column with mandatory_code=implicit
     // assumption: table item has columns category_id and mandatory_code
     block.GetTableNames(TableNames);
     unsigned int num = TableNames.size();
     listitem.clear();
-    listitem.push_back("category_id");
-    listitem.push_back("mandatory_code");
+    listitem.emplace_back("category_id");
+    listitem.emplace_back("mandatory_code");
     for (unsigned int l=0; l<num; l++)
     {
       targetitem.clear();
       targetitem.push_back(TableNames[l]);
-      targetitem.push_back("implicit");
+      targetitem.emplace_back("implicit");
       listOutItem.clear();
       // in table item in ddl searchs rows with value <TableName> in column
       // category_id and value "implicit" in column "mandatory_code"
@@ -567,7 +567,7 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
             {
 	      targetitem.clear();
 	      targetitem.push_back(categoryName2);
-	      targetitem.push_back("implicit");
+	      targetitem.emplace_back("implicit");
 	      listOutItem.clear();
               // in table item in ddl searchs rows with value <categoryName2> in column
               // category_id and value "implicit" in column "mandatory_code"
@@ -639,10 +639,10 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
                 {
                   cwidth[i]=-1+2;
                 }
-	        for (unsigned int j=0; j < listOutcat2.size(); ++j)
+	        for (unsigned int j : listOutcat2)
                 {
                   const vector<string>& rowValues =
-	            cattbl2->GetRow(listOutcat2[j]);
+	            cattbl2->GetRow(j);
 	          for (unsigned int i=0; i< numColumn; i++)
                   {
 	              ilen = rowValues[i].size();
@@ -653,11 +653,11 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
                         cwidth[i]=ilen;
 	          }
 	        }
-	        for (unsigned int j=0; j < listOutcat2.size(); ++j)
+	        for (unsigned int j : listOutcat2)
                 {
 	          linePos = 0;
                   const vector<string>& rowValues =
-	            cattbl2->GetRow(listOutcat2[j]);
+	            cattbl2->GetRow(j);
 	          for (unsigned int i=0; i< numColumn; i++)
                   {
 	            ilen=_PrintItemValue(cifo, rowValues[i], linePos,eNONE,cwidth[i]); 
@@ -705,7 +705,7 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
 	          cattbl2=block.GetTablePtr(categoryName2);
 	          targetitem.clear();
 	          targetitem.push_back(categoryName2);
-	          targetitem.push_back("implicit");
+	          targetitem.emplace_back("implicit");
 	          listOutItem2.clear();
 	          // searchs in table item in ddl all rows with <categoryName2> in
 	          // column "category_id" and "implicit" in column "mandatory_code"
@@ -775,10 +775,10 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
 	                cwidth  = new int[numColumn];
 	    
       	                for (unsigned int i=0; i< numColumn; i++) { cwidth[i]=-1+2; }
-	                for (unsigned int j=0; j < listOutcat2.size(); ++j)
+	                for (unsigned int j : listOutcat2)
                         {
                             const vector<string>& rowValues =
-	                      cattbl2->GetRow(listOutcat2[j]);
+	                      cattbl2->GetRow(j);
 	                    for (unsigned int i=0; i< numColumn; i++)
                             {
 		              ilen = rowValues[i].size();
@@ -787,11 +787,11 @@ int DicFile::WriteFormatted(ostream& cifo, TableFile* ddl, ISTable* formatP)
 		              if (  ilen > cwidth[i]) cwidth[i]=ilen;
 	                }
 	              }
-	              for (unsigned int j=0; j < listOutcat2.size(); ++j)
+	              for (unsigned int j : listOutcat2)
                       {
 	                linePos = 0;
                         const vector<string>& rowValues =
-	                  cattbl2->GetRow(listOutcat2[j]);
+	                  cattbl2->GetRow(j);
 	                for (unsigned int i=0; i< numColumn; i++)
                         {
 		
@@ -848,26 +848,26 @@ void DicFile::Compress(CifFile* ddl)
         catkey = firstBlock.GetTablePtr("category_key");
 
         catkeyList.clear();
-        catkeyList.push_back("id");
+        catkeyList.emplace_back("id");
 
         vector<string> tableNames;
         block.GetTableNames(tableNames);
 
-        for (unsigned int jt = 0; jt < tableNames.size(); ++jt)
+        for (const auto & tableName : tableNames)
         {
-            tbl = block.GetTablePtr(tableNames[jt]);
+            tbl = block.GetTablePtr(tableName);
 
             catkeyTarget.clear();
-            catkeyTarget.push_back(tableNames[jt]);
+            catkeyTarget.push_back(tableName);
 
             catkey->Search(listOut2, catkeyTarget, catkeyList);
             if (!listOut2.empty())
             {
                 catList2.clear();
-                for (unsigned int i = 0; i < listOut2.size(); ++i)
+                for (unsigned int i : listOut2)
                 {
                     //catkey->GetCell(cell, string("name"), listOut2[i]);
-                    cell = (*catkey)(listOut2[i], "name");
+                    cell = (*catkey)(i, "name");
                     CifString::GetItemFromCifItem(itemName, cell);
                     catList2.push_back(itemName);
                 }
@@ -915,7 +915,7 @@ void DicFile::Compress(CifFile* ddl)
 CifFile* DicFile::GetRefFile()
 {
 
-    CifFile* refFileP = new CifFile();
+    auto* refFileP = new CifFile();
  
     refFileP->AddBlock("ref_block");
     Block& block = refFileP->GetBlock(refFileP->GetFirstBlockName());
@@ -1150,9 +1150,9 @@ void DicFile::AddRefRow(ISTable& table, const char* first, const char* second,
   const char* third)
 {
     vector<string> row;
-    row.push_back(first);
-    row.push_back(second);
-    row.push_back(third);
+    row.emplace_back(first);
+    row.emplace_back(second);
+    row.emplace_back(third);
 
     table.AddRow(row);
 }
@@ -1180,7 +1180,7 @@ void DicFile::WriteItemAliases(ostream& cifo)
 
     ISTable* tbl = block.GetTablePtr("item_aliases");
 
-    if (tbl == NULL)
+    if (tbl == nullptr)
     {
         return;
     }

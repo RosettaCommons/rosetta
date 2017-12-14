@@ -60,8 +60,7 @@ PcsInputCenter::PcsInputCenter(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PcsInputCenter class" );
 }
 
-PcsInputCenter::~PcsInputCenter(){
-}
+PcsInputCenter::~PcsInputCenter()= default;
 
 PcsInputCenter::PcsInputCenter(PcsInputCenter const & other):
 	ReferenceCount()

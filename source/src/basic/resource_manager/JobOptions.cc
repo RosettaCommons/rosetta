@@ -201,7 +201,7 @@ JobOptions::add_option(
 	BooleanOptionKey key,
 	bool val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( BOOLEAN_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( BOOLEAN_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -232,7 +232,7 @@ JobOptions::add_option(
 	BooleanVectorOptionKey key,
 	vector1< bool > const & val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( BOOLEAN_VECTOR_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( BOOLEAN_VECTOR_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -263,7 +263,7 @@ JobOptions::add_option(
 	FileOptionKey key,
 	FileName const & val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( FILE_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( FILE_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -294,7 +294,7 @@ JobOptions::add_option(
 	FileVectorOptionKey key,
 	vector1< FileName > const & val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( FILE_VECTOR_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( FILE_VECTOR_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -327,7 +327,7 @@ JobOptions::add_option(
 	IntegerOptionKey key,
 	int val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( INTEGER_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( INTEGER_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -359,7 +359,7 @@ JobOptions::add_option(
 	IntegerVectorOptionKey key,
 	vector1< int > const & val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( INTEGER_VECTOR_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( INTEGER_VECTOR_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -390,7 +390,7 @@ JobOptions::add_option(
 	PathOptionKey key,
 	PathName const & val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( PATH_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( PATH_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -421,7 +421,7 @@ JobOptions::add_option(
 	PathVectorOptionKey key,
 	vector1< PathName > const & val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( PATH_VECTOR_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( PATH_VECTOR_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -452,7 +452,7 @@ JobOptions::add_option(
 	RealOptionKey key,
 	Real val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( REAL_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( REAL_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -483,7 +483,7 @@ JobOptions::add_option(
 	RealVectorOptionKey key,
 	vector1< Real > const & val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( REAL_VECTOR_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( REAL_VECTOR_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -515,7 +515,7 @@ JobOptions::add_option(
 	StringOptionKey key,
 	string val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( STRING_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( STRING_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 
@@ -547,7 +547,7 @@ JobOptions::add_option(
 	StringVectorOptionKey key,
 	vector1< string > const & val
 ) {
-	if ( track_insertion_order_ ) insertion_order_.push_back( std::make_pair( STRING_VECTOR_OPTION, key.id() ));
+	if ( track_insertion_order_ ) insertion_order_.emplace_back( STRING_VECTOR_OPTION, key.id() );
 	add_option_to_map( map_for_key( key ), key, val );
 }
 

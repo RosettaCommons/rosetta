@@ -35,10 +35,10 @@ public:
 		protocols::filters::Filter( "HeavyAtom" )
 	{}
 
-	HeavyAtomFilter(std::string chain, core::Size heavy_atom_limit ) :
+	HeavyAtomFilter(std::string const & chain, core::Size heavy_atom_limit ) :
 		//utility::pointer::ReferenceCount(),
 		protocols::filters::Filter( "HeavyAtom" ),
-		chain_(std::move(chain)),
+		chain_(chain),
 		heavy_atom_limit_(heavy_atom_limit)
 	{}
 

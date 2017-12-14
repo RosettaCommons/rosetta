@@ -143,7 +143,7 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_(
 		setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
-	utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
+	auto form_factors(form_factors_.begin());
 
 	core::Real max_r_value;
 	find_max_r( pose, max_r_value );
@@ -313,13 +313,6 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 		core::Real max_r_value;
 		find_max_r( pose, max_r_value );
 
-		utility::vector0< utility::vector1< core::Real > >::iterator  sampling_points_lE;
-		utility::vector0< core::Size > ::iterator  sampling_points_number_l;
-		utility::vector0< core::Size > ::iterator  lowest_bessel_orders_l;
-		utility::vector0< core::Size > ::iterator  lowest_resolution_l;
-		utility::vector0< core::Size > ::iterator  highest_resolution_l;
-		utility::vector0< utility::vector1< core::Real > >::iterator  selected_Rinv_l;
-
 		core::Real chi_free(0);
 
 		chi_free = calculate_chi2_free(pose, chi_iterations_,lmax,\
@@ -386,7 +379,7 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_(
 		setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
-	utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
+	auto form_factors(form_factors_.begin());
 
 	TR << "Preparing fiber model data for deriv calculation..." << std::endl;
 
@@ -566,7 +559,7 @@ void FiberDiffractionEnergy::eval_atom_derivative(
 
 	if ( rsd_i.aa() != core::chemical::aa_vrt && !rsd_i.atom_type(atmid).is_heavyatom() ) return;
 
-	std::map<  core::id::AtomID, core::Size >::iterator it( AtomID_to_atomnbr_.find( id ) );
+	auto it( AtomID_to_atomnbr_.find( id ) );
 	if ( it == AtomID_to_atomnbr_.end() ) return;
 	Size atomnbr( it->second );
 

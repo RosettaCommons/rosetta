@@ -223,7 +223,7 @@ Real SequenceAlignment::calculate_score_sum_of_pairs(
 	vector1< Real > scores = calculate_per_position_scores( ss );
 	// something mis-understood about std::accumulate?
 	//std::accumulate( scores.begin(), scores.end(), 0 );
-	typedef vector1< Real >::const_iterator iter;
+	using iter = vector1<Real>::const_iterator;
 	for ( iter it = scores.begin(), end = scores.end(); it != end; ++it ) {
 		score += *it;
 	}
@@ -364,7 +364,7 @@ utility::vector1< std::string > SequenceAlignment::comments() const {
 Real SequenceAlignment::max_gap_percentage() const {
 	Real max_gp(0.0);
 	for ( auto const & sequence : sequences_ ) {
-		Real gap_percentage = static_cast< Real >
+		auto gap_percentage = static_cast< Real >
 			( sequence->length() - sequence->ungapped_length() );
 		gap_percentage = gap_percentage / static_cast< Real > ( length() );
 		max_gp = std::max( max_gp, gap_percentage );

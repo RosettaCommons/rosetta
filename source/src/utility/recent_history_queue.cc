@@ -45,7 +45,7 @@ recent_history_queue::recent_history_queue( int num_elements, int history_size )
 	}
 }
 
-recent_history_queue::~recent_history_queue() {}
+recent_history_queue::~recent_history_queue() = default;
 
 void recent_history_queue::clear() {
 	curr_num_in_recent_history_ = 0;

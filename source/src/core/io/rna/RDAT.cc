@@ -19,6 +19,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/tools/make_vector1.hh>
@@ -69,7 +70,7 @@ RDAT::RDAT():
 //Constructor
 RDAT::RDAT( std::string const & name,
 	std::string const & sequence,
-	Size const & offset,
+	Size const offset,
 	utility::vector1< Size > const & seqpos,
 	std::string const & structure,
 	utility::vector1< Annotation > const & annotations,
@@ -101,8 +102,7 @@ RDAT::RDAT( std::string const & filename )
 }
 
 //Destructor
-RDAT::~RDAT()
-{}
+RDAT::~RDAT() = default;
 
 /////////////////////////////////////////////////////////////////////////////
 void

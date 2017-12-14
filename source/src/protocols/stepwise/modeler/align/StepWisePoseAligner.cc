@@ -83,8 +83,7 @@ StepWisePoseAligner::StepWisePoseAligner( pose::Pose const & reference_pose ):
 }
 
 //Destructor
-StepWisePoseAligner::~StepWisePoseAligner()
-{}
+StepWisePoseAligner::~StepWisePoseAligner() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -591,7 +590,7 @@ StepWisePoseAligner::create_coordinate_constraints( pose::Pose & pose,
 	using namespace core::pose::full_model_info;
 
 	if ( rmsd_screen == 0.0 ) return;
-	runtime_assert( reference_pose_local_ != 0 ); // needs to be setup by apply() above.
+	runtime_assert( reference_pose_local_ != nullptr ); // needs to be setup by apply() above.
 
 	std::map< id::AtomID, id::AtomID> coordinate_constraint_atom_id_map =
 		create_coordinate_constraint_atom_id_map( pose );

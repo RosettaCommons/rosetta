@@ -35,7 +35,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-SuckerEnergy::~SuckerEnergy() {}
+SuckerEnergy::~SuckerEnergy() = default;
 
 
 /// @details This must return a fresh instance of the SuckerEnergy class,

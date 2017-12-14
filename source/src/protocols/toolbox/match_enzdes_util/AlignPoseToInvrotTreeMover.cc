@@ -43,6 +43,7 @@
 #include <numeric/random/random.hh>
 
 //utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -60,7 +61,7 @@ AlignPoseToInvrotTreeMover::AlignPoseToInvrotTreeMover(
 	AllowedSeqposForGeomCstCOP seqpos
 ) : Mover(),
 	add_target_to_pose_(false), invrot_tree_(invrot_tree),
-	seqpos_(seqpos), all_invrots_( invrot_tree->collect_all_inverse_rotamers() )
+	seqpos_(std::move(seqpos)), all_invrots_( invrot_tree->collect_all_inverse_rotamers() )
 {
 	geomcsts_for_superposition_.clear();
 	//this is assuming that every InvrotCollector has the same number of geomcsts.
@@ -68,7 +69,7 @@ AlignPoseToInvrotTreeMover::AlignPoseToInvrotTreeMover(
 	for ( core::Size i =1; i <= all_invrots_[1]->invrots().size() - 1; ++i ) geomcsts_for_superposition_.push_back(i);
 }
 
-AlignPoseToInvrotTreeMover::~AlignPoseToInvrotTreeMover(){}
+AlignPoseToInvrotTreeMover::~AlignPoseToInvrotTreeMover()= default;
 
 std::string
 AlignPoseToInvrotTreeMover::get_name() const{
@@ -106,7 +107,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 	//picked_rotamer = 1;
 	//temp debug over
 
-	std::list<core::conformation::ResidueCOP>::const_iterator list_it( all_invrots_[ picked_collector ]->invrots()[picked_geomcst].begin() );
+	auto list_it( all_invrots_[ picked_collector ]->invrots()[picked_geomcst].begin() );
 	for ( Size i =1; i < picked_rotamer; ++i ) ++list_it; //not ideal, but a list is what we have
 	core::conformation::ResidueCOP ranrot( *list_it );
 
@@ -137,7 +138,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 	//2. now we need to add the target residues to the aligned pose,
 	//and try to setup the fold tree the right way
 	//2a
-	std::list<core::conformation::ResidueCOP>::const_iterator target_it( all_invrots_[ picked_collector ]->invrots()[0].begin() );
+	auto target_it( all_invrots_[ picked_collector ]->invrots()[0].begin() );
 	Size first_target_seqpos( pose.size() );
 	if ( add_target_to_pose_ ) {
 		first_target_seqpos++;

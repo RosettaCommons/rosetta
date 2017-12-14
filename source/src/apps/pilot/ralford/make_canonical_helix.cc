@@ -42,29 +42,21 @@ class MakeCanonicalHelix : public protocols::moves::Mover {
 public:
 
 	MakeCanonicalHelix() :
-		protocols::moves::Mover(),
-		phi_( -57.0 ),
-		psi_( -47.0 ),
-		omega_( 175.0 )
+		protocols::moves::Mover()
 	{
 		//register_options();
 		//init_options();
 	}
 
-	MakeCanonicalHelix( MakeCanonicalHelix const & src ) :
-		protocols::moves::Mover( src ),
-		phi_( src.phi_ ),
-		psi_( src.psi_ ),
-		omega_( src.omega_ )
-	{}
+	MakeCanonicalHelix( MakeCanonicalHelix const & /*src*/ ) = default;
 
-	virtual ~MakeCanonicalHelix() {}
+	~MakeCanonicalHelix() override = default;
 
-	virtual std::string get_name() const { return "MakeCanonicalHelix"; }
+	std::string get_name() const override { return "MakeCanonicalHelix"; }
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ) {
+	apply( core::pose::Pose & pose ) override {
 
 		TR << "Trasforming current pose coordinates into an ideal alpha helix" << std::endl;
 
@@ -77,16 +69,16 @@ public:
 
 private:
 
-	core::Real phi_;
-	core::Real psi_;
-	core::Real omega_;
+	core::Real phi_{ -57.0 };
+	core::Real psi_{ -47.0 };
+	core::Real omega_{ 175.0 };
 
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-typedef utility::pointer::shared_ptr< MakeCanonicalHelix > MakeCanonicalHelixOP;
-typedef utility::pointer::shared_ptr< MakeCanonicalHelix const  > MakeCanonicalHelixCOP;
+using MakeCanonicalHelixOP = utility::pointer::shared_ptr<MakeCanonicalHelix>;
+using MakeCanonicalHelixCOP = utility::pointer::shared_ptr<const MakeCanonicalHelix>;
 
 ////////////////////////////////////////////////////////////////////////////////////
 int

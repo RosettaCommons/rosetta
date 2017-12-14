@@ -171,76 +171,76 @@ utility::vector1<Size>
 get_resis(core::pose::Pose const & pose, utility::vector1<std::string> subs);
 
 utility::vector1<std::string>
-get_full_intracomponent_and_neighbor_subs(core::pose::Pose const &pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_full_intracomponent_and_neighbor_subs(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
-get_full_intracomponent_and_neighbor_subpose(core::pose::Pose const &pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_full_intracomponent_and_neighbor_subpose(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<Size>
-get_full_intracomponent_and_neighbor_resis(core::pose::Pose const &pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_full_intracomponent_and_neighbor_resis(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
-get_full_intracomponent_subpose(core::pose::Pose const &pose, std::string sym_dof_name);
+get_full_intracomponent_subpose(core::pose::Pose const &pose, std::string const & sym_dof_name);
 
 utility::vector1<Size>
-get_full_intracomponent_resis(core::pose::Pose const &pose, std::string sym_dof_name);
+get_full_intracomponent_resis(core::pose::Pose const &pose, std::string const & sym_dof_name);
 
 utility::vector1<std::string>
-get_full_intracomponent_neighbor_subs(core::pose::Pose const &pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_full_intracomponent_neighbor_subs(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
-get_full_intracomponent_neighbor_subpose(core::pose::Pose const &pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_full_intracomponent_neighbor_subpose(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<Size>
-get_full_intracomponent_neighbor_resis(core::pose::Pose const &pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_full_intracomponent_neighbor_resis(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 bool
-intracomponent_contact(core::pose::Pose const &pose, std::string sym_dof_name, Real contact_dist=10.0);
+intracomponent_contact(core::pose::Pose const &pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<std::string>
-get_intracomponent_and_neighbor_subs(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_and_neighbor_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
-get_intracomponent_and_neighbor_subpose(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_and_neighbor_subpose(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<Size>
-get_intracomponent_and_neighbor_resis(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_and_neighbor_resis(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<std::string>
-get_intracomponent_subs(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
-get_intracomponent_subpose(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_subpose(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<Size>
-get_intracomponent_resis(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_resis(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<std::string>
-get_neighbor_subs(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_neighbor_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
-get_neighbor_subpose(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_neighbor_subpose(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<Size>
-get_neighbor_resis(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_neighbor_resis(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<std::string>
-get_intracomponent_and_intraneighbor_subs(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_and_intraneighbor_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
-get_intracomponent_and_intraneighbor_subpose(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_and_intraneighbor_subpose(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<Size>
-get_intracomponent_and_intraneighbor_resis(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_and_intraneighbor_resis(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<std::string>
-get_intracomponent_and_interneighbor_subs(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_and_interneighbor_subs(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 core::pose::Pose
-get_intracomponent_and_interneighbor_subpose(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_and_interneighbor_subpose(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 utility::vector1<Size>
-get_intracomponent_and_interneighbor_resis(core::pose::Pose const & pose, std::string sym_dof_name, Real contact_dist=10.0);
+get_intracomponent_and_interneighbor_resis(core::pose::Pose const & pose, std::string const & sym_dof_name, Real contact_dist=10.0);
 
 // make a residue mask (like that used to restrict residues to repack) symmetric
 void

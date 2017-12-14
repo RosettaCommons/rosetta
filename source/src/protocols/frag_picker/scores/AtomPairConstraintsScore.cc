@@ -39,7 +39,7 @@ namespace frag_picker {
 namespace scores {
 
 // @brief Auto-generated virtual destructor
-AtomPairConstraintsData::~AtomPairConstraintsData() {}
+AtomPairConstraintsData::~AtomPairConstraintsData() = default;
 
 static basic::Tracer trAtomPairConstraintsScore(
 	"fragment.picking.scores.AtomPairConstraintsScore");
@@ -172,7 +172,7 @@ void AtomPairConstraintsScore::read_constraints(
 			func->read_data(data);
 			std::map<std::string, core::Size> constr_atoms =
 				get_constrainable_atoms_map();
-			std::map<std::string, core::Size>::iterator it = constr_atoms.find(name1);
+			auto it = constr_atoms.find(name1);
 			if ( it == constr_atoms.end() ) {
 				trAtomPairConstraintsScore.Warning << "Unknown backbone atom: "
 					<< name1
@@ -235,7 +235,7 @@ FragmentScoringMethodOP MakeAtomPairConstraintsScore::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read a constraints file. Provide it with constraints::cst_file flag");
 
-	return NULL;
+	return nullptr;
 }
 
 }

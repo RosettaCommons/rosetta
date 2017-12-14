@@ -161,18 +161,12 @@ bool is_valid_backbone(
 
 // Just a handy datastructure to carry over some statistics together with the actual retrieve index
 struct FilterBucket {
-	FilterBucket():
-		retrieve_index(0),
-		BBrms(0),
-		filter_pro(false),
-		filter_beta(false),
-		filter_gly(false)
-	{}
-	core::Size retrieve_index;
-	core::Real BBrms;
-	bool filter_pro;
-	bool filter_beta;
-	bool filter_gly;
+	FilterBucket() = default;
+	core::Size retrieve_index = 0;
+	core::Real BBrms = 0;
+	bool filter_pro{false};
+	bool filter_beta{false};
+	bool filter_gly{false};
 };
 
 // @brief create a set of structures for a the given range of residues and other parameters
@@ -281,7 +275,7 @@ LoopHashSampler::build_structures(
 						++it ) {
 
 					// Get the actual strucure index (not just the bin index)
-					core::Size retrieve_index = (core::Size) (*it);
+					auto retrieve_index = (core::Size) (*it);
 					LeapIndex cp = hashmap.get_peptide( retrieve_index );
 
 					// Retrieve the actual backbone structure

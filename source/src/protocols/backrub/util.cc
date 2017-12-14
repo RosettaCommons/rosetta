@@ -45,7 +45,7 @@ namespace backrub {
 bool
 read_fold_tree_from_file(
 	core::kinematics::FoldTree & foldtree,
-	std::string filepath)
+	std::string const & filepath)
 {
 	std::ifstream filestream(filepath.c_str());
 
@@ -79,7 +79,7 @@ read_fold_tree_from_file(
 }
 
 bool
-read_fold_tree_from_file( core::pose::Pose & pose, std::string filepath)
+read_fold_tree_from_file( core::pose::Pose & pose, std::string const & filepath)
 {
 	core::kinematics::FoldTree foldtree;
 

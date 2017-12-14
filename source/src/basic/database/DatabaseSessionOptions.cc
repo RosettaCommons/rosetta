@@ -26,7 +26,7 @@
 namespace basic {
 namespace database {
 
-DatabaseSessionOptions::DatabaseSessionOptions() {}
+DatabaseSessionOptions::DatabaseSessionOptions() = default;
 
 DatabaseSessionOptions::DatabaseSessionOptions(
 	std::string const & name) :

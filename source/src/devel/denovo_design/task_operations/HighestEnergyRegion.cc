@@ -92,8 +92,7 @@ HighestEnergyRegionOperation::HighestEnergyRegionOperation( HighestEnergyRegionO
 {}
 
 // destructor
-HighestEnergyRegionOperation::~HighestEnergyRegionOperation()
-{}
+HighestEnergyRegionOperation::~HighestEnergyRegionOperation() = default;
 
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
@@ -190,7 +189,7 @@ HighestEnergyRegionOperation::get_residues_to_design( core::pose::Pose const & p
 
 		// work on a copy of the pose
 		core::pose::Pose posecopy( pose );
-		runtime_assert( scorefxn_ != 0 );
+		runtime_assert( scorefxn_ != nullptr );
 		(*scorefxn_)( posecopy );
 
 		for ( core::Size resi=1; resi<=posecopy.size(); ++resi ) {
@@ -355,13 +354,10 @@ DesignByPackStatOperation::DesignByPackStatOperation() :
 {}
 
 /// @brief copy constructor
-DesignByPackStatOperation::DesignByPackStatOperation( DesignByPackStatOperation const & rval ) :
-	HighestEnergyRegionOperation( rval )
-{}
+DesignByPackStatOperation::DesignByPackStatOperation( DesignByPackStatOperation const & /*rval*/ ) = default;
 
 /// @brief destructor
-DesignByPackStatOperation::~DesignByPackStatOperation()
-{}
+DesignByPackStatOperation::~DesignByPackStatOperation() = default;
 
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
@@ -443,8 +439,7 @@ DesignRandomRegionOperation::DesignRandomRegionOperation() :
 {}
 
 /// @brief destructor
-DesignRandomRegionOperation::~DesignRandomRegionOperation()
-{}
+DesignRandomRegionOperation::~DesignRandomRegionOperation() = default;
 
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
@@ -513,8 +508,7 @@ DesignByResidueCentralityOperation::DesignByResidueCentralityOperation() :
 {}
 
 /// @brief destructor
-DesignByResidueCentralityOperation::~DesignByResidueCentralityOperation()
-{}
+DesignByResidueCentralityOperation::~DesignByResidueCentralityOperation() = default;
 
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
@@ -590,8 +584,7 @@ DesignCatalyticResiduesOperation::DesignCatalyticResiduesOperation() :
 {}
 
 /// @brief destructor
-DesignCatalyticResiduesOperation::~DesignCatalyticResiduesOperation()
-{}
+DesignCatalyticResiduesOperation::~DesignCatalyticResiduesOperation() = default;
 
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
@@ -655,8 +648,7 @@ DesignByCavityProximityOperation::DesignByCavityProximityOperation() :
 {}
 
 /// @brief destructor
-DesignByCavityProximityOperation::~DesignByCavityProximityOperation()
-{}
+DesignByCavityProximityOperation::~DesignByCavityProximityOperation() = default;
 
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP

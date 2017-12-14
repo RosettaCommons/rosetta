@@ -57,8 +57,7 @@ namespace interaction_graph {
 /// @author apl
 ///
 ////////////////////////////////////////////////////////////////////////////////
-NodeBase::~NodeBase()
-{}
+NodeBase::~NodeBase() = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -209,9 +208,9 @@ void NodeBase::drop_edge(std::list< EdgeBase* >::iterator edge)
 ////////////////////////////////////////////////////////////////////////////////
 void NodeBase::drop_all_edges()
 {
-	for ( std::list< EdgeBase* >::iterator iter = incident_edge_list_.begin();
+	for ( auto iter = incident_edge_list_.begin();
 			iter != incident_edge_list_.end(); ) {
-		std::list< EdgeBase* >::iterator nextiter = iter;
+		auto nextiter = iter;
 		++nextiter;
 		delete *iter; iter = nextiter;
 	}
@@ -243,11 +242,10 @@ void NodeBase::drop_all_edges()
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase* NodeBase::find_edge(int other_node) const
 {
-	for ( std::list< EdgeBase* >::const_iterator iter = incident_edge_list_.begin();
-			iter != incident_edge_list_.end(); ++iter ) {
-		if ( (*iter)->same_edge( node_index_, other_node) ) return (*iter);
+	for ( auto iter : incident_edge_list_ ) {
+		if ( iter->same_edge( node_index_, other_node) ) return iter;
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -326,7 +324,7 @@ void NodeBase::update_edge_vector()
 	adjacent_node_ind_.resize( num_incident_edges_ + 1);
 	adjacent_node_.resize(num_incident_edges_ + 1);
 
-	std::vector< EdgeBase* >::iterator position1 = incident_edge_vector_.begin();
+	auto position1 = incident_edge_vector_.begin();
 	++position1;
 
 	std::copy( incident_edge_list_.begin(), incident_edge_list_.end(), position1 );
@@ -688,9 +686,9 @@ EdgeBase::edge_weight( Real new_weight )
 InteractionGraphBase::~InteractionGraphBase()
 {
 
-	for ( std::list< EdgeBase* >::iterator iter = ig_edge_list_.begin();
+	for ( auto iter = ig_edge_list_.begin();
 			iter != ig_edge_list_.end(); ) {
-		std::list< EdgeBase* >::iterator next_iter = iter;
+		auto next_iter = iter;
 		++next_iter;
 		delete (*iter);
 		iter = next_iter;
@@ -722,10 +720,10 @@ InteractionGraphBase::~InteractionGraphBase()
 ////////////////////////////////////////////////////////////////////////////////
 InteractionGraphBase::InteractionGraphBase(int num_ig_nodes) :
 	num_ig_nodes_(num_ig_nodes),
-	ig_nodes_(num_ig_nodes + 1, (NodeBase*) NULL),
+	ig_nodes_(num_ig_nodes + 1, (NodeBase*) nullptr),
 	node_state_offsets_( num_ig_nodes + 1, 0 ),
 	num_total_states_(0),
-	focused_edge_(NULL),
+	focused_edge_(nullptr),
 	num_energy_sum_groups_( -1 )
 {}
 
@@ -761,7 +759,7 @@ void InteractionGraphBase::set_num_states_for_node
 	int num_states
 )
 {
-	debug_assert (ig_nodes_[node_index] == NULL);
+	debug_assert (ig_nodes_[node_index] == nullptr);
 	ig_nodes_[node_index] = create_new_node( node_index, num_states);
 	num_total_states_ += num_states;
 	if ( node_index != num_ig_nodes_ ) {
@@ -862,7 +860,7 @@ void InteractionGraphBase::add_edge(int index1, int index2)
 bool InteractionGraphBase::get_edge_exists(int node1, int node2)
 {
 	EdgeBase* edge = find_edge( node1, node2 );
-	return (edge != NULL);
+	return (edge != nullptr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -897,10 +895,10 @@ void InteractionGraphBase::drop_all_edges_for_node( int node )
 /// edge vector representation.
 void InteractionGraphBase::prepare_for_simulated_annealing()
 {
-	for ( std::list< EdgeBase* >::iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end();
 			/* note: no increment statement here */ ) {
-		std::list< EdgeBase* >::iterator next_iter = iter;
+		auto next_iter = iter;
 		++next_iter;
 		//edges sometimes delete themselves, invalidating iterators, so
 		//get the next iterator before calling prepare_for_simulated_annealing
@@ -965,10 +963,9 @@ void InteractionGraphBase::print_vertices() const
 void InteractionGraphBase::output_connectivity(std::ostream & os) const
 {
 	int counter = 1;
-	for ( std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); ++iter ) {
-		os << "edge " << counter << " between " << (*iter)->get_first_node_ind()
-			<< " " << (*iter)->get_second_node_ind() << std::endl;
+	for ( auto iter : ig_edge_list_ ) {
+		os << "edge " << counter << " between " << iter->get_first_node_ind()
+			<< " " << iter->get_second_node_ind() << std::endl;
 		counter++;
 	}
 	return;
@@ -1000,10 +997,9 @@ void InteractionGraphBase::output_dimacs(std::ostream & os) const
 	int num_edges = ig_edge_list_.size();
 	os << "DIMACS: " << "p edges " << num_ig_nodes_ << " " ;
 	os << num_edges << std::endl;
-	for ( std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); ++iter ) {
-		os << "DIMACS: " << "e " << (*iter)->get_first_node_ind();
-		os << " " << (*iter)->get_second_node_ind() << std::endl;
+	for ( auto iter : ig_edge_list_ ) {
+		os << "DIMACS: " << "e " << iter->get_first_node_ind();
+		os << " " << iter->get_second_node_ind() << std::endl;
 	}
 
 	return;
@@ -1231,10 +1227,9 @@ InteractionGraphBase::getTotalMemoryUsage() const
 		total_memory += ig_nodes_[ ii ]->count_dynamic_memory();
 		total_memory += ig_nodes_[ ii ]->count_static_memory();
 	}
-	for ( std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); ++iter ) {
-		total_memory += (*iter)->count_dynamic_memory();
-		total_memory += (*iter)->count_static_memory();
+	for ( auto iter : ig_edge_list_ ) {
+		total_memory += iter->count_dynamic_memory();
+		total_memory += iter->count_static_memory();
 	}
 
 	total_memory += count_dynamic_memory();
@@ -1551,7 +1546,7 @@ void InteractionGraphBase::drop_edge(std::list< EdgeBase* >::iterator iter)
 	//std::cerr << *ig_edge_list_.begin() << " " << *(++ig_edge_list_.begin()) << std::endl;
 
 	//invalidate focused_edge_
-	focused_edge_ = NULL;
+	focused_edge_ = nullptr;
 	return;
 }
 
@@ -1582,7 +1577,7 @@ void InteractionGraphBase::drop_edge(std::list< EdgeBase* >::iterator iter)
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase const * InteractionGraphBase::find_edge(int node1, int node2) const
 {
-	if ( focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
+	if ( focused_edge_ == nullptr || !( focused_edge_->same_edge(node1, node2)) ) {
 		focused_edge_ = ig_nodes_[node1]->find_edge(node2);
 	}
 	return focused_edge_;
@@ -1590,7 +1585,7 @@ EdgeBase const * InteractionGraphBase::find_edge(int node1, int node2) const
 
 EdgeBase * InteractionGraphBase::find_edge(int node1, int node2)
 {
-	if ( focused_edge_ == NULL || !( focused_edge_->same_edge(node1, node2)) ) {
+	if ( focused_edge_ == nullptr || !( focused_edge_->same_edge(node1, node2)) ) {
 		focused_edge_ = ig_nodes_[node1]->find_edge(node2);
 	}
 	return focused_edge_;

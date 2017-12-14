@@ -32,7 +32,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-WaterPackingInfo::WaterPackingInfo() {}
+WaterPackingInfo::WaterPackingInfo() = default;
 
 WaterPackingInfo::WaterPackingInfo( WaterPackingInfo const & src ):
 	CacheableData(),
@@ -50,8 +50,8 @@ WaterPackingInfo::clone() const {
 
 WaterAnchorInfo &
 WaterPackingInfo::operator[] ( Size const seqpos ) {
-	if ( seqpos > data_.size() ) data_.resize( seqpos, 0 );
-	if ( data_[seqpos] == 0 ) {
+	if ( seqpos > data_.size() ) data_.resize( seqpos, nullptr );
+	if ( data_[seqpos] == nullptr ) {
 		data_[seqpos] = WaterAnchorInfoOP( new WaterAnchorInfo() );
 	}
 	return *( data_[ seqpos ] );

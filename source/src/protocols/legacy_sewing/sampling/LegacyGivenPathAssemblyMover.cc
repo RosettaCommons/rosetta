@@ -78,7 +78,7 @@ LegacyGivenPathAssemblyMover::fresh_instance() const {
 ////////////////////////  LegacyGivenPathAssemblyMover function   //////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-LegacyGivenPathAssemblyMover::LegacyGivenPathAssemblyMover(){}
+LegacyGivenPathAssemblyMover::LegacyGivenPathAssemblyMover()= default;
 
 AssemblyOP
 LegacyGivenPathAssemblyMover::generate_assembly(){
@@ -101,7 +101,7 @@ LegacyGivenPathAssemblyMover::generate_assembly(){
 		runtime_assert(nodes_[i]->model().model_id_ == nodes_[i-1]->model().model_id_);
 		runtime_assert(nodes_.size() >= i+1);
 		graph_->add_edges_from_binary(edge_file_, reference_node->get_node_index());
-		HashEdge const * const cur_edge =
+		auto const * const cur_edge =
 			static_cast< HashEdge const * >(graph_->find_edge(nodes_[i]->get_node_index(), nodes_[i+1]->get_node_index()));
 		assembly->follow_edge(graph_, cur_edge, reference_node->get_node_index());
 	}

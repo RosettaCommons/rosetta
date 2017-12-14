@@ -26,7 +26,7 @@ namespace methods {
 
 ContextIndependentTwoBodyEnergy::ContextIndependentTwoBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 
-ContextIndependentTwoBodyEnergy::~ContextIndependentTwoBodyEnergy() {}
+ContextIndependentTwoBodyEnergy::~ContextIndependentTwoBodyEnergy() = default;
 
 EnergyMethodType
 ContextIndependentTwoBodyEnergy::method_type() const

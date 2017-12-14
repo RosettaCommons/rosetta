@@ -52,7 +52,7 @@ public:
 	/// @brief constructor with pose and copiable residue array
 	ReturnSidechainMover(
 		core::pose::Pose const & pose_in,
-		utility::vector1<bool> allow_chi_in,
+		utility::vector1<bool> const & allow_chi_in,
 		core::Size start_res = 0,
 		core::Size end_res = 0 );
 

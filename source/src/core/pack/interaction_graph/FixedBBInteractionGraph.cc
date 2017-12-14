@@ -38,7 +38,7 @@ void FixedBBInteractionGraph::set_sparse_aa_info_for_edge(
 	FArray2_bool const & sparse_conn_info)
 {
 	FixedBBEdge* edge = get_fixedbb_edge( node1, node2 );
-	if ( edge == NULL ) {
+	if ( edge == nullptr ) {
 		std::cerr <<
 			"WARNING:: you've input sparse aa info for an edge that does not exist"
 			<< std::endl;
@@ -61,7 +61,7 @@ bool FixedBBInteractionGraph::get_sparse_aa_info_for_edge(
 )
 {
 	FixedBBEdge* edge = get_fixedbb_edge( node1, node2 );
-	if ( edge == NULL ) {
+	if ( edge == nullptr ) {
 		std::cerr << "WARNING:: you've requested sparse aa info for an edge that does not exist" << std::endl;
 		return false;
 	}
@@ -83,7 +83,7 @@ void FixedBBInteractionGraph::force_aa_neighbors_for_edge
 )
 {
 	FixedBBEdge* edge = get_fixedbb_edge( node1, node2 );
-	if ( edge == NULL ) {
+	if ( edge == nullptr ) {
 		return;
 	}
 	edge->force_aa_neighbors(aa_node1, aa_node2);
@@ -102,7 +102,7 @@ void FixedBBInteractionGraph::force_all_aa_neighbors_for_edge
 )
 {
 	FixedBBEdge* edge = get_fixedbb_edge( node1, node2 );
-	if ( edge == NULL ) {
+	if ( edge == nullptr ) {
 		add_edge( node1, node2 );
 		edge = (FixedBBEdge*) find_edge(node1, node2);
 
@@ -127,7 +127,7 @@ FixedBBInteractionGraph::get_two_body_energy_for_edge(
 ) const
 {
 	FixedBBEdge const * edge = get_fixedbb_edge( node1, node2 );
-	if ( edge == NULL ) {
+	if ( edge == nullptr ) {
 		return 0;
 	}
 	return edge->get_two_body_energy( state_node1, state_node2 );

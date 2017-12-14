@@ -80,8 +80,7 @@ AtomID_Mapper::clone() const {
 
 
 //Destructor
-AtomID_Mapper::~AtomID_Mapper()
-= default;
+AtomID_Mapper::~AtomID_Mapper() = default;
 
 
 //////////////////////////////////////////////////////////////////

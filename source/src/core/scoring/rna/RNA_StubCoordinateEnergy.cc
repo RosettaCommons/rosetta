@@ -138,7 +138,7 @@ RNA_StubCoordinateEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction co
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
@@ -206,7 +206,7 @@ RNA_StubCoordinateEnergy::residue_pair_energy(
 	Stub stub1, stub2;
 	core::pose::rna::get_stub_stub( rsd1, rsd2, stub1, stub2, stub_stub_type_ );
 
-	if ( reference_RT_ != 0 ) reference_RT_->make_jump( stub1 /*start*/, stub1 /*end*/ );
+	if ( reference_RT_ != nullptr ) reference_RT_->make_jump( stub1 /*start*/, stub1 /*end*/ );
 
 	// could easily generalize this function to also compute penalties for having rotation different from target rotation
 	//   using, e.g., a von-Mises function -- compute Jump( stub1, stub2 ) and then check out, e.g. axis-angle of rotation.

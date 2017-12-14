@@ -179,11 +179,11 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
 	core::environment::LocalPositions pos_list;
 
 	Size const LOOP_EXTEND = 1;
-	for ( Loops::const_iterator loop = loops->loops().begin(); loop != loops->loops().end(); ++loop ) {
-		tr.Debug << " Claiming torsions in residues " << std::max( (Size) 1, loop->start() - LOOP_EXTEND )
-			<< "-" << std::min( pose.size(), loop->stop() + LOOP_EXTEND ) << "." << std::endl;
-		for ( Size i = std::max( (Size) 1, loop->start()-LOOP_EXTEND );
-				i <= std::min( pose.size(), loop->stop()+LOOP_EXTEND ); ++i ) {
+	for ( const auto & loop : loops->loops() ) {
+		tr.Debug << " Claiming torsions in residues " << std::max( (Size) 1, loop.start() - LOOP_EXTEND )
+			<< "-" << std::min( pose.size(), loop.stop() + LOOP_EXTEND ) << "." << std::endl;
+		for ( Size i = std::max( (Size) 1, loop.start()-LOOP_EXTEND );
+				i <= std::min( pose.size(), loop.stop()+LOOP_EXTEND ); ++i ) {
 			pos_list.push_back( core::environment::LocalPositionOP( new core::environment::LocalPosition( "BASE", i ) ) );
 		}
 	}

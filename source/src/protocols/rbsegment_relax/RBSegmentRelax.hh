@@ -52,8 +52,8 @@ public:
 	RBSegmentRelax();
 
 	RBSegmentRelax( core::scoring::ScoreFunctionOP scorefxn,
-		utility::vector1< RBSegment > const &RBSegment_input,
-		protocols::loops::Loops const &Loops_input );
+		utility::vector1< RBSegment > const & RBSegment_input,
+		protocols::loops::Loops const & Loops_input );
 	~RBSegmentRelax() override;
 
 	void initialize( utility::vector1< core::fragment::FragSetOP > const &frag_libs , core::Real rnd=0.0);

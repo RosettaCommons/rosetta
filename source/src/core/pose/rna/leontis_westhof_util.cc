@@ -32,7 +32,7 @@ get_LW_orientation( BaseEdge const & edge1, BaseEdge const & edge2, BaseDoubletO
 	runtime_assert( orientation == ANTIPARALLEL || orientation == PARALLEL );
 
 	LW_Table const & lw_table = get_leontis_westhof_table();
-	LW_Table::const_iterator it = lw_table.find( std::make_pair( edge1, edge2 ) );
+	auto it = lw_table.find( std::make_pair( edge1, edge2 ) );
 	runtime_assert( it != lw_table.end() );
 
 	std::map< BaseDoubletOrientation, LW_BaseDoubletOrientation > const & orientation_map( it->second );
@@ -48,7 +48,7 @@ get_base_doublet_orientation_from_LW( BaseEdge const & edge1, BaseEdge const & e
 	runtime_assert( lw_orientation == CIS || lw_orientation == TRANS );
 
 	LW_Table const & lw_table = get_leontis_westhof_table();
-	LW_Table::const_iterator it = lw_table.find( std::make_pair( edge1, edge2 ) );
+	auto it = lw_table.find( std::make_pair( edge1, edge2 ) );
 	runtime_assert( it != lw_table.end() );
 
 	std::map< BaseDoubletOrientation, LW_BaseDoubletOrientation > const & orientation_map( it->second );

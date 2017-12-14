@@ -69,7 +69,7 @@ static std::string const chr_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<
 namespace core {
 namespace scoring {
 
-typedef PoissonBoltzmannPotential PB;
+using PB = PoissonBoltzmannPotential;
 
 const std::string PB::APBS_CONFIG_EXT = ".in";
 const std::string PB::APBS_PQR_EXT = ".pqr";

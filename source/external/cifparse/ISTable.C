@@ -146,13 +146,14 @@ POSSIBILITY THEREOF.
 */
 
 
-#include <limits.h>
+#include <climits>
 
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <utility>
 
 #include "Exceptions.h"
 #include "GenString.h"
@@ -197,7 +198,7 @@ ISTable::ISTable(ITTable::eOrientation orient,
 }
 
 
-ISTable::ISTable(const string& name,
+ISTable::ISTable(string const & name,
   const Char::eCompareType colCaseSense) : _name(name),
   _orient(ITTable::eROW_WISE), _colCaseSense(colCaseSense),
   _colNames(StringLess(colCaseSense))
@@ -208,7 +209,7 @@ ISTable::ISTable(const string& name,
 }
 
 
-ISTable::ISTable(const string& name, ITTable::eOrientation orient,
+ISTable::ISTable(string const & name, ITTable::eOrientation orient,
   const Char::eCompareType colCaseSense) : _name(name),
   _orient(orient), _colCaseSense(colCaseSense),
   _colNames(StringLess(colCaseSense))
@@ -508,9 +509,9 @@ void ISTable::GetColumn(vector<string>& col, const string& colName)
         unsigned int colIndex = GetColumnIndex(colName);
 
         vector<string> subCol;
-        for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+        for (auto & _ittable : _ittables)
         {
-            _ittables[tableI].GetColumn(subCol, colIndex);
+            _ittable.GetColumn(subCol, colIndex);
             col.insert(col.end(), subCol.begin(), subCol.end());
         }
     }
@@ -575,10 +576,10 @@ void ISTable::GetColumn(vector<string>& col, const string& colName,
     {
         unsigned int colIndex = GetColumnIndex(colName);
 
-        for (unsigned int rowI = 0; rowI < rowIndex.size(); ++rowI)
+        for (unsigned int rowI : rowIndex)
         {
             pair<unsigned int, unsigned int> rowLoc;
-            GetRowLocation(rowLoc, rowIndex[rowI]);
+            GetRowLocation(rowLoc, rowI);
 
             col.push_back(_ittables[rowLoc.first](rowLoc.second, colIndex));
         }
@@ -649,8 +650,8 @@ void ISTable::ClearColumn(const string& colName)
     {
         unsigned int colIndex = GetColumnIndex(colName);
 
-        for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
-            _ittables[tableI].ClearColumn(colIndex);
+        for (auto & _ittable : _ittables)
+            _ittable.ClearColumn(colIndex);
     }
     catch (NotFoundException& notFound)
     {
@@ -677,8 +678,8 @@ void ISTable::DeleteColumn(const string& colName)
 
         if (GetNumRows() != 0)
         {
-            for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
-                _ittables[tableI].DeleteColumn(colIndex);
+            for (auto & _ittable : _ittables)
+                _ittable.DeleteColumn(colIndex);
         }
 
         for (unsigned int i = 0; i < _indexNames.size(); ++i)
@@ -743,7 +744,7 @@ unsigned int ISTable::InsertRow(const unsigned int rowIndex,
            if (colI < row.size())
                newCol.push_back(row[colI]);
            else
-               newCol.push_back(string());
+               newCol.emplace_back();
 
            _ittables[0].InsertColumn(colI, newCol);
            _ittables[0].SetFlags(_compare_opts[colI], colI);
@@ -762,7 +763,7 @@ unsigned int ISTable::InsertRow(const unsigned int rowIndex,
             // Begin create new table and set the row
             ITTable newTable(_orient);
             vector<string> newCol;
-            newCol.push_back(string());
+            newCol.emplace_back();
 
             for (unsigned int colI = 0; colI < _colNames.size(); ++colI)
             {
@@ -961,9 +962,9 @@ void ISTable::FindDuplicateRows(vector<pair<unsigned int, unsigned int> >& duplR
     // VLAD VALUE replace with GetColumnIndices()
     try
     {
-        for (unsigned int i = 0; i < colNames.size(); ++i)
+        for (const auto & colName : colNames)
         {
-            colIndices.push_back(GetColumnIndex(colNames[i]));
+            colIndices.push_back(GetColumnIndex(colName));
         }
     }
     catch (NotFoundException& notFound)
@@ -989,9 +990,9 @@ void ISTable::FindDuplicateRows(vector<pair<unsigned int, unsigned int> >& duplR
         bool cont = false;
         // See if this row has already been identified as duplicate and
         // ignore it
-        for (unsigned int duplRowI = 0; duplRowI < duplRows.size(); ++duplRowI)
+        for (auto & duplRow : duplRows)
         {
-            if (duplRows[duplRowI].second == realRowIndex)
+            if (duplRow.second == realRowIndex)
             {
                 cont = true;
                 break;
@@ -1003,8 +1004,8 @@ void ISTable::FindDuplicateRows(vector<pair<unsigned int, unsigned int> >& duplR
 
         vector<string> row;
 
-        for (unsigned int colI = 0; colI < colNames.size(); ++colI)
-            row.push_back(operator()(realRowIndex, colNames[colI]));
+        for (const auto & colName : colNames)
+            row.push_back(operator()(realRowIndex, colName));
 
         vector<unsigned int> res;
 
@@ -1019,9 +1020,9 @@ void ISTable::FindDuplicateRows(vector<pair<unsigned int, unsigned int> >& duplR
                 Search(res, row, colNames, realRowIndex - 1, eBACKWARD);
         }
 
-        for (unsigned int resI = 0; resI < res.size(); ++resI) 
+        for (unsigned int & re : res) 
         {
-            duplRows.push_back(make_pair(realRowIndex, res[resI]));
+            duplRows.emplace_back(realRowIndex, re);
         }
     }
 
@@ -1029,9 +1030,9 @@ void ISTable::FindDuplicateRows(vector<pair<unsigned int, unsigned int> >& duplR
     {
         vector<unsigned int> duplRowIndices;
 
-        for (unsigned int rowI = 0; rowI < duplRows.size(); rowI++)
+        for (auto & duplRow : duplRows)
         {
-            duplRowIndices.push_back(duplRows[rowI].second);
+            duplRowIndices.push_back(duplRow.second);
         }
 
         DeleteRows(duplRowIndices);
@@ -1152,8 +1153,8 @@ void ISTable::CreateIndex(const string& indexName,
         _listsOfColumns.push_back(colIndices);
         _unique.push_back(unique);
 
-        for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
-            _ittables[tableI].CreateIndex(colIndices, unique);
+        for (auto & _ittable : _ittables)
+            _ittable.CreateIndex(colIndices, unique);
     }
 
 }
@@ -1205,8 +1206,8 @@ void ISTable::DeleteIndex(const string& indexName)
           "ISTable::DeleteIndex");
     }
 
-    for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
-        _ittables[tableI].DeleteIndex(indexIndex);
+    for (auto & _ittable : _ittables)
+        _ittable.DeleteIndex(indexIndex);
 
     DeleteIndex(indexIndex);
 }
@@ -1255,9 +1256,9 @@ void ISTable::SetFlags(const string& colName, const unsigned char newOpts)
 
     unsigned int colIndex = GetColumnIndex(colName);
 
-    for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
-        if (colIndex < _ittables[tableI].GetNumColumns())
-            _ittables[tableI].SetFlags(newOpts, colIndex);
+    for (auto & _ittable : _ittables)
+        if (colIndex < _ittable.GetNumColumns())
+            _ittable.SetFlags(newOpts, colIndex);
 
     if (newOpts & DT_MASK)
     {
@@ -1494,7 +1495,7 @@ void ISTable::Init()
 
     _modified = false;
 
-    _ser = NULL;
+    _ser = nullptr;
 
     _numRows = 0;
 
@@ -1512,8 +1513,8 @@ void ISTable::Init()
 void ISTable::Clear()
 {
 
-    for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
-        _ittables[tableI].Clear();
+    for (auto & _ittable : _ittables)
+        _ittable.Clear();
 
     _colNames.clear();
 
@@ -1564,9 +1565,9 @@ void ISTable::GetColumnsIndices(vector<unsigned int>& colIndices,
 
     try
     {
-        for (unsigned int index = 0; index < colNames.size(); ++index)
+        for (const auto & colName : colNames)
         {
-            colIndices.push_back(GetColumnIndex(colNames[index]));
+            colIndices.push_back(GetColumnIndex(colName));
         }
     }
 
@@ -1707,15 +1708,15 @@ void ISTable::Search(vector<unsigned int>& res, const vector<string>& targets,
             _ittables[tableI].Search(subRes, targets, colIds,
               (unsigned int)indexIndex, searchType);
 
-            for (unsigned int subResI = 0; subResI < subRes.size(); ++subResI)
+            for (unsigned int subRe : subRes)
             {
                 if ((tableI == rowLoc.first) && ((prevNumRows +
-                  subRes[subResI]) < fromRowIndex))
+                  subRe) < fromRowIndex))
                 {
                     continue;
                 }
 
-                res.push_back(prevNumRows + subRes[subResI]);
+                res.push_back(prevNumRows + subRe);
             }
 
             prevNumRows += _ittables[tableI].GetNumRows();
@@ -1826,7 +1827,7 @@ ISTable* ISTable::Merge(ISTable& firstTable, ISTable& secondTable,
   string cell;
 
 
-  ISTable* retTableP = new ISTable(firstTable);
+  auto* retTableP = new ISTable(firstTable);
   retTableP->DeleteKey();
 
   const vector<string>& firstTableColNames = firstTable.GetColumnNames();
@@ -1882,12 +1883,11 @@ ISTable* ISTable::Merge(ISTable& firstTable, ISTable& secondTable,
     searchCols.insert(searchCols.end(),
       firstTable._listsOfColumns[firstKeyIndex].size(), string());
 
-    for (unsigned int jj=0;
-      jj < firstTable._listsOfColumns[firstKeyIndex].size(); jj++)
+    for (unsigned int jj : firstTable._listsOfColumns[firstKeyIndex])
     {
       searchCols[retTableP->GetColumnIndex(
-        firstTableColNames[firstTable._listsOfColumns[firstKeyIndex][jj]])] =
-        firstTableColNames[firstTable._listsOfColumns[firstKeyIndex][jj]];
+        firstTableColNames[jj])] =
+        firstTableColNames[jj];
     }
 
     retTableP->Search(result, target, searchCols);
@@ -1940,10 +1940,10 @@ ostream& operator<<(ostream& out, const ISTable& isTable)
 
     out << setw(5) << "RowNo";
 
-    for (unsigned int i = 0; i < colNames.size(); i++)
+    for (const auto & colName : colNames)
     {
         // VLAD HARDCODED CONST
-        out << setw(10) << colNames[i] << " ";
+        out << setw(10) << colName << " ";
     }
     out << endl;
 
@@ -1951,12 +1951,12 @@ ostream& operator<<(ostream& out, const ISTable& isTable)
     {
         out << setw(5) << j;
 
-        for (unsigned int i = 0; i < colNames.size(); i++)
+        for (const auto & colName : colNames)
         {
             // VLAD HARDCODED CONST
             try
             {
-                out << setw(10) << isTable(j, colNames[i]) << " ";
+                out << setw(10) << isTable(j, colName) << " ";
             }
             catch (out_of_range)
             {
@@ -2029,18 +2029,16 @@ bool ISTable::PrintDiff(ISTable& inTable)
   for (i=0; i<GetNumRows(); i++) {
     // Find out what column ids are in key index
     int indexIndex = inTable.FindKeyIndex();
-    for (unsigned int jj=0; jj< _listsOfColumns[indexIndex].size();
-      jj++) {
+    for (unsigned int jj : _listsOfColumns[indexIndex]) {
       cell.clear();
-      cell = operator()(i, _listsOfColumns[indexIndex][jj]);
+      cell = operator()(i, jj);
       target.push_back(cell);
     }
     vector<unsigned int> result;
     
     vector<string> searchCol;
-    for (unsigned int colI = 0; colI <
-      inTable._listsOfColumns[indexIndex].size(); ++colI)
-        searchCol.push_back(ColNames2[inTable._listsOfColumns[indexIndex][colI]]);
+    for (unsigned int colI : inTable._listsOfColumns[indexIndex])
+        searchCol.push_back(ColNames2[colI]);
 
     inTable.Search(result, target, searchCol);
     if (result.empty()) {
@@ -2109,7 +2107,7 @@ int ISTable::WriteObjectV9(Serializer* ser, int& size)
 
     unsigned int num;
 
-    if (ser == NULL)
+    if (ser == nullptr)
         return ERROR_NO_FILE_NAVIGATOR;
 
     UInt32 firstIndex = ser->WriteString(_version);
@@ -2119,8 +2117,8 @@ int ISTable::WriteObjectV9(Serializer* ser, int& size)
     currIndex = ser->WriteUInt32(_ittables.size());
 
     int unused = 0;
-    for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
-        _ittables[tableI].Write(ser, unused);
+    for (auto & _ittable : _ittables)
+        _ittable.Write(ser, unused);
 
     currIndex = ser->WriteUInt32(_colCaseSense);
 
@@ -2257,7 +2255,7 @@ int ISTable::GetObject(UInt32 index, Serializer* ser) {
 int ISTable::GetObjectV9(UInt32 index, Serializer* ser)
 {
 
-    if (ser == NULL)
+    if (ser == nullptr)
         return ERROR_NO_FILE_NAVIGATOR;
 
     SInt32 ret = 0;
@@ -2280,9 +2278,9 @@ int ISTable::GetObjectV9(UInt32 index, Serializer* ser)
 
     // Calculate the number of rows
     _numRows = 0;
-    for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+    for (auto & _ittable : _ittables)
     {
-        _numRows += _ittables[tableI].GetNumRows();
+        _numRows += _ittable.GetNumRows();
     }
 
     _orient = _ittables[0].GetOrientation();
@@ -2321,8 +2319,8 @@ int ISTable::GetObjectV9(UInt32 index, Serializer* ser)
     for (unsigned int j = 0; j < oToGet.size(); j++)
     {
         _compare_opts.push_back(oToGet[j]);
-        for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
-            _ittables[tableI].SetFlags(oToGet[j], j);
+        for (auto & _ittable : _ittables)
+            _ittable.SetFlags(oToGet[j], j);
     }
 
     // Number of search indices
@@ -2364,7 +2362,7 @@ int ISTable::GetObjectV9(UInt32 index, Serializer* ser)
 int ISTable::GetObjectV8(UInt32 index, Serializer* ser)
 {
 
-    if (ser == NULL)
+    if (ser == nullptr)
         return ERROR_NO_FILE_NAVIGATOR;
 
     SInt32 ret = 0;
@@ -2378,9 +2376,9 @@ int ISTable::GetObjectV8(UInt32 index, Serializer* ser)
 
     // Calculate the number of rows
     _numRows = 0;
-    for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+    for (auto & _ittable : _ittables)
     {
-        _numRows += _ittables[tableI].GetNumRows();
+        _numRows += _ittable.GetNumRows();
     }
 
     _orient = _ittables[0].GetOrientation();
@@ -2461,7 +2459,7 @@ int ISTable::GetObjectV8(UInt32 index, Serializer* ser)
 int ISTable::GetObjectV7(UInt32 index, Serializer* ser)
 {
 
-    if (ser == NULL)
+    if (ser == nullptr)
         return ERROR_NO_FILE_NAVIGATOR;
 
     SInt32 ret = 0;
@@ -2475,9 +2473,9 @@ int ISTable::GetObjectV7(UInt32 index, Serializer* ser)
 
     // Calculate the number of rows
     _numRows = 0;
-    for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+    for (auto & _ittable : _ittables)
     {
-        _numRows += _ittables[tableI].GetNumRows();
+        _numRows += _ittable.GetNumRows();
     }
 
     _orient = _ittables[0].GetOrientation();
@@ -2562,7 +2560,7 @@ int ISTable::GetObjectV7(UInt32 index, Serializer* ser)
 int ISTable::GetObjectV6(UInt32 index, Serializer* ser)
 {
 
-    if (ser == NULL)
+    if (ser == nullptr)
         return ERROR_NO_FILE_NAVIGATOR;
 
     SInt32 ret = 0;
@@ -2604,9 +2602,9 @@ int ISTable::GetObjectV6(UInt32 index, Serializer* ser)
     if (numColumns != oToGet.size())
         return INTERNAL_INCONSISTENCY_ERROR;
 
-    for (unsigned int j = 0; j < oToGet.size(); j++)
+    for (char j : oToGet)
     {
-        _compare_opts.push_back(oToGet[j]);
+        _compare_opts.push_back(j);
     }
 
     for (unsigned int k = 0; k < _colNames.size(); ++k)
@@ -2619,9 +2617,9 @@ int ISTable::GetObjectV6(UInt32 index, Serializer* ser)
 
     // Calculate the number of rows
     _numRows = 0;
-    for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+    for (auto & _ittable : _ittables)
     {
-        _numRows += _ittables[tableI].GetNumRows();
+        _numRows += _ittable.GetNumRows();
     }
 
     for (unsigned int j = 0; j < oToGet.size(); j++)
@@ -2672,7 +2670,7 @@ int ISTable::GetObjectV6(UInt32 index, Serializer* ser)
 int ISTable::GetObjectV3(UInt32 index, Serializer* ser)
 {
 
-  if (ser == NULL)
+  if (ser == nullptr)
       return ERROR_NO_FILE_NAVIGATOR;
 
   SInt32 ret = 0;
@@ -2720,9 +2718,9 @@ int ISTable::GetObjectV3(UInt32 index, Serializer* ser)
 
   // Calculate the number of rows
   _numRows = 0;
-  for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+  for (auto & _ittable : _ittables)
   {
-      _numRows += _ittables[tableI].GetNumRows();
+      _numRows += _ittable.GetNumRows();
   }
 
   for (unsigned int j = 0; j < _colNames.size(); j++)
@@ -2853,7 +2851,7 @@ int ISTable::GetObjectV2(UInt32 index, Serializer* ser) {
     numC = tempColumns.size();
     index++;
     if (numC > 0) {
-      string * tempString = new string[numC];
+      auto * tempString = new string[numC];
       for (l = 0; l < numC; l++) {
         if (tempColumns[l].empty()) {
           tempString[l] = "";
@@ -2880,9 +2878,9 @@ int ISTable::GetObjectV2(UInt32 index, Serializer* ser) {
 
   // Calculate the number of rows
   _numRows = 0;
-  for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+  for (auto & _ittable : _ittables)
   {
-      _numRows += _ittables[tableI].GetNumRows();
+      _numRows += _ittable.GetNumRows();
   }
 
   for (j = 0; j < _colNames.size(); j++)
@@ -2923,8 +2921,8 @@ int ISTable::GetObjectV2(UInt32 index, Serializer* ser) {
     ser->ReadUInt32s(listToGet, index);
     index++;
     vector<unsigned int> list;
-    for (unsigned int l2=0; l2<listToGet.size(); l2++){
-      list.push_back(listToGet[l2]);
+    for (unsigned int l2 : listToGet){
+      list.push_back(l2);
     }
 
     if (j < uniqueToGet.size())
@@ -3030,7 +3028,7 @@ int ISTable::GetObjectV1_1(UInt32 index, Serializer* ser) {
     numC = tempColumns.size();
     index++;
     if (numC > 0) {
-      string * tempString = new string[numC];
+      auto * tempString = new string[numC];
       for (l = 0; l < numC; l++) {
         if (tempColumns[l].empty()) {
           tempString[l] = "";
@@ -3052,9 +3050,9 @@ int ISTable::GetObjectV1_1(UInt32 index, Serializer* ser) {
 
   // Calculate the number of rows
   _numRows = 0;
-  for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+  for (auto & _ittable : _ittables)
   {
-      _numRows += _ittables[tableI].GetNumRows();
+      _numRows += _ittable.GetNumRows();
   }
 
   for (j = 0; j < _colNames.size(); j++)
@@ -3154,7 +3152,7 @@ int ISTable::GetObjectV1(UInt32 index, Serializer* ser) {
     numC = tempColumns.size();
     index++;
     if (numC > 0) {
-      string * tempString = new string[numC];
+      auto * tempString = new string[numC];
       for (l = 0; l < numC; l++) {
         if (tempColumns[l].empty()) {
           tempString[l] = "";
@@ -3176,9 +3174,9 @@ int ISTable::GetObjectV1(UInt32 index, Serializer* ser) {
 
   // Calculate the number of rows
   _numRows = 0;
-  for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+  for (auto & _ittable : _ittables)
   {
-      _numRows += _ittables[tableI].GetNumRows();
+      _numRows += _ittable.GetNumRows();
   }
 
   for (j = 0; j < _colNames.size(); j++)
@@ -3314,9 +3312,9 @@ void ISTable::GetColumn(vector<string>& col, const string& colName,
         unsigned int indexIndex = FindIndex(indexName);
 
         vector<string> subCol;
-        for (unsigned int tableI = 0; tableI < _ittables.size(); ++tableI)
+        for (auto & _ittable : _ittables)
         {
-            _ittables[tableI].GetColumn(subCol, colIndex, indexIndex);
+            _ittable.GetColumn(subCol, colIndex, indexIndex);
             col.insert(col.end(), subCol.begin(), subCol.end());
         }
     }
@@ -3420,7 +3418,7 @@ void ISTable::CreateSubtables(const unsigned int numRows)
     // Create the rest of the ITTables, if needed.
     while (currNumRows < numRows)
     {
-        _ittables.push_back(ITTable(_orient));
+        _ittables.emplace_back(_orient);
         currNumRows += MAX_NUM_ITTABLE_ROWS;
     }
 
@@ -3498,12 +3496,12 @@ void ISTable::UpdateColListOnColDelete(const unsigned int colIndex)
 
     // Updating lists of columns. If a column in the list has column
     // index >= colIndex then decrement it by 1
-    for (unsigned int i = 0; i < _listsOfColumns.size(); i++)
+    for (auto & _listsOfColumn : _listsOfColumns)
     {
-        for (unsigned int j = 0; j < _listsOfColumns[i].size(); j++)
+        for (unsigned int & j : _listsOfColumn)
         {
-            if (_listsOfColumns[i][j] >= colIndex)
-                _listsOfColumns[i][j]--;
+            if (j >= colIndex)
+                j--;
         }
     }
 
@@ -3514,7 +3512,7 @@ bool ISTable::IsColumnInIndex(const unsigned int indexIndex,
   const unsigned int colIndex)
 {
 
-    vector<unsigned int>::iterator pos =
+    auto pos =
       find(_listsOfColumns[indexIndex].begin(),
       _listsOfColumns[indexIndex].end(), colIndex);
 

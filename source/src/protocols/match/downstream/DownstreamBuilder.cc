@@ -42,8 +42,7 @@ DownstreamBuilder::DownstreamBuilder( DownstreamBuilder const & other ) :
 	bb_grid_( other.bb_grid_ )
 {}
 
-DownstreamBuilder::~DownstreamBuilder()
-{}
+DownstreamBuilder::~DownstreamBuilder() = default;
 
 
 void

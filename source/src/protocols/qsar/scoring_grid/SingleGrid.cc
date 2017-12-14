@@ -20,6 +20,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/tools/make_vector.hh>
@@ -37,21 +38,16 @@ namespace scoring_grid {
 static basic::Tracer TR( "protocols.qsar.scoring_grid.SingleGrid" );
 
 
-SingleGrid::SingleGrid(std::string type) : type_(type),chain_('A')
-{
+SingleGrid::SingleGrid(std::string const & type) : type_(type),chain_('A')
+{}
 
-}
-
-SingleGrid::~SingleGrid()
-{
-
-}
+SingleGrid::~SingleGrid() = default;
 
 void SingleGrid::initialize(core::Vector const & center, core::Real width,core::Real resolution )
 {
 	center_=center;
 
-	core::Size num_pts = static_cast<core::Size>(width/resolution);
+	auto num_pts = static_cast<core::Size>(width/resolution);
 	//core::Size num_pts = 160;
 	//core::Real const resolution = 0.1;
 	core::Real const grid_halfwidth = width / 2.0;

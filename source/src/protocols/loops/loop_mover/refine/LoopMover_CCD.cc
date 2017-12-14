@@ -149,7 +149,7 @@ LoopMover_Refine_CCD::LoopMover_Refine_CCD(
 }
 
 //destructor
-LoopMover_Refine_CCD::~LoopMover_Refine_CCD() {}
+LoopMover_Refine_CCD::~LoopMover_Refine_CCD() = default;
 
 // XRW TEMP std::string
 // XRW TEMP LoopMover_Refine_CCD::get_name() const {
@@ -165,7 +165,7 @@ LoopMover_Refine_CCD::show(std::ostream & output) const
 		"\nRepack period:       " << repack_period_ << "\nInitial temperature: " << temp_initial_ <<
 		"\nFinal temperature:   " << temp_final_ <<  "\nSet fold tree from loop?: " <<
 		(set_fold_tree_from_loops_ ? "True" : "False") << "\nMovemap:  ";
-	if ( move_map() != 0 ) { output << std::endl; move_map()->show(output);}
+	if ( move_map() != nullptr ) { output << std::endl; move_map()->show(output);}
 	else { output << "none" << std::endl; }
 }
 
@@ -183,7 +183,7 @@ void LoopMover_Refine_CCD::set_default_settings()
 	move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 	inner_cycles_ = max_inner_cycles_;
 	current_cycle_number_ = 0;
-	original_fold_tree_ = NULL;
+	original_fold_tree_ = nullptr;
 }
 loop_mover::LoopMover::MoveMapOP LoopMover_Refine_CCD::move_map() const
 {
@@ -237,7 +237,7 @@ void LoopMover_Refine_CCD::set_task_factory(
 )
 {
 	// make local, non-const copy from const input
-	runtime_assert( task_factory_in != 0 );
+	runtime_assert( task_factory_in != nullptr );
 	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *task_factory_in ) );
 }
 
@@ -271,9 +271,9 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	if ( tag->hasOption("task_operations") ) {
 		core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( tag, data );
 		this->set_task_factory( task_factory );
-	} else task_factory_ = NULL;
+	} else task_factory_ = nullptr;
 
-	if ( tag->hasOption( "loops_from_cache" ) ) set_use_loops_from_observer_cache( tag->getOption<bool>( "loops_from_cache", 1 ) );
+	if ( tag->hasOption( "loops_from_cache" ) ) set_use_loops_from_observer_cache( tag->getOption<bool>( "loops_from_cache", true ) );
 
 	if ( tag->hasOption( "outer_cycles" ) ) outer_cycles_ = tag->getOption<core::Size>( "outer_cycles", option[ OptionKeys::loops::refine_outer_cycles ]() );
 	if ( tag->hasOption( "max_inner_cycles" ) ) max_inner_cycles_ = tag->getOption<core::Size>( "max_inner_cycles", 250 );
@@ -397,7 +397,7 @@ basic::Tracer & LoopMover_Refine_CCD::tr() const
 
 core::scoring::ScoreFunctionOP LoopMover_Refine_CCD::get_new_ramping_scorefxn()
 {
-	if ( scorefxn() != 0 ) {
+	if ( scorefxn() != nullptr ) {
 		ramping_scorefxn_ = scorefxn()->clone();
 	} else {
 		ramping_scorefxn_ = get_fa_scorefxn();
@@ -428,7 +428,7 @@ core::pack::task::PackerTaskOP LoopMover_Refine_CCD::get_packer_task( core::pose
 {
 	pack::task::PackerTaskOP base_packer_task;
 	// create default Packer behavior if none has been set via TaskFactory
-	if ( task_factory_ == 0 ) {
+	if ( task_factory_ == nullptr ) {
 		// the default Packer behavior is defined here
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;

@@ -411,23 +411,23 @@ SingleResidueDunbrackLibrary::write_to_binary( utility::io::ozstream & out ) con
 
 	/// 2. rotno_2_packed_rotno_
 	{
-		boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
+		auto * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
 		for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno[ ii - 1 ] = rotno_2_packed_rotno_[ ii ];
 		out.write( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
-		delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
+		delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = nullptr;
 	}
 
 	/// 3. packed_rotno_2_rotno_
 	{
-		boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
+		auto * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
 		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno[ ii - 1 ] = packed_rotno_2_rotno_[ ii ];
 		out.write( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
-		delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
+		delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = nullptr;
 	}
 
 	/// 4. packed_rotno_2_rotwell_
 	{
-		boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
+		auto * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
 		Size count( 0 );
 		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) {
 			for ( Size jj = 1; jj <= n_rotameric_chi_; ++jj ) {
@@ -436,7 +436,7 @@ SingleResidueDunbrackLibrary::write_to_binary( utility::io::ozstream & out ) con
 			}
 		}
 		out.write( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
-		delete [] packed_rotno_2_rotwell; packed_rotno_2_rotwell = 0;
+		delete [] packed_rotno_2_rotwell; packed_rotno_2_rotwell = nullptr;
 	}
 
 }
@@ -454,24 +454,24 @@ SingleResidueDunbrackLibrary::read_from_binary( utility::io::izstream & in )
 
 	/// 2. rotno_2_packed_rotno_
 	{
-		boost::int32_t * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
+		auto * rotno_2_packed_rotno = new boost::int32_t[ n_possible_rots_ ];
 		in.read( (char*) rotno_2_packed_rotno, n_possible_rots_ * sizeof( boost::int32_t ) );
 		for ( Size ii = 1; ii <= n_possible_rots_; ++ii ) rotno_2_packed_rotno_[ ii ] = rotno_2_packed_rotno[ ii - 1 ];
-		delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = 0;
+		delete [] rotno_2_packed_rotno; rotno_2_packed_rotno = nullptr;
 	}
 
 	/// 3. packed_rotno_2_rotno_
 	{
-		boost::int32_t * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
+		auto * packed_rotno_2_rotno = new boost::int32_t[ n_packed_rots_ ];
 		in.read( (char*) packed_rotno_2_rotno, n_packed_rots_ * sizeof( boost::int32_t ) );
 		packed_rotno_2_rotno_.resize( n_packed_rots_ );
 		for ( Size ii = 1; ii <= n_packed_rots_; ++ii ) packed_rotno_2_rotno_[ ii ] = packed_rotno_2_rotno[ ii - 1 ];
-		delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = 0;
+		delete [] packed_rotno_2_rotno; packed_rotno_2_rotno = nullptr;
 	}
 
 	/// 4. packed_rotno_2_rotwell_
 	{
-		boost::int32_t * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
+		auto * packed_rotno_2_rotwell = new boost::int32_t[ n_packed_rots_ * n_rotameric_chi_ ];
 		in.read( (char*) packed_rotno_2_rotwell, n_packed_rots_ * n_rotameric_chi_ * sizeof( boost::int32_t ) );
 		packed_rotno_2_rotwell_.resize( n_packed_rots_ );
 		Size count( 0 );
@@ -492,13 +492,13 @@ SingleResidueDunbrackLibrary::read_from_binary( utility::io::izstream & in )
 bool
 SingleResidueDunbrackLibrary::operator ==( SingleResidueRotamerLibrary const & rhs) const {
 	// Raw pointer okay, we're just using it to check for conversion
-	SingleResidueDunbrackLibrary const * ptr( dynamic_cast< SingleResidueDunbrackLibrary const * > ( &rhs ) );
-	if ( ptr == 0 ) {
+	auto const * ptr( dynamic_cast< SingleResidueDunbrackLibrary const * > ( &rhs ) );
+	if ( ptr == nullptr ) {
 		TR << "In comparison operator: right-hand side is not a SingleResidueDunbrackLibrary." << std::endl;
 		return false;
 	}
 
-	SingleResidueDunbrackLibrary const & other( dynamic_cast< SingleResidueDunbrackLibrary const & > ( rhs ) );
+	auto const & other( dynamic_cast< SingleResidueDunbrackLibrary const & > ( rhs ) );
 
 	// We don't call the parent == operator, as there's no meaningful data there to compare.
 	bool equal( true );
@@ -802,7 +802,7 @@ INIT(  FIVE,  FIVE )
 	utility::fixedsizearray1< Real,  FIVE > realvec_FIVE;
 	utility::vector1< Real > realvec( FIVE );
 
-	chemical::ResidueType rt( NULL, NULL, NULL, NULL );
+	chemical::ResidueType rt( nullptr, nullptr, nullptr, nullptr );
 	conformation::Residue rsd( rt, true );
 	RotamerLibraryScratchSpace scratch;
 	Size4 rotwell;

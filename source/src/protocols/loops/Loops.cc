@@ -157,7 +157,7 @@ void Loops::read_loops_options()
 			set_loop_file_name_and_reset( loop_files[ 1 ] );
 			return;
 		}
-		core::Size choice = core::Size( numeric::random::rg().random_range(1,( loop_files.size() ) ));
+		auto choice = core::Size( numeric::random::rg().random_range(1,( loop_files.size() ) ));
 		// Why is this tr.Error and not like... tr.Info?
 		tr.Error << "Loop choice: " << loop_files[ choice ] << "  " << choice << std::endl;
 		set_loop_file_name_and_reset( loop_files[ choice ] );
@@ -402,7 +402,7 @@ Loops::one_random_loop() const {
 	Size const size = loops_.size();
 	runtime_assert( size > 0 );
 	Size index =0;
-	Size const end = static_cast< Size >( numeric::random::uniform()*size );
+	auto const end = static_cast< Size >( numeric::random::uniform()*size );
 	auto it = loops_.begin();
 	while ( index != end ) { ++index; ++it; }
 	return it;
@@ -709,10 +709,10 @@ void Loops::grow_loop(
 
 	tr.Debug << "GrowLoop: " << loop << std::endl;
 
-	core::Size extend_start = static_cast< core::Size >(
+	auto extend_start = static_cast< core::Size >(
 		numeric::random::uniform() * magL
 	);
-	core::Size extend_stop  = static_cast< core::Size >(
+	auto extend_stop  = static_cast< core::Size >(
 		numeric::random::uniform() * magR
 	);
 

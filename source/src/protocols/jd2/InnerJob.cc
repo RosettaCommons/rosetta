@@ -33,9 +33,9 @@ namespace protocols {
 namespace jd2 {
 
 /////////////////////////////InnerJob/////////////////////////////
-InnerJob::InnerJob( std::string  input_tag, core::Size nstruct_max ) :
-	input_tag_(std::move(input_tag)),
-	nstruct_max_(nstruct_max),
+InnerJob::InnerJob( std::string const & input_tag, core::Size nstruct_max ) :
+	input_tag_( input_tag ),
+	nstruct_max_( nstruct_max ),
 	pose_(/* NULL */),
 	bad_( false )
 {
@@ -43,9 +43,9 @@ InnerJob::InnerJob( std::string  input_tag, core::Size nstruct_max ) :
 	//TR.Trace << "Using InnerJob (base class) for JobDistributor" << std::endl;
 }
 
-InnerJob::InnerJob( core::pose::PoseCOP pose, std::string  input_tag, core::Size nstruct_max ) :
-	input_tag_(std::move(input_tag)),
-	nstruct_max_(nstruct_max),
+InnerJob::InnerJob( core::pose::PoseCOP pose, std::string const & input_tag, core::Size nstruct_max ) :
+	input_tag_( input_tag ),
+	nstruct_max_( nstruct_max ),
 	pose_(std::move( pose )),
 	bad_( false )
 {

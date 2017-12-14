@@ -173,12 +173,12 @@ void FragmentConstantLengthTest::test_frag_cache() {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
-				Size val;
+				Size val = 0; // gcc7.2
 				TS_ASSERT( silly_cache.retrieve(frame, 1, val) ); //there should be a value ( return true )
 				TS_ASSERT_EQUALS( val , pos );
 				Real data;
 				TS_ASSERT( !empty_cache.retrieve(frame, 1, data));
-				Size val2;
+				Size val2 = 0; // gcc7.2
 				TS_ASSERT( another_silly_cache.retrieve(frame, 1, val2) ); //there should be a value ( return true )
 				TS_ASSERT_EQUALS( val2 , pos );
 
@@ -219,12 +219,12 @@ void FragmentConstantLengthTest::test_frag_cache() {
 			FrameList frames;
 			if ( fragset.region( movemap, pos, pos+len-1, len, len, frames ) ) {
 				Frame const& frame ( * ( frames[ 1 ] ) );
-				Size val;
+				Size val = 0; // gcc7.2 requires this
 				TS_ASSERT( silly_cache.retrieve(frame, 1, val) ); //there should be a value ( return true )
 				TS_ASSERT_EQUALS( val , pos );
 				//Real data;
 				// TS_ASSERT( empty_cache.retrieve(frame, 1, data)); // this will break since no value has been stored
-				Size val2;
+				Size val2 = 0; // gcc7.2 requires this
 				TS_ASSERT( another_silly_cache.retrieve(frame, 1, val2) ); //there should be a value ( return true )
 				TS_ASSERT_EQUALS( val2 , pos );
 
@@ -297,7 +297,7 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 			FragID_Iterator it = bfragset.begin();
 			FragID_Iterator eit= bfragset.end();
 			for ( Size pos=1 ; it!=eit; ++it ) {
-				Size val;
+				Size val = 0; //gcc7.2
 				silly_cache.retrieve( *it, val);
 				TS_ASSERT_EQUALS( val, pos );
 				++pos;
@@ -328,7 +328,7 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 			FragID_Iterator it = new_frame_list.begin();
 			FragID_Iterator eit = new_frame_list.end();
 			for ( Size pos=1 ; it!=eit; ++it ) {
-				Size val;
+				Size val = 0; // gcc7.2
 				silly_cache.retrieve( *it, val);
 				TS_ASSERT_EQUALS( val, pos );
 				++pos;

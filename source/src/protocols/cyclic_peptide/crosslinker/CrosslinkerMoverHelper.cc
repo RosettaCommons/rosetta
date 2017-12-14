@@ -67,7 +67,7 @@ CrosslinkerMoverHelper::CrosslinkerMoverHelper( CrosslinkerMoverHelper const & s
 /// @brief Destructor (important for properly forward-declaring smart-pointer
 /// members)
 ////////////////////////////////////////////////////////////////////////////////
-CrosslinkerMoverHelper::~CrosslinkerMoverHelper(){}
+CrosslinkerMoverHelper::~CrosslinkerMoverHelper()= default;
 
 //////////////////////
 /// Public Methods ///

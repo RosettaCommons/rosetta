@@ -93,8 +93,7 @@ CavityVolumeFilter::CavityVolumeFilter() :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-CavityVolumeFilter::~CavityVolumeFilter()
-{}
+CavityVolumeFilter::~CavityVolumeFilter() = default;
 
 
 /// Return a copy of ourselves
@@ -131,7 +130,7 @@ CavityVolumeFilter::parse_my_tag(
 	}
 
 	// add selector from sub tags
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator itag = tag->getTags().begin();
+	for ( auto itag = tag->getTags().begin();
 			itag != tag->getTags().end(); ++itag ) {
 		if ( selector_ ) {
 			std::stringstream error_msg;

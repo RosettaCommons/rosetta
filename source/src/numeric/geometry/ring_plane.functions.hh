@@ -22,7 +22,7 @@
 #include <numeric/xyzVector.fwd.hh>
 
 // Utility header
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 
 namespace numeric {

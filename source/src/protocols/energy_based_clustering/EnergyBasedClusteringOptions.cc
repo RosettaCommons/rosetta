@@ -57,7 +57,7 @@ EnergyBasedClusteringOptions::EnergyBasedClusteringOptions( bool const initializ
 	if ( initialize_from_options ) initialize_from_global_options();
 }
 
-EnergyBasedClusteringOptions::~EnergyBasedClusteringOptions() {}
+EnergyBasedClusteringOptions::~EnergyBasedClusteringOptions() = default;
 
 EnergyBasedClusteringOptionsOP
 EnergyBasedClusteringOptions::clone() const {

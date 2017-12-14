@@ -31,12 +31,13 @@
 #include <numeric/EulerAngles.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.magnesium.MgHydrater" );
 
 using namespace core;
 using utility::vector1;
-typedef  numeric::xyzMatrix< core::Real > Matrix;
+using Matrix = numeric::xyzMatrix<core::Real>;
 using namespace ObjexxFCL::format;
 
 namespace protocols {
@@ -66,8 +67,7 @@ MgHydrater::MgHydrater( utility::vector1< Size > const & mg_res_list ):
 }
 
 //Destructor
-MgHydrater::~MgHydrater()
-= default;
+MgHydrater::~MgHydrater() = default;
 
 ///////////////////////////////////////////
 void

@@ -22,6 +22,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
+#include <utility>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -59,7 +60,7 @@ PolymerBondedNeighborIterator::PolymerBondedNeighborIterator(
 
 ResidueNeighborIterator & PolymerBondedNeighborIterator::operator = ( ResidueNeighborIterator const & src ) {
 	debug_assert( dynamic_cast< PolymerBondedNeighborIterator const * >( &src ) );
-	PolymerBondedNeighborIterator const & my_src( static_cast< PolymerBondedNeighborIterator const & >( src ) );
+	auto const & my_src( static_cast< PolymerBondedNeighborIterator const & >( src ) );
 	base_ = my_src.base_;
 	pos_ = my_src.pos_;
 	parent_ = my_src.parent_;
@@ -152,7 +153,7 @@ PolymerBondedNeighborConstIterator::PolymerBondedNeighborConstIterator(
 
 ResidueNeighborConstIterator & PolymerBondedNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & src ) {
 	debug_assert( dynamic_cast< PolymerBondedNeighborConstIterator const * >( &src ) );
-	PolymerBondedNeighborConstIterator const & my_src( static_cast< PolymerBondedNeighborConstIterator const & >( src ) );
+	auto const & my_src( static_cast< PolymerBondedNeighborConstIterator const & >( src ) );
 	base_ = my_src.base_;
 	pos_ = my_src.pos_;
 	parent_ = my_src.parent_;

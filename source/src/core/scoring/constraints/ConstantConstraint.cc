@@ -17,6 +17,7 @@
 
 #include <core/id/AtomID.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -41,10 +42,10 @@ ConstantConstraint::ConstantConstraint(
 	ScoreType scotype
 ):
 	Constraint( scotype ),
-	func_( func_in )
+	func_(std::move( func_in ))
 {}
 
-ConstantConstraint::~ConstantConstraint() {}
+ConstantConstraint::~ConstantConstraint() = default;
 
 ConstraintOP
 ConstantConstraint::clone() const {
@@ -58,7 +59,7 @@ bool ConstantConstraint::operator == ( Constraint const & other ) const {
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	ConstantConstraint const & other_const( static_cast< ConstantConstraint const & > (other) );
+	auto const & other_const( static_cast< ConstantConstraint const & > (other) );
 
 	return func_ == other_const.func_ || ( func_ && other_const.func_ && *func_ == *other_const.func_ );
 }

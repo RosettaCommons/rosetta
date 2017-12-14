@@ -75,12 +75,7 @@ LigandDesign::LigandDesign(): Mover("LigandDesign"){
 	set_fragments();
 }
 
-LigandDesign::LigandDesign(LigandDesign const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	option_file_(that.option_file_),
-	fragments_(that.fragments_)
-{}
+LigandDesign::LigandDesign(LigandDesign const & /*that*/) = default;
 
 LigandDesign::~LigandDesign() = default;
 

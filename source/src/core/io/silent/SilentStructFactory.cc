@@ -41,7 +41,7 @@ namespace silent {
 static basic::Tracer tr( "core.io.silent" );
 
 /// @details Private constructor insures correctness of singleton.
-SilentStructFactory::SilentStructFactory() {}
+SilentStructFactory::SilentStructFactory() = default;
 
 void
 SilentStructFactory::factory_register( SilentStructCreatorCOP creator )
@@ -90,7 +90,7 @@ SilentStructFactory::get_silent_struct( std::string const & type_name, SilentFil
 
 		utility_exit_with_message( msg );
 	}
-	return 0;
+	return nullptr;
 }
 
 utility::vector1< std::string >
@@ -99,9 +99,8 @@ SilentStructFactory::get_ss_names() const {
 	using utility::vector1;
 
 	vector1< string > ss_names;
-	for ( SilentStructCreatorMap::const_iterator
-			it = ss_types_.begin(), end = ss_types_.end(); it != end; ++it ) {
-		ss_names.push_back( it->first );
+	for ( auto const & ss_type : ss_types_ ) {
+		ss_names.push_back( ss_type.first );
 	}
 
 	return ss_names;
@@ -129,7 +128,7 @@ SilentStructFactory::get_creator( std::string const & type_name )
 
 		utility_exit_with_message( msg );
 	}
-	return 0;
+	return nullptr;
 }
 
 SilentStructOP SilentStructFactory::get_silent_struct_in( SilentFileOptions const & opts ) {

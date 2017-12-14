@@ -45,7 +45,7 @@ ModifyAnnealer::ModifyAnnealer(bool disallow_quench, core::Real high_temp, core:
 	low_temp_(low_temp)
 {}
 
-ModifyAnnealer::~ModifyAnnealer(){}
+ModifyAnnealer::~ModifyAnnealer()= default;
 
 core::pack::task::operation::TaskOperationOP ModifyAnnealer::clone() const{
 	return core::pack::task::operation::TaskOperationOP( new ModifyAnnealer( *this ) );

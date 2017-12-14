@@ -17,7 +17,6 @@
 
 // Package headers
 #include <numeric/constants.hh>
-#include <numeric/NumericTraits.hh>
 
 
 namespace numeric {

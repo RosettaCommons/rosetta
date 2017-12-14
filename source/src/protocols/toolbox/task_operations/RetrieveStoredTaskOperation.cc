@@ -79,10 +79,10 @@ std::string RetrieveStoredTaskOperationCreator::keyname() const
 }
 
 // @brief default constructor
-RetrieveStoredTaskOperation::RetrieveStoredTaskOperation() {}
+RetrieveStoredTaskOperation::RetrieveStoredTaskOperation() = default;
 
 // @brief destructor
-RetrieveStoredTaskOperation::~RetrieveStoredTaskOperation() {}
+RetrieveStoredTaskOperation::~RetrieveStoredTaskOperation() = default;
 
 // @brief copy constructor
 core::pack::task::operation::TaskOperationOP RetrieveStoredTaskOperation::clone() const

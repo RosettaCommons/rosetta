@@ -122,16 +122,16 @@ void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 	set_output_prefix(tag->getOption<std::string>("prefix", output_prefix_));
 
 	// 'reset_count' flag
-	reset_count_ = tag->getOption<bool>("reset_count", 1);
+	reset_count_ = tag->getOption<bool>("reset_count", true);
 
 	// 'models_per_file' option
 	models_per_file_ = tag->getOption<core::Size>("models_per_file", models_per_file_);
 
 	// 'row_format_' flag
-	row_format_ = tag->getOption<bool>("row_format", 0);
+	row_format_ = tag->getOption<bool>("row_format", false);
 
 	// 'distance_matrix_' flag
-	distance_matrix_ = tag->getOption<bool>("distance_matrix", 0);
+	distance_matrix_ = tag->getOption<bool>("distance_matrix", false);
 
 	// 'region1', 'region2' and 'ligand' options
 	// Initialize 'region1' with complete pose in case no option is specified

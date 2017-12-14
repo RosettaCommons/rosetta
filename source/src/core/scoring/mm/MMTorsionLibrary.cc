@@ -52,7 +52,7 @@ using basic::Error;
 using basic::Warning;
 static basic::Tracer TR( "core.mm.MMTorsionLibrary" );
 
-MMTorsionLibrary::~MMTorsionLibrary() {}
+MMTorsionLibrary::~MMTorsionLibrary() = default;
 
 /// @details Constructs a MMTorsionLibrary instance from a filename string and constant access pointer to an MMAtomTypeSet
 MMTorsionLibrary::MMTorsionLibrary(

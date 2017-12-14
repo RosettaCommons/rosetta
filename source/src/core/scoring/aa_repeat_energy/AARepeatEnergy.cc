@@ -88,7 +88,7 @@ AARepeatEnergy::AARepeatEnergy( AARepeatEnergy const &src ) :
 
 /// @brief Default destructor.
 ///
-AARepeatEnergy::~AARepeatEnergy() {}
+AARepeatEnergy::~AARepeatEnergy() = default;
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.

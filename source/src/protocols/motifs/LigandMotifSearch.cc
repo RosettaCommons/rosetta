@@ -164,7 +164,7 @@ LigandMotifSearch::run(
 
 	if ( output_ ) {
 		if ( file_exists( output_filename_  ) ) {
-			Pose & pose2 = const_cast< Pose & >( pose );
+			auto & pose2 = const_cast< Pose & >( pose );
 			//Size const ligand_marker = 0;
 			ms_tr << "Motif search has already run, we will get rotamers from output file" << std::endl;
 			//We already have the output file, let's just take the rotamers from there rather than searching again.
@@ -220,7 +220,7 @@ LigandMotifSearch::run(
 
 	if ( output_ ) {
 		if ( file_exists( output_filename_  ) ) {
-			Pose & pose2 = const_cast< Pose & >( pose );
+			auto & pose2 = const_cast< Pose & >( pose );
 			//Size const ligand_marker = 0;
 			ms_tr << "Motif search has already run, we will get rotamers from output file" << std::endl;
 			//We already have the output file, let's just take the rotamers from there rather than searching again.
@@ -1220,7 +1220,7 @@ LigandMotifSearch::get_sphere_aa(
 			for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 				core::conformation::Residue const & prot_rsd = pose.residue(i);
 				for ( core::Size k = targ_res_atom_start, k_end = targ_rsd.nheavyatoms(); k <= k_end; ++k ) {
-					core::Vector prot_cb, prot_ca;
+					core::Vector prot_cb(0), prot_ca(0); // had been being used potentially uninitialized
 					if ( prot_rsd.has("CB") ) prot_cb = prot_rsd.xyz("CB");
 					if ( prot_rsd.has("CA") ) prot_ca = prot_rsd.xyz("CA"); // GLY
 					core::Real ca_dist2 = targ_rsd.xyz(k).distance_squared( prot_ca );

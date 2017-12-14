@@ -103,7 +103,7 @@ GeneralizedKICfilter::GeneralizedKICfilter( GeneralizedKICfilter const &src ):
 
 /// @brief Destructor for GeneralizedKICfilter mover.
 ///
-GeneralizedKICfilter::~GeneralizedKICfilter() {}
+GeneralizedKICfilter::~GeneralizedKICfilter() = default;
 
 /// @brief Clone operator to create a pointer to a fresh GeneralizedKICfilter object that copies this one.
 ///

@@ -29,6 +29,7 @@
 
 // utility headers
 #include <basic/database/open.hh>
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -40,7 +41,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-RamaScore::RamaScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, std::string prediction_name ) :
+RamaScore::RamaScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, std::string const & prediction_name ) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "RamaScore"), query_(fastaQuery),prediction_name_(prediction_name) {
 
 	core::fragment::SecondaryStructureOP default_ss;
@@ -57,7 +58,7 @@ RamaScore::RamaScore(core::Size priority, core::Real lowest_acceptable_value, bo
 }
 
 
-RamaScore::RamaScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name ) :
+RamaScore::RamaScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, core::fragment::SecondaryStructureOP query_prediction, std::string const & prediction_name ) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "RamaScore"), query_(fastaQuery), query_ss_(query_prediction), prediction_name_(prediction_name)
 {
 	SetupRamaTables();
@@ -174,8 +175,8 @@ RamaScore::SetupRamaTables()
 				temp[i][x][y] = 1.0 / ( 1 + std::exp( C + B*temp[i][x][y] ) );
 
 				if ( option[frags::write_rama_tables].user() ) {
-					float xf( static_cast< float >( x ));
-					float yf( static_cast< float >( y ));
+					auto xf( static_cast< float >( x ));
+					auto yf( static_cast< float >( y ));
 					outtable << ((xf-1)*10)-175 << " " << ((yf-1)*10)-175 << " " << temp[i][x][y] << std::endl;
 				}
 			}
@@ -217,8 +218,8 @@ void RamaScore::do_caching(VallChunkOP current_chunk) {
 			if ( phi < -180 ) phi = 180 + (phi + 180);
 			if ( psi < -180 ) psi = 180 + (psi + 180);
 
-			core::Size i_phi = static_cast< core::Size > (((phi + 180)/10)+1);
-			core::Size i_psi = static_cast< core::Size > (((psi + 180)/10)+1);
+			auto i_phi = static_cast< core::Size > (((phi + 180)/10)+1);
+			auto i_psi = static_cast< core::Size > (((psi + 180)/10)+1);
 
 			runtime_assert( (i_phi >= 1) && (i_phi <= 37) );
 			runtime_assert( (i_psi >= 1) && (i_psi <= 37) );

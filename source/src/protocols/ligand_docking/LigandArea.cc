@@ -96,7 +96,7 @@ std::string LigandArea::element_name() { return "LigandArea"; }
 void LigandArea::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList attributes;
 	attributes + optional_name_attribute();
 

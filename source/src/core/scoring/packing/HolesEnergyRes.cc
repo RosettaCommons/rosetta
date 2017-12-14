@@ -58,7 +58,7 @@ namespace packing {
 //@brief THIS CLASS REQUIRES AN ENERGY METHOD CREATOR TO WORK PROPERLY
 //////////////////////////////////////////////////////
 HolesEnergyRes::HolesEnergyRes() :
-	parent( 0 ) // THIS WILL FAIL
+	parent( nullptr ) // THIS WILL FAIL
 {}
 
 //////////////////////////////////////////////////////

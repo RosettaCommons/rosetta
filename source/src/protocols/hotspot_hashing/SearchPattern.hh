@@ -135,8 +135,8 @@ public:
 		target_stub(core::kinematics::default_stub)
 	{}
 
-	ConstPattern(core::kinematics::Stub target) :
-		target_stub(std::move(target))
+	ConstPattern(core::kinematics::Stub const & target) :
+		target_stub(target)
 	{}
 
 	utility::vector1<core::kinematics::Stub> Searchpoints() override

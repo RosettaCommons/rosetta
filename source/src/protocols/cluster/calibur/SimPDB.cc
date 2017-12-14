@@ -14,9 +14,9 @@
 #include <iostream>
 #include <fstream>
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
 #include <iomanip>
 
 #include <map>
@@ -41,7 +41,7 @@ int SimPDB::e_residue = LONGEST_CHAIN;
 char * SimPDB::chains = strdup("AC ");
 
 // Set these two fields to tell SimPDB to use the PreloadedPDB mechanism
-PreloadedPDB * SimPDB::preloadedPDB = NULL;
+PreloadedPDB * SimPDB::preloadedPDB = nullptr;
 bool SimPDB::preloadPDB = true;
 
 
@@ -90,8 +90,7 @@ SimPDB::SimPDB( std::string const & aFileName, int len )
 }
 
 
-SimPDB::~SimPDB()
-{}
+SimPDB::~SimPDB() = default;
 
 
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
@@ -100,7 +99,7 @@ SimPDB::~SimPDB()
 // They should be called from PreloadedPDB only, since it will need to
 // bypass the mechanism
 
-SimPDB::SimPDB() {}
+SimPDB::SimPDB() = default;
 
 SimPDB::SimPDB(int len)
 {

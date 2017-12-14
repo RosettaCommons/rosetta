@@ -905,7 +905,7 @@ translate_virtual_anchor_to_first_rigid_body( pose::Pose & pose ){
 
 ////////////////////////////////////////////////////////////////////////////////////////
 bool
-involved_in_phosphate_torsion( std::string atomname )
+involved_in_phosphate_torsion( std::string const & atomname )
 {
 	utility::vector1< std::string > const & atoms_involved = core::chemical::rna::atoms_involved_in_phosphate_torsion;
 

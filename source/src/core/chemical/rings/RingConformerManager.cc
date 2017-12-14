@@ -46,7 +46,7 @@ RingConformerManager::conformers_for_ring_size( core::Size ring_size )
 
 // Private methods ////////////////////////////////////////////////////////////
 // Empty constructor
-RingConformerManager::RingConformerManager() {}
+RingConformerManager::RingConformerManager() = default;
 
 // Get the conformers requested, creating them if necessary.
 // Called by the public static method conformers_for_ring_size().

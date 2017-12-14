@@ -151,9 +151,9 @@ POSSIBILITY THEREOF.
 */
 
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "Exceptions.h"
 #include "GenString.h"
@@ -163,7 +163,7 @@ POSSIBILITY THEREOF.
 #include "CifParserInt.h"
 #include "CifParserBase.h"
 
-typedef struct cifparser__buffer_state* CIFPARSER__BUFFER_STATE;
+using CIFPARSER__BUFFER_STATE = struct cifparser__buffer_state *;
 
 // WIN32 - move inside extern "C"
 extern "C" FILE* cifparser_in;
@@ -179,11 +179,11 @@ extern "C"
 
 char* Glob_tBufKeyword;
 char* Glob_pBufValue;
-char* Glob_dataBlockName = NULL;
+char* Glob_dataBlockName = nullptr;
 
 }
 
-CifParser* CifParserP = NULL;
+CifParser* CifParserP = nullptr;
 
 #ifdef PDB_TRACE
 using std::cout;
@@ -193,7 +193,7 @@ using std::endl;
 CifParser::CifParser(CifFile *fo, bool verbose)
 {
 
-    if (CifParserP != NULL)
+    if (CifParserP != nullptr)
     {
         // Attempting to create a new parser, during the lifetime of
         // an existing parser.
@@ -201,7 +201,7 @@ CifParser::CifParser(CifFile *fo, bool verbose)
           "one already exists.", "CifParser::CifParser");
     }
 
-    if (fo != NULL)
+    if (fo != nullptr)
         _fobj = fo;
     else
         throw EmptyValueException("fo is a NULL pointer",
@@ -218,7 +218,7 @@ CifParser::CifParser(CifFile *fo, bool verbose)
 CifParser::CifParser(CifFile *fo, CifFileReadDef readDef, bool verbose)
 {
 
-    if (CifParserP != NULL)
+    if (CifParserP != nullptr)
     {
         // Attempting to create a new parser, during the lifetime of
         // an existing parser.
@@ -226,7 +226,7 @@ CifParser::CifParser(CifFile *fo, CifFileReadDef readDef, bool verbose)
           "one already exists.", "CifParser::CifParser");
     }
 
-    if (fo != NULL)
+    if (fo != nullptr)
         _fobj = fo;
     else
         throw EmptyValueException("fo is a NULL pointer",
@@ -247,7 +247,7 @@ void CifParser::Parse(const string& fileName, string& diagnostics,
 
     FILE* cifIn;
 
-    if ((cifIn = fopen(fileName.c_str(), "r")) == NULL)
+    if ((cifIn = fopen(fileName.c_str(), "r")) == nullptr)
     {
       diagnostics = "Unable to open file.";
 
@@ -369,7 +369,7 @@ void CifParser::Clear()
   _fieldListAlloc=100;
   _fieldList.reserve(_fieldListAlloc);
   _pBufValue.clear();
-  _tbl=NULL;
+  _tbl=nullptr;
   _err=0;
   _warn=0;
   _tBufKeyword.clear();
@@ -400,11 +400,11 @@ int CifParser::ProcessLoopDeclaration(void)
   _afterLoop = true;
 
   // Write the previously processed table, if it exists
-  if (_tbl != NULL)
+  if (_tbl != nullptr)
   {
     _ComplexWriteTable();
     // VLAD: Should _tbl be destroyed here first, prior to assigning NULL?
-    _tbl = NULL;
+    _tbl = nullptr;
     _curCategoryName.clear();
   }
 
@@ -492,7 +492,7 @@ int CifParser::ProcessItemNameList(void)
 
   // If no table exists, it means that item name list of a duplicate
   // category are being processed, and they should be ignored. Just return.
-  if (_tbl == NULL)
+  if (_tbl == nullptr)
   {
     return(0);
   }
@@ -614,7 +614,7 @@ int CifParser::ProcessValueList(void)
 
   // If no table exists, it means that value list of a duplicate
   // category is being processed, and it should be ignored. Just return.
-  if (_tbl == NULL)
+  if (_tbl == nullptr)
   {
     return(0);
   }
@@ -820,12 +820,12 @@ int CifParser::ProcessItemValuePair(void)
   if (!String::IsEqual(categoryName,_curCategoryName,
     _fobj->GetCaseSensitivity()))
   {
-    if (_tbl != NULL)
+    if (_tbl != nullptr)
     {
       _ComplexWriteTable();
 
       // VLAD: Should _tbl be destroyed here first, prior to assigning NULL?
-      _tbl = NULL;
+      _tbl = nullptr;
       _curCategoryName.clear();
     }
 
@@ -970,7 +970,7 @@ void CifParser::ProcessDataBlockName()
 
 
   // Write category from previous datablock
-  if ((_tbl != NULL) && (_curItemNo > 0) && (!_curDataBlockName.empty()) &&
+  if ((_tbl != nullptr) && (_curItemNo > 0) && (!_curDataBlockName.empty()) &&
     (!_curCategoryName.empty()))
   {
 #if DEBUG    
@@ -979,7 +979,7 @@ void CifParser::ProcessDataBlockName()
     _ComplexWriteTable();
 
     // VLAD: Should _tbl be destroyed here first, prior to assigning NULL?
-    _tbl = NULL;
+    _tbl = nullptr;
 
     _curCategoryName.clear();
   }
@@ -990,7 +990,7 @@ void CifParser::ProcessDataBlockName()
   _nTablesInBlock = 0;
 
   // Set current datablock name
-  if ((Glob_dataBlockName != NULL) &&
+  if ((Glob_dataBlockName != nullptr) &&
     (strlen(Glob_dataBlockName) > strlen(DATA_TAG)))
   {
     _curDataBlockName = &(Glob_dataBlockName)[strlen(DATA_TAG)];
@@ -1043,7 +1043,7 @@ void CifParser::ProcessDataBlockName()
 CifParser::~CifParser()
 {
     Reset();
-    CifParserP = NULL;
+    CifParserP = nullptr;
 }
 
 

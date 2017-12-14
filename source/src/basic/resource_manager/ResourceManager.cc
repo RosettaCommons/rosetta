@@ -46,7 +46,7 @@ ResourceManager::get_instance()
 	return instance_;
 }
 
-ResourceManager::ResourceManager() {}
+ResourceManager::ResourceManager() = default;
 
 ResourceManager::~ResourceManager() = default;
 

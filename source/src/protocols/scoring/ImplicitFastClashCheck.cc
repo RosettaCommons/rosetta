@@ -36,8 +36,8 @@ using core::id::AtomID;
 using core::kinematics::Stub;
 using namespace numeric;
 using utility::vector1;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
 
 ImplicitFastClashCheck::ImplicitFastClashCheck(Pose const & pose_in, Real clash_dis, utility::vector1<core::Size> ignore) {
 	pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(pose_in) ) );
@@ -68,8 +68,8 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 	using numeric::min;
 	using numeric::max;
 	using numeric::square;
-	typedef  numeric::xyzTriple< Size >  CubeDim; // Cube dimensions
-	typedef  numeric::xyzTriple< Size >  CubeKey; // Cube index-triple key
+	using CubeDim = numeric::xyzTriple<Size>; // Cube dimensions
+	using CubeKey = numeric::xyzTriple<Size>; // Cube index-triple key
 
 	neighbor_cutoff_ = neighbor_cutoff;
 	neighbor_cutoff_sq_ = ( neighbor_cutoff*neighbor_cutoff);

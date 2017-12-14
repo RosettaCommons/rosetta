@@ -77,14 +77,9 @@ SmallBBSampler::get_angle_max(char const type) const
 }
 
 
-SmallBBSampler::~SmallBBSampler(){}
+SmallBBSampler::~SmallBBSampler()= default;
 
-SmallBBSampler::SmallBBSampler( SmallBBSampler const & src ):
-	BBDihedralSampler(src),
-	angle_max_(src.angle_max_)
-{
-
-}
+SmallBBSampler::SmallBBSampler( SmallBBSampler const & /*src*/ ) = default;
 
 core::Real
 SmallBBSampler::get_torsion(core::pose::Pose const & pose, core::Size resnum) const {

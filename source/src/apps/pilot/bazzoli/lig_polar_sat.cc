@@ -175,11 +175,8 @@ void store_hb_counts(Size const ridx, Pose const& ps,
 		energy_graph.get_node(ridx)->const_edge_list_end();
 
 	// collect hbonds for donors
-	for ( core::chemical::AtomIndices::const_iterator
-			hnum = res.Hpos_polar().begin(), hnume = res.Hpos_polar().end();
-			hnum != hnume; ++hnum ) {
+	for ( auto const hatm : res.Hpos_polar() ) {
 
-		Size hatm(*hnum);
 		AtomID don(hatm, ridx);
 
 		Size ratm = rep_hb_atom(hatm, res);
@@ -193,11 +190,8 @@ void store_hb_counts(Size const ridx, Pose const& ps,
 			Size nidx((*nit)->get_other_ind(ridx));
 			Residue const& ngb = ps.residue(nidx);
 
-			for ( core::chemical::AtomIndices::const_iterator
-					anum = ngb.accpt_pos().begin(), anume = ngb.accpt_pos().end();
-					anum != anume; ++anum ) {
+			for ( unsigned long aatm : ngb.accpt_pos() ) {
 
-				Size aatm(*anum);
 				AtomID acc(aatm, nidx);
 
 				if ( is_hbond(don, acc, ps, database, hbond_set) ) {
@@ -208,11 +202,8 @@ void store_hb_counts(Size const ridx, Pose const& ps,
 	}
 
 	// collect hbonds for acceptors
-	for ( core::chemical::AtomIndices::const_iterator
-			anum = res.accpt_pos().begin(), anume = res.accpt_pos().end();
-			anum != anume; ++anum ) {
+	for ( auto const aatm : res.accpt_pos() ) {
 
-		Size aatm(*anum);
 		AtomID acc(aatm, ridx);
 
 		Size ratm = rep_hb_atom(aatm, res);
@@ -226,11 +217,8 @@ void store_hb_counts(Size const ridx, Pose const& ps,
 			Size nidx((*nit)->get_other_ind(ridx));
 			Residue const& ngb = ps.residue(nidx);
 
-			for ( core::chemical::AtomIndices::const_iterator
-					hnum = ngb.Hpos_polar().begin(), hnume = ngb.Hpos_polar().end();
-					hnum != hnume; ++hnum ) {
+			for ( unsigned long hatm : ngb.Hpos_polar() ) {
 
-				Size hatm(*hnum);
 				AtomID don(hatm, nidx);
 
 				if ( is_hbond(don, acc, ps, database, hbond_set) ) {
@@ -280,9 +268,8 @@ void print_hb_counts(std::map<AtomID, Size>& counts, Pose const& ps) {
 Size nsat(std::map<AtomID, Size> const& counts) {
 
 	Size ns = 0;
-	for ( std::map<AtomID, Size>::const_iterator it = counts.begin(),
-			ite = counts.end(); it != ite; ++it ) {
-		if ( it->second ) {
+	for ( auto const & count : counts ) {
+		if ( count.second ) {
 			ns++;
 		}
 	}

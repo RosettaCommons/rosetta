@@ -53,7 +53,7 @@ namespace ccd {
 
 using namespace core;
 using utility::vector1;
-typedef numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 static basic::Tracer TR( "protocols.loops.loop_closure.ccd.ccd_closure" );
 

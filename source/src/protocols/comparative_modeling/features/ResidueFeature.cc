@@ -23,7 +23,7 @@ namespace comparative_modeling {
 namespace features {
 
 /// @details Auto-generated virtual destructor
-ResidueFeature::~ResidueFeature() {}
+ResidueFeature::~ResidueFeature() = default;
 
 core::Size ResidueFeature::resnum() const {
 	return resnum_;

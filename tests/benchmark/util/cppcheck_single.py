@@ -86,7 +86,8 @@ def process_file( filename, compile_type ):
     tests_to_run = TESTS_TO_RUN
 
     define_options = parse_defines( compile_type )
-    commandline = "cppcheck --suppressions cppcheck_suppressions.txt {defines} --enable={tests} {filename}".format(defines=define_options,tests=tests_to_run,filename=filename )
+    #commandline = "cppcheck --suppressions cppcheck_suppressions.txt {defines} --enable={tests} {filename}".format(defines=define_options,tests=tests_to_run,filename=filename )
+    commandline = "cppcheck {defines} --enable={tests} {filename}".format(defines=define_options,tests=tests_to_run,filename=filename )
 
     print '\t', commandline
     res, output = commands.getstatusoutput( commandline )

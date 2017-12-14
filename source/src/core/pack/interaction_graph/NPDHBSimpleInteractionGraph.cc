@@ -99,7 +99,7 @@ NPDHBSimpleNode::NPDHBSimpleNode( Graph* owner, Size node_id ):
 	initialize();
 }
 
-NPDHBSimpleNode::~NPDHBSimpleNode() {}
+NPDHBSimpleNode::~NPDHBSimpleNode() = default;
 
 
 void
@@ -455,7 +455,7 @@ NPDHBSimpleEdge::NPDHBSimpleEdge( Graph* owner, Size res1, Size res2 ):
 	parent( owner, res1, res2 )
 {}
 
-NPDHBSimpleEdge::~NPDHBSimpleEdge() {}
+NPDHBSimpleEdge::~NPDHBSimpleEdge() = default;
 
 NPDHBSimpleInteractionGraph *
 NPDHBSimpleEdge::get_npdhb_simple_ig_owner()
@@ -475,7 +475,7 @@ NPDHBSimpleInteractionGraph::NPDHBSimpleInteractionGraph() :
 	npd_hbond_weight_( 0 )
 {}
 
-NPDHBSimpleInteractionGraph::~NPDHBSimpleInteractionGraph() {}
+NPDHBSimpleInteractionGraph::~NPDHBSimpleInteractionGraph() = default;
 
 void NPDHBSimpleInteractionGraph::set_scorefunction( scoring::ScoreFunction const & sfxn )
 {
@@ -564,7 +564,7 @@ NPDHBSimpleInteractionGraph::consider_substitution(
 ) {
 	Real deltaE = parent::consider_substitution( node_id, new_state, residue_data_cache );
 
-	NPDHBSimpleNode* node = static_cast< NPDHBSimpleNode *>(get_node( node_id ));
+	auto* node = static_cast< NPDHBSimpleNode *>(get_node( node_id ));
 	deltaE += node->get_npdhb_deltaE_for_substitution();
 	return deltaE;
 }

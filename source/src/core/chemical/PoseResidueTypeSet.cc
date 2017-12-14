@@ -42,15 +42,12 @@ PoseResidueTypeSet::PoseResidueTypeSet():
 	ResidueTypeSet()
 {}
 
-PoseResidueTypeSet::~PoseResidueTypeSet(){}
+PoseResidueTypeSet::~PoseResidueTypeSet()= default;
 
 // We want a semi-shallow copy: that is, modifiable datamembers are cloned,
 // but all const-pointers (including those to ResidueTypes) are shared.
 // The base class copy constructor should give us that.
-PoseResidueTypeSet::PoseResidueTypeSet( PoseResidueTypeSet const & src ) :
-	ResidueTypeSet( src ),
-	default_rts_( src.default_rts_ )
-{}
+PoseResidueTypeSet::PoseResidueTypeSet( PoseResidueTypeSet const & /*src*/ ) = default;
 
 PoseResidueTypeSet::PoseResidueTypeSet(core::chemical::ResidueTypeSetCOP deflt_rts):
 	ResidueTypeSet()

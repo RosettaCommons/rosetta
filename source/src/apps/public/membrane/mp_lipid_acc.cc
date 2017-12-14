@@ -553,7 +553,7 @@ using namespace protocols::membrane;
 
 /////////////////////////////////////////
 
-typedef utility::pointer::shared_ptr< MPLipidAccessibility > MPLipidAccessibilityOP;
+using MPLipidAccessibilityOP = utility::pointer::shared_ptr<MPLipidAccessibility>;
 
 /// @brief Main method
 int

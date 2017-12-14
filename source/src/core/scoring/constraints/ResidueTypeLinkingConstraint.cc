@@ -23,6 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -68,8 +69,8 @@ ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint(
 	core::pose::Pose const &, //pose,
 	Size seqpos1,
 	Size seqpos2,
-	std::string AA1name,
-	std::string AA2name,
+	std::string const & AA1name,
+	std::string const & AA2name,
 	core::Real bonus
 ):
 	Constraint( core::scoring::res_type_linking_constraint ),
@@ -81,7 +82,7 @@ ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint(
 	bonus_( bonus )
 {}
 
-ResidueTypeLinkingConstraint::~ResidueTypeLinkingConstraint() {}
+ResidueTypeLinkingConstraint::~ResidueTypeLinkingConstraint() = default;
 
 ConstraintOP
 ResidueTypeLinkingConstraint::clone() const
@@ -128,7 +129,7 @@ ResidueTypeLinkingConstraint::operator == ( Constraint const & other_cst ) const
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me( *this ) ) return false;
 
-	ResidueTypeLinkingConstraint const & other( static_cast< ResidueTypeLinkingConstraint const & > (other_cst) );
+	auto const & other( static_cast< ResidueTypeLinkingConstraint const & > (other_cst) );
 
 	if ( seqpos1_ != other.seqpos1_ ) return false;
 	if ( seqpos2_ != other.seqpos2_ ) return false;

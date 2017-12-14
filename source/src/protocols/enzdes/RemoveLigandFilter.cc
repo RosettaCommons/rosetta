@@ -79,10 +79,10 @@ RemoveLigandFilter::RemoveLigandFilter( ):
 	filter_( FilterOP( new RmsdFilter ) )
 {
 	MoveMapOP movemap( new core::kinematics::MoveMap );
-	movemap->set_bb(1);
-	movemap->set_chi(1);
+	movemap->set_bb(true);
+	movemap->set_chi(true);
 
-	MinMover* min_mover = dynamic_cast< MinMover* >( mover_.get() );
+	auto* min_mover = dynamic_cast< MinMover* >( mover_.get() );
 	min_mover->movemap( movemap );
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	min_mover->score_function( scorefxn );
@@ -113,7 +113,7 @@ RemoveLigandFilter::report_sm( Pose const & pose ) const
 	protocols::toolbox::pose_manipulation::remove_non_protein_residues( no_lig_pose );
 	if ( filter_->get_type() == "Rmsd" ) {
 		PoseOP init_pose( new Pose( no_lig_pose ) );
-		RmsdFilter* rmsd_filter = dynamic_cast< RmsdFilter* >( filter_.get() );
+		auto* rmsd_filter = dynamic_cast< RmsdFilter* >( filter_.get() );
 		rmsd_filter->reference_pose( init_pose );
 		rmsd_filter->superimpose( true );
 		using namespace core::select::residue_selector;

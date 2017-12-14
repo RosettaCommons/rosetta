@@ -32,11 +32,9 @@ namespace sdf {
 
 static basic::Tracer TR( "core.io.sdf.MolFileIOReader" );
 
-MolFileIOReader::MolFileIOReader()
-{}
+MolFileIOReader::MolFileIOReader() = default;
 
-MolFileIOReader::~MolFileIOReader()
-{}
+MolFileIOReader::~MolFileIOReader() = default;
 
 /// @details This has to take a filename, as autodetection of file type may require reopening the file
 
@@ -147,7 +145,7 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 	ResidueTypeOP restype = molfile_data[1]->convert_to_ResidueType(index_name_map, atom_types, element_type_set, mm_atom_types);
 	if ( ! restype ) {
 		TR.Info << "Could not load molecule '" << molfile_data[1]->name() << "' as a residue type." << std::endl;
-		return ResidueTypeOP(0);
+		return ResidueTypeOP(nullptr);
 	}
 
 	if ( molfile_data.size() > 1 ) {

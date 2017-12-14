@@ -29,6 +29,7 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/io/izstream.hh>
@@ -73,7 +74,7 @@ FileConstraintGenerator::FileConstraintGenerator( std::string const & filename )
 }
 
 /// @brief
-FileConstraintGenerator::~FileConstraintGenerator() {}
+FileConstraintGenerator::~FileConstraintGenerator() = default;
 
 protocols::constraint_generator::ConstraintGeneratorOP
 FileConstraintGenerator::clone() const
@@ -142,8 +143,8 @@ FileConstraintGenerator::clean_constraint_string( std::string const & cst_str ) 
 {
 	utility::vector1< std::string > const lines = utility::string_split( cst_str, '\n' );
 	std::string newstr = "";
-	for ( utility::vector1< std::string >::const_iterator l=lines.begin(); l!=lines.end(); ++l ) {
-		if ( l->find_first_not_of( "\t\n\v\f\r " ) != std::string::npos ) newstr += *l + "\n";
+	for ( auto const & line : lines ) {
+		if ( line.find_first_not_of( "\t\n\v\f\r " ) != std::string::npos ) newstr += line + "\n";
 	}
 	return newstr;
 }

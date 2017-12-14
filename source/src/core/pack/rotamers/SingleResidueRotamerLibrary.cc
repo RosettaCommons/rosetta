@@ -40,8 +40,7 @@ namespace rotamers {
 
 static basic::Tracer TR( "core.pack.rotamers.SingleResidueRotamerLibrary" );
 
-SingleResidueRotamerLibrary::~SingleResidueRotamerLibrary()
-{}
+SingleResidueRotamerLibrary::~SingleResidueRotamerLibrary() = default;
 
 /* OL: I thought copying the whole chi_set_vector is unnecessary and made a new version of this function */
 /*

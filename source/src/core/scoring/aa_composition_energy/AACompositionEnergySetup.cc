@@ -41,7 +41,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
-#include <math.h>
+#include <cmath>
 
 namespace core {
 namespace scoring {
@@ -108,8 +108,7 @@ AACompositionPropertiesSet::AACompositionPropertiesSet( AACompositionPropertiesS
 
 /// @brief Default destructor for AACompositionPropertiesSet.
 ///
-AACompositionPropertiesSet::~AACompositionPropertiesSet()
-{}
+AACompositionPropertiesSet::~AACompositionPropertiesSet() = default;
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
@@ -315,7 +314,7 @@ AACompositionEnergySetup::AACompositionEnergySetup( AACompositionEnergySetup con
 
 /// @brief Default destructor for AACompositionEnergySetup.
 ///
-AACompositionEnergySetup::~AACompositionEnergySetup() {}
+AACompositionEnergySetup::~AACompositionEnergySetup() = default;
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.

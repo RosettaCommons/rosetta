@@ -21,6 +21,7 @@
 #include <protocols/legacy_sewing/conformation/Assembly.hh>
 
 //Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -52,7 +53,7 @@ LegacyGlobalLengthRequirement::LegacyGlobalLengthRequirement():
 {}
 
 LegacyGlobalLengthRequirement::LegacyGlobalLengthRequirement(
-	std::set<std::string> valid_dssp_codes,
+	std::set<std::string> const & valid_dssp_codes,
 	core::Size min_length,
 	core::Size max_length
 ):
@@ -116,8 +117,8 @@ LegacyGlobalLengthRequirement::show(
 	out << "/////// LegacyGlobalLengthRequirement - ";
 	if ( dssp_codes_.size() > 0 ) {
 		out << "Segments with DSSP codes ";
-		std::set<std::string>::const_iterator it = dssp_codes_.begin();
-		std::set<std::string>::const_iterator it_end = dssp_codes_.end();
+		auto it = dssp_codes_.begin();
+		auto it_end = dssp_codes_.end();
 		for ( ; it != it_end; ++it ) {
 			out << *it << ",";
 		}

@@ -18,6 +18,7 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.legacy.screener.SimplePoseSelection" );
 
@@ -35,13 +36,12 @@ SimplePoseSelection::SimplePoseSelection( pose::Pose const & pose,
 	bool const full_optimize ):
 	pose_( pose ),
 	moving_res_list_( moving_res_list ),
-	options_( options ),
+	options_(std::move( options )),
 	full_optimize_( full_optimize )
 {}
 
 //Destructor
-SimplePoseSelection::~SimplePoseSelection()
-{}
+SimplePoseSelection::~SimplePoseSelection() = default;
 
 bool
 SimplePoseSelection::check_screen() {

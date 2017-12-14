@@ -37,6 +37,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
@@ -93,8 +94,8 @@ TaskAwareSymMinMover::TaskAwareSymMinMover(
 	min_rb_(false),
 	min_type_("dfpmin_armijo_nonmonotone"),
 	tolerance_(1e-5),
-	minmover_(minmover_in),
-	factory_(factory_in),
+	minmover_(std::move(minmover_in)),
+	factory_(std::move(factory_in)),
 	designable_only_(true)
 {}
 //protocols::simple_moves::TaskAwareMinMover(
@@ -128,7 +129,7 @@ TaskAwareSymMinMover::fresh_instance() const {
 void
 TaskAwareSymMinMover::apply(Pose & pose) {
 
-	runtime_assert( factory_ != 0 );
+	runtime_assert( factory_ != nullptr );
 
 	// Initialize a MoveMap, set all moves to false
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
@@ -140,7 +141,7 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	core::Size nres_monomer = sym_info->num_independent_residues();
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-	if ( factory_ != 0 ) {
+	if ( factory_ != nullptr ) {
 		task = factory_->create_task_and_apply_taskoperations( pose );
 	} else {
 		TR.Warning << "You have not provided any TaskOperations. A default will be used." << std::endl;

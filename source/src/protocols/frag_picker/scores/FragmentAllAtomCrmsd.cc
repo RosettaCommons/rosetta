@@ -40,6 +40,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <fstream>
 
@@ -56,10 +57,10 @@ using namespace core;
 static basic::Tracer trRmsScore(
 	"protocols.frag_picker.scores.FragmentAllAtomCrmsd");
 
-FragmentAllAtomCrmsd::~FragmentAllAtomCrmsd() {}
+FragmentAllAtomCrmsd::~FragmentAllAtomCrmsd() = default;
 
 FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(core::Size priority, core::Real lowest_acceptable_value,
-	bool use_lowest, std::string query_sequence, core::pose::PoseOP reference_pose) :
+	bool use_lowest, std::string const & query_sequence, core::pose::PoseOP reference_pose) :
 	FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentAllAtomCrmsd"), query_sequence_(query_sequence) {
 
 	reference_pose_ = reference_pose;
@@ -73,7 +74,7 @@ FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(core::Size priority, core::Real lowes
 }
 
 FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-	std::string query_sequence, utility::vector1< utility::vector1<core::Real> > xyz)  :
+	std::string const & query_sequence, utility::vector1< utility::vector1<core::Real> > const & xyz)  :
 	FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentAllAtomCrmsd"),
 	query_sequence_(query_sequence) {
 
@@ -221,7 +222,7 @@ FragmentScoringMethodOP MakeFragmentAllAtomCrmsd::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read a reference structure. Provide it with in::file::s flag");
 
-	return NULL;
+	return nullptr;
 }
 
 } // scores

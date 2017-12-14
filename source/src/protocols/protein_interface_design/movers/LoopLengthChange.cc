@@ -72,7 +72,7 @@ LoopLengthChange::LoopLengthChange() :
 }
 
 
-LoopLengthChange::~LoopLengthChange() {}
+LoopLengthChange::~LoopLengthChange() = default;
 
 void
 LoopLengthChange::apply( core::pose::Pose & pose )

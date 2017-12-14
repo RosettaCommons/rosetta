@@ -37,7 +37,7 @@ class LazySilentFilePoseInputStream : public PoseInputStream {
 	typedef utility::file::FileName FileName;
 
 public:
-	LazySilentFilePoseInputStream( utility::vector1< FileName > fns );
+	LazySilentFilePoseInputStream( utility::vector1< FileName > const & fns );
 	LazySilentFilePoseInputStream();
 	~LazySilentFilePoseInputStream() {}
 

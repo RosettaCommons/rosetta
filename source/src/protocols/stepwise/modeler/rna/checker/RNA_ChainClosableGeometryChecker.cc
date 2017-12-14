@@ -53,8 +53,7 @@ RNA_ChainClosableGeometryChecker::RNA_ChainClosableGeometryChecker( Size const f
 
 
 //Destructor
-RNA_ChainClosableGeometryChecker::~RNA_ChainClosableGeometryChecker()
-{}
+RNA_ChainClosableGeometryChecker::~RNA_ChainClosableGeometryChecker() = default;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void

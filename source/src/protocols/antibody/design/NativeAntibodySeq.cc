@@ -54,7 +54,7 @@ NativeAntibodySeq::NativeAntibodySeq(NativeAntibodySeq const &src):
 
 }
 
-NativeAntibodySeq::~NativeAntibodySeq() {}
+NativeAntibodySeq::~NativeAntibodySeq() = default;
 
 basic::datacache::CacheableDataOP
 NativeAntibodySeq::clone() const {
@@ -82,7 +82,7 @@ NativeAntibodySeq::set_sequence(const core::pose::Pose &pose) {
 
 	//Setup CDR Regions
 	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs( true /* include CDR4 */)); ++i ) {
-		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
+		auto cdr = static_cast< CDRNameEnum >( i );
 		set_from_cdr( pose, cdr );
 	}
 }
@@ -127,7 +127,7 @@ NativeAntibodySeq::get_sequence(const core::pose::Pose & pose) const {
 
 	//Go through each of the CDRs.  Update the final sequence with what is stored here.
 	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs()); ++i ) {
-		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
+		auto cdr = static_cast< CDRNameEnum >( i );
 		core::Size cdr_start_resnum = ab_info_->get_CDR_start( cdr, pose );
 
 		if ( cdr_seq_.find( cdr ) != cdr_seq_.end() ) continue;

@@ -50,7 +50,7 @@ using core::scoring::ScoreFunctionCOP;
 static basic::Tracer tr( "protocols.rotamer_recovery.RotamerRecoveryFactory" );
 
 /// @details Private constructor insures correctness of singleton.
-RotamerRecoveryFactory::RotamerRecoveryFactory() {}
+RotamerRecoveryFactory::RotamerRecoveryFactory() = default;
 
 RotamerRecoveryFactory::~RotamerRecoveryFactory() = default;
 

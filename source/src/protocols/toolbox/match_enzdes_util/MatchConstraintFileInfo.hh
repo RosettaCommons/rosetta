@@ -76,8 +76,7 @@ class GeomSampleInfo : public utility::pointer::ReferenceCount
 
 public:
 
-	GeomSampleInfo(
-		std::string tag );
+	GeomSampleInfo( std::string const & tag );
 
 	GeomSampleInfo(
 		core::Real ideal_val,
@@ -333,7 +332,7 @@ protected:
 	/// @brief reads and stores arbitrary algorithm specific input
 	bool
 	process_algorithm_info(
-		std::string tag,
+		std::string const & tag,
 		utility::io::izstream & data
 	);
 

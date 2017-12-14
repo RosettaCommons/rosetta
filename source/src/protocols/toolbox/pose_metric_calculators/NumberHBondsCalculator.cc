@@ -17,6 +17,7 @@
 
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/stream_util.hh>
 #include <utility/string_util.hh>
@@ -79,7 +80,7 @@ NumberHBondsCalculator::NumberHBondsCalculator() :
 	hb_database( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) )
 {}
 
-NumberHBondsCalculator::NumberHBondsCalculator( std::set< core::Size > special_region ) :
+NumberHBondsCalculator::NumberHBondsCalculator( std::set< core::Size > const & special_region ) :
 	hb_database( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) ),
 	special_region_(special_region)
 {}

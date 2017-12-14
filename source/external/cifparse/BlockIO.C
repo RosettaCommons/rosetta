@@ -147,7 +147,7 @@ POSSIBILITY THEREOF.
 #include <strings.h>
 #endif
 
-#include <string.h>
+#include <cstring>
 #include <fcntl.h>
 
 // Windows work around for Posix commands
@@ -172,9 +172,7 @@ BlockIO::BlockIO()
 }
 
 BlockIO::~BlockIO()
-{
-
-}
+= default;
 
 unsigned int BlockIO::ReadBlock(const int fd, const UInt32 blockNum)
 {

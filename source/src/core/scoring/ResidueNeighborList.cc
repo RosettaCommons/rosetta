@@ -42,7 +42,7 @@
 namespace core {
 namespace scoring {
 
-ResidueNblistData::ResidueNblistData() {}
+ResidueNblistData::ResidueNblistData() = default;
 ResidueNblistData::~ResidueNblistData() = default;
 
 ResiduePairNeighborList::CacheableDataOP
@@ -83,7 +83,7 @@ void ResidueNblistData::initialize(
 	}
 }
 
-ResiduePairNeighborList::ResiduePairNeighborList() {}
+ResiduePairNeighborList::ResiduePairNeighborList() = default;
 ResiduePairNeighborList::~ResiduePairNeighborList() = default;
 
 ResiduePairNeighborList::CacheableDataOP ResiduePairNeighborList::clone() const { return ResiduePairNeighborList::CacheableDataOP( new ResiduePairNeighborList( *this ) ); }

@@ -67,11 +67,10 @@ StrandCurvatureByLevels::StrandCurvatureByLevels():
 	output_type_( "bend" ),
 	output_value_( -990.0 ),
 	concavity_reference_residue_("last"),
-	concavity_direction_(1)
+	concavity_direction_(true)
 {}
 
-StrandCurvatureByLevels::~StrandCurvatureByLevels()
-{}
+StrandCurvatureByLevels::~StrandCurvatureByLevels() = default;
 /*
 // @brief copy constructor
 StrandCurvatureByLevels::StrandCurvatureByLevels( StrandCurvatureByLevels const & rval ):

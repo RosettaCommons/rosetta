@@ -107,14 +107,14 @@ class ExemplarMover : public moves::Mover {
 public:
 	ExemplarMover();
 
-	~ExemplarMover();
+	~ExemplarMover() override;
 
-	virtual MoverOP clone() const;
-	virtual MoverOP fresh_instance() const;
+	MoverOP clone() const override;
+	MoverOP fresh_instance() const override;
 
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
-	virtual void test_move( Pose & pose )
+	void apply( Pose & pose ) override;
+	std::string get_name() const override;
+	void test_move( Pose & pose ) override
 	{
 		apply(pose);
 	}
@@ -126,7 +126,7 @@ ExemplarMover::ExemplarMover() :
 
 }
 
-ExemplarMover::~ExemplarMover() {}
+ExemplarMover::~ExemplarMover() = default;
 
 MoverOP ExemplarMover::clone() const {
 	return MoverOP( new ExemplarMover( *this ) );

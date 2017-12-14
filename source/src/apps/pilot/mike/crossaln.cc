@@ -75,37 +75,36 @@ main( int argc, char* argv [] ) {
 		std::cout << "Reading structural cross alignments: " << align_map_fns[1] << std::endl;
 		aln_map = core::sequence::read_aln( option[ cm::aln_format ](), align_map_fns[1] );
 
-		typedef vector1< SequenceAlignment >::iterator iter;
-		typedef vector1< SequenceAlignment >::const_iterator const_iter;
-		for ( iter it = aln.begin(), end = aln.end(); it != end; ++it ) {
-			std::cout << "Original alignment (A->B): " << std::endl << *it << std::endl;
+		using const_iter = vector1<SequenceAlignment>::const_iterator;
+		for ( auto & it : aln ) {
+			std::cout << "Original alignment (A->B): " << std::endl << it << std::endl;
 
-			SequenceOP seq1_copy = it->sequence(1)->clone();
-			SequenceOP seq2_copy = it->sequence(2)->clone();
+			SequenceOP seq1_copy = it.sequence(1)->clone();
+			SequenceOP seq2_copy = it.sequence(2)->clone();
 			seq1_copy->sequence( seq1_copy->ungapped_sequence() );
 			seq2_copy->sequence( seq2_copy->ungapped_sequence() );
 
-			std::string idA1 = it->sequence(1)->id();
-			std::string idA2 = it->sequence(2)->id();
+			std::string idA1 = it.sequence(1)->id();
+			std::string idA2 = it.sequence(2)->id();
 
-			core::id::SequenceMapping map1 = it->sequence_mapping ( 1, 2 );
+			core::id::SequenceMapping map1 = it.sequence_mapping ( 1, 2 );
 
-			for ( iter jt = aln_map.begin(),jend = aln_map.end(); jt !=jend; ++jt ) {
+			for ( auto & jt : aln_map ) {
 
 
-				std::string idB1 = jt->sequence(1)->id();
-				std::string idB2 = jt->sequence(2)->id();
+				std::string idB1 = jt.sequence(1)->id();
+				std::string idB2 = jt.sequence(2)->id();
 
 				if ( idA2.substr(0,5) == idB1.substr(0,5) ) {
-					SequenceOP bseq1_copy = jt->sequence(1)->clone();
-					SequenceOP bseq2_copy = jt->sequence(2)->clone();
+					SequenceOP bseq1_copy = jt.sequence(1)->clone();
+					SequenceOP bseq2_copy = jt.sequence(2)->clone();
 					bseq1_copy->sequence( bseq1_copy->ungapped_sequence() );
 					bseq2_copy->sequence( bseq2_copy->ungapped_sequence() );
-					core::id::SequenceMapping map2 = jt->sequence_mapping( 1, 2 );
+					core::id::SequenceMapping map2 = jt.sequence_mapping( 1, 2 );
 
 					std::cout << idA1 << "  " << idA2 << "<-->" << idB1 << "   " << idB2 << std::endl;
 
-					std::cout << "Crossmap alignment (B->C): " << std::endl << *jt << std::endl;
+					std::cout << "Crossmap alignment (B->C): " << std::endl << jt << std::endl;
 
 					//std::cout << map1 << std::endl;
 					//std::cout << "------" << std::endl;
@@ -142,28 +141,28 @@ main( int argc, char* argv [] ) {
 				length_list.push_back(  align_it->length() - align_it->gapped_positions() );
 				std::cout << "Len " <<  align_it->length() - align_it->gapped_positions() << std::endl;
 			}
-			std::vector<int>::iterator  i = length_list.begin();
-			std::vector<int>::size_type m =(size_t)( length_list.size() * quantile );
+			auto  i = length_list.begin();
+			auto m =(size_t)( length_list.size() * quantile );
 			std::nth_element(i, i + m, length_list.end());
 			filter_threshold = length_list.at(m);
 			std::cout << "Quantile filter threshold = " << filter_threshold << std::endl;
 		}
 
 
-		for ( iter it = final_aln.begin(), end = final_aln.end(); it != end; ++it ) {
+		for ( auto & it : final_aln ) {
 
-			Real const alignment_coverage( it->length() - it->gapped_positions() );
+			Real const alignment_coverage( it.length() - it.gapped_positions() );
 
 			if ( option[ cm::aln_length_filter ].user() ) {
 				filter_threshold = option[ cm::aln_length_filter ]();
 			}
 			if ( ( filter_threshold > 0 ) && ( alignment_coverage <  filter_threshold ) ) {
-				std::cout << "Skipping alignment " << it->sequence(1)->id() << "  " << it->sequence(2)->id() << ": length = " << int( alignment_coverage )
+				std::cout << "Skipping alignment " << it.sequence(1)->id() << "  " << it.sequence(2)->id() << ": length = " << int( alignment_coverage )
 					<< "  threshold = " << int( filter_threshold ) << std::endl;
 				continue;
 			}
 			// if alignment passes filter, print it to the output file
-			it->printGrishinFormat(output);
+			it.printGrishinFormat(output);
 		}
 
 		output.close();

@@ -125,9 +125,7 @@ DisulfidizeMover::DisulfidizeMover( DisulfidizeMover const &src ) :
 }
 
 /// @brief destructor - this class has no dynamic allocation, so
-DisulfidizeMover::~DisulfidizeMover()
-{
-}
+DisulfidizeMover::~DisulfidizeMover() = default;
 
 /// Return a copy of ourselves
 protocols::moves::MoverOP
@@ -262,7 +260,7 @@ DisulfidizeMover::parse_my_tag(
 	set_mutate_pro( tag->getOption< bool >( "mutate_pro", mutate_pro_ ) );
 
 	if ( tag->hasOption( "max_cb_dist" ) ) {
-		core::Real const max_dist = tag->getOption< core::Real >( "max_cb_dist" );
+		auto const max_dist = tag->getOption< core::Real >( "max_cb_dist" );
 		max_dist_sq_ = max_dist*max_dist;
 	}
 
@@ -367,8 +365,8 @@ DisulfidizeMover::process_pose(
 			//form all the disulfides in the disulfide configuration
 			if ( TR.visible() ) {
 				TR << "Building disulfide configuration ";
-				for ( DisulfideList::const_iterator my_ds = (*ds_config).begin(); my_ds != (*ds_config).end(); ++my_ds ) {
-					TR << (*my_ds).first << "-" << (*my_ds).second << " ";
+				for ( auto const & my_ds : (*ds_config) ) {
+					TR << my_ds.first << "-" << my_ds.second << " ";
 				}
 				TR << std::endl;
 			}
@@ -415,8 +413,8 @@ DisulfidizeMover::find_current_disulfides(
 		}
 	}
 
-	for ( std::set< core::Size >::const_iterator cyd1=cyds.begin(); cyd1!=cyds.end(); ++cyd1 ) {
-		for ( std::set< core::Size >::const_iterator cyd2=cyd1; cyd2!=cyds.end(); ++cyd2 ) {
+	for ( auto cyd1=cyds.begin(); cyd1!=cyds.end(); ++cyd1 ) {
+		for ( auto cyd2=cyd1; cyd2!=cyds.end(); ++cyd2 ) {
 			if ( pose.residue(*cyd1).is_bonded( pose.residue(*cyd2) ) ) {
 				retval.push_back( std::make_pair( *cyd1, *cyd2 ) );
 			}
@@ -433,35 +431,35 @@ DisulfidizeMover::mutate_disulfides_to_ala(
 {
 	if ( TR.visible() ) TR << "Mutating current disulfides to ALA" << std::endl;
 	// mutate current disulfides to alanine if we aren't keeping or including them
-	for ( DisulfideList::const_iterator ds=current_ds.begin(), endds=current_ds.end(); ds!=endds; ++ds ) {
+	for ( auto const & current_d : current_ds ) {
 
-		core::conformation::break_disulfide( pose.conformation(), ds->first, ds->second ); //First, break the existing disulfide.  This should be compatible with NCAAs already.
+		core::conformation::break_disulfide( pose.conformation(), current_d.first, current_d.second ); //First, break the existing disulfide.  This should be compatible with NCAAs already.
 
-		if ( pose.residue(ds->first).type().is_alpha_aa() ) {
-			if ( !pose.residue(ds->first).type().is_d_aa() ) {
-				protocols::simple_moves::MutateResidue mut( ds->first, "ALA" );
+		if ( pose.residue(current_d.first).type().is_alpha_aa() ) {
+			if ( !pose.residue(current_d.first).type().is_d_aa() ) {
+				protocols::simple_moves::MutateResidue mut( current_d.first, "ALA" );
 				mut.apply( pose );
 			} else {
-				protocols::simple_moves::MutateResidue mut( ds->first, "DALA" );
+				protocols::simple_moves::MutateResidue mut( current_d.first, "DALA" );
 				mut.apply( pose );
 			}
-		} else if ( pose.residue(ds->first).type().is_beta_aa() ) {
-			protocols::simple_moves::MutateResidue mut( ds->first, "B3A" );
+		} else if ( pose.residue(current_d.first).type().is_beta_aa() ) {
+			protocols::simple_moves::MutateResidue mut( current_d.first, "B3A" );
 			mut.apply( pose );
 		} else {
 			utility_exit_with_message( "Error in protocols::denovo_design::movers::DisulfidizeMover::mutate_disulfides_to_ala(): Encountered a disulfide-bonded residue that is neither an alpha-amino acid nor a beta-amino acid.  This should not be possible." );
 		}
 
-		if ( pose.residue(ds->first).type().is_alpha_aa() ) {
-			if ( !pose.residue(ds->second).type().is_d_aa() ) {
-				protocols::simple_moves::MutateResidue mut2( ds->second, "ALA" );
+		if ( pose.residue(current_d.first).type().is_alpha_aa() ) {
+			if ( !pose.residue(current_d.second).type().is_d_aa() ) {
+				protocols::simple_moves::MutateResidue mut2( current_d.second, "ALA" );
 				mut2.apply( pose );
 			} else {
-				protocols::simple_moves::MutateResidue mut2( ds->second, "DALA" );
+				protocols::simple_moves::MutateResidue mut2( current_d.second, "DALA" );
 				mut2.apply( pose );
 			}
-		} else if ( pose.residue(ds->second).type().is_beta_aa() ) {
-			protocols::simple_moves::MutateResidue mut( ds->second, "B3A" );
+		} else if ( pose.residue(current_d.second).type().is_beta_aa() ) {
+			protocols::simple_moves::MutateResidue mut( current_d.second, "B3A" );
 			mut.apply( pose );
 		} else {
 			utility_exit_with_message( "Error in protocols::denovo_design::movers::DisulfidizeMover::mutate_disulfides_to_ala(): Encountered a disulfide-bonded residue that is neither an alpha-amino acid nor a beta-amino acid.  This should not be possible." );
@@ -481,7 +479,7 @@ DisulfidizeMover::recursive_multiple_disulfide_former(
 	if ( disulfides_formed.size() < max_disulfides_ ) {
 
 		//select one primary new disulfide to be added
-		for ( DisulfideList::const_iterator new_disulfide = disulfides_possible.begin();
+		for ( auto new_disulfide = disulfides_possible.begin();
 				new_disulfide != disulfides_possible.end();
 				++new_disulfide ) {
 
@@ -494,7 +492,7 @@ DisulfidizeMover::recursive_multiple_disulfide_former(
 			DisulfideList disulfides_to_be_added;
 
 			//identify new secondary disulfides which do not clash with the primary
-			DisulfideList::const_iterator potential_further_disulfide = new_disulfide, end = disulfides_possible.end();
+			auto potential_further_disulfide = new_disulfide, end = disulfides_possible.end();
 			for ( ++potential_further_disulfide; potential_further_disulfide != end;
 					++potential_further_disulfide ) {
 
@@ -598,41 +596,41 @@ DisulfidizeMover::find_possible_disulfides(
 	);
 	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
 
-	for ( std::set< core::Size >::const_iterator itr=set1.begin(), end=set1.end(); itr!=end; ++itr ) {
+	for ( unsigned long itr : set1 ) {
 		//gly/pro/non-protein check
-		if ( !check_residue_type( pose, *itr ) ) {
+		if ( !check_residue_type( pose, itr ) ) {
 			continue;
 		}
-		for ( std::set< core::Size >::const_iterator itr2=set2.begin(), end2=set2.end(); itr2!=end2; ++itr2 ) {
-			if ( *itr == *itr2 ) {
+		for ( unsigned long itr2 : set2 ) {
+			if ( itr == itr2 ) {
 				continue;
 			}
 
-			if ( TR.Debug.visible() ) TR.Debug << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
+			if ( TR.Debug.visible() ) TR.Debug << "DISULF trying disulfide between " << itr << " and " << itr2 << std::endl;
 
 			// gly/pro/non-protein check
-			if ( !check_residue_type( pose, *itr2 ) ) {
+			if ( !check_residue_type( pose, itr2 ) ) {
 				continue;
 			}
 
 			// existing disulfides check
-			if ( keep_current_ds_ && ( pose.residue(*itr).type().is_disulfide_bonded() || pose.residue(*itr2).type().is_disulfide_bonded() ) ) {
+			if ( keep_current_ds_ && ( pose.residue(itr).type().is_disulfide_bonded() || pose.residue(itr2).type().is_disulfide_bonded() ) ) {
 				if ( TR.visible() ) TR <<"DISULF \tkeep_current_ds set to True, keeping residues that are already in disulfides." << std::endl;
 				continue;
 			}
 
 			// seqpos distance check
-			if ( !check_disulfide_seqpos(*itr, *itr2) ) {
+			if ( !check_disulfide_seqpos(itr, itr2) ) {
 				continue;
 			}
 
 			// cartesian CB-CB distance check
-			if ( !check_disulfide_cb_distance( pose, *itr, *itr2 ) ) {
+			if ( !check_disulfide_cb_distance( pose, itr, itr2 ) ) {
 				continue;
 			}
 
 			// disulfide rosetta score
-			bool good_score = check_disulfide_score( pose_copy, *itr, *itr2, sfxn_disulfide_only, sfxn ); //Updated for D-residues
+			bool good_score = check_disulfide_score( pose_copy, itr, itr2, sfxn_disulfide_only, sfxn ); //Updated for D-residues
 
 			// stop if we need good score AND matchrt
 			if ( !score_or_matchrt_ && !good_score ) {
@@ -641,12 +639,12 @@ DisulfidizeMover::find_possible_disulfides(
 
 			// disulfide potential scoring -- check_disulfide_match_rt can now score mirror-image pairs, too
 			bool good_match(false);
-			bool const mixed( mixed_disulfide( pose, *itr, *itr2) );
-			bool const noncanonical( noncanonical_disulfide( pose, *itr, *itr2) );
+			bool const mixed( mixed_disulfide( pose, itr, itr2) );
+			bool const noncanonical( noncanonical_disulfide( pose, itr, itr2) );
 			if ( !mixed && !noncanonical ) {
 				bool good_match1(false), good_match_inv(false);
-				if ( allow_l_cys_ ) good_match1=check_disulfide_match_rt( pose, *itr, *itr2, disulfPot, false );
-				if ( allow_d_cys_ ) good_match_inv=check_disulfide_match_rt( pose, *itr, *itr2, disulfPot, true );
+				if ( allow_l_cys_ ) good_match1=check_disulfide_match_rt( pose, itr, itr2, disulfPot, false );
+				if ( allow_d_cys_ ) good_match_inv=check_disulfide_match_rt( pose, itr, itr2, disulfPot, true );
 				good_match = good_match1 || good_match_inv;
 			} else {
 				good_match=true; //Don't apply the match_rt test if this is a mixed disulfide
@@ -656,8 +654,8 @@ DisulfidizeMover::find_possible_disulfides(
 				continue;
 			}
 
-			if ( TR.visible() ) TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-			add_to_list( disulf_partners, *itr, *itr2 );
+			if ( TR.visible() ) TR << "DISULF " <<  itr << "x" << itr2 << std::endl;
+			add_to_list( disulf_partners, itr, itr2 );
 		}
 	}
 	return disulf_partners;
@@ -685,13 +683,13 @@ DisulfidizeMover::tag_disulfides(
 	DisulfidizeMover::DisulfideList const & disulf ) const
 {
 	std::stringstream disulf_comment;
-	for ( DisulfideList::const_iterator ds=disulf.begin(); ds!=disulf.end(); ++ds ) {
+	for ( auto const & ds : disulf ) {
 		if ( !disulf_comment.str().empty() ) disulf_comment << ";";
-		disulf_comment << ds->first << "," << ds->second;
+		disulf_comment << ds.first << "," << ds.second;
 	}
 	core::pose::add_comment( pose, "DISULFIDIZE", disulf_comment.str() );
-	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr ) {
-		tag_disulfide( pose, (*itr).first, (*itr).second );
+	for ( auto const & itr : disulf ) {
+		tag_disulfide( pose, itr.first, itr.second );
 	}
 }
 
@@ -714,7 +712,7 @@ DisulfidizeMover::make_disulfide(
 
 	core::conformation::form_disulfide( pose.conformation(), res1, res2, allow_d_cys_, !allow_l_cys_ ); //Updated for D-residues
 	core::util::rebuild_disulfide( pose, res1, res2,
-		NULL, //task
+		nullptr, //task
 		sfxn, //sfxn
 		mm, // movemap
 		sfxn // min sfxn
@@ -729,8 +727,8 @@ DisulfidizeMover::make_disulfides(
 	bool const relax_bb,
 	core::scoring::ScoreFunctionOP sfxn ) const
 {
-	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr ) {
-		make_disulfide( pose, (*itr).first, (*itr).second, relax_bb, sfxn );
+	for ( auto const & itr : disulf ) {
+		make_disulfide( pose, itr.first, itr.second, relax_bb, sfxn );
 	}
 }
 

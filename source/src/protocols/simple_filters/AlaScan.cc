@@ -80,8 +80,8 @@ AlaScan::scorefxn( core::scoring::ScoreFunctionOP scorefxn )
 
 AlaScan::AlaScan():
 	Filter( "AlaScan" ),
-	chain1_( 0 ),
-	chain2_( 1 ),
+	chain1_( false ),
+	chain2_( true ),
 	repeats_( 1 ),
 	distance_threshold_( 8.0 ),
 	jump_( 1 ),
@@ -242,7 +242,7 @@ AlaScan::report_symmetry( std::ostream & out, core::pose::Pose const & const_pos
 	core::pose::Pose pose( const_pose );
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	core::conformation::symmetry::SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<core::conformation::symmetry::SymmetricConformation & > ( pose.conformation()) );
 
 	protocols::scoring::Interface interface_obj(1);

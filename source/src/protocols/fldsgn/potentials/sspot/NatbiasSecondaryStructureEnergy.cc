@@ -79,17 +79,7 @@ NatbiasSecondaryStructureEnergy::NatbiasSecondaryStructureEnergy() :
 
 
 /// @brief copy constructor
-NatbiasSecondaryStructureEnergy::NatbiasSecondaryStructureEnergy( NatbiasSecondaryStructureEnergy const & src ):
-	parent( src ),
-	native_secstruct_( src.native_secstruct_ ),
-	use_sspot_( src.use_sspot_ ),
-	use_hhpot_( src.use_hhpot_ ),
-	use_hspot_( src.use_hspot_ ),
-	use_nobias_( src.use_nobias_ ),
-	sspot_( src.sspot_ ),
-	hhpot_( src.hhpot_ ),
-	hspot_( src.hspot_ )
-{}
+NatbiasSecondaryStructureEnergy::NatbiasSecondaryStructureEnergy( NatbiasSecondaryStructureEnergy const & /*src*/ ) = default;
 
 
 /// @brief clone

@@ -623,9 +623,9 @@ MakeRotLibMover::calc_rotamer_clusters()
 
 /// @brief struct that is used in calc_centroids, values init to zero
 struct running_average_pair {
-	core::Real avg;
-	core::Size count;
-	running_average_pair() : avg( 0.0 ), count( 0 ) {}
+	core::Real avg = 0.0;
+	core::Size count = 0;
+	running_average_pair() = default;
 };
 
 bool

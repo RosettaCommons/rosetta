@@ -60,7 +60,7 @@ public:
 		scorefxn_ = core::scoring::get_score_function();
 	}
 
-	virtual std::string get_name() const { return "PerturbStruct";}
+	std::string get_name() const override { return "PerturbStruct";}
 
 	//////
 	void do_mutate( core::pose::Pose & pose, core::Size nmut ) {
@@ -77,7 +77,7 @@ public:
 			core::Size res_to_mut = positions[i];
 
 			//
-			core::chemical::AA to_mutate = (core::chemical::AA) numeric::random::rg().random_range(1,20);
+			auto to_mutate = (core::chemical::AA) numeric::random::rg().random_range(1,20);
 			while ( to_mutate == pose.residue(res_to_mut).aa() ) {
 				to_mutate = (core::chemical::AA) numeric::random::rg().random_range(1,20);
 			}
@@ -101,11 +101,11 @@ public:
 	}
 
 
-	void apply( core::pose::Pose & pose ) {
+	void apply( core::pose::Pose & pose ) override {
 		core::pose::Pose ref_pose(pose);
 
 		// random mutations
-		core::Size nmut = (core::Size) std::floor( mutrate_ * pose.size() + 0.5 );
+		auto nmut = (core::Size) std::floor( mutrate_ * pose.size() + 0.5 );
 
 		protocols::relax::RelaxProtocolBaseOP fa_rlx( protocols::relax::generate_relax_from_cmd() );
 
@@ -132,7 +132,7 @@ my_main( void* ) {
 		excn.show( std::cerr );
 	}
 
-	return 0;
+	return nullptr;
 }
 
 

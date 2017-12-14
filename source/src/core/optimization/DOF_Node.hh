@@ -165,14 +165,14 @@ public:
 
 	// constructor
 	DOF_Node(
-		DOF_ID  id_in,
+		DOF_ID const & id_in,
 		DOF_NodeOP parent_in
 	):
 		utility::pointer::ReferenceCount(),
 		F1_(0.0),
 		F2_(0.0),
 		depth_(-1),
-		id(std::move( id_in )),
+		id( id_in ),
 		parent_(std::move( parent_in )),
 		torsion_id_( id::TorsionID::BOGUS_TORSION_ID() ),
 		dependent_( false )

@@ -53,8 +53,7 @@ namespace protocols {
 namespace topology_broker {
 
 using namespace core;
-DensityScoringClaimer::DensityScoringClaimer()
-{}
+DensityScoringClaimer::DensityScoringClaimer() = default;
 
 /* void DensityScoringClaimer::initialize_residues( core::pose::Pose& pose, claims::SequenceClaimOP my_claim, claims::DofClaims& failed_to_init ) {
 SequenceClaimer::initialize_residues( pose, my_claim, failed_to_init );

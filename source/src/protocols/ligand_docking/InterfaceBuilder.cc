@@ -197,7 +197,7 @@ std::string InterfaceBuilder::element_name() { return "InterfaceBuilder"; }
 void InterfaceBuilder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList attributes;
 	attributes + Attr( "extension_window", xsct_non_negative_integer, "XRW TO DO" )
 		+ Attr::required_attribute( "ligand_areas", xs_string, "The comma-separated list of ligand areas, which are read out of the datamap" )

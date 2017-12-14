@@ -47,9 +47,9 @@ class UniformRigidBodyCM : public environment::ClientMover {
 public:
 	UniformRigidBodyCM();
 
-	UniformRigidBodyCM( std::string const& name,
-		LocalPosition const& mobile,
-		LocalPosition const& stationary,
+	UniformRigidBodyCM( std::string const & name,
+		LocalPosition const & mobile,
+		LocalPosition const & stationary,
 		core::Real rotation_magnitude = 3.0,
 		core::Real translation_magnitude = 8.0 );
 

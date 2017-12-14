@@ -142,7 +142,7 @@ EnergyMethodOptions::EnergyMethodOptions(EnergyMethodOptions const & src)
 	*this = src;
 }
 
-EnergyMethodOptions::~EnergyMethodOptions() {}
+EnergyMethodOptions::~EnergyMethodOptions() = default;
 
 /// copy operator
 EnergyMethodOptions &
@@ -842,7 +842,7 @@ EnergyMethodOptions::has_method_weights( ScoreType const & type ) const {
 
 vector1< Real > const &
 EnergyMethodOptions::method_weights( ScoreType const & type ) const {
-	MethodWeights::const_iterator it( method_weights_.find( type ) );
+	auto it( method_weights_.find( type ) );
 	if ( it == method_weights_.end() ) {
 		utility_exit_with_message( "EnergyMethodOptions::method_weights do not exist: " +
 			name_from_score_type(type));
@@ -994,10 +994,10 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 
 	if ( etable_options_->etable_type.size() ) out << "EnergyMethodOptions::show: etable_type: " << etable_options_->etable_type <<'\n';
 	out << "analytic_etable_evaluation: " << etable_options_->analytic_etable_evaluation << '\n';
-	for ( MethodWeights::const_iterator it=method_weights_.begin(), ite = method_weights_.end(); it != ite; ++it ) {
-		out << "EnergyMethodOptions::show: method_weights: " << it->first;
-		for ( Size i=1; i<= it->second.size(); ++i ) {
-			out << ' ' << it->second[i];
+	for ( auto const & method_weight : method_weights_ ) {
+		out << "EnergyMethodOptions::show: method_weights: " << method_weight.first;
+		for ( Size i=1; i<= method_weight.second.size(); ++i ) {
+			out << ' ' << method_weight.second[i];
 		}
 		out << '\n';
 	}

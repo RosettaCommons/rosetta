@@ -81,7 +81,7 @@ HBondSelector::HBondSelector( HBondSelector const & src ){
 	use_input_set_selector_ = src.get_use_input_set_selector();
 }
 
-HBondSelector::~HBondSelector(){}
+HBondSelector::~HBondSelector()= default;
 
 core::select::residue_selector::ResidueSelectorOP
 HBondSelector::clone() const{
@@ -147,7 +147,7 @@ HBondSelector::parse_my_tag(
 		std::string selector_str;
 		try {
 			selector_str = tag->getOption< std::string >( "residue_selector" );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access option 'selector' from HBondResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -156,7 +156,7 @@ HBondSelector::parse_my_tag(
 		try {
 			core::select::residue_selector::ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
 			set_input_set_selector( selector );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from HBondResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -179,7 +179,7 @@ HBondSelector::parse_my_tag(
 	} else if ( tag->hasOption( "resnums" ) ) { // do not get input_set from ResidueSelectors but load resnums string instead
 		try {
 			set_input_set_str ( tag->getOption< std::string >( "resnums" ) );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream err_msg;
 			err_msg << "Failed to access option 'resnums' from HBondResidueSelector::parse_my_tag.\n";
 			err_msg << e.msg();

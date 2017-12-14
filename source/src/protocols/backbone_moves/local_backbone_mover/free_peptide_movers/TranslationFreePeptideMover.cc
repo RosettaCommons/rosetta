@@ -31,7 +31,7 @@ namespace local_backbone_mover {
 namespace free_peptide_movers {
 
 TranslationFreePeptideMover::TranslationFreePeptideMover(xyzVector <Real> v_translate):
-	FreePeptideMover(), random_(false), v_translate_(v_translate)
+	FreePeptideMover(), v_translate_(v_translate)
 {
 }
 
@@ -40,7 +40,7 @@ TranslationFreePeptideMover::TranslationFreePeptideMover(Real max_amplitude):
 {
 }
 
-TranslationFreePeptideMover::~TranslationFreePeptideMover(){}
+TranslationFreePeptideMover::~TranslationFreePeptideMover()= default;
 
 void
 TranslationFreePeptideMover::apply(FreePeptide &free_peptide){

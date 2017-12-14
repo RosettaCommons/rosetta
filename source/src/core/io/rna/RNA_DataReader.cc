@@ -82,7 +82,7 @@ namespace io {
 namespace rna {
 
 /// @details Auto-generated virtual destructor
-RNA_DataReader::~RNA_DataReader() {}
+RNA_DataReader::~RNA_DataReader() = default;
 
 static basic::Tracer TR( "protocols.rna.RNA_DataReader" );
 
@@ -296,7 +296,7 @@ RNA_DataReader::fill_rna_data_info( pose::Pose & pose )
 	rna_data_info_new->set_backbone_burial (   fill_backbone_array( backbone_burial_res_, pose ) );
 	rna_data_info_new->set_backbone_exposed(   fill_backbone_array( backbone_exposed_res_, pose ) );
 
-	runtime_assert( rna_data_info_with_conventional_numbering_ != 0 );
+	runtime_assert( rna_data_info_with_conventional_numbering_ != nullptr );
 	pose::rna::RNA_Data const & rna_data_with_conventional_numbering = rna_data_info_with_conventional_numbering_->rna_data();
 	// Copy below is intended
 	for ( pose::rna::RNA_Datum rna_datum : rna_data_with_conventional_numbering ) {
@@ -346,7 +346,7 @@ get_rna_data_info( pose::Pose & pose, std::string const & rna_data_file,
 		nonconst_rna_scoring_info_from_pose( *(other_pose_list[ n ]) ).rna_data_info() = rna_data_info;
 	}
 
-	if ( scorefxn != 0 &&
+	if ( scorefxn != nullptr &&
 			scoring::rna::rna_scoring_info_from_pose( pose ).rna_data_info().rna_reactivities().size() > 0 ) {
 		scorefxn->set_weight( core::scoring::rna_chem_map, 1.0 );
 	}

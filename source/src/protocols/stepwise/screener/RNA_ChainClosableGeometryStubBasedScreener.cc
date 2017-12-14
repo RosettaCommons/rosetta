@@ -21,6 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
+#include <utility>
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
 
@@ -40,12 +41,12 @@ RNA_ChainClosableGeometryStubBasedScreener::RNA_ChainClosableGeometryStubBasedSc
 	utility::vector1< core::pose::PoseOP > screening_pose_list,
 	core::kinematics::Stub const & moving_res_base_stub,
 	Size const reference_res,
-	utility::vector1< core::conformation::ResidueOP > moving_rsd_at_origin_list,
+	utility::vector1< core::conformation::ResidueOP > const & moving_rsd_at_origin_list,
 	bool const using_predefined_moving_rsd_list /* = true */ ):
 	StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
 	chain_closable_geometry_checker->three_prime_chain_break_res() ),
 	chain_closable_geometry_checker_( chain_closable_geometry_checker ),
-	screening_pose_list_( screening_pose_list ),
+	screening_pose_list_(std::move( screening_pose_list )),
 	moving_rsd_at_origin_list_( moving_rsd_at_origin_list ),
 	moving_res_base_stub_( moving_res_base_stub ),
 	reference_res_( reference_res ),
@@ -60,15 +61,14 @@ RNA_ChainClosableGeometryStubBasedScreener::RNA_ChainClosableGeometryStubBasedSc
 	StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
 	chain_closable_geometry_checker->three_prime_chain_break_res() ),
 	chain_closable_geometry_checker_( chain_closable_geometry_checker ),
-	screening_pose_list_( screening_pose_list ),
+	screening_pose_list_(std::move( screening_pose_list )),
 	moving_res_base_stub_( moving_res_base_stub ),
 	reference_res_( reference_res ),
 	using_predefined_moving_rsd_list_( false )
 {}
 
 //Destructor
-RNA_ChainClosableGeometryStubBasedScreener::~RNA_ChainClosableGeometryStubBasedScreener()
-{}
+RNA_ChainClosableGeometryStubBasedScreener::~RNA_ChainClosableGeometryStubBasedScreener() = default;
 
 ///////////////////////////////////////////////////////////////////
 void

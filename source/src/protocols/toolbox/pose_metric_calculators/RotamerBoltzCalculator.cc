@@ -200,9 +200,9 @@ RotamerBoltzCalculator::compute_boltz_weight_packrotamers(
 	ScoreRmsPoints scores( ScoreRmsPoint( stf.compute( pose ), 0.0 ) );
 	TR << "Initial input pose has score " << scores.bg().score() << std::endl;
 
-	for ( core::pack::rotamer_set::Rotamers::const_iterator rotamer=rotset->begin(); rotamer!=rotset->end(); ++rotamer ) {
+	for ( auto const & rotamer : *rotset ) {
 		pose = const_min_pose;
-		pose.replace_residue( resi, **rotamer, false/*orient bb*/ );
+		pose.replace_residue( resi, *rotamer, false/*orient bb*/ );
 		core::pack::pack_rotamers( pose, *scorefxn_, task );
 		min_mover->apply( pose );
 		core::Real const score = stf.compute( pose );
@@ -405,8 +405,8 @@ RotamerBoltzCalculator::print( std::string const & key ) const
 		return utility::to_string(all_boltz_);
 	} else if ( key == "probabilities" ) {
 		std::stringstream ss;
-		for ( RotamerProbabilities::const_iterator rp=probabilities_.begin(); rp!=probabilities_.end(); ++rp ) {
-			ss << rp->first << " " << rp->second << std::endl;
+		for ( auto probabilitie : probabilities_ ) {
+			ss << probabilitie.first << " " << probabilitie.second << std::endl;
 		}
 		return ss.str();
 	} else {

@@ -64,11 +64,7 @@ RemoveRemodelCsts::RemoveRemodelCsts()
 	generator_id_( "" )
 {}
 
-RemoveRemodelCsts::RemoveRemodelCsts( RemoveRemodelCsts const & rval )
-: Mover( rval ),
-	generator_( rval.generator_ ),
-	generator_id_( rval.generator_id_ )
-{}
+RemoveRemodelCsts::RemoveRemodelCsts( RemoveRemodelCsts const & /*rval*/ ) = default;
 
 /// @brief
 RemoveRemodelCsts::RemoveRemodelCsts( protocols::forge::remodel::RemodelConstraintGeneratorOP generator )
@@ -78,7 +74,7 @@ RemoveRemodelCsts::RemoveRemodelCsts( protocols::forge::remodel::RemodelConstrai
 }
 
 /// @brief
-RemoveRemodelCsts::~RemoveRemodelCsts() {}
+RemoveRemodelCsts::~RemoveRemodelCsts() = default;
 
 void
 RemoveRemodelCsts::parse_my_tag( TagCOP const tag,
@@ -123,7 +119,7 @@ RemoveRemodelCsts::clone() const
 void
 RemoveRemodelCsts::set_generator( protocols::forge::remodel::RemodelConstraintGeneratorOP generator )
 {
-	runtime_assert( generator != 0 );
+	runtime_assert( generator != nullptr );
 	generator_ = generator;
 }
 

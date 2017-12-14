@@ -35,9 +35,9 @@ static basic::Tracer TR( "protocols.moves.ConstraintGenerator" );
 namespace protocols {
 namespace constraint_generator {
 
-ConstraintGenerator::ConstraintGenerator( std::string  class_name ):
+ConstraintGenerator::ConstraintGenerator( std::string const & class_name ):
 	utility::pointer::ReferenceCount(),
-	class_name_(std::move( class_name )),
+	class_name_( class_name ),
 	id_( "unnamed_constraint_generator" )
 {}
 

@@ -321,7 +321,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	max_radius_ = tag->getOption< Size >( "max_radius", 4 );
 	max_struct_ = tag->getOption< Size >( "max_struct", 10 );
 	max_struct_per_radius_ = tag->getOption< Size >( "max_struct_per_radius", 10 );
-	filter_by_phipsi_ = tag->getOption< bool >( "filter_by_phipsi", 1 );
+	filter_by_phipsi_ = tag->getOption< bool >( "filter_by_phipsi", true );
 	sample_weight_const_ = tag->getOption< Real >( "sample_weight_const", 1.0 );
 
 	start_res_ = core::pose::get_resnum_string( tag, "start_", start_res_ );

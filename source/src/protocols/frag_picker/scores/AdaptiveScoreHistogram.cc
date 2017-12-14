@@ -33,15 +33,15 @@ static basic::Tracer trAdaptiveScoreHistogram(
 AdaptiveScoreHistogram::AdaptiveScoreHistogram(core::Real bin_size,core::Real initial_max_score) {
 	bin_size_ = bin_size;
 	is_up_to_date_ = true;
-	core::Size new_size = (core::Size)(initial_max_score / bin_size_);
+	auto new_size = (core::Size)(initial_max_score / bin_size_);
 	data_.resize(new_size);
 }
 
-AdaptiveScoreHistogram::~AdaptiveScoreHistogram() {}
+AdaptiveScoreHistogram::~AdaptiveScoreHistogram() = default;
 
 void AdaptiveScoreHistogram::insert(core::Real score) {
 
-	core::Size bin_id = (core::Size)(score / bin_size_);
+	auto bin_id = (core::Size)(score / bin_size_);
 	if ( data_.size() <= bin_id ) {
 		data_.resize(bin_id+1);
 	}
@@ -73,7 +73,7 @@ core::Real AdaptiveScoreHistogram::p_value(core::Real score) {
 		}
 	}
 
-	core::Size bin_id = (core::Size)(score / bin_size_);
+	auto bin_id = (core::Size)(score / bin_size_);
 	if ( bin_id >= cumulative_sums_.size() ) {
 		return 0.0;
 	} else {

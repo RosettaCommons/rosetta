@@ -48,7 +48,7 @@ ResidueLoader::create_resource(
 			"but was given a non-ResidueLoaderOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
 
-	ResidueLoaderOptions const & residue_options = static_cast<ResidueLoaderOptions const & >(options);
+	auto const & residue_options = static_cast<ResidueLoaderOptions const & >(options);
 
 	ResidueTypeSetCOP residue_type_set( ChemicalManager::get_instance()->residue_type_set(residue_options.residue_type_set_tag()) );
 

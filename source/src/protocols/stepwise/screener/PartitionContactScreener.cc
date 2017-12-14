@@ -69,8 +69,7 @@ PartitionContactScreener::PartitionContactScreener( pose::Pose const & pose,
 }
 
 //Destructor
-PartitionContactScreener::~PartitionContactScreener()
-{}
+PartitionContactScreener::~PartitionContactScreener() = default;
 
 //////////////////////////////////////////////////////////////////////////////
 void

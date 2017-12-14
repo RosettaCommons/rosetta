@@ -85,7 +85,7 @@ EnvLabelSelector::EnvLabelSelector( std::string const& label,
 }
 
 
-EnvLabelSelector::~EnvLabelSelector() {}
+EnvLabelSelector::~EnvLabelSelector() = default;
 
 
 core::select::residue_selector::ResidueSubset
@@ -100,9 +100,8 @@ EnvLabelSelector::apply(
 	ProtectedConformationCOP conf = utility::pointer::dynamic_pointer_cast< protocols::environment::ProtectedConformation const > ( pose.conformation_ptr() );
 	core::environment::SequenceAnnotationCOP ann = conf->annotations();
 
-	for ( LocalPositions::const_iterator pos_it = positions_.begin();
-			pos_it != positions_.end(); ++pos_it ) {
-		core::Size const seqpos = ann->resolve_seq( **pos_it );
+	for ( auto const & position : positions_ ) {
+		core::Size const seqpos = ann->resolve_seq( *position );
 		subset[ seqpos ] = true;
 	}
 	return subset;

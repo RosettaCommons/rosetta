@@ -25,12 +25,10 @@ namespace pose {
 namespace copydofs {
 
 //Constructor
-CopyDofsInfo::CopyDofsInfo()
-{}
+CopyDofsInfo::CopyDofsInfo() = default;
 
 //Destructor
-CopyDofsInfo::~CopyDofsInfo()
-{}
+CopyDofsInfo::~CopyDofsInfo() = default;
 
 void
 CopyDofsInfo::clear()

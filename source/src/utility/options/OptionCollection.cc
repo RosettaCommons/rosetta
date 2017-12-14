@@ -186,7 +186,7 @@ OptionCollection::load(
 	bool const free_args // Support free argument (without - prefix)?
 ){
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	try {
 		// Load the options
@@ -290,7 +290,7 @@ OptionCollection::load(
 /// @brief Load all options in a flags file
 void OptionCollection::load_options_from_stream(std::istream& stream, std::string const & file_string, std::string const & cid) {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	// Read and load the options from the file
 	using std::make_pair;
@@ -305,7 +305,7 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 	string const AFTER_SEP( " \t#" );
 	enum { UNKNOWN_INDENT, SPACE_INDENT, TAB_INDENT } indent_type( UNKNOWN_INDENT );
 	typedef  std::pair< int, std::string >  IndentContext;
-	typedef  utility::vector0< IndentContext >  ContextStack;
+	using ContextStack = utility::vector0<IndentContext>;
 	ContextStack context_stack( 1, make_pair( 0, cid ) );
 	while ( stream ) {
 		using ObjexxFCL::has;
@@ -519,7 +519,7 @@ OptionCollection::check_values() const
 void OptionCollection::show_option_help(OptionKey const &key, std::string &group, std::ostream & stream )
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	if ( has( key ) ) { // Active option
 		Option const & opt( option( key ) );
@@ -737,7 +737,7 @@ void
 OptionCollection::show_all_hier( std::ostream & stream ) const
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	stream << "\nOptions:   [Specify on command line or in @file]\n";
 	string group; // Previous option group name
@@ -765,7 +765,7 @@ void
 OptionCollection::show_table_text( std::ostream & stream ) const
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	stream << "\nOption Definitions Table\n";
 	string group; // Previous option group name
@@ -946,7 +946,7 @@ OptionCollection::load_option_cl(
 {
 	using std::string;
 	using ObjexxFCL::stripped_whitespace;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	// Parse argument into key and value strings
 	bool top( false ); // Top-level context?
@@ -990,7 +990,7 @@ OptionCollection::load_option_file(
 {
 	using std::string;
 	using ObjexxFCL::stripped_whitespace;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	// std::cout << "load_option_file: arg_string=" << arg_string << "\n";
 	// for(ValueStrings::iterator it=val_strings.begin(); it!=val_strings.end(); it++)
@@ -1061,7 +1061,7 @@ OptionCollection::set_option_value_cl(
 	} else { // Vector option key
 		runtime_assert( key.vector() );
 		if ( arg_strings.empty() ) { // No values
-			VectorOption & vopt( option< VectorOption >( key ) );
+			auto & vopt( option< VectorOption >( key ) );
 			if ( ( vopt.n() > 0 ) || ( vopt.n_lower() > 0 ) ) {
 				throw ( CREATE_EXCEPTION(excn::Exception,  "No values specified for multi-valued option -"+ key.id() ) );
 			}
@@ -1105,7 +1105,7 @@ OptionCollection::set_option_value_file(
 	} else { // Vector option key
 		runtime_assert( key.vector() );
 		if ( val_strings.empty() ) { // No values for a vector option
-			VectorOption & vopt( option< VectorOption >( key ) );
+			auto & vopt( option< VectorOption >( key ) );
 			if ( ( vopt.n() > 0 ) || ( vopt.n_lower() > 0 ) ) {
 				throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Multiple values specified for multi-valued option -"
 					+ key.id() + " requiring one or more values" ) );
@@ -1205,7 +1205,7 @@ OptionCollection::find_key_cl(
 )
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 	// Find the option key
 	string kid; // Matched key name
 	if ( ( cid.empty() ) || ( top ) ) { // No context: Search for key with specified key string
@@ -1358,7 +1358,7 @@ OptionCollection::n_part( std::string const & s )
 	if ( s.empty() ) {
 		return 1u;
 	} else { // Scan the string: Count each transition to : so we can accept -a::b as well as -a:b
-		typedef  std::string::size_type  size_type;
+		using size_type = std::string::size_type;
 		char const COLON( ':' );
 		size_type n_part_( s[ 0 ] == COLON ? 2u : 1u );
 		for ( size_type i = 1, e = s.size(); i < e; ++i ) {
@@ -1379,7 +1379,7 @@ OptionCollection::n_part_prefix_match(
 	if ( ( s.empty() ) || ( t.empty() ) ) {
 		return 0u;
 	} else {
-		typedef  std::string::size_type  size_type;
+		using size_type = std::string::size_type;
 		for ( size_type n = std::min( n_part( s ), n_part( t ) ); n > 0; --n ) {
 			if ( prefix( s, n ) == prefix( t, n ) ) return n;
 		}
@@ -1396,7 +1396,7 @@ OptionCollection::prefix(
 )
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	size_type const n_s( n_part( s ) );
 	if ( ( n <= 0 ) || ( s.empty() ) ) { // Nothing
@@ -1425,7 +1425,7 @@ OptionCollection::suffix(
 )
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	size_type const n_s( n_part( s ) );
 
@@ -1455,7 +1455,7 @@ OptionCollection::trim(
 )
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	size_type const n_s( n_part( s ) );
 
@@ -1486,7 +1486,7 @@ OptionCollection::trimmed(
 )
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	size_type const n_s( n_part( s ) );
 
@@ -1513,7 +1513,7 @@ std::string
 OptionCollection::cleaned( std::string const & s )
 {
 	using std::string;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	char const COLON( ':' );
 	string t;
@@ -1540,7 +1540,7 @@ OptionCollection::merged(
 	std::string const & t // Tail id
 )
 {
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	// Handle either id empty
 	if ( ( s.empty() ) || ( t.empty() ) ) return t;
@@ -1579,7 +1579,7 @@ OptionCollection::wrapped(
 {
 	using std::string;
 	using ObjexxFCL::is_any_of;
-	typedef  std::string::size_type  size_type;
+	using size_type = std::string::size_type;
 
 	// check arguments
 	runtime_assert( indent + 1 < width );

@@ -50,7 +50,7 @@ FitSimpleHelixMultiFunc::~FitSimpleHelixMultiFunc() = default;
 
 FitSimpleHelixMultiFunc::FitSimpleHelixMultiFunc(
 	core::pose::Pose const &pose,
-	std::string atom_name,
+	std::string const & atom_name,
 	core::Size const first_res_index,
 	core::Size const res_per_repeat,
 	core::Size const start_index,
@@ -59,7 +59,7 @@ FitSimpleHelixMultiFunc::FitSimpleHelixMultiFunc(
 	core::Real const &rms_offset
 ) :
 	pose_( pose ),
-	atom_name_(std::move( atom_name )),
+	atom_name_( atom_name ),
 	first_res_index_( first_res_index ),
 	residues_per_repeat_( res_per_repeat ),
 	start_index_(start_index),

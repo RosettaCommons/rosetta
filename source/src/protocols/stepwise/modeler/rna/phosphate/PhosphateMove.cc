@@ -27,8 +27,7 @@ namespace rna {
 namespace phosphate {
 
 //Destructor
-PhosphateMove::~PhosphateMove()
-{}
+PhosphateMove::~PhosphateMove() = default;
 
 ///////////////////////////////////////////////
 std::string

@@ -404,7 +404,7 @@ GeneralizedKIC::parse_my_tag(
 				load_perturber_bin_params( branch_tag->getOption<std::string>("bin_params_file", "ABBA") );
 			}
 			if ( effect=="perturb_backbone_by_bins" ) {
-				core::Size const iterationcount( branch_tag->getOption<core::Size>("iterations", 1) );
+				auto const iterationcount( branch_tag->getOption<core::Size>("iterations", 1) );
 				set_perturber_iterations( iterationcount );
 				if ( TR.visible() ) TR << "Set iterations for perturb_backbone_by_bins GeneralizedKICperturber to " << iterationcount << "." << std::endl;
 				bool const mustswitch( branch_tag->getOption<bool>("must_switch_bins", false) );
@@ -464,7 +464,7 @@ GeneralizedKIC::parse_my_tag(
 			if ( filtertype=="backbone_bin" ) {
 				//Residue number:
 				runtime_assert_string_msg( branch_tag->hasOption("residue"), "RosettaScript parsing error: when adding a backbone_bin filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
-				core::Size const resnum( branch_tag->getOption<core::Size>("residue",0) );
+				auto const resnum( branch_tag->getOption<core::Size>("residue",0) );
 				set_filter_resnum(resnum);
 				if ( TR.visible() ) TR << "Set the residue number for backbone_bin filter to " << resnum << "." << std::endl;
 
@@ -479,11 +479,11 @@ GeneralizedKIC::parse_my_tag(
 			} else if ( filtertype == "alpha_aa_rama_check" || filtertype == "rama_prepro_check" ) {
 				//Residue number:
 				runtime_assert_string_msg( branch_tag->hasOption("residue"), "RosettaScript parsing error: when adding an alpha_aa_rama_check or rama_prepro_check filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
-				core::Size const resnum( branch_tag->getOption<core::Size>("residue",0) );
+				auto const resnum( branch_tag->getOption<core::Size>("residue",0) );
 				set_filter_resnum(resnum);
 				if ( TR.visible() ) TR << "Set the residue number for " << filtertype << " filter to " << resnum << "." << std::endl;
 
-				core::Real const cutoff_energy( branch_tag->getOption<core::Real>("rama_cutoff_energy", 0.3) );
+				auto const cutoff_energy( branch_tag->getOption<core::Real>("rama_cutoff_energy", 0.3) );
 				set_filter_rama_cutoff_energy( cutoff_energy );
 				if ( TR.visible() ) TR << "Set the " << (filtertype == "rama_prepro_check" ? "rama_prepro" : "rama" ) << " term cutoff energy for the " << filtertype << " filter to " << cutoff_energy << std::endl;
 			}
@@ -2140,7 +2140,7 @@ void GeneralizedKIC::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	perturber::GeneralizedKICperturber::define_valid_perturber_name_enumeration( xsd );
 	filter::GeneralizedKICfilter::define_valid_filter_name_enumeration( xsd );
 
-	typedef utility::tag::XMLSchemaAttribute Attr;
+	using Attr = utility::tag::XMLSchemaAttribute;
 	AttributeList attlist;
 
 	attlist + Attr( "low_memory_mode", xsct_rosetta_bool, "The low_memory_mode option can be used to limit the amount of information about each solution found that is stored, in order to reduce memory consumption. In this mode, only loop degree-of-freedom values are stored prior to selection. The drawback, however, is it can be risk to use low-memory mode with a preselection mover. Any changes to the pose made by the preselection mover will not be stored, so the preselection mover will have to be re-applied to the selected pose after selection. This costs additional time. In addition, if the preselection mover has any stochastic component to its behaviour, then the second application may not produce identical results to the first. This means that what might have been the lowest-energy pose when the preselection mover was first applied could now be a relatively high-energy pose, for example. For this reason, be judicious in the use of low-memory mode. The preferred course is to stop GenKIC when N solutions have been found to limit memory usage." )

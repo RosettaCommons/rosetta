@@ -115,7 +115,7 @@ bool MutationData::operator==( const MutationData & md_other ) const {
 
 /// @brief
 /// Mutant class constructor
-Mutant::Mutant() {}
+Mutant::Mutant() = default;
 
 /// @brief
 /// Mutant class destructor

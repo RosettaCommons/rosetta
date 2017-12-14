@@ -28,7 +28,7 @@ CircularPermuteFreePeptideMover::CircularPermuteFreePeptideMover(Size off_set, b
 	FreePeptideMover(), off_set_(off_set), direction_(direction)
 {}
 
-CircularPermuteFreePeptideMover::~CircularPermuteFreePeptideMover(){}
+CircularPermuteFreePeptideMover::~CircularPermuteFreePeptideMover()= default;
 
 void
 CircularPermuteFreePeptideMover::apply(FreePeptide &free_peptide){

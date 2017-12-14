@@ -76,7 +76,7 @@ BinSelector::BinSelector( BinSelector const &src ) :
 
 /// @brief Destructor.
 ///
-BinSelector::~BinSelector() {}
+BinSelector::~BinSelector() = default;
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).

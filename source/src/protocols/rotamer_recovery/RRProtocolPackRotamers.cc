@@ -45,7 +45,7 @@ namespace rotamer_recovery {
 
 static Tracer TR("protocol.moves.RRProtocolPackRotamers");
 
-RRProtocolPackRotamers::RRProtocolPackRotamers() {}
+RRProtocolPackRotamers::RRProtocolPackRotamers() = default;
 
 RRProtocolPackRotamers::RRProtocolPackRotamers( RRProtocolPackRotamers const & ) :
 	RRProtocol()

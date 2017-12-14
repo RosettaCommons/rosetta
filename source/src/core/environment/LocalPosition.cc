@@ -48,7 +48,7 @@ LocalPosition::LocalPosition():
 	position_( 0 )
 {}
 
-LocalPosition::LocalPosition( std::string const & label, core::Size const& position ):
+LocalPosition::LocalPosition( std::string const & label, core::Size const position ):
 	ReferenceCount(),
 	label_( label ),
 	position_( position )
@@ -63,7 +63,7 @@ LocalPosition::LocalPosition( std::string const& comma_deliniated ):
 	if ( str_split.size() == 1 ) {
 		try {
 			// try casting to an integer, and use as global sequence number
-			core::Size global_seqpos = boost::lexical_cast< core::Size >( str_split[1] );
+			auto global_seqpos = boost::lexical_cast< core::Size >( str_split[1] );
 			label( "BASE" );
 			position( global_seqpos );
 		} catch ( boost::bad_lexical_cast & ) {

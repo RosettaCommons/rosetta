@@ -29,30 +29,30 @@ namespace protocols {
 namespace canonical_sampling {
 namespace mc_convergence_checks {
 
-typedef ObjexxFCL::FArray2D<double> FArray2D_double;
-typedef utility::vector1< core::Size > Address;
+using FArray2D_double = ObjexxFCL::FArray2D<double>;
+using Address = utility::vector1<core::Size>;
 using namespace core;
 
 DataBuffer::DataBuffer():
-	neighbor_addresses_(0),
-	coords_transfer_buffer_(0),
-	coords_receiving_buffer_(0),
+	neighbor_addresses_(nullptr),
+	coords_transfer_buffer_(nullptr),
+	coords_receiving_buffer_(nullptr),
 	coords_(),
 	temp_coords_(),
 	num_new_neighbors_(0),
-	memory_offset_(0),
-	int_buf1_(0),
-	winning_ranks_(0),
+	memory_offset_(nullptr),
+	int_buf1_(nullptr),
+	winning_ranks_(nullptr),
 	candidate_nbr_index_(0),
 	candidate_best_rmsd_(0.0),
-	candidate_best_rmsds_(0),
+	candidate_best_rmsds_(nullptr),
 	candidate_address_(),
 	winning_tag_(""),
 	winning_address_(),
 	new_level_begins_(0),
 	best_candidate_rmsds_(),
 	is_a_neighbor_(),
-	finished_(0)
+	finished_(nullptr)
 {}
 
 void
@@ -97,7 +97,7 @@ DataBuffer::address_to_buf( Address & address, int* buf, core::Size start_index 
 }
 
 void
-DataBuffer::buf_to_address( Address & address, int* buf, core::Size start_index ){
+DataBuffer::buf_to_address( Address & address, const int* buf, core::Size start_index ){
 	for ( core::Size ii = 1; ii <= address.size(); ii++ ) {
 		address[ ii ] = buf[ ii - 1 + start_index ];
 	}
@@ -129,7 +129,7 @@ void
 DataBuffer::array_to_farray( core::Size index,
 	core::Size /*num_to_add*/,
 	FArray2D_double & coords,
-	double* coord_buf){
+	const double* coord_buf){
 	PROF_START( basic::FARRAY_MANIPULATION );
 	for ( int ii = 1; ii <= coords.u1(); ii++ ) {
 		for ( int jj = 1; jj <= coords.u2(); jj++ ) {

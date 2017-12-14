@@ -46,16 +46,16 @@ int main(int argc, char*argv[])
 
 		std::vector<utility::json_spirit::Value> json_data;
 
-		for ( utility::vector1<std::string>::iterator file_it = file_names.begin(); file_it != file_names.end(); ++file_it ) {
-			core::pose::PoseOP current_pose(core::import_pose::pose_from_file(*file_it,false, core::import_pose::PDB_file));
+		for ( auto & file_name : file_names ) {
+			core::pose::PoseOP current_pose(core::import_pose::pose_from_file(file_name,false, core::import_pose::PDB_file));
 
 			std::string protein_hash = core::pose::get_sha1_hash_excluding_chain(ligand_id,*current_pose);
 			if ( !core::pose::has_chain(ligand_id,*current_pose) ) {
-				utility_exit_with_message(*file_it + " does not contain chain "+ ligand_id);
+				utility_exit_with_message(file_name + " does not contain chain "+ ligand_id);
 			}
 			core::Size ligand_chain_id = core::pose::get_chain_id_from_chain(ligand_id,*current_pose);
 			core::conformation::ResidueCOPs ligand_residues(core::pose::get_chain_residues(*current_pose,ligand_chain_id));
-			std::cout << *file_it <<std::endl;
+			std::cout << file_name <<std::endl;
 			if ( ligand_residues.size() != 1 ) {
 				std::cout <<ligand_residues.size() <<std::endl;
 				utility_exit_with_message("you can only have one residue in a ligand right now sorry");
@@ -63,7 +63,7 @@ int main(int argc, char*argv[])
 
 			core::Vector nbr_atom_coords = ligand_residues[1]->nbr_atom_xyz();
 
-			utility::json_spirit::Pair in_tag("input_tag",*file_it);
+			utility::json_spirit::Pair in_tag("input_tag",file_name);
 			utility::json_spirit::Pair x_coord("x",nbr_atom_coords.x());
 			utility::json_spirit::Pair y_coord("y",nbr_atom_coords.y());
 			utility::json_spirit::Pair z_coord("z",nbr_atom_coords.z());

@@ -89,9 +89,7 @@ using boost::assign::list_of;
 
 static Tracer TR("protocols.features.TaskOperationFeatures");
 
-TaskOperationFeatures::TaskOperationFeatures()
-// : run_once_(true)
-{}
+TaskOperationFeatures::TaskOperationFeatures() = default;
 
 TaskOperationFeatures::TaskOperationFeatures(TaskOperationFeatures const &) :
 	FeaturesReporter()

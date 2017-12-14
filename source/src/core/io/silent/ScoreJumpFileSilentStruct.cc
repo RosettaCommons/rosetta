@@ -91,11 +91,8 @@ void ScoreJumpFileSilentStruct::print_conformation( std::ostream & output  ) con
 	output << "REMARK SOCREJUMP SILENTFILE\n";
 	if ( fold_tree().size() > 1 || fold_tree().num_jump() > 0 ) {
 		output << "FOLD_TREE ";
-		for ( kinematics::FoldTree::const_iterator
-				it = fold_tree().begin(), it_end = fold_tree().end();
-				it != it_end; ++it
-				) {
-			output << *it;
+		for ( auto const & it : fold_tree() ) {
+			output << it;
 		}
 		output << ' ' << decoy_tag() << "\n";
 	}
@@ -114,7 +111,7 @@ bool ScoreJumpFileSilentStruct::init_from_lines(
 	using utility::vector1;
 
 	vector1< std::string > energy_names_;
-	vector1< std::string >::const_iterator iter = lines.begin();
+	auto iter = lines.begin();
 	if ( iter->substr(0,9) == "SEQUENCE:" ) ++iter; // ignore sequence for now
 	if ( iter->substr(0,6) != "SCORE:" ) {
 		// get sequence and scorename data from the silent-file data object, because I don't have it!
@@ -132,7 +129,7 @@ bool ScoreJumpFileSilentStruct::init_from_lines(
 		energy_names_ = enames->energy_names();
 	} // get header information
 
-	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end; ++iter ) {
+	for ( auto end = lines.end(); iter != end; ++iter ) {
 		std::istringstream line_stream( *iter );
 
 		if ( iter->substr(0,6) == "REMARK" ) {

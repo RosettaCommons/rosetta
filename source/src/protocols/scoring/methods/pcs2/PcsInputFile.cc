@@ -64,8 +64,7 @@ PcsInputFile::PcsInputFile():
 	utility_exit_with_message( "You shouldn't call the empty constructor for PcsInputFile class" );
 }
 
-PcsInputFile::~PcsInputFile(){
-}
+PcsInputFile::~PcsInputFile()= default;
 
 PcsInputFile::PcsInputFile(PcsInputFile const & other):
 	filename_(other.filename_), weight_(other.weight_)

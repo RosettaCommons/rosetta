@@ -30,26 +30,26 @@ namespace kdtree {
 /// @details Auto-generated virtual destructor
 KDPoint::~KDPoint() = default;
 
-KDPoint::KDPoint() {}
+KDPoint::KDPoint() = default;
 
 KDPoint::KDPoint(
 	utility::vector1< numeric::Real > location
 ) :
-	location_( location ), data_( /* NULL */ ), distance_( 0.0 )
+	location_(std::move( location )), data_( /* NULL */ ), distance_( 0.0 )
 {}
 
 KDPoint::KDPoint(
 	utility::vector1< numeric::Real > location,
 	utility::pointer::ReferenceCountOP data
 ) :
-	location_( location ), data_(std::move( data )), distance_( 0.0 )
+	location_(std::move( location )), data_(std::move( data )), distance_( 0.0 )
 {}
 
 KDPoint::KDPoint(
 	utility::vector1< numeric::Real > location,
 	numeric::Real distance
 ) :
-	location_( location ), data_( /* NULL */ ), distance_( distance )
+	location_(std::move( location )), data_( /* NULL */ ), distance_( distance )
 {}
 
 KDPoint::KDPoint(
@@ -57,7 +57,7 @@ KDPoint::KDPoint(
 	utility::pointer::ReferenceCountOP data,
 	numeric::Real distance
 ) :
-	location_( location ), data_(std::move( data )), distance_( distance )
+	location_(std::move( location )), data_(std::move( data )), distance_( distance )
 {}
 
 KDPoint::KDPoint( KDPoint const & src ) : ReferenceCount() {

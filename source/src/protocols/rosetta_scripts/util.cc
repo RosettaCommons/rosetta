@@ -193,7 +193,7 @@ parse_task_operations( std::string const & task_list, basic::datacache::DataMap 
 
 	TaskFactoryOP new_task_factory( new TaskFactory );
 	std::string const t_o_val( task_list );
-	typedef utility::vector1< std::string > StringVec;
+	using StringVec = utility::vector1<std::string>;
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 	TR<<"Adding the following task operations\n";
 	for ( auto const & t_o_key : t_o_keys ) {
@@ -233,7 +233,7 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap & dat
 	if ( ! tag->hasOption("task_operations") ) return task_factory;
 
 	std::string const t_o_val( tag->getOption<std::string>("task_operations") );
-	typedef utility::vector1< std::string > StringVec;
+	using StringVec = utility::vector1<std::string>;
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 	TR<<"Adding the following task operations to mover "<<tag->getName()<<" called "<<tag->getOption<std::string>( "name", "no_name" )<<":\n";
 
@@ -255,7 +255,7 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 {
 	using core::pack::task::operation::TaskOperationOP;
 	using core::pack::task::operation::TaskOperation;
-	typedef std::string String;
+	using String = std::string;
 
 	utility::vector1< TaskOperationOP > task_operations;
 	String const t_o_val( tag->getOption<String>("task_operations", "" ) );
@@ -525,7 +525,7 @@ foreach_movemap_tag(
 		std::string const name( tag->getName() );
 		runtime_assert( name == "Jump" || name == "Chain" || name == "Span" );
 		if ( name == "Jump" ) {
-			int const num( tag->getOption< int >( "number" ) );
+			auto const num( tag->getOption< int >( "number" ) );
 			bool const setting( tag->getOption< bool >( "setting" ) );
 			if ( num == 0 ) { // set all jumps if number==0
 				mmf->all_jumps( setting );

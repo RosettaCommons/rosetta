@@ -65,11 +65,11 @@ using utility::io::ozstream;
 using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 
-typedef utility::vector1<core::Real> Reals;
-typedef utility::vector1<core::Size> Sizes;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
-typedef utility::vector1<Vec> Vecs;
+using Reals = utility::vector1<core::Real>;
+using Sizes = utility::vector1<core::Size>;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
+using Vecs = utility::vector1<Vec>;
 
 template< typename T >
 inline

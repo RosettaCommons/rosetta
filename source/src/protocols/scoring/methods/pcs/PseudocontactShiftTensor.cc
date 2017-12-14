@@ -53,8 +53,7 @@ PCS_tensor::PCS_tensor(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_tensor" );
 }
 
-PCS_tensor::~PCS_tensor(){
-}
+PCS_tensor::~PCS_tensor()= default;
 
 PCS_tensor::PCS_tensor(PCS_tensor const & other){
 	a_ = other.a_;

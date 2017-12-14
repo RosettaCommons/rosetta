@@ -71,9 +71,9 @@ public:
 		}
 	}
 
-	virtual ~RescoreSAXS() {}
+	~RescoreSAXS() override = default;
 
-	virtual void apply( core::pose::Pose & pose ) {
+	void apply( core::pose::Pose & pose ) override {
 
 		core::Real score = (*scorefxn_)(pose);
 		core::scoring::EnergyMap emap = pose.energies().total_energies();
@@ -84,7 +84,7 @@ public:
 		}
 		trRescoreSAXS.Warning << "Total score: " << score<<std::endl;
 	}
-	virtual std::string get_name() const { return "RescoreSAXS"; }
+	std::string get_name() const override { return "RescoreSAXS"; }
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;

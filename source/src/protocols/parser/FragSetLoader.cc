@@ -40,8 +40,8 @@ static basic::Tracer TR( "protocols.jd2.parser.FragSetLoader" );
 namespace protocols {
 namespace parser {
 
-FragSetLoader::FragSetLoader() {}
-FragSetLoader::~FragSetLoader() {}
+FragSetLoader::FragSetLoader() = default;
+FragSetLoader::~FragSetLoader() = default;
 
 void FragSetLoader::load_data(
 	core::pose::Pose const &,

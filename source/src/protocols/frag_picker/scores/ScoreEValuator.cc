@@ -120,7 +120,7 @@ FragmentScoringMethodOP MakeScoreEValuator::make(core::Size priority,
 	utility_exit_with_message(
 		"[ERROR] Undefined profile scoring method. Provide it with frags::scoring_scheme flag");
 
-	return NULL;
+	return nullptr;
 }
 
 } //scores

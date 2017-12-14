@@ -64,7 +64,7 @@ ABEGO_SS_Pool::ABEGO_SS_Pool(core::Size total_size,std::string pool_name,
 
 	CompareByScoreCombination ordering(components_, weights_);
 	storage_ = BoundedQuotaContainerOP( new BoundedQuotaContainer(ordering,this_size_,this_size_*buffer_factor) );
-	FragmentCandidateOP worst_f( new FragmentCandidate(1,1,0,1) );
+	FragmentCandidateOP worst_f( new FragmentCandidate(1,1,nullptr,1) );
 	scores::FragmentScoreMapOP worst_s( new scores::FragmentScoreMap(n_scores) );
 	storage_->set_worst(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>(worst_f,worst_s));
 	for ( core::Size i=1; i<=n_scores; i++ ) {
@@ -82,7 +82,7 @@ ABEGO_SS_Pool::ABEGO_SS_Pool(core::Size total_size,std::string pool_name,
 }
 
 
-ABEGO_SS_Pool::~ABEGO_SS_Pool() {}
+ABEGO_SS_Pool::~ABEGO_SS_Pool() = default;
 
 bool ABEGO_SS_Pool::could_be_accepted(ScoredCandidate candidate) const {
 

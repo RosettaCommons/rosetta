@@ -49,7 +49,7 @@ namespace scoring {
 namespace packing {
 
 /// @details Auto-generated virtual destructor
-HolesResult::~HolesResult() {}
+HolesResult::~HolesResult() = default;
 
 
 void compute_holes_surfs(PoseBalls & pb, std::string ) {

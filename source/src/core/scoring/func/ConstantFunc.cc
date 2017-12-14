@@ -37,7 +37,7 @@ bool ConstantFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	ConstantFunc const & other_downcast( static_cast< ConstantFunc const & > (other) );
+	auto const & other_downcast( static_cast< ConstantFunc const & > (other) );
 	return return_val_ == other_downcast.return_val_;
 }
 

@@ -344,7 +344,7 @@ void revert_lactams( Pose & pose ) {
 						continue;
 					}
 
-					AtomPairConstraint const & constraint_i( static_cast< AtomPairConstraint const & > (other_cst) );
+					auto const & constraint_i( static_cast< AtomPairConstraint const & > (other_cst) );
 
 					if ( constraint_i.atom(1) == AtomID(pose.residue(glu_id).atom_index("NZ"), glu_id) && constraint_i.atom(2) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ), glu_id) ) {
 						pose.remove_constraint( cs[i], true );
@@ -356,7 +356,7 @@ void revert_lactams( Pose & pose ) {
 						continue;
 					}
 
-					AngleConstraint const & constraint_i( static_cast< AngleConstraint const & > (other_cst) );
+					auto const & constraint_i( static_cast< AngleConstraint const & > (other_cst) );
 
 					if ( constraint_i.atom(1) == AtomID(pose.residue(lys_id).atom_index( "NZ" ), lys_id) && constraint_i.atom(2) == AtomID( pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ), glu_id) && constraint_i.atom(3) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "OE1" : "OD1" ), glu_id) ) {
 						pose.remove_constraint( cs[i], true );
@@ -371,7 +371,7 @@ void revert_lactams( Pose & pose ) {
 						continue;
 					}
 
-					DihedralConstraint const & constraint_i( static_cast< DihedralConstraint const & > (other_cst) );
+					auto const & constraint_i( static_cast< DihedralConstraint const & > (other_cst) );
 
 					if ( constraint_i.atom(1) == AtomID(pose.residue(lys_id).atom_index( "1HZ" ),lys_id) && constraint_i.atom(2) == AtomID(pose.residue(lys_id).atom_index( "NZ" ),lys_id) && constraint_i.atom(3) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ),glu_id)  &&  constraint_i.atom(4) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "OE1" : "OD1" ),glu_id) ) {
 						pose.remove_constraint( cs[i], true );

@@ -106,7 +106,7 @@ AACompositionEnergy::AACompositionEnergy( AACompositionEnergy const &src ) :
 
 /// @brief Default destructor.
 ///
-AACompositionEnergy::~AACompositionEnergy() {}
+AACompositionEnergy::~AACompositionEnergy() = default;
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.

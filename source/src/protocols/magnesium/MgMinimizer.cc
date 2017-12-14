@@ -42,8 +42,7 @@ MgMinimizer::MgMinimizer():
 {}
 
 //Destructor
-MgMinimizer::~MgMinimizer()
-= default;
+MgMinimizer::~MgMinimizer() = default;
 
 /////////////////////////////////////////////////////
 void

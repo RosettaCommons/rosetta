@@ -47,7 +47,7 @@
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
 
-typedef protocols::moves::Mover Parent;
+using Parent = protocols::moves::Mover;
 
 namespace protocols {
 namespace nonlocal {

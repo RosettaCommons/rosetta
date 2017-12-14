@@ -136,7 +136,7 @@ LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
 }
 
 //destructor
-LoopMover_Perturb_KIC::~LoopMover_Perturb_KIC(){}
+LoopMover_Perturb_KIC::~LoopMover_Perturb_KIC()= default;
 
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_KIC::clone() const {

@@ -54,7 +54,7 @@ ParatopeSiteConstraintMover::ParatopeSiteConstraintMover(AntibodyInfoCOP ab_info
 	set_defaults();
 }
 
-ParatopeSiteConstraintMover::~ParatopeSiteConstraintMover(){}
+ParatopeSiteConstraintMover::~ParatopeSiteConstraintMover()= default;
 
 ParatopeSiteConstraintMover::ParatopeSiteConstraintMover( ParatopeSiteConstraintMover const & src ):
 	protocols::moves::Mover( src ),
@@ -194,7 +194,7 @@ ParatopeSiteConstraintMover::setup_paratope_residues_from_cdrs(core::pose::Pose 
 	paratope_residues_.clear();
 	paratope_residues_.resize(pose.size(), false);
 	for ( core::Size i =1; i <= core::Size(CDRNameEnum_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 
 		if ( cdrs_to_apply_[cdr] ) {
 			for ( core::Size x = ab_info_->get_CDR_start(cdr, pose); x <= ab_info_->get_CDR_end(cdr, pose); ++x ) {

@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <numeric/prob_util.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -46,9 +47,9 @@
 namespace protocols {
 namespace nonlocal {
 
-typedef utility::vector1<double> Probabilities;
+using Probabilities = utility::vector1<double>;
 
-BiasedFragmentMover::BiasedFragmentMover(const PolicyOP& policy, const Probabilities& pdf)
+BiasedFragmentMover::BiasedFragmentMover(const PolicyOP& policy, Probabilities const & pdf)
 : policy_(policy), pdf_(pdf) {
 	debug_assert(policy);
 	fragments_ = policy->fragments();

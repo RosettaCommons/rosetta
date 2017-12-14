@@ -56,6 +56,7 @@
 #include <protocols/checkpoint/CheckPointer.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 
@@ -114,7 +115,7 @@ StageID& increment_stageid( StageID& id ) {
 class AbscriptMover::StageTracker {
 
 public:
-	StageTracker( moves::MonteCarloOP mc );
+	explicit StageTracker( moves::MonteCarloOP mc );
 
 	void begin_stage( std::string const& stagename, core::pose::Pose& );
 
@@ -305,9 +306,8 @@ void AbscriptMover::apply( core::pose::Pose& pose ){
 }
 
 void AbscriptMover::yield_submovers( MoverSet& movers_out ) const {
-	for ( std::map< StageID, AbscriptStageMoverOP >::const_iterator it = stage_movers_.begin();
-			it != stage_movers_.end(); ++it ) {
-		it->second->yield_submovers( movers_out );
+	for ( auto const & stage_mover : stage_movers_ ) {
+		stage_mover.second->yield_submovers( movers_out );
 	}
 }
 
@@ -368,34 +368,32 @@ AbscriptMover::parse_my_tag(
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Flag abinitio::skip_stages and AbscriptMover 'skip_stages' option are incompatible.");
 		} else {
 			utility::vector1< std::string > const skipped_str( utility::string_split( tag->getOption< std::string >( "skip_stages" ), ',' ) );
-			for ( utility::vector1< std::string >::const_iterator stage_it = skipped_str.begin();
-					stage_it != skipped_str.end(); ++stage_it ) {
-				if ( id_map_.find( *stage_it ) != id_map_.end() ) {
-					skipped_stages.push_back( id_map_[*stage_it] );
+			for ( auto const & stage_it : skipped_str ) {
+				if ( id_map_.find( stage_it ) != id_map_.end() ) {
+					skipped_stages.push_back( id_map_[stage_it] );
 				} else {
 					Size stage_int = 0;
 					try {
-						stage_int = utility::string2int( *stage_it );
+						stage_int = utility::string2int( stage_it );
 					} catch (...) {
-						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Stage '"+*stage_it+"' is not recognized." );
+						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Stage '"+stage_it+"' is not recognized." );
 					}
 					if ( stage_int > 0 && stage_int <= 4 ) {
 						skipped_stages.push_back( StageID( stage_int ) );
 					} else {
 						tr.Error << "Skipped stage " << stage_int << " must be between 1 and 4." << std::endl;
-						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Stage number "+*stage_it+" is invalid." );
+						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Stage number "+stage_it+" is invalid." );
 					}
 				}
 			}
 		}
 	} else if ( option[ OptionKeys::abinitio::skip_stages ].user() ) {
-		for ( IntegerVectorOption::const_iterator it = option[ OptionKeys::abinitio::skip_stages ]().begin();
-				it != option[ OptionKeys::abinitio::skip_stages ]().end(); ++it ) {
-			if ( *it < 1 || *it > 4 ) {
+		for ( int it : option[ OptionKeys::abinitio::skip_stages ]() ) {
+			if ( it < 1 || it > 4 ) {
 				throw CREATE_EXCEPTION(utility::excn::BadInput,  "The option abinitio::skip_stages specified value "+
-					utility::to_string( *it )+", which is not a valid stage." );
+					utility::to_string( it )+", which is not a valid stage." );
 			}
-			skipped_stages.push_back( StageID(*it) );
+			skipped_stages.push_back( StageID(it) );
 		}
 	}
 
@@ -407,13 +405,10 @@ AbscriptMover::parse_my_tag(
 	}
 
 	//Load submovers using subtags.
-	typedef utility::vector0< utility::tag::TagCOP > TagVector;
+	using TagVector = utility::vector0<utility::tag::TagCOP>;
 	TagVector const& subtags = tag->getTags();
 
-	for ( TagVector::const_iterator subtag_it = subtags.begin();
-			subtag_it != subtags.end(); ++subtag_it ) {
-		TagCOP stagetag = *subtag_it;
-
+	for ( auto stagetag : subtags ) {
 		if ( stagetag->getName() == "Stage" ) {
 			std::string const& id_str = stagetag->getOption<std::string>("ids");
 			tr.Debug << "Adding movers for stages: " << id_str << std::endl;
@@ -421,10 +416,7 @@ AbscriptMover::parse_my_tag(
 
 			TagVector const& movertags = stagetag->getTags();
 
-			for ( TagVector::const_iterator movertag_it = movertags.begin();
-					movertag_it != movertags.end(); ++movertag_it ) {
-				TagCOP movertag = *movertag_it;
-
+			for ( auto movertag : movertags ) {
 				if ( movertag->getName() == "Mover" ||
 						movertag->getName() == "Preparer" ) {
 					std::string name = movertag->getOption<std::string>( "name", "null" );
@@ -434,7 +426,7 @@ AbscriptMover::parse_my_tag(
 					}
 
 					if ( movertag->getName() == "Mover" ) {
-						core::Real weight = movertag->getOption< core::Real >( "weight", 1.0 );
+						auto weight = movertag->getOption< core::Real >( "weight", 1.0 );
 						register_submover( movers.find( name )->second, stages, weight );
 					} else if ( movertag->getName() == "Preparer" ) {
 						register_preparer( movers.find( name )->second, stages );
@@ -446,7 +438,7 @@ AbscriptMover::parse_my_tag(
 			}
 		} else if ( stagetag->getName() == "Fragments" ||
 				stagetag->getName() == "fragments" ) {
-			core::select::residue_selector::ResidueSelectorCOP selector( NULL );
+			core::select::residue_selector::ResidueSelectorCOP selector( nullptr );
 			if ( stagetag->hasOption( "selector" ) ) {
 				selector = datamap.get_ptr<core::select::residue_selector::ResidueSelector const>( "ResidueSelector", stagetag->getOption<std::string>( "selector" ) );
 			}
@@ -542,7 +534,7 @@ void verify_stage_ID( std::map< std::string, StageID > const& id_map, std::strin
 }
 
 StageIDs AbscriptMover::parse_stage_id( std::string const& id_str ) const {
-	typedef utility::vector0< std::string > Strings;
+	using Strings = utility::vector0<std::string>;
 	Strings comma_delin = utility::string_split( id_str, ',' );
 
 	StageIDs ids;
@@ -580,8 +572,8 @@ void AbscriptMover::register_submover( protocols::moves::MoverOP mover_in,
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Abscript mover takes only ClientMovers.");
 	}
 
-	for ( StageIDs::const_iterator id = ids.begin(); id != ids.end(); ++id ) {
-		stage_movers_[ *id ]->add_submover( mover, weight );
+	for ( auto id : ids ) {
+		stage_movers_[ id ]->add_submover( mover, weight );
 	}
 }
 
@@ -626,8 +618,8 @@ void AbscriptMover::register_preparer( protocols::moves::MoverOP mover, StageIDs
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Non-preparer mover added as preparer to Abscript.");
 	}
 
-	for ( StageIDs::const_iterator id = ids.begin(); id != ids.end(); ++id ) {
-		stage_movers_[ *id ]->add_preparer( preparer );
+	for ( auto id : ids ) {
+		stage_movers_[ id ]->add_preparer( preparer );
 	}
 
 }
@@ -738,7 +730,7 @@ void AbscriptMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 
 AbscriptMover::StageTracker::StageTracker( moves::MonteCarloOP mc ):
-	mc_( mc ),
+	mc_(std::move( mc )),
 	checkpointer_( "Abscript" )
 {}
 

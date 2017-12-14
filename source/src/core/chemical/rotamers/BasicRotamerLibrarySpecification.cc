@@ -49,9 +49,9 @@ BasicRotamerLibrarySpecificationCreator::keyname() const {
 
 // Specification Functions
 
-BasicRotamerLibrarySpecification::BasicRotamerLibrarySpecification() {}
+BasicRotamerLibrarySpecification::BasicRotamerLibrarySpecification() = default;
 
-BasicRotamerLibrarySpecification::~BasicRotamerLibrarySpecification() {}
+BasicRotamerLibrarySpecification::~BasicRotamerLibrarySpecification() = default;
 
 std::string
 BasicRotamerLibrarySpecification::keyname() const {

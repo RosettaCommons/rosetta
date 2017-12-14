@@ -63,7 +63,7 @@ static basic::Tracer tr( "core.fragments" );
 // preliminary reader method --- reads classic rosetta++ frag files
 
 
-MinimalFragSet::MinimalFragSet() {}
+MinimalFragSet::MinimalFragSet() = default;
 MinimalFragSet::~MinimalFragSet() = default;
 
 FragSetOP MinimalFragSet::clone() const {

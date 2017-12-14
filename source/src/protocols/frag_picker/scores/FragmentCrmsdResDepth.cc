@@ -55,7 +55,7 @@ using namespace ObjexxFCL;
 static basic::Tracer trRmsScore(
 	"protocols.frag_picker.scores.FragmentCrmsdResDepth");
 
-FragmentCrmsdResDepth::~FragmentCrmsdResDepth() {}
+FragmentCrmsdResDepth::~FragmentCrmsdResDepth() = default;
 
 FragmentCrmsdResDepth::FragmentCrmsdResDepth(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, core::pose::PoseOP reference_pose, utility::vector1<core::Real> & query_residue_depth) :
@@ -272,7 +272,7 @@ FragmentScoringMethodOP MakeFragmentCrmsdResDepth::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read a reference structure. Provide it with in::file::s flag");
 
-	return NULL;
+	return nullptr;
 }
 
 } // scores

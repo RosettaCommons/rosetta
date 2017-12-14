@@ -970,19 +970,19 @@ void PocketGrid::recenter( std::vector< core::conformation::ResidueCOP > const &
 	}
 	int buffer=14;
 	if ( right(1)-left(1) + buffer > (xdim_-1)*stepSize_ ) {
-		core::Size delta = (core::Size)ceil((right(1)-left(1) + buffer - (xdim_-1)*stepSize_)/stepSize_);
+		auto delta = (core::Size)ceil((right(1)-left(1) + buffer - (xdim_-1)*stepSize_)/stepSize_);
 		if ( delta % 2 ) delta++;
 		TR << "Expanding PocketGrid in the X direction to fit target residues"<<std::endl;
 		xdim_ += delta;
 	}
 	if ( right(2)-left(2) + buffer > (ydim_-1)*stepSize_ ) {
-		core::Size delta = (core::Size)ceil((right(2)-left(2) + buffer - (ydim_-1)*stepSize_)/stepSize_);
+		auto delta = (core::Size)ceil((right(2)-left(2) + buffer - (ydim_-1)*stepSize_)/stepSize_);
 		if ( delta % 2 ) delta++;
 		TR << "Expanding PocketGrid in the Y direction to fit target residues"<<std::endl;
 		ydim_ += delta;
 	}
 	if ( right(3)-left(3) + buffer > (zdim_-1)*stepSize_ ) {
-		core::Size delta = (core::Size)ceil((right(3)-left(3) + buffer - (zdim_-1)*stepSize_)/stepSize_);
+		auto delta = (core::Size)ceil((right(3)-left(3) + buffer - (zdim_-1)*stepSize_)/stepSize_);
 		if ( delta % 2 ) delta++;
 		TR << "Expanding PocketGrid in the Z direction to fit target residues"<<std::endl;
 		zdim_ += delta;
@@ -1042,31 +1042,31 @@ std::vector< core::conformation::ResidueCOP > PocketGrid::getRelaxResidues( core
 
 void PocketGrid::findPockets(core::Size thr, core::Real max){
 	thr=(core::Size)std::floor((core::Real)(thr)/stepSize_+.5);
-	core::Size thr2=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(3.)+.5);
-	core::Size thr3=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(2.)+.5);
-	core::Size max1=(core::Size)std::floor(max/stepSize_+.5);
-	core::Size max2=(core::Size)std::floor((max/stepSize_)/sqrt(3.)+.5);
-	core::Size max3=(core::Size)std::floor((max/stepSize_)/sqrt(2.)+.5);
+	auto thr2=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(3.)+.5);
+	auto thr3=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(2.)+.5);
+	auto max1=(core::Size)std::floor(max/stepSize_+.5);
+	auto max2=(core::Size)std::floor((max/stepSize_)/sqrt(3.)+.5);
+	auto max3=(core::Size)std::floor((max/stepSize_)/sqrt(2.)+.5);
 	newSearch(thr, thr2, thr3, max1, max2, max3);
 }
 
 void PocketGrid::findPSP(core::Size thr, core::Real max){
 	thr=(core::Size)std::floor((core::Real)(thr)/stepSize_+.5);
-	core::Size thr2=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(3.)+.5);
-	core::Size thr3=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(2.)+.5);
-	core::Size max1=(core::Size)std::floor(max/stepSize_+.5);
-	core::Size max2=(core::Size)std::floor((max/stepSize_)/sqrt(3.)+.5);
-	core::Size max3=(core::Size)std::floor((max/stepSize_)/sqrt(2.)+.5);
+	auto thr2=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(3.)+.5);
+	auto thr3=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(2.)+.5);
+	auto max1=(core::Size)std::floor(max/stepSize_+.5);
+	auto max2=(core::Size)std::floor((max/stepSize_)/sqrt(3.)+.5);
+	auto max3=(core::Size)std::floor((max/stepSize_)/sqrt(2.)+.5);
 	newSearch(thr, thr2, thr3, max1, max2, max3, true);
 }
 
 void PocketGrid::findSPS(core::Size thr, core::Real max){
 	thr=(core::Size)std::floor((core::Real)(thr)/stepSize_+.5);
-	core::Size thr2=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(3.)+.5);
-	core::Size thr3=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(2.)+.5);
-	core::Size max1=(core::Size)std::floor(max/stepSize_+.5);
-	core::Size max2=(core::Size)std::floor((max/stepSize_)/sqrt(3.)+.5);
-	core::Size max3=(core::Size)std::floor((max/stepSize_)/sqrt(2.)+.5);
+	auto thr2=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(3.)+.5);
+	auto thr3=(core::Size)std::floor(((core::Real)(thr)/stepSize_)/sqrt(2.)+.5);
+	auto max1=(core::Size)std::floor(max/stepSize_+.5);
+	auto max2=(core::Size)std::floor((max/stepSize_)/sqrt(3.)+.5);
+	auto max3=(core::Size)std::floor((max/stepSize_)/sqrt(2.)+.5);
 	newSearch(thr, thr2, thr3, max1, max2, max3, false, true);
 }
 
@@ -1326,9 +1326,9 @@ void PocketGrid::mark(core::Real x, core::Real y, core::Real z, core::Real const
 	x-=xcorn_;
 	y-=ycorn_;
 	z-=zcorn_;
-	int xcen=(int)floor(x/stepSize_+.5);
-	int ycen=(int)floor(y/stepSize_+.5);
-	int zcen=(int)floor(z/stepSize_+.5);
+	auto xcen=(int)floor(x/stepSize_+.5);
+	auto ycen=(int)floor(y/stepSize_+.5);
+	auto zcen=(int)floor(z/stepSize_+.5);
 	int minX,maxX;
 	int minY,maxY;
 	int minZ,maxZ;
@@ -1977,12 +1977,12 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, n
 		}
 	}
 
-	core::Real new_xcorn=(core::Real)std::floor(xmin);
-	core::Real new_ycorn=(core::Real)std::floor(ymin);
-	core::Real new_zcorn=(core::Real)std::floor(zmin);
-	core::Real x_far_corn=(core::Real)std::ceil(xmax);
-	core::Real y_far_corn=(core::Real)std::ceil(ymax);
-	core::Real z_far_corn=(core::Real)std::ceil(zmax);
+	auto new_xcorn=(core::Real)std::floor(xmin);
+	auto new_ycorn=(core::Real)std::floor(ymin);
+	auto new_zcorn=(core::Real)std::floor(zmin);
+	auto x_far_corn=(core::Real)std::ceil(xmax);
+	auto y_far_corn=(core::Real)std::ceil(ymax);
+	auto z_far_corn=(core::Real)std::ceil(zmax);
 	core::Size new_xdim = (core::Size)std::ceil((x_far_corn-new_xcorn)/stepSize_)+1;
 	core::Size new_ydim = (core::Size)std::ceil((y_far_corn-new_ycorn)/stepSize_)+1;
 	core::Size new_zdim = (core::Size)std::ceil((z_far_corn-new_zcorn)/stepSize_)+1;
@@ -2210,7 +2210,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 }
 
 void PocketGrid::markDepth(core::Size x, core::Size y, core::Size z, core::Real const & surf_d, core::Real const & bur_d){
-	core::Size ssteps=(core::Size)ceil(surf_d/stepSize_);
+	auto ssteps=(core::Size)ceil(surf_d/stepSize_);
 	core::Size st;
 	core::Size en;
 	if ( ssteps>x ) {
@@ -2336,7 +2336,7 @@ bool PocketGrid::markOneEdgeDepth(core::Size x, core::Size y, core::Size z, core
 	core::Size yen;
 	core::Size zst;
 	core::Size zen;
-	core::Size ssteps=(core::Size)ceil(surf_d/stepSize_);
+	auto ssteps=(core::Size)ceil(surf_d/stepSize_);
 	if ( ssteps>x ) {
 		xst=0;
 	} else xst=x-ssteps;
@@ -3099,14 +3099,14 @@ void PocketGrid::linkExemplarsThroughSolvent(){
 			}
 			if ( closest<101. ) {
 				int txdim = (int) ceil(p1->x-p2->x/stepSize_)+(int)ceil(3./stepSize_);
-				core::Real txcorn=(core::Real)std::floor(std::min(p1->x,p2->x)-1.0);
-				int txoff = (int)floor((txcorn-xcorn_)/stepSize_ + 0.5);
+				auto txcorn=(core::Real)std::floor(std::min(p1->x,p2->x)-1.0);
+				auto txoff = (int)floor((txcorn-xcorn_)/stepSize_ + 0.5);
 				int tydim = (int) ceil(p1->y-p2->y/stepSize_)+(int)ceil(3./stepSize_);
-				core::Real tycorn=(core::Real)std::floor(std::min(p1->y,p2->y)-1.0);
-				int tyoff = (int)floor((tycorn-ycorn_)/stepSize_ + 0.5);
+				auto tycorn=(core::Real)std::floor(std::min(p1->y,p2->y)-1.0);
+				auto tyoff = (int)floor((tycorn-ycorn_)/stepSize_ + 0.5);
 				int tzdim = (int) ceil(p1->z-p2->z/stepSize_)+(int)ceil(3./stepSize_);
-				core::Real tzcorn=(core::Real)std::floor(std::min(p1->z,p2->z)-1.0);
-				int tzoff = (int)floor((tzcorn-zcorn_)/stepSize_ + 0.5);
+				auto tzcorn=(core::Real)std::floor(std::min(p1->z,p2->z)-1.0);
+				auto tzoff = (int)floor((tzcorn-zcorn_)/stepSize_ + 0.5);
 				std::vector < std::vector < std::vector <PtType> > > tmpgrid_;
 				tmpgrid_.resize(txdim);
 				for ( int tx=0; tx<txdim; tx++ ) {
@@ -4113,9 +4113,9 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 				core::Real const template_y = point.y*template_pocket.stepSize_+template_pocket.ycorn_;
 				core::Real const template_z = point.z*template_pocket.stepSize_+template_pocket.zcorn_;
 
-				core::Size const self_x_index = (core::Size) floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
-				core::Size const self_y_index = (core::Size) floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
-				core::Size const self_z_index = (core::Size) floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 );
+				auto const self_x_index = (core::Size) floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
+				auto const self_y_index = (core::Size) floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
+				auto const self_z_index = (core::Size) floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 );
 
 				//Check to see if template point is within comparison's grid range
 				if ( ( self_x_index < xdim_ ) && ( self_y_index < ydim_ ) && ( self_z_index < zdim_ ) ) {
@@ -4199,7 +4199,7 @@ bool PocketGrid::operator == ( PocketGrid const & other ) const
 
 bool PocketGrid::same_type_as_me( PocketGrid const & other ) const
 {
-	PocketGrid const * casted_other = dynamic_cast< PocketGrid const * > (&other);
+	auto const * casted_other = dynamic_cast< PocketGrid const * > (&other);
 	return casted_other;
 }
 
@@ -4401,7 +4401,7 @@ void ElectrostaticpotentialGrid::initialize_typGrid(){
 
 bool TargetPocketGrid::same_type_as_me( PocketGrid const & other ) const
 {
-	TargetPocketGrid const * casted_other = dynamic_cast< TargetPocketGrid const * > (&other);
+	auto const * casted_other = dynamic_cast< TargetPocketGrid const * > (&other);
 	return casted_other;
 }
 
@@ -4701,9 +4701,9 @@ void  ElectrostaticpotentialGrid::resize_espGrid_to_match_pocketGrid( std::strin
 	core::Real grdY = (cen_y - ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()+1)/2) * espGrid_spacing_) ))/espGrid_spacing_;
 	core::Real grdZ = (cen_z - ( espGrid_mid_.z() - ((static_cast<core::Real>(espGrid_dim_.z()+1)/2) * espGrid_spacing_) ))/espGrid_spacing_;
 	//rounded grid points are the nearest neighbour points
-	core::Size nn_grdX = (core::Size) std::floor(grdX+.5);
-	core::Size nn_grdY = (core::Size) std::floor(grdY+.5);
-	core::Size nn_grdZ = (core::Size) std::floor(grdZ+.5);
+	auto nn_grdX = (core::Size) std::floor(grdX+.5);
+	auto nn_grdY = (core::Size) std::floor(grdY+.5);
+	auto nn_grdZ = (core::Size) std::floor(grdZ+.5);
 	//convert bact to carteesian coordinates and assign as mid points for the new trimmed espGrid
 	trim_espGrid_mid.x() = nn_grdX * espGrid_spacing_ + ( espGrid_mid_.x() - ((static_cast<core::Real>(espGrid_dim_.x()+1)/2) * espGrid_spacing_) );
 	trim_espGrid_mid.y() = nn_grdY * espGrid_spacing_ + ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()+1)/2) * espGrid_spacing_) );
@@ -4873,9 +4873,9 @@ void ElectrostaticpotentialGrid::mark_atom_espGrid_points( numeric::xyzVector<co
 	maxY = std::min( floor( (ycen + radius) + 0.5 ), espGrid_dim_.y() -1.);
 	maxZ = std::min( floor( (zcen + radius) + 0.5 ), espGrid_dim_.z() -1.);
 
-	for ( int xIter=(int)minX; xIter<=(int)maxX; ++xIter ) {
-		for ( int yIter=(int)minY; yIter<=(int)maxY; ++yIter ) {
-			for ( int zIter=(int)minZ; zIter<=(int)maxZ; ++zIter ) {
+	for ( auto xIter=(int)minX; xIter<=(int)maxX; ++xIter ) {
+		for ( auto yIter=(int)minY; yIter<=(int)maxY; ++yIter ) {
+			for ( auto zIter=(int)minZ; zIter<=(int)maxZ; ++zIter ) {
 				//core::Real xcoord = xIter * espGrid_spacing_ + ( espGrid_mid_.x() - ((static_cast<core::Real>(espGrid_dim_.x()+1)/2) * espGrid_spacing_) );
 				//core::Real ycoord = yIter * espGrid_spacing_ + ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()+1)/2) * espGrid_spacing_) );
 				//core::Real zcoord = zIter * espGrid_spacing_ + ( espGrid_mid_.z() - ((static_cast<core::Real>(espGrid_dim_.z()+1)/2) * espGrid_spacing_) );
@@ -4923,9 +4923,9 @@ void  ElectrostaticpotentialGrid::assign_esp_for_surface_grid_points_by_nn( std:
 		numeric::xyzVector<core::Real> grid_coord;
 		convert_cartesian_to_grid(sf, espGrid_mid_, espGrid_dim_, espGrid_spacing_, grid_coord);
 		//rounded grid points are the nearest neighbour points
-		core::Size nnX = (core::Size) std::floor(grid_coord.x()+.5);
-		core::Size nnY = (core::Size) std::floor(grid_coord.y()+.5);
-		core::Size nnZ = (core::Size) std::floor(grid_coord.z()+.5);
+		auto nnX = (core::Size) std::floor(grid_coord.x()+.5);
+		auto nnY = (core::Size) std::floor(grid_coord.y()+.5);
+		auto nnZ = (core::Size) std::floor(grid_coord.z()+.5);
 		// ignore if the surface point goes out of the grid
 		if ( ((nnX >= espGrid_dim_.x())||(nnX <= 0)) || ((nnY >= espGrid_dim_.y())||(nnY <= 0)) || ((nnZ >= espGrid_dim_.z())||(nnZ <= 0)) ) {
 			continue;
@@ -5198,7 +5198,7 @@ void EggshellGrid::get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<
 bool ElectrostaticpotentialGrid::operator == ( PocketGrid const & other ) const {
 	if ( ! PocketGrid::operator == ( other ) ) return false;
 
-	ElectrostaticpotentialGrid const & other_downcast( static_cast< ElectrostaticpotentialGrid const & > ( other ));
+	auto const & other_downcast( static_cast< ElectrostaticpotentialGrid const & > ( other ));
 	if ( espGrid_dim_         != other_downcast.espGrid_dim_         ) return false;
 	if ( espGrid_mid_         != other_downcast.espGrid_mid_         ) return false;
 	if ( espGrid_spacing_     != other_downcast.espGrid_spacing_     ) return false;
@@ -5209,7 +5209,7 @@ bool ElectrostaticpotentialGrid::operator == ( PocketGrid const & other ) const 
 
 bool ElectrostaticpotentialGrid::same_type_as_me( PocketGrid const & other ) const
 {
-	ElectrostaticpotentialGrid const * casted_other = dynamic_cast< ElectrostaticpotentialGrid const * > (&other);
+	auto const * casted_other = dynamic_cast< ElectrostaticpotentialGrid const * > (&other);
 	return casted_other;
 }
 
@@ -5604,12 +5604,12 @@ void EggshellGrid::dump_eggshell( std::string const & fname, numeric::xyzMatrix<
 		}
 	}
 
-	core::Real new_xcorn=(core::Real)std::floor(xmin);
-	core::Real new_ycorn=(core::Real)std::floor(ymin);
-	core::Real new_zcorn=(core::Real)std::floor(zmin);
-	core::Real x_far_corn=(core::Real)std::ceil(xmax);
-	core::Real y_far_corn=(core::Real)std::ceil(ymax);
-	core::Real z_far_corn=(core::Real)std::ceil(zmax);
+	auto new_xcorn=(core::Real)std::floor(xmin);
+	auto new_ycorn=(core::Real)std::floor(ymin);
+	auto new_zcorn=(core::Real)std::floor(zmin);
+	auto x_far_corn=(core::Real)std::ceil(xmax);
+	auto y_far_corn=(core::Real)std::ceil(ymax);
+	auto z_far_corn=(core::Real)std::ceil(zmax);
 	core::Size new_xdim = (core::Size)std::ceil((x_far_corn-new_xcorn)/stepSize_)+1;
 	core::Size new_ydim = (core::Size)std::ceil((y_far_corn-new_ycorn)/stepSize_)+1;
 	core::Size new_zdim = (core::Size)std::ceil((z_far_corn-new_zcorn)/stepSize_)+1;
@@ -5746,9 +5746,9 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 		core::Real const template_x = pd.x();
 		core::Real const template_y = pd.y();
 		core::Real const template_z = pd.z();
-		core::Size const self_x_index = (core::Size) floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
-		core::Size const self_y_index = (core::Size) floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
-		core::Size const self_z_index = (core::Size) floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 );
+		auto const self_x_index = (core::Size) floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
+		auto const self_y_index = (core::Size) floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
+		auto const self_z_index = (core::Size) floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 );
 
 		//Check to see if template point is within comparison's grid range
 		if ( ( self_x_index < xdim_ ) && ( self_y_index < ydim_ ) && ( self_z_index < zdim_ ) ) {
@@ -5789,7 +5789,7 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 // David, does this look right? Is the right data being compared to make sure two grids are the same?
 bool EggshellGrid::operator == ( PocketGrid const & other ) const {
 	if ( ! PocketGrid::operator == ( other ) ) return false;
-	EggshellGrid const & other_downcast( static_cast< EggshellGrid const & > ( other ));
+	auto const & other_downcast( static_cast< EggshellGrid const & > ( other ));
 	if ( eggshell_coord_list_ != other_downcast.eggshell_coord_list_ ) return false;
 	if ( extra_coord_list_    != other_downcast.extra_coord_list_    ) return false;
 	if ( eggshell_CoM_        != other_downcast.eggshell_CoM_        ) return false;
@@ -5798,7 +5798,7 @@ bool EggshellGrid::operator == ( PocketGrid const & other ) const {
 
 bool EggshellGrid::same_type_as_me( PocketGrid const & other ) const
 {
-	EggshellGrid const * casted_other = dynamic_cast< EggshellGrid const * > (&other);
+	auto const * casted_other = dynamic_cast< EggshellGrid const * > (&other);
 	return casted_other;
 }
 
@@ -5826,9 +5826,9 @@ core::Real ComparisonGrid::mark (const PocketGrid& gr, core::Real x, core::Real 
 	x-=xcorn_;
 	y-=ycorn_;
 	z-=zcorn_;
-	int xcen=(int)floor(x/stepSize_+.5);
-	int ycen=(int)floor(y/stepSize_+.5);
-	int zcen=(int)floor(z/stepSize_+.5);
+	auto xcen=(int)floor(x/stepSize_+.5);
+	auto ycen=(int)floor(y/stepSize_+.5);
+	auto zcen=(int)floor(z/stepSize_+.5);
 	int minX,maxX;
 	int minY,maxY;
 	int minZ,maxZ;

@@ -17,12 +17,12 @@
 #define INCLUDED_utility_file_file_sys_util_hh
 
 // Utility Headers
-#include <utility/file/FileName.hh>
+#include <utility/file/FileName.fwd.hh>
 
 // C++ headers
 #include <fstream>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace utility {
 namespace file {

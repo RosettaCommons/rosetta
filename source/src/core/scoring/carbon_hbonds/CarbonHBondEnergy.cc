@@ -330,14 +330,14 @@ CarbonHBondEnergy::bb_sc_carbon_hbond_one_way(
 	Real res_res_energy( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through non-polar hydrogens in don_aa, and all acceptors.
-	for ( chemical::AtomIndices::const_iterator
+	for ( auto
 			hnum  = don_rsd.Hpos_apolar().begin(),
 			hnume = don_rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
 		Size const don_h_atm( *hnum );
 		if ( don_h_atm >= don_rsd.first_sidechain_hydrogen() ) continue;
 		//  std::cout << "Apolar hydrogen: " << don_rsd.atom_name( don_h_atm ) << " in " <<  don_rsd.name1() << don_rsd.seqpos() << std::endl;
 
-		for ( chemical::AtomIndices::const_iterator
+		for ( auto
 				anum  = acc_rsd.accpt_pos().begin(),
 				anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 
@@ -365,14 +365,14 @@ CarbonHBondEnergy::sc_sc_carbon_hbond_one_way(
 	Real res_res_energy( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through non-polar hydrogens in don_aa, and all acceptors.
-	for ( chemical::AtomIndices::const_iterator
+	for ( auto
 			hnum  = don_rsd.Hpos_apolar().begin(),
 			hnume = don_rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
 		Size const don_h_atm( *hnum );
 		if ( don_h_atm < don_rsd.first_sidechain_hydrogen() ) continue;
 		//  std::cout << "Apolar hydrogen: " << don_rsd.atom_name( don_h_atm ) << " in " <<  don_rsd.name1() << don_rsd.seqpos() << std::endl;
 
-		for ( chemical::AtomIndices::const_iterator
+		for ( auto
 				anum  = acc_rsd.accpt_pos().begin(),
 				anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 

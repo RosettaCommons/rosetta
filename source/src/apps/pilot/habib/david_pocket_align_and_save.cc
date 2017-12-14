@@ -110,9 +110,9 @@ is_interface_heavyatom(
 	core::conformation::Residue const & rsd = pose.residue(resno);
 	bool found = false;
 	if ( rsd.is_protein() && !rsd.atom_is_hydrogen(atomno) ) {
-		for ( std::list<std::string>::iterator it=source_interface.begin(); it!=source_interface.end(); ++it ) {
-			if ( !res_id.compare(*it) ) {
-				std::cout<<*it<<" "<<res_id<<std::endl;
+		for ( auto & it : source_interface ) {
+			if ( !res_id.compare(it) ) {
+				std::cout<<it<<" "<<res_id<<std::endl;
 				found=true;
 				break;
 			}
@@ -143,7 +143,7 @@ is_interface_heavyatom_pair(
 	bool found = false;
 	if ( rsd.is_protein() && !rsd.atom_is_hydrogen(atomno) ) {
 		if ( rsd2.is_protein() && !rsd2.atom_is_hydrogen(atomno) ) {
-			for ( std::list<std::string>::iterator it=source_interface.begin(), it2=template_interface.begin(); it!=source_interface.end() && it2!=source_interface.end(); ++it, ++it2 ) {
+			for ( auto it=source_interface.begin(), it2=template_interface.begin(); it!=source_interface.end() && it2!=source_interface.end(); ++it, ++it2 ) {
 				if ( !res_id.compare(*it) ) {
 					if ( !res_id2.compare(*it2) ) {
 						found = true;

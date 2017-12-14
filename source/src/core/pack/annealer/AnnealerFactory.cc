@@ -78,7 +78,7 @@ AnnealerFactory::create_annealer(
 	}
 
 	// appease compiler
-	return 0;
+	return nullptr;
 }
 
 }// namespace annealer

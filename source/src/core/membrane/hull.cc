@@ -137,7 +137,7 @@ core::id::AtomID_Map< bool > concave_shell( core::pose::Pose & pose, core::Real 
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief adds a shell to boundary points which are taken from the inside point list
-utility::vector1< utility::vector1< core::Size > > add_shell( std::map< core::Size, core::Vector > coords, utility::vector1< utility::vector1< core::Size > > point_lists, core::Real shell_radius ) {
+utility::vector1< utility::vector1< core::Size > > add_shell( std::map< core::Size, core::Vector > const & coords, utility::vector1< utility::vector1< core::Size > > const & point_lists, core::Real shell_radius ) {
 
 	TR << "adding shell" << std::endl;
 
@@ -156,8 +156,8 @@ utility::vector1< utility::vector1< core::Size > > add_shell( std::map< core::Si
 		for ( core::Size j = 1; j <= inside.size(); ++j ) {
 
 			// compute distance between point in boundary and in inside
-			core::Vector a = coords[ boundary[ i ] ];
-			core::Vector b = coords[ inside[ j ] ];
+			core::Vector a = coords.at( boundary[ i ] );
+			core::Vector b = coords.at( inside[ j ] );
 			a.z() = 0;
 			b.z() = 0;
 			core::Real dist = a.distance( b );
@@ -187,7 +187,7 @@ utility::vector1< utility::vector1< core::Size > > add_shell( std::map< core::Si
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief computes 2D concave hull from three lists of points for inside, outside and boundary
-utility::vector1< utility::vector1< core::Size > > concave_hull( std::map< core::Size, core::Vector > coords, utility::vector1< utility::vector1< core::Size > > point_lists, core::Real dist_cutoff ) {
+utility::vector1< utility::vector1< core::Size > > concave_hull( std::map< core::Size, core::Vector > const & coords, utility::vector1< utility::vector1< core::Size > > const & point_lists, core::Real dist_cutoff ) {
 
 	TR << "concave hull" << std::endl;
 
@@ -217,8 +217,8 @@ utility::vector1< utility::vector1< core::Size > > concave_hull( std::map< core:
 		i == 1 ? p1 = boundary.back() : p1 = boundary[ i-1 ];
 		core::Size p2 = boundary[ i ];
 
-		core::Vector c1 = coords[ p1 ];
-		core::Vector c2 = coords[ p2 ];
+		core::Vector const & c1 = coords.at( p1 );
+		core::Vector const & c2 = coords.at( p2 );
 
 		// compute distance between point and previous one
 		core::Real dist = sqrt( pow((c1.x()-c2.x()), 2) + pow((c1.y()-c2.y()), 2) );
@@ -265,7 +265,7 @@ utility::vector1< utility::vector1< core::Size > > concave_hull( std::map< core:
 /// @brief computes 2D convex hull: points in a slice on z-dimension are
 ///   flattened into xy plane; the output is three lists of points for
 ///   inside, outside and boundary
-utility::vector1< utility::vector1< core::Size > > convex_hull( std::map< core::Size, core::Vector > coords, core::Real min_z, core::Real max_z ) {
+utility::vector1< utility::vector1< core::Size > > convex_hull( std::map< core::Size, core::Vector > const & coords, core::Real min_z, core::Real max_z ) {
 
 	TR << "convex hull" << std::endl;
 
@@ -277,8 +277,9 @@ utility::vector1< utility::vector1< core::Size > > convex_hull( std::map< core::
 	utility::vector1< core::Real > tmp_y;
 
 	// go through map, only put points between min and max into the outside list
+	// AMW: there are some issues here.
 	for ( core::Size i = 1; i <= coords.size(); ++i ) {
-		if ( coords[ i ].z() >= min_z && coords[ i ].z() <= max_z ) {
+		if ( coords.at( i ).z() >= min_z && coords.at( i ).z() <= max_z ) {
 			outside.push_back( coords.find( i )->first );
 			tmp_x.push_back( coords.find( i )->second.x() );
 			tmp_y.push_back( coords.find( i )->second.y() );
@@ -313,7 +314,7 @@ utility::vector1< utility::vector1< core::Size > > convex_hull( std::map< core::
 	for ( core::Size i = 1; i <= outside.size(); ++i ) {
 
 		// if point is inside polygon( i.e. boundary ), add to list of points to move
-		if ( inside_polygon( coords, boundary, coords[outside[i]] ) == "i" ) {
+		if ( inside_polygon( coords, boundary, coords.at( outside[i] ) ) == "i" ) {
 			move_to_inside.push_back( outside[i] );
 		}
 	}
@@ -390,7 +391,7 @@ utility::vector1< utility::vector1< core::Size > > convex_hull( std::map< core::
 // medium-level helper functions
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief compute distances in point list from line p1p2
-utility::vector1< core::Real > get_distances( std::map< core::Size, core::Vector > coords, core::Size p1, core::Size p2, utility::vector1< core::Size > points, bool clock ) {
+utility::vector1< core::Real > get_distances( std::map< core::Size, core::Vector > const & coords, core::Size p1, core::Size p2, utility::vector1< core::Size > const & points, bool clock ) {
 
 	// initialize empty vector
 	utility::vector1< core::Real > distances;
@@ -403,13 +404,13 @@ utility::vector1< core::Real > get_distances( std::map< core::Size, core::Vector
 		// keep going if we are looking at p1 or p2
 		if ( q == p1 || q == p2 ) {
 			distances.push_back( 0.0 );
-		} else if ( clockwise( coords[ p1 ], coords[ p2 ], coords[ q ] ) == clock ) {
+		} else if ( clockwise( coords.at( p1 ), coords.at( p2 ), coords.at( q ) ) == clock ) {
 			// find the point with the largest distance from it in clockwise direction (i.e. outside)
 			// if point is in counter-clockwise direction, then ignore for now
 			distances.push_back( -1000 );
 		} else {
 			// add distance value into output vector
-			distances.push_back( distance_from_line2D( coords[ p1 ], coords[ p2 ], coords[ q ] ) );
+			distances.push_back( distance_from_line2D( coords.at( p1 ), coords.at( p2 ), coords.at( q ) ) );
 		}
 	}
 	return distances;
@@ -418,7 +419,7 @@ utility::vector1< core::Real > get_distances( std::map< core::Size, core::Vector
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief compute enclosing angles in point list from line p1p2
-utility::vector1< core::Real > get_angles( std::map< core::Size, core::Vector > coords, core::Size p1, core::Size p2, utility::vector1< core::Size > points, bool clock ) {
+utility::vector1< core::Real > get_angles( std::map< core::Size, core::Vector > const & coords, core::Size p1, core::Size p2, utility::vector1< core::Size > const & points, bool clock ) {
 
 	// TR << "get angles" << std::endl;
 
@@ -433,13 +434,13 @@ utility::vector1< core::Real > get_angles( std::map< core::Size, core::Vector > 
 		// keep going if we are looking at p1 or p2
 		if ( q == p1 || q == p2 ) {
 			angles.push_back( 9999 );
-		} else if ( clockwise( coords[ p1 ], coords[ p2 ], coords[ q ] ) == clock ) {
+		} else if ( clockwise( coords.at( p1 ), coords.at( p2 ), coords.at( q ) ) == clock ) {
 			// find the point with the smalles enclosing angles in clockwise direction (i.e. inside)
 			// if point is in counter-clockwise direction, then ignore for now
 			angles.push_back( 9999 );
 		} else {
 			// add angle value into output vector
-			angles.push_back( enclosing_angles( coords[ p1 ], coords[ p2 ], coords[ q ] ) );
+			angles.push_back( enclosing_angles( coords.at( p1 ), coords.at( p2 ), coords.at( q ) ) );
 		}
 	}
 	return angles;
@@ -448,7 +449,7 @@ utility::vector1< core::Real > get_angles( std::map< core::Size, core::Vector > 
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief find point in AtomIDMap that is closest to line connecting p1p2
-core::Size find_closest( std::map< core::Size, core::Vector > coords, core::Size p1, core::Size p2, utility::vector1< core::Size > inside_points, bool clock ) {
+core::Size find_closest( std::map< core::Size, core::Vector > const & coords, core::Size p1, core::Size p2, utility::vector1< core::Size > const & inside_points, bool clock ) {
 
 	utility::vector1< core::Real > angles = get_angles( coords, p1, p2, inside_points, clock );
 
@@ -472,7 +473,7 @@ core::Size find_closest( std::map< core::Size, core::Vector > coords, core::Size
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief find point in AtomIDMap that is farthest from line connecting p1p2
-core::Size find_farthest( std::map< core::Size, core::Vector > coords, core::Size p1, core::Size p2, utility::vector1< core::Size > outside_points, bool clock ) {
+core::Size find_farthest( std::map< core::Size, core::Vector > const & coords, core::Size p1, core::Size p2, utility::vector1< core::Size > const & outside_points, bool clock ) {
 
 	// check length of input vector
 	if ( outside_points.size() == 0 ) {
@@ -501,7 +502,7 @@ core::Size find_farthest( std::map< core::Size, core::Vector > coords, core::Siz
 ///   0 outside
 ///   1 inside
 ///   2 on boundary
-std::string inside_polygon( std::map< core::Size, core::Vector > coords, utility::vector1< core::Size > polygon, core::Vector q ) {
+std::string inside_polygon( std::map< core::Size, core::Vector > const & coords, utility::vector1< core::Size > const & polygon, core::Vector const & q ) {
 
 	// initialize counts
 	core::SSize cnt = 0;
@@ -515,13 +516,13 @@ std::string inside_polygon( std::map< core::Size, core::Vector > coords, utility
 		core::Size p2 = polygon[ i ];
 
 		// if (q to infinity) intersects with p1p2, increase counter
-		if ( core::membrane::intersect( coords[ p1 ], coords[ p2 ], q ) == true ) {
+		if ( core::membrane::intersect( coords.at( p1 ), coords.at( p2 ), q ) == true ) {
 			cnt += 1;
 		}
 
 		// if q lies on segment between two points
-		if ( core::membrane::on_segment( coords[ p1 ], coords[ p2 ], q )
-				|| p1 == p2 || coords[ p1 ] == q || coords[ p2 ] == q ) {
+		if ( core::membrane::on_segment( coords.at( p1 ), coords.at( p2 ), q )
+				|| p1 == p2 || coords.at( p1 ) == q || coords.at( p2 ) == q ) {
 			cnt = -1;
 			break;
 		}
@@ -539,7 +540,7 @@ std::string inside_polygon( std::map< core::Size, core::Vector > coords, utility
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief returns the points that are within the triangle between points p1, p2, q
-utility::vector1< core::Size > points_in_triangle( std::map< core::Size, core::Vector > coords, core::Size p1, core::Size p2, core::Size q, utility::vector1< core::Size > points ) {
+utility::vector1< core::Size > points_in_triangle( std::map< core::Size, core::Vector > const & coords, core::Size p1, core::Size p2, core::Size q, utility::vector1< core::Size > const & points ) {
 
 	utility::vector1< core::Size > in_triangle;
 
@@ -563,7 +564,7 @@ utility::vector1< core::Size > points_in_triangle( std::map< core::Size, core::V
 		//  }
 
 		// if point is within triangle, append to list to return
-		if ( inside_polygon( coords, triangle, coords[ points[ i ] ] ) == "i" ) {
+		if ( inside_polygon( coords, triangle, coords.at( points[ i ] ) ) == "i" ) {
 			in_triangle.push_back( points[ i ] );
 		}
 	}
@@ -577,7 +578,7 @@ utility::vector1< core::Size > points_in_triangle( std::map< core::Size, core::V
 // bottom-level helper functions
 
 /// @brief distance of point q from line between points p1 and p2
-core::Real distance_from_line2D( core::Vector p1, core::Vector p2, core::Vector q ) {
+core::Real distance_from_line2D( core::Vector const & p1, core::Vector const & p2, core::Vector const & q ) {
 
 	// checks
 	if ( p1 == p2 || p1 == q || p2 == q ) {
@@ -594,7 +595,7 @@ core::Real distance_from_line2D( core::Vector p1, core::Vector p2, core::Vector 
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief is point q on line segment between points p1 and p2?
-bool on_segment( core::Vector p1, core::Vector p2, core::Vector q ) {
+bool on_segment( core::Vector const & p1, core::Vector const & p2, core::Vector const & q ) {
 
 	bool value( false );
 
@@ -623,7 +624,7 @@ bool on_segment( core::Vector p1, core::Vector p2, core::Vector q ) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief q is inside xy boundaries of p1p2
-bool inside_boundaries( core::Vector p1, core::Vector p2, core::Vector q ) {
+bool inside_boundaries( core::Vector const & p1, core::Vector const & p2, core::Vector const & q ) {
 
 	using namespace numeric;
 
@@ -637,7 +638,7 @@ bool inside_boundaries( core::Vector p1, core::Vector p2, core::Vector q ) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief is q clockwise from p1p2?
-bool clockwise( core::Vector p1, core::Vector p2, core::Vector q ) {
+bool clockwise( core::Vector const & p1, core::Vector const & p2, core::Vector const & q ) {
 
 	// get cross-product in 2D, if 3rd dimension is zero
 	core::Real val = ( p2.x()-p1.x() )*( q.y()-p2.y() ) - ( p2.y()-p1.y() )*( q.x()-p2.x() );
@@ -651,7 +652,7 @@ bool clockwise( core::Vector p1, core::Vector p2, core::Vector q ) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief check whether q is to the left of p1p2
-bool to_left( core::Vector p1, core::Vector p2, core::Vector q ) {
+bool to_left( core::Vector const & p1, core::Vector const & p2, core::Vector const & q ) {
 
 	// check whether q is clockwise from p1p2
 	if ( p1.y() <= p2.y() && clockwise( p1, p2, q ) == false ) {
@@ -666,7 +667,7 @@ bool to_left( core::Vector p1, core::Vector p2, core::Vector q ) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief check whether line p1p2 intersects with (q to infinity); q is the test point
-bool intersect( core::Vector p1, core::Vector p2, core::Vector q ) {
+bool intersect( core::Vector const & p1, core::Vector const & p2, core::Vector const & q ) {
 
 	using namespace numeric;
 
@@ -691,7 +692,7 @@ bool intersect( core::Vector p1, core::Vector p2, core::Vector q ) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief find the sum of angles p1q and p2q in 2D; p1, p2, q are points, not vectors
-core::Real enclosing_angles( core::Vector p1, core::Vector p2, core::Vector q ) {
+core::Real enclosing_angles( core::Vector const & p1, core::Vector const & p2, core::Vector const & q ) {
 
 	using namespace numeric;
 

@@ -29,6 +29,7 @@
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/forge/methods/util.hh>
@@ -89,7 +90,7 @@ static basic::Tracer TR_report( "protocols.moves.LoopRemodelFromCommandLine.REPO
 // XRW TEMP  return "LoopMoverFromCommandLine";
 // XRW TEMP }
 
-LoopMoverFromCommandLine::~LoopMoverFromCommandLine() {}
+LoopMoverFromCommandLine::~LoopMoverFromCommandLine() = default;
 
 
 protocols::moves::MoverOP
@@ -121,8 +122,8 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 	std::string const & loop_file_name,
 	protocols::loops::LoopsCOP loops
 ) :
-	simple_moves::DesignRepackMover ( LoopMoverFromCommandLine::mover_name()),
-	protocol_ ( protocol ),
+	simple_moves::DesignRepackMover( LoopMoverFromCommandLine::mover_name()),
+	protocol_( protocol ),
 	perturb_( perturb),
 	refine_(refine),
 	intermedrelax_( "no" ),
@@ -164,7 +165,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		// set up temporary fold tree for loop closure
 		TR.Debug << "Original FoldTree " << pose.fold_tree() << std::endl;
 		core::kinematics::FoldTree old_ft( pose.fold_tree() );
-		for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
+		for ( auto it = loops->v_begin(); it != loops->v_end(); ++it ) {
 			it->set_extended( true ); // set all loops to extended (needed for CCD mover to really perturb)
 			protocols::loops::LoopsOP single_loop( new protocols::loops::Loops() );
 			single_loop->add_loop(*it);
@@ -251,11 +252,11 @@ void
 LoopMoverFromCommandLine::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
-	perturb_ = tag->getOption<bool>( "perturb", 1 );
+	perturb_ = tag->getOption<bool>( "perturb", true );
 	if ( protocol_ == "automatic" ) { // ugly, but LoopRemodelMover accepts string whereas the other movers accept bool
 		refine( tag->getOption< std::string >( "refine", "no" ) );
 	} else {
-		refine( tag->getOption<bool>( "refine", 1 ) );
+		refine( tag->getOption<bool>( "refine", true ) );
 	}
 	intermedrelax( tag->getOption< std::string >( "intermedrelax", "no" ) );
 	remodel( tag->getOption< std::string >( "remodel", "no" ) );

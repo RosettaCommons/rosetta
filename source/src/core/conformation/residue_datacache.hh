@@ -14,16 +14,6 @@
 #ifndef INCLUDED_core_conformation_residue_datacache_hh
 #define INCLUDED_core_conformation_residue_datacache_hh
 
-// unit headers
-
-// #include <core/conformation/residue_datacache.fwd.hh>
-
-// // package headers
-// #include <core/conformation/Residue.fwd.hh>
-
-// #include <basic/datacache/CacheableData.hh>
-// #include <basic/datacache/DataCache.hh>
-
 
 namespace core {
 namespace conformation {

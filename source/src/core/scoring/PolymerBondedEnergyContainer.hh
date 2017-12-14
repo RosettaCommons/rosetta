@@ -52,6 +52,7 @@ class PolymerBondedNeighborIterator : public ResidueNeighborIterator
 public:
 	~PolymerBondedNeighborIterator() override;
 
+	// Moves pos_in, so by-value
 	PolymerBondedNeighborIterator(
 		Size const base_in,
 		utility::vector1< Size > const & positions_in,
@@ -101,6 +102,7 @@ class PolymerBondedNeighborConstIterator : public ResidueNeighborConstIterator
 public:
 	~PolymerBondedNeighborConstIterator() override;
 
+	// Moves pos_in, so by value
 	PolymerBondedNeighborConstIterator(
 		Size const base_in,
 		utility::vector1< Size > const & positions_in,

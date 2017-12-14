@@ -36,7 +36,7 @@ namespace picking_old {
 
 /// @brief default constructor
 FragmentLibraryManager::FragmentLibraryManager() :
-	vall_( NULL )
+	vall_( nullptr )
 {}
 
 /// @brief return instance of standard Vall library
@@ -48,7 +48,7 @@ vall::VallLibrary const & FragmentLibraryManager::get_Vall() const {
 	using basic::database::full_name;
 
 	// TODO: we need proper locking support here for multi-threaded access
-	if ( vall_ == NULL ) {
+	if ( vall_ == nullptr ) {
 		vall_ = new vall::VallLibrary();
 		vall::vall_library_from_file( full_name( option[ in::file::vall ][1] ), *vall_, 62471 );
 	}
@@ -60,9 +60,9 @@ vall::VallLibrary const & FragmentLibraryManager::get_Vall() const {
 /// @brief clear standard Vall library from memory
 /// WARNING WARNING WARNING! THREAD UNSAFE!
 void FragmentLibraryManager::clear_Vall() {
-	if ( vall_ != NULL ) {
+	if ( vall_ != nullptr ) {
 		delete vall_;
-		vall_ = NULL;
+		vall_ = nullptr;
 	}
 }
 

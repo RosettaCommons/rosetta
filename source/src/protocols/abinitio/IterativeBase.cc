@@ -1453,14 +1453,14 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 			//but one could also choose to *not* update evaluators to have a more different (more hedging approach. )
 			//this should probably be renamed into hedging !!!
 			core::io::silent::SilentStructOP pss = *sit;//cannot afford this ever: evaluate_silent_struct( *sit );
-			score_cut_decoys.push_back( std::make_pair( select_score( pss ), pss ) );
+			score_cut_decoys.emplace_back( select_score( pss ), pss );
 		}
 		score_cut_decoys.sort();
 		tr.Debug << "select " << percentage_per_batch*100 << "% from batch from the lowest scoring " << score_cut_per_batch*100 << "% of structures" << std::endl;
 		basic::show_time( tr,  "generate safety_hatch: collected decoys batch "+it.batch() );
 		// if we have less structures below score cut than what we want to harvest,.... take them all
 		while ( score_cut_per_batch < percentage_per_batch ) {
-			Size ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
+			auto ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
 			for ( std::list< std::pair< core::Real, core::io::silent::SilentStructOP > >::const_iterator sit = score_cut_decoys.begin();
 					sit != score_cut_decoys.end(); ++sit ) {
 				start_decoys.push_back( sit->second );
@@ -1471,7 +1471,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		basic::show_time( tr,  "generate safety_hatch: generated start_decoys batch "+it.batch());
 		// for the remaining structures we want to harvest, they clearly will be less than what the score-cut yields... choose randomly...
 		if ( percentage_per_batch > 0.01 ) {
-			Size ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
+			auto ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
 			for ( std::list< std::pair< core::Real, core::io::silent::SilentStructOP > >::const_iterator sit = score_cut_decoys.begin();
 					sit != score_cut_decoys.end(); ++sit ) {
 				if ( numeric::random::rg().uniform() < ( percentage_per_batch / score_cut_per_batch ) ) {

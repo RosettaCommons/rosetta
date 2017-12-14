@@ -83,12 +83,7 @@ ParallelBetaPairingPreferenceFilter::ParallelBetaPairingPreferenceFilter():
 
 
 // @brief copy constructor
-ParallelBetaPairingPreferenceFilter::ParallelBetaPairingPreferenceFilter( ParallelBetaPairingPreferenceFilter const & rval ):
-	Super( rval ),
-	filter_value_( rval.filter_value_ ),
-	score_pairmatrix_( rval.score_pairmatrix_ ),
-	verbose_( rval.verbose_ )
-{}
+ParallelBetaPairingPreferenceFilter::ParallelBetaPairingPreferenceFilter( ParallelBetaPairingPreferenceFilter const & /*rval*/ ) = default;
 
 
 // @brief set filter value ( defalt 0 )
@@ -157,8 +152,8 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 
 	Size num_pair( 0 );
 	Real score( 0.0 );
-	for ( StrandPairings::const_iterator it=spairset.begin(), ite=spairset.end(); it != ite; ++it ) {
-		StrandPairing spair( **it );
+	for ( auto const & it : spairset ) {
+		StrandPairing spair( *it );
 
 		if ( spair.orient() == 'A' ) continue;
 
@@ -221,7 +216,7 @@ ParallelBetaPairingPreferenceFilter::parse_my_tag(
 	filter_value( tag->getOption<Real>( "threshold", 0 ) );
 
 	// set threshold
-	verbose_ = tag->getOption<bool>( "verbose", 0 );
+	verbose_ = tag->getOption<bool>( "verbose", false );
 }
 
 // XRW TEMP protocols::filters::FilterOP

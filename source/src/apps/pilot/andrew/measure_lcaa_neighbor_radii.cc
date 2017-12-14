@@ -78,7 +78,7 @@ int main( int argc, char * argv [] )
 		rotsets->prepare_sets_for_packing( pose, *sfxn );
 
 		Real step_size = option[ measure::step_size ];
-		Size nsteps = core::Size( 360.0 / step_size );
+		auto nsteps = core::Size( 360.0 / step_size );
 
 		RotamerSetOP rotset2 = rotsets->rotamer_set_for_residue( 2 );
 		for ( Size ii = 1; ii <= rotset2->get_n_residue_types(); ++ii ) {

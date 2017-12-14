@@ -37,6 +37,7 @@
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 #include <string>
 
@@ -171,7 +172,7 @@ initialize_input_streams(   utility::vector1< protocols::stepwise::modeler::prot
 InputStreamWithResidueInfo::InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
 	utility::vector1< Size > const & input_res,
 	utility::vector1< Size > const & slice_res ):
-	pose_input_stream_( pose_input_stream ),
+	pose_input_stream_(std::move( pose_input_stream )),
 	input_res_( input_res ),
 	slice_res_( slice_res ),
 	backbone_only_( false )
@@ -182,7 +183,7 @@ InputStreamWithResidueInfo::InputStreamWithResidueInfo( import_pose::pose_stream
 //////////////////////////////////////////////////////////////////////////
 InputStreamWithResidueInfo::InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
 	utility::vector1< Size > const & input_res ):
-	pose_input_stream_( pose_input_stream ),
+	pose_input_stream_(std::move( pose_input_stream )),
 	input_res_( input_res ),
 	backbone_only_( false )
 {
@@ -201,7 +202,7 @@ InputStreamWithResidueInfo::initialize_defaults(){
 
 
 //////////////////////////////////////////////////////////////////////////
-InputStreamWithResidueInfo::~InputStreamWithResidueInfo(){}
+InputStreamWithResidueInfo::~InputStreamWithResidueInfo()= default;
 //////////////////////////////////////////////////////////////////////////
 import_pose::pose_stream::PoseInputStreamOP &
 InputStreamWithResidueInfo::pose_input_stream(){ return pose_input_stream_; }
@@ -243,7 +244,7 @@ void
 InputStreamWithResidueInfo::advance_to_next_pose_segment(){
 	// Read in pose.
 	core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
-	runtime_assert( rsd_set != 0 );
+	runtime_assert( rsd_set != nullptr );
 	import_pose_ = pose::PoseOP( new core::pose::Pose );
 	pose_input_stream_->fill_pose( *import_pose_, *rsd_set );
 }
@@ -320,7 +321,7 @@ InputStreamWithResidueInfo::apply_current_pose_segment( pose::Pose & pose,
 Size
 InputStreamWithResidueInfo::compute_size(){
 	core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
-	runtime_assert( rsd_set != 0 );
+	runtime_assert( rsd_set != nullptr );
 	utility::vector1< core::pose::PoseOP > import_pose_list_ = pose_input_stream_->get_all_poses( *rsd_set );
 	Size const size = import_pose_list_.size();
 	pose_input_stream_->reset();

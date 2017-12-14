@@ -87,8 +87,7 @@ ShapeGrid::ShapeGrid() : SingleGrid("ShapeGrid")
 	load_kbp_data();
 }
 
-ShapeGrid::~ShapeGrid()
-{}
+ShapeGrid::~ShapeGrid() = default;
 
 GridBaseOP ShapeGrid::clone() const {
 	return GridBaseOP( new ShapeGrid( *this ) );
@@ -222,8 +221,7 @@ core::Real ShapeGrid::get_point_score(numeric::kdtree::KDPointList const & neare
 
 	core::Real total_score = 0.0;
 
-	for ( numeric::kdtree::KDPointList::const_iterator it = nearest_residues.begin(); it != nearest_residues.end(); ++it ) {
-		numeric::kdtree::KDPointOP kd_point(*it);
+	for ( auto kd_point : nearest_residues ) {
 		//This is a bit dangerous
 		utility::pointer::ReferenceCountOP data_pointer(kd_point->data());
 		core::conformation::ResidueOP residue(utility::pointer::dynamic_pointer_cast< core::conformation::Residue > ( data_pointer ));
@@ -315,8 +313,8 @@ void ShapeGrid::load_kbp_data()
 
 
 	utility::json_spirit::mArray kbp_outer_array = kbp_data_list.get_array();
-	for ( utility::json_spirit::mArray::iterator res_data = kbp_outer_array.begin(); res_data != kbp_outer_array.end(); ++res_data ) {
-		utility::json_spirit::mArray current_res_data(res_data->get_array());
+	for ( auto & res_data : kbp_outer_array ) {
+		utility::json_spirit::mArray current_res_data(res_data.get_array());
 		std::string resname(current_res_data[0].get_str());
 
 		KBPGridOP current_array( new core::grid::CartGrid<core::Real> );
@@ -324,7 +322,7 @@ void ShapeGrid::load_kbp_data()
 
 
 		utility::json_spirit::mArray current_res_list(current_res_data[1].get_array());
-		utility::json_spirit::mArray::iterator res_list_it = current_res_list.begin();
+		auto res_list_it = current_res_list.begin();
 		for ( core::Size distance_bin = 0; distance_bin < 25; ++distance_bin ) {
 			for ( core::Size theta_bin = 0; theta_bin < 25; ++theta_bin ) {
 				for ( core::Size phi_bin = 0; phi_bin < 25; ++phi_bin ) {

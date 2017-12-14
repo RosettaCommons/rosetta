@@ -53,15 +53,15 @@ SealFoldTreeMover::SealFoldTreeMover( components::StructureData const & sd, prot
 	fg_( new components::FoldGraph( sd ) ),
 	roots_()
 {
-	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
-		if ( l->cut() > 0 ) cutpoints_.push_back( l->cut() );
+	for ( auto const & loop : loops ) {
+		if ( loop.cut() > 0 ) cutpoints_.push_back( loop.cut() );
 	}
 	if ( sd.segments_begin() != sd.segments_end() ) {
 		roots_.push_back( *sd.segments_begin() );
 	}
 }
 
-SealFoldTreeMover::~SealFoldTreeMover(){}
+SealFoldTreeMover::~SealFoldTreeMover()= default;
 
 void
 SealFoldTreeMover::parse_my_tag(
@@ -138,8 +138,7 @@ SealFoldTreeMover::apply( core::pose::Pose & pose )
 void
 SealFoldTreeMover::remove_cutpoints( components::StructureData & sd ) const
 {
-	for ( Cutpoints::const_iterator cut=cutpoints_.begin(); cut!=cutpoints_.end(); ++cut ) {
-		core::Size const resid = *cut;
+	for ( unsigned long resid : cutpoints_ ) {
 		SegmentName const seg_name = sd.segment_name( resid );
 		if ( sd.segment( seg_name ).cutpoint() == resid ) sd.set_cutpoint( seg_name, 0 );
 		TR << "Removed cutpoint at " << resid << " (segment " << seg_name << ") from StructureData." << std::endl;
@@ -151,9 +150,7 @@ SealFoldTreeMover::remove_cutpoints( core::pose::Pose & pose ) const
 {
 	components::StructureData sd = components::StructureDataFactory::get_instance()->get_from_pose( pose );
 	// remove cutpoints
-	for ( Cutpoints::const_iterator cut=cutpoints_.begin(); cut!=cutpoints_.end(); ++cut ) {
-		core::Size const resid = *cut;
-
+	for ( unsigned long resid : cutpoints_ ) {
 		TR.Debug << "Removing cutpoint at " << pose.residue( resid ).name() << " " << resid << std::endl;
 		// remove cutpoint variants from this residue if they are present
 		if ( pose.residue( resid ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {

@@ -103,7 +103,7 @@ void RigidChunkClaimer::set_defaults() {
 
 void RigidChunkClaimer::receive_message( ClaimerMessage& cm ) {
 	if ( typeid( cm ) == typeid( CM_SuggestFixResidue ) ) {
-		CM_SuggestFixResidue& msg = dynamic_cast< CM_SuggestFixResidue& >( cm );
+		auto& msg = dynamic_cast< CM_SuggestFixResidue& >( cm );
 
 		//find good residue
 		if ( !current_rigid_core_.size() ) return;
@@ -253,7 +253,7 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 
 	// check foreign claim
 
-	claims::BBClaim const *bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
+	auto const *bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
 
 	if ( bb_ptr && current_rigid_core_.is_loop_residue( bb_ptr->global_position() ) ) {
 		if ( bExclusive_ ) {  // if we want exclusive claim this is not acceptable
@@ -264,7 +264,7 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 		}
 	} // DofClaim::BB
 
-	claims::JumpClaim const *jump_ptr( dynamic_cast< const claims::JumpClaim* >( &foreign_claim ) );
+	auto const *jump_ptr( dynamic_cast< const claims::JumpClaim* >( &foreign_claim ) );
 
 	if ( jump_ptr ) {
 		runtime_assert( current_jump_calculator_ != nullptr );
@@ -281,7 +281,7 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 		}
 	} // DofClaim::JUMP
 
-	claims::CutClaim const *cut_ptr( dynamic_cast< const claims::CutClaim* >( &foreign_claim ) );
+	auto const *cut_ptr( dynamic_cast< const claims::CutClaim* >( &foreign_claim ) );
 
 	if ( cut_ptr ) {
 		for ( auto const & region : current_rigid_core_ ) {

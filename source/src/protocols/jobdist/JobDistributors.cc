@@ -11,6 +11,7 @@
 /// @brief
 /// @author Sergey Lyskov
 
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <protocols/jobdist/JobDistributors.hh>
 #include <protocols/jobdist/Jobs.hh>
@@ -69,7 +70,7 @@ namespace jobdist {
 
 static basic::Tracer JobDistributorTracer( "protocols.jobdist.JobDistributors" );
 
-BaseJobDistributor::BaseJobDistributor(JobVector jobs):
+BaseJobDistributor::BaseJobDistributor(JobVector const & jobs):
 	overwrite_( basic::options::option[ basic::options::OptionKeys::out::overwrite ] ),
 	jobs_(jobs),
 	current_job_(1),
@@ -742,10 +743,10 @@ void PlainPdbJobDistributor::dump_scores(
 {
 	// Which score terms to use
 	core::scoring::EnergyMap weights = pose.energies().weights();
-	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
+	using ScoreTypeVec = utility::vector1<core::scoring::ScoreType>;
 	ScoreTypeVec score_types;
 	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
+		auto ii = core::scoring::ScoreType(i);
 		if ( weights[ii] != 0 ) score_types.push_back(ii);
 	}
 	// This version is formatted for easy parsing by R, Excel, etc.

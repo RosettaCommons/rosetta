@@ -50,9 +50,9 @@ public:
 	/// @brief Constructs a new instance from the specified lists of means,
 	/// standard deviations, and weights. Assumes that all lists have equal
 	/// length and weights sum to 1.
-	USOGFunc(const utility::vector1<core::Real>& means,
-		const utility::vector1<core::Real>& std_devs,
-		const utility::vector1<core::Real>& weights);
+	USOGFunc( utility::vector1<core::Real> const & means,
+		utility::vector1<core::Real> const & std_devs,
+		utility::vector1<core::Real> const & weights);
 
 	/// @brief No-op virtual destructor
 	~USOGFunc() {}

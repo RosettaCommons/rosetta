@@ -36,7 +36,7 @@ public:
 	OopRandomPuckMover(
 	);
 
-	OopRandomPuckMover( utility::vector1< core::Size > oop_seq_positions );
+	OopRandomPuckMover( utility::vector1< core::Size > const & oop_seq_positions );
 
 	virtual ~OopRandomPuckMover();
 

@@ -75,7 +75,7 @@ comma_strings_to_vector_map(
 	std::istream & is,
 	Size const nbase,
 	std::map< S, utility::vector1< T > > & clones,
-	std::string tag=""
+	std::string const & tag=""
 )
 {
 	bool fail( false );
@@ -127,7 +127,7 @@ comma_strings_to_pair_map(
 	std::istream & is,
 	Size const nbase,
 	std::map< S, std::pair<T,U> > & clones,
-	std::string tag=""
+	std::string const & tag=""
 ) {
 	bool fail( false );
 	std::string tag0;
@@ -170,7 +170,7 @@ comma_strings_to_map(
 	std::istream & is,
 	Size const nbase,
 	std::map< S, T > & clones,
-	std::string tag=""
+	std::string const & tag=""
 ) {
 	bool fail( false );
 	std::string tag0;
@@ -211,7 +211,7 @@ comma_strings_to_vector(
 	std::istream & is,
 	Size const nbase,
 	utility::vector1< S > & clones,
-	std::string tag=""
+	std::string const & tag=""
 )
 {
 	bool fail( false );
@@ -249,7 +249,7 @@ comma_strings_to_map(
 	std::istream & is,
 	Size const nbase,
 	std::map< Size, SymDof > & clones,
-	std::string tag=""
+	std::string const & tag=""
 )
 {
 	bool fail( false );
@@ -290,7 +290,7 @@ template<class S, class T>
 void vector_map_to_comma_strings(
 	std::ostream & out,
 	std::map< S, utility::vector1< T > > clones,
-	std::string tag=""
+	std::string const & tag=""
 ) {
 	typename std::map< S,utility::vector1<T> >::const_iterator it;
 	if ( tag != "" ) out << ' ' << tag ;
@@ -309,7 +309,7 @@ template<class S, class T>
 void map_to_comma_strings(
 	std::ostream & out,
 	std::map< S, T > clones,
-	std::string tag=""
+	std::string const & tag=""
 ) {
 	typename std::map< S, T >::const_iterator it;
 	if ( tag != "" ) out << ' ' << tag ;
@@ -323,7 +323,7 @@ template<class S, class T, class U>
 void pair_map_to_comma_strings(
 	std::ostream & out,
 	std::map< S, std::pair<T,U> > clones,
-	std::string tag=""
+	std::string const & tag=""
 ) {
 	typename std::map< S, std::pair<T,U> >::const_iterator it;
 	if ( tag != "" ) out << ' ' << tag ;
@@ -339,7 +339,7 @@ void
 vector_to_comma_strings(
 	std::ostream & out,
 	utility::vector1 < S > clones,
-	std::string tag=""
+	std::string const & tag=""
 )
 {
 	if ( tag != "" ) out << ' ' << tag ;
@@ -357,7 +357,7 @@ SymmetryInfo::SymmetryInfo() {
 	init_defaults();
 }
 
-SymmetryInfo::~SymmetryInfo() {}
+SymmetryInfo::~SymmetryInfo() = default;
 
 void
 SymmetryInfo::init_defaults() {
@@ -393,9 +393,9 @@ SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit,
 
 	Size joff = njump_subunit*symm_data.get_subunits();
 	std::map<std::string,Size> const & name2num = symm_data.get_jump_string_to_jump_num();
-	for ( std::map<std::string,Size>::const_iterator i = name2num.begin(); i != name2num.end(); ++i ) {
-		dofname2jnum_[i->first] = i->second+joff;
-		jnum2dofname_[i->second+joff] = i->first;
+	for ( auto const & i : name2num ) {
+		dofname2jnum_[i.first] = i.second+joff;
+		jnum2dofname_[i.second+joff] = i.first;
 	}
 	if (  symm_data.get_jump_clones().size() > 0 ) {
 		initialize( nres_subunit, njump_subunit,
@@ -1108,19 +1108,16 @@ const {
 	std::vector < std::pair < Size, Size > > map;
 	int delta ( res2 - res1 );
 	int mapped_res;
-	for ( std::vector< Size>::const_iterator
-			clone     = bb_clones( res1 ).begin(),
-			clone_end = bb_clones( res1 ).end();
-			clone != clone_end; ++clone ) {
-		if ( *clone + delta > num_total_residues() ) {
-			mapped_res = (*clone + delta)%num_total_residues();
+	for ( unsigned long clone : bb_clones( res1 ) ) {
+		if ( clone + delta > num_total_residues() ) {
+			mapped_res = (clone + delta)%num_total_residues();
 		} else {
-			mapped_res = *clone + delta;
+			mapped_res = clone + delta;
 		}
 		if ( mapped_res < 0 ) {
 			mapped_res += num_independent_residues();
 		}
-		map.push_back( std::make_pair( *clone, mapped_res ) );
+		map.emplace_back( clone, mapped_res );
 	}
 	return map;
 }
@@ -1365,10 +1362,9 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 	}
 
 	//fd update jump names
-	typedef std::map< Size,std::string >::iterator it_type;
-	for ( it_type j_it = jnum2dofname_.begin(); j_it != jnum2dofname_.end(); j_it++ ) {
-		int i_new = (int)j_it->first + (int)N*((int)njump_monomer-(int)old_njump_monomer);
-		std::string old_name = j_it->second;
+	for ( auto & j_it : jnum2dofname_ ) {
+		int i_new = (int)j_it.first + (int)N*((int)njump_monomer-(int)old_njump_monomer);
+		std::string old_name = j_it.second;
 		if ( i_new > 0 ) {
 			jnum2dofname_new[i_new] = old_name;
 			dofname2jnum_new[old_name] = i_new;
@@ -1379,8 +1375,7 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 	// 1                 --> N*njump_monomer  : the internal jumps
 	// N*njump_monomer+1 --> N*njump_monomer+N: the pseudo-rsd--monomer jumps
 	// last N-1 jumps                         : jumps between pseudo-rsds
-	for ( std::map<Size,Clones>::const_iterator it=old_jump_clones.begin(), it_end = old_jump_clones.end();
-			it != it_end; ++it ) {
+	for ( auto it=old_jump_clones.begin(), it_end = old_jump_clones.end(); it != it_end; ++it ) {
 		Size source = it->first;
 		Clones target = it->second;
 		std::string old_source_name = jnum2dofname_[source];
@@ -1399,8 +1394,8 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 
 	// dofs
 	std::map< Size, SymDof > dofs_new;
-	for ( std::map< Size, SymDof >::iterator it = dofs_.begin(), it_end = dofs_.end(); it!=it_end; ++it ) {
-		dofs_new.insert( std::make_pair( it->first + N*( njump_monomer - old_njump_monomer ), it->second ) );
+	for ( auto & dof : dofs_ ) {
+		dofs_new.insert( std::make_pair( dof.first + N*( njump_monomer - old_njump_monomer ), dof.second ) );
 	}
 	set_dofs( dofs_new );
 
@@ -1625,11 +1620,11 @@ SymmetryInfo::dependent_dofs( DOF_ID const & id, Conformation const & conf ) con
 		( type == id::BB ? bb_clones( seqpos ) : chi_clones( seqpos ) ) );
 
 	DOF_IDs dofs;
-	for ( Clones::const_iterator pos= clones.begin(), epos=clones.end(); pos != epos; ++pos ) {
+	for ( unsigned long clone : clones ) {
 		if ( type == id::JUMP ) {
-			dofs.push_back( DOF_ID( id::AtomID( atomno, conf.fold_tree().downstream_jump_residue( *pos )  ), id.type() ) );
+			dofs.push_back( DOF_ID( id::AtomID( atomno, conf.fold_tree().downstream_jump_residue( clone )  ), id.type() ) );
 		} else {
-			dofs.push_back( DOF_ID( id::AtomID( atomno, *pos ), id.type() ) );
+			dofs.push_back( DOF_ID( id::AtomID( atomno, clone ), id.type() ) );
 		}
 	}
 	return dofs;
@@ -1703,8 +1698,8 @@ SymmetryInfo::dependent_torsions( TorsionID const & id ) const
 	//std::cerr << " dependent_torsions( TorsionID const & )  bb=" << (id.type() == id::BB) << "   chi=" << (id.type() == id::CHI) << "   jump=" << (id.type() == id::JUMP) << std::endl;
 
 	TorsionIDs tors;
-	for ( Clones::const_iterator pos= seqpos_clones.begin(), epos=seqpos_clones.end(); pos != epos; ++pos ) {
-		tors.push_back( TorsionID( *pos, id.type(), id.torsion() ) );
+	for ( unsigned long seqpos_clone : seqpos_clones ) {
+		tors.push_back( TorsionID( seqpos_clone, id.type(), id.torsion() ) );
 	}
 	return tors;
 }
@@ -1720,8 +1715,8 @@ SymmetryInfo::dependent_atoms( AtomID const & id ) const
 	Clones const & seqpos_clones( bb_clones( seqpos ) );
 
 	AtomIDs atoms;
-	for ( Clones::const_iterator pos= seqpos_clones.begin(), epos=seqpos_clones.end(); pos != epos; ++pos ) {
-		atoms.push_back( AtomID( id.atomno(), *pos ) );
+	for ( unsigned long seqpos_clone : seqpos_clones ) {
+		atoms.push_back( AtomID( id.atomno(), seqpos_clone ) );
 	}
 	return atoms;
 }
@@ -1802,8 +1797,8 @@ SymmetryInfo::set_jump_name(Size jnum, std::string jname) {
 Size
 SymmetryInfo::num_slidablejumps() const {
 	Size retval = 0;
-	for ( std::map<Size,SymDof>::const_iterator i = dofs_.begin(), end = dofs_.end(); i != end; ++i ) {
-		if ( i->second.allow_dof(1) || i->second.allow_dof(2) || i->second.allow_dof(3) ) retval++;
+	for ( auto const & dof : dofs_ ) {
+		if ( dof.second.allow_dof(1) || dof.second.allow_dof(2) || dof.second.allow_dof(3) ) retval++;
 	}
 	return retval;
 }
@@ -1880,10 +1875,10 @@ SymmetryInfo::get_component_of_residue(Size ir) const {
 		utility_exit_with_message(std::string("no symmetry component for residue "));
 	}
 	Size irindep = (ir-1)%num_independent_residues()+1;
-	for ( std::map<char,std::pair<Size,Size> >::const_iterator i = component_bounds_.begin(); i != component_bounds_.end(); ++i ) {
-		char component = i->first;
-		Size lower = i->second.first;
-		Size upper = i->second.second;
+	for ( auto const & component_bound : component_bounds_ ) {
+		char component = component_bound.first;
+		Size lower = component_bound.second.first;
+		Size upper = component_bound.second.second;
 		// std::cerr << component << " " << lower << " " << upper << " " << irindep << std::endl;
 		if ( lower <= irindep && irindep <= upper ) return component;
 	}

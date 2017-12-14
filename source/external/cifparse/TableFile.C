@@ -189,7 +189,7 @@ Block::~Block()
 {
 
     _name.clear();
-    _ser = NULL;
+    _ser = nullptr;
     _tables.clear();
 
 }
@@ -205,39 +205,36 @@ vector<pair<string, ISTable::eTableDiff> > Block::operator==(Block& inBlock)
     GetTableNames(firstBlockTableNames);
     inBlock.GetTableNames(secondBlockTableNames);
 
-    for (unsigned int tableI = 0; tableI < firstBlockTableNames.size();
-      ++tableI)
+    for (auto & firstBlockTableName : firstBlockTableNames)
     {
-        if (!inBlock.IsTablePresent(firstBlockTableNames[tableI]))
+        if (!inBlock.IsTablePresent(firstBlockTableName))
         {
-            diff.push_back(make_pair(firstBlockTableNames[tableI],
-              ISTable::eEXTRA));
+            diff.emplace_back(firstBlockTableName,
+              ISTable::eEXTRA);
         }
         else
         {
             ISTable* firstBlockTableP =
-              GetTablePtr(firstBlockTableNames[tableI]);
+              GetTablePtr(firstBlockTableName);
             ISTable* secondBlockTableP =
-              inBlock.GetTablePtr(firstBlockTableNames\
-              [tableI]);
+              inBlock.GetTablePtr(firstBlockTableName);
 
             ISTable::eTableDiff tableDiff = ((*firstBlockTableP) ==
               (*secondBlockTableP));
             if (tableDiff != ISTable::eNONE)
             {
-                diff.push_back(make_pair(firstBlockTableNames[tableI],
-                  tableDiff));
+                diff.emplace_back(firstBlockTableName,
+                  tableDiff);
             }
         }
     }
 
-    for (unsigned int tableI = 0; tableI < secondBlockTableNames.size();
-      ++tableI)
+    for (auto & secondBlockTableName : secondBlockTableNames)
     {
-        if (!IsTablePresent(secondBlockTableNames[tableI]))
+        if (!IsTablePresent(secondBlockTableName))
         {
-            diff.push_back(make_pair(secondBlockTableNames[tableI],
-              ISTable::eMISSING));
+            diff.emplace_back(secondBlockTableName,
+              ISTable::eMISSING);
         }
     }
 
@@ -269,7 +266,7 @@ void Block::AddTable(const string& name, const int indexInFile,
 
     _tables.push_back(name, indexInFile);
 
-    if (isTableP != NULL)
+    if (isTableP != nullptr)
         _tables.set(isTableP);
 
 }
@@ -362,7 +359,7 @@ ISTable& Block::GetTable(const string& name)
 {
     ISTable* isTableP = GetTablePtr(name);
 
-    if (isTableP == NULL)
+    if (isTableP == nullptr)
     {
         throw NotFoundException("Table \"" + name + "\" not found.",
           "Block::GetTable");
@@ -380,13 +377,13 @@ ISTable* Block::GetTablePtr(const string& name)
 
     if (name.empty())
     {
-        return(NULL);
+        return(nullptr);
     }
 
     unsigned int tableIndex = _tables.find(name);
     if (tableIndex == _tables.size())
     {
-        return(NULL);
+        return(nullptr);
     }
  
     return(_GetTablePtr(tableIndex));
@@ -418,7 +415,7 @@ void Block::DeleteTable(const string& name)
 
     ISTable* isTableP = &(_tables[tableIndex]);
 
-    if (isTableP != NULL)
+    if (isTableP != nullptr)
     {
         delete isTableP;
     }
@@ -443,7 +440,7 @@ void Block::WriteTable(ISTable* isTableP)
           "Block::WriteTable");
     }
 
-    if (isTableP == NULL)
+    if (isTableP == nullptr)
     {
         throw EmptyValueException("NULL ISTable pointer",
           "Block::WriteTable");
@@ -489,7 +486,7 @@ void Block::Print()
 ISTable* Block::_GetTablePtr(const unsigned int tableIndex)
 {
 
-    if (&(_tables[tableIndex]) != NULL)
+    if (&(_tables[tableIndex]) != nullptr)
     {
         // Table is already in memory. Just return the pointer to it.
         return &(_tables[tableIndex]);
@@ -498,7 +495,7 @@ ISTable* Block::_GetTablePtr(const unsigned int tableIndex)
     {
         // For write or virtual mode, there are no tables on the disk.
         if ((_fileMode == CREATE_MODE) || (_fileMode == VIRTUAL_MODE))
-            return(NULL);
+            return(nullptr);
 
         string name = _tables.get_name(tableIndex);
 
@@ -552,7 +549,7 @@ TableFile::~TableFile()
         for (unsigned int tableI = 0; tableI < _blocks[blockI]._tables.size();
           ++tableI)
         {
-            if (&(_blocks[blockI]._tables[tableI]) != NULL)
+            if (&(_blocks[blockI]._tables[tableI]) != nullptr)
             {
                 delete &(_blocks[blockI]._tables[tableI]);
             }
@@ -694,7 +691,7 @@ void TableFile::Flush()
         for (unsigned int tableI = 0; tableI < _blocks[blockI]._tables.size();
           ++tableI)
         {
-            if (&(_blocks[blockI]._tables[tableI]) == NULL)
+            if (&(_blocks[blockI]._tables[tableI]) == nullptr)
             {
                 continue;
             }
@@ -751,7 +748,7 @@ void TableFile::Serialize(const string& fileName)
           "TableFile::Serialize");
     }
 
-    Serializer* ser = new Serializer(fileName, CREATE_MODE);
+    auto* ser = new Serializer(fileName, CREATE_MODE);
 
     // Read in all the missing tables in memory
     for (unsigned int blockI = 0; blockI < _blocks.size(); ++blockI)
@@ -759,7 +756,7 @@ void TableFile::Serialize(const string& fileName)
         for (unsigned int tableI = 0; tableI < _blocks[blockI]._tables.size();
           ++tableI)
         {
-            if (&(_blocks[blockI]._tables[tableI]) == NULL)
+            if (&(_blocks[blockI]._tables[tableI]) == nullptr)
             {
                 _GetTablePtr(blockI, tableI);
             }
@@ -814,10 +811,10 @@ void TableFile::Close()
         Flush();
     }
 
-    if (_f != NULL)
+    if (_f != nullptr)
     {
         delete _f;
-        _f = NULL;
+        _f = nullptr;
     }
 
     _fileMode = NO_MODE;
@@ -891,7 +888,7 @@ void TableFile::_SetStatusInd(const string& blockName)
 void TableFile::_AddBlock(const string& blockName, Serializer* ser)
 {
 
-    Block* blockP = new Block(blockName, ser, _fileMode, _caseSense);
+    auto* blockP = new Block(blockName, ser, _fileMode, _caseSense);
 
     _blocks.push_back(blockP);
 
@@ -916,7 +913,7 @@ ISTable* TableFile::_GetTablePtr(const unsigned int blockIndex,
   const unsigned int tableIndex)
 {
 
-    if (&(_blocks[blockIndex]._tables[tableIndex]) != NULL)
+    if (&(_blocks[blockIndex]._tables[tableIndex]) != nullptr)
     {
         // Table is already in memory. Just return the pointer to it.
         return &(_blocks[blockIndex]._tables[tableIndex]);
@@ -925,7 +922,7 @@ ISTable* TableFile::_GetTablePtr(const unsigned int blockIndex,
     {
         // For write or virtual mode, there are no tables on the disk.
         if ((_fileMode == CREATE_MODE) || (_fileMode == VIRTUAL_MODE))
-            return(NULL);
+            return(nullptr);
 
         string name = _blocks[blockIndex]._tables.get_name(tableIndex);
 
@@ -1142,7 +1139,7 @@ void TableFile::_ReadFileIndexVersion0()
     }
     else
     {
-        int* bOrder = new int[numBlocks];
+        auto* bOrder = new int[numBlocks];
         for (i = 0; i < numBlocks; i++)
         {
             bOrder[bOrder2[i]] = i;
@@ -1156,7 +1153,7 @@ void TableFile::_ReadFileIndexVersion0()
 
         if (bOrder)
             delete[] bOrder; 
-        bOrder = NULL;
+        bOrder = nullptr;
     }
 
     if (tOrder2.empty())
@@ -1174,7 +1171,7 @@ void TableFile::_ReadFileIndexVersion0()
     }
     else
     {
-        int* tOrder = new int[numTables];
+        auto* tOrder = new int[numTables];
 	for (i = 0; i < numTables; i++)
         {
             tOrder[tOrder2[i]]=i;
@@ -1190,7 +1187,7 @@ void TableFile::_ReadFileIndexVersion0()
             _blocks[blockIndex].AddTable(tableName, locs[tOrder[i]]);
         }
 	if (tOrder) delete[] tOrder; 
-	tOrder = NULL;
+	tOrder = nullptr;
     }
 
 }
@@ -1200,7 +1197,7 @@ void TableFile::_WriteFileIndex(Serializer* ser,
   const vector<unsigned int>& tableLocs)
 {
 
-    if (ser == NULL)
+    if (ser == nullptr)
     {
         throw EmptyValueException("NULL ser pointer",
           "TableFile::_WriteFileIndex");
@@ -1232,7 +1229,7 @@ void TableFile::Init()
 
     _fileMode = VIRTUAL_MODE;
     _statusInd = eCLEAR_STATUS;
-    _f = NULL;
+    _f = nullptr;
 
 }
 

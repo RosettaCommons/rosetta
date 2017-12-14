@@ -100,7 +100,7 @@ main( int argc, char * argv [] )
 			if ( selected_poses.size() >= max_poses ) break;
 			std::string tag( scores_list2[i].first );
 			a_pose = core::pose::PoseOP( new core::pose::Pose() );
-			if ( native_pose == NULL ) atdiff.read_pose(tag, *a_pose);
+			if ( native_pose == nullptr ) atdiff.read_pose(tag, *a_pose);
 			else atdiff.read_pose(tag, *a_pose, *native_pose);
 			core::Size const last_rsd = a_pose->size();
 			core::Real rms = 1e99;

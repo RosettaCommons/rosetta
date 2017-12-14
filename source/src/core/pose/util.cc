@@ -368,8 +368,8 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 	int r_start = static_cast< int > ( std::floor(   static_cast< double > (last_peptide_res) /3. ) );
 	int r_end   = static_cast< int > ( std::ceil ( 2.* static_cast< double > (last_peptide_res)/3. ) );
 #else
-	int r_start = static_cast< int > ( std::floor(   last_peptide_res/3 ) );
-	int r_end   = static_cast< int > ( std::ceil ( 2*last_peptide_res/3 ) );
+	auto r_start = static_cast< int > ( std::floor(   last_peptide_res/3 ) );
+	auto r_end   = static_cast< int > ( std::ceil ( 2*last_peptide_res/3 ) );
 #endif
 
 	// If less than three total residues, reset starting residue
@@ -1908,7 +1908,7 @@ set_bb_torsion( uint torsion_id, Pose & pose, core::Size sequence_position, core
 		return;
 	}
 
-	id::MainchainTorsionType torsion_type = static_cast< id::MainchainTorsionType >(torsion_id);
+	auto torsion_type = static_cast< id::MainchainTorsionType >(torsion_id);
 
 	switch (torsion_type) {
 
@@ -1941,7 +1941,7 @@ get_bb_torsion( uint torsion_id, Pose const & pose, core::Size sequence_position
 		return carbohydrates::get_glycosidic_torsion( torsion_id, pose, sequence_position );
 	}
 
-	id::MainchainTorsionType torsion_type = static_cast< id::MainchainTorsionType >( torsion_id );
+	auto torsion_type = static_cast< id::MainchainTorsionType >( torsion_id );
 
 	switch ( torsion_type ) {
 	case id::phi_dihedral :
@@ -2000,7 +2000,7 @@ stepwise_addable_pose_residue( Size const n /*in pose numbering*/, pose::Pose co
 bool
 stepwise_addable_residue( Size const n /* in full model numbering*/, std::map< Size, std::string > const & non_standard_residue_map )
 {
-	std::map< Size, std::string >::const_iterator it = non_standard_residue_map.find( n );
+	auto it = non_standard_residue_map.find( n );
 	if ( it != non_standard_residue_map.end() && ( it->second == "HOH" || it->second == "MG" ) ) return false;
 	return true;
 }

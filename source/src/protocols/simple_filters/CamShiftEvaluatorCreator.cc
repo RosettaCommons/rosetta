@@ -79,7 +79,7 @@ void CamShiftEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & e
 
 
 	if ( option[ OptionKeys::evaluation::cam_shifts ].user() ) {
-		typedef utility::vector1< std::string > CSVector;
+		using CSVector = utility::vector1<std::string>;
 		CSVector const& cs_shifts( option[ OptionKeys::evaluation::cam_shifts ]() );
 
 		for ( auto it=cs_shifts.begin(); it!=cs_shifts.end(); ++it ) {

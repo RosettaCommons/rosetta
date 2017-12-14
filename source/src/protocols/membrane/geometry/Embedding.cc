@@ -171,7 +171,7 @@ Embedding & Embedding::operator = ( Embedding const & src ) {
 }
 
 /// @brief Destructor
-Embedding::~Embedding(){}
+Embedding::~Embedding()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 

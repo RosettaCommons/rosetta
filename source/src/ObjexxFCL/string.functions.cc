@@ -822,16 +822,16 @@ head( std::string const & s )
 /// @brief  ints of a string (e.g., allowing "5-8" to represent "5 6 7 8").
 bool
 is_ints( std::string const & s ){
-  bool string_is_ok( false );
-  ints_of( s, string_is_ok );
-  return string_is_ok;
+	bool string_is_ok( false );
+	ints_of( s, string_is_ok );
+	return string_is_ok;
 }
 
 /// @brief  ints of a string (e.g., allowing "5-8" to represent "5 6 7 8").
 std::vector< int >
 ints_of( std::string const & s ){
-  bool string_is_ok( false );
-  return ints_of( s, string_is_ok );
+	bool string_is_ok( false );
+	return ints_of( s, string_is_ok );
 }
 
 /// @brief  ints of a string (e.g., allowing "5-8" to represent "5 6 7 8").
@@ -839,37 +839,37 @@ ints_of( std::string const & s ){
 std::vector< int >
 ints_of( std::string const & s_input, bool & string_is_ok ){
 
-  std::vector< int > vals;
-  string_is_ok = false;
+	std::vector< int > vals;
+	string_is_ok = false;
 
-  std::string s( s_input );
+	std::string s( s_input );
 
-  // comma parsing:
-  while( s.find( ',' ) != std::string::npos  ){
-    std::vector< int > vals_up_to_comma = ints_of( s.substr( 0, s.find( ',' ) )  /* tag up to the comma*/ );
-    for ( unsigned n = 0; n < vals_up_to_comma.size(); n++ ) vals.push_back( vals_up_to_comma[ n ] );
-    s = s.substr( s.find( ',' )+1 ); // tag after the comma.
-  }
+	// comma parsing:
+	while ( s.find( ',' ) != std::string::npos  ) {
+		std::vector< int > vals_up_to_comma = ints_of( s.substr( 0, s.find( ',' ) )  /* tag up to the comma*/ );
+		for ( int n : vals_up_to_comma ) vals.push_back( n );
+		s = s.substr( s.find( ',' )+1 ); // tag after the comma.
+	}
 
-  size_t found_dash = s.find( "-" );
-  if ( found_dash == 0 ) found_dash = s.substr(1).find("-") + 1;
-  if ( found_dash == std::string::npos || found_dash == 0 ){
+	size_t found_dash = s.find( "-" );
+	if ( found_dash == 0 ) found_dash = s.substr(1).find("-") + 1;
+	if ( found_dash == std::string::npos || found_dash == 0 ) {
 
-    string_is_ok = is_int( s );
-    if ( string_is_ok ) vals.push_back( int_of( s ) );
+		string_is_ok = is_int( s );
+		if ( string_is_ok ) vals.push_back( int_of( s ) );
 
-  } else {
-    std::string const start_val_string = s.substr(0,found_dash  );
-    std::string const  end_val_string  = s.substr(found_dash+1, s.size() );
-    string_is_ok = is_int( start_val_string ) && is_int( end_val_string); // currently cannot process
-    if ( string_is_ok ){
-      int start_val = int_of( start_val_string );
-      int end_val = int_of( end_val_string );
-      for ( int n = start_val; n <= end_val; n++ ) vals.push_back( n );
-    }
-  }
+	} else {
+		std::string const start_val_string = s.substr(0,found_dash  );
+		std::string const  end_val_string  = s.substr(found_dash+1, s.size() );
+		string_is_ok = is_int( start_val_string ) && is_int( end_val_string); // currently cannot process
+		if ( string_is_ok ) {
+			int start_val = int_of( start_val_string );
+			int end_val = int_of( end_val_string );
+			for ( int n = start_val; n <= end_val; n++ ) vals.push_back( n );
+		}
+	}
 
-  return vals;
+	return vals;
 }
 
 

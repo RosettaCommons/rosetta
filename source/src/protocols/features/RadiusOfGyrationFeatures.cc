@@ -47,7 +47,7 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 
-RadiusOfGyrationFeatures::RadiusOfGyrationFeatures(){}
+RadiusOfGyrationFeatures::RadiusOfGyrationFeatures()= default;
 
 RadiusOfGyrationFeatures::RadiusOfGyrationFeatures( RadiusOfGyrationFeatures const & ) :
 	FeaturesReporter()

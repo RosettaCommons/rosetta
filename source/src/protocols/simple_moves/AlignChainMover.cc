@@ -55,7 +55,7 @@ AlignChainMover::AlignChainMover()
 	pose_( /* NULL */ ),
 	source_chain_( 0 ),
 	target_chain_( 0 ),
-	align_to_com_( 0 )
+	align_to_com_( false )
 {
 }
 

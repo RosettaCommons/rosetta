@@ -157,7 +157,7 @@ void attach_debugger();
 class ScaleAnnealerTemperatureOperation : public core::pack::task::operation::TaskOperation {
 
 public:
-	typedef TaskOperation parent;
+	using parent = TaskOperation;
 
 	ScaleAnnealerTemperatureOperation(
 		ScaleAnnealerTemperatureOperation const & other
@@ -165,7 +165,7 @@ public:
 		parent(),
 		scale_factor_( other.scale_factor_ )
 	{}
-	ScaleAnnealerTemperatureOperation( core::Real scale ) : scale_factor_( scale ) {}
+	explicit ScaleAnnealerTemperatureOperation( core::Real scale ) : scale_factor_( scale ) {}
 
 	~ScaleAnnealerTemperatureOperation() override = default;
 
@@ -1068,7 +1068,7 @@ IterativeOptEDriver::load_pssm_data(
 				TR.Warning << "pssm probability distribution does not sum to 1.0: " << sum << std::endl;
 				TR.Warning << "Problem on line " << linenum << " of " << pssm_file_name << std::endl;
 			}
-			pssm_data.push_back( std::make_pair( aa, pssm_prob_dist ));
+			pssm_data.emplace_back( aa, pssm_prob_dist );
 		}
 		pssm_data_.clear();
 		pssm_data_.resize( pssm_data.size() );
@@ -1791,7 +1791,7 @@ IterativeOptEDriver::score_ligand_interface( core::scoring::ScoreFunction const 
 	EnergyMap const & smap = split_pose.energies().total_energies();
 	//std::cout << "delta_scores";
 	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
-		ScoreType i = (ScoreType) ii;
+		auto i = (ScoreType) ii;
 		emap[i] -= smap[i];
 		//if( emap[i] != 0 ) std::cout << " " << name_from_score_type(i) << " " << emap[i];
 	}

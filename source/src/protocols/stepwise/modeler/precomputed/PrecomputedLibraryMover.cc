@@ -79,8 +79,7 @@ PrecomputedLibraryMover::PrecomputedLibraryMover()
 }
 
 //Destructor
-PrecomputedLibraryMover::~PrecomputedLibraryMover()
-{}
+PrecomputedLibraryMover::~PrecomputedLibraryMover() = default;
 
 void
 PrecomputedLibraryMover::initialize_from_directory( std::string const & dir_name ){

@@ -51,7 +51,7 @@ ResidueNeighborIterator &
 DenseNeighborIterator::operator = ( ResidueNeighborIterator const & src )
 {
 	debug_assert( dynamic_cast< DenseNeighborIterator const * >( &src ) );
-	DenseNeighborIterator const & my_src( static_cast< DenseNeighborIterator const & >( src ) );
+	auto const & my_src( static_cast< DenseNeighborIterator const & >( src ) );
 	pos1_ = my_src.pos1_;
 	pos2_ = my_src.pos2_;
 	table_ = my_src.table_;
@@ -166,7 +166,7 @@ ResidueNeighborConstIterator &
 DenseNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & src )
 {
 	debug_assert( dynamic_cast< DenseNeighborConstIterator const * >( &src ) );
-	DenseNeighborConstIterator const & my_src( static_cast< DenseNeighborConstIterator const & >( src ) );
+	auto const & my_src( static_cast< DenseNeighborConstIterator const & >( src ) );
 	pos1_ = my_src.pos1_;
 	pos2_ = my_src.pos2_;
 	table_ = my_src.table_;

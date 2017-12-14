@@ -85,7 +85,7 @@ get_loop_close_potential( pose::Pose const & pose,
 	if ( use_6D_potential &&
 			loop_cycle.size() == 1  /* later, we could actually generalize to handle more complex loop cycles, if we can figure out SE(3) 6D convolutions */ ) {
 		LoopClosePotentialEvaluatorCOP potential_evaluator = get_6D_trans_rot_potential_evaluator( loop_cycle, loop_fixed_cost, pose );
-		if ( potential_evaluator != 0 ) return potential_evaluator;
+		if ( potential_evaluator != nullptr ) return potential_evaluator;
 	}
 
 	// default mode -- derive a GaussianChainFunc that just depends on the distance between
@@ -121,9 +121,9 @@ get_6D_trans_rot_potential_evaluator( LoopCycle const & loop_cycle,
 	std::string database_file = basic::database::full_name( "scoring/loop_close/6D_potentials/"+tag+"/loop_"+ObjexxFCL::lead_zero_string_of( loop_length, 2 )+"/potential.txt.gz" );
 	if ( option[ score::loop_close::force_6D_potential_file ].user() ) {
 		database_file = option[ score::loop_close::force_6D_potential_file ]();
-		runtime_assert( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) != 0 );
+		runtime_assert( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) != nullptr );
 	}
-	if ( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) == 0 ) return 0;
+	if ( ScoringManager::get_instance()->get_LoopCloseSixDPotential( database_file ) == nullptr ) return nullptr;
 
 	return SixDTransRotPotentialEvaluatorCOP( new SixDTransRotPotentialEvaluator(
 		takeoff_pos, landing_pos,

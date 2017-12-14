@@ -115,7 +115,7 @@ namespace scoring {
 namespace rna {
 
 // @brief Auto-generated virtual destructor
-RNA_TorsionPotential::~RNA_TorsionPotential() {}
+RNA_TorsionPotential::~RNA_TorsionPotential() = default;
 
 RNA_TorsionPotential::RNA_TorsionPotential( RNA_EnergyMethodOptions const & options ):
 	delta_fade_( 10.0 ),

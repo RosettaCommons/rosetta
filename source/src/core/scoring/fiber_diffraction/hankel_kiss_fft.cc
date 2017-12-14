@@ -86,7 +86,7 @@ void hankel_free (
 	free( p_hankel->f0 );
 	free( p_hankel->j );
 	free( p_hankel->rp );
-	if ( p_hankel->snn != NULL ) {
+	if ( p_hankel->snn != nullptr ) {
 		free( p_hankel->snn );
 	}
 	free( p_hankel->data_in_fft );
@@ -96,7 +96,7 @@ void hankel_free (
 
 void c_mult_ip (
 	core::Real *one,
-	core::Real *two
+	const core::Real *two
 ){
 	core::Real temp;
 	temp = *one * *two - *( one + 1 ) * *( two + 1 );
@@ -170,7 +170,7 @@ void hankel_make_snn (
 	}
 	snn = p_hankel->snn = ( core::Real * ) malloc( p_hankel->n *
 		sizeof( core::Real ) );
-	if ( p_hankel->snn == NULL ) {
+	if ( p_hankel->snn == nullptr ) {
 		utility_exit_with_message( "snn malloc failed in hankel_copy" );
 	}
 
@@ -192,7 +192,7 @@ void hankel_in_machine (
 	if ( p_hankel->l <= p_hankel->lec_order ) {
 		hankel_make_snn( p_hankel );
 	} else {
-		p_hankel->snn = NULL;
+		p_hankel->snn = nullptr;
 	}
 	memset( p_hankel->f + 2 * p_hankel->n , 0 ,
 		2 * p_hankel->n * sizeof( core::Real ) );
@@ -218,7 +218,7 @@ void hankel_make_j (
 	}
 	j = p_hankel->j = ( core::Real * ) malloc( 4 * p_hankel->n *
 		sizeof( core::Real ) );
-	if ( p_hankel->j == NULL ) {
+	if ( p_hankel->j == nullptr ) {
 		utility_exit_with_message( "malloc failed in make_j");
 	}
 	factor = 2 * M_PI * p_hankel->k2 * p_hankel->alpha /
@@ -240,7 +240,7 @@ void hankel_make_rp (
 	core::Real *rp;
 
 	rp = p_hankel->rp = ( core::Real * ) malloc( p_hankel->n * sizeof( core::Real ) );
-	if ( p_hankel->rp == NULL ) {
+	if ( p_hankel->rp == nullptr ) {
 		utility_exit_with_message( "fourth malloc failed in top_hat" );
 	}
 	for ( core::Size count = 0 ; count < p_hankel->n ;
@@ -264,7 +264,7 @@ Hankel * hankel_make_input (
 	//core::Real r;
 	Hankel *p_hankel;
 	p_hankel = ( Hankel * ) malloc( sizeof( Hankel ) );
-	if ( p_hankel == NULL ) {
+	if ( p_hankel == nullptr ) {
 		utility_exit_with_message( "first malloc failed in make_input" );
 	}
 
@@ -275,20 +275,20 @@ Hankel * hankel_make_input (
 	p_hankel->l = l;
 	f = p_hankel->f = ( core::Real * ) malloc( 4 * p_hankel->n *  sizeof( core::Real ) );
 
-	if ( p_hankel->f == NULL ) {
+	if ( p_hankel->f == nullptr ) {
 		utility_exit_with_message( "Second malloc failed in make_input" );
 	}
 
 	p_hankel->f0 = ( core::Real * ) malloc( 2 * p_hankel->lec_order *
 		sizeof( core::Real ) );
-	if ( p_hankel->f0 == NULL ) {
+	if ( p_hankel->f0 == nullptr ) {
 		utility_exit_with_message( "Third malloc failed in make_input" );
 	}
 
 	memcpy( p_hankel->f0 , f0 , 2 * p_hankel->lec_order * sizeof( core::Real ) );
 
 	p_hankel->data_in_fft = ( std::complex<double> *) malloc(sizeof(std::complex<double> ) * 2 * p_hankel->n );
-	if ( p_hankel->data_in_fft == NULL ) {
+	if ( p_hankel->data_in_fft == nullptr ) {
 		utility_exit_with_message( "Fourth malloc failed in make_input" );
 	}
 	hankel_set_alpha( p_hankel );

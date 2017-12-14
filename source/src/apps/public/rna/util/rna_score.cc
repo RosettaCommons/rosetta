@@ -130,7 +130,7 @@ do_color_by_score( core::pose::Pose & pose ) {
 	DistanceSquared dsq;
 	Real weight;
 	Size path_dist;
-	typedef utility::vector1< Size > const & vect;
+	using vect = const utility::vector1<Size> &;
 
 	for ( Size m = 1; m <= pose.size(); m++ ) {
 
@@ -214,7 +214,7 @@ do_color_by_score( core::pose::Pose & pose ) {
 
 	( scorefxn )( pose );
 	for ( Size n = 1; n <= n_score_types; n++ ) {
-		ScoreType st( static_cast< ScoreType >( n ) );
+		auto st( static_cast< ScoreType >( n ) );
 		if ( scorefxn.has_nonzero_weight( st ) ) {
 			std::cout << st << ":   conventional score function " << pose.energies().total_energies()[ st ] << "   atomwise " << emap_total[ st ] << std::endl;
 		}
@@ -409,7 +409,7 @@ rna_score_test()
 
 		// for data_file, don't actually re-score, just compute rna_chem_map score for now.
 		if ( rna_data_reader.has_reactivities() ) {
-			if ( rna_chemical_mapping_energy == 0 ) rna_chemical_mapping_energy = RNA_ChemicalMappingEnergyOP( new RNA_ChemicalMappingEnergy );
+			if ( rna_chemical_mapping_energy == nullptr ) rna_chemical_mapping_energy = RNA_ChemicalMappingEnergyOP( new RNA_ChemicalMappingEnergy );
 			rna_data_reader.fill_rna_data_info( *pose );
 			pose->update_residue_neighbors();
 			s.add_energy(  "rna_chem_map",       rna_chemical_mapping_energy->calculate_energy( *pose, false /*use_low_res*/ ) );

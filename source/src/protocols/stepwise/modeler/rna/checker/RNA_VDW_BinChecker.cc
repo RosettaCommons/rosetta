@@ -68,7 +68,7 @@
 #include <sstream>
 #include <ObjexxFCL/format.hh>
 #include <set>
-#include <time.h>
+#include <ctime>
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ RNA_VDW_BinChecker::RNA_VDW_BinChecker( core::pose::Pose const & pose ):
 	align_pose_( true ),
 	include_side_chains_( true ),
 	vdw_align_res_set_( false ),
-	optimize_speed_( 1 ), // Could implement as options, similar to VDW_rep_optimize_memory_usage
+	optimize_speed_( true ), // Could implement as options, similar to VDW_rep_optimize_memory_usage
 	verbose_( TR.Debug.visible() ),
 	use_VDW_rep_pose_for_screening_( false ) //Use actual VDW_checker_pose instead of bin for screening. This mode is slow but more robust. Feb 20, 2011
 {
@@ -155,7 +155,7 @@ RNA_VDW_BinChecker::RNA_VDW_BinChecker():
 	align_pose_( true ),
 	include_side_chains_( true ),
 	vdw_align_res_set_( false ),
-	optimize_speed_( 1 ), // Could implement as options, similar to VDW_rep_optimize_memory_usage
+	optimize_speed_( true ), // Could implement as options, similar to VDW_rep_optimize_memory_usage
 	verbose_( TR.Debug.visible() ),
 	use_VDW_rep_pose_for_screening_( false ) //Use actual VDW_checker_pose instead of bin for screening. This mode is slow but more robust. Feb 20, 2011
 {
@@ -636,9 +636,9 @@ RNA_VDW_BinChecker::create_VDW_rep_screen_pose( core::pose::rna::VDW_RepScreenIn
 	std::map< core::Size, core::Size > & full_to_sub,
 	bool const verbose ) {
 
-	if ( VDW_rep_screen_info.VDW_pose == 0 ) {
+	if ( VDW_rep_screen_info.VDW_pose == nullptr ) {
 		read_in_VDW_rep_screen_pose( VDW_rep_screen_info );
-		runtime_assert( VDW_rep_screen_info.VDW_pose != 0 );
+		runtime_assert( VDW_rep_screen_info.VDW_pose != nullptr );
 	}
 	if ( align_pose_ ) {
 		utility::vector1< core::Size > const & VDW_rep_screen_align_res = VDW_rep_screen_info.VDW_align_res;
@@ -856,7 +856,7 @@ RNA_VDW_BinChecker::setup_using_user_input_VDW_pose( utility::vector1< std::stri
 
 			VDW_rep_screen_info.pose_name = All_VDW_rep_screen_pose_info[n];
 			if ( import_ID <= cached_vdw_rep_screen_info_list.size() &&
-					cached_vdw_rep_screen_info_list[ n ].VDW_pose != 0 ) { // PDB already read in through cached VDW_rep_screen_info_list
+					cached_vdw_rep_screen_info_list[ n ].VDW_pose != nullptr ) { // PDB already read in through cached VDW_rep_screen_info_list
 				VDW_rep_screen_info.VDW_pose = cached_vdw_rep_screen_info_list[ n ].VDW_pose;
 			} else {
 				read_in_VDW_rep_screen_pose( VDW_rep_screen_info );
@@ -1072,8 +1072,8 @@ RNA_VDW_BinChecker::update_VDW_screen_bin( core::pose::Pose const & pose,
 
 			Real const sum_radius = moving_atom_radius + VDW_radius - clash_dist_cutoff - max_binning_error;
 
-			int const max_bin_offset = int(  ( sum_radius + atom_bin_size_ ) / atom_bin_size_ );
-			int const min_bin_offset = int( -( sum_radius + atom_bin_size_ ) / atom_bin_size_ );
+			auto const max_bin_offset = int(  ( sum_radius + atom_bin_size_ ) / atom_bin_size_ );
+			auto const min_bin_offset = int( -( sum_radius + atom_bin_size_ ) / atom_bin_size_ );
 
 			if ( output_once == false ) {
 				output_once = true;

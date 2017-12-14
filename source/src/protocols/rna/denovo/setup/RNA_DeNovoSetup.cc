@@ -148,8 +148,7 @@ RNA_DeNovoSetup::RNA_DeNovoSetup():
 {}
 
 //Destructor
-RNA_DeNovoSetup::~RNA_DeNovoSetup()
-{}
+RNA_DeNovoSetup::~RNA_DeNovoSetup() = default;
 
 void
 RNA_DeNovoSetup::initialize_from_command_line()

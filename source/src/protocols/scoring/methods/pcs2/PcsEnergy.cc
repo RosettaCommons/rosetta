@@ -112,8 +112,7 @@ PcsEnergy::PcsEnergy(PcsEnergy const & src ):
 	// TR_PcsEnergy << " () called" << std::endl;
 }
 
-PcsEnergy::~PcsEnergy(){
-}
+PcsEnergy::~PcsEnergy()= default;
 
 /// c-tor
 PcsEnergy::PcsEnergy() :

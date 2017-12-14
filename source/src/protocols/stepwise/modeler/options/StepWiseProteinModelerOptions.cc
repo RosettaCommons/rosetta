@@ -45,9 +45,7 @@ StepWiseProteinModelerOptions::StepWiseProteinModelerOptions()
 
 /////////////////////////////////////////////////////////////////////////////////////
 //Destructor
-StepWiseProteinModelerOptions::~StepWiseProteinModelerOptions()
-{
-}
+StepWiseProteinModelerOptions::~StepWiseProteinModelerOptions() = default;
 
 /// @brief copy constructor
 StepWiseProteinModelerOptions::StepWiseProteinModelerOptions( StepWiseProteinModelerOptions const & src ) :

@@ -42,7 +42,7 @@ void
 TrieCollection::total_residue( Size total_residue_in )
 {
 	tries_.resize( total_residue_in );
-	std::fill( tries_.begin(), tries_.end(), RotamerTrieBaseOP( 0 ) );
+	std::fill( tries_.begin(), tries_.end(), RotamerTrieBaseOP( nullptr ) );
 }
 
 Size

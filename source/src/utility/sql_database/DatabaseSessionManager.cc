@@ -19,6 +19,7 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
+#include <utility/vector1.hh>
 #include <platform/types.hh>
 
 // C++ Headers

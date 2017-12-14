@@ -61,7 +61,7 @@ LigandMetalContactSelector::LigandMetalContactSelector():
 
 /// @brief Destructor.
 ///
-LigandMetalContactSelector::~LigandMetalContactSelector() {}
+LigandMetalContactSelector::~LigandMetalContactSelector() = default;
 
 /// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 LigandMetalContactSelector::LigandMetalContactSelector(LigandMetalContactSelector const & src):
@@ -91,10 +91,10 @@ LigandMetalContactSelector::apply(core::pose::Pose const & pose) const {
 	std::set<Size> input_set_tmp;
 	calculate_ligand_resnums(pose, input_set_tmp);
 
-	for ( std::set<core::Size>::const_iterator it = input_set_tmp.begin(); it != input_set_tmp.end(); ++it ) {
+	for ( unsigned long it : input_set_tmp ) {
 
 		//for(core::Size atomnum = 1; atomnum <= pose.residue(*it).natoms(); ++atomnum){
-		std::map<core::Size, utility::vector1<core::id::AtomID>> contact_map = core::util::find_metalbinding_atoms_for_complex(pose, *it, dist_cutoff_multiplier_);
+		std::map<core::Size, utility::vector1<core::id::AtomID>> contact_map = core::util::find_metalbinding_atoms_for_complex(pose, it, dist_cutoff_multiplier_);
 
 		for ( std::pair<core::Size, utility::vector1<core::id::AtomID>> contact_pair:contact_map ) {
 
@@ -128,7 +128,7 @@ LigandMetalContactSelector::parse_my_tag(
 		std::string selector_str = "";
 		try {
 			selector_str = tag->getOption< std::string >( "residue_selector" );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access option 'selector' from LigandMetalContactSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -138,7 +138,7 @@ LigandMetalContactSelector::parse_my_tag(
 		try {
 			core::select::residue_selector::ResidueSelectorCOP selector = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_str );
 			set_input_set_selector( selector );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from LigandMetalContactSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -162,7 +162,7 @@ LigandMetalContactSelector::parse_my_tag(
 	} else { // do not get input_set from ResidueSelectors but load resnums string instead
 		try {
 			set_resnum_string ( tag->getOption< std::string >( "resnums" ) );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream err_msg;
 			err_msg << "Failed to access option 'resnums' from LigandMetalContactSelector::parse_my_tag.\n";
 			err_msg << e.msg();
@@ -231,10 +231,10 @@ LigandMetalContactSelector::calculate_ligand_resnums(core::pose::Pose const & po
 	} else {
 		std::set<Size> const res_vec( core::pose::get_resnum_list( resnum_string_, pose));
 		input_set.insert(res_vec.begin(), res_vec.end());
-		for ( std::set<Size>::const_iterator it = input_set.begin(); it != input_set.end(); ++it ) {
-			if ( *it == 0 || *it > local_subset.size() ) {
+		for ( unsigned long it : input_set ) {
+			if ( it == 0 || it > local_subset.size() ) {
 				std::stringstream err_msg;
-				err_msg << "Residue " << *it <<" not found in pose!/n";
+				err_msg << "Residue " << it <<" not found in pose!/n";
 				throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 			}
 		}

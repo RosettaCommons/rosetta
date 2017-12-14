@@ -438,8 +438,8 @@ MakeLayerMover::build_layer_of_virtuals(
 		for ( int i=-(int)EXTEND[0]; i<=(int)EXTEND[0]; ++i ) {
 			for ( int j=-(int)EXTEND[1]; j<=(int)EXTEND[1]; ++j ) {
 				// find lattice anchor
-				int x_i = (int)std::floor( (i+EXTEND[0]+T_i[0])*grid[0] + 1.5 );
-				int y_i = (int)std::floor( (j+EXTEND[1]+T_i[1])*grid[1] + 1.5 );
+				auto x_i = (int)std::floor( (i+EXTEND[0]+T_i[0])*grid[0] + 1.5 );
+				auto y_i = (int)std::floor( (j+EXTEND[1]+T_i[1])*grid[1] + 1.5 );
 
 				O = posebase.residue(vrtY(x_i,y_i)).xyz("ORIG");
 

@@ -77,7 +77,7 @@ SingleResidueCenrotLibrary::SingleResidueCenrotLibrary(AA const aa)
 	}
 }
 
-SingleResidueCenrotLibrary::~SingleResidueCenrotLibrary(){}
+SingleResidueCenrotLibrary::~SingleResidueCenrotLibrary()= default;
 
 std::string SingleResidueCenrotLibrary::read_from_file(
 	utility::io::izstream & infile,

@@ -34,17 +34,17 @@ class hackLAMMover : public protocols::moves::Mover {
 public:
 	hackLAMMover(protocols::loops::Loops const & loops) : LAM(new protocols::analysis::LoopAnalyzerMover(loops, true)){}
 
-	virtual
+
 	void
-	apply(core::pose::Pose & pose ){
+	apply(core::pose::Pose & pose ) override{
 		LAM->apply(pose);
 		//set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY); //hacky way to prevent output
 		return;
 	}
 
-	virtual
+
 	std::string
-	get_name() const { return "hackLAMMover"; }
+	get_name() const override { return "hackLAMMover"; }
 
 	protocols::analysis::LoopAnalyzerMoverOP LAM;
 };

@@ -59,7 +59,7 @@ SilentFilePoseInputter::SilentFilePoseInputter()
 	tr.Debug << "Instantiate SilentFilePoseInputter" << std::endl;
 }
 
-SilentFilePoseInputter::~SilentFilePoseInputter() {}
+SilentFilePoseInputter::~SilentFilePoseInputter() = default;
 
 bool SilentFilePoseInputter::job_available_on_command_line() const
 {
@@ -151,7 +151,7 @@ void
 SilentFilePoseInputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList attributes;
 	attributes
 		+ Attr::required_attribute( "silent_files", xs_string, "Comma-separated list of silent files to use" )

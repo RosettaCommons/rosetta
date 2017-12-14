@@ -45,7 +45,7 @@ SetResidueAliasMover::SetResidueAliasMover():
 
 }
 
-SetResidueAliasMover::~SetResidueAliasMover(){}
+SetResidueAliasMover::~SetResidueAliasMover()= default;
 
 void
 SetResidueAliasMover::parse_my_tag(

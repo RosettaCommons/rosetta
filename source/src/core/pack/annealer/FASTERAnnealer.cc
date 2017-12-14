@@ -80,7 +80,7 @@ FASTERAnnealer::FASTERAnnealer(
 	}
 }
 
-FASTERAnnealer::~FASTERAnnealer() {}
+FASTERAnnealer::~FASTERAnnealer() = default;
 
 void
 FASTERAnnealer::run( )
@@ -223,7 +223,7 @@ FASTERAnnealer::sBR()
 	shuffle_sBR_rotamers();
 	int numAttemptsSinceLastCommit = 0;
 
-	int num_rotamers = static_cast< int >  (sBR_rotamers_.size());
+	auto num_rotamers = static_cast< int >  (sBR_rotamers_.size());
 
 	core::PackerEnergy last_energy = ig_->get_energy_current_state_assignment();
 	int count_sBR = 0;
@@ -394,7 +394,7 @@ FASTERAnnealer::run_quench_cycles()
 	ig_->get_current_network_state( state_on_node );
 	int count_since_last_commit( 0 );
 	int count_total( 0 );
-	int num_rotamers = static_cast< int >  (sBR_rotamers_.size());
+	auto num_rotamers = static_cast< int >  (sBR_rotamers_.size());
 
 	core::PackerEnergy deltaE, dummy, best_energy( ig_->get_energy_current_state_assignment() );
 

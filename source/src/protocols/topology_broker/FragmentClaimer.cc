@@ -72,10 +72,10 @@ FragmentClaimer::FragmentClaimer() :
 	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 }
 
-FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::string tag, weights::AbinitioMoverWeightOP weight ) :
+FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::string const & tag, weights::AbinitioMoverWeightOP weight ) :
 	TopologyClaimer( weight ),
 	mover_(std::move( mover )),
-	mover_tag_(std::move( tag )),
+	mover_tag_( tag ),
 	bInitDofs_( false ),
 	claim_right_( claims::DofClaim::CAN_INIT )
 {
@@ -83,10 +83,10 @@ FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::stri
 	runtime_assert( fragments() != nullptr );
 }
 
-FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::string tag, weights::AbinitioMoverWeightOP weight, std::string label, core::fragment::FragSetOP frags ) :
+FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::string const & tag, weights::AbinitioMoverWeightOP weight, std::string label, core::fragment::FragSetOP frags ) :
 	TopologyClaimer( weight ),
 	mover_(std::move( mover )),
-	mover_tag_(std::move( tag )),
+	mover_tag_( tag ),
 	bInitDofs_( false ),
 	claim_right_( claims::DofClaim::CAN_INIT )
 {

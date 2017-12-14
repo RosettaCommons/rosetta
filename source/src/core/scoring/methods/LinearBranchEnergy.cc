@@ -70,7 +70,7 @@ LinearBranchEnergy& LinearBranchEnergy::operator=(const LinearBranchEnergy& o) {
 	return *this;
 }
 
-LinearBranchEnergy::~LinearBranchEnergy() {}
+LinearBranchEnergy::~LinearBranchEnergy() = default;
 
 void LinearBranchEnergy::initialize(Size allowable_sequence_sep) {
 	allowable_sequence_sep_ = allowable_sequence_sep;

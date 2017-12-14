@@ -88,14 +88,14 @@ prepare_silent_struct( std::string const & out_tag,
 	using namespace protocols::stepwise::modeler::align;
 
 	Real rms( 0.0 ), rms_fill( 0.0 );
-	if ( native_pose != 0 ) {
+	if ( native_pose != nullptr ) {
 		// if built from scratch, make sure to superimpose over everything.
 		bool superimpose_over_all_instantiated_ = superimpose_over_all_instantiated || core::pose::full_model_info::check_all_residues_sampled( pose );
 		rms = superimpose_with_stepwise_aligner( pose, *native_pose, superimpose_over_all_instantiated_ );
 
 		if ( do_rms_fill_calculation ) {
 			TR <<  "Generating filled-in model for rms_fill... " << std::endl;
-			if ( full_model_pose == 0 ) full_model_pose = build_full_model( pose );
+			if ( full_model_pose == nullptr ) full_model_pose = build_full_model( pose );
 			rms_fill = superimpose_with_stepwise_aligner( *full_model_pose, *native_pose, superimpose_over_all_instantiated_ );
 		}
 	}
@@ -126,7 +126,7 @@ output_to_silent_file( std::string const & out_tag,
 	std::string const & silent_file,
 	pose::Pose const & pose ){
 	pose::Pose pose_copy = pose;
-	output_to_silent_file( out_tag, silent_file, pose_copy, 0 /*no native -- no superimpose*/ );
+	output_to_silent_file( out_tag, silent_file, pose_copy, nullptr /*no native -- no superimpose*/ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////

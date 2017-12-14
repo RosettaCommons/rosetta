@@ -18,8 +18,8 @@
 
 // Unit headers
 #include <core/conformation/symmetry/SymmData.fwd.hh>
-#include <core/conformation/symmetry/VirtualCoordinate.hh>
-#include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/symmetry/VirtualCoordinate.fwd.hh>
+#include <core/conformation/symmetry/SymDof.fwd.hh>
 #include <core/conformation/symmetry/SymSlideInfo.hh>
 
 // Utility headers
@@ -31,7 +31,7 @@
 #include <map>
 
 #include <utility/vector1.hh>
-#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzMatrix.fwd.hh>
 
 
 namespace core {
@@ -75,8 +75,8 @@ private:
 	SymSlideInfo slide_info_;
 	std::vector< std::string > slide_order_string_;
 	std::vector< std::vector< std::string > > symm_transforms_;
-	std::vector< numeric::xyzMatrix< core::Real> > rotation_matrices_;
-	std::vector< numeric::xyzMatrix< core::Real> > translation_matrices_;
+	std::vector< numeric::xyzMatrix< core::Real > > rotation_matrices_;
+	std::vector< numeric::xyzMatrix< core::Real > > translation_matrices_;
 	std::map< std::string, VirtualCoordinate > virtual_coordinates_;
 	std::map< std::string, std::pair< std::string, std::string > > jump_string_to_virtual_pair_;
 	std::map< std::string, core::Size > jump_string_to_jump_num_;
@@ -226,7 +226,7 @@ public:
 	set_score_multiply_subunit( utility::vector1< Real > & score_multiply_vector );
 
 	void
-	set_slide_info( SymSlideInfo slide_info );
+	set_slide_info( SymSlideInfo const & slide_info );
 
 	void
 	set_rotation_matrix(

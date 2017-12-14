@@ -71,7 +71,7 @@ AddSidechainConstraintsToHotspots::AddSidechainConstraintsToHotspots() :
 	coord_sdev_( 1.0 )
 { }
 
-AddSidechainConstraintsToHotspots::~AddSidechainConstraintsToHotspots() {}
+AddSidechainConstraintsToHotspots::~AddSidechainConstraintsToHotspots() = default;
 
 void
 AddSidechainConstraintsToHotspots::apply( Pose & pose )

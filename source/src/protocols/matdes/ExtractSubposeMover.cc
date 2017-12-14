@@ -75,7 +75,7 @@ ExtractSubposeMover::ExtractSubposeMover() :
 	prefix_(""),
 	suffix_(""),
 	contact_dist_(10.0),
-	extras_( 0 )
+	extras_( false )
 { }
 
 ExtractSubposeMover::ExtractSubposeMover(const ExtractSubposeMover& rval) :
@@ -104,7 +104,7 @@ ExtractSubposeMover::apply(Pose & pose) {
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 	using namespace scoring;
-	typedef vector1<Size> Sizes;
+	using Sizes = vector1<Size>;
 
 	core::pose::Pose pose_out;
 	utility::vector1<core::Size> resis;
@@ -218,7 +218,7 @@ ExtractSubposeMover::parse_my_tag( utility::tag::TagCOP tag,
 	prefix_ = tag->getOption< std::string >( "prefix", "" );
 	suffix_ = tag->getOption< std::string >( "suffix", "" );
 	contact_dist_ = tag->getOption<core::Real>("contact_dist", 10.0);
-	extras_ = tag->getOption<bool>("extras", 0 );
+	extras_ = tag->getOption<bool>("extras", false );
 
 }
 

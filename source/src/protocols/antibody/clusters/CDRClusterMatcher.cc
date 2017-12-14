@@ -29,7 +29,7 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <core/types.hh>
-#include <math.h>
+#include <cmath>
 #include <map>
 
 //Options
@@ -62,7 +62,7 @@ CDRClusterMatcher::CDRClusterMatcher(){
 
 }
 
-CDRClusterMatcher::~CDRClusterMatcher(){}
+CDRClusterMatcher::~CDRClusterMatcher()= default;
 
 void
 CDRClusterMatcher::load_center_data(){

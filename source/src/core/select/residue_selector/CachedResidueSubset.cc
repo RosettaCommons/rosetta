@@ -53,12 +53,12 @@ CachedResidueSubset::set_subset( ResidueSubsetCOP const subset, std::string cons
 ResidueSubsetCOP
 CachedResidueSubset::get_subset( std::string const & name ) const
 {
-	ResidueSubsetMap::const_iterator subset = subsets_.find( name );
+	auto subset = subsets_.find( name );
 	if ( subset == subsets_.end() ) {
 		std::stringstream msg;
 		msg << "CachedResidueSubset: No cached residue subset named " << name << " was found in the pose.  Available subsets are: ";
-		for ( ResidueSubsetMap::const_iterator s=subsets_.begin(); s!=subsets_.end(); ++s ) {
-			msg << s->first << " ";
+		for ( auto const & subset : subsets_ ) {
+			msg << subset.first << " ";
 		}
 		msg << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  msg.str() );

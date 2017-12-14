@@ -49,7 +49,7 @@ protected:
 	typedef utility::vector1< std::string > LineBuffer;
 	typedef std::map< int, LineBuffer> BufferMap;
 public:
-	SingleFileBuffer( std::string  filename, core::Size channel, core::Size&  status ) : filename_(std::move( filename )), mpi_channel_( channel ) { status = 0; };
+	SingleFileBuffer( std::string const & filename, core::Size channel, core::Size&  status ) : filename_( filename ), mpi_channel_( channel ) { status = 0; };
 	~SingleFileBuffer() override;
 	void flush( core::Size slave );
 	void store_line( core::Size slave, core::Size channel, std::string const & line );

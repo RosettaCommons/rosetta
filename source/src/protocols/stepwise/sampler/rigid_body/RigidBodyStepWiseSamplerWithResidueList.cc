@@ -17,6 +17,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueListStepWiseSampler.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSamplerWithResidueList" );
 
@@ -30,8 +31,8 @@ namespace rigid_body {
 //Constructor
 RigidBodyStepWiseSamplerWithResidueList::RigidBodyStepWiseSamplerWithResidueList( ResidueListStepWiseSamplerOP copy_dofs_rotamer,
 	RigidBodyStepWiseSamplerOP rigid_body_rotamer ):
-	copy_dofs_rotamer_( copy_dofs_rotamer ),
-	rigid_body_rotamer_( rigid_body_rotamer )
+	copy_dofs_rotamer_(std::move( copy_dofs_rotamer )),
+	rigid_body_rotamer_(std::move( rigid_body_rotamer ))
 {
 	// inner-most loop
 	add_external_loop_rotamer( copy_dofs_rotamer_ );
@@ -40,8 +41,7 @@ RigidBodyStepWiseSamplerWithResidueList::RigidBodyStepWiseSamplerWithResidueList
 }
 
 //Destructor
-RigidBodyStepWiseSamplerWithResidueList::~RigidBodyStepWiseSamplerWithResidueList()
-{}
+RigidBodyStepWiseSamplerWithResidueList::~RigidBodyStepWiseSamplerWithResidueList() = default;
 
 /// @brief Apply the current rotamer to pose
 void

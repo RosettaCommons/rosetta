@@ -173,7 +173,7 @@ BindingStrainFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new BindingStrainFilter() );
 }
 
-BindingStrainFilter::~BindingStrainFilter(){}
+BindingStrainFilter::~BindingStrainFilter()= default;
 
 protocols::filters::FilterOP
 BindingStrainFilter::clone() const{

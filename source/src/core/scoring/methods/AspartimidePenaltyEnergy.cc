@@ -107,7 +107,7 @@ AspartimidePenaltyEnergy::AspartimidePenaltyEnergy( core::Real const &penalty_va
 
 /// @brief Destructor.
 ///
-AspartimidePenaltyEnergy::~AspartimidePenaltyEnergy( ) {}
+AspartimidePenaltyEnergy::~AspartimidePenaltyEnergy( ) = default;
 
 /// @brief Copy this energy object and return an owning pointer to the copy.
 ///

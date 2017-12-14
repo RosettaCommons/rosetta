@@ -78,8 +78,7 @@ StepWiseMasterMover::StepWiseMasterMover( core::scoring::ScoreFunctionCOP scoref
 }
 
 //Destructor
-StepWiseMasterMover::~StepWiseMasterMover()
-{}
+StepWiseMasterMover::~StepWiseMasterMover() = default;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -230,8 +229,8 @@ void
 StepWiseMasterMover::initialize(){
 
 	using namespace protocols::stepwise::modeler::rna;
-	runtime_assert( scorefxn_ != 0 );
-	runtime_assert( options_  != 0 );
+	runtime_assert( scorefxn_ != nullptr );
+	runtime_assert( options_  != nullptr );
 
 	stepwise_modeler_ = setup_unified_stepwise_modeler( options_, scorefxn_ );
 	stepwise_modeler_->set_native_pose( get_native_pose() );
@@ -393,13 +392,13 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 			bool connected_by_jump = false;
 
 			// Somehow parent might not be. Might need to look for child?
-			Size attached_res = Size( start_pose.fold_tree().get_parent_residue( ii, connected_by_jump ) );
+			auto attached_res = Size( start_pose.fold_tree().get_parent_residue( ii, connected_by_jump ) );
 
 			TR << "Found an attached res POSSIBLY connected by a jump: " << attached_res << std::endl;
 			if ( !connected_by_jump ) {
 				for ( Size jj = 1; jj <= start_pose.size(); ++jj ) {
 					bool connected_by_jump2 = false;
-					Size const possibly_ii = Size( start_pose.fold_tree().get_parent_residue( jj, connected_by_jump2 ) );
+					auto const possibly_ii = Size( start_pose.fold_tree().get_parent_residue( jj, connected_by_jump2 ) );
 					if ( ii == possibly_ii ) {
 						connected_by_jump = connected_by_jump2;
 						attached_res = jj;

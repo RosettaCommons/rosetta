@@ -61,9 +61,9 @@ Mover::Mover()
 
 Mover::~Mover()= default;
 
-Mover::Mover( std::string  type_name ) :
+Mover::Mover( std::string const & type_name ) :
 	utility::pointer::ReferenceCount(),
-	type_(std::move( type_name )),
+	type_( type_name ),
 	current_tag_( "NoTag" ),
 	input_pose_(/* 0 */),
 	native_pose_(/* 0 */),

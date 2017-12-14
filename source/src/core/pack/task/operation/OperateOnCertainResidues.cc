@@ -29,6 +29,7 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -56,8 +57,8 @@ OperateOnCertainResidues::OperateOnCertainResidues(
 	ResFilterOP filter
 )
 : parent(),
-	op_( rlto ),
-	filter_( filter )
+	op_(std::move( rlto )),
+	filter_(std::move( filter ))
 {}
 
 OperateOnCertainResidues::OperateOnCertainResidues( OperateOnCertainResidues const & src )
@@ -77,7 +78,7 @@ OperateOnCertainResidues::operator = ( OperateOnCertainResidues const & src )
 	return *this;
 }
 
-OperateOnCertainResidues::~OperateOnCertainResidues() {}
+OperateOnCertainResidues::~OperateOnCertainResidues() = default;
 
 TaskOperationOP OperateOnCertainResidues::clone() const
 {
@@ -113,13 +114,13 @@ void OperateOnCertainResidues::residue_indices( utility::vector1< Size > const &
 
 void OperateOnCertainResidues::op( ResLvlTaskOperationCOP op_in )
 {
-	runtime_assert( op_in != 0 );
+	runtime_assert( op_in != nullptr );
 	op_ = op_in->clone();
 }
 
 void OperateOnCertainResidues::filter( ResFilterCOP filter_in )
 {
-	runtime_assert( filter_in != 0 );
+	runtime_assert( filter_in != nullptr );
 	filter_ = filter_in->clone();
 }
 

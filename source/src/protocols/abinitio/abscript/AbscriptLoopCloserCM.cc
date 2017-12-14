@@ -56,6 +56,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
@@ -107,10 +108,9 @@ AbscriptLoopCloserCM::AbscriptLoopCloserCM():
 AbscriptLoopCloserCM::AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
 	core::scoring::ScoreFunctionOP scorefxn ):
 	Parent(),
-	fragset_( fragset ),
-	scorefxn_( scorefxn ),
-	selector_( new core::select::residue_selector::TrueResidueSelector() ),
-	bUpdateMM_( true )
+	fragset_(std::move( fragset )),
+	scorefxn_(std::move( scorefxn )),
+	selector_( new core::select::residue_selector::TrueResidueSelector() )
 {}
 
 claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const&,

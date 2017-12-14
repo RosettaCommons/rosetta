@@ -43,8 +43,7 @@ FlexbbRotamerSet::FlexbbRotamerSet() :
 	owner_( /* 0 */ )
 {}
 
-FlexbbRotamerSet::~FlexbbRotamerSet()
-{}
+FlexbbRotamerSet::~FlexbbRotamerSet() = default;
 
 void
 FlexbbRotamerSet::set_owner( FlexbbRotamerSetsCAP owner )

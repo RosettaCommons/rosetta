@@ -43,6 +43,7 @@
 #include <string>
 
 //Auto Headers
+#include <utility>
 #include <utility/vector1.hh>
 using namespace core;
 using core::Real;
@@ -73,8 +74,7 @@ StepWiseProteinMinimizer::StepWiseProteinMinimizer( utility::vector1< pose::Pose
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWiseProteinMinimizer::~StepWiseProteinMinimizer()
-{}
+StepWiseProteinMinimizer::~StepWiseProteinMinimizer() = default;
 
 /////////////////////
 std::string
@@ -113,7 +113,7 @@ StepWiseProteinMinimizer::apply( core::pose::Pose & pose )
 
 	utility::vector1< std::pair<core::Size,core::Size> > disulfides;
 	core::conformation::disulfide_bonds(pose.conformation(), disulfides);
-	runtime_assert( fa_scorefxn_ != 0 );
+	runtime_assert( fa_scorefxn_ != nullptr );
 
 	CartesianMinimizer cart_minimizer;
 	AtomTreeMinimizer minimizer;

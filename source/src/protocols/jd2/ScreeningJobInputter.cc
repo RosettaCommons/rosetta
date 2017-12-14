@@ -71,10 +71,7 @@ ScreeningJobInputterCreator::create_JobInputter() const {
 }
 
 
-ScreeningJobInputter::ScreeningJobInputter()
-{
-
-}
+ScreeningJobInputter::ScreeningJobInputter() = default;
 
 ScreeningJobInputter::~ScreeningJobInputter() = default;
 

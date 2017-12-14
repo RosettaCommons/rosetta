@@ -242,7 +242,7 @@ void Splice::copy_stretch(core::pose::Pose & target, core::pose::Pose const & so
 		target.dump_pdb(mover_name_+ "before_copy_stretch_llc_test.pdb" );
 	}
 	if ( segment_type_=="H3" || segment_type_=="L3" ) {
-		llc.tail(1);
+		llc.tail(true);
 	}
 
 	llc.apply(target);
@@ -420,7 +420,7 @@ core::Size Splice::find_dbase_entry(core::pose::Pose const & pose) {
 	} else if ( dbase_entry == 0 ) { // fi dbase_iterate
 		if ( database_pdb_entry_ == "" ) { //randomize dbase entry
 			TR << "The dbase_subset size is " << dbase_subset_.size() << std::endl;
-			core::Size entry_no_to_choose = (core::Size) (numeric::random::rg().uniform() * dbase_subset_.size() + 1);
+			auto entry_no_to_choose = (core::Size) (numeric::random::rg().uniform() * dbase_subset_.size() + 1);
 			if ( dbase_subset_.size() == 0 ) {
 				//if ( debug_)
 				pose.dump_pdb( mover_name_ + "db_size_0.pdb" );
@@ -890,11 +890,11 @@ void Splice::apply(core::pose::Pose & pose) {
 	if ( boost::iequals(tail_segment_, "c") ) {
 		llc.loop_start(find_nearest_disulfide(pose,from_res())+1);
 		if ( segment_type_=="L3" ) {
-			llc.tail(1);
+			llc.tail(true);
 			llc.loop_end(vl_vh_cut);
 		} else if ( segment_type_=="H3" ) {
 			core::conformation::Conformation const & conf(pose.conformation());
-			llc.tail(1);
+			llc.tail(true);
 			llc.loop_end(conf.chain_end(1));//Asuming that the ligand is chain 2;
 		} else {
 			utility_exit_with_message("Attempting to copy c-ter tail stretch from source PDB but segment type is not H3 or L3. Failing\n");
@@ -1337,7 +1337,7 @@ void Splice::apply(core::pose::Pose & pose) {
 				utility_exit_with_message("Source pdb tail must be at least the same length as the template PDB\n");
 			}
 
-			for ( int i = (int) tail_start; i <= (int) tail_end; ++i ) {
+			for ( auto i = (int) tail_start; i <= (int) tail_end; ++i ) {
 				/// Feed the source_pose dofs into the BBDofs array
 				BBDofs residue_dofs;
 				//TR<<"Copying the following dihedral angles from source pdb:"<< std::endl;
@@ -1465,7 +1465,7 @@ void Splice::apply(core::pose::Pose & pose) {
 
 			PackerTaskOP ptask = tf_in->create_task_and_apply_taskoperations(pose);
 			protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
-			utility::vector1<core::Size> Repackable_residues = residue_packer_states(pose, tf_in, 0, 1);
+			utility::vector1<core::Size> Repackable_residues = residue_packer_states(pose, tf_in, false, true);
 			TR << "Residues Allowed to Repack: "<< std::endl;
 			for ( utility::vector1<core::Size>::const_iterator i(Repackable_residues.begin());
 					i != Repackable_residues.end(); ++i ) {
@@ -1854,7 +1854,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 			"You are using Splice flags \"segment=\" or \"protein_family\" without the other, they both must be used!\n");
 	}
 	skip_alignment( tag->getOption< bool >( "skip_alignment", false ) );
-	typedef utility::vector1<std::string> StringVec;
+	using StringVec = utility::vector1<std::string>;
 	//that the sequence profile is built according to the user (eg. vl, L3, vh, H3)
 	if ( !sub_tags.empty() ) { //subtags are used to assign CDR PSSMs and to
 		for ( TagCOP const sub_tag : sub_tags ) {
@@ -1900,7 +1900,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 				} //foreach segment_tag
 			} // fi Segments
 			if ( sub_tag->getName() == "DB" ) {
-				check_segment=1; //so not to fail following sanity check
+				check_segment=true; //so not to fail following sanity check
 				utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
 				for ( TagCOP const segment_tag : segment_tags ) {
 					std::string const segment_name( segment_tag->getName() );
@@ -2003,7 +2003,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 		source_pdb(tag->getOption<std::string>("source_pdb"));
 	}
 
-	ccd(tag->getOption<bool>("ccd", 1));
+	ccd(tag->getOption<bool>("ccd", true));
 	//dihedral_const(tag->getOption< core::Real >( "dihedral_const", 0 ) );//Added by gideonla Apr13, set here any real posiive value to impose dihedral constraints on loop
 	//coor_const(tag->getOption< core::Real >( "coor_const", 0 ) );//Added by gideonla May13, set here any real to impose coordinate constraint on loop
 	design_shell(tag->getOption<core::Real>("design_shell", 6.0)); //Added by gideonla May13,

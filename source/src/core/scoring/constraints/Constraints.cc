@@ -43,7 +43,7 @@ namespace scoring {
 namespace constraints {
 
 /// @details Auto-generated virtual destructor
-Constraints::~Constraints() {}
+Constraints::~Constraints() = default;
 
 Constraints::Constraints():
 	constraints_() // make cppcheck happy
@@ -86,18 +86,16 @@ Constraints::operator = ( Constraints const & rhs )
 // call the setup_for_derivatives for each constraint
 void
 Constraints::setup_for_scoring( func::XYZ_Func const & xyz, ScoreFunction const &scfxn ) const {
-	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
-			it != ite; ++it ) {
-		(*it)->setup_for_scoring( xyz, scfxn );
+	for ( auto const & constraint : constraints_ ) {
+		constraint->setup_for_scoring( xyz, scfxn );
 	}
 }
 
 // call the setup_for_derivatives for each constraint
 void
 Constraints::setup_for_derivatives( func::XYZ_Func const & xyz, ScoreFunction const &scfxn ) const {
-	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
-			it != ite; ++it ) {
-		(*it)->setup_for_derivatives( xyz, scfxn );
+	for ( auto const & constraint : constraints_ ) {
+		constraint->setup_for_derivatives( xyz, scfxn );
 	}
 }
 
@@ -112,9 +110,8 @@ Constraints::eval_intrares_atom_derivative(
 ) const
 {
 	func::ResidueXYZ resxyz( residue );
-	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
-			it != ite; ++it ) {
-		Constraint const & cst( **it );
+	for ( auto const & constraint : constraints_ ) {
+		Constraint const & cst( *constraint );
 		Vector f1(0.0), f2(0.0);
 		cst.fill_f1_f2( atom_id, resxyz, f1, f2, weights );
 		F1 += f1;
@@ -133,9 +130,8 @@ Constraints::eval_respair_atom_derivative(
 ) const
 {
 	func::ResiduePairXYZ respairxyz( residue1, residue2 );
-	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
-			it != ite; ++it ) {
-		Constraint const & cst( **it );
+	for ( auto const & constraint : constraints_ ) {
+		Constraint const & cst( *constraint );
 		Vector f1(0.0), f2(0.0);
 		cst.fill_f1_f2( atom_id, respairxyz, f1, f2, weights );
 		F1 += f1;
@@ -153,9 +149,8 @@ Constraints::eval_ws_atom_derivative(
 ) const
 {
 	func::ConformationXYZ confxyz( conformation );
-	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
-			it != ite; ++it ) {
-		Constraint const & cst( **it );
+	for ( auto const & constraint : constraints_ ) {
+		Constraint const & cst( *constraint );
 		Vector f1(0.0), f2(0.0);
 		cst.fill_f1_f2( atom_id, confxyz, f1, f2, weights );
 		F1 += f1;
@@ -174,8 +169,8 @@ Constraints::energy(
 	EnergyMap & emap
 ) const
 {
-	for ( ConstraintCOPs::const_iterator it=constraints_.begin(), ite = constraints_.end(); it != ite; ++it ) {
-		Constraint const & cst( **it );
+	for ( auto const & constraint : constraints_ ) {
+		Constraint const & cst( *constraint );
 		cst.score( xyz_func, weights, emap );
 		//cst.show( std::cout );
 	}
@@ -243,7 +238,7 @@ Constraints::remove_constraint(
 {
 
 	if ( object_comparison ) {
-		for ( ConstraintCOPs::iterator cst_it = constraints_.begin(), cst_end = constraints_.end(); cst_it != cst_end; ++cst_it ) {
+		for ( auto cst_it = constraints_.begin(), cst_end = constraints_.end(); cst_it != cst_end; ++cst_it ) {
 
 			if ( *cst == **cst_it ) {
 				constraints_.erase( cst_it );
@@ -253,7 +248,7 @@ Constraints::remove_constraint(
 		return false;
 	}
 
-	ConstraintCOPs::iterator where = std::find( constraints_.begin(), constraints_.end(), cst );
+	auto where = std::find( constraints_.begin(), constraints_.end(), cst );
 	if ( where == constraints_.end() ) return false;
 	constraints_.erase( where );
 	return true;
@@ -274,10 +269,8 @@ Constraints::show_definition(
 	std::ostream & out,
 	pose::Pose const & pose
 ) const {
-	for ( ConstraintCOPs::const_iterator it=constraints_.begin(), ite = constraints_.end();
-			it != ite;
-			++it ) {
-		Constraint const & cst( **it );
+	for ( auto const & constraint : constraints_ ) {
+		Constraint const & cst( *constraint );
 		cst.show_def( out, pose );
 	}
 }
@@ -333,10 +326,8 @@ Constraints::copy_from( Constraints const & other ) {
 	// all of the pointers from the other constraints_ array into this one.
 	constraints_.clear();
 	constraints_.reserve( other.constraints_.size() );
-	for ( ConstraintCOPs::const_iterator
-			iter = other.constraints_.begin(), iter_end = other.constraints_.end();
-			iter != iter_end; ++iter ) {
-		constraints_.push_back( (*iter) );
+	for ( auto const & constraint : other.constraints_ ) {
+		constraints_.push_back( constraint );
 	}
 }
 
@@ -347,10 +338,8 @@ Constraints::deep_copy_from( Constraints const & other ) {
 	// all of the constraints from the other constraints_ array into this one.
 	constraints_.clear();
 	constraints_.reserve( other.constraints_.size() );
-	for ( ConstraintCOPs::const_iterator
-			iter = other.constraints_.begin(), iter_end = other.constraints_.end();
-			iter != iter_end; ++iter ) {
-		constraints_.push_back( (*iter)->clone() );
+	for ( auto const & constraint : other.constraints_ ) {
+		constraints_.push_back( constraint->clone() );
 	}
 }
 

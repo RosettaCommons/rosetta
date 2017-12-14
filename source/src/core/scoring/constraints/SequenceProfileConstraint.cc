@@ -22,6 +22,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/file/file_sys_util.hh> // file_exists, create_directory
 
 #include <basic/options/option.hh>
@@ -80,8 +81,8 @@ SequenceProfileConstraint::SequenceProfileConstraint(
 ):
 	Constraint( res_type_constraint ),
 	seqpos_( seqpos ),
-	sequence_profile_( profile ),
-	mapping_( mapping ),
+	sequence_profile_(std::move( profile )),
+	mapping_(std::move( mapping )),
 	weight_( 1.0 )
 {}
 
@@ -92,12 +93,12 @@ SequenceProfileConstraint::SequenceProfileConstraint(
 ):
 	Constraint( res_type_constraint ),
 	seqpos_( seqpos ),
-	sequence_profile_( sequence_profile ),
-	mapping_( mapping ),
+	sequence_profile_(std::move( sequence_profile )),
+	mapping_(std::move( mapping )),
 	weight_( 1.0 )
 {}
 
-SequenceProfileConstraint::~SequenceProfileConstraint() {}
+SequenceProfileConstraint::~SequenceProfileConstraint() = default;
 
 ConstraintOP
 SequenceProfileConstraint::clone() const {
@@ -108,7 +109,7 @@ bool SequenceProfileConstraint::operator == ( Constraint const & rhs ) const {
 	if ( ! same_type_as_me( rhs ) ) return false;
 	if ( ! rhs.same_type_as_me( *this ) ) return false;
 
-	SequenceProfileConstraint const & rhs_spc( static_cast< SequenceProfileConstraint const & > (rhs) );
+	auto const & rhs_spc( static_cast< SequenceProfileConstraint const & > (rhs) );
 	if ( seqpos_ != rhs_spc.seqpos_ ) return false;
 	if ( sequence_profile_ != rhs_spc.sequence_profile_ && !( *sequence_profile_ == *rhs_spc.sequence_profile_ ) ) return false;
 	if ( mapping_ != rhs_spc.mapping_ && ! ( *mapping_ == *rhs_spc.mapping_ ) ) return false;
@@ -150,12 +151,12 @@ SequenceProfileConstraint::read_def(
 		if ( ! sequence_profile_ )  {
 			SequenceProfileOP newseqprof( new SequenceProfile );
 			sequence_profile_ = newseqprof;
-			mapping_ = NULL;
+			mapping_ = nullptr;
 		}
 		seqpos_ = residue_index;
 		const_cast<SequenceProfile * >(sequence_profile_.get())->prof_row( aa_scores, residue_index );
 	} else {
-		Size residue_index(boost::lexical_cast<Size>(version));
+		auto residue_index(boost::lexical_cast<Size>(version));
 		std::string profile_filename;
 
 		is >> profile_filename;
@@ -189,7 +190,7 @@ SequenceProfileConstraint::read_def(
 			SequenceProfileOP newseqprof( new SequenceProfile );
 			newseqprof->read_from_checkpoint( FileName(profile_filename) );
 			sequence_profile_ = newseqprof;
-			mapping_ = NULL; // Reset mapping
+			mapping_ = nullptr; // Reset mapping
 		}
 
 		// if sequence_profile_ is still NULL by this point, it is assumed that the user intended so
@@ -211,7 +212,7 @@ SequenceProfileConstraint::show( std::ostream & os ) const {
 			profile_pos = (*mapping_)[seqpos_];
 			if ( profile_pos == 0 ) return; // safety/relevance check
 		}
-		typedef utility::vector1<Real> RealVec;
+		using RealVec = utility::vector1<Real>;
 		//if( profile_pos == 1 )
 		//   os << "SequenceProfile start" << std::endl;
 
@@ -252,7 +253,7 @@ SequenceProfileConstraint::remap_resid(
 	SequenceMapping const & seqmap
 ) const {
 	Size newseqpos( seqmap[ seqpos_ ] );
-	if ( newseqpos == 0 ) { return NULL; }
+	if ( newseqpos == 0 ) { return nullptr; }
 
 	TR(t_debug) << "Remapping resid " << seqpos_ << " to " << newseqpos << std::endl;
 
@@ -278,7 +279,7 @@ SequenceProfileConstraint::remapped_clone(
 	// Hereafter map is valid
 	Size newseqpos( (*map)[ seqpos_ ] );
 
-	if ( newseqpos == 0 ) { return NULL; }
+	if ( newseqpos == 0 ) { return nullptr; }
 
 	TR(t_debug) << "Remapping resid " << seqpos_ << " to " << newseqpos << std::endl;
 
@@ -316,7 +317,7 @@ SequenceProfileConstraint::score(
 
 core::Real
 SequenceProfileConstraint::dist( chemical::AA aa ) const {
-	runtime_assert( sequence_profile_ != 0 );
+	runtime_assert( sequence_profile_ != nullptr );
 
 	core::Size profile_pos( seqpos_ );
 	if ( mapping_ ) {
@@ -356,8 +357,8 @@ SequenceProfileConstraint::fill_f1_f2(
 	// the torsions.
 }
 
-SequenceProfileConstraintCreator::SequenceProfileConstraintCreator() {}
-SequenceProfileConstraintCreator::~SequenceProfileConstraintCreator() {}
+SequenceProfileConstraintCreator::SequenceProfileConstraintCreator() = default;
+SequenceProfileConstraintCreator::~SequenceProfileConstraintCreator() = default;
 
 core::scoring::constraints::ConstraintOP
 SequenceProfileConstraintCreator::create_constraint() const

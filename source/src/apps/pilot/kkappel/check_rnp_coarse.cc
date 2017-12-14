@@ -99,7 +99,7 @@ void check_structures() {
 
 	// Make a new residue
 	core::conformation::Residue rsd = pose.residue( 70 ); // totally random for testing
-	core::conformation::ResidueOP new_rsd( 0 );
+	core::conformation::ResidueOP new_rsd( nullptr );
 	core::chemical::ResidueType const & new_rsd_type( rsd_set->name_map(rsd.name()) );
 	new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
 

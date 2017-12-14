@@ -54,7 +54,7 @@ static basic::Tracer tr( "protocols.evaluator.EvaluatorFactory" );
 
 
 /// @details Private constructor insures correctness of singleton.
-EvaluatorFactory::EvaluatorFactory() {}
+EvaluatorFactory::EvaluatorFactory() = default;
 
 EvaluatorFactory::~EvaluatorFactory() = default;
 

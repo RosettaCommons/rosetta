@@ -155,16 +155,16 @@ WorkUnit_LoopHash::run()
 		it->add_energy( "state", 1 );
 
 		if ( option[ OptionKeys::lh::bss]() ) {
-			const core::io::silent::BinarySilentStruct *pss2 = dynamic_cast< const core::io::silent::BinarySilentStruct* > ( ss2 );
-			core::io::silent::BinarySilentStruct *pss = dynamic_cast< core::io::silent::BinarySilentStruct* > ( ss );
+			const auto *pss2 = dynamic_cast< const core::io::silent::BinarySilentStruct* > ( ss2 );
+			auto *pss = dynamic_cast< core::io::silent::BinarySilentStruct* > ( ss );
 			if ( (pss != nullptr) && (pss2 != nullptr) ) {
 				TR.Debug << "LoophashResult: " << pss->CA_rmsd( *pss2 ) << "  " <<  pss->get_energy("censcore") << std::endl;
 			} else {
 				TR << "LoophashResult: ERROR, dynamic cast to BSS failed"  << std::endl;
 			}
 		} else {
-			const core::io::silent::ProteinSilentStruct *pss2 = dynamic_cast< const core::io::silent::ProteinSilentStruct* > ( ss2 );
-			core::io::silent::ProteinSilentStruct *pss = dynamic_cast< core::io::silent::ProteinSilentStruct* > ( ss );
+			const auto *pss2 = dynamic_cast< const core::io::silent::ProteinSilentStruct* > ( ss2 );
+			auto *pss = dynamic_cast< core::io::silent::ProteinSilentStruct* > ( ss );
 			if ( (pss != nullptr) && (pss2 != nullptr) ) {
 				TR.Debug << "LoophashResult: " << pss->CA_rmsd( *pss2 ) << "  " <<  pss->get_energy("censcore") << std::endl;
 			} else {

@@ -101,13 +101,13 @@ RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		Size repeatCount =option[OptionKeys::remodel::repeat_structure];
 		for ( Size rep = 0; rep < repeatCount ; rep++ ) {
-			for ( std::set< Size >::iterator it = uup.begin(); it != uup.end(); ++it ) {
+			for ( unsigned long it : uup ) {
 				//DEBUG
 				//std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
 				//std::cout << "manger size"  << working_model.manager.union_of_intervals_containing_undefined_positions().size() <<  std::endl;
 				//std::cout << *it  << std::endl;
-				if ( !(*it+remodel_data.blueprint.size()*rep > (remodel_data.blueprint.size()*repeatCount)) ) { //Extrapolation of positions shouldn't go beyond the length of pose
-					und_pos.insert(*it + remodel_data.blueprint.size()*rep);
+				if ( !(it+remodel_data.blueprint.size()*rep > (remodel_data.blueprint.size()*repeatCount)) ) { //Extrapolation of positions shouldn't go beyond the length of pose
+					und_pos.insert(it + remodel_data.blueprint.size()*rep);
 				}
 			}
 		}
@@ -117,8 +117,8 @@ RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
 	}
 
 	TR << "Creating NeighborhoodByDistanceCalculator using und_pos: [ ";
-	for ( std::set< Size >::iterator itr = und_pos.begin(), end = und_pos.end(); itr != end; ++itr ) {
-		TR << *itr << " ";
+	for ( unsigned long und_po : und_pos ) {
+		TR << und_po << " ";
 	}
 	TR << "]" << std::endl;
 
@@ -131,7 +131,7 @@ RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
 }
 
 /// @brief default destructor
-RemodelDesignMover::~RemodelDesignMover(){}
+RemodelDesignMover::~RemodelDesignMover()= default;
 
 /// @brief clone this object
 RemodelDesignMover::MoverOP RemodelDesignMover::clone() const {
@@ -282,16 +282,16 @@ void RemodelDesignMover::run_calculator( core::pose::Pose const & pose, std::str
 	runtime_assert( residues.size() == pose.size() );
 
 	// find the set of residues
-	typedef std::set< core::Size > SizeSet;
+	using SizeSet = std::set<core::Size>;
 	basic::MetricValue< SizeSet > mv_sizeset;
 	pose.metric( calculator, calculation, mv_sizeset );
 	SizeSet const & sizeset( mv_sizeset.value() );
 	//TR << "runCalculator " << std::endl;
 
 	// insert this into the vector
-	for ( SizeSet::const_iterator it(sizeset.begin()), end(sizeset.end()) ; it != end; ++it ) {
+	for ( unsigned long it : sizeset ) {
 		//TR << *it <<  " debug run_calc " << std::endl;
-		residues[*it] = true;
+		residues[it] = true;
 	}
 
 	return;
@@ -347,8 +347,8 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	if ( option[OptionKeys::remodel::resclass_by_sasa]() ) {
 		//simply repackage the values so either metric can feed into the code
 		int count = 1 ;
-		for ( utility::vector1< core::Real >::iterator it = sasa_list.begin(), ite = sasa_list.end(); it != ite ; ++it ) {
-			sizemap[count] = Size(*it);
+		for ( double & it : sasa_list ) {
+			sizemap[count] = Size(it);
 			count++;
 		}
 	} else {
@@ -357,8 +357,8 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 	TR.Debug << "sizemap content " << sizemap.size() << std::endl;
 
-	for ( std::map< core::Size, core::Size>::iterator it= sizemap.begin(), end = sizemap.end(); it != end; ++it ) {
-		TR.Debug << "neighborlist " << (*it).first << " " <<  (*it).second << std::endl;
+	for ( auto & it : sizemap ) {
+		TR.Debug << "neighborlist " << it.first << " " <<  it.second << std::endl;
 	}
 
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
@@ -486,22 +486,20 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 	//borrow RESFILE command for the job -- save a lot of coding effort.
 	if ( core ) {
-		for ( utility::vector1<Size>::iterator it= corePos.begin(), end=corePos.end(); it!=end; ++it ) {
+		for ( unsigned long resid : corePos ) {
 			ResfileCommandOP command( new core::pack::task::APOLAR );
 			utility::vector1<std::string> decoy;
 			decoy.push_back("APOLAR");
-			Size resid = *it;
 			TR << "APOLAR " << resid << std::endl;
 			Size whichtoken = 1;
 			command->initialize_from_tokens(decoy, whichtoken, resid );
 			command->residue_action(*task, resid); //not sure about this token thing...
 		}
 	} else {
-		for ( utility::vector1<Size>::iterator it= corePos.begin(), end=corePos.end(); it!=end; ++it ) {
+		for ( unsigned long resid : corePos ) {
 			ResfileCommandOP command( new core::pack::task::NATRO );
 			utility::vector1<std::string> decoy;
 			decoy.push_back("NATRO");
-			Size resid = *it;
 			TR << "NATRO " <<  "(" << pose.residue(resid).name() << ")"<<  std::endl;
 			Size whichtoken = 1;
 			command->initialize_from_tokens(decoy, whichtoken, resid );
@@ -510,22 +508,20 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	}
 
 	if ( boundary ) {
-		for ( utility::vector1<Size>::iterator it= boundaryPos.begin(), end=boundaryPos.end(); it!=end; ++it ) {
+		for ( unsigned long resid : boundaryPos ) {
 			ResfileCommandOP command( new core::pack::task::ALLAAxc ); //note! no cys
 			utility::vector1<std::string> decoy;
 			decoy.push_back("ALLAAxc");
-			Size resid = *it;
 			TR << "ALLAAxc " << resid << std::endl;
 			Size whichtoken = 1;
 			command->initialize_from_tokens( decoy, whichtoken, resid);
 			command->residue_action(*task, resid); //not sure about this token thing...
 		}
 	} else {
-		for ( utility::vector1<Size>::iterator it= boundaryPos.begin(), end=boundaryPos.end(); it!=end; ++it ) {
+		for ( unsigned long resid : boundaryPos ) {
 			ResfileCommandOP command( new core::pack::task::NATRO );
 			utility::vector1<std::string> decoy;
 			decoy.push_back("NATRO");
-			Size resid = *it;
 			TR << "NATRO " << resid << "(" << pose.residue(resid).name() << ")" << std::endl;
 			Size whichtoken = 1;
 			command->initialize_from_tokens( decoy, whichtoken, resid);
@@ -535,22 +531,20 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 
 	if ( surface ) {
-		for ( utility::vector1<Size>::iterator it= surfPos.begin(), end=surfPos.end(); it!=end; ++it ) {
+		for ( unsigned long resid : surfPos ) {
 			ResfileCommandOP command( new core::pack::task::POLAR );
 			utility::vector1<std::string> decoy;
 			decoy.push_back("POLAR");
-			Size resid = *it;
 			TR << "POLAR " << resid << std::endl;
 			Size whichtoken = 1;
 			command->initialize_from_tokens(decoy, whichtoken, resid);
 			command->residue_action( *task, resid); //not sure about this token thing...
 		}
 	} else {
-		for ( utility::vector1<Size>::iterator it= surfPos.begin(), end=surfPos.end(); it!=end; ++it ) {
+		for ( unsigned long resid : surfPos ) {
 			ResfileCommandOP command( new core::pack::task::NATRO );
 			utility::vector1<std::string> decoy;
 			decoy.push_back("NATRO");
-			Size resid = *it;
 			TR << "NATRO " << resid << " (" << pose.residue(resid).name() << ")" << std::endl;
 			Size whichtoken = 1;
 			command->initialize_from_tokens(decoy, whichtoken, resid);
@@ -582,7 +576,7 @@ core::Real build_and_score_disulfide(core::pose::Pose & blank_pose, core::scorin
 	//make_disulfide(blank_pose, disulf, mm);
 
 	core::conformation::form_disulfide(blank_pose.conformation(), res1, res2);
-	core::util:: rebuild_disulfide(blank_pose, res1,res2, NULL /*task*/, NULL /*scfxn*/, mm, NULL /*min scfxn*/);
+	core::util:: rebuild_disulfide(blank_pose, res1,res2, nullptr /*task*/, nullptr /*scfxn*/, mm, nullptr /*min scfxn*/);
 
 	core::Real const score = (*sfxn)(blank_pose) * 0.50;
 	//sfxn->show( TR, blank_pose );
@@ -603,7 +597,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	using core::scoring::disulfides::DisulfideMatchingPotential;
 	using namespace core::chemical;
 
-	bool pass=0;
+	bool pass=false;
 
 	DisulfideMatchingPotential disulfPot;
 	core::Energy  match_t;
@@ -653,16 +647,16 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	// manual overwrite of the disulfide mobile range
 	if ( remodel_data_.disulfMobileRange.size() != 0 ) {
 		Size i = 1;
-		for ( utility::vector1_bool::iterator itr = modeled_clusters.begin(), end = modeled_clusters.end(); itr != end; ++itr ) {
+		for ( auto && modeled_cluster : modeled_clusters ) {
 
-			*itr = false;
+			modeled_cluster = false;
 			if ( i == remodel_data_.disulfMobileRange[0] ) {
-				*itr = true;
+				modeled_cluster = true;
 				TR << "Use disulf mobile range start: " << i << std::endl;
 			} else if ( i > remodel_data_.disulfMobileRange[0] && i < remodel_data_.disulfMobileRange[1] ) {
-				*itr = true;
+				modeled_cluster = true;
 			} else if ( i == remodel_data_.disulfMobileRange[1] ) {
-				*itr = true;
+				modeled_cluster = true;
 				TR << "Use disulf mobile range stop: " << i << std::endl;
 			}
 			i++;
@@ -689,14 +683,14 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	}
 
 	TR << "central residues: ";
-	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; ++itr ) {
-		TR << *itr << ",";
+	for ( unsigned long & cen_re : cen_res ) {
+		TR << cen_re << ",";
 	}
 	TR << std::endl;
 
 	TR << "neighbor residues: ";
-	for ( utility::vector1<Size>::iterator itr = nbr_res.begin(), end=nbr_res.end(); itr!=end; ++itr ) {
-		TR <<  *itr << ",";
+	for ( unsigned long & nbr_re : nbr_res ) {
+		TR <<  nbr_re << ",";
 	}
 	TR << std::endl;
 
@@ -712,8 +706,8 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
 
 
-	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; ++itr ) {
-		for ( utility::vector1<Size>::iterator itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; ++itr2 ) {
+	for ( auto itr = cen_res.begin(), end=cen_res.end(); itr!=end; ++itr ) {
+		for ( auto itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; ++itr2 ) {
 			if ( (nbr_res != cen_res || (*itr2 > (*itr + rosetta_scripts_min_loop))) &&
 					std::abs( core::SSize(*itr2 - *itr) )  > std::abs( core::SSize(rosetta_scripts_min_loop) ) &&
 					(*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
@@ -749,7 +743,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 
 
-									pass = 1;
+									pass = true;
 								} else {
 									if ( rosetta_scripts_include_current_ds && pose.residue(*itr).is_bonded(pose.residue(*itr2)) ) {
 										TR << "DISULF \tIncluding pre-existing disulfide despite failed disulf_fa_max check." << std::endl;
@@ -793,7 +787,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 
 
-									pass = 1;
+									pass = true;
 								} else {
 									if ( rosetta_scripts_include_current_ds && pose.residue(*itr).is_bonded(pose.residue(*itr2)) ) {
 										TR << "DISULF \tIncluding pre-existing disulfide despite failed match_rt_limit check." << std::endl;
@@ -831,19 +825,19 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 void RemodelDesignMover::make_disulfide(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, core::kinematics::MoveMapOP mm){
 	//utility::vector1<std::pair<Size,Size>> dummy_vector;
-	for ( utility::vector1<std::pair<Size,Size> >::iterator itr = disulf_partners.begin(), end = disulf_partners.end(); itr != end; ++itr ) {
-		core::conformation::form_disulfide(pose.conformation(), (*itr).first, (*itr).second );
-		core::util:: rebuild_disulfide(pose, (*itr).first, (*itr).second, NULL /*task*/, NULL /*scfxn*/, mm, NULL /*min scfxn*/);
-		TR << "build_disulf between " << (*itr).first << " and " << (*itr).second << std::endl;
+	for ( auto & disulf_partner : disulf_partners ) {
+		core::conformation::form_disulfide(pose.conformation(), disulf_partner.first, disulf_partner.second );
+		core::util:: rebuild_disulfide(pose, disulf_partner.first, disulf_partner.second, nullptr /*task*/, nullptr /*scfxn*/, mm, nullptr /*min scfxn*/);
+		TR << "build_disulf between " << disulf_partner.first << " and " << disulf_partner.second << std::endl;
 		// pose.dump_pdb("disulf.pdb");
 	}
 }
 
 void RemodelDesignMover::make_disulfide_fast(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners){
 	//utility::vector1<std::pair<Size,Size>> dummy_vector;
-	for ( utility::vector1<std::pair<Size,Size> >::iterator itr = disulf_partners.begin(), end = disulf_partners.end(); itr != end; ++itr ) {
-		core::conformation::form_disulfide(pose.conformation(), (*itr).first, (*itr).second );
-		TR << "build_disulf between " << (*itr).first << " and " << (*itr).second << std::endl;
+	for ( auto & disulf_partner : disulf_partners ) {
+		core::conformation::form_disulfide(pose.conformation(), disulf_partner.first, disulf_partner.second );
+		TR << "build_disulf between " << disulf_partner.first << " and " << disulf_partner.second << std::endl;
 	}
 }
 
@@ -1058,7 +1052,7 @@ void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto desi
 	for ( Size i = 1; i<= Size(additional_sites.size()); ++i ) {
 		TR.Debug << "neighbors sites: " << additional_sites[i]<< " at " << i << std::endl;
 		if ( i > asym_length ) {
-			additional_sites[i] = 0;
+			additional_sites[i] = false;
 		}
 	}
 

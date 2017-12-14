@@ -49,12 +49,12 @@ RotamerLibrarySpecificationFactory::has_type( std::string const & selector_type 
 
 RotamerLibrarySpecificationCreatorCOP
 RotamerLibrarySpecificationFactory::get_creator( std::string const & tag ) const {
-	CreatorMap::const_iterator entry( creator_map_.find( tag ) );
+	auto entry( creator_map_.find( tag ) );
 	if ( entry == creator_map_.end() ) {
 		TR << "Can't find RotamerLibrarySpecificationCreators of type " << tag << ". Known types are: " << std::endl;
 		TR << "\t";
-		for ( CreatorMap::const_iterator iter( creator_map_.begin() ), iter_end( creator_map_.end() ); iter != iter_end; ++iter ) {
-			TR << iter->first << ", ";
+		for ( auto const & iter : creator_map_ ) {
+			TR << iter.first << ", ";
 		}
 		TR << std::endl;
 		utility_exit_with_message("Cannot find RotamerLibrarySpecification of type " + tag );
@@ -73,8 +73,7 @@ RotamerLibrarySpecificationFactory::get( std::string const & tag, std::istream &
 }
 
 
-RotamerLibrarySpecificationFactory::RotamerLibrarySpecificationFactory()
-{}
+RotamerLibrarySpecificationFactory::RotamerLibrarySpecificationFactory() = default;
 
 } //namespace rotamers
 } //namespace chemical

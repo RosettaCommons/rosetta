@@ -29,7 +29,7 @@ namespace core {
 namespace sequence {
 
 /// @brief ctor
-ScoringScheme::ScoringScheme() {}
+ScoringScheme::ScoringScheme() = default;
 
 /// @brief dtor
 ScoringScheme::~ScoringScheme() = default;

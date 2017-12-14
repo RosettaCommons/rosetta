@@ -17,10 +17,10 @@
 
 
 #include <numeric/types.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <cmath>
+//#include <cmath>
 #include <complex>
 
 

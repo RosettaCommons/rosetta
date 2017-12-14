@@ -106,7 +106,7 @@ NetChargeEnergy::NetChargeEnergy( NetChargeEnergy const &src ) :
 
 /// @brief Default destructor.
 ///
-NetChargeEnergy::~NetChargeEnergy() {}
+NetChargeEnergy::~NetChargeEnergy() = default;
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.

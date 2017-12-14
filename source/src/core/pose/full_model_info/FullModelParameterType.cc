@@ -31,7 +31,7 @@ std::map< FullModelParameterType, std::string> full_model_parameter_type_name;
 void
 initialize_parameters( FullModelParameters & full_model_parameters ){
 	for ( Size n = 1; n < LAST_TYPE; n++ ) {
-		FullModelParameterType type = static_cast< FullModelParameterType >( n );
+		auto type = static_cast< FullModelParameterType >( n );
 		full_model_parameters.set_parameter_as_res_list( type,           utility::vector1< Size >() );
 	}
 	utility::vector1< Size > working_res;

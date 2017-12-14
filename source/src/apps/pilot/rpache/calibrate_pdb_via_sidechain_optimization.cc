@@ -148,7 +148,7 @@ my_main( void* )
 	out << "total_energy_before_calibration: " << starting_total_energy << std::endl;
 	out << "total_energy_after_calibration: " << last_total_energy << std::endl;
 
-	return 0;
+	return nullptr;
 }
 
 int

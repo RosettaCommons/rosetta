@@ -35,8 +35,7 @@
 namespace protocols {
 namespace motifs {
 
-MotifLibrary::MotifLibrary()
-{}
+MotifLibrary::MotifLibrary() = default;
 
 MotifLibrary::~MotifLibrary() = default;
 

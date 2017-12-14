@@ -43,16 +43,16 @@ extern "C" {
 
 namespace cppdb {
 
-	typedef backend::static_driver::connect_function_type connect_function_type;
+	using connect_function_type = backend::static_driver::connect_function_type;
 
 	class so_driver : public backend::loadable_driver {
 	public:
 		so_driver(std::string const &name,std::vector<std::string> const &so_list) :
-			connect_(0)
+			connect_(nullptr)
 		{
 			std::string symbol_name = "cppdb_" + name + "_get_connection";
-			for(unsigned i=0;i<so_list.size();i++) {
-				so_ = shared_object::open(so_list[i]);
+			for(const auto & i : so_list) {
+				so_ = shared_object::open(i);
 				if(so_) {
 					so_->safe_resolve(symbol_name,connect_);
 					break;
@@ -62,7 +62,7 @@ namespace cppdb {
 				throw cppdb_error("cppdb::driver failed to load driver " + name + " - no module found");
 			}
 		}
-		virtual backend::connection *open(connection_info const &ci)
+		backend::connection *open(connection_info const &ci) override
 		{
 			return connect_(ci);
 		}
@@ -165,9 +165,9 @@ namespace cppdb {
 			std::string so_name1 = CPPDB_LIBRARY_PREFIX "cppdb_" + conn.driver + CPPDB_LIBRARY_SUFFIX_V1;
 			std::string so_name2 = CPPDB_LIBRARY_PREFIX "cppdb_" + conn.driver + CPPDB_LIBRARY_SUFFIX_V2;
 
-			for(unsigned i=0;i<search_paths.size();i++) {
-				so_names.push_back(search_paths[i]+"/" + so_name1);
-				so_names.push_back(search_paths[i]+"/" + so_name2);
+			for(const auto & search_path : search_paths) {
+				so_names.push_back(search_path+"/" + so_name1);
+				so_names.push_back(search_path+"/" + so_name2);
 			}
 			if(!no_default_directory_) {
 				so_names.push_back(so_name1);
@@ -194,8 +194,7 @@ namespace cppdb {
 // Borland erros on hidden destructors in classes without only static methods.
 #ifndef __BORLANDC__
 	driver_manager::~driver_manager()
-	{
-	}
+	= default;
 #endif
 	
 	void driver_manager::add_search_path(std::string const &p)

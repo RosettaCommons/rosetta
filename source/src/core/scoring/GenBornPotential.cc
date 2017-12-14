@@ -421,7 +421,7 @@ GenBornPotential::update_residue_for_packing(
 	pose::Pose & pose,
 	Size const seqpos
 ) const {
-	GenBornPoseInfo & gb_info( static_cast< GenBornPoseInfo & >( pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) );
+	auto & gb_info( static_cast< GenBornPoseInfo & >( pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) );
 	GenBornResidueInfo & gb( gb_info.residue_info( seqpos ) );
 
 	Residue const & rsd( pose.residue( seqpos ) );
@@ -464,7 +464,7 @@ GenBornPotential::get_rotamers_born_radii(
 	using core::conformation::RotamerSetCacheableDataType::GEN_BORN_ROTAMER_SET_INFO;
 
 	// this holds placeholders, info for non-packed residues
-	GenBornPoseInfo const & gb_info_pose
+	auto const & gb_info_pose
 		( static_cast< GenBornPoseInfo const & >(pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO )));
 
 	// this will get cached in the rotamer set
@@ -662,7 +662,7 @@ GenBornPotential::eval_atom_derivative(
 
 	Size const i( id.rsd() ), ii( id.atomno() );
 
-	GenBornPoseInfo const & gb_info( static_cast< GenBornPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO)));
+	auto const & gb_info( static_cast< GenBornPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO)));
 
 	Residue const & rsd1( pose.residue( i ) );
 	GenBornResidueInfo const & gb1( gb_info.residue_info( i ) );

@@ -49,21 +49,11 @@ CopyRotamerMover::CopyRotamerMover():
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
-CopyRotamerMover::CopyRotamerMover(
-	CopyRotamerMover const & src
-):
-	protocols::moves::Mover( src ),
-	template_res_index_(src.template_res_index_),
-	target_res_index_(src.target_res_index_),
-	copy_identity_(src.copy_identity_),
-	copy_torsions_(src.copy_torsions_)
-	//copy_bondangles_(src.copy_bondangles_),
-	//copy_bondlengths_(src.copy_bondlengths_)
-{}
+CopyRotamerMover::CopyRotamerMover( CopyRotamerMover const & /*src*/ ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-CopyRotamerMover::~CopyRotamerMover(){}
+CopyRotamerMover::~CopyRotamerMover()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

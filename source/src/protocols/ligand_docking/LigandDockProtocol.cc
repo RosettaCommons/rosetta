@@ -135,7 +135,7 @@ LigandDockProtocol::LigandDockProtocol():
 }
 
 LigandDockProtocol::LigandDockProtocol(
-	std::string  protocol,
+	std::string const & protocol,
 	bool const minimize_ligand,
 	bool const minimize_backbone,
 	bool const tether_ligand,
@@ -146,7 +146,7 @@ LigandDockProtocol::LigandDockProtocol(
 	core::Size const ligand_shear_moves
 ):
 	LigandBaseProtocol(),
-	protocol_(std::move(protocol)),
+	protocol_(protocol),
 	minimize_ligand_(minimize_ligand),
 	minimize_backbone_(minimize_backbone),
 	tether_ligand_(tether_ligand),
@@ -657,7 +657,7 @@ LigandDockProtocol::optimize_orientation3(
 
 	if ( !perfect_rsds.empty() ) {
 		// Found multiple diverse and high-quality poses.  Choose one at random.
-		core::Size which_perfect = (core::Size) numeric::random::rg().random_range(1, perfect_rsds.size());
+		auto which_perfect = (core::Size) numeric::random::rg().random_range(1, perfect_rsds.size());
 		// If we have constraints, take the perfect pose with the best constraint score
 		if ( score_csts ) {
 			core::Real min_cstscore = 1e99;
@@ -807,7 +807,7 @@ LigandDockProtocol::append_ligand_docking_scores(
 
 	// Interface delta, broken down by component
 	for ( int i = 1; i <= n_score_types; ++i ) {
-		ScoreType ii = ScoreType(i);
+		auto ii = ScoreType(i);
 		if ( !scorefxn->has_nonzero_weight(ii) ) continue;
 		scores[ "if_"+name_from_score_type(ii) ] = ( scorefxn->get_weight(ii) * (together_energies[ii] - separated_energies[ii]) );
 	}

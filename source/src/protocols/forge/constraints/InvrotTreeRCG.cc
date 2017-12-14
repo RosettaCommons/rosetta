@@ -29,6 +29,7 @@
 
 // utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -85,11 +86,11 @@ InvrotTreeRCG::InvrotTreeRCG(
 	toolbox::match_enzdes_util::InvrotTreeOP invrot_tree,
 	toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP geomcst_seqpos
 )
-: invrot_tree_(invrot_tree),
-	geomcst_seqpos_(geomcst_seqpos)
+: invrot_tree_(std::move(invrot_tree)),
+	geomcst_seqpos_(std::move(geomcst_seqpos))
 {}
 
-InvrotTreeRCG::~InvrotTreeRCG(){}
+InvrotTreeRCG::~InvrotTreeRCG()= default;
 
 void
 InvrotTreeRCG::parse_my_tag( TagCOP const tag,
@@ -135,9 +136,9 @@ InvrotTreeRCG::apply( core::pose::Pose & pose )
 	init( pose );
 	setup_align_pose_->apply( pose );
 
-	runtime_assert( invrot_tree_ != 0 );
-	runtime_assert( geomcst_seqpos_ != 0 );
-	runtime_assert( setup_align_pose_ != 0 );
+	runtime_assert( invrot_tree_ != nullptr );
+	runtime_assert( geomcst_seqpos_ != nullptr );
+	runtime_assert( setup_align_pose_ != nullptr );
 
 	//tr << "now id=" << id() << std::endl;
 	// generate and add constraints

@@ -24,6 +24,7 @@
 
 // Numceric Headers
 #include <numeric/xyzVector.hh>
+#include <utility>
 
 namespace core {
 namespace scoring {
@@ -42,10 +43,10 @@ LKBTrieEvaluator::LKBTrieEvaluator(
 	wt_lk_ball_bridge_(wt_lk_ball_bridge),
 	wt_lk_ball_bridge_uncpl_(wt_lk_ball_bridge_uncpl),
 	lkb_(lkb),
-	etable_(etable)
+	etable_(std::move(etable))
 {}
 
-LKBTrieEvaluator::~LKBTrieEvaluator() {}
+LKBTrieEvaluator::~LKBTrieEvaluator() = default;
 
 Energy
 LKBTrieEvaluator::heavyatom_heavyatom_energy(

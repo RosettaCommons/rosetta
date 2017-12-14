@@ -21,9 +21,8 @@
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
-#include <utility/file/FileName.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 #include <platform/types.hh>
 

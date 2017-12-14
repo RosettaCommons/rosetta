@@ -219,7 +219,7 @@ private: // data
 	Real const safe_max_dis2_;
 	Real const get_bins_per_A2_;
 
-	bool const verbose_;
+	//bool const verbose_;
 
 	// Used only when cmputing derivatives.
 	mutable Real fa_weight_;

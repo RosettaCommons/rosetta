@@ -71,9 +71,9 @@ DumpPdb::DumpPdb():
 	addtime_(false)
 {}
 
-DumpPdb::DumpPdb( std::string  fname ) :
+DumpPdb::DumpPdb( std::string const & fname ) :
 	protocols::moves::Mover( DumpPdb::mover_name() ),
-	fname_(std::move(fname)),
+	fname_(fname),
 	scorefxn_(/* 0 */),
 	addtime_(false)
 {}

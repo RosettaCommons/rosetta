@@ -38,12 +38,12 @@
 
 static basic::Tracer TR( "make_blueprint" );
 
-typedef core::Size Size;
-typedef std::string String;
+using Size = core::Size;
+using String = std::string;
 
 class ThisApplication  {
 public:
-	ThisApplication(){};
+	ThisApplication()= default;
 	static void register_options();
 };
 

@@ -206,7 +206,7 @@ bool FibrilModelingClaimer::allow_claim( claims::DofClaim const& foreign_claim )
 
 
 		// check foreign claim
-		claims::BBClaim const *bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
+		auto const *bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
 		if ( bb_ptr ) {
 			if ( ! symminfo_->bb_is_independent( bb_ptr->global_position() ) ) return false;
 		} // DofClaim::BB

@@ -196,7 +196,7 @@ RampingMover::RampingMover(
 	mc_(std::move( mc_in ))
 {
 	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
-		core::scoring::ScoreType iist = (core::scoring::ScoreType) ii;
+		auto iist = (core::scoring::ScoreType) ii;
 		if ( start_weights_[ iist ] != end_weights_[ iist ] ) {
 			ramping_funcs_for_weights_[ iist ] = protocols::moves::RampingFuncCOP( protocols::moves::RampingFuncOP( new LinearFunc ) );
 		}
@@ -281,8 +281,8 @@ RampingMover::parse_my_tag(
 		}
 		ramp_one_weight_ = true;
 
-		core::Real start_weight(tag->getOption<core::Real>("start_weight"));
-		core::Real end_weight(tag->getOption<core::Real>("end_weight"));
+		auto start_weight(tag->getOption<core::Real>("start_weight"));
+		auto end_weight(tag->getOption<core::Real>("end_weight"));
 		std::string score_type(tag->getOption<std::string>("score_type"));
 		std::string ramping_func(tag->getOption<std::string>("ramp_func"));
 
@@ -325,8 +325,8 @@ RampingMover::parse_my_tag(
 			if ( ! tag_ptr->hasOption("ramp_func") ) {
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Ramping mover Add statement requires the ramp_func option");
 			}
-			core::Real start_weight(tag_ptr->getOption<core::Real>("start_weight"));
-			core::Real end_weight(tag_ptr->getOption<core::Real>("end_weight"));
+			auto start_weight(tag_ptr->getOption<core::Real>("start_weight"));
+			auto end_weight(tag_ptr->getOption<core::Real>("end_weight"));
 			std::string score_type(tag_ptr->getOption<std::string>("score_type"));
 			std::string ramping_func(tag_ptr->getOption<std::string>("ramp_func"));
 
@@ -411,7 +411,7 @@ RampingMover::update_weights( int round )
 	core::Real progress = ((core::Real) round) / outer_cycles_;
 	intermediate_weights_ = start_weights_;
 	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
-		core::scoring::ScoreType iist = (core::scoring::ScoreType) ii;
+		auto iist = (core::scoring::ScoreType) ii;
 		if ( ! ramping_funcs_for_weights_[ ii ] ) continue;
 		core::Real const alpha = ramping_funcs_for_weights_[ ii ]->func( progress );
 		core::Real const beta =  1 - alpha;
@@ -425,7 +425,7 @@ void
 RampingMover::set_weights( core::scoring::EnergyMap const & emap )
 {
 	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
-		core::scoring::ScoreType iist = (core::scoring::ScoreType) ii;
+		auto iist = (core::scoring::ScoreType) ii;
 		scorefxn_->set_weight( iist, emap[ iist ] );
 		if ( emap[ iist ] == 0.0 ) continue;
 		//T.Debug("protocols.moves.RampingMover") << iist << " " << emap[ iist ] << " ";
@@ -441,16 +441,16 @@ RampingMover::instantiate_rampfunc(
 {
 
 	if ( func_name == "geometric" ) {
-		core::Real xval_at_0p5 = tag_ptr->getOption< core::Real >( "xval_at_0p5", 0.75 );
+		auto xval_at_0p5 = tag_ptr->getOption< core::Real >( "xval_at_0p5", 0.75 );
 		return RampingFuncOP( new GeometricFunc( xval_at_0p5 ) );
 	} else if ( func_name == "linear" ) {
 		return RampingFuncOP( new LinearFunc );
 	} else if ( func_name == "fast_linear" ) {
-		core::Real xval_start_ramp = tag_ptr->getOption<core::Real>("xval_start_ramp",0.0);
-		core::Real xval_end_ramp = tag_ptr->getOption<core::Real>("xval_end_ramp",1.0);
+		auto xval_start_ramp = tag_ptr->getOption<core::Real>("xval_start_ramp",0.0);
+		auto xval_end_ramp = tag_ptr->getOption<core::Real>("xval_end_ramp",1.0);
 		return RampingFuncOP( new FastLinearFunc( xval_start_ramp, xval_end_ramp ) );
 	} else if ( func_name == "inverse_geometric" ) {
-		core::Real xval_at_0p5 = tag_ptr->getOption<core::Real>("xval_at_0p5",0.75);
+		auto xval_at_0p5 = tag_ptr->getOption<core::Real>("xval_at_0p5",0.75);
 		return RampingFuncOP( new InvGeometricFunc( xval_at_0p5 ) );
 	} else {
 		utility_exit_with_message("option ramping_func in RampingMover must be: geometric, linear, fast_linear, or inverse_geometric");

@@ -72,11 +72,7 @@ RandomConformers::RandomConformers():
 	Mover("RandomConformers")
 {}
 
-RandomConformers::RandomConformers(RandomConformers const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	chain_(that.chain_)
-{}
+RandomConformers::RandomConformers(RandomConformers const & /*that*/) = default;
 
 RandomConformers::~RandomConformers() = default;
 

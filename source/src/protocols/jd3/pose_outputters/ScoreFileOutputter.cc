@@ -40,7 +40,7 @@ namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
 
-ScoreFileOutputter::ScoreFileOutputter() {}
+ScoreFileOutputter::ScoreFileOutputter() = default;
 
 ScoreFileOutputter::~ScoreFileOutputter() { flush(); }
 
@@ -60,9 +60,9 @@ ScoreFileOutputter::outputter_for_job(
 	PoseOutputSpecification const & spec
 ) const
 {
-	typedef ScoreFileOutputSpecification SFOP;
+	using SFOP = ScoreFileOutputSpecification;
 	debug_assert( dynamic_cast< SFOP const * > ( &spec ) );
-	SFOP const & sf_spec( static_cast< SFOP const & > (spec) );
+	auto const & sf_spec( static_cast< SFOP const & > (spec) );
 	return sf_spec.out_fname();
 }
 
@@ -105,12 +105,12 @@ ScoreFileOutputter::write_output(
 {
 	using standard::PoseJobResult;
 	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
-	PoseJobResult const & pose_result( static_cast< PoseJobResult const &  > ( result ));
+	auto const & pose_result( static_cast< PoseJobResult const &  > ( result ));
 	core::pose::Pose const & pose( *pose_result.pose() );
 
-	typedef ScoreFileOutputSpecification SFOS;
+	using SFOS = ScoreFileOutputSpecification;
 	debug_assert( dynamic_cast< SFOS const * > ( &spec ) );
-	SFOS const & sfspec( static_cast< SFOS const & > ( spec ) );
+	auto const & sfspec( static_cast< SFOS const & > ( spec ) );
 	core::io::raw_data::ScoreFileData sfd( sfspec.out_fname() );
 
 	std::map < std::string, core::Real > score_map;

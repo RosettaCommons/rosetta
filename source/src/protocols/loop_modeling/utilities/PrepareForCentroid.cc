@@ -36,7 +36,7 @@ namespace utilities {
 // XRW TEMP  return "PrepareForCentroid";
 // XRW TEMP }
 
-PrepareForCentroid::PrepareForCentroid() {}
+PrepareForCentroid::PrepareForCentroid() = default;
 
 bool PrepareForCentroid::do_apply(Pose & pose) {
 	using core::util::switch_to_residue_type_set;

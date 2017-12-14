@@ -187,15 +187,15 @@ double TricubicSpline::F( const double x, const double y, const double z) const
 	}
 
 	//determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0] for the correct supporting points
-	int i( int( floor( ( x-start_[ 0]) / delta_[ 0])));
+	auto i( int( floor( ( x-start_[ 0]) / delta_[ 0])));
 	while ( start_[ 0] + i * delta_[ 0] < x ) i++;
 
 	//determine j with start_[ 1]+(i-1)*delta_[ 1] < y < start_[ 1]+i*delta_[ 1] for the correct supporting points
-	int j( int( floor( ( y-start_[ 1]) / delta_[ 1])));
+	auto j( int( floor( ( y-start_[ 1]) / delta_[ 1])));
 	while ( start_[ 1] + j * delta_[ 1] < y ) j++;
 
 	// determine k with start_[ 2]+(k-1)*delta_z < z < start_[ 2]+k*delta_z for the correct supporting points
-	int k( int( floor( ( z - start_[ 2]) / delta_[ 2])));
+	auto k( int( floor( ( z - start_[ 2]) / delta_[ 2])));
 	while ( start_[ 2] + k * delta_[ 2] < z ) k++;
 
 	// this formula was derived from the Spline2D formula
@@ -315,15 +315,15 @@ double TricubicSpline::dFdx( const double x, const double y, const double z) con
 	}
 
 	//determine i with start_+(i-1)*delta_ < x < start_+i*delta_ for the correct supporting points
-	int i( int( floor( ( x - start_[ 0]) / delta_[ 0])));
+	auto i( int( floor( ( x - start_[ 0]) / delta_[ 0])));
 	while ( start_[ 0] + i * delta_[ 0] < x ) i++;
 
 	//the same for j
-	int j( int( floor( ( y-start_[ 1]) / delta_[ 1])));
+	auto j( int( floor( ( y-start_[ 1]) / delta_[ 1])));
 	while ( start_[ 1] + j * delta_[ 1] < y ) j++;
 
 	//the same for k
-	int k( int( floor( ( z - start_[ 2]) / delta_[ 2])));
+	auto k( int( floor( ( z - start_[ 2]) / delta_[ 2])));
 	while ( start_[ 2] + k * delta_[ 2] < z ) k++;
 
 	const double delta_aktx( x - start_[ 0] - ( i - 1) * delta_[ 0]);
@@ -445,17 +445,17 @@ double TricubicSpline::dFdy( const double x, const double y, const double z) con
 
 	//determine i with start_[ 0]+(i-1)*delta_[ 0] < x < start_[ 0]+i*delta_[ 0]
 	//for the correct supporting points
-	int i( int( floor( ( x - start_[ 0]) / delta_[ 0])));
+	auto i( int( floor( ( x - start_[ 0]) / delta_[ 0])));
 	while ( start_[ 0] + i * delta_[ 0] < x ) i++;
 
 	//determine j with start_[ 1]+(j-1)*delta_[ 1] < y < start_[ 1]+j*delta_[ 1]
 	//for the correct supporting points
-	int j( int( floor( ( y - start_[ 1]) / delta_[ 1])));
+	auto j( int( floor( ( y - start_[ 1]) / delta_[ 1])));
 	while ( start_[ 1] + j * delta_[ 1] < y ) j++;
 
 	//determine k with start_[ 2]+(k-1)*delta_[ 2] < z < start_[ 2]+k*delta_[ 2]
 	//for the correct supporting points
-	int k( int( floor( ( z - start_[ 2]) / delta_[ 2])));
+	auto k( int( floor( ( z - start_[ 2]) / delta_[ 2])));
 	while ( start_[ 2] + k * delta_[ 2] < z ) k++;
 
 	//generate some auxiliary variables
@@ -578,15 +578,15 @@ double TricubicSpline::dFdz( const double x, const double y, const double z) con
 	}
 
 	//determine i with start_+(i-1)*delta_ < x < start_+i*delta_ for the correct supporting points
-	int i( int( floor( ( x - start_[ 0]) / delta_[ 0])));
+	auto i( int( floor( ( x - start_[ 0]) / delta_[ 0])));
 	while ( start_[ 0] + i * delta_[ 0] < x ) i++;
 
 	//the same for j and y
-	int j( int( floor( ( y - start_[ 1]) / delta_[ 1])));
+	auto j( int( floor( ( y - start_[ 1]) / delta_[ 1])));
 	while ( start_[ 1] + j * delta_[ 1] < y ) j++;
 
 	//the same for k and z
-	int k( int( floor( ( z - start_[ 2]) / delta_[ 2])));
+	auto k( int( floor( ( z - start_[ 2]) / delta_[ 2])));
 	while ( start_[ 2] + k * delta_[ 2] < z ) k++;
 
 	//generate some auxiliary variables

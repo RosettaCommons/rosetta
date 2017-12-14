@@ -16,7 +16,7 @@
 namespace basic {
 namespace datacache {
 
-WriteableCacheableDataCreator::WriteableCacheableDataCreator() {}
+WriteableCacheableDataCreator::WriteableCacheableDataCreator() = default;
 WriteableCacheableDataCreator::~WriteableCacheableDataCreator() = default;
 
 } //namespace datacache

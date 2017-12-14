@@ -55,8 +55,7 @@ EulerAngles::EulerAngles( numeric::xyzMatrix< core::Real > const & rotation_matr
 }
 
 //Destructor
-EulerAngles::~EulerAngles()
-{}
+EulerAngles::~EulerAngles() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

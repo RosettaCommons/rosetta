@@ -51,7 +51,7 @@ using namespace core::chemical;
 static basic::Tracer trProfScoreBlosum62(
 	"protocols.frag_picker.scores.ProfileScoreBlosum62");
 
-ProfileScoreBlosum62::~ProfileScoreBlosum62() {}
+ProfileScoreBlosum62::~ProfileScoreBlosum62() = default;
 
 ProfileScoreBlosum62::ProfileScoreBlosum62(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	core::sequence::SequenceProfileOP query_profile, core::Size longest_vall_chunk) :

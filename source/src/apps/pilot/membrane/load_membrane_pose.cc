@@ -62,10 +62,10 @@ public:
 	LoadMembraneMover() : Mover() {}
 
 	/// @brief Get Mover Name
-	std::string get_name() const { return "LoadMembraneMover"; }
+	std::string get_name() const override { return "LoadMembraneMover"; }
 
 	/// @brief Apply Membrane Relax
-	void apply( Pose & pose ) {
+	void apply( Pose & pose ) override {
 
 		using namespace protocols::membrane;
 		using namespace protocols::moves;
@@ -99,7 +99,7 @@ public:
 	}
 };
 
-typedef utility::pointer::shared_ptr< LoadMembraneMover > LoadMembraneMoverOP;
+using LoadMembraneMoverOP = utility::pointer::shared_ptr<LoadMembraneMover>;
 
 /// @brief Main method
 int

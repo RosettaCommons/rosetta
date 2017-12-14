@@ -87,8 +87,7 @@ ExposedHydrophobicsFilter::ExposedHydrophobicsFilter() :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-ExposedHydrophobicsFilter::~ExposedHydrophobicsFilter()
-{}
+ExposedHydrophobicsFilter::~ExposedHydrophobicsFilter() = default;
 
 
 /// Return a copy of ourselves

@@ -29,6 +29,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/chemical/AA.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.rna.denovo.libraries.ChunkSet" );
 
@@ -69,7 +70,7 @@ ChunkSet::ChunkSet(
 }
 
 ///////////////////////////////////////////////////////////////////////
-ChunkSet::~ChunkSet() {}
+ChunkSet::~ChunkSet() = default;
 
 ///////////////////////////////////////////////////////////////////////
 void
@@ -273,7 +274,7 @@ ChunkSet::filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::At
 		AtomID const & target_atom_id = elem.first;
 		AtomID const & source_atom_id = elem.second;
 
-		std::map< AtomID, bool >::const_iterator it_mask = atom_id_mask_.find( source_atom_id );
+		auto it_mask = atom_id_mask_.find( source_atom_id );
 
 		if ( it_mask == atom_id_mask_.end() ) utility_exit_with_message( "Some problem with atom_id_mask in defining atom_id_map " );
 

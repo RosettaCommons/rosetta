@@ -127,7 +127,7 @@ void PiPiCalculator::recompute(core::pose::Pose const & pose){
 						if ( acceptor.atom_name(acc_atm) == " CB " ) continue; //not interested in the cb atom
 						for
 							(
-									core::chemical::AtomIndices::const_iterator
+									auto
 									don_num = donate.Haro_index().begin(),
 									don_nume = donate.Haro_index().end();
 									don_num != don_nume; ++don_num

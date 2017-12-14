@@ -33,8 +33,7 @@ PhosphateScreener::PhosphateScreener( modeler::rna::phosphate::MultiPhosphateSam
 {}
 
 //Destructor
-PhosphateScreener::~PhosphateScreener()
-{}
+PhosphateScreener::~PhosphateScreener() = default;
 
 /////////////////////////////////////////
 bool
@@ -48,7 +47,7 @@ void
 PhosphateScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
 	update_mover->add_mover( phosphate_sampler_ );
 
-	restore_mover->add_mover( 0 ); // choice in ClassicResidueSampler -- not sure if we should keep it though.
+	restore_mover->add_mover( nullptr ); // choice in ClassicResidueSampler -- not sure if we should keep it though.
 	//  phosphate_sampler_for_restoration_->set_phosphate_move_list( phosphate_sampler_->phosphate_move_list() );
 	//  restore_mover->add_mover( phosphate_sampler_for_restoration_ );
 }

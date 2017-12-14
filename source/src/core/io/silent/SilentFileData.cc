@@ -81,7 +81,7 @@ SilentFileData::SilentFileData( SilentFileOptions const & options ) :
 // SilentFileData( filename, SilentFileOptions() )
 //{}
 
-SilentFileData::SilentFileData( std::string const& filename, SilentFileOptions const & options ) :
+SilentFileData::SilentFileData( std::string const & filename, SilentFileOptions const & options ) :
 	filename_( filename ),
 	store_argv_in_file_( false ),
 	strict_column_mode_( false ),
@@ -101,10 +101,10 @@ SilentFileData::SilentFileData( std::string const& filename, SilentFileOptions c
 //{}
 
 SilentFileData::SilentFileData(
-	const std::string &filename,
-	bool  store_argv_in_file,
-	bool  strict_column_mode,
-	const std::string & silent_struct_type,
+	std::string const & filename,
+	bool const store_argv_in_file,
+	bool const strict_column_mode,
+	std::string const & silent_struct_type,
 	SilentFileOptions const & options
 ) :
 	filename_( filename ),
@@ -131,9 +131,8 @@ SilentFileData::read_tags_fast( std::string const & filename ) const {
 utility::vector1< std::string > SilentFileData::tags() const {
 	utility::vector1< std::string > tag_list;
 
-	for ( const_iterator it=structure_map_.begin(),
-			it_end = structure_map_.end(); it != it_end; ++it ) {
-		tag_list.push_back( it->decoy_tag() );
+	for ( auto const & elem : structure_map_ ) {
+		tag_list.push_back( elem.second->decoy_tag() );
 	}
 	return tag_list;
 } // tags
@@ -867,7 +866,7 @@ SilentFileData::read_stream(
 		if ( !init_good && throw_exception_on_bad_structs ) throw CREATE_EXCEPTION(utility::excn::BadInput,  "failure to read decoy "+tmp_struct->decoy_tag()+" from silent-file " +filename);
 
 		bool good_tag = false;
-		std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
+		auto tag_it = tagset.find(tmp_struct->decoy_tag());
 		if ( tag_it != tagset.end() ) {
 			good_tag = true;
 		}
@@ -954,8 +953,8 @@ bool SilentFileData::check_if_rna_from_sequence_line( std::string const& line ) 
 	l >> dummy;
 	l >> sequence;
 	bool is_rna( true );
-	for ( Size n = 0; n < sequence.size(); n++ ) {
-		if ( sequence[n] != 'a' && sequence[n] != 'g' && sequence[n] != 'c' && sequence[n] != 'u' ) {
+	for ( char n : sequence ) {
+		if ( n != 'a' && n != 'g' && n != 'c' && n != 'u' ) {
 			is_rna = false; break;
 		}
 	}
@@ -1122,7 +1121,7 @@ SilentFileData::reverse_score_filter(
 	//Real local_score_fraction( score_fraction * -1 );
 	std::sort( scores.begin(), scores.end() );
 	std::reverse( scores.begin(), scores.end() );
-	Size const idx( static_cast< Size > ( -1 * score_fraction * scores.size() ) );
+	auto const idx( static_cast< Size > ( -1 * score_fraction * scores.size() ) );
 	Real const boundary( *( scores.begin() + idx ) );
 	tr.Debug << "reverse_score_filter: " << std::endl;
 	tr.Debug << "filtering for decoys with score worse than " << boundary << std::endl;
@@ -1176,7 +1175,7 @@ SilentFileData::score_filter(
 	}
 
 	std::sort( scores.begin(), scores.end() );
-	Size const idx( static_cast< Size > (score_fraction * scores.size() ) );
+	auto const idx( static_cast< Size > (score_fraction * scores.size() ) );
 	Real const boundary( *( scores.begin() + idx ) );
 	tr.Debug << "score_filter: " << std::endl;
 	tr.Debug << "filtering for decoys with score worse than " << boundary << std::endl;

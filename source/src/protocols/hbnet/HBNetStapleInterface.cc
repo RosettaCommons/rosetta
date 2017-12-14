@@ -116,16 +116,15 @@ static basic::Tracer TR( "protocols.hbnet.HBNetStapleInterface" );
 
 HBNetStapleInterface::HBNetStapleInterface( ) :
 	HBNet( "HBNetStapleInterface" ),
-	all_helices_(0),
-	span_all_helices_(0),
-	only_symm_interfaces_(0),
-	allow_onebody_networks_(0),
-	his_tyr_(0),
-	pH_His_(0),
-	boundary_his_must_to_hbond_pos_charge_(0),
-	only_start_at_interface_pairs_(0),
-	use_aa_dependent_weights_(0),
-	runcount_(0),
+	all_helices_(false),
+	span_all_helices_(false),
+	only_symm_interfaces_(false),
+	allow_onebody_networks_(false),
+	his_tyr_(false),
+	pH_His_(false),
+	boundary_his_must_to_hbond_pos_charge_(false),
+	only_start_at_interface_pairs_(false),
+	use_aa_dependent_weights_(false),
 	min_networks_per_pose_(1),
 	max_networks_per_pose_(1),
 	combos_(1),
@@ -140,16 +139,15 @@ HBNetStapleInterface::HBNetStapleInterface( ) :
 
 HBNetStapleInterface::HBNetStapleInterface( std::string const name ) :
 	HBNet( name ),
-	all_helices_(0),
-	span_all_helices_(0),
-	only_symm_interfaces_(0),
-	allow_onebody_networks_(0),
-	his_tyr_(0),
-	pH_His_(0),
-	boundary_his_must_to_hbond_pos_charge_(0),
-	only_start_at_interface_pairs_(0),
-	use_aa_dependent_weights_(0),
-	runcount_(0),
+	all_helices_(false),
+	span_all_helices_(false),
+	only_symm_interfaces_(false),
+	allow_onebody_networks_(false),
+	his_tyr_(false),
+	pH_His_(false),
+	boundary_his_must_to_hbond_pos_charge_(false),
+	only_start_at_interface_pairs_(false),
+	use_aa_dependent_weights_(false),
 	min_networks_per_pose_(1),
 	max_networks_per_pose_(1),
 	combos_(1),
@@ -176,16 +174,15 @@ HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scor
 	bool only_extend /*false*/
 ) :
 	HBNet( scorefxn, max_unsat_Hpol, min_network_size, hb_threshold, max_network_size, des_residues, find_native, only_native, keep_existing, extend_existing, only_extend ),
-	all_helices_(0),
-	span_all_helices_(0),
-	only_symm_interfaces_(0),
-	allow_onebody_networks_(0),
-	his_tyr_(0),
-	pH_His_(0),
-	boundary_his_must_to_hbond_pos_charge_(0),
-	only_start_at_interface_pairs_(0),
-	use_aa_dependent_weights_(0),
-	runcount_(0),
+	all_helices_(false),
+	span_all_helices_(false),
+	only_symm_interfaces_(false),
+	allow_onebody_networks_(false),
+	his_tyr_(false),
+	pH_His_(false),
+	boundary_his_must_to_hbond_pos_charge_(false),
+	only_start_at_interface_pairs_(false),
+	use_aa_dependent_weights_(false),
 	min_networks_per_pose_(1),
 	max_networks_per_pose_(1),
 	combos_(1),
@@ -199,7 +196,7 @@ HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scor
 {}
 
 //destructor
-HBNetStapleInterface::~HBNetStapleInterface(){}
+HBNetStapleInterface::~HBNetStapleInterface()= default;
 
 protocols::moves::MoverOP
 HBNetStapleInterface::clone() const {
@@ -223,9 +220,9 @@ HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	min_intermolecular_hbonds_ = tag->getOption<Size>("min_intermolecular_hbonds",1);
 	min_helices_contacted_by_network_ = tag->getOption<Size>("min_helices_contacted_by_network",0);
 	min_asp_glu_hbonds_ = tag->getOption<Size>("min_asp_glu_hbonds",3);
-	span_all_helices_ = tag->getOption<bool>( "span_all_helices", 0 );
-	allow_onebody_networks_ = tag->getOption<bool>("allow_onebody_networks",0);
-	his_tyr_ = tag->getOption< bool >( "his_tyr", 0);
+	span_all_helices_ = tag->getOption<bool>( "span_all_helices", false );
+	allow_onebody_networks_ = tag->getOption<bool>("allow_onebody_networks",false);
+	his_tyr_ = tag->getOption< bool >( "his_tyr", false);
 	pH_His_ = tag->getOption<bool>("pH_His", false);
 	only_start_at_interface_pairs_ = tag->getOption<bool>("only_start_at_interface_pairs",false);
 	use_aa_dependent_weights_ = tag->getOption<bool>("use_aa_dependent_weights",false);
@@ -235,8 +232,8 @@ HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		boundary_his_must_to_hbond_pos_charge_ = tag->getOption<bool>("boundary_his_must_to_hbond_pos_charge", false);
 	}
 
-	all_helices_ = tag->getOption<bool>("all_helical_interfaces",0);
-	only_symm_interfaces_ = tag->getOption<bool>("only_symm_interfaces",0);
+	all_helices_ = tag->getOption<bool>("all_helical_interfaces",false);
+	only_symm_interfaces_ = tag->getOption<bool>("only_symm_interfaces",false);
 	if ( tag->hasOption("interface_distance") ) {
 		interf_distance_ = tag->getOption<Real>("interface_distance",8.0);
 	}
@@ -245,7 +242,7 @@ HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		jump_nums_.clear();
 		std::string str = tag->getOption< std::string >( "jump", "" );
 		utility::vector1<std::string> const jumps( utility::string_split( str , ',' ) );
-		for ( const auto & jump : jumps ) {
+		for ( auto const & jump : jumps ) {
 			jump_nums_.push_back(utility::string2int(jump));
 		}
 	}
@@ -259,7 +256,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 	pair_lists_vec_.resize(total_ind_res,std::list<Size>(0));
 
 	bool no_init_taskfactory(false);
-	if ( task_factory() == 0 ) {
+	if ( task_factory() == nullptr ) {
 		no_init_taskfactory = true;
 		task_factory( TaskFactoryOP( new TaskFactory ) );
 	}
@@ -277,7 +274,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 			}
 		}
 	} else {
-		for ( const auto & jump_num : jump_nums_ ) {
+		for ( auto const & jump_num : jump_nums_ ) {
 			if ( pose.num_jump() < jump_num ) {
 				if ( TR.visible() ) {
 					TR.flush();
@@ -318,7 +315,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 
 	if ( no_init_taskfactory ) {
 		if ( get_start_res_vec().empty() ) {
-			for ( const auto & jump_num : jump_nums_ ) {
+			for ( auto const & jump_num : jump_nums_ ) {
 				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
 				interf->distance(interf_distance_);
 				interf->calculate( pose ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
@@ -413,7 +410,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 	} else {
 		set_task( create_ptask(pose) ); //temp task
 		if ( get_start_res_vec().empty() ) {
-			for ( const auto & jump_num : jump_nums_ ) {
+			for ( auto const & jump_num : jump_nums_ ) {
 				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
 				interf->distance(interf_distance_);
 				interf->calculate( pose ); //within 8 angstroms of Ala nbr residue
@@ -751,7 +748,7 @@ HBNetStapleInterface::prepare_output()
 					for ( auto j = netit; ++j != get_net_vec().end(); ) {
 						if ( (*j)->is_extended ) {
 							bool compatible( true );
-							for ( const auto & net_id : net_ids ) {
+							for ( auto const & net_id : net_ids ) {
 								if ( net_clash( *(get_network_by_id(net_id)), **j ) ) {
 									compatible = false;
 									break;
@@ -764,10 +761,10 @@ HBNetStapleInterface::prepare_output()
 						}
 					}
 				} else {
-					for ( const auto & k : get_net_vec() ) {
+					for ( auto const & k : get_net_vec() ) {
 						if ( k->is_extended ) {
 							bool compatible( true );
-							for ( const auto & net_id : net_ids ) {
+							for ( auto const & net_id : net_ids ) {
 								if ( net_clash( *(get_network_by_id(net_id)), *k ) ) {
 									compatible = false;
 									break;
@@ -808,7 +805,7 @@ HBNetStapleInterface::num_helices_w_hbond( utility::vector1< HBondResStructCOP >
 {
 	Size num_helices(0);
 	utility::vector1< bool > helix_has_hbond_residue( helix_boundaries_.size(), false );
-	for ( const auto & residue : residues ) {
+	for ( auto const & residue : residues ) {
 		Size helix_id( get_helix_id( residue->resnum ) ); //returns 0 if residues is not part of a helix
 		if ( helix_id > 0 ) {
 			helix_has_hbond_residue[ helix_id ] = true;
@@ -830,7 +827,7 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
 	while ( combo_count <= combos_ && ++next_netit != get_net_vec().end() )
 			{ //number of combinations of multiple networks to try (default = 1)
 		bool compatible( true );
-		for ( const auto & net_id : net_ids ) {
+		for ( auto const & net_id : net_ids ) {
 			runtime_assert( get_network_by_id(net_id) != nullptr );
 			bool branch(false);
 			//            if ( !(is_sub_residues( (get_network_by_id(*net_id))->residues, (get_network_by_id(*net_id))->residues, branch ))
@@ -852,7 +849,7 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
 
 			if ( staple_count >= min_networks_per_pose_ ) {
 				bool already_stored(false);
-				for ( const auto & output_vec : get_output_vector() ) {
+				for ( auto const & output_vec : get_output_vector() ) {
 					if ( output_vec == new_net_ids ) {
 						already_stored = true;
 					}
@@ -874,7 +871,7 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
 bool
 HBNetStapleInterface::same_helix( utility::vector1< std::pair<Size,Size> > const helix_boundaries, Size const r1, Size const r2)
 {
-	for ( const auto & helix_boundarie : helix_boundaries ) {
+	for ( auto const & helix_boundarie : helix_boundaries ) {
 		if ( (r1 >= helix_boundarie.first && r1 <= helix_boundarie.second) && (r2 >= helix_boundarie.first && r2 <= helix_boundarie.second) ) {
 			return true;
 		}

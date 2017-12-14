@@ -40,9 +40,9 @@ DatabaseEntryWorkUnit::DatabaseEntryWorkUnit(utility::sql_database::sessionOP db
 	db_session_(std::move(db_session))
 {}
 
-DatabaseEntryWorkUnit::DatabaseEntryWorkUnit( std::map<std::string,std::string> row_map ):
+DatabaseEntryWorkUnit::DatabaseEntryWorkUnit( std::map<std::string,std::string> const & row_map ):
 	WorkUnitBase(),
-	row_map_(std::move(row_map))
+	row_map_(row_map)
 {}
 
 void

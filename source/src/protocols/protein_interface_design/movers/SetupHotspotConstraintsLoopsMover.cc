@@ -286,11 +286,10 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 			// Loop over all stubs with this restype
 			hotspot_hashing::HotspotStubSet::Hotspots res_stub_set( hotspot_stub_set_->retrieve( (*restype )->name3() ) );
 			tr.Debug << "found " << res_stub_set.size() << " suitable hotspots" << std::endl;
-			for ( std::multimap<core::Real,hotspot_hashing::HotspotStubOP >::iterator hs_stub = res_stub_set.begin();
-					hs_stub != res_stub_set.end(); ++hs_stub ) {
+			for ( auto & hs_stub : res_stub_set ) {
 
 				// prevent Gly/Pro constraints
-				if ( (hs_stub->second->residue()->aa() == core::chemical::aa_gly) || (hs_stub->second->residue()->aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) ) {
+				if ( (hs_stub.second->residue()->aa() == core::chemical::aa_gly) || (hs_stub.second->residue()->aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) ) {
 					tr.Info << "WARNING - Gly/Pro stubs cannot be used for constraints." << std::endl;
 					continue;
 				}
@@ -301,10 +300,10 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 					continue;
 				}
 
-				core::Real stub_bonus_value = hs_stub->second->bonus_value();
+				core::Real stub_bonus_value = hs_stub.second->bonus_value();
 				tr.Trace << "stub_bonus: " << stub_bonus_value << std::endl;
 				if ( stub_bonus_value < worst_allowed_stub_bonus ) {
-					hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::accept );
+					hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::accept );
 					//tr.Info << " SuccSelfEnergy=" << stub_bonus_value << std::endl;
 					// ****** accept the pairing -- do we really want this? better to just reject, since bb fit doesn't necessarily mean good pair
 					// ****** hs_stub->scaffold_status( resnum, accept );
@@ -313,13 +312,13 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 					if ( apply_ambiguous_constraints_ ) {
 						// Push it onto ambig_csts for this residue
 						ct_cst++;
-						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
+						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
 					} else {
 						ct_cst++;
 						// Apply it directly
-						constraints.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
+						constraints.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub.second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
 					}
-				} else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
+				} else hs_stub.second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else tr.Info << " FailSelfEnergy=" << stub_bonus_value << std::endl;
 				// ****** reject the pairing
 				// ******else hs_stub->scaffold_status( resnum, reject );
@@ -364,9 +363,9 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::dataca
 	CB_force_constant_ = tag->getOption<Real>( "cb_force", 0.5 );
 
 	worst_allowed_stub_bonus_ = tag->getOption<Real>( "worst_allowed_stub_bonus", 0 );
-	apply_self_energies_ = tag->getOption<bool>( "apply_stub_self_energies", 0 );
+	apply_self_energies_ = tag->getOption<bool>( "apply_stub_self_energies", false );
 	bump_cutoff_ = tag->getOption<Real>( "apply_stub_bump_cutoff", 10. );
-	apply_ambiguous_constraints_ = tag->getOption<bool>( "pick_best_energy_constraint", 1 );
+	apply_ambiguous_constraints_ = tag->getOption<bool>( "pick_best_energy_constraint", true );
 	// core::Real const bb_stub_cst_weight( tag->getOption< core::Real >( "backbone_stub_constraint_weight", 1.0 ) );  // Unused variable causes warning.
 	loop_start_ = tag->getOption<Size>("start", 0 );
 	loop_stop_ = tag->getOption<Size>("stop", 0 );
@@ -377,7 +376,7 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::dataca
 		utility_exit_with_message( "loop-stop has to be larger than loop-start. assign with 'stop'" );
 	}
 	tr.Debug << "setup hotspots for loop " << loop_start_ << " to " << loop_stop_ << std::endl;
-	colonyE_ = tag->getOption<bool>( "colonyE", 0 );
+	colonyE_ = tag->getOption<bool>( "colonyE", false );
 
 	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new hotspot_hashing::HotspotStubSet );
 	if ( tag->hasOption( "stubfile" ) ) {
@@ -391,7 +390,7 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::dataca
 			for ( TagCOP const curr_tag2 : branch_tags2 ) {
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				std::string const nickname( curr_tag2->getOption< std::string >( "nickname" ) );
-				core::Size const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );
+				auto const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );
 				hotspot_hashing::HotspotStubSetOP temp_stubset( new hotspot_hashing::HotspotStubSet );
 				temp_stubset->read_data( file_name );
 				temp_stubset->remove_random_stubs_from_set( temp_stubset->size() - stub_num );
@@ -411,7 +410,7 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::dataca
 	tr.Info.flush();
 }
 
-SetupHotspotConstraintsLoopsMover::~SetupHotspotConstraintsLoopsMover() {}
+SetupHotspotConstraintsLoopsMover::~SetupHotspotConstraintsLoopsMover() = default;
 
 std::string SetupHotspotConstraintsLoopsMover::get_name() const {
 	return mover_name();

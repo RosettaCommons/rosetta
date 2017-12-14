@@ -13,14 +13,14 @@
 //#define _DEBUG_NBORLIST_
 
 #include <vector>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <math.h>
-#include <assert.h>
-#include <time.h>
+#include <cmath>
+#include <cassert>
+#include <ctime>
 #ifndef __WIN32__
 #include <sys/resource.h>
 #endif
@@ -83,10 +83,10 @@ Stru::Stru(SimPDBOP pdb, int len, bool use_sig):
 	}
 }
 
-Stru::~Stru() {}
+Stru::~Stru() = default;
 
 double
-Stru::dist(double x, double y, double z, double *zz)
+Stru::dist(double x, double y, double z, const double *zz)
 {
 	double xd=x-zz[0];
 	double yd=y-zz[1];
@@ -275,7 +275,7 @@ Clustering::reinitialize(
 	mCluCen.clear(); // = new std::vector<int>(0);
 	auxiliary_clusters_ = new std::vector<int>*[n_pdbs_];
 	for ( int i=0; i < n_pdbs_; i++ ) {
-		auxiliary_clusters_[i] = NULL;
+		auxiliary_clusters_[i] = nullptr;
 	}
 	mD2C.resize( n_pdbs_ );
 	mCen.resize( n_pdbs_ );
@@ -678,7 +678,7 @@ Clustering::readDecoyNames()
 		input.getline(buf, 400);
 		char* token = strtok(buf, " ");
 		if ( !token ) continue;
-		char* name = new char[strlen(token)+1];
+		auto* name = new char[strlen(token)+1];
 		strcpy(name, token);
 		names_.push_back(name);
 	}
@@ -816,7 +816,7 @@ Clustering::cluster()
 	printf("\r");
 #endif
 	start = clock();
-	initRef(NULL);
+	initRef(nullptr);
 	auxClustering(); // Cluster to speed-up computation of neighbors
 	elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
 #ifdef _SHOW_PERCENTAGE_COMPLETE_
@@ -1733,7 +1733,7 @@ Clustering::estimateDist(std::vector< StruOP > const & decoys, double xPercent,
 	int numdecoys = decoys.size();
 	int numofpairs = numdecoys * (numdecoys-1) / 2;
 	// Has to be a raw array for later qsort.
-	double * alldists = new double[numofpairs];
+	auto * alldists = new double[numofpairs];
 	int k = 0;
 	maxDist = 0;
 	minDist = _OVER_RMSD_;
@@ -1763,7 +1763,7 @@ Clustering::estimateDist(std::vector< StruOP > const & decoys, double xPercent,
 		bin = 0;
 	}
 	for ( int i=0; i < numofpairs; i++ ) {
-		int bin_to_put = (int)floor((alldists[i] - minDist) / bin_size);
+		auto bin_to_put = (int)floor((alldists[i] - minDist) / bin_size);
 		if ( bin_to_put >= numofbins || bin_to_put < 0 ) { // crazy RMSD
 			continue;
 		}

@@ -63,10 +63,10 @@ using core::pose::Pose;
 GetRBDOFValues::GetRBDOFValues():
 	jump_id_( 1 ),
 	sym_dof_name_( "" ),
-	verbose_( 0 ),
-	radial_disp_( 0 ),
-	angle_( 0 ),
-	get_init_value_( 0 ),
+	verbose_( false ),
+	radial_disp_( false ),
+	angle_( false ),
+	get_init_value_( false ),
 	axis_( 'x' ),
 	init_disp_( 0 ),
 	init_angle_( 0 )
@@ -74,9 +74,9 @@ GetRBDOFValues::GetRBDOFValues():
 
 
 // @brief constructor with arguments
-GetRBDOFValues::GetRBDOFValues( int jump, std::string dof_name, bool verb, char ax, bool disp, bool ang, core::Real init_d, core::Real init_a, bool get_init ):
+GetRBDOFValues::GetRBDOFValues( int jump, std::string const & dof_name, bool verb, char ax, bool disp, bool ang, core::Real init_d, core::Real init_a, bool get_init ):
 	jump_id_( jump),
-	sym_dof_name_(std::move( dof_name )),
+	sym_dof_name_( dof_name ),
 	verbose_( verb ),
 	radial_disp_( disp ),
 	angle_( ang ),
@@ -136,8 +136,8 @@ core::Real GetRBDOFValues::compute(
 	core::Real const & init_a,
 	bool const & get_init ) const
 {
-	typedef numeric::xyzVector<Real> Vec;
-	typedef numeric::xyzMatrix<Real> Mat;
+	using Vec = numeric::xyzVector<Real>;
+	using Mat = numeric::xyzMatrix<Real>;
 
 	// Get the jump_id corresponding to the user-specified jump or sym_dof_name.
 	int sym_aware_jump_id;
@@ -224,13 +224,13 @@ GetRBDOFValues::parse_my_tag(
 {
 	jump_id( tag->getOption< int >( "jump", 1 ) );
 	sym_dof_name( tag->getOption< std::string >( "sym_dof_name" , "" ) );
-	verbose( tag->getOption< bool >("verbose", 0) );
+	verbose( tag->getOption< bool >("verbose", false) );
 	axis( tag->getOption< char >("axis", 'x') );
-	radial_disp( tag->getOption< bool >("get_disp", 0 ) );
-	angle( tag->getOption< bool >("get_angle", 0 ) );
+	radial_disp( tag->getOption< bool >("get_disp", false ) );
+	angle( tag->getOption< bool >("get_angle", false ) );
 	init_angle( tag->getOption< core::Real >("init_angle", 0 ) );
 	init_disp( tag->getOption< core::Real >("init_disp", 0 ) );
-	get_init_value( tag->getOption< bool >("get_init_value", 0 ) );
+	get_init_value( tag->getOption< bool >("get_init_value", false ) );
 }
 
 core::Real

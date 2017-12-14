@@ -47,6 +47,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
@@ -73,7 +74,7 @@ namespace protein {
 //////////////////////////////////////////////////////////////////////////
 //constructor!
 StepWiseProteinBackboneSampler::StepWiseProteinBackboneSampler(  working_parameters::StepWiseWorkingParametersCOP working_parameters ):
-	working_parameters_( working_parameters ),
+	working_parameters_(std::move( working_parameters )),
 	moving_residues_input_( working_parameters_->working_moving_res_list() ),
 	n_sample_( 18 /* Corresponds to 20 degree bins */ ),
 	n_sample_beta_( 6 /* Corresponds to 60 degree bins, for betas */ ),
@@ -96,8 +97,7 @@ StepWiseProteinBackboneSampler::StepWiseProteinBackboneSampler(  working_paramet
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWiseProteinBackboneSampler::~StepWiseProteinBackboneSampler()
-{}
+StepWiseProteinBackboneSampler::~StepWiseProteinBackboneSampler() = default;
 
 /////////////////////
 std::string
@@ -660,7 +660,7 @@ StepWiseProteinBackboneSampler::filter_native_BIG_BINS(
 	Size const n,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
-	if ( get_native_pose() == 0 ) {
+	if ( get_native_pose() == nullptr ) {
 		utility_exit_with_message(  "Filter based on native big bins, but not native specified?" );
 	}
 
@@ -721,7 +721,7 @@ StepWiseProteinBackboneSampler::filter_main_chain_torsion_sets(){
 
 	std::list< std::pair< Real, Size > > energy_index_list;
 	for ( Size n = 1; n <= centroid_scores_.size(); n++ ) {
-		energy_index_list.push_back( std::make_pair( centroid_scores_[n], n ) ) ;
+		energy_index_list.emplace_back( centroid_scores_[n], n ) ;
 	}
 	energy_index_list.sort();
 
@@ -1040,7 +1040,7 @@ StepWiseProteinBackboneSampler::prepare_ghost_pose( core::pose::Pose const & pos
 		ghost_pose_blowup.set_jump( n, jump );
 	}
 	ghost_pose_blowup.dump_pdb( "GHOST_BLOWUP.pdb" );
-	runtime_assert( centroid_scorefxn_ != 0 );
+	runtime_assert( centroid_scorefxn_ != nullptr );
 	centroid_score_ref_ = (*centroid_scorefxn_)( ghost_pose_blowup );
 	centroid_vdw_ref_ = ghost_pose_blowup.energies().total_energies()[ vdw ];
 

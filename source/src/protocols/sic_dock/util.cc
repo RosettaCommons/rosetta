@@ -14,6 +14,7 @@
 #include <core/kinematics/Stub.hh>
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/ozstream.hh>
 
@@ -27,17 +28,17 @@ using core::id::AtomID;
 using std::cout;
 using std::endl;
 using utility::vector1;
-typedef core::Real Real;
-typedef core::Size Size;
-typedef core::pose::Pose Pose;
-typedef Xform Xform;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
-typedef vector1<Vec> Vecs;
-typedef vector1<Real> Reals;
-typedef vector1<Size> Sizes;
-typedef numeric::Xforms Xforms;
-typedef vector1<RigidScoreCOP> Scores;
+using Real = core::Real;
+using Size = core::Size;
+using Pose = core::pose::Pose;
+using Xform = Xform;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
+using Vecs = vector1<Vec>;
+using Reals = vector1<Real>;
+using Sizes = vector1<Size>;
+using Xforms = numeric::Xforms;
+using Scores = vector1<RigidScoreCOP>;
 
 static basic::Tracer TR( "protocols.sic_dock.util" );
 

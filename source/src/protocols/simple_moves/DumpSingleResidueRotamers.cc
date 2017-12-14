@@ -104,7 +104,7 @@ DumpSingleResidueRotamers::DumpSingleResidueRotamers( DumpSingleResidueRotamers 
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-DumpSingleResidueRotamers::~DumpSingleResidueRotamers() {}
+DumpSingleResidueRotamers::~DumpSingleResidueRotamers() = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

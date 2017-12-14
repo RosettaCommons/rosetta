@@ -578,7 +578,7 @@ GlycanRelaxMover::setup_movers(
 	}
 	TR.Trace << "Max Dihedrals: " << max_glycan_dihedrals << std::endl;
 	for ( core::Size i =1; i <= max_glycan_dihedrals; ++i ) {
-		core::id::MainchainTorsionType dih_type = static_cast< core::id::MainchainTorsionType >( i );
+		auto dih_type = static_cast< core::id::MainchainTorsionType >( i );
 
 		SmallBBSamplerOP small_sampler = SmallBBSamplerOP( new SmallBBSampler( dih_type, 30 ) ); // +/- 15 degrees
 		SmallBBSamplerOP medium_sampler= SmallBBSamplerOP( new SmallBBSampler( dih_type, 90 ) ); // +/- 45 degrees

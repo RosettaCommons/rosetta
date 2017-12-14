@@ -128,15 +128,15 @@ public:
 	MikeLinkerMover(): Mover("MikeLinkerMover"){}
 
 	//default dtor
-	virtual ~MikeLinkerMover(){}
+	~MikeLinkerMover() override= default;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "MikeLinkerMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "MikeLinkerMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< MikeLinkerMover > MikeLinkerMoverOP;
-typedef utility::pointer::shared_ptr< MikeLinkerMover const > MikeLinkerMoverCOP;
+using MikeLinkerMoverOP = utility::pointer::shared_ptr<MikeLinkerMover>;
+using MikeLinkerMoverCOP = utility::pointer::shared_ptr<const MikeLinkerMover>;
 
 
 class TorsionVectorMover : public Mover {
@@ -145,17 +145,17 @@ public:
 	TorsionVectorMover( utility::vector1< utility::vector1< AtomID > > tv ): Mover("TorsionVectorMover"){ tv_ = tv; }
 
 	//default dtor
-	virtual ~TorsionVectorMover(){}
+	~TorsionVectorMover() override= default;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "TorsionVectorMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "TorsionVectorMover"; }
 
 	utility::vector1< utility::vector1< AtomID > > tv_;
 
 };
 
-typedef utility::pointer::shared_ptr< TorsionVectorMover > TorsionVectorMoverOP;
-typedef utility::pointer::shared_ptr< TorsionVectorMover const > TorsionVectorMoverCOP;
+using TorsionVectorMoverOP = utility::pointer::shared_ptr<TorsionVectorMover>;
+using TorsionVectorMoverCOP = utility::pointer::shared_ptr<const TorsionVectorMover>;
 
 
 void

@@ -55,27 +55,18 @@ namespace crosslinker {
 /////////////////////
 
 /// @brief Default constructor
-TBMB_Helper::TBMB_Helper() //:
-//TODO initialize data here
-{
-
-}
+TBMB_Helper::TBMB_Helper() = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
 ////////////////////////////////////////////////////////////////////////////////
-TBMB_Helper::TBMB_Helper( TBMB_Helper const &src ) :
-	CrosslinkerMoverHelper( src )
-	//TODO copy data here
-{
-
-}
+TBMB_Helper::TBMB_Helper( TBMB_Helper const &/*src*/ ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer
 /// members)
 ////////////////////////////////////////////////////////////////////////////////
-TBMB_Helper::~TBMB_Helper(){}
+TBMB_Helper::~TBMB_Helper()= default;
 
 //////////////////////
 /// Public Methods ///

@@ -68,7 +68,7 @@ FragmentReader::FragmentReader( TagCOP const & tag ):
 }
 
 /// @brief destructor
-FragmentReader::~FragmentReader(){}
+FragmentReader::~FragmentReader()= default;
 
 /// @brief parse tag
 void
@@ -113,14 +113,14 @@ FragmentReader::parse_tag( TagCOP const & tag )
 			blueprint_ = protocols::parser::BluePrintOP( new protocols::parser::BluePrint( blueprint ) );
 			ss_ = blueprint_->secstruct();
 			// pick fragment using sequence information (default false)
-			bool use_sequence_bias( tag->getOption<bool>( "use_sequence_bias", 0 ) );
+			bool use_sequence_bias( tag->getOption<bool>( "use_sequence_bias", false ) );
 			if ( use_sequence_bias ) {
 				aa_ = blueprint_->sequence();
 			}
 		}
 
 		// using abego definition which is given by blueprint file
-		use_abego_ = tag->getOption<bool>( "use_abego", 0 );
+		use_abego_ = tag->getOption<bool>( "use_abego", false );
 
 
 		if ( ss_.empty() ) {
@@ -167,7 +167,7 @@ FragmentReader::xml_element_name() { return "FragReader"; }
 void FragmentReader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef utility::tag::XMLSchemaAttribute Attr;
+	using Attr = utility::tag::XMLSchemaAttribute;
 
 	XMLSchemaRestriction frag_reader_type;
 	frag_reader_type.name( "frag_reader_type" );
@@ -269,11 +269,11 @@ FragmentReader::apply( FragSetOP & fragset )
 		OrderedFragSetOP of = utility::pointer::dynamic_pointer_cast< core::fragment::OrderedFragSet > ( fset );
 
 		FrameList frames;
-		if ( cf.get() != NULL && of.get() == NULL ) {
+		if ( cf.get() != nullptr && of.get() == nullptr ) {
 			for ( ConstFrameIterator it=cf->begin(), end( cf->end() ); it!=end; ++it ) {
 				frames.push_back( core::fragment::FrameOP( new Frame( **it ) ) );
 			}
-		} else if ( of.get() != NULL && cf.get() == NULL ) {
+		} else if ( of.get() != nullptr && cf.get() == nullptr ) {
 			for ( ConstFrameIterator it=of->begin(), end( of->end() ); it!=end; ++it ) {
 				frames.push_back( core::fragment::FrameOP( new Frame( **it ) ) );
 			}

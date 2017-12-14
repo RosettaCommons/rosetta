@@ -43,8 +43,7 @@ CentroidDistanceScreener::CentroidDistanceScreener(  pose::Pose & screening_pose
 {}
 
 //Destructor
-CentroidDistanceScreener::~CentroidDistanceScreener()
-{}
+CentroidDistanceScreener::~CentroidDistanceScreener() = default;
 
 
 //////////////////////////////////////////

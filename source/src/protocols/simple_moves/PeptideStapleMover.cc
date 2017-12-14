@@ -138,8 +138,8 @@ PeptideStapleMover::get_name() const {
 /// @author Andrew Leaver-Fay
 void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 {
-	typedef core::Size Size;
-	typedef core::Real Real;
+	using Size = core::Size;
+	using Real = core::Real;
 	using namespace core::scoring::constraints;
 	using namespace core::chemical;
 	using namespace core::id;

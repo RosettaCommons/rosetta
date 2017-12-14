@@ -79,10 +79,7 @@ SiteGrid::SiteGrid() : SingleGrid("SiteGrid")
 }
 
 
-SiteGrid::~SiteGrid()
-{
-
-}
+SiteGrid::~SiteGrid() = default;
 
 utility::json_spirit::Value SiteGrid::serialize() const
 {

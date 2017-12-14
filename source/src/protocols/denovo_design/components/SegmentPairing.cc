@@ -25,6 +25,7 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -154,7 +155,7 @@ operator<<( std::ostream & os, SegmentPairing const & pairing )
 	tag.setOption< std::string >( "type", type_str );
 
 	std::stringstream seg_str;
-	for ( SegmentNames::const_iterator s=pairing.segments().begin(); s!=pairing.segments().end(); ++s ) {
+	for ( auto s=pairing.segments().begin(); s!=pairing.segments().end(); ++s ) {
 		if ( s != pairing.segments().begin() ) seg_str << ',';
 		seg_str << *s;
 	}
@@ -266,7 +267,7 @@ SegmentPairingCOPs
 SegmentPairing::get_pairings( StructureData const & sd, PairingType const & type )
 {
 	SegmentPairingCOPs my_type;
-	for ( SegmentPairingCOPs::const_iterator p=sd.pairings_begin(); p!=sd.pairings_end(); ++p ) {
+	for ( auto p=sd.pairings_begin(); p!=sd.pairings_end(); ++p ) {
 		if ( (*p)->type() != type ) continue;
 		my_type.push_back( *p );
 	}
@@ -278,9 +279,9 @@ SegmentPairing::get_pairing_str( StructureData const & sd, PairingType const & t
 {
 	std::stringstream pair_str;
 	SegmentPairingCOPs const my_type = get_pairings( sd, type );
-	for ( SegmentPairingCOPs::const_iterator p=my_type.begin(); p!=my_type.end(); ++p ) {
+	for ( auto const & p : my_type ) {
 		if ( !pair_str.str().empty() ) pair_str << ';';
-		pair_str << (*p)->pairing_string( sd );
+		pair_str << p->pairing_string( sd );
 	}
 	return pair_str.str();
 }
@@ -584,7 +585,7 @@ HelixSheetPairing::pairing_string( StructureData const & sd ) const
 	SS_Info2 const ss_info( sd.ss() );
 
 	// get helix id number
-	SegmentNames::const_iterator segment_id = segments().begin();
+	auto segment_id = segments().begin();
 	if ( segment_id == segments().end() ) {
 		std::stringstream msg;
 		msg << class_name() << ": no helix name was specified! Segments="

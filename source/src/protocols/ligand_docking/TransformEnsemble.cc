@@ -36,6 +36,7 @@
 #include <basic/Tracer.hh>
 
 #include <sstream>
+#include <utility>
 #include <utility/string_util.hh>
 
 #include <numeric/numeric.functions.hh>
@@ -79,7 +80,7 @@ TransformEnsemble::TransformEnsemble(
 	core::Real const & temp
 ) :
 	Mover("TransformEnsemble"),
-	grid_set_prototype_( grid_set_prototype )
+	grid_set_prototype_(std::move( grid_set_prototype ))
 	// & in declaration default values
 {
 	transform_info_.chains = chains;

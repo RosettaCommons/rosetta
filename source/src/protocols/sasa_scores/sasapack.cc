@@ -52,7 +52,7 @@ using namespace core::scoring;
 using utility::vector1;
 //using namespace basic::options;
 
-typedef utility::vector1< Real > Reals;
+using Reals = utility::vector1<Real>;
 
 using namespace std;
 using namespace ObjexxFCL::format;
@@ -183,10 +183,10 @@ void
 help_load_data(
 	utility::vector1< PPoly > & polys,
 	Reals & avg_sasa14s,
-	std::string datafile,
-	std::string tag1,
-	std::string tag2,
-	std::string function_name
+	std::string const & datafile,
+	std::string const & tag1,
+	std::string const & tag2,
+	std::string const & function_name
 );
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -216,10 +216,10 @@ void
 help_load_data(
 	vector1< PPoly > & polys,
 	Reals & avg_sasa14s,
-	string datafile,
-	string tag1,
-	string tag2,
-	string function_name
+	string const & datafile,
+	string const & tag1,
+	string const & tag2,
+	string const & function_name
 ) {
 	polys.clear();
 	polys.resize( num_canonical_aas );
@@ -263,7 +263,7 @@ help_load_data(
 	runtime_assert( found_avg_sasa );
 
 	for ( Size i=1; i<= 20; ++i ) {
-		AA const aa = AA(i);
+		auto const aa = AA(i);
 		PPoly const & p( polys[i] );
 		Size const degree( p.max_degree() );
 		cout << function_name << ": using degree " << degree << " polynomial for " << aa <<

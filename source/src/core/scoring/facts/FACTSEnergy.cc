@@ -66,11 +66,7 @@ ScoreTypes FACTSEnergyCreator::score_types_for_method() const {
 
 
 /// energy method definition
-FACTSEnergy::FACTSEnergy( FACTSEnergy const & src ):
-	parent( src ),
-	potential_( src.potential_ ),
-	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
-	max_dis_ ( src.max_dis_ ) {}
+FACTSEnergy::FACTSEnergy( FACTSEnergy const & /*src*/ ) = default;
 
 FACTSEnergy::FACTSEnergy( EnergyMethodOptions const & options ):
 	parent( methods::EnergyMethodCreatorOP( new FACTSEnergyCreator ) ),
@@ -133,7 +129,7 @@ void FACTSEnergy::residue_pair_energy(
 {
 	if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
-	FACTSPoseInfo const & facts_info
+	auto const & facts_info
 		( static_cast< FACTSPoseInfo const & >( pose.data().get( pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) ); // SHOULD BE FAST!
 
 	Real E_elec, E_solv_self, E_solv_pair;
@@ -174,7 +170,7 @@ void FACTSEnergy::evaluate_rotamer_intrares_energies(
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
 
-	FACTSRotamerSetInfo const & facts_info
+	auto const & facts_info
 		( set.data().get< FACTSRotamerSetInfo >( FACTS_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
@@ -209,7 +205,7 @@ void FACTSEnergy::evaluate_rotamer_intrares_energy_maps(
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
 
-	FACTSRotamerSetInfo const & facts_info
+	auto const & facts_info
 		( set.data().get< FACTSRotamerSetInfo >( FACTS_ROTAMER_SET_INFO ) );
 
 	utility::vector1< Real > dBRi1( pose.residue(set.resid()).natoms(), 0.0 );
@@ -253,10 +249,10 @@ void FACTSEnergy::evaluate_rotamer_pair_energies(
 
 	PROF_START( basic::FACTS_ROTAMER_PAIR_ENERGIES );
 
-	FACTSRotamerSetInfo const & facts_info1
+	auto const & facts_info1
 		( set1.data().get< FACTSRotamerSetInfo >( FACTS_ROTAMER_SET_INFO ) );
 
-	FACTSRotamerSetInfo const & facts_info2
+	auto const & facts_info2
 		( set2.data().get< FACTSRotamerSetInfo >( FACTS_ROTAMER_SET_INFO ) );
 
 	// Dummy
@@ -326,7 +322,7 @@ void FACTSEnergy::evaluate_rotamer_background_energies(
 	FACTSResidueInfo const & facts_rsd_info
 		( pose.data().get< FACTSPoseInfo >( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ).residue_info(rsd.seqpos()));
 
-	FACTSRotamerSetInfo const & facts_set_info
+	auto const & facts_set_info
 		( set.data().get< FACTSRotamerSetInfo >( FACTS_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) {
@@ -378,7 +374,7 @@ void FACTSEnergy::evaluate_rotamer_background_energy_maps(
 	FACTSResidueInfo const & facts_rsd_info
 		( pose.data().get< FACTSPoseInfo >( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ).residue_info(rsd.seqpos()));
 
-	FACTSRotamerSetInfo const & facts_set_info
+	auto const & facts_set_info
 		( set.data().get< FACTSRotamerSetInfo >( FACTS_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) {

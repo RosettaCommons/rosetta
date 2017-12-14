@@ -631,24 +631,24 @@ FlxbbDesign::parse_my_tag(
 	layer_mode_ = tag->getOption<String>( "layer_mode", "" );
 
 	// use original sequence for not designed region in layer_mode
-	use_origseq_for_not_dsgned_layer_ = tag->getOption<bool>( "use_original_seq", 1 );
+	use_origseq_for_not_dsgned_layer_ = tag->getOption<bool>( "use_original_seq", true );
 
 	// set filter
-	Size filter_trial = tag->getOption<Size>( "filter_trial", 10 );
+	auto filter_trial = tag->getOption<Size>( "filter_trial", 10 );
 	String filter_type = tag->getOption<String>( "filter_type", "packstat" );
 	if ( filter_trial > 0 && filter_type != "" ) {
 		initialize_filter( filter_trial, filter_type );
 	}
 
 	// do not perform relax after design
-	no_relax_ = tag->getOption<bool>( "no_relax", 0 );
+	no_relax_ = tag->getOption<bool>( "no_relax", false );
 	movemap_factory_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data );
 
 	// do not perform design
-	no_design_ = tag->getOption<bool>( "no_design", 0 );
+	no_design_ = tag->getOption<bool>( "no_design", false );
 
 	/// clear amino acid sequence at the very beginning of FlxbbDesign
-	clear_all_residues_ = tag->getOption<bool>( "clear_all_residues", 0 );
+	clear_all_residues_ = tag->getOption<bool>( "clear_all_residues", false );
 
 	// resfile for fixbb
 	resfile_ = tag->getOption<String>( "resfile", "" );
@@ -660,10 +660,10 @@ FlxbbDesign::parse_my_tag(
 	constraints_sheet_ = tag->getOption<Real>( "constraints_sheet", -1.0 );
 
 	// constraint of backbone to fixbb-designed structure during relax
-	relax_constraint_to_design_ = tag->getOption<bool>( "constraints_to_backbone", 0 );
+	relax_constraint_to_design_ = tag->getOption<bool>( "constraints_to_backbone", false );
 
 	// movemap for relax
-	movemap_from_blueprint_ = tag->getOption<bool>( "movemap_from_blueprint", 0 );
+	movemap_from_blueprint_ = tag->getOption<bool>( "movemap_from_blueprint", false );
 	if ( movemap_from_blueprint_ ) {
 		TR << "Movemap is defined based on blueprint " << std::endl;
 		runtime_assert( blueprint != "" );
@@ -673,10 +673,10 @@ FlxbbDesign::parse_my_tag(
 	task_operations_ = protocols::rosetta_scripts::get_task_operations( tag, data );
 
 	/// use fast relax
-	use_fast_relax_ = tag->getOption<bool>( "fast_relax", 1 );
+	use_fast_relax_ = tag->getOption<bool>( "fast_relax", true );
 
 	// Exclude aromatic chi2 rotamers, of which angles are around 0
-	limit_aroma_chi2_ = tag->getOption<bool>( "limit_aroma_chi2", 1 );
+	limit_aroma_chi2_ = tag->getOption<bool>( "limit_aroma_chi2", true );
 
 	/// read options  Alert!! if there are options, settings of parser will be overrided.
 	read_options();

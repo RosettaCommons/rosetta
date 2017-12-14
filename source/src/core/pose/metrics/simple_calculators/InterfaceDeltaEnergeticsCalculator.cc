@@ -28,6 +28,7 @@
 // Utility headers
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
@@ -172,7 +173,7 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			const scoring::EnergyEdge * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
+			const auto * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			if ( ( j >= ch2_begin_num ) && ( j <= ch2_end_num ) ) {
 				delta_energies_unweighted_ += edge->fill_energy_map();
@@ -186,7 +187,7 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			const scoring::EnergyEdge * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
+			const auto * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			if ( ( j >= ch1_begin_num ) && ( j <= ch1_end_num ) ) {
 				delta_energies_unweighted_ += edge->fill_energy_map();
@@ -196,7 +197,7 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 
 	//let's not forget the long range energies
 	for ( Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++ ) {
-		scoring::methods::LongRangeEnergyType lr_type = scoring::methods::LongRangeEnergyType( lr );
+		auto lr_type = scoring::methods::LongRangeEnergyType( lr );
 		scoring::LREnergyContainerCOP lrec = this_pose.energies().long_range_container( lr_type );
 		//runtime_assert( lrec );
 		if ( !lrec ) continue;

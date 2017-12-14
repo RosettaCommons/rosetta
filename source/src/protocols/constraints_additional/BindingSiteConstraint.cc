@@ -39,6 +39,7 @@ CA  5 CA 71 HARMONIC 4.68 2.0
 #include <core/chemical/ResidueTypeSet.hh>
 #include <numeric/model_quality/rms.hh>
 
+#include <utility>
 #include <utility/string_util.hh>
 
 // Utility Headers
@@ -77,12 +78,12 @@ std::map< core::id::AtomID , numeric::xyzVector< core::Real > > protocols::const
 
 ///c-tor
 BindingSiteConstraint::BindingSiteConstraint(
-	utility::vector1< AtomID > const & atms,
+	utility::vector1< AtomID > atms,
 	core::pose::Pose const &start_pose,
 	core::scoring::ScoreType scoretype   /// ? TO DO -- give own scoretype
 ):
 	Constraint( scoretype ),
-	atms_(atms) {
+	atms_(std::move(atms)) {
 	init ( start_pose );
 }
 
@@ -142,13 +143,13 @@ void BindingSiteConstraint::init( core::pose::Pose const &start_pose ) {
 
 /// ctor from a vector of atom positions (in lieu of a pose)
 BindingSiteConstraint::BindingSiteConstraint(
-	utility::vector1< AtomID > const & atms,
+	utility::vector1< AtomID >  atms,
 	ObjexxFCL::FArray2D< core::Real >  tgt_pos,
 	ObjexxFCL::FArray2D< core::Real >  tgt_pos_centroid,
 	core::scoring::ScoreType scoretype   /// ? TO DO -- give own scoretype
 ):
 	Constraint( scoretype ),
-	atms_(atms),
+	atms_(std::move(atms)),
 	tgt_pos_(tgt_pos),
 	tgt_pos_centroid_(tgt_pos_centroid)
 {}
@@ -158,7 +159,7 @@ bool BindingSiteConstraint::operator == ( core::scoring::constraints::Constraint
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( other ) ) return false;
 
-	BindingSiteConstraint const & other_downcast( static_cast< BindingSiteConstraint const & > ( other ) );
+	auto const & other_downcast( static_cast< BindingSiteConstraint const & > ( other ) );
 	if ( atms_             != other_downcast.atms_             ) return false;
 	if ( tgt_pos_          != other_downcast.tgt_pos_          ) return false;
 	if ( tgt_pos_centroid_ != other_downcast.tgt_pos_centroid_ ) return false;

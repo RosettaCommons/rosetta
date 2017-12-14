@@ -43,9 +43,7 @@ StructureDataPerturber::StructureDataPerturber():
 {
 }
 
-StructureDataPerturber::~StructureDataPerturber()
-{
-}
+StructureDataPerturber::~StructureDataPerturber() = default;
 
 void
 StructureDataPerturber::set_ignore_segments( SegmentNameSet const & ignore )
@@ -115,8 +113,8 @@ StructureDataPerturber::finished() const
 void
 StructureDataPerturber::replace_segments( StructureData & sd, Permutation const & perm ) const
 {
-	for ( Permutation::const_iterator s=perm.begin(); s!=perm.end(); ++s ) {
-		std::string const & segname = (*s)->id();
+	for ( auto const & s : perm ) {
+		std::string const & segname = s->id();
 		TR.Debug << "Looking at segment " << segname << std::endl;
 
 		// Don't change this -- ensures that all Perturbers are working correctly
@@ -131,7 +129,7 @@ StructureDataPerturber::replace_segments( StructureData & sd, Permutation const 
 		if ( !sd.has_segment( segname ) ) continue;
 
 		Segment const & cur_seg = sd.segment( segname );
-		Segment newseg = **s;
+		Segment newseg = *s;
 
 		if ( cur_seg.lower_padding() == 0 ) newseg.delete_lower_padding();
 		if ( cur_seg.upper_padding() == 0 ) newseg.delete_upper_padding();
@@ -155,8 +153,7 @@ NullPerturber::NullPerturber():
 {}
 
 /// @brief Destructor
-NullPerturber::~NullPerturber()
-{}
+NullPerturber::~NullPerturber() = default;
 
 StructureDataPerturberOP
 NullPerturber::clone() const
@@ -182,8 +179,7 @@ ConnectionPerturber::ConnectionPerturber():
 	architect_()
 {}
 
-ConnectionPerturber::~ConnectionPerturber()
-{}
+ConnectionPerturber::~ConnectionPerturber() = default;
 
 StructureDataPerturberOP
 ConnectionPerturber::clone() const
@@ -222,10 +218,10 @@ ConnectionPerturber::enumerate( StructureData const & sd ) const
 
 	// filter connection candidates with different connection points
 	SegmentCOPs motifs;
-	for ( SegmentOPs::const_iterator m=all_arch_motifs.begin(); m!=all_arch_motifs.end(); ++m ) {
-		if ( (*m)->lower_segment() != target_motif.lower_segment() ) continue;
-		if ( (*m)->upper_segment() != target_motif.upper_segment() ) continue;
-		all_motifs.push_back( boost::assign::list_of (*m) );
+	for ( auto const & all_arch_motif : all_arch_motifs ) {
+		if ( all_arch_motif->lower_segment() != target_motif.lower_segment() ) continue;
+		if ( all_arch_motif->upper_segment() != target_motif.upper_segment() ) continue;
+		all_motifs.push_back( boost::assign::list_of (all_arch_motif) );
 	}
 	return all_motifs;
 }
@@ -239,11 +235,9 @@ ConnectionPerturber::retrieve_connection_architect( std::string const & arch_nam
 	architect_ = connection;
 }
 
-HelixPerturber::HelixPerturber()
-{}
+HelixPerturber::HelixPerturber() = default;
 
-HelixPerturber::~HelixPerturber()
-{}
+HelixPerturber::~HelixPerturber() = default;
 
 StructureDataPerturberOP
 HelixPerturber::clone() const
@@ -262,7 +256,7 @@ StructureDataPerturber::Permutations
 HelixPerturber::enumerate( StructureData const & sd ) const
 {
 	Permutations motifs;
-	for ( SegmentCOPs::const_iterator m=architect_->motifs_begin(); m!=architect_->motifs_end(); ++m ) {
+	for ( auto m=architect_->motifs_begin(); m!=architect_->motifs_end(); ++m ) {
 		if ( ignored( (*m)->id() ) ) continue;
 		if ( !sd.has_segment( (*m)->id() ) ) continue;
 		debug_assert( *m );
@@ -310,13 +304,12 @@ CompoundPerturber::CompoundPerturber( CompoundPerturber const & other ):
 	mode_( other.mode_ ),
 	perturbers_()
 {
-	for ( StructureDataPerturberOPs::const_iterator ptb=other.perturbers_.begin(); ptb!=other.perturbers_.end(); ++ptb ) {
-		perturbers_.push_back( (*ptb)->clone() );
+	for ( auto const & perturber : other.perturbers_ ) {
+		perturbers_.push_back( perturber->clone() );
 	}
 }
 
-CompoundPerturber::~CompoundPerturber()
-{}
+CompoundPerturber::~CompoundPerturber() = default;
 
 StructureDataPerturberOP
 CompoundPerturber::clone() const
@@ -340,8 +333,8 @@ CompoundPerturber::parse_my_tag( utility::tag::Tag const & tag, basic::datacache
 	}
 
 	perturbers_.clear();
-	for ( Tag::tags_t::const_iterator subtag=tag.getTags().begin(); subtag!=tag.getTags().end(); ++subtag ) {
-		perturbers_.push_back( StructureDataPerturber::create( **subtag, data ) );
+	for ( auto const & subtag : tag.getTags() ) {
+		perturbers_.push_back( StructureDataPerturber::create( *subtag, data ) );
 	}
 }
 
@@ -349,8 +342,8 @@ StructureDataPerturber::Permutations
 CompoundPerturber::enumerate( StructureData const & sd ) const
 {
 	PermutationsByPerturber all_motifs;
-	for ( StructureDataPerturberOPs::const_iterator ptb=perturbers_.begin(); ptb!=perturbers_.end(); ++ptb ) {
-		all_motifs.push_back( (*ptb)->enumerate( sd ) );
+	for ( auto const & perturber : perturbers_ ) {
+		all_motifs.push_back( perturber->enumerate( sd ) );
 	}
 	return all_combinations( all_motifs );
 }
@@ -368,18 +361,17 @@ CompoundPerturber::all_combinations( PermutationsByPerturber const & all_motifs 
 	Permutations const & first = *all_motifs.begin();
 	if ( remaining.empty() ) {
 		// we are at the lowest level of recursion
-		for ( Permutations::const_iterator s=first.begin(); s!=first.end(); ++s ) {
-			retval.push_back( *s );
+		for ( auto const & s : first ) {
+			retval.push_back( s );
 		}
 	} else {
-		for ( Permutations::const_iterator p=remaining.begin(); p!=remaining.end(); ++p ) {
+		for ( auto const & p : remaining ) {
 			if ( first.empty() ) {
-				Permutation new_perm( p->begin(), p->end() );
+				Permutation new_perm( p.begin(), p.end() );
 				retval.push_back( new_perm );
 			} else {
-				for ( Permutations::const_iterator s=first.begin(); s!=first.end(); ++s ) {
-					Permutation new_perm = *s;
-					new_perm.insert( new_perm.end(), p->begin(), p->end() );
+				for ( auto new_perm : first ) {
+					new_perm.insert( new_perm.end(), p.begin(), p.end() );
 					retval.push_back( new_perm );
 				}
 			}

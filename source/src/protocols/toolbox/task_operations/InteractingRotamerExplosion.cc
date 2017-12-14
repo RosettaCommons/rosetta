@@ -61,7 +61,7 @@ InteractingRotamerExplosion::InteractingRotamerExplosion() :
 	exclude_radius_( 20.0 )
 {}
 
-InteractingRotamerExplosion::~InteractingRotamerExplosion() {}
+InteractingRotamerExplosion::~InteractingRotamerExplosion() = default;
 
 core::pack::task::operation::TaskOperationOP InteractingRotamerExplosion::clone() const
 {
@@ -76,7 +76,7 @@ InteractingRotamerExplosion::apply( core::pose::Pose const & pose, core::pack::t
 	core::Real excl_radius_sq( exclude_radius_ * exclude_radius_ );
 	utility::vector1< core::Size > target_seqpos;
 	std::set< core::Size > parsed_seqpos( core::pose::get_resnum_list( string_target_seqpos_, pose ) );
-	for (  std::set< core::Size >::const_iterator set_it( parsed_seqpos.begin() ), set_end( parsed_seqpos.end() ); set_it != set_end; ++set_it ) target_seqpos.push_back( *set_it );
+	for ( unsigned long parsed_seqpo : parsed_seqpos ) target_seqpos.push_back( parsed_seqpo );
 
 	std::string report_string("Potential rotamer explosion positions against target pdb pos");
 	for ( core::Size j(1); j <= target_seqpos.size(); ++j ) {
@@ -112,7 +112,7 @@ InteractingRotamerExplosion::parse_tag( TagCOP tag , DataMap & )
 	string_target_seqpos_ = tag->getOption< std::string >( "target_seqpos" );// these are kept in memory until the pose is available (at apply time)
 	score_cutoff_ =  tag->getOption< core::Real >( "score_cutoff", -0.5 );
 	ex_level_ = tag->getOption< core::Size >( "ex_level", 4 );
-	debug_ = tag->getOption< bool >( "debug", 0 );
+	debug_ = tag->getOption< bool >( "debug", false );
 	exclude_radius_ =  tag->getOption< core::Real >( "exclude_radius", 20.0 );
 }
 

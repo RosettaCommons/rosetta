@@ -122,7 +122,7 @@ StubScoreFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new StubScoreFilter() );
 }
 
-StubScoreFilter::~StubScoreFilter(){}
+StubScoreFilter::~StubScoreFilter()= default;
 
 
 protocols::filters::FilterOP

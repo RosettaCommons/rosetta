@@ -73,8 +73,8 @@ static basic::Tracer TR( "protocols.rosetta_scripts.ParsedProtocol" );
 static basic::Tracer TR_call_order( "protocols.rosetta_scripts.ParsedProtocol_call_order" );
 static basic::Tracer TR_report( "protocols.rosetta_scripts.ParsedProtocol.REPORT" );
 
-typedef core::Real Real;
-typedef core::pose::Pose Pose;
+using Real = core::Real;
+using Pose = core::pose::Pose;
 
 using namespace core;
 using namespace std;

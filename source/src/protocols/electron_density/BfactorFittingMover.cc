@@ -68,7 +68,7 @@ symmetrizeBfactors( core::pose::Pose & pose ) {
 	}
 
 	core::conformation::symmetry::SymmetryInfoOP symm_info;
-	core::conformation::symmetry::SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 	symm_info = SymmConf.Symmetry_Info();
 
@@ -113,7 +113,7 @@ BfactorMultifunc::BfactorMultifunc(
 	core::pose::initialize_atomid_map( atom_indices_, pose_in );
 	core::conformation::symmetry::SymmetryInfoOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose_in) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose_in.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -176,7 +176,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose_copy) ) {
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose_copy.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -247,7 +247,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 					iru != irue; ++iru ) {
-				core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
+				auto const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
 				core::Size const j( edge->get_other_ind(i) );
 				core::Size jasu = j;
 
@@ -318,7 +318,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 	if ( wt_adp_ != 0 ) {
 		core::conformation::symmetry::SymmetryInfoOP symm_info;
 		if ( core::pose::symmetry::is_symmetric(pose_copy) ) {
-			core::conformation::symmetry::SymmetricConformation & SymmConf (
+			auto & SymmConf (
 				dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose_copy.conformation()) );
 			symm_info = SymmConf.Symmetry_Info();
 		}
@@ -361,7 +361,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 					iru != irue; ++iru ) {
-				core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
+				auto const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
 				core::Size const j( edge->get_other_ind(i) );
 				core::Size jasu = j;
 

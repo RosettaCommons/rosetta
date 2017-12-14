@@ -88,12 +88,12 @@ class RespairInteractions : public basic::datacache::CacheableData
 {
 public:
 	typedef utility::fixedsizearray1< Size, 2 > ResAtomIndex;
-	typedef utility::OrderedTuple< ResAtomIndex > ResAtomIndexTuple;
+	using ResAtomIndexTuple = utility::OrderedTuple<ResAtomIndex>;
 	typedef std::map< ResAtomIndexTuple, std::list< resatom_and_func_struct > > ResAtomIndexFuncMap;
 
-	RespairInteractions(){}
-	virtual ~RespairInteractions(){}
-	virtual basic::datacache::CacheableDataOP clone() const { return basic::datacache::CacheableDataOP( new RespairInteractions( *this ) ); }
+	RespairInteractions()= default;
+	~RespairInteractions() override= default;
+	basic::datacache::CacheableDataOP clone() const override { return basic::datacache::CacheableDataOP( new RespairInteractions( *this ) ); }
 
 	void apfc_list( AtomPairFuncListCOP apfclist ) { apfc_list_ = apfclist; }
 	AtomPairFuncList const & apfc_list() const { return *apfc_list_; }
@@ -101,13 +101,13 @@ private:
 	AtomPairFuncListCOP apfc_list_;
 };
 
-typedef utility::pointer::shared_ptr< RespairInteractions > RespairInteractionsOP;
-typedef utility::pointer::shared_ptr< RespairInteractions const > RespairInteractionsCOP;
+using RespairInteractionsOP = utility::pointer::shared_ptr<RespairInteractions>;
+using RespairInteractionsCOP = utility::pointer::shared_ptr<const RespairInteractions>;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-AtomPairFuncList::AtomPairFuncList() {}
-AtomPairFuncList::~AtomPairFuncList() {}
+AtomPairFuncList::AtomPairFuncList() = default;
+AtomPairFuncList::~AtomPairFuncList() = default;
 
 
 void
@@ -196,12 +196,7 @@ FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy() :
 	set_pair_and_func_map();
 }
 
-FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy( FullatomCustomPairDistanceEnergy const & src ):
-	parent( src ),
-	pair_and_func_map_( src.pair_and_func_map_ ),
-	max_dis_( src.max_dis_ )
-{
-}
+FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy( FullatomCustomPairDistanceEnergy const & /*src*/ ) = default;
 
 /// clone
 methods::EnergyMethodOP
@@ -224,13 +219,10 @@ FullatomCustomPairDistanceEnergy::residue_pair_energy(
 	if ( atom_pair_func_list == nullptr ) { return; }
 
 	Energy score = 0.0;
-	for ( std::list<atoms_and_func_struct>::const_iterator
-			atom_func_iter     = atom_pair_func_list->ats_n_func_list().begin(),
-			atom_func_iter_end = atom_pair_func_list->ats_n_func_list().end();
-			atom_func_iter != atom_func_iter_end; ++atom_func_iter ) {
-		Vector const& atom_a_xyz( rsd1.xyz((*atom_func_iter).resA_atom_index_));
-		Vector const& atom_b_xyz( rsd2.xyz((*atom_func_iter).resB_atom_index_));
-		score += (*atom_func_iter).func_->func(atom_a_xyz.distance_squared(atom_b_xyz));
+	for ( auto const & atom_func_iter : atom_pair_func_list->ats_n_func_list() ) {
+		Vector const& atom_a_xyz( rsd1.xyz(atom_func_iter.resA_atom_index_));
+		Vector const& atom_b_xyz( rsd2.xyz(atom_func_iter.resB_atom_index_));
+		score += atom_func_iter.func_->func(atom_a_xyz.distance_squared(atom_b_xyz));
 
 		//if ((*atom_func_iter).func_->func(atom_a_xyz.distance_squared(atom_b_xyz)) > 0)
 		//tr.Debug << rsd1.name() << " " << rsd1.seqpos() << " " << rsd1.atom_name((*atom_func_iter).resA_atom_index_) << " " <<
@@ -281,13 +273,10 @@ FullatomCustomPairDistanceEnergy::residue_pair_energy_ext(
 
 	RespairInteractions const & respair_intxns( static_cast< RespairInteractions const & > (pair_data.get_data_ref( fa_custom_pair_dist_data ) ));
 	Energy score( 0.0 );
-	for ( std::list< atoms_and_func_struct >::const_iterator
-			atom_func_iter     = respair_intxns.apfc_list().ats_n_func_list().begin(),
-			atom_func_iter_end = respair_intxns.apfc_list().ats_n_func_list().end();
-			atom_func_iter != atom_func_iter_end; ++atom_func_iter ) {
-		Vector const& atom_a_xyz( rsd1.xyz((*atom_func_iter).resA_atom_index_));
-		Vector const& atom_b_xyz( rsd2.xyz((*atom_func_iter).resB_atom_index_));
-		score += (*atom_func_iter).func_->func(atom_a_xyz.distance_squared(atom_b_xyz));
+	for ( auto const & atom_func_iter : respair_intxns.apfc_list().ats_n_func_list() ) {
+		Vector const& atom_a_xyz( rsd1.xyz(atom_func_iter.resA_atom_index_));
+		Vector const& atom_b_xyz( rsd2.xyz(atom_func_iter.resB_atom_index_));
+		score += atom_func_iter.func_->func(atom_a_xyz.distance_squared(atom_b_xyz));
 	}
 	emap[ fa_cust_pair_dist ] += score;
 }
@@ -335,22 +324,19 @@ FullatomCustomPairDistanceEnergy::eval_residue_pair_derivatives(
 	debug_assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
 
 	RespairInteractions const & respair_intxns( static_cast< RespairInteractions const & > (pair_data.get_data_ref( fa_custom_pair_dist_data ) ));
-	for ( std::list< atoms_and_func_struct >::const_iterator
-			atom_func_iter     = respair_intxns.apfc_list().ats_n_func_list().begin(),
-			atom_func_iter_end = respair_intxns.apfc_list().ats_n_func_list().end();
-			atom_func_iter != atom_func_iter_end; ++atom_func_iter ) {
-		Vector const & atom_a_xyz = rsd1.xyz( atom_func_iter->resA_atom_index_ );
-		Vector const & atom_b_xyz = rsd2.xyz( atom_func_iter->resB_atom_index_ );
+	for ( auto const & atom_func_iter : respair_intxns.apfc_list().ats_n_func_list() ) {
+		Vector const & atom_a_xyz = rsd1.xyz( atom_func_iter.resA_atom_index_ );
+		Vector const & atom_b_xyz = rsd2.xyz( atom_func_iter.resB_atom_index_ );
 
 		Real dist_sq = atom_a_xyz.distance_squared(atom_b_xyz);
-		if ( dist_sq < atom_func_iter->func_->min_dis() || dist_sq > atom_func_iter->func_->max_dis() ) continue;
+		if ( dist_sq < atom_func_iter.func_->min_dis() || dist_sq > atom_func_iter.func_->max_dis() ) continue;
 
 		Vector f1( atom_a_xyz.cross( atom_b_xyz ));
 		Vector f2( atom_a_xyz - atom_b_xyz );
 		Real const dist( f2.length() );
 		if ( dist == 0.0 ) continue;
 
-		Real deriv = (*atom_func_iter).func_->dfunc(dist_sq);
+		Real deriv = atom_func_iter.func_->dfunc(dist_sq);
 		// WRONG f1 *= ( deriv / dist ) * weights[ fa_cust_pair_dist ];
 		// WRONG f2 *= ( deriv / dist ) * weights[ fa_cust_pair_dist ];
 		f1 *= deriv * 2 * weights[ fa_cust_pair_dist ];
@@ -364,10 +350,10 @@ FullatomCustomPairDistanceEnergy::eval_residue_pair_derivatives(
 		f2 *= dE_dd2 * 2 * dis * weights[ fa_cust_pair_dist ];*/
 
 		// equal and opposite
-		r1_atom_derivs[ atom_func_iter->resA_atom_index_ ].f1() += f1;
-		r1_atom_derivs[ atom_func_iter->resA_atom_index_ ].f2() += f2;
-		r2_atom_derivs[ atom_func_iter->resB_atom_index_ ].f1() -= f1;
-		r2_atom_derivs[ atom_func_iter->resB_atom_index_ ].f2() -= f2;
+		r1_atom_derivs[ atom_func_iter.resA_atom_index_ ].f1() += f1;
+		r1_atom_derivs[ atom_func_iter.resA_atom_index_ ].f2() += f2;
+		r2_atom_derivs[ atom_func_iter.resB_atom_index_ ].f1() -= f1;
+		r2_atom_derivs[ atom_func_iter.resB_atom_index_ ].f2() -= f2;
 	}
 
 }
@@ -524,7 +510,7 @@ bool DistanceFunc::same_type_as_me( func::Func const & other ) const
 }
 
 
-DistanceFunc::~DistanceFunc() {}
+DistanceFunc::~DistanceFunc() = default;
 Real DistanceFunc::func( Real const dist_sq ) const {
 	Real e(0.0);
 	if ( dist_sq < scores_hist_->minimum() ||

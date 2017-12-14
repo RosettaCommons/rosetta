@@ -73,7 +73,7 @@ AddChainBreak::AddChainBreak() :
 	remove_( false )
 {}
 
-AddChainBreak::~AddChainBreak() {}
+AddChainBreak::~AddChainBreak() = default;
 
 protocols::moves::MoverOP
 AddChainBreak::clone() const {

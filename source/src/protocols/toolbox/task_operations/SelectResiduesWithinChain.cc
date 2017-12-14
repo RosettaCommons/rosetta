@@ -54,7 +54,7 @@ SelectResiduesWithinChainOperation::SelectResiduesWithinChainOperation() :
 	resid_.clear();
 }
 
-SelectResiduesWithinChainOperation::~SelectResiduesWithinChainOperation() {}
+SelectResiduesWithinChainOperation::~SelectResiduesWithinChainOperation() = default;
 
 core::pack::task::operation::TaskOperationOP
 SelectResiduesWithinChainOperationCreator::create_task_operation() const
@@ -135,9 +135,9 @@ SelectResiduesWithinChainOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	std::string const res( tag->getOption< std::string >( "resid" ) );
-	allow_design( tag->getOption< bool >( "allow_design", 1 ) );
-	allow_repacking( tag->getOption< bool >( "allow_repacking", 1 ) );
-	modify_unselected_residues( tag->getOption< bool >( "modify_unselected_residues", 1 ) );
+	allow_design( tag->getOption< bool >( "allow_design", true ) );
+	allow_repacking( tag->getOption< bool >( "allow_repacking", true ) );
+	modify_unselected_residues( tag->getOption< bool >( "modify_unselected_residues", true ) );
 
 	runtime_assert( !( allow_design() && !allow_repacking() ) );
 

@@ -73,8 +73,7 @@ HbdGrid::HbdGrid(): SingleGrid ("HbdGrid")
 }
 
 
-HbdGrid::~HbdGrid()
-{}
+HbdGrid::~HbdGrid() = default;
 
 GridBaseOP HbdGrid::clone() const {
 	return GridBaseOP( new HbdGrid( *this ) );

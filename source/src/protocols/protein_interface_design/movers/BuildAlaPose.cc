@@ -86,7 +86,7 @@ BuildAlaPose::BuildAlaPose(
 	runtime_assert( interface_distance_cutoff_ >= 0 );
 }
 
-BuildAlaPose::~BuildAlaPose() {}
+BuildAlaPose::~BuildAlaPose() = default;
 
 void
 BuildAlaPose::apply( pose::Pose & pose )
@@ -123,8 +123,8 @@ BuildAlaPose::apply( pose::Pose & pose )
 void
 BuildAlaPose::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
-	design_partner1_ = tag->getOption<bool>( "partner1", 0 );
-	design_partner2_ = tag->getOption<bool>( "partner2", 1 );
+	design_partner1_ = tag->getOption<bool>( "partner1", false );
+	design_partner2_ = tag->getOption<bool>( "partner2", true );
 	repack_partner1_ = design_partner1_;
 	repack_partner2_ = design_partner2_;
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 20.0 );

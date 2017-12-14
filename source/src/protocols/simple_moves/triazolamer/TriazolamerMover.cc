@@ -119,7 +119,7 @@ TriazolamerMover::TriazolamerMover(
 
 }
 
-TriazolamerMover::~TriazolamerMover(){}
+TriazolamerMover::~TriazolamerMover()= default;
 
 void TriazolamerMover::update_hydrogens_( core::pose::Pose & pose )
 {

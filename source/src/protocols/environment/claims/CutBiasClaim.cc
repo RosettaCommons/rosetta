@@ -27,6 +27,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -52,7 +53,7 @@ CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
 {
 	using core::select::residue_selector::ResidueSelector;
 
-	core::Real bias = tag->getOption< core::Real >( "bias" );
+	auto bias = tag->getOption< core::Real >( "bias" );
 
 	std::pair< core::Size, core::Size > range;
 	range.first = tag->getOption< core::Size >( "region_start" );
@@ -68,8 +69,8 @@ CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
 }
 
 CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
-	std::string const& label,
-	core::fragment::SecondaryStructure const& ss_in ):
+	std::string const & label,
+	core::fragment::SecondaryStructure const & ss_in ):
 	Parent( owner ),
 	label_( label )
 {
@@ -82,16 +83,16 @@ CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
 }
 
 CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
-	std::string const& label,
-	std::map< LocalPosition, core::Real > const& biases ):
+	std::string const & label,
+	std::map< LocalPosition, core::Real > const & biases ):
 	Parent( owner ),
 	label_( label ),
 	biases_( biases )
 {}
 
 CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
-	std::string const& label,
-	std::pair< core::Size, core::Size > const& range,
+	std::string const & label,
+	std::pair< core::Size, core::Size > const & range,
 	core::Real bias ):
 	Parent( owner ),
 	label_( label )
@@ -103,12 +104,11 @@ CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
 
 void CutBiasClaim::yield_elements( FoldTreeSketch const&, CutBiasElements& elements ) const {
 
-	for ( std::map< LocalPosition, core::Real >::const_iterator it = biases_.begin();
-			it != biases_.end(); ++it ) {
+	for ( auto const & biase : biases_ ) {
 		CutBiasElement e;
 
-		e.p = it->first;
-		e.bias = it->second;
+		e.p = biase.first;
+		e.bias = biase.second;
 
 		elements.push_back( e );
 	}

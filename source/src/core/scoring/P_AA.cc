@@ -180,7 +180,7 @@ P_AA::read_P_AA_pp()
 	using namespace basic::options::OptionKeys::corrections;
 	using namespace basic::options::OptionKeys::corrections::score;
 	using namespace basic::options::OptionKeys::corrections::shapovalov_lib;
-	typedef  FArray2D_Probability::IR  IR; // Index range type
+	using IR = FArray2D_Probability::IR; // Index range type
 
 	// Read the probability file and load the array
 	Angle phi, psi;
@@ -332,7 +332,7 @@ P_AA::read_P_AA_pp()
 void P_AA::symmetrize_gly_table()
 {
 	TR << "Symmetrizing P_AA_pp glycine table." << std::endl;
-	core::Size const glyindex( static_cast<core::Size>(core::chemical::aa_gly) );
+	auto const glyindex( static_cast<core::Size>(core::chemical::aa_gly) );
 
 	//Debug-mode check:
 	TR.Debug << "P_AA_pp gly table before symmetry operation:" << std::endl;

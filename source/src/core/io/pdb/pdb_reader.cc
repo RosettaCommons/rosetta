@@ -63,8 +63,8 @@ create_record_from_pdb_line( std::string const & line )
 	std::string const & record_type( resized_line.substr( 0, 6 ) );
 
 	Record record( RecordCollection::record_from_record_type( record_type ) );
-	for ( Record::iterator field = record.begin(), end = record.end(); field != end; ++field ) {
-		field->second.set_value_from_pdb_line( resized_line );
+	for ( auto & field : record ) {
+		field.second.set_value_from_pdb_line( resized_line );
 	}
 
 	return record;

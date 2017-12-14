@@ -134,8 +134,8 @@
 #define GetCurrentDir getcwd
 
 #include <list>
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 
 using namespace core;
 using namespace core::pose::rna;
@@ -150,7 +150,7 @@ using namespace protocols::stepwise::modeler::rna;
 using namespace protocols::stepwise::legacy::modeler;
 using namespace protocols::stepwise::legacy::modeler::rna;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 static basic::Tracer TR( "swa_rna_main" );
 
@@ -216,8 +216,8 @@ swa_rna_sample()
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 	PoseCOP native_pose = working_parameters_COP->working_native_pose();
 
-	Vector center_vector = ( native_pose != 0 ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
-	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer ( pose.conformation(), get_working_directory(), 400, 400, false, ( native_pose != 0 ), center_vector );
+	Vector center_vector = ( native_pose != nullptr ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
+	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer ( pose.conformation(), get_working_directory(), 400, 400, false, ( native_pose != nullptr ), center_vector );
 
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
 	// put following in pose setup? IS THIS STILL WORKING?

@@ -17,7 +17,7 @@
 namespace protocols {
 namespace jd3 {
 
-Job::Job() {}
+Job::Job() = default;
 Job::~Job() = default;
 
 

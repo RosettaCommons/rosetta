@@ -75,7 +75,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 //Utility
-#include <math.h>
+#include <cmath>
 #include <basic/Tracer.hh>
 #include <utility/py/PyAssert.hh>
 #include <map>
@@ -138,7 +138,7 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyInfoCOP ab_info ):
 
 }
 
-AntibodyDesignMover::~AntibodyDesignMover(){}
+AntibodyDesignMover::~AntibodyDesignMover()= default;
 
 void
 AntibodyDesignMover::set_defaults(){
@@ -593,7 +593,7 @@ AntibodyDesignMover::setup_options_classes(){
 
 	//Disable CDRs that are not present (aka camelid design)
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		if ( ! ab_info_->has_CDR( cdr ) ) {
 			cdr_seq_design_options_[ cdr ]->design( false );
 			cdr_graft_design_options_[ cdr ]->design( false );
@@ -778,7 +778,7 @@ AntibodyDesignMover::finalize_setup(Pose & pose){
 		}
 	} else {
 		for ( core::Size i=1; i<=CDRNameEnum_total; ++i ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+			auto cdr = static_cast<CDRNameEnum>(i);
 			if ( cdr_graft_design_options_[cdr]->design()  || cdr_seq_design_options_[ cdr ]->design() ) {
 				if ( cdr_graft_design_options_[ cdr]->design() && cdr_set_[cdr].size() == 0 ) {
 					//Exit so that we don't continue thinking we are graft designing some cdr when we really are not...
@@ -807,14 +807,14 @@ AntibodyDesignMover::finalize_setup(Pose & pose){
 
 	total_permutations_ = 1;
 	for ( core::Size i=1; i<=6; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		if ( cdr_graft_design_options_[  cdr ]->design() ) {
 			total_permutations_ *= cdr_set_[ cdr ].size();
 		}
 	}
 	TR<< "///// Total CDRs in set /////"<<std::endl;
 	for ( core::Size i = 1; i<=6; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		modeler_->cdr_overhang(cdr, 2); // 2 Residue overhang for CDR packing and CDR minimization to go with grafting.  North CDR definitions already go into the beta barrel by a few residues
 		if ( cdr_graft_design_options_[ cdr ]->design() ) {
 			TR << "/// "<<ab_info_->get_CDR_name(cdr)<<" "<<cdr_set_[cdr].size()<<std::endl;
@@ -936,7 +936,7 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 
 			//Now that AntibodyInfo and the Cacheable data is updated.  Add the correct CDR constraints to all CDRs.
 			for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
-				CDRNameEnum cdr_in_pose = static_cast<CDRNameEnum>(i);
+				auto cdr_in_pose = static_cast<CDRNameEnum>(i);
 				cdr_dihedral_cst_mover_->set_cdr(cdr_in_pose);
 				if ( cdr_in_pose == cdr ) {
 					cdr_dihedral_cst_mover_->set_force_cluster(cdr_pose.cluster);
@@ -957,7 +957,7 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 			//
 			//
 			for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
-				CDRNameEnum cdr_in_pose = static_cast<CDRNameEnum>(i);
+				auto cdr_in_pose = static_cast<CDRNameEnum>(i);
 				cdr_dihedral_cst_mover_->set_cdr(cdr_in_pose);
 				cdr_dihedral_cst_mover_->set_remove_any_set_forced_cluster();
 				cdr_dihedral_cst_mover_->apply(pose);
@@ -1185,8 +1185,8 @@ AntibodyDesignMover::check_for_top_designs(core::pose::Pose & pose){
 	//Can be refactored to use utility::TopScoreSelector
 	//From mc algorithm, you can have multiple poses that are equivalent...
 	core::Real score = (*scorefxn_)(pose);
-	vector1<core::Real>::iterator score_it = top_scores_.begin();
-	vector1<core::pose::PoseOP>::iterator pose_it = top_designs_.begin();
+	auto score_it = top_scores_.begin();
+	auto pose_it = top_designs_.begin();
 	if ( top_scores_.size()==0 ) {
 		top_scores_.push_back(score);
 		top_designs_.push_back(core::pose::PoseOP( new Pose() ));
@@ -1221,7 +1221,7 @@ AntibodyDesignMover::get_cdr_set_index_list(){
 	vector1<core::Size> cdr_set_totals(6, 0);
 
 	for ( core::SSize i=CDRNameEnum_start; i<=CDRNameEnum_total; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		cdr_set_totals[i] = cdr_set_[cdr].size();
 	}
 
@@ -1307,18 +1307,11 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 	//  Probably a better way, though using std::advance is still not ideal...
 	std::map< CDRNameEnum, utility::vector1< CDRClusterEnum > > cluster_indexes;
 
-	typedef std::map< CDRNameEnum,
-		std::map< clusters::CDRClusterEnum,
-		utility::vector1< core::Size > > >::iterator it_type;
-
-	typedef std::map< clusters::CDRClusterEnum,
-		utility::vector1< core::Size > >::iterator it_type_clusters;
-
-	for ( it_type it = cluster_based_CDRDBPose_indexes_.begin(); it != cluster_based_CDRDBPose_indexes_.end(); ++it ) {
+	for ( auto & cluster_based_CDRDBPose_indexe : cluster_based_CDRDBPose_indexes_ ) {
 
 		//For Length indexing:
-		for ( it_type_clusters it2 = cluster_based_CDRDBPose_indexes_[ it->first ].begin(); it2 != cluster_based_CDRDBPose_indexes_[ it->first ].end(); ++it2 ) {
-			cluster_indexes[ it->first ].push_back( it2->first );
+		for ( auto it2 = cluster_based_CDRDBPose_indexes_[ cluster_based_CDRDBPose_indexe.first ].begin(); it2 != cluster_based_CDRDBPose_indexes_[ cluster_based_CDRDBPose_indexe.first ].end(); ++it2 ) {
+			cluster_indexes[ cluster_based_CDRDBPose_indexe.first ].push_back( it2->first );
 		}
 
 		//For length and cluster indexing
@@ -1356,13 +1349,13 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 
 				//Get a random length
 				//Index needs start from 0 for std::advance
-				std::map< core::Size, std::map< CDRClusterEnum, utility::vector1< core::Size > > >::iterator len_it = length_based_CDRDBPose_indexes_[ cdr_type ].begin();
+				auto len_it = length_based_CDRDBPose_indexes_[ cdr_type ].begin();
 				std::advance(len_it, numeric::random::rg().random_range(0, length_based_CDRDBPose_indexes_[ cdr_type ].size() - 1));
 				core::Size length = len_it->first;
 
 				//Get a random cluster within that length
 				//Index needs start from 0 for std::advance
-				std::map<CDRClusterEnum, utility::vector1< core::Size > >::iterator clus_it = length_based_CDRDBPose_indexes_[ cdr_type ][ length ].begin();
+				auto clus_it = length_based_CDRDBPose_indexes_[ cdr_type ][ length ].begin();
 				std::advance(clus_it, numeric::random::rg().random_range(0, length_based_CDRDBPose_indexes_[ cdr_type ][ length ].size() - 1));
 				CDRClusterEnum cluster = clus_it->first;
 
@@ -1546,7 +1539,7 @@ AntibodyDesignMover::show(std::ostream & output) const{
 	output << std::endl;
 	for ( core::Size i=1; i<=core::Size( ab_info_->get_total_num_CDRs() ); ++i ) {
 
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 
 
 		CDRSetOptionsCOP set_options = cdr_set_options_[cdr];

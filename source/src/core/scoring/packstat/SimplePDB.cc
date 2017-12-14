@@ -36,8 +36,7 @@ SimplePDB::get_spheres(
 	using namespace std;
 	set<pair<string,string> > errors;
 	Spheres spheres;
-	for ( SPAtomCIter i = atoms_.begin(); i != atoms_.end(); ++i ) {
-		SimplePDB_Atom const & atom( *i );
+	for ( auto const & atom : atoms_ ) {
 		numeric::xyzVector<PackstatReal> xyz( atom.x, atom.y, atom.z );
 		PackstatReal radius = arm.get_radius( atom.type, atom.res );
 		if ( radius > 0 ) {
@@ -48,8 +47,8 @@ SimplePDB::get_spheres(
 	}
 	if ( !errors.empty() ) {
 		TR << "ignoring unknown atom types:" << std::endl;
-		for ( set<pair<string,string> >::iterator i = errors.begin(); i != errors.end(); ++i ) {
-			TR << "(" << i->first << "," << i->second << "), ";
+		for ( auto const & error : errors ) {
+			TR << "(" << error.first << "," << error.second << "), ";
 		}
 		TR << std::endl;
 	}
@@ -80,12 +79,12 @@ SimplePDB::get_res_centers() const
 	int last_res_num = -12345;
 	char last_chain = '*';
 	char last_icode = ' ';
-	for ( SPAtomCIter i = atoms_.begin(); i != atoms_.end(); ++i ) {
-		if ( i->resnum != last_res_num || i->chain != last_chain  || i->icode != last_icode ) {
+	for ( auto const & atom : atoms_ ) {
+		if ( atom.resnum != last_res_num || atom.chain != last_chain  || atom.icode != last_icode ) {
 			num_res++;
-			last_res_num = i->resnum;
-			last_chain = i->chain;
-			last_icode = i->icode;
+			last_res_num = atom.resnum;
+			last_chain = atom.chain;
+			last_icode = atom.icode;
 		}
 	}
 	utility::vector1< xyzVector<PackstatReal> > centers;
@@ -94,20 +93,20 @@ SimplePDB::get_res_centers() const
 	last_res_num = -12345;
 	last_chain = '*';
 	Size res_atom_count = 0;
-	for ( SPAtomCIter i = atoms_.begin(); i != atoms_.end(); ++i ) {
-		if ( i->resnum != last_res_num || i->chain != last_chain || i->icode != last_icode ) {
+	for ( auto const & atom : atoms_ ) {
+		if ( atom.resnum != last_res_num || atom.chain != last_chain || atom.icode != last_icode ) {
 			if ( num_res > 0 ) {
 				if ( res_atom_count >= MIN_RES_ATOM_COUNT ) {
 					centers.push_back(center/res_atom_count);
-					res_labels_.push_back(i->res);
+					res_labels_.push_back(atom.res);
 				}
 				res_atom_count = 0;
 			}
 			center = xyzVector<PackstatReal>(0,0,0);
-			last_res_num = i->resnum;
-			last_chain = i->chain;
+			last_res_num = atom.resnum;
+			last_chain = atom.chain;
 		}
-		center += xyzVector<PackstatReal>( i->x, i->y, i->z );
+		center += xyzVector<PackstatReal>( atom.x, atom.y, atom.z );
 		res_atom_count++;
 	}
 	if ( res_atom_count >= MIN_RES_ATOM_COUNT ) centers.push_back( center/res_atom_count );

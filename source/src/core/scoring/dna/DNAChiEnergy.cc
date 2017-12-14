@@ -57,7 +57,7 @@ DNAChiEnergy::DNAChiEnergy() :
 	potential_( ScoringManager::get_instance()->get_DNABFormPotential() )
 {}
 
-DNAChiEnergy::~DNAChiEnergy() {}
+DNAChiEnergy::~DNAChiEnergy() = default;
 
 /// clone
 methods::EnergyMethodOP

@@ -160,8 +160,8 @@ string_to_size_vector( std::string const & sv ) {
 	return vec;
 }
 
-typedef utility::pointer::shared_ptr< ErraserMinimizerMover > ErraserMinimizerMoverOP;
-typedef utility::pointer::shared_ptr< ErraserMinimizerMover const > ErraserMinimizerMoverCOP;
+using ErraserMinimizerMoverOP = utility::pointer::shared_ptr<ErraserMinimizerMover>;
+using ErraserMinimizerMoverCOP = utility::pointer::shared_ptr<const ErraserMinimizerMover>;
 
 ErraserMinimizerMover::ErraserMinimizerMover():
 	Mover("ErraserMinimizerMover"),
@@ -941,7 +941,7 @@ ErraserMinimizerMover::apply(
 	ConstraintSetOP saved_cst_set = pose.constraint_set()->clone();
 
 	for ( Size chunk_i = first_chunk; chunk_i <= n_chunk; ++chunk_i ) {
-		time_t chunk_start = time(0);
+		time_t chunk_start = time(nullptr);
 
 		// Don't retain those dirty constraints from chunk n-1 -- they don't
 		// matter, since those residues can't move!
@@ -1006,7 +1006,7 @@ ErraserMinimizerMover::apply(
 		}
 		}
 		*/
-		time_t chunk_end = time(0);
+		time_t chunk_end = time(nullptr);
 		out << "CPU time for chunk: " << (chunk_end-chunk_start) << " seconds." << std::endl;
 		out << "DONE!" << std::endl;
 		std::stringstream fn;

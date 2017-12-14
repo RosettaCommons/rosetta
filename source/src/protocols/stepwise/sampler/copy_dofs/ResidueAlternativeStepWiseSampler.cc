@@ -81,8 +81,7 @@ ResidueAlternativeStepWiseSampler::ResidueAlternativeStepWiseSampler( utility::v
 }
 
 //Destructor
-ResidueAlternativeStepWiseSampler::~ResidueAlternativeStepWiseSampler()
-{}
+ResidueAlternativeStepWiseSampler::~ResidueAlternativeStepWiseSampler() = default;
 
 ///////////////////////////////////////////////////////
 std::map< Size, Size >

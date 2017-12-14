@@ -89,8 +89,7 @@ static basic::Tracer TR( "protocols.loophash.FragmentLoopInserter" );
 //****END CREATOR METHODS****//
 
 FragmentLoopInserter::FragmentLoopInserter():
-	num_flanking_residues_to_match_(3),
-	modify_flanking_regions_(false)
+	num_flanking_residues_to_match_(3)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

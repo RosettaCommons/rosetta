@@ -78,10 +78,10 @@
 #include <sstream>
 #include <ObjexxFCL/format.hh>
 #include <set>
-#include <time.h>
+#include <ctime>
 #include <map>
 
-#include <stdio.h> //Sept 26, 2011
+#include <cstdio> //Sept 26, 2011
 
 //for process_mem_usage:
 #include <ios>
@@ -1579,7 +1579,7 @@ create_torsion_value_string( core::Real const & torsion_value ) {
 	using namespace ObjexxFCL;
 	std::string torsion_string = "";
 	core::Real const principal_torsion = numeric::principal_angle_degrees( torsion_value );
-	Size const principal_torsion_SIZE = Size( std::abs( principal_torsion + 0.00001 ) ); //0.00001 is to prevent random ambiguity if the torsion decimal value is exactly .0000 Oct 12, 2010
+	auto const principal_torsion_SIZE = Size( std::abs( principal_torsion + 0.00001 ) ); //0.00001 is to prevent random ambiguity if the torsion decimal value is exactly .0000 Oct 12, 2010
 
 	if ( principal_torsion > 0 ) {
 		torsion_string = "p" + lead_zero_string_of( principal_torsion_SIZE, 3 );

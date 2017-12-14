@@ -61,8 +61,7 @@ VDW_Grid::VDW_Grid( VDW_Grid const & src ):
 
 
 //Destructor
-VDW_Grid::~VDW_Grid()
-{}
+VDW_Grid::~VDW_Grid() = default;
 
 
 void

@@ -36,7 +36,7 @@ class RECCES_Mover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	RECCES_Mover( options::RECCES_OptionsCOP const & options );
+	RECCES_Mover( options::RECCES_OptionsCOP options );
 
 	//destructor
 	~RECCES_Mover();

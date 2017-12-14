@@ -91,7 +91,7 @@ using namespace core::id;
 MC_SamplerOP
 MC_RNA_Sugar::find( TorsionID const & torsion_id ) {
 	if ( torsion_id == TorsionID( sugar_rotamer_->rsd_id(), BB, DELTA ) ) return std::dynamic_pointer_cast< MC_RNA_Sugar >( shared_from_this() );
-	return 0;
+	return nullptr;
 }
 ///////////////////////////////////////////////////////////////////////////
 } //rna

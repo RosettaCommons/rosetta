@@ -232,7 +232,7 @@ Serial_Refine::apply( core::pose::Pose &pose,
 		method_decoys.all_add_energy( "samplemethod", imovetype );
 		method_decoys.sort_by( "goap" );
 		core::Size npop( 0 );
-		core::Size n_to_pop = core::Size( method_decoys.size()*params.fshave1 );
+		auto n_to_pop = core::Size( method_decoys.size()*params.fshave1 );
 		while ( npop < n_to_pop ) {
 			method_decoys.store().pop_back();
 			npop++;
@@ -264,9 +264,9 @@ Serial_Refine::apply( core::pose::Pose &pose,
 
 	long endtime = time(nullptr);
 	// report time
-	core::Real ds = (core::Real)(endtime - starttime);
-	core::Size elapsemin = (core::Size)(ds/60.0);
-	core::Size elapsesec = (core::Size)(ds - 60.0*elapsemin);
+	auto ds = (core::Real)(endtime - starttime);
+	auto elapsemin = (core::Size)(ds/60.0);
+	auto elapsesec = (core::Size)(ds - 60.0*elapsemin);
 	TR << "Total time: " << elapsemin << " min " << elapsesec << " sec." << std::endl;
 
 	pose = avrg_pose;

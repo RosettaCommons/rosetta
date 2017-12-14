@@ -48,31 +48,31 @@ Adduct::Adduct():
 
 /// constructor
 Adduct::Adduct(
-	std::string  adduct_name,
-	std::string  atom_name,
-	std::string  atom_type_name,
-	std::string  mm_atom_type_name,
+	std::string const & adduct_name,
+	std::string const & atom_name,
+	std::string const & atom_type_name,
+	std::string const & mm_atom_type_name,
 	Real const atom_charge_in,
 	Real const phi_in,
 	Real const theta_in,
 	Real const d_in,
-	std::string  stub_atom1_name,
-	std::string  stub_atom2_name,
-	std::string  stub_atom3_name
+	std::string const & stub_atom1_name,
+	std::string const & stub_atom2_name,
+	std::string const & stub_atom3_name
 ):
-	adduct_name_(std::move( adduct_name )),
-	atom_name_(std::move( atom_name )),
-	atom_type_name_(std::move( atom_type_name )),
+	adduct_name_( adduct_name ),
+	atom_name_( atom_name ),
+	atom_type_name_( atom_type_name ),
 	//atom_type_(),
-	mm_atom_type_name_(std::move( mm_atom_type_name )),
+	mm_atom_type_name_( mm_atom_type_name ),
 	//mm_atom_type_(),
 	atom_charge_( atom_charge_in ),
 	phi_( phi_in ),
 	theta_( theta_in ),
 	d_( d_in ),
-	stub_atom1_(std::move( stub_atom1_name )),
-	stub_atom2_(std::move( stub_atom2_name )),
-	stub_atom3_(std::move( stub_atom3_name ))
+	stub_atom1_( stub_atom1_name ),
+	stub_atom2_( stub_atom2_name ),
+	stub_atom3_( stub_atom3_name )
 {}
 
 /// accessor to adduct_name string

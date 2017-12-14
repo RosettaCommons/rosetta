@@ -76,7 +76,7 @@ private:
 	std::string param_type_;
 	core::Real min_;
 	core::Real max_;
-	bool r_handed_;
+	//bool r_handed_;
 	bool filter_;
 };
 

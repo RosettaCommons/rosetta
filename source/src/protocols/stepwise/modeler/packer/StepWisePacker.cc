@@ -42,6 +42,7 @@
 #include <protocols/simple_moves/GreenPacker.hh>
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 
 #include <string>
@@ -90,8 +91,7 @@ StepWisePacker::StepWisePacker( utility::vector1< Size > const & working_moving_
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWisePacker::~StepWisePacker()
-{}
+StepWisePacker::~StepWisePacker() = default;
 
 /////////////////////
 std::string

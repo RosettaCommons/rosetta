@@ -55,8 +55,7 @@ HBNetScore::HBNetScore( HBNetScore const & src ) :
 
 
 //Destructor
-HBNetScore::~HBNetScore()
-{}
+HBNetScore::~HBNetScore() = default;
 
 void HBNetScore::report( std::ostream & out, core::pose::Pose const & pose) const
 {

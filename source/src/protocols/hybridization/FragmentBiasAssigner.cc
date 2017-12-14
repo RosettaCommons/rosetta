@@ -76,7 +76,7 @@ init(
 	n_symm_subunit_=1;
 
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		symminfo_ = SymmConf.Symmetry_Info();
 		nres_ = symminfo_->num_independent_residues();
@@ -124,13 +124,13 @@ compute_frag_bias(
 			core::Size seqpos_end   = (*frame_it)->end();
 
 			frame_weights[seqpos_start] = 0;
-			for ( int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end; ++i_pos ) {
+			for ( auto i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end; ++i_pos ) {
 				frame_weights[seqpos_start] += fragmentProbs_[i_pos];
 			}
 			frame_weights[seqpos_start] /= (seqpos_end-seqpos_start+1);
 
 			// don't allow insertions at cut points
-			for ( int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos ) {
+			for ( auto i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos ) {
 				if ( pose.fold_tree().is_cutpoint(i_pos) ) {
 					for ( int i_wdw = 0; i_wdw<wdw_to_freeze_; ++i_wdw ) {
 						frame_weights[seqpos_start-i_wdw] = 0.0; // don't allow insertions at a frame where there are cut points downstream
@@ -150,7 +150,7 @@ compute_frag_bias(
 			core::Size seqpos_start = (*frame_it)->start();  // find starting and ending residue seqpos of the inserted fragment
 			core::Size seqpos_end   = (*frame_it)->end();
 
-			for ( int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos ) { //
+			for ( auto i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos ) { //
 				fragbias_tr.Trace << "Prob_dens( " << i_frame << " " << seqpos_start << " ) = " << frame_weights[seqpos_start] << std::endl;
 			}
 
@@ -493,7 +493,7 @@ density_nbr(
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {
 
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const j( edge->get_other_ind(i) );
 			Size asymm_num_j = ((j-1)%nres_)+1;
 

@@ -30,7 +30,7 @@
 namespace protocols {
 namespace loops {
 
-LoopsFileLoader::LoopsFileLoader() {}
+LoopsFileLoader::LoopsFileLoader() = default;
 LoopsFileLoader::~LoopsFileLoader() = default;
 
 /// @details Ensure the %ResourceOptions is a LoopsFileOptions instance and construct a new LoopsFileData from the
@@ -47,7 +47,7 @@ LoopsFileLoader::create_resource(
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "LoopsFileLoader expected to be given a LoopsFileOptions object, " \
 			"but was given a non-LoopsFileOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
-	LoopsFileOptions const & loops_opts = static_cast< LoopsFileOptions const & > ( options );
+	auto const & loops_opts = static_cast< LoopsFileOptions const & > ( options );
 	LoopsFileIO lfio;
 	LoopsFileDataOP lfd = lfio.read_loop_file_stream( istream, locator_id, loops_opts.prohibit_single_residue_loops() );
 	return lfd;

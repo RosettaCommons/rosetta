@@ -73,7 +73,7 @@ InterfaceHolesFilter::compute( core::pose::Pose const & pose ) const
 	return delta_holes;
 }
 
-InterfaceHolesFilter::~InterfaceHolesFilter() {}
+InterfaceHolesFilter::~InterfaceHolesFilter() = default;
 
 bool
 InterfaceHolesFilter::apply( core::pose::Pose const & pose ) const {

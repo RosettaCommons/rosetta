@@ -83,8 +83,7 @@ MetricRecorder::MetricRecorder() :
 	last_flush_(0)
 {}
 
-MetricRecorder::~MetricRecorder()
-= default;
+MetricRecorder::~MetricRecorder() = default;
 
 MetricRecorder::MetricRecorder(
 	MetricRecorder const & other
@@ -143,7 +142,7 @@ MetricRecorder::parse_my_tag(
 
 			std::string rsd = subtag->getOption< std::string >( "rsd" );
 			std::string type = subtag->getOption< std::string >( "type" );
-			core::Size torsion = subtag->getOption< core::Size >( "torsion" );
+			auto torsion = subtag->getOption< core::Size >( "torsion" );
 			std::string name = subtag->getOption< std::string >( "name", "" );
 			if ( subtag->hasOption("name") ) name = subtag->getOptions().find("name")->second;
 

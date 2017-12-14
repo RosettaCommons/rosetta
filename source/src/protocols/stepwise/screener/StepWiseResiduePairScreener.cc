@@ -31,8 +31,7 @@ StepWiseResiduePairScreener::StepWiseResiduePairScreener( Size const res1, Size 
 {}
 
 //Destructor
-StepWiseResiduePairScreener::~StepWiseResiduePairScreener()
-{}
+StepWiseResiduePairScreener::~StepWiseResiduePairScreener() = default;
 
 ////////////////////////////////////////////////////////////////////////////
 void

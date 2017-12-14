@@ -42,7 +42,7 @@ namespace movers {
 class RNA_HelixMover: public protocols::moves::Mover {
 public:
 	/// @brief Construct the mover object
-	RNA_HelixMover( utility::vector1< utility::vector1< Size > > helix_regions,
+	RNA_HelixMover( utility::vector1< utility::vector1< Size > > const & helix_regions,
 		protocols::rna::denovo::base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
 		bool const & move_first_rigid_body );
 

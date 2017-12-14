@@ -50,7 +50,7 @@ using namespace ObjexxFCL::format;
 namespace protocols {
 namespace optimize_weights {
 
-typedef utility::vector1< std::string > Strings;
+using Strings = utility::vector1<std::string>;
 
 static basic::Tracer TR( "NestedEnergyTermOptEData" );
 
@@ -60,7 +60,7 @@ static basic::Tracer TR( "NestedEnergyTermOptEData" );
 // ------------------- NestedEnergyTermPNatAAOptEPositionData -----------------------//
 
 ///
-NestedEnergyTermPNatAAOptEPositionData::NestedEnergyTermPNatAAOptEPositionData() {}
+NestedEnergyTermPNatAAOptEPositionData::NestedEnergyTermPNatAAOptEPositionData() = default;
 
 ///
 NestedEnergyTermPNatAAOptEPositionData::~NestedEnergyTermPNatAAOptEPositionData() = default;
@@ -699,7 +699,7 @@ NestedEnergyTermPNatAAOptEPositionData::receive_from_node( int const source_node
 // ------------------- NestedEnergyTermDDGMutationOptEData -----------------------//
 
 ///
-NestedEnergyTermDDGMutationOptEData::NestedEnergyTermDDGMutationOptEData() {}
+NestedEnergyTermDDGMutationOptEData::NestedEnergyTermDDGMutationOptEData() = default;
 
 ///
 NestedEnergyTermDDGMutationOptEData::~NestedEnergyTermDDGMutationOptEData() = default;

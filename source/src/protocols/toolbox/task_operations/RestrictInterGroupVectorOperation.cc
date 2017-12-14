@@ -23,6 +23,7 @@
 #include <core/pose/selection.hh>
 // Utility Headers
 #include <core/types.hh>
+#include <utility>
 #include <utility/vector1_bool.hh>
 #include <utility/vector1.hh>
 
@@ -109,7 +110,7 @@ RestrictInterGroupVectorOperation:: RestrictInterGroupVectorOperation(
 }
 
 /// @brief destructor
-RestrictInterGroupVectorOperation::~RestrictInterGroupVectorOperation() {}
+RestrictInterGroupVectorOperation::~RestrictInterGroupVectorOperation() = default;
 
 /// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictInterGroupVectorOperation::clone() const

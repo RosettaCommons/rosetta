@@ -18,8 +18,8 @@ namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
 
-PoseOutputter::PoseOutputter() {}
-PoseOutputter::~PoseOutputter() {}
+PoseOutputter::PoseOutputter() = default;
+PoseOutputter::~PoseOutputter() = default;
 
 } // namespace pose_outputters
 } // namespace jd3

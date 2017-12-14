@@ -61,10 +61,10 @@ namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
-typedef core::pose::metrics::StructureDependentCalculator parent;
-typedef std::set< core::Size > one_group;
+using parent = core::pose::metrics::StructureDependentCalculator;
+using one_group = std::set<core::Size>;
 typedef std::pair< one_group, one_group > group_pair;
-typedef utility::vector1< group_pair > group_set;
+using group_set = utility::vector1<group_pair>;
 
 InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( group_set const & groups, core::Real dist_cutoff )
 : parent()
@@ -77,7 +77,7 @@ InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( InterGroupNeighbor
 : parent(), calc_inter_group_(calculator.calc_inter_group_)
 {}
 
-InterGroupNeighborsCalculator::~InterGroupNeighborsCalculator() {}
+InterGroupNeighborsCalculator::~InterGroupNeighborsCalculator() = default;
 
 core::pose::metrics::PoseMetricCalculatorOP InterGroupNeighborsCalculator::clone() const
 { return core::pose::metrics::PoseMetricCalculatorOP( new InterGroupNeighborsCalculator(*this) ); }
@@ -137,19 +137,19 @@ InterGroupNeighborsCalculator::print( std::string const & key ) const
 		if ( key == "groups" ) {
 			for ( core::Size i(1), vecsize(groups_.size()); i <= vecsize; ++i ) {
 				nbrs_string += "{ (";
-				for ( one_group::const_iterator it(groups_[i].first.begin()), end(groups_[i].first.end()); it != end; ++it ) {
-					nbrs_string += spacer + utility::to_string(*it);
+				for ( unsigned long it : groups_[i].first ) {
+					nbrs_string += spacer + utility::to_string(it);
 				}
 				nbrs_string += ") ; (";
-				for ( one_group::const_iterator it(groups_[i].second.begin()), end(groups_[i].second.end()); it != end; ++it ) {
-					nbrs_string += spacer + utility::to_string(*it);
+				for ( unsigned long it : groups_[i].second ) {
+					nbrs_string += spacer + utility::to_string(it);
 				}
 				nbrs_string += ") }";
 			}
 			return nbrs_string;
 		} else if ( key == "neighbors" ) {
-			for ( std::set< core::Size >::const_iterator it(neighbors_.begin()), end(neighbors_.end()); it != end; ++it ) {
-				nbrs_string += utility::to_string(*it) + spacer;
+			for ( unsigned long neighbor : neighbors_ ) {
+				nbrs_string += utility::to_string(neighbor) + spacer;
 			}
 			return nbrs_string;
 		}//neighbors or groups

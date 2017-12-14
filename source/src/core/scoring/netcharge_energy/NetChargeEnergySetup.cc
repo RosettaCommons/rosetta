@@ -41,7 +41,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
-#include <math.h>
+#include <cmath>
 
 namespace core {
 namespace scoring {
@@ -67,7 +67,7 @@ NetChargeEnergySetup::NetChargeEnergySetup() :
 
 /// @brief Default destructor for NetChargeEnergySetup.
 ///
-NetChargeEnergySetup::~NetChargeEnergySetup() {}
+NetChargeEnergySetup::~NetChargeEnergySetup() = default;
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
@@ -214,7 +214,7 @@ std::string NetChargeEnergySetup::report() const {
 
 /// @brief Parse out penalty definition from a single block of lines from file.
 /// @details The lines vector should be the lines BETWEEN the PENALTY_DEFINITION and END_PENALTY_DEFINITION lines.
-void NetChargeEnergySetup::parse_a_penalty_definition( utility::vector1 < std::string > const &lines ) {
+void NetChargeEnergySetup::parse_a_penalty_definition( utility::vector1 < std::string > const & lines ) {
 
 	static const std::string errmsg("Error in core::scoring::netcharge_energy::NetChargeEnergySetup::parse_a_penalty_definition():  ");
 
@@ -279,7 +279,7 @@ void NetChargeEnergySetup::parse_a_penalty_definition( utility::vector1 < std::s
 		}
 	} //End loop through all lines
 
-	runtime_assert_string_msg( netcharge, errmsg + "No DESIRED_CHARGE line was found." );
+	runtime_assert_string_msg( netchargefound, errmsg + "No DESIRED_CHARGE line was found." );
 	runtime_assert_string_msg( rangefound, errmsg + "No PENALTIES_CHARGE_RANGE line was found." );
 	runtime_assert_string_msg( penaltiesfound, errmsg + "No PENALTIES line was found." );
 

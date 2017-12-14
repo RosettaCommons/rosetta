@@ -27,12 +27,7 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-VirtualCoordinate::VirtualCoordinate( VirtualCoordinate const & src ):
-	axis_x_(src.axis_x_),
-	axis_y_(src.axis_y_),
-	axis_origin_(src.axis_origin_),
-	mirror_Z_(src.mirror_Z_)
-{}
+VirtualCoordinate::VirtualCoordinate( VirtualCoordinate const & /*src*/ ) = default;
 
 VirtualCoordinate::VirtualCoordinate():
 	axis_x_(),
@@ -66,15 +61,9 @@ VirtualCoordinate::VirtualCoordinate(
 {}
 
 VirtualCoordinate &
-VirtualCoordinate::operator=( VirtualCoordinate const & src ) {
-	axis_x_ = src.axis_x_;
-	axis_y_ = src.axis_y_;
-	axis_origin_ = src.axis_origin_;
-	mirror_Z_ = src.mirror_Z_;
-	return *this;
-}
+VirtualCoordinate::operator=( VirtualCoordinate const & /*src*/ ) = default;
 
-VirtualCoordinate::~VirtualCoordinate(){}
+VirtualCoordinate::~VirtualCoordinate()= default;
 
 // @details accessor functions
 numeric::xyzVector< core::Real> &

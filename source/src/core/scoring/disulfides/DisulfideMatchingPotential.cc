@@ -56,16 +56,12 @@ namespace disulfides {
 /**
 * Constructor
 */
-DisulfideMatchingPotential::DisulfideMatchingPotential()
-{
-
-
-}
+DisulfideMatchingPotential::DisulfideMatchingPotential() = default;
 
 /**
 * Deconstructor
 */
-DisulfideMatchingPotential::~DisulfideMatchingPotential() {}
+DisulfideMatchingPotential::~DisulfideMatchingPotential() = default;
 
 /**
 * @brief Calculates scoring terms

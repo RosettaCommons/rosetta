@@ -87,7 +87,7 @@ namespace archive {
 using namespace core;
 using namespace core::io::silent;
 
-NormalizedEvaluatedArchive::~NormalizedEvaluatedArchive() {}
+NormalizedEvaluatedArchive::~NormalizedEvaluatedArchive() = default;
 
 
 NormalizedEvaluatedArchive::NormalizedEvaluatedArchive() {
@@ -158,7 +158,7 @@ void NormalizedEvaluatedArchive::save_to_file( std::string suffix ) {
 bool NormalizedEvaluatedArchive::restore_from_file() {
 	bool b_have_restored = Parent::restore_from_file();
 	if ( use_variance_archive_ ) {
-		runtime_assert( variance_archive_ != 0 );
+		runtime_assert( variance_archive_ != nullptr );
 		variance_archive_->restore_from_file();
 	}
 	score_variations_are_clean_ = false;
@@ -175,12 +175,12 @@ bool NormalizedEvaluatedArchive::determine_score_variations() const {
 	tr.Info << "determine score variations in NormalizedEvaluatedArchive " << name() << "... " << std::endl;
 	tr.Info << "use " << ndecoys << " decoys from " << (variance_archive_ ? variance_archive_->name() : name() ) << std::endl;
 	utility::vector1<core::Real> values;
-	for ( WeightMap::const_iterator it = weights().begin(); it != weights().end(); ++it ) {
-		if ( it->first == "special_initial_decoy_penalty" ) continue;
-		if ( it->second > 0.01 ) {
+	for ( auto const & it : weights() ) {
+		if ( it.first == "special_initial_decoy_penalty" ) continue;
+		if ( it.second > 0.01 ) {
 			if ( ndecoys >= min_decoys_for_statistics_ && activated_ ) {
 
-				std::string const& name( it->first );
+				std::string const& name( it.first );
 				Size ct( 1 );
 				core::Size half( ndecoys / 2 );
 				core::Size lowQ( half / 2 );
@@ -191,7 +191,7 @@ bool NormalizedEvaluatedArchive::determine_score_variations() const {
 				}
 				//score_variations_.clear(); not really needed. should be faster without
 				values.resize( ndecoys );
-				for ( SilentStructs::const_iterator iss = my_decoys.begin(); iss != my_decoys.end(); ++iss, ++ct ) {
+				for ( auto iss = my_decoys.begin(); iss != my_decoys.end(); ++iss, ++ct ) {
 					if ( !(*iss)->has_energy( name ) ) {
 						throw CREATE_EXCEPTION(EXCN_Archive, "energy name "+name+" not found in returned decoys -- run with rescoring in archive to avoid this or fix your batches" );
 					} // add weighted column-value to final score
@@ -199,23 +199,23 @@ bool NormalizedEvaluatedArchive::determine_score_variations() const {
 				}
 				runtime_assert( lowQ > 0 && highQ < ndecoys );
 				std::sort(values.begin(), values.end());
-				if ( is_start_zero_score( it->first ) ) {
-					score_variations_[ it->first ] = values[highQ];
-					tr.Info << "score variation of " << score_variations_[ it->first ] << " for " << name
+				if ( is_start_zero_score( it.first ) ) {
+					score_variations_[ it.first ] = values[highQ];
+					tr.Info << "score variation of " << score_variations_[ it.first ] << " for " << name
 						<< " between 0 (forced)"
 						<< " and "     << values[highQ] << " at " << highQ << std::endl;
 				} else {
-					score_variations_[ it->first ] = std::abs( values[highQ]-values[lowQ] );
-					tr.Info << "score variation of " << score_variations_[ it->first ] << " for " << name
+					score_variations_[ it.first ] = std::abs( values[highQ]-values[lowQ] );
+					tr.Info << "score variation of " << score_variations_[ it.first ] << " for " << name
 						<< " between " << values[lowQ]  << " at " << lowQ
 						<< " and "     << values[highQ] << " at " << highQ << std::endl;
 				}
 			} else { //not enough decoys or not activated
-				score_variations_[ it->first ] = 1.0;
+				score_variations_[ it.first ] = 1.0;
 			}
 			//cutoff to avoid division by 0
-			if ( score_variations_[ it->first ]< 1e-20 ) {
-				score_variations_[ it->first ]= 1e-20;
+			if ( score_variations_[ it.first ]< 1e-20 ) {
+				score_variations_[ it.first ]= 1e-20;
 			}
 		} // if weight > 0.01
 	} //for select_weights
@@ -223,8 +223,8 @@ bool NormalizedEvaluatedArchive::determine_score_variations() const {
 } //determine_score_variations
 
 bool NormalizedEvaluatedArchive::is_start_zero_score( std::string const& str ) const {
-	for ( utility::vector1< std::string >::const_iterator it =positive_scores_.begin(); it != positive_scores_.end(); ++it ) {
-		if ( str.substr( 0, it->size() ) == *it ) return true;
+	for ( auto const & positive_score : positive_scores_ ) {
+		if ( str.substr( 0, positive_score.size() ) == positive_score ) return true;
 	}
 	return false;
 }

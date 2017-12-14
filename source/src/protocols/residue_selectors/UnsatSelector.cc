@@ -102,7 +102,7 @@ UnsatSelector::UnsatSelector() :
 
 /// @brief Destructor.
 ///
-UnsatSelector::~UnsatSelector() {}
+UnsatSelector::~UnsatSelector() = default;
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the new object.

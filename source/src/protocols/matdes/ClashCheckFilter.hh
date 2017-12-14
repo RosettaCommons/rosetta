@@ -59,7 +59,7 @@ public:// constructor/destructor
 	ClashCheckFilter();
 
 	// @brief constructor with arguments
-	ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string s, core::Size const n, core::Size const t, bool const v, bool const w );
+	ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const & s, core::Size const n, core::Size const t, bool const v, bool const w );
 
 	// @brief copy constructor
 	ClashCheckFilter( ClashCheckFilter const & rval );

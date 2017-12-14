@@ -258,7 +258,7 @@ private:
 	bool omega_; //dflt true ; minimize omega?
 	ScoreFunctionCOP scorefxn_;
 	MinimizerOptionsOP min_options_;
-	Real threshold_;
+	//Real threshold_;
 	Real abs_score_convergence_threshold_;
 	Real score_before_minimization_;
 	Real score_after_minimization_;

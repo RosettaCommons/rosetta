@@ -32,9 +32,9 @@ using std::string;
 using utility::tag::TagCOP;
 
 ///// ElectronDensityOptionsCreator /////
-ElectronDensityOptionsCreator::ElectronDensityOptionsCreator() {}
+ElectronDensityOptionsCreator::ElectronDensityOptionsCreator() = default;
 
-ElectronDensityOptionsCreator::~ElectronDensityOptionsCreator() {}
+ElectronDensityOptionsCreator::~ElectronDensityOptionsCreator() = default;
 
 ResourceOptionsOP
 ElectronDensityOptionsCreator::create_options() const {
@@ -70,15 +70,9 @@ ElectronDensityOptions::ElectronDensityOptions(
 	grid_spacing_(grid_spacing) // if <= 0 then do not resize gride spacing
 {}
 
-ElectronDensityOptions::~ElectronDensityOptions() {}
+ElectronDensityOptions::~ElectronDensityOptions() = default;
 
-ElectronDensityOptions::ElectronDensityOptions(
-	ElectronDensityOptions const & src
-) :
-	ResourceOptions(src),
-	mapreso_(src.mapreso_),
-	grid_spacing_(src.grid_spacing_)
-{}
+ElectronDensityOptions::ElectronDensityOptions( ElectronDensityOptions const & /*src*/ ) = default;
 
 Real
 ElectronDensityOptions::get_mapreso(

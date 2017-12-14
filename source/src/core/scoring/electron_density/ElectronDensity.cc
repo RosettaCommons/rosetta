@@ -79,7 +79,7 @@ namespace scoring {
 namespace electron_density {
 
 /// @details Auto-generated virtual destructor
-ElectronDensity::~ElectronDensity() {}
+ElectronDensity::~ElectronDensity() = default;
 
 static basic::Tracer TR( "core.scoring.electron_density.ElectronDensity" );
 
@@ -116,7 +116,7 @@ inline double min_mod(double x,double y) {
 // Endianness swap
 // Only works with aligned 4-byte quantities
 static void swap4_aligned(void *v, long ndata) {
-	int *data = (int *) v;
+	auto *data = (int *) v;
 	long i;
 	for ( i=0; i<ndata; i++ ) {
 		int *N;
@@ -128,7 +128,7 @@ static void swap4_aligned(void *v, long ndata) {
 ///
 ///  ELECTRON DENSITY CLASS DEFINITIONS
 ///
-ElectronDensity& getDensityMap(std::string filename, bool force_reload) {
+ElectronDensity& getDensityMap(std::string const & filename, bool force_reload) {
 	if ( basic::resource_manager::ResourceManager::get_instance()->
 			has_resource_with_description("electron_density") ) {
 
@@ -143,7 +143,7 @@ ElectronDensity& getDensityMap(std::string filename, bool force_reload) {
 }
 
 
-ElectronDensity& getDensityMap_legacy(std::string filename, bool force_reload) {
+ElectronDensity& getDensityMap_legacy(std::string const & filename, bool force_reload) {
 	static ElectronDensity theDensityMap;
 
 #ifdef GL_GRAPHICS
@@ -489,7 +489,7 @@ core::Real ElectronDensity::matchCentroidPose(
 	utility::vector1< utility::vector1< numeric::xyzVector<core::Real> > > rho_dx_mask(nres), rho_dx_atm(nres);
 
 	// symmetry
-	bool isSymm = (symmInfo.get() != NULL);
+	bool isSymm = (symmInfo.get() != nullptr);
 	bool remapSymm = remap_symm_;
 
 	///////////////////////////
@@ -697,7 +697,7 @@ core::Real ElectronDensity::matchPose(
 	utility::vector1< utility::vector1< utility::vector1< numeric::xyzVector<core::Real> > > > rho_dx_mask(nres), rho_dx_atm(nres);
 
 	// symmetry
-	bool isSymm = (symmInfo.get() != NULL);
+	bool isSymm = (symmInfo.get() != nullptr);
 	bool remapSymm = remap_symm_;
 
 	///////////////////////////
@@ -1204,7 +1204,7 @@ ElectronDensity::scaleIntensities(
 
 				//fpd smooth interpolate between buckets
 				Real bucket = 0.5+((s_i-maxreso) / step);
-				int bucket_i = (int)std::floor(bucket);
+				auto bucket_i = (int)std::floor(bucket);
 				Real bucket_offset0 = bucket-bucket_i;
 				Real bucket_offset1 = 1.0-bucket_offset0;
 
@@ -1642,7 +1642,7 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 	utility::vector1< core::Real> allBs;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -1745,7 +1745,7 @@ void ElectronDensity::compute_symm_rotations(
 	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/
 ) {
 	// symmetry
-	bool isSymm = (symmInfo.get() != NULL);
+	bool isSymm = (symmInfo.get() != nullptr);
 	bool remapSymm = remap_symm_;
 
 	if ( !isSymm || !remapSymm ) return;
@@ -1897,7 +1897,7 @@ core::Real ElectronDensity::matchRes(
 	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return 0.0;
 
 	// symmetry
-	bool isSymm = (symmInfo.get() != NULL);
+	bool isSymm = (symmInfo.get() != nullptr);
 	bool remapSymm = remap_symm_;
 
 	// symm
@@ -1906,7 +1906,7 @@ core::Real ElectronDensity::matchRes(
 	//// grab atoms to be included in scoring
 	////     context atoms - within the window; mask/derivatives computed
 	////     neighbor atoms - atoms whose density _may_ fall within the mask; no mask/derivs computed
-	int nres = (int)pose.size();
+	auto nres = (int)pose.size();
 	utility::vector1< conformation::Atom > neighborAtoms, contextAtoms;
 	utility::vector1< std::pair<core::Size,core::Size> > neighborAtomIds, contextAtomIds;
 	utility::vector1< OneGaussianScattering > neighborAtomAs, contextAtomAs;
@@ -1934,7 +1934,7 @@ core::Real ElectronDensity::matchRes(
 					iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_edge_list_end();
 					iru != irue; ++iru ) {
-				EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+				auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 				Size const e1( edge->get_first_node_ind() );
 				Size const e2( edge->get_second_node_ind() );
 				Size const j = (e1==i) ? e2 : e1;
@@ -1969,15 +1969,15 @@ core::Real ElectronDensity::matchRes(
 
 	// 2: grab neighbor atom ids
 	// all atoms from neighborgraph
-	for ( std::set< core::Size >::iterator it=neighborResids.begin(), end=neighborResids.end(); it!=end; ++it ) {
-		core::conformation::Residue const &rsd_i( pose.residue(*it) );
+	for ( unsigned long neighborResid : neighborResids ) {
+		core::conformation::Residue const &rsd_i( pose.residue(neighborResid) );
 		if ( !rsd_i.is_polymer() ) continue;
 		chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 		for ( core::Size j=1; j<=rsd_i.nheavyatoms(); ++j ) {
 			std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 			OneGaussianScattering sig_j = get_A( elt_i );
 			neighborAtoms.push_back( rsd_i.atom( j ) );
-			neighborAtomIds.push_back( std::pair<core::Size,core::Size>(*it,j) );
+			neighborAtomIds.push_back( std::pair<core::Size,core::Size>(neighborResid,j) );
 			neighborAtomAs.push_back( sig_j );
 		}
 	}
@@ -2286,7 +2286,7 @@ ElectronDensity::matchResFast(
 	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return 0.0;
 
 	// symmetry
-	bool isSymm = (symmInfo.get() != NULL);
+	bool isSymm = (symmInfo.get() != nullptr);
 	bool remapSymm = remap_symm_;
 
 	// symm
@@ -2350,7 +2350,7 @@ ElectronDensity::matchAtomFast(
 	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return 0.0;
 
 	// symmetry
-	bool isSymm = (symmInfo.get() != NULL);
+	bool isSymm = (symmInfo.get() != nullptr);
 	bool remapSymm = remap_symm_;
 
 	// symm
@@ -2561,7 +2561,7 @@ ElectronDensity::dCCdBs(
 
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}

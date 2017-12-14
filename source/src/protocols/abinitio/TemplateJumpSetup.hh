@@ -53,7 +53,7 @@ public:
 		TemplatesCOP templates,
 		core::fragment::SecondaryStructureCOP secstruct,
 		PairingStatisticsCOP,
-		core::scoring::dssp::PairingList const& helix_pairings
+		core::scoring::dssp::PairingList const & helix_pairings
 	);
 
 	~TemplateJumpSetup() override;

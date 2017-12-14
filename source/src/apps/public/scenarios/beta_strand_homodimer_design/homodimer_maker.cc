@@ -120,9 +120,9 @@ public:
 
 	HDmakerMover();
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual std::string get_name() const{
+	std::string get_name() const override{
 		return "HDmakerMover";
 	}
 
@@ -132,11 +132,11 @@ public:
 	virtual Real bb_score(pose::Pose & pose, core::Size aligned_chain_num, core::scoring::ScoreFunctionOP & scorefxn);
 
 
-	virtual MoverOP clone() const {
+	MoverOP clone() const override {
 		return MoverOP( new HDmakerMover( *this ) );
 	}
 
-	virtual MoverOP fresh_instance() const {
+	MoverOP fresh_instance() const override {
 		return clone();
 	}
 

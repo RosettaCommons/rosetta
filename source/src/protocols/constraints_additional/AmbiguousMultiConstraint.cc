@@ -65,7 +65,7 @@ bool AmbiguousMultiConstraint::operator == ( core::scoring::constraints::Constra
 {
 	if ( ! core::scoring::constraints::AmbiguousConstraint::operator == ( other ) ) return false;
 
-	AmbiguousMultiConstraint const & other_downcast( static_cast< AmbiguousMultiConstraint const & > ( other ) );
+	auto const & other_downcast( static_cast< AmbiguousMultiConstraint const & > ( other ) );
 
 	return num_active_constraints_ == other_downcast.num_active_constraints_;
 }

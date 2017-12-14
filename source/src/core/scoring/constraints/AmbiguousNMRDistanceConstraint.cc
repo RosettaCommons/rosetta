@@ -38,6 +38,7 @@
 //Auto Headers
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -678,7 +679,7 @@ AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
 	Constraint( scoretype ),
 	atoms1_(a1),
 	atoms2_(a2),
-	func_( func )
+	func_(std::move( func ))
 {}
 
 AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
@@ -688,7 +689,7 @@ AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
 	func::FuncOP func,
 	ScoreType scoretype
 ) : Constraint( scoretype ),
-	func_( func )
+	func_(std::move( func ))
 {
 	parse_NMR_name( a1.atom(), a1.rsd(), atoms1_, pose );
 	parse_NMR_name( a2.atom(), a2.rsd(), atoms2_, pose );
@@ -717,7 +718,7 @@ bool AmbiguousNMRDistanceConstraint::operator == ( Constraint const & other ) co
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	AmbiguousNMRDistanceConstraint const & other_amb( static_cast< AmbiguousNMRDistanceConstraint const & > (other));
+	auto const & other_amb( static_cast< AmbiguousNMRDistanceConstraint const & > (other));
 	if ( atoms1_ != other_amb.atoms1_ ) return false;
 	if ( atoms2_ != other_amb.atoms2_ ) return false;
 
@@ -736,22 +737,22 @@ bool AmbiguousNMRDistanceConstraint::same_type_as_me( Constraint const & other )
 /// to the new object. Intended to be implemented by derived classes.
 ConstraintOP AmbiguousNMRDistanceConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
 	Atoms ids1, ids2;
-	for ( Atoms::const_iterator it = atoms1_.begin(); it != atoms1_.end(); ++it ) {
-		id::NamedAtomID atom(pose::atom_id_to_named_atom_id( *it, src ) );
+	for ( auto it : atoms1_ ) {
+		id::NamedAtomID atom(pose::atom_id_to_named_atom_id( it, src ) );
 		if ( smap ) {
-			atom.rsd() = (*smap)[ it->rsd() ];
+			atom.rsd() = (*smap)[ it.rsd() ];
 		}
 		id::AtomID id1( core::pose::named_atom_id_to_atom_id(atom, dest ));
-		if ( !id1.valid() ) return NULL;
+		if ( !id1.valid() ) return nullptr;
 		ids1.push_back( id1 );
 	}
-	for ( Atoms::const_iterator it = atoms2_.begin(); it != atoms2_.end(); ++it ) {
-		id::NamedAtomID atom(atom_id_to_named_atom_id( *it, src ) );
+	for ( auto it : atoms2_ ) {
+		id::NamedAtomID atom(atom_id_to_named_atom_id( it, src ) );
 		if ( smap ) {
-			atom.rsd() = (*smap)[ it->rsd() ];
+			atom.rsd() = (*smap)[ it.rsd() ];
 		}
 		id::AtomID id2( core::pose::named_atom_id_to_atom_id( atom, dest ));
-		if ( !id2.valid() ) return NULL;
+		if ( !id2.valid() ) return nullptr;
 		ids2.push_back( id2 );
 	}
 	return ConstraintOP( new AmbiguousNMRDistanceConstraint( ids1, ids2, func_, score_type() ) );
@@ -814,12 +815,12 @@ AmbiguousNMRDistanceConstraint::read_def(
 
 void AmbiguousNMRDistanceConstraint::show( std::ostream& out ) const {
 	out << "AmbiguousNMRDistanceConstraint (";
-	for ( Atoms::const_iterator it = atoms1_.begin(); it != atoms1_.end(); ++it ) {
-		out << it->atomno() << "," << it->rsd() << "||";
+	for ( auto it : atoms1_ ) {
+		out << it.atomno() << "," << it.rsd() << "||";
 	}
 	out << " - ";
-	for ( Atoms::const_iterator it = atoms2_.begin(); it != atoms2_.end(); ++it ) {
-		out << it->atomno() << "," << it->rsd();
+	for ( auto it : atoms2_ ) {
+		out << it.atomno() << "," << it.rsd();
 	}
 	func_->show( out );
 }
@@ -867,7 +868,7 @@ ConstraintOP AmbiguousNMRDistanceConstraint::map_to_CEN( pose::Pose const& fa_po
 				named_atom_id_to_atom_id( NamedAtomID( atom2, resid( 2 ) ), centroid ), func_, score_type() ) );
 		}
 	} //scope
-	return NULL; // cannot be reached
+	return nullptr; // cannot be reached
 }
 
 Real
@@ -884,9 +885,9 @@ AmbiguousNMRDistanceConstraint::inv_dist6(
 ) const
 {
 	Real cum_dist( 0.0 );
-	for ( Atoms::const_iterator it1 = atoms1_.begin(); it1 != atoms1_.end(); ++it1 ) {
-		for ( Atoms::const_iterator it2 = atoms2_.begin(); it2 != atoms2_.end(); ++it2 ) {
-			Vector const & xyz1( xyz( *it1 ) ), xyz2( xyz( *it2 ) );
+	for ( auto it1 : atoms1_ ) {
+		for ( auto it2 : atoms2_ ) {
+			Vector const & xyz1( xyz( it1 ) ), xyz2( xyz( it2 ) );
 			Vector const f2( xyz1 - xyz2 );
 			Real const dist( f2.length() );
 			Real const inv_dist( 1.0/dist );
@@ -948,8 +949,7 @@ AmbiguousNMRDistanceConstraint::fill_f1_f2(
 
 	Atoms const& the_other_atoms( not_methyl_1 ? atoms1_ : atoms2_ );
 	// tr.Trace << "the_other_atoms: " << the_other_atoms.size() << " " << the_other_atoms.front() << std::endl;
-	for ( Atoms::const_iterator it = the_other_atoms.begin(); it != the_other_atoms.end(); ++it ) {
-		AtomID other_atom = *it;
+	for ( auto other_atom : the_other_atoms ) {
 		//  tr.Trace << "contribution from " << other_atom << " to " << atom << std::endl;
 		Real rdist(0.0);
 		Vector f1(0.0), f2(0.0);
@@ -968,14 +968,14 @@ AmbiguousNMRDistanceConstraint::remap_resid( core::id::SequenceMapping const &sm
 {
 	// runtime_assert( 0 );
 	Atoms ids1, ids2;
-	for ( Atoms::const_iterator it = atoms1_.begin(); it != atoms1_.end(); ++it ) {
-		id::AtomID atom( it->atomno(), smap[ it->rsd() ] );
-		if ( !atom.valid() ) return NULL;
+	for ( auto it : atoms1_ ) {
+		id::AtomID atom( it.atomno(), smap[ it.rsd() ] );
+		if ( !atom.valid() ) return nullptr;
 		ids1.push_back( atom );
 	}
-	for ( Atoms::const_iterator it = atoms2_.begin(); it != atoms2_.end(); ++it ) {
-		id::AtomID atom( it->atomno(), smap[ it->rsd() ] );
-		if ( !atom.valid() ) return NULL;
+	for ( auto it : atoms2_ ) {
+		id::AtomID atom( it.atomno(), smap[ it.rsd() ] );
+		if ( !atom.valid() ) return nullptr;
 		ids2.push_back( atom );
 	}
 	return ConstraintOP( new AmbiguousNMRDistanceConstraint( ids1, ids2, func_, score_type() ) );

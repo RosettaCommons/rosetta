@@ -46,7 +46,7 @@ ElecTrieEvaluator::ElecTrieEvaluator(
 	elec_(elec)
 {}
 
-ElecTrieEvaluator::~ElecTrieEvaluator() {}
+ElecTrieEvaluator::~ElecTrieEvaluator() = default;
 
 //Energy
 //ElecTrieEvaluator::heavyatom_heavyatom_energy(

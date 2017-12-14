@@ -36,7 +36,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace core;
 using namespace ObjexxFCL::format;
@@ -260,7 +260,7 @@ get_close_and_lowE(
 	//Size Ntop( 5 );
 	std::vector< std::pair< Real, Size > > id_sortby_energy;
 	for ( Size i = 1; i <= scores.size(); ++i ) {
-		id_sortby_energy.push_back( std::make_pair( scores[i], i ) );
+		id_sortby_energy.emplace_back( scores[i], i );
 	}
 
 	std::sort( id_sortby_energy.begin(), id_sortby_energy.end(), myComparison );
@@ -300,16 +300,16 @@ relax_with_restraints_on_constres( pose::Pose &pose_avrg,
 
 	// cart2
 	std::vector< std::string > cmdlines;
-	cmdlines.push_back( "repack" );
-	cmdlines.push_back( "accept_to_best" );
-	cmdlines.push_back( "switch:cartesian" );
-	cmdlines.push_back( "repeat 2" );
-	cmdlines.push_back( "ramp_repack_min 0.02  0.001    1.0  50");
-	cmdlines.push_back( "ramp_repack_min 0.25  0.001    0.5  50");
-	cmdlines.push_back( "ramp_repack_min 0.55  0.001    0.1 100");
-	cmdlines.push_back( "ramp_repack_min 1.0   0.00001  0.1 200");
-	cmdlines.push_back( "accept_to_best" );
-	cmdlines.push_back( "endrepeat" );
+	cmdlines.emplace_back("repack" );
+	cmdlines.emplace_back("accept_to_best" );
+	cmdlines.emplace_back("switch:cartesian" );
+	cmdlines.emplace_back("repeat 2" );
+	cmdlines.emplace_back("ramp_repack_min 0.02  0.001    1.0  50");
+	cmdlines.emplace_back("ramp_repack_min 0.25  0.001    0.5  50");
+	cmdlines.emplace_back("ramp_repack_min 0.55  0.001    0.1 100");
+	cmdlines.emplace_back("ramp_repack_min 1.0   0.00001  0.1 200");
+	cmdlines.emplace_back("accept_to_best" );
+	cmdlines.emplace_back("endrepeat" );
 
 	scoring::ScoreFunctionOP sfxn_loc = sfxn->clone();
 	sfxn_loc->set_weight( core::scoring::coordinate_constraint, 10.0 );

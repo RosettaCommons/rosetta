@@ -67,8 +67,7 @@ DoubleLazyNode::DoubleLazyNode(
 {
 }
 
-DoubleLazyNode::~DoubleLazyNode()
-{}
+DoubleLazyNode::~DoubleLazyNode() = default;
 
 void
 DoubleLazyNode::prepare_for_simulated_annealing()
@@ -186,7 +185,7 @@ DoubleLazyNode::assign_zero_state()
 
 	curr_state_one_body_energy_ = core::PackerEnergy( 0.0 );
 	//fills from [1] to end
-	std::vector< core::PackerEnergy >::iterator position1 = curr_state_two_body_energies_.begin();
+	auto position1 = curr_state_two_body_energies_.begin();
 	++position1;
 	std::fill( position1, curr_state_two_body_energies_.end(), core::PackerEnergy( 0.0 ));
 	curr_state_total_energy_ = core::PackerEnergy( 0.0 );
@@ -351,9 +350,9 @@ DoubleLazyNode::commit_considered_substitution()
 	curr_state_total_energy_ = alternate_state_total_energy_;
 
 	//copies from [1] to end
-	std::vector< core::PackerEnergy >::iterator alt_position1 = alternate_state_two_body_energies_.begin();
+	auto alt_position1 = alternate_state_two_body_energies_.begin();
 	++alt_position1;
-	std::vector< core::PackerEnergy >::iterator curr_position1 = curr_state_two_body_energies_.begin();
+	auto curr_position1 = curr_state_two_body_energies_.begin();
 	++curr_position1;
 
 	std::copy( alt_position1,
@@ -602,7 +601,7 @@ DoubleLazyEdge::DoubleLazyEdge(
 	two_body_energies_(
 	get_dlazy_ig_owner()->get_num_aatypes(),
 	get_dlazy_ig_owner()->get_num_aatypes(),
-	( ObjexxFCL::FArray2D< core::PackerEnergy > * ) ( 0 ) ),
+	( ObjexxFCL::FArray2D< core::PackerEnergy > * ) nullptr ),
 	curr_state_energy_( 0.0f ),
 	partial_state_assignment_( false ),
 	ran_annealing_since_pair_energy_table_cleared_( false ),
@@ -1302,7 +1301,7 @@ DoubleLazyInteractionGraph::prepare_for_simulated_annealing()
 	int count = 0; // index nodes from 0 -- makes module arithmetic easier
 	for ( std::list< EdgeBase* >::const_iterator eiter = get_edge_list_begin(),
 			eiter_end = get_edge_list_end(); eiter != eiter_end; ++eiter ) {
-		DoubleLazyEdge * dledge = static_cast< DoubleLazyEdge * >  (* eiter );
+		auto * dledge = static_cast< DoubleLazyEdge * >  (* eiter );
 		dledge->set_edge_index( count );
 		dlazy_edge_vector_[ count ] = dledge;
 		++count;
@@ -1504,7 +1503,7 @@ int
 DoubleLazyInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		sum += ((DoubleLazyEdge*) *iter)->get_two_body_table_size();
 	}
@@ -1539,7 +1538,7 @@ DoubleLazyInteractionGraph::print_current_state_assignment() const
 		get_dlazy_node(ii)->print();
 	}
 
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		((DoubleLazyEdge*) (*iter))->print_current_energy();
 	}
@@ -1605,7 +1604,7 @@ DoubleLazyInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 		}
 	}
 
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+	for ( auto edge_iter = get_edge_list_begin();
 			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
@@ -1801,7 +1800,7 @@ DoubleLazyInteractionGraph::update_internal_energy_totals()
 			get_one_body_energy_current_state();
 	}
 
-	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		total_energy_current_state_assignment_ +=
 			((DoubleLazyEdge*) *iter)->get_current_two_body_energy();

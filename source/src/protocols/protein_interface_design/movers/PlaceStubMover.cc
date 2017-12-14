@@ -16,6 +16,7 @@
 #include <protocols/protein_interface_design/movers/PlaceStubMoverCreator.hh>
 
 // Project Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -102,17 +103,17 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
-CoordinateConstraintStack::CoordinateConstraintStack() {}
+CoordinateConstraintStack::CoordinateConstraintStack() = default;
 
 CoordinateConstraintStack::CoordinateConstraintStack(
 	utility::vector1< core::scoring::constraints::ConstraintCOP > const & coord_csts,
 	CoordinateConstraintStackOP parent
 ) :
 	coord_csts_( coord_csts ),
-	parent_( parent )
+	parent_(std::move( parent ))
 {}
 
-CoordinateConstraintStack::~CoordinateConstraintStack() {}
+CoordinateConstraintStack::~CoordinateConstraintStack() = default;
 
 utility::vector1< core::scoring::constraints::ConstraintCOP > const &
 CoordinateConstraintStack::coord_csts() const
@@ -190,7 +191,7 @@ PlaceStubMover::PlaceStubMover(
 	final_filter_ = final_filter->clone();
 }
 
-PlaceStubMover::~PlaceStubMover() {}
+PlaceStubMover::~PlaceStubMover() = default;
 
 protocols::moves::MoverOP
 PlaceStubMover::clone() const {
@@ -319,7 +320,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	}
 	using namespace protocols::hotspot_hashing;
 	core::scoring::constraints::ConstraintCOPs stub_constraints;
-	if ( stub != NULL ) { //one stub-based constraint
+	if ( stub != nullptr ) { //one stub-based constraint
 		runtime_assert( host_residue );
 		core::conformation::Residue const host_res( pose.conformation().residue( host_residue ) );
 		core::Real dummy1, dummy2;
@@ -365,14 +366,14 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 				ConstraintCOPs to_be_removed;
 				for ( ConstraintCOPs::const_iterator it = constraints.begin(); it != constraints.end(); ++it ) {
 					AmbiguousConstraintCOP cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AmbiguousConstraint const > ( (*it) );
-					runtime_assert( cst != 0 );
+					runtime_assert( cst != nullptr );
 
 					using namespace core::scoring::constraints;
 					ConstraintCOP active_constraint = cst->active_constraint();
 
 					if ( active_constraint->type() == "BackboneStub" ) {
 						BackboneStubConstraintCOP bb_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::BackboneStubConstraint const > ( active_constraint );
-						runtime_assert( bb_cst != 0 );
+						runtime_assert( bb_cst != nullptr );
 						if ( std::find( prevent_repacking_.begin(), prevent_repacking_.end(), bb_cst->seqpos() ) != prevent_repacking_.end() ) {
 							to_be_removed.push_back( *it ); //remove the entire ambiguous constraint, if the active constraint points to a non-repackable residue
 						}
@@ -403,9 +404,9 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	simple_filters::ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
 	core::Real const before_min( stf.compute( pose ) );
 	if ( before_min >= -0.0001 ) {
-		if ( stub != NULL ) {
+		if ( stub != nullptr ) {
 			TR<<"no bb stub constraint score even though I computed it analytically! Ask Sarel what's wrong here."<<std::endl;;
-			runtime_assert( stub != 0 );
+			runtime_assert( stub != nullptr );
 		}
 		protocols::hotspot_hashing::remove_hotspot_constraints_from_pose( pose );
 		TR<<"removing stub constraints from pose\n";
@@ -426,7 +427,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	core::Size before_apply_stub_minimize_mover(0);
 	core::Real before_min_cb_force(0);
 
-	if ( stub != 0 ) {
+	if ( stub != nullptr ) {
 		before_min_distance = pose.residue( host_residue ).xyz( "CB" ).distance( stub->residue()->xyz( "CB" ) );
 		curr_bonus = stub->bonus_value();
 		before_apply_stub_minimize_mover = pose.constraint_set()->get_all_constraints().size();//coordinate constraint shouldnt change
@@ -648,14 +649,14 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 			}
 			if ( !no_repack.empty() ) {
 				std::sort( no_repack.begin(), no_repack.end() );
-				utility::vector1< core::Size >::iterator last = std::unique( no_repack.begin(), no_repack.end() );
+				auto last = std::unique( no_repack.begin(), no_repack.end() );
 				no_repack.erase( last, no_repack.end() );
 				toAla.prevent_repacking( no_repack );
 			}
 
 			TR<<"switching interface to alanine\n";
 			toAla.apply( pose );
-			bool const minimization_status( StubMinimize( pose, NULL/*HotspotStubCOP*/, 0/*host_res*/, hurry_  ) );
+			bool const minimization_status( StubMinimize( pose, nullptr/*HotspotStubCOP*/, 0/*host_res*/, hurry_  ) );
 
 			// Optional Triaging
 			if ( triage_positions_ ) {
@@ -677,7 +678,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 	saved_prevent_repacking_ = prevent_repacking();
 	saved_placed_stubs_ = placed_stubs_;
 	numeric::random::random_permutation( stub_set_->begin(), stub_set_->end(), numeric::random::rg() );// randomly shuffling stubs so that the selection doesn't repeat the same stub order each time
-	HotspotStubSet::Hs_vec::iterator stub_it( stub_set_->begin() );
+	auto stub_it( stub_set_->begin() );
 	std::vector< core::Size > host_positions;
 	if ( task_factory() ) {
 		utility::vector1< core::Size > const designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
@@ -776,7 +777,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 					debug_assert( std::find(no_repack.begin(), no_repack.end(), res) != no_repack.end() );
 
 					std::sort( no_repack.begin(), no_repack.end() );
-					utility::vector1< core::Size >::iterator last = std::unique( no_repack.begin(), no_repack.end() );
+					auto last = std::unique( no_repack.begin(), no_repack.end() );
 					no_repack.erase( last, no_repack.end() );
 					toAla.prevent_repacking( no_repack );
 
@@ -842,7 +843,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 					utility::vector1< core::Size > empty;
 					runtime_assert( coord_cst_std_.size() == design_movers_.size() );
 					utility::vector1< core::Real >::const_iterator it_sdev( coord_cst_std_.begin() );
-					for ( utility::vector1< DesignMoverFoldTreePair >::iterator it=design_movers_.begin(); it!=design_movers_.end() && !subsequent_stub_placement_failure; ++it ) {
+					for ( auto it=design_movers_.begin(); it!=design_movers_.end() && !subsequent_stub_placement_failure; ++it ) {
 						TR<<"applying design mover "<<it->first->get_name()<<'\n';
 						bool const use_constraints( it->second );
 						if ( use_constraints ) {
@@ -865,7 +866,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 							// cases, we might want the child placestub movers to remain pristine, so
 							// we modify and apply clones of these movers.
 							movers::PlaceStubMoverOP modified_place_stub( utility::pointer::dynamic_pointer_cast< protocols::protein_interface_design::movers::PlaceStubMover > ( it->first->clone() ) );
-							runtime_assert( modified_place_stub != 0 );
+							runtime_assert( modified_place_stub != nullptr );
 							modified_place_stub->placed_stubs_ = placed_stubs_;
 							utility::vector1< core::Size > new_prev_repack( prevent_repacking() );
 							for ( utility::vector1< std::pair< core::Size, bool > >::const_iterator it=placed_stubs_.begin(), end=placed_stubs_.end(); it!=end; ++it ) {
@@ -1133,7 +1134,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 	min_rb( minimize_rb );
 
 	std::string const after_placement_filter_name( tag->getOption<std::string>( "after_placement_filter", "true_filter" ) );
-	protocols::filters::Filters_map::const_iterator find_ap_filter( filters.find( after_placement_filter_name ));
+	auto find_ap_filter( filters.find( after_placement_filter_name ));
 
 	bool const ap_filter_found( find_ap_filter != filters.end() );
 	if ( ap_filter_found ) {
@@ -1148,7 +1149,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 	}
 
 	std::string const final_filter_name( tag->getOption<std::string>( "final_filter", "true_filter" ) );
-	protocols::filters::Filters_map::const_iterator find_filter( filters.find( final_filter_name ));
+	auto find_filter( filters.find( final_filter_name ));
 
 	bool const filter_found( find_filter != filters.end() );
 	if ( filter_found ) {
@@ -1169,39 +1170,38 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 
 	//parsing stub minimize movers and design movers for place stub
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	for ( utility::vector0< TagCOP >::const_iterator btag=branch_tags.begin(); btag!=branch_tags.end(); ++btag ) {
-		if ( (*btag)->getName() == "StubMinimize" ) {
-			utility::vector0< TagCOP > const & stub_min_tags( (*btag)->getTags() );
-			for ( utility::vector0< TagCOP >::const_iterator stub_m_tag=stub_min_tags.begin(); stub_m_tag!=stub_min_tags.end(); ++stub_m_tag ) {
-				std::string const stub_mover_name( (*stub_m_tag)->getOption<std::string>( "mover_name" ) );
-				core::Real  const bb_stub_constraint_weight( (*stub_m_tag)->getOption< core::Real > ( "bb_cst_weight", 10.0 ) );
-				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( stub_mover_name ));
+	for ( const auto & branch_tag : branch_tags ) {
+		if ( branch_tag->getName() == "StubMinimize" ) {
+			utility::vector0< TagCOP > const & stub_min_tags( branch_tag->getTags() );
+			for ( const auto & stub_min_tag : stub_min_tags ) {
+				std::string const stub_mover_name( stub_min_tag->getOption<std::string>( "mover_name" ) );
+				auto  const bb_stub_constraint_weight( stub_min_tag->getOption< core::Real > ( "bb_cst_weight", 10.0 ) );
+				auto find_mover( movers.find( stub_mover_name ));
 				bool const stub_mover_found( find_mover != movers.end() );
 				if ( stub_mover_found ) {
 					simple_moves::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
 					if ( !drSOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
-						runtime_assert( drSOP != 0 );
+						runtime_assert( drSOP != nullptr );
 					}//done cast check
 					stub_minimize_movers_.push_back( std::make_pair( drSOP, bb_stub_constraint_weight) );
 					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<'\n';
 				}
 			}
-		} else if ( (*btag)->getName() == "DesignMovers" ) {
-			utility::vector0< TagCOP > const & design_tags( (*btag)->getTags() );
-			for ( utility::vector0< TagCOP >::const_iterator m_it=design_tags.begin(); m_it!=design_tags.end(); ++m_it ) {
-				TagCOP const m_tag_ptr = *m_it;
+		} else if ( branch_tag->getName() == "DesignMovers" ) {
+			utility::vector0< TagCOP > const & design_tags( branch_tag->getTags() );
+			for ( auto m_tag_ptr : design_tags ) {
 				std::string const mover_name( m_tag_ptr->getOption< std::string >( "mover_name" ) );
 				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", true ) );
-				core::Real const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
+				auto const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
 
-				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
+				auto find_mover( movers.find( mover_name ));
 				bool const mover_found( find_mover != movers.end() );
 				if ( mover_found ) {
 					simple_moves::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
 					if ( !drOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
-						runtime_assert( drOP != 0 );
+						runtime_assert( drOP != nullptr );
 					}
 					design_movers_.push_back( std::make_pair( drOP, apply_coord_constraints ) );
 					coord_cst_std_.push_back( coord_cst_std );
@@ -1211,10 +1211,10 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 					runtime_assert( mover_found );
 				}
 			}
-		} else if ( (*btag)->getName() != "NotifyMovers" ) {
+		} else if ( branch_tag->getName() != "NotifyMovers" ) {
 			utility_exit_with_message( "ERROR: tag in PlaceStub not defined\n" );
 		}
-		generate_taskfactory_and_add_task_awareness( *btag, movers, data, residue_level_tasks_for_placed_hotspots_ );
+		generate_taskfactory_and_add_task_awareness( branch_tag, movers, data, residue_level_tasks_for_placed_hotspots_ );
 	}
 	if ( stub_minimize_movers_.size() == 0 ) {
 		TR<<"No StubMinimize movers defined by user, defaulting to minimize_rb and _sc of stubs only\n";

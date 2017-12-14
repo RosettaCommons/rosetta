@@ -27,7 +27,7 @@ namespace interpolation {
 namespace spline {
 
 /// @details Auto-generated virtual destructor
-Interpolator::~Interpolator() {}
+Interpolator::~Interpolator() = default;
 
 Interpolator::Interpolator() :
 	has_lb_function_(false),

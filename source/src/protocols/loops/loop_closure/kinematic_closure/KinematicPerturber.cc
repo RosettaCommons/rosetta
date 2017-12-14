@@ -61,7 +61,7 @@ KinematicPerturber::KinematicPerturber() :
 	max_sample_iterations_( basic::options::option[ basic::options::OptionKeys::loops::max_kic_perturber_samples ]() )
 {}
 
-KinematicPerturber::~KinematicPerturber(){}
+KinematicPerturber::~KinematicPerturber()= default;
 
 void KinematicPerturber::set_movemap( core::kinematics::MoveMapCOP mm ) { movemap_ = mm; }
 
@@ -127,7 +127,7 @@ TorsionSamplingKinematicPerturber::TorsionSamplingKinematicPerturber( KinematicM
 	set_kinmover( kinmover_in );
 }
 
-TorsionSamplingKinematicPerturber::~TorsionSamplingKinematicPerturber(){}
+TorsionSamplingKinematicPerturber::~TorsionSamplingKinematicPerturber()= default;
 
 /// @details Helper function for TorsionSamplingKinematicPerturber::perturb_beta_residue.  This initializes the list of minima in the Ramachandran cube for beta-3-amino acids.
 void TorsionSamplingKinematicPerturber::initialize_betaresidue_minima (
@@ -449,7 +449,7 @@ VicinitySamplingKinematicPerturber::VicinitySamplingKinematicPerturber( Kinemati
 	sample_omega_for_pre_prolines_( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() ) // is this respected at all?
 { set_kinmover( kinmover_in ); }
 
-VicinitySamplingKinematicPerturber::~VicinitySamplingKinematicPerturber(){}
+VicinitySamplingKinematicPerturber::~VicinitySamplingKinematicPerturber()= default;
 
 /// @details small variation around the starting phi/psi angles -- order of magnitude is determined by degree_vicinity_
 void
@@ -603,7 +603,7 @@ TorsionSweepingKinematicPerturber::TorsionSweepingKinematicPerturber()
 : KinematicPerturber()
 {}
 
-TorsionSweepingKinematicPerturber::~TorsionSweepingKinematicPerturber(){}
+TorsionSweepingKinematicPerturber::~TorsionSweepingKinematicPerturber()= default;
 
 void TorsionSweepingKinematicPerturber::set_nonpivot_res_to_sweep( utility::vector1< Size > const & resids )
 {
@@ -675,7 +675,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::NeighborDependentTorsionSamp
 	set_kinmover( kinmover_in );
 }
 
-NeighborDependentTorsionSamplingKinematicPerturber::~NeighborDependentTorsionSamplingKinematicPerturber(){}
+NeighborDependentTorsionSamplingKinematicPerturber::~NeighborDependentTorsionSamplingKinematicPerturber()= default;
 
 /// @details randomly varies the torsions (and possibly the bond angles) for the loop, using phi/psi combinations based on rama2b
 void
@@ -869,7 +869,7 @@ TorsionRestrictedKinematicPerturber::TorsionRestrictedKinematicPerturber(
 	//std::cerr << " predefined torsion string: " << predefined_torsions_ << std::endl;
 }
 
-TorsionRestrictedKinematicPerturber::~TorsionRestrictedKinematicPerturber(){}
+TorsionRestrictedKinematicPerturber::~TorsionRestrictedKinematicPerturber()= default;
 
 /// @details randomly varies the torsions within the given torsion bin
 void
@@ -1068,7 +1068,7 @@ BaseTabooPerturber::BaseTabooPerturber( KinematicMoverCAP kinmover_in ) :
 	set_kinmover( kinmover_in );
 }
 
-BaseTabooPerturber::~BaseTabooPerturber(){}
+BaseTabooPerturber::~BaseTabooPerturber()= default;
 
 /// @details Repopulate the torsion-bin-string vector that's used to select the regions of the
 /// Ramachandran map from which to draw the phi/psi angles.  This queries the kinmover_
@@ -1121,7 +1121,7 @@ BaseTabooPerturber::refill_torsion_string_vector()
 				// of the resulting string isn't necessarily num_strings_ any more
 				ideal_freq /= current_freq;
 			}
-			core::Size sample_rate = static_cast< core::Size > ( ideal_freq * num_strings_ );
+			auto sample_rate = static_cast< core::Size > ( ideal_freq * num_strings_ );
 			for ( core::Size ii = 1; ii < sample_rate; ++ii ) { torsion_bins_for_pos.push_back( mcs_i->first ); }
 		}
 
@@ -1406,7 +1406,7 @@ TabooSamplingKinematicPerturber::TabooSamplingKinematicPerturber( KinematicMover
 	rama_( core::scoring::ScoringManager::get_instance()->get_Ramachandran() )
 {}
 
-TabooSamplingKinematicPerturber::~TabooSamplingKinematicPerturber(){}
+TabooSamplingKinematicPerturber::~TabooSamplingKinematicPerturber()= default;
 
 
 void
@@ -1448,7 +1448,7 @@ NeighborDependentTabooSamplingKinematicPerturber::NeighborDependentTabooSampling
 	rama_( core::scoring::ScoringManager::get_instance()->get_Ramachandran2B() )
 {}
 
-NeighborDependentTabooSamplingKinematicPerturber::~NeighborDependentTabooSamplingKinematicPerturber(){}
+NeighborDependentTabooSamplingKinematicPerturber::~NeighborDependentTabooSamplingKinematicPerturber()= default;
 
 void
 NeighborDependentTabooSamplingKinematicPerturber::get_random_phi_psi_for_residue(

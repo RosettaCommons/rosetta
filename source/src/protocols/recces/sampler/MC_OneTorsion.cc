@@ -84,7 +84,7 @@ void MC_OneTorsion::show( std::ostream & out, Size const indent ) const {
 MC_SamplerOP
 MC_OneTorsion::find( core::id::TorsionID const & torsion_id ) {
 	if ( torsion_id_ == torsion_id ) return std::dynamic_pointer_cast< MC_OneTorsion >( shared_from_this() );
-	return 0;
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ void MC_OneTorsion::set_angle( core::Real const setting ) {
 ///////////////////////////////////////////////////////////////////////////
 void MC_OneTorsion::update() {
 
-	if ( update_pose_ == 0 ) {
+	if ( update_pose_ == nullptr ) {
 		set_angle( active_angle_ ); return;
 	}
 

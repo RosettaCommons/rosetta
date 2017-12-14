@@ -44,7 +44,7 @@ public:
 
 	LocalPosition( std::string const& comma_deliniated );
 
-	LocalPosition( std::string const&, core::Size const& );
+	LocalPosition( std::string const & , core::Size const );
 
 	std::string const& label() const;
 

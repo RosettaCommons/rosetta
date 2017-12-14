@@ -67,11 +67,11 @@ public:// constructor/destructor
 	SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory,
 		utility::vector1<core::Size> const & selected_resis,
 		bool const designable_only,
-		std::string resfile_name,
-		std::string resfile_suffix,
-		std::string resfile_prefix,
-		std::string resfile_general_property,
-		std::string selected_resis_property
+		std::string const & resfile_name,
+		std::string const & resfile_suffix,
+		std::string const & resfile_prefix,
+		std::string const & resfile_general_property,
+		std::string const & selected_resis_property
 	);
 
 	// @brief copy constructor

@@ -212,7 +212,7 @@ ResidueCartBondedParameters::ResidueCartBondedParameters() :
 	pro_CD_index_( 0 )
 {}
 
-ResidueCartBondedParameters::~ResidueCartBondedParameters() {}
+ResidueCartBondedParameters::~ResidueCartBondedParameters() = default;
 
 void ResidueCartBondedParameters::add_length_parameter(  Size2 atom_inds, CartBondedParametersCOP params )
 {
@@ -697,8 +697,8 @@ IdealParametersDatabase::read_bbdep_table(
 			>> CACOavg >> CACOdev >>  CACNavg >> CACNdev >>  OCNavg >> OCNdev
 			>> c1avg >> c1dev >> c2avg >> c2dev >> c3avg >> c3dev >> c4avg >> c4dev >> Zavg >> Zdev;
 
-		Size phibin = (Size)std::floor(phiL/10.0 + 0.5); //Ranges from 0 to 35 for phibins starting from 0.0 to 35.0, respectively.
-		Size psibin = (Size)std::floor(psiL/10.0 + 0.5);
+		auto phibin = (Size)std::floor(phiL/10.0 + 0.5); //Ranges from 0 to 35 for phibins starting from 0.0 to 35.0, respectively.
+		auto psibin = (Size)std::floor(psiL/10.0 + 0.5);
 
 		CNavg_tbl(phibin+1,psibin+1) = CNavg; // Plus 1 because FArray2D is 1-based, not 0-based.
 		NCAavg_tbl(phibin+1,psibin+1) = NCAavg;
@@ -998,7 +998,7 @@ IdealParametersDatabase::lookup_improper(
 	}
 
 	// if we don't find this improper torsion in the table, it's unconstrained
-	return NULL;
+	return nullptr;
 }
 
 IdealParametersDatabase::TorsionsIndepSubmap
@@ -1495,14 +1495,13 @@ IdealParametersDatabase::create_parameters_for_restype(
 	bool imp_found_in_database( false );
 
 	// Iter over parameters - this would be fast enough as far as parameter size is small enough
-	for ( boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it =
-			impropers_indep_.begin(); b_it != impropers_indep_.end(); ++b_it ) {
+	for ( auto & b_it : impropers_indep_ ) {
 
-		atm_name_quad const &tuple( b_it->first );
+		atm_name_quad const &tuple( b_it.first );
 
 		if ( rsdname != tuple.get<0>() ) continue;
 
-		CartBondedParametersCOP tor_params = b_it->second;
+		CartBondedParametersCOP tor_params = b_it.second;
 
 		// Also skip if any atom does not exist
 		if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
@@ -1522,15 +1521,15 @@ IdealParametersDatabase::create_parameters_for_restype(
 	if ( ! imp_found_in_database ) {
 		// See if we need to generate a new one.
 		TorsionsIndepSubmap const & resdata( generate_impropers_map_res( rsd_type ) );
-		for ( TorsionsIndepSubmap::const_iterator b_it( resdata.begin() ); b_it != resdata.end(); ++b_it ) {
+		for ( const auto & b_it : resdata ) {
 
-			atm_name_quad const &tuple( b_it->first );
+			atm_name_quad const &tuple( b_it.first );
 
 			// Double-check to make sure that the atom names exist.
 			if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
 					!rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
 
-			CartBondedParametersCOP tor_params = b_it->second;
+			CartBondedParametersCOP tor_params = b_it.second;
 
 			ResidueCartBondedParameters::Size4 ids;
 			ids[1] = rsd_type.atom_index( tuple.get<1>() );
@@ -1852,7 +1851,7 @@ CartesianBondedEnergy::setup_for_scoring(
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );

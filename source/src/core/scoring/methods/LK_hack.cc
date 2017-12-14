@@ -72,13 +72,13 @@ public:
 	LK_SigmoidalFunc();
 
 	func::FuncOP
-	clone() const;
+	clone() const override;
 
-	virtual bool operator == ( func::Func const & rhs ) const;
-	virtual bool same_type_as_me( func::Func const & other ) const;
+	bool operator == ( func::Func const & rhs ) const override;
+	bool same_type_as_me( func::Func const & other ) const override;
 
-	virtual Real func( Real const x ) const;
-	virtual Real dfunc( Real const x ) const;
+	Real func( Real const x ) const override;
+	Real dfunc( Real const x ) const override;
 
 	static Real const ANGLE_CUTOFF_HIGH;
 	static Real const ANGLE_CUTOFF_LOW;
@@ -99,7 +99,7 @@ Real const LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_HIGH( std::cos( pi - LK_Si
 Real const LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW(  std::cos( pi - LK_SigmoidalFunc::ANGLE_CUTOFF_LOW  ));
 
 
-LK_SigmoidalFunc::LK_SigmoidalFunc() {}
+LK_SigmoidalFunc::LK_SigmoidalFunc() = default;
 
 core::scoring::func::FuncOP LK_SigmoidalFunc::clone() const { return core::scoring::func::FuncOP( new LK_SigmoidalFunc ); }
 

@@ -16,6 +16,7 @@
 
 // Project headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/graph/DisjointSets.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
@@ -48,7 +49,7 @@ namespace fldsgn {
 namespace topology {
 
 /// @details Auto-generated virtual destructor
-SheetSet::~SheetSet() {}
+SheetSet::~SheetSet() = default;
 
 
 /// @brief default constructor
@@ -97,7 +98,7 @@ Sheet::initialize()
 }
 
 /// @brief default destructor
-Sheet::~Sheet(){}
+Sheet::~Sheet()= default;
 
 
 /// @brief return strand pairing
@@ -297,8 +298,7 @@ Sheet::which_side( Vector const & vec ) const
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief default constructor
-SheetSet::SheetSet()
-{}
+SheetSet::SheetSet() = default;
 
 /// @brief value constructor
 SheetSet::SheetSet( Sheets const & sheets ):
@@ -377,8 +377,8 @@ SheetSet::set_sheet_number() const
 	for ( Size i=1; i<=sheets_.size(); i++ ) {
 		SheetCOP const sheet ( sheets_[ i ] );
 		VecSize const & order ( sheet->order_strands() );
-		for ( VecSize::const_iterator it=order.begin(), ite=order.end(); it!=ite; ++it ) {
-			sheet_number_[ *it ] = i;
+		for ( unsigned long it : order ) {
+			sheet_number_[ it ] = i;
 		}
 	}
 }
@@ -430,7 +430,7 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 
 	// calc order of strands
 	std::map< Size, VecSize > sset =  sheet_set.sets();
-	std::map< Size, VecSize >::iterator it = sset.begin(), end = sset.end();
+	auto it = sset.begin(), end = sset.end();
 	while ( it != end ) {
 
 		bool ibarrel (true);

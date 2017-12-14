@@ -356,7 +356,7 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 			continue;
 		}
 
-		AtomPairConstraint const & constraint_i( static_cast< AtomPairConstraint const & > (other_cst) );
+		auto const & constraint_i( static_cast< AtomPairConstraint const & > (other_cst) );
 
 		if ( (constraint_i.atom(1) == CYP_CZP_atompair->atom(1) && constraint_i.atom(2) == CYP_CZP_atompair->atom(2))
 				|| (constraint_i.atom(1) == CYP_VYP_atompair->atom(1) && constraint_i.atom(2) == CYP_VYP_atompair->atom(2))

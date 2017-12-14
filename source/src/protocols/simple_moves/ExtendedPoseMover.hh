@@ -36,8 +36,8 @@ class ExtendedPoseMover : public protocols::moves::Mover {
 	typedef std::string string;
 
 public:
-	ExtendedPoseMover(string sequence = "", // moved
-		string residue_type_set_ = "centroid");
+	ExtendedPoseMover(string const & sequence = "",
+		string const & residue_type_set_ = "centroid");
 
 	/// @brief Creates an extended, idealized pose from the sequence and residue
 	/// type set specified in the constructor.

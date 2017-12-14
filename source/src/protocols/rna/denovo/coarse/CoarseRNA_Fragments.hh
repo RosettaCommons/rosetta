@@ -69,7 +69,7 @@ public:
 
 	//Constructor -- needs vall_torsions_file to get started.
 	// CoarseRNA_Fragments();
-	CoarseRNA_Fragments( std::string filename );
+	CoarseRNA_Fragments( std::string const & filename );
 	~CoarseRNA_Fragments() override;
 
 	void

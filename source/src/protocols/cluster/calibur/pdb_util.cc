@@ -16,9 +16,9 @@
 #include <iostream>
 #include <fstream>
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
 #include <iomanip>
 
 #include <map>
@@ -44,17 +44,17 @@ char slc[] = {'X','G','A','S','C','V','T','I',
 
 
 
-typedef std::vector< std::string > StringVec;
-typedef std::shared_ptr< StringVec > StringVecOP;
+using StringVec = std::vector<std::string>;
+using StringVecOP = std::shared_ptr<StringVec>;
 
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
 int toInt( std::string const & aString ) {
 	static char st[20];
 	int start = 0;
-	for ( unsigned int i=0; i < aString.size(); i++ ) {
-		if ( aString[i] != ' ' ) {
-			st[start++] = aString[i];
+	for ( char i : aString ) {
+		if ( i != ' ' ) {
+			st[start++] = i;
 		}
 	}
 	st[start] = '\0';
@@ -66,9 +66,9 @@ int toInt( std::string const & aString ) {
 double toFloat( std::string const & aString ) {
 	static char st[20];
 	int start = 0;
-	for ( unsigned int i=0; i < aString.size(); i++ ) {
-		if ( aString[i] != ' ' ) {
-			st[start++] = aString[i];
+	for ( char i : aString ) {
+		if ( i != ' ' ) {
+			st[start++] = i;
 		}
 	}
 	st[start] = '\0';
@@ -124,11 +124,11 @@ filetype( std::string const & filename )
 	input.seekg(0);
 	input.getline(buf, 400);
 	char *token = strtok(buf, " ");
-	if ( token == NULL ) {
+	if ( token == nullptr ) {
 		input.close();
 		return UNKNOWN;
 	}
-	char *name = new char[strlen(token)+1];
+	auto *name = new char[strlen(token)+1];
 	strcpy(name, token);
 
 	std::ifstream pdbfile(name); // check if name is a file

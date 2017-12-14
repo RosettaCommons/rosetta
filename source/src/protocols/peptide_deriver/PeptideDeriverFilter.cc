@@ -107,8 +107,8 @@ DerivedPeptideEntry::DerivedPeptideEntry(core::Real const lin_isc, core::Size co
 	this->lin_isc = lin_isc;
 	this->pep_start = pep_start;
 	this->lin_pose = lin_pose;
-	for ( core::Size method = 0; method < NUM_CYCLIZATION_METHODS; ++method ) {
-		this->cyc_info_set[method] = CyclizedPeptideInfoOP(new CyclizedPeptideInfo(lin_pose));
+	for ( auto & method : this->cyc_info_set ) {
+		method = CyclizedPeptideInfoOP(new CyclizedPeptideInfo(lin_pose));
 	}
 }
 // END DerivedPeptideEntry implementation

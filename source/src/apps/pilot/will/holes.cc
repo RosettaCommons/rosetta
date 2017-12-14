@@ -102,7 +102,7 @@ public:
 	void
 	apply(
 		core::pose::Pose & pose
-	) {
+	) override {
 		using namespace std;
 		using namespace core;
 		using namespace io::pdb;
@@ -187,7 +187,7 @@ public:
 
 	}
 
-	std::string get_name() const { return "RosettaHolesMover"; }
+	std::string get_name() const override { return "RosettaHolesMover"; }
 }; // end class RosettaHolesMover
 
 

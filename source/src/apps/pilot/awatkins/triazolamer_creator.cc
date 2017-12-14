@@ -208,17 +208,17 @@ public:
 	TriazoleCreator(): Mover("A3BPeptideBuilder"){}
 
 	//default dtor
-	virtual ~TriazoleCreator(){}
+	~TriazoleCreator() override= default;
 
 	//methods
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "TriazoleCreator"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "TriazoleCreator"; }
 
 };
 
-typedef utility::pointer::shared_ptr< TriazoleCreator > TriazoleCreatorOP;
-typedef utility::pointer::shared_ptr< TriazoleCreator const > TriazoleCreatorCOP;
+using TriazoleCreatorOP = utility::pointer::shared_ptr<TriazoleCreator>;
+using TriazoleCreatorCOP = utility::pointer::shared_ptr<const TriazoleCreator>;
 
 int main ( int argc, char* argv[] )
 {

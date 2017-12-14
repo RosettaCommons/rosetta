@@ -21,8 +21,8 @@ namespace protocols {
 namespace jd3 {
 namespace output {
 
-MultipleOutputter::MultipleOutputter() {}
-MultipleOutputter::~MultipleOutputter() {}
+MultipleOutputter::MultipleOutputter() = default;
+MultipleOutputter::~MultipleOutputter() = default;
 
 /// @brief Invoke write_output on all of the ResultOutputters this %MultipleOutputter contains.
 /// This class expects the OutputSpecification to be of type MultipleOutputSpecification and will
@@ -32,9 +32,9 @@ void MultipleOutputter::write_output(
 	JobResult const & result
 )
 {
-	typedef MultipleOutputSpecification MOS;
+	using MOS = MultipleOutputSpecification;
 	debug_assert( dynamic_cast< MOS const * > (&spec) );
-	MOS const & mos_spec( static_cast< MOS const & > (spec) );
+	auto const & mos_spec( static_cast< MOS const & > (spec) );
 	debug_assert( mos_spec.output_specifications().size() == outputters_.size() );
 	for ( core::Size ii = 1; ii <= mos_spec.output_specifications().size(); ++ii ) {
 		outputters_[ ii ]->write_output( *mos_spec.output_specifications()[ ii ], result );

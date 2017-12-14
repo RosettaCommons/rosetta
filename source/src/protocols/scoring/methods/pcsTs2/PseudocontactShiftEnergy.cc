@@ -101,13 +101,9 @@ PCS_Energy_Ts2::operator=(PCS_Energy_Ts2 const & other){
 	return *this;
 }
 
-PCS_Energy_Ts2::PCS_Energy_Ts2(PCS_Energy_Ts2 const & src ):
-	parent( src )
-{
-}
+PCS_Energy_Ts2::PCS_Energy_Ts2(PCS_Energy_Ts2 const & /*src*/ ) = default;
 
-PCS_Energy_Ts2::~PCS_Energy_Ts2(){
-}
+PCS_Energy_Ts2::~PCS_Energy_Ts2()= default;
 
 /// c-tor
 PCS_Energy_Ts2::PCS_Energy_Ts2() :
@@ -654,7 +650,7 @@ PCS_Energy_parameters_manager_Ts2::PCS_Energy_parameters_manager_Ts2(){
 	pcs_weight_ = 100;
 	*/
 
-	utility::vector1< bool > tmp(false, 0);
+	utility::vector1< bool > tmp(false, false);
 	vec_exclude_residues_ = tmp;
 	vec_exclude_residues_exists_ = false;
 	vec_exclude_residues_changed_ = false;
@@ -701,7 +697,7 @@ PCS_Energy_parameters_manager_Ts2::set_vector_exclude_residues(utility::vector1<
 
 void
 PCS_Energy_parameters_manager_Ts2::remove_vector_exclude_residues() {
-	utility::vector1< bool > temp (false, 0);
+	utility::vector1< bool > temp (false, false);
 	vec_exclude_residues_ = temp;
 	vec_exclude_residues_exists_ = false;
 	vec_exclude_residues_changed_ = true;

@@ -59,7 +59,7 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 
-PairFeatures::PairFeatures(){}
+PairFeatures::PairFeatures()= default;
 
 PairFeatures::PairFeatures( PairFeatures const & ) :
 	FeaturesReporter()

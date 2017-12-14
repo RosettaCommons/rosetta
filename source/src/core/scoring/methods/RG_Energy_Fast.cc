@@ -238,7 +238,7 @@ RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 	// symmetry-specific code
 	// since it is a whole-structure energy, special treatment is needed to make sure this is computed correctly
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation &symmconf =
+		auto &symmconf =
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
 		symmconf.recalculate_transforms(); // this is needed by deriv calcs
 	}
@@ -267,10 +267,10 @@ RG_Energy_Fast::eval_atom_derivative(
 	numeric::xyzVector<core::Real> drg_dx = (X-mindata.com) / (mindata.rg*(mindata.nres_scored - 1));
 
 	//fpd symmetry
-	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=nullptr;
 	Vector f1(0,0,0), f2(0,0,0);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const &symmconf =
+		auto const &symmconf =
 			dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
 		symminfo = symmconf.Symmetry_Info();
 		if ( symminfo->bb_is_independent( resid ) ) {

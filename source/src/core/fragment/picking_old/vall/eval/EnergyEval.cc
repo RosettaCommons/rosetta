@@ -80,7 +80,7 @@ EnergyEval::EnergyEval( EnergyEval const & rval ) :
 
 
 /// @brief default destructor
-EnergyEval::~EnergyEval() {}
+EnergyEval::~EnergyEval() = default;
 
 
 /// @brief copy assignment

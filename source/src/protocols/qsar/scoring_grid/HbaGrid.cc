@@ -74,8 +74,7 @@ HbaGrid::HbaGrid() : SingleGrid("HbaGrid")
 }
 
 
-HbaGrid::~HbaGrid()
-{}
+HbaGrid::~HbaGrid() = default;
 
 GridBaseOP HbaGrid::clone() const {
 	return GridBaseOP( new HbaGrid( *this ) );

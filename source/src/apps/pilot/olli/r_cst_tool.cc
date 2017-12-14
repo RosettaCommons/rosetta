@@ -113,12 +113,12 @@ void register_options() {
 class ConstraintToolMover;
 
 // Types
-typedef  utility::pointer::shared_ptr< ConstraintToolMover >  ConstraintToolMoverOP;
-typedef  utility::pointer::shared_ptr< ConstraintToolMover const >  ConstraintToolMoverCOP;
+using ConstraintToolMoverOP = utility::pointer::shared_ptr<ConstraintToolMover>;
+using ConstraintToolMoverCOP = utility::pointer::shared_ptr<const ConstraintToolMover>;
 
 class ConstraintToolMover : public moves::Mover {
 public:
-	virtual void apply( core::pose::Pose& );
+	void apply( core::pose::Pose& ) override;
 	ConstraintSet const& cstset() const {
 		return *cstset_;
 	}
@@ -139,13 +139,13 @@ public:
 
 		output_cst->show_definition( os, reference_pose_ );
 	}
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new ConstraintToolMover() );
 	}
 
-	std::string get_name() const { return "ConstraintToolMover"; }
+	std::string get_name() const override { return "ConstraintToolMover"; }
 
 private:
 	ConstraintSetOP cstset_;

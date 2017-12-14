@@ -77,7 +77,7 @@ DihedralPairConstraint::remap_resid(
 			remap_b1, remap_b2, remap_b3, remap_b4,
 			this->func_ ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -119,7 +119,7 @@ ConstraintOP DihedralPairConstraint::remapped_clone( pose::Pose const& src, pose
 			&& id5.valid() && id6.valid() &&  id7.valid() && id8.valid() ) {
 		return ConstraintOP( new DihedralPairConstraint( id1, id2, id3, id4, id5, id6, id7, id8, func_, score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -333,7 +333,7 @@ DihedralPairConstraint::operator == ( Constraint const & other_cst ) const {
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	DihedralPairConstraint const & other( static_cast< DihedralPairConstraint const & > (other_cst) );
+	auto const & other( static_cast< DihedralPairConstraint const & > (other_cst) );
 
 	if ( atomA1_ != other.atomA1_ ) return false;
 	if ( atomA2_ != other.atomA2_ ) return false;

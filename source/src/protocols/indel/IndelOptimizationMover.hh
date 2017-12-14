@@ -32,15 +32,15 @@ public:
 
 	//default ctor
 	IndelOptimizationMover( Size start_res, Size end_res, Size loop_length,
-		std::string remodel, std::string intermedrelax, std::string refine, std::string relax, bool frag_files, Size num_to_dock, bool dump_initial_results ):
+		std::string const & remodel, std::string const & intermedrelax, std::string const & refine, std::string const & relax, bool frag_files, Size num_to_dock, bool dump_initial_results ):
 		Mover("IndelOptimizationMover"),
 		start_res_( start_res ),
 		end_res_( end_res ),
 		loop_length_( loop_length ),
-		remodel_(std::move( remodel )),
-		intermedrelax_(std::move( intermedrelax )),
-		refine_(std::move( refine )),
-		relax_(std::move( relax )),
+		remodel_( remodel ),
+		intermedrelax_( intermedrelax ),
+		refine_( refine ),
+		relax_( relax ),
 		frag_files_( frag_files ),
 		num_to_dock_( num_to_dock ),
 		dump_initial_results_( dump_initial_results )

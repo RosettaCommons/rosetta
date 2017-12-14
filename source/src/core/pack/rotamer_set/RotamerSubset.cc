@@ -54,7 +54,7 @@ RotamerSubset::RotamerSubset(
 	utility::vector1< Size > const & rotamer_subset
 ) :
 	n_residue_types_( 0 ),
-	cached_tries_( scoring::methods::n_energy_methods, 0 ),
+	cached_tries_( scoring::methods::n_energy_methods, nullptr ),
 	id_for_current_rotamer_( 0 ),
 	rotamer_offsets_require_update_( false )
 {
@@ -69,7 +69,7 @@ RotamerSubset::RotamerSubset(
 
 }
 
-RotamerSubset::~RotamerSubset() {}
+RotamerSubset::~RotamerSubset() = default;
 
 void
 RotamerSubset::add_rotamer(
@@ -223,7 +223,7 @@ void
 RotamerSubset::drop_rotamer( Size rot_id )
 {
 	debug_assert( rot_id <= rotamers_.size() );
-	utility::vector1< conformation::ResidueOP > copy_rotamers( rotamers_.size() - 1, 0 );
+	utility::vector1< conformation::ResidueOP > copy_rotamers( rotamers_.size() - 1, nullptr );
 	Size count_copy( 1 );
 	for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
 		if ( ii != rot_id ) {
@@ -258,7 +258,7 @@ RotamerSubset::drop_rotamers( utility::vector1< bool > const & rotamers_to_delet
 			if ( ii == id_for_current_rotamer_ ) {
 				current_rotamer_copy_ = rotamers_[ ii ];
 			}
-			rotamers_[ ii ] = 0;
+			rotamers_[ ii ] = nullptr;
 			++n_dropped;
 		}
 	}
@@ -274,10 +274,10 @@ RotamerSubset::drop_rotamers( utility::vector1< bool > const & rotamers_to_delet
 		id_for_current_rotamer_ = 1;
 		current_rotamer_copy_.reset();
 	} else {
-		utility::vector1< conformation::ResidueOP > new_rotamers( rotamers_to_delete.size() - n_dropped, 0 );
+		utility::vector1< conformation::ResidueOP > new_rotamers( rotamers_to_delete.size() - n_dropped, nullptr );
 		Size count_new = 1;
 		for ( Size ii = 1; ii <= rotamers_.size(); ++ii ) {
-			if ( rotamers_[ ii ] != 0 ) {
+			if ( rotamers_[ ii ] != nullptr ) {
 				new_rotamers[ count_new ] = rotamers_[ ii ];
 				if ( ii == id_for_current_rotamer_ ) {
 					id_for_current_rotamer_ = count_new;

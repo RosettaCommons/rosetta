@@ -223,7 +223,7 @@ load_dna_design_defs_from_file(
 void
 load_dna_design_defs_from_options(
 	DnaDesignDefOPs & defs,
-	std::string pdb_prefix = std::string()
+	std::string const & pdb_prefix = std::string()
 );
 
 void

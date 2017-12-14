@@ -78,8 +78,8 @@ class VdWTinkerResPairMinData : public basic::datacache::CacheableData
 {
 public:
 	VdWTinkerResPairMinData();
-	virtual ~VdWTinkerResPairMinData() {}
-	virtual basic::datacache::CacheableDataOP clone() const
+	~VdWTinkerResPairMinData() override = default;
+	basic::datacache::CacheableDataOP clone() const override
 	{ return basic::datacache::CacheableDataOP( new VdWTinkerResPairMinData( *this ) ); }
 
 	void
@@ -100,15 +100,13 @@ private:
 	VdWTinkerResidueInfoCOP res1_data_;
 	VdWTinkerResidueInfoCOP res2_data_;
 
-	bool initialized_;
+	bool initialized_{ false };
 };
 
-typedef utility::pointer::shared_ptr< VdWTinkerResPairMinData >       VdWTinkerResPairMinDataOP;
-typedef utility::pointer::shared_ptr< VdWTinkerResPairMinData const > VdWTinkerResPairMinDataCOP;
+using VdWTinkerResPairMinDataOP = utility::pointer::shared_ptr<VdWTinkerResPairMinData>;
+using VdWTinkerResPairMinDataCOP = utility::pointer::shared_ptr<const VdWTinkerResPairMinData>;
 
-VdWTinkerResPairMinData::VdWTinkerResPairMinData():
-	initialized_( false )
-{}
+VdWTinkerResPairMinData::VdWTinkerResPairMinData()= default;
 
 
 void
@@ -128,7 +126,7 @@ VdWTinkerResPairMinData &
 retrieve_nonconst_vdw_pairdata(
 	ResPairMinimizationData & pairdata
 ) {
-	VdWTinkerResPairMinDataOP vdw_pairdata(0);
+	VdWTinkerResPairMinDataOP vdw_pairdata(nullptr);
 	if ( pairdata.get_data( vdw_respair_data ) ) {
 		debug_assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResPairMinData > ( pairdata.get_data( vdw_respair_data ) ));
 		vdw_pairdata = utility::pointer::static_pointer_cast< VdWTinkerResPairMinData > ( pairdata.get_data( vdw_respair_data ) );
@@ -154,7 +152,7 @@ VdWTinkerResidueInfo &
 retrieve_nonconst_vdw_resdata(
 	ResSingleMinimizationData & resdata
 ) {
-	VdWTinkerResidueInfoOP vdw_resdata( 0 );
+	VdWTinkerResidueInfoOP vdw_resdata( nullptr );
 	if ( resdata.get_data( vdw_res_data ) ) {
 		debug_assert( utility::pointer::dynamic_pointer_cast< VdWTinkerResidueInfo > ( resdata.get_data( vdw_res_data ) ) );
 		vdw_resdata = utility::pointer::static_pointer_cast< VdWTinkerResidueInfo > ( resdata.get_data( vdw_res_data ) );
@@ -202,11 +200,7 @@ VdWTinkerEnergyCreator::score_types_for_method() const {
 }
 
 
-VdWTinkerEnergy::VdWTinkerEnergy( VdWTinkerEnergy const & src ):
-	parent( src ),
-	potential_( src.potential_ ),
-	exclude_DNA_DNA_( src.exclude_DNA_DNA_ )
-{}
+VdWTinkerEnergy::VdWTinkerEnergy( VdWTinkerEnergy const & /*src*/ ) = default;
 
 
 VdWTinkerEnergy::VdWTinkerEnergy( EnergyMethodOptions const & options ):
@@ -277,7 +271,7 @@ VdWTinkerEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
@@ -306,7 +300,7 @@ VdWTinkerEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const &
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
@@ -359,7 +353,7 @@ VdWTinkerEnergy::setup_for_minimizing_for_residue(
 	basic::datacache::BasicDataCache &,
 	ResSingleMinimizationData & resdata
 ) const {
-	VdWTinkerPoseInfo const & vdw_info
+	auto const & vdw_info
 		( static_cast< VdWTinkerPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ) );
 
 	VdWTinkerResidueInfo const & vdw_pose_data( vdw_info.residue_info( rsd.seqpos() ) );
@@ -501,7 +495,7 @@ VdWTinkerEnergy::evaluate_rotamer_intrares_energies(
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
 
-	VdWTinkerRotamerSetInfo const & vdw_info
+	auto const & vdw_info
 		( set.data().get< VdWTinkerRotamerSetInfo >( VDWTINKER_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
@@ -528,7 +522,7 @@ VdWTinkerEnergy::evaluate_rotamer_intrares_energy_maps(
 
 	// std::cout << "VdWTinker rotamer_intrares_energies: " << set.resid() << std::endl;
 
-	VdWTinkerRotamerSetInfo const & vdw_info
+	auto const & vdw_info
 		( set.data().get< VdWTinkerRotamerSetInfo >( VDWTINKER_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
@@ -557,10 +551,10 @@ VdWTinkerEnergy::evaluate_rotamer_pair_energies(
 
 	if ( exclude_DNA_DNA_ && pose.residue( set1.resid() ).is_DNA() && pose.residue( set2.resid() ).is_DNA() ) return;
 
-	VdWTinkerRotamerSetInfo const & vdw_info1
+	auto const & vdw_info1
 		( set1.data().get< VdWTinkerRotamerSetInfo >( VDWTINKER_ROTAMER_SET_INFO ) );
 
-	VdWTinkerRotamerSetInfo const & vdw_info2
+	auto const & vdw_info2
 		( set2.data().get< VdWTinkerRotamerSetInfo >( VDWTINKER_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1; ii <= set1.get_n_residue_types(); ++ii ) {
@@ -612,7 +606,7 @@ VdWTinkerEnergy::evaluate_rotamer_background_energies(
 	using conformation::Residue;
 	using core::conformation::RotamerSetCacheableDataType::VDWTINKER_ROTAMER_SET_INFO;
 
-	VdWTinkerRotamerSetInfo const & vdw_set_info
+	auto const & vdw_set_info
 		( set.data().get< VdWTinkerRotamerSetInfo >( VDWTINKER_ROTAMER_SET_INFO ) );
 
 	VdWTinkerResidueInfo const & vdw_rsd_info( retrieve_vdw_residue_info( pose, rsd.seqpos() ) );
@@ -657,7 +651,7 @@ VdWTinkerEnergy::evaluate_rotamer_background_energy_maps(
 	using conformation::Residue;
 	using core::conformation::RotamerSetCacheableDataType::VDWTINKER_ROTAMER_SET_INFO;
 
-	VdWTinkerRotamerSetInfo const & vdw_set_info
+	auto const & vdw_set_info
 		( set.data().get< VdWTinkerRotamerSetInfo >( VDWTINKER_ROTAMER_SET_INFO ) );
 
 	VdWTinkerResidueInfo const & vdw_rsd_info( retrieve_vdw_residue_info( pose, rsd.seqpos() ) );
@@ -729,7 +723,7 @@ VdWTinkerEnergy::eval_intrares_energy(
 ) const {
 	if ( exclude_DNA_DNA_ && rsd.is_DNA() ) return;
 
-	VdWTinkerPoseInfo const & vdw_info
+	auto const & vdw_info
 		( static_cast< VdWTinkerPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ) ); // SHOULD BE FAST!
 
 	emap[ fa_vdw_tinker ] += potential_.get_res_res_vdw( rsd, vdw_info.residue_info( rsd.seqpos() ),

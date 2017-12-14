@@ -81,9 +81,9 @@
 
 static basic::Tracer TR( "apps.pilot_apps.shilei.lowresdock_patchdock_hotspot_cst" );
 
-typedef core::Size Size;
-typedef core::Real Real;
-typedef core::pose::Pose Pose;
+using Size = core::Size;
+using Real = core::Real;
+using Pose = core::pose::Pose;
 
 using namespace core;
 using namespace pose;
@@ -102,14 +102,14 @@ OPT_1GRP_KEY(Real,lowresdock_patchdock_hotspot_cst,hotspotcst_filter)
 
 class run_score_patchdock_hotspot : public protocols::moves::Mover {
 public:
-	run_score_patchdock_hotspot() { }
+	run_score_patchdock_hotspot() = default;
 
-	void apply( pose::Pose & pose) {
+	void apply( pose::Pose & pose) override {
 
 		//can you convert chain B to be almost alanine?
 		//pose.dump_pdb( "start.pdb" );
 		Pose archive_pose=pose;
-		protocols::protein_interface_design::movers::BuildAlaPose toAla( 1,2,20);
+		protocols::protein_interface_design::movers::BuildAlaPose toAla( true,true,20);
 		toAla.apply( pose );
 		//pose.dump_pdb( "check_alanine.pdb" );
 
@@ -242,7 +242,7 @@ public:
 
 	}//end of apply
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "run_score_patchdock_hotspot";
 	}
 
@@ -270,7 +270,7 @@ void* my_main( void* ) {
 		excn.show( std::cerr );
 	}
 
-	return 0;
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

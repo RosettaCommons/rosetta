@@ -109,7 +109,7 @@ private:
 	bool ramp_rama_;
 	bool ramp_vdw_;
 	core::Size rounds_;
-	bool cartesian_mode_;
+	//bool cartesian_mode_;
 	bool repack_sc_;
 	core::scoring::ScoreFunctionOP cen_scorefxn_;
 	core::scoring::ScoreFunctionOP fa_scorefxn_;

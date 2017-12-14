@@ -436,16 +436,16 @@ EnzdesRemodelMover::parse_my_tag(
 )
 {
 	if ( tag->hasOption("remodel_secmatch") ) {
-		remodel_secmatch_ = tag->getOption<bool>( "remodel_secmatch", 1 );
+		remodel_secmatch_ = tag->getOption<bool>( "remodel_secmatch", true );
 	}
 	if ( tag->hasOption("reinstate_foldtree") ) {
-		reinstate_initial_foldtree_ = tag->getOption<bool>( "reinstate_foldtree", 1 );
+		reinstate_initial_foldtree_ = tag->getOption<bool>( "reinstate_foldtree", true );
 	}
 	if ( tag->hasOption("remodel_region") ) {
 		region_to_remodel_ = tag->getOption<core::Size>( "remodel_region", 1 );
 	}
 	if ( tag->hasOption("include_existing_conf_as_invrot_target") ) {
-		include_existing_conf_as_invrot_target_ = tag->getOption<bool>("include_existing_conf_as_invrot_target",1);
+		include_existing_conf_as_invrot_target_ = tag->getOption<bool>("include_existing_conf_as_invrot_target",true);
 	}
 }
 

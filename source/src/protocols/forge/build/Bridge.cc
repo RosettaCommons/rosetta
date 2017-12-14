@@ -30,6 +30,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/pose/annotated_sequence.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -96,16 +97,11 @@ Bridge::Bridge(
 
 
 /// @brief copy constructor
-Bridge::Bridge( Bridge const & rval ) :
-	Super( rval ),
-	interval_( rval.interval_ ),
-	ss_( rval.ss_ ),
-	aa_( rval.aa_ )
-{}
+Bridge::Bridge( Bridge const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-Bridge::~Bridge() {}
+Bridge::~Bridge() = default;
 
 
 /// @brief copy assignment

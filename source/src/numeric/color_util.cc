@@ -102,7 +102,7 @@ numeric::xyzVector<platform::Real> hsv_to_rgb(numeric::xyzVector<platform::Real>
 
 	// Look at http://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV for an explanation of whats going on here
 	hue /= 60;
-	platform::Size i = static_cast<platform::Size>(std::floor(hue));
+	auto i = static_cast<platform::Size>(std::floor(hue));
 	platform::Real f = hue - i;
 	platform::Real p = value * ( 1 - saturation );
 	platform::Real q = value * ( 1 - saturation * f );

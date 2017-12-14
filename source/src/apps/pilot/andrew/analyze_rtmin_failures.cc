@@ -133,11 +133,11 @@ int main( int argc, char * argv [] )
 
 		Real best_natrot_energy = 0.0;
 		EnergyMap best_natrot_energies;
-		ResidueOP best_natrot = 0;
+		ResidueOP best_natrot = nullptr;
 
 		Real best_nonnatrot_energy = 0.0;
 		EnergyMap best_nonnatrot_energies;
-		ResidueOP best_nonnatrot = 0;
+		ResidueOP best_nonnatrot = nullptr;
 
 		std::cout << "Minimizing " << roi_rotset->num_rotamers() << " rotamers" << std::endl;
 		for ( Size ii = 1; ii <= roi_rotset->num_rotamers(); ++ii ) {
@@ -147,13 +147,13 @@ int main( int argc, char * argv [] )
 
 			Real totalE = minpose.energies().total_energy();
 			if ( is_nat_rot( pose, minpose, residue_of_interest ) ) {
-				if ( best_natrot == 0 || totalE < best_natrot_energy ) {
+				if ( best_natrot == nullptr || totalE < best_natrot_energy ) {
 					best_natrot = minpose.residue( residue_of_interest ).clone();
 					best_natrot_energy = totalE;
 					best_natrot_energies = minpose.energies().total_energies();
 				}
 			} else {
-				if ( best_nonnatrot == 0 || totalE < best_nonnatrot_energy ) {
+				if ( best_nonnatrot == nullptr || totalE < best_nonnatrot_energy ) {
 					best_nonnatrot = minpose.residue( residue_of_interest ).clone();
 					best_nonnatrot_energy = totalE;
 					best_nonnatrot_energies = minpose.energies().total_energies();
@@ -162,11 +162,11 @@ int main( int argc, char * argv [] )
 		}
 
 		bool compare = true;
-		if ( best_natrot == 0 ) {
+		if ( best_natrot == nullptr ) {
 			compare = false;
 			std::cout << "No rotamer minimized to within the cutoff of the native rotamer!" << std::endl;
 		}
-		if ( best_nonnatrot == 0 ) {
+		if ( best_nonnatrot == nullptr ) {
 			compare = false;
 			std::cout << "No rotamer minimized away from within the cutoff of the native rotamer!" << std::endl;
 		}

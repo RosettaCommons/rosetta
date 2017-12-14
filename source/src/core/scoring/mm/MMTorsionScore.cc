@@ -34,7 +34,7 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <math.h>
+#include <cmath>
 
 #include <utility/vector1.hh>
 
@@ -44,7 +44,7 @@ namespace scoring {
 namespace mm {
 
 /// @details Auto-generated virtual destructor
-MMTorsionScore::~MMTorsionScore() {}
+MMTorsionScore::~MMTorsionScore() = default;
 
 MMTorsionScore::MMTorsionScore() :
 	mm_torsion_library_( scoring::ScoringManager::get_instance()->get_MMTorsionLibrary() )
@@ -70,7 +70,7 @@ MMTorsionScore::score( mm_torsion_atom_quad mm_atomtype_set, Real angle ) const
 		mm_atomtype_set.key4() );
 
 	// calc score
-	for ( mm_torsion_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+	for ( auto i = pair.first, e = pair.second; i != e; ++i ) {
 		score += ( (i->second).key1() * ( 1+cos( (i->second).key2() *  angle - (i->second).key3() ) ) );
 	}
 
@@ -92,7 +92,7 @@ MMTorsionScore::dscore( mm_torsion_atom_quad mm_atomtype_set, Real angle ) const
 		mm_atomtype_set.key3(),
 		mm_atomtype_set.key4() );
 
-	for ( mm_torsion_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+	for ( auto i = pair.first, e = pair.second; i != e; ++i ) {
 		/// The math below is entirely Doug's and I'm trusting it.
 		dscore_dang += (-1 * (i->second).key1() * (i->second).key2() * sin( (i->second).key2() * angle - (i->second).key3() ) );
 	}

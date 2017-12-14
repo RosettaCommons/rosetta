@@ -100,7 +100,7 @@ SymShakeStructureMover::SymShakeStructureMover(core::scoring::ScoreFunctionOP s,
 	ShakeStructureMover(s, ens_diversity,ens_div_tolerance )
 {}
 
-SymShakeStructureMover::~SymShakeStructureMover(){}
+SymShakeStructureMover::~SymShakeStructureMover()= default;
 
 //    void
 //    SymShakeStructureMover::set_scorefunction(core::scoring::ScoreFunction & s){

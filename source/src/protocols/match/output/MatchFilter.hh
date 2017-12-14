@@ -34,7 +34,7 @@ namespace output {
 class MatchFilter : public utility::pointer::ReferenceCount {
 public:
 
-	MatchFilter( std::string filter_name );
+	MatchFilter( std::string const & filter_name );
 
 	virtual
 	~MatchFilter();

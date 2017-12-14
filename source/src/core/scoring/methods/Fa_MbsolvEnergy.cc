@@ -71,7 +71,7 @@ Fa_MbsolvEnergyCreator::score_types_for_method() const {
 Fa_MbsolvEnergy::Fa_MbsolvEnergy( etable::Etable const & etable_in, etable::MembEtable const & memb_etable_in):
 	parent( methods::EnergyMethodCreatorOP( new Fa_MbsolvEnergyCreator ) ),
 	etable_(etable_in),
-	memb_etable_(memb_etable_in),
+	//memb_etable_(memb_etable_in),
 	solv1_(memb_etable_in.solv1()),
 	solv2_(memb_etable_in.solv2()),
 	dsolv1_( memb_etable_in.dsolv1() ),
@@ -177,7 +177,7 @@ Fa_MbsolvEnergy::get_residue_pair_energy(
 	Real temp_score (0.0);
 
 	using namespace etable::count_pair;
-	CountPairFunctionOP cpfxn( 0 );
+	CountPairFunctionOP cpfxn( nullptr );
 
 	if ( same_res ) {
 		cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
@@ -387,7 +387,7 @@ Fa_MbsolvEnergy::eval_atom_derivative(
 		bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 
 		using namespace etable::count_pair;
-		CountPairFunctionOP cpfxn( 0 );
+		CountPairFunctionOP cpfxn( nullptr );
 
 		if ( same_res ) {
 			cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );

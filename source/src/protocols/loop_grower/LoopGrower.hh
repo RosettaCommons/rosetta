@@ -420,7 +420,6 @@ private:
 	bool writebeams_ = false;
 	bool clustercheck_ = false;
 	bool fafilter_ = true;
-	bool famin_ = false;
 	bool samplesheets_ = true;
 	bool filterprevious_ = false;
 	bool checksymm_ = false;

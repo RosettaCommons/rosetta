@@ -63,7 +63,7 @@ static basic::Tracer TR( "core.scoring.methods.MMTorsionEnergy" );
 
 
 typedef std::pair< mm::mm_torsion_atom_quad, core::Real > mm_torsion_atom_quad_angle_pair;
-typedef utility::vector1< mm_torsion_atom_quad_angle_pair >::const_iterator mmtaqap_iter;
+using mmtaqap_iter = utility::vector1<mm_torsion_atom_quad_angle_pair>::const_iterator;
 
 MMTorsionEnergy::MMTorsionEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new MMTorsionEnergyCreator ) )

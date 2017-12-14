@@ -63,11 +63,11 @@ SequenceClaimer::SequenceClaimer() :
 	sequence_claim_( /* NULL */ )
 {}
 
-SequenceClaimer::SequenceClaimer( std::string  sequence, std::string const& label,
+SequenceClaimer::SequenceClaimer( std::string const & sequence, std::string const& label,
 	std::string  rsd_type_set_identifier = core::chemical::CENTROID ) :
 	rsd_type_set_(std::move( rsd_type_set_identifier )),
 	priority_( 0.0 ),
-	input_sequence_(std::move( sequence )),
+	input_sequence_( sequence ),
 	sequence_claim_( /* NULL */ )
 {
 	Parent::set_label(label);

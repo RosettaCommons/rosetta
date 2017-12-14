@@ -33,7 +33,7 @@ name_from_elements(Elements element){
 
 Elements
 elements_from_name(std::string name) {
-	std::map< std::string, Elements >::const_iterator iter = name2element().find( name );
+	auto iter = name2element().find( name );
 	if ( iter == name2element().end() ) {
 		if ( name == "X" || name == "Z" ) { // Special case for special Rosetta atoms.
 			return UnknownElement;
@@ -185,9 +185,8 @@ utility::vector0< std::string > setup_element2name() {
 
 	utility::vector0< std::string > element2n( total_number_elements );
 
-	for ( std::map< std::string, Elements >::const_iterator iter = name2element().begin(),
-			iter_end = name2element().end(); iter != iter_end; ++iter ) {
-		element2n[ iter->second ] = iter->first;
+	for ( auto const & iter : name2element() ) {
+		element2n[ iter.second ] = iter.first;
 	}
 
 	return element2n;

@@ -70,14 +70,13 @@ DisulfResNeighbIterator::DisulfResNeighbIterator(
 	disulfide_index_( FullatomDisulfideEnergyContainer::NO_DISULFIDE )
 {}
 
-DisulfResNeighbIterator::~DisulfResNeighbIterator()
-{}
+DisulfResNeighbIterator::~DisulfResNeighbIterator() = default;
 
 ResidueNeighborIterator &
 DisulfResNeighbIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
 	debug_assert( &(dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
-	DisulfResNeighbIterator const & drni_rhs = static_cast< DisulfResNeighbIterator const & > ( rhs );
+	auto const & drni_rhs = static_cast< DisulfResNeighbIterator const & > ( rhs );
 
 	owner_ = drni_rhs.owner_;
 	focused_residue_ = drni_rhs.focused_residue_;
@@ -100,7 +99,7 @@ bool
 DisulfResNeighbIterator::operator == ( ResidueNeighborIterator const & rhs ) const
 {
 	debug_assert( &( dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
-	DisulfResNeighbIterator const & drni_rhs = static_cast< DisulfResNeighbIterator const & > ( rhs );
+	auto const & drni_rhs = static_cast< DisulfResNeighbIterator const & > ( rhs );
 
 	return ( owner_ == drni_rhs.owner_ &&
 		focused_residue_ == drni_rhs.focused_residue_ &&
@@ -111,7 +110,7 @@ bool
 DisulfResNeighbIterator::operator != ( ResidueNeighborIterator const & rhs ) const
 {
 	debug_assert( &( dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
-	DisulfResNeighbIterator const & drni_rhs = static_cast< DisulfResNeighbIterator const & > ( rhs );
+	auto const & drni_rhs = static_cast< DisulfResNeighbIterator const & > ( rhs );
 	return ( owner_ != drni_rhs.owner_ ||
 		focused_residue_ != drni_rhs.focused_residue_ ||
 		disulfide_index_ != drni_rhs.disulfide_index_ );
@@ -210,14 +209,13 @@ DisulfResNeighbConstIterator::DisulfResNeighbConstIterator(
 	disulfide_index_( FullatomDisulfideEnergyContainer::NO_DISULFIDE )
 {}
 
-DisulfResNeighbConstIterator::~DisulfResNeighbConstIterator()
-{}
+DisulfResNeighbConstIterator::~DisulfResNeighbConstIterator() = default;
 
 ResidueNeighborConstIterator &
 DisulfResNeighbConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )
 {
 	debug_assert( &(dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
-	DisulfResNeighbConstIterator const & drni_rhs = static_cast< DisulfResNeighbConstIterator const & > ( rhs );
+	auto const & drni_rhs = static_cast< DisulfResNeighbConstIterator const & > ( rhs );
 
 	owner_ = drni_rhs.owner_;
 	focused_residue_ = drni_rhs.focused_residue_;
@@ -240,7 +238,7 @@ bool
 DisulfResNeighbConstIterator::operator == ( ResidueNeighborConstIterator const & rhs ) const
 {
 	debug_assert( &( dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
-	DisulfResNeighbConstIterator const & drni_rhs = static_cast< DisulfResNeighbConstIterator const & > ( rhs );
+	auto const & drni_rhs = static_cast< DisulfResNeighbConstIterator const & > ( rhs );
 
 	return ( owner_ == drni_rhs.owner_ &&
 		focused_residue_ == drni_rhs.focused_residue_ &&
@@ -253,7 +251,7 @@ bool
 DisulfResNeighbConstIterator::operator != ( ResidueNeighborConstIterator const & rhs ) const
 {
 	debug_assert( &( dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );
-	DisulfResNeighbConstIterator const & drni_rhs = static_cast< DisulfResNeighbConstIterator const & > ( rhs );
+	auto const & drni_rhs = static_cast< DisulfResNeighbConstIterator const & > ( rhs );
 	return ( owner_ != drni_rhs.owner_ ||
 		focused_residue_ != drni_rhs.focused_residue_ ||
 		disulfide_index_ != drni_rhs.disulfide_index_ );
@@ -321,8 +319,7 @@ DisulfResNeighbConstIterator::energy_computed() const
 Size const FullatomDisulfideEnergyContainer::NO_DISULFIDE( 0 );
 
 
-FullatomDisulfideEnergyContainer::FullatomDisulfideEnergyContainer()
-{}
+FullatomDisulfideEnergyContainer::FullatomDisulfideEnergyContainer() = default;
 
 bool
 FullatomDisulfideEnergyContainer::empty() const
@@ -342,8 +339,7 @@ FullatomDisulfideEnergyContainer::update( pose::Pose const & pose )
 	if ( disulfides_changed( pose ) ) find_disulfides( pose );
 }
 
-FullatomDisulfideEnergyContainer::~FullatomDisulfideEnergyContainer()
-{}
+FullatomDisulfideEnergyContainer::~FullatomDisulfideEnergyContainer() = default;
 
 LREnergyContainerOP
 FullatomDisulfideEnergyContainer::clone() const
@@ -599,7 +595,7 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 	resid_2_disulfide_index_.resize( nres );
 	disulfide_residue_types_.resize( nres );
 	std::fill( resid_2_disulfide_index_.begin(), resid_2_disulfide_index_.end(), NO_DISULFIDE );
-	std::fill( disulfide_residue_types_.begin(), disulfide_residue_types_.end(), chemical::ResidueTypeCOP(0) );
+	std::fill( disulfide_residue_types_.begin(), disulfide_residue_types_.end(), chemical::ResidueTypeCOP(nullptr) );
 
 
 	Size count_disulfides( 0 );

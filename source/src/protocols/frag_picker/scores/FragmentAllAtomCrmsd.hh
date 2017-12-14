@@ -42,11 +42,11 @@ public:
 
 	/// @brief  creates a crmsd-based scoring function.
 	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
-	FragmentAllAtomCrmsd(core::Size, core::Real, bool, std::string, core::pose::PoseOP);
+	FragmentAllAtomCrmsd(core::Size, core::Real, bool, std::string const &, core::pose::PoseOP);
 
 	/// @brief  creates a crmsd-based scoring function.
 	/// @details fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
-	FragmentAllAtomCrmsd(core::Size, core::Real, bool, std::string, utility::vector1< utility::vector1<core::Real> >);
+	FragmentAllAtomCrmsd(core::Size, core::Real, bool, std::string const &, utility::vector1< utility::vector1<core::Real> > const & );
 
 	~FragmentAllAtomCrmsd();
 

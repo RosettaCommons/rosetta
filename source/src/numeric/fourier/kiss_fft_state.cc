@@ -107,7 +107,7 @@ void kiss_fft_state::resize(int n, int inv) {
 /////////////////////////
 /// 1D c->c split fft
 /////////////////////////
-kiss_fftsplit_state::kiss_fftsplit_state() { }
+kiss_fftsplit_state::kiss_fftsplit_state() = default;
 
 kiss_fftsplit_state::kiss_fftsplit_state(int n, int inv) {
 	resize( n, inv );
@@ -123,7 +123,7 @@ void kiss_fftsplit_state::resize(int n, int inv) {
 /////////////////////////
 /// 1D dft
 /////////////////////////
-kiss_dct_state::kiss_dct_state() { }
+kiss_dct_state::kiss_dct_state() = default;
 
 kiss_dct_state::kiss_dct_state(int n, int inv) {
 	resize( n, inv );
@@ -152,7 +152,7 @@ void kiss_dct_state::resize(int n, int inv) {
 /////////////////////////
 /// 1D r->c fft
 /////////////////////////
-kiss_fftr_state::kiss_fftr_state() { }
+kiss_fftr_state::kiss_fftr_state() = default;
 
 kiss_fftr_state::kiss_fftr_state(int n, int inv) {
 	resize( n, inv );
@@ -184,7 +184,7 @@ void kiss_fftr_state::resize(int n, int inv) {
 /////////////////////////
 /// ND c->c fft
 /////////////////////////
-kiss_fftnd_state::kiss_fftnd_state() { }
+kiss_fftnd_state::kiss_fftnd_state() = default;
 
 kiss_fftnd_state::kiss_fftnd_state(std::vector<int> const &n, int inv) {
 	resize(n,inv);
@@ -214,7 +214,7 @@ void kiss_fftnd_state::resize(std::vector<int> const &n, int inv) {
 /////////////////////////
 /// ND r->c fft
 /////////////////////////
-kiss_fftndr_state::kiss_fftndr_state() { }
+kiss_fftndr_state::kiss_fftndr_state() = default;
 
 kiss_fftndr_state::kiss_fftndr_state(std::vector<int> const &n, int inv) {
 	inverse_ = inv;

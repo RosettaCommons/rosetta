@@ -109,9 +109,9 @@ main( int argc, char * argv [] )
 		core::import_pose::pose_from_file( whole_pose, complex_pdb_name );
 		core::import_pose::pose_from_file( whole_pose_complex, complex_pdb_name );
 
-		core::Size const start = (core::Size)option[ startCut ];
-		core::Size const end = (core::Size)option[ endCut ];
-		core::Size const domain = (core::Size)option[ domainNum ];
+		auto const start = (core::Size)option[ startCut ];
+		auto const end = (core::Size)option[ endCut ];
+		auto const domain = (core::Size)option[ domainNum ];
 		std::string const chain_string = option[ chain ];
 		if ( start <= 0 ) {
 			std::cerr<< "Error: startCut must be greater than 0"<<std::endl;

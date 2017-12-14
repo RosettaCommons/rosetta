@@ -21,6 +21,7 @@
 
 // Utility headers
 //#include <core/util/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <basic/MetricValue.hh>
 
@@ -63,7 +64,7 @@ ChargeCalculator::ChargeCalculator(
 {}
 
 
-ChargeCalculator::~ChargeCalculator(){}
+ChargeCalculator::~ChargeCalculator()= default;
 
 
 void

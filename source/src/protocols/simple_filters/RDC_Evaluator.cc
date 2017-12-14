@@ -45,7 +45,7 @@ namespace protocols {
 namespace simple_filters {
 using namespace core;
 
-RDC_Evaluator::RDC_Evaluator( std::string tag ) :
+RDC_Evaluator::RDC_Evaluator( std::string const & tag ) :
 	evaluation::SingleValuePoseEvaluator< Real >( tag )
 {}
 
@@ -63,19 +63,19 @@ RDC_Evaluator::apply( core::pose::Pose& pose ) const {
 	return energy_evaluator.eval_dipolar( pose, rdc_data_ ); //const
 }
 /// @brief evaluate pose
-SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< Size >  selection, std::string tag, std::string file )
+SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< Size > const & selection, std::string const & tag, std::string const & file )
 : evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
-	selection_(std::move( selection )),
+	selection_( selection ),
 	tag_ ( tag ),
-	rdc_file_(std::move( file ))
+	rdc_file_( file )
 {
 	init_rdcs();
 }
 
-SelectRDC_Evaluator::SelectRDC_Evaluator( utility::vector1< Size> const& selection, std::string tag, std::string file )
+SelectRDC_Evaluator::SelectRDC_Evaluator( utility::vector1< Size> const& selection, std::string const & tag, std::string const & file )
 : evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
 	tag_( tag ),
-	rdc_file_ (std::move( file ))
+	rdc_file_ ( file )
 {
 	copy( selection.begin(), selection.end(), std::back_inserter( selection_ ) );
 	init_rdcs();

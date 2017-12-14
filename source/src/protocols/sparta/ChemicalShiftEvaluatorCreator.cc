@@ -71,7 +71,7 @@ void ChemicalShiftEvaluatorCreator::add_evaluators( protocols::evaluation::MetaP
 
 
 	if ( option[ OptionKeys::evaluation::chemical_shifts ].user() ) {
-		typedef utility::vector1< std::string > CSVector;
+		using CSVector = utility::vector1<std::string>;
 		CSVector const& cs_shifts( option[ OptionKeys::evaluation::chemical_shifts ]() );
 
 		for ( auto it=cs_shifts.begin(); it!=cs_shifts.end(); ++it ) {

@@ -32,6 +32,7 @@
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
+#include <utility/options/OptionCollection.hh>
 
 // Core headers
 #include <core/types.hh>
@@ -55,41 +56,28 @@ namespace init {
 struct pre_talaris_2013_behavior_settings {
 	pre_talaris_2013_behavior_settings();
 
-	bool pre_talaris2013_geometries;
-	bool hb_sp2_chipen;
-	bool hb_fade_energy;
-	bool hbond_measure_sp3acc_BAH_from_hvy;
-	Real lj_hbond_hdis;
-	Real lj_hbond_OH_donor_dis;
-	Real hb_sp2_outer_width;
-	Real expand_st_chi2sampling;
+	bool pre_talaris2013_geometries{ true };
+	bool hb_sp2_chipen{ false };
+	bool hb_fade_energy{ false };
+	bool hbond_measure_sp3acc_BAH_from_hvy{ false };
+	Real lj_hbond_hdis = 1.95;
+	Real lj_hbond_OH_donor_dis = 3.0;
+	Real hb_sp2_outer_width = 0.33333;
+	Real expand_st_chi2sampling{ false };
 	std::string score_weights;
 	std::string score_patch;
-	bool analytic_etable_evaluation;
+	bool analytic_etable_evaluation{ false };
 	std::string hbond_params;
-	bool smooth_fa_elec;
-	Real elec_min_dis;
-	bool dun10;
-	bool use_bicubic_interpolation;
+	bool smooth_fa_elec{ false };
+	Real elec_min_dis = 1.5;
+	bool dun10{ false };
+	bool use_bicubic_interpolation{ false };
 };
 
 pre_talaris_2013_behavior_settings::pre_talaris_2013_behavior_settings() :
-	pre_talaris2013_geometries( true ),
-	hb_sp2_chipen( false ),
-	hb_fade_energy( false ),
-	hbond_measure_sp3acc_BAH_from_hvy( false ),
-	lj_hbond_hdis( 1.95 ),
-	lj_hbond_OH_donor_dis( 3.0 ),
-	hb_sp2_outer_width( 0.33333 ),
-	expand_st_chi2sampling( false ),
 	score_weights( "pre_talaris_2013_standard.wts" ),
 	score_patch( "" ), // the default patch to score12 is handled in the core::scoring::get_score_function
-	analytic_etable_evaluation( false ),
-	hbond_params( "score12_params" ),
-	smooth_fa_elec( false ),
-	elec_min_dis( 1.5 ),
-	dun10( false ),
-	use_bicubic_interpolation( false )
+	hbond_params( "score12_params" )
 {}
 
 pre_talaris_2013_behavior_settings const restore_sc12_settings;

@@ -147,7 +147,7 @@ private:
 
 	bool bb_, chi_, symmetric_sequence_, distance_pair_;
 
-	core::Real limit_, wt_, wtD_, sd_;
+	core::Real limit_, wt_, sd_;
 };
 
 } // symmetry

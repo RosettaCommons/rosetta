@@ -44,7 +44,7 @@ static basic::Tracer TR( "protocols.simple_filters.ResidueSelectionDistanceFilte
 // XRW TEMP std::string
 // XRW TEMP ResidueSelectionDistanceFilterCreator::keyname() const { return "ResidueSelectionDistance"; }
 
-ResidueSelectionDistanceFilter::~ResidueSelectionDistanceFilter(){}
+ResidueSelectionDistanceFilter::~ResidueSelectionDistanceFilter()= default;
 
 
 bool

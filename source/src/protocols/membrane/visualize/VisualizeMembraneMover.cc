@@ -93,12 +93,7 @@ VisualizeMembraneMover::VisualizeMembraneMover(
 
 /// @brief Copy Constructor
 /// @details Creates a deep copy of the visualize membrane mover class
-VisualizeMembraneMover::VisualizeMembraneMover( VisualizeMembraneMover const & src ) :
-	protocols::moves::Mover( src ),
-	spacing_( src.spacing_ ),
-	width_( src.width_ ),
-	thickness_( src.thickness_ )
-{}
+VisualizeMembraneMover::VisualizeMembraneMover( VisualizeMembraneMover const & /*src*/ ) = default;
 
 /// @brief Assignment Operator
 /// @details Overloads "=" assignemnt for deep copying
@@ -116,7 +111,7 @@ VisualizeMembraneMover::operator=( VisualizeMembraneMover const & src ) {
 }
 
 /// @brief Destructor
-VisualizeMembraneMover::~VisualizeMembraneMover() {}
+VisualizeMembraneMover::~VisualizeMembraneMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

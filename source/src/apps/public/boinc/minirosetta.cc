@@ -86,13 +86,13 @@
 class DummyMover : public protocols::moves::Mover {
 public:
 	DummyMover() : protocols::moves::Mover( "DummyMover" ) {}
-	virtual ~DummyMover(){}
-	virtual void apply( core::pose::Pose & ) {
+	~DummyMover() override= default;
+	void apply( core::pose::Pose & ) override {
 		std::cerr << "DummyMover::apply() should never have been called!"
 			<< " (JobDistributor/Parser should have replaced DummyMover.)" << std::endl;
 		utility_exit_with_message("Function not implemented.");
 	}
-	virtual std::string get_name() const { return "DummyMover"; }
+	std::string get_name() const override { return "DummyMover"; }
 };
 
 int
@@ -231,11 +231,11 @@ main( int argc, char * argv [] )
 			} else if ( option[ run::protocol ]() == "threading" ) {
 				protocols::comparative_modeling::cm_main();
 			} else if ( option[ run::protocol ]() == "medal" ) {
-				protocols::medal::Medal_main(NULL);
+				protocols::medal::Medal_main(nullptr);
 			} else if ( option[ run::protocol ]() == "medal_exchange" ) {
-				protocols::medal::MedalExchange_main(NULL);
+				protocols::medal::MedalExchange_main(nullptr);
 			} else if ( option[ run::protocol ]() == "star" ) {
-				protocols::star::StarAbinitio_main(NULL);
+				protocols::star::StarAbinitio_main(nullptr);
 			} else if ( option[ run::protocol ]() == "rbsegmentrelax" ) {
 				protocols::RBSegmentRelax_main( );
 			} else if ( option[ run::protocol ]() == "boinc_debug" ) {

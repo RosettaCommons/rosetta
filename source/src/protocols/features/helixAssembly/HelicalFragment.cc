@@ -41,7 +41,7 @@ HelicalFragment::HelicalFragment(core::Size start, core::Size end):
 	end_(end)
 {}
 
-HelicalFragment::~HelicalFragment(){}
+HelicalFragment::~HelicalFragment()= default;
 
 core::Size HelicalFragment::start() const { return start_; }
 core::Size HelicalFragment::seq_start() const { return std::min(start_, end_); }

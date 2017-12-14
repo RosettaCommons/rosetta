@@ -62,7 +62,7 @@ RNA_BulgeEnergy::RNA_BulgeEnergy() :
 	rna_bulge_bonus_once_per_loop_( basic::options::option[ basic::options::OptionKeys::score::rna::rna_bulge_bonus_once_per_loop ]() /*default true*/)
 {}
 
-RNA_BulgeEnergy::~RNA_BulgeEnergy() {}
+RNA_BulgeEnergy::~RNA_BulgeEnergy() = default;
 
 /// clone
 core::scoring::methods::EnergyMethodOP

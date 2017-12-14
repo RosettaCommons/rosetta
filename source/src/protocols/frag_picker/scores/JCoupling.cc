@@ -205,7 +205,7 @@ FragmentScoringMethodOP MakeJCoupling::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read JCoupling file.");
 
-	return NULL;
+	return nullptr;
 }
 
 } // scores

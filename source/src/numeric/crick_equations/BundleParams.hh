@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <numeric/types.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 namespace numeric {
 namespace crick_equations {

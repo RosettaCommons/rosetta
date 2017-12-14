@@ -68,7 +68,7 @@ sys_sleep( double const seconds )
 		if ( remaining_time == 0 ) break;
 		if ( remaining_time > seconds ) break; // paranoia
 	}
-	int const x = static_cast< int >( fmod( seconds * 1000000, 1000000 ) );
+	auto const x = static_cast< int >( fmod( seconds * 1000000, 1000000 ) );
 	if ( x ) ::usleep(x);
 #endif // _WIN32
 
@@ -95,7 +95,7 @@ timestamp()
 	using std::time_t;
 	using std::tm;
 
-	time_t currentTime = time( 0 );
+	time_t currentTime = time( nullptr );
 	struct tm * now = std::localtime( &currentTime );
 
 	ostringstream timestamp;
@@ -122,7 +122,7 @@ timestamp_short()
 	using std::time_t;
 	using std::tm;
 
-	time_t currentTime = time( 0 );
+	time_t currentTime = time( nullptr );
 	struct tm * now = std::localtime( &currentTime );
 
 	ostringstream timestamp;

@@ -58,7 +58,7 @@ get_contact_features(
 			);
 
 			if ( dist_sq < dist_threshold_sq ) {
-				features[feat_idx] = 1;
+				features[feat_idx] = true;
 			}
 			feat_idx++;
 		} // jj

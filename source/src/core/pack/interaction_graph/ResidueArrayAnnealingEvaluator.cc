@@ -78,8 +78,7 @@ ResidueArrayAnnealingEvaluator::ResidueArrayAnnealingEvaluator():
 
 /// @brief Destructor
 //.
-ResidueArrayAnnealingEvaluator::~ResidueArrayAnnealingEvaluator()
-{}
+ResidueArrayAnnealingEvaluator::~ResidueArrayAnnealingEvaluator() = default;
 
 /// @brief Copy constructor
 ///
@@ -134,7 +133,7 @@ void ResidueArrayAnnealingEvaluator::initialize(
 		// the method to cache data from the Pose (which will be invisible to it during packing).
 		annealable_energy_method->setup_residuearrayannealableenergy_for_packing( pose, score_function );
 
-		weighted_energy_methods_.push_back( std::make_pair( score_weight, annealable_energy_method ));
+		weighted_energy_methods_.emplace_back( score_weight, annealable_energy_method );
 	}
 
 	if ( weighted_energy_methods_.empty() ) return; //All of the expensive setup that follows this point can be skipped if there are no energy methods that will use this evaluator.

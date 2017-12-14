@@ -32,8 +32,7 @@ O2PrimeScreener::O2PrimeScreener( modeler::rna::o2prime::O2PrimePackerOP o2prime
 {}
 
 //Destructor
-O2PrimeScreener::~O2PrimeScreener()
-{}
+O2PrimeScreener::~O2PrimeScreener() = default;
 
 /////////////////////////////////////////
 bool
@@ -46,7 +45,7 @@ O2PrimeScreener::check_screen(){
 void
 O2PrimeScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
 	update_mover->add_mover( o2prime_packer_ ); // will copy over 2'-OH solutions
-	restore_mover->add_mover( 0 ); // does nothing to restore -- this is the original choice in SWA
+	restore_mover->add_mover( nullptr ); // does nothing to restore -- this is the original choice in SWA
 }
 
 } //screener

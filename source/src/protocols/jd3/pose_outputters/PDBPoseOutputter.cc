@@ -52,8 +52,8 @@ namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
 
-PDBPoseOutputter::PDBPoseOutputter() {}
-PDBPoseOutputter::~PDBPoseOutputter() {}
+PDBPoseOutputter::PDBPoseOutputter() = default;
+PDBPoseOutputter::~PDBPoseOutputter() = default;
 
 bool
 PDBPoseOutputter::outputter_specified_by_command_line()
@@ -198,10 +198,10 @@ void PDBPoseOutputter::write_output(
 {
 	using standard::PoseJobResult;
 	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
-	PoseJobResult const & pose_result( static_cast< PoseJobResult const & > ( result ));
+	auto const & pose_result( static_cast< PoseJobResult const & > ( result ));
 	core::pose::Pose const & pose( *pose_result.pose() );
 
-	typedef PDBPoseOutputSpecification PDBPOS;
+	using PDBPOS = PDBPoseOutputSpecification;
 	debug_assert( dynamic_cast< PDBPOS const * > ( & spec ) );
 	PDBPOS pdb_spec( static_cast< PDBPOS const & > ( spec ) );
 	core::io::pdb::dump_pdb( pose, pdb_spec.out_fname(), pdb_spec.sfr_opts() );

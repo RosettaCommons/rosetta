@@ -46,7 +46,7 @@ public:
 	ddGMover(
 		core::scoring::ScoreFunctionOP s, // for scoring the pose?
 		core::scoring::ScoreFunctionOP m, // for minimizing the pose?
-		utility::vector1<core::chemical::AA> res_to_mutate
+		utility::vector1<core::chemical::AA> const & res_to_mutate
 	);
 
 	~ddGMover() override;

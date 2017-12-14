@@ -94,8 +94,7 @@ SymmetryTransform::SymmetryTransform(
 }
 
 /// @brief Destructor
-SymmetryTransform::~SymmetryTransform()
-{}
+SymmetryTransform::~SymmetryTransform() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the copy.

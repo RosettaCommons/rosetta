@@ -51,8 +51,7 @@ UpstreamDownstreamCollisionFilter::UpstreamDownstreamCollisionFilter(
 	std::cout << "Created UpstreamDownstreamCollisionFilter" << std::endl;
 }
 
-UpstreamDownstreamCollisionFilter::~UpstreamDownstreamCollisionFilter()
-{}
+UpstreamDownstreamCollisionFilter::~UpstreamDownstreamCollisionFilter() = default;
 
 void
 UpstreamDownstreamCollisionFilter::set_downstream_pose( core::pose::Pose const & downstream_pose )
@@ -149,7 +148,7 @@ bool UpstreamDownstreamCollisionFilter::passes_etable_filter( match_dspos1 const
 	using namespace core::conformation;
 	using namespace core::pose;
 
-	runtime_assert( dsbuilders_[ m.originating_geom_cst_for_dspos ] != 0 );
+	runtime_assert( dsbuilders_[ m.originating_geom_cst_for_dspos ] != nullptr );
 	dsbuilders_[ m.originating_geom_cst_for_dspos ]->coordinates_from_hit(
 		full_hit( m ), downstream_atoms_, coords_ );
 	for ( Size ii = 1; ii <= downstream_atoms_.size(); ++ii ) {
@@ -178,7 +177,7 @@ bool UpstreamDownstreamCollisionFilter::passes_etable_filter( match_dspos1 const
 
 bool UpstreamDownstreamCollisionFilter::passes_hardsphere_filter( match_dspos1 const & m ) const
 {
-	runtime_assert( dsbuilders_[ m.originating_geom_cst_for_dspos ] != 0 );
+	runtime_assert( dsbuilders_[ m.originating_geom_cst_for_dspos ] != nullptr );
 	dsbuilders_[ m.originating_geom_cst_for_dspos ]->coordinates_from_hit(
 		full_hit( m ), downstream_atoms_, coords_ );
 

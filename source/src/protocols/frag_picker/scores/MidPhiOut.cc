@@ -70,9 +70,9 @@ bool MidPhiOut::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP sc
 
 	core::Size offset_v = fragment->get_first_index_in_vall() - 1;
 
-	core::Real r_phi = static_cast< core::Real > ( fragment->get_length() );
+	auto r_phi = static_cast< core::Real > ( fragment->get_length() );
 	r_phi = (r_phi/2)+0.5+offset_v;
-	core::Size i_phi = static_cast< core::Size > ( r_phi );
+	auto i_phi = static_cast< core::Size > ( r_phi );
 
 	core::Real phi = chunk_phi_(i_phi);
 

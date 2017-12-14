@@ -1187,7 +1187,7 @@ operator <<( std::ostream & out, ScoreFunction const & sf )
 /// optional extension.
 
 std::string
-find_weights_file(std::string name, std::string extension=".wts");
+find_weights_file(std::string const & name, std::string const & extension=".wts");
 
 } // namespace scoring
 } // namespace core

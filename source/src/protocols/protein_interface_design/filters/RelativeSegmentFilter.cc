@@ -80,7 +80,7 @@ RelativeSegmentFilter::report_sm( core::pose::Pose const & ) const {
 	return( 0.0 );
 }
 
-RelativeSegmentFilter::~RelativeSegmentFilter() {}
+RelativeSegmentFilter::~RelativeSegmentFilter() = default;
 
 std::string RelativeSegmentFilter::name() const {
 	return class_name();

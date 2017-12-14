@@ -56,10 +56,8 @@ namespace methods {
 // PBLifetimeCache: carries cache for the entire runtime cycle.
 //
 //*****************************************************************
-PBLifetimeCache::PBLifetimeCache()
-{}
-PBLifetimeCache::~PBLifetimeCache()
-{}
+PBLifetimeCache::PBLifetimeCache() = default;
+PBLifetimeCache::~PBLifetimeCache() = default;
 basic::datacache::CacheableDataOP
 PBLifetimeCache::clone() const
 {
@@ -222,7 +220,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 
 		// switch to the state's pb
 		poisson_boltzmann_potential_ = cached_data->get_pbp(energy_state);
-		debug_assert(poisson_boltzmann_potential_ != 0);
+		debug_assert(poisson_boltzmann_potential_ != nullptr);
 
 		TR << "Found cached pose for state: " << energy_state << std::endl;
 
@@ -250,7 +248,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );

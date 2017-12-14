@@ -63,7 +63,7 @@ RelativeConnectRight::RelativeConnectRight( RelativeConnectRight const & rval ) 
 
 
 /// @brief default destructor
-RelativeConnectRight::~RelativeConnectRight() {}
+RelativeConnectRight::~RelativeConnectRight() = default;
 
 
 /// @brief copy assignment

@@ -1312,7 +1312,7 @@ identify_hbonds_1way_membrane(
 
 	HBondDerivs derivs;
 
-	for ( chemical::AtomIndices::const_iterator
+	for ( auto
 			hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
 			hnum != hnume; ++hnum ) {
 		Size const hatm( *hnum );
@@ -1327,7 +1327,7 @@ identify_hbonds_1way_membrane(
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
-		for ( chemical::AtomIndices::const_iterator
+		for ( auto
 				anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
 				anum != anume; ++anum ) {
 			Size const aatm( *anum );
@@ -1403,7 +1403,7 @@ identify_hbonds_1way_membrane(
 
 	HBondDerivs derivs;
 
-	for ( chemical::AtomIndices::const_iterator
+	for ( auto
 			hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
 			hnum != hnume; ++hnum ) {
 		Size const hatm( *hnum );
@@ -1418,7 +1418,7 @@ identify_hbonds_1way_membrane(
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
-		for ( chemical::AtomIndices::const_iterator
+		for ( auto
 				anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
 				anum != anume; ++anum ) {
 			Size const aatm( *anum );

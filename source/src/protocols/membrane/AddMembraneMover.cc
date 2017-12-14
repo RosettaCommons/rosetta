@@ -160,12 +160,12 @@ AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 /// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
 /// specified spanfile
 AddMembraneMover::AddMembraneMover(
-	std::string spanfile,
+	std::string const & spanfile,
 	core::Size membrane_rsd
 ) :
 	protocols::moves::Mover(),
 	include_lips_( false ),
-	spanfile_(std::move( spanfile )),
+	spanfile_( spanfile ),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_(),
 	anchor_rsd_( 1 ),
@@ -241,15 +241,15 @@ AddMembraneMover::AddMembraneMover(
 /// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
 /// specified spanfile and lipsfile
 AddMembraneMover::AddMembraneMover(
-	std::string spanfile,
-	std::string lips_acc,
+	std::string const & spanfile,
+	std::string const & lips_acc,
 	core::Size membrane_rsd
 ) :
 	protocols::moves::Mover(),
 	include_lips_( true ),
-	spanfile_(std::move( spanfile )),
+	spanfile_( spanfile ),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
-	lipsfile_(std::move( lips_acc )),
+	lipsfile_( lips_acc ),
 	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd ),
 	center_( 0, 0, 0 ),
@@ -266,16 +266,16 @@ AddMembraneMover::AddMembraneMover(
 
 /// @brief Create a RosettaMP setup from a user specified spanfile and lipsfile
 /// @brief Create a membrane positioned at "init_center" and aligned with
-/// "init_normal". Use a defualt lipid type DOPC.
+/// "init_normal". Use a default lipid type DOPC.
 AddMembraneMover::AddMembraneMover(
-	core::Vector init_center,
-	core::Vector init_normal,
-	std::string spanfile,
+	core::Vector const & init_center,
+	core::Vector const & init_normal,
+	std::string const & spanfile,
 	core::Size membrane_rsd
 ) :
 	protocols::moves::Mover(),
 	include_lips_( false ),
-	spanfile_(std::move( spanfile )),
+	spanfile_( spanfile ),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_( "" ),
 	anchor_rsd_( 1 ),
@@ -681,7 +681,7 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 				// Case 2b: Multiple membrane residues found AND the user specified found residue
 				// matches a residue in the 'found' list
 			} else {
-				core::SSize current_rsd = static_cast< core::SSize >( membrane_rsd_ );
+				auto current_rsd = static_cast< core::SSize >( membrane_rsd_ );
 				for ( core::Size i = 1; i <= found_mem_rsds.size(); i++ ) {
 					if ( current_rsd == found_mem_rsds[1] ) {
 						TR << "Adding membrane residue from PDB at residue number " << membrane_rsd_ << std::endl;
@@ -750,9 +750,9 @@ AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 	if ( TR.visible() ) pose.fold_tree().show( TR );
 
 	// Updating Chain Record in PDB Info
-	if ( pose.pdb_info() != 0 ) {
+	if ( pose.pdb_info() != nullptr ) {
 		char curr_chain = pose.pdb_info()->chain( pose.size()-1 );
-		char new_chain = (char)((int) curr_chain + 1);
+		auto new_chain = (char)((int) curr_chain + 1);
 		pose.pdb_info()->number( pose.size(), (int) pose.size() );
 		pose.pdb_info()->chain( pose.size(), new_chain );
 		pose.pdb_info()->obsolete(false);

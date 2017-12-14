@@ -49,9 +49,9 @@ using utility::tag::TagCOP;
 static basic::Tracer tr( "protocols.ligand_docking.rdf.RDFFunctionFactory" );
 
 /// @details Private constructor insures correctness of singleton.
-RDFFunctionFactory::RDFFunctionFactory() {}
+RDFFunctionFactory::RDFFunctionFactory() = default;
 
-RDFFunctionFactory::~RDFFunctionFactory() {}
+RDFFunctionFactory::~RDFFunctionFactory() = default;
 
 void
 RDFFunctionFactory::factory_register(
@@ -82,7 +82,7 @@ RDFFunctionFactory::get_rdf_function(std::string const & type_name)
 		}
 		utility_exit_with_message(error_msg.str());
 	}
-	return 0;
+	return nullptr;
 }
 utility::vector1<std::string> RDFFunctionFactory::get_all_function_names()
 {

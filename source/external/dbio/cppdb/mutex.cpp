@@ -71,10 +71,10 @@
 #	define impl_ ((pthread_mutex_t *)mutex_impl_)
 
 	namespace cppdb {
-		mutex::mutex() : mutex_impl_(0)
+		mutex::mutex() : mutex_impl_(nullptr)
 		{
 			mutex_impl_ = new pthread_mutex_t();
-			pthread_mutex_init(impl_,0);
+			pthread_mutex_init(impl_,nullptr);
 		}
 		mutex::~mutex()
 		{

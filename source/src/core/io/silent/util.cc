@@ -102,9 +102,9 @@ figure_out_residue_numbers_from_line( std::istream & line_stream,
 		std::vector< char > const & chainchars  = std::get< 1 >( resnum_and_chain );
 		std::vector< std::string > const & segidstrs  = std::get< 2 >( resnum_and_chain );
 		if ( string_ok ) {
-			for ( Size i = 0; i < resnums.size(); i++ ) residue_numbers.push_back( resnums[i] );
-			for ( Size i = 0; i < chainchars.size(); i++ ) chains.push_back( chainchars[i] );
-			for ( Size i = 0; i < segidstrs.size(); i++ ) segids.push_back( segidstrs[i] );
+			for ( int resnum : resnums ) residue_numbers.push_back( resnum );
+			for ( char chainchar : chainchars ) chains.push_back( chainchar );
+			for ( auto const & segidstr : segidstrs ) segids.push_back( segidstr );
 		} else break;
 		line_stream >> resnum_string;
 	}

@@ -124,7 +124,7 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	for ( Size n = 1; n <= pose.size(); n++ ) partition_definition( n ) = working_moving_partition_res.has_value( n );
 
 	pose::PoseOP working_native_pose;
-	if ( native_pose != 0 ) {
+	if ( native_pose != nullptr ) {
 		working_native_pose = native_pose->clone();
 		utility::vector1< Size > const & native_res_list = get_res_list_from_full_model_info( *working_native_pose );
 		utility::vector1< Size > res_list_for_slicing;

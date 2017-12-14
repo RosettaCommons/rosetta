@@ -53,7 +53,7 @@ public:
 	ReportToDB(
 		utility::sql_database::sessionOP db_session,
 		std::string const & batch_name,
-		std::string batch_description,
+		std::string const & batch_description,
 		bool use_transactions=true,
 		core::Size cache_size=2000);
 
@@ -61,7 +61,7 @@ public:
 		std::string const & name,
 		utility::sql_database::sessionOP db_session,
 		std::string const & batch_name,
-		std::string batch_description,
+		std::string const & batch_description,
 		bool use_transactions=true,
 		core::Size cache_size=2000
 	);

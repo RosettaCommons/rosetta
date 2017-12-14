@@ -33,6 +33,7 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -64,7 +65,7 @@ NamedSegmentSelector::NamedSegmentSelector( SegmentName const & segment_name, st
 
 /// @brief Destructor.
 ///
-NamedSegmentSelector::~NamedSegmentSelector() {}
+NamedSegmentSelector::~NamedSegmentSelector() = default;
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
@@ -166,9 +167,9 @@ NamedSegmentSelector::compute_residue_subset(
 			msg << class_name() << ": you cannot specify residue numbers with a segment group" << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
-		for ( SegmentNames::const_iterator c=segments.begin(); c!=segments.end(); ++c ) {
-			TR.Debug << "Adding interval for segment " << *c << std::endl;
-			compute_residue_subset_for_segment( subset, sd.segment( *c ), resids );
+		for ( auto const & segment : segments ) {
+			TR.Debug << "Adding interval for segment " << segment << std::endl;
+			compute_residue_subset_for_segment( subset, sd.segment( segment ), resids );
 		}
 	} else {
 		std::stringstream error_msg;
@@ -188,12 +189,12 @@ NamedSegmentSelector::resid_set() const
 	if ( residues_.empty() ) return residueset;
 
 	utility::vector1< std::string > const residue_blocks = utility::string_split( residues_, ',' );
-	for ( utility::vector1< std::string >::const_iterator b=residue_blocks.begin(); b!=residue_blocks.end(); ++b ) {
-		utility::vector1< std::string > const ranges = utility::string_split( *b, ':' );
+	for ( auto const & residue_block : residue_blocks ) {
+		utility::vector1< std::string > const ranges = utility::string_split( residue_block, ':' );
 		if ( ( ! ranges.size() ) || ( ranges.size() > 2 ) ) {
-			throw CREATE_EXCEPTION(utility::excn::Exception,  "Bad residue range specified to NamedSegmentSelector: " + *b );
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Bad residue range specified to NamedSegmentSelector: " + residue_block );
 		}
-		SignedResid start = boost::lexical_cast< SignedResid >( ranges[ 1 ] );
+		auto start = boost::lexical_cast< SignedResid >( ranges[ 1 ] );
 		SignedResid stop = start;
 		if ( ranges.size() == 2 ) {
 			stop = boost::lexical_cast< SignedResid >( ranges[ 2 ] );

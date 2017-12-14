@@ -40,7 +40,7 @@
 #include <core/scoring/rna/chemical_shift/RNA_CS_Util.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_RingCurrent.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_MagneticAnisotropy.hh>
-#include <math.h>
+#include <cmath>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <core/chemical/rna/util.hh>
@@ -295,8 +295,8 @@ std::string
 remove_whitespaces( std::string const & in_atom_name )
 {
 	std::string out_atom_name = "";
-	for ( Size n = 0; n < in_atom_name.size(); n++ ) {
-		if ( in_atom_name[n] != ' ' ) out_atom_name += in_atom_name[n];
+	for ( char n : in_atom_name ) {
+		if ( n != ' ' ) out_atom_name += n;
 	}
 	return out_atom_name;
 }
@@ -377,7 +377,7 @@ get_rosetta_hatom_name( std::string const & input_atom_name, std::string const &
 
 /////////////////////////////////////////////////////////////////////////////
 void
-print_chemical_shift_data( std::string prestring, ChemicalShiftData const & CS_data, bool const print_data_line )
+print_chemical_shift_data( std::string const & prestring, ChemicalShiftData const & CS_data, bool const print_data_line )
 {
 	TR << prestring  << "seq_num = " << std::setw( 3 ) << CS_data.seq_num;
 	TR << " | res_aa = " << std::setw( 3 ) << name_from_aa( CS_data.res_aa );

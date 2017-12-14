@@ -110,7 +110,7 @@ MembraneLipo::finalize_total_energy(
 			Size rsdSeq(i);
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				using namespace core::conformation::symmetry;
-				SymmetricConformation const & symm_conf (
+				auto const & symm_conf (
 					dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 				SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 				if ( !symm_info->bb_is_independent(pose.residue(i).seqpos()) ) {

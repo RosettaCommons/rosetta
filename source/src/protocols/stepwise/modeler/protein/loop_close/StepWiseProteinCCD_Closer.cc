@@ -84,8 +84,7 @@ StepWiseProteinCCD_Closer::StepWiseProteinCCD_Closer( working_parameters::StepWi
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWiseProteinCCD_Closer::~StepWiseProteinCCD_Closer()
-{}
+StepWiseProteinCCD_Closer::~StepWiseProteinCCD_Closer() = default;
 
 /////////////////////
 std::string

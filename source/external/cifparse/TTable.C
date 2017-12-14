@@ -247,10 +247,10 @@ void TTable::Clear()
 
     if (!_tuples.empty())
     {
-        for (unsigned int tupleI = 0; tupleI < _tuples.size(); tupleI++)
+        for (auto & _tuple : _tuples)
         {
-            _tuples[tupleI]->clear();
-            delete _tuples[tupleI];
+            _tuple->clear();
+            delete _tuple;
         }
 
         _tuples.clear();
@@ -417,10 +417,9 @@ void TTable::ClearTuple(const unsigned int tupleIndex)
         throw out_of_range("Invalid tuple index in TTable::ClearTuple");
     }
 
-    for (unsigned int colI = 0; colI < _tuples[tupleIndex]->size();
-      ++colI)
+    for (auto & colI : *_tuples[tupleIndex])
     {
-        (*_tuples[tupleIndex])[colI].clear();
+        colI.clear();
     }
 
 }
@@ -524,9 +523,9 @@ void TTable::InsertColumn(const unsigned int atColIndex,
 
         unsigned int intRowIndex = IntColIndex(atColIndex);
 
-        for (unsigned int tupleI = 0; tupleI < _tuples.size(); ++tupleI)
+        for (auto & _tuple : _tuples)
         {
-            _tuples[tupleI]->insert(_tuples[tupleI]->begin() + intRowIndex,
+            _tuple->insert(_tuple->begin() + intRowIndex,
               1, string());
         }
 
@@ -586,7 +585,7 @@ void TTable::FillColumn(const unsigned int colIndex,
     unsigned int intRowIndex = IntColIndex(colIndex);
 
     unsigned int tupleI = 0;
-    for (vector<string>::const_iterator currIter = colBeg; currIter < colEnd;
+    for (auto currIter = colBeg; currIter < colEnd;
       ++currIter, ++tupleI)
     {
         (*_tuples[fromTupleIndex + tupleI])[intRowIndex] =
@@ -607,9 +606,9 @@ void TTable::ClearColumn(const unsigned int colIndex)
 
     unsigned int intRowIndex = IntColIndex(colIndex);
 
-    for (unsigned int tupleI = 0; tupleI < _tuples.size(); ++tupleI)
+    for (auto & _tuple : _tuples)
     {
-        (*_tuples[tupleI])[intRowIndex].clear();
+        (*_tuple)[intRowIndex].clear();
     }
 
 }
@@ -625,9 +624,9 @@ void TTable::DeleteColumn(const unsigned int colIndex)
     }
 
 #ifdef TTABLE_COLUMN_DELETE_AS_REMOVE
-    for (unsigned int tupleI = 0; tupleI < _tuples.size(); ++tupleI)
+    for (auto & _tuple : _tuples)
     {
-        _tuples[tupleI]->erase(_tuples[tupleI]->begin() + colIndex);
+        _tuple->erase(_tuple->begin() + colIndex);
     }
 #endif
 

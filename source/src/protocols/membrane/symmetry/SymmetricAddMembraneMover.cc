@@ -156,12 +156,10 @@ SymmetricAddMembraneMover::SymmetricAddMembraneMover(
 
 /// @brief Copy Constructor for SymmetricAddMembraneMover
 /// @details Create a deep copy of SymmetricAddMembraneMover
-SymmetricAddMembraneMover::SymmetricAddMembraneMover( SymmetricAddMembraneMover const & src ) :
-	protocols::membrane::AddMembraneMover( src )
-{}
+SymmetricAddMembraneMover::SymmetricAddMembraneMover( SymmetricAddMembraneMover const & /*src*/ ) = default;
 
 /// @brief Destructor
-SymmetricAddMembraneMover::~SymmetricAddMembraneMover() {}
+SymmetricAddMembraneMover::~SymmetricAddMembraneMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
@@ -308,7 +306,7 @@ SymmetricAddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
 	// Obtain information about the symmetric setup of virtual residues
 	// in the pose from the symmetry info object
-	SymmetricConformation & symm_conf ( dynamic_cast< SymmetricConformation & > ( pose.conformation()) );
+	auto & symm_conf ( dynamic_cast< SymmetricConformation & > ( pose.conformation()) );
 
 	// Grab the number of subunits and number of residues in the monomeric unit
 	core::Size nsubunits( symm_conf.Symmetry_Info()->subunits() );

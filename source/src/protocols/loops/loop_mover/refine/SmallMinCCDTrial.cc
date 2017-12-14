@@ -87,7 +87,7 @@ SmallMinCCDTrial & SmallMinCCDTrial::operator=( SmallMinCCDTrial const & rhs ){
 }
 
 //destructor
-SmallMinCCDTrial::~SmallMinCCDTrial() {}
+SmallMinCCDTrial::~SmallMinCCDTrial() = default;
 
 /// @brief Each derived class must specify its name.
 // XRW TEMP std::string SmallMinCCDTrial::get_name() const

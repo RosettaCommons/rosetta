@@ -47,7 +47,7 @@ namespace moves {
 /// @details Auto-generated virtual destructor
 MoverStatistics::~MoverStatistics() = default;
 
-typedef core::Real Real;
+using Real = core::Real;
 using basic::Error;
 using basic::Warning;
 

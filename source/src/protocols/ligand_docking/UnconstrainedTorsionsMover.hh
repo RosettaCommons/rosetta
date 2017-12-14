@@ -43,17 +43,17 @@ public:
 
 	UnconstrainedTorsionsMover(
 		protocols::moves::MoverOP child_mover,
-		Restraints restraints
+		Restraints const & restraints
 	);
 
 	UnconstrainedTorsionsMover(
 		protocols::moves::MoverOP child_mover,
-		std::set<ResidueTorsionRestraintsOP> restraints
+		std::set<ResidueTorsionRestraintsOP> const & restraints
 	);
 
 	UnconstrainedTorsionsMover(
 		protocols::moves::MoverOP child_mover,
-		MinimizeLigandOPs
+		MinimizeLigandOPs const &
 	);
 
 

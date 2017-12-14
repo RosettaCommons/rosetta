@@ -90,7 +90,7 @@ public:
 		Size const task_scaling,
 		MoverOP const & mover,
 		Real const temperature = 0.0,
-		String sample_type = "low",
+		String const & sample_type = "low",
 		bool const drift = true
 	);
 
@@ -114,7 +114,7 @@ public:
 		MoverOP const & mover,
 		TaskFactoryOP factory_in,
 		Real const temperature = 0.0,
-		String sample_type = "low",
+		String const & sample_type = "low",
 		bool const drift = true
 	);
 

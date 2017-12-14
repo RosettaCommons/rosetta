@@ -25,53 +25,53 @@ namespace ObjexxFCL {
 // ObserverMulti: Combined Subject + Multi Observer Abstract Base Class
 
 
-	/// @brief Destructor
-	ObserverMulti::~ObserverMulti()
-	{
-		notify_destructed();
-		delete observers_p_;
+/// @brief Destructor
+ObserverMulti::~ObserverMulti()
+{
+	notify_destructed();
+	delete observers_p_;
+}
+
+
+/// @brief Insert an Observer
+void
+ObserverMulti::insert_observer( Observer & observer ) const
+{
+	assert( this != &observer );
+	assert( acyclic( observer ) );
+	if ( ! observers_p_ ) observers_p_ = new Observers;
+	(*observers_p_)().insert( &observer );
+}
+
+
+/// @brief Remove an Observer
+void
+ObserverMulti::do_remove_observer( Observer & observer ) const
+{
+	assert( observers_p_ );
+	(*observers_p_)().erase( &observer );
+}
+
+
+/// @brief Has At Least One Observer?
+bool
+ObserverMulti::do_has_observer() const
+{
+	assert( observers_p_ );
+	return !(*observers_p_)().empty();
+}
+
+
+/// @brief Notify Observers That This Subject is Being Destructed
+void
+ObserverMulti::do_notify_destructed() const
+{
+	assert( observers_p_ );
+	for ( auto io : (*observers_p_)() ) {
+		assert( io );
+		io->destructed( *this );
 	}
-
-
-	/// @brief Insert an Observer
-	void
-	ObserverMulti::insert_observer( Observer & observer ) const
-	{
-		assert( this != &observer );
-		assert( acyclic( observer ) );
-		if ( ! observers_p_ ) observers_p_ = new Observers;
-		(*observers_p_)().insert( &observer );
-	}
-
-
-	/// @brief Remove an Observer
-	void
-	ObserverMulti::do_remove_observer( Observer & observer ) const
-	{
-		assert( observers_p_ );
-		(*observers_p_)().erase( &observer );
-	}
-
-
-	/// @brief Has At Least One Observer?
-	bool
-	ObserverMulti::do_has_observer() const
-	{
-		assert( observers_p_ );
-		return !(*observers_p_)().empty();
-	}
-
-
-	/// @brief Notify Observers That This Subject is Being Destructed
-	void
-	ObserverMulti::do_notify_destructed() const
-	{
-		assert( observers_p_ );
-		for ( Observers::const_iterator io = (*observers_p_)().begin(), eo = (*observers_p_)().end(); io != eo; ++io ) {
-			assert( *io );
-			(*io)->destructed( *this );
-		}
-	}
+}
 
 
 // ObserverMulti

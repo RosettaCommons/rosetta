@@ -55,7 +55,7 @@ HPatchCalculator::HPatchCalculator( bool remove_nonprotein_res )
 : total_hpatch_score_(0.0), remove_nonprotein_res_(remove_nonprotein_res )
 {}
 
-HPatchCalculator::~HPatchCalculator(){}
+HPatchCalculator::~HPatchCalculator()= default;
 
 void
 HPatchCalculator::lookup( std::string const & key, basic::MetricValueBase* valptr ) const {

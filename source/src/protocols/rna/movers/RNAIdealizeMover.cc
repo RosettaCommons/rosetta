@@ -85,14 +85,10 @@ using namespace scoring::constraints;
 using namespace scoring::func;
 
 RNAIdealizeMover::RNAIdealizeMover():
-	protocols::moves::Mover( RNAIdealizeMover::mover_name() ),
-	iterations_( 100 ),
-	noise_( false ),
-	final_minimize_( false ),
-	ang_significance_threshold_( 5 )
+	protocols::moves::Mover( RNAIdealizeMover::mover_name() )
 {}
 
-RNAIdealizeMover::~RNAIdealizeMover(){}
+RNAIdealizeMover::~RNAIdealizeMover()= default;
 
 void
 RNAIdealizeMover::parse_my_tag(

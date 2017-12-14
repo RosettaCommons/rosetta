@@ -480,8 +480,8 @@ void DecoySetEvaluation::create_dist_constraints_median(
 
 
 	Real const invn( 1.0/n_decoys() );
-	Size const Nlb( static_cast< Size > ( std::ceil( n_decoys()*option[ dist_cst::lb_fact ] )));
-	Size const Nub( static_cast< Size > ( std::ceil( n_decoys()*option[ dist_cst::ub_fact ] )));
+	auto const Nlb( static_cast< Size > ( std::ceil( n_decoys()*option[ dist_cst::lb_fact ] )));
+	auto const Nub( static_cast< Size > ( std::ceil( n_decoys()*option[ dist_cst::ub_fact ] )));
 	Real const grow_fact( option[ dist_cst::grow_fact ] );
 	Real const grow_fact_lb( option[ dist_cst::grow_fact_lb ] );
 	loops::Loops rigid;
@@ -557,7 +557,7 @@ void DecoySetEvaluation::create_xyz_constraints_median(
 
 	Real const invn( 1.0/n_decoys() );
 	//Size const Nlb( std::ceil( n_decoys()*option[ dist_cst::lb_fact ] ));
-	Size const Nub( static_cast< Size > ( std::ceil( n_decoys()*option[ dist_cst::ub_fact ] )));
+	auto const Nub( static_cast< Size > ( std::ceil( n_decoys()*option[ dist_cst::ub_fact ] )));
 	if ( Nub >= n_decoys() ) {
 		utility_exit_with_message( "set ub_fact to 0.05 such that e.g., 5% of decoys are allowed to violate upper bound." );
 	}
@@ -588,7 +588,7 @@ void DecoySetEvaluation::create_xyz_constraints_median(
 
 		//now compute new average only on the 70% points closest to the average xyz
 		Size ct = 1;
-		Size const N_find_center( static_cast< Size >( std::ceil( n_decoys()*0.7 )));
+		auto const N_find_center( static_cast< Size >( std::ceil( n_decoys()*0.7 )));
 		tr.Debug << "use " << N_find_center << " points to compute average " << std::endl;
 		xyz_av = core::Vector( 0.0 );
 		for ( PointList::const_iterator it = sorted_points.begin(); ct<=N_find_center; ++ct, ++it ) {

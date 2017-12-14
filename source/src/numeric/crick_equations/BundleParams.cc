@@ -17,6 +17,7 @@
 // Unit headers
 #include <numeric/types.hh>
 #include <numeric/constants.hh>
+#include <numeric/xyzVector.hh>
 
 //Project headers
 #include <numeric/crick_equations/BundleParams.hh>

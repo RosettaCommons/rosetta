@@ -80,7 +80,7 @@ using namespace basic::options::OptionKeys;
 using namespace basic::options;
 
 using utility::vector1;
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 // all helper functions moved to protocols/toolbox/sample_around/util.cc
 using namespace protocols::toolbox::sample_around;
@@ -289,7 +289,7 @@ nucleobase_probe_score_test()
 
 	Real const box_size = option[ xyz_size ]();
 	Real const translation_increment = option[ xyz_increment ]();
-	int box_bins = int( box_size/translation_increment );
+	auto box_bins = int( box_size/translation_increment );
 	bool const do_all = !option[ just_xy ]() && !option[ just_yz ]() && !option[ just_z ]() && !option[ just_xz ]();
 
 	using namespace core::io::silent;

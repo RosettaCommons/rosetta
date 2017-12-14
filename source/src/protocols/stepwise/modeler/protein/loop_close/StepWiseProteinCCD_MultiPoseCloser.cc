@@ -18,6 +18,7 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 #include <core/pose/Pose.hh>
+#include <utility>
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
@@ -44,7 +45,7 @@ namespace loop_close {
 StepWiseProteinCCD_MultiPoseCloser::StepWiseProteinCCD_MultiPoseCloser( working_parameters::StepWiseWorkingParametersCOP working_parameters,
 	sampler::StepWiseSamplerSizedOP sampler ):
 	ccd_closer_( StepWiseProteinCCD_CloserOP( new StepWiseProteinCCD_Closer( working_parameters ) ) ),
-	sampler_( sampler ),
+	sampler_(std::move( sampler )),
 	choose_random_( false ),
 	num_random_samples_( 20 ),
 	max_ntries_( 500 ), // for random modeler.
@@ -53,8 +54,7 @@ StepWiseProteinCCD_MultiPoseCloser::StepWiseProteinCCD_MultiPoseCloser( working_
 }
 
 //Destructor
-StepWiseProteinCCD_MultiPoseCloser::~StepWiseProteinCCD_MultiPoseCloser()
-{}
+StepWiseProteinCCD_MultiPoseCloser::~StepWiseProteinCCD_MultiPoseCloser() = default;
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

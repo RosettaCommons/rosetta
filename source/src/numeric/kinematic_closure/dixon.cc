@@ -51,7 +51,7 @@ string skipl = "\n\n";
 typedef Eigen::Matrix<Real, 8, 8> Matrix8;
 typedef Eigen::Matrix<Real, 16, 16> Matrix16;
 typedef Eigen::Matrix<Real, Eigen::Dynamic, 1, 0, 16, 1> Vector16;
-typedef linear_algebra::GeneralizedEigenSolver<Matrix16> SolverType;
+using SolverType = linear_algebra::GeneralizedEigenSolver<Matrix16>;
 
 // If I can rant for a little bit, using STL vectors as a matrix type was a
 // fucking horrible idea.  For one thing, the API presented by the std::vector

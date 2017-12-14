@@ -93,7 +93,7 @@ SubroutineMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new SubroutineMover );
 }
 
-SubroutineMover::~SubroutineMover(){}
+SubroutineMover::~SubroutineMover()= default;
 
 SubroutineMover::SubroutineMover() :
 	Mover( SubroutineMover::mover_name() ),

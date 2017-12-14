@@ -36,7 +36,7 @@ MultipleOutputSpecification::MultipleOutputSpecification(
 	OutputSpecification( result_id, output_index )
 {}
 
-MultipleOutputSpecification::~MultipleOutputSpecification() {}
+MultipleOutputSpecification::~MultipleOutputSpecification() = default;
 
 void
 MultipleOutputSpecification::append_specification( OutputSpecificationOP spec )

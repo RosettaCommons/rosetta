@@ -34,8 +34,8 @@ namespace parser {
 
 static basic::Tracer TR( "protocols.jd2.parser.MonteCarloLoader" );
 
-MonteCarloLoader::MonteCarloLoader() {}
-MonteCarloLoader::~MonteCarloLoader() {}
+MonteCarloLoader::MonteCarloLoader() = default;
+MonteCarloLoader::~MonteCarloLoader() = default;
 
 void MonteCarloLoader::load_data(
 	core::pose::Pose const &,
@@ -44,7 +44,7 @@ void MonteCarloLoader::load_data(
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagCOP > TagCOPs;
+	using TagCOPs = utility::vector0<TagCOP>;
 
 	TagCOPs const montecarlo_tags( tag->getTags() );
 
@@ -52,7 +52,7 @@ void MonteCarloLoader::load_data(
 		runtime_assert( montecarlo_tag->getName() == "MonteCarlo" );
 		//std::string const mc_name( montecarlo_tag->getName() );
 		std::string const mc_name( montecarlo_tag->getOption< std::string >( "name" ));
-		core::Real const mctemp( montecarlo_tag->getOption< core::Real >( "temperature", 2.0 ));
+		auto const mctemp( montecarlo_tag->getOption< core::Real >( "temperature", 2.0 ));
 		core::scoring::ScoreFunctionOP scorefxn =
 			rosetta_scripts::parse_score_function( montecarlo_tag, data )->clone();
 

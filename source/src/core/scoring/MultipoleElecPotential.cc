@@ -65,8 +65,8 @@
 
 static basic::Tracer TR( "core.scoring.MultipoleElecPotential" );
 
-typedef numeric::xyzVector< core::Real > Vector;
-typedef numeric::xyzMatrix< core::Real > Matrix;
+using Vector = numeric::xyzVector<core::Real>;
+using Matrix = numeric::xyzMatrix<core::Real>;
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -405,9 +405,9 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 		//TR << "Processing line: " << input_line << std::endl;
 		//TR << "Found " << num_tokens << " tokens in line: " << "\n" << input_line << std::endl;
 
-		Size const this_type( static_cast<core::Size>( boost::lexical_cast< core::Size >( tokens[2] ) ) );
-		Real const polarity( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[3] ) ) );
-		Real const thole( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[4] ) ) );
+		auto const this_type( static_cast<core::Size>( boost::lexical_cast< core::Size >( tokens[2] ) ) );
+		auto const polarity( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[3] ) ) );
+		auto const thole( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[4] ) ) );
 		utility::vector1< Size > group_members;
 
 		if ( num_tokens > 4 ) {
@@ -468,7 +468,7 @@ MultipoleElecPotential::find_params_and_neighbors(
 	// }
 
 	// MultipoleElecPoseInfoCOP multipole_info;
-	MultipoleElecPoseInfo const & multipole_info( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO)));
+	auto const & multipole_info( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO)));
 
 	// Get iterators for the range of possible multipole parameters
 	std::pair<
@@ -1933,7 +1933,7 @@ MultipoleElecPotential::get_rotamers_effective_radii(
 
 	// this will get cached in the rotamer set
 	// this call should initialize the residue_info objects with the appropriate Residue info
-	MultipoleElecRotamerSetInfo & mp_info_rotamers
+	auto & mp_info_rotamers
 		( rotamer_set.data().get< MultipoleElecRotamerSetInfo >( MULTIPOLE_ELEC_ROTAMER_SET_INFO ) );
 
 	for ( Size n=1; n<= rotamer_set.num_rotamers(); ++n ) {
@@ -2053,7 +2053,7 @@ MultipoleElecPotential::update_residue_for_packing(
 ) const {
 	// ////using core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO;
 
-	MultipoleElecPoseInfo & multipole_info( static_cast< MultipoleElecPoseInfo & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) );
+	auto & multipole_info( static_cast< MultipoleElecPoseInfo & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) );
 	MultipoleElecResidueInfo & mp_residue_info( multipole_info.residue_info( seqpos ) );
 
 	Residue const & rsd( pose.residue( seqpos ) );
@@ -2763,7 +2763,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 	// TR << "Precalculating all of the derivatives" << std::endl;
 
-	MultipoleElecPoseInfo const & multipole_info( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO)));
+	auto const & multipole_info( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO)));
 
 	// Make sure the cache for the derivs is correctly sized
 	// DANGER DANGER DANGER DANGER

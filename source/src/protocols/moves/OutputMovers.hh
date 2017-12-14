@@ -49,7 +49,7 @@ class PDBDumpMover : public Mover
 public:
 	//constructor
 	//PDBDumpMover(std::string name_in, basic::Tracer const & tr=core::io::pdb::TR_dump_pdb_dummy);
-	PDBDumpMover(std::string name_in);
+	PDBDumpMover(std::string const & name_in);
 
 	//destructor
 	~PDBDumpMover() override;

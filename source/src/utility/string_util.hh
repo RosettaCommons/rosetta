@@ -219,7 +219,7 @@ fmt_real( platform::Real, platform::Size const pad_left_newlen, std::size_t cons
 // successful, this function call has no effect on the value of <y> that
 // was present prior to invokation.
 void
-string2uint(const std::string& x, unsigned int *y);
+string2uint(const std::string& x, unsigned int * const y);
 
 /// @brief True iff haystack starts with needle
 bool
@@ -265,11 +265,11 @@ trimmed_compare( std::string const & s1, std::string const & s2 );
 
 ///@brief Add char to the left of the string
 std::string
-pad_left( std::string s, platform::Size const newlen, char pad_with=' ');
+pad_left( std::string const & s, platform::Size const newlen, char pad_with=' ');
 
 /// @brief Add char to the right of a string
 std::string
-pad_right( std::string s, platform::Size const newlen, char pad_with=' ');
+pad_right( std::string const & s, platform::Size const newlen, char pad_with=' ');
 
 ///@brief Add char to the left of the string
 template <class T>

@@ -103,8 +103,8 @@ FaMPSolvEnergy::FaMPSolvEnergy(
 	memb_dsolv1_( memb_etable_in.lock()->memb_dsolv1() ),
 	memb_dsolv2_( memb_etable_in.lock()->memb_dsolv2() ),
 	safe_max_dis2_( etable_in.lock()->get_safe_max_dis2() ),
-	get_bins_per_A2_( etable_in.lock()->get_bins_per_A2() ),
-	verbose_( false )
+	get_bins_per_A2_( etable_in.lock()->get_bins_per_A2() )
+	//verbose_( false )
 {
 	// etable::MembEtableCOP memb_etable( memb_etable_in );
 }
@@ -171,7 +171,7 @@ FaMPSolvEnergy::eval_atom_derivative(
 		bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 
 		using namespace etable::count_pair;
-		CountPairFunctionOP cpfxn( 0 );
+		CountPairFunctionOP cpfxn( nullptr );
 
 		if ( same_res ) {
 			cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
@@ -290,7 +290,7 @@ FaMPSolvEnergy::get_residue_pair_energy(
 
 	// Initialize Count Pair Function
 	using namespace etable::count_pair;
-	CountPairFunctionOP cpfxn( 0 );
+	CountPairFunctionOP cpfxn( nullptr );
 
 	if ( same_res ) {
 		cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );

@@ -72,16 +72,14 @@ AtomBasedConstraintsScore::AtomBasedConstraintsScore(core::Size priority,
 	constrainable_atoms_.insert(std::pair<std::string, core::Size>("2HB", 10));
 }
 
-std::string AtomBasedConstraintsScore::get_constrained_atom_name(core::Size atom_id) {
-
-	std::map<std::string, core::Size>::iterator it, end ;
-	for ( it=constrainable_atoms_.begin(), end = constrainable_atoms_.end(); it != end; ++it ) {
-		if ( (it)->second == atom_id ) {
-			return (it)->first;
+std::string AtomBasedConstraintsScore::get_constrained_atom_name( core::Size atom_id ) {
+	for ( auto const & elem : constrainable_atoms_ ) {
+		if ( elem.second == atom_id ) {
+			return elem.first;
 		}
 	}
 
-	return 0;
+	return nullptr; // TODO this is a string return. why not just use std::find?
 }
 
 void AtomBasedConstraintsScore::do_caching(VallChunkOP chunk) {
@@ -92,7 +90,7 @@ void AtomBasedConstraintsScore::do_caching(VallChunkOP chunk) {
 
 	//  pose->dump_pdb("dump-"+chunk->get_pdb_id()+".pdb");
 
-	numeric::xyzVector<core::Real> empty_one;
+	numeric::xyzVector<core::Real> empty_one( 0 );
 	for ( core::Size i = 1; i <= chunk->size(); ++i ) {
 		utility::vector1<bool> flag_row(constrainable_atoms_.size());
 		utility::vector1<numeric::xyzVector<core::Real> > row(
@@ -106,15 +104,14 @@ void AtomBasedConstraintsScore::do_caching(VallChunkOP chunk) {
 
 		std::map<std::string, core::Size>::iterator it;
 		core::chemical::ResidueType const & ith_res_type = pose->residue_type(i);
-		for ( it = constrainable_atoms_.begin(); it
-				!= constrainable_atoms_.end(); ++it ) {
-			if ( ! ith_res_type.has( it->first ) ) {
+		for ( auto const & elem : constrainable_atoms_ ) {
+			if ( ! ith_res_type.has( elem.first ) ) {
 				continue;
 			}
-			core::id::NamedAtomID idAtom(it->first, i);
+			core::id::NamedAtomID idAtom( elem.first, i);
 			numeric::xyzVector<core::Real> xyz = pose->xyz(idAtom);
-			chunk_atoms_xyz_[i][it->second] = xyz;
-			atom_flags_[i][it->second] = true;
+			chunk_atoms_xyz_[i][ elem.second] = xyz;
+			atom_flags_[i][ elem.second] = true;
 		}
 	}
 }

@@ -65,8 +65,8 @@ public:
 
 	/// @brief Construct a new atom with the name, mm type, element, charge and position.
 	Atom(
-		std::string name_in,
-		std::string mm_name,
+		std::string const & name_in,
+		std::string const & mm_name,
 		Size const mm_atom_type_index,
 		ElementCOP element,
 		Real const charge,

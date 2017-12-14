@@ -84,7 +84,7 @@ InverseRotamersRCG::InverseRotamersRCG(
 	init( lstart, lstop, inverse_rotamers );
 }
 
-InverseRotamersRCG::~InverseRotamersRCG(){}
+InverseRotamersRCG::~InverseRotamersRCG()= default;
 
 void
 InverseRotamersRCG::parse_my_tag( TagCOP const tag,
@@ -173,9 +173,8 @@ InverseRotamersRCG::init( core::Size const lstart,
 	intervals_.clear();
 	inverse_rotamers_.clear();
 	intervals_.push_back( forge::build::Interval( lstart, lstop ) );
-	for ( std::list< core::conformation::ResidueCOP >::const_iterator rot_it( inverse_rotamers.begin() ), rot_end( inverse_rotamers.end() );
-			rot_it != rot_end; ++rot_it ) {
-		inverse_rotamers_.push_back( *rot_it );
+	for ( auto const & inverse_rotamer : inverse_rotamers ) {
+		inverse_rotamers_.push_back( inverse_rotamer );
 	}
 }
 

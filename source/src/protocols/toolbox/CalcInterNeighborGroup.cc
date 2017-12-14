@@ -23,6 +23,7 @@
 
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
+#include <utility>
 #include <utility/graph/Graph.hh>
 
 //Utility headers

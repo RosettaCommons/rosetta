@@ -443,7 +443,7 @@ void PackDaemon::calculate_background_energies()
 				iru  = energy_graph.get_node(ii)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(ii)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const & edge( static_cast< EnergyEdge const & > (**iru) );
+			auto const & edge( static_cast< EnergyEdge const & > (**iru) );
 			Size const jj = edge.get_second_node_ind();
 			if ( task_->being_packed( jj ) ) continue;
 			EnergyMap emap = edge.fill_energy_map();
@@ -463,8 +463,7 @@ DaemonSet::DaemonSet() :
 	n_npd_properties_( 0 )
 {}
 
-DaemonSet::~DaemonSet()
-= default;
+DaemonSet::~DaemonSet() = default;
 
 /// @details  The entity resfile is slightly different from a regular resfile.
 /// Its first line should consist of the number of residues that are entity; the
@@ -835,7 +834,7 @@ DaemonSet::retrieve_relevant_poses_for_entity(
 			}
 		}
 		if ( ! generate_pose_for_daemon ) continue;
-		return_list.push_back( std::make_pair( daemon.first, daemon.second->recreate_pose_for_entity( ent )) );
+		return_list.emplace_back( daemon.first, daemon.second->recreate_pose_for_entity( ent ) );
 	}
 	return return_list;
 }
@@ -1085,7 +1084,7 @@ DaemonSet::graceful_exit() const
 	utility_exit();
 }
 
-NPDPropCalculator::NPDPropCalculator() {}
+NPDPropCalculator::NPDPropCalculator() = default;
 NPDPropCalculator::~NPDPropCalculator() = default;
 
 void
@@ -1096,7 +1095,7 @@ NPDPropCalculator::setup(
 {}
 
 
-NPDPropCalculatorCreator::NPDPropCalculatorCreator() {}
+NPDPropCalculatorCreator::NPDPropCalculatorCreator() = default;
 NPDPropCalculatorCreator::~NPDPropCalculatorCreator() = default;
 
 QuickRepacker::QuickRepacker(

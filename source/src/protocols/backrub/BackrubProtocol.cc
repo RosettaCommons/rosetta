@@ -98,15 +98,15 @@ namespace backrub {
 
 BackrubProtocol::BackrubProtocol():
 	Mover(),
-	scorefxn_(NULL),
-	main_task_factory_(NULL),
+	scorefxn_(nullptr),
+	main_task_factory_(nullptr),
 	backrubmover_(BackrubMoverOP( new BackrubMover() )),
 	smallmover_(protocols::simple_moves::SmallMoverOP(new protocols::simple_moves::SmallMover())),
 	sidechainmover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP(new protocols::simple_moves::sidechain_moves::SidechainMover())),
 	packrotamersmover_(protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover())),
-	movemap_smallmover_(NULL),
-	minimize_movemap_(NULL),
-	packing_operation_(NULL),
+	movemap_smallmover_(nullptr),
+	minimize_movemap_(nullptr),
+	packing_operation_(nullptr),
 	trajectory_(false),
 	trajectory_gz_(false),
 	recover_low_(true),
@@ -208,19 +208,19 @@ BackrubProtocol::read_cmd_line_options(){
 		}
 	}
 
-	core::kinematics::MoveMapOP minimize_movemap = NULL;
+	core::kinematics::MoveMapOP minimize_movemap = nullptr;
 	if ( option[ OptionKeys::backrub::minimize_movemap ].user() ) {
 		minimize_movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		minimize_movemap->init_from_file(option[ OptionKeys::backrub::minimize_movemap ]);
 	}
 
-	core::pack::task::operation::TaskOperationCOP packing_operation = NULL;
+	core::pack::task::operation::TaskOperationCOP packing_operation = nullptr;
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
 		packing_operation = core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::ReadResfile );
 	}
 
 	core::Real sm_prob = option[ OptionKeys::backrub::sm_prob ];
-	core::kinematics::MoveMapOP movemap_smallmover = NULL;
+	core::kinematics::MoveMapOP movemap_smallmover = nullptr;
 	if ( sm_prob > 0 ) {
 		if ( ! movemap_smallmover_ ) {
 			movemap_smallmover = core::kinematics::MoveMapOP(new core::kinematics::MoveMap );
@@ -408,12 +408,12 @@ BackrubProtocol::parse_my_tag(
 		pivots_residue_selector_ = protocols::rosetta_scripts::get_residue_selector( tag->getOption<std::string>("pivot_residue_selector"), data);
 	}
 
-	core::Real mc_kt = tag->getOption<core::Real>(
+	auto mc_kt = tag->getOption<core::Real>(
 		"mc_kt",
 		basic::options::option[ basic::options::OptionKeys::backrub::mc_kt ]()
 	);
 
-	core::Size ntrials = tag->getOption<core::Size>(
+	auto ntrials = tag->getOption<core::Size>(
 		"ntrials",
 		basic::options::option[ basic::options::OptionKeys::backrub::ntrials ]()
 	);
@@ -424,7 +424,7 @@ BackrubProtocol::parse_my_tag(
 		trajectory_apply_mover_ = utility::pointer::dynamic_pointer_cast < protocols::moves::Mover > (mover);
 	}
 
-	core::Size trajectory_stride = tag->getOption<core::Size>(
+	auto trajectory_stride = tag->getOption<core::Size>(
 		"trajectory_stride",
 		basic::options::option[ basic::options::OptionKeys::backrub::trajectory_stride ]()
 	);
@@ -446,9 +446,9 @@ BackrubProtocol::parse_my_tag(
 	set_options(
 		pivot_residues,
 		pivot_atoms,
-		NULL, // minimize_movemap - not implemented in parse_my_tag
-		NULL, // movemap_smallmover - not implemented in parse_my_tag
-		NULL, // packing_operation - not needed, as main_task_factory_ set directly if task_operations passed
+		nullptr, // minimize_movemap - not implemented in parse_my_tag
+		nullptr, // movemap_smallmover - not implemented in parse_my_tag
+		nullptr, // packing_operation - not needed, as main_task_factory_ set directly if task_operations passed
 		basic::options::option[ basic::options::OptionKeys::backrub::min_atoms ](), // min_atoms
 		basic::options::option[ basic::options::OptionKeys::backrub::max_atoms ](), // max_atoms,
 		false, // initial_pack,

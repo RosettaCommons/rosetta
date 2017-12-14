@@ -80,7 +80,7 @@ void PalesEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval
 
 
 	if ( option[ OptionKeys::evaluation::pales ].user() ) {
-		typedef utility::vector1< std::string > CSVector;
+		using CSVector = utility::vector1<std::string>;
 		CSVector const& pales( option[ OptionKeys::evaluation::pales ]() );
 
 		for ( auto it=pales.begin(); it!=pales.end(); ++it ) {

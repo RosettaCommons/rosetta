@@ -40,18 +40,11 @@ OptH::OptH() :
 
 
 /// @brief copy constructor
-OptH::OptH( OptH const & rval ) :
-	Super( rval ),
-	disallowed_resids_( rval.disallowed_resids_ ),
-	init_from_command_line_( rval.init_from_command_line_ ),
-	include_current_( rval.include_current_ ),
-	flip_HNQ_( rval.flip_HNQ_ ),
-	use_multicool_annealer_( rval.use_multicool_annealer_ )
-{}
+OptH::OptH( OptH const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-OptH::~OptH() {}
+OptH::~OptH() = default;
 
 /// @brief clone this object
 OptH::TaskOperationOP OptH::clone() const {
@@ -71,8 +64,8 @@ void OptH::apply( Pose const & , PackerTask & task ) const {
 	task.or_multi_cool_annealer( use_multicool_annealer_ );
 
 	// lock down disallowed residues
-	for ( utility::vector1< Size >::const_iterator i = disallowed_resids_.begin(), ie = disallowed_resids_.end(); i != ie; ++i ) {
-		task.nonconst_residue_task( *i ).prevent_repacking();
+	for ( unsigned long disallowed_resid : disallowed_resids_ ) {
+		task.nonconst_residue_task( disallowed_resid ).prevent_repacking();
 	}
 }
 

@@ -54,7 +54,7 @@ ElecAtom::ElecAtom( conformation::Residue const & res, Size atom_index )
 	charge_( res.atomic_charge( atom_index ) )
 {}
 
-ElecAtom::~ElecAtom() {}
+ElecAtom::~ElecAtom() = default;
 
 /// @brief send a description of the atom to standard out
 void

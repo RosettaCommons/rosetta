@@ -77,8 +77,8 @@ RNA_AnalyticLoopCloser::RNA_AnalyticLoopCloser ( Size const moving_suite, Size c
 	nsol_ ( 0 ),
 	choose_least_perturb_solution_ ( true ),
 	choose_best_solution_ ( false ),
-	choose_random_solution_ ( false ),
-	save_all_solutions_ ( false ) {
+	choose_random_solution_ ( false )
+{
 	Mover::type ( "RNA_AnalyticLoopCloser" );
 }
 
@@ -359,7 +359,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 			pose.dump_pdb ( "closed.pdb" );
 		}
 	} else if ( choose_best_solution_ ) {
-		debug_assert ( scorefxn_ != 0 );
+		debug_assert ( scorefxn_ != nullptr );
 		Real best_score ( 0.0 );
 		Size best_sol ( 0 );
 

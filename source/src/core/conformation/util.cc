@@ -950,7 +950,7 @@ build_polymer_edge(
 
 	debug_assert( dir == 1 || dir == -1 );
 
-	id::AtomID first_anchor;
+	//id::AtomID first_anchor;
 	for ( int pos=start+dir; pos != stop + dir; pos += dir ) {
 		runtime_assert( pos > 0 );
 		conformation::Residue const & rsd( *residues[pos] );
@@ -1410,7 +1410,7 @@ setup_links(
 	kinematics::Links & links
 )
 {
-	typedef utility::vector1< bool > BVec;
+	using BVec = utility::vector1<bool>;
 
 	//////////////////////////////////
 	// get the full list of atom nbrs:

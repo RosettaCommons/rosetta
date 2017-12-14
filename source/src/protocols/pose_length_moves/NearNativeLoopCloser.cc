@@ -426,7 +426,7 @@ void PossibleLoop::assign_phi_psi_omega_from_lookback(Size db_index, Size fragme
 }
 
 
-vector<Real> PossibleLoop::get_center_of_mass(Real* coordinates, int number_of_atoms){
+vector<Real> PossibleLoop::get_center_of_mass(const Real* coordinates, int number_of_atoms){
 	vector<Real> center;
 	center.push_back(0);
 	center.push_back(0);
@@ -478,7 +478,7 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size stub_ss_index_match, S
 	using namespace core::scoring::constraints;
 	using namespace chemical;
 	using namespace protocols::generalized_kinematic_closure;
-	typedef numeric::xyzMatrix< Real >  Matrix;
+	using Matrix = numeric::xyzMatrix<Real>;
 	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates = SSHashedFragmentStore_->get_fragment_coordinates(stub_ss_index_match,fragment_index);
 	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_rot;
 	if ( !match_stub_alone ) {
@@ -929,7 +929,7 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 	}
 	Real return_rmsd;
 	core::pose::PoseOP tmpPoseOP=get_additional_output_with_rmsd(return_rmsd);
-	if ( tmpPoseOP!=NULL ) {
+	if ( tmpPoseOP!=nullptr ) {
 		pose=*tmpPoseOP;
 	}
 	return(return_rmsd);
@@ -1260,7 +1260,7 @@ core::pose::PoseOP NearNativeLoopCloser::get_additional_output_with_rmsd(Real & 
 	// }
 	set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 	return_rmsd = 9999;
-	return NULL;
+	return nullptr;
 }
 
 std::string NearNativeLoopCloser::get_name() const {

@@ -203,9 +203,9 @@ HSSTripletFilter::apply( Pose const & pose ) const
 	// check conformation hsstriplets
 	bool filter( true );
 	Size current_id( 0 );
-	for ( HSSTriplets::const_iterator it=hss3s.begin(); it!=hss3s.end(); ++it ) {
+	for ( auto const & hss3 : hss3s ) {
 		current_id ++;
-		HSSTriplet hss = **it;
+		HSSTriplet hss = *hss3;
 
 		if ( !check_elements( hss, *ss_info ) ) {
 			return false;
@@ -274,10 +274,10 @@ HSSTripletFilter::compute( Pose const & pose ) const
 
 	// check conformation hsstriplets
 	Size current_id( 0 );
-	for ( HSSTriplets::const_iterator it=hss3s.begin(); it!=hss3s.end(); ++it ) {
+	for ( auto const & hss3 : hss3s ) {
 		++current_id;
 		if ( current_id != output_id_ ) continue;
-		HSSTriplet hss( **it );
+		HSSTriplet hss( *hss3 );
 
 		if ( !check_elements( hss, *ss_info ) ) {
 			utility_exit_with_message("Error in HSSTripletFilter: improper secondary structure elements.");

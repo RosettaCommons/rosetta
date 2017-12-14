@@ -1659,7 +1659,7 @@ public:
 class ReplaceProtonWithTrifluoromethyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithTrifluoromethyl( std::string atom ): atom_(std::move( atom )) {};
+	ReplaceProtonWithTrifluoromethyl( std::string atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1688,7 +1688,7 @@ public:
 class ReplaceProtonWithMethyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithMethyl( std::string  atom ): atom_(std::move( atom )) {};
+	ReplaceProtonWithMethyl( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1717,7 +1717,7 @@ public:
 class ReplaceProtonWithMethoxy: public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithMethoxy( std::string  atom ): atom_(std::move( atom )) {};
+	ReplaceProtonWithMethoxy( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1746,7 +1746,7 @@ public:
 class ReplaceProtonWithEthyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithEthyl( std::string  atom ): atom_(std::move( atom )) {};
+	ReplaceProtonWithEthyl( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1775,7 +1775,7 @@ public:
 class ReplaceProtonWithChlorine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithChlorine( std::string atom ): atom_(std::move( atom )) {};
+	ReplaceProtonWithChlorine( std::string atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1804,7 +1804,7 @@ public:
 class ReplaceProtonWithFluorine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithFluorine( std::string  atom ): atom_(std::move( atom )) {};
+	ReplaceProtonWithFluorine( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1833,7 +1833,7 @@ public:
 class ReplaceProtonWithBromine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithBromine( std::string  atom ): atom_(std::move( atom )) {};
+	ReplaceProtonWithBromine( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1862,7 +1862,7 @@ public:
 class ReplaceProtonWithIodine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithIodine( std::string  atom ): atom_(std::move( atom )) {};
+	ReplaceProtonWithIodine( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1891,7 +1891,7 @@ public:
 class ReplaceProtonWithHydroxyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithHydroxyl( std::string  atom ): atom_(std::move( atom )) {};
+	ReplaceProtonWithHydroxyl( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1920,7 +1920,7 @@ public:
 class AddConnectAndTrackingVirt : public PatchOperation {
 public:
 	/// @brief constructor
-	AddConnectAndTrackingVirt( std::string  atom ): atom_(std::move( atom )) {};
+	AddConnectAndTrackingVirt( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1952,7 +1952,7 @@ public:
 class AddConnectDeleteChildProton : public PatchOperation {
 public:
 	/// @brief constructor
-	AddConnectDeleteChildProton( std::string  atom ): atom_(std::move( atom )) {};
+	AddConnectDeleteChildProton( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;
@@ -1984,7 +1984,7 @@ public:
 class DeleteChildProton : public PatchOperation {
 public:
 	/// @brief constructor
-	DeleteChildProton( std::string  atom ): atom_(std::move( atom )) {};
+	DeleteChildProton( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( ResidueType & rsd ) const override;

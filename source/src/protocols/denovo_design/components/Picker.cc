@@ -62,7 +62,7 @@ Picker::Picker() :
 {
 }
 
-Picker::~Picker() {}
+Picker::~Picker() = default;
 
 void
 Picker::set_nfrags( core::Size const nfrags )
@@ -91,7 +91,7 @@ Picker::pick_fragments_for_resid(
 	std::string const key = ss_key( chain_aa, chain_ss, chain_abego, resid, frag_length );
 	TR.Debug << "Fragment SS Key=" << key << std::endl;
 
-	FragmentMap::iterator cached = fragcache_.find( key );
+	auto cached = fragcache_.find( key );
 	if ( cached == fragcache_.end() ) {
 		core::fragment::FrameList framelist = vlb_.pick_fragments_public(
 			chain_ss,                                          // secondary structure of entire pose
@@ -163,7 +163,7 @@ truncate_abego( utility::vector1< std::string > const & complete_abego, core::Si
 {
 	utility::vector1< std::string > chain_abego;
 	core::Size cur_resid = 1;
-	for ( utility::vector1< std::string >::const_iterator ab=complete_abego.begin(); ab!=complete_abego.end(); ++ab, ++cur_resid ) {
+	for ( auto ab=complete_abego.begin(); ab!=complete_abego.end(); ++ab, ++cur_resid ) {
 		if ( cur_resid > closest_chain_ending ) break;
 		chain_abego.push_back( *ab );
 	}
@@ -174,9 +174,9 @@ truncate_abego( utility::vector1< std::string > const & complete_abego, core::Si
 core::Size
 get_closest_chain_ending( utility::vector1< core::Size > const & chain_endings, core::Size total_residue, core::Size const end_res )
 {
-	for ( utility::vector1< core::Size >::const_iterator r=chain_endings.begin(); r!=chain_endings.end(); ++r ) {
-		if ( ( *r > end_res ) && ( *r < total_residue ) ) {
-			total_residue = *r;
+	for ( unsigned long chain_ending : chain_endings ) {
+		if ( ( chain_ending > end_res ) && ( chain_ending < total_residue ) ) {
+			total_residue = chain_ending;
 		}
 	}
 	return total_residue;
@@ -230,8 +230,8 @@ Picker::pick_and_cache_fragments(
 	core::fragment::ConstantLengthFragSetOP fragset =
 		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
 
-	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
-		fragset->add( get_framelist( "", ss, abegovec, chain_endings, l->start(), l->stop(), frag_length ) );
+	for ( auto const & loop : loops ) {
+		fragset->add( get_framelist( "", ss, abegovec, chain_endings, loop.start(), loop.stop(), frag_length ) );
 	}
 	return fragset;
 }
@@ -248,15 +248,15 @@ Picker::fragments_for_permutation(
 		core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( frag_length ) );
 
 	utility::vector1< core::Size > chain_endings;
-	for ( SegmentNameList::const_iterator s=perm.segments_begin(); s!=perm.segments_end(); ++s ) {
+	for ( auto s=perm.segments_begin(); s!=perm.segments_end(); ++s ) {
 		if ( perm.segment( *s ).has_free_upper_terminus() ) {
 			chain_endings.push_back( perm.segment( *s ).upper() );
 		}
 	}
 
 	utility::vector1< std::string > const abegovec = abego_vector( perm.abego() );
-	for ( SegmentNameList::const_iterator s=comp_ids.begin(); s!=comp_ids.end(); ++s ) {
-		fragset->add( get_framelist( "", perm.ss(), abegovec, chain_endings, perm.segment(*s).lower(), perm.segment(*s).upper(), frag_length ) );
+	for ( auto const & comp_id : comp_ids ) {
+		fragset->add( get_framelist( "", perm.ss(), abegovec, chain_endings, perm.segment(comp_id).lower(), perm.segment(comp_id).upper(), frag_length ) );
 	}
 
 	return fragset;
@@ -277,8 +277,8 @@ Picker::fragments_for_permutation_take_X_from_pose(
 
 	//utility::vector1< std::string > complete_abego = core::sequence::ABEGOManager().get_symbols( *(perm.pose()), 1 );
 
-	for ( SegmentNames::const_iterator c=comp_ids.begin(); c!=comp_ids.end(); ++c ) {
-		Segment residues = perm.segment( *c );
+	for ( auto const & comp_id : comp_ids ) {
+		Segment residues = perm.segment( comp_id );
 		debug_assert( residues.stop() >= residues.start() );
 		debug_assert( residues.start() >= 1 );
 		utility::vector1< std::string > poseabego = core::sequence::ABEGOManager().get_symbols( pose, 1 );

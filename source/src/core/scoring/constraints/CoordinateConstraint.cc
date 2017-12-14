@@ -38,6 +38,7 @@
 
 #include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -90,10 +91,10 @@ CoordinateConstraint::CoordinateConstraint(
 	atom_(a1),
 	fixed_atom_( fixed_atom_in ),
 	xyz_target_( xyz_target_in ),
-	func_( func )
+	func_(std::move( func ))
 {}
 
-CoordinateConstraint::~CoordinateConstraint() {}
+CoordinateConstraint::~CoordinateConstraint() = default;
 
 std::string
 CoordinateConstraint::type() const {
@@ -168,7 +169,7 @@ ConstraintOP CoordinateConstraint::remapped_clone( pose::Pose const& src, pose::
 	if ( id1.valid() && id2.valid() ) {
 		return ConstraintOP( new CoordinateConstraint( id1, id2, xyz_target_, func_, score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -251,7 +252,7 @@ CoordinateConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) con
 			remap_fa( fixed_atom_.atomno(), seqmap[fixed_atom_.rsd()] );
 		return ConstraintOP( new CoordinateConstraint( remap_a, remap_fa, xyz_target_, this->func_, score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 
 }
@@ -324,7 +325,7 @@ CoordinateConstraint::operator == ( Constraint const & other_cst ) const
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	CoordinateConstraint const & other( static_cast< CoordinateConstraint const & > (other_cst) );
+	auto const & other( static_cast< CoordinateConstraint const & > (other_cst) );
 
 	if ( atom_ != other.atom_ ) return false;
 	if ( fixed_atom_ != other.fixed_atom_ ) return false;

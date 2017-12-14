@@ -58,8 +58,7 @@ RotateSegmentMover::RotateSegmentMover():
 {
 }
 
-RotateSegmentMover::~RotateSegmentMover()
-{}
+RotateSegmentMover::~RotateSegmentMover() = default;
 
 void
 RotateSegmentMover::parse_my_tag(
@@ -125,8 +124,8 @@ RotateSegmentMover::apply( core::pose::Pose & pose, core::Real const random ) co
 
 	// collect xyz vectors
 	utility::vector1< core::Vector > atom_xyzs;
-	for ( AtomIDs::const_iterator a=atom_ids.begin(); a!=atom_ids.end(); ++a ) {
-		atom_xyzs.push_back( pose.xyz( *a ) );
+	for ( auto atom_id : atom_ids ) {
+		atom_xyzs.push_back( pose.xyz( atom_id ) );
 	}
 	debug_assert( atom_xyzs.size() == 4 );
 
@@ -170,11 +169,11 @@ RotateSegmentMover::apply( core::pose::Pose & pose, core::Real const random ) co
 	TR << "Grabbed jump " << jump_idx << " of " << pose.fold_tree() << std::endl;
 
 	// get frozen jump indices and make they come off safe residue of segments_[1]
-	for ( SegmentNames::const_iterator f=frozen_segments_.begin(); f!=frozen_segments_.end(); ++f ) {
-		int const childjump = find_jump_rec( pose.fold_tree(), sd.segment( *f ).safe() );
+	for ( auto const & frozen_segment : frozen_segments_ ) {
+		int const childjump = find_jump_rec( pose.fold_tree(), sd.segment( frozen_segment ).safe() );
 		debug_assert( childjump );
 		if ( jump_idx == childjump ) {
-			TR.Warning << "Parent jump and child jump are the same while sliding jump for " << *f
+			TR.Warning << "Parent jump and child jump are the same while sliding jump for " << frozen_segment
 				<< " to have parent " << parent_seg << " --  not doing anything." << std::endl;
 			return;
 		}
@@ -201,8 +200,8 @@ RotateSegmentMover::apply( core::pose::Pose & pose, core::Real const random ) co
 	TR << "Pose rotation set in RotatedTomponent to " << build_rotation << std::endl;
 
 	utility::vector1< core::Vector > new_atom_xyzs;
-	for ( AtomIDs::const_iterator a=atom_ids.begin(); a!=atom_ids.end(); ++a ) {
-		new_atom_xyzs.push_back( pose.xyz( *a ) );
+	for ( auto atom_id : atom_ids ) {
+		new_atom_xyzs.push_back( pose.xyz( atom_id ) );
 	}
 	TR << "Actual rotation is " << calc_dihedral( new_atom_xyzs[1], new_atom_xyzs[2], new_atom_xyzs[3], new_atom_xyzs[4] ) << std::endl;
 }
@@ -226,8 +225,8 @@ RotateSegmentMover::target_atoms(
 	}
 
 	AtomIDs atom_ids;
-	Residues::const_iterator r = residues_.begin();
-	Atoms::const_iterator a = atoms_.begin();
+	auto r = residues_.begin();
+	auto a = atoms_.begin();
 	for ( ; ( r != residues_.end() ) && ( a != atoms_.end() ); ++r, ++a ) {
 		core::Size const resid = get_resid( sd, *r );
 		core::Size const atomid = pose.residue( resid ).type().atom_index( *a );

@@ -28,6 +28,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/types.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -68,10 +69,10 @@ RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  mover::AddOrDeleteMoverOP rna
 	RNA_TorsionMoverOP     rna_torsion_mover,
 	RNA_O2PrimeMoverOP      rna_o2prime_mover,
 	core::scoring::ScoreFunctionOP scorefxn ):
-	rna_add_or_delete_mover_( rna_add_or_delete_mover ),
-	rna_torsion_mover_( rna_torsion_mover ),
-	rna_o2prime_mover_( rna_o2prime_mover ),
-	scorefxn_( scorefxn ),
+	rna_add_or_delete_mover_(std::move( rna_add_or_delete_mover )),
+	rna_torsion_mover_(std::move( rna_torsion_mover )),
+	rna_o2prime_mover_(std::move( rna_o2prime_mover )),
+	scorefxn_(std::move( scorefxn )),
 	num_cycles_( 50000 ),
 	output_period_( 5000 ),
 	sample_range_small_( 5.0 ),
@@ -87,8 +88,7 @@ RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  mover::AddOrDeleteMoverOP rna
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-RNA_AddDeleteMonteCarlo::~RNA_AddDeleteMonteCarlo()
-{}
+RNA_AddDeleteMonteCarlo::~RNA_AddDeleteMonteCarlo() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void

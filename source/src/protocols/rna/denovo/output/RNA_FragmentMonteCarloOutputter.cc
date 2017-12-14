@@ -21,8 +21,10 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <numeric/EulerAngles.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/MathNTensor_io.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
 
@@ -52,14 +54,13 @@ namespace output {
 //Constructor
 RNA_FragmentMonteCarloOutputter::RNA_FragmentMonteCarloOutputter( RNA_FragmentMonteCarloOptionsCOP options,
 	core::pose::PoseCOP align_pose ):
-	options_( options )
+	options_(std::move( options ))
 {
 	initialize( align_pose );
 }
 
 //Destructor
-RNA_FragmentMonteCarloOutputter::~RNA_FragmentMonteCarloOutputter()
-{}
+RNA_FragmentMonteCarloOutputter::~RNA_FragmentMonteCarloOutputter() = default;
 
 void
 RNA_FragmentMonteCarloOutputter::apply( core::pose::Pose & )
@@ -100,7 +101,7 @@ RNA_FragmentMonteCarloOutputter::initialize( core::pose::PoseCOP align_pose ) {
 			jump_histogram_bin_width_  = make_vector1(   bw,   bw,   bw,   bwr,    bwr,   bwr );
 			vector1< Size > jump_n_bins;
 			for ( Size n = 1; n <= 6; n++ ) jump_n_bins.push_back( static_cast<Size>( (jump_histogram_max_[n] - jump_histogram_min_[n]) / jump_histogram_bin_width_[n] + 1.0 ) );
-			if ( jump_histogram_ == 0 ) {
+			if ( jump_histogram_ == nullptr ) {
 				jump_histogram_ = MathNTensorOP< Size, 6>( new MathNTensor< Size, 6>( jump_n_bins, 0 ) );
 			} else {
 				for ( Size n = 1; n <= 6; n++ ) runtime_assert( jump_histogram_->n_bins( n ) == jump_n_bins[ n ] );
@@ -131,7 +132,7 @@ core::kinematics::RT
 RNA_FragmentMonteCarloOutputter::get_output_jump_RT( pose::PoseCOP pose ) const
 {
 	using namespace core::kinematics;
-	if ( pose == 0 ) return RT();
+	if ( pose == nullptr ) return RT();
 	Stub stub1, stub2;
 	get_output_jump_stub_stub( *pose, stub1, stub2 );
 	Jump const j( stub1, stub2 );
@@ -166,7 +167,7 @@ RNA_FragmentMonteCarloOutputter::output_jump_information( pose::Pose const & pos
 	if ( options_->output_jump_res().size() == 0 ) return;
 	Stub stub1, stub2;
 	get_output_jump_stub_stub( pose, stub1, stub2 );
-	if ( reference_RT_ != 0 ) reference_RT_->make_jump( stub1 /*start*/, stub1 /*end*/ );
+	if ( reference_RT_ != nullptr ) reference_RT_->make_jump( stub1 /*start*/, stub1 /*end*/ );
 
 	Jump const j( stub1, stub2 );
 	Vector const & t( j.get_translation() );
@@ -188,7 +189,7 @@ RNA_FragmentMonteCarloOutputter::output_jump_information( pose::Pose const & pos
 		vector1< Size > outbins;
 		for ( Size n = 1; n <= 6; n++ ) {
 			// round to *closest* bin  by adding 0.5 before conversion to int.
-			int outbin = static_cast<int>( 0.5 + ( outvals[ n ] - jump_histogram_min_[ n ] ) / jump_histogram_bin_width_[ n ] );
+			auto outbin = static_cast<int>( 0.5 + ( outvals[ n ] - jump_histogram_min_[ n ] ) / jump_histogram_bin_width_[ n ] );
 			outbin = std::min( std::max( 0, outbin ), int(jump_histogram_->n_bins( n )) - 1 ); // zero-indexed
 			outbins.push_back( Size( outbin ) );
 		}
@@ -208,14 +209,14 @@ RNA_FragmentMonteCarloOutputter::finalize( core::scoring::ScoreFunctionCOP denov
 		running_score_output_.close();
 		TR << "Created running score file at: " << options_->output_score_file() << std::endl;
 	}
-	if ( jump_histogram_ != 0  ) {
+	if ( jump_histogram_ != nullptr  ) {
 		using namespace utility::json_spirit;
 		std::vector< Value > n_bins;
-		for ( auto const & v : jump_histogram_->n_bins() ) n_bins.push_back( Value(boost::uint64_t(v)) );
+		for ( auto const & v : jump_histogram_->n_bins() ) n_bins.emplace_back(boost::uint64_t(v) );
 		std::vector< Value > minval, maxval, binwidth;
-		for ( auto const & v : jump_histogram_min_ ) minval.push_back( Value(v) );
-		for ( auto const & v : jump_histogram_max_ ) maxval.push_back( Value(v) );
-		for ( auto const & v : jump_histogram_bin_width_ ) binwidth.push_back( Value(v) );
+		for ( auto const & v : jump_histogram_min_ ) minval.emplace_back(v );
+		for ( auto const & v : jump_histogram_max_ ) maxval.emplace_back(v );
+		for ( auto const & v : jump_histogram_bin_width_ ) binwidth.emplace_back(v );
 		Object json( make_vector( Pair( "n_bins", n_bins ),
 			Pair( "type", "uint64" ),
 			Pair( "minval",  minval ),

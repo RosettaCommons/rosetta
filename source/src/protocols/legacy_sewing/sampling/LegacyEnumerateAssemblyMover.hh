@@ -69,7 +69,6 @@ public:
 
 
 private:
-	core::Size bogus_var_for_constructor_;
 	core::Real min_assembly_score_;
 	std::map< int, Model > models;
 };

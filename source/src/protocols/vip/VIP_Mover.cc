@@ -54,7 +54,7 @@ namespace vip {
 
 static basic::Tracer TR( "VIP" );
 
-VIP_Mover::VIP_Mover() {}
+VIP_Mover::VIP_Mover() = default;
 VIP_Mover::VIP_Mover(
 	core::pose::Pose p,
 	core::pose::Pose cp,

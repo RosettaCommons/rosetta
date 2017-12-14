@@ -46,7 +46,7 @@
 #include <utility/excn/Exceptions.hh>
 
 class SuperDeviationMover;
-typedef utility::pointer::shared_ptr< SuperDeviationMover > SuperDeviationMoverOP;
+using SuperDeviationMoverOP = utility::pointer::shared_ptr<SuperDeviationMover>;
 using core::Size;
 using core::Real;
 using utility::vector1;
@@ -95,11 +95,11 @@ public:
 	{}
 
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "SuperDev";
 	}
 
-	void apply( core::pose::Pose & pose ) {
+	void apply( core::pose::Pose & pose ) override {
 		using core::Real;
 		using std::string;
 

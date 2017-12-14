@@ -27,7 +27,7 @@ namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
 
-PoseOutputSpecification::PoseOutputSpecification() {}
+PoseOutputSpecification::PoseOutputSpecification() = default;
 
 PoseOutputSpecification::PoseOutputSpecification(
 	JobResultID const & result_id,
@@ -36,7 +36,7 @@ PoseOutputSpecification::PoseOutputSpecification(
 	OutputSpecification( result_id, output_index )
 {}
 
-PoseOutputSpecification::~PoseOutputSpecification() {}
+PoseOutputSpecification::~PoseOutputSpecification() = default;
 
 std::string const & PoseOutputSpecification::outputter_type() const
 {

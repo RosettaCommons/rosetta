@@ -58,7 +58,7 @@ using namespace basic;
 namespace protocols {
 namespace noesy_assign {
 
-Resonance::Resonance() {}
+Resonance::Resonance() = default;
 
 Resonance::Resonance(  core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID const& id, core::chemical::AA aa, core::Real intensity ) :
 	label_ ( label ),

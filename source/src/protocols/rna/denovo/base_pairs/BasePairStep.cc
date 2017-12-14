@@ -33,8 +33,7 @@ BasePairStep::BasePairStep( Size const i, Size const i_next,
 }
 
 //Destructor
-BasePairStep::~BasePairStep()
-{}
+BasePairStep::~BasePairStep() = default;
 
 } //base_pairs
 } //denovo

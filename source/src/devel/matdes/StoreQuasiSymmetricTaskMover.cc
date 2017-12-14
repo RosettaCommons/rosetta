@@ -52,7 +52,7 @@ namespace devel {
 namespace matdes {
 
 // @brief default constructor
-StoreQuasiSymmetricTaskMover::StoreQuasiSymmetricTaskMover() {}
+StoreQuasiSymmetricTaskMover::StoreQuasiSymmetricTaskMover() = default;
 
 // @brief destructor
 StoreQuasiSymmetricTaskMover::~StoreQuasiSymmetricTaskMover() = default;

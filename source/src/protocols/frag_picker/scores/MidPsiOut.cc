@@ -70,9 +70,9 @@ bool MidPsiOut::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP sc
 
 	core::Size offset_v = fragment->get_first_index_in_vall() - 1;
 
-	core::Real r_psi = static_cast< core::Real > ( fragment->get_length() );
+	auto r_psi = static_cast< core::Real > ( fragment->get_length() );
 	r_psi = (r_psi/2)+0.5+offset_v;
-	core::Size i_psi = static_cast< core::Size > ( r_psi );
+	auto i_psi = static_cast< core::Size > ( r_psi );
 
 	core::Real psi = chunk_psi_(i_psi);
 

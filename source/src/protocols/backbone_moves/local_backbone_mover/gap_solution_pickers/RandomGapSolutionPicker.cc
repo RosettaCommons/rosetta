@@ -31,7 +31,7 @@ RandomGapSolutionPicker::RandomGapSolutionPicker():
 
 }
 
-RandomGapSolutionPicker::~RandomGapSolutionPicker(){}
+RandomGapSolutionPicker::~RandomGapSolutionPicker()= default;
 
 Size
 RandomGapSolutionPicker::pick(core::pose::Pose &, FreePeptide &,

@@ -84,7 +84,7 @@ go_main() {
 		// We're actually only interested in "ligand_is_touching", "interface_delta",  and "total_score"
 		if ( scoremap.find("ligand_is_touching") == scoremap.end() || scoremap.find("interface_delta") == scoremap.end() || scoremap.find("total_score") == scoremap.end() ) {
 			core::pose::PoseCOP in_pose = (*job_iter)->get_pose();
-			runtime_assert( in_pose != 0 );
+			runtime_assert( in_pose != nullptr );
 			core::Real value;
 			if ( scoremap.find("ligand_is_touching") == scoremap.end() && getPoseExtraScore( *in_pose, "ligand_is_touching", value ) ) {
 				scoremap["ligand_is_touching"] = value;

@@ -455,7 +455,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 				iru  = energy_graph.get_node(resNum)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(resNum)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const & edge( static_cast< EnergyEdge const &> (**iru) );
+			auto const & edge( static_cast< EnergyEdge const &> (**iru) );
 			Size const otherResNum( edge.get_second_node_ind() );
 
 			if ( !check_relevant_residues( relevant_residues, resNum, otherResNum ) ) continue;

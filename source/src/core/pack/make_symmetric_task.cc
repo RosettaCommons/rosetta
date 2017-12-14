@@ -52,7 +52,7 @@ make_symmetric_PackerTask_by_truncation(
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -84,14 +84,14 @@ make_new_symmetric_PackerTask_by_union(
 	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	PackerTaskOP new_task = TaskFactory::create_packer_task(pose);
-	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
-	PackerTask_       & n(dynamic_cast<PackerTask_       &>(*new_task));
+	auto const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
+	auto       & n(dynamic_cast<PackerTask_       &>(*new_task));
 
 	if ( !o.symmetrize_by_union() ) utility_exit_with_message("incorrect PackerTask symmetrization request");
 
 	n.update_commutative(o);
 
-	conformation::symmetry::SymmetricConformation const & SymmConf( dynamic_cast<conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+	auto const & SymmConf( dynamic_cast<conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 	conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	for ( Size i = 1; i <= symm_info->num_total_residues_without_pseudo(); ++i ) {
@@ -119,14 +119,14 @@ make_new_symmetric_PackerTask_by_intersection(
 	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	PackerTaskOP new_task = TaskFactory::create_packer_task(pose);
-	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
-	PackerTask_       & n(dynamic_cast<PackerTask_       &>(*new_task));
+	auto const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
+	auto       & n(dynamic_cast<PackerTask_       &>(*new_task));
 
 	if ( !o.symmetrize_by_intersection() ) utility_exit_with_message("incorrect PackerTask symmetrization request");
 
 	n.update_commutative(o);
 
-	conformation::symmetry::SymmetricConformation const & SymmConf( dynamic_cast<conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+	auto const & SymmConf( dynamic_cast<conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 	conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	for ( Size i = 1; i <= symm_info->num_total_residues_without_pseudo(); ++i ) {
@@ -152,7 +152,7 @@ make_new_symmetric_PackerTask_by_requested_method(
 ){
 	using namespace core::pack::task;
 	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
-	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
+	auto const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
 
 	if ( o.symmetrize_by_union() ) {
 		return make_new_symmetric_PackerTask_by_union(pose,non_symmetric_task);

@@ -34,9 +34,9 @@
 
 // C++ headers
 #include <map>
-#include <string>
+#include <iosfwd>
 
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.fwd.hh>
 
 
 #ifdef    SERIALIZATION

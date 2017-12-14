@@ -86,9 +86,7 @@ SecondaryStructureSelector::SecondaryStructureSelector( std::string const & sele
 	set_selected_ss( selected );
 }
 
-SecondaryStructureSelector::~SecondaryStructureSelector()
-{
-}
+SecondaryStructureSelector::~SecondaryStructureSelector() = default;
 
 /// @brief Override pose secondary structure. The secondary structure set by this
 ///        method will always be used if it is non-empty.
@@ -255,14 +253,14 @@ SecondaryStructureSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 bool
 SecondaryStructureSelector::check_ss( std::string const & ss ) const
 {
-	for ( std::string::const_iterator c = ss.begin(); c != ss.end(); ++c ) {
-		if ( *c == 'L' ) {
+	for ( char s : ss ) {
+		if ( s == 'L' ) {
 			continue;
 		}
-		if ( *c == 'E' ) {
+		if ( s == 'E' ) {
 			continue;
 		}
-		if ( *c == 'H' ) {
+		if ( s == 'H' ) {
 			continue;
 		}
 		return false;
@@ -320,7 +318,7 @@ SecondaryStructureSelector::add_overlap(
 {
 	ResidueRanges intervals( matching_ss );
 	for ( auto & range : intervals ) {
-		Size count = Size( 0 );
+		auto count = Size( 0 );
 		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, range.start() ) ) {
 			range.set_start( range.start() - 1 );
 			matching_ss[ range.start() ] = true;

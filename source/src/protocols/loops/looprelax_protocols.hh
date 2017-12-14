@@ -230,8 +230,6 @@ private:
 
 	bool random_loop_flag_;
 
-	bool only_remove_missing_density_flag_;
-
 	int allowed_failure_before_extend_;
 
 	int allowed_failure_before_stop_;

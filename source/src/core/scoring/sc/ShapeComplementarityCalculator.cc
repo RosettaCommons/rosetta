@@ -50,7 +50,7 @@
 #include <utility/string_util.hh>
 
 // C headers
-#include <stdio.h>
+#include <cstdio>
 
 // C++ headers
 #include <iostream>
@@ -82,9 +82,7 @@ ShapeComplementarityCalculator::ShapeComplementarityCalculator() :
 {
 }
 
-ShapeComplementarityCalculator::~ShapeComplementarityCalculator()
-{
-}
+ShapeComplementarityCalculator::~ShapeComplementarityCalculator() = default;
 
 /// @brief
 /// Run the SC calculation on Pose and return just the sc statistic or -1 on error
@@ -278,7 +276,7 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::TrimPeri
 	// Loop over one surface
 	// If a point is buried then see if there is an accessible point within distance band
 
-	for ( std::vector<DOT>::const_iterator idot = sdots.begin(); idot < sdots.end(); ++idot ) {
+	for ( auto idot = sdots.begin(); idot < sdots.end(); ++idot ) {
 		DOT const &dot = *idot;
 		// Paralelleizable kernel function
 		if ( dot.buried && TrimPeripheralBandCheckDot(dot, sdots) ) {
@@ -303,7 +301,7 @@ int ShapeComplementarityCalculator::TrimPeripheralBandCheckDot(
 	// Caching of r2 only brings 0.5% speed boost
 	ScValue r2 = pow(settings.band, 2);
 
-	for ( std::vector<DOT>::const_iterator idot2 = sdots.begin(); idot2 < sdots.end(); ++idot2 ) {
+	for ( auto idot2 = sdots.begin(); idot2 < sdots.end(); ++idot2 ) {
 		DOT const &dot2 = *idot2;
 		if ( &dot == &dot2 ) continue;
 		if ( dot2.buried ) continue;
@@ -330,7 +328,7 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 
 	if ( my_dots.empty() || their_dots.empty() ) return 0;
 
-	for ( std::vector<DOT const*>::const_iterator idot = my_dots.begin();
+	for ( auto idot = my_dots.begin();
 			idot < my_dots.end(); ++idot ) {
 		total += (*idot)->area;
 	}
@@ -345,12 +343,12 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 	}
 #endif
 
-	for ( std::vector<DOT const*>::const_iterator idot = my_dots.begin();
+	for ( auto idot = my_dots.begin();
 			idot < my_dots.end(); ++idot ) {
 		DOT const &dot1 = **idot;
 
 		ScValue distmin, r;
-		DOT const *neighbor = NULL;
+		DOT const *neighbor = nullptr;
 
 #ifdef USEOPENCL
 		if ( settings.gpu ) {
@@ -472,12 +470,12 @@ DOT const *ShapeComplementarityCalculator::CalcNeighborDistanceFindClosestNeighb
 	std::vector<DOT const*> const &their_dots
 ) {
 	ScValue distmin = 999999.0, d;
-	DOT const *neighbor = NULL;
+	DOT const *neighbor = nullptr;
 
 	// Loop over the entire surface: find and flag neighbour of each point
 	// that we're interested in and store nearest neighbour pointer
 
-	for ( std::vector<DOT const*>::const_iterator idot2 = their_dots.begin();
+	for ( auto idot2 = their_dots.begin();
 			idot2 < their_dots.end(); ++idot2 ) {
 		DOT const &dot2 = **idot2;
 		if ( !dot2.buried ) continue;

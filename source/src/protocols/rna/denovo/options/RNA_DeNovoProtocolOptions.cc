@@ -53,8 +53,7 @@ RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
 {}
 
 //Destructor
-RNA_DeNovoProtocolOptions::~RNA_DeNovoProtocolOptions()
-{}
+RNA_DeNovoProtocolOptions::~RNA_DeNovoProtocolOptions() = default;
 
 /// @brief copy constructor
 RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions( RNA_DeNovoProtocolOptions const & src ) :

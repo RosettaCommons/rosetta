@@ -50,7 +50,7 @@ PoseInputterFactory::PoseInputterFactory() :
 void
 PoseInputterFactory::factory_register( PoseInputterCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const pose_inputter_type( creator->keyname() );
 	if ( pose_inputter_creator_map_.find( pose_inputter_type ) != pose_inputter_creator_map_.end() ) {
 		std::string err_msg = "PoseInputterFactory::factory_register already has a pose_inputter creator with name \""
@@ -70,7 +70,7 @@ PoseInputterFactory::factory_register( PoseInputterCreatorOP creator )
 PoseInputterOP
 PoseInputterFactory::new_pose_inputter( std::string const & pose_inputter_type ) const
 {
-	PoseInputterMap::const_iterator iter( pose_inputter_creator_map_.find( pose_inputter_type ) );
+	auto iter( pose_inputter_creator_map_.find( pose_inputter_type ) );
 	if ( iter != pose_inputter_creator_map_.end() ) {
 		if ( ! iter->second ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: PoseInputterCreatorOP prototype for " + pose_inputter_type + " is NULL!" );
@@ -92,10 +92,9 @@ PoseInputterFactory::PoseInputSourcesAndInputters
 PoseInputterFactory::pose_inputs_from_command_line() const
 {
 	PoseInputSourcesAndInputters input_sources;
-	for ( PoseInputterMap::const_iterator iter = pose_inputter_creator_map_.begin();
-			iter != pose_inputter_creator_map_.end(); ++iter ) {
+	for ( auto const & iter : pose_inputter_creator_map_ ) {
 		// TR << pose_inputter_it->first << ", ";
-		PoseInputterOP inputter = iter->second->create_inputter();
+		PoseInputterOP inputter = iter.second->create_inputter();
 		if ( inputter->job_available_on_command_line() ) {
 			PoseInputSources iter_sources = inputter->pose_input_sources_from_command_line();
 			input_sources.reserve( input_sources.size() + iter_sources.size() );
@@ -124,8 +123,8 @@ void PoseInputterFactory::define_pose_inputter_xml_schema( utility::tag::XMLSche
 
 void PoseInputterFactory::list_options_read( utility::options::OptionKeyList & read_options ) const
 {
-	for ( CreatorList::const_iterator iter = creator_list_.begin(); iter != creator_list_.end(); ++iter ) {
-		(*iter)->list_options_read( read_options );
+	for ( auto const & iter : creator_list_ ) {
+		iter->list_options_read( read_options );
 	}
 }
 

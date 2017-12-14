@@ -74,7 +74,7 @@ public:
 
 	PCS_line_data_Ts3(
 		core::Size const residue_num,
-		std::string const atom_name,
+		std::string const & atom_name,
 		core::Real const PCS_experimental,
 		core::Real const PCS_tolerance
 	);

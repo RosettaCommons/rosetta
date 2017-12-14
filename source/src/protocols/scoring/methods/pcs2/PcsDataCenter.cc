@@ -65,8 +65,7 @@ PcsDataCenter::PcsDataCenter(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PcsDataCenter class" );
 }
 
-PcsDataCenter::~PcsDataCenter(){
-}
+PcsDataCenter::~PcsDataCenter()= default;
 
 PcsDataCenter &
 PcsDataCenter::operator=( PcsDataCenter const &other )

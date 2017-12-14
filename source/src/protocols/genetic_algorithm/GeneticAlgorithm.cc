@@ -422,7 +422,7 @@ GeneticAlgorithmBase::print_generation_statistics(
 
 	utility::vector1<EntityOP> sorted_generation(generations_[gen_num]);
 	std::sort( sorted_generation.begin(), sorted_generation.end(), lt_OP_deref< Entity > );
-	core::Real gen_size(static_cast<core::Real>(sorted_generation.size()));
+	auto gen_size(static_cast<core::Real>(sorted_generation.size()));
 
 	os << "Distinct new entities: " << new_entities << std::endl;
 	os << "Duplicate new entities: " << duplicate_new_entities << std::endl;

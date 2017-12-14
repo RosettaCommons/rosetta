@@ -33,9 +33,9 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Constraint();
 
-	Constraint(Column column);
+	Constraint(Column const & column);
 
-	Constraint(Columns columns);
+	Constraint(Columns const & columns);
 
 	virtual std::string
 	print(
@@ -74,8 +74,8 @@ protected:
 class UniqueConstraint : public Constraint {
 public:
 
-	UniqueConstraint(Column column);
-	UniqueConstraint(Columns columns);
+	UniqueConstraint(Column const & column);
+	UniqueConstraint(Columns const & columns);
 
 	std::string
 	print(
@@ -87,7 +87,7 @@ class GreaterThanConstraint : public Constraint {
 public:
 
 	GreaterThanConstraint(
-		Column column,
+		Column const & column,
 		platform::Real value);
 
 	std::string

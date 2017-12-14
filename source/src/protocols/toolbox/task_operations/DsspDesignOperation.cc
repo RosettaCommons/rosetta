@@ -60,14 +60,9 @@ DsspDesignOperation::DsspDesignOperation()
 	set_default_sse_residues();
 }
 
-DsspDesignOperation::DsspDesignOperation( DsspDesignOperation const & rval ): parent( rval ),
-	sse_residues_( rval.sse_residues_ ),
-	blueprint_( rval.blueprint_ ),
-	pose_secstruct_( "" )
-{
-}
+DsspDesignOperation::DsspDesignOperation( DsspDesignOperation const & /*rval*/ ) = default;
 
-DsspDesignOperation::~DsspDesignOperation() {}
+DsspDesignOperation::~DsspDesignOperation() = default;
 
 TaskOperationOP
 DsspDesignOperation::clone() const

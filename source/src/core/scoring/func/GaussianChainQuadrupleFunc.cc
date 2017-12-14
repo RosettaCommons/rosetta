@@ -67,7 +67,7 @@ bool GaussianChainQuadrupleFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	GaussianChainQuadrupleFunc const & other_downcast( static_cast< GaussianChainQuadrupleFunc const & > (other) );
+	auto const & other_downcast( static_cast< GaussianChainQuadrupleFunc const & > (other) );
 	if ( gaussian_variance_     != other_downcast.gaussian_variance_     ) return false;
 	if ( loop_fixed_cost_       != other_downcast.loop_fixed_cost_       ) return false;
 	if ( D2_                    != other_downcast.D2_                    ) return false;

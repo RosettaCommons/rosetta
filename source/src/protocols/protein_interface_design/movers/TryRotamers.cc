@@ -18,6 +18,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -120,7 +121,7 @@ TryRotamers::TryRotamers( std::string const & resnum,
 	final_filter_(protocols::filters::FilterOP( new protocols::filters::TrueFilter ))
 {}
 
-TryRotamers::~TryRotamers() {}
+TryRotamers::~TryRotamers() = default;
 
 void
 TryRotamers::setup_rotamer_set( pose::Pose & pose, core::Size resnum )
@@ -230,15 +231,15 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 	Pose const & )
 {
 	resnum_ = core::pose::get_resnum_string( tag );
-	automatic_connection_ = tag->getOption< bool >( "automatic_connection", 1 );
+	automatic_connection_ = tag->getOption< bool >( "automatic_connection", true );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
-	solo_res_ = tag->getOption<bool>( "solo_res", 0);
+	solo_res_ = tag->getOption<bool>( "solo_res", false);
 	std::string const final_filter_name( tag->getOption<std::string>( "final_filter", "true_filter" ) );
-	protocols::filters::Filters_map::const_iterator find_filter( filters.find( final_filter_name ));
+	auto find_filter( filters.find( final_filter_name ));
 
-	clash_check_ = tag->getOption<bool>("clash_check", 0 );
-	include_current_ = tag->getOption<bool>("include_current", 1 );
+	clash_check_ = tag->getOption<bool>("clash_check", false );
+	include_current_ = tag->getOption<bool>("include_current", true );
 
 	explosion_ = tag->getOption<core::Size>( "explosion", 0);
 	bool const filter_found( find_filter != filters.end() );

@@ -18,6 +18,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 // numeric headers
@@ -87,18 +88,11 @@ IdentityEval::IdentityEval(
 
 
 /// @brief default copy constructor
-IdentityEval::IdentityEval( IdentityEval const & rval ) :
-	Super( rval ),
-	ss_( rval.ss_ ),
-	aa_( rval.aa_ ),
-	ss_penalty_( rval.ss_penalty_ ),
-	aa_penalty_( rval.aa_penalty_ ),
-	randomize_( rval.randomize_ )
-{}
+IdentityEval::IdentityEval( IdentityEval const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-IdentityEval::~IdentityEval() {}
+IdentityEval::~IdentityEval() = default;
 
 
 /// @brief copy assignment

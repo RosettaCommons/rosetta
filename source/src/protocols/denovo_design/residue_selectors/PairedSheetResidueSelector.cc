@@ -57,7 +57,7 @@ PairedSheetResidueSelector::PairedSheetResidueSelector():
 
 /// @brief Destructor.
 ///
-PairedSheetResidueSelector::~PairedSheetResidueSelector() {}
+PairedSheetResidueSelector::~PairedSheetResidueSelector() = default;
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
@@ -179,10 +179,10 @@ PairedSheetResidueSelector::apply( core::pose::Pose const & pose ) const
 	StrandPairings const pairs( spairs.strand_pairings() );
 
 	// determine paired residues
-	for ( StrandPairings::const_iterator pair=pairs.begin(); pair!=pairs.end(); ++pair ) {
-		for ( core::Size s1_resid=(*pair)->begin1(); s1_resid<=(*pair)->end1(); ++s1_resid ) {
-			if ( !(*pair)->has_paired_residue( s1_resid ) ) continue;
-			core::Size const s2_resid = (*pair)->residue_pair( s1_resid );
+	for ( auto const & pair : pairs ) {
+		for ( core::Size s1_resid=pair->begin1(); s1_resid<=pair->end1(); ++s1_resid ) {
+			if ( !pair->has_paired_residue( s1_resid ) ) continue;
+			core::Size const s2_resid = pair->residue_pair( s1_resid );
 			TR.Debug << "Pairing found: " << std::make_pair( s1_resid, s2_resid ) << std::endl;
 			subset[s1_resid] = true;
 			subset[s2_resid] = true;

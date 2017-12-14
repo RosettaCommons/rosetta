@@ -99,7 +99,7 @@ public:
 	TestQuickRelaxMover & operator = ( TestQuickRelaxMover const & src );
 
 	/// @brief Destructor
-	virtual ~TestQuickRelaxMover();
+	~TestQuickRelaxMover() override;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -125,10 +125,10 @@ public:
 	/////////////////////
 
 	/// @brief Get the name of this Mover (TestQuickRelaxMover)
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Flip the downstream partner in the membrane
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 	/// @brief Run AddMembraneMover before?
 	/// @details If you want to keep your anchor point for MEM, then pick no
@@ -205,7 +205,7 @@ private: // data
 
 //////////////////////////////////////////////////////////////////////
 
-typedef utility::pointer::shared_ptr< TestQuickRelaxMover > TestQuickRelaxMoverOP;
+using TestQuickRelaxMoverOP = utility::pointer::shared_ptr<TestQuickRelaxMover>;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -276,7 +276,7 @@ TestQuickRelaxMover & TestQuickRelaxMover::operator = ( TestQuickRelaxMover cons
 }
 
 /// @brief Destructor
-TestQuickRelaxMover::~TestQuickRelaxMover() {}
+TestQuickRelaxMover::~TestQuickRelaxMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///
@@ -470,7 +470,7 @@ void TestQuickRelaxMover::apply( Pose & pose ) {
 		// start 5 residues lower and repack for 10 residues
 		core::SSize halfrange = 4;
 		core::SSize range = 2 * halfrange;
-		core::SSize nres = static_cast< core::SSize >( pose.size() );
+		auto nres = static_cast< core::SSize >( pose.size() );
 
 		// create packer task - will be re-used
 		PackerTaskOP repack = TaskFactory::create_packer_task( pose );
@@ -755,7 +755,7 @@ void TestQuickRelaxMover::init_from_cmd() {
 /// @brief Initialize from commandline
 utility::vector1< bool > TestQuickRelaxMover::get_repack_residues( Pose & pose, core::SSize center1, core::SSize center2, core::SSize halfrange ){
 
-	core::SSize nres = static_cast< core::SSize >( pose.size() );
+	auto nres = static_cast< core::SSize >( pose.size() );
 	core::SSize m, n;
 
 	// initialize vector with false

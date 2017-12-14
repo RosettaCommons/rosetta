@@ -133,11 +133,10 @@ MSA_design(
 
 	// output structures
 	Size counter(0);
-	for ( utility::vector1< pose::PoseOP >::iterator result( pose_list.begin() ),
-			end( pose_list.end() ); result != end; ++result ) {
+	for ( auto & result : pose_list ) {
 		std::ostringstream ss;
 		ss << "MSA_design" << '_' << counter++ << ".pdb";
-		(*result)->dump_pdb( ss.str() );
+		result->dump_pdb( ss.str() );
 	}
 }
 
@@ -151,7 +150,7 @@ MSA_design_main( void* )
 
 	TR << "Getting input filename(s)" << '\n';
 
-	typedef vector1< utility::file::FileName > Filenames;
+	using Filenames = vector1<utility::file::FileName>;
 	Filenames pdbnames;
 
 	if ( option[ in::file::l ].user() ) {
@@ -189,7 +188,7 @@ MSA_design_main( void* )
 		MSA_design( pose );
 	}
 
-	return 0;
+	return nullptr;
 }
 
 int

@@ -35,10 +35,10 @@ public:
 		protocols::filters::Filter( "ChainExists" )
 	{}
 
-	ChainExistsFilter(std::string chain ) :
+	ChainExistsFilter(std::string const & chain ) :
 		//utility::pointer::ReferenceCount(),
 		protocols::filters::Filter( "ChainExists" ),
-		chain_(std::move(chain))
+		chain_(chain)
 	{}
 
 	ChainExistsFilter( ChainExistsFilter const & init ) :

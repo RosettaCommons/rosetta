@@ -113,11 +113,11 @@ InterfaceRecapitulationMover::set_reference_pose( core::pose::PoseOP pose )
 	saved_pose_ = pose;
 }
 
-InterfaceRecapitulationMover::~InterfaceRecapitulationMover() {}
+InterfaceRecapitulationMover::~InterfaceRecapitulationMover() = default;
 
 void
 InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
-	runtime_assert( saved_pose_ != 0 );
+	runtime_assert( saved_pose_ != nullptr );
 	runtime_assert( design_mover_ || design_mover2_ );
 	core::pack::task::PackerTaskCOP task;
 	if ( design_mover_ ) {
@@ -160,7 +160,7 @@ void
 InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & pose ){
 	set_reference_pose( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
 	std::string const mover_name( tag->getOption<std::string>( "mover_name" ) );
-	std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
+	auto find_mover( movers.find( mover_name ));
 	bool const mover_found( find_mover != movers.end() );
 	if ( mover_found ) {
 		design_mover_ = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );

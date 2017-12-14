@@ -37,6 +37,7 @@
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 #include <core/types.hh>
+#include <utility>
 
 // C++ Headers
 
@@ -115,17 +116,17 @@ OopRandomSmallMover::OopRandomSmallMover(
 	Mover::type( "OopRandomSmallMover" );
 }
 
-OopRandomSmallMover::OopRandomSmallMover( utility::vector1< core::Size > oop_seq_positions ): Mover(), oop_seq_positions_(oop_seq_positions), max_small_angle_(0.0)
+OopRandomSmallMover::OopRandomSmallMover( utility::vector1< core::Size > const & oop_seq_positions ): Mover(), oop_seq_positions_(oop_seq_positions), max_small_angle_(0.0)
 {
 	Mover::type( "OopRandomSmallMover" );
 }
 
-OopRandomSmallMover::OopRandomSmallMover( utility::vector1< core::Size > oop_seq_positions, core::Real max_small_angle ): Mover(), oop_seq_positions_(oop_seq_positions), max_small_angle_( max_small_angle )
+OopRandomSmallMover::OopRandomSmallMover( utility::vector1< core::Size > const & oop_seq_positions, core::Real max_small_angle ): Mover(), oop_seq_positions_(oop_seq_positions), max_small_angle_( max_small_angle )
 {
 	Mover::type( "OopRandomSmallMover" );
 }
 
-OopRandomSmallMover::~OopRandomSmallMover(){}
+OopRandomSmallMover::~OopRandomSmallMover()= default;
 
 
 }//oop

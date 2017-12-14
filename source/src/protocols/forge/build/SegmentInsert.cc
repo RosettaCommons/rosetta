@@ -187,7 +187,7 @@ SegmentInsert::SegmentInsert( SegmentInsert const & rval ) :
 
 
 /// @brief default destructor
-SegmentInsert::~SegmentInsert() {}
+SegmentInsert::~SegmentInsert() = default;
 
 
 /// @brief copy assignment
@@ -354,10 +354,7 @@ SegmentInsert::MoveMap SegmentInsert::movemap() const {
 	using core::id::omega_torsion;
 	using core::id::TorsionID;
 
-	typedef MoveMap::MoveMapTorsionID MoveMapTorsionID;
-	typedef MoveMap::TorsionTypeMap TorsionTypeMap;
-	typedef MoveMap::MoveMapTorsionID_Map MoveMapTorsionID_Map;
-	typedef MoveMap::TorsionID_Map TorsionID_Map;
+	using MoveMapTorsionID = MoveMap::MoveMapTorsionID;
 
 	MoveMap mm;
 
@@ -416,12 +413,12 @@ SegmentInsert::MoveMap SegmentInsert::movemap() const {
 	Size const ridx_offset = insertion.left - 1; // residue index offset, add this to movemap settings to get proper numbering
 
 	// TorsionType first
-	for ( TorsionTypeMap::const_iterator i = insert_pose_torsion_override_movemap().torsion_type_begin(), ie = insert_pose_torsion_override_movemap().torsion_type_end(); i != ie; ++i ) {
+	for ( auto i = insert_pose_torsion_override_movemap().torsion_type_begin(), ie = insert_pose_torsion_override_movemap().torsion_type_end(); i != ie; ++i ) {
 		mm.set( i->first, i->second );
 	}
 
 	// MoveMapTorsionID second
-	for ( MoveMapTorsionID_Map::const_iterator i = insert_pose_torsion_override_movemap().movemap_torsion_id_begin(), ie = insert_pose_torsion_override_movemap().movemap_torsion_id_end(); i != ie; ++i ) {
+	for ( auto i = insert_pose_torsion_override_movemap().movemap_torsion_id_begin(), ie = insert_pose_torsion_override_movemap().movemap_torsion_id_end(); i != ie; ++i ) {
 		MoveMapTorsionID shifted_id = i->first;
 		shifted_id.first += ridx_offset;
 		debug_assert( insertion.left <= shifted_id.first && shifted_id.first <= insertion.right );
@@ -429,7 +426,7 @@ SegmentInsert::MoveMap SegmentInsert::movemap() const {
 	}
 
 	// TorsionID last
-	for ( TorsionID_Map::const_iterator i = insert_pose_torsion_override_movemap().torsion_id_begin(), ie = insert_pose_torsion_override_movemap().torsion_id_end(); i != ie ; ++i ) {
+	for ( auto i = insert_pose_torsion_override_movemap().torsion_id_begin(), ie = insert_pose_torsion_override_movemap().torsion_id_end(); i != ie ; ++i ) {
 		TorsionID shifted_id = i->first;
 		shifted_id.rsd() += ridx_offset;
 		debug_assert( insertion.left <= shifted_id.rsd() && shifted_id.rsd() <= insertion.right );
@@ -447,16 +444,12 @@ SegmentInsert::MoveMap SegmentInsert::movemap() const {
 ///  be honored.  Implicit false settings are ignored.
 void SegmentInsert::insert_pose_torsion_override_movemap( MoveMap const & mm ) {
 
-	typedef MoveMap::TorsionTypeMap TorsionTypeMap;
-	typedef MoveMap::MoveMapTorsionID_Map MoveMapTorsionID_Map;
-	typedef MoveMap::TorsionID_Map TorsionID_Map;
-
 	// run through all explicit torsion settings and make sure they're within
 	// the range [1, insert_pose_.size()] and only consist of BB & CHI
 	// settings
 
 	// TorsionTypeMap first
-	for ( TorsionTypeMap::const_iterator i = mm.torsion_type_begin(), ie = mm.torsion_type_end(); i != ie; ++i ) {
+	for ( auto i = mm.torsion_type_begin(), ie = mm.torsion_type_end(); i != ie; ++i ) {
 
 		if ( i->first != core::id::BB && i->first != core::id::CHI ) {
 			TR.Error << "insert_pose_torsion_override_movemap() passed a MoveMap with an unhandled TorsionType setting: " << i->first << std::endl;
@@ -465,7 +458,7 @@ void SegmentInsert::insert_pose_torsion_override_movemap( MoveMap const & mm ) {
 	}
 
 	// MoveMapTorsionID_Map second
-	for ( MoveMapTorsionID_Map::const_iterator i = mm.movemap_torsion_id_begin(), ie = mm.movemap_torsion_id_end(); i != ie; ++i ) {
+	for ( auto i = mm.movemap_torsion_id_begin(), ie = mm.movemap_torsion_id_end(); i != ie; ++i ) {
 
 		if ( i->first.second != core::id::BB && i->first.second != core::id::CHI ) {
 			TR.Error << "insert_pose_torsion_override_movemap() passed a MoveMap with an unhandled"
@@ -482,7 +475,7 @@ void SegmentInsert::insert_pose_torsion_override_movemap( MoveMap const & mm ) {
 	}
 
 	// TorsionID_Map last
-	for ( TorsionID_Map::const_iterator i = mm.torsion_id_begin(), ie = mm.torsion_id_end(); i != ie; ++i ) {
+	for ( auto i = mm.torsion_id_begin(), ie = mm.torsion_id_end(); i != ie; ++i ) {
 
 		if ( i->first.type() != core::id::BB && i->first.type() != core::id::CHI ) {
 			TR.Error << "insert_pose_torsion_override_movemap() passed a MoveMap with an unhandled"
@@ -1001,7 +994,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// don't cause any rigid body shifts.
 	FoldTree ft = pose.fold_tree();
 	bool ft_was_altered = false;
-	for ( FoldTree::const_iterator e = pose.fold_tree().begin(), ee = pose.fold_tree().end(); e != ee; ++e ) {
+	for ( auto e = pose.fold_tree().begin(), ee = pose.fold_tree().end(); e != ee; ++e ) {
 		if ( e->label() > 0 ) {
 			Edge tmp = *e;
 			order( tmp );

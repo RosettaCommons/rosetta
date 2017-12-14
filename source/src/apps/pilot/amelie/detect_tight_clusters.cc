@@ -190,7 +190,7 @@ void compare_chi1_2_angles(
 	// make sure that chi_dev_details has the correct size
 	chi_dev_details.resize(cluster.size());
 
-	for ( IntegerVectorOption::const_iterator it = option[ detect_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ detect_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++ ) {
+	for ( auto it = option[ detect_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ detect_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++ ) {
 
 		//const core::Size chi_deviation_threshold ( *it );
 		rrc_chi_diff.set_recovery_threshold( *it );
@@ -205,10 +205,10 @@ void compare_chi1_2_angles(
 		utility::vector1<core::Size> individual_chi_dev_vector(4); // this could be a vector of bools, but I think Size prints more reliably -- AS_DEBUG -- still needed?
 
 		int i = 0; // size isn't random-access, so I'll need a counter to keep track of where we are -- this already looks error-prone
-		for ( std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++ ) {
+		for ( unsigned long iter : cluster ) {
 			i++; // working with vector1
-			core::conformation::Residue const & refres( native_p.residue( *iter ) );
-			core::conformation::Residue const & rp_res( repacked_p.residue( *iter ) );
+			core::conformation::Residue const & refres( native_p.residue( iter ) );
+			core::conformation::Residue const & rp_res( repacked_p.residue( iter ) );
 			bool within_chi_threshold = false; // the logic of the reporter is inverted vs. what I did before -- it reports true if the chi delta is within the threshold (!)
 			core::Real max_chi_diff; // we're not reporting this at the moment, but the function wants it
 			bool measured = rrc_chi_diff.measure_rotamer_recovery(native_p, repacked_p, refres, rp_res, max_chi_diff, within_chi_threshold);
@@ -223,10 +223,10 @@ void compare_chi1_2_angles(
 			}
 
 			if ( !measured ) {
-				TR << "WARNING -- chi diff could not be assessed for residues at position " << *iter << std::endl;
+				TR << "WARNING -- chi diff could not be assessed for residues at position " << iter << std::endl;
 			} else {
 				if ( chi_threshold_exceeded ) {
-					pos_with_chi_dev[*iter]++;
+					pos_with_chi_dev[iter]++;
 				}
 				//pos_with_chi_dev[*iter] = chi_threshold_exceeded; // I'm not sure if this is always 1 2 3 4... check -- this probably was replaced with res_info now -- AS_DEBUG remove?
 				//TR << " checking individual chi thresholds: " << i << " " << chi_threshold_exceeded << std::endl; // AS_DEBUG
@@ -309,22 +309,22 @@ void repack_cluster(
 		ala_aalist[ chemical::aa_ala ] = true;
 
 
-		for ( std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++ ) {
-			if ( !allow_repacked.at(*iter) ) { // prevent duplicates -- in 8A repacking, this residue could already be in the list
-				allow_repacked.at((*iter)) = true;
-				positions.push_back(*iter);
-				repack_packer_task->nonconst_residue_task((*iter)).restrict_to_repacking();
+		for ( unsigned long iter : cluster ) {
+			if ( !allow_repacked.at(iter) ) { // prevent duplicates -- in 8A repacking, this residue could already be in the list
+				allow_repacked.at(iter) = true;
+				positions.push_back(iter);
+				repack_packer_task->nonconst_residue_task(iter).restrict_to_repacking();
 				//TR << *iter << " " << p.pdb_info()->chain(*iter) << p.pdb_info()->number(*iter) << std::endl;
 
-				repacked_pos_in_PDB_numbering.push_back(utility::to_string(p.pdb_info()->chain(*iter)) + ":" + utility::to_string(p.pdb_info()->number(*iter)));
+				repacked_pos_in_PDB_numbering.push_back(utility::to_string(p.pdb_info()->chain(iter)) + ":" + utility::to_string(p.pdb_info()->number(iter)));
 			}
 
-			cluster_pos_in_PDB_numbering.push_back(utility::to_string(p.pdb_info()->chain(*iter)) + ":" + utility::to_string(p.pdb_info()->number(*iter)));
+			cluster_pos_in_PDB_numbering.push_back(utility::to_string(p.pdb_info()->chain(iter)) + ":" + utility::to_string(p.pdb_info()->number(iter)));
 
 			// in case we repack the entire 8A shell, we also need to determine all those residues and set their packer task appropriately
 			if ( basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::repack_8A_sphere ]() ) {
 				std::map<core::Size, bool> neighbor_map;
-				detect_neighbors(p, *iter, repack_sphere_radius, neighbor_map);
+				detect_neighbors(p, iter, repack_sphere_radius, neighbor_map);
 				for ( std::map<core::Size, bool>::const_iterator m_iter = neighbor_map.begin(); m_iter != neighbor_map.end(); m_iter++ ) {
 					if ( m_iter->second && !allow_repacked.at(m_iter->first) ) { // try to avoid duplicates
 						allow_repacked.at((m_iter->first)) = true;
@@ -460,7 +460,7 @@ void repack_cluster(
 
 				sidechainmover.set_prob_uniform( 0.1/* option[ backrub::sc_prob_uniform ]*/ );
 				sidechainmover.set_prob_withinrot( 0.0/* option[ backrub::sc_prob_withinrot ] */);
-				sidechainmover.set_preserve_detailed_balance(0/* option[ backrub::detailed_balance ]*/ );  // not for now -- would be difficult for Noah's stuff
+				sidechainmover.set_preserve_detailed_balance(false/* option[ backrub::detailed_balance ]*/ );  // not for now -- would be difficult for Noah's stuff
 
 				//sidechainmover.init_task(); // maybe this is what we're missing? -- no, this is supposed to happen inside the apply function
 
@@ -588,23 +588,23 @@ void repack_cluster(
 
 	std::string cluster_name = "";
 	std::map<core::Size, core::Size> all_neighbors; // make sure we don't append residues multiple times to a pose, that would probably be a mess
-	for ( std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++ ) {
-		cluster_name += utility::to_string(p.pdb_info()->number(*iter)) + "_";
-		starting_cluster.append_residue_by_jump(p.residue(*iter), starting_cluster.size());
-		repacked_cluster.append_residue_by_jump(repacked.residue(*iter), repacked_cluster.size());
+	for ( unsigned long iter : cluster ) {
+		cluster_name += utility::to_string(p.pdb_info()->number(iter)) + "_";
+		starting_cluster.append_residue_by_jump(p.residue(iter), starting_cluster.size());
+		repacked_cluster.append_residue_by_jump(repacked.residue(iter), repacked_cluster.size());
 
 		// get all-atom RMSD for this particular residue
 		core::pose::Pose i_native; // empty pose, then just append the single residue - will this work?
 		core::pose::Pose i_repacked;
-		i_native.append_residue_by_jump(p.residue(*iter), i_native.size());
-		i_repacked.append_residue_by_jump(repacked.residue(*iter), i_repacked.size());
+		i_native.append_residue_by_jump(p.residue(iter), i_native.size());
+		i_repacked.append_residue_by_jump(repacked.residue(iter), i_repacked.size());
 		individual_pos_RMSDs.push_back(core::scoring::rmsd_with_super(i_native, i_repacked, core::scoring::is_heavyatom));
 
 
 		// we'll also want these residues in the output set -- note that this will affect the RMSD calculation (!)
 		if ( basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::repack_8A_sphere ]() ) {
 			std::map<core::Size, bool> neighbor_map;
-			detect_neighbors(p, *iter, repack_sphere_radius, neighbor_map);
+			detect_neighbors(p, iter, repack_sphere_radius, neighbor_map);
 			for ( std::map<core::Size, bool>::const_iterator m_iter = neighbor_map.begin(); m_iter != neighbor_map.end(); m_iter++ ) {
 				if ( m_iter->second ) {
 					if ( all_neighbors.find(m_iter->first) == all_neighbors.end() ) {
@@ -903,12 +903,12 @@ void find_clusters(
 	//find clusters of four interacting residues
 	for ( core::Size i = 1; i <= p.size(); i++ ) {
 		// check if there is shared neighbor between positions i and j
-		for ( std::set<core::Size>::iterator iter_j = neighbors[i].begin(); iter_j != neighbors[i].end(); iter_j++ ) {
+		for ( auto iter_j = neighbors[i].begin(); iter_j != neighbors[i].end(); iter_j++ ) {
 			core::Size j = (*iter_j);
-			for ( std::set<core::Size>::iterator iter_k = neighbors[j].begin(); iter_k != neighbors[j].end(); iter_k++ ) {
+			for ( auto iter_k = neighbors[j].begin(); iter_k != neighbors[j].end(); iter_k++ ) {
 				core::Size k = (*iter_k);
 				if ( neighbors[i].find(k) != neighbors[i].end() ) {
-					for ( std::set<core::Size>::iterator iter_m = neighbors[k].begin(); iter_m != neighbors[k].end(); iter_m++ ) {
+					for ( auto iter_m = neighbors[k].begin(); iter_m != neighbors[k].end(); iter_m++ ) {
 						core::Size m = (*iter_m);
 						if ( ( !find_interchain_clusters && p.residue(i).chain() == p.residue(j).chain() && p.residue(i).chain() == p.residue(k).chain() && p.residue(i).chain() == p.residue(m).chain() ) ||
 								( find_interchain_clusters && ( p.residue(i).chain() != p.residue(j).chain() || p.residue(i).chain() != p.residue(k).chain() || p.residue(i).chain() != p.residue(m).chain() || p.residue(j).chain() != p.residue(k).chain() || p.residue(j).chain() != p.residue(m).chain() || p.residue(k).chain() != p.residue(m).chain() ) ) ) { // default: only looking for intrachain clusters -- if detect_interchain_clusters(), some chains must (!) differ
@@ -1021,8 +1021,8 @@ int main( int argc, char * argv [] )
 		}
 		*/
 		//cluster_filename_suffix << "." << option[ detect_tight_clusters::chi_deviation_threshold ]();
-		for ( IntegerVectorOption::const_iterator it = option[ detect_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ detect_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++ ) {
-			cluster_filename_suffix << "." << *it;
+		for ( int it : option[ detect_tight_clusters::chi_deviation_thresholds ]() ) {
+			cluster_filename_suffix << "." << it;
 		}
 
 		// get scoring function

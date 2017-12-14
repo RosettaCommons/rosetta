@@ -25,6 +25,7 @@
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "core.pose.copydofs.CopyDofs" );
 
@@ -64,8 +65,7 @@ CopyDofs::CopyDofs( pose::MiniPose const & template_pose,
 {}
 
 //Destructor
-CopyDofs::~CopyDofs()
-{}
+CopyDofs::~CopyDofs() = default;
 
 ////////////////////////////////////////////////////////
 void

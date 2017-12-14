@@ -198,7 +198,7 @@ public:
 	/// @brief Constructor for poses with >= 1 jump, keeps defined chains together
 	/// @details pack_separated and pack_input only pack the detected interface residues.
 	InterfaceAnalyzerMover(
-		std::set<int> fixed_chains,
+		std::set<int> const & fixed_chains,
 		bool const tracer = false,
 		core::scoring::ScoreFunctionCOP sf = nullptr,
 		bool compute_packstat = false,

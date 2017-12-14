@@ -91,7 +91,7 @@ SmoothEnvEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const &
 	// symmetry-specific code
 	// since it is a whole-structure energy, special treatment is needed to make sure this is computed correctly
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation &symmconf =
+		auto &symmconf =
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
 		symmconf.recalculate_transforms(); // this is needed by deriv calcs
 	}

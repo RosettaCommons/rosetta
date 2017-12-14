@@ -37,7 +37,7 @@ namespace scoring {
 namespace nv {
 
 /// @details Auto-generated virtual destructor
-NVlookup::~NVlookup() {}
+NVlookup::~NVlookup() = default;
 
 using namespace numeric::interpolation::spline;
 
@@ -65,7 +65,7 @@ void NVlookup::set_up_spline_from_data(core::chemical::AA const & aa_type, utili
 	lookup_table_[aa_type] = spline.get_interpolator();
 }
 
-NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_canonical_aas,0)
+NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_canonical_aas,nullptr)
 {
 	//Look at rosetta_database/scoring/score_function/NV/neighbor_vector_score.histogram to see what formatting should look like
 	utility::io::izstream infile;
@@ -78,14 +78,14 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 	utility::vector1<core::Real> bin_centers;
 
 	//the rest of the code expects a vector of reals, so we convert the array to one
-	for ( core::Size i =0; i < bin_array_data.size(); ++i ) {
-		bin_centers.push_back(bin_array_data[i].get_real());
+	for ( auto const & i : bin_array_data ) {
+		bin_centers.push_back(i.get_real());
 	}
 
 	//the score information is a dictionary, key is amino acid type, data is an array of reals
 	utility::json_spirit::mObject const & spline_objects = histogram_object.get_obj()["scores"].get_obj();
 
-	utility::json_spirit::mObject::const_iterator spline_object_iterator = spline_objects.begin();
+	auto spline_object_iterator = spline_objects.begin();
 	for ( ; spline_object_iterator != spline_objects.end(); ++spline_object_iterator ) {
 		std::string aa_name_string = spline_object_iterator->first;
 		debug_assert(aa_name_string.size() == 1); //The key should be a single letter amino acid
@@ -95,8 +95,8 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 
 		utility::json_spirit::mArray const & spline_array_data = spline_object_iterator->second.get_array();
 		utility::vector1<core::Real> spline_values;
-		for ( core::Size i = 0; i < spline_array_data.size(); ++i ) {
-			spline_values.push_back(spline_array_data[i].get_real());
+		for ( auto const & i : spline_array_data ) {
+			spline_values.push_back(i.get_real());
 		}
 		set_up_spline_from_data(aa_type,bin_centers,spline_values);
 

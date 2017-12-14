@@ -119,7 +119,7 @@ RNA_DeNovoPoseInitializer::RNA_DeNovoPoseInitializer( RNA_DeNovoParameters const
 {
 }
 
-RNA_DeNovoPoseInitializer::~RNA_DeNovoPoseInitializer() {}
+RNA_DeNovoPoseInitializer::~RNA_DeNovoPoseInitializer() = default;
 
 //////////////////////////////////////////////////////////////////
 void

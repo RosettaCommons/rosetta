@@ -137,7 +137,7 @@ void
 translate_virtual_anchor_to_first_rigid_body( core::pose::Pose & pose );
 
 bool
-involved_in_phosphate_torsion( std::string atomname );
+involved_in_phosphate_torsion( std::string const & atomname );
 
 void
 set_output_res_and_chain( core::pose::Pose & extended_pose,

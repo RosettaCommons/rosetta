@@ -109,7 +109,7 @@ private:
 
 private:
 
-	methods::EnergyMethodOptions const & options_;
+	//methods::EnergyMethodOptions const & options_;
 	etable::EtableEvaluatorOP etable_evaluator_;
 
 	/*

@@ -20,6 +20,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
@@ -55,11 +56,11 @@ IRmsdFilter::IRmsdFilter(protocols::docking::DockJumps const movable_jumps,
 	core::pose::PoseOP reference_pose)
 : protocols::filters::Filter( "IRmsd" ),
 	threshold_(threshold),
-	reference_pose_(reference_pose),
+	reference_pose_(std::move(reference_pose)),
 	movable_jumps_(movable_jumps)
 {}
 
-IRmsdFilter::~IRmsdFilter() {}
+IRmsdFilter::~IRmsdFilter() = default;
 
 protocols::filters::FilterOP
 IRmsdFilter::clone() const {
@@ -116,7 +117,7 @@ IRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	threshold_ = tag->getOption<core::Real>( "threshold", 5 );
 
 	//TODO: support multiple jumps
-	core::Size jump_num = tag->getOption<core::Size>( "jump", 1);
+	auto jump_num = tag->getOption<core::Size>( "jump", 1);
 
 	movable_jumps_.push_back(jump_num);
 

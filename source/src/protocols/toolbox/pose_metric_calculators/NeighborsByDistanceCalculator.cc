@@ -112,8 +112,8 @@ NeighborsByDistanceCalculator::print( std::string const & key ) const
 		using namespace basic::options; //this lets you get + or (space) as spacer
 		std::string const spacer( option[ OptionKeys::packing::print_pymol_selection].value() ? "+" : " ");
 		std::string nbrs_string("");
-		for ( std::set< core::Size >::const_iterator it(neighbors_.begin()), end(neighbors_.end()); it != end; ++it ) {
-			nbrs_string += utility::to_string(*it) + spacer;
+		for ( unsigned long neighbor : neighbors_ ) {
+			nbrs_string += utility::to_string(neighbor) + spacer;
 		}
 		return nbrs_string;
 

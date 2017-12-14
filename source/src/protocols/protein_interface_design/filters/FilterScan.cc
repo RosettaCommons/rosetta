@@ -284,7 +284,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 
 	core::conformation::symmetry::SymmetryInfoOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -326,7 +326,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			delta_filter->baseline( fbaseline );
 			TR<<"Computed baseline at position "<<resi<<" with filter "<<fname<<" is "<<fbaseline<<std::endl;
 		}
-		typedef std::list< ResidueTypeCOP > ResidueTypeCOPList;
+		using ResidueTypeCOPList = std::list<ResidueTypeCOP>;
 		ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
 		utility::vector1< AA > allow_temp;
 		allow_temp.clear();
@@ -412,8 +412,8 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 
 			for ( std::map< core::Size, std::set< char > >::const_iterator pair = map_position_allowed_aa.begin(); pair != map_position_allowed_aa.end(); ++pair ) {
 				resfile << pose.pdb_info()->number( pair->first )<<'\t'<<pose.pdb_info()->chain( pair->first )<<"\tPIKAA\t";
-				for ( std::set< char >::const_iterator aa = pair->second.begin(); aa != pair->second.end(); ++aa ) {
-					resfile<< *aa;
+				for ( char aa : pair->second ) {
+					resfile<< aa;
 				}
 				resfile<<'\n';
 			}
@@ -487,7 +487,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 	runtime_assert( tag->hasOption( "filter" ) || tag->hasOption( "delta_filters" ));
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	std::string const triage_filter_name( tag->getOption< std::string >( "triage_filter", "true_filter" ) );
-	protocols::filters::Filters_map::const_iterator triage_filter_it( filters.find( triage_filter_name ) );
+	auto triage_filter_it( filters.find( triage_filter_name ) );
 	keep_native( tag->getOption< bool >( "keep_native", false ) );
 	dump_pdb_name( tag->getOption< std::string > ( "dump_pdb_name", "" ) );
 
@@ -505,7 +505,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 	triage_filter( triage_filter_it->second );
 
 	std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
-	protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
+	auto filter_it( filters.find( filter_name ) );
 
 #ifdef USEMPI
 	if( filter_it == filters.end() )
@@ -519,7 +519,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 	filter( filter_it->second );
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
-	protocols::moves::Movers_map::const_iterator mover_it( movers.find( relax_mover_name ) );
+	auto mover_it( movers.find( relax_mover_name ) );
 
 #ifdef USEMPI
 	if( mover_it == movers.end() )
@@ -576,7 +576,7 @@ FilterScanFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new FilterScanFilter() );
 }
 
-FilterScanFilter::~FilterScanFilter(){}
+FilterScanFilter::~FilterScanFilter()= default;
 
 protocols::filters::FilterOP
 FilterScanFilter::clone() const{

@@ -101,7 +101,7 @@ SegmentGraph::c_segment(
 	core::Size ind
 ) const {
 	while ( true ) {
-		std::map<core::Size, core::Size>::const_iterator it = forward_connections_.find(ind);
+		auto it = forward_connections_.find(ind);
 		if ( it == forward_connections_.end() ) {
 			return ind;
 		}
@@ -114,7 +114,7 @@ SegmentGraph::n_segment(
 	core::Size ind
 ) const {
 	while ( true ) {
-		std::map<core::Size, core::Size>::const_iterator it = reverse_connections_.find(ind);
+		auto it = reverse_connections_.find(ind);
 		if ( it == reverse_connections_.end() ) {
 			return ind;
 		}
@@ -160,9 +160,9 @@ SegmentGraph::insert_connected_segment(
 
 	std::map<core::Size, core::Size> new_forward;
 	std::map<core::Size, core::Size> new_reverse;
-	std::map<core::Size, core::Size>::iterator f_it = forward_connections_.begin();
-	std::map<core::Size, core::Size>::iterator f_end = forward_connections_.end();
-	std::map<core::Size, core::Size>::iterator r_it = reverse_connections_.begin();
+	auto f_it = forward_connections_.begin();
+	auto f_end = forward_connections_.end();
+	auto r_it = reverse_connections_.begin();
 	for ( ; f_it != f_end; ++f_it, ++r_it ) {
 		core::Size new_f_start = f_it->first;
 		core::Size new_f_end = f_it->second;
@@ -206,8 +206,8 @@ SegmentGraph::erase_segments(
 	indices_to_erase.insert(linker_segments_to_delete.begin(), linker_segments_to_delete.end());
 
 	//Remove all connections to segments we are deleting
-	std::set<core::Size>::const_iterator it = indices_to_erase.begin();
-	std::set<core::Size>::const_iterator it_end = indices_to_erase.end();
+	auto it = indices_to_erase.begin();
+	auto it_end = indices_to_erase.end();
 	for ( ; it != it_end; ++it ) {
 		if ( forward_connections_.find(*it) != forward_connections_.end() ) {
 			reverse_connections_.erase(forward_connections_.find(*it)->second);
@@ -233,9 +233,9 @@ SegmentGraph::erase_segments(
 	//update connections
 	std::map<core::Size, core::Size> new_forward;
 	std::map<core::Size, core::Size> new_reverse;
-	std::map<core::Size, core::Size>::iterator f_it = forward_connections_.begin();
-	std::map<core::Size, core::Size>::iterator f_end = forward_connections_.end();
-	std::map<core::Size, core::Size>::iterator r_it = reverse_connections_.begin();
+	auto f_it = forward_connections_.begin();
+	auto f_end = forward_connections_.end();
+	auto r_it = reverse_connections_.begin();
 	for ( ; f_it != f_end; ++f_it, ++r_it ) {
 		it = indices_to_erase.begin();
 		core::Size new_f_start = f_it->first;
@@ -293,9 +293,9 @@ SegmentGraph::reorder(
 	std::map<core::Size, core::Size> new_forward;
 	std::map<core::Size, core::Size> new_reverse;
 
-	std::map<core::Size, core::Size>::iterator f_it = forward_connections_.begin();
-	std::map<core::Size, core::Size>::iterator f_end = forward_connections_.end();
-	std::map<core::Size, core::Size>::iterator r_it = reverse_connections_.begin();
+	auto f_it = forward_connections_.begin();
+	auto f_end = forward_connections_.end();
+	auto r_it = reverse_connections_.begin();
 	for ( ; f_it != f_end; ++f_it, ++r_it ) {
 		new_forward[old_to_new[f_it->first]] = old_to_new[f_it->second];
 		new_reverse[old_to_new[r_it->first]] = old_to_new[r_it->second];
@@ -317,35 +317,35 @@ SegmentGraph::clear_connections(
 
 ModelIterator<SewSegment>
 Model::model_begin() {
-	utility::vector1<SewSegment>::iterator seg_it = segments_.begin();
+	auto seg_it = segments_.begin();
 
 	if ( seg_it == segments_.end() ) {
 		utility_exit_with_message("Model " + utility::to_string(seg_it->model_id_) + " has no segments to iterator over!");
 	}
-	utility::vector1<SewResidue>::iterator res_it = seg_it->residues_.begin();
+	auto res_it = seg_it->residues_.begin();
 
 	if ( res_it == seg_it->residues_.end() ) {
 		utility_exit_with_message("Model " + utility::to_string(seg_it->model_id_) + ", Segment " +
 			utility::to_string(seg_it->segment_id_) + " has no residues to iterator over!");
 	}
-	utility::vector1<SewAtom>::iterator atom_it = res_it->basis_atoms_.begin();
+	auto atom_it = res_it->basis_atoms_.begin();
 	return ModelIterator<SewSegment>(seg_it, segments_.end(), res_it, atom_it);
 }
 
 ModelConstIterator<SewSegment>
 Model::model_begin() const {
-	utility::vector1<SewSegment>::const_iterator seg_it = segments_.begin();
+	auto seg_it = segments_.begin();
 
 	if ( seg_it == segments_.end() ) {
 		utility_exit_with_message("Model " + utility::to_string(seg_it->model_id_) + " has no segments to iterator over!");
 	}
-	utility::vector1<SewResidue>::const_iterator res_it = seg_it->residues_.begin();
+	auto res_it = seg_it->residues_.begin();
 
 	if ( res_it == seg_it->residues_.end() ) {
 		utility_exit_with_message("Model " + utility::to_string(seg_it->model_id_) + ", Segment " +
 			utility::to_string(seg_it->segment_id_) + " has no residues to iterator over!");
 	}
-	utility::vector1<SewAtom>::const_iterator atom_it = res_it->basis_atoms_.begin();
+	auto atom_it = res_it->basis_atoms_.begin();
 	return ModelConstIterator<SewSegment>(seg_it, segments_.end(), res_it, atom_it);
 }
 
@@ -354,19 +354,21 @@ Model::model_end() {
 	utility::vector1<SewSegment>::iterator seg_it;
 	utility::vector1<SewResidue>::iterator res_it;
 	if ( segments_.size() == 0 ) {
-		utility_exit_with_message("Model " + utility::to_string(seg_it->model_id_) + " has no segments to iterator over!");
+		utility_exit_with_message("Model  has no segments to iterator over!");
+		//utility_exit_with_message("Model " + utility::to_string(seg_it->model_id_) + " has no segments to iterator over!");
 	}
 	seg_it = segments_.end();
 	--seg_it;
 
 	if ( segments_[segments_.size()].residues_.size() == 0 ) {
-		utility_exit_with_message("Model " + utility::to_string(seg_it->model_id_) + ", Segment " +
-			utility::to_string(seg_it->segment_id_) + " has no residues to iterator over!");
+		utility_exit_with_message("Model  Segment  has no residues to iterator over!");
+		//utility_exit_with_message("Model " + utility::to_string(seg_it->model_id_) + ", Segment " +
+		// utility::to_string(seg_it->segment_id_) + " has no residues to iterator over!");
 	}
 	res_it = seg_it->residues_.end();
 	--res_it;
 
-	utility::vector1<SewAtom>::iterator atom_it =
+	auto atom_it =
 		res_it->basis_atoms_.end();
 	return ModelIterator<SewSegment>(seg_it, segments_.end(), res_it, atom_it);
 }
@@ -388,7 +390,7 @@ Model::model_end() const {
 	res_it = seg_it->residues_.end();
 	--res_it;
 
-	utility::vector1<SewAtom>::const_iterator atom_it =
+	auto atom_it =
 		res_it->basis_atoms_.end();
 	return ModelConstIterator<SewSegment>(seg_it, segments_.end(), res_it, atom_it);
 }
@@ -922,7 +924,7 @@ get_strand_sew_models_from_db(){
 } //get_strand_sew_models_from_db
 
 std::map< int, Model >
-get_continuous_models_from_db(std::string hash_between){
+get_continuous_models_from_db(std::string const & hash_between){
 
 	utility::sql_database::sessionOP db_session( basic::database::get_db_session() );
 
@@ -977,8 +979,8 @@ get_continuous_models_from_db(std::string hash_between){
 	TR << "Found " << linker_segs.size() << " linker segments" << std::endl;
 	TR << "hash_between: " << hash_between << std::endl;
 
-	std::map< int, Model >::iterator it = models.begin();
-	std::map< int, Model >::iterator it_end = models.end();
+	auto it = models.begin();
+	auto it_end = models.end();
 	for ( ; it != it_end; ++it ) {
 		Model & cur_model = it->second;
 		for ( core::Size i=1; i <= cur_model.segments_.size(); ++i ) {
@@ -1002,7 +1004,7 @@ get_continuous_models_from_db(std::string hash_between){
 
 
 std::map< int, Model >
-get_5_ss_models_from_db(std::string hash_between){
+get_5_ss_models_from_db(std::string const & hash_between){
 
 	utility::sql_database::sessionOP db_session( basic::database::get_db_session() );
 
@@ -1038,8 +1040,8 @@ get_5_ss_models_from_db(std::string hash_between){
 
 	////////////// for models_w_5_sss
 	//Now make sure we aren't hashing the linker segments
-	std::map< int, Model >::iterator it_5 = models_w_5_sss.begin();
-	std::map< int, Model >::iterator it_end_5 = models_w_5_sss.end();
+	auto it_5 = models_w_5_sss.begin();
+	auto it_end_5 = models_w_5_sss.end();
 	for ( ; it_5 != it_end_5; ++it_5 ) {
 		Model & cur_model = it_5->second;
 		for ( core::Size i=1; i <= cur_model.segments_.size(); ++i ) {
@@ -1072,8 +1074,8 @@ remove_models_from_dssp(
 	char dssp2
 ) {
 	std::set<int> invalid_model_ids;
-	std::map< int, Model >::iterator it = models.begin();
-	std::map< int, Model >::iterator it_end = models.end();
+	auto it = models.begin();
+	auto it_end = models.end();
 	for ( ; it != it_end; ++it ) {
 		Model const & cur_model = it->second;
 		if ( cur_model.segments_.size() != 3 ) {
@@ -1085,8 +1087,8 @@ remove_models_from_dssp(
 	}
 
 	TR << "Removing " << invalid_model_ids.size() << " models matching DSSP pattern " << dssp1 << "-" << dssp2 << std::endl;
-	std::set<int>::const_iterator remove_it = invalid_model_ids.begin();
-	std::set<int>::const_iterator remove_it_end = invalid_model_ids.end();
+	auto remove_it = invalid_model_ids.begin();
+	auto remove_it_end = invalid_model_ids.end();
 	for ( ; remove_it != remove_it_end; ++remove_it ) {
 		models.erase(models.find(*remove_it));
 	}
@@ -1180,8 +1182,8 @@ add_linker_segments(
 		"ORDER BY coords.seqpos, coords.atomno;";
 	cppdb::statement select_stmt=basic::database::safely_prepare_statement(select_string, db_session);
 
-	std::map< int, Model >::iterator it = models.begin();
-	std::map< int, Model >::iterator it_end = models.end();
+	auto it = models.begin();
+	auto it_end = models.end();
 	for ( ; it != it_end; ++it ) {
 		Model & cur_model = it->second;
 		utility::vector1<SewSegment> linker_segments;
@@ -1308,8 +1310,8 @@ get_alpha_beta_models_from_db(){
 	}
 	TR << "Found " << linker_segs.size() << " linker segments" << std::endl;
 
-	std::map< int, Model >::iterator it = models.begin();
-	std::map< int, Model >::iterator it_end = models.end();
+	auto it = models.begin();
+	auto it_end = models.end();
 	for ( ; it != it_end; ++it ) {
 		Model & cur_model = it->second;
 		for ( core::Size i=1; i <= cur_model.segments_.size(); ++i ) {
@@ -1467,7 +1469,7 @@ std::map<int, Model>
 read_model_file(
 	std::string filename
 ){
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 	utility::io::izstream file(filename);
 	if ( !file.good() ) {
 		utility_exit_with_message("Could not find Models file with name: " + filename);
@@ -1560,8 +1562,8 @@ read_model_file(
 	std::set<int> invalid_model_ids;
 
 	//Infer linkers based on segment ids. Consecutive segments = linked
-	std::map< int, Model >::iterator it = models.begin();
-	std::map< int, Model >::iterator it_end = models.end();
+	auto it = models.begin();
+	auto it_end = models.end();
 	for ( ; it != it_end; ++it ) {
 		Model & curr_model = it->second;
 		for ( core::Size i=1; i<=curr_model.segments_.size(); ++i ) {
@@ -1579,13 +1581,13 @@ read_model_file(
 		}
 	}
 
-	std::set<int>::const_iterator remove_it = invalid_model_ids.begin();
-	std::set<int>::const_iterator remove_it_end = invalid_model_ids.end();
+	auto remove_it = invalid_model_ids.begin();
+	auto remove_it_end = invalid_model_ids.end();
 	for ( ; remove_it != remove_it_end; ++remove_it ) {
 		models.erase(models.find(*remove_it));
 	}
 
-	core::Size endttime = time(NULL);
+	core::Size endttime = time(nullptr);
 	TR << "Read " << models.size() << " models in " << endttime - starttime << " seconds" << std::endl;
 
 	return models;

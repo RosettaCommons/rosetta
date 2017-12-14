@@ -14,6 +14,7 @@
 // unit headers
 #include <core/fragment/picking_old/vall/gen/SecStructGen.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -39,15 +40,11 @@ SecStructGen::SecStructGen( String const & ss ) :
 
 
 /// @brief copy constructor
-SecStructGen::SecStructGen( SecStructGen const & rval ) :
-	Super( rval ),
-	ss_( rval.ss_ )
-{}
+SecStructGen::SecStructGen( SecStructGen const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-SecStructGen::~SecStructGen()
-{}
+SecStructGen::~SecStructGen() = default;
 
 
 /// @brief copy assignment

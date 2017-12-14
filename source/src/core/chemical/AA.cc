@@ -242,9 +242,8 @@ utility::vector1< std::string > setup_aa2name() {
 
 	utility::vector1< std::string > aa2n( num_aa_types );
 
-	for ( std::map< std::string, AA >::const_iterator iter = name2aa().begin(),
-			iter_end = name2aa().end(); iter != iter_end; ++iter ) {
-		aa2n[ iter->second ] = iter->first;
+	for ( auto const & iter : name2aa() ) {
+		aa2n[ iter.second ] = iter.first;
 	}
 
 	return aa2n;
@@ -265,9 +264,8 @@ utility::vector1< char > setup_aa2oneletter() {
 
 	utility::vector1< char > aa2l( num_aa_types );
 
-	for ( std::map< char, AA >::const_iterator iter = oneletter2aa().begin(),
-			iter_end = oneletter2aa().end(); iter != iter_end; ++iter ) {
-		aa2l[ iter->second ] = iter->first;
+	for ( auto iter : oneletter2aa() ) {
+		aa2l[ iter.second ] = iter.first;
 	}
 
 	return aa2l;

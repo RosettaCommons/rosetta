@@ -20,6 +20,7 @@
 
 // Numeric Headers
 #include <numeric/random/random.hh>
+#include <utility>
 
 using namespace core;
 static basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerOneValue" );
@@ -48,7 +49,7 @@ StepWiseSamplerOneValue::StepWiseSamplerOneValue(
 	tag_( tag )
 {}
 
-StepWiseSamplerOneValue::~StepWiseSamplerOneValue(){}
+StepWiseSamplerOneValue::~StepWiseSamplerOneValue()= default;
 
 std::string
 StepWiseSamplerOneValue::get_name() const {

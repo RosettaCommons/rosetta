@@ -38,8 +38,7 @@ SugarVirtualizeMover::SugarVirtualizeMover( Size const moving_res ):
 {}
 
 //Destructor
-SugarVirtualizeMover::~SugarVirtualizeMover()
-{}
+SugarVirtualizeMover::~SugarVirtualizeMover() = default;
 
 void
 SugarVirtualizeMover::apply( pose::Pose & pose ){

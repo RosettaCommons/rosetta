@@ -82,7 +82,7 @@ ExtendChainMover::ExtendChainMover() :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-ExtendChainMover::~ExtendChainMover() {}
+ExtendChainMover::~ExtendChainMover() = default;
 
 
 /// Return a copy of ourselves

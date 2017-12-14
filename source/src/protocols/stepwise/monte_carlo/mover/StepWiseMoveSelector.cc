@@ -30,6 +30,7 @@
 #include <core/pose/full_model_info/SubMotifInfo.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
+#include <utility>
 #include <utility/tools/make_vector1.hh>
 #include <utility/stream_util.hh>
 #include <utility/vector1.functions.hh>
@@ -91,7 +92,7 @@ namespace mover {
 
 //Constructor
 StepWiseMoveSelector::StepWiseMoveSelector( options::StepWiseMoveSelectorOptionsCOP options ):
-	options_( options ),
+	options_(std::move( options )),
 	allow_delete_( true ),
 	force_unique_moves_( false ),
 	choose_random_( true )
@@ -107,8 +108,7 @@ StepWiseMoveSelector::StepWiseMoveSelector():
 }
 
 //Destructor
-StepWiseMoveSelector::~StepWiseMoveSelector()
-{}
+StepWiseMoveSelector::~StepWiseMoveSelector() = default;
 
 /// @brief copy constructor
 StepWiseMoveSelector::StepWiseMoveSelector( StepWiseMoveSelector const & src ) :
@@ -879,9 +879,9 @@ StepWiseMoveSelector::figure_out_already_docked(
 {
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	std::set< Size > dock_domains = get_dock_domains( res_list, pose );
-	for ( std::set< Size >::const_iterator it1 = dock_domains.begin(),
+	for ( auto it1 = dock_domains.begin(),
 			end1 = dock_domains.end(); it1 != end1; ++it1 ) {
-		for ( std::set< Size >::const_iterator it2 = it1,
+		for ( auto it2 = it1,
 				end2 = dock_domains.end(); it2 != end2; ++it2 ) {
 			if ( it1 == it2 ) continue;
 			already_docked[ std::make_pair( *it1, *it2 ) ] = true;
@@ -981,7 +981,7 @@ void
 StepWiseMoveSelector::get_submotif_add_moves( pose::Pose const & pose,
 	utility::vector1< StepWiseMove > & swa_moves ) {
 
-	if ( submotif_library_ == 0 ) return;
+	if ( submotif_library_ == nullptr ) return;
 
 	utility::vector1< StepWiseMove > submotif_from_scratch_moves = submotif_library_->get_submotif_moves( pose );
 
@@ -1033,9 +1033,9 @@ StepWiseMoveSelector::filter_add_submotif_moves_to_not_redock_domain(
 		std::set< Size > const dock_domains = get_dock_domains( submotif_add_moves[ n ].move_element(), pose );
 		// if any are already docked in pose, better not make a second jump connection via this submotif.
 		bool ok_to_dock( true );
-		for ( std::set< Size >::const_iterator it1 = dock_domains.begin(),
+		for ( auto it1 = dock_domains.begin(),
 				end1 = dock_domains.end(); it1 != end1; ++it1 ) {
-			for ( std::set< Size >::const_iterator it2 = it1,
+			for ( auto it2 = it1,
 					end2 = dock_domains.end(); it2 != end2; ++it2 ) {
 				if ( already_docked[ std::make_pair( *it1, *it2 ) ] ) {
 					ok_to_dock = false;
@@ -1142,7 +1142,7 @@ StepWiseMoveSelector::get_vary_loop_length_moves( pose::Pose const & pose,
 {
 	FullModelParametersCOP full_model_parameters( const_full_model_info( pose ).full_model_parameters() );
 	FullModelParametersCOP parent_full_model_parameters( full_model_parameters->parent_full_model_parameters() );
-	runtime_assert( parent_full_model_parameters != 0 );
+	runtime_assert( parent_full_model_parameters != nullptr );
 	utility::vector1< Size > const & slice_res_list = const_full_model_info( pose ).full_model_parameters()->slice_res_list();
 	utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
 	Size const nres = full_model_parameters->size();

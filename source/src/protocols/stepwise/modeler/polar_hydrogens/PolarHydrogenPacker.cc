@@ -84,8 +84,7 @@ PolarHydrogenPacker::PolarHydrogenPacker():
 }
 
 //Destructor
-PolarHydrogenPacker::~PolarHydrogenPacker()
-{}
+PolarHydrogenPacker::~PolarHydrogenPacker() = default;
 
 ///////////////////////////////////////////////////////////////////////////////////
 void

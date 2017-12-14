@@ -26,6 +26,7 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
@@ -45,10 +46,10 @@ RemoveConstraints::RemoveConstraints():
 }
 
 RemoveConstraints::RemoveConstraints(
-	ConstraintGeneratorCOPs const & generators,
+	ConstraintGeneratorCOPs  generators,
 	bool const exception_on_failure ):
 	protocols::moves::Mover( RemoveConstraints::mover_name() ),
-	generators_( generators ),
+	generators_(std::move( generators )),
 	exception_on_failure_( exception_on_failure )
 {
 }

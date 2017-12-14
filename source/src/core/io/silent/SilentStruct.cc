@@ -69,6 +69,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <core/sequence/AnnotatedSequence.hh>
@@ -101,7 +102,7 @@ SilentStruct::SilentStruct( SilentFileOptions const & opts ) :
 	options_( opts )
 {}
 
-SilentStruct::~SilentStruct() {}
+SilentStruct::~SilentStruct() = default;
 
 SilentStruct::SilentStruct( SilentStruct const & src ) :
 	ReferenceCount(),
@@ -286,7 +287,7 @@ void SilentStruct::read_score_headers( std::string const & line, utility::vector
 void
 SilentStruct::print_header( std::ostream & out ) const {
 	out << "SEQUENCE: ";
-	if ( full_model_parameters_ != 0 ) {
+	if ( full_model_parameters_ != nullptr ) {
 		out << full_model_parameters_->full_sequence(); // better representative of full modeling problem
 	} else {
 		out << one_letter_sequence();
@@ -711,7 +712,7 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 		= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap >
 		( pose.data().get_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
-	runtime_assert( data.get() != NULL );
+	runtime_assert( data.get() != nullptr );
 
 	EnergyMap weights;
 	EnergyMap & emap( pose.energies().total_energies() );
@@ -726,7 +727,7 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 		}
 	}
 
-	typedef vector1< SilentEnergy > elist;
+	using elist = vector1<SilentEnergy>;
 	elist es = energies();
 	for ( auto const & elem : es ) {
 		// only keep this score if we want it.
@@ -1080,7 +1081,7 @@ SilentStruct::residue_numbers_into_pose( pose::Pose & pose ) const{
 void
 SilentStruct::full_model_info_into_pose( pose::Pose & pose ) const {
 	using namespace core::pose::full_model_info;
-	if ( full_model_parameters_ == 0 )  return;
+	if ( full_model_parameters_ == nullptr )  return;
 
 	FullModelInfoOP full_model_info( new FullModelInfo( full_model_parameters_ ) );
 	if ( residue_numbers_.size() > 0 ) {
@@ -1157,8 +1158,8 @@ SilentStruct::figure_out_segment_ids_from_line( std::istream & line_stream ) {
 		std::vector< int >  const & resnums       = resnum_and_segid.first;
 		std::vector< std::string > const & segid  = resnum_and_segid.second;
 		if ( string_ok ) {
-			for ( Size i = 0; i < resnums.size(); i++ ) residue_numbers.push_back( resnums[i] );
-			for ( Size i = 0; i < segid.size(); i++ ) segment_ids.push_back( segid[i] );
+			for ( int resnum : resnums ) residue_numbers.push_back( resnum );
+			for ( auto const & i : segid ) segment_ids.push_back( i );
 		} else break;
 		line_stream >> resnum_string;
 	}
@@ -1173,7 +1174,7 @@ SilentStruct::figure_out_segment_ids_from_line( std::istream & line_stream ) {
 void
 SilentStruct::add_submotif_info_from_line( std::istream & line_stream ) {
 	using namespace core::pose::full_model_info;
-	if ( full_model_parameters_ == 0 )  return;
+	if ( full_model_parameters_ == nullptr )  return;
 
 	SubMotifInfoOP submotif_info( new SubMotifInfo() );
 	line_stream >> submotif_info;

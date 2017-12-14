@@ -50,7 +50,7 @@ struct RestypeDestructionEvent {
 	/// @brief copy assignment
 	inline
 	RestypeDestructionEvent &
-	operator =( RestypeDestructionEvent const & rval ) = default;
+	operator =( RestypeDestructionEvent const & /*rval*/ ) = default;
 
 	/// @brief the ResidueType firing the signal
 	ResidueType const * restype;

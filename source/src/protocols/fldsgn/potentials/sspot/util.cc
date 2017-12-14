@@ -32,10 +32,10 @@ namespace fldsgn {
 namespace potentials {
 namespace sspot {
 
-typedef core::Size Size;
-typedef core::Real Real;
-typedef core::Vector Vector;
-typedef core::pose::Pose Pose;
+using Size = core::Size;
+using Real = core::Real;
+using Vector = core::Vector;
+using Pose = core::pose::Pose;
 
 /// @details define a coordinate system with Z axis along cen1->a2 (v1),
 /// xz plane defined by cen1->a2 and v21. and origin at cen1.

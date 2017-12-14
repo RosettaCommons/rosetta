@@ -164,7 +164,7 @@ bool PeakAssignmentResidueMap::has( core::Size res1, core::Size res2 ) {
 void PeakAssignmentResidueMap::add( CrossPeakList const& cpl ) {
 #ifndef WIN32
 	for ( auto const & it : cpl.peaks() ) {
-		for ( const auto & ait : it->assignments() ) {
+		for ( auto const & ait : it->assignments() ) {
 			add( ait );
 		}
 	}
@@ -257,7 +257,7 @@ void PeakAssignmentResidueMap::check_for_symmetric_peaks( CrossPeakList& cpl, bo
 #endif
 }
 
-typedef PeakAssignmentResidueMap::PeakAssignments PeakAssignments;
+using PeakAssignments = PeakAssignmentResidueMap::PeakAssignments;
 void retrieve_assignment( PeakAssignments const& list, Size resonance_id1, Size resonance_id2, PeakAssignments& intra_res_NOEs ) {
 #ifndef WIN32
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_NETWORK_RETRIEVE_ASSIGN );

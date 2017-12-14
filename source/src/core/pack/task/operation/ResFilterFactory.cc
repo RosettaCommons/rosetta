@@ -36,9 +36,9 @@ namespace pack {
 namespace task {
 namespace operation {
 
-ResFilterFactory::ResFilterFactory() {}
+ResFilterFactory::ResFilterFactory() = default;
 
-ResFilterFactory::~ResFilterFactory(){}
+ResFilterFactory::~ResFilterFactory()= default;
 
 void
 ResFilterFactory::factory_register( ResFilterCreatorOP creator )
@@ -50,7 +50,7 @@ ResFilterFactory::factory_register( ResFilterCreatorOP creator )
 void
 ResFilterFactory::add_creator( ResFilterCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	filter_creator_map_[ creator->keyname() ] = creator;
 }
 
@@ -73,15 +73,15 @@ ResFilterFactory::newResFilter(
 	TagCOP tag
 ) const
 {
-	ResFilterCreatorMap::const_iterator iter( filter_creator_map_.find( type ) );
+	auto iter( filter_creator_map_.find( type ) );
 	if ( iter != filter_creator_map_.end() ) {
 		ResFilterOP filter( iter->second->create_res_filter() );
 		// parse tag if tag pointer is pointing to one
-		if ( tag.get() != NULL ) filter->parse_tag( tag );
+		if ( tag.get() != nullptr ) filter->parse_tag( tag );
 		return filter;
 	} else {
 		utility_exit_with_message( type + " is not known to the ResFilterFactory. Was its ResFilterCreator class registered at initialization?" );
-		return NULL;
+		return nullptr;
 	}
 }
 

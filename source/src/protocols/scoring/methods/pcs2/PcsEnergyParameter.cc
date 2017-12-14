@@ -54,12 +54,9 @@ namespace pcs2 {
 
 static basic::Tracer TR_PcsEnergyParameter( "protocols.scoring.methods.pcs.PcsEnergyParameter" );
 
-PcsEnergyParameter::PcsEnergyParameter(){
+PcsEnergyParameter::PcsEnergyParameter()= default;
 
-}
-
-PcsEnergyParameter::~PcsEnergyParameter(){
-}
+PcsEnergyParameter::~PcsEnergyParameter()= default;
 
 PcsEnergyParameter &
 PcsEnergyParameter::operator=(PcsEnergyParameter const & other){

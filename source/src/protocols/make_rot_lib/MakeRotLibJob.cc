@@ -23,7 +23,7 @@ namespace protocols {
 namespace make_rot_lib {
 
 MakeRotLibJob::MakeRotLibJob( jd2::InnerJobOP inner_job, core::Size nstruct_index,
-	core::Real omg, utility::vector1< core::Real > bbs, utility::vector1< core::Size > bb_ids, core::Real eps,
+	core::Real omg, utility::vector1< core::Real > const & bbs, utility::vector1< core::Size > const & bb_ids, core::Real eps,
 	MakeRotLibOptionsDataOP mrlod, bool semirotameric ) :
 	jd2::Job( inner_job, nstruct_index ),
 	omg_( omg ),

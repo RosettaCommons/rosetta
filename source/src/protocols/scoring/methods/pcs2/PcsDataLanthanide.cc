@@ -41,6 +41,7 @@
 #include <basic/options/keys/PCS.OptionKeys.gen.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
@@ -61,8 +62,7 @@ using namespace ObjexxFCL;
 
 static basic::Tracer TR_PcsDataLanthanide( "protocols.scoring.methods.pcs.PcsDataLanthanide" );
 
-PcsDataLanthanide::~PcsDataLanthanide(){
-}
+PcsDataLanthanide::~PcsDataLanthanide()= default;
 
 PcsDataLanthanide::PcsDataLanthanide(PcsDataLanthanide const &other):
 	filename_(other.filename_),  weight_(other.weight_), svd_s_(other.svd_s_)
@@ -301,7 +301,7 @@ reduced_size(utility::vector1< PcsInputLine > const & pcs_i_l_v, core::Size star
 }
 
 
-PcsDataLanthanide::PcsDataLanthanide(std::string filename,
+PcsDataLanthanide::PcsDataLanthanide(std::string const & filename,
 	core::Real const weight,
 	utility::vector1< PcsInputLine > & pcs_i_l_v,
 	core::Size start,

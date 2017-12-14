@@ -64,11 +64,11 @@ namespace dssp {
 
 
 Dssp::Dssp( core::pose::Pose const& pose ) {
-	pair_set_ = NULL;
+	pair_set_ = nullptr;
 	compute( pose );
 }
 
-Dssp::~Dssp() {}
+Dssp::~Dssp() = default;
 
 //////////////////////////////////////////////////////////////////////////////
 ///
@@ -476,15 +476,15 @@ Dssp::bb_pair_score( Size res1, Size res2 )
 Size
 Dssp::num_pairings(Size resi ) const {
 	Size npair = 0;
-	for ( StrandPairingSet::const_iterator i = pair_set_->begin(); i != pair_set_->end(); ++i ) {
-		if ( i->contains(resi) ) ++npair;
+	for ( auto const & i : *pair_set_ ) {
+		if ( i.contains(resi) ) ++npair;
 	}
 	return npair;
 }
 bool
 Dssp::in_paired_strands(Size res1, Size res2 ) const {
-	for ( StrandPairingSet::const_iterator i = pair_set_->begin(); i != pair_set_->end(); ++i ) {
-		if ( i->contains(res1) && i->contains(res2) ) return true;
+	for ( auto const & i : *pair_set_ ) {
+		if ( i.contains(res1) && i.contains(res2) ) return true;
 	}
 	return false;
 }

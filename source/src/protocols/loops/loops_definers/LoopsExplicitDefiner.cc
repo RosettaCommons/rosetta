@@ -61,11 +61,9 @@ LoopsExplicitDefiner::LoopsExplicitDefiner() :
 	loop_list_()
 {}
 
-LoopsExplicitDefiner::~LoopsExplicitDefiner() {}
+LoopsExplicitDefiner::~LoopsExplicitDefiner() = default;
 
-LoopsExplicitDefiner::LoopsExplicitDefiner(LoopsExplicitDefiner const & src) : LoopsDefiner(src),
-	loop_list_(src.loop_list_)
-{}
+LoopsExplicitDefiner::LoopsExplicitDefiner(LoopsExplicitDefiner const & /*src*/) = default;
 
 /// @brief Create another loops definer of the type matching the most-derived
 /// version of the class.
@@ -126,8 +124,8 @@ LoopsExplicitDefiner::parse_my_tag(
 	string const loops_name(tag->getOption<string>("name"));
 
 
-	vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
-	vector0< TagCOP >::const_iterator end=tag->getTags().end();
+	auto begin=tag->getTags().begin();
+	auto end=tag->getTags().end();
 
 	for ( ; begin != end; ++begin ) {
 		TagCOP loop_tag= *begin;
@@ -160,7 +158,7 @@ std::string LoopsExplicitDefiner::class_name()
 void LoopsExplicitDefiner::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 
 	AttributeList loop_attributes;
 	loop_attributes

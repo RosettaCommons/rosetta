@@ -386,7 +386,7 @@ densityTools()
 			(*scorefxn)(fullpose);
 
 			for ( core::uint r = 1; r <= nres; ++r ) {
-				perResCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , fullpose.residue(r), fullpose, NULL , false);
+				perResCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , fullpose.residue(r), fullpose, nullptr , false);
 			}
 			protocols::hybridization::FragmentBiasAssigner fa(fullpose);
 			fa.automode_scores( fullpose, perResStrain );

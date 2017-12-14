@@ -49,10 +49,7 @@ FullModelInnerLarvalJob::FullModelInnerLarvalJob( core::Size nstruct, core::Size
 	prelim_job_node_( prelim_job_node )
 {}
 
-FullModelInnerLarvalJob::FullModelInnerLarvalJob( FullModelInnerLarvalJob const & src ) :
-	InnerLarvalJob( src ),
-	prelim_job_node_( src.prelim_job_node_ )
-{}
+FullModelInnerLarvalJob::FullModelInnerLarvalJob( FullModelInnerLarvalJob const & /*src*/ ) = default;
 
 
 FullModelInnerLarvalJob::~FullModelInnerLarvalJob() = default;
@@ -64,7 +61,7 @@ bool
 FullModelInnerLarvalJob::operator == ( InnerLarvalJob const & other ) const
 {
 	if ( InnerLarvalJob::operator == ( other ) ) {
-		FullModelInnerLarvalJob const & other_std = static_cast< FullModelInnerLarvalJob const & > ( other );
+		auto const & other_std = static_cast< FullModelInnerLarvalJob const & > ( other );
 		return prelim_job_node_ == other_std.prelim_job_node_;
 	}
 	return false;

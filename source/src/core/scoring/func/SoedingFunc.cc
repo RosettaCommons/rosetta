@@ -48,7 +48,7 @@ bool SoedingFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	SoedingFunc const & other_downcast( static_cast< SoedingFunc const & > (other) );
+	auto const & other_downcast( static_cast< SoedingFunc const & > (other) );
 	if ( w1_    != other_downcast.w1_    ) return false;
 	if ( mean1_ != other_downcast.mean1_ ) return false;
 	if ( sdev1_ != other_downcast.sdev1_ ) return false;

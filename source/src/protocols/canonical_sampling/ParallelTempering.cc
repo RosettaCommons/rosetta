@@ -299,7 +299,7 @@ ParallelTempering::temperature_move( core::Real MPI_ONLY( score ) ) {
 }
 
 void
-ParallelTempering::shuffle_temperatures( double *energies ) {
+ParallelTempering::shuffle_temperatures( const double *energies ) {
 	last_exchange_schedule_ = ( last_exchange_schedule_ + 1 ) % 2;
 	ExchangeSchedule const& ex( exchange_schedules_[ last_exchange_schedule_ ] );
 

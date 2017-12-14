@@ -103,7 +103,7 @@ void read_loop_fragments(
 	}
 
 	for ( Size i = 1; i <= frag_sizes.size(); ++i ) {
-		Size const frag_size = Size(frag_sizes[i]);
+		auto const frag_size = Size(frag_sizes[i]);
 
 		FragSetOP frag_lib_op( new ConstantLengthFragSet( frag_size ) );
 		//protocols::frags::TorsionFragmentLibraryOP frag_lib_op( new protocols::frags::TorsionFragmentLibrary );

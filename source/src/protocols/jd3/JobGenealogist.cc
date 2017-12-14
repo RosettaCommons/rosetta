@@ -34,7 +34,7 @@ JobGenealogist::JobGenealogist() :
 
 JobGenealogist::JobGenealogist( JobGenealogist const & ) = default;
 
-JobGenealogist::~JobGenealogist() {}
+JobGenealogist::~JobGenealogist() = default;
 
 JobGenealogist & JobGenealogist::operator = ( JobGenealogist const & ) = default;
 

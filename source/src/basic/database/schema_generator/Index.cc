@@ -14,6 +14,7 @@
 
 #include <basic/database/schema_generator/Index.hh>
 #include <basic/database/schema_generator/Column.hh>
+#include <utility>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
@@ -54,15 +55,10 @@ Index::Index(
 	bool unique
 ) :
 	unique_(unique),
-	columns_(columns)
+	columns_(std::move(columns))
 {}
 
-Index::Index(
-	Index const & src
-) :
-	unique_(src.unique_),
-	columns_(src.columns_)
-{}
+Index::Index( Index const & /*src*/ ) = default;
 
 Columns
 Index::columns(){

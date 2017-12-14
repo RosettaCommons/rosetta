@@ -18,6 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.legacy.screener.RNA_AtrRepScreener" );
 
@@ -38,14 +39,13 @@ namespace screener {
 //Constructor
 RNA_AtrRepScreener::RNA_AtrRepScreener( RNA_AtrRepCheckerOP atr_rep_checker,
 	pose::Pose & screening_pose ):
-	atr_rep_checker_( atr_rep_checker ),
+	atr_rep_checker_(std::move( atr_rep_checker )),
 	screening_pose_( screening_pose ),
 	exit_on_fail_( false )
 {}
 
 //Destructor
-RNA_AtrRepScreener::~RNA_AtrRepScreener()
-{}
+RNA_AtrRepScreener::~RNA_AtrRepScreener() = default;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 bool

@@ -12,7 +12,7 @@
 namespace basic {
 namespace datacache {
 
-HierarchicalDataMap::HierarchicalDataMap() {}
+HierarchicalDataMap::HierarchicalDataMap() = default;
 
 HierarchicalDataMap::~HierarchicalDataMap() = default;
 

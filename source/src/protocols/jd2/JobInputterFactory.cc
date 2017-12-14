@@ -37,8 +37,7 @@ namespace jd2 {
 
 static basic::Tracer TR( "protocols.jd2.JobInputterFactory" );
 
-JobInputterFactory::JobInputterFactory()
-{}
+JobInputterFactory::JobInputterFactory() = default;
 
 JobInputterFactory::~JobInputterFactory()= default;
 

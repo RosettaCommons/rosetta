@@ -90,7 +90,7 @@ private:
 	core::Real rmsThreshold_;
 	std::string output_chains_;
 
-	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
+	//core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 };
 
 /////////////

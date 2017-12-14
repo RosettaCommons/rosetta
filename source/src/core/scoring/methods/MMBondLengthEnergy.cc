@@ -70,7 +70,7 @@ MMBondLengthEnergy::MMBondLengthEnergy( MMBondLengthEnergy const & src ):
 	parent( src )
 {}
 
-MMBondLengthEnergy::~MMBondLengthEnergy() {}
+MMBondLengthEnergy::~MMBondLengthEnergy() = default;
 
 
 /// clone

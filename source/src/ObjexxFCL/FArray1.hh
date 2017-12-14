@@ -453,7 +453,10 @@ public: // Inspector
 			T const length_i( sarray_[ i ] );
 			length_sq += length_i * length_i;
 		}
-		return std::sqrt( length_sq );
+		// The explicit cast is necessary because you could
+		// be given an FArray of bools or something
+		// (you get warnings for that implicit conversion)
+		return static_cast< T >( std::sqrt( length_sq ) );
 	}
 
 

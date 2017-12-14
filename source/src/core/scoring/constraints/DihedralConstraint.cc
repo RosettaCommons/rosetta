@@ -334,7 +334,7 @@ DihedralConstraint::remap_resid(
 			remap_a4( atom4_.atomno(), seqmap[atom4_.rsd()] );
 		return ConstraintOP( new DihedralConstraint( remap_a1, remap_a2, remap_a3, remap_a4, this->func_ ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -364,7 +364,7 @@ ConstraintOP DihedralConstraint::remapped_clone( pose::Pose const& src, pose::Po
 	if ( id1.valid() && id2.valid() &&  id3.valid() && id4.valid()  ) {
 		return ConstraintOP( new DihedralConstraint( id1, id2, id3, id4, func_ ? func_->clone() : func_, score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -459,7 +459,7 @@ DihedralConstraint::operator == ( Constraint const & other_cst ) const
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	DihedralConstraint const & other( static_cast< DihedralConstraint const & > (other_cst) );
+	auto const & other( static_cast< DihedralConstraint const & > (other_cst) );
 
 	if ( atom1_ != other.atom1_ ) return false;
 	if ( atom2_ != other.atom2_ ) return false;

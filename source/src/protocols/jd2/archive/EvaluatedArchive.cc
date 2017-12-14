@@ -85,7 +85,7 @@ namespace archive {
 using namespace core;
 using namespace core::io::silent;
 
-EvaluatedArchive::~EvaluatedArchive() {}
+EvaluatedArchive::~EvaluatedArchive() = default;
 
 
 EvaluatedArchive::EvaluatedArchive()
@@ -109,7 +109,7 @@ EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
 }
 
 void EvaluatedArchive::start_evaluation_timer() const {
-	start_eval_time_ = time(NULL);
+	start_eval_time_ = time(nullptr);
 	tr.Trace << "start evaluation" << std::endl;
 }
 
@@ -140,12 +140,12 @@ bool EvaluatedArchive::add_evaluated_structure(
 	if ( numeric::isnan( new_decoy_score ) ) return false;
 
 	//find position in sorted list to insert
-	SilentStructs::iterator iss = decoys().begin();
+	auto iss = decoys().begin();
 	while ( iss != decoys().end() && new_decoy_score >= select_score( *iss ) ) ++iss;
 
 	//if we are at the end this decoy has a worse score than all others
 	if ( iss != decoys().end() || decoys().size() < nstruct() ) {
-		int now = time(NULL);
+		int now = time(nullptr);
 		int eval_time = now-start_eval_time_;
 		evaluated_decoy->add_energy( "eval_time", 1.0*eval_time, 1.0 );
 		tr.Trace << "add evaluated structure " << evaluated_decoy->decoy_tag() << "  after " << eval_time << " seconds of evaluation."<< std::endl;
@@ -223,7 +223,7 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 	if ( pss->has_energy( "total_eval_time" ) ) {
 		total_time = static_cast<int>(pss->get_energy( "total_eval_time" ));
 	}
-	total_time += time(NULL)-start_eval_time_;
+	total_time += time(nullptr)-start_eval_time_;
 	pss->add_energy( "total_eval_time", total_time, 1.0 );
 	return pss;
 
@@ -242,11 +242,10 @@ EvaluatedArchive::evaluate_pose( core::io::silent::SilentStructOP iss, core::pos
 
 	//apply evaluators
 	PROF_START( basic::ARCHIVE_EVALUATORS );
-	for ( EvaluatorMap::const_iterator it=evaluators_.begin(), eit=evaluators_.end();
-			it!=eit; ++it ) {
+	for ( auto const & evaluator : evaluators_ ) {
 		//  tr.Trace << "evaluate with " << it->first << std::endl;
 		//  basic::DynamicProfileThis here( "Evaluate "+it->first );
-		it->second->apply( pose, iss->decoy_tag(), *iss );
+		evaluator.second->apply( pose, iss->decoy_tag(), *iss );
 	}
 	PROF_STOP( basic::ARCHIVE_EVALUATORS );
 
@@ -314,7 +313,7 @@ bool EvaluatedArchive::restore_from_file() {
 
 class SortPredicate {
 public:
-	SortPredicate( EvaluatedArchive& arc ) : arc_( arc ) {};
+	explicit SortPredicate( EvaluatedArchive& arc ) : arc_( arc ) {};
 	bool operator() (SilentStructOP const& pss1, SilentStructOP const& pss2 ) {
 		return arc_.select_score( pss1 ) < arc_.select_score( pss2 );
 	}
@@ -339,8 +338,8 @@ void EvaluatedArchive::rescore() {
 		tr.Info << name << " " << weight << " " << weight / variations.find( name )->second << std::endl;
 	}
 	//rescore all decoys
-	for ( SilentStructs::iterator iss = decoys().begin(); iss != decoys().end(); ++iss ) {
-		*iss = evaluate_silent_struct( *iss ); //_archive_select_score_ will be removed here
+	for ( auto & iss : decoys() ) {
+		iss = evaluate_silent_struct( iss ); //_archive_select_score_ will be removed here
 	}
 	scores_are_clean_ = true; //do this first, since SortPredicate asks for the select_score
 	sort(); //here the summing is done via select_score() and a new _archive_select_score_ is computed
@@ -370,10 +369,10 @@ void EvaluatedArchive::remove_evaluation( std::string const& name ) {
 	tr.Info << "remve evaluator " << name << std::endl;
 	std::string const& column( name );
 
-	EvaluatorMap::iterator iter = evaluators_.find( column );
+	auto iter = evaluators_.find( column );
 	if ( iter != evaluators_.end() )  evaluators_.erase( iter );
 
-	WeightMap::iterator iter2 = select_weights_.find( column );
+	auto iter2 = select_weights_.find( column );
 	if ( iter2 != select_weights_.end() ) {
 		// AMW: cppcheck rightly complains!
 		// switching the order. (can't ask for iter2->second AFTER erasing it.
@@ -399,8 +398,8 @@ void EvaluatedArchive::set_weight( std::string const& column, core::Real weight 
 
 void EvaluatedArchive::set_weights( WeightMap const& setting ) {
 	select_weights_.clear();
-	for ( WeightMap::const_iterator it = setting.begin(); it != setting.end(); ++it ) {
-		set_weight( it->first, it->second );
+	for ( auto const & it : setting ) {
+		set_weight( it.first, it.second );
 	}
 }
 
@@ -410,15 +409,15 @@ EvaluatedArchive::WeightMap const& EvaluatedArchive::score_variations() const {
 
 void EvaluatedArchive::set_evaluators( EvaluatorMap const& evaluators, WeightMap const& weights ) {
 	evaluators_.clear();
-	for ( EvaluatorMap::const_iterator it = evaluators.begin(); it != evaluators.end(); ++it ) {
-		WeightMap::const_iterator itfind=weights.find( it->first );
-		add_evaluation( it->second, itfind->second );
+	for ( auto const & evaluator : evaluators ) {
+		auto itfind=weights.find( evaluator.first );
+		add_evaluation( evaluator.second, itfind->second );
 	}
 }
 
 core::Real EvaluatedArchive::get_weight( std::string const& column ) const {
 	// runtime_assert( has_evaluator( column ) ); or part of score!
-	WeightMap::const_iterator iter = select_weights_.find( column );
+	auto iter = select_weights_.find( column );
 	if ( iter != select_weights_.end() ) return iter->second;
 	else return 0.0;
 }
@@ -439,13 +438,13 @@ void EvaluatedArchive::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) {
 
 core::scoring::ScoreFunction const &
 EvaluatedArchive::scorefxn() const {
-	runtime_assert( scorefxn_ != 0 );
+	runtime_assert( scorefxn_ != nullptr );
 	return *scorefxn_;
 }
 
 core::scoring::ScoreFunctionOP
 EvaluatedArchive::scorefxn_non_const() {
-	runtime_assert( scorefxn_ != 0 );
+	runtime_assert( scorefxn_ != nullptr );
 	return scorefxn_;
 }
 

@@ -46,8 +46,7 @@ static basic::Tracer TR( "protocols.simple_moves.Tumble" );
 namespace protocols {
 namespace simple_moves {
 
-Tumble::Tumble() {
-}
+Tumble::Tumble() = default;
 
 Tumble::~Tumble() = default;
 
@@ -111,7 +110,7 @@ Tumble::parse_my_tag(
 	Pose const & pose
 ) {
 	if ( tag->hasOption( "chain_number" ) ) {
-		core::Size chain = tag->getOption< core::Size >( "chain_number" );
+		auto chain = tag->getOption< core::Size >( "chain_number" );
 		for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 			if ( pose.residue(ires).chain() == chain ) {
 				TR.Debug << "Adding residue " << ires << std::endl;

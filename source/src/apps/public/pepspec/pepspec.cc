@@ -543,7 +543,7 @@ has_clash(
 				iru  = energy_graph.get_node( seqpos )->lower_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->lower_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+			auto * edge( static_cast< EnergyEdge *> (*iru) );
 			//   Size const j( edge->get_first_node_ind() );
 
 			// the pair energies cached in the link
@@ -562,7 +562,7 @@ has_clash(
 				iru  = energy_graph.get_node( seqpos )->upper_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+			auto * edge( static_cast< EnergyEdge *> (*iru) );
 			//   Size const j( edge->get_second_node_ind() );
 
 			// the pair energies cached in the link
@@ -603,7 +603,7 @@ get_clash_pairs(
 				iru  = energy_graph.get_node( seqpos )->lower_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->lower_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+			auto * edge( static_cast< EnergyEdge *> (*iru) );
 			Size const j( edge->get_first_node_ind() );
 
 			// the pair energies cached in the link
@@ -618,7 +618,7 @@ get_clash_pairs(
 				iru  = energy_graph.get_node( seqpos )->upper_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+			auto * edge( static_cast< EnergyEdge *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 
 			// the pair energies cached in the link

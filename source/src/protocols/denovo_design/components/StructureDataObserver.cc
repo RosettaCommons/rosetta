@@ -24,6 +24,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 // Boost/ObjexxFCL headers
@@ -60,7 +61,7 @@ StructureDataObserver::StructureDataObserver():
 /// @brief default constructor
 StructureDataObserver::StructureDataObserver( StructureDataOP sd_op ):
 	core::pose::datacache::CacheableObserver(),
-	sd_( sd_op ),
+	sd_(std::move( sd_op )),
 	length_event_link_()
 {
 }

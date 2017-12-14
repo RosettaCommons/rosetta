@@ -99,12 +99,11 @@ poses_from_cmd_line(
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
 
-	typedef vector1< string >::const_iterator iter;
-	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
-		if ( file_exists(*it) ) {
+	for ( auto const & it : fn_list ) {
+		if ( file_exists(it) ) {
 			Pose pose;
-			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
-			string name = utility::file_basename( *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, it , core::import_pose::PDB_file);
+			string name = utility::file_basename( it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
 		}
@@ -120,9 +119,8 @@ void print_seq_map(
 	using std::map;
 	using std::string;
 	using core::sequence::SequenceOP;
-	typedef map< string, SequenceOP >::const_iterator iter;
-	for ( iter it = seqs.begin(), end = seqs.end(); it != end; ++it ) {
-		out << it->first << " => " << *it->second << std::endl;
+	for ( auto const & seq : seqs ) {
+		out << seq.first << " => " << *seq.second << std::endl;
 	}
 }
 
@@ -137,13 +135,12 @@ sequences_from_cmd_line(
 
 	map< string, SequenceOP > seqs;
 
-	typedef vector1< string >::const_iterator iter;
-	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
+	for ( auto const & it : fn_list ) {
 		SequenceProfileOP prof( new SequenceProfile );
-		if ( file_exists(*it) ) {
-			prof->read_from_file( *it );
+		if ( file_exists(it) ) {
+			prof->read_from_file( it );
 			prof->convert_profile_to_probs( 1.0 ); // was previously implicit in read_from_file()
-			string name = utility::file_basename( *it );
+			string name = utility::file_basename( it );
 			name = name.substr( 0, 5 );
 			seqs[name] = prof;
 		}
@@ -241,7 +238,7 @@ main( int argc, char* argv [] ) {
 		SilentFileOptions opts; // initialized from the command line
 		SilentFileData sfd(opts);
 
-		typedef vector1< string >::const_iterator aln_iter;
+		using aln_iter = vector1<string>::const_iterator;
 		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
 				aln_fn != aln_end; ++aln_fn
 				) {
@@ -249,15 +246,12 @@ main( int argc, char* argv [] ) {
 				option[ cm::aln_format ](), *aln_fn
 			);
 
-			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-					end = alns.end();
-					it != end; ++it
-					) {
-				string const template_id( it->sequence(2)->id().substr(0,5) );
-				tr << *it << std::endl;
-				tr << "id " << it->sequence(2)->id() << " => " << template_id
+			for ( auto & it : alns ) {
+				string const template_id( it.sequence(2)->id().substr(0,5) );
+				tr << it << std::endl;
+				tr << "id " << it.sequence(2)->id() << " => " << template_id
 					<< std::endl;
-				string const ungapped_query( it->sequence(1)->ungapped_sequence() );
+				string const ungapped_query( it.sequence(1)->ungapped_sequence() );
 
 				SilentStructOP ss_out( new ScoreFileSilentStruct(opts) );
 				//bool encountered_error(false);
@@ -274,13 +268,13 @@ main( int argc, char* argv [] ) {
 					utility::vector1< SequenceOP > my_seqs;
 					my_seqs.push_back( query_prof->clone() );
 					my_seqs.push_back( template_prof->clone() );
-					SequenceAlignment rescore_aln = steal_alignment( *it, my_seqs );
+					SequenceAlignment rescore_aln = steal_alignment( it, my_seqs );
 					Real const aln_score( rescore_aln.calculate_score_sum_of_pairs( ss ) );
 					rescore_aln.score( aln_score );
 					//string const ungapped_templ( it->sequence(2)->ungapped_sequence() );
 					save_per_residue_scores(
-						it->sequence(2)->id() + ".dat", rescore_aln, ss,
-						it->sequence(2)->id()
+						it.sequence(2)->id() + ".dat", rescore_aln, ss,
+						it.sequence(2)->id()
 					);
 
 					ss_out->add_energy( "aln_score", aln_score );
@@ -314,7 +308,7 @@ main( int argc, char* argv [] ) {
 						ObjexxFCL::FArray2D< core::Real > p1a( 3, natoms );
 						ObjexxFCL::FArray2D< core::Real > p2a( 3, natoms );
 
-						protocols::comparative_modeling::PartialThreadingMover pt(*it,template_pose);
+						protocols::comparative_modeling::PartialThreadingMover pt(it,template_pose);
 						pt.apply(query_pose);
 						SequenceAlignment aln = core::sequence::align_poses_naive(query_pose,native_pose);
 
@@ -337,7 +331,7 @@ main( int argc, char* argv [] ) {
 					} // template pdb check
 				} // have native
 				ss_out->scoreline_prefix( "" );
-				ss_out->decoy_tag( it->sequence(2)->id() );
+				ss_out->decoy_tag( it.sequence(2)->id() );
 				ss_out->add_string_value( "template", template_id );
 				sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
 			} // alns

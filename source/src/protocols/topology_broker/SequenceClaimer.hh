@@ -50,7 +50,7 @@ class SequenceClaimer : public virtual TopologyClaimer {
 public:
 	SequenceClaimer();
 	SequenceClaimer(
-		std::string sequence,
+		std::string const & sequence,
 		std::string const& label,
 		std::string rsd_type_set_identifier
 	);

@@ -195,9 +195,9 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	TR << "Adding lines to temp_for_truncation vector." << std::endl;
 
 	std::vector< forge::remodel::LineObject > temp_for_truncation; // collection of positions to copy from original pdb
-	for ( int i = 0, ie=(int)data.blueprint.size(); i < ie ; i++ ) {  // loop to extract positions to keep
-		if ( data.blueprint[i].resname != "x" && data.blueprint[i].resname != "X" ) {
-			temp_for_truncation.push_back( data.blueprint[i] );
+	for ( const auto & i : data.blueprint ) {  // loop to extract positions to keep
+		if ( i.resname != "x" && i.resname != "X" ) {
+			temp_for_truncation.push_back( i );
 		}
 	}
 
@@ -225,11 +225,11 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	//std::vector< forge::remodel::Segment > segment_to_copyVector;   // not used
 	//std::vector< forge::remodel::Segment > segment_to_copyNewIndex; // not used
 
-	for ( int i = 0, ie = (int)data.blueprint.size(); i < ie; i++ ) {
-		if ( data.blueprint[i].sstype != "." ) { // first find the segments to be remodelled
-			temp.push_back( data.blueprint[i] );
-		} else if ( data.blueprint[i].sstype == "." ) { // parts to be copied
-			temp_for_copy.push_back(data.blueprint[i]); // lines_residues_to_remodel
+	for ( const auto & i : data.blueprint ) {
+		if ( i.sstype != "." ) { // first find the segments to be remodelled
+			temp.push_back( i );
+		} else if ( i.sstype == "." ) { // parts to be copied
+			temp_for_copy.push_back(i); // lines_residues_to_remodel
 		} else {
 			TR << "workingSetGen(): assignment error" << std::endl;
 		}
@@ -243,8 +243,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 
 		bool denovo = true;
 		//have to loop to identify denovo case
-		for ( int i = 0, ie = (int)data.blueprint.size(); i < ie; i++ ) {
-			if ( data.blueprint[i].sstype == "." ) { //if anywhere hits this assignment, not de novo
+		for ( const auto & i : data.blueprint ) {
+			if ( i.sstype == "." ) { //if anywhere hits this assignment, not de novo
 				denovo = false;
 			}
 		}
@@ -280,8 +280,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	}
 
 	TR.Trace << "temp_for_copy (lines_residues_to_remodel): [ ";
-	for ( Size ii=0; ii < temp_for_copy.size(); ++ii ) {
-		TR.Trace << temp_for_copy[ ii ].original_index << "-" << temp_for_copy[ ii ].index << ", ";
+	for ( auto & ii : temp_for_copy ) {
+		TR.Trace << ii.original_index << "-" << ii.index << ", ";
 	}
 	TR.Trace << "]" << std::endl;
 
@@ -329,8 +329,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	TR.Trace << "segmentStorageVector: [ ";
 	for ( Size ii=0; ii < segmentStorageVector.size(); ++ii ) {
 		TR.Trace << "segment " << ii << ": [ ";
-		for ( Size jj=0; jj < segmentStorageVector[ ii ].residues.size(); ++jj ) {
-			TR.Trace << segmentStorageVector[ ii ].residues[ jj ] << ", ";
+		for ( int residue : segmentStorageVector[ ii ].residues ) {
+			TR.Trace << residue << ", ";
 		}
 		TR.Trace << "], ";
 	}
@@ -342,8 +342,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	using protocols::forge::build::SegmentInsert;
 	using protocols::forge::build::SegmentInsertOP;
 	using protocols::forge::build::BuildInstructionOP;
-	typedef std::string String;
-	typedef core::Size Size;
+	using String = std::string;
+	using Size = core::Size;
 
 	using core::fragment::ConstantLengthFragSet;
 	using core::fragment::ConstantLengthFragSetOP;
@@ -391,13 +391,13 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	runtime_assert (build_aa_type.size() == 1);
 
 	if ( option[OptionKeys::remodel::use_blueprint_sequence]() ) {
-		for ( int i = 0; i < (int)data.blueprint.size(); i++ ) {
-			if ( data.blueprint[i].resname.compare("x") == 0  || data.blueprint[i].resname.compare("X") == 0 ) {
+		for ( const auto & i : data.blueprint ) {
+			if ( i.resname.compare("x") == 0  || i.resname.compare("X") == 0 ) {
 				aa.append(build_aa_type);
 				seq_aa.push_back(build_aa_type);
 			} else {
-				aa.append( data.blueprint[i].resname );
-				seq_aa.push_back(data.blueprint[i].resname);
+				aa.append( i.resname );
+				seq_aa.push_back(i.resname);
 			}
 		}
 		//  runtime_assert( aa.size() == data.dssp_updated_ss.size());
@@ -433,12 +433,12 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	//BuildManager manager;
 
 	// find the begin and end index
-	for ( int i = 0, ie = (int)segmentStorageVector.size(); i < ie ; i++ ) {
-		begin.push_back( segmentStorageVector[i].residues.front() );
-		end.push_back( segmentStorageVector[i].residues.back() );
+	for ( auto & i : segmentStorageVector ) {
+		begin.push_back( i.residues.front() );
+		end.push_back( i.residues.back() );
 
-		core::Size idFront = segmentStorageVector[i].residues.front();
-		core::Size idBack = segmentStorageVector[i].residues.back();
+		core::Size idFront = i.residues.front();
+		core::Size idBack = i.residues.back();
 		core::Size seg_size = (int)data.blueprint.size();
 		//core::Size rep_number =option[OptionKeys::remodel::repeat_structure];
 		std::string DSSP = data.dssp_updated_ss;
@@ -516,7 +516,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		TR << "head " << head << ":" << headNew << ", tail " << tail << ":" << tailNew << ", gap: " << gap
 			<<  ", dssp_updated_ss.size(): " << data.dssp_updated_ss.size() << ", insert_ss: " << data.dssp_updated_ss.substr( headNew-1, gap ) << std::endl; // head-1 because dssp_updated_ss is 0 based std::string
 
-		loops.add_loop( segmentStorageVector[i].residues.front(), segmentStorageVector[i].residues.back(), segmentStorageVector[i].residues.front()+1, 0, 0 );
+		loops.add_loop( i.residues.front(), i.residues.back(), i.residues.front()+1, 0, false );
 
 		// process regions containing insertion
 		if ( headNew <= static_cast<int>(insertStartIndex) && tailNew >= static_cast<int>(insertEndIndex) &&
@@ -585,22 +585,22 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		//c_term_mod_region_aa += seq_aa[segmentStorageVector[i].residues.front()-1+count];
 		}
 		*/
-		if ( head == 0 && segmentStorageVector[i].residues.front() == 1 ) { // N-term extension
+		if ( head == 0 && i.residues.front() == 1 ) { // N-term extension
 			TR << "N-terminal extension found" << std::endl;
 			std::string mod_region_aa;
 			for ( int count = 0; count < gap; count++ ) {
 				mod_region_aa += seq_aa[headNew-1+count];
 			}
 			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), mod_region_aa ) ) );
-		} else if ( tail == 0 && segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) {
+		} else if ( tail == 0 && i.residues.back() == static_cast<int>(model_length) ) {
 			TR << "C-terminal extension found" << std::endl;
-			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
+			gap = (int)data.blueprint.size()-i.residues.front()+1;
 			std::string mod_region_aa;
 			for ( int count = 0; count < gap; count++ ) {
-				mod_region_aa += seq_aa[segmentStorageVector[i].residues.front()-1+count];
+				mod_region_aa += seq_aa[i.residues.front()-1+count];
 			}
-			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), mod_region_aa ) ) );
-		} else if ( head != 0 && headNew == 1 && segmentStorageVector[i].residues.front() == 1 ) { // N-term deletion
+			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( i.residues.front()-1, gap ), mod_region_aa ) ) );
+		} else if ( head != 0 && headNew == 1 && i.residues.front() == 1 ) { // N-term deletion
 			TR << "debug: N-term deletion" << std::endl;
 			std::string mod_region_aa;
 			for ( int count = 0; count < gap; count++ ) {
@@ -608,14 +608,14 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			}
 			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), mod_region_aa ) ) );
 		} else if ( tail != static_cast<int>(input_pose.total_residue()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
-				segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) { // C-term deletion
-			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
+				i.residues.back() == static_cast<int>(model_length) ) { // C-term deletion
+			gap = (int)data.blueprint.size()-i.residues.front()+1;
 			std::string mod_region_aa;
 			for ( int count = 0; count < gap; count++ ) {
-				mod_region_aa += seq_aa[segmentStorageVector[i].residues.front()-1+count];
+				mod_region_aa += seq_aa[i.residues.front()-1+count];
 			}
 			TR << "debug: C-term deletion" << std::endl;
-			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), mod_region_aa ) ) );
+			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( i.residues.front()-1, gap ), mod_region_aa ) ) );
 		} else {
 			TR << "normal rebuild" << std::endl;
 			// if the sequence contains ncaa, handle it properly

@@ -591,7 +591,7 @@ MPI_Refinement::shave_library( SilentStructStore &new_structs,
 {
 	new_structs.sort_by( scorename );
 	core::Size ntot = new_structs.size();
-	core::Size n_to_pop = core::Size( new_structs.size()*frac );
+	auto n_to_pop = core::Size( new_structs.size()*frac );
 	core::Size npop( 0 );
 
 	while ( npop < n_to_pop ) {

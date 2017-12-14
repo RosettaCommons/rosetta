@@ -68,8 +68,7 @@ void SolvationGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 SolvationGrid::SolvationGrid() :SingleGrid("SolvationGrid")
 {}
 
-SolvationGrid::~SolvationGrid()
-{}
+SolvationGrid::~SolvationGrid() = default;
 
 GridBaseOP SolvationGrid::clone() const {
 	return GridBaseOP( new SolvationGrid( *this ) );
@@ -104,7 +103,7 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
 				core::Real total_solvation = 0.0;
 
 
-				for ( std::list<core::conformation::Atom>::iterator it = atom_list.begin(); it != atom_list.end(); ++it ) {
+				for ( auto & it : atom_list ) {
 					//the interface for the etable evaluator gets atr,rep,distance and solvation at once
 					//atr,rep and d2 are dummy variables
 					core::Real atr = 0.0;
@@ -112,7 +111,7 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
 					core::Real sol = 0.0;
 					core::Real d2 = 0.0;
 
-					etable_evaluator.atom_pair_energy(probe, *it, 1.0, atr, rep, sol, d2);
+					etable_evaluator.atom_pair_energy(probe, it, 1.0, atr, rep, sol, d2);
 					total_solvation += sol;
 				}
 

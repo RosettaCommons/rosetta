@@ -38,7 +38,7 @@ namespace scoring {
 namespace mm {
 
 /// @details Auto-generated virtual destructor
-MMLJLibrary::~MMLJLibrary() {}
+MMLJLibrary::~MMLJLibrary() = default;
 
 using basic::Error;
 using basic::Warning;

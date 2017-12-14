@@ -67,7 +67,7 @@ ProteinCore::operator() ( core::pose::Pose const & pose, core::Size index ) cons
 	nsnf.resnum( index );
 	nsnf.jump( jump_ );
 
-	core::Size const neighbor_count( (core::Size) nsnf.compute( pose ) );
+	auto const neighbor_count( (core::Size) nsnf.compute( pose ) );
 	return( neighbor_count >= neighbor_count_cutoff_ );
 }
 

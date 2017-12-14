@@ -99,7 +99,7 @@ SymPackRotamersMover::SymPackRotamersMover(
 	symmetric_ig_(/* 0 */)
 {}
 
-SymPackRotamersMover::~SymPackRotamersMover(){}
+SymPackRotamersMover::~SymPackRotamersMover()= default;
 
 SymPackRotamersMover::SymPackRotamersMover( PackRotamersMover const & other )
 : protocols::simple_moves::PackRotamersMover( other )
@@ -135,19 +135,19 @@ void SymPackRotamersMover::setup( pose::Pose & pose )
 	// jec update_residue_neighbors() required to update EnergyGraph (ensures graph_state == GOOD) when calling Interface.cc
 	pose.update_residue_neighbors();
 	// guarantee of valid ScoreFunction and PackerTask postponed until now
-	if ( score_function() == 0 ) {
+	if ( score_function() == nullptr ) {
 		TR.Warning << "undefined ScoreFunction -- creating a default one" << std::endl;
 		ScoreFunctionCOP scfx ( get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		score_function( scfx );
 	}
 
 	// if present, task_factory_ always overrides/regenerates task_
-	if ( task() != 0 ) {
+	if ( task() != nullptr ) {
 		symmetric_task_ = (task())->clone();
 	}
-	if ( task_factory() != 0 ) {
+	if ( task_factory() != nullptr ) {
 		symmetric_task_ = task_factory()->create_task_and_apply_taskoperations( pose );
-	} else if ( task() == 0 ) {
+	} else if ( task() == nullptr ) {
 		basic::Warning() << "undefined PackerTask -- creating a default one" << std::endl;
 		symmetric_task_ = core::pack::task::TaskFactory::create_packer_task( pose );
 	}
@@ -174,7 +174,7 @@ SymPackRotamersMover::make_symmetric_task(
 		return make_new_symmetric_PackerTask_by_requested_method(pose,task);
 	} // new machinery
 
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 

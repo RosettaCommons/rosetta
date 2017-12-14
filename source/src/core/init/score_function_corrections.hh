@@ -15,7 +15,7 @@
 #ifndef INCLUDED_core_init_score_function_corrections_hh
 #define INCLUDED_core_init_score_function_corrections_hh
 
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <string>
 
 namespace core {
@@ -77,7 +77,7 @@ void init_score_function_corrections( utility::options::OptionCollection & optio
 bool check_score_function_sanity(
 	utility::options::OptionCollection const & options,
 	std::string const & scorefxn_key,
-	bool throw_exception=false);
+	bool throw_exception = false );
 
 /// @brief  Apply some DNA-specific mods that are still in testing phase; only if -corrections::newdna present
 void

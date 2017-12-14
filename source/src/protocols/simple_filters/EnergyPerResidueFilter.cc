@@ -176,8 +176,8 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );
 	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
-	whole_interface_ = tag->getOption<bool>( "whole_interface" , 0 );
-	whole_protein_ = tag->getOption<bool>( "whole_protein" , 0 );
+	whole_interface_ = tag->getOption<bool>( "whole_interface" , false );
+	whole_protein_ = tag->getOption<bool>( "whole_protein" , false );
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 1 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
 	bb_bb_ = tag->getOption< bool >("bb_bb", false );
@@ -208,7 +208,7 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 			energy_per_residue_filter_tracer<<"EnergyPerResidueFilter for residue "<<resnum_string_<<" of score_type "<<score_type_<<" with cutoff "<<threshold_<<std::endl;
 		}
 	} else {
-		whole_protein_=1;
+		whole_protein_=true;
 		energy_per_residue_filter_tracer<<"EnergyPerResidueFilter default for whole_protein"<<std::endl;
 	}
 }

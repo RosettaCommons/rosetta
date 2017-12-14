@@ -59,7 +59,7 @@ CartSCMinMultifunc::CartSCMinMultifunc(
 {
 }
 
-CartSCMinMultifunc::~CartSCMinMultifunc() {}
+CartSCMinMultifunc::~CartSCMinMultifunc() = default;
 
 
 //fpd  same as AtomTree version
@@ -89,7 +89,7 @@ CartSCMinMultifunc::operator ()( Multivec const & xs ) const
 			if ( jjmoving && iiresid > jjresid ) continue;
 			conformation::Residue const & jjres( jjmoving ? scminmap_.residue( jjresid ) : *bg_residues_[ jjresid ] );
 
-			MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
+			auto & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
 			if ( iiresid < jjresid ) {
 				minedge.setup_for_scoring( iires, jjres, pose_, sfxn_ );
 			} else {
@@ -117,7 +117,7 @@ CartSCMinMultifunc::operator ()( Multivec const & xs ) const
 			bool const jjmoving = scminmap_.dm()( jjresid ) == 0;
 			if ( jjmoving && iiresid > jjresid ) continue;
 			conformation::Residue const & jjres( jjmoving ? scminmap_.residue( jjresid ) : *bg_residues_[ jjresid ] );
-			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+			auto const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 
 			if ( iiresid < jjresid ) {
 				eval_res_pair_energy_for_minedge( minedge, iires, jjres, pose_, sfxn_, emap );
@@ -155,7 +155,7 @@ CartSCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dx ) const
 			bool const jjmoving = scminmap_.dm()( jjresid ) == 0;
 			if ( jjmoving && iiresid > jjresid ) continue;
 			conformation::Residue const & jjres( jjmoving ? scminmap_.residue( jjresid ) : *bg_residues_[ jjresid ] );
-			MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
+			auto & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
 			if ( iiresid < jjresid ) {
 				minedge.setup_for_derivatives( iires, jjres, pose_, sfxn_ );
 			} else {
@@ -187,7 +187,7 @@ CartSCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dx ) const
 
 			conformation::Residue const & jjres( jjmoving ? scminmap_.residue( jjresid ) : *bg_residues_[ jjresid ] );
 			MinimizationNode const & jjminnode( * g_.get_minimization_node( jjresid ) );
-			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+			auto const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 			if ( iiresid < jjresid ) {
 				eval_atom_derivatives_for_minedge( minedge, iires, jjres,
 					iiminnode.res_min_data(), jjminnode.res_min_data(), pose_, sfxn_.weights(),

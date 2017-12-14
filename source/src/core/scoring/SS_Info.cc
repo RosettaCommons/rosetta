@@ -154,8 +154,7 @@ BB_Pos::update_indices( pose::Pose const & pose )
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// @brief default constructor
-Strands::Strands()
-{}
+Strands::Strands() = default;
 
 /// @brief total residue constructor
 Strands::Strands(
@@ -224,8 +223,7 @@ operator<< ( std::ostream & out, Strands const & s )
 
 
 /// @brief default constructor
-Helices::Helices()
-{}
+Helices::Helices() = default;
 
 /// @brief total residue constructor
 Helices::Helices(

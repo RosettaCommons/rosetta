@@ -9,7 +9,7 @@
 #include <string>
 #include <core/types.hh>
 #include <ostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <devel/init.hh>
 #include <utility>
 #include <protocols/noesy_assign/FragsToAtomDist.fwd.hh>

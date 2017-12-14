@@ -54,7 +54,7 @@ public:
 	PlaceProbeMover();
 
 	PlaceProbeMover(
-		std::string residue_name,
+		std::string const & residue_name,
 		core::conformation::ResidueCOP target_residue,
 		core::Size search_partition = 1,
 		core::Size total_search_partition = 1);

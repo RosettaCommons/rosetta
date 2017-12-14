@@ -64,9 +64,9 @@ public:
 		mdl_cnt_ = 1;
 	}
 
-	virtual ~ComputeSAXSSpectrum() {}
+	~ComputeSAXSSpectrum() override = default;
 
-	virtual void apply( core::pose::Pose & pose ) {
+	void apply( core::pose::Pose & pose ) override {
 
 		saxs_->total_energy(pose);
 		utility::vector1<Real> q = saxs_->get_q();
@@ -80,11 +80,11 @@ public:
 		mdl_cnt_++;
 	}
 
-	virtual std::string get_name() const { return "ComputeSAXSSpectrum"; }
+	std::string get_name() const override { return "ComputeSAXSSpectrum"; }
 
 private:
 	Size mdl_cnt_;
-	typedef utility::pointer::shared_ptr< core::scoring::saxs::SAXSEnergy > SAXSEnergyOP;
+	using SAXSEnergyOP = utility::pointer::shared_ptr<core::scoring::saxs::SAXSEnergy>;
 	SAXSEnergyOP saxs_;
 };
 

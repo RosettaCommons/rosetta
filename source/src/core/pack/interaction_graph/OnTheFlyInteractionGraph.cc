@@ -63,8 +63,7 @@ OnTheFlyNode::OnTheFlyNode(
 }
 
 /// @details
-OnTheFlyNode::~OnTheFlyNode()
-{}
+OnTheFlyNode::~OnTheFlyNode() = default;
 
 /// @details avoid polymorphic lookup later by nabbing rotamers now.
 void
@@ -304,7 +303,7 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 	/// For now, long range interactions are computed for the whole residue, and do not divide it into pieces
 	if ( get_incident_otf_edge( edge_making_energy_request )->long_range_interactions_exist() ) {
 		EnergyMap emap;
-		for ( ScoreFunction::LR_2B_MethodIterator iter = get_on_the_fly_owner()->score_function().long_range_energies_begin(),
+		for ( auto iter = get_on_the_fly_owner()->score_function().long_range_energies_begin(),
 				iter_end = get_on_the_fly_owner()->score_function().long_range_energies_end();
 				iter != iter_end; ++iter ) {
 			(*iter)->residue_pair_energy(
@@ -378,7 +377,7 @@ OnTheFlyEdge::OnTheFlyEdge(
 }
 
 
-OnTheFlyEdge::~OnTheFlyEdge(){}
+OnTheFlyEdge::~OnTheFlyEdge()= default;
 
 void
 OnTheFlyEdge::set_ProCorrection_values(
@@ -436,8 +435,7 @@ OnTheFlyInteractionGraph::OnTheFlyInteractionGraph(int num_nodes )
 	num_aa_types_( 0 )
 {}
 
-OnTheFlyInteractionGraph::~OnTheFlyInteractionGraph()
-{}
+OnTheFlyInteractionGraph::~OnTheFlyInteractionGraph() = default;
 
 bool
 OnTheFlyInteractionGraph::distinguish_backbone_and_sidechain_for_node( int node_ind ) const
@@ -457,7 +455,7 @@ OnTheFlyInteractionGraph::initialize(
 	rotamer_set::RotamerSetsBase const & rot_sets_base
 )
 {
-	rotamer_set::RotamerSets const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
+	auto const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
 
 	// determine max # of residue types
 	Size max_nresgroups = 0;
@@ -550,8 +548,8 @@ OnTheFlyInteractionGraph::set_sparse_aa_info_for_edge(
 	ObjexxFCL::FArray2_bool const & sparse_conn_info
 )
 {
-	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
-	if ( edge != 0 ) {
+	auto* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != nullptr ) {
 		edge->set_sparse_aa_info( sparse_conn_info );
 	}
 }
@@ -568,8 +566,8 @@ OnTheFlyInteractionGraph::set_ProCorrection_values_for_edge(
 	core::PackerEnergy sc_probb_E
 )
 {
-	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
-	if ( edge != 0 ) {
+	auto* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != nullptr ) {
 		edge->set_ProCorrection_values(
 			node_not_neccessarily_proline, state,
 			bb_regbb_E, bb_probb_E, sc_regbb_E, sc_probb_E );
@@ -588,8 +586,8 @@ OnTheFlyInteractionGraph::set_GlyCorrection_values_for_edge(
 	core::PackerEnergy sc_glybb_E
 )
 {
-	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
-	if ( edge != 0 ) {
+	auto* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != nullptr ) {
 		edge->set_GlyCorrection_values(
 			node_not_neccessarily_glycine, state,
 			bb_regbb_E, bb_glybb_E, sc_regbb_E, sc_glybb_E );
@@ -602,8 +600,8 @@ OnTheFlyInteractionGraph::note_short_range_interactions_exist_for_edge(
 	int node2
 )
 {
-	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
-	if ( edge != 0 ) {
+	auto* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != nullptr ) {
 		edge->note_short_range_interactions_exist();
 	}
 }
@@ -614,8 +612,8 @@ OnTheFlyInteractionGraph::note_long_range_interactions_exist_for_edge(
 	int node2
 )
 {
-	OnTheFlyEdge* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
-	if ( edge != 0 ) {
+	auto* edge = (OnTheFlyEdge*) find_edge( node1, node2 );
+	if ( edge != nullptr ) {
 		edge->note_long_range_interactions_exist( );
 	}
 }

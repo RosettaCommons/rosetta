@@ -19,6 +19,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 // numeric headers
@@ -70,17 +71,11 @@ ABEGOEval::ABEGOEval(
 
 
 /// @brief default copy constructor
-ABEGOEval::ABEGOEval( ABEGOEval const & rval ) :
-	Super( rval ),
-	abego_( rval.abego_ ),
-	penalty_( rval.penalty_ ),
-	randomize_( rval.randomize_ ),
-	am_( rval.am_ )
-{}
+ABEGOEval::ABEGOEval( ABEGOEval const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-ABEGOEval::~ABEGOEval() {}
+ABEGOEval::~ABEGOEval() = default;
 
 
 /// @brief copy assignment
@@ -123,9 +118,9 @@ bool ABEGOEval::eval_impl(
 		String::size_type index = abego_[ pos+1 ].find( "X" );
 		if ( index == String::npos ) {
 			bool flag( false );
-			for ( Size ii=0; ii<abego_[ pos+1 ].length(); ++ii ) {
-				if ( am_->check_rama( abego_[ pos+1 ].at( ii ), i->phi(), i->psi(), i->omega() ) ) {
-					if ( (abego_[pos+1].at(ii) != 'A') || (!(option[OptionKeys::frags::ABEGO::phi_psi_range_A].user())) ) {
+			for ( char ii : abego_[ pos+1 ] ) {
+				if ( am_->check_rama( ii, i->phi(), i->psi(), i->omega() ) ) {
+					if ( (ii != 'A') || (!(option[OptionKeys::frags::ABEGO::phi_psi_range_A].user())) ) {
 						flag = true;
 						break;
 					} else {
@@ -136,7 +131,7 @@ bool ABEGOEval::eval_impl(
 						}
 					}
 				}
-				if ( abego_[ pos+1 ].at( ii ) == 'D' ) {
+				if ( ii == 'D' ) {
 					flag = true;
 					break;
 				}
@@ -163,8 +158,8 @@ void ABEGOEval::pre_catalog_op( VallLibrary const & ) {
 		if ( length > 1 ) {
 			std::ostringstream multi;
 			multi << "[";
-			for ( Size jj=0; jj<abego_[ ii ].length(); ++jj ) {
-				multi << abego_[ ii ].at( jj );
+			for ( char jj : abego_[ ii ] ) {
+				multi << jj;
 			}
 			multi << "]";
 			abego << multi.str();

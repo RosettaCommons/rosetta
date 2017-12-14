@@ -31,6 +31,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/Tag.hh>
@@ -65,7 +66,7 @@ namespace mover {
 
 //Constructor
 ResampleMover::ResampleMover( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler ):
-	stepwise_modeler_( stepwise_modeler ),
+	stepwise_modeler_(std::move( stepwise_modeler )),
 	swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
 	options_( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions ) ),
 	minimize_single_res_( false ),
@@ -83,8 +84,7 @@ ResampleMover::ResampleMover() :
 }
 
 //Destructor
-ResampleMover::~ResampleMover()
-{}
+ResampleMover::~ResampleMover() = default;
 
 protocols::moves::MoverOP
 ResampleMover::clone() const {

@@ -130,7 +130,7 @@ FastDensEnergy::pose_is_setup_for_density_scoring( pose::Pose const & pose) cons
 void
 FastDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const & /* sf */) const {
 	// grab symminfo (if defined) from the pose
-	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
 			pose.conformation()).Symmetry_Info();
@@ -161,7 +161,7 @@ FastDensEnergy::setup_for_scoring(
 	if ( !pose_has_nonzero_Bs( pose ) ) {
 		Real effB = core::scoring::electron_density::getDensityMap().getEffectiveBfactor();
 
-		if ( pose.pdb_info() != NULL ) {
+		if ( pose.pdb_info() != nullptr ) {
 			TR.Debug << "Reset B factors to effective value: " << effB << std::endl;
 			for ( core::Size i=1; i<=pose.size(); ++i ) {
 				for ( core::Size j=1; j<=pose.residue(i).natoms(); ++j ) {
@@ -176,7 +176,7 @@ FastDensEnergy::setup_for_scoring(
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
@@ -194,7 +194,7 @@ FastDensEnergy::setup_for_scoring(
 
 	// grab symminfo (if defined) from the pose
 	// make a copy
-	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation() ).Symmetry_Info();
 	}
@@ -228,7 +228,7 @@ FastDensEnergy::residue_pair_energy(
 	}
 
 	// grab symminfo (if defined) from the pose
-	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	core::Size nsubunits = 1;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();

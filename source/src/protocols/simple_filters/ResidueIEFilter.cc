@@ -55,8 +55,8 @@ ResidueIEFilter::ResidueIEFilter():
 }
 
 ResidueIEFilter::ResidueIEFilter(
-	std::string  resnums,
-	std::string  restype,
+	std::string const & resnums,
+	std::string const & restype,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::scoring::ScoreType const score_type,
 	core::Real const threshold,
@@ -69,8 +69,8 @@ ResidueIEFilter::ResidueIEFilter(
 	bool const report_energy
 ) :
 	filters::Filter( "ResidueIE" ),
-	resnum_str_(std::move( resnums )),
-	restype_(std::move( restype )),
+	resnum_str_( resnums ),
+	restype_( restype ),
 	score_type_( score_type ),
 	threshold_( threshold ),
 	whole_pose_( whole_pose ),
@@ -188,7 +188,7 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 
 	runtime_assert( tag->hasOption("residues") || whole_pose_ || whole_interface_ || selector_ );
 
-	use_resE_ = tag->getOption<bool>( "use_resE" , 0 );
+	use_resE_ = tag->getOption<bool>( "use_resE" , false );
 }
 
 bool
@@ -260,7 +260,7 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 
 			//Fill residue energies by traversing energy graph
 			for ( EdgeListConstIterator egraph_it = in_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != in_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it ) {
-				EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+				auto const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 				res_intE += Eedge->dot( curr_weights );
 
 

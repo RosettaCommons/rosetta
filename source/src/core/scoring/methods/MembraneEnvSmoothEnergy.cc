@@ -389,8 +389,8 @@ MembraneEnvSmoothEnergy::calc_energy(
 	Real & dscore_dneighbor_count
 ) const
 {
-	Size low_bin = static_cast< Size > ( floor(neighbor_count));
-	Size high_bin = static_cast< Size > ( ceil(neighbor_count));
+	auto low_bin = static_cast< Size > ( floor(neighbor_count));
+	auto high_bin = static_cast< Size > ( ceil(neighbor_count));
 	Real inter = neighbor_count - low_bin;
 	if ( neighbor_count <= 1 ) {
 		low_bin = high_bin = 1; inter = 0;

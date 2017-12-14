@@ -49,8 +49,7 @@ RNA_ChainClosureScreener::RNA_ChainClosureScreener( modeler::rna::checker::RNA_C
 {}
 
 //Destructor
-RNA_ChainClosureScreener::~RNA_ChainClosureScreener()
-{}
+RNA_ChainClosureScreener::~RNA_ChainClosureScreener() = default;
 
 /////////////////////////////////////////
 bool
@@ -63,7 +62,7 @@ RNA_ChainClosureScreener::check_screen() {
 void
 RNA_ChainClosureScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
 	update_mover->add_mover( chain_closure_checker_ );
-	restore_mover->add_mover( 0 );
+	restore_mover->add_mover( nullptr );
 }
 
 ////////////////////////////////////////////////////////////////////////////

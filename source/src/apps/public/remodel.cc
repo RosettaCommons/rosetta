@@ -66,8 +66,8 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
 
-typedef std::string String;
-typedef std::vector< OptionKey const * > KeyVec;
+using String = std::string;
+using KeyVec = std::vector<const OptionKey *>;
 
 static basic::Tracer TR( "apps.public.remodel" );
 
@@ -79,7 +79,7 @@ std::string usage_string;
 /// the usage prompt that gets printed when the user doesn't enter any arguments or uses the -h flag since the application
 /// specific help Rosetta bring up with the -help flag is, in fact, not helpful.
 ///
-void init_usage_prompt( std::string exe ) {
+void init_usage_prompt( std::string const & exe ) {
 
 	// place the prompt up here so that it gets updated easily; global this way, but that's ok
 	std::stringstream usage_stream;

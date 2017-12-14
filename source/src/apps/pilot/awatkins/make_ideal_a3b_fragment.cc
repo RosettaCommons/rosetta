@@ -108,18 +108,18 @@ int main ( int argc, char* argv[] )
 
 		Pose pose;
 
-		pose.append_residue_by_jump( Residue( rts->name_map( "GLN" ), 1 ), 1 );
-		pose.append_residue_by_bond( Residue( rts->name_map( "B3E" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "GLY" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "PHE" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "SER" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "B3D" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "LEU" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "TRP" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "LYS" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "B3L" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "LEU" ), 1 ), true );
-		pose.append_residue_by_bond( Residue( rts->name_map( "SER:MethylatedCtermProteinFull" ), 1 ), true );
+		pose.append_residue_by_jump( Residue( rts->name_map( "GLN" ), true ), 1 );
+		pose.append_residue_by_bond( Residue( rts->name_map( "B3E" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "GLY" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "PHE" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "SER" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "B3D" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "LEU" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "TRP" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "LYS" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "B3L" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "LEU" ), true ), true );
+		pose.append_residue_by_bond( Residue( rts->name_map( "SER:MethylatedCtermProteinFull" ), true ), true );
 
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue_type( ii ).is_beta_aa() ) {
@@ -202,11 +202,11 @@ int main ( int argc, char* argv[] )
 		for ( Size ii = 1; ii <= pose.residue_type( ii ).nchi(); ++ii ) {
 			old_chis.push_back( pose.residue( ii ).chi( ii ) );
 		}
-		pose.replace_residue( 1, Residue( pre_type, 1 ), true );
+		pose.replace_residue( 1, Residue( pre_type, true ), true );
 		for ( Size ii = 1; ii <= pose.residue_type( 1 ).nchi(); ++ii ) {
 			pose.set_torsion( id::TorsionID( 1, id::CHI, ii ),  old_chis[ ii ] );
 		}
-		pose.replace_residue( 3, Residue( post_type, 1 ), true );
+		pose.replace_residue( 3, Residue( post_type, true ), true );
 		core::pose::ncbb::initialize_ncbbs( pose );
 		pose.conformation().declare_chemical_bond( 1, "CYH", 3, "CZH" );
 

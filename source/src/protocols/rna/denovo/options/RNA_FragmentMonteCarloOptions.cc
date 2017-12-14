@@ -53,7 +53,6 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	chainbreak_weight_( -1.0 ), /* use rna/denovo/rna_lores.wts number unless user specified. -1.0 is never really used. */
 	linear_chainbreak_weight_( -1.0 ), /* use rna/denovo/rna_lores.wts number unless user specified. -1.0 is never really used. */
 	close_loops_( true ),
-	close_loops_in_last_round_( true ),
 	close_loops_after_each_move_( false ),
 	allow_bulge_( false ),
 	allow_consecutive_bulges_( false ),
@@ -105,7 +104,6 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	new_fold_tree_initializer_( false ),
 	initial_structures_provided_( false ),
 	simple_rmsd_cutoff_relax_( false ),
-	refine_from_silent_( false ),
 	refine_pose_( false ),
 	override_refine_pose_rounds_( false ),
 	refine_native_get_good_FT_( false ),
@@ -125,8 +123,7 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 {}
 
 //Destructor
-RNA_FragmentMonteCarloOptions::~RNA_FragmentMonteCarloOptions()
-{}
+RNA_FragmentMonteCarloOptions::~RNA_FragmentMonteCarloOptions() = default;
 
 /// @brief copy constructor
 RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions( RNA_FragmentMonteCarloOptions const & src ) :

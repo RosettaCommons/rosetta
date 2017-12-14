@@ -42,6 +42,7 @@
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
@@ -152,7 +153,7 @@ SecondaryStructureFilter::parse_my_tag(
 		}
 
 		set_blueprint( blueprint );
-		use_abego_ = tag->getOption<bool>( "use_abego", 0 );
+		use_abego_ = tag->getOption<bool>( "use_abego", false );
 	}
 
 	treat_L_as_D_ = tag->getOption<bool>( "treat_L_as_D", treat_L_as_D_ );
@@ -235,7 +236,7 @@ SecondaryStructureFilter::correct_for_incomplete_strand_pairings(
 
 	core::Size resid = 1;
 	std::string::iterator ss = secstruct.begin();
-	for ( ResidueSubset::const_iterator in_pair=paired.begin(); ( ss!=secstruct.end() ) && ( in_pair!=paired.end() ); ++ss, ++in_pair, ++resid ) {
+	for ( auto in_pair=paired.begin(); ( ss!=secstruct.end() ) && ( in_pair!=paired.end() ); ++ss, ++in_pair, ++resid ) {
 		if ( *ss != 'E' ) continue;
 		if ( *in_pair ) continue;
 		tr.Debug << "Found unpaired E residue: " << resid << std::endl;

@@ -79,7 +79,7 @@ LeGrandSasa::LeGrandSasa(Real probe_radius, SasaRadii radii_set):
 	init();
 }
 
-LeGrandSasa::~LeGrandSasa(){}
+LeGrandSasa::~LeGrandSasa()= default;
 
 void
 LeGrandSasa::init() {

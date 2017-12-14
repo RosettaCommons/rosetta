@@ -63,7 +63,7 @@ bool CalculatorFactory::check_calculator_exists( std::string const & calculator_
 /// @brief remove a calculator from the factory
 /// @return true if calculator removed, false if no such calculator
 bool CalculatorFactory::remove_calculator( std::string const & calculator_name ) {
-	std::map< std::string, PoseMetricCalculatorOP >::iterator i = calculators_.find( calculator_name );
+	auto i = calculators_.find( calculator_name );
 
 	if ( i != calculators_.end() ) {
 		calculators_.erase( i );

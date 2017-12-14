@@ -200,8 +200,7 @@ output_single_motif(
 	fetch_atom_names( target_aa, atom1_name, atom2_name, atom3_name );
 
 	pose.append_residue_by_jump( src_pose.residue( prot_pos ), 1 );
-	for ( Size ic = 0 ; ic < contacts.size() ; ++ic ) {
-		Size dna_pos = contacts[ ic ];
+	for ( unsigned long dna_pos : contacts ) {
 		pose.append_residue_by_jump( src_pose.residue( dna_pos ), 1 );
 	}
 	pose.conformation().insert_chain_ending( 1 );
@@ -246,8 +245,7 @@ output_single_motif(
 		string_of( src_pose.pdb_info()->number( prot_pos ) ) +
 		string_of( src_pose.pdb_info()->chain( prot_pos ) ) + delimiter );
 
-	for ( Size ic = 0 ; ic < contacts.size() ; ++ic ) {
-		Size dna_pos = contacts[ ic ];
+	for ( unsigned long dna_pos : contacts ) {
 		motif_file_name = motif_file_name +
 			src_pose.residue_type( dna_pos ).name1() +
 			string_of( src_pose.pdb_info()->number( dna_pos ) ) +
@@ -456,10 +454,10 @@ process_for_motifs(
 
 					// Check against other motifs
 					core::Size check_i( 1 );
-					for ( protocols::motifs::MotifCOPs::const_iterator this_motif = motif_lib.begin() ; this_motif != motif_lib.end() ; ++this_motif ) {
+					for ( auto const & this_motif : motif_lib ) {
 						core::Real dist_diff( 0.0 );
 						core::Real angl_diff( 0.0 );
-						motif_distances( work_motif, **this_motif, dist_diff, angl_diff );
+						motif_distances( work_motif, *this_motif, dist_diff, angl_diff );
 						//      TR << "Motif dist from current motif " << check_i << " is translation " << dist_diff << " and angle " << angl_diff << std::endl;
 						check_i++;
 						if ( dist_diff < dist_threshold && angl_diff < angl_threshold ) {

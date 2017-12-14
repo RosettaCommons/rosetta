@@ -27,7 +27,7 @@ namespace protocols {
 namespace topology_broker {
 
 ClaimerMessage::ClaimerMessage() : label_( "NoAddress" ) {}
-ClaimerMessage::ClaimerMessage( std::string label ) : label_(std::move( label )) {}
+ClaimerMessage::ClaimerMessage( std::string const & label ) : label_( label ) {}
 
 ClaimerMessage::~ClaimerMessage() = default;
 

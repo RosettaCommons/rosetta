@@ -206,8 +206,8 @@ HelixPairingFilter::apply( Pose const & pose ) const
 
 	// check conformation of helical pairings
 	bool filter( true );
-	for ( HelixPairings::const_iterator it=helix_pairings.begin(), ite=helix_pairings.end(); it != ite; ++it ) {
-		HelixPairing const & hpair( **it );
+	for ( auto const & helix_pairing : helix_pairings ) {
+		HelixPairing const & hpair( *helix_pairing );
 
 		// bend check
 		if ( bend_angle_ >= 0.0 ) {
@@ -401,9 +401,9 @@ HelixPairingFilter::find_missing_helices(
 	core::Size const n_helices = ss_info.helices().size();
 
 	std::set< core::Size > missing;
-	for ( topology::HelixPairings::const_iterator hp=hpairs.begin(); hp!=hpairs.end(); ++hp ) {
-		if ( n_helices < (*hp)->h1() ) missing.insert( (*hp)->h1() );
-		if ( n_helices < (*hp)->h2() ) missing.insert( (*hp)->h2() );
+	for ( auto const & hpair : hpairs ) {
+		if ( n_helices < hpair->h1() ) missing.insert( hpair->h1() );
+		if ( n_helices < hpair->h2() ) missing.insert( hpair->h2() );
 	}
 	return missing;
 }

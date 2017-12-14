@@ -56,11 +56,9 @@ SingleBasicRotamerLibraryCreator::keyname() const {
 
 ///////////////////  RotamerLibrary Functions ///////////////////////
 
-SingleBasicRotamerLibrary::SingleBasicRotamerLibrary()
-{}
+SingleBasicRotamerLibrary::SingleBasicRotamerLibrary() = default;
 
-SingleBasicRotamerLibrary::~SingleBasicRotamerLibrary()
-{}
+SingleBasicRotamerLibrary::~SingleBasicRotamerLibrary() = default;
 
 using namespace core::pack::dunbrack;
 

@@ -15,22 +15,21 @@
 
 #include <core/scoring/loop_graph/LoopCycle.hh>
 #include <core/scoring/loop_graph/Loop.hh>
+#include <utility>
 
 namespace core {
 namespace scoring {
 namespace loop_graph {
 
 //Constructor
-LoopCycle::LoopCycle()
-{}
+LoopCycle::LoopCycle() = default;
 
 LoopCycle::LoopCycle( utility::vector1< Loop > const & loops ):
 	loops_( loops )
 {}
 
 //Destructor
-LoopCycle::~LoopCycle()
-{}
+LoopCycle::~LoopCycle() = default;
 
 //////////////////////////////////////////////
 Loop const &

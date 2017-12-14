@@ -57,7 +57,7 @@
 #include <core/io/silent/BinarySilentStruct.hh> //Feb 24, 2011, FARFAR start_silent_file.
 
 #include <utility/exit.hh>
-#include <time.h>
+#include <ctime>
 
 #include <string>
 
@@ -101,8 +101,7 @@ StepWiseRNA_PoseSetup::StepWiseRNA_PoseSetup( stepwise::modeler::working_paramet
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //destructor
-StepWiseRNA_PoseSetup::~StepWiseRNA_PoseSetup()
-{}
+StepWiseRNA_PoseSetup::~StepWiseRNA_PoseSetup() = default;
 
 /////////////////////
 std::string

@@ -139,7 +139,7 @@ POSSIBILITY THEREOF.
 */
 
 
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 #include <ios>
 #include <fstream>
@@ -157,15 +157,11 @@ const string RcsbFile::DIR_SEPARATOR = "/";
 
 
 RcsbFile::RcsbFile()
-{
-
-}
+= default;
 
 
 RcsbFile::~RcsbFile()
-{
-
-}
+= default;
 
 
 bool RcsbFile::IsEmpty(ofstream& fileStream)

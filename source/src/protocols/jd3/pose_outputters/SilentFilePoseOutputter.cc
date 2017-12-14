@@ -61,7 +61,7 @@ SilentFilePoseOutputter::SilentFilePoseOutputter() :
 	buffer_limit_( 20 )
 {}
 
-SilentFilePoseOutputter::~SilentFilePoseOutputter() {}
+SilentFilePoseOutputter::~SilentFilePoseOutputter() = default;
 
 bool
 SilentFilePoseOutputter::outputter_specified_by_command_line()
@@ -102,9 +102,9 @@ SilentFilePoseOutputter::outputter_for_job(
 	PoseOutputSpecification const & spec
 ) const
 {
-	typedef SilentFilePoseOutputSpecification SFPOS;
+	using SFPOS = SilentFilePoseOutputSpecification;
 	debug_assert( dynamic_cast< SFPOS const * > ( &spec ) );
-	SFPOS const & sf_spec( static_cast< SFPOS const & > ( spec ) );
+	auto const & sf_spec( static_cast< SFPOS const & > ( spec ) );
 
 	return sf_spec.out_fname();
 }
@@ -173,12 +173,12 @@ SilentFilePoseOutputter::write_output(
 {
 	using standard::PoseJobResult;
 	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
-	PoseJobResult const & pose_result( static_cast< PoseJobResult const & > ( result ));
+	auto const & pose_result( static_cast< PoseJobResult const & > ( result ));
 	core::pose::Pose const & pose( *pose_result.pose() );
 
-	typedef SilentFilePoseOutputSpecification SFPOS;
+	using SFPOS = SilentFilePoseOutputSpecification;
 	debug_assert( dynamic_cast< SFPOS const * > ( &spec ) );
-	SFPOS const & sf_spec( static_cast< SFPOS const & > ( spec ) );
+	auto const & sf_spec( static_cast< SFPOS const & > ( spec ) );
 
 	if ( ! opts_ ) {
 		// I.e., we are a fresh outputter

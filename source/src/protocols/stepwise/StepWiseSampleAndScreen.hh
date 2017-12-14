@@ -32,7 +32,7 @@ public:
 
 	//constructor
 	StepWiseSampleAndScreen( sampler::StepWiseSamplerOP sampler,
-		utility::vector1< screener::StepWiseScreenerOP > screener );
+		utility::vector1< screener::StepWiseScreenerOP > const & screener );
 
 	//destructor
 	~StepWiseSampleAndScreen() override;

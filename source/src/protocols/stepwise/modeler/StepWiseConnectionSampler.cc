@@ -186,8 +186,7 @@ StepWiseConnectionSampler::StepWiseConnectionSampler( working_parameters::StepWi
 }
 
 //Destructor
-StepWiseConnectionSampler::~StepWiseConnectionSampler()
-{}
+StepWiseConnectionSampler::~StepWiseConnectionSampler() = default;
 
 /////////////////////
 std::string
@@ -272,7 +271,7 @@ StepWiseConnectionSampler::initialize_residue_level_screeners( pose::Pose & pose
 	using namespace core::conformation;
 	using utility::tools::make_vector1;
 
-	runtime_assert( rigid_body_rotamer_ != 0 );
+	runtime_assert( rigid_body_rotamer_ != nullptr );
 
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new StubApplier( moving_res_base_stub_ ) ) ); // will pull stub out of the sampler
 
@@ -293,7 +292,7 @@ StepWiseConnectionSampler::initialize_residue_level_screeners( pose::Pose & pose
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// clash checks
 	ResidueCOP screening_moving_rsd_at_origin = rigid_body_rotamer_->get_residue_at_origin( moving_res_ ).clone();
-	if ( VDW_bin_checker_ != 0 && !protein_connection_ ) {
+	if ( VDW_bin_checker_ != nullptr && !protein_connection_ ) {
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new VDW_BinScreener( VDW_bin_checker_, *virt_sugar_screening_pose_, moving_res_,
 			screening_moving_rsd_at_origin, moving_res_base_stub_ ) ) );
 	}
@@ -322,7 +321,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( *screening_pose_, false /*apply_residue_alternative_sampler*/ ) ) );
 
 	AlignRMSD_ScreenerOP align_rmsd_screener;
-	if ( ( get_native_pose() != 0 ) && (moving_res_ != 0) &&
+	if ( ( get_native_pose() != nullptr ) && (moving_res_ != 0) &&
 			( options_->rmsd_screen() > 0.0 || options_->integration_test_mode() ) ) {
 		bool do_screen = ( ( options_->rmsd_screen() > 0.0 ) && !options_->integration_test_mode() ); // gets toggled to true in integration tests.
 		// not necessarily native -- just used for alignment & rmsd calcs.
@@ -400,7 +399,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	if ( !rigid_body_modeler_ && !working_parameters_->rebuild_bulge_mode() &&
 			options_->allow_bulge_at_chainbreak() && moving_partition_res_.size() == 1 &&
 			( rna_cutpoints_closed_.size() > 0 )  && !protein_connection_ && !kic_modeler_ ) {
-		runtime_assert( rna_atr_rep_checker_ != 0 );
+		runtime_assert( rna_atr_rep_checker_ != nullptr );
 		legacy::screener::RNA_AtrRepScreenerOP rna_atr_rep_screener( new legacy::screener::RNA_AtrRepScreener( rna_atr_rep_checker_, *screening_pose_ ) );
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( rna_atr_rep_screener ) );  // will actually carry out the legacy RNA atr/rep check.
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new BulgeApplier( rna_atr_rep_checker_ /* it turns out that this is not even used*/ , base_centroid_checker_, moving_res_ ) ) ); // apply bulge at the last minute.
@@ -709,7 +708,7 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 		}
 	}
 
-	if ( sampler_ == 0 ) {
+	if ( sampler_ == nullptr ) {
 		pose_list_.push_back( pose.clone() );
 		( *scorefxn_ )( *( pose_list_[ 1 ]) );
 		return false;
@@ -736,12 +735,12 @@ StepWiseConnectionSampler::initialize_protein_bond_sampler( pose::Pose const & p
 sampler::StepWiseSamplerOP
 StepWiseConnectionSampler::initialize_rna_bond_sampler( pose::Pose const & pose ){
 	using namespace sampler;
-	if ( moving_res_list_.size() == 0 ) return 0;
+	if ( moving_res_list_.size() == 0 ) return nullptr;
 	sampler::StepWiseSamplerOP sampler_ = sampler::rna::setup_sampler( pose, options_,
 		working_parameters_, false /*build_pose_from_scratch_*/,
 		kic_modeler_, (rna_cutpoints_closed_.size() > 0) );
 	ResidueAlternativeStepWiseSamplerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
-	if ( rsd_alternatives_rotamer == 0 ) return sampler_;
+	if ( rsd_alternatives_rotamer == nullptr ) return sampler_;
 
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
 	sampler->add_external_loop_rotamer( rsd_alternatives_rotamer );
@@ -756,7 +755,7 @@ StepWiseConnectionSampler::initialize_rna_bond_sampler( pose::Pose const & pose 
 sampler::StepWiseSamplerOP
 StepWiseConnectionSampler::initialize_ligand_bond_sampler( pose::Pose const & pose ){
 	using namespace sampler;
-	if ( moving_res_list_.size() == 0 ) return 0;
+	if ( moving_res_list_.size() == 0 ) return nullptr;
 
 	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
@@ -773,7 +772,7 @@ StepWiseConnectionSampler::initialize_ligand_bond_sampler( pose::Pose const & po
 sampler::StepWiseSamplerOP
 StepWiseConnectionSampler::initialize_carbohydrate_bond_sampler( pose::Pose const & pose ){
 	using namespace sampler;
-	if ( moving_res_list_.size() == 0 ) return 0;
+	if ( moving_res_list_.size() == 0 ) return nullptr;
 
 	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
@@ -805,12 +804,12 @@ StepWiseConnectionSampler::initialize_full_rigid_body_sampler(){
 sampler::copy_dofs::ResidueAlternativeStepWiseSamplerCombOP
 StepWiseConnectionSampler::get_rsd_alternatives_rotamer(){
 
-	if ( residue_alternative_sets_.size() == 0 ) return 0;
+	if ( residue_alternative_sets_.size() == 0 ) return nullptr;
 	ResidueAlternativeStepWiseSamplerCombOP rsd_alternatives_rotamer( new ResidueAlternativeStepWiseSamplerComb() );
 	// note that following will include moving_res_ for sampler, as well as any other chunks that might move...
 	for ( ResidueAlternativeSet const & residue_alternative_set : residue_alternative_sets_ ) {
 		ResidueAlternativeStepWiseSamplerOP rsd_alt_rotamer;
-		if ( rigid_body_rotamer_ != 0 ) {
+		if ( rigid_body_rotamer_ != nullptr ) {
 			rsd_alt_rotamer = ResidueAlternativeStepWiseSamplerOP( new ResidueAlternativeStepWiseSampler( residue_alternative_set,
 				*rigid_body_rotamer_->pose_at_origin() /*take representative residues from this pose after applying copy_dofs*/) );
 		} else {

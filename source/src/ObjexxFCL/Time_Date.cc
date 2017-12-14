@@ -31,7 +31,7 @@ itime( FArray1_int & timearray )
 {
 	assert( timearray.l() <= 1 );
 	assert( timearray.u() >= 3 );
-	std::time_t const current_time( std::time( NULL ) );
+	std::time_t const current_time( std::time( nullptr ) );
 	std::tm const * const timeinfo( std::localtime( &current_time ) );
 	timearray( 1 ) = timeinfo->tm_hour;
 	timearray( 2 ) = timeinfo->tm_min;
@@ -45,7 +45,7 @@ idate( FArray1_int & datearray )
 {
 	assert( datearray.l() <= 1 );
 	assert( datearray.u() >= 3 );
-	std::time_t const current_time( std::time( NULL ) );
+	std::time_t const current_time( std::time( nullptr ) );
 	std::tm const * const timeinfo( std::localtime( &current_time ) );
 	datearray( 1 ) = timeinfo->tm_mday; // Day of month: 1,2,...
 	datearray( 2 ) = timeinfo->tm_mon + 1; // Month of year: 1-12
@@ -57,7 +57,7 @@ idate( FArray1_int & datearray )
 void
 idate( int & month, int & day, int & year )
 {
-	std::time_t const current_time( std::time( NULL ) );
+	std::time_t const current_time( std::time( nullptr ) );
 	std::tm const * const timeinfo( std::localtime( &current_time ) );
 	month = timeinfo->tm_mon + 1; // Month of year: 1-12
 	day = timeinfo->tm_mday; // Day of month: 1,2,...
@@ -81,40 +81,40 @@ date( Fstring & day )
 	day( 8, 9 ) = s.str();
 	Fstring mmm( 3 );
 	switch ( m ) {
-	case 1:
+	case 1 :
 		mmm = "JAN";
 		break;
-	case 2:
+	case 2 :
 		mmm = "FEB";
 		break;
-	case 3:
+	case 3 :
 		mmm = "MAR";
 		break;
-	case 4:
+	case 4 :
 		mmm = "APR";
 		break;
-	case 5:
+	case 5 :
 		mmm = "MAY";
 		break;
-	case 6:
+	case 6 :
 		mmm = "JUN";
 		break;
-	case 7:
+	case 7 :
 		mmm = "JUL";
 		break;
-	case 8:
+	case 8 :
 		mmm = "AUG";
 		break;
-	case 9:
+	case 9 :
 		mmm = "SEP";
 		break;
-	case 10:
+	case 10 :
 		mmm = "OCT";
 		break;
-	case 11:
+	case 11 :
 		mmm = "NOV";
 		break;
-	case 12:
+	case 12 :
 		mmm = "DEC";
 		break;
 	default :

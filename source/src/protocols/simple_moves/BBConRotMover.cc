@@ -113,7 +113,7 @@ bool BBConRotMover::make_move(Pose &pose)
 	//using numeric::constants::d::pi_2;
 
 	setup_list(pose);
-	int ndx=static_cast< int >( numeric::random::rg().uniform()*available_seg_list_.size()+1 );
+	auto ndx=static_cast< int >( numeric::random::rg().uniform()*available_seg_list_.size()+1 );
 
 	Size left = available_seg_list_[ ndx ].first;
 	resnum_ = available_seg_list_[ ndx ].second;

@@ -89,7 +89,7 @@ align_pose_and_add_rmsd_constraints( pose::Pose & pose,
 	utility::vector1< Size > const & moving_res_list,
 	Real const rmsd_screen ) {
 
-	if ( align_pose == 0 ) return;
+	if ( align_pose == nullptr ) return;
 
 	utility::vector1< Size > root_partition_res = figure_out_root_partition_res( pose, moving_res_list );
 	if ( root_partition_res.size() == 0 ) root_partition_res.push_back( pose.fold_tree().root() );

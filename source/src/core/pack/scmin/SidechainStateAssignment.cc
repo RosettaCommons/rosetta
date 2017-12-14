@@ -34,14 +34,7 @@ SidechainStateAssignment::SidechainStateAssignment( Size nmoltenres ) :
 	n_unassigned_( nmoltenres )
 {}
 
-SidechainStateAssignment::SidechainStateAssignment( SidechainStateAssignment const & src ) :
-	utility::pointer::ReferenceCount(src),
-	nmoltenres_( src.nmoltenres_ ),
-	state_assignments_( src.state_assignments_ ),
-	original_rotamer_id_( src.original_rotamer_id_ ),
-	energy_( src.energy_ ),
-	n_unassigned_( src.n_unassigned_ )
-{}
+SidechainStateAssignment::SidechainStateAssignment( SidechainStateAssignment const & /*src*/ ) = default;
 
 SidechainStateAssignment &
 SidechainStateAssignment::operator = ( SidechainStateAssignment const & rhs )

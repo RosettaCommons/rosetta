@@ -37,8 +37,8 @@ namespace parser {
 
 static basic::Tracer TR( "protocols.jd2.parser.ConstraintGeneratorLoader" );
 
-ConstraintGeneratorLoader::ConstraintGeneratorLoader() {}
-ConstraintGeneratorLoader::~ConstraintGeneratorLoader() {}
+ConstraintGeneratorLoader::ConstraintGeneratorLoader() = default;
+ConstraintGeneratorLoader::~ConstraintGeneratorLoader() = default;
 
 void ConstraintGeneratorLoader::load_data(
 	core::pose::Pose const &,

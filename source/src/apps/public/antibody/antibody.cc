@@ -166,11 +166,11 @@ int antibody_main()
 	TR << TR.Magenta << "Unzipping files in antibody_database (if any). This will only be done once." << TR.Reset << std::endl;
 
 	// iterate over vector looking for bz2's and unzip
-	for (auto it = file_names.begin(); it != file_names.end() ; ++it) {
+	for (auto & file_name : file_names) {
 		// check for bz2 and not already unzipped
-		if ( file::file_extension( *it ).compare( "bz2" ) == 0 and ! file::file_exists( full_ab_db_path + file::file_basename( *it ) ) ) {
+		if ( file::file_extension( file_name ).compare( "bz2" ) == 0 and ! file::file_exists( full_ab_db_path + file::file_basename( file_name ) ) ) {
 				// bzipped files, unzip
-				basic::execute("Unzipping " + *it ,"cd " + full_ab_db_path + " && bunzip2 -k " + *it);
+				basic::execute("Unzipping " + file_name ,"cd " + full_ab_db_path + " && bunzip2 -k " + file_name);
 		}
 	}
 	TR << TR.Magenta << "Done unzipping." << TR.Reset << std::endl;

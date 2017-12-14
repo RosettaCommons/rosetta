@@ -72,8 +72,7 @@ CoarseRNA_LoopCloser::CoarseRNA_LoopCloser():
 	which_scratch_res_is_cut_( 0 ),
 	choose_least_perturb_solution_( true ),
 	choose_best_solution_( false ),
-	choose_random_solution_( false ),
-	save_all_solutions_( false )
+	choose_random_solution_( false )
 {
 	Mover::type("CoarseRNA_LoopCloser");
 }

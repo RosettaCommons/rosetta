@@ -29,11 +29,11 @@ namespace schema_generator {
 class Column : public utility::pointer::ReferenceCount {
 public:
 
-	Column(std::string name, DbDataTypeOP type);
+	Column(std::string const & name, DbDataTypeOP type);
 
-	Column(std::string name, DbDataTypeOP type, bool allow_null);
+	Column(std::string const & name, DbDataTypeOP type, bool allow_null);
 
-	Column(std::string name, DbDataTypeOP type, bool allow_null, bool auto_increment, platform::Size auto_increment_base = 0);
+	Column(std::string const & name, DbDataTypeOP type, bool allow_null, bool auto_increment, platform::Size auto_increment_base = 0);
 
 	Column(Column const & src);
 

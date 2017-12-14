@@ -51,7 +51,7 @@ HBAtom::HBAtom() :
 	//,seqpos_( 0 )
 {}
 
-HBAtom::~HBAtom() {}
+HBAtom::~HBAtom() = default;
 
 /// @brief send a description of the atom to standard out
 void

@@ -66,7 +66,7 @@ namespace protocols {
 namespace noesy_assign {
 
 CrossPeak::Spin::Spin( Real freq ) : freq_ ( freq ) {}
-CrossPeak::Spin::Spin() { }
+CrossPeak::Spin::Spin() = default;
 CrossPeak::Spin::~Spin() = default;
 core::Size CrossPeak::Spin::assignment_index( core::Size assignment ) const {
 	core::Size ct( 1 );
@@ -657,7 +657,7 @@ CrossPeak3D::CrossPeak3D( Spin const& sp1, Spin const& sp2, Spin const& label1, 
 	label1_( label1 )
 {}
 
-CrossPeak3D::CrossPeak3D() {}
+CrossPeak3D::CrossPeak3D() = default;
 CrossPeak3D::~CrossPeak3D() = default;
 
 CrossPeak4D::CrossPeak4D( Spin const& sp1, Spin const& sp2, Spin const& label1, Spin const& label2, Real strength ) :
@@ -665,7 +665,7 @@ CrossPeak4D::CrossPeak4D( Spin const& sp1, Spin const& sp2, Spin const& label1, 
 	label2_( label2 )
 {}
 
-CrossPeak4D::CrossPeak4D() {}
+CrossPeak4D::CrossPeak4D() = default;
 CrossPeak4D::~CrossPeak4D() = default;
 
 void CrossPeak4D::assign_spin( Size iproton ) {

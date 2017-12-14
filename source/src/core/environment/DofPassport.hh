@@ -95,7 +95,7 @@ public:
 
 private:
 
-	DofPassport( std::string const& mover, Size env_id);
+	DofPassport( std::string const & mover, Size env_id);
 
 	DofPassport( DofPassport const& );
 

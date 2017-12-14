@@ -18,6 +18,7 @@
 #include <core/conformation/Residue.hh>
 
 //utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 
@@ -38,7 +39,7 @@ InvrotCollector::InvrotCollector( InvrotCollector const & other )
 : ReferenceCount(), invrots_(other.invrots_), owner_nodes_and_locations_(other.owner_nodes_and_locations_)
 {}
 
-InvrotCollector::~InvrotCollector(){}
+InvrotCollector::~InvrotCollector()= default;
 
 InvrotCollectorOP
 InvrotCollector::clone() const {
@@ -66,10 +67,10 @@ InvrotCollector::set_invrots_for_listnum(
 
 InvrotTreeNodeBase::InvrotTreeNodeBase(
 	InvrotTreeNodeBaseCAP parent_node )
-: ReferenceCount(), parent_node_(parent_node ), location_in_parent_node_(1)
+: ReferenceCount(), parent_node_(std::move(parent_node )), location_in_parent_node_(1)
 {}
 
-InvrotTreeNodeBase::~InvrotTreeNodeBase(){}
+InvrotTreeNodeBase::~InvrotTreeNodeBase()= default;
 
 }
 }

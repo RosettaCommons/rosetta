@@ -44,7 +44,7 @@ private:
 
 class ScoreRmsPoints : public utility::vector1< ScoreRmsPoint > {
 public:
-	ScoreRmsPoints( ScoreRmsPoint bg_point ); // move-constructed
+	ScoreRmsPoints( ScoreRmsPoint const & bg_point ); // move-constructed
 	ScoreRmsPoint const & bg() const;
 
 private:

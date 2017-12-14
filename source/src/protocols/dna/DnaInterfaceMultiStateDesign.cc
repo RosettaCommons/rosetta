@@ -290,7 +290,7 @@ DnaInterfaceMultiStateDesign::output_results( Pose & pose )
 	if ( option[ OptionKeys::out::prefix ].user() ) prefix = option[ OptionKeys::out::prefix ]();
 
 	// sort local copy of sequence/fitness cache
-	typedef GeneticAlgorithm::TraitEntityHashMap TraitEntityHashMap;
+	using TraitEntityHashMap = GeneticAlgorithm::TraitEntityHashMap;
 	TraitEntityHashMap const & cache( gen_alg_->entity_cache() );
 	vector1< EntityOP > sortable;
 	//  std::copy( cache.begin(), cache.end(), sortable.begin() ); // FAIL(?)

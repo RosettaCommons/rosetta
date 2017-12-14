@@ -24,6 +24,7 @@
 #include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -65,30 +66,30 @@ ResidueTypeConstraint::ResidueTypeConstraint(
 ResidueTypeConstraint::ResidueTypeConstraint(
 	core::pose::Pose const &, //pose,
 	Size seqpos,
-	std::string AAname,
+	std::string const & AAname,
 	core::Real favor_native_bonus
 ):
 	Constraint( core::scoring::res_type_constraint ),
 	seqpos_( seqpos ),
-	rsd_type_name3_( AAname ),
+	rsd_type_name3_(std::move( AAname )),
 	favor_native_bonus_( favor_native_bonus )
 {}
 
 ResidueTypeConstraint::ResidueTypeConstraint(
 	Size seqpos,
-	std::string aa_in,
-	std::string name3_in,
+	std::string const & aa_in,
+	std::string const & name3_in,
 	core::Real bonus_in
 ):
 	Constraint( core::scoring::res_type_constraint ),
 	seqpos_( seqpos ),
-	AAname( aa_in ),
-	rsd_type_name3_( name3_in ),
+	AAname(std::move( aa_in )),
+	rsd_type_name3_(std::move( name3_in )),
 	favor_native_bonus_( bonus_in )
 {}
 
 
-ResidueTypeConstraint::~ResidueTypeConstraint() {}
+ResidueTypeConstraint::~ResidueTypeConstraint() = default;
 
 ConstraintOP
 ResidueTypeConstraint::clone() const
@@ -118,7 +119,7 @@ ResidueTypeConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) co
 	if ( newseqpos != 0 ) {
 		return ConstraintOP( new ResidueTypeConstraint( newseqpos, AAname, rsd_type_name3_, favor_native_bonus_ ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -128,7 +129,7 @@ ResidueTypeConstraint::operator == ( Constraint const & other_cst ) const
 	if ( ! same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me( *this ) ) return false;
 
-	ResidueTypeConstraint const & other( static_cast< ResidueTypeConstraint const & > (other_cst) );
+	auto const & other( static_cast< ResidueTypeConstraint const & > (other_cst) );
 
 	if ( seqpos_ != other.seqpos_ ) return false;
 	if ( AAname != other.AAname ) return false;
@@ -151,7 +152,7 @@ ResidueTypeConstraint::remapped_clone( pose::Pose const&, pose::Pose const&, id:
 	core::Size newseqpos = seqpos_;
 	if ( smap ) {
 		newseqpos = (*smap)[ seqpos_ ];
-		if ( newseqpos == 0 ) return NULL;
+		if ( newseqpos == 0 ) return nullptr;
 	}
 
 	return ConstraintOP( new ResidueTypeConstraint(newseqpos, AAname, rsd_type_name3_, favor_native_bonus_) );

@@ -142,7 +142,7 @@ FullModelInfo::FullModelInfo( FullModelInfo const & src ) :
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FullModelInfo::~FullModelInfo(){}
+FullModelInfo::~FullModelInfo()= default;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // properties of full model.
@@ -470,7 +470,7 @@ FullModelInfo::submotif_info( utility::vector1< Size > const & res_list, bool co
 		Size const & idx = get_idx_for_other_pose_with_residue( res_list[ 1 ] );
 		if ( idx ) return const_full_model_info( *other_pose_list_[ idx ] ).submotif_info( res_list );
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -513,7 +513,7 @@ FullModelInfo::submotif_info_containing_residues( utility::vector1< Size > const
 		Size const & idx = get_idx_for_other_pose_with_residue( res_list[ 1 ] );
 		if ( idx ) return const_full_model_info( *other_pose_list_[ idx ] ).submotif_info_containing_residues( res_list );
 	}
-	return NULL;
+	return nullptr;
 }
 
 

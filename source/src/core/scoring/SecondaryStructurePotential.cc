@@ -180,7 +180,7 @@ SecondaryStructurePotential::hspair(
 	core::conformation::symmetry::SymmetryInfoOP symm_info = nullptr;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		symmetric=true;
-		SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info()->clone();
 	}
@@ -225,14 +225,14 @@ SecondaryStructurePotential::hspair(
 					ph -= 360.0f;
 				}
 
-				int iph = static_cast< int >(1+(ph+180.0f)/10);
+				auto iph = static_cast< int >(1+(ph+180.0f)/10);
 				if ( iph > 36 ) {
 					iph = 36;
 				} else if ( iph < 1 ) {
 					iph = 1;
 				}
 
-				int ith = static_cast< int >(1+(th/5));
+				auto ith = static_cast< int >(1+(th/5));
 				if ( ith > 36 ) {
 					ith = 36;
 				} else if ( ith < 1 ) {
@@ -347,7 +347,7 @@ private:
 
 };
 
-typedef utility::pointer::shared_ptr< DimerPairing > DimerPairingOP;
+using DimerPairingOP = utility::pointer::shared_ptr<DimerPairing>;
 
 bool
 dimer_pairing_pointer_sorter( DimerPairingOP const & a, DimerPairingOP const & b )
@@ -384,7 +384,7 @@ SecondaryStructurePotential::sspair(
 	core::conformation::symmetry::SymmetryInfoOP symm_info = nullptr;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		symmetric=true;
-		SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info()->clone();
 	}
@@ -394,7 +394,7 @@ SecondaryStructurePotential::sspair(
 	// new plan: keep a list of dimer pairs with good interaction energy
 	// sort by energy after compiling
 
-	typedef utility::vector1< DimerPairingOP > DimerPairings;
+	using DimerPairings = utility::vector1<DimerPairingOP>;
 	DimerPairings dimer_pairs;
 
 	// dimer to dimer score (<6.5A)
@@ -492,14 +492,14 @@ SecondaryStructurePotential::sspair(
 						phi_ss += 360.0f;
 					}
 
-					int iphi = static_cast< int >(1+(phi_ss+180.0)/10);
+					auto iphi = static_cast< int >(1+(phi_ss+180.0)/10);
 					if ( iphi > 36 ) {
 						iphi = 36;
 					} else if ( iphi < 1 ) {
 						iphi = 1;
 					}
 
-					int itheta = static_cast< int >(1+(theta/5));
+					auto itheta = static_cast< int >(1+(theta/5));
 					if ( itheta > 36 ) {
 						itheta = 36;
 					} else if ( itheta < 1 ) {
@@ -1007,7 +1007,7 @@ SecondaryStructurePotential::sheets_from_dimers(
 	core::conformation::symmetry::SymmetryInfoOP symm_info = nullptr;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		symmetric=true;
-		SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info()->clone();
 	}
@@ -1066,7 +1066,7 @@ SecondaryStructurePotential::sheets_from_dimers(
 					weight = Size(symm_info->score_multiply(strand_res_native,strand_res_native));
 				} else {
 					if ( strand_res !=0 ) continue; //if we don't have a strand in the scoring subunit
-					Size new_weight = Size(symm_info->score_multiply(strand_res_native, strand_res) );
+					auto new_weight = Size(symm_info->score_multiply(strand_res_native, strand_res) );
 					if (  new_weight > weight ) weight = new_weight;
 				}
 			}
@@ -1459,7 +1459,7 @@ SecondaryStructurePotential::load_phi_theta_bins(
 	int isep,iph,itheta,idot;
 	Real totn,tot;
 
-	typedef ObjexxFCL::FArray3D< Real > FArray3D_real;
+	using FArray3D_real = ObjexxFCL::FArray3D<Real>;
 	FArray3D_real pts_HS( 36, 36, 3 );
 	FArray3D_real pts_SS( 36, 36, 3 );
 	FArray1D_real pts_correct( 3 );

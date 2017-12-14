@@ -26,6 +26,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
@@ -208,7 +209,7 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 	// add two body energies to the correct one body or two body locations
 	for ( utility::graph::Graph::EdgeListConstIter iter = energy_graph.const_edge_list_begin();
 			iter != energy_graph.const_edge_list_end(); ++iter ) {
-		core::scoring::EnergyEdge const * const energy_edge = static_cast<core::scoring::EnergyEdge const *>(*iter);
+		auto const * const energy_edge = static_cast<core::scoring::EnergyEdge const *>(*iter);
 		core::Size const first_set_num(residue_set_numbers[energy_edge->get_first_node_ind()]);
 		core::Size const second_set_num(residue_set_numbers[energy_edge->get_second_node_ind()]);
 		// only place the energies if both residues in a set
@@ -225,7 +226,7 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 
 	// add long range two body energies to the correct onebody or twobody locations
 	for ( Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++ ) {
-		scoring::methods::LongRangeEnergyType lr_type = scoring::methods::LongRangeEnergyType( lr );
+		auto lr_type = scoring::methods::LongRangeEnergyType( lr );
 		scoring::LREnergyContainerCOP lrec = this_pose.energies().long_range_container( lr_type );
 		if ( !lrec ) continue;
 		if ( lrec->empty() ) continue;
@@ -354,7 +355,7 @@ DecomposeAndReweightEnergiesCalculator::master_weight_vector(
 )
 {
 	// determine the number sets that the vector corresponds to
-	core::Size num_sets_for_vector = static_cast<core::Size> (floor(sqrt(float((master_weight_vector.size()-1)*2))));
+	auto num_sets_for_vector = static_cast<core::Size> (floor(sqrt(float((master_weight_vector.size()-1)*2))));
 	// apply the reverse mapping to make sure it is the correct length
 	runtime_assert(master_weight_vector.size() == 1+(num_sets_for_vector+1)*num_sets_for_vector/2);
 	// if num_sets is 0, set num_sets to be the size of the vector

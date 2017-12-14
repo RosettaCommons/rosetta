@@ -31,14 +31,11 @@ VallFragmentGen::VallFragmentGen() :
 
 
 /// @brief copy constructor
-VallFragmentGen::VallFragmentGen( VallFragmentGen const & rval ) :
-	Super( rval )
-{}
+VallFragmentGen::VallFragmentGen( VallFragmentGen const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-VallFragmentGen::~VallFragmentGen()
-{}
+VallFragmentGen::~VallFragmentGen() = default;
 
 
 /// @brief copy assignment

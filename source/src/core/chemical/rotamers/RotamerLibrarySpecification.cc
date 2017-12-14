@@ -28,9 +28,9 @@ namespace core {
 namespace chemical {
 namespace rotamers {
 
-RotamerLibrarySpecification::RotamerLibrarySpecification() {}
+RotamerLibrarySpecification::RotamerLibrarySpecification() = default;
 
-RotamerLibrarySpecification::~RotamerLibrarySpecification() {}
+RotamerLibrarySpecification::~RotamerLibrarySpecification() = default;
 
 } //namespace rotamers
 } //namespace chemical

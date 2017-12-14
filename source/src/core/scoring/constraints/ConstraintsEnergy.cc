@@ -82,7 +82,7 @@ static basic::Tracer tr( "core.scoring.ConstraintsEnergy" );
 
 ConstraintsEnergy::ConstraintsEnergy() : parent( methods::EnergyMethodCreatorOP( new ConstraintsEnergyCreator ) ) {}
 
-ConstraintsEnergy::~ConstraintsEnergy() {}
+ConstraintsEnergy::~ConstraintsEnergy() = default;
 
 methods::EnergyMethodOP
 ConstraintsEnergy::clone() const
@@ -114,7 +114,7 @@ ConstraintsEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-	if ( pose.constraint_set() == 0 ) return;
+	if ( pose.constraint_set() == nullptr ) return;
 	// PROF_START( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->residue_pair_energy( rsd1, rsd2, pose, sfxn, emap );
 	// PROF_STOP( basic::CONSTRAINT_SCORE );
@@ -307,7 +307,7 @@ ConstraintsEnergy::eval_intrares_energy(
 	EnergyMap & emap
 ) const
 {
-	if ( pose.constraint_set() == 0 ) return;
+	if ( pose.constraint_set() == nullptr ) return;
 	// PROF_START( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->eval_intrares_energy( rsd, pose, sfxn, emap );
 	// PROF_STOP( basic::CONSTRAINT_SCORE );
@@ -462,13 +462,13 @@ ConstraintsEnergy::prepare_constraints_energy_container( pose::Pose & pose ) con
 	using namespace methods;
 
 	//do nothing if there are no constraints
-	if ( pose.constraint_set() == 0 ) return; //this will never happen: since empty constraint_set is created as soon as method constraint_set() is called
+	if ( pose.constraint_set() == nullptr ) return; //this will never happen: since empty constraint_set is created as soon as method constraint_set() is called
 	// however, if one jumps out here after asking !has_constraints() it breaks in ScoringFunction.cc:604 because the
 	// long_rang_container is not setup for constraints.
 	// basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	Energies & energies( pose.energies() );
 	bool create_new_cstcontainer( false );
-	if ( energies.long_range_container( constraints_lr ) == 0 ) {
+	if ( energies.long_range_container( constraints_lr ) == nullptr ) {
 		create_new_cstcontainer = true; // pbmod
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( constraints_lr );
@@ -529,7 +529,7 @@ ConstraintsEnergy::finalize_total_energy(
 	EnergyMap & totals
 ) const
 {
-	if ( pose.constraint_set() == 0 ) return;
+	if ( pose.constraint_set() == nullptr ) return;
 	// basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->eval_non_residue_pair_energy( pose, sfxn, totals );
 }

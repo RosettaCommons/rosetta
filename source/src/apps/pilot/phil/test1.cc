@@ -268,7 +268,7 @@ show_intrachain_energies(
 				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+			auto * edge( static_cast< EnergyEdge *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			conformation::Residue const & resu( pose.residue( j ) );
 
@@ -828,7 +828,7 @@ simple_loop_modeling_test()
 
 			// choose a fragment
 			Size const nfrags( lib[ pos ].size() );
-			int const nn( static_cast< int >( nfrags * numeric::random::rg().uniform() + 1 ) );
+			auto const nn( static_cast< int >( nfrags * numeric::random::rg().uniform() + 1 ) );
 
 			// make move
 			lib[pos][nn].insert( pose, pos );
@@ -854,7 +854,7 @@ void*
 simple_loop_modeling_test_wrapper( void* )
 {
 	simple_loop_modeling_test();
-	return 0;
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

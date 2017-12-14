@@ -69,9 +69,9 @@ public:
 	}
 
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "FragCaptureMover"; }
-	virtual void test_move( core::pose::Pose & pose ){apply(pose);}
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "FragCaptureMover"; }
+	void test_move( core::pose::Pose & pose ) override{apply(pose);}
 
 	void write( const std::string &filename );
 
@@ -83,8 +83,8 @@ private:  //  Data
 
 };
 
-typedef utility::pointer::shared_ptr< FragCaptureMover > FragCaptureMoverOP;
-typedef utility::pointer::shared_ptr< FragCaptureMover const > FragCaptureMoverCOP;
+using FragCaptureMoverOP = utility::pointer::shared_ptr<FragCaptureMover>;
+using FragCaptureMoverCOP = utility::pointer::shared_ptr<const FragCaptureMover>;
 
 
 void FragCaptureMover::apply( core::pose::Pose & pose )

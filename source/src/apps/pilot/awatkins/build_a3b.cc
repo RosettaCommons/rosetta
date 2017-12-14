@@ -102,17 +102,17 @@ public:
 	A3BPeptideBuilder(): Mover("A3BPeptideBuilder"){}
 
 	//default dtor
-	virtual ~A3BPeptideBuilder(){}
+	~A3BPeptideBuilder() override= default;
 
 	//methods
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "A3BPeptideBuilder"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "A3BPeptideBuilder"; }
 
 };
 
-typedef utility::pointer::shared_ptr< A3BPeptideBuilder > A3BPeptideBuilderOP;
-typedef utility::pointer::shared_ptr< A3BPeptideBuilder const > A3BPeptideBuilderCOP;
+using A3BPeptideBuilderOP = utility::pointer::shared_ptr<A3BPeptideBuilder>;
+using A3BPeptideBuilderCOP = utility::pointer::shared_ptr<const A3BPeptideBuilder>;
 
 int main ( int argc, char* argv[] )
 {

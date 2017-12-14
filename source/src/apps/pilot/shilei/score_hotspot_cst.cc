@@ -78,9 +78,9 @@
 
 static basic::Tracer TR( "apps.pilot_apps.shilei.score_hotspot_cst" );
 
-typedef core::Size Size;
-typedef core::Real Real;
-typedef core::pose::Pose Pose;
+using Size = core::Size;
+using Real = core::Real;
+using Pose = core::pose::Pose;
 
 using namespace core;
 using namespace pose;
@@ -95,9 +95,9 @@ OPT_1GRP_KEY(RealVector,score_hotspot_cst,hotspot_distcb_weight)
 
 class run_score_hotspot : public protocols::moves::Mover {
 public:
-	run_score_hotspot() { }
+	run_score_hotspot() = default;
 
-	void apply( pose::Pose & pose) {
+	void apply( pose::Pose & pose) override {
 
 		Pose archive_pose=pose;
 
@@ -176,7 +176,7 @@ public:
 
 	}//end of apply
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "run_score_hotspot";
 	}
 
@@ -204,7 +204,7 @@ void* my_main( void* ) {
 		excn.show( std::cerr );
 	}
 
-	return 0;
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

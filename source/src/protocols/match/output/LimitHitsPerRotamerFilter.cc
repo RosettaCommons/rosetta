@@ -52,7 +52,7 @@ LimitHitsPerRotamerFilter::set_limit_for_rotamer_combo( Size limit )
 	limit_per_rotamer_combo_ = limit;
 }
 
-LimitHitsPerRotamerFilter::~LimitHitsPerRotamerFilter() {}
+LimitHitsPerRotamerFilter::~LimitHitsPerRotamerFilter() = default;
 
 /// @brief Returns true if the given match passes this filter
 bool
@@ -68,7 +68,7 @@ LimitHitsPerRotamerFilter::passes_filter(
 		rot_vector[ n_geometric_constraints_ + ii ] = m[ ii ].upstream_conf_id();
 	}
 
-	RotamerComboCountMap::const_iterator iter = count_per_rotamer_combo_.find( rot_vector );
+	auto iter = count_per_rotamer_combo_.find( rot_vector );
 	if ( iter == count_per_rotamer_combo_.end() ) {
 		return true;
 	} else {
@@ -90,7 +90,7 @@ LimitHitsPerRotamerFilter::note_match_accepted(
 		rot_vector[ n_geometric_constraints_ + ii ] = m[ ii ].upstream_conf_id();
 	}
 
-	RotamerComboCountMap::iterator iter = count_per_rotamer_combo_.find( rot_vector );
+	auto iter = count_per_rotamer_combo_.find( rot_vector );
 	if ( iter == count_per_rotamer_combo_.end() ) {
 		count_per_rotamer_combo_[ rot_vector ] = 1;
 	} else {

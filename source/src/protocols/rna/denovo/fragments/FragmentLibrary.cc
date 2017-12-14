@@ -26,7 +26,7 @@ namespace fragments {
 
 using namespace core;
 
-FragmentLibrary::~FragmentLibrary() {}
+FragmentLibrary::~FragmentLibrary() = default;
 
 Real FragmentLibrary::get_fragment_torsion( Size const num_torsion,  Size const which_frag, Size const offset ){
 	return align_torsions_[ which_frag - 1 ].torsions( num_torsion, offset) ;

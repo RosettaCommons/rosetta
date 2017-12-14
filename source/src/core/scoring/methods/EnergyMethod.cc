@@ -36,7 +36,7 @@ EnergyMethod::EnergyMethod( EnergyMethod const & src ) :
 {
 }
 
-EnergyMethod::~EnergyMethod() {}
+EnergyMethod::~EnergyMethod() = default;
 
 bool
 EnergyMethod::minimize_in_whole_structure_context( pose::Pose const & ) const

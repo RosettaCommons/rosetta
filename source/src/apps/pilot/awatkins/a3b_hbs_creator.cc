@@ -143,9 +143,9 @@ public:
 	A3BHbsCreatorMover();
 
 	//default dtor
-	virtual ~A3BHbsCreatorMover(){}
+	~A3BHbsCreatorMover() override= default;
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 	void repack( core::pose::Pose & pose );
 	void scan( core::pose::Pose & pose, char const hbs_chn );
 
@@ -166,7 +166,7 @@ public:
 	do_mc(
 		core::pose::Pose & pose );
 
-	virtual std::string get_name() const { return "A3BHbsCreatorMover"; }
+	std::string get_name() const override { return "A3BHbsCreatorMover"; }
 
 private:
 	ScoreFunctionOP score_fxn_;
@@ -179,8 +179,8 @@ private:
 	utility::vector1< Size > oldnums_;
 };
 
-typedef utility::pointer::shared_ptr< A3BHbsCreatorMover > A3BHbsCreatorMoverOP;
-typedef utility::pointer::shared_ptr< A3BHbsCreatorMover const > A3BHbsCreatorMoverCOP;
+using A3BHbsCreatorMoverOP = utility::pointer::shared_ptr<A3BHbsCreatorMover>;
+using A3BHbsCreatorMoverCOP = utility::pointer::shared_ptr<const A3BHbsCreatorMover>;
 
 A3BHbsCreatorMover::A3BHbsCreatorMover():
 	Mover("A3BHbsCreatorMover"),

@@ -57,8 +57,7 @@ RotamerBoltzmannWeight2::RotamerBoltzmannWeight2():
 	TR << "Created new calculator id: " << calculator_id_ << std::endl;
 }
 
-RotamerBoltzmannWeight2::~RotamerBoltzmannWeight2()
-= default;
+RotamerBoltzmannWeight2::~RotamerBoltzmannWeight2() = default;
 
 RotamerBoltzmannWeight2::RotamerBoltzmannWeight2( RotamerBoltzmannWeight2 const & rval ):
 	protocols::filters::Filter( rval ),

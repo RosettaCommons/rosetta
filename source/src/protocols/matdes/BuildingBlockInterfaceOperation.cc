@@ -65,9 +65,9 @@ std::string BuildingBlockInterfaceOperationCreator::keyname() const
 	return BuildingBlockInterfaceOperation::keyname();
 }
 
-BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock, std::string sym_dof_names, core::Real contact_dist /* = 10*/, core::Real bblock_dist /*= 5 */, core::Real fa_rep_cut /* = 3.0 */, bool filter_intrabb, bool intrabb_only, bool multicomponent ):
+BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock, std::string const & sym_dof_names, core::Real contact_dist /* = 10*/, core::Real bblock_dist /*= 5 */, core::Real fa_rep_cut /* = 3.0 */, bool filter_intrabb, bool intrabb_only, bool multicomponent ):
 	nsub_bblock_(nsub_bblock),
-	sym_dof_names_(std::move(sym_dof_names)),
+	sym_dof_names_(sym_dof_names),
 	contact_dist_(contact_dist),
 	bblock_dist_(bblock_dist),
 	fa_rep_cut_(fa_rep_cut),
@@ -93,7 +93,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	using namespace core::pose::symmetry;
 	using namespace scoring;
 	using namespace utility;
-	typedef vector1<Size> Sizes;
+	using Sizes = vector1<Size>;
 
 	utility::vector1<std::string> sym_dof_name_list;
 	if ( sym_dof_names_ == "" ) {
@@ -239,9 +239,9 @@ BuildingBlockInterfaceOperation::parse_tag( TagCOP tag , DataMap & )
 	contact_dist_ = tag->getOption<core::Real>("contact_dist", 10.0);
 	bblock_dist_ = tag->getOption<core::Real>("bblock_dist", 5.0);
 	fa_rep_cut_ = tag->getOption<core::Real>("fa_rep_cut", 3.0);
-	filter_intrabb_ = tag->getOption< bool >("filter_intrabb", 1);
-	intrabb_only_ = tag->getOption< bool >("intrabb_only", 0);
-	multicomponent_ = tag->getOption< bool >("multicomp", 0);
+	filter_intrabb_ = tag->getOption< bool >("filter_intrabb", true);
+	intrabb_only_ = tag->getOption< bool >("intrabb_only", false);
+	multicomponent_ = tag->getOption< bool >("multicomp", false);
 }
 
 void BuildingBlockInterfaceOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

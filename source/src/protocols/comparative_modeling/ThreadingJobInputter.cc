@@ -111,7 +111,7 @@ ThreadingJobInputter::ThreadingJobInputter() :
 	/// get template-pdbs from files
 	if ( option[ in::file::template_pdb ].user() ) {
 		FileList template_pdb_filenames = option[ in::file::template_pdb ]();
-		typedef utility::vector1< pose::PoseOP > PoseOPvec;
+		using PoseOPvec = utility::vector1<pose::PoseOP>;
 		PoseOPvec poses = core::import_pose::poseOPs_from_files( template_pdb_filenames , core::import_pose::PDB_file);
 
 		/// put template-pdbs into map --- use filename as key --- this is used to match pdb and alignment
@@ -251,7 +251,7 @@ void ThreadingJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ) {
 		}
 
 		auto  i = length_list.begin();
-		std::vector< int >::size_type m = (size_t)( length_list.size() * quantile );
+		auto m = (size_t)( length_list.size() * quantile );
 
 		std::nth_element(i, i + m, length_list.end());
 

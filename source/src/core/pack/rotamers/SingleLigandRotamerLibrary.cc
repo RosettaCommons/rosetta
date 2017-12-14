@@ -86,8 +86,7 @@ SingleLigandRotamerLibrary::SingleLigandRotamerLibrary():
 	// total_superpos_(0)
 {}
 
-SingleLigandRotamerLibrary::~SingleLigandRotamerLibrary()
-{}
+SingleLigandRotamerLibrary::~SingleLigandRotamerLibrary() = default;
 
 /// @details Reads conformers from PDB-format file.
 /// Chain ID, residue name and number, etc are all ignored -- must have TER records.
@@ -384,9 +383,9 @@ SingleLigandRotamerLibrary::build_base_rotamers( chemical::ResidueType const & r
 		conformation::ResidueOP rsd = conformation::ResidueFactory::create_residue( restype );
 		core::Size set_xyzs = 0;
 		utility::vector1< bool > missing(rsd->natoms(),true);
-		for ( NamePosMap::const_iterator iter( name_map.begin() ), iter_end( name_map.end() ); iter != iter_end; ++iter ) {
-			std::string const & atom_name( iter->first );
-			core::Vector const & pos( iter->second );
+		for ( auto const & iter : name_map ) {
+			std::string const & atom_name( iter.first );
+			core::Vector const & pos( iter.second );
 			if ( rsd->has( atom_name ) ) {
 				rsd->set_xyz( atom_name, pos );
 				missing[ rsd->atom_index(atom_name) ] = false;

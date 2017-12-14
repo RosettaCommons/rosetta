@@ -77,7 +77,7 @@ void SS_predictor::load_models(string rd1_model_fl, string rd2_model_fl){
 //happens on termini
 /////////////////////////////////////////////////////////////////////////////////
 string SS_predictor::get_window_aa(string fasta,SSize position){
-	SSize half_window_size = (SSize)floor((Real)WINDOW_SIZE/2.0);
+	auto half_window_size = (SSize)floor((Real)WINDOW_SIZE/2.0);
 	string window_aa = "";
 	for ( SSize ii=position-half_window_size; ii<=position+half_window_size; ++ii ) {
 		if ( ii<0 || ii>=SSize(fasta.size()) ) {
@@ -113,7 +113,7 @@ vector1 <Real> SS_predictor::predict_pos_rd2( vector1<vector1<Real> > rd1_preds,
 	string HLE_RD2_IN_ORDER = "HLE";
 	string ABEGO_RD2_OUT_ORDER ="EBAGO";
 	string HLE_RD2_OUT_ORDER = "LEH";
-	SSize half_window_size = (SSize)floor((Real)WINDOW_SIZE/2.0);
+	auto half_window_size = (SSize)floor((Real)WINDOW_SIZE/2.0);
 	Size lpCt = 0;
 	vector1< Svm_node_rosettaOP > features;
 	for ( SSize ii=position-half_window_size; ii<=position+half_window_size; ++ii ) {

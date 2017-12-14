@@ -81,14 +81,14 @@ class MyScoreMover : public Mover {
 public:
 	MyScoreMover();
 
-	virtual void apply( core::pose::Pose& pose );
-	std::string get_name() const { return "MyScoreMover"; }
+	void apply( core::pose::Pose& pose ) override;
+	std::string get_name() const override { return "MyScoreMover"; }
 
-	virtual MoverOP clone() const {
+	MoverOP clone() const override {
 		return MoverOP( new MyScoreMover( *this ) );
 	}
 
-	virtual MoverOP fresh_instance() const {
+	MoverOP fresh_instance() const override {
 		return MoverOP( new MyScoreMover );
 	}
 
@@ -97,14 +97,12 @@ public:
 private:
 	core::scoring::ScoreFunctionOP sfxn_;
 
-	bool keep_scores_flag_;   // retains the previous scores from the input silent file or whatever
-	bool skip_scoring_;       // skips the actual scoring call, calling evaluators only
+	bool keep_scores_flag_{false};   // retains the previous scores from the input silent file or whatever
+	bool skip_scoring_{false};       // skips the actual scoring call, calling evaluators only
 	bool assign_ss_;          // Call the dssp object to assign a secondary structure.
 };
 
-MyScoreMover::MyScoreMover():
-	keep_scores_flag_(false),
-	skip_scoring_(false)
+MyScoreMover::MyScoreMover()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

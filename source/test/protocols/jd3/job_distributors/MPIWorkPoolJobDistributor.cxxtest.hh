@@ -561,6 +561,12 @@ class Unserializable : public utility::pointer::ReferenceCount
 {
 public:
 	Unserializable() : myint_( 5 ) {}
+
+	// AMW: Adding a dumb function here so that we don't
+	// have an unused private field. (Because to my understanding
+	// you need this for the unit test)
+	void foo() { myint_++; }
+
 private:
 	int myint_;
 };

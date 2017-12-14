@@ -187,13 +187,13 @@ ReportToDB::ReportToDB(string const & type):
 ReportToDB::ReportToDB(
 	sessionOP db_session,
 	string const & batch_name,
-	string  batch_description,
+	string const & batch_description,
 	bool use_transactions,
 	Size cache_size) :
 	Mover("ReportToDB"),
 	db_session_(std::move(db_session)),
 	batch_name_(batch_name),
-	batch_description_(std::move(batch_description)),
+	batch_description_(batch_description),
 	use_transactions_(use_transactions),
 	cache_size_(cache_size),
 	remove_xray_virt_(false),
@@ -219,14 +219,14 @@ ReportToDB::ReportToDB(
 	string const & name,
 	sessionOP db_session,
 	string const & batch_name,
-	string  batch_description,
+	string const & batch_description,
 	bool use_transactions,
 	Size cache_size
 ) :
 	Mover(name),
 	db_session_(std::move(db_session)),
 	batch_name_(batch_name),
-	batch_description_(std::move(batch_description)),
+	batch_description_(batch_description),
 	use_transactions_(use_transactions),
 	cache_size_(cache_size),
 	remove_xray_virt_(false),

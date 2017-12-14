@@ -144,7 +144,7 @@ get_basic_protein_sampler(
 			options->choose_random() ) );
 		TR << "Using ProteinMainChainStepWiseSampler. Num poses: " << backbone_sampler.main_chain_torsion_set_lists_real( sampler_pose ).size() << std::endl;
 	} else {
-		sampler = 0; // no op.
+		sampler = nullptr; // no op.
 	}
 
 	if ( sampler ) sampler->init();

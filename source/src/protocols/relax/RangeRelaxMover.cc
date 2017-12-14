@@ -723,7 +723,7 @@ void RangeRelaxMover::repack_sequence_window( Pose & pose, MonteCarloOP mc ){
 	// start 5 residues lower and repack for 10 residues
 	core::SSize halfrange = 4;
 	core::SSize range = 2 * halfrange;
-	core::SSize nres = static_cast< core::SSize >( pose.size() );
+	auto nres = static_cast< core::SSize >( pose.size() );
 
 	// create packer task - will be re-used
 	PackerTaskOP repack = TaskFactory::create_packer_task( pose );
@@ -827,7 +827,7 @@ void RangeRelaxMover::repack_all( Pose & pose, MonteCarloOP mc ) {
 
 utility::vector1< bool > RangeRelaxMover::get_window_repack_residues( Pose & pose, core::SSize center1, core::SSize center2, core::SSize halfrange ){
 
-	core::SSize nres = static_cast< core::SSize >( pose.size() );
+	auto nres = static_cast< core::SSize >( pose.size() );
 	core::SSize m, n;
 
 	// initialize vector with false

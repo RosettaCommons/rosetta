@@ -573,7 +573,7 @@ void load_form_factors(
 
 		for ( int i=1; i<=(int)nq; ++i ) {
 
-			int q_bucket = (int)std::floor(q_in[i-1]/0.015);
+			auto q_bucket = (int)std::floor(q_in[i-1]/0.015);
 			if ( q_bucket >= 50 ) {
 				TR.Warning << "Input data extends to higher resolution than stored structure factors (1.33A)" << std::endl;
 				TR << "            Results may be inaccurate!" << std::endl;

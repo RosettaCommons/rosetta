@@ -136,9 +136,6 @@ protected:
 
 	void set_defaults();
 
-private:
-	bool kicclose_;
-
 };
 
 ////////////////////////////////////////////

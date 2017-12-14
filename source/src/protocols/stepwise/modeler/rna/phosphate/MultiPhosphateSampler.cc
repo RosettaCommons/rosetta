@@ -58,8 +58,7 @@ MultiPhosphateSampler::MultiPhosphateSampler( pose::Pose & pose_to_prepack,
 
 
 //Destructor
-MultiPhosphateSampler::~MultiPhosphateSampler()
-{}
+MultiPhosphateSampler::~MultiPhosphateSampler() = default;
 
 //////////////////////////////
 MultiPhosphateSamplerOP
@@ -83,7 +82,7 @@ MultiPhosphateSampler::initialize_parameters(){
 void
 MultiPhosphateSampler::sample_phosphates(){
 
-	if ( scorefxn_ == 0 ) scorefxn_ = get_phosphate_scorefxn();
+	if ( scorefxn_ == nullptr ) scorefxn_ = get_phosphate_scorefxn();
 
 	phosphate_move_list_ = initialize_phosphate_move_list( *phosphate_sample_pose_ );
 	copy_over_phosphate_variants( *phosphate_sample_pose_, *pose_with_original_phosphates_, phosphate_move_list_ );

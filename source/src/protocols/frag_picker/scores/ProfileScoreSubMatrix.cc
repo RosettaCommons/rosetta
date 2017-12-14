@@ -52,7 +52,7 @@ using namespace core::chemical;
 static basic::Tracer trProfScoreSubMatrix(
 	"protocols.frag_picker.scores.ProfileScoreSubMatrix");
 
-ProfileScoreSubMatrix::~ProfileScoreSubMatrix() {}
+ProfileScoreSubMatrix::~ProfileScoreSubMatrix() = default;
 
 ProfileScoreSubMatrix::ProfileScoreSubMatrix(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	std::string sequence,core::Size longest_vall_chunk,std::string subMatrixFile) :

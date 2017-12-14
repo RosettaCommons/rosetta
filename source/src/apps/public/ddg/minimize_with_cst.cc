@@ -164,7 +164,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 
 
 void
-minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_tag){
+minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string const & output_tag){
 	using namespace basic::options;
 
 	std::string out_pdb_prefix = basic::options::option[OptionKeys::ddg::out_pdb_prefix ]();
@@ -260,7 +260,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 }
 
 void
-optimize_pose(pose::Pose & p, ScoreFunctionOP scorefxn,std::string output_tag){
+optimize_pose(pose::Pose & p, ScoreFunctionOP scorefxn,std::string const & output_tag){
 	Real cst_tol;
 	if ( basic::options::option[OptionKeys::ddg::harmonic_ca_tether].user() ) {
 		cst_tol = basic::options::option[ OptionKeys::ddg::harmonic_ca_tether ]();

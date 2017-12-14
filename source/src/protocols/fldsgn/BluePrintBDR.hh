@@ -91,8 +91,8 @@ public: // construct/destruct
 	/// @brief value constructor
 	BluePrintBDR( String const & filename, bool const ss_from_blueprint=true );
 
-	/// @brief value constructor
-	BluePrintBDR( BluePrintOP const & blueprintOP, bool const ss_from_blueprint=true );
+	/// @brief moves the BluePrintOP
+	BluePrintBDR( BluePrintOP blueprintOP, bool const ss_from_blueprint=true );
 
 	/// @brief copy constructor
 	BluePrintBDR( BluePrintBDR const & rval );

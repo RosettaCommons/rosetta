@@ -74,7 +74,7 @@ NPDHBondSet::NPDHBondSet():
 	parent()
 {}
 
-NPDHBondSet::~NPDHBondSet() {}
+NPDHBondSet::~NPDHBondSet() = default;
 
 NPDHBondSet::NPDHBondSet( Size const nres ):
 	parent( nres )

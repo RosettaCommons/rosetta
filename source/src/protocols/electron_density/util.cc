@@ -207,7 +207,7 @@ protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real
 }
 
 
-core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* ="" */ ) {
+core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string const & align_in /* ="" */ ) {
 	using namespace basic::options;
 
 	std::string align = align_in;

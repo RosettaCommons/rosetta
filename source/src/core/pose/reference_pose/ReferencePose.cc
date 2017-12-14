@@ -78,7 +78,7 @@ ReferencePose::ReferencePose( ReferencePose const & src ) :
 
 /// @brief Destructor.
 ///
-ReferencePose::~ReferencePose() {}
+ReferencePose::~ReferencePose() = default;
 
 
 /// @brief Make a copy of this ReferencePose object (allocate actual memory for it)
@@ -110,8 +110,8 @@ void ReferencePose::initialize_residue_map_from_pose( core::pose::Pose const &po
 void ReferencePose::increment_reference_pose_mapping_after_seqpos( core::Size const seqpos ) {
 	if ( residue_map_.empty() ) return; //Do nothing if the residue map is empty.
 	//Loop through all elements of the residue_map:
-	for ( std::map< core::Size, core::Size >::iterator it=residue_map_.begin(); it!=residue_map_.end(); ++it ) {
-		if ( it->second > seqpos ) it->second = (it->second + 1); //If the mapped value is greater than the seqpos, increment it.
+	for ( auto & it : residue_map_ ) {
+		if ( it.second > seqpos ) it.second = (it.second + 1); //If the mapped value is greater than the seqpos, increment it.
 	}
 	return;
 }
@@ -121,8 +121,8 @@ void ReferencePose::increment_reference_pose_mapping_after_seqpos( core::Size co
 void ReferencePose::decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos ) {
 	if ( residue_map_.empty() ) return; //Do nothing if the residue map is empty.
 	//Loop through all elements of the residue_map:
-	for ( std::map< core::Size, core::Size >::iterator it=residue_map_.begin(); it!=residue_map_.end(); ++it ) {
-		if ( it->second > seqpos ) it->second = (it->second - 1); //If the mapped value is greater than the seqpos, decrement it.
+	for ( auto & it : residue_map_ ) {
+		if ( it.second > seqpos ) it.second = (it.second - 1); //If the mapped value is greater than the seqpos, decrement it.
 	}
 	return;
 }
@@ -132,8 +132,8 @@ void ReferencePose::decrement_reference_pose_mapping_after_seqpos( core::Size co
 void ReferencePose::zero_reference_pose_mapping_at_seqpos( core::Size const seqpos ) {
 	if ( residue_map_.empty() ) return; //Do nothing if the residue map is empty.
 	//Loop through all elements of the residue_map:
-	for ( std::map< core::Size, core::Size >::iterator it=residue_map_.begin(); it!=residue_map_.end(); ++it ) {
-		if ( it->second == seqpos ) it->second = 0; //If the mapped value matches the seqpos, zero it.
+	for ( auto & it : residue_map_ ) {
+		if ( it.second == seqpos ) it.second = 0; //If the mapped value matches the seqpos, zero it.
 	}
 	return;
 }

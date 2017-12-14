@@ -90,7 +90,7 @@ void SecondaryStructure::compute_fractions( core::fragment::FragSet const& frags
 	strand_fraction_(total_residue_) = 0.0;
 
 	for ( FragID_Iterator it=frags.begin(), eit=frags.end(); it!=eit; ++it ) { //carefully checked that I don't change FrameData
-		Size central_residue( static_cast< Size > (it->frame().length()/2.0+0.5) );
+		auto central_residue( static_cast< Size > (it->frame().length()/2.0+0.5) );
 		Size loop_start = bJustCenterResidue ? central_residue : 1;
 		Size loop_end = bJustCenterResidue ? central_residue : it->frame().length();
 		for ( Size fpos = loop_start; fpos <= loop_end; ++fpos ) {

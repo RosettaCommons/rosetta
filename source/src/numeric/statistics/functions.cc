@@ -23,7 +23,7 @@
 
 
 // defines for error functions
-typedef std::complex<double> cmplx;
+using cmplx = std::complex<double>;
 #define C(a,b) cmplx(a,b)
 #define cexp(z) std::exp(z)
 #define creal(z) std::real(z)
@@ -617,7 +617,7 @@ cmplx w(cmplx z, double relerr) {
 			if ( x < 5e-4 ) { // compute sum4 and sum5 together as sum5-sum4
 				const double x2 = x*x;
 				expx2 = 1 - x2 * (1 - 0.5*x2); // exp(-x*x) via Taylor
-				for ( int n = 1; 1; ++n ) {
+				for ( int n = 1; true; ++n ) {
 					const double coef = exp(-a2*(n*n)) * expx2 / (a2*(n*n) + y*y);
 					prod2ax *= exp2ax;
 					prodm2ax *= expm2ax;
@@ -633,7 +633,7 @@ cmplx w(cmplx z, double relerr) {
 				}
 			} else { // x > 5e-4, compute sum4 and sum5 separately
 				expx2 = exp(-x*x);
-				for ( int n = 1; 1; ++n ) {
+				for ( int n = 1; true; ++n ) {
 					const double coef = exp(-a2*(n*n)) * expx2 / (a2*(n*n) + y*y);
 					prod2ax *= exp2ax;
 					prodm2ax *= expm2ax;
@@ -690,7 +690,7 @@ cmplx w(cmplx z, double relerr) {
 			sum5 += a * (np * tp + nm * tm);
 			if ( a * (np * tp + nm * tm) < relerr * sum5 ) goto finish;
 		}
-		while ( 1 ) { // loop over n0+dn terms only (since n0-dn <= 0)
+		while ( true ) { // loop over n0+dn terms only (since n0-dn <= 0)
 			double np = n0 + dn++;
 			double tp = exp(-sqr(a*dn+dx)) / (a2*(np*np) + y*y);
 			sum3 += tp;

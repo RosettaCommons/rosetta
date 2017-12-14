@@ -42,6 +42,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.hh>
 
 //C++ headers
@@ -69,7 +70,7 @@ RNA_FragmentMover::RNA_FragmentMover(
 	Size const symm_hack_arity
 ) : Mover(),
 	rna_fragments_( rna_fragments ),
-	atom_level_domain_map_( atom_level_domain_map ),
+	atom_level_domain_map_(std::move( atom_level_domain_map )),
 	num_insertable_residues_( 0 ),
 	insert_map_frag_size_( 0 ),
 	frag_size_( 0 ),
@@ -91,9 +92,7 @@ RNA_FragmentMover::RNA_FragmentMover(RNA_FragmentMover const & object_to_copy) :
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-RNA_FragmentMover::~RNA_FragmentMover()
-{
-}
+RNA_FragmentMover::~RNA_FragmentMover() = default;
 
 std::string
 RNA_FragmentMover::get_name() const {

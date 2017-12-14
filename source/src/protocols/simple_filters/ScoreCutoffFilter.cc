@@ -186,7 +186,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 	}
 	utility::vector1< LREnergyContainerCOP > active_lr_e;
 	for ( Size lr = 1; lr <= methods::n_long_range_types; lr++ ) {
-		methods::LongRangeEnergyType lr_type = methods::LongRangeEnergyType( lr );
+		auto lr_type = methods::LongRangeEnergyType( lr );
 		LREnergyContainerCOP lrec = pose.energies().long_range_container( lr_type );
 		if ( !lrec ) continue;
 		if (  !lrec->empty() ) active_lr_e.push_back( lrec );
@@ -217,7 +217,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 			core::Size other_ind( (*egraph_it)->get_other_ind( res1 ) );
 			upper_interactions.insert( std::pair< Size, EnergyMap >(other_ind, EnergyMap() ) );
 			EnergyMap & this_emap( upper_interactions.find( other_ind )->second );
-			EnergyEdge const * eedge( static_cast< EnergyEdge const * >(*egraph_it));
+			auto const * eedge( static_cast< EnergyEdge const * >(*egraph_it));
 
 			for ( core::Size i =1; i <= last_active_sr_st; ++i ) this_emap[ active_st[i] ] = ((*eedge)[  active_st[i] ]);
 

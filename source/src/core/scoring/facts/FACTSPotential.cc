@@ -48,8 +48,8 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
 #include <utility/assert.hh>
 #include <utility/assert.hh>
 
@@ -66,7 +66,7 @@ inline float
 fastpow2 (float p) {
 	float offset = (p < 0.0) ? 1.0f : 0.0f;
 	float clipp = (p < -126.0) ? -126.0f : p;
-	int w = (int)(clipp);
+	auto w = (int)(clipp);
 	float z = clipp - (float)(w) + offset;
 	union { uint32_t i; float f; } v = { (uint32_t) ( (1 << 23) * (clipp + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z) ) };
 
@@ -1090,7 +1090,7 @@ void FACTSPotential::calculate_GBpair_v1trunk(
 			// Main run
 			Real BRij = BRi*BRj;
 			Real tmp1 = dis2/Kappa();
-			Real tmp2 = (Real)fastexp((float)(-tmp1/BRij));
+			auto tmp2 = (Real)fastexp((float)(-tmp1/BRij));
 			//Real tmp2 = exp((float)(-tmp1/BRij));
 			Real tmp3 = dis2 + BRij*tmp2 - dshift2;
 			if ( !(tmp3 > 1.0e-3) ) continue;
@@ -1456,7 +1456,7 @@ void FACTSPotential::eval_atom_polar_derivative(
 	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
 #endif
 
-	FACTSPoseInfo const & facts_info( static_cast< FACTSPoseInfo const & >
+	auto const & facts_info( static_cast< FACTSPoseInfo const & >
 		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 	Size const atm1( id.atomno() );
 	Size const res1( id.rsd() );
@@ -1489,7 +1489,7 @@ void FACTSPotential::eval_atom_nonpolar_derivative(
 	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
 #endif
 
-	FACTSPoseInfo const & facts_info( static_cast< FACTSPoseInfo const & >
+	auto const & facts_info( static_cast< FACTSPoseInfo const & >
 		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 	Size const atm1( id.atomno() );
 	Size const res1( id.rsd() );
@@ -1566,7 +1566,7 @@ void FACTSPotential::update_residue_for_packing(pose::Pose & pose,Size const seq
 	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
 #endif
 
-	FACTSPoseInfo & facts_info( static_cast< FACTSPoseInfo & >
+	auto & facts_info( static_cast< FACTSPoseInfo & >
 		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) );
 	FACTSResidueInfo & facts( facts_info.residue_info( seqpos ) );
 
@@ -1583,7 +1583,7 @@ void FACTSPotential::get_rotamers_born_radii(pose::Pose const & pose, conformati
 	utility_exit_with_message( "The FactsPotential object caches pose-specific data in a global data object, and as such, it is fundamentally non-threadsafe.  Please contact Hahnbeom Park (hahnbeom@gmail.com) to complain about this if you need this coring function to work in a multi-threaded context." );
 #endif
 
-	FACTSPoseInfo const & facts_info_pose( static_cast< FACTSPoseInfo const & >
+	auto const & facts_info_pose( static_cast< FACTSPoseInfo const & >
 		(pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 
 	// this will get cached in the rotamer set
@@ -1715,7 +1715,7 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 			Real const arg = MultiplicitiveFactor()*q1*q2;
 			Real fsolv( 0.0 );
 			Real tmp1 = dis2/Kappa();
-			Real tmp2 = (Real)fastexp((float)(-tmp1/BRij));
+			auto tmp2 = (Real)fastexp((float)(-tmp1/BRij));
 			Real tmp3 = dis2 + BRij*tmp2 - dshift2;
 
 			if ( !self_pair && tmp3 < dis2 ) {

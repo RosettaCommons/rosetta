@@ -53,8 +53,7 @@ namespace core {
 namespace scoring {
 namespace mm {
 
-MMBondAngleResidueTypeParam::MMBondAngleResidueTypeParam()
-{ }
+MMBondAngleResidueTypeParam::MMBondAngleResidueTypeParam() = default;
 
 bool
 score_atom_centrally(

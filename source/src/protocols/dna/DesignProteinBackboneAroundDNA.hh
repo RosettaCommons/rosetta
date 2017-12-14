@@ -41,7 +41,7 @@ public:
 	DesignProteinBackboneAroundDNA();
 	~DesignProteinBackboneAroundDNA() override;
 
-	DesignProteinBackboneAroundDNA( std::string , ScoreFunctionCOP );
+	DesignProteinBackboneAroundDNA( std::string const &, ScoreFunctionCOP );
 
 	void targeted_dna( DnaDesignDefOPs const & );
 	DnaDesignDefOPs const & targeted_dna() const;

@@ -18,6 +18,7 @@
 
 // Project headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 
@@ -41,11 +42,11 @@ namespace gasteiger {
 
 static basic::Tracer tr( "core.chemical.gasteiger.GasteigerAtomTypeSet" );
 
-GasteigerAtomTypeSet::GasteigerAtomTypeSet() {}
+GasteigerAtomTypeSet::GasteigerAtomTypeSet() = default;
 
 GasteigerAtomTypeSet::GasteigerAtomTypeSet( ElementSetCAP element_set, std::string const & name ):
 	name_( name ),
-	element_set_( element_set )
+	element_set_(std::move( element_set ))
 {}
 
 GasteigerAtomTypeSet::GasteigerAtomTypeSet( GasteigerAtomTypeSet const & other ):
@@ -55,7 +56,7 @@ GasteigerAtomTypeSet::GasteigerAtomTypeSet( GasteigerAtomTypeSet const & other )
 	atom_types_( other.atom_types_ )
 {}
 
-GasteigerAtomTypeSet::~GasteigerAtomTypeSet() {}
+GasteigerAtomTypeSet::~GasteigerAtomTypeSet() = default;
 
 /// @details Initialize a GasteigerAtomTypeSet from an external file "filename",
 /// and set parameters and properties for each Atom.
@@ -105,9 +106,7 @@ GasteigerAtomTypeSet::read_bond_file( std::string const & filename ){
 	// make a mapping from element type, # bonds, # electrons in bonds to a listing of all atom types with those
 	// properties
 	std::map< std::string,  utility::vector1<gasteiger::GasteigerAtomTypeDataOP> > phenotype_to_atom_type;
-	for ( utility::vector1< GasteigerAtomTypeDataOP >::iterator itr(atom_types_.begin()); itr != atom_types_.end(); ++itr ) {
-		gasteiger::GasteigerAtomTypeDataOP & atom_type( *itr);
-
+	for ( auto & atom_type : atom_types_ ) {
 		// create the triplet of phenotypic info about this atom type
 		const std::string phenotype
 			(
@@ -176,7 +175,7 @@ GasteigerAtomTypeSet::read_bond_file( std::string const & filename ){
 bool
 GasteigerAtomTypeSet::contains_atom_type( std::string const & atom_type_name ) const
 {
-	std::map< std::string, core::Size >::const_iterator
+	auto
 		iter( atom_type_index_.find( atom_type_name ) );
 	return iter != atom_type_index_.end();
 }
@@ -186,7 +185,7 @@ GasteigerAtomTypeSet::contains_atom_type( std::string const & atom_type_name ) c
 Size
 GasteigerAtomTypeSet::atom_type_index( std::string const & atom_type_name ) const
 {
-	std::map< std::string, core::Size >::const_iterator
+	auto
 		iter( atom_type_index_.find( atom_type_name ) );
 	if ( iter == atom_type_index_.end() ) {
 		utility_exit_with_message("unrecognized atom_type_name "+atom_type_name);

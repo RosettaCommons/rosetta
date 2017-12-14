@@ -42,7 +42,7 @@ CDRClusterSet::CDRClusterSet(AntibodyInfo * ab_info){
 	clear();
 }
 
-CDRClusterSet::~CDRClusterSet(){}
+CDRClusterSet::~CDRClusterSet()= default;
 
 void
 CDRClusterSet::identify_and_set_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum cdr){
@@ -57,12 +57,12 @@ CDRClusterSet::identify_and_set_cdr_cluster(core::pose::Pose const & pose, CDRNa
 
 void
 CDRClusterSet::clear(){
-	clusters_.resize(6, NULL);
+	clusters_.resize(6, nullptr);
 }
 
 void
 CDRClusterSet::clear(CDRNameEnum cdr){
-	clusters_[cdr] = NULL;
+	clusters_[cdr] = nullptr;
 }
 
 CDRClusterCOP
@@ -97,7 +97,7 @@ bool
 CDRClusterSet::empty() const {
 
 	for ( core::SSize i = 1; i <= 6; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		if ( ! empty(cdr) ) {
 			return false;
 		}
@@ -124,7 +124,7 @@ BasicCDRClusterSet::BasicCDRClusterSet():
 	CacheableData()
 {
 	clusters_.clear();
-	clusters_.resize(6, NULL);
+	clusters_.resize(6, nullptr);
 
 }
 
@@ -140,7 +140,7 @@ BasicCDRClusterSet::BasicCDRClusterSet(const BasicCDRClusterSet& src):
 	set_clusters(src.clusters_);
 }
 
-BasicCDRClusterSet::~BasicCDRClusterSet(){}
+BasicCDRClusterSet::~BasicCDRClusterSet()= default;
 
 CacheableDataOP
 BasicCDRClusterSet::clone() const{
@@ -152,7 +152,7 @@ BasicCDRClusterSet::set_cluster( CDRNameEnum cdr, CDRClusterCOP cluster ){
 	if ( cluster ) {
 		clusters_[ cdr ] = cluster->clone();
 	} else {
-		clusters_[ cdr ] = NULL;
+		clusters_[ cdr ] = nullptr;
 	}
 }
 
@@ -160,9 +160,9 @@ void
 BasicCDRClusterSet::set_clusters( utility::vector1<CDRClusterOP> const clusters ){
 	debug_assert( clusters.size() == 6 );
 	clusters_.clear();
-	clusters_.resize(6, NULL);
+	clusters_.resize(6, nullptr);
 	for ( core::Size i = 1; i <= clusters.size(); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		set_cluster(cdr, clusters[ i ]);
 	}
 }

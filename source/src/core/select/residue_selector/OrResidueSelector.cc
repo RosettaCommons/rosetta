@@ -47,7 +47,7 @@ namespace select {
 namespace residue_selector {
 
 
-OrResidueSelector::OrResidueSelector() {}
+OrResidueSelector::OrResidueSelector() = default;
 
 /// @brief Copy constructor
 ///
@@ -55,7 +55,7 @@ OrResidueSelector::OrResidueSelector( OrResidueSelector const &src) :
 	selectors_( src.selectors_ )
 {}
 
-OrResidueSelector::~OrResidueSelector() {}
+OrResidueSelector::~OrResidueSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.

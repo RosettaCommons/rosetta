@@ -39,6 +39,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -61,7 +62,7 @@ using namespace utility::tag;
 LegacyReadNativeRotamersFile::LegacyReadNativeRotamersFile() : parent()
 {}
 
-LegacyReadNativeRotamersFile::~LegacyReadNativeRotamersFile() {}
+LegacyReadNativeRotamersFile::~LegacyReadNativeRotamersFile() = default;
 
 TaskOperationOP
 LegacyReadNativeRotamersFileCreator::create_task_operation() const {
@@ -89,8 +90,8 @@ LegacyReadNativeRotamersFile::apply(
 	core::pose::Pose const & pose,
 	core::pack::task::PackerTask & task
 ) const {
-	NativeRotamersMap::const_iterator map_it = nat_ro_map_.begin();
-	NativeRotamersMap::const_iterator map_it_end = nat_ro_map_.end();
+	auto map_it = nat_ro_map_.begin();
+	auto map_it_end = nat_ro_map_.end();
 	for ( ; map_it != map_it_end; ++map_it ) {
 		core::Size seqpos = map_it->first;
 		utility::vector1< std::pair<bool, core::conformation::ResidueOP> > residues = map_it->second;
@@ -149,7 +150,7 @@ LegacyReadRepeatNativeRotamersFile::LegacyReadRepeatNativeRotamersFile() :
 	parent()
 {}
 
-LegacyReadRepeatNativeRotamersFile::~LegacyReadRepeatNativeRotamersFile() {}
+LegacyReadRepeatNativeRotamersFile::~LegacyReadRepeatNativeRotamersFile() = default;
 
 
 core::pack::task::operation::TaskOperationOP

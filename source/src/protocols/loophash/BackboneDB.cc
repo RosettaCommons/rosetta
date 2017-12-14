@@ -46,7 +46,7 @@ short RealAngleToShort( core::Real angle ){
 	while ( angle > 180.0 ) angle -= 360.0;
 	while ( angle <-180.0 ) angle += 360.0;
 	// range for short: -32768 to 32767
-	short result = short( angle * 182.0 );
+	auto result = short( angle * 182.0 );
 	return result;
 }
 

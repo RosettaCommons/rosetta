@@ -94,7 +94,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	Size const task_scaling,
 	MoverOP const & mover,
 	Real const temperature,
-	String  sample_type,
+	String const & sample_type,
 	bool const drift ) :
 	Super("GenericMonteCarlo"),
 	maxtrials_( maxtrials ),
@@ -102,9 +102,8 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	task_scaling_( task_scaling ),
 	mover_(std::move( mover )),
 	temperature_( temperature ),
-	sample_type_(std::move( sample_type )),
-	drift_( drift ),
-	stop_sampling_( false )
+	sample_type_( sample_type ),
+	drift_( drift )
 {
 	initialize();
 }
@@ -118,7 +117,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	MoverOP const & mover,
 	TaskFactoryOP factory_in,
 	Real const temperature,
-	String  sample_type,
+	String const & sample_type,
 	bool const drift ) :
 	Super("GenericMonteCarlo"),
 	maxtrials_( maxtrials ),
@@ -128,7 +127,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	task_( /* NULL */ ),
 	factory_ (std::move(factory_in)),
 	temperature_( temperature ),
-	sample_type_(std::move( sample_type )),
+	sample_type_( sample_type ),
 	drift_( drift )
 {
 	initialize();
@@ -1018,10 +1017,10 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	if ( tag->hasOption( "stopping_condition" ) ) {
 		TR<<"Generic MC using stopping condition "<< stopping_condition()->get_user_defined_name()<<std::endl;
 	}
-	drift_ = tag->getOption< bool >( "drift", 1 );
-	preapply_ = tag->getOption< bool >( "preapply", 1 ); // Default true for historical reasons
-	recover_low_ = tag->getOption< bool >( "recover_low", 1 );
-	boltz_rank_ = tag->getOption< bool >( "bolz_rank", 0 );
+	drift_ = tag->getOption< bool >( "drift", true );
+	preapply_ = tag->getOption< bool >( "preapply", true ); // Default true for historical reasons
+	recover_low_ = tag->getOption< bool >( "recover_low", true );
+	boltz_rank_ = tag->getOption< bool >( "bolz_rank", false );
 
 	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
 	for ( TagCOP const btag : branch_tags ) {
@@ -1034,7 +1033,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 					TR.Error << "filter not found in map: \n" << tag << std::endl;
 					runtime_assert( find_filt != filters.end() );
 				}
-				Real const temp( ftag->getOption< Real >( "temperature", 1 ) );
+				auto const temp( ftag->getOption< Real >( "temperature", 1 ) );
 				bool const adap( ftag->getOption< bool >( "adaptive", true ));
 				String const samp_type( ftag->getOption< String >( "sample_type", "low" ));
 				bool const rank( ftag->getOption< bool >( "rank", false ) );
@@ -1173,7 +1172,7 @@ GenericMonteCarloMover::define_composition_schema( utility::tag::XMLSchemaDefini
 {
 	using namespace utility::tag;
 
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList attlist;
 
 	attlist + Attr::attribute_w_default(

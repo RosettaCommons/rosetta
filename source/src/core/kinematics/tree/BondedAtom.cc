@@ -67,7 +67,7 @@ BondedAtom::dfs(
 	if ( start_atom_index == dof_refold_index() ) {
 		if ( dof_change_propagates_to_younger_siblings_ ) {
 			AtomOP parent( parent_ ); // must have parent
-			Atoms_Iterator iter = parent->atoms_begin();
+			auto iter = parent->atoms_begin();
 			/// you had better find yourself in your parent's atom list.
 			while ( (*iter).get() != this ) { ++iter;debug_assert( iter != parent->atoms_end() );}
 			++iter; // point to your next-youngest sibling.
@@ -108,7 +108,7 @@ BondedAtom::update_xyz_coords()
 
 	if ( local_dof_change_propagates_to_younger_siblings ) {
 		AtomOP parent( parent_ ); // must have parent
-		Atoms_Iterator iter = parent->atoms_begin();
+		auto iter = parent->atoms_begin();
 		/// you had better find yourself in your parent's atom list.
 		while ( (*iter).get() != this ) { ++iter;debug_assert( iter != parent->atoms_end() );}
 		++iter; // point to your next-youngest sibling.
@@ -160,7 +160,7 @@ BondedAtom::update_xyz_coords(
 
 	position( new_stub.v );
 
-	for ( Atoms_Iterator it=atoms_begin(), it_end = atoms_end();
+	for ( auto it=atoms_begin(), it_end = atoms_end();
 			it != it_end; ++it ) {
 		(*it)->update_xyz_coords( new_stub );
 	}
@@ -250,7 +250,7 @@ BondedAtom::update_internal_coords(
 			new_stub.M *= x_rotation_matrix_radians( pi );
 		}
 
-		for ( Atoms_Iterator it=atoms_begin(), it_end = atoms_end();
+		for ( auto it=atoms_begin(), it_end = atoms_end();
 				it != it_end; ++it ) {
 			(*it)->update_internal_coords( new_stub, recursive );
 		}
@@ -348,7 +348,7 @@ BondedAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 	new_me->inverted_frame_ = inverted_frame_;
 
 	// copy atoms
-	for ( Atoms_ConstIterator a=atoms_begin(), a_end = atoms_end();
+	for ( auto a=atoms_begin(), a_end = atoms_end();
 			a != a_end; ++a ) {
 		new_me->append_atom( (*a)->clone( AtomAP(new_me) /*the new parent*/, atom_pointer ) );
 	}
@@ -397,7 +397,7 @@ BondedAtom::setup_min_map(
 	// add me to the min_map
 	min_map.add_atom( id(), last_torsion_local );
 
-	for ( Atoms_ConstIterator it=atoms_begin(), it_end = atoms_end();
+	for ( auto it=atoms_begin(), it_end = atoms_end();
 			it != it_end; ++it ) {
 		(*it)->setup_min_map( last_torsion_local, allow_move, min_map );
 	}
@@ -508,7 +508,7 @@ BondedAtom::copy_coords( Atom const & src )
 
 	// call recursively for my children
 	int i(0);
-	for ( Atoms_Iterator it=atoms_begin(), it_end = atoms_end();
+	for ( auto it=atoms_begin(), it_end = atoms_end();
 			it != it_end; ++it, ++i ) {
 		(*it)->copy_coords( *(src.child(i)) );
 	}

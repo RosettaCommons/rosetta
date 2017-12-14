@@ -31,8 +31,8 @@ public:
 	HyperRectangle();
 
 	HyperRectangle(
-		utility::vector1< numeric::Real > upper,
-		utility::vector1< numeric::Real > lower
+		utility::vector1< numeric::Real > const & upper,
+		utility::vector1< numeric::Real > const & lower
 	);
 
 	HyperRectangle(

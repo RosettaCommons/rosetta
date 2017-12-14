@@ -70,7 +70,7 @@ bool RigidBodySilentStruct::init_from_lines(
 	bool success( false );
 
 	utility::vector1< std::string > energy_names;
-	utility::vector1< std::string >::const_iterator iter = lines.begin();
+	auto iter = lines.begin();
 	if ( iter->substr(0,9) != "SEQUENCE:" ) { //a full new header would change the default columns
 		// get sequence and scorename data from the silent-file data object, because I don't have it!
 		EnergyNamesOP enames = EnergyNamesOP(
@@ -93,7 +93,7 @@ bool RigidBodySilentStruct::init_from_lines(
 		++iter;
 		read_score_headers( *iter, energy_names, container ); ++iter;
 	} // get header information
-	for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end; ++iter ) {
+	for ( auto end = lines.end(); iter != end; ++iter ) {
 		std::string tag;
 		std::istringstream line_stream( *iter );
 
@@ -135,7 +135,7 @@ bool RigidBodySilentStruct::init_from_lines(
 			} else if ( iter->substr(0,9) == "SEQUENCE:" ) {
 				tr.Warning << "skipping duplicate sequence declaration " << std::endl;
 				//after a SEQUENCE declaration we might find another SCORE header that should be skipped, too...
-				utility::vector1< std::string >::const_iterator iter2 = ++iter;
+				auto iter2 = ++iter;
 				if ( ( iter2 != end ) && iter2->substr(0,7) == "SCORE: " ) {
 					tr.Warning << "re-reading score declaration from second line... " << std::endl;
 					read_score_headers( *iter2, energy_names, container );
@@ -168,7 +168,7 @@ void RigidBodySilentStruct::fold_tree( kinematics::FoldTree const& f ) {
 }
 
 kinematics::FoldTree const& RigidBodySilentStruct::fold_tree() const {
-	runtime_assert( fold_tree_ != 0 );
+	runtime_assert( fold_tree_ != nullptr );
 	return *fold_tree_;
 }
 
@@ -216,9 +216,8 @@ void RigidBodySilentStruct::print_conformation( std::ostream & output ) const {
 	// output << "REMARK RIGID_BODY_SILENTFILE" << std::endl;
 	if ( write_fold_tree_ && fold_tree_ ) { //assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 		output << "FOLD_TREE ";
-		for ( kinematics::FoldTree::const_iterator it = fold_tree().begin(), it_end = fold_tree().end();
-				it != it_end; ++it ) {
-			output << *it;
+		for ( auto const & it : fold_tree() ) {
+			output << it;
 		}
 		//  output << fold_tree(); this produces a new-line --- wrong behaviour of fold_tree but I don't want to fix 1000 u-tracer unit-tests!
 		output << ' ' << decoy_tag() << "\n";

@@ -33,8 +33,8 @@ qsarPoint::~qsarPoint() = default;
 static basic::Tracer qsarMapTracer( "protocols.qsar.qsarMap" );
 
 
-qsarPoint::qsarPoint(std::string type, core::Real value, std::string name, core::conformation::ResidueOP residue ):
-	type_(std::move(type)), value_(value), atom_name_(std::move(name)), residue_(std::move(residue))
+qsarPoint::qsarPoint(std::string const & type, core::Real value, std::string const & name, core::conformation::ResidueOP residue ):
+	type_(type), value_(value), atom_name_(name), residue_(residue)
 {}
 
 void qsarPoint::set_value(core::Real value)
@@ -63,7 +63,7 @@ core::conformation::ResidueOP qsarPoint::get_residue()
 }
 
 qsarMap::qsarMap(std::string map_name, core::conformation::ResidueOP residue) :
-	map_name_(std::move(map_name)), residue_(std::move(residue))
+	map_name_(map_name), residue_(residue)
 { }
 
 core::Size qsarMap::size()

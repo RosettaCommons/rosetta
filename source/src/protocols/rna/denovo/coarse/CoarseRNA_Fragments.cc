@@ -74,9 +74,9 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() = default;
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CoarseRNA_Fragments::CoarseRNA_Fragments( std::string  frag_source_file ):
+CoarseRNA_Fragments::CoarseRNA_Fragments( std::string const & frag_source_file ):
 	RNA_Fragments(),
-	frag_source_file_(std::move( frag_source_file ))
+	frag_source_file_( frag_source_file )
 {
 	initialize_frag_source_pose();
 }

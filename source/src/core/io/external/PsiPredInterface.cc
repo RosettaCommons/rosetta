@@ -24,6 +24,7 @@
 
 // utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/io/izstream.hh>
 
 #include <utility/file/file_sys_util.hh> //file_exists()
@@ -34,7 +35,7 @@
 // C++ headers
 
 // C headers
-#include <time.h>
+#include <ctime>
 
 static basic::Tracer TR( "core.io.external.psipredinterface" );
 
@@ -152,10 +153,10 @@ PsiPredInterface::parse_psipred_horiz_output( std::string const & psipred_horiz_
 		// we will basically read a block at a time in this while loop
 		// first 6 characters are header, strip them
 		std::string const data( line.substr( 6, std::string::npos ) );
-		for ( core::Size i=0; i<data.size(); ++i ) {
-			core::Size const num( data[i] - '0' );
+		for ( char i : data ) {
+			core::Size const num( i - '0' );
 			if ( num > 9 ) {
-				utility_exit_with_message( std::string( "Invalid psipred integer conversion!, char=" ) + data[i] + ", line=" + line );
+				utility_exit_with_message( std::string( "Invalid psipred integer conversion!, char=" ) + i + ", line=" + line );
 			}
 			conf.push_back( num );
 		}
@@ -164,9 +165,9 @@ PsiPredInterface::parse_psipred_horiz_output( std::string const & psipred_horiz_
 		}
 		std::string data2( line.substr( 6, std::string::npos ) );
 		// convert C to L
-		for ( core::Size i=0; i<data2.size(); ++i ) {
-			if ( data2[i] == 'C' ) {
-				data2[i] = 'L';
+		for ( char & i : data2 ) {
+			if ( i == 'C' ) {
+				i = 'L';
 			}
 		}
 		ss += data2;
@@ -282,8 +283,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		TR << "Running psipred for chain " << i << " of " << pose.conformation().num_chains() << std::endl;
 		std::string pose_seq = pose.chain_sequence(i);
 		std::string seq = "";
-		for ( core::Size ii=0; ii<pose_seq.size(); ++ii ) {
-			char const j = pose_seq[ii];
+		for ( char j : pose_seq ) {
 			if ( ( j == 'A' ) || ( j == 'C' ) || ( j == 'D' ) || ( j == 'E' ) ||
 					( j == 'F' ) || ( j == 'G' ) || ( j == 'H' ) || ( j == 'I' ) ||
 					( j == 'K' ) || ( j == 'L' ) || ( j == 'M' ) || ( j == 'N' ) ||
@@ -297,7 +297,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 			continue;
 		}
 		TR.Debug << "seq : " << seq << std::endl;
-		core::Size time_val = time(NULL);
+		core::Size time_val = time(nullptr);
 		std::string const filebase = pose.sequence().substr(0,10) + "_" + boost::lexical_cast< std::string >(time_val);
 		std::string const fasta_filename = create_fasta_file( filebase, seq );
 		std::string psipred_filename = filebase + ".ss2";
@@ -371,8 +371,7 @@ utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInt
 		TR << "Running psipred for chain " << i << " of " << pose.conformation().num_chains() << std::endl;
 		std::string pose_seq = pose.chain_sequence(i);
 		std::string seq = "";
-		for ( core::Size ii=0; ii<pose_seq.size(); ++ii ) {
-			char const j = pose_seq[ii];
+		for ( char j : pose_seq ) {
 			if ( ( j == 'A' ) || ( j == 'C' ) || ( j == 'D' ) || ( j == 'E' ) ||
 					( j == 'F' ) || ( j == 'G' ) || ( j == 'H' ) || ( j == 'I' ) ||
 					( j == 'K' ) || ( j == 'L' ) || ( j == 'M' ) || ( j == 'N' ) ||
@@ -386,7 +385,7 @@ utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInt
 			continue;
 		}
 		TR.Debug << "seq : " << seq << std::endl;
-		core::Size time_val = time(NULL);
+		core::Size time_val = time(nullptr);
 		std::string const filebase = pose.sequence().substr(0,10) + "_" + boost::lexical_cast< std::string >(time_val);
 		std::string const fasta_filename = create_fasta_file( filebase, seq );
 		std::string const psipred_filename = filebase + ".ss2";

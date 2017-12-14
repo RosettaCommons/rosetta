@@ -144,7 +144,7 @@
 #include <utility/excn/Exceptions.hh>
 //#include "james_util.hh" //for calculation of burial
 #include <basic/Tracer.hh>
-#include <time.h>
+#include <ctime>
 using basic::Warning;
 using basic::Error;
 
@@ -254,7 +254,7 @@ setup_movers(simple_moves::SmallMoverOP small, simple_moves::ShearMoverOP shear,
 double
 run_mc(pose::Pose & p, ScoreFunctionOP s,
 	core::Real temperature, int numstruct,
-	std::string output_tag, bool output_pdbs){
+	std::string const & output_tag, bool output_pdbs){
 
 	using namespace protocols;
 	using namespace moves;
@@ -340,7 +340,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 
 	MonteCarloOP mc( new moves::MonteCarlo(init_pose,*s,temperature) );
 	for ( int ns =1; ns<=numstruct; ns++ ) {
-		time_t time_per_decoy = time(NULL);
+		time_t time_per_decoy = time(nullptr);
 		std::ostringstream curr;
 		curr << ns;
 
@@ -411,7 +411,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 		} else { //if(file_stat != 0){
 			std::cout << "file:  " << (basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb") << " already exists, skipping to next iteration" << std::endl;
 		}
-		time_t time_per_decoy_finish = time(NULL);
+		time_t time_per_decoy_finish = time(nullptr);
 		std::cout << "time to finish decoy " << (time_per_decoy_finish-time_per_decoy) << std::endl;
 	}
 
@@ -420,7 +420,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 
 
 void
-create_ensemble(pose::Pose & p, ScoreFunctionOP s, std::string output_tag){
+create_ensemble(pose::Pose & p, ScoreFunctionOP s, std::string const & output_tag){
 
 	using namespace protocols;
 	using namespace moves;

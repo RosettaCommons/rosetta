@@ -348,7 +348,7 @@ GeneralizedEigenSolver<MatrixType>::compute_in_place(
 	eigenvectors_were_computed_ = compute_eigenvectors;
 
 	// Define some scratch-space matrix types.
-	ComplexScalar eigenvalue_numerator;
+	//ComplexScalar eigenvalue_numerator; AMW: unused
 	ScratchVector eigenvalue_numerators_real;
 	ScratchVector eigenvalue_numerators_imaginary;
 	ScratchVector eigenvalue_denominators;

@@ -66,7 +66,7 @@ namespace features {
 // XRW TEMP }
 // }}}1
 
-RuntimeFeatures::RuntimeFeatures() {} // {{{1
+RuntimeFeatures::RuntimeFeatures() = default; // {{{1
 
 RuntimeFeatures::~RuntimeFeatures() = default; // {{{1
 

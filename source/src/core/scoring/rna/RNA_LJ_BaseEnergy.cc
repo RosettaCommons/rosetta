@@ -98,17 +98,7 @@ RNA_LJ_BaseEnergy::clone() const
 }
 
 ////////////////////////////////////////////////
-RNA_LJ_BaseEnergy::RNA_LJ_BaseEnergy( RNA_LJ_BaseEnergy const & src ):
-	parent( src ),
-	etable_( src.etable_ ),
-	ljatr_( src.ljatr_ ),
-	ljrep_( src.ljrep_ ),
-	dljatr_( src.dljatr_ ),
-	dljrep_( src.dljrep_ ),
-	safe_max_dis2_( src.safe_max_dis2_ ),
-	get_bins_per_A2_( src.get_bins_per_A2_   ),
-	verbose_( src.verbose_ )
-{}
+RNA_LJ_BaseEnergy::RNA_LJ_BaseEnergy( RNA_LJ_BaseEnergy const & /*src*/ ) = default;
 
 
 /////////////////////////////////////////////////////////////////////////////

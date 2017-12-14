@@ -57,15 +57,7 @@ IteratedConvergenceMover::IteratedConvergenceMover( MoverOP submover, filters::F
 
 IteratedConvergenceMover::~IteratedConvergenceMover()= default;
 
-IteratedConvergenceMover::IteratedConvergenceMover( IteratedConvergenceMover const & other ) :
-	//utility::pointer::ReferenceCount(),
-	Mover(other),
-	submover_(other.submover_),
-	filter_(other.filter_),
-	delta_(other.delta_),
-	cycles_(other.cycles_),
-	maxcycles_(other.maxcycles_)
-{}
+IteratedConvergenceMover::IteratedConvergenceMover( IteratedConvergenceMover const & /*other*/ ) = default;
 
 void
 IteratedConvergenceMover::apply( Pose & pose )

@@ -94,7 +94,7 @@ SymmetricEnergies::clone() const
 	return EnergiesOP( new SymmetricEnergies( *this ) );
 }
 
-SymmetricEnergies::~SymmetricEnergies() {}
+SymmetricEnergies::~SymmetricEnergies() = default;
 
 void SymmetricEnergies::set_derivative_graph( MinimizationGraphOP dg )
 {
@@ -130,12 +130,12 @@ SymmetricEnergies::update_neighbor_links(
 	// std::endl;
 
 	// find SymmInfo
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	conformation::PointGraphOP pg( point_graph() );
-	if ( pg == 0 ) {
+	if ( pg == nullptr ) {
 		pg = conformation::PointGraphOP( new conformation::PointGraph );
 	}
 	fill_point_graph( pose, pg );
@@ -207,7 +207,7 @@ SymmetricEnergies::update_neighbor_links(
 void
 SymmetricEnergies::fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP pg ) const {
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -231,10 +231,10 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 	//utility::vector1< ContextGraphOP >  cgraphs( context_graphs() );
 	utility::vector1< ContextGraphOP >& cgraphs( context_graphs() );
 	utility::vector1< bool >& required_cgraphs( required_context_graphs() );
-	debug_assert( cgraphs[type] == 0 );
+	debug_assert( cgraphs[type] == nullptr );
 	required_cgraphs[type] = true;
 	cgraphs[type] = ContextGraphFactory::create_context_graph( type );
-	if ( cgraphs[type] == 0 ) {
+	if ( cgraphs[type] == nullptr ) {
 		utility_exit_with_message( "Error: Null returned from ContextGraphFactory::create_context_graph( " + utility::to_string( type ) + ")" );
 	}
 	cgraphs[type]->set_num_nodes( size() );
@@ -263,7 +263,7 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 			}
 		}
 	}
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 

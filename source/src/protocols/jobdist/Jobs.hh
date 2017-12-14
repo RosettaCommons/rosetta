@@ -71,9 +71,9 @@ class BasicJob : public utility::pointer::ReferenceCount
 public:
 
 	/// @brief You MUST ensure that input_tag is a UNIQUE identifier for this Job!
-	BasicJob(std::string input_tag, std::string native_tag, int nstruct=1):
-		input_id_(std::move(input_tag)),
-		native_id_(std::move(native_tag)),
+	BasicJob(std::string const & input_tag, std::string const & native_tag, int nstruct=1):
+		input_id_(input_tag),
+		native_id_(native_tag),
 		nstruct_(nstruct),
 		preserve_whole_input_tag_(false)
 	{}

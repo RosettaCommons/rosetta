@@ -52,13 +52,12 @@ static basic::Tracer TR( "protocols.fldsgn.MatchResidues" );
 namespace protocols {
 namespace fldsgn {
 
-typedef utility::vector1< core::Size > VecSize;
-typedef utility::vector1< VecSize > VecVecSize;
+using VecSize = utility::vector1<core::Size>;
+using VecVecSize = utility::vector1<VecSize>;
 
 
 // @brief default constructor
-MatchResidues::MatchResidues()
-{}
+MatchResidues::MatchResidues() = default;
 
 
 // @brief destructor
@@ -201,7 +200,7 @@ MatchResidues::parse_my_tag(
 
 	for ( utility::tag::TagCOP pairs_tag : tag->getTags() ) {
 		if ( pairs_tag->getName() == "match" ) {
-			const Size ref_pos = pairs_tag->getOption< Size >("ref_pos");
+			const auto ref_pos = pairs_tag->getOption< Size >("ref_pos");
 			Size mod_pos_start= 0;
 			Size mod_pos_end = 0;
 			if ( pairs_tag->hasOption("segment") ) {

@@ -19,6 +19,7 @@
 #include <protocols/moves/CompositionMover.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.PackScreener" );
 
@@ -30,13 +31,12 @@ namespace screener {
 PackScreener::PackScreener( core::pose::Pose & pose,
 	modeler::packer::StepWisePackerOP stepwise_packer ):
 	SampleApplier( pose ),
-	stepwise_packer_( stepwise_packer )
+	stepwise_packer_(std::move( stepwise_packer ))
 {
 }
 
 //Destructor
-PackScreener::~PackScreener()
-{}
+PackScreener::~PackScreener() = default;
 
 bool
 PackScreener::check_screen() {
@@ -51,7 +51,7 @@ PackScreener::add_mover( moves::CompositionMoverOP update_mover, moves::Composit
 	update_mover->add_mover( MoverOP( new modeler::packer::SideChainCopier( pose_,
 		stepwise_packer_->previous_working_pack_res(),
 		stepwise_packer_->pack_o2prime_hydrogens() ) )  );
-	restore_mover->add_mover( 0 ); // original choice.
+	restore_mover->add_mover( nullptr ); // original choice.
 	//  restore_mover->add_mover( SideChainMover( *pose_original_ ) );
 }
 

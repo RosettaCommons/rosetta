@@ -135,8 +135,8 @@
 #endif
 
 #include <list>
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 
 using namespace core;
 using namespace protocols;
@@ -148,7 +148,7 @@ using namespace protocols::stepwise::modeler::rna;
 using namespace protocols::stepwise::legacy::modeler::rna;
 using utility::vector1;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 
 static basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSetupFromCommandLine" );

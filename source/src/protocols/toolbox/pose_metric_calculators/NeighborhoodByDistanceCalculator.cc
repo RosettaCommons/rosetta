@@ -21,6 +21,7 @@
 
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
+#include <utility>
 #include <utility/graph/Graph.hh>
 #include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
@@ -58,14 +59,14 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 /// @details
-NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( std::set< core::Size > central_residues )
+NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( std::set< core::Size > const & central_residues )
 : parent(), central_residues_(central_residues), dist_cutoff_ ( basic::options::option[basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff] ), num_neighbors_(0)
 {
 
 }
 
 /// @details
-NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( std::set< core::Size > central_residues, core::Real dist_cutoff )
+NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( std::set< core::Size > const & central_residues, core::Real dist_cutoff )
 : parent(), central_residues_(central_residues), dist_cutoff_(dist_cutoff), num_neighbors_(0)
 {
 }
@@ -116,8 +117,8 @@ NeighborhoodByDistanceCalculator::print( std::string const & key ) const
 	if ( key == "central_residues" ) {
 		std::string const spacer( option[ OptionKeys::packing::print_pymol_selection].value() ? "+" : " ");
 		std::string res_string("");
-		for ( std::set< core::Size >::const_iterator it(central_residues_.begin()), end(central_residues_.end()); it != end; ++it ) {
-			res_string += utility::to_string(*it) + spacer;
+		for ( unsigned long central_residue : central_residues_ ) {
+			res_string += utility::to_string(central_residue) + spacer;
 		}
 		return res_string;
 
@@ -129,8 +130,8 @@ NeighborhoodByDistanceCalculator::print( std::string const & key ) const
 
 	} else if ( key == "num_neighbors_map" ) {
 		std::string map_string("");
-		for ( std::map<core::Size, core::Size>::const_iterator it(num_neighbors_map_.begin()), end(num_neighbors_map_.end()); it != end; ++it ) {
-			map_string += utility::to_string(it->first) + ":" + utility::to_string(it->second) + " ";
+		for ( auto it : num_neighbors_map_ ) {
+			map_string += utility::to_string(it.first) + ":" + utility::to_string(it.second) + " ";
 		}
 		return map_string;
 
@@ -138,8 +139,8 @@ NeighborhoodByDistanceCalculator::print( std::string const & key ) const
 		using namespace basic::options; //this lets you get + or (space) as spacer
 		std::string const spacer( option[ OptionKeys::packing::print_pymol_selection].value() ? "+" : " ");
 		std::string nbrs_string("");
-		for ( std::set< core::Size >::const_iterator it(neighbors_.begin()), end(neighbors_.end()); it != end; ++it ) {
-			nbrs_string += utility::to_string(*it) + spacer;
+		for ( unsigned long neighbor : neighbors_ ) {
+			nbrs_string += utility::to_string(neighbor) + spacer;
 		}
 		return nbrs_string;
 
@@ -179,19 +180,19 @@ NeighborhoodByDistanceCalculator::recompute( core::pose::Pose const & pose )
 
 	//iterating through the graph is somewhat less expensive.
 	//for each residue of interest
-	for ( std::set< core::Size >::const_iterator it(central_residues_.begin()), end(central_residues_.end()); it != end; ++it ) {
+	for ( unsigned long central_residue : central_residues_ ) {
 		//for all edges of that residue
 		core::Size neighbor_counter = 0;
-		for ( utility::graph::Graph::EdgeListConstIter edge_iter = neighborgraph.get_node(*it)->const_edge_list_begin(),
-				edge_end_iter = neighborgraph.get_node(*it)->const_edge_list_end();
+		for ( utility::graph::Graph::EdgeListConstIter edge_iter = neighborgraph.get_node(central_residue)->const_edge_list_begin(),
+				edge_end_iter = neighborgraph.get_node(central_residue)->const_edge_list_end();
 				edge_iter != edge_end_iter; ++edge_iter ) {
 			//the other end of this edge goes in neighbors_
-			neighbors_.insert((*edge_iter)->get_other_ind(*it));
+			neighbors_.insert((*edge_iter)->get_other_ind(central_residue));
 			neighbor_counter++;
 		}//for all edges of a residue
-		num_neighbors_map_[(*it)] = neighbor_counter;
+		num_neighbors_map_[central_residue] = neighbor_counter;
 		//a residue is its own neighbor, so this makes it part of the set
-		neighbors_.insert(*it);
+		neighbors_.insert(central_residue);
 	}//for all central_residue_
 
 	num_neighbors_ = neighbors_.size();

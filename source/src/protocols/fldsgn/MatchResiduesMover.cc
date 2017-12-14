@@ -61,8 +61,7 @@ namespace fldsgn {
 // -------------  Mover Creator -------------
 
 // @brief default constructor
-MatchResiduesMover::MatchResiduesMover()
-{}
+MatchResiduesMover::MatchResiduesMover() = default;
 
 
 // @brief destructor

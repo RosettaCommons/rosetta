@@ -81,7 +81,7 @@ public: //Public methods:
 
 	/// @brief Get the HomogeneousTransform matrix.
 	///
-	inline numeric::HomogeneousTransform < core::Real > const &
+	inline numeric::HomogeneousTransform< core::Real > const &
 	ht() const {
 		return htransform_;
 	}

@@ -65,8 +65,8 @@ SingleResidueRotamerLibraryFactory::type_for_residuetype( core::chemical::Residu
 		if ( ! has_type(type) ) {
 			TR << "For residue " << restype.name() << ", can't find SingleResidueRotamerLibraryCreator for type '" << type << "'. Known types are: " << std::endl;
 			TR << "\t\t";
-			for ( CreatorMap::const_iterator iter( creator_map_.begin() ), iter_end( creator_map_.end() ); iter != iter_end; ++iter ) {
-				TR << iter->first << ", ";
+			for ( auto const & iter : creator_map_ ) {
+				TR << iter.first << ", ";
 			}
 			TR << std::endl;
 			utility_exit_with_message( "Unable to find creator for SingleResidueRotamerLibrary type " + type );
@@ -111,7 +111,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 		if ( forcebasic ) {
 			return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
 		} else {
-			return SingleResidueRotamerLibraryCOP(0);
+			return SingleResidueRotamerLibraryCOP(nullptr);
 		}
 	}
 	std::string cachetag( get_cachetag(restype) );
@@ -129,7 +129,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 		}
 	}
 
-	CreatorMap::const_iterator entry(creator_map_.find( type ) );
+	auto entry(creator_map_.find( type ) );
 	debug_assert( entry != creator_map_.end() );
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP library( entry->second->create( restype ) );
 
@@ -168,7 +168,7 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 		return get( restype );
 	}
 	std::string type( type_for_residuetype( restype ) );
-	CreatorMap::const_iterator entry(creator_map_.find( type ) );
+	auto entry(creator_map_.find( type ) );
 	debug_assert( entry != creator_map_.end() );
 	return entry->second->create( restype, residue );
 }

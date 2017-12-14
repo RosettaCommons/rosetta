@@ -677,10 +677,9 @@ int main(int argc, char *argv[])
 
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		typedef numeric::geometry::hashing::Real6 Real6;
+		using Real6 = numeric::geometry::hashing::Real6;
 		typedef std::pair< std::pair< core::Size, core::Size >, Real6  > Key;
-		typedef core::fragment::Frame Frame;
-		typedef utility::vector1< std::pair<Key, Frame> >::iterator it_type;
+		using Frame = core::fragment::Frame;
 
 		using namespace ObjexxFCL;
 
@@ -794,8 +793,7 @@ int main(int argc, char *argv[])
 				}
 				++frag_length;
 			}
-			for ( utility::vector1< int >::iterator fragAlength_iterator = fragAvector.begin(); fragAlength_iterator != fragAvector.end(); ++fragAlength_iterator ) {
-				core::Size A_length = *fragAlength_iterator;
+			for ( core::Size A_length : fragAvector ) {
 				if ( A_length+4 != frag_length ) {
 					std::cerr << "\n" << std::endl;
 					std::cerr << "WARNING!" << std::endl;
@@ -803,8 +801,7 @@ int main(int argc, char *argv[])
 					utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 				}
 			}
-			for ( utility::vector1< int >::iterator fragBlength_iterator = fragBvector.begin(); fragBlength_iterator != fragBvector.end(); ++fragBlength_iterator ) {
-				core::Size B_length = *fragBlength_iterator;
+			for ( core::Size B_length : fragBvector ) {
 				if ( B_length+4 != frag_length ) {
 					std::cerr << "\n" << std::endl;
 					std::cerr << "WARNING!" << std::endl;
@@ -849,18 +846,18 @@ int main(int argc, char *argv[])
 
 
 		// For every vector length of FragA:
-		for ( utility::vector1< int >::iterator fragAlength_iterator = fragAvector.begin(); fragAlength_iterator != fragAvector.end(); ++fragAlength_iterator ) {
+		for ( int & fragAlength_iterator : fragAvector ) {
 
 			std::stringstream VV;
-			VV << *fragAlength_iterator;
+			VV << fragAlength_iterator;
 			std::string fragAlength = VV.str();
 			TR << "Fragment A Length: " << fragAlength << std::endl;
 
 			// For every vector length of FragB:
-			for ( utility::vector1< int >::iterator fragBlength_iterator = fragBvector.begin(); fragBlength_iterator != fragBvector.end(); ++fragBlength_iterator ) {
+			for ( int & fragBlength_iterator : fragBvector ) {
 
 				std::stringstream VW;
-				VW << *fragBlength_iterator;
+				VW << fragBlength_iterator;
 				std::string fragBlength = VW.str();
 				TR << "Fragment B Length: " << fragBlength << std::endl;
 
@@ -886,10 +883,10 @@ int main(int argc, char *argv[])
 					std::string fragAnat_ss = fragA_native.secstruct();
 					std::string fragAnat_aa = fragA_native.sequence();
 
-					fraglibA = molten_get_vallfrags(*fragAlength_iterator, fragAnat_ss, fragAnat_aa, known);
+					fraglibA = molten_get_vallfrags(fragAlength_iterator, fragAnat_ss, fragAnat_aa, known);
 
 				} else {
-					fraglibA = get_vallfrags(round, *fragAlength_iterator, capss, capaa, botss, botaa, ins_begin, ins_end);
+					fraglibA = get_vallfrags(round, fragAlength_iterator, capss, capaa, botss, botaa, ins_begin, ins_end);
 				}
 				TR << "Made FragA library containing " << fraglibA->size() << " fragments." << std::endl;
 
@@ -982,9 +979,9 @@ int main(int argc, char *argv[])
 					std::string fragBnat_ss = fragB_native.secstruct();
 					std::string fragBnat_aa = fragB_native.sequence();
 
-					fraglibB = molten_get_vallfrags(*fragBlength_iterator, fragBnat_ss, fragBnat_aa, known);
+					fraglibB = molten_get_vallfrags(fragBlength_iterator, fragBnat_ss, fragBnat_aa, known);
 				} else {
-					fraglibB = get_vallfrags(round, *fragBlength_iterator, capss, capaa, botss, botaa, ins_begin, ins_end);
+					fraglibB = get_vallfrags(round, fragBlength_iterator, capss, capaa, botss, botaa, ins_begin, ins_end);
 				}
 
 				TR << "Made FragB library containing " << fraglibB->size() << " fragments." << std::endl;
@@ -1039,14 +1036,14 @@ int main(int argc, char *argv[])
 							}
 
 
-							for ( it_type it = library_A.begin(); it != library_A.end(); it++ ) {
+							for ( auto & it : library_A ) {
 
 								// Get FragA information again.
 								core::pose::Pose libpose;
-								Key fraginfo = it->first;
+								Key fraginfo = it.first;
 								Real6 real6_A = fraginfo.second;
 
-								core::fragment::Frame fragframe = it->second;
+								core::fragment::Frame fragframe = it.second;
 								fragframe.fragment_as_pose(fraginfo.first.second, libpose, rsd_set);
 
 								std::stringstream HHH;

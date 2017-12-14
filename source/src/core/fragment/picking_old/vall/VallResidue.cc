@@ -66,25 +66,11 @@ VallResidue::VallResidue( String const & line ) {
 
 
 /// @brief copy constructor
-VallResidue::VallResidue( VallResidue const & rval ) :
-	id_( rval.id_ ),
-	aa_( rval.aa_ ),
-	ss_( rval.ss_ ),
-	resi_( rval.resi_ ),
-	x_( rval.x_ ),
-	y_( rval.y_ ),
-	z_( rval.z_ ),
-	phi_( rval.phi_ ),
-	psi_( rval.psi_ ),
-	omega_( rval.omega_ ),
-	profile_( rval.profile_ ),
-	position_index_( rval.position_index_ ),
-	section_index_( rval.section_index_ )
-{}
+VallResidue::VallResidue( VallResidue const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-VallResidue::~VallResidue() {}
+VallResidue::~VallResidue() = default;
 
 
 /// @brief copy assignment

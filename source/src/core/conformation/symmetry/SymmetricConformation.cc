@@ -82,7 +82,7 @@ SymmetricConformation::SymmetricConformation(Conformation const & conf, Symmetry
 Conformation &
 SymmetricConformation::operator=( Conformation const & src )
 {
-	SymmetricConformation const * sym_conf = dynamic_cast< SymmetricConformation const * > ( &src );
+	auto const * sym_conf = dynamic_cast< SymmetricConformation const * > ( &src );
 	if ( sym_conf ) {
 		SymmetricConformation::operator=( *sym_conf );
 	} else {
@@ -96,7 +96,7 @@ SymmetricConformation::operator=( Conformation const & src )
 void
 SymmetricConformation::detached_copy( Conformation const & src ) {
 	Conformation::detached_copy( src );
-	SymmetricConformation const * sym_conf = dynamic_cast< SymmetricConformation const * > ( &src );
+	auto const * sym_conf = dynamic_cast< SymmetricConformation const * > ( &src );
 	if ( sym_conf ) {
 
 		// Copy the private data members of the symmetric conformation.
@@ -148,7 +148,7 @@ SymmetricConformation::~SymmetricConformation() { clear(); }
 void
 SymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 {
-	typedef SymmetryInfo::DOF_IDs DOF_IDs;
+	using DOF_IDs = SymmetryInfo::DOF_IDs;
 
 	core::Size parent_rsd;
 	if ( symm_info_->torsion_changes_move_other_monomers() ) clear_Tsymm( );
@@ -175,8 +175,8 @@ SymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 	Conformation::set_dof( parent_id, setting );
 	{
 		DOF_IDs const & dofs( symm_info_->dependent_dofs( parent_id, *this ) );
-		for ( DOF_IDs::const_iterator dof =dofs.begin(), dofe= dofs.end(); dof != dofe; ++dof ) {
-			Conformation::set_dof( *dof, setting );
+		for ( auto const & dof : dofs ) {
+			Conformation::set_dof( dof, setting );
 		}
 	}
 }
@@ -190,9 +190,8 @@ SymmetricConformation::set_secstruct( Size const seqpos, char const setting )
 {
 	Conformation::set_secstruct( seqpos, setting );
 	if ( symm_info_->bb_is_independent( seqpos ) ) {
-		for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( seqpos ).begin(),
-				epos=symm_info_->bb_clones( seqpos ).end(); pos != epos; ++pos ) {
-			Conformation::set_secstruct( *pos, setting );
+		for ( unsigned long pos : symm_info_->bb_clones( seqpos ) ) {
+			Conformation::set_secstruct( pos, setting );
 		}
 	} else {
 		TR.Debug << "SymmetricConformation:: Setting secstruct for dependent residue!, try to set its parent" << std::endl;
@@ -212,7 +211,7 @@ SymmetricConformation::fold_tree( FoldTree const & fold_tree_in )
 void
 SymmetricConformation::set_torsion( id::TorsionID const & id, Real const setting )
 {
-	typedef SymmetryInfo::TorsionIDs TorsionIDs;
+	using TorsionIDs = SymmetryInfo::TorsionIDs;
 
 	TR.Trace << "SymmetricConformation: set_torsion: " << id << ' ' << setting << std::endl;
 	if ( symm_info_->torsion_changes_move_other_monomers() ) clear_Tsymm( );
@@ -232,8 +231,8 @@ SymmetricConformation::set_torsion( id::TorsionID const & id, Real const setting
 	Conformation::set_torsion( parent_id, setting );
 	{
 		TorsionIDs const & tors( symm_info_->dependent_torsions( parent_id ) );
-		for ( TorsionIDs::const_iterator tor =tors.begin(), tore= tors.end(); tor != tore; ++tor ) {
-			Conformation::set_torsion( *tor, setting );
+		for ( auto const & tor : tors ) {
+			Conformation::set_torsion( tor, setting );
 		}
 	}
 }
@@ -363,10 +362,9 @@ SymmetricConformation::set_bond_length(
 		core::Size nclones = symm_info_->num_bb_clones( );
 		SymmetryInfo::Clones clones1 = symm_info_->bb_clones( parent_atom1.rsd() );
 		SymmetryInfo::Clones clones2 = symm_info_->bb_clones( parent_atom2.rsd() );
-		AtomID dep_atom1, dep_atom2, dep_atom3;
 		for ( int i=1; i<=(int)nclones; ++i ) {
-			dep_atom1 = id::AtomID( atom1.atomno(), clones1[i] );
-			dep_atom2 = id::AtomID( atom2.atomno(), clones2[i] );
+			AtomID dep_atom1( atom1.atomno(), clones1[i] );
+			AtomID dep_atom2( atom2.atomno(), clones2[i] );
 			Conformation::set_bond_length( dep_atom1, dep_atom2, setting );
 		}
 	}
@@ -377,9 +375,6 @@ SymmetricConformation::set_bond_length(
 void
 SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const & new_jump )
 {
-	//typedef SymmetryInfo::AtomIDs AtomIDs;
-	typedef SymmetryInfo::Clones Clones;
-
 	TR.Trace << "SymmetricConformation: set_jump jump_number: " << jump_number << std::endl;
 
 	// clear cached transforms
@@ -392,9 +387,8 @@ SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const &
 		TR.Warning << "SymmetricConformation:: directly setting a dependent ATOM!" << std::endl;
 		TR.Warning << "the jump " << jump_number << " is controlled by " << symm_info_->jump_follows( jump_number ) << std::endl;
 	} else {
-		for ( Clones::const_iterator pos= symm_info_->jump_clones( jump_number ).begin(),
-				epos=symm_info_->jump_clones( jump_number ).end(); pos != epos; ++pos ) {
-			id::AtomID const id_clone( Conformation::jump_atom_id( *pos ) );
+		for ( unsigned long pos : symm_info_->jump_clones( jump_number ) ) {
+			id::AtomID const id_clone( Conformation::jump_atom_id( pos ) );
 			Conformation::set_jump( id_clone, new_jump );
 		}
 	}
@@ -403,9 +397,6 @@ SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const &
 void
 SymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump const & new_jump )
 {
-	//typedef SymmetryInfo::AtomIDs AtomIDs;
-	typedef SymmetryInfo::Clones Clones;
-
 	TR.Trace << "SymmetricConformation: set_jump id:" << id << std::endl;
 
 	// clear cached transforms
@@ -417,9 +408,8 @@ SymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump const &
 	if ( !symm_info_->jump_is_independent( jump_number ) ) {
 		TR.Warning << "SymmetricConformation:: directly setting a dependent ATOM!" << std::endl;
 	} else {
-		for ( Clones::const_iterator pos= symm_info_->jump_clones( jump_number ).begin(),
-				epos=symm_info_->jump_clones( jump_number ).end(); pos != epos; ++pos ) {
-			id::AtomID const id_clone( Conformation::jump_atom_id( *pos ) );
+		for ( unsigned long pos : symm_info_->jump_clones( jump_number ) ) {
+			id::AtomID const id_clone( Conformation::jump_atom_id( pos ) );
 			Conformation::set_jump( id_clone, new_jump );
 		}
 	}
@@ -466,7 +456,7 @@ SymmetricConformation::replace_residue( Size const seqpos, Residue const & new_r
 	Conformation::replace_residue( parent_rsd, new_rsd, orient_backbone );
 
 	// now the copies
-	for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( parent_rsd ).begin(),
+	for ( auto pos=symm_info_->bb_clones( parent_rsd ).begin(),
 			epos=symm_info_->bb_clones( parent_rsd ).end(); pos != epos; ++pos ) {
 		// if we're not orienting backbone, update symm copies using local coord frame for each
 		//fpd --> we already oriented backbone for master, that should be good enough
@@ -504,7 +494,7 @@ SymmetricConformation::replace_residue( Size const seqpos,
 	Conformation::replace_residue( parent_rsd, new_rsd, atom_pairs );
 
 	// now the copies
-	for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( parent_rsd ).begin(),
+	for ( auto pos=symm_info_->bb_clones( parent_rsd ).begin(),
 			epos=symm_info_->bb_clones( parent_rsd ).end(); pos != epos; ++pos ) {
 		//fpd Same logic as above; we already oriented backbone for master, that should be good enough
 		// make the new res
@@ -645,7 +635,7 @@ SymmetricConformation::set_xyz(
 
 	// set parent XYZ using base-class method, followed by all copies
 	Conformation::set_xyz( parent_id, parent_pos );
-	for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( parent_id.rsd() ).begin(),
+	for ( auto pos=symm_info_->bb_clones( parent_id.rsd() ).begin(),
 			epos=symm_info_->bb_clones( parent_id.rsd() ).end(); pos != epos; ++pos ) {
 		AtomID id_i = AtomID( id.atomno(), *pos );
 		PointPosition pos_i = apply_transformation( parent_pos, parent_id.rsd(), *pos );
@@ -689,7 +679,7 @@ SymmetricConformation::batch_set_xyz(
 			// set parent XYZ using base-class method, followed by all copies
 			ids_with_symm.push_back( parent_id );
 			positions_with_symm.push_back( parent_pos );
-			for ( SymmetryInfo::Clones::const_iterator pos=symm_info_->bb_clones( parent_id.rsd() ).begin(),
+			for ( auto pos=symm_info_->bb_clones( parent_id.rsd() ).begin(),
 					epos=symm_info_->bb_clones( parent_id.rsd() ).end(); pos != epos; ++pos ) {
 				AtomID id_i = AtomID( id.atomno(), *pos );
 				PointPosition pos_i = apply_transformation( parent_pos, parent_id.rsd(), *pos );
@@ -752,7 +742,7 @@ SymmetricConformation::recalculate_transforms( ) {
 
 	FoldTree const & f( fold_tree() );
 
-	ResidueOP vrt_res_op( 0 ); // maybe unused
+	ResidueOP vrt_res_op( nullptr ); // maybe unused
 
 	// multicomp support
 	Size ncomps = symm_info_->get_num_components();
@@ -804,7 +794,7 @@ SymmetricConformation::recalculate_transforms( ) {
 				}
 			}
 
-			Residue const * vrt_res_cap = 0;
+			Residue const * vrt_res_cap = nullptr;
 			if ( vrt_ctrl ) {
 				vrt_res_cap = &( residue( vrt_ctrl ) ); /// the standard logic, if virtual rsds are present
 			} else {

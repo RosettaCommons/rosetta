@@ -125,10 +125,10 @@ public:
 	{
 	}
 
-	CSA(Size res1, std::string  atom1, Real sigma1, Real sigma2, Real sigma3, Real CSAval, Real CSAerr, Real weight) :
+	CSA(Size res1, std::string const & atom1, Real sigma1, Real sigma2, Real sigma3, Real CSAval, Real CSAerr, Real weight) :
 		CSAval_computed_(-999),f1ij_(0.0),f2ij_(0.0),f3ij_(0.0),
 		res1_(res1), res2_(res1-1), res3_(res1),
-		atom1_(std::move(atom1)), atom2_("C"), atom3_("CA"),
+		atom1_(atom1), atom2_("C"), atom3_("CA"),
 		sigma1_(sigma1), sigma2_(sigma2), sigma3_(sigma3),
 		alpha_(0), beta_(105), gamma_(0),
 		CSAval_(CSAval), CSAerr_(CSAerr),

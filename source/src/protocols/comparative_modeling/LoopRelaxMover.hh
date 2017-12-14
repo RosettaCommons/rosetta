@@ -48,10 +48,10 @@ public:
 	/// AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 	/// NOT BE INITIALIZED.
 	LoopRelaxMover(
-		std::string remodel,
-		std::string intermedrelax,
-		std::string refine,
-		std::string relax,
+		std::string const & remodel,
+		std::string const & intermedrelax,
+		std::string const & refine,
+		std::string const & relax,
 		loops::Loops const & loops
 	);
 
@@ -60,10 +60,10 @@ public:
 	/// AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 	/// NOT BE INITIALIZED.
 	LoopRelaxMover(
-		std::string remodel,
-		std::string intermedrelax,
-		std::string refine,
-		std::string relax,
+		std::string const & remodel,
+		std::string const & intermedrelax,
+		std::string const & refine,
+		std::string const & relax,
 		loops::LoopsFileData const & loops_from_file
 	);
 
@@ -75,10 +75,10 @@ public:
 	/// AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 	/// NOT BE INITIALIZED.
 	LoopRelaxMover(
-		std::string remodel,
-		std::string intermedrelax,
-		std::string refine,
-		std::string relax,
+		std::string const & remodel,
+		std::string const & intermedrelax,
+		std::string const & refine,
+		std::string const & relax,
 		loops::GuardedLoopsFromFileOP guarded_loops
 	);
 

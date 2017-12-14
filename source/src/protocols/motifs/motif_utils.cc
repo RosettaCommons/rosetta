@@ -259,7 +259,7 @@ parallel_base_test(
 	core::conformation::Residue const & motif_dna
 )
 {
-	typedef numeric::xyzVector< core::Real > xyzVec;
+	using xyzVec = numeric::xyzVector<core::Real>;
 	xyzVec p( core::scoring::dna::get_z_axis( motif_dna, core::scoring::dna::get_y_axis( motif_dna, 1 ) ) );
 	// The second argument is the chain and if the value is changed from 1 to 2 the resulting value becomes negative
 	xyzVec q( core::scoring::dna::get_z_axis( pose_dna, core::scoring::dna::get_y_axis( pose_dna, 1 ) ) );

@@ -560,7 +560,7 @@ FragmentStoreOP SSHashedFragmentStore::get_fragment_store(Size db_index){
 	if ( SSHashedFragmentStore_.find(db_index) != SSHashedFragmentStore_.end() ) {
 		return(SSHashedFragmentStore_.at(db_index));
 	}
-	return(NULL);
+	return(nullptr);
 }
 
 FragmentStoreOP SSHashedFragmentStore::get_fragment_store(){

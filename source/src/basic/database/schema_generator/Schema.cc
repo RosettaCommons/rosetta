@@ -29,13 +29,14 @@
 #include <platform/types.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/mpi_util.hh>
 #include <utility/sql_database/types.hh>
 
 #include <string>
 #include <sstream>
-#include <stdio.h>
+#include <cstdio>
 #include <algorithm>
 #include <cctype>
 
@@ -62,13 +63,13 @@ using cppdb::statement;
 static basic::Tracer TR( "basic.database.schema_generator.Schema" );
 
 
-Schema::Schema(std::string table_name):
+Schema::Schema(std::string const & table_name):
 	table_name_(table_name)
 {
 	init();
 }
 
-Schema::Schema(std::string table_name, PrimaryKey primary_key):
+Schema::Schema(std::string const & table_name, PrimaryKey const & primary_key):
 	table_name_(table_name),
 	primary_key_(primary_key)
 {
@@ -147,7 +148,7 @@ std::string Schema::table_schema_statements( sessionOP db_session ) const
 	stringstream schema_string;
 	schema_string << "CREATE TABLE IF NOT EXISTS " << table_name_ << "(\n\t";
 
-	for ( Columns::const_iterator it=columns_.begin(), end = columns_.end(); it != end; ++it ) {
+	for ( auto it=columns_.begin(), end = columns_.end(); it != end; ++it ) {
 		if ( it!=columns_.begin() ) {
 			schema_string << ",\n\t";
 		}
@@ -196,26 +197,26 @@ std::string Schema::table_schema_statements( sessionOP db_session ) const
 std::string Schema::table_init_statements( sessionOP db_session ) const
 {
 	stringstream init_string;
-	for ( Columns::const_iterator it=columns_.begin(), end = columns_.end(); it != end; ++it ) {
-		if ( it->auto_increment() && it->auto_increment_base() != 0 ) {
+	for ( const auto & column : columns_ ) {
+		if ( column.auto_increment() && column.auto_increment_base() != 0 ) {
 			switch(db_session->get_db_mode()){
 			case utility::sql_database::DatabaseMode::postgres :
 				// Postgresql creates an implicit sequence of the form <table_name>_<column_name>_seq to handle auto_increment values.
 				//
 				// http://www.postgresql.org/docs/9.2/static/datatype-numeric.html
 				// see 8.1.4 Serial Types
-				init_string << "ALTER SEQUENCE " << table_name_ << "_" << it->name() << "_seq" << " MINVALUE " << it->auto_increment_base() << ";\n";
+				init_string << "ALTER SEQUENCE " << table_name_ << "_" << column.name() << "_seq" << " MINVALUE " << column.auto_increment_base() << ";\n";
 				break;
 			case utility::sql_database::DatabaseMode::mysql :
 				// http://dev.mysql.com/doc/refman/5.6/en/example-auto-increment.html
-				init_string << "ALTER TABLE " << table_name_ << " AUTO_INCREMENT = " << it->auto_increment_base() << ";\n";
+				init_string << "ALTER TABLE " << table_name_ << " AUTO_INCREMENT = " << column.auto_increment_base() << ";\n";
 				break;
 			case utility::sql_database::DatabaseMode::sqlite3 :
 				// Sqlite3 autoincrement is managed by the db table, sqlite_sequence. ROWID (and autoincrement value) are monotonically
 				// increased from from current value in sqlite_sequence. In the trivial case, the next value is sqlite_sequence + 1.
 				//
 				// http://www.sqlite.org/autoinc.html
-				init_string << "INSERT INTO sqlite_sequence SELECT \"" << table_name_ << "\", " << it->auto_increment_base() - 1 << "  WHERE NOT EXISTS (SELECT 1 FROM sqlite_sequence WHERE NAME = \"" << table_name_ << "\");\n";
+				init_string << "INSERT INTO sqlite_sequence SELECT \"" << table_name_ << "\", " << column.auto_increment_base() - 1 << "  WHERE NOT EXISTS (SELECT 1 FROM sqlite_sequence WHERE NAME = \"" << table_name_ << "\");\n";
 				break;
 			default :
 				utility_exit_with_message(

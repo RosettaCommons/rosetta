@@ -121,7 +121,7 @@ WaterAdductHBondEnergy::eval_atom_derivative(
 {
 	using EnergiesCacheableDataType::H2O_HBOND_SET;
 	/// f1 and f2 are zeroed
-	hbonds::HBondSet const & hbond_set
+	auto const & hbond_set
 		( static_cast< hbonds::HBondSet const & >
 		( pose.energies().data().get( H2O_HBOND_SET ) ) );
 	Vector f1,f2;

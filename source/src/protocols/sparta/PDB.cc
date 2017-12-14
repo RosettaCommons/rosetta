@@ -802,7 +802,7 @@ void PDB::Vec3Zero(Vec3 v)
 }
 
 
-void PDB::Vec3Copy(Vec3 v1, Vec3 v2)
+void PDB::Vec3Copy(Vec3 v1, const Vec3 v2)
 {
 	for ( int i = 0; i < 3; i++ ) {
 		v1[i] = v2[i];
@@ -810,13 +810,13 @@ void PDB::Vec3Copy(Vec3 v1, Vec3 v2)
 }
 
 
-float PDB::Vec3Abs(Vec3 v)
+float PDB::Vec3Abs(const Vec3 v)
 {
 	return sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 }
 
 
-float PDB::Vec3DiffAbs(Vec3 v1, Vec3 v2)
+float PDB::Vec3DiffAbs(const Vec3 v1, const Vec3 v2)
 {
 	return sqrtf((v1[0] - v2[0]) * (v1[0] - v2[0]) +
 		(v1[1] - v2[1]) * (v1[1] - v2[1]) +
@@ -841,7 +841,7 @@ void PDB::Vec3Scale(Vec3 v, float s)
 }
 
 
-void PDB::Vec3Add(Vec3 v1, Vec3 v2)
+void PDB::Vec3Add(Vec3 v1, const Vec3 v2)
 {
 	for ( int i = 0; i < 3; i++ ) {
 		v1[i] += v2[i];
@@ -849,7 +849,7 @@ void PDB::Vec3Add(Vec3 v1, Vec3 v2)
 }
 
 
-void PDB::Vec3Sub(Vec3 v1, Vec3 v2)
+void PDB::Vec3Sub(Vec3 v1, const Vec3 v2)
 {
 	for ( int i = 0; i < 3; i++ ) {
 		v1[i] -= v2[i];
@@ -857,13 +857,13 @@ void PDB::Vec3Sub(Vec3 v1, Vec3 v2)
 }
 
 
-float PDB::Vec3Scalar(Vec3 v1, Vec3 v2)
+float PDB::Vec3Scalar(const Vec3 v1, const Vec3 v2)
 {
 	return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 }
 
 
-void PDB::Vec3Cross(Vec3 v1, Vec3 v2)
+void PDB::Vec3Cross(Vec3 v1, const Vec3 v2)
 {
 	Vec3 vRes;
 
@@ -888,7 +888,7 @@ void PDB::Mat3VecMult(Vec3 v, Mat3 m)
 }
 
 
-void PDB::Vec3ScaleAdd(Vec3 v1, float s, Vec3 v2)
+void PDB::Vec3ScaleAdd(Vec3 v1, float s, const Vec3 v2)
 {
 	int i;
 

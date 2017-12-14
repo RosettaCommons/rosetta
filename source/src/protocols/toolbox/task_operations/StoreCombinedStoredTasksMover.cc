@@ -53,10 +53,10 @@ namespace toolbox {
 namespace task_operations {
 
 // @brief default constructor
-StoreCombinedStoredTasksMover::StoreCombinedStoredTasksMover() {}
+StoreCombinedStoredTasksMover::StoreCombinedStoredTasksMover() = default;
 
 // @brief destructor
-StoreCombinedStoredTasksMover::~StoreCombinedStoredTasksMover() {}
+StoreCombinedStoredTasksMover::~StoreCombinedStoredTasksMover() = default;
 
 void
 StoreCombinedStoredTasksMover::apply( core::pose::Pose & pose )
@@ -156,8 +156,8 @@ StoreCombinedStoredTasksMover::parse_my_tag( TagCOP const tag, basic::datacache:
 	task2_ = tag->getOption< std::string >( "task2" ) ;
 	operator_ = tag->getOption< std::string >( "operator", "union" ) ;
 	task_name_ = tag->getOption< std::string >( "task_name" );
-	overwrite_ = tag->getOption< bool >( "overwrite", 0 );
-	invert_ = tag->getOption< bool >( "invert", 0 );
+	overwrite_ = tag->getOption< bool >( "overwrite", false );
+	invert_ = tag->getOption< bool >( "invert", false );
 }
 
 // @brief Identification

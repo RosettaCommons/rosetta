@@ -78,37 +78,11 @@ AddHelixSequenceConstraintsMover::AddHelixSequenceConstraintsMover():
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
-AddHelixSequenceConstraintsMover::AddHelixSequenceConstraintsMover( AddHelixSequenceConstraintsMover const & src ):
-	protocols::moves::Mover( src ),
-	reset_mode_( src.reset_mode_ ),
-	min_helix_length_( src.min_helix_length_ ),
-	add_n_terminal_constraints_( src.add_n_terminal_constraints_ ),
-	add_c_terminal_constraints_( src.add_c_terminal_constraints_ ),
-	add_overall_constraints_( src.add_overall_constraints_ ),
-	add_alanine_constraints_( src.add_alanine_constraints_ ),
-	add_hydrophobic_constraints_( src.add_hydrophobic_constraints_ ),
-	min_n_terminal_charges_( src.min_n_terminal_charges_ ),
-	n_terminus_size_( src.n_terminus_size_ ),
-	n_terminal_constraint_strength_( src.n_terminal_constraint_strength_ ),
-	min_c_terminal_charges_( src.min_c_terminal_charges_ ),
-	c_terminus_size_( src.c_terminus_size_ ),
-	c_terminal_constraint_strength_( src.c_terminal_constraint_strength_ ),
-	types_to_avoid_( src.types_to_avoid_ ),
-	overall_max_count_( src.overall_max_count_ ),
-	overall_constraints_strength_( src.overall_constraints_strength_ ),
-	desired_ala_fraction_( src.desired_ala_fraction_ ),
-	ala_constraint_under_strength_( src.ala_constraint_under_strength_ ),
-	ala_constraint_over_strength_( src.ala_constraint_over_strength_ ),
-	desired_min_hydrophobic_fraction_( src.desired_min_hydrophobic_fraction_ ),
-	hydrophobic_constraint_strength_( src.hydrophobic_constraint_strength_ ),
-	residue_selector_( src.residue_selector_ ) //Note: no deep-cloning here.
-{
-
-}
+AddHelixSequenceConstraintsMover::AddHelixSequenceConstraintsMover( AddHelixSequenceConstraintsMover const & /*src*/ ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-AddHelixSequenceConstraintsMover::~AddHelixSequenceConstraintsMover(){}
+AddHelixSequenceConstraintsMover::~AddHelixSequenceConstraintsMover()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

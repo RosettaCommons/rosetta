@@ -50,7 +50,7 @@ using namespace ObjexxFCL::format;
 static basic::Tracer trProfScore(
 	"protocols.frag_picker.scores.ProfileScore");
 
-ProfileScore::~ProfileScore() {}
+ProfileScore::~ProfileScore() = default;
 
 void ProfileScore::do_caching(VallChunkOP chunk) {
 
@@ -171,7 +171,7 @@ FragmentScoringMethodOP MakeProfileScore::make(core::Size priority,
 	utility_exit_with_message(
 		"[ERROR] Undefined profile scoring method. Provide it with frags::scoring::profile_score flag");
 
-	return NULL;
+	return nullptr;
 }
 
 } //scores

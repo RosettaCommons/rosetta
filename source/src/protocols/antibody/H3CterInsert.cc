@@ -24,6 +24,7 @@
 #include <basic/Tracer.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -53,7 +54,7 @@ H3CterInsert::H3CterInsert() :
 
 H3CterInsert::H3CterInsert(antibody::AntibodyInfoOP  antibody_info ) :
 	Mover(),
-	ab_info_(antibody_info)
+	ab_info_(std::move(antibody_info))
 {
 
 }

@@ -30,7 +30,7 @@ PerturberSet::PerturberSet() {
 	is_default_ = false;
 }
 
-PerturberSet::~PerturberSet() {}
+PerturberSet::~PerturberSet() = default;
 
 void PerturberSet::perturb_subset(
 	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {

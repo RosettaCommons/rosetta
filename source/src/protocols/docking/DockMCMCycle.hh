@@ -128,9 +128,6 @@ private:
 	/// init_task_factory_ instead acts as a starting point and the docking mover masks over init_task_factory
 	core::Size repack_period_;
 
-	bool norepack1_; // belongs to the packer task
-	bool norepack2_; // belongs to the packer task
-
 	// minimization
 	core::Real min_tolerance_;
 	bool nb_list_;

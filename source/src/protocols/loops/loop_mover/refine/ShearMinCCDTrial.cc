@@ -84,7 +84,7 @@ ShearMinCCDTrial & ShearMinCCDTrial::operator=( ShearMinCCDTrial const & rhs ){
 }
 
 //destructor
-ShearMinCCDTrial::~ShearMinCCDTrial() {}
+ShearMinCCDTrial::~ShearMinCCDTrial() = default;
 
 /// @brief Each derived class must specify its name.
 // XRW TEMP std::string ShearMinCCDTrial::get_name() const
@@ -135,7 +135,7 @@ void ShearMinCCDTrial::apply( Pose & pose )
 	task_before_bb_perturbation->set_bump_check( true );
 
 	LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
-	Loops::const_iterator it( loop_mover_op->loops()->one_random_loop() );
+	auto it( loop_mover_op->loops()->one_random_loop() );
 	Loops one_loop;
 	one_loop.add_loop( it );
 

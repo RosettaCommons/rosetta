@@ -22,6 +22,7 @@
 #include <ObjexxFCL/FArray1A.hh>
 
 /// Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 // Numeric headers
@@ -78,7 +79,7 @@ MultiCoolAnnealer::MultiCoolAnnealer(
 	calc_rot_freq,
 	rot_freq
 	),
-	ig_(ig),
+	ig_(std::move(ig)),
 	nsteps_for_rot_( p_rotamer_set->nrotamers() , 0 ),
 	nsteps_( 0 ),
 	top_to_keep( task->multi_cool_annealer_history_size() ),
@@ -124,8 +125,7 @@ MultiCoolAnnealer::MultiCoolAnnealer(
 }
 
 /// @brief virtual destructor
-MultiCoolAnnealer::~MultiCoolAnnealer()
-{}
+MultiCoolAnnealer::~MultiCoolAnnealer() = default;
 
 
 /// @brief sim_annealing for fixed backbone design mode

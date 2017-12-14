@@ -88,7 +88,7 @@ SelectByDensityFitOperation::SelectByDensityFitOperation( core::Real threshold, 
 	invert_(invert)
 {}
 
-SelectByDensityFitOperation::~SelectByDensityFitOperation() {}
+SelectByDensityFitOperation::~SelectByDensityFitOperation() = default;
 
 core::pack::task::operation::TaskOperationOP SelectByDensityFitOperation::clone() const
 {
@@ -121,7 +121,7 @@ SelectByDensityFitOperation::apply( core::pose::Pose const & const_pose, core::p
 
 	for ( Size r=1; r<=nres; ++r ) {
 		if ( task.nonconst_residue_task(r).being_designed() || task.nonconst_residue_task(r).being_packed() ) {
-			Real score = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, NULL , false);
+			Real score = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, nullptr , false);
 			TR.Debug << pose.pdb_info()->name() << " residue: " << r << " density_score: " << score << std::endl;
 			if ( (score < threshold_) != invert_ ) {         // != invert_ flips the Boolean when true
 				task.nonconst_residue_task(r).prevent_repacking();
@@ -134,7 +134,7 @@ void
 SelectByDensityFitOperation::parse_tag( TagCOP tag, DataMap & )
 {
 	threshold_ = tag->getOption<core::Real>("threshold", 0.72);
-	invert_ = tag->getOption<bool>("invert", 0);
+	invert_ = tag->getOption<bool>("invert", false);
 }
 
 void SelectByDensityFitOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

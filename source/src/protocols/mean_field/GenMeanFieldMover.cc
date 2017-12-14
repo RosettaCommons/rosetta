@@ -45,7 +45,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <math.h>
+#include <cmath>
 #include <utility/file/file_sys_util.hh> // file_exists
 #include <utility/file/FileName.hh>
 #include <utility/vector0.hh>
@@ -273,7 +273,7 @@ void
 GenMeanFieldMover::read_input_pdbs()
 {
 
-	typedef vector1< file::FileName > Filenames;
+	using Filenames = vector1<file::FileName>;
 
 
 	if ( basic::options::option[ basic::options::OptionKeys::mean_field::bb_list ].active() ) {
@@ -531,7 +531,7 @@ GenMeanFieldMover::fresh_instance() const{
 	return protocols::moves::MoverOP( new GenMeanFieldMover );
 }
 
-GenMeanFieldMover::~GenMeanFieldMover(){}
+GenMeanFieldMover::~GenMeanFieldMover()= default;
 
 protocols::moves::MoverOP
 GenMeanFieldMover::clone() const{

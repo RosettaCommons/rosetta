@@ -26,6 +26,7 @@
 #include <core/kinematics/tree/Atom.hh>
 #include <basic/Tracer.hh>
 #include <numeric/NumericTraits.hh>
+#include <utility>
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -80,8 +81,7 @@ RigidBodyStepWiseSampler::RigidBodyStepWiseSampler( Size const moving_res,
 {}
 
 //Destructor
-RigidBodyStepWiseSampler::~RigidBodyStepWiseSampler()
-{}
+RigidBodyStepWiseSampler::~RigidBodyStepWiseSampler() = default;
 
 ////////////////////////////////////////////////////////////
 void RigidBodyStepWiseSampler::init() {

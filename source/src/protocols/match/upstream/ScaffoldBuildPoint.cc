@@ -31,7 +31,7 @@ namespace upstream {
 
 ScaffoldBuildPoint::ScaffoldBuildPoint() : index_( 0 ) {}
 ScaffoldBuildPoint::ScaffoldBuildPoint( Size index ) : index_( index ) {}
-ScaffoldBuildPoint::~ScaffoldBuildPoint() {}
+ScaffoldBuildPoint::~ScaffoldBuildPoint() = default;
 
 bool ScaffoldBuildPoint::compatible( ScaffoldBuildPoint const & other, bool first_dispatch ) const
 {

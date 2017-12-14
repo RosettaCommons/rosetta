@@ -58,7 +58,7 @@ ResidueCentralityCalculator::ResidueCentralityCalculator() :
 }
 
 /// @brief destructor
-ResidueCentralityCalculator::~ResidueCentralityCalculator(){}
+ResidueCentralityCalculator::~ResidueCentralityCalculator()= default;
 
 
 /// @brief
@@ -117,11 +117,11 @@ void Dijkstras( std::list< NodeOP > & nodes )
 		}
 		std::list< NodeOP > const & adjacentNodes( AdjacentRemainingNodes( nodes, smallest ) );
 		TR << "Nodes adjacent to " << smallest->resi << ": ";
-		for ( std::list< NodeOP >::const_iterator it = adjacentNodes.begin(); it != adjacentNodes.end(); ++it ) {
-			TR.Debug << " " << (*it)->resi;
+		for ( auto const & adjacentNode : adjacentNodes ) {
+			TR.Debug << " " << adjacentNode->resi;
 			int distance = smallest->distanceFromStart + 1;
-			if ( distance < (*it)->distanceFromStart ) {
-				(*it)->distanceFromStart = distance;
+			if ( distance < adjacentNode->distanceFromStart ) {
+				adjacentNode->distanceFromStart = distance;
 			}
 		}
 		TR.Debug << std::endl;
@@ -133,9 +133,9 @@ void Dijkstras( std::list< NodeOP > & nodes )
 NodeOP
 ExtractSmallest( std::list< NodeOP > & nodes )
 {
-	if ( nodes.empty() /*size() == 0 */ ) return NULL;
-	std::list< NodeOP >::iterator smallest( nodes.begin() );
-	for ( std::list< NodeOP >::iterator current = ++(nodes.begin()); current != nodes.end(); ++current ) {
+	if ( nodes.empty() /*size() == 0 */ ) return nullptr;
+	auto smallest( nodes.begin() );
+	for ( auto current = ++(nodes.begin()); current != nodes.end(); ++current ) {
 		if ( (*current)->distanceFromStart < (*smallest)->distanceFromStart ) {
 			smallest = current;
 		}
@@ -168,8 +168,8 @@ AdjacentRemainingNodes( std::list< NodeOP > const &, NodeOP node )
 bool
 Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 {
-	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
-		if ( node == *it ) {
+	for ( auto const & it : nodes ) {
+		if ( node == it ) {
 			return true;
 		}
 	}
@@ -180,8 +180,8 @@ void
 find_neighbors( core::pose::Pose const & pose,
 	std::list< NodeOP > const & nodes )
 {
-	for ( std::list< NodeOP >::const_iterator res_it_1 = nodes.begin(); res_it_1 != nodes.end(); ++res_it_1 ) {
-		(*res_it_1)->neighbors.clear();
+	for ( auto const & node : nodes ) {
+		node->neighbors.clear();
 	}
 
 	// Residues are in contact if >=1 atom from each residue is less far than this
@@ -257,12 +257,12 @@ core::Real
 ResidueCentralityCalculator::connectivity_index( std::list< NodeOP > const & nodes,
 	core::Size const resi ) const {
 	// reset nodes
-	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
-		(*it)->in_list = true;
-		if ( (*it)->resi == resi ) {
-			(*it)->distanceFromStart = 0;
+	for ( auto const & node : nodes ) {
+		node->in_list = true;
+		if ( node->resi == resi ) {
+			node->distanceFromStart = 0;
 		} else {
-			(*it)->distanceFromStart = INT_MAX;
+			node->distanceFromStart = INT_MAX;
 		}
 	}
 
@@ -271,9 +271,9 @@ ResidueCentralityCalculator::connectivity_index( std::list< NodeOP > const & nod
 	Dijkstras( nodecopy );
 
 	core::Real running_sum = 0.0;
-	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
-		core::Size shortest_path = (*it)->distanceFromStart;
-		TR.Debug << "Shortest path from " << resi << " to " << (*it)->resi << " is " << shortest_path << std::endl;
+	for ( auto const & node : nodes ) {
+		core::Size shortest_path = node->distanceFromStart;
+		TR.Debug << "Shortest path from " << resi << " to " << node->resi << " is " << shortest_path << std::endl;
 		running_sum += shortest_path;
 	} // for each residue
 	return ( nodes.size() - 1 ) / running_sum;

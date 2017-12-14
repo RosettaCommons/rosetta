@@ -49,7 +49,7 @@ void Ints::add(const pair<int,int>& range) {
 	if ( range.first <= range.second ) {
 		vRanges.push_back(range);
 	} else {
-		vRanges.push_back( make_pair(range.second,range.first) );
+		vRanges.emplace_back(range.second,range.first );
 	}
 	b_is_init = false;
 } // Ints::add

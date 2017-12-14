@@ -42,12 +42,12 @@ public:
 
 	/// @brief constructs the calculator for a target atom in residues of a target
 	///  amino acid type
-	SHOBuriedUnsatisfiedPolarsCalculator(core::Real sho_cutoff, std::string tgt_amino,
-		std::string tgt_atom, core::scoring::ScoreFunctionCOP sfxn);
+	SHOBuriedUnsatisfiedPolarsCalculator(core::Real sho_cutoff, std::string const & tgt_amino,
+		std::string const & tgt_atom, core::scoring::ScoreFunctionCOP sfxn);
 
 	/// @brief constructs the calculator for a target residue
 	SHOBuriedUnsatisfiedPolarsCalculator(core::Real sho_cutoff,
-		utility::vector1<Size> const& tgt_res_idxs,
+		utility::vector1<Size> const & tgt_res_idxs,
 		core::scoring::ScoreFunctionCOP sfxn);
 
 	/// @brief clones this calculator

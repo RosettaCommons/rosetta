@@ -123,22 +123,16 @@ PossibleAtomTypesForAtom::CreateAtomicEnvironmentToTypesMap ( const bool IN_AROM
 	// Remove unhybridized types wherever possible; the unhybridized types are only used when there is no
 	// hybridized alternative
 	for
-		(
-				std::map< std::string, PossibleAtomTypesForAtom >::iterator
-				itr( atomic_environment_to_possible_types.begin()),
-				itr_end( atomic_environment_to_possible_types.end());
-				itr != itr_end;
-				++itr
-				) {
-		itr->second.gasteiger_atom_type_set( GASTEIGER_ATOM_TYPE_SET );
+		( auto & atomic_environment_to_possible_type : atomic_environment_to_possible_types ) {
+		atomic_environment_to_possible_type.second.gasteiger_atom_type_set( GASTEIGER_ATOM_TYPE_SET );
 		if ( IN_AROMATIC_RING ) {
 			// get the last character, which indicates the desired charge
-			const char last_char( itr->first[ itr->first.size() - 1]);
+			const char last_char( atomic_environment_to_possible_type.first[ atomic_environment_to_possible_type.first.size() - 1]);
 			const int charge( last_char - 'O');
-			itr->second.FinalizeAromatic( charge);
+			atomic_environment_to_possible_type.second.FinalizeAromatic( charge);
 		} else {
 			// finalize; only keep the best type
-			itr->second.Finalize();
+			atomic_environment_to_possible_type.second.Finalize();
 		}
 	}
 
@@ -155,7 +149,7 @@ PossibleAtomTypesForAtom::PossibleAtomTypesForAtom() :
 	m_NumberAtomTypesWithHybridization( GasteigerAtomTypeData::NumberHybridOrbitalType, 0 ),
 	m_AtomTypesByDecreasingStability(),
 	m_NumberConjugatedTypes( 0),
-	m_FinalizeFunction( 0 )
+	m_FinalizeFunction( nullptr )
 {
 }
 
@@ -254,7 +248,7 @@ core::Size PossibleAtomTypesForAtom::GetNumberPossibleTypes() const
 GasteigerAtomTypeDataCOP PossibleAtomTypesForAtom::GetMostStableType() const
 {
 	return !m_AtomTypesByDecreasingStability.empty()
-		? m_AtomTypesByDecreasingStability.front() : GasteigerAtomTypeDataCOP(0);
+		? m_AtomTypesByDecreasingStability.front() : GasteigerAtomTypeDataCOP(nullptr);
 }
 
 ////! @brief get the alternate atom types
@@ -347,7 +341,7 @@ void PossibleAtomTypesForAtom::AddAtomType( GasteigerAtomTypeDataCOP ATOM_TYPE)
 
 	if ( CouldHaveHybridization( hybrid) ) { // find the type with that hybridization, test its stability
 		// test stability criterion to decide whether we should insert this hybrid
-		std::list< GasteigerAtomTypeDataCOP >::iterator itr( m_AtomTypesByDecreasingStability.begin());
+		auto itr( m_AtomTypesByDecreasingStability.begin());
 
 		// find the hybrid orbital type in the most stable type vector
 		// we know this type is there, otherwise CouldHaveHybridization would have returned false
@@ -370,7 +364,7 @@ void PossibleAtomTypesForAtom::AddAtomType( GasteigerAtomTypeDataCOP ATOM_TYPE)
 	// only insert if there are no types remaining with that hybridization
 	if ( !CouldHaveHybridization( hybrid) ) {
 		++m_NumberAtomTypesWithHybridization[ hybrid ];
-		std::list< GasteigerAtomTypeDataCOP >::iterator itr( m_AtomTypesByDecreasingStability.begin()),
+		auto itr( m_AtomTypesByDecreasingStability.begin()),
 			itr_end( m_AtomTypesByDecreasingStability.end());
 
 		while ( itr != itr_end && ( *itr)->get_stability_metric() > stability )
@@ -396,9 +390,8 @@ void PossibleAtomTypesForAtom::SetToType( GasteigerAtomTypeDataCOP ATOM_TYPE)
 		TR.Warning << "Tried to limit atom type to " + ATOM_TYPE->get_name()
 			+ " but could not find it " << std::endl;
 		TR.Warning << "Possible types are: ";
-		for ( std::list< GasteigerAtomTypeDataCOP >::iterator itr(m_AtomTypesByDecreasingStability.begin()),
-				end(m_AtomTypesByDecreasingStability.end()); itr != end; ++itr ) {
-			TR.Warning << " " << (*itr)->get_name();
+		for ( auto & itr : m_AtomTypesByDecreasingStability ) {
+			TR.Warning << " " << itr->get_name();
 		}
 		if ( m_AtomTypesByDecreasingStability.empty() ) {
 			TR.Warning << " (None) ";
@@ -418,7 +411,7 @@ void PossibleAtomTypesForAtom::SetToType( GasteigerAtomTypeDataCOP ATOM_TYPE)
 		++m_NumberConjugatedTypes;
 	}
 	m_AtomTypesByDecreasingStability.push_back( ATOM_TYPE);
-	m_FinalizeFunction = NULL;
+	m_FinalizeFunction = nullptr;
 }
 
 //! @brief set the final type based on the given atom and smallest ring size
@@ -502,7 +495,7 @@ void PossibleAtomTypesForAtom::RemoveHybridization( const GasteigerAtomTypeData:
 
 	for
 		(
-				std::list< GasteigerAtomTypeDataCOP >::iterator
+				auto
 				itr( m_AtomTypesByDecreasingStability.begin()), itr_end( m_AtomTypesByDecreasingStability.end());
 				itr != itr_end;
 				// iteration in loop
@@ -537,7 +530,7 @@ void PossibleAtomTypesForAtom::AddAromaticAtomType( GasteigerAtomTypeDataCOP ATO
 	const core::Real stability( ATOM_TYPE->get_stability_metric());
 
 	// find out where this atom type should be placed
-	std::list< GasteigerAtomTypeDataCOP >::iterator itr( m_AtomTypesByDecreasingStability.begin());
+	auto itr( m_AtomTypesByDecreasingStability.begin());
 
 	const core::Size hybrid_rank( hybridization_rank( hybrid ) );
 
@@ -752,7 +745,7 @@ void PossibleAtomTypesForAtom::FinalizeAromatic( const int DESIRED_CHARGE)
 	for ( core::Size pi_electrons( 0), limit_pi_electrons( 3); pi_electrons < limit_pi_electrons; ++pi_electrons ) {
 		core::Size best_hybrid_orbital_rank( 10);
 		int best_charge_diff( 10);
-		GasteigerAtomTypeDataCOP best_type( 0 );
+		GasteigerAtomTypeDataCOP best_type( nullptr );
 		core::Size index( 0), best_index( utility::get_undefined_size() );
 		std::list< GasteigerAtomTypeDataCOP > equivalent_choices;
 		for ( std::list< GasteigerAtomTypeDataCOP >::const_iterator
@@ -1187,7 +1180,7 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 			restype.atom(miter->first).gasteiger_atom_type( miter->second.GetMostStableType() );
 			// TODO: reset the formal charge if there isn't one already.
 		} else if ( allow_unknown ) {
-			restype.atom(miter->first).gasteiger_atom_type( 0 ); //
+			restype.atom(miter->first).gasteiger_atom_type( nullptr ); //
 		} else {
 			TR.Error << "Cannot find appropriate gasteiger type for atom " << restype.atom_name(miter->first) << std::endl;
 			sdf::output_residue( std::cerr, restype );

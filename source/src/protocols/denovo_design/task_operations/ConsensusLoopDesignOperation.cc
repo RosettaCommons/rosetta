@@ -81,8 +81,7 @@ ConsensusLoopDesignOperation::ConsensusLoopDesignOperation() :
 }
 
 // destructor
-ConsensusLoopDesignOperation::~ConsensusLoopDesignOperation()
-{}
+ConsensusLoopDesignOperation::~ConsensusLoopDesignOperation() = default;
 
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
@@ -250,9 +249,9 @@ ConsensusLoopDesignOperation::AAs
 ConsensusLoopDesignOperation::forbidden_aas( AAFrequencies const & frequencies ) const
 {
 	AAs aas = "";
-	for ( AAFrequencies::AAFrequencyMap::const_iterator f=frequencies.begin(); f!=frequencies.end(); ++f ) {
-		if ( f->second->enrichment() >= enrichment_threshold_ ) continue;
-		aas += f->first;
+	for ( auto const & frequencie : frequencies ) {
+		if ( frequencie.second->enrichment() >= enrichment_threshold_ ) continue;
+		aas += frequencie.first;
 	}
 
 	return aas;
@@ -262,8 +261,8 @@ utility::vector1< bool >
 make_aa_bitmap_from_forbidden_aas( std::string const & forbidden_aas )
 {
 	utility::vector1< bool > bitmap( core::chemical::num_canonical_aas, true );
-	for ( std::string::const_iterator aa=forbidden_aas.begin(); aa!=forbidden_aas.end(); ++aa ) {
-		bitmap[ core::chemical::aa_from_oneletter_code( *aa ) ] = false;
+	for ( char forbidden_aa : forbidden_aas ) {
+		bitmap[ core::chemical::aa_from_oneletter_code( forbidden_aa ) ] = false;
 	}
 	return bitmap;
 }
@@ -272,8 +271,8 @@ utility::vector1< bool >
 make_aa_bitmap_from_allowed_aas( std::string const & allowed_aas )
 {
 	utility::vector1< bool > bitmap( core::chemical::num_canonical_aas, false );
-	for ( std::string::const_iterator aa=allowed_aas.begin(); aa!=allowed_aas.end(); ++aa ) {
-		bitmap[ core::chemical::aa_from_oneletter_code( *aa ) ] = true;
+	for ( char allowed_aa : allowed_aas ) {
+		bitmap[ core::chemical::aa_from_oneletter_code( allowed_aa ) ] = true;
 	}
 	return bitmap;
 }
@@ -284,7 +283,7 @@ ConsensusLoopDesignOperation::compute_aas_after_disallowing(
 	core::pack::task::ResidueLevelTask const & task ) const
 {
 	AAs remaining_aas = "";
-	for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter t=task.allowed_residue_types_begin(); t!=task.allowed_residue_types_end(); ++t ) {
+	for ( auto t=task.allowed_residue_types_begin(); t!=task.allowed_residue_types_end(); ++t ) {
 		if ( std::find( aas.begin(), aas.end(), (*t)->name1() ) == aas.end() ) {
 			remaining_aas += (*t)->name1();
 		}
@@ -301,7 +300,7 @@ ConsensusLoopDesignOperation::compute_best_allowed_aas(
 	std::pair< core::Real, core::Real > best_scores = std::make_pair( -1200, -1200 );
 
 	utility::vector1< char > no_freq;
-	for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter t=task.allowed_residue_types_begin(); t!=task.allowed_residue_types_end(); ++t ) {
+	for ( auto t=task.allowed_residue_types_begin(); t!=task.allowed_residue_types_end(); ++t ) {
 		if ( !aa_freqs.has_frequency( (*t)->name1() ) ) {
 			no_freq.push_back( (*t)->name1() );
 			continue;
@@ -509,7 +508,7 @@ AAFrequencies::set_frequency( char const aa, AAFrequencyCOP frequency )
 AAFrequency const &
 AAFrequencies::frequency( char const aa ) const
 {
-	AAFrequencyMap::const_iterator aa_f = aa_freq_.find( aa );
+	auto aa_f = aa_freq_.find( aa );
 	if ( aa_f == aa_freq_.end() ) {
 		std::stringstream msg;
 		msg << "AAFrequencies: could not find " << aa << " in the frequency map." << std::endl;
@@ -543,20 +542,19 @@ ConsensusLoopDatabase::ConsensusLoopDatabase():
 	read_db();
 }
 
-ConsensusLoopDatabase::~ConsensusLoopDatabase()
-{}
+ConsensusLoopDatabase::~ConsensusLoopDatabase() = default;
 
 bool
 ConsensusLoopDatabase::has_frequencies(
 	SurroundingSS const & surrounding,
 	Abego const & loop_abego ) const
 {
-	SurroundingSSMap::const_iterator ss = ss_map_.find( surrounding );
+	auto ss = ss_map_.find( surrounding );
 	if ( ss == ss_map_.end() ) {
 		return false;
 	}
 
-	AbegoToLoopAAsMap::const_iterator ab = ss->second.find( loop_abego );
+	auto ab = ss->second.find( loop_abego );
 	if ( ab == ss->second.end() ) {
 		return false;
 	}
@@ -569,12 +567,12 @@ ConsensusLoopDatabase::has_frequencies(
 	Abego const & loop_abego,
 	core::Size const loop_resid ) const
 {
-	SurroundingSSMap::const_iterator ss = ss_map_.find( surrounding );
+	auto ss = ss_map_.find( surrounding );
 	if ( ss == ss_map_.end() ) {
 		return false;
 	}
 
-	AbegoToLoopAAsMap::const_iterator ab = ss->second.find( loop_abego );
+	auto ab = ss->second.find( loop_abego );
 	if ( ab == ss->second.end() ) {
 		return false;
 	}
@@ -606,7 +604,7 @@ ConsensusLoopDatabase::frequencies(
 	Abego const & loop_abego,
 	core::Size const loop_resid ) const
 {
-	SurroundingSSMap::const_iterator ss = ss_map_.find( surrounding );
+	auto ss = ss_map_.find( surrounding );
 	if ( ss == ss_map_.end() ) {
 		std::stringstream msg;
 		msg << "ConsensusLoopDatabase: could not find data for loops starting/ending with"
@@ -614,7 +612,7 @@ ConsensusLoopDatabase::frequencies(
 		utility_exit_with_message( msg.str() );
 	}
 
-	AbegoToLoopAAsMap::const_iterator ab = ss->second.find( loop_abego );
+	auto ab = ss->second.find( loop_abego );
 	if ( ab == ss->second.end() ) {
 		std::stringstream msg;
 		msg << "ConsensusLoopDatabase: could not find data for loops starting/ending with "
@@ -650,13 +648,13 @@ ConsensusLoopDatabase::set_frequency(
 	char const aa,
 	AAFrequencyCOP frequency )
 {
-	SurroundingSSMap::iterator ss_data = ss_map_.find( surrounding );
+	auto ss_data = ss_map_.find( surrounding );
 	if ( ss_data == ss_map_.end() ) {
 		ss_data = ss_map_.insert( std::make_pair( surrounding, AbegoToLoopAAsMap() ) ).first;
 	}
 	debug_assert( ss_data != ss_map_.end() );
 
-	AbegoToLoopAAsMap::iterator seq = ss_data->second.find( loop_abego );
+	auto seq = ss_data->second.find( loop_abego );
 	if ( seq == ss_data->second.end() ) {
 		seq = ss_data->second.insert( std::make_pair( loop_abego, LoopAAs() ) ).first;
 	}
@@ -699,8 +697,8 @@ ConsensusLoopDatabase::read_db()
 			>> bg_frequency
 			>> score;
 
-		std::map< char, char >::const_iterator preabego = ss_to_abego.find( beforess );
-		std::map< char, char >::const_iterator postabego = ss_to_abego.find( afterss );
+		auto preabego = ss_to_abego.find( beforess );
+		auto postabego = ss_to_abego.find( afterss );
 		debug_assert( preabego != ss_to_abego.end() );
 		debug_assert( postabego != ss_to_abego.end() );
 

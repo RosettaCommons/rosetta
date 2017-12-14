@@ -62,6 +62,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/stream_util.hh>
 #include <utility/string_util.hh>
@@ -106,7 +107,7 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolarsCalculator(
-	std::string hbond_calc,
+	std::string const & hbond_calc,
 	scoring::ScoreFunctionOP scorefxn,
 	core::Real semiexpl_water_cutoff
 ) :
@@ -115,7 +116,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolars
 	special_region_unsat_polars_(0),
 	semiexpl_water_cutoff_( semiexpl_water_cutoff ),
 	name_of_hbond_calc_( hbond_calc ),
-	scorefxn_( scorefxn )
+	scorefxn_(std::move( scorefxn ))
 {
 	atom_unsat_.clear();
 	residue_unsat_polars_.clear();
@@ -127,7 +128,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolars
 }
 
 SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolarsCalculator(
-	std::string hbond_calc,
+	std::string const & hbond_calc,
 	scoring::ScoreFunctionOP scorefxn,
 	std::set< core::Size > const & special_region,
 	core::Real semiexpl_water_cutoff
@@ -137,7 +138,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolars
 	special_region_unsat_polars_(0),
 	semiexpl_water_cutoff_( semiexpl_water_cutoff ),
 	name_of_hbond_calc_( hbond_calc ),
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	special_region_( special_region )
 {
 	atom_unsat_.clear();

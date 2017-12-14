@@ -83,7 +83,7 @@ using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowData;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 
-StructureFeatures::StructureFeatures(){}
+StructureFeatures::StructureFeatures()= default;
 
 StructureFeatures::StructureFeatures( StructureFeatures const & ) :
 	FeaturesReporter()

@@ -61,13 +61,7 @@ PackStatFilter::PackStatFilter( Real const & score ):
 {}
 
 // @brief copy constructor
-PackStatFilter::PackStatFilter( PackStatFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
-	Super( rval ),
-	chain_(rval.chain_),
-	repeats_(rval.repeats_),
-	filtered_score_( rval.filtered_score_ )
-{}
+PackStatFilter::PackStatFilter( PackStatFilter const & /*rval*/ ) = default;
 
 // @brief set filtered secondary structure
 void PackStatFilter::filtered_score( Real const & score )

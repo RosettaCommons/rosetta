@@ -88,8 +88,8 @@
 
 #include <tuple>
 
-typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
-typedef utility::pointer::shared_ptr< CifParser > CifParserOP;
+using CifFileOP = utility::pointer::shared_ptr<CifFile>;
+using CifParserOP = utility::pointer::shared_ptr<CifParser>;
 
 static basic::Tracer TR( "core.import_pose.util" );
 
@@ -1776,8 +1776,8 @@ figure_out_dock_domain_map( utility::vector1< Size > & cutpoint_open_in_full_mod
 			if ( !working_res.has_value( res_list[ k ] ) ) continue;
 			chains_in_pose.insert( chains[ res_list[ k ] ] );
 		}
-		for ( std::set< Size >::const_iterator it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
-			for ( std::set< Size >::const_iterator it2 = it1; it2 != end; ++it2 ) {
+		for ( auto it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
+			for ( auto it2 = it1; it2 != end; ++it2 ) {
 				if ( it1 != it2 ) chain_connections.push_back( make_pair( *it1, *it2 ) );
 			}
 		}

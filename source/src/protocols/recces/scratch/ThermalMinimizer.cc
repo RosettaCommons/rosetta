@@ -155,7 +155,6 @@ ThermalMinimizer::ThermalMinimizer():
 	n_cycle_( basic::options::option[ basic::options::OptionKeys::recces::n_cycle ] ),
 	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::recces::thermal_sampling::angle_range_chi ]() ),
 	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::recces::thermal_sampling::angle_range_bb ]() ),
-	kic_sampling_( true ),
 	output_min_pose_( true )
 {}
 
@@ -192,7 +191,7 @@ mm_compatible_with_kic( core::kinematics::MoveMapOP mm, Size const ii ) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-ThermalMinimizer::~ThermalMinimizer(){}
+ThermalMinimizer::~ThermalMinimizer()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

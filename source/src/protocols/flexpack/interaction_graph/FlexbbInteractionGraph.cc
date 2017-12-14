@@ -65,7 +65,7 @@ FlexbbNode::FlexbbNode(
 	//std::cout << "FlexbbNode ctor: num_aa_types_: " << num_aa_types_ << std::endl;
 }
 
-FlexbbNode::~FlexbbNode() {}
+FlexbbNode::~FlexbbNode() = default;
 
 void
 FlexbbNode::print() const {
@@ -476,7 +476,7 @@ FlexbbEdge::FlexbbEdge(
 	nodes_alt_state_[ 1 ] = 0;
 }
 
-FlexbbEdge::~FlexbbEdge() {}
+FlexbbEdge::~FlexbbEdge() = default;
 
 /// @details during backbone-moving rotamer substitutions, the nodes on
 /// flexible segments must inform their edges of their new states.
@@ -576,7 +576,7 @@ FlexbbEdge::set_node_state_to_zero( int which_node )
 
 /// GRAPH
 
-FlexbbInteractionGraph::~FlexbbInteractionGraph() {}
+FlexbbInteractionGraph::~FlexbbInteractionGraph() = default;
 FlexbbInteractionGraph::FlexbbInteractionGraph(int num_nodes) :
 	parent( num_nodes ),
 	num_aa_types_( 0 ),
@@ -604,7 +604,7 @@ FlexbbInteractionGraph::initialize( core::pack::rotamer_set::RotamerSetsBase con
 	using namespace core;
 
 	debug_assert( dynamic_cast< FlexbbRotamerSets const * > ( & rot_sets ) );
-	rotamer_set::FlexbbRotamerSets const & flex_sets( static_cast< rotamer_set::FlexbbRotamerSets const & > ( rot_sets ) );
+	auto const & flex_sets( static_cast< rotamer_set::FlexbbRotamerSets const & > ( rot_sets ) );
 
 	/// Set Graph data:
 	/// 1. flexseg and bb id mappings.
@@ -955,7 +955,7 @@ void FlexbbInteractionGraph::update_internal_energy_totals()
 		total_energy_current_state_assignment_ += get_flexbb_node( ii )->curr_state_one_body_energy();
 		get_flexbb_node( ii )->update_internal_energy_sums();
 	}
-	for ( std::list<EdgeBase*>::iterator
+	for ( auto
 			iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		total_energy_current_state_assignment_ +=

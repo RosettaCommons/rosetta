@@ -66,7 +66,7 @@ BranchEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, E
 {
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		using namespace core::conformation::symmetry;
-		SymmetricConformation const & symm_conf(
+		auto const & symm_conf(
 			dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 	}
@@ -126,7 +126,7 @@ BranchEnergy::eval_atom_derivative(
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		using namespace core::conformation::symmetry;
 
-		SymmetricConformation const & symm_conf(
+		auto const & symm_conf(
 			dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		Size max_res = symm_info->num_independent_residues() - 1;

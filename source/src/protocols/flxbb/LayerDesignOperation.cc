@@ -58,6 +58,7 @@
 
 // Utility Headers
 #include <protocols/flxbb/utility.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -122,7 +123,7 @@ std::string LayerDesignOperationCreator::keyname() const
 	return LayerDesignOperation::keyname();
 }
 
-CombinedTaskOperation::CombinedTaskOperation( VecTaskOP  ops ):
+CombinedTaskOperation::CombinedTaskOperation( VecTaskOP const & ops ):
 	task_operations_( ops )
 { }
 
@@ -297,7 +298,7 @@ void
 LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::select::util::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, bool has_ligand, std::string const & filename ) const
 {
 	using utility::io::ozstream;
-	typedef utility::vector1<Size> VecSize;
+	using VecSize = utility::vector1<Size>;
 	TR << "Writing pymol script with the layer information to "<< filename << std::endl;
 	ozstream pymol( filename );
 	TR << "Dumping pose for the script as layer_design_input.pdb" << std::endl;
@@ -945,7 +946,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 {
 	//typedef std::pair< std::string, bool > DesignLayerPair;
 
-	use_original_ = tag->getOption< bool >( "use_original_non_designed_layer", 1 );
+	use_original_ = tag->getOption< bool >( "use_original_non_designed_layer", true );
 
 	String design_layers = tag->getOption< String >( "layer", "core_boundary_surface_Nterm_Cterm" );
 	if ( design_layers == "all" ) {
@@ -957,7 +958,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	utility::vector1< String > layers( utility::string_split( design_layers, '_' ) );
 	set_design_layers( layers );
 
-	repack_non_designed_residues_ = tag->getOption< bool >("repack_non_design", 1);
+	repack_non_designed_residues_ = tag->getOption< bool >("repack_non_design", true);
 
 	//Should residues that have been set to design or not design in a resfile with PIKAA or NATRO,
 	//where the resfile is applied BEFORE the LayerDesign operation, be ignored?  Default false to
@@ -1156,7 +1157,7 @@ void LayerDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	xsd.add_top_level_element( layer_design_specification_behavior );
 
 
-	typedef XMLSchemaAttribute Attr;
+	using Attr = XMLSchemaAttribute;
 	AttributeList ss_layer_attributes;
 	ss_layer_attributes
 		+ Attr( "copy_layer", xs_string, "XRW TO DO" )
@@ -1371,7 +1372,7 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 }
 
 /// @brief returns a string containing sorted, unique residue one-letter codes
-std::string unique_chars( std::string const orig )
+std::string unique_chars( std::string const & orig )
 {
 	std::set< char > temp_def_res_set( orig.begin(), orig.end() );
 	return std::string( temp_def_res_set.begin(), temp_def_res_set.end() );

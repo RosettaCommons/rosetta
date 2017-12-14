@@ -27,8 +27,7 @@ OrbitalTypeMapper::OrbitalTypeMapper()
 	map_orbital_name_to_enum();
 }
 
-OrbitalTypeMapper::~OrbitalTypeMapper()
-{ }
+OrbitalTypeMapper::~OrbitalTypeMapper() = default;
 
 void OrbitalTypeMapper::map_orbital_name_to_enum()
 {

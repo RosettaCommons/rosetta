@@ -68,7 +68,7 @@ SetupMetalsMover::SetupMetalsMover( SetupMetalsMover const & src ):
 	contact_resnums_string_ = src.contact_resnums_string_;
 }
 
-SetupMetalsMover::~SetupMetalsMover(){}
+SetupMetalsMover::~SetupMetalsMover()= default;
 
 
 //General mover methods

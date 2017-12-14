@@ -38,8 +38,7 @@ namespace filters {
 
 static basic::Tracer TR( "protocols.filters.FilterFactory" );
 
-FilterFactory::FilterFactory()
-{}
+FilterFactory::FilterFactory() = default;
 
 FilterFactory::~FilterFactory()= default;
 
@@ -75,7 +74,7 @@ FilterFactory::provide_xml_schema(
 	std::string const &filter_name,
 	utility::tag::XMLSchemaDefinition & xsd
 ) const {
-	FilterMap::const_iterator iter( filter_creator_map_.find( filter_name ) );
+	auto iter( filter_creator_map_.find( filter_name ) );
 	if ( iter != filter_creator_map_.end() ) {
 		if ( ! iter->second ) {
 			utility_exit_with_message( "Error: FilterCreatorOP prototype for " + filter_name + " is NULL!" );
@@ -83,8 +82,8 @@ FilterFactory::provide_xml_schema(
 		iter->second->provide_xml_schema( xsd );
 	} else {
 		TR << "Available filters: ";
-		for ( FilterMap::const_iterator filt_it = filter_creator_map_.begin(); filt_it != filter_creator_map_.end(); ++filt_it ) {
-			TR << filt_it->first << ", ";
+		for ( auto const & filt_it : filter_creator_map_ ) {
+			TR << filt_it.first << ", ";
 		}
 		TR << std::endl;
 		utility_exit_with_message( filter_name + " is not known to the FilterFactory. Was it registered via a FilterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );

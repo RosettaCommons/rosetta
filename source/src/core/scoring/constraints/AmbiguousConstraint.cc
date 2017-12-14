@@ -44,7 +44,7 @@ namespace constraints {
 AmbiguousConstraint::AmbiguousConstraint():
 	MultiConstraint()
 {
-	active_constraint_ = NULL;
+	active_constraint_ = nullptr;
 	init_cst_score_types();
 	debug_assert ( member_constraints().size() == 0 );
 }
@@ -54,7 +54,7 @@ AmbiguousConstraint::AmbiguousConstraint():
 AmbiguousConstraint::AmbiguousConstraint( ConstraintCOPs const & cst_in ):
 	MultiConstraint( cst_in )
 {
-	active_constraint_ = NULL;
+	active_constraint_ = nullptr;
 	init_cst_score_types();
 	debug_assert( member_constraints().size() > 0 );
 }
@@ -119,13 +119,11 @@ AmbiguousConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & w
 	core::Real cur_score = 0;
 	bool first_pass = true;
 
-	for ( ConstraintCOPs::const_iterator
-			member_it = member_constraints().begin(), end = member_constraints().end();
-			member_it != end; ++member_it ) {
+	for ( auto const & member_it : member_constraints() ) {
 
 		temp_EMap_.zero(cst_score_types_ );
 
-		(*member_it)->score(xyz_func, weights, temp_EMap_ );
+		member_it->score(xyz_func, weights, temp_EMap_ );
 
 		cur_score = calculate_total_cst_score( weights, temp_EMap_ );
 
@@ -133,7 +131,7 @@ AmbiguousConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & w
 			first_pass = false;
 
 			low_total_cst_score = cur_score;
-			active_constraint_ = *member_it;
+			active_constraint_ = member_it;
 
 			low_EMap_[constant_constraint]      = temp_EMap_[constant_constraint];
 			low_EMap_[coordinate_constraint]    = temp_EMap_[coordinate_constraint];
@@ -181,14 +179,14 @@ ConstraintOP
 AmbiguousConstraint::remap_resid( core::id::SequenceMapping const & seqmap ) const
 {
 	ConstraintCOPs new_csts;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); ++cst_it ) {
-		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
+	for ( auto const & cst_it : member_constraints() ) {
+		ConstraintOP new_cst = cst_it->remap_resid( seqmap );
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
 
 	if ( new_csts.size() > 0 ) {
 		return ConstraintOP( new AmbiguousConstraint( new_csts ) );
-	} else return NULL;
+	} else return nullptr;
 
 }
 
@@ -351,7 +349,7 @@ AmbiguousConstraint::read_def(
 	func::FuncFactory const & func_factory
 ) {
 	ConstraintOP constr;
-	while ( ( constr = ConstraintIO::read_individual_constraint_new( data, pose, func_factory ) ) != 0 ) {
+	while ( ( constr = ConstraintIO::read_individual_constraint_new( data, pose, func_factory ) ) != nullptr ) {
 		add_individual_constraint(constr);
 	}
 }

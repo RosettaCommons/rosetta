@@ -133,14 +133,14 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	ddg_threshold_ = tag->getOption<core::Real>( "threshold", -15 );
 	rb_jump_ = tag->getOption< core::Size >( "jump", 1 );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
-	repack( tag->getOption< bool >( "repack", 1 ) );
+	repack( tag->getOption< bool >( "repack", true ) );
 	if ( tag->hasOption( "symmetry" ) ) {
 		TR << "DdgFilter autodetermines symmetry from input pose - symmetry option has no effect." << std::endl;
 	}
 	use_custom_task( tag->hasOption("task_operations") );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-	repack_bound( tag->getOption<bool>( "repack_bound", 1 ) );
-	relax_bound( tag->getOption<bool>( "relax_bound", 0 ) );
+	repack_bound( tag->getOption<bool>( "repack_bound", true ) );
+	relax_bound( tag->getOption<bool>( "relax_bound", false ) );
 	translate_by_ = tag->getOption<core::Real>( "translate_by", 1000 );
 
 	if ( tag->hasOption( "relax_mover" ) ) {

@@ -19,23 +19,24 @@
 #include <protocols/match/Hit.fwd.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 
 namespace protocols {
 namespace match {
 namespace output {
 
-MatchFilter::MatchFilter( std::string filter_name )
+MatchFilter::MatchFilter( std::string const & filter_name )
 : filter_name_(filter_name)
 {}
 
-MatchFilter::~MatchFilter() {}
+MatchFilter::~MatchFilter() = default;
 
 StateAccumulatingMatchFilter::StateAccumulatingMatchFilter( std::string filter_name )
 : MatchFilter( filter_name )
 {}
 
-StateAccumulatingMatchFilter::~StateAccumulatingMatchFilter() {}
+StateAccumulatingMatchFilter::~StateAccumulatingMatchFilter() = default;
 
 }
 }

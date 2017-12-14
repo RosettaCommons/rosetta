@@ -130,7 +130,7 @@ std::string EntityElementFactory::factory_name() const {
 	return "EntityElementFactory";
 }
 
-EntityElementFactory::EntityElementFactory() {}
+EntityElementFactory::EntityElementFactory() = default;
 
 //////////// Entity ////////////
 

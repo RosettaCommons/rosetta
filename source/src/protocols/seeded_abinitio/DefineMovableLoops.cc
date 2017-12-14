@@ -281,10 +281,10 @@ DefineMovableLoops::parse_my_tag(
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
 	data.add( "loops", "found_loops", loops_ );
 
-	chainbreakweights_ = tag->getOption< bool >("add_chainbreakterm" , 1 );
+	chainbreakweights_ = tag->getOption< bool >("add_chainbreakterm" , true );
 
 	//get secondary structure either from input template, a string in the xml or through the
-	use_cutpoints_ = tag->getOption< bool >( "cutpoint_based" , 1 );
+	use_cutpoints_ = tag->getOption< bool >( "cutpoint_based" , true );
 
 	if ( tag->hasOption("secstrct") ) {
 		secstructure_ = tag->getOption< std::string > ( "secstrct" );

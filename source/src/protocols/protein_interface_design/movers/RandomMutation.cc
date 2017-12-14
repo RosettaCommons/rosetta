@@ -76,7 +76,7 @@ RandomMutation::RandomMutation() :
 }
 
 
-RandomMutation::~RandomMutation() {}
+RandomMutation::~RandomMutation() = default;
 
 void
 RandomMutation::apply( core::pose::Pose & pose )
@@ -113,7 +113,7 @@ RandomMutation::apply( core::pose::Pose & pose )
 		return;
 	}
 	core::Size const random_entry = being_designed[ (core::Size) floor( numeric::random::rg().uniform() * being_designed.size() )+1 ];
-	typedef list< ResidueTypeCOP > ResidueTypeCOPList;
+	using ResidueTypeCOPList = list<ResidueTypeCOP>;
 	ResidueTypeCOPList const & allowed( task->residue_task( random_entry ).allowed_residue_types() );
 	utility::vector1< AA > allow_temp;
 	allow_temp.clear();

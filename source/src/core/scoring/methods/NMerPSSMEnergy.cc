@@ -106,15 +106,15 @@ NMerPSSMEnergy::NMerPSSMEnergy( utility::vector1< std::map< chemical::AA, utilit
 		std::map< chemical::AA, utility::vector1< core::Real > > nmer_pssm;
 		std::map< chemical::AA, utility::vector1< core::Real > > const nmer_pssm_in( all_nmer_pssms_in[ ipssm ] );
 		//copy contents of input into new copy
-		for ( std::map< chemical::AA, utility::vector1< Real > >::const_iterator it = nmer_pssm_in.begin(); it != nmer_pssm_in.end(); ++it ) {
-			nmer_pssm.insert( *it );
+		for ( auto const & it : nmer_pssm_in ) {
+			nmer_pssm.insert( it );
 		}
 		//append new copy to our cleared instance
 		all_nmer_pssms_.push_back( nmer_pssm );
 	}
 }
 
-NMerPSSMEnergy::~NMerPSSMEnergy() {}
+NMerPSSMEnergy::~NMerPSSMEnergy() = default;
 
 void NMerPSSMEnergy::read_nmer_pssms_from_options() {
 

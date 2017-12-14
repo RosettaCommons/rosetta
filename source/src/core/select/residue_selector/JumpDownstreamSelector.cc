@@ -67,7 +67,7 @@ JumpDownstreamSelector::JumpDownstreamSelector( int jump )
 }
 
 
-JumpDownstreamSelector::~JumpDownstreamSelector() {}
+JumpDownstreamSelector::~JumpDownstreamSelector() = default;
 
 ResidueSubset
 JumpDownstreamSelector::apply( core::pose::Pose const & pose ) const

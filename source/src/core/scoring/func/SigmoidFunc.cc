@@ -13,7 +13,7 @@
 
 
 #include <core/scoring/func/SigmoidFunc.hh>
-#include <math.h>
+#include <cmath>
 
 #include <core/types.hh>
 
@@ -45,7 +45,7 @@ bool SigmoidFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	SigmoidFunc const & other_downcast( static_cast< SigmoidFunc const & > (other) );
+	auto const & other_downcast( static_cast< SigmoidFunc const & > (other) );
 	if ( x0_    != other_downcast.x0_    ) return false;
 	if ( slope_ != other_downcast.slope_ ) return false;
 	return true;

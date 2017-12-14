@@ -89,7 +89,7 @@ RotamerSubsets::RotamerSubsets(
 }
 
 
-RotamerSubsets::~RotamerSubsets() {}
+RotamerSubsets::~RotamerSubsets() = default;
 
 /* // Unused
 void

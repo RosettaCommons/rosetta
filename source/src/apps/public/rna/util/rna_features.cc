@@ -121,7 +121,7 @@ using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 
 
-typedef  numeric::xyzMatrix< core::Real > Matrix;
+using Matrix = numeric::xyzMatrix<core::Real>;
 
 
 ///////////////////////////////////////////////////////////////////////////

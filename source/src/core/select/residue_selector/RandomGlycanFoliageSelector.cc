@@ -67,7 +67,7 @@ RandomGlycanFoliageSelector::RandomGlycanFoliageSelector( ResidueSelectorOP sele
 
 /// @brief Destructor.
 ///
-RandomGlycanFoliageSelector::~RandomGlycanFoliageSelector() {}
+RandomGlycanFoliageSelector::~RandomGlycanFoliageSelector() = default;
 
 /// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 RandomGlycanFoliageSelector::RandomGlycanFoliageSelector(RandomGlycanFoliageSelector const & src):

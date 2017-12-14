@@ -76,25 +76,16 @@ MutateResidue::MutateResidue() :
 {}
 
 /// @brief copy ctor
-MutateResidue::MutateResidue(MutateResidue const& dm) :
-	//utility::pointer::ReferenceCount(),
-	parent( dm ),
-	target_(dm.target_),
-	res_name_(dm.res_name_),
-	preserve_atom_coords_(dm.preserve_atom_coords_),
-	mutate_self_(dm.mutate_self_),
-	update_polymer_dependent_(dm.update_polymer_dependent_),
-	selector_(dm.selector_)
-{}
+MutateResidue::MutateResidue(MutateResidue const& /*dm*/) = default;
 
 /// @brief Mutate a single residue to a new amino acid
 /// @param target The residue index to mutate
 /// @param new_res The name of the replacement residue
 
-MutateResidue::MutateResidue( core::Size const target, string new_res ) :
+MutateResidue::MutateResidue( core::Size const target, string const & new_res ) :
 	parent(),
 	target_(""),
-	res_name_(std::move(new_res)),
+	res_name_(new_res),
 	preserve_atom_coords_(false),
 	mutate_self_(false),
 	update_polymer_dependent_(false),

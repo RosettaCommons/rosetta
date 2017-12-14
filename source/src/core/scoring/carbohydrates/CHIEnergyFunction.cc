@@ -49,8 +49,7 @@ CHIEnergyFunction::CHIEnergyFunction()
 	init();
 }
 
-CHIEnergyFunction::~CHIEnergyFunction()
-{}
+CHIEnergyFunction::~CHIEnergyFunction() = default;
 
 
 // Other Public Methods ///////////////////////////////////////////////////////
@@ -176,7 +175,7 @@ CHIEnergyFunction::setup_for_sampling( core::Real step_size ){
 		//TR << "linkage: " << i << std::endl;
 		//std::cout << "Angle,Energy,Probability"<<std::endl;
 
-		CHIEnergyFunctionLinkageType linkage_type = static_cast< CHIEnergyFunctionLinkageType >( i );
+		auto linkage_type = static_cast< CHIEnergyFunctionLinkageType >( i );
 
 		CHIDihedralSamplingData sampling_data;
 

@@ -93,7 +93,7 @@ bool ScoreFileSilentStruct::init_from_lines(
 	using utility::vector1;
 
 	vector1< std::string > energy_names_;
-	vector1< std::string >::const_iterator iter = lines.begin();
+	auto iter = lines.begin();
 	if ( iter->substr(0,9) == "SEQUENCE:" ) ++iter; // ignore sequence for now
 	if ( iter->substr(0,6) != "SCORE:" ) {
 		// get sequence and scorename data from the silent-file data object, because I don't have it!

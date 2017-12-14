@@ -65,7 +65,7 @@ using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowData;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 
-ProtocolFeatures::ProtocolFeatures(){}
+ProtocolFeatures::ProtocolFeatures()= default;
 
 ProtocolFeatures::ProtocolFeatures( ProtocolFeatures const & ) : utility::pointer::ReferenceCount() {}
 

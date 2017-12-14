@@ -77,7 +77,7 @@ PackerTask_::update_residue_union(
 	Size resid,
 	ResidueLevelTask const & t
 ){
-	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+	auto const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 	residue_tasks_[resid].update_union(o);
 	pack_residue_[resid] = residue_tasks_[resid].being_packed();
 }
@@ -87,7 +87,7 @@ PackerTask_::update_residue_intersection(
 	Size resid,
 	ResidueLevelTask const & t
 ){
-	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+	auto const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 	residue_tasks_[resid].update_intersection(o);
 	pack_residue_[resid] = residue_tasks_[resid].being_packed();
 }
@@ -97,7 +97,7 @@ PackerTask_::update_residue_commutative(
 	Size resid,
 	ResidueLevelTask const & t
 ){
-	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+	auto const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 	residue_tasks_[resid].update_commutative(o);
 	pack_residue_[resid] = residue_tasks_[resid].being_packed();
 }
@@ -113,7 +113,7 @@ PackerTask_::update_commutative(
 	std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 	}*/
 
-	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(t));
+	auto const & o(dynamic_cast<PackerTask_ const &>(t));
 
 	if ( nres_ != o.nres_ ) utility_exit_with_message("unmatching nres_");
 
@@ -159,12 +159,12 @@ PackerTask_::update_commutative(
 
 	if ( o.IG_edge_reweights_ ) {
 		IG_edge_reweights_ = IGEdgeReweightContainerOP( new IGEdgeReweightContainer(nres_) );
-		for ( utility::vector1< IGEdgeReweighterOP >::const_iterator i = o.IG_edge_reweights_->reweighters_begin();
+		for ( auto i = o.IG_edge_reweights_->reweighters_begin();
 				i != o.IG_edge_reweights_->reweighters_end(); ++i ) {
 			IG_edge_reweights_->add_reweighter(*i);
 		}
 	} else {
-		IG_edge_reweights_ = NULL;
+		IG_edge_reweights_ = nullptr;
 	}
 
 }
@@ -222,7 +222,7 @@ PackerTask_::PackerTask_(
 	disallow_quench_( false ),
 	symmetry_status_(NO_SYMMETRIZATION_REQUEST)
 {
-	IG_edge_reweights_ = NULL; //default stays empty, no reweighting
+	IG_edge_reweights_ = nullptr; //default stays empty, no reweighting
 }
 
 /// @details constructor requires a pose.  most settings are in ResidueLevelTask
@@ -258,10 +258,10 @@ PackerTask_::PackerTask_(
 		residue_tasks_.push_back( ResidueLevelTask_( pose.residue(ii), pose ));
 	}
 
-	IG_edge_reweights_ = NULL; //default stays empty, no reweighting
+	IG_edge_reweights_ = nullptr; //default stays empty, no reweighting
 }
 
-PackerTask_::~PackerTask_() {}
+PackerTask_::~PackerTask_() = default;
 
 /// @details uses compiler-generated copy ctor
 PackerTaskOP
@@ -585,7 +585,7 @@ PackerTask_::show( std::ostream & out ) const {
 		out << "\t" << (design_residue( i ) ? "TRUE" : "FALSE");
 
 		out << "\t";
-		for ( ResidueLevelTask::ResidueTypeCOPListConstIter
+		for ( auto
 				allowed_iter(   residue_task( i ).allowed_residue_types_begin() );
 				allowed_iter != residue_task( i ).allowed_residue_types_end();
 				++allowed_iter ) {
@@ -805,7 +805,7 @@ PackerTask_::designing_residues() const
 bool
 PackerTask_::rotamer_couplings_exist() const
 {
-	return ( rotamer_couplings_ != 0 );
+	return ( rotamer_couplings_ != nullptr );
 }
 
 /// @brief const accessor for the RotamerCouplings object
@@ -830,7 +830,7 @@ PackerTask_::rotamer_couplings( PackerTask::RotamerCouplingsCOP setting )
 bool
 PackerTask_::rotamer_links_exist() const
 {
-	return ( rotamer_links_ != 0 );
+	return ( rotamer_links_ != nullptr );
 }
 
 /// @brief const accessor for the RotamerCouplings object
@@ -924,7 +924,7 @@ PackerTask_::disallow_quench() const { return disallow_quench_;}
 
 std::string ResidueLevelTask_::task_mode() const{
 	std::ostringstream modes;
-	for ( std::vector<std::string>::const_iterator i = mode_tokens_.begin(); i < mode_tokens_.end(); ++i ) {
+	for ( auto i = mode_tokens_.begin(); i < mode_tokens_.end(); ++i ) {
 		modes << *i << " ";
 	}
 	return modes.str();
@@ -977,7 +977,7 @@ std::string ResidueLevelTask_::command_string() const{
 	for ( std::string const & elem : behaviors_ ) {
 		if ( elem == "TARGET" ) {
 			command_string << " TARGET ";
-			if ( target_type() == 0 ) {
+			if ( target_type() == nullptr ) {
 				command_string << "_";
 			} else {
 				command_string << target_type()->name();

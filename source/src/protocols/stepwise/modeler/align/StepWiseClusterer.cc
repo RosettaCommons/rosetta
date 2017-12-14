@@ -90,8 +90,7 @@ StepWiseClusterer::StepWiseClusterer( options::StepWiseModelerOptionsCOP options
 }
 
 //Destructor
-StepWiseClusterer::~StepWiseClusterer()
-{}
+StepWiseClusterer::~StepWiseClusterer() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void
@@ -125,7 +124,7 @@ StepWiseClusterer::cluster()
 	pose_list_.clear();
 
 	for ( pose::PoseOP const & pose : starting_pose_list ) {
-		runtime_assert( pose != NULL );
+		runtime_assert( pose != nullptr );
 		if ( check_screen_and_kick_out_displaced_model( *pose ) ) pose_list_.push_back( pose );
 		sort_pose_list();
 	}
@@ -188,7 +187,7 @@ bool
 StepWiseClusterer::check_for_closeness( pose::Pose const & pose1, pose::Pose const & pose2 ) {
 	bool set_rmsd( false );
 	if ( assume_atom_ids_invariant_ ) {
-		if ( pose_aligner_ == 0 ) {
+		if ( pose_aligner_ == nullptr ) {
 			pose_aligner_ = StepWisePoseAlignerOP( new StepWisePoseAligner( pose2 ) );
 			pose_aligner_->set_user_defined_calc_rms_res( calc_rms_res_ );
 			pose_aligner_->set_root_partition_res( figure_out_root_partition_res( pose2, calc_rms_res_ ) );

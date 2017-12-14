@@ -20,8 +20,8 @@
 namespace protocols {
 namespace parser {
 
-DataLoader::DataLoader() {}
-DataLoader::~DataLoader() {}
+DataLoader::DataLoader() = default;
+DataLoader::~DataLoader() = default;
 
 } //namespace parser
 } //namespace protocols

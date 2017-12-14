@@ -156,7 +156,7 @@ RcsbException::RcsbException(const string& message,
 }
 
 
-RcsbException::~RcsbException() throw()
+RcsbException::~RcsbException() noexcept
 {
 
     _message.clear();
@@ -174,7 +174,7 @@ void RcsbException::AppendMessage(const string& message,
 }
 
 
-const char* RcsbException::what() const throw()
+const char* RcsbException::what() const noexcept
 {
 
     return(_message.c_str());
@@ -189,10 +189,8 @@ EmptyValueException::EmptyValueException(const string& message,
 }
 
 
-EmptyValueException::~EmptyValueException() throw()
-{
-
-}
+EmptyValueException::~EmptyValueException() noexcept
+= default;
 
 
 NotFoundException::NotFoundException(const string& message,
@@ -202,10 +200,8 @@ NotFoundException::NotFoundException(const string& message,
 }
 
 
-NotFoundException::~NotFoundException() throw()
-{
-
-}
+NotFoundException::~NotFoundException() noexcept
+= default;
 
 
 AlreadyExistsException::AlreadyExistsException(const string& message,
@@ -215,10 +211,8 @@ AlreadyExistsException::AlreadyExistsException(const string& message,
 }
 
 
-AlreadyExistsException::~AlreadyExistsException() throw()
-{
-
-}
+AlreadyExistsException::~AlreadyExistsException() noexcept
+= default;
 
 
 EmptyContainerException::EmptyContainerException(const string& message,
@@ -228,10 +222,8 @@ EmptyContainerException::EmptyContainerException(const string& message,
 }
 
 
-EmptyContainerException::~EmptyContainerException() throw()
-{
-
-}
+EmptyContainerException::~EmptyContainerException() noexcept
+= default;
 
 
 FileModeException::FileModeException(const string& message,
@@ -241,10 +233,8 @@ FileModeException::FileModeException(const string& message,
 }
 
 
-FileModeException::~FileModeException() throw()
-{
-
-}
+FileModeException::~FileModeException() noexcept
+= default;
 
 
 InvalidStateException::InvalidStateException(const string& message,
@@ -254,10 +244,8 @@ InvalidStateException::InvalidStateException(const string& message,
 }
 
 
-InvalidStateException::~InvalidStateException() throw()
-{
-
-}
+InvalidStateException::~InvalidStateException() noexcept
+= default;
 
 
 FileException::FileException(const string& message,
@@ -267,10 +255,8 @@ FileException::FileException(const string& message,
 }
 
 
-FileException::~FileException() throw()
-{
-
-}
+FileException::~FileException() noexcept
+= default;
 
 
 InvalidOptionsException::InvalidOptionsException(const string& message,
@@ -280,10 +266,8 @@ InvalidOptionsException::InvalidOptionsException(const string& message,
 }
 
 
-InvalidOptionsException::~InvalidOptionsException() throw()
-{
-
-}
+InvalidOptionsException::~InvalidOptionsException() noexcept
+= default;
 
 
 VersionMismatchException::VersionMismatchException(const string& message,
@@ -293,8 +277,6 @@ VersionMismatchException::VersionMismatchException(const string& message,
 }
 
 
-VersionMismatchException::~VersionMismatchException() throw()
-{
-
-}
+VersionMismatchException::~VersionMismatchException() noexcept
+= default;
 

@@ -17,6 +17,7 @@
 #include <basic/database/schema_generator/DbDataType.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/sql_database/types.hh>
@@ -25,25 +26,25 @@ namespace basic {
 namespace database {
 namespace schema_generator {
 
-Column::Column(std::string name, DbDataTypeOP type) :
+Column::Column(std::string const & name, DbDataTypeOP type) :
 	name_(name),
-	type_(type),
+	type_(std::move(type)),
 	allow_null_(true),
 	auto_increment_(false),
 	auto_increment_base_(0)
 {}
 
-Column::Column(std::string name, DbDataTypeOP type, bool allow_null) :
+Column::Column(std::string const & name, DbDataTypeOP type, bool allow_null) :
 	name_(name),
-	type_(type),
+	type_(std::move(type)),
 	allow_null_(allow_null),
 	auto_increment_(false),
 	auto_increment_base_(0)
 {}
 
-Column::Column(std::string name, DbDataTypeOP type, bool allow_null, bool auto_increment, platform::Size auto_increment_base) :
+Column::Column(std::string const & name, DbDataTypeOP type, bool allow_null, bool auto_increment, platform::Size auto_increment_base) :
 	name_(name),
-	type_(type),
+	type_(std::move(type)),
 	allow_null_(allow_null),
 	auto_increment_(auto_increment),
 	auto_increment_base_(auto_increment_base)
@@ -58,7 +59,7 @@ Column::Column(Column const & src) :
 	auto_increment_base_(src.auto_increment_base_)
 {}
 
-Column::~Column() {}
+Column::~Column() = default;
 
 std::string Column::name() const{
 	return name_;

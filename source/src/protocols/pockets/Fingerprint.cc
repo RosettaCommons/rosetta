@@ -2183,7 +2183,7 @@ core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::
 core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & CoM_offset ) {
 
 	core::Real best_score = std::numeric_limits<core::Real>::max();
-	core::Size num_steps = core::Size ( 360. / angle_increment );
+	auto num_steps = core::Size ( 360. / angle_increment );
 
 	core::Real curr_angle1=0.;
 	for ( core::Size i = 0; i < num_steps; ++i ) {
@@ -2865,9 +2865,9 @@ core::Real NonPlaidFingerprint::get_nearest_neighbour_esp_energy(numeric::xyzVec
 	core::Real grdZ =(ligand_atom.z() - ( esp_mid_.z() - ((static_cast<Real>(esp_dim_.z()+1)/2) * esp_spacing_) ))/esp_spacing_;
 
 	//rounded grid points are the nearest neighbour points
-	core::Size nn_grdX = (core::Size) std::floor(grdX+.5);
-	core::Size nn_grdY = (core::Size) std::floor(grdY+.5);
-	core::Size nn_grdZ = (core::Size) std::floor(grdZ+.5);
+	auto nn_grdX = (core::Size) std::floor(grdX+.5);
+	auto nn_grdY = (core::Size) std::floor(grdY+.5);
+	auto nn_grdZ = (core::Size) std::floor(grdZ+.5);
 
 	core::Real nn_espEnergy;
 

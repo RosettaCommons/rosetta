@@ -62,6 +62,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
+#include <utility>
 #include <utility/stream_util.hh>
 #include <utility/exit.hh>
 
@@ -140,8 +141,7 @@ StepWiseProteinPoseSetup::StepWiseProteinPoseSetup( utility::vector1< core::Size
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWiseProteinPoseSetup::~StepWiseProteinPoseSetup()
-{}
+StepWiseProteinPoseSetup::~StepWiseProteinPoseSetup() = default;
 
 /////////////////////
 std::string
@@ -1159,7 +1159,7 @@ StepWiseProteinPoseSetup::setup_working_native_pose(){
 	using namespace core::conformation;
 	using namespace core::pose;
 
-	if ( get_native_pose() == 0 ) return;
+	if ( get_native_pose() == nullptr ) return;
 
 	TR.Debug << "NATIVE sequence: " << get_native_pose()->annotated_sequence( true ) << std::endl;
 

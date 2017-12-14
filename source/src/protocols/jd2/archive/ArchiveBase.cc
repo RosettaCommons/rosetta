@@ -79,7 +79,7 @@ namespace jd2 {
 namespace archive {
 
 /// @details Auto-generated virtual destructor
-AbstractArchiveBase::~AbstractArchiveBase() {}
+AbstractArchiveBase::~AbstractArchiveBase() = default;
 // using namespace basic::options;
 // using namespace basic::options::OptionKeys;
 using namespace core;
@@ -109,7 +109,7 @@ ArchiveBase::ArchiveBase( ArchiveManagerAP ptr ) :
 	min_structures_for_acceptance_statistics_ = max_nstruct_;
 }
 
-ArchiveBase::~ArchiveBase() {}
+ArchiveBase::~ArchiveBase() = default;
 
 /// @brief count the structure for the acceptance statistics
 ///   only count if not from expired batch
@@ -197,7 +197,7 @@ void ArchiveBase::read_structures(
 		(*it)->add_comment( TAG_IN_FILE, tag );
 		(*it)->add_comment( SOURCE_FILE, batch.silent_out() );
 
-		core::io::silent::SilentStructOP alternative_decoy = NULL;
+		core::io::silent::SilentStructOP alternative_decoy = nullptr;
 		SilentFileData::iterator alternative_it = alternative_decoys.get_iterator_for_tag( tag );
 		if ( alternative_it != alternative_decoys.end() ) {
 			alternative_decoy = *alternative_it;
@@ -254,8 +254,8 @@ void ArchiveBase::save_decoys( std::string const& dirname, std::string const& na
 	utility::io::ozstream output( tmp_filename );
 	if ( decoys.begin() != decoys.end() ) ( *decoys.begin())->print_header( output );
 
-	for ( SilentStructs::const_iterator it = decoys.begin(); it != decoys.end(); ++it ) {
-		sfd.write_silent_struct( **it, output );
+	for ( auto const & decoy : decoys ) {
+		sfd.write_silent_struct( *decoy, output );
 	}
 
 	//rename to final
@@ -343,7 +343,7 @@ void ArchiveBase::save_status( std::ostream& os ) const {
 	os << "acceptance_history: " << floating_acceptance_ratio_ << "\nAH: ";
 	Size const cols( 50 );
 	Size ct( cols );
-	for ( AcceptHistoryQueue::const_iterator it = acceptance_history_.begin(); it != acceptance_history_.end(); ++it, --ct ) {
+	for ( auto it = acceptance_history_.begin(); it != acceptance_history_.end(); ++it, --ct ) {
 		os << *it << " ";
 		if ( ct <= 1 ) { os << "\nAH: "; ct = cols; }
 	}

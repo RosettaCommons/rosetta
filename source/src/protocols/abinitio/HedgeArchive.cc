@@ -56,7 +56,7 @@ void HedgeArchive::incorporate_batch( core::Size batch_id ) {
 	tr.Debug << "batch " << batch_id << " has finished... incorporating into hedge archive " << std::endl;
 	SilentStructs& sorted_decoys( incoming_structures_[ batch_id ] );
 	sorted_decoys.sort();
-	Size ind_max( static_cast< Size > ( sorted_decoys.size()*score_cut_per_batch_ ) );
+	auto ind_max( static_cast< Size > ( sorted_decoys.size()*score_cut_per_batch_ ) );
 	for ( SilentStructs::const_iterator sit = sorted_decoys.begin(); sit != sorted_decoys.end() && ind_max>0; ++sit ) {
 		if ( numeric::random::rg().uniform() < (1-add_fuzzy_) ) {
 			set_max_nstruct( static_cast<Size>(1e6) );

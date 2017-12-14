@@ -164,7 +164,7 @@ private:
 private:
 	etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
 	//a reference is taken, instead of a smart pointer.  There's the potential for a dangling reference with this.
-	etable::MembEtable const & memb_etable_;
+	//etable::MembEtable const & memb_etable_;
 
 	/// these guys are taken from the etable
 	ObjexxFCL::FArray3D< Real > const & solv1_;

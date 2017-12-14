@@ -55,7 +55,6 @@ public:
 
 private:
 	bool use_constraints_;            /// @brief boolean to indicate if constraints are used
-	core::Real constraint_cutoff_;    /// @brief cutoff value for the constraint score
 	protocols::filters::FilterCollectionOP filters_;
 };
 

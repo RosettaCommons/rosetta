@@ -76,7 +76,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 
-PairingStatEntry::PairingStatEntry() {}
+PairingStatEntry::PairingStatEntry() = default;
 
 PairingStatEntry::PairingStatEntry( core::scoring::dssp::StrandPairing const& strand, Model const& id ) :
 	strand_pairing_( strand ),
@@ -234,7 +234,7 @@ void PairingStatistics::compute_model_weights(  ModelFreq& model_freq ) {
 		//     }
 		//       }
 		//} // added score for each pairing
-		weight_list.push_back( std::make_pair( score, top->first ) );
+		weight_list.emplace_back( score, top->first );
 		//  weights_[ top->first ] = score; //also want the score in a map NAME --> score
 	} // score for each model/topology
 	weight_list.sort();

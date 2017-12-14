@@ -21,6 +21,7 @@
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 
 
@@ -82,7 +83,7 @@ FixbbSimAnnealer::FixbbSimAnnealer(
 	calc_rot_freq,
 	rot_freq
 	),
-	ig_(ig),
+	ig_(std::move(ig)),
 	record_annealer_trajectory_( false )
 {
 }
@@ -113,8 +114,7 @@ FixbbSimAnnealer::FixbbSimAnnealer(
 }
 
 /// @brief virtual destructor
-FixbbSimAnnealer::~FixbbSimAnnealer()
-{}
+FixbbSimAnnealer::~FixbbSimAnnealer() = default;
 
 /// @brief sim_annealing for fixed backbone design mode
 void FixbbSimAnnealer::run()

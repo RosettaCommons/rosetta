@@ -47,11 +47,11 @@ public:
 		StrandData( std::string const name_val,
 			core::Size const len,
 			core::Size const reg_shift,
-			std::string const orient )
+			std::string const & orient )
 		: name( name_val),
 			length( len ),
 			register_shift( reg_shift ),
-			orientation(std::move( orient ))
+			orientation( orient )
 		{}
 		std::string name;
 		core::Size length;

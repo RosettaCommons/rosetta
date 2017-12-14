@@ -103,7 +103,7 @@ RNA_KinematicCloser::RNA_KinematicCloser(
 	calculate_jacobians_( false )
 {}
 
-RNA_KinematicCloser::~RNA_KinematicCloser() {}
+RNA_KinematicCloser::~RNA_KinematicCloser() = default;
 
 ////////////////////////////////////////////////////////////////
 void RNA_KinematicCloser::init() {

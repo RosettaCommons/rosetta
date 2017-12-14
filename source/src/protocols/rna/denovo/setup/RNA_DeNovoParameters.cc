@@ -15,6 +15,7 @@
 
 #include <protocols/rna/denovo/setup/RNA_DeNovoParameters.hh>
 #include <core/pose/rna/leontis_westhof_util.hh>
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <ObjexxFCL/format.hh>
 
@@ -100,8 +101,7 @@ RNA_DeNovoParameters::RNA_DeNovoParameters():
 }
 
 //Destructor
-RNA_DeNovoParameters::~RNA_DeNovoParameters()
-{}
+RNA_DeNovoParameters::~RNA_DeNovoParameters() = default;
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
@@ -339,9 +339,9 @@ RNA_DeNovoParameters::read_chain_connection( std::istringstream & line_stream ) 
 			bool string_is_ok( false );
 			std::vector< int > ints = ints_of( tag, string_is_ok );
 			runtime_assert( string_is_ok );
-			for ( Size m = 0; m < ints.size(); m++ ) {
-				if ( which_segment == 1 ) res_list1.push_back( ints[m] );
-				if ( which_segment == 2 ) res_list2.push_back( ints[m] );
+			for ( int m : ints ) {
+				if ( which_segment == 1 ) res_list1.push_back( m );
+				if ( which_segment == 2 ) res_list2.push_back( m );
 			}
 		}
 

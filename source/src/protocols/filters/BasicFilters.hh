@@ -139,7 +139,7 @@ public:
 public:
 	CompoundFilter();
 	~CompoundFilter() override;
-	CompoundFilter( CompoundStatement ); // moving
+	CompoundFilter( CompoundStatement const & );
 	bool apply( core::pose::Pose const & ) const override;
 	FilterOP clone() const override;
 	FilterOP fresh_instance() const override;
@@ -184,7 +184,7 @@ protected:
 	compute_subfilter( FilterOP const & filter, core::pose::Pose const & pose ) const;
 
 private:
-	core::Real threashold_;
+	//core::Real threashold_;
 	CompoundStatement compound_statement_;
 	bool invert_;
 	utility::vector1<FilterOP> reset_filters_;

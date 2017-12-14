@@ -38,7 +38,7 @@ public:
 
 	DatabaseEntryWorkUnit(utility::sql_database::sessionOP db_session);
 
-	DatabaseEntryWorkUnit( std::map<std::string,std::string> row_map );
+	DatabaseEntryWorkUnit( std::map<std::string,std::string> const & row_map );
 
 	~DatabaseEntryWorkUnit() override= default;
 

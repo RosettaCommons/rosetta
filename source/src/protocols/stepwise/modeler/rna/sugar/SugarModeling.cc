@@ -89,7 +89,7 @@ SugarModeling::operator = ( SugarModeling const & src )
 	return *this;
 }
 
-SugarModeling::~SugarModeling(){}
+SugarModeling::~SugarModeling()= default;
 
 
 void

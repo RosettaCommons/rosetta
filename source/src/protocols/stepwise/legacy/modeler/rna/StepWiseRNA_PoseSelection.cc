@@ -57,8 +57,7 @@ StepWiseRNA_PoseSelection::StepWiseRNA_PoseSelection( working_parameters::StepWi
 	initialize_modeler_scorefxn( scorefxn );
 }
 //Destructor
-StepWiseRNA_PoseSelection::~StepWiseRNA_PoseSelection()
-{}
+StepWiseRNA_PoseSelection::~StepWiseRNA_PoseSelection() = default;
 
 ////////////////////Setup modeler scoring//////////////////////////////////////////////////////////////////////////////
 //1. Want to increase fa_rep during the minimization phase but want to keep it at 0.12 during the sample phase

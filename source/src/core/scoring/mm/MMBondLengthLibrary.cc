@@ -45,7 +45,7 @@ namespace scoring {
 namespace mm {
 
 /// @details Auto-generated virtual destructor
-MMBondLengthLibrary::~MMBondLengthLibrary() {}
+MMBondLengthLibrary::~MMBondLengthLibrary() = default;
 
 using basic::Error;
 using basic::Warning;
@@ -146,12 +146,11 @@ MMBondLengthLibrary::lookup ( std::string atom1, std::string atom2 ) const {
 void
 MMBondLengthLibrary::pretty_print() const {
 	// for each key print out its value
-	for ( mm_bondlength_library_citer i = mm_bondlength_library_.begin(),
-			e = mm_bondlength_library_.end(); i != e; ++i ) {
-		TR << (i->first).key1() << "\t"
-			<< (i->first).key2() << "\t"
-			<< (i->second).key1() << "\t"
-			<< (i->second).key2() << "\t"
+	for ( auto const & i : mm_bondlength_library_ ) {
+		TR << (i.first).key1() << "\t"
+			<< (i.first).key2() << "\t"
+			<< (i.second).key1() << "\t"
+			<< (i.second).key2() << "\t"
 			<< std::endl;
 	}
 }
@@ -159,7 +158,7 @@ MMBondLengthLibrary::pretty_print() const {
 void
 MMBondLengthLibrary::pretty_print( int atom1, int atom2 ) const {
 	mm_bondlength_library_citer_pair temppair = this->lookup(atom1, atom2);
-	for ( mm_bondlength_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
+	for ( auto i = temppair.first, e = temppair.second; i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
 			<< (i->first).key2() << "\t"
 			<< (i->second).key1() << "\t"
@@ -171,7 +170,7 @@ MMBondLengthLibrary::pretty_print( int atom1, int atom2 ) const {
 void
 MMBondLengthLibrary::pretty_print( std::string atom1, std::string atom2 ) const {
 	mm_bondlength_library_citer_pair temppair = this->lookup(atom1, atom2);
-	for ( mm_bondlength_library_citer i = temppair.first, e = temppair.second; i != e; ++i ) {
+	for ( auto i = temppair.first, e = temppair.second; i != e; ++i ) {
 		TR << (i->first).key1() << "\t"
 			<< (i->first).key2() << "\t"
 			<< (i->second).key1() << "\t"

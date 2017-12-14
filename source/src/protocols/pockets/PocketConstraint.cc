@@ -55,7 +55,7 @@
 namespace protocols {
 namespace pockets {
 
-PocketConstraintCreator::PocketConstraintCreator() {}
+PocketConstraintCreator::PocketConstraintCreator() = default;
 PocketConstraintCreator::~PocketConstraintCreator() = default;
 
 core::scoring::constraints::ConstraintOP
@@ -340,7 +340,7 @@ core::scoring::constraints::ConstraintOP PocketConstraint::clone() const {
 bool PocketConstraint::operator == ( core::scoring::constraints::Constraint const & other ) const
 {
 	if ( ! same_type_as_me( other ) || ! other.same_type_as_me( *this ) ) return false;
-	PocketConstraint const & other_downcast( static_cast< PocketConstraint const & >( other ) );
+	auto const & other_downcast( static_cast< PocketConstraint const & >( other ) );
 
 	if ( seqpos_ != other_downcast.seqpos_ ) return false;
 	if ( totalres_ != other_downcast.totalres_ ) return false;

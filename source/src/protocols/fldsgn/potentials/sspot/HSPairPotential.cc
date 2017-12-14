@@ -59,8 +59,7 @@ HSPairPotential::HSPairPotential():
 }
 
 /// @brief default destructor
-HSPairPotential::~HSPairPotential()
-{}
+HSPairPotential::~HSPairPotential() = default;
 
 /// @brief
 HSPairPotential::Real
@@ -76,13 +75,13 @@ HSPairPotential::calc_phithetascore( Size const strand_seqsep, Real const phi, R
 			istrand_seqsep = 1;
 		}
 	}
-	Size iphi = static_cast< Size >( 1 + ( phi + 180.0 )/10 );
+	auto iphi = static_cast< Size >( 1 + ( phi + 180.0 )/10 );
 	if ( iphi > 36 ) {
 		iphi = 36;
 	} else if ( iphi < 1 ) {
 		iphi = 1;
 	}
-	Size itheta = static_cast< Size >( 1 + ( theta/5 ) );
+	auto itheta = static_cast< Size >( 1 + ( theta/5 ) );
 	if ( itheta > 36 ) {
 		itheta = 36;
 	} else if ( itheta < 1 ) {
@@ -204,7 +203,7 @@ void
 HSPairPotential::load_phi_theta_bins( String const & hs_filename )
 {
 	using ObjexxFCL::format::skip;
-	typedef ObjexxFCL::FArray3D< Real > FArray3D_real;
+	using FArray3D_real = ObjexxFCL::FArray3D<Real>;
 	FArray3D_real pts_HS( 36, 36, 3 );
 
 	FArray1D_int iptsn( 36 );

@@ -16,6 +16,7 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
+#include <utility>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -31,10 +32,10 @@ namespace pose {
 namespace datacache {
 
 CacheablePoseRawPtr::CacheablePoseRawPtr( core::pose::PoseOP pose )
-: CacheableData(), pose_(pose)
+: CacheableData(), pose_(std::move(pose))
 {}
 
-CacheablePoseRawPtr::~CacheablePoseRawPtr(){}
+CacheablePoseRawPtr::~CacheablePoseRawPtr()= default;
 
 basic::datacache::CacheableDataOP
 CacheablePoseRawPtr::clone() const { return basic::datacache::CacheableDataOP( new CacheablePoseRawPtr(*this) ); }

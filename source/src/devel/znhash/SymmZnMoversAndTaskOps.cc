@@ -588,7 +588,7 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 	// Symmetry info
 	using namespace core::conformation::symmetry;
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( p.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	Size nsubunits = symm_info->subunits();
@@ -735,7 +735,7 @@ ZNCoordinationConstraintPlacerMover::minimize_zinc_coordination( core::pose::Pos
 	//TR << "fold tree: " << std::endl;
 	//TR << p.fold_tree() << std::endl;
 
-	core::conformation::symmetry::SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast< core::conformation::symmetry::SymmetricConformation const & > ( p.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -803,7 +803,7 @@ ZNCoordinationConstraintPlacerMover::restore_alanine_interface_residues_to_wtcon
 	// Symmetry info
 	using namespace core::conformation::symmetry;
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( p.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	Size nres_asu = symm_info->num_independent_residues();
@@ -861,7 +861,7 @@ void FindZnCoordinatingResidues::find_coordinating_residues(
 	sfxn.set_weight( core::scoring::fa_atr, 1.0 );
 	sfxn( copy_pose );
 
-	core::conformation::symmetry::SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast< core::conformation::symmetry::SymmetricConformation const & > ( p.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -966,7 +966,7 @@ FindZnCoordinatingResidues::closest_distance_to_desired_vrt(
 
 /////////////////////////////////////////////////////////////////////
 
-InsertZincCoordinationRemarkLines::InsertZincCoordinationRemarkLines() {}
+InsertZincCoordinationRemarkLines::InsertZincCoordinationRemarkLines() = default;
 InsertZincCoordinationRemarkLines::~InsertZincCoordinationRemarkLines() = default;
 
 protocols::moves::MoverOP
@@ -983,7 +983,7 @@ void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 		utility_exit_with_message( "InsertZincCoordinationRemarkLines requires a symmetric pose" );
 	}
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( p.conformation()) );
 
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
@@ -1088,7 +1088,7 @@ std::string DisableZnCoordinationResiduesTaskOpCreator::keyname() const
 }
 ////////////////////////////////////////////////////////////////////
 
-DisableZnCoordinationResiduesTaskOp::DisableZnCoordinationResiduesTaskOp() {}
+DisableZnCoordinationResiduesTaskOp::DisableZnCoordinationResiduesTaskOp() = default;
 DisableZnCoordinationResiduesTaskOp::~DisableZnCoordinationResiduesTaskOp() = default;
 
 DisableZnCoordinationResiduesTaskOp::TaskOperationOP
@@ -1114,7 +1114,7 @@ void DisableZnCoordinationResiduesTaskOp::apply(
 		utility_exit_with_message( "InsertZincCoordinationRemarkLines requires a symmetric pose" );
 	}
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );

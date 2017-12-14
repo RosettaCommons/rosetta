@@ -73,8 +73,7 @@ GridSearchIterator_Ts4::GridSearchIterator_Ts4():
 	utility_exit_with_message( "You shouldn't call the empty constructor for GridSearchIterator_Ts4 class" );
 }
 
-GridSearchIterator_Ts4::~GridSearchIterator_Ts4(){
-}
+GridSearchIterator_Ts4::~GridSearchIterator_Ts4()= default;
 
 GridSearchIterator_Ts4::GridSearchIterator_Ts4(GridSearchIterator_Ts4 const & other):
 	ReferenceCount(),

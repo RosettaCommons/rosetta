@@ -39,14 +39,14 @@ ResidueFeatureOP
 ResidueFeatureFactory::get_residue_feature(
 	std::string const & type
 ) const {
-	ResidueFeatureTypes::const_iterator iter = feature_types_.find( type );
+	auto iter = feature_types_.find( type );
 	if ( iter != feature_types_.end() ) {
 		return iter->second->clone();
 	} else {
 		utility_exit_with_message(
 			"ResidueFeatureFactory: unknown ResidueFeature type: " + type
 		);
-		return NULL;
+		return nullptr;
 	}
 }
 

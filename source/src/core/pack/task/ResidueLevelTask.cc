@@ -29,7 +29,7 @@ namespace core {
 namespace pack {
 namespace task {
 
-ResidueLevelTask::~ResidueLevelTask() {}
+ResidueLevelTask::~ResidueLevelTask() = default;
 
 }
 }

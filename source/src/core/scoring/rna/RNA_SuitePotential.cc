@@ -71,7 +71,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-RNA_SuitePotential::~RNA_SuitePotential() {}
+RNA_SuitePotential::~RNA_SuitePotential() = default;
 
 RNA_SuitePotential::RNA_SuitePotential( bool const calculate_suiteness_bonus /* = false */,
 	std::string const & suiteness_bonus ):
@@ -243,7 +243,7 @@ void RNA_SuitePotential::eval_suiteness_bonus(
 	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
 #endif
 
-	runtime_assert( rna_suite_name_ != 0 );
+	runtime_assert( rna_suite_name_ != nullptr );
 	pose::rna::RNA_SuiteAssignment assignment( rna_suite_name_->assign( torsions, deriv_ ) );
 
 	if ( !tags_.has_value( assignment.name ) ) return; // outlier

@@ -55,7 +55,7 @@ bool FadeFunc::operator == ( Func const & other ) const
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	FadeFunc const & other_downcast( static_cast< FadeFunc const & > (other) );
+	auto const & other_downcast( static_cast< FadeFunc const & > (other) );
 	if ( cutoff_lower_ != other_downcast.cutoff_lower_ ) return false;
 	if ( cutoff_upper_ != other_downcast.cutoff_upper_ ) return false;
 	if ( fade_zone_    != other_downcast.fade_zone_    ) return false;

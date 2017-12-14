@@ -138,7 +138,7 @@ match_main()
 	mtask->initialize_from_command_line();
 	//task->consolidate_matches( false );
 
-	time_t matcher_start_time = time(NULL);
+	time_t matcher_start_time = time(nullptr);
 	long processing_time(0);
 	MatcherOP matcher( new Matcher );
 	matcher->initialize_from_task( *mtask );
@@ -146,16 +146,16 @@ match_main()
 
 	time_t find_hits_end_time;
 	if ( matcher->find_hits() ) {
-		find_hits_end_time = time(NULL);
-		time_t process_start_time( time(NULL) );
+		find_hits_end_time = time(nullptr);
+		time_t process_start_time( time(nullptr) );
 		matcher->process_matches( *processor );
-		processing_time = (long) (time(NULL) - process_start_time);
+		processing_time = (long) (time(nullptr) - process_start_time);
 
 	} else {
-		find_hits_end_time = time(NULL);
+		find_hits_end_time = time(nullptr);
 	}
-	long find_hits_time = (long)(find_hits_end_time - matcher_start_time );
-	time_t matcher_end_time = time(NULL);
+	auto find_hits_time = (long)(find_hits_end_time - matcher_start_time );
+	time_t matcher_end_time = time(nullptr);
 	T << "Matcher ran for " << (long)(matcher_end_time - matcher_start_time) << " seconds, where finding hits took " << find_hits_time << " seconds and processing the matches took " << processing_time << " seconds."  << std::endl;
 
 }

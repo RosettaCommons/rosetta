@@ -13,6 +13,7 @@
 
 // Unit header or inline function header
 #include <protocols/denovo_design/components/PoseFolder.hh>
+#include <utility>
 
 namespace protocols {
 namespace denovo_design {
@@ -24,8 +25,7 @@ PoseFolder::PoseFolder( std::string const & type ):
 {}
 
 // Defined to prevent pure virtual destructor error at run time.
-PoseFolder::~PoseFolder()
-{}
+PoseFolder::~PoseFolder() = default;
 
 std::string const &
 PoseFolder::type() const

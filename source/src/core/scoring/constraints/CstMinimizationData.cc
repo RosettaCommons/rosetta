@@ -16,6 +16,7 @@
 
 // Package headers
 #include <core/scoring/constraints/Constraints.hh>
+#include <utility>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -30,11 +31,11 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-CstMinimizationData::CstMinimizationData() {}
+CstMinimizationData::CstMinimizationData() = default;
 
-CstMinimizationData::CstMinimizationData( ConstraintsOP constraints ) : constraints_( constraints ) {}
+CstMinimizationData::CstMinimizationData( ConstraintsOP constraints ) : constraints_(std::move( constraints )) {}
 
-CstMinimizationData::~CstMinimizationData() {}
+CstMinimizationData::~CstMinimizationData() = default;
 
 CstMinimizationData::CacheableDataOP
 CstMinimizationData::clone() const { return CacheableDataOP( new CstMinimizationData( *this ) ); }

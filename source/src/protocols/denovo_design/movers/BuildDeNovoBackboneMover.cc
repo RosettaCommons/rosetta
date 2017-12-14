@@ -97,8 +97,7 @@ BuildDeNovoBackboneMover::BuildDeNovoBackboneMover():
 {
 }
 
-BuildDeNovoBackboneMover::~BuildDeNovoBackboneMover()
-{}
+BuildDeNovoBackboneMover::~BuildDeNovoBackboneMover() = default;
 
 void
 BuildDeNovoBackboneMover::parse_my_tag(
@@ -239,7 +238,7 @@ std::string
 pdb_filename( core::Size const phase_num )
 {
 	std::stringstream filename;
-	filename << time( NULL ) << "_iter_" << std::setw( 2 )
+	filename << time( nullptr ) << "_iter_" << std::setw( 2 )
 		<< std::setfill('0') << phase_num << ".pdb";
 	return filename.str();
 }
@@ -298,7 +297,7 @@ BuildDeNovoBackboneMover::build_in_phases(
 			/// this will never be reached if check_pose() throws an exception
 			components::StructureData new_full_sd = working_sd;
 			components::StructureData const & built_sd = components::StructureDataFactory::get_instance()->get_from_const_pose( *built );
-			for ( SegmentNameList::const_iterator s=built_sd.segments_begin(); s!=built_sd.segments_end(); ++s ) {
+			for ( auto s=built_sd.segments_begin(); s!=built_sd.segments_end(); ++s ) {
 				new_full_sd.set_template_pose( *s, *built, built_sd.segment( *s ).start(), built_sd.segment( *s ).stop() );
 			}
 
@@ -337,7 +336,7 @@ void
 BuildDeNovoBackboneMover::check_pose( core::pose::Pose const & pose ) const
 {
 	core::Size filter_num = 1;
-	for ( FilterCOPs::const_iterator f=filters_.begin(); f!=filters_.end(); ++f, ++filter_num ) {
+	for ( auto f=filters_.begin(); f!=filters_.end(); ++f, ++filter_num ) {
 		if ( !(*f)->apply( pose ) ) throw CREATE_EXCEPTION(EXCN_FilterFailed, (*f)->get_type(), filter_num );
 	}
 }
@@ -346,7 +345,7 @@ SegmentNames
 BuildDeNovoBackboneMover::segments_to_fold( components::StructureData const & sd ) const
 {
 	SegmentNames segs;
-	for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+	for ( auto s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
 		if ( !sd.segment( *s ).template_pose() ) segs.push_back( *s );
 	}
 	return segs;
@@ -362,16 +361,16 @@ BuildDeNovoBackboneMover::find_roots(
 	components::StructureData const & sd =
 		components::StructureDataFactory::get_instance()->get_from_const_pose( pose );
 
-	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
+	for ( auto const & loop : loops ) {
 		core::Size const startres =
-			loop_start_without_overlap( pose, l->start(), build_overlap_ );
+			loop_start_without_overlap( pose, loop.start(), build_overlap_ );
 		std::string const & start_comp = sd.segment_name( startres );
 		std::string const & prevcomp = sd.segment( start_comp ).lower_segment();
 		if ( prevcomp != "" ) {
 			roots.push_back( prevcomp );
 		}
 		core::Size const stopres =
-			loop_stop_without_overlap( pose, l->stop(), build_overlap_ );
+			loop_stop_without_overlap( pose, loop.stop(), build_overlap_ );
 		std::string const & stop_comp = sd.segment_name( stopres );
 		std::string const & nextcomp = sd.segment(stop_comp).upper_segment();
 		if ( nextcomp != "" ) {
@@ -395,8 +394,8 @@ void
 BuildDeNovoBackboneMover::parse_prefold_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & moversmap )
 {
 	MoverOPs const & movers = parse_movers( tag, moversmap );
-	for ( MoverOPs::const_iterator m=movers.begin(); m!=movers.end(); ++m ) {
-		prefold_movers_.push_back( *m );
+	for ( auto const & mover : movers ) {
+		prefold_movers_.push_back( mover );
 	}
 }
 
@@ -404,8 +403,8 @@ void
 BuildDeNovoBackboneMover::parse_postfold_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & moversmap )
 {
 	MoverOPs const & movers = parse_movers( tag, moversmap );
-	for ( MoverOPs::const_iterator m=movers.begin(); m!=movers.end(); ++m ) {
-		postfold_movers_.push_back( *m );
+	for ( auto const & mover : movers ) {
+		postfold_movers_.push_back( mover );
 	}
 }
 
@@ -413,7 +412,7 @@ BuildDeNovoBackboneMover::MoverOPs
 BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & moversmap ) const
 {
 	MoverOPs movers;
-	for ( utility::tag::Tag::tags_t::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
+	for ( auto subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
 		if ( (*subtag)->getName() != "Add" ) {
 			std::stringstream msg;
 			msg << type() << ": Invalid xml tag name (" << (*subtag)->getName() << ") found in tag " << *tag << std::endl;
@@ -421,7 +420,7 @@ BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, protocols::mov
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		std::string const mover_name = (*subtag)->getOption< std::string >( "mover" );
-		protocols::moves::Movers_map::const_iterator find_mover = moversmap.find( mover_name );
+		auto find_mover = moversmap.find( mover_name );
 		if ( find_mover == moversmap.end() ) {
 			std::stringstream msg;
 			msg << type() << "::parse_movers(): ERROR !! mover not found in map: \n" << **subtag << std::endl;
@@ -437,7 +436,7 @@ void
 BuildDeNovoBackboneMover::parse_filters( utility::tag::TagCOP tag, protocols::filters::Filters_map const & filter_map )
 {
 	filters_.clear();
-	for ( utility::tag::Tag::tags_t::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
+	for ( auto subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
 		if ( (*subtag)->getName() != "Add" ) {
 			std::stringstream msg;
 			msg << type() << ": Invalid xml tag name (" << (*subtag)->getName() << ") found in tag " << *tag << std::endl;
@@ -445,7 +444,7 @@ BuildDeNovoBackboneMover::parse_filters( utility::tag::TagCOP tag, protocols::fi
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		std::string const filter_name = (*subtag)->getOption< std::string >( "filter" );
-		protocols::filters::Filters_map::const_iterator find_filter = filter_map.find( filter_name );
+		auto find_filter = filter_map.find( filter_name );
 		if ( find_filter == filter_map.end() ) {
 			std::stringstream msg;
 			msg << type() << "::parse_filters(): ERROR !! filter not found in map: \n" << **subtag << std::endl;
@@ -473,8 +472,8 @@ BuildDeNovoBackboneMover::prefold_movers(
 	movers.push_back( set_ss.clone() );
 
 	// 3. Run user-provided movers
-	for ( MoverOPs::const_iterator m=prefold_movers_.begin(); m!=prefold_movers_.end(); ++m ) {
-		movers.push_back( *m );
+	for ( auto const & prefold_mover : prefold_movers_ ) {
+		movers.push_back( prefold_mover );
 	}
 
 	// 4. Add coordinate constraints for overlapping regions
@@ -514,8 +513,8 @@ BuildDeNovoBackboneMover::postfold_movers(
 	movers.push_back( seal_ft );
 
 	// 2. Run user-provided movers
-	for ( MoverOPs::const_iterator m=postfold_movers_.begin(); m!=postfold_movers_.end(); ++m ) {
-		movers.push_back( *m );
+	for ( auto const & postfold_mover : postfold_movers_ ) {
+		movers.push_back( postfold_mover );
 	}
 
 	// 3. Switch to full atom
@@ -660,10 +659,10 @@ BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
 void
 BuildDeNovoBackboneMover::remove_cutpoints( components::StructureData & sd, protocols::loops::Loops const & loops ) const
 {
-	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
-		if ( ! l->cut() ) continue;
-		TR.Debug << "Removing cutpoint from StructureData: " << l->cut() << std::endl;
-		sd.set_cutpoint( sd.segment_name( l->cut() ), 0 );
+	for ( auto const & loop : loops ) {
+		if ( ! loop.cut() ) continue;
+		TR.Debug << "Removing cutpoint from StructureData: " << loop.cut() << std::endl;
+		sd.set_cutpoint( sd.segment_name( loop.cut() ), 0 );
 	}
 }
 
@@ -672,7 +671,7 @@ BuildDeNovoBackboneMover::apply_movers( MoverOPs const & movers, core::pose::Pos
 {
 	//pose.dump_pdb( "prefold_0.pdb" );
 	core::Size count = 1;
-	for ( MoverOPs::const_iterator m=movers.begin(); m!=movers.end(); ++m, ++count ) {
+	for ( auto m=movers.begin(); m!=movers.end(); ++m, ++count ) {
 		TR.Debug << "Running mover " << (*m)->get_name() << std::endl;
 		(*m)->apply( pose );
 		//pose.dump_pdb( "prefold_" + (*m)->get_name() + boost::lexical_cast< std::string >( count ) + ".pdb" );
@@ -689,15 +688,15 @@ BuildDeNovoBackboneMover::select_movable_residues(
 		components::StructureDataFactory::get_instance()->get_from_const_pose( pose );
 
 	core::select::residue_selector::ResidueSubset subset( sd.pose_length(), false );
-	for ( SegmentNames::const_iterator s=movable_segments.begin(); s!=movable_segments.end(); ++s ) {
-		for ( core::Size resid=sd.segment( *s ).lower(); resid<=sd.segment( *s ).upper(); ++resid ) {
+	for ( auto const & movable_segment : movable_segments ) {
+		for ( core::Size resid=sd.segment( movable_segment ).lower(); resid<=sd.segment( movable_segment ).upper(); ++resid ) {
 			subset[ resid ] = true;
 		}
 	}
-	for ( ResidueVector::const_iterator r=overlap_residues.begin(); r!=overlap_residues.end(); ++r ) {
-		debug_assert( *r > 0 );
-		debug_assert( *r <= pose.size() );
-		subset[ *r ] = true;
+	for ( unsigned long overlap_residue : overlap_residues ) {
+		debug_assert( overlap_residue > 0 );
+		debug_assert( overlap_residue <= pose.size() );
+		subset[ overlap_residue ] = true;
 	}
 	return subset;
 }
@@ -727,7 +726,7 @@ BuildDeNovoBackboneMover::create_overlap_constraint_generator( ResidueVector con
 	dist_csts->set_sd( 1.0 );
 
 	std::stringstream index_ss;
-	for ( ResidueVector::const_iterator r=residues.begin(); r!=residues.end(); ++r ) {
+	for ( auto r=residues.begin(); r!=residues.end(); ++r ) {
 		if ( r != residues.begin() ) index_ss << ',';
 		index_ss << *r;
 	}
@@ -1247,7 +1246,7 @@ add_overlap_to_loops(
 	if ( !overlap ) return residues;
 
 	// go through loops and add proper overlap
-	for ( protocols::loops::Loops::iterator l=loops.v_begin(); l!=loops.v_end(); ++l ) {
+	for ( auto l=loops.v_begin(); l!=loops.v_end(); ++l ) {
 		for ( core::Size i=1; i<=overlap; ++i ) {
 			// see if this loop is lower-terminal
 			if ( core::pose::is_lower_terminus( pose, l->start() ) ) {

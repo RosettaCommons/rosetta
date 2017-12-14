@@ -31,6 +31,7 @@
 #include <protocols/constraints_additional/AmbiguousMultiConstraint.hh>
 
 //utility headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -62,7 +63,7 @@ ResidueVicinityInfo::ResidueVicinityInfo(
 	desired_remodelres_in_vicinity_(desired_remodelres_in_vicinity)
 {}
 
-ResidueVicinityInfo::~ResidueVicinityInfo() {}
+ResidueVicinityInfo::~ResidueVicinityInfo() = default;
 
 core::scoring::func::FuncOP
 ResidueVicinityInfo::dis() const {
@@ -153,7 +154,7 @@ ResidueVicinityRCG::ResidueVicinityRCG(
 	rv_infos_(rv_infos)
 {}
 
-ResidueVicinityRCG::~ResidueVicinityRCG() {}
+ResidueVicinityRCG::~ResidueVicinityRCG() = default;
 
 void
 ResidueVicinityRCG::parse_my_tag( TagCOP const tag,

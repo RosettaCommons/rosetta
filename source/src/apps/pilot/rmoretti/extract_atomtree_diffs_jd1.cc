@@ -96,7 +96,7 @@ main( int argc, char * argv [] )
 		// Doesn't seem to hurt to do it again if already done once (?)
 		devel::init(argc, argv);
 
-		time_t overall_start_time = time(NULL);
+		time_t overall_start_time = time(nullptr);
 		utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
 		// Reduce read contention between processes by randomizing the order in which structures are processed
 		numeric::random::random_permutation( input_jobs, numeric::random::rg() );
@@ -118,7 +118,7 @@ main( int argc, char * argv [] )
 
 		// Reading the enzdes constraints creates new residue types we may need, in the case of covalent constraints.
 		// Actually, the residue types aren't created until we apply the constraints to the reference poses, below.
-		protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraint_io = NULL;
+		protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraint_io = nullptr;
 		if ( option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 			//we need the residue type set, assuming FA standard is used
 			core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
@@ -162,7 +162,7 @@ main( int argc, char * argv [] )
 				if ( !desired_tags.empty() && desired_tags.count(output_tag) == 0 ) continue;
 
 				core::pose::PoseOP the_pose( new core::pose::Pose() );
-				if ( native_pose == NULL ) atdiff.read_pose(output_tag, *the_pose);
+				if ( native_pose == nullptr ) atdiff.read_pose(output_tag, *the_pose);
 				else atdiff.read_pose(output_tag, *the_pose, *native_pose);
 
 				// Score new structure.  Cached energies (including *residue* energies)
@@ -181,7 +181,7 @@ main( int argc, char * argv [] )
 		} // loop over jobs and nstructs
 		jobdist.shutdown();
 
-		time_t overall_end_time = time(NULL);
+		time_t overall_end_time = time(nullptr);
 		TR << "Finished all " << num_structures_processed << " structures in " << (overall_end_time - overall_start_time) << " seconds." << std::endl;
 		if ( num_structures_processed == 0 ) {
 			basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them?" << std::endl;

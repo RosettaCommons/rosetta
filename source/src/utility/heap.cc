@@ -34,7 +34,7 @@ heap::heap( int max_items ) {
 
 
 // @brief virtual destructor
-heap::~heap() {}
+heap::~heap() = default;
 
 
 //------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ heap::heap_up(
 	covalue = coheap_[indx];
 
 	while ( indx != 0 ) {
-		int parent = static_cast< int >((indx-1)/2);
+		auto parent = static_cast< int >((indx-1)/2);
 		int pv = heap_[parent];
 		float copv = coheap_[parent];
 		if ( copv < covalue ) break; // GHAA goto L20; // loop escape

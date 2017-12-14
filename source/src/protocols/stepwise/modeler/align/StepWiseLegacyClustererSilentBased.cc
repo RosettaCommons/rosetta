@@ -123,8 +123,7 @@ StepWiseLegacyClustererSilentBased::StepWiseLegacyClustererSilentBased( core::io
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWiseLegacyClustererSilentBased::~StepWiseLegacyClustererSilentBased()
-{}
+StepWiseLegacyClustererSilentBased::~StepWiseLegacyClustererSilentBased() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void

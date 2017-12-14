@@ -48,7 +48,7 @@ namespace pack_daemon {
 struct EntityHistoryLT
 {
 public:
-	typedef TopEntitySet::EntityAndScore EntityAndScore;
+	using EntityAndScore = TopEntitySet::EntityAndScore;
 
 public:
 	bool operator () ( EntityAndScore const & a, EntityAndScore const & b ) {
@@ -594,7 +594,7 @@ MPIMultistateFitnessFunction::recover_poses_from_states(
 			PoseOP pose( new Pose );
 			core::import_pose::pose_from_pdbstring( *pose, pdb_string, pseudo_pdbname );
 
-			return_pose_list.push_back( std::make_pair( pack_daemon_index, pose ) );
+			return_pose_list.emplace_back( pack_daemon_index, pose );
 			//std::cout << "... done" << std::endl;
 		}
 	}

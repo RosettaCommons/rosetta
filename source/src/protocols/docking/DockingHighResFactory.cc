@@ -35,7 +35,7 @@ namespace docking {
 static basic::Tracer TR( "protocols.docking.DockingHighResFactory" );
 
 /// @details Private constructor insures correctness of singleton.
-DockingHighResFactory::DockingHighResFactory() {}
+DockingHighResFactory::DockingHighResFactory() = default;
 
 DockingHighResFactory::~DockingHighResFactory() = default;
 

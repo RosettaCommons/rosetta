@@ -60,7 +60,7 @@ DeleteRegionMover::DeleteRegionMover( core::Size const res_start, core::Size con
 	region( start.str(), end.str() );
 }
 
-DeleteRegionMover::~DeleteRegionMover(){}
+DeleteRegionMover::~DeleteRegionMover()= default;
 
 DeleteRegionMover::DeleteRegionMover( DeleteRegionMover const & src ):
 	protocols::moves::Mover( src ),
@@ -150,7 +150,7 @@ DeleteRegionMover::apply( core::pose::Pose& pose )
 	}
 
 	ResidueRanges const ranges( selector_->apply( pose ) );
-	for ( ResidueRanges::const_reverse_iterator range=ranges.rbegin(); range!=ranges.rend(); ++range ) {
+	for ( auto range=ranges.rbegin(); range!=ranges.rend(); ++range ) {
 		PyAssert( range->start() != 0, "Cannot delete region starting with 0 - make sure region is set for DeleteRegionMover" );
 		PyAssert( range->stop() != 0, "Cannot delete region ending with 0 - make sure region is set for DeleteRegionMover" );
 		PyAssert( range->stop() >= range->start(), "Cannot delete region where end > start" );

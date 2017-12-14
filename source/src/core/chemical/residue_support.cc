@@ -160,7 +160,7 @@ rename_atoms( ResidueType & res, bool preserve/*=true*/ ) {
 /// "Rigid" includes direct neighbors and atoms connected by non-rotatable bonds
 /// e.g. all rings, all double/triple bonds, methyl groups, single atoms, etc.
 class RigidDistanceVisitor: public utility::graph::null_bfs_prune_visitor {
-	typedef utility::vector1< utility::vector1< core::Real > > Matrix;
+	using Matrix = utility::vector1<utility::vector1<core::Real> >;
 
 public:
 	RigidDistanceVisitor( Matrix & distances, ResidueType const & restype, VD start ) :

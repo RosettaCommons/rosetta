@@ -20,6 +20,7 @@
 
 #include <ObjexxFCL/Fmath.hh>
 
+#include <utility>
 #include <utility/io/izstream.hh>
 
 #include <fstream>
@@ -70,7 +71,7 @@ DebuggingAnnealer::DebuggingAnnealer(
 	current_rot_index,
 	calc_rot_freq,
 	rot_freq
-	), ig_(ig)
+	), ig_(std::move(ig))
 {
 }
 
@@ -115,8 +116,7 @@ DebuggingAnnealer::DebuggingAnnealer(
 /// @author
 ///
 ////////////////////////////////////////////////////////////////////////////////
-DebuggingAnnealer::~DebuggingAnnealer()
-{}
+DebuggingAnnealer::~DebuggingAnnealer() = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///

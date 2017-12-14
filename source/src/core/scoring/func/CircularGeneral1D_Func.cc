@@ -85,7 +85,7 @@ bool CircularGeneral1D_Func::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	CircularGeneral1D_Func const & other_downcast( static_cast< CircularGeneral1D_Func const & > (other) );
+	auto const & other_downcast( static_cast< CircularGeneral1D_Func const & > (other) );
 	if ( data_     != other_downcast.data_     ) return false;
 	if ( xmin_     != other_downcast.xmin_     ) return false;
 	if ( xbin_     != other_downcast.xbin_     ) return false;
@@ -106,7 +106,7 @@ CircularGeneral1D_Func::func( Real const x ) const {
 	Real const bin_wrap_real = bin_real - num_bins_ * floor( bin_real / num_bins_ ) + 1;
 	debug_assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_+1 );
 
-	Size const bin = static_cast< Size >( bin_wrap_real );
+	auto const bin = static_cast< Size >( bin_wrap_real );
 	Real const leftover = bin_wrap_real - bin;
 
 	Size next_bin = bin + 1;
@@ -122,7 +122,7 @@ CircularGeneral1D_Func::dfunc( Real const x ) const {
 	Real const bin_wrap_real = bin_real - num_bins_ * floor( bin_real / num_bins_ ) + 1;
 	debug_assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_ + 1 );
 
-	Size const bin = static_cast< Size >( bin_wrap_real );
+	auto const bin = static_cast< Size >( bin_wrap_real );
 
 	Size next_bin = bin + 1;
 	if ( next_bin > num_bins_ ) next_bin = 1; //wrap around.

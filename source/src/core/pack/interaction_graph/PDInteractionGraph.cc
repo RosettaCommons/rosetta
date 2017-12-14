@@ -67,8 +67,7 @@ PDNode::PDNode(InteractionGraphBase * owner, int node_id, int num_states) :
 ///
 /// @details not responsible for any dynamically allocated memory, so node does nothing
 /// it's member variables, of course, are implicitly destructed
-PDNode::~PDNode()
-{}
+PDNode::~PDNode() = default;
 
 void PDNode::print() const
 {
@@ -239,7 +238,7 @@ void PDNode::assign_zero_state()
 
 	curr_state_one_body_energy_ = 0.0f;
 	//fills from [1] to end
-	std::vector< float >::iterator position1 = curr_state_two_body_energies_.begin();
+	auto position1 = curr_state_two_body_energies_.begin();
 	++position1;
 	std::fill( position1,
 		curr_state_two_body_energies_.end(),
@@ -317,9 +316,9 @@ void PDNode::commit_considered_substitution()
 	curr_state_total_energy_ = alternate_state_total_energy_;
 
 	//copies from [1] to end
-	std::vector< float >::iterator alt_position1 = alternate_state_two_body_energies_.begin();
+	auto alt_position1 = alternate_state_two_body_energies_.begin();
 	++alt_position1;
-	std::vector< float >::iterator curr_position1 = curr_state_two_body_energies_.begin();
+	auto curr_position1 = curr_state_two_body_energies_.begin();
 	++curr_position1;
 
 	std::copy( alt_position1,
@@ -358,7 +357,7 @@ void PDNode::update_internal_vectors()
 
 	edge_matrix_ptrs_.clear();
 	edge_matrix_ptrs_.reserve( get_num_incident_edges() + 1);
-	edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >() ); //occupy the 0th position
+	edge_matrix_ptrs_.emplace_back( ); //occupy the 0th position
 
 	aa_offsets_for_edges_.dimension(
 		num_aa_types_, get_num_incident_edges(), num_aa_types_);
@@ -382,10 +381,10 @@ void PDNode::update_internal_vectors()
 		int edge_table_size = get_incident_pd_edge(ii)->get_two_body_table_size();
 		if ( edge_table_size != 0 ) {
 			float & edge_table_ref = get_incident_pd_edge(ii)->get_edge_table_ptr();
-			edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >( edge_table_ref ));
+			edge_matrix_ptrs_.emplace_back( edge_table_ref );
 			edge_matrix_ptrs_[ii].dimension( edge_table_size );
 		} else {
-			edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >() );
+			edge_matrix_ptrs_.emplace_back( );
 		}
 
 		ObjexxFCL::FArray2D_int const & edge_aa_neighb_offsets =
@@ -802,8 +801,7 @@ PDEdge::PDEdge
 }
 
 /// @brief destructor
-PDEdge::~PDEdge()
-{}
+PDEdge::~PDEdge() = default;
 
 /// @brief allocates two-body energy table based on amino-acid neighbor relationships
 /// and initializes the table to 0.
@@ -1446,7 +1444,7 @@ PDInteractionGraph::PDInteractionGraph(int num_nodes) :
 void
 PDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_base )
 {
-	rotamer_set::RotamerSets const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
+	auto const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
 
 	// determine max # of residue type groups
 	Size max_nresgroups = 0;
@@ -1649,7 +1647,7 @@ void PDInteractionGraph::update_internal_energy_totals()
 	}
 
 	//int counter = 0;
-	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		//std::cerr << " ig_edge " << ++counter  << " =" <<
 		//((PDEdge*) *iter)->get_current_two_body_energy();
@@ -1666,7 +1664,7 @@ void PDInteractionGraph::update_internal_energy_totals()
 int PDInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		sum += ((PDEdge*) *iter)->get_two_body_table_size();
 	}
@@ -1997,7 +1995,7 @@ PDInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 		}
 	}
 
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+	for ( auto edge_iter = get_edge_list_begin();
 			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
@@ -2057,8 +2055,8 @@ PDInteractionGraph::get_aa_submatrix_energies_for_edge(
 ///
 NodeBase* PDInteractionGraph::create_new_node( int node_index, int num_states)
 {
-	PDNode* new_node = new PDNode(this, node_index, num_states);
-	debug_assert( new_node != NULL );
+	auto* new_node = new PDNode(this, node_index, num_states);
+	debug_assert( new_node != nullptr );
 	return new_node;
 }
 

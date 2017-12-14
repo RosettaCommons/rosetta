@@ -21,6 +21,7 @@
 
 
 #include <protocols/grafting/util.hh>
+#include <utility>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataCache.hh>
@@ -68,7 +69,7 @@ ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& src) :
 	if ( src.src_pose_ ) src_pose_ = src.src_pose_->clone();
 }
 
-ReplaceRegionMover::~ReplaceRegionMover(){}
+ReplaceRegionMover::~ReplaceRegionMover()= default;
 
 // XRW TEMP std::string
 // XRW TEMP ReplaceRegionMover::get_name() const {

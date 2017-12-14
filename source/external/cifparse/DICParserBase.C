@@ -152,9 +152,9 @@ POSSIBILITY THEREOF.
 
 #include <stdexcept>
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "Exceptions.h"
 #include "GenString.h"
@@ -178,7 +178,7 @@ char* Glob_dataBlockNameDIC;
 
 }
 
-DICParser* DICParserP = NULL;
+DICParser* DICParserP = nullptr;
 
 using std::exception;
 using std::endl;
@@ -189,7 +189,7 @@ using std::cout;
 DICParser::DICParser(DicFile* fo, CifFile* ddl_in, bool verbose)
 {
 
-    if (DICParserP != NULL)
+    if (DICParserP != nullptr)
     {
         // Attempting to create a new parser, during the lifetime of
         // an existing parser.
@@ -199,13 +199,13 @@ DICParser::DICParser(DicFile* fo, CifFile* ddl_in, bool verbose)
 
     Clear();
 
-    if (fo != NULL)
+    if (fo != nullptr)
         _fobj = fo;
     else
         throw EmptyValueException("fo is a NULL pointer",
           "DICParser::DICParser");
 
-    if (ddl_in != NULL)
+    if (ddl_in != nullptr)
         ddl = ddl_in;
     else
         throw EmptyValueException("ddl_in is a NULL pointer",
@@ -215,7 +215,7 @@ DICParser::DICParser(DicFile* fo, CifFile* ddl_in, bool verbose)
 
     format=fo->GetFormatTable();
     errorLog.clear();
-    listcat.clear(); listcat.push_back("id");
+    listcat.clear(); listcat.emplace_back("id");
     string BlockName;
     BlockName = ddl->GetFirstBlockName();
 
@@ -229,13 +229,13 @@ DICParser::DICParser(DicFile* fo, CifFile* ddl_in, bool verbose)
     cattbl->SetFlags(cattblCols[2], ISTable::DT_STRING | ISTable::CASE_INSENSE);
     cattbl->CreateIndex("index0",listcat);
 
-    listitem.clear(); listitem.push_back("category_id");
-    listitem.push_back("name");
+    listitem.clear(); listitem.emplace_back("category_id");
+    listitem.emplace_back("name");
     BlockName = ddl->GetFirstBlockName();
     itemtbl = block.GetTablePtr("item");
     itemtbl->CreateIndex("index0",listitem);
 
-    listitem2.clear(); listitem2.push_back("category_id"); listitem2.push_back("mandatory_code");
+    listitem2.clear(); listitem2.emplace_back("category_id"); listitem2.emplace_back("mandatory_code");
     itemtbl->CreateIndex("index2",listitem2);
 
     DICParserP = this;
@@ -247,7 +247,7 @@ void DICParser::Parse(const string& fileName, string& diagnostics)
 
     FILE* dicIn;
 
-    if ((dicIn = fopen(fileName.c_str(), "r")) == NULL )
+    if ((dicIn = fopen(fileName.c_str(), "r")) == nullptr )
     {
         diagnostics = "Unable to open file.";
         throw NotFoundException("File \"" + fileName + "\" cannot be opened",
@@ -301,7 +301,7 @@ void dicparser_error(const char *s)
 DICParser::~DICParser()
 {
     Reset();
-    DICParserP = NULL;
+    DICParserP = nullptr;
 }
 
 
@@ -336,10 +336,10 @@ void DICParser::Reset()
   _fieldList.clear();
   _fieldListSave.clear();
   if (_prevtbl) delete _prevtbl;
-  if (_savetbl != NULL)
+  if (_savetbl != nullptr)
   {
       delete _savetbl;
-      _savetbl = NULL;
+      _savetbl = nullptr;
   }
 }
 
@@ -354,14 +354,14 @@ void DICParser::Clear()
   _fieldListAlloc=100;
   _fieldList.reserve(_fieldListAlloc);
   _pBufValue.clear();
-  _fobj=NULL;
-  _tbl=NULL;
+  _fobj=nullptr;
+  _tbl=nullptr;
   isSave = 0;
   _nTablesInBlockSave=0;
   _curItemNoSave=0;
-  _saveobj=NULL;
-  _savetbl=NULL;
-  _prevtbl=NULL;
+  _saveobj=nullptr;
+  _savetbl=nullptr;
+  _prevtbl=nullptr;
   _fieldListAllocSave=100;
   _fieldListSave.reserve(_fieldListAllocSave);
   _tBufKeyword.clear();
@@ -512,18 +512,18 @@ void DICParser::ProcessItemNameList(void)
   }
 
   vector<string> colNames, target, target2;
-  colNames.push_back("dbName");
-  colNames.push_back("type");
-  colNames.push_back("catName");
+  colNames.emplace_back("dbName");
+  colNames.emplace_back("type");
+  colNames.emplace_back("catName");
   target.push_back(_curDataBlockName);
   if (isSave == 0) {
-    target.push_back("data");
+    target.emplace_back("data");
   }
   if (isSave == 1) {
-    target.push_back("category");
+    target.emplace_back("category");
   }
   if (isSave == 2) {
-    target.push_back("item");
+    target.emplace_back("item");
   }
   target.push_back(categoryName);
   unsigned int resIndex = format->FindFirst(target, colNames);
@@ -724,18 +724,18 @@ void DICParser::ProcessItemValuePair(void)
     return;
   }
   vector<string> colNames, target;
-  colNames.push_back("dbName");
-  colNames.push_back("type");
-  colNames.push_back("catName");
+  colNames.emplace_back("dbName");
+  colNames.emplace_back("type");
+  colNames.emplace_back("catName");
   target.push_back(_curDataBlockName);
   if (isSave == 0) {
-    target.push_back("data");
+    target.emplace_back("data");
   }
   if (isSave == 1) {
-    target.push_back("category");
+    target.emplace_back("category");
   }
   if (isSave == 2) {
-    target.push_back("item");
+    target.emplace_back("item");
   }
   target.push_back(categoryName);
   unsigned int resIndex = format->FindFirst(target, colNames);
@@ -954,10 +954,10 @@ void DICParser::ProcessLoopDeclarationSave(void)
       _prevtbl=new ISTable();
       *_prevtbl = *_savetbl;
     }
-    if (_savetbl != NULL)
+    if (_savetbl != nullptr)
     {
         delete _savetbl;
-        _savetbl = NULL;
+        _savetbl = nullptr;
     }
     _savetbl = new ISTable(categoryName);
     _curRowSave = 0;
@@ -1124,10 +1124,10 @@ void DICParser::ProcessItemValuePairSave(void)
       _prevtbl=new ISTable();
       *_prevtbl = *_savetbl;
     }
-    if (_savetbl != NULL)
+    if (_savetbl != nullptr)
     {
         delete _savetbl;
-        _savetbl = NULL;
+        _savetbl = nullptr;
     }
     _savetbl = new ISTable(categoryName);
     _curCategoryNameSave = categoryName;
@@ -1135,7 +1135,7 @@ void DICParser::ProcessItemValuePairSave(void)
   CifString::GetItemFromCifItem(keywordName, _tBufKeyword);
   if (!keywordName.empty()) {
 //    cout<<categoryName<<"   "<<_curCategoryNameSave<<"   "<<endl;
-    if (_savetbl==NULL)
+    if (_savetbl==nullptr)
       _savetbl = new ISTable(categoryName);
     _savetbl->AddColumn(keywordName);
   }
@@ -1206,7 +1206,7 @@ void  DICParser::CheckDDL(void)
   unsigned int numRows = _prevtbl->GetNumRows();
 
   vector<string> listitem1;
-  listitem1.push_back("name");
+  listitem1.emplace_back("name");
 
   bool implicitFound = false;
 
@@ -1276,7 +1276,7 @@ void  DICParser::CheckDDL(void)
     {
       vector<string> target2;
       target2.push_back(_curCategoryName);
-      target2.push_back("implicit");
+      target2.emplace_back("implicit");
       unsigned int listOut = itemtbl->FindFirst(target2, listitem2);
       if (listOut != itemtbl->GetNumRows())
       {
@@ -1394,7 +1394,7 @@ void DICParser::ProcessSaveBegin(void)
       _saveFrames.insert(_curDataBlockNameSave);
   }
 
-  _savetbl=NULL;
+  _savetbl=nullptr;
   _pBufValue = Glob_dataBlockNameDIC;
 }
 
@@ -1404,10 +1404,10 @@ void DICParser::ProcessSaveEnd(void)
   _prevtbl=new ISTable();
   *_prevtbl = *_savetbl;
   delete _saveobj;
-  if (_savetbl != NULL)
+  if (_savetbl != nullptr)
   {
       delete _savetbl;
-      _savetbl = NULL;
+      _savetbl = nullptr;
   }
   _pBufValue = Glob_pBufValueDIC; 
 }
@@ -1433,7 +1433,7 @@ void DICParser::ProcessDataBlockName(void)
       block.WriteTable(_tbl);
       _nTablesInBlock++;
     //    delete _tbl;
-                _tbl=NULL;
+                _tbl=nullptr;
   }
   if (_prevDataBlockName != _curDataBlockName)
          _curCategoryName.clear();
@@ -1533,28 +1533,28 @@ void DICParser::InsertImplicitOrdinalItems()
     ISTable* itemTableP = ddlBlock.GetTablePtr("item");
 
     vector<string> searchCols;
-    searchCols.push_back("mandatory_code");
+    searchCols.emplace_back("mandatory_code");
 
     vector<string> searchVals;
-    searchVals.push_back("implicit-ordinal");
+    searchVals.emplace_back("implicit-ordinal");
 
     vector<unsigned int> foundIndices;
     itemTableP->Search(foundIndices, searchVals, searchCols);
 
     Block& block = _fobj->GetBlock(_fobj->GetFirstBlockName());
 
-    for (unsigned int foundI = 0; foundI < foundIndices.size(); ++foundI)
+    for (unsigned int foundIndice : foundIndices)
     {
-        const string& catName = (*itemTableP)(foundIndices[foundI],
+        const string& catName = (*itemTableP)(foundIndice,
           "category_id");
 
         ISTable* catTableP = block.GetTablePtr(catName);
-        if (catTableP == NULL)
+        if (catTableP == nullptr)
         {
             continue;
         }
 
-        const string& itemName = (*itemTableP)(foundIndices[foundI], "name");
+        const string& itemName = (*itemTableP)(foundIndice, "name");
 
         string attrName;
         CifString::GetItemFromCifItem(attrName, itemName); 

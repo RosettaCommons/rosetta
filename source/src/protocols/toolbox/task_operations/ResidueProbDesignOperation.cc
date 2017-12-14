@@ -80,7 +80,7 @@ ResidueProbDesignOperation();
 prob_set_ = aa_probs;
 }*/
 
-ResidueProbDesignOperation::~ResidueProbDesignOperation(){}
+ResidueProbDesignOperation::~ResidueProbDesignOperation()= default;
 
 ResidueProbDesignOperation::ResidueProbDesignOperation(ResidueProbDesignOperation const & rhs): core::pack::task::operation::TaskOperation(rhs)
 {
@@ -221,14 +221,14 @@ ResidueProbDesignOperation::sample_zero_probs_at() const {
 
 bool
 ResidueProbDesignOperation::resnum_exists_in_set(core::Size const resnum) const {
-	std::map< Size, std::map< AA, Real > >::const_iterator iter(prob_set_.find(resnum));
+	auto iter(prob_set_.find(resnum));
 
 	return iter != prob_set_.end();
 }
 
 bool
 ResidueProbDesignOperation::aa_exists(AA amino_acid, std::map< AA, Real > const & aa_prob_set) const {
-	std::map< core::chemical::AA, Real >::const_iterator iter(aa_prob_set.find(amino_acid));
+	auto iter(aa_prob_set.find(amino_acid));
 
 	return iter != aa_prob_set.end();
 }
@@ -240,7 +240,7 @@ ResidueProbDesignOperation::get_weights(AAProbabilities & aa_prob_set) const{
 
 	//Non-cannonicals will have to come later
 	for ( core::Size i = 1; i <= 20; ++i ) {
-		core::chemical::AA amino = static_cast< core::chemical::AA >(i);
+		auto amino = static_cast< core::chemical::AA >(i);
 		if ( ! aa_exists(amino, aa_prob_set) || aa_prob_set[amino] == 0.0 ) { continue; }
 		aa_weights[i] = aa_prob_set[amino];
 	}
@@ -314,7 +314,7 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 		//Add to already allowed aminos
 		if ( keep_task_allowed_aa_ ) {
 			for ( core::Size aa_num = 1; aa_num <= 20; ++aa_num ) {
-				core::chemical::AA amino = static_cast<core::chemical::AA>(aa_num);
+				auto amino = static_cast<core::chemical::AA>(aa_num);
 				if ( allowed_aminos[aa_num] ) {
 					task.nonconst_residue_task(i).allow_aa(amino);
 				}

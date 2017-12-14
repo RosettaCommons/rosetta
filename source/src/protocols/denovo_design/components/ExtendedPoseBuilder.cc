@@ -51,9 +51,7 @@ ExtendedPoseBuilder::ExtendedPoseBuilder():
 {
 }
 
-ExtendedPoseBuilder::~ExtendedPoseBuilder()
-{
-}
+ExtendedPoseBuilder::~ExtendedPoseBuilder() = default;
 
 core::pose::PoseOP
 ExtendedPoseBuilder::apply( StructureData const & sd ) const
@@ -87,7 +85,7 @@ SegmentNames
 ExtendedPoseBuilder::find_template_segments( StructureData const & sd ) const
 {
 	SegmentNames with_template;
-	for ( SegmentNameList::const_iterator c=sd.segments_begin(); c!=sd.segments_end(); ++c ) {
+	for ( auto c=sd.segments_begin(); c!=sd.segments_end(); ++c ) {
 		if ( sd.segment( *c ).template_pose() ) with_template.push_back( *c );
 	}
 	return with_template;
@@ -100,8 +98,8 @@ ExtendedPoseBuilder::create_template_pose( StructureData const & sd, SegmentName
 
 	// look for segments with template pose
 	// add these segments to the pose
-	SegmentNames::const_iterator prev = template_segments.end();
-	for ( SegmentNames::const_iterator s=template_segments.begin(); s!=template_segments.end(); ++s ) {
+	auto prev = template_segments.end();
+	for ( auto s=template_segments.begin(); s!=template_segments.end(); ++s ) {
 		Segment const & seg = sd.segment( *s );
 
 		bool const new_chain = ( prev == template_segments.end() ) || ( *prev != seg.lower_segment() );
@@ -128,10 +126,10 @@ void
 add_terminus_variants( core::pose::Pose & pose, ExtendedPoseBuilder::Resids const & endings )
 {
 	core::pose::add_lower_terminus_type_to_pose_residue( pose, 1 );
-	for ( ExtendedPoseBuilder::Resids::const_iterator r=endings.begin(); r!=endings.end(); ++r ) {
-		core::pose::add_upper_terminus_type_to_pose_residue( pose, *r );
-		if ( *r + 1 <= pose.size() ) {
-			core::pose::add_lower_terminus_type_to_pose_residue( pose, *r+1 );
+	for ( unsigned long ending : endings ) {
+		core::pose::add_upper_terminus_type_to_pose_residue( pose, ending );
+		if ( ending + 1 <= pose.size() ) {
+			core::pose::add_lower_terminus_type_to_pose_residue( pose, ending+1 );
 		}
 	}
 }
@@ -146,11 +144,11 @@ ExtendedPoseBuilder::extend_pose(
 	TR.Debug << "Chain endings = " << endings << std::endl;
 	TR.Debug << "SD= " << sd << std::endl;
 
-	SegmentNames::const_iterator prev_template = template_segments.end();
-	SegmentNames::const_iterator next_template = template_segments.begin();
+	auto prev_template = template_segments.end();
+	auto next_template = template_segments.begin();
 	core::Size cur_resid = 1;
 	core::Size extend_size = 0;
-	for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+	for ( auto s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
 		TR.Debug << "At segment " << *s << sd.segment(*s) << " cur_resid = " << cur_resid << std::endl;
 		// if this is a template segment, prepend residues and skip ahead
 		if ( ( next_template != template_segments.end() ) &&
@@ -224,7 +222,7 @@ ExtendedPoseBuilder::Resids
 ExtendedPoseBuilder::calc_chain_endings( StructureData const & sd ) const
 {
 	Resids endings;
-	for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+	for ( auto s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
 		if ( ! sd.segment( *s ).cterm_included() ) {
 			endings.push_back( sd.segment( *s ).upper() );
 		}

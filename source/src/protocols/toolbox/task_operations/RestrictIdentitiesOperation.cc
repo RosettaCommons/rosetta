@@ -22,6 +22,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pose/Pose.hh>
@@ -73,16 +74,16 @@ std::string RestrictIdentitiesOperationCreator::keyname() const
 }
 
 // @brief default constructor
-RestrictIdentitiesOperation::RestrictIdentitiesOperation() {}
+RestrictIdentitiesOperation::RestrictIdentitiesOperation() = default;
 
 // @brief constructor with arguments
-RestrictIdentitiesOperation::RestrictIdentitiesOperation( utility::vector1 < std::string > identities, bool prevent_repacking ) :
+RestrictIdentitiesOperation::RestrictIdentitiesOperation( utility::vector1< std::string > const & identities, bool prevent_repacking ) :
 	identities_( identities ),
 	prevent_repacking_( prevent_repacking )
 {}
 
 // @brief destructor
-RestrictIdentitiesOperation::~RestrictIdentitiesOperation() {}
+RestrictIdentitiesOperation::~RestrictIdentitiesOperation() = default;
 
 // @brief copy constructor
 core::pack::task::operation::TaskOperationOP RestrictIdentitiesOperation::clone() const

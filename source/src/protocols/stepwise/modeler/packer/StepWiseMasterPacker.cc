@@ -32,6 +32,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.packer.StepWiseMasterPacker" );
 
@@ -66,13 +67,12 @@ namespace packer {
 //Constructor
 StepWiseMasterPacker::StepWiseMasterPacker( working_parameters::StepWiseWorkingParametersCOP working_parameters,
 	options::StepWiseModelerOptionsCOP options ):
-	working_parameters_( working_parameters),
-	options_( options )
+	working_parameters_(std::move( working_parameters)),
+	options_(std::move( options ))
 {}
 
 //Destructor
-StepWiseMasterPacker::~StepWiseMasterPacker()
-{}
+StepWiseMasterPacker::~StepWiseMasterPacker() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -112,7 +112,7 @@ StepWiseMasterPacker::initialize_packer() {
 //////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMasterPacker::do_prepack( pose::Pose & pose ) {
-	if ( phosphate_sampler_ != 0 ) phosphate_sampler_->do_prepack( pose, working_parameters_->working_moving_res_list() ); // must be fixed.
+	if ( phosphate_sampler_ != nullptr ) phosphate_sampler_->do_prepack( pose, working_parameters_->working_moving_res_list() ); // must be fixed.
 	packer_->do_prepack( pose );
 }
 
@@ -144,7 +144,7 @@ StepWiseMasterPacker::add_packer_screeners( utility::vector1< screener::StepWise
 ///////////////////////////////////////////////////////////////////////////
 void
 StepWiseMasterPacker::reset( pose::Pose const & pose ){
-	if ( phosphate_sampler_ != 0 ) phosphate_sampler_->reset( pose );
+	if ( phosphate_sampler_ != nullptr ) phosphate_sampler_->reset( pose );
 	packer_->reset( pose );
 }
 

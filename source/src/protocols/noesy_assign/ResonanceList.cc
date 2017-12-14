@@ -69,7 +69,7 @@ namespace protocols {
 namespace noesy_assign {
 
 
-ResonanceList::ResonanceList( std::string  sequence ) : sequence_(std::move( sequence ))
+ResonanceList::ResonanceList( std::string const & sequence ) : sequence_( sequence )
 {}
 
 ResonanceList::~ResonanceList() = default;
@@ -195,7 +195,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 
 		std::string fl_tag;
 		line_stream >> fl_tag;
-		typedef std::set< core::Size > FloatList;
+		using FloatList = std::set<core::Size>;
 		FloatList floats;
 		if ( line_stream ) {
 			if ( fl_tag!="None" ) {

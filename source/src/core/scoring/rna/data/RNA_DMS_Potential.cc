@@ -129,8 +129,7 @@ RNA_DMS_Potential::RNA_DMS_Potential():
 }
 
 //Destructor
-RNA_DMS_Potential::~RNA_DMS_Potential()
-{}
+RNA_DMS_Potential::~RNA_DMS_Potential() = default;
 
 //////////////////////////////////////////////////////////////////////////////////
 void
@@ -702,8 +701,8 @@ RNA_DMS_Potential::get_binding_energy( Size const i,
 utility::vector1< Real >
 RNA_DMS_Potential::get_logL_values( pose::Pose const & pose, Size const i /*, utility::vector1< Real > const & DMS_values */  ){
 
-	runtime_assert( working_pose_ != 0 );
-	runtime_assert( working_pose_with_probe_ != 0 );
+	runtime_assert( working_pose_ != nullptr );
+	runtime_assert( working_pose_with_probe_ != nullptr );
 
 	if ( pose.aa( i ) != chemical::na_rad ) {
 		return vector1< Real >( DMS_values_.size(), 0.0 );

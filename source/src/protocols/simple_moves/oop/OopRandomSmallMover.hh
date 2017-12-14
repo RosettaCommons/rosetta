@@ -37,8 +37,8 @@ public:
 	OopRandomSmallMover(
 	);
 
-	OopRandomSmallMover( utility::vector1< core::Size > oop_seq_positions );
-	OopRandomSmallMover( utility::vector1< core::Size > oop_seq_positions, core::Real max_small_angle );
+	OopRandomSmallMover( utility::vector1< core::Size > const & oop_seq_positions );
+	OopRandomSmallMover( utility::vector1< core::Size > const & oop_seq_positions, core::Real max_small_angle );
 
 	virtual ~OopRandomSmallMover();
 

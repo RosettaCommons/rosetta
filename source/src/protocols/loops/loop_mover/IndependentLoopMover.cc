@@ -102,7 +102,7 @@ IndependentLoopMover::IndependentLoopMover(
 }
 
 // destructor
-IndependentLoopMover::~IndependentLoopMover(){}
+IndependentLoopMover::~IndependentLoopMover()= default;
 
 void IndependentLoopMover::set_defaults() {
 	using namespace basic::options;
@@ -140,7 +140,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 
 	int select_best_loop_from = option[ OptionKeys::loops::select_best_loop_from ]();
 
-	for ( Loops::iterator it=selected_loops.v_begin(), it_end=selected_loops.v_end();
+	for ( auto it=selected_loops.v_begin(), it_end=selected_loops.v_end();
 			it != it_end; ++it ) {
 		lcount++;
 		// Make loal copy of loop to be build
@@ -158,7 +158,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 		}
 
 		// statistics:
-		int  time_start = time(NULL);
+		int  time_start = time(nullptr);
 		Size nfailure = 0;
 		//Size nrmsfail = 0;
 
@@ -269,7 +269,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 
 
 		// Print statistics:
-		int time_end = time(NULL);
+		int time_end = time(nullptr);
 		float time_per_build = float(time_end - time_start) / float(nfailure+1);
 
 		tr().Info   << "Loopstat: "
@@ -315,11 +315,11 @@ void IndependentLoopMover::select_loops( Loops & selected_loops ){
 
 	} else {
 		// Choose loops by skiprate
-		for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
+		for ( const auto & it : *loops() ) {
 			if ( build_all_loops_ ||
-					( numeric::random::uniform() >= it->skip_rate() )
+					( numeric::random::uniform() >= it.skip_rate() )
 					) {
-				temp_loops.add_loop( *it );
+				temp_loops.add_loop( it );
 			}
 		}
 	}

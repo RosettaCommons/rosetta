@@ -26,6 +26,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
@@ -77,12 +78,12 @@ RestrictResiduesToRepackingOperation::RestrictResiduesToRepackingOperation(): pa
 	reference_pdb_id_ = "";
 }
 
-RestrictResiduesToRepackingOperation::RestrictResiduesToRepackingOperation( utility::vector1 < core::Size > residues )
+RestrictResiduesToRepackingOperation::RestrictResiduesToRepackingOperation( utility::vector1< core::Size > const & residues )
 : parent(), residues_( residues ), reference_pdb_id_( "" )
 {
 }
 
-RestrictResiduesToRepackingOperation::~RestrictResiduesToRepackingOperation() {}
+RestrictResiduesToRepackingOperation::~RestrictResiduesToRepackingOperation() = default;
 
 core::pack::task::operation::TaskOperationOP RestrictResiduesToRepackingOperation::clone() const
 {

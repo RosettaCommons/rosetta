@@ -24,6 +24,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.o2prime.O2PrimePacker" );
 
@@ -38,7 +39,7 @@ using namespace core;
 //Constructor
 O2PrimePacker::O2PrimePacker( pose::Pose const & pose,
 	core::scoring::ScoreFunctionCOP const & scorefxn,
-	utility::vector1< core::Size > moving_res,
+	utility::vector1< core::Size > const & moving_res,
 	bool const pack_virtual_o2prime_hydrogen /* = false */ ):
 	pose_with_original_HO2prime_torsion_( pose ),
 	moving_res_( moving_res ),
@@ -55,8 +56,7 @@ O2PrimePacker::O2PrimePacker( pose::Pose const & pose,
 }
 
 //Destructor
-O2PrimePacker::~O2PrimePacker()
-{}
+O2PrimePacker::~O2PrimePacker() = default;
 
 ////////////////////////////////////////////////////////////////////////
 void

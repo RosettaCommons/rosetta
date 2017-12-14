@@ -519,7 +519,7 @@ PowerDiagram::add_single_atom_to_power_diagram(
 							// the infinite vertex if the lone finite partner vertex
 							// will be deleted.
 							//       TR << "New atom is on generator plane of infinite vertex" << std::endl;
-							utility::vector1< PDvertex * >::const_iterator fv_itr( partner_vrt->partners().begin() );
+							auto fv_itr( partner_vrt->partners().begin() );
 							while ( !(*fv_itr)->finite() ) ++fv_itr;
 							Real finite_partner_pd( power_distance( (*fv_itr)->xyz(), new_sph.get() ) );
 
@@ -580,20 +580,19 @@ PowerDiagram::add_single_atom_to_power_diagram(
 
 	std::list< PDvertexOP > new_vertices;
 
-	for ( std::list< PDvertexOP >::iterator trash_itr( trash.begin() ) ;
-			trash_itr != trash.end() ; ++trash_itr ) {
+	for ( auto & trash_itr : trash ) {
 
 		// Remove this vertex from all of its generator atoms' lists
-		for ( auto pvert : (*trash_itr)->nonconst_generators() ) {
+		for ( auto pvert : trash_itr->nonconst_generators() ) {
 			Size check_val( pvert->vertices().size() );
 
-			pvert->vertices().remove( (*trash_itr).get() );
+			pvert->vertices().remove( trash_itr.get() );
 
 			debug_assert( pvert->vertices().size() == (check_val - 1)   );
 			//   TR << "Atom res " << (*gen_itr)->res() << " atom " << (*gen_itr)->atom() << " lost a vertex" << std::endl;
 		}
 
-		PDvertex * trash_vrt( (*trash_itr).get() );
+		PDvertex * trash_vrt( trash_itr.get() );
 
 		for ( auto part_vrt : trash_vrt->nonconst_partners() ) {
 			//   TR << "Examining trashed vertex " << trash_vrt->id() << " partner id " << (*part_itr)->id() << std::endl;
@@ -680,9 +679,9 @@ PowerDiagram::add_single_atom_to_power_diagram(
 	// Note that we sorted the vectors of generator for all the new vertices,
 	// so we can use set_intersection from the get-go.
 
-	for ( std::list< PDvertexOP >::iterator itr1( new_vertices.begin() ) ;
+	for ( auto itr1( new_vertices.begin() ) ;
 			itr1 != new_vertices.end() ; ++itr1 ) {
-		for ( std::list< PDvertexOP >::iterator itr2( std::next( itr1 ) ) ;
+		for ( auto itr2( std::next( itr1 ) ) ;
 				itr2 != new_vertices.end() ; ++itr2 ) {
 			utility::vector1< PDsphere* > shared_atoms;
 			std::set_intersection( (*itr1)->nonconst_generators().begin(), (*itr1)->nonconst_generators().end(),
@@ -814,12 +813,12 @@ PowerDiagram::add_single_atom_to_power_diagram(
 	// Now the infinite vertices need to look amongst themselves to
 	// find the last bunch of partners.
 
-	for ( std::list< PDvertexOP >::iterator itr( new_infinite_vertices.begin() ) ;
+	for ( auto itr( new_infinite_vertices.begin() ) ;
 			itr != new_infinite_vertices.end() ; ++itr ) {
 		while ( (*itr)->partners().size() != 4 ) {
 
 			debug_assert( (*itr)->partners().size() <= 4 );
-			for ( std::list< PDvertexOP >::iterator new_itr( std::next( itr ) ) ;
+			for ( auto new_itr( std::next( itr ) ) ;
 					new_itr != new_infinite_vertices.end() ; ++new_itr ) {
 
 				utility::vector1< PDsphere * > shared_atoms;
@@ -985,7 +984,7 @@ PowerDiagram::get_intersections_for_atom( PDsphere* psph )
 
 
 			bool found_a_shared_overlap( false );
-			for ( std::multimap< PDsphere*, PDvertex* >::iterator it = key_range.first ;
+			for ( auto it = key_range.first ;
 					it != key_range.second; ++it ) {
 				if ( found_a_shared_overlap ) continue;
 				PDvertex* nvrt( (*it).second );
@@ -1534,7 +1533,7 @@ get_derivs_from_cycle(
 
 	// Loop through arcs, getting derivatives for each
 	Size arc_num( 0 );
-	for ( utility::vector1< SAnode >::iterator itr = cycle.begin() ; itr != cycle.end() ; ++itr ) {
+	for ( auto itr = cycle.begin() ; itr != cycle.end() ; ++itr ) {
 		// What kind of information is useful here?
 		// Certainly the 'other atom' that forms the arc with the atom of interest.
 		// Maybe should store this.
@@ -1666,7 +1665,7 @@ get_area_from_cycle(
 	// Try getting the surface area for a single atom.
 	Real surf_area( two_pi );
 	Size arc_num( 0 );
-	for ( utility::vector1< SAnode >::iterator itr = cycle.begin() ; itr != cycle.end() ; ++itr ) {
+	for ( auto itr = cycle.begin() ; itr != cycle.end() ; ++itr ) {
 		// What kind of information is useful here?
 		// Certainly the 'other atom' that forms the arc with the atom of interest.
 		// Maybe should store this.
@@ -1778,12 +1777,12 @@ print_points( std::list< PDinterOP > & inters )
 {
 
 	Size counter( 0 );
-	for ( std::list< PDinterOP >::iterator itr = inters.begin() ; itr != inters.end() ; ++itr ) {
+	for ( auto & inter : inters ) {
 		TR << "ATOM  " << I(5,++counter) << "  FE  VRT X" <<
 			I(4,counter ) << "    " <<
-			F(8,3,(*itr)->xyz()(1)) <<
-			F(8,3,(*itr)->xyz()(2)) <<
-			F(8,3,(*itr)->xyz()(3)) <<
+			F(8,3,inter->xyz()(1)) <<
+			F(8,3,inter->xyz()(2)) <<
+			F(8,3,inter->xyz()(3)) <<
 			F(6,2,1.0) << F(6,2,1.0) << std::endl;
 	}
 	TR << "END" << std::endl;
@@ -1796,9 +1795,8 @@ print_partners( PDvertexCOP vrt )
 {
 
 	TR << "Partners: ";
-	for ( std::vector< PDvertex * >::const_iterator itr( vrt->partners().begin() ) ;
-			itr != vrt->partners().end() ; ++itr ) {
-		TR << " id " << (*itr)->id() << "   ";
+	for ( auto itr : vrt->partners() ) {
+		TR << " id " << itr->id() << "   ";
 	}
 	TR << std::endl;
 
@@ -1825,30 +1823,29 @@ void
 print_vertices( std::list< PDvertexOP > & fv, std::list< PDvertexOP > & iv )
 {
 
-	for ( std::list< PDvertexOP >::iterator itr = fv.begin() ; itr != fv.end() ; ++itr ) {
-		if ( !(*itr)->finite() ) continue;
-		TR << "ATOM  " << I(5,(*itr)->id()) << "  FE  VRT X" <<
-			I(4,(*itr)->id()) << "    " <<
-			F(8,3,(*itr)->xyz()(1)) <<
-			F(8,3,(*itr)->xyz()(2)) <<
-			F(8,3,(*itr)->xyz()(3)) <<
+	for ( auto & itr : fv ) {
+		if ( !itr->finite() ) continue;
+		TR << "ATOM  " << I(5,itr->id()) << "  FE  VRT X" <<
+			I(4,itr->id()) << "    " <<
+			F(8,3,itr->xyz()(1)) <<
+			F(8,3,itr->xyz()(2)) <<
+			F(8,3,itr->xyz()(3)) <<
 			F(6,2,1.0) << F(6,2,1.0) << std::endl;
 	}
-	for ( std::list< PDvertexOP >::iterator itr = iv.begin() ; itr != iv.end() ; ++itr ) {
+	for ( auto & itr : iv ) {
 		PDvertex * finite_partner = nullptr;
 
-		for ( std::vector< PDvertex * >::iterator part_itr( (*itr)->nonconst_partners().begin() ) ;
-				part_itr != (*itr)->nonconst_partners().end(); ++part_itr ) {
-			if ( (*part_itr)->finite() ) {
-				finite_partner = (*part_itr);
+		for ( auto & part_itr : itr->nonconst_partners() ) {
+			if ( part_itr->finite() ) {
+				finite_partner = part_itr;
 			}
 		}
 
 		debug_assert( finite_partner != nullptr ); //Clang analysis seems to think that this pointer is null.
 
-		Vector vrt( finite_partner->xyz() + 5.0*(*itr)->direction() );
-		TR << "ATOM  " << I(5,(*itr)->id()) << "  FE  VRT X" <<
-			I(4,(*itr)->id() ) << "    " <<
+		Vector vrt( finite_partner->xyz() + 5.0*itr->direction() );
+		TR << "ATOM  " << I(5,itr->id()) << "  FE  VRT X" <<
+			I(4,itr->id() ) << "    " <<
 			F(8,3,vrt(1)) <<
 			F(8,3,vrt(2)) <<
 			F(8,3,vrt(3)) <<
@@ -1864,22 +1861,21 @@ print_vertices( std::list< PDvertexOP > & v )
 {
 
 	Size finite_count( 0 );
-	for ( std::list< PDvertexOP >::iterator itr = v.begin() ; itr != v.end() ; ++itr ) {
-		if ( (*itr)->finite() ) {
+	for ( auto & itr : v ) {
+		if ( itr->finite() ) {
 			finite_count++;
-			TR << "ATOM  " << I(5,(*itr)->id()) << "  FE  FIN X" <<
-				I(4,(*itr)->id()) << "    " <<
-				F(8,3,(*itr)->xyz()(1)) <<
-				F(8,3,(*itr)->xyz()(2)) <<
-				F(8,3,(*itr)->xyz()(3)) <<
+			TR << "ATOM  " << I(5,itr->id()) << "  FE  FIN X" <<
+				I(4,itr->id()) << "    " <<
+				F(8,3,itr->xyz()(1)) <<
+				F(8,3,itr->xyz()(2)) <<
+				F(8,3,itr->xyz()(3)) <<
 				F(6,2,1.0) << F(6,2,1.0) << std::endl;
 		} else {
 			PDvertex * finite_partner = nullptr;
 
-			for ( std::vector< PDvertex * >::iterator part_itr( (*itr)->nonconst_partners().begin() ) ;
-					part_itr != (*itr)->nonconst_partners().end(); ++part_itr ) {
-				if ( (*part_itr)->finite() ) {
-					finite_partner = (*part_itr);
+			for ( auto & part_itr : itr->nonconst_partners() ) {
+				if ( part_itr->finite() ) {
+					finite_partner = part_itr;
 				}
 			}
 
@@ -1887,17 +1883,17 @@ print_vertices( std::list< PDvertexOP > & v )
 
 			debug_assert( finite_partner != nullptr ); //Clang analysis is warning that finite_partner is null.
 
-			Vector vrt( finite_partner->xyz() + 5.0*(*itr)->direction() );
-			TR << "ATOM  " << I(5,(*itr)->id()) << "  FE  INF X" <<
-				I(4,(*itr)->id() ) << "    " <<
+			Vector vrt( finite_partner->xyz() + 5.0*itr->direction() );
+			TR << "ATOM  " << I(5,itr->id()) << "  FE  INF X" <<
+				I(4,itr->id() ) << "    " <<
 				F(8,3,vrt(1)) <<
 				F(8,3,vrt(2)) <<
 				F(8,3,vrt(3)) <<
 				F(6,2,1.0) << F(6,2,1.0) << std::endl;
 
 		}
-		print_generators( *itr );
-		print_partners( *itr );
+		print_generators( itr );
+		print_partners( itr );
 	}
 	TR << "END" << std::endl;
 
@@ -1908,13 +1904,13 @@ PDvertex *
 find_next_vertex_with_smallest_dist( PDvertex * srch_vrt, PDsphereOP & new_sph, Real & this_dist )
 {
 	PDvertex * return_vrt = nullptr;
-	for ( auto itr = srch_vrt->partners().begin() ; itr != srch_vrt->partners().end() ; ++itr ) {
+	for ( auto itr : srch_vrt->partners() ) {
 		// Only checking finite vertices
-		if ( !(*itr)->finite() ) continue;
-		Real check_dist( power_distance( (*itr)->xyz(), new_sph.get() ) - (*itr)->power() );
+		if ( !itr->finite() ) continue;
+		Real check_dist( power_distance( itr->xyz(), new_sph.get() ) - itr->power() );
 		if ( check_dist < this_dist ) {
 			this_dist = check_dist;
-			return_vrt = (*itr);
+			return_vrt = itr;
 		}
 	}
 	if ( return_vrt == nullptr ) return_vrt = srch_vrt;

@@ -55,7 +55,7 @@ core::Real get_current_model_score(core::pose::Pose const & pose, core::Size sco
 	core::scoring::Energies const & energies(pose.energies());
 	core::scoring::EnergyMap emap;
 	core::scoring::ScoreFunctionOP score_function(core::scoring::get_score_function());
-	core::scoring::ScoreType score_type = static_cast<core::scoring::ScoreType>(score_type_id);
+	auto score_type = static_cast<core::scoring::ScoreType>(score_type_id);
 	utility::vector1< bool > relevant_residues(pose.size(), true);
 	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, score_function);
 	score_function->get_sub_score(pose,relevant_residues,emap);
@@ -162,7 +162,7 @@ TopPercentOfEachInput::TopPercentOfEachInput(
 
 	core::Real percent = utility::from_string(arguments[2], core::Real());
 	core::Size n_structs = basic::options::option[basic::options::OptionKeys::out::nstruct];
-	core::Size percentile_count = static_cast<core::Size>(floor(percent*n_structs));
+	auto percentile_count = static_cast<core::Size>(floor(percent*n_structs));
 	top_count_of_each_input_.count_ = percentile_count;
 }
 

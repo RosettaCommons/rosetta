@@ -68,8 +68,7 @@ public:
 
 	/// @brief Construct a %ResourceLocator while setting its name to the input
 	/// locater_tag
-	ResourceLocator(
-		std::string const & locator_tag);
+	ResourceLocator( std::string const & locator_tag);
 
 	/// @brief Copy construct a %ResourceLocator from an example locator
 	ResourceLocator( ResourceLocator const & src );

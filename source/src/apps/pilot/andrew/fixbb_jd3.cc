@@ -98,13 +98,13 @@ public:
 		add_option( basic::options::OptionKeys::off_rotamer_pack );
 	}
 
-	~FixbbJobQueen() {}
+	~FixbbJobQueen() override = default;
 
-	virtual
+
 	void append_job_tag_subelements(
 		utility::tag::XMLSchemaDefinition & job_definition_xsd,
 		utility::tag::XMLSchemaComplexTypeGenerator & job_ct_gen
-	) const
+	) const override
 	{
 		using namespace utility::tag;
 		using namespace protocols::simple_moves;
@@ -134,12 +134,12 @@ public:
 		job_ct_gen.add_ordered_subelement_set_as_optional( min_subelement );
 	}
 
-	virtual
+
 	void
 	append_common_tag_subelements(
 		utility::tag::XMLSchemaDefinition & job_definition_xsd,
 		utility::tag::XMLSchemaComplexTypeGenerator & ct_gen
-	) const
+	) const override
 	{
 		using namespace utility::tag;
 		using namespace protocols::parser;
@@ -155,13 +155,13 @@ public:
 	}
 
 
-	virtual
+
 	protocols::jd3::JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP larval_job,
 		utility::options::OptionCollectionCOP job_options,
 		utility::vector1< protocols::jd3::JobResultCOP > const &
-	)
+	) override
 	{
 
 		TR << "Completing larval job maturation" << std::endl;
@@ -283,7 +283,7 @@ public:
 	}
 
 	//virtual bool has_job_completed( protocols::jd3::LarvalJobCOP job ) { return pose_outputter_for_job( *job->inner_job() )->job_has_already_completed( *job ); }
-	virtual void mark_job_as_having_begun( protocols::jd3::LarvalJobCOP /*job*/ ) {/*TEMP*/}
+	void mark_job_as_having_begun( protocols::jd3::LarvalJobCOP /*job*/ ) override {/*TEMP*/}
 
 	//virtual void note_job_completed( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobStatus /*status*/ ) {}
 
@@ -309,7 +309,7 @@ public:
 		using namespace utility::tag;
 		using namespace protocols::parser;
 
-		for ( Tag::tags_t::const_iterator iter = tag->getTags().begin(); iter != tag->getTags().end(); ++iter ) {
+		for ( auto iter = tag->getTags().begin(); iter != tag->getTags().end(); ++iter ) {
 			if ( (*iter)->getName() == ScoreFunctionLoader::loader_name() ) {
 				ScoreFunctionLoader sfxn_loader;
 				sfxn_loader.load_data( pose, *iter, datamap );

@@ -50,13 +50,12 @@ AtomLevelHBondNode::AtomLevelHBondNode( utility::graph::Graph* owner, core::Size
 {}
 
 //Destructor
-AtomLevelHBondNode::~AtomLevelHBondNode()
-{}
+AtomLevelHBondNode::~AtomLevelHBondNode() = default;
 
 void AtomLevelHBondNode::copy_from( utility::graph::Node const * source ){
 	HBondNode::copy_from( source );
 
-	AtomLevelHBondNode const * src = dynamic_cast< AtomLevelHBondNode const * >( source );
+	auto const * src = dynamic_cast< AtomLevelHBondNode const * >( source );
 	debug_assert( src );
 	polar_sc_atoms_not_satisfied_by_background_ = src->polar_sc_atoms_not_satisfied_by_background_;
 }
@@ -87,13 +86,12 @@ AtomLevelHBondEdge::AtomLevelHBondEdge( utility::graph::Graph* owner, core::Size
 {}
 
 //Destructor
-AtomLevelHBondEdge::~AtomLevelHBondEdge()
-{}
+AtomLevelHBondEdge::~AtomLevelHBondEdge() = default;
 
 void AtomLevelHBondEdge::copy_from( utility::graph::Edge const * source ){
 	HBondEdge::copy_from( source );
 
-	AtomLevelHBondEdge const * src = dynamic_cast< AtomLevelHBondEdge const * >( source );
+	auto const * src = dynamic_cast< AtomLevelHBondEdge const * >( source );
 	debug_assert( src );
 	hbonds_ = src->hbonds_;
 }

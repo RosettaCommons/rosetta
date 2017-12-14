@@ -28,6 +28,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.protein.checker.ProteinAtrRepChecker" );
 
@@ -55,8 +56,7 @@ ProteinAtrRepChecker::ProteinAtrRepChecker( pose::Pose const & pose,
 }
 
 //Destructor
-ProteinAtrRepChecker::~ProteinAtrRepChecker()
-{}
+ProteinAtrRepChecker::~ProteinAtrRepChecker() = default;
 
 ///////////////////////////////////////////
 void

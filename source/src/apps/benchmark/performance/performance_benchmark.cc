@@ -28,7 +28,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/exit.hh>
-#include <stdio.h>
+#include <cstdio>
 
 #include <set>
 #include <fstream>
@@ -114,7 +114,7 @@ using namespace core;
 
 std::vector<PerformanceBenchmark *> & PerformanceBenchmark::allBenchmarks()
 {
-	static std::vector< PerformanceBenchmark * > * allBenchmarks = new std::vector< PerformanceBenchmark * >;
+	static auto * allBenchmarks = new std::vector< PerformanceBenchmark * >;
 	return *allBenchmarks;
 }
 
@@ -277,8 +277,7 @@ void PerformanceBenchmark::executeOneBenchmark(
 
 	std::vector<PerformanceBenchmark * > & all( allBenchmarks() );
 	bool found_benchmark(false);
-	for ( Size i = 0; i < all.size(); i++ ) {
-		PerformanceBenchmark * B = all[i];
+	for ( auto B : all ) {
 		if ( B->name() == name ) {
 
 			B->execute( scaleFactor );
@@ -293,8 +292,7 @@ void PerformanceBenchmark::executeOneBenchmark(
 	} else {
 		TR << std::endl << "Unable to locate benchmark '" << name << "'" << std::endl;
 		TR << "The available benchmarks are:" << std::endl;
-		for ( Size i=0; i<all.size(); i++ ) {
-			PerformanceBenchmark * B = all[i];
+		for ( auto B : all ) {
 			TR << "    name: '" << B->name() << "'" << std::endl;
 		}
 	}
@@ -316,8 +314,7 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 
 	std::vector< double > prev_results( all.size(), 0 );
 	//for ( Size j = 0; j < 3; ++j ) {
-	for ( Size i = 0; i < all.size(); ++i ) {
-		PerformanceBenchmark * B = all[ i ];
+	for ( auto B : all ) {
 		//perform_until_set_found( B, scaleFactor );
 		B->execute( scaleFactor );
 	}
@@ -356,8 +353,7 @@ std::string PerformanceBenchmark::getOneReport(std::string const & name)
 
 	std::string res = "{\n";
 
-	for ( Size i=0; i<all.size(); i++ ) {
-		PerformanceBenchmark * B = all[i];
+	for ( auto B : all ) {
 		if ( B->name() == name ) {
 			sprintf(buf, "[%i, %f]", B->result_, B->time_ );
 			res += "    \"" + B->name_ + "\":" + std::string(buf);

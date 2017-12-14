@@ -153,12 +153,9 @@ restore_residues(
 
 	using core::pack::pack_rotamers;
 
-	typedef std::map< core::Size, core::Size > Old2New;
+	for ( auto i : old2new ) {
 
-
-	for ( Old2New::const_iterator i = old2new.begin(), ie = old2new.end(); i != ie; ++i ) {
-
-		if ( i->second > pose.size() || i->first > archive_pose.size() ) {
+		if ( i.second > pose.size() || i.first > archive_pose.size() ) {
 			//TR << "mappign beyond pose length.  only possible in repeat generation!!" << std::endl;
 			continue;
 		}
@@ -179,7 +176,7 @@ restore_residues(
 		}
 		}
 		*/
-		pose.replace_residue( i->second, archive_pose.residue( i->first ), true );
+		pose.replace_residue( i.second, archive_pose.residue( i.first ), true );
 	}
 
 	//archive_pose.dump_pdb("ARCposeInprogress.pdb");

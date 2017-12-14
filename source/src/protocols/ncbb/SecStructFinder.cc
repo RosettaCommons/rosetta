@@ -115,7 +115,7 @@ SecStructFinder::SecStructFinder():
 }
 
 SecStructFinder::SecStructFinder(
-	std::string residue,
+	std::string const & residue,
 	Size min_length,
 	Size max_length,
 	Real bin_size,
@@ -129,7 +129,7 @@ SecStructFinder::SecStructFinder(
 	bool cart,
 	bool constrain
 ):
-	residue_(std::move( residue )),
+	residue_( residue ),
 	min_length_( min_length ),
 	//max_length_( max_length ),
 	bin_size_( bin_size ),

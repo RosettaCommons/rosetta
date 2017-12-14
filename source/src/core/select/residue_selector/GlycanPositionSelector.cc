@@ -52,27 +52,14 @@ GlycanPositionSelector::GlycanPositionSelector():
 	ResidueSelector(),
 	from_residue_(0),
 	to_residue_(0)
-{
-
-
-
-}
+{}
 
 /// @brief Destructor.
 ///
-GlycanPositionSelector::~GlycanPositionSelector() {}
+GlycanPositionSelector::~GlycanPositionSelector() = default;
 
 
-GlycanPositionSelector::GlycanPositionSelector( GlycanPositionSelector const & src ):
-	ResidueSelector(src),
-	ranges_(src.ranges_),
-	positions_(src.positions_),
-	from_residue_(src.from_residue_),
-	to_residue_(src.to_residue_)
-
-{
-
-}
+GlycanPositionSelector::GlycanPositionSelector( GlycanPositionSelector const & /*src*/ ) = default;
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
@@ -128,7 +115,7 @@ GlycanPositionSelector::parse_my_tag(
 		}
 	}
 	if ( tag->hasOption("position") ) {
-		Size position = tag->getOption< Size >("position");
+		auto position = tag->getOption< Size >("position");
 		positions_.push_back(position);
 	}
 	if ( tag->hasOption("range") | tag->hasOption("ranges") ) {

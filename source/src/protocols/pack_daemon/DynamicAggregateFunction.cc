@@ -33,6 +33,7 @@
 #include <protocols/multistate_design/MultiStatePacker.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
@@ -52,7 +53,7 @@ using namespace numeric::expression_parser;
 
 ///// class VectorExpression : public Expression
 
-VectorExpression::VectorExpression( std::string  name ) : parent(), name_(std::move( name )) {}
+VectorExpression::VectorExpression( std::string const & name ) : parent(), name_( name ) {}
 VectorExpression::~VectorExpression() = default;
 
 core::Real
@@ -355,8 +356,7 @@ VMin::active_variables() const
 
 
 VMaxBy::VMaxBy( VectorExpressionCOP ex1, VectorExpressionCOP ex2 ) : parent( ex1, ex2 ) {}
-VMaxBy::~VMaxBy()
-= default;
+VMaxBy::~VMaxBy() = default;
 
 core::Real
 VMaxBy::operator() () const
@@ -2242,7 +2242,7 @@ DynamicAggregateFunctionDriver::distribute_jobs_to_remote_daemons(
 	int MPI_nprocs = utility::mpi_nprocs();
 	int nstructs = num_states();
 
-	int njobs_per_cpu = static_cast< int > ( std::ceil( (double) nstructs / MPI_nprocs ));
+	auto njobs_per_cpu = static_cast< int > ( std::ceil( (double) nstructs / MPI_nprocs ));
 	/// Assign myself fewer states than to all other nodes if the number of states is not evenly divisible
 	/// by the number of processors.
 
@@ -2434,8 +2434,7 @@ EntityFuncExpressionCreator::EntityFuncExpressionCreator(
 	owner_( owner )
 {}
 
-EntityFuncExpressionCreator::~EntityFuncExpressionCreator()
-= default;
+EntityFuncExpressionCreator::~EntityFuncExpressionCreator() = default;
 
 ExpressionCOP
 EntityFuncExpressionCreator::handle_variable_expression(
@@ -2463,8 +2462,7 @@ EntityFunc::EntityFunc() :
 	num_entity_elements_( 0 )
 {}
 
-EntityFunc::~EntityFunc()
-= default;
+EntityFunc::~EntityFunc() = default;
 
 void EntityFunc::set_num_entity_elements( Size num_ees )
 {
@@ -3149,7 +3147,7 @@ void EntityFunc::assign_entity_sequence_to_variables( Entity const & entity )
 
 	runtime_assert( entity.traits().size() == num_entity_elements_ );
 	for ( Size ii = 1; ii <= entity.traits().size(); ++ii ) {
-		PosType const & pt_ptr( dynamic_cast< PosType const & > ( * entity.traits()[ ii ] ));
+		auto const & pt_ptr( dynamic_cast< PosType const & > ( * entity.traits()[ ii ] ));
 		core::chemical::AA entity_aa( pt_ptr.type() );
 		entity_aas_[ ii ]->set_value( entity_aa );
 	}

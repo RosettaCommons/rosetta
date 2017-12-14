@@ -41,7 +41,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-GaussianOverlapEnergy::~GaussianOverlapEnergy() {}
+GaussianOverlapEnergy::~GaussianOverlapEnergy() = default;
 
 
 /// @details This must return a fresh instance of the GaussianOverlapEnergy class,

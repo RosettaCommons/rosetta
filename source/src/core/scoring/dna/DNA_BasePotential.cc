@@ -42,9 +42,9 @@ namespace scoring {
 namespace dna {
 
 /// @details Auto-generated virtual destructor
-DNA_BasePotential::~DNA_BasePotential() {}
+DNA_BasePotential::~DNA_BasePotential() = default;
 
-typedef ObjexxFCL::FArray1D< Real > FArray1D_Real;
+using FArray1D_Real = ObjexxFCL::FArray1D<Real>;
 
 DNA_BasePotential::DNA_BasePotential():
 	mean_     (    6, 2, 16 ),

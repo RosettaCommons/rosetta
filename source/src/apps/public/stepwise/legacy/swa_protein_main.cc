@@ -138,7 +138,7 @@ using utility::vector1;
 
 
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 //typedef std::map< std::string, core::pose::PoseOP > PoseList;
 
 //Definition of new OptionKeys
@@ -263,8 +263,8 @@ rebuild_test(){
 
 	working_parameters::StepWiseWorkingParametersOP & working_parameters = stepwise_pose_setup->working_parameters();
 
-	Vector center_vector = ( native_pose != 0 ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400, false, ( native_pose != 0 ), center_vector );
+	Vector center_vector = ( native_pose != nullptr ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400, false, ( native_pose != nullptr ), center_vector );
 
 	options::StepWiseModelerOptionsOP stepwise_options( new options::StepWiseModelerOptions );
 	stepwise_options->initialize_from_command_line();

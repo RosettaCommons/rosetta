@@ -109,8 +109,8 @@ private :
 	std::map< Size, Real > bound_per_residue_energies_;
 	std::map< Size, Real > unbound_per_residue_energies_;
 
-	Real bound_total_energy_;
-	Real unbound_total_energy_;
+	//Real bound_total_energy_;
+	//Real unbound_total_energy_;
 	Size repeats_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	void fill_energy_vector( Pose const & pose, std::map<ScoreType, Real > & energy_map );

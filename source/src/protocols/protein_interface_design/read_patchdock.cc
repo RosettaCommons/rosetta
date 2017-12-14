@@ -50,7 +50,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.read_patchdock" );
 
 struct Transformation
 {
-	typedef core::Real Real;
+	using Real = core::Real;
 
 	Real alpha, beta, gamma; // Euler angles
 	numeric::xyzVector< Real > translation; // translation

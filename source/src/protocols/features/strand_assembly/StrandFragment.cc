@@ -28,8 +28,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-StrandFragment::StrandFragment()
-{}
+StrandFragment::StrandFragment() = default;
 
 // 2 parameters
 StrandFragment::StrandFragment(core::Size start, core::Size end):
@@ -48,7 +47,7 @@ StrandFragment::StrandFragment(core::Size beta_selected_segments_id, core::Size 
 	pdb_source_("")
 {}
 
-StrandFragment::~StrandFragment(){}
+StrandFragment::~StrandFragment()= default;
 
 core::Size StrandFragment::get_id() const
 {

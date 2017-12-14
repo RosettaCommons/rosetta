@@ -38,6 +38,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <protocols/enzdes/enzdes_util.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -78,7 +79,7 @@ PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy(
 	scorefxn_repack_ (scorefxn),
 	scorefxn_minimize_ (scorefxn),
 	task_ (std::move(task)),
-	target_residues_ (target_residues)
+	target_residues_ (std::move(target_residues))
 {}
 
 PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy() :
@@ -372,9 +373,9 @@ PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core
 	//Fill residue_energies of interface residues by traversing energy graph
 	for ( EdgeListConstIterator egraph_it = nonconst_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != nonconst_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it ) {
 		core::Size const int_resi = (*egraph_it)->get_other_ind( res );
-		EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+		auto const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 		core::Real intE = Eedge->dot( curr_weights );
-		residue_energies.push_back( std::make_pair( int_resi, intE));
+		residue_energies.emplace_back( int_resi, intE);
 	}//for each egraph_it
 
 	//Sort and return n_best

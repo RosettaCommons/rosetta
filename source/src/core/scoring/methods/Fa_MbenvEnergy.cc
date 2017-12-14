@@ -68,9 +68,9 @@ Fa_MbenvEnergyCreator::score_types_for_method() const {
 }
 
 
-Fa_MbenvEnergy::Fa_MbenvEnergy( etable::MembEtable const & memb_etable_in):
+Fa_MbenvEnergy::Fa_MbenvEnergy( etable::MembEtable const & memb_etable_in ):
 	parent( methods::EnergyMethodCreatorOP( new Fa_MbenvEnergyCreator ) ),
-	memb_etable_(memb_etable_in),
+	//memb_etable_(memb_etable_in),
 	lk_dgrefce_(memb_etable_in.lk_dgrefce()),
 	memb_lk_dgrefce_(memb_etable_in.memb_lk_dgrefce()),
 	potential_( ScoringManager::get_instance()->get_Membrane_FAPotential() )

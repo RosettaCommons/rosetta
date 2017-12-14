@@ -44,7 +44,7 @@ RestrictToCDRH3Loop::RestrictToCDRH3Loop() : parent() {}
 
 RestrictToCDRH3Loop::RestrictToCDRH3Loop( RestrictToCDRH3Loop const & ) : parent() {}
 
-RestrictToCDRH3Loop::~RestrictToCDRH3Loop() {}
+RestrictToCDRH3Loop::~RestrictToCDRH3Loop() = default;
 
 TaskOperationOP RestrictToCDRH3Loop::clone() const
 {

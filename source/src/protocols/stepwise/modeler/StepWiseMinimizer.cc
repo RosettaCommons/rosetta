@@ -49,6 +49,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <ObjexxFCL/format.hh>
+#include <utility>
 #include <utility/tools/make_vector1.hh>
 #include <utility/vector1.functions.hh>
 #include <basic/Tracer.hh>
@@ -86,7 +87,7 @@ StepWiseMinimizer::StepWiseMinimizer( utility::vector1< pose::PoseOP > const & p
 	core::scoring::ScoreFunctionCOP scorefxn):
 	pose_list_( pose_list ),
 	options_( options ),
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	num_pose_minimize_( options_->num_pose_minimize() ),
 	working_moving_res_( get_all_working_moving_res( working_parameters ) ),
 	working_fixed_res_( working_parameters->working_fixed_res() ),
@@ -113,8 +114,7 @@ StepWiseMinimizer::StepWiseMinimizer( utility::vector1< pose::PoseOP > const & p
 }
 
 //Destructor
-StepWiseMinimizer::~StepWiseMinimizer()
-{}
+StepWiseMinimizer::~StepWiseMinimizer() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void

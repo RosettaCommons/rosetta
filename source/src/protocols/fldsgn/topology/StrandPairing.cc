@@ -20,6 +20,7 @@
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // utility headers
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/stream_util.hh>
 
@@ -33,8 +34,8 @@
 
 static basic::Tracer TR( "protocols.topology.StrandPairing" );
 
-typedef std::string String;
-typedef utility::vector1< core::Size > VecSize;
+using String = std::string;
+using VecSize = utility::vector1<core::Size>;
 
 namespace protocols {
 namespace fldsgn {
@@ -146,7 +147,7 @@ StrandPairing::initialize()
 
 
 /// @brief default destructor
-StrandPairing::~StrandPairing(){}
+StrandPairing::~StrandPairing()= default;
 
 
 /// @brief clone this object
@@ -323,7 +324,7 @@ StrandPairing::residue_pair( Size const res ) const
 {
 	//runtime_assert( (begin1_ <= res && res <= end1_) || (begin2_ <= res && res <= end2_) ||
 	//  (end1_ <= res && res <= begin1_) || (end2_ <= res && res <= begin2_) );
-	std::map< core::Size, core::Size >::const_iterator it = residue_pair_.find( res );
+	auto it = residue_pair_.find( res );
 	runtime_assert( it != residue_pair_.end() );
 	return it->second;
 }
@@ -518,7 +519,7 @@ StrandPairingSet::StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const
 }
 
 /// @brief destructor
-StrandPairingSet::~StrandPairingSet(){}
+StrandPairingSet::~StrandPairingSet()= default;
 
 /// @brief clone this object
 StrandPairingSetOP
@@ -535,8 +536,8 @@ std::ostream & operator<<( std::ostream & out, const StrandPairingSet &s )
 	out << "# " << s.name() << std::endl;
 
 	StrandPairings const & spairs( s.strand_pairings() );
-	for ( StrandPairings::const_iterator iter = spairs.begin(); iter != spairs.end(); ++iter ) {
-		out << "# " << (**iter) << std::endl;
+	for ( auto const & spair : spairs ) {
+		out << "# " << (*spair) << std::endl;
 	}
 
 	return out;
@@ -635,9 +636,8 @@ StrandPairingSet::name_wo_rgstr() const
 {
 	String spairs = "";
 	//std::ostringstream name;
-	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),
-			ite=strand_pairings_.end(); it != ite; ++it ) {
-		StrandPairing const & spair( **it );
+	for ( auto const & strand_pairing : strand_pairings_ ) {
+		StrandPairing const & spair( *strand_pairing );
 		utility::vector1< String > sp( utility::string_split( spair.name(), '.' ) );
 		runtime_assert( sp.size() == 3 );
 		if ( spairs == "" ) {
@@ -661,7 +661,7 @@ bool pointer_sorter( StrandPairingCOP const a, StrandPairingCOP const b )
 void
 StrandPairingSet::finalize()
 {
-	typedef utility::vector1< Size > VecSize;
+	using VecSize = utility::vector1<Size>;
 
 	finalized_ = true;
 
@@ -768,7 +768,7 @@ StrandPairingSet::make_strand_neighbor_two()
 		if ( neighbor_strands( ist ).size() > 2 ) {
 
 			modified = true;
-			for ( VecSize::const_iterator
+			for ( auto
 					it=neighbor_strands( ist ).begin(), ite=neighbor_strands( ist ).end(); it != ite; ++it ) {
 				Size jst( *it );
 				spairs.push_back( strand_pairing( ist, jst ) );
@@ -828,9 +828,9 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 		}
 	}
 
-	for ( DimerPairings::const_iterator it=dimer_pairs.begin(); it != dimer_pairs.end(); ++it ) {
+	for ( auto const & dimer_pair : dimer_pairs ) {
 
-		DimerPairing const & dp ( **it );
+		DimerPairing const & dp ( *dimer_pair );
 
 		if ( (dp.sign1() == 1 && dp.sign2() == 1) || (dp.sign1() == 2 && dp.sign2() == 2) ) continue;
 
@@ -843,7 +843,7 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 		Size jst_length = ssinfo.strand( jstrand )->length();
 
 		StrandPairingOP & spop = map_strand_pairings_[ istrand ][ jstrand ];
-		if ( spop == 0 ) {
+		if ( spop == nullptr ) {
 			spop = StrandPairingOP( new StrandPairing( istrand, jstrand, 0, dp.orient() ) );
 			strand_pairings_.push_back( spop );
 		}

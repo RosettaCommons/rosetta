@@ -111,7 +111,7 @@ BasePairConstraint::operator == ( Constraint const & other_cst ) const
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	BasePairConstraint const & other( static_cast< BasePairConstraint const & > (other_cst) );
+	auto const & other( static_cast< BasePairConstraint const & > (other_cst) );
 	if ( res1_ != other.res1_ ) return false;
 	if ( res2_ != other.res2_ ) return false;
 

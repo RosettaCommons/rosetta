@@ -29,7 +29,7 @@
 namespace basic {
 namespace datacache {
 
-DiagnosticData::DiagnosticData( std::map < std::string, double >  data_in ) : CacheableData(), data_(std::move(data_in)) {}
+DiagnosticData::DiagnosticData( std::map < std::string, double > const & data_in ) : CacheableData(), data_(data_in) {}
 DiagnosticData::~DiagnosticData() = default;
 CacheableDataOP DiagnosticData::clone() const { return CacheableDataOP( new DiagnosticData(*this) ); }
 std::map < std::string, double > const & DiagnosticData::data() const { return data_; }

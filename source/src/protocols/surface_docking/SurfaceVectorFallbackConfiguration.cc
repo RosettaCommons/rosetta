@@ -48,8 +48,7 @@ using basic::resource_manager::ResourceTag;
 using basic::resource_manager::ResourceOptionsTag;
 
 
-SurfaceVectorFallbackConfiguration::SurfaceVectorFallbackConfiguration()
-{}
+SurfaceVectorFallbackConfiguration::SurfaceVectorFallbackConfiguration() = default;
 
 bool
 SurfaceVectorFallbackConfiguration::fallback_specified( ResourceDescription const & ) const

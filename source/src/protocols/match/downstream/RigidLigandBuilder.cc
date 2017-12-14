@@ -90,7 +90,7 @@ RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other ) :
 //}
 
 
-RigidLigandBuilder::~RigidLigandBuilder() {}
+RigidLigandBuilder::~RigidLigandBuilder() = default;
 
 DownstreamBuilderOP
 RigidLigandBuilder::clone() const
@@ -575,7 +575,7 @@ return oframe;
 void
 RigidLigandBuilder::ignore_h_collisions( bool setting )
 {
-	if ( downstream_restype_ != 0 ) {
+	if ( downstream_restype_ != nullptr ) {
 		utility_exit_with_message( "ERROR: ignore_h_collisions_ must be set before the downstream restype is initialized" );
 	} else {
 		ignore_h_collisions_ = setting;

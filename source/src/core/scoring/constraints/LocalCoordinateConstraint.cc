@@ -35,6 +35,7 @@
 
 #include <core/id/NamedStubID.hh>
 #include <core/id/SequenceMapping.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
@@ -75,13 +76,13 @@ LocalCoordinateConstraint::LocalCoordinateConstraint(
 	atom_(a1),
 	fixed_stub_( fixed_stub_in ),
 	xyz_target_( xyz_target_in ),
-	func_( func )
+	func_(std::move( func ))
 {
 	runtime_assert( fixed_stub_.atom( 1 ) == fixed_stub_.center() || !fixed_stub_.center().valid() );
 	//don't allow 4-atom stubs, because that changes other functions
 }
 
-LocalCoordinateConstraint::~LocalCoordinateConstraint() {}
+LocalCoordinateConstraint::~LocalCoordinateConstraint() = default;
 
 std::string
 LocalCoordinateConstraint::type() const {
@@ -119,7 +120,7 @@ LocalCoordinateConstraint::remapped_clone( pose::Pose const& src, pose::Pose con
 	if ( id1.valid() && id2.valid() && id3.valid() && id4.valid() ) {
 		return ConstraintOP( new LocalCoordinateConstraint( id1, id::StubID( id2, id3, id4) , xyz_target_, func_ ? func_->clone() : func_, score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -137,7 +138,7 @@ LocalCoordinateConstraint::remap_resid( core::id::SequenceMapping const &seqmap 
 		id::StubID remap_stub( remap_s1, remap_s2, remap_s3 );
 		return ConstraintOP( new LocalCoordinateConstraint( remap_a, remap_stub, xyz_target_, this->func_, score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -146,7 +147,7 @@ bool LocalCoordinateConstraint::operator == ( Constraint const & rhs ) const
 	if ( !     same_type_as_me(   rhs ) ) return false;
 	if ( ! rhs.same_type_as_me( *this ) ) return false;
 
-	LocalCoordinateConstraint const & rhs_lcc( static_cast< LocalCoordinateConstraint const & > ( rhs ));
+	auto const & rhs_lcc( static_cast< LocalCoordinateConstraint const & > ( rhs ));
 	if ( atom_ != rhs_lcc.atom_ ) return false;
 	if ( fixed_stub_ != rhs_lcc.fixed_stub_ ) return false;
 	if ( xyz_target_ != rhs_lcc.xyz_target_ ) return false;

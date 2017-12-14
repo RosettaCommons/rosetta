@@ -126,7 +126,7 @@ MultiConstraint::operator == ( Constraint const & other_cst ) const
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	MultiConstraint const & other( static_cast< MultiConstraint const & > (other_cst) );
+	auto const & other( static_cast< MultiConstraint const & > (other_cst) );
 
 	if ( report_this_as_effective_sequence_separation_ != other.report_this_as_effective_sequence_separation_ ) return false;
 	if ( member_constraints_.size() != other.member_constraints_.size() ) return false;
@@ -200,7 +200,7 @@ MultiConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 	}
 	if ( new_csts.size() > 0 ) {
 		return ConstraintOP( new MultiConstraint( new_csts ) );
-	} else return NULL;
+	} else return nullptr;
 }
 
 ConstraintOP MultiConstraint::remapped_clone(
@@ -291,7 +291,7 @@ MultiConstraint::choose_effective_sequence_separation(
 	ConstraintCOPs const& cst_list( member_constraints() );
 	for ( auto const & cst_const : cst_list ) {
 		Size seq_sep( 0 );
-		Constraint& cst = const_cast< Constraint& >( *cst_const );
+		auto& cst = const_cast< Constraint& >( *cst_const );
 		seq_sep = cst.choose_effective_sequence_separation( sp, RG );
 		collected_seq_separations.push_back( seq_sep );
 	}

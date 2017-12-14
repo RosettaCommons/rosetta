@@ -48,16 +48,7 @@ SurfaceEnergies::SurfaceEnergies() :
 
 
 /// copy ctor -- deep copy
-SurfaceEnergies::SurfaceEnergies( SurfaceEnergies const & other ) :
-	parent( other ),
-	total_residue_( other.total_residue_ ),
-	non_surface_ranges_( other.non_surface_ranges_ ),
-	is_surface_( other.is_surface_ ),
-	neighbor_cutoff_( other.neighbor_cutoff_ )
-	//surface_grid_( other.surface_grid_ ),
-	//surf_bb_( other.surf_bb_ ),
-	//surf_dim_( other.surf_dim_ )
-{}
+SurfaceEnergies::SurfaceEnergies( SurfaceEnergies const & /*other*/ ) = default;
 
 /// assignment operator -- deep copy
 Energies &
@@ -66,7 +57,7 @@ SurfaceEnergies::operator = ( Energies const & rhs )
 	debug_assert( dynamic_cast< SurfaceEnergies const * > ( & rhs ) );
 	if ( this == &rhs ) return *this;
 
-	SurfaceEnergies const & surf_rhs( static_cast< SurfaceEnergies const & > ( rhs ) );
+	auto const & surf_rhs( static_cast< SurfaceEnergies const & > ( rhs ) );
 	total_residue_ = surf_rhs.total_residue_;
 	non_surface_ranges_ = surf_rhs.non_surface_ranges_;
 	is_surface_ = surf_rhs.is_surface_;
@@ -94,7 +85,7 @@ SurfaceEnergies::same_type_as_me( Energies const & other, bool recurse /* = true
 	}
 }
 
-SurfaceEnergies::~SurfaceEnergies() {}
+SurfaceEnergies::~SurfaceEnergies() = default;
 
 /// @details make a copy of this Energies( allocate actual memory for it )
 EnergiesOP

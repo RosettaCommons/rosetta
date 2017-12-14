@@ -32,6 +32,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -68,7 +69,7 @@ std::string SelectBySASAOperationCreator::keyname() const
 }
 
 
-SelectBySASAOperation::SelectBySASAOperation( std::string mode, std::string state, core::Real probe_radius, core::Real core_asa, core::Real surface_asa, std::string jump_nums, std::string sym_dof_names, bool core, bool boundary, bool surface, bool verbose ):
+SelectBySASAOperation::SelectBySASAOperation( std::string const & mode, std::string const & state, core::Real probe_radius, core::Real core_asa, core::Real surface_asa, std::string const & jump_nums, std::string const & sym_dof_names, bool core, bool boundary, bool surface, bool verbose ):
 	mode_(mode),
 	state_(state),
 	probe_radius_(probe_radius),
@@ -82,7 +83,7 @@ SelectBySASAOperation::SelectBySASAOperation( std::string mode, std::string stat
 	verbose_(verbose)
 {}
 
-SelectBySASAOperation::~SelectBySASAOperation() {}
+SelectBySASAOperation::~SelectBySASAOperation() = default;
 
 core::pack::task::operation::TaskOperationOP SelectBySASAOperation::clone() const
 {
@@ -94,10 +95,10 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 {
 	using core::id::AtomID;
 	std::string layername = "";
-	bool prev = 0;
+	bool prev = false;
 	if ( core_ ) {
 		layername.append("core");
-		prev = 1;
+		prev = true;
 	}
 	if ( boundary_ ) {
 		if ( prev ) {
@@ -105,7 +106,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		} else {
 			layername.append("boundary");
 		}
-		prev = 1;
+		prev = true;
 	}
 	if ( surface_ ) {
 		if ( prev ) {
@@ -113,7 +114,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		} else {
 			layername.append("surface");
 		}
-		prev = 1;
+		prev = true;
 	}
 
 	if ( !prev ) {
@@ -221,7 +222,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 				}
 			}
 			if ( sasa_pose.residue( iaa ).is_protein() ) {
-				bool prevent_repacking = 1;
+				bool prevent_repacking = true;
 				res_count++;
 				core::Size output_resi = res_count;
 				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
@@ -233,19 +234,19 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 				if ( final_sasas[ iaa ] <= core_asa_ ) {
 					if ( core_ ) {
 						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");
-						prevent_repacking = 0;
+						prevent_repacking = false;
 					}
 					core_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 				} else if ( final_sasas[iaa] >= surface_asa_ ) {
 					if ( surface_ ) {
 						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");
-						prevent_repacking = 0;
+						prevent_repacking = false;
 					}
 					surface_pos.append(ObjexxFCL::string_of(res_count) + "+");
 				} else if ( (final_sasas[iaa] >= core_asa_) && (final_sasas[iaa] <= surface_asa_) ) {
 					if ( boundary_ ) {
 						selected_pos.append(ObjexxFCL::string_of(output_resi) + "+");
-						prevent_repacking = 0;
+						prevent_repacking = false;
 					}
 					boundary_pos.append(ObjexxFCL::string_of(output_resi) + "+");
 				}
@@ -273,10 +274,10 @@ SelectBySASAOperation::parse_tag( TagCOP tag , DataMap & )
 	surface_asa_ = tag->getOption<core::Real>("surface_asa", 30);
 	jump_nums_ = tag->getOption<std::string>("jumps", "1");
 	sym_dof_names_ = tag->getOption<std::string>("sym_dof_names","");
-	core_ = tag->getOption< bool >("core", 0 );
-	boundary_ = tag->getOption< bool >("boundary", 0 );
-	surface_ = tag->getOption< bool >("surface", 0 );
-	verbose_ = tag->getOption< bool >("verbose", 0 );
+	core_ = tag->getOption< bool >("core", false );
+	boundary_ = tag->getOption< bool >("boundary", false );
+	surface_ = tag->getOption< bool >("surface", false );
+	verbose_ = tag->getOption< bool >("verbose", false );
 }
 
 void SelectBySASAOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

@@ -173,7 +173,7 @@ using namespace conformation::symmetry;
 
 void
 UpdateCrystInfo::apply( core::pose::Pose & pose ) {
-	SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	Size Ajump_=0, Bjump_=0, Cjump_=0, SUBjump_=0;
 
 	core::pose::Pose pose_asu;
@@ -316,7 +316,7 @@ DockLatticeMover::DockLatticeMover() {
 
 void
 DockLatticeMover::init(core::pose::Pose & pose) {
-	SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	symdofs_ = SymmConf.Symmetry_Info()->get_dofs();
 
 	core::pose::Pose pose_asu;
@@ -798,7 +798,7 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 
 	// if we are mirror symmetric, update restypes
 	if ( core::conformation::symmetry::is_mirror_symmetric( pose.conformation() ) ) {
-		core::conformation::symmetry::MirrorSymmetricConformation & mirror_conf(
+		auto & mirror_conf(
 			dynamic_cast< core::conformation::symmetry::MirrorSymmetricConformation& >( pose.conformation() ) );
 		mirror_conf.update_residue_identities();
 	}
@@ -1084,9 +1084,9 @@ MakeLatticeMover::build_lattice_of_virtuals(
 			for ( int j=-(int)EXTEND[1]; j<=(int)EXTEND[1]; ++j ) {
 				for ( int k=-(int)EXTEND[2]; k<=(int)EXTEND[2]; ++k ) {
 					// find lattice anchor
-					int x_i = (int)std::floor( (i+EXTEND[0]+T_i[0])*grid[0] + 1.5 );
-					int y_i = (int)std::floor( (j+EXTEND[1]+T_i[1])*grid[1] + 1.5 );
-					int z_i = (int)std::floor( (k+EXTEND[2]+T_i[2])*grid[2] + 1.5 );
+					auto x_i = (int)std::floor( (i+EXTEND[0]+T_i[0])*grid[0] + 1.5 );
+					auto y_i = (int)std::floor( (j+EXTEND[1]+T_i[1])*grid[1] + 1.5 );
+					auto z_i = (int)std::floor( (k+EXTEND[2]+T_i[2])*grid[2] + 1.5 );
 
 					O = posebase.residue(vrtZ(x_i,y_i,z_i)).xyz("ORIG");
 

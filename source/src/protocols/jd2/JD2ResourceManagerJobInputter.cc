@@ -563,22 +563,22 @@ JD2ResourceManagerJobInputter::parse_options_name_and_value(
 		if ( opt.scalar() ) {
 			// scalar options
 			if ( dynamic_cast< BooleanOptionKey const * > (&opt) ) {
-				BooleanOptionKey const & boolopt( static_cast< BooleanOptionKey const & > (opt) );
+				auto const & boolopt( static_cast< BooleanOptionKey const & > (opt) );
 				read_BooleanOption_subtag_for_job( boolopt, full_key, val, job_options );
 			} else if ( dynamic_cast< FileOptionKey const * > (&opt) ) {
-				FileOptionKey const & fileopt( static_cast< FileOptionKey const & > (opt) );
+				auto const & fileopt( static_cast< FileOptionKey const & > (opt) );
 				read_FileOption_subtag_for_job( fileopt, full_key, val, job_options );
 			} else if ( dynamic_cast< IntegerOptionKey const * > (&opt) ) {
-				IntegerOptionKey const & iopt( static_cast< IntegerOptionKey const & > (opt) );
+				auto const & iopt( static_cast< IntegerOptionKey const & > (opt) );
 				read_IntegerOption_subtag_for_job( iopt, full_key, val, job_options );
 			} else if ( dynamic_cast< PathOptionKey const * > (&opt) ) {
-				PathOptionKey const & pathopt( static_cast< PathOptionKey const & > (opt) );
+				auto const & pathopt( static_cast< PathOptionKey const & > (opt) );
 				read_PathOption_subtag_for_job( pathopt, full_key, val, job_options );
 			} else if ( dynamic_cast< RealOptionKey const * > (&opt) ) {
-				RealOptionKey const & ropt( static_cast< RealOptionKey const & > (opt) );
+				auto const & ropt( static_cast< RealOptionKey const & > (opt) );
 				read_RealOption_subtag_for_job( ropt, full_key, val, job_options );
 			} else if ( dynamic_cast< StringOptionKey const * > (&opt) ) {
-				StringOptionKey const & stopt( static_cast< StringOptionKey const & > (opt) );
+				auto const & stopt( static_cast< StringOptionKey const & > (opt) );
 				read_StringOption_subtag_for_job( stopt, full_key, val, job_options );
 			}
 
@@ -586,22 +586,22 @@ JD2ResourceManagerJobInputter::parse_options_name_and_value(
 			/// vector option
 			utility::vector1< std::string > vals = utility::string_split( val, ',' );
 			if ( dynamic_cast< BooleanVectorOptionKey const * > (&opt) ) {
-				BooleanVectorOptionKey const & boolvectopt( static_cast< BooleanVectorOptionKey const & > (opt) );
+				auto const & boolvectopt( static_cast< BooleanVectorOptionKey const & > (opt) );
 				read_BooleanVectorOption_subtag_for_job( boolvectopt, full_key, val, vals, job_options );
 			} else if ( dynamic_cast< FileVectorOptionKey const * > (&opt) ) {
-				FileVectorOptionKey const & filevectopt( static_cast< FileVectorOptionKey const & > (opt) );
+				auto const & filevectopt( static_cast< FileVectorOptionKey const & > (opt) );
 				read_FileVectorOption_subtag_for_job( filevectopt, full_key, val, vals, job_options );
 			} else if ( dynamic_cast< IntegerVectorOptionKey const * > (&opt) ) {
-				IntegerVectorOptionKey const & ivectopt( static_cast< IntegerVectorOptionKey const & > (opt) );
+				auto const & ivectopt( static_cast< IntegerVectorOptionKey const & > (opt) );
 				read_IntegerVectorOption_subtag_for_job( ivectopt, full_key, val, vals, job_options );
 			} else if ( dynamic_cast< PathVectorOptionKey const * > (&opt) ) {
-				PathVectorOptionKey const & pathvectopt( static_cast< PathVectorOptionKey const & > (opt) );
+				auto const & pathvectopt( static_cast< PathVectorOptionKey const & > (opt) );
 				read_PathVectorOption_subtag_for_job( pathvectopt, full_key, val, vals, job_options );
 			} else if ( dynamic_cast< RealVectorOptionKey const * > (&opt) ) {
-				RealVectorOptionKey const & rvectopt( static_cast< RealVectorOptionKey const & > (opt) );
+				auto const & rvectopt( static_cast< RealVectorOptionKey const & > (opt) );
 				read_RealVectorOption_subtag_for_job( rvectopt, full_key, val, vals, job_options );
 			} else if ( dynamic_cast< StringVectorOptionKey const * > (&opt) ) {
-				StringVectorOptionKey const & stvectopt( static_cast< StringVectorOptionKey const & > (opt) );
+				auto const & stvectopt( static_cast< StringVectorOptionKey const & > (opt) );
 				read_StringVectorOption_subtag_for_job( stvectopt, full_key, val, vals, job_options );
 			}
 		}

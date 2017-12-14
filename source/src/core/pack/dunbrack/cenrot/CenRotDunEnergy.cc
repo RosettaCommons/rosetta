@@ -113,7 +113,7 @@ void CenRotDunEnergy::residue_energy(
 	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( rsd.type() ));
 
-	if ( residue_rotamer_library == 0 ) return;
+	if ( residue_rotamer_library == nullptr ) return;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
 		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >( residue_rotamer_library )
@@ -156,12 +156,12 @@ Real CenRotDunEnergy::eval_residue_dof_derivative(
 	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( rsd.type() ));
 
-	if ( residue_rotamer_library==0 ) return 0.0;
+	if ( residue_rotamer_library==nullptr ) return 0.0;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
 		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library) );
 
-	if ( residue_cenrot_library != 0 && rsd.is_protein() && tor_id.type() == id::BB ) {
+	if ( residue_cenrot_library != nullptr && rsd.is_protein() && tor_id.type() == id::BB ) {
 		RotamerLibraryScratchSpace scratch;
 		residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv( rsd, scratch );
 
@@ -196,7 +196,7 @@ Real CenRotDunEnergy::eval_dof_derivative(
 	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( pose.residue( tor_id.rsd() ).type() ));
 
-	if ( residue_rotamer_library==0 ) return 0.0;
+	if ( residue_rotamer_library==nullptr ) return 0.0;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
 		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library) );
@@ -232,7 +232,7 @@ void CenRotDunEnergy::eval_residue_derivatives(
 	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( rsd.type() ));
 
-	if ( residue_rotamer_library==0 ) return;
+	if ( residue_rotamer_library==nullptr ) return;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
 		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)

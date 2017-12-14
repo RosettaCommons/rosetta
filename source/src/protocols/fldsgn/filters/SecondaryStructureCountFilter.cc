@@ -125,12 +125,12 @@ SecondaryStructureCountFilter::parse_my_tag(
 	max_sheet_length_ = tag->getOption<core::Size>( "max_sheet_length", 9999 );
 	max_loop_length_ = tag->getOption<core::Size>( "max_loop_length", 9999 );
 	num_helix_sheet_ = tag->getOption<core::Size>( "num_helix_sheet", 0);
-	filter_helix_ = tag->getOption<bool>( "filter_helix", 0 );
-	filter_sheet_ = tag->getOption<bool>( "filter_sheet", 0 );
-	filter_loop_ = tag->getOption<bool>( "filter_loop", 0 );
-	filter_helix_sheet_ = tag->getOption<bool>( "filter_helix_sheet", 1 );
+	filter_helix_ = tag->getOption<bool>( "filter_helix", false );
+	filter_sheet_ = tag->getOption<bool>( "filter_sheet", false );
+	filter_loop_ = tag->getOption<bool>( "filter_loop", false );
+	filter_helix_sheet_ = tag->getOption<bool>( "filter_helix_sheet", true );
 	min_element_resis_ = tag->getOption<core::Size>( "min_element_resis", 1 );
-	return_total_ = tag->getOption<bool>("return_total", 0 );
+	return_total_ = tag->getOption<bool>("return_total", false );
 
 	std::string const selector_name = tag->getOption< std::string >( "residue_selector", "" );
 	if ( !selector_name.empty() ) selector_ = core::select::residue_selector::get_residue_selector( selector_name, data );

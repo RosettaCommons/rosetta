@@ -54,7 +54,7 @@ load_loop_definitions(
 		return loops_from_string(loops_str, pose );
 	}
 
-	return 0;
+	return nullptr;
 
 }
 

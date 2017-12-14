@@ -118,7 +118,7 @@ using ObjexxFCL::lead_zero_string_of;
 
 namespace protocols {
 namespace hotspot_hashing {
-typedef platform::Size Size;
+using Size = platform::Size;
 static basic::Tracer TR( "protocols.hotspot_hashing" );
 
 HotspotStubSet::HotspotStubSet() :
@@ -384,7 +384,7 @@ HotspotStubSetOP HotspotStubSet::subset( std::string const & residue_name3, core
 
 	if ( ( scorecut > 0 ) && ( scorecut <=1 ) ) {
 		// add 0.5 to get rounding up
-		Size n_return = static_cast<Size>(all_stubs.size() * scorecut + 0.5);
+		auto n_return = static_cast<Size>(all_stubs.size() * scorecut + 0.5);
 		if ( n_return < 1 ) n_return = 1;
 		TR << "Finding the top " << n_return << " stubs." << std::endl;
 		Size i = 1;
@@ -419,7 +419,7 @@ HotspotStubSetOP HotspotStubSet::subset( core::Real const scorecut ) const {
 
 		if ( ( scorecut > 0) && ( scorecut <= 1 ) ) {
 			// add 0.5 to get rounding up
-			Size n_return = static_cast<Size>(ss_iter.second.size() * scorecut + 0.5);
+			auto n_return = static_cast<Size>(ss_iter.second.size() * scorecut + 0.5);
 			TR << "Finding the top " << n_return << " stubs." << std::endl;
 			if ( n_return < 1 ) n_return = 1;
 			Size i = 1;

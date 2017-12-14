@@ -21,6 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Stub.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.VDW_BinScreener" );
 
@@ -34,7 +35,7 @@ namespace screener {
 VDW_BinScreener::VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
 	core::pose::Pose & screening_pose,
 	Size const moving_res ):
-	vdw_bin_checker_( vdw_bin_checker),
+	vdw_bin_checker_(std::move( vdw_bin_checker)),
 	screening_pose_( screening_pose ),
 	moving_res_( moving_res ),
 	using_stub_( false ),
@@ -47,17 +48,16 @@ VDW_BinScreener::VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vd
 	Size const moving_res,
 	core::conformation::ResidueCOP screening_moving_rsd_at_origin,
 	core::kinematics::Stub const & moving_res_base_stub ):
-	vdw_bin_checker_( vdw_bin_checker),
+	vdw_bin_checker_(std::move( vdw_bin_checker)),
 	screening_pose_( screening_pose ),
 	moving_res_( moving_res ),
 	using_stub_( true ),
-	screening_moving_rsd_at_origin_( screening_moving_rsd_at_origin ),
+	screening_moving_rsd_at_origin_(std::move( screening_moving_rsd_at_origin )),
 	moving_res_base_stub_( moving_res_base_stub )
 {}
 
 //Destructor
-VDW_BinScreener::~VDW_BinScreener()
-{}
+VDW_BinScreener::~VDW_BinScreener() = default;
 
 bool
 VDW_BinScreener::check_screen(){

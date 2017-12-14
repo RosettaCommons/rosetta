@@ -16,7 +16,7 @@
 namespace numeric {
 
 /// @details Auto-generated virtual destructor
-ClusteringTreeNode::~ClusteringTreeNode() {}
+ClusteringTreeNode::~ClusteringTreeNode() = default;
 
 ClusteringTreeNodeOP ClusteringTreeNode::visit_next_leaf() {
 
@@ -29,7 +29,7 @@ ClusteringTreeNodeOP ClusteringTreeNode::visit_next_leaf() {
 		return left();
 	}
 
-	return 0;
+	return nullptr;
 }
 
 } // numeric

@@ -41,8 +41,8 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
 //#include <time>
 
 static basic::Tracer TR( "core.scoring.FACTSPoseInfo" );
@@ -87,8 +87,8 @@ FACTSPoseInfo::FACTSPoseInfo( FACTSPoseInfo const & src ) : CacheableData()
 			placeholder_residue_[i] = src.placeholder_residue_[i]->clone();
 			placeholder_info_[i] = src.placeholder_info_[i]->clone();
 		} else {
-			placeholder_residue_[i] = 0;
-			placeholder_info_[i] = 0;
+			placeholder_residue_[i] = nullptr;
+			placeholder_info_[i] = nullptr;
 		}
 	}
 	being_packed_ = src.being_packed_;
@@ -99,9 +99,9 @@ void FACTSPoseInfo::initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtyp
 {
 	Size const nres( pose.size() ); // maybe faster for symm if it is made symm-aware
 
-	residue_info_.resize( nres, 0 );
-	placeholder_residue_.resize( nres, 0 );
-	placeholder_info_.resize( nres, 0 );
+	residue_info_.resize( nres, nullptr );
+	placeholder_residue_.resize( nres, nullptr );
+	placeholder_info_.resize( nres, nullptr );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( !residue_info_[i] ) {

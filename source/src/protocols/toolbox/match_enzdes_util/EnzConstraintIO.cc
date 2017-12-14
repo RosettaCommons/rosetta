@@ -87,7 +87,7 @@ EnzConstraintIO::EnzConstraintIO (core::chemical::ResidueTypeSetCOP src_restype_
 	cst_pairs_.clear();
 }
 
-EnzConstraintIO::~EnzConstraintIO() {}
+EnzConstraintIO::~EnzConstraintIO() = default;
 
 /// @brief reads the enzyme cstfile and for each block of residue residue constraints, creates a new
 /// @brief instance of EnzConstraintParameters
@@ -226,7 +226,7 @@ EnzConstraintIO::process_pdb_header(
 	Size cst_block(0), counted_blocks(0);
 
 	//std::cerr << "There are " << pose_remarks->size() << " remark lines." << std::endl;
-	for ( std::vector< core::io::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ) {
+	for ( auto const & pose_remark : pose_remarks ) {
 
 		//line_stream.clear();
 		//line_stream.str( remark_it->value );
@@ -235,7 +235,7 @@ EnzConstraintIO::process_pdb_header(
 		//std::cerr << "and the number is: " << remark_it->num << std::endl;
 
 		//line_stream >> buffer >> tag;
-		std::string remark_line( remark_it->value), resA_type(""), resB_type("");
+		std::string remark_line( pose_remark.value), resA_type(""), resB_type("");
 		int resA_num(0), resB_num(0);
 		Size pose_resnumA(0), pose_resnumB(0), ex_geom_id(0);
 		std::string resA_chain(""),resB_chain("");
@@ -560,10 +560,9 @@ EnzConstraintIO::add_pregenerated_constraints_to_pose(
 
 		utility::vector1< ConstraintCOP > & cur_active_constraints = param_cache->active_pose_constraints();
 
-		for ( utility::vector1< ConstraintCOP >::iterator cst_it = cur_active_constraints.begin();
-				cst_it != cur_active_constraints.end(); ++cst_it ) {
+		for ( auto & cur_active_constraint : cur_active_constraints ) {
 
-			utility::vector1< ConstraintCOP >::iterator cst_find = find(all_pose_constraints.begin(), all_pose_constraints.end(), *cst_it);
+			auto cst_find = find(all_pose_constraints.begin(), all_pose_constraints.end(), cur_active_constraint);
 
 			if ( cst_find != all_pose_constraints.end() ) {
 				if ( ! cst_pairs_[i]->is_covalent() ) {
@@ -573,7 +572,7 @@ EnzConstraintIO::add_pregenerated_constraints_to_pose(
 				//std::cerr << "There are a total of " << cur_active_constraints.size() << " constraints in this parameter.\n" << std::endl;
 				//std::cerr << "showing definition for a constraint with " << (*cst_it)->natoms() << " atoms... ";
 				//(*cst_it)->show( std::cerr );
-				if ( !  cst_pairs_[i]->is_covalent() ) *cst_it = pose.add_constraint( *cst_it );
+				if ( !  cst_pairs_[i]->is_covalent() ) cur_active_constraint = pose.add_constraint( cur_active_constraint );
 			}
 
 		}
@@ -633,12 +632,12 @@ EnzConstraintIO::update_pdb_remarks_for_backbone_params(
 	core::pose::Pose & pose ) const
 {
 
-	for ( utility::vector1< EnzConstraintParametersOP >::const_iterator it = cst_pairs_.begin(); it != cst_pairs_.end(); ++it ) {
+	for ( auto const & cst_pair : cst_pairs_ ) {
 
-		if ( !(*it)->resA()->is_backbone() && !(*it)->resB()->is_backbone() ) continue;
-		if ( (*it)->missing_in_pose(pose) ) continue;
+		if ( !cst_pair->resA()->is_backbone() && !cst_pair->resB()->is_backbone() ) continue;
+		if ( cst_pair->missing_in_pose(pose) ) continue;
 
-		if ( !(*it)->update_pdb_remarks( pose ) ) utility_exit_with_message("Error when trying to update pdb remarks.");
+		if ( !cst_pair->update_pdb_remarks( pose ) ) utility_exit_with_message("Error when trying to update pdb remarks.");
 	}
 }
 
@@ -653,9 +652,9 @@ EnzConstraintIO::allowed_res_name3_at_position(
 
 	std::set< std::string > found;
 
-	for ( utility::vector1< EnzConstraintParametersOP >::const_iterator it = cst_pairs_.begin(); it != cst_pairs_.end(); ++it ) {
+	for ( auto const & cst_pair : cst_pairs_ ) {
 
-		std::set< std::string > res_this_param = (*it)->allowed_res_name3_at_position( pose, seqpos );
+		std::set< std::string > res_this_param = cst_pair->allowed_res_name3_at_position( pose, seqpos );
 		if ( res_this_param.empty()/*size() == 0*/ ) continue;
 		//we need to make two checks:
 		//1. are there already residues in the found set? if so, dont include anything,
@@ -663,17 +662,17 @@ EnzConstraintIO::allowed_res_name3_at_position(
 		//2. if not, the found set will become res_this_param
 		if ( found.empty()/*size() == 0*/ ) found = res_this_param;
 		else {
-			for ( std::set< std::string >::iterator set_it = found.begin(); set_it != found.end();  ) {
+			for ( auto set_it = found.begin(); set_it != found.end();  ) {
 				if ( res_this_param.find( *set_it ) == res_this_param.end() ) {
-					std::set< std::string >::iterator to_erase = set_it;
+					auto to_erase = set_it;
 					++set_it;
 					found.erase( to_erase );
 				} else ++set_it;
 			}
 		}
 	} //iterator over all params
-	for ( std::set< std::string >::iterator set_it = found.begin(); set_it != found.end();  ++set_it ) {
-		to_return.push_back( *set_it );
+	for ( auto const & set_it : found ) {
+		to_return.push_back( set_it );
 	}
 	return to_return;
 }
@@ -686,7 +685,7 @@ EnzConstraintIO::show_cst_definitions() const
 		tr.Info << "No constraints have been read in." << std::endl;
 	} else {
 		tr.Info << cst_pairs_.size() << " constraint blocks have been read in: " << std::endl;
-		for ( utility::vector1< EnzConstraintParametersOP >::const_iterator it = cst_pairs_.begin(); it != cst_pairs_.end(); ++it ) { (*(*it)).show_definitions(); }
+		for ( auto const & cst_pair : cst_pairs_ ) { (*cst_pair).show_definitions(); }
 	}
 }
 
@@ -694,8 +693,8 @@ void
 EnzConstraintIO::remap_resid( core::id::SequenceMapping const & smap )
 {
 
-	for ( utility::vector1< EnzConstraintParametersOP >::iterator it = cst_pairs_.begin(); it != cst_pairs_.end(); ++it ) {
-		(*it)->remap_resid( smap );
+	for ( auto & cst_pair : cst_pairs_ ) {
+		cst_pair->remap_resid( smap );
 	}
 }
 

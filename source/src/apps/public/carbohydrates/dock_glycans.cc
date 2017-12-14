@@ -106,7 +106,7 @@ public:  // Standard methods
 	}
 
 	// Destructor
-	virtual ~DockGlycansProtocol() = default;
+	~DockGlycansProtocol() override = default;
 
 
 public:  // Standard Rosetta methods
@@ -137,9 +137,9 @@ public:  // Standard Rosetta methods
 	}
 
 	/// @brief  Generate string representation of DockGlycansProtocol for debugging purposes.
-	virtual
+
 	void
-	show( std::ostream & output=std::cout ) const
+	show( std::ostream & output=std::cout ) const override
 	{
 		using namespace std;
 
@@ -154,31 +154,31 @@ public:  // Standard Rosetta methods
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	virtual
+
 	std::string
-	get_name() const
+	get_name() const override
 	{
 		return type();
 	}
 
-	virtual
+
 	moves::MoverOP
-	clone() const
+	clone() const override
 	{
 		return protocols::moves::MoverOP( new DockGlycansProtocol( *this ) );
 	}
 
-	virtual
+
 	moves::MoverOP
-	fresh_instance() const
+	fresh_instance() const override
 	{
 		return protocols::moves::MoverOP( new DockGlycansProtocol );
 	}
 
 	/// @brief  Apply the corresponding protocol to <pose>.
-	virtual
+
 	void
-	apply( core::pose::Pose & pose )
+	apply( core::pose::Pose & pose ) override
 	{
 		using namespace id;
 		using namespace scoring;
@@ -625,7 +625,7 @@ core::uint const DockGlycansProtocol::JUMP_NUM( 1 );
 core::Real const DockGlycansProtocol::STARTING_RAMP_DOWN_FACTOR( 3.25 );  // values used by Krishna
 core::Real const DockGlycansProtocol::STARTING_RAMP_UP_FACTOR( 0.45455 );  // values used by Krishna
 
-typedef utility::pointer::shared_ptr< DockGlycansProtocol > DockGlycansProtocolOP;
+using DockGlycansProtocolOP = utility::pointer::shared_ptr<DockGlycansProtocol>;
 
 
 // Main ///////////////////////////////////////////////////////////////////////

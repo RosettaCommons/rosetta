@@ -35,7 +35,7 @@ namespace protocols {
 namespace jd3 {
 namespace full_model {
 
-MoverAndFullModelJob::MoverAndFullModelJob() {}
+MoverAndFullModelJob::MoverAndFullModelJob() = default;
 MoverAndFullModelJob::~MoverAndFullModelJob() = default;
 
 CompletedJobOutput
@@ -116,11 +116,11 @@ void MoverAndFullModelJob::finalize_job_result( FullModelJobResultOP ) {}
 void MoverAndFullModelJob::finalize_job_summary( EnergyJobSummaryOP ) {}
 
 
-FullModelJobResult::FullModelJobResult() {}
+FullModelJobResult::FullModelJobResult() = default;
 FullModelJobResult::~FullModelJobResult() = default;
 
 EnergyJobSummary::EnergyJobSummary() : energy_( 0.0 ) {}
-EnergyJobSummary::~EnergyJobSummary() {}
+EnergyJobSummary::~EnergyJobSummary() = default;
 
 core::Real
 EnergyJobSummary::energy() const

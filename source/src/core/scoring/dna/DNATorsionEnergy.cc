@@ -122,7 +122,7 @@ DNATorsionEnergy::residue_pair_energy(
 	ScoreFunction const & sfxn,
 	EnergyMap & emap ) const {
 
-	if ( dna_torsion_constraints_ == 0 ) return;
+	if ( dna_torsion_constraints_ == nullptr ) return;
 	if ( !constraints_ready_ ) return;
 
 	EnergyMap emap_temp;
@@ -145,7 +145,7 @@ DNATorsionEnergy::eval_intrares_energy(
 	ScoreFunction const & sfxn,
 	EnergyMap & emap  ) const {
 
-	if ( dna_torsion_constraints_ == 0 ) return;
+	if ( dna_torsion_constraints_ == nullptr ) return;
 	if ( !constraints_ready_ ) return;
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ DNATorsionEnergy::finalize_total_energy(
 	EnergyMap & totals
 ) const
 {
-	if ( dna_torsion_constraints_ == 0 ) return;
+	if ( dna_torsion_constraints_ == nullptr ) return;
 	if ( !constraints_ready_ ) return;
 
 	if ( verbose_ ) std::cout << " final_energy " << totals[ dna_bb_torsion ] << std::endl;
@@ -196,7 +196,7 @@ DNATorsionEnergy::eval_atom_derivative(
 	Vector & F2
 ) const
 {
-	if ( dna_torsion_constraints_ == 0 ) return;
+	if ( dna_torsion_constraints_ == nullptr ) return;
 	if ( !constraints_ready_ ) return;
 	dna_torsion_constraints_->deprecated_eval_atom_derivative( id, pose, sfxn, weights, F1, F2 );
 	dna_sugar_close_constraints_->deprecated_eval_atom_derivative( id, pose, sfxn, weights, F1, F2 );
@@ -234,7 +234,7 @@ DNATorsionEnergy::finalize_after_derivatives(
 	ScoreFunction const &
 ) const
 {
-	if ( dna_torsion_constraints_ == 0 ) return;
+	if ( dna_torsion_constraints_ == nullptr ) return;
 	if ( !constraints_ready_ ) return;
 	constraints_ready_ = false;
 }

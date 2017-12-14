@@ -66,7 +66,7 @@ using namespace basic::options::OptionKeys;
 ClashWithTargetFilter::ClashWithTargetFilter() :
 	protocols::filters::Filter( "ClashWithTarget" ) { }
 
-ClashWithTargetFilter::~ClashWithTargetFilter() {}
+ClashWithTargetFilter::~ClashWithTargetFilter() = default;
 
 protocols::filters::FilterOP
 ClashWithTargetFilter::clone() const {
@@ -97,7 +97,7 @@ core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
 	//pose_copy.dump_pdb("target_inputAlign.pdb");
 
 	//mutate interface Ala
-	protocols::protein_interface_design::movers::BuildAlaPose toAla(1,2,20,clash_residues_);
+	protocols::protein_interface_design::movers::BuildAlaPose toAla(true,true,20,clash_residues_);
 	toAla.apply(pose_copy);
 	//pose_copy.dump_pdb("target_Ala_inputAlign.pdb");
 

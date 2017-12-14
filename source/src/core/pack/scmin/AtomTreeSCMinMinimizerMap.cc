@@ -54,7 +54,7 @@ AtomTreeSCMinMinimizerMap::AtomTreeSCMinMinimizerMap() :
 
 }
 
-AtomTreeSCMinMinimizerMap::~AtomTreeSCMinMinimizerMap() {}
+AtomTreeSCMinMinimizerMap::~AtomTreeSCMinMinimizerMap() = default;
 
 void AtomTreeSCMinMinimizerMap::set_total_residue( Size total_residue )
 {
@@ -81,7 +81,7 @@ void AtomTreeSCMinMinimizerMap::clear_active_dofs()
 {
 	for ( Size ii = 1; ii <= nactive_residues_; ++ii ) {
 		domain_map_( active_residues_[ ii ] ) = 1;
-		atcs_for_residues_[ active_residues_[ ii ]] = 0;
+		atcs_for_residues_[ active_residues_[ ii ]] = nullptr;
 		active_residue_index_for_res_[ active_residues_[ ii ] ] = 0;
 
 		active_residues_[ ii ] = 0;
@@ -143,7 +143,7 @@ AtomTreeSCMinMinimizerMap::add_torsion(
 	DOF_ID new_torsion_corrected( id::AtomID( new_torsion.atomno(), focused_residue_ ), new_torsion.type() );
 
 	//std::cerr << "add_torsion   " << new_torsion << " " << parent << std::endl;
-	DOF_NodeOP pnode( 0 );
+	DOF_NodeOP pnode( nullptr );
 	if ( parent.valid() ) {
 		Size dofind=0;
 		if ( parent.type() == core::id::PHI ) {
@@ -438,7 +438,7 @@ void AtomTreeSCMinMinimizerMap::zero_atom_derivative_vectors()
 void AtomTreeSCMinMinimizerMap::reset_dof_nodes()
 {
 	for ( Size ii = 1; ii <= n_active_dof_nodes_; ++ii ) {
-		dof_nodes_[ ii ]->set_parent( 0 );
+		dof_nodes_[ ii ]->set_parent( nullptr );
 		dof_nodes_[ ii ]->clear_atoms();
 	}
 	n_active_dof_nodes_ = 0;

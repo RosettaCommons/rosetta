@@ -45,8 +45,8 @@ namespace parser {
 
 static basic::Tracer TR( "protocols.jd2.parser.ScoreFunctionLoader" );
 
-ScoreFunctionLoader::ScoreFunctionLoader() {}
-ScoreFunctionLoader::~ScoreFunctionLoader() {}
+ScoreFunctionLoader::ScoreFunctionLoader() = default;
+ScoreFunctionLoader::~ScoreFunctionLoader() = default;
 
 void ScoreFunctionLoader::load_data(
 	core::pose::Pose const &,
@@ -55,7 +55,7 @@ void ScoreFunctionLoader::load_data(
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagCOP > TagCOPs;
+	using TagCOPs = utility::vector0<TagCOP>;
 
 	TagCOPs const & scorefxn_tags( tag->getTags() );
 
@@ -96,7 +96,7 @@ void ScoreFunctionLoader::load_data(
 			std::string const tagname( mod_tag->getName() ); //Get the name of the tag
 			if ( tagname == "Reweight" ) {
 				std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );
-				core::Real const weight( mod_tag->getOption<core::Real>( "weight" ) );
+				auto const weight( mod_tag->getOption<core::Real>( "weight" ) );
 				TR<<" setting "<<scorefxn_name<<" weight " << scoretype_name << " to " << weight << std::endl;
 				core::scoring::ScoreType const type = score_type_from_name( scoretype_name );
 				in_scorefxn->set_weight( type, weight );
@@ -163,7 +163,7 @@ void ScoreFunctionLoader::load_data(
 					TR << "User defined unbound tag: " << emoptions.pb_unbound_tag() << std::endl;
 				}
 				if ( mod_tag->hasOption( "scale_sc_dens" ) ) {
-					core::Real scale_sc_dens = mod_tag->getOption<core::Real>("scale_sc_dens" );
+					auto scale_sc_dens = mod_tag->getOption<core::Real>("scale_sc_dens" );
 					emoptions.set_density_sc_scale_byres( scale_sc_dens );
 					TR << "User defined sidechain density reweighing: " << scale_sc_dens << std::endl;
 				}
@@ -210,13 +210,13 @@ void ScoreFunctionLoader::load_data(
 		// hotspot hash constraint
 		if ( scorefxn_tag->hasOption("hs_hash") ) {
 			core::Real hotspot_hash( 0.0 ); // APL FIX THIS!  This used to be initialized when the HotspotHashingConstraints were read in.
-			core::Real const hs_hash( scorefxn_tag->getOption<core::Real>( "hs_hash", hotspot_hash ) );
+			auto const hs_hash( scorefxn_tag->getOption<core::Real>( "hs_hash", hotspot_hash ) );
 			TR<<"setting "<<scorefxn_name<<" backbone_stub_constraint to " << hs_hash << std::endl;
 			in_scorefxn->set_weight( backbone_stub_constraint, hs_hash );
 		}
 
 		//fpd should we symmetrize scorefunction?
-		bool const scorefxn_symm( scorefxn_tag->getOption<bool>( "symmetric", 0 ) );
+		bool const scorefxn_symm( scorefxn_tag->getOption<bool>( "symmetric", false ) );
 		if ( scorefxn_symm ) {
 			in_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *in_scorefxn );
 			TR<<"symmetrizing "<<scorefxn_name<< std::endl;

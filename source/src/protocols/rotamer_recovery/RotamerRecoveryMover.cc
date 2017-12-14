@@ -149,13 +149,7 @@ RotamerRecoveryMover::RotamerRecoveryMover(
 
 RotamerRecoveryMover::~RotamerRecoveryMover()= default;
 
-RotamerRecoveryMover::RotamerRecoveryMover( RotamerRecoveryMover const & src):
-	//utility::pointer::ReferenceCount(),
-	Mover( src ),
-	rotamer_recovery_( src.rotamer_recovery_ ),
-	scfxn_( src.scfxn_ ),
-	task_factory_( src.task_factory_ )
-{}
+RotamerRecoveryMover::RotamerRecoveryMover( RotamerRecoveryMover const & /*src*/) = default;
 
 
 void

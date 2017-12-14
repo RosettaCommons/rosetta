@@ -61,8 +61,7 @@ InterfaceDdGMover::InterfaceDdGMover():
 	report_to_db_(false)
 {}
 
-InterfaceDdGMover::~InterfaceDdGMover()
-{}
+InterfaceDdGMover::~InterfaceDdGMover() = default;
 
 void
 InterfaceDdGMover::parse_my_tag(
@@ -201,7 +200,7 @@ InterfaceDdGMover::unbind (
 	}
 
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		core::conformation::symmetry::SymmetricConformation & symm_conf( dynamic_cast<core::conformation::symmetry::SymmetricConformation & > ( pose.conformation()) );
+		auto & symm_conf( dynamic_cast<core::conformation::symmetry::SymmetricConformation & > ( pose.conformation()) );
 		std::map< Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 		rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );

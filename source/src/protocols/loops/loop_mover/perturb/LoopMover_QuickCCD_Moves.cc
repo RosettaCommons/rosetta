@@ -165,10 +165,8 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	frag_mover_movemap->set_bb_true_range( loop.start(), loop.stop() );
 
 	utility::vector1< FragmentMoverOP > fragmover;
-	for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
-			it = frag_libs().begin(), it_end = frag_libs().end();
-			it != it_end; ++it ) {
-		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, frag_mover_movemap ) );
+	for ( const auto & it : frag_libs() ) {
+		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( it, frag_mover_movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
 		fragmover.push_back( cfm );
@@ -210,7 +208,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 
 	float final_chain_break_weight = 5.0;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		core::conformation::symmetry::SymmetricConformation const & symm_conf (
+		auto const & symm_conf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		final_chain_break_weight = 5.0*symm_info->subunits();

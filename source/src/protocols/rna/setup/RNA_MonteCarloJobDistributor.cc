@@ -71,8 +71,7 @@ RNA_MonteCarloJobDistributor::RNA_MonteCarloJobDistributor(
 }
 
 //Destructor
-RNA_MonteCarloJobDistributor::~RNA_MonteCarloJobDistributor()
-{}
+RNA_MonteCarloJobDistributor::~RNA_MonteCarloJobDistributor() = default;
 
 void
 RNA_MonteCarloJobDistributor::initialize( core::pose::Pose const & pose ) {
@@ -102,7 +101,7 @@ RNA_MonteCarloJobDistributor::apply( core::pose::Pose & pose ) {
 	runtime_assert( has_another_job() );
 	TR << std::endl << TR.Green << "Embarking on structure " << count_ << " of " << nstruct_ << TR.Reset << std::endl;
 
-	runtime_assert( start_pose_ != 0 ); // initialized.
+	runtime_assert( start_pose_ != nullptr ); // initialized.
 	pose = *start_pose_;
 
 	// AMW TODO unify -- right now we just switch on pointer nullity to do one of two behaviors!

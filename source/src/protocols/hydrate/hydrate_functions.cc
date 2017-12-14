@@ -672,7 +672,7 @@ set_task_and_movemap(
 			if ( temp_task->being_packed(ii) && pose.residue(ii).name() != "TP3" ) { // design residue
 
 				utility::vector1< bool > allowed_types( core::chemical::num_canonical_aas, false );
-				core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
+				auto
 					res_iter( temp_task->residue_task( ii ).allowed_residue_types_begin() );
 				while ( res_iter != temp_task->residue_task( ii ).allowed_residue_types_end() ) {
 					allowed_types[ core::chemical::aa_from_oneletter_code( (*res_iter)->name1() ) ] = true;
@@ -939,7 +939,7 @@ read_header(
 void // yumeng
 read_body(
 	Size const total_res,
-	std::string const line,
+	std::string const & line,
 	kinematics::MoveMap & mm
 ){
 	std::istringstream istr(line);

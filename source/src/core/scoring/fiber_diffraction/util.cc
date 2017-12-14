@@ -82,7 +82,7 @@ void setup_cylindrical_coords(
 ) {
 
 	// Are we symmetric?
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	const core::conformation::symmetry::SymmetryInfo *symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
 			pose.conformation()).Symmetry_Info().get();
@@ -152,7 +152,7 @@ void find_pitch(
 	pose::Pose const & pose,
 	core::Real & pitch
 ) {
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	const core::conformation::symmetry::SymmetryInfo *symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
 			pose.conformation()).Symmetry_Info().get();
@@ -170,11 +170,8 @@ void find_pitch(
 	}
 	pitch = 1e10;
 	numeric::xyzVector< Real > start ( pose.xyz( id::AtomID( 1, master_res ) ) );
-	for ( utility::vector0 < Size>::const_iterator
-			clone     = symminfo->bb_clones( master_res ).begin(),
-			clone_end = symminfo->bb_clones( master_res ).end();
-			clone != clone_end; ++clone ) {
-		numeric::xyzVector< Real > stop ( pose.xyz( id::AtomID( 1, *clone ) ) );
+	for ( unsigned long clone : symminfo->bb_clones( master_res ) ) {
+		numeric::xyzVector< Real > stop ( pose.xyz( id::AtomID( 1, clone ) ) );
 		Real z_diff( fabs( start(3) -stop(3) ) );
 		if ( z_diff < pitch ) pitch = z_diff;
 	}
@@ -196,7 +193,7 @@ find_min_xyz(
 ) {
 
 	// Are we symmetric?
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	const core::conformation::symmetry::SymmetryInfo *symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
 			pose.conformation()).Symmetry_Info().get();
@@ -251,7 +248,7 @@ find_max_r(
 	core::Real & maxR
 ) {
 	// Are we symmetric?
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	const core::conformation::symmetry::SymmetryInfo *symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
 			pose.conformation()).Symmetry_Info().get();
@@ -315,11 +312,11 @@ centroid_scatter(
 	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	ResidueOP fa_res( ResidueFactory::create_residue( rsd_set->name_map(res_name ) ) );
 
-	Atoms::const_iterator sc_begin( fa_res->sidechainAtoms_begin() );
+	auto sc_begin( fa_res->sidechainAtoms_begin() );
 	Atoms::const_iterator sc_end( fa_res->atom_end() );
 	core::Real sigma_tot(0), weight_tot(0);
 	core::Size num_atoms(0);
-	for ( Atoms::const_iterator atom=sc_begin; atom!=sc_end; ++atom ) {
+	for ( auto atom=sc_begin; atom!=sc_end; ++atom ) {
 		chemical::AtomTypeSet const & atom_type_set( fa_res->atom_type_set() );
 		std::string elt_i = atom_type_set[ atom->type() ].element();
 		if ( elt_i == "H" ) continue;
@@ -691,7 +688,7 @@ core::Real calculate_chi2_free(
 	//TODO: Check this function
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_(
 		setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv, b_factor_solv_K ));
-	utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
+	auto form_factors(form_factors_.begin());
 
 
 	for ( Size k=0; k < chi_free_iterations_; ++k ) {

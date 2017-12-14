@@ -31,6 +31,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -56,7 +57,7 @@ AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover(
 	core::scoring::ScoreFunctionCOP scorefxn
 ) :
 	protocols::moves::Mover( "AsymFoldandDockRbTrialMover" ),
-	scorefxn_(scorefxn), smooth_move_(false), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
+	scorefxn_(std::move(scorefxn)), smooth_move_(false), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
 {}
 
 AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover(
@@ -64,7 +65,7 @@ AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover(
 	bool smooth_move
 ) :
 	protocols::moves::Mover( "AsymFoldandDockRbTrialMover" ),
-	scorefxn_(scorefxn), smooth_move_(smooth_move), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
+	scorefxn_(std::move(scorefxn)), smooth_move_(smooth_move), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
 {}
 
 AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover(
@@ -74,7 +75,7 @@ AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover(
 	core::Real trans_mag
 ) :
 	protocols::moves::Mover( "AsymFoldandDockRbTrialMover" ),
-	scorefxn_( scorefxn), smooth_move_(smooth_move), rot_mag_(rot_mag), trans_mag_(trans_mag)
+	scorefxn_(std::move( scorefxn)), smooth_move_(smooth_move), rot_mag_(rot_mag), trans_mag_(trans_mag)
 {}
 
 void

@@ -250,7 +250,7 @@ print_chis( std::ostream & out, ResidueType const & res )
 // Replaces the deprecated "_p:" linker connecting ResidueType base names with their patch names with ":".
 /// @note This is here for backwards compatibility.
 std::string
-fixup_patches( std::string string_in )
+fixup_patches( std::string const & string_in )
 {
 	std::string string_out = string_in;
 	string_out = utility::replace_in( string_out, "_p:", PATCH_LINKER );

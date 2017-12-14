@@ -27,6 +27,7 @@
 #include <ostream>                        // for operator<<, basic_ostream
 #include <platform/types.hh>              // for Size
 #include <string>                         // for allocator, operator==, basi...
+#include <utility>
 #include <utility/CSI_Sequence.hh>        // for CSI_Sequence, CSI_Black
 #include <utility/sys_util.hh>      // for timestamp
 #include <utility/string_util.hh>         // for split, string2int, string_s...
@@ -164,11 +165,11 @@ TracerImpl::bgBlack(utility::CSI_bgBlack()), TracerImpl::bgRed(utility::CSI_bgRe
 TracerImpl::TracerProxyImpl::TracerProxyImpl(
 	TracerImpl & tracer,
 	int priority,
-	std::string const & channel
+	std::string channel
 ) :
 	tracer_(tracer),
 	priority_(priority),
-	channel_(channel),
+	channel_(std::move(channel)),
 	visible_(true)
 {}
 
@@ -273,11 +274,11 @@ TracerImpl::~TracerImpl()
 	//set_ios_hook(otstreamOP(), "");
 
 	//bool need_flush = false;
-	for ( size_t i=0; i<v.size(); i++ ) {
-		if ( !v[i]->is_flushed() ) {
+	for ( auto & i : v ) {
+		if ( !i->is_flushed() ) {
 			//v[i]->flush();
-			(*v[i]) << std::endl;
-			(*v[i]) << "[ WARNING ] Message(s) above was printed in the end instead of proper place because this Tracer object has some contents left in inner buffer when destructor was called. Explicitly call Tracer::flush() or end your IO with std::endl to disable this warning.\n" << std::endl;
+			(*i) << std::endl;
+			(*i) << "[ WARNING ] Message(s) above was printed in the end instead of proper place because this Tracer object has some contents left in inner buffer when destructor was called. Explicitly call Tracer::flush() or end your IO with std::endl to disable this warning.\n" << std::endl;
 		}
 	}
 #endif
@@ -323,8 +324,8 @@ void TracerImpl::flush_all_channels()
 		this, &Fatal, &Error, &Warning,
 		&Info, &Debug, &Trace);
 
-	for ( size_t i=0; i<v.size(); i++ ) {
-		v[i]->flush();
+	for ( auto & i : v ) {
+		i->flush();
 	}
 }
 

@@ -16,6 +16,7 @@
 #include <protocols/legacy_sewing/sampling/requirements/LegacySegmentDsspRequirement.hh>
 #include <protocols/legacy_sewing/sampling/requirements/LegacySegmentDsspRequirementCreator.hh>
 #include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementFactory.hh>
+#include <utility>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 //Utility headers
@@ -43,10 +44,10 @@ LegacySegmentDsspRequirementCreator::type_name() const {
 }
 //////End Creator methods/////
 
-LegacySegmentDsspRequirement::LegacySegmentDsspRequirement(){}
+LegacySegmentDsspRequirement::LegacySegmentDsspRequirement()= default;
 
 LegacySegmentDsspRequirement::LegacySegmentDsspRequirement(
-	std::set<std::string> valid_dssp_codes
+	std::set<std::string> const & valid_dssp_codes
 ):
 	valid_dssp_codes_(valid_dssp_codes)
 {}
@@ -89,8 +90,8 @@ LegacySegmentDsspRequirement::show(
 	std::ostream & out
 ) const {
 	out << "/////// LegacySegmentDsspRequirement - Segment must have on of the following DSSP codes: ";
-	std::set<std::string>::const_iterator it = valid_dssp_codes_.begin();
-	std::set<std::string>::const_iterator it_end = valid_dssp_codes_.end();
+	auto it = valid_dssp_codes_.begin();
+	auto it_end = valid_dssp_codes_.end();
 	for ( ; it != it_end; ++it ) {
 		out << *it << " ";
 	}

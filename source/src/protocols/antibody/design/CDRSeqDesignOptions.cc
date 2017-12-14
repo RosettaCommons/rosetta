@@ -72,7 +72,7 @@ CDRSeqDesignOptions::CDRSeqDesignOptions(CDRSeqDesignOptions const & src):
 {
 }
 
-CDRSeqDesignOptions::~CDRSeqDesignOptions() {}
+CDRSeqDesignOptions::~CDRSeqDesignOptions() = default;
 
 void
 CDRSeqDesignOptions::set_defaults() {
@@ -133,7 +133,7 @@ CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser():
 	design_enum_manager_ = AntibodyDesignEnumManagerCOP( new AntibodyDesignEnumManager());
 }
 
-CDRSeqDesignOptionsParser::~CDRSeqDesignOptionsParser() {}
+CDRSeqDesignOptionsParser::~CDRSeqDesignOptionsParser() = default;
 
 CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser( CDRSeqDesignOptionsParser const & src ):
 	utility::pointer::ReferenceCount(),
@@ -154,7 +154,7 @@ utility::vector1<CDRSeqDesignOptionsOP>
 CDRSeqDesignOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRSeqDesignOptionsOP> antibody_options;
 	for ( Size i = 1; i <= 6; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_default_and_user_options( cdr, filename ) );
 	}
 	return antibody_options;
@@ -177,7 +177,7 @@ utility::vector1<CDRSeqDesignOptionsOP>
 CDRSeqDesignOptionsParser::parse_options(std::string const & filename) {
 	utility::vector1<CDRSeqDesignOptionsOP> antibody_options;
 	for ( core::Size i = 1; i <= 6; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_options( cdr, filename ) );
 	}
 	return antibody_options;

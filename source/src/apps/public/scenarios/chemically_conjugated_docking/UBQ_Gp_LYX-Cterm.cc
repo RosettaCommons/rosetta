@@ -108,16 +108,14 @@ static basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ
 
 class UBQ_GTPaseMover : public protocols::moves::Mover {
 public:
-	UBQ_GTPaseMover()
-	: init_for_input_yet_(false),
+	UBQ_GTPaseMover() :
 		fullatom_scorefunction_(/* NULL */),
 		task_factory_(/* NULL */),
 		amide_mm_(/* NULL */),
 		loop_(), //we want default ctor
 		atomIDs(8, core::id::AtomID::BOGUS_ATOM_ID() ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
-		IAM_(protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover )),
-		GTPase_lys_(0)
+		IAM_(protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover ))
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
@@ -430,11 +428,11 @@ public:
 		core::scoring::constraints::add_constraints_from_cmdline_to_pose( starting_pose_ ); //protected internally if no constraints
 
 	}
-	virtual ~UBQ_GTPaseMover(){};
+	~UBQ_GTPaseMover() override= default;
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ){
+	apply( core::pose::Pose & pose ) override{
 		if ( !init_for_input_yet_ ) init_on_new_input();
 
 		pose = starting_pose_;
@@ -671,26 +669,26 @@ public:
 		return;
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new UBQ_GTPaseMover );
 	}
 
-	virtual
-	bool
-	reinitialize_for_each_job() const { return false; }
 
-	virtual
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
 
-	virtual
+
+	bool
+	reinitialize_for_new_input() const override { return false; }
+
+
 	std::string
-	get_name() const { return "UBQ_GTPaseMover"; }
+	get_name() const override { return "UBQ_GTPaseMover"; }
 
 private:
-	bool init_for_input_yet_;
+	bool init_for_input_yet_{false};
 
 	core::scoring::ScoreFunctionOP fullatom_scorefunction_;
 	core::pack::task::TaskFactoryOP task_factory_;
@@ -709,13 +707,13 @@ private:
 
 	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 
-	core::Size GTPase_lys_; //converted to member data for sharing between setup and apply
+	core::Size GTPase_lys_ = 0; //converted to member data for sharing between setup and apply
 
 	/// @brief used to track which chains are "extra" nonmoving bodies in extra bodies mode
 	utility::vector1< core::Size > extra_bodies_chains_;
 };
 
-typedef utility::pointer::shared_ptr< UBQ_GTPaseMover > UBQ_GTPaseMoverOP;
+using UBQ_GTPaseMoverOP = utility::pointer::shared_ptr<UBQ_GTPaseMover>;
 
 int main( int argc, char* argv[] )
 {

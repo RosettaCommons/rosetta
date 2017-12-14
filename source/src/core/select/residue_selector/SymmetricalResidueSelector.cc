@@ -61,7 +61,7 @@ SymmetricalResidueSelector::SymmetricalResidueSelector(
 }
 
 
-SymmetricalResidueSelector::~SymmetricalResidueSelector() {}
+SymmetricalResidueSelector::~SymmetricalResidueSelector() = default;
 
 ResidueSubset
 SymmetricalResidueSelector::apply( core::pose::Pose const & pose ) const
@@ -124,7 +124,7 @@ SymmetricalResidueSelector::parse_my_tag(
 		//make sure it is a valid residue selector
 		try {
 			set_selector( data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname ) );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from SymmetricalResidueSelector.\n";
 			error_msg << e.msg();

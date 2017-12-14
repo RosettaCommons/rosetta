@@ -111,8 +111,8 @@ using namespace core::scoring;
 
 ddG::ddG() :
 	moves::Mover(ddG::mover_name()),
-	bound_total_energy_(0.0),
-	unbound_total_energy_(0.0),
+	//bound_total_energy_(0.0),
+	//unbound_total_energy_(0.0),
 	repeats_(0),
 	rb_jump_(0),
 	per_residue_ddg_(false),
@@ -133,8 +133,8 @@ ddG::ddG() :
 ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	core::Size const jump/*=1*/) :
 	moves::Mover(ddG::mover_name()),
-	bound_total_energy_(0.0),
-	unbound_total_energy_(0.0),
+	//bound_total_energy_(0.0),
+	//unbound_total_energy_(0.0),
 	repeats_(1),
 	rb_jump_(jump),
 	per_residue_ddg_(false),
@@ -167,8 +167,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	core::Size const jump/*=1*/,
 	utility::vector1<core::Size> const & chain_ids) :
 	moves::Mover(ddG::mover_name()),
-	bound_total_energy_(0.0),
-	unbound_total_energy_(0.0),
+	//bound_total_energy_(0.0),
+	//unbound_total_energy_(0.0),
 	repeats_(1),
 	rb_jump_(jump),
 	per_residue_ddg_(false),
@@ -208,12 +208,12 @@ void ddG::parse_my_tag(
 	if ( tag->hasOption("symmetry") ) {
 		TR << "Option 'symmetry' for ddG mover has no effect - symmetry is autodetected from pose." << std::endl;
 	}
-	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",0);
-	repack_unbound_ = tag->getOption<bool>("repack_unbound",0);
+	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",false);
+	repack_unbound_ = tag->getOption<bool>("repack_unbound",false);
 	repeats_ = tag->getOption<Size>("repeats",1);
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	use_custom_task( tag->hasOption("task_operations") );
-	repack_bound_ = tag->getOption<bool>("repack_bound",1);
+	repack_bound_ = tag->getOption<bool>("repack_bound",true);
 	relax_bound_ = tag->getOption<bool>("relax_bound",false);
 	translate_by_ = tag->getOption<core::Real>("translate_by", 1000);
 
@@ -552,7 +552,7 @@ bool
 ddG::unbind( pose::Pose & pose ) const
 {
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		SymmetricConformation & symm_conf( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
+		auto & symm_conf( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 		std::map< Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 		rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );

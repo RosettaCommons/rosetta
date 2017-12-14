@@ -277,7 +277,7 @@ ChiralMover::ChiralMover(
 	Mover::type( "ChiralMover" );
 }
 
-ChiralMover::~ChiralMover(){}
+ChiralMover::~ChiralMover()= default;
 
 }//chiral
 }//simple_moves

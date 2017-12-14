@@ -47,7 +47,7 @@ bool GaussianFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	GaussianFunc const & other_downcast( static_cast< GaussianFunc const & > (other) );
+	auto const & other_downcast( static_cast< GaussianFunc const & > (other) );
 	if ( mean_          != other_downcast.mean_          ) return false;
 	if ( sd_            != other_downcast.sd_            ) return false;
 	if ( use_log_score_ != other_downcast.use_log_score_ ) return false;

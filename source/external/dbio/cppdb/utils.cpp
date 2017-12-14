@@ -18,9 +18,9 @@
 #define CPPDB_SOURCE
 #include <cppdb/utils.h>
 #include <cppdb/errors.h>
-#include <time.h>
-#include <stdio.h>
-#include <string.h>
+#include <ctime>
+#include <cstdio>
+#include <cstring>
 #include <sstream>
 #include <locale>
 
@@ -153,7 +153,7 @@ namespace cppdb {
 	} //
 	std::string connection_info::get(std::string const &prop,std::string const &default_value) const
 	{
-		properties_type::const_iterator p=properties.find(prop);
+		auto p=properties.find(prop);
 		if(p==properties.end())
 			return default_value;
 		else
@@ -167,7 +167,7 @@ namespace cppdb {
 
 	int connection_info::get(std::string const &prop,int default_value) const
 	{
-		properties_type::const_iterator p=properties.find(prop);
+		auto p=properties.find(prop);
 		if(p==properties.end())
 			return default_value;
 		std::istringstream ss;

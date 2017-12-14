@@ -15,6 +15,7 @@
 
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
+#include <utility>
 #include <utility/tools/make_vector1.hh>
 #include <map>
 #include <iostream>
@@ -98,7 +99,7 @@ StepWiseMove::StepWiseMove():
 {
 }
 
-StepWiseMove::StepWiseMove( utility::vector1< std::string > swa_move_string_vector,
+StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_string_vector,
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters /* = 0 */ ):
 	utility::pointer::ReferenceCount(),
 	move_type_( NO_MOVE )
@@ -163,8 +164,7 @@ StepWiseMove::StepWiseMove( utility::vector1< std::string > swa_move_string_vect
 
 
 //Destructor
-StepWiseMove::~StepWiseMove()
-{}
+StepWiseMove::~StepWiseMove() = default;
 
 StepWiseMove::StepWiseMove( StepWiseMove const & src ):
 	ReferenceCount( src )
@@ -203,7 +203,7 @@ Attachment::Attachment():
 }
 
 //Constructor
-Attachment::Attachment( Size const & attached_res,
+Attachment::Attachment( Size const attached_res,
 	AttachmentType const attachment_type ):
 	utility::pointer::ReferenceCount(),
 	attached_res_( attached_res ),
@@ -212,8 +212,7 @@ Attachment::Attachment( Size const & attached_res,
 }
 
 //Destructor
-Attachment::~Attachment()
-{}
+Attachment::~Attachment() = default;
 
 Attachment::Attachment( Attachment const & src ):
 	ReferenceCount( src )

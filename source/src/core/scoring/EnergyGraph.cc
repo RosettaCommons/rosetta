@@ -60,7 +60,7 @@ void EnergyNode::print() const
 void EnergyNode::copy_from( parent const * source )
 {
 	//EnergyNode const * en_source = utility::down_cast< EnergyNode const * > ( source ); //nothing to copy, still -- want to assert the dynamic cast
-	EnergyNode const * en_source = static_cast< EnergyNode const * > ( source );
+	auto const * en_source = static_cast< EnergyNode const * > ( source );
 	moved_ = en_source->moved_;
 }
 
@@ -124,7 +124,7 @@ EnergyEdge::~EnergyEdge()
 /// called from the copy ctor and operator= methods defined in the Graph base class
 void EnergyEdge::copy_from( parent const * source )
 {
-	EnergyEdge const * ee = static_cast< EnergyEdge const * > ( source );
+	auto const * ee = static_cast< EnergyEdge const * > ( source );
 	// down_cast is *supposed* to assert the dynamic cast in debug builds; doesn't work for some reason
 	//EnergyEdge const * ee = utility::down_cast< EnergyEdge const * > ( source );
 	energies_not_yet_computed_ = ee->energies_not_yet_computed_;

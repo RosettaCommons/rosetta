@@ -59,8 +59,7 @@ StrandHelixGeometryFilter::StrandHelixGeometryFilter():
 	output_value_( -990.0 )
 {}
 
-StrandHelixGeometryFilter::~StrandHelixGeometryFilter()
-{}
+StrandHelixGeometryFilter::~StrandHelixGeometryFilter() = default;
 
 // @brief set secondary structure
 void

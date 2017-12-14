@@ -42,15 +42,14 @@ GridFactory::GridFactory()
 	grid_creator_map_.clear();
 }
 
-GridFactory::~GridFactory()
-{ }
+GridFactory::~GridFactory() = default;
 
 
 /// @brief add a Grid prototype, using it's default type name as the map key
 void
 GridFactory::factory_register(GridCreatorOP creator)
 {
-	runtime_assert(creator != 0 );
+	runtime_assert(creator != nullptr );
 	std::string grid_type( creator->keyname());
 	//qsarType grid_enum = qsarTypeManager::qsar_type_from_name(grid_type);
 	if ( grid_type == "UNDEFINED NAME" ) {
@@ -68,16 +67,16 @@ GridBaseOP GridFactory::new_grid(utility::tag::TagCOP tag) const
 	std::string const type = tag->getName();
 	//std::string const type = tag->getOption<std::string>("grid_type");
 
-	GridSet::const_iterator iter(grid_creator_map_.find(type));
+	auto iter(grid_creator_map_.find(type));
 	if ( iter != grid_creator_map_.end() ) {
 		if ( !iter->second ) {
 			utility_exit_with_message("Error: GridCreatorOP prototype for "+type+ " is NULL!");
-			return NULL;
+			return nullptr;
 		}
 		return iter->second->create_grid(tag);
 	} else {
 		utility_exit_with_message(type + " is not known to the GridFactory.  Was it registered via a GridRegistrator in one of the init.cc files");
-		return NULL;
+		return nullptr;
 	}
 
 }
@@ -89,7 +88,7 @@ GridBaseOP GridFactory::new_grid(utility::json_spirit::mObject data ) const
 
 	std::string type;
 
-	utility::json_spirit::mObject::iterator type_it(data.find("type"));
+	auto type_it(data.find("type"));
 	if ( type_it != data.end() ) {
 		//If this is a metagrid then we can find a type tag in the top level
 		type = type_it->second.get_str();
@@ -102,7 +101,7 @@ GridBaseOP GridFactory::new_grid(utility::json_spirit::mObject data ) const
 
 	//make a new grid
 	GridBaseOP new_grid;
-	GridSet::const_iterator iter(grid_creator_map_.find(type));
+	auto iter(grid_creator_map_.find(type));
 	if ( iter != grid_creator_map_.end() ) {
 		if ( !iter->second ) {
 			utility_exit_with_message("Error: GridCreatorOP prototype for "+type+ " is NULL!");

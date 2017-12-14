@@ -288,9 +288,9 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 	ff_ops_.clear();
 	ff_map_.clear();
 	Size i = 1;
-	for ( std::set<FormFactorOP>::iterator it=ff_set.begin(), end=ff_set.end(); it!=end; ++it ) {
-		ff_map_.insert( std::pair<FormFactorOP,Size>(*it,i) );
-		ff_ops_.push_back( *it );
+	for ( auto const & it : ff_set ) {
+		ff_map_.insert( std::pair<FormFactorOP,Size>(it,i) );
+		ff_ops_.push_back( it );
 		i++;
 	}
 

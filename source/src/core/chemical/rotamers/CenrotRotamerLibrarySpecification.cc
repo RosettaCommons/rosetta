@@ -75,7 +75,7 @@ CenrotRotamerLibrarySpecification::aa( AA aa_setting ) {
 	}
 	aa_ = aa_setting;
 }
-CenrotRotamerLibrarySpecification::~CenrotRotamerLibrarySpecification() {}
+CenrotRotamerLibrarySpecification::~CenrotRotamerLibrarySpecification() = default;
 
 std::string
 CenrotRotamerLibrarySpecification::keyname() const {

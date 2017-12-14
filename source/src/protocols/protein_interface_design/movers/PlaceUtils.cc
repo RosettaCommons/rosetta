@@ -308,7 +308,7 @@ generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, Movers_ma
 	utility::vector0< TagCOP > const & ta_tags( tag->getTags() );
 	for ( TagCOP const ta_tag : ta_tags ) {
 		std::string const mover_name( ta_tag->getOption< std::string >( "mover_name" ) );
-		std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
+		auto find_mover( movers.find( mover_name ));
 		bool const mover_found( find_mover != movers.end() );
 		if ( mover_found ) {
 			simple_moves::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
@@ -369,7 +369,7 @@ parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::
 	stub_sets.clear();
 	bool contain_StubSet( false );
 	utility::vector0< utility::tag::TagCOP > const btags( tag->getTags() );
-	utility::vector0< utility::tag::TagCOP >::const_iterator ss_tag = btags.begin();
+	auto ss_tag = btags.begin();
 	for ( ; ss_tag != btags.end(); ++ss_tag ) {
 		if ( (*ss_tag)->getName() == "StubSets" ) {
 			contain_StubSet = true;

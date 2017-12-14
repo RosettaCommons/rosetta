@@ -201,7 +201,7 @@ Real compareRef_fxn(
 	//vector1< float > scores;
 	calc_per_residue_scores( names, Pred_Sum, REF_CS_Tab, COMP_Tab, scores );
 
-	typedef vector1< float >::const_iterator iter;
+	using iter = vector1<float>::const_iterator;
 	Real SCORE_SUM(0.0);
 	for ( iter it = scores.begin(), end = scores.end(); it != end; ++it ) {
 		SCORE_SUM += *it;

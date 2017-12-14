@@ -409,7 +409,7 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 			//get interface set from calculator
 			std::string const & interface_calc(interface_->interface_calc());
 			//find the set of residues
-			typedef std::set< core::Size > SizeSet;
+			using SizeSet = std::set<core::Size>;
 			basic::MetricValue< SizeSet > mv_sizeset;
 			start_pose->metric(interface_calc, "interface_residues", mv_sizeset);
 			SizeSet const & sizeset(mv_sizeset.value());
@@ -693,7 +693,7 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 
 	//using core::Real;
 	core::Real anchorstart(interface_->anchor_start()), anchorend(interface_->anchor_end());
-	core::Size anchormid(core::Size(std::ceil(anchorstart + (anchorend - anchorstart)/2.0)));
+	auto anchormid(core::Size(std::ceil(anchorstart + (anchorend - anchorstart)/2.0)));
 
 	Size anchor_jump_end( anchormid > chain1end ? chain1end : chain1end+1);
 	jump_starts[ANCHOR_TARGET] = anchormid < anchor_jump_end ? anchormid : anchor_jump_end; //max

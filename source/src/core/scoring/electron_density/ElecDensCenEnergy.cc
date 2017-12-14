@@ -114,7 +114,7 @@ ElecDensCenEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const
 {
 	//if (!pose.is_fullatom()) return;
 
-	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 	}
@@ -150,7 +150,7 @@ ElecDensCenEnergy::setup_for_scoring(
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
@@ -173,7 +173,7 @@ ElecDensCenEnergy::setup_for_scoring(
 
 	// grab symminfo (if defined) from the pose
 	// make a copy
-	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation() ).Symmetry_Info();
 	}

@@ -94,14 +94,7 @@ RotamerTrialsMover::RotamerTrialsMover(
 }
 
 // copy constructor
-RotamerTrialsMover::RotamerTrialsMover( RotamerTrialsMover const & rval ):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( rval ),
-	scorefxn_( rval.scorefxn_ ),
-	task_( rval.task_ ),
-	factory_( rval.factory_ ),
-	show_packer_task_( rval.show_packer_task_ )
-{}
+RotamerTrialsMover::RotamerTrialsMover( RotamerTrialsMover const & /*rval*/ ) = default;
 
 // destructor
 RotamerTrialsMover::~RotamerTrialsMover()= default;
@@ -184,7 +177,7 @@ RotamerTrialsMover::parse_my_tag(
 	using core::pack::task::TaskFactory;
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
-	show_packer_task_ = tag->getOption<bool>( "show_packer_task", 0 );
+	show_packer_task_ = tag->getOption<bool>( "show_packer_task", false );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 }
 

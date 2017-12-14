@@ -16,7 +16,7 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-PoseSelectorCreator::PoseSelectorCreator() {}
+PoseSelectorCreator::PoseSelectorCreator() = default;
 PoseSelectorCreator::~PoseSelectorCreator() = default;
 
 } //namespace rosetta_scripts

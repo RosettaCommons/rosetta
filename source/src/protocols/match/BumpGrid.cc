@@ -133,11 +133,11 @@ Bool3DGrid::or_by_sphere_conservative( Vector const & center, Real radius )
 	Bin3D bin;
 
 	Vector relpos = center - bb_extended_.lower();
-	SSize xlo( static_cast< SSize > ((relpos.x() - radius) / bin_width_ ));
+	auto xlo( static_cast< SSize > ((relpos.x() - radius) / bin_width_ ));
 	SSize xhi( static_cast< SSize > ((relpos.x() + radius) / bin_width_ ) + 1);
-	SSize ylo( static_cast< SSize > ((relpos.y() - radius) / bin_width_ ));
+	auto ylo( static_cast< SSize > ((relpos.y() - radius) / bin_width_ ));
 	SSize yhi( static_cast< SSize > ((relpos.y() + radius) / bin_width_ ) + 1);
-	SSize zlo( static_cast< SSize > ((relpos.z() - radius) / bin_width_ ));
+	auto zlo( static_cast< SSize > ((relpos.z() - radius) / bin_width_ ));
 	SSize zhi( static_cast< SSize > ((relpos.z() + radius) / bin_width_ ) + 1);
 
 	Size uxlo = xlo < 0 ? 0 : xlo;
@@ -215,11 +215,11 @@ Bool3DGrid::or_by_sphere_liberal( Vector const & center, Real radius )
 
 	Bin3D bin;
 	Vector relpos = center - bb_extended_.lower();
-	SSize xlo( static_cast< SSize > ((relpos.x() - radius) / bin_width_ ));
+	auto xlo( static_cast< SSize > ((relpos.x() - radius) / bin_width_ ));
 	SSize xhi( static_cast< SSize > ((relpos.x() + radius) / bin_width_ ) + 1);
-	SSize ylo( static_cast< SSize > ((relpos.y() - radius) / bin_width_ ));
+	auto ylo( static_cast< SSize > ((relpos.y() - radius) / bin_width_ ));
 	SSize yhi( static_cast< SSize > ((relpos.y() + radius) / bin_width_ ) + 1);
-	SSize zlo( static_cast< SSize > ((relpos.z() - radius) / bin_width_ ));
+	auto zlo( static_cast< SSize > ((relpos.z() - radius) / bin_width_ ));
 	SSize zhi( static_cast< SSize > ((relpos.z() + radius) / bin_width_ ) + 1);
 
 	Size uxlo = xlo < 0 ? 0 : xlo;

@@ -36,6 +36,7 @@
 
 // Boost headers
 #include <boost/format.hpp>
+#include <utility>
 
 // Construct tracer.
 static basic::Tracer TR("protocols.mean_field.RotProb");
@@ -66,7 +67,7 @@ RotProb::RotProb( Real prob, Size rot_ind, Size pos, core::conformation::Residue
 	probability_( prob ),
 	rot_ind_( rot_ind ),
 	pos_( pos ),
-	res_( res )
+	res_(std::move( res ))
 {}
 
 /// @details Copy constructor uses private member function
@@ -89,7 +90,7 @@ RotProb::operator=( RotProb const & object_to_copy )
 }
 
 /// @brief Destructor
-RotProb::~RotProb() {}
+RotProb::~RotProb() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////

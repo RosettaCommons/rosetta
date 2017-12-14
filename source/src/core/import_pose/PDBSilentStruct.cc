@@ -151,7 +151,7 @@ bool PDBSilentStruct::init_from_lines(
 					) {
 				line_stream >> tag;
 				if ( *energy_iter != "description" ) { // currently the only text-based field, might change in future.
-					Real score_val = (Real) float_of( tag );
+					auto score_val = (Real) float_of( tag );
 					add_energy( *energy_iter, score_val );
 				} else {
 					line_stream >> tag;

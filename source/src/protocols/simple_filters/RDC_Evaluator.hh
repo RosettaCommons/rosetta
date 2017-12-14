@@ -48,7 +48,7 @@ namespace simple_filters {
 
 class RDC_Evaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-	RDC_Evaluator( std::string tag = "rdc" );
+	RDC_Evaluator( std::string const & tag = "rdc" );
 	//  RDC_Evaluator( utility::vector1< std::string > const& rdc_files, std::string tag = "rdc" );
 
 	/// @brief evaluate pose
@@ -62,8 +62,8 @@ private:
 
 class SelectRDC_Evaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-	SelectRDC_Evaluator( core::scoring::ResidueSelection selection, std::string tag = "", std::string file ="" );
-	SelectRDC_Evaluator( utility::vector1< core::Size> const & selection, std::string tag = "" , std::string file ="");
+	SelectRDC_Evaluator( core::scoring::ResidueSelection const & selection, std::string const & tag = "", std::string const & file ="" );
+	SelectRDC_Evaluator( utility::vector1< core::Size> const & selection, std::string const & tag = "" , std::string const & file ="");
 
 	//work it out by yourself from missing density == whacky random coords
 	SelectRDC_Evaluator( core::pose::PoseCOP, std::string tag = "" );

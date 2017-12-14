@@ -45,8 +45,8 @@ class SymmetricMotifFilter : public protocols::filters::Filter
 public:
 	SymmetricMotifFilter();
 	SymmetricMotifFilter(
-		utility::vector1<core::pose::PoseOP> reference_motifs,
-		std::string symm_type_in="D2");
+		utility::vector1<core::pose::PoseOP> const & reference_motifs,
+		std::string const & symm_type_in="D2");
 
 	void set_defaults();
 

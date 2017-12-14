@@ -67,14 +67,14 @@ Atom::Atom() :
 
 /// @details Rosetta AtomTypes should be set through the ResidueType to ensure data consistency.
 Atom::Atom(
-	std::string  name_in,
-	std::string  mm_name,
+	std::string const & name_in,
+	std::string const & mm_name,
 	Size const mm_atom_type_index,
 	ElementCOP element,
 	Real const charge,
 	Vector const & ideal_xyz ) :
-	name_(std::move( name_in )),
-	mm_name_(std::move( mm_name )),
+	name_( name_in ),
+	mm_name_( mm_name ),
 	atom_type_index_( 0 ),
 	mm_atom_type_index_( mm_atom_type_index ),
 	element_(std::move( element )),
@@ -100,8 +100,8 @@ Atom::Atom( Atom const & src ) :
 	charge_( src.charge_ ),
 	ideal_xyz_( src.ideal_xyz_ ),
 	properties_( AtomPropertiesOP ( new AtomProperties( *src.properties_ ) ) ),
-	is_hydrogen_( 0 ),
-	has_orbitals_( 0 ),
+	is_hydrogen_( false ),
+	has_orbitals_( false ),
 	bonded_orbitals_(),
 	abs_stereochem_( src.abs_stereochem_ ),
 	greek_d_( src.greek_d_ )

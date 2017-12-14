@@ -90,10 +90,10 @@ get_ab_design_global_scorefxn(utility::tag::TagCOP tag, basic::datacache::DataMa
 		global_scorefxn = get_score_function();
 	}
 
-	core::Real atom_pair_cst_weight = tag->getOption<core::Real>("atom_pair_cst_weight",
+	auto atom_pair_cst_weight = tag->getOption<core::Real>("atom_pair_cst_weight",
 		option[ OptionKeys::antibody::design::atom_pair_cst_weight]());
 
-	core::Real dihedral_cst_weight = tag->getOption<core::Real>("dihedral_cst_weight",
+	auto dihedral_cst_weight = tag->getOption<core::Real>("dihedral_cst_weight",
 		option[ OptionKeys::antibody::design::dihedral_cst_weight]());
 
 	//Add any atom pair constraints
@@ -185,10 +185,10 @@ get_ab_design_min_scorefxn(utility::tag::TagCOP tag, basic::datacache::DataMap &
 		min_scorefxn = get_score_function();
 	}
 
-	core::Real atom_pair_cst_weight = tag->getOption<core::Real>("atom_pair_cst_weight",
+	auto atom_pair_cst_weight = tag->getOption<core::Real>("atom_pair_cst_weight",
 		option[ OptionKeys::antibody::design::atom_pair_cst_weight]());
 
-	core::Real dihedral_cst_weight = tag->getOption<core::Real>("dihedral_cst_weight",
+	auto dihedral_cst_weight = tag->getOption<core::Real>("dihedral_cst_weight",
 		option[ OptionKeys::antibody::design::dihedral_cst_weight]());
 
 	//Add any atom pair constraints
@@ -330,7 +330,7 @@ design_protocol_to_string(AntibodyDesignProtocolEnum const design_type){
 }
 
 SeqDesignStrategyEnum
-seq_design_strategy_to_enum(std::string strategy){
+seq_design_strategy_to_enum(std::string const & strategy){
 	std::string option = strategy;
 	boost::to_upper(option);
 
@@ -367,7 +367,7 @@ seq_design_strategy_to_string(SeqDesignStrategyEnum strategy){
 }
 
 std::string
-get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, std::string ab_dock_chains){
+get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, std::string const & ab_dock_chains){
 	vector1<char> chains;
 	for ( core::Size i = 0; i <= ab_dock_chains.length()-1; ++i ) {
 		char ab_chain = ab_dock_chains[i];
@@ -565,8 +565,8 @@ check_cb(core::pose::Pose const & pose, utility::vector1<bool> const & residues)
 std::pair<bool, core::Size>
 check_cb(core::pose::Pose const & pose, protocols::loops::Loops const & loops){
 	std::pair<bool, core::Size> cb = std::make_pair(false, 0);
-	for ( protocols::loops::Loops::const_iterator it = loops.begin(); it != loops.end(); ++it ) {
-		cb = protocols::loops::has_severe_pep_bond_geom_issues(pose, it->cut(), true, true, 1.5, 15, 15);
+	for ( auto const & loop : loops ) {
+		cb = protocols::loops::has_severe_pep_bond_geom_issues(pose, loop.cut(), true, true, 1.5, 15, 15);
 		if ( cb.first == true ) {
 			return cb;
 		}
@@ -704,7 +704,7 @@ get_cdr_set_options(){
 	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	TR << "Reading CDRSetOptions from: " << filename << std::endl;
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_options(cdr, filename));
 	}
 	return options_settings;
@@ -723,7 +723,7 @@ get_cdr_set_options(std::string filename){
 
 	TR << "Reading CDRSetOptions from: " << filename << std::endl;
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_default_and_user_options(cdr, filename));
 
 	}
@@ -739,7 +739,7 @@ get_graft_design_options(){
 	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	TR << "Reading CDRGraftDesignOptions from: " << filename << std::endl;
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_options(cdr, filename));
 
 	}
@@ -757,7 +757,7 @@ get_graft_design_options(std::string filename){
 
 	TR << "Reading CDRGraftDesignOptions from: " << filename << std::endl;
 	for ( core::Size i = 1; i <= core::Size(CDRNameEnum_proto_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_default_and_user_options(cdr, filename));
 	}
 	return options_settings;
@@ -772,7 +772,7 @@ get_seq_design_options(){
 	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	TR << "Reading CDRSeqDesignOptions from: " << filename << std::endl;
 	for ( core::Size i = 1; i <=core::Size(CDRNameEnum_proto_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_options(cdr, filename));
 	}
 	return options_settings;
@@ -789,7 +789,7 @@ get_seq_design_options(std::string filename){
 
 	TR << "Reading CDRSeqDesignOptions from: " << filename << std::endl;
 	for ( core::Size i = 1; i <=core::Size(CDRNameEnum_proto_total); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		options_settings.push_back(parser.parse_default_and_user_options(cdr, filename));
 	}
 

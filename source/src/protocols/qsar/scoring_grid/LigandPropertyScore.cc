@@ -54,10 +54,7 @@ void LigandPropertyScoreCreator::provide_xml_schema( utility::tag::XMLSchemaDefi
 // return "LigandPropertyScore";
 //}
 
-LigandPropertyScore::LigandPropertyScore()
-{
-
-}
+LigandPropertyScore::LigandPropertyScore() = default;
 
 /// @brief Make a copy of the grid, respecting the subclassing.
 GridBaseOP LigandPropertyScore::clone() const {

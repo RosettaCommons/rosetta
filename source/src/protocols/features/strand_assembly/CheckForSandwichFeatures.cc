@@ -204,9 +204,9 @@ cal_min_avg_dis_between_two_sheets_by_cen_res (
 	//float sum_dis = 0.0;
 	//float cal_num = 0.0;
 
-	for ( Size ii=0; ii<vector_of_cen_residues_in_sheet_1.size(); ii++ ) {
-		for ( Size jj=0; jj<vector_of_cen_residues_in_sheet_2.size(); jj++ ) {
-			Real distance = dssp_pose.residue(vector_of_cen_residues_in_sheet_1[ii]).atom("CA").xyz().distance(dssp_pose.residue(vector_of_cen_residues_in_sheet_2[jj]).atom("CA").xyz());
+	for ( unsigned long ii : vector_of_cen_residues_in_sheet_1 ) {
+		for ( unsigned long jj : vector_of_cen_residues_in_sheet_2 ) {
+			Real distance = dssp_pose.residue(ii).atom("CA").xyz().distance(dssp_pose.residue(jj).atom("CA").xyz());
 			//sum_dis = sum_dis + distance;
 			//cal_num = cal_num + 1.0;
 			if ( distance < min_dis ) {
@@ -295,9 +295,9 @@ cal_min_dis_between_two_sheets_by_all_res (
 
 	float min_dis_between_two_sheets_by_all_res = 9999;
 
-	for ( Size ii=0; ii<vector_of_all_residues_in_sheet_1.size(); ii++ ) {
-		for ( Size jj=0; jj<vector_of_all_residues_in_sheet_2.size(); jj++ ) {
-			Real current_distance = dssp_pose.residue(vector_of_all_residues_in_sheet_1[ii]).atom("CA").xyz().distance(dssp_pose.residue(vector_of_all_residues_in_sheet_2[jj]).atom("CA").xyz());
+	for ( unsigned long ii : vector_of_all_residues_in_sheet_1 ) {
+		for ( unsigned long jj : vector_of_all_residues_in_sheet_2 ) {
+			Real current_distance = dssp_pose.residue(ii).atom("CA").xyz().distance(dssp_pose.residue(jj).atom("CA").xyz());
 			if ( current_distance < min_dis_between_two_sheets_by_all_res ) {
 				min_dis_between_two_sheets_by_all_res = current_distance;
 			}
@@ -401,54 +401,54 @@ cal_shortest_dis_between_facing_aro_in_sw (
 				vector_of_aro_residues_in_sheet_2.clear(); // Removes all elements from the vector (which are destroyed)
 				vector_of_aro_residues_in_sheet_2 = get_aro_residues_in_this_sheet(struct_id, db_session, pose, all_distinct_sheet_ids[j]);
 
-				for ( Size ii=0; ii<vector_of_aro_residues_in_sheet_1.size(); ii++ ) {
-					for ( Size jj=0; jj<vector_of_aro_residues_in_sheet_2.size(); jj++ ) {
+				for ( unsigned long ii : vector_of_aro_residues_in_sheet_1 ) {
+					for ( unsigned long jj : vector_of_aro_residues_in_sheet_2 ) {
 						numeric::xyzVector< core::Real > xyz_of_centroid_of_aro_sheet_1;
-						if ( (pose.residue_type(vector_of_aro_residues_in_sheet_1[ii]).name3() == "PHE") || (pose.residue_type(vector_of_aro_residues_in_sheet_1[ii]).name3() == "TYR") ) {
+						if ( (pose.residue_type(ii).name3() == "PHE") || (pose.residue_type(ii).name3() == "TYR") ) {
 							xyz_of_centroid_of_aro_sheet_1.x() =
-								(pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CG ").xyz().x()
-								+ pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CZ ").xyz().x())/2;
+								(pose.residue(ii).atom(" CG ").xyz().x()
+								+ pose.residue(ii).atom(" CZ ").xyz().x())/2;
 
 							xyz_of_centroid_of_aro_sheet_1.y() =
-								(pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CG ").xyz().y()
-								+ pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CZ ").xyz().y())/2;
+								(pose.residue(ii).atom(" CG ").xyz().y()
+								+ pose.residue(ii).atom(" CZ ").xyz().y())/2;
 
 							xyz_of_centroid_of_aro_sheet_1.z() =
-								(pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CG ").xyz().z()
-								+ pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CZ ").xyz().z())/2;
+								(pose.residue(ii).atom(" CG ").xyz().z()
+								+ pose.residue(ii).atom(" CZ ").xyz().z())/2;
 						} else { //(pose.residue_type(vector_of_aro_residues_in_sheet_1[ii]).name3() == "TRP")
 							xyz_of_centroid_of_aro_sheet_1.x() =
-								pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CD2").xyz().x();
+								pose.residue(ii).atom(" CD2").xyz().x();
 
 							xyz_of_centroid_of_aro_sheet_1.y() =
-								pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CD2").xyz().y();
+								pose.residue(ii).atom(" CD2").xyz().y();
 
 							xyz_of_centroid_of_aro_sheet_1.z() =
-								pose.residue(vector_of_aro_residues_in_sheet_1[ii]).atom(" CD2").xyz().z();
+								pose.residue(ii).atom(" CD2").xyz().z();
 						}
 
 						numeric::xyzVector< core::Real > xyz_of_centroid_of_aro_sheet_2;
-						if ( (pose.residue_type(vector_of_aro_residues_in_sheet_2[jj]).name3() == "PHE") || (pose.residue_type(vector_of_aro_residues_in_sheet_2[jj]).name3() == "TYR") ) {
+						if ( (pose.residue_type(jj).name3() == "PHE") || (pose.residue_type(jj).name3() == "TYR") ) {
 							xyz_of_centroid_of_aro_sheet_2.x() =
-								(pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CG ").xyz().x()
-								+ pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CZ ").xyz().x())/2;
+								(pose.residue(jj).atom(" CG ").xyz().x()
+								+ pose.residue(jj).atom(" CZ ").xyz().x())/2;
 
 							xyz_of_centroid_of_aro_sheet_2.y() =
-								(pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CG ").xyz().y()
-								+ pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CZ ").xyz().y())/2;
+								(pose.residue(jj).atom(" CG ").xyz().y()
+								+ pose.residue(jj).atom(" CZ ").xyz().y())/2;
 
 							xyz_of_centroid_of_aro_sheet_2.z() =
-								(pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CG ").xyz().z()
-								+ pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CZ ").xyz().z())/2;
+								(pose.residue(jj).atom(" CG ").xyz().z()
+								+ pose.residue(jj).atom(" CZ ").xyz().z())/2;
 						} else { //(pose.residue_type(vector_of_aro_residues_in_sheet_2[ii]).name3() == "TRP")
 							xyz_of_centroid_of_aro_sheet_2.x() =
-								pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CD2").xyz().x();
+								pose.residue(jj).atom(" CD2").xyz().x();
 
 							xyz_of_centroid_of_aro_sheet_2.y() =
-								pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CD2").xyz().y();
+								pose.residue(jj).atom(" CD2").xyz().y();
 
 							xyz_of_centroid_of_aro_sheet_2.z() =
-								pose.residue(vector_of_aro_residues_in_sheet_2[jj]).atom(" CD2").xyz().z();
+								pose.residue(jj).atom(" CD2").xyz().z();
 						}
 
 						Real distance_between_aro = xyz_of_centroid_of_aro_sheet_1.distance(xyz_of_centroid_of_aro_sheet_2);
@@ -475,7 +475,7 @@ string
 check_canonicalness_of_LR(
 	Size loop_size,
 	bool intra_sheet,
-	string LR)
+	string const & LR)
 {
 	// T, -> true, canonical chiral
 	// F, -> false, non-canonical chiral
@@ -511,8 +511,8 @@ string
 check_canonicalness_of_PA(
 	Size loop_size,
 	bool intra_sheet,
-	string PA_by_preceding_E,
-	string PA_by_following_E,
+	string const & PA_by_preceding_E,
+	string const & PA_by_following_E,
 	Real canocheck_canonicalness_cutoff_)
 {
 	// T, -> true, canonical PA
@@ -621,7 +621,7 @@ string
 check_canonicalness_of_parallel_EE(
 	Size loop_size,
 	bool intra_sheet,
-	string parallel_EE)
+	string const & parallel_EE)
 {
 	// T, -> true, canonical parallel_EE
 	// F, -> false, non-canonical parallel_EE
@@ -668,7 +668,7 @@ check_heading_direction( // exclusively between preceding E and following E
 	Pose & dssp_pose,
 	Size residue_begin,
 	Size residue_end,
-	string check_N_to_C_direction_by_)
+	string const & check_N_to_C_direction_by_)
 {
 	Size preceding_E = residue_begin-1;
 	Size following_E = residue_end+1;
@@ -1270,13 +1270,13 @@ check_whether_sw_is_not_connected_with_continuous_atoms(
 //check_whether_this_pdb_should_be_excluded
 bool
 check_whether_this_pdb_should_be_excluded (
-	string tag){
+	string const & tag){
 	const char* args[] = {"1W8N", "1w8n", "1W8O", "1w8o"};
 	// I need to exclude these since I don't come up with how to correctly extract beta-sandwich from 1W8N
 
 	std::vector<string> to_be_excluded (args, args+4);
-	for ( Size i = 0; i < to_be_excluded.size(); i++ ) {
-		Size found = tag.find(to_be_excluded[i]);
+	for ( const auto & i : to_be_excluded ) {
+		Size found = tag.find(i);
 		//TR << "found: " << found << endl;
 		if ( found != string::npos ) { // referred http://www.cplusplus.com/reference/string/string/find/
 			return true; // this pdb should be excluded, so don't use this pdb
@@ -2832,7 +2832,7 @@ get_segment_id(
 // get_shortest_among_4_vals (simple one with just four parameters)
 Real
 get_shortest_among_4_vals(
-	Real arr_dis_inter_sheet[])
+	const Real arr_dis_inter_sheet[])
 {
 	Real temp_shortest_dis = 9999;
 	for ( Size i=0; i<=3; ++i ) {
@@ -3070,8 +3070,8 @@ utility::vector1<Size>
 get_vector_of_strand_AA_distribution (
 	StructureID struct_id,
 	sessionOP db_session,
-	string heading_direction, // like core_heading, surface_heading
-	string strand_location // like 'edge (strand), 'core (strand)'
+	string const & heading_direction, // like core_heading, surface_heading
+	string const & strand_location // like 'edge (strand), 'core (strand)'
 )
 {
 	string sum_string; // just initial declaration
@@ -3656,8 +3656,8 @@ retrieve_residue_num_of_rkde(
 	StructureID struct_id,
 	sessionOP db_session,
 	Size sw_can_by_sh_id,
-	string dssp_code,
-	string heading_direction)
+	string const & dssp_code,
+	string const & heading_direction)
 {
 	if ( dssp_code == "all_dssp" ) {
 		string select_string =
@@ -3759,7 +3759,7 @@ Size
 round_to_Size(
 	Real x)
 {
-	Size rounded = static_cast <Size> (floor(x+.5));
+	auto rounded = static_cast <Size> (floor(x+.5));
 	return rounded;
 } //round_to_Size
 

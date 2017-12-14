@@ -26,7 +26,7 @@ namespace protocols {
 namespace match {
 namespace upstream {
 
-UpstreamBuilder::~UpstreamBuilder() {}
+UpstreamBuilder::~UpstreamBuilder() = default;
 
 bool UpstreamBuilder::compatible(
 	Hit const & my_hit,
@@ -67,7 +67,7 @@ UpstreamBuilder::set_bb_grid( BumpGridCOP bbgrid )
 	bbgrid_ = bbgrid;
 }
 
-UpstreamResidueProcessor::~UpstreamResidueProcessor() {}
+UpstreamResidueProcessor::~UpstreamResidueProcessor() = default;
 
 
 }

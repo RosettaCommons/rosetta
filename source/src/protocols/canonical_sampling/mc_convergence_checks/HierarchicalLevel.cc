@@ -22,6 +22,7 @@
 #include <protocols/toolbox/DecoySetEvaluation.hh>
 #include <protocols/toolbox/superimpose.hh>
 
+#include <utility>
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.hh>
 #include <utility/exit.hh>
@@ -65,14 +66,14 @@ PoolData::PoolData():
 {}
 
 PoolData::PoolData( Pool_RMSD_OP pool, utility::vector1<core::Size> & address, core::Size nlevels ):
-	pool_(pool),
+	pool_(std::move(pool)),
 	address_(address)
 {
 	setup(nlevels);
 }
 
 PoolData::PoolData( Pool_RMSD_OP pool, Address & address):
-	pool_(pool),
+	pool_(std::move(pool)),
 	address_(address),
 	nlevels_(0)
 {}
@@ -87,9 +88,8 @@ PoolData::setup( core::Size nlevels ){
 void
 HierarchicalLevel::get_addresses_at_level( utility::vector1< Address >& addresses_at_level ) {
 	core::Size num_addresses_at_level = 0;
-	for ( std::list< PoolData >::iterator itr = pool_cache_.begin(), end = pool_cache_.end();
-			itr != end; ++itr ) {
-		Address addr = (*itr).address_;
+	for ( auto & itr : pool_cache_ ) {
+		Address addr = itr.address_;
 		addresses_at_level.push_back( addr );
 		num_addresses_at_level++;
 	}
@@ -110,7 +110,7 @@ HierarchicalLevel::HierarchicalLevel( core::Size maxlevels ):
 	utility::vector1< core::Size >  universal_address( max_levels_ , 0 );
 	universal_address[ 1 ] = 1;
 	Pool_RMSD_OP poolrms( new Pool_RMSD() );
-	pool_cache_.push_back( PoolData( poolrms, universal_address ) );
+	pool_cache_.emplace_back( poolrms, universal_address );
 	num_clusters_in_level_++;
 	radius_ = option[ cluster::K_radius ]()[ level_ ];
 
@@ -123,14 +123,14 @@ HierarchicalLevel::HierarchicalLevel( core::Size maxlevels ):
 }
 
 //filename assumed to specify structures at top-most level
-HierarchicalLevel::HierarchicalLevel( core::Size maxlevels, std::string filename ):
+HierarchicalLevel::HierarchicalLevel( core::Size maxlevels, std::string const & filename ):
 	pool_cache_(), //cache is filled as needed
 	max_cache_size_( 100 ),
 	level_(1),
 	max_levels_( maxlevels ),
 	radius_(),
 	num_clusters_in_level_(0),
-	filename_(filename),
+	filename_( filename ),
 	next_free_address_index_(0)
 {
 	using namespace basic::options;
@@ -139,7 +139,7 @@ HierarchicalLevel::HierarchicalLevel( core::Size maxlevels, std::string filename
 	utility::vector1< core::Size >  universal_address( max_levels_ , 0 );
 	universal_address[ 1 ] = 1;
 	Pool_RMSD_OP poolrms( new Pool_RMSD() );
-	pool_cache_.push_back( PoolData( poolrms, universal_address ) );
+	pool_cache_.emplace_back( poolrms, universal_address );
 	num_clusters_in_level_++;
 	radius_ = option[ cluster::K_radius ]()[ level_ ];
 
@@ -230,7 +230,7 @@ HierarchicalLevel::max_cache_size() {
 
 bool
 HierarchicalLevel::has_next_level(){
-	return ( next_level_ != 0 );
+	return ( next_level_ != nullptr );
 }
 
 //if pool exists on file but not in memory, will not load pool from file
@@ -240,7 +240,7 @@ HierarchicalLevel::find( utility::vector1< core::Size > & address ) {
 	if ( pool_cache_.size() == 0 ) {
 		return pool_cache_.end();
 	}
-	std::list<PoolData>::iterator itr = pool_cache_.begin();
+	auto itr = pool_cache_.begin();
 	while ( itr != pool_cache_.end() ) {
 		if ( equal_addresses( address, (*itr).address_ ) ) {
 			break;
@@ -705,7 +705,7 @@ HierarchicalLevel::evaluate(
 		return next_level_->evaluate( coords, best_decoy, best_rmsd, best_indices, reset_all_levels, load_if_missing_from_cache );
 	}
 	//std::string current_best_decoy="";
-	std::list<PoolData>::iterator addr_itr  = find( best_indices );
+	auto addr_itr  = find( best_indices );
 	PoolData matching_pool;
 	Pool_RMSD_OP matching_pool_ptr;
 	bool element_exists_in_cache = true;
@@ -960,16 +960,16 @@ HierarchicalLevel::add_to_top_level(FArray2D_double& coords, std::string & tag) 
 
 void
 HierarchicalLevel::print_addresses_at_level(){
-	for ( std::list< PoolData >::iterator it = pool_cache_.begin(), end = pool_cache_.end(); it != end; ++it ) {
-		print_address( (*it).address_ );
+	for ( auto & it : pool_cache_ ) {
+		print_address( it.address_ );
 	}
 }
 
 void
 HierarchicalLevel::debug_print_addresses() {
 	if ( TR.visible() ) TR.Debug << "level: " << level_ << " ";
-	for ( std::list<PoolData>::iterator itr = pool_cache_.begin(), end = pool_cache_.end(); itr != end; ++itr ) {
-		Address addr = (*itr).address_;
+	for ( auto & itr : pool_cache_ ) {
+		Address addr = itr.address_;
 		if ( TR.visible() ) {
 			for ( core::Size ii = 1; ii <= addr.size(); ii++ ) {
 				TR.Debug << addr[ ii ] << " ";
@@ -987,10 +987,10 @@ void
 HierarchicalLevel::debug_print_hierarchy(){
 	// runtime_assert( level_ == 1 );
 	if ( TR.visible() ) { TR.Debug << "level: " << level_ << " size of level: " << size() << std::endl; }
-	for ( std::list< PoolData >::iterator itr = pool_cache_.begin(), end = pool_cache_.end(); itr != end; ++itr ) {
-		Pool_RMSD_OP poolop = (*itr).pool_;
+	for ( auto & itr : pool_cache_ ) {
+		Pool_RMSD_OP poolop = itr.pool_;
 		if ( TR.visible() ) {
-			TR.Debug << "pool at address: "; print_address( (*itr).address_ );
+			TR.Debug << "pool at address: "; print_address( itr.address_ );
 			TR.Debug << " expecting: " << poolop->size() << std::endl;
 			for ( core::Size ii = 1; ii <= poolop->size(); ii++ ) {
 				TR.Debug << poolop->get_tag( ii ) << std::endl;
@@ -1006,13 +1006,13 @@ HierarchicalLevel::debug_print_hierarchy(){
 void
 HierarchicalLevel::debug_print_size_per_level() {
 	if ( TR.visible() ) TR.Debug << "size per level: " << level_ << " " << this->size() << " ";
-	for ( std::list< PoolData >::iterator itr = pool_cache_.begin(), end = pool_cache_.end(); itr != end; ++itr ) {
+	for ( auto & itr : pool_cache_ ) {
 		if ( TR.visible() ) {
 			TR.Debug << "address: ";
-			for ( core::Size ii = 1; ii <= (*itr).address_.size(); ii++ ) {
-				TR.Debug << (*itr).address_[ ii ] << " ";
+			for ( core::Size ii = 1; ii <= itr.address_.size(); ii++ ) {
+				TR.Debug << itr.address_[ ii ] << " ";
 			}
-			TR.Debug << ", size: " << (*itr).pool_->size() << " | ";
+			TR.Debug << ", size: " << itr.pool_->size() << " | ";
 			TR.Debug << std::endl;
 		}
 	}
@@ -1117,7 +1117,7 @@ HierarchicalLevel::clear(){
 utility::vector1< core::Size > &
 HierarchicalLevel::address( core::Size index ) {
 	core::Size count = 0;
-	std::list< PoolData >::iterator itr = pool_cache_.begin();
+	auto itr = pool_cache_.begin();
 	while ( count < index ) {
 		++itr;
 	}

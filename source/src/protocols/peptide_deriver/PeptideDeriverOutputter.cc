@@ -21,9 +21,9 @@ static basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverOutputter" );
 namespace protocols {
 namespace peptide_deriver {
 
-PeptideDeriverOutputter::PeptideDeriverOutputter() {}
+PeptideDeriverOutputter::PeptideDeriverOutputter() = default;
 
-PeptideDeriverOutputter::~PeptideDeriverOutputter(){}
+PeptideDeriverOutputter::~PeptideDeriverOutputter()= default;
 
 // helper function: avoid +- signed on zero-values
 core::Real PeptideDeriverOutputter::avoid_negative_zero(core::Real const value, core::Real const threshold) {

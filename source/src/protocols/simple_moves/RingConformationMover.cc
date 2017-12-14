@@ -28,6 +28,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 // Numeric headers
@@ -78,7 +79,7 @@ RingConformationMover::RingConformationMover( RingConformationMover const & obje
 /// @remarks  Movable cyclic residues will generally be a subset of residues in the MoveMap whose nu
 /// torsions are set to true.
 RingConformationMover::RingConformationMover( core::kinematics::MoveMapOP input_movemap ):
-	movemap_( input_movemap )
+	movemap_(std::move( input_movemap ))
 {
 	init();
 }
@@ -199,7 +200,7 @@ RingConformationMover::apply( Pose & input_pose )
 
 	TR << "Applying " << get_name() << " to pose...." << endl;
 
-	core::uint const i( core::uint( numeric::random::rg().uniform() * residue_list_.size() + 1 ) );
+	auto const i( core::uint( numeric::random::rg().uniform() * residue_list_.size() + 1 ) );
 	core::uint const res_num( residue_list_[ i ] );
 	Residue const & res( input_pose.residue( res_num ) );
 

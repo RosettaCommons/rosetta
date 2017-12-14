@@ -90,7 +90,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.MapHotspot" 
 
 MapHotspot::MapHotspot() : protocols::moves::Mover( MapHotspot::mover_name() ) {}
 
-MapHotspot::~MapHotspot() {}
+MapHotspot::~MapHotspot() = default;
 
 /// @details function for minimizing the interface
 void
@@ -100,7 +100,7 @@ MapHotspot::MinimizeHotspots( core::pose::Pose & pose ){
 
 	core::Size const num_jump( pose.num_jump() );
 	ScoreFunctionCOP scorefxn( minimization_scorefxns_[ num_jump ] );
-	if ( scorefxn == 0 ) {
+	if ( scorefxn == nullptr ) {
 		TR<<"skipping minimization b/c no scorefxn was defined"<<std::endl;
 		return;
 	}
@@ -223,16 +223,16 @@ MapHotspot::GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose &
 
 		core::pose::Pose const saved_pose_2( curr_pose );
 		core::Size rotset_size( 0 ); //ugly but I don't know how to find the size of cacheable data in rotset
-		for ( Rotamers::const_iterator rot_it = rotset->begin(); rot_it!=rotset->end(); ++rot_it, ++rotset_size ) {};
+		for ( auto rot_it = rotset->begin(); rot_it!=rotset->end(); ++rot_it, ++rotset_size ) {};
 		TR<<"Iterating over "<<rotset_size<<" rotamers for residue "<<residue_type1<<" in jump #"<<jump_number<<std::endl;
 		core::Size curr_rotamer_num( 1 );
 		core::pose::Pose best_pose;
 		core::Real lowest_energy( 100000 );
 		ScoreFunctionCOP scorefxn( get_score_function() );
 		simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100/*threshold*/ );
-		for ( Rotamers::const_iterator rot_it = rotset->begin(); rot_it!=rotset->end(); ++rot_it ) {
+		for ( auto const & rot_it : *rotset ) {
 			TR<<"Current rotamer: "<<curr_rotamer_num++<<'\n';
-			core::conformation::ResidueCOP rot( *rot_it );
+			core::conformation::ResidueCOP rot( rot_it );
 			curr_pose.replace_residue( hotspot_resnum, *rot, false );
 			jump_movers_[ jump_number ]->apply( curr_pose );
 			MinimizeHotspots( curr_pose );
@@ -290,7 +290,7 @@ MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 {
 	using namespace utility::tag;
 
-	clash_check_ = tag->getOption<bool>("clash_check", 0 );
+	clash_check_ = tag->getOption<bool>("clash_check", false );
 	file_name_prefix_ = tag->getOption< std::string >( "file_name_prefix", "map_hs" );
 
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
@@ -300,19 +300,19 @@ MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 			utility::vector0< TagCOP > const & jump_tags( btag->getTags() );
 			runtime_assert( jump_tags.size() == pose.num_jump() );
 			for ( TagCOP j_tag : jump_tags ) {
-				core::Size const jump( j_tag->getOption< core::Size >( "jump" ) );
+				auto const jump( j_tag->getOption< core::Size >( "jump" ) );
 				bool const jump_fine( jump <= pose.num_jump() );
 				if ( !jump_fine ) TR.Error<<"Jump "<<jump<<" is larger than the number of jumps in pose="<<pose.num_jump()<<std::endl;
 				runtime_assert( jump_fine );
 				explosion_[ jump ] = j_tag->getOption<core::Size>( "explosion", 0 );
 				std::string const filter_name( j_tag->getOption<std::string>( "filter_name", "true_filter" ));
-				protocols::filters::Filters_map::const_iterator find_filter( filters.find( filter_name ));
+				auto find_filter( filters.find( filter_name ));
 				bool const filter_found( find_filter != filters.end() );
 				if ( !filter_found ) TR.Error<<"Filter "<<filter_name<<" not found in MapHotspot parsing"<<std::endl;
 				runtime_assert( filter_found );
 				jump_filters_[ jump ] = find_filter->second;
 				std::string const mover_name( j_tag->getOption< std::string >( "mover_name", "null" ) );
-				protocols::moves::Movers_map::const_iterator find_mover( movers.find( mover_name ) );
+				auto find_mover( movers.find( mover_name ) );
 				bool const mover_found( find_mover != movers.end() );
 				if ( !mover_found ) TR.Error<<"Mover "<<mover_name<<" not found in MapHotspot parsing"<<std::endl;
 				runtime_assert( mover_found );
@@ -322,7 +322,7 @@ MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 				std::string const scorefxn_name( rosetta_scripts::get_score_function_name(j_tag, "scorefxn_minimize") );
 				if ( !data.has( "scorefxns", scorefxn_name ) ) {
 					TR<<"Scorefxn "<<scorefxn_name<<" not found. Will not minimize sidechain.";
-					minimization_scorefxns_[ jump ] = 0;
+					minimization_scorefxns_[ jump ] = nullptr;
 				} else {
 					minimization_scorefxns_[ jump ] = rosetta_scripts::parse_score_function(j_tag, "scorefxn_minimize", data);
 				}

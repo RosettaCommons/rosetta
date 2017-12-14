@@ -94,7 +94,7 @@ get_enzdes_observer(
 	using namespace core::pose::datacache;
 
 	//const access: if cacheable observer hasn't been set, return NULL pointer
-	if ( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER ) ) return NULL;
+	if ( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER ) ) return nullptr;
 
 	CacheableObserverCOP enz_obs = pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER );
 	//std::cout << " returning const enzdes observer with val " << enz_obs << std::endl;
@@ -124,7 +124,7 @@ EnzdesCacheableObserver::EnzdesCacheableObserver( EnzdesCacheableObserver const 
 	if ( other.seq_recovery_cache_ ) seq_recovery_cache_ = EnzdesSeqRecoveryCacheOP( new EnzdesSeqRecoveryCache( *(other.seq_recovery_cache_) ) );
 }
 
-EnzdesCacheableObserver::~EnzdesCacheableObserver(){}
+EnzdesCacheableObserver::~EnzdesCacheableObserver()= default;
 
 core::pose::datacache::CacheableObserverOP
 EnzdesCacheableObserver::clone()
@@ -171,9 +171,8 @@ EnzdesCacheableObserver::on_length_change( core::conformation::signals::LengthEv
 	//will be null pointers, so the vector might change size
 	if ( favor_native_constraints_.size() > 0 ) {
 		utility::vector1< core::scoring::constraints::ConstraintCOP > new_favor_native_csts;
-		for ( core::scoring::constraints::ConstraintCOPs::iterator cst_it = favor_native_constraints_.begin();
-				cst_it != favor_native_constraints_.end(); ++cst_it ) {
-			core::scoring::constraints::ConstraintCOP remappedcst = (*cst_it)->remap_resid( smap );
+		for ( auto & favor_native_constraint : favor_native_constraints_ ) {
+			core::scoring::constraints::ConstraintCOP remappedcst = favor_native_constraint->remap_resid( smap );
 			if ( remappedcst ) new_favor_native_csts.push_back( remappedcst );
 		}
 		favor_native_constraints_.clear();
@@ -230,7 +229,7 @@ void
 EnzdesCacheableObserver::erase_rigid_body_confs_for_lig(
 	core::Size seqpos )
 {
-	std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > >::iterator conf_it( lig_rigid_body_confs_.find( seqpos ) );
+	auto conf_it( lig_rigid_body_confs_.find( seqpos ) );
 	if ( conf_it != lig_rigid_body_confs_.end() ) lig_rigid_body_confs_.erase( conf_it );
 }
 

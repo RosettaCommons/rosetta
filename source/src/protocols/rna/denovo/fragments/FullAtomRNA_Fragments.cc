@@ -437,7 +437,7 @@ FullAtomRNA_Fragments::read_vall_torsions( std::string const & filename ){
 	///////////////////////////////////////////////////////////////
 	//A bunch of vectors for temporary readin.
 	//At the end, transfer all the data to FArrays for faster access.
-	typedef numeric::xyzVector< Real > Vector;
+	using Vector = numeric::xyzVector<Real>;
 	utility::vector1< utility::vector1< Real > > vall_torsions;
 	utility::vector1< utility::vector1< Vector > > vall_non_main_chain_sugar_coords;
 	utility::vector1< char > vall_sequence;

@@ -62,7 +62,7 @@
 namespace protocols {
 namespace evolution {
 
-typedef utility::vector1< bool > bools;
+using bools = utility::vector1<bool>;
 using namespace std;
 using namespace core::scoring;
 
@@ -182,8 +182,8 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 	std::string const pose_ss = AlignmentCleanerTools::short_ss_loop_filter( dssp.get_dssp_secstruct(), min_loop_length );
 	std::string pose_ss_aln;
 	core::Size ss_counter = 0;
-	for ( core::Size i = 0; i < target_sequence.length(); ++i ) {
-		if ( target_sequence[i] == '-' || ss_counter > pose_ss.size() ) pose_ss_aln += '-';
+	for ( char i : target_sequence ) {
+		if ( i == '-' || ss_counter > pose_ss.size() ) pose_ss_aln += '-';
 		else {
 			pose_ss_aln += pose_ss[ss_counter];
 			++ss_counter;
@@ -401,7 +401,7 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 						egraph_it != pose.energies().energy_graph().get_node( pose_resi )->edge_list_end(); ++egraph_it ) {
 					core::Size const other_pose_res = (*egraph_it)->get_other_ind( pose_resi );
 					core::Size const other_res_aln = pose2aln[other_pose_res];
-					EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+					auto const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 					EnergyMap const cur_weights = pose.energies().weights();
 					core::Real const resresE( Eedge->dot_abs( cur_weights ) );
 					bool const is_not_res_nbr = ( resresE < nbr_e_threshold() );
@@ -532,7 +532,7 @@ AlignmentGapInserter::apply( core::pose::Pose const & p ) const {
 			cleanedAlignFileNoGaps.close();
 		}
 	}
-	return( 1 );
+	return( true );
 }
 
 void

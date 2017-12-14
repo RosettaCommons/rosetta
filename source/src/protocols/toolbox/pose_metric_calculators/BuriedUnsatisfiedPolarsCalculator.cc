@@ -50,6 +50,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/stream_util.hh>
 #include <utility/string_util.hh>
@@ -88,8 +89,8 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
-	std::string sasa_calc,
-	std::string hbond_calc,
+	std::string const & sasa_calc,
+	std::string const & hbond_calc,
 	core::Real burial_cutoff
 ) : all_bur_unsat_polars_( 0 ),
 	special_region_bur_unsat_polars_(0),
@@ -106,8 +107,8 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 
 
 BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
-	std::string sasa_calc,
-	std::string hbond_calc,
+	std::string const & sasa_calc,
+	std::string const & hbond_calc,
 	std::set< core::Size > const & special_region,
 	core::Real burial_cutoff
 ) : all_bur_unsat_polars_(0),

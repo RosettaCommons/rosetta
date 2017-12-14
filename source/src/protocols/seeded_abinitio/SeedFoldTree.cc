@@ -305,7 +305,7 @@ SeedFoldTree::best_by_ala_scan( Size start, Size end, pose::PoseOP & ts_pose ){
 	TR << "tspose: " << ts_pose->size() <<std::endl;
 	TR <<"----------alanine scanning to identify the best jump atom in seed  ------------"<<std::endl;
 	protocols::simple_filters::AlaScan ala_scan;
-	ala_scan.repack( 0 );
+	ala_scan.repack( false );
 	ala_scan.repeats( 1 );
 	ala_scan.jump( 1 );
 	ala_scan.scorefxn( scorefxn() );
@@ -727,7 +727,7 @@ SeedFoldTree::parse_my_tag( TagCOP const tag,
 
 	TR<<"SeedFoldTree has been invoked"<<std::endl;
 
-	ddg_based_ = tag->getOption< bool >( "ddG_based", 0 );
+	ddg_based_ = tag->getOption< bool >( "ddG_based", false );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 
 	//parsing branch tags
@@ -749,11 +749,11 @@ SeedFoldTree::parse_my_tag( TagCOP const tag,
 
 		if ( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 
-			core::Size const begin( btag->getOption<core::Size>( "begin", 0 ) );
-			core::Size const end( btag->getOption<core::Size>( "end", 0 ) );
+			auto const begin( btag->getOption<core::Size>( "begin", 0 ) );
+			auto const end( btag->getOption<core::Size>( "end", 0 ) );
 			all_seeds_.add_loop( begin , end , 0, 0, false );
 			if ( btag->hasOption( "anchor" ) ) {
-				Size anchor_res = btag->getOption< core::Size >("anchor", 0 );
+				auto anchor_res = btag->getOption< core::Size >("anchor", 0 );
 				TR<<"anchor residue: " << anchor_res << std::endl;
 				anchors_.push_back( anchor_res );
 				anchor_specified_ = true;

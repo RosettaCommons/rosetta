@@ -18,6 +18,7 @@
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // utility headers
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 
@@ -40,7 +41,7 @@
 static basic::Tracer TR( "protocols.topology.HelixPairing" );
 
 using namespace core;
-typedef std::string String;
+using String = std::string;
 
 namespace protocols {
 namespace fldsgn {
@@ -119,7 +120,7 @@ HelixPairing::HelixPairing( HelixPairing const & hp ) :
 {}
 
 /// @brief default destructor
-HelixPairing::~HelixPairing(){}
+HelixPairing::~HelixPairing()= default;
 
 /// @brief clone this object
 HelixPairingOP HelixPairing::clone()
@@ -255,7 +256,7 @@ HelixPairingSet::HelixPairingSet( HelixPairingSet const & s ):
 {}
 
 /// @brief destructor
-HelixPairingSet::~HelixPairingSet(){}
+HelixPairingSet::~HelixPairingSet()= default;
 
 /// @brief clone this object
 HelixPairingSetOP
@@ -271,8 +272,8 @@ std::ostream & operator<<( std::ostream & out, const HelixPairingSet &s )
 	out << "# " << s.name() << std::endl;
 	out << "# name distance cross_angle align_angle " << std::endl;
 	HelixPairings const & hpairs( s.helix_pairings() );
-	for ( HelixPairings::const_iterator iter = hpairs.begin(); iter != hpairs.end(); ++iter ) {
-		out << "# " << (**iter) << std::endl;
+	for ( auto const & hpair : hpairs ) {
+		out << "# " << (*hpair) << std::endl;
 	}
 	return out;
 }
@@ -319,7 +320,7 @@ HelixPairingSet::helix_pairing( Size const h1, Size const h2 )
 	if ( h1 <= num_helices_ && h2 <= num_helices_ ) {
 		return map_helix_pairings_[ h1 ][ h2 ];
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -368,7 +369,7 @@ void HelixPairingSet::create_map_helix_pairings()
 	for ( Size i=1; i<=num_helices_; i++ ) {
 		map_helix_pairings_[i].resize( num_helices_ );
 		for ( Size j=1; j<=num_helices_; j++ ) {
-			map_helix_pairings_[i][j] = 0;
+			map_helix_pairings_[i][j] = nullptr;
 		}
 	}
 

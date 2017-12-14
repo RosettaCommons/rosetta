@@ -67,7 +67,7 @@ SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose ) {
 	using namespace basic::options;
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	SymSlideInfo const & slide_info( symm_conf.Symmetry_Info()->get_slide_info() );

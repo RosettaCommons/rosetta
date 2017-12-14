@@ -27,7 +27,7 @@ ResidueChainVectorOption::copy_from( Option const & other )
 {
 	debug_assert( dynamic_cast< ResidueChainVectorOption const * > ( & other ));
 
-	ResidueChainVectorOption const & rcvect_opt_other =
+	auto const & rcvect_opt_other =
 		dynamic_cast< ResidueChainVectorOption const & > ( other );
 
 	Super::operator = ( rcvect_opt_other ); // rely on parent's assignment operator

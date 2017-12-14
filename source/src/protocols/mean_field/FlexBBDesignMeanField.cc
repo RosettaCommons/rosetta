@@ -77,7 +77,7 @@ FlexBBDesignMeanField::FlexBBDesignMeanField( Size option,
 }
 
 // Destructor
-FlexBBDesignMeanField::~FlexBBDesignMeanField() {}
+FlexBBDesignMeanField::~FlexBBDesignMeanField() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////

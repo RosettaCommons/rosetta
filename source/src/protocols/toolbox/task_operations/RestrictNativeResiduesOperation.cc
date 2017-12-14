@@ -70,13 +70,13 @@ RestrictNativeResiduesOperation::RestrictNativeResiduesOperation():
 	TaskOperation(),
 	reference_pose_( /* NULL */ ),
 	verbose_( false ),
-	prevent_repacking_( 0 ),
-	invert_( 0 )
+	prevent_repacking_( false ),
+	invert_( false )
 {
 }
 
 /// @brief destructor
-RestrictNativeResiduesOperation::~RestrictNativeResiduesOperation() {}
+RestrictNativeResiduesOperation::~RestrictNativeResiduesOperation() = default;
 
 
 /// @brief clone
@@ -132,7 +132,7 @@ RestrictNativeResiduesOperation::prevent_repacking( bool const prev )
 void
 RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) const
 {
-	runtime_assert( reference_pose() != 0 );
+	runtime_assert( reference_pose() != nullptr );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
 	if ( core::pose::symmetry::is_symmetric( *reference_pose() ) ) {
@@ -217,8 +217,8 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 void
 RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 {
-	verbose( tag->getOption< bool >( "verbose", 0 ) );
-	prevent_repacking( tag->getOption< bool >( "prevent_repacking", 0 ) );
+	verbose( tag->getOption< bool >( "verbose", false ) );
+	prevent_repacking( tag->getOption< bool >( "prevent_repacking", false ) );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

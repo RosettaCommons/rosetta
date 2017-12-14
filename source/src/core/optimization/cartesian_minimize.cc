@@ -85,7 +85,7 @@ cartesian_dfunc(
 	//fpd  scale derivatives for symmetry
 	core::Real scale = 1.0;
 	if ( pose::symmetry::is_symmetric( pose ) ) {
-		conformation::symmetry::SymmetricConformation & symm_conf (
+		auto & symm_conf (
 			dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		scale = symm_info->score_multiply_factor();
@@ -131,7 +131,7 @@ cartesian_collect_atompairE_deriv(
 	for ( utility::graph::Node::EdgeListConstIter
 			edgeit = mingraph->const_edge_list_begin(), edgeit_end = mingraph->const_edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
-		MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+		auto const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 		Size const rsd1ind = minedge.get_first_node_ind();
 		Size const rsd2ind = minedge.get_second_node_ind();
 		conformation::Residue const & rsd1( pose.residue( rsd1ind ));
@@ -146,14 +146,14 @@ cartesian_collect_atompairE_deriv(
 
 	// if we're symmetric loop over other edges
 	if ( pose::symmetry::is_symmetric( pose ) ) {
-		SymmetricEnergies const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
+		auto const & symm_energies( dynamic_cast< SymmetricEnergies const & > (pose.energies()) );
 		MinimizationGraphCOP dmingraph = symm_energies.derivative_graph();
 
 		/// 2b. eval inter-residue derivatives from derivative minimization graph
 		for ( utility::graph::Node::EdgeListConstIter
 				edgeit = dmingraph->const_edge_list_begin(), edgeit_end = dmingraph->const_edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
-			MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+			auto const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 			Size const rsd1ind = minedge.get_first_node_ind();
 			Size const rsd2ind = minedge.get_second_node_ind();
 			conformation::Residue const & rsd1( pose.residue( rsd1ind ));

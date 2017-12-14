@@ -43,7 +43,7 @@ namespace func {
 
 using namespace core::scoring::constraints;
 
-SOGFunc_Impl::~SOGFunc_Impl() {}
+SOGFunc_Impl::~SOGFunc_Impl() = default;
 
 void
 SOGFunc_Impl::read_data( std::istream & in ) {
@@ -148,7 +148,7 @@ SOGFunc_Impl::get_alt_score_( Real const x ) const {
 
 Real SOGFunc_Impl::prob_sum_of_gaussians( Real const x ) const {
 	Real score( 0.0 );
-	for ( utility::vector1< Real >::const_iterator
+	for ( auto
 			w = weights_.begin(), w_end = weights_.end(),
 			m = means_.begin(), m_end = means_.end(),
 			s = sdevs_.begin(), s_end = sdevs_.end(); // iterators

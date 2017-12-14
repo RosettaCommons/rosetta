@@ -322,9 +322,7 @@ process_for_motifs(
 				std::string motif_name = pose.residue_type( prot_pos ).name3() + ObjexxFCL::string_of( prot_pos_pdb ) + ObjexxFCL::string_of( prot_pos_chain) + delimiter +  pose.residue_type( dna_pos ).name1() + ObjexxFCL::string_of( dna_pos_pdb ) + ObjexxFCL::string_of( dna_pos_chain ) + delimiter + pdb_prefix;
 				motif.store_remark( motif_name );
 
-				for ( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motifs.begin(), end_itr = motifs.end();
-						motifcop_itr != end_itr; ++motifcop_itr ) {
-					protocols::motifs::MotifCOP motifcop( *motifcop_itr );
+				for ( auto motifcop : motifs ) {
 					if ( motifcop->restype_name1() != motif.restype_name1() ) continue;
 					if ( motifcop->restype_name2() != motif.restype_name2() ) continue;
 					motifcop->place_residue( *protres, *dnares2 );
@@ -367,9 +365,7 @@ process_file_list()
 
 	if ( motif_library_previous.nmotifs() > 0 ) {
 		TR << "Adding motifs from a previously made library" << std::endl;
-		for ( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motif_library_previous.begin(), end_itr = motif_library_previous.end();
-				motifcop_itr != end_itr; ++motifcop_itr ) {
-			protocols::motifs::MotifCOP motifcop( *motifcop_itr );
+		for ( auto motifcop : motif_library_previous ) {
 			motifs.add_to_library( *motifcop );
 			motif_output_file << *motifcop;
 		}

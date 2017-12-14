@@ -47,10 +47,10 @@ BuildPosition::BuildPosition(
 BuildPosition::BuildPosition(
 	Size const seqpos,
 	utility::vector1< Size > const & target_positions,
-	std::set< std::string >  allowed_types
+	std::set< std::string > const & allowed_types
 ) : seqpos_( seqpos ),
 	target_positions_( target_positions ),
-	allowed_types_(std::move( allowed_types )),
+	allowed_types_( allowed_types ),
 	best_rotamers_(/* 0 */),
 	best_motifs_(/* 0 */),
 	best_motifhits_(/* 0 */)

@@ -84,7 +84,7 @@ SelectByDeltaScoreOperation::SelectByDeltaScoreOperation() :
 {}
 
 /// @brief destructor
-SelectByDeltaScoreOperation::~SelectByDeltaScoreOperation(){}
+SelectByDeltaScoreOperation::~SelectByDeltaScoreOperation()= default;
 
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP

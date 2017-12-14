@@ -119,13 +119,7 @@ LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( etable::Etable const & etable_in
 }
 
 ////////////////////////////////////////////////
-LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( LK_PolarNonPolarEnergy const & src ):
-	parent( src ),
-	etable_evaluator_( src.etable_evaluator_ ),
-	safe_max_dis2_( src.safe_max_dis2_ ),
-	max_dis_( src.max_dis_ ),
-	verbose_( src.verbose_ )
-{}
+LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( LK_PolarNonPolarEnergy const & /*src*/ ) = default;
 
 
 void
@@ -608,7 +602,7 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
 
 
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
+	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
 	Size m;
@@ -903,9 +897,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 	Vector f1;
 	Vector f2;
 
-	for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(),
-			it2e=nbrs.end(); it2 != it2e; ++it2 ) {
-		scoring::AtomNeighbor const & nbr( *it2 );
+	for ( auto const & nbr : nbrs ) {
 		Size const j( nbr.rsd() );
 		if ( i == j ) continue;
 		if ( pos1_fixed && domain_map(i) == domain_map(j) ) continue;

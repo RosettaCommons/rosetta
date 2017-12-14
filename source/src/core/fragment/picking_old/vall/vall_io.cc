@@ -69,7 +69,7 @@ void vall_library_from_file( std::string const & filename, VallLibrary & library
 
 	TR << "Reading Vall library from " << filename << " ... " << std::endl;
 
-	time_t time_start = time( NULL );
+	time_t time_start = time( nullptr );
 
 	std::string prior_id;
 	Size prior_resi;
@@ -117,7 +117,7 @@ void vall_library_from_file( std::string const & filename, VallLibrary & library
 		library.tighten_memory(); // books only
 	}
 
-	time_t time_end = time( NULL );
+	time_t time_end = time( nullptr );
 
 	TR << "... done.  Read " << n_lines << " lines.  Time elapsed: " << ( time_end - time_start ) << " seconds." << std::endl;
 	TR << "Prior library contained " << prior_library_size << " sections totaling " << prior_n_residues << " residues." << std::endl;

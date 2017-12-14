@@ -217,7 +217,7 @@ RemodelMover::RemodelMover() :
 	rosetta_scripts_min_disulfides_ = 1;
 	rosetta_scripts_max_disulfides_ = 1;
 	rosetta_scripts_min_loop_ = 1;
-	last_input_pose_ = NULL;
+	last_input_pose_ = nullptr;
 	rosetta_scripts_ = false;
 	relax_bb_for_disulf_ = false;
 	use_match_rt_ = true;
@@ -275,7 +275,7 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 /// @brief
 /// Default destructor. Does this need to free the VarLengthBuild memory?
 ///
-RemodelMover::~RemodelMover() {}
+RemodelMover::~RemodelMover() = default;
 
 ///
 /// @brief
@@ -405,7 +405,7 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 	if ( disulfides_formed.size() < max_disulfides ) {
 
 		//select one primary new disulfide to be added
-		for ( utility::vector1< std::pair< Size, Size > >::iterator new_disulfide = disulfides_possible.begin(), end = disulfides_possible.end();
+		for ( auto new_disulfide = disulfides_possible.begin(), end = disulfides_possible.end();
 				new_disulfide != end;
 				++new_disulfide ) {
 
@@ -418,7 +418,7 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 			utility::vector1< std::pair<Size,Size> >  disulfides_to_be_added;
 
 			//identify new secondary disulfides which do not clash with the primary
-			utility::vector1< std::pair< Size, Size > >::iterator potential_further_disulfide = new_disulfide;
+			auto potential_further_disulfide = new_disulfide;
 			for ( ++potential_further_disulfide; potential_further_disulfide != end;
 					++potential_further_disulfide ) {
 
@@ -437,10 +437,8 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 				utility::vector1< utility::vector1< std::pair<Size,Size> > > new_disulfide_configurations =
 					recursive_multiple_disulfide_former(new_disulfides_formed, disulfides_to_be_added, max_disulfides);
 
-				for ( utility::vector1< utility::vector1< std::pair<Size,Size> > >::iterator new_configuration = new_disulfide_configurations.begin(), ndcend = new_disulfide_configurations.end();
-						new_configuration != ndcend;
-						++new_configuration ) {
-					final_configurations.push_back(*new_configuration);
+				for ( auto & new_disulfide_configuration : new_disulfide_configurations ) {
+					final_configurations.push_back(new_disulfide_configuration);
 
 				}
 			} //end adding new disulfides recursively AFTER the first selected new one
@@ -873,9 +871,9 @@ void RemodelMover::apply( Pose & pose ) {
 				//safety
 				//pose.remove_constraints();
 				//wipe out cst_cache
-				toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
+				toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( nullptr );
 				//wipe out observer too
-				pose.observer_cache().set( pose::datacache::CacheableObserverType::ENZDES_OBSERVER, NULL , false);
+				pose.observer_cache().set( pose::datacache::CacheableObserverType::ENZDES_OBSERVER, nullptr , false);
 
 				//cstOP->remove_constraints_from_pose(pose,true /*keep covalent*/, false /*fail if missing*/);
 
@@ -921,15 +919,13 @@ void RemodelMover::apply( Pose & pose ) {
 					recursive_multiple_disulfide_former(empty_disulfide_list, disulf_partners, rosetta_scripts_max_disulfides_);
 
 				//iterate over disulfide configurations instead of over possible disulfides
-				for ( utility::vector1< utility::vector1< std::pair<Size,Size> > >::iterator ds_config = disulfide_configurations.begin();
-						ds_config != disulfide_configurations.end();
-						++ds_config ) {
-					if ( (*ds_config).size() >= rosetta_scripts_min_disulfides_ && (*ds_config).size() <= rosetta_scripts_max_disulfides_ ) {
+				for ( auto & disulfide_configuration : disulfide_configurations ) {
+					if ( disulfide_configuration.size() >= rosetta_scripts_min_disulfides_ && disulfide_configuration.size() <= rosetta_scripts_max_disulfides_ ) {
 
 						//form all the disulfides in the disulfide configuration
 						TR << "Building disulfide configuration ";
-						for ( utility::vector1< std::pair<Size,Size> >::iterator my_ds = (*ds_config).begin(); my_ds != (*ds_config).end(); ++my_ds ) {
-							TR << (*my_ds).first << "-" << (*my_ds).second << " ";
+						for ( auto & my_ds : disulfide_configuration ) {
+							TR << my_ds.first << "-" << my_ds.second << " ";
 						}
 						TR << std::endl;
 
@@ -942,14 +938,14 @@ void RemodelMover::apply( Pose & pose ) {
 
 						if ( !rosetta_scripts_fast_disulfide_ ) {
 							//original way of doing things, design is included through designMover.apply
-							designMover.make_disulfide( disulf_copy_pose, *ds_config, combined_mm );
+							designMover.make_disulfide( disulf_copy_pose, disulfide_configuration, combined_mm );
 							designMover.apply( disulf_copy_pose );
 						} else {
 							//fast way of doing things, assumes design later in a rosetta script, no need to do any now.
 							//designMover.apply is not called.
 							//kinematics::MoveMapOP freeze_bb_combined_mm = new kinematics::MoveMap(*combined_mm);
 							//(*freeze_bb_combined_mm).set_bb(false);
-							designMover.make_disulfide_fast( disulf_copy_pose, *ds_config);//, freeze_bb_combined_mm );
+							designMover.make_disulfide_fast( disulf_copy_pose, disulfide_configuration);//, freeze_bb_combined_mm );
 							//designMover.apply( disulf_copy_pose );
 						}
 
@@ -1170,7 +1166,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 		TR << "clustered poses count: " << results.size() << std::endl;
 
-		for ( std::vector< pose::PoseOP >::iterator it = results.begin(), end= results.end(); it!= end; ++it ) {
+		for ( auto it = results.begin(), end= results.end(); it!= end; ++it ) {
 
 			TR << "clustered poses count: " << results.size() << std::endl;
 
@@ -1440,8 +1436,8 @@ bool RemodelMover::centroid_build( Pose & pose, protocols::forge::build::BuildMa
 
 			bool denovo = true;
 			//find out if it's actually denovo
-			for ( int i = 0, ie = (int)remodel_data_.blueprint.size(); i < ie; i++ ) {
-				if ( remodel_data_.blueprint[i].sstype == "." ) { //if anywhere hits this assignment, not de novo
+			for ( auto & i : remodel_data_.blueprint ) {
+				if ( i.sstype == "." ) { //if anywhere hits this assignment, not de novo
 					denovo = false;
 				}
 			}
@@ -1545,9 +1541,9 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	if ( !working_model_.abego.empty() ) {
 		//the following block simply packages the string to feed to vlb
 		utility::vector1<std::string> abego_vec;
-		for ( Size i = 0; i < working_model_.abego.length(); i++ ) {
+		for ( char i : working_model_.abego ) {
 			std::string buffer;
-			buffer.push_back(working_model_.abego[i]);
+			buffer.push_back(i);
 			abego_vec.push_back(buffer);
 		}
 		vlb_->set_abego(abego_vec);
@@ -1583,8 +1579,8 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 		pose.energies().clear();
 		bool denovo = true;
 		//have to loop to identify denovo case
-		for ( int i = 0, ie = (int)remodel_data_.blueprint.size(); i < ie; i++ ) {
-			if ( remodel_data_.blueprint[i].sstype == "." ) { //if anywhere hits this assignment, not de novo
+		for ( auto & i : remodel_data_.blueprint ) {
+			if ( i.sstype == "." ) { //if anywhere hits this assignment, not de novo
 				denovo = false;
 			}
 		}
@@ -2122,7 +2118,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 	// evaluate all chainbreaks using linear chainbreak
 	bool cbreaks_pass = true;
-	for ( loops::Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
+	for ( auto l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = forge::methods::linear_chainbreak( pose, l->cut() );
 			TR << "design_refine: final chainbreak = " << c  << " at " << l->cut() << std::endl;
@@ -2225,7 +2221,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 	Real sum_sd_archive2native=0;
 	Size atom_count = 0;
 
-	for ( loops::Loops::iterator it = confirmation_loops->v_begin(), end = confirmation_loops->v_end(); it!=end; ++it ) {
+	for ( auto it = confirmation_loops->v_begin(), end = confirmation_loops->v_end(); it!=end; ++it ) {
 		for ( Size i = it->start(); i <= it->stop(); ++i ) {
 			Real dist_squared = ( pose.residue(i).xyz( "CA" ) - archive_pose.residue(i).xyz( "CA" ) ).length_squared();
 			Real dist_squared_native = ( pose.residue(i).xyz( "CA" ) - native_pose_.residue(i).xyz( "CA" ) ).length_squared();
@@ -2393,8 +2389,8 @@ utility::vector1< bool > const & RemodelMover::allowed_surface_aa() {
 	static String surface_aa = "ADEGHIKLMNPQRSTV";
 	static utility::vector1< bool > v( 20, false );
 
-	for ( Size i = 0, ie = surface_aa.length(); i < ie; ++i ) {
-		v[ aa_from_oneletter_code( surface_aa.at( i ) ) ] = true;
+	for ( char i : surface_aa ) {
+		v[ aa_from_oneletter_code( i ) ] = true;
 	}
 
 	return v;

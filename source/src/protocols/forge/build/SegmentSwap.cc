@@ -66,16 +66,11 @@ SegmentSwap::SegmentSwap(
 
 
 /// @brief copy constructor
-SegmentSwap::SegmentSwap( SegmentSwap const & rval ) :
-	Super( rval ),
-	interval_( rval.interval_ ),
-	swap_in_movemap_( rval.swap_in_movemap_ ),
-	swap_in_( rval.swap_in_ )
-{}
+SegmentSwap::SegmentSwap( SegmentSwap const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-SegmentSwap::~SegmentSwap() {}
+SegmentSwap::~SegmentSwap() = default;
 
 
 /// @brief copy assignment
@@ -174,8 +169,8 @@ SegmentSwap::MoveMap SegmentSwap::movemap() const {
 	MoveMap mm;
 
 	Positions const newp = new_positions();
-	for ( Positions::const_iterator i = newp.begin(), ie = newp.end(); i != ie; ++i ) {
-		mm.set_bb( *i, false );
+	for ( unsigned long i : newp ) {
+		mm.set_bb( i, false );
 	}
 
 	return mm;
@@ -330,9 +325,9 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 
 	// copy pdb info if it exists; PDBInfo should always be
 	// obsolete after leaving modify_impl()
-	if ( swap_in_.pdb_info().get() != NULL ) {
+	if ( swap_in_.pdb_info().get() != nullptr ) {
 
-		if ( pose.pdb_info().get() == NULL ) {
+		if ( pose.pdb_info().get() == nullptr ) {
 			pose.pdb_info( PDBInfoOP( new PDBInfo( pose ) ) );
 		}
 

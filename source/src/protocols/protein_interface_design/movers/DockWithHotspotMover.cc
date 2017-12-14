@@ -96,12 +96,12 @@ DockWithHotspotMover::DockWithHotspotMover() :
 {
 }
 
-DockWithHotspotMover::~DockWithHotspotMover() {}
+DockWithHotspotMover::~DockWithHotspotMover() = default;
 
 void DockWithHotspotMover::apply( Pose & pose ) {
 	//convert chain B to be alanine
 	Pose archive_pose=pose;
-	protocols::protein_interface_design::movers::BuildAlaPose toAla( 1,2,100);
+	protocols::protein_interface_design::movers::BuildAlaPose toAla( true,true,100);
 	toAla.apply( pose );
 
 	//scoring function
@@ -194,7 +194,7 @@ void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP tag,
 			for ( TagCOP const curr_tag2 : branch_tags2 ) {
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				hotspot_filenames_.push_back(file_name);
-				core::Real cb_force( curr_tag2->getOption< core::Real >( "cb_force", 1.0 ) );
+				auto cb_force( curr_tag2->getOption< core::Real >( "cb_force", 1.0 ) );
 				hotspot_distcb_weight_.push_back(cb_force);
 				TR << "file: " << file_name << " with cb_force set to " << cb_force << std::endl;
 			}

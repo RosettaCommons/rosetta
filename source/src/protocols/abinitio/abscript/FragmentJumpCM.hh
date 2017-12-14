@@ -39,9 +39,9 @@ class FragmentJumpCM : public FragmentCM {
 public:
 	FragmentJumpCM();
 
-	FragmentJumpCM( std::string const& topol_filename,
+	FragmentJumpCM( std::string const & topol_filename,
 		core::select::residue_selector::ResidueSelectorCOP selector,
-		std::string const& moverkey );
+		std::string const & moverkey );
 
 	virtual
 	~FragmentJumpCM() {};

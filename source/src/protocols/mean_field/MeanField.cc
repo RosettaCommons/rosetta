@@ -30,6 +30,7 @@
 
 
 // Utility headers
+#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -60,7 +61,7 @@ using namespace core;
 
 MeanField::MeanField( Size option,
 	core::pose::PoseOPs & poses,
-	utility::vector1 < pack::task::PackerTaskOP > tasks,
+	utility::vector1< pack::task::PackerTaskOP > const & tasks,
 	scoring::ScoreFunctionOP scfxn ) :
 	utility::pointer::ReferenceCount(),
 	rot_matrix_( new RotMatrix() ),
@@ -72,12 +73,12 @@ MeanField::MeanField( Size option,
 	threshold_( Real( 10.0 ) ) ,
 	poses_( poses ),
 	tasks_( tasks ),
-	scfxn_( scfxn )
+	scfxn_(std::move( scfxn ))
 {}
 
 MeanField::MeanField( Size option,
 	pose::PoseOPs & poses,
-	utility::vector1 < pack::task::PackerTaskOP > tasks,
+	utility::vector1< pack::task::PackerTaskOP > const & tasks,
 	scoring::ScoreFunctionOP scfxn,
 	Real lambda_mem,
 	Real tolerance,
@@ -93,12 +94,12 @@ MeanField::MeanField( Size option,
 	threshold_( threshold ),
 	poses_( poses ),
 	tasks_( tasks ),
-	scfxn_( scfxn )
+	scfxn_(std::move( scfxn ))
 
 {}
 
 // Destructor
-MeanField::~MeanField() {}
+MeanField::~MeanField() = default;
 
 
 // Standard Rosetta methods ////////////////////////////////////////////////////
@@ -180,7 +181,7 @@ MeanField::build_rot_matrix_for_pose( Size pose_ind )
 	TR.Info << "Processing pose: " << poses_[ pose_ind ]->pdb_info()->name() << std::endl;
 
 	core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets() );
-	core::pack::interaction_graph::AnnealableGraphBaseOP ig = NULL;
+	core::pack::interaction_graph::AnnealableGraphBaseOP ig = nullptr;
 
 	core::pack::pack_rotamers_setup( *poses_[ pose_ind ], *scfxn_, tasks_[ pose_ind ], rotsets, ig );
 
@@ -257,7 +258,7 @@ MeanField::calc_energies_matrix ()
 
 		for (  pig_->reset_edge_list_iterator_for_node( node ) ; !pig_->edge_list_iterator_at_end() ; pig_->increment_edge_list_iterator() ) {
 			//no need for assert on dynamic cast as already checked that pig_ is FixedBBInteractionGraph
-			core::pack::interaction_graph::FixedBBEdge const & pedge =
+			auto const & pedge =
 				static_cast< core::pack::interaction_graph::FixedBBEdge const & > ( pig_->get_edge() );
 			Size node2 = pedge.get_other_ind( node );
 

@@ -80,18 +80,18 @@ public:
 
 protected:
 	/// @brief Empty constructor
-	FragmentMover(std::string type);
+	FragmentMover(std::string const & type);
 
 	FragmentMover(
 		core::fragment::FragSetCOP fragset,
-		std::string type
+		std::string const & type
 	);
 
 	/// @brief constructor
 	FragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
-		std::string type
+		std::string const & type
 	);
 
 	virtual void on_new_fragments() {

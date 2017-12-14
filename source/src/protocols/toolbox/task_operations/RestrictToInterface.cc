@@ -100,7 +100,7 @@ DockingNoRepack1::DockingNoRepack1( int rb_jump_in )
 : parent(), rb_jump_(rb_jump_in)
 {}
 
-DockingNoRepack1::~DockingNoRepack1(){}
+DockingNoRepack1::~DockingNoRepack1()= default;
 
 core::pack::task::operation::TaskOperationOP DockingNoRepack1::clone() const
 {
@@ -139,7 +139,7 @@ DockingNoRepack2::DockingNoRepack2( int rb_jump_in )
 : parent(), rb_jump_(rb_jump_in)
 {}
 
-DockingNoRepack2::~DockingNoRepack2(){}
+DockingNoRepack2::~DockingNoRepack2()= default;
 
 void DockingNoRepack2::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
@@ -169,7 +169,7 @@ DockingNoRepack2::apply(
 	}
 }
 
-RestrictToInterface::~RestrictToInterface(){}
+RestrictToInterface::~RestrictToInterface()= default;
 
 RestrictToInterface::RestrictToInterface(utility::vector1<bool> loop_residues):
 	parent(), distance_( 8 ), loopy_interface_( true ) {
@@ -247,7 +247,7 @@ void RestrictToInterface::symmetric_task(
 ) const {
 	using namespace conformation::symmetry;
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast< SymmetricConformation const &> ( pose.conformation()) );
 
 	for ( Size i = 1; i <= pose.size(); ++i ) {

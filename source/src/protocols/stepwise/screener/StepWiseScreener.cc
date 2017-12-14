@@ -31,13 +31,12 @@ StepWiseScreener::StepWiseScreener():
 {}
 
 //Destructor
-StepWiseScreener::~StepWiseScreener()
-{}
+StepWiseScreener::~StepWiseScreener() = default;
 
 void
 StepWiseScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-	update_mover->add_mover( 0 );
-	restore_mover->add_mover( 0 );
+	update_mover->add_mover( nullptr );
+	restore_mover->add_mover( nullptr );
 }
 
 void

@@ -376,7 +376,7 @@ void SurfacePotential::compute_pose_surface_energy( pose::Pose const & pose, Rea
 	}
 
 	// need symmetry info to ignore the duplicated units
-	core::conformation::symmetry::SymmetryInfoCOP symm_info(NULL);
+	core::conformation::symmetry::SymmetryInfoCOP symm_info(nullptr);
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		symm_info = (dynamic_cast<const core::conformation::symmetry::SymmetricConformation &>(pose.conformation()).Symmetry_Info());
 	}
@@ -797,7 +797,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 	for ( it = sets.begin() ; it != sets.end(); ++it ) {
 		//std::ostringstream strstream;
 
-		std::map< core::Size, std::pair< core::Real, core::Real > >::iterator ps_it = patch_scores_.find( (*it).first );
+		auto ps_it = patch_scores_.find( (*it).first );
 		if ( ps_it == patch_scores_.end() ) { continue; } // this shouldn't happen though
 		Real score = (*ps_it).second.first;
 		if ( score < 4.00 ) { continue; }

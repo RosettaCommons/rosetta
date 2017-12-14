@@ -241,7 +241,7 @@ class FaDockingSlideIntoContact : public moves::Mover
 public:
 	FaDockingSlideIntoContact();
 	FaDockingSlideIntoContact( core::Size const rb_jump);
-	FaDockingSlideIntoContact( utility::vector1<core::Size> rb_jumps);
+	FaDockingSlideIntoContact( utility::vector1<core::Size> const & rb_jumps);
 	FaDockingSlideIntoContact( core::Size const rb_jump, core::Vector const & slide_axis );
 
 	//destructor

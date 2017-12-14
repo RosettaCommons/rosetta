@@ -36,7 +36,7 @@ namespace scoring {
 namespace loop_graph {
 namespace evaluator {
 
-typedef  numeric::xyzMatrix< Real >  Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 //Constructor
 SixDTransRotPotentialEvaluator::SixDTransRotPotentialEvaluator( Size const & takeoff_pos,
@@ -55,8 +55,7 @@ SixDTransRotPotentialEvaluator::SixDTransRotPotentialEvaluator( Size const & tak
 }
 
 //Destructor
-SixDTransRotPotentialEvaluator::~SixDTransRotPotentialEvaluator()
-{}
+SixDTransRotPotentialEvaluator::~SixDTransRotPotentialEvaluator() = default;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// @details currently limited to RNA loops but would be easy to generalize to proteins, etc.

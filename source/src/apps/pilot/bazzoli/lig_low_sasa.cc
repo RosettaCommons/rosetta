@@ -63,7 +63,7 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
-#include <stdlib.h>
+#include <cstdlib>
 
 using core::id::AtomID;
 using core::Size;

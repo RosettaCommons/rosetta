@@ -33,6 +33,7 @@
 // Package headers
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
+#include <utility>
 
 namespace protocols {
 namespace simple_moves {
@@ -49,7 +50,7 @@ using protocols::moves::MoverOP;
 static basic::Tracer TR( "protocols.simple_moves.RationalMonteCarlo" );
 
 RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, Size num_trials, Real temperature, bool recover_low)
-: Mover("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
+: Mover("RationalMonteCarlo"), mover_(std::move(mover)), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
 	mc_ = moves::MonteCarloOP( new protocols::moves::MonteCarlo(*score, temperature) );
 	protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");
 }
@@ -99,8 +100,8 @@ void RationalMonteCarlo::remove_trigger(Size trigger_id) {
 }
 
 void RationalMonteCarlo::fire_all_triggers(const Pose& pose) {
-	for ( Triggers::iterator i = triggers_.begin(); i != triggers_.end(); ++i ) {
-		RationalMonteCarloTrigger& t = i->second;
+	for ( auto & trigger : triggers_ ) {
+		RationalMonteCarloTrigger& t = trigger.second;
 		t(pose);
 	}
 }

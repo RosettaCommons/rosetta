@@ -55,7 +55,7 @@ namespace scoring {
 namespace constraints {
 
 /// @details Auto-generated virtual destructor
-ResidueConstraints::~ResidueConstraints() {}
+ResidueConstraints::~ResidueConstraints() = default;
 
 #ifdef    SERIALIZATION
 template < class Archive >
@@ -149,10 +149,10 @@ ConstraintSet::operator = ( ConstraintSet const & rhs ) {
 			mark_revision_id_expired();
 		}
 
-		ResiduePairConstraintsIterator rhs_iter = rhs.residue_pair_constraints_[ ii ]->begin();
-		ResiduePairConstraintsIterator this_iter = residue_pair_constraints_[ ii ]->begin();
-		ResiduePairConstraintsIterator rhs_iter_end = rhs.residue_pair_constraints_[ ii ]->end();
-		ResiduePairConstraintsIterator this_iter_end = residue_pair_constraints_[ ii ]->end();
+		auto rhs_iter = rhs.residue_pair_constraints_[ ii ]->begin();
+		auto this_iter = residue_pair_constraints_[ ii ]->begin();
+		auto rhs_iter_end = rhs.residue_pair_constraints_[ ii ]->end();
+		auto this_iter_end = residue_pair_constraints_[ ii ]->end();
 		while ( rhs_iter != rhs_iter_end && this_iter != this_iter_end ) {
 			if ( rhs_iter->first == this_iter->first ) {
 				// assignment operator for the Constraints class will perform pointer comparisons
@@ -162,7 +162,7 @@ ConstraintSet::operator = ( ConstraintSet const & rhs ) {
 				++rhs_iter;
 			} else if ( this_iter->first < rhs_iter->first ) {
 				mark_revision_id_expired();
-				ResiduePairConstraintsIterator next_this_iter( this_iter );
+				auto next_this_iter( this_iter );
 				++next_this_iter;
 				residue_pair_constraints_[ ii ]->erase( this_iter->first );
 				this_iter = next_this_iter;
@@ -177,7 +177,7 @@ ConstraintSet::operator = ( ConstraintSet const & rhs ) {
 		// be deleted because they aren't in the rhs ConstrainSet
 		while ( this_iter != this_iter_end ) {
 			mark_revision_id_expired();
-			ResiduePairConstraintsIterator next_this_iter( this_iter );
+			auto next_this_iter( this_iter );
 			++next_this_iter;
 			residue_pair_constraints_[ ii ]->erase( this_iter->first );
 			this_iter = next_this_iter;
@@ -191,10 +191,10 @@ ConstraintSet::operator = ( ConstraintSet const & rhs ) {
 		}
 	}
 
-	ResiduePairConstraintsIterator rhs_intra_iter = rhs.intra_residue_constraints_.begin();
-	ResiduePairConstraintsIterator this_intra_iter = intra_residue_constraints_.begin();
-	ResiduePairConstraintsIterator rhs_intra_iter_end = rhs.intra_residue_constraints_.end();
-	ResiduePairConstraintsIterator this_intra_iter_end = intra_residue_constraints_.end();
+	auto rhs_intra_iter = rhs.intra_residue_constraints_.begin();
+	auto this_intra_iter = intra_residue_constraints_.begin();
+	auto rhs_intra_iter_end = rhs.intra_residue_constraints_.end();
+	auto this_intra_iter_end = intra_residue_constraints_.end();
 
 	while ( rhs_intra_iter != rhs_intra_iter_end && this_intra_iter != this_intra_iter_end ) {
 		if ( rhs_intra_iter->first == this_intra_iter->first ) {
@@ -205,7 +205,7 @@ ConstraintSet::operator = ( ConstraintSet const & rhs ) {
 			++rhs_intra_iter;
 		} else if ( this_intra_iter->first < rhs_intra_iter->first ) {
 			mark_revision_id_expired();
-			ResiduePairConstraintsIterator next_this_intra_iter( this_intra_iter );
+			auto next_this_intra_iter( this_intra_iter );
 			++next_this_intra_iter;
 			intra_residue_constraints_.erase( this_intra_iter->first );
 			this_intra_iter = next_this_intra_iter;
@@ -218,7 +218,7 @@ ConstraintSet::operator = ( ConstraintSet const & rhs ) {
 
 	// handle extra constraints in this
 	while ( this_intra_iter != this_intra_iter_end ) {
-		ResiduePairConstraintsIterator next_this_intra_iter( this_intra_iter );
+		auto next_this_intra_iter( this_intra_iter );
 		++next_this_intra_iter;
 		intra_residue_constraints_.erase( this_intra_iter->first );
 		this_intra_iter = next_this_intra_iter;
@@ -336,7 +336,7 @@ ConstraintSet::setup_for_minimizing_for_residue(
 	ResSingleMinimizationData & res_data_cache
 ) const
 {
-	ResidueConstraints::const_iterator iter = intra_residue_constraints_.find( rsd.seqpos() );
+	auto iter = intra_residue_constraints_.find( rsd.seqpos() );
 	if ( iter != intra_residue_constraints_.end() ) {
 		res_data_cache.set_data( cst_res_data, basic::datacache::CacheableDataOP( new CstMinimizationData( iter->second ) ) );
 	}
@@ -376,17 +376,13 @@ ConstraintSet::setup_for_scoring(
 		if ( !residue_pair_constraints_[i] ) continue;
 
 		ResidueConstraints const & seqpos_constraints( *residue_pair_constraints_[ i ] );
-		for ( ResidueConstraints::const_iterator
-				it= seqpos_constraints.begin(),
-				ite= seqpos_constraints.end();
-				it != ite; ++it ) {
-			it->second->setup_for_scoring( confxyz, scfxn );
+		for ( auto const & seqpos_constraint : seqpos_constraints ) {
+			seqpos_constraint.second->setup_for_scoring( confxyz, scfxn );
 		}
 	}
 
-	for ( ResidueConstraints::const_iterator it=intra_residue_constraints_.begin(), it_end=intra_residue_constraints_.end(); it != it_end;
-			++it ) {
-		it->second->setup_for_scoring( confxyz, scfxn );
+	for ( auto const & intra_residue_constraint : intra_residue_constraints_ ) {
+		intra_residue_constraint.second->setup_for_scoring( confxyz, scfxn );
 	}
 
 	non_residue_pair_constraints_.setup_for_scoring( confxyz, scfxn );
@@ -400,15 +396,13 @@ ConstraintSet::setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scf
 		if ( !residue_pair_constraints_[i] ) continue;
 
 		ResidueConstraints const & seqpos_constraints( *residue_pair_constraints_[ i ] );
-		for ( ResidueConstraints::const_iterator it= seqpos_constraints.begin(),
-				ite= seqpos_constraints.end(); it != ite; ++it ) {
-			it->second->setup_for_derivatives( confxyz, scfxn );
+		for ( auto const & seqpos_constraint : seqpos_constraints ) {
+			seqpos_constraint.second->setup_for_derivatives( confxyz, scfxn );
 		}
 	}
 
-	for ( ResidueConstraints::const_iterator it=intra_residue_constraints_.begin(), it_end=intra_residue_constraints_.end(); it != it_end;
-			++it ) {
-		it->second->setup_for_derivatives( confxyz, scfxn );
+	for ( auto const & intra_residue_constraint : intra_residue_constraints_ ) {
+		intra_residue_constraint.second->setup_for_derivatives( confxyz, scfxn );
 	}
 
 	non_residue_pair_constraints_.setup_for_derivatives( confxyz, scfxn );
@@ -427,7 +421,7 @@ ConstraintSet::residue_pair_energy(
 	Size const pos1( rsd1.seqpos() ), pos2( rsd2.seqpos() );
 	if ( residue_pair_constraints_.size() < pos1 || !residue_pair_constraints_[pos1] ) return;
 	ResidueConstraints const & pos1_constraints( *residue_pair_constraints_[ pos1 ] );
-	ResidueConstraints::const_iterator it( pos1_constraints.find( pos2 ) );
+	auto it( pos1_constraints.find( pos2 ) );
 	if ( it == pos1_constraints.end() ) return;
 	Constraints const & pair_constraints( *(it->second) );
 	pair_constraints.residue_pair_energy( rsd1, rsd2, scorefxn.weights(), emap );
@@ -451,7 +445,7 @@ ConstraintSet::deprecated_eval_atom_derivative(
 	deprecated_eval_atom_derivative_for_residue_pairs( atom_id, pose, scfxn, weights, F1, F2 );
 
 	{ // intraresidue constraints
-		ResidueConstraints::const_iterator it( intra_residue_constraints_.find( seqpos ) );
+		auto it( intra_residue_constraints_.find( seqpos ) );
 		if ( it != intra_residue_constraints_.end() ) {
 			it->second->eval_ws_atom_derivative( atom_id, pose.conformation(), weights, F1, F2 );
 		}
@@ -490,9 +484,8 @@ ConstraintSet::deprecated_eval_atom_derivative_for_residue_pairs(
 	Size const seqpos( atom_id.rsd() );
 	if ( residue_pair_constraints_.size() >= seqpos && residue_pair_constraints_[ seqpos ] ) {
 		ResidueConstraints const & seqpos_constraints( *residue_pair_constraints_[ seqpos ] );
-		for ( ResidueConstraints::const_iterator it= seqpos_constraints.begin(), ite= seqpos_constraints.end(); it != ite;
-				++it ) {
-			it->second->eval_ws_atom_derivative( atom_id, pose.conformation(), weights, F1, F2 );
+		for ( auto const & seqpos_constraint : seqpos_constraints ) {
+			seqpos_constraint.second->eval_ws_atom_derivative( atom_id, pose.conformation(), weights, F1, F2 );
 		}
 	}
 }
@@ -506,7 +499,7 @@ ConstraintSet::eval_intrares_energy(
 	EnergyMap & emap
 ) const
 {
-	ResidueConstraints::const_iterator it( intra_residue_constraints_.find( rsd.seqpos() ) );
+	auto it( intra_residue_constraints_.find( rsd.seqpos() ) );
 	if ( it != intra_residue_constraints_.end() ) {
 		it->second->intra_residue_energy( rsd, sfxn.weights(), emap );
 	}
@@ -519,7 +512,7 @@ ConstraintSet::eval_intrares_energy(
 	EnergyMap & emap
 ) const
 {
-	ResidueConstraints::const_iterator it( intra_residue_constraints_.find( rsd.seqpos() ) );
+	auto it( intra_residue_constraints_.find( rsd.seqpos() ) );
 	if ( it != intra_residue_constraints_.end() ) {
 		it->second->intra_residue_energy( rsd, emap /*dummy -- not actually used in this function? */, emap );
 	}
@@ -594,7 +587,7 @@ ConstraintSet::add_residue_pair_constraint( Size const pos1, Size const pos2, Co
 {
 	if (  total_residue_ < pos1 ) total_residue_ = pos1;
 	if (  total_residue_ < pos2 ) total_residue_ = pos2;
-	if (  residue_pair_constraints_.size() < pos1 ) residue_pair_constraints_.resize( pos1, 0 );
+	if (  residue_pair_constraints_.size() < pos1 ) residue_pair_constraints_.resize( pos1, nullptr );
 	if ( !residue_pair_constraints_[ pos1 ] ) residue_pair_constraints_[ pos1 ] = ResidueConstraintsOP( new ResidueConstraints() );
 
 	add_constraint_to_residue_constraints( pos2, cst, *(residue_pair_constraints_[ pos1 ] ) );
@@ -603,9 +596,8 @@ ConstraintSet::add_residue_pair_constraint( Size const pos1, Size const pos2, Co
 
 void
 ConstraintSet::add_constraints( ConstraintCOPs cst_list ) {
-	for ( ConstraintCOPs::iterator it = cst_list.begin(), end = cst_list.end();
-			it != end; ++it ) {
-		add_constraint( *it );
+	for ( auto & it : cst_list ) {
+		add_constraint( it );
 	}
 }
 
@@ -663,7 +655,7 @@ remove_constraint_from_residue_constraints(
 {
 	if ( !residue_constraints.has( seqpos ) ) return false;
 
-	ResidueConstraints::iterator csts_it = residue_constraints.find( seqpos );
+	auto csts_it = residue_constraints.find( seqpos );
 
 	//if( residue_constraints.find( seqpos )->second->remove_constraint( cst ) ) {
 	if ( csts_it->second->remove_constraint( cst, object_comparison ) ) {
@@ -721,9 +713,8 @@ ConstraintSet::remove_constraints(
 	bool object_comparison  )
 {
 	bool success = false;
-	for ( ConstraintCOPs::iterator it = cst_list.begin(), end = cst_list.end();
-			it != end; ++it ) {
-		success = remove_constraint( *it, object_comparison );
+	for ( auto & it : cst_list ) {
+		success = remove_constraint( it, object_comparison );
 		if ( success == false ) return false;
 	}
 
@@ -785,9 +776,9 @@ ConstraintSet::get_all_constraints() const
 	// from one run to the next.  The use of std::set< ConstraintOP > would produce
 	// this effect.
 	utility::vector1< ConstraintCOP > all;
-	for ( ResidueConstraints::const_iterator j = intra_residue_constraints_.begin(), i_end = intra_residue_constraints_.end(); j != i_end; ++j ) {
-		for ( Constraints::const_iterator i = j->second->begin(), i_end = j->second->end(); i != i_end; ++i ) {
-			all.push_back( *i );
+	for ( auto const & intra_residue_constraint : intra_residue_constraints_ ) {
+		for ( auto const & i : *intra_residue_constraint.second ) {
+			all.push_back( i );
 		}
 	}
 
@@ -798,18 +789,17 @@ ConstraintSet::get_all_constraints() const
 	// the constraint will appear again in the opposite order -- i.e. as between j and i).
 	for ( core::Size ii = 1; ii <= residue_pair_constraints_.size(); ++ii ) {
 		if ( ! residue_pair_constraints_[ ii ] ) continue; // some entries may be null
-		for ( ResidueConstraints::const_iterator ij_csts = residue_pair_constraints_[ii]->begin(),
+		for ( auto ij_csts = residue_pair_constraints_[ii]->begin(),
 				ij_csts_end = residue_pair_constraints_[ii]->end(); ij_csts != ij_csts_end; ++ij_csts ) {
 			if ( ij_csts->first < ii ) continue; // "j" is ij_csts->first; compare this against the index for i.
-			for ( Constraints::const_iterator cst_iter = ij_csts->second->begin(),
-					cst_iter_end = ij_csts->second->end(); cst_iter != cst_iter_end; ++cst_iter ) {
-				all.push_back( *cst_iter );
+			for ( auto const & cst_iter : *ij_csts->second ) {
+				all.push_back( cst_iter );
 			}
 		}
 	}
 
-	for ( Constraints::const_iterator i = non_residue_pair_constraints_.begin(), i_end = non_residue_pair_constraints_.end(); i != i_end; ++i ) {
-		all.push_back( *i );
+	for ( auto const & non_residue_pair_constraint : non_residue_pair_constraints_ ) {
+		all.push_back( non_residue_pair_constraint );
 	}
 
 	for ( Size ii = 1; ii <= sequence_constraints_.size(); ++ii ) {
@@ -935,7 +925,7 @@ ConstraintSet::show(
 
 		if ( ! residue_pair_constraints_exists( ii ) ) continue;
 
-		for ( ResiduePairConstraintsIterator
+		for ( auto
 				iter = residue_pair_constraints_[ ii ]->begin(),
 				iter_end = residue_pair_constraints_[ ii ]->end();
 				iter  != iter_end; ++iter ) {
@@ -951,18 +941,16 @@ ConstraintSet::show(
 	} // for ( Size ii = 1; ii <= other.residue_pair_constraints_.size(); ++ii )
 
 	out << "IntraResidueConstraints: total: " << intra_residue_constraints_.size()  << " showing active..." << std::endl;
-	for ( ResidueConstraints::const_iterator it = intra_residue_constraints_.begin(),
-			eit = intra_residue_constraints_.end(); it != eit; ++it ) {
-		out << "IntraResidueConstraints (" << it->first << ")" << std::endl;
-		it->second->show( out );
+	for ( auto const & intra_residue_constraint : intra_residue_constraints_ ) {
+		out << "IntraResidueConstraints (" << intra_residue_constraint.first << ")" << std::endl;
+		intra_residue_constraint.second->show( out );
 		out << std::endl;
 	}
 
 
 	out << "NonResiduePairConstraints: total: " << non_residue_pair_constraints_.size() << " showing active..." << std::endl;
-	for ( Constraints::const_iterator it = non_residue_pair_constraints_.begin(),
-			eit = non_residue_pair_constraints_.end(); it != eit; ++it ) {
-		(*it)->show( out );
+	for ( auto const & non_residue_pair_constraint : non_residue_pair_constraints_ ) {
+		non_residue_pair_constraint->show( out );
 		out << std::endl;
 	}
 }
@@ -975,16 +963,15 @@ ConstraintSet::show_definition(
 	using namespace core::scoring::constraints;
 
 	// Intra-Residue
-	for ( ResidueConstraints::const_iterator it = intra_residue_constraints_.begin(), eit = intra_residue_constraints_.end();
-			it != eit; ++it ) {
-		it->second->show_definition( out, pose );
+	for ( auto const & intra_residue_constraint : intra_residue_constraints_ ) {
+		intra_residue_constraint.second->show_definition( out, pose );
 	}
 
 	// Residue-Pairs
 	for ( Size ii = 1; ii <= residue_pair_constraints_.size(); ++ii ) {
 		if ( ! residue_pair_constraints_exists( ii ) ) continue;
 
-		for ( ResiduePairConstraintsIterator
+		for ( auto
 				iter = residue_pair_constraints_[ ii ]->begin(),
 				iter_end = residue_pair_constraints_[ ii ]->end();
 				iter  != iter_end; ++iter ) {
@@ -1002,9 +989,8 @@ ConstraintSet::show_definition(
 	} // for ( Size ii = 1; ii <= other.residue_pair_constraints_.size(); ++ii )
 
 	// 3+ body Constraints
-	for ( Constraints::const_iterator it = non_residue_pair_constraints_.begin(),
-			eit = non_residue_pair_constraints_.end(); it != eit; ++it ) {
-		(*it)->show_def( out, pose );
+	for ( auto const & non_residue_pair_constraint : non_residue_pair_constraints_ ) {
+		non_residue_pair_constraint->show_def( out, pose );
 	}
 }
 
@@ -1017,7 +1003,7 @@ ConstraintSet::show_numbers(
 	core::Size intercount=0;
 	for ( Size ii = 1; ii <= residue_pair_constraints_.size(); ++ii ) {
 		if ( ! residue_pair_constraints_exists( ii ) ) continue;
-		for ( ResiduePairConstraintsIterator
+		for ( auto
 				iter = residue_pair_constraints_[ ii ]->begin(),
 				iter_end = residue_pair_constraints_[ ii ]->end();
 				iter  != iter_end; ++iter ) {
@@ -1053,10 +1039,9 @@ ConstraintSet::show_violations(
 	if ( intra_residue_constraints_.size() ) {
 		if ( verbose_level>0 ) out << "IntraResidueConstraints: ... ";
 		if ( verbose_level>50 ) out << std::endl;
-		for ( ResidueConstraints::const_iterator it = intra_residue_constraints_.begin(), eit = intra_residue_constraints_.end();
-				it != eit; ++it ) {
-			if ( verbose_level>50 ) out << "IntraResidueConstraints ( " << it->first << " ) ";
-			Size viol = it->second->show_violations( out, pose, verbose_level, threshold );
+		for ( auto const & intra_residue_constraint : intra_residue_constraints_ ) {
+			if ( verbose_level>50 ) out << "IntraResidueConstraints ( " << intra_residue_constraint.first << " ) ";
+			Size viol = intra_residue_constraint.second->show_violations( out, pose, verbose_level, threshold );
 			if ( verbose_level>50 ) out << " " << viol << " violated" << std::endl;
 			total_viol += viol;
 		}
@@ -1066,7 +1051,7 @@ ConstraintSet::show_violations(
 	if ( verbose_level>50 ) out << std::endl;
 	for ( Size ii = 1; ii <= residue_pair_constraints_.size(); ++ii ) {
 		if ( ! residue_pair_constraints_exists( ii ) ) continue;
-		for ( ResiduePairConstraintsIterator
+		for ( auto
 				iter = residue_pair_constraints_[ ii ]->begin(),
 				iter_end = residue_pair_constraints_[ ii ]->end();
 				iter  != iter_end; ++iter ) {
@@ -1090,11 +1075,10 @@ ConstraintSet::show_violations(
 	if ( non_residue_pair_constraints_.size() ) {
 		if ( verbose_level>0 ) out << "MultiConstraints: ... ";
 		if ( verbose_level>50 ) out << std::endl;
-		for ( Constraints::const_iterator it = non_residue_pair_constraints_.begin(),
-				eit = non_residue_pair_constraints_.end(); it != eit; ++it ) {
+		for ( auto const & non_residue_pair_constraint : non_residue_pair_constraints_ ) {
 			Size viol( 0 );
 			if ( verbose_level>80 ) out << std::endl;
-			viol=(*it)->show_violations( out, pose, verbose_level, threshold );
+			viol=non_residue_pair_constraint->show_violations( out, pose, verbose_level, threshold );
 			if ( verbose_level>50 ) out << " " << viol << " violated" << std::endl;
 			total_viol+=viol;
 		}
@@ -1219,7 +1203,7 @@ void ConstraintSet::shallow_copy(
 		if ( ! other.residue_pair_constraints_exists( ii ) ) continue;
 
 		bool first_insert ( true );
-		for ( ResiduePairConstraintsIterator
+		for ( auto
 				iter = other.residue_pair_constraints_[ ii ]->begin(),
 				iter_end = other.residue_pair_constraints_[ ii ]->end();
 				iter  != iter_end; ++iter ) {
@@ -1240,16 +1224,13 @@ void ConstraintSet::shallow_copy(
 	}
 
 	intra_residue_constraints_.clear();
-	for ( ResiduePairConstraintsIterator
-			iter = other.intra_residue_constraints_.begin(),
-			iter_end = other.intra_residue_constraints_.end();
-			iter  != iter_end; ++iter ) {
+	for ( auto const & intra_residue_constraint : other.intra_residue_constraints_ ) {
 		// All Constraints are now immutable, and so do not ever need to be cloned.
 		//intra_residue_constraints_.insert( iter->first, iter->second->clone() );
-		if ( (( iter->first < start_residue) || (iter->first > end_residue )) ) {
+		if ( (( intra_residue_constraint.first < start_residue) || (intra_residue_constraint.first > end_residue )) ) {
 			continue; // do not insert unless eihter end of constraint is in range
 		}
-		intra_residue_constraints_.insert( iter->first, iter->second->clone() );
+		intra_residue_constraints_.insert( intra_residue_constraint.first, intra_residue_constraint.second->clone() );
 	}
 
 	// Constraints assignment operator performs a shallow copy

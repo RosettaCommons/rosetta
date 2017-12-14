@@ -66,12 +66,7 @@ DockingLowResFilter::DockingLowResFilter() :
 	filters_->add_filter( fewclashes );
 }
 
-DockingLowResFilter::DockingLowResFilter( const DockingLowResFilter & init ) :
-	//utility::pointer::ReferenceCount(),
-	Filter( init ), use_constraints_( init.use_constraints_ ), constraint_cutoff_( init.constraint_cutoff_ ),
-	filters_( init.filters_ )
-{
-}
+DockingLowResFilter::DockingLowResFilter( const DockingLowResFilter & /*init*/ ) = default;
 
 DockingLowResFilter::~DockingLowResFilter() = default;
 
@@ -118,11 +113,7 @@ DockingHighResFilter::DockingHighResFilter( ) : Filter()
 	scorefilter_->set_cutoff( 1000000.0 );
 }
 
-DockingHighResFilter::DockingHighResFilter( const DockingHighResFilter & init ) :
-	//utility::pointer::ReferenceCount(),
-	Filter( init ), movable_jumps_ ( init.movable_jumps_ ), score_margin_ ( init.score_margin_ ),
-	scorefunction_ ( init.scorefunction_ ), scorefilter_( init.scorefilter_ )
-{}
+DockingHighResFilter::DockingHighResFilter( const DockingHighResFilter & /*init*/ ) = default;
 
 DockingHighResFilter::~DockingHighResFilter() = default;
 

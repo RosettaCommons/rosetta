@@ -54,10 +54,10 @@ void StructFileReaderOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
 	StructFileRepOptions::parse_my_tag( tag );
 
-	set_new_chain_order(  tag->getOption< bool >( "new_chain_order", 0 ) );
-	set_obey_ENDMDL(  tag->getOption< bool >( "obey_ENDMDL", 0 ) );
-	set_read_pdb_header( tag->getOption< bool >( "preserve_header", 0 ) );
-	set_glycam_pdb_format( tag->getOption< bool >( "glycam_pdb_format", 0 ) );
+	set_new_chain_order(  tag->getOption< bool >( "new_chain_order", false ) );
+	set_obey_ENDMDL(  tag->getOption< bool >( "obey_ENDMDL", false ) );
+	set_read_pdb_header( tag->getOption< bool >( "preserve_header", false ) );
+	set_glycam_pdb_format( tag->getOption< bool >( "glycam_pdb_format", false ) );
 }
 
 std::string StructFileReaderOptions::type() const { return "StructFileReaderOptions"; }

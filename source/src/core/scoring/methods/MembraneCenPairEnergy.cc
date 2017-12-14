@@ -111,7 +111,7 @@ MembraneCenPairEnergy::residue_pair_energy(
 	Size rsd1Seq(rsd1.seqpos()), rsd2Seq(rsd2.seqpos());
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		using namespace core::conformation::symmetry;
-		SymmetricConformation const & symm_conf (
+		auto const & symm_conf (
 			dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 

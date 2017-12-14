@@ -25,7 +25,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-ScoreNormalizationOP get_score_normalization_function(std::string norm_tag);
+ScoreNormalizationOP get_score_normalization_function(std::string const & norm_tag);
 
 class ScoreNormalization : public utility::pointer::ReferenceCount {
 public:

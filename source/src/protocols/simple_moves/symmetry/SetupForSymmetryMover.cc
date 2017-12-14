@@ -37,6 +37,7 @@
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/options/keys/OptionKeyList.hh>
@@ -136,7 +137,7 @@ SetupForSymmetryMover::SetupForSymmetryMover(
 	slide_(false),
 	cryst1_(false),
 	preserve_datacache_(false),
-	symmdef_( symmdata ),
+	symmdef_(std::move( symmdata )),
 	refinable_lattice_was_set_( false ),
 	refinable_lattice_( false )
 {
@@ -163,7 +164,7 @@ SetupForSymmetryMover::SetupForSymmetryMover(
 	read_refinable_lattice( options );
 }
 
-SetupForSymmetryMover::~SetupForSymmetryMover(){}
+SetupForSymmetryMover::~SetupForSymmetryMover()= default;
 
 //fpd centralize the logic for processing a symmdef file tag
 void
@@ -376,7 +377,7 @@ ExtractAsymmetricUnitMover::ExtractAsymmetricUnitMover()
 	keep_virtual_residues_( true ),
 	keep_unknown_aas_( false ) { }
 
-ExtractAsymmetricUnitMover::~ExtractAsymmetricUnitMover(){}
+ExtractAsymmetricUnitMover::~ExtractAsymmetricUnitMover()= default;
 
 void
 ExtractAsymmetricUnitMover::apply( core::pose::Pose & pose )
@@ -463,7 +464,7 @@ ExtractAsymmetricPoseMover::ExtractAsymmetricPoseMover()
 : protocols::moves::Mover("ExtractAsymmetricPoseMover"),
 	clear_sym_def_( false ) { }
 
-ExtractAsymmetricPoseMover::~ExtractAsymmetricPoseMover(){}
+ExtractAsymmetricPoseMover::~ExtractAsymmetricPoseMover()= default;
 
 
 void

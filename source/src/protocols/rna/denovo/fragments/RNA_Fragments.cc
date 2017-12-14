@@ -24,8 +24,8 @@ namespace rna {
 namespace denovo {
 namespace fragments {
 
-RNA_Fragments::RNA_Fragments(){}
-RNA_Fragments::~RNA_Fragments(){}
+RNA_Fragments::RNA_Fragments()= default;
+RNA_Fragments::~RNA_Fragments()= default;
 
 // empty shell.
 void

@@ -47,6 +47,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <basic/datacache/DataMap.hh>
@@ -77,7 +78,7 @@ namespace membrane {
 MPFastRelaxMover::MPFastRelaxMover() :
 	protocols::moves::Mover(),
 	relax_protocol_( generate_relax_from_cmd() ),
-	sfxn_( 0 )
+	sfxn_( nullptr )
 {}
 
 /// @brief Allow the user to set a custom sfxn from
@@ -85,11 +86,11 @@ MPFastRelaxMover::MPFastRelaxMover() :
 MPFastRelaxMover::MPFastRelaxMover( core::scoring::ScoreFunctionOP sfxn ) :
 	protocols::moves::Mover(),
 	relax_protocol_( generate_relax_from_cmd() ),
-	sfxn_( sfxn )
+	sfxn_(std::move( sfxn ))
 {}
 
 /// @brief Destructor
-MPFastRelaxMover::~MPFastRelaxMover() {}
+MPFastRelaxMover::~MPFastRelaxMover() = default;
 
 /// @brief Show the current setup of this protocol
 void
@@ -184,7 +185,7 @@ MPFastRelaxMover::apply( core::pose::Pose & pose ) {
 	relax_protocol_->set_movemap( movemap );
 
 	// Setup membrane fullatom smooth energy function
-	if ( sfxn_ == 0 ) {
+	if ( sfxn_ == nullptr ) {
 		sfxn_ = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012" );
 	}
 	relax_protocol_->set_scorefxn( sfxn_ );

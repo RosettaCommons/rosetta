@@ -361,7 +361,7 @@ heap_up(
 	covalue = coheap(indx);
 
 	while ( indx != 0 ) {
-		int parent = static_cast< int >((indx-1)/2);
+		auto parent = static_cast< int >((indx-1)/2);
 		int pv = heap(parent);
 		float copv = coheap(parent);
 		if ( copv < covalue ) break;

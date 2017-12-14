@@ -50,7 +50,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 
 using core::Real;
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 namespace core {
 namespace scoring {

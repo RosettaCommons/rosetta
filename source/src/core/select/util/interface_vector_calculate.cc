@@ -56,7 +56,7 @@ namespace util {
 
 // typedefs
 typedef std::pair< std::set<core::Size>,std::set<core::Size> > InterfacePair;
-typedef numeric::HomogeneousTransform< core::Real > HTReal;
+using HTReal = numeric::HomogeneousTransform<core::Real>;
 
 //static basic::Tracer TR("core.select.util.interface_vector_calculate");
 
@@ -196,14 +196,14 @@ utility::vector1_bool calc_interacting_vector(
 
 	// for all nodes in chain1 == for all residues in chain 1
 	// all this is setup by verify_chain_setup in InterfaceDefinitionBase
-	for ( std::set<Size>::const_iterator side1_it = part1res.begin(); side1_it != part1res.end(); ++side1_it ) {
-		for ( conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( *side1_it ).upper_edge_list_begin(),
-				edge_end_iter = pg->get_vertex( *side1_it ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
+	for ( unsigned long part1re : part1res ) {
+		for ( conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( part1re ).upper_edge_list_begin(),
+				edge_end_iter = pg->get_vertex( part1re ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 			// get node on other edge of that node == 2nd residue index
 			Size const edge_res = edge_iter->upper_vertex();
 			// if that node(residue) is in the second set of residues
 			if ( part2res.count( edge_res ) ) {
-				side1_within_cutoff.insert( *side1_it ); // add partner1 residue
+				side1_within_cutoff.insert( part1re ); // add partner1 residue
 				side2_within_cutoff.insert( edge_res ); // add partner2 residue
 			} else continue;
 		} // end - for all edges of node
@@ -236,12 +236,12 @@ void find_interface_pointing_residues_from_neighbs(
 	using namespace utility;
 	using namespace core;
 	//itterate over pairs
-	for ( std::set<Size>::const_iterator chain1_it = interface_pairs.first.begin();  chain1_it!=interface_pairs.first.end(); ++chain1_it ) {
+	for ( auto chain1_it = interface_pairs.first.begin();  chain1_it!=interface_pairs.first.end(); ++chain1_it ) {
 		conformation::Residue ch1residue(pose.residue(*chain1_it));
-		for (  std::set<Size>::const_iterator chain2_it = interface_pairs.second.begin();  chain2_it!=interface_pairs.second.end(); ++chain2_it ) {
-			conformation::Residue ch2residue(pose.residue(*chain2_it));
+		for ( unsigned long chain2_it : interface_pairs.second ) {
+			conformation::Residue ch2residue(pose.residue(chain2_it));
 			//check to see if both are already in the interface
-			if ( interface_residues[*chain1_it] && interface_residues[*chain2_it] ) {
+			if ( interface_residues[*chain1_it] && interface_residues[chain2_it] ) {
 				continue;
 			}
 			//use a stricter distance cutoff to define any very close to other chain
@@ -257,14 +257,14 @@ void find_interface_pointing_residues_from_neighbs(
 			}
 			//are residue2 sidechain atoms near residue1 atoms?
 			if ( r2_near_r1 ) {
-				interface_residues[*chain2_it] = true;
+				interface_residues[chain2_it] = true;
 				// #ifndef NDEBUG
 				//      std::cout<< "Residue:  "<<pose.pdb_info()->pose2pdb(*chain2_it) << " is included because Residue: "
 				//           << pose.pdb_info()->pose2pdb(*chain1_it) <<" meets the nearby cutoff."<<std::endl;
 				// #endif
 			}
 			//check to see if both are NOW at the interface
-			if ( interface_residues[*chain1_it] && interface_residues[*chain2_it] ) {
+			if ( interface_residues[*chain1_it] && interface_residues[chain2_it] ) {
 				continue;
 			}
 			//check to see if the vectors are in the same direction
@@ -278,7 +278,7 @@ void find_interface_pointing_residues_from_neighbs(
 			}
 			//chain 2 residue pointed at chain1 residue?
 			if ( res1_pointed_at_res2( ch2residue, ch1residue, vector_angle_cutoff, vector_dist_cutoff ) ) {
-				interface_residues[*chain2_it] = true;
+				interface_residues[chain2_it] = true;
 				// #ifndef NDEBUG
 				//      std::cout<< "Residue:  "<<pose.pdb_info()->pose2pdb(*chain2_it) << " is included because Residue: "
 				//           << pose.pdb_info()->pose2pdb(*chain1_it) <<" is pointed at it."<<std::endl;
@@ -308,7 +308,7 @@ bool any_atoms_within_cutoff(core::conformation::Residue & res1,
 	//if there is a CB atom itterate through all the side chain atms in res 1
 	if ( res1.type().has("CB") ) {
 		//itterate over res1 sidechain atoms
-		for ( conformation::Atoms::const_iterator res1atm = res1.sidechainAtoms_begin(); res1atm != res1.heavyAtoms_end(); ++res1atm ) {
+		for ( auto res1atm = res1.sidechainAtoms_begin(); res1atm != res1.heavyAtoms_end(); ++res1atm ) {
 			//itterate over res2 all atoms
 			for ( conformation::Atoms::const_iterator res2atm = res2.atom_begin(); res2atm != res2.heavyAtoms_end(); ++res2atm ) {
 				if ( (*res1atm).xyz().distance_squared( (*res2atm).xyz() )  < cutoff_squared ) {

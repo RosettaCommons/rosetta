@@ -31,7 +31,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include <string>
 
 namespace core {

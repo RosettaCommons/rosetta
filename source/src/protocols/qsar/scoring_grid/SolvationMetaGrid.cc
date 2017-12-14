@@ -65,8 +65,7 @@ SolvationMetaGrid::SolvationMetaGrid( SolvationMetaGrid const & other):
 	}
 }
 
-SolvationMetaGrid::~SolvationMetaGrid()
-{}
+SolvationMetaGrid::~SolvationMetaGrid() = default;
 
 /// @brief Make a copy of the grid, respecting the subclassing.
 GridBaseOP SolvationMetaGrid::clone() const {
@@ -100,7 +99,7 @@ void SolvationMetaGrid::refresh(core::pose::Pose const & pose, core::Vector cons
 
 void SolvationMetaGrid::refresh(core::pose::Pose const & pose, core::Vector const & center)
 {
-	std::map<core::ShortSize,SingleGridOP>::iterator it = grid_set_.begin();
+	auto it = grid_set_.begin();
 	for ( ; it != grid_set_.end(); ++it ) {
 		std::cout << "initializing solvation grid for atom type " <<it->first <<std::endl;
 		it->second->refresh(pose,center);
@@ -120,7 +119,7 @@ core::Real SolvationMetaGrid::score(
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
 		//core::Vector const & coords = residue.xyz(atom_index);
 		core::conformation::Atom current_atom(residue.residue()->atom(atom_index));
-		std::map<core::ShortSize,SingleGridOP>::const_iterator grid_iterator(grid_set_.find(current_atom.type()));
+		auto grid_iterator(grid_set_.find(current_atom.type()));
 		if ( grid_iterator == grid_set_.end() ) {
 			utility_exit_with_message("Ligands must be parameterized with the FA_STANDARD atom type set for use in the SolvationMetaGrid");
 		}
@@ -138,7 +137,7 @@ core::Real SolvationMetaGrid::atom_score(
 	qsarMapCOP /*qsar_map*/) const
 {
 	core::conformation::Atom current_atom(residue.residue()->atom(atomno));
-	std::map<core::ShortSize,SingleGridOP>::const_iterator grid_iterator(grid_set_.find(current_atom.type()));
+	auto grid_iterator(grid_set_.find(current_atom.type()));
 	if ( grid_iterator == grid_set_.end() ) {
 		utility_exit_with_message("Ligands must be parameterized with the FA_STANDARD atom type set for use in the SolvationMetaGrid");
 	}
@@ -153,7 +152,7 @@ core::Real SolvationMetaGrid::score(core::conformation::Residue const & residue,
 	for ( core::Size atom_index = 1; atom_index <= residue.natoms(); ++atom_index ) {
 		//core::Vector const & coords = residue.xyz(atom_index);
 		core::conformation::Atom current_atom(residue.atom(atom_index));
-		std::map<core::ShortSize,SingleGridOP>::const_iterator grid_iterator(grid_set_.find(current_atom.type()));
+		auto grid_iterator(grid_set_.find(current_atom.type()));
 		if ( grid_iterator == grid_set_.end() ) {
 			utility_exit_with_message("Ligands must be parameterized with the FA_STANDARD atom type set for use in the SolvationMetaGrid");
 		}
@@ -168,7 +167,7 @@ core::Real SolvationMetaGrid::score(core::conformation::Residue const & residue,
 core::Real SolvationMetaGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapCOP /*qsar_map*/) const
 {
 	core::conformation::Atom current_atom(residue.atom(atomno));
-	std::map<core::ShortSize,SingleGridOP>::const_iterator grid_iterator(grid_set_.find(current_atom.type()));
+	auto grid_iterator(grid_set_.find(current_atom.type()));
 	if ( grid_iterator == grid_set_.end() ) {
 		utility_exit_with_message("Ligands must be parameterized with the FA_STANDARD atom type set for use in the SolvationMetaGrid");
 	}
@@ -185,7 +184,7 @@ std::string SolvationMetaGrid::get_type() const
 
 void SolvationMetaGrid::set_chain(char chain)
 {
-	std::map<core::ShortSize,SingleGridOP>::iterator it = grid_set_.begin();
+	auto it = grid_set_.begin();
 	for ( ; it != grid_set_.end(); ++it ) {
 		it->second->set_chain(chain);
 	}
@@ -204,9 +203,9 @@ utility::json_spirit::Value SolvationMetaGrid::serialize() const
 	Pair type_record("type",Value(type_));
 	std::vector<Value> grid_set_vector;
 
-	for ( std::map<core::ShortSize,SingleGridOP>::const_iterator it = grid_set_.begin(); it != grid_set_.end(); ++it ) {
-		std::vector<Value> current_map_data(utility::tools::make_vector(Value(core::ShortSize(it->first)),Value(it->second->serialize())));
-		grid_set_vector.push_back(Value(current_map_data));
+	for ( const auto & it : grid_set_ ) {
+		std::vector<Value> current_map_data(utility::tools::make_vector(Value(core::ShortSize(it.first)),Value(it.second->serialize())));
+		grid_set_vector.emplace_back(current_map_data);
 	}
 
 	Pair grid_set_data("grids",grid_set_vector);
@@ -223,8 +222,8 @@ void SolvationMetaGrid::deserialize(utility::json_spirit::mObject data)
 {
 	type_ = data["type"].get_str();
 	utility::json_spirit::mArray grid_set_data(data["grids"].get_array());
-	for ( utility::json_spirit::mArray::iterator it = grid_set_data.begin(); it != grid_set_data.end(); ++it ) {
-		utility::json_spirit::mArray grid_pair(it->get_array());
+	for ( auto & it : grid_set_data ) {
+		utility::json_spirit::mArray grid_pair(it.get_array());
 		core::ShortSize atom_type = grid_pair[0].get_int();
 		SingleGridOP grid( new SolvationGrid() );
 		grid->deserialize(grid_pair[1].get_obj());
@@ -234,8 +233,8 @@ void SolvationMetaGrid::deserialize(utility::json_spirit::mObject data)
 
 bool SolvationMetaGrid::is_in_grid(core::conformation::UltraLightResidue const & residue) const
 {
-	for ( std::map<core::ShortSize,SingleGridOP>::const_iterator it = grid_set_.begin(); it != grid_set_.end(); ++it ) {
-		if ( !it->second->is_in_grid(residue) ) {
+	for ( const auto & it : grid_set_ ) {
+		if ( !it.second->is_in_grid(residue) ) {
 			return false;
 		}
 	}
@@ -244,8 +243,8 @@ bool SolvationMetaGrid::is_in_grid(core::conformation::UltraLightResidue const &
 
 bool SolvationMetaGrid::is_in_grid(core::conformation::Residue const & residue) const
 {
-	for ( std::map<core::ShortSize,SingleGridOP>::const_iterator it = grid_set_.begin(); it != grid_set_.end(); ++it ) {
-		if ( !it->second->is_in_grid(residue) ) {
+	for ( const auto & it : grid_set_ ) {
+		if ( !it.second->is_in_grid(residue) ) {
 			return false;
 		}
 	}

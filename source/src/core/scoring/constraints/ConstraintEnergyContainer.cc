@@ -50,14 +50,13 @@ CstResNeighbIterator::CstResNeighbIterator(
 {}
 
 
-CstResNeighbIterator::~CstResNeighbIterator()
-{}
+CstResNeighbIterator::~CstResNeighbIterator() = default;
 
 ResidueNeighborIterator &
 CstResNeighbIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
 	debug_assert( &(dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
-	CstResNeighbIterator const & crni_rhs = static_cast< CstResNeighbIterator const & > ( rhs );
+	auto const & crni_rhs = static_cast< CstResNeighbIterator const & > ( rhs );
 
 	focused_node_ = crni_rhs.focused_node_;
 	edge_iter_ = crni_rhs.edge_iter_;
@@ -75,7 +74,7 @@ bool
 CstResNeighbIterator::operator == ( ResidueNeighborIterator const & rhs ) const
 {
 	debug_assert( &( dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
-	CstResNeighbIterator const & crni_rhs = static_cast< CstResNeighbIterator const & > ( rhs );
+	auto const & crni_rhs = static_cast< CstResNeighbIterator const & > ( rhs );
 
 	return ( edge_iter_ == crni_rhs.edge_iter_ );
 }
@@ -84,7 +83,7 @@ bool
 CstResNeighbIterator::operator != ( ResidueNeighborIterator const & rhs ) const
 {
 	debug_assert( &( dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
-	CstResNeighbIterator const & crni_rhs = static_cast< CstResNeighbIterator const & > ( rhs );
+	auto const & crni_rhs = static_cast< CstResNeighbIterator const & > ( rhs );
 	return ( edge_iter_ != crni_rhs.edge_iter_ );
 }
 
@@ -202,14 +201,13 @@ CstResNeighbConstIterator::CstResNeighbConstIterator(
 	edge_iter_( edge_iter )
 {}
 
-CstResNeighbConstIterator::~CstResNeighbConstIterator()
-{}
+CstResNeighbConstIterator::~CstResNeighbConstIterator() = default;
 
 ResidueNeighborConstIterator &
 CstResNeighbConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )
 {
 	//debug_assert( dynamic_cast< CstResNeighbConstIterator const & > ( rhs ) );
-	CstResNeighbConstIterator const & crnci_rhs = static_cast< CstResNeighbConstIterator const & > ( rhs );
+	auto const & crnci_rhs = static_cast< CstResNeighbConstIterator const & > ( rhs );
 
 	focused_node_ = crnci_rhs.focused_node_;
 	edge_iter_ = crnci_rhs.edge_iter_;
@@ -228,7 +226,7 @@ bool
 CstResNeighbConstIterator::operator == ( ResidueNeighborConstIterator const & rhs ) const
 {
 	debug_assert( &( dynamic_cast< CstResNeighbConstIterator const & > ( rhs )) );
-	CstResNeighbConstIterator const & crnci_rhs = static_cast< CstResNeighbConstIterator const & > ( rhs );
+	auto const & crnci_rhs = static_cast< CstResNeighbConstIterator const & > ( rhs );
 	return ( edge_iter_ == crnci_rhs.edge_iter_ );
 }
 
@@ -238,7 +236,7 @@ bool
 CstResNeighbConstIterator::operator != ( ResidueNeighborConstIterator const & rhs ) const
 {
 	debug_assert( &( dynamic_cast< CstResNeighbConstIterator const & > ( rhs )) );
-	CstResNeighbConstIterator const & crnci_rhs = static_cast< CstResNeighbConstIterator const & > ( rhs );
+	auto const & crnci_rhs = static_cast< CstResNeighbConstIterator const & > ( rhs );
 	return ( edge_iter_ != crnci_rhs.edge_iter_ );
 }
 
@@ -324,11 +322,11 @@ CstResNeighbConstIterator::downcast_cstedge( utility::graph::Edge const * edge )
 /// Constraints Energy Container Class Implementation
 /////////////////////////////////////////////////////
 
-CstEnergyContainer::CstEnergyContainer() : cst_graph_( /* 0 */ ), cst_set_revision_id_( 0 ), constraint_set_( 0 ) {}
+CstEnergyContainer::CstEnergyContainer() : cst_graph_( /* 0 */ ), cst_set_revision_id_( 0 ), constraint_set_( nullptr ) {}
 
 bool
 CstEnergyContainer::empty() const {
-	return cst_graph_ == 0;
+	return cst_graph_ == nullptr;
 }
 
 
@@ -339,7 +337,7 @@ CstEnergyContainer::CstEnergyContainer( pose::Pose const & pose )
 
 	constraint_set_ = pose.constraint_set();
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		for ( ConstraintSet::ResiduePairConstraintsIterator
+		for ( auto
 				rpc_iter = constraint_set_->residue_pair_constraints_begin( ii ),
 				rpc_end = constraint_set_->residue_pair_constraints_end( ii );
 				rpc_iter != rpc_end; ++rpc_iter ) {
@@ -352,8 +350,7 @@ CstEnergyContainer::CstEnergyContainer( pose::Pose const & pose )
 }
 
 
-CstEnergyContainer::~CstEnergyContainer()
-{}
+CstEnergyContainer::~CstEnergyContainer() = default;
 
 LREnergyContainerOP
 CstEnergyContainer::clone() const

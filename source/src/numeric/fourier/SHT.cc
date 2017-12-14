@@ -15,6 +15,10 @@
 #include <numeric/fourier/SHT.hh>
 #include <numeric/constants.hh>
 
+#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
+#include <ObjexxFCL/FArray3D.hh>
+
 #include <cstdlib>
 
 #ifdef WIN32

@@ -361,7 +361,7 @@ initialize_thermal_sampler( pose::Pose const & pose,
 			loop_sampler->add_rotamer( standard_bb_sampler );
 		} else if ( (n % 2) == 0 ) {
 			loop_sampler->add_rotamer( internal_bb_sampler );
-		} else if ( jump_sampler != 0 && ( n % 5 ) == 0 ) {
+		} else if ( jump_sampler != nullptr && ( n % 5 ) == 0 ) {
 			loop_sampler->add_rotamer( jump_sampler );
 		} else {
 			loop_sampler->add_rotamer( chi_sampler );

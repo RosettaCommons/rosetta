@@ -70,7 +70,7 @@ namespace packstat {
 
 static basic::Tracer TRcs( "protocols.packstat" );
 
-typedef numeric::xyzMatrix<PackstatReal> Rot;
+using Rot = numeric::xyzMatrix<PackstatReal>;
 typedef std::pair< numeric::xyzMatrix<PackstatReal>, numeric::xyzMatrix<PackstatReal> > RotPair;
 
 using utility::vector1;
@@ -277,7 +277,7 @@ compute_sasa(
 	PackstatReal fraction,total_sa,expose;//,dist_sq,total_sasa5,total_sasa14,
 	PackstatReal const largest_probe( opts.probe_radii[1] ); // first probe is largest
 
-	ObjexxFCL::FArray3D_ubyte atom_sasa_masks( old::nbytes, Nspheres, Nprobes, NULL );
+	ObjexxFCL::FArray3D_ubyte atom_sasa_masks( old::nbytes, Nspheres, Nprobes, nullptr );
 
 	vector1< RotPair > rotations;
 
@@ -425,17 +425,17 @@ compute_cav_ball_volumes(
 	using namespace ObjexxFCL;
 	using namespace old;
 
-	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), NULL );
+	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), nullptr );
 
 	std::sort( cavballs.begin(), cavballs.end(), OrderCavBallOnX() ); // already sorted
 
 	PackstatReal maxrad = 0;
-	for ( CavBallIter i = cavballs.begin(); i != cavballs.end(); ++i ) {
-		if ( maxrad < i->radius() ) {
-			maxrad = i->radius();
+	for ( auto & ball : cavballs ) {
+		if ( maxrad < ball.radius() ) {
+			maxrad = ball.radius();
 		}
-		i->area = 0.0f;
-		i->vol  = 0.0f;
+		ball.area = 0.0f;
+		ball.vol  = 0.0f;
 	}
 
 	for ( PackstatReal dpr = 0.0f; dpr <= maxrad; dpr += 0.1 ) {
@@ -500,7 +500,7 @@ prune_hidden_cavity_balls(
 	using namespace ObjexxFCL;
 	using namespace old;
 
-	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), NULL );
+	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), nullptr );
 
 	std::sort( cavballs.begin(), cavballs.end(), OrderCavBallOnX() );
 
@@ -567,7 +567,7 @@ prune_1pass(
 	using namespace ObjexxFCL;
 	using namespace old;
 
-	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), 0 );
+	FArray2D_ubyte prune_sasa_masks( old::nbytes, cavballs.size(), nullptr );
 
 	PackstatReal const max_cbrad = max_rad( cavballs );
 	PackstatReal const max_dis_sphere  = max_rad( spheres ) + max_cbrad + 2*pr;
@@ -669,9 +669,9 @@ prune_cavity_balls(
 	// make new list with exposed removed
 	CavBalls buried_cav_balls;
 	int id = 0;
-	for ( CavBallIter i = cavballs.begin(); i != cavballs.end(); ++i ) {
-		if ( i->exposed_radius < largest_probe_radius ) {
-			buried_cav_balls.push_back( *i );
+	for ( auto & cavball : cavballs ) {
+		if ( cavball.exposed_radius < largest_probe_radius ) {
+			buried_cav_balls.push_back( cavball );
 			buried_cav_balls[ buried_cav_balls.size() ].id_ = ++id;
 		}
 	}
@@ -702,11 +702,11 @@ compute_cav_ball_neighbor_count(
 	PackstatReal dis
 ) {
 	PackstatReal dis2 = dis*dis;
-	for ( CavBallIter c = cavballs.begin(); c != cavballs.end(); ++c ) {
-		c->anb = 0;
-		for ( SphereIter s = spheres.begin(); s != spheres.end(); ++s ) {
-			if ( s->xyz.distance_squared( c->xyz() ) <= dis2 ) {
-				c->anb++;
+	for ( auto & cavball : cavballs ) {
+		cavball.anb = 0;
+		for ( auto & sphere : spheres ) {
+			if ( sphere.xyz.distance_squared( cavball.xyz() ) <= dis2 ) {
+				cavball.anb++;
 			}
 		}
 	}
@@ -719,12 +719,12 @@ CavBalls select_cav_balls(
 	std::sort( cavballs.begin(), cavballs.end(), OrderCavBallOnR() );
 	CavBalls selected_cavballs;
 	PackstatReal const dist_th = spacing*spacing;
-	for ( CavBallIter i = cavballs.begin(); i != cavballs.end(); ++i ) {
+	for ( auto & cavball : cavballs ) {
 		bool ok_to_add = true;
-		for ( CavBallIter j = selected_cavballs.begin(); j != selected_cavballs.end(); ++j ) {
-			if ( i->xyz().distance_squared(j->xyz()) < dist_th ) ok_to_add = false;
+		for ( auto & selected_cavball : selected_cavballs ) {
+			if ( cavball.xyz().distance_squared(selected_cavball.xyz()) < dist_th ) ok_to_add = false;
 		}
-		if ( ok_to_add ) selected_cavballs.push_back( *i );
+		if ( ok_to_add ) selected_cavballs.push_back( cavball );
 	}
 	return selected_cavballs;
 }
@@ -1190,8 +1190,8 @@ cavity_distance_constraint(
 		}
 		numeric::xyzVector<core::Real> roi_ca( pose.residue(roi).xyz(2) );
 		core::Real dist_max = 0;
-		numeric::xyzVector<core::Real> roi_max;
-		numeric::xyzVector<core::Real> native_roi_max;
+		numeric::xyzVector<core::Real> roi_max( 0 ); // had been potentially used uninitialized
+		numeric::xyzVector<core::Real> native_roi_max( 0 ); // ditto
 		for ( Size ia = 5; ia <= pose.residue(roi).nheavyatoms(); ++ia ) {
 			if ( roi_ca.distance(pose.residue(roi).xyz(ia)) > dist_max ) {
 				roi_max = pose.residue(roi).xyz(ia);
@@ -1246,8 +1246,7 @@ cavity_distance_constraint(
 
 		std::map<id::AtomID,Real> constraints;
 
-		for ( std::set<id::AtomID>::iterator i = nbrs.begin(); i != nbrs.end(); ++i ) {
-			id::AtomID aid( *i );
+		for ( auto aid : nbrs ) {
 			constraints[aid] = best_clust_wcen.distance(pose.xyz(aid));
 			TRcs  << "PACKSTAT_ROI " << roi << " constraint: " << aid << " " << " " << std::endl;
 		}

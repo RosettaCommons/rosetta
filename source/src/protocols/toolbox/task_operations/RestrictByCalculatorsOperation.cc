@@ -23,6 +23,7 @@
 
 // Utility Headers
 #include <core/types.hh>
+#include <utility>
 #include <utility/vector1_bool.hh>
 #include <basic/Tracer.hh>
 
@@ -60,7 +61,7 @@ std::string RestrictByCalculatorsOperationCreator::keyname() const
 	return RestrictByCalculatorsOperation::keyname();
 }
 
-RestrictByCalculatorsOperation::RestrictByCalculatorsOperation() {}
+RestrictByCalculatorsOperation::RestrictByCalculatorsOperation() = default;
 
 RestrictByCalculatorsOperation::RestrictByCalculatorsOperation(utility::vector1< calc_calcn > const & calcs_and_calcns)
 : parent(), calcs_and_calcns_(calcs_and_calcns)
@@ -73,7 +74,7 @@ RestrictByCalculatorsOperation::RestrictByCalculatorsOperation(utility::vector1<
 	//  }
 }
 
-RestrictByCalculatorsOperation::~RestrictByCalculatorsOperation() {}
+RestrictByCalculatorsOperation::~RestrictByCalculatorsOperation() = default;
 
 /// @details be warned if you use clone that you'll not get new calculators
 core::pack::task::operation::TaskOperationOP RestrictByCalculatorsOperation::clone() const

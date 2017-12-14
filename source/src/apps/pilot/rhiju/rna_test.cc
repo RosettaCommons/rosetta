@@ -159,7 +159,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <time.h>
+#include <ctime>
 
 using namespace core;
 using namespace core::pose::rna;
@@ -177,7 +177,7 @@ using ObjexxFCL::format::F;
 using ObjexxFCL::string_of;
 using io::pdb::dump_pdb;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 //Definition of new OptionKeys
 // these will be available in the top-level OptionKey namespace:
@@ -986,7 +986,7 @@ rna_fullatom_minimize_silent_test()
 		pose::Pose pose_for_lores_scoring  = pose;
 		(*lores_scorefxn)( pose_for_lores_scoring );
 		for ( Size i = 1; i <= n_score_types; i++ ) {
-			ScoreType const t = ScoreType( i );
+			auto const t = ScoreType( i );
 			if ( lores_scorefxn->get_weight( t ) != 0.0 ) {
 				s.add_energy( name_from_score_type( t ), pose_for_lores_scoring.energies().total_energies()[ t ] );
 			}
@@ -1701,10 +1701,9 @@ is_regular_helix( pose::Pose const & pose,
 
 	Size k( 0 ), m( 0 );
 	Size partner( 0 ), canonical_partner( 0 );
-	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-			it != scored_base_pair_list.end(); ++it ) {
+	for ( const auto & it : scored_base_pair_list ) {
 
-		BasePair const base_pair = it->second;
+		BasePair const base_pair = it.second;
 
 		Size const i = base_pair.res1();
 		Size const j = base_pair.res2();
@@ -1813,7 +1812,7 @@ figure_out_domain_neighbors( Size const & i, core::pose::Pose const & pose  ){
 			irue = energy_graph.get_node(i)->const_edge_list_end();
 			iru != irue; ++iru ) {
 
-		EnergyEdge const * edge( static_cast< EnergyEdge const *> ( *iru ) );
+		auto const * edge( static_cast< EnergyEdge const *> ( *iru ) );
 
 		Size const j( edge->get_other_ind(i) );
 
@@ -1891,7 +1890,7 @@ fill_hbond_neighbors( pose::Pose const & pose  ){
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {
 
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> ( *iru ) );
+			auto const * edge( static_cast< EnergyEdge const *> ( *iru ) );
 
 			Size const j( edge->get_other_ind(i) );
 
@@ -1926,10 +1925,9 @@ output_benchmark_stuff( pose::Pose const & pose,
 	pose::Pose mini_pose;
 	Size count( 0 );
 	std::map< Size, Size > res_map;
-	for ( std::list<Size>::iterator it = all_res_list.begin(),
-			it_end = all_res_list.end(); it != it_end; ++ it ) {
-		res_map[ *it ] = ++count;
-		mini_pose.append_residue_by_bond( pose.residue( *it ) );
+	for ( unsigned long & it : all_res_list ) {
+		res_map[ it ] = ++count;
+		mini_pose.append_residue_by_bond( pose.residue( it ) );
 	}
 
 	mini_pose.dump_pdb( tag );
@@ -1955,9 +1953,8 @@ output_benchmark_stuff( pose::Pose const & pose,
 	///////////////////////////////////////////////////////
 	// Some pymol crap.
 	pymol_out << "select  chunk"<< lead_zero_string_of(n,3) << ", resi ";
-	for ( std::list<Size>::iterator it = all_res_list.begin(),
-			it_end = all_res_list.end(); it != it_end; ++ it ) {
-		pymol_out << *it << "+";
+	for ( unsigned long & it : all_res_list ) {
+		pymol_out << it << "+";
 	}
 	pymol_out << "0" << std::endl;
 	pymol_out << "color " << colors[ ( ( n-1 ) % colors.size() ) + 1 ] <<",  chunk"<< lead_zero_string_of(n,3) << std::endl;
@@ -1965,9 +1962,8 @@ output_benchmark_stuff( pose::Pose const & pose,
 	pymol_out << "label native and resi " << domain_res_list[1] << " and name P, " << "\"chunk"<<lead_zero_string_of(n,3)<<"\"" << std::endl;
 
 	pymol_out << "select  stems"<< lead_zero_string_of(n,3) << ", resi ";
-	for ( std::list<Size>::const_iterator it = stem_res_list.begin(),
-			it_end = stem_res_list.end(); it != it_end; ++ it ) {
-		pymol_out << *it << "+";
+	for ( unsigned long it : stem_res_list ) {
+		pymol_out << it << "+";
 	}
 	pymol_out << "0" << std::endl;
 	pymol_out << "color purple,  stems"<< lead_zero_string_of(n,3) << std::endl;
@@ -1977,9 +1973,7 @@ output_benchmark_stuff( pose::Pose const & pose,
 	FArray1D <bool> stem_residue_written_out( nres, false );
 	// Note that this doesn't (yet) group stem residues together --
 	//  may be necessary for pseudoknots!
-	for ( std::list<Size>::const_iterator it = stem_res_list.begin(),
-			it_end = stem_res_list.end(); it != it_end; ++ it ) {
-		Size const i( *it );
+	for ( unsigned long i : stem_res_list ) {
 		if ( !stem_residue_written_out( i ) ) {
 			params_out << "STEM PAIR " << res_map[i] << " " << res_map[vanilla_helix(i)] << " W W A " << std::endl;
 			stem_residue_written_out( i ) = true;
@@ -2060,9 +2054,8 @@ figure_out_stems( pose::Pose & pose, std::string const & infile, utility::io::oz
 		stem_residues.unique();
 
 		std::cout << "  ASSOCIATED STEM RESIDUES ==> ";
-		for ( std::list<Size>::iterator it = stem_residues.begin(),
-				it_end = stem_residues.end(); it != it_end; ++ it ) {
-			std::cout << " " << ( *it );
+		for ( unsigned long & stem_residue : stem_residues ) {
+			std::cout << " " << stem_residue;
 		}
 		std::cout << std::endl;
 
@@ -3361,7 +3354,7 @@ build_next_nucleotide_test()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-typedef utility::vector1< GaussianParameter > GaussianParameterSet;
+using GaussianParameterSet = utility::vector1<GaussianParameter>;
 
 void
 copy_rotamerized_torsions( pose::Pose & pose,

@@ -67,17 +67,17 @@ class PDB
 	long sgn(float x);
 	float arccos_(float x);
 	void Vec3Zero(Vec3 v);
-	void Vec3Copy(Vec3 v1, Vec3 v2);
-	float Vec3Abs(Vec3 v);
-	float Vec3DiffAbs(Vec3 v1, Vec3 v2);
+	void Vec3Copy(Vec3 v1, Vec3 const v2);
+	float Vec3Abs(Vec3 const v);
+	float Vec3DiffAbs(Vec3 const v1, Vec3 const v2);
 	void Vec3Norm(Vec3 v);
 	void Vec3Scale(Vec3 v, float s);
-	void Vec3Add(Vec3 v1, Vec3 v2);
-	void Vec3Sub(Vec3 v1, Vec3 v2);
-	float Vec3Scalar(Vec3 v1, Vec3 v2);
-	void Vec3Cross(Vec3 v1, Vec3 v2);
+	void Vec3Add(Vec3 v1, Vec3 const v2);
+	void Vec3Sub(Vec3 v1, Vec3 const v2);
+	float Vec3Scalar(Vec3 const v1, Vec3 const v2);
+	void Vec3Cross(Vec3 v1, Vec3 const v2);
 	void Mat3VecMult(Vec3 v, Mat3 m);
-	void Vec3ScaleAdd(Vec3 v1, float s, Vec3 v2);
+	void Vec3ScaleAdd(Vec3 v1, float s, Vec3 const v2);
 
 public:
 

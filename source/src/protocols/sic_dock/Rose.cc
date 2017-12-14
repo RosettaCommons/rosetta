@@ -42,8 +42,8 @@ using numeric::max;
 using std::cout;
 using std::cerr;
 using std::endl;
-typedef numeric::xyzVector<platform::Real> Vec;
-typedef numeric::xyzMatrix<platform::Real> Mat;
+using Vec = numeric::xyzVector<platform::Real>;
+using Mat = numeric::xyzMatrix<platform::Real>;
 
 Rose::Rose(PoseCOP pin                                                     ) : p(std::move(pin)),h(HashCOP( HashOP( new Hash(*p, core::pose::PoseCoordPickMode_BB ,4.0) ) )) {}
 Rose::Rose(PoseCOP pin, core::pose::PoseCoordPickMode const & coord_picker ) : p(std::move(pin)),h(HashCOP( HashOP( new Hash(*p,coord_picker,4.0) ) )) {}

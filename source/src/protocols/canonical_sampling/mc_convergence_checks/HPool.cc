@@ -51,7 +51,7 @@ namespace canonical_sampling {
 namespace mc_convergence_checks {
 
 //get desired lib file name from tag
-std::string lib_full_path(std::string tag_orign)
+std::string lib_full_path(std::string const & tag_orign)
 {
 	using namespace std;
 	using namespace core;

@@ -64,7 +64,7 @@ PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector(
 }
 
 
-PrimarySequenceNeighborhoodSelector::~PrimarySequenceNeighborhoodSelector() {}
+PrimarySequenceNeighborhoodSelector::~PrimarySequenceNeighborhoodSelector() = default;
 
 ResidueSubset
 PrimarySequenceNeighborhoodSelector::apply( core::pose::Pose const & pose ) const
@@ -115,7 +115,7 @@ PrimarySequenceNeighborhoodSelector::parse_my_tag(
 		std::string const selectorname = tag->getOption< std::string >( "selector" );
 		try {
 			set_selector( data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname ) );
-		} catch ( utility::excn::Exception e ) {
+		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from DisulfidizeMover.\n";
 			error_msg << e.msg();

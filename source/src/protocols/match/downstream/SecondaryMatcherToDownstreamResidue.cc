@@ -38,6 +38,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <numeric/xyzVector.hh>
 
@@ -59,12 +60,12 @@ SecondaryMatcherToDownstreamResidue::SecondaryMatcherToDownstreamResidue(
 	Size geom_cst_id
 ) :
 	parent( geom_cst_id ),
-	upstream_pose_(upstream_pose)
+	upstream_pose_(std::move(upstream_pose))
 {
 	for ( core::Size ii=1; ii<=4; ++ii ) { catalytic_atoms_.push_back(0); }
 }
 
-SecondaryMatcherToDownstreamResidue::~SecondaryMatcherToDownstreamResidue() {}
+SecondaryMatcherToDownstreamResidue::~SecondaryMatcherToDownstreamResidue() = default;
 
 DownstreamAlgorithmOP
 SecondaryMatcherToDownstreamResidue::clone() const
@@ -149,11 +150,8 @@ SecondaryMatcherToDownstreamResidue::respond_to_primary_hitlist_change(
 
 	/// Prepare to clear the cobwebs.  Note which voxels in the occ_space_hash_
 	/// could lead to matches, and which voxels could not possibly lead to matches.
-	for ( Matcher::HitListConstIterator
-			iter = matcher.hits( geom_cst_id() ).begin(),
-			iter_end = matcher.hits( geom_cst_id() ).end();
-			iter != iter_end; ++iter ) {
-		occspace->note_hit_geometry( iter->second() );
+	for ( auto const & iter : matcher.hits( geom_cst_id() ) ) {
+		occspace->note_hit_geometry( iter.second() );
 	}
 
 	occspace->drop_unsatisfied_voxels();
@@ -180,13 +178,13 @@ SecondaryMatcherToDownstreamResidue::respond_to_peripheral_hitlist_change(
 		return;
 	}
 
-	Matcher::HitListIterator iter = matcher.hit_list_begin(   geom_cst_id() );
-	Matcher::HitListIterator iter_end = matcher.hit_list_end( geom_cst_id() );
+	auto iter = matcher.hit_list_begin(   geom_cst_id() );
+	auto iter_end = matcher.hit_list_end( geom_cst_id() );
 
 	Size drop_count( 0 );
 
 	while ( iter != iter_end  ) {
-		Matcher::HitListIterator iter_next = iter;
+		auto iter_next = iter;
 		++iter_next;
 		if ( ! occspace->previous_round_geometry_still_matchable( iter->second() ) ) {
 			matcher.erase_hit( *this, geom_cst_id(), iter );
@@ -234,11 +232,9 @@ SecondaryMatcherToDownstreamResidue::build(
 				target_downstream_coords_->coord( 1, ii, kk ));
 		}
 
-		for ( EvaluatorSet::const_iterator eval_iter = respair_evaluators_.begin(),
-				eval_iter_end = respair_evaluators_.end();
-				eval_iter != eval_iter_end; ++eval_iter ) {
+		for ( auto const & respair_evaluator : respair_evaluators_ ) {
 
-			if ( eval_iter->first->evaluate_residues( upstream_residue, target_residue ) ) {
+			if ( respair_evaluator.first->evaluate_residues( upstream_residue, target_residue ) ) {
 				//detect collision between downstream evaluator atoms
 				//and heavy sidechain atoms
 				if ( ! are_colliding( upstream_residue, target_residue, downstream_atom_coordinates_needed_, catalytic_atoms_ ) ) {
@@ -260,7 +256,7 @@ SecondaryMatcherToDownstreamResidue::build(
 						Hit hit;
 						hit.first()[ 1 ] = scaffold_build_point_id;
 						hit.first()[ 2 ] = upstream_conf_id;
-						hit.first()[ 3 ] = eval_iter->second;
+						hit.first()[ 3 ] = respair_evaluator.second;
 						hit.first()[ 4 ] = (target_downstream_coords_->hit(1,ii)).downstream_conf_id();
 						//flo sep '13 the below line is probably a bug, was old line, above is better
 						//hit.first()[ 4 ] = 1; // do not store the downstream rotamer id or the focused_geomcst_id_; we never try to recover this placement
@@ -342,11 +338,10 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 	/// so that they point all point to the same target_downstream_coords_ object
 	std::list< DownstreamAlgorithmOP > const & dsalgs = matcher.nonconst_downstream_algorithms( geom_cst_id() );
 	std::list< SecondaryMatcherToDownstreamResidueOP > secmatchers;
-	for ( std::list< DownstreamAlgorithmOP >::const_iterator iter = dsalgs.begin(),
-			iter_end = dsalgs.end(); iter != iter_end; ++iter ) {
+	for ( auto const & dsalg : dsalgs ) {
 		SecondaryMatcherToDownstreamResidueOP secmatcher =
-			utility::pointer::dynamic_pointer_cast< SecondaryMatcherToDownstreamResidue> ( *iter );
-		runtime_assert( secmatcher != 0 );
+			utility::pointer::dynamic_pointer_cast< SecondaryMatcherToDownstreamResidue> ( dsalg );
+		runtime_assert( secmatcher != nullptr );
 		if ( secmatcher.get() != this ) {
 			secmatcher->set_target_rotamer_coords( target_downstream_coords_ );
 		}
@@ -420,12 +415,10 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_for_geomcst(
 	/// Make sure all the downstream algorithms for this geom_cst_id()
 	/// know which geomcst is the source for this  next batch of hits.
 	std::list< DownstreamAlgorithmOP > const & dsalgs = matcher.nonconst_downstream_algorithms( geom_cst_id() );
-	for ( std::list< DownstreamAlgorithmOP >::const_iterator
-			iter = dsalgs.begin(), iter_end = dsalgs.end();
-			iter != iter_end; ++iter ) {
-		if ( iter->get() != this ) {
-			SecondaryMatcherToDownstreamResidueOP other = utility::pointer::dynamic_pointer_cast< SecondaryMatcherToDownstreamResidue > ( *iter );
-			runtime_assert( other != 0 );
+	for ( auto const & dsalg : dsalgs ) {
+		if ( dsalg.get() != this ) {
+			SecondaryMatcherToDownstreamResidueOP other = utility::pointer::dynamic_pointer_cast< SecondaryMatcherToDownstreamResidue > ( dsalg );
+			runtime_assert( other != nullptr );
 			other->set_focused_geomcst_id( focused_geomcst_id_ );
 			//set downstram atom coords needed for all downstream algorithms
 			//and also downstreambuilders that are needed to get coordinates
@@ -501,13 +494,13 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_at_target_build_
 
 	// DownstreamBuilderOP dsbuilder = matcher.downstream_builder( focused_geomcst_id_ );
 	//set_dsbuilder( matcher.downstream_builder( focused_geomcst_id_ ) );
-	runtime_assert( get_dsbuilder() != 0 );
+	runtime_assert( get_dsbuilder() != nullptr );
 
 	core::conformation::Residue dsrescoords( *downstream_restype_, false );
 	utility::vector1< core::Vector > coords( downstream_atom_coordinates_needed_.size() );
 
 	Size count_ds_hits( 0 );
-	for ( Matcher::HitListConstIterator iter = hits_for_focused_geomcst_and_build_point_begin_,
+	for ( auto iter = hits_for_focused_geomcst_and_build_point_begin_,
 			iter_end = hits_for_focused_geomcst_and_build_point_end_; iter != iter_end; ++iter ) {
 		++count_ds_hits;
 		get_dsbuilder()->coordinates_from_hit( *iter, downstream_atom_coordinates_needed_, coords );

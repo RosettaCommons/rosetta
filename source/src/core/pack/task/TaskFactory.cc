@@ -40,7 +40,7 @@ TaskFactoryOP TaskFactory::clone() const
 	return TaskFactoryOP( new TaskFactory(*this) );
 }
 
-TaskFactory::~TaskFactory() {}
+TaskFactory::~TaskFactory() = default;
 
 TaskFactory &
 TaskFactory::operator = ( TaskFactory const & rhs )
@@ -52,7 +52,7 @@ TaskFactory::operator = ( TaskFactory const & rhs )
 void
 TaskFactory::modify_task( core::pose::Pose const & pose, PackerTaskOP task ) const
 {
-	runtime_assert( task != 0 );
+	runtime_assert( task != nullptr );
 	for ( TaskOperationOP const taskop : *this ) {
 		taskop->apply( pose, *task );
 	}
@@ -104,11 +104,8 @@ TaskFactory::create_packer_task(
 void
 TaskFactory::copy_operations( TaskFactory const & src )
 {
-	for ( std::list< TaskOperationOP >::const_iterator
-			taskop_iter = src.begin(),
-			taskop_iter_end = src.end();
-			taskop_iter != taskop_iter_end; ++taskop_iter ) {
-		operations_.push_back( (*taskop_iter)->clone() );
+	for ( auto const & taskop_iter : src ) {
+		operations_.push_back( taskop_iter->clone() );
 	}
 }
 

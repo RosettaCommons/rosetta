@@ -26,6 +26,7 @@
 #include <core/chemical/AA.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -56,14 +57,14 @@ AddCDRProfileSetsOperation::AddCDRProfileSetsOperation():
 
 AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AntibodyInfoCOP ab_info):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 }
 
 AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AntibodyInfoCOP ab_info, const utility::vector1<bool>& cdrs):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 
 {
 	set_defaults();
@@ -72,7 +73,7 @@ AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AntibodyInfoCOP ab_info, 
 
 AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AntibodyInfoCOP ab_info, const utility::vector1<bool>& cdrs, bool limit_only_to_length):
 	TaskOperation(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	cdrs_ = cdrs;
@@ -102,7 +103,7 @@ AddCDRProfileSetsOperation::clone() const {
 	return TaskOperationOP( new AddCDRProfileSetsOperation( *this));
 }
 
-AddCDRProfileSetsOperation::~AddCDRProfileSetsOperation(){}
+AddCDRProfileSetsOperation::~AddCDRProfileSetsOperation()= default;
 
 void
 AddCDRProfileSetsOperation::set_defaults(){
@@ -249,7 +250,7 @@ AddCDRProfileSetsOperation::pre_load_data(const core::pose::Pose& pose){
 	utility::vector1<bool> no_data_cdrs(8, false);
 
 	for ( core::Size i = 1; i <= 8; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		if ( ! cdrs_[ i ] ) continue;
 
 		if ( cdr == l4 || cdr == h4 ) {
@@ -291,7 +292,7 @@ AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task
 	MutationSetDesignOperation mut_set_op = MutationSetDesignOperation();
 
 	for ( core::Size i_cdr = 1; i_cdr <= core::Size(local_ab_info->get_total_num_CDRs( true /* inlude cdr4 */)); ++i_cdr ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i_cdr );
+		auto cdr = static_cast<CDRNameEnum>( i_cdr );
 		if ( sequences.count(cdr) == 0 || sequences[ cdr ].size() <= cutoff_ ) continue;
 		TR << "applying profile set operation for " << local_ab_info->get_CDR_name(cdr) << std::endl;
 		utility::vector1< std::map< core::Size, core::chemical::AA > > mutation_sets;

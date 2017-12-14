@@ -94,7 +94,7 @@ MirrorSymmetricConformation::MirrorSymmetricConformation(
 Conformation &
 MirrorSymmetricConformation::operator=( Conformation const & src )
 {
-	MirrorSymmetricConformation const * mirr_sym_conf = dynamic_cast< MirrorSymmetricConformation const * > ( &src );
+	auto const * mirr_sym_conf = dynamic_cast< MirrorSymmetricConformation const * > ( &src );
 	if ( mirr_sym_conf ) {
 		MirrorSymmetricConformation::operator=( *mirr_sym_conf );
 	} else {
@@ -107,7 +107,7 @@ MirrorSymmetricConformation::operator=( Conformation const & src )
 void
 MirrorSymmetricConformation::detached_copy( Conformation const & src ) {
 	SymmetricConformation::detached_copy( src );
-	MirrorSymmetricConformation const * mirr_sym_conf = dynamic_cast< MirrorSymmetricConformation const * > ( &src );
+	auto const * mirr_sym_conf = dynamic_cast< MirrorSymmetricConformation const * > ( &src );
 	if ( mirr_sym_conf ) {
 		// Copy the private data members of the symmetric conformation.
 		res_is_mirrored_ = mirr_sym_conf->res_is_mirrored_;
@@ -145,7 +145,7 @@ MirrorSymmetricConformation::~MirrorSymmetricConformation() { clear(); }
 void
 MirrorSymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 {
-	typedef SymmetryInfo::DOF_IDs DOF_IDs;
+	using DOF_IDs = SymmetryInfo::DOF_IDs;
 
 	core::Size parent_rsd;
 	//bool parent_mirrored=false;
@@ -176,8 +176,8 @@ MirrorSymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 	Conformation::set_dof( parent_id, setting );
 
 	DOF_IDs const & dofs( Symmetry_Info()->dependent_dofs( parent_id, *this ) );
-	for ( DOF_IDs::const_iterator dof =dofs.begin(), dofe= dofs.end(); dof != dofe; ++dof ) {
-		Conformation::set_dof( *dof, setting );
+	for ( auto const & dof : dofs ) {
+		Conformation::set_dof( dof, setting );
 	}
 }
 
@@ -185,7 +185,7 @@ MirrorSymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 void
 MirrorSymmetricConformation::set_torsion( id::TorsionID const & id, Real const setting )
 {
-	typedef SymmetryInfo::TorsionIDs TorsionIDs;
+	using TorsionIDs = SymmetryInfo::TorsionIDs;
 
 	TR.Trace << "MirrorSymmetricConformation: set_torsion: " << id << ' ' << setting << std::endl;
 	if ( Symmetry_Info()->torsion_changes_move_other_monomers() ) {
@@ -208,8 +208,8 @@ MirrorSymmetricConformation::set_torsion( id::TorsionID const & id, Real const s
 	Conformation::set_torsion( parent_id, setting );
 	{
 		TorsionIDs const & tors( Symmetry_Info()->dependent_torsions( parent_id ) );
-		for ( TorsionIDs::const_iterator tor =tors.begin(), tore= tors.end(); tor != tore; ++tor ) {
-			Conformation::set_torsion( *tor, setting );
+		for ( auto const & tor : tors ) {
+			Conformation::set_torsion( tor, setting );
 		}
 	}
 }
@@ -273,9 +273,6 @@ MirrorSymmetricConformation::set_torsion_angle(
 void
 MirrorSymmetricConformation::set_jump( int const jump_number, kinematics::Jump const & new_jump )
 {
-	//typedef SymmetryInfo::AtomIDs AtomIDs;
-	typedef SymmetryInfo::Clones Clones;
-
 	TR.Debug << "MirrorSymmetricConformation: set_jump jump_number: " << jump_number << std::endl;
 
 	// clear cached transforms
@@ -288,9 +285,8 @@ MirrorSymmetricConformation::set_jump( int const jump_number, kinematics::Jump c
 		TR.Warning << "MirrorSymmetricConformation:: directly setting a dependent jump!" << std::endl;
 		TR.Warning << "the jump " << jump_number << " is controlled by " << Symmetry_Info()->jump_follows( jump_number ) << std::endl;
 	} else {
-		for ( Clones::const_iterator pos= Symmetry_Info()->jump_clones( jump_number ).begin(),
-				epos=Symmetry_Info()->jump_clones( jump_number ).end(); pos != epos; ++pos ) {
-			id::AtomID const id_clone( Conformation::jump_atom_id( *pos ) );
+		for ( unsigned long pos : Symmetry_Info()->jump_clones( jump_number ) ) {
+			id::AtomID const id_clone( Conformation::jump_atom_id( pos ) );
 
 			//fpd the logic is a bit convoluted here
 			//    to make the inverse jump we need not just the rotation & translation
@@ -299,8 +295,8 @@ MirrorSymmetricConformation::set_jump( int const jump_number, kinematics::Jump c
 			//    but that is probably inefficient?
 			kinematics::Jump new_jump_copy = new_jump;
 			new_jump_copy.set_invert(
-				jump_is_mirrored_[*pos].first,
-				jump_is_mirrored_[*pos].second
+				jump_is_mirrored_[pos].first,
+				jump_is_mirrored_[pos].second
 			);
 			Conformation::set_jump( id_clone, new_jump_copy );
 		}
@@ -310,8 +306,6 @@ MirrorSymmetricConformation::set_jump( int const jump_number, kinematics::Jump c
 void
 MirrorSymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump const & new_jump )
 {
-	typedef SymmetryInfo::Clones Clones;
-
 	TR.Debug << "MirrorSymmetricConformation: set_jump id:" << id << std::endl;
 
 	// clear cached transforms
@@ -323,9 +317,8 @@ MirrorSymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump c
 	if ( !Symmetry_Info()->jump_is_independent( jump_number ) ) {
 		TR.Warning << "MirrorSymmetricConformation:: directly setting a dependent jump!" << std::endl;
 	} else {
-		for ( Clones::const_iterator pos= Symmetry_Info()->jump_clones( jump_number ).begin(),
-				epos=Symmetry_Info()->jump_clones( jump_number ).end(); pos != epos; ++pos ) {
-			id::AtomID const id_clone( Conformation::jump_atom_id( *pos ) );
+		for ( unsigned long pos : Symmetry_Info()->jump_clones( jump_number ) ) {
+			id::AtomID const id_clone( Conformation::jump_atom_id( pos ) );
 
 			//fpd the logic is a bit convoluted here
 			//    to make the inverse jump we need not just the rotation & translation
@@ -334,8 +327,8 @@ MirrorSymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump c
 			//    but that is probably inefficient?
 			kinematics::Jump new_jump_copy = new_jump;
 			new_jump_copy.set_invert(
-				jump_is_mirrored_[*pos].first,
-				jump_is_mirrored_[*pos].second
+				jump_is_mirrored_[pos].first,
+				jump_is_mirrored_[pos].second
 			);
 			Conformation::set_jump( id_clone, new_jump_copy );
 		}
@@ -377,7 +370,7 @@ MirrorSymmetricConformation::replace_residue( Size const seqpos, Residue const &
 	Conformation::replace_residue( parent_rsd, *new_rsd, orient_backbone );
 
 	// now the copies
-	for ( SymmetryInfo::Clones::const_iterator pos=Symmetry_Info()->bb_clones( parent_rsd ).begin(),
+	for ( auto pos=Symmetry_Info()->bb_clones( parent_rsd ).begin(),
 			epos=Symmetry_Info()->bb_clones( parent_rsd ).end(); pos != epos; ++pos ) {
 		ResidueOP new_new_rsd( new_rsd->clone() );
 		for ( int i=1; i<=(int)new_new_rsd->natoms(); ++i ) {
@@ -428,7 +421,7 @@ MirrorSymmetricConformation::replace_residue( Size const seqpos,
 	Conformation::replace_residue( parent_rsd, *new_rsd, atom_pairs );
 
 	// now the copies
-	for ( SymmetryInfo::Clones::const_iterator pos=Symmetry_Info()->bb_clones( parent_rsd ).begin(),
+	for ( auto pos=Symmetry_Info()->bb_clones( parent_rsd ).begin(),
 			epos=Symmetry_Info()->bb_clones( parent_rsd ).end(); pos != epos; ++pos ) {
 		ResidueOP new_new_rsd( new_rsd->clone() );
 		for ( int i=1; i<=(int)new_new_rsd->natoms(); ++i ) {

@@ -60,7 +60,7 @@ CavityCalculator::CavityCalculator() :
 }
 
 /// @brief destructor
-CavityCalculator::~CavityCalculator(){}
+CavityCalculator::~CavityCalculator()= default;
 
 /// @brief
 void

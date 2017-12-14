@@ -171,18 +171,18 @@ public:
 	A3BHbsDockDesignMinimizeMover(): Mover("A3BHbsDockDesignMinimizeMover"){}
 
 	//default dtor
-	virtual ~A3BHbsDockDesignMinimizeMover(){}
+	~A3BHbsDockDesignMinimizeMover() override= default;
 
 	//methods
 	void setup_pert_foldtree( core::pose::Pose & pose);
 	void setup_filter_stats();
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "A3BHbsDockDesignMinimizeMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "A3BHbsDockDesignMinimizeMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< A3BHbsDockDesignMinimizeMover > A3BHbsDockDesignMinimizeMoverOP;
-typedef utility::pointer::shared_ptr< A3BHbsDockDesignMinimizeMover const > A3BHbsDockDesignMinimizeMoverCOP;
+using A3BHbsDockDesignMinimizeMoverOP = utility::pointer::shared_ptr<A3BHbsDockDesignMinimizeMover>;
+using A3BHbsDockDesignMinimizeMoverCOP = utility::pointer::shared_ptr<const A3BHbsDockDesignMinimizeMover>;
 
 
 int

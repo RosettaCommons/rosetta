@@ -138,7 +138,7 @@ RollMover::parse_my_tag(
 
 	if ( tag->hasOption("chain") ) {
 		if ( tag->hasOption("start_res") || tag->hasOption("stop_res") ) utility_exit_with_message("cannot specify start/stop res AND chain!");
-		core::Size const chain = tag->getOption<core::Size>("chain");
+		auto const chain = tag->getOption<core::Size>("chain");
 		runtime_assert_msg(chain > 0 && chain <= pose.conformation().num_chains(),"RollMover bad chain");
 		start_res_ = pose.conformation().chain_begin(chain);
 		stop_res_ = pose.conformation().chain_end(chain);

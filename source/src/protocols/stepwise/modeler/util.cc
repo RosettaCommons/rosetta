@@ -193,8 +193,8 @@ merge_vectors( utility::vector1< Size > const & vec1,
 	for ( Size n = 1; n <= vec2.size(); n++ ) silly_map[ vec2[n] ] = true;
 
 	utility::vector1< Size > merged_vec;
-	for ( std::map<Size,bool>::iterator it = silly_map.begin(), end = silly_map.end(); it != end; ++it ) {
-		merged_vec.push_back( it->first );
+	for ( auto & it : silly_map ) {
+		merged_vec.push_back( it.first );
 	}
 	return merged_vec;
 
@@ -291,7 +291,7 @@ find_root_without_virtual_ribose( kinematics::FoldTree const & f, pose::Pose con
 		}
 	}
 	utility_exit_with_message( "Fail: find_root_without_virtual_ribose" );
-	return 0;
+	return false;
 }
 
 
@@ -911,7 +911,7 @@ switch_focus_to_other_pose( pose::Pose & pose,
 
 	if ( focus_pose_idx == 0 ) return;
 
-	Real const score_before_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
+	Real const score_before_switch_focus = ( scorefxn != nullptr ) ? (*scorefxn)( pose ) : 0.0;
 
 	utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
 
@@ -946,7 +946,7 @@ switch_focus_to_other_pose( pose::Pose & pose,
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, new_full_model_info );
 	protocols::scoring::set_vdw_cached_rep_screen_info_from_pose( pose, *other_pose );
 
-	Real const score_after_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
+	Real const score_after_switch_focus = ( scorefxn != nullptr ) ? (*scorefxn)( pose ) : 0.0;
 
 	// debugging verbiage.
 	// if ( scorefxn != 0 ) {

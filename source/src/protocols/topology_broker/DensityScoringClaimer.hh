@@ -93,9 +93,6 @@ protected:
 private:
 	core::Size  anchor_residue_;  // where does the VRT jump to
 	std::string anchor_chain_;    // a SequenceLabel  << fpd ... is this used??
-
-	core::Size  resolved_anchor_residue_;   // residue number of anchor in final pose
-	core::Size  vrt_id_;                    // residue number of VRT in final pose
 }; //class MetalloClaimer
 
 }

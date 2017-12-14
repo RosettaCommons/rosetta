@@ -49,8 +49,7 @@ namespace optimization {
 
 static basic::Tracer TR( "core.optimization.CartesianMinimizer" );
 
-CartesianMinimizer::CartesianMinimizer()
-{}
+CartesianMinimizer::CartesianMinimizer() = default;
 
 CartesianMinimizer::~CartesianMinimizer() = default;
 

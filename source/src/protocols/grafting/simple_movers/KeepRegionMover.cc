@@ -19,6 +19,7 @@
 #include <protocols/grafting/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <utility/py/PyAssert.hh>
@@ -42,7 +43,7 @@ KeepRegionMover::KeepRegionMover() :
 
 }
 
-KeepRegionMover::KeepRegionMover(std::string const & res_start, std::string const & res_end):
+KeepRegionMover::KeepRegionMover(std::string const & res_start, std::string const &res_end):
 	start_(res_start),
 	end_(res_end),
 	nter_overhang_(0),
@@ -51,7 +52,7 @@ KeepRegionMover::KeepRegionMover(std::string const & res_start, std::string cons
 
 }
 
-KeepRegionMover::~KeepRegionMover() {}
+KeepRegionMover::~KeepRegionMover() = default;
 
 KeepRegionMover::KeepRegionMover(KeepRegionMover const & ) = default;
 

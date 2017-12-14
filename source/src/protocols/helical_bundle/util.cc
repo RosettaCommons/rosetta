@@ -296,10 +296,10 @@ void read_minor_helix_params (
 		} else if ( strbuffer=="atoms_per_residue" ) {
 			runtime_assert_string_msg( residues_per_repeat_specified, "Error in protocols::helical_bundle::read_minor_helix_params():  The \"atoms_per_residue\" lines can only be after a \"residues_per_repeat\" line.  (This is a problem with the crick_params file.)" );
 			ss.getline(buffer, 25, '\t');
-			core::Size const curres( static_cast<core::Size>( atoi( buffer ) ) );
+			auto const curres( static_cast<core::Size>( atoi( buffer ) ) );
 			runtime_assert_string_msg( curres > 0 && curres <=residues_per_repeat, "Error in protocols::helical_bundle::read_minor_helix_params():  An \"atoms_per_residue\" line specifies a residue index that's not in the repeating unit.  (This is a problem with the crick_params file.)" );
 			ss.getline(buffer, 25);
-			core::Size const curres_atomcount( static_cast<core::Size>( atoi( buffer ) ) );
+			auto const curres_atomcount( static_cast<core::Size>( atoi( buffer ) ) );
 			runtime_assert_string_msg( curres_atomcount > 0, "Error in protocols::helical_bundle::read_minor_helix_params():  The number of atoms in the current residue must be greater than zero.  (This is a problem with the crick_params file.)" );
 			runtime_assert_string_msg( atoms_per_residue[curres] == 0, "Error in protocols::helical_bundle::read_minor_helix_params():  The number of atoms in a residue was specified more than once in the crick_params file.");
 			atoms_per_residue[curres] = curres_atomcount;

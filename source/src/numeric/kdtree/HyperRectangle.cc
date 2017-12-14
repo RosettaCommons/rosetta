@@ -14,6 +14,7 @@
 #include <numeric/types.hh>
 #include <numeric/kdtree/HyperRectangle.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -25,7 +26,7 @@ namespace kdtree {
 /// @details Auto-generated virtual destructor
 HyperRectangle::~HyperRectangle() = default;
 
-HyperRectangle::HyperRectangle() {}
+HyperRectangle::HyperRectangle() = default;
 
 HyperRectangle::HyperRectangle(
 	utility::vector1< utility::vector1< Real > > const & pts
@@ -40,8 +41,8 @@ HyperRectangle::HyperRectangle(
 }
 
 HyperRectangle::HyperRectangle(
-	utility::vector1< numeric::Real > upper,
-	utility::vector1< numeric::Real > lower
+	utility::vector1< numeric::Real > const & upper,
+	utility::vector1< numeric::Real > const & lower
 )
 : upper_( upper ), lower_( lower )
 {

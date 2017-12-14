@@ -106,7 +106,7 @@ RepackMinimize::RepackMinimize(
 	repack_non_ala_ = repack_non_ala;
 }
 
-RepackMinimize::~RepackMinimize() {}
+RepackMinimize::~RepackMinimize() = default;
 
 /// @details designs interface residues and minimizes the pose.
 /// If minimization parameters have not been set by the user the default minimization behaviour is as follows:

@@ -133,8 +133,7 @@ MonteCarlo::MonteCarlo(
 }
 
 
-MonteCarlo::~MonteCarlo()
-= default;
+MonteCarlo::~MonteCarlo() = default;
 
 
 void MonteCarlo::clear_poses() {

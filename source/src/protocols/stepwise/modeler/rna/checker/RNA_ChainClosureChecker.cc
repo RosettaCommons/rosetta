@@ -53,8 +53,7 @@ RNA_ChainClosureChecker::RNA_ChainClosureChecker( pose::Pose const & pose, Size 
 }
 
 //Destructor
-RNA_ChainClosureChecker::~RNA_ChainClosureChecker()
-{}
+RNA_ChainClosureChecker::~RNA_ChainClosureChecker() = default;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////

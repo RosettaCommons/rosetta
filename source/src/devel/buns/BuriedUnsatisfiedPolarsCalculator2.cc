@@ -80,14 +80,14 @@ using namespace basic::options;
 using namespace core::pose::metrics;
 using namespace protocols::toolbox::pose_metric_calculators;
 using namespace utility;
-typedef numeric::xyzVector< core::Real > Vector;
+using Vector = numeric::xyzVector<core::Real>;
 
 BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2(
-	std::string weak_bunsat_calc
+	std::string const & weak_bunsat_calc
 ) :
 	all_bur_unsat_polars_( 0 ),
 	special_region_bur_unsat_polars_(0),
-	name_of_weak_bunsat_calc_(std::move( weak_bunsat_calc )),
+	name_of_weak_bunsat_calc_( weak_bunsat_calc ),
 	layered_sasa_(option[OptionKeys::bunsat_calc2::layered_sasa]),
 	generous_hbonds_(option[OptionKeys::bunsat_calc2::generous_hbonds]),
 	sasa_burial_cutoff_(option[OptionKeys::bunsat_calc2::sasa_burial_cutoff]),
@@ -105,13 +105,13 @@ BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2(
 
 
 BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2(
-	std::string weak_bunsat_calc,
-	std::set< core::Size >  special_region
+	std::string const & weak_bunsat_calc,
+	std::set< core::Size > const & special_region
 ) :
 	all_bur_unsat_polars_(0),
 	special_region_bur_unsat_polars_(0),
-	name_of_weak_bunsat_calc_(std::move( weak_bunsat_calc )),
-	special_region_(std::move( special_region )),
+	name_of_weak_bunsat_calc_( weak_bunsat_calc ),
+	special_region_( special_region ),
 	layered_sasa_(option[OptionKeys::bunsat_calc2::layered_sasa]),
 	generous_hbonds_(option[OptionKeys::bunsat_calc2::generous_hbonds]),
 	sasa_burial_cutoff_(option[OptionKeys::bunsat_calc2::sasa_burial_cutoff]),

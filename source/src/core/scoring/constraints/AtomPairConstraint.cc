@@ -39,6 +39,7 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -74,7 +75,7 @@ AtomPairConstraint::AtomPairConstraint(
 	Constraint( scoretype ),
 	atom1_(a1),
 	atom2_(a2),
-	func_( func )
+	func_(std::move( func ))
 {}
 
 
@@ -192,7 +193,7 @@ ConstraintOP AtomPairConstraint::remapped_clone( pose::Pose const& src, pose::Po
 		atom2.rsd() = (*smap)[ atom2_.rsd() ];
 	}
 
-	if ( atom1.rsd() == 0 || atom2.rsd() == 0 ) return NULL;
+	if ( atom1.rsd() == 0 || atom2.rsd() == 0 ) return nullptr;
 
 	//get AtomIDs for target pose
 	id::AtomID id1( named_atom_id_to_atom_id( atom1, dest ) );
@@ -200,7 +201,7 @@ ConstraintOP AtomPairConstraint::remapped_clone( pose::Pose const& src, pose::Po
 	if ( id1.valid() && id2.valid() ) {
 		return ConstraintOP( new AtomPairConstraint( id1, id2, func_, score_type() ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -210,7 +211,7 @@ AtomPairConstraint::operator == ( Constraint const & other_cst ) const
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	AtomPairConstraint const & other( static_cast< AtomPairConstraint const & > (other_cst) );
+	auto const & other( static_cast< AtomPairConstraint const & > (other_cst) );
 	if ( atom1_ != other.atom1_ ) return false;
 	if ( atom2_ != other.atom2_ ) return false;
 	if ( this->score_type() != other.score_type() ) return false;
@@ -285,7 +286,7 @@ AtomPairConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 			remap_a2( atom2_.atomno(), seqmap[atom2_.rsd()] );
 		return ConstraintOP( new AtomPairConstraint( remap_a1, remap_a2, this->func_ ) );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

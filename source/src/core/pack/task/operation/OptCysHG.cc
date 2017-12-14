@@ -43,13 +43,11 @@ OptCysHG::OptCysHG() :
 
 
 /// @brief copy constructor
-OptCysHG::OptCysHG( OptCysHG const & rval ) :
-	Super( rval )
-{}
+OptCysHG::OptCysHG( OptCysHG const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-OptCysHG::~OptCysHG() {}
+OptCysHG::~OptCysHG() = default;
 
 /// @brief clone this object
 OptCysHG::TaskOperationOP OptCysHG::clone() const {

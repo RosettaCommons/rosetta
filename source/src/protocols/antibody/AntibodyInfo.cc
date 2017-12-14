@@ -216,7 +216,7 @@ void AntibodyInfo::init(pose::Pose const & pose) {
 		total_cdr_loops_ = num_cdr_loops;
 	}
 	for ( core::Size i = 1; i <= core::Size(total_cdr_loops_); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		all_cdrs_present_.push_back( cdr );
 		all_cdrs_present_and_proto_.push_back( cdr );
 	}
@@ -521,7 +521,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 
 	for ( Size i=start_cdr_loop; i<= core::Size(total_cdr_loops_); ++i ) {
 
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		loop_start_in_pose = pose.pdb_info()->pdb2pose( chains_for_cdrs_[i], numbering_info_.cdr_numbering[i][cdr_start]->resnum());
 		loop_stop_in_pose= pose.pdb_info()->pdb2pose( chains_for_cdrs_[i], numbering_info_.cdr_numbering[i][cdr_end]->resnum());
 
@@ -767,7 +767,7 @@ AntibodyInfo::check_cdr_quality(const pose::Pose& pose) const {
 	//
 
 	for ( core::Size i = 1; i <= core::Size(total_cdr_loops_); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		protocols::loops::Loop loo = get_CDR_loop(cdr, pose);
 		std::pair< bool, core::Size> cb_result = protocols::loops::has_severe_pep_bond_geom_issues(pose, loo, check_bonds, check_angles);
 
@@ -1211,12 +1211,12 @@ AntibodyInfo::get_region_of_residue(const core::pose::Pose& pose, core::Size res
 	if ( chain == 'L' || chain == 'H' ) {
 
 		//Check if the resnum is part of a CDR:
-		core::Size total_cdrs = core::Size(total_cdr_loops_);
+		auto total_cdrs = core::Size(total_cdr_loops_);
 		if ( ! de_as_framework ) {
 			total_cdrs = core::Size( CDRNameEnum_proto_total );
 		}
 		for ( core::Size i = 1; i <= total_cdrs; ++i ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+			auto cdr = static_cast<CDRNameEnum>(i);
 			if ( ! has_CDR(cdr) ) continue;
 
 			core::Size start = this->get_CDR_start(cdr, pose);
@@ -1277,7 +1277,7 @@ AntibodyInfo::get_CDR_loops(pose::Pose const & pose, core::Size overhang) const 
 
 	protocols::loops::LoopsOP cdr_loops( new loops::Loops );
 	for ( Size i = 1; i <= Size(total_cdr_loops_); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		protocols::loops::Loop cdr_loop =get_CDR_loop(cdr, pose, overhang);
 		cdr_loops->add_loop(cdr_loop);
 	}
@@ -1291,7 +1291,7 @@ AntibodyInfo::get_CDR_loops(const pose::Pose& pose, const vector1<bool> & cdrs, 
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops );
 	for ( Size i = 1; i <= cdrs.size(); ++i ) {
 		if ( cdrs[i] ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+			auto cdr = static_cast<CDRNameEnum>(i);
 			protocols::loops::Loop cdr_loop = get_CDR_loop(cdr, pose, overhang);
 			cdr_loops->add_loop(cdr_loop);
 		}
@@ -1371,7 +1371,7 @@ AntibodyInfo::setup_CDR_clusters(const pose::Pose& pose, utility::vector1<bool> 
 
 	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 		if ( cdrs[ i ] ) {
-			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+			auto cdr = static_cast<CDRNameEnum>( i );
 			setup_CDR_cluster(pose, cdr, attempt_set_from_pose);
 
 		}
@@ -1390,7 +1390,7 @@ AntibodyInfo::setup_CDR_cluster(const pose::Pose& pose, CDRNameEnum cdr, bool at
 	TR << "Setting up CDR Cluster for " << this->get_CDR_name( cdr ) << std::endl;
 
 	if ( this->has_CDR( cdr ) && attempt_set_from_pose && pose.data().has(CacheableDataType::CDR_CLUSTER_INFO) ) {
-		BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(CacheableDataType::CDR_CLUSTER_INFO));
+		auto const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(CacheableDataType::CDR_CLUSTER_INFO));
 		CDRClusterCOP result = cluster_cache.get_cluster(cdr);
 		cdr_cluster_set_->set_cluster_data(cdr, result);
 	} else if ( this->has_CDR( cdr ) ) {
@@ -2106,10 +2106,10 @@ AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
 	for ( int l = 0; l < 3; ++l ) {
 		for ( int m = 0; m < 4; ++m ) {
 			for ( int n = 0; n < 2; ++n ) {
-				for ( int k = 0; k < 20; ++k ) {
+				for ( const auto & k : p3_l3 ) {
 					//frl3 = "FG" + p3_l3[k] + "G";
 					//frl3 = p1_l3[l] + "G" + p3_l3[k] + "G";   //[VF]GXG
-					frl3 = p1_l3[l] + p2_l3[m] + p3_l3[k] + p4_l3[n]; //[VF][AG]XG
+					frl3 = p1_l3[l] + p2_l3[m] + k + p4_l3[n]; //[VF][AG]XG
 
 					if ( querychain3.find(frl3, 80) != std::string::npos ) {
 						posl3_e = querychain3.find(frl3,80) - 1;

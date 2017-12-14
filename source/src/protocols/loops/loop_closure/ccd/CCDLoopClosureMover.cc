@@ -116,7 +116,7 @@ CCDLoopClosureMover::CCDLoopClosureMover( protocols::loops::Loop const & loop, k
 }
 
 // Destructor
-CCDLoopClosureMover::~CCDLoopClosureMover() {}
+CCDLoopClosureMover::~CCDLoopClosureMover() = default;
 
 // Assignment operator
 CCDLoopClosureMover &
@@ -393,7 +393,7 @@ CCDLoopClosureMover::init( protocols::loops::Loop const & loop, kinematics::Move
 
 	deviation_ = MALARKEY;
 
-	rama_ = NULL;
+	rama_ = nullptr;
 
 	init_options();
 }
@@ -452,7 +452,7 @@ CCDLoopClosureMover::copy_data( CCDLoopClosureMover & to, CCDLoopClosureMover co
 	to.deviation_ = from.deviation_;
 	to.average_change_in_torsion_angle_ = from.average_change_in_torsion_angle_;
 
-	to.rama_ = NULL; // correct rama_ is initialized lazily based on check_rama_scores_ and use_rama_2b_.
+	to.rama_ = nullptr; // correct rama_ is initialized lazily based on check_rama_scores_ and use_rama_2b_.
 
 	to.average_change_in_rama_score_ = from.average_change_in_rama_score_;
 
@@ -762,7 +762,7 @@ void CCDLoopClosureMover::compute_closure_metrics(
 
 RamaCheckBaseOP CCDLoopClosureMover::rama() const
 {
-	if ( rama_.get() == NULL ) {
+	if ( rama_.get() == nullptr ) {
 		if ( ! use_rama_2B() ) {
 			// one-body Ramachandran score
 			rama_ = RamaCheckBaseOP( new RamaCheck1B );
@@ -778,9 +778,9 @@ RamaCheckBaseOP CCDLoopClosureMover::rama() const
 std::map< char, SecondaryStructureType > const &
 CCDLoopClosureMover::sec_struc_char_to_enum_map() {
 	// This line will only ever be executed once.
-	static std::map< char, SecondaryStructureType > * sec_struc_char_to_enum = 0;
+	static std::map< char, SecondaryStructureType > * sec_struc_char_to_enum = nullptr;
 
-	if ( sec_struc_char_to_enum == 0 ) {
+	if ( sec_struc_char_to_enum == nullptr ) {
 		sec_struc_char_to_enum = new std::map< char, SecondaryStructureType >;
 		( *sec_struc_char_to_enum )[ 'H' ] = helix;
 		( *sec_struc_char_to_enum )[ 'E' ] = strand;

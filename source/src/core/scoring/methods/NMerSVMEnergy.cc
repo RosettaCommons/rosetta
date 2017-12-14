@@ -150,7 +150,7 @@ NMerSVMEnergy::NMerSVMEnergy( utility::vector1< std::string > const & svm_fnames
 	}
 }
 
-NMerSVMEnergy::~NMerSVMEnergy() {}
+NMerSVMEnergy::~NMerSVMEnergy() = default;
 
 void
 NMerSVMEnergy::read_nmer_svms_from_options() {

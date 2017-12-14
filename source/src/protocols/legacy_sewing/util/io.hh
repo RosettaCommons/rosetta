@@ -47,12 +47,12 @@ typedef std::map<core::Size, utility::vector1<std::pair<bool, core::conformation
 void
 write_native_residue_file(
 	NativeRotamersMap native_residue_map,
-	std::string filename
+	std::string const & filename
 );
 
 NativeRotamersMap
 read_native_residue_file(
-	std::string filename
+	std::string const & filename
 );
 
 ///@brief Take the given StructureScores and save them to disk
@@ -66,7 +66,7 @@ write_hashing_scores_to_file(
 std::string
 see_whether_model_is_H_bonded_by_terminal_strands(
 	Model model,
-	std::string P_PA
+	std::string const & P_PA
 );
 
 utility::vector1<BasisPair>

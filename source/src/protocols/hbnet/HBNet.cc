@@ -17,6 +17,7 @@
 #include <protocols/hbnet/HBNet_util.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
@@ -142,25 +143,25 @@ static basic::Tracer TR( "protocols.hbnet.HBNet" );
 
 HBNet::HBNet( ) :
 	protocols::moves::Mover( "HBNet" ),
-	write_network_pdbs_(0),
-	write_cst_files_(1),
-	output_poly_ala_background_(0),
-	find_native_(0),
-	only_native_(0),
-	keep_existing_networks_(0),
-	extend_existing_networks_(0),
-	only_extend_existing_(0),
-	verbose_(0),
-	symmetric_(0),
-	multi_component_(0),
-	show_task_(0),
-	minimize_(1),
+	write_network_pdbs_(false),
+	write_cst_files_(true),
+	output_poly_ala_background_(false),
+	find_native_(false),
+	only_native_(false),
+	keep_existing_networks_(false),
+	extend_existing_networks_(false),
+	only_extend_existing_(false),
+	verbose_(false),
+	symmetric_(false),
+	multi_component_(false),
+	show_task_(false),
+	minimize_(true),
 	//bridging_waters_(0),
-	tyr_hydroxyls_must_donate_(0),
-	hydroxyls_must_donate_(0),
-	use_pdb_numbering_(1),
-	no_heavy_unsats_allowed_(1),
-	keep_start_selector_rotamers_fixed_(0),
+	tyr_hydroxyls_must_donate_(false),
+	hydroxyls_must_donate_(false),
+	use_pdb_numbering_(true),
+	no_heavy_unsats_allowed_(true),
+	keep_start_selector_rotamers_fixed_(false),
 	min_network_size_(3),
 	max_network_size_(15),
 	min_unique_networks_(1),
@@ -189,9 +190,9 @@ HBNet::HBNet( ) :
 	scorefxn_( core::scoring::get_score_function() ),
 	rotamer_sets_( /* NULL */ ),
 	ig_( /* NULL */ ),
-	rotamer_links_(0),
-	store_subnetworks_(0),
-	secondary_search_(0),
+	rotamer_links_(nullptr),
+	store_subnetworks_(false),
+	secondary_search_(false),
 	secondary_threshold_(-0.25),
 	upweight_twobody_(1.0),
 	start_selector_( /* NULL */ ),
@@ -206,25 +207,25 @@ HBNet::HBNet( ) :
 
 HBNet::HBNet( std::string const name ) :
 	protocols::moves::Mover( name ),
-	write_network_pdbs_(0),
-	write_cst_files_(1),
-	output_poly_ala_background_(0),
-	find_native_(0),
-	only_native_(0),
-	keep_existing_networks_(0),
-	extend_existing_networks_(0),
-	only_extend_existing_(0),
-	verbose_(0),
-	symmetric_(0),
-	multi_component_(0),
-	show_task_(0),
-	minimize_(1),
+	write_network_pdbs_(false),
+	write_cst_files_(true),
+	output_poly_ala_background_(false),
+	find_native_(false),
+	only_native_(false),
+	keep_existing_networks_(false),
+	extend_existing_networks_(false),
+	only_extend_existing_(false),
+	verbose_(false),
+	symmetric_(false),
+	multi_component_(false),
+	show_task_(false),
+	minimize_(true),
 	//bridging_waters_(0),
-	tyr_hydroxyls_must_donate_(0),
-	hydroxyls_must_donate_(0),
-	use_pdb_numbering_(1),
-	no_heavy_unsats_allowed_(1),
-	keep_start_selector_rotamers_fixed_(0),
+	tyr_hydroxyls_must_donate_(false),
+	hydroxyls_must_donate_(false),
+	use_pdb_numbering_(true),
+	no_heavy_unsats_allowed_(true),
+	keep_start_selector_rotamers_fixed_(false),
 	min_network_size_(3),
 	max_network_size_(15),
 	min_unique_networks_(1),
@@ -253,9 +254,9 @@ HBNet::HBNet( std::string const name ) :
 	scorefxn_( core::scoring::get_score_function() ),
 	rotamer_sets_( /* NULL */ ),
 	ig_( /* NULL */ ),
-	rotamer_links_(0),
-	store_subnetworks_(0),
-	secondary_search_(0),
+	rotamer_links_(nullptr),
+	store_subnetworks_(false),
+	secondary_search_(false),
 	secondary_threshold_(-0.25),
 	upweight_twobody_(1.0),
 	start_selector_( /* NULL */ ),
@@ -284,25 +285,25 @@ HBNet::HBNet( core::scoring::ScoreFunctionCOP scorefxn,
 	//bool minimize /*false*/
 ) :
 	protocols::moves::Mover( "HBNet" ),
-	write_network_pdbs_(0),
-	write_cst_files_(1),
-	output_poly_ala_background_(0),
+	write_network_pdbs_(false),
+	write_cst_files_(true),
+	output_poly_ala_background_(false),
 	find_native_(find_native),
 	only_native_(only_native),
 	keep_existing_networks_(keep_existing),
 	extend_existing_networks_(extend_existing),
 	only_extend_existing_(only_extend),
-	verbose_(0),
-	symmetric_(0),
-	multi_component_(0),
-	show_task_(0),
-	minimize_(1),
+	verbose_(false),
+	symmetric_(false),
+	multi_component_(false),
+	show_task_(false),
+	minimize_(true),
 	//bridging_waters_(0),
-	tyr_hydroxyls_must_donate_(0),
-	hydroxyls_must_donate_(0),
-	use_pdb_numbering_(1),
-	no_heavy_unsats_allowed_(1),
-	keep_start_selector_rotamers_fixed_(0),
+	tyr_hydroxyls_must_donate_(false),
+	hydroxyls_must_donate_(false),
+	use_pdb_numbering_(true),
+	no_heavy_unsats_allowed_(true),
+	keep_start_selector_rotamers_fixed_(false),
 	min_network_size_(min_network_size),
 	max_network_size_(max_network_size),
 	min_unique_networks_(1),
@@ -314,7 +315,7 @@ HBNet::HBNet( core::scoring::ScoreFunctionCOP scorefxn,
 	max_replicates_before_branch_(0),
 	max_replicates_before_unsat_check_(1),
 	//bridging_water_search_depth_(1),
-	des_residues_(des_residues),
+	des_residues_(std::move(des_residues)),
 	start_res_vec_( /* NULL */ ),
 	network_vector_( /* NULL */ ),
 	native_networks_( /* NULL */ ),
@@ -331,9 +332,9 @@ HBNet::HBNet( core::scoring::ScoreFunctionCOP scorefxn,
 	scorefxn_(scorefxn->clone()),
 	rotamer_sets_( /* NULL */ ),
 	ig_( /* NULL */ ),
-	rotamer_links_(0),
-	store_subnetworks_(0),
-	secondary_search_(0),
+	rotamer_links_(nullptr),
+	store_subnetworks_(false),
+	secondary_search_(false),
 	secondary_threshold_(-0.25),
 	upweight_twobody_(1.0),
 	start_selector_( /* NULL */ ),
@@ -367,7 +368,7 @@ HBNet::fresh_instance() const {
 }
 
 //destructor
-HBNet::~HBNet(){}
+HBNet::~HBNet()= default;
 
 core::pack::task::TaskFactoryOP
 HBNet::task_factory() const
@@ -390,28 +391,28 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	charge_charge_rep_cutoff_ = tag->getOption<core::PackerEnergy>("charge_charge_rep_cutoff",1.0);
 	clash_threshold_ = tag->getOption<core::PackerEnergy>("clash_threshold",1.0);
 	upper_score_limit_ = tag->getOption<core::Real>("upper_score_limit",15.0);
-	find_native_ = tag->getOption<bool>( "find_native_networks", 0 );
-	only_native_ = tag->getOption<bool>( "find_only_native_networks", 0 );
-	keep_existing_networks_ = tag->getOption<bool>( "keep_existing_networks", 0 );
-	extend_existing_networks_ = tag->getOption<bool>( "extend_existing_networks", 0 );
-	only_extend_existing_ = tag->getOption<bool>( "only_extend_existing", 0 );
-	minimize_ = tag->getOption< bool > ("minimize",1);
-	store_subnetworks_ = tag->getOption< bool >("store_subnetworks",0);
-	secondary_search_ = tag->getOption< bool >("secondary_search",0);
+	find_native_ = tag->getOption<bool>( "find_native_networks", false );
+	only_native_ = tag->getOption<bool>( "find_only_native_networks", false );
+	keep_existing_networks_ = tag->getOption<bool>( "keep_existing_networks", false );
+	extend_existing_networks_ = tag->getOption<bool>( "extend_existing_networks", false );
+	only_extend_existing_ = tag->getOption<bool>( "only_extend_existing", false );
+	minimize_ = tag->getOption< bool > ("minimize",true);
+	store_subnetworks_ = tag->getOption< bool >("store_subnetworks",false);
+	secondary_search_ = tag->getOption< bool >("secondary_search",false);
 	secondary_threshold_ = tag->getOption< Real >("secondary_threshold",-0.25);
-	write_network_pdbs_ = tag->getOption< bool >( "write_network_pdbs", 0 );
-	write_cst_files_ = tag->getOption< bool >( "write_cst_files", 1 );
-	output_poly_ala_background_ = tag->getOption< bool >( "output_poly_ala_background", 0 );
+	write_network_pdbs_ = tag->getOption< bool >( "write_network_pdbs", false );
+	write_cst_files_ = tag->getOption< bool >( "write_cst_files", true );
+	output_poly_ala_background_ = tag->getOption< bool >( "output_poly_ala_background", false );
 	max_rep_ = tag->getOption< Size >( "max_replicates", 1 );
 	max_replicates_before_branch_ = tag->getOption< Size >( "max_replicates_before_branch", 0 );
 	max_replicates_before_unsat_check_ = tag->getOption< Size >( "max_replicates_before_unsat_check", 1 );
 	//    bridging_water_search_depth_ = tag->getOption< Size >( "bridging_water_search_depth", 1 );
-	tyr_hydroxyls_must_donate_ = tag->getOption<bool>( "tyr_hydroxyls_must_donate", 0 ); // only for unsat check -- should move to filter
-	hydroxyls_must_donate_ = tag->getOption<bool>( "hydroxyls_must_donate", 0 ); // only for unsat check -- should move to filter
-	use_pdb_numbering_ = tag->getOption<bool>( "use_pdb_numbering", 1 );
-	no_heavy_unsats_allowed_ = tag->getOption<bool>( "no_heavy_unsats_allowed", 1 );
+	tyr_hydroxyls_must_donate_ = tag->getOption<bool>( "tyr_hydroxyls_must_donate", false ); // only for unsat check -- should move to filter
+	hydroxyls_must_donate_ = tag->getOption<bool>( "hydroxyls_must_donate", false ); // only for unsat check -- should move to filter
+	use_pdb_numbering_ = tag->getOption<bool>( "use_pdb_numbering", true );
+	no_heavy_unsats_allowed_ = tag->getOption<bool>( "no_heavy_unsats_allowed", true );
 	keep_start_selector_rotamers_fixed_ = tag->getOption<bool>( "use_only_input_rot_for_start_res", false );
-	show_task_ = tag->getOption<bool>( "show_task", 0 );
+	show_task_ = tag->getOption<bool>( "show_task", false );
 	min_network_size_ = tag->getOption<Size>( "min_network_size", 3 );
 	max_network_size_ = tag->getOption<Size>( "max_network_size", 15 );
 	min_unique_networks_ = tag->getOption<Size>( "min_unique_networks", 1 );
@@ -434,7 +435,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	if ( only_native_ ) find_native_ = true;
 	if ( only_extend_existing_ ) extend_existing_networks_ = true;
 
-	verbose_ = tag->getOption<bool>( "verbose", 0);
+	verbose_ = tag->getOption<bool>( "verbose", false);
 
 	if ( tag->hasOption("design_residues") ) {
 		des_residues_ = tag->getOption<std::string>("design_residues","STRKHYWNQDE");
@@ -524,7 +525,7 @@ HBNet::traverse_IG( Real const hb_threshold ){
 
 		platform::uint const first_ni = rotamer_sets_->resid_2_moltenres(res1); //returns 0 if res1 not molten (not design/repack-able)
 		if ( first_ni == 0 ) continue;
-		int const first_node_ind = (int)(first_ni);
+		auto const first_node_ind = (int)(first_ni);
 
 		// Loop over all edges in IG for each starting residue
 		for ( ig_->reset_edge_list_iterator_for_node(first_node_ind); !ig_->edge_list_iterator_at_end(); ig_->increment_edge_list_iterator() ) {
@@ -558,7 +559,7 @@ HBNet::traverse_IG( Real const hb_threshold ){
 					// check for residues that hydrogen bond with their symmetric clones; these are stored in 1-body in symmeric case!!
 					if ( one_body_i < onebody_hb_threshold_ ) {
 						utility::vector1< HBondResStructCOP > residues(0);
-						residues.push_back( HBondResStructCOP( new hbond_res_struct( res1_ind, (platform::uint)(ii), (rotamer_sets_->rotamer_set_for_moltenresidue(first_ni)->rotamer(ii)->name1()), orig_pose_->pdb_info()->chain(res1_ind), 1, 0, 0 ) ) );
+						residues.push_back( HBondResStructCOP( new hbond_res_struct( res1_ind, (platform::uint)(ii), (rotamer_sets_->rotamer_set_for_moltenresidue(first_ni)->rotamer(ii)->name1()), orig_pose_->pdb_info()->chain(res1_ind), true, false, false ) ) );
 						store_network( residues, one_body_i, true, true, false, false ); //network complete, store it
 					}
 				}
@@ -571,11 +572,11 @@ HBNet::traverse_IG( Real const hb_threshold ){
 							continue;
 						} else if ( one_body_j < onebody_hb_threshold_ ) {
 							utility::vector1< HBondResStructCOP > residues(0);
-							residues.push_back( HBondResStructCOP( new hbond_res_struct( res2_ind, (platform::uint)(jj), (rotamer_sets_->rotamer_set_for_moltenresidue(second_ni)->rotamer(jj)->name1()), orig_pose_->pdb_info()->chain(res2_ind), 1, 0, 0 ) ) );
+							residues.push_back( HBondResStructCOP( new hbond_res_struct( res2_ind, (platform::uint)(jj), (rotamer_sets_->rotamer_set_for_moltenresidue(second_ni)->rotamer(jj)->name1()), orig_pose_->pdb_info()->chain(res2_ind), true, false, false ) ) );
 							store_network( residues, one_body_j, true, true, false, false ); //network complete, store it
 						}
 					}
-					PDEdge const & pdedge =  static_cast< PDEdge const & >(edge);
+					auto const & pdedge =  static_cast< PDEdge const & >(edge);
 					Real twobody( (first_node_ind < second_node_ind) ? (pdedge.get_two_body_energy(ii, jj))/scmult_2b : (pdedge.get_two_body_energy(jj, ii))/scmult_2b );
 					twobody = twobody * ( this->upweight_starting_twobody_energy() );
 					if ( twobody < 0.0 ) {
@@ -585,7 +586,7 @@ HBNet::traverse_IG( Real const hb_threshold ){
 					if ( twobody < hb_threshold ) {
 						core::Real init_sc = twobody;
 						utility::vector1< HBondResStructCOP > residues(0);
-						residues.push_back( HBondResStructCOP( new hbond_res_struct( res1_ind, (platform::uint)(ii), rotamer_sets_->rotamer_set_for_moltenresidue(first_ni)->nonconst_rotamer(ii)->name1(), orig_pose_->pdb_info()->chain(res1_ind), 1, 0, 0 ) ) );
+						residues.push_back( HBondResStructCOP( new hbond_res_struct( res1_ind, (platform::uint)(ii), rotamer_sets_->rotamer_set_for_moltenresidue(first_ni)->nonconst_rotamer(ii)->name1(), orig_pose_->pdb_info()->chain(res1_ind), true, false, false ) ) );
 						recursive_traverse( second_node_ind, jj, res2_ind, res1_ind, residues, 1, init_sc, hb_threshold ); //recursive traverse of IG
 					}
 				}
@@ -601,7 +602,7 @@ HBNet::recursive_traverse( int const new_node_ind, int const newstate, Size cons
 {
 	// secondary search option allows dead-end cases to search again with a lowered threshold
 	if ( !second_search ) {
-		residues.push_back( HBondResStructCOP( new hbond_res_struct( newres, (platform::uint)(newstate), (rotamer_sets_->rotamer_set_for_moltenresidue(new_node_ind)->rotamer(newstate)->name1()), orig_pose_->pdb_info()->chain(newres), 1, 0, 0 ) ) );
+		residues.push_back( HBondResStructCOP( new hbond_res_struct( newres, (platform::uint)(newstate), (rotamer_sets_->rotamer_set_for_moltenresidue(new_node_ind)->rotamer(newstate)->name1()), orig_pose_->pdb_info()->chain(newres), true, false, false ) ) );
 	}
 	Size prev_resnum = prevres;
 	network_rec_count++; // numer of recursive calls; network_rec_count = # rotamers in the current h-bond network
@@ -632,7 +633,7 @@ HBNet::recursive_traverse( int const new_node_ind, int const newstate, Size cons
 			if ( symmetric_ && one_body_j > clash_threshold_ ) {
 				continue;
 			}
-			PDEdge * pdedge = static_cast< PDEdge * >(*edge_iter);
+			auto * pdedge = static_cast< PDEdge * >(*edge_iter);
 			Real twobody( (new_node_ind < second_node_ind) ? (pdedge->get_two_body_energy(newstate, jj))/scmult_2b : (pdedge->get_two_body_energy(jj, newstate))/scmult_2b );
 			if ( twobody < 0.0 ) {
 				twobody = this->scale_twobody_energy( twobody, rotamer_sets_->rotamer_set_for_moltenresidue(new_node_ind)->rotamer(newstate)->name1(), rotamer_sets_->rotamer_set_for_moltenresidue(second_node_ind)->rotamer(jj)->name1() );
@@ -655,7 +656,7 @@ HBNet::recursive_traverse( int const new_node_ind, int const newstate, Size cons
 						}
 					}
 				} else { // if we are back to original starting rotamer, don't need check_clash else check_clash
-					int const start_state = static_cast<int>(residues.front()->rot_index);
+					auto const start_state = static_cast<int>(residues.front()->rot_index);
 					if ( residues.front()->resnum == res2 && start_state == jj && residues.size() > 2 ) {
 						store_network( residues, init_sc, true, true, false, false );
 						//return; 16/03
@@ -699,7 +700,7 @@ HBNet::MC_traverse_IG( ){
 	for ( utility::graph::EdgeListIterator it = hbond_graph_->edge_list_begin(), end = hbond_graph_->edge_list_end();
 			it != end; ) {
 
-		AtomLevelHBondEdge * edge = static_cast< AtomLevelHBondEdge * >( *it );
+		auto * edge = static_cast< AtomLevelHBondEdge * >( *it );
 		if ( hbond_graph_->get_node( edge->get_first_node_ind() )->num_edges() == 1 &&
 				hbond_graph_->get_node( edge->get_second_node_ind() )->num_edges() == 1
 				) {
@@ -749,7 +750,7 @@ HBNet::MC_traverse_IG( ){
 	//Look for seeds
 	for ( utility::graph::EdgeListConstIterator it = hbond_graph_->const_edge_list_begin();
 			it != hbond_graph_->const_edge_list_end(); ++it ) {
-		HBondEdge const * edge = static_cast< HBondEdge const * >( *it );
+		auto const * edge = static_cast< HBondEdge const * >( *it );
 
 		HBondNode const * node1 = hbond_graph_->get_hbondnode( edge->get_first_node_ind() );
 		HBondNode const * node2 = hbond_graph_->get_hbondnode( edge->get_second_node_ind() );
@@ -781,7 +782,7 @@ HBNet::traverse_native( Pose const & pose, Real const hb_threshold )
 
 		for ( utility::graph::EdgeListConstIterator egraph_it = node->const_edge_list_begin();
 				egraph_it != node->const_edge_list_end(); ++egraph_it ) {
-			core::scoring::EnergyEdge const * eedge = static_cast< core::scoring::EnergyEdge const * > (*egraph_it);
+			auto const * eedge = static_cast< core::scoring::EnergyEdge const * > (*egraph_it);
 			Size other_res = eedge->get_other_node(node->get_node_index())->get_node_index();
 
 			Size res1_ind(res),res2_ind(other_res);
@@ -794,7 +795,7 @@ HBNet::traverse_native( Pose const & pose, Real const hb_threshold )
 				// Initialize lists
 				utility::vector1< HBondResStructCOP > residues(0);
 				residues.push_back( HBondResStructCOP( new hbond_res_struct( res1_ind, 0, pose.residue(res1_ind).name1(), pose.pdb_info()->chain(res1_ind),
-					pose.residue(res1_ind).is_protein(), 0, pose.residue(res1_ind).is_ligand() ) ) );
+					pose.residue(res1_ind).is_protein(), false, pose.residue(res1_ind).is_ligand() ) ) );
 
 				rec_trav_native( pose, res2_ind, res1_ind, residues, hydrogen_bond_threshold_ ); // recursive call
 			}
@@ -819,7 +820,7 @@ HBNet::rec_trav_native( Pose const & pose, Size new_res, Size prev_res, utility:
 	utility::graph::Node const * node = pose.energies().energy_graph().get_node( new_res );
 	for ( utility::graph::EdgeListConstIterator egraph_it = node->const_edge_list_begin();
 			egraph_it != node->const_edge_list_end(); ++egraph_it ) {
-		core::scoring::EnergyEdge const * eedge = static_cast< core::scoring::EnergyEdge const * > (*egraph_it);
+		auto const * eedge = static_cast< core::scoring::EnergyEdge const * > (*egraph_it);
 		Size other_res = eedge->get_other_node(node->get_node_index())->get_node_index();
 
 		if ( symmetric_ ) {
@@ -859,10 +860,10 @@ HBNet::check_clash(utility::vector1< HBondResStructCOP > const & residues, platf
 	for ( const auto & residue : residues ) {
 		platform::uint otherstate( residue->rot_index );
 		platform::uint other_node_ind(rotamer_sets_->resid_2_moltenres(residue->resnum));
-		int const new_ind = static_cast<int>(new_node_ind);
-		int const other_ind = static_cast<int>(rotamer_sets_->resid_2_moltenres(residue->resnum));
-		int const new_st = static_cast<int>(newstate);
-		int const other_st = static_cast<int>(otherstate);
+		auto const new_ind = static_cast<int>(new_node_ind);
+		auto const other_ind = static_cast<int>(rotamer_sets_->resid_2_moltenres(residue->resnum));
+		auto const new_st = static_cast<int>(newstate);
+		auto const other_st = static_cast<int>(otherstate);
 
 		if ( newres == residue->resnum ) {
 			if ( newstate == otherstate ) { // If rotamer state already in network, we found a cycle, no need to clash check
@@ -874,9 +875,9 @@ HBNet::check_clash(utility::vector1< HBondResStructCOP > const & residues, platf
 				clash = true;
 				return clash;
 			}
-		} else if ( ig_->find_edge(new_ind, other_ind) != 0 ) { // this function is order-independent; returns the same Edge regardless of order
+		} else if ( ig_->find_edge(new_ind, other_ind) != nullptr ) { // this function is order-independent; returns the same Edge regardless of order
 			core::pack::interaction_graph::EdgeBase * temp_edge = ig_->find_edge(new_ind, other_ind);
-			core::pack::interaction_graph::PDEdge * temp_pdedge = static_cast< PDEdge * >(temp_edge);
+			auto * temp_pdedge = static_cast< PDEdge * >(temp_edge);
 			int first_node_ind = temp_pdedge->get_first_node_ind(); // need to get the first node of the Edge (lower-index node) (we're getting this from the IG)
 			platform::uint first_ni = first_node_ind;
 			Size res1 = rotamer_sets_->moltenres_2_resid(first_ni); // get residue number that corresopnds to the first node of Edge
@@ -925,11 +926,11 @@ HBNet::net_clash(utility::vector1< HBondResStructCOP > const & residues_i, utili
 	core::PackerEnergy twobody(0.0);
 
 	for ( const auto & res_i : residues_i ) {
-		int const state_i = static_cast<int const>(res_i->rot_index);
-		int const node_i = static_cast<int const>(rotamer_sets_->resid_2_moltenres(res_i->resnum));
+		auto const state_i = static_cast<int const>(res_i->rot_index);
+		auto const node_i = static_cast<int const>(rotamer_sets_->resid_2_moltenres(res_i->resnum));
 		for ( const auto & res_j : residues_j ) {
-			int const state_j = static_cast<int const>(res_j->rot_index);
-			int const node_j = static_cast<int const>(rotamer_sets_->resid_2_moltenres(res_j->resnum));
+			auto const state_j = static_cast<int const>(res_j->rot_index);
+			auto const node_j = static_cast<int const>(rotamer_sets_->resid_2_moltenres(res_j->resnum));
 			// If networks share a residue, make sure it is the same rotamer state; otherwise, return clash = true;
 			//    except at *(start_res_vec_.begin()) in ligand()binding design case: check for compatible ligand states in merge_networks()
 			//NEED TO CHECK LIGAND COMPATIBILITY HERE //NEED TO FIX
@@ -953,9 +954,9 @@ HBNet::net_clash(utility::vector1< HBondResStructCOP > const & residues_i, utili
 			}
 
 			if ( ig_ != nullptr  ) { //if IG still exists, use 2-body for faster lookup
-				if ( ig_->find_edge(node_i, node_j) != 0 ) { // If edge exist s, look up 2-body energy for rotamer state_i and state_j
+				if ( ig_->find_edge(node_i, node_j) != nullptr ) { // If edge exist s, look up 2-body energy for rotamer state_i and state_j
 					core::pack::interaction_graph::EdgeBase * temp_edge = ig_->find_edge(node_i, node_j);
-					core::pack::interaction_graph::PDEdge * temp_pdedge = static_cast< PDEdge * >(temp_edge);
+					auto * temp_pdedge = static_cast< PDEdge * >(temp_edge);
 					int first_node_ind = temp_pdedge->get_first_node_ind();
 
 					if ( first_node_ind == node_i ) {
@@ -2401,7 +2402,7 @@ HBNet::set_symmetry( Pose & pose )
 	}
 	if ( TR.visible() ) TR << "         POSE IS SYMMETRIC" << std::endl;
 	symmetric_ = true;
-	core::conformation::symmetry::SymmetricConformation const & SymmConf(dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()));
+	auto const & SymmConf(dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()));
 	symm_info_ = SymmConf.Symmetry_Info();
 	Size num_components(symm_info_->get_num_components());
 	multi_component_ = num_components >= 2;
@@ -2687,7 +2688,7 @@ HBNet::get_additional_output()
 {
 	pose::PoseOP out_pose;
 	if ( output_vector_.size() == 0 ) {
-		return NULL;
+		return nullptr;
 	} else if ( output_vector_.size() == 1 ) {
 		// Last iteration, do not create a new pose copy
 		out_pose = ( output_poly_ala_background_ ) ? ala_pose_ : orig_pose_;
@@ -2945,7 +2946,7 @@ HBNet::get_native_networks( Pose const & pose )
 	}
 	// set ala_pose_
 	ala_pose_ = PoseOP( new Pose(pose) );
-	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose("ALA", *ala_pose_, residues_to_ala, 1, 1, 1);
+	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose("ALA", *ala_pose_, residues_to_ala, true, true, true);
 	ala_pose_->update_residue_neighbors();
 	(*scorefxn_)(*ala_pose_); // score now so we don't have to later; several functions require ala_pose_ to be scored
 
@@ -3127,7 +3128,7 @@ HBNet::setup( Pose const & pose )
 	}
 	TR.Debug << " Storing background version of pose; design/repack residues set to Poly-ALA (keeping Pro,Gly,Cys-disulfide):" << std::endl;
 	ala_pose_ = pose::PoseOP( new Pose(pose) );
-	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose("ALA", *ala_pose_, residues_to_ala, 1, 1, 1);
+	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose("ALA", *ala_pose_, residues_to_ala, true, true, true);
 	ala_pose_->update_residue_neighbors();
 	(*scorefxn_)(*ala_pose_); // score now so we don't have to later; several functions require pose to be scored
 }
@@ -3723,8 +3724,8 @@ HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 			}
 
 			if ( ! all_nodes_satisfied ) { // check if this edge satisfies a current unsat atom in the network
-				AtomLevelHBondNode const * const al_node = static_cast< AtomLevelHBondNode const * >( current_node );
-				AtomLevelHBondEdge const * const al_edge = static_cast< AtomLevelHBondEdge const * >( *it );
+				auto const * const al_node = static_cast< AtomLevelHBondNode const * >( current_node );
+				auto const * const al_edge = static_cast< AtomLevelHBondEdge const * >( *it );
 				if ( ! edge_satisfies_heavy_unsat_for_node( current_state, al_node, al_edge ) ) continue;
 			}
 			// if everything is satisfied, we'll still try to grow (and network state will have already been stored)
@@ -3745,7 +3746,7 @@ HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 	}//current_node
 
 	if ( total_num_nbrs == 0 ) {
-		return 0;
+		return nullptr;
 	}
 
 	core::Real const rg_uniform = numeric::random::rg().uniform();
@@ -3766,7 +3767,7 @@ HBondNode * HBNet::get_next_node( NetworkState & current_state ){
 	}
 
 	utility_exit_with_message( "Dead code has been reached" );
-	return 0;
+	return nullptr;
 }
 
 
@@ -3830,7 +3831,7 @@ void HBNet::append_to_network_vector( std::list< NetworkState > & designed_netwo
 				res_ptr->name1(),
 				chain_for_moltenres( mres ),
 				res_ptr->is_protein(), //is_protein
-				0, //is_solvent
+				false, //is_solvent
 				res_ptr->is_ligand()  //is_ligand
 				)
 			);
@@ -3877,7 +3878,7 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 
 			//Declare hbonding atoms to be satisfied!
 
-			AtomLevelHBondEdge const * al_edge = static_cast< AtomLevelHBondEdge const * >( hbond_edge );
+			auto const * al_edge = static_cast< AtomLevelHBondEdge const * >( hbond_edge );
 			for ( HBondInfo const & hbond : al_edge->hbonds() ) {
 				bool const first_node_is_donor = hbond.first_node_is_donor();
 				unsigned short int const local_atom_id_A = hbond.local_atom_id_A();//Acceptor
@@ -3916,7 +3917,7 @@ void HBNet::add_residue_to_network_state( NetworkState & current_network_state, 
 			current_network_state.full_twobody_energy += hbond_edge->energy();
 
 			//Declare hbonding atoms to be satisfied!
-			AtomLevelHBondEdge const * al_edge = static_cast< AtomLevelHBondEdge const * >( hbond_edge );
+			auto const * al_edge = static_cast< AtomLevelHBondEdge const * >( hbond_edge );
 			unsigned int const new_node_mres = node_being_added->moltenres();
 
 			for ( HBondInfo const & hbond : al_edge->hbonds() ) {

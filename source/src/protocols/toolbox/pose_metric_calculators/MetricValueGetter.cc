@@ -14,6 +14,7 @@
 
 #include <core/pose/Pose.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <basic/MetricValue.hh>
 
@@ -35,7 +36,7 @@ MetricValueGetter::MetricValueGetter(
 ) :
 	calculator_(calculator),
 	key_(key),
-	metric_value_template_(metric_value_template)
+	metric_value_template_(std::move(metric_value_template))
 {}
 
 MetricValueGetter::MetricValueGetter(
@@ -45,8 +46,7 @@ MetricValueGetter::MetricValueGetter(
 	*this = getter;
 }
 
-MetricValueGetter::~MetricValueGetter()
-{}
+MetricValueGetter::~MetricValueGetter() = default;
 
 MetricValueGetter &
 MetricValueGetter::operator = (
@@ -107,7 +107,7 @@ MetricValueGetter::get(
 	core::pose::Pose const & pose
 ) const
 {
-	runtime_assert(metric_value_template_ != 0);
+	runtime_assert(metric_value_template_ != nullptr);
 	basic::MetricValueBaseOP new_metric_value(metric_value_template_->clone());
 	pose.metric(calculator_, key_, *new_metric_value);
 	return new_metric_value;

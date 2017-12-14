@@ -677,7 +677,7 @@ void make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vec
 	for ( Size i = 1; i <= frags.size(); ++i ) {
 		FragDataCOP frag = frags[i];
 		// Construct stubs from the 3 central CA atoms
-		Size central_residue = static_cast< Size >(ceil(frag->size() / 2.0));
+		auto central_residue = static_cast< Size >(ceil(frag->size() / 2.0));
 		BBTorsionSRFDCOP f1 = utility::pointer::static_pointer_cast< BBTorsionSRFD const >(frag->get_residue(central_residue - 1));
 		BBTorsionSRFDCOP f2 = utility::pointer::static_pointer_cast< BBTorsionSRFD const >(frag->get_residue(central_residue    ));
 		BBTorsionSRFDCOP f3 = utility::pointer::static_pointer_cast< BBTorsionSRFD const >(frag->get_residue(central_residue + 1));

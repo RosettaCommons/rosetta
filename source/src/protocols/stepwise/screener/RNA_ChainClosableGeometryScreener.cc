@@ -17,6 +17,7 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.RNA_ChainClosableGeometryScreener" );
 
@@ -33,14 +34,13 @@ RNA_ChainClosableGeometryScreener::RNA_ChainClosableGeometryScreener( modeler::r
 	StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
 	chain_closable_geometry_checker->three_prime_chain_break_res() ),
 	chain_closable_geometry_checker_( chain_closable_geometry_checker ),
-	screening_pose_( screening_pose ),
+	screening_pose_(std::move( screening_pose )),
 	finer_sampling_at_chain_closure_( finer_sampling_at_chain_closure )
 {}
 
 
 //Destructor
-RNA_ChainClosableGeometryScreener::~RNA_ChainClosableGeometryScreener()
-{}
+RNA_ChainClosableGeometryScreener::~RNA_ChainClosableGeometryScreener() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////RNA_Chain_break_screening -- distance cut                     /////////////////

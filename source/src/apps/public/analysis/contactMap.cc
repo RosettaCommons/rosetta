@@ -43,7 +43,7 @@
 #include <basic/options/keys/contactMap.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
-typedef protocols::contact_map::ContactMap ContactMap;
+using ContactMap = protocols::contact_map::ContactMap;
 
 
 // declare variables that need to be accessed outside the main routine

@@ -99,11 +99,11 @@ HighResEnsemble::HighResEnsemble():
 	num_cycles_(0),
 	repack_every_Nth_(0),
 	chains_(),
-	score_fxn_(NULL),
-	movemap_builder_(NULL),
+	score_fxn_(nullptr),
+	movemap_builder_(nullptr),
 	resfile_(""),
-	final_score_fxn_(0),
-	final_movemap_builder_(0),
+	final_score_fxn_(nullptr),
+	final_movemap_builder_(nullptr),
 	correlation_weight_(0),
 	exp_ranks_(),
 	rosetta_current_scores_(),
@@ -122,32 +122,7 @@ HighResEnsemble::HighResEnsemble():
 	//abbrev2: 6, 3;
 }
 
-HighResEnsemble::HighResEnsemble(HighResEnsemble const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	num_cycles_(that.num_cycles_),
-	repack_every_Nth_(that.repack_every_Nth_),
-	chains_(that.chains_),
-	score_fxn_(that.score_fxn_),
-	movemap_builder_(that.movemap_builder_),
-	resfile_(that.resfile_),
-	final_score_fxn_(that.final_score_fxn_),
-	final_movemap_builder_(that.final_movemap_builder_),
-	correlation_weight_(that.correlation_weight_),
-	exp_ranks_(that.exp_ranks_),
-	rosetta_current_scores_(that.rosetta_current_scores_),
-	rosetta_lowest_scores_(that.rosetta_lowest_scores_),
-	rosetta_old_scores_(that.rosetta_old_scores_),
-	rosetta_current_poses_(that.rosetta_current_poses_),
-	rosetta_old_poses_(that.rosetta_old_poses_),
-	rosetta_lowest_poses_(that.rosetta_lowest_poses_),
-	rosetta_names_(that.rosetta_names_),
-	//   qsar_assay_(that.qsar_assay_),
-	//   qsar_chains_(that.qsar_chains_),
-	rosetta_chars_(that.rosetta_chars_)
-	//    qsar_jumps_(that.qsar_jumps_),
-	//    qsar_unsorted_ranks_(that.qsar_unsorted_ranks_),
-{}
+HighResEnsemble::HighResEnsemble(HighResEnsemble const & /*that*/) = default;
 
 HighResEnsemble::~HighResEnsemble() = default;
 

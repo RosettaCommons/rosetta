@@ -125,15 +125,15 @@ public:
 	HbsCreatorMover(): Mover("HbsCreatorMover"){}
 
 	//default dtor
-	virtual ~HbsCreatorMover(){}
+	~HbsCreatorMover() override= default;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "HbsCreatorMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "HbsCreatorMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< HbsCreatorMover > HbsCreatorMoverOP;
-typedef utility::pointer::shared_ptr< HbsCreatorMover const > HbsCreatorMoverCOP;
+using HbsCreatorMoverOP = utility::pointer::shared_ptr<HbsCreatorMover>;
+using HbsCreatorMoverCOP = utility::pointer::shared_ptr<const HbsCreatorMover>;
 
 
 int

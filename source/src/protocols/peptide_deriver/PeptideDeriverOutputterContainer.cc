@@ -30,7 +30,7 @@ namespace peptide_deriver {
 PeptideDeriverOutputterContainer::PeptideDeriverOutputterContainer(): PeptideDeriverOutputter ()
 {}
 
-PeptideDeriverOutputterContainer::~PeptideDeriverOutputterContainer(){}
+PeptideDeriverOutputterContainer::~PeptideDeriverOutputterContainer()= default;
 
 PeptideDeriverOutputterContainer::PeptideDeriverOutputterContainer( PeptideDeriverOutputterContainer const & src) {
 	list_ = src.list_;

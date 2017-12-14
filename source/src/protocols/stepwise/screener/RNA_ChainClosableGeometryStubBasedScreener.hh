@@ -36,7 +36,7 @@ public:
 		utility::vector1< core::pose::PoseOP > screening_pose_list,
 		core::kinematics::Stub const & moving_res_base_stub,
 		Size const reference_res,
-		utility::vector1< core::conformation::ResidueOP > moving_rsd_at_origin_list,
+		utility::vector1< core::conformation::ResidueOP > const & moving_rsd_at_origin_list,
 		bool const using_predefined_moving_rsd_list = true );
 
 

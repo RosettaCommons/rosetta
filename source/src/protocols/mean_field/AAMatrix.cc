@@ -88,7 +88,7 @@ AAMatrix::operator=( AAMatrix const & object_to_copy )
 }
 
 // Destructor
-AAMatrix::~AAMatrix() {}
+AAMatrix::~AAMatrix() = default;
 
 /// param [out] results - vector1 of cosine distances, calculated per-column and for the entire matrix.
 /// @remarks distance is calculated between corresponding columns, determined by pos() of the AAProbs in the columns

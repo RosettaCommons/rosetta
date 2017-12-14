@@ -22,8 +22,8 @@ namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-LoopsExplicitDefinerCreator::LoopsExplicitDefinerCreator() {}
-LoopsExplicitDefinerCreator::~LoopsExplicitDefinerCreator() {}
+LoopsExplicitDefinerCreator::LoopsExplicitDefinerCreator() = default;
+LoopsExplicitDefinerCreator::~LoopsExplicitDefinerCreator() = default;
 
 LoopsDefinerOP
 LoopsExplicitDefinerCreator::create_loops_definer() const {

@@ -49,8 +49,8 @@ FilterStructs::FilterStructs():
 {}
 
 /// @brief value constructor
-FilterStructs::FilterStructs( String  name ):
-	name_(std::move( name )),
+FilterStructs::FilterStructs( String const & name ):
+	name_( name ),
 	filter_on_( true ),
 	ntrial_( 5 ),
 	current_trial_( 0 ),
@@ -58,8 +58,8 @@ FilterStructs::FilterStructs( String  name ):
 {}
 
 /// @brief value constructor
-FilterStructs::FilterStructs( String  name, Size const ntrial ):
-	name_(std::move( name )),
+FilterStructs::FilterStructs( String const & name, Size const ntrial ):
+	name_( name ),
 	filter_on_( true ),
 	ntrial_( ntrial ),
 	current_trial_( 0 ),
@@ -68,8 +68,8 @@ FilterStructs::FilterStructs( String  name, Size const ntrial ):
 
 
 /// @brief value constructor
-FilterStructs::FilterStructs( String  name, Pose const & pose, Size const ntrial ):
-	name_(std::move( name )),
+FilterStructs::FilterStructs( String const & name, Pose const & pose, Size const ntrial ):
+	name_( name ),
 	filter_on_( true ),
 	ntrial_( ntrial ),
 	current_trial_( 0 ),

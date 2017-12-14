@@ -111,19 +111,19 @@ public:
 	HotspotPlacementMover(): Mover("HotspotPlacementMover"){}
 
 	//default dtor
-	virtual ~HotspotPlacementMover(){}
+	~HotspotPlacementMover() override= default;
 
 	//methods
 	void setup_pert_foldtree( core::pose::Pose & pose);
 	void setup_pert_foldtree_byres( core::pose::Pose & pose, Size dock_jump_pos_pro, Size dock_jump_pos_pep );
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "OopHotspotPlacementMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "OopHotspotPlacementMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< HotspotPlacementMover > HotspotPlacementMoverOP;
-typedef utility::pointer::shared_ptr< HotspotPlacementMover const > HotspotPlacementMoverCOP;
+using HotspotPlacementMoverOP = utility::pointer::shared_ptr<HotspotPlacementMover>;
+using HotspotPlacementMoverCOP = utility::pointer::shared_ptr<const HotspotPlacementMover>;
 
 
 int
@@ -295,7 +295,7 @@ HotspotPlacementMover::apply(
 
 			protocols::hotspot_hashing::HotspotStubSet::Hotspots res_stub_set( hotspot_stub_setOP->retrieve( (*restype )->name3() ) );
 
-			for ( std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub = res_stub_set.begin(); hs_stub != res_stub_set.end(); ++hs_stub ) {
+			for ( auto & hs_stub : res_stub_set ) {
 				Pose pose( start_pose );
 
 				//kdrew: setup fold tree centered around resnum
@@ -306,7 +306,7 @@ HotspotPlacementMover::apply(
 
 				hs_index++;
 
-				TR << "resnum: " << resnum << " stub: "<< hs_stub->second->residue()->name() << " is residue stub #" << hs_index << std::endl;
+				TR << "resnum: " << resnum << " stub: "<< hs_stub.second->residue()->name() << " is residue stub #" << hs_index << std::endl;
 
 				core::Size fixed_res(1);
 				core::id::AtomID fixed_atom = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
@@ -323,10 +323,10 @@ HotspotPlacementMover::apply(
 				core::id::AtomID aid_scaffold_C( pose.residue( resnum ).atom_index("C"), resnum );
 				core::id::AtomID aid_scaffold_N( pose.residue( resnum ).atom_index("N"), resnum );
 
-				core::scoring::constraints::ConstraintCOP coord_CA_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_CA, fixed_atom, hs_stub->second->residue()->xyz( hs_stub->second->residue()->atom_index("CA") ), harm_func ) ) );
-				core::scoring::constraints::ConstraintCOP coord_CB_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_CB, fixed_atom, hs_stub->second->residue()->xyz( hs_stub->second->residue()->atom_index("CB") ), harm_func ) ) );
-				core::scoring::constraints::ConstraintCOP coord_C_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_C, fixed_atom, hs_stub->second->residue()->xyz( hs_stub->second->residue()->atom_index("C") ), harm_func ) ) );
-				core::scoring::constraints::ConstraintCOP coord_N_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_N, fixed_atom, hs_stub->second->residue()->xyz( hs_stub->second->residue()->atom_index("N") ), harm_func ) ) );
+				core::scoring::constraints::ConstraintCOP coord_CA_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_CA, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("CA") ), harm_func ) ) );
+				core::scoring::constraints::ConstraintCOP coord_CB_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_CB, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("CB") ), harm_func ) ) );
+				core::scoring::constraints::ConstraintCOP coord_C_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_C, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("C") ), harm_func ) ) );
+				core::scoring::constraints::ConstraintCOP coord_N_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( aid_scaffold_N, fixed_atom, hs_stub.second->residue()->xyz( hs_stub.second->residue()->atom_index("N") ), harm_func ) ) );
 
 				pose.add_constraint( coord_CA_cst );
 				pose.add_constraint( coord_CB_cst );
@@ -358,10 +358,10 @@ HotspotPlacementMover::apply(
 				*/
 
 				place_hs_score_fxn->set_weight( core::scoring::coordinate_constraint, 0.0 );
-				TR << "coord constraint removal successful: " << pose.remove_constraint( coord_CA_cst, 1 ) << std::endl;
-				TR << "coord constraint removal successful: " << pose.remove_constraint( coord_CB_cst, 1 ) << std::endl;
-				TR << "coord constraint removal successful: " << pose.remove_constraint( coord_C_cst, 1 ) << std::endl;
-				TR << "coord constraint removal successful: " << pose.remove_constraint( coord_N_cst, 1 ) << std::endl;
+				TR << "coord constraint removal successful: " << pose.remove_constraint( coord_CA_cst, true ) << std::endl;
+				TR << "coord constraint removal successful: " << pose.remove_constraint( coord_CB_cst, true ) << std::endl;
+				TR << "coord constraint removal successful: " << pose.remove_constraint( coord_C_cst, true ) << std::endl;
+				TR << "coord constraint removal successful: " << pose.remove_constraint( coord_N_cst, true ) << std::endl;
 
 				//kdrew: now use full score term to evaluate "goodness" of scaffold placement
 				TR << "Full score without stub: " << (*score_fxn)(pose) << std::endl;
@@ -370,14 +370,14 @@ HotspotPlacementMover::apply(
 					score_fxn->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 				}
 
-				core::Real stub_bonus_value = hs_stub->second->bonus_value();
+				core::Real stub_bonus_value = hs_stub.second->bonus_value();
 				core::Real const force_constant = option[ scaffold_matcher::stub_constraint_strength ].value();
 
 				//core::scoring::constraints::ConstraintCOP bbstub_cst = new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, force_constant, "CB","CA","N","C" );
 
 				//kdrew: TODO: make target_residue a pose
 				core::pose::Pose stub_pose = core::pose::Pose();
-				stub_pose.append_residue_by_bond( *(hs_stub->second->residue()) );
+				stub_pose.append_residue_by_bond( *(hs_stub.second->residue()) );
 				core::scoring::constraints::ConstraintCOP bbstub_cst( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, stub_pose, 1, stub_bonus_value, force_constant) ) );
 
 				pose.add_constraint( bbstub_cst );
@@ -401,11 +401,10 @@ HotspotPlacementMover::apply(
 							//kdrew: for each inverse rotamer in stub set
 							for ( core::Size jjj = 1; jjj <= ancillary_stubs.size(); ++jjj ) {
 								protocols::hotspot_hashing::HotspotStubSet::Hotspots res_stub_set2( ancillary_stubs[jjj]->retrieve( (*restype2 )->name3() ) );
-								for ( std::multimap<core::Real,protocols::hotspot_hashing::HotspotStubOP >::iterator hs_stub2 = res_stub_set2.begin();
-										hs_stub2 != res_stub_set2.end(); ++hs_stub2 ) {
+								for ( auto & hs_stub2 : res_stub_set2 ) {
 									core::pose::Pose stub2_pose = core::pose::Pose();
-									stub2_pose.append_residue_by_bond( *(hs_stub2->second->residue()) );
-									core::Real stub_bonus_value2 = hs_stub2->second->bonus_value();
+									stub2_pose.append_residue_by_bond( *(hs_stub2.second->residue()) );
+									core::Real stub_bonus_value2 = hs_stub2.second->bonus_value();
 									ambig_csts.push_back(
 										core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose,
 										resnum2,
@@ -456,7 +455,7 @@ HotspotPlacementMover::apply(
 				TR << "after repack: Stub score with long-range constraints is: " << pose.energies().total_energies()[ core::scoring::backbone_stub_constraint ] << std::endl;
 
 				score_fxn->set_weight( core::scoring::backbone_stub_constraint, 0.0 );
-				TR << "constraint removal successful: " << pose.remove_constraint( bbstub_cst, 1 ) << std::endl;
+				TR << "constraint removal successful: " << pose.remove_constraint( bbstub_cst, true ) << std::endl;
 				std::cout << std::endl;
 			}
 		}

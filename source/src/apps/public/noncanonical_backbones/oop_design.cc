@@ -132,16 +132,16 @@ public:
 	OopDesignMover(): Mover("OopDesignMover"){}
 
 	//default dtor
-	virtual ~OopDesignMover(){}
+	~OopDesignMover() override= default;
 
 	//methods
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "OopDesignMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "OopDesignMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< OopDesignMover > OopDesignMoverOP;
-typedef utility::pointer::shared_ptr< OopDesignMover const > OopDesignMoverCOP;
+using OopDesignMoverOP = utility::pointer::shared_ptr<OopDesignMover>;
+using OopDesignMoverCOP = utility::pointer::shared_ptr<const OopDesignMover>;
 
 
 int

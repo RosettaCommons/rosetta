@@ -45,9 +45,9 @@ public:
 	typedef std::list< core::Real > Dihedrals;
 
 	HydrogenBondingAtom(
-		std::string atom1, // move-constructed
-		std::string atom2,
-		std::string atom3,
+		std::string const & atom1,
+		std::string const & atom2,
+		std::string const & atom3,
 		core::Real const ideal_distance,
 		core::Real const ideal_angle,
 		Dihedrals const & ideal_dihedrals );

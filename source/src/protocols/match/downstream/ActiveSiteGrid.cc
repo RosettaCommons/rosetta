@@ -37,7 +37,7 @@ namespace downstream {
 
 using namespace ObjexxFCL;
 
-ActiveSiteGrid::~ActiveSiteGrid() {}
+ActiveSiteGrid::~ActiveSiteGrid() = default;
 
 ActiveSiteGrid::ActiveSiteGrid() :
 	bin_width_( 0.0 ),

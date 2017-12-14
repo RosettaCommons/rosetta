@@ -78,7 +78,7 @@ bool WorkUnitBase::in_blacklist( int mpi_rank ) {
 void WorkUnitBase::raw_data_load( const unsigned char * raw_data_ptr, unsigned int size )
 {
 	TR.Debug << "Extracting header information:" << sizeof( WU_Header ) << "  " << size << std::endl;
-	WU_Header *tgtheader = (WU_Header*) raw_data_ptr;
+	auto *tgtheader = (WU_Header*) raw_data_ptr;
 	header = *tgtheader;
 
 	TR.Debug << "Extracting data information " << std::endl;
@@ -149,7 +149,7 @@ WorkUnitBase::raw_data_dump( unsigned char ** raw_data_ptr ) const
 	(*raw_data_ptr) = new unsigned char [ datasize ];
 
 	// first write the header:
-	WU_Header *tgtheader = (WU_Header*) (*raw_data_ptr);
+	auto *tgtheader = (WU_Header*) (*raw_data_ptr);
 	*tgtheader = header;
 
 	// now dump the contents of string

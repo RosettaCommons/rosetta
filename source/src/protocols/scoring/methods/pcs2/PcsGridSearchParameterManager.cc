@@ -57,7 +57,7 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-PcsGridSearchParameterManager::PcsGridSearchParameterManager() {}
+PcsGridSearchParameterManager::PcsGridSearchParameterManager() = default;
 
 /// @brief WARNING WARNING WARNING! THREAD UNSAFE!
 void

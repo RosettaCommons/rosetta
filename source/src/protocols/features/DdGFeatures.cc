@@ -86,7 +86,7 @@ using cppdb::statement;
 
 static basic::Tracer TR( "protocols.features.DdGFeatures" );
 
-DdGFeatures::DdGFeatures() {}
+DdGFeatures::DdGFeatures() = default;
 
 DdGFeatures::DdGFeatures(
 	protocols::simple_filters::DdGScanOP ddG_scan_mover

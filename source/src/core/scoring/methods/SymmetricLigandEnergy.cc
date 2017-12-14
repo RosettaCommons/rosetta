@@ -60,7 +60,7 @@ SymmetricLigandEnergy::SymmetricLigandEnergy() :
 {}
 
 
-SymmetricLigandEnergy::~SymmetricLigandEnergy() {}
+SymmetricLigandEnergy::~SymmetricLigandEnergy() = default;
 
 /// clone
 EnergyMethodOP

@@ -205,7 +205,7 @@ public:
 	typedef typename Config_type::Array_type Array_type;
 	typedef typename String_type::value_type Char_type;
 
-	Semantic_actions( Value_type& value )
+	explicit Semantic_actions( Value_type& value )
 	:   value_( value )
 		,   current_p_( 0 )
 	{
@@ -368,7 +368,7 @@ public:
 
 	typedef Semantic_actions< Value_type, Iter_type > Semantic_actions_t;
 
-	Json_grammer( Semantic_actions_t& semantic_actions )
+	explicit Json_grammer( Semantic_actions_t& semantic_actions )
 	:   actions_( semantic_actions )
 	{
 	}
@@ -408,7 +408,7 @@ public:
 	{
 	public:
 
-		definition( const Json_grammer& self )
+		explicit definition( const Json_grammer& self )
 		{
 			using namespace spirit_namespace;
 
@@ -527,7 +527,7 @@ struct Multi_pass_iters
 	typedef std::istream_iterator< Char_type, Char_type > istream_iter;
 	typedef spirit_namespace::multi_pass< istream_iter > Mp_iter;
 
-	Multi_pass_iters( Istream_type& is )
+	explicit Multi_pass_iters( Istream_type& is )
 	{
 		is.unsetf( std::ios::skipws );
 

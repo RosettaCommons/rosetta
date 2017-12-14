@@ -85,16 +85,14 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	checkpointing_frequency_( 0 ),
 	continue_until_none_missing_( false ),
 	eval_base_pairs_( false ),
-	superimpose_over_all_( false ),
-	force_moving_res_for_erraser_( false )
+	superimpose_over_all_( false )
 {
 	StepWiseBasicOptions::initialize_variables();
 	set_silent_file( "default.out" );
 }
 
 //Destructor
-StepWiseMonteCarloOptions::~StepWiseMonteCarloOptions()
-{}
+StepWiseMonteCarloOptions::~StepWiseMonteCarloOptions() = default;
 
 /// @brief copy constructor
 StepWiseMonteCarloOptions::StepWiseMonteCarloOptions( StepWiseMonteCarloOptions const & src ) :

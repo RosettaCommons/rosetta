@@ -1050,10 +1050,10 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 
 	core::scoring::EnergyMap emap_weights = pose.energies().weights();
 
-	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
+	using ScoreTypeVec = utility::vector1<core::scoring::ScoreType>;
 	ScoreTypeVec score_types;
 	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
+		auto ii = core::scoring::ScoreType(i);
 		if ( emap_weights[ii] != 0 ) score_types.push_back(ii);
 	}
 
@@ -1070,7 +1070,7 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 	core::Real pose_total = 0.0;
 	if ( pose.energies().energies_updated() ) {
 		std::vector<std::string> line;
-		line.push_back( "pose" );
+		line.emplace_back("pose" );
 		for ( core::scoring::ScoreType const & score_type : score_types ) {
 			core::Real score = (emap_weights[score_type] * pose.energies().total_energies()[ score_type ]);
 			line.push_back( restrict_prec(score) );
@@ -1111,13 +1111,11 @@ PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose)
 		basic::datacache::CacheableStringMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-		debug_assert( data.get() != NULL );
+		debug_assert( data.get() != nullptr );
 
-		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
-				it != end;
-				++it ) {
+		for ( auto const & it : data->map() ) {
 			//TR << it->first << " " << it->second << std::endl;
-			string_data[ it->first ] = it->second;
+			string_data[ it.first ] = it.second;
 		}
 	}
 
@@ -1126,13 +1124,11 @@ PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose)
 		basic::datacache::CacheableStringFloatMapCOP data
 			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
 			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-		debug_assert( data.get() != NULL );
+		debug_assert( data.get() != nullptr );
 
-		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
-				it != end;
-				++it ) {
+		for ( auto const & it : data->map() ) {
 			//TR << it->first << " " << it->second << std::endl;
-			float_data [ it->first ] = it->second;
+			float_data [ it.first ] = it.second;
 		}
 	}
 

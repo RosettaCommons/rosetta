@@ -89,7 +89,7 @@ BestHotspotCstMover::BestHotspotCstMover( BestHotspotCstMover const & init ) :
 	if ( init.stub_set_ ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *init.stub_set_ ) );
 }
 
-BestHotspotCstMover::~BestHotspotCstMover() {}
+BestHotspotCstMover::~BestHotspotCstMover() = default;
 
 
 void

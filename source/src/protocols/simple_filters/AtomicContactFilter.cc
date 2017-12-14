@@ -148,9 +148,9 @@ void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
 		modifiable( true );
 		TR<<"AtomicContact: residue2 was not defined. A mover/filter will have to set it during the protocol\n";
 	}
-	sidechain_ = tag->getOption< bool >( "sidechain", 1 );
-	backbone_  = tag->getOption< bool >( "backbone",  0 );
-	protons_   = tag->getOption< bool >( "protons",   0 );
+	sidechain_ = tag->getOption< bool >( "sidechain", true );
+	backbone_  = tag->getOption< bool >( "backbone",  false );
+	protons_   = tag->getOption< bool >( "protons",   false );
 
 	TR<<"AtomicContact filter between residues "<<residue1_<<" and "<<get_resid()<<" with distance cutoff of "<<distance_<<std::endl;
 }

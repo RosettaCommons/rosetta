@@ -47,7 +47,7 @@ ScoreFileOutputSpecification::ScoreFileOutputSpecification(
 	outputter_type( ScoreFileOutputter::keyname() );
 }
 
-ScoreFileOutputSpecification::~ScoreFileOutputSpecification() {}
+ScoreFileOutputSpecification::~ScoreFileOutputSpecification() = default;
 
 std::string
 ScoreFileOutputSpecification::out_fname() const

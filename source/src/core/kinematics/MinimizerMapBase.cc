@@ -17,7 +17,7 @@
 namespace core {
 namespace kinematics {
 
-MinimizerMapBase::MinimizerMapBase() {}
+MinimizerMapBase::MinimizerMapBase() = default;
 MinimizerMapBase::~MinimizerMapBase() = default;
 
 } // namespace kinematics

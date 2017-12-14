@@ -49,7 +49,7 @@ PeptideDeriverPoseOutputter::PeptideDeriverPoseOutputter( bool const is_dump_bes
 	is_dump_cyclic_poses_(is_dump_cyclic_poses),
 	scorefxn_(std::move(scorefxn)) { }
 
-PeptideDeriverPoseOutputter::~PeptideDeriverPoseOutputter(){}
+PeptideDeriverPoseOutputter::~PeptideDeriverPoseOutputter()= default;
 
 PeptideDeriverPoseOutputter::PeptideDeriverPoseOutputter( PeptideDeriverPoseOutputter const & src) {
 
@@ -126,41 +126,41 @@ void PeptideDeriverPoseOutputter::peptide_entry(PeptideDeriverEntryType const en
 		core::pose::Pose temp_pose(*(entry->lin_pose));
 		output_pose(temp_pose, lin_pose_name);
 
-		for ( core::Size method = 0; method<NUM_CYCLIZATION_METHODS; ++method ) {
-			if ( entry->cyc_info_set[method]->was_cyclic_model_created ) {
+		for ( auto const & method : entry->cyc_info_set ) {
+			if ( method->was_cyclic_model_created ) {
 				std::string const cyc_pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_best_linear_cyclic_peptide")
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
 					% current_peptide_length_).str();
-				core::pose::Pose temp_cyclic_pose(*(entry->cyc_info_set[method]->cyc_pose));
+				core::pose::Pose temp_cyclic_pose(*(method->cyc_pose));
 				output_pose(temp_cyclic_pose, cyc_pose_name);
 			}
 		}
 	} else {
-		for ( core::Size method = 0; method<NUM_CYCLIZATION_METHODS; ++method ) {
+		for ( auto const & method : entry->cyc_info_set ) {
 			// handles best cyclic peptide (by any one of the cyclization methods) and its linear / other possible cyclization variants
-			if ( is_dump_best_peptide_pose_ && entry_type == ET_BEST_CYCLIC && entry->cyc_info_set[method]->was_cyclic_model_created ) {
+			if ( is_dump_best_peptide_pose_ && entry_type == ET_BEST_CYCLIC && method->was_cyclic_model_created ) {
 				std::string const lin_pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_best_cyclic_linear_peptide")
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
 					% current_peptide_length_).str();
-				core::pose::Pose temp_pose(*(entry->cyc_info_set[method]->pre_cyc_pose));
+				core::pose::Pose temp_pose(*(method->pre_cyc_pose));
 				output_pose(temp_pose, lin_pose_name);
 
 				std::string const cyc_pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_best_cyclic_cyclic_peptide")
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
 					% current_peptide_length_).str();
-				core::pose::Pose temp_cyclic_pose(*(entry->cyc_info_set[method]->cyc_pose));
+				core::pose::Pose temp_cyclic_pose(*(method->cyc_pose));
 				output_pose(temp_cyclic_pose, cyc_pose_name);
-			} else if ( is_dump_cyclic_poses_ && entry_type == ET_GENERAL && entry->cyc_info_set[method]->was_cyclic_model_created ) {
+			} else if ( is_dump_cyclic_poses_ && entry_type == ET_GENERAL && method->was_cyclic_model_created ) {
 				// handles all non-best cyclic peptides that did meet the criteria to be generated
 				std::string const pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_%4%_cyclic_peptide")
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
 					% current_peptide_length_
-					% entry->cyc_info_set[method]->cyc_comment ).str();
-				core::pose::Pose temp_pose(*(entry->cyc_info_set[method]->cyc_pose));
+					% method->cyc_comment ).str();
+				core::pose::Pose temp_pose(*(method->cyc_pose));
 				output_pose(temp_pose, pose_name);
 			}
 

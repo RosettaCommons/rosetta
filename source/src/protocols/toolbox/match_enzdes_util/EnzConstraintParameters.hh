@@ -65,10 +65,10 @@ class CovalentConnectionReplaceInfo : public utility::pointer::ReferenceCount {
 public:
 
 	CovalentConnectionReplaceInfo(
-		std::string resA_base_in,
-		std::string resB_base_in,
-		std::string resA_var_in,
-		std::string resB_var_in,
+		std::string const & resA_base_in,
+		std::string const & resB_base_in,
+		std::string const & resA_var_in,
+		std::string const & resB_var_in,
 		core::Size Apos_in,
 		core::Size Bpos_in,
 		core::chemical::ResidueTypeSetCOP restype_set_in

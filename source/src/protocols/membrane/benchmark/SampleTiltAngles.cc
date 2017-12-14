@@ -40,6 +40,7 @@
 
 // Utility Headers
 #include <basic/datacache/DataMap.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <numeric/xyzVector.hh>
@@ -79,27 +80,21 @@ SampleTiltAngles::SampleTiltAngles():
 }
 
 SampleTiltAngles::SampleTiltAngles(
-	std::string prefix,
+	std::string const & prefix,
 	core::scoring::ScoreFunctionOP ref_sfxn1,
 	core::scoring::ScoreFunctionOP ref_sfxn2,
 	core::scoring::ScoreFunctionOP ref_sfxn3
 ):
 	protocols::moves::Mover( "SampleTiltAngles" ),
 	prefix_( prefix ),
-	ref_sfxn1_( ref_sfxn1 ),
-	ref_sfxn2_( ref_sfxn2 ),
-	ref_sfxn3_( ref_sfxn3 )
+	ref_sfxn1_(std::move( ref_sfxn1 )),
+	ref_sfxn2_(std::move( ref_sfxn2 )),
+	ref_sfxn3_(std::move( ref_sfxn3 ))
 {}
 
-SampleTiltAngles::~SampleTiltAngles(){}
+SampleTiltAngles::~SampleTiltAngles()= default;
 
-SampleTiltAngles::SampleTiltAngles( SampleTiltAngles const & src ):
-	protocols::moves::Mover( src ),
-	prefix_( src.prefix_ ),
-	ref_sfxn1_( src.ref_sfxn1_ ),
-	ref_sfxn2_( src.ref_sfxn2_ ),
-	ref_sfxn3_( src.ref_sfxn3_ )
-{}
+SampleTiltAngles::SampleTiltAngles( SampleTiltAngles const & /*src*/ ) = default;
 
 void
 SampleTiltAngles::parse_my_tag(

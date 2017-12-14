@@ -50,13 +50,13 @@ public:
 	// @brief Standard constructor, no default constructor, initializes lambda_memory, tolerance, temp, and threshold to standard values
 	MeanField( core::Size const option,
 		core::pose::PoseOPs & poses,
-		utility::vector1 < core::pack::task::PackerTaskOP > tasks,
+		utility::vector1< core::pack::task::PackerTaskOP > const & tasks,
 		core::scoring::ScoreFunctionOP scfxn );
 
 	// @brief Optional constructor, initializes lambda_mem, tolerance, temp, and threshold to input values
 	MeanField( core::Size const option,
 		core::pose::PoseOPs & poses,
-		utility::vector1 < core::pack::task::PackerTaskOP > tasks,
+		utility::vector1< core::pack::task::PackerTaskOP > const & tasks,
 		core::scoring::ScoreFunctionOP scfxn,
 		core::Real lambda_mem,
 		core::Real tolerance,

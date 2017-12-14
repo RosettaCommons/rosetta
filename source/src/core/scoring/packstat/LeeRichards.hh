@@ -113,7 +113,7 @@ struct LR_MP_AtomData {
 };
 
 struct MultiProbePoseAccumulator : public Accumulator {
-	MultiProbePoseAccumulator( core::pose::Pose & _pose, std::string tag="" );
+	MultiProbePoseAccumulator( core::pose::Pose & _pose, std::string const & tag="" );
 	virtual void accumulate_area( core::id::AtomID id, core::Real area, bool buried ) {
 		if ( buried ) atom_map_[id].barea[pr_idx_] += area;
 		else         atom_map_[id].area[pr_idx_] += area;

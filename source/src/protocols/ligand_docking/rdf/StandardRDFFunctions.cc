@@ -60,10 +60,7 @@ RDFEtableFunction::RDFEtableFunction() : RDFBase("RDFEtableFunction"), etable_ev
 	this->add_function_name("solv");
 }
 
-RDFEtableFunction::~RDFEtableFunction()
-{
-
-}
+RDFEtableFunction::~RDFEtableFunction() = default;
 
 std::string RDFEtableFunction::class_name(){
 	return "RDFEtableFunction";
@@ -148,10 +145,7 @@ RDFElecFunction::RDFElecFunction() : RDFBase("RDFElecFunction"), coloumb_(/* NUL
 	this->add_function_name("elec");
 }
 
-RDFElecFunction::~RDFElecFunction()
-{
-
-}
+RDFElecFunction::~RDFElecFunction() = default;
 void RDFElecFunction::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map)
@@ -217,10 +211,7 @@ RDFChargeFunction::RDFChargeFunction() : RDFBase("RDFChargeFunction")
 
 }
 
-RDFChargeFunction::~RDFChargeFunction()
-{
-
-}
+RDFChargeFunction::~RDFChargeFunction() = default;
 void RDFChargeFunction::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &)
@@ -322,10 +313,7 @@ RDFHbondFunction::RDFHbondFunction() : RDFBase("RDFHbondFunction"),hbond_set_(/*
 
 }
 
-RDFHbondFunction::~RDFHbondFunction()
-{
-
-}
+RDFHbondFunction::~RDFHbondFunction() = default;
 
 void RDFHbondFunction::parse_my_tag(
 	utility::tag::TagCOP tag ,
@@ -435,10 +423,7 @@ RDFBinaryHbondFunction::RDFBinaryHbondFunction() : RDFBase("RDFBinaryHbindFuncti
 
 }
 
-RDFBinaryHbondFunction::~RDFBinaryHbondFunction()
-{
-
-}
+RDFBinaryHbondFunction::~RDFBinaryHbondFunction() = default;
 
 void RDFBinaryHbondFunction::parse_my_tag(utility::tag::TagCOP tag,basic::datacache::DataMap &)
 {
@@ -529,7 +514,7 @@ RDFOrbitalFunction::class_name(){
 	return "RDFOrbitalFunction";
 }
 
-RDFOrbitalFunction::RDFOrbitalFunction() : RDFBase("RDFOrbitalFunction"),pose_(/* NULL */),orbital_score_(NULL)
+RDFOrbitalFunction::RDFOrbitalFunction() : RDFBase("RDFOrbitalFunction"),pose_(/* NULL */),orbital_score_(nullptr)
 {
 	this->add_function_name("pci_cation_pi");
 	this->add_function_name("pci_pi_pi");
@@ -538,10 +523,7 @@ RDFOrbitalFunction::RDFOrbitalFunction() : RDFBase("RDFOrbitalFunction"),pose_(/
 	this->add_function_name("pci_salt_bridge");
 }
 
-RDFOrbitalFunction::~RDFOrbitalFunction()
-{
-
-}
+RDFOrbitalFunction::~RDFOrbitalFunction() = default;
 
 void RDFOrbitalFunction::parse_my_tag(
 	utility::tag::TagCOP ,
@@ -625,10 +607,7 @@ RDFBinaryOrbitalFunction::RDFBinaryOrbitalFunction() : RDFBase("RDFBinaryOrbital
 
 }
 
-RDFBinaryOrbitalFunction::~RDFBinaryOrbitalFunction()
-{
-
-}
+RDFBinaryOrbitalFunction::~RDFBinaryOrbitalFunction() = default;
 
 void RDFBinaryOrbitalFunction::parse_my_tag(utility::tag::TagCOP, basic::datacache::DataMap &) {}
 
@@ -654,18 +633,10 @@ RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_dat
 	core::Real salt_bridge_counts = 0.0;
 	core::Real hbond_orbital_counts = 0.0;
 	core::Real cation_pi_counts = 0.0;
-	for (
-			utility::vector1< core::Size >::const_iterator
-			protein_orb_it = protein_orbitals.begin(),
-			protein_orb_end = protein_orbitals.end();
-			protein_orb_it != protein_orb_end; ++protein_orb_it ) {
-		std::string protein_orb = protein_residue.orbital_type(*protein_orb_it).name();
-		for (
-				utility::vector1< core::Size >::const_iterator
-				ligand_orb_it = ligand_orbitals.begin(),
-				ligand_orb_end = ligand_orbitals.end();
-				ligand_orb_it != ligand_orb_end; ++ligand_orb_it ) {
-			std::string ligand_orb = ligand_residue.orbital_type(*ligand_orb_it).name();
+	for ( unsigned long protein_orbital : protein_orbitals ) {
+		std::string protein_orb = protein_residue.orbital_type(protein_orbital).name();
+		for ( unsigned long ligand_orbital : ligand_orbitals ) {
+			std::string ligand_orb = ligand_residue.orbital_type(ligand_orbital).name();
 			if (
 					(ligand_orb == "C.pi.sp2" && protein_orb == "C.pi.sp2") ||
 					(ligand_orb == "C.pi.sp2" && protein_orb == "N.pi.sp2") ||
@@ -678,12 +649,8 @@ RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_dat
 	std::string protein_atom_name = protein_residue.type().atom_type((atom_data.protein_atom_id.atomno())).name();
 	std::string ligand_atom_name = ligand_residue.type().atom_type((atom_data.ligand_atom_id.atomno())).name();
 	if ( protein_atom_name == "Hpol" || protein_atom_name == "Haro" ) {
-		for (
-				utility::vector1< core::Size >::const_iterator
-				ligand_orb_it = ligand_orbitals.begin(),
-				ligand_orb_end = ligand_orbitals.end();
-				ligand_orb_it != ligand_orb_end; ++ligand_orb_it ) {
-			std::string ligand_orb = ligand_residue.orbital_type(*ligand_orb_it).name();
+		for ( unsigned long ligand_orbital : ligand_orbitals ) {
+			std::string ligand_orb = ligand_residue.orbital_type(ligand_orbital).name();
 			if ( protein_atom_name == "Hpol" ) {
 				if ( ligand_orb == "O.p.sp2" ) {
 					salt_bridge_counts += 1.0;
@@ -699,12 +666,8 @@ RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_dat
 			}
 		}
 	} else if ( ligand_atom_name == "Hpol" || ligand_atom_name == "Haro" ) {
-		for (
-				utility::vector1< core::Size >::const_iterator
-				protein_orb_it = protein_orbitals.begin(),
-				protein_orb_end = protein_orbitals.end();
-				protein_orb_it != protein_orb_end; ++protein_orb_it ) {
-			std::string protein_orb = protein_residue.orbital_type(*protein_orb_it).name();
+		for ( unsigned long protein_orbital : protein_orbitals ) {
+			std::string protein_orb = protein_residue.orbital_type(protein_orbital).name();
 			if ( ligand_atom_name == "Hpol" ) {
 				if ( protein_orb == "O.p.sp2" ) {
 					salt_bridge_counts += 1.0;

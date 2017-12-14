@@ -76,8 +76,8 @@ void SCS_Comparator::apply(AntibodySequence const &antibody_sequence, SCS_Result
 
 bool SCS_BlastComparator::compare(AntibodySequence const &antibody_sequence, SCS_Result const &a, SCS_Result const &b) const
 {
-	SCS_BlastResult const *aa = dynamic_cast< SCS_BlastResult const *>( &a );
-	SCS_BlastResult const *bb = dynamic_cast< SCS_BlastResult const *>( &b );
+	auto const *aa = dynamic_cast< SCS_BlastResult const *>( &a );
+	auto const *bb = dynamic_cast< SCS_BlastResult const *>( &b );
 	if( aa and bb ) return compare(antibody_sequence, *aa, *bb);
 	else throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastComparator::compare: Error! Could not cast SCS_Results to SCS_BlastResult!");
 }
@@ -143,7 +143,7 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 	};
 	for(auto &region : h1_h2_h3_l1_l2_l3) {
 		for(auto p = region.r.rbegin(); p != region.r.rend(); ) {
-			SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+			auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 			if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_alignment_length::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			if( region.query_sequence.size() != (br->*region.result_sequence).size() ) {
@@ -158,7 +158,7 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 	}
 
 	for(auto p = results->frh.rbegin(); p != results->frh.rend(); ) {
-		SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+		auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_alignment_length::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		uint template_length = (br->pdb == "2x7l") ? 61 : 63;
@@ -171,7 +171,7 @@ void SCS_BlastFilter_by_sequence_length::apply(AntibodySequence const &A, SCS_Re
 	}
 
 	for(auto p = results->frl.rbegin(); p != results->frl.rend(); ) {
-		SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+		auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_alignment_length::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		uint template_length = (br->pdb == "3h0t") ? 60 : 58;
@@ -217,7 +217,7 @@ void SCS_BlastFilter_by_alignment_length::apply(AntibodySequence const &/*antibo
 
 	for(auto &region : R) {
 		for(auto p = region.r.rbegin(); p != region.r.rend(); ) {
-			SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+			auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 			if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_alignment_length::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			//TR << "alignment_length: " << br->alignment_length << "   " << region.v * (br->*region.sequence).size() << std::endl;
@@ -269,7 +269,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 
 	for(auto &region : R) { // loop over all members of array of structs, R?
 		for(auto p = region.r.rbegin(); p != region.r.rend(); ) { // for each region, h1-l3, loop over all alignments
-			SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() ); // use iterator to "get" alignment result and cast from Result to BlastResult
+			auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() ); // use iterator to "get" alignment result and cast from Result to BlastResult
 			if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_template_resolution::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			//TR << "resolution: " << br->resolution << "   " << region.v * (br->*region.sequence).size() << std::endl;
@@ -284,7 +284,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 
 	// Filter heavy framework region by resolution
 	for(auto p = results->frh.rbegin(); p != results->frh.rend(); ) {
-		SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+		auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identity::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		if( br->resolution > get_resolution_cutoff() ) {
@@ -296,7 +296,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 
 	// Filter light framework region by resolution
 	for(auto p = results->frl.rbegin(); p != results->frl.rend(); ) {
-		SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+		auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		if( br->resolution > get_resolution_cutoff() ) {
@@ -308,7 +308,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 
 	// Filter orientation by resolution
 	for(auto p = results->orientation.rbegin(); p != results->orientation.rend(); ) {
-		SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+		auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		if( br->resolution > get_resolution_cutoff() ) {
@@ -423,7 +423,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
   // Filter CDRs by sequence identity
   for(auto &region : h1_h2_h3_l1_l2_l3) {
     for(auto p = region.r.rbegin(); p != region.r.rend(); ) {
-      SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+      auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
       if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identity::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			sid_ratio = sid_checker( region.query_sequence, br->*region.result_sequence );
@@ -452,7 +452,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
 	// Filter heavy framework region by sequence identity
   for(auto p = results->frh.rbegin(); p != results->frh.rend(); ) {
-    SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+    auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
     if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identity::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		sid_ratio = sid_checker( query_frh, br->frh);
@@ -465,7 +465,7 @@ void SCS_BlastFilter_by_sequence_identity::apply(AntibodySequence const& A,
 
 	// Filter light framework region by sequence identity
   for(auto p = results->frl.rbegin(); p != results->frl.rend(); ) {
-    SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+    auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
     if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		sid_ratio = sid_checker( query_frl, br->frl);
@@ -529,7 +529,7 @@ void SCS_BlastFilter_by_outlier::apply(AntibodySequence const& /* A */,
 
   for(auto &region : frh_h1_h2_frl_l1_l2_l3) {
     for(auto p = region.r.rbegin(); p != region.r.rend(); ) {
-      SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+      auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
       if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_outlier::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			// check if pdb is contained in outlier list... somewhat worrying that list doesn't contain all pdbs
@@ -591,7 +591,7 @@ void SCS_BlastFilter_by_template_bfactor::apply(AntibodySequence const& /* A */,
 
 	for(auto &region : h1_h2_h3_l1_l2_l3) {
 		for(auto p = region.r.rbegin(); p != region.r.rend(); ) {
-			SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+			auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 			if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_template_bfactor::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			// check if pdb is contained in bfactor list... somewhat worrying that list doesn't contain all pdbs
@@ -693,13 +693,13 @@ void SCS_BlastFilter_by_OCD::apply(AntibodySequence const& /* A */,
 		}
 
 		auto p = r.begin()+j; //get best aligned model, then second best, then third best, then ...
-		SCS_BlastResult const *top_br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+		auto const *top_br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 		if( !top_br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_OCD::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		for ( core::Size i=j+1; i < r.size(); ++i ) { // loop over result vector, but update size each iteration as we delete things?
 
 			auto p = r.begin()+i;
-			SCS_BlastResult const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+			auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
 			if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_OCD::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 			if ( ocd_map.at(top_br->pdb).at(br->pdb) < get_ocd_cutoff() ) {

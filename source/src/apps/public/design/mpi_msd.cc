@@ -214,9 +214,9 @@ class HPatchNPDCalculator : public protocols::pack_daemon::NPDPropCalculator
 {
 public:
 
-	virtual
+
 	core::Real
-	calculate( core::pose::Pose const & p ) {
+	calculate( core::pose::Pose const & p ) override {
 		return core::pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( p );
 	}
 
@@ -224,13 +224,13 @@ public:
 
 class HPatchNPDCalculatorCreator : public protocols::pack_daemon::NPDPropCalculatorCreator
 {
-	virtual
-	std::string
-	calculator_name() const {return "hpatch"; }
 
-	virtual
+	std::string
+	calculator_name() const override {return "hpatch"; }
+
+
 	protocols::pack_daemon::NPDPropCalculatorOP
-	new_calculator() const { return protocols::pack_daemon::NPDPropCalculatorOP( new HPatchNPDCalculator ); }
+	new_calculator() const override { return protocols::pack_daemon::NPDPropCalculatorOP( new HPatchNPDCalculator ); }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -241,12 +241,12 @@ class HPatchNPDCalculatorCreator : public protocols::pack_daemon::NPDPropCalcula
 class HPatchByChainNPDCalculator : public protocols::pack_daemon::NPDPropCalculator
 {
 public:
-	virtual
+
 	void
 	setup(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & task
-	){
+	) override{
 		chains_ = pose.split_by_chain();
 		task_ = task.clone();
 		Size last_chain( 1 ), first_residue_for_chain( 1 );
@@ -260,9 +260,9 @@ public:
 		}
 	}
 
-	virtual
+
 	core::Real
-	calculate( core::pose::Pose const & p ) {
+	calculate( core::pose::Pose const & p ) override {
 		// MJO COMMENTING OUT BECAUSE IT IS UNUSED:
 		// Size chain_offset = 0;
 		for ( core::Size ii = 1; ii <= p.size(); ++ii ) {
@@ -285,13 +285,13 @@ private:
 
 class HPatchByChainNPDCalculatorCreator : public protocols::pack_daemon::NPDPropCalculatorCreator
 {
-	virtual
-	std::string
-	calculator_name() const {return "hpatch_by_chain"; }
 
-	virtual
+	std::string
+	calculator_name() const override {return "hpatch_by_chain"; }
+
+
 	protocols::pack_daemon::NPDPropCalculatorOP
-	new_calculator() const { return protocols::pack_daemon::NPDPropCalculatorOP( new HPatchByChainNPDCalculator ); }
+	new_calculator() const override { return protocols::pack_daemon::NPDPropCalculatorOP( new HPatchByChainNPDCalculator ); }
 };
 
 
@@ -302,12 +302,12 @@ class HPatchByChainNPDCalculatorCreator : public protocols::pack_daemon::NPDProp
 class NBuriedUnsatsCalcultor : public protocols::pack_daemon::NPDPropCalculator
 {
 public:
-	virtual
+
 	void
 	setup(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & task
-	){
+	) override{
 		pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 		task_ = task.clone();
 		sfxn_ = core::scoring::get_score_function();
@@ -336,9 +336,9 @@ public:
 
 	}
 
-	virtual
+
 	core::Real
-	calculate( core::pose::Pose const & p ) {
+	calculate( core::pose::Pose const & p ) override {
 		for ( core::Size ii = 1; ii <= pose_->size(); ++ii ) {
 			if ( ! task_->being_packed( ii ) ) continue;
 			pose_->replace_residue( ii, p.residue( ii ), false );
@@ -357,13 +357,13 @@ private:
 
 class NBuriedUnsatsCalcultorCreator : public protocols::pack_daemon::NPDPropCalculatorCreator
 {
-	virtual
-	std::string
-	calculator_name() const {return "nbunsats"; }
 
-	virtual
+	std::string
+	calculator_name() const override {return "nbunsats"; }
+
+
 	protocols::pack_daemon::NPDPropCalculatorOP
-	new_calculator() const { return protocols::pack_daemon::NPDPropCalculatorOP( new NBuriedUnsatsCalcultor ); }
+	new_calculator() const override { return protocols::pack_daemon::NPDPropCalculatorOP( new NBuriedUnsatsCalcultor ); }
 };
 
 
@@ -536,12 +536,12 @@ int main( int argc, char ** argv )
 
 			// <stolen code>
 			// sort local copy of sequence/fitness cache
-			typedef GeneticAlgorithm::TraitEntityHashMap TraitEntityHashMap;
+			using TraitEntityHashMap = GeneticAlgorithm::TraitEntityHashMap;
 			TraitEntityHashMap const & cache( ga.entity_cache() );
 			utility::vector1<Entity::OP> sortable;
-			for ( TraitEntityHashMap::const_iterator it( cache.begin() ), end( cache.end() ); it != end; ++it ) {
-				if ( it->second == 0 ) continue; /// Why would this be?
-				sortable.push_back( it->second );
+			for ( auto const & it : cache ) {
+				if ( it.second == nullptr ) continue; /// Why would this be?
+				sortable.push_back( it.second );
 			}
 			std::sort( sortable.begin(), sortable.end(), lt_OP_deref< Entity > );
 

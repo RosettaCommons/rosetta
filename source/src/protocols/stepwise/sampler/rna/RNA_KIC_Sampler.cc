@@ -29,6 +29,7 @@
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/string_util.hh>
 
 using namespace core;
@@ -45,12 +46,12 @@ namespace sampler {
 namespace rna {
 
 RNA_KIC_Sampler::RNA_KIC_Sampler(
-	core::pose::PoseOP const & ref_pose,
+	core::pose::PoseOP  ref_pose,
 	core::Size const moving_suite,
 	core::Size const chainbreak_suite
 ):
 	StepWiseSampler(),
-	ref_pose_( ref_pose ),
+	ref_pose_(std::move( ref_pose )),
 	moving_suite_( moving_suite ),
 	chainbreak_suite_( chainbreak_suite ),
 	pucker_state_( ANY_PUCKER ), // ANY_PUCKER, NORTH, SOUTH, NO_PUCKER
@@ -71,7 +72,7 @@ RNA_KIC_Sampler::RNA_KIC_Sampler(
 	StepWiseSampler::set_random( false );
 }
 
-RNA_KIC_Sampler::~RNA_KIC_Sampler() {}
+RNA_KIC_Sampler::~RNA_KIC_Sampler() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void RNA_KIC_Sampler::init() {

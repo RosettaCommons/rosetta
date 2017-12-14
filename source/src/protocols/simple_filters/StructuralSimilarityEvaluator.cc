@@ -16,6 +16,7 @@
 
 #include <core/scoring/rms_util.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <numeric/util.hh>
 

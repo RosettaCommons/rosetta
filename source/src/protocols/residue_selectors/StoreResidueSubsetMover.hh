@@ -35,7 +35,7 @@ public:
 	StoreResidueSubsetMover();
 	StoreResidueSubsetMover(
 		core::select::residue_selector::ResidueSelectorCOP selector,
-		std::string subset_name, // move-constructed
+		std::string const & subset_name, // move-constructed
 		bool const overwrite );
 	~StoreResidueSubsetMover() override;
 

@@ -71,7 +71,7 @@ NtoCConstraintGenerator::NtoCConstraintGenerator( Real const dist, Real const co
 }
 
 /// @brief
-NtoCConstraintGenerator::~NtoCConstraintGenerator() {}
+NtoCConstraintGenerator::~NtoCConstraintGenerator() = default;
 
 void
 NtoCConstraintGenerator::parse_my_tag( TagCOP const tag,

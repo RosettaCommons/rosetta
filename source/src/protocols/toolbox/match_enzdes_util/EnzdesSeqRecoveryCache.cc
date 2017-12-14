@@ -62,7 +62,7 @@ EnzdesSeqRecoveryCache::EnzdesSeqRecoveryCache( EnzdesSeqRecoveryCache const & o
 	designable_residues_ = other.designable_residues_;
 }
 
-EnzdesSeqRecoveryCache::~EnzdesSeqRecoveryCache() {}
+EnzdesSeqRecoveryCache::~EnzdesSeqRecoveryCache() = default;
 
 void
 EnzdesSeqRecoveryCache::set_sequence(

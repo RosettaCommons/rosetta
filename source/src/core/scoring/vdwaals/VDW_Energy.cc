@@ -361,7 +361,7 @@ VDW_Energy::get_count_pair_function_trie(
 	} else {
 		return trie::TrieCountPairBaseOP( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
 	}
-	return 0;
+	return nullptr;
 }
 
 core::Size
@@ -431,7 +431,7 @@ VDW_Energy::create_rotamer_trie(
 		/// As of 10/21, all count pair data combinations should be covered. This code should not execute.
 		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
 		utility_exit();
-		return 0;
+		return nullptr;
 	}
 }
 

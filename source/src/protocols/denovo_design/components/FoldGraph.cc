@@ -72,13 +72,13 @@ FoldGraph::FoldGraph( StructureData const & perm ):
 	MovableGroups const movable_groups = sd().movable_groups();
 	TR.Debug << "Num groups = " << movable_groups.size() << std::endl;
 	debug_assert( movable_groups.size() );
-	for ( MovableGroups::const_iterator grp=movable_groups.begin(); grp!=movable_groups.end(); ++grp ) {
-		SegmentNames const segments = sd().segments_in_movable_group( *grp );
-		for ( SegmentNames::const_iterator s1=segments.begin(); s1!=segments.end(); ++s1 ) {
-			TR.Debug << "Group " << *grp << " Segment " << *s1 << std::endl;
-			SegmentNames::const_iterator next = s1;
+	for ( unsigned long movable_group : movable_groups ) {
+		SegmentNames const segments = sd().segments_in_movable_group( movable_group );
+		for ( auto s1=segments.begin(); s1!=segments.end(); ++s1 ) {
+			TR.Debug << "Group " << movable_group << " Segment " << *s1 << std::endl;
+			auto next = s1;
 			++next;
-			for ( SegmentNames::const_iterator s2=next; s2!=segments.end(); ++s2 ) {
+			for ( auto s2=next; s2!=segments.end(); ++s2 ) {
 				debug_assert( *s1 != *s2 );
 				add_edge( *s1, *s2 );
 			}
@@ -86,7 +86,7 @@ FoldGraph::FoldGraph( StructureData const & perm ):
 	}
 
 	// look for non-canonical bonds
-	for ( BondInfos::const_iterator bi=sd().covalent_bonds_begin(); bi!=sd().covalent_bonds_end(); ++bi ) {
+	for ( auto bi=sd().covalent_bonds_begin(); bi!=sd().covalent_bonds_end(); ++bi ) {
 		TR << "Found non-canonical connection from " << bi->seg1 << ":" << bi->res1 << ":" << bi->atom1
 			<<" to " << bi->seg2 << ":" << bi->res2 << ":" << bi->atom2 << std::endl;
 		if ( bi->seg1 != bi->seg2 ) {
@@ -95,7 +95,7 @@ FoldGraph::FoldGraph( StructureData const & perm ):
 	}
 
 	// add peptide edges
-	for ( SegmentNameList::const_iterator n=sd().segments_begin(); n!=sd().segments_end(); ++n ) {
+	for ( auto n=sd().segments_begin(); n!=sd().segments_end(); ++n ) {
 		Segment const & resis = sd().segment(*n);
 		if ( !resis.has_free_lower_terminus() ) {
 			TR.Debug << "Segment1 " << *n << " res " << resis.safe() << std::endl;
@@ -110,13 +110,13 @@ FoldGraph::FoldGraph( StructureData const & perm ):
 	}
 }
 
-FoldGraph::~FoldGraph() {}
+FoldGraph::~FoldGraph() = default;
 
 void
 FoldGraph::find_cutpoints()
 {
 	cutpoints_.clear();
-	for ( SegmentNameList::const_iterator s=sd().segments_begin(); s!=sd().segments_end(); ++s ) {
+	for ( auto s=sd().segments_begin(); s!=sd().segments_end(); ++s ) {
 		core::Size cut = sd().segment( *s ).cutpoint();
 		if ( cut != 0 ) cutpoints_.insert( nodeidx( *s ) );
 	}
@@ -126,9 +126,9 @@ void
 FoldGraph::build_seg2node()
 {
 	// populate seg2node
-	for ( SegmentNameList::const_iterator r=sd().segments_begin(); r!=sd().segments_end(); ++r ) {
+	for ( auto r=sd().segments_begin(); r!=sd().segments_end(); ++r ) {
 		core::Size const nodenum = seg2node_.size() + 1;
-		SegmentToNodeMap::iterator s2n = seg2node_.find( *r );
+		auto s2n = seg2node_.find( *r );
 		if ( s2n == seg2node_.end() ) {
 			s2n = seg2node_.insert( std::make_pair( *r, nodenum ) ).first;
 			TR.Debug << "Added " << *r << std::endl;
@@ -149,14 +149,14 @@ void
 FoldGraph::build_node2seg( SegmentToNodeMap const & seg2node )
 {
 	// populate node2seg
-	for ( SegmentToNodeMap::const_iterator s2n=seg2node.begin(); s2n!=seg2node.end(); ++s2n ) {
-		NodeToSegmentMap::iterator n2s = node2seg_.find( s2n->second );
+	for ( auto const & s2n : seg2node ) {
+		auto n2s = node2seg_.find( s2n.second );
 		if ( n2s == node2seg_.end() ) {
-			n2s = node2seg_.insert( std::make_pair( s2n->second, s2n->first ) ).first;
+			n2s = node2seg_.insert( std::make_pair( s2n.second, s2n.first ) ).first;
 		} else {
 			std::stringstream msg;
-			msg << "FoldGraph::build_node2seg(): Attempted to add a segment (" << s2n->first
-				<< ") and node number (" << s2n->second << "), but the node number is already present in the node2seg_ map. SegmentToNodeMap = "
+			msg << "FoldGraph::build_node2seg(): Attempted to add a segment (" << s2n.first
+				<< ") and node number (" << s2n.second << "), but the node number is already present in the node2seg_ map. SegmentToNodeMap = "
 				<< seg2node_ << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
@@ -169,7 +169,7 @@ FoldGraph::build_node2seg( SegmentToNodeMap const & seg2node )
 core::Size
 FoldGraph::nodeidx( std::string const & segment ) const
 {
-	std::map< std::string, core::Size >::const_iterator it = seg2node_.find(segment);
+	auto it = seg2node_.find(segment);
 	if ( it == seg2node_.end() ) {
 		TR.Error << "Component " << segment << " not found in map: " << seg2node_ << std::endl;
 		debug_assert( it != seg2node_.end() );
@@ -181,7 +181,7 @@ FoldGraph::nodeidx( std::string const & segment ) const
 std::string const &
 FoldGraph::segment( core::Size const nodeidx ) const
 {
-	std::map< core::Size, std::string >::const_iterator it = node2seg_.find(nodeidx);
+	auto it = node2seg_.find(nodeidx);
 	if ( it == node2seg_.end() ) {
 		TR.Error << "Node idx " << nodeidx << " not found in map: " << seg2node_ << std::endl;
 		debug_assert( it != node2seg_.end() );
@@ -256,7 +256,7 @@ FoldGraph::fold_tree( SegmentNames const & root_segments ) const
 	// add to fold tree based on peptide graph
 	Segment const & root_resis = sd().segment( *root_segments.begin() );
 	fold_tree_rec( ft, visited, to_search, *root_segments.begin(), root_resis.safe(), 0, true );
-	for ( utility::vector1< std::string >::const_iterator s=++root_segments.begin(); s!=root_segments.end(); ++s ) {
+	for ( auto s=++root_segments.begin(); s!=root_segments.end(); ++s ) {
 		if ( visited.find( nodeidx( *s ) ) != visited.end() ) continue;
 		Segment const & resis = sd().segment( *s );
 		core::kinematics::Edge e( root_resis.safe(), resis.safe(), ft.num_jump()+1 );
@@ -278,7 +278,7 @@ FoldGraph::fold_tree( SegmentNames const & root_segments ) const
 				continue;
 			}
 			core::kinematics::Edge edge( sd().segment(segment(node)).safe(), sd().segment(segment(othernode)).safe(), ft.num_jump()+1 );
-			BondInfos::const_iterator bi = sd().find_non_polymer_bond( segment(node), segment(othernode) );
+			auto bi = sd().find_non_polymer_bond( segment(node), segment(othernode) );
 			if ( bi == sd().covalent_bonds_end() ) {
 				TR.Debug << " adding unconnected segment from interaction graph rooted at " << segment(othernode) << " " << edge << std::endl;
 			} else {
@@ -310,29 +310,29 @@ FoldGraph::fold_tree( SegmentNames const & root_segments ) const
 				core::kinematics::FoldTree const & ft_const = ft;
 				utility::vector1< core::kinematics::Edge > newedges;
 				utility::vector1< core::kinematics::Edge > deledges;
-				for ( core::kinematics::FoldTree::const_iterator e=ft_const.begin(); e != ft_const.end(); ++e ) {
-					if ( e->label() > 0 ) continue;
-					if ( ( edge.start() >= e->stop() ) && ( edge.start() <= e->start() ) ) {
-						TR << "Removing edge: " << *e << " to insert " << edge << std::endl;
-						newedges.push_back( core::kinematics::Edge( e->stop(), edge.start(), core::kinematics::Edge::PEPTIDE ) );
-						newedges.push_back( core::kinematics::Edge( edge.start(), e->start(), core::kinematics::Edge::PEPTIDE ) );
-						deledges.push_back( *e );
-					} else if ( ( edge.start() >= e->start() ) && ( edge.start() <= e->stop() ) ) {
-						TR << "2Adding edge: " << *e << " to insert " << edge << std::endl;
-						newedges.push_back( core::kinematics::Edge( e->start(), edge.start(), core::kinematics::Edge::PEPTIDE ) );
-						newedges.push_back( core::kinematics::Edge( edge.start(), e->stop(), core::kinematics::Edge::PEPTIDE ) );
-						deledges.push_back( *e );
+				for ( auto const & e : ft_const ) {
+					if ( e.label() > 0 ) continue;
+					if ( ( edge.start() >= e.stop() ) && ( edge.start() <= e.start() ) ) {
+						TR << "Removing edge: " << e << " to insert " << edge << std::endl;
+						newedges.push_back( core::kinematics::Edge( e.stop(), edge.start(), core::kinematics::Edge::PEPTIDE ) );
+						newedges.push_back( core::kinematics::Edge( edge.start(), e.start(), core::kinematics::Edge::PEPTIDE ) );
+						deledges.push_back( e );
+					} else if ( ( edge.start() >= e.start() ) && ( edge.start() <= e.stop() ) ) {
+						TR << "2Adding edge: " << e << " to insert " << edge << std::endl;
+						newedges.push_back( core::kinematics::Edge( e.start(), edge.start(), core::kinematics::Edge::PEPTIDE ) );
+						newedges.push_back( core::kinematics::Edge( edge.start(), e.stop(), core::kinematics::Edge::PEPTIDE ) );
+						deledges.push_back( e );
 					}
-					if ( ( edge.stop() >= e->stop() ) && ( edge.stop() <= e->start() ) ) {
-						TR << "Removing edge: " << *e << " to insert " << edge << std::endl;
-						newedges.push_back( core::kinematics::Edge( e->stop(), edge.stop(), core::kinematics::Edge::PEPTIDE ) );
-						newedges.push_back( core::kinematics::Edge( edge.stop(), e->start(), core::kinematics::Edge::PEPTIDE ) );
-						deledges.push_back( *e );
-					} else if ( ( edge.stop() >= e->start() ) && ( edge.stop() <= e->stop() ) ) {
-						TR << "2Adding edge: " << *e << " to insert " << edge << std::endl;
-						newedges.push_back( core::kinematics::Edge( e->start(), edge.stop(), core::kinematics::Edge::PEPTIDE ) );
-						newedges.push_back( core::kinematics::Edge( edge.stop(), e->stop(), core::kinematics::Edge::PEPTIDE ) );
-						deledges.push_back( *e );
+					if ( ( edge.stop() >= e.stop() ) && ( edge.stop() <= e.start() ) ) {
+						TR << "Removing edge: " << e << " to insert " << edge << std::endl;
+						newedges.push_back( core::kinematics::Edge( e.stop(), edge.stop(), core::kinematics::Edge::PEPTIDE ) );
+						newedges.push_back( core::kinematics::Edge( edge.stop(), e.start(), core::kinematics::Edge::PEPTIDE ) );
+						deledges.push_back( e );
+					} else if ( ( edge.stop() >= e.start() ) && ( edge.stop() <= e.stop() ) ) {
+						TR << "2Adding edge: " << e << " to insert " << edge << std::endl;
+						newedges.push_back( core::kinematics::Edge( e.start(), edge.stop(), core::kinematics::Edge::PEPTIDE ) );
+						newedges.push_back( core::kinematics::Edge( edge.stop(), e.stop(), core::kinematics::Edge::PEPTIDE ) );
+						deledges.push_back( e );
 					}
 				}
 				for ( utility::vector1< core::kinematics::Edge >::const_iterator e=newedges.begin(); e!=newedges.end(); ++e ) {
@@ -348,9 +348,9 @@ FoldGraph::fold_tree( SegmentNames const & root_segments ) const
 	}
 
 	// add unconnected foldtree elements directly to the start node
-	for ( SegmentToNodeMap::const_iterator s2n=seg2node_.begin(); s2n!=seg2node_.end(); ++s2n ) {
-		if ( visited.find( s2n->second ) == visited.end() ) {
-			std::string const & unconnected_seg = segment(s2n->second);
+	for ( auto const & s2n : seg2node_ ) {
+		if ( visited.find( s2n.second ) == visited.end() ) {
+			std::string const & unconnected_seg = segment(s2n.second);
 			Segment const & resis = sd().segment(unconnected_seg);
 			core::kinematics::Edge e( root_resis.safe(), resis.safe(), ft.num_jump()+1 );
 			TR.Debug << " unconnected_comp = " << unconnected_seg << " " << e << std::endl;
@@ -483,7 +483,7 @@ insert_mg(
 	core::Size const mg,
 	T const & segname )
 {
-	typename std::map< core::Size, std::list< T > >::iterator fixed_mg = fixed_mgs.find( mg );
+	auto fixed_mg = fixed_mgs.find( mg );
 	if ( fixed_mg == fixed_mgs.end() ) {
 		fixed_mg = fixed_mgs.insert( std::make_pair( mg, std::list< T >() ) ).first;
 	}
@@ -496,9 +496,9 @@ bool
 FoldGraph::check_solution( Solution const & solution ) const
 {
 	SegmentNameSet loop_segments;
-	for ( Solution::const_iterator s=solution.begin(); s!=solution.end(); ++s ) {
-		for ( NodeSet::const_iterator lseg=s->begin(); lseg!=s->end(); ++lseg ) {
-			SegmentName const & segmentname = segment( *lseg );
+	for ( auto const & s : solution ) {
+		for ( unsigned long lseg : s ) {
+			SegmentName const & segmentname = segment( lseg );
 			std::pair< SegmentNameSet::iterator, bool > const ins_result = loop_segments.insert( segmentname );
 			if ( !ins_result.second ) {
 				TR << "Segment " << segmentname << " is present in more than one loop... this should not be possible. Skipping." << std::endl;
@@ -511,27 +511,27 @@ FoldGraph::check_solution( Solution const & solution ) const
 	MovableGroupToSegmentNameListMap fixed_mgs;
 
 	// ensure that the same MG isn't present both inside and outside of loops
-	for ( SegmentNameList::const_iterator c=sd().segments_begin(); c!=sd().segments_end(); ++c ) {
+	for ( auto c=sd().segments_begin(); c!=sd().segments_end(); ++c ) {
 		MovableGroup const mg = sd().segment(*c).movable_group();
 		if ( loop_segments.find(*c) == loop_segments.end() ) {
 			insert_mg( fixed_mgs, mg, *c );
 		}
 	}
 
-	for ( Solution::const_iterator nodeset=solution.begin(); nodeset!=solution.end(); ++nodeset ) {
-		for ( NodeSet::const_iterator n=nodeset->begin(); n!=nodeset->end(); ++n ) {
-			std::string const & segname = segment( *n );
+	for ( auto const & nodeset : solution ) {
+		for ( unsigned long n : nodeset ) {
+			std::string const & segname = segment( n );
 			core::Size const mg = sd().segment( segname ).movable_group();
 			MovableGroupToSegmentNameListMap::const_iterator fixed_mg = fixed_mgs.find( mg );
 			if ( fixed_mg != fixed_mgs.end() ) {
 				SegmentNameList const connected = sd().connected_segments( segname, false );
-				for ( SegmentNameList::const_iterator c=fixed_mg->second.begin(); c!=fixed_mg->second.end(); ++c ) {
+				for ( auto const & c : fixed_mg->second ) {
 					// check to see if fixed segment is connected to anything connected to *n
-					if ( std::count( connected.begin(), connected.end(), *c ) > 0 ) {
-						TR.Debug << "Movable group for node " << *n << " --> " << segment( *n ) << " : " << mg << " is present in both loops and non-loop regions. Skipping." << std::endl;
+					if ( std::count( connected.begin(), connected.end(), c ) > 0 ) {
+						TR.Debug << "Movable group for node " << n << " --> " << segment( n ) << " : " << mg << " is present in both loops and non-loop regions. Skipping." << std::endl;
 						return false;
 					} else {
-						TR.Debug << "Movable group for node " << *n << " --> " << segment( *n ) << " : " << mg << " is present in both loops and non-loop regions. Allowing because there is no covalent connection." << std::endl;
+						TR.Debug << "Movable group for node " << n << " --> " << segment( n ) << " : " << mg << " is present in both loops and non-loop regions. Allowing because there is no covalent connection." << std::endl;
 					}
 				}
 			}
@@ -540,29 +540,29 @@ FoldGraph::check_solution( Solution const & solution ) const
 
 	// check for the same MG present in different loops
 	NodeSet seen;
-	for ( Solution::const_iterator nodeset=solution.begin(); nodeset!=solution.end(); ++nodeset ) {
-		for ( NodeSet::const_iterator n=nodeset->begin(); n!=nodeset->end(); ++n ) {
-			SegmentName const & segname = segment( *n );
+	for ( auto const & nodeset : solution ) {
+		for ( unsigned long n : nodeset ) {
+			SegmentName const & segname = segment( n );
 			MovableGroup const mg = sd().segment(segname).movable_group();
 			if ( seen.find( mg ) != seen.end() ) {
-				TR.Debug << "Movable group for node " << *n << " --> " << segname << " : " << mg << " is present in two different loops. Skipping." << std::endl;
+				TR.Debug << "Movable group for node " << n << " --> " << segname << " : " << mg << " is present in two different loops. Skipping." << std::endl;
 				return false;
 			}
 		}
-		for ( NodeSet::const_iterator n=nodeset->begin(); n!=nodeset->end(); ++n ) {
-			seen.insert( sd().segment( segment( *n ) ).movable_group() );
+		for ( unsigned long n : nodeset ) {
+			seen.insert( sd().segment( segment( n ) ).movable_group() );
 		}
 		TR.Debug << "Seen is now: " << seen << std::endl;
 	}
 
-	for ( Solution::const_iterator nodeset=solution.begin(); nodeset!=solution.end(); ++nodeset ) {
+	for ( auto const & nodeset : solution ) {
 		SegmentNames segments_in_set;
-		for ( NodeSet::const_iterator n=nodeset->begin(); n!=nodeset->end(); ++n ) {
-			segments_in_set.push_back( segment( *n ) );
+		for ( unsigned long n : nodeset ) {
+			segments_in_set.push_back( segment( n ) );
 		}
 
-		for ( NodeSet::const_iterator n=nodeset->begin(); n!=nodeset->end(); ++n ) {
-			SegmentName const & segname = segment( *n );
+		for ( unsigned long n : nodeset ) {
+			SegmentName const & segname = segment( n );
 			MovableGroup const mg = sd().segment(segname).movable_group();
 			// check to see if this mg has already been "used" i.e. referred to
 			if ( fixed_mgs.find(mg) == fixed_mgs.end() ) {
@@ -585,7 +585,7 @@ FoldGraph::check_solution( Solution const & solution ) const
 				// connected to current segment via non-polymer bond - skip
 				if ( sd().non_polymer_bond_exists( segname, *s2 ) ) continue;
 
-				TR.Debug << "Movable group for node " << *n << " --> " << segname << " : " << mg << " has been used twice in the same loop. Skipping." << std::endl;
+				TR.Debug << "Movable group for node " << n << " --> " << segname << " : " << mg << " has been used twice in the same loop. Skipping." << std::endl;
 				return false;
 			}
 			insert_mg( fixed_mgs, mg, segname );
@@ -593,14 +593,14 @@ FoldGraph::check_solution( Solution const & solution ) const
 	}
 
 	// each set in the vector represents one loop object
-	for ( Solution::const_iterator s=solution.begin(); s!=solution.end(); ++s ) {
+	for ( auto const & s : solution ) {
 		// create a set of movable groups to be included in this loop
 		std::set< core::Size > mgs;
 		NodeSet visited;
 		std::stack< core::Size > idxs;
-		for ( NodeSet::const_iterator lseg=s->begin(); lseg!=s->end(); ++lseg ) {
-			idxs.push( *lseg );
-			std::string const & segmentname = segment( *lseg );
+		for ( unsigned long lseg : s ) {
+			idxs.push( lseg );
+			std::string const & segmentname = segment( lseg );
 			std::pair< NodeSet::iterator, bool > mg_insert_result = mgs.insert( sd().segment(segmentname).movable_group() );
 			if ( !mg_insert_result.second ) {
 				TR.Debug << "Movable group for " << segmentname << " : " << sd().segment(segmentname).movable_group() << " already existed. Skipping this solution." << std::endl;
@@ -615,7 +615,7 @@ FoldGraph::check_solution( Solution const & solution ) const
 				continue;
 			}
 			visited.insert( cur );
-			bool cur_in_solution = ( s->find(cur) != s->end() );
+			bool cur_in_solution = ( s.find(cur) != s.end() );
 			if ( !cur_in_solution && ( mgs.find( sd().segment( segment(cur) ).movable_group() ) != mgs.end() ) ) {
 				// in this case, there must be a cutpoint between the two objects of same movable group
 				TR.Debug << segment(cur) << " with mg " << sd().segment(segment(cur)).movable_group() << " is covalently bound to something in the loop with the same movable group without a cutpoint in between: " << mgs << std::endl;
@@ -651,7 +651,7 @@ FoldGraph::add_combined_solutions( utility::vector1< Solution > & solutions ) co
 			for ( core::Size j=i+1; j<=solution.size(); ++j ) {
 				NodeSet merged = solution[i];
 				core::Size overlap_count = 0;
-				for ( NodeSet::const_iterator n = solution[j].begin(), end=solution[j].end(); n != end; ++n ) {
+				for ( auto n = solution[j].begin(), end=solution[j].end(); n != end; ++n ) {
 					utility::graph::Node const * nptr = gpeptide_.get_node(*n);
 					debug_assert( nptr );
 					for ( utility::graph::Graph::EdgeListConstIter e=nptr->const_edge_list_begin(); e != nptr->const_edge_list_end(); ++e ) {
@@ -687,7 +687,7 @@ std::map< core::Size, std::list< core::Size > >
 map_mgs( StructureData const & sd, FoldGraph const & fg )
 {
 	std::map< core::Size, std::list< core::Size > > mg_map;
-	for ( SegmentNameList::const_iterator c=sd.segments_begin(); c!=sd.segments_end(); ++c ) {
+	for ( auto c=sd.segments_begin(); c!=sd.segments_end(); ++c ) {
 		insert_mg( mg_map, sd.segment( *c ).movable_group(), fg.nodeidx( *c ) );
 	}
 	return mg_map;
@@ -697,7 +697,7 @@ std::map< core::Size, core::Size >
 map_nodes( StructureData const & sd, FoldGraph const & fg )
 {
 	std::map< core::Size, core::Size > node_to_mg;
-	for ( SegmentNameList::const_iterator c=sd.segments_begin(); c!=sd.segments_end(); ++c ) {
+	for ( auto c=sd.segments_begin(); c!=sd.segments_end(); ++c ) {
 		debug_assert( node_to_mg.find( fg.nodeidx( *c ) ) == node_to_mg.end() );
 		node_to_mg[ fg.nodeidx( *c ) ] = sd.segment( *c ).movable_group();
 	}
@@ -727,9 +727,9 @@ private:
 	nodes_in_solution( FoldGraph::Solution const & s ) const
 	{
 		FoldGraph::NodeSet in_a_loop;
-		for ( FoldGraph::Solution::const_iterator ns=s.begin(); ns!=s.end(); ++ns ) {
-			for ( FoldGraph::NodeSet::const_iterator n=ns->begin(); n!=ns->end(); ++n ) {
-				in_a_loop.insert( *n );
+		for ( auto const & ns : s ) {
+			for ( unsigned long n : ns ) {
+				in_a_loop.insert( n );
 			}
 		}
 		return in_a_loop;
@@ -739,9 +739,9 @@ private:
 	fixed_nodes( FoldGraph::NodeSet const & nodes_in_solution ) const
 	{
 		FoldGraph::NodeSet fixed;
-		for ( std::map< core::Size, core::Size >::const_iterator n_mg=node_to_mg_.begin(); n_mg!=node_to_mg_.end(); ++n_mg ) {
-			if ( nodes_in_solution.find( n_mg->first ) == nodes_in_solution.end() ) {
-				fixed.insert( n_mg->first );
+		for ( auto n_mg : node_to_mg_ ) {
+			if ( nodes_in_solution.find( n_mg.first ) == nodes_in_solution.end() ) {
+				fixed.insert( n_mg.first );
 			}
 		}
 		return fixed;
@@ -752,8 +752,8 @@ private:
 	{
 		FoldGraph::NodeSet seen;
 		core::Size shared_count = 0;
-		for ( FoldGraph::NodeSet::const_iterator fnode=fixed.begin(); fnode!=fixed.end(); ++fnode ) {
-			core::Size const mg = node_to_mg_.find( *fnode )->second;
+		for ( unsigned long fnode : fixed ) {
+			core::Size const mg = node_to_mg_.find( fnode )->second;
 			if ( seen.find( mg ) != seen.end() ) {
 				++shared_count;
 			} else {
@@ -779,24 +779,24 @@ FoldGraph::sort_solutions( Solutions & solutions ) const
 void
 FoldGraph::add_non_polymeric_connections( Solutions & solutions ) const
 {
-	for ( utility::vector1< Solution >::iterator s=solutions.begin(); s!=solutions.end(); ++s ) {
-		for ( Solution::iterator sol=s->begin(); sol!=s->end(); ++sol ) {
+	for ( auto & solution : solutions ) {
+		for ( auto & sol : solution ) {
 			NodeSet connected_nodes;
-			for ( NodeSet::const_iterator n = sol->begin(); n != sol->end(); ++n ) {
-				for ( utility::vector1< BondInfo >::const_iterator bi = sd().covalent_bonds_begin();
+			for ( unsigned long n : sol ) {
+				for ( auto bi = sd().covalent_bonds_begin();
 						bi != sd().covalent_bonds_end(); ++bi ) {
 					core::Size othernode = 0;
-					if ( segment( *n ) == bi->seg1 ) {
+					if ( segment( n ) == bi->seg1 ) {
 						othernode = nodeidx( bi->seg2 );
-					} else if ( segment( *n ) == bi->seg2 ) {
+					} else if ( segment( n ) == bi->seg2 ) {
 						othernode = nodeidx( bi->seg1 );
 					}
 					if ( othernode ) connected_nodes.insert( othernode );
 				}
 			}
 			if ( !connected_nodes.empty() ) {
-				for ( NodeSet::const_iterator n = connected_nodes.begin(); n != connected_nodes.end(); ++n ) {
-					sol->insert( *n );
+				for ( unsigned long connected_node : connected_nodes ) {
+					sol.insert( connected_node );
 				}
 			} // if !connected_nodes.empty()
 		} // for nodeset in s
@@ -810,8 +810,8 @@ FoldGraph::compute_best_solution( SegmentNames const & staple_loops ) const
 	TR.Debug << "staple loops= " << staple_loops << " cutpoints= " << cutpoints_ << std::endl;
 
 	Solutions solutions;
-	for ( SegmentNames::const_iterator s=staple_loops.begin(); s!=staple_loops.end(); ++s ) {
-		TR.Debug << "Running for " << *s << std::endl;
+	for ( auto const & staple_loop : staple_loops ) {
+		TR.Debug << "Running for " << staple_loop << std::endl;
 		bool const first_run = ( solutions.size() == 0 );
 
 		core::Size nruns;
@@ -826,21 +826,21 @@ FoldGraph::compute_best_solution( SegmentNames const & staple_loops ) const
 			NodeSet visited;
 			if ( !first_run ) {
 				for ( Solution::const_iterator s=solutions[sol].begin(); s!=solutions[sol].end(); ++s ) {
-					for ( NodeSet::const_iterator n=s->begin(); n!=s->end(); ++n ) {
-						visited.insert( *n );
+					for ( unsigned long n : *s ) {
+						visited.insert( n );
 					}
 				}
 			}
 			Solution dfs_solution;
 			NodeSet const visited_copy = visited;
 			TR.Debug << "Input visited " << visited << std::endl;
-			create_loops_dfs( dfs_solution, visited, nodeidx(*s) );
+			create_loops_dfs( dfs_solution, visited, nodeidx(staple_loop) );
 			TR.Debug << "SUCCESS: " << dfs_solution.size() << std::endl;
 			for ( Solution::const_iterator dfs_sol=dfs_solution.begin(); dfs_sol!=dfs_solution.end(); ++dfs_sol ) {
 				NodeSet new_visited;
-				for ( NodeSet::const_iterator v=dfs_sol->begin(); v!=dfs_sol->end(); ++v ) {
-					if ( visited_copy.find(*v) == visited_copy.end() ) {
-						new_visited.insert( *v );
+				for ( unsigned long v : *dfs_sol ) {
+					if ( visited_copy.find(v) == visited_copy.end() ) {
+						new_visited.insert( v );
 					}
 				}
 				TR.Debug << "New visited: " << new_visited << std::endl;
@@ -868,21 +868,21 @@ FoldGraph::compute_best_solution( SegmentNames const & staple_loops ) const
 	if ( !staple_loops.size() ) {
 		solutions.push_back( Solution() );
 	}
-	for ( Solutions::iterator sol=solutions.begin(); sol!=solutions.end(); ++sol ) {
+	for ( auto & solution : solutions ) {
 		NodeSet visited;
-		for ( Solution::const_iterator nset=sol->begin(); nset!=sol->end(); ++nset ) {
+		for ( Solution::const_iterator nset=solution.begin(); nset!=solution.end(); ++nset ) {
 			TR.Debug << *nset << " ";
-			for ( NodeSet::const_iterator g=nset->begin(); g!=nset->end(); ++g ) {
-				visited.insert( *g );
+			for ( unsigned long g : *nset ) {
+				visited.insert( g );
 			}
 		}
 		TR.Debug << std::endl;
 		TR.Debug << "Adding unvisited loop nodes.  Visited nodes are " << visited << std::endl;
-		for ( NodeSet::const_iterator c=cutpoints_.begin(); c!=cutpoints_.end(); ++c ) {
-			if ( visited.find(*c) == visited.end() ) {
+		for ( unsigned long cutpoint : cutpoints_ ) {
+			if ( visited.find(cutpoint) == visited.end() ) {
 				NodeSet tmpset;
-				tmpset.insert(*c);
-				sol->push_back( tmpset );
+				tmpset.insert(cutpoint);
+				solution.push_back( tmpset );
 			}
 		}
 	}
@@ -911,9 +911,9 @@ FoldGraph::select_best_solution( Solutions const & solutions ) const
 	TR.Debug << NamedSolutions( *this, solutions ) << std::endl;
 
 	// choose best solution == fewest loops
-	Solutions::const_iterator best = solutions.end();
+	auto best = solutions.end();
 	core::Size i = 1;
-	for ( Solutions::const_iterator s=solutions.begin(); s!=solutions.end(); ++s, ++i ) {
+	for ( auto s=solutions.begin(); s!=solutions.end(); ++s, ++i ) {
 		if ( ! check_solution( *s ) ) {
 			TR.Debug << "Skipping solution " << i << " because it has a movable groups conflict." << std::endl;
 			continue;
@@ -950,11 +950,11 @@ FoldGraph::create_loops( Solution const & solution ) const
 
 	// now make a loops object
 	protocols::loops::LoopsOP loops = protocols::loops::LoopsOP( new protocols::loops::Loops() );
-	for ( Solution::const_iterator nset=solution.begin(); nset!=solution.end(); ++nset ) {
+	for ( auto const & nset : solution ) {
 		int min_res = -1;
 		int max_res = -1;
-		for ( NodeSet::const_iterator n=nset->begin(); n!=nset->end(); ++n ) {
-			std::string const & seg = segment(*n);
+		for ( unsigned long n : nset ) {
+			std::string const & seg = segment(n);
 			int const start = sd().segment(seg).lower();
 			int const stop = sd().segment(seg).upper();
 			if ( min_res < 0 ) {
@@ -996,8 +996,8 @@ int
 FoldGraph::find_cutpoint_in_range( int const min_res, int const max_res ) const
 {
 	int cut = 0;
-	for ( NodeSet::const_iterator c=cutpoints_.begin(); c!=cutpoints_.end(); ++c ) {
-		std::string const & segmentname = segment( *c );
+	for ( unsigned long cutpoint : cutpoints_ ) {
+		std::string const & segmentname = segment( cutpoint );
 		int const cut_to_check = sd().segment( segmentname ).cutpoint();
 		TR.Debug << "Checking whether " << cut_to_check << " is within " << min_res << " and " << max_res << std::endl;
 		if ( ( min_res <= cut_to_check ) && ( cut_to_check <= max_res ) ) {
@@ -1055,8 +1055,8 @@ FoldGraph::create_loops_dfs(
 NamedSolutions::NamedSolutions( FoldGraph const & fg, FoldGraph::Solutions const & solutions ):
 	utility::vector1< NamedSolution >()
 {
-	for ( FoldGraph::Solutions::const_iterator s=solutions.begin(); s!=solutions.end(); ++s ) {
-		push_back( NamedSolution( fg, *s ) );
+	for ( auto const & solution : solutions ) {
+		push_back( NamedSolution( fg, solution ) );
 	}
 }
 
@@ -1064,7 +1064,7 @@ std::ostream &
 operator<<( std::ostream & os, NamedSolutions const & solutions )
 {
 	core::Size i = 1;
-	for ( NamedSolutions::const_iterator s=solutions.begin(); s!=solutions.end(); ++s, ++i ) {
+	for ( auto s=solutions.begin(); s!=solutions.end(); ++s, ++i ) {
 		os << "S" << i << ": " << *s << std::endl;
 	}
 	return os;
@@ -1073,10 +1073,10 @@ operator<<( std::ostream & os, NamedSolutions const & solutions )
 NamedSolution::NamedSolution( FoldGraph const & fg, FoldGraph::Solution const & solution ):
 	utility::vector1< NamedNodeSet >()
 {
-	for ( FoldGraph::Solution::const_iterator s=solution.begin(); s!=solution.end(); ++s ) {
+	for ( auto s=solution.begin(); s!=solution.end(); ++s ) {
 		NamedNodeSet nset;
-		for ( FoldGraph::NodeSet::const_iterator n=s->begin(); n!=s->end(); ++n ) {
-			nset.insert( fg.segment( *n ) );
+		for ( unsigned long n : *s ) {
+			nset.insert( fg.segment( n ) );
 		}
 		push_back( nset );
 		debug_assert( nset.size() == s->size() );
@@ -1086,8 +1086,8 @@ NamedSolution::NamedSolution( FoldGraph const & fg, FoldGraph::Solution const & 
 std::ostream &
 operator<<( std::ostream & os, NamedSolution const & s )
 {
-	for ( NamedSolution::const_iterator nset=s.begin(); nset!=s.end(); ++nset ) {
-		os << *nset;
+	for ( auto const & nset : s ) {
+		os << nset;
 	}
 	return os;
 }

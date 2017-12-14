@@ -34,7 +34,7 @@
 
 // STL Headers
 #include <string>
-#include <math.h>
+#include <cmath>
 
 // options
 #include <basic/options/option.hh>
@@ -93,8 +93,7 @@ ProClosureEnergy::ProClosureEnergy() :
 	set_skip_ring_closure_from_flags();
 }
 
-ProClosureEnergy::~ProClosureEnergy()
-{}
+ProClosureEnergy::~ProClosureEnergy() = default;
 
 /// clone
 EnergyMethodOP

@@ -278,11 +278,11 @@ PerturbBundle::parse_my_tag(
 
 	//Set defaults for the various perturbable degrees of freedom:
 	if ( tag->hasOption("r0_perturbation") ) {
-		core::Real r0pert( tag->getOption<core::Real>("r0_perturbation", 0.0) );
+		auto r0pert( tag->getOption<core::Real>("r0_perturbation", 0.0) );
 		default_r0()->set_perturbation_magnitude(r0pert);
 		if ( TR.visible() ) TR << "Set r0 perturbation magnitude to " << r0pert << std::endl;
 	} else if ( tag->hasOption("r0") ) {
-		core::Real const val( tag->getOption<core::Real>("r0") );
+		auto const val( tag->getOption<core::Real>("r0") );
 		default_r0()->set_default_value( val );
 		default_r0()->set_being_set(true);
 		if ( TR.visible() ) TR << "Set default r0 to " << val << std::endl;
@@ -301,11 +301,11 @@ PerturbBundle::parse_my_tag(
 	}
 
 	if ( tag->hasOption("omega0_perturbation") ) {
-		core::Real omega0pert( tag->getOption<core::Real>("omega0_perturbation", 0.0) );
+		auto omega0pert( tag->getOption<core::Real>("omega0_perturbation", 0.0) );
 		default_omega0()->set_perturbation_magnitude( convert_angle( omega0pert ) );
 		if ( TR.visible() ) TR << "Set omega0 perturbation magnitude to " << omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 	} else if ( tag->hasOption("omega0") ) {
-		core::Real const val( tag->getOption<core::Real>("omega0") );
+		auto const val( tag->getOption<core::Real>("omega0") );
 		default_omega0()->set_default_value( convert_angle( val ) );
 		default_omega0()->set_being_set(true);
 		if ( TR.visible() ) TR << "Set default omega0 to " << val << std::endl;
@@ -324,11 +324,11 @@ PerturbBundle::parse_my_tag(
 	}
 
 	if ( tag->hasOption("delta_omega0_perturbation") ) {
-		core::Real delta_omega0pert( tag->getOption<core::Real>("delta_omega0_perturbation", 0.0) );
+		auto delta_omega0pert( tag->getOption<core::Real>("delta_omega0_perturbation", 0.0) );
 		default_delta_omega0()->set_perturbation_magnitude( convert_angle( delta_omega0pert) );
 		if ( TR.visible() ) TR << "Set delta_omega0 perturbation magnitude to " << delta_omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 	} else if ( tag->hasOption("delta_omega0") ) {
-		core::Real const val( tag->getOption<core::Real>("delta_omega0") );
+		auto const val( tag->getOption<core::Real>("delta_omega0") );
 		default_delta_omega0()->set_default_value( convert_angle( val ) );
 		default_delta_omega0()->set_being_set(true);
 		if ( TR.visible() ) TR << "Set default delta_omega0 to " << val << std::endl;
@@ -347,11 +347,11 @@ PerturbBundle::parse_my_tag(
 	}
 
 	if ( tag->hasOption("delta_omega1_perturbation") ) {
-		core::Real delta_omega1pert( tag->getOption<core::Real>("delta_omega1_perturbation", 0.0) );
+		auto delta_omega1pert( tag->getOption<core::Real>("delta_omega1_perturbation", 0.0) );
 		default_delta_omega1()->set_perturbation_magnitude( convert_angle( delta_omega1pert ) );
 		if ( TR.visible() ) TR << "Set delta_omega1 perturbation magnitude to " << delta_omega1pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 	} else if ( tag->hasOption("delta_omega1") ) {
-		core::Real const val( tag->getOption<core::Real>("delta_omega1") );
+		auto const val( tag->getOption<core::Real>("delta_omega1") );
 		default_delta_omega1()->set_default_value( convert_angle( val ) );
 		default_delta_omega1()->set_being_set(true);
 		if ( TR.visible() ) TR << "Set default delta_omega1 to " << val << std::endl;
@@ -370,11 +370,11 @@ PerturbBundle::parse_my_tag(
 	}
 
 	if ( tag->hasOption("delta_t_perturbation") ) {
-		core::Real delta_tpert( tag->getOption<core::Real>("delta_t_perturbation", 0.0) );
+		auto delta_tpert( tag->getOption<core::Real>("delta_t_perturbation", 0.0) );
 		default_delta_t()->set_perturbation_magnitude(delta_tpert);
 		if ( TR.visible() ) TR << "Set delta_t perturbation magnitude to " << delta_tpert << std::endl;
 	} else if ( tag->hasOption("delta_t") ) {
-		core::Real const val( tag->getOption<core::Real>("delta_t") );
+		auto const val( tag->getOption<core::Real>("delta_t") );
 		default_delta_t()->set_default_value( val );
 		default_delta_t()->set_being_set(true);
 		if ( TR.visible() ) TR << "Set default delta_t to " << val << std::endl;
@@ -392,11 +392,11 @@ PerturbBundle::parse_my_tag(
 		}
 	}
 	if ( tag->hasOption("z1_offset_perturbation") ) {
-		core::Real z1_offsetpert( tag->getOption<core::Real>("z1_offset_perturbation", 0.0) );
+		auto z1_offsetpert( tag->getOption<core::Real>("z1_offset_perturbation", 0.0) );
 		default_z1_offset()->set_perturbation_magnitude(z1_offsetpert);
 		if ( TR.visible() ) TR << "Set z1_offset perturbation magnitude to " << z1_offsetpert << std::endl;
 	} else if ( tag->hasOption("z1_offset") ) {
-		core::Real const val( tag->getOption<core::Real>("z1_offset") );
+		auto const val( tag->getOption<core::Real>("z1_offset") );
 		default_z1_offset()->set_default_value( val );
 		default_z1_offset()->set_being_set(true);
 		if ( TR.visible() ) TR << "Set default z1_offset to " << val << std::endl;
@@ -414,11 +414,11 @@ PerturbBundle::parse_my_tag(
 		}
 	}
 	if ( tag->hasOption("z0_offset_perturbation") ) {
-		core::Real z0_offsetpert( tag->getOption<core::Real>("z0_offset_perturbation", 0.0) );
+		auto z0_offsetpert( tag->getOption<core::Real>("z0_offset_perturbation", 0.0) );
 		default_z0_offset()->set_perturbation_magnitude(z0_offsetpert);
 		if ( TR.visible() ) TR << "Set z0_offset perturbation magnitude to " << z0_offsetpert << std::endl;
 	} else if ( tag->hasOption("z0_offset") ) {
-		core::Real const val( tag->getOption<core::Real>("z0_offset") );
+		auto const val( tag->getOption<core::Real>("z0_offset") );
 		default_z0_offset()->set_default_value( val );
 		default_z0_offset()->set_being_set(true);
 		if ( TR.visible() ) TR << "Set default z0_offset to " << val << std::endl;
@@ -436,11 +436,11 @@ PerturbBundle::parse_my_tag(
 		}
 	}
 	if ( tag->hasOption("epsilon_perturbation") ) {
-		core::Real epsilonpert( tag->getOption<core::Real>("epsilon_perturbation", 0.0) );
+		auto epsilonpert( tag->getOption<core::Real>("epsilon_perturbation", 0.0) );
 		default_epsilon()->set_perturbation_magnitude(epsilonpert);
 		if ( TR.visible() ) TR << "Set epsilon perturbation magnitude to " << epsilonpert << std::endl;
 	} else if ( tag->hasOption("epsilon") ) {
-		core::Real const val( tag->getOption<core::Real>("epsilon") );
+		auto const val( tag->getOption<core::Real>("epsilon") );
 		default_epsilon()->set_default_value( val );
 		default_epsilon()->set_being_set(true);
 		if ( TR.visible() ) TR << "Set default epsilon to " << val << std::endl;
@@ -465,14 +465,14 @@ PerturbBundle::parse_my_tag(
 	for ( auto const & branch_tag : branch_tags ) {
 		if ( branch_tag->getName() == "Helix" ) { //A helix has been added.  Add it, and parse its options.
 			runtime_assert_string_msg( branch_tag->hasOption("helix_index"), "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was added, but no helix index has been indicated." );
-			core::Size helix_index( branch_tag->getOption<core::Size>("helix_index", 0) );
+			auto helix_index( branch_tag->getOption<core::Size>("helix_index", 0) );
 			runtime_assert_string_msg(helix_index>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was added, but its index was set to 0.  This is not allowed." );
 			core::Size const this_helix( add_helix(helix_index) ); //Add and initialize this helix.  By default, no degrees of freedom may be perturbed.  Store the current helix index in this_helix.
 			bool has_perturbable_dofs(false);
 
 			if ( branch_tag->hasOption("r0_copies_helix") ) {
 				runtime_assert_string_msg( !branch_tag->hasOption("r0"), "Error in PerturbBundle::parse_my_tag(): The \"r0_copies_helix\" and \"r0\" options are mutually incompatible." );
-				core::Size copyhelix( branch_tag->getOption<core::Size>("r0_copies_helix", 0) );
+				auto copyhelix( branch_tag->getOption<core::Size>("r0_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				r0(this_helix)->set_helix_to_copy( copyhelix );
@@ -481,12 +481,12 @@ PerturbBundle::parse_my_tag(
 			} else {
 				if ( branch_tag->hasOption("r0_perturbation") ) {
 					runtime_assert_string_msg( !branch_tag->hasOption("r0"), "Error in PerturbBundle::parse_my_tag(): The \"r0_perturbation\" and \"r0\" options are mutually incompatible." );
-					core::Real const r0pert( branch_tag->getOption<core::Real>("r0_perturbation", 0.0) );
+					auto const r0pert( branch_tag->getOption<core::Real>("r0_perturbation", 0.0) );
 					r0(this_helix)->set_perturbation_magnitude(r0pert);
 					if ( TR.visible() ) TR << "Set r0 perturbation magnitude to " << r0pert << std::endl;
 					has_perturbable_dofs=true;
 				} else if ( branch_tag->hasOption("r0") ) {
-					core::Real const r0val( branch_tag->getOption<core::Real>("r0") );
+					auto const r0val( branch_tag->getOption<core::Real>("r0") );
 					r0(this_helix)->set_default_value( r0val );
 					r0(this_helix)->set_being_set(true);
 					if ( TR.visible() ) TR << "Set r0 to " << r0val << std::endl;
@@ -515,7 +515,7 @@ PerturbBundle::parse_my_tag(
 					!branch_tag->hasOption("omega0_perturbation"),
 					"When parsing options for the BundleGridSampler mover, found \"pitch_from_helix\" alongside omega0 options.  This does not make sense.  EITHER a helix copies its pitch angle from another, OR the omega0 value can be perturbed/copied."
 				);
-				core::Size const val( branch_tag->getOption<core::Size>("pitch_from_helix", 0) );
+				auto const val( branch_tag->getOption<core::Size>("pitch_from_helix", 0) );
 				runtime_assert_string_msg( val>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( val!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				if ( TR.visible() ) TR << "Setting omega0 for helix " << this_helix << " to be set to match the pitch angle for helix " << val << "." << std::endl;
@@ -524,7 +524,7 @@ PerturbBundle::parse_my_tag(
 			} else { //All that follows resembles the code for the other parameters.
 				if ( branch_tag->hasOption("omega0_copies_helix") ) {
 					runtime_assert_string_msg( !branch_tag->hasOption("omega0"), "Error in PerturbBundle::parse_my_tag(): The \"omega0_copies_helix\" and \"omega0\" options are mutually incompatible." );
-					core::Size copyhelix( branch_tag->getOption<core::Size>("omega0_copies_helix", 0) );
+					auto copyhelix( branch_tag->getOption<core::Size>("omega0_copies_helix", 0) );
 					runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 					runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 					omega0(this_helix)->set_helix_to_copy( copyhelix );
@@ -533,12 +533,12 @@ PerturbBundle::parse_my_tag(
 				} else {
 					if ( branch_tag->hasOption("omega0_perturbation") ) {
 						runtime_assert_string_msg( !branch_tag->hasOption("omega0"), "Error in PerturbBundle::parse_my_tag(): The \"omega0_perturbation\" and \"omega0\" options are mutually incompatible." );
-						core::Real omega0pert( branch_tag->getOption<core::Real>("omega0_perturbation", 0.0) );
+						auto omega0pert( branch_tag->getOption<core::Real>("omega0_perturbation", 0.0) );
 						omega0(this_helix)->set_perturbation_magnitude( convert_angle( omega0pert ) );
 						if ( TR.visible() ) TR << "Set omega0 perturbation magnitude to " << omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 						has_perturbable_dofs=true;
 					} else if ( branch_tag->hasOption("omega0") ) {
-						core::Real const omega0val( branch_tag->getOption<core::Real>("omega0") );
+						auto const omega0val( branch_tag->getOption<core::Real>("omega0") );
 						omega0(this_helix)->set_default_value( convert_angle( omega0val ) );
 						omega0(this_helix)->set_being_set(true);
 						if ( TR.visible() ) TR << "Set omega0 to " << omega0val << std::endl;
@@ -563,7 +563,7 @@ PerturbBundle::parse_my_tag(
 
 			if ( branch_tag->hasOption("delta_omega0_copies_helix") ) {
 				runtime_assert_string_msg( !branch_tag->hasOption("delta_omega0"), "Error in PerturbBundle::parse_my_tag(): The \"delta_omega0_copies_helix\" and \"delta_omega0\" options are mutually incompatible." );
-				core::Size copyhelix( branch_tag->getOption<core::Size>("delta_omega0_copies_helix", 0) );
+				auto copyhelix( branch_tag->getOption<core::Size>("delta_omega0_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				delta_omega0(this_helix)->set_helix_to_copy( copyhelix );
@@ -572,12 +572,12 @@ PerturbBundle::parse_my_tag(
 			} else {
 				if ( branch_tag->hasOption("delta_omega0_perturbation") ) {
 					runtime_assert_string_msg( !branch_tag->hasOption("delta_omega0"), "Error in PerturbBundle::parse_my_tag(): The \"delta_omega0_perturbation\" and \"delta_omega0\" options are mutually incompatible." );
-					core::Real delta_omega0pert( branch_tag->getOption<core::Real>("delta_omega0_perturbation", 0.0) );
+					auto delta_omega0pert( branch_tag->getOption<core::Real>("delta_omega0_perturbation", 0.0) );
 					delta_omega0(this_helix)->set_perturbation_magnitude( convert_angle( delta_omega0pert ) );
 					if ( TR.visible() ) TR << "Set delta_omega0 perturbation magnitude to " << delta_omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 					has_perturbable_dofs=true;
 				} else if ( branch_tag->hasOption("delta_omega0") ) {
-					core::Real const delta_omega0val( branch_tag->getOption<core::Real>("delta_omega0") );
+					auto const delta_omega0val( branch_tag->getOption<core::Real>("delta_omega0") );
 					delta_omega0(this_helix)->set_default_value( convert_angle( delta_omega0val ) );
 					delta_omega0(this_helix)->set_being_set(true);
 					if ( TR.visible() ) TR << "Set delta_omega0 to " << delta_omega0val << std::endl;
@@ -601,7 +601,7 @@ PerturbBundle::parse_my_tag(
 
 			if ( branch_tag->hasOption("delta_omega1_copies_helix") ) {
 				runtime_assert_string_msg( !branch_tag->hasOption("delta_omega1"), "Error in PerturbBundle::parse_my_tag(): The \"delta_omega1_copies_helix\" and \"delta_omega1\" options are mutually incompatible." );
-				core::Size copyhelix( branch_tag->getOption<core::Size>("delta_omega1_copies_helix", 0) );
+				auto copyhelix( branch_tag->getOption<core::Size>("delta_omega1_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				delta_omega1(this_helix)->set_helix_to_copy( copyhelix );
@@ -610,12 +610,12 @@ PerturbBundle::parse_my_tag(
 			} else {
 				if ( branch_tag->hasOption("delta_omega1_perturbation") ) {
 					runtime_assert_string_msg( !branch_tag->hasOption("delta_omega1"), "Error in PerturbBundle::parse_my_tag(): The \"delta_omega1_perturbation\" and \"delta_omega1\" options are mutually incompatible." );
-					core::Real delta_omega1pert( branch_tag->getOption<core::Real>("delta_omega1_perturbation", 0.0) );
+					auto delta_omega1pert( branch_tag->getOption<core::Real>("delta_omega1_perturbation", 0.0) );
 					delta_omega1(this_helix)->set_perturbation_magnitude( convert_angle( delta_omega1pert) );
 					if ( TR.visible() ) TR << "Set delta_omega1 perturbation magnitude to " << delta_omega1pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 					has_perturbable_dofs=true;
 				} else if ( branch_tag->hasOption("delta_omega1") ) {
-					core::Real const delta_omega1val( branch_tag->getOption<core::Real>("delta_omega1") );
+					auto const delta_omega1val( branch_tag->getOption<core::Real>("delta_omega1") );
 					delta_omega1(this_helix)->set_default_value( convert_angle( delta_omega1val ) );
 					delta_omega1(this_helix)->set_being_set(true);
 					if ( TR.visible() ) TR << "Set delta_omega1 to " << delta_omega1val << std::endl;
@@ -639,7 +639,7 @@ PerturbBundle::parse_my_tag(
 
 			if ( branch_tag->hasOption("delta_t_copies_helix") ) {
 				runtime_assert_string_msg( !branch_tag->hasOption("delta_t"), "Error in PerturbBundle::parse_my_tag(): The \"delta_t_copies_helix\" and \"delta_t\" options are mutually incompatible." );
-				core::Size copyhelix( branch_tag->getOption<core::Size>("delta_t_copies_helix", 0) );
+				auto copyhelix( branch_tag->getOption<core::Size>("delta_t_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				delta_t(this_helix)->set_helix_to_copy( copyhelix );
@@ -648,12 +648,12 @@ PerturbBundle::parse_my_tag(
 			} else {
 				if ( branch_tag->hasOption("delta_t_perturbation") ) {
 					runtime_assert_string_msg( !branch_tag->hasOption("delta_t"), "Error in PerturbBundle::parse_my_tag(): The \"delta_t_perturbation\" and \"delta_t\" options are mutually incompatible." );
-					core::Real delta_tpert( branch_tag->getOption<core::Real>("delta_t_perturbation", 0.0) );
+					auto delta_tpert( branch_tag->getOption<core::Real>("delta_t_perturbation", 0.0) );
 					delta_t(this_helix)->set_perturbation_magnitude(delta_tpert);
 					if ( TR.visible() ) TR << "Set delta_t perturbation magnitude to " << delta_tpert << std::endl;
 					has_perturbable_dofs=true;
 				} else if ( branch_tag->hasOption("delta_t") ) {
-					core::Real const delta_tval( branch_tag->getOption<core::Real>("delta_t") );
+					auto const delta_tval( branch_tag->getOption<core::Real>("delta_t") );
 					delta_t(this_helix)->set_default_value( delta_tval );
 					delta_t(this_helix)->set_being_set(true);
 					if ( TR.visible() ) TR << "Set delta_t to " << delta_tval << std::endl;
@@ -677,7 +677,7 @@ PerturbBundle::parse_my_tag(
 
 			if ( branch_tag->hasOption("z1_offset_copies_helix") ) {
 				runtime_assert_string_msg( !branch_tag->hasOption("z1_offset"), "Error in PerturbBundle::parse_my_tag(): The \"z1_offset_copies_helix\" and \"z1_offset\" options are mutually incompatible." );
-				core::Size copyhelix( branch_tag->getOption<core::Size>("z1_offset_copies_helix", 0) );
+				auto copyhelix( branch_tag->getOption<core::Size>("z1_offset_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				z1_offset(this_helix)->set_helix_to_copy( copyhelix );
@@ -686,12 +686,12 @@ PerturbBundle::parse_my_tag(
 			} else {
 				if ( branch_tag->hasOption("z1_offset_perturbation") ) {
 					runtime_assert_string_msg( !branch_tag->hasOption("z1_offset"), "Error in PerturbBundle::parse_my_tag(): The \"z1_offset_perturbation\" and \"z1_offset\" options are mutually incompatible." );
-					core::Real z1_offsetpert( branch_tag->getOption<core::Real>("z1_offset_perturbation", 0.0) );
+					auto z1_offsetpert( branch_tag->getOption<core::Real>("z1_offset_perturbation", 0.0) );
 					z1_offset(this_helix)->set_perturbation_magnitude(z1_offsetpert);
 					if ( TR.visible() ) TR << "Set z1_offset perturbation magnitude to " << z1_offsetpert << std::endl;
 					has_perturbable_dofs=true;
 				} else if ( branch_tag->hasOption("z1_offset") ) {
-					core::Real const z1_offsetval( branch_tag->getOption<core::Real>("z1_offset") );
+					auto const z1_offsetval( branch_tag->getOption<core::Real>("z1_offset") );
 					z1_offset(this_helix)->set_default_value( z1_offsetval );
 					z1_offset(this_helix)->set_being_set(true);
 					if ( TR.visible() ) TR << "Set z1_offset to " << z1_offsetval << std::endl;
@@ -715,7 +715,7 @@ PerturbBundle::parse_my_tag(
 
 			if ( branch_tag->hasOption("z0_offset_copies_helix") ) {
 				runtime_assert_string_msg( !branch_tag->hasOption("z0_offset"), "Error in PerturbBundle::parse_my_tag(): The \"z0_offset_copies_helix\" and \"z0_offset\" options are mutually incompatible." );
-				core::Size copyhelix( branch_tag->getOption<core::Size>("z0_offset_copies_helix", 0) );
+				auto copyhelix( branch_tag->getOption<core::Size>("z0_offset_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				z0_offset(this_helix)->set_helix_to_copy( copyhelix );
@@ -724,12 +724,12 @@ PerturbBundle::parse_my_tag(
 			} else {
 				if ( branch_tag->hasOption("z0_offset_perturbation") ) {
 					runtime_assert_string_msg( !branch_tag->hasOption("z0_offset"), "Error in PerturbBundle::parse_my_tag(): The \"z0_offset_perturbation\" and \"z0_offset\" options are mutually incompatible." );
-					core::Real z0_offsetpert( branch_tag->getOption<core::Real>("z0_offset_perturbation", 0.0) );
+					auto z0_offsetpert( branch_tag->getOption<core::Real>("z0_offset_perturbation", 0.0) );
 					z0_offset(this_helix)->set_perturbation_magnitude(z0_offsetpert);
 					if ( TR.visible() ) TR << "Set z0_offset perturbation magnitude to " << z0_offsetpert << std::endl;
 					has_perturbable_dofs=true;
 				} else if ( branch_tag->hasOption("z0_offset") ) {
-					core::Real const z0_offsetval( branch_tag->getOption<core::Real>("z0_offset") );
+					auto const z0_offsetval( branch_tag->getOption<core::Real>("z0_offset") );
 					z0_offset(this_helix)->set_default_value( z0_offsetval );
 					z0_offset(this_helix)->set_being_set(true);
 					if ( TR.visible() ) TR << "Set z0_offset to " << z0_offsetval << std::endl;
@@ -753,7 +753,7 @@ PerturbBundle::parse_my_tag(
 
 			if ( branch_tag->hasOption("epsilon_copies_helix") ) {
 				runtime_assert_string_msg( !branch_tag->hasOption("epsilon"), "Error in PerturbBundle::parse_my_tag(): The \"epsilon_copies_helix\" and \"epsilon\" options are mutually incompatible." );
-				core::Size copyhelix( branch_tag->getOption<core::Size>("epsilon_copies_helix", 0) );
+				auto copyhelix( branch_tag->getOption<core::Size>("epsilon_copies_helix", 0) );
 				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
 				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
 				epsilon(this_helix)->set_helix_to_copy( copyhelix );
@@ -762,12 +762,12 @@ PerturbBundle::parse_my_tag(
 			} else {
 				if ( branch_tag->hasOption("epsilon_perturbation") ) {
 					runtime_assert_string_msg( !branch_tag->hasOption("epsilon"), "Error in PerturbBundle::parse_my_tag(): The \"epsilon_perturbation\" and \"epsilon\" options are mutually incompatible." );
-					core::Real epsilonpert( branch_tag->getOption<core::Real>("epsilon_perturbation", 0.0) );
+					auto epsilonpert( branch_tag->getOption<core::Real>("epsilon_perturbation", 0.0) );
 					epsilon(this_helix)->set_perturbation_magnitude(epsilonpert);
 					if ( TR.visible() ) TR << "Set epsilon perturbation magnitude to " << epsilonpert << std::endl;
 					has_perturbable_dofs=true;
 				} else if ( branch_tag->hasOption("epsilon") ) {
-					core::Real const epsilonval( branch_tag->getOption<core::Real>("epsilon") );
+					auto const epsilonval( branch_tag->getOption<core::Real>("epsilon") );
 					epsilon(this_helix)->set_default_value( epsilonval );
 					epsilon(this_helix)->set_being_set(true);
 					if ( TR.visible() ) TR << "Set epsilon to " << epsilonval << std::endl;

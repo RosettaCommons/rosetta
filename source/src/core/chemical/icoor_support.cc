@@ -100,9 +100,9 @@ public:
 /// This doesn't (need to?) quite match the logic in core/conformation/util.cc:setup_atom_links()
 class RerootEdgeSorter {
 public:
-	RerootEdgeSorter(core::chemical::ResidueGraph const & graph, core::chemical::ResidueType const & restype):
-		graph_(graph),
-		restype_(restype)
+	RerootEdgeSorter(core::chemical::ResidueGraph const & graph, core::chemical::ResidueType const & /*restype*/):
+		graph_(graph)
+		//restype_(restype)
 	{}
 
 	/// Return true if the first argument goes before the second argument
@@ -171,7 +171,7 @@ public:
 	}
 private:
 	core::chemical::ResidueGraph const & graph_;
-	core::chemical::ResidueType const & restype_;
+	//core::chemical::ResidueType const & restype_;
 };
 
 

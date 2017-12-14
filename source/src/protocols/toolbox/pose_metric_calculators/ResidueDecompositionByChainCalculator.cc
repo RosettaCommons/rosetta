@@ -76,7 +76,7 @@ ResidueDecompositionByChainCalculator::recompute(
 		if ( chain_numbers_.size() ) {
 			set_names_.assign(chain_numbers_.size(), "");
 			for ( core::Size i = 1; i <= chain_numbers_.size(); ++i ) {
-				for ( std::set<core::Size>::iterator iter = chain_numbers_[i].begin(); iter != chain_numbers_[i].end(); ++iter ) {
+				for ( auto iter = chain_numbers_[i].begin(); iter != chain_numbers_[i].end(); ++iter ) {
 					// there shouldn't be any duplicate chains in the the sets
 					runtime_assert(chain_map.find(*iter) == chain_map.end());
 					chain_map[*iter] = i;
@@ -97,7 +97,7 @@ ResidueDecompositionByChainCalculator::recompute(
 
 		residue_set_numbers_.assign(this_pose.size(), 0);
 		for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
-			std::map<core::Size, core::Size>::iterator iter(chain_map.find(this_pose.chain(i)));
+			auto iter(chain_map.find(this_pose.chain(i)));
 			if ( iter != chain_map.end() ) {
 				residue_decomposition_[iter->second].insert(i);
 				residue_set_numbers_[i] = iter->second;
@@ -105,13 +105,13 @@ ResidueDecompositionByChainCalculator::recompute(
 		}
 
 	} else {
-		runtime_assert(this_pose.pdb_info() != 0);
+		runtime_assert(this_pose.pdb_info() != nullptr);
 		// create a map from chain letter to set number
 		std::map<char, core::Size> chain_map;
 		if ( chain_letters_.size() ) {
 			set_names_.assign(chain_letters_.size(), "");
 			for ( core::Size i = 1; i <= chain_letters_.size(); ++i ) {
-				for ( std::set<char>::iterator iter = chain_letters_[i].begin(); iter != chain_letters_[i].end(); ++iter ) {
+				for ( auto iter = chain_letters_[i].begin(); iter != chain_letters_[i].end(); ++iter ) {
 					// there shouldn't be any duplicate chains in the the sets
 					runtime_assert(chain_map.find(*iter) == chain_map.end());
 					chain_map[*iter] = i;
@@ -135,7 +135,7 @@ ResidueDecompositionByChainCalculator::recompute(
 
 		residue_set_numbers_.assign(this_pose.size(), 0);
 		for ( core::Size i = 1; i <= this_pose.size(); ++i ) {
-			std::map<char, core::Size>::iterator iter(chain_map.find(this_pose.pdb_info()->chain(i)));
+			auto iter(chain_map.find(this_pose.pdb_info()->chain(i)));
 			if ( iter != chain_map.end() ) {
 				residue_decomposition_[iter->second].insert(i);
 				residue_set_numbers_[i] = iter->second;

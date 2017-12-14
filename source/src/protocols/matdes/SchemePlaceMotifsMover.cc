@@ -74,7 +74,7 @@ SchemePlaceMotifsMover::SchemePlaceMotifsMover() : halt_on_error_(false)
 {
 	core::scoring::motif::MotifHashManager::get_instance();
 	scorefxn_ = core::scoring::get_score_function()     ;
-	task_factory_ = NULL  ;
+	task_factory_ = nullptr  ;
 }
 
 protocols::moves::MoverOP

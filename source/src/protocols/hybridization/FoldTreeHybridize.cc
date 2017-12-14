@@ -150,11 +150,11 @@ using namespace basic::options::OptionKeys;
 /// fragments, 1.5 angstrom rmsd convergence. It checks after 200 cycles
 /// compared to 100 used in ClassicAbinitio
 class hConvergenceCheck;
-typedef  utility::pointer::shared_ptr< hConvergenceCheck >  hConvergenceCheckOP;
+using hConvergenceCheckOP = utility::pointer::shared_ptr<hConvergenceCheck>;
 
 class hConvergenceCheck : public moves::PoseCondition {
 public:
-	hConvergenceCheck() : bInit_( false ), ct_( 0 ) {}
+	hConvergenceCheck() = default;
 	void reset() { ct_ = 0; bInit_ = false; residue_selection_big_frags_.clear(); residue_selection_small_frags_.clear(); }
 	void set_trials( moves::TrialMoverOP trin ) {
 		trials_ = trin;
@@ -170,8 +170,8 @@ public:
 	bool operator() ( const core::pose::Pose & pose ) override;
 private:
 	core::pose::Pose very_old_pose_;
-	bool bInit_;
-	core::Size ct_;
+	bool bInit_{ false };
+	core::Size ct_ = 0;
 	std::list< core::Size > residue_selection_big_frags_;
 	std::list< core::Size > residue_selection_small_frags_;
 	moves::TrialMoverOP trials_;
@@ -337,7 +337,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	core::Size nres = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres = symm_info->num_independent_residues();
@@ -1248,10 +1248,10 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 
 	// determine the number of cycles
-	core::Size stage1_max_cycles = (core::Size)((core::Real)stage1_1_cycles_*increase_cycles_);
-	core::Size stage2_max_cycles = (core::Size)((core::Real)stage1_2_cycles_*increase_cycles_);
-	core::Size stage3_max_cycles = (core::Size)((core::Real)stage1_3_cycles_*increase_cycles_);
-	core::Size stage4_max_cycles = (core::Size)((core::Real)stage1_4_cycles_*increase_cycles_);
+	auto stage1_max_cycles = (core::Size)((core::Real)stage1_1_cycles_*increase_cycles_);
+	auto stage2_max_cycles = (core::Size)((core::Real)stage1_2_cycles_*increase_cycles_);
+	auto stage3_max_cycles = (core::Size)((core::Real)stage1_3_cycles_*increase_cycles_);
+	auto stage4_max_cycles = (core::Size)((core::Real)stage1_4_cycles_*increase_cycles_);
 
 	// For stages 1-4 use the same ramping of chainbreaks as in KinematicAbinitio without close_chbrk_
 	//  may want to look into using the constraints/jump sequence separation logic as in KinematicAbinitio
@@ -1537,7 +1537,7 @@ void FoldTreeHybridize::auto_frag_insertion_weight(
 	core::Size small_frag_pos_coverage = small_frag_trial_mover->get_total_frames()*small_n_frags;
 	core::Size big_frag_pos_coverage = big_frag_trial_mover->get_total_frames()*big_n_frags;
 
-	core::Real sum = (core::Real)(frag_1mer_pos_coverage+small_frag_pos_coverage+big_frag_pos_coverage+template_pos_coverage);
+	auto sum = (core::Real)(frag_1mer_pos_coverage+small_frag_pos_coverage+big_frag_pos_coverage+template_pos_coverage);
 
 	frag_1mer_insertion_weight_ = ((core::Real) frag_1mer_pos_coverage)/sum;
 	small_frag_insertion_weight_ = ((core::Real) small_frag_pos_coverage)/sum;

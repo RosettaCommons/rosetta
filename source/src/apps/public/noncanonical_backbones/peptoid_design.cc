@@ -128,16 +128,16 @@ public:
 	PeptoidDesignMover(): Mover("PeptoidDesignMover"){}
 
 	//default dtor
-	virtual ~PeptoidDesignMover(){}
+	~PeptoidDesignMover() override= default;
 
 	//methods
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "PeptoidDesignMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "PeptoidDesignMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< PeptoidDesignMover > PeptoidDesignMoverOP;
-typedef utility::pointer::shared_ptr< PeptoidDesignMover const > PeptoidDesignMoverCOP;
+using PeptoidDesignMoverOP = utility::pointer::shared_ptr<PeptoidDesignMover>;
+using PeptoidDesignMoverCOP = utility::pointer::shared_ptr<const PeptoidDesignMover>;
 
 
 int
@@ -305,8 +305,8 @@ PeptoidDesignMover::apply(
 	peptoid_name_set.erase( peptoid_name_set.find( "704" ) ); // not sure what is up but don't want to design this anyway
 
 	TR << "Allowed sidechains: ";
-	for ( std::set< std::string >::const_iterator j(peptoid_name_set.begin()); j != peptoid_name_set.end(); ++j ) {
-		TR << *j << " ";
+	for ( auto const & j : peptoid_name_set ) {
+		TR << j << " ";
 	}
 	TR << std::endl;
 

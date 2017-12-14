@@ -407,26 +407,26 @@ SeedSetupMover::parse_my_tag( TagCOP const tag,
 	//temporarily inactivating this option.....
 	//task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data, task_factory_ ) );
 
-	chi_chain2_ = tag->getOption< bool >("chi_chain2", 0 );
-	chi_chain1_ = tag->getOption< bool >("chi_chain1", 0 );
+	chi_chain2_ = tag->getOption< bool >("chi_chain2", false );
+	chi_chain1_ = tag->getOption< bool >("chi_chain1", false );
 
-	interface_chi1_ = tag->getOption< bool >("interface_chi1", 0 );
-	interface_chi2_ = tag->getOption< bool >("interface_chi2", 0 );
+	interface_chi1_ = tag->getOption< bool >("interface_chi1", false );
+	interface_chi2_ = tag->getOption< bool >("interface_chi2", false );
 	interface_distance_cutoff_ = tag->getOption< core::Real >("interface_distance_cutoff" , 8 );
 
 	//repacking for packer tasks options
-	repack_target_ = tag->getOption< bool >("repack_target", 1 );
-	repack_foldpose_ = tag->getOption< bool >("repack_foldpose", 1 );
+	repack_target_ = tag->getOption< bool >("repack_target", true );
+	repack_foldpose_ = tag->getOption< bool >("repack_foldpose", true );
 
 	//for design option for packertasks
-	design_target_ = tag->getOption< bool >("design_target", 0 );
-	design_foldpose_ = tag->getOption< bool >("design_foldpose", 1 );
-	allow_all_aas_ = tag->getOption< bool >("allow_all_aas", 0 );
+	design_target_ = tag->getOption< bool >("design_target", false );
+	design_foldpose_ = tag->getOption< bool >("design_foldpose", true );
+	allow_all_aas_ = tag->getOption< bool >("allow_all_aas", false );
 
 	/// this mover can perform repacking and design mover -- which is not recommaned
 	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
 	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
-	design_ = tag->getOption< bool >( "design" , 0 );
+	design_ = tag->getOption< bool >( "design" , false );
 
 	/// read input seeds
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );

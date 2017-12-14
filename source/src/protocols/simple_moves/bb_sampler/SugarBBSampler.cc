@@ -68,13 +68,9 @@ SugarBBSampler::SugarBBSampler( core::id::MainchainTorsionType torsion_type, BBS
 }
 
 
-SugarBBSampler::~SugarBBSampler(){}
+SugarBBSampler::~SugarBBSampler()= default;
 
-SugarBBSampler::SugarBBSampler( SugarBBSampler const & src ):
-	BBDihedralSampler( src ),
-	sampling_step_size_(src.sampling_step_size_) {
-
-}
+SugarBBSampler::SugarBBSampler( SugarBBSampler const & /*src*/ ) = default;
 
 
 SugarBBSamplerOP

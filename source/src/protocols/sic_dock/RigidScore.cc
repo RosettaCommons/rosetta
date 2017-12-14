@@ -50,17 +50,17 @@ using core::id::AtomID;
 using std::cout;
 using std::endl;
 
-typedef core::Real Real;
-typedef core::Size Size;
-typedef core::pose::Pose Pose;
-typedef Xform Xform;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
-typedef utility::vector1<Vec> Vecs;
-typedef utility::vector1<Real> Reals;
-typedef utility::vector1<Size> Sizes;
-typedef numeric::Xforms Xforms;
-typedef utility::vector1<RigidScoreCOP> Scores;
+using Real = core::Real;
+using Size = core::Size;
+using Pose = core::pose::Pose;
+using Xform = Xform;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
+using Vecs = utility::vector1<Vec>;
+using Reals = utility::vector1<Real>;
+using Sizes = utility::vector1<Size>;
+using Xforms = numeric::Xforms;
+using Scores = utility::vector1<RigidScoreCOP>;
 
 
 std::ostream & operator<< ( std::ostream & out, Vec3 v ){
@@ -164,13 +164,13 @@ LinkerScore::LinkerScore(
 	Pose const & pose2,
 	Size max_loop_len,
 	Size lookup_radius,
-	std::string  outtag
+	std::string const & outtag
 ):
 	loopsizes_( range(3,max_loop_len+1) ),
 	lookup_radius_( lookup_radius ),
 	pose1_(pose1),
 	pose2_(pose2),
-	outtag_(std::move(outtag))
+	outtag_(outtag)
 {
 	if ( ! basic::options::option[ basic::options::OptionKeys::lh::db_path ].user() ) {
 		utility_exit_with_message("user must specify -lh:db_path for loop hash database");
@@ -388,12 +388,11 @@ core::Real ConstraintSetScore::score( Xforms const & x1s, Xforms const & x2s ) c
 // }
 
 
-JointScore::JointScore()
-{}
+JointScore::JointScore() = default;
 
 JointScore::JointScore(
-	Scores scores,
-	Reals weights
+	Scores const & scores,
+	Reals const & weights
 ):
 	scores_(scores),
 	weights_(weights)

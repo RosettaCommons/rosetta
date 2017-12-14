@@ -165,7 +165,7 @@ Hydrate::operator=(Hydrate const & hyd)
 }
 
 // Destructor
-Hydrate::~Hydrate() {}
+Hydrate::~Hydrate() = default;
 
 
 // Mover methods

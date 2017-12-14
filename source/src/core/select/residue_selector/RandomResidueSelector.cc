@@ -28,6 +28,7 @@
 
 // Utility Headers
 #include <numeric/random/random_permutation.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -68,7 +69,7 @@ RandomResidueSelector::clone() const
 
 RandomResidueSelector::RandomResidueSelector( ResidueSelectorCOP selector, Size const num_residues ):
 	ResidueSelector(),
-	selector_( selector ),
+	selector_(std::move( selector )),
 	num_residues_( num_residues ),
 	select_res_cluster_( false ),
 	distance_cutoff_( 8.0 )
@@ -77,14 +78,14 @@ RandomResidueSelector::RandomResidueSelector( ResidueSelectorCOP selector, Size 
 
 RandomResidueSelector::RandomResidueSelector( ResidueSelectorCOP selector, Size const num_residues, bool const select_res_cluster, Real const distance_cutoff ):
 	ResidueSelector(),
-	selector_( selector ),
+	selector_(std::move( selector )),
 	num_residues_( num_residues ),
 	select_res_cluster_( select_res_cluster ),
 	distance_cutoff_( distance_cutoff )
 {
 }
 
-RandomResidueSelector::~RandomResidueSelector() {}
+RandomResidueSelector::~RandomResidueSelector() = default;
 
 ResidueSubset
 RandomResidueSelector::apply( core::pose::Pose const & pose ) const

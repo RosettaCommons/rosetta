@@ -260,7 +260,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 
 	////////iterate to define antibody paratope/////////////////////////////////////////////
 	for ( core::Size i=1; i<=core::Size(ab_info.get_total_num_CDRs(include_de_loop)); ++i ) {
-		CDRNameEnum loop = static_cast<CDRNameEnum>(i);
+		auto loop = static_cast<CDRNameEnum>(i);
 		Size loop_start = ab_info.get_CDR_start(loop, pose);
 		Size loop_end = ab_info.get_CDR_end(loop, pose);
 		TR.Debug << loop << " loop_start " << loop_start << std::endl;
@@ -327,7 +327,7 @@ paratope_charge( core::pose::Pose const & pose, const protocols::antibody::Antib
 	core::SSize paratope_charge = 0;
 
 	for ( core::Size ia=1; ia<=core::Size(ab_info.get_total_num_CDRs( include_de_loop ) ); ++ia ) {
-		CDRNameEnum loop = static_cast<CDRNameEnum>(ia);
+		auto loop = static_cast<CDRNameEnum>(ia);
 		Size loop_start = ab_info.get_CDR_start(loop, pose);
 		Size loop_end = ab_info.get_CDR_end(loop, pose);
 

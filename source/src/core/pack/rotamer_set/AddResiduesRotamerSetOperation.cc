@@ -14,6 +14,7 @@
 
 //Unit
 #include<core/pack/rotamer_set/AddResiduesRotamerSetOperation.hh>
+#include <utility>
 
 namespace core {
 namespace pack {
@@ -39,7 +40,7 @@ void AddResiduesRotamerSetOperation::alter_rotamer_set(
 	utility::graph::GraphCOP /*packer_neighbor_graph*/,
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 ){
-	core::Size seqnum = (core::Size) rotamer_set.resid();
+	auto seqnum = (core::Size) rotamer_set.resid();
 	for ( core::Size i=1; i<=this->residues_.size(); ++i ) {
 		core::conformation::ResidueOP cur_res = residues_[i]->clone();
 		core::conformation::Residue const & existing_residue=pose.residue(seqnum);

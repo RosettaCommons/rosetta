@@ -88,7 +88,7 @@ RNA_LowResolutionPotentialCreator::score_types_for_method() const {
 
 core::Real RNA_LowResolutionPotential::dummy_deriv = 0.0;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

@@ -130,8 +130,8 @@ Symmetrizer::apply(Pose & pose) {
 	using core::conformation::symmetry::SymmetryInfoCOP;
 	using core::conformation::symmetry::SymDof;
 	using core::pose::Pose;
-	typedef numeric::xyzVector<Real> Vec;
-	typedef numeric::xyzMatrix<Real> Mat;
+	using Vec = numeric::xyzVector<Real>;
+	using Mat = numeric::xyzMatrix<Real>;
 	TR << "mode: " << sampling_mode_ << std::endl;
 	core::pose::symmetry::make_symmetric_pose(pose, symm_file_);
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
@@ -214,8 +214,8 @@ Symmetrizer::parse_my_tag( TagCOP const tag,
 	TR << "Setting sampling mode to " << sampling_mode_ << std::endl;
 	explore_grid_ = tag->getOption<bool>("grid", false);
 	if ( sampling_mode_ == "grid" || explore_grid_ ) {
-		Real angle_step = tag->getOption<Real>("angle_step");
-		Real radial_disp_step = tag->getOption<Real>("radial_disp_step");
+		auto angle_step = tag->getOption<Real>("angle_step");
+		auto radial_disp_step = tag->getOption<Real>("radial_disp_step");
 		TR << "Setting the exploration grid." << std::endl;
 		SymmetrizerSampler::get_instance()->set_angle_range(angle_min_, angle_max_, angle_step);
 		SymmetrizerSampler::get_instance()->set_radial_disp_range(radial_disp_min_, radial_disp_max_, radial_disp_step);

@@ -39,7 +39,7 @@ namespace scoring {
 namespace mm {
 
 /// @details Auto-generated virtual destructor
-MMLJEnergyTable::~MMLJEnergyTable() {}
+MMLJEnergyTable::~MMLJEnergyTable() = default;
 
 static basic::Tracer TR( "core.scoring.mm.MMLJEnergyTable" );
 

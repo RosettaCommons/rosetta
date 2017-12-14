@@ -114,7 +114,7 @@ initialize_native_and_align_pose( PoseOP & native_pose,
 		align_pose = core::import_pose::get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::align_pdb ](), rsd_set );
 	}
 
-	if ( align_pose == 0 && option[ in::file::s ].user() ) {
+	if ( align_pose == nullptr && option[ in::file::s ].user() ) {
 		align_pose = start_pose->clone();
 	}
 	if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() ) { // could generalize to proteins

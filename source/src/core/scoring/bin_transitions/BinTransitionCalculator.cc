@@ -70,7 +70,7 @@ BinTransitionCalculator::BinTransitionCalculator( BinTransitionCalculator const 
 
 /// @brief Default destructor for BinTransitionCalculator
 ///
-BinTransitionCalculator::~BinTransitionCalculator() {}
+BinTransitionCalculator::~BinTransitionCalculator() = default;
 
 /// @brief Clone operation for BinTransitionCalculator.
 /// @details Returns an owning pointer to a copy of this object.
@@ -221,7 +221,7 @@ bool BinTransitionCalculator::find_data(
 	core::conformation::Residue const &res_iplus1,
 	core::Size &data_index
 ) const {
-	if ( n_bin_transition_data()==0 ) return 1; //Fail immediately if there are no defined BinTranstionData objects.
+	if ( n_bin_transition_data()==0 ) return true; //Fail immediately if there are no defined BinTranstionData objects.
 
 	for ( core::Size i=1, imax=n_bin_transition_data(); i<=imax; ++i ) {
 		if ( !bin_transition_data(i)->criteria_match_i( res_i ) ) continue;

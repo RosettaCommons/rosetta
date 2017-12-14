@@ -60,7 +60,7 @@ class CoordConstraintClaimer : public TopologyClaimer {
 public:
 	CoordConstraintClaimer(); //for factory
 	~CoordConstraintClaimer() override; //for factory
-	CoordConstraintClaimer( std::string pdb_file );
+	CoordConstraintClaimer( std::string const & pdb_file );
 
 	TopologyClaimerOP clone() const override {
 		return TopologyClaimerOP( new CoordConstraintClaimer( *this ) );

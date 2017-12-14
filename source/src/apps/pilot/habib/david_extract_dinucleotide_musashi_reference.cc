@@ -134,8 +134,8 @@ main( int argc, char * argv [] )
 			return -101;
 		}
 
-		char *target_caln = new char[target_aln.length()+1];
-		char *musashi_caln = new char[musashi_aln.length()+1];
+		auto *target_caln = new char[target_aln.length()+1];
+		auto *musashi_caln = new char[musashi_aln.length()+1];
 		std::strcpy(target_caln, target_aln.c_str());
 		std::strcpy(musashi_caln, musashi_aln.c_str());
 
@@ -226,7 +226,7 @@ main( int argc, char * argv [] )
 						iru  = energy_graph.get_node( i )->lower_edge_list_begin(),
 						irue = energy_graph.get_node( i )->lower_edge_list_end();
 						iru != irue; ++iru ) {
-					EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+					auto * edge( static_cast< EnergyEdge *> (*iru) );
 					Size const j( edge->get_first_node_ind() );
 					if ( !((int)j==res1 || (int)j==res2 || (int)j==res3) ) {
 						continue;
@@ -271,7 +271,7 @@ main( int argc, char * argv [] )
 						iru  = energy_graph.get_node( i )->lower_edge_list_begin(),
 						irue = energy_graph.get_node( i )->lower_edge_list_end();
 						iru != irue; ++iru ) {
-					EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+					auto * edge( static_cast< EnergyEdge *> (*iru) );
 					Size const j( edge->get_first_node_ind() );
 					if ( !(pose.residue(j).is_RNA() || pose.residue(j).is_DNA()) ) {
 						continue;

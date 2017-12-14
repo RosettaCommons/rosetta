@@ -10,7 +10,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <cmath>
 #include <iostream>

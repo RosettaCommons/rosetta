@@ -11,15 +11,15 @@
 /// @author SC Li & YK Ng (kalngyk@gmail.com)
 
 #include <vector>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <math.h>
-#include <assert.h>
+#include <cmath>
+#include <cassert>
 #ifndef PYROSETTA
-#include <time.h>
+#include <ctime>
 #endif
 #ifndef __WIN32__
 #include <sys/resource.h>

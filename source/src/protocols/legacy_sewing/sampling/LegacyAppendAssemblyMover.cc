@@ -242,7 +242,7 @@ LegacyAppendAssemblyMover::hash_pdb_model(
 	//with a minor hit to scoring speed.
 	ScoreResults all_scores;
 	core::Size group = 1;
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 	while ( true ) {
 		++group;
 		core::Size counter = 0;
@@ -264,7 +264,7 @@ LegacyAppendAssemblyMover::hash_pdb_model(
 			break;
 		}
 	}
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR << "Scoring complete, found " << all_scores.size() << " unique alignments to input PDB. (" << endtime - starttime << " seconds)" << std::endl;
 
 	//Combine the PDB scores with the score file and run the AssemblyMover

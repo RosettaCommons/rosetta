@@ -34,8 +34,7 @@ Histogram::Histogram( core::Real const min, core::Real const max, core::Real con
 }
 
 //Destructor
-Histogram::~Histogram()
-{}
+Histogram::~Histogram() = default;
 
 void
 Histogram::add( float const value, core::Size const n_items ) {

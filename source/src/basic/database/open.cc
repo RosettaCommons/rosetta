@@ -113,7 +113,7 @@ full_name(
 ///
 /// @athor Labonte <JWLabonte@jhu.edu>
 std::string
-find_database_path( std::string dir, std::string filename)
+find_database_path( std::string const & dir, std::string const & filename)
 {
 	using namespace utility::io;
 
@@ -143,7 +143,7 @@ find_database_path( std::string dir, std::string filename)
 ///
 /// @athor Labonte <JWLabonte@jhu.edu>
 std::string
-find_database_path( std::string dir, std::string filename, std::string ext)
+find_database_path( std::string const & dir, std::string const & filename, std::string const & ext )
 {
 	using namespace utility::io;
 

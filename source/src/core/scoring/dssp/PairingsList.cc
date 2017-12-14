@@ -144,17 +144,15 @@ std::ostream& operator<< ( std::ostream& out, Pairing const& p) {
 }
 
 std::ostream& operator<< ( std::ostream& out, PairingsList const& p) {
-	for ( PairingsList::const_iterator it= p.begin(),
-			eit = p.end(); it!=eit; ++it ) {
-		out << (*it) << "\n";
+	for ( auto const & it : p ) {
+		out << it << "\n";
 	}
 	return out;
 }
 
 bool has_orientation_and_pleating( PairingsList const& pairings ) {
-	for ( PairingsList::const_iterator it = pairings.begin(), eit = pairings.end();
-			it != eit; ++it ) {
-		if ( it->Orientation() == 0 || it->Pleating() == 0 ) return false;
+	for ( auto const & pairing : pairings ) {
+		if ( pairing.Orientation() == 0 || pairing.Pleating() == 0 ) return false;
 	}
 	return true;
 }

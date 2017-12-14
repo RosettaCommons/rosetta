@@ -91,7 +91,7 @@ EmbeddingDef & EmbeddingDef::operator = ( EmbeddingDef const & src ) {
 }
 
 /// @brief Destructor
-EmbeddingDef::~EmbeddingDef() {}
+EmbeddingDef::~EmbeddingDef() = default;
 
 /// @brief Standard Rosetta Show Method for Debugging
 void

@@ -94,10 +94,10 @@ LegacyAssemblyMover::get_name() const {
 }
 
 LegacyAssemblyMover::LegacyAssemblyMover():
-	graph_(0),
+	graph_(nullptr),
 	requirement_factory_(sampling::requirements::LegacyRequirementFactory::get_instance()),
-	cen_scorefxn_(0),
-	fa_scorefxn_(0),
+	cen_scorefxn_(nullptr),
+	fa_scorefxn_(nullptr),
 	base_native_bonus_(1.5),
 	neighbor_cutoff_(15)
 {
@@ -132,9 +132,9 @@ LegacyAssemblyMover::apply( core::pose::Pose & pose ) {
 	assembly_scorefxn_->add_scorer("InterfaceMotif", 1.0, partner_motif_scorer);
 
 	//First, try to generate an Assembly
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 	AssemblyOP assembly = generate_assembly();
-	if ( assembly == 0 ) {
+	if ( assembly == nullptr ) {
 		TR << "Failed to generate an Assembly (if this comes from EnumerateAssembly, this is actually a success, hopefully later I can better code this part)" << std::endl;
 		set_last_move_status(protocols::moves::FAIL_RETRY);
 		return;
@@ -144,12 +144,12 @@ LegacyAssemblyMover::apply( core::pose::Pose & pose ) {
 	//  set_last_move_status(protocols::moves::FAIL_RETRY);
 	//  return;
 	// }
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR << "Successfully generated Assembly in " << endtime - starttime << " seconds" << std::endl;
 
 	//We have a complete, valid Assembly. Now change
 	//it to a pose and refine it.
-	starttime = time(NULL);
+	starttime = time(nullptr);
 	if ( ! basic::options::option[ basic::options::OptionKeys::legacy_sewing::skip_refinement ].value() ) {
 		pose = refine_assembly(assembly);
 	} else {
@@ -158,7 +158,7 @@ LegacyAssemblyMover::apply( core::pose::Pose & pose ) {
 	TR << "Got Pose!" << std::endl;
 
 	output_stats(assembly, pose, "from_LegacyMonteCarloAssemblyMover");
-	endtime = time(NULL);
+	endtime = time(nullptr);
 	TR << "Refined Assembly in " << endtime - starttime << " seconds" << std::endl;
 
 	//SUCCESS!
@@ -226,7 +226,7 @@ LegacyAssemblyMover::follow_random_edge_from_node(
 
 		//Cast the edge to a proper HashEdge, follow it, and make sure we haven't violated
 		//any requirements. If we have, revert and try the next edge
-		HashEdge const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
+		auto const * const cur_edge = static_cast< HashEdge const * >(*edge_it);
 
 		AssemblyOP pre_op_assembly = assembly->clone();
 		assembly->follow_edge(graph_, cur_edge, reference_node->get_node_index());
@@ -503,8 +503,8 @@ LegacyAssemblyMover::parse_requirements(
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ){
-	utility::vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
-	utility::vector0< TagCOP >::const_iterator end=tag->getTags().end();
+	auto begin=tag->getTags().begin();
+	auto end=tag->getTags().end();
 	for ( ; begin != end; ++begin ) {
 		TagCOP requirement_tag= *begin;
 
@@ -529,8 +529,8 @@ LegacyAssemblyMover::parse_global_requirements(
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ){
-	utility::vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
-	utility::vector0< TagCOP >::const_iterator end=tag->getTags().end();
+	auto begin=tag->getTags().begin();
+	auto end=tag->getTags().end();
 	for ( ; begin != end; ++begin ) {
 		TagCOP requirement_tag= *begin;
 		sampling::requirements::LegacyGlobalRequirementOP requirement =
@@ -551,10 +551,10 @@ LegacyAssemblyMover::parse_intra_segment_requirements(
 	if ( !tag->hasOption("index") ) {
 		utility_exit_with_message("You must give an 'index' attribute to the IntraSegmentRequirements tag!");
 	}
-	core::Size index = tag->getOption<core::Size>("index");
+	auto index = tag->getOption<core::Size>("index");
 
-	utility::vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
-	utility::vector0< TagCOP >::const_iterator end=tag->getTags().end();
+	auto begin=tag->getTags().begin();
+	auto end=tag->getTags().end();
 	for ( ; begin != end; ++begin ) {
 		TagCOP requirement_tag= *begin;
 		sampling::requirements::LegacyIntraSegmentRequirementOP requirement =
@@ -602,13 +602,13 @@ LegacyAssemblyMover::parse_my_tag(
 
 	/////////Segments////////////
 	if ( tag->hasOption("min_segments") ) {
-		core::Size min_segments = tag->getOption<core::Size>("min_segments");
+		auto min_segments = tag->getOption<core::Size>("min_segments");
 		requirement_set_->min_segments(min_segments);
 	} else {
 		TR.Warning << "You have not specified a min segment size, using 0" << std::endl;
 	}
 	if ( tag->hasOption("max_segments") ) {
-		core::Size max_segments = tag->getOption<core::Size>("max_segments");
+		auto max_segments = tag->getOption<core::Size>("max_segments");
 		requirement_set_->max_segments(max_segments);
 	} else {
 		TR.Warning << "You have not specified a min segment size, using arbitrary maximum of 50 segments" << std::endl;

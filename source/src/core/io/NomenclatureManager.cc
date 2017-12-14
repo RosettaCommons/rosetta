@@ -102,19 +102,19 @@ NomenclatureManager::pdb_code_from_rosetta_name(std::string const & rosetta_name
 	core::Size max_patches_matched = 0;
 	std::string best_match = "";
 	utility::vector1<std::string> best_patch_match;
-	for ( auto it=alt_codes.begin(); it!=alt_codes.end(); ++it ) {
+	for ( auto const & alt_code : alt_codes ) {
 		//determine whether the linkage number is related to the name
 		bool match_all = false;
-		if ( std::get<1>(it->second).find("->?") != std::string::npos ) {
+		if ( std::get<1>(alt_code.second).find("->?") != std::string::npos ) {
 			match_all = true;
 		}
-		utility::vector1<std::string> matching_patches = std::get<2>(it->second);
+		utility::vector1<std::string> matching_patches = std::get<2>(alt_code.second);
 
 		//find the base name
 		std::string base_tag;
 		if ( match_all ) {
 			utility::vector1<std::string> base_tag_vect;
-			boost::split(base_tag_vect, std::get<1>(it->second), [](char c){ return c == ')';});
+			boost::split(base_tag_vect, std::get<1>(alt_code.second), [](char c){ return c == ')';});
 			base_tag = base_tag_vect[2];
 		} else {
 			base_tag = split_vect[1];
@@ -134,11 +134,11 @@ NomenclatureManager::pdb_code_from_rosetta_name(std::string const & rosetta_name
 			if ( has_all == false ) break;
 			if ( match_count > max_patches_matched ) {
 				max_patches_matched = match_count;
-				best_match = it->first;
+				best_match = alt_code.first;
 				best_patch_match = matching_patches;
 			}
 			if ( best_match == "" && matching_patches.has_value("default") ) {
-				best_match = it->first;
+				best_match = alt_code.first;
 			}
 		}
 	}

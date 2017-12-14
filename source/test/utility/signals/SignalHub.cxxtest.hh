@@ -97,7 +97,7 @@ class Observer {
 
 
 public:
-	Observer( int id ) : id_( id ) {
+	Observer( int /*id*/ ) /*: id_( id )*/ {
 	}
 
 
@@ -130,11 +130,8 @@ public:
 
 private:
 
-
-	int id_;
 	Event event1_;
 	Event event2_;
-
 
 }; // class Observer
 
@@ -150,17 +147,17 @@ class SignalHubTests : public CxxTest::TestSuite {
 public: // setup
 
 
-  // shared initialization
-  void setUp() {
-  }
+	// shared initialization
+	void setUp() {
+	}
 
 
-  // shared finalization
-  void tearDown() {
-  }
+	// shared finalization
+	void tearDown() {
+	}
 
 
-  // --------------- Test Cases --------------- //
+	// --------------- Test Cases --------------- //
 
 	/// @brief test observer attachment, detachment, and notification
 	void test_SignalHub_attach_detach_notify() {

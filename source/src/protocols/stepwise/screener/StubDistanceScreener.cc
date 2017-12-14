@@ -40,8 +40,7 @@ StubDistanceScreener::StubDistanceScreener(  core::kinematics::Stub & moving_res
 }
 
 //Destructor
-StubDistanceScreener::~StubDistanceScreener()
-{}
+StubDistanceScreener::~StubDistanceScreener() = default;
 
 
 //////////////////////////////////////////

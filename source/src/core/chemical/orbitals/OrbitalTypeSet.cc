@@ -31,6 +31,7 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 
 #include <core/chemical/orbitals/OrbitalType.hh>
+#include <utility>
 #include <utility/io/izstream.hh>
 
 #include <utility/exit.hh>
@@ -49,7 +50,7 @@ namespace chemical {
 namespace orbitals {
 
 /// @details Auto-generated virtual destructor
-OrbitalTypeSet::~OrbitalTypeSet() {}
+OrbitalTypeSet::~OrbitalTypeSet() = default;
 
 static basic::Tracer TR( "core.chemical.orbitals" );
 
@@ -152,7 +153,7 @@ void OrbitalTypeSet::read_file(std::string const & filename)
 int
 OrbitalTypeSet::orbital_type_index( std::string const & orbital_type_name ) const
 {
-	std::map< std::string, int >::const_iterator
+	auto
 		iter( orbital_type_index_.find( orbital_type_name ) );
 	if ( iter == orbital_type_index_.end() ) {
 		utility_exit_with_message("unrecognized orbital type name "+orbital_type_name);
@@ -164,7 +165,7 @@ OrbitalTypeSet::orbital_type_index( std::string const & orbital_type_name ) cons
 int
 OrbitalTypeSet::orbital_type_index( std::string & orbital_type_name ) const
 {
-	std::map< std::string, int >::const_iterator
+	auto
 		iter( orbital_type_index_.find( orbital_type_name ) );
 	if ( iter == orbital_type_index_.end() ) {
 		utility_exit_with_message("unrecognized orbital type name "+orbital_type_name);

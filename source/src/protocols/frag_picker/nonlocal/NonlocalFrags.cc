@@ -421,7 +421,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 						protocols::boinc::Boinc::update_mc_trial_info( step_cnt++, "NonLocalFrags_" + input_tag + tag );
 #endif
 						// Create a sub pose representing the pair
-						core::Size midpoint = static_cast<core::Size>(ceil(frag_len / 2.0));
+						auto midpoint = static_cast<core::Size>(ceil(frag_len / 2.0));
 						kinematics::FoldTree tree(total_len);
 						int jump_id = tree.new_jump( midpoint, frag_len+midpoint, frag_len );
 						tree.set_jump_atoms(jump_id, "CA", "CA");

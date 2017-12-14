@@ -101,7 +101,7 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
 	first_apply_->obj = true;
 }
 
-SaveAndRetrieveSidechains::~SaveAndRetrieveSidechains() {}
+SaveAndRetrieveSidechains::~SaveAndRetrieveSidechains() = default;
 
 void
 SaveAndRetrieveSidechains::apply( Pose & pose )
@@ -118,7 +118,7 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 	TR << "Retrieving sidechains..."<<std::endl;
 	Size nres = pose.size();
 	if ( nres != init_pose_->size() && core::pose::symmetry::is_symmetric(pose) ) {
-		conformation::symmetry::SymmetricConformation & symm_conf (
+		auto & symm_conf (
 			dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		nres = symm_conf.Symmetry_Info()->num_independent_residues();
 	}
@@ -148,19 +148,17 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 					pose.residue_type( i ).properties().get_list_of_variants() );
 				utility::vector1< std::string > const old_var_types(
 					init_pose_->residue_type( i ).properties().get_list_of_variants() );
-				for ( utility::vector1< std::string >::const_iterator newvars = new_var_types.begin();
-						newvars != new_var_types.end(); ++newvars ) {
-					if ( ! (init_pose_->residue_type( i ).has_variant_type( *newvars ) ) ) {
+				for ( auto const & new_var_type : new_var_types ) {
+					if ( ! (init_pose_->residue_type( i ).has_variant_type( new_var_type ) ) ) {
 						core::pose::remove_variant_type_from_pose_residue( pose,
-							core::chemical::ResidueProperties::get_variant_from_string( *newvars ), i );
+							core::chemical::ResidueProperties::get_variant_from_string( new_var_type ), i );
 					}
 				}
 
-				for ( utility::vector1< std::string >::const_iterator oldvars = old_var_types.begin();
-						oldvars != old_var_types.end(); ++oldvars ) {
-					if ( !pose.residue_type( i ).has_variant_type( *oldvars ) ) {
+				for ( auto const & old_var_type : old_var_types ) {
+					if ( !pose.residue_type( i ).has_variant_type( old_var_type ) ) {
 						core::pose::add_variant_type_to_pose_residue( pose,
-							core::chemical::ResidueProperties::get_variant_from_string( *oldvars ), i );
+							core::chemical::ResidueProperties::get_variant_from_string( old_var_type ), i );
 					}
 				}
 			} //if variants don't match
@@ -181,7 +179,7 @@ void
 SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	first_apply_->obj = true;
-	allsc_ = tag->getOption<bool>( "allsc", 0 );
+	allsc_ = tag->getOption<bool>( "allsc", false );
 	multi_use( tag->getOption< bool >( "multi_use", false ) );
 	two_step( tag->getOption< bool >( "two_step", false ) );
 	if ( !two_step() ) {

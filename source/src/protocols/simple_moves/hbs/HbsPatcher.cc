@@ -186,7 +186,7 @@ HbsPatcher::HbsPatcher(
 
 }
 
-HbsPatcher::~HbsPatcher(){}
+HbsPatcher::~HbsPatcher()= default;
 
 }//hbs
 }//simple_moves

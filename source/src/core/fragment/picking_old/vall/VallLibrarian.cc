@@ -40,8 +40,7 @@ VallLibrarian::VallLibrarian() :
 
 
 /// @brief default destructor
-VallLibrarian::~VallLibrarian()
-{}
+VallLibrarian::~VallLibrarian() = default;
 
 
 /// @brief get top 'N' fragments from prior catalog()
@@ -77,8 +76,8 @@ VallLibrarian::FragDataOPs VallLibrarian::fragments(
 		to = scores().size();
 	}
 
-	Scores::const_iterator begin = scores().begin() + ( from - 1 );
-	Scores::const_iterator end = scores().begin() + to;
+	auto begin = scores().begin() + ( from - 1 );
+	auto end = scores().begin() + to;
 
 	TR << "best fragment:   " << ( *begin ) << std::endl;
 	TR << "worst fragment:  " << ( *( end - 1) ) << std::endl;
@@ -93,7 +92,7 @@ VallLibrarian::FragDataOPs VallLibrarian::fragments(
 	//TR << std::endl;
 	//debug over
 
-	for ( Scores::const_iterator i = begin; i != end; ++i, ++num_frags_picked ) {
+	for ( auto i = begin; i != end; ++i, ++num_frags_picked ) {
 		core::Real this_score(i->score);
 		if ( this_score < max_allowed_score ) {
 			fdl.push_back( extent_to_fragdata( i->extent_begin, i->extent_end, this_score, srfd_type ) );
@@ -113,8 +112,8 @@ VallLibrarian::FragDataOPs VallLibrarian::fragments(
 /// @brief this function runs before main routine in catalog() starts
 void VallLibrarian::pre_catalog_ops( VallLibrary const & library ) {
 	// do any Evaluator pre-catalog operations
-	for ( VallFragmentEvalOPs::iterator i = Super::extent_eval().begin(), ie = Super::extent_eval().end(); i != ie; ++i ) {
-		(**i).pre_catalog_op( library );
+	for ( auto & i : Super::extent_eval() ) {
+		(*i).pre_catalog_op( library );
 	}
 
 	// preallocate heuristic
@@ -127,8 +126,8 @@ void VallLibrarian::pre_catalog_ops( VallLibrary const & library ) {
 /// @brief this function runs after main routine catalog() finishes
 void VallLibrarian::post_catalog_ops( VallLibrary const & library ) {
 	// do any Evaluator post-catalog operations
-	for ( VallFragmentEvalOPs::iterator i = Super::extent_eval().begin(), ie = Super::extent_eval().end(); i != ie; ++i ) {
-		(**i).post_catalog_op( library );
+	for ( auto & i : Super::extent_eval() ) {
+		(*i).post_catalog_op( library );
 	}
 }
 

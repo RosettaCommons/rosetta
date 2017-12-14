@@ -78,7 +78,7 @@ get_nres_asu( core::pose::Pose const & pose ) {
 	core::Size nres_tgt = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres_tgt = symm_info->num_independent_residues();

@@ -213,7 +213,7 @@ positions_incompatible_with_task(
 
 			// check to see if pose residue type is in list of allowed residue types
 			core::pack::task::ResidueLevelTask const & residueleveltask(packertask.residue_task(i));
-			for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+			for ( auto iter(residueleveltask.allowed_residue_types_begin());
 					iter != residueleveltask.allowed_residue_types_end(); ++iter ) {
 
 				if ( (*iter)->name() == pose.residue_type(i).name() ) incompatible = false;
@@ -382,7 +382,7 @@ my_main( void* )
 					minmover.min_type("lbfgs_armijo_nonmonotone");
 
 					// first minimize just the side chains
-					for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+					for ( auto iter = minimize_movemap->movemap_torsion_id_begin();
 							iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
 						if ( iter->first.second == core::id::CHI ) minimize_movemap_progressive->set(iter->first, iter->second);
 					}
@@ -391,7 +391,7 @@ my_main( void* )
 					//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminchi.pdb");
 
 					// next minimize the side chains and backbone
-					for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+					for ( auto iter = minimize_movemap->movemap_torsion_id_begin();
 							iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
 						if ( iter->first.second == core::id::BB ) minimize_movemap_progressive->set(iter->first, iter->second);
 					}
@@ -400,7 +400,7 @@ my_main( void* )
 					//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminbb.pdb");
 
 					// finally minimize everything
-					for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap->movemap_torsion_id_begin();
+					for ( auto iter = minimize_movemap->movemap_torsion_id_begin();
 							iter != minimize_movemap->movemap_torsion_id_end(); ++iter ) {
 						if ( iter->first.second == core::id::JUMP ) minimize_movemap_progressive->set(iter->first, iter->second);
 					}
@@ -562,5 +562,5 @@ my_main( void* )
 	// write parameters for any sets of branching atoms for which there were not optimization coefficients
 	backrubmover.branchopt().write_database();
 
-	return 0;
+	return nullptr;
 }

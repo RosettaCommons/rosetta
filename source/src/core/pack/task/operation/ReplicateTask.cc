@@ -48,7 +48,7 @@ ReplicateTask::ReplicateTask(core::pose::Pose & native_pose, core::pack::task::T
 	native_task_ =  task_factory->create_task_and_apply_taskoperations( native_pose ) ;
 }
 
-ReplicateTask::~ReplicateTask(){}
+ReplicateTask::~ReplicateTask()= default;
 
 task::operation::TaskOperationOP ReplicateTask::clone() const
 {

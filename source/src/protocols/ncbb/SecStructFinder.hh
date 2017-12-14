@@ -41,7 +41,7 @@ class SecStructFinder : public moves::Mover
 public:
 	SecStructFinder();
 	SecStructFinder(
-		std::string residue,
+		std::string const & residue,
 		core::Size min_length = 5,
 		core::Size max_length = 5,
 		core::Real bin_size = 10,

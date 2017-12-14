@@ -34,7 +34,7 @@ namespace rosetta_scripts {
 
 static basic::Tracer TR( "protocols.rosetta_scripts.PosePropertyReporterFactory" );
 
-PosePropertyReporterFactory::PosePropertyReporterFactory(){}
+PosePropertyReporterFactory::PosePropertyReporterFactory()= default;
 
 PosePropertyReporterFactory::~PosePropertyReporterFactory()= default;
 

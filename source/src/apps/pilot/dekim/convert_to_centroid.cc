@@ -61,14 +61,14 @@ class MyMover : public Mover {
 public:
 	MyMover();
 
-	virtual void apply( core::pose::Pose& pose );
-	std::string get_name() const { return "ConvertToCentroidMover"; }
+	void apply( core::pose::Pose& pose ) override;
+	std::string get_name() const override { return "ConvertToCentroidMover"; }
 
-	virtual MoverOP clone() const {
+	MoverOP clone() const override {
 		return MoverOP( new MyMover( *this ) );
 	}
 
-	virtual MoverOP fresh_instance() const {
+	MoverOP fresh_instance() const override {
 		return MoverOP( new MyMover );
 	}
 

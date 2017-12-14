@@ -78,7 +78,7 @@ ligand_dock_main_jd1()
 	// Build overall docking protocol Mover
 	LigandDockProtocolOP dockingProtocol( new LigandDockProtocol() );
 
-	time_t overall_start_time = time(NULL);
+	time_t overall_start_time = time(nullptr);
 	bool const use_silent_in = option[ in::file::silent ].active();
 	utility::vector1< BasicJobOP > input_jobs;
 	core::import_pose::atom_tree_diffs::AtomTreeDiffOP atdiff;
@@ -125,7 +125,7 @@ ligand_dock_main_jd1()
 		core::import_pose::pose_from_file( *rms_native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 	}
 
-	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraint_io = NULL;
+	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraint_io = nullptr;
 	if ( option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 		//we need the residue type set, assuming FA standard is used
 		core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
@@ -144,11 +144,11 @@ ligand_dock_main_jd1()
 	core::pose::PoseOP input_pose; // starts NULL, coords *never* modified!
 	jobdist.startup();
 	while ( jobdist.next_job(curr_job, curr_nstruct) ) {
-		time_t pdb_start_time = time(NULL);
+		time_t pdb_start_time = time(nullptr);
 		TR << "Starting " << curr_job->output_tag(curr_nstruct) << " ..." << std::endl;
 
 		// we read each PDB just once to save on disk I/O
-		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
+		if ( curr_job.get() != prev_job.get() || input_pose.get() == nullptr ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( use_silent_in ) atdiff->read_pose( curr_job->input_tag(), *input_pose );
 			else core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
@@ -168,7 +168,7 @@ ligand_dock_main_jd1()
 		// Score new structure and add to silent file
 		std::map< std::string, core::Real > scores;
 		core::import_pose::atom_tree_diffs::map_of_weighted_scores(*the_pose, *(dockingProtocol->get_scorefxn()), scores);
-		if ( rms_native_pose.get() == NULL ) { // input serves as native
+		if ( rms_native_pose.get() == nullptr ) { // input serves as native
 			dockingProtocol->append_ligand_docking_scores(*input_pose, *the_pose,
 				dockingProtocol->get_scorefxn(), scores, constraint_io);
 		} else {
@@ -183,11 +183,11 @@ ligand_dock_main_jd1()
 
 		prev_job = curr_job; // pointer assignment, not a copy op
 		num_structures_processed += 1;
-		time_t pdb_end_time = time(NULL);
+		time_t pdb_end_time = time(nullptr);
 		TR << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 	} // loop over jobs and nstructs
 
-	time_t overall_end_time = time(NULL);
+	time_t overall_end_time = time(nullptr);
 	TR << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
 	if ( num_structures_processed == 0 ) {
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them?" << std::endl;

@@ -21,7 +21,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-ExternalGeomSampler::~ExternalGeomSampler() {}
+ExternalGeomSampler::~ExternalGeomSampler() = default;
 
 ExternalGeomSampler::ExternalGeomSampler() :
 	parent(),

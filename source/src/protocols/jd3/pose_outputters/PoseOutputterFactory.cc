@@ -52,7 +52,7 @@ PoseOutputterFactory::PoseOutputterFactory() :
 void
 PoseOutputterFactory::factory_register( PoseOutputterCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const pose_outputter_type( creator->keyname() );
 	if ( pose_outputter_creator_map_.find( pose_outputter_type ) != pose_outputter_creator_map_.end() ) {
 		std::string err_msg = "PoseOutputterFactory::factory_register already has a pose_outputter creator with name \""
@@ -70,7 +70,7 @@ PoseOutputterFactory::factory_register( PoseOutputterCreatorOP creator )
 void
 PoseOutputterFactory::factory_register( SecondaryPoseOutputterCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const secondary_pose_outputter_type( creator->keyname() );
 	if ( secondary_pose_outputter_creator_map_.find( secondary_pose_outputter_type ) != secondary_pose_outputter_creator_map_.end() ) {
 		std::string err_msg = "PoseOutputterFactory::factory_register already has a secondary pose outputter creator with name \""
@@ -90,7 +90,7 @@ PoseOutputterFactory::factory_register( SecondaryPoseOutputterCreatorOP creator 
 PoseOutputterOP
 PoseOutputterFactory::new_pose_outputter( std::string const & pose_outputter_type ) const
 {
-	PoseOutputterMap::const_iterator iter( pose_outputter_creator_map_.find( pose_outputter_type ) );
+	auto iter( pose_outputter_creator_map_.find( pose_outputter_type ) );
 	if ( iter != pose_outputter_creator_map_.end() ) {
 		if ( ! iter->second ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: PoseOutputterCreatorOP prototype for " + pose_outputter_type + " is NULL!" );
@@ -112,7 +112,7 @@ PoseOutputterFactory::new_pose_outputter( std::string const & pose_outputter_typ
 SecondaryPoseOutputterOP
 PoseOutputterFactory::new_secondary_outputter( std::string const & secondary_outputter_type ) const
 {
-	SecondaryOutputterMap::const_iterator iter( secondary_pose_outputter_creator_map_.find( secondary_outputter_type ) );
+	auto iter( secondary_pose_outputter_creator_map_.find( secondary_outputter_type ) );
 	if ( iter != secondary_pose_outputter_creator_map_.end() ) {
 		if ( ! iter->second ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: SecondaryPoseOutputterCreatorOP prototype for " + secondary_outputter_type + " is NULL!" );

@@ -69,10 +69,10 @@
 #include <sstream>
 #include <ObjexxFCL/format.hh>
 #include <set>
-#include <time.h>
+#include <ctime>
 #include <map>
 
-#include <stdio.h> //Sept 26, 2011
+#include <cstdio> //Sept 26, 2011
 
 //for process_mem_usage:
 #include <ios>

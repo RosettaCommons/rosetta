@@ -38,7 +38,7 @@
 #include <basic/Tracer.hh>
 
 //C++ header
-#include <stdio.h>
+#include <cstdio>
 
 namespace core {
 namespace scoring {

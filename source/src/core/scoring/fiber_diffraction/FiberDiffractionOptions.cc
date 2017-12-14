@@ -31,9 +31,9 @@ using basic::resource_manager::ResourceOptions;
 using std::string;
 using utility::tag::TagCOP;
 
-FiberDiffractionOptionsCreator::FiberDiffractionOptionsCreator() {}
+FiberDiffractionOptionsCreator::FiberDiffractionOptionsCreator() = default;
 
-FiberDiffractionOptionsCreator::~FiberDiffractionOptionsCreator() {}
+FiberDiffractionOptionsCreator::~FiberDiffractionOptionsCreator() = default;
 
 ResourceOptionsOP
 FiberDiffractionOptionsCreator::create_options() const {
@@ -77,16 +77,9 @@ FiberDiffractionOptions::FiberDiffractionOptions(
 {}
 
 
-FiberDiffractionOptions::FiberDiffractionOptions(
-	FiberDiffractionOptions const & src
-) :
-	ResourceOptions(src),
-	c(src.c),
-	res_cutoff_high(src.res_cutoff_high),
-	res_cutoff_low(src.res_cutoff_low)
-{}
+FiberDiffractionOptions::FiberDiffractionOptions( FiberDiffractionOptions const & /*src*/ ) = default;
 
-FiberDiffractionOptions::~FiberDiffractionOptions() {}
+FiberDiffractionOptions::~FiberDiffractionOptions() = default;
 
 Real FiberDiffractionOptions::get_res_high() const {
 	return  res_cutoff_high;

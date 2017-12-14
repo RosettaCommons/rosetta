@@ -430,7 +430,7 @@ AntibodyCDRGrafter::apply( core::pose::Pose& pose ){
 	KeepRegionMover cookie_cutter = KeepRegionMover();
 
 	for ( core::Size i = 1; i <=  CDRNameEnum_proto_total; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 		if ( ! cdrs_to_graft_[ i ] ) continue;
 
 		TR <<"Grafting CDR: "<< ab_info_->get_CDR_name( cdr ) << std::endl;
@@ -481,10 +481,10 @@ AntibodyCDRGrafter::apply( core::pose::Pose& pose ){
 		//Setup CDRs to minimize based on graft and neighbors.
 		utility::vector1< bool > cdrs_to_minimize( 8, false );
 		for ( core::Size i = 1; i <= cdrs_to_graft_.size(); ++i ) {
-			CDRNameEnum cdr_grafted = static_cast< CDRNameEnum >( i );
+			auto cdr_grafted = static_cast< CDRNameEnum >( i );
 
 			for ( core::Size x = 1; x <= neighbor_cdrs_[ cdr_grafted ].size(); ++x ) {
-				CDRNameEnum cdr_neighbor = static_cast< CDRNameEnum >( x );
+				auto cdr_neighbor = static_cast< CDRNameEnum >( x );
 
 				if ( ( cdr_neighbor == l4 || cdr_neighbor == h4 ) ) {
 					if ( include_cdr4_ ) cdrs_to_minimize[ cdr_neighbor ] = true;
@@ -502,7 +502,7 @@ AntibodyCDRGrafter::apply( core::pose::Pose& pose ){
 		for ( core::Size i = 1; i <= cdrs_to_minimize.size(); ++i ) {
 			if ( ! cdrs_to_minimize[ i ] ) continue;
 
-			CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
+			auto cdr = static_cast< CDRNameEnum >( i );
 			dih_cst.set_cdr( cdr );
 			dih_cst.apply( pose );
 			modeler.cdr_overhang(cdr, 2);

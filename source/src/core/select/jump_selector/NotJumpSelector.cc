@@ -40,8 +40,8 @@ namespace select {
 namespace jump_selector {
 
 
-NotJumpSelector::NotJumpSelector() {}
-NotJumpSelector::~NotJumpSelector() {}
+NotJumpSelector::NotJumpSelector() = default;
+NotJumpSelector::~NotJumpSelector() = default;
 
 /// @brief Copy constructor
 ///

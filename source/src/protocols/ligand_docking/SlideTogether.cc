@@ -58,16 +58,11 @@ static basic::Tracer slide_together_tracer( "protocols.ligand_docking.ligand_opt
 // XRW TEMP  return "SlideTogether";
 // XRW TEMP }
 
-SlideTogether::SlideTogether(){}
+SlideTogether::SlideTogether()= default;
 
-SlideTogether::SlideTogether(std::string  chain): chain_(std::move(chain)), jumps_(){}
+SlideTogether::SlideTogether(std::string const & chain): chain_(chain), jumps_(){}
 
-SlideTogether::SlideTogether(SlideTogether const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	chain_(that.chain_),
-	jumps_(that.jumps_)
-{}
+SlideTogether::SlideTogether(SlideTogether const & /*that*/) = default;
 
 SlideTogether::~SlideTogether() = default;
 

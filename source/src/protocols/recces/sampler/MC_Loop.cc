@@ -31,8 +31,7 @@ MC_Loop::MC_Loop():
 }
 
 //Destructor
-MC_Loop::~MC_Loop()
-{}
+MC_Loop::~MC_Loop() = default;
 
 ///////////////////////////////////////////////////////////////////////////
 void MC_Loop::operator++() {

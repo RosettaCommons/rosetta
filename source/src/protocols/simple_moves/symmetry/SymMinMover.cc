@@ -84,7 +84,7 @@ SymMinMover::SymMinMover()
 SymMinMover::SymMinMover( std::string const & name )
 : protocols::simple_moves::MinMover(name) {}
 
-SymMinMover::~SymMinMover(){}
+SymMinMover::~SymMinMover()= default;
 
 SymMinMover::SymMinMover( MinMover const & src ):
 	protocols::simple_moves::MinMover(src)

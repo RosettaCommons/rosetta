@@ -75,8 +75,8 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-RotamerSets::RotamerSets() {}
-RotamerSets::~RotamerSets() {}
+RotamerSets::RotamerSets() = default;
+RotamerSets::~RotamerSets() = default;
 
 void
 RotamerSets::dump_pdb( pose::Pose const & pose, std::string const & filename ) const
@@ -212,8 +212,8 @@ RotamerSets::build_rotamers(
 					RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
 					RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
 					rotset->set_resid( resid );
-					for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) {
-						conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
+					for ( auto const & itr : *bufferset ) {
+						conformation::ResidueOP cloneRes( new conformation::Residue(*itr->clone()) );
 						copy_residue_conenctions_and_variants(pose,cloneRes,resid, asym_length);
 						rotset->add_rotamer(*cloneRes);
 
@@ -231,8 +231,8 @@ RotamerSets::build_rotamers(
 					RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
 					RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
 					rotset->set_resid( resid );
-					for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) {
-						conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
+					for ( auto const & itr : *bufferset ) {
+						conformation::ResidueOP cloneRes( new conformation::Residue(*itr->clone()) );
 						copy_residue_conenctions_and_variants(pose,cloneRes,resid, asym_length);
 						rotset->add_rotamer(*cloneRes);
 
@@ -308,42 +308,42 @@ RotamerSets::build_rotamers(
 
 				RotamerSetOP smallset( rsf->create_rotamer_set( pose.residue( 1 ) )) ;
 
-				for ( Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ) { //go through each rotamer
+				for ( auto const & itr : *bufferset ) { //go through each rotamer
 
-					conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
+					conformation::ResidueOP cloneRes( new conformation::Residue(*itr->clone()) );
 
 					cloneRes->seqpos(copies[jj]); //sets sequence position to current copy
 
 					//correct for connections if the smallset is from first or last
 					//residues.  These positions don't have a complete connect record.
 
-					if ( (*itr)->seqpos() == 1 && copies[jj] != 1  ) {
+					if ( itr->seqpos() == 1 && copies[jj] != 1  ) {
 						if ( cloneRes->has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) {
 							cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
 						}
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
 						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
-					} else if ( (*itr)->seqpos() == 1 && copies[jj] == 1  ) {
+					} else if ( itr->seqpos() == 1 && copies[jj] == 1  ) {
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
-					} else if ( (*itr)->seqpos() == asym_length && copies[jj] != (int) asym_length ) {
+					} else if ( itr->seqpos() == asym_length && copies[jj] != (int) asym_length ) {
 						if ( cloneRes->has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) {
 							cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
 						}
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
 						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
-					} else if ( (*itr)->seqpos() == asym_length && copies[jj] == (int) asym_length ) {
+					} else if ( itr->seqpos() == asym_length && copies[jj] == (int) asym_length ) {
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					} else {
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
 
 					//debug connectivity
-					TR.Debug << "rotamer #: " << *itr << " ";
+					TR.Debug << "rotamer #: " << itr << " ";
 					TR.Debug << "resconn1: " << cloneRes->connected_residue_at_resconn( 1 ) << " ";
 					TR.Debug << cloneRes->residue_connection_conn_id(1);
 					TR.Debug << " resconn2: " << cloneRes->connected_residue_at_resconn( 2 ) << " ";
 					TR.Debug << cloneRes->residue_connection_conn_id(2);
-					TR.Debug << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << (*itr)->seqpos() << std::endl;
+					TR.Debug << " seqpos: " << cloneRes->seqpos() << " for " << copies[jj] << " cloned from " << itr->seqpos() << std::endl;
 
 					using namespace core::chemical;
 
@@ -524,7 +524,7 @@ RotamerSets::precompute_two_body_energies(
 
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = scfxn.long_range_energies_begin(),
 			lr_end  = scfxn.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
@@ -660,7 +660,7 @@ RotamerSets::prepare_otf_graph(
 	sparse_conn_info = true;
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = scfxn.long_range_energies_begin(),
 			lr_end  = scfxn.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {

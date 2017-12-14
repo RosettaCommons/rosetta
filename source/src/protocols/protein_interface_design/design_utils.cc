@@ -71,9 +71,9 @@ static basic::Tracer TR( "protocols.protein_interface_design.design_utils" );
 
 using namespace core;
 
-typedef core::Real Real;
-typedef core::Size Size;
-typedef core::pose::Pose Pose;
+using Real = core::Real;
+using Size = core::Size;
+using Pose = core::pose::Pose;
 
 // it is assumed that the pose is scored prior to calling this function
 core::Real
@@ -81,12 +81,12 @@ sum_total_residue_energy( pose::Pose const & pose, core::Size const resid )
 {
 	using namespace core::scoring;
 
-	typedef utility::vector1<ScoreType> ScoreTypeVec;
+	using ScoreTypeVec = utility::vector1<ScoreType>;
 
 	ScoreTypeVec score_types;
 	EnergyMap weights = pose.energies().weights();
 	for ( core::Size i = 1; i <= n_score_types; ++i ) {
-		ScoreType const st = ScoreType( i );
+		auto const st = ScoreType( i );
 		if ( weights[ st ] != 0 ) score_types.push_back( st );
 	}
 
@@ -462,7 +462,7 @@ MinimizeInterface(
 	AtomTreeMinimizer().run( pose, mm, *scorefxn,
 		MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
 
-	if ( 0/* target_residues.size() > 0*/ ) { //reset fold_tree
+	if ( false/* target_residues.size() > 0*/ ) { //reset fold_tree
 		pose.fold_tree( saved_ft );
 	}
 	TR.flush();

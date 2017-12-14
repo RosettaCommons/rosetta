@@ -40,8 +40,7 @@ BlueprintArchitect::BlueprintArchitect( std::string const & id_value ):
 {
 }
 
-BlueprintArchitect::~BlueprintArchitect()
-{}
+BlueprintArchitect::~BlueprintArchitect() = default;
 
 DeNovoArchitectOP
 BlueprintArchitect::clone() const
@@ -148,7 +147,7 @@ BlueprintArchitect::get_helix_pairings(
 	core::Size & h2,
 	char & orientation ) const
 {
-	typedef utility::vector1< std::string > Strings;
+	using Strings = utility::vector1<std::string>;
 	Strings const fields = utility::string_split( hhpair_str, '.' );
 
 	if ( fields.size() != 2 ) {
@@ -178,9 +177,9 @@ void
 BlueprintArchitect::set_template_segments( StructureData & sd, core::pose::Pose const & pose ) const
 {
 	SegmentNames const templates = get_template_segments( sd );
-	for ( SegmentNames::const_iterator s=templates.begin(); s!=templates.end(); ++s ) {
-		TR << "Adding template for " << *s << std::endl;
-		sd.set_template_pose( *s, pose, blueprint_->resnum( sd.segment( *s ).lower() ), blueprint_->resnum( sd.segment( *s ).upper() ) );
+	for ( auto const & s : templates ) {
+		TR << "Adding template for " << s << std::endl;
+		sd.set_template_pose( s, pose, blueprint_->resnum( sd.segment( s ).lower() ), blueprint_->resnum( sd.segment( s ).upper() ) );
 	}
 }
 
@@ -193,7 +192,7 @@ SegmentNames
 BlueprintArchitect::get_template_segments( StructureData const & sd ) const
 {
 	SegmentNames has_template;
-	for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
+	for ( auto s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
 		core::Size template_residues = 0;
 		core::Size prev_pose_residue = 0;
 		for ( core::Size resid=sd.segment( *s ).lower(); resid<=sd.segment( *s ).upper(); ++resid ) {

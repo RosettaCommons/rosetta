@@ -105,7 +105,7 @@ compute_nres_in_asymmetric_unit( core::pose::Pose const & pose )
 {
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info;
-		core::conformation::symmetry::SymmetricConformation const & SymmConf(
+		auto const & SymmConf(
 			dynamic_cast< core::conformation::symmetry::SymmetricConformation const & >( pose.conformation() ) );
 		symm_info = SymmConf.Symmetry_Info();
 		return symm_info->num_independent_residues();

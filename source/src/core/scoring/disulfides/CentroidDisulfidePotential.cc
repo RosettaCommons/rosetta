@@ -63,12 +63,12 @@ namespace disulfides {
 /**
 * Constructor
 */
-CentroidDisulfidePotential::CentroidDisulfidePotential() {}
+CentroidDisulfidePotential::CentroidDisulfidePotential() = default;
 
 /**
 * Deconstructor
 */
-CentroidDisulfidePotential::~CentroidDisulfidePotential() {}
+CentroidDisulfidePotential::~CentroidDisulfidePotential() = default;
 
 /**
 * @brief Calculates scoring terms for the disulfide bond specified
@@ -356,8 +356,8 @@ histogram_from_db(string file) {
 }
 
 //Cb_Distance_Func
-Cb_Distance_Func::Cb_Distance_Func() {}
-Cb_Distance_Func::~Cb_Distance_Func() {}
+Cb_Distance_Func::Cb_Distance_Func() = default;
+Cb_Distance_Func::~Cb_Distance_Func() = default;
 
 bool Cb_Distance_Func::operator == ( Func const & other ) const
 {
@@ -389,8 +389,8 @@ const Real Cb_Distance_Func::weights_[3] = {10.8864116, 33.5711622, 0.2658681 };
 const Real Cb_Distance_Func::base_score_ = 0.0;
 
 //Cen_Distance_Func
-Cen_Distance_Func::Cen_Distance_Func() {}
-Cen_Distance_Func::~Cen_Distance_Func() {}
+Cen_Distance_Func::Cen_Distance_Func() = default;
+Cen_Distance_Func::~Cen_Distance_Func() = default;
 bool Cen_Distance_Func::operator == ( Func const & other ) const
 {
 	return same_type_as_me( other ) && other.same_type_as_me( *this );
@@ -401,7 +401,7 @@ bool Cen_Distance_Func::same_type_as_me( Func const & other ) const
 	return dynamic_cast< Cen_Distance_Func const * > ( &other );
 }
 Real Cen_Distance_Func::func( Real const cen_dist_sq) const {
-	if ( centroid_dist_scores_ == 0 ) {
+	if ( centroid_dist_scores_ == nullptr ) {
 		centroid_dist_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_distance_score");
 	}
 	Real e(0.0);
@@ -411,11 +411,11 @@ Real Cen_Distance_Func::func( Real const cen_dist_sq) const {
 Real Cen_Distance_Func::dfunc( Real const ) const {
 	return 0.0;
 }
-HistogramCOP<Real,Real>::Type Cen_Distance_Func::centroid_dist_scores_ = 0;
+HistogramCOP<Real,Real>::Type Cen_Distance_Func::centroid_dist_scores_ = nullptr;
 
 //CaCbCb_Angle_Func
-CaCbCb_Angle_Func::CaCbCb_Angle_Func() {}
-CaCbCb_Angle_Func::~CaCbCb_Angle_Func() {}
+CaCbCb_Angle_Func::CaCbCb_Angle_Func() = default;
+CaCbCb_Angle_Func::~CaCbCb_Angle_Func() = default;
 bool CaCbCb_Angle_Func::operator == ( Func const & other ) const
 {
 	return same_type_as_me( other ) && other.same_type_as_me( *this );
@@ -426,7 +426,7 @@ bool CaCbCb_Angle_Func::same_type_as_me( Func const & other ) const
 	return dynamic_cast< CaCbCb_Angle_Func const * > ( &other );
 }
 Real CaCbCb_Angle_Func::func( Real const cacbcb_angle) const {
-	if ( CaCbCb_angle_scores_ == 0 ) {
+	if ( CaCbCb_angle_scores_ == nullptr ) {
 		CaCbCb_angle_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_CaCbCb_angle_score");
 	}
 	Real e(0.0);
@@ -436,12 +436,12 @@ Real CaCbCb_Angle_Func::func( Real const cacbcb_angle) const {
 Real CaCbCb_Angle_Func::dfunc( Real const ) const {
 	return 0.0;
 }
-HistogramCOP<core::Real,core::Real>::Type CaCbCb_Angle_Func::CaCbCb_angle_scores_ = 0;
+HistogramCOP<core::Real,core::Real>::Type CaCbCb_Angle_Func::CaCbCb_angle_scores_ = nullptr;
 
 
 //NCaCaC_Dihedral_Func
-NCaCaC_Dihedral_Func::NCaCaC_Dihedral_Func() {}
-NCaCaC_Dihedral_Func::~NCaCaC_Dihedral_Func() {}
+NCaCaC_Dihedral_Func::NCaCaC_Dihedral_Func() = default;
+NCaCaC_Dihedral_Func::~NCaCaC_Dihedral_Func() = default;
 bool NCaCaC_Dihedral_Func::operator == ( Func const & other ) const
 {
 	return same_type_as_me( other ) && other.same_type_as_me( *this );
@@ -452,7 +452,7 @@ bool NCaCaC_Dihedral_Func::same_type_as_me( Func const & other ) const
 	return dynamic_cast< NCaCaC_Dihedral_Func const * > ( &other );
 }
 Real NCaCaC_Dihedral_Func::func( Real const backbone_dihedral) const {
-	if ( backbone_dihedral_scores_ == 0 ) {
+	if ( backbone_dihedral_scores_ == nullptr ) {
 		backbone_dihedral_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_backbone_dihedral_score");
 	}
 	Real e(0.0);
@@ -462,12 +462,12 @@ Real NCaCaC_Dihedral_Func::func( Real const backbone_dihedral) const {
 Real NCaCaC_Dihedral_Func::dfunc( Real const ) const {
 	return 0.0;
 }
-HistogramCOP<core::Real,core::Real>::Type NCaCaC_Dihedral_Func::backbone_dihedral_scores_ = 0;
+HistogramCOP<core::Real,core::Real>::Type NCaCaC_Dihedral_Func::backbone_dihedral_scores_ = nullptr;
 
 
 //CaCbCbCa_Dihedral_Func
-CaCbCbCa_Dihedral_Func::CaCbCbCa_Dihedral_Func() {}
-CaCbCbCa_Dihedral_Func::~CaCbCbCa_Dihedral_Func() {}
+CaCbCbCa_Dihedral_Func::CaCbCbCa_Dihedral_Func() = default;
+CaCbCbCa_Dihedral_Func::~CaCbCbCa_Dihedral_Func() = default;
 bool CaCbCbCa_Dihedral_Func::operator == ( Func const & other ) const
 {
 	return same_type_as_me( other ) && other.same_type_as_me( *this );
@@ -478,7 +478,7 @@ bool CaCbCbCa_Dihedral_Func::same_type_as_me( Func const & other ) const
 	return dynamic_cast< CaCbCbCa_Dihedral_Func const * > ( &other );
 }
 Real CaCbCbCa_Dihedral_Func::func( Real const cacbcbca_dihedral) const {
-	if ( CaCbCbCa_dihedral_scores_ == 0 ) {
+	if ( CaCbCbCa_dihedral_scores_ == nullptr ) {
 		CaCbCbCa_dihedral_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_CaCbCbCa_dihedral_score");
 	}
 	Real e(0.0);
@@ -488,7 +488,7 @@ Real CaCbCbCa_Dihedral_Func::func( Real const cacbcbca_dihedral) const {
 Real CaCbCbCa_Dihedral_Func::dfunc( Real const ) const {
 	return 0.0;
 }
-HistogramCOP<core::Real,core::Real>::Type CaCbCbCa_Dihedral_Func::CaCbCbCa_dihedral_scores_ = 0;
+HistogramCOP<core::Real,core::Real>::Type CaCbCbCa_Dihedral_Func::CaCbCbCa_dihedral_scores_ = nullptr;
 
 
 } // disulfides

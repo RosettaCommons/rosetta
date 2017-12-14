@@ -32,7 +32,7 @@ namespace scoring {
 namespace packing {
 
 /// @details Auto-generated virtual destructor
-PoseBallsLite::~PoseBallsLite() {}
+PoseBallsLite::~PoseBallsLite() = default;
 
 using namespace ObjexxFCL;
 

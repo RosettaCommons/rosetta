@@ -50,7 +50,7 @@ using core::pose::Pose;
 static basic::Tracer tr( "protocols.loops.LoopMoverFactory" );
 
 /// @details Private constructor insures correctness of singleton.
-LoopMoverFactory::LoopMoverFactory() {}
+LoopMoverFactory::LoopMoverFactory() = default;
 
 LoopMoverFactory::~LoopMoverFactory() = default;
 

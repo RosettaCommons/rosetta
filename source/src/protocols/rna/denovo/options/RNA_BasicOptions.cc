@@ -42,8 +42,7 @@ RNA_BasicOptions::RNA_BasicOptions():
 {}
 
 //Destructor
-RNA_BasicOptions::~RNA_BasicOptions()
-{}
+RNA_BasicOptions::~RNA_BasicOptions() = default;
 
 
 /// @brief copy constructor

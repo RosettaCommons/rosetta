@@ -81,13 +81,13 @@ public:
 	ResidueIndexDescriptionFromFile();
 
 	ResidueIndexDescriptionFromFile(
-		std::string fname,
+		std::string const & fname,
 		Size linenum,
 		Size pose_index
 	);
 
 	ResidueIndexDescriptionFromFile(
-		std::string fname,
+		std::string const & fname,
 		Size linenum,
 		char chain,
 		int resindex,

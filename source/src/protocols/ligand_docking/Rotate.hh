@@ -70,7 +70,7 @@ class Rotate: public protocols::moves::Mover
 {
 public:
 	Rotate();
-	Rotate(Rotate_info rotate_info);
+	Rotate(Rotate_info const & rotate_info); // moves Rotate_info, so by-value
 	~Rotate() override;
 	Rotate(Rotate const & that);
 

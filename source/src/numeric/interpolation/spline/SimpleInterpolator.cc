@@ -15,6 +15,7 @@
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <numeric/interpolation/spline/spline_functions.hh>
 
+#include <utility>
 #include <utility/tools/make_vector.hh>
 
 #ifdef    SERIALIZATION
@@ -71,16 +72,16 @@ utility::json_spirit::Value SimpleInterpolator::serialize() const
 
 	std::vector<Value> x_values,y_values,ddy_values;
 
-	for ( utility::vector1<Real>::const_iterator it = x_.begin(); it != x_.end(); ++it ) {
-		x_values.push_back(Value(*it));
+	for ( double it : x_ ) {
+		x_values.emplace_back(it);
 	}
 
-	for ( utility::vector1<Real>::const_iterator it = y_.begin(); it != y_.end(); ++it ) {
-		y_values.push_back(Value(*it));
+	for ( double it : y_ ) {
+		y_values.emplace_back(it);
 	}
 
-	for ( utility::vector1<Real>::const_iterator it = ddy_.begin(); it != ddy_.end(); ++it ) {
-		ddy_values.push_back(Value(*it));
+	for ( double it : ddy_ ) {
+		ddy_values.emplace_back(it);
 	}
 
 	Pair x_data("xdata",x_values);
@@ -103,16 +104,16 @@ void SimpleInterpolator::deserialize(utility::json_spirit::mObject data)
 	y_.clear();
 	ddy_.clear();
 
-	for ( utility::json_spirit::mArray::iterator it = x_data.begin(); it != x_data.end(); ++it ) {
-		x_.push_back(it->get_real());
+	for ( auto & it : x_data ) {
+		x_.push_back(it.get_real());
 	}
 
-	for ( utility::json_spirit::mArray::iterator it = y_data.begin(); it != y_data.end(); ++it ) {
-		y_.push_back(it->get_real());
+	for ( auto & it : y_data ) {
+		y_.push_back(it.get_real());
 	}
 
-	for ( utility::json_spirit::mArray::iterator it = ddy_data.begin(); it != ddy_data.end(); ++it ) {
-		ddy_.push_back(it->get_real());
+	for ( auto & it : ddy_data ) {
+		ddy_.push_back(it.get_real());
 	}
 
 	Interpolator::deserialize(data["base_data"].get_obj());
@@ -122,7 +123,7 @@ void SimpleInterpolator::deserialize(utility::json_spirit::mObject data)
 bool SimpleInterpolator::operator == ( Interpolator const & other ) const
 {
 	if ( ! Interpolator::operator==( other ) ) return false;
-	SimpleInterpolator const & other_downcast( static_cast< SimpleInterpolator const & > ( other ) );
+	auto const & other_downcast( static_cast< SimpleInterpolator const & > ( other ) );
 	if ( x_   != other_downcast.x_   ) return false;
 	if ( y_   != other_downcast.y_   ) return false;
 	if ( ddy_ != other_downcast.ddy_ ) return false;

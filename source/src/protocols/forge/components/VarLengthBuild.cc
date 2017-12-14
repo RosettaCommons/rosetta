@@ -68,6 +68,7 @@
 #include <protocols/loops/LoopMoverFactory.hh>
 
 // utility headers
+#include <utility>
 #include <utility/vector1.hh>
 
 #include <core/fragment/FrameIterator.hh>
@@ -187,7 +188,7 @@ VarLengthBuild::VarLengthBuild( VarLengthBuild const & rval ) :
 
 
 /// @brief default destructor
-VarLengthBuild::~VarLengthBuild() {}
+VarLengthBuild::~VarLengthBuild() = default;
 
 
 /// @brief clone this object
@@ -447,8 +448,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 	//flo may '12, give user supplied setup movers
 	//a chance to modify the pose before centroid building happens
 	//pose.dump_pdb("vlb_bef_setup_movers.pdb");
-	for (  utility::vector1< moves::MoverOP >::iterator mover_it( setup_movers_.begin() ); mover_it != setup_movers_.end(); ++mover_it ) {
-		(*mover_it)->apply( pose );
+	for ( auto & setup_mover : setup_movers_ ) {
+		setup_mover->apply( pose );
 	}
 	//pose.dump_pdb("vlb_aft_setup_movers.pdb");
 
@@ -585,7 +586,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	typedef utility::vector1< Interval > Intervals;
+	using Intervals = utility::vector1<Interval>;
 
 	// safety, clear the energies object
 	pose.energies().clear();
@@ -643,8 +644,8 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		// fill in the sequence of the new regions from the "new" modified Pose
 		// that we're working on
 		Positions np = manager_.new_positions();
-		for ( Positions::const_iterator i = np.begin(), ie = np.end(); i != ie; ++i ) {
-			aa.at( (*i) - 1 ) = pose.residue( *i ).name1();
+		for ( unsigned long i : np ) {
+			aa.at( i - 1 ) = pose.residue( i ).name1();
 		}
 	}
 
@@ -665,7 +666,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		Size insertEndIndex = remodel_data_.dssp_updated_ss.find_last_of("I");
 
 		//loop over the interval set to find insertion and split it into two sections
-		for ( std::set< Interval >::iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
+		for ( auto i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
 			Interval interval = *i;
 
 			if ( interval.left <= insertStartIndex && interval.right >= insertEndIndex && ((insertEndIndex-insertStartIndex) != 0) ) {
@@ -688,8 +689,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		}
 
 		// pick fragments for insertion case
-		for ( std::set< Interval >::const_iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
-			Interval interval = *i;
+		for ( auto interval : loop_intervals ) {
 			if ( !( cache_fragments_ && fragments_picked_ ) ) {
 				pick_all_fragments( ss, aa, abego_, interval, num_fragpick_ );
 			}
@@ -703,9 +703,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	//loops
 	loop_intervals = manager_.intervals_containing_undefined_positions();
 
-	for ( std::set< Interval >::const_iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
-		Interval interval = *i;
-
+	for ( auto interval : loop_intervals ) {
 		Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
 
 		if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
@@ -785,9 +783,9 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		//safety
 		//pose.remove_constraints();
 		//wipe out cst_cache
-		protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
+		protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( nullptr );
 		//wipe out observer too
-		pose.observer_cache().set( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER, NULL , false);
+		pose.observer_cache().set( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER, nullptr , false);
 
 		//RemodelEnzdesCstModule cst(remodel_data);
 		cstOP->use_backbone_only_blocks();
@@ -827,7 +825,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		return cbreaks_pass;
 	}
 
-	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
+	for ( auto l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = linear_chainbreak( pose, l->cut() );
 			TR << "centroid_build: loop: " << l->start() << "-" << l->stop() << ", final chainbreak = " << c << ", max_linear_chainbreak_: " << max_linear_chainbreak_ << std::endl;
@@ -853,7 +851,7 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 	using protocols::loops::loop_mover::IndependentLoopMover;
 	using protocols::loops::LoopMoverFactory;
 
-	typedef utility::pointer::shared_ptr< IndependentLoopMover > IndependentLoopMoverOP;
+	using IndependentLoopMoverOP = utility::pointer::shared_ptr<IndependentLoopMover>;
 
 	MoverOP lm;
 
@@ -1081,10 +1079,10 @@ VarLengthBuild::setup_remodel_constraints(
 		return; // nothing to do...
 	}
 
-	for ( utility::vector1< RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin(); rcg_it != rcgs_.end(); ++rcg_it ) {
-		(*rcg_it)->set_seqmap( this->manager().sequence_mapping());
-		TR << "Adding remodel constraints to pose using " << (*rcg_it)->get_name() << std::endl;
-		(*rcg_it)->add_remodel_constraints_to_pose( pose );
+	for ( auto & rcg : rcgs_ ) {
+		rcg->set_seqmap( this->manager().sequence_mapping());
+		TR << "Adding remodel constraints to pose using " << rcg->get_name() << std::endl;
+		rcg->add_remodel_constraints_to_pose( pose );
 	}
 }
 
@@ -1098,8 +1096,8 @@ VarLengthBuild::remove_remodel_constraints(
 		return; // nothing to do...
 	}
 
-	for ( utility::vector1< RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin(); rcg_it != rcgs_.end(); ++rcg_it ) {
-		(*rcg_it)->remove_remodel_constraints_from_pose( pose );
+	for ( auto & rcg : rcgs_ ) {
+		rcg->remove_remodel_constraints_from_pose( pose );
 	}
 }
 

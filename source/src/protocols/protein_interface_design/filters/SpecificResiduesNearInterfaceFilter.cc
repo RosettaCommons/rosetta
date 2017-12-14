@@ -80,7 +80,7 @@ SpecificResiduesNearInterfaceFilter::SpecificResiduesNearInterfaceFilter(
 	rb_jump_(src.rb_jump_)
 {}
 
-SpecificResiduesNearInterfaceFilter::~SpecificResiduesNearInterfaceFilter(){}
+SpecificResiduesNearInterfaceFilter::~SpecificResiduesNearInterfaceFilter()= default;
 
 FilterOP
 SpecificResiduesNearInterfaceFilter::fresh_instance() const{

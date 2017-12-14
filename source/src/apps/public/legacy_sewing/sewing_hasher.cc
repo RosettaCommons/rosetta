@@ -422,7 +422,7 @@ main( int argc, char * argv [] ) {
 				TR << "current model id (it2): " << (it2->second).model_id_ << std::endl;
 				scores = hasher.score(it1->second, num_segments_to_match, min_hash_score, max_clash_score, true, box_length);
 				if ( ! option[legacy_sewing::do_not_remove_connection_inconsistencies].user() ) {
-					option[legacy_sewing::do_not_remove_connection_inconsistencies].value( 0 );
+					option[legacy_sewing::do_not_remove_connection_inconsistencies].value( false );
 				}
 				bool do_not_remove_connection_inconsistencies = option[legacy_sewing::do_not_remove_connection_inconsistencies];
 				TR << "do_not_remove_connection_inconsistencies: " << do_not_remove_connection_inconsistencies << std::endl;

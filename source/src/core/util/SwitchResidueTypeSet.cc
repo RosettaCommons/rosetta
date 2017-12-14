@@ -90,7 +90,7 @@ switch_to_residue_type_set(
 	//fpd only do this over the asymmetric unit if the pose is symmetric
 	symmetry::SymmetryInfoCOP symm_info=nullptr;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		symmetry::SymmetricConformation const & symm_conf ( dynamic_cast< symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+		auto const & symm_conf ( dynamic_cast< symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 		symm_info = symm_conf.Symmetry_Info();
 	}
 
@@ -273,7 +273,7 @@ switch_to_centroid_rot_set(
 		}
 
 		//gen new residue
-		core::conformation::ResidueOP new_rsd( 0 );
+		core::conformation::ResidueOP new_rsd( nullptr );
 		if ( (rsd.aa()==aa_unk) || (rsd.aa()==aa_vrt) ) {
 			//skip
 			continue;

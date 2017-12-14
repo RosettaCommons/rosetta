@@ -293,10 +293,10 @@ int main(int argc, char *argv[])
 		}
 
 		core::Size outsize=0;
-		for ( std::multimap< core::Real, core::Size>::iterator ddg_index_pair = ddgclustermap.begin(); ddg_index_pair != ddgclustermap.end(); ++ddg_index_pair ) {
+		for ( auto & ddg_index_pair : ddgclustermap ) {
 			if ( outsize<output_ddg_clusters ) {
-				outtaglist.push_back(taglist[ddg_index_pair->second]);
-				TR.Info << ddg_index_pair->second<< " : " << taglist[ddg_index_pair->second] << " : " << ddg_index_pair->first << std::endl;
+				outtaglist.push_back(taglist[ddg_index_pair.second]);
+				TR.Info << ddg_index_pair.second<< " : " << taglist[ddg_index_pair.second] << " : " << ddg_index_pair.first << std::endl;
 			}
 			outsize++;
 			if ( outsize>=output_ddg_clusters ) break;

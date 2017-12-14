@@ -18,6 +18,7 @@
 
 // Project headers
 #include <core/scoring/ScoreFunction.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
@@ -91,7 +92,7 @@ PrepackMover::PrepackMover(
 	core::Size jump_num
 ) :
 	protocols::simple_moves::PackRotamersMover( PrepackMover::mover_name() ),
-	scorefxn_( scorefxn ),
+	scorefxn_(std::move( scorefxn )),
 	jump_num_( jump_num )
 {}
 
@@ -106,7 +107,7 @@ PrepackMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new PrepackMover );
 }
 
-PrepackMover::~PrepackMover() {}
+PrepackMover::~PrepackMover() = default;
 
 /// @details separate bound partners (if any), minimize, do rotamer trials, and re-minimize.
 void PrepackMover::apply( pose::Pose & pose )
@@ -211,7 +212,7 @@ PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>("jump_number", 1 );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-	min_bb( tag->getOption< bool >( "min_bb", 0 ));
+	min_bb( tag->getOption< bool >( "min_bb", false ));
 	if ( min_bb() ) {
 		mmf_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data );
 	}

@@ -38,13 +38,13 @@ static basic::Tracer TR( "apps.public.rosettaDNA" );
 class DummyMover : public Mover {
 public:
 	DummyMover() : Mover( "DummyMover" ) {}
-	virtual ~DummyMover(){}
-	virtual void apply( Pose & ) {
+	~DummyMover() override= default;
+	void apply( Pose & ) override {
 		TR.Fatal << "DummyMover::apply() should never have been called!"
 			<< " (JobDistributor/Parser should have replaced DummyMover.)" << std::endl;
 		utility_exit_with_message("Unimplemented method called.");
 	}
-	virtual std::string get_name() const { return "DummyMover"; }
+	std::string get_name() const override { return "DummyMover"; }
 };
 
 void *
@@ -56,7 +56,7 @@ my_main( void * )
 	JobDistributor::get_instance()->go( dummy_mover, JobOutputterOP( new PDBOutput ) );
 
 	TR << "*********************successful completion**************************" << std::endl;
-	return 0;
+	return nullptr;
 }
 
 int

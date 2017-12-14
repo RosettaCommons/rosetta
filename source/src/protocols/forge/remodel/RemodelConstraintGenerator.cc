@@ -21,6 +21,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/id/SequenceMapping.hh>
 
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -34,8 +35,7 @@ namespace remodel {
 std::map<std::string,core::scoring::constraints::ConstraintCOPs> RemodelConstraintGenerator::cst_map_;
 
 /// @details Auto-generated virtual destructor
-RemodelConstraintGenerator::~RemodelConstraintGenerator()
-{}
+RemodelConstraintGenerator::~RemodelConstraintGenerator() = default;
 
 
 RemodelConstraintGenerator::RemodelConstraintGenerator()
@@ -191,7 +191,7 @@ RemodelConstraintGenerator::clear_stored_constraints()
 {
 	if ( id_ == "" ) return;
 	// find id for this class in the map
-	std::map< std::string, core::scoring::constraints::ConstraintCOPs >::iterator cst_it( cst_map_.find( id_ ) );
+	auto cst_it( cst_map_.find( id_ ) );
 	// if the constraints are found, warn the user and erase the old data
 	if ( cst_it != cst_map_.end() ) {
 		TR << "Overwriting constraints for " << this->get_name() << " named " << id_ << std::endl;
@@ -231,7 +231,7 @@ GenericRemodelConstraintGenerator::GenericRemodelConstraintGenerator(
 	std::string const & id,
 	protocols::constraint_generator::ConstraintGeneratorCOP cg ):
 	RemodelConstraintGenerator(),
-	cg_( cg )
+	cg_(std::move( cg ))
 {
 	set_id( id );
 }

@@ -81,8 +81,7 @@ LazyNode::LazyNode(
 /// @author apl
 ///
 ////////////////////////////////////////////////////////////////////////////////
-LazyNode::~LazyNode()
-{}
+LazyNode::~LazyNode() = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -238,7 +237,7 @@ LazyNode::assign_zero_state()
 
 	curr_state_one_body_energy_ = core::PackerEnergy( 0.0 );
 	//fills from [1] to end
-	std::vector< core::PackerEnergy >::iterator position1 = curr_state_two_body_energies_.begin();
+	auto position1 = curr_state_two_body_energies_.begin();
 	++position1;
 	std::fill( position1, curr_state_two_body_energies_.end(), core::PackerEnergy( 0.0 ));
 	curr_state_total_energy_ = core::PackerEnergy( 0.0 );
@@ -403,9 +402,9 @@ LazyNode::commit_considered_substitution()
 	curr_state_total_energy_ = alternate_state_total_energy_;
 
 	//copies from [1] to end
-	std::vector< core::PackerEnergy >::iterator alt_position1 = alternate_state_two_body_energies_.begin();
+	auto alt_position1 = alternate_state_two_body_energies_.begin();
 	++alt_position1;
-	std::vector< core::PackerEnergy >::iterator curr_position1 = curr_state_two_body_energies_.begin();
+	auto curr_position1 = curr_state_two_body_energies_.begin();
 	++curr_position1;
 
 	std::copy( alt_position1,
@@ -600,7 +599,7 @@ void LazyNode::update_internal_vectors()
 
 	edge_matrix_ptrs_.clear();
 	edge_matrix_ptrs_.reserve( get_num_incident_edges() + 1);
-	edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >() ); //occupy the 0th position
+	edge_matrix_ptrs_.emplace_back( ); //occupy the 0th position
 
 	aa_offsets_for_edges_.dimension(
 		get_num_aa_types(), get_num_incident_edges(), get_num_aa_types());
@@ -616,7 +615,7 @@ void LazyNode::update_internal_vectors()
 
 		core::PackerEnergy & edge_table_ref =
 			get_incident_lazy_edge(ii)->get_edge_table_ptr();
-		edge_matrix_ptrs_.push_back( ObjexxFCL::FArray1A< core::PackerEnergy >( edge_table_ref ));
+		edge_matrix_ptrs_.emplace_back( edge_table_ref );
 
 
 		int edge_table_size = get_incident_lazy_edge(ii)->get_two_body_table_size();
@@ -720,9 +719,7 @@ LazyEdge::LazyEdge(
 /// @author apl
 ///
 ////////////////////////////////////////////////////////////////////////////////
-LazyEdge::~LazyEdge()
-{
-}
+LazyEdge::~LazyEdge() = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -1238,7 +1235,7 @@ LazyEdge::get_second_node_num_states_per_aa()
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyEdge::get_energy_for_state_pair(
-	int nodes_states[ 2 ],
+	const int nodes_states[ 2 ],
 	SparseMatrixIndex sparse_matrix_indices_[ 2 ]
 )
 {
@@ -1369,9 +1366,7 @@ LazyInteractionGraph::LazyInteractionGraph(
 /// @author apl
 ///
 ////////////////////////////////////////////////////////////////////////////////
-LazyInteractionGraph::~LazyInteractionGraph()
-{
-}
+LazyInteractionGraph::~LazyInteractionGraph() = default;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1586,7 +1581,7 @@ int
 LazyInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		sum += ((LazyEdge*) *iter)->get_two_body_table_size();
 	}
@@ -1621,7 +1616,7 @@ LazyInteractionGraph::print_current_state_assignment() const
 		get_lazy_node(ii)->print();
 	}
 
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		((LazyEdge*) (*iter))->print_current_energy();
 	}
@@ -1687,7 +1682,7 @@ LazyInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 		}
 	}
 
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+	for ( auto edge_iter = get_edge_list_begin();
 			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
@@ -1840,7 +1835,7 @@ LazyInteractionGraph::update_internal_energy_totals()
 			get_one_body_energy_current_state();
 	}
 
-	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		total_energy_current_state_assignment_ +=
 			((LazyEdge*) *iter)->get_current_two_body_energy();

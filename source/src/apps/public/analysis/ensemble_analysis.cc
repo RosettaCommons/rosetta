@@ -94,13 +94,13 @@ void register_options() {
 class RmsfMover;
 
 // Types
-typedef  utility::pointer::shared_ptr< RmsfMover >  RmsfMoverOP;
-typedef  utility::pointer::shared_ptr< RmsfMover const >  RmsfMoverCOP;
+using RmsfMoverOP = utility::pointer::shared_ptr<RmsfMover>;
+using RmsfMoverCOP = utility::pointer::shared_ptr<const RmsfMover>;
 
 class RmsfMover : public moves::Mover {
 public:
-	virtual void apply( core::pose::Pose& );
-	std::string get_name() const { return "RmsfMover"; }
+	void apply( core::pose::Pose& ) override;
+	std::string get_name() const override { return "RmsfMover"; }
 
 	DecoySetEvaluation eval_;
 };
@@ -114,16 +114,16 @@ void RmsfMover::apply( core::pose::Pose &pose ) {
 
 class FitMover : public moves::Mover {
 public:
-	virtual void apply( core::pose::Pose& );
-	std::string get_name() const { return "FitMover"; }
-	FitMover() : first( true ), iref( 0 ) {};
+	void apply( core::pose::Pose& ) override;
+	std::string get_name() const override { return "FitMover"; }
+	FitMover() = default;
 	ObjexxFCL::FArray1D_double weights_;
 	core::pose::Pose ref_pose_;
-	bool first;
-	Size iref;
+	bool first = true;
+	Size iref =  0;
 };
 
-typedef utility::pointer::shared_ptr< FitMover > FitMoverOP;
+using FitMoverOP = utility::pointer::shared_ptr<FitMover>;
 
 void FitMover::apply( core::pose::Pose &pose ) {
 	if ( iref && first ) {

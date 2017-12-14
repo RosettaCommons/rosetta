@@ -61,7 +61,7 @@ NetChargeConstraint::NetChargeConstraint( NetChargeConstraint const &src ):
 
 /// @brief Destructor
 ///
-NetChargeConstraint::~NetChargeConstraint() {}
+NetChargeConstraint::~NetChargeConstraint() = default;
 
 /// @brief Clone operator
 ///

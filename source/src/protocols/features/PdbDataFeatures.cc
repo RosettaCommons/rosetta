@@ -79,10 +79,7 @@ using basic::database::insert_statement_generator::RowData;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 
 
-PdbDataFeatures::PdbDataFeatures()
-{
-
-}
+PdbDataFeatures::PdbDataFeatures() = default;
 
 PdbDataFeatures::PdbDataFeatures(PdbDataFeatures const & ) : FeaturesReporter()
 {

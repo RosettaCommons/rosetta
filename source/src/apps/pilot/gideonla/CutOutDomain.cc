@@ -15,7 +15,7 @@
 
 
 // Mini-Rosetta headers
-#include <time.h>
+#include <ctime>
 #include <numeric/constants.hh>
 #include <numeric/random/random.hh>
 

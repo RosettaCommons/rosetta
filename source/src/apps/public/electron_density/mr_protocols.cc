@@ -106,7 +106,7 @@ my_main( void* ) {
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( do_MR );
 
-	return 0;
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -105,8 +105,7 @@ JD2ResourceManager::clear()
 }
 
 
-JD2ResourceManager::JD2ResourceManager() {
-}
+JD2ResourceManager::JD2ResourceManager() = default;
 
 JD2ResourceManager::~JD2ResourceManager() = default;
 
@@ -145,7 +144,7 @@ void JD2ResourceManager::read_resource_locators_tags( TagCOP tags )
 	using basic::resource_manager::ResourceLocatorOP;
 	using basic::resource_manager::LocatorTag;
 	using utility::tag::Tag;
-	typedef utility::excn::Exception Exception;
+	using Exception = utility::excn::Exception;
 
 	for ( auto
 			tag_iter = tags->getTags().begin(),
@@ -337,7 +336,7 @@ JD2ResourceManager::read_resource_option_item(
 	using basic::resource_manager::ResourceOptionsFactory;
 	using basic::resource_manager::ResourceOptionsOP;
 	using basic::resource_manager::ResourceOptionsTag;
-	typedef utility::excn::Exception Exception;
+	using Exception = utility::excn::Exception;
 
 	std::string const & tagname = tag->getName();
 
@@ -381,7 +380,7 @@ void
 JD2ResourceManager::check_resource_loader_type(
 	LoaderType const & loader_type
 ) {
-	typedef utility::excn::Exception Exception;
+	using Exception = utility::excn::Exception;
 
 	// 1. Make sure this is an allowed resource type / loader type
 	if ( ! ResourceLoaderFactory::get_instance()->has_resource_loader( loader_type ) ) {
@@ -404,7 +403,7 @@ JD2ResourceManager::read_resource_tag_item(
 	LoaderType const & loader_type,
 	LocatorID const & locator_id
 ) {
-	typedef utility::excn::Exception Exception;
+	using Exception = utility::excn::Exception;
 
 	// 2. Set the resource tag to be the locator id unless it has been
 	// explcitely provided.
@@ -437,7 +436,7 @@ JD2ResourceManager::read_resource_locator_items(
 	LoaderType const & loader_type,
 	LocatorID & locator_id
 ) {
-	typedef utility::excn::Exception Exception;
+	using Exception = utility::excn::Exception;
 
 	// 4. Verify that, if it's been given a locator, that the ResourceLocator has previously been declared
 	LocatorTag locator_tag;
@@ -505,7 +504,7 @@ JD2ResourceManager::read_resource_options_tag_item(
 	LoaderType const & loader_type,
 	ResourceTag const & resource_tag
 ) {
-	typedef utility::excn::Exception Exception;
+	using Exception = utility::excn::Exception;
 
 	// 5. Verify that, if it's been given a resource options, that the
 	// ResourceOptions has been previously declared
@@ -719,7 +718,7 @@ JD2ResourceManager::read_resource_table_tag(
 JD2ResourceManager *
 JD2ResourceManager::get_jd2_resource_manager_instance(
 ){
-	JD2ResourceManager * jd2_resource_manager(
+	auto * jd2_resource_manager(
 		dynamic_cast< JD2ResourceManager * > ( ResourceManager::get_instance() ));
 	if ( ! jd2_resource_manager ) {
 		std::ostringstream err;

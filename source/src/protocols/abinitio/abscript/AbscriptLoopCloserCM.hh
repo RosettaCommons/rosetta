@@ -101,8 +101,6 @@ private:
 
 	core::select::residue_selector::ResidueSelectorCOP selector_;
 
-	mutable bool bUpdateMM_;
-
 }; // end AbscriptLoopCloserCM base class
 
 } // abscript

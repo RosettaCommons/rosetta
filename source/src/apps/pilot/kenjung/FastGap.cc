@@ -63,12 +63,11 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line(utility::vector1< 
 
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	std::map< std::string, core::pose::Pose > poses;
-	typedef utility::vector1< std::string >::const_iterator iter;
-	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
-		if ( file_exists(*it) ) {
+	for ( auto const & it : fn_list ) {
+		if ( file_exists(it) ) {
 			core::pose::Pose pose;
-			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
-			std::string name = utility::file_basename( *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, it , core::import_pose::PDB_file);
+			std::string name = utility::file_basename( it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
 		}
@@ -86,13 +85,12 @@ main( int argc, char * argv [] )
 		// read in poses
 		std::map< string, Pose > input_poses = poses_from_cmd_line(option[ in::file::s ]());
 
-		typedef std::map< string, Pose >::iterator iter;
-		for ( iter it = input_poses.begin(), end = input_poses.end(); it != end; ++it ) {
+		for ( auto & input_pose : input_poses ) {
 			FastGapMoverOP fastgap( new FastGapMover() );
-			fastgap->apply(it->second);
+			fastgap->apply(input_pose.second);
 			// dump resulting pdb
-			string m = it->first + ".closed.pdb";
-			(it->second).dump_pdb(m);
+			string m = input_pose.first + ".closed.pdb";
+			(input_pose.second).dump_pdb(m);
 		}
 
 	} catch (utility::excn::Exception const & e ) {

@@ -58,6 +58,7 @@
 #include <iostream>
 #include <iomanip>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -71,8 +72,7 @@ using namespace ObjexxFCL;
 static basic::Tracer TR_pcs_d_p_l( "protocols.scoring.methods.pcs.PCS_data_per_lanthanides" );
 static basic::Tracer TR_pcs_d( "protocols.scoring.methods.pcs.PCS_data" );
 
-PCS_data_per_lanthanides::~PCS_data_per_lanthanides(){
-}
+PCS_data_per_lanthanides::~PCS_data_per_lanthanides()= default;
 
 PCS_data_per_lanthanides::PCS_data_per_lanthanides(PCS_data_per_lanthanides const &other):
 	filename_(other.filename_), svd_s_(other.svd_s_),  weight_(other.weight_)
@@ -135,8 +135,7 @@ PCS_data::PCS_data(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_data class" );
 }
 
-PCS_data::~PCS_data(){
-}
+PCS_data::~PCS_data()= default;
 
 PCS_data &
 PCS_data::operator=( PCS_data const &other )
@@ -463,7 +462,7 @@ PCS_data::where_is_line(PCS_line_data & P_l_d){
 // }
 
 
-PCS_data_per_lanthanides::PCS_data_per_lanthanides(std::string filename,
+PCS_data_per_lanthanides::PCS_data_per_lanthanides(std::string const & filename,
 	core::Real const weight,
 	utility::vector1< PCS_line_data > & PCS_d_l_a):
 	filename_(filename), svd_s_(basic::svd::SVD_Solver(PCS_d_l_a.size(), 5)), weight_(weight)
@@ -473,7 +472,6 @@ PCS_data_per_lanthanides::PCS_data_per_lanthanides(std::string filename,
 	using namespace basic::options::OptionKeys;
 
 	core::Size i;
-	utility::vector1<PCS_line_data>::iterator it;
 
 	n_pcs_ =  PCS_d_l_a.size();
 	A_index_.resize(n_pcs_);

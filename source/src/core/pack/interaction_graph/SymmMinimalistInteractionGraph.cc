@@ -56,8 +56,7 @@ SymmMinimalistNode::SymmMinimalistNode(
 {
 }
 
-SymmMinimalistNode::~SymmMinimalistNode()
-{}
+SymmMinimalistNode::~SymmMinimalistNode() = default;
 
 void
 SymmMinimalistNode::prepare_for_simulated_annealing()
@@ -618,7 +617,7 @@ SymmMinimalistEdge::SymmMinimalistEdge(
 {
 }
 
-SymmMinimalistEdge::~SymmMinimalistEdge() {}
+SymmMinimalistEdge::~SymmMinimalistEdge() = default;
 
 core::PackerEnergy SymmMinimalistEdge::get_two_body_energy( int const , int const ) const
 {
@@ -780,7 +779,7 @@ SymmMinimalistInteractionGraph::SymmMinimalistInteractionGraph(
 }
 
 
-SymmMinimalistInteractionGraph::~SymmMinimalistInteractionGraph() {}
+SymmMinimalistInteractionGraph::~SymmMinimalistInteractionGraph() = default;
 
 void
 SymmMinimalistInteractionGraph::blanket_assign_state_0()
@@ -876,7 +875,7 @@ int
 SymmMinimalistInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		sum += ((SymmMinimalistEdge*) *iter)->get_two_body_table_size();
 	}
@@ -892,7 +891,7 @@ SymmMinimalistInteractionGraph::print_current_state_assignment() const
 		get_symmin_node(ii)->print();
 	}
 
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		((SymmMinimalistEdge*) (*iter))->print_current_energy();
 	}
@@ -913,7 +912,7 @@ SymmMinimalistInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
 		}
 	}
 
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+	for ( auto edge_iter = get_edge_list_begin();
 			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
@@ -973,7 +972,7 @@ SymmMinimalistInteractionGraph::update_internal_energy_totals()
 			get_one_body_energy_current_state();
 	}
 
-	for ( std::list<EdgeBase*>::iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		total_energy_current_state_assignment_ +=
 			((SymmMinimalistEdge*) *iter)->get_current_two_body_energy();

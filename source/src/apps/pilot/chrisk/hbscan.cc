@@ -11,8 +11,8 @@
 /// @brief
 
 //core library
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>

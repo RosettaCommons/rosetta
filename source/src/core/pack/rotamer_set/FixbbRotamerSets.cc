@@ -29,8 +29,8 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-FixbbRotamerSets::FixbbRotamerSets() {}
-FixbbRotamerSets::~FixbbRotamerSets() {}
+FixbbRotamerSets::FixbbRotamerSets() = default;
+FixbbRotamerSets::~FixbbRotamerSets() = default;
 
 
 } // namespace rotamer_set

@@ -100,8 +100,7 @@ ostream& operator<<(ostream& out, const Entry& e) {
 
 // ____________________ File ____________________
 
-File::File() {
-} // File::File
+File::File() = default; // File::File
 
 File::File(const string& filename) {
 	ifstream fin;

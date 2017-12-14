@@ -99,13 +99,7 @@ ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods:
 }
 
 /// copy ctor
-ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( ContextDependentGeometricSolEnergy const & src ):
-	ContextDependentTwoBodyEnergy( src ),
-	options_( src.options_ ),
-	evaluator_( src.evaluator_ ),
-	precalculated_bb_bb_energy_(src.precalculated_bb_bb_energy_),
-	using_extended_method_( src.using_extended_method_ )
-{}
+ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( ContextDependentGeometricSolEnergy const & /*src*/ ) = default;
 
 /// clone
 methods::EnergyMethodOP

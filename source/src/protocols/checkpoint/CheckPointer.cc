@@ -139,8 +139,8 @@ bool pose_from_binary_silent_file( const std::string &filename, const std::strin
 	return true;
 }
 
-CheckPointer::CheckPointer( std::string  type ):
-	type_ (std::move( type )),
+CheckPointer::CheckPointer( std::string const & type ):
+	type_ ( type ),
 	disabled_( false ),
 	count_checkpoint_recoveries_( 0 )
 {

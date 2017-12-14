@@ -33,13 +33,13 @@ public:
 	ReplicaExchangeMC(
 		Pose const & init_pose, // PoseCOP init_pose,
 		ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
-		utility::vector1<core::Real> const &tlist,
+		utility::vector1<core::Real> const & tlist,
 		core::Size nint
 	);
 
 	ReplicaExchangeMC(
 		ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
-		utility::vector1<core::Real> const &tlist,
+		utility::vector1<core::Real> const & tlist,
 		core::Size nint
 	);
 
@@ -47,7 +47,7 @@ public:
 
 	~ReplicaExchangeMC() override;
 
-	void build_temperature_list(double *elist);
+	void build_temperature_list(const double *elist);
 
 	using Parent::boltzmann;
 

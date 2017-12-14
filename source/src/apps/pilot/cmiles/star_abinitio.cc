@@ -69,7 +69,7 @@ void* star_main(void*) {
 		std::cerr << "Exception: " << std::endl;
 		e.show(std::cerr);
 	}
-	return 0;
+	return nullptr;
 }
 
 int main(int argc, char* argv[]) {

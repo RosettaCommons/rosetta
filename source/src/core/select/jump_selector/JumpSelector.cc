@@ -21,9 +21,9 @@ namespace core {
 namespace select {
 namespace jump_selector {
 
-JumpSelector::JumpSelector() {}
+JumpSelector::JumpSelector() = default;
 
-JumpSelector::~JumpSelector() {}
+JumpSelector::~JumpSelector() = default;
 
 /// @details Noop implementation in the base class in the case that a derived
 /// class has no need to read data from an input tag

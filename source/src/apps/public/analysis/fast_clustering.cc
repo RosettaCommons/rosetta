@@ -93,9 +93,9 @@ void read_structures( SilentFileData &sfd, DecoySetEvaluation& ensemble ) {
 		utility_exit_with_message("fast_clustering works only with -in:file:silent as input option");
 	}
 	utility::vector1< utility::file::FileName > const silent_files( option[ in::file::silent ]() );
-	for ( utility::vector1< utility::file::FileName >::const_iterator current_fn_ = silent_files.begin(); current_fn_ != silent_files.end(); ++current_fn_ ) {
-		tr.Debug << "reading " << *current_fn_ << std::endl;
-		sfd.read_file( *current_fn_ );
+	for ( auto const & silent_file : silent_files ) {
+		tr.Debug << "reading " << silent_file << std::endl;
+		sfd.read_file( silent_file );
 	}
 	ensemble.push_back_CA_xyz_from_silent_file( sfd, true /*store energies*/ );
 }

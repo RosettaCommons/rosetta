@@ -15,7 +15,7 @@
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <math.h>
+#include <cmath>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -227,7 +227,7 @@ BoltzmannFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new BoltzmannFilter() );
 }
 
-BoltzmannFilter::~BoltzmannFilter(){}
+BoltzmannFilter::~BoltzmannFilter()= default;
 
 protocols::filters::FilterOP
 BoltzmannFilter::clone() const{

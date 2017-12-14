@@ -345,7 +345,7 @@ void kiss_fft_cleanup(void) {
 }
 
 int kiss_fft_next_fast_size(int n) {
-	while ( 1 ) {
+	while ( true ) {
 		int m=n;
 		while ( (m%2) == 0 ) m/=2;
 		while ( (m%3) == 0 ) m/=3;
@@ -620,7 +620,7 @@ void kiss_fftndr(kiss_fftndr_cfg st, const kiss_fft_scalar *timedata, kiss_fft_c
 	int dimOther = st->dimOther();
 	int nrbins = dimReal/2+1;
 
-	kiss_fft_cpx * tmp1 = (kiss_fft_cpx*)st->tmpbuf();
+	auto * tmp1 = (kiss_fft_cpx*)st->tmpbuf();
 	kiss_fft_cpx * tmp2 = tmp1 + std::max(nrbins,dimOther);
 
 	// timedata is N0 x N1 x ... x Nk real
@@ -645,7 +645,7 @@ void kiss_fftndri(kiss_fftndr_cfg st, const kiss_fft_cpx *freqdata, kiss_fft_sca
 	int dimReal = st->dimReal();
 	int dimOther = st->dimOther();
 	int nrbins = dimReal/2+1;
-	kiss_fft_cpx * tmp1 = (kiss_fft_cpx*)st->tmpbuf();
+	auto * tmp1 = (kiss_fft_cpx*)st->tmpbuf();
 	kiss_fft_cpx * tmp2 = tmp1 + std::max(nrbins,dimOther);
 
 	for ( k2=0; k2<nrbins; ++k2 ) {

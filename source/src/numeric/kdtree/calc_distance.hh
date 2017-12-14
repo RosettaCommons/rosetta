@@ -14,7 +14,7 @@
 #define INCLUDED_numeric_kdtree_calc_distance_hh
 
 #include <numeric/types.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace numeric {
 namespace kdtree {

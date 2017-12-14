@@ -68,7 +68,7 @@ DisulfideMatchingEnergy::DisulfideMatchingEnergy(
 	potential_( potential )
 {}
 
-DisulfideMatchingEnergy::~DisulfideMatchingEnergy() {}
+DisulfideMatchingEnergy::~DisulfideMatchingEnergy() = default;
 
 // EnergyMethod Methods:
 
@@ -84,7 +84,7 @@ void DisulfideMatchingEnergy::setup_for_scoring(
 {
 	using namespace methods;
 
-	if ( pose.energies().long_range_container( disulfide_matching_energy ) == 0 ) {
+	if ( pose.energies().long_range_container( disulfide_matching_energy ) == nullptr ) {
 		DisulfideMatchingEnergyContainerOP dec( new DisulfideMatchingEnergyContainer( pose ) );
 		pose.energies().set_long_range_container( disulfide_matching_energy, dec );
 	} else {

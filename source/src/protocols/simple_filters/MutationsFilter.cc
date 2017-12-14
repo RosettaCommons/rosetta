@@ -46,9 +46,9 @@ MutationsFilter::MutationsFilter() :
 	reference_pose_( /* NULL */ ),
 	rate_threshold_( 0.0 ),
 	mutation_threshold_( 100 ),
-	mutations_( 0 ),
-	verbose_( 0 ),
-	packable_( 0 )
+	mutations_( false ),
+	verbose_( false ),
+	packable_( false )
 {}
 
 core::pack::task::TaskFactoryOP
@@ -296,10 +296,10 @@ MutationsFilter::parse_my_tag( utility::tag::TagCOP tag,
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	rate_threshold( tag->getOption< core::Real >( "rate_threshold", 0.0 ) );
 	mutation_threshold( tag->getOption< core::Size >( "mutation_threshold", 100 ) );
-	mutations( tag->getOption< bool >( "report_mutations", 0 ) );
-	verbose( tag->getOption< bool >( "verbose", 0 ) );
-	packable( tag->getOption< bool >( "packable", 0 ) );
-	write2pdb( tag->getOption< bool >( "write2pdb", 0 ) );
+	mutations( tag->getOption< bool >( "report_mutations", false ) );
+	verbose( tag->getOption< bool >( "verbose", false ) );
+	packable( tag->getOption< bool >( "packable", false ) );
+	write2pdb( tag->getOption< bool >( "write2pdb", false ) );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

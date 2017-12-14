@@ -35,8 +35,7 @@ using namespace ObjexxFCL::format;
 
 static int precision (3);
 
-RawStruct::~RawStruct() {
-}
+RawStruct::~RawStruct() = default;
 
 // Print the energy line/header into silent files
 // You must supply a score_map (from the CachedData in the pose)

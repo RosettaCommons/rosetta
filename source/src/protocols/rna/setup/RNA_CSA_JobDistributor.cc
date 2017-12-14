@@ -113,8 +113,7 @@ RNA_CSA_JobDistributor::RNA_CSA_JobDistributor( denovo::RNA_FragmentMonteCarloOP
 {}
 
 //Destructor
-RNA_CSA_JobDistributor::~RNA_CSA_JobDistributor()
-{}
+RNA_CSA_JobDistributor::~RNA_CSA_JobDistributor() = default;
 
 void
 RNA_CSA_JobDistributor::initialize( core::pose::Pose const & pose ) {
@@ -148,7 +147,7 @@ RNA_CSA_JobDistributor::apply( core::pose::Pose & pose ) {
 	///////////////////////
 	// "check out" a model
 	///////////////////////
-	if ( sfd_ == 0 ) read_in_silent_file();
+	if ( sfd_ == nullptr ) read_in_silent_file();
 	if ( !has_another_job() ) return;
 
 	////////////////////
@@ -210,7 +209,7 @@ RNA_CSA_JobDistributor::apply( core::pose::Pose & pose ) {
 
 Real
 RNA_CSA_JobDistributor::average_pairwise_distance() const {
-	runtime_assert( sfd_ != 0 );
+	runtime_assert( sfd_ != nullptr );
 
 	// This is a big computation. If you have a bank of 200 structures, you are
 	// taking 200 * 200 RMSDs. At some point -- maybe jd3 migration? -- let's be
@@ -239,7 +238,7 @@ RNA_CSA_JobDistributor::average_pairwise_distance() const {
 void
 RNA_CSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 
-	runtime_assert( sfd_ != 0 );
+	runtime_assert( sfd_ != nullptr );
 
 	SilentStructOP s; // this eventually most hold the silent struct that is *updated*
 	// creates a mock version of the pose with all residues instantiated. used anyway for rms_fill calculation,
@@ -284,7 +283,7 @@ RNA_CSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 			}
 
 			if ( kick_out_idx > 0 ) {
-				runtime_assert( s == 0 ); // s will be filled below.
+				runtime_assert( s == nullptr ); // s will be filled below.
 				SilentFileOptions opts;
 				SilentFileDataOP sfd_new( new SilentFileData(opts) );
 				for ( Size n = 1; n <= struct_list.size(); n++ ) if ( n != kick_out_idx ) sfd_new->add_structure( struct_list[ n ] );
@@ -293,14 +292,14 @@ RNA_CSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 		}
 	}
 
-	if ( s == 0 ) {
+	if ( s == nullptr ) {
 		s = stepwise::monte_carlo::prepare_silent_struct( "S_0", pose, get_native_pose(),
 			superimpose_over_all_, true /*do_rms_fill_calculation*/, full_model_pose );
 		sfd_->add_structure( s );
 	}
 
 	// allows for checks on book-keeping
-	runtime_assert( s != 0 );
+	runtime_assert( s != nullptr );
 	total_updates_so_far_ += 1;
 	set_updates( s, total_updates_so_far_ );
 	TR << TR.Cyan << "Outputting silent structure: " << s->decoy_tag() << TR.Reset << std::endl;
@@ -331,7 +330,7 @@ RNA_CSA_JobDistributor::read_in_silent_file(){
 void
 RNA_CSA_JobDistributor::write_out_silent_file( std::string const & silent_file_in ){
 	std::string const silent_file = silent_file_in.size() == 0 ?  silent_file_ : silent_file_in;
-	runtime_assert( sfd_ != 0 );
+	runtime_assert( sfd_ != nullptr );
 	runtime_assert( sfd_->structure_list().size() > 0 );
 	runtime_assert( sfd_->structure_list().size() <= csa_bank_size_ );
 	core::io::silent::remove_silent_file_if_it_exists( silent_file );

@@ -17,6 +17,7 @@
 #include <numeric/roc_curve.hh>
 
 //utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 
@@ -27,10 +28,10 @@
 namespace numeric {
 
 /// @details Auto-generated virtual destructor
-RocCurve::~RocCurve() {}
+RocCurve::~RocCurve() = default;
 
 /// @details Auto-generated virtual destructor
-RocPoint::~RocPoint() {}
+RocPoint::~RocPoint() = default;
 
 
 RocPoint::RocPoint(
@@ -158,8 +159,8 @@ void RocCurve::generate_roc_curve()
 
 	std::sort(roc_point_vector_.begin(),roc_point_vector_.end());
 
-	for ( utility::vector1<RocPoint>::iterator roc_it= roc_point_vector_.begin(); roc_it != roc_point_vector_.end(); ++roc_it ) {
-		RocStatus status(roc_it->status());
+	for ( auto & roc_it : roc_point_vector_ ) {
+		RocStatus status(roc_it.status());
 		switch(status)
 				{
 				case true_positive :
@@ -201,8 +202,8 @@ utility::vector1<std::pair<platform::Real, platform::Real> > RocCurve::roc_curve
 
 void RocCurve::print_roc_curve()
 {
-	for ( utility::vector1<std::pair<platform::Real, platform::Real> >::iterator auc_it = roc_curve_.begin(); auc_it != roc_curve_.end(); ++auc_it ) {
-		std::cout << auc_it->first << " " <<auc_it->second <<std::endl;
+	for ( auto & auc_it : roc_curve_ ) {
+		std::cout << auc_it.first << " " <<auc_it.second <<std::endl;
 	}
 }
 
@@ -211,10 +212,10 @@ platform::Real RocCurve::calculate_auc()
 	platform::Real AUC = 0.0;
 	platform::Real last_TPR = 0.0;
 	platform::Real last_FPR = 0.0;
-	for ( utility::vector1<std::pair<platform::Real, platform::Real> >::iterator auc_it = roc_curve_.begin(); auc_it != roc_curve_.end(); ++auc_it ) {
+	for ( auto & auc_it : roc_curve_ ) {
 
-		platform::Real TPR = auc_it->first;
-		platform::Real FPR = auc_it->second;
+		platform::Real TPR = auc_it.first;
+		platform::Real FPR = auc_it.second;
 		AUC += (FPR-last_FPR)*((TPR+last_TPR)/2);
 		//AUC += auc_it->first*(auc_it->second - last_FPR);
 		last_TPR = TPR;

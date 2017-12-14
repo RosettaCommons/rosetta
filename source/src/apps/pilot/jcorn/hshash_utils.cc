@@ -251,8 +251,8 @@ main( int argc, char * argv [] )
 						core::conformation::ResidueCOP res_target( tgt_pose.residue( i ).get_self_ptr() );
 
 						// for each hotspot of that residue type
-						for ( std::multimap< core::Real, protocols::hotspot_hashing::HotspotStubOP >::const_iterator stub_it = stubs.begin(); stub_it != stubs.end(); ++stub_it ) {
-							core::conformation::ResidueCOP stub( stub_it->second->residue() );
+						for ( auto const & stub_it : stubs ) {
+							core::conformation::ResidueCOP stub( stub_it.second->residue() );
 							// get distances from target residue to each hotspot
 							core::Real distance( res_target->xyz( res_target->nbr_atom() ).distance( stub->xyz( stub->nbr_atom() )) );
 							if ( distance <= 8 ) { // take care of unweighted neighbors. They're easy.
@@ -260,7 +260,7 @@ main( int argc, char * argv [] )
 							}
 
 							{ // Boltzmann distribution, weighted by LK-like falloff by distance
-								core::Real const E = exp( -( stub_it->second->bonus_value() ) );
+								core::Real const E = exp( -( stub_it.second->bonus_value() ) );
 								core::Real const dist_falloff = 4; // where stubs should stop counting
 								core::Real const sigma = 2;
 								core::Real const dist_wt = exp( -( pow(distance,2)/(dist_falloff*sigma) ) ); // LK-like falloff e^(-r^2)/8

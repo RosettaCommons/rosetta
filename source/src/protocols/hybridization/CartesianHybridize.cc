@@ -318,7 +318,7 @@ CartesianHybridize::apply_frag( core::pose::Pose &pose, core::pose::Pose &templ,
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > coords;
 
-	for ( int i=(int)frag.start(); i<=(int)frag.stop(); ++i ) {
+	for ( auto i=(int)frag.start(); i<=(int)frag.stop(); ++i ) {
 		for ( int j=1; j<=(int)templ.residue(i).natoms(); ++j ) {
 			core::id::AtomID src(j,i), tgt(j, templ.pdb_info()->number(i));
 			ids.push_back(tgt);
@@ -344,7 +344,7 @@ CartesianHybridize::apply_frame( core::pose::Pose & pose, core::fragment::Frame 
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres = symm_info->num_independent_residues();
@@ -489,7 +489,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	options_minilbfgs.max_iter(5);
 	core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 	if ( increase_cycles_ < 1. ) {
-		Size niter = (Size) (200*increase_cycles_);
+		auto niter = (Size) (200*increase_cycles_);
 		options_lbfgs.max_iter(niter);
 	} else {
 		options_lbfgs.max_iter(200);
@@ -531,7 +531,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	core::Size nres = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres = symm_info->num_independent_residues();
@@ -628,7 +628,7 @@ CartesianHybridize::apply( Pose & pose ) {
 		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, temperature_ ) );
 		//cenrot may use higher temp
 
-		core::Size neffcycles = (core::Size)(ncycles_*increase_cycles_);
+		auto neffcycles = (core::Size)(ncycles_*increase_cycles_);
 		if ( m==4 ) neffcycles /= 2;
 
 		for ( int n=1; n<=(int)neffcycles; ++n ) {

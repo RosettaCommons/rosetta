@@ -355,7 +355,7 @@ WaterFeatures::report_features(
 			TR << "Looking at hbond site with site_id " << partner_site_id << std::endl;
 			Size hbond_site_is_donor_int;
 			hbond_site_result >> hbond_site_is_donor_int;
-			bool hbond_site_is_donor = static_cast<bool>(hbond_site_is_donor_int);
+			auto hbond_site_is_donor = static_cast<bool>(hbond_site_is_donor_int);
 			Length hbond_site_x, hbond_site_y, hbond_site_z;
 			hbond_site_result >> hbond_site_x;
 			hbond_site_result >> hbond_site_y;

@@ -148,46 +148,7 @@ ClassicRelax::ClassicRelax() :
 	use_default_mc_ = true;
 }
 
-ClassicRelax::ClassicRelax( ClassicRelax const & other ) :
-	//utility::pointer::ReferenceCount(),
-	parent( other ),
-	min_mover_( other.min_mover_ ),
-	checkpoints_( other.checkpoints_ ),
-	mc_( other.mc_ ),
-	use_default_mc_( other.use_default_mc_ ),
-	pack_full_repack_( other.pack_full_repack_ ),
-	use_default_pack_full_repack_( other.use_default_pack_full_repack_ ),
-	pack_rottrial_( other.pack_rottrial_ ),
-	use_default_pack_rottrial_( other.use_default_pack_rottrial_ ),
-	m_Temperature( other.m_Temperature ),
-	nmoves_( other.nmoves_ ),
-	energycut( other.energycut ),
-	min_type( other.min_type ),
-	nb_list( other.nb_list ),
-	min_tolerance( other.min_tolerance ),
-	moveset_phase1_( other.moveset_phase1_ ),
-	moveset_phase2_( other.moveset_phase2_ ),
-	moveset_phase3_( other.moveset_phase3_ ),
-	lj_ramp_cycles( other.lj_ramp_cycles ),
-	lj_ramp_inner_cycles( other.lj_ramp_inner_cycles ),
-	start_rep_weight( other.start_rep_weight ),
-	end_rep_weight( other.end_rep_weight ),
-	st_rep_( other.st_rep_ ),
-	st_atr_( other.st_atr_ ),
-	st_sol_( other.st_sol_ ),
-	stage2_repack_period( other.stage2_repack_period ),
-	stage2_cycles( other.stage2_cycles ),
-	stage3_cycles( other.stage3_cycles ),
-	score_stage2_beginning( other.score_stage2_beginning ),
-	score_stage2_quarter( other.score_stage2_quarter ),
-	score_stage2_half( other.score_stage2_half ),
-	score_stage2_end( other.score_stage2_end ),
-	filter_stage2_beginning( other.filter_stage2_beginning ),
-	filter_stage2_quarter( other.filter_stage2_quarter ),
-	filter_stage2_half( other.filter_stage2_half ),
-	filter_stage2_end( other.filter_stage2_end )
-{
-}
+ClassicRelax::ClassicRelax( ClassicRelax const & /*other*/ ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 protocols::moves::MoverOP ClassicRelax::clone() const {
@@ -638,7 +599,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	get_scorefxn()->show(TR.Debug , pose);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		// save time if the pose is symmetric
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		// need to copy virtuals first

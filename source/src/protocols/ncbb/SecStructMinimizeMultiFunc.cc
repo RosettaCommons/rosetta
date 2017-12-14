@@ -156,7 +156,7 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 		Size const node1 = (*eiter)->get_first_node_ind();
 		Size const node2 = (*eiter)->get_second_node_ind();
 
-		scoring::MinimizationEdge & minedge( static_cast< scoring::MinimizationEdge & > (**eiter) );
+		auto & minedge( static_cast< scoring::MinimizationEdge & > (**eiter) );
 
 		sfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
 			pose.residue( node1 ), pose.residue( node2 ),

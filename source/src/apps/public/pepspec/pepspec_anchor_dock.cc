@@ -272,7 +272,7 @@ has_clash(
 				iru  = energy_graph.get_node( seqpos )->lower_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->lower_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+			auto * edge( static_cast< EnergyEdge *> (*iru) );
 			Size const j( edge->get_first_node_ind() );
 
 			// the pair energies cached in the link
@@ -290,7 +290,7 @@ has_clash(
 				iru  = energy_graph.get_node( seqpos )->upper_edge_list_begin(),
 				irue = energy_graph.get_node( seqpos )->upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
+			auto * edge( static_cast< EnergyEdge *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 
 			// the pair energies cached in the link
@@ -459,8 +459,8 @@ run_pep_prep()
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
 
-	typedef  numeric::xyzVector< Real >  Vector; // DOUBLE!
-	typedef  numeric::xyzMatrix< Real >  Matrix; // DOUBLE!
+	using Vector = numeric::xyzVector<Real>; // DOUBLE!
+	using Matrix = numeric::xyzMatrix<Real>; // DOUBLE!
 
 	std::string pdb_out_list_filename_str( option[ out::file::o ]+".pdblist" );
 	char const *pdb_out_list_filename = pdb_out_list_filename_str.c_str();

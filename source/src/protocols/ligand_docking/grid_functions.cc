@@ -35,7 +35,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-typedef utility::pointer::shared_ptr<core::grid::CartGrid<int> > CartGridIntOP;
+using CartGridIntOP = utility::pointer::shared_ptr<core::grid::CartGrid<int> >;
 
 static basic::Tracer TR( "protocols.ligand_docking.grid_functions", basic::t_debug );
 
@@ -255,7 +255,7 @@ void set_sphere(
 	int value
 )
 {
-	typedef core::grid::CartGrid<int>::GridPt GridPt;
+	using GridPt = core::grid::CartGrid<int>::GridPt;
 	using core::Vector;
 	using namespace std; // min, max
 

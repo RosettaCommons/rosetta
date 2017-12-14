@@ -31,6 +31,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.recces.RECCES_Mover" );
 
@@ -56,15 +57,14 @@ namespace protocols {
 namespace recces {
 
 //Constructor
-RECCES_Mover::RECCES_Mover( options::RECCES_OptionsCOP const & options ):
-	options_( options )
+RECCES_Mover::RECCES_Mover( options::RECCES_OptionsCOP  options ):
+	options_(std::move( options ))
 {
 	initialize();
 }
 
 //Destructor
-RECCES_Mover::~RECCES_Mover()
-{}
+RECCES_Mover::~RECCES_Mover() = default;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -92,15 +92,15 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 	runtime_assert( options_ );
 
 	// Are we doing MC_loop?
-	MC_LoopOP loop_sampler = ( sampler_->type() == toolbox::MC_LOOP ) ? MC_LoopOP( std::dynamic_pointer_cast< MC_Loop >( sampler_) ) : 0;
+	MC_LoopOP loop_sampler = ( sampler_->type() == toolbox::MC_LOOP ) ? MC_LoopOP( std::dynamic_pointer_cast< MC_Loop >( sampler_) ) : nullptr;
 
 	if ( options_->show_more_pose_scores() ) scorefxn_->show( pose ); // matching legacy output
-	if ( loop_sampler == 0 ) sampler_->apply( pose ); // matching legacy output
+	if ( loop_sampler == nullptr ) sampler_->apply( pose ); // matching legacy output
 
 	if ( options_->out_torsions() ) prepare_output_torsion_ids();
 
 	// Simulated Tempering setup
-	if ( scorefxn_ == 0 ) utility_exit_with_message( "Must set scorefunction." );
+	if ( scorefxn_ == nullptr ) utility_exit_with_message( "Must set scorefunction." );
 	if ( options_->setup_base_pair_constraints() ) runtime_assert( scorefxn_->has_nonzero_weight( base_pair_constraint ) );
 	moves::SimulatedTempering tempering( pose, scorefxn_, options_->temperatures(), weights_ );
 	set_sampler_gaussian_stdev( tempering.temperature(), pose );
@@ -140,7 +140,7 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 		sampler_->apply( pose );
 
 		bool const did_move( sampler_->found_move() || options_->accept_no_op_moves() );
-		if ( loop_sampler != 0 ) num_tries[ loop_sampler->rotamer()->get_name() ]++;
+		if ( loop_sampler != nullptr ) num_tries[ loop_sampler->rotamer()->get_name() ]++;
 
 		//////////////////////////////
 		// Check metropolis criterion
@@ -160,11 +160,11 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 			dump_stuff( n, pose, scores, min_pose, min_score, curr_dump );
 			curr_counts = 1;
 
-			if ( loop_sampler != 0 ) stored_pose = pose; // eventually deprecate this
+			if ( loop_sampler != nullptr ) stored_pose = pose; // eventually deprecate this
 		} else {
 			// reject new pose
 			++curr_counts; // pose stayed the same.
-			if ( loop_sampler != 0 && sampler_->found_move() ) pose = stored_pose; // let's eventually replace this with sampler->restore( pose )
+			if ( loop_sampler != nullptr && sampler_->found_move() ) pose = stored_pose; // let's eventually replace this with sampler->restore( pose )
 		}
 
 		//////////////////////////
@@ -249,7 +249,7 @@ RECCES_Mover::increment_accepts( Size & n_accept_total,
 	sampler::MC_LoopCOP loop_sampler ) const
 {
 	++n_accept_total;
-	if ( loop_sampler != 0 ) num_accepts[ loop_sampler->rotamer()->get_name() ]++;
+	if ( loop_sampler != nullptr ) num_accepts[ loop_sampler->rotamer()->get_name() ]++;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

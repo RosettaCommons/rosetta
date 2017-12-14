@@ -54,8 +54,8 @@
 
 //////////////////////////////////////////////////////////////////////////////
 class LigandRepackMinimizeProtocol; // fwd declaration
-typedef utility::pointer::shared_ptr< LigandRepackMinimizeProtocol > LigandRepackMinimizeProtocolOP;
-typedef utility::pointer::shared_ptr< LigandRepackMinimizeProtocol const > LigandRepackMinimizeProtocolCOP;
+using LigandRepackMinimizeProtocolOP = utility::pointer::shared_ptr<LigandRepackMinimizeProtocol>;
+using LigandRepackMinimizeProtocolCOP = utility::pointer::shared_ptr<const LigandRepackMinimizeProtocol>;
 
 class LigandRepackMinimizeProtocol : public protocols::ligand_docking::LigandBaseProtocol
 {
@@ -68,7 +68,7 @@ public:
 		Mover::type( "LigandRepackMinimizeProtocol" );
 	}
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 }; // class LigandRepackMinimizeProtocol
 

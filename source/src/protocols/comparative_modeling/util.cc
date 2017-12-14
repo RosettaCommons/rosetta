@@ -323,7 +323,7 @@ protocols::loops::LoopsOP pick_loops_unaligned(
 	utility::vector1< core::Size > const & unaligned_residues,
 	core::Size min_loop_size
 ) {
-	typedef core::Size Size;
+	using Size = core::Size;
 
 	protocols::loops::LoopsOP query_loops( new protocols::loops::Loops() );
 	if ( unaligned_residues.size() == 0 ) {
@@ -379,14 +379,14 @@ protocols::loops::LoopsOP pick_loops_chainbreak(
 	core::pose::Pose & query_pose,
 	core::Size min_loop_size
 ) {
-	typedef core::Size Size;
+	using Size = core::Size;
 
 	core::Real const chainbreak_cutoff( 4.0 );
 	core::Size nres = query_pose.size();
 
 	//fpd symm
 	if ( core::pose::symmetry::is_symmetric(query_pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( query_pose.conformation()) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = SymmConf.Symmetry_Info();
 		nres = symm_info->num_independent_residues();

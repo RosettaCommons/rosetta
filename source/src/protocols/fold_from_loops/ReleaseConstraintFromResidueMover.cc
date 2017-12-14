@@ -29,6 +29,7 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
@@ -48,9 +49,9 @@ ReleaseConstraintFromResidueMover::ReleaseConstraintFromResidueMover():
 	set_residue_selector( false_selector );
 }
 
-ReleaseConstraintFromResidueMover::ReleaseConstraintFromResidueMover( core::select::residue_selector::ResidueSelectorCOP const & selector ):
+ReleaseConstraintFromResidueMover::ReleaseConstraintFromResidueMover( core::select::residue_selector::ResidueSelectorCOP selector ):
 	protocols::moves::Mover( ReleaseConstraintFromResidueMover::mover_name() ),
-	selector_( selector )
+	selector_(std::move( selector ))
 {
 }
 

@@ -23,8 +23,8 @@ namespace sic_dock {
 using platform::Real;
 using numeric::min;
 using numeric::max;
-typedef numeric::xyzVector<platform::Real> Vec;
-typedef numeric::xyzMatrix<platform::Real> Mat;
+using Vec = numeric::xyzVector<platform::Real>;
+using Mat = numeric::xyzMatrix<platform::Real>;
 
 void
 get_xform_stats(
@@ -108,7 +108,7 @@ XfoxmScore::makebinary(
 	for ( int i = 0; i < 16*16*16*24*12*24; ++i ) {
 		float f;
 		in >> f;
-		int tmp = (int)((log(f)+2.5)*12.0);
+		auto tmp = (int)((log(f)+2.5)*12.0);
 		a[i] =  (f==0.0f) ? ((char)-127) : ((char)max(-126,min(128,tmp)));
 		// std::cout << f << " " << tmp << " " << (int)a[i] << std::endl;
 		// if( i > 100) utility_exit_with_message("FOO");
@@ -145,12 +145,12 @@ XfoxmScore::score(
 	if ( (ss1=='E' && ss2=='H') || (ss1=='L' && ss2=='H') || (ss1=='L' && ss2=='E') ) {
 		get_xform_stats(s2,s1,dx,dy,dz,ex,ey,ez); // reverse
 	} else get_xform_stats(s1,s2,dx,dy,dz,ex,ey,ez);
-	int idx = static_cast<int>(dx+8.0); // 0.0-0.999 -> 10
-	int idy = static_cast<int>(dy+8.0);
-	int idz = static_cast<int>(dz+8.0);
-	int iex = static_cast<int>(ex/pi_2*24.0 + 12.0);
-	int iey = static_cast<int>(ey/pi_2*24.0 +  6.0);
-	int iez = static_cast<int>(ez/pi_2*24.0 + 12.0);
+	auto idx = static_cast<int>(dx+8.0); // 0.0-0.999 -> 10
+	auto idy = static_cast<int>(dy+8.0);
+	auto idz = static_cast<int>(dz+8.0);
+	auto iex = static_cast<int>(ex/pi_2*24.0 + 12.0);
+	auto iey = static_cast<int>(ey/pi_2*24.0 +  6.0);
+	auto iez = static_cast<int>(ez/pi_2*24.0 + 12.0);
 	int index = idx + 16*idy + 16*16*idz + 16*16*16*iex + 16*16*16*24*iey + 16*16*16*24*12*iez;
 	if ( 0 > index || index >= 16*16*16*24*12*24 ) utility_exit_with_message("FOO");
 	// expensive memory lookup

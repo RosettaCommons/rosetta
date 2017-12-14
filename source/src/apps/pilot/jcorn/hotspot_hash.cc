@@ -132,9 +132,7 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 	TR << "SCORE id chain res seqpos fa_atr fa_rep hbond_bb_sc hbond_sc fa_sol total\n";
 
 	// iterate over all single-chain poses
-	for ( utility::vector1<pose::PoseOP>::iterator target_chain_it = singlechain_poses.begin();
-			target_chain_it != singlechain_poses.end();
-			++target_chain_it ) {
+	for ( auto & singlechain_pose : singlechain_poses ) {
 
 		//for ( conformation::ResidueOPs::iterator res_it = pose.res_begin();
 		//res_it != pose.res_end();
@@ -162,25 +160,25 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 			}
 
 			// append the new residue and set its backbone virtual (emulate de novo hashing)
-			(*target_chain_it)->append_residue_by_jump( residue, (*target_chain_it)->size(), "", "", true );
+			singlechain_pose->append_residue_by_jump( residue, singlechain_pose->size(), "", "", true );
 			if ( option[hotspot::sc_only]() ) {
-				core::pose::add_variant_type_to_pose_residue( **target_chain_it,
-					core::chemical::SHOVE_BB, (*target_chain_it)->size() );
+				core::pose::add_variant_type_to_pose_residue( *singlechain_pose,
+					core::chemical::SHOVE_BB, singlechain_pose->size() );
 			}
 
 			//Size const pdb_seqpos = residue->seqpos() + pose.conformation().chain_begin( chain2 ) - 1;
-			Size const placed_seqpos = (*target_chain_it)->size();
+			Size const placed_seqpos = singlechain_pose->size();
 			Size const pdb_seqpos = residue.seqpos();
 
 			// build up scores
-			(*scorefxn)( **target_chain_it );
+			(*scorefxn)( *singlechain_pose );
 			// I think accumulate_residue_total_energies is now obsolete
 			//scorefxn->accumulate_residue_total_energies( *target_chain_it );
-			Real weighted_fa_atr = (*target_chain_it)->energies().residue_total_energies( placed_seqpos )[scoring::fa_atr] * scorefxn->weights()[scoring::fa_atr];
-			Real weighted_fa_rep = (*target_chain_it)->energies().residue_total_energies( placed_seqpos )[scoring::fa_rep] * scorefxn->weights()[scoring::fa_rep];
-			Real weighted_hbond_bb_sc = (*target_chain_it)->energies().residue_total_energies( placed_seqpos )[scoring::hbond_bb_sc] * scorefxn->weights()[scoring::hbond_bb_sc];
-			Real weighted_hbond_sc = (*target_chain_it)->energies().residue_total_energies( placed_seqpos )[scoring::hbond_sc] * scorefxn->weights()[scoring::hbond_sc];
-			Real weighted_fa_sol = (*target_chain_it)->energies().residue_total_energies( placed_seqpos )[scoring::fa_sol] * scorefxn->weights()[scoring::fa_sol];
+			Real weighted_fa_atr = singlechain_pose->energies().residue_total_energies( placed_seqpos )[scoring::fa_atr] * scorefxn->weights()[scoring::fa_atr];
+			Real weighted_fa_rep = singlechain_pose->energies().residue_total_energies( placed_seqpos )[scoring::fa_rep] * scorefxn->weights()[scoring::fa_rep];
+			Real weighted_hbond_bb_sc = singlechain_pose->energies().residue_total_energies( placed_seqpos )[scoring::hbond_bb_sc] * scorefxn->weights()[scoring::hbond_bb_sc];
+			Real weighted_hbond_sc = singlechain_pose->energies().residue_total_energies( placed_seqpos )[scoring::hbond_sc] * scorefxn->weights()[scoring::hbond_sc];
+			Real weighted_fa_sol = singlechain_pose->energies().residue_total_energies( placed_seqpos )[scoring::fa_sol] * scorefxn->weights()[scoring::fa_sol];
 			Real weighted_contact_score = weighted_fa_atr + weighted_fa_rep + weighted_hbond_bb_sc + weighted_hbond_sc + weighted_fa_sol;
 
 			// weighted score output
@@ -196,7 +194,7 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 			}
 
 			// clear the new residue so that we can start over
-			(*target_chain_it)->conformation().delete_residue_slow( placed_seqpos );
+			singlechain_pose->conformation().delete_residue_slow( placed_seqpos );
 		} // end residue iteration
 	} // end target chain iteration
 	// } // end residue source chain iteration
@@ -266,9 +264,8 @@ main( int argc, char * argv [] )
 			pose::Pose pose;
 			if ( option[in::file::l].user() ) {
 				utility::vector1< std::string > pdbnames = basic::options::start_files() ;
-				for ( utility::vector1<std::string>::iterator filename( pdbnames.begin() );
-						filename != pdbnames.end(); ++filename ) {
-					core::import_pose::pose_from_file( pose, *filename , core::import_pose::PDB_file);
+				for ( auto & pdbname : pdbnames ) {
+					core::import_pose::pose_from_file( pose, pdbname , core::import_pose::PDB_file);
 					benchmark_contacts( pose, scorefxn );
 				}
 			} else if ( option[in::file::s].user() ) {

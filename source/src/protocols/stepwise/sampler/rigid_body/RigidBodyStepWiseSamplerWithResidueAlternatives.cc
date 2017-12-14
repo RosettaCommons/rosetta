@@ -18,6 +18,7 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSamplerWithResidueAlternatives" );
 
@@ -33,8 +34,8 @@ namespace rigid_body {
 //Constructor
 RigidBodyStepWiseSamplerWithResidueAlternatives::RigidBodyStepWiseSamplerWithResidueAlternatives( ResidueAlternativeStepWiseSamplerCombOP residue_alternatives_rotamer,
 	RigidBodyStepWiseSamplerOP rigid_body_rotamer ):
-	residue_alternatives_rotamer_( residue_alternatives_rotamer ),
-	rigid_body_rotamer_( rigid_body_rotamer )
+	residue_alternatives_rotamer_(std::move( residue_alternatives_rotamer )),
+	rigid_body_rotamer_(std::move( rigid_body_rotamer ))
 {
 	// inner-most loop
 	add_external_loop_rotamer( residue_alternatives_rotamer_ );
@@ -43,8 +44,7 @@ RigidBodyStepWiseSamplerWithResidueAlternatives::RigidBodyStepWiseSamplerWithRes
 }
 
 //Destructor
-RigidBodyStepWiseSamplerWithResidueAlternatives::~RigidBodyStepWiseSamplerWithResidueAlternatives()
-{}
+RigidBodyStepWiseSamplerWithResidueAlternatives::~RigidBodyStepWiseSamplerWithResidueAlternatives() = default;
 
 void
 RigidBodyStepWiseSamplerWithResidueAlternatives::apply_rigid_body_only( pose::Pose & pose ){

@@ -61,7 +61,7 @@ using basic::Tracer;
 
 static Tracer TR("protocols.features.AtomTypesFeatures");
 
-AtomTypesFeatures::AtomTypesFeatures() {}
+AtomTypesFeatures::AtomTypesFeatures() = default;
 
 AtomTypesFeatures::~AtomTypesFeatures() = default;
 

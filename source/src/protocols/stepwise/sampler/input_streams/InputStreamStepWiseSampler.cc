@@ -18,6 +18,7 @@
 #include <protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.sampler.input_streams.InputStreamStepWiseSampler" );
 
@@ -39,7 +40,7 @@ InputStreamStepWiseSampler::InputStreamStepWiseSampler( stepwise::modeler::prote
 InputStreamStepWiseSampler::InputStreamStepWiseSampler( stepwise::modeler::protein::InputStreamWithResidueInfoOP input_stream,
 	stepwise::legacy::modeler::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup ):
 	input_stream_( input_stream ),
-	stepwise_pose_setup_( stepwise_pose_setup ),
+	stepwise_pose_setup_(std::move( stepwise_pose_setup )),
 	size_( input_stream->compute_size() ) // slow...
 {
 	set_random( false );
@@ -47,8 +48,7 @@ InputStreamStepWiseSampler::InputStreamStepWiseSampler( stepwise::modeler::prote
 }
 
 //Destructor
-InputStreamStepWiseSampler::~InputStreamStepWiseSampler()
-{}
+InputStreamStepWiseSampler::~InputStreamStepWiseSampler() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void
@@ -93,7 +93,7 @@ InputStreamStepWiseSampler::apply( core::pose::Pose & pose, core::Size const id 
 
 	input_stream_->apply_current_pose_segment( pose );
 	// This is annoying but necessary:
-	if ( ( stepwise_pose_setup_ != 0 ) && stepwise_pose_setup_->ready_to_align() ) {
+	if ( ( stepwise_pose_setup_ != nullptr ) && stepwise_pose_setup_->ready_to_align() ) {
 		//   TR << "ALIGNING POSE! " << std::endl;
 		stepwise_pose_setup_->align_pose( pose );
 	}

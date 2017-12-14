@@ -36,7 +36,7 @@ InputPoseDeallocationMessage::InputPoseDeallocationMessage( core::Size pose_id )
 	pose_id_( pose_id )
 {}
 
-InputPoseDeallocationMessage::~InputPoseDeallocationMessage() {}
+InputPoseDeallocationMessage::~InputPoseDeallocationMessage() = default;
 
 core::Size InputPoseDeallocationMessage::pose_id() const { return pose_id_; }
 

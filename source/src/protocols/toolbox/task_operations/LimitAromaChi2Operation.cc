@@ -58,7 +58,7 @@ LimitAromaChi2_RotamerSetOperation::LimitAromaChi2_RotamerSetOperation( Real con
 	include_trp_( false )
 {}
 
-LimitAromaChi2_RotamerSetOperation::~LimitAromaChi2_RotamerSetOperation() {}
+LimitAromaChi2_RotamerSetOperation::~LimitAromaChi2_RotamerSetOperation() = default;
 
 core::pack::rotamer_set::RotamerSetOperationOP
 LimitAromaChi2_RotamerSetOperation::clone() const
@@ -80,11 +80,10 @@ LimitAromaChi2_RotamerSetOperation::alter_rotamer_set(
 	utility::vector1< bool > rotamers_to_delete;
 	rotamers_to_delete.resize( rotamer_set.num_rotamers() );
 	Size irot( 0 ), num_to_delete(0);
-	for ( Rotamers::const_iterator it=rotamer_set.begin(), ite=rotamer_set.end(); it != ite; ++it ) {
+	for ( auto rop : rotamer_set ) {
 
 		irot ++;
 		rotamers_to_delete[ irot ] = false;
-		core::conformation::ResidueOP rop ( *it );
 		if ( rop->aa() == core::chemical::aa_tyr ||
 				rop->aa() == core::chemical::aa_phe ||
 				rop->aa() == core::chemical::aa_his ||
@@ -141,7 +140,7 @@ LimitAromaChi2Operation::LimitAromaChi2Operation():
 {}
 
 /// @brief destructor
-LimitAromaChi2Operation::~LimitAromaChi2Operation(){}
+LimitAromaChi2Operation::~LimitAromaChi2Operation()= default;
 
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
@@ -164,7 +163,7 @@ LimitAromaChi2Operation::parse_tag( TagCOP tag , DataMap & )
 {
 	chi2max( tag->getOption< Real >( "chi2max", 110.0 ) );
 	chi2min( tag->getOption< Real >( "chi2min", 70.0 ) );
-	include_trp( tag->getOption< bool >( "include_trp", 0 ) );
+	include_trp( tag->getOption< bool >( "include_trp", false ) );
 }
 
 void LimitAromaChi2Operation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

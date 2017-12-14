@@ -69,7 +69,7 @@ using namespace core;
 static basic::Tracer trTmScore(
 	"protocols.frag_picker.scores.FragmentChunkCrms");
 
-FragmentChunkCrms::~FragmentChunkCrms() {}
+FragmentChunkCrms::~FragmentChunkCrms() = default;
 
 FragmentChunkCrms::FragmentChunkCrms(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, std::string query_sequence, core::pose::PoseOP reference_pose, FArray1D_int& seqmapping) :
@@ -254,7 +254,7 @@ FragmentScoringMethodOP MakeFragmentChunkCrms::make(core::Size priority,
 	} else {
 		utility_exit_with_message("Can't read a reference structure. Provide it with in::file::s or in:file:native flag");
 
-		return NULL;
+		return nullptr;
 	}
 }
 

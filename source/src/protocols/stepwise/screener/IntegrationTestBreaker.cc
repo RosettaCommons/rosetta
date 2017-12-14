@@ -17,6 +17,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueList.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.IntegrationTestBreaker" );
 
@@ -31,14 +32,13 @@ namespace screener {
 IntegrationTestBreaker::IntegrationTestBreaker( StepWiseScreenerOP screener_whose_counts_to_check,
 	StepWiseScreenerOP final_screener /*total_count -- for turning on align screen*/,
 	AlignRMSD_ScreenerOP align_rmsd_screener ):
-	screener_whose_counts_to_check_( screener_whose_counts_to_check ),
-	final_screener_( final_screener ),
-	align_rmsd_screener_( align_rmsd_screener )
+	screener_whose_counts_to_check_(std::move( screener_whose_counts_to_check )),
+	final_screener_(std::move( final_screener )),
+	align_rmsd_screener_(std::move( align_rmsd_screener ))
 {}
 
 //Destructor
-IntegrationTestBreaker::~IntegrationTestBreaker()
-{}
+IntegrationTestBreaker::~IntegrationTestBreaker() = default;
 
 //////////////////////////////////////////////////////////////////////////
 // If you see an issue with changes to integration tests, take
@@ -48,7 +48,7 @@ bool
 IntegrationTestBreaker::check_screen() {
 	if ( screener_whose_counts_to_check_ && screener_whose_counts_to_check_->count() >= 100 )  return false;
 
-	if ( align_rmsd_screener_ != 0 ) {
+	if ( align_rmsd_screener_ != nullptr ) {
 		if ( final_screener_->count() >= 10 ) align_rmsd_screener_->set_do_screen( true );
 		if ( align_rmsd_screener_->pass_count() >= 10 ) return false;
 	}

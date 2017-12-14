@@ -38,7 +38,7 @@ namespace scoring {
 namespace mm {
 
 /// @details Auto-generated virtual destructor
-MMBondLengthScore::~MMBondLengthScore() {}
+MMBondLengthScore::~MMBondLengthScore() = default;
 
 
 MMBondLengthScore::MMBondLengthScore() :
@@ -68,7 +68,7 @@ Real MMBondLengthScore::score( mm_bondlength_atom_pair mm_atomtype_set, Real d )
 		mm_atomtype_set.key1(), mm_atomtype_set.key2());
 
 	// calc score
-	for ( mm_bondlength_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+	for ( auto i = pair.first, e = pair.second; i != e; ++i ) {
 		score += this->score( (i->second).key1(), (i->second).key2(), d );
 	}
 
@@ -90,7 +90,7 @@ Real MMBondLengthScore::dscore( mm_bondlength_atom_pair mm_atomtype_set, Real d 
 		mm_atomtype_set.key1(), mm_atomtype_set.key2() );
 
 	// calc score
-	for ( mm_bondlength_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+	for ( auto i = pair.first, e = pair.second; i != e; ++i ) {
 		dscore_dang += dscore( (i->second).key1(), (i->second).key2(), d );
 	}
 

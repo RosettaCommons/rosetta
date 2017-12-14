@@ -151,12 +151,10 @@ create_cpdata_correspondence_for_rotamer(
 	}
 
 	std::map< Size, PseudoBondCollectionCOP > const & pb_map( example_rotamer.pseudobonds());
-	for ( std::map< Size, PseudoBondCollectionCOP >::const_iterator
-			pbc_iter = pb_map.begin(), pbc_iter_end = pb_map.end();
-			pbc_iter != pbc_iter_end; ++pbc_iter ) {
+	for ( auto const & pbc_iter : pb_map ) {
 
-		Size const other_resid = pbc_iter->first;
-		PseudoBondCollectionCOP pbs = pbc_iter->second;
+		Size const other_resid = pbc_iter.first;
+		PseudoBondCollectionCOP pbs = pbc_iter.second;
 
 		if ( resid_2_connection_partner_id.find( other_resid ) == resid_2_connection_partner_id.end() ) {
 			++n_connection_partners;
@@ -166,7 +164,7 @@ create_cpdata_correspondence_for_rotamer(
 
 		utility::vector1< Size > pseudobond_connection_points( pbs->size(), 0 );
 		Size count = 0;
-		for ( PseudoBondCollection::PBIter pbiter = pbs->iter_begin(), pbiter_end = pbs->iter_end();
+		for ( auto pbiter = pbs->iter_begin(), pbiter_end = pbs->iter_end();
 				pbiter != pbiter_end; ++pbiter ) {
 			++count;
 			PseudoBond pb = *pbiter;
@@ -196,19 +194,15 @@ create_cpdata_correspondence_for_rotamer(
 		/// First bonds
 		if ( bonds_to_residues.find( other_resid ) != bonds_to_residues.end() ) {
 			std::map< Size, Size > const & ii_connmap = bonds_to_residues[ other_resid ];
-			for ( std::map< Size, Size >::const_iterator
-					iter = ii_connmap.begin(), iter_end = ii_connmap.end();
-					iter != iter_end; ++iter ) {
-				cpdata_map.connid_for_entry_connpoint( ii, ++count_connpoints, iter->second );
+			for ( auto iter : ii_connmap ) {
+				cpdata_map.connid_for_entry_connpoint( ii, ++count_connpoints, iter.second );
 			}
 		}
 		/// Second pseudobonds.
 		if ( pseudobonds_to_residues.find( other_resid ) != pseudobonds_to_residues.end() ) {
 			utility::vector1< Size > const & ii_pbmap = pseudobonds_to_residues[ other_resid ];
-			for ( utility::vector1< Size >::const_iterator
-					iter = ii_pbmap.begin(), iter_end = ii_pbmap.end();
-					iter != iter_end; ++iter ) {
-				cpdata_map.connid_for_entry_connpoint( ii, ++count_connpoints, *iter );
+			for ( unsigned long iter : ii_pbmap ) {
+				cpdata_map.connid_for_entry_connpoint( ii, ++count_connpoints, iter );
 			}
 			cpdata_map.note_has_pseudobonds();
 		}

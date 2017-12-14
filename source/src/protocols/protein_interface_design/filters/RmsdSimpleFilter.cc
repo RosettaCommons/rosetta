@@ -83,7 +83,7 @@ RmsdSimpleFilter::RmsdSimpleFilter(
 	reference_pose_=reference_pose;
 }
 
-RmsdSimpleFilter::~RmsdSimpleFilter() {}
+RmsdSimpleFilter::~RmsdSimpleFilter() = default;
 
 protocols::filters::FilterOP
 RmsdSimpleFilter::clone() const {

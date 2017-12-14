@@ -105,11 +105,9 @@ std::ostream & operator << ( std::ostream & os, PNatAAOptERotamerDataOP rd )
 // ------------------- OptEPositionData -----------------------//
 
 
-OptEPositionData::OptEPositionData()
-{}
+OptEPositionData::OptEPositionData() = default;
 
-OptEPositionData::~OptEPositionData()
-= default;
+OptEPositionData::~OptEPositionData() = default;
 
 void
 OptEPositionData::update_range(
@@ -194,11 +192,9 @@ OptEPositionData::receive_from_node(
 // ------------------- PNatAAOptEPositionData -----------------------//
 
 
-PNatAAOptEPositionData::PNatAAOptEPositionData()
-{}
+PNatAAOptEPositionData::PNatAAOptEPositionData() = default;
 
-PNatAAOptEPositionData::~PNatAAOptEPositionData()
-= default;
+PNatAAOptEPositionData::~PNatAAOptEPositionData() = default;
 
 /// Does actual work for OptE minimization
 /// @details Determine the metric for optimization of energy weights.  Original source
@@ -512,7 +508,7 @@ PNatAAOptEPositionData::write_to_file( std::ofstream & outfile ) const
 void
 PNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 {
-	typedef utility::vector1< std::string > Strings;
+	using Strings = utility::vector1<std::string>;
 	using namespace utility;
 
 	// read first line with position, native aa, neighbor_count, and num_rotamers data
@@ -601,7 +597,7 @@ PNatAAOptEPositionData::write_to_binary_file( std::ofstream & outfile ) const
 void
 PNatAAOptEPositionData::read_from_binary_file( std::ifstream & infile )
 {
-	typedef utility::vector1< Real > Energies;
+	using Energies = utility::vector1<Real>;
 	//typedef Energies::const_iterator Energies_CItr;
 
 	//Size position(0), neighbor_count(0);
@@ -815,7 +811,7 @@ PNatAAOptEPositionData::receive_from_node( int const source_node, int const tag 
 // ------------------- Position Specific Scoring Matrix -----------------------//
 
 
-PSSMOptEPositionData::PSSMOptEPositionData() {}
+PSSMOptEPositionData::PSSMOptEPositionData() = default;
 
 PSSMOptEPositionData::~PSSMOptEPositionData() = default;
 
@@ -2100,8 +2096,7 @@ PNatStructureOptEData::PNatStructureOptEData()
 	nativeness_sum_( 0.0 )
 {}
 
-PNatStructureOptEData::~PNatStructureOptEData()
-= default;
+PNatStructureOptEData::~PNatStructureOptEData() = default;
 
 
 Real
@@ -2929,7 +2924,7 @@ PNatStructureOptEData::nativeness_high()
 //// ConstraintedOptimizationWeightFunc /////
 /////////////////////////////////////////////
 
-ConstraintedOptimizationWeightFunc::ConstraintedOptimizationWeightFunc() {}
+ConstraintedOptimizationWeightFunc::ConstraintedOptimizationWeightFunc() = default;
 
 ConstraintedOptimizationWeightFunc::ConstraintedOptimizationWeightFunc(
 	ScoreTypes const & score_list
@@ -2941,8 +2936,7 @@ ConstraintedOptimizationWeightFunc::ConstraintedOptimizationWeightFunc(
 
 }
 
-ConstraintedOptimizationWeightFunc::~ConstraintedOptimizationWeightFunc()
-= default;
+ConstraintedOptimizationWeightFunc::~ConstraintedOptimizationWeightFunc() = default;
 
 
 /// @details Constraint input file format:
@@ -2954,7 +2948,7 @@ ConstraintedOptimizationWeightFunc::initialize_constraints_from_file( std::ifstr
 {
 	std::string on_off;
 	std::string term_name;
-	ScoreType term( ScoreType(1) );
+	auto term( ScoreType(1) );
 	Real min_val;
 	Real max_val;
 	Real spring_constant;
@@ -3196,8 +3190,7 @@ DDGMutationOptEData::DDGMutationOptEData()
 	mut_aa_( core::chemical::aa_ala )
 {}
 
-DDGMutationOptEData::~DDGMutationOptEData()
-= default;
+DDGMutationOptEData::~DDGMutationOptEData() = default;
 
 Real
 DDGMutationOptEData::get_score(
@@ -3937,7 +3930,7 @@ OptEData::read_from_file( std::string filename )
 	std::ifstream infile( filename.c_str() );
 	std::string line;
 
-	typedef utility::vector1< std::string > Strings;
+	using Strings = utility::vector1<std::string>;
 	using utility::string_split;
 
 	// first read the header to get the get list of fixed and free terms
@@ -3967,7 +3960,7 @@ OptEData::read_from_file( std::string filename )
 		if ( words.size() == 0 ) { utility_exit_with_message("Bad line from optE data file"); }
 		if ( words[ 1 ] != "optE_position_data_type" ) { utility_exit_with_message("Bad line from optE data file"); }
 
-		OptEPositionDataType postype = (OptEPositionDataType) utility::from_string( words[2], int( 0 ) /* dummy */ );
+		auto postype = (OptEPositionDataType) utility::from_string( words[2], int( 0 ) /* dummy */ );
 		OptEPositionDataOP new_position_data = OptEPositionDataFactory::create_position_data( postype );
 		new_position_data->read_from_file( infile );
 		add_position_data( new_position_data );

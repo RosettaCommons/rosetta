@@ -752,8 +752,7 @@ bool write_motifs_binary(ostream & out, ResPairMotifs const & motifs){
 	uint64_t const n = motifs.size();
 	out.write((char*)&v,sizeof(uint64_t));
 	out.write((char*)&n,sizeof(uint64_t));
-	for ( ResPairMotifs::const_iterator i = motifs.begin(); i != motifs.end(); ++i ) {
-		ResPairMotif const & sm( *i );
+	for ( const auto & sm : motifs ) {
 		out.write((char*)&sm,sizeof(ResPairMotif));
 		if ( !out.good() ) return false;
 	}
@@ -821,7 +820,7 @@ bool read_motifs_binary(string const & fname, ResPairMotifs & motifs){
 }
 bool read_motifs_binary(vector1<string> const & fnames, ResPairMotifs & motifs){
 	TR << "Nfiles: " << fnames.size() << endl;
-	for ( vector1<string>::const_iterator i = fnames.begin(); i != fnames.end(); ++i ) {
+	for ( auto i = fnames.begin(); i != fnames.end(); ++i ) {
 		// if( ++count %50 == 0 ){ TR << "... read " << count << endl; }
 		if ( fnames.size()<10 ) TR << "reading binary ResPairMotifs " << *i << endl;
 		else TR << ".";
@@ -865,7 +864,7 @@ void load_motifs(string const & fname, ResPairMotifs & motifs, ResPairMotifsStri
 
 struct MyHash {
 	uint64_t operator()(ResPairMotif const & rpm) const {
-		uint64_t const *x = (uint64_t const *)(&rpm);
+		auto const *x = (uint64_t const *)(&rpm);
 		return x[0] ^ x[1] ^ x[2] ^ x[3] ^ x[4] ^ x[5];
 	}
 };
@@ -1034,11 +1033,11 @@ void MotifHits::compute_metrics() const {
 	std::set<int> resset;
 	std::set<std::pair<int,int> > pairset;
 	total_score = 0.0;
-	for ( MotifHits::const_iterator i = begin(); i != end(); ++i ) {
-		resset.insert(i->residue1);
-		resset.insert(i->residue2);
-		pairset.insert(std::make_pair(i->residue1,i->residue2));
-		total_score += i->motif.score();
+	for ( const auto & i : *this ) {
+		resset.insert(i.residue1);
+		resset.insert(i.residue2);
+		pairset.insert(std::make_pair(i.residue1,i.residue2));
+		total_score += i.motif.score();
 	}
 	rescover = resset.size();
 	paircover = pairset.size();
@@ -1520,7 +1519,7 @@ void ResPairMotifQuery::init( Pose const & pose1_in, Pose const & pose2_in){
 	bool dssp1=true; for ( char const ss : pose1_in.secstruct() ) dssp1 &= ss=='L'; // dssp iff all L
 	if ( dssp1 ) core::scoring::dssp::Dssp(*pose1op).insert_ss_into_pose(*pose1op,false);
 	pose1_ = pose1op;
-	pose2_ = NULL;
+	pose2_ = nullptr;
 	if ( &pose1_in != &pose2_in ) {
 		core::pose::PoseOP pose2op( new Pose(pose2_in) );
 		bool dssp2=true; for ( char const ss : pose2_in.secstruct() ) dssp2 &= ss=='L'; // dssp iff all L
@@ -1528,7 +1527,7 @@ void ResPairMotifQuery::init( Pose const & pose1_in, Pose const & pose2_in){
 		pose2_ = pose2op;
 	}
 
-	inter_clash1_ = inter_clash2_ = NULL;
+	inter_clash1_ = inter_clash2_ = nullptr;
 	auto_clash_ = false;
 	match_ss1_ = option[mh::match::ss1].user() ? option[mh::match::ss1]() : option[mh::match::ss]();
 	match_ss2_ = option[mh::match::ss2].user() ? option[mh::match::ss2]() : option[mh::match::ss]();
@@ -1654,7 +1653,7 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 		}
 	}
 
-	xyzStripeHashPoseCOP ccheck1bb32=0,ccheck2bb32=0;
+	xyzStripeHashPoseCOP ccheck1bb32=nullptr,ccheck2bb32=nullptr;
 	if ( opt.auto_clash_ ) {
 		ccheck1bb32 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose1,PoseCoordPickMode_BB,2.8) );
 		if ( !samepose ) ccheck2bb32 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose2,PoseCoordPickMode_BB,2.8) );
@@ -1820,8 +1819,8 @@ void filter_motifs(
 	ResPairMotifs       & motifs_out
 ){
 	RPM_FilterStats s;
-	for ( ResPairMotifs::const_iterator i = motifs_in.begin(); i != motifs_in.end(); ++i ) {
-		if ( i->filter(&s) ) motifs_out.push_back(*i);
+	for ( const auto & i : motifs_in ) {
+		if ( i.filter(&s) ) motifs_out.push_back(i);
 	}
 	TR << s;
 }
@@ -1892,9 +1891,9 @@ void XformScore::print_quantiles(ostream & out, int num) const {
 	}
 	Score mx = -9e9;
 	utility::vector1<Score> vals;
-	for ( ScoreMap::const_iterator i=scores_.begin(); i != scores_.end(); ++i ) {
-		vals.push_back(i->second);
-		mx = max(i->second,mx);
+	for ( auto score : scores_ ) {
+		vals.push_back(score.second);
+		mx = max(score.second,mx);
 	}
 	int W = 5;
 	std::sort(vals.begin(),vals.end());
@@ -1983,9 +1982,9 @@ bool XformScore::write_binary(ostream & out) const {
 	out.write((char*)& cart_size,sizeof(numeric::Real));
 	out.write((char*)& cart_resl,sizeof(numeric::Real));
 	out.write((char*)&angle_resl,sizeof(numeric::Real));
-	for ( ScoreMap::const_iterator i = scores_.begin(); i != scores_.end(); ++i ) {
-		Key key = i->first;
-		Score count = i->second;
+	for ( auto score : scores_ ) {
+		Key key = score.first;
+		Score count = score.second;
 		out.write((char*)&key  ,sizeof(Key));
 		out.write((char*)&count,sizeof(Score));
 	}
@@ -2057,10 +2056,10 @@ bool XformScore::read_binary(XformScoreOP & xs, vector1<string> const & fnames, 
 	if ( xs ) xs->clear();
 	Size count = 0;
 	TR << "Nfiles: " << fnames.size() << endl;
-	for ( vector1<string>::const_iterator i = fnames.begin(); i != fnames.end(); ++i ) {
+	for ( const auto & fname : fnames ) {
 		if ( ++count %50 == 0 ) { TR << "... read " << count << endl; }
-		if ( !read_binary(xs,*i,false,wt) ) {
-			std::cerr << "XformScore::read_binary(fnames): error reading file "+*i << endl;
+		if ( !read_binary(xs,fname,false,wt) ) {
+			std::cerr << "XformScore::read_binary(fnames): error reading file "+fname << endl;
 			if ( !option[basic::options::OptionKeys::mh::ignore_io_errors]() ) utility_exit_with_message("XformScore::read_binary(fnames): see tracer output");
 		}
 	}
@@ -2069,19 +2068,19 @@ bool XformScore::read_binary(XformScoreOP & xs, vector1<string> const & fnames, 
 }
 
 void XformScore::print_scores(ostream & out, std::string const tag) const {
-	for ( ScoreMap::const_iterator i = scores_.begin(); i != scores_.end(); ++i ) {
-		Key key = i->first;
+	for ( auto score : scores_ ) {
+		Key key = score.first;
 		// Real6 center = hasher_.bin_center_point(hasher_.bin_from_index(key));
-		Score count = i->second;
+		Score count = score.second;
 		out << tag << " " << key << " " << count << " " << hasher_.bin_center_point(hasher_.bin_from_index(key)) << endl;
 	}
 }
 
 void XformScore::print_scores_norm(ostream & out, std::string const tag) const {
-	for ( ScoreMap::const_iterator i = scores_.begin(); i != scores_.end(); ++i ) {
-		Key key = i->first;
+	for ( auto score : scores_ ) {
+		Key key = score.first;
 		Real6 center = hasher_.bin_center_point(hasher_.bin_from_index(key));
-		Real count = i->second;
+		Real count = score.second;
 		Real freq = count / sin(radians(center[6]));
 		out << tag << " " << key << " " << freq << endl;
 	}
@@ -2111,7 +2110,7 @@ void fill_xform_score_from_file(XformScoreOP & xs,string const & datfile, Real c
 		} else {
 			TR.Warning << "file does not exist " << datfile << endl;
 		}
-		xs = NULL;
+		xs = nullptr;
 	}
 }
 
@@ -2130,7 +2129,7 @@ void* preload_motif_data_pthread_wrapper(void* ptr)
 
 	preload_motif_data(mman);
 
-	return NULL;
+	return nullptr;
 }
 
 void preload_motif_data(MotifHashManager & mman){
@@ -2187,14 +2186,14 @@ void preload_motif_data(MotifHashManager & mman){
 }
 
 MotifHashManager::MotifHashManager() :
-	motif_hash_SC_BB_(NULL),
-	motif_hash_BB_BB_(NULL),
-	motif_hash_BB_PH_(NULL),
-	motif_hash_BB_PO_(NULL),
-	xform_score_BB_PH_(NULL),
-	xform_score_BB_PO_(NULL),
-	xform_score_PH_PO_(NULL),
-	xform_score_frags_(NULL),
+	motif_hash_SC_BB_(nullptr),
+	motif_hash_BB_BB_(nullptr),
+	motif_hash_BB_PH_(nullptr),
+	motif_hash_BB_PO_(nullptr),
+	xform_score_BB_PH_(nullptr),
+	xform_score_BB_PO_(nullptr),
+	xform_score_PH_PO_(nullptr),
+	xform_score_frags_(nullptr),
 	done_loading_(false)
 {
 	if ( option[basic::options::OptionKeys::mh::harvest::sep_aa1 ]() &&
@@ -2224,7 +2223,7 @@ void MotifHashManager::init(){
 				BOOST_FOREACH ( char const aa1, AA1 ) {
 					BOOST_FOREACH ( char const aa2, AA2 ) {
 						Key k = key_mask_BB_BB_ & ((Key)ss1 | ((Key)ss2<<8) | ((Key)aa1<<16) | ((Key)aa2<<24));
-						xform_scores_BB_BB_[k] = NULL;
+						xform_scores_BB_BB_[k] = nullptr;
 						// cout << ss1 << " " << ss2 << " " << aa1 << " " << aa2 << " " << k << endl;
 						string ss1s = ss1!=' ' ? "_"+string_of(ss1) : "";
 						string ss2s = ss2!=' ' ?     string_of(ss2) : "";
@@ -2236,7 +2235,7 @@ void MotifHashManager::init(){
 							// if( (ss1=='H' && ss2=='E') || (ss1=='E' && ss2=='H') ){ wt =  5.5; /*cout << "FIXME SS wt" << endl;*/ }
 							// if( (ss1=='E' && ss2=='E')                           ){ wt = 10.2; /*cout << "FIXME SS wt" << endl;*/ }
 							fill_xform_score_from_file(xform_scores_BB_BB_[k],fname,wt);
-							allnull &= (NULL==xform_scores_BB_BB_[k]);
+							allnull &= (nullptr==xform_scores_BB_BB_[k]);
 							// if(xform_scores_BB_BB_[k]) cout << "read " << fname << " " << k << endl;
 							// else                 cout << "fail " << fname << endl;
 						}
@@ -2284,10 +2283,10 @@ void MotifHashManager::init(){
 		BOOST_FOREACH ( char const aa1, AA ) {
 			BOOST_FOREACH ( char const aa2, AA ) {
 				Key const k = (((Key)aa1<<0) | ((Key)aa2<<8));
-				xform_scores_SC_SC_[k] = NULL;
+				xform_scores_SC_SC_[k] = nullptr;
 				for ( string const & fname : option[mh::path::scores_SC_SC]() ) {
 					fill_xform_score_from_file(xform_scores_SC_SC_[k],fname+"_"+aa1+aa2+".xh.bin.gz",1.0);
-					allnull &= (NULL==xform_scores_SC_SC_[k]);
+					allnull &= (nullptr==xform_scores_SC_SC_[k]);
 				}
 			}
 		}
@@ -2301,10 +2300,10 @@ void MotifHashManager::init(){
 		const char * AA = "ACDEFGHIKLMNPQRSTVWY";
 		bool allnull = true;
 		BOOST_FOREACH ( char const aa, AA ) {
-			xform_scores_SC_BB_[aa] = NULL;
+			xform_scores_SC_BB_[aa] = nullptr;
 			for ( string const & fname :option[mh::path::scores_SC_BB]() ) {
 				fill_xform_score_from_file(xform_scores_SC_BB_[aa],fname+"_"+aa+".xh.bin.gz",1.0);
-				allnull &= (NULL==xform_scores_SC_BB_[aa]);
+				allnull &= (nullptr==xform_scores_SC_BB_[aa]);
 			}
 		}
 		if ( allnull ) {
@@ -2314,21 +2313,21 @@ void MotifHashManager::init(){
 	}
 	if ( option[mh::path::scores_BB_PH].user() ) {
 		TR << "reading xform_score_data_BB_PH" << endl;
-		xform_score_BB_PH_ = NULL;
+		xform_score_BB_PH_ = nullptr;
 		for ( string const & fname : option[mh::path::scores_BB_PH]() ) {
 			fill_xform_score_from_file(xform_score_BB_PH_,fname,1.0);
 		}
 	}
 	if ( option[mh::path::scores_BB_PO].user() ) {
 		TR << "reading xform_score_data_BB_PO" << endl;
-		xform_score_BB_PO_ = NULL;
+		xform_score_BB_PO_ = nullptr;
 		for ( string const & fname : option[mh::path::scores_BB_PO]() ) {
 			fill_xform_score_from_file(xform_score_BB_PO_,fname,1.0);
 		}
 	}
 	if ( option[mh::path::scores_PH_PO].user() ) {
 		TR << "reading xform_score_data_PH_PO" << endl;
-		xform_score_PH_PO_ = NULL;
+		xform_score_PH_PO_ = nullptr;
 		for ( string const & fname : option[mh::path::scores_PH_PO]() ) {
 			fill_xform_score_from_file(xform_score_PH_PO_,fname);
 		}
@@ -2393,7 +2392,7 @@ MotifHashCOP MotifHashManager::get_motif_hash_BB_BB(){
 #else
 			utility_exit_with_message("BB_BB motif data should have been loaded at this point!");
 #endif
-		} else return NULL;
+		} else return nullptr;
 	}
 	return motif_hash_BB_BB_;
 }
@@ -2406,7 +2405,7 @@ MotifHashCOP MotifHashManager::get_motif_hash_SC_BB(){
 #else
 			utility_exit_with_message("SC_BB motif data should have been loaded at this point!");
 #endif
-		} else return NULL;
+		} else return nullptr;
 	}
 	return motif_hash_SC_BB_;
 }
@@ -2419,7 +2418,7 @@ MotifHashCOP MotifHashManager::get_motif_hash_SC_SC(){
 #else
 			utility_exit_with_message("SC_SC motif data should have been loaded at this point!");
 #endif
-		} else return NULL;
+		} else return nullptr;
 	}
 	return motif_hash_SC_SC_;
 }
@@ -2432,7 +2431,7 @@ MotifHashCOP MotifHashManager::get_motif_hash_BB_PH(){
 #else
 			utility_exit_with_message("BB_PH motif data should have been loaded at this point!");
 #endif
-		} else return NULL;
+		} else return nullptr;
 	}
 	return motif_hash_BB_PH_;
 }
@@ -2445,7 +2444,7 @@ MotifHashCOP MotifHashManager::get_motif_hash_BB_PO(){
 #else
 			utility_exit_with_message("BB_PO motif data should have been loaded at this point!");
 #endif
-		} else return NULL;
+		} else return nullptr;
 	}
 	return motif_hash_BB_PO_;
 }
@@ -2496,7 +2495,7 @@ XformScoreCOP MotifHashManager::get_xform_score_BB_BB(char ss1, char ss2, char a
 	Key const k = key_mask_BB_BB_ & ((Key)ss1 | ((Key)ss2<<8) | ((Key)aa1<<16) | ((Key)aa2<<24));
 	// cout << "lookup " << k << " " << ss1 <<' '<< ss2 <<' '<< aa1 <<' '<< aa2 << endl;
 	XformScoreMap::const_iterator i = xform_scores_BB_BB_.find(k);
-	if ( i==xform_scores_BB_BB_.end() ) return NULL;
+	if ( i==xform_scores_BB_BB_.end() ) return nullptr;
 	return XformScoreCOP(i->second);
 }
 XformScoreCOP MotifHashManager::get_xform_score_frags(){
@@ -2509,13 +2508,13 @@ XformScoreCOP MotifHashManager::get_xform_score_frags(){
 XformScoreCOP MotifHashManager::get_xform_score_SC_BB(char aa1){
 	Key const k = aa1;
 	XformScoreMap::const_iterator i = xform_scores_SC_BB_.find(k);
-	if ( i==xform_scores_SC_BB_.end() ) return NULL;
+	if ( i==xform_scores_SC_BB_.end() ) return nullptr;
 	return XformScoreCOP(i->second);
 }
 XformScoreCOP MotifHashManager::get_xform_score_SC_SC(char aa1, char aa2){
 	Key const k = (((Key)aa1<<0) | ((Key)aa2<<8));
 	XformScoreMap::const_iterator i = xform_scores_SC_SC_.find(k);
-	if ( i==xform_scores_SC_SC_.end() ) return NULL;
+	if ( i==xform_scores_SC_SC_.end() ) return nullptr;
 	return XformScoreCOP(i->second);
 }
 XformScoreCOP MotifHashManager::get_xform_score_BB_PH(){
@@ -2527,7 +2526,7 @@ XformScoreCOP MotifHashManager::get_xform_score_BB_PO(){
 
 int MotifHashManager::get_matching_motifs( ResPairMotifQuery const & opt, MotifHits & hits ) const {
 	if ( motif_set_names_.size()==0 ) return 0;
-	ResPairMotifQuery * optswap = NULL;
+	ResPairMotifQuery * optswap = nullptr;
 	if ( opt.pose1()!=opt.pose2() ) {
 		optswap = new ResPairMotifQuery(*opt.pose2(),*opt.pose1());
 		optswap->copy_opts_swapped(opt);

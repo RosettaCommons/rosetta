@@ -85,7 +85,7 @@ using utility::vector1;
 
 using protocols::rna::denovo::libraries::MAX_BULGE_LENGTH;
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 //Definition of new OptionKeys
 // these will be available in the top-level OptionKey namespace:
@@ -363,7 +363,7 @@ create_bp_jump_database_test( ){
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> ( *iru ) );
+			auto const * edge( static_cast< EnergyEdge const *> ( *iru ) );
 			Size const j( edge->get_other_ind(i) );
 
 			if ( is_num_in_list(i, exclude_res_list) || is_num_in_list(j, exclude_res_list) ) {

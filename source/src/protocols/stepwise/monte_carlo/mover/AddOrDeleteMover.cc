@@ -29,6 +29,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 using namespace core;
 using core::Real;
@@ -58,9 +59,9 @@ namespace mover {
 AddOrDeleteMover::AddOrDeleteMover( AddMoverOP rna_add_mover,
 	DeleteMoverOP rna_delete_mover,
 	FromScratchMoverOP rna_from_scratch_mover ) :
-	rna_add_mover_( rna_add_mover ),
-	rna_delete_mover_( rna_delete_mover ),
-	rna_from_scratch_mover_( rna_from_scratch_mover ),
+	rna_add_mover_(std::move( rna_add_mover )),
+	rna_delete_mover_(std::move( rna_delete_mover )),
+	rna_from_scratch_mover_(std::move( rna_from_scratch_mover )),
 	disallow_deletion_of_last_residue_( false ),
 	swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
 	choose_random_( true )
@@ -68,8 +69,7 @@ AddOrDeleteMover::AddOrDeleteMover( AddMoverOP rna_add_mover,
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-AddOrDeleteMover::~AddOrDeleteMover()
-{}
+AddOrDeleteMover::~AddOrDeleteMover() = default;
 
 void
 AddOrDeleteMover::apply( core::pose::Pose & pose ){
@@ -89,7 +89,7 @@ AddOrDeleteMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_move 
 		rna_from_scratch_mover_->apply( pose, swa_move.move_element() );
 	} else {
 		if ( swa_move.move_type() == ADD_SUBMOTIF ) {
-			runtime_assert( submotif_library_ != 0 );
+			runtime_assert( submotif_library_ != nullptr );
 
 			// could encapsulate in full_model_info.add_submotif();
 			FullModelInfo & full_model_info = nonconst_full_model_info( pose );

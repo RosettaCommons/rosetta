@@ -122,7 +122,7 @@ SidechainMCMover::SidechainMCMover(
 	metropolis_hastings_mover_(/* 0 */)
 {}
 
-SidechainMCMover::~SidechainMCMover() {}
+SidechainMCMover::~SidechainMCMover() = default;
 
 
 void
@@ -177,7 +177,7 @@ SidechainMCMover::apply(
 
 	if ( inherit_scorefxn_temperature_ ) {
 		protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover( metropolis_hastings_mover_ );
-		runtime_assert(metropolis_hastings_mover != 0);
+		runtime_assert(metropolis_hastings_mover != nullptr);
 		// update temperature every time in case temperature changes are implemented in the future
 		set_temperature(metropolis_hastings_mover->monte_carlo()->temperature());
 	}
@@ -343,14 +343,13 @@ SidechainMCMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 		core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );
 
 		std::string const t_o_val( tag->getOption<std::string>("task_operations") );
-		typedef utility::vector1< std::string > StringVec;
+		using StringVec = utility::vector1<std::string>;
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
-		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-				t_o_key != end; ++t_o_key ) {
-			if ( data.has( "task_operations", *t_o_key ) ) {
-				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
+		for ( auto const & t_o_key : t_o_keys ) {
+			if ( data.has( "task_operations", t_o_key ) ) {
+				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", t_o_key ) );
 			} else {
-				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 
@@ -365,7 +364,7 @@ SidechainMCMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 	}
 
 	ntrials_ = tag->getOption<core::Size>( "ntrials", 10000 );
-	set_preserve_detailed_balance( tag->getOption<bool>( "preserve_detailed_balance", 1 ) );
+	set_preserve_detailed_balance( tag->getOption<bool>( "preserve_detailed_balance", true ) );
 	temperature_ = tag->getOption<core::Real>( "temperature", 1.0 );
 	set_inherit_scorefxn_temperature( tag->getOption<bool>( "inherit_scorefxn_temperature", inherit_scorefxn_temperature() ) );
 
@@ -398,7 +397,7 @@ SidechainMCMover::initialize_simulation(
 
 	if ( inherit_scorefxn_temperature_ ) {
 		protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover( metropolis_hastings_mover_ );
-		runtime_assert(metropolis_hastings_mover != 0);
+		runtime_assert(metropolis_hastings_mover != nullptr);
 		set_scorefunction(metropolis_hastings_mover->monte_carlo()->score_function());
 		set_temperature(metropolis_hastings_mover->monte_carlo()->temperature());
 	}

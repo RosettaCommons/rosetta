@@ -36,8 +36,7 @@ BaseBinMapUpdater::BaseBinMapUpdater( BaseBinMap & base_bin_map ):
 {}
 
 //Destructor
-BaseBinMapUpdater::~BaseBinMapUpdater()
-{}
+BaseBinMapUpdater::~BaseBinMapUpdater() = default;
 
 // diagnostics.
 void

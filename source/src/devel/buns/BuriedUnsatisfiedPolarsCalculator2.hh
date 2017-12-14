@@ -47,12 +47,12 @@ class BuriedUnsatisfiedPolarsCalculator2 : public core::pose::metrics::EnergyDep
 public:
 
 	BuriedUnsatisfiedPolarsCalculator2(
-		std::string weak_bunsat_calc_
+		std::string const & weak_bunsat_calc_
 	);
 
 	BuriedUnsatisfiedPolarsCalculator2(
-		std::string weak_bunsat_calc,
-		std::set< Size > special_region
+		std::string const & weak_bunsat_calc,
+		std::set< Size > const & special_region
 	);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone()

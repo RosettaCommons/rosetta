@@ -13,6 +13,7 @@
 
 // Unit headers
 #include <protocols/jd3/output/OutputSpecification.hh>
+#include <utility>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -28,7 +29,7 @@ namespace protocols {
 namespace jd3 {
 namespace output {
 
-OutputSpecification::OutputSpecification() {}
+OutputSpecification::OutputSpecification() = default;
 
 OutputSpecification::OutputSpecification(
 	JobResultID const & result_id,
@@ -38,7 +39,7 @@ OutputSpecification::OutputSpecification(
 	output_index_( output_index )
 {}
 
-OutputSpecification::~OutputSpecification() {}
+OutputSpecification::~OutputSpecification() = default;
 
 JobResultID
 OutputSpecification::result_id() const

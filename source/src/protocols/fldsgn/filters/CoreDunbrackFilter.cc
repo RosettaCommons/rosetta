@@ -36,6 +36,7 @@
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <core/pose/util.hh>
@@ -71,13 +72,7 @@ CoreDunbrackFilter::CoreDunbrackFilter( String const & type, Real const value ):
 {}
 
 // @brief copy constructor
-CoreDunbrackFilter::CoreDunbrackFilter( CoreDunbrackFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
-	Super( rval ),
-	filter_value_( rval.filter_value_ ),
-	type_( rval.type_ ),
-	fa_dun_danger_( rval.fa_dun_danger_ )
-{}
+CoreDunbrackFilter::CoreDunbrackFilter( CoreDunbrackFilter const & /*rval*/ ) = default;
 
 // @brief set filter value
 void CoreDunbrackFilter::filter_value( Real const & value )

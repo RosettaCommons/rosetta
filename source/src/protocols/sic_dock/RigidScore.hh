@@ -104,7 +104,7 @@ public:
 		Pose const & pose2,
 		Size max_loop_len,
 		Size lookup_radius,
-		std::string outtag
+		std::string const & outtag
 	);
 	~LinkerScore() override= default;
 	core::Real  score( Xforms const & x1, Xforms const & x2 ) const override;
@@ -184,8 +184,8 @@ class JointScore : public RigidScore {
 public:
 	JointScore();
 	JointScore(
-		Scores scores,
-		Reals weights
+		Scores const & scores,
+		Reals const & weights
 	);
 	void add_score(RigidScoreCOP score, Real weight);
 

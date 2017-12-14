@@ -572,7 +572,7 @@ RepackLigandSiteWithoutLigandMover::get_ptask() const {
 
 //-------UpdateEnzdesHeaderMover----------//
 
-UpdateEnzdesHeaderMover::UpdateEnzdesHeaderMover(){}
+UpdateEnzdesHeaderMover::UpdateEnzdesHeaderMover()= default;
 
 UpdateEnzdesHeaderMover::~UpdateEnzdesHeaderMover()= default;
 

@@ -18,8 +18,8 @@ namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
 
-SecondaryPoseOutputter::SecondaryPoseOutputter() {}
-SecondaryPoseOutputter::~SecondaryPoseOutputter() {}
+SecondaryPoseOutputter::SecondaryPoseOutputter() = default;
+SecondaryPoseOutputter::~SecondaryPoseOutputter() = default;
 
 void SecondaryPoseOutputter::determine_job_tag(
 	utility::tag::TagCOP,

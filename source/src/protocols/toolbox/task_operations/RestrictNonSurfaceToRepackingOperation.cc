@@ -74,7 +74,7 @@ RestrictNonSurfaceToRepackingOperation::RestrictNonSurfaceToRepackingOperation( 
 }
 
 // destructor
-RestrictNonSurfaceToRepackingOperation::~RestrictNonSurfaceToRepackingOperation() {}
+RestrictNonSurfaceToRepackingOperation::~RestrictNonSurfaceToRepackingOperation() = default;
 
 // clone method, required by TaskOperation interface
 TaskOperationOP RestrictNonSurfaceToRepackingOperation::clone() const {

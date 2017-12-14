@@ -33,7 +33,7 @@ class Calculator : public utility::pointer::ReferenceCount {
 public:
 	virtual ~Calculator();
 
-	Calculator(std::string const & equation);
+	Calculator( std::string const & equation );
 
 	/// @brief Calculate the value of the equation, putting it in output
 	/// Return true if the computation failed.

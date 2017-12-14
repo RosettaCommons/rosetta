@@ -66,6 +66,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/io/ozstream.hh>
 
 //numeric headers
@@ -103,8 +104,8 @@ SlidingWindowLoopClosure::SlidingWindowLoopClosure(
 	fragment::FragSetCOP fragset,
 	scoring::ScoreFunctionOP scorefxn,
 	kinematics::MoveMapCOP movemap
-) : scorefxn_( scorefxn ),
-	movemap_( movemap ),
+) : scorefxn_(std::move( scorefxn )),
+	movemap_(std::move( movemap )),
 	fragset_( fragset ),
 	ss_info_( core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *fragset ) ) )
 {
@@ -120,7 +121,7 @@ SlidingWindowLoopClosure::SlidingWindowLoopClosure() :
 	set_defaults();
 }
 
-SlidingWindowLoopClosure::~SlidingWindowLoopClosure() {}
+SlidingWindowLoopClosure::~SlidingWindowLoopClosure() = default;
 
 //@brief sets the movemap
 void SlidingWindowLoopClosure::movemap( core::kinematics::MoveMapCOP movemap ) {
@@ -602,7 +603,7 @@ SlidingWindowLoopClosure::process_fragments(
 
 void
 SlidingWindowLoopClosure::generate_window_list( Size loop_size, WindowList& window_list ) const {
-	runtime_assert( ss_info_ != 0 );
+	runtime_assert( ss_info_ != nullptr );
 	for ( Size ii= std::max( 0, - (int) loop_.cut() + (int) loop_size )  ; ii<= loop_size; ++ii ) {
 		runtime_assert( (int) loop_.cut() - (int) loop_size + ii + 1  > 0 );
 		Size const loop_begin( loop_.cut() - loop_size + ii + 1);

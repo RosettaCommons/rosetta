@@ -38,7 +38,7 @@ class BuildingBlockInterfaceOperation : public core::pack::task::operation::Task
 public:
 	BuildingBlockInterfaceOperation(
 		core::Size nsub_bblock = 1,
-		std::string sym_dof_names  = "",
+		std::string const & sym_dof_names  = "",
 		core::Real contact_dist = 10,
 		core::Real bblock_dist = 5,
 		core::Real fa_rep_cut = 3.0,

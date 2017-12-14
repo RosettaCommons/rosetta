@@ -79,7 +79,7 @@ Real
 SphereGrinder( pose::Pose const &pose_ref,
 	pose::Pose const &pose,
 	Real dcut2,
-	std::string mode )
+	std::string const & mode )
 {
 	// get sphere residue first
 	utility::vector1< utility::vector1< id::AtomID > > sphere_atomid( pose_ref.total_residue() );

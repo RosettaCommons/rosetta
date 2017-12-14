@@ -73,14 +73,14 @@ ReferencePoseSet::ReferencePoseSet( ReferencePoseSet const & src ) :
 	reference_pose_map_()
 {
 	//Loop over and clone all elements in the map:
-	for ( std::map<std::string,ReferencePoseOP>::const_iterator it=src.reference_pose_map_.begin(); it!=src.reference_pose_map_.end(); ++it ) {
-		reference_pose_map_[it->first] = it->second->clone(); //Create a clone of each ReferencePose object.
+	for ( auto const & it : src.reference_pose_map_ ) {
+		reference_pose_map_[it.first] = it.second->clone(); //Create a clone of each ReferencePose object.
 	}
 }
 
 /// @brief Destructor.
 ///
-ReferencePoseSet::~ReferencePoseSet() {}
+ReferencePoseSet::~ReferencePoseSet() = default;
 
 
 /// @brief Make a copy of this ReferencePoseSet object (allocate actual memory for it)
@@ -148,7 +148,7 @@ bool ReferencePoseSet::empty() const {
 void ReferencePoseSet::increment_reference_pose_mapping_after_seqpos( core::Size const seqpos ) {
 	if ( empty() ) return; //Do nothing if the map is empty.
 	//Iterate over all elements of the ReferencePose map:
-	for ( std::map< std::string, ReferencePoseOP >::iterator it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it ) {
+	for ( auto it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it ) {
 		debug_assert( it->second ); //The reference pose owning pointer should always point to something, but let's double-check that.
 		it->second->increment_reference_pose_mapping_after_seqpos( seqpos );
 	}
@@ -160,7 +160,7 @@ void ReferencePoseSet::increment_reference_pose_mapping_after_seqpos( core::Size
 void ReferencePoseSet::decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos ) {
 	if ( empty() ) return; //Do nothing if the map is empty.
 	//Iterate over all elements of the ReferencePose map:
-	for ( std::map< std::string, ReferencePoseOP >::iterator it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it ) {
+	for ( auto it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it ) {
 		debug_assert( it->second ); //The reference pose owning pointer should always point to something, but let's double-check that.
 		it->second->decrement_reference_pose_mapping_after_seqpos( seqpos );
 	}
@@ -172,7 +172,7 @@ void ReferencePoseSet::decrement_reference_pose_mapping_after_seqpos( core::Size
 void ReferencePoseSet::zero_reference_pose_mapping_at_seqpos( core::Size const seqpos ) {
 	if ( empty() ) return; //Do nothing if the map is empty.
 	//Iterate over all elements of the ReferencePose map:
-	for ( std::map< std::string, ReferencePoseOP >::iterator it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it ) {
+	for ( auto it=reference_pose_map_.begin(); it!=reference_pose_map_.end(); ++it ) {
 		debug_assert( it->second ); //The reference pose owning pointer should always point to something, but let's double-check that.
 		it->second->zero_reference_pose_mapping_at_seqpos( seqpos );
 	}

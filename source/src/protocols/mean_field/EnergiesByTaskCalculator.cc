@@ -23,6 +23,7 @@
 #include <core/scoring/Energies.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
@@ -49,7 +50,7 @@ namespace mean_field {
 
 
 EnergiesByTaskCalculator::EnergiesByTaskCalculator( core::pack::task::PackerTaskCOP task ) :
-	task_( task ),
+	task_(std::move( task )),
 	total_score_( 0.0 )
 {}
 
@@ -113,10 +114,10 @@ EnergiesByTaskCalculator::recompute(
 	core::Real total = 0.0;
 	core::scoring::EnergyMap weights = this_pose.energies().weights();
 
-	typedef utility::vector1<core::scoring::ScoreType> ScoreTypeVec;
+	using ScoreTypeVec = utility::vector1<core::scoring::ScoreType>;
 	ScoreTypeVec score_types;
 	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
+		auto ii = core::scoring::ScoreType(i);
 		if ( weights[ii] != 0 ) score_types.push_back(ii);
 	}
 

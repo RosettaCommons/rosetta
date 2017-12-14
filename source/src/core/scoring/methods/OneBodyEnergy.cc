@@ -37,7 +37,7 @@ OneBodyEnergy::OneBodyEnergy(
 	parent( creator )
 {}
 
-OneBodyEnergy::~OneBodyEnergy() {}
+OneBodyEnergy::~OneBodyEnergy() = default;
 
 bool
 OneBodyEnergy::defines_score_for_residue(

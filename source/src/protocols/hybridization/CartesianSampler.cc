@@ -218,11 +218,6 @@ CartesianSampler::init() {
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
 	set_fa_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep" ) );
-
-	// ligands
-	//add_hetatm_ = false;
-	//hetatm_self_cst_weight_ = 10.;
-	//hetatm_prot_cst_weight_ = 0.;
 }
 
 void
@@ -622,7 +617,7 @@ CartesianSampler::apply_constraints(
 
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -826,7 +821,7 @@ apply(
 	core::Size nres = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres = symm_info->num_independent_residues();

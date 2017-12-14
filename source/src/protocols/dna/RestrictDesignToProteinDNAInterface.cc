@@ -146,7 +146,7 @@ RestrictDesignToProteinDNAInterface::reference_pose() const { return reference_p
 void
 RestrictDesignToProteinDNAInterface::parse_tag( TagCOP tag , DataMap & )
 {
-	typedef utility::vector1< std::string > Strings;
+	using Strings = utility::vector1<std::string>;
 	if ( tag->hasOption("dna_defs") ) {
 		//targeted_dna_.clear() // pros/cons?
 		std::string const defs( tag->getOption< std::string >("dna_defs") );

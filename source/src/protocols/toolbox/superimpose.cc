@@ -346,7 +346,7 @@ void rotate_vec(int natoms,rvec *x,matrix R)
 	}
 }
 
-void add_vec( int natoms, rvec *x, rvec transvec ) {
+void add_vec( int natoms, rvec *x, const rvec transvec ) {
 	for ( int i=0; i<natoms; i++ ) {
 		for ( int j = 0; j< DIM; j++ ) {
 			x[i][j]+=transvec[j];

@@ -52,8 +52,7 @@ LoopAnalyzerFilter::LoopAnalyzerFilter( protocols::loops::Loops const & loops, b
 	tracer_(tracer)
 {}
 
-LoopAnalyzerFilter::~LoopAnalyzerFilter()
-{}
+LoopAnalyzerFilter::~LoopAnalyzerFilter() = default;
 
 LoopAnalyzerFilter::LoopAnalyzerFilter( LoopAnalyzerFilter const & rhs ) :
 	//utility::pointer::ReferenceCount(),

@@ -559,7 +559,7 @@ void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
 /// @brief A brief comparator object initialized with the correct strength accessor for reuse of setup_passports
 class Comparator {
 public:
-	Comparator( claims::ControlStrength const & (*str_access)( std::pair< claims::DOFElement, ClientMoverOP > const & ) ):
+	explicit Comparator( claims::ControlStrength const & (*str_access)( std::pair< claims::DOFElement, ClientMoverOP > const & ) ):
 		str_access_( str_access ) {}
 	bool operator() ( std::pair< claims::DOFElement, ClientMoverOP > const & a,
 		std::pair< claims::DOFElement, ClientMoverOP > const & b ){
@@ -886,10 +886,10 @@ void EnvClaimBroker::add_chainbreak_variants( core::Size rsd_num_lower,
 
 }
 
-EnvClaimBroker::BrokeredJumpData::BrokeredJumpData( std::pair< core::Size, core::Size >  positions,
+EnvClaimBroker::BrokeredJumpData::BrokeredJumpData( std::pair< core::Size, core::Size > const & positions,
 	std::pair< std::string, std::string > const & atoms,
 	bool put_jump_stub_intra_residue  ) :
-	pos(std::move( positions )),
+	pos( positions ),
 	atoms( atoms ),
 	put_jump_stub_intra_residue( put_jump_stub_intra_residue )
 {

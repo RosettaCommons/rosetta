@@ -83,7 +83,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.TopologyBrok
 // XRW TEMP }
 
 TopologyBrokerMover::TopologyBrokerMover() : simple_moves::DesignRepackMover( TopologyBrokerMover::mover_name() ) {}
-TopologyBrokerMover::~TopologyBrokerMover() {}
+TopologyBrokerMover::~TopologyBrokerMover() = default;
 
 void
 TopologyBrokerMover::apply( pose::Pose & pose )

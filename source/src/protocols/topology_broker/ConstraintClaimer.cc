@@ -76,9 +76,9 @@ ConstraintClaimer::ConstraintClaimer() :
 	filter_name_( "" )
 {}
 
-ConstraintClaimer::ConstraintClaimer( std::string filename, std::string tag ) :
-	filename_(std::move( filename )),
-	tag_(std::move( tag )),
+ConstraintClaimer::ConstraintClaimer( std::string const & filename, std::string const & tag ) :
+	filename_( filename ),
+	tag_( tag ),
 	constraints_( /* NULL */ ),
 	bCentroid_( true ),
 	bFullatom_( false ),

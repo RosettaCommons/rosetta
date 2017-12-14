@@ -189,21 +189,21 @@ int main( int argc, char** argv ) {
 
 					core::Size strand_positives( 0 );
 					core::Size strand_false_positives( 0 );
-					for ( StrandPairingSet::const_iterator it_ref = ref_sp.begin(); it_ref != ref_sp.end(); ++it_ref ) {
+					for ( auto const & it_ref : ref_sp ) {
 						bool found=false;
-						for ( StrandPairingSet::const_iterator it= sp.begin(); it != sp.end() && !found; ++ it ) {
+						for ( auto it= sp.begin(); it != sp.end() && !found; ++ it ) {
 							//check for common pairing:
-							found = it->has_common_pairing( *it_ref );
-							tr.Trace << *it_ref << " and " << *it << " have " << ( found ? "    " : " no " ) << "common pairing" << std::endl;
+							found = it->has_common_pairing( it_ref );
+							tr.Trace << it_ref << " and " << *it << " have " << ( found ? "    " : " no " ) << "common pairing" << std::endl;
 						}
 						if ( found ) ++strand_positives;
 					}
 
-					for ( StrandPairingSet::const_iterator it = sp.begin(); it != sp.end(); ++it ) {
+					for ( auto const & it : sp ) {
 						bool found=false;
-						if ( ps->strand_weight( *it )/ps->weight( 1 ) ) {
-							for ( StrandPairingSet::const_iterator it_ref= ref_sp.begin(); it_ref != ref_sp.end() && !found; ++ it_ref ) {
-								found = it->has_common_pairing( *it_ref ) || it->mergeable( *it_ref );
+						if ( ps->strand_weight( it )/ps->weight( 1 ) ) {
+							for ( auto it_ref= ref_sp.begin(); it_ref != ref_sp.end() && !found; ++ it_ref ) {
+								found = it.has_common_pairing( *it_ref ) || it.mergeable( *it_ref );
 							}
 							if ( !found ) ++strand_false_positives;
 						} else {

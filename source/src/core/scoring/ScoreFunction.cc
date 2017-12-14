@@ -881,7 +881,7 @@ ScoreFunction::get_sub_score(
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const & edge( static_cast< EnergyEdge const &> (**iru) );
+			auto const & edge( static_cast< EnergyEdge const &> (**iru) );
 			Size const j( edge.get_second_node_ind() );
 			if ( !residue_mask[j] ) continue;
 
@@ -913,7 +913,7 @@ ScoreFunction::get_sub_score(
 	// add in hbonding
 	if ( pose.energies().data().has( EnergiesCacheableDataType::HBOND_SET ) ) {
 
-		hbonds::HBondSet const & hbond_set
+		auto const & hbond_set
 			( static_cast< hbonds::HBondSet const & >
 			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 
@@ -1008,7 +1008,7 @@ ScoreFunction::get_sub_score(
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const & edge( static_cast< EnergyEdge const &> (**iru) );
+			auto const & edge( static_cast< EnergyEdge const &> (**iru) );
 			Size const j( edge.get_second_node_ind() );
 			if ( !residue_mask[j] ) continue;
 
@@ -1042,7 +1042,7 @@ ScoreFunction::get_sub_score(
 	// add in backbone-backbone hbonding
 	if ( pose.energies().data().has( EnergiesCacheableDataType::HBOND_SET ) ) {
 
-		hbonds::HBondSet const & hbond_set
+		auto const & hbond_set
 			( static_cast< hbonds::HBondSet const & >
 			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
 
@@ -1190,7 +1190,7 @@ ScoreFunction::eval_twobody_neighbor_energies(
 	// cached energies object
 	Energies & energies( pose.energies() );
 
-	EnergyMap & total_energies( const_cast< EnergyMap & > ( energies.total_energies() ) );
+	auto & total_energies( const_cast< EnergyMap & > ( energies.total_energies() ) );
 
 	// the neighbor/energy links
 	EnergyGraph & energy_graph( energies.energy_graph() );
@@ -1212,7 +1212,7 @@ ScoreFunction::eval_twobody_neighbor_energies(
 					edge_iter != edge_iter_end; ++edge_iter ) {
 				Size const jj = (*edge_iter)->get_second_node_ind();
 				conformation::Residue const & jj_rsd( pose.residue( jj ));
-				MinimizationEdge const & minedge( static_cast< MinimizationEdge const & > (**edge_iter) );
+				auto const & minedge( static_cast< MinimizationEdge const & > (**edge_iter) );
 
 				eval_res_pair_energy_for_minedge( minedge, ii_rsd, jj_rsd, pose, *this, total_energies );
 			}
@@ -1227,7 +1227,7 @@ ScoreFunction::eval_twobody_neighbor_energies(
 					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->upper_edge_list_end();
 					iru != irue; ++iru ) {
-				EnergyEdge & edge( static_cast< EnergyEdge & > (**iru) );
+				auto & edge( static_cast< EnergyEdge & > (**iru) );
 
 				Size const j( edge.get_second_node_ind() );
 				conformation::Residue const & resu( pose.residue( j ) );
@@ -1277,7 +1277,7 @@ ScoreFunction::eval_twobody_neighbor_energies(
 void
 ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 {
-	EnergyMap & total_energies(const_cast< EnergyMap & > (pose.energies().total_energies()));
+	auto & total_energies(const_cast< EnergyMap & > (pose.energies().total_energies()));
 
 	bool const minimizing( pose.energies().use_nblist() );
 	if ( minimizing ) return; // long range energies are handled as part of the 2-body energies in the minimization graph
@@ -1929,7 +1929,7 @@ ScoreFunction::check_methods() const
 	for ( EnergyMap::const_iterator it=counter.begin(), it_end=counter.end();
 			it != it_end; ++it ) {
 		// total hack!!!
-		ScoreType const t( static_cast< ScoreType >( it - counter.begin() + 1));
+		auto const t( static_cast< ScoreType >( it - counter.begin() + 1));
 		Real const count( *it );
 		if ( count > 1.5 ) {
 			utility_exit_with_message("multiple methods for same score type!" );
@@ -2005,7 +2005,7 @@ ScoreFunction::setup_for_scoring(
 		for ( utility::graph::Graph::EdgeListIter
 				edgeit = mingraph->edge_list_begin(), edgeit_end = mingraph->edge_list_end();
 				edgeit != edgeit_end; ++edgeit ) {
-			MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
+			auto & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
 			minedge.setup_for_scoring(
 				pose.residue(minedge.get_first_node_ind()),
 				pose.residue(minedge.get_second_node_ind()),
@@ -2076,7 +2076,7 @@ ScoreFunction::setup_for_derivatives(
 	for ( utility::graph::Graph::EdgeListIter
 			edgeit = mingraph->edge_list_begin(), edgeit_end = mingraph->edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
-		MinimizationEdge & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
+		auto & minedge = static_cast< MinimizationEdge & > ( (**edgeit) );
 		minedge.setup_for_derivatives(
 			pose.residue(minedge.get_first_node_ind()),
 			pose.residue(minedge.get_second_node_ind()),
@@ -2154,7 +2154,7 @@ ScoreFunction::setup_for_minimizing(
 		debug_assert( node1 == (*ee_edge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
 		debug_assert( node2 == (*ee_edge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
 
-		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+		auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 		// domain map check here?
 		bool const res_moving_wrt_eachother(
 			domain_map( node1 ) == 0 ||
@@ -2209,7 +2209,7 @@ ScoreFunction::setup_for_minimizing(
 		Size const node1 = (*edge_iter)->get_first_node_ind();
 		Size const node2 = (*edge_iter)->get_second_node_ind();
 
-		MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+		auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 
 		utility::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
 		++edge_iter_next;
@@ -2372,7 +2372,7 @@ ScoreFunction::setup_for_lr2benmeth_minimization_for_respair(
 			lr2benergy->defines_score_for_residue_pair( res1, res2, res_moving_wrt_eachother ) ) {
 
 		/// 3. iv Find the edge in the graph
-		MinimizationEdge * minedge( static_cast< MinimizationEdge * > (g.find_edge( seqpos1, seqpos2)) );
+		auto * minedge( static_cast< MinimizationEdge * > (g.find_edge( seqpos1, seqpos2)) );
 		/// 3. v  Create a new edge if necessary
 		if ( ! minedge ) minedge = static_cast< MinimizationEdge * > (g.add_edge( seqpos1, seqpos2));
 		/// 3. vi. Now initialize this edge
@@ -2713,7 +2713,7 @@ ScoreFunction::indicate_required_context_graphs(
 /// in the local directory, or in the database. Names may be passed either with or without the
 /// optional extension.
 std::string
-find_weights_file(std::string name, std::string extension/*=".wts"*/) {
+find_weights_file(std::string const & name, std::string const & extension/*=".wts"*/) {
 	utility::io::izstream data1( name );
 	if ( data1.good() ) {
 		return name;

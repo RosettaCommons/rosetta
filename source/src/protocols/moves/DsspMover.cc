@@ -40,11 +40,10 @@ namespace moves {
 
 DsspMover::DsspMover():
 	Mover( DsspMover::mover_name() ),
-	reduced_IG_as_L_(0)
+	reduced_IG_as_L_(false)
 {}
 
-DsspMover::~DsspMover()
-= default;
+DsspMover::~DsspMover() = default;
 
 /// @brief clone this object
 DsspMover::MoverOP DsspMover::clone() const {
@@ -81,7 +80,7 @@ DsspMover::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	reduced_IG_as_L_ = tag->getOption<bool>( "reduced_IG_as_L" , 0 );
+	reduced_IG_as_L_ = tag->getOption<bool>( "reduced_IG_as_L" , false );
 	TR << "DsspMover loaded." << std::endl;
 }
 

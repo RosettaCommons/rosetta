@@ -48,7 +48,7 @@ StubScoreLoopsFilter::StubScoreLoopsFilter() :
 	set_score_type( core::scoring::backbone_stub_constraint );
 }
 
-StubScoreLoopsFilter::~StubScoreLoopsFilter() {}
+StubScoreLoopsFilter::~StubScoreLoopsFilter() = default;
 
 void
 StubScoreLoopsFilter::parse_my_tag( utility::tag::TagCOP tag,

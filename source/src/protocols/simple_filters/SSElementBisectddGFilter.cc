@@ -83,7 +83,7 @@ SSElementBisectddGFilter::SSElementBisectddGFilter( SSElementBisectddGFilter con
 {}
 
 // @brief destructor
-SSElementBisectddGFilter::~SSElementBisectddGFilter() {}
+SSElementBisectddGFilter::~SSElementBisectddGFilter() = default;
 
 // @brief set filtered value
 void SSElementBisectddGFilter::filtered_value( Real const & value )

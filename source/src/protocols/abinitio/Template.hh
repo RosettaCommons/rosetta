@@ -60,8 +60,8 @@ public:
 
 	static void register_options();
 
-	Template( std::string name, core::pose::PoseCOP, core::sequence::DerivedSequenceMapping const& mapping);
-	Template( std::string const& name, core::pose::PoseCOP, std::string const& map_file, int offset, core::Real score );
+	Template( std::string const & name, core::pose::PoseCOP, core::sequence::DerivedSequenceMapping const& mapping);
+	Template( std::string const & name, core::pose::PoseCOP, std::string const& map_file, int offset, core::Real score );
 
 	//@brief pick fragments of <length> from Template according to mapping, return nr of Frames
 	/// good for continuous fragments: no torsions from insertions are mapped

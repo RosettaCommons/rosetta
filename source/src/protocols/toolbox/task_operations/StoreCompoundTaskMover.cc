@@ -52,10 +52,10 @@ namespace toolbox {
 namespace task_operations {
 
 // @brief default constructor
-StoreCompoundTaskMover::StoreCompoundTaskMover() {}
+StoreCompoundTaskMover::StoreCompoundTaskMover() = default;
 
 // @brief destructor
-StoreCompoundTaskMover::~StoreCompoundTaskMover() {}
+StoreCompoundTaskMover::~StoreCompoundTaskMover() = default;
 
 void StoreCompoundTaskMover::task_clear() { compound_task_.clear(); }
 StoreCompoundTaskMover::task_iterator StoreCompoundTaskMover::task_begin() { return( compound_task_.begin() ); }
@@ -224,7 +224,7 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 		task_pair.second = it->second;
 		core::pack::task::PackerTaskOP new_packer_task = it->first->create_task_and_apply_taskoperations( pose );
 		task_pair.first = new_packer_task->clone(); //clone?
-		runtime_assert( new_packer_task != 0 );
+		runtime_assert( new_packer_task != nullptr );
 		compound_task_.push_back( task_pair );
 	}
 
@@ -291,7 +291,7 @@ StoreCompoundTaskMover::parse_my_tag(
 	core::pose::Pose const & /*pose*/ )
 {
 
-	typedef utility::vector1< std::string > StringVec;
+	using StringVec = utility::vector1<std::string>;
 
 	TR<<"StoreCompoundTask: "<<tag->getName()<<std::endl;
 	task_name_ = tag->getOption< std::string >( "task_name", "" );
@@ -337,16 +337,15 @@ StoreCompoundTaskMover::parse_my_tag(
 		TR<<"Defined with operator: "<<operation<<" and tasks: "<<t_o_val<<std::endl;
 
 		StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
-		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
-				t_o_key != end; ++t_o_key ) {
-			if ( data_map.has( "task_operations", *t_o_key ) ) {
-				new_task_factory->push_back( data_map.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
+		for ( auto const & t_o_key : t_o_keys ) {
+			if ( data_map.has( "task_operations", t_o_key ) ) {
+				new_task_factory->push_back( data_map.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", t_o_key ) );
 			} else {
-				utility_exit_with_message("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
+				utility_exit_with_message("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 		factory_pair.first = new_task_factory->clone(); //clone?
-		runtime_assert( new_task_factory != 0 );
+		runtime_assert( new_task_factory != nullptr );
 		compound_factory_.push_back( factory_pair );
 	}
 }

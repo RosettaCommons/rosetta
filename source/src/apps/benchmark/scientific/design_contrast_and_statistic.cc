@@ -66,7 +66,7 @@ static basic::Tracer TR( "apps.pilot.yiliu.DC" );
 
 ///////////////////////////////////////////////////////////////////////////////
 // YAML helper function
-std::ostream & writeYamlValue(std::ostream & S, std::string name, core::Real value)
+std::ostream & writeYamlValue(std::ostream & S, std::string const & name, core::Real value)
 {
 	S << "'" << name << "' : " << value << ", ";
 	return S;
@@ -74,7 +74,7 @@ std::ostream & writeYamlValue(std::ostream & S, std::string name, core::Real val
 
 ///////////////////////////////////////////////////////////////////////////////
 // YAML helper function
-std::ostream & writeYamlValue(std::ostream & S, std::string name, bool value)
+std::ostream & writeYamlValue(std::ostream & S, std::string const & name, bool value)
 {
 	std::string sv;
 	if ( value ) sv = "True";

@@ -52,8 +52,8 @@ namespace pose_inputters {
 static basic::Tracer TR( "protocols.jd3.pose_inputter.PDBPoseInputter" );
 
 
-PDBPoseInputter::PDBPoseInputter() {}
-PDBPoseInputter::~PDBPoseInputter() {}
+PDBPoseInputter::PDBPoseInputter() = default;
+PDBPoseInputter::~PDBPoseInputter() = default;
 
 bool PDBPoseInputter::job_available_on_command_line() const
 {

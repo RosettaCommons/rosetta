@@ -74,15 +74,14 @@ SplineFunc::SplineFunc():
 	interpolator_()
 {}
 
-SplineFunc::~SplineFunc()
-{}
+SplineFunc::~SplineFunc() = default;
 
 bool SplineFunc::operator == ( Func const & other ) const
 {
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	SplineFunc const & other_downcast( static_cast< SplineFunc const & > (other) );
+	auto const & other_downcast( static_cast< SplineFunc const & > (other) );
 
 	if ( exp_val_             != other_downcast.exp_val_             ) return false;
 	if ( filename_            != other_downcast.filename_            ) return false;

@@ -51,8 +51,8 @@ using namespace utility;
 using namespace numeric;
 
 
-typedef numeric::xyzVector<core::Real> Vec;
-typedef numeric::xyzMatrix<core::Real> Mat;
+using Vec = numeric::xyzVector<core::Real>;
+using Mat = numeric::xyzMatrix<core::Real>;
 
 static basic::Tracer TR( "sym_multicomp_test" );
 

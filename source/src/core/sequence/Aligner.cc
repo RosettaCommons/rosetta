@@ -60,7 +60,7 @@ SequenceAlignment Aligner::traceback(
 	CellOP current_cell = start;
 	std::string aligned_seq_x(""), aligned_seq_y("");
 
-	while ( 1 ) {
+	while ( true ) {
 		Size current_x = current_cell->x();
 		Size current_y = current_cell->y();
 

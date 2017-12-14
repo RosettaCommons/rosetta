@@ -1517,7 +1517,7 @@ get_stub_stub( conformation::Residue const & rsd1,
 	StubStubType const & stub_stub_type )
 {
 	using namespace core::kinematics;
-	typedef numeric::xyzMatrix< Real > Matrix;
+	using Matrix = numeric::xyzMatrix<Real>;
 	switch ( stub_stub_type ) {
 	case O3P_TO_O5P :
 		// takeoff

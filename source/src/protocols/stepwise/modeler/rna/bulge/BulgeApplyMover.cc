@@ -36,8 +36,7 @@ BulgeApplyMover::BulgeApplyMover( Size const moving_res ):
 {}
 
 //Destructor
-BulgeApplyMover::~BulgeApplyMover()
-{}
+BulgeApplyMover::~BulgeApplyMover() = default;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void

@@ -40,6 +40,7 @@
 
 #include <numeric/conversions.hh>
 
+#include <utility>
 #include <utility/exit.hh>
 
 #ifdef WIN32
@@ -78,7 +79,7 @@ namespace loop_close {
 //constructor!
 StepWiseProteinKIC_LoopBridger::StepWiseProteinKIC_LoopBridger( sampler::StepWiseSamplerSizedOP sampler,
 	working_parameters::StepWiseWorkingParametersCOP working_parameters ):
-	sampler_( sampler ),
+	sampler_(std::move( sampler )),
 	working_bridge_res_( working_parameters->working_bridge_res() ),
 	is_pre_proline_( working_parameters->is_pre_proline() ),
 	num_perturb_steps_( 0 ), // perturbations of 'takeoff' psi and phi -- currently disabled.
@@ -98,8 +99,7 @@ StepWiseProteinKIC_LoopBridger::StepWiseProteinKIC_LoopBridger( sampler::StepWis
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWiseProteinKIC_LoopBridger::~StepWiseProteinKIC_LoopBridger()
-{}
+StepWiseProteinKIC_LoopBridger::~StepWiseProteinKIC_LoopBridger() = default;
 /////////////////////
 std::string
 StepWiseProteinKIC_LoopBridger::get_name() const {

@@ -69,7 +69,7 @@ ThreadSequenceOperation::ThreadSequenceOperation( std::string const & seq ) : pa
 	target_sequence( seq );
 }
 
-ThreadSequenceOperation::~ThreadSequenceOperation() {}
+ThreadSequenceOperation::~ThreadSequenceOperation() = default;
 
 core::pack::task::operation::TaskOperationOP ThreadSequenceOperation::clone() const
 {

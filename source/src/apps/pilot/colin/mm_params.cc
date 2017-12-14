@@ -107,7 +107,7 @@ main
 		//    aa_iter != residue_set->aas_defined_end(); ++aa_iter ) {
 		for ( core::Size ii = 1; ii <= core::chemical::num_aa_types; ii++ ) {
 
-			core::chemical::AA aa = core::chemical::AA( ii );
+			auto aa = core::chemical::AA( ii );
 			//   TR << *aa_iter << std::endl;
 
 			if ( aa == core::chemical::aa_unk ) continue;
@@ -116,10 +116,9 @@ main
 
 			core::chemical::ResidueTypeCOPs const & aa_caps( protocols::toolbox::match_enzdes_util::sort_residue_type_pointers_by_name( core::chemical::ResidueTypeFinder( *residue_set ).aa( aa ).get_all_possible_residue_types() ) );
 
-			for ( core::chemical::ResidueTypeCOPs::const_iterator residue_iter(aa_caps.begin());
-					residue_iter != aa_caps.end(); ++residue_iter ) {
+			for ( auto const & aa_cap : aa_caps ) {
 
-				core::chemical::ResidueType const & residue_type(**residue_iter);
+				core::chemical::ResidueType const & residue_type(*aa_cap);
 
 				if ( !residue_type.is_protein() ) continue;
 				if ( residue_type.name().find("acetylated") != std::string::npos ) continue;

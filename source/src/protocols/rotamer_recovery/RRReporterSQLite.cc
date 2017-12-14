@@ -93,8 +93,8 @@ RRReporterSQLite::RRReporterSQLite() :
 {}
 
 RRReporterSQLite::RRReporterSQLite(
-	string  database_name,
-	string  database_pq_schema /* = "" */,
+	string const & database_name,
+	string const & database_pq_schema /* = "" */,
 	OutputLevel output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
@@ -105,8 +105,8 @@ RRReporterSQLite::RRReporterSQLite(
 	comparer_params_(),
 	residues_considered_( 0 ),
 	rotamers_recovered_( 0 ),
-	database_name_(std::move(database_name)),
-	database_pq_schema_(std::move(database_pq_schema)),
+	database_name_(database_name),
+	database_pq_schema_(database_pq_schema),
 	db_session_()
 {}
 

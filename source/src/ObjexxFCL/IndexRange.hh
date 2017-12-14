@@ -257,7 +257,7 @@ public: // Predicate
 	bool
 	legal() const
 	{
-		return ( ( l_ >= l_min ) && ( u_ <= u_max ) && ( l_ - 2 <= u_ ) );
+		return ( ( l_ >= l_min ) /*&& ( u_ <= u_max )*/ && ( l_ - 2 <= u_ ) );
 	}
 
 
@@ -585,7 +585,7 @@ protected: // Inspector
 	bool
 	legal_static() const
 	{
-		return ( ( l_ >= l_min ) && ( u_ <= u_max ) && ( l_ - 2 <= u_ ) );
+		return ( ( l_ >= l_min ) /*&& ( u_ <= u_max )*/ && ( l_ - 2 <= u_ ) );
 	}
 
 

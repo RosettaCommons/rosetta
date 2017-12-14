@@ -40,6 +40,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
@@ -134,7 +135,7 @@ void ExtraThreadingMover::apply(
 	// Iterate over residue selection, copy relevant residues.
 	// Make sure that fold-tree is coherent by checking for bonded_partners
 	using core::conformation::Residue;
-	typedef vector1< Size >::const_iterator iter;
+	using iter = vector1<Size>::const_iterator;
 	std::map< Size, Size > template_to_query_res; // keeps track of residues that we've added to query_pose.
 	Size const query_jump_anchor( query_pose.size() ); // maybe do this with a VRT residue later.
 	//Size current_chain( query_pose.residue(query_jump_anchor).chain() );

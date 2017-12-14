@@ -28,7 +28,7 @@ namespace qsar {
 qsarOptFunc::qsarOptFunc(
 	utility::sql_database::sessionOP db_session,
 	core::optimization::Multivec const & initial_values,
-	std::map<std::string,core::Size>  grid_indices) : core::optimization::Multifunc(), initial_values_(initial_values), grid_indices_(std::move(grid_indices)), cutoff_(0.0)
+	std::map<std::string,core::Size>  grid_indices) : core::optimization::Multifunc(), initial_values_(initial_values), grid_indices_(grid_indices), cutoff_(0.0)
 {
 	std::string value_string =
 		"SELECT job_string_real_data.data_value\n"
@@ -83,7 +83,7 @@ core::Real qsarOptFunc::operator() (core::optimization::Multivec const & vars) c
 
 		core::Real total_score = 0.0;
 
-		for ( const auto & score_it : data_it.score_map ) {
+		for ( auto const & score_it : data_it.score_map ) {
 			core::Size vec_index = grid_indices_.find(score_it.first)->second;
 			core::Real initial_weight = initial_values_[vec_index];
 			core::Real current_weight = vars[vec_index];

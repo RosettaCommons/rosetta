@@ -67,7 +67,7 @@ namespace pose {
 
 static basic::Tracer TR( "core.pose.PDBInfo" );
 
-core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() {}
+core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() = default;
 
 
 

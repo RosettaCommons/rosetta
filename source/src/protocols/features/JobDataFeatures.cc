@@ -55,7 +55,7 @@ using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;
 
-JobDataFeatures::JobDataFeatures() {}
+JobDataFeatures::JobDataFeatures() = default;
 
 JobDataFeatures::JobDataFeatures(JobDataFeatures const & ) : protocols::features::FeaturesReporter() {}
 

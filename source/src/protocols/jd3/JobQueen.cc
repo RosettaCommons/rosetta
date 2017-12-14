@@ -17,7 +17,7 @@
 namespace protocols {
 namespace jd3 {
 
-JobQueen::JobQueen() {}
+JobQueen::JobQueen() = default;
 JobQueen::~JobQueen() = default;
 
 

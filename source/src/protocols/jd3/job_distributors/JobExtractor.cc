@@ -51,7 +51,7 @@ JobExtractor::JobExtractor() :
 	maximum_jobs_to_hold_in_memory_( 1000 )
 {}
 
-JobExtractor::~JobExtractor() {}
+JobExtractor::~JobExtractor() = default;
 
 void
 JobExtractor::set_job_queen( JobQueenOP queen )
@@ -296,7 +296,7 @@ JobExtractor::mark_node_as_complete( Size digraph_node )
 		// If we never got any jobs for this node, then its index was
 		// never inserted into the jobs_running_for_digraph_nodes_ map,
 		// so look to see if it's there before calling erase.
-		OutstandingJobsForDigraphNodeMap::iterator running_jobs_iter =
+		auto running_jobs_iter =
 			jobs_running_for_digraph_nodes_.find( digraph_node );
 		if ( running_jobs_iter != jobs_running_for_digraph_nodes_.end () ) {
 			jobs_running_for_digraph_nodes_.erase( running_jobs_iter );
@@ -321,7 +321,7 @@ JobExtractor::mark_node_as_complete( Size digraph_node )
 	for ( auto done_child_iter = done_node->const_outgoing_edge_list_begin();
 			done_child_iter != done_node->const_outgoing_edge_list_end();
 			++done_child_iter ) {
-		JobDirectedNode const * done_child = dynamic_cast< JobDirectedNode const * >
+		auto const * done_child = dynamic_cast< JobDirectedNode const * >
 			((*done_child_iter)->get_head_node());
 		if ( done_child->n_predecessors_w_outstanding_jobs() == 0 ) {
 			digraph_nodes_ready_to_be_run_.push_back( done_child->get_node_index() );

@@ -193,7 +193,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 		constraint_set_ = pose.constraint_set()->clone();
 
-		if ( align_pose_ != 0 ) moving_res_list = reroot_pose_before_align_and_return_moving_res( pose );
+		if ( align_pose_ != nullptr ) moving_res_list = reroot_pose_before_align_and_return_moving_res( pose );
 
 		rna_chunk_library_->initialize_random_chunks( pose, options_->dump_pdb() ); //actually not random if only one chunk in each region.
 
@@ -256,7 +256,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 			// Introduce constraints in stages.
 			update_pose_constraints( r, pose );
-			if ( align_pose_ != 0 && !options_->disallow_realign() ) align_pose_and_add_rmsd_constraints( pose, align_pose_, moving_res_list, options_->rmsd_screen() );
+			if ( align_pose_ != nullptr && !options_->disallow_realign() ) align_pose_and_add_rmsd_constraints( pose, align_pose_, moving_res_list, options_->rmsd_screen() );
 			monte_carlo.reset( pose );
 
 			update_rna_denovo_master_mover( r, pose );
@@ -341,7 +341,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	// Get the full strength constraint back. Next few lines repeat code from above -- would be better to stick in a function.
 	update_denovo_scorefxn_weights( rounds_ );
 	update_pose_constraints( rounds_, pose );
-	if ( align_pose_ != 0 && !options_->disallow_realign() ) {
+	if ( align_pose_ != nullptr && !options_->disallow_realign() ) {
 		stepwise::modeler::align::align_pose_and_add_rmsd_constraints( pose, align_pose_, moving_res_list, options_->rmsd_screen() );
 	}
 
@@ -512,7 +512,7 @@ RNA_FragmentMonteCarlo::initialize_movers( core::pose::Pose const & pose ) {
 		rnp_high_res_mover_->initialize( pose );
 	}
 
-	if ( outputter_ == 0 ) {
+	if ( outputter_ == nullptr ) {
 		outputter_ = output::RNA_FragmentMonteCarloOutputterOP( new output::RNA_FragmentMonteCarloOutputter( options_, align_pose_ ) );
 	}
 }

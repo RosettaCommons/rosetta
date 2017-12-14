@@ -54,17 +54,17 @@ OPT_KEY( Integer, read_batch )
 class CloudArchiveManagerWrapper : public protocols::jd2::archive::BaseArchiveManager {
 public:
 	CloudArchiveManagerWrapper();
-	virtual ~CloudArchiveManagerWrapper() {}; //virtual destructor because we have virtual functions
-	typedef utility::vector1< protocols::jd2::archive::Batch > BatchList;
+	~CloudArchiveManagerWrapper() override = default; //virtual destructor because we have virtual functions
+	using BatchList = utility::vector1<protocols::jd2::archive::Batch>;
 	// static void register_options();
-	virtual void save_archive();
-	virtual bool restore_archive();
+	void save_archive() override;
+	bool restore_archive() override;
 
 	void read_batch( core::Size batch_id );
 	void generate_batch();
 
 protected:
-	void queue_batch( protocols::jd2::archive::Batch const& batch ) {
+	void queue_batch( protocols::jd2::archive::Batch const& batch ) override {
 		std::cout << "START BATCH" << batch << std::endl;
 	};
 

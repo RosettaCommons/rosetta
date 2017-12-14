@@ -61,8 +61,8 @@ namespace pack {
 namespace rotamer_set {
 namespace symmetry {
 
-SymmetricRotamerSets::SymmetricRotamerSets() {}
-SymmetricRotamerSets::~SymmetricRotamerSets() {}
+SymmetricRotamerSets::SymmetricRotamerSets() = default;
+SymmetricRotamerSets::~SymmetricRotamerSets() = default;
 
 // @details For now, this function knows that all RPEs are computed before annealing begins
 // In not very long, this function will understand that there are different ways to compute
@@ -132,7 +132,7 @@ SymmetricRotamerSets::precompute_two_body_energies(
 	using namespace scoring;
 
 	// find SymmInfo
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -229,7 +229,7 @@ SymmetricRotamerSets::precompute_two_body_energies(
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
 	// The logic here is exactly the same as for the non-lr energy calculation in terms of symmetry
-	for ( ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = scfxn.long_range_energies_begin(),
 			lr_end  = scfxn.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
@@ -350,7 +350,7 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 )
 {
 	// find SymmInfo
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
@@ -426,7 +426,7 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 
 	// Iterate across the long range energy functions and use the iterators generated
 	// by the LRnergy container object
-	for ( scoring::ScoreFunction::LR_2B_MethodIterator
+	for ( auto
 			lr_iter = sfxn.long_range_energies_begin(),
 			lr_end  = sfxn.long_range_energies_end();
 			lr_iter != lr_end; ++lr_iter ) {
@@ -551,7 +551,7 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 				lie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end();
 				li != lie; ++li ) {
 			Size jj_resid = (*li)->get_other_ind( ii_resid );
-			Size const iijj_scale = Size(symm_info->score_multiply( ii_resid, jj_resid ));
+			auto const iijj_scale = Size(symm_info->score_multiply( ii_resid, jj_resid ));
 			//std::cout << "pro_corr: ii_resid " << ii_resid << " jj_resid " << jj_resid << " scale: " << iijj_scale << std::endl;
 			if ( iijj_scale == 0 ) continue;
 
@@ -686,15 +686,12 @@ SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 	RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( pose.residue( seqpos ) );
 	sym_rotamer_set->set_resid(sympos);
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
 
 	core::conformation::symmetry::MirrorSymmetricConformationCOP mirrorconf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::MirrorSymmetricConformation const>( pose.conformation_ptr() ) );
 
-	for ( Rotamers::const_iterator
-			rot     = rotset_in->begin(),
-			rot_end = rotset_in->end();
-			rot != rot_end; ++rot ) {
+	for ( const auto & rot : *rotset_in ) {
 		bool mirrored(false);
 		if ( mirrorconf ) { //If this is a mirror symmetric conformation, figure out whether this subunit is mirrored:
 			mirrored = mirrorconf->res_is_mirrored( sympos );
@@ -708,9 +705,9 @@ SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 		// set_up_mirror_types_if_has_mirror_symmetry=false.
 		conformation::ResidueOP target_rsd;
 		if ( set_up_mirror_types_if_has_mirror_symmetry && mirrored ) {
-			target_rsd = (*rot)->clone_flipping_chirality( *pose.residue_type_set_for_pose( (*rot)->type().mode() ) );
+			target_rsd = rot->clone_flipping_chirality( *pose.residue_type_set_for_pose( rot->type().mode() ) );
 		} else {
-			target_rsd = (*rot)->clone();
+			target_rsd = rot->clone();
 		}
 
 		// peptoids have a different orientation function due to the placement of the first side chain atom
@@ -741,30 +738,24 @@ SymmetricRotamerSets::final_visit_to_edge(
 )
 {
 	// find SymmInfo
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	// find the highest jj clone sequence number we could have
 	uint jj_highest(jj_resid);
-	for ( std::vector< Size>::const_iterator
-			clone     = symm_info->chi_clones( jj_resid ).begin(),
-			clone_end = symm_info->chi_clones( jj_resid ).end();
-			clone != clone_end; ++clone ) {
-		if (  *clone > jj_highest &&
-				packer_neighbor_graph->get_edge_exists(ii_resid, *clone) ) {
-			jj_highest = *clone;
+	for ( unsigned long clone : symm_info->chi_clones( jj_resid ) ) {
+		if (  clone > jj_highest &&
+				packer_neighbor_graph->get_edge_exists(ii_resid, clone) ) {
+			jj_highest = clone;
 		}
 	}
 	// find the highest jj clone sequence number we could have
 	uint ii_highest(ii_resid);
-	for ( std::vector< Size>::const_iterator
-			clone     = symm_info->chi_clones( ii_resid ).begin(),
-			clone_end = symm_info->chi_clones( ii_resid ).end();
-			clone != clone_end; ++clone ) {
-		if (  *clone > ii_highest &&
-				packer_neighbor_graph->get_edge_exists(*clone, jj_resid) ) {
-			ii_highest = *clone;
+	for ( unsigned long clone : symm_info->chi_clones( ii_resid ) ) {
+		if (  clone > ii_highest &&
+				packer_neighbor_graph->get_edge_exists(clone, jj_resid) ) {
+			ii_highest = clone;
 		}
 	}
 	if ( ii_resid == ii_highest && jj_resid == jj_highest ) return true;
@@ -776,7 +767,7 @@ void
 SymmetricRotamerSets::initialize_pose_for_rotsets_creation(
 	pose::Pose & pose
 ) const {
-	SymmetricConformation & SymmConf (
+	auto & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation() ) );
 	SymmConf.recalculate_transforms();
 }

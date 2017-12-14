@@ -63,10 +63,9 @@ std::string LinkResiduesCreator::keyname() const
 	return LinkResidues::keyname();
 }
 
-LinkResidues::LinkResidues() {
-}
+LinkResidues::LinkResidues() = default;
 
-LinkResidues::~LinkResidues() {}
+LinkResidues::~LinkResidues() = default;
 
 core::pack::task::operation::TaskOperationOP LinkResidues::clone() const
 {
@@ -160,8 +159,8 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 	//print out equivalent residues
 	for ( Size ii=1; ii<=equiv_pos.size(); ++ii ) {
 		TR.Debug << ii <<" ";
-		for ( set<Size>::iterator equiv_pos_itr=equiv_pos[ii].begin(); equiv_pos_itr!=equiv_pos[ii].end(); ++equiv_pos_itr ) {
-			TR.Debug << *equiv_pos_itr <<",";
+		for ( unsigned long equiv_pos_itr : equiv_pos[ii] ) {
+			TR.Debug << equiv_pos_itr <<",";
 		}
 		TR.Debug << std::endl;
 	}

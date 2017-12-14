@@ -34,7 +34,7 @@ namespace residue_selectors {
 class StoredResidueSubsetSelector : public core::select::residue_selector::ResidueSelector {
 public:
 	StoredResidueSubsetSelector();
-	StoredResidueSubsetSelector( std::string subset_name ); // move-constructed
+	StoredResidueSubsetSelector( std::string const & subset_name ); // move-constructed
 
 	~StoredResidueSubsetSelector() override;
 

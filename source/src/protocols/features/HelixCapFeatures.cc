@@ -51,8 +51,7 @@
 namespace protocols {
 namespace features {
 
-HelixCapFeatures::HelixCapFeatures()
-{}
+HelixCapFeatures::HelixCapFeatures() = default;
 
 HelixCapFeatures::HelixCapFeatures(core::scoring::ScoreFunctionOP /*scfxn*/ )
 {

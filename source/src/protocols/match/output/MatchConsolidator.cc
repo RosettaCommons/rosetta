@@ -39,13 +39,13 @@ namespace output {
 
 MatchConsolidator::MatchConsolidator() : n_to_output_per_group_( 5 ) {}
 
-MatchConsolidator::~MatchConsolidator() {}
+MatchConsolidator::~MatchConsolidator() = default;
 
 void
 MatchConsolidator::begin_processing()
 {
-	runtime_assert( grouper_ != 0 );
-	runtime_assert( evaluator_ != 0 );
+	runtime_assert( grouper_ != nullptr );
+	runtime_assert( evaluator_ != nullptr );
 	MatchProcessor::begin_processing();
 	match_groups_.clear();
 	grouper_->reset();
@@ -57,9 +57,9 @@ MatchConsolidator::process_match(
 	match const & m
 )
 {
-	runtime_assert( grouper_ != 0 );
-	runtime_assert( evaluator_ != 0 );
-	runtime_assert( writer_ != 0 );
+	runtime_assert( grouper_ != nullptr );
+	runtime_assert( evaluator_ != nullptr );
+	runtime_assert( writer_ != nullptr );
 	//runtime_assert( match_dspos1_groups_.size() == 0 );
 	note_match_processed();
 
@@ -81,9 +81,9 @@ MatchConsolidator::process_match(
 	match_dspos1 const & m
 )
 {
-	runtime_assert( grouper_ != 0 );
-	runtime_assert( evaluator_ != 0 );
-	runtime_assert( writer_ != 0 );
+	runtime_assert( grouper_ != nullptr );
+	runtime_assert( evaluator_ != nullptr );
+	runtime_assert( writer_ != nullptr );
 	//runtime_assert( match_groups_.size() == 0 );
 	note_match_processed();
 
@@ -107,9 +107,9 @@ MatchConsolidator::end_processing()
 	/// Can only handle regular match objects or match_dspos1's but not both.
 	//runtime_assert( match_dspos1_groups_.size() == 0 || match_groups_.size() == 0 );
 
-	runtime_assert( grouper_ != 0 );
-	runtime_assert( evaluator_ != 0 );
-	runtime_assert( match_score_writer_ != 0 );
+	runtime_assert( grouper_ != nullptr );
+	runtime_assert( evaluator_ != nullptr );
+	runtime_assert( match_score_writer_ != nullptr );
 
 	//std::cout << std::endl;
 	//std::cout << "match groups: " << match_groups_.size() << std::endl;
@@ -223,7 +223,7 @@ MatchConsolidator::reset_grouper()
 	if ( grouper_ ) grouper_->reset();
 }
 
-BestMatchesCollection::~BestMatchesCollection() {}
+BestMatchesCollection::~BestMatchesCollection() = default;
 
 BestMatchesCollection::BestMatchesCollection(
 	Size n_to_keep,

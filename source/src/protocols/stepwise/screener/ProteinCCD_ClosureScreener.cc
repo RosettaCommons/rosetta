@@ -17,6 +17,7 @@
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.hh>
 #include <protocols/simple_moves/TorsionSetMover.hh>
 #include <protocols/moves/CompositionMover.hh>
+#include <utility>
 #include <utility/stream_util.hh>
 
 #include <basic/Tracer.hh>
@@ -34,14 +35,13 @@ namespace screener {
 ProteinCCD_ClosureScreener::ProteinCCD_ClosureScreener( modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer,
 	pose::Pose & screening_pose ):
 	SampleApplier( screening_pose ), // sets up pose_
-	ccd_closer_( ccd_closer )
+	ccd_closer_(std::move( ccd_closer ))
 {
 	ccd_closer_->init( pose_ );
 }
 
 //Destructor
-ProteinCCD_ClosureScreener::~ProteinCCD_ClosureScreener()
-{}
+ProteinCCD_ClosureScreener::~ProteinCCD_ClosureScreener() = default;
 
 /////////////////////////////////////////
 bool

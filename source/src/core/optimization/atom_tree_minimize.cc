@@ -275,7 +275,7 @@ atom_tree_get_atompairE_deriv(
 	for ( utility::graph::Node::EdgeListConstIter
 			edgeit = mingraph->const_edge_list_begin(), edgeit_end = mingraph->const_edge_list_end();
 			edgeit != edgeit_end; ++edgeit ) {
-		MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
+		auto const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
 		Size const rsd1ind = minedge.get_first_node_ind();
 		Size const rsd2ind = minedge.get_second_node_ind();
 		conformation::Residue const & rsd1( pose.residue( rsd1ind ));

@@ -54,10 +54,10 @@ public:// construct/destruct
 
 	/// @brief value constructor
 	BetaAlphaBetaMotif(
-		Size const & strand1,
-		Size const & strand2,
-		Size const & helix,
-		Size const & cross_over );
+		Size const strand1,
+		Size const strand2,
+		Size const helix,
+		Size const cross_over );
 
 	/// @brief copy constructor
 	BetaAlphaBetaMotif( BetaAlphaBetaMotif const & s );

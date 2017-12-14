@@ -50,7 +50,7 @@ void print_node(
 	int atom_num,
 	core::Vector const & atom_xyz,
 	core::chemical::ResidueType const & res,
-	std::string extras = "" //< P for points, color, width/radius, etc.
+	std::string const & extras = "" //< P for points, color, width/radius, etc.
 )
 {
 	// atom_num is often 0 in fold tree, means no specific atom.
@@ -72,7 +72,7 @@ void print_node(
 	int residue_num,
 	int atom_num,
 	core::conformation::Residue const & res,
-	std::string extras = "" //< P for points, color, width/radius, etc.
+	std::string const & extras = "" //< P for points, color, width/radius, etc.
 )
 {
 	print_node( out, residue_num, atom_num, res.xyz( atom_num ), res.type(), extras );
@@ -84,7 +84,7 @@ void print_node(
 	int residue_num,
 	std::string atom_name,
 	core::conformation::Residue const & res,
-	std::string extras = "" //< P for points, color, width/radius, etc.
+	std::string const & extras = "" //< P for points, color, width/radius, etc.
 )
 {
 	// atom_num is often 0 in fold tree, means no specific atom.

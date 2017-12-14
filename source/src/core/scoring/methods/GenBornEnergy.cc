@@ -78,11 +78,7 @@ GenBornEnergyCreator::score_types_for_method() const {
 }
 
 
-GenBornEnergy::GenBornEnergy( GenBornEnergy const & src ):
-	parent( src ),
-	potential_( src.potential_ ),
-	exclude_DNA_DNA_( src.exclude_DNA_DNA_ )
-{}
+GenBornEnergy::GenBornEnergy( GenBornEnergy const & /*src*/ ) = default;
 
 
 GenBornEnergy::GenBornEnergy( EnergyMethodOptions const & options ):
@@ -164,7 +160,7 @@ GenBornEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 	Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 
 	} else {
@@ -204,7 +200,7 @@ GenBornEnergy::residue_pair_energy(
 {
 	if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
-	GenBornPoseInfo const & gb_info
+	auto const & gb_info
 		( static_cast< GenBornPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) ); // SHOULD BE FAST!
 
 	emap[ gb_elec ] += potential_.get_res_res_elecE( rsd1, gb_info.residue_info( rsd1.seqpos() ),
@@ -226,7 +222,7 @@ GenBornEnergy::evaluate_rotamer_intrares_energies(
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
 
 
-	GenBornRotamerSetInfo const & gb_info
+	auto const & gb_info
 		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
@@ -255,7 +251,7 @@ GenBornEnergy::evaluate_rotamer_intrares_energy_maps(
 
 	// std::cout << "GenBorn rotamer_intrares_energies: " << set.resid() << std::endl;
 
-	GenBornRotamerSetInfo const & gb_info
+	auto const & gb_info
 		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
@@ -286,10 +282,10 @@ GenBornEnergy::evaluate_rotamer_pair_energies(
 
 	PROF_START( basic::GEN_BORN_ROTAMER_PAIR_ENERGIES );
 
-	GenBornRotamerSetInfo const & gb_info1
+	auto const & gb_info1
 		( set1.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
-	GenBornRotamerSetInfo const & gb_info2
+	auto const & gb_info2
 		( set2.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
 
@@ -348,7 +344,7 @@ GenBornEnergy::evaluate_rotamer_background_energies(
 		( pose.data().get< GenBornPoseInfo >( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ).residue_info(rsd.seqpos()));
 	//GenBornResidueInfo const & gb_rsd_info( retrieve_gen_born_pose_info( pose ).residue_info( rsd.seqpos ) );
 
-	GenBornRotamerSetInfo const & gb_set_info
+	auto const & gb_set_info
 		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 	//GenBornRotamersInfo const & gb_set_info( retrieve_gen_born_rotamers_info( set ) );
 
@@ -395,7 +391,7 @@ GenBornEnergy::evaluate_rotamer_background_energy_maps(
 
 	GenBornResidueInfo const & gb_rsd_info
 		( pose.data().get< GenBornPoseInfo >( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ).residue_info(rsd.seqpos()));
-	GenBornRotamerSetInfo const & gb_set_info
+	auto const & gb_set_info
 		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) {

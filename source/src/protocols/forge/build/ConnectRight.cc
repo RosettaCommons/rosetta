@@ -75,21 +75,11 @@ ConnectRight::ConnectRight(
 
 
 /// @brief copy constructor
-ConnectRight::ConnectRight( ConnectRight const & rval ) :
-	Super( rval ),
-	left_position_( rval.left_position_ ),
-	right_position_( rval.right_position_ ),
-	pose_right_( rval.pose_right_ ),
-	use_rt_( rval.use_rt_ ),
-	left_stub_atoms_( rval.left_stub_atoms_ ),
-	right_stub_atoms_( rval.right_stub_atoms_ ),
-	rt_( rval.rt_ ),
-	interval_( rval.interval_ )
-{}
+ConnectRight::ConnectRight( ConnectRight const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-ConnectRight::~ConnectRight() {}
+ConnectRight::~ConnectRight() = default;
 
 
 /// @brief copy assignment
@@ -173,8 +163,8 @@ ConnectRight::MoveMap ConnectRight::movemap() const {
 	MoveMap mm;
 
 	Positions const newp = new_positions();
-	for ( Positions::const_iterator i = newp.begin(), ie = newp.end(); i != ie; ++i ) {
-		mm.set_bb( *i, false );
+	for ( unsigned long i : newp ) {
+		mm.set_bb( i, false );
 	}
 
 	return mm;
@@ -366,10 +356,10 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	// Handle PDBInfo separately. PDBInfo in pose_left
 	// should always be obsolete after leaving modify_impl()
 	// as a safety.
-	if ( pose_right_.pdb_info().get() != NULL ) {
+	if ( pose_right_.pdb_info().get() != nullptr ) {
 
 		// if pose_left doesn't have PDBInfo, create it
-		if ( pose_left.pdb_info().get() == NULL ) {
+		if ( pose_left.pdb_info().get() == nullptr ) {
 			pose_left.pdb_info( PDBInfoOP( new PDBInfo( pose_left ) ) );
 		}
 

@@ -15,7 +15,7 @@
 #include <core/scoring/func/FlatHarmonicFunc.hh>
 
 #include <core/types.hh>
-#include <math.h>
+#include <cmath>
 
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -46,7 +46,7 @@ bool FlatHarmonicFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	FlatHarmonicFunc const & other_downcast( static_cast< FlatHarmonicFunc const & > (other) );
+	auto const & other_downcast( static_cast< FlatHarmonicFunc const & > (other) );
 	if ( x0_  != other_downcast.x0_  ) return false;
 	if ( sd_  != other_downcast.sd_  ) return false;
 	if ( tol_ != other_downcast.tol_ ) return false;

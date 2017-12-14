@@ -30,7 +30,7 @@ namespace scoring {
 namespace constraints {
 
 /// @details Private constructor insures correctness of singleton.
-ConstraintFactory::ConstraintFactory() {}
+ConstraintFactory::ConstraintFactory() = default;
 
 /*
 void
@@ -77,7 +77,7 @@ ConstraintFactory::newConstraint( std::string const & type_name )
 
 		utility_exit_with_message( msg );
 	}
-	return 0;
+	return nullptr;
 }
 
 utility::vector1< std::string >
@@ -121,7 +121,7 @@ ConstraintFactory::get_creator( std::string const & type_name )
 
 		utility_exit_with_message( msg );
 	}
-	return 0;
+	return nullptr;
 }
 
 

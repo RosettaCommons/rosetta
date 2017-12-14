@@ -32,12 +32,12 @@ class AssembleLinkerMover : public protocols::moves::Mover {
 public:
 
 	AssembleLinkerMover(
-		std::string  loop_mover_name,
+		std::string const & loop_mover_name,
 		Size const min_loop_size,
 		utility::vector1< core::fragment::FragSetOP > frags
 	) :
 		Mover("AssembleLinkerMover"),
-		loop_mover_name_(std::move(loop_mover_name)),
+		loop_mover_name_(loop_mover_name),
 		min_loop_size_(min_loop_size),
 		frag_libs_(frags)
 	{}

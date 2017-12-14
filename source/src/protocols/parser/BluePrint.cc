@@ -68,8 +68,7 @@ BluePrint::BluePrint( std::string const & filename ):
 
 
 /// @brief destructor
-BluePrint::~BluePrint()
-{}
+BluePrint::~BluePrint() = default;
 
 
 /// @brief copy constructor
@@ -309,7 +308,7 @@ BluePrint::read_blueprint_stream( std::istream & data, std::string const & filen
 			runtime_assert( tokens.size() == 3 || tokens.size() == 4 || tokens.size() == 5 );
 
 			count ++;
-			Size ii = boost::lexical_cast<Size>( tokens[1] );
+			auto ii = boost::lexical_cast<Size>( tokens[1] );
 			char aa ( tokens[2][0] );
 			char sec( tokens[3][0] );
 			String abego("");

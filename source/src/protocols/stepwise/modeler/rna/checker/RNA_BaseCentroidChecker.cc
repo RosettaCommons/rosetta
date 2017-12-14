@@ -75,7 +75,7 @@ RNA_BaseCentroidChecker::RNA_BaseCentroidChecker( core::pose::Pose const & pose,
 	Initialize_terminal_res( pose );
 }
 ////////////////////////////////////////////////////////////////////////
-RNA_BaseCentroidChecker::~RNA_BaseCentroidChecker(){}
+RNA_BaseCentroidChecker::~RNA_BaseCentroidChecker()= default;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

@@ -193,10 +193,10 @@ InterfaceScoreCalculator::get_scores(
 	core::Real const tot_score = score_fxn_->score( pose );
 
 	// Which score terms to use
-	typedef utility::vector1<ScoreType> ScoreTypeVec;
+	using ScoreTypeVec = utility::vector1<ScoreType>;
 	ScoreTypeVec score_types;
 	for ( int i = 1; i <= n_score_types; ++i ) {
-		ScoreType ii = ScoreType(i);
+		auto ii = ScoreType(i);
 		if ( score_fxn_->has_nonzero_weight(ii) ) score_types.push_back(ii);
 	}
 

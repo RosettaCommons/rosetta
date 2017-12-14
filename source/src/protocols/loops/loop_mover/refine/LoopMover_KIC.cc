@@ -122,7 +122,7 @@ LoopMover_Refine_KIC::LoopMover_Refine_KIC(
 }
 
 //destructor
-LoopMover_Refine_KIC::~LoopMover_Refine_KIC(){}
+LoopMover_Refine_KIC::~LoopMover_Refine_KIC()= default;
 
 //clone
 protocols::moves::MoverOP LoopMover_Refine_KIC::clone() const {
@@ -154,7 +154,7 @@ LoopMover_Refine_KIC::set_default_settings(){
 }
 
 void LoopMover_Refine_KIC::set_task_factory( core::pack::task::TaskFactoryOP value ){ task_factory = value; }
-bool LoopMover_Refine_KIC::get_task_factory(){ return task_factory != 0; }
+bool LoopMover_Refine_KIC::get_task_factory(){ return task_factory != nullptr; }
 
 
 /// detailed
@@ -209,12 +209,11 @@ void LoopMover_Refine_KIC::apply(
 	Size const nres( pose.size() );
 	utility::vector1< bool > is_loop( nres, false );
 
-	for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end();
-			it != it_end; ++it ) {
-		for ( Size i= it->start(); i<= it->stop(); ++i ) {
+	for ( const auto & it : *loops() ) {
+		for ( Size i= it.start(); i<= it.stop(); ++i ) {
 			is_loop[i] = true;
 		}
-		Size const loop_cut(it->cut());
+		Size const loop_cut(it.cut());
 
 		if ( loop_cut != nres ) { //c-terminal loop
 			bool pose_changed( false );
@@ -256,7 +255,7 @@ void LoopMover_Refine_KIC::apply(
 	// scorefxn
 	scoring::ScoreFunctionOP local_scorefxn;
 	scoring::ScoreFunctionOP min_scorefxn;
-	if ( scorefxn() != 0 ) local_scorefxn = scorefxn()->clone();
+	if ( scorefxn() != nullptr ) local_scorefxn = scorefxn()->clone();
 	else {
 		local_scorefxn = get_fa_scorefxn();
 	}
@@ -322,7 +321,7 @@ void LoopMover_Refine_KIC::apply(
 
 	// Set up the packer tasks: one for rotamer trials, one for repacking (with design if resfile supplied)
 	using namespace pack::task;
-	if ( task_factory == 0 ) {
+	if ( task_factory == nullptr ) {
 		task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
 		// TaskOperations replace the following kind of code:
 		// base_packer_task->initialize_from_command_line().or_include_current( true );
@@ -421,7 +420,7 @@ void LoopMover_Refine_KIC::apply(
 	Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
 
 	// AS: adding option to change the number of rotamer trials -- just one (as in the current implementation) may be way too little
-	core::Size num_rot_trials = Size( option[ OptionKeys::loops::kic_num_rotamer_trials ]() );
+	auto num_rot_trials = Size( option[ OptionKeys::loops::kic_num_rotamer_trials ]() );
 
 	// AS: setting up weights for ramping rama[2b] and/or fa_rep
 	core::Real orig_local_fa_rep_weight = local_scorefxn->get_weight( fa_rep );
@@ -493,7 +492,7 @@ void LoopMover_Refine_KIC::apply(
 
 	if ( local_movie ) {
 		// this assumes there is only one loops_.
-		Loops::const_iterator one_loop( loops()->begin() );
+		auto one_loop( loops()->begin() );
 		Size begin_loop=one_loop->start();
 		Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;
@@ -835,7 +834,7 @@ void LoopMover_Refine_KIC::apply(
 	}
 	if ( local_movie ) {
 		// this assumes there is only one loops_.
-		Loops::const_iterator one_loop( loops()->begin() );
+		auto one_loop( loops()->begin() );
 		Size begin_loop=one_loop->start();
 		Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;

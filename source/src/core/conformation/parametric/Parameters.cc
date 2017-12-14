@@ -65,7 +65,7 @@ Parameters::Parameters( Parameters const & src ) :
 	}
 }
 
-Parameters::~Parameters() {}
+Parameters::~Parameters() = default;
 
 
 /// @brief make a copy of this residue( allocate actual memory for it )

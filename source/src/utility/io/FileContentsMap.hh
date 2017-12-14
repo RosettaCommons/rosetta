@@ -63,7 +63,8 @@ public:
 	FileContentsMap();
 
 	/// @brief Construct and populate a %FileContentsMap from an input std::map between
-	/// file names and file contents.  Both boolean options are set to false.
+	/// file names and file contents.  Both boolean options are set to false. fcontents
+	/// is moved and therefore passed by value.
 	FileContentsMap( std::map< std::string, std::string > const & fcontents );
 
 	/// @brief Enable or disable the behavior that the %FileContentsMap will delete

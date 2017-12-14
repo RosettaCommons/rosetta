@@ -47,16 +47,15 @@ namespace job_distributors {
 
 static basic::Tracer TR( "protocols.jd3.VanillaJobDistributor" );
 
-VanillaJobDistributor::VanillaJobDistributor()
-{}
+VanillaJobDistributor::VanillaJobDistributor() = default;
 
-VanillaJobDistributor::~VanillaJobDistributor() {}
+VanillaJobDistributor::~VanillaJobDistributor() = default;
 
 void
 VanillaJobDistributor::go( JobQueenOP queen ) {
 	using core::Size;
 	using namespace utility::graph;
-	typedef std::list< Size > SizeList;
+	using SizeList = std::list<Size>;
 
 	if ( basic::options::option[ basic::options::OptionKeys::jd3::job_definition_schema ].user() ) {
 		std::string xsd = queen->job_definition_xsd();

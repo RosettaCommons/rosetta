@@ -72,8 +72,7 @@ RNA_BasePairHandler::RNA_BasePairHandler( RNA_DeNovoParameters const & rna_param
 }
 
 //Destructor
-RNA_BasePairHandler::~RNA_BasePairHandler()
-{}
+RNA_BasePairHandler::~RNA_BasePairHandler() = default;
 
 /////////////////////////////////////////////////////////
 bool

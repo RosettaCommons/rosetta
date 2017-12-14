@@ -219,7 +219,7 @@ FoldConstraints::do_stage1_cycles( pose::Pose& pose ) {
 	using namespace basic::options::OptionKeys;
 	moves::MoverOP trial( stage1_mover( pose, trial_large() ) );
 	core::Real const cycle_factor( option[ fold_cst::stage1_ramp_cst_cycle_factor ] );
-	Size const cycles ( static_cast< Size > ( cycle_factor * stage1_cycles() ) );
+	auto const cycles ( static_cast< Size > ( cycle_factor * stage1_cycles() ) );
 	int total_cycles = 0;
 	if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 	//first run a normal set of fragment insertions until extended chain is lost

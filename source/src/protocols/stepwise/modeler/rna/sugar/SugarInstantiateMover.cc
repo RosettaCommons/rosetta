@@ -37,8 +37,7 @@ SugarInstantiateMover::SugarInstantiateMover( Size const moving_res ):
 {}
 
 //Destructor
-SugarInstantiateMover::~SugarInstantiateMover()
-{}
+SugarInstantiateMover::~SugarInstantiateMover() = default;
 
 void
 SugarInstantiateMover::apply( pose::Pose & pose ){

@@ -41,7 +41,7 @@ public:
 
 public:
 	ResFilterComposition();
-	ResFilterComposition(utility::vector1<ResFilterCOP> const &);
+	ResFilterComposition(utility::vector1<ResFilterCOP> const & );
 
 	virtual void parse_tag( TagCOP );
 
@@ -303,7 +303,7 @@ public:
 	typedef ResFilter parent;
 public:
 	ChainIs();
-	ChainIs( char const & );
+	ChainIs( char const );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
 	virtual void parse_tag( TagCOP );
@@ -322,7 +322,7 @@ public:
 	typedef ChainIs parent;
 public:
 	ChainIsnt();
-	ChainIsnt( char const & );
+	ChainIsnt( char const );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
 

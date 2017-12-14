@@ -161,7 +161,7 @@ ResidueSetChainEnergyFilter::compute(
 		//search over energy edges
 		for ( utility::graph::Graph::EdgeListIter el_iter  = energy_graph.get_node( iseq1 )->edge_list_begin();
 				el_iter != energy_graph.get_node( iseq1 )->edge_list_end(); ++el_iter ) {
-			EnergyEdge * edge( static_cast< EnergyEdge *> ( *el_iter ) );
+			auto * edge( static_cast< EnergyEdge *> ( *el_iter ) );
 			//the other seqpos connected to this edge
 			core::Size iseq2( edge->get_first_node_ind() );
 			if ( iseq2 == iseq1 ) iseq2 = edge->get_second_node_ind();

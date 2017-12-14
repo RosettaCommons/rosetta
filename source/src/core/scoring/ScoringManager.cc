@@ -1645,7 +1645,7 @@ ScoringManager::create_sixdtransrotpotential_instance(
 		return loop_graph::evaluator::SixDTransRotPotentialOP( new loop_graph::evaluator::SixDTransRotPotential( database_file ) );
 	}
 	TR.Warning << "File " << database_file << " does not exist!" << std::endl;
-	return 0; // save information that database file does not exist. (?)
+	return nullptr; // save information that database file does not exist. (?)
 }
 
 /// @brief Create an instance of the RNA_LowResolutionPotential object, by owning pointer.

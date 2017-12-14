@@ -21,7 +21,7 @@
 #include <core/scoring/electron_density/SplineInterp.hh>
 
 #include <cmath>
-#include <float.h>  // for DBL_EPSILON
+#include <cfloat>  // for DBL_EPSILON
 #include <vector>
 #include <iostream>
 
@@ -31,7 +31,7 @@ namespace scoring {
 namespace electron_density {
 namespace SplineInterp {
 
-void put_line3(double* data, int dim, int x1, int x2, double line[], int dims[]) {
+void put_line3(double* data, int dim, int x1, int x2, const double line[], const int dims[]) {
 	int i, inc;
 	double* ptr;
 
@@ -53,7 +53,7 @@ void put_line3(double* data, int dim, int x1, int x2, double line[], int dims[])
 }
 
 
-void get_line3(double* data, int dim, int x1, int x2, double line[], int dims[]) {
+void get_line3(double* data, int dim, int x1, int x2, double line[], const int dims[]) {
 	int i, inc;
 	double* ptr;
 
@@ -74,7 +74,7 @@ void get_line3(double* data, int dim, int x1, int x2, double line[], int dims[])
 	}
 }
 
-void put_line4(double* data, int dim, int x1, int x2, int x3, double line[], int dims[]) {
+void put_line4(double* data, int dim, int x1, int x2, int x3, const double line[], const int dims[]) {
 	int i, inc;
 	double* ptr;
 
@@ -99,7 +99,7 @@ void put_line4(double* data, int dim, int x1, int x2, int x3, double line[], int
 }
 
 
-void get_line4(double* data, int dim, int x1, int x2, int x3, double line[], int dims[]) {
+void get_line4(double* data, int dim, int x1, int x2, int x3, double line[], const int dims[]) {
 	int i, inc;
 	double* ptr;
 
@@ -124,7 +124,7 @@ void get_line4(double* data, int dim, int x1, int x2, int x3, double line[], int
 }
 
 static double InitialCausalCoefficient (
-	double c[],       // coefficients
+	const double c[],       // coefficients
 	long DataLength,  // number of coefficients
 	double z,         // actual pole
 	double Tolerance, // admissible relative error
@@ -189,7 +189,7 @@ static double InitialCausalCoefficient (
 
 
 static double InitialAntiCausalCoefficient (
-	double c[],       // coefficients
+	const double c[],       // coefficients
 	long DataLength,  // number of coefficients
 	double z,         // actual pole
 	double Tolerance, // admissible relative error
@@ -318,7 +318,7 @@ int compute_coefficients3(double *data, int dims[3]) {
 }
 
 
-int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3]) {
+int grad3(double grad[3], const double *Bcoeff, const int dims[3], double X[3]) {
 	double wt[3][4];
 	double w;
 	double sum_k, sum_jk;
@@ -379,7 +379,7 @@ int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3]) {
 }
 
 
-double interp3(double *Bcoeff, int dims[3], double X[3]) {
+double interp3(const double *Bcoeff, const int dims[3], double X[3]) {
 	double wt[3][4];
 	double value;
 	double sum_k;
@@ -388,7 +388,7 @@ double interp3(double *Bcoeff, int dims[3], double X[3]) {
 
 	// interpolation indexes
 	for ( dim=0; dim<3; dim++ ) {
-		int pt = (int)floor(X[dim] - (3-1) / 2.0);
+		auto pt = (int)floor(X[dim] - (3-1) / 2.0);
 		for ( i = 0L; i <= 3; i++ ) {
 			idx[dim][i] = pt++;
 		}
@@ -496,7 +496,7 @@ int compute_coefficients4(double *data, int dims[4]) {
 }
 
 
-int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]) {
+int grad4(double grad[4], const double *Bcoeff, const int dims[4], double X[4]) {
 	double wt[4][4];
 	double w;
 	double sum_l, sum_kl, sum_jkl;
@@ -577,7 +577,7 @@ int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]) {
 }
 
 
-double interp4(double *Bcoeff, int dims[4], double X[4]) {
+double interp4(const double *Bcoeff, const int dims[4], double X[4]) {
 	double wt[4][4];
 	double value;
 	int idx[4][4];
@@ -585,7 +585,7 @@ double interp4(double *Bcoeff, int dims[4], double X[4]) {
 
 	// interpolation indexes
 	for ( dim=0; dim<4; dim++ ) {
-		int pt = (int)floor(X[dim] - (3-1) / 2.0);
+		auto pt = (int)floor(X[dim] - (3-1) / 2.0);
 		for ( i = 0L; i <= 3; i++ ) {
 			idx[dim][i] = pt++;
 		}

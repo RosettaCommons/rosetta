@@ -175,7 +175,7 @@ AntibodyEnumManager::setup() {
 	antibody_region_to_string_[framework_region] = "framework_region";
 
 	for ( core::Size i = 1; i <= 6; ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		all_cdrs_.push_back( cdr );
 		all_cdrs_and_proto_.push_back( cdr );
 	}

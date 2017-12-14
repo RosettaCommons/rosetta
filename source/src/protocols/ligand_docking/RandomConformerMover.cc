@@ -44,8 +44,7 @@ RandomConformerMover::RandomConformerMover(core::Size resid):
 }
 
 
-RandomConformerMover::~RandomConformerMover()
-= default;
+RandomConformerMover::~RandomConformerMover() = default;
 
 
 void RandomConformerMover::apply( core::pose::Pose & pose )

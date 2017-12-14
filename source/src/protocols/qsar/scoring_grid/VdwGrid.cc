@@ -125,10 +125,7 @@ void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 	refresh(pose,center);
 }
 
-VdwGrid::~VdwGrid()
-{
-
-}
+VdwGrid::~VdwGrid() = default;
 
 core::Real VdwGrid::score(
 	core::conformation::UltraLightResidue const & residue,

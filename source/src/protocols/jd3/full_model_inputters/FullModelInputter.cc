@@ -20,8 +20,8 @@ namespace jd3 {
 namespace full_model_inputters {
 
 
-FullModelInputter::FullModelInputter() {}
-FullModelInputter::~FullModelInputter() {}
+FullModelInputter::FullModelInputter() = default;
+FullModelInputter::~FullModelInputter() = default;
 
 }
 } // namespace jd3

@@ -33,12 +33,12 @@ namespace operation {
 
 static basic::Tracer TR( "core.pack.task.operation.TaskOperation" );
 
-TaskOperation::~TaskOperation() {}
+TaskOperation::~TaskOperation() = default;
 
 void TaskOperation::parse_tag( TagCOP tag,  DataMap & )
 {
 	TR << "TaskOperation::parse_tag method called with no effect";
-	if ( tag.get() != NULL ) TR << " for Tag with type " << tag->getName();
+	if ( tag.get() != nullptr ) TR << " for Tag with type " << tag->getName();
 	TR << ". Probably due to (un/mis)implemented virtual method in derived class." << std::endl;
 }
 

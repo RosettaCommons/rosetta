@@ -59,7 +59,7 @@ namespace topology_broker {
 using namespace core;
 
 
-MembraneTopologyClaimer::MembraneTopologyClaimer(){}
+MembraneTopologyClaimer::MembraneTopologyClaimer()= default;
 
 MembraneTopologyClaimer::MembraneTopologyClaimer( pose::Pose const& input_pose ) :
 	input_pose_(input_pose)

@@ -26,8 +26,8 @@
 namespace protocols {
 namespace jd3 {
 
-JobSummary::JobSummary() {}
-JobSummary::~JobSummary() {}
+JobSummary::JobSummary() = default;
+JobSummary::~JobSummary() = default;
 
 } // namespace jd3
 } // namespace protocols

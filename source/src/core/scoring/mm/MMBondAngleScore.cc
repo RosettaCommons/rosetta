@@ -43,7 +43,7 @@ namespace scoring {
 namespace mm {
 
 /// @details Auto-generated virtual destructor
-MMBondAngleScore::~MMBondAngleScore() {}
+MMBondAngleScore::~MMBondAngleScore() = default;
 
 MMBondAngleScore::MMBondAngleScore() :
 	mm_bondangle_library_( scoring::ScoringManager::get_instance()->get_MMBondAngleLibrary() )
@@ -77,7 +77,7 @@ MMBondAngleScore::score( mm_bondangle_atom_tri mm_atomtype_set, Real angle ) con
 		mm_atomtype_set.key3() );
 
 	// calc score
-	for ( mm_bondangle_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+	for ( auto i = pair.first, e = pair.second; i != e; ++i ) {
 
 		score += this->score( (i->second).key1(), (i->second).key2(), angle );
 
@@ -125,7 +125,7 @@ MMBondAngleScore::dscore( mm_bondangle_atom_tri mm_atomtype_set, Real angle ) co
 		mm_atomtype_set.key3() );
 
 	// calc score
-	for ( mm_bondangle_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
+	for ( auto i = pair.first, e = pair.second; i != e; ++i ) {
 		dscore_dang += dscore( (i->second).key1(), (i->second).key2(), angle );
 		//std::cout << "core.mm.MMBondAngleEnergy:     dscore_dang = " << dscore_dang <<
 		//" sc: " << score( mm_atomtype_set, angle ) << " +d " << score( mm_atomtype_set, angle + 1e-4 ) <<

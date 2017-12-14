@@ -66,36 +66,36 @@ public:
 		scorefxn_ = protocols::ligand_docking::LigandBaseProtocol().get_scorefxn();
 	}
 
-	virtual
-	~ExtractATD(){};
 
-	virtual
+	~ExtractATD() override= default;
+
+
 	void
-	apply( core::pose::Pose & pose ) {
+	apply( core::pose::Pose & pose ) override {
 
 		core::pack::dunbrack::load_unboundrot( pose ); // adds scoring bonuses for the "unbound" rotamers, if any
 		(*scorefxn_)( pose );
 	}
 
-	virtual
+
 	std::string
-	get_name() const {
+	get_name() const override {
 		return "ExtractATD";
 	}
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new ExtractATD );
 	}
 
-	virtual
-	bool
-	reinitialize_for_each_job() const { return false; }
 
-	virtual
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
+
+
+	bool
+	reinitialize_for_new_input() const override { return false; }
 
 	core::scoring::ScoreFunctionOP
 	scorefxn() { return scorefxn_; }
@@ -105,7 +105,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
-typedef utility::pointer::shared_ptr< ExtractATD > ExtractATDOP;
+using ExtractATDOP = utility::pointer::shared_ptr<ExtractATD>;
 
 
 int

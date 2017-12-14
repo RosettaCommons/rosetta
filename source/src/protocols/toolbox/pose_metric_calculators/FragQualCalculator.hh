@@ -69,7 +69,7 @@ public:// constructor/destructor
 	FragQualCalculator();
 
 	/// @brief default constructor
-	FragQualCalculator( FragSetOP const & frag, Real const rmsd=1.0, Real const ratio=30.0 );
+	FragQualCalculator( FragSetOP frag, Real const rmsd=1.0, Real const ratio=30.0 );
 
 	/// @brief copy constructor
 	FragQualCalculator( FragQualCalculator const & rval );

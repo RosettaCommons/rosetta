@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
@@ -66,14 +67,14 @@ CDRResidueSelector::CDRResidueSelector():
 
 CDRResidueSelector::CDRResidueSelector( AntibodyInfoCOP ab_info ):
 	ResidueSelector(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 }
 
 CDRResidueSelector::CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector1< CDRNameEnum > cdrs ):
 	ResidueSelector(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	set_cdrs( cdrs );
@@ -81,7 +82,7 @@ CDRResidueSelector::CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector
 
 CDRResidueSelector::CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector1< bool > cdrs ):
 	ResidueSelector(),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	set_cdrs( cdrs );
@@ -93,7 +94,7 @@ CDRResidueSelector::CDRResidueSelector( AntibodyInfoCOP ab_info, utility::vector
 
 /// @brief Destructor.
 ///
-CDRResidueSelector::~CDRResidueSelector() {}
+CDRResidueSelector::~CDRResidueSelector() = default;
 
 CDRResidueSelector::CDRResidueSelector(CDRResidueSelector const & src):
 	ResidueSelector(),
@@ -251,7 +252,7 @@ CDRResidueSelector::apply(
 
 	for ( core::Size i = 1; i <= cdrs_.size(); ++i ) {
 
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 
 
 		if ( ! cdrs_[ i ] ) continue;

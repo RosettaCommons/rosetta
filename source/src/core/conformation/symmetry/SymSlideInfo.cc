@@ -31,31 +31,18 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-SymSlideInfo::SymSlideInfo()
-: slide_type_( RANDOM ),
+SymSlideInfo::SymSlideInfo() :
+	slide_type_( RANDOM ),
 	score_criteria_( CEN_DOCK_SCORE ),
 	SlideCriteriaVal_( "AUTOMATIC" )
-{
-}
+{}
 
-SymSlideInfo::SymSlideInfo( SymSlideInfo const & src )
-: slide_type_( src.slide_type_ ),
-	score_criteria_(  src.score_criteria_ ),
-	SlideCriteriaVal_(  src.SlideCriteriaVal_ ),
-	slide_order_( src.slide_order_ )
-{
-}
+SymSlideInfo::SymSlideInfo( SymSlideInfo const & /*src*/ ) = default;
 
 SymSlideInfo &
-SymSlideInfo::operator=( SymSlideInfo const & src ) {
-	slide_type_ = src.slide_type_;
-	score_criteria_ = src.score_criteria_;
-	SlideCriteriaVal_ = src.SlideCriteriaVal_;
-	slide_order_ = src.slide_order_;
-	return *this;
-}
+SymSlideInfo::operator=( SymSlideInfo const & /*src*/ ) = default;
 
-SymSlideInfo::~SymSlideInfo() {}
+SymSlideInfo::~SymSlideInfo() = default;
 
 // setter functions
 void SymSlideInfo::set_slide_type( SlideType slide_type )

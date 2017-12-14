@@ -272,25 +272,25 @@ public:
 
 	/// @brief CHEMICAL Edge constructor (requires atomno info) -- note: a chemical
 	/// edge may be built from any constructor, this one is for convenience only
-	Edge( core::Size const start_in, core::Size const stop_in, std::string  start_atom, std::string  stop_atom ):
+	Edge( core::Size const start_in, core::Size const stop_in, std::string const & start_atom, std::string const & stop_atom ):
 		start_( start_in ),
 		stop_( stop_in ),
 		label_( CHEMICAL ),
-		start_atom_(std::move( start_atom )),
-		stop_atom_(std::move( stop_atom )),
+		start_atom_( start_atom ),
+		stop_atom_( stop_atom ),
 		bKeepStubInResidue_( false )
 	{}
 
 	/// @brief JUMP Edge constructor (requires atomno info) -- note: a chemical
 	/// edge may be built from any constructor, this one is for convenience only
 	Edge( core::Size const start_in, core::Size const stop_in, int label,
-		std::string  start_atom, std::string  stop_atom,
+		std::string const & start_atom, std::string const & stop_atom,
 		bool bKeepStubInResidue ):
 		start_( start_in ),
 		stop_( stop_in ),
 		label_( label ),
-		start_atom_(std::move( start_atom )),
-		stop_atom_(std::move( stop_atom )),
+		start_atom_( start_atom ),
+		stop_atom_( stop_atom ),
 		bKeepStubInResidue_( bKeepStubInResidue )
 	{}
 

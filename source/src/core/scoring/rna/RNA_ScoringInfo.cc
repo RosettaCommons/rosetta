@@ -50,8 +50,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-RNA_ScoringInfo::RNA_ScoringInfo()
-{}
+RNA_ScoringInfo::RNA_ScoringInfo() = default;
 
 
 /// @details Copy constructors must copy all data, not just some...

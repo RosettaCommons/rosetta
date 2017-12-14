@@ -48,9 +48,9 @@ using std::istream;
 using std::string;
 
 ///// SilentFileLoaderCreator /////
-SilentFileLoaderCreator::SilentFileLoaderCreator() {}
+SilentFileLoaderCreator::SilentFileLoaderCreator() = default;
 
-SilentFileLoaderCreator::~SilentFileLoaderCreator() {}
+SilentFileLoaderCreator::~SilentFileLoaderCreator() = default;
 
 ResourceLoaderOP
 SilentFileLoaderCreator::create_resource_loader() const {
@@ -63,9 +63,9 @@ SilentFileLoaderCreator::loader_type() const {
 }
 
 //// SilentFileLoader /////
-SilentFileLoader::SilentFileLoader() {}
+SilentFileLoader::SilentFileLoader() = default;
 
-SilentFileLoader::~SilentFileLoader() {}
+SilentFileLoader::~SilentFileLoader() = default;
 
 SilentFileLoader::SilentFileLoader( SilentFileLoader const &) : ResourceLoader() {}
 
@@ -82,7 +82,7 @@ SilentFileLoader::create_resource(
 			"but was given a ResourceOptions of type '" + options.type() + "', "
 			"which has the name '" + options.name() + "'." );
 	}
-	SilentFileRMOptions const & resource_options(
+	auto const & resource_options(
 		static_cast< SilentFileRMOptions const & >( options ));
 
 	utility::vector1< std::string > lines;

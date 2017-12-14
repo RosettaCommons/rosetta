@@ -141,10 +141,8 @@ ResidueLevelTask_::ResidueLevelTask_(
 		ResidueType const & match_residue_type( original_residue_type_set_->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
 		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 			ResidueTypeCOPs const & aas( original_residue_type_set_->get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
-			for ( ResidueTypeCOPs::const_iterator
-					aas_iter = aas.begin(),
-					aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-				allowed_residue_types_.push_back( *aas_iter );
+			for ( auto const & aa : aas ) {
+				allowed_residue_types_.push_back( aa );
 			}
 		}
 		// allow noncanonical AAs and D-amino acids to be repacked
@@ -184,9 +182,9 @@ ResidueLevelTask_::ResidueLevelTask_(
 	runtime_assert( ! allowed_residue_types_.empty() );
 }
 
-ResidueLevelTask_::ResidueLevelTask_() {}
+ResidueLevelTask_::ResidueLevelTask_() = default;
 
-ResidueLevelTask_::~ResidueLevelTask_() {}
+ResidueLevelTask_::~ResidueLevelTask_() = default;
 
 ExtraRotSample
 ResidueLevelTask_::extrachi_sample_level(
@@ -419,7 +417,7 @@ void ResidueLevelTask_::or_adducts( bool setting )
 {
 	if ( setting ) return;
 
-	for ( ResidueTypeCOPListIter type_iter( allowed_residue_types_.begin() ), type_end(  allowed_residue_types_.end() ); type_iter != type_end; ) {
+	for ( auto type_iter( allowed_residue_types_.begin() ), type_end(  allowed_residue_types_.end() ); type_iter != type_end; ) {
 		if ( (*type_iter)->has_variant_type( chemical::ADDUCT_VARIANT ) ) {
 			type_iter = allowed_residue_types_.erase( type_iter );
 		} else {
@@ -715,7 +713,7 @@ void ResidueLevelTask_::or_fix_his_tautomer( bool setting )
 	bool HIS(original_residue_type_->has(" HE2")); //HIS
 	bool HIS_D(original_residue_type_->has(" HD1")); //HIS_D
 
-	for ( ResidueTypeCOPListIter
+	for ( auto
 			allowed_iter = allowed_residue_types_.begin(),
 			iter_next = allowed_residue_types_.begin(),
 			allowed_end = allowed_residue_types_.end();
@@ -776,7 +774,7 @@ void ResidueLevelTask_::prevent_repacking()
 	allowed_residue_types_.clear();
 	determine_if_designing();
 	determine_if_repacking();
-	mode_tokens_.push_back("NATRO");
+	mode_tokens_.emplace_back("NATRO");
 }
 
 
@@ -790,18 +788,18 @@ ResidueLevelTask_::restrict_absent_canonical_aas( utility::vector1< bool > const
 	Size num_allowed = std::count( allowed_aas.begin(), allowed_aas.end(), true);
 	std::ostringstream aas;
 	if ( num_allowed == 0 ) {
-		mode_tokens_.push_back("EMPTY");
+		mode_tokens_.emplace_back("EMPTY");
 	} else if ( num_allowed == chemical::num_canonical_aas ) {
 		// this doesn't constrain anything...
 	} else if ( num_allowed < chemical::num_canonical_aas/2 ) {
-		mode_tokens_.push_back("PIKAA");
+		mode_tokens_.emplace_back("PIKAA");
 		for ( Size i = 1; i <= chemical::num_canonical_aas; ++i ) {
 			if ( allowed_aas[ i ] ) {
 				aas << chemical::oneletter_code_from_aa( static_cast<chemical::AA>(i) );
 			}
 		}
 	} else {
-		mode_tokens_.push_back("NOTAA");
+		mode_tokens_.emplace_back("NOTAA");
 		for ( Size i = 1; i <= chemical::num_canonical_aas; ++i ) {
 			if ( !allowed_aas[ i ] ) {
 				aas << chemical::oneletter_code_from_aa( static_cast<chemical::AA>(i) );
@@ -825,7 +823,7 @@ ResidueLevelTask_::do_restrict_absent_canonical_aas( utility::vector1< bool > co
 {
 	runtime_assert( allowed_aas.size() == chemical::num_canonical_aas );
 
-	for ( ResidueTypeCOPListIter
+	for ( auto
 			allowed_iter( allowed_residue_types_.begin() ),
 			allowed_end( allowed_residue_types_.end() );
 			allowed_iter != allowed_end; ) {
@@ -847,7 +845,7 @@ ResidueLevelTask_::restrict_nonnative_canonical_aas( utility::vector1< bool > co
 {
 	runtime_assert( allowed_aas.size() == chemical::num_canonical_aas );
 
-	for ( ResidueTypeCOPListIter
+	for ( auto
 			allowed_iter = allowed_residue_types_.begin(),
 			allowed_end = allowed_residue_types_.end();
 			allowed_iter != allowed_end; ) {
@@ -872,16 +870,15 @@ ResidueLevelTask_::restrict_absent_nas(
 	utility::vector1< chemical::AA > const & keep_nas
 )
 {
-	typedef utility::vector1< chemical::AA > AAs;
-	for ( ResidueTypeCOPListIter
+	for ( auto
 			type_itr = allowed_residue_types_.begin(), next_itr = allowed_residue_types_.begin(),
 			end_itr = allowed_residue_types_.end(); type_itr != end_itr;
 			/* no increment: deletion + iterator incrementing = segfault! */ ) {
 		next_itr = type_itr;
 		++next_itr;
 		bool keep(false);
-		for ( AAs::const_iterator na( keep_nas.begin() ); na != keep_nas.end(); ++na ) {
-			if ( (*type_itr)->aa() == *na ) { keep = true; break; }
+		for ( auto keep_na : keep_nas ) {
+			if ( (*type_itr)->aa() == keep_na ) { keep = true; break; }
 		}
 		if ( ! keep ) allowed_residue_types_.erase( type_itr );
 		type_itr = next_itr;
@@ -891,12 +888,12 @@ ResidueLevelTask_::restrict_absent_nas(
 
 
 	std::ostringstream nas;
-	for ( utility::vector1 < chemical::AA >::const_iterator na = keep_nas.begin(); na != keep_nas.end(); ++na ) {
+	for ( auto keep_na : keep_nas ) {
 		// illegal for DNA: single-letter codes redundant
 		//nas << chemical::oneletter_code_from_aa( *na );
-		nas << chemical::name_from_aa( *na );
+		nas << chemical::name_from_aa( keep_na );
 	}
-	mode_tokens_.push_back( "NA" );
+	mode_tokens_.emplace_back("NA" );
 	mode_tokens_.push_back( nas.str() );
 
 }
@@ -908,7 +905,7 @@ ResidueLevelTask_::restrict_absent_nas(
 void
 ResidueLevelTask_::restrict_to_repacking()
 {
-	for ( ResidueTypeCOPListIter
+	for ( auto
 			allowed_iter = allowed_residue_types_.begin(),
 			allowed_end = allowed_residue_types_.end();
 			allowed_iter != allowed_end; ) {
@@ -923,7 +920,7 @@ ResidueLevelTask_::restrict_to_repacking()
 	design_disabled_ = true;
 	determine_if_designing();
 	determine_if_repacking();
-	mode_tokens_.push_back("NATAA");
+	mode_tokens_.emplace_back("NATAA");
 }
 
 bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCOP type ) const
@@ -963,16 +960,14 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 
 	for ( Size ii = chemical::num_canonical_aas + 1; ii <= chemical::num_aa_types; ++ii ) {
 		ResidueTypeCOPs const & aas( ResidueTypeFinder( residue_set ).aa( AA( ii ) ).variants( original_residue_type_->variant_types() ).interchangeability_group( interchangeability_group ).get_all_possible_residue_types() );
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) == allowed_residue_types_.end() /* haven't already added it */ ) {
-				allowed_residue_types_.push_back( *aas_iter );
+		for ( auto const & aa : aas ) {
+			if ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), aa ) == allowed_residue_types_.end() /* haven't already added it */ ) {
+				allowed_residue_types_.push_back( aa );
 			}
 		}
 	}
 
-	mode_tokens_.push_back("NC");
+	mode_tokens_.emplace_back("NC");
 	mode_tokens_.push_back( interchangeability_group );
 
 	determine_if_designing();
@@ -1000,7 +995,7 @@ void ResidueLevelTask_::allow_noncanonical_aa( chemical::AA aa )
 /// looking for ResidueTypes that share the input "interchangeability_group" id
 void ResidueLevelTask_::disallow_noncanonical_aas()
 {
-	for ( ResidueTypeCOPList::iterator
+	for ( auto
 			aas_iter( allowed_residue_types_.begin() ),
 			aas_end( allowed_residue_types_.end() );
 			aas_iter != aas_end; ) {
@@ -1012,7 +1007,7 @@ void ResidueLevelTask_::disallow_noncanonical_aas()
 		}
 	}
 
-	mode_tokens_.push_back("EMPTY");
+	mode_tokens_.emplace_back("EMPTY");
 
 	determine_if_designing();
 	determine_if_repacking();
@@ -1029,11 +1024,10 @@ ResidueLevelTask_::allow_aa(
 
 	chemical::ResidueTypeCOPs const aas( original_residue_type_set_->get_all_types_with_variants_aa( aa, original_residue_type_->variant_types() ) );
 
-	for ( chemical::ResidueTypeCOPs::const_iterator
-			aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-		if ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==
+	for ( auto const & aa : aas ) {
+		if ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), aa ) ==
 				allowed_residue_types_.end() /* haven't already added it */ ) {
-			allowed_residue_types_.push_back( *aas_iter );
+			allowed_residue_types_.push_back( aa );
 		}
 	}
 
@@ -1064,14 +1058,14 @@ ResidueLevelTask_::target_type() const {
 
 	bool allowed( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(),
 		target_residue_type_ ) != allowed_residue_types_.end() );
-	if ( !allowed ) return 0;
+	if ( !allowed ) return nullptr;
 	return target_residue_type_;
 }
 
 void
 ResidueLevelTask_::print_allowed_types( std::ostream & os ) const
 {
-	for ( ResidueTypeCOPListConstIter type( allowed_residue_types_begin() );
+	for ( auto type( allowed_residue_types_begin() );
 			type != allowed_residue_types_end(); ++type ) {
 		os << '\t' << (**type).name() << '\n';
 	}
@@ -1090,7 +1084,7 @@ bool ResidueLevelTask_::being_packed() const { return repacking_; } // is this r
 void ResidueLevelTask_::reset() {
 	using namespace core::chemical;
 
-	mode_tokens_.push_back( "RESET" );
+	mode_tokens_.emplace_back("RESET" );
 	disallow_noncanonical_aas();
 
 	ResidueTypeSet const & residue_set( *get_original_residue_set() );
@@ -1098,10 +1092,8 @@ void ResidueLevelTask_::reset() {
 	ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( *original_residue_type_, chemical::VIRTUAL_SIDE_CHAIN ) );
 	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 		ResidueTypeCOPs const & aas( residue_set.get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			allowed_residue_types_.push_back( *aas_iter );
+		for ( auto const & aa : aas ) {
+			allowed_residue_types_.push_back( aa );
 		}
 	}
 
@@ -1243,36 +1235,36 @@ void
 ResidueLevelTask_::update_union( ResidueLevelTask const & t )
 {
 	//T << "ResidueLevelTask_::update_union" << std::endl;
-	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+	auto const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 
-	for ( utility::vector1<std::string>::const_iterator i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i ) {
-		if ( std::find(behaviors_.begin(),behaviors_.end(),*i) == behaviors_.end() ) {
+	for ( auto const & behavior : o.behaviors_ ) {
+		if ( std::find(behaviors_.begin(),behaviors_.end(),behavior) == behaviors_.end() ) {
 			//std::cout << "behaviors_ add " << *i;
-			behaviors_.push_back(*i);
+			behaviors_.push_back(behavior);
 		}
 	}
-	for ( rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i ) {
-		if ( std::find(rotamer_operations_.begin(),rotamer_operations_.end(),*i) == rotamer_operations_.end() ) {
+	for ( auto const & rotamer_operation : o.rotamer_operations_ ) {
+		if ( std::find(rotamer_operations_.begin(),rotamer_operations_.end(),rotamer_operation) == rotamer_operations_.end() ) {
 			//std::cout << "rotamer_operations_ add " << *i;
-			rotamer_operations_.push_back(*i);
+			rotamer_operations_.push_back(rotamer_operation);
 		}
 	}
-	for ( rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i ) {
-		if ( std::find(rotsetops_.begin(),rotsetops_.end(),*i) == rotsetops_.end() ) {
+	for ( auto const & rotsetop : o.rotsetops_ ) {
+		if ( std::find(rotsetops_.begin(),rotsetops_.end(),rotsetop) == rotsetops_.end() ) {
 			//std::cout << "rotsetops_ add " << *i;
-			rotsetops_.push_back(*i);
+			rotsetops_.push_back(rotsetop);
 		}
 	}
-	for ( std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i ) {
-		if ( std::find(mode_tokens_.begin(),mode_tokens_.end(),*i) == mode_tokens_.end() ) {
+	for ( auto const & mode_token : o.mode_tokens_ ) {
+		if ( std::find(mode_tokens_.begin(),mode_tokens_.end(),mode_token) == mode_tokens_.end() ) {
 			//std::cout << "mode_tokens_ add " << *i;
-			mode_tokens_.push_back(*i);
+			mode_tokens_.push_back(mode_token);
 		}
 	}
-	for ( ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i ) {
-		if ( std::find(allowed_residue_types_.begin(),allowed_residue_types_.end(),*i) == allowed_residue_types_.end() ) {
+	for ( auto const & allowed_residue_type : o.allowed_residue_types_ ) {
+		if ( std::find(allowed_residue_types_.begin(),allowed_residue_types_.end(),allowed_residue_type) == allowed_residue_types_.end() ) {
 			//std::cout << "allowed_residue_types_ add " << (*i)->name();
-			allowed_residue_types_.push_back(*i);
+			allowed_residue_types_.push_back(allowed_residue_type);
 			//std::cout << " set disabled false ";
 
 		}
@@ -1321,10 +1313,10 @@ void
 ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 {
 	//T << "ResidueLevelTask_::update_union" << std::endl;
-	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+	auto const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 
 	utility::vector1<std::string> new_behaviors;
-	for ( utility::vector1<std::string>::const_iterator i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i ) {
+	for ( auto i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i ) {
 		if ( std::find(  behaviors_.begin(),  behaviors_.end(),*i) !=   behaviors_.end() &&
 				std::find(o.behaviors_.begin(),o.behaviors_.end(),*i) != o.behaviors_.end() ) {
 			new_behaviors.push_back(*i);
@@ -1333,7 +1325,7 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	behaviors_ = new_behaviors;
 
 	rotamer_set::RotamerOperations new_rotamer_operations;
-	for ( rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i ) {
+	for ( auto i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i ) {
 		if ( std::find(  rotamer_operations_.begin(),  rotamer_operations_.end(),*i) !=   rotamer_operations_.end() &&
 				std::find(o.rotamer_operations_.begin(),o.rotamer_operations_.end(),*i) != o.rotamer_operations_.end() ) {
 			new_rotamer_operations.push_back(*i);
@@ -1343,7 +1335,7 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 
 
 	rotamer_set::RotSetOperationList new_rotsetops;
-	for ( rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i ) {
+	for ( auto i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i ) {
 		if ( std::find(  rotsetops_.begin(),  rotsetops_.end(),*i) !=   rotsetops_.end() &&
 				std::find(o.rotsetops_.begin(),o.rotsetops_.end(),*i) != o.rotsetops_.end() ) {
 			new_rotsetops.push_back(*i);
@@ -1352,7 +1344,7 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	rotsetops_ = new_rotsetops;
 
 	std::vector<std::string> new_mode_tokens;
-	for ( std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i ) {
+	for ( auto i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i ) {
 		if ( std::find(  mode_tokens_.begin(),  mode_tokens_.end(),*i) !=   mode_tokens_.end() &&
 				std::find(o.mode_tokens_.begin(),o.mode_tokens_.end(),*i) != o.mode_tokens_.end() ) {
 			new_mode_tokens.push_back(*i);
@@ -1361,7 +1353,7 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	mode_tokens_ = new_mode_tokens;
 
 	ResidueTypeCOPList new_allowed_residue_types;
-	for ( ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i ) {
+	for ( auto i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i ) {
 		if ( std::find(  allowed_residue_types_.begin(),  allowed_residue_types_.end(),*i) !=   allowed_residue_types_.end() &&
 				std::find(o.allowed_residue_types_.begin(),o.allowed_residue_types_.end(),*i) != o.allowed_residue_types_.end() ) {
 			new_allowed_residue_types.push_back(*i);
@@ -1413,7 +1405,7 @@ ResidueLevelTask_::update_commutative(
 ){
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+	auto const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 
 	include_current_              |= o.include_current_;
 	adducts_                      |= o.adducts_;

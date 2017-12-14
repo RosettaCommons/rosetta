@@ -55,7 +55,7 @@ StepWiseSamplerSizedComb::StepWiseSamplerSizedComb( StepWiseSamplerSizedOP outer
 	init();
 }
 
-StepWiseSamplerSizedComb::~StepWiseSamplerSizedComb(){}
+StepWiseSamplerSizedComb::~StepWiseSamplerSizedComb()= default;
 
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerSizedComb::init() {

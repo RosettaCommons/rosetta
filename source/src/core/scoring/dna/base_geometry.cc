@@ -48,9 +48,9 @@ static basic::Tracer TR("core.scoring.dna.base_geometry");
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
-typedef numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 //using kinematics::Stub::Matrix;
-typedef utility::vector1< Real > Params;
+using Params = utility::vector1<Real>;
 
 ////////////////////////////////////////////////////////////////////////////
 /// FWD

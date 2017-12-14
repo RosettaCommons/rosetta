@@ -46,7 +46,7 @@ bool TopOutFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	TopOutFunc const & other_downcast( static_cast< TopOutFunc const & > (other) );
+	auto const & other_downcast( static_cast< TopOutFunc const & > (other) );
 	if ( x0_ != other_downcast.x0_ ) return false;
 	if ( weight_ != other_downcast.weight_ ) return false;
 	if ( limit_ != other_downcast.limit_ ) return false;

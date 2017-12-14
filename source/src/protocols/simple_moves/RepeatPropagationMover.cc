@@ -216,7 +216,7 @@ void RepeatPropagationMover::add_caps(Pose & pose, Pose & repeat_pose){
 	}
 }
 
-vector<Real> RepeatPropagationMover::get_center_of_mass(Real* coordinates, int number_of_atoms){
+vector<Real> RepeatPropagationMover::get_center_of_mass(const Real* coordinates, int number_of_atoms){
 	vector<Real> center;
 	center.push_back(0);
 	center.push_back(0);
@@ -237,7 +237,7 @@ vector<Real> RepeatPropagationMover::get_center_of_mass(Real* coordinates, int n
 
 void RepeatPropagationMover::repeat_ligand(Pose & pose, Pose & repeat_pose){
 	using namespace chemical;
-	typedef numeric::xyzMatrix< Real >  Matrix;
+	using Matrix = numeric::xyzMatrix<Real>;
 	Size ligand_residue = 0;
 	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( ! pose.residue( i ).is_protein() ) {

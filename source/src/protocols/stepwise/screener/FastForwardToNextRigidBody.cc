@@ -26,12 +26,10 @@ namespace stepwise {
 namespace screener {
 
 //Constructor
-FastForwardToNextRigidBody::FastForwardToNextRigidBody()
-{}
+FastForwardToNextRigidBody::FastForwardToNextRigidBody() = default;
 
 //Destructor
-FastForwardToNextRigidBody::~FastForwardToNextRigidBody()
-{}
+FastForwardToNextRigidBody::~FastForwardToNextRigidBody() = default;
 
 // auto-trigger fast forward.
 // bool

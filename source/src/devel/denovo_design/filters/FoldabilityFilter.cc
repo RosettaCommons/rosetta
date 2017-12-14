@@ -115,8 +115,7 @@ FoldabilityFilter::FoldabilityFilter() :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-FoldabilityFilter::~FoldabilityFilter()
-{}
+FoldabilityFilter::~FoldabilityFilter() = default;
 
 
 /// Return a copy of ourselves

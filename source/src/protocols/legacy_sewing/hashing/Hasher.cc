@@ -139,7 +139,7 @@ Hasher::score(
 	TR << "[First score function in Hasher.cc]" << std::endl;
 
 	std::set<core::Size> all_segments;
-	utility::vector1<SewSegment>::const_iterator it= model.segments_.begin();
+	auto it= model.segments_.begin();
 
 	// For 5-ss-models, this 'for loop' iterates 5 times
 	for ( ; it!=model.segments_.end(); ++it ) {
@@ -170,7 +170,7 @@ Hasher::score(
 
 	utility::vector1<SewSegment> segments = model.segments_;
 	utility::vector1<SewResidue> all_residues;
-	utility::vector1<SewSegment>::const_iterator it = model.segments_.begin();
+	auto it = model.segments_.begin();
 	for ( ; it != model.segments_.end(); ++it ) {
 
 		//Don't score the segments that we aren't hashing, if it is not hashed, it is just a linker segment!
@@ -241,19 +241,18 @@ Hasher::score_basis(
 		neighborhood_lookup(key, hit_its);
 		for ( core::Size hit_it_i = 1; hit_it_i<= hit_its.size(); ++hit_it_i ) { // hit_its.size() is 27 for 3 box_length
 			if ( hit_its[hit_it_i] == hash_map_.end() ) continue;
-			for ( utility::vector1<HashValue>::const_iterator it = hit_its[hit_it_i]->second.begin(); it!=hit_its[hit_it_i]->second.end(); ++it ) {
-				HashValue const & cur_hit = *it;
+			for ( auto const & cur_hit : hit_its[hit_it_i]->second ) {
 				if ( transformed_model.model_id_ != cur_hit.model_id ) { //Don't score the model against itself
 					BasisPair basis_pair = std::make_pair(reference_bp, Basis(cur_hit.model_id, cur_hit.basis_resnum));
 					if ( cur_atom.atomno_ == cur_hit.atomno ) {
 						using namespace basic::options;
 						if ( ! option[OptionKeys::legacy_sewing::score_between_opposite_terminal_segments].user() ) {
-							option[OptionKeys::legacy_sewing::score_between_opposite_terminal_segments].value( 0 );
+							option[OptionKeys::legacy_sewing::score_between_opposite_terminal_segments].value( false );
 						}
 						bool score_between_opposite_terminal_segments = option[OptionKeys::legacy_sewing::score_between_opposite_terminal_segments];
 						// <begin> identifying the 1st and the last segment
 						utility::vector1<SewSegment> segments = transformed_model.segments_;
-						utility::vector1<SewSegment>::const_iterator it= transformed_model.segments_.begin();
+						auto it= transformed_model.segments_.begin();
 						core::Size segment_id_1st = 9999;
 						core::Size segment_id_last = 9999;
 						for ( ; it != transformed_model.segments_.end(); ++it ) {
@@ -276,7 +275,7 @@ Hasher::score_basis(
 								) {
 							SegmentPair segment_pair = std::make_pair(model_it.segment()->segment_id_, cur_hit.segment_id);
 
-							std::map<SegmentPair, core::Size>::iterator seg_pair_it = alignment_scores[basis_pair].segment_match_counts.find(segment_pair);
+							auto seg_pair_it = alignment_scores[basis_pair].segment_match_counts.find(segment_pair);
 							if ( seg_pair_it == alignment_scores[basis_pair].segment_match_counts.end() ) {
 								alignment_scores[basis_pair].segment_match_counts[segment_pair] = 0;
 							}
@@ -325,16 +324,14 @@ Hasher::score_basis_125(
 		for ( core::Size hit_it_i = 1; hit_it_i<= hit_its.size(); ++hit_it_i ) {
 			if ( hit_its[hit_it_i] == hash_map_.end() ) continue;
 
-			for ( utility::vector1<HashValue>::const_iterator it = hit_its[hit_it_i]->second.begin(); it!=hit_its[hit_it_i]->second.end(); ++it ) {
-				HashValue const & cur_hit = *it;
-
+			for ( auto const & cur_hit : hit_its[hit_it_i]->second ) {
 				if ( transformed_model.model_id_ != cur_hit.model_id ) { //Don't score the model against itself
 					BasisPair basis_pair = std::make_pair(reference_bp, Basis(cur_hit.model_id, cur_hit.basis_resnum));
 
 					if ( cur_atom.atomno_ == cur_hit.atomno ) {
 						SegmentPair segment_pair = std::make_pair(model_it.segment()->segment_id_, cur_hit.segment_id);
 
-						std::map<SegmentPair, core::Size>::iterator seg_pair_it = alignment_scores[basis_pair].segment_match_counts.find(segment_pair);
+						auto seg_pair_it = alignment_scores[basis_pair].segment_match_counts.find(segment_pair);
 						if ( seg_pair_it == alignment_scores[basis_pair].segment_match_counts.end() ) {
 							alignment_scores[basis_pair].segment_match_counts[segment_pair] = 0;
 						}
@@ -372,7 +369,7 @@ Hasher::trim_scores(
 
 	// Doonam introduced this disregard_num_segment_matches option for development purpose
 	if ( ! option[OptionKeys::legacy_sewing::disregard_num_segment_matches].user() ) {
-		option[OptionKeys::legacy_sewing::disregard_num_segment_matches].value( 0 );
+		option[OptionKeys::legacy_sewing::disregard_num_segment_matches].value( false );
 	}
 	bool disregard_num_segment_matches = option[OptionKeys::legacy_sewing::disregard_num_segment_matches];
 	//TR << "disregard_num_segment_matches: " << disregard_num_segment_matches << std::endl;
@@ -380,9 +377,9 @@ Hasher::trim_scores(
 	//  TR << "[attention] [condition] min_segment_score: " << min_segment_score << std::endl;
 	//  TR << "[attention] [condition] num_segment_matches: " << num_segment_matches << std::endl;
 
-	ScoreResults::iterator it = scores.begin();
+	auto it = scores.begin();
 	//typedef std::map< BasisPair, HashResult > ScoreResults;
-	ScoreResults::iterator it_end = scores.end();
+	auto it_end = scores.end();
 
 	while ( it!=it_end ) {
 		// TR << "it!=it_end" << std::endl;
@@ -405,8 +402,8 @@ Hasher::trim_scores(
 		} else {
 			//Ensure each matched segment contains at least the minimum number of atoms in the same bin
 			std::map<SegmentPair, core::Size> const & segment_matches = it->second.segment_match_counts;
-			std::map<SegmentPair, core::Size>::const_iterator seg_it = segment_matches.begin();
-			std::map<SegmentPair, core::Size>::const_iterator seg_it_end = segment_matches.end();
+			auto seg_it = segment_matches.begin();
+			auto seg_it_end = segment_matches.end();
 			std::set<core::Size> source_segments;
 			std::set<core::Size> target_segments;
 			for ( ; seg_it != seg_it_end; ++seg_it ) {
@@ -430,8 +427,8 @@ Hasher::trim_scores(
 		// just for devel purpose
 		if ( TR.Debug.visible() ) {
 			std::map<SegmentPair, core::Size> const & segment_matches = it->second.segment_match_counts;
-			std::map<SegmentPair, core::Size>::const_iterator seg_it = segment_matches.begin();
-			std::map<SegmentPair, core::Size>::const_iterator seg_it_end = segment_matches.end();
+			auto seg_it = segment_matches.begin();
+			auto seg_it_end = segment_matches.end();
 			std::set<core::Size> source_segments;
 			std::set<core::Size> target_segments;
 			for ( ; seg_it != seg_it_end; ++seg_it ) {
@@ -465,8 +462,8 @@ Hasher::remove_duplicates(
 
 	std::map< std::pair< score_node, score_node >, std::pair<core::Size, ScoreResults::const_iterator> > best_hits;
 
-	ScoreResults::const_iterator it = scores.begin();
-	ScoreResults::const_iterator it_end = scores.end();
+	auto it = scores.begin();
+	auto it_end = scores.end();
 	for ( ; it != it_end; ++it ) {
 		score_node model_1_node;
 		model_1_node.first = it->first.first.model_id;
@@ -511,8 +508,8 @@ Hasher::remove_connection_inconsistencies(
 	ScoreResults & scores
 ) const {
 	TR << "[remove_connection_inconsistencies]" << std::endl;
-	ScoreResults::iterator scores_it = scores.begin();
-	ScoreResults::iterator scores_it_end = scores.end();
+	auto scores_it = scores.begin();
+	auto scores_it_end = scores.end();
 	while ( scores_it != scores_it_end ) {
 		BasisPair bp = scores_it->first;
 
@@ -698,11 +695,11 @@ Hasher::write_to_disk(std::string filename) const {
 
 	utility::io::ozstream file;
 	file.open(filename);
-	for ( HashMap::const_iterator it = hash_map_.begin(); it != hash_map_.end(); ++it ) {
-		HashKey const & key = it->first;
+	for ( auto const & it : hash_map_ ) {
+		HashKey const & key = it.first;
 		file << "KEY " << key[1] << " " << key[2] << " " << key[3] << std::endl;
 
-		utility::vector1<HashValue> const & values = it->second;
+		utility::vector1<HashValue> const & values = it.second;
 		for ( core::Size i=1; i<=values.size(); ++i ) {
 			file << "VALUE " << values[i].model_id << " " << values[i].basis_resnum << " " << values[i].segment_id << " " << values[i].resnum << " " << values[i].atomno << std::endl;
 		}

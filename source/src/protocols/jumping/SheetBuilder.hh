@@ -56,7 +56,7 @@ namespace jumping {
 class SheetBuilder : public BaseJumpSetup {
 public:
 	typedef utility::vector1< core::Size > SheetTopology;
-	SheetBuilder( core::fragment::SecondaryStructureOP, core::scoring::dssp::PairingsList const&, SheetTopology const& );
+	SheetBuilder( core::fragment::SecondaryStructureOP, core::scoring::dssp::PairingsList const &, SheetTopology const & );
 
 	//copy c'stor
 	SheetBuilder( SheetBuilder const& );

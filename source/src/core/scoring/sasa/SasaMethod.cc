@@ -34,7 +34,7 @@ SasaMethod::SasaMethod(Real probe_radius, SasaRadii radii_set):
 	use_big_polar_H_(false)
 {}
 
-SasaMethod::~SasaMethod(){}
+SasaMethod::~SasaMethod()= default;
 
 void
 SasaMethod::set_include_probe_radius_in_calc(bool include_probe_radius) {

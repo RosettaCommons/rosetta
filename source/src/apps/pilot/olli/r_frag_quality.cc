@@ -85,8 +85,7 @@ public:
 private:
 };
 
-ThisApplication::ThisApplication()
-{}
+ThisApplication::ThisApplication() = default;
 
 OPT_KEY( File, f )
 OPT_KEY( Boolean, torsion )
@@ -269,7 +268,7 @@ void check_quality_of_cluster_frags( Pose const& native_pose, FragSetOP decoy_fr
 }
 
 void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragSetOP new_frags ) {
-	typedef ClusterBase::ClusterList ClusterList;
+	using ClusterList = ClusterBase::ClusterList;
 
 	//if all clusters together have at least this value, we don't allow any std-fragset stuff
 	FrameList fra;
@@ -283,10 +282,10 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 	if ( !cluster_in.good() ) utility_exit_with_message( "can't open cluster file " + std::string( option[ cluster::in ]()) );
 
 	//as many clusters as residues
-	typedef utility::vector1< ClusterList > Clusters;
+	using Clusters = utility::vector1<ClusterList>;
 	Clusters clusters( predicted_frags->max_pos() );
 
-	typedef utility::vector1< Size > SizeVector;
+	using SizeVector = utility::vector1<Size>;
 	SizeVector clust_sum( predicted_frags->max_pos(), 0 );
 
 	//movemap to keep track where we have GOOD clusters  -- will be set to FALSE where GOOD fragments are found
@@ -326,8 +325,8 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		clust_sum[ pos ] = sum;
 
 		Size const N( frame.nr_frags() );
-		Size const clust_sum_value( static_cast< Size >(option[ cluster::acc_sum ]()*N ) );
-		Size const min_cluster_size( static_cast< Size >( option[ cluster::acc_size ]()*N) );
+		auto const clust_sum_value( static_cast< Size >(option[ cluster::acc_sum ]()*N ) );
+		auto const min_cluster_size( static_cast< Size >( option[ cluster::acc_size ]()*N) );
 		tr.Info << "pos: " << pos << " min_cluster_size: " << min_cluster_size << " cluster_sum "<< clust_sum_value << std::endl;
 
 		//decide whether to use these fragments
@@ -367,8 +366,8 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		ClusterList cluster = clusters[ pos ];
 
 		Size const N( (*itframe)->nr_frags() );
-		Size const clust_sum_value( static_cast< Size >(option[ cluster::acc_sum ]()*N ) );
-		Size const min_cluster_size( static_cast< Size >( option[ cluster::acc_size ]()*N) );
+		auto const clust_sum_value( static_cast< Size >(option[ cluster::acc_sum ]()*N ) );
+		auto const min_cluster_size( static_cast< Size >( option[ cluster::acc_size ]()*N) );
 
 
 		if ( !mm.get_bb( pos ) ) { //we have confidence in our decoys: no fill_frags
@@ -376,13 +375,13 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 			//get all the fragments from the first cluster
 			ClusterList::const_iterator it = cluster.begin();
 
-			for ( ClusterBase::IntraClusterIterator fit = it->begin(); fit != it->end(); ++fit ) {
-				if ( *fit > (*itframe)->nr_frags() ) {
+			for ( unsigned long fit : *it ) {
+				if ( fit > (*itframe)->nr_frags() ) {
 					tr.Warning << "IGNORE: more elements in cluster than in frame... frame:" << (*itframe)->nr_frags()
-						<< " in cluster: " << *fit << std::endl;
+						<< " in cluster: " << fit << std::endl;
 					tr.Warning << " position: " << pos << std::endl;
 				} else {
-					FragID frag( *itframe, *fit );
+					FragID frag( *itframe, fit );
 					new_frags->add( frag );
 				}
 			}
@@ -409,7 +408,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		// 2.) fill up with chopped frags that do not overlap with the converged region
 
 		//vector of boolean, to track which frag_ids we want to keep
-		typedef utility::vector1< bool> InsertSet;
+		using InsertSet = utility::vector1<bool>;
 		InsertSet insert_set( max_frag_id, false );
 
 		//at insert_size[pos] the first good cluster starts,
@@ -424,9 +423,8 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 				for ( ClusterList::const_iterator it = cluster.begin(), eit = cluster.end(); it != eit; ++it ) {
 					if ( it->size() > min_cluster_size ) {
 						//keep only fragments from cluster
-						for ( ClusterBase::IntraClusterIterator fit = it->begin(), efit = it->end();
-								fit != efit; ++fit ) {
-							insert_set[ *fit ] = true;
+						for ( unsigned long fit : *it ) {
+							insert_set[ fit ] = true;
 						}
 					}
 				}
@@ -466,16 +464,16 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		fill_frags->frames( pos, fill_frames );
 		if ( tr.Trace.visible() ) {
 			tr.Trace << " fill_frames have " << fill_frames.size() << " frames with: ";
-			for ( FrameList::iterator it = fill_frames.begin(), eit = fill_frames.end(); it != eit; ++it )  tr.Trace << (*it)->nr_frags() << " ";
+			for ( auto & fill_frame : fill_frames )  tr.Trace << fill_frame->nr_frags() << " ";
 			tr.Trace << "number of fragments" << std::endl;
 		}
 
 		//chop everything in fill_frames and add to new_frags
 		Size const chop( insert_size[ pos ] );
-		for ( FrameList::iterator it = fill_frames.begin(), eit = fill_frames.end(); it != eit; ++it ) {
+		for ( auto & fill_frame : fill_frames ) {
 			FrameOP chop_frame( new Frame( pos, chop ) );
-			for ( Size nr = 1; nr <= (*it)->nr_frags(); nr ++ ) {
-				chop_frame->add_fragment( (*it)->fragment( nr ).generate_sub_fragment( 1, chop ) );
+			for ( Size nr = 1; nr <= fill_frame->nr_frags(); nr ++ ) {
+				chop_frame->add_fragment( fill_frame->fragment( nr ).generate_sub_fragment( 1, chop ) );
 			}
 			new_frags->add( chop_frame );
 		}
@@ -484,7 +482,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 
 
 	//at this point we should have a complete fragment set in new_frags...
-	runtime_assert( new_frags != 0 );
+	runtime_assert( new_frags != nullptr );
 	tr.Info << " fill_frags: " << fill_frags->max_frag_length() << " new_frag: " << fill_frags->max_frag_length() << std::endl;
 
 
@@ -631,9 +629,7 @@ void compute_intrinsic_deviation( Pose& test_pose, FragSetOP predicted_frags, Po
 			for ( Size ncl = 1; ncl <= (Size) std::min( (int) nout, (int) cluster.size() ); ncl ++ ) {
 				Real total( 0 );
 				Real min_rms( 1000 );
-				for ( ClusterPhilStyle::IntraClusterIterator it = cluster.cluster( ncl ).begin(), eit = cluster.cluster( ncl ).end();
-						it != eit; ++it ) {
-					Size frag_nr = *it;
+				for ( unsigned long frag_nr : cluster.cluster( ncl ) ) {
 					frame.apply( frag_nr, test_pose );
 					utility::vector1< Size > excl;
 					Real rms =  compare_frags_pose( native_pose, test_pose, frame, excl );
@@ -687,7 +683,7 @@ FragSetOP filter_frags( FragSet const& frags_in, std::string const& filter_file 
 		frags_in.frames( pos, frames );
 
 		// find right size
-		FrameList::iterator it = frames.begin(), eit = frames.end();
+		auto it = frames.begin(), eit = frames.end();
 		while ( it != eit ) {
 			if ( (*it)->length() == size ) break;
 			++it;
@@ -779,7 +775,7 @@ int main( int argc, char** argv ) {
 			}
 
 
-			FragSetOP predicted_frags = NULL;
+			FragSetOP predicted_frags = nullptr;
 			if ( ( option[ intrinsic ] && option[ torsion ] ) || option[ chop ].user() ) {
 				ConstantLengthFragSetOP short_frags( new ConstantLengthFragSet( option[ chop ] ) );
 				chop_fragments( *orig_frags, *short_frags );

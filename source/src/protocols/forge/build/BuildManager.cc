@@ -75,12 +75,12 @@ BuildManager::BuildManager() :
 BuildManager::BuildManager( BuildManager const & rval ) :
 	Super( rval ),
 	original2modified_( rval.original2modified_ ),
-	seqmap_( rval.seqmap_.get() ? new SequenceMapping( *rval.seqmap_ ) : 0 ),
+	seqmap_( rval.seqmap_.get() ? new SequenceMapping( *rval.seqmap_ ) : nullptr ),
 	modify_was_successful_( rval.modify_was_successful_ )
 {
 	// add instructions in the exact same order
-	for ( BIOPConstIterator i = rval.begin(), ie = rval.end(); i != ie; ++i ) {
-		add( *i );
+	for ( const auto & i : rval ) {
+		add( i );
 	}
 
 	// rebuild the dependencies
@@ -89,7 +89,7 @@ BuildManager::BuildManager( BuildManager const & rval ) :
 
 
 /// @brief default destructor
-BuildManager::~BuildManager() {}
+BuildManager::~BuildManager() = default;
 
 
 /// @brief copy assignment
@@ -100,15 +100,15 @@ BuildManager & BuildManager::operator =( BuildManager const & rval ) {
 		clear(); // clear all instructions
 
 		// add the instructions in the same order
-		for ( BIOPConstIterator i = rval.begin(), ie = rval.end(); i != ie; ++i ) {
-			add( *i );
+		for ( const auto & i : rval ) {
+			add( i );
 		}
 
 		// rebuild the dependencies
 		reconstruct_dependencies( rval.instruction_dependencies_ );
 
 		original2modified_ = rval.original2modified_;
-		seqmap_ = SequenceMappingOP( rval.seqmap_.get() ? new SequenceMapping( *rval.seqmap_ ) : 0 );
+		seqmap_ = SequenceMappingOP( rval.seqmap_.get() ? new SequenceMapping( *rval.seqmap_ ) : nullptr );
 		modify_was_successful_ = rval.modify_was_successful_;
 	}
 	return *this;
@@ -130,8 +130,8 @@ BuildManagerOP BuildManager::create() const {
 /// @brief reset all accounting info (intervals, positions, etc) to initial
 ///  state
 void BuildManager::reset_accounting() {
-	for ( BIOPIterator i = instructions_.begin(), ie = instructions_.end(); i != ie; ++i ) {
-		(**i).reset_accounting();
+	for ( auto & instruction : instructions_ ) {
+		(*instruction).reset_accounting();
 	}
 	original2modified_.clear();
 	seqmap_.reset(); // to NULL
@@ -162,8 +162,8 @@ void BuildManager::clear() {
 ///  before instruction 'v' can complete, i.e. 'v' depends on 'u'
 void BuildManager::create_directed_dependency( BuildInstructionOP u, BuildInstructionOP v ) {
 	// find the index of the instructions in the instructions_ array
-	BIOPIterator u_iter = find_instruction( u );
-	BIOPIterator v_iter = find_instruction( v );
+	auto u_iter = find_instruction( u );
+	auto v_iter = find_instruction( v );
 	runtime_assert( u_iter != instructions_.end() );
 	runtime_assert( v_iter != instructions_.end() );
 
@@ -186,8 +186,8 @@ BuildManager::Size BuildManager::clear_dependencies() {
 	Size const n = instruction_dependencies_.size();
 
 	// clear for each instruction
-	for ( BIOPIterator i = instructions_.begin(), ie = instructions_.end(); i != ie; ++i ) {
-		(**i).clear_dependencies();
+	for ( auto & instruction : instructions_ ) {
+		(*instruction).clear_dependencies();
 	}
 
 	// clear the list
@@ -275,16 +275,16 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 
 	// attach all instructions as length observers and set flag
 	// so detach does not occur after modify
-	for ( BIOPIterator i = instructions_.begin(), ie = instructions_.end(); i != ie; ++i ) {
-		(**i).attach_to( pose );
-		(**i).detach_after_modify( false );
+	for ( auto & instruction : instructions_ ) {
+		(*instruction).attach_to( pose );
+		(*instruction).detach_after_modify( false );
 	}
 
 	// Now perform all instructions; note that modify() will automatically
 	// re-attach here but that's fine.
 	Size instructions_remaining = instructions_.size();
 	Size instructions_remaining_prior_loop = instructions_remaining; // safeguard against cycles in the dependency topology
-	BIOPIterator iii = instructions_.begin(), iiie = instructions_.end();
+	auto iii = instructions_.begin(), iiie = instructions_.end();
 
 	while ( instructions_remaining > 0 ) {
 
@@ -325,31 +325,31 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	// to true as a safety, since we are not necessarily storing clones of the
 	// instructions and we don't want to be inadvertantly causing weird behavior
 	// downstream if the instructions are somehow reused.
-	for ( BIOPIterator i = instructions_.begin(), ie = instructions_.end(); i != ie; ++i ) {
-		(**i).detach_from();
-		(**i).detach_after_modify( true ); // safety
+	for ( auto & instruction : instructions_ ) {
+		(*instruction).detach_from();
+		(*instruction).detach_after_modify( true ); // safety
 	}
 
 	// gather residues of newly modified Pose for mapping purposes
 	Positions new_r = closed_range( Size( 1 ), pose.size() ); // new residues
 
 	// remove original deleted positions from original residues
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 		Positions const odp = bi.original_deleted_positions();
 
-		for ( Positions::const_iterator j = odp.begin(), je = odp.end(); j != je; ++j ) {
-			old_r.erase( *j );
+		for ( unsigned long j : odp ) {
+			old_r.erase( j );
 		}
 	}
 
 	// remove newly created positions from modified residues
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 		Positions const np = bi.new_positions();
 
-		for ( Positions::const_iterator j = np.begin(), je = np.end(); j != je; ++j ) {
-			new_r.erase( *j );
+		for ( unsigned long j : np ) {
+			new_r.erase( j );
 		}
 	}
 
@@ -357,7 +357,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 
 	// create old -> new map for unmodified regions
 	original2modified_.clear();
-	for ( Positions::const_iterator o = old_r.begin(), n = new_r.begin(), oe = old_r.end(), ne = new_r.end();
+	for ( auto o = old_r.begin(), n = new_r.begin(), oe = old_r.end(), ne = new_r.end();
 			o != oe && n != ne; ++o, ++n ) {
 		original2modified_[ *o ] = *n;
 	}
@@ -426,8 +426,8 @@ BuildManager::Size BuildManager::dummy_modify( Size const nres ) {
 /// @brief check if instruction regions are compatible with each other
 /// @return true if regions compatible, false if regions incompatible
 bool BuildManager::compatibility_check() const {
-	for ( BIOPConstIterator i = begin(), ie = --end(); i != ie; ++i ) {
-		for ( BIOPConstIterator j = i + 1, je = end(); j != je; ++j ) {
+	for ( auto i = begin(), ie = --end(); i != ie; ++i ) {
+		for ( auto j = i + 1, je = end(); j != je; ++j ) {
 			if ( !(**i).compatible_with( **j ) ) {
 				return false;
 			}
@@ -450,8 +450,8 @@ BuildManager::MoveMapOP BuildManager::movemap_as_OP() const {
 		return combined_mm;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		combined_mm->import( (**i).movemap() );
+	for ( const auto & i : *this ) {
+		combined_mm->import( (*i).movemap() );
 	}
 
 	return combined_mm;
@@ -489,8 +489,8 @@ BuildManager::Interval2Interval BuildManager::original2modified_intervals() cons
 		return o2m;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 
 		if ( bi.original_interval_valid() ) {
 			o2m[ bi.original_interval() ] = bi.interval();
@@ -514,8 +514,8 @@ BuildManager::Original2Modified BuildManager::original2modified_interval_endpoin
 		return o2m;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 
 		if ( bi.original_interval_valid() ) {
 			o2m[ bi.original_interval().left ] = bi.interval().left;
@@ -539,8 +539,8 @@ BuildManager::Interval2Interval BuildManager::modified2original_intervals() cons
 		return m2o;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 
 		if ( bi.original_interval_valid() ) {
 			m2o[ bi.interval() ] = bi.original_interval();
@@ -563,8 +563,8 @@ BuildManager::Modified2Original BuildManager::modified2original_interval_endpoin
 		return m2o;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 
 		if ( bi.original_interval_valid() ) {
 			m2o[ bi.interval().left ] = bi.original_interval().left;
@@ -587,8 +587,8 @@ std::set< Interval > BuildManager::intervals() const {
 		return intervals;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = (**i);
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = (*i);
 		intervals.insert( bi.interval() );
 	}
 
@@ -608,8 +608,8 @@ std::set< Interval > BuildManager::intervals_without_valid_original_equivalents(
 		return intervals;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = (**i);
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = (*i);
 
 		// only return those modified intervals whose original interval is
 		// invalid
@@ -632,8 +632,8 @@ std::set< Interval > BuildManager::intervals_containing_preexisting_positions() 
 		return intervals;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = (**i);
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = (*i);
 		if ( !bi.preexisting_positions().empty() ) {
 			intervals.insert( bi.interval() );
 		}
@@ -653,8 +653,8 @@ std::set< Interval > BuildManager::intervals_containing_new_positions() const {
 		return intervals;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = (**i);
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = (*i);
 		if ( !bi.new_positions().empty() ) {
 			intervals.insert( bi.interval() );
 		}
@@ -673,8 +673,8 @@ std::set< Interval > BuildManager::intervals_containing_defined_positions() cons
 		return intervals;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = (**i);
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = (*i);
 		if ( !bi.defined_positions().empty() ) {
 			intervals.insert( bi.interval() );
 		}
@@ -694,8 +694,8 @@ std::set< Interval > BuildManager::intervals_containing_undefined_positions() co
 		return intervals;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = (**i);
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = (*i);
 		if ( !bi.undefined_positions().empty() ) {
 			intervals.insert( bi.interval() );
 		}
@@ -711,8 +711,8 @@ std::set< Interval > BuildManager::intervals_containing_undefined_positions() co
 std::set< Interval > BuildManager::original_intervals_containing_kept_positions() const {
 	std::set< Interval > intervals;
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = (**i);
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = (*i);
 		if ( !bi.original_kept_positions().empty() ) {
 			intervals.insert( bi.original_interval() );
 		}
@@ -728,8 +728,8 @@ std::set< Interval > BuildManager::original_intervals_containing_kept_positions(
 std::set< Interval > BuildManager::original_intervals_containing_deleted_positions() const {
 	std::set< Interval > intervals;
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = (**i);
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = (*i);
 		if ( !bi.original_deleted_positions().empty() ) {
 			intervals.insert( bi.original_interval() );
 		}
@@ -752,8 +752,8 @@ BuildManager::Positions BuildManager::positions() const {
 		return p;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		Interval const ival = (**i).interval();
+	for ( const auto & i : *this ) {
+		Interval const ival = (*i).interval();
 		insert_closed_range( ival.left, ival.right, p );
 	}
 
@@ -771,8 +771,8 @@ BuildManager::Positions BuildManager::preexisting_positions() const {
 		return preexisting;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		Positions const bi_pp = (**i).preexisting_positions();
+	for ( const auto & i : *this ) {
+		Positions const bi_pp = (*i).preexisting_positions();
 		preexisting.insert( bi_pp.begin(), bi_pp.end() );
 	}
 
@@ -790,8 +790,8 @@ BuildManager::Positions BuildManager::new_positions() const {
 		return newp;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		Positions const bi_np = (**i).new_positions();
+	for ( const auto & i : *this ) {
+		Positions const bi_np = (*i).new_positions();
 		newp.insert( bi_np.begin(), bi_np.end() );
 	}
 
@@ -809,8 +809,8 @@ BuildManager::Positions BuildManager::defined_positions() const {
 		return defined;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		Positions const bi_dp = (**i).defined_positions();
+	for ( const auto & i : *this ) {
+		Positions const bi_dp = (*i).defined_positions();
 		defined.insert( bi_dp.begin(), bi_dp.end() );
 	}
 
@@ -828,8 +828,8 @@ BuildManager::Positions BuildManager::undefined_positions() const {
 		return undefined;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		Positions const bi_up = (**i).undefined_positions();
+	for ( const auto & i : *this ) {
+		Positions const bi_up = (*i).undefined_positions();
 		undefined.insert( bi_up.begin(), bi_up.end() );
 	}
 
@@ -851,8 +851,8 @@ BuildManager::Positions BuildManager::union_of_intervals_containing_undefined_po
 		return p;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = (**i);
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = (*i);
 		Interval const ival = bi.interval();
 
 		if ( !bi.undefined_positions().empty() ) {
@@ -870,8 +870,8 @@ BuildManager::Positions BuildManager::union_of_intervals_containing_undefined_po
 BuildManager::Positions BuildManager::original_kept_positions() const {
 	Positions kept;
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		Positions const bi_kp = (**i).original_kept_positions();
+	for ( const auto & i : *this ) {
+		Positions const bi_kp = (*i).original_kept_positions();
 		kept.insert( bi_kp.begin(), bi_kp.end() );
 	}
 
@@ -885,8 +885,8 @@ BuildManager::Positions BuildManager::original_kept_positions() const {
 BuildManager::Positions BuildManager::original_deleted_positions() const {
 	Positions deleted;
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		Positions const bi_dp = (**i).original_deleted_positions();
+	for ( const auto & i : *this ) {
+		Positions const bi_dp = (*i).original_deleted_positions();
 		deleted.insert( bi_dp.begin(), bi_dp.end() );
 	}
 
@@ -904,8 +904,8 @@ BuildManager::Interval2Positions BuildManager::modified_i2p_preexisting() const 
 		return i2p;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 		i2p.insert( std::make_pair( bi.interval(), bi.preexisting_positions() ) );
 	}
 
@@ -923,8 +923,8 @@ BuildManager::Interval2Positions BuildManager::modified_i2p_new() const {
 		return i2p;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 		i2p.insert( std::make_pair( bi.interval(), bi.new_positions() ) );
 	}
 
@@ -942,8 +942,8 @@ BuildManager::Interval2Positions BuildManager::modified_i2p_defined() const {
 		return i2p;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 		i2p.insert( std::make_pair( bi.interval(), bi.defined_positions() ) );
 	}
 
@@ -961,8 +961,8 @@ BuildManager::Interval2Positions BuildManager::modified_i2p_undefined() const {
 		return i2p;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 		i2p.insert( std::make_pair( bi.interval(), bi.undefined_positions() ) );
 	}
 
@@ -979,8 +979,8 @@ BuildManager::Interval2MoveMap BuildManager::modified_interval2movemap() const {
 		return i2m;
 	}
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 		i2m.insert( std::make_pair( bi.interval(), bi.movemap() ) );
 	}
 
@@ -994,8 +994,8 @@ BuildManager::Interval2MoveMap BuildManager::modified_interval2movemap() const {
 BuildManager::Interval2Positions BuildManager::original_i2p_kept() const {
 	Interval2Positions i2p;
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 		i2p.insert( std::make_pair( bi.original_interval(), bi.original_kept_positions() ) );
 	}
 
@@ -1009,8 +1009,8 @@ BuildManager::Interval2Positions BuildManager::original_i2p_kept() const {
 BuildManager::Interval2Positions BuildManager::original_i2p_deleted() const {
 	Interval2Positions i2p;
 
-	for ( BIOPConstIterator i = begin(), ie = end(); i != ie; ++i ) {
-		BuildInstruction const & bi = **i;
+	for ( const auto & i : *this ) {
+		BuildInstruction const & bi = *i;
 		i2p.insert( std::make_pair( bi.original_interval(), bi.original_deleted_positions() ) );
 	}
 
@@ -1038,7 +1038,7 @@ BuildManager::BIOPConstIterator BuildManager::find_instruction( BuildInstruction
 /// @return iterator pointing to the DependencyEdge if found, otherwise the
 ///  'end' iterator
 BuildManager::DependencyEdges::iterator BuildManager::find_dependency( BuildInstructionCOP u, BuildInstructionCOP v ) {
-	for ( DependencyEdges::iterator i = instruction_dependencies_.begin(), ie = instruction_dependencies_.end(); i != ie; ++i ) {
+	for ( auto i = instruction_dependencies_.begin(), ie = instruction_dependencies_.end(); i != ie; ++i ) {
 		if ( instructions_[ i->first ] == u && instructions_[ i->second ] == v ) {
 			return i;
 		}
@@ -1052,7 +1052,7 @@ BuildManager::DependencyEdges::iterator BuildManager::find_dependency( BuildInst
 /// @return const iterator pointing to the DependencyEdge if found, otherwise the
 ///  'end' const iterator
 BuildManager::DependencyEdges::const_iterator BuildManager::find_dependency( BuildInstructionCOP u, BuildInstructionCOP v ) const {
-	for ( DependencyEdges::const_iterator i = instruction_dependencies_.begin(), ie = instruction_dependencies_.end(); i != ie; ++i ) {
+	for ( auto i = instruction_dependencies_.begin(), ie = instruction_dependencies_.end(); i != ie; ++i ) {
 		if ( instructions_[ i->first ] == u && instructions_[ i->second ] == v ) {
 			return i;
 		}
@@ -1068,8 +1068,8 @@ void BuildManager::reconstruct_dependencies( DependencyEdges const & dependency_
 	clear_dependencies();
 
 	// add the new dependencies
-	for ( DependencyEdges::const_iterator i = dependency_list.begin(), ie = dependency_list.end(); i != ie; ++i ) {
-		create_directed_dependency( instructions_[ i->first ], instructions_[ i->second ] );
+	for ( const auto & i : dependency_list ) {
+		create_directed_dependency( instructions_[ i.first ], instructions_[ i.second ] );
 	}
 }
 

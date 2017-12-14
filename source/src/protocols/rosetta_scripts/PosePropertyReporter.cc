@@ -30,9 +30,7 @@ static basic::Tracer TR( "protocols.rosetta_scripts.PosePropertyReporter" );
 namespace protocols {
 namespace rosetta_scripts {
 
-PosePropertyReporter::PosePropertyReporter()
-{
-}
+PosePropertyReporter::PosePropertyReporter() = default;
 
 PosePropertyReporter::~PosePropertyReporter() = default;
 

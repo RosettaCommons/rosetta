@@ -115,25 +115,25 @@ public:
 	MPFoldingMover( MPFoldingMover const & src );
 
 	/// @brief Destructor
-	virtual ~MPFoldingMover();
+	~MPFoldingMover() override;
 
 public: // methods
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (MPFoldingMover)
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 	/// @brief Fold MP
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
 private: // methods
 
@@ -196,7 +196,7 @@ MPFoldingMover::MPFoldingMover( MPFoldingMover const & src ) :
 {}
 
 /// @brief Destructor
-MPFoldingMover::~MPFoldingMover() {}
+MPFoldingMover::~MPFoldingMover() = default;
 
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
@@ -480,7 +480,7 @@ MPFoldingMover::apply( Pose & pose ) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-typedef utility::pointer::shared_ptr< MPFoldingMover > MPFoldingMoverOP;
+using MPFoldingMoverOP = utility::pointer::shared_ptr<MPFoldingMover>;
 
 /////////////////////////////////////// MAIN ///////////////////////////////////
 

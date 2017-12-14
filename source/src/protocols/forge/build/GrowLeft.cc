@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/pose/annotated_sequence.hh>
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -69,16 +70,11 @@ GrowLeft::GrowLeft(
 
 
 /// @brief copy constructor
-GrowLeft::GrowLeft( GrowLeft const & rval ) :
-	Super( rval ),
-	pos_( rval.pos_ ),
-	ss_( rval.ss_ ),
-	aa_( rval.aa_ )
-{}
+GrowLeft::GrowLeft( GrowLeft const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-GrowLeft::~GrowLeft() {}
+GrowLeft::~GrowLeft() = default;
 
 
 /// @brief copy assignment
@@ -153,9 +149,9 @@ GrowLeft::MoveMap GrowLeft::movemap() const {
 
 	MoveMap mm;
 
-	for ( Positions::const_iterator i = newp.begin(), ie = newp.end(); i != ie; ++i ) {
-		mm.set_bb( *i, true );
-		mm.set_chi( *i, true );
+	for ( unsigned long i : newp ) {
+		mm.set_bb( i, true );
+		mm.set_chi( i, true );
 	}
 
 	return mm;

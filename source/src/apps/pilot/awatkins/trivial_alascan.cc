@@ -111,16 +111,16 @@ public:
 	TrivialAlascanMover(): Mover("TrivialAlascanMover"){}
 
 	//default dtor
-	virtual ~TrivialAlascanMover(){}
+	~TrivialAlascanMover() override= default;
 
 	//methods
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "TrivialAlascanMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "TrivialAlascanMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< TrivialAlascanMover > TrivialAlascanMoverOP;
-typedef utility::pointer::shared_ptr< TrivialAlascanMover const > TrivialAlascanMoverCOP;
+using TrivialAlascanMoverOP = utility::pointer::shared_ptr<TrivialAlascanMover>;
+using TrivialAlascanMoverCOP = utility::pointer::shared_ptr<const TrivialAlascanMover>;
 
 
 int

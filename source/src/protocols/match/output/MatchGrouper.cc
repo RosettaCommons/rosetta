@@ -25,9 +25,9 @@ namespace protocols {
 namespace match {
 namespace output {
 
-MatchGrouper::MatchGrouper() {}
+MatchGrouper::MatchGrouper() = default;
 
-MatchGrouper::~MatchGrouper() {}
+MatchGrouper::~MatchGrouper() = default;
 
 
 }

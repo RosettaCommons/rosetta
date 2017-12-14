@@ -101,7 +101,7 @@ RNA_SugarCloseEnergy::RNA_SugarCloseEnergy() :
 	rna_fitted_torsion_info_( new chemical::rna::RNA_FittedTorsionInfo ) //currently just used for delta cutoff.
 {}
 
-RNA_SugarCloseEnergy::~RNA_SugarCloseEnergy() {}
+RNA_SugarCloseEnergy::~RNA_SugarCloseEnergy() = default;
 
 /// clone
 methods::EnergyMethodOP

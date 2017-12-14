@@ -62,14 +62,14 @@ std::string PreventChainFromRepackingOperationCreator::keyname() const
 	return PreventChainFromRepackingOperation::keyname();
 }
 
-PreventChainFromRepackingOperation::PreventChainFromRepackingOperation() {}
+PreventChainFromRepackingOperation::PreventChainFromRepackingOperation() = default;
 
 PreventChainFromRepackingOperation::PreventChainFromRepackingOperation( core::Size const chain )
 : parent(), chain_( chain )
 {
 }
 
-PreventChainFromRepackingOperation::~PreventChainFromRepackingOperation() {}
+PreventChainFromRepackingOperation::~PreventChainFromRepackingOperation() = default;
 
 core::pack::task::operation::TaskOperationOP PreventChainFromRepackingOperation::clone() const
 {

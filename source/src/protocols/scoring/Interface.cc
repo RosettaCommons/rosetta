@@ -183,7 +183,7 @@ Interface::protein_calculate( core::pose::Pose const & pose )
 				iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
+			auto const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			if ( partner_(i) == partner_(j) ) continue;
 			// if ( is_interface_(i) && is_interface_(j) ) continue;
@@ -469,10 +469,10 @@ Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
 	using namespace conformation;
 	using namespace conformation::symmetry;
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-	core::scoring::symmetry::SymmetricEnergies const & energies
+	auto const & energies
 		( dynamic_cast< core::scoring::symmetry::SymmetricEnergies const & > ( pose.energies() ) );
 	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
@@ -488,7 +488,7 @@ Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
 				iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
+			auto const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
 			bool symm_add;
 			if ( basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() ) {
@@ -534,7 +534,7 @@ Interface::set_symmetric_pack(
 	set_pack( pose, task );
 	using namespace core::conformation::symmetry;
 
-	SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 

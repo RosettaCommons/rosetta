@@ -32,20 +32,17 @@ namespace interaction_graph {
 
 /// @brief Constructor.
 ///
-AnnealableGraphBase::AnnealableGraphBase()
+AnnealableGraphBase::AnnealableGraphBase() = default;
 //TODO -- initialize here
-{}
 
 /// @brief Copy constructor.
 ///
-AnnealableGraphBase::AnnealableGraphBase( AnnealableGraphBase const &/*src*/ )
+AnnealableGraphBase::AnnealableGraphBase( AnnealableGraphBase const &/*src*/ ) {}
 //TODO -- initialize here
-{}
 
 /// @brief Destructor.
 ///
-AnnealableGraphBase::~AnnealableGraphBase()
-{}
+AnnealableGraphBase::~AnnealableGraphBase() = default;
 
 
 } // namespace interaction_graph

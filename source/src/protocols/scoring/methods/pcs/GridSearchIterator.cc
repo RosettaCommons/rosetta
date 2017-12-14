@@ -73,8 +73,7 @@ GridSearchIterator::GridSearchIterator():
 	utility_exit_with_message( "You shouldn't call the empty constructor for GridSearchIterator class" );
 }
 
-GridSearchIterator::~GridSearchIterator(){
-}
+GridSearchIterator::~GridSearchIterator()= default;
 
 GridSearchIterator::GridSearchIterator(GridSearchIterator const & other):
 	ReferenceCount(),

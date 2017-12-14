@@ -58,7 +58,7 @@ using utility::vector1;
 
 
 
-typedef  numeric::xyzMatrix< Real > Matrix;
+using Matrix = numeric::xyzMatrix<Real>;
 
 OPT_KEY( Boolean, dump )
 

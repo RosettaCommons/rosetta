@@ -52,8 +52,7 @@ static basic::Tracer TR( "protocols.cyclic_peptide.CreateDistanceConstraint" );
 namespace protocols {
 namespace cyclic_peptide {
 
-CreateDistanceConstraint::CreateDistanceConstraint() //:
-{}
+CreateDistanceConstraint::CreateDistanceConstraint() = default;
 CreateDistanceConstraint::~CreateDistanceConstraint()= default;
 
 //adding a setter so that people can call the mover within Rosetta commands

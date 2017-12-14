@@ -117,14 +117,14 @@ void ObserverCache::set(
 {
 	detach( slot ); // safety
 
-	if ( observer.get() != 0 ) {
+	if ( observer.get() != nullptr ) {
 		data()[ slot ] = observer->clone();
 
 		if ( auto_attach ) {
 			attach( slot );
 		}
 	} else {
-		data()[ slot ] = 0;
+		data()[ slot ] = nullptr;
 	}
 }
 

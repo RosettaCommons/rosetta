@@ -75,7 +75,7 @@ OopPuckPlusMover::OopPuckPlusMover( core::Size oop_seq_position ): OopMover( oop
 	OopMover::type( "OopPuckPlusMover" );
 }
 
-OopPuckPlusMover::~OopPuckPlusMover(){}
+OopPuckPlusMover::~OopPuckPlusMover()= default;
 
 std::string
 OopPuckPlusMover::get_name() const {
@@ -87,7 +87,7 @@ OopPuckMinusMover::OopPuckMinusMover( core::Size oop_seq_position ): OopMover( o
 	OopMover::type( "OopPuckMinusMover" );
 }
 
-OopPuckMinusMover::~OopPuckMinusMover(){}
+OopPuckMinusMover::~OopPuckMinusMover()= default;
 
 std::string
 OopPuckMinusMover::get_name() const {
@@ -99,7 +99,7 @@ OopDPuckPlusMover::OopDPuckPlusMover( core::Size oop_seq_position ): OopMover( o
 	OopMover::type( "OopDPuckPlusMover" );
 }
 
-OopDPuckPlusMover::~OopDPuckPlusMover(){}
+OopDPuckPlusMover::~OopDPuckPlusMover()= default;
 
 std::string
 OopDPuckPlusMover::get_name() const {
@@ -111,7 +111,7 @@ OopDPuckMinusMover::OopDPuckMinusMover( core::Size oop_seq_position ): OopMover(
 	OopMover::type( "OopDPuckMinusMover" );
 }
 
-OopDPuckMinusMover::~OopDPuckMinusMover(){}
+OopDPuckMinusMover::~OopDPuckMinusMover()= default;
 
 std::string
 OopDPuckMinusMover::get_name() const {

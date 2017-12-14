@@ -38,7 +38,7 @@ MatchOutputter::MatchOutputter()
 : MatchProcessor()
 {}
 
-MatchOutputter::~MatchOutputter() {}
+MatchOutputter::~MatchOutputter() = default;
 
 void
 MatchOutputter::begin_processing()
@@ -62,8 +62,8 @@ MatchOutputter::process_match(
 	if ( !this->passes_filters( m ) ) return;
 
 	if ( writer_ ) {
-		runtime_assert( evaluator_ != 0 );
-		runtime_assert( match_score_writer_ != 0 );
+		runtime_assert( evaluator_ != nullptr );
+		runtime_assert( match_score_writer_ != nullptr );
 		writer_->record_match( m , evaluator_ , match_score_writer_ );
 	}
 }

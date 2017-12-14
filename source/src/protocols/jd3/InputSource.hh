@@ -52,7 +52,7 @@ class InputSource : public utility::pointer::ReferenceCount
 {
 public:
 	InputSource();
-	InputSource( std::string origin ); // move-constructed
+	InputSource( std::string const & origin );
 	~InputSource() override;
 
 	bool operator == ( InputSource const & rhs ) const;

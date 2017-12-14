@@ -65,8 +65,8 @@
 
 static basic::Tracer TR( "core.scoring.SASAPotential" );
 
-typedef numeric::xyzVector< core::Real > Vector;
-typedef numeric::xyzMatrix< core::Real > Matrix;
+using Vector = numeric::xyzVector<core::Real>;
+using Matrix = numeric::xyzMatrix<core::Real>;
 
 using namespace core::scoring::power_diagram;
 

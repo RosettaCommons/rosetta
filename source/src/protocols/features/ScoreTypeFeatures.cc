@@ -193,7 +193,7 @@ ScoreTypeFeatures::insert_score_type_rows(
 
 			std::string score_type_id_s = utility::to_string (score_type_id);
 
-			ScoreType type(static_cast<ScoreType>(score_type_id));
+			auto type(static_cast<ScoreType>(score_type_id));
 			string const score_type( ScoreTypeManager::name_from_score_type(type) );
 
 			std::vector<std::string> values;

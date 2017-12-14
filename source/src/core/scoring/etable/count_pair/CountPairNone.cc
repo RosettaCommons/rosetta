@@ -20,9 +20,9 @@ namespace scoring {
 namespace etable {
 namespace count_pair {
 
-CountPairNone::CountPairNone() {}
+CountPairNone::CountPairNone() = default;
 
-CountPairNone::~CountPairNone() {}
+CountPairNone::~CountPairNone() = default;
 
 bool
 CountPairNone::count(

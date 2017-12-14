@@ -34,7 +34,7 @@ LongAxisRotationFreePeptideMover::LongAxisRotationFreePeptideMover(Real radian, 
 {
 }
 
-LongAxisRotationFreePeptideMover::~LongAxisRotationFreePeptideMover(){}
+LongAxisRotationFreePeptideMover::~LongAxisRotationFreePeptideMover()= default;
 
 void
 LongAxisRotationFreePeptideMover::apply(FreePeptide &free_peptide){

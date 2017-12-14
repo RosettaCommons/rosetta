@@ -19,6 +19,7 @@
 #include <core/scoring/func/GaussianChainQuadrupleFunc.hh>
 #include <core/scoring/func/GaussianChainGeneralFunc.hh>
 #include <core/types.hh>
+#include <utility>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
@@ -124,7 +125,7 @@ bool GaussianChainFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	GaussianChainFunc const & other_downcast( static_cast< GaussianChainFunc const & > (other) );
+	auto const & other_downcast( static_cast< GaussianChainFunc const & > (other) );
 	if ( gaussian_variance_     != other_downcast.gaussian_variance_     ) return false;
 	if ( loop_fixed_cost_       != other_downcast.loop_fixed_cost_       ) return false;
 	if ( other_distances_       != other_downcast.other_distances_       ) return false;
@@ -160,7 +161,7 @@ GaussianChainFunc::initialize_func(){
 		}
 	}
 
-	if ( func_ == 0 ) {
+	if ( func_ == nullptr ) {
 		// at an early stage, was treating as one effective long gaussian chain,
 		// but note that GaussianChainGeneralFunc (see above) replaces this.
 		Real gaussian_variance_total  = gaussian_variance_;
@@ -171,7 +172,7 @@ GaussianChainFunc::initialize_func(){
 		func_ = FuncOP( new GaussianChainSingleFunc( gaussian_variance_total,  loop_fixed_cost_ ) );
 	}
 
-	runtime_assert( func_.get() != NULL );
+	runtime_assert( func_.get() != nullptr );
 }
 
 /////////////////////////////////////////////////////

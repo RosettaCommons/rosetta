@@ -460,7 +460,7 @@ RotamerBoltzmannWeight::interface_interaction_energy( core::pose::Pose const & p
 		core::Size const int_resi = (*egraph_it)->get_other_ind( res );
 		core::Size const int_resi_chain( pose.residue( int_resi ).chain() );
 		if ( int_resi_chain != res_chain ) { // only sum over interaction energies with the residue's non-host chain
-			EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+			auto const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 			core::Real const intE = Eedge->dot( curr_weights );
 			total_residue_energy += intE;
 		}//fi
@@ -506,13 +506,13 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 	type_ = tag->getOption< std::string >( "type", "" );
 	rb_jump( tag->getOption< core::Size >( "jump", 1 ) );
 	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
-	unbound( tag->getOption< bool >( "unbound", 1 ) );
+	unbound( tag->getOption< bool >( "unbound", true ) );
 	ddG_threshold( tag->getOption< core::Real >( "ddG_threshold", 1.5 ) );
 	temperature( tag->getOption< core::Real >( "temperature", 0.8 ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	energy_reduction_factor( tag->getOption< core::Real >( "energy_reduction_factor", 0.5 ) );
-	compute_entropy_reduction( tag->getOption< bool >( "compute_entropy_reduction", 0 ) );
-	repack( tag->getOption< bool >( "repack", 1 ) );
+	compute_entropy_reduction( tag->getOption< bool >( "compute_entropy_reduction", false ) );
+	repack( tag->getOption< bool >( "repack", true ) );
 	skip_report_ = tag->getOption< bool >( "skip_report", skip_report_ );
 	utility::vector0< TagCOP > const & branch( tag->getTags() );
 	for ( TagCOP const tag : branch ) {
@@ -520,19 +520,19 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 
 		std::string const residue_type( tag->getName() );
 		AA const aa( aa_from_name( residue_type ) );
-		core::Real const threshold_probability_input( tag->getOption< core::Real >( "threshold_probability" ) );
+		auto const threshold_probability_input( tag->getOption< core::Real >( "threshold_probability" ) );
 
 		threshold_probability( aa, threshold_probability_input );
 	}
 
 	target_residues_ = tag->getOption<std::string>("target_residues","");
 
-	fast_calc_ = tag->getOption< bool >("fast_calc",0);
-	no_modified_ddG_ = tag->getOption< bool >("no_modified_ddG",0);
+	fast_calc_ = tag->getOption< bool >("fast_calc",false);
+	no_modified_ddG_ = tag->getOption< bool >("no_modified_ddG",false);
 
-	compute_max_ = tag->getOption< bool >( "compute_max", 0 );
-	skip_ala_scan( tag->getOption< bool >( "skip_ala_scan", 0 ) );
-	write2pdb( tag->getOption< bool >( "write2pdb", 0 ) );
+	compute_max_ = tag->getOption< bool >( "compute_max", false );
+	skip_ala_scan( tag->getOption< bool >( "skip_ala_scan", false ) );
+	write2pdb( tag->getOption< bool >( "write2pdb", false ) );
 	TR<<"with options repacking radius: "<<repacking_radius()<<" and jump "<<rb_jump()<<" unbound "<<unbound()<<" ddG threshold "<<ddG_threshold()<<" temperature "<<temperature()<<" energy reduction factr "<<energy_reduction_factor()<<" entropy_reduction "<<compute_entropy_reduction()<<" repack "<<repack()<<" skip_ala_scan "<<skip_ala_scan()<<std::endl;
 }
 

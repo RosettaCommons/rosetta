@@ -290,7 +290,7 @@ FragmentScoringMethodOP MakePhiPsiRmsd::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read a reference Phi,Psi data. Provide a structure with in::file::s flag\n\t or a Phi-Psi prediction in TALOS format.");
 
-	return NULL;
+	return nullptr;
 }
 
 } // scores

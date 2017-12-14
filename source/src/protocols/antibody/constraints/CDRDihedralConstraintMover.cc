@@ -38,6 +38,7 @@
 #include <basic/options/option.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataCache.hh>
+#include <utility>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
@@ -75,7 +76,7 @@ CDRDihedralConstraintMover::CDRDihedralConstraintMover() :
 
 CDRDihedralConstraintMover::CDRDihedralConstraintMover(AntibodyInfoCOP ab_info):
 	protocols::moves::Mover("CDRDihedralConstraintMover"),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	read_command_line_options();
@@ -83,7 +84,7 @@ CDRDihedralConstraintMover::CDRDihedralConstraintMover(AntibodyInfoCOP ab_info):
 
 CDRDihedralConstraintMover::CDRDihedralConstraintMover(AntibodyInfoCOP ab_info, CDRNameEnum cdr):
 	protocols::moves::Mover("CDRDihedralConstraintMover"),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	read_command_line_options();
@@ -91,7 +92,7 @@ CDRDihedralConstraintMover::CDRDihedralConstraintMover(AntibodyInfoCOP ab_info, 
 
 }
 
-CDRDihedralConstraintMover::~CDRDihedralConstraintMover() {}
+CDRDihedralConstraintMover::~CDRDihedralConstraintMover() = default;
 
 CDRDihedralConstraintMover::CDRDihedralConstraintMover(CDRDihedralConstraintMover const & src) :
 	protocols::moves::Mover(src),
@@ -265,7 +266,7 @@ CDRDihedralConstraintMover::apply(core::pose::Pose& pose) {
 		if ( force_cluster_ ) {
 			local_cluster = forced_cluster_;
 		} else if ( pose.data().has(CacheableDataType::CDR_CLUSTER_INFO) && (! ignore_pose_datacache_) ) {
-			BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(CacheableDataType::CDR_CLUSTER_INFO));
+			auto const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(CacheableDataType::CDR_CLUSTER_INFO));
 			local_cluster  = cluster_cache.get_cluster(cdr_)->cluster();
 		} else {
 			local_cluster = ab_info_->get_CDR_cluster(cdr_)->cluster();

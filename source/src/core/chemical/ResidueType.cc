@@ -48,6 +48,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/ring_detection.hh>
@@ -108,11 +109,10 @@ ResidueType::ResidueType(
 	orbitals::OrbitalTypeSetCOP orbital_types
 ) : utility::pointer::ReferenceCount(),
 	atom_types_( atom_types ),
-	elements_( elements ),
-	mm_atom_types_( mm_atom_types ),
+	elements_(std::move( elements )),
+	mm_atom_types_(std::move( mm_atom_types )),
 	gasteiger_atom_types_(),
-	orbital_types_( orbital_types ),
-	mode_( INVALID_t ),
+	orbital_types_(std::move( orbital_types )),
 	graph_(),
 	orbitals_(),
 	nheavyatoms_(0),
@@ -2747,15 +2747,24 @@ void
 ResidueType::delete_terminal_chi(
 )
 {
+	// On a RT with no chis, we don't want to resize
+	// chi_atoms_ to INT_MAX...
+	if ( chi_atoms_.empty() ) return;
+	if ( is_proton_chi_.empty() ) return;
+
 	// signal that we need to update the derived data
 	finalized_ = false;
 
 	// if the terminal chi was a proton chi, get rid of it!
 	if ( is_proton_chi_[ is_proton_chi_.size() ] ) {
-		proton_chis_.resize( proton_chis_.size() - 1 );
+		Size new_size = proton_chis_.empty() ? 0 : proton_chis_.size() - 1;
+		if ( new_size > 10000 ) new_size = 0;
+		proton_chis_.resize( new_size );
 	}
 
-	Size new_size = chi_atoms_.size() - 1;
+	// On GCC 7.2, still have to catch this...
+	Size new_size = chi_atoms_.empty() ? 0 : chi_atoms_.size() - 1;
+	if ( new_size > 10000 ) new_size = 0;
 	// resize vectors that include every chi
 	chi_atoms_.resize(        new_size );
 	chi_rotamers_.resize(     new_size );
@@ -3367,7 +3376,7 @@ ResidueType::update_derived_data()
 
 	// setup the hydrogen information
 	for ( Size Aindex=1; Aindex<= ordered_atoms_.size(); ++Aindex ) {
-		graph_[ordered_atoms_[Aindex]].heavyatom_has_polar_hydrogens(0);
+		graph_[ordered_atoms_[Aindex]].heavyatom_has_polar_hydrogens(false);
 	}
 
 	// donor heavy atoms, acceptor heavy atoms, donor hydrogen atoms setup.
@@ -3375,7 +3384,7 @@ ResidueType::update_derived_data()
 	for ( Size ii = 1; ii <= Hpos_polar_.size(); ++ii ) {
 		Size hind = Hpos_polar_[ ii ];
 		Size base = atom_base(hind);
-		graph_[ordered_atoms_[base]].heavyatom_has_polar_hydrogens(1);
+		graph_[ordered_atoms_[base]].heavyatom_has_polar_hydrogens(true);
 	}
 
 	vec_atom_types_.clear();

@@ -50,7 +50,7 @@ public:
 	MakePolyXMover();
 
 	// @brief value constructor
-	MakePolyXMover( std::string aa, bool keep_pro, bool keep_gly, bool keep_disulfide_cys );
+	MakePolyXMover( std::string const & aa, bool keep_pro, bool keep_gly, bool keep_disulfide_cys );
 
 	// @brief destructor
 	~MakePolyXMover() override;

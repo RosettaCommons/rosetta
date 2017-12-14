@@ -42,9 +42,9 @@ SymmDataLoader::create_resource(
 
 
 ///// SymmDataOptionsCreator /////
-SymmDataOptionsCreator::SymmDataOptionsCreator() {}
+SymmDataOptionsCreator::SymmDataOptionsCreator() = default;
 
-SymmDataOptionsCreator::~SymmDataOptionsCreator() {}
+SymmDataOptionsCreator::~SymmDataOptionsCreator() = default;
 
 basic::resource_manager::ResourceOptionsOP
 SymmDataOptionsCreator::create_options() const {

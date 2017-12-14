@@ -42,10 +42,11 @@ public:
 
 	SubMotifInfo();
 
+	// Moves res_list and tag
 	SubMotifInfo(
 		utility::vector1< Size > const & res_list,
 		std::string const & tag,
-		bool const & seed = false
+		bool const seed = false
 	);
 
 	SubMotifInfo( SubMotifInfo const & src );

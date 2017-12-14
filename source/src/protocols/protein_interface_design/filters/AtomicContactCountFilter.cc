@@ -60,19 +60,19 @@ AtomicContactCountFilter::AtomicContactCountFilter() :
 	protocols::filters::Filter( "AtomicContactCount" ),
 	distance_cutoff_(4.5)
 {
-	initialize_all_atoms(NULL);
+	initialize_all_atoms(nullptr);
 }
 
 AtomicContactCountFilter::AtomicContactCountFilter(core::Real distance_cutoff) :
 	Filter( "AtomicContactCount" ),
 	distance_cutoff_(distance_cutoff)
 {
-	initialize_all_atoms(NULL);
+	initialize_all_atoms(nullptr);
 }
 
 AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter const & ) = default;
 
-AtomicContactCountFilter::~AtomicContactCountFilter() {}
+AtomicContactCountFilter::~AtomicContactCountFilter() = default;
 
 protocols::filters::FilterOP AtomicContactCountFilter::clone() const { return protocols::filters::FilterOP( new AtomicContactCountFilter( *this ) ); }
 protocols::filters::FilterOP AtomicContactCountFilter::fresh_instance() const { return protocols::filters::FilterOP( new AtomicContactCountFilter() ); }
@@ -208,7 +208,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	core::pack::task::PackerTaskOP taskA = core::pack::task::TaskFactory::create_packer_task( pose );
 	core::pack::task::PackerTaskOP taskB = core::pack::task::TaskFactory::create_packer_task( pose );
 
-	if ( task_factoryA_ != 0 ) {
+	if ( task_factoryA_ != nullptr ) {
 		taskA = task_factoryA_->create_task_and_apply_taskoperations( pose );
 		TR << "Initializing taskA from packer task." << std::endl;
 		//TR.Debug << "Initializing taskA from packer task." << std::endl;
@@ -216,7 +216,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		TR << "No packer taskA specified, using default task." << std::endl;
 		//TR.Debug << "No packer taskA specified, using default task." << std::endl;
 	}
-	if ( task_factoryB_ != 0 ) {
+	if ( task_factoryB_ != nullptr ) {
 		taskB = task_factoryB_->create_task_and_apply_taskoperations( pose );
 		TR << "Initializing taskB from packer task." << std::endl;
 		//TR.Debug << "Initializing taskB from packer task." << std::endl;

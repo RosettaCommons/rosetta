@@ -36,7 +36,7 @@ StepWiseSamplerSized::StepWiseSamplerSized():
 	StepWiseSampler::set_random( false );
 }
 
-StepWiseSamplerSized::~StepWiseSamplerSized(){}
+StepWiseSamplerSized::~StepWiseSamplerSized()= default;
 
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerSized::init() {

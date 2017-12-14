@@ -35,8 +35,7 @@ MinimalistFlexbbNode::MinimalistFlexbbNode(
 	parent( owner, node_id, num_states )
 {}
 
-MinimalistFlexbbNode::~MinimalistFlexbbNode()
-{}
+MinimalistFlexbbNode::~MinimalistFlexbbNode() = default;
 
 /// Virtual functions from NodeBase
 void
@@ -502,8 +501,7 @@ MinimalistFlexbbEdge::MinimalistFlexbbEdge(
 	parent( owner, node1, node2 )
 {}
 
-MinimalistFlexbbEdge::~MinimalistFlexbbEdge()
-{}
+MinimalistFlexbbEdge::~MinimalistFlexbbEdge() = default;
 
 void MinimalistFlexbbEdge::declare_energies_final()
 {}
@@ -576,7 +574,7 @@ MinimalistFlexbbInteractionGraph::MinimalistFlexbbInteractionGraph( int num_node
 	parent( num_nodes )
 {}
 
-MinimalistFlexbbInteractionGraph::~MinimalistFlexbbInteractionGraph() {}
+MinimalistFlexbbInteractionGraph::~MinimalistFlexbbInteractionGraph() = default;
 
 void
 MinimalistFlexbbInteractionGraph::initialize( core::pack::rotamer_set::RotamerSetsBase const & rot_sets )
@@ -701,7 +699,7 @@ int
 MinimalistFlexbbInteractionGraph::get_edge_memory_usage() const
 {
 	int sum = 0;
-	for ( std::list< EdgeBase* >::const_iterator iter = get_edge_list_begin();
+	for ( auto iter = get_edge_list_begin();
 			iter != get_edge_list_end(); ++iter ) {
 		sum += cast_minimalist_flexbb_edge(*iter)->count_dynamic_memory(); // close enough...
 	}
@@ -736,7 +734,7 @@ MinimalistFlexbbInteractionGraph::get_energy_sum_for_vertex_group( int group_id 
 		}
 	}
 
-	for ( std::list< EdgeBase* >::iterator edge_iter = get_edge_list_begin();
+	for ( auto edge_iter = get_edge_list_begin();
 			edge_iter != get_edge_list_end(); ++edge_iter ) {
 		int first_node_ind = (*edge_iter)->get_first_node_ind();
 		int second_node_ind = (*edge_iter)->get_second_node_ind();
@@ -782,7 +780,7 @@ MinimalistFlexbbInteractionGraph::consider_backbone_move(
 		return;
 	}
 
-	int const nflexseg_members = (int) flexseg_members( moving_flexseg ).size();
+	auto const nflexseg_members = (int) flexseg_members( moving_flexseg ).size();
 	//std::cout << "bbmove: " << moving_flexseg << " " << bb_id << " " << nflexseg_members;
 	//std::cout << std::flush;
 	for ( int ii = 1; ii <= nflexseg_members; ++ii ) {
@@ -877,7 +875,7 @@ MinimalistFlexbbInteractionGraph::complete_deltaE_prediction_for_bbmove(
 )
 {
 	int moving_flexseg = flexseg_considering_alt_bb();
-	int const nflexseg_members = (int) flexseg_members( moving_flexseg ).size();
+	auto const nflexseg_members = (int) flexseg_members( moving_flexseg ).size();
 	Real total_frag_energy_alt( 0.0 );
 	for ( int ii = 1; ii <= nflexseg_members; ++ii ) {
 		int iinode = flexseg_members( moving_flexseg )[ ii ];

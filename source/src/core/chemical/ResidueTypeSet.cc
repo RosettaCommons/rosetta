@@ -498,7 +498,7 @@ ResidueTypeSet::remove_base_residue_type( std::string const & name )
 #endif
 
 	ResidueTypeCOP rsd_type( cache_object()->name_map( name ) );
-	ResidueTypeCOPs::iterator res_it = std::find( base_residue_types_.begin(), base_residue_types_.end(), rsd_type );
+	auto res_it = std::find( base_residue_types_.begin(), base_residue_types_.end(), rsd_type );
 	runtime_assert( res_it != base_residue_types_.end() );
 	base_residue_types_.erase( res_it );
 
@@ -518,7 +518,7 @@ ResidueTypeSet::remove_unpatchable_residue_type( std::string const & name )
 #endif
 
 	ResidueTypeCOP rsd_type( cache_object()->name_map( name ) );
-	ResidueTypeCOPs::iterator res_it = std::find( unpatchable_residue_types_.begin(), unpatchable_residue_types_.end(), rsd_type );
+	auto res_it = std::find( unpatchable_residue_types_.begin(), unpatchable_residue_types_.end(), rsd_type );
 	runtime_assert( res_it != unpatchable_residue_types_.end() );
 	unpatchable_residue_types_.erase( res_it );
 

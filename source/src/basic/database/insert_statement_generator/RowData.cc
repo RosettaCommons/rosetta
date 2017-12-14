@@ -13,6 +13,7 @@
 /// @author Sam DeLuca
 
 #include <basic/database/insert_statement_generator/RowData.hh>
+#include <utility>
 
 namespace basic {
 namespace database {
@@ -23,7 +24,7 @@ RowDataBase::RowDataBase(std::string const & column_name) : column_name_(column_
 
 }
 
-RowDataBase::~RowDataBase() {}
+RowDataBase::~RowDataBase() = default;
 
 std::string RowDataBase::get_column_name() const
 {

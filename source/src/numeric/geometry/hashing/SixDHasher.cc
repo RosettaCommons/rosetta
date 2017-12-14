@@ -22,13 +22,12 @@ namespace geometry {
 namespace hashing {
 
 /// @details Auto-generated virtual destructor
-SixDCoordinateBinner::~SixDCoordinateBinner() {}
+SixDCoordinateBinner::~SixDCoordinateBinner() = default;
 
 //static basic::Tracer TR("numeric.geometry.hashing.SixDHasher");
 
 
-SixDCoordinateBinner::SixDCoordinateBinner()
-{}
+SixDCoordinateBinner::SixDCoordinateBinner() = default;
 
 SixDCoordinateBinner::SixDCoordinateBinner(
 	BoundingBox const & bounding_box,
@@ -116,12 +115,12 @@ SixDCoordinateBinner::radial_bin_index( Size radius, Real6 const & center ) cons
 	std::vector < boost::uint64_t > bin_indices;
 	Bin6D center_bin = bin6( center );
 	std::vector < SBin6D > offsets = offset_tree_.lookup(radius, center_bin, dimsizes_);
-	for ( Size j = 0; j < offsets.size(); ++j ) {
+	for ( auto & offset : offsets ) {
 		Bin6D candidate;
 		// apparently fixedarray1 (bin6d) has no + operator to another fixedarray1
 		for ( Size k = 1; k <= 6; ++k ) {
 			//go through and add
-			candidate[k] = center_bin[k] + offsets[j][k];
+			candidate[k] = center_bin[k] + offset[k];
 			//TR<< candidate[k] << "\t" << center_bin[k] << "\t" << offsets[j][k] << std::endl;
 		}
 		// TR << std::endl;
@@ -205,8 +204,7 @@ SixDCoordinateBinner::wrap_euler_angles( Real6 const & values ) const
 }
 
 
-SixDOffsetTree::SixDOffsetTree(){
-}
+SixDOffsetTree::SixDOffsetTree()= default;
 
 void SixDOffsetTree::init( Size max_radius ){
 	SBin6D test ( 0 );

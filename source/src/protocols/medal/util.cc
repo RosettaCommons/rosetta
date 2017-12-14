@@ -39,7 +39,7 @@
 namespace protocols {
 namespace medal {
 
-typedef utility::vector1<double> Probabilities;
+using Probabilities = utility::vector1<double>;
 using core::Size;
 
 /// @brief Lower sampling probability near termini
@@ -47,7 +47,7 @@ void end_bias_probabilities(const Size num_residues, Probabilities* p) {
 	debug_assert(p);
 
 	// Penalize 10% lowest, highest residues
-	const Size offset_left = static_cast<Size>(std::ceil(0.1 * num_residues));
+	const auto offset_left = static_cast<Size>(std::ceil(0.1 * num_residues));
 	const Size offset_right = num_residues - offset_left + 1;
 
 	p->clear();

@@ -352,7 +352,7 @@ LigandBaseProtocol::get_ligand_id(
 	core::Size jump_id
 )
 {
-	core::Size const lig_id = (core::Size) pose.fold_tree().downstream_jump_residue(jump_id);
+	auto const lig_id = (core::Size) pose.fold_tree().downstream_jump_residue(jump_id);
 
 	// Safety checks...
 	FArray1D_bool is_upstream ( pose.size(), false );
@@ -908,7 +908,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 				Size const cut_start = ( pose.residue(start).is_terminus() ? start+1 : start );
 				Size const cut_end = ( pose.residue(stop).is_terminus() ? stop-2 : stop-1 );
 				runtime_assert( cut_start <= cut_end );
-				Size cutpt = Size( numeric::random::rg().random_range(cut_start, cut_end) ); // cut is made between cutpt and cutpt+1
+				auto cutpt = Size( numeric::random::rg().random_range(cut_start, cut_end) ); // cut is made between cutpt and cutpt+1
 				// Can't use this function while iterating -- invalidates the iterators!
 				//f.new_jump( max(e_start,start-1), min(e_stop,stop+1), cutpt );
 				//loops.push_back( Loop( max(e_start,start-1), min(e_stop,stop+1), cutpt ) );

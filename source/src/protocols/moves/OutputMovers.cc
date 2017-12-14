@@ -46,8 +46,8 @@ namespace moves {
 using basic::Error;
 using basic::Warning;
 //constructor
-PDBDumpMover::PDBDumpMover(std::string name_in)
-: Mover(), name_(std::move(name_in)), num_(0)
+PDBDumpMover::PDBDumpMover(std::string const & name_in)
+: Mover(), name_(name_in), num_(0)
 {
 	//tracer_.init(tr);
 

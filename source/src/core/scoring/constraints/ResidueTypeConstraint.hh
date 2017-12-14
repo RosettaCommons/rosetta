@@ -54,14 +54,14 @@ public:
 	ResidueTypeConstraint(
 		pose::Pose const & pose,
 		Size seqpos,
-		std::string AAname,
+		std::string const & AAname,
 		Real favor_native_bonus
 	);
 
 	ResidueTypeConstraint(
 		Size seqpos,
-		std::string aa_in,
-		std::string name3_in,
+		std::string const & aa_in,
+		std::string const & name3_in,
 		core::Real bonus_in
 	);
 

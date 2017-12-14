@@ -38,14 +38,10 @@ SpecialRotamerRSO::SpecialRotamerRSO( core::Size seqpos )
 	new_rots_.clear();
 }
 
-SpecialRotamerRSO::SpecialRotamerRSO( SpecialRotamerRSO const & src )
-: parent( src ),
-	seqpos_(src.seqpos_),
-	new_rots_(src.new_rots_)
-{}
+SpecialRotamerRSO::SpecialRotamerRSO( SpecialRotamerRSO const & /*src*/ ) = default;
 
 
-SpecialRotamerRSO::~SpecialRotamerRSO(){}
+SpecialRotamerRSO::~SpecialRotamerRSO()= default;
 
 core::pack::rotamer_set::RotamerSetOperationOP
 SpecialRotamerRSO::clone() const{

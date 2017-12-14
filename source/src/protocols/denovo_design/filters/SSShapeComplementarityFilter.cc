@@ -88,8 +88,7 @@ SSShapeComplementarityFilter::SSShapeComplementarityFilter() :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-SSShapeComplementarityFilter::~SSShapeComplementarityFilter()
-{}
+SSShapeComplementarityFilter::~SSShapeComplementarityFilter() = default;
 
 /// Return a copy of ourselves
 protocols::filters::FilterOP
@@ -158,7 +157,7 @@ core::Real
 SSShapeComplementarityFilter::compute( core::pose::Pose const & pose ) const
 {
 	// if scc_ is not set, something horrible has happened
-	runtime_assert( scc_ != 0 );
+	runtime_assert( scc_ != nullptr );
 	if ( !scc_->Init() ) {
 		TR.Error << "Failed to initialize ShapeComplementarityCalculator!" << std::endl;
 		return -1;
@@ -191,7 +190,7 @@ SSShapeComplementarityFilter::compute_from_selector( core::pose::Pose const & po
 	scc_->Reset();
 	core::Size resid = 1;
 	ResidueVector residues;
-	for ( ResidueSubset::const_iterator s=subset.begin(); s!=subset.end(); ++s, ++resid ) {
+	for ( auto s=subset.begin(); s!=subset.end(); ++s, ++resid ) {
 		if ( *s ) {
 			scc_->AddResidue( 0, pose.residue( resid ) );
 			residues.push_back( resid );

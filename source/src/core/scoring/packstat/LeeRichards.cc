@@ -19,6 +19,7 @@
 
 #include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/packing_score_params.hh>
+#include <utility>
 #include <utility/exit.hh>
 
 
@@ -106,12 +107,12 @@ LeeRichards::compute(
 
 	// compute slice coords
 	Real mx=-9e9,mn=9e9;
-	for ( SphereIter i = spheres.begin(); i != spheres.end(); ++i ) {
-		Real const d = plane.dot(i->xyz);
-		if ( d - i->radius - probe_radius < mn ) mn = d - i->radius-probe_radius;
-		if ( d + i->radius + probe_radius > mx ) mx = d + i->radius+probe_radius;
+	for ( auto & sphere : spheres ) {
+		Real const d = plane.dot(sphere.xyz);
+		if ( d - sphere.radius - probe_radius < mn ) mn = d - sphere.radius-probe_radius;
+		if ( d + sphere.radius + probe_radius > mx ) mx = d + sphere.radius+probe_radius;
 	}
-	int Nslice = int( (mx-mn) / spacing );
+	auto Nslice = int( (mx-mn) / spacing );
 	Real st = mn + ((mx-mn)-Nslice*spacing)/2.0;
 	for ( core::Real r = st; r <= mx; r += spacing ) {
 		slice_coords_.push_back(r);
@@ -174,7 +175,7 @@ LeeRichards::compute(
 
 MultiProbePoseAccumulator::MultiProbePoseAccumulator(
 	core::pose::Pose & _pose,
-	std::string tag
+	std::string const & tag
 ) : pr_idx_(1), pose_(_pose), tag_(tag)
 {
 	core::pose::initialize_atomid_map_heavy_only( atom_map_, pose_ );
@@ -251,9 +252,9 @@ operator<< ( std::ostream & out, Circle & circle ) {
 }
 
 Slice::~Slice() {
-	for ( EventIter  i =  events_.begin(); i !=  events_.end(); ++i ) delete *i;
-	for ( CircleIter i = circles_.begin(); i != circles_.end(); ++i ) delete *i;
-	for ( traceIter  i =  traces_.begin(); i !=  traces_.end(); ++i ) delete *i;
+	for ( auto & event : events_ ) delete event;
+	for ( auto & circle : circles_ ) delete circle;
+	for ( auto & trace : traces_ ) delete trace;
 }
 
 void
@@ -261,21 +262,19 @@ Slice::compute_events()
 {
 	Octree2D nbr(circles_);
 
-	for ( CircleIter ia = circles_.begin(); ia != circles_.end(); ia++ ) {
-		Circle *circle(*ia);
-
+	for ( auto circle : circles_ ) {
 		if ( !nbr.contains(circle->x+circle->r,circle->y,2,circle) ) {
-			events_.push_back( new Event( circle->x + circle->r, circle->y, ENTER, circle, NULL ) );
+			events_.push_back( new Event( circle->x + circle->r, circle->y, ENTER, circle, nullptr ) );
 		}
 		if ( !nbr.contains(circle->x-circle->r,circle->y,2,circle) ) {
-			events_.push_back( new Event( circle->x - circle->r, circle->y, EXIT , circle, NULL ) );
+			events_.push_back( new Event( circle->x - circle->r, circle->y, EXIT , circle, nullptr ) );
 		}
 
 		int I = nbr.get_i(circle->x);
 		int J = nbr.get_j(circle->y);
 		for ( int i = std::max(I-2,0); i <= std::min(I+2,(int)nbr.Xdim_); ++i ) {
 			for ( int j = std::max(J-2,0); j <= std::min(J+2,(int)nbr.Ydim_); ++j ) {
-				for ( CircleIter ja = nbr.cubes(i,j).begin(); ja != nbr.cubes(i,j).end(); ja++ ) {
+				for ( auto ja = nbr.cubes(i,j).begin(); ja != nbr.cubes(i,j).end(); ja++ ) {
 					Circle *circle2(*ja);
 					if ( circle <= circle2 ) continue;
 					if ( ! circle->does_overlap(circle2) ) continue;
@@ -302,14 +301,13 @@ Slice::compute_events()
 void
 Slice::compute_surface()
 {
-	for ( EventIter ie = events_.begin(); ie != events_.end(); ++ie ) {
-		Event *e = *ie;
+	for ( auto e : events_ ) {
 		// std::cerr << "EVENT " << e << " " << e->x << " " << e->y << " " << e->kind << std::endl;
 		Circle *circle = e->circle;
 		if     ( circle->tcw  ) e->trace_ = circle->tcw;
 		else if ( circle->tccw ) e->trace_ = circle->tccw;
 		if ( e->kind == ENTER ) {
-			traces_.push_back( new trace( accum_, e, false, circle, 0.0, NULL           ) );
+			traces_.push_back( new trace( accum_, e, false, circle, 0.0, nullptr           ) );
 			traces_.push_back( new trace( accum_, e, true , circle, 0.0, traces_.back() ) );
 		} else if ( e->kind == EXIT ) {
 			circle->tcw ->end( circle->tccw );
@@ -318,13 +316,13 @@ Slice::compute_surface()
 			Circle *ccwcircle = e->ccw;
 			if     ( ccwcircle->tcw  ) e->trace_ = ccwcircle->tcw;
 			else if ( ccwcircle->tccw ) e->trace_ = ccwcircle->tccw;
-			bool have_cw_trace  = (    circle->tcw  != NULL && e->y > circle->y    );
-			bool have_ccw_trace = ( ccwcircle->tccw != NULL && e->y < ccwcircle->y );
+			bool have_cw_trace  = (    circle->tcw  != nullptr && e->y > circle->y    );
+			bool have_ccw_trace = ( ccwcircle->tccw != nullptr && e->y < ccwcircle->y );
 			if ( have_cw_trace && have_ccw_trace ) {
 				circle   ->tcw ->end( ccwcircle->tccw, e->cw_angle  );
 				ccwcircle->tccw->end(    circle->tcw , e->ccw_angle );
 			} else if ( !have_cw_trace && !have_ccw_trace ) {
-				traces_.push_back( new trace( accum_, e, true , circle, e->cw_angle , NULL           ) );
+				traces_.push_back( new trace( accum_, e, true , circle, e->cw_angle , nullptr           ) );
 				traces_.push_back( new trace( accum_, e, false, e->ccw, e->ccw_angle, traces_.back() ) );
 			} else if ( have_cw_trace ) {
 				circle->tcw->next_circle(ccwcircle,e->cw_angle,e->ccw_angle);
@@ -336,8 +334,7 @@ Slice::compute_surface()
 		}
 	}
 
-	for ( traceIter i = traces_.begin(); i != traces_.end(); ++i ) {
-		trace *t(*i);
+	for ( auto t : traces_ ) {
 		if ( t->next_trace_ ) {
 			t->start_ = t->next_trace_->get_first(t);
 			t->next_trace_->set_first(t,t->start_); // sets next_trace_ to NULL for all
@@ -351,8 +348,8 @@ Slice::compute_surface()
 		//  }
 		//  std::exit(-1);
 		// }
-		for ( ArcIter ia = t->arcs_.begin(); ia != t->arcs_.end(); ++ia ) {
-			accum_->accumulate_area(ia->first,ia->second,is_internal);
+		for ( auto & arc : t->arcs_ ) {
+			accum_->accumulate_area(arc.first,arc.second,is_internal);
 		}
 	}
 
@@ -363,8 +360,7 @@ void
 Slice::compute_derivatives()
 {
 	// std::cerr << "compute_derivatives" << std::endl;
-	for ( EventIter ie = events_.begin(); ie != events_.end(); ++ie ) {
-		Event *e(*ie);
+	for ( auto e : events_ ) {
 		if ( e->kind != ISECT ) continue;
 		bool is_internal = ( e->trace_->start_->kind == ISECT ) && internal_allowed_;
 		Real mg = 1.0 / sin( ( e->cw_angle - e->ccw_angle + numeric::constants::d::pi ) / 2.0 );

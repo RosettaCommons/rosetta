@@ -168,7 +168,7 @@ private: // members
 // recognise that S_1234_4 and C_S_1234_4 are the same.
 class CompareTags: public std::unary_function<std::string, bool > {
 public:
-	CompareTags( std::string  querytag ): querytag_(std::move(querytag)) {}
+	CompareTags( std::string const & querytag ): querytag_(querytag) {}
 
 	bool operator () ( const std::string & compare_tag ) const {
 		// Strings match if all the characters of the shorter string match all of the last characters of the other.

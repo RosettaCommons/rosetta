@@ -415,7 +415,7 @@ MoveMap::init_from_file( std::string const & filename ) {
 						}
 					}
 				} else {
-					core::Size jump_num = (core::Size) atoi(tokens[2].c_str());
+					auto jump_num = (core::Size) atoi(tokens[2].c_str());
 					if ( tokens.size() < 3 || tokens[3] == "YES" || tokens[3] == "yes" ) {
 						set_jump( jump_num, true );
 					} else if ( tokens[3] == "NO" || tokens[3] == "no" ) {
@@ -446,7 +446,7 @@ MoveMap::init_from_file( std::string const & filename ) {
 						}
 					}
 				} else if ( tokens.size() == 3 ) {
-					core::Size start_res   = (core::Size) atoi(tokens[2].c_str());
+					auto start_res   = (core::Size) atoi(tokens[2].c_str());
 					if ( tokens[3] == "BB" || tokens[3] == "bb" ) {
 						set_bb( start_res, true ); set_chi( start_res, false );
 					} else if ( tokens[3] == "CHI" || tokens[3] == "chi" ) {
@@ -459,8 +459,8 @@ MoveMap::init_from_file( std::string const & filename ) {
 						utility_exit_with_message( "Error reading movemap at line: " + line );
 					}
 				} else {
-					core::Size start_res = (core::Size) atoi(tokens[2].c_str());
-					core::Size end_res = (core::Size) atoi(tokens[3].c_str());
+					auto start_res = (core::Size) atoi(tokens[2].c_str());
+					auto end_res = (core::Size) atoi(tokens[3].c_str());
 					if ( start_res > end_res ) {
 						utility_exit_with_message( "Error reading movemap at line: " + line );
 					}

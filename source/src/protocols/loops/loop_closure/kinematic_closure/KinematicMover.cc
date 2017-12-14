@@ -47,7 +47,7 @@
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
 // C++ headers
-#include <stdio.h>
+#include <cstdio>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -133,7 +133,7 @@ KinematicMover::KinematicMover() :
 }
 
 // default destructor
-KinematicMover::~KinematicMover() {}
+KinematicMover::~KinematicMover() = default;
 
 
 KinematicPerturberOP KinematicMover::perturber() {
@@ -1110,9 +1110,8 @@ KinematicMover::frequency_in_taboo_map( core::Size pos, core::conformation::ppo_
 		TR << "error -- position " << pos << " exceeds the current taboo map string" << std::endl;
 		return counter;
 	} // assumption: all strings in the taboo map have the same size, and pos is within these bounds
-	for ( std::map< core::conformation::torsion_bin_string, bool >::const_iterator
-			mi = taboo_map_.begin(), end = taboo_map_.end(); mi != end;  ++mi ) {
-		counter += ( (mi->first)[pos] == torsion_bin ); // this might be slow...
+	for ( const auto & mi : taboo_map_ ) {
+		counter += ( (mi.first)[pos] == torsion_bin ); // this might be slow...
 	}
 	return core::Real(counter)/taboo_map_.size();
 }

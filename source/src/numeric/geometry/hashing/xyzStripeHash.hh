@@ -11,7 +11,7 @@
 #define INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
 
 #include <numeric/geometry/hashing/xyzStripeHash.fwd.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzTransform.hh>

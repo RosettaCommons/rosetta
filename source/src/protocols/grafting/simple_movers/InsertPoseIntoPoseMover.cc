@@ -21,6 +21,7 @@
 #include <protocols/grafting/util.hh>
 
 #include <basic/datacache/DataCache.hh>
+#include <utility>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
@@ -62,7 +63,7 @@ InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(const InsertPoseIntoPoseMover& 
 	if ( src.src_pose_ ) src_pose_ = src_pose_->clone();
 }
 
-InsertPoseIntoPoseMover::~InsertPoseIntoPoseMover(){}
+InsertPoseIntoPoseMover::~InsertPoseIntoPoseMover()= default;
 
 void
 InsertPoseIntoPoseMover::src_pose(const core::pose::Pose& src_pose){

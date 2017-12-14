@@ -112,7 +112,7 @@ make_score_function_consistent_with_symmetric_state_of_pose(
 conformation::symmetry::SymmetryInfoCOP symmetry_info( pose::Pose const & pose )
 {
 	runtime_assert( is_symmetric( pose ) );
-	conformation::symmetry::SymmetricConformation const & SymmConf (
+	auto const & SymmConf (
 		dynamic_cast<conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 	return SymmConf.Symmetry_Info();
 }
@@ -281,7 +281,7 @@ void extract_asymmetric_unit(
 		return;
 	}
 
-	SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast<SymmetricConformation const & > ( pose_in.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -410,7 +410,7 @@ make_symmetric_pdb_info(
 
 	runtime_assert( is_symmetric( pose ) );
 	runtime_assert( pdb_info_target->nres() == pose.size() );
-	SymmetricConformation const & symm_conf( dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
+	auto const & symm_conf( dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// setup chainID mapping
@@ -525,7 +525,7 @@ extract_asymmetric_unit_pdb_info(
 		return;
 	}
 
-	SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -586,7 +586,7 @@ make_symmetric_movemap(
 	using namespace core::conformation::symmetry;
 
 	runtime_assert( is_symmetric( pose ) );
-	SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast<SymmetricConformation const & > ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -606,8 +606,8 @@ make_symmetric_movemap(
 	std::map< Size, SymDof > dofs ( symm_info->get_dofs() );
 
 	std::map< Size, SymDof >::iterator it;
-	std::map< Size, SymDof >::iterator it_begin = dofs.begin();
-	std::map< Size, SymDof >::iterator it_end = dofs.end();
+	auto it_begin = dofs.begin();
+	auto it_end = dofs.end();
 
 	// first find out whether we have any allowed jumps. we just need to
 	// find one jump that is true to know that set_jump have been set to
@@ -762,7 +762,7 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 	using namespace core::conformation::symmetry;
 
 	runtime_assert( is_symmetric( pose ) );
-	SymmetricConformation & symm_conf (
+	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -836,7 +836,7 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 		try_assert = false;
 	}
 
-	for ( std::vector< Size>::const_iterator
+	for ( auto
 			clone     = symm_info->bb_clones( anchor_start ).begin(),
 			clone_end = symm_info->bb_clones( anchor_start ).end();
 			clone != clone_end; ++clone ) {
@@ -972,12 +972,12 @@ partition_by_symm_jumps(
 	partner1( pos1 ) = false;
 
 	bool new_member ( true );
-	std::vector< Edge >::const_iterator it_begin( ft.begin() );
-	std::vector< Edge >::const_iterator it_end  ( ft.end() );
+	auto it_begin( ft.begin() );
+	auto it_end  ( ft.end() );
 
 	while ( new_member ) {     // keep adding new members
 		new_member = false;
-		for ( std::vector< Edge >::const_iterator it = it_begin; it != it_end; ++it ) {
+		for ( auto it = it_begin; it != it_end; ++it ) {
 			if ( std::find ( jump_numbers.begin(), jump_numbers.end(), it->label() ) != jump_numbers.end() ) continue;
 
 			int const start( std::min( it->start(), it->stop() ) );
@@ -1009,7 +1009,7 @@ numeric::xyzVector< core::Real >
 get_symm_axis( core::pose::Pose & pose ) {
 	if ( !is_symmetric( pose ) ) return numeric::xyzVector< core::Real >(0,0,0);
 
-	conformation::symmetry::SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 	conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
@@ -1125,7 +1125,7 @@ get_resis(Pose const &pose, utility::vector1<std::string> subs) {
 
 // Contacting intracomponent neighboring subunits
 utility::vector1<std::string>
-get_full_intracomponent_and_neighbor_subs(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_full_intracomponent_and_neighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1160,28 +1160,28 @@ get_full_intracomponent_and_neighbor_subs(Pose const &pose, std::string sym_dof_
 }
 
 core::pose::Pose
-get_full_intracomponent_and_neighbor_subpose(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_full_intracomponent_and_neighbor_subpose(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_subpose(pose, get_full_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist));
 }
 
 utility::vector1<Size>
-get_full_intracomponent_and_neighbor_resis(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_full_intracomponent_and_neighbor_resis(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_resis(pose, get_full_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist));
 }
 
 core::pose::Pose
-get_full_intracomponent_subpose(Pose const &pose, std::string sym_dof_name) {
+get_full_intracomponent_subpose(Pose const &pose, std::string const & sym_dof_name) {
 	return get_subpose(pose, get_full_intracomponent_subs(pose, sym_dof_name));
 }
 
 utility::vector1<Size>
-get_full_intracomponent_resis(Pose const &pose, std::string sym_dof_name) {
+get_full_intracomponent_resis(Pose const &pose, std::string const & sym_dof_name) {
 	return get_resis(pose, get_full_intracomponent_subs(pose, sym_dof_name));
 }
 
 // Contacting neighbor subunits of the full component building block controlled by the symdof
 utility::vector1<std::string>
-get_full_intracomponent_neighbor_subs(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_full_intracomponent_neighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1200,19 +1200,19 @@ get_full_intracomponent_neighbor_subs(Pose const &pose, std::string sym_dof_name
 }
 
 core::pose::Pose
-get_full_intracomponent_neighbor_subpose(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_full_intracomponent_neighbor_subpose(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_subpose(pose,get_full_intracomponent_neighbor_subs(pose,sym_dof_name,contact_dist));
 }
 
 utility::vector1<Size>
-get_full_intracomponent_neighbor_resis(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_full_intracomponent_neighbor_resis(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_resis(pose,get_full_intracomponent_neighbor_subs(pose,sym_dof_name,contact_dist));
 }
 
 
 // Are there intracomponent contacts for the specified symdof?
 bool
-intracomponent_contact(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+intracomponent_contact(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1260,7 +1260,7 @@ intracomponent_contact(Pose const &pose, std::string sym_dof_name, Real contact_
 
 // Contacting intracomponent and neighboring subunits
 utility::vector1<std::string>
-get_intracomponent_and_neighbor_subs(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_and_neighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1300,18 +1300,18 @@ get_intracomponent_and_neighbor_subs(Pose const &pose, std::string sym_dof_name,
 }
 
 core::pose::Pose
-get_intracomponent_and_neighbor_subpose(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_and_neighbor_subpose(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_subpose(pose, get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist));
 }
 
 utility::vector1<Size>
-get_intracomponent_and_neighbor_resis(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_and_neighbor_resis(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_resis(pose, get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist));
 }
 
 // Contacting intracomponent subunits only
 utility::vector1<std::string>
-get_intracomponent_subs(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1331,18 +1331,18 @@ get_intracomponent_subs(Pose const &pose, std::string sym_dof_name, Real contact
 }
 
 core::pose::Pose
-get_intracomponent_subpose(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_subpose(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_subpose(pose,get_intracomponent_subs(pose,sym_dof_name,contact_dist));
 }
 
 utility::vector1<Size>
-get_intracomponent_resis(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_resis(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_resis(pose,get_intracomponent_subs(pose,sym_dof_name,contact_dist));
 }
 
 // Contacting neighbor subunits only
 utility::vector1<std::string>
-get_neighbor_subs(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_neighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1361,18 +1361,18 @@ get_neighbor_subs(Pose const &pose, std::string sym_dof_name, Real contact_dist)
 }
 
 core::pose::Pose
-get_neighbor_subpose(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_neighbor_subpose(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_subpose(pose,get_neighbor_subs(pose,sym_dof_name,contact_dist));
 }
 
 utility::vector1<Size>
-get_neighbor_resis(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_neighbor_resis(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_resis(pose,get_neighbor_subs(pose,sym_dof_name,contact_dist));
 }
 
 // Contacting intracomponents and intraneighbors
 utility::vector1<std::string>
-get_intracomponent_and_intraneighbor_subs(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_and_intraneighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1391,18 +1391,18 @@ get_intracomponent_and_intraneighbor_subs(Pose const &pose, std::string sym_dof_
 }
 
 core::pose::Pose
-get_intracomponent_and_intraneighbor_subpose(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_and_intraneighbor_subpose(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_subpose(pose,get_intracomponent_and_intraneighbor_subs(pose,sym_dof_name,contact_dist));
 }
 
 utility::vector1<Size>
-get_intracomponent_and_intraneighbor_resis(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_and_intraneighbor_resis(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_resis(pose,get_intracomponent_and_intraneighbor_subs(pose,sym_dof_name,contact_dist));
 }
 
 // Contacting intracomponents and interneighbors
 utility::vector1<std::string>
-get_intracomponent_and_interneighbor_subs(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_and_interneighbor_subs(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
@@ -1422,12 +1422,12 @@ get_intracomponent_and_interneighbor_subs(Pose const &pose, std::string sym_dof_
 }
 
 core::pose::Pose
-get_intracomponent_and_interneighbor_subpose(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_and_interneighbor_subpose(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_subpose(pose,get_intracomponent_and_interneighbor_subs(pose,sym_dof_name,contact_dist));
 }
 
 utility::vector1<Size>
-get_intracomponent_and_interneighbor_resis(Pose const &pose, std::string sym_dof_name, Real contact_dist) {
+get_intracomponent_and_interneighbor_resis(Pose const &pose, std::string const & sym_dof_name, Real contact_dist) {
 	return get_resis(pose,get_intracomponent_and_interneighbor_subs(pose,sym_dof_name,contact_dist));
 }
 
@@ -1435,7 +1435,7 @@ void
 make_residue_mask_symmetric( core::pose::Pose const &p, utility::vector1< bool > & msk ) {
 	if ( !is_symmetric( p ) ) return;
 
-	conformation::symmetry::SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( p.conformation() ) );
 	conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 	// Size nres_subunit ( symm_info->num_independent_residues() );
@@ -1465,7 +1465,7 @@ sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
 	kinematics::FoldTree f = f_orig;
 	//TR.Error << "sealed_symmetric_fold_tree called with " << f_orig << std::endl;
 
-	conformation::symmetry::SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 	conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 	//Size nres_subunit ( symm_info->num_independent_residues() );
@@ -1563,11 +1563,11 @@ get_sym_aware_jump_num ( core::pose::Pose const & pose, core::Size jump_num ) {
 		sym_jump = 0;
 		Size jump_counter = 0;
 
-		for ( std::map<Size,SymDof>::iterator i = dofs.begin(), end = dofs.end(); i != end; ++i ) {
+		for ( auto & dof : dofs ) {
 			//fpd  if slide moves are not allowed on this jump, then skip it
-			if ( !i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3) ) continue;
+			if ( !dof.second.allow_dof(1) && !dof.second.allow_dof(2) && !dof.second.allow_dof(3) ) continue;
 			if ( ++jump_counter == (Size)jump_num ) {
-				sym_jump = i->first;
+				sym_jump = dof.first;
 				break;
 			}
 		}
@@ -1586,8 +1586,8 @@ sym_dof_names(core::pose::Pose const & pose) {
 	utility::vector1<std::string> names;
 	SymmetryInfoCOP syminfo = core::pose::symmetry::symmetry_info(pose);
 	std::map<Size,SymDof> dofs = syminfo->get_dofs();
-	for ( std::map<Size,SymDof>::iterator i = dofs.begin(), end = dofs.end(); i != end; ++i ) {
-		names.push_back(syminfo->get_jump_name(i->first));
+	for ( auto & dof : dofs ) {
+		names.push_back(syminfo->get_jump_name(dof.first));
 	}
 	return names;
 }

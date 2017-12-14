@@ -44,8 +44,7 @@ StrandArchitect::StrandArchitect( std::string const & id_value ):
 {
 }
 
-StrandArchitect::~StrandArchitect()
-{}
+StrandArchitect::~StrandArchitect() = default;
 
 StrandArchitect::DeNovoArchitectOP
 StrandArchitect::clone() const

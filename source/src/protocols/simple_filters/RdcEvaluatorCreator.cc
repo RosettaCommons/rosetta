@@ -80,7 +80,7 @@ void RdcEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval )
 
 
 	if ( option[ OptionKeys::evaluation::rdc ].user() ) {
-		typedef utility::vector1< std::string > RdcVector;
+		using RdcVector = utility::vector1<std::string>;
 		RdcVector const& rdc( option[ OptionKeys::evaluation::rdc ]() );
 		utility::vector1< core::Size> empty_selection;
 		for ( auto it=rdc.begin(); it!=rdc.end(); ++it ) {

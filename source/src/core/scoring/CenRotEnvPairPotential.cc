@@ -418,7 +418,7 @@ CenRotEnvPairPotential::evaluate_cen_rot_env_and_cbeta_deriv(
 			iru  = energy_graph.get_node(position)->const_edge_list_begin(),
 			irue = energy_graph.get_node(position)->const_edge_list_end();
 			iru != irue; ++iru ) {
-		EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+		auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 		Size const j( edge->get_other_ind(position) );
 		conformation::Residue const & rsd2 ( pose.residue(j) );
 		if ( !rsd2.is_protein() ) continue;
@@ -571,7 +571,7 @@ CenRotEnvPairPotential::compute_centroid_environment(
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const j( edge->get_other_ind(i) );
 			conformation::Residue const & rsd2 ( pose.residue(j) );
 			if ( !rsd2.is_protein() ) continue;
@@ -611,7 +611,7 @@ CenRotEnvPairPotential::compute_dcentroid_environment(
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			auto const * edge( static_cast< EnergyEdge const *> (*iru) );
 			Size const j( edge->get_other_ind(i) );
 			conformation::Residue const & rsd2 ( pose.residue(j) );
 			if ( !rsd2.is_protein() ) continue;

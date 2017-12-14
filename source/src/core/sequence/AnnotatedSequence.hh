@@ -33,7 +33,7 @@ class AnnotatedSequence : public std::string {
 public:
 
 	AnnotatedSequence();
-	AnnotatedSequence( std::string );
+	AnnotatedSequence( std::string const & );
 	AnnotatedSequence( AnnotatedSequence const& other );
 
 	void operator=( std::string const& );

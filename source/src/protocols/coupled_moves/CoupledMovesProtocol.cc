@@ -157,10 +157,7 @@ CoupledMovesProtocol::CoupledMovesProtocol(): Mover(),
 	configure_score_fxn();
 }
 
-CoupledMovesProtocol::CoupledMovesProtocol(CoupledMovesProtocol const & cmp): Mover(cmp),
-	score_fxn_(cmp.score_fxn_),
-	main_task_factory_(cmp.main_task_factory_)
-{}
+CoupledMovesProtocol::CoupledMovesProtocol( CoupledMovesProtocol const & /*cmp*/ ) = default;
 
 core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
 	core::pose::PoseOP pose,
@@ -176,7 +173,7 @@ core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
 				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_edge_list_end();
 				iru != irue; ++iru ) {
-			const core::scoring::EnergyEdge * edge( static_cast< const core::scoring::EnergyEdge *> (*iru) );
+			const auto * edge( static_cast< const core::scoring::EnergyEdge *> (*iru) );
 			core::Size const j( edge->get_first_node_ind() );
 			core::Size const k( edge->get_second_node_ind() );
 			for ( core::Size index = 1; index <= ligand_resnums.size(); index++ ) {

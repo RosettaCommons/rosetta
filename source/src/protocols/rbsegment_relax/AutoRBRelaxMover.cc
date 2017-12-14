@@ -100,7 +100,7 @@ private:
 	core::Size start_, stop_, cut_;
 };
 
-typedef utility::pointer::shared_ptr< CCDMoveWrapper >  CCDMoveWrapperOP;
+using CCDMoveWrapperOP = utility::pointer::shared_ptr<CCDMoveWrapper>;
 
 
 ///////////////////
@@ -291,8 +291,8 @@ AutoRBMover::grow_flexible( core::Size maxlen , core::Size nres , core::Size min
 
 	tr << "EXTENDING LOOPS:" << std::endl;
 	for ( core::Size i=1; i <= loops_.size(); i++ ) {
-		core::Size extend_start = (core::Size) numeric::random::random_range(minlen, maxlen-minlen);
-		core::Size extend_stop  = (core::Size) numeric::random::random_range(minlen, maxlen-minlen);
+		auto extend_start = (core::Size) numeric::random::random_range(minlen, maxlen-minlen);
+		auto extend_stop  = (core::Size) numeric::random::random_range(minlen, maxlen-minlen);
 		if ( ( extend_start == 0 ) && ( extend_stop == 0 ) ) {
 			if ( numeric::random::uniform() > 0.5 ) extend_start = 1;
 			else extend_stop  = 1;

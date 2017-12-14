@@ -43,8 +43,7 @@ StepWiseBasicModelerOptions::StepWiseBasicModelerOptions():
 }
 
 //Destructor
-StepWiseBasicModelerOptions::~StepWiseBasicModelerOptions()
-{}
+StepWiseBasicModelerOptions::~StepWiseBasicModelerOptions() = default;
 
 /// @brief copy constructor
 StepWiseBasicModelerOptions::StepWiseBasicModelerOptions( StepWiseBasicModelerOptions const & src ) :

@@ -60,8 +60,7 @@ static basic::Tracer trKillHairpinsIO( "core.score.SS_Killhairpins_Info" );
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// @brief default constructor
-Hairpin::Hairpin()
-{}
+Hairpin::Hairpin() = default;
 
 Hairpin::Hairpin( core::Size s1_1, core::Size s1_2, core::Size s2_1, core::Size s2_2) :
 	range_pair_( std::make_pair( std::make_pair( s1_1, s1_2 ), std::make_pair( s2_1, s2_2 ) ) )
@@ -103,8 +102,7 @@ operator<< ( std::ostream & out, Hairpin const & s )
 
 
 /// @brief default constructor
-Hairpins::Hairpins()
-{}
+Hairpins::Hairpins() = default;
 
 /// @brief copy constructor
 Hairpins::Hairpins( Hairpins const & ) = default;

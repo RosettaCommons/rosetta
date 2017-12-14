@@ -37,7 +37,7 @@
 
 //C++
 #include <string>
-#include <math.h>
+#include <cmath>
 
 //External Headers
 #include <cppdb/frontend.h>

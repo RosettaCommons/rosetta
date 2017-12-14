@@ -68,7 +68,7 @@ ClashBasedRepackShellSelector::ClashBasedRepackShellSelector() :
 	bump_overlap_factor_(0.5)
 {}
 
-ClashBasedRepackShellSelector::~ClashBasedRepackShellSelector() {}
+ClashBasedRepackShellSelector::~ClashBasedRepackShellSelector() = default;
 
 /// @brief Copy constructor
 ///

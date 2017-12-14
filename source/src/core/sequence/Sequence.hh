@@ -47,8 +47,8 @@ public:
 
 	/// @brief ctor
 	Sequence() : id_( "blank" ), start_( 1 ), gap_char_('-') {}
-	Sequence( std::string seq, std::string id, core::Size start = 1 ) :
-		id_(std::move( id )),
+	Sequence( std::string const & seq, std::string const & id, core::Size start = 1 ) :
+		id_( id ),
 		start_( start ),
 		gap_char_('-')
 	{

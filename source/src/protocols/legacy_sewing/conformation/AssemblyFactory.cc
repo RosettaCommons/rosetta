@@ -38,7 +38,7 @@ AssemblyFactory::create_assembly(
 	} else {
 		utility_exit_with_message("Invalid Assembly name given to AssemblyFactory!");
 	}
-	return 0;
+	return nullptr;
 }
 
 } //legacy_sewing namespace

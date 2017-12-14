@@ -187,7 +187,7 @@ void DihedralConstraintsScore::read_constraints(
 			func->read_data(data);
 			std::map<std::string, core::Size> constr_atoms =
 				get_constrainable_atoms_map();
-			std::map<std::string, core::Size>::iterator it = constr_atoms.find(name1);
+			auto it = constr_atoms.find(name1);
 			if ( it == constr_atoms.end() ) {
 				trDihedralConstraintsScore.Warning << "Unknown atom: " << name1
 					<< "\nThe following constraint will NOT be used:\n"
@@ -267,7 +267,7 @@ FragmentScoringMethodOP MakeDihedralConstraintsScore::make(core::Size priority,
 	utility_exit_with_message(
 		"Can't read a constraints file. Provide it with constraints::cst_file flag");
 
-	return NULL;
+	return nullptr;
 }
 
 }

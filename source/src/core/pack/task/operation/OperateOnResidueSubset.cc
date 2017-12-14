@@ -30,6 +30,7 @@
 #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -59,8 +60,8 @@ OperateOnResidueSubset::OperateOnResidueSubset(
 	bool flip_subset
 )
 : parent(),
-	op_( rlto ),
-	residue_selector_( selector ),
+	op_(std::move( rlto )),
+	residue_selector_(std::move( selector )),
 	flip_subset_(flip_subset)
 {}
 
@@ -69,7 +70,7 @@ OperateOnResidueSubset::OperateOnResidueSubset(
 	utility::vector1< bool > const & subset
 )
 : parent(),
-	op_( rlto ),
+	op_(std::move( rlto )),
 	user_provided_subset_( subset )
 {}
 
@@ -91,7 +92,7 @@ OperateOnResidueSubset::operator = ( OperateOnResidueSubset const & src )
 	return *this;
 }
 
-OperateOnResidueSubset::~OperateOnResidueSubset() {}
+OperateOnResidueSubset::~OperateOnResidueSubset() = default;
 
 TaskOperationOP OperateOnResidueSubset::clone() const
 {

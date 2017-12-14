@@ -52,19 +52,19 @@ namespace core {
 namespace scoring {
 namespace func {
 
-FuncFactory::~FuncFactory() {}
+FuncFactory::~FuncFactory() = default;
 
 void FuncFactory::add_type( std::string type_name, FuncOP new_func ) {
 	func_types_[ type_name ] = new_func;
 }
 
 FuncOP FuncFactory::new_func( std::string const& type ) const {
-	FuncTypes::const_iterator iter = func_types_.find( type );
+	auto iter = func_types_.find( type );
 	if ( iter != func_types_.end() ) {
 		return iter->second->clone();
 	} else {
 		utility_exit_with_message("FuncFactory: unknown constraint function type: " + type );
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -75,9 +75,9 @@ FuncFactory::FuncFactory(void) {
 	FuncFactory::add_type( "AMBERPERIODIC", FuncOP( new AmberPeriodicFunc(0.0, 0.5, 1.0) ) );
 	FuncFactory::add_type( "CIRCULARHARMONIC", FuncOP( new CircularHarmonicFunc(0,0) ) );
 	FuncFactory::add_type( "MIXTUREFUNC", FuncOP( new MixtureFunc(0,0,0,0,0,0) ) );
-	FuncFactory::add_type( "SCALARWEIGHTEDFUNC", FuncOP( new ScalarWeightedFunc(0,0) ) );
-	FuncFactory::add_type( "COUNTVIOLFUNC", FuncOP( new CountViolFunc(0,0) ) );
-	FuncFactory::add_type( "SKIPVIOLFUNC", FuncOP( new SkipViolFunc(0,0) ) );
+	FuncFactory::add_type( "SCALARWEIGHTEDFUNC", FuncOP( new ScalarWeightedFunc(0,nullptr) ) );
+	FuncFactory::add_type( "COUNTVIOLFUNC", FuncOP( new CountViolFunc(0,nullptr) ) );
+	FuncFactory::add_type( "SKIPVIOLFUNC", FuncOP( new SkipViolFunc(0,nullptr) ) );
 	FuncFactory::add_type( "GAUSSIANFUNC", FuncOP( new GaussianFunc(0,0) ) );
 	FuncFactory::add_type( "CONSTANTFUNC", FuncOP( new ConstantFunc(0.) ) );
 	FuncFactory::add_type( "BOUNDED", FuncOP( new BoundFunc(0,0,0,"dummy") ) );

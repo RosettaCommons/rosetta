@@ -509,8 +509,8 @@ loopstring_to_loopvector( std::string const & loopstr,
 			utility::vector1< std::string > const str_limits( utility::string_split( res , '-' ) );
 			if ( str_limits.size() != 2 ) continue;
 
-			core::Size start = (core::Size) (std::atoi( str_limits[1].c_str() ));
-			core::Size end = (core::Size) (std::atoi( str_limits[2].c_str() ));
+			auto start = (core::Size) (std::atoi( str_limits[1].c_str() ));
+			auto end = (core::Size) (std::atoi( str_limits[2].c_str() ));
 
 			start = start - ext > 1? start - ext : 1;
 
@@ -538,8 +538,8 @@ loopstring_to_loopregions( std::string const & loopstr )
 			utility::vector1< std::string > const str_limits( utility::string_split( res , '-' ) );
 			if ( str_limits.size() != 2 ) continue;
 
-			core::Size const start = (core::Size) (std::atoi( str_limits[1].c_str() ));
-			core::Size const end = (core::Size) (std::atoi( str_limits[2].c_str() ));
+			auto const start = (core::Size) (std::atoi( str_limits[1].c_str() ));
+			auto const end = (core::Size) (std::atoi( str_limits[2].c_str() ));
 
 			utility::vector1< core::Size > loopregion;
 			for ( core::Size ires = start; ires <= end; ++ires ) loopregion.push_back( ires );
@@ -599,8 +599,8 @@ void mean_and_stdev( utility::vector1< core::Real > values,
 	std::sort( values_cut.begin(), values_cut.end() );
 
 	// Get mean/stdev on 90% (to remove outliers)
-	core::Size start = (core::Size)(values.size()*0.1);
-	core::Size end = (core::Size)(values.size()*0.9);
+	auto start = (core::Size)(values.size()*0.1);
+	auto end = (core::Size)(values.size()*0.9);
 
 	mean = 0.0; shave_cut = 0.0; stdev = 0.0;
 
@@ -615,7 +615,7 @@ void mean_and_stdev( utility::vector1< core::Real > values,
 	stdev = std::sqrt( stdev );
 
 	//shaving criteria
-	core::Size ncut2 = (core::Size)((end-start)*(1.0-frac));
+	auto ncut2 = (core::Size)((end-start)*(1.0-frac));
 	if ( ncut2 < 1 ) ncut2 = 1;
 	shave_cut = values_cut[start+ncut2];
 }
@@ -654,7 +654,7 @@ superimpose_all( core::io::silent::SilentStructCOP ss_ref,
 core::Real CA_Sscore( core::io::silent::SilentStructOP ss1,
 	core::io::silent::SilentStructOP ss2,
 	core::Real &rmsd,
-	utility::vector1< core::Size > const loopres,
+	utility::vector1< core::Size > const & loopres,
 	bool const superimpose,
 	core::Real const dbase
 )
@@ -746,7 +746,7 @@ core::Real CA_Sscore( core::io::silent::SilentStructOP ss1,
 core::Real
 distance( core::io::silent::SilentStructOP ss1,
 	core::io::silent::SilentStructOP ss2,
-	std::string const similarity_measure,
+	std::string const & similarity_measure,
 	bool const superimpose )
 {
 	using namespace basic::options;
@@ -777,7 +777,7 @@ distance( core::io::silent::SilentStructOP ss1,
 void
 add_init_dev_penalty( core::io::silent::SilentStructOP ss,
 	ObjexxFCL::FArray2D< core::Real > const init_xyz,
-	std::string const mode,
+	std::string const & mode,
 	core::Real const iha_cut,
 	core::Real const iha_penalty_slope
 )
@@ -822,7 +822,7 @@ add_init_dev_penalty( core::io::silent::SilentStructOP ss,
 void
 add_init_dev_penalty( core::io::silent::SilentStructOP ss,
 	core::pose::Pose pose0,
-	std::string const mode,
+	std::string const &  mode,
 	core::Real const iha_cut,
 	core::Real const iha_penalty_slope
 )
@@ -846,7 +846,7 @@ add_init_dev_penalty( core::io::silent::SilentStructOP ss,
 void
 add_init_dev_penalty( protocols::wum::SilentStructStore &structs,
 	core::pose::Pose const pose0,
-	std::string const mode,
+	std::string const & mode,
 	core::Real const iha_cut,
 	core::Real const iha_penalty_slope
 )

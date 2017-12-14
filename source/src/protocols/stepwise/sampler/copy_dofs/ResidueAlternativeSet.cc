@@ -16,6 +16,7 @@
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeSet.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.sampler.copy_dofs.ResidueAlternativeSet" );
 
@@ -43,7 +44,7 @@ ResidueAlternativeSet::ResidueAlternativeSet(  utility::vector1< core::pose::Pos
 }
 
 //Destructor
-ResidueAlternativeSet::~ResidueAlternativeSet(){}
+ResidueAlternativeSet::~ResidueAlternativeSet()= default;
 
 utility::vector1< core::pose::PoseOP >
 ResidueAlternativeSet::pose_list() const

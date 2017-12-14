@@ -118,8 +118,8 @@ RotamerConstraint::RotamerConstraint():
 	seqpos_( 0 ),
 	rsd_type_name_(""),
 	atom_ids_(),
-	restype_( 0 ),
-	rotlib_( 0 ),
+	restype_( nullptr ),
+	rotlib_( nullptr ),
 	favored_rotamers_(),
 	favored_rotamer_numbers_()
 {}
@@ -162,7 +162,7 @@ RotamerConstraint::RotamerConstraint(
 }
 
 
-RotamerConstraint::~RotamerConstraint() {}
+RotamerConstraint::~RotamerConstraint() = default;
 
 bool
 RotamerConstraint::operator == ( Constraint const & other_cst ) const
@@ -170,7 +170,7 @@ RotamerConstraint::operator == ( Constraint const & other_cst ) const
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
-	RotamerConstraint const & other( static_cast< RotamerConstraint const & > (other_cst) );
+	auto const & other( static_cast< RotamerConstraint const & > (other_cst) );
 	if ( seqpos_                  != other.seqpos_                  ) return false;
 	if ( rsd_type_name_           != other.rsd_type_name_           ) return false;
 	if ( atom_ids_                != other.atom_ids_                ) return false;

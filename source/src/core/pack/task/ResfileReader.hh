@@ -63,6 +63,7 @@ class ResfileContents : public utility::pointer::ReferenceCount
 {
 public:
 
+	// Moves fname, so by-value
 	ResfileContents( pose::Pose const & pose, std::string const & fname, std::istream & istream );
 	virtual ~ResfileContents();
 

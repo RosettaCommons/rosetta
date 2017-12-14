@@ -51,6 +51,7 @@
 #include <core/scoring/dssp/PairingsList.hh>
 
 //Utility Headers
+#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
@@ -102,7 +103,7 @@ FragmentJumpCM::FragmentJumpCM():
 
 FragmentJumpCM::FragmentJumpCM( std::string const& topol_filename,
 	core::select::residue_selector::ResidueSelectorCOP selector,
-	std::string const& moverkey ) :
+	std::string const & moverkey ) :
 	moverkey_( moverkey )
 {
 	set_topology( topol_filename );
@@ -141,7 +142,7 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
 	if ( tag->hasOption( "selector" ) ) {
 		set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
 	} else {
-		set_selector( NULL );
+		set_selector( nullptr );
 	}
 
 	set_moverkey( tag->getOption< std::string >( "name" , "" ) );
@@ -180,7 +181,7 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
 				if ( jump_def_ ) {
 					tr.Warning << "Found JumpSampleOP found in FragmentJumpCM's input pose. Overwriting input"
 						<< " topologies with input structure's information." << std::endl;
-					jump_def_ = NULL;
+					jump_def_ = nullptr;
 				}
 				return build_claims( selection, jumpdata_ptr->jump_sample() );
 			} else if ( tr.Debug.visible() ) {
@@ -324,7 +325,7 @@ void FragmentJumpCM::set_topology( std::string const& topol_filename ){
 	ss_def->extend( 10000 ); //Set number of residues to unreasonably large.
 	core::scoring::dssp::PairingList helix_pairings; // helix pairings not used, required by BaseJumpSetup.
 
-	jump_def_ = jumping::BaseJumpSetupOP( new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings ) );
+	jump_def_ = jumping::BaseJumpSetupOP( new abinitio::TemplateJumpSetup( nullptr, ss_def, ps, helix_pairings ) );
 
 	// Fail faster with better information on bad topology files.
 	jumping::JumpSample jump_sample;

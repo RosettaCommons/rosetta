@@ -200,7 +200,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 
 		core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP rotamer_spec(
 			utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const >( rsd_type.rotamer_library_specification() ) );
-		if ( rotamer_spec == 0 ) {
+		if ( rotamer_spec == nullptr ) {
 			utility_exit_with_message("NCAA rotamer set not found for residue type " + rsd_type.name() );
 		}
 		std::string file_name = rotamer_spec->ncaa_rotlib_path();
@@ -223,7 +223,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 
 		switch ( n_rotlib_chi ) {
 		case 1 : {
-			RotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
+			auto * r1 =
 				new RotamericSingleResidueDunbrackLibrary< ONE, THREE >( aan, dun02, use_bicubic, entropy_correction, prob_buried, prob_nonburied );
 			r1->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r1->read_from_file( rotlib_in, false );
@@ -231,7 +231,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 			break;
 		}
 		case 2 : {
-			RotamericSingleResidueDunbrackLibrary< TWO, THREE > * r2 =
+			auto * r2 =
 				new RotamericSingleResidueDunbrackLibrary< TWO, THREE >(aan, dun02, use_bicubic, entropy_correction, prob_buried, prob_nonburied );
 			r2->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r2->read_from_file( rotlib_in, false );
@@ -239,7 +239,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 			break;
 		}
 		case 3 : {
-			RotamericSingleResidueDunbrackLibrary< THREE, THREE > * r3 =
+			auto * r3 =
 				new RotamericSingleResidueDunbrackLibrary< THREE, THREE >(aan, dun02, use_bicubic, entropy_correction, prob_buried, prob_nonburied );
 			r3->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r3->read_from_file( rotlib_in, false );
@@ -247,7 +247,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 			break;
 		}
 		case 4 : {
-			RotamericSingleResidueDunbrackLibrary< FOUR, THREE > * r4 =
+			auto * r4 =
 				new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >(aan, dun02, use_bicubic, entropy_correction, prob_buried, prob_nonburied );
 			r4->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r4->read_from_file( rotlib_in, false );
@@ -270,14 +270,14 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 class B3AADihedralGrabber : public protocols::moves::Mover {
 public:
 	// ctor
-	B3AADihedralGrabber() {}
+	B3AADihedralGrabber() = default;
 
 	//dtor
-	virtual ~B3AADihedralGrabber(){}
+	~B3AADihedralGrabber() override= default;
 
 	// mover interface
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "B3AADihedralGrabber"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "B3AADihedralGrabber"; }
 
 
 };
@@ -416,7 +416,7 @@ B3AADihedralGrabber::apply( core::pose::Pose & pose ) {
 }
 
 // typedefs
-typedef utility::pointer::shared_ptr< B3AADihedralGrabber > B3AADihedralGrabberOP;
+using B3AADihedralGrabberOP = utility::pointer::shared_ptr<B3AADihedralGrabber>;
 
 int
 main( int argc, char * argv [] )

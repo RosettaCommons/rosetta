@@ -19,6 +19,7 @@
 
 // Protocol headers
 #include <protocols/moves/MonteCarlo.hh>
+#include <utility>
 
 namespace protocols {
 namespace loop_modeling {
@@ -27,7 +28,7 @@ namespace utilities {
 using protocols::moves::MonteCarloOP;
 
 AcceptanceCheck::AcceptanceCheck(MonteCarloOP monte_carlo, string name)
-: monte_carlo_(monte_carlo), name_(name) {}
+: monte_carlo_(std::move(monte_carlo)), name_(std::move(name)) {}
 
 bool AcceptanceCheck::do_apply(Pose & pose) {
 	return monte_carlo_->boltzmann(pose, name_);

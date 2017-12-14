@@ -71,7 +71,7 @@ GlycosyltransferaseMover::operator=( GlycosyltransferaseMover const & object_to_
 }
 
 // Destructor
-GlycosyltransferaseMover::~GlycosyltransferaseMover() {}
+GlycosyltransferaseMover::~GlycosyltransferaseMover() = default;
 
 
 // Standard Rosetta methods ///////////////////////////////////////////////////

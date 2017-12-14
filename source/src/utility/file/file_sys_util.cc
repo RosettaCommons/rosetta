@@ -32,6 +32,8 @@
 // Unit headers
 #include <utility/file/file_sys_util.hh>
 #include <utility/file/PathName.hh>
+#include <utility/file/FileName.hh>
+#include <utility/vector1.hh>
 
 // Project headers
 #include <utility/sys_util.hh> //  for rand_sleep?

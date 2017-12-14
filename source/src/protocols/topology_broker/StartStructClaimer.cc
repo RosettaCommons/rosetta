@@ -142,7 +142,7 @@ void StartStructClaimer::initialize_dofs(
 		claims::BBClaimOP bb_ptr( utility::pointer::dynamic_pointer_cast< claims::BBClaim >( init_dof ) );
 
 		if ( bb_ptr ) {
-			Size pos( (platform::Size) bb_ptr->global_position() );
+			auto pos( (platform::Size) bb_ptr->global_position() );
 			pose.set_phi( pos, pose.phi( pos ) + numeric::random::rg().gaussian()*perturb_ );
 			pose.set_psi( pos, pose.psi( pos ) + numeric::random::rg().gaussian()*perturb_ );
 		}

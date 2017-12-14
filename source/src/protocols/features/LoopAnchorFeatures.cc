@@ -202,7 +202,7 @@ LoopAnchorFeatures::parse_my_tag(
 	min_loop_length_ = tag->getOption<Size>("min_loop_length", 5);
 	max_loop_length_ = tag->getOption<Size>("max_loop_length", 30);
 
-	set_use_relevant_residues_as_loop_length( tag->getOption<bool>("use_relevant_residues_as_loop_length", 0) );
+	set_use_relevant_residues_as_loop_length( tag->getOption<bool>("use_relevant_residues_as_loop_length", false) );
 
 	if ( max_loop_length_ < min_loop_length_ ) {
 		std::stringstream error_msg;

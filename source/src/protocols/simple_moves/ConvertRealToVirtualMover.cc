@@ -28,6 +28,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 // XSD XRW Includes
@@ -51,13 +52,13 @@ ConvertRealToVirtualMover::ConvertRealToVirtualMover():
 
 ConvertRealToVirtualMover::ConvertRealToVirtualMover(core::select::residue_selector::ResidueSelectorCOP selector):
 	protocols::moves::Mover( ConvertRealToVirtualMover::mover_name() ),
-	selector_(selector)
+	selector_(std::move(selector))
 {
 
 }
 
 // Destructor
-ConvertRealToVirtualMover::~ConvertRealToVirtualMover(){}
+ConvertRealToVirtualMover::~ConvertRealToVirtualMover()= default;
 
 ConvertRealToVirtualMover::ConvertRealToVirtualMover( ConvertRealToVirtualMover const & src ):
 	Mover( src )

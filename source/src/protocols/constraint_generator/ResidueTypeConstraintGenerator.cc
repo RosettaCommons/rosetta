@@ -45,7 +45,6 @@ namespace constraint_generator {
 ResidueTypeConstraintGenerator::ResidueTypeConstraintGenerator():
 	protocols::constraint_generator::ConstraintGenerator( ResidueTypeConstraintGenerator::class_name() ),
 	selector_( core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::TrueResidueSelector ) ),
-	favor_native_bonus_( 1.0 ),
 	rsd_type_name3_( "" )
 {}
 

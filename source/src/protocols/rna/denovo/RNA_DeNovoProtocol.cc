@@ -271,7 +271,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		if ( options_->filter_vdw() ) rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
 		if ( !refine_pose || options_->refine_native_get_good_FT() ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_initializer( rna_de_novo_pose_initializer ); // only used for resetting fold-tree & cutpoints on each try.
 		rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final );  // used for filtering.
-		if ( outputter != 0 ) rna_fragment_monte_carlo_->set_outputter( outputter); // accumulate stats in histogram.
+		if ( outputter != nullptr ) rna_fragment_monte_carlo_->set_outputter( outputter); // accumulate stats in histogram.
 
 		// This calls apply on the rna_fragment_monte_carlo_ object, to which it
 		// has a shared_ptr

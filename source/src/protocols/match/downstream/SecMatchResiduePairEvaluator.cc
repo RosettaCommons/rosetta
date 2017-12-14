@@ -30,10 +30,10 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-SecMatchResiduePairEvaluator::SecMatchResiduePairEvaluator() {}
+SecMatchResiduePairEvaluator::SecMatchResiduePairEvaluator() = default;
 
 
-SecMatchResiduePairEvaluator::~SecMatchResiduePairEvaluator() {}
+SecMatchResiduePairEvaluator::~SecMatchResiduePairEvaluator() = default;
 
 bool
 SecMatchResiduePairEvaluator::require_candidate_residue_atoms_to_lie_near_target_atom( Size /*target_atom_id*/ ) const

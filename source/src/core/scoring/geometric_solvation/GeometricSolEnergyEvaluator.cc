@@ -115,8 +115,7 @@ GeometricSolEnergyEvaluator::GeometricSolEnergyEvaluator( GeometricSolEnergyEval
 {}
 
 //Destructor
-GeometricSolEnergyEvaluator::~GeometricSolEnergyEvaluator()
-{}
+GeometricSolEnergyEvaluator::~GeometricSolEnergyEvaluator() = default;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -707,7 +706,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	if ( don_h_atm_is_protein_backbone && !occ_atm_is_protein_backbone_acceptor ) {
 		using core::scoring::EnergiesCacheableDataType::HBOND_SET;
 		if ( pose.energies().data().has( HBOND_SET ) ) {
-			hbonds::HBondSet const & hbond_set
+			auto const & hbond_set
 				( static_cast< hbonds::HBondSet const & >
 				( pose.energies().data().get( HBOND_SET )));
 			if ( hbond_set.don_bbg_in_bb_bb_hbond( don_rsd.seqpos() ) ) return;
@@ -835,7 +834,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 		//Need to know about backbone/backbone H-bonds for proteins
 		using core::scoring::EnergiesCacheableDataType::HBOND_SET;
 		if ( pose.energies().data().has( HBOND_SET ) ) {
-			hbonds::HBondSet const & hbond_set
+			auto const & hbond_set
 				( static_cast< hbonds::HBondSet const & >
 				( pose.energies().data().get( HBOND_SET )));
 			if ( hbond_set.acc_bbg_in_bb_bb_hbond( acc_rsd.seqpos() ) ) return;
@@ -1228,7 +1227,7 @@ GeometricSolEnergyEvaluator::eval_residue_pair_derivatives(
 	if ( jres.has_variant_type( chemical::REPLONLY ) ) return;
 	if ( jres.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
 
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( geom_solv_pair_nblist ) ) );
+	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( geom_solv_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
 	Real energy( 0.0 );
@@ -1285,7 +1284,7 @@ GeometricSolEnergyEvaluator::residue_pair_energy_ext(
 	Real score( 0.0 );
 	Real energy( 0.0 );
 
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( geom_solv_pair_nblist ) ) );
+	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( geom_solv_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 	Size m = 0;
 	Size n = 0;

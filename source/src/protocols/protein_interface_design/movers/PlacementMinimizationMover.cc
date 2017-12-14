@@ -172,7 +172,7 @@ PlacementMinimizationMover::apply( core::pose::Pose & pose )
 	if ( !prevent_repacking().empty() ) no_repack = prevent_repacking();
 	if ( !no_repack.empty() ) {
 		std::sort( no_repack.begin(), no_repack.end() );
-		utility::vector1< core::Size >::iterator last = std::unique( no_repack.begin(), no_repack.end() );
+		auto last = std::unique( no_repack.begin(), no_repack.end() );
 		no_repack.erase( last, no_repack.end() );
 		toAla.prevent_repacking( no_repack );
 	}
@@ -241,7 +241,7 @@ PlacementMinimizationMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new PlacementMinimizationMover );
 }
 
-PlacementMinimizationMover::~PlacementMinimizationMover(){}
+PlacementMinimizationMover::~PlacementMinimizationMover()= default;
 
 PlacementMinimizationMover::PlacementMinimizationMover() :
 	simple_moves::DesignRepackMover( PlacementMinimizationMover::mover_name() ),

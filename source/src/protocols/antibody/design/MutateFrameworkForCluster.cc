@@ -35,6 +35,7 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <boost/algorithm/string.hpp>
@@ -61,13 +62,13 @@ MutateFrameworkForCluster::MutateFrameworkForCluster() :
 
 MutateFrameworkForCluster::MutateFrameworkForCluster(AntibodyInfoCOP ab_info):
 	protocols::moves::Mover("MutateFrameworkForCluster"),
-	ab_info_(ab_info)
+	ab_info_(std::move(ab_info))
 {
 	set_defaults();
 	load_data();
 }
 
-MutateFrameworkForCluster::~MutateFrameworkForCluster() {}
+MutateFrameworkForCluster::~MutateFrameworkForCluster() = default;
 
 
 
@@ -175,7 +176,7 @@ MutateFrameworkForCluster::has_framework_dependant_cluster(const core::pose::Pos
 bool
 MutateFrameworkForCluster::has_framework_dependant_clusters(const core::pose::Pose& pose){
 	for ( core::Size i = 1; i <= static_cast<core::Size>(ab_info_->get_total_num_CDRs()); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		if ( has_framework_dependant_cluster(pose, cdr) ) {
 			return true;
 		} else {
@@ -188,8 +189,8 @@ MutateFrameworkForCluster::has_framework_dependant_clusters(const core::pose::Po
 utility::vector1<CDRClusterEnum>
 MutateFrameworkForCluster::framework_dependant_clusters(){
 	utility::vector1<CDRClusterEnum> clusters;
-	for ( std::map<CDRClusterEnum, utility::vector1<MutantPosition> >::iterator iter = mutant_info_.begin(); iter != mutant_info_.end(); ++iter ) {
-		clusters.push_back(iter->first);
+	for ( auto & iter : mutant_info_ ) {
+		clusters.push_back(iter.first);
 	}
 	return clusters;
 }
@@ -199,10 +200,10 @@ MutateFrameworkForCluster::framework_dependant_positions(const core::pose::Pose&
 
 	utility::vector1<bool> positions(pose.size(), false);
 
-	for ( std::map<CDRClusterEnum, utility::vector1<MutantPosition> >::iterator iter = mutant_info_.begin(); iter != mutant_info_.end(); ++iter ) {
+	for ( auto & iter : mutant_info_ ) {
 
-		for ( core::Size i = 1; i <= iter->second.size(); ++i ) {
-			core::Size resnum = get_resnum_from_single_string_w_landmark(ab_info_, pose, iter->second[ i ].pdb_position_, iter->second[ i ].numbering_scheme_);
+		for ( core::Size i = 1; i <= iter.second.size(); ++i ) {
+			core::Size resnum = get_resnum_from_single_string_w_landmark(ab_info_, pose, iter.second[ i ].pdb_position_, iter.second[ i ].numbering_scheme_);
 			positions[resnum] = true;
 		}
 	}
@@ -274,9 +275,9 @@ MutateFrameworkForCluster::load_data() {
 		mut_pos.mutants_allowed_.clear();
 		mut_pos.mutants_allowed_.resize(20, false); //Standard cannonical aas.
 
-		for ( std::string::iterator iter_aa = aas_str.begin(); iter_aa != aas_str.end(); ++iter_aa ) {
+		for ( char & iter_aa : aas_str ) {
 			//TR << *iter_aa << std::endl;
-			mut_pos.mutants_allowed_[ core::chemical::aa_from_oneletter_code( *iter_aa ) ] = true;
+			mut_pos.mutants_allowed_[ core::chemical::aa_from_oneletter_code( iter_aa ) ] = true;
 
 		}
 
@@ -328,13 +329,13 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	bool framework_dependant_clusters = false;
 
 	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		auto cdr = static_cast<CDRNameEnum>( i );
 		if ( ! cdrs_[ cdr ] ) continue;
 
 		CDRClusterEnum current_cluster;
 
 		if ( pose.data().has(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
-			BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(
+			auto const & cluster_cache = static_cast< BasicCDRClusterSet const & >(
 				pose.data().get(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 			current_cluster = cluster_cache.get_cluster(cdr)->cluster();
 		} else {
@@ -369,7 +370,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 
 					if ( mut_pos.mutants_allowed_[ aa_num ] ) {
 
-						core::chemical::AA amino = static_cast<core::chemical::AA>(aa_num);
+						auto amino = static_cast<core::chemical::AA>(aa_num);
 						task->nonconst_residue_task(i).allow_aa(amino);
 					}
 				}

@@ -191,8 +191,8 @@ void read_RBSegment_file(
 					TR_seg.Fatal << "Error parsing line '" << line << "'" << std::endl;
 					utility_exit();
 				}
-				core::Size start_res = (core::Size) atoi(tokens[2].c_str());
-				core::Size end_res   = (core::Size) atoi(tokens[3].c_str());
+				auto start_res = (core::Size) atoi(tokens[2].c_str());
+				auto end_res   = (core::Size) atoi(tokens[3].c_str());
 				core::Size cutpt = 0;        // default - let LoopRebuild choose cutpoint
 				core::Real skip_rate = 0.0;  // default - never skip
 				std::string extend_loop_str;
@@ -350,7 +350,7 @@ void select_RBsegments(
 	rbsegs_selected.clear();
 	loops_selected.clear();
 
-	int nRBSegs = (int)rbsegs_in.size();
+	auto nRBSegs = (int)rbsegs_in.size();
 	if ( nRBSegs == 0 ) {
 		return;
 	}
@@ -385,7 +385,7 @@ void select_RBsegments(
 RBSegment RBSegment::remap( core::id::SequenceMapping const &mapping ) const {
 	utility::vector1 < RBSegment > remappedSimpleSegs;
 	for ( core::Size i=1 ; i<=segments_.size(); ++i ) {
-		int oldS = (int)segments_[i].start(),
+		auto oldS = (int)segments_[i].start(),
 			oldE = (int)segments_[i].end();
 		int newS, newE;
 

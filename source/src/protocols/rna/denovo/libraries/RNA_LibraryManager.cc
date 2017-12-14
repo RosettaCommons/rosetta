@@ -59,13 +59,13 @@ RNA_LibraryManager::rna_jump_library_cop() {
 
 BasePairStepLibrary const &
 RNA_LibraryManager::canonical_base_pair_step_library() {
-	if ( canonical_base_pair_step_library_ == 0 )  canonical_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( true ) );
+	if ( canonical_base_pair_step_library_ == nullptr )  canonical_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( true ) );
 	return *canonical_base_pair_step_library_;
 }
 
 BasePairStepLibrary const &
 RNA_LibraryManager::general_base_pair_step_library() {
-	if ( general_base_pair_step_library_ == 0 )  general_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( false ) );
+	if ( general_base_pair_step_library_ == nullptr )  general_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( false ) );
 	return *general_base_pair_step_library_;
 }
 

@@ -66,18 +66,18 @@ using namespace core;
 using namespace core::fragment;
 
 struct CmdLineData {
-	CmdLineData() : b_has_constraint_claimer( false ) {};
-	bool b_has_constraint_claimer;
+	CmdLineData() = default;
+	bool b_has_constraint_claimer{ false };
 };
 
 class FragmentContainer {
 
 public:
 
-	FragmentContainer( FragSetOP large, FragSetOP small, std::string label ):
+	FragmentContainer( FragSetOP large, FragSetOP small, std::string const & label ):
 		frags_large_ (std::move( large )),
 		frags_small_ (std::move( small )),
-		label_ (std::move( label ))
+		label_ ( label )
 	{}
 
 	FragSetOP frags_large(){
@@ -92,7 +92,7 @@ public:
 		return label_;
 	}
 
-	void set_label( std::string label ){
+	void set_label( std::string const & label ){
 		label_ = label;
 	}
 

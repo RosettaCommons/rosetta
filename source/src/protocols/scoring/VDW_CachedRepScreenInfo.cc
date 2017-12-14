@@ -82,8 +82,7 @@ VDW_CachedRepScreenInfo::VDW_CachedRepScreenInfo( VDW_CachedRepScreenInfo const 
 
 
 // @brief default destructor
-VDW_CachedRepScreenInfo::~VDW_CachedRepScreenInfo()
-{}
+VDW_CachedRepScreenInfo::~VDW_CachedRepScreenInfo() = default;
 
 
 basic::datacache::CacheableDataOP

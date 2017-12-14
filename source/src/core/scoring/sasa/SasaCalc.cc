@@ -56,7 +56,7 @@ SasaCalc::SasaCalc(SasaMethodEnum method):
 	method_type_ = method;
 }
 
-SasaCalc::~SasaCalc(){}
+SasaCalc::~SasaCalc()= default;
 
 void
 SasaCalc::set_defaults() {

@@ -32,7 +32,7 @@
 #include <utility/string_util.hh>
 #include <numeric/NumericTraits.hh>
 
-#include <math.h>
+#include <cmath>
 #include <cmath>
 
 
@@ -49,11 +49,11 @@ void
 add_cluster_comments_to_pose(core::pose::Pose& pose, AntibodyInfoCOP ab_info){
 
 	for ( core::Size i = 1; i <= core::Size( ab_info->get_total_num_CDRs() ); ++i ) {
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		auto cdr = static_cast<CDRNameEnum>(i);
 
 
 		if ( pose.data().has(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
-			BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
+			auto const & cluster_cache = static_cast< BasicCDRClusterSet const & >(pose.data().get(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 			CDRClusterCOP result = cluster_cache.get_cluster(cdr);
 			std::string output = ab_info->get_cluster_name(result->cluster()) +" "+utility::to_string(result->normalized_distance_in_degrees());
 			core::pose::add_comment(pose, "REMARK "+ab_info->get_CDR_name(cdr)+" POSTGRAFT_OR_ORIGINAL_CLUSTER ", output);
@@ -150,7 +150,7 @@ get_cluster_from_cache_or_ab_info(AntibodyInfoCOP ab_info, core::pose::Pose cons
 
 	CDRClusterEnum current_cluster;
 	if ( pose.data().has(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO) ) {
-		BasicCDRClusterSet const & cluster_cache = static_cast< BasicCDRClusterSet const & >(
+		auto const & cluster_cache = static_cast< BasicCDRClusterSet const & >(
 			pose.data().get(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO));
 		current_cluster = cluster_cache.get_cluster(cdr)->cluster();
 	} else {

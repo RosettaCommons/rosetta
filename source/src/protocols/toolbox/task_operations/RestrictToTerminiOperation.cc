@@ -88,13 +88,9 @@ RestrictToTerminiOperation::RestrictToTerminiOperation(
 	repack_c_terminus_(repack_c_terminus)
 {}
 
-RestrictToTerminiOperation::RestrictToTerminiOperation(RestrictToTerminiOperation const & src) : TaskOperation(src),
-	chain_(src.chain_),
-	repack_n_terminus_(src.repack_n_terminus_),
-	repack_c_terminus_(src.repack_c_terminus_)
-{}
+RestrictToTerminiOperation::RestrictToTerminiOperation(RestrictToTerminiOperation const & /*src*/) = default;
 
-RestrictToTerminiOperation::~RestrictToTerminiOperation() {}
+RestrictToTerminiOperation::~RestrictToTerminiOperation() = default;
 
 TaskOperationOP
 RestrictToTerminiOperation::clone() const {

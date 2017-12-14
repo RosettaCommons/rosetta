@@ -19,8 +19,8 @@
 
 namespace numeric {
 
-typedef xyzVector< Real > Vector;
-typedef Real Length;
+using Vector = xyzVector<Real>;
+using Length = Real;
 
 
 /// @param <F>: the coordinates of the fixed target atoms

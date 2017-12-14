@@ -55,8 +55,8 @@ public:
 		pose::Pose const & pose,
 		Size seqpos1,
 		Size seqpos2,
-		std::string AA1name,
-		std::string AA2name,
+		std::string const & AA1name,
+		std::string const & AA2name,
 		Real bonus
 	);
 	/*

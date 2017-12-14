@@ -344,8 +344,8 @@ public:
 
 public:
 
-	FragLib( FragMap  frag_map ):
-		frag_map_(std::move( frag_map ))
+	FragLib( FragMap const & frag_map ):
+		frag_map_( frag_map )
 	{}
 
 	FragLib() {}

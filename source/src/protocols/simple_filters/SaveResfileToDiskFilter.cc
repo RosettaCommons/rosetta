@@ -25,6 +25,7 @@
 #include <core/conformation/Conformation.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -61,16 +62,16 @@ SaveResfileToDiskFilter::SaveResfileToDiskFilter():
 {}
 
 // @brief constructor with arguments
-SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> const & r, bool const d, std::string  n, std::string  s, std::string  p, std::string  g, std::string   srp ):
-	task_factory_(std::move( task_factory )),
+SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> const & r, bool const d, std::string const & n, std::string const & s, std::string const & p, std::string const & g, std::string const &  srp ):
+	task_factory_( std::move( task_factory ) ),
 	selected_resis_( r ),
 	designable_only_( d ),
 	renumber_pdb_( false ),
-	resfile_name_(std::move( n )),
-	resfile_suffix_(std::move( s )),
-	resfile_prefix_(std::move( p )),
-	resfile_general_property_(std::move( g )),
-	selected_resis_property_(std::move( srp ))
+	resfile_name_( n ),
+	resfile_suffix_( s ),
+	resfile_prefix_( p ),
+	resfile_general_property_( g ),
+	selected_resis_property_( srp )
 {}
 
 // @brief copy constructor
@@ -186,7 +187,7 @@ bool SaveResfileToDiskFilter::apply( Pose const & pose ) const
 		write_resfile( pose, selected_residues );
 	}
 
-	return 1;
+	return true;
 
 } // apply
 

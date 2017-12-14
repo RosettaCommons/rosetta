@@ -22,6 +22,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <protocols/qsar/scoring_grid/GridBase.hh>
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -79,7 +80,7 @@ RenderGridsToKinemage::RenderGridsToKinemage(
 	scoring_grid::GridSetCOP grid_set_prototype,
 	std::string const & grid_name,
 	std::string const & filename):
-	grid_set_prototype_( grid_set_prototype ),
+	grid_set_prototype_(std::move( grid_set_prototype )),
 	filename_( filename ),
 	grid_name_( grid_name )
 {}

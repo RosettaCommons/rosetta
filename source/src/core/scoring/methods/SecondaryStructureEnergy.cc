@@ -62,10 +62,7 @@ SecondaryStructureEnergy::SecondaryStructureEnergy() :
 
 
 /// c-tor
-SecondaryStructureEnergy::SecondaryStructureEnergy( SecondaryStructureEnergy const & src ):
-	parent( src),
-	potential_( src.potential_ )
-{}
+SecondaryStructureEnergy::SecondaryStructureEnergy( SecondaryStructureEnergy const & /*src*/ ) = default;
 
 
 /// clone

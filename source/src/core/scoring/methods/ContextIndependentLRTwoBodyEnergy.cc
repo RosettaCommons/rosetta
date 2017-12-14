@@ -26,7 +26,7 @@ namespace methods {
 
 ContextIndependentLRTwoBodyEnergy::ContextIndependentLRTwoBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 
-ContextIndependentLRTwoBodyEnergy::~ContextIndependentLRTwoBodyEnergy() {}
+ContextIndependentLRTwoBodyEnergy::~ContextIndependentLRTwoBodyEnergy() = default;
 
 EnergyMethodType
 ContextIndependentLRTwoBodyEnergy::method_type() const

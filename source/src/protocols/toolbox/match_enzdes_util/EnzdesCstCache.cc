@@ -28,6 +28,7 @@
 
 
 //utility headers
+#include <utility>
 #include <utility/string_util.hh>
 
 #include <core/id/AtomID.hh>
@@ -53,7 +54,7 @@ namespace match_enzdes_util {
 EnzdesCstCache::EnzdesCstCache(
 	EnzConstraintIOCOP enzcst_io,
 	core::Size num_cst_blocks
-) : enzcst_io_(enzcst_io)
+) : enzcst_io_(std::move(enzcst_io))
 {
 	param_cache_.clear();
 	for ( core::Size i = 1; i <= num_cst_blocks; ++i ) {
@@ -65,12 +66,12 @@ EnzdesCstCache::EnzdesCstCache( EnzdesCstCache const & other )
 : ReferenceCount( other ), enzcst_io_(other.enzcst_io_)
 {
 	param_cache_.clear();
-	for ( utility::vector1< EnzdesCstParamCacheOP >::const_iterator param_it( other.param_cache_.begin()), param_end(other.param_cache_.end()); param_it != param_end; ++param_it ) {
-		param_cache_.push_back( EnzdesCstParamCacheOP( new EnzdesCstParamCache( **param_it ) ) );
+	for ( auto const & param_it : other.param_cache_ ) {
+		param_cache_.push_back( EnzdesCstParamCacheOP( new EnzdesCstParamCache( *param_it ) ) );
 	}
 }
 
-EnzdesCstCache::~EnzdesCstCache() {}
+EnzdesCstCache::~EnzdesCstCache() = default;
 
 EnzConstraintIOCOP
 EnzdesCstCache::enzcst_io() const
@@ -127,7 +128,7 @@ EnzdesCstCache::ordered_constrained_positions( core::pose::Pose const & pose ) c
 
 	for ( Size i =1; i<= param_cache_.size(); ++i ) {
 
-		for ( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator resA_it = param_cache_[i]->template_res_cache( 1 )->seqpos_map_begin(), resA_end = param_cache_[i]->template_res_cache( 1 )->seqpos_map_end(); resA_it !=  resA_end; ++resA_it ) {
+		for ( auto resA_it = param_cache_[i]->template_res_cache( 1 )->seqpos_map_begin(), resA_end = param_cache_[i]->template_res_cache( 1 )->seqpos_map_end(); resA_it !=  resA_end; ++resA_it ) {
 			if ( pose.residue_type( resA_it->first ).is_ligand() ) {
 				if ( find( found_lig_positions.begin(), found_lig_positions.end(), resA_it->first ) == found_lig_positions.end() ) {
 					found_lig_positions.push_back( resA_it->first );
@@ -135,7 +136,7 @@ EnzdesCstCache::ordered_constrained_positions( core::pose::Pose const & pose ) c
 			} else found_protein_positions.push_back( resA_it->first );
 		}
 
-		for ( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator resB_it = param_cache_[i]->template_res_cache( 2 )->seqpos_map_begin(), resB_end = param_cache_[i]->template_res_cache( 2 )->seqpos_map_end(); resB_it !=  resB_end; ++resB_it ) {
+		for ( auto resB_it = param_cache_[i]->template_res_cache( 2 )->seqpos_map_begin(), resB_end = param_cache_[i]->template_res_cache( 2 )->seqpos_map_end(); resB_it !=  resB_end; ++resB_it ) {
 			if ( pose.residue_type( resB_it->first ).is_ligand() ) {
 				if ( find( found_lig_positions.begin(), found_lig_positions.end(), resB_it->first ) == found_lig_positions.end() ) {
 					found_lig_positions.push_back( resB_it->first );
@@ -154,8 +155,8 @@ void
 EnzdesCstCache::remap_resid(
 	core::id::SequenceMapping const & smap )
 {
-	for ( utility::vector1< EnzdesCstParamCacheOP >::iterator param_it = param_cache_.begin(), param_end = param_cache_.end(); param_it != param_end; ++param_it ) {
-		(*param_it)->remap_resid( smap );
+	for ( auto & param_it : param_cache_ ) {
+		param_it->remap_resid( smap );
 	}
 }
 
@@ -182,7 +183,7 @@ EnzdesCstParamCache::EnzdesCstParamCache( EnzdesCstParamCache const & other )
 }
 
 
-EnzdesCstParamCache::~EnzdesCstParamCache(){}
+EnzdesCstParamCache::~EnzdesCstParamCache()= default;
 
 
 void
@@ -201,8 +202,8 @@ EnzdesCstParamCache::clear_active_pose_constraints()
 bool
 EnzdesCstParamCache::missing_in_pose() const
 {
-	for ( utility::vector1< EnzCstTemplateResCacheOP >::const_iterator template_res_it = template_res_cache_.begin(), template_res_end = template_res_cache_.end(); template_res_it != template_res_end; ++template_res_it ) {
-		if ( (*template_res_it)->not_in_pose() ) return true;
+	for ( auto const & template_res_it : template_res_cache_ ) {
+		if ( template_res_it->not_in_pose() ) return true;
 	}
 	return false;
 }
@@ -211,8 +212,8 @@ void
 EnzdesCstParamCache::remove_seqpos_from_template_res( core::Size seqpos ){
 
 	core::Size find_count(0);
-	for ( utility::vector1< EnzCstTemplateResCacheOP >::iterator template_res_it = template_res_cache_.begin(), template_res_end = template_res_cache_.end(); template_res_it != template_res_end; ++template_res_it ) {
-		if ( (*template_res_it)->remove_seqpos( seqpos ) ) find_count++;
+	for ( auto & template_res_it : template_res_cache_ ) {
+		if ( template_res_it->remove_seqpos( seqpos ) ) find_count++;
 	}
 
 	if ( find_count > 1 ) {
@@ -228,10 +229,10 @@ void
 EnzdesCstParamCache::set_position_for_missing_res( core::Size seqpos ){
 
 	core::Size find_count(0);
-	for ( utility::vector1< EnzCstTemplateResCacheOP >::iterator template_res_it = template_res_cache_.begin(), template_res_end = template_res_cache_.end(); template_res_it != template_res_end; ++template_res_it ) {
+	for ( auto & template_res_it : template_res_cache_ ) {
 
-		if ( (*template_res_it)->not_in_pose() ) {
-			(*template_res_it)->set_position_in_pose( seqpos );
+		if ( template_res_it->not_in_pose() ) {
+			template_res_it->set_position_in_pose( seqpos );
 			find_count++;
 		}
 	}
@@ -243,8 +244,8 @@ EnzdesCstParamCache::set_position_for_missing_res( core::Size seqpos ){
 bool
 EnzdesCstParamCache::contains_position( core::Size seqpos ) const
 {
-	for ( utility::vector1< EnzCstTemplateResCacheOP >::const_iterator template_res_it = template_res_cache_.begin(), template_res_end = template_res_cache_.end(); template_res_it != template_res_end; ++template_res_it ) {
-		if ( (*template_res_it)->contains_position( seqpos ) ) return true;
+	for ( auto const & template_res_it : template_res_cache_ ) {
+		if ( template_res_it->contains_position( seqpos ) ) return true;
 	}
 	return false;
 }
@@ -258,22 +259,21 @@ void
 EnzdesCstParamCache::remap_resid( core::id::SequenceMapping const & smap )
 {
 	// 1.
-	for ( utility::vector1< EnzCstTemplateResCacheOP >::iterator template_res_it = template_res_cache_.begin(), template_res_end = template_res_cache_.end(); template_res_it != template_res_end; ++template_res_it ) {
-		(*template_res_it)->remap_resid( smap );
+	for ( auto & template_res_it : template_res_cache_ ) {
+		template_res_it->remap_resid( smap );
 	}
 
 	//2.
-	for ( utility::vector1< core::scoring::constraints::ConstraintCOP >::iterator cst_it = active_pose_constraints_.begin();
-			cst_it != active_pose_constraints_.end(); ++cst_it ) {
-		*cst_it = (*cst_it)->remap_resid( smap );
-		if ( ! (*cst_it) ) utility_exit_with_message("Remapping of catalytic constraints failed");
+	for ( auto & active_pose_constraint : active_pose_constraints_ ) {
+		active_pose_constraint = active_pose_constraint->remap_resid( smap );
+		if ( ! active_pose_constraint ) utility_exit_with_message("Remapping of catalytic constraints failed");
 	}
 
 	//3.
-	for ( utility::vector1< CovalentConnectionReplaceInfoCOP >::iterator con_it = covalent_connections_.begin(), con_end = covalent_connections_.end(); con_it != con_end; ++con_it ) {
-		CovalentConnectionReplaceInfoOP newcov( new CovalentConnectionReplaceInfo( **con_it ) );
+	for ( auto & covalent_connection : covalent_connections_ ) {
+		CovalentConnectionReplaceInfoOP newcov( new CovalentConnectionReplaceInfo( *covalent_connection ) );
 		newcov->remap_resid( smap );
-		(*con_it) = newcov;
+		covalent_connection = newcov;
 	}
 }
 
@@ -291,12 +291,12 @@ EnzCstTemplateResCache::EnzCstTemplateResCache( EnzCstTemplateResCache const & o
 	pose_data_uptodate_(other.pose_data_uptodate_)
 {
 	seqpos_map_.clear();
-	for ( SeqposTemplateAtomsMap::const_iterator map_it(other.seqpos_map_.begin()), map_end(other.seqpos_map_.end()); map_it != map_end; ++map_it ) {
-		seqpos_map_.insert( std::pair< core::Size, EnzCstTemplateResAtomsOP >( map_it->first, EnzCstTemplateResAtomsOP( new EnzCstTemplateResAtoms( *(map_it->second) ) ) ) );
+	for ( auto const & map_it : other.seqpos_map_ ) {
+		seqpos_map_.insert( std::pair< core::Size, EnzCstTemplateResAtomsOP >( map_it.first, EnzCstTemplateResAtomsOP( new EnzCstTemplateResAtoms( *(map_it.second) ) ) ) );
 	}
 }
 
-EnzCstTemplateResCache::~EnzCstTemplateResCache(){}
+EnzCstTemplateResCache::~EnzCstTemplateResCache()= default;
 
 void
 EnzCstTemplateResCache::set_position_in_pose( core::Size seqpos ){
@@ -334,11 +334,11 @@ EnzCstTemplateResCache::remap_resid( core::id::SequenceMapping const & smap ){
 	}
 	seqpos_map_.clear();
 
-	for ( utility::vector1< std::pair< Size, EnzCstTemplateResAtomsOP > >::iterator vec_it = temp_vec.begin(), vec_end = temp_vec.end(); vec_it != vec_end; ++vec_it ) {
-		vec_it->second->remap_resid( smap );
-		core::Size newpos( smap[ vec_it->first  ] );
+	for ( auto & vec_it : temp_vec ) {
+		vec_it.second->remap_resid( smap );
+		core::Size newpos( smap[ vec_it.first  ] );
 		if ( newpos == 0 ) utility_exit_with_message("A catalytic residue is apparently missing from the pose");
-		seqpos_map_.insert( std::pair< Size, EnzCstTemplateResAtomsOP >( newpos, vec_it->second ) );
+		seqpos_map_.insert( std::pair< Size, EnzCstTemplateResAtomsOP >( newpos, vec_it.second ) );
 	}
 }
 

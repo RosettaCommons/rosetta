@@ -71,7 +71,7 @@ CentroidDisulfideEnergy::CentroidDisulfideEnergy(
 	potential_( potential )
 {}
 
-CentroidDisulfideEnergy::~CentroidDisulfideEnergy() {}
+CentroidDisulfideEnergy::~CentroidDisulfideEnergy() = default;
 
 // EnergyMethod Methods:
 
@@ -87,7 +87,7 @@ void CentroidDisulfideEnergy::setup_for_scoring(
 {
 	using namespace methods;
 
-	if ( pose.energies().long_range_container( centroid_disulfide_energy ) == 0 ) {
+	if ( pose.energies().long_range_container( centroid_disulfide_energy ) == nullptr ) {
 		CentroidDisulfideEnergyContainerOP dec( new CentroidDisulfideEnergyContainer( pose ) );
 		pose.energies().set_long_range_container( centroid_disulfide_energy, dec );
 	} else {

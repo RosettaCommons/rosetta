@@ -35,10 +35,10 @@ public:
 		protocols::filters::Filter( "MolarMass" )
 	{}
 
-	MolarMassFilter(std::string chain, core::Size mass_limit ) :
+	MolarMassFilter(std::string const & chain, core::Size mass_limit ) :
 		//utility::pointer::ReferenceCount(),
 		protocols::filters::Filter( "MolarMass" ),
-		chain_(std::move(chain)),
+		chain_(chain),
 		mass_limit_(mass_limit)
 	{}
 

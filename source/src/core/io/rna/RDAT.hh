@@ -53,7 +53,7 @@ public:
 
 	//constructor
 	RDAT( std::string const & name, std::string const & sequence,
-		core::Size const & offset,
+		core::Size const offset,
 		utility::vector1< Size > const & seqpos,
 		std::string const & structure,
 		utility::vector1< Annotation > const & annotations,

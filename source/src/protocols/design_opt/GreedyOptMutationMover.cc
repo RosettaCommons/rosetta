@@ -857,7 +857,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 					runtime_assert( find_filt != filters.end() );
 				}
 				std::string const samp_type( ftag->getOption< std::string >( "sample_type", "low" ));
-				core::Real filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
+				auto filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
 				add_filter( find_filt->second->clone(), samp_type, filter_delta );
 			} //foreach ftag
 		} else { // fi Filters
@@ -873,7 +873,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
 			}
 			std::string const samp_type( tag->getOption< std::string >( "sample_type", "low" ) );
-			core::Real filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
+			auto filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
 			//only add the default dummy filter if we dont have any others, allows user to define filters in branch tags only
 			add_filter( find_filt->second->clone(), samp_type, filter_delta );
 		}

@@ -18,8 +18,8 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-ConstraintCreator::ConstraintCreator() {}
-ConstraintCreator::~ConstraintCreator() {}
+ConstraintCreator::ConstraintCreator() = default;
+ConstraintCreator::~ConstraintCreator() = default;
 
 } //namespace constraints
 } //namespace scoring

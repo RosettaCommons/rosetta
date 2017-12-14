@@ -68,16 +68,10 @@ RamaMutationSelector::RamaMutationSelector():
 
 /// @brief Destructor.
 ///
-RamaMutationSelector::~RamaMutationSelector() {}
+RamaMutationSelector::~RamaMutationSelector() = default;
 
 /// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
-RamaMutationSelector::RamaMutationSelector(RamaMutationSelector const & src):
-	ResidueSelector( src ),
-	target_type_(src.target_type_),
-	score_threshold_(src.score_threshold_),
-	rama_prepro_multiplier_(src.rama_prepro_multiplier_)
-{
-}
+RamaMutationSelector::RamaMutationSelector(RamaMutationSelector const & /*src*/) = default;
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).

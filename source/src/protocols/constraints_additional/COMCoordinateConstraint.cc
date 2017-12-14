@@ -30,6 +30,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <numeric/model_quality/rms.hh>
 
+#include <utility>
 #include <utility/string_util.hh>
 
 // Utility Headers
@@ -294,7 +295,7 @@ bool COMCoordinateConstraint::operator == ( core::scoring::constraints::Constrai
 	if ( !       same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( other ) ) return false;
 
-	COMCoordinateConstraint const & other_downcast( static_cast< COMCoordinateConstraint const & > ( other ) );
+	auto const & other_downcast( static_cast< COMCoordinateConstraint const & > ( other ) );
 	if ( COM_target_ != other_downcast.COM_target_ ) return false;
 	if ( atms_       != other_downcast.atms_       ) return false;
 	if ( stdv_       != other_downcast.stdv_       ) return false;

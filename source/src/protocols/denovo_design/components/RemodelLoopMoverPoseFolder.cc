@@ -47,8 +47,7 @@ RemodelLoopMoverPoseFolder::RemodelLoopMoverPoseFolder():
 {
 }
 
-RemodelLoopMoverPoseFolder::~RemodelLoopMoverPoseFolder()
-{}
+RemodelLoopMoverPoseFolder::~RemodelLoopMoverPoseFolder() = default;
 
 RemodelLoopMoverPoseFolder::PoseFolderOP
 RemodelLoopMoverPoseFolder::clone() const
@@ -109,11 +108,11 @@ void
 RemodelLoopMoverPoseFolder::remove_cutpoints( StructureData & sd, protocols::loops::Loops const & loops ) const
 {
 	using protocols::loops::Loops;
-	for ( Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
-		if ( l->cut() == 0 ) continue;
-		SegmentName const seg_name = sd.segment_name( l->cut() );
+	for ( auto const & loop : loops ) {
+		if ( loop.cut() == 0 ) continue;
+		SegmentName const seg_name = sd.segment_name( loop.cut() );
 		sd.set_cutpoint( seg_name, 0 );
-		TR.Debug << "Removed cutpoint in StructureData from residue " << l->cut()
+		TR.Debug << "Removed cutpoint in StructureData from residue " << loop.cut()
 			<< " segment " << seg_name << std::endl;
 	}
 }

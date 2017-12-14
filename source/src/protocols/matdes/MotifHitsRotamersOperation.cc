@@ -22,6 +22,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
+#include <utility>
 #include <utility/io/ozstream.hh>
 #include <numeric/xyzTransform.hh>
 
@@ -34,7 +35,7 @@ static basic::Tracer TR("protocols.matdes.MotifHitsRotamersOperation");
 //Constructor
 
 MotifHitsRotamersOperation::MotifHitsRotamersOperation(
-	core::scoring::motif::MotifHits const &  motif_hits
+	core::scoring::motif::MotifHits const & motif_hits
 ):
 	RotamerSetOperation(),
 	motif_hits_(motif_hits),
@@ -115,9 +116,9 @@ MotifHitsRotamersOperation::alter_rotamer_set(
 	//core::Size atoms = 1  ;
 	using namespace core::pose::symmetry ;
 	using namespace core::scoring::motif  ;
-	Size const seqnum = (Size) rotamer_set.resid();
+	auto const seqnum = (Size) rotamer_set.resid();
 	debug_assert( seqnum <= ptask.total_residue() );
-	core::conformation::symmetry::SymmetryInfoCOP syminfo = 0 ;
+	core::conformation::symmetry::SymmetryInfoCOP syminfo = nullptr ;
 	if ( is_symmetric(pose) ) syminfo = symmetry_info(pose) ;
 	int count = 0 ;
 	std::set<core::Size> sym_pos ;
@@ -129,7 +130,7 @@ MotifHitsRotamersOperation::alter_rotamer_set(
 	//for (core::Size const i : sym_pos) std::cout << " " << i ;
 	//std::cout << std::endl  ;
 	for ( MotifHit const & hit : motif_hits_ ) {
-		core::conformation::ResidueOP res = NULL ;
+		core::conformation::ResidueOP res = nullptr ;
 		core::Size motif_seqnum = 0   ;
 		bool is_bb_frame=false  ;
 		if ( sym_pos.find( (core::Size) hit.residue1) != sym_pos.end() )  {

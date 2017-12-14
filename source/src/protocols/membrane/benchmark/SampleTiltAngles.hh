@@ -45,7 +45,7 @@ public:
 	/// @brief Sample all tilt angles and compare with user specified energy functions
 	/// and a user specified output prefix for files
 	SampleTiltAngles(
-		std::string prefix,
+		std::string const & prefix,
 		core::scoring::ScoreFunctionOP ref_sfxn1,
 		core::scoring::ScoreFunctionOP ref_sfxn2,
 		core::scoring::ScoreFunctionOP ref_sfxn3

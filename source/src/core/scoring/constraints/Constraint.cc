@@ -47,20 +47,20 @@ namespace constraints {
 
 Constraint::Constraint( ScoreType const & t ): score_type_(t) {}
 
-Constraint::~Constraint() {}
+Constraint::~Constraint() = default;
 
 ConstraintOP Constraint::clone( core::scoring::func::FuncOP ) const {
 	unimplemented_method_error( std::string("clone" ) );
-	return NULL;
+	return nullptr;
 }
 
 ConstraintOP Constraint::remapped_clone(
 	pose::Pose const& /*src*/,
 	pose::Pose const& /*dest*/,
-	id::SequenceMappingCOP map=NULL ) const {
+	id::SequenceMappingCOP map=nullptr ) const {
 	unimplemented_method_error( std::string("remapped_clone" ) );
-	if ( !map ) return NULL; // to make compile happy
-	return NULL;
+	if ( !map ) return nullptr; // to make compile happy
+	return nullptr;
 }
 
 utility::vector1< core::Size >
@@ -86,7 +86,7 @@ ConstraintOP
 Constraint::remap_resid( core::id::SequenceMapping const &/*seqmap*/ ) const
 {
 	unimplemented_method_error( std::string( "remap_resid" ) );
-	return NULL;
+	return nullptr;
 }
 
 /// @brief Returns the unweighted score of this constraint computed over the given pose.

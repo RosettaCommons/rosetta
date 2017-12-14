@@ -32,6 +32,7 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/scoring/rms_util.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 
@@ -98,8 +99,7 @@ StepWiseLegacyClusterer::StepWiseLegacyClusterer( utility::vector1< PoseOP > con
 
 //////////////////////////////////////////////////////////////////////////
 //destructor
-StepWiseLegacyClusterer::~StepWiseLegacyClusterer()
-{}
+StepWiseLegacyClusterer::~StepWiseLegacyClusterer() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void

@@ -93,7 +93,7 @@ SSamountFilter::SSamountFilter(
 	b_discard_lonely_SS_=b_discard_lonely_SS;
 }
 
-SSamountFilter::~SSamountFilter() {}
+SSamountFilter::~SSamountFilter() = default;
 
 protocols::filters::FilterOP
 SSamountFilter::clone() const {
@@ -130,8 +130,8 @@ SSamountFilter::compute( core::pose::Pose const & pose ) const
 	bool did_start_second_SS=false;
 	//Count SS
 	core::Size ssCount=0;
-	for ( core::Size i=0; i< s_dssp_profile.length(); i++ ) {
-		if ( (s_dssp_profile[i] == 'H') || (s_dssp_profile[i] == 'E') ) {
+	for ( char i : s_dssp_profile ) {
+		if ( (i == 'H') || (i == 'E') ) {
 			ssCount+=1;
 			if ( !did_start_SS ) {
 				did_start_SS=true;

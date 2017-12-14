@@ -294,7 +294,7 @@ StructureScoresFeatures::insert_structure_score_rows(
 	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id",batch_id) );
 
 	for ( Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
-		ScoreType type(static_cast<ScoreType>(score_type_id));
+		auto type(static_cast<ScoreType>(score_type_id));
 		Real const score_value( (*scfxn_)[type] * emap[type] );
 		if ( !score_value ) continue;
 		total_score_value += score_value;

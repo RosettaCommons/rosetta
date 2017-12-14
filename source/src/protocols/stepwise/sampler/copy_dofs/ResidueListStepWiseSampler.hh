@@ -30,7 +30,7 @@ class ResidueListStepWiseSampler: public StepWiseSamplerSized {
 public:
 
 	//constructor
-	ResidueListStepWiseSampler( utility::vector1< core::conformation::ResidueOP > copy_dofs );
+	ResidueListStepWiseSampler( utility::vector1< core::conformation::ResidueOP > const & copy_dofs );
 
 	//destructor
 	~ResidueListStepWiseSampler();

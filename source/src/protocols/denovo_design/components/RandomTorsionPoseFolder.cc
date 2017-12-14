@@ -39,8 +39,7 @@ RandomTorsionPoseFolder::RandomTorsionPoseFolder():
 {
 }
 
-RandomTorsionPoseFolder::~RandomTorsionPoseFolder()
-{}
+RandomTorsionPoseFolder::~RandomTorsionPoseFolder() = default;
 
 RandomTorsionPoseFolder::PoseFolderOP
 RandomTorsionPoseFolder::clone() const
@@ -81,9 +80,9 @@ check_residue_subset(
 	core::select::residue_selector::ResidueSubset const & subset,
 	protocols::loops::Loops const & loops )
 {
-	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
-		check_residue( subset, l->start() );
-		check_residue( subset, l->stop() );
+	for ( auto const & loop : loops ) {
+		check_residue( subset, loop.start() );
+		check_residue( subset, loop.stop() );
 	}
 }
 
@@ -106,8 +105,8 @@ RandomTorsionPoseFolder::apply(
 {
 	check_residue_subset( movable, loops );
 
-	for ( protocols::loops::Loops::const_iterator l=loops.begin(); l!=loops.end(); ++l ) {
-		for ( core::Size resid=l->start(); resid<=l->stop(); ++resid ) {
+	for ( auto const & loop : loops ) {
+		for ( core::Size resid=loop.start(); resid<=loop.stop(); ++resid ) {
 			if ( !movable[resid] ) continue;
 			TR.Debug << "Setting random torsions for residue << " << resid << std::endl;
 			pose.set_phi( resid, numeric::random::rg().uniform()*360.0 - 180.0 );

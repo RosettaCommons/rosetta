@@ -19,3 +19,5 @@
 
 // This is a check that's error prone, and has been removed from more recent versions of cppcheck.
 unnecessaryForwardDeclaration
+// This triggers for braced initializers in classes
+constStatement

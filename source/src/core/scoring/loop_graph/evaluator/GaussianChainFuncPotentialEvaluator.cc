@@ -44,8 +44,7 @@ GaussianChainFuncPotentialEvaluator::GaussianChainFuncPotentialEvaluator( LoopCy
 }
 
 //Destructor
-GaussianChainFuncPotentialEvaluator::~GaussianChainFuncPotentialEvaluator()
-{}
+GaussianChainFuncPotentialEvaluator::~GaussianChainFuncPotentialEvaluator() = default;
 
 void
 GaussianChainFuncPotentialEvaluator::initialize( LoopCycle const & loop_cycle,

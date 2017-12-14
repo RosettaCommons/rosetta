@@ -80,6 +80,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -94,7 +95,7 @@ namespace ddg {
 using namespace core;
 using namespace core::scoring;
 
-typedef std::vector<double> ddGs;
+using ddGs = std::vector<double>;
 
 ddGMover::ddGMover() :
 	Mover("ddGMover"),
@@ -132,7 +133,7 @@ ddGMover::ddGMover() :
 ddGMover::ddGMover(
 	core::scoring::ScoreFunctionOP s,
 	core::scoring::ScoreFunctionOP m,
-	utility::vector1<core::chemical::AA> res_to_mutate
+	utility::vector1<core::chemical::AA> const & res_to_mutate
 ) :
 	Mover("ddGMover"),
 	num_decoys_used_in_calculations_(20),
@@ -155,7 +156,7 @@ ddGMover::ddGMover(
 	repack_cst_set_mut_(core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() )),
 	repack_mut_types_(), //these arrays only because
 	//theres no easy way to get constraint info after the fact
-	residues_to_mutate_(res_to_mutate),
+	residues_to_mutate_( res_to_mutate ),
 	num_iterations_(20),
 	dmp_pdb_(false),
 	dbg_output_(false),
@@ -301,7 +302,7 @@ ddGMover::average_score_components(
 		}
 		return 0;
 	} else {
-		typedef utility::vector1<double> score_components;
+		using score_components = utility::vector1<double>;
 		typedef std::pair<double,score_components> enrgs;
 
 		utility::vector1<enrgs> scores_to_sort;

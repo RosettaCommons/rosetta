@@ -60,7 +60,7 @@ bool GaussianChainSingleFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	GaussianChainSingleFunc const & other_downcast( static_cast< GaussianChainSingleFunc const & > (other) );
+	auto const & other_downcast( static_cast< GaussianChainSingleFunc const & > (other) );
 	if ( gaussian_variance_     != other_downcast.gaussian_variance_     ) return false;
 	if ( loop_fixed_cost_       != other_downcast.loop_fixed_cost_       ) return false;
 	if ( kB_T_                  != other_downcast.kB_T_                  ) return false;

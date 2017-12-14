@@ -203,9 +203,7 @@ CifFile::CifFile(const bool verbose, const Char::eCompareType caseSense,
 
 
 CifFile::~CifFile()
-{
-
-}
+= default;
 
 
 void CifFile::Init()
@@ -340,10 +338,10 @@ void CifFile::Write(ostream& cifo, const vector<string>& catOrder,
     for (unsigned int blockI = 0, numTables = 0; blockI < _blocks.size();
       blockI++)
     {
-        for (unsigned int l = 0; l < catOrder.size(); l++)
+        for (const auto & l : catOrder)
         {
             tableIndex = _blocks[blockI]._tables.\
-              find(catOrder[l]);
+              find(l);
 
             if (tableIndex != _blocks[blockI]._tables.size())
             {
@@ -437,9 +435,9 @@ int CifFile::DataChecking(CifFile& ref, const string& diagFileName,
     vector<string> BlockNames;
     GetBlockNames(BlockNames);
 
-    for (unsigned int blockI = 0; blockI < BlockNames.size(); ++blockI)
+    for (const auto & BlockName : BlockNames)
     {
-        Block& block = GetBlock(BlockNames[blockI]);
+        Block& block = GetBlock(BlockName);
 
         ostringstream buf;
 
@@ -562,9 +560,9 @@ CifFile::eIdentType CifFile::_FindPrintType(const vector<string>& values)
 {
 
     // If at least one value is a number, all should be right justified.
-    for (unsigned int valuesI = 0; valuesI < values.size(); ++valuesI)
+    for (const auto & value : values)
     {
-        if (String::IsNumber(values[valuesI]))
+        if (String::IsNumber(value))
         {
             return(eRIGHT);
         }
@@ -1117,7 +1115,7 @@ void CifFile::Write(ostream& cifo, vector<unsigned int>& tables,
   const bool writeEmptyTables)
 {
 
-    ISTable* tableP = NULL;
+    ISTable* tableP = nullptr;
  
     unsigned int numColumn, numRow, linePos, cwid, ilen, numPostItemSpaces;
 
@@ -1379,10 +1377,10 @@ int CifFile::CheckCategories(Block& block, Block& refBlock, ostringstream& log)
     ISTable* refCatTableP = refBlock.GetTablePtr("category");
 
     vector<string> list;
-    list.push_back("mandatory_code");
+    list.emplace_back("mandatory_code");
 
     vector<string> target;
-    target.push_back("yes");
+    target.emplace_back("yes");
 
     vector<unsigned int> OutList;
     refCatTableP->Search(OutList, target, list);
@@ -1391,10 +1389,10 @@ int CifFile::CheckCategories(Block& block, Block& refBlock, ostringstream& log)
         return(ret);
     }
 
-    for (unsigned int i = 0; i < OutList.size(); i++)
+    for (unsigned int i : OutList)
     {
         // For all the mandatory categories
-        const string& mandatoryCat = (*refCatTableP)(OutList[i], "id");
+        const string& mandatoryCat = (*refCatTableP)(i, "id");
         if (!block.IsTablePresent(mandatoryCat))
         {
             log << "ERROR - category \"" << mandatoryCat <<
@@ -1416,11 +1414,11 @@ void CifFile::CheckCategoryKey(Block& block, ostringstream& log)
 
     ISTable* itemTableP = block.GetTablePtr("item");
 
-    if ((catKeyTableP == NULL) || (itemTableP == NULL))
+    if ((catKeyTableP == nullptr) || (itemTableP == nullptr))
         return;
 
     vector<string> searchCols;
-    searchCols.push_back("name");
+    searchCols.emplace_back("name");
 
     // For every item in the category key table, check if it is set as
     // mandatory or implicit
@@ -1473,7 +1471,7 @@ void CifFile::CheckItemsTable(Block& block, ostringstream& log)
 
     ISTable* catsTableP = block.GetTablePtr("category");
 
-    if (itemsTableP == NULL)
+    if (itemsTableP == nullptr)
     {
         // "item" table does not exist. This is the case when checking a CIF
         // file and not dictionary or DDL file.
@@ -1532,33 +1530,33 @@ int CifFile::CheckItems(Block& block, Block& refBlock, ostringstream& log)
     // category save frame is uppercase.
     catKeyTableP->SetFlags("id", ISTable::DT_STRING | ISTable::CASE_INSENSE);
 
-    ISTable* itemTableP = NULL;
-    ISTable* itemTypeTableP = NULL;
-    ISTable* itemRangeTableP = NULL;
-    ISTable* itemEnumTableP = NULL;
+    ISTable* itemTableP = nullptr;
+    ISTable* itemTypeTableP = nullptr;
+    ISTable* itemRangeTableP = nullptr;
+    ISTable* itemEnumTableP = nullptr;
 
     if (_extraCifChecks)
     {
         itemTableP = refBlock.GetTablePtr("pdbx_item");
-        if (itemTableP == NULL)
+        if (itemTableP == nullptr)
         {
             itemTableP = refBlock.GetTablePtr("item");
         }
 
         itemTypeTableP = refBlock.GetTablePtr("pdbx_item_type");
-        if (itemTypeTableP == NULL)
+        if (itemTypeTableP == nullptr)
         {
             itemTypeTableP = refBlock.GetTablePtr("item_type");
         }
 
         itemRangeTableP = refBlock.GetTablePtr("pdbx_item_range");
-        if (itemRangeTableP == NULL)
+        if (itemRangeTableP == nullptr)
         {
             itemRangeTableP = refBlock.GetTablePtr("item_range");
         }
 
         itemEnumTableP = refBlock.GetTablePtr("pdbx_item_enumeration");
-        if (itemEnumTableP == NULL)
+        if (itemEnumTableP == nullptr)
         {
             itemEnumTableP = refBlock.GetTablePtr("item_enumeration");
         }
@@ -1582,7 +1580,7 @@ int CifFile::CheckItems(Block& block, Block& refBlock, ostringstream& log)
     vector<string> catNames;
     block.GetTableNames(catNames);
 
-    for (unsigned int catI = 0; catI < catNames.size(); ++catI)
+    for (const auto & catName : catNames)
     {
 #ifdef JW_DEBUG
         cout << endl;
@@ -1594,7 +1592,7 @@ int CifFile::CheckItems(Block& block, Block& refBlock, ostringstream& log)
         cout << "Checking category: " << catNames[catI] << "; " << catI <<
           " of " << catNames.size() << endl;
 #endif
-        ISTable* catTableP = block.GetTablePtr(catNames[catI]);
+        ISTable* catTableP = block.GetTablePtr(catName);
 
 #ifdef VLAD_PERF
         log << "Category: \"" << catNames[catI] << "\"; Index: " << catI
@@ -1603,24 +1601,24 @@ int CifFile::CheckItems(Block& block, Block& refBlock, ostringstream& log)
         bool skipCatCheck = false;
 
         // Check if the table is defined in the reference file
-        if (!IsCatDefinedInRef(catNames[catI], *refCatTableP))
+        if (!IsCatDefinedInRef(catName, *refCatTableP))
         {
             log << "ERROR - In block \"" << block.GetName() <<
-              "\", category \"" << catNames[catI] << "\" is not " <<
+              "\", category \"" << catName << "\" is not " <<
               "defined in the reference file" << endl;
             skipCatCheck = true;
         }
 
         const vector<string>& colNames = catTableP->GetColumnNames();
 
-        for (unsigned int itemI = 0; itemI < colNames.size(); ++itemI)
+        for (const auto & colName : colNames)
         {
-            if (!IsItemDefinedInRef(catNames[catI], colNames[itemI],
+            if (!IsItemDefinedInRef(catName, colName,
               *itemTableP))
             {
                 log << "ERROR - In block \"" << block.GetName() <<
-                  "\", in category \"" << catNames[catI] << "\", item \"" <<
-                  colNames[itemI] << "\" is not defined in the " <<
+                  "\", in category \"" << catName << "\", item \"" <<
+                  colName << "\" is not defined in the " <<
                   "reference file" << endl;
             }
         }
@@ -1650,13 +1648,13 @@ int CifFile::CheckItems(Block& block, Block& refBlock, ostringstream& log)
 #ifdef JW_DEBUG
         cout << "Finished parent/child for category: " << catNames[catI] << endl;
 #endif
-        for (unsigned int colI = 0; colI < colNames.size(); ++colI)
+        for (const auto & colName : colNames)
         {
 #ifdef VLAD_PERF
             cout << "Processing attribute: " << colI + 1 << " of " <<
               colNames.size() << endl;
 #endif
-            ret = CheckRegExpRangeEnum(block, *catTableP, colNames[colI],
+            ret = CheckRegExpRangeEnum(block, *catTableP, colName,
                *itemTypeTableP, *itemTypeListTableP, itemRangeTableP,
                itemEnumTableP, *itemLinkedTableP, itemAliasesTableP, log);
         }
@@ -1666,11 +1664,11 @@ int CifFile::CheckItems(Block& block, Block& refBlock, ostringstream& log)
         FindCifNullRows(nullRowsIndices, *catTableP);
         if (!nullRowsIndices.empty())
         {
-            for (unsigned int rowI = 0; rowI < nullRowsIndices.size(); ++rowI)
+            for (unsigned int nullRowsIndice : nullRowsIndices)
             {
                 log << "WARNING - In block \"" << block.GetName() <<
-                  "\", in category \"" << catNames[catI] << "\", row " <<
-                  nullRowsIndices[rowI] + 1 << " contains all null values." <<
+                  "\", in category \"" << catName << "\", row " <<
+                  nullRowsIndice + 1 << " contains all null values." <<
                   endl;
             }
         }
@@ -1689,9 +1687,9 @@ void CifFile::FindCifNullRows(vector<unsigned int>& nullRowsIndices,
     for (unsigned int rowI = 0; rowI < isTable.GetNumRows(); ++rowI)
     {
         bool nullRow = true;
-        for (unsigned int colI = 0; colI < colNames.size(); ++colI)
+        for (const auto & colName : colNames)
         {
-            if (!CifString::IsUnknownValue(isTable(rowI, colNames[colI])))
+            if (!CifString::IsUnknownValue(isTable(rowI, colName)))
             {
                 nullRow = false;
                 break;
@@ -1764,7 +1762,7 @@ void CifFile::GetAttributeValueIf(string& attribVal,
 
     ISTable* t = block.GetTablePtr(category);
 
-    if (t == NULL)
+    if (t == nullptr)
     {
         // VLAD - EXCEPTION - Throw exception here and test all the code
         return;
@@ -1801,7 +1799,7 @@ void CifFile::GetAttributeValuesIf(vector<string>& strings,
 
     ISTable* t = block.GetTablePtr(category);
 
-    if (t == NULL)
+    if (t == nullptr)
     {
         // VLAD - EXCEPTION - Throw exception here and test all the code
         return;
@@ -1836,7 +1834,7 @@ void CifFile::SetAttributeValueIf(const string& blockId,
 
     ISTable* t = block.GetTablePtr(category);
 
-    if (t == NULL)
+    if (t == nullptr)
     {
         // VLAD - EXCEPTION - Throw exception here and test all the code
         return;
@@ -1852,9 +1850,9 @@ void CifFile::SetAttributeValueIf(const string& blockId,
 
     if (!iResult.empty())
     {
-        for (unsigned int i = 0; i < iResult.size(); ++i)
+        for (unsigned int i : iResult)
         {
-            t->UpdateCell(iResult[i], attributeA, valA);
+            t->UpdateCell(i, attributeA, valA);
         }
     }
     else
@@ -1891,14 +1889,14 @@ void CifFile::SetAttributeValue(const string& blockId,
 
     ISTable* t = block.GetTablePtr(category);
 
-    if (!create && (t == NULL))
+    if (!create && (t == nullptr))
     {
         return;
     }
 
     unsigned int numRows = 0;
 
-    if (t == NULL)
+    if (t == nullptr)
     {
         t = new ISTable(category);
         t->AddColumn(attribute);
@@ -2031,7 +2029,7 @@ void CifFile::SetAttributeValues(const string& blockId,
   Block& block = GetBlock(blockId);
   ISTable* t = block.GetTablePtr(category);
   
-  if (t != NULL)
+  if (t != nullptr)
   {
     unsigned int nRow = t->GetNumRows();
     if ((nRow != 0) && (t->IsColumnPresent(attribute)))
@@ -2108,7 +2106,7 @@ void CifFile::SetAttributeValueIfNull(const string& blockId, const string& categ
 
   Block& block = GetBlock(blockId);
   ISTable* t = block.GetTablePtr(category);
-  if (t != NULL)
+  if (t != nullptr)
   {
     unsigned int nRow = t->GetNumRows();
     if ((nRow != 0) && (t->IsColumnPresent(attribute)))
@@ -2138,7 +2136,7 @@ bool CifFile::IsCatDefinedInRef(const string& catName, ISTable& catTable)
     keyTarget.push_back(catName);
 
     vector<string> keyList;
-    keyList.push_back("id");
+    keyList.emplace_back("id");
 
     unsigned int catIndex = catTable.FindFirst(keyTarget, keyList);
     if (catIndex == catTable.GetNumRows())
@@ -2163,8 +2161,8 @@ bool CifFile::IsItemDefinedInRef(const string& catName, const string& itemName,
     bool found = false;
 
     vector<string> refItemList;
-    refItemList.push_back("category_id");
-    refItemList.push_back("name");
+    refItemList.emplace_back("category_id");
+    refItemList.emplace_back("name");
 
     vector<string> refItemTarget;
     refItemTarget.push_back(catName);
@@ -2200,17 +2198,17 @@ void CifFile::GetKeyAttributes(vector<string>& keyAttributes,
     keyTarget.push_back(catTableName);
 
     vector<string> keyList;
-    keyList.push_back("id");
+    keyList.emplace_back("id");
 
     vector<unsigned int> OutList;
     catKeyTable.Search(OutList, keyTarget, keyList);
 
-    for (unsigned int i = 0; i < OutList.size(); ++i)
+    for (unsigned int i : OutList)
     {
         string keyAttributeName;
 
         CifString::GetItemFromCifItem(keyAttributeName,
-          catKeyTable(OutList[i], "name"));
+          catKeyTable(i, "name"));
 
         keyAttributes.push_back(keyAttributeName);
     }
@@ -2235,12 +2233,12 @@ void CifFile::CheckKeyItems(const string& blockName, ISTable& catTable,
 
     bool keyNotFound = false;
 
-    for (unsigned int k = 0; k < keyItems.size(); k++)
+    for (const auto & keyItem : keyItems)
     {
-        if (!catTable.IsColumnPresent(keyItems[k]))
+        if (!catTable.IsColumnPresent(keyItem))
         {
             log << "ERROR - In block \"" << blockName << "\", key item \"" <<
-              keyItems[k] << "\" not found in category \"" <<
+              keyItem << "\" not found in category \"" <<
               catTable.GetName() << "\"" << endl;
             keyNotFound = true;
         }
@@ -2255,13 +2253,13 @@ void CifFile::CheckKeyItems(const string& blockName, ISTable& catTable,
         catTable.FindDuplicateRows(duplRows, keyItems, true);
         if (!duplRows.empty())
         {
-            for (unsigned int rowI = 0; rowI < duplRows.size(); rowI++)
+            for (auto & duplRow : duplRows)
             {
                 bool report = true;
-                for (unsigned int keyI = 0; keyI < keyItems.size(); ++keyI)
+                for (const auto & keyItem : keyItems)
                 {
-                    const string& cell = catTable(duplRows[rowI].first,
-                      keyItems[keyI]);
+                    const string& cell = catTable(duplRow.first,
+                      keyItem);
                  
                     if (CifString::IsEmptyValue(cell))
                     {
@@ -2277,13 +2275,13 @@ void CifFile::CheckKeyItems(const string& blockName, ISTable& catTable,
                   "cateogory \"" << catTable.GetName() <<
                   "\", values for key item(s):" << endl;
 
-                for (unsigned int keyI = 0; keyI < keyItems.size(); ++keyI)
+                for (const auto & keyItem : keyItems)
                 {
-                    log << "  \"" << keyItems[keyI] << "\"," << endl; 
+                    log << "  \"" << keyItem << "\"," << endl; 
                 }
 
-                log << "  in row #" << duplRows[rowI].first + 1 <<
-                  " are repeated in row #" << duplRows[rowI].second + 1 << endl;
+                log << "  in row #" << duplRow.first + 1 <<
+                  " are repeated in row #" << duplRow.second + 1 << endl;
             }
         }
     }
@@ -2302,12 +2300,12 @@ void CifFile::CheckMandatoryItems(const string& blockName, ISTable& catTable,
     */
 
     vector<string> refItemList;
-    refItemList.push_back("category_id");
-    refItemList.push_back("mandatory_code");
+    refItemList.emplace_back("category_id");
+    refItemList.emplace_back("mandatory_code");
 
     vector<string> refItemTarget;
     refItemTarget.push_back(catTable.GetName());
-    refItemTarget.push_back("yes");
+    refItemTarget.emplace_back("yes");
 
     vector<unsigned int> OutList;
     refItemTable.Search(OutList, refItemTarget, refItemList);
@@ -2331,9 +2329,9 @@ void CifFile::CheckMandatoryItems(const string& blockName, ISTable& catTable,
 
     }
 
-    for (unsigned int k = 0; k < OutList.size(); ++k)
+    for (unsigned int k : OutList)
     {
-        string cell = refItemTable(OutList[k], "name");
+        string cell = refItemTable(k, "name");
         string itemName;
         CifString::GetItemFromCifItem(itemName, cell);
         if (!catTable.IsColumnPresent(itemName))
@@ -2362,14 +2360,14 @@ void CifFile::CheckMandatoryItems(const string& blockName, ISTable& catTable,
                   "\"";
 
                 bool first = true;
-                for (unsigned int i = 0; i < keyItems.size(); ++i)
+                for (const auto & keyItem : keyItems)
                 {
-                    if (!catTable.IsColumnPresent(keyItems[i]))
+                    if (!catTable.IsColumnPresent(keyItem))
                     {
                         continue;
                     }
 
-                    if (keyItems[i] != itemName)
+                    if (keyItem != itemName)
                     {
                         if (first)
                             log << " in row: ";
@@ -2378,9 +2376,9 @@ void CifFile::CheckMandatoryItems(const string& blockName, ISTable& catTable,
 
                         string cifItem;
                         CifString::MakeCifItem(cifItem, catTable.GetName(),
-                          keyItems[i]);
+                          keyItem);
                         log << "\"" << cifItem <<
-                          "\" == \"" << catTable(rowI, keyItems[i]) <<
+                          "\" == \"" << catTable(rowI, keyItem) <<
                           "\"";
                         first = false;
                     }
@@ -2450,7 +2448,7 @@ int CifFile::CheckRegExpRangeEnum(Block& block, ISTable& catTable,
     target.push_back(cifItemName);
 
     vector<string> nameList;
-    nameList.push_back("name");
+    nameList.emplace_back("name");
 
     string typeCode;
     GetItemTypeCode(typeCode, cifItemName, itemTypeTable);
@@ -2467,7 +2465,7 @@ int CifFile::CheckRegExpRangeEnum(Block& block, ISTable& catTable,
     ItemTypeLTarget.push_back(typeCode);
 
     vector<string> ItemTypeLList;
-    ItemTypeLList.push_back("code");
+    ItemTypeLList.emplace_back("code");
 
     unsigned int iOut = itemTypeListTable.FindFirst(ItemTypeLTarget,
       ItemTypeLList);
@@ -2484,30 +2482,30 @@ int CifFile::CheckRegExpRangeEnum(Block& block, ISTable& catTable,
 
     /************** RANGE step 1**************/
     vector<unsigned int> OutList;
-    if (itemRangeTableP != NULL)
+    if (itemRangeTableP != nullptr)
     {
         itemRangeTableP->Search(OutList, target, nameList);
         if (!OutList.empty())
         {
             errCodeRange = 0;
-            for (unsigned int l = 0; l < OutList.size(); ++l)
+            for (unsigned int l : OutList)
             {
-                maxlist.push_back((*itemRangeTableP)(OutList[l], "maximum"));
-                minlist.push_back((*itemRangeTableP)(OutList[l], "minimum"));
+                maxlist.push_back((*itemRangeTableP)(l, "maximum"));
+                minlist.push_back((*itemRangeTableP)(l, "minimum"));
             }
         }
     }
 
     /************ ENUMERATION step 1************/
-    if (itemEnumTableP != NULL)
+    if (itemEnumTableP != nullptr)
     {
         itemEnumTableP->Search(OutList, target, nameList);
         if (!OutList.empty())
         {
             errCodeEnumeration = 0;
-            for (unsigned int l = 0; l < OutList.size(); ++l)
+            for (unsigned int l : OutList)
             {
-                enumlist.push_back((*itemEnumTableP)(OutList[l], "value"));
+                enumlist.push_back((*itemEnumTableP)(l, "value"));
             }
         }
     }
@@ -2547,14 +2545,14 @@ int CifFile::CheckRegExpRangeEnum(Block& block, ISTable& catTable,
                         log << "ERROR - In block \"" << block.GetName() <<
                           "\", in item \"" << cifItemName << "\"";
 
-                        if (itemAliasesP != NULL)
+                        if (itemAliasesP != nullptr)
                         {
                             // Find out if item has aliases.
                             vector<string> itemAliasesTarget;
                             itemAliasesTarget.push_back(cifItemName);
 
                             vector<string> itemAliasesColumns;
-                            itemAliasesColumns.push_back("name");
+                            itemAliasesColumns.emplace_back("name");
 
                             unsigned int where =
                               itemAliasesP->FindFirst(itemAliasesTarget,
@@ -2883,12 +2881,12 @@ void CifFile::CheckAndRectifyItemTypeCode(Block& block, ostringstream& log)
 
     ISTable* itemTableP = block.GetTablePtr("item");
 
-    if ((itemTypeTableP == NULL) || (itemTableP == NULL))
+    if ((itemTypeTableP == nullptr) || (itemTableP == nullptr))
         return;
 
     // VLAD: Begin: Refactor this with GetCatNames()
     ISTable* categoryTableP = block.GetTablePtr("category");
-    if (categoryTableP == NULL)
+    if (categoryTableP == nullptr)
     {
         log << "CRITICAL: CANNOT FIND DDL CATEGORY: " << "category" << endl;
         return;
@@ -2900,13 +2898,11 @@ void CifFile::CheckAndRectifyItemTypeCode(Block& block, ostringstream& log)
 
     CifParentChild cifParentChild(block);
 
-    for (unsigned int catI = 0; catI < categories.size(); ++catI)
+    for (const auto & catName : categories)
     {
-        const string& catName = categories[catI];
-
         // VLAD: Begin: Refactor this with GetCatItemsNames()
         ISTable* itemCatP = block.GetTablePtr("item");
-        if (itemCatP == NULL)
+        if (itemCatP == nullptr)
         {
             log << "CRITICAL: CANNOT FIND DDL CATEGORY: " << "item" << endl;
             return;
@@ -2928,11 +2924,11 @@ void CifFile::CheckAndRectifyItemTypeCode(Block& block, ostringstream& log)
         }
         // VLAD: end: Refactor this with GetCatItemsNames()
 
-        for (unsigned int itemI = 0; itemI < itemsNames.size(); ++itemI)
+        for (const auto & itemsName : itemsNames)
         {
             string itemTypeCode;
             RectifyItemTypeCode(itemTypeCode, log, block, cifParentChild,
-              itemsNames[itemI]);
+              itemsName);
         } // for (all items)
     } // for (all categories)
 }
@@ -2950,7 +2946,7 @@ void CifFile::RectifyItemTypeCode(string& retItemTypeCode,
     target.push_back(cifItemName);
 
     vector<string> nameList;
-    nameList.push_back("name");
+    nameList.emplace_back("name");
 
     ISTable* itemTypeTableP = block.GetTablePtr("item_type");
 
@@ -3010,8 +3006,8 @@ void CifFile::RectifyItemTypeCode(string& retItemTypeCode,
             RectifyItemTypeCode(parItemTypeCode, log, block, cifParentChild,
               parKeys[keysI]);
 
-            parItemsAndTypes.push_back(make_pair(parKeys[keysI],
-              parItemTypeCode));
+            parItemsAndTypes.emplace_back(parKeys[keysI],
+              parItemTypeCode);
         }
     }
 
@@ -3030,9 +3026,9 @@ void CifFile::RectifyItemTypeCode(string& retItemTypeCode,
     if (hasParents)
     {
         set<string> parTypes;
-        for (unsigned int pairI = 0; pairI < parItemsAndTypes.size(); ++pairI)
+        for (auto & parItemsAndType : parItemsAndTypes)
         {
-            parTypes.insert(parItemsAndTypes[pairI].second);
+            parTypes.insert(parItemsAndType.second);
         }
 
         // If any type is empty string, report and return
@@ -3042,12 +3038,11 @@ void CifFile::RectifyItemTypeCode(string& retItemTypeCode,
             log << "ERROR - Item \"" << cifItemName << "\" has parents "\
               "with different types:" << endl;
 
-            for (unsigned int pairI = 0; pairI < parItemsAndTypes.size();
-              ++pairI)
+            for (auto & parItemsAndType : parItemsAndTypes)
             {
-                log << "  Parent item \"" << parItemsAndTypes[pairI].first <<
+                log << "  Parent item \"" << parItemsAndType.first <<
                   "\" has item type code \"" <<
-                  parItemsAndTypes[pairI].second << "\"" << endl;
+                  parItemsAndType.second << "\"" << endl;
             }
         }
         else
@@ -3120,7 +3115,7 @@ void CifFile::GetItemTypeCode(string& typeCode, const string& cifItemName,
     target.push_back(cifItemName);
 
     vector<string> nameList;
-    nameList.push_back("name");
+    nameList.emplace_back("name");
 
     unsigned int iOut = itemTypeTable.FindFirst(target, nameList);
     if (iOut != itemTypeTable.GetNumRows())

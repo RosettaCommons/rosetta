@@ -77,7 +77,7 @@ FreeDOF_Energy::FreeDOF_Energy( methods::EnergyMethodOptions const & energy_meth
 {
 }
 
-FreeDOF_Energy::~FreeDOF_Energy() {}
+FreeDOF_Energy::~FreeDOF_Energy() = default;
 
 /// clone
 core::scoring::methods::EnergyMethodOP
@@ -261,7 +261,7 @@ FreeDOF_Energy::accumulate_stack_energy(
 				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			EnergyEdge const & edge( static_cast< EnergyEdge const & > (**iru) );
+			auto const & edge( static_cast< EnergyEdge const & > (**iru) );
 			Size const j( edge.get_second_node_ind() );
 			runtime_assert( i < j );
 			stack_energy[ i ] += fa_stack_weight * edge[ fa_stack_lower ];

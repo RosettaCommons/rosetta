@@ -320,7 +320,7 @@ void ResidualDipolarCoupling::preprocess_data() {
 	nrows_ = All_RDC_lines_.size();
 }
 
-std::string element_string(std::string atom) {
+std::string element_string(std::string const & atom) {
 	if ( atom == "HN" || atom == "H" || atom == "HA" || atom == "1H" ) {
 		return "H";
 	}

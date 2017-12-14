@@ -64,7 +64,7 @@ JumpSelectorFactory::provide_xml_schema(
 		std::string err_msg =  "No JumpSelectorCreator with the name '" + selector_name + "' has been registered with the JumpSelectorFactory";
 		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 	}
-	std::map< std::string, JumpSelectorCreatorOP >::const_iterator iter = creator_map_.find( selector_name );
+	auto iter = creator_map_.find( selector_name );
 	iter->second->provide_xml_schema( xsd );
 }
 
@@ -78,7 +78,7 @@ JumpSelectorOP JumpSelectorFactory::new_jump_selector(
 		std::string err_msg =  "No JumpSelectorCreator with the name '" + selector_name + "' has been registered with the JumpSelectorFactory";
 		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg );
 	}
-	std::map< std::string, JumpSelectorCreatorOP >::const_iterator iter = creator_map_.find( selector_name );
+	auto iter = creator_map_.find( selector_name );
 	JumpSelectorOP new_selector = iter->second->create_jump_selector();
 	new_selector->parse_my_tag( tag, datamap );
 	return new_selector;

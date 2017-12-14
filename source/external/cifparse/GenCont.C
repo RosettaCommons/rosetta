@@ -154,21 +154,17 @@ using std::bind2nd;
 
 
 GenCont::GenCont()
-{
-
-}
+= default;
 
 
 GenCont::~GenCont()
-{
-
-}
+= default;
 
 
 bool GenCont::IsInVector(const string& element,
   const vector<string>& contVector, const Char::eCompareType compareType)
 {
-    vector<string>::const_iterator where = find_if(contVector.begin(),
+    auto where = find_if(contVector.begin(),
       contVector.end(), bind2nd(StringEqualTo(compareType), element));
  
     return (where != contVector.end());

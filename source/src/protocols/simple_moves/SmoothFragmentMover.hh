@@ -41,7 +41,7 @@ typedef utility::vector1< core::Real > ScoreList;
 class FragmentCost : public utility::pointer::ReferenceCount {
 protected:
 	// Constructor protected for base class
-	FragmentCost( std::string type, core::Real cutoff ) : type_(std::move( type )), cutoff_( cutoff ) {};
+	FragmentCost( std::string const & type, core::Real cutoff ) : type_( type ), cutoff_( cutoff ) {};
 	~FragmentCost() override;
 public:
 	// accesor

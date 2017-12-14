@@ -16,12 +16,12 @@
 
 #include <numeric/fourier/kiss_fft_state.hh>
 
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzMatrix.fwd.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 #include <utility/vector0.hh>
 
-#include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray3D.fwd.hh>
 
 
 #include <complex>

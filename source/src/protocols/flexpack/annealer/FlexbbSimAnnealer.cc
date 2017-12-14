@@ -26,6 +26,7 @@
 /// ObjexxFCL headers
 
 /// Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 /// Numeric headers
@@ -67,11 +68,10 @@ FlexbbSimAnnealer::FlexbbSimAnnealer(
 	rot_freq
 	),
 	ig_(ig),
-	rotsets_( rotsets )
+	rotsets_(std::move( rotsets ))
 {}
 
-FlexbbSimAnnealer:: ~FlexbbSimAnnealer()
-{}
+FlexbbSimAnnealer:: ~FlexbbSimAnnealer() = default;
 
 /// @details The FlexbbSimAnnealer operates with three submodes:
 /// mvsc_only :    same as the fixbb mode, only consider moving the side chains

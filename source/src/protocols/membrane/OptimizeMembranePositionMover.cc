@@ -254,7 +254,7 @@ void OptimizeMembranePositionMover::optimize_membrane_center( Pose & pose ) {
 
 	// initialize new center
 	core::Vector new_center;
-	core::Real new_z( static_cast< core::Real >( starting_z_ ) );
+	auto new_z( static_cast< core::Real >( starting_z_ ) );
 
 	// set new starting center
 	new_center.assign( 0, 0, new_z );

@@ -59,7 +59,7 @@ public:
 		moves::MoverOP mover_in,
 		moves::MonteCarloOP mc_in,
 		evaluation::PoseEvaluatorOP evaluator_in,
-		std::string tag
+		std::string const & tag
 	);
 	~EvaluatedTrialMover() override;
 

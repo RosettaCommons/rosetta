@@ -162,20 +162,20 @@ LoopRelaxMover::LoopRelaxMover() : moves::Mover(),
 // AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 // NOT BE INITIALIZED
 LoopRelaxMover::LoopRelaxMover(
-	std::string  remodel,
-	std::string  intermedrelax,
-	std::string  refine,
-	std::string  relax,
+	std::string const & remodel,
+	std::string const & intermedrelax,
+	std::string const & refine,
+	std::string const & relax,
 	loops::Loops const & loops
 ) : moves::Mover(),
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
 	n_rebuild_tries_( 3 ),
 	rebuild_filter_( 999 ),
-	remodel_(std::move( remodel )),
-	intermedrelax_(std::move( intermedrelax )),
-	refine_(std::move( refine )),
-	relax_(std::move( relax )),
+	remodel_( remodel ),
+	intermedrelax_( intermedrelax ),
+	refine_( refine ),
+	relax_( relax ),
 	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile( loops ) ))
 {}
 
@@ -183,39 +183,39 @@ LoopRelaxMover::LoopRelaxMover(
 // AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
 // NOT BE INITIALIZED
 LoopRelaxMover::LoopRelaxMover(
-	std::string  remodel,
-	std::string  intermedrelax,
-	std::string  refine,
-	std::string  relax,
+	std::string const & remodel,
+	std::string const & intermedrelax,
+	std::string const & refine,
+	std::string const & relax,
 	loops::LoopsFileData const & loops_from_file
 ) : moves::Mover(),
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
 	n_rebuild_tries_( 3 ),
 	rebuild_filter_( 999 ),
-	remodel_(std::move( remodel )),
-	intermedrelax_(std::move( intermedrelax )),
-	refine_(std::move( refine )),
-	relax_(std::move( relax )),
+	remodel_( remodel ),
+	intermedrelax_( intermedrelax ),
+	refine_( refine ),
+	relax_( relax ),
 	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile( loops_from_file ) ))
 {}
 
 LoopRelaxMover::LoopRelaxMover(
-	std::string  remodel,
-	std::string  intermedrelax,
-	std::string  refine,
-	std::string  relax,
+	std::string const & remodel,
+	std::string const & intermedrelax,
+	std::string const & refine,
+	std::string const & relax,
 	loops::GuardedLoopsFromFileOP guarded_loops
 ) : moves::Mover(),
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
 	n_rebuild_tries_( 3 ),
 	rebuild_filter_( 999 ),
-	remodel_(std::move( remodel )),
-	intermedrelax_(std::move( intermedrelax )),
-	refine_(std::move( refine )),
-	relax_(std::move( relax )),
-	guarded_loops_(std::move( guarded_loops )) // shallow copy
+	remodel_( remodel ),
+	intermedrelax_( intermedrelax ),
+	refine_( refine ),
+	relax_( relax ),
+	guarded_loops_( std::move( guarded_loops ) ) // shallow copy
 {}
 
 /// @brief Copy-ctor; shallow copy of all data object.
@@ -901,7 +901,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			core::Size nmonomerres = pose.size()-1;
 			core::conformation::symmetry::SymmetryInfoCOP symm_info;
 			if ( core::pose::symmetry::is_symmetric(pose) ) {
-				core::conformation::symmetry::SymmetricConformation & SymmConf (
+				auto & SymmConf (
 					dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 				symm_info = SymmConf.Symmetry_Info();
 				nmonomerres = symm_info->num_independent_residues();

@@ -49,7 +49,7 @@ TrueResidueSelector::TrueResidueSelector() :
 	ResidueSelector()
 {}
 
-TrueResidueSelector::~TrueResidueSelector() {}
+TrueResidueSelector::~TrueResidueSelector() = default;
 
 /// @brief Copy constructor
 ///

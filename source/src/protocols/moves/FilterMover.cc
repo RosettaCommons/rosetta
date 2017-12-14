@@ -39,12 +39,12 @@ FilterMover::FilterMover():
 
 FilterMover::FilterMover(
 	MoverOP const & my_mover,
-	FilterOP const & my_filter,
+	FilterOP  my_filter,
 	Size const max_tries,
 	MoverStatus const mover_status
 ):Mover( my_mover->type() ),
 	my_mover_( my_mover ),
-	my_filter_( my_filter ),
+	my_filter_(std::move( my_filter )),
 	max_tries_( max_tries ),
 	ms_whenfail_( mover_status )
 {}

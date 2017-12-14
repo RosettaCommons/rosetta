@@ -43,7 +43,7 @@ PeptideDeriverBasicStreamOutputter::PeptideDeriverBasicStreamOutputter(utility::
 
 }
 
-PeptideDeriverBasicStreamOutputter::~PeptideDeriverBasicStreamOutputter(){}
+PeptideDeriverBasicStreamOutputter::~PeptideDeriverBasicStreamOutputter()= default;
 
 PeptideDeriverBasicStreamOutputter::PeptideDeriverBasicStreamOutputter( PeptideDeriverBasicStreamOutputter const & src ) {
 	out_p_=src.out_p_;

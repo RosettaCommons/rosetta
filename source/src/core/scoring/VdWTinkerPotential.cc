@@ -63,8 +63,8 @@
 
 static basic::Tracer TR( "core.scoring.VdWTinkerPotential" );
 
-typedef numeric::xyzVector< core::Real > Vector;
-typedef numeric::xyzMatrix< core::Real > Matrix;
+using Vector = numeric::xyzVector<core::Real>;
+using Matrix = numeric::xyzMatrix<core::Real>;
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -228,8 +228,8 @@ VdWTinkerPotential::read_in_vdw_tinker_parameters() {
 		Size const num_tokens( tokens.size() );
 
 		//  Size const vdw_type( static_cast<core::Size>( boost::lexical_cast< core::Size >( tokens[ 2 ] ) ) );
-		Real const vdw_radius( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[ 3 ] ) ) );
-		Real const vdw_depth( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[ 4 ] ) ) );
+		auto const vdw_radius( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[ 3 ] ) ) );
+		auto const vdw_depth( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[ 4 ] ) ) );
 		Real const vdw_reduce( num_tokens == 5 ? static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[ 5 ] ) ) : 1.0 );
 
 		//TR << "Processed:  type " << vdw_type << " has radius " << vdw_radius << " with well depth " << vdw_depth << " and reduction factor " << vdw_reduce << std::endl;
@@ -437,7 +437,7 @@ VdWTinkerPotential::update_residue_for_packing(
 	pose::Pose & pose,
 	Size const seqpos
 ) const {
-	VdWTinkerPoseInfo & vdw_info( static_cast< VdWTinkerPoseInfo & >( pose.data().get( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ) );
+	auto & vdw_info( static_cast< VdWTinkerPoseInfo & >( pose.data().get( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO ) ) );
 	VdWTinkerResidueInfo & vdw_residue_info( vdw_info.residue_info( seqpos ) );
 
 	Residue const & rsd( pose.residue( seqpos ) );
@@ -569,7 +569,7 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 	Size const resj( rsd2.seqpos() );
 	bool const same_res( resi == resj );
 
-	VdWTinkerPoseInfo const & vdw_info( static_cast< VdWTinkerPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO)));
+	auto const & vdw_info( static_cast< VdWTinkerPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO)));
 
 	VdWTinkerResidueInfo const & vdw1( vdw_info.residue_info( resi ) );
 	VdWTinkerResidueInfo const & vdw2( vdw_info.residue_info( resj ) );

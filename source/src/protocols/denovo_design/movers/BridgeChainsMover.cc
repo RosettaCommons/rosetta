@@ -64,7 +64,7 @@ BridgeChainsMover::BridgeChainsMover( std::string const & mover_name ):
 {
 }
 
-BridgeChainsMover::~BridgeChainsMover(){}
+BridgeChainsMover::~BridgeChainsMover()= default;
 
 void
 BridgeChainsMover::parse_my_tag(

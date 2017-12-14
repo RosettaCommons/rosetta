@@ -143,8 +143,8 @@ public:
 
 public:
 	DisallowIfNonnative();
-	DisallowIfNonnative( utility::vector1< bool > disallowed_aas );
-	DisallowIfNonnative( utility::vector1< bool > disallowed_aas, utility::vector1<core::Size> res_selection);
+	DisallowIfNonnative( utility::vector1< bool > const & disallowed_aas );
+	DisallowIfNonnative( utility::vector1< bool > const & disallowed_aas, utility::vector1<core::Size> const & res_selection);
 	virtual ~DisallowIfNonnative();
 	virtual TaskOperationOP clone() const;
 
@@ -405,7 +405,7 @@ public:
 public:
 	ReadResfile();
 	ReadResfile( utility::options::OptionCollection const & options );
-	ReadResfile( std::string const &filename );
+	ReadResfile( std::string const & filename );
 
 	/// @brief Copy constructor.
 	/// @details Needed if a ResidueSelector is used.

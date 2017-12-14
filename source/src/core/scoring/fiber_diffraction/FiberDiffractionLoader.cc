@@ -40,9 +40,9 @@ using basic::resource_manager::LocatorID;
 using std::istream;
 using std::string;
 
-FiberDiffractionLoaderCreator::FiberDiffractionLoaderCreator() {}
+FiberDiffractionLoaderCreator::FiberDiffractionLoaderCreator() = default;
 
-FiberDiffractionLoaderCreator::~FiberDiffractionLoaderCreator() {}
+FiberDiffractionLoaderCreator::~FiberDiffractionLoaderCreator() = default;
 
 ResourceLoaderOP
 FiberDiffractionLoaderCreator::create_resource_loader() const {
@@ -54,9 +54,9 @@ FiberDiffractionLoaderCreator::loader_type() const {
 	return "FiberDiffraction";
 }
 
-FiberDiffractionLoader::FiberDiffractionLoader() {}
+FiberDiffractionLoader::FiberDiffractionLoader() = default;
 
-FiberDiffractionLoader::~FiberDiffractionLoader() {}
+FiberDiffractionLoader::~FiberDiffractionLoader() = default;
 
 FiberDiffractionLoader::FiberDiffractionLoader(
 	FiberDiffractionLoader const &) : basic::resource_manager::ResourceLoader() {}
@@ -75,7 +75,7 @@ FiberDiffractionLoader::create_resource(
 			"which has the name '" + options.name() + "'." );
 	}
 
-	FiberDiffractionOptions const & resource_options(
+	auto const & resource_options(
 		static_cast< FiberDiffractionOptions const & >( options ));
 
 	FiberDiffractionOP fiber_diffraction( new FiberDiffraction() );

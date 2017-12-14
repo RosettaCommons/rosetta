@@ -44,11 +44,11 @@ using utility::vector1;
 class PackingAngle : public protocols::moves::Mover {
 public:
 	// default constructor
-	PackingAngle(){};
+	PackingAngle()= default;
 	// destructor
-	virtual ~PackingAngle(){};
+	~PackingAngle() override= default;
 
-	virtual void apply( core::pose::Pose & pose_in )
+	void apply( core::pose::Pose & pose_in ) override
 	{
 		TR << "Applying Packing Angle Calculator" << std::endl;
 
@@ -81,27 +81,27 @@ public:
 		return;
 	} // PackingAngle::apply()
 
-	std::string get_name() const { return "PackingAngle"; }
+	std::string get_name() const override { return "PackingAngle"; }
 
-	virtual
+
 	protocols::moves::MoverOP
-	fresh_instance() const {
+	fresh_instance() const override {
 		return protocols::moves::MoverOP( new PackingAngle() );
 	}
 
-	virtual
-	bool
-	reinitialize_for_each_job() const { return false; }
 
-	virtual
 	bool
-	reinitialize_for_new_input() const { return false; }
+	reinitialize_for_each_job() const override { return false; }
+
+
+	bool
+	reinitialize_for_new_input() const override { return false; }
 
 private:
 
 };
 
-typedef utility::pointer::shared_ptr< PackingAngle > PackingAngleOP;
+using PackingAngleOP = utility::pointer::shared_ptr<PackingAngle>;
 
 
 /////////////////////////////////////////////////////////////////////////////////

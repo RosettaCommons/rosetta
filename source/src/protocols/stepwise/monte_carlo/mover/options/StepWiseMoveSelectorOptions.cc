@@ -51,8 +51,7 @@ StepWiseMoveSelectorOptions::StepWiseMoveSelectorOptions():
 }
 
 //Destructor
-StepWiseMoveSelectorOptions::~StepWiseMoveSelectorOptions()
-{}
+StepWiseMoveSelectorOptions::~StepWiseMoveSelectorOptions() = default;
 
 /// @brief copy constructor
 StepWiseMoveSelectorOptions::StepWiseMoveSelectorOptions( StepWiseMoveSelectorOptions const & src ) :

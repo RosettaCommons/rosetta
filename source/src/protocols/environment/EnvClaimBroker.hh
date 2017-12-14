@@ -95,7 +95,7 @@ private:
 	/// @brief an inner class for tracking the properties of jumps that've been brokered.
 	class BrokeredJumpData : public utility::pointer::ReferenceCount {
 	public:
-		BrokeredJumpData( std::pair< core::Size, core::Size > positions, // move-constructed
+		BrokeredJumpData( std::pair< core::Size, core::Size > const & positions,
 			std::pair< std::string, std::string > const& atoms,
 			bool put_jump_stub_intra_residue  );
 		bool operator==( BrokeredJumpData const& ) const;

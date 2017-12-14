@@ -52,11 +52,8 @@ utility::vector1< utility::file::FileName > filenames_from_list_file(
 
 	vector1< FileName > fns_to_return;
 
-	for ( vector1< FileName >::const_iterator it = list_fns.begin(),
-			it_end = list_fns.end();
-			it != it_end; ++it
-			) {
-		std::string filename( it->name() );
+	for ( auto const & list_fn : list_fns ) {
+		std::string filename( list_fn.name() );
 		utility::io::izstream data( filename.c_str() );
 		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + filename + '\n' );

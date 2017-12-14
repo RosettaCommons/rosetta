@@ -15,7 +15,9 @@
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/sql_utils.hh>
 
+#include <utility>
 #include <utility/sql_database/types.hh>
+#include <utility/exit.hh>
 #include <cppdb/frontend.h>
 
 namespace basic {
@@ -142,14 +144,14 @@ void InsertGenerator::bind_row_data(
 
 	for ( platform::Size i = row_start_index; i < row_end_index; ++i ) {
 		std::vector<RowDataBaseOP> current_row = row_list_[i];
-		for ( std::vector<RowDataBaseOP>::iterator column_it = current_row.begin(); column_it != current_row.end(); ++column_it ) {
-			std::map<std::string,platform::Size>::const_iterator it(column_index_map_.find((*column_it)->get_column_name()));
+		for ( auto & column_it : current_row ) {
+			std::map<std::string,platform::Size>::const_iterator it(column_index_map_.find(column_it->get_column_name()));
 			if ( it == column_index_map_.end() ) {
-				utility_exit_with_message(table_name_ + " does not contain column " + (*column_it)->get_column_name() + " check for typos in your features reporter");
+				utility_exit_with_message(table_name_ + " does not contain column " + column_it->get_column_name() + " check for typos in your features reporter");
 			}
 			platform::Size base_column_index = it->second;
 			platform::Size column_index = column_count*(i-row_start_index)+base_column_index;
-			(*column_it)->bind_data(column_index,statement);
+			column_it->bind_data(column_index,statement);
 		}
 	}
 }

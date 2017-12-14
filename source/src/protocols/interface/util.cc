@@ -39,9 +39,9 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	using namespace core::pose::metrics;
 	using namespace protocols::toolbox;
 
-	typedef std::set< Size > one_group;
+	using one_group = std::set<Size>;
 	typedef std::pair< one_group, one_group > group_pair;
-	typedef utility::vector1< group_pair > group_set;
+	using group_set = utility::vector1<group_pair>;
 
 	if ( interface.find('_') ==  std::string::npos ) {
 		utility_exit_with_message("Unrecognized interface: "+interface+" must have side1 and side2, ex: LH_A or L_H to calculate interface residues");

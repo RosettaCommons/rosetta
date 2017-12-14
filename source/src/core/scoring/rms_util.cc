@@ -973,7 +973,7 @@ core::Real
 CA_gdtmm(
 	core::pose::Pose const& pose1,
 	core::pose::Pose const& pose2,
-	std::list< Size > residue_selection, //the std::list can be sorted! -- note std::sort can be applied to vectors
+	std::list< Size > const & residue_selection, //the std::list can be sorted! -- note std::sort can be applied to vectors
 	core::Real& m_1_1,
 	core::Real& m_2_2,
 	core::Real& m_3_3,
@@ -1085,7 +1085,7 @@ core::Real
 CA_gdtmm(
 	core::pose::Pose const& pose1,
 	core::pose::Pose const& pose2,
-	std::list< Size> residue_selection
+	std::list< Size> const & residue_selection
 ) {
 	core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
 	return CA_gdtmm( pose1, pose2, residue_selection, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
@@ -1098,7 +1098,7 @@ CA_gdttm(
 	core::pose::Pose const& pose2,
 	core::Real &gdttm_score,
 	core::Real &gdtha_score,
-	std::list< Size > residue_selection //the std::list can be sorted! -- note std::sort can be applied to vectors
+	std::list< Size > const & residue_selection //the std::list can be sorted! -- note std::sort can be applied to vectors
 ) {
 	int natoms;
 	FArray2D< core::Real > p1a( 3, pose1.size() );
@@ -1331,7 +1331,7 @@ CA_rmsd_symmetric(
 
 	runtime_assert( core::pose::symmetry::is_symmetric( native_pose ) || core::pose::symmetry::is_symmetric( pose ) );
 
-	SymmetricConformation const & symm_conf (
+	auto const & symm_conf (
 		dynamic_cast<SymmetricConformation const & > ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 

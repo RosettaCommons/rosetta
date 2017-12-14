@@ -52,13 +52,7 @@ FragQualFilter::FragQualFilter():
 {}
 
 // @brief copy constructor
-FragQualFilter::FragQualFilter( FragQualFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
-	Super( rval ),
-	filtered_type_( rval.filtered_type_ ),
-	filtered_value_( rval.filtered_value_ )
-	// rmsd_cutoff_( 1.0 )
-{}
+FragQualFilter::FragQualFilter( FragQualFilter const & /*rval*/ ) = default;
 
 // @brief set filtered value
 void FragQualFilter::filtered_value( Real const & value )

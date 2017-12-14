@@ -50,9 +50,9 @@ using std::pair;
 using std::make_pair;
 using std::vector;
 using utility::vector1;
-typedef numeric::xyzTransform<Real> Xform;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
+using Xform = numeric::xyzTransform<Real>;
+using Vec = numeric::xyzVector<Real>;
+using Mat = numeric::xyzMatrix<Real>;
 
 //typedef vector1< Size > Clones;
 
@@ -349,7 +349,7 @@ SymmData::set_score_multiply_subunit( vector1< Real > & score_multiply_subunit_v
 }
 
 void
-SymmData::set_slide_info( SymSlideInfo slide_info )
+SymmData::set_slide_info( SymSlideInfo const & slide_info )
 {
 	slide_info_ = slide_info;
 }
@@ -376,7 +376,7 @@ SymmData::set_symm_transforms(
 }
 
 // @define: destructor
-SymmData::~SymmData(){}
+SymmData::~SymmData()= default;
 
 
 // @details: Parse symmetry information from a textfile. This function fills all data necessary to generate a
@@ -493,7 +493,7 @@ SymmData::read_symmetry_data_from_stream(
 					// Save the rotation matrix in the rot_matrix vector
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, 360.0 / N ) );
 					// We need to know what type of transformation this is
-					transform_type.push_back( make_pair( ++num_transformations, "rot") );
+					transform_type.emplace_back( ++num_transformations, "rot" );
 				}
 				if ( tokens[2] == "Ry" ) {
 					if ( tokens.size() != 3 ) {
@@ -502,7 +502,7 @@ SymmData::read_symmetry_data_from_stream(
 					N = utility::string2int( tokens[2] );
 					Vector axis (0,1,0);
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, 360.0 / N ) );
-					transform_type.push_back( make_pair( ++num_transformations, "rot") );
+					transform_type.emplace_back( ++num_transformations, "rot" );
 				}
 				if ( tokens[2] == "Rz" ) {
 					if ( tokens.size() != 3 ) {
@@ -511,7 +511,7 @@ SymmData::read_symmetry_data_from_stream(
 					N = utility::string2int( tokens[3] );
 					Vector axis (0,0,1);
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, 360.0 / N ) );
-					transform_type.push_back( make_pair( ++num_transformations, "rot") );
+					transform_type.emplace_back( ++num_transformations, "rot" );
 				}
 				// Rotate an angle "angle" around the x-axis
 				if ( tokens[2] == "Rx_angle" ) {
@@ -519,27 +519,27 @@ SymmData::read_symmetry_data_from_stream(
 						utility_exit_with_message( "[ERROR] Need to give two arguments..." );
 					}
 					Vector axis (1,0,0);
-					Real angle = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
+					auto angle = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, angle ) );
-					transform_type.push_back( make_pair( ++num_transformations, "rot") );
+					transform_type.emplace_back( ++num_transformations, "rot" );
 				}
 				if ( tokens[2] == "Ry_angle" ) {
 					if ( tokens.size() != 3 ) {
 						utility_exit_with_message( "[ERROR] Need to give two arguments..." );
 					}
 					Vector axis (0,1,0);
-					Real angle = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
+					auto angle = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, angle ) );
-					transform_type.push_back( make_pair( ++num_transformations, "rot") );
+					transform_type.emplace_back( ++num_transformations, "rot" );
 				}
 				if ( tokens[2] == "Rz_angle" ) {
 					if ( tokens.size() != 3 ) {
 						utility_exit_with_message( "[ERROR] Need to give two arguments..." );
 					}
 					Vector axis (0,0,1);
-					Real angle = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
+					auto angle = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
 					rot_matrix.push_back( numeric::rotation_matrix_degrees( axis, angle ) );
-					transform_type.push_back( make_pair( ++num_transformations, "rot") );
+					transform_type.emplace_back( ++num_transformations, "rot" );
 				}
 				// read translations. Need to give a vector
 				if ( tokens[1] == "trans" ) {
@@ -549,7 +549,7 @@ SymmData::read_symmetry_data_from_stream(
 						( static_cast<core::Real>( std::atof( split[2].c_str() ) ) ),
 						( static_cast<core::Real>( std::atof( split[3].c_str() ) ) ) );
 					trans_vector.push_back( trans );
-					transform_type.push_back( make_pair( ++num_transformations, "trans") );
+					transform_type.emplace_back( ++num_transformations, "trans" );
 				}
 			} else if ( tokens[1] == "virtual_transforms_stop" ) {
 				read_transforms = false;
@@ -748,7 +748,7 @@ SymmData::read_symmetry_data_from_stream(
 					map< string, pair< string, string > >::const_iterator itv_end = jump_string_to_virtual_pair_.end();
 
 					// jumps to the subunit first
-					for ( map< string, pair< string, string > >::const_iterator itv = itv_start; itv != itv_end; ++itv ) {
+					for ( auto itv = itv_start; itv != itv_end; ++itv ) {
 						pair< string, string > connect( itv->second );
 						string pos_id1( connect.first );
 						string pos_id2( connect.second );
@@ -758,7 +758,7 @@ SymmData::read_symmetry_data_from_stream(
 						}
 					}
 					// then intra-VRT jumps
-					for ( map< string, pair< string, string > >::const_iterator itv = itv_start; itv != itv_end; ++itv ) {
+					for ( auto itv = itv_start; itv != itv_end; ++itv ) {
 						pair< string, string > connect( itv->second );
 						string pos_id2( connect.second );
 						// We have already added the jumps from virtual residues to their corresponding subunits
@@ -806,7 +806,7 @@ SymmData::read_symmetry_data_from_stream(
 					map< string, pair< string, string > >::const_iterator itv_end = jump_string_to_virtual_pair_.end();
 
 					// jumps to the subunit first
-					for ( map< string, pair< string, string > >::const_iterator itv = itv_start; itv != itv_end; ++itv ) {
+					for ( auto itv = itv_start; itv != itv_end; ++itv ) {
 						pair< string, string > connect( itv->second );
 						string pos_id1( connect.first );
 						string pos_id2( connect.second );
@@ -816,7 +816,7 @@ SymmData::read_symmetry_data_from_stream(
 						}
 					}
 					// then intra-VRT jumps
-					for ( map< string, pair< string, string > >::const_iterator itv = itv_start; itv != itv_end; ++itv ) {
+					for ( auto itv = itv_start; itv != itv_end; ++itv ) {
 						pair< string, string > connect( itv->second );
 						string pos_id2( connect.second );
 						// We have already added the jumps from virtual residues to their corresponding subunits
@@ -1065,8 +1065,8 @@ SymmData::read_symmetry_data_from_stream(
 			jnum2dofname_[i->second] = i->first;
 		}
 
-		for ( map< Size, SymDof >::iterator i = dofs_.begin(); i != dofs_.end(); ++i ) {
-			string dofname = jnum2dofname_[i->first];
+		for ( auto & dof : dofs_ ) {
+			string dofname = jnum2dofname_[dof.first];
 			jname2components_[dofname] = components_moved_by_jump(dofname);
 			jname2subunits_[dofname] = subunits_moved_by_jump(dofname);
 		}
@@ -1168,8 +1168,7 @@ SymmData::read_symmetry_data_from_stream(
 
 	// process slide order information
 	vector< Size > slide_order;
-	for ( vector< string >::iterator it = slide_order_string_.begin(); it != slide_order_string_.end(); ++it ) {
-		string jump_id ( *it );
+	for ( auto jump_id : slide_order_string_ ) {
 		if ( jump_string_to_jump_num_.find(jump_id) == jump_string_to_jump_num_.end() ) {
 			string error( "[ERROR] Jump id is not found..." + jump_id );
 			utility_exit_with_message( error );
@@ -1205,7 +1204,7 @@ SymmData::sanity_check()
 	Size subunits(0);
 	map< string, pair< string, string > >::const_iterator itv_start = jump_string_to_virtual_pair_.begin();
 	map< string, pair< string, string > >::const_iterator itv_end = jump_string_to_virtual_pair_.end();
-	for ( map< string, pair< string, string > >::const_iterator itv = itv_start; itv != itv_end; ++itv ) {
+	for ( auto itv = itv_start; itv != itv_end; ++itv ) {
 		pair< string, string > connect( itv->second );
 		if ( connect.second == "SUBUNIT" ) ++subunits;
 	}
@@ -1233,8 +1232,8 @@ SymmData::show()
 	TR << "anchor the subunits at residue: " << anchor_residue_ << endl;
 
 	map< string, VirtualCoordinate >::iterator vit;
-	map< string, VirtualCoordinate >::iterator vit_begin = virtual_coordinates_.begin();
-	map<  string, VirtualCoordinate >::iterator vit_end = virtual_coordinates_.end();
+	auto vit_begin = virtual_coordinates_.begin();
+	auto vit_end = virtual_coordinates_.end();
 
 	for ( vit = vit_begin; vit != vit_end; ++vit ) {
 		string identifier( (*vit).first );
@@ -1249,8 +1248,8 @@ SymmData::show()
 	}
 
 	map< Size, SymDof >::iterator it;
-	map< Size, SymDof >::iterator it_begin = dofs_.begin();
-	map< Size, SymDof >::iterator it_end = dofs_.end();
+	auto it_begin = dofs_.begin();
+	auto it_end = dofs_.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		int jump_nbr ( (*it).first );
 		SymDof dof ( (*it).second );
@@ -1271,20 +1270,20 @@ SymmData::show()
 
 	map< string, pair< string, string > >::const_iterator itv_start = jump_string_to_virtual_pair_.begin();
 	map< string, pair< string, string > >::const_iterator itv_end = jump_string_to_virtual_pair_.end();
-	for ( map< string, pair< string, string > >::const_iterator itv = itv_start; itv != itv_end; ++itv ) {
+	for ( auto itv = itv_start; itv != itv_end; ++itv ) {
 		pair< string, string > connect( itv->second );
 		string pos_id1( connect.first );
 		string pos_id2( connect.second );
 		TR << "Jump " << itv->first << " " << pos_id1 << " " << pos_id2 << endl;
 	}
 	TR << "Include subunit:";
-	for ( vector1< Size >::iterator it = include_subunit_.begin(); it != include_subunit_.end(); ++it ) {
-		TR << ' ' << (*it) ;
+	for ( unsigned long & it : include_subunit_ ) {
+		TR << ' ' << it ;
 	}
 	TR << endl;
 	TR << "Output subunit:";
-	for ( vector1< Size >::iterator it = output_subunit_.begin(); it != output_subunit_.end(); ++it ) {
-		TR << ' ' << (*it) ;
+	for ( unsigned long & it : output_subunit_ ) {
+		TR << ' ' << it ;
 	}
 	TR << endl;
 	TR << "SlideType: ";
@@ -1299,9 +1298,8 @@ SymmData::show()
 	TR << slide_info_.get_SlideCriteriaVal() << endl;
 	TR << "SlideOrder: ";
 	if ( slide_order_string_.size() == 0 ) TR << "none";
-	for ( vector< string >::iterator it = slide_order_string_.begin();
-			it != slide_order_string_.end(); ++it ) {
-		TR << ' ' << (*it) ;
+	for ( auto & it : slide_order_string_ ) {
+		TR << ' ' << it ;
 	}
 
 	TR << endl;
@@ -1333,8 +1331,8 @@ SymmData::get_parent_jump(std::string const & jname) const {
 		utility_exit_with_message("can't find parent jump of jump"+jname);
 	}
 	std::string upvirt = jump_string_to_virtual_pair_.find(jname)->second.first;
-	for ( map<string,pair<string,string> >::const_iterator i = jump_string_to_virtual_pair_.begin(); i != jump_string_to_virtual_pair_.end(); ++i ) {
-		if ( i->second.second == upvirt ) return i->first;
+	for ( auto const & i : jump_string_to_virtual_pair_ ) {
+		if ( i.second.second == upvirt ) return i.first;
 	}
 	// utility_exit_with_message("can't find parent jump of jump: "+jname);
 	return NOPARENT;
@@ -1342,8 +1340,8 @@ SymmData::get_parent_jump(std::string const & jname) const {
 
 std::string const &
 SymmData::get_parent_virtual(std::string const & vname) const {
-	for ( map<string,pair<string,string> >::const_iterator i = jump_string_to_virtual_pair_.begin(); i != jump_string_to_virtual_pair_.end(); ++i ) {
-		if ( i->second.second == vname ) return i->second.first;
+	for ( auto const & i : jump_string_to_virtual_pair_ ) {
+		if ( i.second.second == vname ) return i.second.first;
 	}
 	// utility_exit_with_message("can't find parent jump of virtual: "+vname);
 	return NOPARENT;
@@ -1401,8 +1399,8 @@ SymmData::leaves_of_jump(std::string const & jname) const {
 	}
 	string const & ancestor( jump_string_to_virtual_pair_.find(jname)->second.second );
 	vector1<string> leaves;
-	for ( map<std::string,Size>::const_iterator i = virt_id_to_subunit_num_.begin(); i != virt_id_to_subunit_num_.end(); ++i ) {
-		if ( is_ancestor_virtual(ancestor,i->first) ) leaves.push_back(i->first);
+	for ( auto const & i : virt_id_to_subunit_num_ ) {
+		if ( is_ancestor_virtual(ancestor,i.first) ) leaves.push_back(i.first);
 	}
 	return leaves;
 }
@@ -1526,7 +1524,7 @@ operator==(
 	}
 
 	for (
-			std::vector< std::vector< std::string > >::const_iterator
+			auto
 			ai = a.symm_transforms_.begin(), aie = a.symm_transforms_.end(),
 			bi = b.symm_transforms_.begin();
 			ai != aie; ++ai, ++bi ) {
@@ -1537,7 +1535,7 @@ operator==(
 	}
 
 	for (
-			std::map< Size, WtedClones >::const_iterator
+			auto
 			ai = a.jump_clones_.begin(), aie = a.jump_clones_.end(),
 			bi = b.jump_clones_.begin();
 			ai != aie; ++ai, ++bi ) {
@@ -1548,7 +1546,7 @@ operator==(
 	}
 
 	for (
-			std::map< std::string, utility::vector1<char> >::const_iterator
+			auto
 			ai = a.jname2components_.begin(), aie = a.jname2components_.end(),
 			bi = b.jname2components_.begin();
 			ai != aie; ++ai, ++bi ) {
@@ -1559,7 +1557,7 @@ operator==(
 	}
 
 	for (
-			std::map< std::string, utility::vector1<Size> >::const_iterator
+			auto
 			ai = a.jname2subunits_.begin(), aie = a.jname2subunits_.end(),
 			bi = b.jname2subunits_.begin();
 			ai != aie; ++ai, ++bi ) {

@@ -69,7 +69,7 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 
 		// only grab scores that have non-zero weights.
 		if ( *wts_iter != 0.0 ) {
-			core::scoring::ScoreType sc_type
+			auto sc_type
 				= core::scoring::ScoreType( emap_iter - emap.begin() + 1 );
 			std::string name = core::scoring::name_from_score_type( sc_type );
 

@@ -53,8 +53,8 @@ namespace jd3 {
 namespace full_model_inputters {
 
 
-PDBFullModelInputter::PDBFullModelInputter() {}
-PDBFullModelInputter::~PDBFullModelInputter() {}
+PDBFullModelInputter::PDBFullModelInputter() = default;
+PDBFullModelInputter::~PDBFullModelInputter() = default;
 
 bool PDBFullModelInputter::job_available_on_command_line() const
 {

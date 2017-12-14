@@ -63,13 +63,12 @@ StoredResidueSubsetSelector::StoredResidueSubsetSelector() :
 	subset_name_( "" )
 {}
 
-StoredResidueSubsetSelector::StoredResidueSubsetSelector( std::string  subset_name ):
+StoredResidueSubsetSelector::StoredResidueSubsetSelector( std::string const & subset_name ):
 	ResidueSelector(),
-	subset_name_(std::move( subset_name ))
+	subset_name_( subset_name )
 {}
 
-StoredResidueSubsetSelector::~StoredResidueSubsetSelector()
-= default;
+StoredResidueSubsetSelector::~StoredResidueSubsetSelector() = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.

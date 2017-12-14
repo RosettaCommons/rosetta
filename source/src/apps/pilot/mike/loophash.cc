@@ -47,6 +47,7 @@
 #include <protocols/relax/FastRelax.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -99,8 +100,8 @@ using namespace protocols::loophash;
 using namespace numeric::geometry::hashing;
 
 class LoopHashRelax_Sampler;
-typedef utility::pointer::shared_ptr< LoopHashRelax_Sampler > LoopHashRelax_SamplerOP;
-typedef utility::pointer::shared_ptr< LoopHashRelax_Sampler const > LoopHashRelax_SamplerCOP;
+using LoopHashRelax_SamplerOP = utility::pointer::shared_ptr<LoopHashRelax_Sampler>;
+using LoopHashRelax_SamplerCOP = utility::pointer::shared_ptr<const LoopHashRelax_Sampler>;
 
 class LoopHashRelax_Sampler: public protocols::moves::Mover {
 public:
@@ -108,23 +109,23 @@ public:
 	LoopHashRelax_Sampler(
 		LoopHashLibraryOP library
 	):
-		library_(library)
+		library_(std::move(library))
 
 	{
 	}
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new LoopHashRelax_Sampler( *this ) );
 	}
 
 
-	virtual std::string get_name() const {
+	std::string get_name() const override {
 		return "LoopHashRelax_Sampler";
 	}
 
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new LoopHashRelax_Sampler( library_ ) );
 	}
 
@@ -190,7 +191,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 	//read_coord_cst(); //include this function later !
 
 	for ( int round = 1; round <= option[ OptionKeys::lh::rounds ]; round ++ ) {
-		core::Size total_starttime = time(NULL);
+		core::Size total_starttime = time(nullptr);
 
 		static int casecount = 0;
 		core::pose::Pose opose = pose;
@@ -207,7 +208,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 
 
 		// Generate alternate structures
-		core::Size starttime2 = time(NULL);
+		core::Size starttime2 = time(nullptr);
 		core::Size sampler_chunk_size = 1;
 		core::Size start_res = std::max( core::Size(2), core::Size(rand()%(pose.size() - sampler_chunk_size - 2 )) );
 		core::Size stop_res  = std::min( core::Size(pose.size()), core::Size(start_res + sampler_chunk_size - 1 )  );
@@ -227,7 +228,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		lsampler.set_start_res( start_res );
 		lsampler.set_stop_res(  stop_res );
 		lsampler.build_structures( pose, lib_structs );
-		core::Size endtime2 = time(NULL);
+		core::Size endtime2 = time(nullptr);
 		core::Size loophash_time = endtime2 - starttime2;
 		TR.Info << "FOUND (" << start_res << " to " << stop_res << "): "
 			<< lib_structs.size() << " states in time: "
@@ -307,9 +308,9 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 
 		/// For fullatom goodness, continue
 
-		core::Size starttime = time(NULL);
+		core::Size starttime = time(nullptr);
 		relax->batch_apply( select_lib_structs );
-		core::Size endtime = time(NULL);
+		core::Size endtime = time(nullptr);
 		core::Size batchrelax_time = endtime - starttime;
 		TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 
@@ -383,7 +384,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 			last_accepted_score = new_energy;
 		}  // end of metropolis acceptance if-block
 
-		core::Size total_endtime = time(NULL);
+		core::Size total_endtime = time(nullptr);
 
 		TR.Info << "------------------------------------------------------------------------------------" << std::endl;
 		TR.Info << " Energy: " << round << "  " << old_energy << "  " << new_energy << std::endl;

@@ -74,7 +74,7 @@ public: // Constructors & General Setup
 	/// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
 	/// specified spanfile
 	AddMembraneMover(
-		std::string spanfile,
+		std::string const & spanfile,
 		core::Size membrane_rsd=0
 	);
 
@@ -101,8 +101,8 @@ public: // Constructors & General Setup
 	/// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
 	/// specified spanfile and lipsfile
 	AddMembraneMover(
-		std::string spanfile,
-		std::string lipsfile,
+		std::string const & spanfile,
+		std::string const & lipsfile,
 		core::Size membrane_rsd=0
 	);
 
@@ -110,9 +110,9 @@ public: // Constructors & General Setup
 	/// @brief Create a membrane positioned at "init_center" and aligned with
 	/// "init_normal". Use a defualt lipid type DOPC.
 	AddMembraneMover(
-		core::Vector init_center,
-		core::Vector init_normal,
-		std::string spanfile = "",
+		core::Vector const & init_center,
+		core::Vector const & init_normal,
+		std::string const & spanfile = "",
 		core::Size membrane_rsd = 0
 	);
 

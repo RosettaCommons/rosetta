@@ -133,7 +133,7 @@ close_chainbreaks(
 						&& movemap.get_bb( max_loop_end + 1)
 						) ++max_loop_end;
 				if ( max_loop_end > min_loop_begin ) {    // put in list
-					cuts.push_back( std::make_pair(  max_loop_end - min_loop_begin, cutpoint ) );
+					cuts.emplace_back(  max_loop_end - min_loop_begin, cutpoint );
 				}
 			}
 		}
@@ -330,7 +330,7 @@ core::fragment::JumpingFrameOP generate_jump_frame( Size startpos, Size endpos, 
 ///////////////////////////////////////////////////////////////////////////////
 //// some legacy code
 ///
-typedef utility::vector1< PointPosition > PointList;
+using PointList = utility::vector1<PointPosition>;
 
 void
 get_CA_vectors(

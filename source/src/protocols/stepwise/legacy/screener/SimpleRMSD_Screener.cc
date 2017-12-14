@@ -19,6 +19,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.legacy.screener.SimpleRMSD_Screener" );
 
@@ -46,8 +47,7 @@ SimpleRMSD_Screener::SimpleRMSD_Screener( pose::Pose const & pose,
 }
 
 //Destructor
-SimpleRMSD_Screener::~SimpleRMSD_Screener()
-{}
+SimpleRMSD_Screener::~SimpleRMSD_Screener() = default;
 
 //////////////////////////////////////////////////////////////////////////
 bool

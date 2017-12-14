@@ -82,7 +82,7 @@ RingConformerSet::operator=( RingConformerSet const & object_to_copy )
 }
 
 // Destructor
-RingConformerSet::~RingConformerSet() {}
+RingConformerSet::~RingConformerSet() = default;
 
 
 // Standard Rosetta methods ///////////////////////////////////////////////////////////////////////////////////////////
@@ -339,7 +339,7 @@ RingConformerSet::get_lowest_energy_conformer() const
 RingConformer const &
 RingConformerSet::get_random_conformer() const
 {
-	uint const i( uint( numeric::random::rg().uniform() * degenerate_conformers_.size() + 1 ) );
+	auto const i( uint( numeric::random::rg().uniform() * degenerate_conformers_.size() + 1 ) );
 
 	return degenerate_conformers_[ i ];
 }
@@ -348,7 +348,7 @@ RingConformerSet::get_random_conformer() const
 RingConformer const &
 RingConformerSet::get_random_local_min_conformer() const
 {
-	uint const i( uint( numeric::random::rg().uniform() * energy_minima_conformers_.size() + 1 ) );
+	auto const i( uint( numeric::random::rg().uniform() * energy_minima_conformers_.size() + 1 ) );
 
 	return energy_minima_conformers_[ i ];
 }

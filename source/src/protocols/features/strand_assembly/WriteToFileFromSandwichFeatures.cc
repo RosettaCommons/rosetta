@@ -596,12 +596,12 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 
 			ElectroStatics_txt_file << residue_num << "\t" << pose.residue_type(residue_num).name3();
 
-			numeric::xyzVector< core::Real > xyz_of_centroid_of_RKDE;
-			numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_R;
-			numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_R;
-			numeric::xyzVector< core::Real > xyz_of_terminal_atom_of_K;
-			numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_DE;
-			numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_DE;
+			numeric::xyzVector< core::Real > xyz_of_centroid_of_RKDE( 0 );
+			numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_R( 0 );
+			numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_R( 0 );
+			numeric::xyzVector< core::Real > xyz_of_terminal_atom_of_K( 0 );
+			numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_DE( 0 );
+			numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_DE( 0 );
 
 			if ( pose.residue_type(residue_num).name3() == "ARG" ) {
 				// <begin> calculate centroid position
@@ -702,12 +702,12 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 				}
 				// <end> check whether "other_residue" has low atom position uncertainty
 
-				numeric::xyzVector< core::Real > xyz_of_centroid_of_other_RKDE;
-				numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_other_R;
-				numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_other_R;
-				numeric::xyzVector< core::Real > xyz_of_terminal_atom_of_other_K;
-				numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_other_DE;
-				numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_other_DE;
+				numeric::xyzVector< core::Real > xyz_of_centroid_of_other_RKDE( 0 );
+				numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_other_R( 0 );
+				numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_other_R( 0 );
+				numeric::xyzVector< core::Real > xyz_of_terminal_atom_of_other_K( 0 );
+				numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_other_DE( 0 );
+				numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_other_DE( 0 );
 
 				if ( pose.residue_type(other_residue_num).name3() == "ARG" ) {
 					// <begin> calculate centroid position

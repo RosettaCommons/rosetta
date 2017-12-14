@@ -261,7 +261,7 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 	// movemap
 	mm->clear();
 	for ( auto const & loop : loops ) {
-		for ( int j=(int)(loop.start()) ; j<=(int)(loop.stop()); ++j ) {
+		for ( auto j=(int)(loop.start()) ; j<=(int)(loop.stop()); ++j ) {
 			mm->set_bb(j,true);
 		}
 	}
@@ -550,7 +550,7 @@ void restore_pose_from_rbsegs(
 				pose_out.copy_segment( nsegment_reses, pose_in,  rb_start, res_rb_counter  );
 			}
 			// copy secstruct
-			for ( int k=(int)rb_start; k<=(int)rb_end; ++k ) {
+			for ( auto k=(int)rb_start; k<=(int)rb_end; ++k ) {
 				pose_out.set_secstruct( k, pose_in.secstruct( res_rb_counter+k-rb_start ) );
 			}
 			res_rb_counter += nsegment_reses;
@@ -715,8 +715,8 @@ void guess_rbsegs_from_pose(
 
 			// foreach res in i,j
 			bool found = false;
-			for ( int ii=(int)simple_segments[i][1].start(); ii<=(int)simple_segments[i][1].end() && !found; ++ii ) {
-				for ( int jj=(int)simple_segments[j][1].start(); jj<=(int)simple_segments[j][1].end() && !found; ++jj ) {
+			for ( auto ii=(int)simple_segments[i][1].start(); ii<=(int)simple_segments[i][1].end() && !found; ++ii ) {
+				for ( auto jj=(int)simple_segments[j][1].start(); jj<=(int)simple_segments[j][1].end() && !found; ++jj ) {
 					core::Real d2=10;
 
 					if ( pose.residue(ii).aa() != core::chemical::aa_pro && pose.residue(jj).aa() != core::chemical::aa_pro ) {

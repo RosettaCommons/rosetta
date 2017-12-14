@@ -52,8 +52,8 @@ namespace checkpoint {
 
 class FileBuffer {
 public:
-	FileBuffer( std::string  filename, bool gzipped = false ):
-		filename_(std::move( filename )),
+	FileBuffer( std::string const & filename, bool gzipped = false ):
+		filename_( filename ),
 		gzipped_( gzipped )
 	{
 	}
@@ -74,7 +74,7 @@ private:
 
 class CheckPointer : public utility::pointer::ReferenceCount {
 public:
-	CheckPointer( std::string type ); // move-constructed
+	CheckPointer( std::string const & type );
 
 	~CheckPointer() override {
 		clear_checkpoints();

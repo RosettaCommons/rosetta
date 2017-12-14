@@ -156,7 +156,7 @@ Size SSElementMotifContactEnergy::get_SSelements_in_contact(Size element,vector1
 					core::scoring::motif::XformScoreCOP xs_bb_fxn1(mman_->get_xform_score_BB_BB(ss1,ss2,aa1,aa2));
 					core::scoring::motif::XformScoreCOP xs_bb_fxn2(mman_->get_xform_score_BB_BB(ss2,ss1,aa2,aa1));
 					Real tmpScore = 0;
-					if ( xs_bb_fxn1 != NULL ) {
+					if ( xs_bb_fxn1 != nullptr ) {
 						tmpScore += xs_bb_fxn1->score_of_bin(Xbb);
 						tmpScore += xs_bb_fxn2->score_of_bin(Xbb.inverse());
 					}

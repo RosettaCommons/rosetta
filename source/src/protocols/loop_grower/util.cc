@@ -40,7 +40,7 @@ using namespace core;
 
 void
 transform_res_to_subunit( core::pose::Pose &pose, core::conformation::ResidueOP xformed, core::Size symmcopy) {
-	core::conformation::symmetry::SymmetricConformation & SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+	auto & SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	core::Size nres_asu = symm_info->num_independent_residues();
 
@@ -53,7 +53,7 @@ transform_res_to_subunit( core::pose::Pose &pose, core::conformation::ResidueOP 
 
 void
 transform_to_closest_symmunit(core::pose::Pose & cen_pose, core::pose::Pose & fa_pose, Size lower_pose){
-	core::conformation::symmetry::SymmetricConformation & SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( cen_pose.conformation()) );
+	auto & SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( cen_pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	Size nsubunits = symm_info->subunits();
 	//add terminus checks!!!!

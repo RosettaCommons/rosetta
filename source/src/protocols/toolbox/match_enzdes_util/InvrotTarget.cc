@@ -44,7 +44,7 @@ InvrotTarget::InvrotTarget()
 	next_nodes_.clear();
 }
 
-InvrotTarget::~InvrotTarget(){}
+InvrotTarget::~InvrotTarget()= default;
 
 core::conformation::ResidueCOP
 InvrotTarget::target_res_for_geom_cst( core::Size geom_cst ) const
@@ -72,7 +72,7 @@ InvrotTarget::generate_constraints(
 		core::scoring::constraints::ConstraintCOP this_child_cst( (next_nodes_[i]->generate_constraints( pose, geomcst_seqpos ) ) );
 		if ( this_child_cst ) node_constraints.push_back( this_child_cst );
 	}
-	if ( node_constraints.size() == 0 ) return NULL;
+	if ( node_constraints.size() == 0 ) return nullptr;
 
 	return core::scoring::constraints::ConstraintCOP( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::MultiConstraint( node_constraints ) ) );
 }
@@ -171,11 +171,11 @@ SingleResidueInvrotTarget::SingleResidueInvrotTarget(
 {
 	//this might seem a bit clumsy, but at some point we have to change from vector to list
 	std::list< core::conformation::ResidueCOP > all_targets;
-	for ( utility::vector1< core::conformation::ResidueCOP >::const_iterator res_it( single_res.begin() ); res_it != single_res.end(); ++res_it ) all_targets.push_back( *res_it );
+	for ( auto const & single_re : single_res ) all_targets.push_back( single_re );
 	this->set_all_target_res( all_targets );
 }
 
-SingleResidueInvrotTarget::~SingleResidueInvrotTarget(){}
+SingleResidueInvrotTarget::~SingleResidueInvrotTarget()= default;
 
 void
 SingleResidueInvrotTarget::generate_representative_target_res_for_geom_cst( Size const num_geom_cst )

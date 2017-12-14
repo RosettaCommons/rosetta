@@ -74,12 +74,12 @@ using namespace scoring;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
-typedef std::vector<Real> ddGs;
+using ddGs = std::vector<Real>;
 static basic::Tracer TR( "apps.pilot.yiliu.ddg" );
 
 ///////////////////////////////////////////////////////////////////////////////
 // YAML helper function
-std::ostream & writeYamlValue(std::ostream & S, std::string name, core::Real value)
+std::ostream & writeYamlValue(std::ostream & S, std::string const & name, core::Real value)
 {
 	S << "'" << name << "' : " << value << ", ";
 	return S;
@@ -87,7 +87,7 @@ std::ostream & writeYamlValue(std::ostream & S, std::string name, core::Real val
 
 ///////////////////////////////////////////////////////////////////////////////
 // YAML helper function
-std::ostream & writeYamlValue(std::ostream & S, std::string name, bool value)
+std::ostream & writeYamlValue(std::ostream & S, std::string const & name, bool value)
 {
 	std::string sv;
 	if ( value ) sv = "True";
@@ -104,8 +104,8 @@ Real
 sum(ddGs &scores_to_sum)
 {
 	Real sum=0;
-	for ( Size i =0; i<scores_to_sum.size(); i++ ) {
-		sum+=scores_to_sum[i];
+	for ( double i : scores_to_sum ) {
+		sum+=i;
 	}
 	return sum;
 }
@@ -158,9 +158,9 @@ average_score_components( ObjexxFCL::FArray2D< Real > &scores_to_average,
 	utility::vector1<Real> &averaged_scores )
 {
 	averaged_scores = utility::vector1<Real>(scores_to_average.u1()-scores_to_average.l1()+1);
-	for ( Size i = Size(scores_to_average.l1()); i <= Size(scores_to_average.u1()); i++ ) {
+	for ( auto i = Size(scores_to_average.l1()); i <= Size(scores_to_average.u1()); i++ ) {
 		Real sum_score_component = 0;
-		for ( Size j = Size(scores_to_average.l2()); j <= Size(scores_to_average.u2()); j++ ) {
+		for ( auto j = Size(scores_to_average.l2()); j <= Size(scores_to_average.u2()); j++ ) {
 			sum_score_component += scores_to_average(i,j);
 		}
 		averaged_scores[i]=
@@ -501,7 +501,7 @@ main( int argc, char * argv [] )
 		for ( Size i =1; i<=pose.size(); i++ ) {
 
 			if ( storage_task->design_residue(i) ) {
-				for ( ResidueLevelTask::ResidueTypeCOPListConstIter aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
+				for ( auto aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
 						aa_end(storage_task->residue_task(i).allowed_residue_types_end());
 						aa_iter != aa_end; ++aa_iter ) {
 

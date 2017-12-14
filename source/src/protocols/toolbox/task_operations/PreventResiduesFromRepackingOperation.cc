@@ -26,6 +26,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -69,14 +70,14 @@ std::string PreventResiduesFromRepackingOperationCreator::keyname() const
 	return PreventResiduesFromRepackingOperation::keyname();
 }
 
-PreventResiduesFromRepackingOperation::PreventResiduesFromRepackingOperation() {}
+PreventResiduesFromRepackingOperation::PreventResiduesFromRepackingOperation() = default;
 
-PreventResiduesFromRepackingOperation::PreventResiduesFromRepackingOperation( utility::vector1 < core::Size > residues )
+PreventResiduesFromRepackingOperation::PreventResiduesFromRepackingOperation( utility::vector1 < core::Size > const & residues )
 : parent(), residues_( residues ), reference_pdb_id_( "" )
 {
 }
 
-PreventResiduesFromRepackingOperation::~PreventResiduesFromRepackingOperation() {}
+PreventResiduesFromRepackingOperation::~PreventResiduesFromRepackingOperation() = default;
 
 core::pack::task::operation::TaskOperationOP PreventResiduesFromRepackingOperation::clone() const
 {

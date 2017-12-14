@@ -21,8 +21,8 @@ namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-LoopsFileDefinerCreator::LoopsFileDefinerCreator() {}
-LoopsFileDefinerCreator::~LoopsFileDefinerCreator() {}
+LoopsFileDefinerCreator::LoopsFileDefinerCreator() = default;
+LoopsFileDefinerCreator::~LoopsFileDefinerCreator() = default;
 
 LoopsDefinerOP
 LoopsFileDefinerCreator::create_loops_definer() const {

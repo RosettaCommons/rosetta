@@ -68,8 +68,7 @@ VDW_RepScreenInfo::VDW_RepScreenInfo( VDW_RepScreenInfo const & src ):
 
 
 //Destructor
-VDW_RepScreenInfo::~VDW_RepScreenInfo()
-{}
+VDW_RepScreenInfo::~VDW_RepScreenInfo() = default;
 
 } //rna
 } //pose

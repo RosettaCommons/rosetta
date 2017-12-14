@@ -171,13 +171,13 @@ catch (const std::bad_alloc &) {
 
 //  lm_lmdif (low-level, modified legacy interface for full control)
 
-void lm_lmpar( int n, double *r, int ldr, int *ipvt, double *diag,
+void lm_lmpar( int n, double *r, int ldr, int *ipvt, const double *diag,
 	double *qtb, double delta, double *par, double *x,
 	double *sdiag, double *aux, double *xdi );
 void lm_qrfac( int m, int n, double *a, int pivot, int *ipvt,
 	double *rdiag, double *acnorm, double *wa );
-void lm_qrsolv( int n, double *r, int ldr, int *ipvt, double *diag,
-	double *qtb, double *x, double *sdiag, double *wa );
+void lm_qrsolv( int n, double *r, int ldr, const int *ipvt, const double *diag,
+	const double *qtb, double *x, double *sdiag, double *wa );
 
 #define MIN(a,b) (((a)<=(b)) ? (a) : (b))
 #define MAX(a,b) (((a)>=(b)) ? (a) : (b))
@@ -667,14 +667,14 @@ void lm_lmdif( int m, int n, double *x, double *fvec, double ftol,
 
 		// outer: end of the loop.
 
-	} while (1);
+	} while (true);
 
 } // lm_lmdif.
 
 
 //  lm_lmpar (determine Levenberg-Marquardt parameter)
 
-void lm_lmpar(int n, double *r, int ldr, int *ipvt, double *diag,
+void lm_lmpar(int n, double *r, int ldr, int *ipvt, const double *diag,
 	double *qtb, double delta, double *par, double *x,
 	double *sdiag, double *aux, double *xdi)
 {
@@ -1075,8 +1075,8 @@ void lm_qrfac(int m, int n, double *a, int pivot, int *ipvt,
 
 
 //  lm_qrsolv (linear least-squares)
-void lm_qrsolv(int n, double *r, int ldr, int *ipvt, double *diag,
-	double *qtb, double *x, double *sdiag, double *wa)
+void lm_qrsolv(int n, double *r, int ldr, const int *ipvt, const double *diag,
+	const double *qtb, double *x, double *sdiag, double *wa)
 {
 	//
 	//     Given an m by n matrix a, an n by n diagonal matrix d,

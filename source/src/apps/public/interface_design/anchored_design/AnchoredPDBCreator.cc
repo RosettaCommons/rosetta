@@ -73,7 +73,7 @@ public:
 		read_in_insert_loop_info();
 	}
 
-	virtual ~APDBCMover(){};
+	~APDBCMover() override= default;
 
 	void read_in_insert_loop_info() {
 		std::string filename( basic::options::option[ basic::options::OptionKeys::AnchoredPDBCreator::scaffold_loop ].value() );
@@ -111,9 +111,9 @@ public:
 
 	}//read_in_insert_loop_info
 
-	virtual
+
 	void
-	apply( core::pose::Pose & pose ) {
+	apply( core::pose::Pose & pose ) override {
 
 		//domain insertion
 		//using protocols::toolbox::pose_manipulation::insert_pose_into_pose;
@@ -166,7 +166,7 @@ public:
 		return;
 	}
 
-	virtual std::string get_name() const { return "APDBCMover"; }
+	std::string get_name() const override { return "APDBCMover"; }
 
 
 private:
@@ -179,7 +179,7 @@ private:
 	core::pose::Pose target;
 };
 
-typedef utility::pointer::shared_ptr< APDBCMover > APDBCMoverOP;
+using APDBCMoverOP = utility::pointer::shared_ptr<APDBCMover>;
 
 int main( int argc, char* argv[] )
 {

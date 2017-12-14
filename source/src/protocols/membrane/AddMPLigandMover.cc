@@ -187,7 +187,7 @@ AddMPLigandMover::apply( core::pose::Pose & pose ) {
 	utility::vector1< core::Size > chain_end_residues( chain_end_res( pose ) );
 
 	// get chainid of user-defined ligand anchor point
-	core::Size ligand_anchor_chain = static_cast< core::Size >( pose.chain( closest_rsd_ ) );
+	auto ligand_anchor_chain = static_cast< core::Size >( pose.chain( closest_rsd_ ) );
 	TR << "ligand anchor chain " << ligand_anchor_chain << std::endl;
 
 	// get the anchor residues as chain tm COMs

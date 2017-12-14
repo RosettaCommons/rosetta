@@ -103,7 +103,7 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 
 	Size ct( 1 );
 
-	typedef utility::vector1< Real > RealVector;
+	using RealVector = utility::vector1<Real>;
 	RealVector distance_deltas( structures_.size(), 0.0 );
 
 

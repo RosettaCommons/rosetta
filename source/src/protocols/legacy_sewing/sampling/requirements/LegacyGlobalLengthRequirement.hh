@@ -39,7 +39,7 @@ public:
 	LegacyGlobalLengthRequirement();
 
 	LegacyGlobalLengthRequirement(
-		std::set<std::string> valid_dssp_codes,
+		std::set<std::string> const & valid_dssp_codes,
 		core::Size min_length,
 		core::Size max_length
 	);

@@ -138,7 +138,7 @@ get_interface_deltas(
 
 	// Interface delta, broken down by component
 	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
+		auto ii = core::scoring::ScoreType(i);
 
 		if ( !scorefxn->has_nonzero_weight(ii) ) continue;
 

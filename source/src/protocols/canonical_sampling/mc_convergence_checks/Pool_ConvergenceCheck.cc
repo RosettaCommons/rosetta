@@ -52,13 +52,13 @@ namespace canonical_sampling {
 namespace mc_convergence_checks {
 
 // @brief Auto-generated virtual destructor
-Pool_Evaluator::~Pool_Evaluator() {}
+Pool_Evaluator::~Pool_Evaluator() = default;
 
 // @brief Auto-generated virtual destructor
-Pool_ConvergenceCheck::~Pool_ConvergenceCheck() {}
+Pool_ConvergenceCheck::~Pool_ConvergenceCheck() = default;
 
 // @brief Auto-generated virtual destructor
-Pool_RMSD::~Pool_RMSD() {}
+Pool_RMSD::~Pool_RMSD() = default;
 
 using namespace ObjexxFCL;
 using namespace core;
@@ -230,8 +230,8 @@ core::Size Pool_RMSD::evaluate( FArray2D_double& coords, std::string& best_decoy
 	tr.Debug << "evaluating: start from index " << index << " of " << pool_.n_decoys() << std::endl;
 
 	FArray1D_double weights( pool_.n_atoms(), 1.0 );
-	for ( utility::vector1< core::Size >::const_iterator it = excluded_residues_.begin(); it!=excluded_residues_.end(); ++it ) {
-		weights( *it ) = 0.0;
+	for ( unsigned long excluded_residue : excluded_residues_ ) {
+		weights( excluded_residue ) = 0.0;
 	}
 
 	FArray1D_double transvec( 3 );

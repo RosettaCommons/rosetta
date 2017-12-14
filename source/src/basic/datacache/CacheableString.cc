@@ -28,7 +28,7 @@
 namespace basic {
 namespace datacache {
 
-CacheableString::CacheableString( std::string str ) : CacheableData(), str_(std::move(str)) {}
+CacheableString::CacheableString( std::string const & str ) : CacheableData(), str_(str) {}
 CacheableString::~CacheableString() = default;
 CacheableDataOP CacheableString::clone() const { return CacheableDataOP( new CacheableString(*this) ); }
 std::string const & CacheableString::str() const { return str_; }

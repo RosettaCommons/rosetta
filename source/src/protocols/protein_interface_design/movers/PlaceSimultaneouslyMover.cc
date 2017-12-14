@@ -119,8 +119,7 @@ using namespace core;
 // XRW TEMP  return "PlaceSimultaneously";
 // XRW TEMP }
 
-PlaceSimultaneouslyMover::~PlaceSimultaneouslyMover() {
-}
+PlaceSimultaneouslyMover::~PlaceSimultaneouslyMover() = default;
 
 protocols::moves::MoverOP
 PlaceSimultaneouslyMover::clone() const {
@@ -354,7 +353,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 	utility::vector1< core::Size > prev_pack( prevent_repacking() );
 	prev_pack.insert( prev_pack.begin(), targets.begin(), targets.end() );
 	std::sort( prev_pack.begin(), prev_pack.end() );
-	utility::vector1< core::Size >::iterator last = std::unique( prev_pack.begin(), prev_pack.end() );
+	auto last = std::unique( prev_pack.begin(), prev_pack.end() );
 	prev_pack.erase( last, prev_pack.end() );
 	prevent_repacking( prev_pack );
 	//end add to prevent repacking
@@ -391,11 +390,11 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 		utility::vector1< Size > scanned_position;
 		core::pose::Pose saved_pose=pose;
 
-		for ( PlacementAuctionMover::ResidueAuction::iterator each_auction_result = saved_auction.begin(); each_auction_result != saved_auction.end(); ++each_auction_result ) {
+		for ( auto & each_auction_result : saved_auction ) {
 			//old copy of pose and cleared auction
 			auction_->clear();
 			saved_pose=pose;
-			auction_->insert(*each_auction_result);
+			auction_->insert(each_auction_result);
 			PackerTaskOP task = create_task_for_allhotspot_packing( saved_pose );
 			//TR << "test loop through saved_auction: " << auction_->auction_results().size() << " , " << new_auction.size() << std::endl;
 
@@ -447,28 +446,28 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 			//decide whether to keep it or not
 			//complexity for the unknown number of hotspot
 			if ( new_auction.empty() ) { //size()==0) {
-				new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
+				new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result.second.first, std::make_pair( each_auction_result.second.second.first, each_auction_result.second.second.second) ) ) );
 			} else {
 				Size status=0;
 				// Modifying a container you're iterating over is perilous, as iterators may become invalid.
 				// Luckily for a multimap only the iterator being deleted is invalidated. We can make a copy and increment the main iterator before we delete the copy.
-				for ( PlacementAuctionMover::ResidueAuction::iterator selected_auction_iterator = new_auction.begin(); selected_auction_iterator != new_auction.end(); /*intentionally left blank*/ ) {
-					PlacementAuctionMover::ResidueAuction::iterator selected_auction_result( selected_auction_iterator );
+				for ( auto selected_auction_iterator = new_auction.begin(); selected_auction_iterator != new_auction.end(); /*intentionally left blank*/ ) {
+					auto selected_auction_result( selected_auction_iterator );
 					++selected_auction_iterator; // Increment before delete, because it will be invalid after the deletion of the copy
-					if ( each_auction_result->second.first == selected_auction_result->second.first ) {
+					if ( each_auction_result.second.first == selected_auction_result->second.first ) {
 						if ( cst_score < selected_auction_result->first ) {
 							new_auction.erase( selected_auction_result );
 							// selected_auction_result is now an invalid iterator
 							// NOTE: Inserting into a multimap we're iterating over doesn't invalidate iterators, but it may mean we will encounter the inserted value during the current round of iteration.
 							//       This may not be the behavior we're after here.
-							new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
+							new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result.second.first, std::make_pair( each_auction_result.second.second.first, each_auction_result.second.second.second) ) ) );
 						}
 						status=1;
 					}
 				}
 
 				if ( status==0 ) {
-					new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
+					new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result.second.first, std::make_pair( each_auction_result.second.second.first, each_auction_result.second.second.second) ) ) );
 				}
 
 			} //insert when there is something
@@ -478,11 +477,11 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 
 		//loop through each position, save best score for each position and insert to new_auction_results
 		auction_->clear();
-		for ( PlacementAuctionMover::ResidueAuction::iterator selected_auction_result = new_auction.begin(); selected_auction_result != new_auction.end(); ++selected_auction_result ) {
-			auction_->insert(*selected_auction_result);
-			TR << "selected coordinate constraint score: " << selected_auction_result->first << " residue: " << selected_auction_result->second.first << std::endl;
-			if ( selected_auction_result->first >= coor_cst_cutoff_ ) {
-				TR<<"coordinate constraint energy: " << selected_auction_result->first << " Failed cutoff "<<coor_cst_cutoff_<<", Can be bad rotamer" << std::endl;
+		for ( auto & selected_auction_result : new_auction ) {
+			auction_->insert(selected_auction_result);
+			TR << "selected coordinate constraint score: " << selected_auction_result.first << " residue: " << selected_auction_result.second.first << std::endl;
+			if ( selected_auction_result.first >= coor_cst_cutoff_ ) {
+				TR<<"coordinate constraint energy: " << selected_auction_result.first << " Failed cutoff "<<coor_cst_cutoff_<<", Can be bad rotamer" << std::endl;
 				return( false );
 			}
 		}
@@ -638,7 +637,7 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 	if ( !prevent_repacking().empty() ) no_repack = prevent_repacking();
 	if ( !no_repack.empty() ) {
 		std::sort( no_repack.begin(), no_repack.end() );
-		utility::vector1< core::Size >::iterator last = std::unique( no_repack.begin(), no_repack.end() );
+		auto last = std::unique( no_repack.begin(), no_repack.end() );
 		no_repack.erase( last, no_repack.end() );
 		toAla.prevent_repacking( no_repack );
 	}
@@ -783,7 +782,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	min_rb( true );
 
 	std::string const after_placement_filter_name( tag->getOption<std::string>( "after_placement_filter", "true_filter" ) );
-	Filters_map::const_iterator ap_filter( filters.find( after_placement_filter_name ) );
+	auto ap_filter( filters.find( after_placement_filter_name ) );
 	if ( after_placement_filter_name == "true_filter" ) {
 		after_placement_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
 	} else {
@@ -799,14 +798,14 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 			utility::vector0< TagCOP > const & stub_min_tags( btag->getTags() );
 			for ( TagCOP stub_m_tag : stub_min_tags ) {
 				std::string const stub_mover_name( stub_m_tag->getOption<std::string>( "mover_name" ) );
-				core::Real  const bb_stub_constraint_weight( stub_m_tag->getOption< core::Real > ( "bb_cst_weight", 10.0 ) );
-				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( stub_mover_name ));
+				auto  const bb_stub_constraint_weight( stub_m_tag->getOption< core::Real > ( "bb_cst_weight", 10.0 ) );
+				auto find_mover( movers.find( stub_mover_name ));
 				bool const stub_mover_found( find_mover != movers.end() );
 				if ( stub_mover_found ) {
 					simple_moves::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
 					if ( !drSOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
-						runtime_assert( drSOP != 0 );
+						runtime_assert( drSOP != nullptr );
 					}//done cast check
 					minimization_movers_.push_back( std::make_pair( drSOP, bb_stub_constraint_weight) );
 					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<std::endl;
@@ -817,15 +816,15 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 			for ( TagCOP const m_tag_ptr : design_tags ) {
 				std::string const mover_name( m_tag_ptr->getOption< std::string >( "mover_name" ) );
 				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", true ) );
-				core::Real const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
+				auto const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
 
-				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
+				auto find_mover( movers.find( mover_name ));
 				bool const mover_found( find_mover != movers.end() );
 				if ( mover_found ) {
 					simple_moves::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
 					if ( !drOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
-						runtime_assert( drOP != 0 );
+						runtime_assert( drOP != nullptr );
 					}
 					design_movers_.push_back( std::make_pair( drOP, ( apply_coord_constraints ? coord_cst_std : -1 ) ) );
 					TR<<"added design mover "<<mover_name<<" to place simultaneously ";
@@ -890,7 +889,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				(*scorefxn)( *ala_pose );
 				stubset->pair_with_scaffold( *ala_pose, host_chain_, protocols::filters::FilterCOP( protocols::filters::FilterOP( new protocols::filters::TrueFilter ) ) );
 				std::string const stub_set_filter_name( stubset_tag->getOption< std::string >( "filter_name", "true_filter" ) );
-				Filters_map::const_iterator stub_set_filter( filters.find( stub_set_filter_name ) );
+				auto stub_set_filter( filters.find( stub_set_filter_name ) );
 				runtime_assert( stub_set_filter != filters.end() );
 				stub_set_filters_[ stubset ] = stub_set_filter->second->clone();
 			}//foreach stubset_tag

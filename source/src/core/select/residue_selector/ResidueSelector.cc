@@ -29,9 +29,9 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-ResidueSelector::ResidueSelector() {}
+ResidueSelector::ResidueSelector() = default;
 
-ResidueSelector::~ResidueSelector() {}
+ResidueSelector::~ResidueSelector() = default;
 
 /// @details Noop implementation in the base class in the case that a derived
 /// class has no need to read data from an input tag

@@ -1186,7 +1186,7 @@ utility::vector1< xyzVector<T> >
 FArray_to_vector_of_xyzvectors(ObjexxFCL::FArray2D<T> const & input)
 {
 	assert(input.size1() == 3);
-	utility::vector1< xyzVector<T> > output(input.size2(),xyzVector<T>());
+	utility::vector1< xyzVector<T> > output(input.size2(),xyzVector<T>(0));
 	for ( numeric::Real index = 1; index <= input.size2(); ++index ) {
 		output[(int)index].x(input(1,(int)index));
 		output[(int)index].y(input(2,(int)index));

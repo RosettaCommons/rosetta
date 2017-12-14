@@ -148,7 +148,7 @@ EnvSmoothEnergy::setup_for_derivatives(
 
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
@@ -449,11 +449,11 @@ EnvSmoothEnergy::calc_energy(
 	Real & dscore_dneighbor_count
 ) const
 {
-	Size low_bin = static_cast< Size > ( floor(neighbor_count));
-	Size high_bin = static_cast< Size > ( ceil(neighbor_count));
+	auto low_bin = static_cast< Size > ( floor(neighbor_count));
+	auto high_bin = static_cast< Size > ( ceil(neighbor_count));
 	Real inter = neighbor_count - low_bin;
 
-	int const aa_as_int = static_cast< int > (aa);
+	auto const aa_as_int = static_cast< int > (aa);
 
 	if ( high_bin < 40 ) {
 		score = envdata_[ aa_as_int - 1 ][ low_bin ]  * (1.0-inter) +

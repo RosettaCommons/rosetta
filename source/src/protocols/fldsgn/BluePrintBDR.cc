@@ -54,6 +54,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 
 // C++ headers
@@ -126,9 +127,9 @@ BluePrintBDR::BluePrintBDR( String const & filename, bool const ss_from_blueprin
 }
 
 /// @brief value constructor
-BluePrintBDR::BluePrintBDR( BluePrintOP const & blueprintOP, bool const ss_from_blueprint ) :
+BluePrintBDR::BluePrintBDR( BluePrintOP blueprintOP, bool const ss_from_blueprint ) :
 	Super( "BluePrintBDR" ),
-	blueprint_( blueprintOP ),
+	blueprint_(std::move( blueprintOP )),
 	sfx_( core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen" ) ),
 	loop_mover_str_( "RemodelLoopMover" ),
 	use_fullmer_( false ),
@@ -661,7 +662,7 @@ BluePrintBDR::parse_my_tag(
 	set_blueprint( blueprint );
 
 	// set secondary structure using blueprint
-	ss_from_blueprint_ = tag->getOption<bool>( "ss_from_blueprint", 1 );
+	ss_from_blueprint_ = tag->getOption<bool>( "ss_from_blueprint", true );
 
 	// set scorefxn
 	String const sfxn ( tag->getOption<String>( "scorefxn", "" ) );
@@ -671,10 +672,10 @@ BluePrintBDR::parse_my_tag(
 	}
 
 	// pick fragment using sequence information
-	use_sequence_bias_ = tag->getOption<bool>( "use_sequence_bias", 0 );
+	use_sequence_bias_ = tag->getOption<bool>( "use_sequence_bias", false );
 
 	// pick fragment using abego torsion information
-	use_abego_bias_ = tag->getOption<bool>( "use_abego_bias", 0 );
+	use_abego_bias_ = tag->getOption<bool>( "use_abego_bias", false );
 
 	// constraint N- and C- terminal
 	constraints_NtoC_ = tag->getOption<Real>( "constraints_NtoC", -1.0 );
@@ -695,7 +696,7 @@ BluePrintBDR::parse_my_tag(
 	rmdl_attempts_ = tag->getOption<Size>( "rmdl_attempts", 1 );
 
 	// entire sequence except for rebuilding parts become poly-Val ( default true )
-	use_poly_val_ = tag->getOption<bool>( "use_poly_val", 1 );
+	use_poly_val_ = tag->getOption<bool>( "use_poly_val", true );
 
 	// Use specified constraint generator movers
 	// these are called from VLB after the residues are added, but before the actual fragment insertions take place

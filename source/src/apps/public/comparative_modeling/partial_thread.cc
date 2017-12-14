@@ -78,12 +78,11 @@ poses_from_cmd_line(
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
 
-	typedef vector1< string >::const_iterator iter;
-	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
-		if ( file_exists(*it) ) {
+	for ( auto const & it : fn_list ) {
+		if ( file_exists(it) ) {
 			Pose pose;
-			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
-			string name = utility::file_basename( *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, it , core::import_pose::PDB_file);
+			string name = utility::file_basename( it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
 		}
@@ -121,7 +120,7 @@ main( int argc, char* argv [] ) {
 		bool skip_repack = option[ partial_thread::skip_repack ]();
 
 		vector1< string > align_fns = option[ in::file::alignment ]();
-		typedef vector1< string >::const_iterator aln_iter;
+		using aln_iter = vector1<string>::const_iterator;
 		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end(); aln_fn != aln_end; ++aln_fn ) {
 			vector1< SequenceAlignment > alns = core::sequence::read_aln(option[ cm::aln_format ](), *aln_fn);
 
@@ -129,30 +128,30 @@ main( int argc, char* argv [] ) {
 			//fd     "input id" is it->sequence(2)->id().substr(0,5)
 			//fd     "output id" is it->sequence(2)->id()
 			//fd  So input and outputs are "linked" and it is really easy to overwrite your inputs
-			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),end = alns.end(); it != end; ++it ) {
-				string const template_id( it->sequence(2)->id().substr(0,5) );
+			for ( auto & aln : alns ) {
+				string const template_id( aln.sequence(2)->id().substr(0,5) );
 
-				string const ungapped_query( it->sequence(1)->ungapped_sequence() );
+				string const ungapped_query( aln.sequence(1)->ungapped_sequence() );
 
 				map< string, Pose >::iterator pose_it = poses.find( template_id );
 				if ( pose_it == poses.end() ) {
 					tr.Error << "can't find pose (id = " << template_id << ")" << std::endl;
 				} else {
-					tr << *it << std::endl;
-					tr << "id " << it->sequence(2)->id() << " => " << template_id
+					tr << aln << std::endl;
+					tr << "id " << aln.sequence(2)->id() << " => " << template_id
 						<< std::endl;
 
 					Pose query_pose, template_pose;
 					make_pose_from_sequence( query_pose, fasta_seq->sequence(), *(rsd_set_from_cmd_line().lock()) );
 					template_pose = pose_it->second;
-					PartialThreadingMover mover(*it,template_pose,skip_repack);
+					PartialThreadingMover mover(aln,template_pose,skip_repack);
 					mover.apply(query_pose);
-					string const id_out( it->sequence(2)->id() );
+					string const id_out( aln.sequence(2)->id() );
 
 					// print out query-anchored alignment
 					utility::io::ozstream output( id_out+".pdb" );
 
-					core::id::SequenceMapping map( it->sequence_mapping(1,2) );
+					core::id::SequenceMapping map( aln.sequence_mapping(1,2) );
 					output << "REMARK query_anchored_aln ";
 					for ( core::Size ii = 1; ii <= fasta_seq->sequence().size(); ++ii ) {
 						if ( map[ii] ) output << fasta_seq->at(ii);

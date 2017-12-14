@@ -110,9 +110,9 @@ HbondsToAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Da
 {
 	partners_ = tag->getOption<core::Size>( "partners" );
 	energy_cutoff_ = tag->getOption<core::Real>( "energy_cutoff", -0.5 );
-	bb_bb_ = tag->getOption<bool>( "bb_bb", 0 );
-	backbone_ = tag->getOption<bool>( "backbone", 0 );
-	sidechain_ = tag->getOption<bool>( "sidechain", 1 );
+	bb_bb_ = tag->getOption<bool>( "bb_bb", false );
+	backbone_ = tag->getOption<bool>( "backbone", false );
+	sidechain_ = tag->getOption<bool>( "sidechain", true );
 	resnum_ = core::pose::get_resnum_string( tag );
 
 	if ( tag->hasOption( "atomname" ) ) {
@@ -162,7 +162,7 @@ HbondsToAtomFilter::compute( Pose const & pose ) const {
 	return( hbonded_res.size() );
 }
 
-HbondsToAtomFilter::~HbondsToAtomFilter() {}
+HbondsToAtomFilter::~HbondsToAtomFilter() = default;
 
 std::string HbondsToAtomFilter::name() const {
 	return class_name();

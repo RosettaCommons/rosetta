@@ -55,7 +55,7 @@ bool SOGFunc::operator == ( Func const & other ) const
 	if ( ! same_type_as_me( other ) ) return false;
 	if ( ! other.same_type_as_me( *this ) ) return false;
 
-	SOGFunc const & other_downcast( static_cast< SOGFunc const & > (other) );
+	auto const & other_downcast( static_cast< SOGFunc const & > (other) );
 	return member_ == other_downcast.member_;
 
 }

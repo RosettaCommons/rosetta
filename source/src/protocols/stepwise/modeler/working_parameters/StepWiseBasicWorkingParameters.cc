@@ -40,8 +40,7 @@ StepWiseBasicWorkingParameters::StepWiseBasicWorkingParameters():
 {}
 
 //Destructor
-StepWiseBasicWorkingParameters::~StepWiseBasicWorkingParameters()
-{}
+StepWiseBasicWorkingParameters::~StepWiseBasicWorkingParameters() = default;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 Size
@@ -56,8 +55,8 @@ utility::vector1< Size >
 StepWiseBasicWorkingParameters::working_res_list() const{
 	if ( sub_to_full_.size() == 0 ) utility_exit_with_message( "sub_to_full_.size() == 0. Cannot output working_res_list" );
 	utility::vector1< Size > working_res_list;
-	for ( std::map< core::Size, core::Size > ::const_iterator it = sub_to_full_.begin(), end = sub_to_full_.end(); it != end; ++it ) {
-		working_res_list.push_back( it->second );
+	for ( auto it : sub_to_full_ ) {
+		working_res_list.push_back( it.second );
 	}
 	return working_res_list;
 }
@@ -91,7 +90,7 @@ StepWiseBasicWorkingParameters::apply_full_to_sub_mapping( utility::vector1< Siz
 ///////////////////////////////////////////////////////////////////////////////////////////////
 Size
 StepWiseBasicWorkingParameters::apply_full_to_sub_mapping( Size const res ) const {
-	std::map<Size,Size>::const_iterator iter = full_to_sub_.find( res );
+	auto iter = full_to_sub_.find( res );
 	if ( iter == full_to_sub_.end() ) return 0;
 	return iter->second;
 }

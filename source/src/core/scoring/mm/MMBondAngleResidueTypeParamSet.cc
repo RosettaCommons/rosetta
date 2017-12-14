@@ -76,7 +76,7 @@ MMBondAngleResidueTypeParamSet::MMBondAngleResidueTypeParamSet(
 	*this = src;
 }
 
-MMBondAngleResidueTypeParamSet::~MMBondAngleResidueTypeParamSet() {}
+MMBondAngleResidueTypeParamSet::~MMBondAngleResidueTypeParamSet() = default;
 
 /// @brief lookup a param object for a given ResidueType
 MMBondAngleResidueTypeParam const &
@@ -84,7 +84,7 @@ MMBondAngleResidueTypeParamSet::get(
 	core::chemical::ResidueType const & residue_type
 )
 {
-	std::map<std::string, MMBondAngleResidueTypeParam>::iterator iter(reside_type_param_map_.find(residue_type.name()));
+	auto iter(reside_type_param_map_.find(residue_type.name()));
 
 	if ( iter != reside_type_param_map_.end() ) return iter->second;
 
@@ -101,11 +101,11 @@ MMBondAngleResidueTypeParamSet::get(
 	core::chemical::ResidueType const & residue_type
 ) const
 {
-	std::map<std::string, MMBondAngleResidueTypeParam>::const_iterator iter(reside_type_param_map_.find(residue_type.name()));
+	auto iter(reside_type_param_map_.find(residue_type.name()));
 
 	if ( iter != reside_type_param_map_.end() ) return &(iter->second);
 
-	return NULL;
+	return nullptr;
 }
 
 /// @brief get the indices of the connections that connects one of my atoms to an atom on another residue
@@ -257,7 +257,7 @@ mm_bond_angle_residue_type_param_set(
 	core::scoring::ScoreFunction const & scorefxn
 )
 {
-	for ( core::scoring::ScoreFunction::TWO_B_MethodIterator iter(scorefxn.ci_2b_intrares_begin());
+	for ( auto iter(scorefxn.ci_2b_intrares_begin());
 			iter != scorefxn.ci_2b_intrares_end(); ++iter ) {
 
 		core::scoring::methods::MMBondAngleEnergyCOP bond_angle_energy_method =
@@ -268,7 +268,7 @@ mm_bond_angle_residue_type_param_set(
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

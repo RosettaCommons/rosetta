@@ -86,7 +86,7 @@ MMBondAngleEnergy::MMBondAngleEnergy( MMBondAngleEnergy const & src ):
 	}
 }
 
-MMBondAngleEnergy::~MMBondAngleEnergy() {}
+MMBondAngleEnergy::~MMBondAngleEnergy() = default;
 
 
 /// clone

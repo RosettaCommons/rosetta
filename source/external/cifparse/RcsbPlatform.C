@@ -146,20 +146,16 @@ const UInt16 RcsbPlatform::_ENDIANNESS_TEST_INT = 0x0001;
 
 
 RcsbPlatform::RcsbPlatform()
-{
-
-}
+= default;
 
 
 RcsbPlatform::~RcsbPlatform()
-{
-
-}
+= default;
 
 
 bool RcsbPlatform::IsLittleEndian()
 {
-    char* leastSigByte = (char*) &_ENDIANNESS_TEST_INT;
+    auto* leastSigByte = (char*) &_ENDIANNESS_TEST_INT;
 
     return (leastSigByte[0] ? true : false);
 }

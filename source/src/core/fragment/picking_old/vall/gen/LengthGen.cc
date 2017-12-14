@@ -39,15 +39,11 @@ LengthGen::LengthGen( Size const frag_size ) :
 
 
 /// @brief copy constructor
-LengthGen::LengthGen( LengthGen const & rval ) :
-	Super( rval ),
-	frag_size_( rval.frag_size_ )
-{}
+LengthGen::LengthGen( LengthGen const & /*rval*/ ) = default;
 
 
 /// @brief default destructor
-LengthGen::~LengthGen()
-{}
+LengthGen::~LengthGen() = default;
 
 
 /// @brief copy assignment

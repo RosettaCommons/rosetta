@@ -128,9 +128,9 @@ AddOrRemoveMatchCsts::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Illegal or no value for cst_instruction in xml tag given. Has to be either 'add_new', 'add_pregenerated', or 'remove'.");
 	}
 
-	keep_covalent_ = tag->getOption<bool>( "keep_covalent", 0 );
-	accept_blocks_missing_header_ = tag->getOption<bool>( "accept_blocks_missing_header", 0 );
-	fail_on_constraints_missing_ = tag->getOption<bool>( "fail_on_constraints_missing", 1 );
+	keep_covalent_ = tag->getOption<bool>( "keep_covalent", false );
+	accept_blocks_missing_header_ = tag->getOption<bool>( "accept_blocks_missing_header", false );
+	fail_on_constraints_missing_ = tag->getOption<bool>( "fail_on_constraints_missing", true );
 }
 
 void

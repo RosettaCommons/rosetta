@@ -94,7 +94,7 @@ class VariableToken : public Token
 {
 public:
 	VariableToken();
-	VariableToken( std::string const & name );
+	VariableToken( std::string name ); // moved
 
 
 	TokenType
@@ -114,7 +114,8 @@ class FunctionToken : public Token
 {
 public:
 	FunctionToken();
-	FunctionToken( std::string const & name, numeric::Size nargs );
+	// std::moves name
+	FunctionToken( std::string name, numeric::Size nargs );
 
 
 	TokenType
@@ -688,8 +689,9 @@ private:
 class VariableExpression : public Expression
 {
 public:
-	VariableExpression( std::string const & name );
-	VariableExpression( std::string const & name, numeric::Real value );
+	// pass by value because we move name
+	VariableExpression( std::string name );
+	VariableExpression( std::string name, numeric::Real value );
 
 
 	numeric::Real

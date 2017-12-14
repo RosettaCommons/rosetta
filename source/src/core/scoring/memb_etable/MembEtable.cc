@@ -101,7 +101,7 @@ MembEtable::MembEtable( MembEtable const & src ) :
 	memb_dsolv2_( src.memb_dsolv2_ )
 {}
 
-MembEtable::~MembEtable() {}
+MembEtable::~MembEtable() = default;
 
 // Initialization Functions
 
@@ -219,7 +219,7 @@ MembEtable::make_pairenergy_table()
 	if ( add_long_range_damping() ) {
 		Real const dif = max_dis() - long_range_damping_length();
 		damping_thresh_dis2 = max_dis2() - ( dif * dif );
-		int damping_disbins = static_cast< int >( damping_thresh_dis2*get_bins_per_A2() );
+		auto damping_disbins = static_cast< int >( damping_thresh_dis2*get_bins_per_A2() );
 		normal_disbins = etable_disbins()-damping_disbins;
 	} else {
 		normal_disbins = etable_disbins();
@@ -324,11 +324,11 @@ MembEtable::make_pairenergy_table()
 	if ( option[ score::input_etables ].user() ) {
 		string tag = option[ score::input_etables ];
 		TR << "INPUT ETABLES " << tag << std::endl;
-		for ( map<string,FArray3D<Real>*>::iterator i = etables.begin(), end = etables.end(); i != end; ++i ) {
-			string ename = i->first;
+		for ( auto & etable : etables ) {
+			string ename = etable.first;
 			string fname = tag+"."+ename+".etable";
 			std::ifstream input( fname.c_str() );
-			input_etable(*(i->second),ename,input);
+			input_etable(*(etable.second),ename,input);
 			input.close();
 		}
 	}
@@ -336,12 +336,12 @@ MembEtable::make_pairenergy_table()
 	if ( option[ score::output_etables ].user() ) {
 		string header = option[ score::output_etables ];
 		TR << "OUTPUT ETABLES " << header << std::endl;
-		for ( map<string,FArray3D<Real>*>::iterator i = etables.begin(), end = etables.end(); i != end; ++i ) {
-			string ename = i->first;
+		for ( auto & etable : etables ) {
+			string ename = etable.first;
 			string fname = header+"."+ename+".etable";
 			TR << "output_etable: writing etable: " << ename << " to " << fname << std::endl;
 			ofstream out(fname.c_str());
-			output_etable(*(i->second),ename,out);
+			output_etable(*(etable.second),ename,out);
 			out.close();
 		}
 	}
@@ -398,7 +398,7 @@ MembEtable::modify_pot()
 
 		Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0;
 		Real dis;
-		int const ibin( static_cast< int >( bin ) );
+		auto const ibin( static_cast< int >( bin ) );
 		chemical::AtomTypeSetCOP atom_set_ac( atom_set() );
 		for ( int k = 1; k <= etable_disbins(); ++k ) {
 			dis = std::sqrt( ( k - 1 ) * .05f );

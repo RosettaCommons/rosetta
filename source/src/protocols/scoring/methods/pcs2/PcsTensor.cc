@@ -54,8 +54,7 @@ PcsTensor::PcsTensor(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PcsTensor" );
 }
 
-PcsTensor::~PcsTensor(){
-}
+PcsTensor::~PcsTensor()= default;
 
 PcsTensor::PcsTensor(PcsTensor const & other){
 	a_ = other.a_;

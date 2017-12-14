@@ -84,34 +84,13 @@ CrosslinkerMover::CrosslinkerMover():
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
 ////////////////////////////////////////////////////////////////////////////////
-CrosslinkerMover::CrosslinkerMover( CrosslinkerMover const & src ):
-	protocols::moves::Mover( src ),
-	residue_selector_(src.residue_selector_),
-	linker_(src.linker_),
-	add_linker_(src.add_linker_),
-	constrain_linker_(src.constrain_linker_),
-	pack_and_minimize_linker_and_sidechains_(src.pack_and_minimize_linker_and_sidechains_),
-	do_final_fastrelax_(src.do_final_fastrelax_),
-	sfxn_(src.sfxn_),
-	sidechain_frlx_rounds_(src.sidechain_frlx_rounds_),
-	final_frlx_rounds_(src.final_frlx_rounds_),
-	filter_by_sidechain_distance_(src.filter_by_sidechain_distance_),
-	filter_by_constraints_energy_(src.filter_by_constraints_energy_),
-	filter_by_total_score_(src.filter_by_total_score_),
-	filter_by_total_score_cutoff_energy_(src.filter_by_total_score_cutoff_energy_),
-	sidechain_distance_filter_multiplier_(src.sidechain_distance_filter_multiplier_),
-	constraints_energy_filter_multiplier_(src.constraints_energy_filter_multiplier_),
-	symm_type_(src.symm_type_),
-	symm_count_(src.symm_count_)
-{
-
-}
+CrosslinkerMover::CrosslinkerMover( CrosslinkerMover const & /*src*/ ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer
 /// members)
 ////////////////////////////////////////////////////////////////////////////////
-CrosslinkerMover::~CrosslinkerMover(){}
+CrosslinkerMover::~CrosslinkerMover()= default;
 
 /////////////////////
 /// Mover Methods ///

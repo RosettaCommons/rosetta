@@ -59,7 +59,7 @@ GlycanLayerSelector::GlycanLayerSelector():
 
 /// @brief Destructor.
 ///
-GlycanLayerSelector::~GlycanLayerSelector() {}
+GlycanLayerSelector::~GlycanLayerSelector() = default;
 
 /// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 //GlycanLayerSelector::GlycanLayerSelector(GlycanLayerSelector const & src):

@@ -51,13 +51,13 @@ public:// constructor/destructor
 	FilterStructs();
 
 	/// @brief value constructor
-	FilterStructs( String name );
+	FilterStructs( String const & name );
 
 	/// @brief value constructor
-	FilterStructs( String name, Size const ntrial );
+	FilterStructs( String const & name, Size const ntrial );
 
 	/// @brief value constructor
-	FilterStructs( String name, Pose const & pose, Size const ntrial );
+	FilterStructs( String const & name, Pose const & pose, Size const ntrial );
 
 	/// @brief copy constructor
 	FilterStructs( FilterStructs const & rval );

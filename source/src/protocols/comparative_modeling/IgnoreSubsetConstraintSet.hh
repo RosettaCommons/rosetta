@@ -49,7 +49,7 @@ public:
 	IgnoreSubsetConstraintSet( IgnoreSubsetConstraintSet const &other );
 
 	IgnoreSubsetConstraintSet(
-		std::set< int > residues_to_ignore,
+		std::set< int > const & residues_to_ignore,
 		ConstraintSet const & other
 	);
 

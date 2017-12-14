@@ -44,7 +44,7 @@ using utility::vector1;
 
 namespace protocols {
 namespace simple_filters {
-typedef numeric::xyzTransform<double> Xform;
+using Xform = numeric::xyzTransform<double>;
 static basic::Tracer TR( "protocols.simple_moves.MotifScoreFilter" );
 
 // XRW TEMP protocols::filters::FilterOP

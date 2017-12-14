@@ -84,8 +84,7 @@ StructFragmentMover::StructFragmentMover():
 	structPicker_->prefix_       = default_value_for_prefix();
 }
 
-StructFragmentMover::~StructFragmentMover()
-{}
+StructFragmentMover::~StructFragmentMover() = default;
 
 core::Size
 StructFragmentMover::evaluate_job() {
@@ -327,7 +326,7 @@ cf::FragSetOP StructFragmentMover::get_fragset ( pfp::FragmentPickerOP pickIt, c
 		pickIt->selector_->select_fragments( storage->get_candidates( qPos ), out );
 		cf::FrameOP frame( new cf::Frame(residueInPose++) );
 		for ( core::Size fi = 1; fi <= out.size(); ++fi ) {
-			cf::FragDataOP current_fragment( NULL );
+			cf::FragDataOP current_fragment( nullptr );
 
 			for ( core::Size i = 1; i <= out[1].first->get_length(); ++i ) {
 				pfp::VallResidueOP r = out[fi].first->get_residue(i);

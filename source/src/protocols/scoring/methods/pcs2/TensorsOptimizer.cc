@@ -72,8 +72,7 @@ TensorsOptimizer::TensorsOptimizer(PcsDataCenter /*const*/ & pcs_d_c):
 {
 }
 
-TensorsOptimizer::~TensorsOptimizer(){
-}
+TensorsOptimizer::~TensorsOptimizer()= default;
 
 
 bool

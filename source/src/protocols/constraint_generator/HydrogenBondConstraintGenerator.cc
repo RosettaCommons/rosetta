@@ -507,16 +507,16 @@ HydrogenBondConstraintGenerator::create_residue_constraint(
 }
 
 HydrogenBondingAtom::HydrogenBondingAtom(
-	std::string  atom1,
-	std::string  atom2,
-	std::string  atom3,
+	std::string const & atom1,
+	std::string const & atom2,
+	std::string const & atom3,
 	core::Real const ideal_distance,
 	core::Real const ideal_angle,
 	Dihedrals const & ideal_dihedral ):
 	utility::pointer::ReferenceCount(),
-	atom_(std::move( atom1 )),
-	atom2_(std::move( atom2 )),
-	atom3_(std::move( atom3 )),
+	atom_( atom1 ),
+	atom2_( atom2 ),
+	atom3_( atom3 ),
 	distance_( ideal_distance ),
 	angle_( numeric::constants::f::pi / 180.0 * ideal_angle ),
 	dihedrals_()
@@ -631,9 +631,9 @@ HydrogenBondInfo::add_atoms_from_string( std::string const & description_str )
 	++cur_field;
 	std::string const & atom3 = *cur_field;
 	++cur_field;
-	core::Real const dist = boost::lexical_cast< core::Real >( *cur_field );
+	auto const dist = boost::lexical_cast< core::Real >( *cur_field );
 	++cur_field;
-	core::Real const angle = boost::lexical_cast< core::Real >( *cur_field );
+	auto const angle = boost::lexical_cast< core::Real >( *cur_field );
 	++cur_field;
 	HydrogenBondingAtom::Dihedrals dihedrals;
 	for ( ; cur_field!=fields.end(); ++cur_field ) {

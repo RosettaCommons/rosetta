@@ -43,7 +43,7 @@ static basic::Tracer tr( "core.import_pose.import_pose_options" );
 
 
 ///// ImportPoseOptionsCreator /////
-ImportPoseOptionsCreator::ImportPoseOptionsCreator() {}
+ImportPoseOptionsCreator::ImportPoseOptionsCreator() = default;
 
 ImportPoseOptionsCreator::~ImportPoseOptionsCreator() = default;
 
@@ -75,13 +75,13 @@ void ImportPoseOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
 	StructFileReaderOptions::parse_my_tag( tag );
 
-	set_centroid( tag->getOption< bool >( "centroid", 0 ));
-	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", 0 ));
-	set_membrane( tag->getOption< bool >( "membrane", 0 ));
-	set_no_optH( tag->getOption< bool >( "no_optH", 0 ));
-	set_pack_missing_sidechains( tag->getOption< bool >( "pack_missing_sidechains", 1 ));
-	set_read_fold_tree( tag->getOption< bool >( "read_fold_tree", 0 ));
-	set_skip_set_reasonable_fold_tree( tag->getOption< bool >( "skip_set_reasonable_fold_tree", 0 ));
+	set_centroid( tag->getOption< bool >( "centroid", false ));
+	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", false ));
+	set_membrane( tag->getOption< bool >( "membrane", false ));
+	set_no_optH( tag->getOption< bool >( "no_optH", false ));
+	set_pack_missing_sidechains( tag->getOption< bool >( "pack_missing_sidechains", true ));
+	set_read_fold_tree( tag->getOption< bool >( "read_fold_tree", false ));
+	set_skip_set_reasonable_fold_tree( tag->getOption< bool >( "skip_set_reasonable_fold_tree", false ));
 	// Umm .. shouldn't this be sensitive to the centroid setting?
 	// right now we ignore them for this if residue_type_set is left as the default.
 	std::string residue_type_set_name( tag->getOption< std::string >( "residue_type_set", "fa_standard" ) );

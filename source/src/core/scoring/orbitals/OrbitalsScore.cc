@@ -127,9 +127,9 @@ OrbitalsScore::setup_for_minimizing_for_residue_pair(
 	ResPairMinimizationData &
 ) const{
 	//std::cout << "we got to setup for minimizeing" << std::endl;
-	conformation::Residue *res1_ptr = const_cast<conformation::Residue *>(&rsd1);
+	auto *res1_ptr = const_cast<conformation::Residue *>(&rsd1);
 	res1_ptr->update_orbital_coords();
-	conformation::Residue *res2_ptr = const_cast<conformation::Residue *>(&rsd2);
+	auto *res2_ptr = const_cast<conformation::Residue *>(&rsd2);
 	res2_ptr->update_orbital_coords();
 }
 
@@ -440,22 +440,12 @@ void OrbitalsScore::get_orb_orb_E(
 	if ( !orb_orb_rules(res1.atom_type_index(atom1.atomno()), res2.atom_type_index(atom2.atomno())) ) return;
 
 	utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(atom1.atomno()));
-	for (
-			utility::vector1< core::Size >::const_iterator
-			res1_orb = res1_orbs.begin(),
-			res1_orb_end = res1_orbs.end();
-			res1_orb != res1_orb_end; ++res1_orb
-			) {
+	for ( unsigned long res1_orb : res1_orbs ) {
 
 		utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(atom2.atomno()));
-		for (
-				utility::vector1< core::Size >::const_iterator
-				res2_orb = res2_orbs.begin(),
-				res2_orb_end = res2_orbs.end();
-				res2_orb != res2_orb_end; ++res2_orb
-				) {
+		for ( unsigned long res2_orb : res2_orbs ) {
 
-			compute_orb_orb_E(res1,res2,*res1_orb,*res2_orb,atom1.atomno(),atom2.atomno(),emap);
+			compute_orb_orb_E(res1,res2,res1_orb,res2_orb,atom1.atomno(),atom2.atomno(),emap);
 		}
 	}
 }
@@ -467,7 +457,7 @@ void OrbitalsScore::get_orb_orb_E(
 	EnergyMap & emap
 )const{
 	for (
-			chemical::AtomIndices::const_iterator
+			auto
 			Aindex = res1.atoms_with_orb_index().begin(),
 			Aindex_end = res1.atoms_with_orb_index().end();
 			Aindex != Aindex_end; ++Aindex
@@ -475,7 +465,7 @@ void OrbitalsScore::get_orb_orb_E(
 		if ( res1.atom_is_backbone(*Aindex) ) continue;
 
 		for (
-				chemical::AtomIndices::const_iterator
+				auto
 				Dindex = res2.atoms_with_orb_index().begin(),
 				Dindex_end = res2.atoms_with_orb_index().end();
 				Dindex != Dindex_end; ++Dindex
@@ -484,20 +474,12 @@ void OrbitalsScore::get_orb_orb_E(
 			if ( !orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex) ) ) continue;
 
 			utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
-			for (
-					utility::vector1< core::Size >::const_iterator
-					res1_orb = res1_orbs.begin(),
-					res1_orb_end = res1_orbs.end();
-					res1_orb != res1_orb_end; ++res1_orb ) {
+			for ( unsigned long res1_orb : res1_orbs ) {
 
 				utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
-				for (
-						utility::vector1< core::Size >::const_iterator
-						res2_orb = res2_orbs.begin(),
-						res2_orb_end = res2_orbs.end();
-						res2_orb != res2_orb_end; ++res2_orb ) {
+				for ( unsigned long res2_orb : res2_orbs ) {
 
-					compute_orb_orb_E(res1,res2,*res1_orb,*res2_orb,*Aindex,*Dindex,emap);
+					compute_orb_orb_E(res1,res2,res1_orb,res2_orb,*Aindex,*Dindex,emap);
 				}
 			}
 		}
@@ -545,7 +527,7 @@ void OrbitalsScore::get_E_haro_one_way(
 	core::Real dummy_E1(0.0);//needed for generalized function get_orb_H_distance_and_energy
 	core::Real energy(0.0);
 	for (
-			chemical::AtomIndices::const_iterator
+			auto
 			atoms_with_orb_index = res1.atoms_with_orb_index().begin(),
 			atoms_with_orb_index_end = res1.atoms_with_orb_index().end();
 			atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
@@ -555,7 +537,7 @@ void OrbitalsScore::get_E_haro_one_way(
 
 		numeric::xyzVector<core::Real> const & Axyz = res1.atom(*atoms_with_orb_index).xyz();//acceptor xyz
 		for (
-				chemical::AtomIndices::const_iterator
+				auto
 				haro_index = res2.Haro_index().begin(),
 				haro_end = res2.Haro_index().end();
 				haro_index != haro_end; ++haro_index
@@ -615,14 +597,14 @@ void OrbitalsScore::get_E_hpol_one_way(
 	core::Real HPOL_sc_H_sc_orb_E(0.0);
 	core::Real HPOL_bb_H_sc_orb_energy(0.0);
 	for (
-			chemical::AtomIndices::const_iterator
+			auto
 			atoms_with_orb_index = res1.atoms_with_orb_index().begin(),
 			atoms_with_orb_index_end = res1.atoms_with_orb_index().end();
 			atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
 			) {
 		numeric::xyzVector<core::Real> const & Axyz = res1.atom(*atoms_with_orb_index).xyz(); //acceptor xyz
 		for (
-				chemical::AtomIndices::const_iterator
+				auto
 				hpol_index = res2.Hpol_index().begin(),
 				hpol_end = res2.Hpol_index().end();
 				hpol_index != hpol_end; ++hpol_index
@@ -674,17 +656,12 @@ void OrbitalsScore::get_orb_H_distance_and_energy(
 	core::Real d_deriv(0.0);
 	core::Real a_deriv(0.0);
 	utility::vector1< core::Size > const & orbital_indices(res1.bonded_orbitals(Aindex));
-	for (
-			utility::vector1< core::Size >::const_iterator
-			orbital_index = orbital_indices.begin(),
-			orbital_index_end = orbital_indices.end();
-			orbital_index != orbital_index_end; ++orbital_index
-			) {
-		numeric::xyzVector< core::Real > const & Orbxyz(res1.orbital_xyz(*orbital_index) );
+	for ( unsigned long orbital_indice : orbital_indices ) {
+		numeric::xyzVector< core::Real > const & Orbxyz(res1.orbital_xyz(orbital_indice) );
 		core::Real const temp_dist_squared = Orbxyz.distance_squared( Hxyz );
 		if ( temp_dist_squared >= max_orbital_dist_squared_ ) continue;
 
-		core::Size orbital_type = res1.orbital_type_index(*orbital_index);
+		core::Size orbital_type = res1.orbital_type_index(orbital_indice);
 		core::Size orbital_lookup_type = lookup_type_for_orbital_type( chemical::orbitals::orbital_type_enum( orbital_type ) );
 
 		core::Real const cosDHO(cos_of(Dxyz, Hxyz, Orbxyz)); // cos of Donor - Hydrogen - Orbital angle
@@ -747,7 +724,7 @@ void OrbitalsScore::assign_haro_derivs_one_way(
 ) const
 {
 	for (
-			chemical::AtomIndices::const_iterator
+			auto
 			atoms_with_orb_index = res1.atoms_with_orb_index().begin(),
 			atoms_with_orb_index_end = res1.atoms_with_orb_index().end();
 			atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
@@ -755,7 +732,7 @@ void OrbitalsScore::assign_haro_derivs_one_way(
 		if ( res1.atom_is_backbone(*atoms_with_orb_index) ) continue;
 
 		for (
-				chemical::AtomIndices::const_iterator
+				auto
 				haro_index = res2.Haro_index().begin(),
 				haro_end = res2.Haro_index().end();
 				haro_index != haro_end; ++haro_index
@@ -783,13 +760,13 @@ void OrbitalsScore::assign_hpol_derivs_one_way(
 
 ) const {
 	for (
-			chemical::AtomIndices::const_iterator
+			auto
 			atoms_with_orb_index = res1.atoms_with_orb_index().begin(),
 			atoms_with_orb_index_end = res1.atoms_with_orb_index().end();
 			atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
 			) {
 		for (
-				chemical::AtomIndices::const_iterator
+				auto
 				hpol_index = res2.Hpol_index().begin(),
 				hpol_end = res2.Hpol_index().end();
 				hpol_index != hpol_end; ++hpol_index
@@ -925,7 +902,7 @@ OrbitalsScore::assign_orb_orb_derivs(
 )const {
 	core::Real orb_orb_E(0.0);
 	for (
-			chemical::AtomIndices::const_iterator
+			auto
 			Aindex = res1.atoms_with_orb_index().begin(),
 			Aindex_end = res1.atoms_with_orb_index().end();
 			Aindex != Aindex_end; ++Aindex
@@ -933,7 +910,7 @@ OrbitalsScore::assign_orb_orb_derivs(
 		if ( res1.atom_is_backbone(*Aindex) ) continue;
 
 		for (
-				chemical::AtomIndices::const_iterator
+				auto
 				Dindex = res2.atoms_with_orb_index().begin(),
 				Dindex_end = res2.atoms_with_orb_index().end();
 				Dindex != Dindex_end; ++Dindex
@@ -943,29 +920,19 @@ OrbitalsScore::assign_orb_orb_derivs(
 			if ( !orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex))  ) continue;
 
 			utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
-			for (
-					utility::vector1< core::Size >::const_iterator
-					res1_orb = res1_orbs.begin(),
-					res1_orb_end = res1_orbs.end();
-					res1_orb != res1_orb_end; ++res1_orb
-					) {
+			for ( unsigned long res1_orb : res1_orbs ) {
 
 				utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
-				for (
-						utility::vector1< core::Size >::const_iterator
-						res2_orb = res2_orbs.begin(),
-						res2_orb_end = res2_orbs.end();
-						res2_orb != res2_orb_end; ++res2_orb
-						) {
+				for ( unsigned long res2_orb : res2_orbs ) {
 
 					numeric::xyzVector< core::Real > const pD(res2.xyz(*Dindex)); // the xyz of the donor
 					numeric::xyzVector< core::Real > const pA(res1.xyz(*Aindex)); // the xyz of the acceptor
-					numeric::xyzVector< core::Real > const pAO(res1.orbital_xyz(*res1_orb) ); // the xyz of the acceptor orbital
-					core::Size orbital_type1 = res1.orbital_type_index(*res1_orb);
+					numeric::xyzVector< core::Real > const pAO(res1.orbital_xyz(res1_orb) ); // the xyz of the acceptor orbital
+					core::Size orbital_type1 = res1.orbital_type_index(res1_orb);
 					core::Size const orbital1_surrogate_atom = surrogate_atom_for_orbital( res1, *Aindex, chemical::orbitals::orbital_type_enum( orbital_type1 ) );
 
-					numeric::xyzVector< core::Real > const pDO(res2.orbital_xyz(*res2_orb) ); // the xyz of the donor orbital
-					core::Size orbital_type2 = res2.orbital_type_index(*res2_orb);
+					numeric::xyzVector< core::Real > const pDO(res2.orbital_xyz(res2_orb) ); // the xyz of the donor orbital
+					core::Size orbital_type2 = res2.orbital_type_index(res2_orb);
 					core::Size const orbital2_surrogate_atom = surrogate_atom_for_orbital( res2, *Dindex, chemical::orbitals::orbital_type_enum( orbital_type2 ) );
 					core::Real const orb1_orb2_dist= pAO.distance_squared(pDO);
 					if ( orb1_orb2_dist >= 9 ) continue;
@@ -1079,17 +1046,12 @@ void OrbitalsScore::assign_orb_H_derivs(
 	bool const backbone_interaction = res1.atom_is_backbone( atom_index ) || res2.atom_is_backbone( H_index );
 
 	utility::vector1< core::Size > const & orbital_indices(res1.bonded_orbitals(atom_index));
-	for (
-			utility::vector1< core::Size >::const_iterator
-			orbital_index = orbital_indices.begin(),
-			orbital_index_end = orbital_indices.end();
-			orbital_index != orbital_index_end; ++orbital_index
-			) {
-		numeric::xyzVector< core::Real > const Orbxyz(res1.orbital_xyz(*orbital_index) );
+	for ( unsigned long orbital_indice : orbital_indices ) {
+		numeric::xyzVector< core::Real > const Orbxyz(res1.orbital_xyz(orbital_indice) );
 		core::Real const temp_dist_squared = Orbxyz.distance_squared( Hxyz );
 		if ( temp_dist_squared >= max_orbital_dist_squared_ ) continue;
 
-		core::Size const orbital_type = res1.orbital_type_index(*orbital_index);
+		core::Size const orbital_type = res1.orbital_type_index(orbital_indice);
 		core::Size const orbital_lookup_type = lookup_type_for_orbital_type( chemical::orbitals::orbital_type_enum( orbital_type ) );
 		// which atom do we assign the f1/f2 vectors to?  For most cases, it will be the acceptor atom, but
 		// for sp3 hybridized atoms, it will be the attached atom of the acceptor which is not the atoms' base;
@@ -1160,7 +1122,7 @@ void OrbitalsScore::assign_orb_H_derivs(
 		//orbital hydrogen angle. why? because there is no index for action centers, thefore the Acceptor is the first action center atom
 
 		bool const working_with_action_center_orbital = (
-			(( res1.aa() == chemical::aa_tyr || res1.aa() == chemical::aa_phe || res1.aa() == chemical::aa_trp ) && *orbital_index <= 2 ));
+			(( res1.aa() == chemical::aa_tyr || res1.aa() == chemical::aa_phe || res1.aa() == chemical::aa_trp ) && orbital_indice <= 2 ));
 		lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_lookup_type, OrbHdist, cosAOH, energy, d_deriv, a_deriv, true, working_with_action_center_orbital );
 		//std::cout << "AOH: " << res1.seqpos() << " " << res2.seqpos() << " " << weight << " " << energy << " " << d_deriv << " " << a_deriv << std::endl;
 

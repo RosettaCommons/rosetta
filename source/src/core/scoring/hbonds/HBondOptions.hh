@@ -56,10 +56,10 @@ class HBondOptions : public utility::pointer::ReferenceCount {
 public:
 
 	/// @brief Constructor that initializes th
-	HBondOptions( std::string params_db_tag = "" );
+	HBondOptions( std::string const & params_db_tag = "" );
 
 	/// @brief Constructor using options given in a (possibly local) option collection.
-	HBondOptions( utility::options::OptionCollection const & options, std::string params_db_tag = "" );
+	HBondOptions( utility::options::OptionCollection const & options, std::string const & params_db_tag = "" );
 
 	// HBondOptions(); // removed in favor of single constructor to avoid copying code.
 

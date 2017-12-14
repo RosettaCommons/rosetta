@@ -115,7 +115,7 @@ private:
 	std::vector<core::Size> pleating1;
 	// similar to pairing1 but for strand 2.
 	std::vector<core::Size> pairing2;
-	bool pleat_weird;
+	//bool pleat_weird;
 	bool antipar;
 };
 

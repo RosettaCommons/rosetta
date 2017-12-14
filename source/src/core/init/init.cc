@@ -374,7 +374,7 @@ using basic::Warning;
 #ifdef UNICODE
 typedef std::wostringstream ostringstream_t;
 #else
-typedef std::ostringstream ostringstream_t;
+using ostringstream_t = std::ostringstream;
 #endif
 
 namespace core {

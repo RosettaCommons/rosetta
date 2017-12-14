@@ -41,8 +41,7 @@ RNA_ResidueLevelTask::RNA_ResidueLevelTask():
 {}
 
 //Destructor
-RNA_ResidueLevelTask::~RNA_ResidueLevelTask()
-{}
+RNA_ResidueLevelTask::~RNA_ResidueLevelTask() = default;
 
 } //rna
 } //task

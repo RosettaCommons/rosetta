@@ -22,6 +22,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.BaseCentroidScreener" );
 
@@ -33,8 +34,8 @@ namespace screener {
 BaseCentroidScreener::BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
 	core::pose::PoseOP screening_pose,
 	bool const force_centroid_interaction /* = true */):
-	base_centroid_checker_( base_centroid_checker ),
-	screening_pose_( screening_pose ),
+	base_centroid_checker_(std::move( base_centroid_checker )),
+	screening_pose_(std::move( screening_pose )),
 	force_centroid_interaction_( force_centroid_interaction ),
 	using_stub_( false ),
 	moving_res_base_stub_( core::kinematics::default_stub )
@@ -44,7 +45,7 @@ BaseCentroidScreener::BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentr
 //constructor
 BaseCentroidScreener::BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
 	core::kinematics::Stub const & moving_res_base_stub ):
-	base_centroid_checker_( base_centroid_checker ),
+	base_centroid_checker_(std::move( base_centroid_checker )),
 	screening_pose_( /* 0 */ ),
 	force_centroid_interaction_( true ),
 	using_stub_( true ),
@@ -53,8 +54,7 @@ BaseCentroidScreener::BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentr
 }
 
 //Destructor
-BaseCentroidScreener::~BaseCentroidScreener()
-{}
+BaseCentroidScreener::~BaseCentroidScreener() = default;
 
 
 ////////////////////////////////////////////////////////////////////////////////

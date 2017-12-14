@@ -59,8 +59,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::UnfoldedStateEnergyCalcu
 {}
 
 /// @brief dtor (don't put anything in here)
-UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::~UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor()
-= default;
+UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::~UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor() = default;
 
 /// @brief unforntunatly this is pretty much copied from the MPIWorkPoolJobDistributor, I should make that more compartmentalized
 void

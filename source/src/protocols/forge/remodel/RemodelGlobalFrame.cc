@@ -67,7 +67,7 @@
 
 // C++ headers
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 using namespace basic::options;
 using namespace Eigen;
@@ -133,7 +133,7 @@ RemodelGlobalFrame::RemodelGlobalFrame(Size segment_size){
 /// @brief copy constructor
 
 /// @brief default destructor
-RemodelGlobalFrame::~RemodelGlobalFrame(){}
+RemodelGlobalFrame::~RemodelGlobalFrame()= default;
 
 /// @brief clone this object
 protocols::moves::MoverOP

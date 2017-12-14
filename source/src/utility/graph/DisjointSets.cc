@@ -22,7 +22,7 @@ namespace graph {
 /// @brief
 /// default constructor, for when number of nodes is not known
 ///
-DisjointSets::DisjointSets() {}
+DisjointSets::DisjointSets() = default;
 
 ///
 /// @brief

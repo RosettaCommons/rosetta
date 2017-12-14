@@ -63,15 +63,14 @@ std::string RemodelRotamerLinksCreator::keyname() const
 	return RemodelRotamerLinks::keyname();
 }
 
-RemodelRotamerLinks::~RemodelRotamerLinks() {}
+RemodelRotamerLinks::~RemodelRotamerLinks() = default;
 
 TaskOperationOP RemodelRotamerLinks::clone() const
 {
 	return TaskOperationOP( new RemodelRotamerLinks( *this ) );
 }
 
-RemodelRotamerLinks::RemodelRotamerLinks()
-{}
+RemodelRotamerLinks::RemodelRotamerLinks() = default;
 
 void
 RemodelRotamerLinks::parse_tag( TagCOP /*tag*/ , DataMap & )

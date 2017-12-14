@@ -193,7 +193,7 @@ main( int argc, char *argv[] )
 
 		*/
 
-		core::Size cutpoint = static_cast<core::Size>( ( 2 + pose.size()-1 ) / 2 );
+		auto cutpoint = static_cast<core::Size>( ( 2 + pose.size()-1 ) / 2 );
 		//protocols::loops::Loop loop( loop_start, loop_end, cutpoint );
 		//TR << "i.e. " << loop << std::endl;
 		loops::LoopsOP loops( new protocols::loops::Loops );

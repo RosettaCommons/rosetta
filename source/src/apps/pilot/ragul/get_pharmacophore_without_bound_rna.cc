@@ -208,7 +208,7 @@ int main( int argc, char * argv [] ){
 			}*/
 
 			//fill in points that are ideal for a hydrogen acceptor with an O
-			for ( core::chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+			for ( auto hnum  = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 				Size const hatm( *hnum );
 				// Skip buried residues
 				if ( atom_sasas(j, hatm) < 0.1 && atom_sasas(j, rsd.atom_base(hatm)) < 0.1 ) {
@@ -229,7 +229,7 @@ int main( int argc, char * argv [] ){
 
 
 			//fill in points that are ideal for a hydrogen donor with an N
-			for ( core::chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
+			for ( auto anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 				Size const aatm( *anum );
 				// Skip buried residues
 				// int offset = 9;
@@ -296,14 +296,14 @@ int main( int argc, char * argv [] ){
 				protein_atom_coord.x() = curr_rsd.atom(i).xyz()(1);
 				protein_atom_coord.y() = curr_rsd.atom(i).xyz()(2);
 				protein_atom_coord.z() = curr_rsd.atom(i).xyz()(3);
-				for ( std::list< numeric::xyzVector<core::Real> >::iterator aa = acp_coord_list.begin(); aa != acp_coord_list.end(); /* ++aa */ ) {
+				for ( auto aa = acp_coord_list.begin(); aa != acp_coord_list.end(); /* ++aa */ ) {
 					if ( protein_atom_coord.distance(*aa) <= clash_dist ) {
 						aa = acp_coord_list.erase(aa);
 					} else {
 						++aa;
 					}
 				}
-				for ( std::list< numeric::xyzVector<core::Real> >::iterator bb = dnr_coord_list.begin(); bb != dnr_coord_list.end(); /* ++bb */ ) {
+				for ( auto bb = dnr_coord_list.begin(); bb != dnr_coord_list.end(); /* ++bb */ ) {
 					if ( protein_atom_coord.distance(*bb) <= clash_dist ) {
 						bb = dnr_coord_list.erase(bb);
 					} else {
@@ -316,7 +316,7 @@ int main( int argc, char * argv [] ){
 		utility::io::ozstream outPDB_stream;
 		outPDB_stream.open("NPHR.pdb", std::ios::out);
 
-		for ( std::list< numeric::xyzVector<core::Real> >::iterator aa = acp_coord_list.begin(); aa != acp_coord_list.end(); ++aa ) {
+		for ( auto & aa : acp_coord_list ) {
 			outPDB_stream
 				<<std::setw(6)<<"ATOM  "
 				<<std::setw(5)<<" 1  "
@@ -327,10 +327,10 @@ int main( int argc, char * argv [] ){
 				<<std::setw(1)<<"A"
 				<<std::setw(4)<<" 1  "
 				<<"    "
-				<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa->z()<<std::endl;
+				<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<aa.z()<<std::endl;
 		}
 
-		for ( std::list< numeric::xyzVector<core::Real> >::iterator bb = dnr_coord_list.begin(); bb != dnr_coord_list.end(); ++bb ) {
+		for ( auto & bb : dnr_coord_list ) {
 			outPDB_stream
 				<<std::setw(6)<<"ATOM  "
 				<<std::setw(5)<<" 1  "
@@ -341,7 +341,7 @@ int main( int argc, char * argv [] ){
 				<<std::setw(1)<<"B"
 				<<std::setw(4)<<" 2  "
 				<<"    "
-				<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb->z()<<std::endl;
+				<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<bb.z()<<std::endl;
 		}
 
 		outPDB_stream.close();

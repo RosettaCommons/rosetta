@@ -92,7 +92,7 @@ GroupElec::GroupElec( GroupElec const & src ): ReferenceCount(),
 	grp_cpfxn_( src.grp_cpfxn_ )
 {}
 
-GroupElec::~GroupElec(){}
+GroupElec::~GroupElec()= default;
 
 void
 GroupElec::initialize( etable::coulomb::Coulomb const &coulomb )

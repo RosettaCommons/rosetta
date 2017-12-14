@@ -62,7 +62,7 @@ public:
 		Size repack_every_Nth,
 		core::scoring::ScoreFunctionOP score_fxn,
 		MoveMapBuilderOP movemap_builder,
-		std::string resfile=""
+		std::string const & resfile=""
 	);
 
 	protocols::moves::MoverOP clone() const override;

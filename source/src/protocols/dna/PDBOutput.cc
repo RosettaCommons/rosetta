@@ -292,7 +292,7 @@ PDBOutput::get_residue_indices_to_output()
 std::string
 string_join(
 	PDBOutput::Strings const & list,
-	std::string sep = ", "
+	std::string const & sep = ", "
 )
 {
 	std::string os;
@@ -593,7 +593,7 @@ void
 make_subdirs( std::string const & name )
 {
 	// for names that include directory paths: try to create any such directories that do not yet exist
-	typedef utility::vector1< std::string > StringVec;
+	using StringVec = utility::vector1<std::string>;
 	StringVec const subdirs( string_split( name, '/' ) );
 	for ( auto dir( subdirs.begin() ); dir != subdirs.end()-1; ++dir ) {
 		if ( utility::file::file_exists( dir->c_str() ) ) continue;

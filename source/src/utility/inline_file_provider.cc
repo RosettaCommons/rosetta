@@ -10,6 +10,7 @@
 /// @file inline_file_provider.cc
 
 
+#include <utility>
 #include <utility/inline_file_provider.hh>
 
 // C/C++ headers
@@ -28,10 +29,10 @@ void Inline_File_Provider::init_static_inputs(){
 }
 
 void Inline_File_Provider::add_input_file( const std::string &filename, const std::string &contents ){
-	std::stringstream *newstream = new std::stringstream(contents);
+	auto *newstream = new std::stringstream(contents);
 	std::string filtered_filename( standardise_filename( filename ) );
 	std::cout << "Creating inline input file: '" << filename << "' = (" << filtered_filename << ")" << std::endl;
-	input_files.push_back( std::make_pair( filtered_filename, newstream ) );
+	input_files.emplace_back( filtered_filename, newstream );
 }
 
 void Inline_File_Provider::add_black_listed_file( const std::string &filename ){
@@ -41,7 +42,7 @@ void Inline_File_Provider::add_black_listed_file( const std::string &filename ){
 class predicate_cmp_filename
 {
 public:
-	predicate_cmp_filename( std::string filename ): filename_(filename) {}
+	explicit predicate_cmp_filename( std::string const & filename ): filename_(filename) {}
 
 	bool operator() ( std::pair < std::string, std::stringstream* > &a ) const
 	{
@@ -79,14 +80,14 @@ std::string Inline_File_Provider::standardise_filename( std::string filename ){
 	}
 
 	std::string no_dup_slash;
-	for ( unsigned int i = 0; i < filename.size(); ++i ) {
+	for ( char i : filename ) {
 		if ( (no_dup_slash.size() > 0) && // previous chars existed
-				(filename[i] == '/') &&  // current char is a forward slash
+				(i == '/') &&  // current char is a forward slash
 				(no_dup_slash[no_dup_slash.size()-1] == '/') // and last added character is a forward slash
 				) {
 			continue;
 		}
-		no_dup_slash = no_dup_slash + filename[i];
+		no_dup_slash = no_dup_slash + i;
 	}
 	return no_dup_slash;
 }
@@ -121,11 +122,11 @@ bool Inline_File_Provider::file_exists( const std::string& filename )
 
 bool Inline_File_Provider::get_ostream( const std::string& filename, std::ostream **the_stream )
 {
-	std::stringstream *newstream = new std::stringstream( );
+	auto *newstream = new std::stringstream( );
 
 	std::string filtered_filename( standardise_filename( filename ) );
 	std::cout << "Creating inline output file: '" << filename << "' = (" << filtered_filename << ")" << std::endl;
-	output_files.push_back( std::make_pair( filtered_filename, newstream ) );
+	output_files.emplace_back( filtered_filename, newstream );
 	(*the_stream) = newstream;
 	return true;
 }
@@ -154,7 +155,7 @@ bool Inline_File_Provider::get_istream( const std::string& filename, std::istrea
 		return false;
 	}
 
-	std::stringstream *the_sstream(0);
+	std::stringstream *the_sstream(nullptr);
 	bool result = get_sstream( filename, &the_sstream );
 	if ( result ) {
 		(*the_stream) = the_sstream;
@@ -186,7 +187,7 @@ bool Inline_File_Provider::get_istream( const std::string& filename, std::istrea
 }
 
 bool Inline_File_Provider::find_sstream( std::vector < std::pair < std::string, std::stringstream* > > &file_catalog, const std::string& filename, std::stringstream **the_stream ){
-	std::vector < std::pair < std::string, std::stringstream* > >::iterator it = file_catalog.begin();
+	auto it = file_catalog.begin();
 	for ( ; it != file_catalog.end(); ++it ) {
 		if ( it->first == filename ) {
 			break;

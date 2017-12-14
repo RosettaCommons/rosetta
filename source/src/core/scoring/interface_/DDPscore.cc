@@ -101,8 +101,8 @@ void DDPscore::residue_pair_energy(
 	if ( rsd1.chain() == rsd2.chain() )  return;
 
 	core::Real distance = 1e3;
-	for ( core::conformation::Atoms::const_iterator atom_it_1 = rsd1.atom_begin(), end1 = rsd1.heavyAtoms_end(); atom_it_1 != end1; ++atom_it_1 ) {
-		for ( core::conformation::Atoms::const_iterator atom_it_2 = rsd2.atom_begin(), end2 = rsd2.heavyAtoms_end(); atom_it_2 != end2; ++atom_it_2 ) {
+	for ( auto atom_it_1 = rsd1.atom_begin(), end1 = rsd1.heavyAtoms_end(); atom_it_1 != end1; ++atom_it_1 ) {
+		for ( auto atom_it_2 = rsd2.atom_begin(), end2 = rsd2.heavyAtoms_end(); atom_it_2 != end2; ++atom_it_2 ) {
 			if ( atom_it_1->xyz().distance(atom_it_2->xyz()) < distance ) {
 				distance = atom_it_1->xyz().distance(atom_it_2->xyz());
 			}

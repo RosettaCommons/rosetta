@@ -17,6 +17,7 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
+#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.TagDefinition" );
 
@@ -43,8 +44,7 @@ TagDefinition::TagDefinition( pose::Pose & pose,
 }
 
 //Destructor
-TagDefinition::~TagDefinition()
-{}
+TagDefinition::~TagDefinition() = default;
 
 ///////////////////////////////////////////////////////////
 // this action could also be in the update_mover, which would move forward to all poses in later screeners.

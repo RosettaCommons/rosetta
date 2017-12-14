@@ -44,18 +44,12 @@ void ScoreStructJSON::print_scores(
 	}
 
 	// Scores
-	for ( std::map< std::string, core::Real >::const_iterator it( score_map.begin()), end( score_map.end() );
-			it != end;
-			++it
-			) {
-		record.push_back( Pair( it->first, it->second ) );
+	for ( auto const & it : score_map ) {
+		record.push_back( Pair( it.first, it.second ) );
 	}
 
-	for ( std::map< std::string, std::string >::const_iterator it( string_map.begin()), end( string_map.end() );
-			it != end;
-			++it
-			) {
-		record.push_back( Pair( it->first, it->second ) );
+	for ( auto const & it : string_map ) {
+		record.push_back( Pair( it.first, it.second ) );
 	}
 
 	utility::json_spirit::write( utility::json_spirit::Value( record ), out, utility::json_spirit::remove_trailing_zeros );

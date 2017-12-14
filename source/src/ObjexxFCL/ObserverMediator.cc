@@ -42,7 +42,7 @@ notify( Subject const & s )
 bool
 acyclic( Subject const & s, Observer & o )
 {
-	if ( Subject const * const ss_p = dynamic_cast< Subject const * >( &o ) ) { // Observer is a Subject
+	if ( auto const * const ss_p = dynamic_cast< Subject const * >( &o ) ) { // Observer is a Subject
 		Subject const & ss( *ss_p );
 		if ( ss_p == &s ) { // Two Cycle
 			return false;
@@ -60,7 +60,7 @@ acyclic( Subject const & s, Observer & o )
 bool
 accumulate( Subject const & s_root, Subject const & s, Observers & accum_observers )
 {
-	if ( SubjectSingle const * const ss_p = dynamic_cast< SubjectSingle const * >( &s ) ) { // Single Observer
+	if ( auto const * const ss_p = dynamic_cast< SubjectSingle const * >( &s ) ) { // Single Observer
 		Observer * const o_p( ss_p->observer_p() );
 		if ( o_p ) { // Subject has an Observer
 			if ( accum_observers().find( o_p ) == accum_observers().end() ) { // New Observer
@@ -69,11 +69,10 @@ accumulate( Subject const & s_root, Subject const & s, Observers & accum_observe
 				if ( ! accumulate( s_root, *o_p, accum_observers ) ) return false; // Recurse: Abort if cyclic
 			}
 		}
-	} else if ( SubjectMulti const * const sm_p = dynamic_cast< SubjectMulti const * >( &s ) ) { // Multi Observer
+	} else if ( auto const * const sm_p = dynamic_cast< SubjectMulti const * >( &s ) ) { // Multi Observer
 		if ( sm_p->observers_p() ) { // Subject has Observers
 			ObserverMulti::Observers const & observers( sm_p->observers() );
-			for ( ObserverMulti::Observers::const_iterator io = observers().begin(), eo = observers().end(); io != eo; ++io ) {
-				Observer * const o_p( *io );
+			for ( auto o_p : observers() ) {
 				if ( accum_observers().find( o_p ) == accum_observers().end() ) { // New Observer
 					accum_observers().insert( o_p ); // Add it
 					if ( ( o_p == &s ) || ( o_p == &s_root ) ) return false; // Cyclic

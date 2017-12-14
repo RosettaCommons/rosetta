@@ -289,7 +289,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 					if ( dist <= min_dist_ || dist > max_dist_ ) continue;
 
 
-					Size const dist_bin(
+					auto const dist_bin(
 						static_cast<Size>(ceil(
 						(dist-min_dist_)*nbins_/(max_dist_-min_dist_))));
 					counts(i_relevant_atom_index1->second, i_elem2->second, dist_bin) += 1;

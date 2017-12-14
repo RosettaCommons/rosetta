@@ -50,10 +50,10 @@ public:
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	~CrossPeakInfo() override;
-	CrossPeakInfo( std::string  proton, std::string  label, core::Real max_noe_distance, core::Real proton_tolerance, core::Real label_tolerance ) :
+	CrossPeakInfo( std::string const & proton, std::string const & label, core::Real max_noe_distance, core::Real proton_tolerance, core::Real label_tolerance ) :
 
-		proton_atom_name_(std::move( proton )),
-		label_atom_type_(std::move( label )),
+		proton_atom_name_( proton ),
+		label_atom_type_( label ),
 		max_noe_distance_( max_noe_distance ),
 		proton_tolerance_( proton_tolerance ),
 		label_tolerance_( label_tolerance )

@@ -51,6 +51,7 @@
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -75,16 +76,13 @@ VisualizeEmbeddingMover::VisualizeEmbeddingMover() : embeddings_( new protocols:
 /// @brief   Constructor from embedding
 /// @details  Visualizes defined embedding
 VisualizeEmbeddingMover::VisualizeEmbeddingMover( protocols::membrane::geometry::EmbeddingOP embedding ) :
-	embeddings_( embedding ) {
+	embeddings_(std::move( embedding )) {
 	register_options();
 }
 
 /// @brief Copy Constructor
 /// @details Creates a deep copy of the visualize membrane mover class
-VisualizeEmbeddingMover::VisualizeEmbeddingMover( VisualizeEmbeddingMover const & src ) :
-	protocols::moves::Mover( src ),
-	embeddings_( src.embeddings_ )
-{}
+VisualizeEmbeddingMover::VisualizeEmbeddingMover( VisualizeEmbeddingMover const & /*src*/ ) = default;
 
 /// @brief Assignment Operator
 /// @details Overloads "=" assignemnt for deep copying
@@ -102,7 +100,7 @@ VisualizeEmbeddingMover::operator=( VisualizeEmbeddingMover const & src ) {
 }
 
 /// @brief Destructor
-VisualizeEmbeddingMover::~VisualizeEmbeddingMover() {}
+VisualizeEmbeddingMover::~VisualizeEmbeddingMover() = default;
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

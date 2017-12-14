@@ -130,9 +130,9 @@ void ChargeGrid::deserialize(utility::json_spirit::mObject data)
 
 	charge_atom_list_.clear();
 	utility::json_spirit::mArray charge_atom_data(data["atoms"].get_array());
-	for ( utility::json_spirit::mArray::iterator it = charge_atom_data.begin(); it != charge_atom_data.end(); ++it ) {
+	for ( auto & it : charge_atom_data ) {
 		ChargeAtom current_atom;
-		current_atom.deserialize(it->get_obj());
+		current_atom.deserialize(it.get_obj());
 		charge_atom_list_.push_back(current_atom);
 	}
 
@@ -154,7 +154,7 @@ void ChargeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 				core::Size neighbor_count = 0;
 				//first loop through the charge atoms to calculate neighbor count
 				//Maybe we should use a b-tree to do atom count calculation but it might not be worth the effort
-				std::list<ChargeAtom>::iterator protein_charge_atom_it = charge_atom_list_.begin();
+				auto protein_charge_atom_it = charge_atom_list_.begin();
 				for ( ; protein_charge_atom_it != charge_atom_list_.end(); ++protein_charge_atom_it ) {
 					if ( protein_charge_atom_it->xyz.distance(pdb_coords) <= 4.0 ) {
 						++neighbor_count;
@@ -323,7 +323,7 @@ void ChargeGrid::setup_charge_atoms(core::pose::Pose const & pose)
 						break;
 					}
 				}
-				charge_atom_list_.push_back(ChargeAtom(current_atom_coords,current_atom_charge,current_atom_neighbor_count));
+				charge_atom_list_.emplace_back(current_atom_coords,current_atom_charge,current_atom_neighbor_count);
 			}
 		}
 	}

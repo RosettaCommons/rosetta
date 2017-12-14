@@ -119,9 +119,7 @@ BinarySilentStruct::BinarySilentStruct(
 	fill_struct( pose, tag );
 } // BinarySilentStruct
 
-BinarySilentStruct::~BinarySilentStruct()
-{
-}
+BinarySilentStruct::~BinarySilentStruct() = default;
 
 void
 BinarySilentStruct::fill_struct(
@@ -230,8 +228,8 @@ std::string BinarySilentStruct::chain_endings_str() const {
 	std::ostringstream ss;
 	ss << "CHAIN_ENDINGS ";
 
-	for ( utility::vector1< Size >::const_iterator i = chain_endings().begin(), ie = chain_endings().end(); i != ie; ++i ) {
-		ss << ' ' << (*i);
+	for ( unsigned long i : chain_endings() ) {
+		ss << ' ' << i;
 	}
 
 	return ss.str();
@@ -242,9 +240,9 @@ void BinarySilentStruct::chain_endings( utility::vector1< Size > const & endings
 	if ( is_symmetric() ) {
 		nres_pose = symmetry_info()->num_total_residues_with_pseudo() ;
 	}
-	for ( utility::vector1< Size >::const_iterator i = endings.begin(), ie = endings.end(); i != ie; ++i ) {
-		if ( (*i) < 1 || (*i) > nres_pose ) {  //fpd if symmetric, chainendings may be > nres (in asu)
-			tr.Fatal << "chain_endings() invalid chain ending " << (*i) << std::endl;
+	for ( unsigned long ending : endings ) {
+		if ( ending < 1 || ending > nres_pose ) {  //fpd if symmetric, chainendings may be > nres (in asu)
+			tr.Fatal << "chain_endings() invalid chain ending " << ending << std::endl;
 			utility_exit();
 		}
 	}
@@ -259,7 +257,7 @@ bool BinarySilentStruct::init_from_lines(
 ) {
 
 	utility::vector1< std::string > energy_names_;
-	utility::vector1< std::string >::const_iterator iter = lines.begin();
+	auto iter = lines.begin();
 
 	if ( iter->substr(0,9) != "SEQUENCE:" ) {
 		// get sequence and scorename data from the silent-file data object,
@@ -332,7 +330,7 @@ bool BinarySilentStruct::init_from_lines(
 	bool bitflip = false;
 	fullatom_ = false; //start with fullatom_ false and update to true as soon as a residue with too many atoms is read...
 	bool fullatom_well_defined = false;
-	for ( utility::vector1< std::string >::const_iterator end = lines.end();
+	for ( auto end = lines.end();
 			iter != end; ++iter ) {
 		std::string tag;
 		std::istringstream line_stream( *iter );
@@ -689,7 +687,7 @@ void BinarySilentStruct::fill_pose(
 
 	// additional setup for mirrored poses
 	if ( core::pose::symmetry::is_mirror_symmetric( pose ) ) {
-		conformation::symmetry::MirrorSymmetricConformation & mirror_conf(
+		auto & mirror_conf(
 			dynamic_cast< conformation::symmetry::MirrorSymmetricConformation & >( pose.conformation() ) );
 		mirror_conf.update_residue_identities();
 	}
@@ -729,7 +727,7 @@ BinarySilentStruct::print_header( std::ostream & out ) const
 {
 	SilentStruct::print_header( out );
 	out << "REMARK BINARY SILENTFILE";
-	if ( full_model_parameters() != 0 ) out << "    " << *full_model_parameters();
+	if ( full_model_parameters() != nullptr ) out << "    " << *full_model_parameters();
 	out << std::endl;
 }
 
@@ -743,11 +741,8 @@ void BinarySilentStruct::print_conformation(
 	// no -- can have a fold tree with a single jump, actually.
 	if ( fold_tree().size() > 1 || fold_tree().num_jump() > 0 ) {
 		output << "FOLD_TREE ";
-		for ( kinematics::FoldTree::const_iterator
-				it = fold_tree().begin(), it_end = fold_tree().end();
-				it != it_end; ++it
-				) {
-			output << *it;
+		for ( auto const & it : fold_tree() ) {
+			output << it;
 		}
 		//  output << fold_tree(); this produces a new-line --- wrong behaviour
 		//  of fold_tree but I don't want to fix 1000 u-tracer unit-tests!

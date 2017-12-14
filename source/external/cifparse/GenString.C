@@ -221,11 +221,7 @@ CharLess::CharLess(Char::eCompareType compareType) :
 
 
 CharLess& CharLess::operator=(const CharLess& in)
-{
-    _compareType = in._compareType;
-
-    return (*this);
-}
+= default;
 
 
 bool CharLess::operator()(const char c1, const char c2) const
@@ -308,11 +304,7 @@ StringLess::StringLess(Char::eCompareType compareType) :
 
 
 StringLess& StringLess::operator=(const StringLess& in)
-{
-    _compareType = in._compareType;
-
-    return (*this);
-}
+= default;
 
 
 bool StringLess::operator()(const string& s1, const string& s2) const

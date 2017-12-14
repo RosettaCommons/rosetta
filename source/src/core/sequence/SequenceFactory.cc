@@ -19,6 +19,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/file/FileName.hh>
 
 #include <utility/vector1.hh>
 #include <utility/thread/threadsafe_creation.hh>
@@ -33,7 +34,7 @@ namespace sequence {
 static basic::Tracer tr( "core.sequence.SequenceFactory" );
 
 /// @details Private constructor insures correctness of singleton.
-SequenceFactory::SequenceFactory() {}
+SequenceFactory::SequenceFactory() = default;
 
 void
 SequenceFactory::factory_register( SequenceCreatorCOP creator )

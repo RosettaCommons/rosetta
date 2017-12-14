@@ -35,9 +35,9 @@ public:
 		protocols::filters::Filter( "HBondDonor" )
 	{}
 
-	HBondDonorFilter(std::string chain, core::Size hbond_donor_limit ) :
+	HBondDonorFilter(std::string const & chain, core::Size hbond_donor_limit ) :
 		protocols::filters::Filter( "HBondDonor" ),
-		chain_(std::move(chain)),
+		chain_(chain),
 		hbond_donor_limit_(hbond_donor_limit)
 	{}
 

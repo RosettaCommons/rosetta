@@ -69,7 +69,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <cifparse/CifFile.h>
-typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
+using CifFileOP = utility::pointer::shared_ptr<CifFile>;
 
 // C++ headers
 #include <cstdlib>
@@ -378,8 +378,8 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	}
 
 
-	for ( Size i=0; i< chain_list.size(); ++i ) { // std::vector
-		sfr->chains().push_back( atom_chain_map.find( chain_list[i] )->second );
+	for ( char i : chain_list ) { // std::vector
+		sfr->chains().push_back( atom_chain_map.find( i )->second );
 	}
 
 	return sfr;

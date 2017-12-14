@@ -617,10 +617,10 @@ private:
 };
 
 /// @brief The EDM instance
-ElectronDensity& getDensityMap(std::string filename ="", bool force_reload =false);
+ElectronDensity& getDensityMap(std::string const & filename ="", bool force_reload =false);
 
 /// @brief The EDM instance
-ElectronDensity& getDensityMap_legacy(std::string filename ="", bool force_reload =false);
+ElectronDensity& getDensityMap_legacy(std::string const & filename ="", bool force_reload =false);
 
 
 // x mod y, returns z in [0,y-1]

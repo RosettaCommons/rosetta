@@ -471,7 +471,7 @@ HybridizeProtocol::init() {
 
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		utility::vector1< std::string > cst_files = option[ OptionKeys::constraints::cst_fa_file ]();
-		core::Size choice = core::Size( numeric::random::rg().random_range( 1, cst_files.size() ) );
+		auto choice = core::Size( numeric::random::rg().random_range( 1, cst_files.size() ) );
 		fa_cst_fn_ = cst_files[choice];
 		TR.Info << "Fullatom Constraint choice: " << fa_cst_fn_ << std::endl;
 	}
@@ -532,7 +532,7 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		core::Size nres_tgt = pose.size();
 		core::conformation::symmetry::SymmetryInfoCOP symm_info;
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
-			core::conformation::symmetry::SymmetricConformation & SymmConf (
+			auto & SymmConf (
 				dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 			symm_info = SymmConf.Symmetry_Info();
 			nres_tgt = symm_info->num_independent_residues();
@@ -630,8 +630,8 @@ HybridizeProtocol::add_fragment_csts( core::pose::Pose &pose ) {
 			core::Real phi = std::fmod( res_i->torsion(1), 360.0 ); if ( phi<0 ) phi +=360.0;
 			core::Real psi = std::fmod( res_i->torsion(2), 360.0 ); if ( psi<0 ) psi +=360.0;
 
-			core::Size phibin = (core::Size) std::floor( phi/10.0 ); if ( phibin == 36 ) phibin=0;
-			core::Size psibin = (core::Size) std::floor( psi/10.0 ); if ( psibin == 36 ) psibin=0;
+			auto phibin = (core::Size) std::floor( phi/10.0 ); if ( phibin == 36 ) phibin=0;
+			auto psibin = (core::Size) std::floor( psi/10.0 ); if ( psibin == 36 ) psibin=0;
 
 			phi_distr[pos][phibin+1]+=1.0;
 			psi_distr[pos][psibin+1]+=1.0;
@@ -734,7 +734,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres_tgt = symm_info->num_independent_residues();
@@ -830,7 +830,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		(*scorefxn)(pose);
 		protocols::moves::MonteCarloOP mc1( new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 ) );
 
-		core::Size neffcycles = (core::Size)(1000*option[cm::hybridize::stage1_increase_cycles]());
+		auto neffcycles = (core::Size)(1000*option[cm::hybridize::stage1_increase_cycles]());
 		for ( Size n=1; n<=neffcycles; ++n ) {
 			frag9mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag9" );
 			frag3mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag3" );
@@ -1147,7 +1147,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	core::Size nres_protein_tgt = pose.size();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		auto & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres_tgt = symm_info->num_independent_residues();
@@ -1636,7 +1636,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		if ( !option[cm::hybridize::skip_stage2]() ) {
 			core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 			core::optimization::CartesianMinimizer minimizer;
-			Size n_min_cycles =(Size) (200.*stage25_increase_cycles_);
+			auto n_min_cycles =(Size) (200.*stage25_increase_cycles_);
 			options_lbfgs.max_iter(n_min_cycles);
 			(*stage2_scorefxn_)(pose); minimizer.run( pose, *mm, *stage2_scorefxn_, options_lbfgs );
 		}
@@ -2121,7 +2121,7 @@ HybridizeProtocol::parse_my_tag(
 		if ( (*tag_it)->getName() == "Template" ) {
 			std::string template_fn = (*tag_it)->getOption<std::string>( "pdb" );
 			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "AUTO" );  // should this be NONE?
-			core::Real weight = (*tag_it)->getOption<core::Real>( "weight", 1.0 );
+			auto weight = (*tag_it)->getOption<core::Real>( "weight", 1.0 );
 			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
 
 			// randomize some chains
@@ -2154,12 +2154,12 @@ HybridizeProtocol::parse_my_tag(
 		if ( (*tag_it)->getName() == "Pairings" ) {
 			pairings_file_ = (*tag_it)->getOption< std::string >( "file", "" );
 			if ( (*tag_it)->hasOption("sheets") ) {
-				core::Size sheets = (*tag_it)->getOption< core::Size >( "sheets" );
+				auto sheets = (*tag_it)->getOption< core::Size >( "sheets" );
 				sheets_.clear();
 				random_sheets_.clear();
 				sheets_.push_back(sheets);
 			} else if ( (*tag_it)->hasOption("random_sheets") ) {
-				core::Size random_sheets = (*tag_it)->getOption< core::Size >( "random_sheets" );
+				auto random_sheets = (*tag_it)->getOption< core::Size >( "random_sheets" );
 				sheets_.clear();
 				random_sheets_.clear();
 				random_sheets_.push_back(random_sheets);
@@ -2185,8 +2185,8 @@ HybridizeProtocol::parse_my_tag(
 					}
 				}
 			} else {
-				core::Size start_res = (*tag_it)->getOption<core::Size>( "start_res", 1 );
-				core::Size stop_res = (*tag_it)->getOption<core::Size>( "stop_res", nres_nonvirt );
+				auto start_res = (*tag_it)->getOption<core::Size>( "start_res", 1 );
+				auto stop_res = (*tag_it)->getOption<core::Size>( "stop_res", nres_nonvirt );
 				if ( (*tag_it)->hasOption( "sample_template" ) ) {
 					bool sample_template = (*tag_it)->getOption<bool>( "sample_template", true );
 					for ( core::Size ires=start_res; ires<=stop_res; ++ires ) {

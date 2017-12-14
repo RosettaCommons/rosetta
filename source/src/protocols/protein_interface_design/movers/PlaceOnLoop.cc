@@ -93,7 +93,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceOnLoop"
 PlaceOnLoop::PlaceOnLoop() :
 	simple_moves::DesignRepackMover( PlaceOnLoop::mover_name() ),
 	loop_begin_( 0 ), loop_end_( 0 ),
-	hires_scorefxn_( /* NULL */ ), lores_scorefxn_( NULL ),
+	hires_scorefxn_( /* NULL */ ), lores_scorefxn_( nullptr ),
 	chain_closing_attempts_( 100 ), host_chain_( 2 ), stub_set_( /* NULL */ ), minimize_toward_stub_( true )
 {
 	delta_length_.clear();
@@ -102,7 +102,7 @@ PlaceOnLoop::PlaceOnLoop() :
 	set_kinematic_defaults();
 }
 
-PlaceOnLoop::~PlaceOnLoop() {}
+PlaceOnLoop::~PlaceOnLoop() = default;
 
 MoverOP PlaceOnLoop::fresh_instance() const {
 	return MoverOP( new PlaceOnLoop );
@@ -157,7 +157,7 @@ PlaceOnLoop::add_bb_csts_to_loop( core::pose::Pose & pose ) const
 	using namespace core::pack::task;
 	using namespace core::chemical;
 
-	if ( stub_set_ == NULL ) return;
+	if ( stub_set_ == nullptr ) return;
 	PackerTaskOP ptask = TaskFactory::create_packer_task( pose );
 	for ( core::Size i( 1 ); i<=pose.size(); ++i ) {
 		using namespace basic::options;
@@ -248,7 +248,7 @@ PlaceOnLoop::position_stub( core::pose::Pose & ) const
 void
 PlaceOnLoop::set_kinematic_defaults()
 {
-	runtime_assert( kinematic_mover_ != 0 );
+	runtime_assert( kinematic_mover_ != nullptr );
 	kinematic_mover_->set_idealize_loop_first( true );
 	kinematic_mover_->set_temperature( 0.6/*mc_kt*/ );
 	kinematic_mover_->set_sfxn(hires_scorefxn_);
@@ -282,7 +282,7 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 	core::Size const chain_end( pose.conformation().chain_end( host_chain_ ) );
 	runtime_assert( chain_begin < loop_begin_ && loop_begin_ < chain_end );
 	runtime_assert( chain_begin < loop_end_ && loop_end_ < chain_end );
-	minimize_toward_stub_ = tag->getOption< bool >( "minimize_toward_stub", 1 );
+	minimize_toward_stub_ = tag->getOption< bool >( "minimize_toward_stub", true );
 	if ( tag->hasOption( "stubfile" ) ) {
 		std::string const stub_fname = tag->getOption< std::string >( "stubfile" );
 		stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet );
@@ -293,7 +293,7 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 	lores_scorefxn_ = protocols::rosetta_scripts::parse_score_function(tag, "score_low", data, "score4L");
 	chain_closing_attempts_ = tag->getOption< core::Size >( "closing_attempts", 100 );
 
-	typedef utility::vector1< std::string > StringVec;
+	using StringVec = utility::vector1<std::string>;
 	std::string shorten_by(""), lengthen_by("");
 	if ( tag->hasOption( "shorten_by" ) ) {
 		shorten_by = tag->getOption< std::string >( "shorten_by" );
@@ -318,7 +318,7 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 
 	sort( delta_length_.begin(), delta_length_.end() );
 	runtime_assert( loop_end_ - loop_begin_ + 1 + *delta_length_.begin() >= 3 );
-	utility::vector1< int >::iterator last = unique( delta_length_.begin(), delta_length_.end() );
+	auto last = unique( delta_length_.begin(), delta_length_.end() );
 	delta_length_.erase( last, delta_length_.end() );
 	TR<<"PlaceOnLoop mover defined with kinematic mover ";
 	TR<<" will change the loop by these values: ";

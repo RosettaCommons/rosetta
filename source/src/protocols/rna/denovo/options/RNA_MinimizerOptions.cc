@@ -50,8 +50,7 @@ RNA_MinimizerOptions::RNA_MinimizerOptions():
 {}
 
 //Destructor
-RNA_MinimizerOptions::~RNA_MinimizerOptions()
-{}
+RNA_MinimizerOptions::~RNA_MinimizerOptions() = default;
 
 
 /// @brief copy constructor

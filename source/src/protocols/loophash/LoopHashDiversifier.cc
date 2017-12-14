@@ -21,6 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>

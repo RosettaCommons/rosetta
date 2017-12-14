@@ -127,7 +127,7 @@ MPDockingMover::MPDockingMover( MPDockingMover const & src ) :
 {}
 
 /// @brief Destructor
-MPDockingMover::~MPDockingMover() {}
+MPDockingMover::~MPDockingMover() = default;
 
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP

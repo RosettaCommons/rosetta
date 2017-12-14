@@ -58,7 +58,7 @@ SecondaryStructurePool::SecondaryStructurePool(core::Size total_size,std::string
 	ss_type_ = ss_type;
 	CompareByScoreCombination ordering(components_, weights_);
 	storage_ = BoundedQuotaContainerOP( new BoundedQuotaContainer(ordering,this_size_,this_size_*buffer_factor) );
-	FragmentCandidateOP worst_f( new FragmentCandidate(1,1,0,1) );
+	FragmentCandidateOP worst_f( new FragmentCandidate(1,1,nullptr,1) );
 	scores::FragmentScoreMapOP worst_s( new scores::FragmentScoreMap(n_scores) );
 	storage_->set_worst(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>(worst_f,worst_s));
 	for ( core::Size i=1; i<=n_scores; i++ ) {
@@ -74,7 +74,7 @@ SecondaryStructurePool::SecondaryStructurePool(core::Size total_size,std::string
 }
 
 
-SecondaryStructurePool::~SecondaryStructurePool() {}
+SecondaryStructurePool::~SecondaryStructurePool() = default;
 
 bool SecondaryStructurePool::could_be_accepted(ScoredCandidate candidate) const
 {

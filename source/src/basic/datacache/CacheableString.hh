@@ -54,7 +54,7 @@ namespace datacache {
 class CacheableString : public CacheableData
 {
 public:
-	CacheableString( std::string str );
+	CacheableString( std::string const & str );
 	~CacheableString() override;
 	CacheableDataOP clone() const override;
 	virtual std::string const & str() const;

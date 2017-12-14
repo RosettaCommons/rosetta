@@ -168,8 +168,8 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 	Size core_cutoff(core_cutoff_);
 
 	// iterate through all the structures
-	utility::vector1< core::pose::Pose >::iterator native_itr( native_poses.begin() ), native_last( native_poses.end() );
-	utility::vector1< core::pose::Pose >::iterator redesign_itr( redesign_poses.begin() ), redesign_last( redesign_poses.end() );
+	auto native_itr( native_poses.begin() ), native_last( native_poses.end() );
+	auto redesign_itr( redesign_poses.begin() ), redesign_last( redesign_poses.end() );
 
 	while ( ( native_itr != native_last ) && (redesign_itr != redesign_last ) ) {
 
@@ -194,59 +194,59 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 		utility::vector1< chemical::AA > native_sequence( nres );
 
 		// iterate over designable positions
-		for ( std::set< core::Size >::const_iterator it = design_set.begin(), end = design_set.end(); it != end; ++it ) {
+		for ( unsigned long it : design_set ) {
 
-			if ( ! native_pose.residue(*it).is_protein() ) {
-				native_sequence[ *it ] = chemical::aa_unk;
+			if ( ! native_pose.residue(it).is_protein() ) {
+				native_sequence[ it ] = chemical::aa_unk;
 				continue;
 			}
 
-			native_sequence[ *it ] = native_pose.residue( *it ).aa();
-			n_native[ native_pose.residue(*it).aa() ]++;
+			native_sequence[ it ] = native_pose.residue( it ).aa();
+			n_native[ native_pose.residue(it).aa() ]++;
 
 			//determine core/surface
-			if ( num_neighbors[*it] >= core_cutoff ) {
-				n_native_core[ native_pose.residue(*it).aa() ]++;
+			if ( num_neighbors[it] >= core_cutoff ) {
+				n_native_core[ native_pose.residue(it).aa() ]++;
 				n_total_core++;
 			}
 
-			if ( num_neighbors[*it] < surface_exposed_cutoff ) {
-				n_native_surface[ native_pose.residue(*it).aa() ]++;
+			if ( num_neighbors[it] < surface_exposed_cutoff ) {
+				n_native_surface[ native_pose.residue(it).aa() ]++;
 				n_total_surface++;
 			}
 
 		} // end finding native seq
 
 		/// measure seq recov
-		for ( std::set< core::Size >::const_iterator it = design_set.begin(), end = design_set.end(); it != end; ++it ) {
+		for ( unsigned long it : design_set ) {
 
 			// don't worry about recovery of non-protein residues
-			if ( redesign_pose.residue( *it ).is_protein() ) {
+			if ( redesign_pose.residue( it ).is_protein() ) {
 				n_total++;
 
 				// increment the designed count
-				n_designed[ redesign_pose.residue(*it).aa() ]++;
+				n_designed[ redesign_pose.residue(it).aa() ]++;
 
-				if ( num_neighbors[*it] >= core_cutoff ) { n_designed_core[ redesign_pose.residue(*it).aa() ]++; }
-				if ( num_neighbors[*it] < surface_exposed_cutoff ) { n_designed_surface[ redesign_pose.residue(*it).aa() ]++; }
+				if ( num_neighbors[it] >= core_cutoff ) { n_designed_core[ redesign_pose.residue(it).aa() ]++; }
+				if ( num_neighbors[it] < surface_exposed_cutoff ) { n_designed_surface[ redesign_pose.residue(it).aa() ]++; }
 
 				// then check if it's the same
-				if ( native_sequence[ *it ] == redesign_pose.residue(*it).aa() ) {
-					n_correct[ redesign_pose.residue(*it).aa() ]++;
+				if ( native_sequence[ it ] == redesign_pose.residue(it).aa() ) {
+					n_correct[ redesign_pose.residue(it).aa() ]++;
 
-					if ( num_neighbors[*it] >= core_cutoff ) {
-						n_correct_core[ redesign_pose.residue(*it).aa() ]++;
+					if ( num_neighbors[it] >= core_cutoff ) {
+						n_correct_core[ redesign_pose.residue(it).aa() ]++;
 						n_correct_total_core++;
 					}
-					if ( num_neighbors[*it] < surface_exposed_cutoff ) {
-						n_correct_surface[ redesign_pose.residue(*it).aa() ]++;
+					if ( num_neighbors[it] < surface_exposed_cutoff ) {
+						n_correct_surface[ redesign_pose.residue(it).aa() ]++;
 						n_correct_total_surface++;
 					}
 					n_correct_total++;
 				}
 
 				// set the substitution matrix for this go round
-				sub_matrix( native_pose.residue(*it).aa(), redesign_pose.residue(*it).aa() )++;
+				sub_matrix( native_pose.residue(it).aa(), redesign_pose.residue(it).aa() )++;
 			}
 
 		} // end measure seq reovery

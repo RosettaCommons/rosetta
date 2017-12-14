@@ -104,7 +104,7 @@ SAVE_AND_LOAD_SERIALIZABLE( core::conformation::PseudoBond );
 // A PBCollection stores all of the PBs between a pair of residues.
 // PBs can be added to the collection, and iterated over, but cannot
 // be modified.
-PseudoBondCollection::PseudoBondCollection() {}
+PseudoBondCollection::PseudoBondCollection() = default;
 PseudoBondCollection::~PseudoBondCollection() = default;
 
 PseudoBondCollectionCOP

@@ -609,11 +609,11 @@ FragmentExtension::parse_my_tag(
 
 	// read chainbreaks
 	std::string fulllength_clean;
-	for ( int i=0; i<(int)seq[1].length(); ++i ) {
-		if ( seq[1][i] == '/' ) {
+	for ( char i : seq[1] ) {
+		if ( i == '/' ) {
 			cbreaks_.push_back(fulllength_clean.length());
 		} else {
-			fulllength_clean += seq[1][i];
+			fulllength_clean += i;
 		}
 	}
 	fullength_seq_ = core::sequence::SequenceOP(new core::sequence::Sequence( fulllength_clean, "target" ));
@@ -986,7 +986,7 @@ void LoopComparator::set_scores(core::pose::Pose & pose){
 								iru = energy_graph.get_node(j)->const_upper_edge_list_begin(),
 								irue = energy_graph.get_node(j)->const_upper_edge_list_end();
 								iru != irue; ++iru ) {
-							core::scoring::EnergyEdge const *edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
+							auto const *edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
 							Size const e1( edge->get_first_node_ind() );
 							Size const e2( edge->get_second_node_ind() );
 							if ( (e1 >=lower_one && e1<=upper_one) || (e2 >= lower_one && e2 <= upper_one) ) {

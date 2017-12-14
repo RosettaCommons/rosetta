@@ -30,6 +30,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
+#include <utility>
 #include <utility/pointer/owning_ptr.hh>
 #include <protocols/jd2/util.hh>
 
@@ -176,7 +177,7 @@ OopDockDesignProtocol::OopDockDesignProtocol(
 	bool const keep_history
 
 ): Mover("OopDockDesignProtocol"),
-	score_fxn_(score_function),
+	score_fxn_(std::move(score_function)),
 	mc_temp_ (mc_temp),
 	pert_mc_temp_(pert_mc_temp),
 	pert_dock_rot_mag_(pert_dock_rot_mag),
@@ -213,7 +214,7 @@ OopDockDesignProtocol::OopDockDesignProtocol(
 	bool const pymol,
 	bool const keep_history
 ): Mover("OopDockDesignProtocol"),
-	score_fxn_(score_function),
+	score_fxn_(std::move(score_function)),
 	mc_temp_ (mc_temp),
 	pert_mc_temp_ (0.8),
 	pert_dock_rot_mag_ (pert_dock_rot_mag),

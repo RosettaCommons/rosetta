@@ -73,8 +73,7 @@ RigidSearchMover::RigidSearchMover(RigidSearchMover const & that):
 }
 
 
-RigidSearchMover::~RigidSearchMover()
-= default;
+RigidSearchMover::~RigidSearchMover() = default;
 
 
 void RigidSearchMover::apply(core::pose::Pose & pose)

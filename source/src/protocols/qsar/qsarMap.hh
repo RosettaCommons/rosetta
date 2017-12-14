@@ -32,7 +32,7 @@ class qsarPoint : public utility::pointer::ReferenceCount
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	~qsarPoint() override;
-	qsarPoint(std::string type, core::Real value, std::string name, core::conformation::ResidueOP residue );
+	qsarPoint(std::string const & type, core::Real value, std::string const & name, core::conformation::ResidueOP residue );
 	/// @brief set the value of the qsar point
 	void set_value(core::Real value);
 

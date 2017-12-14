@@ -125,15 +125,15 @@ public:
 	LDConverterMover(): Mover("LDConverterMover"){}
 
 	//default dtor
-	virtual ~LDConverterMover(){}
+	~LDConverterMover() override= default;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const { return "LDConverterMover"; }
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override { return "LDConverterMover"; }
 
 };
 
-typedef utility::pointer::shared_ptr< LDConverterMover > LDConverterMoverOP;
-typedef utility::pointer::shared_ptr< LDConverterMover const > LDConverterMoverCOP;
+using LDConverterMoverOP = utility::pointer::shared_ptr<LDConverterMover>;
+using LDConverterMoverCOP = utility::pointer::shared_ptr<const LDConverterMover>;
 
 
 int

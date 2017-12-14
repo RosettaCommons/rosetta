@@ -33,9 +33,9 @@ public:
 		Mover("PostDockAssemblyScorer"),
 		score_prefix_("rebuild_dist")
 	{}
-	PostDockAssemblyScorer( std::string  prefix ) :
+	PostDockAssemblyScorer( std::string const & prefix ) :
 		Mover("PostDockAssemblyScorer"),
-		score_prefix_(std::move(prefix))
+		score_prefix_(prefix)
 	{}
 
 	std::string get_name() const override {

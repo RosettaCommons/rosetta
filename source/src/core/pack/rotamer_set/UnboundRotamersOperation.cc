@@ -54,7 +54,7 @@ UnboundRotamersOperation::UnboundRotamersOperation():
 }
 
 
-UnboundRotamersOperation::~UnboundRotamersOperation() {}
+UnboundRotamersOperation::~UnboundRotamersOperation() = default;
 
 
 core::pack::rotamer_set::RotamerSetOperationOP
@@ -118,7 +118,7 @@ UnboundRotamersOperation::alter_rotamer_set(
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 )
 {
-	Size const seqnum = (Size) rotamer_set.resid();
+	auto const seqnum = (Size) rotamer_set.resid();
 	debug_assert( seqnum <= ptask.total_residue() );
 	core::pack::task::ResidueLevelTask const & rtask = ptask.residue_task(seqnum);
 	for ( Size i = 1; i <= poses_.size(); ++i ) {
@@ -126,7 +126,7 @@ UnboundRotamersOperation::alter_rotamer_set(
 		if ( seqnum > ubr_pose.size() ) continue;
 		core::chemical::ResidueType const & restype = ubr_pose.residue_type(seqnum);
 		bool type_is_allowed = false;
-		for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter j = rtask.allowed_residue_types_begin(),
+		for ( auto j = rtask.allowed_residue_types_begin(),
 				j_end = rtask.allowed_residue_types_end(); j != j_end; ++j ) {
 			if ( restype.name() == (**j).name() ) {
 				type_is_allowed = true;

@@ -79,7 +79,7 @@ DatabaseThread::DatabaseThread() : parent(),
 	design_.clear(); revert_to_template_.clear(); full_database_.clear(); designable_.clear(); leave_as_is_.clear();count_=1;
 }
 
-DatabaseThread::~DatabaseThread() {}
+DatabaseThread::~DatabaseThread() = default;
 
 core::pack::task::operation::TaskOperationOP DatabaseThread::clone() const
 {

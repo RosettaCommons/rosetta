@@ -69,8 +69,8 @@ public:
 		Size start_res,
 		Size end_res,
 		Size jump_id,
-		std::string ensemble_file_path,
-		std::string partner,
+		std::string const & ensemble_file_path,
+		std::string const & partner,
 		core::scoring::ScoreFunctionCOP scorefxn_low,
 		core::scoring::ScoreFunctionCOP scorefxn_high
 	);

@@ -70,14 +70,9 @@ namespace protocols {
 namespace jd3 {
 namespace standard {
 
-PreliminaryLarvalJob::PreliminaryLarvalJob() {}
+PreliminaryLarvalJob::PreliminaryLarvalJob() = default;
 PreliminaryLarvalJob::~PreliminaryLarvalJob() = default;
-PreliminaryLarvalJob::PreliminaryLarvalJob( PreliminaryLarvalJob const & src ) :
-	inner_job( src.inner_job ),
-	job_tag( src.job_tag ),
-	job_options( src.job_options ),
-	pose_inputter( src.pose_inputter )
-{}
+PreliminaryLarvalJob::PreliminaryLarvalJob( PreliminaryLarvalJob const & /*src*/ ) = default;
 
 PreliminaryLarvalJob &
 PreliminaryLarvalJob::operator = ( PreliminaryLarvalJob const & rhs )
@@ -565,17 +560,17 @@ StandardJobQueen::result_outputter(
 	output::OutputSpecification const & spec
 )
 {
-	typedef output::MultipleOutputSpecification MOS;
-	typedef pose_outputters::PoseOutputSpecification POS;
-	typedef output::MultipleOutputter MO;
-	typedef output::MultipleOutputterOP MOOP;
+	using MOS = output::MultipleOutputSpecification;
+	using POS = pose_outputters::PoseOutputSpecification;
+	using MO = output::MultipleOutputter;
+	using MOOP = output::MultipleOutputterOP;
 	debug_assert( dynamic_cast< MOS const * > ( &spec ) );
-	MOS const & mo_spec( static_cast< MOS const & > (spec) );
+	auto const & mo_spec( static_cast< MOS const & > (spec) );
 	MOOP outputters( new MO );
 	for ( Size ii = 1; ii <= mo_spec.output_specifications().size(); ++ii ) {
 		output::OutputSpecification const & ii_spec( *mo_spec.output_specifications()[ ii ] );
 		debug_assert( dynamic_cast< POS const * > (&ii_spec) );
-		POS const & ii_pos( static_cast< POS const & > (ii_spec) );
+		auto const & ii_pos( static_cast< POS const & > (ii_spec) );
 		// Note assumption that there is always a primary pose outputter -- return here
 		// when trying to implement the -no_output option for JD3
 		pose_outputters::PoseOutputterOP ii_outputter;
@@ -1120,7 +1115,7 @@ StandardJobQueen::pose_for_job(
 	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
-	PoseInputSource const & input_source = dynamic_cast< PoseInputSource const & >( inner_job->input_source() );
+	auto const & input_source = dynamic_cast< PoseInputSource const & >( inner_job->input_source() );
 	TR << "Looking for input source " << job->inner_job()->input_source().input_tag() << " with pose_id " << job->inner_job()->input_source().pose_id() << std::endl;
 	if ( input_pose_index_map_.count( input_source.pose_id() ) ) {
 
@@ -1577,7 +1572,7 @@ StandardJobQueen::determine_preliminary_job_list_from_command_line()
 	core::Size count_prelim_nodes( 0 );
 	for ( auto const & input_pose : input_poses ) {
 		PreliminaryLarvalJob prelim_job;
-		Size nstruct = nstruct_for_job( 0 );
+		Size nstruct = nstruct_for_job( nullptr );
 		StandardInnerLarvalJobOP inner_job( create_inner_larval_job( nstruct, ++count_prelim_nodes ) );
 		inner_job->input_source( input_pose.first );
 		inner_job->outputter( outputter->class_key() );

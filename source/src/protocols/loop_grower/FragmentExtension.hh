@@ -114,7 +114,7 @@ private:
 	core::sequence::SequenceOP fragseq;
 	// fragments
 	utility::vector1<core::Size> frag_sizes_;
-	core::Size nfrags_ ,fragmelt_, minmelt_, storelow_, storehi_;
+	core::Size nfrags_ ,fragmelt_, minmelt_;
 	utility::vector1<core::fragment::FragSetOP> fragments_;
 };
 

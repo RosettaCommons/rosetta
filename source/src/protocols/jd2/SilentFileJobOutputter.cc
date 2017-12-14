@@ -272,8 +272,8 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 		CacheableStringMapCOP data = utility::pointer::dynamic_pointer_cast< CacheableStringMap const >
 			( pose_in.data().get_const_ptr( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) );
 
-		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() ); it != end; ++it ) {
-			ss->add_energy( it->first, (core::Real) atof( it->second.c_str() ) );
+		for ( auto const & it : data->map() ) {
+			ss->add_energy( it.first, (core::Real) atof( it.second.c_str() ) );
 		}
 	}
 

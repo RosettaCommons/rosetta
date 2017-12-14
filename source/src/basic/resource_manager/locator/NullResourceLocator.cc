@@ -42,10 +42,10 @@ static Tracer TR("basic.resource_manager.locator.NullResourceLocator");
 
 
 ///// NullResourceLocatorCreator /////
-NullResourceLocatorCreator::NullResourceLocatorCreator() {}
+NullResourceLocatorCreator::NullResourceLocatorCreator() = default;
 
 
-NullResourceLocatorCreator::~NullResourceLocatorCreator() {}
+NullResourceLocatorCreator::~NullResourceLocatorCreator() = default;
 
 ResourceLocatorOP
 NullResourceLocatorCreator::create_resource_locator() const {
@@ -59,9 +59,9 @@ NullResourceLocatorCreator::locator_type() const {
 
 ///// NullStream //////
 
-NullStream::NullStream(){}
+NullStream::NullStream() = default;
 
-NullStream::~NullStream() {}
+NullStream::~NullStream() = default;
 
 istream &
 NullStream::stream() {
@@ -71,9 +71,9 @@ NullStream::stream() {
 
 ///// NullResourceLocator /////
 
-NullResourceLocator::NullResourceLocator(){}
+NullResourceLocator::NullResourceLocator() = default;
 
-NullResourceLocator::NullResourceLocator(NullResourceLocator const & src) : basic::resource_manager::ResourceLocator(src) {}
+NullResourceLocator::NullResourceLocator(NullResourceLocator const & /*src*/) = default;
 
 void
 NullResourceLocator::show(
@@ -87,7 +87,7 @@ NullResourceLocator::type() const {
 	return "NullResourceLocator";
 }
 
-NullResourceLocator::~NullResourceLocator() {}
+NullResourceLocator::~NullResourceLocator() = default;
 
 ResourceStreamOP
 NullResourceLocator::locate_resource_stream(

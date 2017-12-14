@@ -28,6 +28,7 @@
 // project headers
 #include <basic/Tracer.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 
 
@@ -126,7 +127,7 @@ bool SecondarySimilarity::cached_score(FragmentCandidateOP f,
 }
 
 SecondarySimilarity::SecondarySimilarity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-	core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name,
+	core::fragment::SecondaryStructureOP query_prediction, std::string const & prediction_name,
 	core::Size sequence_length, utility::vector1<core::Size> & frag_sizes, core::Size longest_vall_chunk) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 	"SecondarySimilarity") , prediction_name_(prediction_name) {

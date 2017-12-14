@@ -70,7 +70,7 @@ create_match_position_modifier(
 	return nullptr;
 }
 
-MatchPositionModifier::MatchPositionModifier(){}
+MatchPositionModifier::MatchPositionModifier()= default;
 
 MatchPositionModifier::~MatchPositionModifier()= default;
 

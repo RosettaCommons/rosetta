@@ -54,16 +54,9 @@ MakeCanonicalHelix::MakeCanonicalHelix( core::Size helix_start, core::Size helix
 	helix_end_( helix_end )
 {}
 
-MakeCanonicalHelix::~MakeCanonicalHelix(){}
+MakeCanonicalHelix::~MakeCanonicalHelix()= default;
 
-MakeCanonicalHelix::MakeCanonicalHelix( MakeCanonicalHelix const & src ):
-	protocols::moves::Mover( src ),
-	phi_( src.phi_ ),
-	psi_( src.psi_ ),
-	omega_( src.omega_ ),
-	helix_start_( src.helix_start_ ),
-	helix_end_( src.helix_end_ )
-{}
+MakeCanonicalHelix::MakeCanonicalHelix( MakeCanonicalHelix const & /*src*/ ) = default;
 
 void
 MakeCanonicalHelix::parse_my_tag(

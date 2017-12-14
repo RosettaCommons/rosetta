@@ -66,7 +66,7 @@
 
 // C++ headers
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 using namespace basic::options;
 
@@ -83,15 +83,13 @@ static basic::Tracer TR( "protocols.forge.remodel.RemodelLigandHandler" );
 
 
 // @brief default constructor
-RemodelLigandHandler::RemodelLigandHandler()
-{
-}
+RemodelLigandHandler::RemodelLigandHandler() = default;
 
 
 /// @brief copy constructor
 
 /// @brief default destructor
-RemodelLigandHandler::~RemodelLigandHandler(){}
+RemodelLigandHandler::~RemodelLigandHandler()= default;
 
 /// @brief clone this object
 protocols::moves::MoverOP

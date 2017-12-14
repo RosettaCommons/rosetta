@@ -46,8 +46,8 @@
 static basic::Tracer TR( "protocols.topology.util" );
 
 using namespace core;
-typedef std::string String;
-typedef utility::vector1< Size > VecSize;
+using String = std::string;
+using VecSize = utility::vector1<Size>;
 
 namespace protocols {
 namespace fldsgn {
@@ -109,7 +109,7 @@ calc_strand_pairing_set(
 
 				std::ostringstream spairname;
 				spairname << istrand << "-" << jstrand << "." << orient ;
-				std::map<String, StrandPairingOP>::iterator it( newpairs.find( spairname.str() ) );
+				auto it( newpairs.find( spairname.str() ) );
 				if ( it == newpairs.end() ) {
 					StrandPairingOP strand_pair( new StrandPairing( istrand, jstrand, iaa, jaa, pleats, rgstr_shift, orient ) );
 					newpairs.insert( std::map<String, StrandPairingOP>::value_type( spairname.str(), strand_pair ) );
@@ -122,7 +122,7 @@ calc_strand_pairing_set(
 	} // ispair
 
 	StrandPairingSet spairset_new;
-	std::map<String, StrandPairingOP>::iterator it( newpairs.begin() );
+	auto it( newpairs.begin() );
 	while ( it != newpairs.end() ) {
 
 		// skip if pair length < minimum_pair_length
@@ -252,7 +252,7 @@ check_kink_helix(
 	using core::scoring::hbonds::HBondSet;
 
 	core::pose::Pose copy_pose( pose );
-	HBondSet const & hbond_set( static_cast< HBondSet const & > ( copy_pose.energies().data().get( HBOND_SET )) );
+	auto const & hbond_set( static_cast< HBondSet const & > ( copy_pose.energies().data().get( HBOND_SET )) );
 	//hbond_set.show( copy_pose );
 
 	Size num_broken_hbond( 0 );
@@ -279,7 +279,7 @@ check_internal_hbonds(
 	using core::scoring::hbonds::HBond;
 
 	core::pose::Pose copy_pose( pose );
-	HBondSet const & hbond_set( static_cast< HBondSet const & > ( copy_pose.energies().data().get( HBOND_SET )) );
+	auto const & hbond_set( static_cast< HBondSet const & > ( copy_pose.energies().data().get( HBOND_SET )) );
 
 	utility::vector1< HBond > hbonds;
 	for ( core::Size i=1; i<=(core::Size)hbond_set.nhbonds(); ++i ) {

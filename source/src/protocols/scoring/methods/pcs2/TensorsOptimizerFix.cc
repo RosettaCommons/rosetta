@@ -78,8 +78,7 @@ TensorsOptimizerFix::TensorsOptimizerFix(PcsDataCenter const & pcs_d_c/*, core::
 	*/
 }
 
-TensorsOptimizerFix::~TensorsOptimizerFix(){
-}
+TensorsOptimizerFix::~TensorsOptimizerFix()= default;
 
 
 core::Real

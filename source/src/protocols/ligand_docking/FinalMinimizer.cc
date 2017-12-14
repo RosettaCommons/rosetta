@@ -83,12 +83,7 @@ FinalMinimizer::FinalMinimizer(
 
 {}
 
-FinalMinimizer::FinalMinimizer(FinalMinimizer const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	score_fxn_(that.score_fxn_),
-	movemap_builder_(that.movemap_builder_)
-{}
+FinalMinimizer::FinalMinimizer(FinalMinimizer const & /*that*/) = default;
 
 FinalMinimizer::~FinalMinimizer() = default;
 

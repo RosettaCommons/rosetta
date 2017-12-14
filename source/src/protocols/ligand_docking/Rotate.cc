@@ -95,7 +95,7 @@ const & Ligand_info::get_residues() const{
 Rotate::Rotate(): Mover("Rotate")
 {}
 
-Rotate::Rotate(Rotate_info rotate_info): Mover("Rotate"), rotate_info_(std::move(rotate_info))
+Rotate::Rotate(Rotate_info const & rotate_info): Mover("Rotate"), rotate_info_(rotate_info)
 {}
 
 Rotate::Rotate(Rotate const & that):
@@ -212,7 +212,7 @@ void Rotate::rotate_ligand(
 	core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
 	utility::vector1< Ligand_info> ligands= create_random_rotations(grid, mover, pose, chain_begin);
 
-	core::Size const jump_choice=  (core::Size) numeric::random::rg().random_range(1, ligands.size());
+	auto const jump_choice=  (core::Size) numeric::random::rg().random_range(1, ligands.size());
 	{
 		pose.set_jump(rotate_info_.jump_id, ligands[jump_choice].jump);
 

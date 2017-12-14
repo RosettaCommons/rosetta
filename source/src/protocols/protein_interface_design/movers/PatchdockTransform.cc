@@ -60,7 +60,7 @@ PatchdockTransform::PatchdockTransform() :
 	pd_reader_ = PatchdockReaderOP( new protocols::protein_interface_design::PatchdockReader ); // initialize the patchdock reader object
 }
 
-PatchdockTransform::~PatchdockTransform() {}
+PatchdockTransform::~PatchdockTransform() = default;
 
 void
 PatchdockTransform::apply( core::pose::Pose & pose )

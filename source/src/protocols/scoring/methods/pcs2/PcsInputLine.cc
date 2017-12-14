@@ -37,6 +37,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility>
 #include <utility/exit.hh>
 
 // Numeric headers
@@ -63,16 +64,9 @@ PcsInputLine::PcsInputLine() :
 	utility_exit_with_message( "You shouldn't call the empty constructor for PcsInputLine class" );
 }
 
-PcsInputLine::~PcsInputLine(){
-}
+PcsInputLine::~PcsInputLine()= default;
 
-PcsInputLine::PcsInputLine(PcsInputLine const & other):
-	residue_num_(other.residue_num_),
-	atom_name_(other.atom_name_),
-	PCS_experimental_(other.PCS_experimental_),
-	PCS_tolerance_(other.PCS_tolerance_)
-{
-}
+PcsInputLine::PcsInputLine(PcsInputLine const & /*other*/) = default;
 
 PcsInputLine &
 PcsInputLine::operator=( PcsInputLine const & other )
@@ -105,7 +99,7 @@ PcsInputLine::get_PCS_tolerance() const{
 }
 
 PcsInputLine::PcsInputLine(core::Size residue_num,
-	std::string atom_name,
+	std::string const & atom_name,
 	core::Real PCS_experimental,
 	core::Real PCS_tolerance
 ) :

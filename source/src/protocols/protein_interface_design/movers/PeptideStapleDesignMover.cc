@@ -20,6 +20,7 @@
 // Project headers
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
