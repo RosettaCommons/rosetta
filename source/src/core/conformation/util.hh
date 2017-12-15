@@ -40,6 +40,8 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
 #include <core/kinematics/Edge.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
+#include <core/kinematics/RT.fwd.hh>
 
 // C++ headers
 #include <iosfwd>
@@ -486,6 +488,20 @@ get_residue_from_name1(
 bool
 get_second_atom_from_connection( core::Size & resno, core::Size & atomno, Residue const &rsd, Conformation const &conformation, core::Size const &conn_id );
 
+
+/// @brief Get stub from orient_atoms
+/// @details This defaults to a stub with CA, N, C for canonical amino acids
+core::kinematics::Stub
+get_stub_from_residue( core::conformation::Residue const & res );
+
+/// @brief Get stub mapping that maps residue 1 to residue 2
+/// @details Coordinate frames for each defined by orient_atoms which defaults to
+//            CA, N, C for canonical amino acids
+core::kinematics::RT
+get_rt_from_residue_pair(
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2
+);
 
 } // conformation
 } // core

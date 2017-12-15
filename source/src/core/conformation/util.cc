@@ -20,7 +20,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
-#include <core/kinematics/Stub.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -44,6 +43,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Edge.hh>
+#include <core/kinematics/Stub.hh>
+#include <core/kinematics/RT.hh>
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/util.hh>
 
@@ -2573,6 +2574,31 @@ get_residue_from_name1(
 	chemical::ResidueTypeCOP res_type = chemical::ResidueTypeFinder( *residue_set ).aa( my_aa ).variants( variants ).get_representative_type();
 
 	return  conformation::ResidueFactory::create_residue( *res_type );
+}
+
+core::kinematics::Stub
+get_stub_from_residue( core::conformation::Residue const & res ) {
+	Size center = 0;
+	Size nbr1 = 0;
+	Size nbr2 = 0;
+	res.select_orient_atoms( center, nbr1, nbr2 );
+	return core::kinematics::Stub(
+		res.xyz( center ),
+		res.xyz( nbr1 ),
+		res.xyz( nbr2 )
+	);
+}
+
+core::kinematics::RT
+get_rt_from_residue_pair(
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2
+) {
+
+	core::kinematics::Stub stub1 = get_stub_from_residue( res1 );
+	core::kinematics::Stub stub2 = get_stub_from_residue( res2 );
+
+	return core::kinematics::RT( stub1, stub2 );
 }
 
 } // namespace conformation
