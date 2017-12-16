@@ -92,7 +92,7 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 	runtime_assert( options_ );
 
 	// Are we doing MC_loop?
-	MC_LoopOP loop_sampler = ( sampler_->type() == toolbox::MC_LOOP ) ? MC_LoopOP( std::dynamic_pointer_cast< MC_Loop >( sampler_) ) : nullptr;
+	MC_LoopOP loop_sampler = ( sampler_->type() == toolbox::MC_LOOP ) ? MC_LoopOP( utility::pointer::dynamic_pointer_cast< MC_Loop >( sampler_) ) : nullptr;
 
 	if ( options_->show_more_pose_scores() ) scorefxn_->show( pose ); // matching legacy output
 	if ( loop_sampler == nullptr ) sampler_->apply( pose ); // matching legacy output

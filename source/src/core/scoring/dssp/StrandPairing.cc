@@ -797,7 +797,7 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 
 	if ( tr.Trace.visible() ) {
 		tr.Trace << " regs: ";
-		for ( unsigned long & reg : regs ) {
+		for ( Size & reg : regs ) {
 			tr.Trace << reg << " ";
 		}
 	}
@@ -813,7 +813,7 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 
 	if ( tr.Trace.visible() ) {
 		tr.Trace << " bulges: ";
-		for ( unsigned long & bulge : bulges ) {
+		for ( Size & bulge : bulges ) {
 			tr.Trace << bulge << " ";
 		}
 	}

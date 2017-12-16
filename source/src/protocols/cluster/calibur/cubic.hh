@@ -16,7 +16,7 @@
 #ifndef PYROSETTA
 #include <time.h>
 #endif
-#ifndef __WIN32__
+#if !defined(__WIN32__) && !defined(WIN32)
 #include <sys/resource.h>
 #endif
 #include <stdlib.h>

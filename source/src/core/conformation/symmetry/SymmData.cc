@@ -1277,12 +1277,12 @@ SymmData::show()
 		TR << "Jump " << itv->first << " " << pos_id1 << " " << pos_id2 << endl;
 	}
 	TR << "Include subunit:";
-	for ( unsigned long & it : include_subunit_ ) {
+	for ( core::Size & it : include_subunit_ ) {
 		TR << ' ' << it ;
 	}
 	TR << endl;
 	TR << "Output subunit:";
-	for ( unsigned long & it : output_subunit_ ) {
+	for ( core::Size & it : output_subunit_ ) {
 		TR << ' ' << it ;
 	}
 	TR << endl;

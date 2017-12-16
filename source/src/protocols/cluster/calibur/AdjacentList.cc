@@ -17,12 +17,9 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <cmath>
-#include <cassert>
-#include <ctime>
-#ifndef __WIN32__
-#include <sys/resource.h>
-#endif
+#include <math.h>
+#include <assert.h>
+#include <time.h>
 
 //#include <protocols/cluster/calibur/SimpPDB.hh>
 //#include <protocols/cluster/calibur/rmsd.hh>

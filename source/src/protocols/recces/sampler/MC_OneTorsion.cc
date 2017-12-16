@@ -83,7 +83,7 @@ void MC_OneTorsion::show( std::ostream & out, Size const indent ) const {
 ///////////////////////////////////////////////////////////////////////////
 MC_SamplerOP
 MC_OneTorsion::find( core::id::TorsionID const & torsion_id ) {
-	if ( torsion_id_ == torsion_id ) return std::dynamic_pointer_cast< MC_OneTorsion >( shared_from_this() );
+	if ( torsion_id_ == torsion_id ) return utility::pointer::dynamic_pointer_cast< MC_OneTorsion >( shared_from_this() );
 	return nullptr;
 }
 

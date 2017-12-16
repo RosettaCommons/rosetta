@@ -422,7 +422,7 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 			//We will use the constraint corresponding to the ideal value closest to the current value
 			utility::vector1< core::Real > diff_vector;
 			for ( core::scoring::func::FuncOP anglefunc: angle_about_contact_func ) {
-				diff_vector.push_back( std::abs( std::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( anglefunc )->x0() - current_angle ) );
+				diff_vector.push_back( std::abs( utility::pointer::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( anglefunc )->x0() - current_angle ) );
 			}
 			core::scoring::func::FuncOP anglefunc = angle_about_contact_func.at( utility::arg_min( diff_vector ) );
 			//Define constraint
@@ -467,7 +467,7 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 				//We will use the constraint corresponding to the ideal value closest to the current value
 				utility::vector1< core::Real > diff_vector;
 				for ( core::scoring::func::FuncOP dihedralfunc: dihedral_about_contact_func ) {
-					diff_vector.push_back( std::abs( std::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( dihedralfunc )->x0() - current_dihedral ) );
+					diff_vector.push_back( std::abs( utility::pointer::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( dihedralfunc )->x0() - current_dihedral ) );
 				}
 				core::scoring::func::FuncOP dihedralfunc = dihedral_about_contact_func.at( utility::arg_min( diff_vector ) );
 				//Define constraint
@@ -509,7 +509,7 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 			} else if ( constrain_to_closest_ ) {
 				utility::vector1< core::Real > diff_vector;
 				for ( core::scoring::func::FuncOP anglefunc: angle_about_metal_func ) {
-					diff_vector.push_back( std::abs( std::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( anglefunc )->x0() - current_angle2 ) );
+					diff_vector.push_back( std::abs( utility::pointer::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( anglefunc )->x0() - current_angle2 ) );
 				}
 				core::scoring::func::FuncOP anglefunc = angle_about_metal_func.at( utility::arg_min( diff_vector ) );
 				core::scoring::constraints::ConstraintCOP angle_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AngleConstraint( contact, metal_atom_id, other_contact, anglefunc, core::scoring::metalbinding_constraint ) );
@@ -560,7 +560,7 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 				} else if ( constrain_to_closest_ ) {
 					utility::vector1< core::Real > diff_vector;
 					for ( core::scoring::func::FuncOP dihedralfunc: dihedral_about_metal_func ) {
-						diff_vector.push_back( std::abs( std::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( dihedralfunc )->x0() - current_dihedral2 ) );
+						diff_vector.push_back( std::abs( utility::pointer::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( dihedralfunc )->x0() - current_dihedral2 ) );
 					}
 					core::scoring::func::FuncOP dihedralfunc = dihedral_about_metal_func.at( utility::arg_min( diff_vector ) );
 					core::scoring::constraints::ConstraintCOP dihedral_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( base_atom, contact, metal_atom_id, other_contact, dihedralfunc, core::scoring::metalbinding_constraint ) );
@@ -605,7 +605,7 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 			} else if ( constrain_to_closest_ ) {
 				utility::vector1< core::Real > diff_vector;
 				for ( core::scoring::func::FuncOP dihedral3func: dihedral_3_func ) {
-					diff_vector.push_back( std::abs( std::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( dihedral3func )->x0() - current_dihedral3 ) );
+					diff_vector.push_back( std::abs( utility::pointer::dynamic_pointer_cast< core::scoring::func::CircularHarmonicFunc>( dihedral3func )->x0() - current_dihedral3 ) );
 				}
 				core::scoring::func::FuncOP dihedral3func = dihedral_3_func.at( utility::arg_min( diff_vector ) );
 				core::scoring::constraints::ConstraintCOP dihedral_3_cst = core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::DihedralConstraint( contact, metal_atom_id, other_contact, other_base, dihedral3func, core::scoring::metalbinding_constraint ) );

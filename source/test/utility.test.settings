@@ -70,6 +70,7 @@ sources = {
 		#"access_ptr",
 		#"owning_ptr",
 		#"owning_ptr_MI",
+		'make_shared',
 	],
 	"signals" : [
 		"BufferedSignalHub",

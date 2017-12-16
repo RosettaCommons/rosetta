@@ -19,7 +19,7 @@
 #include <protocols/mean_field/MeanField.fwd.hh>
 
 // Package headers
-#include <protocols/mean_field/RotMatrix.fwd.hh>
+#include <protocols/mean_field/RotMatrix.hh>
 
 // Project headers
 #include <core/pack/interaction_graph/FixedBBInteractionGraph.fwd.hh>

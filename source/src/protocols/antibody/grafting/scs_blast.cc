@@ -34,6 +34,8 @@
 #include <fstream>
 #include <locale>
 
+#include <utility/pointer/memory.hh>
+
 namespace protocols {
 namespace antibody {
 namespace grafting {
@@ -227,7 +229,7 @@ SCS_ResultVector parse_blastp_output(string const & file_name, string const & qu
 
 	for(auto fields : lines ) {
 		// Converting text based results filed to SCS_BlastMetric
-		SCS_BlastResultOP r = std::make_shared<SCS_BlastResult>();
+		SCS_BlastResultOP r = utility::pointer::make_shared<SCS_BlastResult>();
 
 		// Different BLAST version use different headers ... search for header and assign
 		string subject_header("");
@@ -302,7 +304,7 @@ SCS_ResultsOP SCS_LoopOverSCs::raw_select(AntibodySequence const &A) //, Antibod
 	Result J[] {
 		{"frh", frh, results->frh}, {"h1", A.h1_sequence(), results->h1}, {"h2", A.h2_sequence(), results->h2}, {"h3", A.h3_sequence(), results->h3},
 		{"frl", frl, results->frl}, {"l1", A.l1_sequence(), results->l1}, {"l2", A.l2_sequence(), results->l2}, {"l3", A.l3_sequence(), results->l3},
-	    {"orientation", orientation, results->orientation},
+		{"orientation", orientation, results->orientation},
 	};
 
 	string blast_database( database_path_ + "/blast_database/database" );
@@ -314,7 +316,7 @@ SCS_ResultsOP SCS_LoopOverSCs::raw_select(AntibodySequence const &A) //, Antibod
 
 	for(auto &j : J) {
 
-        //TR << "Region " << j.name << ", Sequence " << j.sequence << std::endl;
+		//TR << "Region " << j.name << ", Sequence " << j.sequence << std::endl;
 
 		std::stringstream sq;  sq << j.sequence.size();
 		string db_suffix = j.name + '.' + sq.str();
@@ -401,21 +403,20 @@ void SCS_BlastPlus::pad_results(uint N, AntibodySequence const &A, SCS_Results &
 		for(auto i = antibody_info_lines.begin(); j.results.size() < N  and  i != antibody_info_lines.end(); ++i) {
 			if( j.name == "orientation" || j.sequence.size() == i->at(j.name).size() ) {
 
-                // double check that region != "none"
-                bool missing_region = false;
+				// double check that region != "none"
+				bool missing_region = false;
 
-                for( auto cdr : {"h1", "h2", "h3", "l1", "l2", "l3"} ) {
-                    if ( (i->at(cdr)).compare("none") == 0 ) {
-                        // line from antibody.info contains missing region (=="none"), skip
-                        missing_region = true;
-                    }
-                }
+				for( auto cdr : {"h1", "h2", "h3", "l1", "l2", "l3"} ) {
+					if ( (i->at(cdr)).compare("none") == 0 ) {
+						// line from antibody.info contains missing region (=="none"), skip
+						missing_region = true;
+					}
+				}
 
-                if (missing_region) continue; // go onto next line in antibody_info_lines
+				if (missing_region) continue; // go onto next line in antibody_info_lines
+				SCS_BlastResultOP r = utility::pointer::make_shared<SCS_BlastResult>();
 
-				SCS_BlastResultOP r = std::make_shared<SCS_BlastResult>();
-
-                r->padded = true;
+				r->padded = true;
 
 				r->pdb = i->at("pdb");
 

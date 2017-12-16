@@ -549,7 +549,7 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 
 
 		//now we have to find the base atoms for each possible atoms for atom1
-		for ( unsigned long & at1_id : at1_ids ) {
+		for ( core::Size & at1_id : at1_ids ) {
 
 			Size id_firstbase = restype->atom_base( at1_id );
 			Size id_secondbase = restype->atom_base( id_firstbase );

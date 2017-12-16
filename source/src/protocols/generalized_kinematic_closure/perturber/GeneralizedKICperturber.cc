@@ -15,7 +15,6 @@
 #ifdef BOINC
 #include <utility/boinc/boinc_util.hh>
 #include <protocols/boinc/boinc.hh>
-#include "boinc_zip.h"
 #endif // BOINC
 
 // Unit Headers

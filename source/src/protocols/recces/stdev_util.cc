@@ -81,7 +81,7 @@ set_gaussian_stdevs_recces_turner_from_secstruct(
 		else  stdev = dangling_stdev;
 		MC_SamplerOP torsion_sampler = sampler->find( TorsionID( i, TorsionType::CHI, 1 ) );
 		runtime_assert( torsion_sampler != nullptr ); // these all move in RECCES
-		std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
+		utility::pointer::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
 	}
 
 	//////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ set_gaussian_stdevs_recces_turner_from_secstruct(
 		for ( auto bb_torsion_id : suite_torsion_ids ) {
 			MC_SamplerOP torsion_sampler = sampler->find( bb_torsion_id );
 			runtime_assert( torsion_sampler != nullptr ); // these all move in RECCES
-			std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
+			utility::pointer::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
 		}
 	}
 
@@ -142,7 +142,7 @@ set_gaussian_stdevs_recces_turner_legacy(
 		else  stdev = dangling_stdev;
 		MC_SamplerOP torsion_sampler = sampler->find( TorsionID( i, TorsionType::CHI, 1 ) );
 		runtime_assert( torsion_sampler != nullptr ); // these all move in RECCES
-		std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
+		utility::pointer::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
 	}
 
 	//////////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ set_gaussian_stdevs_recces_turner_legacy(
 		for ( auto bb_torsion_id : suite_torsion_ids ) {
 			MC_SamplerOP torsion_sampler = sampler->find( bb_torsion_id );
 			runtime_assert( torsion_sampler != nullptr ); // these all move in RECCES
-			std::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
+			utility::pointer::dynamic_pointer_cast< MC_OneTorsion >(torsion_sampler)->set_gaussian_stdev( stdev );
 		}
 	}
 
@@ -223,16 +223,16 @@ void set_gaussian_stdevs_thermal_sampler(
 	if ( internal_bb_sampler != nullptr ) {
 		for ( Size i = 1; i <= internal_bb_sampler->num_rotamers(); ++i ) {
 			runtime_assert(  (*internal_bb_sampler)[i]->type() == toolbox::MC_RNA_KIC );
-			std::dynamic_pointer_cast< MC_RNA_KIC_Sampler >( (*internal_bb_sampler)[i] )->set_gaussian_stdev( internal_bb_stdev );
+			utility::pointer::dynamic_pointer_cast< MC_RNA_KIC_Sampler >( (*internal_bb_sampler)[i] )->set_gaussian_stdev( internal_bb_stdev );
 		}
 	}
 	if ( chi_sampler != nullptr ) {
 		for ( Size i = 1; i <= chi_sampler->num_rotamers(); ++i ) {
 			runtime_assert(  (*chi_sampler)[i]->type() == toolbox::MC_ONE_TORSION );
 			if ( is_free[i] ) {
-				std::dynamic_pointer_cast< MC_OneTorsion >( (*chi_sampler)[i] )->set_gaussian_stdev( free_chi_stdev );
+				utility::pointer::dynamic_pointer_cast< MC_OneTorsion >( (*chi_sampler)[i] )->set_gaussian_stdev( free_chi_stdev );
 			} else {
-				std::dynamic_pointer_cast< MC_OneTorsion >( (*chi_sampler)[i] )->set_gaussian_stdev( chi_stdev );
+				utility::pointer::dynamic_pointer_cast< MC_OneTorsion >( (*chi_sampler)[i] )->set_gaussian_stdev( chi_stdev );
 			}
 		}
 	}
@@ -258,21 +258,21 @@ set_gaussian_stdevs_thermal_sampler(
 
 	// assume that this is thermal_sampler type. Later generalize, based on sampler.find( TorsionID ) and sampler.find( TorsionIDs ).
 	runtime_assert( sampler->type() == MC_LOOP );
-	MC_Loop & loop_sampler( *std::dynamic_pointer_cast< MC_Loop >( sampler ) );
+	MC_Loop & loop_sampler( *utility::pointer::dynamic_pointer_cast< MC_Loop >( sampler ) );
 
 	MC_CombOP chi_sampler, internal_bb_sampler;
 	MC_RNA_MultiSuiteOP standard_bb_sampler;
 	if ( loop_sampler.num_rotamers() >= 1 ) {
 		runtime_assert( loop_sampler[ 1 ]->type() == MC_ANY );
-		chi_sampler = MC_CombOP( std::dynamic_pointer_cast< MC_Comb >( loop_sampler[ 1 ] ) );
+		chi_sampler = MC_CombOP( utility::pointer::dynamic_pointer_cast< MC_Comb >( loop_sampler[ 1 ] ) );
 	}
 	if ( loop_sampler.num_rotamers() >= 2 ) {
 		runtime_assert( loop_sampler[ 2 ]->type() == MC_ANY );
-		internal_bb_sampler = MC_CombOP( std::dynamic_pointer_cast< MC_Comb >( loop_sampler[ 2 ] ) );
+		internal_bb_sampler = MC_CombOP( utility::pointer::dynamic_pointer_cast< MC_Comb >( loop_sampler[ 2 ] ) );
 	}
 	if ( loop_sampler.num_rotamers() >= 10 ) {
 		runtime_assert( loop_sampler[ 10 ]->type() == MC_RNA_MULTI_SUITE );
-		standard_bb_sampler = MC_RNA_MultiSuiteOP( std::dynamic_pointer_cast< MC_RNA_MultiSuite >( loop_sampler[ 10 ] ) );
+		standard_bb_sampler = MC_RNA_MultiSuiteOP( utility::pointer::dynamic_pointer_cast< MC_RNA_MultiSuite >( loop_sampler[ 10 ] ) );
 	}
 
 	utility::vector1< bool > is_free;

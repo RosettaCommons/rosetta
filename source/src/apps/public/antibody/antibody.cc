@@ -59,6 +59,7 @@
 #include <basic/options/option.hh>
 
 #include <utility/file/file_sys_util.hh>
+#include <utility/pointer/memory.hh>
 
 #include <devel/init.hh>
 
@@ -236,7 +237,7 @@ int antibody_main()
 		file::create_directory_recursive( prefix_path );
 	}
 
-	basic::ReportOP report = std::make_shared<basic::Report>(prefix+"report");
+	basic::ReportOP report = utility::pointer::make_shared<basic::Report>(prefix+"report");
 
 	AntibodySequence as(heavy_chain_sequence, light_chain_sequence);
 
@@ -255,7 +256,7 @@ int antibody_main()
 		// std::cout << "Heavy Numbering: " << an.heavy << std::endl << std::endl;
 		// std::cout << "Light Numbering: " << an.heavy << std::endl << std::endl;
 
-		SCS_BlastPlusOP blast = n_templates == 1 ? std::make_shared<SCS_BlastPlus>(report) : std::make_shared<SCS_BlastPlus>();
+		SCS_BlastPlusOP blast = n_templates == 1 ? utility::pointer::make_shared<SCS_BlastPlus>(report) : utility::pointer::make_shared<SCS_BlastPlus>();
 		blast->init_from_options();
 
 		blast->add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_length) );

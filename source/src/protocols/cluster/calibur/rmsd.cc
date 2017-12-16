@@ -11,11 +11,8 @@
 /// @author YK Ng & SC Li (kalngyk@gmail.com)
 
 
-#ifndef __WIN32__
-#include <sys/resource.h>
-#endif
-#include <cstdio>
-#include <cmath>
+#include <stdio.h>
+#include <math.h>
 #include <protocols/cluster/calibur/jacobi.hh>
 #include <protocols/cluster/calibur/cubic.hh>
 #include <protocols/cluster/calibur/rmsd.hh>

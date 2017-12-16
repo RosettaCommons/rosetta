@@ -10,11 +10,8 @@
 /// @file apps/pilot/kalngyk/cubic.cc
 /// @author YK Ng & SC Li (kalngyk@gmail.com)
 
-#include <ctime>
-#ifndef __WIN32__
-#include <sys/resource.h>
-#endif
-#include <cstdlib>
+#include <time.h>
+#include <stdlib.h>
 #include <iostream>
 #include <cmath>
 #include <numeric/NumericTraits.hh>

@@ -79,6 +79,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <utility/pointer/memory.hh>
+
 static basic::Tracer TR( "protocols.recces.scratch.ThermalSamplingMover" );
 
 namespace protocols {
@@ -612,8 +614,7 @@ ThermalSamplingMover::set_residue_sampling_from_pose_and_movemap(
 	TR << "Free residues is " << free_rsd_ << std::endl;
 	// total_sampled_ needs to be updated
 	total_sampled_ = residues_.size();
-
-	mm_ = std::make_shared< core::kinematics::MoveMap >( mm );
+	mm_ = utility::pointer::make_shared< core::kinematics::MoveMap >( mm );
 }
 
 

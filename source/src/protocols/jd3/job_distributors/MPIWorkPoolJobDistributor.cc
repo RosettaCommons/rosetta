@@ -47,6 +47,7 @@
 #include <utility/mpi_util.hh>
 #include <utility/vector1.srlz.hh>
 #include <utility/io/zipstream.hpp>
+#include <utility/pointer/memory.hh>
 
 // Cereal headers
 #include <cereal/archives/binary.hpp>
@@ -893,7 +894,7 @@ MPIWorkPoolJobDistributor::process_archive_job_result_request( int remote_node )
 		out << serialized_larval_job_and_result;
 		out.close();
 	} else {
-		job_results_[ result_id ] = std::make_shared< std::string > ( std::move( serialized_larval_job_and_result ) );
+		job_results_[ result_id ] = utility::pointer::make_shared< std::string > ( std::move( serialized_larval_job_and_result ) );
 	}
 	utility::send_integer_to_node( remote_node, mpi_work_pool_jd_archival_completed );
 }

@@ -57,6 +57,8 @@
 #include <utility/file/file_sys_util.hh>
 #include <fstream>
 
+#include <utility/pointer/memory.hh>
+
 static basic::Tracer TR( "protocols.stepwise.modeler.StepWiseMinimizer" );
 using ObjexxFCL::format::F;
 using ObjexxFCL::format::I;
@@ -242,7 +244,7 @@ StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 		protocols::recces::scratch::ThermalMinimizer tm;
 		// Also hands over the movemap so that the samplers can read it.
 		tm.set_scorefxn( minimize_scorefxn_ );
-		tm.set_mm( std::make_shared< kinematics::MoveMap >( mm ) );
+		tm.set_mm( utility::pointer::make_shared< kinematics::MoveMap >( mm ) );
 		tm.set_n_cycle( options_->n_cycles() );
 		tm.set_temp( options_->thermal_sampler_temperature() );
 		tm.set_kic_sampling( false ); // TEMPORARY -- FOR DEBUGGING.

@@ -45,7 +45,8 @@ char slc[] = {'X','G','A','S','C','V','T','I',
 
 
 using StringVec = std::vector<std::string>;
-using StringVecOP = std::shared_ptr<StringVec>;
+using StringVecOP = utility::pointer::shared_ptr<StringVec>;
+
 
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
@@ -110,7 +111,7 @@ filetype( std::string const & filename )
 	std::ifstream input(filename);
 	std::string line;
 	if ( !input ) {
-		std::cerr << "Can't open input file \"" << filename << "\"" << std::endl;
+		std::cerr << "Can't open input file \"" << filename.c_str() << "\"" << std::endl;
 		exit(0);
 	}
 
@@ -149,7 +150,7 @@ unsigned int num_lines_in_file(std::string const & filename) {
 	char buf[400];
 	std::ifstream input(filename);
 	if ( !input ) {
-		std::cerr << "Can't open input file \"" << filename << "\"" << std::endl;
+		std::cerr << "Can't open input file \"" << filename.c_str() << "\"" << std::endl;
 		exit(0);
 	}
 	unsigned int count = 0;

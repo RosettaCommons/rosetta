@@ -18,12 +18,9 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <cmath>
-#include <cassert>
-#include <ctime>
-#ifndef __WIN32__
-#include <sys/resource.h>
-#endif
+#include <math.h>
+#include <assert.h>
+#include <time.h>
 
 //#include <protocols/cluster/calibur/SimpPDB.hh>
 #include <numeric/random/random.hh>
@@ -386,7 +383,7 @@ Clustering::getThresholdAndDecoys()
 		double min_avg_dist = _OVER_RMSD_;
 		for ( int i=0; i < numDecoys; i++ ) {
 			double sum_of_dist = 0;
-			uint num_to_avg = 0;
+			unsigned int num_to_avg = 0;
 			for ( unsigned int j=0; j < names_.size(); j++ ) {
 				if ( nbors[i][j] >= 0 && nbors[i][j] < 500 ) {
 					sum_of_dist += nbors[i][j];
@@ -826,14 +823,14 @@ Clustering::cluster()
 
 	std::cout << "Finding decoys neighbors...";
 	//start = clock();
-#ifndef __WIN32__
+#if !defined(__WIN32__) && !defined(WIN32)
 #ifndef PYROSETTA
 	_get_elapsed(1);
 #endif
 #endif
 	buildAdjacentLists(); // Find all the neighbors for each decoy
 	//elapsed = (clock() - start)/(double)CLOCKS_PER_SEC;
-#ifndef __WIN32__
+#if !defined(__WIN32__) && !defined(WIN32)
 #ifndef PYROSETTA
 	elapsed = _get_elapsed(0);
 	std::cout << "\nFinding all neighbors completed in " << elapsed << " s" << std::endl;
@@ -914,15 +911,15 @@ Clustering::showClusters(int numClus)
 		//std::cout << clu->which_ << "'" << names_[clu->which_]
 		std::cout << std::endl << "cluster = " << i << "; center = " << names_[clu.which_]
 			<< "; n_decoy_members = " << clu.num_neighbors_ << "; members = ";
-		uint num_neighbors_this_cluster = clu.num_neighbors_;
+		unsigned int num_neighbors_this_cluster = clu.num_neighbors_;
 		std::vector<int> const & neigh = clu.neigh;
 
-		for ( uint j=0; j < num_neighbors_this_cluster; j++ ) { // for each neighboring decoy...
+		for ( unsigned int j=0; j < num_neighbors_this_cluster; j++ ) { // for each neighboring decoy...
 			// If decoy is greater than names_.size(), just move on.
 			// I don't yet know what could cause this.
 
 			// output its decoy number and name...
-			uint decoy = neigh[j];
+			unsigned int decoy = neigh[j];
 
 			if ( decoy > names_.size() ) {
 				std::cout << "Warning: attempted to access the " << decoy << " element of names_ (" << names_.size() << ")!" << std::endl;
@@ -1695,7 +1692,7 @@ Clustering::get_neighbor_list(std::vector< StruOP > const & decoys,
 	}
 
 #ifdef _DEBUG_NBORLIST_
-	for ( uint i=0; i < names_.size(); i++ ) {
+	for ( unsigned int i=0; i < names_.size(); i++ ) {
 		std::cout << i << "'" << names_[i];
 		ni = (int *)nborsIndex[i];
 		for ( int j=0; j < listLength; j++ ) {
@@ -1967,8 +1964,8 @@ Clustering::refBound( int i, int j, double& lower, double& upper )
 {
 	lower = 0;
 	upper = _OVER_RMSD_;
-	uint index_first  = i*REFERENCE_SIZE;
-	uint index_second = j*REFERENCE_SIZE;
+	unsigned int index_first  = i*REFERENCE_SIZE;
+	unsigned int index_second = j*REFERENCE_SIZE;
 	for ( int k=0; k < REFERENCE_SIZE; k++ ) {
 		double diff = fabs( references_[ index_first + k ] - references_[ index_second + k ] );
 		double sum  = references_[ index_first + k ] + references_[ index_second + k ] ;

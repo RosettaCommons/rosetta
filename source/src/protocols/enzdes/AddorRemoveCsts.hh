@@ -29,7 +29,7 @@ namespace protocols {
 namespace enzdes {
 
 enum CstAction {
-	VOID = 1,
+	_VOID = 1,
 	ADD_NEW,
 	ADD_PREGENERATED,
 	REMOVE

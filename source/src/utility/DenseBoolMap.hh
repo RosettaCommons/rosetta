@@ -92,7 +92,7 @@ public:
 
 
 private:
-	std::array< unsigned char, num_bytes() > data_;
+	std::array< unsigned char, (NUM_ELEMS + 3)/4 > data_; // num_bytes() does not compile with Windows VS2015
 
 };
 

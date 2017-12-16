@@ -51,7 +51,7 @@ static basic::Tracer tr( "protocols.enzdes.AddorRemoveCsts" );
 AddOrRemoveMatchCsts::AddOrRemoveMatchCsts()
 : Mover("AddOrRemoveMatchCsts"),
 	option_cstfile_(""), cstfile_(""),
-	cst_action_(VOID), keep_covalent_(false),
+	cst_action_(_VOID), keep_covalent_(false),
 	accept_blocks_missing_header_(false), fail_on_constraints_missing_(true)
 {
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
@@ -106,7 +106,7 @@ AddOrRemoveMatchCsts::apply( core::pose::Pose & pose )
 	case REMOVE :
 		cst_io->remove_constraints_from_pose( pose, keep_covalent_, fail_on_constraints_missing_ );
 		break;
-	case VOID :
+	case _VOID :
 		utility_exit_with_message("Illegal action for AddOrRemoveMatchCsts mover specified.");
 		break;
 	}

@@ -156,7 +156,7 @@ MC_SamplerOP
 MC_RNA_OneJump::find( core::id::TorsionID const & torsion_id ) {
 	if ( torsion_id.rsd() == jump_num_  &&
 			torsion_id.type() == core::id::TorsionType::JUMP ) {
-		return std::dynamic_pointer_cast< MC_RNA_OneJump >( shared_from_this() );
+		return utility::pointer::dynamic_pointer_cast< MC_RNA_OneJump >( shared_from_this() );
 	}
 	return nullptr;
 }

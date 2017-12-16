@@ -38,7 +38,10 @@
 #include <stdexcept>
 #include <string>
 
-
+#ifdef WIN32
+#define popen  _popen
+#define pclose _pclose
+#endif
 
 static basic::Tracer TR( "core.scoring.rna.RNA_PartitionEnergy" );
 

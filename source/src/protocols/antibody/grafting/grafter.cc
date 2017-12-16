@@ -72,8 +72,8 @@ struct PDB_N
 {
 	PDB_N(string s) {
 		n = std::stoi(s);
-
-		if( s.size()  and std::isalpha( s[s.size()-1])) icode=s[s.size()-1];
+		std::locale loc;
+		if( s.size()  and std::isalpha( s[s.size()-1], loc)) icode=s[s.size()-1];
 		else icode=' ';
 	}
 
@@ -130,8 +130,10 @@ core::pose::PoseOP construct_antibody(AntibodySequence const &A, SCS_ResultSet c
 		{'L', frl, an.light, trimmed_light_fr.fr1 + A.l1_sequence() + trimmed_light_fr.fr2 + A.l2_sequence() + trimmed_light_fr.fr3 + A.l3_sequence() + trimmed_light_fr.fr4, TR.Green, conserved_frl_residues},
 	};
 
+	std::locale loc;
 	for(auto &j : J) {
-		auto chain_lower = char(std::tolower(j.chain));
+		auto chain_lower = char(std::tolower(j.chain,loc));
+
 		TR << "Adjusting fr" << chain_lower << " template sequence [" << j.pose->pdb_info()->name() << "]..." << std::endl;
 
 		AntibodyChainNumbering::NumberingVector numbering = j.numbering.all();

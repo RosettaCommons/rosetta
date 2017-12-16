@@ -79,10 +79,10 @@
 #include <time.h>
 #else
 #include <sys/time.h>
+#endif
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#endif
 
 namespace protocols {
 namespace md {

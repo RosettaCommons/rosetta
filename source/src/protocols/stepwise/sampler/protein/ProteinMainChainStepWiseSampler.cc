@@ -64,7 +64,7 @@ using namespace core::id;
 toolbox::SamplerPlusPlusOP
 ProteinMainChainStepWiseSampler::find( TorsionID const & torsion_id ) {
 	for ( auto which_torsion_id : which_torsions_ ) {
-		if ( which_torsion_id == torsion_id ) return std::dynamic_pointer_cast< ProteinMainChainStepWiseSampler >( shared_from_this() );
+		if ( which_torsion_id == torsion_id ) return utility::pointer::dynamic_pointer_cast< ProteinMainChainStepWiseSampler >( shared_from_this() );
 	}
 	return nullptr;
 }

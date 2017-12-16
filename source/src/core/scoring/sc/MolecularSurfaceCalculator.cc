@@ -330,7 +330,7 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 	int n =0;
 	for ( auto & scatom : scatoms ) {
 #if defined(WIN32) && !defined(WIN_PYROSETTA) // windows WINAPI has an AddAtom function
-		if ( AddAtomWIN32(molecule, *it) ) ++n;
+		if ( AddAtomWIN32(molecule, scatom) ) ++n;
 #else
 		if(AddAtom(molecule, scatom)) ++n;
 #endif

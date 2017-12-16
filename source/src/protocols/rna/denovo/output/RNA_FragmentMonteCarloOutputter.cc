@@ -93,9 +93,9 @@ RNA_FragmentMonteCarloOutputter::initialize( core::pose::PoseCOP align_pose ) {
 		}
 		if ( options_->save_jump_histogram() ) {
 			runtime_assert( options_->output_rotation_vector() );
-			Real const & bxs( options_->jump_histogram_boxsize() );
-			Real const & bw ( options_->jump_histogram_binwidth() );
-			Real const & bwr( options_->jump_histogram_binwidth_rotvector() );
+			core::Real const & bxs( options_->jump_histogram_boxsize() );
+			core::Real const & bw ( options_->jump_histogram_binwidth() );
+			core::Real const & bwr( options_->jump_histogram_binwidth_rotvector() );
 			jump_histogram_min_        = make_vector1( -bxs, -bxs, -bxs, -180.0, -180.0, -180.0 );
 			jump_histogram_max_        = make_vector1( +bxs, +bxs, +bxs, +180.0, +180.0, +180.0 );
 			jump_histogram_bin_width_  = make_vector1(   bw,   bw,   bw,   bwr,    bwr,   bwr );

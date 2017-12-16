@@ -41,7 +41,7 @@ namespace nls {
 //  lm_printout_std (default monitoring routine)
 
 void lm_printout_std( int n_par, const double *par, int m_dat,
-	const void */*data*/, const double *fvec,
+	const void * /*data*/, const double *fvec,
 	int printflags, int iflag, int iter, int nfev)
 //
 //       data  : for soft control of printout behaviour, add control

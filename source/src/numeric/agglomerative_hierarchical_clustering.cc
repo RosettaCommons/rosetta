@@ -63,7 +63,7 @@ AgglomerativeHierarchicalClusterer::cluster(
 
 	assert(active_indexes.size() == n_clusters);
 	utility::vector1<ClusteringTreeNodeOP> out;
-	for ( unsigned long & active_indexe : active_indexes ) {
+	for ( Size & active_indexe : active_indexes ) {
 		out.push_back(nodes[active_indexe]);
 	}
 

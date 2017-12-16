@@ -20,7 +20,7 @@
 
 // Package headers
 #include <protocols/mean_field/FlexBBMeanField.hh>
-#include <protocols/mean_field/AAMatrix.fwd.hh>
+#include <protocols/mean_field/AAMatrix.hh>
 
 // Project headers
 

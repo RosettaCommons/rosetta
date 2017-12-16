@@ -21,9 +21,6 @@
 #ifndef PYROSETTA
 #include <ctime>
 #endif
-#ifndef __WIN32__
-#include <sys/resource.h>
-#endif
 
 #include <protocols/cluster/calibur/rmsd.hh>
 #include <protocols/cluster/calibur/InitCluster.hh>
@@ -34,7 +31,7 @@ namespace calibur {
 
 //- = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = - = -
 
-#ifndef __WIN32__
+#if !defined(__WIN32__) && !defined(WIN32)
 #ifndef PYROSETTA
 double
 __timeval_difference(struct timeval * x, struct timeval * y) {

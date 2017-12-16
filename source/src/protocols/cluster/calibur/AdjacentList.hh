@@ -22,7 +22,7 @@
 #include <math.h>
 #include <assert.h>
 #include <time.h>
-#ifndef __WIN32__
+#if !defined(__WIN32__) && !defined(WIN32)
 #include <sys/resource.h>
 #endif
 

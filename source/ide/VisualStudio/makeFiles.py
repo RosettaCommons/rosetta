@@ -81,7 +81,7 @@ for dir, srcfiles in sources.iteritems():
 			objfile = objfile.replace('\\', '__')
 
 			vsFileLines += ['    <ClCompile Include="'+allfile+'">\r\n']
-			for config in ['BoincDebug|Win32','BoincRelease|Win32','Debug|Win32','Release|Win32']:
+			for config in ['BoincDebug|Win32','BoincRelease|Win32','Debug|Win32','Release|Win32','BoincRelease|x64']:
 				vsFileLines += ['      <ObjectFileName Condition="\'$(Configuration)|$(Platform)\'==\'' + config + '\'">$(IntDir)' + objfile + '.obj</ObjectFileName>\r\n']
 				vsFileLines += ['      <XMLDocumentationFileName Condition="\'$(Configuration)|$(Platform)\'==\'' + config + '\'">$(IntDir)' + objfile + '.xdc</XMLDocumentationFileName>\r\n']
 			vsFileLines += ['    </ClCompile>\r\n']

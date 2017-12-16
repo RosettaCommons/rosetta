@@ -316,7 +316,7 @@ MC_RNA_KIC_Sampler::find( core::id::TorsionID const & torsion_id )
 {
 	if ( get_suite_torsion_ids( moving_suite_ ).has_value( torsion_id ) ||
 			get_suite_torsion_ids( chainbreak_suite_ ).has_value( torsion_id ) ) {
-		return std::dynamic_pointer_cast< MC_Sampler >( shared_from_this() );
+		return utility::pointer::dynamic_pointer_cast< MC_Sampler >( shared_from_this() );
 	}
 	return nullptr;
 }

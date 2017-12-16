@@ -44,6 +44,10 @@ typedef platform::Real Real;
 #else // Real == double
 typedef  double  Real;
 #endif
+
+// for 'and/or' operators
+#include <iso646.h>
+
 #endif
 
 typedef unsigned short ShortSize; // used in the conformation::Atom

@@ -26,7 +26,12 @@
 #include <iostream>
 #include <sstream>
 #include <utility/string_util.hh>
+
+#ifdef WIN32
+#include <dirent_windows.h>
+#else
 #include <dirent.h>
+#endif
 
 namespace devel {
 namespace splice {

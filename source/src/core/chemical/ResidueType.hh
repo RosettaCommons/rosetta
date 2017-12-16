@@ -40,7 +40,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#ifdef __INTEL_COMPILER
+#if defined(__INTEL_COMPILER) || defined(WIN32)
 #include <core/chemical/RestypeDestructionEvent.hh>
 #else
 #include <core/chemical/RestypeDestructionEvent.fwd.hh>

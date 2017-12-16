@@ -39,6 +39,8 @@
 #include <core/id/AtomID.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/pointer/memory.hh>
+
 using basic::Error;
 using basic::Warning;
 namespace core {
@@ -144,7 +146,7 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 	get_density_map().precompute_unweighted_score();
 
 	// if in fact the sequence DID change, now we should set the new seuqence
-	pose.data().set( pose::datacache::CacheableDataType::POSE_SEQUENCE, std::make_shared< PoseSequence >( pose.annotated_sequence() ) );
+	pose.data().set( pose::datacache::CacheableDataType::POSE_SEQUENCE, utility::pointer::make_shared< PoseSequence >( pose.annotated_sequence() ) );
 }
 
 ///////////////////////////////////////////////////////////////////////

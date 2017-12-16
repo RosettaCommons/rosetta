@@ -119,7 +119,7 @@ SimPDB::read()
 {
 	std::ifstream input(protein_file_name_);
 	if ( !input ) {
-		std::cerr << "Cannot find protein file " << protein_file_name_ << std::endl;
+		std::cerr << "Cannot find protein file " << protein_file_name_.c_str() << std::endl;
 		exit(0);
 	}
 	std::cout.flush();

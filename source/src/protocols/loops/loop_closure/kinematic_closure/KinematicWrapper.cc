@@ -140,7 +140,7 @@ void KinematicWrapper::respect_this_movemap( core::kinematics::MoveMapCOP mm )
 	}
 
 	TR << "respect_this_movemap has restricted loop pivots to these positions:";
-	for ( unsigned long & allowed_position : allowed_positions_ ) TR << " " << allowed_position;
+	for ( core::Size & allowed_position : allowed_positions_ ) TR << " " << allowed_position;
 	TR << std::endl;
 
 	return;

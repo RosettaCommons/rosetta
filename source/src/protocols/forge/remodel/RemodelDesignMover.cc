@@ -683,13 +683,13 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	}
 
 	TR << "central residues: ";
-	for ( unsigned long & cen_re : cen_res ) {
+	for ( core::Size & cen_re : cen_res ) {
 		TR << cen_re << ",";
 	}
 	TR << std::endl;
 
 	TR << "neighbor residues: ";
-	for ( unsigned long & nbr_re : nbr_res ) {
+	for ( core::Size & nbr_re : nbr_res ) {
 		TR <<  nbr_re << ",";
 	}
 	TR << std::endl;

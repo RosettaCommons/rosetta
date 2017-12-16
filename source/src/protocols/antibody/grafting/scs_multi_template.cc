@@ -18,6 +18,8 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility/pointer/memory.hh>
+
 namespace protocols {
 namespace antibody {
 namespace grafting {
@@ -43,9 +45,7 @@ SCS_ResultsOP SCS_MultiTemplate::select(uint n, AntibodySequence const &A)
 {
 	//TR << "SCS_MultiTemplate::select regions: " << TR.bgGreen << TR.Black; for(auto & s : regions_) TR << s; TR << std::endl;
 	SCS_ResultsOP S = source_->select(n, A);
-
-	SCS_ResultsOP R = std::make_shared<SCS_Results>();
-
+	SCS_ResultsOP R = utility::pointer::make_shared<SCS_Results>();
 	struct {
 		string name;
 		SCS_ResultVector SCS_Results::*region;
