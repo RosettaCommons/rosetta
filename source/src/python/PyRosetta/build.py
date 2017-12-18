@@ -30,7 +30,9 @@ PlatformBits = platform.architecture()[0][:2]
 
 _script_version_ = '1.0'  # used as seed for dependency tracking
 
-_machine_name_ = os.uname()[1]
+if os.path.isfile('.hostname'):
+    with open('.hostname') as f: _machine_name_ = f.read().split()[0]
+else: _machine_name_ = os.getenv('HOSTNAME') or platform.node()
 
 _python_version_ = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)  # should be formatted: 2.7 or 3.5
 #_python_version_ = '{}.{}.{}'.format(sys.version_info.major, sys.version_info.minor, sys.version_info.micro)  # should be formatted: 2.7.6 or 3.5.0
