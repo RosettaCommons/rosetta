@@ -368,7 +368,11 @@ void TracerImpl::calculate_visibility()
 		Debug.calculate_visibility();
 		Trace.calculate_visibility();
 	} else {
-		utility_exit_with_message("Tried to calculate the visibility of Tracer "+channel_+" before the init() was called!.");
+		// Can't have a direct-exit error here, as we might try to call un-initialized tracers during errors in Option system parsing
+		std::cout << std::endl;
+		std::cout << "[ WARNING ] Tried to calculate the visibility of Tracer '"+channel_+"' before init() was called!" << std::endl;
+		std::cout << "[ WARNING ] This tracer will not obey commandline options." << std::endl;
+		std::cout << std::endl;
 	}
 }
 

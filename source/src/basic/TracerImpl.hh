@@ -234,14 +234,14 @@ public: /// Inner Classes
 
 	private:
 		TracerImpl & tracer_;
-		int priority_;
+		int priority_ = t_info;
 
 		/// @brief We need to copy channel name here so we can generate appropriate 'warning' message
 		/// in destructor, where tracer_ object is no longer valid.
 		std::string channel_;
 
 		/// @brief is channel visible?
-		bool visible_;
+		bool visible_ = true;
 	};
 
 	/// @brief channels with predefined priority levels.
@@ -307,19 +307,19 @@ private: /// Data members
 	utility::CSI_Sequence channel_color_, channel_name_color_;
 
 	/// @brief channel output priority level
-	int priority_;
+	int priority_ = t_info;
 
 	/// @brief channel muted priority level (above which level is channel muted), calculated using user suppied -level and -levels options
-	int mute_level_;
+	int mute_level_ = t_info;
 
 	/// @brief is channel visible?
-	bool visible_;
+	bool visible_ = true;
 
 	/// @brief is channel muted ?
-	bool muted_;
+	bool muted_ = false;
 
 	/// @brief is channel muted by default?
-	bool muted_by_default_;
+	bool muted_by_default_ = false;
 
 	/// static data members
 	/// @brief link to Tracer like object where all output for selecting channels should go.
