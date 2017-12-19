@@ -78,7 +78,7 @@ template <class T, platform::Size S>
 std::ostream & operator <<(std::ostream & os, utility::fixedsizearray1<T, S> const & v) {
 	os << "[";
 	if ( v.size() ) {
-		for ( size_t i=0; i<=S; ++i ) {
+		for ( size_t i=1; i<=S; ++i ) {
 			os << v[i];
 			if ( i < S ) os << ", ";
 		}

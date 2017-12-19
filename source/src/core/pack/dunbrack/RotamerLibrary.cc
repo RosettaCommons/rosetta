@@ -140,7 +140,6 @@ void rotamer_from_chi_02(ChiVector const & chi, // pass by reference for speed
 	}
 
 	rotamer_from_chi_02(chi4, res, nchi, rot4);
-
 	for ( Size ii = 1; ii <= nchi; ++ii ) {
 		rot[ii] = rot4[ii];
 	}
@@ -165,8 +164,7 @@ void rotamer_from_chi_02(Real4 const & chi, chemical::AA const res, Size nchi,
 	using namespace chemical;
 
 	// This code assumes that we're dealing with a canonical aa - fail if not the case.
-	// amw possibly temporarily commenting out so that this works for get_dihedral_b3aa
-	//debug_assert( res <= num_canonical_aas );
+	runtime_assert_string_msg( res <= num_canonical_aas, "Error in core::pack::dunbrack::RotamerLibrary::rotamer_from_chi_02(): This function cannot be called for a non-canonical amino acid!" );
 
 	// default to 0
 	// right now this means 0 for rot numbers larger than dunbrack's nchi

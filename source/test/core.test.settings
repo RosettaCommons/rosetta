@@ -202,6 +202,7 @@ sources = {
 		"rotamer_building_functions",
 	],
 	"pack/rotamers" : [
+		"SingleNCAARotamerLibraryTests",
 		"SingleResidueRotamerLibrary",
 		"SingleLigandRotamerLibrary",
 		"StoredRotamerLibrarySpecification",
@@ -899,6 +900,8 @@ testinputfiles = [
 	"pack/rotamer_set/glycerol.pdb",
 	"pack/rotamer_set/GOL.params",
 	"pack/rotamers/6SA.params",
+	"pack/rotamers/LEU_NCAA.params",
+	"pack/rotamers/lxx.bbdep.rotamers.lib",
 	"pack/rotamers/4tim.params",
 	"pack/rotamers/4tim_confs.pdb",
 	"pack/task/EX_test.resfile",

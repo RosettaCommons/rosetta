@@ -261,7 +261,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 	interpolate_rotamers( rsd, scratch, packed_rotno, interpolated_rotamer );
 
-	if ( dun02() ) {
+	if ( dun02() && aa() < core::chemical::last_D_aa ) {
 		for ( Size ii = 1; ii <= T; ++ii ) chidev[ ii ] = subtract_chi_angles( chi[ ii ], chimean[ ii ], aa(), ii );
 	} else {
 		for ( Size ii = 1; ii <= T; ++ii ) chidev[ ii ] = basic::periodic_range( chi[ ii ] - chimean[ ii ], 360 );
@@ -631,7 +631,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 ) const
 {
 	using namespace basic;
-
 	interpolated_rotamer.packed_rotno() = packed_rotno;
 	utility::fixedsizearray1< Size, ( 1 << N ) > sorted_rotno;
 	utility::vector1< PackedDunbrackRotamer< T, N > > rot( 1 << N );
@@ -1959,7 +1958,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 
 		if ( finished_first_phipsi_bin ) {
 			Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
-
 			if ( packed_rotno < 1 || packed_rotno > parent::n_packed_rots() ) {
 				std::cerr << "ERROR in converting rotwell to packed rotno: ";
 				for ( Size ii = 1; ii <= T; ++ii ) std::cerr << " " << rotwell[ ii ];
@@ -1978,6 +1976,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 			Size bb_bin_index = make_index( N, N_PHIPSI_BINS, bb_bin );
 			rotamers_( bb_bin_index, count_in_this_phipsi_bin ) = rotamer;
 			packed_rotno_2_sorted_rotno_( bb_bin_index, packed_rotno ) = count_in_this_phipsi_bin;
+
 			++count_in_this_phipsi_bin;
 			for ( Size ii = 1; ii <= N; ++ii ) last_bb_bin[ ii ] = bb_bin[ ii ];
 
@@ -2262,9 +2261,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static(
 {
 	core::chemical::AA aa2=aa();
 	if ( core::chemical::is_canonical_D_aa( aa2 ) ) aa2 = core::chemical::get_L_equivalent( aa2 );
-
-	if ( dun02() ) { rotamer_from_chi_02( chi, aa2, T, rot ); return; }
-
+	if ( dun02() && aa() < core::chemical::last_D_aa ) { rotamer_from_chi_02( chi, aa2, T, rot ); return; }
 	debug_assert( chi.size() >= T );
 
 	/// compiler will unroll this loop

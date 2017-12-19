@@ -289,7 +289,13 @@ public:
 		Real chi,
 		Size which_chi
 	) const {
-		debug_assert( ! dun02_ );
+
+		// I'm removing this debug_assert because it is enforced earlier -- in the
+		// function that calls it -- and furthermore because this assert NEEDS to have
+		// a more complex condition: it has to accept NCAA rotlibs. So we need to be
+		// able to compare aa against last_canonical or last_D or something, and here
+		// we don't have aa with us.
+		//debug_assert( ! dun02_ );
 		//debug_assert( -180.0 <= chi && chi <= 180.0 );
 		if ( !(-180.0 <= chi && chi <= 180.0 ) ) {
 			throw CREATE_EXCEPTION(utility::excn::RangeError,
