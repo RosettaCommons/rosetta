@@ -35,7 +35,6 @@
 #include <basic/options/option.hh>
 #include <core/pose/PDBInfo.hh>
 
-
 // numeric headers
 #include <numeric/random/random.hh>
 
@@ -910,9 +909,11 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 	// safety, make sure PDBInfo leaves obsolete
 	if ( pose.pdb_info().get() ) {
-		pose.pdb_info()->obsolete( true );
+		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose ) ) );
+		char const chain_id = 'A';
+		pose.pdb_info()->set_chains( chain_id );//set all chains to A at this stage, so design doesn't fail on chain
+		//pose.pdb_info()->obsolete( true );
 	}
-
 
 }
 

@@ -461,6 +461,13 @@ void VarLengthBuild::apply( Pose & pose ) {
 		for ( core::Size i=abego_.size(); i<pose.size(); ++i ) {
 			abego_.push_back("X");
 		}
+		// fix insertion code
+		for ( core::Size i=0; i<abego_.size(); i++ ) {
+			if ( (abego_[i] == "I") || (abego_[i] == "i") ) {
+				abego_[i] = "X";
+				//std::cout << "made I into an X" << std::endl;
+			}
+		}
 	}
 
 	// centroid level protocol
