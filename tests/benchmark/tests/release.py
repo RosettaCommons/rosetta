@@ -99,6 +99,8 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
         execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
+        if os.path.isdir(git_working_dir): shutil.rmtree(git_working_dir)  # removing git dir to keep size of database small
+
 
 def convert_to_release(rosetta_dir, working_dir, config, git_repository_name, release_name, tracer):
     ''' Convert Rosetta repostiroty into release mode. This include removing all devel files, checking out submodules and so on...
@@ -355,6 +357,8 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
             release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in ['Release', 'MinSizeRel'] else False )
 
+            if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
+
             res_code = _S_passed_
             results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
             json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
@@ -421,6 +425,49 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
     return results
 
 
+def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    TR = Tracer(True)
+    TR('Running ui_release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={config[cpu_count]}, memory={config[memory]}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+
+    platform_suffix = platform_to_pretty_string(platform)
+    build_path = '{rosetta_dir}/source/build/ui.{platform_suffix}.static'.format(**vars())
+
+    command_line = 'cd {rosetta_dir}/source/src/ui && python update_ui_project.py && cd ../../build && mkdir -p {build_path} && cd {build_path} && {config[qmake.static]} -r ../qt/qt.pro && make -j{config[cpu_count]}'.format(**vars())
+
+    if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
+    else: res, output = execute('Compiling...', command_line, return_='tuple', add_message_and_command_line_to_output=True)
+
+    release_name = 'ui.{platform}'.format( platform='.'.join([platform['os']]) ) #, python_version=platform['python'][:3].replace('.', '') )
+
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
+
+    if res:
+        res_code = _S_build_failed_
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+
+    else:
+        package_dir = working_dir + '/' + release_name
+
+        if not os.path.isdir(package_dir): os.makedirs(package_dir)
+
+        apps = 'workbench'.split()
+        for a in apps:
+            if    platform['os'] == 'mac':               distutils.dir_util.copy_tree(build_path + '/{a}/{a}.app'.format(**vars()), '{package_dir}/{a}.app'.format(**vars()), update=False)
+            elif  platform['os'] in ['linux', 'ubuntu']: shutil.copy(build_path + '/{a}/{a}'.format(**vars()), package_dir)
+            else: raise BenchmarkError('ui_release: ERROR, unsupported os: {platform[os]}!'.format(**vars()))
+
+        release('ui', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True)
+
+        #if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
+
+        res_code = _S_passed_
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+
+    return results
+
+
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     ''' Run single test.
@@ -441,5 +488,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test =='PyRosetta4.RelWithDebInfo': return py_rosetta4_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     elif test =='PyRosetta4.documentation':  return py_rosetta4_documentaion('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+
+    elif test =='ui': return ui_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     else: raise BenchmarkError('Unknow PyRosetta test: {}!'.format(test))

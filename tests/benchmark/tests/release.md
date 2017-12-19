@@ -17,3 +17,7 @@ Create corresponding PyRosetta4 release package. On test completion package will
 -----
 ### PyRosetta4.debug
 Build PyRosetta4 and generate API documentaton for it. If this is successful upload new documentation so it became available from http://graylab.jhu.edu/PyRosetta.documentation/
+
+-----
+### ui
+Build UI release distribution packages

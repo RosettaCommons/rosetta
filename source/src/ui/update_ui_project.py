@@ -46,9 +46,15 @@ def get_rosetta_include_directories():
 def get_defines():
     ''' return list of #defines '''
     defines = 'BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD'  # MULTI_THREADED
-    if Platform == 'macos': defines += ' UNUSUAL_ALLOCATOR_DECLARATION'
-    #if Options.type in 'Release MinSizeRel': defines += ' NDEBUG'
+    # moved to library_project_template if Platform == 'macos': defines += ' UNUSUAL_ALLOCATOR_DECLARATION'
+    # moved to library_project_template  if Options.type in 'Release MinSizeRel': defines += ' NDEBUG'
     return defines.split()
+
+def get_config_flags():
+    ''' return extra config flags for Qt projects
+    '''
+    #return 'static' if Options.static else ''
+    return ''
 
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False):
@@ -102,7 +108,13 @@ CONFIG += object_parallel_to_source no_keywords {config}
 TARGET = {name}
 TEMPLATE = lib
 
+
 DEFINES += {defines}
+macx {{
+    DEFINES += UNUSUAL_ALLOCATOR_DECLARATION
+}}
+CONFIG(release, debug|release) : DEFINES += NDEBUG  # message(Release build!)
+
 
 INCLUDEPATH = {includes}
 
@@ -167,7 +179,7 @@ def generate_rosetta_external_project_files(rosetta_source_path, prefix):
         if not os.path.isdir(lib_prefix): os.makedirs(lib_prefix)
 
         t = library_project_template.format(name=lib,
-                                            config='',
+                                            config  = get_config_flags(),
                                             sources = ' \\\n\t'.join( [ 'external/' + s for s in libs[lib] if not s.endswith('h') ] ),
                                             headers = ' \\\n\t'.join( [ 'external/' + h for h in libs[lib] if h.endswith('h') ] ),
                                             #sources = ' \\\n\t'.join( [ os.path.abspath(rosetta_source_path + '/external/' + s) for  if not s.endswith('h') ] ),
@@ -250,7 +262,7 @@ def generate_rosetta_libraries_project_files(rosetta_source_path, prefix, linkin
         if not os.path.isdir(lib_prefix): os.makedirs(lib_prefix)
 
         t = library_project_template.format(name=lib_mangled,
-                                            config='c++11',
+                                            config='c++11 ' + get_config_flags(),
                                             sources = ' \\\n\t'.join([s for s in sources]),
                                             headers = ' \\\n\t'.join([h for h in headers]),
                                             defines = ' '.join( get_defines() ),
@@ -344,6 +356,31 @@ def generate_app_project_files(rosetta_source_path, prefix):
     return projects
 
 
+
+root_project_template = '''\
+TEMPLATE = subdirs
+
+CONFIG += {config}
+
+SUBDIRS += {sub_dirs} rosetta
+
+{dependencies}
+'''
+
+def generate_root_project(ui_project_root, projects):
+    ''' creating root project, this is just an umbrella that hold other projects
+    '''
+    root_project = root_project_template.format(
+        sub_dirs = ' '.join(projects),
+        config = get_config_flags(),
+        dependencies = '\n'.join( ( '{}.depends = rosetta {}\n'.format(p, 'ui' if p!='ui' else '') for p in projects) ),
+    )
+
+    #update_source_file(ui_project_root + '/qt{static}.pro'.format(static = '.static' if Options.static else ''), root_project)
+    update_source_file(ui_project_root + '/qt.pro', root_project)
+
+
+
 """ version for putting apps into qt/apps subproject, but qmake does not allow to specify project-level dependency for project on different hierarchy leveles
 def generate_app_project_files(rosetta_source_path, prefix):
     ''' create link to ui project files and return list of projects
@@ -409,6 +446,7 @@ def main(args):
     ''' UI project building script '''
 
     parser = argparse.ArgumentParser()
+    #parser.add_argument('--static', action="store_true", help="Generate UI project with static linking (for deployement). Note: when this options is enabled project files will be put into source/build/qt.static directory.")
 
     global Options
     Options = parser.parse_args()
@@ -432,12 +470,7 @@ def main(args):
     projects.append('ui')
 
     # creating root project, this is just an umbrella that hold other projects
-    root_project = 'TEMPLATE = subdirs\n\nSUBDIRS += {} rosetta\n'.format( ' '.join(projects) )
-    for p in projects: root_project +='\n{}.depends = rosetta {}\n'.format(p, 'ui' if p!='ui' else '')
-    update_source_file(ui_project_root + '/qt.pro', root_project)
-
-    # root_project = 'TEMPLATE = subdirs\n\nSUBDIRS += apps rosetta\napps.depends = rosetta\n'
-    # update_source_file(ui_project_root + '/qt.pro', root_project)
+    generate_root_project(ui_project_root, projects)
 
     generate_app_shell_scripts(ui_project_root, rosetta_libs, [a for a in projects if a != 'ui'])
 

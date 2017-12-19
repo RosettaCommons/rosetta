@@ -27,6 +27,7 @@ public Q_SLOTS:
 
 private Q_SLOTS:
 	void on_description_textChanged(void);
+	void on_nstruct_valueChanged(int);
 
 	void on_input_set_from_file_clicked();
 	void on_flags_set_from_file_clicked();

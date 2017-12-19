@@ -52,7 +52,7 @@ QNetworkAccessManager * network_access_manager()
 
 QString server_url()
 {
-	return "http://127.0.0.1:64078";
+	return "http://ui.graylab.jhu.edu/api";
 }
 
 Updater & Updater::get()

@@ -167,7 +167,7 @@ def calculate_extension(platform, mode='release'):
 
 def platform_to_pretty_string(platform):
     ''' Take platform as json object and return normalized human-readable string '''
-    return '{}.{}{}{}'.format(platform['os'], platform['compiler'], ('.'+'.'.join(platform['extras']) if 'extras' in platform  and  platform['extras'] else ''), ('.'+platform['python'].split('/')[-1] if 'python' in platform else ''))
+    return '{}.{}{}{}'.format(platform['os'], platform['compiler'], ('.'+'.'.join(platform['extras']) if 'extras' in platform  and  platform['extras'] else ''), ('.python'+platform['python'] if 'python' in platform else ''))
 
 
 def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=False, verbose=False):

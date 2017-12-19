@@ -71,7 +71,7 @@ def main(args):
 
     parser.add_argument("--compare", nargs=2, help="Do not run the tests but instead compare previous results. Use --compare suffix1 suffix2" )
 
-    parser.add_argument("--config", default='benchmark.ini', action="store", help="Location of .ini file with additional options configuration. Optional.")
+    parser.add_argument("--config", default='benchmark.{os}.ini'.format(os=Platform['os']), action="store", help="Location of .ini file with additional options configuration. Optional.")
 
     parser.add_argument("--skip-compile", dest='skip_compile', default=None, action="store_true", help="Skip the compilation phase. Assumes the binaries are already compiled locally.")
 
@@ -98,7 +98,7 @@ def main(args):
 
     Platform['compiler'] = Options.compiler
 
-    if os.path.isfile('benchmark.ini'):
+    if os.path.isfile(Options.config):
         Config = ConfigParser( dict(here=os.path.abspath('./') ) )
         Config.readfp( file(Options.config) )
 

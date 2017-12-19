@@ -118,6 +118,13 @@ void Task::description(QString const &d)
 	}
 }
 
+void Task::nstruct(int n)
+{
+	if( nstruct_ != n ) {
+		nstruct_ = n;
+		Q_EMIT changed();
+	}
+}
 
 void Task::subscribe()
 {
@@ -327,6 +334,7 @@ QJsonValue Task::task_data()
 	r["state"] = to_string(state_);
 	r["queue"] = queue_;
 	r["description"] = description_;
+	r["nstruct"] = nstruct_;
 
 	//QJsonDocument jd = QJsonDocument::fromVariant(r);
 	//return jd.toJson(QJsonDocument::Compact);
@@ -364,6 +372,15 @@ void Task::task_data(QJsonValue const &jv)
 		auto queue = q.toString();
 		if( queue != queue_) {
 			queue_ = queue;
+			changed = true;
+		}
+	}
+
+	auto ns = o["nstruct"];
+	if( ns.isDouble() ) {
+		auto nstruct = ns.toInt();
+		if( nstruct != nstruct_) {
+			nstruct_ = nstruct;
 			changed = true;
 		}
 	}

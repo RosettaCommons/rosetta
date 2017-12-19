@@ -68,11 +68,14 @@ void TaskView::update_ui_from_task()
 	ui->flags_file_name->setText( task_->flags().file_name() );
 	ui->flags->document()->setPlainText( task_->flags().data() );
 
+	ui->nstruct->setValue( task_->nstruct() );
+
 	if( auto model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
 		QStringList output_files;
 		for(auto const &k_fsp : task_->output() ) {
 			//qDebug() << "TaskView::update_ui_from_task adding output file: " << k_fsp.first;
-			if( not k_fsp.second->data().isEmpty() ) output_files << k_fsp.first;
+			//if( not k_fsp.second->data().isEmpty() ) output_files << k_fsp.first;
+			output_files << k_fsp.first;
 		}
 		model->setStringList(output_files);
 	} else {
@@ -108,6 +111,11 @@ void TaskView::on_description_textChanged()
 	task_->description( ui->description->document()->toPlainText() );
 }
 
+void TaskView::on_nstruct_valueChanged(int)
+{
+    //qDebug() << "TaskView::on_nstruct_valueChanged";
+	task_->nstruct( ui->nstruct->value() );
+}
 
 void TaskView::on_input_set_from_file_clicked()
 {

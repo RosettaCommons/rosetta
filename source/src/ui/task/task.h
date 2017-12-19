@@ -139,6 +139,8 @@ public:
 	QString description() const { return description_; }
 	void description(QString const &d);
 
+	int nstruct() const { return nstruct_; }
+	void nstruct(int);
 
 	File const &input() const { return input_; }
 	void input(File &&input) { if( input_ != input ) { input_ = std::move(input);  Q_EMIT changed(); } }
@@ -148,6 +150,8 @@ public:
 
 	File const &flags() const { return flags_; }
 	void flags(File &&flags) { if( flags_ != flags ) { flags_ = std::move(flags); Q_EMIT changed(); } }
+
+
 
 	/// subscribe to network update stream
 	void subscribe();
@@ -203,6 +207,8 @@ private:
 	State state_ = State::_draft_;
 
 	QString queue_;
+
+	int nstruct_ = 1;
 
 	/// UUID for cloud syncing. Zero id by default (will be set to a new random value on 'submit' event).
 	//QUuid task_id_;

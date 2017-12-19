@@ -81,7 +81,7 @@ void NetworkCall::call(QString const & address, QNetworkAccessManager::Operation
 	else Q_ASSERT_X(false, "NetworkCall::call", "Unknown operation!");
 
 	//connect(reply_, &QNetworkReply::finished, this, &NetworkCall::network_operation_is_finished); // does not work on old GCC compilers
-	connect(reply_, SIGNAL(QNetworkReply::finished()), this, SLOT(NetworkCall::network_operation_is_finished()));
+	connect(reply_, SIGNAL(finished()), this, SLOT(network_operation_is_finished()));
     if( reply_->isFinished() ) { network_operation_is_finished(); }
 }
 
