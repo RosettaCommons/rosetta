@@ -54,6 +54,16 @@ BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2( core::Size const upper_thresho
 	calc_( /* NULL */)
 { }
 
+// @brief copy constructor
+BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2( BuriedUnsatHbondFilter2 const & rval ):
+	Filter( rval ),
+	upper_threshold_( rval.upper_threshold_ ),
+	jump_num_( rval.jump_num_ ),
+	task_factory_( rval.task_factory_ ),
+	calc_( rval.calc_ )
+{}
+
+
 BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2() : protocols::filters::Filter( "BuriedUnsatHbonds2" ) {}
 
 BuriedUnsatHbondFilter2::~BuriedUnsatHbondFilter2() = default;
@@ -64,7 +74,9 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
 
-	calc_ = devel::buns::BuriedUnsatisfiedPolarsCalculator2OP( new devel::buns::BuriedUnsatisfiedPolarsCalculator2("default") );
+	// calc_ = devel::buns::BuriedUnsatisfiedPolarsCalculator2OP( new devel::buns::BuriedUnsatisfiedPolarsCalculator2("default") );
+	//  sboyken NEED DIFFERENT NAME THAN "default" OTHERWISE DOES NOT PLAY NICE WHEN CALL MULTIPLE UNSAT FILTERS WITHIN SAME XML!!!
+	calc_ = devel::buns::BuriedUnsatisfiedPolarsCalculator2OP( new devel::buns::BuriedUnsatisfiedPolarsCalculator2("bunsat_calc2_default_weak_bunsat_calc") );
 
 	if ( tag->hasOption("generous_hbonds") ) {
 		calc_->set_generous_hbonds(tag->getOption<bool>( "generous_hbonds", true  ));
@@ -192,13 +204,13 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 	return unsat_hbonds;
 }
 
-protocols::filters::FilterOP BuriedUnsatHbondFilter2::clone() const {
-	return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2( *this ) );
-}
-
-protocols::filters::FilterOP BuriedUnsatHbondFilter2::fresh_instance() const{
-	return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2() );
-}
+//protocols::filters::FilterOP BuriedUnsatHbondFilter2::clone() const {
+// return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2( *this ) );
+//}
+//
+//protocols::filters::FilterOP BuriedUnsatHbondFilter2::fresh_instance() const{
+// return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2() );
+//}
 
 void
 BuriedUnsatHbondFilter2::task_factory( core::pack::task::TaskFactoryOP tf ){

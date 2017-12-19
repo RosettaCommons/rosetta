@@ -210,9 +210,6 @@ sources = {
 	#	"SSRbClass",
 	#	"SSrbrelax",
 	#],
-	"devel/vardist_solaccess": [
-		"VarSolDRotamerDots",
-	],
 	"devel/znhash": [
 		"ZnHash",
 		"SymmZnMoversAndTaskOps",

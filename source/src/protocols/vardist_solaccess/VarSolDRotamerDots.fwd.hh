@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   devel/vardist_solaccess/RotamerDots.fwd.hh
+/// @file   protocols/vardist_solaccess/RotamerDots.fwd.hh
 /// @brief  VarSolDRotamerDots classes, forward declaration
 /// @author Ron Jacak
 
-#ifndef INCLUDED_devel_vardist_solaccess_VarSolDRotamerDots_FWD_HH
-#define INCLUDED_devel_vardist_solaccess_VarSolDRotamerDots_FWD_HH
+#ifndef INCLUDED_protocols_vardist_solaccess_VarSolDRotamerDots_FWD_HH
+#define INCLUDED_protocols_vardist_solaccess_VarSolDRotamerDots_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
-namespace devel {
+namespace protocols {
 namespace vardist_solaccess {
 
 class VarSolDRotamerDots;
@@ -32,7 +32,7 @@ typedef utility::pointer::weak_ptr< VarSolDistSasaCalculator const > VarSolDistS
 
 
 } // vardist_solaccess
-} // devel
+} // protocols
 
 
-#endif // INCLUDED_devel_vardist_solaccess_VarSolDRotamerDots_FWD_HH
+#endif // INCLUDED_protocols_vardist_solaccess_VarSolDRotamerDots_FWD_HH

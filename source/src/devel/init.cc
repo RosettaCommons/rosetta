@@ -78,7 +78,7 @@
 // Task Operation creators
 #include <devel/denovo_design/task_operations/HighestEnergyRegionCreator.hh>
 #include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
-#include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
+//#include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 
 #include <utility/vector1.hh>
 
@@ -92,7 +92,7 @@ protocols::moves::MoverRegistrator< domain_insertion::FusePosesNtoCMoverCreator 
 protocols::moves::MoverRegistrator< domain_insertion::InsertionSiteTestMoverCreator > reg_InsertionSiteTestMoverCreator;
 protocols::moves::MoverRegistrator< domain_insertion::SetupCoiledCoilFoldTreeMoverCreator > reg_SetupCoiledCoilFoldTreeMoverCreator;
 protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;
-protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
+//protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
 protocols::moves::MoverRegistrator< devel::znhash::InsertZincCoordinationRemarkLinesCreator > reg_InsertZincCoordinationRemarkLinesCreator;
 protocols::moves::MoverRegistrator< znhash::LoadZnCoordNumHbondCalculatorMoverCreator > reg_LoadZnCoordNumHbondCalculatorMoverCreator;
 static protocols::moves::MoverRegistrator< devel::loop_creation::LoopCreationMoverCreator > reg_LoopCreationMoverCreator;

@@ -18,7 +18,7 @@
 /// (Note: does not repack in unbound state), goes through every heavy atom in the asymmetric unit and
 /// finds cases where a polar is considered buried in the bound state, but not in the unbound state.
 /// The output includes the number of unsatisfied hydrogen bonds, the specific residues and atoms that
-/// are unsatisfied, and a formatted string for easy selection in pymol.
+/// are unsatisfied, and a formatted string for easy selection in pymol.S
 ///
 /// example usage: <SymUnsatHbonds name=uhb jump=1 cutoff=20 />
 ///
@@ -35,7 +35,7 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <ObjexxFCL/format.hh>
-#include <core/pose/symmetry/util.hh>
+//#include <core/pose/symmetry/util.hh>
 #include <protocols/jd2/util.hh>
 
 // Project Headers

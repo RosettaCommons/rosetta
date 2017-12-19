@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   devel/vardist_solaccess/VarSolDRotamerDots.hh
+/// @file   protocols/vardist_solaccess/VarSolDRotamerDots.hh
 /// @brief  VarSolDRotamerDots classes header file
 /// @author Andrew Leaver-Fay
 /// @author Ron Jacak
 
-#ifndef INCLUDED_devel_vardist_solaccess_VarSolDRotamerDots_HH
-#define INCLUDED_devel_vardist_solaccess_VarSolDRotamerDots_HH
+#ifndef INCLUDED_protocols_vardist_solaccess_VarSolDRotamerDots_HH
+#define INCLUDED_protocols_vardist_solaccess_VarSolDRotamerDots_HH
 
 // Unit Headers
-#include <devel/vardist_solaccess/VarSolDRotamerDots.fwd.hh>
+#include <protocols/vardist_solaccess/VarSolDRotamerDots.fwd.hh>
 
 // Project headers
 #include <core/id/AtomID_Map.hh>
@@ -46,7 +46,7 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
-namespace devel {
+namespace protocols {
 namespace vardist_solaccess {
 
 /// @brief Handles sphere-sphere overlap calculations
@@ -67,7 +67,7 @@ public:
 	VarSolDRotamerDots(const VarSolDRotamerDots& rhs);
 
 	void copy( VarSolDRotamerDots const & rhs );
-	VarSolDRotamerDots const & operator= ( VarSolDRotamerDots const & rhs );
+	VarSolDRotamerDots & operator= ( VarSolDRotamerDots const & rhs );
 
 	// do two rotamers have any sphere overlaps? doesn't actually determine which dots are covered if there is overlap.
 	bool overlaps( VarSolDRotamerDots const & other ) const;
@@ -253,8 +253,8 @@ public:
 
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( devel_vardist_solaccess_VarSolDRotamerDots )
+CEREAL_FORCE_DYNAMIC_INIT( protocols_vardist_solaccess_VarSolDRotamerDots )
 #endif // SERIALIZATION
 
 
-#endif // INCLUDED_devel_vardist_sollaccess_VarSolDRotamerDots_HH
+#endif // INCLUDED_protocols_vardist_sollaccess_VarSolDRotamerDots_HH

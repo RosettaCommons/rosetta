@@ -36,7 +36,7 @@
 // #include <core/scoring/cont_sasa.hh>
 
 // Andrew's stuff
-#include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
+#include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
 
 // Utility Headers
 #include <basic/MetricValue.hh>
@@ -357,7 +357,7 @@ void CalcsTestMover::register_calculators(){
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		if ( basic::options::option[ basic::options::OptionKeys::bpf::variable_sasa_radii ] ) {
-			using namespace devel::vardist_solaccess;
+			using namespace protocols::vardist_solaccess;
 			CalculatorFactory::Instance().register_calculator( Sasa_, VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator ) );
 		} else {
 			CalculatorFactory::Instance().register_calculator( Sasa_, PoseMetricCalculatorOP( new simple_calculators::SasaCalculatorLegacy ) );

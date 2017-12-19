@@ -552,3 +552,4 @@
 #include <protocols/toolbox/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
 #include <protocols/toolbox/task_operations/StoreCompoundTaskMoverCreator.hh>
 #include <protocols/toolbox/task_operations/StoreTaskMoverCreator.hh>
+#include <protocols/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>

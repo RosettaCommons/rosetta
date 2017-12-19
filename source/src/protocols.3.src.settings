@@ -990,6 +990,9 @@ sources = {
 		"StoreTaskMover",
 		"ThreadSequenceOperation",
 	],
+	"protocols/vardist_solaccess": [
+                "VarSolDRotamerDots",
+        ],
 }
 include_path = [
 ]

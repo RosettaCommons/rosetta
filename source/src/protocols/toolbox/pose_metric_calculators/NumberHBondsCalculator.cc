@@ -10,6 +10,7 @@
 /// @file   core/pose/metrics/NumberHBondsCalculator.cc
 /// @brief  number of hbonds calculator class
 /// @author Florian Richter
+/// @author Scott Boyken ( sboyken@gmail.com); updated 2017 to be compatible with new unsat filters and generous way of h-bond counting
 
 // Unit headers
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
@@ -28,6 +29,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 
+// core headers
+//#include <core/pose/util.tmpl.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/scoring/Energies.hh>
@@ -38,6 +41,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
 
 #include <utility/assert.hh>
 
@@ -76,17 +80,36 @@ choose_hbond_parameter_set() {
 	}
 }
 
+// default constructor
 NumberHBondsCalculator::NumberHBondsCalculator() :
-	hb_database( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) )
+	use_generous_hbonds_( true ),
+	special_region_( /* NULL */ ),
+	all_Hbonds_( /* NULL */ ),
+	special_region_Hbonds_( /* NULL */ ),
+	atom_Hbonds_( /* NULL */ ),
+	residue_Hbonds_( /* NULL */ ),
+	ref_residue_total_energies_( /* NULL */ )
+	//hbond_set_( /* NULL */ ),
+	//hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) )
 {}
 
-NumberHBondsCalculator::NumberHBondsCalculator( std::set< core::Size > const & special_region ) :
-	hb_database( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) ),
-	special_region_(special_region)
+// constructor with options
+NumberHBondsCalculator::NumberHBondsCalculator( bool const generous, std::set< core::Size > special_region /* NULL */ ) :
+	use_generous_hbonds_( generous ),
+	special_region_(special_region),
+	all_Hbonds_( /* NULL */ ),
+	special_region_Hbonds_( /* NULL */ ),
+	atom_Hbonds_( /* NULL */ ),
+	residue_Hbonds_( /* NULL */ ),
+	ref_residue_total_energies_( /* NULL */ )
+	//hbond_set_( /* NULL */ ),
+	//hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) )
 {}
 
+// desctructor
+NumberHBondsCalculator::~NumberHBondsCalculator(){}
 
-core::pose::metrics::PoseMetricCalculatorOP NumberHBondsCalculator::clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new NumberHBondsCalculator() ); }
+//core::pose::metrics::PoseMetricCalculatorOP NumberHBondsCalculator::clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new NumberHBondsCalculator() ); }
 
 void
 NumberHBondsCalculator::lookup(
@@ -146,13 +169,25 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 {
 
 	using namespace core::scoring;
+	using namespace core::scoring::hbonds;
 
 	//first we have to figure out which of the hbonds to (re)calculate
 	utility::vector1< bool >res_to_recompute( this_pose.size(), false );
-	hbonds::HBondSet hb_set( this_pose.size() );
+	//hbonds::HBondSet hb_set( this_pose.size() );
 
 	//hbonds::HBondSet test_hb_set( this_pose.size() );
 	//hbonds::fill_hbond_set( this_pose, false, test_hb_set, false);
+
+	HBondSet temp_hbond_set; // we need to recompute HBondSet each time
+	HBondOptions new_options( temp_hbond_set.hbond_options() ); // set default options
+	if ( use_generous_hbonds_ ) {
+		new_options.use_hb_env_dep(false);
+		new_options.decompose_bb_hb_into_pair_energies(true);
+		new_options.bb_donor_acceptor_check( false ); // don't use bb exclusion logic when penalizing unsatisfied -- ideally would only eclude N-H donors and not exclude C=O with only 1 h-bond
+		// according to ALF will get rid of exclusion logic soon
+		new_options.exclude_intra_res_protein( false ); // we want to count this for unsat calc, by default they are excluded
+	}
+	HBondSetOP hb_set( new HBondSet( new_options, this_pose.size() ) ); // we need to recompute HBondSet each time
 
 	determine_res_to_recompute( this_pose, res_to_recompute );
 	runtime_assert( residue_Hbonds_.size() == res_to_recompute.size() );
@@ -166,7 +201,7 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 
 	for ( Size i = 1; i <= res_to_recompute.size(); ++i ) {
 
-		compute_Hbonds_for_residue( this_pose, i, res_to_recompute, hb_set );
+		compute_Hbonds_for_residue( this_pose, i, res_to_recompute, *hb_set );
 
 	} //loop over all residues
 
@@ -195,39 +230,46 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 				Size hbonds_this_donor(0);
 				// count donated hbonds
 				for ( Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++ ) {
-					hbonds_this_donor = hbonds_this_donor + hb_set.atom_hbonds( core::id::AtomID (hcount, i ) ).size();
+					hbonds_this_donor = hbonds_this_donor + hb_set->atom_hbonds( core::id::AtomID (hcount, i ), !use_generous_hbonds_ /* include_only_allowed */ ).size();
+					// sboyken added; want to store Hpol as +1 in atom map if makes an h-bond
+					//    the !use_generous_hbonds_ results in giving us all h-bonds, which we want for generous case
+					atom_Hbonds_.set( core::id::AtomID(hcount, i ), hb_set->atom_hbonds( core::id::AtomID (hcount, i ), !use_generous_hbonds_ /* include_only_allowed */ ).size() );
 				}
-
-				// adds accepted hbonds
-				hbonds_this_donor = hbonds_this_donor + hb_set.atom_hbonds( atid ).size();;
-				atom_Hbonds_.set( atid, hbonds_this_donor );
+				// for heavy atom, store total
+				atom_Hbonds_.set( atid, hbonds_this_donor + hb_set->atom_hbonds( atid, !use_generous_hbonds_ /* include_only_allowed */ ).size() );
 
 			} else if ( rsd.atom_type( at ).is_acceptor() ) {
-
-				atom_Hbonds_.set( atid, hb_set.atom_hbonds( atid ).size() );
-
+				// for each heavy atom acceptor, store number of h-bonds it participates in
+				atom_Hbonds_.set( atid, hb_set->atom_hbonds( atid, !use_generous_hbonds_ /* include_only_allowed */ ).size() );
 			} else if ( rsd.atom_type( at ).is_donor() ) {
 				Size hbonds_this_donor(0);
 
 				for ( Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++ ) {
 
-					hbonds_this_donor = hbonds_this_donor + hb_set.atom_hbonds( core::id::AtomID (hcount, i ) ).size();
-
+					hbonds_this_donor = hbonds_this_donor + hb_set->atom_hbonds( core::id::AtomID (hcount, i ), !use_generous_hbonds_ /* include_only_allowed */ ).size();
+					// sboyken added; want to store Hpol as +1 in atom map if makes an h-bond
+					//    the !use_generous_hbonds_ results in giving us all h-bonds, which we want for generous case
+					atom_Hbonds_.set( core::id::AtomID(hcount, i ), hb_set->atom_hbonds( core::id::AtomID (hcount, i ), !use_generous_hbonds_ /* include_only_allowed */ ).size() );
 				}
-
+				// for each heavy atom donor, store number of h-bonds it participates in
 				atom_Hbonds_.set( atid, hbonds_this_donor );
 			} else atom_Hbonds_.set( atid, 0 );
 		}
 	}
 
 
-	//finally, we compute the total number of h-bonds
-	all_Hbonds_ = 0;
-	for ( utility::vector1< core::Size >::const_iterator resh_it = residue_Hbonds_.begin();
-			resh_it != residue_Hbonds_.end(); ++resh_it ) {
-		all_Hbonds_ = all_Hbonds_ + *resh_it;
-	}
-	all_Hbonds_ = all_Hbonds_ / 2; //remember not to overcount
+	all_Hbonds_ = hb_set->nhbonds();
+
+	//hbond_set_ = hb_set; // store it for later access, but we need to recompute HBondSet each time
+
+	//  this is not accurate, this assumes only inter h-bonds
+	// //finally, we compute the total number of h-bonds
+	// all_Hbonds_ = 0;
+	// for ( utility::vector1< core::Size >::const_iterator resh_it = residue_Hbonds_.begin();
+	//   resh_it != residue_Hbonds_.end(); ++resh_it ) {
+	//  all_Hbonds_ = all_Hbonds_ + *resh_it;
+	// }
+	// all_Hbonds_ = all_Hbonds_ / 2; //remember not to overcount
 
 } //recompute
 
@@ -283,10 +325,20 @@ NumberHBondsCalculator::compute_Hbonds_for_residue(
 	core::scoring::hbonds::HBondSet & hb_set)
 {
 	using namespace core::scoring;
+	using namespace core::scoring::hbonds;
 
 
 	conformation::Residue const & rsd1( pose.residue( i ) );
 	int const nb1 = pose.energies().tenA_neighbor_graph().get_node( i )->num_neighbors_counting_self();
+
+	// sboyken added
+	// no need to store database, can get as needed
+	core::scoring::hbonds::HBondDatabaseCOP hb_database( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) );
+
+	if ( use_generous_hbonds_ ) {
+		identify_intra_res_hbonds( *hb_database, rsd1, nb1, false /*evaluate derivative*/, hb_set);
+	}
+	// will not add these to residue_Hbonds_[ i ] for now
 
 	//go over the neighbours of this residue
 	//in the pose energy graph and see whether there
@@ -316,7 +368,6 @@ NumberHBondsCalculator::compute_Hbonds_for_residue(
 		hbonds::identify_hbonds_1way( *hb_database, rsd2, rsd1, nb2, nb1, false /*evaluate derivative*/,
 			false, false, false, false, hb_set);
 
-
 		Size num_hb_these_two_res = hb_set.nhbonds() - prev_no_hb;
 
 		if ( res_to_recompute[i] ) residue_Hbonds_[ i ] += num_hb_these_two_res;
@@ -326,9 +377,6 @@ NumberHBondsCalculator::compute_Hbonds_for_residue(
 		else if ( special_region_.find( other_node ) != special_region_.end() ) special_region_Hbonds_ += num_hb_these_two_res;
 
 		//std::cerr << "residues " << i << " and " << other_node << " make " << num_hb_this_two_res << " hbonds.\n";
-
-
-		//} //if  hbond energy between these two residues
 
 	}//iterator over all neighbors for this residue
 
@@ -358,12 +406,13 @@ template< class Archive >
 void
 protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
-	// arc( CEREAL_NVP( hb_database ) ); // core::scoring::hbonds::HBondDatabaseCOP
+	// arc( CEREAL_NVP( hb_database_ ) ); // core::scoring::hbonds::HBondDatabaseCOP
 
 	// EXEMPT hb_database
 	// Don't serialize the hbond database -- instead, plan to get the global HBondDatabase
 	// during deserialization
 
+	arc( CEREAL_NVP( use_generous_hbonds_ ) ); // bool
 	arc( CEREAL_NVP( all_Hbonds_ ) ); // core::Size
 	arc( CEREAL_NVP( special_region_Hbonds_ ) ); // core::Size
 	arc( CEREAL_NVP( atom_Hbonds_ ) ); // core::id::AtomID_Map<core::Size>
@@ -378,8 +427,9 @@ void
 protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator::load( Archive & arc ) {
 	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
 
-	hb_database = core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() );
+	//hb_database_ = core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() );
 
+	arc( use_generous_hbonds_ ); // bool
 	arc( all_Hbonds_ ); // core::Size
 	arc( special_region_Hbonds_ ); // core::Size
 	arc( atom_Hbonds_ ); // core::id::AtomID_Map<core::Size>

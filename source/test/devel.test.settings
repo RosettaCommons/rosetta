@@ -24,9 +24,6 @@ sources = {
 		"MMTDriver",
 		"MMTReceiver",
 	],
-	"vardist_solaccess" : [
-		"VarSolDRotamerDots",
-	],
 	"znhash" : [
 		"ZnHash",
 	],

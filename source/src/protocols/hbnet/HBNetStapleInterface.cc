@@ -233,6 +233,12 @@ HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	}
 
 	all_helices_ = tag->getOption<bool>("all_helical_interfaces",false);
+
+	//17/07/28 fixing bug for intramolecular, all helical interaces case
+	if ( all_helices_ ) {
+		min_intermolecular_hbonds_ = 0;
+	}
+
 	only_symm_interfaces_ = tag->getOption<bool>("only_symm_interfaces",false);
 	if ( tag->hasOption("interface_distance") ) {
 		interf_distance_ = tag->getOption<Real>("interface_distance",8.0);
@@ -251,6 +257,11 @@ HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 void
 HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose const & pose )
 {
+	//17/07/28 fixing bug for intramolecular, all helical interaces case
+	if ( all_helices_ ) {
+		min_intermolecular_hbonds_ = 0;
+	}
+
 	Size total_ind_res( ( symmetric() ) ? get_symm_info()->num_independent_residues() : pose.total_residue() );
 
 	pair_lists_vec_.resize(total_ind_res,std::list<Size>(0));
@@ -977,7 +988,7 @@ void HBNetStapleInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		+ XMLSchemaAttribute::attribute_w_default( "allow_onebody_networks", xsct_rosetta_bool, "Allow networks within a pose", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "his_tyr", xsct_rosetta_bool, "Include histidine and tyrosine in the network", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "pH_His", xsct_rosetta_bool, "Identify and handle pH-sensitive histidines", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "only_start_at_interface_pairs", xsct_rosetta_bool, "Only start IG traversal with h-bonds that span across inerface (different chains)", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "only_start_at_interface_pairs", xsct_rosetta_bool, "Only start IG traversal with h-bonds that span across interface (different chains)", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_aa_dependent_weights", xsct_rosetta_bool, "weight twobody IG energies depending on aa type", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "all_helical_interfaces", xsct_rosetta_bool, "Interfaces must be composed of helices", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "only_symm_interfaces", xsct_rosetta_bool, "Only staple symmetric interfaces", "false" )

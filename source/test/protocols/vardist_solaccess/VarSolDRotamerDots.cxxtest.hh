@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   devel/vardist_solaccess/VarSolDRotamerDots.cxxtest.hh
+/// @file   protocols/vardist_solaccess/VarSolDRotamerDots.cxxtest.hh
 /// @brief  test suite for Variable-distance hydrogen-bonds to solvent calculator
 /// @author Kevin Houlihan (khouli@gmail.com)
 
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
+#include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
 
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
@@ -44,7 +44,7 @@ class VarSolDRotamerDotsTest : public CxxTest::TestSuite
 {
 public:
 	typedef core::pose::PoseOP PoseOP;
-	typedef devel::vardist_solaccess::VarSolDRotamerDots VarSolDRotamerDots;
+	typedef protocols::vardist_solaccess::VarSolDRotamerDots VarSolDRotamerDots;
 
 public:
 	void setUp() {
@@ -55,8 +55,8 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueOP res10( new core::conformation::Residue( trpcage.residue( 10 ) ) );
-		devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
-		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
+		protocols::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new protocols::vardist_solaccess::VarSolDistSasaCalculator );
+		//protocols::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots(res10, vsasa_calc);
 		dots.increment_self_overlap();
 		//ResidueKinWriter writer;
@@ -108,8 +108,8 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueOP res10( new core::conformation::Residue( trpcage.residue( 10 ) ) );
 		ResidueOP res11( new core::conformation::Residue( trpcage.residue( 11 ) ) );
-		devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
-		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
+		protocols::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new protocols::vardist_solaccess::VarSolDistSasaCalculator );
+		//protocols::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots10(res10, vsasa_calc);
 		VarSolDRotamerDots dots11(res11, vsasa_calc);
 		//dots10.increment_self_overlap();
@@ -207,7 +207,7 @@ public:
 	void radii_monotonically_increasing() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
-		devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
+		protocols::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new protocols::vardist_solaccess::VarSolDistSasaCalculator );
 		VarSolDRotamerDots dots1(res1, vsasa_calc);
 		core::Size res1natoms = res1->natoms();
 		utility::vector1< core::Real > r1_collision_radii( res1natoms );
@@ -296,8 +296,8 @@ public:
 	void test_shells_evenly_spaced() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
-		devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
-		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
+		protocols::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new protocols::vardist_solaccess::VarSolDistSasaCalculator );
+		//protocols::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots1(res1, vsasa_calc);
 		core::Size res1natoms = res1->natoms();
 
@@ -320,9 +320,9 @@ public:
 		//
 		// core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		// ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
-		// devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
-		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc1;
-		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc2;
+		// protocols::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new protocols::vardist_solaccess::VarSolDistSasaCalculator );
+		//protocols::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc1;
+		//protocols::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc2;
 	}
 
 };

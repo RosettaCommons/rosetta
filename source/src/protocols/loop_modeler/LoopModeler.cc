@@ -347,7 +347,8 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	core::pose::setPoseExtraScore(pose, "loop_backbone_rmsd", backbone_rmsd);
 
 	if ( pose.is_fullatom() ) {
-		protocols::simple_filters::BuriedUnsatHbondFilter unsats(20, 0);
+		//protocols::simple_filters::BuriedUnsatHbondFilter unsats(20, 0);
+		protocols::simple_filters::BuriedUnsatHbondFilter unsats(20); // 0 (jump_number no longer needed; default is full pose)
 		Real delta_unsats = unsats.compute(pose) - unsats.compute(native_pose);
 		TR << "Delta Buried Unsatisfied H-bonds: " << showpos << delta_unsats << endl;
 		core::pose::setPoseExtraScore(pose, "delta_buried_unsats", delta_unsats);

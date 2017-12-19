@@ -764,6 +764,7 @@ private:
 	bool multi_component_;
 	bool show_task_;
 	bool minimize_;
+	bool allow_no_hbnets_;
 	bool tyr_hydroxyls_must_donate_;
 	bool hydroxyls_must_donate_;
 	bool use_pdb_numbering_;

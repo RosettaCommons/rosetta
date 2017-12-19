@@ -8,9 +8,8 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file /src/protocols/toolbox/PoseMetricCalculators/NumberHBondsCalculator.hh
-/// @brief
+/// @brief calculates h-bonds in pose
 /// @author Florian Richter
-
 
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_NumberHBondsCalculator_hh
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_NumberHBondsCalculator_hh
@@ -51,12 +50,25 @@ class NumberHBondsCalculator : public core::pose::metrics::EnergyDependentCalcul
 public:
 
 	NumberHBondsCalculator();
-	NumberHBondsCalculator( std::set< core::Size > const & special_region );
+	NumberHBondsCalculator( bool const generous, std::set< core::Size > special_region=std::set< core::Size >() );
+	~NumberHBondsCalculator();
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const;
+	//core::pose::metrics::PoseMetricCalculatorOP clone() const;
+
+	core::pose::metrics::PoseMetricCalculatorOP clone() const {
+		return core::pose::metrics::PoseMetricCalculatorOP( new NumberHBondsCalculator( use_generous_hbonds_, special_region_ ) ); };
 
 	static core::Real
 	sum_Hbond_terms( core::scoring::EnergyMap const & emap );
+
+	// getters and setters
+	void set_generous( bool generous ){ use_generous_hbonds_ = generous; };
+	void set_special_region( std::set< core::Size > selection ){ special_region_ = selection; };
+	core::Size get_total_hbonds() { return all_Hbonds_; };
+	std::set< core::Size > get_special_region(){ return special_region_; };
+	//core::id::AtomID_Map< core::Size > get_atom_honds(){ return atom_Hbonds_; };
+	utility::vector1< core::Size > get_residue_hbonds(){ return residue_Hbonds_; };
+	//core::scoring::hbonds::HBondSetCOP get_hbond_set() { return hbond_set_; };
 
 protected:
 
@@ -80,17 +92,16 @@ protected:
 
 private:
 
-	core::scoring::hbonds::HBondDatabaseCOP hb_database;
+	bool use_generous_hbonds_;
+	std::set< core::Size > special_region_;
 	core::Size all_Hbonds_;
 	core::Size special_region_Hbonds_;
-
 	core::id::AtomID_Map< core::Size > atom_Hbonds_;
 	utility::vector1< core::Size > residue_Hbonds_;
+	utility::vector1< core::Real > ref_residue_total_energies_; //holds the calculated energies to prevent unnecessary recalculation
+	//core::scoring::hbonds::HBondSetOP hbond_set_;
+	//core::scoring::hbonds::HBondDatabaseCOP hb_database_;
 
-	//holds the calculated energies to prevent unnecessary recalculation
-	utility::vector1< core::Real > ref_residue_total_energies_;
-
-	std::set< core::Size > special_region_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

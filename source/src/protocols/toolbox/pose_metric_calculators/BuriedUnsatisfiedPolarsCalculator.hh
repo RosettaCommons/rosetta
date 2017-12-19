@@ -8,9 +8,15 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file /src/protocols/toolbox/PoseMetricCalculators/BuriedUnsatisfiedPolarsCalculator.hh
-/// @brief
+/// @brief calculates buried polar atoms that are not satisfied by hydrogen bonds
+/// @details significantly updated in 2017 to have more generous definition of h-bonds
+///  (previously, legit h-bonds were excluded because of sfxn exceptions); users can now choose
+///  between legacy SASA and VSASA for burial; poses with more than 3 chains now supported; the
+///  way unsats are counted and reported is now different (before, all unsats were counted as equal,
+///  which is misleading); users can choose different reporting behaviours; legacy options can be
+///  restored by setting legacy=true, but this is only recommended for benchmarking purposes
 /// @author Florian Richter
-
+/// @author Scott Boyken (sboyken@gmail.com), major updates and refactoring
 
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_BuriedUnsatisfiedPolarsCalculator_hh
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_BuriedUnsatisfiedPolarsCalculator_hh
@@ -27,9 +33,7 @@
 
 #include <set>
 
-
 // option key includes
-
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 
@@ -47,26 +51,55 @@ class BuriedUnsatisfiedPolarsCalculator : public core::pose::metrics::EnergyDepe
 
 public:
 
+	///@brief default constructor ( keeping this for historical reasons and compatibility with other code that calls this )
 	BuriedUnsatisfiedPolarsCalculator(
 		std::string const & sasa_calc,
 		std::string const & hbond_calc,
-		core::Real burial_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff]
+		core::Real const burial_cutoff = -1.0, // must be 3rd to ensure legacy compatible // -1.0 dummy so we check if user defined
+		bool const generous = true,
+		bool const legacy = false,
+		bool const vsasa = true
 	);
 
+	///@brief default constructor with special_region ( keeping this for historical reasons and compatibility with other code that calls this )
+	BuriedUnsatisfiedPolarsCalculator(
+		std::string const & sasa_calc,
+		std::string const & hbond_calc,
+		std::set< core::Size > const & special_region, // must be 3rd
+		core::Real const burial_cutoff = -1.0, // must be 3rd to ensure legacy compatible // -1.0 dummy so we check if user defined
+		bool const generous = true,
+		bool const legacy = false,
+		bool const vsasa = true
+	);
 
+	///@brief constructor where all options must be defined, for calling from code
 	BuriedUnsatisfiedPolarsCalculator(
 		std::string const & sasa_calc,
 		std::string const & hbond_calc,
 		std::set< core::Size > const & special_region,
-		core::Real burial_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff]
+		core::Real const burial_cutoff,
+		core::Real const probe_r,
+		core::Real const residue_surface_cutoff,
+		bool const generous,
+		bool const legacy,
+		bool const vsasa,
+		bool const use_sc_neighbors,
+		bool const skip_surface_res
 	);
 
 
+	///@brief copy constructor implicit in clone call
 	core::pose::metrics::PoseMetricCalculatorOP clone() const {
-		return core::pose::metrics::PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator( name_of_sasa_calc_, name_of_hbond_calc_, burial_sasa_cutoff_) ); };
+		return core::pose::metrics::PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator( name_of_sasa_calc_, name_of_hbond_calc_, special_region_, burial_cutoff_, probe_radius_, residue_surface_cutoff_, generous_hbonds_, legacy_counting_, vsasa_, use_sc_neighbors_, skip_surface_res_ ) ); };
 
 	std::string const & name_of_hbond_calc() const { return name_of_hbond_calc_; }
 	std::string const & name_of_sasa_calc() const { return name_of_sasa_calc_; }
+
+	void set_special_region( std::set< core::Size > const & special_region ) {
+		special_region_ = special_region;
+		this->notify_energy_change();
+	}
+
 
 protected:
 
@@ -79,20 +112,26 @@ private:
 
 	void assert_calculators();
 
-	static
-	core::Size satisfaction_cutoff( std::string atom_type );
-
+	///@brief ONLY USED FOR LEGACY BEHAVIOR (legacy=true), cutoff to determine if unsat
+	static core::Size satisfaction_cutoff( std::string atom_type );
 
 	core::Size all_bur_unsat_polars_;
-	core::Size special_region_bur_unsat_polars_;
+	core::Size bb_heavy_unsats_;
+	core::Size all_heavy_unsats_;
+	core::Size countable_nonheavy_unsats_;
 	core::id::AtomID_Map< bool > atom_bur_unsat_;
 	utility::vector1< core::Size > residue_bur_unsat_polars_;
-
 	//holds the sasa and atom hbonds calculators necessary for this calculator
 	std::string name_of_hbond_calc_, name_of_sasa_calc_;
-	core::Real burial_sasa_cutoff_;
-
 	std::set< core::Size > special_region_;
+	core::Real burial_cutoff_;
+	core::Real probe_radius_;
+	core::Real residue_surface_cutoff_;
+	bool generous_hbonds_; // if false, will only count the h-bonds that the scorefxn does
+	bool legacy_counting_; // revert to legacy options
+	bool vsasa_;
+	bool use_sc_neighbors_;
+	bool skip_surface_res_;
 
 #ifdef    SERIALIZATION
 protected:

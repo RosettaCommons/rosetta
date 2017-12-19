@@ -64,7 +64,7 @@
 //This comment brackets a snippet of code that is automatically stripped from the release, usually for semi-forbidden interactions with the unreleased devel library
 //If you want non-devel code stripped from the release, see the release machinery in tools/release and contact the release manager (Steven Lewis smlewi@gmail.com at this time)
 ///DONOTRELEASE_TOP
-#include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
+#include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
 ///DONOTRELEASE_BOTTOM
 //end automatic stripping comment
 
@@ -318,7 +318,7 @@ public:
 		//If you want non-devel code stripped from the release, see the release machinery in tools/release and contact the release manager (Steven Lewis smlewi@gmail.com at this time)
 		///DONOTRELEASE_TOP
 		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
-			devel::vardist_solaccess::VarSolDistSasaCalculatorOP sasa_calculator( new devel::vardist_solaccess::VarSolDistSasaCalculator );
+			protocols::vardist_solaccess::VarSolDistSasaCalculatorOP sasa_calculator( new protocols::vardist_solaccess::VarSolDistSasaCalculator );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 		}
 		///DONOTRELEASE_BOTTOM

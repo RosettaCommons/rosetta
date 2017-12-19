@@ -19,7 +19,8 @@
 
 //Project Headers
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
+//#include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
+#include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -30,7 +31,7 @@
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
+//#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/conformation/Residue.hh>
 #include <utility>
 #include <utility/vector1.hh>
@@ -130,17 +131,18 @@ BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2(
 void
 BuriedUnsatisfiedPolarsCalculator2::assert_calculators() {
 	if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_weak_bunsat_calc_ ) ) {
-		if ( name_of_weak_bunsat_calc_ != "default" ) {
-			TR <<
-				"Attention: couldn't find the specified buried unsat calculator ( " <<
-				name_of_weak_bunsat_calc_ << " ), instantiating default one." << std::endl;
-		}
+		// sboyken NEED DIFFERENT NAME THAN "default" OTHERWISE DOES NOT PLAY NICE WHEN CALL MULTIPLE UNSAT FILTERS WITHIN SAME XML!!!
+		//  if ( name_of_weak_bunsat_calc_ != "default" ) {
+		//   TR <<
+		//    "Attention: couldn't find the specified buried unsat calculator ( " <<
+		//    name_of_weak_bunsat_calc_ << " ), instantiating default one." << std::endl;
+		//  }
 		name_of_weak_bunsat_calc_ = "bunsat_calc2_default_weak_bunsat_calc";
 
 		std::string sasa_calc_name("sasa_calc_name");
 		if ( !CalculatorFactory::Instance().check_calculator_exists( sasa_calc_name ) ) {
 			if ( layered_sasa_ ) {
-				using namespace devel::vardist_solaccess;
+				using namespace protocols::vardist_solaccess;
 				TR << "Registering VarSolDist SASA Calculator" << std::endl;
 				CalculatorFactory::Instance().register_calculator(sasa_calc_name,
 					VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator() ));
@@ -158,8 +160,11 @@ BuriedUnsatisfiedPolarsCalculator2::assert_calculators() {
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_weak_bunsat_calc_ ) ) {
 			using namespace protocols::toolbox::pose_metric_calculators;
 			TR << "Registering new basic buried unsat calculator." << std::endl;
+			// need to set weak_bunsat_calc to legacy to maintain existing BUNS2 behavior
+			//   17/09/05 sboyken NEED TO MAKE SURE THAT THIS SETS DEFAULTS CORRECTLY AND MAINTAINS CURRENT BUNS2 BEHAVIOR
 			CalculatorFactory::Instance().register_calculator( name_of_weak_bunsat_calc_, PoseMetricCalculatorOP(
-				new BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, num_hbonds_calc_name, sasa_burial_cutoff_)));
+				new BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, num_hbonds_calc_name, sasa_burial_cutoff_, false /* generous */, true /* legacy counting */, layered_sasa_ /* vsasa */ )));
+			// defining vsasa won't matter because calculators asserted above and weak calc will find them based on the name
 		}
 	}
 }

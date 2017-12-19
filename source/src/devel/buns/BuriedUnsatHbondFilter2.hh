@@ -36,14 +36,20 @@ class BuriedUnsatHbondFilter2 : public protocols::filters::Filter
 {
 
 public:
+	// @brief default constructor
 	BuriedUnsatHbondFilter2();
+	// @brief constructor with options
 	BuriedUnsatHbondFilter2( core::Size const upper_threshold, core::Size const jump_num );
+	// @brief copy constructor
+	BuriedUnsatHbondFilter2( BuriedUnsatHbondFilter2 const & rval );
+	// @brief make clone
+	protocols::filters::FilterOP clone() const override { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2( *this ) ); }
+	// @brief make fresh instance
+	protocols::filters::FilterOP fresh_instance() const override { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2() ); }
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const override;
-	protocols::filters::FilterOP fresh_instance() const override;
 
 	~BuriedUnsatHbondFilter2() override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;

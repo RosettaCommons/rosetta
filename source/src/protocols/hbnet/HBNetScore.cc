@@ -90,7 +90,7 @@ core::Real HBNetScore::get_score( core::pose::Pose & pose ) const
 
 	reward /= resid_count;
 
-	protocols::simple_filters::BuriedUnsatHbondFilter buns_filter( 0, 0 );//TODO make this Scott's buns3
+	protocols::simple_filters::BuriedUnsatHbondFilter buns_filter( 0 );// now updated to new unsat filter
 	return reward + buns_filter.compute( pose );
 }
 

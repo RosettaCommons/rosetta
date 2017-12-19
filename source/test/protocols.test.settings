@@ -614,6 +614,9 @@ sources = {
 	"util": [
 		"cout",
 	],
+	"vardist_solaccess" : [
+                "VarSolDRotamerDots",
+        ],
 
 }
 include_path = [ "#external/cxxtest", "#" ]

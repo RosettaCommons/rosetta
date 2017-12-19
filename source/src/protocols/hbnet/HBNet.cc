@@ -105,7 +105,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-#include <protocols/scoring/Interface.hh>
+//#include <protocols/scoring/Interface.hh>
 #include <protocols/simple_moves/MakePolyXMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd2/util.hh>
@@ -157,6 +157,7 @@ HBNet::HBNet( ) :
 	show_task_(false),
 	minimize_(true),
 	//bridging_waters_(0),
+	allow_no_hbnets_(false),
 	tyr_hydroxyls_must_donate_(false),
 	hydroxyls_must_donate_(false),
 	use_pdb_numbering_(true),
@@ -221,6 +222,7 @@ HBNet::HBNet( std::string const name ) :
 	show_task_(false),
 	minimize_(true),
 	//bridging_waters_(0),
+	allow_no_hbnets_(false),
 	tyr_hydroxyls_must_donate_(false),
 	hydroxyls_must_donate_(false),
 	use_pdb_numbering_(true),
@@ -299,6 +301,7 @@ HBNet::HBNet( core::scoring::ScoreFunctionCOP scorefxn,
 	show_task_(false),
 	minimize_(true),
 	//bridging_waters_(0),
+	allow_no_hbnets_(false),
 	tyr_hydroxyls_must_donate_(false),
 	hydroxyls_must_donate_(false),
 	use_pdb_numbering_(true),
@@ -420,6 +423,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	min_boundary_res_ = tag->getOption<Size>( "min_boundary_res", 0 );
 	max_unsat_Hpol_ = tag->getOption<Size>( "max_unsat_Hpol", 5 );
 	min_percent_hbond_capacity_ = tag->getOption<core::Real>( "min_percent_hbond_capacity", 0.5 );
+	allow_no_hbnets_ = tag->getOption< bool >( "allow_no_hbnets", false);
 
 	//MONTE CARLO/////////
 	monte_carlo_branch_ = tag->getOption< bool >( "monte_carlo_branch", monte_carlo_branch_ );//deprecated
@@ -1851,7 +1855,8 @@ HBNet::find_unsats( Pose const & pose, hbond_net_struct & network )
 		bool skip_backbones(true);
 		//bool skip_ligands(true);
 		//        if ( !(pose.residue( resnum ).is_water()) ) { // need to handle waters separately
-		for ( Size a_index = 1; a_index <= pose.residue(resnum).natoms(); ++a_index ) {
+		//for ( Size a_index = 1; a_index <= pose.residue(resnum).natoms(); ++a_index ) {
+		for ( Size a_index = 1; a_index <= pose.residue(resnum).nheavyatoms(); ++a_index ) {
 			if ( ( skip_backbones && !( pose.residue( resnum ).atom_is_backbone( a_index ) ) ) || ((this->ligand()) && resnum == (this->ligand()) ) ) {
 				if ( pose.residue( resnum ).atom_type( a_index ).is_donor() && pose.residue( resnum ).atomic_charge( a_index ) != 0.0 && pose.residue( resnum ).atom_type(a_index).name() != "OH" ) {
 					Size h_count(0);
@@ -2586,7 +2591,7 @@ HBNet::set_constraints( Pose & pose, core::scoring::constraints::ConstraintSet &
 		Real hb_energy((*i)->energy());//unweighted h-bond energy
 		std::ostringstream cst_str_stream;
 		cst_str_stream << "# angle_AHD = " << angle_AHD << ", angle_BAH = " << angle_BAH << ", dist_AH = " << dist_AH << angle_BAH << ", unweighted hb_energy = " << hb_energy << "\n";
-		cst_str_stream << "AtomPair " << pose.residue(arsd).atom_name((int)(aatm)) << " " << arsd << " " << pose.residue(drsd).atom_name((int)(datm)) << " " << drsd
+		cst_str_stream << "#AtomPair " << pose.residue(arsd).atom_name((int)(aatm)) << " " << arsd << " " << pose.residue(drsd).atom_name((int)(datm)) << " " << drsd
 			<< " BOUNDED " << lb << " " << ub << " " << sd << " " << tag << std::endl;
 		comment_str = comment_str + cst_str_stream.str();
 		if ( write_cst_file && !(p->cst_file_written ) ) {
@@ -3334,7 +3339,11 @@ HBNet::apply( Pose & pose )
 		return;
 	}
 	TR.Debug << "After prepare_output, network_vector_.size() = " << network_vector_.size() << std::endl;
-	if ( output_vector_.size() == 0 ) {
+	if ( allow_no_hbnets_ && output_vector_.size() == 0 ) {
+		if ( TR.visible() ) TR << "DID NOT FIND SOLUTIONS THAT MEET YOUR CRITERIA! BUT continuing because allow_no_hbnets is set" << std::endl;
+		return;
+	}
+	if ( output_vector_.size() == 0 )  {
 		if ( TR.visible() ) TR << "DID NOT FIND SOLUTIONS THAT MEET YOUR CRITERIA! EXITING" << std::endl;
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		ig_.reset(); // resets OP to 0
@@ -3600,7 +3609,9 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		+ XMLSchemaAttribute(
 		"boundary_selector", xs_string,
 		"residue selector to define what HBNet considers boundary during comparisons/scoring of networks" )
-
+		+ XMLSchemaAttribute(
+		"allow_no_hbnets", xsct_rosetta_bool,
+		"allows the program to continue when no hbnets are found" )
 		//Monte carlo options:
 		+ XMLSchemaAttribute::attribute_w_default(
 		"monte_carlo", xsct_rosetta_bool,
@@ -3630,7 +3641,6 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		"seed_hbond_threshold", xsct_real,
 		"(if monte_carlo_branch) Maybe you only want to branch from strong hbonds. If this value is -1.2, for example, then only hbonds with a strength of -1.2 or lower will be branched from.",
 		"0" );
-
 
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	rosetta_scripts::attributes_for_parse_score_function( attlist );

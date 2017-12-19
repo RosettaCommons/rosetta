@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   devel/vardist_solaccess/LoadVarSolDistSasaCalculatorLegacyMover.hh
+/// @file   protocols/vardist_solaccess/LoadVarSolDistSasaCalculatorLegacyMover.hh
 /// @brief  VarSolDRotamerDots classes header file
 /// @author Andrew Leaver-Fay
 /// @author Ron Jacak
 
-#ifndef INCLUDED_devel_vardist_solaccess_LoadVarSolDistSasaCalculatorMover_HH
-#define INCLUDED_devel_vardist_solaccess_LoadVarSolDistSasaCalculatorMover_HH
+#ifndef INCLUDED_protocols_vardist_solaccess_LoadVarSolDistSasaCalculatorMover_HH
+#define INCLUDED_protocols_vardist_solaccess_LoadVarSolDistSasaCalculatorMover_HH
 
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverCreator.hh>
 
-namespace devel {
+namespace protocols {
 namespace vardist_solaccess {
 
 class LoadVarSolDistSasaCalculatorMoverCreator : public protocols::moves::MoverCreator
@@ -66,4 +66,4 @@ private:
 } // core
 
 
-#endif // INCLUDED_devel_vardist_sollaccess_LoadVarSolDistSasaCalculatorMover_HH
+#endif // INCLUDED_protocols_vardist_sollaccess_LoadVarSolDistSasaCalculatorMover_HH

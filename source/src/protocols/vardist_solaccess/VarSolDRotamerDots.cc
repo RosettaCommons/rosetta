@@ -13,8 +13,8 @@
 /// @author Ron Jacak
 
 // Unit Headers
-#include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
-#include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
+#include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
+#include <protocols/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 
 #include <protocols/moves/mover_schemas.hh>
 
@@ -61,12 +61,11 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
-static basic::Tracer TR( "devel.vardist_solaccess" );
-//static basic::Tracer TR_DS("core.pack.interaction_graph.RotamerDots.DotSphere");
-//static basic::Tracer TR_RD("core.pack.interaction_graph.RotamerDots.RotamerDots");
-//static basic::Tracer TR_RDC("core.pack.interaction_graph.RotamerDots.RotamerDotsCache");
-//static basic::Tracer TR_RDRD("core.pack.interaction_graph.RotamerDots.RotamerDotsRadiusData");
-
+static basic::Tracer TR( "protocols.vardist_solaccess" );
+//static THREAD_LOCAL basic::Tracer TR_DS("core.pack.interaction_graph.RotamerDots.DotSphere");
+//static THREAD_LOCAL basic::Tracer TR_RD("core.pack.interaction_graph.RotamerDots.RotamerDots");
+//static THREAD_LOCAL basic::Tracer TR_RDC("core.pack.interaction_graph.RotamerDots.RotamerDotsCache");
+//static THREAD_LOCAL basic::Tracer TR_RDRD("core.pack.interaction_graph.RotamerDots.RotamerDotsRadiusData");
 
 using namespace ObjexxFCL::format;
 using namespace core;
@@ -90,7 +89,7 @@ using namespace core;
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-namespace devel {
+namespace protocols {
 namespace vardist_solaccess {
 
 //----------------------------------------------------------------------------//
@@ -200,7 +199,7 @@ void VarSolDRotamerDots::copy( VarSolDRotamerDots const & rhs ) {
 }
 
 ///
-VarSolDRotamerDots const &
+VarSolDRotamerDots &
 VarSolDRotamerDots::operator= ( VarSolDRotamerDots const & rhs ) {
 	if ( this != & rhs ) {
 		copy( rhs );
@@ -910,14 +909,14 @@ void LoadVarSolDistSasaCalculatorMover::parse_my_tag(
 
 
 } // vardist_solaccess
-} // devel
+} // protocols
 
 
 #ifdef    SERIALIZATION
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-devel::vardist_solaccess::VarSolDRotamerDots::save( Archive & arc ) const {
+protocols::vardist_solaccess::VarSolDRotamerDots::save( Archive & arc ) const {
 	arc( CEREAL_NVP( owner_ ) );
 	arc( CEREAL_NVP( rotamer_ ) ); // core::conformation::ResidueCOP
 	arc( CEREAL_NVP( num_atoms_ ) ); // core::Size
@@ -931,7 +930,7 @@ devel::vardist_solaccess::VarSolDRotamerDots::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-devel::vardist_solaccess::VarSolDRotamerDots::load_and_construct( Archive & arc, cereal::construct< devel::vardist_solaccess::VarSolDRotamerDots > & construct ) {
+protocols::vardist_solaccess::VarSolDRotamerDots::load_and_construct( Archive & arc, cereal::construct< protocols::vardist_solaccess::VarSolDRotamerDots > & construct ) {
 
 	VarSolDistSasaCalculatorAP owner_weak; arc( owner_weak );
 	VarSolDistSasaCalculatorCOP owner_strong( owner_weak.lock() );
@@ -948,14 +947,14 @@ devel::vardist_solaccess::VarSolDRotamerDots::load_and_construct( Archive & arc,
 	// EXEMPT lg_angles_ lg_masks_
 
 }
-SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE( devel::vardist_solaccess::VarSolDRotamerDots );
-CEREAL_REGISTER_TYPE( devel::vardist_solaccess::VarSolDRotamerDots )
+SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE( protocols::vardist_solaccess::VarSolDRotamerDots );
+CEREAL_REGISTER_TYPE( protocols::vardist_solaccess::VarSolDRotamerDots )
 
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-devel::vardist_solaccess::VarSolDistSasaCalculator::save( Archive & arc ) const {
+protocols::vardist_solaccess::VarSolDistSasaCalculator::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
 	arc( CEREAL_NVP( probe_radius_ ) ); // core::Real
 	arc( CEREAL_NVP( wobble_ ) ); // core::Real
@@ -981,7 +980,7 @@ devel::vardist_solaccess::VarSolDistSasaCalculator::save( Archive & arc ) const 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-devel::vardist_solaccess::VarSolDistSasaCalculator::load( Archive & arc ) {
+protocols::vardist_solaccess::VarSolDistSasaCalculator::load( Archive & arc ) {
 	arc( probe_radius_ ); // core::Real
 	arc( wobble_ ); // core::Real
 	arc( total_sasa_ ); // core::Real
@@ -1002,10 +1001,10 @@ devel::vardist_solaccess::VarSolDistSasaCalculator::load( Archive & arc ) {
 	arc( polar_expansion_radius_ ); // core::Real
 	arc( up_to_date ); // _Bool
 }
-SAVE_AND_LOAD_SERIALIZABLE( devel::vardist_solaccess::VarSolDistSasaCalculator );
-CEREAL_REGISTER_TYPE( devel::vardist_solaccess::VarSolDistSasaCalculator )
+SAVE_AND_LOAD_SERIALIZABLE( protocols::vardist_solaccess::VarSolDistSasaCalculator );
+CEREAL_REGISTER_TYPE( protocols::vardist_solaccess::VarSolDistSasaCalculator )
 
-CEREAL_REGISTER_DYNAMIC_INIT( devel_vardist_solaccess_VarSolDRotamerDots )
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_vardist_solaccess_VarSolDRotamerDots )
 #endif // SERIALIZATION
 
 

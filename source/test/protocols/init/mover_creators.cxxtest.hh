@@ -409,6 +409,7 @@
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
 #include <protocols/membrane/AddMPLigandMoverCreator.hh>
 #include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh>
+#include <protocols/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 
 
 class BackwardsProtocolsMoverCreatorTests : public CxxTest::TestSuite
@@ -1569,6 +1570,9 @@ public:
 
 	void test_protocols_relax_membrane_MPFastRelaxMoverCreator_name()
 	{ protocols::relax::membrane::MPFastRelaxMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MPFastRelaxMover" ); }
+
+	void test_protocols_vardist_solaccess_LoadVarSolDistSasaCalculatorMoverCreator_name()
+	{ protocols::vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoadVarSolDistSasaCalculatorMover" ); }
 
 	// void test_protocols_aa_composition_AddCompositionConstraintMoverCreator()
 	// { protocols::aa_composition::AddCompositionConstraintMoverCreator cr; std::cout << "protocols::aa_composition::AddCompositionConstraintMoverCreator " << cr.keyname() << std::endl; }

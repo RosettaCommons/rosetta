@@ -199,7 +199,8 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 	HBondSet temp_hbond_set;
 	core::scoring::hbonds::HBondOptions new_options( temp_hbond_set.hbond_options() );
 	new_options.use_hb_env_dep(false);
-	new_options.bb_donor_acceptor_check(bb_exclusion); // don't use bb exclusion logic when penalizing unsatisfied -- ideally would only ecluse N-H donors and not exclude C=O with only 1 h-bond
+	new_options.bb_donor_acceptor_check(bb_exclusion); // don't use bb exclusion logic when penalizing unsatisfied -- ideally would only eclude N-H donors and not exclude C=O with only 1 h-bond
+	new_options.exclude_intra_res_protein( false ); // we want to count this for unsat calc, by default they are excluded
 	HBondSetOP full_hbond_set( new HBondSet(new_options) );
 
 	//setting this to false will calculate all hbonds in pose

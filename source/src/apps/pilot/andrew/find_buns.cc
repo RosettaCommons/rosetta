@@ -14,7 +14,7 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #include <devel/init.hh>
-#include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
+#include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -49,16 +49,16 @@
 #include <fstream>
 
 
-utility::vector1< devel::vardist_solaccess::VarSolDRotamerDotsOP >
+utility::vector1< protocols::vardist_solaccess::VarSolDRotamerDotsOP >
 varsoldist_rotamer_dots_for_pose(
-	devel::vardist_solaccess::VarSolDistSasaCalculatorCOP calc,
+	protocols::vardist_solaccess::VarSolDistSasaCalculatorCOP calc,
 	core::pose::Pose const & pose
 )
 {
 	using namespace core;
 	using namespace utility::graph;
 	using namespace core::scoring;
-	using namespace devel::vardist_solaccess;
+	using namespace protocols::vardist_solaccess;
 
 	utility::vector1< VarSolDRotamerDotsOP > rotamer_dots( pose.size() );
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
@@ -82,7 +82,7 @@ varsoldist_rotamer_dots_for_pose(
 std::list< core::id::AtomID >
 buns_for_pose(
 	core::pose::Pose const & pose,
-	utility::vector1< devel::vardist_solaccess::VarSolDRotamerDotsOP > const & rotamer_dots,
+	utility::vector1< protocols::vardist_solaccess::VarSolDRotamerDotsOP > const & rotamer_dots,
 	core::scoring::hbonds::HBondSet const & hbset
 )
 {
@@ -149,7 +149,7 @@ write_buns_and_dots_kinemage(
 	std::string const & outfile_name,
 	std::string const & structure_tag,
 	core::pose::Pose const & pose,
-	utility::vector1< devel::vardist_solaccess::VarSolDRotamerDotsOP > const & rotamer_dots,
+	utility::vector1< protocols::vardist_solaccess::VarSolDRotamerDotsOP > const & rotamer_dots,
 	std::list< core::id::AtomID > const & buns
 )
 {
@@ -182,7 +182,7 @@ int main( int argc, char * argv [] )
 	using namespace core::scoring;
 	using namespace core::scoring::hbonds;
 
-	using namespace devel::vardist_solaccess;
+	using namespace protocols::vardist_solaccess;
 
 	using namespace basic::options;
 

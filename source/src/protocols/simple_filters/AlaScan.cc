@@ -49,7 +49,7 @@
 #include <protocols/simple_filters/AlaScan.hh>
 #include <protocols/simple_filters/AlaScanCreator.hh>
 #include <protocols/simple_moves/ddG.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+//#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <string>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>

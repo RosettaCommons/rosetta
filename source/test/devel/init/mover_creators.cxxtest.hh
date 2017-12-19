@@ -29,7 +29,7 @@
 #include <devel/domain_insertion/InsertionSiteTestMoverCreator.hh>
 #include <devel/domain_insertion/FusePosesNtoCMoverCreator.hh>
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
-#include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
+//#include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 #include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
 #include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
 #include <devel/denovo_design/ConnectJumpsCreator.hh>
@@ -69,8 +69,8 @@ public:
 	void test_devel_enzdes_EnzdesRemodelMoverCreator_name()
 	{ devel::enzdes::EnzdesRemodelMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "EnzdesRemodelMover" ); }
 
-	void test_devel_vardist_solaccess_LoadVarSolDistSasaCalculatorMoverCreator_name()
-	{ devel::vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoadVarSolDistSasaCalculatorMover" ); }
+	//void test_devel_vardist_solaccess_LoadVarSolDistSasaCalculatorMoverCreator_name()
+	//{ devel::vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoadVarSolDistSasaCalculatorMover" ); }
 
 	void test_devel_znhash_InsertZincCoordinationRemarkLinesCreator_name()
 	{ devel::znhash::InsertZincCoordinationRemarkLinesCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "InsertZincCoordinationRemarkLines" ); }

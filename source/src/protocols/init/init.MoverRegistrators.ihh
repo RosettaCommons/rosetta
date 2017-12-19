@@ -574,5 +574,5 @@ static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > re
 static MoverRegistrator< toolbox::task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 static MoverRegistrator< toolbox::task_operations::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
 static MoverRegistrator< toolbox::task_operations::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
-
+static MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
 } //namespace protocols
