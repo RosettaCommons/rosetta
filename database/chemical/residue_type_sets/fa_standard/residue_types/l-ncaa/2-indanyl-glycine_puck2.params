@@ -1,3 +1,8 @@
+# AMW: note that we can't use A44 for the other pucker anymore
+# because that collides with a real RNA residue we care about
+# So, let's make the nu torsion sampling system handle this 
+# pucker so that we don't need IGL (former A44) and also A45
+# (that is aesthetics-defying).
 NAME A45
 IO_STRING A45 X
 TYPE POLYMER

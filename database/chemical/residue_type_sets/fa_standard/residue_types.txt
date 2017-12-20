@@ -44,7 +44,15 @@ residue_types/nucleic/rna_phenix/RAD_n.params
 residue_types/nucleic/rna_phenix/RCY_n.params
 residue_types/nucleic/rna_phenix/RGU_n.params
 residue_types/nucleic/rna_phenix/URA_n.params
-# needed for 3cce
+
+# Here for a while
+residue_types/nucleic/rna_nonnatural/ICY.params
+# Beware when activating this type: it will cause name collisions with
+# any ligands named LIG. Thus, we can't have it on by default.
+#residue_types/nucleic/rna_nonnatural/IGU.params
+residue_types/nucleic/rna_nonnatural/INO.params
+
+# Modified bases
 residue_types/nucleic/rna_nonnatural/1AP.params
 residue_types/nucleic/rna_nonnatural/1MA.params
 residue_types/nucleic/rna_nonnatural/2MA.params
@@ -57,31 +65,49 @@ residue_types/nucleic/rna_nonnatural/BRU.params
 residue_types/nucleic/rna_nonnatural/7MG.params
 residue_types/nucleic/rna_nonnatural/G7M.params
 residue_types/nucleic/rna_nonnatural/7DA.params
-#residue_types/nucleic/rna_nonnatural/ICY.params
-#residue_types/nucleic/rna_nonnatural/IGU.params
-residue_types/nucleic/rna_nonnatural/INO.params
 residue_types/nucleic/rna_nonnatural/M2G.params
 residue_types/nucleic/rna_nonnatural/MA6.params
+residue_types/nucleic/rna_nonnatural/PSU.params
+residue_types/nucleic/rna_nonnatural/UR3.params
+residue_types/nucleic/rna_nonnatural/6MZ.params
+residue_types/nucleic/rna_nonnatural/1MG.params
+residue_types/nucleic/rna_nonnatural/4SU.params
+residue_types/nucleic/rna_nonnatural/3TD.params
+residue_types/nucleic/rna_nonnatural/H2U.params
+residue_types/nucleic/rna_nonnatural/MIA.params
+
 # 2'OMe
-residue_types/nucleic/rna_nonnatural/OMA.params
+residue_types/nucleic/rna_nonnatural/A2M.params
 residue_types/nucleic/rna_nonnatural/OMC.params
 residue_types/nucleic/rna_nonnatural/OMG.params
 residue_types/nucleic/rna_nonnatural/OMU.params
+
+# 2' mods
+residue_types/nucleic/rna_nonnatural/5JO.params
+residue_types/nucleic/rna_nonnatural/A44.params
+residue_types/nucleic/rna_nonnatural/C43.params
+residue_types/nucleic/rna_nonnatural/C5L.params
+residue_types/nucleic/rna_nonnatural/G48.params
+residue_types/nucleic/rna_nonnatural/U36.params
+
 # 2'F
 residue_types/nucleic/rna_nonnatural/FMA.params
 residue_types/nucleic/rna_nonnatural/FMC.params
 residue_types/nucleic/rna_nonnatural/FMG.params
-residue_types/nucleic/rna_nonnatural/2FU.params
+residue_types/nucleic/rna_nonnatural/FMU.params
+
 # OP1 => SP1
 residue_types/nucleic/rna_nonnatural/SRA.params
 residue_types/nucleic/rna_nonnatural/SRC.params
 residue_types/nucleic/rna_nonnatural/SRG.params
 residue_types/nucleic/rna_nonnatural/SRU.params
+
 # OP2 => SP2
 residue_types/nucleic/rna_nonnatural/SSA.params
 residue_types/nucleic/rna_nonnatural/SSC.params
 residue_types/nucleic/rna_nonnatural/SSG.params
 residue_types/nucleic/rna_nonnatural/SSU.params
+
 # 4'S
 #residue_types/nucleic/rna_nonnatural/S4A.params
 #residue_types/nucleic/rna_nonnatural/S4C.params
@@ -99,14 +125,227 @@ residue_types/nucleic/rna_nonnatural/5FC.params
 residue_types/nucleic/rna_nonnatural/8OG.params
 residue_types/nucleic/rna_nonnatural/OMI.params
 
-residue_types/nucleic/rna_nonnatural/PSU.params
-residue_types/nucleic/rna_nonnatural/UR3.params
-residue_types/nucleic/rna_nonnatural/6MZ.params
-residue_types/nucleic/rna_nonnatural/1MG.params
-residue_types/nucleic/rna_nonnatural/4SU.params
-residue_types/nucleic/rna_nonnatural/3TD.params
-residue_types/nucleic/rna_nonnatural/H2U.params
-residue_types/nucleic/rna_nonnatural/MIA.params
+# Task 1. Check all our methylated params to ensure that the result
+# isn't positively charged when it should actually be hydrogenated
+# and neutral.
+
+# Task 2.
+# A complete listing of RNA-ish PDB residues for future/present work
+# verbal description both intended to be evocative and to help prioritize
+# e.g. it's a great idea to have N1-deaza-adenosine in there, but perhaps
+# we can hold off on some of the odder ones.
+
+## 2'O-modifications
+# 2AT - 2'O-allyl T
+# 2BT - 2'O-butyl T
+# 2GT - 2'O-propargyl T
+# 2NT - 2'O ethyl O NH methylene OH T
+# 2OT - 2'O ethyl O dimethylN T
+# 125 - 2'O-(2-F-ethyl) thymine
+# 126 - 2'O-METHYL-[TRI(OXYETHYL)] thymine
+# 127 - 2'O-AMINOOXY-ETHYL thymine
+# 6NW - 2'OMe 5' O-thiophosphonoadenosine
+# 6OO - 2'OMe 5' O-thiophosphono C
+# BOE - 2'O-2-benzyloxyethyl T
+# C31 - 2'O-3-aminopropyl C
+# EIT - thymine with 2' ethylimidazole
+# GMU - 2'O-(2-guanidinium-ethyl)- T
+# P2T - 2'O propyl T
+# RIA - 2'-O-[5'phosphoribosyl] A
+# S2M - 2(=S), 2'OEtOMe thymidine
+# SMT - 2'-OEtSMe T
+# T38 - 2'OCH2OEt thymine
+# T39 - 2'OEtOMe thymine
+# TFE - 2'O(2-trifluoroethyl) thymine
+# U2P - 2' phospho, 3' 5' naked U
+# U31 - 2'-O-3aminopropyl  U
+# UPV - 2'CH2OCOC(CH3)3 U
+# V3L - 2'O-(5-O-phosphono alpha D ribofuranosyl) A
+
+
+## Other 2' modifications
+# 2AU - 2' amino U
+# 6FC - 2' trifluoromethylthio 2' deoxy C
+# 6FU - 2' trifluoromethylthio 2' deoxy U
+# A5M - 2' amino C
+# A9Z - A but with the 2' substituent: imagine it was an azide that clicked with 1-butyne 
+# F2T - 2' fluoro 2' deoxy 5' O-thiophosphono U
+# KAG - 2' deoxy G with an N-substituent on its watson-crick edge... 1S-1-methyl-3-oxopropyl G
+# O2G - 2' deoxy N,N dimethyl G
+# SUR - 2-thio 2-deoxo uracil
+# M5M - 2' N-acetamide C
+
+### Base modifications
+
+# 1PR - though only as a ligand, imidazole base?
+
+## A derived
+# 1DP - N1-deaza adenosine
+# AET - A, 9-substituted with N-methylcarbamoyl threonine??? of course it's in polymers
+# T6A - adenine with an N6 carbamoyl threonine
+# 2SA - ligand only, RAD with 6 position substituted with a 4 carbon dicarboxylic acid
+# 6IA - N6 isopentenyl adenosine
+
+# 2OM - 5,6 dihydro "orotidine"-looks like U but 6-carboxylated?
+# 4AC - 4-acetyl C
+# 50L - hard to describe simply. the normal purine bridge is two carbons. Rotate the five-carbon part of the base...
+# 50N - nitro para to C's carbonyl - makes it the enol, too
+# 5BU - 5-bromo U
+# 5CF - 5-fluoro C
+# 5FU - 5-fluoro U
+# 5HM - 5-hydroxymethyl-C
+# 5IC - 5-iodo-C
+# 6OP - revisit: complicated
+# 70U - 5-Omethyl aceto 2-thio-2-deoxy U
+# 7AT - complicated
+# 8AZ - 8-aza-nebularine
+# A7E - new base, return to this
+
+
+# BMQ - BARBITURIC ACID (2,4,6-oxo, edge like U)
+# BT5 - ligand only, biotinyl 5-AMP
+#  CH - N3-PROTONATED CYTIDINE
+# CM0 - 5-(CARBOXYMETHOXY) URIDINE
+# CNU - 5-CYANO-URIDINE
+# CS8 - ligand only, 3-THIAOCTANOYL-COENZYME A
+# DBM - 9-(6-DEOXY-BETA-D-ALLOFURANOSYL)-6-METHYLPURINE
+# ENA - etheno-NAD
+# ENP - etheno-NADP
+# ENQ - similar to above
+# F3O - ditto but O-linked
+# FA5 - Phe O-linked to the 5' phosphate (lig)
+# FAI - base is 5-formylamino-1H-imidazole-4-carboxamide (lig)
+# GOM - ligand only, glutamine reduced to glutamol and O-linked to 5' of A (so, AMP)
+# IRN - "1H"-imidazole as base
+# JLN - "1H"-imidazole as base with 5-formylamino, 4-carboxyl
+# MTU - imagine if A's amine came off between the two purine nitrogens
+# N6G - diaminopurine!
+# NF2 - base is 2,4-diF-5-Me-phenyl
+# ONE - 1-pyridine-4-one base
+# P5P - purine
+#  PU - puromycin - N - aminophosphonic acid
+# PUY - puromycin as a ligand
+# PYO - pyrimidin-2-one
+# PYY - phenyl base
+# T2S - dithiophosphorate (one =S, one -SH?) T
+# T2T - this is a piece of work, but it's in 2GUN as a polymer
+# Y5P - 1,4-dihydropyrimidine
+#  YG - wybutosine
+# YYG - a wybutosine derivative?
+
+## C derived
+# CSF - CYTIDINE-5'-MONOPHOSPHATE-3-FLUORO-N-ACETYL-NEURAMINIC ACID (ligand only, thank god)
+# ZBC - 5-bromo C
+# N5M - 5-nitro C
+# RSP - thione C
+# RSQ - 5-formyl C
+# S4C - 4' thio 4' deoxy C (we have this already I think)
+# CBV - 5-bromo C
+
+## G derived
+# PQ1 - 5-amiinomethyl G
+# QUO - 7-deaza G but substitute CH2NH(CHCHOHCHOHCH2CH2)
+# MGQ - 7-benzyl G (positively charged 7) - ligand only, but not necessarily
+# G7M - N7-METHYL-G
+# GRB - 8-bromoG
+# MGV - para-fluoro 7 benzyl G - ligand only, but not necessarily
+
+## U derived
+# ZBU - 5-bromo U
+# U8U - 5-methylaminomethyl-2-thio U
+# TYU - tetrahydro U
+# UD5 - 5-F U
+# MNU - U with 5-CH2-NH-CH3
+# 3AU - DAP where the sidechain nitrogen is uracil's N
+# US5 - 4-selanyl U
+# JW5 - 6-hydroxymethyl U
+#  IU - 5-iodo U
+# FHU - 5-F, 6-OH PSU
+# FMU - 5-F, 5-Me PSU
+# BMP - 6-hydroxy U
+# RUS - HSe instead of =O in the 2- position of U
+
+### 3' modified
+# 8AN - 3' amino 3' deoxy A
+# C2L - 5-methyl 3' methoxyethyl C
+# U2L - 3'OEtOMe T
+# URU - 3' of U attached to amide attached to the 5' carbon of another U
+# PPU - puromycin (dimethyl A with a 3' N-liked to 4-methyl tyrosine)
+# O2C - 3'deoxy C
+# M3O - 3' O linked formyl methionine A
+# 5AA - N6-dimethyl, 3' amino A
+# 31H - 3' sub NHC=OCH(NHC=OH)CH2CH2SCH3 -- oh, sometimes adenosyl formyl methionine is one residue.
+# 3DA - 3' deoxy A
+# 31M - adenosine with a 3' phe met (no formyl)
+# G2L - 3'OEtOMe G
+# GDO - 3' deoxy G
+# F3N - 3' amino linked phe (no formyl or anything)
+
+### 5' modified
+# PMT - C with a 5' linkage to beta-alanine-COCHOHC(CH3)2CH2Ophosphate
+# U37 - U 5' thiophosphonate
+# SRA - 5' thiophosphonate A (let's confirm we have this one right re: SR vs SS...)
+# 5CG - 5'-chloro, 5'-deoxy G
+# LMS - ligand only, A but iwth a 5' sulfamate
+# CG1 - 5'-O-[(R)-hydroxy(methoxy)phosphoryl]guanosine
+# ADX - A but 5' phosphosulfate (ligand only)
+# 1SC - I think, is what we've called SRC. At least, it's really the R version... it's possible SR vs SS is misnamed here.
+# U34 - monomethyl phosphate at 5' U, but I think it's different
+# SSU - ditto thiophosphonate U
+# 2SG - G phosphorodithioate
+# G46 - thiophosphonate G
+
+### 2', 3' caps
+# 574 - 2', 3' capped A with boron-phenyl-ortho-CHOHCH2NH2
+# 128 - here's an odd one, SPIRO(2,4,6-TRINITROBENZENE bonded to 2' and 3' OH of adenine
+# A23 - 2', 3' cyclic phosphate A
+# CCC - 2', 3' cyclic phosphate C
+# AVC - 2', 3' vanadate A
+# CVC - 2', 3' vanadate C
+# DJF - 2', 3' borane: phenyl-B with ortho CH2O-B and ortho OCH2CH2CH2OH, A (3ZJU)
+# TLB - 2'-O, 3'-C-methylene T
+
+### Different sugars
+# L-sugars ACGU, plus 2' selenomethyl U - 0A, 0C, 0G, 0U, 0U1
+# 10C - C on a six-carbon sugar
+# 12A - 2-METHYLTHIO-N6-(AMINOCARBONYL-L-THREONYL)-ADENOSINE
+# A6A - altritol A
+# A6C - altritol C
+# A6G - altritol G
+# A6U - altritol U
+# ATL - T with literally a bicyclic sugar (1GV6) - think this is LNA
+# FA2 - TNA ADE
+# LCA - LNA A
+# LCC - LNA C, but I think it's 5-methylated
+# LCG - LNA G
+# LKC - LNA C without phospho
+# TLN - LNA T, maybe a different LNA T... compare to ATL.
+# A5O - adenine on arabinose
+# CAR -  C on arabinose
+# GAO - arabinose G
+# GDR - GDP on rhamnose
+# T23 - 2'OMe 3'Me 3' deoxy thymine on arabinose
+# T41 - 2'OMe thymine on arabinose
+# U5M - 2' F 2' deoxy U on talofuranose
+# UAR - uracil arabinose
+# ZAD - DHP A
+# ZCY - DHP C
+# ZGU - DHP G
+# ZHP - DHP hydroxypyridone
+# ZTH - DHP T
+
+### Polyphosphates
+# 4TA - the 5' ends of A and DT, connected by 4 phosphates?
+# 5FA - Adenosine-5'-pentaphosphate
+# G4P - GUANOSINE-5',3'-TETRAPHOSPHATE
+# GDP - 5'-diphosphate G
+# GH3 - 3' deoxy G 5' triphos
+# OAD - 2' O acetyl A 5' diphosphodibose
+# ODP - 4-oxo-nicotinamide-adenine dinucleotide phosphate
+# RTP - ribavirin triphosphate
+# TPG - 2,2,7-TRIMETHYL-GUANOSINE-5'-TRIPHOSPHATE-5'-GUANOSINE
+# UDP - URIDINE-5'-DIPHOSPHATE
+
 
 residue_types/nucleic/rna_nonnatural/1PU.params
 residue_types/nucleic/rna_nonnatural/2ST.params
@@ -146,7 +385,7 @@ residue_types/nucleic/rna_nonnatural/MHU.params
 residue_types/nucleic/rna_nonnatural/M3G.params
 residue_types/nucleic/rna_nonnatural/M26.params
 
-residue_types/nucleic/rna_nonnatural/FMU.params
+residue_types/nucleic/rna_nonnatural/2FU.params
 
 # Modomics support
 #01A	1,2′-O-dimethyladenosine	m1Am	œ	œ	C12O4N5H17	295.128053	295.298867
@@ -639,16 +878,6 @@ residue_types/peptoids/601.params
 #residue_types/gamma-peptide/G4ALA.params
 #residue_types/gamma-peptide/4D3L_GALA.params
 #residue_types/gamma-peptide/4L3L_GALA.params
-#residue_types/gamma-peptide/4D2L_GALA.params
-#residue_types/gamma-peptide/4L2L_GALA.params
-#residue_types/gamma-peptide/3D2L_GALA.params
-#residue_types/gamma-peptide/3L2L_GALA.params
-#residue_types/gamma-peptide/4L3L2L_GALA.params
-#residue_types/gamma-peptide/4D3L2L_GALA.params
-#residue_types/gamma-peptide/4L3D2L_GALA.params
-#residue_types/gamma-peptide/4D3D2L_GALA.params
-
-## Beta-peptide Types
 residue_types/beta-peptide/B3A.params
 residue_types/beta-peptide/B3C.params
 residue_types/beta-peptide/B3D.params
