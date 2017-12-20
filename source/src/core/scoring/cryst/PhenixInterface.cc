@@ -594,7 +594,7 @@ void PhenixInterface::stealBfactorsFromFile(
 		// fpd handle H internally
 		if (atmLine.substr(76,2) == " H") continue;
 		std::string atom_name = atmLine.substr(12,4);
-		if (basic::options::option[ basic::options::OptionKeys::inout::use_alternate_atomids ].value() ){
+		if (basic::options::option[ basic::options::OptionKeys::inout::output_alternate_atomids ].value() ){
 				//this is a hack to get around the fact that the normal atom aliases don't include spaces in their naming conventions...they really should
 				for( auto const & res_pair: pose_asu.residue_type(resid_ros).canonical_atom_aliases() ){
 						if( res_pair.second == atom_name ){
