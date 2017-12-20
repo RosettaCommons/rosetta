@@ -117,11 +117,11 @@ FIRST_SIDECHAIN_ATOM O1
 ICOOR_INTERNAL    C1     0.000000    0.000000    0.000000   C1    C2    C3
 ICOOR_INTERNAL    C2     0.000000    0.000000    1.527772   C1    C2    C3
 ICOOR_INTERNAL    C3     0.000001   68.145414    1.484510   C2    C1    C3
-ICOOR_INTERNAL    C4   -62.556893   74.464186    1.518591   C3    C2    C1
-ICOOR_INTERNAL    O4  -179.166214   71.758824    1.391257   C4    C3    C2
+ICOOR_INTERNAL    C4   -62.556893   74.464186    1.530000   C3    C2    C1
+ICOOR_INTERNAL    O4  -179.166214   71.758824    1.420000   C4    C3    C2
 ICOOR_INTERNAL  UPPER  -57.780020   71.802996    1.500049   O4    C4    C3
 # then the rest of the backbone heavy atoms
-ICOOR_INTERNAL    C5    60.023516   70.036253    1.562526   C4    C3    C2
+ICOOR_INTERNAL    C5    60.023516   70.036253    1.530000   C4    C3    C2
 ICOOR_INTERNAL    O5   -57.917154   70.697608    1.443028   C5    C4    C3
 ICOOR_INTERNAL    VO5   60.755967   71.897802    1.457688   C1    C2    C3  # must build as branch from main chain, unlike O5
 ICOOR_INTERNAL    VC1   56.8        66.2         1.457688   O5    C5    C4  # must build from end of ring, unlike C1
@@ -130,8 +130,8 @@ ICOOR_INTERNAL  LOWER -178.125      71.218273    1.456186   C1    C2    C3
 ICOOR_INTERNAL    O1  -178.125      71.218273    1.456186   C1    C2    C3
 ICOOR_INTERNAL    O2   118.118553   71.613743    1.342689   C2    C1    C3
 ICOOR_INTERNAL    O3  -119.867195   70.190983    1.448831   C3    C2    C4
-ICOOR_INTERNAL    C6  -175.112472   68.828198    1.578649   C5    C4    C3
-ICOOR_INTERNAL    O6   -59.874527   64.749256    1.473304   C6    C5    C4
+ICOOR_INTERNAL    C6  -175.112472   68.828198    1.510000   C5    C4    C3
+ICOOR_INTERNAL    O6   -59.874527   64.749256    1.420000   C6    C5    C4
 # now all the Hs (improper torsions used for hydrogens to ensure good placement no matter the backbone conformation)
 ICOOR_INTERNAL    H1  -120.0        71.0         1.10       C1  LOWER   C2
 ICOOR_INTERNAL    HO1   60.0        70.5         0.98       O1    C1    C2

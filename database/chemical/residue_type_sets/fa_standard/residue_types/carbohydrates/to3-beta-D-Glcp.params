@@ -131,8 +131,8 @@ ICOOR_INTERNAL  LOWER -178.882118   73.093678    1.393201   C1    C2    C3
 ICOOR_INTERNAL    O1  -178.882118   73.093678    1.393201   C1    C2    C3
 ICOOR_INTERNAL    O2   118.860412   71.031502    1.358465   C2    C1    C3
 ICOOR_INTERNAL    O4  -179.166214   71.758824    1.391257   C4    C3    C2
-ICOOR_INTERNAL    C6  -179.288386   67.562812    1.540525   C5    C4    C3
-ICOOR_INTERNAL    O6   -62.797083   67.644322    1.449102   C6    C5    C4
+ICOOR_INTERNAL    C6  -179.288386   67.562812    1.510000   C5    C4    C3
+ICOOR_INTERNAL    O6   -62.797083   67.644322    1.420000   C6    C5    C4
 # now all the Hs (improper torsions used for hydrogens to ensure good placement no matter the backbone conformation)
 ICOOR_INTERNAL    H1  -120.0        71.0         1.10       C1  LOWER   C2
 ICOOR_INTERNAL    HO1   60.0        70.5         0.98       O1    C1    C2
