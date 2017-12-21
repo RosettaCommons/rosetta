@@ -736,6 +736,13 @@ HBondSet::nhbonds() const
 	return hbonds_.size();
 }
 
+// Return the vector of HBond pointers -- super useful in PyRosetta
+utility::vector1< HBondOP > const &
+HBondSet::hbonds() const
+{
+	return hbonds_;
+}
+
 Size
 HBondSet::nhbonds(Size const seqpos, bool include_only_allowed /* true */) const
 {

@@ -364,6 +364,10 @@ public:
 	Size
 	nhbonds() const;
 
+	/// @brief  Return the vector of HBond pointers
+	utility::vector1< HBondOP > const &
+	hbonds() const;
+
 	/// @brief Number of hbonds involving this residue
 	/// @details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
 	Size
