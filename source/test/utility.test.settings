@@ -13,20 +13,20 @@ sources = {
 	"" : [
 		"BitSet",
 		"BitVector",
-                "DenseBoolMap",
-                "heap",
-                "in_place_list",
-                "integer_mapping",
-                "iter_util",
-                "LexicographicalIterator",
-                "minmax",
+		"DenseBoolMap",
+		"heap",
+		"in_place_list",
+		"integer_mapping",
+		"iter_util",
+		"LexicographicalIterator",
+		"minmax",
 		"numbers",
-                "OrderedTuple",
+		"OrderedTuple",
 		"recent_history_queue",
 		"simulate_mpi",
 		"string_util",
 		'type_traits',
-                #"TopScoreSelector",
+		#"TopScoreSelector",
 		"UTools",
 		"vector0",
 		"vector1",
@@ -52,7 +52,10 @@ sources = {
 		"FileContentsMap",
 		"zipstream",
 	],
-       "options": [
+	"json": [
+		"json_utilitiesTests",
+	],
+	"options": [
 		"OptionCollection",
 	],
 	"keys" : [
@@ -78,16 +81,16 @@ sources = {
 		"SignalHub",
 		"TokenHub",
 	],
-        "sql_database" : [
-        	"DatabaseSessionManagerTests",
+	"sql_database" : [
+		"DatabaseSessionManagerTests",
 	],
 	"tag" : [
- 		"Tag",
- 		"XMLSchemaGeneration",
+		"Tag",
+		"XMLSchemaGeneration",
 		"validate_w_xsd",
 	],
 	"thread" : [
- 		"ReadWriteMutex",
+		"ReadWriteMutex",
 	],
 
 }
