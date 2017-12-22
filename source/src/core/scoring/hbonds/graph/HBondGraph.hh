@@ -156,7 +156,6 @@ public:
 		energy_ = energy;
 	}
 
-
 private:
 
 	float energy_;

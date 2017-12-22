@@ -29,6 +29,11 @@ struct DenseBoolMap
 {
 public:
 	DenseBoolMap(){
+#ifndef NDEBUG
+		if ( num_bytes() != data_.size() ) {
+			utility_exit_with_message( "Discrepancy between num_bytes() and data_.size()" );
+		}
+#endif
 		for ( unsigned int i = 0; i < num_bytes(); ++i ) {
 			data_[ i ] = 0;
 		}
@@ -92,7 +97,9 @@ public:
 
 
 private:
-	std::array< unsigned char, (NUM_ELEMS + 3)/4 > data_; // num_bytes() does not compile with Windows VS2015
+	//Please change this line back to the following once all compilers can handle constexpr:
+	//std::array< unsigned char, num_bytes() > data_;
+	std::array< unsigned char, ( NUM_ELEMS + 3 ) / 4 > data_;
 
 };
 

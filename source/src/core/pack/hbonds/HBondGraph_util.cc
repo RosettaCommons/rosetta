@@ -49,7 +49,11 @@ scoring::hbonds::graph::HBondGraphOP create_init_and_create_edges_for_hbond_grap
 ){
 	scoring::hbonds::graph::HBondGraphOP hbond_graph = create_and_init_hbond_graph( * rotamer_sets );
 
-	MCHBNetInteractionGraphOP ig( new MCHBNetInteractionGraph ( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold ) );
+	//TODO change back once utility::pointer::make_shared enters master
+	//MCHBNetInteractionGraphOP ig = utility::pointer::make_shared< MCHBNetInteractionGraph >( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold );
+	MCHBNetInteractionGraphOP ig( new MCHBNetInteractionGraph( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold ) );
+	ig->initialize( *rotamer_sets );
+
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, rotamer_sets->task() );
 	rotamer_sets->precompute_two_body_energies( pose, sfxn, packer_neighbor_graph, ig, true );
 
@@ -67,7 +71,11 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 ){
 	scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph = create_and_init_atom_level_hbond_graph( * rotamer_sets );
 
+	//TODO change back once utility::pointer::make_shared enters master
+	//MCHBNetInteractionGraphOP ig = std::make_shared< MCHBNetInteractionGraph >( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold );
 	MCHBNetInteractionGraphOP ig( new MCHBNetInteractionGraph ( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold ) );
+	ig->initialize( *rotamer_sets );
+
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, rotamer_sets->task() );
 	rotamer_sets->precompute_two_body_energies( pose, sfxn, packer_neighbor_graph, ig, true );
 
@@ -292,9 +300,9 @@ void determine_atom_level_edge_info(
 		if ( false ) { //TODO bridging_waters
 			//LKAtomLevelHBondEdge * lk_edge = static_cast< LKAtomLevelHBondEdge * >( lk_edge );
 			//LKHBondInfo info = ...
-			//lk_edge->register_hbond( info, first_node_is_donor, Hatm, Datm, Aatm );
+			//lk_edge->register_hbond( info, first_node_is_donor, Aatm, Datm, Hatm );
 		} else {
-			hb_edge.register_hbond( first_node_is_donor, Hatm, Datm, Aatm );
+			hb_edge.register_hbond( first_node_is_donor, Aatm, Datm, Hatm );
 		}
 	}// for all hbonds
 }

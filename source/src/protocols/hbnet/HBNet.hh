@@ -322,6 +322,30 @@ struct compare_by_x {
 	}
 };
 
+struct DecoratedNetworkState {
+	DecoratedNetworkState(
+		core::Real sat,
+		unsigned int n_unsat_H,
+		NetworkState const * state
+	) :
+		saturation( sat ),
+		n_unsat_Hpols( n_unsat_H ),
+		network_state( state )
+	{}
+
+	core::Real saturation;
+	unsigned int n_unsat_Hpols;
+	NetworkState const * network_state;
+
+	bool operator < ( DecoratedNetworkState const & other ) const {
+		if ( n_unsat_Hpols == other.n_unsat_Hpols ) {
+			return saturation < other.saturation;
+		} else {
+			return n_unsat_Hpols < other.n_unsat_Hpols;
+		}
+	}
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -724,7 +748,7 @@ protected://Monte Carlo Protocol Protected Methods
 	bool monte_carlo_seed_is_dead_end( core::scoring::hbonds::graph::HBondEdge const * monte_carlo_seed );
 
 	///@brief called at the end of the monte carlo branching protocol. Adds all of the monte carlo networks to the data elements used by the traditional HBNet protocol
-	void append_to_network_vector( std::list< NetworkState > & designed_networks );
+	void append_to_network_vector( utility::vector1< DecoratedNetworkState > const & designed_networks );
 
 	void add_residue_to_network_state( NetworkState & current_state, core::scoring::hbonds::graph::HBondNode * node_being_added ) const;
 
@@ -745,6 +769,9 @@ protected://Monte Carlo Protocol Protected Methods
 
 	///@brief This is only being used for debug purposes right now. Makes sure that there are no possible nodes that can be added to current_state
 	static bool network_state_is_done_growing( NetworkState const & current_state, core::scoring::hbonds::graph::AbstractHBondGraphCOP hbond_graph );
+
+	///@brief TODO
+	core::Real estimate_saturation( NetworkState const & ) const;
 
 private:
 	core::pose::Pose & nonconst_get_orig_pose() { return *orig_pose_; }
@@ -842,7 +869,7 @@ private:
 
 inline void HBNet::set_monte_carlo_data_to_default(){
 	monte_carlo_branch_ = false;
-	total_num_mc_runs_ = 100000;
+	total_num_mc_runs_ = 10000;
 	monte_carlo_seeds_.reserve( 1024 );
 	monte_carlo_seed_threshold_ = 0;
 

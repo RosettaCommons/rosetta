@@ -128,7 +128,7 @@ struct NetworkState{
 
 	//This is a map of all unsatisfied atoms ( Heavy and H both included ) for every moltenres in the network:
 	std::map < unsigned int /*mres*/, utility::vector1< core::scoring::hbonds::graph::AtomInfo > > unsatisfied_sc_atoms;
-
+	//TODO turn this into a sorted vector - maps are slow for this
 };
 
 struct NetworkStateScoreComparator{

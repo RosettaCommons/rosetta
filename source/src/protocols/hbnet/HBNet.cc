@@ -1640,8 +1640,23 @@ void HBNet::MC_branch_overlapping_networks(){
 	}//run_id
 
 	TR << "Monte carlo branching protocol found " << designed_networks.size() << " networks." << std::endl;
-	designed_networks.sort( NetworkStateScoreComparator::compare );
-	append_to_network_vector( designed_networks );
+
+	utility::vector1< DecoratedNetworkState > designed_networks_for_sorting;
+	designed_networks_for_sorting.reserve( designed_networks.size() );
+
+	for ( NetworkState const & ns : designed_networks ) {
+		core::Real const saturation_est = estimate_saturation( ns );
+
+		unsigned int n_unsat_Hpols = 0;//assumes no heavy unsats
+		for ( auto const & uint_vec_pair : ns.unsatisfied_sc_atoms ) {
+			n_unsat_Hpols += uint_vec_pair.second.size();
+		}
+		designed_networks_for_sorting.emplace_back( saturation_est, n_unsat_Hpols, & ns );
+	}
+	std::sort( designed_networks_for_sorting.begin(), designed_networks_for_sorting.end() );
+
+	append_to_network_vector( designed_networks_for_sorting );
+	//std::sort( network_vector_.begin(), network_vector_.end(), compare_net_vec() );
 }
 
 void add_network_resids_to_pose( core::pose::Pose & pose, utility::vector1< core::Size > resids, std::string name_of_subset="HBNet" )
@@ -1830,6 +1845,7 @@ HBNet::find_unsats( Pose const & pose, hbond_net_struct & network )
 	Size polar_groups_making_hbonds(0);
 
 	std::vector< Size > resnums(0);
+	resnums.reserve( network.residues.size() );
 	for ( utility::vector1< HBondResStructCOP >::const_iterator res = network.residues.begin(); res != network.residues.end(); ++res ) {
 		//for ( std::set< Size >::const_iterator res = actual_hbond_residues.begin(); res != actual_hbond_residues.end(); ++res ){
 		resnums.push_back( (*res)->resnum );
@@ -1848,7 +1864,7 @@ HBNet::find_unsats( Pose const & pose, hbond_net_struct & network )
 	//        }
 	//    }
 
-	for ( const auto & resnum : resnums ) {
+	for ( const auto resnum : resnums ) {
 
 		if ( verbose_ && TR.visible() ) network.hbond_set->show( pose, resnum, true, TR );
 
@@ -3631,12 +3647,12 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		"false" )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"max_mc_nets", xsct_non_negative_integer,
-		"(if monte_carlo_branch) This is experimental and so far it does not look super useful. Maximum number of networks that the monte carlo protocol will store. Loose rule of thumb is to make this 10x the max number of nets you want to end up with. 100 (default) is on the conservative end of the spectrum for this value. The reason you do not want this to be too large is that each of these networks goes through a relatively expensive quality check. A value of zero results in no limit.",
+		"(if monte_carlo_branch) This is experimental and so far it does not look super useful. Maximum number of networks that the monte carlo protocol will store. Loose rule of thumb is to make this 10x the max number of nets you want to end up with. The reason you do not want this to be too large is that each of these networks goes through a relatively expensive quality check. A value of zero (which is default) represents having no limit.",
 		"0" )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"total_num_mc_runs", xsct_non_negative_integer,
 		"(if monte_carlo_branch) number of monte carlo runs to be divided over all the seed hbonds. A single monte carlo run appears to take roughly 1 ms (very loose estimate).",
-		"100000" )
+		"10000" )
 		+ XMLSchemaAttribute::attribute_w_default(
 		"seed_hbond_threshold", xsct_real,
 		"(if monte_carlo_branch) Maybe you only want to branch from strong hbonds. If this value is -1.2, for example, then only hbonds with a strength of -1.2 or lower will be branched from.",
@@ -3790,7 +3806,8 @@ bool HBNet::monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed ){
 
 	if ( nodeA_ind == nodeB_ind ) return false;//Symmetry
 
-	for ( utility::graph::EdgeListConstIterator it_A = nodeA->const_edge_list_begin(); it_A != nodeA->const_edge_list_end(); ++it_A ) {
+	for ( utility::graph::EdgeListConstIterator it_A = nodeA->const_edge_list_begin();
+			it_A != nodeA->const_edge_list_end(); ++it_A ) {
 		HBondNode const * const temp_node = hbond_graph_->get_hbondnode( (*it_A)->get_other_ind( nodeA_ind ) );
 
 		if ( temp_node->moltenres() == nodeB->moltenres() ) continue;
@@ -3799,7 +3816,8 @@ bool HBNet::monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed ){
 		return false;
 	}
 
-	for ( utility::graph::EdgeListConstIterator it_B = nodeB->const_edge_list_begin(); it_B != nodeB->const_edge_list_end(); ++it_B ) {
+	for ( utility::graph::EdgeListConstIterator it_B = nodeB->const_edge_list_begin();
+			it_B != nodeB->const_edge_list_end(); ++it_B ) {
 		HBondNode const * const temp_node = hbond_graph_->get_hbondnode( (*it_B)->get_other_ind( nodeB_ind ) );
 
 		if ( temp_node->moltenres() == nodeA->moltenres() ) continue;
@@ -3811,16 +3829,17 @@ bool HBNet::monte_carlo_seed_is_dead_end( HBondEdge const * monte_carlo_seed ){
 	return true;
 }
 
-void HBNet::append_to_network_vector( std::list< NetworkState > & designed_networks ){
+void HBNet::append_to_network_vector( utility::vector1< DecoratedNetworkState > const & designed_networks ){
 
-	//USING max_replicates_before_unsat_check_
+	//using max_replicates_before_unsat_check_
 	std::string const poly_A_sequence( task_->num_to_be_packed(), 'A' );
 	std::map< std::string, unsigned int > num_replicates_for_sequence;
 
 	std::vector< HBondNetStructOP > & network_vector = HBNet::get_net_vec();
 	core::Size net_count = 0;
 
-	for ( NetworkState & state : designed_networks ) {
+	for ( DecoratedNetworkState const & dec_state : designed_networks ) {
+		NetworkState const & state = * dec_state.network_state;
 
 		utility::vector1< HBondResStructCOP > hbond_res_structs;
 		hbond_res_structs.reserve( state.nodes.size() );
@@ -4029,6 +4048,53 @@ bool HBNet::network_state_is_done_growing( NetworkState const & current_state, A
 	return true;
 }
 
+core::Real HBNet::estimate_saturation( NetworkState const & network_state ) const {
+	using namespace core::scoring::hbonds::graph;
+	unsigned short int total_polar_groups_that_could_hbond( 0 );
+
+	for ( HBondNode const * node : network_state.nodes ) {
+		core::conformation::Residue const & rotamer = * rotamer_sets_->rotamer( node->global_rotamer_id() );
+
+		unsigned char const n_Hpol = rotamer.Hpol_index().size();
+		total_polar_groups_that_could_hbond += n_Hpol;
+
+		for ( unsigned char atomno = rotamer.first_sidechain_atom(),
+				end = rotamer.nheavyatoms();
+				atomno <= end; ++atomno ) {
+			auto const & atom_type = rotamer.atom_type( atomno );
+			if ( ! atom_type.is_donor() && ! atom_type.is_acceptor() ) continue;
+
+			if ( rotamer.atom_type( atomno ).name() == "OH" ) {
+				++total_polar_groups_that_could_hbond;
+			} else {
+				std::string const element = rotamer.atom_type( atomno ).element();
+				unsigned char num_lone_pairs = 1;
+				if ( element == "O" ) {
+					num_lone_pairs = 2;
+				} else if ( element == "N" ) {
+					num_lone_pairs = 1;
+				} else {
+					TR << "MC HBNet is unprepared to handle this polar atom's element: " << element << std::endl;
+				}
+				//Let's not worry about charged atoms
+				//auto const charge = rotamer.atomic_charge( atomno );
+				//num_lone_pairs -= charge;
+				total_polar_groups_that_could_hbond += num_lone_pairs;
+			}
+		}
+	}
+
+	//Is this fair - at least for a quick estimate?
+	//Real const polar_groups_making_hbonds = 2 * network_state.edges.size();
+	Real polar_groups_making_hbonds( 0 );
+	for ( HBondEdge const * edge : network_state.edges ) {
+		AtomLevelHBondEdge const & al_edge = static_cast< AtomLevelHBondEdge const & >( * edge );
+		polar_groups_making_hbonds += 2 * al_edge.hbonds().size();
+	}
+
+	return polar_groups_making_hbonds / total_polar_groups_that_could_hbond;
+}
+
 std::string HBNetCreator::keyname() const {
 	return HBNet::mover_name();
 }
@@ -4042,7 +4108,6 @@ void HBNetCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	HBNet::provide_xml_schema( xsd );
 }
-
 
 } //hbnet
 } //protocols
