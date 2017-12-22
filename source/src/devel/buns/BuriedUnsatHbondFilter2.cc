@@ -82,7 +82,7 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 		calc_->set_generous_hbonds(tag->getOption<bool>( "generous_hbonds", true  ));
 	}
 	if ( tag->hasOption("sasa_burial_cutoff") ) {
-		calc_->set_sasa_burial_cutoff(tag->getOption<core::Real>( "sasa_burial_cutoff", true ));
+		calc_->set_sasa_burial_cutoff( tag->getOption<core::Real>( "sasa_burial_cutoff" ) );
 	}
 	if ( tag->hasOption("AHD_cutoff") ) {
 		calc_->set_AHD_cutoff(tag->getOption<core::Real>( "AHD_cutoff", 120 ));
@@ -237,7 +237,7 @@ void BuriedUnsatHbondFilter2::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	attlist + XMLSchemaAttribute::attribute_w_default( "jump_number", xsct_non_negative_integer, "Jump, numbered sequentially from 1, that defines the interface", "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "cutoff", xsct_non_negative_integer, "Upper threshold beyond which the filter fails", "20" )
 		+ XMLSchemaAttribute::attribute_w_default( "generous_hbonds", xsct_rosetta_bool, "Use a generous definition of H-bonds", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "sasa_burial_cutoff", xsct_rosetta_bool, "Use a SASA threshold to define residue burial", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "sasa_burial_cutoff", xsct_real, "SASA threshold to define residue burial", "0.01" )
 		+ XMLSchemaAttribute::attribute_w_default( "AHD_cutoff", xsct_real, "Cutoff for AHD angle, in degrees, to define a hydrogen bond", "120" )
 		+ XMLSchemaAttribute::attribute_w_default( "dist_cutoff", xsct_real, "Cutoff for distance, in Angstroms, to define a hydrogen bond", "3.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "hxl_dist_cutoff", xsct_real, "Cutoff for distance, in Angstroms, to define a hydrogen bond to a hydroxyl", "3.5" )
