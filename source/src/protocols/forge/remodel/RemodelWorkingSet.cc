@@ -452,7 +452,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			//duplicate length of dssp and aastring
 			DSSP += DSSP;
 			aa += aa;
-			for ( int i = 0; i < (int)seq_aa.size(); i++ ) {
+			int limit = (int)seq_aa.size();
+			for ( int i = 0; i < limit; i++ ) {
 				seq_aa.push_back(seq_aa[i]);
 			}
 
