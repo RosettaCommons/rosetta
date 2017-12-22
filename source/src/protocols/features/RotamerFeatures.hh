@@ -56,6 +56,7 @@ public:
 	bool
 	initialize_rotamer(
 		core::conformation::Residue const & residue,
+		core::pose::Pose const & pose,
 		core::pack::dunbrack::RotamerLibraryScratchSpace & scratch,
 		core::Size & rotamer_bin
 	) {
@@ -92,14 +93,14 @@ public:
 		packed_rotno = rotlib.rotwell_2_packed_rotno(rotamer_vector);
 		if ( packed_rotno == 0 ) {
 			packed_rotno = rotlib.find_another_representative_for_unlikely_rotamer(
-				residue, rotamer_fixed_vector);
+				residue, pose, rotamer_fixed_vector);
 			rotlib.packed_rotno_2_rotwell(packed_rotno, rotamer_vector);
 		}
 		rotamer_bin = rotlib.rotwell_2_rotno(rotamer_vector);
 
 		PackedDunbrackRotamer< T, N, core::Real > interpolated_rotamer;
 		rotlib.interpolate_rotamers(
-			residue, scratch, packed_rotno, interpolated_rotamer);
+			residue, pose, scratch, packed_rotno, interpolated_rotamer);
 
 		return true;
 

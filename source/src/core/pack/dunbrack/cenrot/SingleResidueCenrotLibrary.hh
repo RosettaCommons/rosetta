@@ -182,12 +182,14 @@ public:
 	virtual
 	Real rotamer_energy(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
 	virtual
 	Real rotamer_energy_deriv(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
@@ -211,6 +213,7 @@ public:
 	virtual
 	Real best_rotamer_energy(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		bool curr_rotamer_only,
 		RotamerLibraryScratchSpace & scratch
 	) const;

@@ -43,6 +43,7 @@ public:
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;
 
@@ -51,6 +52,7 @@ public:
 	Real
 	rotamer_energy(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;
 
@@ -58,6 +60,7 @@ public:
 	Real
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		bool curr_rotamer_only,
 		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;

@@ -89,17 +89,6 @@ public:
 		scoring::EnergyMap const & weights
 	) const;
 
-	/// @brief Deprecated.
-	virtual
-	Real
-	eval_dof_derivative(
-		id::DOF_ID const & dof_id,
-		id::TorsionID const & tor_id,
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & sfxn,
-		scoring::EnergyMap const & weights
-	) const;
-
 	/// @brief DunbrackEnergy is context independent; indicates that no
 	/// context graphs are required
 	virtual
@@ -116,7 +105,7 @@ private:
 	/// torsions 2, 3, and 4, respectively.  This function returns 0 if torsion_index is a torsion on which rotamers do
 	/// not depend.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	core::Size get_scratch_index( core::Size const torsion_index, core::conformation::Residue const &rsd ) const;
+	core::Size get_scratch_index( core::id::TorsionID const &torid, core::conformation::Residue const &rsd, core::pose::Pose const &pose ) const;
 
 	virtual
 	core::Size version() const;

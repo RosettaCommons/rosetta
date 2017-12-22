@@ -233,6 +233,10 @@ RotamerConstraint::score(
 	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
 
 	conformation::Residue const & rsd( xyz_func.residue(seqpos_) );
+	// This single-residue scheme will ONLY work for rotamer libraries that
+	// depend on no external context. (For example, peptoid libraries that
+	// depend on omega-pre? Nope.)
+	pose::Pose pose;
 
 	if ( rsd.type().name() != rsd_type_name_ ) return; // residue types must match
 
@@ -242,8 +246,8 @@ RotamerConstraint::score(
 		if ( rot != favored_rotamer_numbers_[i] )  continue;
 
 		pack::dunbrack::RotamerLibraryScratchSpace scratch;
-		Real const best_rotE = rotlib->best_rotamer_energy(rsd, false /* => global min */, scratch);
-		Real const this_rotE = rotlib->best_rotamer_energy(rsd, true /* => local min */, scratch);
+		Real const best_rotE = rotlib->best_rotamer_energy(rsd, pose, false /* => global min */, scratch);
+		Real const this_rotE = rotlib->best_rotamer_energy(rsd, pose, true /* => local min */, scratch);
 		debug_assert( best_rotE <= this_rotE );
 		TR << "rotamer constraint active for " << seqpos_ << " thisE = " << this_rotE << " bestE = " << best_rotE << " dE = " << ( best_rotE - this_rotE ) << std::endl;
 		emap[ this->score_type() ] +=  ( best_rotE - this_rotE );

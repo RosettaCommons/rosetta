@@ -20,10 +20,6 @@ BEGIN_SELECTOR
 VARIANT_TYPE UPPER_TERMINUS_VARIANT
 END_SELECTOR
 
-# If modified, no longer canonical.
-DELETE_PROPERTY CANONICAL_AA
-DELETE_PROPERTY CANONICAL_NUCLEIC
-
 # Delete the OH at C-term and replace with the following stuff
 DELETE_ATOM OXT
 

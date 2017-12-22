@@ -220,7 +220,7 @@ SidechainMCMover::apply(
 		//  if( !task_initialized() ){
 		//   init_task( pose );
 		//  }
-		new_state = make_move( new_state );
+		new_state = make_move( new_state, pose );
 		//new_state->update_actcoord();
 		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "new-chi-angles: ";

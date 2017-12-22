@@ -132,6 +132,7 @@ SingleLigandRotamerLibrary::init_from_vector(
 Real
 SingleLigandRotamerLibrary::rotamer_energy_deriv(
 	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	dunbrack::RotamerLibraryScratchSpace & scratch
 ) const
 {
@@ -139,7 +140,7 @@ SingleLigandRotamerLibrary::rotamer_energy_deriv(
 	dunbrack::Real4 & dE_dchi( scratch.dE_dchi() );
 	std::fill( dE_dbb.begin(), dE_dbb.end(), 0 );
 	std::fill( dE_dchi.begin(), dE_dchi.end(), 0 );
-	return rotamer_energy(rsd, scratch);
+	return rotamer_energy(rsd, pose, scratch);
 }
 
 
@@ -149,6 +150,7 @@ SingleLigandRotamerLibrary::rotamer_energy_deriv(
 Real
 SingleLigandRotamerLibrary::rotamer_energy(
 	conformation::Residue const & /*rsd*/,
+	pose::Pose const & ,//pose,
 	dunbrack::RotamerLibraryScratchSpace & /*scratch*/
 ) const
 {
@@ -162,6 +164,7 @@ SingleLigandRotamerLibrary::rotamer_energy(
 Real
 SingleLigandRotamerLibrary::best_rotamer_energy(
 	conformation::Residue const & /*rsd*/,
+	pose::Pose const &,// pose,
 	bool /*curr_rotamer_only*/,
 	dunbrack::RotamerLibraryScratchSpace & /*scratch*/
 ) const

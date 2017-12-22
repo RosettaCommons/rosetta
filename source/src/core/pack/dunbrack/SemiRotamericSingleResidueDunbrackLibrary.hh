@@ -218,7 +218,7 @@ public:
 	/// scheme.  All four combinations are possible, though backbone independent scoring
 	/// and backbone dependent rotamer sampling seems a poor combination.
 	SemiRotamericSingleResidueDunbrackLibrary(
-		chemical::AA const aa_in,
+		chemical::ResidueType const & rt,
 		bool const backbone_independent_scoring,         // true uses less memory
 		bool const backbone_independent_rotamer_sampling, // true uses less memory
 		bool use_shapovalov,
@@ -238,6 +238,7 @@ public:
 	Real
 	rotamer_energy(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
 	) const override;
 
@@ -245,6 +246,7 @@ public:
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
 	) const override;
 
@@ -257,6 +259,7 @@ public:
 	Real
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		bool curr_rotamer_only,
 		RotamerLibraryScratchSpace & scratch
 	) const override;
@@ -398,6 +401,7 @@ protected:
 	Real
 	rotamer_energy_deriv_bbdep(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch,
 		bool eval_deriv
 	) const;
@@ -405,6 +409,7 @@ protected:
 	void
 	assign_random_rotamer_with_bias_bbdep(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
@@ -414,6 +419,7 @@ protected:
 	Real
 	bbdep_nrchi_score(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch,
 		Real & dnrchi_score_dnrchi,
 		utility::fixedsizearray1< Real, N > & dnrchi_score_dbb

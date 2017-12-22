@@ -175,7 +175,7 @@ BBDepScoreInterpData< N >::operator==( BBDepScoreInterpData< N > const & other )
 
 template < Size T, Size N >
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::SemiRotamericSingleResidueDunbrackLibrary(
-	chemical::AA const aa_in,
+	chemical::ResidueType const & rt,
 	bool const backbone_independent_scoring,   // true uses less memory
 	bool const backbone_independent_rotamer_sampling, // true uses less memory
 	bool use_shapovalov,
@@ -184,7 +184,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::SemiRotamericSingleResidueDun
 	core::Real prob_buried,
 	core::Real prob_nonburied
 ) :
-	parent( aa_in, false /*dun02*/, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied ), // dun02 false, since the semi rotameric library is new in 2008
+	parent( rt, false /*dun02*/, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied ), // dun02 false, since the semi rotameric library is new in 2008
 	bbind_nrchi_scoring_( backbone_independent_scoring ),
 	bbind_nrchi_sampling_( backbone_independent_rotamer_sampling ),
 	use_shapovalov_( use_shapovalov ),
@@ -204,26 +204,29 @@ template < Size T, Size N >
 Real
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy(
 	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
-	return rotamer_energy_deriv_bbdep( rsd, scratch, false );
+	return rotamer_energy_deriv_bbdep( rsd, pose, scratch, false );
 }
 
 template < Size T, Size N >
 Real
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
-	return rotamer_energy_deriv_bbdep( rsd, scratch, true );
+	return rotamer_energy_deriv_bbdep( rsd, pose, scratch, true );
 }
 
 template < Size T, Size N >
 Real
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv_bbdep(
 	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch,
 	bool eval_deriv
 ) const
@@ -233,14 +236,14 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv_bbdep(
 	//Multiplier for D-amino acids:
 	const core::Real d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
 
-	parent::eval_rotameric_energy_deriv( rsd, scratch, eval_deriv ); //This has been updated to allow scoring of D-amino acids.
+	parent::eval_rotameric_energy_deriv( rsd, pose, scratch, eval_deriv ); //This has been updated to allow scoring of D-amino acids.
 
 	Real chidevpen_score( 0.0 );
 	for ( Size ii = 1; ii <= T; ++ii ) chidevpen_score += scratch.chidevpen()[ ii ];
 
 	Real nrchi_score, dnrchiscore_dchi;
 	utility::fixedsizearray1< Real, N > dnrchiscore_dbb;
-	nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dbb ); //Handles D-amino acids; derivatives WRT phi, psi, and chi are inverted iff D-amino acid.
+	nrchi_score = bbdep_nrchi_score( rsd, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb ); //Handles D-amino acids; derivatives WRT phi, psi, and chi are inverted iff D-amino acid.
 
 	if ( utility::isnan( nrchi_score ) ) {
 		nrchi_score = 0;
@@ -315,6 +318,7 @@ template < Size T, Size N >
 Real
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::bbdep_nrchi_score(
 	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch,
 	Real & dnrchi_score_dnrchi,
 	utility::fixedsizearray1< Real, N > & dnrchi_score_dbb
@@ -335,19 +339,19 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::bbdep_nrchi_score(
 	Real nrchi_alpha;
 	get_bbdep_nrchi_bin( nrchi, nrchi_bin, nrchi_bin_next, nrchi_alpha );
 
-	utility::fixedsizearray1< Real, N > bbs = parent::get_bbs_from_rsd( rsd );
+	utility::fixedsizearray1< Real, N > bbs = parent::get_IVs_from_rsd( rsd, pose );
 	for ( Size bbi = 1; bbi <= N; ++bbi ) bbs[ bbi ] *= d_multiplier;
 
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	parent::get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 	for ( Size bbi = 1; bbi <= N; ++bbi ) {
-		debug_assert( bb_bin[ bbi ] >= 1 && bb_bin[ bbi ] <= parent::N_PHIPSI_BINS[bbi] );
+		debug_assert( bb_bin[ bbi ] >= 1 && bb_bin[ bbi ] <= parent::N_BB_BINS[bbi] );
 	}
 
 	utility::fixedsizearray1< Size, ( 1 << N ) > interp_indices;
 	for ( Size ii = 1; ii <= ( 1 << N ); ++ii ) {
-		interp_indices[ ii ] = make_conditional_index( N, parent::N_PHIPSI_BINS, ii, bb_bin_next, bb_bin );
+		interp_indices[ ii ] = make_conditional_index< N >( parent::N_BB_BINS, ii, bb_bin_next, bb_bin );
 	}
 
 	utility::vector1< BBDepScoreInterpData< N > > bbdep_interp_data( ( 1 << ( N + 1 ) ), BBDepScoreInterpData<N>() );
@@ -393,6 +397,7 @@ template < Size T, Size N >
 Real
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	bool curr_rotamer_only,
 	RotamerLibraryScratchSpace & scratch
 ) const
@@ -402,23 +407,23 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 	if ( curr_rotamer_only ) {
 		Real dnrchiscore_dchi;
 		utility::fixedsizearray1< Real, N > dnrchiscore_dbb;
-		parent::eval_rotameric_energy_deriv( rsd, scratch, false);
+		parent::eval_rotameric_energy_deriv( rsd, pose, scratch, false);
 
-		nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
+		nrchi_score = bbdep_nrchi_score( rsd, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
 		core::conformation::Residue rsd_copy ( rsd );
 		utility::vector1< Real > rsd_chi = rsd.chi();
 
 		for ( Size jj = 0; jj <= bbdep_nrchi_nbins_; ++jj ) {
 			rsd_chi[ rsd_copy.nchi() ] = nrchi_lower_angle_ + bbdep_nrchi_binsize_ * jj;
 			rsd_copy.chi( rsd_chi );
-			parent::eval_rotameric_energy_deriv( rsd_copy, scratch, false);
-			Real tmp_nrchi_score = bbdep_nrchi_score( rsd_copy, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
+			parent::eval_rotameric_energy_deriv( rsd_copy, pose, scratch, false);
+			Real tmp_nrchi_score = bbdep_nrchi_score( rsd_copy, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
 			if ( tmp_nrchi_score < nrchi_score ) nrchi_score = tmp_nrchi_score;
 		}
 	} else {
 
 		// AMW
-		utility::fixedsizearray1< Real, N > const bbs2( parent::get_bbs_from_rsd( rsd ) );
+		utility::fixedsizearray1< Real, N > const bbs2( parent::get_IVs_from_rsd( rsd, pose ) );
 		utility::fixedsizearray1< Real, 5 > bbs( 0 );
 		for ( Size i = 1; i <= N; ++i ) bbs[ i ] = bbs2[ i ];
 
@@ -427,8 +432,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 
 		Real dnrchiscore_dchi;
 		utility::fixedsizearray1< Real, N > dnrchiscore_dbb;
-		parent::eval_rotameric_energy_deriv( rsd, scratch, false);
-		nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
+		parent::eval_rotameric_energy_deriv( rsd, pose, scratch, false);
+		nrchi_score = bbdep_nrchi_score( rsd, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
 		Real tmp_nrchi_score;
 		//search the space of terminal chiT
 		core::conformation::Residue rsd_copy ( rsd );
@@ -440,8 +445,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 			for ( Size kk = 0; kk <= bbdep_nrchi_nbins_; ++kk ) {
 				rsd_chi[ rsd_copy.nchi() ] = nrchi_lower_angle_ + bbdep_nrchi_binsize_ * kk;
 				rsd_copy.chi( rsd_chi );
-				parent::eval_rotameric_energy_deriv( rsd_copy, scratch, false);
-				tmp_nrchi_score = bbdep_nrchi_score( rsd_copy, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
+				parent::eval_rotameric_energy_deriv( rsd_copy, pose, scratch, false);
+				tmp_nrchi_score = bbdep_nrchi_score( rsd_copy, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
 				if ( tmp_nrchi_score < nrchi_score ) nrchi_score = tmp_nrchi_score;
 			}
 		}
@@ -454,20 +459,21 @@ template < Size T, Size N >
 void
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::assign_random_rotamer_with_bias(
 	conformation::Residue const & rsd,
-	pose::Pose const & /*pose*/,
+	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch,
 	numeric::random::RandomGenerator & RG,
 	ChiVector & new_chi_angles,
 	bool perturb_from_rotamer_center
 ) const
 {
-	assign_random_rotamer_with_bias_bbdep( rsd, scratch, RG, new_chi_angles, perturb_from_rotamer_center );
+	assign_random_rotamer_with_bias_bbdep( rsd, pose, scratch, RG, new_chi_angles, perturb_from_rotamer_center );
 }
 
 template < Size T, Size N >
 void
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::assign_random_rotamer_with_bias_bbdep(
 	conformation::Residue const & rsd,
+	pose::Pose const & pose,
 	RotamerLibraryScratchSpace & scratch,
 	numeric::random::RandomGenerator & RG,
 	ChiVector & new_chi_angles,
@@ -476,7 +482,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::assign_random_rotamer_with_bi
 {
 	Real random_prob = RG.uniform();
 
-	utility::fixedsizearray1< Real, N > bbs = parent::get_bbs_from_rsd( rsd );
+	utility::fixedsizearray1< Real, N > bbs = parent::get_IVs_from_rsd( rsd, pose );
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	parent::get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
@@ -485,7 +491,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::assign_random_rotamer_with_bi
 	Size count( 0 );
 	while ( random_prob > 0 ) {
 
-		Size index00 = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+		Size index00 = make_index< N >( parent::N_BB_BINS, bb_bin );
 
 		BBDepNRChiSample<> const & nrchi_sample_00( bbdep_rotamers_to_sample_( index00, ++count ) );
 
@@ -524,7 +530,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_nrchi_values(
 	// collect 2^N values
 	utility::fixedsizearray1< Size, ( 1 << N ) > indices;
 	for ( Size ii = 1; ii <= ( 1 << N ); ++ii ) {
-		indices[ ii ] = make_conditional_index( N, parent::N_PHIPSI_BINS, ii, bb_bin, bb_bin_next );
+		indices[ ii ] = make_conditional_index< N >( parent::N_BB_BINS, ii, bb_bin, bb_bin_next );
 	}
 
 	utility::fixedsizearray1< Real, ( 1 << N ) > vals;
@@ -535,7 +541,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_nrchi_values(
 			utility::fixedsizearray1< Size, ( 1 << N ) > vals;
 			vals[ ii ] = bbdep_nrc_interpdata_[ packed_rotno ]( indices[ ii ], jj ).n_derivs_[ 1 ];
 		}
-		interpolate_polylinear_by_value( vals, bb_alpha, parent::PHIPSI_BINRANGE, false, energies[ jj ], dummy );
+		interpolate_polylinear_by_value( vals, bb_alpha, parent::BB_BINRANGE, false, energies[ jj ], dummy );
 	}
 
 	for ( Size ii = 1; ii <= ( 1 << N ); ++ii ) {
@@ -585,7 +591,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 	if ( existing_residue.type().is_d_aa() ) d_multiplier = -1.0;
 
 	/// Save backbone interpolation data for reuse
-	utility::fixedsizearray1< Real, N > bbs = parent::get_bbs_from_rsd( existing_residue );
+	utility::fixedsizearray1< Real, N > bbs = parent::get_IVs_from_rsd( existing_residue, pose );
 	for ( Size bbi = 1; bbi <= N; ++bbi ) bbs[ bbi ] *= d_multiplier;
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
@@ -599,7 +605,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 	Size count_rotamers_built = 0;
 	while ( accumulated_probability < requisit_probability ) {
 		++count_rotamers_built;
-		Size index00 = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+		Size index00 = make_index< N >( parent::N_BB_BINS, bb_bin );
 
 		utility::fixedsizearray1< BBDepNRChiSample<>, ( 1 << N ) > nrchi_sample( ( BBDepNRChiSample<>() ) );
 
@@ -609,7 +615,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 
 		utility::fixedsizearray1< Size, ( 1 << N ) > ind;
 		for ( Size indi = 2; indi <= ( 1 << N ); ++indi ) {
-			Size index = make_conditional_index( N, parent::N_PHIPSI_BINS, indi, bb_bin_next, bb_bin );
+			Size index = make_conditional_index< N >( parent::N_BB_BINS, indi, bb_bin_next, bb_bin );
 			ind[ indi ] = bbdep_rotsample_sorted_order_( index, packed_rotno00, nrchi_bin );
 			nrchi_sample[ indi ] = bbdep_rotamers_to_sample_( index, ind[ indi ] );
 		}
@@ -707,7 +713,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples_bbdep
 
 	for ( Size ii = 1; ii <= n_rots; ++ii ) {
 
-		Size index00 = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+		Size index00 = make_index< N >( parent::N_BB_BINS, bb_bin );
 
 		utility::fixedsizearray1< BBDepNRChiSample<>, ( 1 << N ) > nrchi_sample( ( BBDepNRChiSample<>() ) );
 		nrchi_sample[ 1 ] = bbdep_rotamers_to_sample_( index00, ii );
@@ -716,7 +722,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples_bbdep
 
 		utility::fixedsizearray1< Size, ( 1 << N ) > ind;
 		for ( Size indi = 2; indi <= ( 1 << N ); ++indi ) {
-			Size index = make_conditional_index( N, parent::N_PHIPSI_BINS, indi, bb_bin_next, bb_bin );
+			Size index = make_conditional_index< N >( parent::N_BB_BINS, indi, bb_bin_next, bb_bin );
 			ind[ indi ] = bbdep_rotsample_sorted_order_( index, packed_rotno00, nrchi_bin );
 			nrchi_sample[ indi ] = bbdep_rotamers_to_sample_( index, ind[ indi ] );
 		}
@@ -763,7 +769,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer_b
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	parent::get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 
-	Size index00 = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+	Size index00 = make_index< N >( parent::N_BB_BINS, bb_bin );
 	utility::fixedsizearray1< BBDepNRChiSample<>, ( 1 << N ) > nrchi_samples( ( BBDepNRChiSample<>() ) );
 
 	BBDepNRChiSample<> const & nrchi_sample_00( bbdep_rotamers_to_sample_( index00, rot_ind ) );
@@ -777,7 +783,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer_b
 	utility::fixedsizearray1< Real, ( 1 << N ) > nrchi_sample_probs;
 	nrchi_sample_probs[ 1 ] = static_cast< Real >( nrchi_samples[ 1 ].prob_ );
 	for ( Size indi = 2; indi <= ( 1 << N ); ++indi ) {
-		Size index = make_conditional_index( N, parent::N_PHIPSI_BINS, indi, bb_bin_next, bb_bin );
+		Size index = make_conditional_index< N >( parent::N_BB_BINS, indi, bb_bin_next, bb_bin );
 		ind[ indi ] = bbdep_rotsample_sorted_order_( index, packed_rotno00, nrchi_bin );
 		nrchi_samples[ indi ] = bbdep_rotamers_to_sample_( index, ind[ indi ] );
 		nrchi_sample_probs[ indi ] = static_cast< Real >( nrchi_samples[ indi ].prob_ );
@@ -785,7 +791,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer_b
 
 	Real nrchi_prob;
 	utility::fixedsizearray1< Real, N > dummy_dprob;
-	utility::fixedsizearray1< Real, N > binw( parent::PHIPSI_BINRANGE );
+	utility::fixedsizearray1< Real, N > binw( parent::BB_BINRANGE );
 	interpolate_polylinear_by_value( nrchi_sample_probs, bb_alpha, binw, false /*treat_as_angles*/, nrchi_prob, dummy_dprob );
 
 	return nrchi_prob;
@@ -806,14 +812,14 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_bbdep(
 	parent::get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 
 	utility::fixedsizearray1< BBDepNRChiSample<>, ( 1 << N ) > nrchi_sample( ( BBDepNRChiSample<>() ) );
-	Size index00 = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+	Size index00 = make_index< N >( parent::N_BB_BINS, bb_bin );
 	nrchi_sample[ 1 ] = bbdep_rotamers_to_sample_( index00, rot_ind );
 	Size const packed_rotno00 = nrchi_sample[1].packed_rotno_;
 	Size const nrchi_bin = nrchi_sample[1].nrchi_bin_;
 
 	utility::fixedsizearray1< Size, ( 1 << N ) > ind;
 	for ( Size indi = 2; indi <= n_packed_rots; ++indi ) {
-		Size index = make_conditional_index( N, parent::N_PHIPSI_BINS, indi, bb_bin_next, bb_bin );
+		Size index = make_conditional_index< N >( parent::N_BB_BINS, indi, bb_bin_next, bb_bin );
 		ind[ indi ] = bbdep_rotsample_sorted_order_( index, packed_rotno00, nrchi_bin );
 		nrchi_sample[ indi ] = bbdep_rotamers_to_sample_( index, ind[ indi ] );
 	}
@@ -965,7 +971,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io:
 	}
 
 	// 3a. bbdep_non_rotameric_chi_scores_
-	Size const n_bbdep_scores = grandparent::n_packed_rots() * product( parent::N_PHIPSI_BINS ) * bbdep_nrchi_nbins_;
+	Size const n_bbdep_scores = grandparent::n_packed_rots() * product( parent::N_BB_BINS ) * bbdep_nrchi_nbins_;
 	BBDepScoreInterpData<N> * bbdep_nrc_interpdata = new BBDepScoreInterpData<N>[ n_bbdep_scores ];
 
 	Size count( 0 );
@@ -974,11 +980,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io:
 
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 			utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
-			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_PHIPSI_BINS[i];
+			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_BB_BINS[i];
 			Size p = 1;
 			while ( bb_bin[ N + 1 ] == 1 ) {
 
-				bbdep_nrc_interpdata[ count ] = bbdep_nrc_interpdata_[ ii ]( make_index( N, parent::N_PHIPSI_BINS, bb_bin ), jj );
+				bbdep_nrc_interpdata[ count ] = bbdep_nrc_interpdata_[ ii ]( make_index< N >( parent::N_BB_BINS, bb_bin ), jj );
 				++count;
 
 				bb_bin[ 1 ]++;
@@ -1001,7 +1007,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io:
 
 	// 5. bbdep_rotamers_to_sample_, bbdep_rotsample_sorted_order_
 	Size const n_bbdep_nrchi_samples =
-		grandparent::n_packed_rots() * product( parent::N_PHIPSI_BINS ) * n_nrchi_sample_bins_;
+		grandparent::n_packed_rots() * product( parent::N_BB_BINS ) * n_nrchi_sample_bins_;
 
 	boost::int32_t * bbdep_nrchi_packed_rotnos = new boost::int32_t[ n_bbdep_nrchi_samples ];
 	boost::int32_t * bbdep_nrchi_bin     = new boost::int32_t[ n_bbdep_nrchi_samples ];
@@ -1018,11 +1024,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io:
 
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 			utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
-			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_PHIPSI_BINS[i];
+			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_BB_BINS[i];
 			Size p = 1;
 			while ( bb_bin[ N + 1 ] == 1 ) {
 
-				Size llkk = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+				Size llkk = make_index< N >( parent::N_BB_BINS, bb_bin );
 
 				bbdep_nrchi_packed_rotnos[    count ] = bbdep_rotamers_to_sample_( llkk, count_iijj ).packed_rotno_;
 				bbdep_nrchi_bin[              count ] = bbdep_rotamers_to_sample_( llkk, count_iijj ).nrchi_bin_;
@@ -1098,7 +1104,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io
 {
 	using namespace boost;
 	parent::read_from_binary( in );
-	Size const num_rot_bin = product( parent::N_PHIPSI_BINS );
+	Size const num_rot_bin = product( parent::N_BB_BINS );
 	// Check that constant member data initialized in the ctor is consistent with this input file
 	// 1. bbind_nrchi_scoring_
 	{
@@ -1138,11 +1144,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io
 		for ( Size jj = 1; jj <= bbdep_nrchi_nbins_; ++jj ) {
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 			utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
-			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_PHIPSI_BINS[i];
+			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_BB_BINS[i];
 			Size p = 1;
 			while ( bb_bin[ N + 1 ] == 1 ) {
 
-				Size llkk = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+				Size llkk = make_index< N >( parent::N_BB_BINS, bb_bin );
 				bbdep_nrc_interpdata_[ ii ]( llkk, jj ) = bbdep_nrc_interpdata[ count ];//BBDepScoreInterpData<N>();
 				bbdep_nrc_interpdata_[ ii ]( llkk, jj ).n_derivs_ = bbdep_nrc_interpdata[ count ].n_derivs_;
 				++count;
@@ -1193,11 +1199,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io
 		for ( Size jj = 1; jj <= grandparent::n_packed_rots(); ++jj ) {
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 			utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
-			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_PHIPSI_BINS[i];
+			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_BB_BINS[i];
 			Size p = 1;
 			while ( bb_bin[ N + 1 ] == 1 ) {
 
-				Size rot_index = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+				Size rot_index = make_index< N >( parent::N_BB_BINS, bb_bin );
 
 				bbdep_rotamers_to_sample_( rot_index, count_iijj ).packed_rotno_ = bbdep_nrchi_packed_rotnos[ count ];
 				bbdep_rotamers_to_sample_( rot_index, count_iijj ).nrchi_bin_ = bbdep_nrchi_bin[ count ];
@@ -1345,10 +1351,10 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::operator ==( rotamers::Single
 		for ( Size jj = 1; jj <= bbdep_nrchi_nbins_; ++jj ) {
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 			utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
-			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_PHIPSI_BINS[i];
+			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_BB_BINS[i];
 			Size p = 1;
 			while ( bb_bin[ N + 1 ] == 1 ) {
-				Size bb_rot_index = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+				Size bb_rot_index = make_index< N >( parent::N_BB_BINS, bb_bin );
 				if ( !( bbdep_nrc_interpdata_[ ii ]( bb_rot_index, jj ) == other.bbdep_nrc_interpdata_[ ii ]( bb_rot_index, jj ) ) ) {
 					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
 						<< " bbdep_nrc_interpdata:   " << ii << " " << bb_bin[1] << " " << bb_bin[2] << " " << jj << std::endl;
@@ -1379,11 +1385,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::operator ==( rotamers::Single
 
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 			utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
-			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_PHIPSI_BINS[i];
+			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_BB_BINS[i];
 			Size p = 1;
 			while ( bb_bin[ N + 1 ] == 1 ) {
 
-				Size bb_rot_index = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+				Size bb_rot_index = make_index< N >( parent::N_BB_BINS, bb_bin );
 				if ( !( bbdep_rotamers_to_sample_( bb_rot_index, count_iijj ) == other.bbdep_rotamers_to_sample_( bb_rot_index, count_iijj ) ) ) {
 					TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
 						<< " bbdep_rotamers_to_sample: " << ii << " " << jj << " " << bb_bin[1] << " " << bb_bin[2] << std::endl;
@@ -1583,7 +1589,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotameric_data(
 )
 {
 	std::string three_letter_code;
-	Size const num_bb_bins = product( parent::N_PHIPSI_BINS );
+	Size const num_bb_bins = product( parent::N_BB_BINS );
 
 	utility::fixedsizearray1< Real, N > bbs;
 	Size count;
@@ -1652,7 +1658,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotameric_data(
 		parent::get_bb_bins( bbs, bb_bin );
 
 		// calc index
-		Size ind = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+		Size ind = make_index< N >( parent::N_BB_BINS, bb_bin );
 		++semi_rotameric_count( ind );
 
 		/// Store first T elements in rotamers_, and, if we're going to build bbdep
@@ -1721,7 +1727,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 	utility::io::izstream & in_continmin
 )
 {
-	Size const n_bin_pow = product( parent::N_PHIPSI_BINS );
+	Size const n_bin_pow = product( parent::N_BB_BINS );
 	if ( bbind_nrchi_scoring_ ) return;
 
 	std::string three_letter_code;
@@ -1787,7 +1793,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 		/// Now, convert the probabilities into scores
 		utility::fixedsizearray1< Size, N > bb_bin;
 		parent::get_bb_bins( bbs, bb_bin );
-		Size ind = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+		Size ind = make_index< N >( parent::N_BB_BINS, bb_bin );
 
 		Size const & rotno = grandparent::rotwell_2_rotno( rotwell ); // Needs to be `const &` for GCC 7.1 template resolution issue
 		for ( Size ii = 1; ii <= bbdep_nrchi_nbins_; ++ii ) {
@@ -1817,12 +1823,12 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 	for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
 
 		utility::fixedsizearray1< Size, N+1 > dimensions;
-		for ( Size i = 1; i <= N; ++i ) dimensions[ i ] = parent::N_PHIPSI_BINS[i];
+		for ( Size i = 1; i <= N; ++i ) dimensions[ i ] = parent::N_BB_BINS[i];
 		dimensions[ N + 1 ] = bbdep_nrchi_nbins_;
 		MathNTensor< Real, N+1 > data( dimensions );
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
 		utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
-		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_PHIPSI_BINS[i];
+		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_BB_BINS[i];
 
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
@@ -1833,7 +1839,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 			utility::vector1< Size > indices;
 			for ( Size i = 1; i <= N; ++i ) indices.push_back( bb_bin[ i ] - 1 );
 
-			Size bbdepindex = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+			Size bbdepindex = make_index< N >( parent::N_BB_BINS, bb_bin );
 
 			for ( Size ll = 1; ll <= bbdep_nrchi_nbins_; ++ll ) {
 				position[ N + 1 ] = ll - 1;
@@ -1852,14 +1858,14 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 		spline.train( border, start, delta, data, lin_cont, first_be );
 
 		for ( Size bbi = 1; bbi <= ( N+1 ); ++bbi ) bb_bin[ bbi ] = 1;
-		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_PHIPSI_BINS[i];
+		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = parent::N_BB_BINS[i];
 		p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
 
 			utility::vector1< Size > position( N );
 			for ( Size qq = 1; qq <= N; ++qq ) position[ qq ] = bb_bin[ qq ] - 1;
 			position.push_back( 0 );
-			Size bbdepindex = make_index( N, parent::N_PHIPSI_BINS, bb_bin );
+			Size bbdepindex = make_index< N >( parent::N_BB_BINS, bb_bin );
 
 			for ( Size ll = 1; ll <= bbdep_nrchi_nbins_; ++ll ) {
 				position[ N + 1 ] = ll - 1;
@@ -1891,7 +1897,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotamer_definitions(
 {
 	utility::vector1< Size > rotwell( 4, 0 );
 	Real prob, lnprob, left, median, right;
-	Size num_bins = product( parent::N_PHIPSI_BINS );
+	Size num_bins = product( parent::N_BB_BINS );
 
 	utility::vector1< utility::vector1< Real > > lefts(   grandparent::n_possible_rots() );
 	utility::vector1< utility::vector1< Real > > medians( grandparent::n_possible_rots() );
@@ -2029,7 +2035,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_bbdep_nrchi_sampl
 	utility::fixedsizearray1< Size, ( 1 << N ) > ind;
 	utility::fixedsizearray1< BBDepNRChiSample<>, ( 1 << N ) > nrchi_sample( ( BBDepNRChiSample<>() ) );
 	for ( Size indi = 1; indi <= ( 1 << N ); ++indi ) {
-		Size index = make_conditional_index( N, parent::N_PHIPSI_BINS, indi, bb_bin_next, bb_bin );
+		Size index = make_conditional_index< N >( parent::N_BB_BINS, indi, bb_bin_next, bb_bin );
 		ind[ indi ] = bbdep_rotsample_sorted_order_( index, packed_rotno, nrchi_bin );
 		nrchi_sample[ indi ] = ( bbdep_rotamers_to_sample_( index, ind[ indi ] ) );
 	}
@@ -2050,7 +2056,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_bbdep_nrchi_sampl
 
 	utility::fixedsizearray1< Real, N > dummy_dprob, dummy_dmean, dummy_dsd;
 	utility::fixedsizearray1< Real, ( 1 << N ) > rot_prob, nrchi_mean, nrchi_sd;
-	utility::fixedsizearray1< Real, N > binw( parent::PHIPSI_BINRANGE );
+	utility::fixedsizearray1< Real, N > binw( parent::BB_BINRANGE );
 
 	for ( Size i = 1; i <= ( 1 << N ) /*nrchi_sample.size()*/; ++i ) {
 		rot_prob[ i ] = static_cast< Real >   ( nrchi_sample[ i ].prob_ );

@@ -92,7 +92,7 @@ public:
 	) override;
 
 	core::conformation::ResidueOP
-	make_move( core::conformation::ResidueOP res );
+	make_move( core::conformation::ResidueOP res, core::pose::Pose const & pose );
 
 	bool task_initialized();
 	/// @brief apply a sidechain move to a Pose object
@@ -280,7 +280,7 @@ private:
 	);
 
 	void
-	preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP input_residue );
+	preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP input_residue, core::pose::Pose const & pose );
 
 	void
 	perturb_rot_within_well(
@@ -292,6 +292,7 @@ private:
 	dunbrack_accept(
 		numeric::random::RandomGenerator & Rand,
 		core::conformation::Residue & res,
+		core::pose::Pose const & pose,
 		utility::vector1<core::Real> const & previous_chi_angles,
 		utility::vector1<core::Real> const & new_chi_angles
 	);

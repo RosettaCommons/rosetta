@@ -1477,8 +1477,8 @@ update_fixed_domain_from_extra_minimize_jump_pairs( utility::vector1< Size > & f
 
 
 	for ( Size i = 1; i <= extra_minimize_jump_pairs.size(); i++ ) {
-		Size const & res1_full = extra_minimize_jump_pairs[ i ].first;
-		Size const & res2_full = extra_minimize_jump_pairs[ i ].second;
+		Size const res1_full = extra_minimize_jump_pairs[ i ].first;
+		Size const res2_full = extra_minimize_jump_pairs[ i ].second;
 
 		if ( !res_list.has_value( res1_full ) ) continue;
 		if ( !res_list.has_value( res2_full ) ) continue;

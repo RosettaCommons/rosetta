@@ -140,8 +140,6 @@ sources = {
 		"SingleLigandRotamerLibrary",
 		"SingleLigandRotamerLibraryCreator",
 		"SingleNCAARotamerLibraryCreator",
-                "SingleResiduePeptoidLibrary",
-		"SingleResiduePeptoidLibraryCreator",
 		"SingleResidueRotamerLibrary",
 		"SingleResidueRotamerLibraryCreator",
 		"SingleResidueRotamerLibraryFactory",

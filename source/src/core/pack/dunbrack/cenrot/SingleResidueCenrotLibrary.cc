@@ -187,6 +187,7 @@ void SingleResidueCenrotLibrary::setup_entropy_correction()
 
 Real SingleResidueCenrotLibrary::rotamer_energy_deriv(
 	conformation::Residue const & rsd,
+	pose::Pose const & ,// pose,
 	RotamerLibraryScratchSpace & scratch
 ) const {
 	return eval_rotameric_energy_deriv(rsd, scratch, true);
@@ -194,6 +195,7 @@ Real SingleResidueCenrotLibrary::rotamer_energy_deriv(
 
 Real SingleResidueCenrotLibrary::rotamer_energy(
 	conformation::Residue const & rsd,
+	pose::Pose const & ,// pose,
 	RotamerLibraryScratchSpace & scratch
 ) const {
 	return eval_rotameric_energy_deriv(rsd, scratch, false);
@@ -462,6 +464,7 @@ CentroidRotamerSampleData const & SingleResidueCenrotLibrary::get_closest_rotame
 /// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
 Real SingleResidueCenrotLibrary::best_rotamer_energy(
 	conformation::Residue const &, //rsd,
+	pose::Pose const &, //pose,
 	bool , //curr_rotamer_only,
 	RotamerLibraryScratchSpace & //scratch
 ) const {

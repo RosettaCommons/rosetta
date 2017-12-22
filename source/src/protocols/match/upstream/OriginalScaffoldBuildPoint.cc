@@ -140,11 +140,11 @@ OriginalBackboneBuildPoint::initialize_from_residue(
 	}
 
 	if ( res.is_lower_terminus() ) {
-		phi( core::pack::dunbrack::SingleResidueDunbrackLibrary::NEUTRAL_PHI );
+		phi( core::pack::dunbrack::SingleResidueDunbrackLibrary::PEPTIDE_NEUTRAL_PHI );
 	}
 
 	if ( res.is_upper_terminus() ) {
-		psi( core::pack::dunbrack::SingleResidueDunbrackLibrary::NEUTRAL_PSI );
+		psi( core::pack::dunbrack::SingleResidueDunbrackLibrary::PEPTIDE_NEUTRAL_PSI );
 	}
 
 	if ( res.aa() == core::chemical::aa_gly ) {
@@ -191,4 +191,3 @@ OriginalBackboneBuildPoint::insert(
 }
 }
 }
-

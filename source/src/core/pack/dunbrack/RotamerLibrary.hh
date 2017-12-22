@@ -30,6 +30,8 @@
 #include <core/conformation/Residue.fwd.hh>
 //#include <utility/graph/Graph.fwd.hh>
 
+#include <core/pose/Pose.fwd.hh>
+
 #ifdef WIN32 //VC++ needs full class declaration
 //#include <utility/graph/Graph.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
@@ -157,12 +159,14 @@ public:
 	Real
 	rotamer_energy(
 		Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
 	Real
 	best_rotamer_energy(
 		Residue const & rsd,
+		pose::Pose const & pose,
 		bool curr_rotamer_only,
 		RotamerLibraryScratchSpace & scratch
 	) const;
@@ -171,6 +175,7 @@ public:
 	Real
 	rotamer_energy_deriv(
 		Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
@@ -261,7 +266,7 @@ private:
 	/// boolean.
 	SingleResidueDunbrackLibraryOP
 	create_rotameric_dunlib(
-		chemical::AA aa,
+		chemical::ResidueType const & rt,
 		Size const n_chi,
 		Size const n_bb,
 		utility::io::izstream & library,
@@ -272,7 +277,7 @@ private:
 
 	SingleResidueDunbrackLibraryOP
 	create_rotameric_dunlib(
-		chemical::AA aa,
+		chemical::ResidueType const & rt,
 		Size const n_chi,
 		Size const n_bb,
 		bool const dun02,
@@ -281,7 +286,7 @@ private:
 
 	SingleResidueDunbrackLibraryOP
 	create_rotameric_dunlib(
-		chemical::AA aa,
+		chemical::ResidueType const & rt,
 		Size const n_chi,
 		bool dun02
 	) const;
@@ -293,7 +298,7 @@ private:
 	/// boolean variables.
 	SingleResidueDunbrackLibraryOP
 	create_semi_rotameric_dunlib(
-		chemical::AA aa,
+		chemical::ResidueType const & rt,
 		Size const nchi,
 		Size const nbb,
 		bool const use_bbind_rnchi_scoring,
@@ -308,7 +313,7 @@ private:
 
 	SingleResidueDunbrackLibraryOP
 	create_semi_rotameric_dunlib(
-		chemical::AA aa,
+		chemical::ResidueType const & rt,
 		Size const nchi,
 		bool const use_bbind_rnchi_scoring,
 		bool const use_bbind_rnchi_sampling,
@@ -319,7 +324,7 @@ private:
 
 	SingleResidueDunbrackLibraryOP
 	create_semi_rotameric_dunlib(
-		chemical::AA aa,
+		chemical::ResidueType const & rt,
 		Size const nchi,
 		Size const nbb,
 		bool const use_bbind_rnchi_scoring,
@@ -330,7 +335,7 @@ private:
 
 	SingleResidueDunbrackLibraryOP
 	create_srdl(
-		chemical::AA aa_in,
+		chemical::ResidueType const & rt,
 		DunbrackAAParameterSet const & ps,
 		bool const reduced_resolution_library=false
 	) const;

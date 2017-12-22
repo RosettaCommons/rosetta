@@ -34,7 +34,6 @@ namespace dunbrack {
 class RotamerLibraryScratchSpace : public utility::pointer::ReferenceCount
 {
 public:
-	/// DOUG DOUG DOUG might be problems here might need PeptoidRotamerLibraryScratchSpace
 	static Size const AA_OMG_INDEX = 3;
 	static Size const AA_PHI_INDEX = 1;
 	static Size const AA_PSI_INDEX = 2;

@@ -47,7 +47,7 @@ BOND  CE  3HE
 CHI 1  N    CA   CB   CG 
 CHI 2  CA   CB   CG   SD 
 CHI 3  CB   CG   SD   CE 
-PROPERTIES PROTEIN ALPHA_AA SC_ORBITALS L_AA
+PROPERTIES PROTEIN CANONICAL_AA ALPHA_AA SC_ORBITALS L_AA
 NBR_ATOM CB
 # APL CB to sidechain heavyatom distance -- max observed on residue 74 of ubiquitin
 NBR_RADIUS 4.1766

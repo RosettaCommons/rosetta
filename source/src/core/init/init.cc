@@ -234,7 +234,6 @@
 #include <core/chemical/rotamers/CenrotRotamerLibrarySpecificationCreator.hh>
 #include <core/chemical/rotamers/DunbrackRotamerLibrarySpecificationCreator.hh>
 #include <core/chemical/rotamers/NCAARotamerLibrarySpecificationCreator.hh>
-#include <core/chemical/rotamers/PeptoidRotamerLibrarySpecificationCreator.hh>
 #include <core/chemical/rotamers/PDBRotamerLibrarySpecificationCreator.hh>
 
 #include <core/pack/dunbrack/SingleResidueDunbrackLibraryCreator.hh>
@@ -243,7 +242,6 @@
 #include <core/pack/rotamers/SingleBasicRotamerLibraryCreator.hh>
 #include <core/pack/rotamers/SingleLigandRotamerLibraryCreator.hh>
 #include <core/pack/rotamers/SingleNCAARotamerLibraryCreator.hh>
-#include <core/pack/rotamers/SingleResiduePeptoidLibraryCreator.hh>
 #include <core/pack/rotamers/StoredRotamerLibraryCreator.hh>
 
 // Constraint registration
@@ -605,16 +603,14 @@ static RotamerLibrarySpecificationRegistrator< chemical::rotamers::BasicRotamerL
 static RotamerLibrarySpecificationRegistrator< chemical::rotamers::CenrotRotamerLibrarySpecificationCreator > CenrotRotamerLibrarySpecificationCreator_registrator;
 static RotamerLibrarySpecificationRegistrator< chemical::rotamers::DunbrackRotamerLibrarySpecificationCreator > DunbrackRotamerLibrarySpecificationCreator_registrator;
 static RotamerLibrarySpecificationRegistrator< chemical::rotamers::NCAARotamerLibrarySpecificationCreator > NCAARotamerLibrarySpecificationCreator_registrator;
-static RotamerLibrarySpecificationRegistrator< chemical::rotamers::PeptoidRotamerLibrarySpecificationCreator > PeptoidRotamerLibrarySpecificationCreator_registrator;
 static RotamerLibrarySpecificationRegistrator< chemical::rotamers::PDBRotamerLibrarySpecificationCreator > PDBRotamerLibrarySpecificationCreator_registrator;
 
 using pack::rotamers::SingleResidueRotamerLibraryRegistrator;
 static SingleResidueRotamerLibraryRegistrator< pack::dunbrack::SingleResidueDunbrackLibraryCreator > SingleResidueDunbrackLibraryCreator_registrator;
-static SingleResidueRotamerLibraryRegistrator< pack::dunbrack::cenrot::SingleResidueCenrotLibraryCreator > SingleCenrotPeptoidLibraryCreator_registrator;
 static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleBasicRotamerLibraryCreator > SingleBasicRotamerLibraryCreator_registrator;
+static SingleResidueRotamerLibraryRegistrator< pack::dunbrack::cenrot::SingleResidueCenrotLibraryCreator > SingleCenrotRotamerLibraryCreator_registrator;
 static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleLigandRotamerLibraryCreator > SingleLigandRotamerLibraryCreator_registrator;
 static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleNCAARotamerLibraryCreator > SingleNCAARotamerLibraryCreator_registrator;
-static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleResiduePeptoidLibraryCreator > SingleResiduePeptoidLibraryCreator_registrator;
 static SingleResidueRotamerLibraryRegistrator< pack::rotamers::StoredRotamerLibraryCreator > StoredRotamerLibraryCreator_registrator;
 
 /// Constraint Registrators

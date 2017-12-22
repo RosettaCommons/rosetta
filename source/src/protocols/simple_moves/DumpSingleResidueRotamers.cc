@@ -42,7 +42,6 @@
 
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
-#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
 
 // Basic/Utility headers
 #include <basic/options/option.hh>
@@ -60,6 +59,7 @@
 // C++ Headers
 #include <cstdlib>
 #include <string>
+#include <fstream>
 
 static basic::Tracer TR( "protocols.simple_moves.DumpSingleResidueRotamers" );
 

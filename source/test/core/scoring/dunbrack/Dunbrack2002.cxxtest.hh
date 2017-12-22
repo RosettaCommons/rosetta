@@ -182,10 +182,10 @@ public:
 					}
 				}
 				RotamerLibraryScratchSpace scratch;
-				if ( bOut ) std::cout << rotlib->rotamer_energy( (**it), scratch ) << " " << rotlib->rotamer_energy( residue, scratch);
+				if ( bOut ) std::cout << rotlib->rotamer_energy( (**it), pose, scratch ) << " " << rotlib->rotamer_energy( residue, pose, scratch);
 				else {
-					TS_ASSERT_DELTA( rot_ener_gold[ ct ], rotlib->rotamer_energy( **it, scratch ), 0.001);
-					TS_ASSERT_DELTA( pose_ener_gold[ pos ], rotlib->rotamer_energy( residue, scratch ), 0.001);
+					TS_ASSERT_DELTA( rot_ener_gold[ ct ], rotlib->rotamer_energy( **it, pose, scratch ), 0.001);
+					TS_ASSERT_DELTA( pose_ener_gold[ pos ], rotlib->rotamer_energy( residue, pose, scratch ), 0.001);
 				}
 				if ( residue.nchi() ) {
 					ct++;
@@ -213,8 +213,8 @@ public:
 			if ( ! rotlib ) continue;
 
 			RotamerLibraryScratchSpace scratch;
-			Real const this_rotamerE = rotlib->best_rotamer_energy(residue, true /*current well only*/, scratch);
-			Real const best_rotamerE = rotlib->best_rotamer_energy(residue, false /*global best*/, scratch);
+			Real const this_rotamerE = rotlib->best_rotamer_energy(residue, pose, true /*current well only*/, scratch);
+			Real const best_rotamerE = rotlib->best_rotamer_energy(residue, pose, false /*global best*/, scratch);
 			UTRACE << "this (ideal) = " << this_rotamerE << "; best (this phi,psi) = " << best_rotamerE << std::endl;
 			TS_ASSERT( best_rotamerE <= this_rotamerE );
 		}

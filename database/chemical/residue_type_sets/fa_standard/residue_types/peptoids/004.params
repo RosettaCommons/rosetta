@@ -77,6 +77,5 @@ ICOOR_INTERNAL    CB2 -178.507044   60.678660    1.385900   CA1   N     CB1
 ICOOR_INTERNAL    CG3  179.033488   60.363856    1.384964   CB2   CA1   N  
 ICOOR_INTERNAL   1HG3  179.860281   60.164681    1.074983   CG3   CB2   CA1
 ICOOR_INTERNAL   1HB2 -179.306953   61.122655    1.072039   CB2   CA1   CG3
-# Rather than changing how PEPTOID_ROTLIB_PATH works, we will just redirect.
-PEPTOID_ROTLIB_PATH ../ncaa_rotlibs/ncaa_rotamer_libraries/peptoid/004.rotlib
-PEPTOID_ROTLIB_NUM_ROTAMER_BINS 1 2
+NCAA_ROTLIB_PATH ../ncaa_rotlibs/ncaa_rotamer_libraries/peptoid/004.rotlib
+NCAA_ROTLIB_NUM_ROTAMER_BINS 1 2

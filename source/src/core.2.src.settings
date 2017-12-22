@@ -104,7 +104,6 @@ sources = {
 		"DunbrackRotamerLibrarySpecification",
 		"NCAARotamerLibrarySpecification",
 		"PDBRotamerLibrarySpecification",
-		"PeptoidRotamerLibrarySpecification",
 		"RotamerLibrarySpecification",
 		"RotamerLibrarySpecificationFactory",
 		"StoredRotamerLibrarySpecification",

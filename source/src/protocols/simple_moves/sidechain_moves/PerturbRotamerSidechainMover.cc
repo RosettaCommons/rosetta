@@ -213,7 +213,7 @@ PerturbRotamerSidechainMover::build_rotamer_list(
 	//for ( Size i = 1; i <= residue.type().mainchain_torsions().size() - 1; ++i )
 	bbs[ 1 ] = phi;
 	bbs[2] = psi;
-	//residue_dunbrack_library->get_bb_from_rsd( i, residue );
+	//residue_dunbrack_library->get_IV_from_rsd( i, residue );
 	//RotamerList rotamers_raw( residue_dunbrack_library->get_all_rotamer_samples( phi, psi ) );
 	RotamerList rotamers_raw( residue_dunbrack_library->get_all_rotamer_samples( bbs ) );
 

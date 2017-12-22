@@ -445,8 +445,8 @@ FullModelPoseBuilder::set_extra_minimize_jump_res( utility::vector1< Size > cons
 		Size const & res2 = extra_minimize_jump_res[ 2*n     ];
 		bool matches_existing( false );
 		for ( Size q = 1; q <= jump_res_.size()/2; q++ ) {
-			Size const existing_res1 = jump_res_[ 2*n - 1 ];
-			Size const existing_res2 = jump_res_[ 2*n     ];
+			Size const existing_res1 = jump_res_[ 2*q - 1 ];
+			Size const existing_res2 = jump_res_[ 2*q     ];
 			if ( ( res1 == existing_res1 && res2 == existing_res2 ) ||
 					( res1 == existing_res2 && res2 == existing_res1 ) ) {
 				matches_existing = true;

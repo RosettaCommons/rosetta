@@ -31,6 +31,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/MinimizationData.hh>
 
 // Protocols Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh> //To make it easier to build poses
@@ -249,20 +250,23 @@ public:
 
 		core::pack::dunbrack::DunbrackEnergy dun;
 
-		core::Real const score1a (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("N"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 1 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
-		core::Real const score1b (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("CA"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 2 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
-		core::Real const score1c (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("CM"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 3 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
-		core::Real const score1d (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("NU"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 4 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
-		core::Real const score1e (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("C"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 5 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+		{
+			core::scoring::ResSingleMinimizationData mindata;
+			core::Real const score1a (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("N"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 1 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+			core::Real const score1b (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("CA"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 2 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+			core::Real const score1c (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("CM"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 3 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+			core::Real const score1d (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("NU"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 4 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+			core::Real const score1e (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("C"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 5 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
 
-		TR.precision( 10 );
-		TR << "Derivatives are: " << score1a << " " << score1b << " " << score1c << " " << score1d << " " << score1e << std::endl;
+			TR.precision( 10 );
+			TR << "Derivatives are: " << score1a << " " << score1b << " " << score1c << " " << score1d << " " << score1e << std::endl;
 
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score1a) );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score1b) );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score1c) );
-		TS_ASSERT_DELTA( score1d, 0.0, 0.00001 );
-		TS_ASSERT_DELTA( score1e, 0.0, 0.00001 );
+			TS_ASSERT_LESS_THAN( 0.1, std::abs(score1a) );
+			TS_ASSERT_LESS_THAN( 0.1, std::abs(score1b) );
+			TS_ASSERT_LESS_THAN( 0.1, std::abs(score1c) );
+			TS_ASSERT_DELTA( score1d, 0.0, 0.00001 );
+			TS_ASSERT_DELTA( score1e, 0.0, 0.00001 );
+		}
 	}
 
 	void test_oligourea_dunbrack_derivs2(){
@@ -287,20 +291,23 @@ public:
 
 		core::pack::dunbrack::DunbrackEnergy dun;
 
-		core::Real const score1a (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("N"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 1 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
-		core::Real const score1b (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("CA"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 2 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
-		core::Real const score1c (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("CM"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 3 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
-		core::Real const score1d (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("NU"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 4 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
-		core::Real const score1e (dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("C"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 5 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+		{
+			core::scoring::ResSingleMinimizationData mindata;
+			core::Real const score1a (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("N"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 1 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+			core::Real const score1b (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("CA"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 2 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+			core::Real const score1c (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("CM"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 3 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+			core::Real const score1d (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("NU"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 4 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
+			core::Real const score1e (dun.eval_residue_dof_derivative( pose.residue(2), mindata, core::id::DOF_ID( core::id::AtomID( pose.residue_type(2).atom_index("C"), 2 ), core::id::PHI ), core::id::TorsionID( 2, core::id::BB, 5 ), pose, *sfxn, pose.energies().onebody_energies(2) ) );
 
-		TR.precision( 10 );
-		TR << "Derivatives are: " << score1a << " " << score1b << " " << score1c << " " << score1d << " " << score1e << std::endl;
+			TR.precision( 10 );
+			TR << "Derivatives are: " << score1a << " " << score1b << " " << score1c << " " << score1d << " " << score1e << std::endl;
 
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score1a) );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score1b) );
-		TS_ASSERT_DELTA( score1c, 0.0, 0.00001 );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score1d) );
-		TS_ASSERT_DELTA( score1e, 0.0, 0.00001 );
+			TS_ASSERT_LESS_THAN( 0.1, std::abs(score1a) );
+			TS_ASSERT_LESS_THAN( 0.1, std::abs(score1b) );
+			TS_ASSERT_DELTA( score1c, 0.0, 0.00001 );
+			TS_ASSERT_LESS_THAN( 0.1, std::abs(score1d) );
+			TS_ASSERT_DELTA( score1e, 0.0, 0.00001 );
+		}
 	}
 
 };

@@ -263,6 +263,7 @@ bool
 SidechainMover::dunbrack_accept(
 	numeric::random::RandomGenerator & Rand,
 	core::conformation::Residue & res,
+	core::pose::Pose const & pose,
 	utility::vector1<core::Real> const & previous_chi_angles,
 	utility::vector1<core::Real> const & new_chi_angles
 )
@@ -270,10 +271,10 @@ SidechainMover::dunbrack_accept(
 	core::Real rand = Rand.uniform();
 	//conformation::Residue copy(res); // APL: EXPENSIVE!
 	res.set_all_chi( previous_chi_angles );
-	core::Real prev_chi_angle_score = rotamer_library_.rotamer_energy( res, *scratch_);
+	core::Real prev_chi_angle_score = rotamer_library_.rotamer_energy( res, pose, *scratch_);
 	res.set_all_chi( new_chi_angles );
 
-	core::Real new_chi_angle_score = rotamer_library_.rotamer_energy( res, *scratch_);
+	core::Real new_chi_angle_score = rotamer_library_.rotamer_energy( res, pose, *scratch_);
 	if ( new_chi_angle_score > prev_chi_angle_score ) {
 		//Real const boltz_factor = (prev_chi_angle_score - new_chi_angle_score)/1.0;
 		Real const boltz_factor = (prev_chi_angle_score - new_chi_angle_score)/sampling_temperature_*temperature0_;
@@ -288,7 +289,7 @@ SidechainMover::dunbrack_accept(
 
 
 core::conformation::ResidueOP
-SidechainMover::make_move( core::conformation::ResidueOP input_residue )
+SidechainMover::make_move( core::conformation::ResidueOP input_residue, core::pose::Pose const & pose )
 {
 
 	using numeric::conversions::degrees;
@@ -374,7 +375,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 			make_rotwell_jump( rotamer_sample_data ); // returns last_chi_angles_
 		} else if ( move_type_prob > (prob_uniform_ + prob_withinrot_) ) {
 			//ek added in new option to perturb current chi and evaluate according to dunbrack
-			preturb_rot_and_dunbrack_eval( input_residue ); // ?
+			preturb_rot_and_dunbrack_eval( input_residue, pose ); // ?
 		} else if ( move_type_prob > prob_uniform_ ) {
 			utility::fixedsizearray1< Real, 5 > bbs;
 			bbs[ 1 ] = phi; bbs[ 2 ] = psi;
@@ -528,7 +529,7 @@ SidechainMover::make_rotwell_jump(
 }
 
 void
-SidechainMover::preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP input_residue )
+SidechainMover::preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP input_residue, core::pose::Pose const & pose )
 {
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "making a perterb-rot (ek) " << std::endl;
@@ -550,7 +551,7 @@ SidechainMover::preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP inp
 			// }
 
 		}
-		while( !dunbrack_accept( numeric::random::rg(), *input_residue, previous_chi_angles, new_chi_angles ) );
+		while( !dunbrack_accept( numeric::random::rg(), *input_residue, pose, previous_chi_angles, new_chi_angles ) );
 		if ( preserve_detailed_balance_ ) {
 			TR.Error << "You cannot specify accept_according_to_dunbrack_ and preserve_detailed_balance_ both as true!" << std::endl;
 			TR.Error << "Recommend rerunning with 'random perturb current' frequency set to zero." << std::endl;
@@ -628,7 +629,7 @@ SidechainMover::apply(
 		TR.Debug << std::endl;
 	}
 
-	conformation::ResidueOP final = make_move( newresidue );
+	conformation::ResidueOP final = make_move( newresidue, pose );
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "new residue chi is : ";
 		for ( Size i = 1; i <= pose.residue(resnum).type().nchi(); ++i ) TR.Debug << " " << newresidue->chi(i);

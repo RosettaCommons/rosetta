@@ -31,7 +31,6 @@
 #include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
 #include <core/chemical/rotamers/DunbrackRotamerLibrarySpecification.hh>
 #include <core/chemical/rotamers/PDBRotamerLibrarySpecification.hh>
-#include <core/chemical/rotamers/PeptoidRotamerLibrarySpecification.hh>
 #include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 
 // Project headers
@@ -577,7 +576,6 @@ read_topology_file(
 /// * DUNBRACK - Dunbrack rotamer library for the given aa (e.g. "SER")
 /// * CENROT - Centroid rotamers for the given aa (e.g. "SER")
 /// * NCAA - Non-canonical amino acid libraries (<filename> <bins for each rotamer>)
-/// * PEPTOID - Peptoid libraries (<filename> <bins for each rotamer>)
 /// * PDB - Rotamer library loaded from PDB (<filename>) - Note that unlike PDB_ROTAMERS,
 ///      the filename is not relative to the params file location.
 ///
@@ -1137,43 +1135,6 @@ read_topology_file(
 			runtime_assert_string_msg( !l.fail(), "Error parsing NET_FORMAL_CHARGE line in params file.  A signed integer must be provided." );
 			runtime_assert_string_msg( l.eof(), "Error parsing NET_FORMAL_CHARGE line in params file.  Nothign can follow the value provided.");
 			rsd->net_formal_charge( charge_in );
-		} else if ( tag == "PEPTOID_ROTLIB_PATH" || tag == "PEPTOID_ROTLIB_NUM_ROTAMER_BINS" ) {
-			using namespace core::chemical::rotamers;
-			PeptoidRotamerLibrarySpecificationOP peptoid_libspec;
-			if ( rsd->rotamer_library_specification() ) {
-				PeptoidRotamerLibrarySpecificationCOP old_libspec( utility::pointer::dynamic_pointer_cast< PeptoidRotamerLibrarySpecification const >( rsd->rotamer_library_specification() ) );
-				if ( ! old_libspec ) {
-					tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname();
-					tr.Error << " when attempting to set " << tag << " parameter for peptoid rotamer libraries." << std::endl;
-					utility_exit_with_message("Cannot have multiple rotamer specifications in params file, " + filename );
-				}
-				peptoid_libspec = PeptoidRotamerLibrarySpecificationOP( new PeptoidRotamerLibrarySpecification( *old_libspec ) );
-			} else {
-				peptoid_libspec = PeptoidRotamerLibrarySpecificationOP( new core::chemical::rotamers::PeptoidRotamerLibrarySpecification );
-			}
-
-			if ( tag == "PEPTOID_ROTLIB_PATH" ) {
-				std::string path;
-				l >> path;
-				peptoid_libspec->peptoid_rotlib_path( path );
-			} else if ( tag == "PEPTOID_ROTLIB_NUM_ROTAMER_BINS" ) {
-				Size n_rots(0);
-				utility::vector1<Size> n_bins_per_rot;
-				l >> n_rots;
-				n_bins_per_rot.resize( n_rots );
-				for ( Size i = 1; i <= n_rots; ++i ) {
-					Size bin_size(0);
-					l >> bin_size;
-					n_bins_per_rot[i] = bin_size;
-				}
-				peptoid_libspec->peptoid_rotlib_n_bin_per_rot( n_bins_per_rot );
-			} else {
-				tr.Error << "Did not expect " << tag << " when reading peptoid rotamer info." << std::endl;
-				utility_exit_with_message("Logic error in params file reading, " + filename );
-			}
-
-			rsd->rotamer_library_specification( peptoid_libspec );
-			// End of peptoid library entries.
 		} else if ( tag == "VIRTUAL_SHADOW" ) {
 			std::string shadower, shadowee;
 			l >> shadower >> shadowee;

@@ -52,11 +52,14 @@ public:
 
 	/// constants
 
-	/// A good "phi" value to use for N-term residues
-	static Real const NEUTRAL_PHI;
+	/// A good phi and psi values to use for terminal peptide residues where they cannont be completely defined
+	static Real const PEPTIDE_NEUTRAL_PHI;
+	static Real const PEPTIDE_NEUTRAL_PSI;
 
-	/// A good "psi" value to use for C-term residues
-	static Real const NEUTRAL_PSI;
+	/// A good omega, phi, and psi values to use for terminal peptoid residues where they cannont be completely defined
+	static Real const PEPTOID_NEUTRAL_OMG;
+	static Real const PEPTOID_NEUTRAL_PHI;
+	static Real const PEPTOID_NEUTRAL_PSI;
 
 	/// @brief Precision measures for comparsions.
 	static Real const ANGLE_DELTA;
@@ -68,7 +71,7 @@ public:
 
 	/// c-tor
 	SingleResidueDunbrackLibrary(
-		AA const aa,
+		chemical::ResidueType const & rt,
 		Size const n_rotameric_chi,
 		bool dun02,
 		bool use_bicubic,
@@ -148,13 +151,13 @@ public:
 
 	//virtual
 	//Real
-	//get_bb_from_rsd(
+	//get_IV_from_rsd(
 	// conformation::Residue const & rsd,
 	// Size bbn
 	//) const = 0;
 	//virtual
 	//utility::vector1< Real >
-	//get_bbs_from_rsd(
+	//get_IVs_from_rsd(
 	// conformation::Residue const & rsd
 	//) const = 0;
 
@@ -316,8 +319,6 @@ public:
 		else /*if ( ( chi_i >= -120.0 ) && ( chi_i <= 0.0 ) )*/ { return 3; }
 	}
 
-	/// @brief This is not the right place for this code, but the numeric interpolation library
-	/// uselessly indexes by 0 and the basic functions aren't inlined...
 	inline
 	void bin_angle(
 		Real const angle_start,
@@ -332,7 +333,8 @@ public:
 		/// very, very rarely, periodic_range( angle, 360 ) will return 180 instead of -180.
 		/// though it is supposed to return values in the range [-180, 180).
 		debug_assert( angle_start <= ang && ang <= angle_start + angle_range );
-		debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
+		// temp -- by merge-time we won't call this function at all.
+		//debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
 
 		Real real_bin_lower = ( ang - angle_start ) / angle_step;
 		Size bin_prev = static_cast< Size > ( real_bin_lower );
@@ -341,6 +343,119 @@ public:
 		angle_alpha = ( (ang - angle_start ) - ( bin_prev * angle_step ) ) / angle_step;
 	}
 
+	inline
+	void bin_angle(
+		Real const angle_start,
+		utility::vector1< core::Size > const & bin_equivs,
+		Real const angle_step,
+		Real const ASSERT_ONLY( angle_range ),
+		Size const nbins,
+		Real const ang,
+		Size & bin_lower,
+		Size & bin_upper,
+		Real & angle_alpha
+	) const {
+		/// very, very rarely, periodic_range( angle, 360 ) will return 180 instead of -180.
+		/// though it is supposed to return values in the range [-180, 180).
+		debug_assert( angle_start <= ang && ang <= angle_start + angle_range );
+		// temp -- by merge-time we won't call this function at all.
+		//debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
+
+		Real real_bin_lower = ( ang - angle_start ) / angle_step;
+
+		Size bin_prev_raw = static_cast< Size > ( real_bin_lower );
+		Size bin_lower_raw = 1 + numeric::mod( bin_prev_raw, nbins );
+		Size bin_upper_raw = numeric::mod( bin_lower_raw, nbins ) + 1;
+
+		bin_lower = bin_equivs[ bin_lower_raw ];
+		// In odd cases if bin_prev_raw is zero we need to wrap. Or vice-versa. (It has to be on [0, 35].)
+		Size bin_prev = bin_prev_raw == 0 ? 0 /*numeric::mod( bin_equivs[ nbins ], nbins )*/ : bin_equivs[ bin_prev_raw ];
+		bin_upper = bin_equivs[ bin_upper_raw ];
+
+
+		if ( bin_prev == bin_lower || bin_lower == bin_upper ) { //== bin_equivs[ bin_prev_raw - 1 ] ) {
+			angle_alpha = 0;
+		} else {
+			// raw? bc if we are here raw may be equivalent... SLASH BETTER.
+			angle_alpha = ( ( ang - angle_start ) - ( bin_prev_raw * angle_step ) ) / angle_step;
+		}
+
+	}
+
+
+	/*
+	/// @brief This is not the right place for this code, but the numeric interpolation library
+	/// uselessly indexes by 0 and the basic functions aren't inlined...
+	inline
+	void bin_angle(
+	Real const angle_start,// same as bin_lowers[1] - small_angle_step
+	utility::vector1< Real > const & bin_lowers, // could be nonuniform
+	Real const small_angle_step, // when stuff isn't being skipped
+	Real const angle_range,
+	Size const nbins,
+	Real const ang,
+	Size & bin_lower,
+	Size & bin_upper,
+	Real & angle_alpha
+	) const {
+	/// very, very rarely, periodic_range( angle, 360 ) will return 180 instead of -180.
+	/// though it is supposed to return values in the range [-180, 180).
+	// this just isn't true anymore
+	//debug_assert( angle_start <= ang && ang <= angle_start + angle_range );
+	// angle_step is now nonuniform. You would have to add up all the differences between
+	// consecutive bins. angle_range now cannot be provided; you would have to take the difference
+	// between the first and last bin_lower, plus bin_step. this is equivalent to the above
+	// so this assert would pass by definition.
+	//debug_assert( std::abs( nbins * angle_step - angle_range ) < 1e-15 );
+	//Real angle_start = bin_lowers[1] - small_angle_step;
+	//Real angle_range = bin_lowers[ bin_lowers.size() ] - bin_lowers[ 1 ] + small_angle_step;
+	Real real_ang = ang - angle_start;//numeric::mod(ang - angle_start, angle_range);
+	// We want to return real_ang on (0, 360]
+	if ( real_ang <= 0 ) real_ang += angle_range;
+
+	std::cout << "angle_start angle_range real_ang " << angle_start << " " << angle_range << " " << real_ang << std::endl;
+	for ( bin_upper = 1; bin_upper <= bin_lowers.size(); ++bin_upper ) {
+	if ( bin_lowers[ bin_upper ] - angle_start > real_ang ) break;
+	}
+	//if ( bin_lowers[ bin_upper ] - angle_start == real_ang ) ++bin_upper;
+	//std::cout << "bin_upper " << bin_upper << std::endl;
+	//if ( bin_lowers[ bin_upper - 1 ] == real_ang ) bin_lower = bin_upper - 1;
+
+	// These bin_uppers appear to be consistently 1 too small.
+	// The issue is that we're basically solving for bin_prev+1 and bin_prev?
+	++bin_upper;
+
+	bin_upper = bin_upper % nbins;
+	if ( bin_upper == 0 ) bin_upper = nbins;
+
+	if ( bin_upper == 1 && real_ang != 0 ) {
+	bin_lower = nbins;
+	} else if ( bin_upper == 1 && real_ang == 0 ) {
+	bin_lower = 1; bin_upper = 2;
+	} else  {
+	bin_lower = bin_upper - 1;
+	}
+
+	std::cout << "bin_upper " << bin_upper << " " << bin_lowers[ bin_upper ] - angle_start
+	<< " bin_lower " << bin_lower << " " << bin_lowers[ bin_lower ] - angle_start << std::endl;
+	//if ( angle_alpha > 1 ) { // sign you're in the middle of a 'skip'
+	if ( bin_lowers[ bin_lower ] - angle_start - small_angle_step > real_ang || std::abs( bin_lowers[ bin_upper ] - bin_lowers[ bin_lower ] ) > small_angle_step ) {
+	// 'snap' to lower or upper, respectively.
+	// A skip that happens around the wrap (300 to 60, for example) would
+	// fail this condition, I think.
+	if ( ( real_ang - ( bin_lowers[ bin_lower ] - angle_start - small_angle_step ) ) / std::abs( bin_lowers[ bin_upper ] - bin_lowers[ bin_lower ] ) >= 0.5 ) {
+	bin_lower = bin_upper;
+	angle_alpha = 0;
+	} else {
+	bin_upper = bin_lower;
+	angle_alpha = 1;
+	}
+	//angle_alpha = 0;
+	} else {
+	angle_alpha = ( real_ang - ( bin_lowers[ bin_lower ] - angle_start - small_angle_step ) ) / small_angle_step;
+	}
+	}
+	*/
 
 public:
 	/// @brief The amino acid this library is representing
@@ -359,28 +474,33 @@ public:
 	void prob_to_accumulate_buried( Real );
 	void prob_to_accumulate_nonburied( Real );
 
-	/// @brief Hard coded specifics about the amino acids
-	static
-	void
-	n_rotamer_bins_for_aa(
+	/// @brief Extract the number of rotamer bins (vector of bin counts for each chi) from the ResidueType
+	/// and store it in rot.
+	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu) to make this general and to remove hard-coded
+	/// information about canonical amino acids.
+	static void n_rotamer_bins_for_aa(
+		chemical::ResidueType const & rt,
+		RotVector & rot,
+		bool const dun02=false
+	);
+
+	/// @details The number of wells for canonical amino acids defined for the 08 library; includes
+	/// the number of wells for the semi-rotameric chi (arbitrarily chosen).
+	static void n_rotamer_bins_for_aa(
 		chemical::AA const aa,
 		RotVector & rot
 	);
 
-	/// @brief Reports information about the *rotameric* chi only; no details
-	/// about the non rotameric chi.
-	static
-	void
-	n_rotameric_bins_for_aa(
+	/// @details For the rotameric chi -- not all chi are rotameric
+	static void n_rotameric_bins_for_aa(
 		chemical::AA const aa,
 		RotVector & rot,
 		bool dun02
 	);
 
-	/// @brief Hard coded rotamer well info for the 2002 library.
-	static
-	void
-	n_rotamer_bins_for_aa_02(
+	/// @details To continue supporting the 2002 Dunbrack library, we
+	/// need to preserve the rotamer well definitions for canonical amino acids that it made.
+	static void n_rotamer_bins_for_aa_02(
 		chemical::AA const aa,
 		RotVector & rot
 	);

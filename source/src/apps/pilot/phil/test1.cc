@@ -317,7 +317,7 @@ test_dunbrack_io()
 	RotamerLibraryScratchSpace scratch;
 
 	for ( Size i=1; i<= pose.size(); ++i ) {
-		rot_lib.rotamer_energy( pose.residue(i), scratch );
+		rot_lib.rotamer_energy( pose.residue(i), pose, scratch );
 	}
 }
 

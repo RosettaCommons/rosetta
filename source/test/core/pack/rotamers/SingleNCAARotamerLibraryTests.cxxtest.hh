@@ -32,6 +32,7 @@
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/DunbrackEnergy.hh>
+#include <core/scoring/MinimizationData.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -113,8 +114,8 @@ public:
 						pose_ca.set_chi( 2, 2, chi2 );
 						pose_ncaa.set_chi( 1, 2, chi1 );
 						pose_ncaa.set_chi( 2, 2, chi2 );
-						Real cv = rl_cleu->rotamer_energy( pose_ca.residue( 2 ), cscratch );
-						Real nv = rl_nleu->rotamer_energy( pose_ncaa.residue( 2 ), nscratch );
+						Real cv = rl_cleu->rotamer_energy( pose_ca.residue( 2 ), pose_ca, cscratch );
+						Real nv = rl_nleu->rotamer_energy( pose_ncaa.residue( 2 ), pose_ncaa, nscratch );
 						TS_ASSERT( cv == nv );
 						TS_ASSERT( cscratch.chimean() == nscratch.chimean() );
 						TS_ASSERT( cscratch.chisd() == nscratch.chisd() );
@@ -199,16 +200,17 @@ public:
 			pose_ncaa.set_chi( 1, 2, trial_conformations[i][3] );
 			pose_ncaa.set_chi( 2, 2, trial_conformations[i][4] );
 
-			core::Real const dEdphi_ca( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 1), pose_ca, sfxn, sfxn.weights() ) );
-			core::Real const dEdphi_ncaa( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 1), pose_ncaa, sfxn, sfxn.weights() ) );
-			core::Real const dEdpsi_ca( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 2), pose_ca, sfxn, sfxn.weights() ) );
-			core::Real const dEdpsi_ncaa( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 2), pose_ncaa, sfxn, sfxn.weights() ) );
-			core::Real const dEdchi1_ca( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::CHI, 1), pose_ca, sfxn, sfxn.weights() ) );
-			core::Real const dEdchi1_ncaa( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::CHI, 1), pose_ncaa, sfxn, sfxn.weights() ) );
-			core::Real const dEdchi2_ca( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::CHI, 2), pose_ca, sfxn, sfxn.weights() ) );
-			core::Real const dEdchi2_ncaa( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::CHI, 2), pose_ncaa, sfxn, sfxn.weights() ) );
-			core::Real const dEdomg_ca( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 3), pose_ca, sfxn, sfxn.weights() ) );
-			core::Real const dEdomg_ncaa( dun.eval_dof_derivative( core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 3), pose_ncaa, sfxn, sfxn.weights() ) );
+			core::scoring::ResSingleMinimizationData rmm;
+			core::Real const dEdphi_ca(    dun.eval_residue_dof_derivative( pose_ca.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 1), pose_ca, sfxn, sfxn.weights() ) );
+			core::Real const dEdphi_ncaa(  dun.eval_residue_dof_derivative( pose_ncaa.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 1), pose_ncaa, sfxn, sfxn.weights() ) );
+			core::Real const dEdpsi_ca(    dun.eval_residue_dof_derivative( pose_ca.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 2), pose_ca, sfxn, sfxn.weights() ) );
+			core::Real const dEdpsi_ncaa(  dun.eval_residue_dof_derivative( pose_ncaa.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 2), pose_ncaa, sfxn, sfxn.weights() ) );
+			core::Real const dEdchi1_ca(   dun.eval_residue_dof_derivative( pose_ca.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::CHI, 1), pose_ca, sfxn, sfxn.weights() ) );
+			core::Real const dEdchi1_ncaa( dun.eval_residue_dof_derivative( pose_ncaa.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::CHI, 1), pose_ncaa, sfxn, sfxn.weights() ) );
+			core::Real const dEdchi2_ca(   dun.eval_residue_dof_derivative( pose_ca.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::CHI, 2), pose_ca, sfxn, sfxn.weights() ) );
+			core::Real const dEdchi2_ncaa( dun.eval_residue_dof_derivative( pose_ncaa.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::CHI, 2), pose_ncaa, sfxn, sfxn.weights() ) );
+			core::Real const dEdomg_ca(    dun.eval_residue_dof_derivative( pose_ca.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 3), pose_ca, sfxn, sfxn.weights() ) );
+			core::Real const dEdomg_ncaa(  dun.eval_residue_dof_derivative( pose_ncaa.residue( 2 ), rmm, core::id::DOF_ID( core::id::AtomID( 1, 2 ), core::id::PHI ), core::id::TorsionID(2, core::id::BB, 3), pose_ncaa, sfxn, sfxn.weights() ) );
 
 			TR << trial_conformations[i][1] << "\t" << trial_conformations[i][2] << "\t" << trial_conformations[i][3] << "\t" << trial_conformations[i][4] << "\t" << dEdphi_ca << "\t" << dEdphi_ncaa << "\t" << dEdpsi_ca << "\t" << dEdpsi_ncaa << "\t" << dEdchi1_ca << "\t" << dEdchi1_ncaa << "\t" << dEdchi2_ca << "\t" << dEdchi2_ncaa << "\t" << dEdomg_ca << "\t" << dEdomg_ncaa << std::endl;
 			TS_ASSERT_DELTA( dEdphi_ca, dEdphi_ncaa, 1e-6 );

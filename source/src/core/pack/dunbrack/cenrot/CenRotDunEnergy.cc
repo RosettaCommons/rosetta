@@ -97,7 +97,7 @@ using namespace core::pack::rotamers;
 
 void CenRotDunEnergy::residue_energy(
 	conformation::Residue const & rsd,
-	pose::Pose const &,  //pose,
+	pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
 
@@ -120,7 +120,7 @@ void CenRotDunEnergy::residue_energy(
 	);
 
 	RotamerLibraryScratchSpace scratch;
-	dun_score = residue_cenrot_library->rotamer_energy( rsd, scratch );
+	dun_score = residue_cenrot_library->rotamer_energy( rsd, pose, scratch );
 
 	emap[ cen_rot_dun ] += dun_score;
 } // residue_energy
@@ -218,7 +218,7 @@ Real CenRotDunEnergy::eval_dof_derivative(
 void CenRotDunEnergy::eval_residue_derivatives(
 	conformation::Residue const & rsd,
 	ResSingleMinimizationData const &,
-	pose::Pose const &, //pose,
+	pose::Pose const & pose,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const {
@@ -251,7 +251,7 @@ void CenRotDunEnergy::eval_residue_derivatives(
 	Vector const rD (rsd.atom(nD).xyz());
 
 	RotamerLibraryScratchSpace scratch;
-	residue_cenrot_library->rotamer_energy_deriv(rsd, scratch);
+	residue_cenrot_library->rotamer_energy_deriv(rsd, pose, scratch);
 	Real4 const & dE_dchi(scratch.dE_dchi());
 	Real dE_ddis(dE_dchi[1]);
 	Real dE_dang(dE_dchi[2]);

@@ -25,6 +25,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -56,7 +57,7 @@ public:
 
 	/// @brief Creator.
 	RotamericSingleResidueDunbrackLibrary(
-		AA const aa_in,
+		chemical::ResidueType const & rt, // mostly use for aa.
 		bool dun02,
 		bool use_bicubic,
 		bool entropy_correction,
@@ -76,6 +77,7 @@ public:
 	Real
 	rotamer_energy(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
 	) const override;
 
@@ -83,6 +85,7 @@ public:
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
 	) const override;
 
@@ -94,6 +97,7 @@ public:
 	Real
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		bool curr_rotamer_only,
 		RotamerLibraryScratchSpace & scratch
 	) const override;
@@ -124,8 +128,8 @@ public:
 	) const override;
 
 	/// @brief Return all of the rotamer sample data given a particular backbone bin.
-	/// For N-terminus residues, hand in the first bb value SingleResidueDunbrackLibrary::PHI_NEUTRAL and
-	/// for C-terminus residues, hand in the final bb value SingleResidueDunbrackLibrary::PSI_NEUTRAL.
+	/// For N-terminus residues, hand in the first bb value SingleResidueDunbrackLibrary::NEUTRAL_PHI and
+	/// for C-terminus residues, hand in the final bb value SingleResidueDunbrackLibrary::NEUTRAL_PSI.
 	/// The returned samples should be in semi-decrasing order by probability; semi, because the
 	/// rotamers are constructed in sorted order by their probability in the lower torsion bin that
 	/// the input backbone torsions prescribe.
@@ -228,8 +232,18 @@ public:
 
 public:
 
-	utility::fixedsizearray1< Size, N > N_PHIPSI_BINS;
-	utility::fixedsizearray1< Real, N > PHIPSI_BINRANGE;
+	utility::fixedsizearray1< Size, N > N_BB_BINS;
+	utility::fixedsizearray1< Real, N > BB_BINRANGE;
+
+	utility::fixedsizearray1< utility::vector1< core::Size >, N> BIN_EQUIVALENTS;
+
+	// Public by convention!
+	// This array describes function objects that, given a residue and some context, return some
+	// computable value on which this rotamer library depends.
+	// Typical rotamer libraries depend on backbone dihedrals, but not all!
+	// Note: would use lambdas -- minutely lighter-weight, better syntax for types -- but we need
+	// C++14 for the full deduction.
+	utility::fixedsizearray1< std::function< Real( conformation::Residue const & rsd, pose::Pose const & pose ) >, N > IVs;
 
 protected:
 	/// Read and write access for derived classes
@@ -269,6 +283,7 @@ protected:
 	Real
 	eval_rotameric_energy_deriv(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch,
 		bool eval_deriv
 	) const;
@@ -277,6 +292,7 @@ public:
 	Size
 	find_another_representative_for_unlikely_rotamer(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		Size4 & rotwell
 	) const;
 
@@ -284,6 +300,7 @@ public:
 	void
 	interpolate_rotamers(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch,
 		Size packed_rotno,
 		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
@@ -305,6 +322,7 @@ protected:
 	void
 	assign_random_rotamer(
 		conformation::Residue const & rsd,
+		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
@@ -352,14 +370,16 @@ protected:
 	) const;
 
 	utility::fixedsizearray1< Real, N >
-	get_bbs_from_rsd(
-		conformation::Residue const & rsd
+	get_IVs_from_rsd(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose
 	) const;
 
 	Real
-	get_bb_from_rsd(
+	get_IV_from_rsd(
 		core::Size bbn,
-		conformation::Residue const & rsd
+		conformation::Residue const & rsd,
+		pose::Pose const & pose
 	) const;
 
 
@@ -472,7 +492,7 @@ private:
 	/// sorted index simply means the order for a particular packed_rotno in the
 	/// list of rotamers sorted by probability and the bb_bin_index is a composite
 	/// of what you would get from essentially expressing the backbone torsions as
-	/// a number in base N_PHIPSI_BINS (often 36).
+	/// a number in base N_BB_BINS (often 36).
 	typename ObjexxFCL::FArray2D< PackedDunbrackRotamer< T, N > > rotamers_;
 	/// Quick lookup that lists the sorted position for the packed rotamer number
 	/// given a phi/psi.  Indexed by (bb_bin_index, packed_rotno ).
@@ -480,6 +500,9 @@ private:
 
 	// Entropy correction
 	utility::fixedsizearray1< ObjexxFCL::FArray1D< Real >, ( 1 << N ) > ShannonEntropy_n_derivs_;
+
+	// AMW: one peptoid flag needed
+	bool peptoid_ = false;
 
 };
 

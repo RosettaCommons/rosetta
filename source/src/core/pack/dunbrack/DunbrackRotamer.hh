@@ -63,66 +63,79 @@ bit_is_set(
 	return ( num - 1 ) & ( 1 << ( num_len - pos ) );
 }
 
+// AMW: WHY IS n_bb SEPARATE???
 template< Size N >
 inline Size make_index(
-	Size n_bb,
 	utility::fixedsizearray1< Size, N > num_bins,
 	utility::fixedsizearray1< Size, N > bb_bin
 ) {
 	Size index = 1;
 	for ( Size bbi = 1; bbi <= N; ++bbi ) {
-		index += ( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+		Size addend = ( bb_bin[ bbi ] - 1 );
+		for ( Size bbj = N; bbj > bbi; --bbj ) {
+			//Size jp1kp1lp1 = jj * N_BB_BINS[3] * N_BB_BINS[2] + kk * N_BB_BINS[3] + ll+1;
+			////Size jp1kp1lp1 = (bb_bin[1]-1) * N_BB_BINS[3] * N_BB_BINS[2] + kk * N_BB_BINS[3] + ll+1;
+
+			addend *= num_bins[ bbj ];
+		}
+		index += addend;
+		//( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
 	}
 	return index;
 }
 
-
+// AMW: this makes ZERO SENSE.
 template< Size N >
 inline Size make_index(
-	Size n_bb,
 	utility::fixedsizearray1< Size, N > num_bins,
 	utility::fixedsizearray1< Size, N+1 > bb_bin
 ) {
 	Size index = 1;
 	for ( Size bbi = 1; bbi <= N; ++bbi ) {
-		index += ( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+		index += ( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], N - bbi );
 	}
 	return index;
 }
 
 template < Size N >
 inline Size make_conditional_index(
-	Size n_bb,
 	utility::fixedsizearray1< Size, N > num_bins,
 	Size cond_i,
 	utility::fixedsizearray1< Size, N > bin_true,
 	utility::fixedsizearray1< Size, N > bin_false
 ) {
 	Size index = 1;
-	for ( Size bbi = 1; bbi <= n_bb; ++bbi ) {
-		if ( ( cond_i - 1 ) & ( 1 << ( n_bb - bbi ) ) ) {
-			index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+	for ( Size bbi = 1; bbi <= N; ++bbi ) {
+		Size addend;
+		if ( ( cond_i - 1 ) & ( 1 << ( N - bbi ) ) ) {
+			addend = ( bin_true[ bbi ] - 1 );
+			//index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
 		} else {
-			index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+			addend = ( bin_false[ bbi ] - 1 );
+			//index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
 		}
+		for ( Size bbj = N; bbj > bbi; --bbj ) {
+			addend *= num_bins[ bbj ];
+		}
+		index += addend;
 	}
 	return index;
 }
 
+///AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 template < Size N >
 inline Size make_conditional_index(
-	Size n_bb,
 	utility::fixedsizearray1< Size, N > num_bins,
 	Size cond_i,
 	utility::fixedsizearray1< Size, N+1 > bin_true,
 	utility::fixedsizearray1< Size, N+1 > bin_false
 ) {
 	Size index = 1;
-	for ( Size bbi = 1; bbi <= n_bb; ++bbi ) {
-		if ( ( cond_i - 1 ) & ( 1 << ( n_bb - bbi ) ) ) {
-			index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+	for ( Size bbi = 1; bbi <= N; ++bbi ) {
+		if ( ( cond_i - 1 ) & ( 1 << ( N - bbi ) ) ) {
+			index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins[ bbi ], N - bbi );
 		} else {
-			index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+			index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], N - bbi );
 		}
 	}
 	return index;

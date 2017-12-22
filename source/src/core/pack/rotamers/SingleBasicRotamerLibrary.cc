@@ -66,6 +66,7 @@ using namespace core::pack::dunbrack;
 Real
 SingleBasicRotamerLibrary::rotamer_energy_deriv(
 	conformation::Residue const & /*rsd*/,
+	pose::Pose const & ,//pose,
 	RotamerLibraryScratchSpace & /*scratch*/
 ) const
 {
@@ -77,6 +78,7 @@ SingleBasicRotamerLibrary::rotamer_energy_deriv(
 Real
 SingleBasicRotamerLibrary::rotamer_energy(
 	conformation::Residue const & /*rsd*/,
+	pose::Pose const & ,//pose,
 	RotamerLibraryScratchSpace & /*scratch*/
 ) const
 {
@@ -87,6 +89,7 @@ SingleBasicRotamerLibrary::rotamer_energy(
 Real
 SingleBasicRotamerLibrary::best_rotamer_energy(
 	conformation::Residue const & /*rsd*/,
+	pose::Pose const & ,//pose,
 	bool /*curr_rotamer_only*/,
 	RotamerLibraryScratchSpace & /*scratch*/
 ) const

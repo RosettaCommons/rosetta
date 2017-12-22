@@ -40,6 +40,7 @@ public:
 	core::Real
 	rotamer_energy_deriv(
 		conformation::Residue const &,
+		pose::Pose const &,
 		dunbrack::RotamerLibraryScratchSpace &
 	) const {
 		utility_exit_with_message("UNIMPLEMENTED");
@@ -49,6 +50,7 @@ public:
 	core::Real
 	rotamer_energy(
 		conformation::Residue const &,
+		pose::Pose const &,
 		dunbrack::RotamerLibraryScratchSpace &
 	) const { utility_exit_with_message("UNIMPLEMENTED"); }
 
@@ -56,6 +58,7 @@ public:
 	core::Real
 	best_rotamer_energy(
 		conformation::Residue const &,
+		pose::Pose const &,
 		bool,
 		dunbrack::RotamerLibraryScratchSpace &
 	) const { utility_exit_with_message("UNIMPLEMENTED"); }

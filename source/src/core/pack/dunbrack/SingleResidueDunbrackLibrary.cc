@@ -56,8 +56,12 @@ namespace dunbrack {
 
 static basic::Tracer TR( "core.pack.dunbrack" );
 
-Real const SingleResidueDunbrackLibrary::NEUTRAL_PHI = -90; // R++ value.  Roland Dunbrack suggests -60.
-Real const SingleResidueDunbrackLibrary::NEUTRAL_PSI = 130; // R++ value.  Roland Dunbrack suggests  60.
+Real const SingleResidueDunbrackLibrary::PEPTIDE_NEUTRAL_PHI = -90; // R++ value.  Roland Dunbrack suggests -60.
+Real const SingleResidueDunbrackLibrary::PEPTIDE_NEUTRAL_PSI = 130; // R++ value.  Roland Dunbrack suggests  60.
+
+Real const SingleResidueDunbrackLibrary::PEPTOID_NEUTRAL_OMG = 180;
+Real const SingleResidueDunbrackLibrary::PEPTOID_NEUTRAL_PHI = -90;
+Real const SingleResidueDunbrackLibrary::PEPTOID_NEUTRAL_PSI = 180;
 
 core::Real const SingleResidueDunbrackLibrary::ANGLE_DELTA( 1e-6 );
 core::Real const SingleResidueDunbrackLibrary::PROB_DELTA( 1e-6 );
@@ -65,7 +69,7 @@ core::Real const SingleResidueDunbrackLibrary::ENERGY_DELTA( 1e-6 );
 core::Real const SingleResidueDunbrackLibrary::COEF_DELTA( 1e-6 );
 
 SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
-	AA const aa,
+	chemical::ResidueType const & rt,
 	Size const n_rotameric_chi,
 	bool dun02,
 	bool use_bicubic,
@@ -76,7 +80,7 @@ SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 	dun02_( dun02 ),
 	use_bicubic_( use_bicubic ),
 	dun_entropy_correction_( dun_entropy_correction ),
-	aa_( aa ),
+	aa_( rt.aa() ),
 	n_rotameric_chi_( n_rotameric_chi ),
 	n_chi_bins_( n_rotameric_chi, 0 ),
 	n_chi_products_( n_rotameric_chi, 1),
@@ -89,8 +93,8 @@ SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 	// this builds on the hard coded hack bellow
 	// since NCAAs are aa_unk we cannot hard code the information
 	// alternativly it is added to the residue type paramater files
-	if ( aa_ != chemical::aa_unk ) {
-		n_rotameric_bins_for_aa( aa_, n_chi_bins_, dun02 );
+	if ( rt.aa() != chemical::aa_unk ) {
+		n_rotamer_bins_for_aa( rt, n_chi_bins_, dun02 );
 		for ( Size ii = n_rotameric_chi_; ii > 1; --ii ) {
 			n_chi_products_[ ii - 1 ] = n_chi_products_[ ii ] * n_chi_bins_[ ii ];
 		}
@@ -119,6 +123,27 @@ SingleResidueDunbrackLibrary::set_n_chi_bins( utility::vector1< Size > const & n
 	rotno_2_packed_rotno_.resize( n_possible_rots_ );
 	std::fill( rotwell_exists_.begin(), rotwell_exists_.end(), false );
 	std::fill( rotno_2_packed_rotno_.begin(), rotno_2_packed_rotno_.end(), 0 );
+}
+
+/// @brief Extract the number of rotamer bins (vector of bin counts for each chi) from the ResidueType
+/// and store it in rot.
+/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu) to make this general and to remove hard-coded
+/// information about canonical amino acids.
+void
+SingleResidueDunbrackLibrary::n_rotamer_bins_for_aa(
+	chemical::ResidueType const & rt,
+	RotVector & rot,
+	bool const dun02/*=false*/
+)
+{
+	if ( rt.is_canonical_aa() ) {
+		n_rotameric_bins_for_aa( rt.aa(), rot, dun02 );
+		return;
+	}
+	rot.resize( rt.nchi() );
+	for ( core::Size i(1), imax(rot.size()); i<=imax; ++i ) {
+		rot[i] = rt.chi_rotamers(i).size();
+	}
 }
 
 /// @details the number of wells defined for the 08 library; includes
@@ -232,7 +257,6 @@ SingleResidueDunbrackLibrary::n_rotamer_bins_for_aa_02(
 		rot.resize( 0 );
 	}
 }
-
 
 /// 2002 Library hard code symmetry information.
 Real
@@ -706,19 +730,19 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	// Don't look at this #define--read the comment below it.
 
 	#define INIT( CHI, BB ) \
-RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( chemical::aa_ala, false, true, true, 1.0, 1.0 ); \
-SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( chemical::aa_ala, true, true, false, true, true, 1.0, 1.0 ); \
+RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( rsd.type(), false, true, true, 1.0, 1.0 ); \
+SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( rsd.type(), true, true, false, true, true, 1.0, 1.0 ); \
 PackedDunbrackRotamer< CHI, BB, Real > prot_ ## CHI ## _ ## BB; \
 rsrdl_ ## CHI ## _ ## BB.nchi(); \
 srsrdl_ ## CHI ## _ ## BB.nchi(); \
 rsrdl_ ## CHI ## _ ## BB.n_rotamer_bins(); \
 srsrdl_ ## CHI ## _ ## BB.n_rotamer_bins(); \
-rsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, scratch ); \
-srsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, scratch ); \
-rsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, scratch ); \
-srsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, scratch ); \
-rsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, true, scratch ); \
-srsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, true, scratch ); \
+rsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, pose, scratch ); \
+srsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, pose, scratch ); \
+rsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, pose, scratch ); \
+srsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, pose, scratch ); \
+rsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, pose, true, scratch ); \
+srsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, pose, true, scratch ); \
 rsrdl_ ## CHI ## _ ## BB.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv ); \
 srsrdl_ ## CHI ## _ ## BB.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv ); \
 rsrdl_ ## CHI ## _ ## BB.write_to_file( ozs ); \
@@ -731,10 +755,10 @@ rsrdl_ ## CHI ## _ ## BB.memory_usage_in_bytes(); \
 srsrdl_ ## CHI ## _ ## BB.memory_usage_in_bytes(); \
 rsrdl_ ## CHI ## _ ## BB.get_rotamer_from_chi( chi, rot ); \
 srsrdl_ ## CHI ## _ ## BB.get_rotamer_from_chi( chi, rot ); \
-rsrdl_ ## CHI ## _ ## BB.find_another_representative_for_unlikely_rotamer( rsd, rotwell ); \
-srsrdl_ ## CHI ## _ ## BB.find_another_representative_for_unlikely_rotamer( rsd, rotwell ); \
-rsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, scratch, i, prot_ ## CHI ## _ ## BB ); \
-srsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, scratch, i, prot_ ## CHI ## _ ## BB ); \
+rsrdl_ ## CHI ## _ ## BB.find_another_representative_for_unlikely_rotamer( rsd, pose, rotwell ); \
+srsrdl_ ## CHI ## _ ## BB.find_another_representative_for_unlikely_rotamer( rsd, pose, rotwell ); \
+rsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, pose, scratch, i, prot_ ## CHI ## _ ## BB ); \
+srsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, pose, scratch, i, prot_ ## CHI ## _ ## BB ); \
 rsrdl_ ## CHI ## _ ## BB.memory_usage_dynamic(); \
 srsrdl_ ## CHI ## _ ## BB.memory_usage_dynamic(); \
 rsrdl_ ## CHI ## _ ## BB.memory_usage_static(); \

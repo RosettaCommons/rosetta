@@ -1002,7 +1002,12 @@ correct_dunbrack() {
 
 						dunbrack::RotamerLibraryScratchSpace scratch;
 						working_res->set_chi( (int)allrots[ii].nchi(), start + (jj-1.0)*step );
-						core::Real dunE = rotlib->rotamer_energy( *working_res, scratch );
+
+						// AMW: note that this will only work on non-peptoid, non-fancy rotlibs.
+						// Otherwise, this needs to live within a pose (that has e.g. an adjacent
+						// residue.)
+						core::pose::Pose pose;
+						core::Real dunE = rotlib->rotamer_energy( *working_res, pose, scratch );
 
 						core::Real newP = std::exp( -dunE ) / data(x,y);
 

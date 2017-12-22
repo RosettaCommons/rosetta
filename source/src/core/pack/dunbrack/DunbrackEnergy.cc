@@ -65,7 +65,6 @@ DunbrackEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
-
 /// ctor
 DunbrackEnergy::DunbrackEnergy() :
 	parent( EnergyMethodCreatorOP( new DunbrackEnergyCreator ) )
@@ -89,7 +88,7 @@ DunbrackEnergy::clone() const
 void
 DunbrackEnergy::residue_energy(
 	conformation::Residue const & rsd,
-	pose::Pose const &,
+	pose::Pose const & pose,
 	scoring::EnergyMap & emap
 ) const
 {
@@ -104,7 +103,7 @@ DunbrackEnergy::residue_energy(
 	if ( ! rotlib || rsd.has_variant_type( core::chemical::SC_BRANCH_POINT ) ) return;
 
 	dunbrack::RotamerLibraryScratchSpace scratch;
-	emap[ fa_dun ] += rotlib->rotamer_energy( rsd, scratch );
+	emap[ fa_dun ] += rotlib->rotamer_energy( rsd, pose, scratch );
 	emap[ fa_dun_rot ] += scratch.fa_dun_rot();
 	emap[ fa_dun_semi ] += scratch.fa_dun_semi();
 	emap[ fa_dun_dev  ] += scratch.fa_dun_dev();
@@ -118,7 +117,7 @@ DunbrackEnergy::eval_residue_dof_derivative(
 	ResSingleMinimizationData const & ,//min_data,
 	id::DOF_ID const & ,// dof_id,
 	id::TorsionID const & tor_id,
-	pose::Pose const & ,//pose,
+	pose::Pose const & pose,
 	scoring::ScoreFunction const & ,//sfxn,
 	scoring::EnergyMap const & weights
 ) const
@@ -132,74 +131,14 @@ DunbrackEnergy::eval_residue_dof_derivative(
 	Real deriv_semi( 0.0 );
 	if ( ! tor_id.valid() ) return 0.0;
 
-	debug_assert( rsd.seqpos() == tor_id.rsd() );
-
 	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
 		rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
-	if ( ! rsd.is_protein() || ! rotlib || rsd.has_variant_type( core::chemical::SC_BRANCH_POINT ) )  { return 0.0; }
+	if ( ! rotlib || rsd.has_variant_type( core::chemical::SC_BRANCH_POINT ) )  { return 0.0; }
 
 	dunbrack::RotamerLibraryScratchSpace scratch;
-	rotlib->rotamer_energy_deriv( rsd, scratch );
+	rotlib->rotamer_energy_deriv( rsd, pose, scratch );
 	if ( tor_id.type() == id::BB ) {
-		core::Size const scratch_index( get_scratch_index( tor_id.torsion(), rsd ) ); //The index of the relevant torsion, as indexed in the scratch space.
-		// Note that the scratch space indexes only the relevant backbone torsions.  So, for example, if a residue type had
-		// rotamers that were dependent on mainchain torsion indices 1, 2, and 4, the scratch space would have indices 1, 2,
-		// and 3 corresponding to mainchain indices 1, 2, and 4.
-
-		if ( scratch_index == 0 ) {
-			deriv = 0;
-			deriv_dev = 0;
-			deriv_rot = 0;
-			deriv_semi = 0;
-		} else if ( scratch_index  <= DUNBRACK_MAX_BBTOR ) {
-			deriv      = scratch.dE_dbb()[ scratch_index ];
-			deriv_dev  = scratch.dE_dbb_dev()[ scratch_index ];
-			deriv_rot  = scratch.dE_dbb_rot()[ scratch_index ];
-			deriv_semi = scratch.dE_dbb_semi()[ scratch_index ];
-		}
-	} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
-		deriv      = scratch.dE_dchi()[ tor_id.torsion() ];
-		deriv_dev  = scratch.dE_dchi_dev()[ tor_id.torsion() ];
-		deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
-	}
-
-	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi);
-}
-
-
-Real
-DunbrackEnergy::eval_dof_derivative(
-	id::DOF_ID const &,// dof_id,
-	id::TorsionID const & tor_id,
-	pose::Pose const & pose,
-	scoring::ScoreFunction const &,
-	scoring::EnergyMap const & weights
-) const
-{
-	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ) {
-		return 0.0;
-	}
-
-	Real deriv( 0.0 );
-	Real deriv_dev( 0.0 );
-	Real deriv_rot( 0.0 );
-	Real deriv_semi( 0.0 );
-	if ( !tor_id.valid() )  return 0.0;
-
-	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
-		rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue( tor_id.rsd() ).type() );
-
-	if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
-
-	/// ASSUMPTION: Derivatives for amino acids only!
-	if ( ! rotlib || ! pose.residue_type( tor_id.rsd() ).is_protein() || pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::SC_BRANCH_POINT) )  { return 0.0; }
-
-	dunbrack::RotamerLibraryScratchSpace scratch;
-	rotlib->rotamer_energy_deriv( pose.residue( tor_id.rsd() ), scratch );
-
-	if ( tor_id.type() == id::BB ) {
-		core::Size const scratch_index( get_scratch_index( tor_id.torsion(), pose.residue(tor_id.rsd()) ) ); //The index of the relevant torsion, as indexed in the scratch space.
+		core::Size const scratch_index( get_scratch_index( tor_id, rsd, pose ) ); //The index of the relevant torsion, as indexed in the scratch space.
 		// Note that the scratch space indexes only the relevant backbone torsions.  So, for example, if a residue type had
 		// rotamers that were dependent on mainchain torsion indices 1, 2, and 4, the scratch space would have indices 1, 2,
 		// and 3 corresponding to mainchain indices 1, 2, and 4.
@@ -221,7 +160,7 @@ DunbrackEnergy::eval_dof_derivative(
 		deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
 	}
 
-	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi );
+	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi);
 }
 
 /// @brief DunbrackEnergy is context independent; indicates that no context graphs are required
@@ -241,10 +180,25 @@ DunbrackEnergy::indicate_required_context_graphs(
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 core::Size
 DunbrackEnergy::get_scratch_index(
-	core::Size const torsion_index,
-	core::conformation::Residue const &rsd
+	core::id::TorsionID const &torid,
+	core::conformation::Residue const &rsd,
+	core::pose::Pose const &pose
 ) const {
-	core::Size scratch_index(torsion_index);
+	// Special-case logic for peptoids:
+	if ( rsd.is_peptoid() ) {
+		if ( torid.rsd() == rsd.connected_residue_at_lower() && torid.torsion() == pose.residue( rsd.connected_residue_at_lower() ).mainchain_torsions().size() ) {
+			return 3;
+		} else if ( torid.rsd() == rsd.seqpos() && torid.torsion() <=2 ) {
+			return torid.torsion();
+		} else {
+			return 0;
+		}
+	}
+
+	// In general, torsion id must be within this residue:
+	if ( torid.rsd() != rsd.seqpos() ) return 0;
+
+	core::Size scratch_index(torid.torsion());
 
 	// Figure out whether this is a residue type with rotamers that depend on only a subset of mainchain torsion angles:
 	core::chemical::rotamers::RotamerLibrarySpecificationCOP rotlibspec( rsd.type().rotamer_library_specification() );
@@ -255,7 +209,7 @@ DunbrackEnergy::get_scratch_index(
 			if ( ncaa_rotlibspec->rotamer_bb_torsion_indices().size() < rsd.mainchain_torsions().size() - 1 ) {
 				scratch_index = 0;
 				for ( core::Size i(1), imax(ncaa_rotlibspec->rotamer_bb_torsion_indices().size()); i<=imax; ++i ) {
-					if ( ncaa_rotlibspec->rotamer_bb_torsion_indices()[i] == torsion_index ) scratch_index = i;
+					if ( ncaa_rotlibspec->rotamer_bb_torsion_indices()[i] == torid.torsion() ) scratch_index = i;
 				}
 			}
 		}

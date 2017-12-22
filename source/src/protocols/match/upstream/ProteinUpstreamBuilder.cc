@@ -25,6 +25,7 @@
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
@@ -825,7 +826,12 @@ ProteinUpstreamBuilder::build(
 							for ( core::Size res_chi(1); res_chi<= ii_nchi; ++res_chi ) {
 								rescoords.chi()[res_chi] = additional_chi_samples.chi_sample( res_chi, lex[ res_chi ] );
 							}
-							if ( rotlib->rotamer_energy( rescoords, dunscratch ) >= fa_dun_cutoff ) {
+
+							// AMW: we are momentarily assuming that this will not be applied to fancy peptoid stuff
+							// where there is a REAL nonlocal DOF (i.e. omega-pre) to be computed. That will
+							// fail dramatically
+							core::pose::Pose pose;
+							if ( rotlib->rotamer_energy( rescoords, pose, dunscratch ) >= fa_dun_cutoff ) {
 								rotamer_acceptable = false;
 							}
 						}

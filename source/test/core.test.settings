@@ -179,6 +179,7 @@ sources = {
 	"pack/dunbrack" : [
 		"DunbrackEnergy",
 		"DunbrackEnergyTests_oligourea",
+		"DunbrackEnergyTests_peptoid",
 		"NCAA_dunbrack",
 		"NCAA_dunbrack_betanov15",
 		"RotamerConstraintDun2002",
