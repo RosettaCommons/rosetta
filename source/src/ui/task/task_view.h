@@ -46,6 +46,9 @@ private Q_SLOTS:
 	void on_queues_finished();
 
 private:
+
+
+private:
 	QWidget * create_viewer_for_file(FileSP const &);
 
 

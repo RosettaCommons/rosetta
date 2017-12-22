@@ -1,32 +1,30 @@
-QT += core gui network widgets
+QT += core gui widgets opengl
 
 CONFIG += object_parallel_to_source c++11 no_keywords
 
-TARGET = workbench
+TARGET = parametric_design
 TEMPLATE = app
 
 DEFINES += BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD UNUSUAL_ALLOCATOR_DECLARATION
 
-INCLUDEPATH = $$PWD/../../../../src $$PWD/../../../../src/platform/macos
+INCLUDEPATH = $$PWD/../../../../../../src $$PWD/../../../../../../src/platform/macos
 
 QMAKE_CXXFLAGS += \
-    -isystem$$PWD/../../../../external \
-    -isystem$$PWD/../../../../external/include \
-    -isystem$$PWD/../../../../external/boost_1_55_0 \
-    -isystem$$PWD/../../../../external/dbio \
-    -isystem$$PWD/../../../../external/dbio/sqlite3 \
-    -isystem$$PWD/../../../../external/libxml2/include
+    -isystem$$PWD/../../../../../../external \
+    -isystem$$PWD/../../../../../../external/include \
+    -isystem$$PWD/../../../../../../external/boost_1_55_0 \
+    -isystem$$PWD/../../../../../../external/dbio \
+    -isystem$$PWD/../../../../../../external/dbio/sqlite3 \
+    -isystem$$PWD/../../../../../../external/libxml2/include
 
 
 SOURCES += \
         main.cpp \
         mainwindow.cpp
 
-
 HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
-
 
 LIBS += \
         -L$$OUT_PWD/../ui                       -lui \

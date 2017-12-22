@@ -437,8 +437,6 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
     if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
     else: res, output = execute('Compiling...', command_line, return_='tuple', add_message_and_command_line_to_output=True)
 
-    release_name = 'ui.{platform}'.format( platform='.'.join([platform['os']]) ) #, python_version=platform['python'][:3].replace('.', '') )
-
     codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
 
     if res:
@@ -447,19 +445,31 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
         json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
 
     else:
-        package_dir = working_dir + '/' + release_name
+        does_not_require_database = ''.split()  # bundle_gui
 
-        if not os.path.isdir(package_dir): os.makedirs(package_dir)
-
-        apps = 'workbench'.split()
+        apps = 'workbench parametric_design rna_denovo'.split()
         for a in apps:
-            if    platform['os'] == 'mac':               distutils.dir_util.copy_tree(build_path + '/{a}/{a}.app'.format(**vars()), '{package_dir}/{a}.app'.format(**vars()), update=False)
-            elif  platform['os'] in ['linux', 'ubuntu']: shutil.copy(build_path + '/{a}/{a}'.format(**vars()), package_dir)
+            release_name = 'ui.{a}.{platform}'.format(a=a, platform='.'.join([platform['os']]) ) #, python_version=platform['python'][:3].replace('.', '') )
+            package_dir = working_dir + '/' + release_name
+            if not os.path.isdir(package_dir): os.makedirs(package_dir)
+
+            if platform['os'] == 'mac':
+                distutils.dir_util.copy_tree(build_path + '/{a}/{a}.app'.format(**vars()), '{package_dir}/{a}.app'.format(**vars()), update=False)
+                if a not in does_not_require_database: distutils.dir_util.copy_tree(rosetta_dir + '/database', '{package_dir}/{a}.app/Contents/database'.format(**vars()), update=False)
+
+            elif platform['os'] in ['linux', 'ubuntu']:
+                #os.makedirs( '{package_dir}/{a}'.format(**vars()) )
+                #shutil.copy(build_path + '/{a}/{a}'.format(**vars()), package_dir'{package_dir}'.format(**vars()) )
+
+                shutil.copy(build_path + '/{a}/{a}'.format(**vars()), package_dir)
+                if a not in does_not_require_database: distutils.dir_util.copy_tree(rosetta_dir + '/database', '{package_dir}/database'.format(**vars()), update=False)
+
+
             else: raise BenchmarkError('ui_release: ERROR, unsupported os: {platform[os]}!'.format(**vars()))
 
-        release('ui', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True)
+            release('ui', release_name, package_dir, working_dir, platform, config, release_as_git_repository = False)
 
-        #if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
+            if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
 
         res_code = _S_passed_
         results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }

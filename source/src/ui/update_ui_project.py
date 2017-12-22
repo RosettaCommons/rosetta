@@ -325,19 +325,21 @@ def generate_app_project_files(rosetta_source_path, prefix):
 
     projects = ['workbench', 'tests']  # WARNING: DO NOT ADD EXTRA APPS to this list! We intentionally want to keep only one UI app public to enforce merge-ability of apps. If you feel that you need to change this - please write to devel list first!
 
+    devel_apps_module = imp.load_source('devel_apps_module', 'config.devel.py')
+    apps = devel_apps_module.devel_apps
 
     pilot_filename = 'config.py'
     if os.path.isfile(pilot_filename):
         pilot = imp.load_source('pilot', pilot_filename)
+        if hasattr(pilot, 'devel_apps'): apps = pilot.devel_apps
+        if hasattr(pilot, 'pilot_apps'): apps += pilot.pilot_apps
 
-        if hasattr(pilot, 'pilot_apps'):
-            for a in pilot.pilot_apps:
-                pth, name = a
-                print('Adding Pilot app {}/{}.pro...'.format(pth, name) )
+    for a in apps:
+        pth, name = a
+        print('Adding Pilot app {}/{}.pro...'.format(pth, name) )
 
-                if not os.path.islink(apps_project_root + '/' + name): os.symlink('../../src/ui/apps/pilot/'+pth, apps_project_root + '/' + name)
-                projects.append(name)
-
+        if not os.path.islink(apps_project_root + '/' + name): os.symlink('../../src/ui/apps/pilot/'+pth, apps_project_root + '/' + name)
+        projects.append(name)
 
         # if hasattr(pilot, 'public_apps'):
         #     print( 'Warning local config for public_apps detected, setting public_app={}'.format(pilot.public_apps) )
@@ -345,8 +347,6 @@ def generate_app_project_files(rosetta_source_path, prefix):
 
     for p in projects:
         if not os.path.islink(apps_project_root + '/' + p): os.symlink('../../src/ui/apps/'+p, apps_project_root + '/' + p)
-
-
 
 
     #project = 'TEMPLATE = subdirs\n\nSUBDIRS += {}\n'.format( ' '.join(projects) )

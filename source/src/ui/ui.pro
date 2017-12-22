@@ -1,4 +1,4 @@
-QT += core gui widgets network
+QT += core gui network widgets
 
 CONFIG += object_parallel_to_source c++11 no_keywords
 
@@ -39,6 +39,7 @@ HEADERS  += \
     ui_lib_test.h \
     config/config_dialog.h \
     task/node.h \
+    task/project.fwd.h \
     task/project.h \
     task/project_model.h \
     task/project_view.h \

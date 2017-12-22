@@ -231,6 +231,8 @@ void Task::draft_to_queued(void)
 
 		connect(root_.get(), SIGNAL(synced()), this, SLOT(post_submit()));
 		root_->data_is_fresh(false);
+
+		if( project_ and !project_->file_name().isEmpty() ) save_project(*project_, /* always_ask_for_file_name = */ false);
 	}
 }
 
@@ -454,6 +456,7 @@ QDataStream &operator<<(QDataStream &out, Task const&t)
 	out << t.input_;
 	out << t.script_;
 	out << t.flags_;
+	out << t.nstruct_;
 
 	out << t.output_;
 
@@ -485,6 +488,7 @@ QDataStream &operator>>(QDataStream &in, Task &t)
 	in >> t.input_;
 	in >> t.script_;
 	in >> t.flags_;
+	in >> t.nstruct_;
 
 	in >> t.output_;
 

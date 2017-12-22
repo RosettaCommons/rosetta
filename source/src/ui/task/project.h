@@ -14,6 +14,8 @@
 #ifndef UI_TASK_PROJECT_H
 #define UI_TASK_PROJECT_H
 
+#include <ui/task/project.fwd.h>
+
 
 //#include <ui/task/node.h>
 #include <ui/task/task.fwd.h>
@@ -26,12 +28,13 @@
 namespace ui {
 namespace task {
 
-
-class Project;
-using ProjectSP  = std::shared_ptr< Project >;
-using ProjectCSP = std::shared_ptr< Project const >;
-
-
+///
+/// Project is intended to hold all data relevant for current user session.
+/// In general saving and later restoring project should allow user to return to exactly the same configuration of tools (and possibly windows).
+///
+/// Note that this is *not* current configuration of windows (but it can store that as well)
+/// instead it should be seen as a `bag` for all relevant user data that was used/created during current session.
+///
 class Project final : public QObject
 {
     Q_OBJECT
@@ -66,6 +69,10 @@ public:
 	bool operator ==(Project const &r) const;
 	bool operator !=(Project const &r) const { return not (*this == r); }
 
+
+	QString file_name() const { return file_name_; }
+	void file_name(QString const &file_name) { file_name_ = file_name; }
+
 	// serialization
 	friend QDataStream &operator<<(QDataStream &, Project const&);
 	friend QDataStream &operator>>(QDataStream &, Project &);
@@ -76,6 +83,7 @@ private:
 private:
 
 	Map tasks_;
+	QString file_name_;
 
 	friend struct PNode;
 };

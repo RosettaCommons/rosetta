@@ -1,6 +1,8 @@
 #pragma once
 
 #include <ui/util/exception.h>
+#include <ui/task/project.fwd.h>
+
 
 #include <map>
 #include <memory>
@@ -57,6 +59,15 @@ private:
 	QPointer<QNetworkReply> reply_;
 	QByteArray result_;
 };
+
+
+
+/// Try to save project. If project file name is not set then ask user for it. If always_ask_for_file_name is true - always ask for file name.
+/// return true on success
+bool save_project(Project &, bool always_ask_for_file_name);
+
+/// Check if system have enough configuration for Task to be submitted. Right now this include credentials and file-name for project.
+bool check_submit_requirements(Project &project);
 
 
 quint64 const _std_map_QDataStream_magic_number_   = 0xFFF2C04ABB492107;

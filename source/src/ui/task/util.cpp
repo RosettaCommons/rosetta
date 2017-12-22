@@ -1,6 +1,12 @@
 #include <ui/task/util.h>
 #include <ui/task/node.h>
+#include <ui/task/project.h>
 
+#include <ui/config/util.h>
+#include <ui/config/config_dialog.h>
+
+#include <QFileDialog>
+#include <QMessageBox>
 #include <QSettings>
 #include <QTimer>
 
@@ -128,6 +134,70 @@ QJsonDocument NetworkCall::json() const
 	//return root;
 
 	return QJsonDocument::fromJson(result_);
+}
+
+
+
+/// Try to save project. If project file name is not set then ask user for it. If always_ask_for_file_name is true - always ask for file name.
+/// return true on success
+bool save_project(Project &project, bool always_ask_for_file_name)
+{
+	QString file_name = always_ask_for_file_name ? "" : project.file_name();
+
+	if( file_name.isEmpty() ) {
+		file_name = QFileDialog::getSaveFileName(nullptr, QObject::tr("Save Project File"), "", QObject::tr("RosettaUI Projects (*.rosetta)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
+	}
+
+	if( not file_name.isEmpty() ) {
+		project.file_name(file_name);
+
+		QFile file(file_name);
+
+		if (!file.open(QIODevice::WriteOnly) ) return false;
+
+		QDataStream out( &file );
+
+		out << project;
+		file.close();
+
+		return true;
+	}
+	else return false;
+}
+
+
+/// Check if system have enough configuration for Task to be submitted. Right now this include credentials and file-name for project.
+bool check_submit_requirements(Project &project)
+{
+	auto c = config::get_user_credentials();
+	if( c.user.isEmpty() or c.password.isEmpty() ) {
+		QMessageBox msg_box;
+		msg_box.setText("User name and password for RosettaCloud is not set!");
+		msg_box.setInformativeText("Do you want to set it now?)");
+		msg_box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+		msg_box.setDefaultButton(QMessageBox::Yes);
+		int r = msg_box.exec();
+		if( r == QMessageBox::Yes ) {
+			config::ConfigDialog * preferences = new config::ConfigDialog();
+			preferences->show();
+		}
+	}
+	c = config::get_user_credentials();
+	if( c.user.isEmpty() or c.password.isEmpty() ) return false;
+
+	if( project.file_name().isEmpty() ) {
+		QMessageBox msg_box;
+		msg_box.setText("Project is not saved!");
+		msg_box.setInformativeText("Do you want to save it now?");
+		msg_box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+		msg_box.setDefaultButton(QMessageBox::Yes);
+		int r = msg_box.exec();
+		if( r == QMessageBox::Yes ) {
+			return save_project(project, /* always_ask_for_file_name = */ false);
+		}
+		else return false;
+	}
+	else return save_project(project, /* always_ask_for_file_name = */ false);
 }
 
 } // namespace task

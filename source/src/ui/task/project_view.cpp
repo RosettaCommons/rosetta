@@ -52,12 +52,14 @@ void ProjectView::on_new_task_clicked()
 {
     qDebug() << "ProjectView::on_new_task_clicked()";
 
-	static int task_counter = 0;
-	//QString label = QString("Task-%1").arg( project_->size() );
-	QString label = QString("Task-%1").arg( task_counter++ );
+	if( check_submit_requirements(*project_) ) {
+		static int task_counter = 0;
+		//QString label = QString("Task-%1").arg( project_->size() );
+		QString label = QString("Task-%1").arg( task_counter++ );
 
-	project_->add(label, std::make_shared<Task>(label) );
-	project_model_->set(project_);
+		project_->add(label, std::make_shared<Task>(label) );
+		project_model_->set(project_);
+	}
 }
 
 /*
@@ -122,8 +124,6 @@ void ProjectView::on_action_new_project_triggered()
 	project_ = std::make_shared<Project>();
 
 	project_model_->set(project_);
-
-	file_name_ = "";
 }
 
 
@@ -145,39 +145,20 @@ void ProjectView::on_action_open_project_triggered()
 
 		project_model_->set(project_);
 
-		file_name_ = file_name;
-	}
-}
-
-void ProjectView::save_project(bool avoid_asking_file_name_if_possible)
-{
-
-	if( file_name_.isEmpty()  or  (not avoid_asking_file_name_if_possible) ) {
-		file_name_ = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("RosettaUI Projects (*.rosetta)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
-	}
-
-	if( not file_name_.isEmpty() ) {
-		QFile file(file_name_);
-
-		if (!file.open(QIODevice::WriteOnly) ) return;
-
-		QDataStream out( &file );
-
-		out << *project_;
-		file.close();
+		project_->file_name(file_name);
 	}
 }
 
 void ProjectView::on_action_save_project_triggered()
 {
     qDebug() << "ProjectView::on_project_save()";
-	save_project(true);
+	save_project(*project_, /* always_ask_for_file_name =*/ false);
 }
 
 void ProjectView::on_action_save_project_as_triggered()
 {
     qDebug() << "ProjectView::on_project_save_as()";
-	save_project(false);
+	save_project(*project_, /* always_ask_for_file_name =*/ true);
 }
 
 
@@ -185,7 +166,7 @@ void ProjectView::on_action_preferences_triggered()
 {
     qDebug() << "ProjectView::on_action_preferences_triggered()";
 
-        config::ConfigDialog * preferences = new config::ConfigDialog(this);
+	config::ConfigDialog * preferences = new config::ConfigDialog(this);
     preferences->show();
 }
 

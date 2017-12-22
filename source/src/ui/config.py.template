@@ -15,5 +15,5 @@ pilot_apps = [
 
 
 # If public_apps is defined allow you to overwrite list of public apps to build, so you can speed up building process by skipping curretly irrelevant public_apps
-# public_apps = [
+# devel_apps = [
 # ]

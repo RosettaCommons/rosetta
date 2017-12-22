@@ -11,6 +11,7 @@
 #include <QMenu>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QMessageBox>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
@@ -90,9 +91,19 @@ void TaskView::update_ui_from_task()
 		ui->input_preview->set_pose(pose);
 	}
 
+	QWidget * inputs[] = {ui->name, ui->description, ui->input_file_name, ui->script_file_name, ui->script, ui->flags_file_name, ui->flags, ui->nstruct};
+
 	auto syncing = task_->is_syncing();
-	if( task_->state() == Task::State::_draft_  and (not syncing) ) ui->submit->show();
-	else ui->submit->hide();
+	if( task_->state() == Task::State::_draft_  and (not syncing) ) {
+		ui->submit->show();
+
+		for(auto w : inputs) w->setEnabled(true);
+	}
+	else {
+		ui->submit->hide();
+
+		for(auto w : inputs) w->setEnabled(false);
+	}
 
 	if(syncing) {
 		auto sp = task_->syncing_progress();
@@ -164,8 +175,15 @@ void TaskView::on_flags_set_from_file_clicked()
 void TaskView::on_submit_clicked()
 {
     qDebug() << "TaskView::on_submit_clicked queue:" << ui->queue->currentText();
-	ui->submit->setEnabled(false);
-	task_->submit( ui->queue->currentText() );
+
+	Project * project = task_->project();
+
+	if( project  and  check_submit_requirements(*project) ) {
+		ui->submit->setEnabled(false);
+		task_->submit( ui->queue->currentText() );
+
+		save_project(*project, /* always_ask_for_file_name = */ false);
+	}
 }
 
 void TaskView::create_output_context_menu(const QPoint &pos)

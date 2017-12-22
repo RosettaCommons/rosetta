@@ -51,15 +51,11 @@ private Q_SLOTS:
 
 private:
 
-	void save_project(bool avoid_asking_file_name_if_possible);
-
-
     Ui::ProjectView *ui;
 
 	ProjectModel * project_model_ = nullptr;
 
 	ProjectSP project_;
-	QString file_name_;
 };
 
 } // namespace task
