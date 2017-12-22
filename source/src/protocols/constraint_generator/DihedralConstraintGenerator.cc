@@ -34,6 +34,7 @@
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
 
 // Basic/Utility headers
 #include <numeric/conversions.hh>
@@ -141,7 +142,10 @@ DihedralConstraintGenerator::apply( core::pose::Pose const & pose) const
 		return constraints;
 	}
 
-	assert( selector_ != nullptr );
+	if ( selector_ == nullptr ) {
+		utility_exit_with_message("ResidueSelector required for the DihedralConstraintGenerator!");
+	}
+
 	utility::vector1< bool > subset = selector_->apply( pose );
 	utility::vector1< core::Size > cst_residues = selection_positions( subset );
 	for ( core::Size i : cst_residues ) {
@@ -262,6 +266,8 @@ DihedralConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		" By default, works on Protein and carbohydrate BackBone dihedrals (see dihedral option), however CUSTOM ARBITRARY DIHEDRALS can be set. \n"
 		"  See the dihedral_atoms and dihedral_residues tags to set a custom dihedral.\n\n"
 		" Will only work on ONE type of dihedral angle to allow complete customization.";
+
+	protocols::rosetta_scripts::attributes_for_parse_residue_selector( attlist );
 
 	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
 		xsd,

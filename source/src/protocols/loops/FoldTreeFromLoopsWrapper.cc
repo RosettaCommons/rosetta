@@ -69,6 +69,9 @@ FoldTreeFromLoops::apply( core::pose::Pose & pose )
 	TR<<"old foldtree "<<pose.fold_tree()<<"\nNew foldtree ";
 	pose.fold_tree( f );
 	TR<<pose.fold_tree()<<std::endl;
+	if ( add_cp_variants_ ) {
+		protocols::loops::add_cutpoint_variants(pose);
+	}
 }
 
 // XRW TEMP std::string
@@ -86,6 +89,7 @@ FoldTreeFromLoops::parse_my_tag(
 ) {
 
 	loops_ = loops_definers::load_loop_definitions(tag, data, pose);
+	add_cutpoint_variants(tag->getOption<bool>("add_cp_variants", add_cp_variants_));
 }
 
 void FoldTreeFromLoops::loop_str( std::string const & str )
@@ -137,11 +141,18 @@ void FoldTreeFromLoops::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	using namespace utility::tag;
 	AttributeList attlist;
 	loops_definers::attributes_for_load_loop_definitions( attlist );
+	attlist + XMLSchemaAttribute("add_cp_variants", xsct_rosetta_bool, "Add cutpoint variants used by the Chainbreak energy term? default false");
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Helper mover that looks for loop definitions and sets up the fold tree.", attlist );
 }
 
 std::string FoldTreeFromLoopsCreator::keyname() const {
 	return FoldTreeFromLoops::mover_name();
+}
+
+void
+FoldTreeFromLoops::add_cutpoint_variants( bool add_cp_variants ){
+	add_cp_variants_ = add_cp_variants;
 }
 
 protocols::moves::MoverOP

@@ -60,10 +60,15 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	///@brief Add cutpoint variants that are used for scoring with chainbreak term?
+	/// default false
+	void
+	add_cutpoint_variants( bool add_cp_variants );
 
 private:
 	std::string loop_str_; // loaded at parsetime but only realized at apply
 	LoopsOP loops_; // a different interface into FoldTreeFromLoops, which takes precedence over loop_str_;
+	bool add_cp_variants_ = false;
 };
 
 } // namespace loops

@@ -92,7 +92,7 @@ xsd_type_definition_w_attributes(
 void
 attributes_for_load_loop_definitions( utility::tag::AttributeList & attributes )
 {
-	attributes + utility::tag::XMLSchemaAttribute( "loops", utility::tag::xs_string , "The format for loops is: Start:End:Cut,Start:End:Cut... ");
+	attributes + utility::tag::XMLSchemaAttribute( "loops", utility::tag::xs_string , "The format for loops is: Start:End:Cut,Start:End:Cut... RosettaResnum or PDB Numbering accepted.");
 }
 
 } // namespace
