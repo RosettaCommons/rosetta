@@ -7125,6 +7125,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'jump_library_file', 'String', desc= "Input file for jumps",default="sampling/rna/1jj2_RNA_jump_library.dat" ),
        Option( 'vall_torsions', 'String', desc='Torsions file containing information on fragments from RNA models', default='rna.torsions' ),
 		   Option( 'use_1jj2_torsions', 'Boolean',desc= "Use original (ribosome) fragments, 1JJ2", default='false' ),
+	           Option( 'fuzz_fragments', 'Real', desc="When picking fragments, fuzz fragments with multiple samples with Gaussians of this standard deviation", default='0'),
 		   Option( 'rna_lores_chainbreak_weight', 'Real', desc= "chainbreak weight for lo res sampling",default='0.0' ),
 		   Option( 'rna_lores_linear_chainbreak_weight', 'Real', desc= "linear chainbreak weight for lo res sampling",default='0.0' ),
 		   Option( 'fixed_stems', 'Boolean', desc= "Seed each stem with a Watson-Crick base pair instead of having the strands find each other",default= 'false' ),
