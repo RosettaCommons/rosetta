@@ -61,7 +61,7 @@ void  FragmentLibrary::add_torsion(
 		}
 		torsion_set.torsion_source_name( offset ) = vall.name( position+offset );
 		torsion_set.secstruct( offset ) = vall.secstruct( position+offset );
-		
+
 		//Defined non-ideal geometry of sugar ring -- to keep it closed.
 		if ( vall.non_main_chain_sugar_coords_defined() ) {
 			torsion_set.non_main_chain_sugar_coords_defined = true;
@@ -69,25 +69,25 @@ void  FragmentLibrary::add_torsion(
 			for ( Size j = 1; j <= 3; j++ ) {
 				for ( Size k = 1; k <= 3; k++ ) {
 					torsion_set.non_main_chain_sugar_coords( offset, j, k ) =
-					vall.non_main_chain_sugar_coords( position+offset, j, k );
+						vall.non_main_chain_sugar_coords( position+offset, j, k );
 				}
 			}
 		} else {
 			torsion_set.non_main_chain_sugar_coords_defined = false;
 		}
 	}
-	
+
 	align_torsions_.push_back( torsion_set );
-	
+
 	using namespace basic::options;
-	if ( option[ OptionKeys::rna::denovo::fuzz_fragments ]() != 0 ) { 
+	if ( option[ OptionKeys::rna::denovo::fuzz_fragments ]() != 0 ) {
 		// Arbitrarily... let's start with five.
 		for ( Size ii = 1; ii <= 5; ++ii ) {
 			TorsionSet torsion_set( size, position );
 			for ( Size offset = 0; offset < size; offset++ ) {
 				// This might mess with sugar closure unless we are careful
 				// about what torsions we fuzz... all but delta safe?
-				
+
 				for ( Size j = 1; j <= core::chemical::rna::NUM_RNA_TORSIONS; j++ ) {
 					torsion_set.torsions( j, offset ) = vall.torsions( j, position + offset );
 					// AMW: to maintain overall 'shape' could consider shearing.
@@ -97,7 +97,7 @@ void  FragmentLibrary::add_torsion(
 				}
 				torsion_set.torsion_source_name( offset ) = vall.name( position+offset );
 				torsion_set.secstruct( offset ) = vall.secstruct( position+offset );
-				
+
 				//Defined non-ideal geometry of sugar ring -- to keep it closed.
 				if ( vall.non_main_chain_sugar_coords_defined() ) {
 					torsion_set.non_main_chain_sugar_coords_defined = true;
@@ -105,14 +105,14 @@ void  FragmentLibrary::add_torsion(
 					for ( Size j = 1; j <= 3; j++ ) {
 						for ( Size k = 1; k <= 3; k++ ) {
 							torsion_set.non_main_chain_sugar_coords( offset, j, k ) =
-							vall.non_main_chain_sugar_coords( position + offset, j, k );
+								vall.non_main_chain_sugar_coords( position + offset, j, k );
 						}
 					}
 				} else {
 					torsion_set.non_main_chain_sugar_coords_defined = false;
 				}
 			}
-			
+
 			align_torsions_.push_back( torsion_set );
 		}
 	}

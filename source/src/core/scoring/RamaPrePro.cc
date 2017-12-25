@@ -270,6 +270,12 @@ RamaPrePro::get_mainchain_torsions_covered(
 	//Get the L-equivalent type:
 	core::chemical::ResidueTypeCOP ltype( is_d ? conf.residue_type_set_for_conf( res1->mode() )->get_mirrored_type( res1 )  : res1 );
 
+	//If we have a backbone aa type defined, use it.
+	core::chemical::AA const bbaa( ltype->backbone_aa() );
+	if ( bbaa != ltype->aa() && bbaa != core::chemical::aa_unk ) {
+		ltype = conf.residue_type_set_for_conf( res1->mode() )->get_representative_type_aa( bbaa );
+	}
+
 	//Get an instance of the ScoringManager, and the proper MainchainScoreTable:
 	ScoringManager* manager( ScoringManager::get_instance() );
 	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table(

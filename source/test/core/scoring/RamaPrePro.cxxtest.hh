@@ -38,6 +38,7 @@
 
 // Protocol Headers
 #include <protocols/cyclic_peptide/FlipChiralityMover.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
@@ -166,6 +167,18 @@ public:
 		TS_ASSERT_DELTA( old_score2, pose.energies().residue_total_energies(2)[ core::scoring::rama_prepro ], 0.001);
 		TS_ASSERT_DELTA( old_score3, pose.energies().residue_total_energies(3)[ core::scoring::rama_prepro ], 0.001);
 		//pose.dump_scored_pdb( "rama_pdb_after.pdb", sfxn ); //DELETE ME
+	}
+
+	/// @brief This test was added to fix a bug in cases in which a backbone_aa was specified.
+	/// @author Vikram K. Mulligan
+	void test_get_mainchain_torsions_covered_bb_aa() {
+		core::scoring::RamaPrePro ramaprepro;
+		core::pose::Pose pose( pdb1ubq5to13_pose() );
+
+		protocols::simple_moves::MutateResidue mutres( 2, "BMT" );
+		mutres.apply(pose);
+
+		ramaprepro.get_mainchain_torsions_covered( pose.conformation(), pose.residue_type_ptr(2),pose.residue_type_ptr(3) ); //Fails if bug is present.
 	}
 
 
