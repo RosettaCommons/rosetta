@@ -90,14 +90,16 @@ void glycosylate_pose(
 	uint const sequence_position,
 	std::string const & atom_name,
 	std::string const & iupac_sequence,
-	bool const idealize_linkages = true );
+	bool idealize_linkages = true,
+	bool keep_pdbinfo = true );
 
 /// @brief  Glycosylate the Pose at the given sequence position using an IUPAC sequence.
 void glycosylate_pose(
 	Pose & pose,
 	uint const sequence_position,
 	std::string const & iupac_sequence,
-	bool const idealize_linkages = true );
+	bool const idealize_linkages = true,
+	bool keep_pdbinfo = true );
 
 /// @brief  Glycosylate the Pose at the given sequence position and atom using a .GWS or IUPAC sequence file.
 void glycosylate_pose_by_file(
@@ -105,14 +107,16 @@ void glycosylate_pose_by_file(
 	uint const sequence_position,
 	std::string const & atom_name,
 	std::string const & filename,
-	bool const idealize_linkages = true );
+	bool const idealize_linkages = true,
+	bool keep_pdbinfo = true );
 
 /// @brief  Glycosylate the Pose at the given sequence position using a .GWS or IUPAC sequence file.
 void glycosylate_pose_by_file(
 	Pose & pose,
 	uint const sequence_position,
 	std::string const & filename,
-	bool const idealize_linkages = true );
+	bool const idealize_linkages = true,
+	bool keep_pdbinfo = true );
 
 
 /// @brief  Set the dihedral angles involved in a glycosidic linkage based on statistical data.
@@ -274,6 +278,11 @@ get_resnums_from_glycan_positions(
 
 
 ////////////////////////////   Branch Deletion    ////////////////////////////////////////
+
+
+utility::vector1< bool >
+get_mainchain_children( Pose const & pose, core::Size starting_resnum, bool include_starting_resnum = false);
+
 
 /// @brief Delete the glycan from this residue onward toward the end of the branch.  Like chopping off a tree trunk at position resnum (not including the resnum). Also known as defoliating.
 ///  If resnum is the protein branch point, will change variant.

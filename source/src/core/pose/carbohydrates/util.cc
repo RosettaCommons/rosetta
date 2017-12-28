@@ -41,8 +41,10 @@
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/carbohydrates/GlycanTree.hh>
+#include <core/conformation/carbohydrates/GlycanNode.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+
 
 // Utility Headers
 #include <utility/string_constants.hh>
@@ -273,7 +275,8 @@ glycosylate_pose(
 	uint const sequence_position,
 	std::string const & atom_name,
 	std::string const & iupac_sequence,
-	bool const idealize_linkages /*true*/ )
+	bool const idealize_linkages /*true*/,
+	bool keep_pdbinfo /* true */ )
 {
 	using namespace std;
 	using namespace utility;
@@ -307,27 +310,7 @@ glycosylate_pose(
 	// Keep track of branch points as we go.
 	list< pair< uint, string > > branch_points;
 
-	//JAB - reverting this till we can fix it
-	// TODO: Fix it.
-	/*
-	Size const initial_sizes( pose.size() );
-	PDBInfoOP info( new PDBInfo( *pose.pdb_info() ) );//Copy because as we add residues it will change PDB Info - and not the way we want.
-	if ( ! info ) {
-	info = PDBInfoOP( new PDBInfo( pose ) );
-	info->name( pose.sequence() );  // Use the sequence as the default name.
-	//pose.pdb_info( info ); //This copies PDBInfo into the pose, not the actuall OP.  Can't set it here.
-	}
-
-	char const last_chain_id( info->chain( initial_sizes ) );  // Get the chain ID of the last residue.
-	char new_chain_id;
-	uint last_chain_index( utility::ALPHANUMERICS.find( last_chain_id ) );
-	if ( ( last_chain_index == string::npos ) ||  // not a standard chain ID
-	( last_chain_index == utility::ALPHANUMERICS.size() - 1 ) ) {  // out of chain IDs
-	new_chain_id = 'A';  // Wrap around to the beginning.
-	} else {
-	new_chain_id = utility::ALPHANUMERICS[ last_chain_index + 1 ];
-	}
-	*/
+	Size const initial_nres = pose.size();
 
 	// Begin with the first sugar.
 	ResidueType const & first_sugar_type( *residue_types.front() );
@@ -341,32 +324,55 @@ glycosylate_pose(
 	// Let the Conformation know that it (now) contains sugars.
 	pose.conformation().contains_carbohydrate_residues( true );
 
+	//Size const final_nres = pose.size();
+	//Size const total_glycan_residues = final_nres - initial_nres;
+	Size const glycan_start_rosetta_num = initial_nres+1;
 
 
+	///New code.   Keep in an-tact PDBInfo and organize it nicely.
+	if ( keep_pdbinfo && pose.pdb_info() != nullptr ) {
 
-	/*
-	// Reverting PDBInfo changes as they don't quite work.
-	Size const sizes( pose.size() );
-	uint new_seqpos( 0 );
-	for ( uint i( initial_sizes + 1 ); i <= sizes; ++i ) {
-	++new_seqpos;
-	info->append_res( i - 1, pose.residue( i ).natoms() );
-	info->chain( i, new_chain_id );
-	info->number( i, new_seqpos );
+		char protein_chain = pose.pdb_info()->chain( sequence_position );
+		int max_protein_chain_pdbnum = 0;
+
+		//If you have a residue number that is negative - what the hell is that?
+
+		//Find the maximum number in the chain of that the glycan is attached to.
+		for ( core::Size i = 1; i <= initial_nres; ++i ) {
+			if ( (pose.pdb_info()->chain(i) == protein_chain) && (pose.pdb_info()->number(i) > max_protein_chain_pdbnum) ) {
+				max_protein_chain_pdbnum = pose.pdb_info()->number(i);
+			}
+		}
+
+		//Set the chains
+		int current_pdbnum = max_protein_chain_pdbnum + 1;
+		for ( core::Size  i = glycan_start_rosetta_num; i <= pose.size(); ++i ) {
+
+			//Actually set the PDBInfo to be correct.
+			pose.pdb_info()->set_resinfo(i, protein_chain, current_pdbnum);
+			current_pdbnum+=1;
+		}
+
+		//Give the Mainchain residue number
+		//JAB- This is the more complicated way where the mainchain first gets numbers, and then each branch of children do.
+		// This is not completely nessessary (AFAIK), and this code is not yet finished.
+		//utility::vector1< bool > mainchain_children = get_mainchain_children(pose, initial_nres+1, true /* include_initial */);
+		//for (core::Size i = 1; i <= pose.size(); ++i){
+		// if ( ! mainchain_children[ i ]) continue;
+		// pose.pdb_info()->number( i, current_res );
+		// current_res +=1;
+		//
+		//}
+
+		pose.pdb_info()->resize_atom_records( pose );
+		pose.pdb_info()->rebuild_pdb2pose(); //JAB - this may not be nessessary - not sure.
+		
+		pose.pdb_info()->obsolete(false);
+	} else {
+		PDBInfoOP info( new PDBInfo( pose ) );
+		info->name( pose.sequence() );  // Use the sequence as the default name.
+		pose.pdb_info( info );
 	}
-	info->name( info->name() + "_glycosylated" );
-	info->obsolete( false );
-	pose.pdb_info(info);
-	*/
-
-	//JAB - this leaves an intact PDBInfo, which we absolutely need for Link Records to be written out properly.
-	// However, the PDBInfo records we start with are completely wiped out.
-	// We tried a fix above, but this leaves the PDB unreadable by Rosetta...
-	// Figure out a way to preserve some of the original info that got us here.
-
-	PDBInfoOP info( new PDBInfo( pose ) );
-	info->name( pose.sequence() );  // Use the sequence as the default name.
-	pose.pdb_info( info );
 
 	//TR << "InitialNRES: " << initial_sizes << " NRES: "<< pose.size() << " PDBINFO: "<< pose.pdb_info()->nres() << std::endl;
 	TR << "Glycosylated pose with " << iupac_sequence << '-' << atom_name <<
@@ -391,17 +397,18 @@ glycosylate_pose(
 	Pose & pose,
 	uint const sequence_position,
 	std::string const & iupac_sequence,
-	bool const idealize_linkages /*true*/ )
+	bool const idealize_linkages /*true*/,
+	bool keep_pdb_info /*true*/ )
 {
 	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
 	if ( glycosylation_site == "ASN" ) {
-		glycosylate_pose( pose, sequence_position, "ND2", iupac_sequence, idealize_linkages );
+		glycosylate_pose( pose, sequence_position, "ND2", iupac_sequence, idealize_linkages, keep_pdb_info );
 	} else if ( glycosylation_site == "SER" ) {
-		glycosylate_pose( pose, sequence_position, "OG", iupac_sequence, idealize_linkages );
+		glycosylate_pose( pose, sequence_position, "OG", iupac_sequence, idealize_linkages, keep_pdb_info );
 	} else if ( glycosylation_site == "THR" ) {
-		glycosylate_pose( pose, sequence_position, "OG1", iupac_sequence, idealize_linkages );
+		glycosylate_pose( pose, sequence_position, "OG1", iupac_sequence, idealize_linkages, keep_pdb_info );
 	} else if ( glycosylation_site == "TRP" ) {
-		glycosylate_pose( pose, sequence_position, "CD1", iupac_sequence, idealize_linkages );
+		glycosylate_pose( pose, sequence_position, "CD1", iupac_sequence, idealize_linkages, keep_pdb_info );
 	} else {
 		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
 			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "
@@ -417,7 +424,8 @@ glycosylate_pose_by_file(
 	uint const sequence_position,
 	std::string const & atom_name,
 	std::string const & filename,
-	bool const idealize_linkages /*true*/ )
+	bool const idealize_linkages /*true*/,
+	bool keep_pdb_info /*true*/)
 {
 	using namespace std;
 	using namespace io::carbohydrates;
@@ -428,7 +436,7 @@ glycosylate_pose_by_file(
 		//string const & gws_sequence( core::chemical::carbohydrates::read_glycan_sequence_file( sequence_file ) );
 	} else {  // Assume any other file type contains an IUPAC sequence.
 		string const & iupac_sequence( core::chemical::carbohydrates::read_glycan_sequence_file( sequence_file ) );
-		glycosylate_pose( pose, sequence_position, atom_name, iupac_sequence, idealize_linkages );
+		glycosylate_pose( pose, sequence_position, atom_name, iupac_sequence, idealize_linkages, keep_pdb_info );
 	}
 }
 
@@ -439,17 +447,18 @@ glycosylate_pose_by_file(
 	Pose & pose,
 	uint const sequence_position,
 	std::string const & filename,
-	bool const idealize_linkages /*true*/ )
+	bool const idealize_linkages /*true*/,
+	bool keep_pdb_info /*true*/ )
 {
 	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
 	if ( glycosylation_site == "ASN" ) {
-		glycosylate_pose_by_file( pose, sequence_position, "ND2", filename, idealize_linkages );
+		glycosylate_pose_by_file( pose, sequence_position, "ND2", filename, idealize_linkages, keep_pdb_info );
 	} else if ( glycosylation_site == "SER" ) {
-		glycosylate_pose_by_file( pose, sequence_position, "OG", filename, idealize_linkages );
+		glycosylate_pose_by_file( pose, sequence_position, "OG", filename, idealize_linkages, keep_pdb_info );
 	} else if ( glycosylation_site == "THR" ) {
-		glycosylate_pose_by_file( pose, sequence_position, "OG1", filename, idealize_linkages );
+		glycosylate_pose_by_file( pose, sequence_position, "OG1", filename, idealize_linkages, keep_pdb_info );
 	} else if ( glycosylation_site == "TRP" ) {
-		glycosylate_pose_by_file( pose, sequence_position, "CD1", filename, idealize_linkages );
+		glycosylate_pose_by_file( pose, sequence_position, "CD1", filename, idealize_linkages, keep_pdb_info );
 	} else {
 		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
 			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose_by_file( Pose & pose, uint "
@@ -1039,6 +1048,21 @@ get_resnums_from_glycan_positions(Pose const & pose, utility::vector1< core::Siz
 ///
 ///
 
+utility::vector1< bool >
+get_mainchain_children( Pose const & pose, core::Size starting_resnum, bool include_starting_resnum){
+
+	utility::vector1< bool > mc_children( pose.size(), false);
+
+	if ( include_starting_resnum ) mc_children[ starting_resnum ] = true;
+	core::Size child = pose.glycan_tree_set()->get_node( starting_resnum )->get_mainchain_child();
+	while ( child != 0 ) {
+		mc_children[ child ] = true;
+		child = pose.glycan_tree_set()->get_node( child )->get_mainchain_child();
+	}
+
+	return mc_children;
+
+}
 
 /// @brief Delete the glycan from this residue onward toward the end of the branch.  Like chopping off a tree trunk at position resnum (not including resnum). Also known as defoliating.
 ///  If resnum is the protein branch point, will change variant.
