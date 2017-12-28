@@ -366,7 +366,7 @@ glycosylate_pose(
 
 		pose.pdb_info()->resize_atom_records( pose );
 		pose.pdb_info()->rebuild_pdb2pose(); //JAB - this may not be nessessary - not sure.
-		
+
 		pose.pdb_info()->obsolete(false);
 	} else {
 		PDBInfoOP info( new PDBInfo( pose ) );
