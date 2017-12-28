@@ -337,7 +337,7 @@ public:
 		TS_ASSERT_EQUALS( csts_1.size(), 1 );
 		std::string old_res = ref_pose->residue_type( 5 ).name3();
 		std::string new_res = ref_pose->residue_type( 5 ).name3();
-		TS_TRACE( "Old residue: " + old_res + " New residue: " + new_res );
+		TR << "Old residue: " << old_res << " New residue: " << new_res << std::endl;
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::ResidueTypeConstraint const >( csts_1.at( 1 ) )->get_rsd_type_name3(), pose_->residue_type( 5 ).name3() );
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::ResidueTypeConstraint const >( csts_1.at( 1 ) )->get_rsd_type_name3(), ref_pose->residue_type( 5 ).name3() );
 		ResidueTypeConstraintGenerator rt_gen_2;
@@ -348,7 +348,7 @@ public:
 		TS_ASSERT_EQUALS( csts_2.size(), 1 );
 		old_res = ref_pose->residue_type( 110 ).name3();
 		new_res = ref_pose->residue_type( 110 ).name3();
-		TS_TRACE( "Old residue: " + old_res + " New residue: " + new_res );
+		TR << "Old residue: " << old_res << " New residue: " << new_res << std::endl;
 		TS_ASSERT_EQUALS( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::ResidueTypeConstraint const >( csts_2.at( 1 ) )->get_rsd_type_name3(), ref_pose->residue_type( 110 ).name3() );
 		TS_ASSERT( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::ResidueTypeConstraint const >( csts_2.at( 1 ) )->get_rsd_type_name3() != pose_->residue_type( 110 ).name3() );
 

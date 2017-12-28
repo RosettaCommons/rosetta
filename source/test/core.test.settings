@@ -227,6 +227,13 @@ sources = {
 		"SCMinMultifunc",
 		"rtmin_setup",
 	],
+	"pack/voids_penalty_energy" : [
+		"VoidsPenaltyEnergyTests",
+		"VoidsPenaltyEnergyTests_symm",
+		"VoidsPenaltyVoxelGridTests",
+		"VoidsPenaltyVoxelGridTests_rotamer_setup",
+		"VoidsPenaltyVoxelGridTests_rotamer_setup_2",
+	],
 	"pose" : [
 		"annotated_sequence",
 		"PDBInfo",
@@ -916,6 +923,8 @@ testinputfiles = [
 	"pack/task/test_in.resfile",
 	"pack/task/operation/DisallowIfNonnativeTaskOperation.u",
 	"pack/task/operation/ReplicateTaskOperation.u",
+	"pack/voids_penalty_energy/1ubq.pdb",
+	"pack/voids_penalty_energy/d2.symm",
 	"pose/pdbinfo_test_in.pdb",
 	"pose/2WDQ__tr.pdb",
 	"pose/multichain.pdb",

@@ -444,6 +444,58 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void symmetric_gly_tables( bool const setting );
 
+	/// @brief Get the number of cones in which a voxel must lie in order for that voxel to be considered
+	/// to be "buried".
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::Size voids_penalty_energy_containing_cones_cutoff() const;
+
+	/// @brief Get the cone distance cutoff for the voids penalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Real voids_penalty_energy_cone_distance_cutoff() const;
+
+	/// @brief Get the cone dot product cutoff for the voids penalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Real voids_penalty_energy_cone_dotproduct_cutoff() const;
+
+	/// @brief Get the voxel grid padding for the voids penalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Real voids_penalty_energy_voxel_grid_padding() const;
+
+	/// @brief Get the voxel size for the voids penalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Real voids_penalty_energy_voxel_size() const;
+
+	/// @brief Get whether we're prohibiting evaluation of the voids_penalty score term outside
+	/// of the context of the packer.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool voids_penalty_energy_disabled_except_during_packing() const;
+
+	/// @brief Set the number of cones in which a voxel must lie in order for that voxel to be considered
+	/// to be "buried".
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void voids_penalty_energy_containing_cones_cutoff( core::Size const setting );
+
+	/// @brief Set the cone distance cutoff for the voids penalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void voids_penalty_energy_cone_distance_cutoff( core::Real const &setting );
+
+	/// @brief Set the cone dot product cutoff for the voids penalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void voids_penalty_energy_cone_dotproduct_cutoff( core::Real const &setting );
+
+	/// @brief Set the voxel grid padding for the voids penalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void voids_penalty_energy_voxel_grid_padding( core::Real const &setting );
+
+	/// @brief Set the voxel size for the voids penalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void voids_penalty_energy_voxel_size( core::Real const &setting );
+
+	/// @brief Set whether we're prohibiting evaluation of the voids_penalty score term outside
+	/// of the context of the packer.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void voids_penalty_energy_disabled_except_during_packing( bool const setting );
+
 	bool loop_close_use_6D_potential() const;
 	void loop_close_use_6D_potential( bool const setting );
 
@@ -631,6 +683,14 @@ private:
 	bool symmetric_gly_tables_;
 	bool loop_close_use_6D_potential_;
 	bool fa_stack_base_all_;
+
+	//Options for the VoidsPenaltyEnergy:
+	core::Size voids_penalty_energy_containing_cones_cutoff_;
+	core::Real voids_penalty_energy_cone_dotproduct_cutoff_;
+	core::Real voids_penalty_energy_cone_distance_cutoff_;
+	core::Real voids_penalty_energy_voxel_size_;
+	core::Real voids_penalty_energy_voxel_grid_padding_;
+	bool voids_penalty_energy_disabled_except_during_packing_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;

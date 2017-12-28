@@ -2244,6 +2244,18 @@ ScoreFunction::setup_for_minimizing(
 	pose.energies().set_minimization_graph( g );
 }
 
+/// @brief Called after minimization.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ScoreFunction::finalize_after_minimizing(
+	pose::Pose & pose
+) const {
+	for ( AllMethods::const_iterator iter(all_methods_.begin()); iter!=all_methods_.end(); ++iter ) {
+		(*iter)->finalize_after_minimizing(pose);
+	}
+}
+
+
 /// @details Note that energy methods should be added to the MinimizationGraph
 /// reguardless of whether or not they have been modernized to use the
 /// eval_residue_derivatives/eval_residue_pair_derivatives machinery.

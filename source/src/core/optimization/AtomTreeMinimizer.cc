@@ -134,6 +134,8 @@ AtomTreeMinimizer::run(
 	// we may not really need all these extra function evaluations
 	// good for diagnostics though
 
+	scorefxn.finalize_after_minimizing(pose);
+
 	basic::TracerImpl core_optimize( "core.optimize", basic::t_debug );
 	core_optimize << "AtomTreeMinimizer::run: nangles= " << min_map.nangles() <<
 		" start_score: " << F(12,3,start_score) <<

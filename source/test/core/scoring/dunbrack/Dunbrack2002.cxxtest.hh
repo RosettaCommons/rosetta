@@ -164,7 +164,7 @@ public:
 					break;
 				}
 
-				if ( bOut ) std::cout << pos << " " << residue.nchi() << " ";
+				if ( bOut ) TR << pos << " " << residue.nchi() << " ";
 				else {
 					if ( chi_gold[ct].size() != residue.nchi() ) {
 
@@ -176,13 +176,13 @@ public:
 
 				for ( Size n = 1; n <= residue.nchi(); ++n ) {
 					if ( bOut ) {
-						std::cout << (*it)->chi()[ n ] << " " ;
+						TR << (*it)->chi()[ n ] << " " ;
 					} else {
 						TS_ASSERT_DELTA( chi_gold[ ct ][ n ],  (*it)->chi()[ n ] , 0.001);
 					}
 				}
 				RotamerLibraryScratchSpace scratch;
-				if ( bOut ) std::cout << rotlib->rotamer_energy( (**it), pose, scratch ) << " " << rotlib->rotamer_energy( residue, pose, scratch);
+				if ( bOut ) TR << rotlib->rotamer_energy( (**it), pose, scratch ) << " " << rotlib->rotamer_energy( residue, pose, scratch);
 				else {
 					TS_ASSERT_DELTA( rot_ener_gold[ ct ], rotlib->rotamer_energy( **it, pose, scratch ), 0.001);
 					TS_ASSERT_DELTA( pose_ener_gold[ pos ], rotlib->rotamer_energy( residue, pose, scratch ), 0.001);
@@ -190,7 +190,7 @@ public:
 				if ( residue.nchi() ) {
 					ct++;
 				}
-				if ( bOut ) std::cout << std::endl;
+				if ( bOut ) TR << std::endl;
 			} // read-out
 		} // residues
 
@@ -275,8 +275,8 @@ public:
 
 
 		AtomTreeMinimizer minimizer;
-		//std::cout.precision( 16 );
-		//std::cout << "start score: " << sfxn(pose) << std::endl;
+		//TR.precision( 16 );
+		//TR << "start score: " << sfxn(pose) << std::endl;
 		//Real start_score =
 		sfxn(pose);
 		//TS_ASSERT_DELTA( 38.86927045441701, start_score, 1e-12 );
@@ -300,7 +300,7 @@ public:
 		}
 
 		//Real end_score = sfxn(pose);
-		//std::cout << "end score: " << sfxn(pose) << std::endl;
+		//TR << "end score: " << sfxn(pose) << std::endl;
 		//TS_ASSERT_DELTA( 38.57005418761457, end_score, 1e-12 );
 		//pose.dump_pdb( "cstetest1.pdb" );
 
@@ -321,8 +321,8 @@ public:
 
 
 		AtomTreeMinimizer minimizer;
-		// std::cout.precision( 16 );
-		// std::cout << "start score: " << sfxn(pose) << std::endl;
+		// TR.precision( 16 );
+		// TR << "start score: " << sfxn(pose) << std::endl;
 		//Real start_score =
 		sfxn(pose);
 		//TS_ASSERT_DELTA( 38.86927045441701, start_score, 1e-12 );
@@ -342,9 +342,9 @@ public:
 			TS_ASSERT( iidata.nsteps() >= 1 );
 			for ( Size jj = 1; jj <= iidata.nangles(); ++jj ) {
 				// if ( jj % 3 == 1 ) { // new res
-				//  std::cout << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
+				//  TR << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
 				// } else {
-				//  std::cout << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
+				//  TR << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
 				// }
 
 				TS_ASSERT_DELTA( iidata.dof_step_data( jj, 1 ).num_deriv(), iidata.dof_step_data( jj, 1 ).ana_deriv(), 1e-6 );
@@ -352,7 +352,7 @@ public:
 		}
 
 		//Real end_score = sfxn(pose);
-		//std::cout << "end score: " << sfxn(pose) << std::endl;
+		//TR << "end score: " << sfxn(pose) << std::endl;
 		//TS_ASSERT_DELTA( 38.57005418761457, end_score, 1e-12 );
 		pose.dump_pdb( "dunmin1.pdb" );
 
@@ -441,7 +441,7 @@ public:
 		sfxn( Lpose );
 		sfxn( Dpose );
 
-		std::cout << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
+		TR << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
 		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
 
 		remove_variant_type_from_pose_residue( Lpose, chemical::LOWER_TERMINUS_VARIANT, 1 );
@@ -451,7 +451,7 @@ public:
 		sfxn( Lpose );
 		sfxn( Dpose );
 
-		//std::cout << std::setprecision(17) << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
+		//TR << std::setprecision(17) << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
 		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
 
 
@@ -472,7 +472,7 @@ public:
 		sfxn( Lpose );
 		sfxn( Dpose );
 
-		std::cout << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
+		TR << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
 		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
 
 		remove_variant_type_from_pose_residue( Lpose, chemical::LOWER_TERMINUS_VARIANT, 1 );
@@ -482,7 +482,7 @@ public:
 		sfxn( Lpose );
 		sfxn( Dpose );
 
-		//std::cout << std::setprecision(17) << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
+		//TR << std::setprecision(17) << "Lpose " << Lpose.energies().total_energy() << " Dpose " << Dpose.energies().total_energy() << std::endl;
 		TS_ASSERT_DELTA( Lpose.energies().total_energy(), Dpose.energies().total_energy(), 1e-12 );
 	}
 
@@ -503,8 +503,8 @@ public:
 
 
 		AtomTreeMinimizer minimizer;
-		// std::cout.precision( 16 );
-		// std::cout << "start score: " << sfxn(pose) << std::endl;
+		// TR.precision( 16 );
+		// TR << "start score: " << sfxn(pose) << std::endl;
 		Real start_score = sfxn(pose);
 		TS_ASSERT_DELTA( 38.86927045441701, start_score, 1e-12 );
 
@@ -519,7 +519,7 @@ public:
 		minimizer.run( pose, movemap, sfxn, min_options );
 
 		Real end_score = sfxn(pose);
-		//std::cout << "end score: " << end_score << std::endl;
+		//TR << "end score: " << end_score << std::endl;
 		TS_ASSERT_DELTA( 38.57005418761457, end_score, 1e-12 );
 		pose.dump_pdb( "dunmintest1.pdb" );
 

@@ -67,28 +67,28 @@ public:
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.
-	virtual core::scoring::methods::EnergyMethodOP clone() const;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	/// @brief HBNetEnergy is context-independent and thus indicates that no context graphs need to be maintained by
 	/// class Energies.
-	virtual void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const override;
 
 	/// @brief HBNetEnergy is version 1.0 right now.
 	///
-	virtual core::Size version() const;
+	core::Size version() const override;
 
 	/// @brief Actually calculate the total energy
 	/// @details Called by the scoring machinery.  The update_residue_neighbors() function of the pose
 	/// must be called first.
-	virtual void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
+	void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called directly by the ResidueArrayAnnealingEvaluator during packer runs.
-	virtual core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, core::Size const substitution_position = 0 ) const;
+	core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, core::Size const substitution_position = 0 ) const override;
 
 	/// @brief What to do when a substitution that was considered is accepted.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	virtual void commit_considered_substitution();
+	void commit_considered_substitution() override;
 
 	/// @brief Get a summary of all loaded data.
 	///
@@ -96,7 +96,7 @@ public:
 
 	/// @brief Cache data from the pose in this EnergyMethod in anticipation of scoring.
 	///
-	virtual void setup_residuearrayannealableenergy_for_packing ( core::pose::Pose const &pose, core::scoring::ScoreFunction const &sfxn);
+	void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose const &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
 
 private:
 

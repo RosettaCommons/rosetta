@@ -144,6 +144,8 @@ SymAtomTreeMinimizer::run(
 	// rescore
 	Real const end_score( scorefxn( pose ) );
 
+	scorefxn.finalize_after_minimizing(pose);
+
 	//std::cout << "end_score:" << std::endl;
 	//pose.energies().show( std::cout );
 

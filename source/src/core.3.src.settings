@@ -908,6 +908,7 @@ sources = {
 		"util",
 	],
 	"core/select/util": [
+		"burial_utilities",
 		"interface_vector_calculate",
 		"SelectResiduesByLayer",
 	],

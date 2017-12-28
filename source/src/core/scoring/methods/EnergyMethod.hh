@@ -137,6 +137,16 @@ public:
 		kinematics::MinimizerMapBase const &
 	) const;
 
+	/// @brief Called after minimization, allowing a derived class to do some
+	/// teardown steps.
+	/// @details Base class function does nothing.  Derived classes may override.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual
+	void
+	finalize_after_minimizing(
+		pose::Pose & pose
+	) const;
+
 	/// @brief Called immediately before atom- and DOF-derivatives are calculated
 	/// allowing the derived class a chance to prepare for future calls.
 	virtual

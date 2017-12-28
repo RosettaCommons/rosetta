@@ -20,7 +20,9 @@
 #include <numeric/interpolation/polycubic_catmull_rom.hh>
 #include <numeric/constants.hh>
 #include <numeric/types.hh>
+#include <basic/Tracer.hh>
 
+static basic::Tracer TR("numeric.interpolation.polycubic_catmull_rom.cxxtest");
 
 using namespace numeric;
 using namespace numeric::interpolation;
@@ -125,7 +127,7 @@ public:
 	// imported from apps/pilot/rhiju/check_cubic_conv
 	void test_cubic_conv_1D()
 	{
-		std::cout << "--- Checking 1D periodic ---" << std::endl;
+		TR << "--- Checking 1D periodic ---" << std::endl;
 		utility::fixedsizearray1< Real, 1 > x, deriv;
 		x[1] = 0.1211;
 		test_numerical_deriv( F_1D, x, minval, binwidth, PERIODIC, val, deriv );
@@ -157,7 +159,7 @@ public:
 	}
 
 	void test_cubic_conv_2D() {
-		std::cout << "--- Checking 2D periodic ---" << std::endl;
+		TR << "--- Checking 2D periodic ---" << std::endl;
 		TS_ASSERT_DELTA(  periodic_test_function( 0.5, 0.5 ), 4.0, 1.0e-3 );
 		TS_ASSERT_DELTA(  F_2D( 5, 5 ), 4.0, 1.0e-3 );
 		utility::fixedsizearray1< Real, 2 > x, deriv;
@@ -170,7 +172,7 @@ public:
 	}
 
 	void test_cubic_conv_3D() {
-		std::cout << "--- Checking 3D cubic ---" << std::endl;
+		TR << "--- Checking 3D cubic ---" << std::endl;
 		utility::fixedsizearray1< Real, 3 > x, deriv;
 		x[1] = 0.1211; x[2] = 0.5555; x[3] = 0.4461;
 		test_numerical_deriv( F_3D, x, minval, binwidth, PERIODIC, val, deriv );
@@ -211,7 +213,7 @@ public:
 
 
 	void test_cubic_conv_4D() {
-		std::cout << "--- Checking 4D cubic ---" << std::endl;
+		TR << "--- Checking 4D cubic ---" << std::endl;
 		utility::fixedsizearray1< Real, 4 > x, deriv;
 		x[1] = 0.1211; x[2] = 0.5555; x[3] = 0.4461; x[4] = 0.0022;
 		test_numerical_deriv( F_4D, x, minval, binwidth, PERIODIC, val, deriv );

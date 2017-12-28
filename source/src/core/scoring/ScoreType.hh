@@ -628,6 +628,7 @@ enum ScoreType {
 	aspartimide_penalty, //A context-independent two-body score term for penalizing two-residue sequences likely to produce the aspartimide side-product during peptide synthesis.
 	hbnet, //A bonus for hydrogen-bonded networks, which ramps nonlinearly with the size of the network.  Fundamentally non-pairwise decomposable (but packer-compatbile due to Alex Ford's nice framework).
 	netcharge, //A penalty for deviating from a desired net charge in a pose or region selected by a ResidueSelector.
+	voids_penalty, //A packer-centric penalty for solutions in which the sum of the buried rotamer volumes differs greatly from the total buried volume to fill.
 
 	// dna env/pair potential
 	dna_env,

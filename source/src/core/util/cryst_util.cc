@@ -112,11 +112,13 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		rosetta_scorefxn->setup_for_minimizing( pose, min_map );
 		SymAtomTreeMultifunc f_ros( pose, min_map, *rosetta_scorefxn, false, false );
 		f_ros.dfunc( vars, dEros_dvars );
+		rosetta_scorefxn->finalize_after_minimizing( pose );
 
 		(*xtal_scorefxn)(pose);  // score pose first
 		xtal_scorefxn->setup_for_minimizing( pose, min_map );
 		SymAtomTreeMultifunc f_xtal( pose, min_map, *xtal_scorefxn, false, false );
 		f_xtal.dfunc( vars, dExtal_dvars );
+		xtal_scorefxn->finalize_after_minimizing( pose );
 
 		// sum
 		for ( int i=1; i<=(int)vars.size(); ++i ) {
@@ -139,11 +141,13 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		rosetta_scorefxn->setup_for_minimizing( pose, min_map );
 		AtomTreeMultifunc f_ros( pose, min_map, *rosetta_scorefxn, false, false );
 		f_ros.dfunc( vars, dEros_dvars );
+		rosetta_scorefxn->finalize_after_minimizing( pose );
 
 		(*xtal_scorefxn)(pose);  // score pose first
 		xtal_scorefxn->setup_for_minimizing( pose, min_map );
 		AtomTreeMultifunc f_xtal( pose, min_map, *xtal_scorefxn, false, false );
 		f_xtal.dfunc( vars, dExtal_dvars );
+		xtal_scorefxn->finalize_after_minimizing( pose );
 
 		// sum
 		for ( int i=1; i<=(int)vars.size(); ++i ) {
@@ -214,11 +218,13 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 	rosetta_scorefxn->setup_for_minimizing( pose, min_map );
 	CartesianMultifunc f_ros( pose, min_map, *rosetta_scorefxn, false, false );
 	f_ros.dfunc( vars, dEros_dvars );
+	rosetta_scorefxn->finalize_after_minimizing( pose );
 
 	(*xtal_scorefxn)(pose);  // score pose first
 	xtal_scorefxn->setup_for_minimizing( pose, min_map );
 	CartesianMultifunc f_xtal( pose, min_map, *xtal_scorefxn, false, false );
 	f_xtal.dfunc( vars, dExtal_dvars );
+	xtal_scorefxn->finalize_after_minimizing( pose );
 
 	// sum
 	for ( int i=1; i<=(int)vars.size(); ++i ) {

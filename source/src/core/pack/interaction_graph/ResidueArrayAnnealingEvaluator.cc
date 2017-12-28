@@ -129,9 +129,9 @@ void ResidueArrayAnnealingEvaluator::initialize(
 			continue;
 		}
 
-		// Call the setup_residuearrayannealableenergy_for_packing() function for the method, which allows
+		// Call the set_up_residuearrayannealableenergy_for_packing() function for the method, which allows
 		// the method to cache data from the Pose (which will be invisible to it during packing).
-		annealable_energy_method->setup_residuearrayannealableenergy_for_packing( pose, score_function );
+		annealable_energy_method->set_up_residuearrayannealableenergy_for_packing( pose, rotamer_sets, score_function );
 
 		weighted_energy_methods_.emplace_back( score_weight, annealable_energy_method );
 	}

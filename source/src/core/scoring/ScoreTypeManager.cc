@@ -567,6 +567,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "aspartimide_penalty"] = aspartimide_penalty; //A context-independent two-body score term for penalizing two-residue sequences likely to produce the aspartimide side-product during peptide synthesis.
 	name2score_type_[ "hbnet" ] = hbnet; //A bonus for hydrogen-bonded networks, which ramps nonlinearly with the size of the network.  Fundamentally non-pairwise decomposable (but packer-compatbile due to Alex Ford's nice framework).
 	name2score_type_[ "netcharge" ] = netcharge; //A penalty for deviating from a desired net charge in a pose or region selected by a ResidueSelector.
+	name2score_type_[ "voids_penalty" ] = voids_penalty; //A packer-centric penalty for solutions in which the sum of the buried rotamer volumes differs greatly from the total buried volume to fill.
 
 	name2score_type_[ "sidechain_neighbors" ] = sidechain_neighbors;
 

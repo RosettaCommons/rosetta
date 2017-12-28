@@ -15,6 +15,7 @@
 #define INCLUDED_core_scoring_annealing_ResidueArrayAnnealableEnergy_hh
 
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.fwd.hh>
+#include <core/scoring/annealing/RotamerSets.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -49,7 +50,7 @@ public:
 	/// data are necessary.
 	/// @details Note that this is strictly unidirectional: data can be cached FROM the Pose or ScoreFunction, not TO the Pose or ScoreFunction.
 	/// The method is nonconst to permit caching within the ResidueArrayAnnealableEnergy-derived EnergyMethod.
-	virtual void setup_residuearrayannealableenergy_for_packing ( core::pose::Pose const &pose, core::scoring::ScoreFunction const &sfxn);
+	virtual void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose const &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn);
 
 	/// @brief What to do when a substitution that was considered is accepted.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

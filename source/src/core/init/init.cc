@@ -89,6 +89,7 @@
 
 #include <core/pack/dunbrack/DunbrackEnergyCreator.hh>
 #include <core/pack/dunbrack/cenrot/CenRotDunEnergyCreator.hh>
+#include <core/pack/voids_penalty_energy/VoidsPenaltyEnergyCreator.hh>
 
 // define this for compiling a slimmed down version of mini libraries lacking about 3/4s of the code
 // this is required for compiling a less memory hungry version of mini for Bluegene etc..
@@ -447,6 +448,7 @@ static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergy
 static EnergyMethodRegistrator< scoring::methods::RingClosureEnergyCreator > RingClosureEnergyCreator_registrator;
 static EnergyMethodRegistrator< carbohydrates::SugarBackboneEnergyCreator > SugarBackboneEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::netcharge_energy::NetChargeEnergyCreator > NetChargeEnergyCreator_registrator;
+static EnergyMethodRegistrator< pack::voids_penalty_energy::VoidsPenaltyEnergyCreator > VoidsPenaltyEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< pack::dunbrack::DunbrackEnergyCreator > DunbrackEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::dunbrack::cenrot::CenRotDunEnergyCreator > CenRotDunEnergyCreator_registrator;

@@ -128,8 +128,9 @@ RNA_PartitionEnergy::calculate_energy( utility::vector1< core::conformation::Res
 }
 
 void
-RNA_PartitionEnergy::setup_residuearrayannealableenergy_for_packing (
+RNA_PartitionEnergy::set_up_residuearrayannealableenergy_for_packing (
 	pose::Pose const & pose,
+	core::pack::rotamer_set::RotamerSets const &/*rotamersets*/,
 	scoring::ScoreFunction const & //sfxn
 ) {
 	using namespace core::pose::full_model_info;

@@ -129,6 +129,14 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	symmetric_gly_tables_(false),
 	loop_close_use_6D_potential_(false),
 	fa_stack_base_all_(false),
+
+	voids_penalty_energy_containing_cones_cutoff_(6),
+	voids_penalty_energy_cone_dotproduct_cutoff_(0.1),
+	voids_penalty_energy_cone_distance_cutoff_(8.0),
+	voids_penalty_energy_voxel_size_(0.5),
+	voids_penalty_energy_voxel_grid_padding_(1.0),
+	voids_penalty_energy_disabled_except_during_packing_(true),
+
 	bond_angle_residue_type_param_set_(/* NULL */)
 {
 	initialize_from_options( options );
@@ -206,6 +214,12 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		symmetric_gly_tables_ = src.symmetric_gly_tables_;
 		loop_close_use_6D_potential_ = src.loop_close_use_6D_potential_;
 		fa_stack_base_all_ = src.fa_stack_base_all_;
+		voids_penalty_energy_containing_cones_cutoff_ = src.voids_penalty_energy_containing_cones_cutoff_;
+		voids_penalty_energy_cone_dotproduct_cutoff_ = src.voids_penalty_energy_cone_dotproduct_cutoff_;
+		voids_penalty_energy_cone_distance_cutoff_ = src.voids_penalty_energy_cone_distance_cutoff_;
+		voids_penalty_energy_voxel_size_ = src.voids_penalty_energy_voxel_size_;
+		voids_penalty_energy_voxel_grid_padding_ = src.voids_penalty_energy_voxel_grid_padding_;
+		voids_penalty_energy_disabled_except_during_packing_ = src.voids_penalty_energy_disabled_except_during_packing_;
 	}
 	return *this;
 }
@@ -255,6 +269,14 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	symmetric_gly_tables_ = options[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
 	loop_close_use_6D_potential_ = options[ basic::options::OptionKeys::score::loop_close::use_6D_potential ]();
 	fa_stack_base_all_ = !options[ basic::options::OptionKeys::score::fa_stack_base_base_only ]();
+
+	runtime_assert_string_msg( options[basic::options::OptionKeys::score::voids_penalty_energy_containing_cones_cutoff]() >= 0, "Error in EnergyMethodOptions::initialize_from_options: The -score:voids_penalty_energy_containing_cones_cutoff flag must be set to a non-negative integer." );
+	voids_penalty_energy_containing_cones_cutoff_ = options[basic::options::OptionKeys::score::voids_penalty_energy_containing_cones_cutoff]();
+	voids_penalty_energy_cone_dotproduct_cutoff_ = options[basic::options::OptionKeys::score::voids_penalty_energy_cone_dotproduct_cutoff]();
+	voids_penalty_energy_cone_distance_cutoff_ = options[basic::options::OptionKeys::score::voids_penalty_energy_cone_distance_cutoff]();
+	voids_penalty_energy_voxel_size_ = options[basic::options::OptionKeys::score::voids_penalty_energy_voxel_size]();
+	voids_penalty_energy_voxel_grid_padding_ = options[basic::options::OptionKeys::score::voids_penalty_energy_voxel_grid_padding]();
+	voids_penalty_energy_disabled_except_during_packing_ = options[basic::options::OptionKeys::score::voids_penalty_energy_disabled_except_during_packing]();
 
 	// check to see if the unfolded state command line options are set by the user
 	if ( options[ basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
@@ -313,6 +335,12 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::fa_stack_base_base_only
 		+ basic::options::OptionKeys::score::use_gen_kirkwood
 		+ basic::options::OptionKeys::score::use_polarization
+		+ basic::options::OptionKeys::score::voids_penalty_energy_containing_cones_cutoff
+		+ basic::options::OptionKeys::score::voids_penalty_energy_cone_distance_cutoff
+		+ basic::options::OptionKeys::score::voids_penalty_energy_cone_dotproduct_cutoff
+		+ basic::options::OptionKeys::score::voids_penalty_energy_voxel_grid_padding
+		+ basic::options::OptionKeys::score::voids_penalty_energy_voxel_size
+		+ basic::options::OptionKeys::score::voids_penalty_energy_disabled_except_during_packing
 		+ basic::options::OptionKeys::score::water_dielectric
 		+ basic::options::OptionKeys::unfolded_state::split_unfolded_energies_file
 		+ basic::options::OptionKeys::unfolded_state::unfolded_energies_file;
@@ -765,6 +793,72 @@ EnergyMethodOptions::symmetric_gly_tables( bool const setting ) {
 	symmetric_gly_tables_ = setting;
 }
 
+/// @brief Get the number of cones in which a voxel must lie in order for that voxel to be considered
+/// to be "buried".
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::Size EnergyMethodOptions::voids_penalty_energy_containing_cones_cutoff() const { return voids_penalty_energy_containing_cones_cutoff_; }
+
+/// @brief Get the cone distance cutoff for the voids penalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::Real EnergyMethodOptions::voids_penalty_energy_cone_distance_cutoff() const { return voids_penalty_energy_cone_distance_cutoff_; }
+
+/// @brief Get the cone dot product cutoff for the voids penalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::Real EnergyMethodOptions::voids_penalty_energy_cone_dotproduct_cutoff() const { return voids_penalty_energy_cone_dotproduct_cutoff_; }
+
+/// @brief Get the voxel grid padding for the voids penalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::Real EnergyMethodOptions::voids_penalty_energy_voxel_grid_padding() const { return voids_penalty_energy_voxel_grid_padding_; }
+
+/// @brief Get the voxel size for the voids penalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::Real EnergyMethodOptions::voids_penalty_energy_voxel_size() const { return voids_penalty_energy_voxel_size_; }
+
+/// @brief Get whether we're prohibiting evaluation of the voids_penalty score term outside
+/// of the context of the packer.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+bool EnergyMethodOptions::voids_penalty_energy_disabled_except_during_packing() const { return voids_penalty_energy_disabled_except_during_packing_; }
+
+/// @brief Set the number of cones in which a voxel must lie in order for that voxel to be considered
+/// to be "buried".
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void EnergyMethodOptions::voids_penalty_energy_containing_cones_cutoff( core::Size const setting ) {
+	voids_penalty_energy_cone_distance_cutoff_ = setting;
+}
+
+/// @brief Set the cone distance cutoff for the voids penalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void EnergyMethodOptions::voids_penalty_energy_cone_distance_cutoff( core::Real const &setting ) {
+	runtime_assert_string_msg( setting > 0, "Error in EnergyMethodOptions::voids_penalty_energy_cone_distance_cutoff(): The setting must be positive!" );
+	voids_penalty_energy_cone_distance_cutoff_ = setting;
+}
+
+/// @brief Set the cone dot product cutoff for the voids penalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void EnergyMethodOptions::voids_penalty_energy_cone_dotproduct_cutoff( core::Real const &setting ) {
+	runtime_assert_string_msg( -1.0 <= setting && setting <= 1.0, "Error in EnergyMethodOptions::voids_penalty_energy_cone_dotproduct_cutoff(): The setting must be between -1.0 and 1.0." );
+	voids_penalty_energy_cone_dotproduct_cutoff_ = setting;
+}
+
+/// @brief Set the voxel grid padding for the voids penalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void EnergyMethodOptions::voids_penalty_energy_voxel_grid_padding( core::Real const &setting ) {
+	runtime_assert_string_msg( setting > 0, "Error in EnergyMethodOptions::voids_penalty_energy_voxel_grid_padding(): The setting must be positive!" );
+	voids_penalty_energy_voxel_grid_padding_ = setting;
+}
+
+/// @brief Set the voxel size for the voids penalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void EnergyMethodOptions::voids_penalty_energy_voxel_size( core::Real const &setting ) {
+	runtime_assert_string_msg( setting > 0, "Error in EnergyMethodOptions::voids_penalty_energy_voxel_size(): The setting must be positive!" );
+	voids_penalty_energy_voxel_size_ = setting;
+}
+
+/// @brief Set whether we're prohibiting evaluation of the voids_penalty score term outside
+/// of the context of the packer.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void EnergyMethodOptions::voids_penalty_energy_disabled_except_during_packing( bool const setting ) { voids_penalty_energy_disabled_except_during_packing_ = setting; }
+
 bool
 EnergyMethodOptions::loop_close_use_6D_potential() const {
 	return loop_close_use_6D_potential_;
@@ -960,6 +1054,12 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
 		( a.pb_bound_tag_ == b.pb_bound_tag_ ) &&
 		( a.pb_unbound_tag_ == b.pb_unbound_tag_ ) &&
+		( a.voids_penalty_energy_containing_cones_cutoff_ == b.voids_penalty_energy_containing_cones_cutoff_ ) &&
+		( a.voids_penalty_energy_cone_distance_cutoff_ == b.voids_penalty_energy_cone_distance_cutoff_ ) &&
+		( a.voids_penalty_energy_cone_dotproduct_cutoff_ == b.voids_penalty_energy_cone_dotproduct_cutoff_ ) &&
+		( a.voids_penalty_energy_voxel_grid_padding_ == b.voids_penalty_energy_voxel_grid_padding_ ) &&
+		( a.voids_penalty_energy_voxel_size_ == b.voids_penalty_energy_voxel_size_ ) &&
+		( a.voids_penalty_energy_disabled_except_during_packing_ == b.voids_penalty_energy_disabled_except_during_packing_ ) &&
 		( a.fastdens_perres_weights_ == b.fastdens_perres_weights_ ) );
 }
 
@@ -1052,6 +1152,14 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_bound_tag: " << pb_bound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
+
+	out << "EnergyMethodOptions::show: voids_penalty_energy_containing_cones_cutoff_:" << voids_penalty_energy_containing_cones_cutoff_ << std::endl;
+	out << "EnergyMethodOptions::show: voids_penalty_energy_cone_distance_cutoff_: " << voids_penalty_energy_cone_distance_cutoff_ << std::endl;
+	out << "EnergyMethodOptions::show: voids_penalty_energy_cone_dotproduct_cutoff_: " << voids_penalty_energy_cone_dotproduct_cutoff_ << std::endl;
+	out << "EnergyMethodOptions::show: voids_penalty_energy_voxel_grid_padding_: " << voids_penalty_energy_voxel_grid_padding_ << std::endl;
+	out << "EnergyMethodOptions::show: voids_penalty_energy_voxel_size_: " << voids_penalty_energy_voxel_size_<< std::endl;
+	out << "EnergyMethodOptions::show: voids_penalty_energy_disabled_except_during_packing_: " << (voids_penalty_energy_disabled_except_during_packing_ ? "TRUE" : "FALSE")  << std::endl;
+
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
 	if ( bond_angle_residue_type_param_set_ ) {
 		out << "setting ignored";
@@ -1324,6 +1432,12 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( symmetric_gly_tables_ ) ); // _Bool
 	arc( CEREAL_NVP( loop_close_use_6D_potential_ ) ); // _Bool
 	arc( CEREAL_NVP( fa_stack_base_all_ ) ); // _Bool
+	arc( CEREAL_NVP( voids_penalty_energy_containing_cones_cutoff_ ) ); // core::Size
+	arc( CEREAL_NVP( voids_penalty_energy_cone_distance_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( voids_penalty_energy_cone_dotproduct_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( voids_penalty_energy_voxel_grid_padding_ ) ); // core::Real
+	arc( CEREAL_NVP( voids_penalty_energy_voxel_size_ ) ); // core::Real
+	arc( CEREAL_NVP( voids_penalty_energy_disabled_except_during_packing_ ) ); //bool
 	arc( CEREAL_NVP( bond_angle_central_atoms_to_score_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( bond_angle_residue_type_param_set_ ) ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
 }
@@ -1388,6 +1502,12 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( symmetric_gly_tables_ ); // _Bool
 	arc( loop_close_use_6D_potential_ ); // _Bool
 	arc( fa_stack_base_all_ ); // _Bool
+	arc( voids_penalty_energy_containing_cones_cutoff_ ); // core::Size
+	arc( voids_penalty_energy_cone_distance_cutoff_ ); // core::Real
+	arc( voids_penalty_energy_cone_dotproduct_cutoff_ ); // core::Real
+	arc( voids_penalty_energy_voxel_grid_padding_ ); // core::Real
+	arc( voids_penalty_energy_voxel_size_ ); // core::Real
+	arc( voids_penalty_energy_disabled_except_during_packing_ ); //bool
 	arc( bond_angle_central_atoms_to_score_ ); // utility::vector1<std::string>
 	arc( bond_angle_residue_type_param_set_ ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
 }

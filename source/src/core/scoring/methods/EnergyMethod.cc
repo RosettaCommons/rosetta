@@ -100,6 +100,15 @@ EnergyMethod::setup_for_minimizing(
 	kinematics::MinimizerMapBase const &
 ) const {}
 
+/// @brief Called after minimization, allowing a derived class to do some
+/// teardown steps.
+/// @details Base class function does nothing.  Derived classes may override.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+EnergyMethod::finalize_after_minimizing(
+	pose::Pose &// pose
+) const {}
+
 /// @details default implementation noop
 void
 EnergyMethod::setup_for_derivatives( pose::Pose &, ScoreFunction const &  ) const {}

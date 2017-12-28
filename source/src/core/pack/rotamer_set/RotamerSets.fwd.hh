@@ -10,26 +10,16 @@
 /// @file   core/pack/rotamer_set/RotamerSets.fwd.hh
 /// @brief  Residue Sets class foward declarations
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
-
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @note The actual forward declaration is one library level down from where it should be.  This is because the ResidueArrayAnnealableEnergy base class, which needs
+/// to be in core.3, must define the set_up_residuearrayannealableenergy_for_packing() method, which has a RotamerSets const reference as a parameter, but the
+/// RotamersSets class isn't defined until core.4.  This is a minimal, necessary violation of the usual coding conventions that should not appreciably affect
+/// compile times.  Since this file includes core/scoring/annealing/RotamerSets.fwd.hh, usual inclusion of forward declarations ought not to be affected,
+/// either.
 
 #ifndef INCLUDED_core_pack_rotamer_set_RotamerSets_fwd_hh
 #define INCLUDED_core_pack_rotamer_set_RotamerSets_fwd_hh
 
-// Utility Headers
-#include <utility/pointer/owning_ptr.hh>
-
-namespace core {
-namespace pack {
-namespace rotamer_set {
-
-class RotamerSets;
-
-typedef utility::pointer::shared_ptr< RotamerSets > RotamerSetsOP;
-typedef utility::pointer::shared_ptr< RotamerSets const > RotamerSetsCOP;
-
-} // namespace rotamer_set
-} // namespace pack
-} // namespace core
-
+#include <core/scoring/annealing/RotamerSets.fwd.hh>
 
 #endif // INCLUDED_core_pack_RotamerSet_RotamerSets_fwd_HH

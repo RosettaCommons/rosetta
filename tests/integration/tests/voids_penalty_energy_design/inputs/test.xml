@@ -1,0 +1,48 @@
+<ROSETTASCRIPTS>
+	# Design the core of a helical bundle, requiring
+	# very few voids in the core. 
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+		<ScoreFunction name="r15_voids" weights="ref2015.wts" >
+			<Reweight scoretype="voids_penalty" weight="3.0" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer name="select_surf" select_core="false" select_boundary="false" select_surface="true" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="no_repack_surf" selector="select_surf" >
+			<PreventRepackingRLT />
+		</OperateOnResidueSubset>
+		<ReadResfile name="allowed_for_design" filename="inputs/design.resfile" />
+	</TASKOPERATIONS>
+	<FILTERS>
+		<CavityVolume name="cavity_volume" />
+	</FILTERS>
+	<MOVERS>
+		<BundleGridSampler name="bgs1" scorefxn="r15" nstruct_mode="true" reset="true" helix_length="25" use_degrees="true" max_samples="12" >
+			<Helix r0_min="7.1" r0_max="7.8" r0_samples="2" omega0_min="-1.0" omega0_max="1.0" omega0_samples="2" delta_omega0="0" delta_omega1_min="-35.0" delta_omega1_max="35.0" delta_omega1_samples="3" invert="false" />
+			<Helix r0_copies_helix="1" pitch_from_helix="1" delta_omega0="90.0" delta_omega1_copies_helix="1" invert="true" />
+			<Helix r0_copies_helix="1" pitch_from_helix="1" delta_omega0="180.0" delta_omega1_copies_helix="1" invert="false" />
+			<Helix r0_copies_helix="1" pitch_from_helix="1" delta_omega0="270.0" delta_omega1_copies_helix="1" invert="true" />
+		</BundleGridSampler>
+		<AtomTree name="foldtree1" fold_tree_file="inputs/foldtree1.txt" />
+		<FastDesign name="design" scorefxn="r15_voids" repeats="1" task_operations="no_repack_surf,allowed_for_design" >
+			<MoveMap name="design_mm" >
+				<Span begin="1" end="100" bb="false" chi="true" />
+				<Jump number="1" setting="false" />
+				<Jump number="2" setting="false" />
+				<Jump number="3" setting="false" />
+			</MoveMap>
+		</FastDesign>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs1" />
+		<Add mover="foldtree1" />
+		<Add mover="design" />
+		<Add filter="cavity_volume" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_voids" />
+</ROSETTASCRIPTS>

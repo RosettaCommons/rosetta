@@ -123,6 +123,8 @@ CartesianMinimizer::run(
 	// rescore
 	Real const end_score( scorefxn( pose ) );
 
+	scorefxn.finalize_after_minimizing(pose);
+
 	// we may not really need all these extra function evaluations
 	// good for diagnostics though
 	basic::TracerImpl core_optimize( "core.optimize", basic::t_debug );

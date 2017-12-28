@@ -848,6 +848,18 @@ RotamerSets::rotamer_for_moltenres( uint moltenres_id, uint rotamerid ) const
 uint
 RotamerSets::nrotamer_offset_for_moltenres( uint mresid ) const { return nrotamer_offsets_[ mresid ]; }
 
+/// @brief Does this RotamerSets object store a rotamer set for a residue at position resid
+/// in the pose?
+/// @details Rotamer sets for non-packable residues aren't generated, but could conceivably
+/// be queried by protocols or energy functions.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+RotamerSets::has_rotamer_set_for_residue(
+	uint const resid
+) const {
+	return static_cast<bool>( resid_2_moltenres_[resid] ); //resid_2_moltenres_ maps to 0 for non-packable positions.
+}
+
 RotamerSetCOP
 RotamerSets::rotamer_set_for_residue( uint resid ) const { return set_of_rotamer_sets_[ resid_2_moltenres( resid ) ]; }
 

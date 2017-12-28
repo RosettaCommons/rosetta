@@ -158,7 +158,7 @@ void NetChargeEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunct
 
 /// @brief Calculate the total energy given a vector of const owning pointers to residues.
 /// @details Called directly by the ResidueArrayAnnealingEvaluator during packer runs.  Requires
-/// that setup_residuearrayannealablenergy_for_packing() be called first.
+/// that set_up_residuearrayannealablenergy_for_packing() be called first.
 core::Real
 NetChargeEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &resvect,
@@ -232,8 +232,9 @@ void NetChargeEnergy::report() const {
 /// @brief Cache data from the pose in this EnergyMethod in anticipation of scoring.
 ///
 void
-NetChargeEnergy::setup_residuearrayannealableenergy_for_packing (
+NetChargeEnergy::set_up_residuearrayannealableenergy_for_packing (
 	core::pose::Pose const &pose,
+	core::pack::rotamer_set::RotamerSets const &/*rotamersets*/,
 	core::scoring::ScoreFunction const &/*sfxn*/
 ) {
 	if ( TR.Debug.visible() ) TR.Debug << "Setting up the NetChargeEnergy for packing." << std::endl;

@@ -485,6 +485,12 @@ public:
 		kinematics::MinimizerMapBase const & min_map
 	) const;
 
+	/// @brief Called after minimization.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual
+	void
+	finalize_after_minimizing( pose::Pose & pose ) const;
+
 	/// @brief Initialize a single node of a MinimizationGraph with the one-body and two-body
 	/// energy methods that are held within this ScoreFunction object.
 	virtual

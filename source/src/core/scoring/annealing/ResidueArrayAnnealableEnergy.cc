@@ -36,8 +36,9 @@ ResidueArrayAnnealableEnergy::~ResidueArrayAnnealableEnergy() = default;
 /// This function is defined as doing nothing by default, but can be redefined on a per-EnergyMethod basis to cache whatever
 /// data are necessary.
 void
-ResidueArrayAnnealableEnergy::setup_residuearrayannealableenergy_for_packing (
+ResidueArrayAnnealableEnergy::set_up_residuearrayannealableenergy_for_packing (
 	core::pose::Pose const &/*pose*/,
+	core::pack::rotamer_set::RotamerSets const & /*rotamersets*/,
 	core::scoring::ScoreFunction const &/*sfxn*/
 ) {} //Does nothing unless implemented by a derived class.
 

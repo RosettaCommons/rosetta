@@ -78,7 +78,7 @@ public: // constructor/destructor
 	virtual ~AACompositionEnergy();
 
 	/// @brief clone
-	virtual EnergyMethodOP clone() const;
+	EnergyMethodOP clone() const override;
 
 
 private:
@@ -97,30 +97,26 @@ public:
 	// methods for ContextDependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual
 	void
 	residue_energy(
 		Residue const & rsd,
 		Pose const & pose,
 		EnergyMap & emap
-	) const;
+	) const override;
 
 
 	/// @brief scoring
-	// virtual void setup_for_scoring( Pose &, ScoreFunction const & ) const;
+	// void setup_for_scoring( Pose &, ScoreFunction const & ) const override;
 
 	/// @brief scoring
-	// virtual void finalize_total_energy( Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
+	// void finalize_total_energy( Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
 
 
 	/// @brief DunbrackEnergy is context independent; indicates that no
 	/// context graphs are required
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	virtual
-	Size version() const { return 1; }
-
+	Size version() const override { return 1; }
 
 private:
 

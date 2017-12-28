@@ -188,6 +188,10 @@ sources = {
 	"core/pack/task/residue_selector" : [
 		"ClashBasedRepackShellSelector",
 	],
+	"core/pack/voids_penalty_energy": [
+		"VoidsPenaltyEnergy",
+		"VoidsPenaltyVoxelGrid",
+	],
 	"core/util": [
 		"ChainbreakUtil",
 		"cryst_util",

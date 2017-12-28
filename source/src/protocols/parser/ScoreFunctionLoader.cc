@@ -135,6 +135,25 @@ void ScoreFunctionLoader::load_data(
 					}
 				}
 
+				if ( mod_tag->hasOption("voids_penalty_energy_containing_cones_cutoff") ) {
+					emoptions.voids_penalty_energy_containing_cones_cutoff( mod_tag->getOption<core::Size>("voids_penalty_energy_containing_cones_cutoff") );
+				}
+				if ( mod_tag->hasOption("voids_penalty_energy_voxel_size") ) {
+					emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_voxel_size") );
+				}
+				if ( mod_tag->hasOption("voids_penalty_energy_voxel_grid_padding") ) {
+					emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_voxel_grid_padding") );
+				}
+				if ( mod_tag->hasOption("voids_penalty_energy_cone_dotproduct_cutoff") ) {
+					emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_dotproduct_cutoff") );
+				}
+				if ( mod_tag->hasOption("voids_penalty_energy_cone_distance_cutoff") ) {
+					emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_distance_cutoff") );
+				}
+				if ( mod_tag->hasOption("voids_penalty_energy_disabled_except_during_packing") ) {
+					emoptions.voids_penalty_energy_disabled_except_during_packing( mod_tag->getOption<bool>("voids_penalty_energy_disabled_except_during_packing") );
+				}
+
 				if ( mod_tag->hasOption( "fa_elec_min_dis" ) ) {
 					emoptions.elec_min_dis( mod_tag->getOption<core::Real>( "fa_elec_min_dis" ) );
 				}
@@ -288,7 +307,14 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "pb_bound_tag", xs_string , "XRW TO DO" )
 		+ XMLSchemaAttribute( "pb_unbound_tag", xs_string , "XRW TO DO" )
 		+ XMLSchemaAttribute( "scale_sc_dens", xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "scale_sc_dens_byres", xs_string , "XRW TO DO" );
+		+ XMLSchemaAttribute( "scale_sc_dens_byres", xs_string , "XRW TO DO" )
+
+		+ XMLSchemaAttribute( "voids_penalty_energy_containing_cones_cutoff", xsct_non_negative_integer, "The minimum number of sidechain cones in which a voxel must lie in order for that voxel to be considered to be buried.  Defaults to 6 cones." )
+		+ XMLSchemaAttribute( "voids_penalty_energy_voxel_size", xsct_real , "The voxel size (in Angstroms) used in the voids_penalty score term's calculation.  Default 0.5 Angstroms." )
+		+ XMLSchemaAttribute( "voids_penalty_energy_voxel_grid_padding", xsct_real , "The voxel grid padding (in Angstroms) used in the voids_penalty score term's calculation.  The bounding box for the pose is enlarged on every side by this amount.  Default 1.0 Angstroms." )
+		+ XMLSchemaAttribute( "voids_penalty_energy_cone_dotproduct_cutoff", xsct_real , "The dot product cutoff used in the voids_penalty score term's calculation.  This effectively sets the width of the cone projected along each side-chain when determining the number of neighbors to a test point in space.  The value can range from -1.0 to 1.0, though negative values are not recommended (since they yield cone angles greater than 180 degrees).  Default 0.1." )
+		+ XMLSchemaAttribute( "voids_penalty_energy_cone_distance_cutoff", xsct_real , "The cutoff distance used in the voids_penalty score term's calculation when determining whether a point lies near to a residue.  Default 8.0 Angstroms." )
+		+ XMLSchemaAttribute( "voids_penalty_energy_disabled_except_during_packing", xsct_rosetta_bool, "If true, then the voids_penalty score term is disabled outside of the context of the packer.  If false, then the voids_penalty score term is evaluated for packing and scoring (but not for minimizing).  True by default." );
 
 	// ScoreFunction complex type
 	AttributeList scorefunction_ct_attributes;

@@ -24,6 +24,7 @@
 #include <core/scoring/sasa.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <basic/Tracer.hh>
+#include <core/select/util/burial_utilities.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -330,15 +331,8 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 						other_bb_coordinates = pose.residue(j).atom( nbr_atom_index ).xyz();
 					}
 				}
-				numeric::xyzVector< Real > new_sc_vector(other_bb_coordinates - my_sc_coordinates);
-				//TR << new_sc_vector.length() << std::endl;
 
-				Real dist_term(1.0 / (1.0 + exp( dist_exponent()*(new_sc_vector.length() - dist_midpoint())  ))); // dist_term = 1/(1+exp( n*(d - m))); sigmoidal falloff with midpoint at m, with sharpness controlled by n
-				Real angle_term( ( my_sc_vector.dot(new_sc_vector.normalize()) + angle_shift_factor() ) / (1 + angle_shift_factor() ) );
-				if ( angle_term < 0 ) {
-					angle_term = 0.0;
-				}
-				my_neighbors += (dist_term * pow(angle_term, angle_exponent()) );
+				my_neighbors += calculate_point_in_cone( other_bb_coordinates, my_sc_vector, my_sc_coordinates, angle_exponent(), angle_shift_factor(), dist_exponent(), dist_midpoint() );
 			}
 		}
 		rsd_sc_neighbors.push_back(my_neighbors / rsd_neighbor_denominator());

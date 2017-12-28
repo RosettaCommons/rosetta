@@ -152,6 +152,8 @@ NormalModeMinimizer::apply( pose::Pose & pose ) {
 
 	Real const end_score( (*scorefxn_)( pose ) );
 
+	scorefxn_->finalize_after_minimizing( pose );
+
 	nma_tr << "NormalModeMinimizer::run: nangles= " << min_map.nangles() <<
 		" start_score: " << F(12,3,start_score) <<
 		" start_func: "  << F(12,3,start_func ) <<
