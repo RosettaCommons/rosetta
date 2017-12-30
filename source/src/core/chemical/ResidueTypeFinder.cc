@@ -619,10 +619,9 @@ ResidueTypeFinder::filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd
 	if ( residue_type_base_name_.size() == 0 ) return rsd_types;
 
 	ResidueTypeCOPs filtered_rsd_types;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
+	for ( ResidueTypeCOP const & rsd_type : rsd_types ) {
 		std::string base_name( residue_type_base_name( *rsd_type ) );
-		if ( base_name == residue_type_base_name_ ) {
+		if ( base_name == residue_type_base_name_ || rsd_type->base_name() == residue_type_base_name_ ) {
 			filtered_rsd_types.push_back( rsd_type );
 		}
 	}
