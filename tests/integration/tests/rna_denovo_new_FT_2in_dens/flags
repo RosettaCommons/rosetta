@@ -7,5 +7,6 @@
 -s A_helix_1.pdb B_helix_1.pdb
 -ignore_zero_occupancy false 
 -new_fold_tree_initializer true
+-denovo:use_legacy_job_distributor true
 -edensity:mapfile mini_1a9n_map.mrc
 -edensity:mapreso 5.0

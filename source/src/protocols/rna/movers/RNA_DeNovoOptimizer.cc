@@ -15,7 +15,7 @@
 
 #include <protocols/rna/movers/RNA_DeNovoOptimizer.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
@@ -28,7 +28,7 @@ static basic::Tracer TR( "protocols.rna.movers.RNA_DeNovoOptimizer" );
 
 using namespace core;
 using namespace protocols::rna::denovo;
-using namespace protocols::rna::denovo::options;
+using namespace core::import_pose::options;
 
 namespace protocols {
 namespace rna {

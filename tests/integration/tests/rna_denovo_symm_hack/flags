@@ -7,3 +7,4 @@
 -cycles 500
 -chemical::enlarge_H_lj
 -rna:denovo:symm_hack_arity 3
+-denovo:use_legacy_job_distributor

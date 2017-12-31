@@ -20,4 +20,11 @@ using namespace protocols::jd3::pose_inputters;
 static PoseInputterRegistrator< PDBPoseInputterCreator > reg_PDBPoseInputterCreator;
 static PoseInputterRegistrator< SilentFilePoseInputterCreator > reg_SilentFilePoseInputterCreator;
 
+using namespace protocols::jd3::full_model_inputters;
+static FullModelInputterRegistrator< PDBFullModelInputterCreator > reg_PDBFullModelInputterCreator;
+static FullModelInputterRegistrator< SilentFileFullModelInputterCreator > reg_SilentFileFullModelInputterCreator;
+
+using namespace protocols::jd3::chunk_library_inputters;
+static ChunkLibraryInputterRegistrator< PDBChunkLibraryInputterCreator > reg_PDBChunkLibraryInputterCreator;
+
 } //namespace protocols

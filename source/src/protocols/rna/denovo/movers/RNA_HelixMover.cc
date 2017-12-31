@@ -14,10 +14,11 @@
 
 
 #include <protocols/rna/denovo/movers/RNA_HelixMover.hh>
-#include <protocols/rna/denovo/base_pairs/RNA_BasePairHandler.hh>
+#include <core/import_pose/RNA_BasePairHandler.hh>
 
 #include <protocols/rna/denovo/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/rna/util.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
@@ -71,7 +72,7 @@ namespace movers {
 
 //////////////////////////////////////////////////////////////////////////////////////////
 RNA_HelixMover::RNA_HelixMover(  utility::vector1< utility::vector1< Size > > const & helix_regions,
-	protocols::rna::denovo::base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
+	core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler,
 	bool const & move_first_rigid_body ):
 	Mover(),
 	helix_regions_( helix_regions ),
@@ -232,7 +233,7 @@ RNA_HelixMover::set_pose( core::pose::Pose const & pose ) {
 	pose_fold_tree_ = pose.fold_tree();
 
 	// figure out the jump for each helix region
-	utility::vector1< core::Size > rigid_body_jumps = get_rigid_body_jumps( pose );
+	utility::vector1< core::Size > rigid_body_jumps = core::pose::rna::get_rigid_body_jumps( pose );
 
 	if ( !move_first_rigid_body_ ) {
 		if ( rigid_body_jumps.size() >= 1 ) {

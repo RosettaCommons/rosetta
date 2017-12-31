@@ -123,7 +123,8 @@ public:
 	/// @brief Return the job tag -- a string that describes what task is being performed and
 	/// and (usually) what input structure that job is being performed upon.  This is the tag
 	/// can be defined by the user in the job-definition XML file.
-	std::string job_tag() const;
+	/// @details Can be overridden by child classes that require distinct logic.
+	virtual std::string job_tag() const;
 
 	/// @brief Set the job tag.  If not set, then the input tag will be returned.
 	void job_tag( std::string const & setting );

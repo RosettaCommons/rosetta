@@ -20,7 +20,7 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/movemap/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/stepwise/sampler/rna/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>

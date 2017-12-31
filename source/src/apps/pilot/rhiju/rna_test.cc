@@ -111,7 +111,7 @@
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
+#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/util.hh>
@@ -4423,7 +4423,7 @@ print_secstruct_test(){
 	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	utility::vector1< std::pair<Size, Size> > base_pairing_list;
-	protocols::rna::get_base_pairing_list( pose, base_pairing_list );
+	core::pose::rna::get_base_pairing_list( pose, base_pairing_list );
 
 	std::cout << "WATSON-CRICK BASE PAIRS: " << std::endl;
 	for ( Size n = 1; n <= base_pairing_list.size(); n++ ) {

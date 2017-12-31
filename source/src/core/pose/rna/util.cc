@@ -42,6 +42,8 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/pose/rna/BasePair.hh>
+#include <core/pose/rna/BasePairStep.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/pose/rna/VDW_Grid.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -50,6 +52,17 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularSplineFunc.hh>
 #include <core/scoring/methods/chainbreak_util.hh>
+#include <core/chemical/AA.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/FlatHarmonicFunc.hh>
+#include <core/scoring/func/FadeFunc.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/pose/rna/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
+#include <basic/options/option.hh> //
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh> // Will want to kill this once in FMI
 #include <core/scoring/rna/RNA_Motif.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 
@@ -65,6 +78,7 @@
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/FArray1D.hh>
 
 #include <map>
 
@@ -75,6 +89,9 @@ static basic::Tracer TR( "core.pose.rna.RNA_Util" );
 // C++
 
 using namespace core::chemical::rna;
+using namespace core::chemical;
+using namespace ObjexxFCL;
+using namespace ObjexxFCL::format;
 using namespace core::scoring::rna;
 using utility::strip;
 static const RNA_FittedTorsionInfo torsion_info;
@@ -1562,6 +1579,760 @@ get_stub_stub( conformation::Residue const & rsd1,
 	}
 }
 
+/////////////////////////////////////////////////////////
+/// @details
+///
+///   Adds 2-3 constraints between donor hydrogen and acceptor
+///    across C-G, A-U, or G-U pairs, *and* asks that C1'-C1'
+///    distance be near 10.5 Angstroms (prevents stacking!)
+///
+///   "suppress_factor" reduces strength, in use by FARNA/RNA_DeNovo
+///
+///   use_harmonic is standard 'spring' like function
+///    that can pull in bases from very far away to optimal
+///    distance of 1.9 Angstroms:
+///
+///     H-bond   ( x - 1.9 A )/( 0.25 / scale_factor )^2
+///
+///     C1'-C1'  ( x - 10.5 A )/( 1/0 / scale_factor )^2
+///
+///   If use_flat_harmonic is set to true, functions are zero out to
+///    tolerance of 1.0 A and 2.0 A, and then go up quadratically.
+///    [used in RECCES/free-energy estimation where we want constraint = 0
+///     when base pairs are formed rather than some small number].
+///
+void
+setup_base_pair_constraints(
+	pose::Pose & pose,
+	utility::vector1< std::pair< Size, Size > > const &  pairings,
+	Real const scale_factor /* = 1.0 */,
+	bool const use_flat_harmonic /* = false */ )
+{
+	using namespace ObjexxFCL;
+	using namespace core::scoring::constraints;
+	using namespace core::scoring::func;
+
+	Distance const WC_distance( 1.9 );
+	Distance const distance_stddev( 0.25 / scale_factor ); //Hmm. Maybe try linear instead?
+	FuncOP distance_func( new HarmonicFunc( WC_distance, distance_stddev ) );
+
+	// Need to force base pairing -- not base stacking!
+	Distance const C1prime_distance( 10.5 );
+	Distance const C1prime_distance_stddev( 1.0 / scale_factor ); //Hmm. Maybe try linear instead?
+	FuncOP C1prime_distance_func( new HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
+
+	if ( use_flat_harmonic ) {
+		Distance const distance_tolerance( 1.0 );
+		distance_func = FuncOP( new FlatHarmonicFunc( WC_distance, distance_stddev, distance_tolerance ) );
+		Distance const C1prime_distance_tolerance( 2.0 );
+		C1prime_distance_func = FuncOP( new FlatHarmonicFunc( C1prime_distance, C1prime_distance_stddev, C1prime_distance_tolerance  ) );
+	}
+
+	for ( auto const & pairing : pairings ) {
+
+		Size const i = pairing.first;
+		Size const j = pairing.second;
+
+		if ( !pose.residue_type(i).is_RNA() ) continue;
+		if ( !pose.residue_type(j).is_RNA() ) continue;
+
+		if ( !pose.residue_type(i).is_coarse() ) { //fullatom
+
+			Size const atom1 = pose.residue_type(i).RNA_info().c1prime_atom_index();
+			Size const atom2 = pose.residue_type(j).RNA_info().c1prime_atom_index();
+			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+				id::AtomID(atom1,i),
+				id::AtomID(atom2,j),
+				C1prime_distance_func, core::scoring::base_pair_constraint ) ) ) );
+
+			utility::vector1< std::string > atom_ids1, atom_ids2;
+			get_watson_crick_base_pair_atoms( pose.residue_type(i), pose.residue_type(j), atom_ids1, atom_ids2 );
+
+			for ( Size p = 1; p <= atom_ids1.size(); p++ ) {
+
+				Size const atom1 = pose.residue_type(i).atom_index( atom_ids1[p] ) ;
+				Size const atom2 = pose.residue_type(j).atom_index( atom_ids2[p] ) ;
+
+				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(i).name1() << I(3,i) << " <-->  " <<
+					pose.residue_type(j).name1() << I(3,j) << "   " <<
+					atom_ids1[p] << " <--> " <<
+					atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+
+				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+					id::AtomID(atom1,i),
+					id::AtomID(atom2,j),
+					distance_func, core::scoring::base_pair_constraint ) ) ) );
+			}
+
+		} else { //coarse-grained RNA
+
+			static Real const coarse_WC_SUG_distance_min( 12.3 );
+			static Real const coarse_WC_SUG_distance_max( 14.3 );
+			static Real const coarse_WC_SUG_distance_stddev( 2.0 );
+			static Real const coarse_WC_SUG_bonus( -2.5 );
+			static core::scoring::func::FuncOP const coarse_SUG_distance_func( new core::scoring::func::FadeFunc( coarse_WC_SUG_distance_min - coarse_WC_SUG_distance_stddev,
+				coarse_WC_SUG_distance_max + coarse_WC_SUG_distance_stddev,
+				coarse_WC_SUG_distance_stddev,
+				coarse_WC_SUG_bonus ) );
+
+			{
+				Size const atom1 = pose.residue_type(i).atom_index( " S  " );
+				Size const atom2 = pose.residue_type(j).atom_index( " S  " );
+				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(i).name1() << I(3,i) << " <-->  " <<
+					pose.residue_type(j).name1() << I(3,j) << "   " <<
+					" S  " << " <--> " <<
+					" S  " << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+					id::AtomID(atom1,i),
+					id::AtomID(atom2,j),
+					coarse_SUG_distance_func, core::scoring::base_pair_constraint ) ) ) );
+			}
+
+			static Real const coarse_WC_CEN_distance( 5.5 );
+			static Real const coarse_WC_CEN_distance_stddev( 3.0 );
+			static Real const coarse_WC_CEN_bonus( -5.0 );
+			static core::scoring::func::FuncOP const coarse_CEN_distance_func( new core::scoring::func::FadeFunc( coarse_WC_CEN_distance - coarse_WC_CEN_distance_stddev,
+				coarse_WC_CEN_distance + coarse_WC_CEN_distance_stddev,
+				coarse_WC_CEN_distance_stddev,
+				coarse_WC_CEN_bonus ) );
+
+			{
+				Size const atom1 = pose.residue_type(i).atom_index( " CEN" );
+				Size const atom2 = pose.residue_type(j).atom_index( " CEN" );
+				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(i).name1() << I(3,i) << " <-->  " <<
+					pose.residue_type(j).name1() << I(3,j) << "   " <<
+					" CEN" << " <--> " <<
+					" CEN" << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+					id::AtomID(atom1,i),
+					id::AtomID(atom2,j),
+					coarse_CEN_distance_func, core::scoring::base_pair_constraint ) ) ) );
+			}
+
+			static Real const coarse_WC_X_distance( 3.5 );
+			static Real const coarse_WC_X_distance_stddev( 2.0 );
+			static Real const coarse_WC_X_bonus( -5.0 );
+			static core::scoring::func::FuncOP const coarse_X_distance_func( new core::scoring::func::FadeFunc( coarse_WC_X_distance - coarse_WC_X_distance_stddev,
+				coarse_WC_X_distance + coarse_WC_X_distance_stddev,
+				coarse_WC_X_distance_stddev, coarse_WC_X_bonus ) );
+
+			{
+				Size const atom1 = pose.residue_type(i).atom_index( " X  " );
+				Size const atom2 = pose.residue_type(j).atom_index( " X  " );
+				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(i).name1() << I(3,i) << " <-->  " <<
+					pose.residue_type(j).name1() << I(3,j) << "   " <<
+					" X  " << " <--> " <<
+					" X  " << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+				pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
+					id::AtomID(atom1,i),
+					id::AtomID(atom2,j),
+					coarse_X_distance_func, core::scoring::base_pair_constraint ) ) ) );
+			}
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// @brief score pose & get base pairing list.
+// @details copies code from get_base_pairing_info [?]. Should be in core/pose/rna/util? Shouldn't have to score?
+void
+get_base_pairing_list(
+	pose::Pose & pose,
+	utility::vector1< std::pair<Size, Size> > & base_pairing_list )
+{
+
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace core::chemical::rna;
+	using namespace core::conformation;
+	using namespace core::scoring::rna;
+	using namespace core::pose::rna;
+
+	// Need some stuff to figure out which residues are base paired. First score.
+	ScoreFunctionOP scorefxn( new ScoreFunction );
+	scorefxn->set_weight( rna_base_pair, 1.0 );
+	(*scorefxn)( pose );
+
+	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
+	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+
+	// bool forms_canonical_base_pair( false );
+
+	BaseEdge k( ANY_BASE_EDGE ), m( ANY_BASE_EDGE );
+
+	std::list < std::pair< Size,Size > > base_pair_list0;
+
+	for ( auto const & it : scored_base_pair_list ) {
+
+		BasePair const & base_pair = it.second;
+
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
+
+		if ( i > j ) continue;
+
+		k = base_pair.edge1();
+		m = base_pair.edge2();
+
+		Residue const & rsd_i( pose.residue( i ) );
+		Residue const & rsd_j( pose.residue( j ) );
+
+		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
+				&& base_pair.orientation() == ANTIPARALLEL )  &&
+				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) {
+			std::string atom1, atom2;
+
+			if ( !rsd_i.is_coarse() ) { // doesn't work for coarse-grained RNA
+				get_watson_crick_base_pair_atoms( rsd_i.type(), rsd_j.type(), atom1, atom2 );
+				if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() > 3.5 ) continue;
+			}
+
+			base_pair_list0.emplace_back( i, j );
+		}
+	}
+
+
+	base_pair_list0.sort();
+	base_pairing_list.clear();
+	for ( auto const & elem : base_pair_list0 ) {
+		base_pairing_list.push_back( elem );
+	}
+}
+
+// @brief   check that pose has OP1/OP2 with chirality matching Rosetta standard
+// @details an ancient function; see also ensure_phosphate_nomenclature_matches_mini()
+void
+assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose)
+{
+	runtime_assert( pose.size() > 1 );
+
+	for ( Size res_num=1; res_num<=pose.size(); res_num++ ) {
+
+		Real sign1 = core::pose::rna::get_op2_op1_sign( pose,  res_num);
+
+		pose::Pose mini_pose; //Could move this part outside the for loop
+		make_pose_from_sequence( mini_pose, "aa", pose.residue_type_set_for_pose( pose.residue_type(res_num).mode() ) );
+		Real const sign2 = core::pose::rna::get_op2_op1_sign( mini_pose);
+
+		if ( sign1 * sign2 < 0 ) {
+			utility_exit_with_message("In the assert_phosphate_nomenclature_matches_mini function: phosphate_nomenclature_matches does not match mini!");
+			if ( !pose.residue_type(res_num).is_RNA() ) { //Consistency check!
+				utility_exit_with_message("residue # " + ObjexxFCL::string_of(res_num)+ " should be a RNA nucleotide!");
+			}
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+set_output_res_and_chain( pose::Pose & extended_pose,
+	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_resnum_and_chain )
+{
+	using namespace pose;
+	utility::vector1< int > const & output_res_num = std::get< 0 >( output_resnum_and_chain );
+	utility::vector1< char > const & output_chain = std::get< 1 >( output_resnum_and_chain );
+	utility::vector1< std::string > const & output_segid = std::get< 2 >( output_resnum_and_chain );
+	if ( output_res_num.size() == 0 ) return;
+	runtime_assert( output_res_num.size() == extended_pose.size() );
+
+	PDBInfoOP pdb_info( new PDBInfo( extended_pose ) );
+	pdb_info->set_numbering( output_res_num );
+
+	bool chain_interesting = std::any_of( output_chain.begin(), output_chain.end(),
+		[]( char const c ) { return c != ' '; } );
+	bool segid_interesting = std::any_of( output_segid.begin(), output_segid.end(),
+		[]( std::string const & s ) { return s != "    "; } );
+
+	if ( chain_interesting ) pdb_info->set_chains( output_chain );
+	if ( segid_interesting ) pdb_info->set_segment_ids( output_segid );
+
+	extended_pose.pdb_info( pdb_info );
+}
+
+//////////////////////////////////////////////////////////////////////
+// this is reasonably sophisticated...
+//
+// * looks at base contacts -- at least 5 atoms in base contact some other residue.
+// * also checks if 2'-OH is H-bonded, and in that case, keeps backbone instantiated (just virtualize bases).
+// * checks if phosphate makes hydrogen bonds, and then keeps those instantiated.
+//
+// Good test case is second U in UUCG in 2KOC.pdb.
+//
+//  -- rhiju, 2014
+//////////////////////////////////////////////////////////////////////
+void
+virtualize_free_rna_moieties( pose::Pose & pose ){
+
+	utility::vector1< bool > base_makes_contact      = detect_base_contacts( pose );
+	utility::vector1< bool > sugar_makes_contact     = detect_sugar_contacts( pose );
+	utility::vector1< bool > phosphate_makes_contact = detect_phosphate_contacts( pose );
+
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		if ( !pose.residue_type( i ).is_RNA() ) continue;
+		if ( base_makes_contact[ i ] ) continue;
+
+
+		// Todo: take into the FMP so we can use resnum-chain
+		if ( basic::options::option[ basic::options::OptionKeys::stepwise::definitely_virtualize ].value().contains( i ) ) {
+			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, i );
+			continue;
+		}
+
+		// base is virtual.
+		if ( sugar_makes_contact[ i ] ) {
+			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_BASE, i );
+			continue;
+		}
+
+		// base and sugar are virtual.
+		add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, i );
+
+		// phosphate 5' to base
+		if ( i > 1 && phosphate_makes_contact[ i ] &&
+				pose.residue_type( i-1 ).is_RNA() &&
+				!pose.fold_tree().is_cutpoint(i-1) ) {
+			setup_three_prime_phosphate_based_on_next_residue( pose, i-1 );
+		}
+
+		// phosphate 3' to base
+		if ( i < pose.size() && !phosphate_makes_contact[ i+1 ] &&
+				pose.residue_type( i+1 ).is_RNA() &&
+				!pose.fold_tree().is_cutpoint( i ) ) {
+			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i+1 );
+		}
+
+	}
+
+	// check if all virtual
+	bool all_virtual( true );
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		if ( !pose.residue( i ).is_virtual_residue() && !pose.residue( i ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) all_virtual = false;
+	}
+	if ( all_virtual ) utility_exit_with_message( "Turned native into an all virtual pose. May want to fix native or rerun with -virtualize_free_moieties_in_native false." );
+	TR.Debug << pose.annotated_sequence() << std::endl;
+
+}
+
+utility::vector1< bool >
+detect_base_contacts( core::pose::Pose const & pose ) {
+
+	static Distance const CONTACT_DIST_CUTOFF( 4.0 );
+	static Distance const NBR_DIST_CUTOFF( 12.0 );
+	static Size const MIN_ATOM_CONTACTS( 5 );
+
+	utility::vector1< bool > base_makes_contact( pose.size(), false );
+
+	// could be dramatically accelerated by using nbr list, etc.
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		if ( !pose.residue_type( i ).is_RNA() ) continue;
+
+		bool found_contact( false );
+		Size num_contacts( 0 );
+		for ( Size ii = pose.residue_type( i ).first_sidechain_atom()+1 /*just nucleobase, no O2'*/;
+				ii < pose.residue_type( i ).nheavyatoms(); ii++ ) {
+			if ( pose.residue_type( i ).is_virtual( ii ) ) continue;
+
+			bool found_atom_contact( false );
+			for ( Size j = 1; j <= pose.size(); j++ ) {
+				if ( i == j ) continue;
+				if ( ( pose.residue( i ).nbr_atom_xyz() - pose.residue( j ).nbr_atom_xyz() ).length() > NBR_DIST_CUTOFF ) continue;
+
+				for ( Size jj = 1; jj < pose.residue_type( j ).nheavyatoms(); jj++ ) {
+					if ( pose.residue_type( j ).is_virtual( jj ) ) continue;
+					if ( ( pose.residue( i ).xyz( ii ) - pose.residue( j ).xyz( jj ) ).length() < CONTACT_DIST_CUTOFF ) {
+						//      TR << "FOUND CONTACT " << pose.pdb_info()->chain(i) << ":" << pose.pdb_info()->number( i ) << " " << pose.residue(i).atom_name(ii)
+						//  << " with " << pose.pdb_info()->chain(j) << ":" << pose.pdb_info()->number( j ) << " " << pose.residue(j).atom_name(jj) << std::endl;
+						found_atom_contact = true;
+						break;
+					}
+				} // jj
+				if ( found_atom_contact ) break;
+			} // j
+			if ( found_atom_contact ) num_contacts++;
+			if ( num_contacts >= MIN_ATOM_CONTACTS ) {
+				found_contact = true;
+				break;
+			}
+		}
+		if ( found_contact ) {
+			base_makes_contact[ i ] = true;
+		} else {
+			TR.Debug << "BULGE RESIDUE at " << pose.pdb_info()->chain(i) << ":" << pose.residue_type(i).name1() << pose.pdb_info()->number( i ) << std::endl;
+		}
+	}
+	return base_makes_contact;
+}
+
+//////////////////////////////////////////////////////////////////////
+// Most of the following functions are helpers for PhosphateMover but are also
+// useful in, e.g. deciding whether or not to virtualize phosphates in
+// virtualize_free_rna_moieties()
+bool
+check_phosphate_contacts_donor( utility::vector1< Vector > const & op_xyz_list,
+	utility::vector1< Vector > const & donor_atom_xyz_list,
+	utility::vector1< Vector > const & donor_base_atom_xyz_list )
+{
+	static Real const max_hbond_dist_cutoff2( 2.2 * 2.2 );
+	static Real const max_hbond_base_dist_cutoff2( 3.2 * 3.2 );
+	static Real const cos_angle_cutoff = -0.5;
+
+	for ( Size i = 1; i <= donor_atom_xyz_list.size(); i++ ) {
+		for ( auto const & op_xyz : op_xyz_list ) {
+			Real const dist2 =  ( donor_atom_xyz_list[ i ] - op_xyz ).length_squared();
+			if ( dist2 > max_hbond_dist_cutoff2 ) continue;
+
+			Real const dist_to_base2 =  ( donor_base_atom_xyz_list[ i ] - op_xyz ).length_squared();
+			if ( dist_to_base2 > max_hbond_base_dist_cutoff2  ) continue;
+
+			Real const costheta =  cos_of( donor_base_atom_xyz_list[i], donor_atom_xyz_list[i], op_xyz  );
+			if ( costheta > cos_angle_cutoff ) continue;
+			//    TR << "dist! " << std::sqrt( dist2 ) << " to " << i << " out of " << donor_atom_xyz_list.size() << " and cos angle is " << costheta << std::endl;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////
+bool
+check_phosphate_contacts_donor( pose::Pose const & pose, Size const n ){
+	utility::vector1< Vector > op_xyz_list;
+	op_xyz_list.push_back( pose.residue( n ).xyz( " OP1" ) );
+	op_xyz_list.push_back( pose.residue( n ).xyz( " OP2" ) );
+
+	utility::vector1< Vector > donor_atom_xyz_list;
+	utility::vector1< Vector > donor_base_atom_xyz_list;
+	utility::vector1< Size > neighbor_copy_dofs; // dummy
+	get_phosphate_atom_and_neighbor_list( pose, n, FIVE_PRIME, donor_atom_xyz_list, donor_base_atom_xyz_list, neighbor_copy_dofs );
+
+	return check_phosphate_contacts_donor( op_xyz_list,
+		donor_atom_xyz_list,
+		donor_base_atom_xyz_list );
+}
+
+//////////////////////////////////////////////////////////////////////
+utility::vector1< bool >
+detect_phosphate_contacts( pose::Pose const & pose ){
+	utility::vector1< bool > phosphate_makes_contact( pose.size(), false );
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		if ( !pose.residue_type( i ).is_RNA() ) continue;
+		phosphate_makes_contact[ i ] = check_phosphate_contacts_donor( pose, i );
+	}
+	return phosphate_makes_contact;
+}
+
+//////////////////////////////////////////////////////////////////////
+void
+get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
+	Size const n,
+	Terminus const t, // enum of FIVE_PRIME or THREE_PRIME
+	utility::vector1< Vector > & donor_atom_xyz_list,
+	utility::vector1< Vector > & donor_base_atom_xyz_list,
+	utility::vector1< Size > & neighbor_copy_dofs ) {
+
+	static Real const  phosphate_takeoff_donor_distance_cutoff2( 8.0 * 8.0 );
+	static Real const  phosphate_nbr_distance_cutoff2( 12.0 * 12.0 );
+
+	donor_atom_xyz_list.clear();
+	donor_base_atom_xyz_list.clear();
+	neighbor_copy_dofs.clear();
+
+	Vector const phosphate_takeoff_xyz = (t == FIVE_PRIME) ?
+		pose.residue( n ).xyz( " C5'" ) :
+		pose.residue( n ).xyz( " O3'" );
+
+	for ( Size m = 1; m <= pose.size(); m++ ) {
+
+		if ( ( pose.residue( m ).nbr_atom_xyz()  - phosphate_takeoff_xyz ).length_squared() > phosphate_nbr_distance_cutoff2 ) continue;
+		neighbor_copy_dofs.push_back( m );
+
+		core::chemical::AtomIndices Hpos_polar = pose.residue_type( m ).Hpos_polar();
+		for ( Size const q : Hpos_polar ) {
+			Vector const & donor_atom_xyz = pose.residue( m ).xyz( q );
+			if ( ( donor_atom_xyz - phosphate_takeoff_xyz ).length_squared() < phosphate_takeoff_donor_distance_cutoff2 ) {
+				donor_atom_xyz_list.push_back( donor_atom_xyz );
+				Size  q_base = pose.residue_type(m).atom_base( q );
+				Vector const & donor_base_atom_xyz = pose.residue( m ).xyz( q_base );
+				donor_base_atom_xyz_list.push_back( donor_base_atom_xyz );
+			}
+		}
+	}
+
+}
+
+///////////////////////////////////////////////////////////////////////////
+utility::vector1< bool >
+detect_sugar_contacts( pose::Pose const & pose ) {
+	utility::vector1< bool > sugar_makes_contact( pose.size(), false );
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		if ( !pose.residue_type( i ).is_RNA() ) continue;
+		sugar_makes_contact[ i ] = detect_sugar_contacts( pose, i );
+	}
+	return sugar_makes_contact;
+}
+
+///////////////////////////////////////////////////////////////////////////
+bool
+detect_sugar_contacts( pose::Pose const & pose, Size const moving_res,
+	Distance o2prime_contact_distance_cutoff_ ) {
+
+	bool found_contact( false );
+	Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( " O2'" );
+	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		if ( i == moving_res ) continue;
+
+		// sometimes see artifactual H-bonds of O2' to next phosphate or sugar.
+		if ( i > 1 &&
+				pdb_info->number( i )-1 == pdb_info->number( moving_res ) &&
+				pdb_info->chain( i ) == pdb_info->chain( moving_res ) ) continue;
+
+		if ( pose.residue( i ).is_virtual_residue() ) continue;
+		for ( Size j = 1; j <= pose.residue( i ).nheavyatoms(); j++ ) {
+			if ( pose.residue_type( i ).is_virtual( j ) ) continue;
+			if ( pose.residue_type( i ).heavyatom_is_an_acceptor( j ) ||
+					pose.residue_type( i ).heavyatom_has_polar_hydrogens( j )  ) {
+				Distance dist = ( pose.residue(i).xyz( j ) - moving_O2prime_xyz ).length();
+				//std::cout << "Distance to rsd " << i << "  atom " << pose.residue_type( i ).atom_name( j ) << ": " << dist << std::endl;
+				if ( dist < o2prime_contact_distance_cutoff_ ) {
+					found_contact = true; break;
+				}
+			}
+		} // atoms j
+		if ( found_contact ) break;
+	} // residues i
+
+	return found_contact;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+void
+setup_three_prime_phosphate_based_on_next_residue( pose::Pose & pose, Size const n ) {
+	add_variant_type_to_pose_residue( pose, chemical::THREE_PRIME_PHOSPHATE, n );
+	runtime_assert( n < pose.size() );
+	runtime_assert( pose.residue_type( n+1 ).is_RNA() );
+	runtime_assert( pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ||
+		pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) );
+	pose.set_xyz( id::NamedAtomID( "YP  ", n ), pose.residue( n+1 ).xyz( " P  " ) );
+	pose.set_xyz( id::NamedAtomID( "YOP1", n ), pose.residue( n+1 ).xyz( " OP1" ) );
+	pose.set_xyz( id::NamedAtomID( "YOP2", n ), pose.residue( n+1 ).xyz( " OP2" ) );
+	pose.set_xyz( id::NamedAtomID( "YO5'", n ), pose.residue( n+1 ).xyz( " O5'" ) );
+}
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+base_pair_step_moving( core::pose::rna::BasePairStep const & base_pair_step,
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	pose::Pose const & pose )
+{
+	// look that at least one base in this base pair step is moveable.
+	bool pair_moving( false );
+	utility::vector1< Size > bps_res = utility::tools::make_vector1( base_pair_step.i(),
+		base_pair_step.i_next(),
+		base_pair_step.j(),
+		base_pair_step.j_next() );
+	for ( Size i = 1; i <= 4; i++ ) {
+		Size domain(  atom_level_domain_map->get_domain( core::id::NamedAtomID( " C1'", bps_res[i] ), pose  ) );
+		// TR << "DOMAIN for " << bps_res[i] << " --> " << domain << std::endl;
+		if ( domain == 0 || domain == 1000 ) { // ROSETTA_LIBRARY_DOMAIN AMW TODO
+			pair_moving = true; //break;
+		}
+	}
+	// TR << "MOVING? " << pair_moving << std::endl;
+	return pair_moving;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+bool
+base_pair_moving( core::pose::rna::BasePair const & base_pair,
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::pose::Pose const & pose )
+{
+	// look that at least one base in this base pair step is moveable.
+	bool pair_moving( false );
+	utility::vector1< Size > bp_res = utility::tools::make_vector1( base_pair.res1(),
+		base_pair.res2() );
+	for ( Size i = 1; i <= bp_res.size(); i++ ) {
+		Size domain(  atom_level_domain_map->get_domain( core::id::NamedAtomID( " C1'", bp_res[i] ), pose  ) );
+		//  TR << "DOMAIN for " << bp_res[i] << " --> " << domain << std::endl;
+		if ( domain == 0 || domain == 1000 ) { // ROSETTA_LIBRARY_DOMAIN AMW TODO
+			pair_moving = true; //break;
+		}
+	}
+	// TR << "MOVING? " << pair_moving << std::endl;
+	return pair_moving;
+}
+
+/////////////////////////////////////////////////////////
+bool
+moveable_jump( id::AtomID const & jump_atom_id1,
+	id::AtomID const & jump_atom_id2,
+	core::pose::toolbox::AtomLevelDomainMap const & atom_level_domain_map)  {
+	if ( atom_level_domain_map.get( jump_atom_id1 ) ) return true;
+	if ( atom_level_domain_map.get( jump_atom_id2 ) ) return true;
+	if ( atom_level_domain_map.get_domain( jump_atom_id1 ) != atom_level_domain_map.get_domain( jump_atom_id2 ) ) return true;
+	return false;
+}
+
+/////////////////////////////////////////////////////////
+// should this really be separate from AtomID-base moveable_jump?
+bool
+moveable_jump( Size const jump_pos1,
+	Size const jump_pos2,
+	core::pose::toolbox::AtomLevelDomainMap const & atom_level_domain_map)  {
+	if ( atom_level_domain_map.get( jump_pos1 ) ) return true;
+	if ( atom_level_domain_map.get( jump_pos2 ) ) return true;
+	if ( atom_level_domain_map.get_domain( jump_pos1 ) != atom_level_domain_map.get_domain( jump_pos2 ) ) return true;
+	return false;
+}
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+get_rigid_body_jumps( core::pose::Pose const & pose ) {
+
+	utility::vector1< Size > rigid_body_jumps;
+
+	TR.Debug << "Initialize RigidBodyMover: Is last residue virtual? " <<  pose.residue_type( pose.size() ).name3()  << std::endl;
+
+	if ( pose.residue_type( pose.size() ).name3() != "XXX" ) return rigid_body_jumps; // must have a virtual anchor residue.
+
+	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
+		TR.Debug << "checking jump: " <<  pose.fold_tree().upstream_jump_residue( n ) << " to " <<  pose.fold_tree().downstream_jump_residue( n ) << std::endl;
+		if ( pose.fold_tree().upstream_jump_residue( n ) == pose.size()  ||
+				pose.fold_tree().downstream_jump_residue( n ) == pose.size()  ) {
+			TR.Debug << "found jump to virtual anchor at: " << n << std::endl;
+
+			rigid_body_jumps.push_back( n );
+			if ( rigid_body_jumps.size() > 1 ) {
+				TR.Debug << "found moveable jump!" << std::endl;
+			}
+		}
+	}
+
+	return rigid_body_jumps;
+}
+
+
+
+///////////////////////////////////////////////////////////////
+void
+fill_in_default_jump_atoms( kinematics::FoldTree & f, pose::Pose const & pose )
+{
+
+	// default atoms for jump connections.
+	for ( Size i = 1; i <= f.num_jump(); i++ ) {
+		Size const jump_pos1( f.upstream_jump_residue( i ) );
+		Size const jump_pos2( f.downstream_jump_residue( i ) );
+		f.set_jump_atoms( i,
+			chemical::rna::default_jump_atom( pose.residue_type( jump_pos1 ) ),
+			chemical::rna::default_jump_atom( pose.residue_type( jump_pos2) ) );
+	}
+}
+
+///////////////////////////////////////////////////////////////
+void
+fill_in_default_jump_atoms( pose::Pose & pose )
+{
+	core::kinematics::FoldTree f( pose.fold_tree() );
+	fill_in_default_jump_atoms( f, pose );
+	pose.fold_tree( f );
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+Vector
+get_sugar_centroid( core::conformation::Residue const & rsd ){
+	Vector cen( 0.0 );
+	core::chemical::rna::RNA_Info rna_type = rsd.type().RNA_info();
+	cen += rsd.xyz( rna_type.c1prime_atom_index() );
+	cen += rsd.xyz( rna_type.c2prime_atom_index() );
+	cen += rsd.xyz( rna_type.c3prime_atom_index() );
+	cen += rsd.xyz( rna_type.c4prime_atom_index() );
+	cen += rsd.xyz( rna_type.o4prime_atom_index() );
+	cen /= 5.0;
+	return cen;
+}
+
+
+
+// @details copies code from get_base_pairing_info [?]. Should be in core/pose/rna/util?
+void
+get_base_pairing_info( pose::Pose const & pose,
+	Size const & seqpos,
+	char & secstruct,
+	FArray1D <bool> & edge_is_base_pairing ){
+
+	using namespace core::scoring::rna;
+	using namespace core::pose::rna;
+	using namespace core::chemical;
+	using namespace core::conformation;
+
+	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
+	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+
+	edge_is_base_pairing.dimension( 3 );
+	edge_is_base_pairing = false;
+
+	bool forms_canonical_base_pair( false ), forms_base_pair( false );
+
+	BaseEdge k( ANY_BASE_EDGE ), m( ANY_BASE_EDGE );
+	for ( auto const & it : scored_base_pair_list ) {
+
+		BasePair const & base_pair = it.second;
+
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
+
+		if ( i == seqpos ) {
+			k = base_pair.edge1();
+			m = base_pair.edge2();
+		} else if ( j == seqpos ) {
+			k = base_pair.edge2();
+			m = base_pair.edge1();
+		} else {
+			continue;
+		}
+
+		edge_is_base_pairing( k ) = true;
+		forms_base_pair = true;
+
+		Residue const & rsd_i( pose.residue( i ) );
+		Residue const & rsd_j( pose.residue( j ) );
+
+		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
+				&& base_pair.orientation() == ANTIPARALLEL )  &&
+				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) {
+			std::string atom1, atom2;
+
+			if ( !rsd_i.is_coarse() ) { // doesn't work for coarse-grained RNA
+				get_watson_crick_base_pair_atoms( rsd_i.type(), rsd_j.type(), atom1, atom2 );
+				if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() > 3.5 ) continue;
+			}
+
+			forms_canonical_base_pair = true;
+		}
+	}
+
+	secstruct = 'N';
+	if ( forms_canonical_base_pair ) {
+		secstruct = 'H';
+	} else if ( forms_base_pair ) {
+		secstruct = 'P';
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
 output_base_pairs( std::ostream & out, core::pose::rna::RNA_BasePairList const & base_pair_list, pose::Pose const & pose  )
@@ -1897,10 +2668,32 @@ output_other_contacts( std::ostream & out, pose::Pose const & pose )
 			if ( found_contact ) break;
 		}
 		if ( !found_contact ) continue;
-
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void
+figure_out_secstruct( pose::Pose & pose ){
+	using namespace core::scoring;
+	using namespace ObjexxFCL;
+
+	// Need some stuff to figure out which residues are base paired. First score.
+	ScoreFunctionOP scorefxn( new ScoreFunction );
+	scorefxn->set_weight( rna_base_pair, 1.0 );
+	(*scorefxn)( pose );
+
+	std::string secstruct = "";
+	FArray1D < bool > edge_is_base_pairing( 3, false );
+	char secstruct1( 'X' );
+	for ( Size i=1; i <= pose.size() ; ++i ) {
+		get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
+		secstruct += secstruct1;
+	}
+
+	TR << "SECSTRUCT: " << secstruct << std::endl;
+
+	secstruct_legacy::set_rna_secstruct_legacy( pose, secstruct );
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 // @details remove Rosetta variants (preparing for output of FASTA)
@@ -1920,3 +2713,4 @@ remove_upper_lower_variants_from_RNA( pose::Pose & pose )
 } //ns rna
 } //ns pose
 } //ns core
+

@@ -18,8 +18,8 @@
 #define INCLUDED_protocols_rna_RNA_Minimizer_HH
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/rna/denovo/options/RNA_MinimizerOptions.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <core/import_pose/options/RNA_MinimizerOptions.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -41,7 +41,7 @@ public:
 
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
-	RNA_Minimizer( protocols::rna::denovo::options::RNA_MinimizerOptionsCOP options = 0 );
+	RNA_Minimizer( core::import_pose::options::RNA_MinimizerOptionsCOP options = 0 );
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const {
@@ -57,12 +57,12 @@ public:
 
 	void set_perform_minimizer_run( bool const setting ){ perform_minimizer_run_ = setting; }
 
-	void set_options( protocols::rna::denovo::options::RNA_MinimizerOptionsCOP setting ){ options_ = setting; }
+	void set_options( core::import_pose::options::RNA_MinimizerOptionsCOP setting ){ options_ = setting; }
 
 	void set_include_default_linear_chainbreak( bool const setting){ include_default_linear_chainbreak_ = setting; }
 
 	void
-	set_atom_level_domain_map(toolbox::AtomLevelDomainMapCOP atom_level_domain_map  ) {
+	set_atom_level_domain_map(core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map  ) {
 		atom_level_domain_map_input_ = atom_level_domain_map;
 	}
 
@@ -110,15 +110,15 @@ private:
 
 private:
 
-	protocols::rna::denovo::options::RNA_MinimizerOptionsCOP options_;
+	core::import_pose::options::RNA_MinimizerOptionsCOP options_;
 	core::Real const coord_sdev_;
 	core::Real const coord_cst_weight_;
 	bool perform_minimizer_run_;
 	bool include_default_linear_chainbreak_;
 	bool close_loops_;
 
-	toolbox::AtomLevelDomainMapCOP atom_level_domain_map_input_;
-	toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_input_;
+	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 	bool skip_chi_min_;

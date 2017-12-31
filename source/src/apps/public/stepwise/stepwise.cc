@@ -27,7 +27,6 @@
 #include <core/io/rna/RNA_DataReader.hh> // temporary, for scoring RNA chemical mapping data. Move into core?
 #include <core/io/silent/util.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/rna/setup/RNA_JobDistributor.hh>
 #include <protocols/rna/setup/RNA_CSA_JobDistributor.hh>
 #include <protocols/rna/setup/RNA_MonteCarloJobDistributor.hh>
@@ -55,6 +54,7 @@
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
+#include <basic/options/keys/run.OptionKeys.gen.hh> // for option[ run::show_simulation_in_pymol ] and etc.
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
@@ -89,8 +89,7 @@ using utility::vector1;
 
 static basic::Tracer TR( "apps.public.stepwise.stepwise" );
 
-OPT_KEY( Boolean, use_legacy_stepwise_job_distributor )
-OPT_KEY( Boolean, pymol_observer )
+OPT_1GRP_KEY( Boolean, stepwise, use_legacy_stepwise_job_distributor )
 
 core::scoring::ScoreFunctionOP
 get_stepwise_score_function( OptionCollection const & option ) {
@@ -149,7 +148,6 @@ public:
 		using namespace core::pose::full_model_info;
 		using namespace core::import_pose;
 		using namespace protocols::stepwise;
-		using namespace protocols::stepwise::setup;
 		using namespace protocols::stepwise::modeler;
 		using namespace protocols::stepwise::monte_carlo::submotif;
 		using namespace protocols::stepwise::monte_carlo;
@@ -163,11 +161,11 @@ public:
 
 		utility::options::OptionCollection const & jo = *job_options;
 
-		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 		// AMW: pass this scorefunction to the JQ
 		ScoreFunctionOP scorefxn = get_stepwise_score_function( jo );
-		if ( jo[ score::weights ].user() ) scorefxn = get_score_function();
+		//if ( jo[ score::weights ].user() ) scorefxn = get_score_function();
 
 		// If we care about the 'viewability' of the pose, center it -- obviously this
 		// isn't super-useful unless we have a BIG starting pose where residue 1 is
@@ -241,14 +239,13 @@ stepwise_monte_carlo_legacy()
 	using namespace protocols::stepwise;
 	using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::monte_carlo::submotif;
-	using namespace protocols::stepwise::setup;
 	using namespace protocols::rna::setup;
 	using namespace protocols::stepwise::monte_carlo;
 	using namespace protocols::stepwise::monte_carlo::mover;
 	using namespace protocols::stepwise::monte_carlo::options;
 	using namespace utility::file;
 
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	ScoreFunctionOP scorefxn = get_stepwise_score_function( option );
 
@@ -278,7 +275,11 @@ stepwise_monte_carlo_legacy()
 	if ( pose.size() > 0 && test_move.move_type() == NO_MOVE ) ( *scorefxn )( pose );
 	Vector center_vector = ( align_pose != nullptr ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != nullptr ), center_vector );
-	if ( option[ pymol_observer ].value() ) {
+
+	// Clumsy -- but we need to USUALLY not have this active
+	// because AMW TODO: submotif moves are not compatible with
+	// pymol observation.
+	if ( option[ run::show_simulation_in_pymol ].user() ) {
 		protocols::moves::AddPyMOLObserver( pose, true );
 	}
 
@@ -319,7 +320,7 @@ void*
 my_main( void* )
 {
 	clock_t const my_main_time_start( clock() );
-	if ( option[ use_legacy_stepwise_job_distributor ].value() ) {
+	if ( option[ OptionKeys::stepwise::use_legacy_stepwise_job_distributor ].value() ) {
 		stepwise_monte_carlo_legacy();
 	} else {
 		// Check that the user is not supplying an -out:file:silent with a path
@@ -340,8 +341,7 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		NEW_OPT( use_legacy_stepwise_job_distributor, "Use the legacy RNA_MonteCarloJobDistributor", true );
-		NEW_OPT( pymol_observer, "Attach a PyMOLObserver", false );
+		NEW_OPT( stepwise::use_legacy_stepwise_job_distributor, "Use the legacy RNA_MonteCarloJobDistributor", false );
 
 		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -fasta <fasta file with sequence> -s <start pdb> -input_res <input pdb1> [ -native <native pdb file> ] " << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;

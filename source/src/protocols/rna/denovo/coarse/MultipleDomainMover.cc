@@ -28,8 +28,8 @@
 #include <protocols/rna/denovo/coarse/CoarseRNA_LoopCloser.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/toolbox/AtomID_Mapper.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomID_Mapper.hh>
 
 
 // Utility headers
@@ -106,7 +106,7 @@ MultipleDomainMover::apply_at_domain( core::pose::Pose & pose, Size const & n )
 
 ////////////////////////////////////////////////////////////////
 void
-MultipleDomainMover::initialize( pose::Pose const & pose,toolbox::AtomLevelDomainMapOP atom_level_domain_map ){
+MultipleDomainMover::initialize( pose::Pose const & pose, core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map ){
 	// std::cout << "HELLO! " << pose.residue_type( pose.size() ).name3() << std::endl;
 	if ( pose.residue_type( pose.size() ).name3() != "XXX" /*virtual residue*/ ) return;
 	setup_jump_numbers_and_partner( pose );
@@ -199,7 +199,7 @@ void MultipleDomainMover::setup_jump_numbers_and_partner( pose::Pose const & pos
 
 /////////////////////////////////////
 void
-MultipleDomainMover::setup_ok_for_centroid_calculation(toolbox::AtomLevelDomainMapOP & atom_level_domain_map ){
+MultipleDomainMover::setup_ok_for_centroid_calculation( core::pose::toolbox::AtomLevelDomainMapOP & atom_level_domain_map ){
 	// Need to find jump number [Can try alternate constructor later]
 	ok_for_centroid_calculation_.clear();
 

@@ -6,6 +6,7 @@
 -out:overwrite
 -preminimize
 -enumerate
+-use_legacy_stepwise_job_distributor true
 -num_random_samples 20
 -allow_virtual_side_chains
 -protein_prepack

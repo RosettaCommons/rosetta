@@ -21,9 +21,8 @@
 
 #include <protocols/rna/movers/RNA_DeNovoOptimizer.hh>
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
-#include <protocols/rna/denovo/options/RNA_DeNovoProtocolOptions.hh>
+#include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/rna/denovo/util.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 
 
 // core
@@ -77,12 +76,13 @@
 using namespace core;
 using namespace protocols;
 using namespace basic::options;
-using namespace protocols::rna::denovo::options;
-using namespace protocols::rna::denovo::setup;
+using namespace basic::options::OptionKeys;
 using namespace core::scoring;
 using namespace core::chemical;
 using namespace core::conformation;
 using namespace core::io::silent;
+using namespace core::import_pose;
+using namespace core::import_pose::options;
 using namespace core::import_pose::pose_stream;
 using namespace core::pose;
 using namespace core::pose::rna;
@@ -168,7 +168,7 @@ BuildFullModel::BuildFullModel() {
 	if ( option[ in::file::native ].user() ) {
 		ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		native_pose_ = core::import_pose::get_pdb_with_full_model_info( option[ in::file::native ], rsd_set ); //import_pose::pose_from_file( option[ in::file::native ] );
-		protocols::stepwise::modeler::rna::virtualize_free_rna_moieties( *native_pose_ );
+		core::pose::rna::virtualize_free_rna_moieties( *native_pose_ );
 	}
 }
 

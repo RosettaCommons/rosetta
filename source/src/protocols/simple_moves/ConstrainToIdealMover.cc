@@ -24,7 +24,7 @@
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pose/rna/util.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -136,10 +136,10 @@ protocols::moves::MoverOP ConstrainToIdealMover::fresh_instance() const { return
 protocols::moves::MoverOP ConstrainToIdealMover::clone() const { return protocols::moves::MoverOP( new ConstrainToIdealMover( *this ) ); }
 
 /// @brief setter for AtomLevelDomainMap; shallow copy
-void ConstrainToIdealMover::set_atom_level_domain_map( protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) { atom_level_domain_map_ = atom_level_domain_map; }
+void ConstrainToIdealMover::set_atom_level_domain_map( core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) { atom_level_domain_map_ = atom_level_domain_map; }
 
 /// @brief getter for AtomLevelDomainMap
-protocols::toolbox::AtomLevelDomainMapCOP ConstrainToIdealMover::get_atom_level_domain_map() const { return atom_level_domain_map_; }
+core::pose::toolbox::AtomLevelDomainMapCOP ConstrainToIdealMover::get_atom_level_domain_map() const { return atom_level_domain_map_; }
 
 /// @details This code will modify your input pose by adding constraints which will trend bond lengths and angles towards ideal.
 void ConstrainToIdealMover::apply( core::pose::Pose & pose ){
@@ -147,7 +147,7 @@ void ConstrainToIdealMover::apply( core::pose::Pose & pose ){
 	//this is not a clear() operation in case someone is still sharing the old pointer
 	core::kinematics::MoveMap mm;
 	apply( pose, mm );
-	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = protocols::toolbox::AtomLevelDomainMapOP( new protocols::toolbox::AtomLevelDomainMap( pose ) );
+	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = core::pose::toolbox::AtomLevelDomainMapOP( new core::pose::toolbox::AtomLevelDomainMap( pose ) );
 } //apply
 
 
@@ -704,7 +704,7 @@ ConstrainToIdealMover::set_score_type( core::scoring::ScoreType const setting ){
 // ideal bond lengths and angles! This came from RNA_Minimizer.
 void
 setup_vary_rna_bond_geometry( core::kinematics::MoveMap & mm,
-	core::pose::Pose & pose, toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::pose::Pose & pose, core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 	core::scoring::ScoreType score_type /* = rna_bond_geometry*/ ) {
 	ConstrainToIdealMover CTIMover;
 	CTIMover.set_atom_level_domain_map( atom_level_domain_map );
@@ -719,7 +719,7 @@ setup_vary_rna_bond_geometry( core::kinematics::MoveMap & mm,
 // ideal bond lengths and angles! This came from RNA_Minimizer.
 void
 setup_vary_polar_hydrogen_geometry( core::kinematics::MoveMap & mm,
-	core::pose::Pose & pose, toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) {
+	core::pose::Pose & pose, core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) {
 	ConstrainToIdealMover CTIMover;
 	CTIMover.set_atom_level_domain_map( atom_level_domain_map );
 	CTIMover.set_just_polar_hydrogens( true );

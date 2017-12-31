@@ -28,7 +28,7 @@
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <utility/vector1.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.fwd.hh>
@@ -50,7 +50,7 @@ public:
 	/// the RNA fragment library to use.
 	RNP_HighResMover( RNA_FragmentMoverOP rna_fragment_mover,
 		protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
-		options::RNA_FragmentMonteCarloOptionsCOP options );
+		core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options );
 
 	~RNP_HighResMover();
 
@@ -71,7 +71,7 @@ private:
 	//data
 	RNA_FragmentMoverOP rna_fragment_mover_;
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_;
-	options::RNA_FragmentMonteCarloOptionsCOP options_;
+	core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options_;
 
 	Size const fragment_cycles_;
 	Size const frag_size_;

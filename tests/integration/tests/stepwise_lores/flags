@@ -6,6 +6,7 @@
 -motif_mode 
 
 -lores
+-use_legacy_stepwise_job_distributor true
 -num_random_samples 1
 -virtualize_free_moieties_in_native false
 -add_delete_frequency 0.80

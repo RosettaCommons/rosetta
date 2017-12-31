@@ -753,6 +753,14 @@ get_number_missing_residues_and_connections( pose::Pose & pose ) {
 	return get_number_missing_residues_and_connections( pose, missing_residues, loop_suite_lengths );
 }
 
+/// @brief What if you know your pose has a FMI but it has to be const?
+Size
+get_number_missing_residues_and_connections( pose::Pose const & pose ) {
+	utility::vector1< char > missing_residues;
+	utility::vector1< utility::vector1< Size > > loop_suite_lengths;
+	return get_number_missing_residues_and_connections( pose, missing_residues, loop_suite_lengths );
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // deprecate soon in favor of direct loop-graph call
 //

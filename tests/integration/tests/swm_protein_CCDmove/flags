@@ -5,6 +5,7 @@
 -out:file:silent swm_rebuild.out
 -out:overwrite
 -output_minimized_pose_list
+-use_legacy_stepwise_job_distributor
 -move ADD 12 BOND_TO_PREVIOUS 11
 -sample_res 12-14
 -choose_random

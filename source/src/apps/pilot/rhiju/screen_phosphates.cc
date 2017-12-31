@@ -33,7 +33,6 @@
 #include <core/pose/variant_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
@@ -102,12 +101,11 @@ screen_phosphates()
 	using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::monte_carlo;
 	using namespace protocols::stepwise::modeler::rna::phosphate;
-	using namespace protocols::stepwise::setup;
 	using namespace utility::file;
 
 	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	PoseOP native_pose;
 	if ( option[ in::file::native ].user() ) native_pose = get_pdb_and_cleanup( option[ in::file::native ](), rsd_set );

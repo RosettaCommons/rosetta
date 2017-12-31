@@ -31,9 +31,9 @@
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/rna/denovo/options/RNA_DeNovoProtocolOptions.hh>
-#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
+#include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/copydofs/CopyDofs.hh>
 
 
@@ -46,9 +46,9 @@ static basic::Tracer TR("RNA_DeNovoProtocolTest");
 
 using namespace core;
 using namespace protocols::rna::movers;
-using namespace protocols::rna::denovo::options;
+using namespace core::import_pose::options;
 using namespace protocols::rna::denovo::movers;
-using namespace protocols::rna::denovo::libraries;
+using namespace core::import_pose::libraries;
 
 class RNA_DeNovoProtocolTest : public CxxTest::TestSuite {
 	//Define Variables
@@ -111,7 +111,7 @@ public:
 		using namespace core::pose;
 		using namespace core::id;
 		using namespace protocols::rna::denovo;
-		using namespace protocols::toolbox;
+		using namespace core::pose::toolbox;
 		using namespace utility::tools;
 
 		RNA_DeNovoProtocolOptionsOP options( new RNA_DeNovoProtocolOptions);
@@ -214,7 +214,8 @@ public:
 		using namespace core::pose;
 		using namespace core::id;
 		using namespace protocols::rna::denovo;
-		using namespace protocols::toolbox;
+		using namespace core::import_pose::options;
+		using namespace core::pose::toolbox;
 		using namespace utility::tools;
 
 		RNA_DeNovoProtocolOptionsOP options( new RNA_DeNovoProtocolOptions);

@@ -10,3 +10,4 @@
 -bps_moves
 -cycles 500
 -output_res_num  3-10 15-22
+-denovo:use_legacy_job_distributor true

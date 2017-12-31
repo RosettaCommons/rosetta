@@ -78,6 +78,8 @@ public:
 
 	void prelim_job_node( core::Size setting );
 
+	std::string job_tag() const override { return "S"; }
+
 private:
 
 	core::Size prelim_job_node_;

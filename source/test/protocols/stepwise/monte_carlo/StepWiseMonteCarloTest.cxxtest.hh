@@ -28,7 +28,6 @@
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 
 // Protocol Headers
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
@@ -55,9 +54,8 @@ public:
 		using namespace core::scoring;
 		using namespace protocols::stepwise::monte_carlo;
 		using namespace protocols::stepwise::monte_carlo::options;
-		using namespace protocols::stepwise::setup;
 
-		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
 
 		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" ); // RNA/protein.

@@ -102,7 +102,7 @@ prepare_silent_struct( std::string const & out_tag,
 
 	SilentFileOptions opts;
 	SilentStructOP s( new BinarySilentStruct( opts, pose, out_tag ) );
-	s->add_string_value( "missing", ObjexxFCL::string_of( core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) ) );
+	s->add_string_value( "missing", ObjexxFCL::string_of( core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) ), -3 );
 
 	bool const eval_base_pairs = basic::options::option[ basic::options::OptionKeys::rna::evaluate_base_pairs ]();
 

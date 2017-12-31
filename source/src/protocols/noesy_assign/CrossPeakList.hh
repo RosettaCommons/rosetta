@@ -114,6 +114,7 @@ public:
 	const_iterator begin() const { return peaks_.begin(); }
 	const_iterator end() const { return peaks_.end(); }
 	iterator begin() { return peaks_.begin(); }
+	iterator end() { return peaks_.end(); }
 	core::Size size() const { return peaks_.size(); }
 private:
 	void update_assignment_list(); //after find_assignments or delete_diagonal_peaks()

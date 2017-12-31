@@ -149,7 +149,13 @@ PDBFullModelInputter::full_model_from_input_source(
 	//core::import_pose::ImportPoseOptions import_opts( options );
 	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
-	return core::import_pose::initialize_pose_and_other_poses_from_options( rsd_set, options );
+	utility::vector1< core::pose::PoseOP > input_poses;
+	for ( auto const & filename : input_source.string_string_map().at( "filename" ) ) {
+		if ( filename == "fasta" ) continue;
+		input_poses.push_back( core::import_pose::get_pdb_and_cleanup( filename, rsd_set ) );
+	}
+
+	return core::import_pose::initialize_pose_and_other_poses_from_options_and_input_poses( rsd_set, options, input_poses );
 }
 
 std::string

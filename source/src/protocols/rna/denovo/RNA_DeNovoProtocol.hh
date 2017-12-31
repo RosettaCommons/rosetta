@@ -19,8 +19,8 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.fwd.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
-#include <protocols/rna/denovo/options/RNA_DeNovoProtocolOptions.fwd.hh>
+#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
+#include <core/import_pose/options/RNA_DeNovoProtocolOptions.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
@@ -45,8 +45,8 @@ public:
 
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
-	RNA_DeNovoProtocol( options::RNA_DeNovoProtocolOptionsCOP options = nullptr,
-		setup::RNA_DeNovoParametersCOP params = nullptr);
+	RNA_DeNovoProtocol( core::import_pose::options::RNA_DeNovoProtocolOptionsCOP options = nullptr,
+		core::import_pose::RNA_DeNovoParametersCOP params = nullptr);
 
 	~RNA_DeNovoProtocol() override;
 
@@ -70,7 +70,7 @@ public:
 	void
 	set_refine_pose_list( utility::vector1<core::pose::PoseOP> const & setting ) { refine_pose_list_ = setting; };
 
-	options::RNA_DeNovoProtocolOptionsCOP options() const { return options_; }
+	core::import_pose::options::RNA_DeNovoProtocolOptionsCOP options() const { return options_; }
 
 	RNA_FragmentMonteCarloCOP rna_fragment_monte_carlo() const { return rna_fragment_monte_carlo_; }
 
@@ -107,8 +107,8 @@ private:
 
 private:
 
-	options::RNA_DeNovoProtocolOptionsCOP options_;
-	setup::RNA_DeNovoParametersCOP rna_params_;
+	core::import_pose::options::RNA_DeNovoProtocolOptionsCOP options_;
+	core::import_pose::RNA_DeNovoParametersCOP rna_params_;
 	protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_grid_;
 
 	std::string lores_silent_file_;

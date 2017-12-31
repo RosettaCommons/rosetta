@@ -209,9 +209,6 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 
 	// Done with sampling.
-	// What we used to add to a silent struct in preparation, we now add to the pose.
-
-	setPoseExtraScore( pose, "missing", core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) );
 	Real rms( 0.0 ), rms_fill( 0.0 );
 	using namespace protocols::stepwise::modeler::align;
 	if ( get_native_pose() ) {

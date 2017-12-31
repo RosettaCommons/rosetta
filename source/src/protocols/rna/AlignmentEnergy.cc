@@ -75,7 +75,7 @@ AlignmentEnergy::AlignmentEnergy(
 {
 	// Do the worst possible thing:
 	using namespace basic::options;
-	core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	// Keep at nullptr and hope it gets initialized later if there's no align_pdb
 	if (  option[ OptionKeys::stepwise::new_align_pdb ].user() ) {
 		align_pose_ = core::import_pose::get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::new_align_pdb ](), rsd_set );

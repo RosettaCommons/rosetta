@@ -15,16 +15,16 @@
 
 // Unit headers
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
-#include <protocols/rna/denovo/options/RNA_DeNovoProtocolOptions.hh>
+#include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
-#include <protocols/rna/denovo/fragments/FullAtomRNA_Fragments.hh>
+#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/rna/denovo/base_pairs/RNA_BasePairHandler.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoParameters.hh>
+#include <core/import_pose/RNA_BasePairHandler.hh>
+#include <core/import_pose/RNA_DeNovoParameters.hh>
+#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/rna/denovo/movers/RNA_Relaxer.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
-#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
+#include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/rna/setup/RNA_MonteCarloJobDistributor.hh>
 #include <protocols/rna/setup/RNA_CSA_JobDistributor.hh>
 
@@ -112,9 +112,9 @@
 
 using namespace ObjexxFCL::format; // AUTO USING NS
 using namespace core;
-using namespace protocols::rna::denovo::setup;
-using namespace protocols::rna::denovo::libraries;
-using namespace protocols::rna::denovo::base_pairs;
+using namespace core::pose::rna;
+using namespace core::import_pose;
+using namespace core::import_pose::libraries;
 
 namespace protocols {
 namespace rna {
@@ -122,7 +122,7 @@ namespace denovo {
 
 static basic::Tracer TR( "protocols.rna.denovo.RNA_DeNovoProtocol" );
 
-RNA_DeNovoProtocol::RNA_DeNovoProtocol( options::RNA_DeNovoProtocolOptionsCOP options,
+RNA_DeNovoProtocol::RNA_DeNovoProtocol( core::import_pose::options::RNA_DeNovoProtocolOptionsCOP options,
 	RNA_DeNovoParametersCOP params):
 	Mover(),
 	options_(std::move( options )),
@@ -130,9 +130,9 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol( options::RNA_DeNovoProtocolOptionsCOP op
 {
 	if ( rna_params_ == nullptr ) {
 		if ( !options_->rna_params_file().empty() ) {
-			rna_params_ = RNA_DeNovoParametersCOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
+			rna_params_ = core::import_pose::RNA_DeNovoParametersCOP( new core::import_pose::RNA_DeNovoParameters( options_->rna_params_file() ) );
 		} else {
-			rna_params_ = RNA_DeNovoParametersCOP( new RNA_DeNovoParameters );
+			rna_params_ = core::import_pose::RNA_DeNovoParametersCOP( new core::import_pose::RNA_DeNovoParameters );
 		}
 	}
 	Mover::type("RNA_DeNovoProtocol");
@@ -176,7 +176,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	initialize_lores_silent_file();
 	initialize_tag_is_done();
 
-	RNA_DeNovoPoseInitializerOP rna_de_novo_pose_initializer( new RNA_DeNovoPoseInitializer( *rna_params_ )  );
+	protocols::rna::denovo::RNA_DeNovoPoseInitializerOP rna_de_novo_pose_initializer( new protocols::rna::denovo::RNA_DeNovoPoseInitializer( *rna_params_ )  );
 	rna_de_novo_pose_initializer->set_bps_moves( options_->bps_moves() );
 	rna_de_novo_pose_initializer->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
 	rna_de_novo_pose_initializer->set_dock_each_chunk( options_->dock_each_chunk() );

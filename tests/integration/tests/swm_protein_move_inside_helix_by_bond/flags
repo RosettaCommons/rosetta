@@ -3,6 +3,7 @@
 -fasta 2zta.fasta
 -move ADD 5 BOND_TO_PREVIOUS 4
 -output_minimized_pose_list
+-use_legacy_stepwise_job_distributor true
 -silent swm_rebuild.out
 -out:overwrite
 -n_sample 36

@@ -93,7 +93,7 @@ FullModelPoseBuilder::FullModelPoseBuilder():
 {}
 
 void
-FullModelPoseBuilder::initialize_input_poses_from_options( core::chemical::ResidueTypeSetCAP rsd_set ) {
+FullModelPoseBuilder::initialize_input_poses_from_options( core::chemical::ResidueTypeSetCOP rsd_set ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

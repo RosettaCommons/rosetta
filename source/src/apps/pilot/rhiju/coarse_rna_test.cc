@@ -69,7 +69,7 @@
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/coarse_rna/MultipleDomainMover.hh>
 #include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
 #include <core/io/rna/RNA_DataReader.hh>
@@ -588,7 +588,7 @@ general_initialize(  pose::Pose & pose,
 	protocols::rna::denovo::RNA_DeNovoPoseInitializerOP & rna_structure_parameters_,
 	protocols::coarse_rna::CoarseRNA_LoopCloserOP & rna_loop_closer_,
 	protocols::rna::denovo::RNA_ChunkLibraryOP & rna_chunk_library_,
-	protocols::toolbox::AtomLevelDomainMapOP &  atom_level_domain_map_
+	core::pose::toolbox::AtomLevelDomainMapOP &  atom_level_domain_map_
 ){
 
 	using namespace core::chemical;
@@ -673,7 +673,7 @@ coarse_rb_test(){
 	using namespace protocols::coarse_rna;
 	using namespace protocols::rna::denovo;
 	using namespace protocols::moves;
-	using namespace protocols::toolbox;
+	using namespace core::pose::toolbox;
 	using namespace core::pose;
 
 	// create extended coarse grained pose.
@@ -766,7 +766,7 @@ get_ideal_angle_sets(    utility::vector1< utility::vector1< Real > > & angle_se
 //////////////////////////////////////////////////////////////////////////////////////
 void
 get_angle_sets(  pose::Pose const & pose,
-	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map,
+	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map,
 	utility::vector1< utility::vector1< Real > > & angle_sets,
 	utility::vector1< utility::vector1< core::id::AtomID > > & angle_ids,
 	bool const sample_angles_ ){
@@ -1258,7 +1258,7 @@ modeler_map_test(){
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
 	using namespace protocols::rna::denovo;
-	using namespace protocols::toolbox;
+	using namespace core::pose::toolbox;
 	using namespace core::pose;
 
 	// create extended coarse grained pose.
@@ -1694,7 +1694,7 @@ main( int argc, char * argv [] )
 		exit( 0 );
 
 
-	} catch (utility::excn::Exception const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

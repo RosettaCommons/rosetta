@@ -26,7 +26,6 @@
 #include <core/kinematics/FoldTree.hh>
 
 // Protocol Headers
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/StepWiseMinimizer.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/packer/StepWisePacker.hh>
@@ -66,7 +65,6 @@ public:
 		using namespace core::pose::full_model_info;
 		using namespace core::scoring;
 		using namespace core::id;
-		using namespace protocols::stepwise::setup;
 		using namespace protocols::stepwise::monte_carlo;
 		using namespace protocols::stepwise::monte_carlo::mover;
 		using namespace protocols::stepwise::modeler;
@@ -76,7 +74,7 @@ public:
 		using namespace utility;
 		using namespace utility::tools;
 
-		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 		pose::Pose & pose = *pose_op;
 

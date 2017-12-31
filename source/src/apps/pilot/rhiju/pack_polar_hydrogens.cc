@@ -55,7 +55,7 @@ pack_polar_hydrogens()
 	using namespace core::import_pose;
 	using namespace utility::file;
 
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Following could go to a FullModelSetup class.
 	// read starting pose(s) from disk

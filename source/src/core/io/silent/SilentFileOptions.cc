@@ -25,6 +25,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -95,6 +96,7 @@ void SilentFileOptions::read_from_options( utility::options::OptionCollection co
 	force_silent_bitflip_on_read_ = options[ in::file::force_silent_bitflip_on_read ];
 	print_all_score_headers_ = options[ out::file::silent_print_all_score_headers ];
 
+	binary_output_ = options[ rna::denovo::out::binary_output ] || options[ rna::vary_geometry ] || options[ rna::denovo::close_loops ] || ( options[ in::file::silent_struct_type ].value() == "binary_rna" );
 }
 
 void SilentFileOptions::read_from_tag( utility::tag::TagCOP tag )
@@ -128,6 +130,7 @@ void SilentFileOptions::read_from_tag( utility::tag::TagCOP tag )
 	force_silent_bitflip_on_read_ = tag->getOption< bool >( "force_silent_bitflip_on_read", false );
 	print_all_score_headers_ = tag->getOption< bool >( "print_all_score_headers", false );
 
+	binary_output_ = tag->getOption< bool >( "binary_output", true ) || tag->getOption< bool >( "vary_geometry", true );
 }
 
 void SilentFileOptions::list_read_options( utility::options::OptionKeyList & read_options )
@@ -150,7 +153,11 @@ void SilentFileOptions::list_read_options( utility::options::OptionKeyList & rea
 		+ out::file::silent_struct_type
 		+ out::file::weight_silent_scores
 		+ out::user_tag
-		+ run::write_failures;
+		+ run::write_failures
+		+ rna::denovo::out::binary_output
+		+ rna::vary_geometry
+		+ rna::denovo::close_loops
+		+ in::file::silent_struct_type;
 }
 
 void SilentFileOptions::append_attributes_for_tag_parsing(
@@ -474,6 +481,7 @@ core::io::silent::SilentFileOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( force_silent_bitflip_on_read_set_ ) ); // _Bool
 	arc( CEREAL_NVP( force_silent_bitflip_on_read_ ) ); // _Bool
 	arc( CEREAL_NVP( print_all_score_headers_ ) ); // _Bool
+	arc( CEREAL_NVP( binary_output_ ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -503,6 +511,7 @@ core::io::silent::SilentFileOptions::load( Archive & arc ) {
 	arc( force_silent_bitflip_on_read_set_ ); // _Bool
 	arc( force_silent_bitflip_on_read_ ); // _Bool
 	arc( print_all_score_headers_ ); // _Bool
+	arc( binary_output_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::io::silent::SilentFileOptions );

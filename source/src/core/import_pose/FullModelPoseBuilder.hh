@@ -79,7 +79,7 @@ public:
 	void set_constraint_file( std::string const & constraint_file ) { constraint_file_ = constraint_file; }
 
 
-	void initialize_input_poses_from_options( core::chemical::ResidueTypeSetCAP rsd_set );
+	void initialize_input_poses_from_options( core::chemical::ResidueTypeSetCOP rsd_set );
 	void initialize_further_from_options();
 	void initialize_full_model_parameters();
 

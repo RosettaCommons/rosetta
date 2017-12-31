@@ -13,24 +13,24 @@
 /// @author Kalli Kappel, kappel@stanford.edu
 
 #include <protocols/rna/denovo/movers/RNA_DeNovoMasterMover.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
 #include <protocols/rna/denovo/movers/RNA_DeNovoMasterMover.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
-#include <protocols/rna/denovo/fragments/RNA_Fragments.hh>
-#include <protocols/rna/denovo/fragments/FullAtomRNA_Fragments.hh>
-#include <protocols/rna/denovo/base_pairs/RNA_BasePairHandler.hh>
-#include <protocols/rna/denovo/libraries/RNA_JumpLibrary.hh>
-#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
-#include <protocols/rna/denovo/libraries/RNA_LibraryManager.hh>
-#include <protocols/rna/denovo/movers/RNA_JumpMover.hh>
+#include <core/fragment/rna/RNA_Fragments.hh>
+#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
+#include <core/import_pose/RNA_BasePairHandler.hh>
+#include <core/import_pose/libraries/RNA_JumpLibrary.hh>
+#include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
+#include <core/import_pose/libraries/RNA_LibraryManager.hh>
+#include <core/import_pose/RNA_JumpMover.hh>
 #include <protocols/rna/denovo/movers/RNA_HelixMover.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/rna/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/Tracer.hh>
@@ -44,9 +44,11 @@
 static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_DeNovoMasterMover" );
 
 using namespace core;
+using namespace core::pose::rna;
 using namespace ObjexxFCL::format; // AUTO USING NS
-using namespace protocols::rna::denovo::fragments;
-using namespace protocols::rna::denovo::libraries;
+using namespace core::fragment::rna;
+using namespace core::import_pose;
+using namespace core::import_pose::libraries;
 using utility::vector1;
 
 /////////////////////////////////////////////////////////////////////////
@@ -70,9 +72,9 @@ namespace denovo {
 namespace movers {
 
 //Constructor
-RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( options::RNA_FragmentMonteCarloOptionsCOP options,
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-	base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
+RNA_DeNovoMasterMover::RNA_DeNovoMasterMover( core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options,
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler,
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
 	libraries::RNA_ChunkLibraryOP rna_chunk_library ):
 	options_(std::move( options )),

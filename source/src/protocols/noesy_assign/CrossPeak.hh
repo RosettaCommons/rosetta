@@ -255,8 +255,9 @@ public:
 #ifndef WIN32
 	PeakAssignments const& assignments() const { return assignments_; }
 	const_iterator begin() const { return assignments_.begin(); }
-	iterator begin() { return assignments_.begin(); }
 	const_iterator end() const { return assignments_.end(); }
+	iterator begin() { return assignments_.begin(); }
+	iterator end() { return assignments_.end(); }
 #endif
 
 	core::Real distance_bound() const { return distance_bound_; }

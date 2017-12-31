@@ -656,5 +656,36 @@ void tag_into_pose( core::pose::Pose & pose, std::string const & tag ) {
 	);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void
+set_output_res_and_chain( pose::Pose & extended_pose,
+	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_resnum_and_chain )
+{
+	using namespace pose;
+	utility::vector1< int > const & output_res_num = std::get< 0 >( output_resnum_and_chain );
+	utility::vector1< char > const & output_chain = std::get< 1 >( output_resnum_and_chain );
+	utility::vector1< std::string > const & output_segid = std::get< 2 >( output_resnum_and_chain );
+	if ( output_res_num.size() == 0 ) return;
+	runtime_assert( output_res_num.size() == extended_pose.size() );
+
+	PDBInfoOP pdb_info( new PDBInfo( extended_pose ) );
+	pdb_info->set_numbering( output_res_num );
+
+	bool chain_interesting( false );
+	for ( Size n = 1; n <= output_chain.size(); n++ ) {
+		if ( output_chain[ n ] != ' ' ) chain_interesting = true;
+	}
+	if ( chain_interesting ) pdb_info->set_chains( output_chain );
+
+	bool segid_interesting( false );
+	for ( Size n = 1; n <= output_segid.size(); n++ ) {
+		if ( output_segid[ n ] != "    " ) segid_interesting = true;
+	}
+	if ( segid_interesting ) pdb_info->set_segment_ids( output_segid );
+
+	extended_pose.pdb_info( pdb_info );
+}
+
+
 } // pose
 } // core

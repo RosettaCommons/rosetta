@@ -17,6 +17,7 @@
 #include <protocols/stepwise/modeler/rna/sugar/SugarInstantiateMover.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarVirtualizeMover.hh>
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
+#include <core/pose/rna/util.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
@@ -25,6 +26,7 @@ static basic::Tracer TR( "protocols.stepwise.screener.SugarInstantiator" );
 
 using namespace protocols::stepwise::modeler::rna::sugar;
 using namespace core;
+using namespace core::pose::rna;
 
 namespace protocols {
 namespace stepwise {

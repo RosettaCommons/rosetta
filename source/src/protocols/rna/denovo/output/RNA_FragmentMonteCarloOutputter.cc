@@ -13,7 +13,7 @@
 
 
 #include <protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
@@ -34,7 +34,7 @@ using namespace core;
 using utility::vector1;
 using utility::tools::make_vector1;
 using utility::tools::make_vector;
-using namespace protocols::rna::denovo::options;
+using namespace core::import_pose::options;
 
 //////////////////////////////////////////////////////////////////////
 /// @detailed

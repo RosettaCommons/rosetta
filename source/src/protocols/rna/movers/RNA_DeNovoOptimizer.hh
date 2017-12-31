@@ -19,7 +19,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/movers/RNA_DeNovoOptimizer.fwd.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.fwd.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.fwd.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 namespace protocols {
@@ -57,7 +57,7 @@ private:
 	Size cycles_;
 
 	protocols::rna::denovo::RNA_FragmentMonteCarloOP rna_fragment_monte_carlo_;
-	protocols::rna::denovo::options::RNA_FragmentMonteCarloOptionsOP options_;
+	core::import_pose::options::RNA_FragmentMonteCarloOptionsOP options_;
 
 };
 

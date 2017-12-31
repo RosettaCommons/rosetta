@@ -15,6 +15,7 @@
 
 #include <protocols/stepwise/modeler/rna/phosphate/PhosphateMover.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_Info.hh>
@@ -35,6 +36,7 @@
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.phosphate.PhosphateMover" );
 
 using namespace core;
+using namespace core::pose::rna;
 using TorsionList = utility::vector1<Real>;
 
 namespace protocols {
@@ -175,10 +177,11 @@ PhosphateMover::setup_variants_and_free_pose_for_three_prime_phosphate( pose::Po
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 PhosphateMover::setup_atom_and_neighbor_list( pose::Pose & pose ) {
-	get_phosphate_atom_and_neighbor_list( pose, phosphate_move_,
-		donor_atom_xyz_list_, donor_base_atom_xyz_list_, neighbor_copy_dofs_ );
 	Size const & n = phosphate_move_.rsd();
 	Size const & terminus = phosphate_move_.terminus();
+	get_phosphate_atom_and_neighbor_list( pose, phosphate_move_.rsd(),
+		terminus == FIVE_PRIME_PHOSPHATE ? FIVE_PRIME : THREE_PRIME,
+		donor_atom_xyz_list_, donor_base_atom_xyz_list_, neighbor_copy_dofs_ );
 	if ( terminus == FIVE_PRIME_PHOSPHATE ) {
 		op1_atom_idx_ = pose.residue( n ).atom_index( " OP1" );
 		op2_atom_idx_ = pose.residue( n ).atom_index( " OP2" );
@@ -315,7 +318,7 @@ PhosphateMover::check_phosphate_contacts_donor( pose::Pose & pose ) const {
 	Size const & n = phosphate_move_.rsd();
 	op_xyz_list.push_back( pose.residue( n ).xyz( op1_atom_idx_ ) );
 	op_xyz_list.push_back( pose.residue( n ).xyz( op2_atom_idx_ ) );
-	return protocols::stepwise::modeler::rna::phosphate::check_phosphate_contacts_donor( op_xyz_list,
+	return core::pose::rna::check_phosphate_contacts_donor( op_xyz_list,
 		donor_atom_xyz_list_,
 		donor_base_atom_xyz_list_ );
 }

@@ -21,7 +21,7 @@
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -140,7 +140,7 @@ private:
 	protein::loop_close::StepWiseProteinCCD_CloserOP protein_ccd_closer_;
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_; // needed only for legacy SWA RNA main output.
 
-	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map_; // a atom-centric version of the DOF-centric movemap.
+	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map_; // a atom-centric version of the DOF-centric movemap.
 };
 
 } //modeler

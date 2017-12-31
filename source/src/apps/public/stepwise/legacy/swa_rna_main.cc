@@ -451,7 +451,7 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 
 	pose::Pose pose;
 	import_pose_from_silent_file( pose, silent_files_in[ 1 ], input_tags[1] );
-	protocols::rna::assert_phosphate_nomenclature_matches_mini( pose );
+	core::pose::rna::assert_phosphate_nomenclature_matches_mini( pose );
 	stepwise_rna_pose_setup->setup_full_model_info( pose );
 	stepwise_rna_pose_setup->setup_vdw_cached_rep_screen_info( pose );
 	stepwise_rna_pose_setup->update_fold_tree_at_virtual_sugars( pose );
@@ -689,7 +689,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	//NEW_copy_dofs( output_pose, mini_rebuild_pose, res_map );
 	core::pose::copydofs::copy_dofs_match_atom_names( output_pose, mini_rebuild_pose, res_map ); //Dec 28, 2011..STILL NEED TO VERIFY THAT THIS WORKS PROPERLY!
 	//OK THE copy_dofs seem to correctly position every atom except for the OVU1, OVL1 and OVL2 at the chainbreak(s). This is becuase the rebuild_pose does not necessaringly have the same cutpoint position as the start_pose
-	protocols::rna::assert_phosphate_nomenclature_matches_mini( output_pose ); //Just to be safe
+	core::pose::rna::assert_phosphate_nomenclature_matches_mini( output_pose ); //Just to be safe
 
 	utility::vector1< Size > virtual_res_list;
 

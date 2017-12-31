@@ -38,7 +38,7 @@ class SubMotifLibrary: public utility::pointer::ReferenceCount {
 public:
 
 	//constructor
-	SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
+	SubMotifLibrary( core::chemical::ResidueTypeSetCOP rsd_set,
 		bool const include_submotifs_from_jump_library = false,
 		bool const use_first_jump_for_submotif = false,
 		utility::vector1< std::string > const & exclude_submotif_list = utility::vector1< std::string >() );
@@ -96,7 +96,7 @@ private:
 
 private:
 
-	core::chemical::ResidueTypeSetCAP rsd_set_;
+	core::chemical::ResidueTypeSetCOP rsd_set_;
 	bool const include_submotifs_from_jump_library_;
 	bool const use_first_jump_for_submotif_;
 	utility::vector1< PoseTag > exclude_submotif_list_;

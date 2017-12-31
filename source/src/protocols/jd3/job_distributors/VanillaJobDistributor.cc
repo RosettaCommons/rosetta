@@ -69,7 +69,6 @@ VanillaJobDistributor::go( JobQueenOP queen ) {
 	job_dag_ = job_queen_->initial_job_dag();
 
 	while ( true ) {
-
 		std::pair< SizeList, bool > job_total_order_pair = topological_sort( *job_dag_ );
 		if ( ! job_total_order_pair.second ) {
 			job_queen_->flush();

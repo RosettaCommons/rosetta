@@ -98,7 +98,7 @@ public:
 
 	/// @brief For output purposes, construct a string for a particular output of this job given
 	/// a JobOutputIndex.
-	std::string job_tag_with_index_suffix( JobOutputIndex const & output_index ) const;
+	std::string job_tag_with_index_suffix( JobOutputIndex const & output_index, core::Size const min_digits = 4 ) const;
 
 	/// @brief The index used to identify which job this is out of many that have identical inputs
 	/// but different random number seeds (controlled by the command-line flag "nstruct")

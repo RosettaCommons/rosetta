@@ -35,9 +35,9 @@
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <protocols/rna/denovo/options/RNA_MinimizerOptions.hh>
+#include <core/import_pose/options/RNA_MinimizerOptions.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 
@@ -86,6 +86,8 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 
 
 using namespace core;
+using namespace core::import_pose;
+using namespace core::import_pose::options;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
@@ -194,10 +196,9 @@ rna_design_test()
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
-	using namespace protocols::toolbox;
+	using namespace core::pose::toolbox;
 	using namespace protocols::rna::denovo;
 	using namespace protocols::rna::denovo::movers;
-	using namespace protocols::rna::denovo::options;
 
 
 	ResidueTypeSetCOP rsd_set;

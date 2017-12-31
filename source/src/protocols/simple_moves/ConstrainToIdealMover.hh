@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
-#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh> //need to move AtomLevelDomainMap to toolbox XRW2
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh> //need to move AtomLevelDomainMap to toolbox XRW2
 
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
@@ -69,10 +69,10 @@ public:
 	moves::MoverOP clone() const override;
 
 	/// @brief setter for AtomLevelDomainMap; makes a shallow copy
-	void set_atom_level_domain_map( protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
+	void set_atom_level_domain_map( core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
 
 	/// @brief getter for AtomLevelDomainMap
-	protocols::toolbox::AtomLevelDomainMapCOP get_atom_level_domain_map() const;
+	core::pose::toolbox::AtomLevelDomainMapCOP get_atom_level_domain_map() const;
 
 	void set_score_type( core::scoring::ScoreType const setting );
 	void set_just_rna_backbone( bool const setting ){ just_rna_backbone_ = setting; }
@@ -158,7 +158,7 @@ private:
 
 private:
 	/// @brief atom_level_domain_map has info on which atoms should move; complementary to move_map (which instead focuses on DOFs).
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
 
 	core::Real const bond_length_sd_;
 	core::Real const bond_length_sd_polar_hydrogen_;
@@ -183,12 +183,12 @@ private:
 
 void
 setup_vary_rna_bond_geometry( core::kinematics::MoveMap & mm, core::pose::Pose & pose,
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 	core::scoring::ScoreType score_type = core::scoring::rna_bond_geometry );
 
 void
 setup_vary_polar_hydrogen_geometry( core::kinematics::MoveMap & mm,
-	core::pose::Pose & pose, toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
+	core::pose::Pose & pose, core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
 
 } //namespace moves
 } //namespace protocols

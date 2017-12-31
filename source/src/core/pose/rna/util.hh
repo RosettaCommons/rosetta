@@ -25,13 +25,19 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/rna/BasePair.fwd.hh>
+#include <core/pose/rna/BasePairStep.fwd.hh>
+#include <core/pose/rna/StubStubType.fwd.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/rna/BaseStack.fwd.hh>
 #include <core/pose/rna/StubStubType.fwd.hh>
 #include <core/pose/rna/VDW_Grid.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <utility/vector1.fwd.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
+#include <tuple>
 #include <map>
 
 namespace core {
@@ -256,6 +262,118 @@ get_stub_stub( core::conformation::Residue const & rsd1,
 	core::kinematics::Stub & stub1,
 	core::kinematics::Stub & stub2,
 	StubStubType const & stub_stub_type );
+
+void
+setup_base_pair_constraints(
+	core::pose::Pose & pose,
+	utility::vector1< std::pair< core::Size, core::Size > > const &  pairings,
+	core::Real const scale_factor = 1.0,
+	bool const use_flat_harmonic = false );
+
+void
+get_base_pairing_list(
+	core::pose::Pose & pose,
+	utility::vector1< std::pair< core::Size, core::Size> > & base_pairing_list );
+
+void
+assert_phosphate_nomenclature_matches_mini( core::pose::Pose const & pose);
+
+void
+set_output_res_and_chain( core::pose::Pose & extended_pose,
+	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_resnum_and_chain_and_segid );
+
+void
+virtualize_free_rna_moieties( core::pose::Pose & pose );
+
+utility::vector1< bool >
+detect_base_contacts( core::pose::Pose const & pose );
+
+bool
+check_phosphate_contacts_donor( utility::vector1< core::Vector > const & op_xyz_list,
+	utility::vector1< core::Vector > const & donor_atom_xyz_list,
+	utility::vector1< core::Vector > const & donor_base_atom_xyz_list );
+
+bool
+check_phosphate_contacts_donor( core::pose::Pose const & pose, core::Size const n );
+
+utility::vector1< bool >
+detect_phosphate_contacts( core::pose::Pose const & pose );
+
+
+utility::vector1< bool >
+detect_sugar_contacts( core::pose::Pose const & pose );
+
+bool
+detect_sugar_contacts( core::pose::Pose const & pose, core::Size const moving_res,
+	core::Distance const o2prime_contact_distance_cutoff_ = 3.2 /*hydrogen bond*/ );
+
+
+void
+setup_three_prime_phosphate_based_on_next_residue( core::pose::Pose & pose, core::Size const n );
+
+
+enum Terminus {
+	FIVE_PRIME,
+	THREE_PRIME
+};
+
+void
+get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
+	Size const n,
+	Terminus const t,
+	utility::vector1< core::Vector > & donor_atom_xyz_list,
+	utility::vector1< core::Vector > & donor_base_atom_xyz_list,
+	utility::vector1< core::Size > & neighbor_copy_dofs );
+
+
+
+
+bool
+moveable_jump( core::id::AtomID const & jump_atom_id1,
+	core::id::AtomID const & jump_atom_id2,
+	core::pose::toolbox::AtomLevelDomainMap const & atom_level_domain_map);
+
+bool
+moveable_jump( core::Size const jump_pos1,
+	core::Size const jump_pos2,
+	core::pose::toolbox::AtomLevelDomainMap const & atom_level_domain_map);
+
+bool
+base_pair_step_moving( core::pose::rna::BasePairStep const & base_pair_step,
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::pose::Pose const & pose );
+
+bool
+base_pair_moving( core::pose::rna::BasePair const & base_pair,
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::pose::Pose const & pose );
+
+
+
+
+utility::vector1< core::Size >
+get_rigid_body_jumps( core::pose::Pose const & pose );
+
+void
+fill_in_default_jump_atoms( core::kinematics::FoldTree & f, core::pose::Pose const & pose );
+
+void
+fill_in_default_jump_atoms( core::pose::Pose & pose );
+
+
+
+Vector
+get_sugar_centroid( core::conformation::Residue const & rsd );
+
+
+void
+figure_out_secstruct( core::pose::Pose & pose );
+
+void
+get_base_pairing_info( core::pose::Pose const & pose,
+	core::Size const & seqpos,
+	char & secstruct,
+	ObjexxFCL::FArray1D <bool> & edge_is_base_pairing );
 
 /// @brief Output base pairs detected for RNA, including noncanonicals. Must previously score pose with RNA_LORES.
 void

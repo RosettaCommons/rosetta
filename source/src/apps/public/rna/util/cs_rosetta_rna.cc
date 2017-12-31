@@ -34,13 +34,13 @@
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/sequence/Sequence.hh>
 
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 
 //RNA stuff.
 #include <protocols/rna/denovo/movers/RNA_Minimizer.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoParameters.hh>
+#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
+#include <core/import_pose/RNA_DeNovoParameters.hh>
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
 
@@ -81,13 +81,13 @@ using namespace core::id;
 using namespace core::io::silent;
 using namespace core::pose;
 using namespace core::pose::rna;
+using namespace core::import_pose;
 using namespace core::scoring;
 using namespace core::scoring::rna::chemical_shift;
 
 using namespace protocols;
 using namespace protocols::rna::movers;
 using namespace protocols::rna::denovo;
-using namespace protocols::rna::denovo::setup;
 using namespace protocols::rna::denovo::movers;
 
 using namespace ObjexxFCL;

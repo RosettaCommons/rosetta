@@ -29,10 +29,9 @@
 // Protocol Headers
 #include <protocols/rna/movers/RNA_DeNovoOptimizer.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
-#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
+#include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 
 #include <utility/string_util.hh>
 
@@ -89,11 +88,10 @@ public:
 		using namespace core::id;
 		using namespace protocols::rna::denovo;
 		using namespace protocols::rna::movers;
-		using namespace protocols::rna::denovo::libraries;
-		using namespace protocols::toolbox;
-		using namespace protocols::stepwise::setup;
+		using namespace core::import_pose::libraries;
+		using namespace core::pose::toolbox;
 
-		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 		pose::Pose & pose = *pose_op;
 		TS_ASSERT( pose.fold_tree().is_cutpoint( 1 ) );

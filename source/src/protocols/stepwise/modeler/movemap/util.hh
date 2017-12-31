@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_stepwise_modeler_movemap_util_HH
 
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/types.hh>
@@ -35,7 +35,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 
 void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
-	toolbox::AtomLevelDomainMapOP & atom_level_domain_map,
+	core::pose::toolbox::AtomLevelDomainMapOP & atom_level_domain_map,
 	core::pose::Pose const & pose,
 	utility::vector1< core::Size > const & working_fixed_res,
 	utility::vector1< core::Size > const & working_extra_minimize_res,
@@ -43,7 +43,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 
 void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
-	toolbox::AtomLevelDomainMapOP atom_level_domain_map,
+	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map,
 	core::pose::Pose const & pose,
 	utility::vector1< core::Size > const & working_minimize_res,
 	bool const move_takeoff_torsions = true );

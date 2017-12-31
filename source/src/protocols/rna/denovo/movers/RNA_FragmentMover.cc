@@ -14,8 +14,8 @@
 
 // Unit headers
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
-#include <protocols/rna/denovo/fragments/RNA_Fragments.hh>
-#include <protocols/rna/denovo/fragments/RNA_MatchType.hh>
+#include <core/fragment/rna/RNA_Fragments.hh>
+#include <core/fragment/rna/RNA_MatchType.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -28,8 +28,8 @@
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/full_model_info/FullModelParameterType.hh>
 
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -52,8 +52,7 @@
 
 
 using namespace core;
-using namespace protocols::rna::denovo::fragments;
-
+using namespace core::fragment::rna;
 
 static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_FragmentMover" );
 
@@ -66,7 +65,7 @@ namespace movers {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 RNA_FragmentMover::RNA_FragmentMover(
 	RNA_Fragments const & rna_fragments,
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 	Size const symm_hack_arity
 ) : Mover(),
 	rna_fragments_( rna_fragments ),

@@ -10,3 +10,4 @@
 -dump
 -mute core.io.database
 -vary_geometry
+-denovo:use_legacy_job_distributor true

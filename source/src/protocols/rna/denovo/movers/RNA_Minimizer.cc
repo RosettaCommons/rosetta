@@ -14,14 +14,14 @@
 
 
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh> // for ROSETTA_LIBRARY_DOMAIN
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/import_pose/libraries/RNA_ChunkLibrary.hh> // for ROSETTA_LIBRARY_DOMAIN
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/stepwise/modeler/rna/util.hh> //Parin Sripakdeevong
 #include <protocols/stepwise/modeler/util.hh> // for figuring out moving chainbreaks
 #include <protocols/stepwise/modeler/output_util.hh> // output movemap
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/rna/denovo/options/RNA_MinimizerOptions.hh>
+#include <core/import_pose/options/RNA_MinimizerOptions.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -77,6 +77,9 @@
 #include <core/kinematics/FoldTree.hh>
 
 using namespace core;
+using namespace core::import_pose;
+using namespace pose;
+using namespace core::pose::rna;
 
 static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_Minimizer" );
 
@@ -453,7 +456,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 void
 RNA_Minimizer::update_atom_level_domain_map_to_move_rosetta_library_chunks()
 {
-	atom_level_domain_map_->update_to_move_chunks_with_domain( libraries::ROSETTA_LIBRARY_DOMAIN );
+	atom_level_domain_map_->update_to_move_chunks_with_domain( core::import_pose::libraries::ROSETTA_LIBRARY_DOMAIN );
 }
 
 

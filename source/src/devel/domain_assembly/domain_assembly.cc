@@ -32,7 +32,7 @@
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueConnection.hh>
 
@@ -41,7 +41,7 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 // Headers for RNA
-#include <protocols/rna/denovo/fragments/FullAtomRNA_Fragments.hh>
+#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
 #include <basic/database/open.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.fwd.hh>
@@ -85,7 +85,7 @@ using namespace protocols::viewer;
 using namespace basic::options;
 using namespace rna::denovo;
 using namespace rna::denovo::movers;
-using namespace rna::denovo::fragments;
+using namespace core::fragment::rna;
 using namespace ObjexxFCL::format;
 //using namespace basic::options::OptionKeys;
 using namespace chemical;
@@ -149,13 +149,13 @@ read_linker_file(
 }
 
 /// @brief function that parses the rna regions specified into a boolean array to be used by a RNA Fragment Mover Object
-protocols::toolbox::AtomLevelDomainMapOP
+core::pose::toolbox::AtomLevelDomainMapOP
 set_moveable_rna(
 	pose::Pose & full_pose,
 	utility::vector1< std::pair < Size, Size > > & linker_rna
 )
 {
-	using namespace protocols::toolbox;
+	using namespace core::pose::toolbox;
 	//FArray1D used to maintain RNA_FragmentMover compatability with other RNA protocols
 	AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( full_pose ) );
 	for ( Size i = 1; i <= full_pose.size(); ++i ) {
@@ -434,7 +434,7 @@ void
 optimize_linkers_rna_fullatom_mode(
 	kinematics::MoveMapOP & mm,
 	pose::Pose & full_pose,
-	protocols::rna::denovo::fragments::RNA_FragmentsOP & all_rna_fragments,
+	core::fragment::rna::RNA_FragmentsOP & all_rna_fragments,
 	utility::vector1< std::pair< Size, Size > > linker_rna
 )
 {

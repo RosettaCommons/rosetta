@@ -438,7 +438,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		TR.Debug << pose.fold_tree() << std::endl;
 	}
 
-	protocols::rna::assert_phosphate_nomenclature_matches_mini( pose ); //Just to be safe, Jun 11, 2010
+	core::pose::rna::assert_phosphate_nomenclature_matches_mini( pose ); //Just to be safe, Jun 11, 2010
 	correctly_copy_HO2prime_positions( pose, start_pose_list );
 }
 

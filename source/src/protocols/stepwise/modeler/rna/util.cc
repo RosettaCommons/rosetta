@@ -18,7 +18,6 @@
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
-#include <protocols/stepwise/modeler/rna/bulge/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
@@ -61,7 +60,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
@@ -70,8 +69,6 @@
 #include <numeric/random/random.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/file/file_sys_util.hh>
-#include <basic/options/option.hh> //
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh> // Will want to kill this once in FMI
 
 #include <iostream>
 #include <fstream>
@@ -1782,69 +1779,6 @@ figure_out_moving_rna_chain_breaks( pose::Pose const & pose,
 		rna_three_prime_chain_breaks.push_back( three_prime_chain_breaks[n] );
 		rna_chain_break_gap_sizes.push_back( chain_break_gap_sizes[n] );
 	}
-}
-
-//////////////////////////////////////////////////////////////////////
-// this is reasonably sophisticated...
-//
-// * looks at base contacts -- at least 5 atoms in base contact some other residue.
-// * also checks if 2'-OH is H-bonded, and in that case, keeps backbone instantiated (just virtualize bases).
-// * checks if phosphate makes hydrogen bonds, and then keeps those instantiated.
-//
-// Good test case is second U in UUCG in 2KOC.pdb.
-//
-//  -- rhiju, 2014
-//////////////////////////////////////////////////////////////////////
-void
-virtualize_free_rna_moieties( pose::Pose & pose ){
-
-	utility::vector1< bool > base_makes_contact      = rna::bulge::detect_base_contacts( pose );
-	utility::vector1< bool > sugar_makes_contact     = rna::sugar::detect_sugar_contacts( pose );
-	utility::vector1< bool > phosphate_makes_contact = rna::phosphate::detect_phosphate_contacts( pose );
-
-	for ( Size i = 1; i <= pose.size(); i++ ) {
-		// Todo: take into the FMP so we can use resnum-chain
-		if ( basic::options::option[ basic::options::OptionKeys::stepwise::definitely_virtualize ].value().contains( i ) ) {
-			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, i );
-			continue;
-		}
-
-		if ( !pose.residue_type( i ).is_RNA() ) continue;
-		if ( base_makes_contact[ i ] ) continue;
-
-		// base is virtual.
-		if ( sugar_makes_contact[ i ] ) {
-			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_BASE, i );
-			continue;
-		}
-
-		// base and sugar are virtual.
-		add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, i );
-
-		// phosphate 5' to base
-		if ( i > 1 && phosphate_makes_contact[ i ] &&
-				pose.residue_type( i-1 ).is_RNA() &&
-				!pose.fold_tree().is_cutpoint(i-1) ) {
-			rna::phosphate::setup_three_prime_phosphate_based_on_next_residue( pose, i-1 );
-		}
-
-		// phosphate 3' to base
-		if ( i < pose.size() && !phosphate_makes_contact[ i+1 ] &&
-				pose.residue_type( i+1 ).is_RNA() &&
-				!pose.fold_tree().is_cutpoint( i ) ) {
-			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i+1 );
-		}
-
-	}
-
-	// check if all virtual
-	bool all_virtual( true );
-	for ( Size i = 1; i <= pose.size(); i++ ) {
-		if ( !pose.residue( i ).is_virtual_residue() && !pose.residue( i ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) all_virtual = false;
-	}
-	if ( all_virtual ) utility_exit_with_message( "Turned native into an all virtual pose. May want to fix native or rerun with -virtualize_free_moieties_in_native false." );
-	TR.Debug << pose.annotated_sequence() << std::endl;
-
 }
 
 } //rna

@@ -27,8 +27,8 @@
 #include <basic/database/open.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/extra_pose_info_util.hh>
@@ -43,7 +43,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
+#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <core/pose/PDBInfo.hh>
 
@@ -237,7 +237,6 @@ rna_score_test()
 	using namespace core::import_pose;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
-	using namespace protocols::stepwise::setup;
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );
@@ -331,7 +330,7 @@ rna_score_test()
 			core::util::switch_to_residue_type_set( *pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */ );
 		}
 
-		if ( option[ virtualize_free ]() ) protocols::stepwise::modeler::rna::virtualize_free_rna_moieties( *pose ); // purely for testing.
+		if ( option[ virtualize_free ]() ) core::pose::rna::virtualize_free_rna_moieties( *pose ); // purely for testing.
 
 		if ( !option[ in::file::silent ].user() ) cleanup( *pose );
 

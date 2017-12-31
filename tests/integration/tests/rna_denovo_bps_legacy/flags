@@ -13,3 +13,4 @@
 -chemical::enlarge_H_lj
 -score:rna_torsion_potential RNA11_based_new
 -output_res_num  1-22
+-denovo:use_legacy_job_distributor true

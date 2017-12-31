@@ -57,7 +57,6 @@
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

@@ -350,25 +350,28 @@ void build_pose_as_is2(
 
 core::pose::PoseOP
 get_pdb_with_full_model_info( std::string const & input_file,
-	core::chemical::ResidueTypeSetCAP rsd_set );
+	core::chemical::ResidueTypeSetCOP rsd_set );
 
 core::pose::PoseOP
 get_pdb_and_cleanup( std::string const & input_file );
 
 core::pose::PoseOP
 get_pdb_and_cleanup( std::string const & input_file,
-	core::chemical::ResidueTypeSetCAP rsd_set );
+	core::chemical::ResidueTypeSetCOP rsd_set );
 
 void
 get_other_poses(  utility::vector1< core::pose::PoseOP > & other_poses,
 	utility::vector1< std::string > const & other_files,
-	core::chemical::ResidueTypeSetCAP rsd_set );
+	core::chemical::ResidueTypeSetCOP rsd_set );
 
 core::pose::PoseOP
-initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set );
+initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCOP rsd_set );
 
 core::pose::PoseOP
-initialize_pose_and_other_poses_from_options( core::chemical::ResidueTypeSetCAP rsd_set, utility::options::OptionCollection const & options );
+initialize_pose_and_other_poses_from_options( core::chemical::ResidueTypeSetCOP rsd_set, utility::options::OptionCollection const & options );
+
+core::pose::PoseOP
+initialize_pose_and_other_poses_from_options_and_input_poses( core::chemical::ResidueTypeSetCOP rsd_set, utility::options::OptionCollection const & options, utility::vector1< pose::PoseOP > & input_poses );
 
 void
 cleanup( core::pose::Pose & pose,
@@ -543,6 +546,52 @@ get_cutpoints( utility::vector1< core::sequence::SequenceCOP > const & fasta_seq
 	utility::vector1< char > const & conventional_chains,
 	utility::vector1< int  > const & conventional_numbering,
 	utility::vector1< std::string > const & conventional_segids );
+
+void
+initialize_native_and_align_pose( core::pose::PoseOP & native_pose,
+	core::pose::PoseOP & align_pose,
+	core::chemical::ResidueTypeSetCOP rsd_set,
+	core::pose::PoseCOP start_pose );
+
+
+void
+process_input_file( std::string const & silent_file,
+	utility::vector1< core::pose::PoseOP > & pose_list,
+	bool is_pdb = false,
+	bool coarse_rna  = false );
+
+
+std::string const
+convert_based_on_match_type( std::string const & RNA_string, core::Size const type );
+
+bool
+compare_RNA_char( char const char1, char const char2 );
+
+bool
+compare_RNA_secstruct( char const char1, char const char2 );
+
+
+core::Size
+get_anchor_rsd( core::pose::Pose const & pose );
+
+bool
+involved_in_phosphate_torsion( std::string atomname );
+
+
+void
+remove_cutpoint_closed( core::pose::Pose & pose, core::Size const i );
+
+void
+remove_cutpoints_closed( core::pose::Pose & pose );
+
+
+
+void
+make_extended_coarse_pose( core::pose::Pose & coarse_pose, std::string const & full_sequence );
+
+void
+make_coarse_pose( core::pose::Pose const & pose, core::pose::Pose & coarse_pose );
+
 
 } // namespace import_pose
 } // namespace core

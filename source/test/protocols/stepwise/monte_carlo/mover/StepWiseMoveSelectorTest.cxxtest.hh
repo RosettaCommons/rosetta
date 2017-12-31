@@ -30,7 +30,6 @@
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 
 // Protocol Headers
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
 
 #include <utility/tools/make_vector1.hh>
@@ -55,13 +54,12 @@ public:
 		using namespace core::chemical;
 		using namespace core::pose;
 		using namespace core::import_pose;
-		using namespace protocols::stepwise::setup;
 		using namespace protocols::stepwise::monte_carlo::submotif;
 		using namespace protocols::stepwise::monte_carlo::mover;
 		using namespace protocols::stepwise::monte_carlo::mover::options;
 		using namespace utility;
 
-		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
 
 		submotif_library = SubMotifLibraryOP( new SubMotifLibrary( rsd_set ) );

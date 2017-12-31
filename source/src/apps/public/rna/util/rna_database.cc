@@ -52,7 +52,8 @@
 
 //RNA stuff.
 #include <protocols/rna/denovo/util.hh>
-#include <protocols/rna/denovo/libraries/BasePairStepLibrary.hh>
+#include <core/import_pose/libraries/BasePairStepLibrary.hh>
+#include <core/import_pose/RNA_BasePairHandler.hh>
 
 
 // C++ headers
@@ -83,7 +84,7 @@ using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 
-using protocols::rna::denovo::libraries::MAX_BULGE_LENGTH;
+using core::import_pose::MAX_BULGE_LENGTH;
 
 using Matrix = numeric::xyzMatrix<Real>;
 

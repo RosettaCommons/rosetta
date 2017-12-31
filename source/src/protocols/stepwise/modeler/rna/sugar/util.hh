@@ -103,13 +103,6 @@ instantiate_any_virtual_sugars( core::pose::Pose & pose,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	options::StepWiseModelerOptionsCOP options );
 
-utility::vector1< bool >
-detect_sugar_contacts( core::pose::Pose const & pose );
-
-bool
-detect_sugar_contacts( core::pose::Pose const & pose, core::Size const moving_res,
-	core::Distance const o2prime_contact_distance_cutoff_ = 3.2 /*hydrogen bond*/ );
-
 } //sugar
 } //rna
 } //modeler

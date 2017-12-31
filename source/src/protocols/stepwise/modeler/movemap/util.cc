@@ -58,7 +58,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	core::pose::Pose const & pose,
 	utility::vector1< Size > const & working_minimize_res,
 	bool const move_takeoff_torsions /* = true */ ){
-	toolbox::AtomLevelDomainMapOP atom_level_domain_map( new toolbox::AtomLevelDomainMap( pose ) );
+	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map( new core::pose::toolbox::AtomLevelDomainMap( pose ) );
 	figure_out_stepwise_movemap( mm, atom_level_domain_map, pose, working_minimize_res, move_takeoff_torsions );
 }
 
@@ -66,7 +66,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 // used by legacy StepWiseRNA_Minimizer.cc
 void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
-	toolbox::AtomLevelDomainMapOP & atom_level_domain_map,
+	core::pose::toolbox::AtomLevelDomainMapOP & atom_level_domain_map,
 	core::pose::Pose const & pose,
 	utility::vector1< Size > const & working_fixed_res,
 	utility::vector1< Size > const & working_extra_minimize_res,
@@ -76,14 +76,14 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( !working_fixed_res.has_value( n ) || working_extra_minimize_res.has_value( n ) ) working_minimize_res.push_back( n );
 	}
-	atom_level_domain_map = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) );
+	atom_level_domain_map = core::pose::toolbox::AtomLevelDomainMapOP( new core::pose::toolbox::AtomLevelDomainMap( pose ) );
 	figure_out_stepwise_movemap( mm, atom_level_domain_map, pose, working_minimize_res, move_takeoff_torsions );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
-	toolbox::AtomLevelDomainMapOP atom_level_domain_map,
+	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map,
 	core::pose::Pose const & pose,
 	utility::vector1< Size > const & working_minimize_res,
 	bool const move_takeoff_torsions /* = true */ ) {

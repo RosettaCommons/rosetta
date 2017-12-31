@@ -60,6 +60,10 @@
 
 #include <core/io/pdb/pdb_reader.hh>
 
+#include <core/fragment/rna/RNA_MatchType.hh>
+
+#include <core/scoring/rna/RNA_CentroidInfo.hh>
+
 #include <core/id/TorsionID.hh>
 
 // Basic headers
@@ -104,6 +108,7 @@ using core::SSize;
 using basic::Error;
 using basic::Warning;
 using namespace core::io;
+using namespace core::fragment::rna;
 using namespace ObjexxFCL;
 using namespace core::pose;
 using namespace core::pose::full_model_info;
@@ -838,13 +843,13 @@ void build_pose_as_is2(
 
 
 pose::PoseOP
-initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set ) {
+initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCOP rsd_set ) {
 
 	return initialize_pose_and_other_poses_from_options( rsd_set, basic::options::option );
 }
 
 PoseOP
-initialize_pose_and_other_poses_from_options( core::chemical::ResidueTypeSetCAP rsd_set, utility::options::OptionCollection const & options ) {
+initialize_pose_and_other_poses_from_options( core::chemical::ResidueTypeSetCOP rsd_set, utility::options::OptionCollection const & options ) {
 	FullModelPoseBuilder builder;
 	builder.set_options( options );
 	builder.initialize_input_poses_from_options( rsd_set );
@@ -852,12 +857,70 @@ initialize_pose_and_other_poses_from_options( core::chemical::ResidueTypeSetCAP 
 	return builder.build();
 }
 
+PoseOP
+initialize_pose_and_other_poses_from_options_and_input_poses(
+	core::chemical::ResidueTypeSetCOP rsd_set,
+	utility::options::OptionCollection const & options,
+	utility::vector1< pose::PoseOP > & input_poses
+) {
+	// AMW: This function predates the FullModelPoseBuilder (developed above) but I think
+	// it is still reasonable to use it, as we may simply set its input_poses manually.
+
+	using namespace basic::options::OptionKeys;
+	using namespace core::io::silent;
+	using namespace core::pose;
+	using namespace utility;
+
+	std::tuple< vector1< Size >, vector1< char >, vector1< std::string > > const & input_resnum_and_chain_and_segid = options[ in::file::input_res ].resnum_and_chain();
+	vector1< Size > const & input_res_list = std::get<0>( input_resnum_and_chain_and_segid );
+	if ( input_res_list.size() ) {
+		vector1< char > input_chain_list = std::get<1>( input_resnum_and_chain_and_segid );
+		vector1< std::string > input_segid_list = std::get<2>( input_resnum_and_chain_and_segid );
+		Size input_res_count = 0;
+		for ( Size n = 1; n <= input_poses.size(); n++ ) {
+			Pose & pose = *input_poses[ n ];
+			PDBInfoOP pdb_info( new PDBInfo( pose ) );
+			vector1< Size > input_res_for_pose;
+			vector1< char > input_chain_for_pose;
+			vector1< std::string > input_segid_for_pose;
+			for ( Size k = 1; k <= pose.size(); k++ ) {
+				input_res_count++;
+				runtime_assert( input_res_count <= input_res_list.size() );
+				Size const & number_in_full_model = input_res_list[ input_res_count ];
+				input_res_for_pose.push_back( number_in_full_model );
+				input_chain_for_pose.push_back( input_chain_list[ input_res_count ] );
+				input_segid_for_pose.push_back( input_segid_list[ input_res_count ] );
+			}
+			pdb_info->set_numbering( input_res_for_pose );
+			pdb_info->set_chains(    input_chain_for_pose );
+			pdb_info->set_segment_ids(    input_segid_for_pose );
+			pose.pdb_info( pdb_info );
+		}
+		runtime_assert( input_res_count == input_res_list.size() );
+	}
+
+	if ( input_poses.size() == 0 ) input_poses.push_back( core::pose::PoseOP( new Pose ) ); // just a blank pose for now.
+
+	if ( options[ full_model::other_poses ].user() ) {
+		get_other_poses( input_poses, options[ full_model::other_poses ](), rsd_set );
+	}
+
+	/*
+	fill_full_model_info_from_options( input_poses, options );  //FullModelInfo (minimal object needed for add/delete)
+	return input_poses[1];
+	*/
+	FullModelPoseBuilder builder;
+	builder.set_options( options );
+	builder.set_input_poses( input_poses );
+	builder.initialize_further_from_options();
+	return builder.build();
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 get_other_poses( utility::vector1< pose::PoseOP > & other_poses,
 	utility::vector1< std::string > const & other_files,
-	core::chemical::ResidueTypeSetCAP rsd_set ) {
+	core::chemical::ResidueTypeSetCOP rsd_set ) {
 
 	for ( Size n = 1; n <= other_files.size(); n++ ) {
 		other_poses.push_back( get_pdb_and_cleanup( other_files[ n ], rsd_set ) );
@@ -867,7 +930,7 @@ get_other_poses( utility::vector1< pose::PoseOP > & other_poses,
 //////////////////////////////////////////////////////////////////////////////////////
 core::pose::PoseOP
 get_pdb_with_full_model_info( std::string const & input_file,
-	core::chemical::ResidueTypeSetCAP rsd_set ) {
+	core::chemical::ResidueTypeSetCOP rsd_set ) {
 
 	core::pose::PoseOP pose = get_pdb_and_cleanup( input_file, rsd_set );
 
@@ -889,7 +952,7 @@ get_pdb_and_cleanup( std::string const & input_file )
 
 core::pose::PoseOP
 get_pdb_and_cleanup( std::string const & input_file,
-	core::chemical::ResidueTypeSetCAP rsd_set )
+	core::chemical::ResidueTypeSetCOP rsd_set )
 {
 	using namespace core::pose;
 	PoseOP input_pose( new Pose );
@@ -1826,6 +1889,328 @@ just_modeling_RNA( utility::vector1< std::string > const & fasta_files ) {
 	std::string sequence = core::sequence::read_fasta_file_return_str( fasta_files[1] );
 	core::sequence::parse_out_non_standard_residues( sequence );
 	return ( pose::just_modeling_RNA( sequence ) );
+}
+
+
+// AMW TODO: version that takes an OptionsCollection
+// AMW: for now, create version that leaves
+// alone if it has already been initialized.
+///////////////////////////////////////////////////////////////
+void
+initialize_native_and_align_pose( PoseOP & native_pose,
+	PoseOP & align_pose,
+	core::chemical::ResidueTypeSetCOP rsd_set,
+	PoseCOP start_pose ) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if ( ( !native_pose || native_pose->size() == 0 ) && option[ in::file::native ].user() )  {
+		// If native is on the command line, stuff all that in align_pose!
+		align_pose = native_pose = core::import_pose::get_pdb_with_full_model_info( option[ in::file::native ](), rsd_set );
+	} else if ( ( !align_pose || align_pose->size() == 0 ) && native_pose ) {
+		// If native wasn't specified on the command line but it is already set up
+		// nonetheless...
+		align_pose = native_pose;
+	}
+
+	if ( option[ OptionKeys::stepwise::new_align_pdb ].user() ) {
+		align_pose = core::import_pose::get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::new_align_pdb ](), rsd_set );
+	} else if ( ( !align_pose || align_pose->size() == 0 )  && option[ OptionKeys::stepwise::align_pdb ].user() ) {
+		align_pose = core::import_pose::get_pdb_with_full_model_info(  option[ OptionKeys::stepwise::align_pdb ](), rsd_set );
+	}
+
+	if ( align_pose == nullptr && option[ in::file::s ].user() ) {
+		align_pose = start_pose->clone();
+	}
+	if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() ) { // could generalize to proteins
+		if ( native_pose != nullptr )  pose::rna::virtualize_free_rna_moieties( *native_pose );
+		if ( align_pose  != nullptr ) pose::rna::virtualize_free_rna_moieties( *align_pose );
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+void
+process_input_file( std::string const & input_file,
+	utility::vector1< pose::PoseOP > & pose_list,
+	bool is_pdb /*= false*/,
+	bool coarse_rna /* = false */)
+{
+	using namespace core::io::silent;
+
+	core::chemical::ResidueTypeSetCOP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+
+	if ( is_pdb ) {
+
+		pose::PoseOP pose_op( new pose::Pose );
+		core::import_pose::pose_from_file( *pose_op, *rsd_set, input_file , core::import_pose::PDB_file);
+		//   ensure_phosphate_nomenclature_matches_mini( *pose_op );
+		core::pose::rna::figure_out_reasonable_rna_fold_tree( *pose_op );
+		pose_list.push_back( pose_op );
+
+	} else { //its a silent file.
+		SilentFileOptions opts;
+		SilentFileData silent_file_data( opts );
+		silent_file_data.read_file( input_file );
+		for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(),
+				end = silent_file_data.end(); iter != end; ++iter ) {
+			pose::PoseOP pose_op( new pose::Pose );
+			iter->fill_pose( *pose_op );
+			pose_list.push_back( pose_op );
+		}
+
+	}
+
+	// further cleanup.
+	for ( Size n = 1; n <= pose_list.size(); n++ ) {
+
+		pose::PoseOP pose_op = pose_list[ n ];
+
+		remove_cutpoints_closed( *pose_op );
+
+		if ( coarse_rna && !pose_op->residue(1).is_coarse() ) {
+			pose::Pose coarse_pose;
+			make_coarse_pose( *pose_op, coarse_pose );
+			*pose_op = coarse_pose;
+		}
+
+		core::pose::rna::virtualize_5prime_phosphates( *pose_op );
+	}
+
+	if ( pose_list.size() < 1 )  {
+		utility_exit_with_message(  "No structure found in input file  " + input_file );
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+compare_RNA_char( char const char1, char const char2 ) {
+	//Man this is silly, there must be a more elegant way to do this.
+	if ( char1 == char2 ) return true;
+	if ( char1 == 'n' || char2 == 'n' ) return true;
+	if ( char1 == 'r' && (char2 == 'a' || char2 == 'g') ) return true;
+	if ( char1 == 'y' && (char2 == 'c' || char2 == 'u') ) return true;
+	if ( char2 == 'r' && (char1 == 'a' || char1 == 'g') ) return true;
+	if ( char2 == 'y' && (char1 == 'c' || char1 == 'u') ) return true;
+	return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+compare_RNA_secstruct( char const char1, char const char2 ) {
+	if ( char1 == char2 ) return true;
+	if ( char1 == 'X' || char2 == 'X' ) return true;
+	if ( char1 == 'L' && ( char2 == 'N' || char2 == 'P') ) return true;
+	if ( char2 == 'L' && ( char1 == 'N' || char1 == 'P') ) return true;
+	return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+std::string const
+convert_based_on_match_type( std::string const & RNA_string, Size const type ){
+
+	// AMW: this can probably be made more concise using a functional approach.
+
+	std::string RNA_string_local = RNA_string;
+
+	Size const size = RNA_string.length();
+
+	static bool print_warning( false );
+
+	//Obey orders to match exactly, match pyrimidine/purine, or match all.
+	if ( type == MATCH_ALL ) {
+		for ( Size i = 0; i < size; i++ )  RNA_string_local[ i ] = 'n';
+	} else if ( type == MATCH_YR ) {
+		for ( Size i = 0; i < size; i++ ) {
+			if ( RNA_string[ i ] == 'g' || RNA_string[ i ] == 'a' ) {
+				RNA_string_local[ i ] = 'r';
+			} else {
+				runtime_assert( RNA_string[ i ] == 'u' || RNA_string[ i ] == 'c' || RNA_string[ i ] == 't' );
+				RNA_string_local[ i ] = 'y';
+			}
+		}
+	} else {
+		for ( Size i = 0; i < size; i++ )  {
+			if ( RNA_string[ i ] == 't' ) {
+				if ( !print_warning ) {
+					TR.Warning << TR.Red << "Requesting an RNA fragment for t. Instead choosing fragment based on u!" << std::endl;
+					print_warning = true;
+				}
+				RNA_string_local[ i ] = 'u';
+			}
+		}
+	}
+
+	return RNA_string_local;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+Size
+get_anchor_rsd( pose::Pose const & pose )
+{
+	utility::vector1< Size > const rigid_body_jumps = pose::rna::get_rigid_body_jumps( pose );
+	if ( rigid_body_jumps.size() == 0 ) return 0;
+
+	Size const nres = pose.size(); // This better be a virtual residue -- checked in get_rigid_body_jumps() above.
+
+	Size anchor_rsd = pose.fold_tree().downstream_jump_residue( rigid_body_jumps[1] );
+	if ( anchor_rsd == nres ) anchor_rsd = pose.fold_tree().upstream_jump_residue( rigid_body_jumps[1] );
+	return anchor_rsd;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+involved_in_phosphate_torsion( std::string atomname )
+{
+	utility::vector1< std::string > const & atoms_involved = core::chemical::rna::atoms_involved_in_phosphate_torsion;
+
+	for ( Size n = 1; n <= atoms_involved.size(); n++ ) {
+		if (  atomname == atoms_involved[ n ] ) return true;
+	}
+	return false;
+}
+
+
+
+////////////////////////////////////////////////////////
+void
+remove_cutpoint_closed( pose::Pose & pose, Size const i ) {
+
+	using namespace core::chemical;
+	using namespace core::kinematics;
+
+	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, i );
+	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, i+1 );
+
+	// using namespace protocols::forge::methods;
+	//  FoldTree f( pose.fold_tree() );
+	//  remove_cutpoint( i, f );
+	//  pose.fold_tree( f );
+
+	utility::vector1< Size > const & cutpoints = pose.fold_tree().cutpoints();
+
+	Size const num_jump =  pose.fold_tree().num_jump();
+	utility::vector1< Size > upstream_pos, downstream_pos;
+	for ( Size n = 1; n <= num_jump; n++ ) {
+		upstream_pos.push_back( pose.fold_tree().upstream_jump_residue( n ) );
+		downstream_pos.push_back( pose.fold_tree().downstream_jump_residue( n ) );
+	}
+
+	ObjexxFCL::FArray1D< Size > cuts( num_jump-1 );
+	Size count( 0 );
+	for ( Size n = 1; n <= num_jump; n++ ) {
+		if ( cutpoints[n] == i ) continue;
+		count++;
+		cuts( count ) = cutpoints[ n ];
+	}
+
+	Size const nres( pose.size() );
+
+	// Just brute-force iterate through to find a jump we can remove.
+	Size jump_to_remove( 0 );
+	for ( Size k = 1; k <= num_jump; k++ ) {
+		FArray1D< bool > partition_definition( nres, false );
+		pose.fold_tree().partition_by_jump( k, partition_definition );
+		if ( partition_definition( i ) != partition_definition( i+1 ) ) {
+			jump_to_remove = k; break;
+		}
+	}
+
+	bool success( false );
+
+	ObjexxFCL::FArray2D< Size > jump_point( 2, num_jump-1 );
+
+	count = 0;
+	for ( Size n = 1; n <= num_jump; n++ ) {
+		if ( n == jump_to_remove ) continue;
+		count++;
+		if ( upstream_pos[ n ] < downstream_pos[ n ] ) {
+			jump_point( 1, count ) = upstream_pos[ n ];
+			jump_point( 2, count ) = downstream_pos[ n ];
+		} else {
+			jump_point( 1, count ) = downstream_pos[ n ];
+			jump_point( 2, count ) = upstream_pos[ n ];
+		}
+	}
+
+	FoldTree f( nres );
+
+	success = f.tree_from_jumps_and_cuts( nres, num_jump-1, jump_point, cuts, 1, false /*verbose*/ );
+
+	if ( !success ) utility_exit_with_message( "FAIL to remove cutpoint "+string_of( i ) );
+
+	pose.fold_tree( f );
+}
+
+////////////////////////////////////////////////////////
+void
+remove_cutpoints_closed( pose::Pose & pose ){
+	// Make a list of each cutpoint_closed.
+	for ( Size i = 1; i < pose.size(); i++ ) {
+		if ( pose.fold_tree().is_cutpoint( i ) &&
+				pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+				pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+			remove_cutpoint_closed( pose, i ); // this will cycle through to find a jump that is removable.
+		}
+	}
+}
+
+
+
+/////////////////////////////////////////////////
+void
+make_extended_coarse_pose( pose::Pose & coarse_pose, std::string const & full_sequence ){
+
+	using namespace core::chemical;
+	using namespace core::id;
+
+	ResidueTypeSetCOP rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
+
+	make_pose_from_sequence( coarse_pose, full_sequence, *rsd_set_coarse );
+
+	for ( Size n = 1; n <= coarse_pose.size(); n++ ) {
+		coarse_pose.set_torsion( TorsionID( n, BB, 1 ), -150.0 );
+		coarse_pose.set_torsion( TorsionID( n, BB, 2 ),  180.0 );
+	}
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+void
+make_coarse_pose( pose::Pose const & pose, pose::Pose & coarse_pose ){
+
+	using namespace core::chemical;
+	using namespace core::id;
+	using namespace core::scoring::rna;
+
+	ResidueTypeSetCOP rsd_set, rsd_set_coarse;
+	RNA_CentroidInfo rna_centroid_info;
+
+	rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
+	make_extended_coarse_pose( coarse_pose, pose.sequence() );
+
+	for ( Size n = 1; n <= pose.size(); n++ ) {
+		coarse_pose.set_xyz(  NamedAtomID( " P  ", n ),  pose.xyz( NamedAtomID( " P  ", n )) );
+
+		//coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  pose.xyz( NamedAtomID( " C4'", n )) );
+		Vector sugar_centroid = pose::rna::get_sugar_centroid( pose.residue( n ) );
+		coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  sugar_centroid );
+
+		Vector base_centroid = rna_centroid_info.get_base_centroid( pose.residue( n ) );
+		kinematics::Stub stub = rna_centroid_info.get_base_coordinate_system( pose.residue( n ), base_centroid );
+
+		coarse_pose.set_xyz(  NamedAtomID( " CEN", n ),  base_centroid );
+		coarse_pose.set_xyz(  NamedAtomID( " X  ", n ),  base_centroid + stub.M.col_x() );
+		coarse_pose.set_xyz(  NamedAtomID( " Y  ", n ),  base_centroid + stub.M.col_y() );
+	}
+
+	core::kinematics::FoldTree f( pose.fold_tree() );
+	for ( Size n = 1; n <= pose.num_jump(); n++ ) {
+		f.set_jump_atoms( n, " Y  ", " Y  " );
+	}
+	coarse_pose.fold_tree( f );
 }
 
 

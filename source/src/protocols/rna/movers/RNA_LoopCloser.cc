@@ -13,8 +13,8 @@
 /// @author Rhiju Das
 
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh> // for ROSETTA_LIBRARY_DOMAIN id.
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
+#include <core/import_pose/libraries/RNA_ChunkLibrary.hh> // for ROSETTA_LIBRARY_DOMAIN id.
 #include <core/conformation/Residue.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/id/AtomID_Map.hh>
@@ -142,7 +142,7 @@ RNA_LoopCloser::get_cutpoints_closed( pose::Pose const & pose ) const {
 		if ( atom_level_domain_map_ != nullptr ) {
 			Size const domain1( atom_level_domain_map_->get_domain( NamedAtomID( "OVL1", i ), pose ) );
 			Size const domain2( atom_level_domain_map_->get_domain( NamedAtomID( "OVU1", j ), pose ) );
-			if ( domain1 == domain2 && domain1 > 0 && domain1 != denovo::libraries::ROSETTA_LIBRARY_DOMAIN ) {
+			if ( domain1 == domain2 && domain1 > 0 && domain1 != core::import_pose::libraries::ROSETTA_LIBRARY_DOMAIN ) {
 				continue;
 			}
 		}

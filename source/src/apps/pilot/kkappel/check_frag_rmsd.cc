@@ -28,6 +28,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/init/init.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
@@ -38,18 +39,17 @@
 #include <basic/database/open.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
+#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/rna/denovo/util.hh>
-#include <protocols/rna/denovo/fragments/RNA_MatchType.hh>
-#include <protocols/rna/denovo/fragments/RNA_Fragments.hh>
-#include <protocols/rna/denovo/fragments/FragmentLibrary.hh>
-#include <protocols/rna/denovo/fragments/TorsionSet.hh>
-#include <protocols/rna/denovo/libraries/RNA_LibraryManager.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
+#include <core/fragment/rna/RNA_MatchType.hh>
+#include <core/fragment/rna/RNA_Fragments.hh>
+#include <core/fragment/rna/FragmentLibrary.hh>
+#include <core/fragment/rna/TorsionSet.hh>
+#include <core/import_pose/libraries/RNA_LibraryManager.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 
 #include <core/pose/copydofs/util.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
 
 // C++ headers
 #include <iostream>
@@ -90,7 +90,7 @@ figure_out_secstruct( pose::Pose & pose ){
 	char secstruct1( 'X' );
 	for ( Size i=1; i <= pose.size() ; ++i ) {
 		//TR << i << std::endl;
-		protocols::rna::denovo::get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
+		core::pose::rna::get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
 		secstruct += secstruct1;
 	}
 
@@ -99,17 +99,16 @@ figure_out_secstruct( pose::Pose & pose ){
 	return secstruct;
 }
 
-utility::vector1< Real > get_min_frag_rmsd( std::string const & in_file, protocols::rna::denovo::fragments::RNA_Fragments const & fragments, std::string const & exclusion_match_type = "MATCH_EXACT" ) {
+utility::vector1< Real > get_min_frag_rmsd( std::string const & in_file, core::fragment::rna::RNA_Fragments const & fragments, std::string const & exclusion_match_type = "MATCH_EXACT" ) {
 	using namespace core::pose;
 	using namespace core::pose::copydofs;
 	using namespace core::scoring;
 	using namespace core::import_pose;
 	using namespace core::chemical;
 	using namespace core::id;
-	using namespace protocols::rna::denovo::options;
-	using namespace protocols::rna::denovo::fragments;
-	using namespace protocols::stepwise::setup;
-	using namespace protocols::toolbox;
+	using namespace core::import_pose::options;
+	using namespace core::fragment::rna;
+	using namespace core::pose::toolbox;
 	using namespace utility::file;
 	using namespace basic::options;
 
@@ -124,7 +123,7 @@ utility::vector1< Real > get_min_frag_rmsd( std::string const & in_file, protoco
 		utility_exit_with_message( "Illegal value provided for option -exclusion_match_type. Must be MATCH_EXACT (default), MATCH_YR, or MATCH_ALL.");
 	}
 
-	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	PoseOP pose_op = get_pdb_and_cleanup( in_file, rsd_set );
 	Pose & pose_input = *pose_op;
@@ -221,9 +220,8 @@ utility::vector1< Real > get_min_frag_rmsd( std::string const & in_file, protoco
 
 // Just try to run the homology stuff
 void test() {
-	using namespace protocols::rna::denovo::fragments;
-	using namespace protocols::rna::denovo;
-	using namespace protocols::rna::denovo::libraries;
+	using namespace core::fragment::rna;
+	using namespace core::import_pose::libraries;
 
 	// get all the RNA fragments
 	RNA_Fragments const & all_rna_fragments( RNA_LibraryManager::get_instance()->rna_fragment_library( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ) );

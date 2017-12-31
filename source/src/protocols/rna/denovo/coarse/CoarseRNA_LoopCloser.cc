@@ -16,7 +16,7 @@
 #include <protocols/rna/denovo/coarse/CoarseRNA_LoopCloser.hh>
 
 // Package headers
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 //
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
@@ -203,7 +203,7 @@ CoarseRNA_LoopCloser::output_forward_backward_res(){
 bool
 CoarseRNA_LoopCloser::figure_out_pivots( core::pose::Pose const & pose ){
 
-	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = protocols::toolbox::AtomLevelDomainMapOP( new protocols::toolbox::AtomLevelDomainMap( pose ) );
+	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = core::pose::toolbox::AtomLevelDomainMapOP( new core::pose::toolbox::AtomLevelDomainMap( pose ) );
 
 	figure_out_forward_backward_res_by_backtracking( pose );
 
@@ -971,12 +971,12 @@ CoarseRNA_LoopCloser::fill_chainTORS(
 
 ///////////////////////////////////////////////////////////
 void
-CoarseRNA_LoopCloser::set_atom_level_domain_map( protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) {
+CoarseRNA_LoopCloser::set_atom_level_domain_map( core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) {
 	atom_level_domain_map_ = atom_level_domain_map;
 }
 
 ///////////////////////////////////////////////////////////
-protocols::toolbox::AtomLevelDomainMapOP
+core::pose::toolbox::AtomLevelDomainMapOP
 CoarseRNA_LoopCloser::atom_level_domain_map(){
 	return atom_level_domain_map_;
 }

@@ -20,7 +20,6 @@
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/scoring/CachedVdwScreenInfo.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
@@ -30,7 +29,7 @@
 #include <protocols/rna/denovo/libraries/RNA_JumpLibrary.hh>
 #include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/rna/denovo/libraries/BasePairStepLibrary.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <basic/database/open.hh>
 

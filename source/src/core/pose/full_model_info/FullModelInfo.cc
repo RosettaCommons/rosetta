@@ -499,15 +499,15 @@ SubMotifInfoOP
 FullModelInfo::submotif_info_containing_residues( utility::vector1< Size > const & res_list, bool const & check_other_poses /*= false*/ ) const
 {
 	utility::vector1< SubMotifInfoOP >::iterator itr;
-	for ( itr = submotif_info_list_.begin(); itr != submotif_info_list_.end(); ++itr ) {
+	for ( auto const & elem : submotif_info_list_ ) {
 		bool found_all_residues( true );
 		for ( Size n = 1; n <= res_list.size(); n++ ) {
-			if ( (*itr)->res_list().has_value( res_list[ n ] ) ) continue;
+			if ( elem->res_list().has_value( res_list[ n ] ) ) continue;
 			found_all_residues = false;
 			break;
 		}
 		if ( !found_all_residues ) continue;
-		return (*itr);
+		return elem;
 	}
 	if ( check_other_poses ) {
 		Size const & idx = get_idx_for_other_pose_with_residue( res_list[ 1 ] );
@@ -524,15 +524,15 @@ FullModelInfo::update_submotif_info_list()
 {
 	utility::vector1< SubMotifInfoOP >::iterator itr;
 	utility::vector1< SubMotifInfoOP > submotif_info_to_delete;
-	for ( itr = submotif_info_list_.begin(); itr != submotif_info_list_.end(); ++itr ) {
-		for ( Size n = 1; n <= (*itr)->res_list().size(); ++n ) {
-			if ( !res_list_.has_value( (*itr)->res_list( n ) ) ) submotif_info_to_delete.push_back( *itr );
+	for ( auto const & elem : submotif_info_list_ ) {
+		for ( Size n = 1; n <= elem->res_list().size(); ++n ) {
+			if ( !res_list_.has_value( elem->res_list( n ) ) ) submotif_info_to_delete.push_back( elem );
 		}
 	}
 
 	// have to delete in a second stage; otherwise iteration above can get tripped up it
 	// an iterator disapears in the middle of the loop.
-	for ( Size n = 1; n <= submotif_info_to_delete.size(); n++ ) delete_submotif_info( submotif_info_to_delete[ n ] );
+	for ( auto const & elem : submotif_info_to_delete ) delete_submotif_info( elem );
 
 }
 
@@ -554,8 +554,8 @@ FullModelInfo::add_submotif_info(
 void
 FullModelInfo::add_submotif_info( utility::vector1< SubMotifInfoOP > submotif_info_list ) {
 	utility::vector1< SubMotifInfoOP >::iterator itr;
-	for ( itr = submotif_info_list.begin(); itr != submotif_info_list.end(); ++itr ) {
-		add_submotif_info( (*itr) );
+	for ( auto const & elem : submotif_info_list ) {
+		add_submotif_info( elem );
 	}
 }
 
@@ -567,8 +567,8 @@ FullModelInfo::add_submotif_info( SubMotifInfoOP submotif_info_op )
 {
 	// could try .index()/.has_value() -- but only if overloaded operator== is used
 	utility::vector1< SubMotifInfoOP >::iterator itr;
-	for ( itr = submotif_info_list_.begin(); itr != submotif_info_list_.end(); ++itr ) {
-		if ( (*itr) == submotif_info_op ) return;
+	for ( auto const & elem : submotif_info_list_ ) {
+		if ( elem == submotif_info_op ) return;
 	}
 	submotif_info_list_.push_back( submotif_info_op->clone() );
 }
@@ -590,9 +590,8 @@ FullModelInfo::delete_submotif_info(
 /// @brief Delete a list of SubMotifInfoOPs from submotif_info_list_
 void
 FullModelInfo::delete_submotif_info( utility::vector1< SubMotifInfoOP > submotif_info_list ) {
-	utility::vector1< SubMotifInfoOP >::iterator itr;
-	for ( itr = submotif_info_list.begin(); itr != submotif_info_list.end(); ++itr ) {
-		delete_submotif_info( (*itr) );
+	for ( auto const & elem : submotif_info_list ) {
+		delete_submotif_info( elem );
 	}
 }
 
@@ -622,8 +621,8 @@ FullModelInfo::show_submotif_info_list( bool const & for_all_poses /*= false*/ )
 	if ( !submotif_info_list_.size() ) return;
 	utility::vector1< SubMotifInfoOP >::iterator itr;
 	std::cout << "SUBMOTIF_INFO FOR POSE" << std::endl;
-	for ( itr = submotif_info_list_.begin(); itr != submotif_info_list_.end(); ++itr ) {
-		std::cout << *itr << std::endl;
+	for ( auto const & elem : submotif_info_list_ ) {
+		std::cout << elem << std::endl;
 	}
 	if ( for_all_poses ) {
 		for ( Size pose_idx = 1; pose_idx <= other_pose_list_.size(); ++pose_idx ) {

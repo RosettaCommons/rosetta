@@ -162,6 +162,7 @@ sources = {
 	],
 	"core/pose/rna": [
 		"BasePair",
+		"BasePairStep",
 		"BaseStack",
 		"RNA_BasePairClassifier",
 		"RNA_DataInfo",
@@ -176,8 +177,15 @@ sources = {
 		"VDW_Grid",
 		"VDW_RepScreenInfo",
 	],
+    "core/pose/rna/secstruct_legacy": [
+        "RNA_SecStructLegacyInfo",
+    ],
 	"core/pose/symmetry": [
 		"util",
+	],
+	"core/pose/toolbox": [
+		"AtomLevelDomainMap",
+		"AtomID_Mapper",
 	],
 	"core/scoring": [
 		"APBSWrapper",

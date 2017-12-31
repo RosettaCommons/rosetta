@@ -409,8 +409,13 @@ SilentStruct::add_energy( std::string const & scorename, Real value, Real weight
 
 void
 SilentStruct::add_string_value(
-	std::string const & scorename, std::string const & value
+	std::string const & scorename, std::string const & value, int const index/* = -1*/
 ) {
+	// target `index`: if negative, -1 is 'final position' through -(size()+1) is first
+	// if positive, 1 is first through size()+1 is 'final position'
+	// Added so that we can maintain exact correspondence for SWM silent files with
+	// new job distributor
+
 	// check if we already have a SilentEnergy with this scorename
 	bool replace( false );
 	std::for_each( silent_energies_.begin(), silent_energies_.end(),
@@ -425,7 +430,19 @@ SilentStruct::add_string_value(
 	if ( !replace ) {
 		int width = std::max( 10, (int) scorename.length() + 3 );
 		SilentEnergy new_se( scorename, value, width );
-		silent_energies_.push_back( new_se );
+		if ( index == -1 || index >= int( silent_energies_.size() + 1 ) ) {
+			silent_energies_.push_back( new_se );
+		} else {
+			// insert adds *right before* the indicated index.
+			// So for positive indices, just what we need.
+			auto iter = silent_energies_.begin();
+			if ( index > 0 ) {
+				std::advance( iter, index - 1 );
+			} else {
+				std::advance( iter, silent_energies_.size() + 1 + index );
+			}
+			silent_energies_.insert( iter, new_se );
+		}
 	}
 } // add_string_value
 
@@ -632,22 +649,19 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 	// silent_energies_
 	SilentEnergy score_energy( "score", 0.0, 1.0, 8 );
 	silent_energies_.push_back( score_energy );
-	core::scoring::EnergyMap::const_iterator emap_iter, wts_iter;
-	for ( emap_iter = emap.begin(), wts_iter = wts.begin();
+	for ( auto emap_iter = emap.begin(), wts_iter = wts.begin();
 			emap_iter != emap.end() && wts_iter!= wts.end();
 			++emap_iter && ++wts_iter
 			) {
 
 		// only grab scores that have non-zero weights.
-		if ( *wts_iter != 0.0 ) {
-			core::scoring::ScoreType sc_type
-				= core::scoring::ScoreType( emap_iter - emap.begin() + 1 );
-			std::string name = core::scoring::name_from_score_type( sc_type );
+		if ( *wts_iter == 0.0 )  continue;
+		core::scoring::ScoreType sc_type = core::scoring::ScoreType( emap_iter - emap.begin() + 1 );
+		std::string name = core::scoring::name_from_score_type( sc_type );
 
-			int width = std::max( 10, (int) name.length() + 3 );
-			SilentEnergy new_se( name, *emap_iter, *wts_iter, width );
-			silent_energies_.push_back( new_se );
-		} // if ( *wts_iter != 0.0 )
+		int width = std::max( 10, (int) name.length() + 3 );
+		SilentEnergy new_se( name, *emap_iter, *wts_iter, width );
+		silent_energies_.push_back( new_se );
 	} // for ( emap_iter ...)
 
 	// set the "score" term to its appropriate value

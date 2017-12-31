@@ -16,10 +16,10 @@
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/rna/denovo/libraries/RNA_JumpLibrary.hh>
-#include <protocols/rna/denovo/libraries/RNA_LibraryManager.hh>
+#include <core/import_pose/libraries/RNA_JumpLibrary.hh>
+#include <core/import_pose/libraries/RNA_LibraryManager.hh>
 #include <protocols/rna/denovo/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
@@ -57,6 +57,7 @@ static basic::Tracer TR( "protocols.stepwise.monte_carlo.submotif.SubMotifLibrar
 ///////////////////////////////////////////////////////////////////////////////////
 using namespace core;
 using namespace core::pose;
+using namespace core::pose::rna;
 using namespace core::pose::full_model_info;
 using namespace core::chemical::rna;
 using namespace protocols::stepwise::monte_carlo::mover;
@@ -70,7 +71,7 @@ namespace submotif {
 
 //Constructor
 SubMotifLibrary::SubMotifLibrary(
-	core::chemical::ResidueTypeSetCAP rsd_set,
+	core::chemical::ResidueTypeSetCOP rsd_set,
 	bool const include_submotifs_from_jump_library,
 	bool const use_first_jump_for_submotif,
 	utility::vector1< std::string > const & exclude_submotif_list ):
@@ -152,7 +153,7 @@ void
 SubMotifLibrary::initialize_from_jump_library()
 {
 	using namespace protocols::rna::denovo;
-	using namespace protocols::rna::denovo::libraries;
+	using namespace core::import_pose::libraries;
 	RNA_JumpLibraryCOP rna_jump_library( RNA_LibraryManager::get_instance()->rna_jump_library_cop() );
 	for ( Size i = 0; i <= 3; i++ ) {
 		for ( Size j = 0; j <= 3; j++ ) {
@@ -175,7 +176,7 @@ SubMotifLibrary::initialize_from_jump_library()
 
 							FoldTree f( 2 );
 							f.new_jump( 1, 2, 1 );
-							fill_in_default_jump_atoms( f, *pose );
+							core::pose::rna::fill_in_default_jump_atoms( f, *pose );
 							pose->fold_tree( f );
 							core::kinematics::Jump const & j( templates[ n ]->jump_forward() );
 							pose->set_jump( 1, j );

@@ -18,7 +18,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.fwd.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.fwd.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <core/pose/rna/StubStubType.fwd.hh>
 #include <core/kinematics/RT.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
@@ -36,7 +36,7 @@ class RNA_FragmentMonteCarloOutputter: public protocols::moves::Mover {
 public:
 
 	//constructor
-	RNA_FragmentMonteCarloOutputter(  options::RNA_FragmentMonteCarloOptionsCOP options,
+	RNA_FragmentMonteCarloOutputter(  core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options,
 		core::pose::PoseCOP align_pose );
 
 	//destructor
@@ -78,7 +78,7 @@ private:
 
 private:
 
-	options::RNA_FragmentMonteCarloOptionsCOP options_;
+	core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options_;
 
 	utility::io::ozstream running_score_output_;
 	numeric::MathNTensorOP< core::Size, 6 > jump_histogram_;

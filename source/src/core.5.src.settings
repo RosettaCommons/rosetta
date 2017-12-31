@@ -39,6 +39,13 @@ sources = {
 		"SingleResidueFragData",
 		"util",
 	],
+    "core/fragment/rna": [
+        "FragmentLibrary",
+        "FullAtomRNA_Fragments",
+		"RNA_FragmentHomologyExclusion",
+        "RNA_Fragments",
+		"TorsionSet",
+    ],
 	"core/fragment/picking_old": [
 		"FragmentLibraryManager",
 	],
@@ -66,6 +73,24 @@ sources = {
 		"PDBSilentStruct",
 		"PDBSilentStructCreator",
 		"PoseFromPDBLoader",
+		"RNA_BasePairHandler",
+		"RNA_DeNovoSetup",
+		"RNA_DeNovoParameters",
+		"RNA_HelixAssembler",
+		"RNA_JumpMover", # not a mover -- it never was!
+	],
+    "core/import_pose/libraries": [
+        "BasePairStepLibrary",
+        "ChunkSet",
+        "RNA_ChunkLibrary",
+        "RNA_JumpLibrary",
+        "RNA_LibraryManager",
+    ],
+	"core/import_pose/options": [
+		"RNA_BasicOptions",
+		"RNA_DeNovoProtocolOptions",
+		"RNA_FragmentMonteCarloOptions",
+		"RNA_MinimizerOptions",
 	],
 	"core/import_pose/atom_tree_diffs": [
 		"atom_tree_diff",

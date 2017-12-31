@@ -78,7 +78,7 @@ using namespace protocols;
 using namespace pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using namespace toolbox;
+using namespace protocols::toolbox;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 

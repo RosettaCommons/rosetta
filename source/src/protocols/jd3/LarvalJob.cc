@@ -110,12 +110,12 @@ std::string LarvalJob::job_tag() const {
 /// that this job points at.  For 9999  nstruct, there should be 4 digits: 1 + int(log10( 9999 )) = 1 + int( 3.9999 ) = 4
 /// For 10K nstruct, there should be 5 digits; 1 + int( log10( 10K )) = 5
 
-std::string LarvalJob::job_tag_with_index_suffix( JobOutputIndex const & output_index ) const
+std::string LarvalJob::job_tag_with_index_suffix( JobOutputIndex const & output_index, Size const min_digits ) const
 {
 	return inner_job_->job_tag() + "_" +
-		ObjexxFCL::lead_zero_string_of( output_index.primary_output_index, std::max( 4, 1 + int( std::log10( output_index.n_primary_outputs ))) ) +
+		ObjexxFCL::lead_zero_string_of( output_index.primary_output_index, std::max( int( min_digits ), 1 + int( std::log10( output_index.n_primary_outputs ))) ) +
 		( output_index.secondary_output_index == 1 && output_index.n_secondary_outputs == 1 ?
-		"" : "_" + ObjexxFCL::lead_zero_string_of( output_index.secondary_output_index, std::max( 4, 1 + int( std::log10( output_index.n_secondary_outputs ))))) ;
+		"" : "_" + ObjexxFCL::lead_zero_string_of( output_index.secondary_output_index, std::max( int( min_digits ), 1 + int( std::log10( output_index.n_secondary_outputs ))))) ;
 
 
 }

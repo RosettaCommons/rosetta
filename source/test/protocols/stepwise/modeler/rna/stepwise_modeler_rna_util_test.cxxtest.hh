@@ -20,13 +20,13 @@
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 
 #include <basic/Tracer.hh>
@@ -54,13 +54,13 @@ public:
 		using namespace core;
 		using namespace core::chemical;
 		using namespace core::pose;
+		using namespace core::pose::rna;
 		using namespace core::import_pose;
 		using namespace core::pose::full_model_info;
-		using namespace protocols::stepwise::setup;
 		using namespace protocols::stepwise::modeler::rna;
 		using namespace utility;
 
-		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 		pose::Pose & pose = *pose_op;
 

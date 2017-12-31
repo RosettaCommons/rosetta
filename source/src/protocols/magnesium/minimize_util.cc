@@ -16,7 +16,6 @@
 #include <protocols/magnesium/minimize_util.hh>
 #include <protocols/magnesium/util.hh>
 #include <protocols/magnesium/MgMinimizer.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>

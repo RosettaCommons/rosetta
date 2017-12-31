@@ -250,13 +250,13 @@ void NoesyModule::read_input_files() {
 void NoesyModule::add_dist_viol_to_assignments( core::pose::Pose native_pose) {
 #ifndef WIN32
 	using namespace core::scoring::constraints;
-	for ( auto it = crosspeaks_->begin(); it != crosspeaks_->end(); ++it ) {
-		if ( (*it)->eliminated() ) continue;
-		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < 1 ) continue;
-		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
-			core::scoring::func::FuncOP func( new BoundFunc(1.5, (*it)->distance_bound(), 1, "NOE Peak " ) );
-			ConstraintOP new_cst( (*ait)->create_constraint( native_pose, func ) );
-			(*ait)->set_native_distance_viol( new_cst->score( native_pose ) );
+	for ( auto const & peak : *crosspeaks_ ) {
+		if ( peak->eliminated() ) continue;
+		if ( peak->min_seq_separation_residue_assignment( 0.1 ) < 1 ) continue;
+		for ( auto const & elem : *peak ) {
+			core::scoring::func::FuncOP func( new BoundFunc(1.5, peak->distance_bound(), 1, "NOE Peak " ) );
+			ConstraintOP new_cst( elem->create_constraint( native_pose, func ) );
+			elem->set_native_distance_viol( new_cst->score( native_pose ) );
 		}
 	}
 #endif

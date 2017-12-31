@@ -13,12 +13,12 @@
 /// @author Rhiju Das
 
 #include <protocols/rna/denovo/util.hh>
-#include <protocols/rna/denovo/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
-#include <protocols/rna/denovo/base_pairs/BasePairStep.hh>
-#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
+#include <core/pose/rna/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
+#include <core/pose/rna/BasePairStep.hh>
+#include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/forge/methods/fold_tree_functions.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
@@ -68,7 +68,7 @@
 #include <sstream>
 #include <fstream>
 
-#include <protocols/rna/denovo/fragments/RNA_MatchType.hh>
+#include <core/fragment/rna/RNA_MatchType.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -78,14 +78,16 @@
 
 
 using namespace core;
+using namespace core::import_pose;
+using namespace core::pose::rna;
 using namespace core::chemical::rna;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 static basic::Tracer TR( "protocols.rna.denovo.util" );
 
-using namespace protocols::rna::denovo::secstruct_legacy;
-using namespace protocols::rna::denovo::fragments;
+using namespace core::pose::rna::secstruct_legacy;
+using namespace core::fragment::rna;
 
 namespace protocols {
 namespace rna {
@@ -94,99 +96,6 @@ namespace denovo {
 ///////////////////////////////////////////////////////////////////////////////
 // A bunch of helper functions used in rna apps...
 ///////////////////////////////////////////////////////////////////////////////
-
-// @details copies code from get_base_pairing_info [?]. Should be in core/pose/rna/util?
-void
-get_base_pairing_info( pose::Pose const & pose,
-	Size const & seqpos,
-	char & secstruct,
-	FArray1D <bool> & edge_is_base_pairing ){
-
-	using namespace core::scoring::rna;
-	using namespace core::pose::rna;
-	using namespace core::chemical;
-	using namespace core::conformation;
-
-	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
-	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
-
-	edge_is_base_pairing.dimension( 3 );
-	edge_is_base_pairing = false;
-
-	bool forms_canonical_base_pair( false ), forms_base_pair( false );
-
-	BaseEdge k( ANY_BASE_EDGE ), m( ANY_BASE_EDGE );
-	for ( auto const & it : scored_base_pair_list ) {
-
-		BasePair const & base_pair = it.second;
-
-		Size const i = base_pair.res1();
-		Size const j = base_pair.res2();
-
-		if ( i == seqpos ) {
-			k = base_pair.edge1();
-			m = base_pair.edge2();
-		} else if ( j == seqpos ) {
-			k = base_pair.edge2();
-			m = base_pair.edge1();
-		} else {
-			continue;
-		}
-
-		edge_is_base_pairing( k ) = true;
-		forms_base_pair = true;
-
-		Residue const & rsd_i( pose.residue( i ) );
-		Residue const & rsd_j( pose.residue( j ) );
-
-		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-				&& base_pair.orientation() == ANTIPARALLEL )  &&
-				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) {
-			std::string atom1, atom2;
-
-			if ( !rsd_i.is_coarse() ) { // doesn't work for coarse-grained RNA
-				get_watson_crick_base_pair_atoms( rsd_i.type(), rsd_j.type(), atom1, atom2 );
-				if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() > 3.5 ) continue;
-			}
-
-			forms_canonical_base_pair = true;
-		}
-	}
-
-	secstruct = 'N';
-	if ( forms_canonical_base_pair ) {
-		secstruct = 'H';
-	} else if ( forms_base_pair ) {
-		secstruct = 'P';
-	}
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-void
-figure_out_secstruct( pose::Pose & pose ){
-	using namespace core::scoring;
-	using namespace ObjexxFCL;
-
-	// Need some stuff to figure out which residues are base paired. First score.
-	ScoreFunctionOP scorefxn( new ScoreFunction );
-	scorefxn->set_weight( rna_base_pair, 1.0 );
-	(*scorefxn)( pose );
-
-	std::string secstruct = "";
-	FArray1D < bool > edge_is_base_pairing( 3, false );
-	char secstruct1( 'X' );
-	for ( Size i=1; i <= pose.size() ; ++i ) {
-		get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
-		secstruct += secstruct1;
-	}
-
-	TR << "SECSTRUCT: " << secstruct << std::endl;
-
-	set_rna_secstruct_legacy( pose, secstruct );
-}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -522,219 +431,6 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 		S_S_distance_func, core::scoring::coarse_chainbreak_constraint ) ) ) );
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-std::string const
-convert_based_on_match_type( std::string const & RNA_string, Size const type ){
-
-	// AMW: this can probably be made more concise using a functional approach.
-
-	std::string RNA_string_local = RNA_string;
-
-	Size const size = RNA_string.length();
-
-	static bool print_warning( false );
-
-	//Obey orders to match exactly, match pyrimidine/purine, or match all.
-	if ( type == MATCH_ALL ) {
-		for ( Size i = 0; i < size; i++ )  RNA_string_local[ i ] = 'n';
-	} else if ( type == MATCH_YR ) {
-		for ( Size i = 0; i < size; i++ ) {
-			if ( RNA_string[ i ] == 'g' || RNA_string[ i ] == 'a' ) {
-				RNA_string_local[ i ] = 'r';
-			} else {
-				runtime_assert( RNA_string[ i ] == 'u' || RNA_string[ i ] == 'c' || RNA_string[ i ] == 't' );
-				RNA_string_local[ i ] = 'y';
-			}
-		}
-	} else {
-		for ( Size i = 0; i < size; i++ )  {
-			if ( RNA_string[ i ] == 't' ) {
-				if ( !print_warning ) {
-					TR.Warning << TR.Red << "Requesting an RNA fragment for t. Instead choosing fragment based on u!" << std::endl;
-					print_warning = true;
-				}
-				RNA_string_local[ i ] = 'u';
-			}
-		}
-	}
-
-	return RNA_string_local;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-compare_RNA_char( char const char1, char const char2 ) {
-	//Man this is silly, there must be a more elegant way to do this.
-	if ( char1 == char2 ) return true;
-	if ( char1 == 'n' || char2 == 'n' ) return true;
-	if ( char1 == 'r' && (char2 == 'a' || char2 == 'g') ) return true;
-	if ( char1 == 'y' && (char2 == 'c' || char2 == 'u') ) return true;
-	if ( char2 == 'r' && (char1 == 'a' || char1 == 'g') ) return true;
-	if ( char2 == 'y' && (char1 == 'c' || char1 == 'u') ) return true;
-	return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-compare_RNA_secstruct( char const char1, char const char2 ) {
-	if ( char1 == char2 ) return true;
-	if ( char1 == 'X' || char2 == 'X' ) return true;
-	if ( char1 == 'L' && ( char2 == 'N' || char2 == 'P') ) return true;
-	if ( char2 == 'L' && ( char1 == 'N' || char1 == 'P') ) return true;
-	return false;
-}
-
-///////////////////////////////////////////////////////////////////////////
-Vector
-get_sugar_centroid( core::conformation::Residue const & rsd ){
-	Vector cen( 0.0 );
-	core::chemical::rna::RNA_Info rna_type = rsd.type().RNA_info();
-	cen += rsd.xyz( rna_type.c1prime_atom_index() );
-	cen += rsd.xyz( rna_type.c2prime_atom_index() );
-	cen += rsd.xyz( rna_type.c3prime_atom_index() );
-	cen += rsd.xyz( rna_type.c4prime_atom_index() );
-	cen += rsd.xyz( rna_type.o4prime_atom_index() );
-	cen /= 5.0;
-	return cen;
-}
-
-/////////////////////////////////////////////////
-void
-make_extended_coarse_pose( pose::Pose & coarse_pose, std::string const & full_sequence ){
-
-	using namespace core::chemical;
-	using namespace core::id;
-
-	ResidueTypeSetCOP rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
-
-	make_pose_from_sequence( coarse_pose, full_sequence, *rsd_set_coarse );
-
-	for ( Size n = 1; n <= coarse_pose.size(); n++ ) {
-		coarse_pose.set_torsion( TorsionID( n, BB, 1 ), -150.0 );
-		coarse_pose.set_torsion( TorsionID( n, BB, 2 ),  180.0 );
-	}
-}
-
-
-///////////////////////////////////////////////////////////////////////////
-void
-make_coarse_pose( pose::Pose const & pose, pose::Pose & coarse_pose ){
-
-	using namespace core::chemical;
-	using namespace core::id;
-	using namespace core::scoring::rna;
-
-	ResidueTypeSetCAP rsd_set, rsd_set_coarse;
-	RNA_CentroidInfo rna_centroid_info;
-
-	rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
-	make_extended_coarse_pose( coarse_pose, pose.sequence() );
-
-	for ( Size n = 1; n <= pose.size(); n++ ) {
-		coarse_pose.set_xyz(  NamedAtomID( " P  ", n ),  pose.xyz( NamedAtomID( " P  ", n )) );
-
-		//coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  pose.xyz( NamedAtomID( " C4'", n )) );
-		Vector sugar_centroid = get_sugar_centroid( pose.residue( n ) );
-		coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  sugar_centroid );
-
-		Vector base_centroid = rna_centroid_info.get_base_centroid( pose.residue( n ) );
-		kinematics::Stub stub = rna_centroid_info.get_base_coordinate_system( pose.residue( n ), base_centroid );
-
-		coarse_pose.set_xyz(  NamedAtomID( " CEN", n ),  base_centroid );
-		coarse_pose.set_xyz(  NamedAtomID( " X  ", n ),  base_centroid + stub.M.col_x() );
-		coarse_pose.set_xyz(  NamedAtomID( " Y  ", n ),  base_centroid + stub.M.col_y() );
-	}
-
-	core::kinematics::FoldTree f( pose.fold_tree() );
-	for ( Size n = 1; n <= pose.num_jump(); n++ ) {
-		f.set_jump_atoms( n, " Y  ", " Y  " );
-	}
-	coarse_pose.fold_tree( f );
-}
-
-////////////////////////////////////////////////////////
-void
-remove_cutpoint_closed( pose::Pose & pose, Size const i ) {
-
-	using namespace core::chemical;
-	using namespace core::kinematics;
-
-	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, i );
-	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, i+1 );
-
-	// using namespace protocols::forge::methods;
-	//  FoldTree f( pose.fold_tree() );
-	//  remove_cutpoint( i, f );
-	//  pose.fold_tree( f );
-
-	utility::vector1< Size > const & cutpoints = pose.fold_tree().cutpoints();
-
-	Size const num_jump =  pose.fold_tree().num_jump();
-	utility::vector1< Size > upstream_pos, downstream_pos;
-	for ( Size n = 1; n <= num_jump; n++ ) {
-		upstream_pos.push_back( pose.fold_tree().upstream_jump_residue( n ) );
-		downstream_pos.push_back( pose.fold_tree().downstream_jump_residue( n ) );
-	}
-
-	ObjexxFCL::FArray1D< Size > cuts( num_jump-1 );
-	Size count( 0 );
-	for ( Size n = 1; n <= num_jump; n++ ) {
-		if ( cutpoints[n] == i ) continue;
-		count++;
-		cuts( count ) = cutpoints[ n ];
-	}
-
-	Size const nres( pose.size() );
-
-	// Just brute-force iterate through to find a jump we can remove.
-	Size jump_to_remove( 0 );
-	for ( Size k = 1; k <= num_jump; k++ ) {
-		FArray1D< bool > partition_definition( nres, false );
-		pose.fold_tree().partition_by_jump( k, partition_definition );
-		if ( partition_definition( i ) != partition_definition( i+1 ) ) {
-			jump_to_remove = k; break;
-		}
-	}
-
-	bool success( false );
-
-	ObjexxFCL::FArray2D< Size > jump_point( 2, num_jump-1 );
-
-	count = 0;
-	for ( Size n = 1; n <= num_jump; n++ ) {
-		if ( n == jump_to_remove ) continue;
-		count++;
-		if ( upstream_pos[ n ] < downstream_pos[ n ] ) {
-			jump_point( 1, count ) = upstream_pos[ n ];
-			jump_point( 2, count ) = downstream_pos[ n ];
-		} else {
-			jump_point( 1, count ) = downstream_pos[ n ];
-			jump_point( 2, count ) = upstream_pos[ n ];
-		}
-	}
-
-	FoldTree f( nres );
-
-	success = f.tree_from_jumps_and_cuts( nres, num_jump-1, jump_point, cuts, 1, false /*verbose*/ );
-
-	if ( !success ) utility_exit_with_message( "FAIL to remove cutpoint "+string_of( i ) );
-
-	pose.fold_tree( f );
-}
-
-////////////////////////////////////////////////////////
-void
-remove_cutpoints_closed( pose::Pose & pose ){
-	// Make a list of each cutpoint_closed.
-	for ( Size i = 1; i < pose.size(); i++ ) {
-		if ( pose.fold_tree().is_cutpoint( i ) &&
-				pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-				pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
-			remove_cutpoint_closed( pose, i ); // this will cycle through to find a jump that is removable.
-		}
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////
 // One of these days I'll put in residue 1 as well.
 void
@@ -823,34 +519,6 @@ possible_root( core::kinematics::FoldTree const & f, core::Size const & n ){
 	return f.possible_root( n );
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
-get_rigid_body_jumps( core::pose::Pose const & pose ) {
-
-	utility::vector1< Size > rigid_body_jumps;
-
-	TR.Debug << "Initialize RigidBodyMover: Is last residue virtual? " <<  pose.residue_type( pose.size() ).name3()  << std::endl;
-
-	if ( pose.residue_type( pose.size() ).name3() != "XXX" ) return rigid_body_jumps; // must have a virtual anchor residue.
-
-	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
-		TR.Debug << "checking jump: " <<  pose.fold_tree().upstream_jump_residue( n ) << " to " <<  pose.fold_tree().downstream_jump_residue( n ) << std::endl;
-		if ( pose.fold_tree().upstream_jump_residue( n ) == pose.size()  ||
-				pose.fold_tree().downstream_jump_residue( n ) == pose.size()  ) {
-			TR.Debug << "found jump to virtual anchor at: " << n << std::endl;
-
-			rigid_body_jumps.push_back( n );
-			if ( rigid_body_jumps.size() > 1 ) {
-				TR.Debug << "found moveable jump!" << std::endl;
-			}
-		}
-	}
-
-	return rigid_body_jumps;
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////////
 bool
 let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
@@ -869,20 +537,6 @@ let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
 	for ( Size n = start; n <= rigid_body_jumps.size(); n++ ) movemap.set_jump( rigid_body_jumps[n], true );
 
 	return true;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-Size
-get_anchor_rsd( pose::Pose const & pose )
-{
-	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
-	if ( rigid_body_jumps.size() == 0 ) return 0;
-
-	Size const nres = pose.size(); // This better be a virtual residue -- checked in get_rigid_body_jumps() above.
-
-	Size anchor_rsd = pose.fold_tree().downstream_jump_residue( rigid_body_jumps[1] );
-	if ( anchor_rsd == nres ) anchor_rsd = pose.fold_tree().upstream_jump_residue( rigid_body_jumps[1] );
-	return anchor_rsd;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -914,37 +568,6 @@ involved_in_phosphate_torsion( std::string const & atomname )
 	}
 	return false;
 }
-
-///////////////////////////////////////////////////////////////////////////////
-void
-set_output_res_and_chain( pose::Pose & extended_pose,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_resnum_and_chain )
-{
-	using namespace pose;
-	utility::vector1< int > const & output_res_num = std::get< 0 >( output_resnum_and_chain );
-	utility::vector1< char > const & output_chain = std::get< 1 >( output_resnum_and_chain );
-	utility::vector1< std::string > const & output_segid = std::get< 2 >( output_resnum_and_chain );
-	if ( output_res_num.size() == 0 ) return;
-	runtime_assert( output_res_num.size() == extended_pose.size() );
-
-	PDBInfoOP pdb_info( new PDBInfo( extended_pose ) );
-	pdb_info->set_numbering( output_res_num );
-
-	bool chain_interesting( false );
-	for ( Size n = 1; n <= output_chain.size(); n++ ) {
-		if ( output_chain[ n ] != ' ' ) chain_interesting = true;
-	}
-	if ( chain_interesting ) pdb_info->set_chains( output_chain );
-
-	bool segid_interesting( false );
-	for ( Size n = 1; n <= output_segid.size(); n++ ) {
-		if ( output_segid[ n ] != "    " ) segid_interesting = true;
-	}
-	if ( segid_interesting ) pdb_info->set_segment_ids( output_segid );
-
-	extended_pose.pdb_info( pdb_info );
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
@@ -1020,61 +643,6 @@ classify_base_pairs_lores( pose::Pose const & pose_input )
 	return base_pair_list;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-void
-process_input_file( std::string const & input_file,
-	utility::vector1< pose::PoseOP > & pose_list,
-	bool is_pdb /*= false*/,
-	bool coarse_rna /* = false */)
-{
-	using namespace core::io::silent;
-	using namespace protocols::rna::denovo;
-
-	core::chemical::ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-
-	if ( is_pdb ) {
-
-		pose::PoseOP pose_op( new pose::Pose );
-		core::import_pose::pose_from_file( *pose_op, *rsd_set, input_file , core::import_pose::PDB_file);
-		//   ensure_phosphate_nomenclature_matches_mini( *pose_op );
-		core::pose::rna::figure_out_reasonable_rna_fold_tree( *pose_op );
-		pose_list.push_back( pose_op );
-
-	} else { //its a silent file.
-		SilentFileOptions opts;
-		SilentFileData silent_file_data( opts );
-		silent_file_data.read_file( input_file );
-		for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(),
-				end = silent_file_data.end(); iter != end; ++iter ) {
-			pose::PoseOP pose_op( new pose::Pose );
-			iter->fill_pose( *pose_op );
-			pose_list.push_back( pose_op );
-		}
-
-	}
-
-	// further cleanup.
-	for ( Size n = 1; n <= pose_list.size(); n++ ) {
-
-		pose::PoseOP pose_op = pose_list[ n ];
-
-		remove_cutpoints_closed( *pose_op );
-
-		if ( coarse_rna && !pose_op->residue(1).is_coarse() ) {
-			pose::Pose coarse_pose;
-			make_coarse_pose( *pose_op, coarse_pose );
-			*pose_op = coarse_pose;
-		}
-
-		core::pose::rna::virtualize_5prime_phosphates( *pose_op );
-	}
-
-	if ( pose_list.size() < 1 )  {
-		utility_exit_with_message(  "No structure found in input file  " + input_file );
-	}
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////
 void
 print_hbonds( pose::Pose & pose ){
@@ -1101,54 +669,6 @@ print_hbonds( pose::Pose & pose ){
 			pose.residue_type( acc_res_num).name1() << acc_res_num << " " << pose.residue_type( acc_res_num ).atom_name( acc_atm ) << " ==> " << hbond.energy()
 			<< std::endl;
 	}
-}
-
-
-/////////////////////////////////////////////////////////
-bool
-moveable_jump( id::AtomID const & jump_atom_id1,
-	id::AtomID const & jump_atom_id2,
-	protocols::toolbox::AtomLevelDomainMap const & atom_level_domain_map)  {
-	if ( atom_level_domain_map.get( jump_atom_id1 ) ) return true;
-	if ( atom_level_domain_map.get( jump_atom_id2 ) ) return true;
-	if ( atom_level_domain_map.get_domain( jump_atom_id1 ) != atom_level_domain_map.get_domain( jump_atom_id2 ) ) return true;
-	return false;
-}
-
-/////////////////////////////////////////////////////////
-// should this really be separate from AtomID-base moveable_jump?
-bool
-moveable_jump( Size const jump_pos1,
-	Size const jump_pos2,
-	protocols::toolbox::AtomLevelDomainMap const & atom_level_domain_map)  {
-	if ( atom_level_domain_map.get( jump_pos1 ) ) return true;
-	if ( atom_level_domain_map.get( jump_pos2 ) ) return true;
-	if ( atom_level_domain_map.get_domain( jump_pos1 ) != atom_level_domain_map.get_domain( jump_pos2 ) ) return true;
-	return false;
-}
-
-///////////////////////////////////////////////////////////////
-void
-fill_in_default_jump_atoms( kinematics::FoldTree & f, pose::Pose const & pose )
-{
-
-	// default atoms for jump connections.
-	for ( Size i = 1; i <= f.num_jump(); i++ ) {
-		Size const jump_pos1( f.upstream_jump_residue( i ) );
-		Size const jump_pos2( f.downstream_jump_residue( i ) );
-		f.set_jump_atoms( i,
-			chemical::rna::default_jump_atom( pose.residue_type( jump_pos1 ) ),
-			chemical::rna::default_jump_atom( pose.residue_type( jump_pos2) ) );
-	}
-}
-
-///////////////////////////////////////////////////////////////
-void
-fill_in_default_jump_atoms( pose::Pose & pose )
-{
-	core::kinematics::FoldTree f( pose.fold_tree() );
-	fill_in_default_jump_atoms( f, pose );
-	pose.fold_tree( f );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1348,7 +868,7 @@ get_rna_hires_scorefxn( bool const & include_protein_terms ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 get_moving_res( core::pose::Pose const & pose,
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) {
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) {
 
 	utility::vector1< Size > moving_res;
 
@@ -1359,51 +879,6 @@ get_moving_res( core::pose::Pose const & pose,
 	}
 
 	return moving_res;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////
-bool
-base_pair_step_moving( base_pairs::BasePairStep const & base_pair_step,
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-	pose::Pose const & pose )
-{
-	// look that at least one base in this base pair step is moveable.
-	bool pair_moving( false );
-	utility::vector1< Size > bps_res = utility::tools::make_vector1( base_pair_step.i(),
-		base_pair_step.i_next(),
-		base_pair_step.j(),
-		base_pair_step.j_next() );
-	for ( Size i = 1; i <= 4; i++ ) {
-		Size domain(  atom_level_domain_map->get_domain( core::id::NamedAtomID( " C1'", bps_res[i] ), pose  ) );
-		// TR << "DOMAIN for " << bps_res[i] << " --> " << domain << std::endl;
-		if ( domain == 0 || domain == libraries::ROSETTA_LIBRARY_DOMAIN ) {
-			pair_moving = true; //break;
-		}
-	}
-	// TR << "MOVING? " << pair_moving << std::endl;
-	return pair_moving;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-bool
-base_pair_moving( core::pose::rna::BasePair const & base_pair,
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-	core::pose::Pose const & pose )
-{
-	// look that at least one base in this base pair step is moveable.
-	bool pair_moving( false );
-	utility::vector1< Size > bp_res = utility::tools::make_vector1( base_pair.res1(),
-		base_pair.res2() );
-	for ( Size i = 1; i <= bp_res.size(); i++ ) {
-		Size domain(  atom_level_domain_map->get_domain( core::id::NamedAtomID( " C1'", bp_res[i] ), pose  ) );
-		//  TR << "DOMAIN for " << bp_res[i] << " --> " << domain << std::endl;
-		if ( domain == 0 || domain == libraries::ROSETTA_LIBRARY_DOMAIN ) {
-			pair_moving = true; //break;
-		}
-	}
-	// TR << "MOVING? " << pair_moving << std::endl;
-	return pair_moving;
 }
 
 /////////////////////////////////////////////////////////////////////////////////

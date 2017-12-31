@@ -22,7 +22,7 @@
 
 // Project headers
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/rna/denovo/coarse/MultipleDomainMover.hh>
 #include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>

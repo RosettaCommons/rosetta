@@ -5,6 +5,7 @@ SET(COMPILER mpi)
 SET(LINK_RULES shared)
 SET(EXTRAS serialization)
 
+INCLUDE(../build/compiler.cmake) ###
 INCLUDE(../build/build.pre.cmake)
 INCLUDE(../build/${LINK_RULES}.build.cmake)
 

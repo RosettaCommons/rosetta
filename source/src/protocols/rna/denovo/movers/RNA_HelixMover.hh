@@ -26,7 +26,7 @@
 #include <vector>
 
 #include <protocols/rna/denovo/movers/RNA_HelixMover.fwd.hh>
-#include <protocols/rna/denovo/base_pairs/RNA_BasePairHandler.fwd.hh>
+#include <core/import_pose/RNA_BasePairHandler.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <utility/vector1.hh>
@@ -43,7 +43,7 @@ class RNA_HelixMover: public protocols::moves::Mover {
 public:
 	/// @brief Construct the mover object
 	RNA_HelixMover( utility::vector1< utility::vector1< Size > > const & helix_regions,
-		protocols::rna::denovo::base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
+		core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler,
 		bool const & move_first_rigid_body );
 
 	~RNA_HelixMover();
@@ -83,7 +83,7 @@ private:
 	utility::vector1< utility::vector1< Size > > helix_regions_with_jumps_and_ends_;
 	utility::vector1< Size > helix_regions_jumps_;
 	utility::vector1< Size > helix_regions_jumps_final_;
-	protocols::rna::denovo::base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler_;
+	core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler_;
 	utility::vector1< std::pair< std::pair< Size, Size>, std::pair< Size, Size > > > helix_ends_;
 	utility::vector1< std::pair< std::pair< Size, Size>, std::pair< Size, Size > > > helix_ends_final_;
 	core::kinematics::FoldTree pose_fold_tree_;

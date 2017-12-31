@@ -52,28 +52,6 @@ get_phosphate_scorefxn();
 core::scoring::ScoreFunctionCOP
 get_phosphate_scorefxn( core::scoring::methods::EnergyMethodOptions const & options );
 
-bool
-check_phosphate_contacts_donor( utility::vector1< core::Vector > const & op_xyz_list,
-	utility::vector1< core::Vector > const & donor_atom_xyz_list,
-	utility::vector1< core::Vector > const & donor_base_atom_xyz_list );
-
-bool
-check_phosphate_contacts_donor( core::pose::Pose const & pose, core::Size const n );
-
-void
-get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
-	PhosphateMove const & phosphate_move_,
-	utility::vector1< core::Vector > & donor_atom_xyz_list,
-	utility::vector1< core::Vector > & donor_base_atom_xyz_list,
-	utility::vector1< core::Size > & neighbor_copy_dofs );
-
-utility::vector1< bool >
-detect_phosphate_contacts( core::pose::Pose const & pose );
-
-void
-setup_three_prime_phosphate_based_on_next_residue( core::pose::Pose & pose, core::Size const n );
-
-
 } //phosphate
 } //rna
 } //modeler

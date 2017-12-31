@@ -22,13 +22,13 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.hh>
-#include <protocols/rna/denovo/fragments/FullAtomRNA_Fragments.hh>
-#include <protocols/rna/denovo/fragments/FragmentLibrary.hh>
-#include <protocols/rna/denovo/fragments/TorsionSet.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
+#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
+#include <core/fragment/rna/FragmentLibrary.hh>
+#include <core/fragment/rna/TorsionSet.hh>
+#include <core/pose/rna/util.hh>
 #include <protocols/rna/denovo/util.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
@@ -121,7 +121,7 @@ figure_out_secstruct( pose::Pose & pose ){
 	char secstruct1( 'X' );
 	for ( Size i=1; i <= pose.size() ; ++i ) {
 		TR << i << std::endl;
-		protocols::rna::denovo::get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
+		core::pose::rna::get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
 		secstruct += secstruct1;
 	}
 
@@ -139,15 +139,14 @@ homolog_finder()
 	using namespace core::scoring;
 	using namespace core::chemical;
 	using namespace core::id;
-	using namespace protocols::rna::denovo::options;
-	using namespace protocols::rna::denovo::fragments;
-	using namespace protocols::stepwise::setup;
-	using namespace protocols::toolbox;
+	using namespace core::import_pose::options;
+	using namespace core::fragment::rna;
+	using namespace core::pose::toolbox;
 	using namespace utility::file;
 
 	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
-	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Following could go to a FullModelSetup class.
 	// read starting pose(s) from disk

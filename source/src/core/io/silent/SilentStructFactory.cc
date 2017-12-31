@@ -152,6 +152,10 @@ SilentStructOP SilentStructFactory::get_silent_struct_out( core::pose::Pose cons
 		return get_silent_struct( opts.out_silent_struct_type(), opts ) ;
 	}
 
+	if ( !opts.binary_output() && pose.residue_type( 1 ).is_RNA() ) {
+		return get_silent_struct( "rna", opts );
+	}
+
 	// if pose has RNA, OR a full_model_info, can't use protein silent struct.
 	if ( core::pose::full_model_info::full_model_info_defined( pose ) ) {
 		return get_silent_struct( "binary", opts );

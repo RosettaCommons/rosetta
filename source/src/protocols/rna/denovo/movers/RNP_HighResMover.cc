@@ -17,7 +17,7 @@
 #include <protocols/rna/denovo/movers/RNP_HighResMover.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.fwd.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -89,7 +89,7 @@ namespace denovo {
 namespace movers {
 
 //////////////////////////////////////////////////////////////////////////////////////////
-RNP_HighResMover::RNP_HighResMover( RNA_FragmentMoverOP rna_fragment_mover, protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer, options::RNA_FragmentMonteCarloOptionsCOP options ):
+RNP_HighResMover::RNP_HighResMover( RNA_FragmentMoverOP rna_fragment_mover, protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer, core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options ):
 	Mover(),
 	rna_fragment_mover_(std::move( rna_fragment_mover )),
 	rna_loop_closer_(std::move( rna_loop_closer )),

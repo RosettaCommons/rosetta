@@ -7,6 +7,7 @@
 -s MS2_protein.pdb
 -ignore_zero_occupancy false
 -rna:denovo:refine_native true 
+-denovo:use_legacy_job_distributor true
 -native center_0_r10_complex.pdb
 -superimpose_over_all false
 -rnp_high_res_cycles 0

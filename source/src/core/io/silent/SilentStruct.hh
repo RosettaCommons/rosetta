@@ -232,7 +232,7 @@ public:
 
 	/// @brief add a non-floating point score of a given name and value to this
 	/// SilentStruct.
-	void add_string_value( std::string const & scorename, std::string const & value );
+	void add_string_value( std::string const & scorename, std::string const & value, int const index = -1 );
 
 	/// @brief Copy the score information in the given SilentStruct into
 	/// this SilentStruct.

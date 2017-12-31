@@ -181,6 +181,21 @@ sources = {
 		"PDBPoseInputter",
 		"SilentFilePoseInputter",
 	],
+	"protocols/jd3/chunk_library_inputters": [
+		"ChunkLibraryInputter",
+		"ChunkLibraryInputSource",
+		"chunk_library_inputter_schemas",
+		"ChunkLibraryInputterFactory",
+		"PDBChunkLibraryInputter",
+	],
+	"protocols/jd3/full_model_inputters": [
+		"FullModelInputter",
+		"FullModelInputSource",
+		"full_model_inputter_schemas",
+		"FullModelInputterFactory",
+		"PDBFullModelInputter",
+		"SilentFileFullModelInputter",
+	],
 	"protocols/jd3/pose_outputters": [
 		"pose_outputter_schemas",
 		"PDBPoseOutputSpecification",
@@ -193,6 +208,12 @@ sources = {
 		"SecondaryPoseOutputter",
 		"SilentFilePoseOutputSpecification",
 		"SilentFilePoseOutputter",
+		"DeNovoSilentFilePoseOutputter",
+	],
+	"protocols/jd3/chunk_library": [
+		"MoverAndChunkLibraryJob",
+		"ChunkLibraryInnerLarvalJob",
+		"ChunkLibraryJobQueen",
 	],
 	"protocols/jd3/full_model": [
 		"MoverAndFullModelJob",

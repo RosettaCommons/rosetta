@@ -25,7 +25,6 @@
 #include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/magnesium/MgMonteCarlo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>

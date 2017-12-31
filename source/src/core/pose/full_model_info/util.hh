@@ -158,6 +158,9 @@ get_chain_for_resnum( Size const & resnum, pose::Pose const & pose );
 Size
 get_number_missing_residues_and_connections( pose::Pose & pose );
 
+Size
+get_number_missing_residues_and_connections( pose::Pose const & pose );
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // deprecate soon in favor of direct loop-graph call
 //

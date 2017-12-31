@@ -41,6 +41,7 @@
 #include <core/chemical/AA.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
 #include <core/types.hh>
 #include <utility/options/OptionCollection.hh>
 
@@ -50,8 +51,8 @@
 
 //Rosetta protocols headers
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoSetup.hh>
-#include <protocols/rna/denovo/options/RNA_DeNovoProtocolOptions.hh>
+#include <core/import_pose/RNA_DeNovoSetup.hh>
+#include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/simple_moves/MinMover.hh>
 
 //Rosetta ui headers
@@ -624,11 +625,11 @@ void MainWindow::on_pushButton_clicked()
     utility::options::OptionKeyList opts;
     // OK, gotta use list_options_read functions provided by RNA denovo stuff, maybe???
     using namespace protocols::rna::denovo;
-    options::RNA_DeNovoProtocolOptions::list_options_read( opts );
+	core::import_pose::options::RNA_DeNovoProtocolOptions::list_options_read( opts );
 
     utility::options::OptionCollection faux_cl_opts = basic::options::option;
     using namespace basic::options::OptionKeys;
-    using namespace protocols::rna::denovo::setup;
+    using namespace core::import_pose;
     // TODO: enable provision of sequence and secstruct file paths.
     faux_cl_opts[ rna::denovo::minimize_rna ].set_cl_value( "true" );
     faux_cl_opts[ rna::denovo::sequence ].set_cl_value( sequence.toStdString() );

@@ -17,17 +17,17 @@
 #define INCLUDED_protocols_rna_denovo_movers_RNA_DeNovoMasterMover_HH
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.fwd.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_DeNovoMasterMover.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.fwd.hh>
-#include <protocols/rna/denovo/fragments/RNA_Fragments.fwd.hh>
-#include <protocols/rna/denovo/base_pairs/RNA_BasePairHandler.fwd.hh>
-#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.fwd.hh>
-#include <protocols/rna/denovo/movers/RNA_JumpMover.fwd.hh>
+#include <core/fragment/rna/RNA_Fragments.fwd.hh>
+#include <core/import_pose/RNA_BasePairHandler.fwd.hh>
+#include <core/import_pose/libraries/RNA_ChunkLibrary.fwd.hh>
+#include <core/import_pose/RNA_JumpMover.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_HelixMover.fwd.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
@@ -42,11 +42,11 @@ class RNA_DeNovoMasterMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	RNA_DeNovoMasterMover( options::RNA_FragmentMonteCarloOptionsCOP options,
-		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-		base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler,
+	RNA_DeNovoMasterMover( core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options,
+		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+		core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler,
 		protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer,
-		libraries::RNA_ChunkLibraryOP rna_chunk_library  );
+		core::import_pose::libraries::RNA_ChunkLibraryOP rna_chunk_library  );
 
 	//destructor
 	~RNA_DeNovoMasterMover();
@@ -80,7 +80,7 @@ public:
 		core::Real const & trans_mag );
 
 	movers::RNA_FragmentMoverOP rna_fragment_mover(){ return rna_fragment_mover_; }
-	movers::RNA_JumpMoverOP rna_jump_mover(){ return rna_jump_mover_; }
+	core::import_pose::RNA_JumpMoverOP rna_jump_mover(){ return rna_jump_mover_; }
 
 	void
 	do_random_moves( core::pose::Pose & pose, Size const & monte_carlo_cycles, bool const & check_num_rna_res = false );
@@ -140,7 +140,7 @@ private:
 
 private:
 
-	options::RNA_FragmentMonteCarloOptionsCOP options_;
+	core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options_;
 
 	core::Size frag_size_;
 	core::Real jump_change_frequency_;
@@ -150,8 +150,8 @@ private:
 	std::string move_type_;
 
 	movers::RNA_FragmentMoverOP rna_fragment_mover_;
-	movers::RNA_JumpMoverOP rna_jump_mover_;
-	libraries::RNA_ChunkLibraryOP rna_chunk_library_;
+	core::import_pose::RNA_JumpMoverOP rna_jump_mover_;
+	core::import_pose::libraries::RNA_ChunkLibraryOP rna_chunk_library_;
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_;
 	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_, rnp_docking_mover_,
 		dock_into_density_mover_;

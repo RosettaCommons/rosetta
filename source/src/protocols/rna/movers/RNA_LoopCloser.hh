@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 
 #include <core/types.hh>
 
@@ -81,7 +81,7 @@ public:
 	set_verbose( bool const setting ){ verbose_ = setting; }
 
 	void
-	set_atom_level_domain_map( toolbox::AtomLevelDomainMapCOP setting ){ atom_level_domain_map_ = setting; }
+	set_atom_level_domain_map( core::pose::toolbox::AtomLevelDomainMapCOP setting ){ atom_level_domain_map_ = setting; }
 
 	utility::vector1< core::Size >
 	get_cutpoints_closed( core::pose::Pose const & pose ) const;
@@ -119,7 +119,7 @@ private:
 	core::Real attempt_closure_cutoff_;
 	core::Real gap_distance_cutoff_;
 	bool fast_scan_;
-	toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
 }; // class RNA_LoopCloser
 
 

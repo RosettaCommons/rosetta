@@ -78,6 +78,7 @@ public:
 	bool force_silent_bitflip_on_read_set() const;
 	bool force_silent_bitflip_on_read() const;
 	bool print_all_score_headers() const;
+	bool binary_output() const { return binary_output_; }
 
 	void keep_input_scores( bool setting );
 	void out_user_tag( std::string setting );
@@ -95,6 +96,7 @@ public:
 	void select_range_mul( int setting );
 	void force_silent_bitflip_on_read( bool setting );
 	void print_all_score_headers( bool setting );
+	void set_binary_output( bool setting ) { binary_output_ = setting; }
 
 private:
 
@@ -117,6 +119,7 @@ private:
 	std::string in_silent_struct_type_;
 	bool out_silent_struct_type_set_;
 	std::string out_silent_struct_type_;
+	bool binary_output_ = true; // for RNA, overriding
 
 	// read by SilentFileData
 	bool read_through_errors_;
@@ -128,6 +131,7 @@ private:
 	bool force_silent_bitflip_on_read_set_;
 	bool force_silent_bitflip_on_read_;
 	bool print_all_score_headers_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

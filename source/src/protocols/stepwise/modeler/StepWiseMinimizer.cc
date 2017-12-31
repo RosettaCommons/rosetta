@@ -288,7 +288,7 @@ void
 StepWiseMinimizer::get_move_map_and_atom_level_domain_map( core::kinematics::MoveMap & mm, pose::Pose const & pose ){
 	runtime_assert( working_minimize_res_ == figure_out_working_minimize_res( pose ) );
 	bool const move_takeoff_torsions = !options_->disable_sampling_of_loop_takeoff();
-	atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) ); // can come in handy later...
+	atom_level_domain_map_ = core::pose::toolbox::AtomLevelDomainMapOP( new core::pose::toolbox::AtomLevelDomainMap( pose ) ); // can come in handy later...
 	movemap::figure_out_stepwise_movemap( mm, atom_level_domain_map_, pose, working_minimize_res_, move_takeoff_torsions );
 	if ( !options_->minimize_waters() ) freeze_waters( pose, mm );
 	output_movemap( mm, pose, TR.Debug );

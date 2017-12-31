@@ -6,13 +6,14 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
 #ifndef INCLUDED_protocols_coarse_rna_CoarseRNA_Fragments_HH
 #define INCLUDED_protocols_coarse_rna_CoarseRNA_Fragments_HH
 
-#include <protocols/rna/denovo/fragments/RNA_Fragments.hh>
-#include <protocols/rna/denovo/fragments/TorsionSet.fwd.hh>
-#include <protocols/rna/denovo/fragments/RNA_FragmentHomologyExclusion.fwd.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <core/fragment/rna/RNA_Fragments.hh>
+#include <core/fragment/rna/TorsionSet.fwd.hh>
+#include <core/fragment/rna/RNA_FragmentHomologyExclusion.fwd.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/types.hh>
@@ -64,7 +65,7 @@ typedef utility::pointer::shared_ptr< SourcePositions > SourcePositionsOP;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class CoarseRNA_Fragments : public protocols::rna::denovo::fragments::RNA_Fragments {
+class CoarseRNA_Fragments : public core::fragment::rna::RNA_Fragments {
 public:
 
 	//Constructor -- needs vall_torsions_file to get started.
@@ -78,8 +79,8 @@ public:
 		core::Size const position,
 		core::Size const size,
 		core::Size const type,
-		protocols::rna::denovo::fragments::RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
-		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+		core::fragment::rna::RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
+		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 		core::Size const symm_hack_arity ) const override;
 
 	bool
@@ -91,8 +92,8 @@ private:
 	insert_fragment(
 		core::pose::Pose & ,//pose,
 		Size const ,//position,
-		rna::denovo::fragments::TorsionSet const & ,//torsion_set,
-		toolbox::AtomLevelDomainMapCOP /*atom_level_domain_map*/ ) const override {
+		core::fragment::rna::TorsionSet const & ,//torsion_set,
+		core::pose::toolbox::AtomLevelDomainMapCOP /*atom_level_domain_map*/ ) const override {
 		/// STUBBED OUT!
 	}
 
@@ -103,8 +104,8 @@ private:
 		Size const & insert_res,
 		Size const & source_res,
 		Size const & frag_size,
-		protocols::rna::denovo::fragments::RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
-		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
+		core::fragment::rna::RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
+		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
 
 	void
 	find_source_positions( SequenceSecStructPair const & key ) const;

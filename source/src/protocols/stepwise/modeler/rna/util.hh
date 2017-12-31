@@ -308,9 +308,6 @@ figure_out_moving_rna_chain_breaks( core::pose::Pose const & pose,
 	utility::vector1< core::Size > & rna_three_prime_chain_breaks,
 	utility::vector1< core::Size > & rna_chain_break_gap_sizes );
 
-void
-virtualize_free_rna_moieties( core::pose::Pose & pose );
-
 } //rna
 } //modeler
 } //stepwise

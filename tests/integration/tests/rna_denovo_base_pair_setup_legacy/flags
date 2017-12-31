@@ -3,3 +3,4 @@
 -include_neighbor_base_stacks
 -cycles 200
 -output_res_num  1-2
+-denovo:use_legacy_job_distributor true

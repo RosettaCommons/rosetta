@@ -93,7 +93,8 @@ FullModelInputSources SilentFileFullModelInputter::full_model_input_sources_from
 			continue;
 		}
 
-		input_sources[1]->input_tag( tag );
+		//input_sources[1]->input_tag( tag );
+		input_sources[1]->store_string_pair( "filename", iter->get_comment( "SOURCE" ) );
 		tr << "Tag: " << tag << std::endl;
 		break; // only one!
 	}
@@ -140,24 +141,26 @@ SilentFileFullModelInputter::full_model_from_input_source(
 {
 	if ( ! sfd_ ) { initialize_sfd_from_options_and_tag( options, tag ); }
 
-	debug_assert( sfd_->has_tag( input_source.input_tag() ));
+	// Different kind of tag...
+	//debug_assert( sfd_->has_tag( input_source.input_tag() ));
 
 	using namespace core::io::silent;
-	//SilentStruct const & silent_struct( sfd_->get_structure( input_source.input_tag() ) );
 	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
-	/*core::pose::PoseOP pose( new core::pose::Pose );
-	silent_struct.fill_pose( *pose );
-	return pose;
-	*/
+	// TODO: respond to tag -- you'll get exactly one pose per silent as before, but this way
+	// you can give it a tag I guess?
+	utility::vector1< core::pose::PoseOP > input_poses;
+	for ( auto const & filename : input_source.string_string_map().at( "filename" ) ) {
+		core::pose::PoseOP pose( new core::pose::Pose );
+		SilentFileOptions opts;
+		SilentFileData silent_file_data(opts);
+		core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
+		silent_file_data.read_file( filename );
+		silent_file_data.begin()->fill_pose( *pose, *rsd_set_op );
+		input_poses.push_back( pose );
+	}
 
-
-	// AMW EDIT HERE!!!
-	//debug_assert( input_source.string_string_map().find( "filename" ) != input_source.string_string_map().end() );
-	//core::import_pose::ImportPoseOptions import_opts( options );
-
-	return core::import_pose::initialize_pose_and_other_poses_from_options( rsd_set, options );
-
+	return core::import_pose::initialize_pose_and_other_poses_from_options_and_input_poses( rsd_set, options, input_poses );
 }
 
 std::string SilentFileFullModelInputter::keyname() { return "Silent"; }
@@ -219,6 +222,7 @@ SilentFileFullModelInputter::initialize_sfd_from_options_and_tag(
 	if ( tag ) sf_opts_->read_from_tag( tag );
 
 	sfd_ = SilentFileDataOP( new SilentFileData( *sf_opts_ ));
+	sfd_->set_record_source( true );
 
 	utility::vector1< utility::file::FileName > silent_files;
 	utility::vector1< std::string > tags_vector;

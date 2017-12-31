@@ -12,12 +12,7 @@
 /// @details  This application predicts structures of simple backbone-cyclized peptides made of alpha-, beta-, or gamma-amino acids (of any chirality)
 /// using generalized kinematic closure (GenKIC) for cyclization, and enforcing user-defined requiresments for numbers of mainchain hydrogen bonds.  This
 /// version uses MPI for cross-communication with parallel processes.
-/// On 4 Aug 2017, work commenced to make this appliction compatible with a job distribution scheme in which the last level of the hierarchy splits
-/// jobs over many threads (hierarchical process-level parallelism plus thread-level parallelism).
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
-
-//#define USEMPI //DELETE ME -- this is temporarily here for my IDE
-//#define MULTI_THREADED //DELETE ME -- this is temporarily here for my IDE
 
 #ifdef USEMPI
 
@@ -47,10 +42,6 @@
 // C++ headers
 #include <stdio.h>
 #include <time.h>
-
-#ifdef MULTI_THREADED
-#include <mutex>
-#endif
 
 namespace protocols {
 namespace cyclic_peptide_predict {
@@ -98,8 +89,7 @@ public:
 		core::Real const &output_fraction,
 		std::string const &output_filename,
 		core::Real const &lambda,
-		core::Real const &kbt,
-		core::Size const threads_per_slave_proc //Only used in multi-threaded build.
+		core::Real const &kbt
 	);
 
 	/// @brief Explicit virtual destructor.
@@ -109,12 +99,6 @@ public:
 	/// @brief Explicit copy constructor.
 	///
 	SimpleCycpepPredictApplication_MPI( SimpleCycpepPredictApplication_MPI const &src );
-
-#ifdef MULTI_THREADED
-	/// @brief Initialize private member variables related to thread random seeds from the options
-	/// system.  Does nothing if this isn't a multi-threaded compilation.
-	void init_random_info_from_options();
-#endif
 
 	/// @brief Actually run the application.
 	/// @details On slave nodes, this creates an instance of SimpleCycpepPredictApplication and runs that.  Nodes higher
@@ -336,33 +320,11 @@ private:
 
 	/// @brief The jobs done by the slaves during parallel execution.
 	/// @details The slaves receive jobs from higher in the hierarchy, do them, and send results back up the hierarchy.
-	/// @note In multi-threaded mode, if threads_per_slave_process_ is greater than 1, then the slaves launch threads
-	/// to do the work.  Only the master thread does MPI calls.
 	void run_slave() const;
 
 	/// @brief Actually carry out the jobs.  This is where SimpleCycpepPredictApplication is created and invoked.
 	///
 	void slave_carry_out_njobs( core::Size &njobs_from_above, utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > &jobsummaries, utility::vector1 < core::io::silent::SilentStructOP > &all_output ) const;
-
-#ifdef MULTI_THREADED
-	/// @brief Decrement the job counter.  Return true if the job counter was greater than zero.
-	/// @details Does this with proper locking to prevent threads from stepping on one another.
-	bool slave_decrement_jobcount_multithreaded( core::Size * available_job_count, core::Size &already_completed_job_count, core::Size const jobs_in_this_batch, core::Size const thread_index ) const;
-
-	/// @brief Actually carry out the jobs.  This is where SimpleCycpepPredictApplication is created and invoked.
-	/// @details This is the multi-threaded version, which locks the job count to decrement it, and locks the jobsummaries and all_output vectors to add to them.
-	void slave_carry_out_njobs_in_thread(
-		core::Size const thread_index,
-		core::Size * njobs_from_above,
-		core::Size const jobs_in_this_batch,
-		utility::vector1 < SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > * jobsummaries,
-		utility::vector1 < core::io::silent::SilentStructOP > * all_output,
-		core::scoring::ScoreFunctionOP sfxn,
-		core::pose::PoseOP native,
-		std::string const sequence, /*deliberately passed by copy*/
-		core::Size const batch_index //Number of batches that have been sent out on this proc.
-	) const;
-#endif
 
 	/// @brief Given a list of jobs that have been requested from above, send the corresponding poses up the hierarchy.
 	/// @details Throws an error if any jbo was completed on a different node than this slave.
@@ -492,38 +454,6 @@ private:
 	/// @brief The Boltzmann temperature, kB*T, used for calculating funnel quality (PNear).
 	/// @details Read from options system; default 1.0.
 	core::Real kbt_;
-
-
-#ifdef MULTI_THREADED
-// Private member variables only used in multi-threaded build.
-private:
-
-	/// @brief The number of threads per slave process.  Setting this to 1 (the default)
-	/// reproduces the same behaviour as the non-threaded build.
-	core::Size threads_per_slave_proc_;
-
-	/// @brief Lock the results list for read or for write.
-	mutable std::mutex results_mutex_;
-
-	/// @brief Lock the available jobs list and next job counter for read or for write.
-	mutable std::mutex joblist_mutex_;
-
-	/// @brief Are we using a constant random seed?
-	/// @details If false, time is used as seed.
-	bool use_const_random_seed_;
-
-	/// @brief The random seed offset to use.
-	/// @details Different threads will be offset by 1, and different processes, by the
-	/// number of threads.  This value will be added as well.
-	int random_seed_offset_;
-
-	/// @brief The random seed to use.
-	int random_seed_;
-
-	/// @brief What type of random generator to use?
-	std::string rgtype_;
-
-#endif //ifdef MULTI_THREADED
 
 };
 

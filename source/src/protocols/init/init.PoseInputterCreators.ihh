@@ -16,3 +16,8 @@
 #include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
 #include <protocols/jd3/pose_inputters/PDBPoseInputterCreator.hh>
 #include <protocols/jd3/pose_inputters/SilentFilePoseInputterCreator.hh>
+#include <protocols/jd3/full_model_inputters/FullModelInputterFactory.hh>
+#include <protocols/jd3/full_model_inputters/PDBFullModelInputterCreator.hh>
+#include <protocols/jd3/full_model_inputters/SilentFileFullModelInputterCreator.hh>
+#include <protocols/jd3/chunk_library_inputters/ChunkLibraryInputterFactory.hh>
+#include <protocols/jd3/chunk_library_inputters/PDBChunkLibraryInputterCreator.hh>

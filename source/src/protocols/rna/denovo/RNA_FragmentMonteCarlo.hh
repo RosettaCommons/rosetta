@@ -18,11 +18,10 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.fwd.hh>
-#include <protocols/rna/denovo/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_DeNovoMasterMover.fwd.hh>
-#include <protocols/rna/denovo/base_pairs/RNA_BasePairHandler.fwd.hh>
-#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.fwd.hh>
-#include <protocols/rna/denovo/libraries/RNA_ChunkLibrary.fwd.hh>
+#include <core/import_pose/RNA_BasePairHandler.fwd.hh>
+#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.fwd.hh>
+#include <core/import_pose/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_Relaxer.fwd.hh>
@@ -32,8 +31,9 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -49,7 +49,7 @@ class RNA_FragmentMonteCarlo: public protocols::moves::Mover {
 public:
 
 	//constructor
-	RNA_FragmentMonteCarlo( options::RNA_FragmentMonteCarloOptionsCOP = nullptr );
+	RNA_FragmentMonteCarlo( core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP = nullptr );
 
 	//destructor
 	~RNA_FragmentMonteCarlo() override;
@@ -83,26 +83,27 @@ public:
 	std::list< core::Real > const & all_lores_score_final() const { return all_lores_score_final_; }
 
 	core::pose::PoseOP lores_pose() { return lores_pose_; }
+	core::pose::PoseOP get_additional_output() override;
 
 	core::Real lores_score_early() const { return lores_score_early_; }
 
 	core::Real lores_score_final() const { return lores_score_final_; }
 
 	void
-	set_rna_base_pair_handler( base_pairs::RNA_BasePairHandlerCOP setting ) { rna_base_pair_handler_ = setting; }
+	set_rna_base_pair_handler( core::import_pose::RNA_BasePairHandlerCOP setting ) { rna_base_pair_handler_ = setting; }
 
-	base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler() const { return rna_base_pair_handler_; }
-
-	void
-	set_rna_de_novo_pose_initializer( setup::RNA_DeNovoPoseInitializerCOP setting ) { rna_de_novo_pose_initializer_ = setting; }
+	core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler() const { return rna_base_pair_handler_; }
 
 	void
-	set_user_input_chunk_library( libraries::RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_library_ = setting; }
+	set_rna_de_novo_pose_initializer( protocols::rna::denovo::RNA_DeNovoPoseInitializerCOP setting ) { rna_de_novo_pose_initializer_ = setting; }
 
 	void
-	set_user_input_chunk_initialization_library( libraries::RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_initialization_library_ = setting; }
+	set_user_input_chunk_library( core::import_pose::libraries::RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_library_ = setting; }
 
-	libraries::RNA_ChunkLibraryCOP rna_chunk_library() const { return rna_chunk_library_; }
+	void
+	set_user_input_chunk_initialization_library( core::import_pose::libraries::RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_initialization_library_ = setting; }
+
+	core::import_pose::libraries::RNA_ChunkLibraryCOP rna_chunk_library() const { return rna_chunk_library_; }
 
 	void show(std::ostream & output) const override;
 
@@ -115,7 +116,7 @@ public:
 	core::Real
 	get_rmsd_stems_no_superimpose ( core::pose::Pose const & pose ) const;
 
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map() const { return atom_level_domain_map_; }
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map() const { return atom_level_domain_map_; }
 
 	protocols::rna::movers::RNA_LoopCloserCOP rna_loop_closer() const { return rna_loop_closer_; }
 
@@ -202,16 +203,16 @@ private:
 private:
 
 	// The parameters in this OptionsCOP should not change:
-	options::RNA_FragmentMonteCarloOptionsCOP options_;
+	core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options_;
 	std::string out_file_tag_;
 
 	// Movers (currently must be set up outside, but should write auto-setup code)
-	base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler_;
-	libraries::RNA_ChunkLibraryCOP user_input_rna_chunk_library_;
-	libraries::RNA_ChunkLibraryCOP user_input_rna_chunk_initialization_library_;
-	libraries::RNA_ChunkLibraryOP rna_chunk_library_;
-	libraries::RNA_ChunkLibraryOP rna_chunk_initialization_library_;
-	setup::RNA_DeNovoPoseInitializerCOP rna_de_novo_pose_initializer_;
+	core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler_;
+	core::import_pose::libraries::RNA_ChunkLibraryCOP user_input_rna_chunk_library_;
+	core::import_pose::libraries::RNA_ChunkLibraryCOP user_input_rna_chunk_initialization_library_;
+	core::import_pose::libraries::RNA_ChunkLibraryOP rna_chunk_library_;
+	core::import_pose::libraries::RNA_ChunkLibraryOP rna_chunk_initialization_library_;
+	protocols::rna::denovo::RNA_DeNovoPoseInitializerCOP rna_de_novo_pose_initializer_;
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_;
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_init_;
 	movers::RNA_DeNovoMasterMoverOP rna_denovo_master_mover_;
@@ -221,7 +222,7 @@ private:
 	movers::RNA_RelaxerOP rna_relaxer_;
 	movers::RNP_HighResMoverOP rnp_high_res_mover_;
 
-	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
+	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
 
 	core::scoring::ScoreFunctionCOP denovo_scorefxn_;
 	core::scoring::ScoreFunctionCOP hires_scorefxn_;

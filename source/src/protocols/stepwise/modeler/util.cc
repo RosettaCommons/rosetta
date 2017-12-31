@@ -17,8 +17,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/rna/denovo/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
+#include <core/pose/rna/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -857,7 +856,7 @@ fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix ) {
 	fix_up_residue_type_variants( pose_to_fix );
 	update_constraint_set_from_full_model_info( pose_to_fix ); //atom numbers may have shifted around with variant changes.
 	core::scoring::rna::clear_rna_scoring_info( pose_to_fix );
-	protocols::rna::denovo::secstruct_legacy::clear_rna_secstruct_legacy_info( pose_to_fix );
+	core::pose::rna::secstruct_legacy::clear_rna_secstruct_legacy_info( pose_to_fix );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

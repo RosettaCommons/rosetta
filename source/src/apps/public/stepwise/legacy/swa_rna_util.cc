@@ -81,7 +81,7 @@
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <protocols/rna/denovo/options/RNA_MinimizerOptions.hh>
+#include <core/import_pose/options/RNA_MinimizerOptions.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>

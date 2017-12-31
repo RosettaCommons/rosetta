@@ -4,6 +4,7 @@
 -cutpoint_open 4
 -move ADD 6 JUMP_DOCK 3
 -output_minimized_pose_list
+-use_legacy_stepwise_job_distributor true
 -out:file:silent swm_rebuild.out
 -out:overwrite
 #-enumerate

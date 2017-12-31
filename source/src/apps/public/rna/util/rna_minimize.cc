@@ -31,7 +31,6 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <devel/init.hh>
 
@@ -46,13 +45,13 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-#include <protocols/rna/denovo/setup/RNA_DeNovoPoseInitializer.hh>
+#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <protocols/rna/denovo/options/RNA_MinimizerOptions.hh>
+#include <core/import_pose/options/RNA_MinimizerOptions.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/stepwise/modeler/util.hh> // for other_pose.
 #include <protocols/stepwise/modeler/align/util.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 
 // C++ headers
 #include <iostream>
@@ -97,11 +96,10 @@ rna_fullatom_minimize_test()
 	using namespace core::import_pose::pose_stream;
 	using namespace core::import_pose;
 	using namespace core::pose::full_model_info;
-	using namespace protocols::toolbox;
+	using namespace core::pose::toolbox;
 	using namespace protocols::rna::denovo;
 	using namespace protocols::rna::denovo::movers;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::setup;
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -140,7 +138,7 @@ rna_fullatom_minimize_test()
 		native_exists = true;
 	}
 
-	using namespace protocols::rna::denovo::options;
+	using namespace core::import_pose::options;
 	// minimizer setup
 	RNA_MinimizerOptionsOP options( new RNA_MinimizerOptions );
 	options->initialize_from_command_line();

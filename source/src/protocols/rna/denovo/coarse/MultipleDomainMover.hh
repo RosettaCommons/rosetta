@@ -21,7 +21,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <protocols/rna/denovo/coarse/CoarseRNA_LoopCloser.fwd.hh>
@@ -79,13 +79,13 @@ public:
 
 private:
 	void
-	initialize( core::pose::Pose const & pose, protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map );
+	initialize( core::pose::Pose const & pose, core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map );
 
 	void
 	setup_jump_numbers_and_partner( core::pose::Pose const & pose );
 
 	void
-	setup_ok_for_centroid_calculation( protocols::toolbox::AtomLevelDomainMapOP & atom_level_domain_map );
+	setup_ok_for_centroid_calculation( core::pose::toolbox::AtomLevelDomainMapOP & atom_level_domain_map );
 
 	void
 	randomize_orientations( core::pose::Pose & pose );

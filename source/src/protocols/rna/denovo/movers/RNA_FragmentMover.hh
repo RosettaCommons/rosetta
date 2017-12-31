@@ -16,9 +16,9 @@
 #define INCLUDED_protocols_rna_RNA_FragmentMover_HH
 
 // Unit headers
-#include <protocols/rna/denovo/fragments/RNA_Fragments.fwd.hh>
-#include <protocols/rna/denovo/fragments/FullAtomRNA_Fragments.hh>
-#include <protocols/rna/denovo/fragments/RNA_FragmentHomologyExclusion.hh>
+#include <core/fragment/rna/RNA_Fragments.fwd.hh>
+#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
+#include <core/fragment/rna/RNA_FragmentHomologyExclusion.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -27,7 +27,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -51,8 +51,8 @@ class RNA_FragmentMover: public protocols::moves::Mover {
 public:
 
 	/// @brief Construct the protocol object given the RNA fragment library to use.
-	RNA_FragmentMover( protocols::rna::denovo::fragments::RNA_Fragments const & all_rna_fragments,
-		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	RNA_FragmentMover( core::fragment::rna::RNA_Fragments const & all_rna_fragments,
+		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 		Size const symm_hack_arity );
 
 	/// @brief Copy constructor
@@ -83,8 +83,8 @@ private:
 	void
 	update_insert_map( core::pose::Pose const & pose );
 
-	protocols::rna::denovo::fragments::RNA_Fragments const & rna_fragments_;
-	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
+	core::fragment::rna::RNA_Fragments const & rna_fragments_;
+	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
 
 	std::map < Size, Size > insert_map_;
 	Size num_insertable_residues_;
@@ -92,7 +92,7 @@ private:
 	Size frag_size_;
 	Size symm_hack_arity_;
 
-	fragments::RNA_FragmentHomologyExclusionCOP homology_exclusion_ = nullptr;
+	core::fragment::rna::RNA_FragmentHomologyExclusionCOP homology_exclusion_ = nullptr;
 
 }; // class RNA_FragmentMover
 

@@ -21,10 +21,14 @@
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
+#include <protocols/jd3/full_model_inputters/FullModelInputSource.hh>
+#include <protocols/jd3/full_model/MoverAndFullModelJob.hh>
 #include <protocols/jd3/standard/MoverAndPoseJob.hh>
 
 //project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/util.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -159,8 +163,18 @@ SilentFilePoseOutputter::create_output_specification(
 	sf_pos->sf_opts( opts );
 	sf_pos->out_fname( fname_out );
 	sf_pos->buffer_limit( buffer_limit );
-	sf_pos->pose_tag( ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
-		+ job.job_tag_with_index_suffix( output_index ) );
+	// There should ultimately be a better way of communicating. Meantime,
+	// look for an option that's ubiquitous in stepwise runs but used little if at all
+	// elsewhere.
+	// Try to cast the input source?
+	if ( dynamic_cast< full_model_inputters::FullModelInputSource const * >( &job.inner_job()->input_source() ) ) { //job_options[ ] ) {
+		sf_pos->pose_tag( ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
+			+ job.job_tag_with_index_suffix( output_index, 6 ) );
+	} else {
+		sf_pos->pose_tag( ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
+			+ job.job_tag_with_index_suffix( output_index ) );
+	}
+
 	return sf_pos;
 }
 
@@ -171,8 +185,10 @@ SilentFilePoseOutputter::write_output(
 	JobResult const & result
 )
 {
+	using namespace protocols::jd3::full_model;
+
 	using standard::PoseJobResult;
-	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ));
+	debug_assert( dynamic_cast< PoseJobResult const * > ( &result ) || dynamic_cast< FullModelJobResult const * > ( &result ) );
 	auto const & pose_result( static_cast< PoseJobResult const & > ( result ));
 	core::pose::Pose const & pose( *pose_result.pose() );
 
@@ -189,6 +205,10 @@ SilentFilePoseOutputter::write_output(
 
 	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose, sf_spec.sf_opts() );
 	ss->fill_struct( pose, sf_spec.pose_tag() );
+
+	if ( dynamic_cast< FullModelJobResult const * >( &result ) && core::pose::full_model_info::full_model_info_defined( pose ) ) {
+		ss->add_string_value( "missing", ObjexxFCL::string_of( core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) ), -3 );
+	}
 
 	buffered_structs_.push_back( ss );
 

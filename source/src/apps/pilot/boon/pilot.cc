@@ -46,9 +46,9 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
-#include <protocols/rna/denovo/options/RNA_DeNovoProtocolOptions.hh>
+#include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <protocols/rna/denovo/options/RNA_MinimizerOptions.hh>
+#include <core/import_pose/options/RNA_MinimizerOptions.hh>
 
 int main(int argc, char *argv[])
 {
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
 		/////////////////////////////////////RNA_Minimizer///////////////////////////////////////////////////
 		// minimizer setup
-		protocols::rna::denovo::options::RNA_MinimizerOptionsOP options( new protocols::rna::denovo::options::RNA_MinimizerOptions );
+		core::import_pose::options::RNA_MinimizerOptionsOP options( new core::import_pose::options::RNA_MinimizerOptions );
 		options->set_deriv_check( true );
 		options->set_minimizer_use_coordinate_constraints( false );
 		options->set_skip_o2prime_trials( true );
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 		std::cout << rna_minimizer << std::endl;
 
 		/////////////////////////////////////RNA_DeNovoProtocol//////////////////////////////////////////////
-		protocols::rna::denovo::options::RNA_DeNovoProtocolOptionsOP rna_de_novo_protocol_options( new protocols::rna::denovo::options::RNA_DeNovoProtocolOptions );
+		core::import_pose::options::RNA_DeNovoProtocolOptionsOP rna_de_novo_protocol_options( new core::import_pose::options::RNA_DeNovoProtocolOptions );
 		rna_de_novo_protocol_options->set_silent_file( "output.txt" );
 		protocols::rna::denovo::RNA_DeNovoProtocol rna_de_novo_protocol( rna_de_novo_protocol_options );
 

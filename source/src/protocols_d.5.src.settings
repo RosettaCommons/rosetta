@@ -12,9 +12,10 @@
 sources = {
     "protocols/rna/": [
 		"AlignmentEnergy",
-		"util",
+		#"util",
     ],
     "protocols/rna/denovo": [
+        "RNA_DeNovoPoseInitializer",
         "RNA_DeNovoProtocol",
         "RNA_FragmentMonteCarlo",
         "util",
@@ -25,53 +26,38 @@ sources = {
         "CoarseRNA_LoopCloser",
         "MultipleDomainMover", #deprecated?
     ],
-    "protocols/rna/denovo/base_pairs": [
-        "BasePairStep",
-        "RNA_BasePairHandler",
-    ],
-    "protocols/rna/denovo/fragments": [
-        "FragmentLibrary",
-        "FullAtomRNA_Fragments",
-	"RNA_FragmentHomologyExclusion",
-        "RNA_Fragments",
-	"TorsionSet",
-    ],
-    "protocols/rna/denovo/libraries": [
-        "BasePairStepLibrary",
-        "ChunkSet",
-        "RNA_ChunkLibrary",
-        "RNA_JumpLibrary",
-        "RNA_LibraryManager",
-    ],
+    #"protocols/rna/denovo/base_pairs": [
+    #    "BasePairStep",
+    #    "RNA_BasePairHandler",
+    #],
     "protocols/rna/denovo/movers": [
         "RNA_DeNovoMasterMover",
         "RNA_FragmentMover",
         "RNA_HelixMover",
-        "RNA_JumpMover",
         "RNA_Minimizer",
         "RNA_Relaxer",
 	"RNP_HighResMover",
     ],
-    "protocols/rna/denovo/options": [
-        "RNA_BasicOptions",
-        "RNA_DeNovoProtocolOptions",
-        "RNA_FragmentMonteCarloOptions",
-        "RNA_MinimizerOptions",
-    ],
+    #"protocols/rna/denovo/options": [
+    #    "RNA_BasicOptions",
+        #"RNA_DeNovoProtocolOptions",
+        #"RNA_FragmentMonteCarloOptions",
+    #    "RNA_MinimizerOptions",
+    #],
     "protocols/rna/denovo/output": [
         "RNA_FragmentMonteCarloOutputter",
     ],
-    "protocols/rna/denovo/secstruct_legacy": [
-        "RNA_SecStructLegacyInfo",
-    ],
-    "protocols/rna/denovo/setup": [
-        "RNA_DeNovoSetup",
-        "RNA_DeNovoPoseInitializer",
-        "RNA_DeNovoParameters",
-    ],
+    #"protocols/rna/denovo/secstruct_legacy": [
+    #    "RNA_SecStructLegacyInfo",
+    #],
+    #"protocols/rna/denovo/setup": [
+        #"RNA_DeNovoSetup",
+        #"RNA_DeNovoPoseInitializer",
+        #"RNA_DeNovoParameters",
+    #],
     "protocols/rna/movers": [
         "ErraserMinimizerMover",
-        "RNA_HelixAssembler",
+        #"RNA_HelixAssembler",
         "RNA_LoopCloser",
         "RNAThreadAndMinimizeMover",
         "RNAIdealizeMover",
@@ -175,7 +161,6 @@ sources = {
         "RNA_TorsionScreener",
     ],
     "protocols/stepwise/setup/": [
-        "FullModelInfoSetupFromCommandLine",
         "util",
     ],
     "protocols/stepwise/legacy/modeler": [
@@ -307,7 +292,7 @@ sources = {
     "protocols/stepwise/modeler/rna/bulge/": [
         "BulgeApplyMover",
         "BulgeUnApplyMover",
-        "util",
+        #"util",
     ],
     "protocols/stepwise/modeler/rna/o2prime/": [
         "O2PrimePacker",

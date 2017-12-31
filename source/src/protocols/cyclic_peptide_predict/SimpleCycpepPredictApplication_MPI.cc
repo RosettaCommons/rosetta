@@ -10,14 +10,8 @@
 /// @file protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI.cc
 /// @brief Application-level code for the simple_cycpep_predict app, MPI version.
 /// @details  This application predicts structures of simple backbone-cyclized peptides made of alpha-, beta-, or gamma-amino acids (of any chirality)
-/// using generalized kinematic closure (GenKIC) for cyclization, and enforcing user-defined requiresments for numbers of mainchain hydrogen bonds.  This
-/// version uses MPI for cross-communication with parallel processes.
-/// On 4 Aug 2017, work commenced to make this appliction compatible with a job distribution scheme in which the last level of the hierarchy splits
-/// jobs over many threads (hierarchical process-level parallelism plus thread-level parallelism).
+/// using generalized kinematic closure (GenKIC) for cyclization, and enforcing user-defined requiresments for numbers of mainchain hydrogen bonds.
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
-
-//#define USEMPI //DELETE ME -- this is temporarily here for my IDE
-//#define MULTI_THREADED //DELETE ME -- this is temporarily here for my IDE
 
 #ifdef USEMPI
 
@@ -40,7 +34,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/init/init.hh>
 #include <numeric/conversions.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
@@ -117,23 +110,9 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI() :
 	abba_bins_(""),
 	lambda_(0.5),
 	kbt_(1.0)
-#ifdef MULTI_THREADED
-	,
-	threads_per_slave_proc_(1),
-	results_mutex_(),
-	joblist_mutex_(),
-	use_const_random_seed_(false),
-	random_seed_offset_(0),
-	random_seed_(11111111),
-	rgtype_("")
-#endif
 	//TODO -- Initialize vars here.
 {
-
 	scorefxn_ = core::scoring::get_score_function(); //Reads from file.
-#ifdef MULTI_THREADED
-	init_random_info_from_options();
-#endif
 }
 
 /// @brief Constructor with options
@@ -150,12 +129,7 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	core::Real const &output_fraction,
 	std::string const &output_filename,
 	core::Real const &lambda,
-	core::Real const &kbt,
-#ifdef MULTI_THREADED
-	core::Size const threads_per_slave_proc
-#else
-	core::Size const /*threads_per_slave_proc*/
-#endif
+	core::Real const &kbt
 ) :
 	MPI_rank_( MPI_rank ),
 	MPI_n_procs_( MPI_n_procs ),
@@ -186,21 +160,8 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	abba_bins_(""),
 	lambda_(lambda),
 	kbt_(kbt)
-#ifdef MULTI_THREADED
-	,
-	threads_per_slave_proc_(threads_per_slave_proc),
-	results_mutex_(),
-	joblist_mutex_(),
-	use_const_random_seed_(false),
-	random_seed_offset_(0),
-	random_seed_(11111111),
-	rgtype_("")
-#endif
 {
 	if(sfxn_in) scorefxn_ = sfxn_in->clone();
-#ifdef MULTI_THREADED
-	init_random_info_from_options();
-#endif
 	set_sort_type( sort_type );
 	set_output_fraction( output_fraction );
 	set_procs_per_hierarchy_level( procs_per_hierarchy_level );
@@ -248,16 +209,6 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	abba_bins_(src.abba_bins_),
 	lambda_(src.lambda_),
 	kbt_(src.kbt_)
-#ifdef MULTI_THREADED
-	,
-	threads_per_slave_proc_( src.threads_per_slave_proc_ ),
-	results_mutex_(), //Don't copy mutexes
-	joblist_mutex_(), //Don't copy mutexes.
-	use_const_random_seed_(src.use_const_random_seed_),
-	random_seed_offset_(src.random_seed_offset_),
-	random_seed_(src.random_seed_),
-	rgtype_(src.rgtype_)
-#endif
 	//TODO -- copy variables here.
 {
 	set_procs_per_hierarchy_level( src.procs_per_hierarchy_level_ );
@@ -271,21 +222,6 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	runtime_assert( output_fraction_ >= 0.0 && output_fraction_ <= 1.0 );
 	runtime_assert_string_msg( output_filename_ != "", "Error in copy constructor for SimpleCycpepPredict_MPI class: The output filname cannot be empty." );
 }
-
-#ifdef MULTI_THREADED
-/// @brief Initialize private member variables related to thread random seeds from the options
-/// system.  Does nothing if this isn't a multi-threaded compilation.
-void
-SimpleCycpepPredictApplication_MPI::init_random_info_from_options() {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	if ( option[ run::constant_seed ].active() ) use_const_random_seed_ = option[ run::constant_seed ]();
-	if ( option[ run::seed_offset ].active() ) random_seed_offset_ = option[ run::seed_offset ]();
-	if ( option[ run::jran ].active() )  random_seed_ = option[ run::jran ]();
-	rgtype_ = option[ run::rng ]();
-}
-#endif
 
 
 /// @brief Actually run the application.
@@ -1505,20 +1441,9 @@ SimpleCycpepPredictApplication_MPI::i_am_slave() const {
 
 /// @brief The jobs done by the slaves during parallel execution.
 /// @details The slaves receive jobs from higher in the hierarchy, do them, and send results back up the hierarchy.
-/// @note In multi-threaded mode, if threads_per_slave_process_ is greater than 1, then the slaves launch threads
-/// to do the work.  Only the master thread does MPI calls.
 void
 SimpleCycpepPredictApplication_MPI::run_slave() const {
 	go_signal(); //Wait for signal to everyone that it's time to start.
-
-	//Temporary lines for GDB debugging with MPI.  DELETE LATER:
-	//core::Size i(0);
-	//while(i==0) {
-	//}
-
-#ifdef MULTI_THREADED
-	core::Size batchcount(0); //Counter for total number of batches sent out to slave threads
-#endif
 
 	core::Size total_jobs_attempted(0);
 	core::Size njobs_from_above(0);
@@ -1531,52 +1456,7 @@ SimpleCycpepPredictApplication_MPI::run_slave() const {
 		if (TR.Debug.visible()) TR.Debug << "Slave process " << MPI_rank_ << " was assigned " << njobs_from_above << " job(s)." << std::endl;
 		if( njobs_from_above != 0 ) {
 			total_jobs_attempted += njobs_from_above;
-#ifdef MULTI_THREADED
-			core::Size const jobs_in_this_batch( njobs_from_above );
-			++batchcount; //We're sending out another batch.
-			// In multi-threaded mode, if we're launching more than one thread per slave process, do that here.
-			if( threads_per_slave_proc_ > 1 ) {
-				utility::vector1< std::thread > worker_threads;
-				for(core::Size i(1); i<threads_per_slave_proc_; ++i) { //Note that one thread (this one) is the MPI communication thread.  There are N-1 worker threads.
-					core::pose::PoseOP native_copy;
-					if( native_ != nullptr ) {
-						native_copy = core::pose::PoseOP( new core::pose::Pose );
-						native_copy->detached_copy(*native_);
-					}
-
-					worker_threads.push_back( std::thread( std::bind(
-					   &protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI::slave_carry_out_njobs_in_thread,
-					   this,
-					   i,
-					   &njobs_from_above,
-					   jobs_in_this_batch,
-					   &jobsummaries,
-					   &all_output,
-					   scorefxn_->clone(),
-					   native_copy,
-					   sequence_,
-					   batchcount
-					) ) ); //Note that, in the C++11 standard, objects created with push_back() are moved rather than copied into the container, so this is correct.
-				}
-				for(core::Size i(1); i<threads_per_slave_proc_; ++i) {
-					worker_threads[i].join();
-				}
-
-				{ //Scope for lock.
-					//Update the indices of jobs in the jobsummaries list.  Note that this is done between threads being open, and requires no mutex locking.
-					//I'm going to lock anyways to be extra safe.
-					std::lock_guard < std::mutex > lock( results_mutex_ );
-					for(core::Size i(1), imax(jobsummaries.size()); i<=imax; ++i) {
-						jobsummaries[i]->set_jobindex_on_originating_node(i);
-					}
-				}
-
-			} else {
-				slave_carry_out_njobs( njobs_from_above, jobsummaries, all_output );
-			}
-#else
 			slave_carry_out_njobs( njobs_from_above, jobsummaries, all_output );
-#endif
 		} else {
 			break;
 		}
@@ -1591,7 +1471,7 @@ SimpleCycpepPredictApplication_MPI::run_slave() const {
 
 	//Offer the total number of jobs attempted upward:
 	send_request( my_parent_, OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD);
-	send_jobs_attempted_count( total_jobs_attempted, my_parent_);
+	send_jobs_attempted_count( total_jobs_attempted,	my_parent_);
 	if(TR.Debug.visible()) TR.Debug << "Slave process " << MPI_rank_ << " reported to its parent that it attempted " << total_jobs_attempted << " jobs." << std::endl;
 
 	//Receive requests for full poses from up the hierarchy:

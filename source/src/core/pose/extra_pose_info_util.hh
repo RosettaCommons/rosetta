@@ -191,6 +191,11 @@ std::string tag_from_pose( core::pose::Pose const & pose );
 std::string extract_tag_from_pose( core::pose::Pose &pose );
 void tag_into_pose( core::pose::Pose & pose, std::string const & tag );
 
+void
+set_output_res_and_chain( core::pose::Pose & extended_pose,
+	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_resnum_and_chain_and_segid );
+
+
 } // pose
 } // core
 

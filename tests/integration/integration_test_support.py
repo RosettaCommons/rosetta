@@ -109,7 +109,10 @@ class IntegrationTestAnalysis(object):
             result = result_file.read()
             for param, value in self.run_parameters.ref_parameters.items():
                 if param in self.config.sub_test_parameters:
-                    result = result.replace(value, param)
+                    try:
+                        result = result.replace(value, param)
+                    except:
+                        pass
 
             return result.split("\n")
         else:
@@ -121,7 +124,10 @@ class IntegrationTestAnalysis(object):
             result = result_file.read()
             for param, value in self.run_parameters.new_parameters.items():
                 if param in self.config.sub_test_parameters:
-                    result = result.replace(value, param)
+                    try:
+                        result = result.replace(value, param)
+                    except:
+                        pass
 
             return result.split("\n")
         else:

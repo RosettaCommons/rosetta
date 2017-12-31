@@ -37,6 +37,8 @@
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/SilentFilePoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/SilentFilePoseOutputterCreator.hh>
 #include <protocols/jd3/deallocation/DeallocationMessage.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 
@@ -67,7 +69,10 @@
 #include <basic/datacache/ConstDataMap.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.jd3.FullModelJobQueen" );
+static basic::Tracer TR( "protocols.jd3.full_model.FullModelJobQueen" );
+
+// AMW TODO: known issue -- we can't support stepwise_lores with this
+// for some reason.
 
 
 namespace protocols {
@@ -115,6 +120,10 @@ FullModelJobQueen::FullModelJobQueen() :
 	full_model_inputters::FullModelInputterCreatorOP full_model_inputter_creator2( new full_model_inputters::SilentFileFullModelInputterCreator );
 	allow_full_model_inputter( full_model_inputter_creator );
 	allow_full_model_inputter( full_model_inputter_creator2 );
+
+	do_not_accept_all_pose_outputters_from_factory();
+	pose_outputters::PoseOutputterCreatorOP pose_outputter_creator( new pose_outputters::SilentFilePoseOutputterCreator );
+	allow_pose_outputter( pose_outputter_creator );
 
 	// begin to populate the per-job options object
 	full_model_inputters::FullModelInputterFactory::get_instance()->list_options_read( inputter_options_ );
@@ -607,7 +616,6 @@ FullModelJobQueen::result_outputter(
 	return outputters;
 }
 
-
 // FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
 // if ( ! inner_job ) { throw bad_inner_job_exception(); }
 // pose_outputters::PoseOutputterOP outputter = pose_outputter_for_job( *inner_job );
@@ -633,6 +641,15 @@ FullModelJobQueen::result_outputter(
 //
 // outputter->write_output_pose( *job, output_index, *job_options, outputter_tag, *pose_result->pose() );
 //
+// std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters = secondary_outputters_for_job( *inner_job, *job_options );
+// for ( auto const & secondary_outputter : secondary_outputters ) {
+//  // Manually silence scorefile output... not sure why this is ending up in secondary_outputters at all!
+//  // ARGH AMW TODO
+//  if ( secondary_outputter->class_key() == "ScoreFile" ) continue;
+//  secondary_outputter->write_output_pose( *job, *job_options, *pose_result->pose() );
+// }
+//
+// note_job_result_output_or_discarded( job, result_index );
 // std::list< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters = secondary_outputters_for_job( *inner_job, *job_options );
 // for ( auto const & secondary_outputter : secondary_outputters ) {
 //  secondary_outputter->write_output_pose( *job, output_index, *job_options, *pose_result->pose() );
@@ -759,6 +776,7 @@ void
 FullModelJobQueen::allow_pose_outputter( pose_outputters::PoseOutputterCreatorOP creator )
 {
 	if ( use_factory_provided_pose_outputters_ ) {
+
 		use_factory_provided_pose_outputters_ = false;
 		// the user has not told us they want to drop the original set of creators
 		// so interpret this as them wanting to allow the user to provide another
@@ -1229,20 +1247,24 @@ FullModelJobQueen::pose_outputter_for_job(
 }
 
 pose_outputters::PoseOutputterOP
-FullModelJobQueen::pose_outputter_for_job( pose_outputters::PoseOutputSpecification const & spec )
+FullModelJobQueen::pose_outputter_for_job( pose_outputters::PoseOutputSpecification const & /*spec*/ )
 {
+	// This will kill multistage jobs because of the suffix issues. But I don't care for now.
+	return outputter_creators_[ "SilentFile" ]->create_outputter();
+
+	/*
 	std::string const & outputter_type = spec.outputter_type();
 	pose_outputters::PoseOutputterOP representative;
 	auto rep_iter = representative_pose_outputter_map_.find( outputter_type );
 	if ( rep_iter == representative_pose_outputter_map_.end() ) {
-		if ( use_factory_provided_pose_outputters_ ) {
-			representative = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( outputter_type );
-		} else {
-			runtime_assert( outputter_creators_.count( outputter_type ) != 0 );
-			auto iter = outputter_creators_.find( outputter_type );
-			representative = iter->second->create_outputter();
-		}
-		representative_pose_outputter_map_[ outputter_type ] = representative;
+	if ( use_factory_provided_pose_outputters_ ) {
+	representative = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( outputter_type );
+	} else {
+	runtime_assert( outputter_creators_.count( outputter_type ) != 0 );
+	auto iter = outputter_creators_.find( outputter_type );
+	representative = iter->second->create_outputter();
+	}
+	representative_pose_outputter_map_[ outputter_type ] = representative;
 	}
 
 	// This outputter name may have a job-distributor-assigned suffix, and so it may not yet
@@ -1251,69 +1273,70 @@ FullModelJobQueen::pose_outputter_for_job( pose_outputters::PoseOutputSpecificat
 	if ( actual_outputter_name == "" ) return representative;
 
 	std::pair< std::string, std::string > outputter_key =
-		std::make_pair( outputter_type, actual_outputter_name );
+	std::make_pair( outputter_type, actual_outputter_name );
 	auto iter = pose_outputter_map_.find( outputter_key );
 	if ( iter != pose_outputter_map_.end() ) {
-		return iter->second;
+	return iter->second;
 	}
 
 	pose_outputters::PoseOutputterOP outputter;
 	if ( use_factory_provided_pose_outputters_ ) {
-		outputter = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( outputter_type );
+	outputter = pose_outputters::PoseOutputterFactory::get_instance()->new_pose_outputter( outputter_type );
 	} else {
-		debug_assert( outputter_creators_.count( outputter_type ) );
-		outputter = outputter_creators_[ outputter_type ]->create_outputter();
+	debug_assert( outputter_creators_.count( outputter_type ) );
+	outputter = outputter_creators_[ outputter_type ]->create_outputter();
 	}
 	pose_outputter_map_[ outputter_key ] = outputter;
 	return outputter;
-
+	*/
 }
 
 
 utility::vector1< pose_outputters::SecondaryPoseOutputterOP >
 FullModelJobQueen::secondary_outputters_for_job(
-	FullModelInnerLarvalJob const & inner_job,
-	utility::options::OptionCollection const & job_options
+	FullModelInnerLarvalJob const & ,//inner_job,
+	utility::options::OptionCollection const & //job_options
 )
 {
-	std::set< std::string > secondary_outputters_added;
+	//std::set< std::string > secondary_outputters_added;
 	utility::vector1< pose_outputters::SecondaryPoseOutputterOP > secondary_outputters;
-	if ( inner_job.jobdef_tag() ) {
-		utility::tag::TagCOP job_tag = inner_job.jobdef_tag();
-		if ( job_tag->hasTag( "SecondaryOutput" ) ) {
-			utility::tag::TagCOP secondary_output_tags = job_tag->getTag( "SecondaryOutput" );
-			utility::vector0< utility::tag::TagCOP > const & subtags = secondary_output_tags->getTags();
-			for ( core::Size ii = 0; ii < subtags.size(); ++ii ) {
-				utility::tag::TagCOP iitag = subtags[ ii ];
-				// allow repeats! Why not?
-				//if ( secondary_outputters_added.count( iitag->getName() ) ) continue;
-				secondary_outputters_added.insert( iitag->getName() );
+	/*if ( inner_job.jobdef_tag() ) {
+	utility::tag::TagCOP job_tag = inner_job.jobdef_tag();
+	if ( job_tag->hasTag( "SecondaryOutput" ) ) {
+	utility::tag::TagCOP secondary_output_tags = job_tag->getTag( "SecondaryOutput" );
+	utility::vector0< utility::tag::TagCOP > const & subtags = secondary_output_tags->getTags();
+	for ( core::Size ii = 0; ii < subtags.size(); ++ii ) {
+	utility::tag::TagCOP iitag = subtags[ ii ];
+	// allow repeats! Why not?
+	//if ( secondary_outputters_added.count( iitag->getName() ) ) continue;
+	secondary_outputters_added.insert( iitag->getName() );
 
-				// returns 0 if the secondary outputter is repressed for a particular job
-				pose_outputters::SecondaryPoseOutputterOP outputter = secondary_outputter_for_job( inner_job, job_options, iitag->getName() );
-				if ( outputter ) {
-					secondary_outputters.push_back( outputter );
-				}
-			}
-		}
+	// returns 0 if the secondary outputter is repressed for a particular job
+	pose_outputters::SecondaryPoseOutputterOP outputter = secondary_outputter_for_job( inner_job, job_options, iitag->getName() );
+	if ( outputter ) {
+	secondary_outputters.push_back( outputter );
+	}
+	}
+	}
 	}
 
 	if ( cl_outputters_.empty() ) {
-		cl_outputters_ = pose_outputters::PoseOutputterFactory::get_instance()->secondary_pose_outputters_from_command_line();
+	cl_outputters_ = pose_outputters::PoseOutputterFactory::get_instance()->secondary_pose_outputters_from_command_line();
 	}
 	for ( pose_outputters::SecondaryPoseOutputterOP const & elem : cl_outputters_ ) {
-		if ( representative_secondary_outputter_map_.count( elem->class_key() ) == 0 ) {
-			representative_secondary_outputter_map_[ elem->class_key() ] = elem;
-		}
-		if ( secondary_outputters_added.count( elem->class_key() ) ) continue;
-
-		// returns 0 if the secondary outputter is repressed for a particular job
-		pose_outputters::SecondaryPoseOutputterOP outputter = secondary_outputter_for_job(
-			inner_job, job_options, elem->class_key() );
-		if ( outputter ) {
-			secondary_outputters.push_back( outputter );
-		}
+	if ( representative_secondary_outputter_map_.count( elem->class_key() ) == 0 ) {
+	representative_secondary_outputter_map_[ elem->class_key() ] = elem;
 	}
+	if ( secondary_outputters_added.count( elem->class_key() ) ) continue;
+
+	// returns 0 if the secondary outputter is repressed for a particular job
+	pose_outputters::SecondaryPoseOutputterOP outputter = secondary_outputter_for_job(
+	inner_job, job_options, elem->class_key() );
+	if ( outputter ) {
+	secondary_outputters.push_back( outputter );
+	}
+	}
+	*/
 
 	return secondary_outputters;
 }
@@ -1799,8 +1822,8 @@ FullModelJobQueen::get_outputter_from_job_tag( utility::tag::TagCOP tag ) const
 				if ( override_default_outputter_ ) {
 					outputter = default_outputter_creator_->create_outputter();
 				} else {
-					runtime_assert( outputter_creators_.count( pose_outputters::PDBPoseOutputter::keyname() ) );
-					outputter = pose_outputters::PoseOutputterOP( new pose_outputters::PDBPoseOutputter );
+					runtime_assert( outputter_creators_.count( pose_outputters::SilentFilePoseOutputter::keyname() ) );
+					outputter = pose_outputters::PoseOutputterOP( new pose_outputters::SilentFilePoseOutputter );
 				}
 			}
 		}

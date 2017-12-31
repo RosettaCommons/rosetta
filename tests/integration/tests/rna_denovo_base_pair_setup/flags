@@ -5,3 +5,4 @@
 -output_res_num  1-2
 -cutpoint_open 1
 -minimize_rna false
+-denovo:use_legacy_job_distributor true

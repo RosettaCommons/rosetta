@@ -38,7 +38,6 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/util.hh>
@@ -217,7 +216,6 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	using namespace protocols::moves;
 	using namespace core::id;
 	using namespace protocols::stepwise::sampler;
-	using namespace protocols::stepwise::setup;
 
 	utility::vector1< Size > residues_sampled;
 	Size total_sampled = 0;
