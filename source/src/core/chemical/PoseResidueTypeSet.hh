@@ -61,62 +61,50 @@ public:
 	core::chemical::ResidueTypeSetCOP
 	default_rts() const;
 
-	/// @brief Get ResidueType by exact name, returning COP
-	/// Will return null pointer for no matches
-	virtual
-	ResidueTypeCOP
-	name_mapOP( std::string const & name ) const override;
+	ResidueTypeCOP get_d_equivalent( ResidueTypeCOP l_rsd ) const override;
 
-	/// @brief query if a ResidueType of the unique residue id (name) is present.
-	virtual
-	bool
-	has_name( std::string const & name ) const override;
+	ResidueTypeCOP get_l_equivalent( ResidueTypeCOP d_rsd ) const override;
+
+	ResidueTypeCOP get_mirrored_type( ResidueTypeCOP original_rsd ) const override;
 
 	/// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
-	virtual
 	bool
 	generates_patched_residue_type_with_name3( std::string const & base_residue_name, std::string const & name3 ) const override;
 
 	/// @brief Check if a base type (like "CYS") generates any types with a new interchangeability group (like "SCY" (via cys_acetylated))
-	virtual
 	bool
 	generates_patched_residue_type_with_interchangeability_group( std::string const & base_residue_name, std::string const & interchangeability_group ) const override;
 
 	/// @brief the residues with no patches applied
-	virtual
 	ResidueTypeCOPs
 	base_residue_types() const override;
 
 	/// @brief the residues with no patches applied
-	virtual
 	ResidueTypeCOPs
 	unpatchable_residue_types() const override;
 
 	/// @brief the patches
-	virtual
 	utility::vector1< PatchCOP > patches() const override;
 
 	/// @brief the metapatches
-	virtual
 	utility::vector1< MetapatchCOP > metapatches() const override;
 
 	/// @brief the patches, index by name.
-	virtual
-	std::map< std::string, utility::vector1< PatchCOP > > patch_map() const override;
+	std::map< std::string, utility::vector1< PatchCOP > > const & patch_map() const override { return all_patch_map_; }
+
+	/// @brief the metapatches, index by name.
+	std::map< std::string, MetapatchCOP > const & metapatch_map() const override { return all_metapatch_map_; }
 
 	/// @brief Do we have this metapatch?
-	virtual
 	bool
 	has_metapatch( std::string const & name ) const override;
 
-	virtual
 	MetapatchCOP
 	metapatch( std::string const & name ) const override;
 
 	/// @brief Gets all types with the given aa type and variants
 	/// @details The number of variants must match exactly. Variants can be custom variants.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
-	virtual
 	ResidueTypeCOPs
 	get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const override;
 
@@ -124,7 +112,6 @@ public:
 	/// @details The number of variants must match exactly. Variants can be custom variants, but exceptions must
 	///           be standard types, listed in VariantType.hh.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
-	virtual
 	ResidueTypeCOPs
 	get_all_types_with_variants_aa( AA aa,
 		utility::vector1< std::string > const & variants,
@@ -135,19 +122,19 @@ public:
 public:
 
 	// These could be hoisted by using statements, but PyRosetta currently has issues with that.
-	virtual void add_base_residue_type( ResidueTypeOP new_type ) override;
-	virtual void add_base_residue_type( std::string const &  filename ) override;
-	virtual void read_files_for_base_residue_types( utility::vector1< std::string > const & filenames ) override;
-	virtual void add_unpatchable_residue_type( ResidueTypeOP new_type ) override;
-	virtual void add_unpatchable_residue_type( std::string const &  filename ) override;
-	virtual void read_files_for_unpatchable_residue_types( utility::vector1< std::string > const & filenames ) override;
-	virtual void remove_base_residue_type( std::string const & name ) override;
-	virtual void remove_unpatchable_residue_type( std::string const & name ) override;
-	virtual void add_patches(
+	void add_base_residue_type( ResidueTypeOP new_type ) override;
+	void add_base_residue_type( std::string const &  filename ) override;
+	void read_files_for_base_residue_types( utility::vector1< std::string > const & filenames ) override;
+	void add_unpatchable_residue_type( ResidueTypeOP new_type ) override;
+	void add_unpatchable_residue_type( std::string const &  filename ) override;
+	void read_files_for_unpatchable_residue_types( utility::vector1< std::string > const & filenames ) override;
+	void remove_base_residue_type( std::string const & name ) override;
+	void remove_unpatchable_residue_type( std::string const & name ) override;
+	void add_patches(
 		utility::vector1< std::string > const & patch_filenames,
 		utility::vector1< std::string > const & metapatch_filenames
 	) override;
-	virtual void set_merge_behavior_manager( MergeBehaviorManagerCOP mbm) override;
+	void set_merge_behavior_manager( MergeBehaviorManagerCOP mbm) override;
 
 	// Hoist the getters
 	AtomTypeSetCOP atom_type_set() const { return ResidueTypeSet::atom_type_set(); }
@@ -162,21 +149,33 @@ public:
 
 protected:
 
+	/// @brief Add a patch object to the RTS
+	void
+	add_patch(PatchCOP p) override;
+
+	/// @brief Add a metapatch object to the RTS
+	void
+	add_metapatch(MetapatchCOP p) override;
+
+	/// @brief Generate the ResidueType from either/both of the local RTS and the default RTS.
+	/// @details Assumes that we already have a write lock to the cache object for this RTS
+	/// (but not for the default RTS).
+	ResidueTypeCOP
+	generate_residue_type_write_locked( std::string const & name_in ) const override;
+
 	/// @brief Attempt to lazily load the given residue type from data.
 	bool
 	lazy_load_base_type( std::string const & rsd_base_name ) const override;
-
-	/// @brief Recursive function for looking up / instantiating a ResidueType given its name
-	ResidueTypeCOP
-	name_mapOP_write_locked( std::string const & name ) const override;
-
-	bool
-	has_name_write_locked( std::string const & name ) const override;
 
 
 private:
 
 	core::chemical::ResidueTypeSetCOP default_rts_;
+
+	/// @brief patches indexed by name
+	/// Includes both the patches from this map and the default_rts_ patches.
+	std::map< std::string, utility::vector1< PatchCOP > > all_patch_map_;
+	std::map< std::string, MetapatchCOP > all_metapatch_map_;
 
 #ifdef    SERIALIZATION
 public:

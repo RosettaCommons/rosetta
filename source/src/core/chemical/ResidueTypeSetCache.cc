@@ -67,6 +67,7 @@ ResidueTypeSetCache::clone( ResidueTypeSet const & rsd_type_set ) const {
 
 	// This is a shallow copy - (immutable) ResidueTypes can be shared by multiple ResidueTypeSets
 	cloned->name_map_ = name_map_;
+	cloned->pass_throughs_ = pass_throughs_;
 	cloned->prohibited_types_ = prohibited_types_;
 
 	cloned->clear_cached_maps(); // clear the caches, and allow them to regenerate.
@@ -84,6 +85,18 @@ ResidueTypeSetCache::name_map( std::string const & name_in ) const
 	return it->second;
 }
 
+/// @details Must be read locked by calling function.
+ResidueTypeCOP
+ResidueTypeSetCache::name_map_or_null( std::string const & name_in ) const
+{
+	auto it = name_map_.find( name_in );
+	if ( it != name_map_.end() ) {
+		return it->second;
+	} else {
+		return nullptr;
+	}
+}
+
 /// @details Must be write-locked by calling function
 void
 ResidueTypeSetCache::add_residue_type( ResidueTypeCOP residue_type )
@@ -96,6 +109,23 @@ ResidueTypeSetCache::add_residue_type( ResidueTypeCOP residue_type )
 	//  clear_cached_maps(); // no can't do this
 }
 
+/// @details Must be write-locked by calling function
+void
+ResidueTypeSetCache::add_pass_through( ResidueTypeCOP residue_type )
+{
+	if ( residue_type != nullptr ) {
+		add_residue_type( residue_type );
+		pass_throughs_.insert( residue_type->name() );
+	}
+}
+
+/// @details Must be read-locked by calling function
+bool
+ResidueTypeSetCache::is_pass_through( std::string const & name_in )
+{
+	return pass_throughs_.count( name_in );
+}
+
 /// @details Danger Danger Danger.  Unsafe in a multi-threaded environment.
 void
 ResidueTypeSetCache::remove_residue_type( std::string const & name )
@@ -103,6 +133,7 @@ ResidueTypeSetCache::remove_residue_type( std::string const & name )
 	auto it = name_map_.find( name );
 	runtime_assert( it != name_map_.end() );
 	name_map_.erase( it );
+	pass_throughs_.erase( name ); // Does nothing if it isn't in the set
 	clear_cached_maps();
 }
 
@@ -114,6 +145,7 @@ ResidueTypeSetCache::update_residue_type( ResidueTypeCOP residue_type_original, 
 	runtime_assert( it != name_map_.end() );
 	runtime_assert( residue_type_original->name() == residue_type_new->name() );
 	name_map_[ residue_type_original->name() ] = residue_type_new;
+	// ResidueTypes have the same name - no change in pass_throughs_
 	clear_cached_maps();
 }
 
@@ -272,6 +304,7 @@ void
 core::chemical::ResidueTypeSetCache::save( Archive & arc ) const {
 	arc( ::cereal::make_nvp( "rsd_type_set_", rsd_type_set_.get_self_ptr() ) );
 	arc( CEREAL_NVP( name_map_ ) );
+	arc( CEREAL_NVP( pass_throughs_ ) );
 	arc( CEREAL_NVP( prohibited_types_ ) );
 
 	// All the cached data is exempt, as it can be regenerated later.
@@ -292,6 +325,7 @@ core::chemical::ResidueTypeSetCache::load_and_construct( Archive & arc, cereal::
 
 	construct( *parent );
 	arc( construct->name_map_ );
+	arc( construct->pass_throughs_ );
 	arc( construct->prohibited_types_ );
 
 	construct->cache_up_to_date_ = false;

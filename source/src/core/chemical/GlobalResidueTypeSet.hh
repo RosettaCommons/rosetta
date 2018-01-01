@@ -107,9 +107,6 @@ public:
 		return name_;
 	}
 
-	/// @brief query if a ResidueType of the unique residue id (name) is present.
-	bool has_name( std::string const & name ) const override;
-
 	/// @brief Gets all types with the given aa type and variants
 	/// @details The number of variants must match exactly. Variants can be custom variants.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
@@ -135,9 +132,6 @@ public:
 	//////////////////
 	// protected methods, implement from base class
 protected:
-
-	bool
-	has_name_write_locked( std::string const & name ) const override;
 
 	/// @brief Attempt to lazily load the given residue type from data.
 	bool

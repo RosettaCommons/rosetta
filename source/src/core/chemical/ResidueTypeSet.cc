@@ -148,15 +148,16 @@ ResidueTypeSet::name_mapOP( std::string const & name_in ) const
 	return name_mapOP_write_locked( name );
 }
 
-bool
+ResidueTypeCOP
 ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 {
 	{ // scope the read lock
 #ifdef MULTI_THREADED
 		utility::thread::ReadLockGuard read_lock( cache_->read_write_mutex() );
 #endif
-		if ( cache_object()->has_generated_residue_type( rsd_name ) ) {
-			return true;
+		ResidueTypeCOP const & rt_ptr( cache_object()->name_map_or_null( rsd_name ) );
+		if ( rt_ptr != nullptr ) {
+			return rt_ptr;
 		}
 	}
 #ifdef MULTI_THREADED
@@ -170,21 +171,22 @@ ResidueTypeCOP
 ResidueTypeSet::name_mapOP_write_locked( std::string const & name_in ) const
 {
 	std::string const name = fixup_patches( name_in );
-	if ( generate_residue_type_write_locked( name ) ) {
-		return cache_object()->name_map( name );
-	} else {
-		return ResidueTypeCOP( nullptr );
-	}
+	return generate_residue_type_write_locked( name );
 }
 
 /// @details Instantiates ResidueType recursively, peeling off the last-most patch and generating
 /// the patched ResidueType from the base ResidueType and the corresponding Patch, recursively
 /// generating the base ResidueType if necessary. The function that calls this function must first
 /// obtain a write lock
-bool
+ResidueTypeCOP
 ResidueTypeSet::generate_residue_type_write_locked( std::string const & rsd_name ) const
 {
-	if ( cache_object()->has_generated_residue_type( rsd_name ) ) return true; // already generated
+	{ // scope rt_ptr
+		ResidueTypeCOP const & rt_ptr( cache_object()->name_map_or_null( rsd_name ) );
+		if ( rt_ptr != nullptr ) {
+			return rt_ptr; // already generated
+		}
+	}
 
 	// get name (which holds patch information)
 	std::string rsd_name_base, patch_name;
@@ -194,15 +196,33 @@ ResidueTypeSet::generate_residue_type_write_locked( std::string const & rsd_name
 		if ( ! cache_object()->has_generated_residue_type( rsd_name_base ) ) {
 			lazy_load_base_type( rsd_name_base );
 		}
-		return cache_object()->has_generated_residue_type( rsd_name ); // Is generated?
+		return cache_object()->name_map_or_null( rsd_name ); // We either have it or we don't
 	}
 
 	// now apply patches.
 	ResidueTypeCOP rsd_base_ptr = name_mapOP_write_locked( rsd_name_base );
-	if ( ! rsd_base_ptr ) { return false; }
+	if ( ! rsd_base_ptr ) { return nullptr; }
 
-	ResidueType const & rsd_base( *rsd_base_ptr );
-	runtime_assert( rsd_base.finalized() );
+	runtime_assert( rsd_base_ptr->finalized() );
+
+	ResidueTypeCOP patched_type( apply_patch( rsd_base_ptr, patch_name, patch_map(), metapatch_map() ) );
+	if ( patched_type == nullptr ) {
+		return nullptr;
+	} else {
+		cache_object()->add_residue_type( patched_type );
+		return patched_type;
+	}
+}
+
+ResidueTypeCOP
+ResidueTypeSet::apply_patch(
+	ResidueTypeCOP const & rsd_base_ptr,
+	std::string const & patch_name,
+	std::map< std::string, utility::vector1< PatchCOP > > const & patch_mapping,
+	std::map< std::string, MetapatchCOP > const & metapach_mapping
+) {
+
+	if ( rsd_base_ptr == nullptr ) { return nullptr; }
 
 	// I may have to create this patch, if it is metapatch-derived!
 	// This version preserves this function's constness by not
@@ -217,84 +237,62 @@ ResidueTypeSet::generate_residue_type_write_locked( std::string const & rsd_name
 		// Atom name: second element if you split the patch name by '-'
 		std::string atom_name = utility::string_split( patch_name, '-' )[2];
 
-		if ( ! has_metapatch( metapatch_name ) ) {
-			TR.Debug << "Metapatch " << metapatch_name << " not in the metapatch map!" << std::endl;
-			return false; // Can't generate this with this ResidueTypeSet
+		if ( metapach_mapping.count( metapatch_name ) == 0 ) {
+			return nullptr; // Can't generate this with this ResidueTypeSet
 		}
 
 		// Add buffering spaces just in case the resultant patch is PDB-naming sensitive
 		// we need enough whitespace -- will trim later
-		PatchCOP needed_patch = metapatch( metapatch_name )->get_one_patch( /*rsd_base, */"  " + atom_name + "  " );
+		PatchCOP needed_patch = metapach_mapping.at( metapatch_name )->get_one_patch( /*rsd_base, */"  " + atom_name + "  " );
 
-		ResidueTypeOP rsd_instantiated ( needed_patch->apply( rsd_base ) );
+		ResidueTypeOP rsd_instantiated ( needed_patch->apply( *rsd_base_ptr ) );
 
 		if ( rsd_instantiated == nullptr ) {
-			return false; // utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
+			return nullptr;
 		}
-		if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
-			gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
-				ChemicalManager::get_instance()->gasteiger_atom_type_set() );
-			gasteiger::assign_gasteiger_atom_types( *rsd_instantiated, gasteiger_set, false );
-		}
-		if ( option[ OptionKeys::in::add_orbitals] ) {
-			orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
-		}
+		prep_restype( rsd_instantiated );
 
 		//Set the pointer to the base type:
-		if ( rsd_base.get_base_type_cop() ) {
-			rsd_instantiated->set_base_type_cop( rsd_base.get_base_type_cop() );
-			if ( rsd_base.is_base_type() && rsd_base.mainchain_potentials_match( *rsd_instantiated ) ) { //If we're making a copy of a base type and the mainchain potentials match...
+		if ( rsd_base_ptr->get_base_type_cop() ) {
+			rsd_instantiated->set_base_type_cop( rsd_base_ptr->get_base_type_cop() );
+			if ( rsd_base_ptr->is_base_type() && rsd_base_ptr->mainchain_potentials_match( *rsd_instantiated ) ) { //If we're making a copy of a base type and the mainchain potentials match...
 				rsd_instantiated->reset_mainchain_torsion_potential_names();
 			}
 		} else {
 			rsd_instantiated->set_base_type_cop( rsd_base_ptr );
 		}
 
-		cache_object()->add_residue_type( rsd_instantiated );
-		return true;
+		return rsd_instantiated;
 
 	} else {
-		// patch_map() returns by value - need to keep a reference to the object around while we're using it.
-		std::map< std::string, utility::vector1< PatchCOP > > patch_mapping( patch_map() );
-		if ( patch_mapping.find( patch_name ) == patch_mapping.end() ) return false;
+		if ( patch_mapping.find( patch_name ) == patch_mapping.end() ) return nullptr;
 		utility::vector1< PatchCOP > const & patches = patch_mapping.find( patch_name )->second;
-		bool patch_applied( false );
 
 		// sometimes patch cases are split between several patches -- look through all:
 		for ( PatchCOP p : patches ) {
-			if ( !p->applies_to( rsd_base ) ) continue;
+			if ( !p->applies_to( *rsd_base_ptr ) ) continue;
 
-			runtime_assert( !patch_applied ); // patch cannot be applied twice.
+			ResidueTypeOP rsd_instantiated = p->apply( *rsd_base_ptr );
 
-			ResidueTypeOP rsd_instantiated = p->apply( rsd_base );
+			if ( rsd_instantiated == nullptr ) return nullptr; // Should this really be a hard-fail, or should we just go on to the next patch?
 
-			if ( rsd_instantiated == nullptr ) {
-				return false; // utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
-			}
-			if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
-				gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
-					ChemicalManager::get_instance()->gasteiger_atom_type_set() );
-				gasteiger::assign_gasteiger_atom_types( *rsd_instantiated, gasteiger_set, false );
-			}
-			if ( option[ OptionKeys::in::add_orbitals] ) {
-				orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
-			}
+			prep_restype( rsd_instantiated );
 
 			//Set the pointer to the base type:
-			if ( rsd_base.get_base_type_cop() ) {
-				rsd_instantiated->set_base_type_cop( rsd_base.get_base_type_cop() );
-				if ( rsd_base.is_base_type() && rsd_base.mainchain_potentials_match( *rsd_instantiated ) ) { //If we're making a copy of a base type...
+			if ( rsd_base_ptr->get_base_type_cop() ) {
+				rsd_instantiated->set_base_type_cop( rsd_base_ptr->get_base_type_cop() );
+				if ( rsd_base_ptr->is_base_type() && rsd_base_ptr->mainchain_potentials_match( *rsd_instantiated ) ) { //If we're making a copy of a base type...
 					rsd_instantiated->reset_mainchain_torsion_potential_names();
 				}
 			} else {
 				rsd_instantiated->set_base_type_cop( rsd_base_ptr );
 			}
 
-			cache_object()->add_residue_type( rsd_instantiated );
-			patch_applied = true;
+			return rsd_instantiated;
 		}
-		return patch_applied;
 	}
+
+	return nullptr; // If we make it here, we weren't able to successfully patch the ResidueType
 }
 
 
@@ -307,15 +305,13 @@ ResidueTypeSet::add_patches(
 	for ( std::string const & filename : patch_filenames ) {
 		PatchOP p( new Patch(mode_) );
 		p->read_file( filename );
-		patches_.push_back( p );
-		patch_map_[ p->name() ].push_back( p );
+		add_patch( p );
 	}
 
 	for ( std::string const & filename : metapatch_filenames ) {
 		MetapatchOP p( new Metapatch );
 		p->read_file( filename );
-		metapatches_.push_back( p );
-		metapatch_map_[ p->name() ] = p;
+		add_metapatch( p );
 	}
 
 #ifdef MULTI_THREADED
@@ -525,6 +521,18 @@ ResidueTypeSet::remove_unpatchable_residue_type( std::string const & name )
 	cache_object()->remove_residue_type( name );
 }
 
+void
+ResidueTypeSet::add_patch(PatchCOP p) {
+	patches_.push_back( p );
+	patch_map_[ p->name() ].push_back( p );
+}
+
+void
+ResidueTypeSet::add_metapatch(MetapatchCOP p) {
+	metapatches_.push_back( p );
+	metapatch_map_[ p->name() ] = p;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 /// @details helper function used during replacing residue types after, e.g., orbitals. Could possibly expand to update all maps.
 bool
@@ -699,6 +707,36 @@ ResidueTypeSet::get_mirrored_type(
 	if ( original_rsd->is_l_aa() ) return get_d_equivalent(original_rsd);
 
 	return ResidueTypeCOP();
+}
+
+/// @brief   checks if name exists.
+/// @details actually instantiates the residue type if it does not yet exist.
+bool
+ResidueTypeSet::has_name( std::string const & name_in ) const
+{
+	std::string const name = fixup_patches( name_in );
+	{ // scope the read lock
+#ifdef MULTI_THREADED
+		utility::thread::ReadLockGuard read_lock( cache_->read_write_mutex() );
+#endif
+		if ( cache_object()->has_generated_residue_type( name ) ) {
+			return true;
+		}
+	}
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard write_lock( cache_->read_write_mutex() );
+#endif
+	return generate_residue_type_write_locked( name ) != nullptr;
+}
+
+bool
+ResidueTypeSet::has_name_write_locked( std::string const & name ) const
+{
+	// Already have the cache lock
+	if ( cache_object()->has_generated_residue_type( name ) ) {
+		return true;
+	}
+	return generate_residue_type_write_locked( name ) != nullptr;
 }
 
 /// @brief Gets all types with the given aa type and variants

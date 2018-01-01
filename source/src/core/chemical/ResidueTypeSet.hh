@@ -130,7 +130,7 @@ public:
 	/// a write lock on the ResidueTypeSetCache.
 	virtual
 	bool
-	has_name( std::string const & name ) const = 0;
+	has_name( std::string const & name ) const;
 
 	/// @brief query if any ResidueTypes in the set have a "name3" that matches the input name3
 	/// Note for derived classes: this method will obtain a read lock, and possibly
@@ -217,6 +217,7 @@ public:
 	/// Note for derived classes: this method will obtain a read lock, and possibly
 	/// a write lock on the ResidueTypeSetCache.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual
 	ResidueTypeCOP get_d_equivalent( ResidueTypeCOP l_rsd ) const;
 
 	/// @brief Given an L-residue, get its D-equivalent.
@@ -225,6 +226,7 @@ public:
 	/// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not an L-residue.
 	/// Preserves variant types.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual
 	ResidueTypeCOP get_l_equivalent( ResidueTypeCOP d_rsd ) const;
 
 	/// @brief Given a residue, get its mirror-image type.
@@ -232,6 +234,7 @@ public:
 	/// a write lock on the ResidueTypeSetCache.
 	/// @details Returns the same residue if this is an ACHIRAL type (e.g. gly), the D-equivalent for an L-residue, the L-equivalent of a D-residue,
 	/// or NULL if this is an L-residue with no D-equivalent (or a D- with no L-equivalent).  Preserves variant types.
+	virtual
 	ResidueTypeCOP get_mirrored_type( ResidueTypeCOP original_rsd ) const;
 
 	/// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
@@ -307,7 +310,11 @@ public:
 
 	/// @brief the patches, index by name.
 	virtual
-	std::map< std::string, utility::vector1< PatchCOP > > patch_map() const { return patch_map_; }
+	std::map< std::string, utility::vector1< PatchCOP > > const & patch_map() const { return patch_map_; }
+
+	/// @brief the metapatches, index by name.
+	virtual
+	std::map< std::string, MetapatchCOP > const & metapatch_map() const { return metapatch_map_; }
 
 	/// @brief Do we have this metapatch?
 	virtual
@@ -365,6 +372,7 @@ protected:
 
 	/// @brief Centralize the steps for preparing the ResidueType for addition to the RTS
 	/// (e.g. if there's any additional modifications that need to get done.)
+	static
 	void
 	prep_restype( ResidueTypeOP new_type );
 
@@ -435,6 +443,16 @@ protected:
 	void
 	remove_unpatchable_residue_type( std::string const & name );
 
+	/// @brief Add a patch object to the RTS
+	virtual
+	void
+	add_patch(PatchCOP p);
+
+	/// @brief Add a metapatch object to the RTS
+	virtual
+	void
+	add_metapatch(MetapatchCOP p);
+
 protected:
 
 	/// @brief helper function used during replacing residue types after, e.g., orbitals.
@@ -456,15 +474,25 @@ protected:
 	cache_object() const { return cache_; }
 
 	/// @brief Template method invoked by the base class to be overridden by the derived class
-	/// when a not-yet-generated ResidueType is requested by name. The function returns "true" if
-	/// the ResidueType can be generated and "false" if no such residue type exists.
+	/// when a not-yet-generated ResidueType is requested by name. The function returns the COP
+	/// of the ResidueType if it can be generated, and a nullptr if it cannot.
 	/// @details If the requested ResidueType has not been generated yet, then this function will
 	/// obtain a write lock on the ResidueTypeSetCache and generate it. If it has already
 	/// been generated, then this function will obtain a read lock. This function should not
 	/// be invoked by a function that has already obtained either a read or a write lock.
 	virtual
-	bool
+	ResidueTypeCOP
 	generate_residue_type( std::string const & rsd_name ) const;
+
+	/// @brief Static method which will apply a given patch to a given ResidueType
+	/// If the patch cannot be applies, it will return nullptr
+	/// @details This is a static member function, so should not be sensitive to the lock state of the RTS
+	static
+	ResidueTypeCOP
+	apply_patch( ResidueTypeCOP const & rsd_base_ptr,
+		std::string const & patch_name,
+		std::map< std::string, utility::vector1< PatchCOP > > const & patch_mapping,
+		std::map< std::string, MetapatchCOP > const & metapach_mapping);
 
 	/// @brief Template method to return a residue type with the given name, updating the
 	/// ResidueTypeSetCache as needed -- meant to be overridden by the derived
@@ -486,7 +514,7 @@ protected:
 	/// any function that would itself try and obtain a read or write lock.
 	virtual
 	bool
-	has_name_write_locked( std::string const & name ) const = 0;
+	has_name_write_locked( std::string const & name ) const;
 
 	/// @brief Template method to recursively determine whether or not the requested residue
 	/// type exists / can be created in this %ResidueTypeSet -- meant to be overridden by the
@@ -496,7 +524,8 @@ protected:
 	/// ResidueTypeSetCache, and so it should not invoke either name_mapOP or
 	/// generate_residue_type as both of these will also attempt to create locks, and
 	/// would thus deadlock.
-	bool
+	virtual
+	ResidueTypeCOP
 	generate_residue_type_write_locked( std::string const & rsd_name ) const;
 
 	/// @brief Attempt to lazily load the given residue type from data.

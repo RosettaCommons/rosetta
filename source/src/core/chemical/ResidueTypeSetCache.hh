@@ -64,8 +64,21 @@ public:
 	ResidueTypeCOP
 	name_map( std::string const & name_in ) const;
 
+	/// @details Like name_map, but returns a nullptr rather than raising an error if the entry can't be found
+	ResidueTypeCOP
+	name_map_or_null( std::string const & name_in ) const;
+
 	void
 	add_residue_type( ResidueTypeCOP residue_type );
+
+	/// @brief Add a ResidueType to the cache which isn't strictly in the associated ResidueTypeSet,
+	/// but is included here for efficiency/convenience
+	void
+	add_pass_through( ResidueTypeCOP residue_type );
+
+	/// @brief Is the ResidueType one of the pass-through convenience types?
+	bool
+	is_pass_through( std::string const & name_in );
 
 	void
 	remove_residue_type( std::string const & name );
@@ -165,6 +178,10 @@ private:
 	////////////////////////////////////////////////////////////////////////////
 	/// @brief map to ResidueType pointers by unique residue id
 	std::map< std::string, ResidueTypeCOP > name_map_;
+
+	/// @brief ResidueTypes which don't directly belong to the associated ResidueTypeSet,
+	/// but are included in the cache for efficiency.
+	std::set< std::string > pass_throughs_;
 
 	/// @brief annotation about types which theoretically may exist but we don't want
 	/// @details For example, for PDB components which duplicate standard types.

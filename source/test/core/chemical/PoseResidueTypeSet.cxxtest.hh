@@ -21,7 +21,7 @@
 #include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-
+#include <core/chemical/ResidueProperties.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -83,7 +83,73 @@ public:
 		TS_ASSERT( rs->has_name("bigser") );
 	}
 
+	void test_local_vs_default() {
+		using namespace core::chemical;
+		// The local PoseResidueTypeSet should pull out the ResidueType from the default RTS, unless overridden.
 
+		GlobalResidueTypeSetOP grts( new GlobalResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
+		PoseResidueTypeSetOP prts( new PoseResidueTypeSet( grts ) );
+
+		ResidueTypeOP new_cys( new ResidueType( grts->name_map("CYS") ) );
+		std::string const & unique_tag( "UNIQUE_PROPERTY_TAG_13243214" );
+		new_cys->add_string_property(unique_tag,"VALUE");
+		prts->add_base_residue_type( new_cys );
+
+		utility::vector1< std::string > variants{ "UPPER_TERMINUS_VARIANT" };
+
+		// Non-CYS should get the same types as the Global RTS
+
+		TS_ASSERT( prts->name_mapOP("GLU").get() == grts->name_mapOP("GLU").get() ); // Yes, we want to compare object addresses
+		TS_ASSERT( prts->name_mapOP("GLU:NtermProteinFull").get() == grts->name_mapOP("GLU:NtermProteinFull").get() ); // Check patched
+
+		TS_ASSERT( prts->get_representative_type_aa(aa_trp).get() == grts->get_representative_type_aa(aa_trp).get() );
+		TS_ASSERT( prts->get_representative_type_aa(aa_trp,variants).get() == grts->get_representative_type_aa(aa_trp,variants).get() );
+
+		TS_ASSERT( prts->get_representative_type_name1('R').get() == grts->get_representative_type_name1('R').get() );
+		TS_ASSERT( prts->get_representative_type_name1('R',variants).get() == grts->get_representative_type_name1('R',variants).get() );
+
+		TS_ASSERT( prts->get_representative_type_name3("LYS").get() == grts->get_representative_type_name3("LYS").get() );
+		TS_ASSERT( prts->get_representative_type_name3("LYS",variants).get() == grts->get_representative_type_name3("LYS",variants).get() );
+
+		TS_ASSERT( prts->get_mirrored_type( prts->name_mapOP("ALA") ).get() == grts->get_mirrored_type( grts->name_mapOP("ALA") ).get() );
+
+		// Make sure that even if we cache things, we still get the same types
+
+		TS_ASSERT( prts->name_mapOP("GLU").get() == grts->name_mapOP("GLU").get() ); // Yes, we want to compare object addresses
+		TS_ASSERT( prts->name_mapOP("GLU:NtermProteinFull").get() == grts->name_mapOP("GLU:NtermProteinFull").get() ); // Check patched
+
+		// Now we *shouldn't* get the same type as the global for anything involving CYS
+
+		TS_ASSERT( prts->name_mapOP("CYS").get() != grts->name_mapOP("CYS").get() );
+		TS_ASSERT( prts->name_mapOP("CYS")->properties().string_properties().count(unique_tag) == 1 );
+		TS_ASSERT( prts->name_mapOP("CYS:NtermProteinFull").get() != grts->name_mapOP("CYS:NtermProteinFull").get() );
+		TS_ASSERT( prts->name_mapOP("CYS:NtermProteinFull")->properties().string_properties().count(unique_tag) == 1 );
+
+		TS_ASSERT( prts->get_representative_type_aa(aa_cys).get() != grts->get_representative_type_aa(aa_cys).get() );
+		TS_ASSERT( prts->get_representative_type_aa(aa_cys,variants).get() != grts->get_representative_type_aa(aa_cys,variants).get() );
+
+		TS_ASSERT( prts->get_representative_type_name1('C').get() != grts->get_representative_type_name1('C').get() );
+		TS_ASSERT( prts->get_representative_type_name1('C',variants).get() != grts->get_representative_type_name1('C',variants).get() );
+
+		TS_ASSERT( prts->get_representative_type_name3("CYS").get() != grts->get_representative_type_name3("CYS").get() );
+		TS_ASSERT( prts->get_representative_type_name3("CYS",variants).get() != grts->get_representative_type_name3("CYS",variants).get() );
+
+		// D/L patching in PoseResidueTypeSets doesn't work at the moment.
+		//// The D-version is also a patch, so it should also be different
+		//TS_ASSERT( prts->get_mirrored_type( prts->name_mapOP("CYS") ).get() != grts->get_mirrored_type( grts->name_mapOP("CYS") ).get() );
+		//TS_ASSERT( prts->get_mirrored_type( prts->name_mapOP("CYS") )->properties().string_properties().count(unique_tag) == 1 );
+
+		// Now if we add a new patch, we should grab that instead of the global one.
+		utility::vector1< std::string > new_patch{"core/chemical/conflict_patch.txt"};
+		utility::vector1< std::string > new_metapatch;
+		prts->add_patches( new_patch, new_metapatch );
+
+		TS_ASSERT( prts->name_mapOP("TYR").get() == grts->name_mapOP("TYR").get() ); // The non-patched versions should be the same
+		TS_ASSERT( prts->name_mapOP("TYR:NtermProteinFull").get() == grts->name_mapOP("TYR:NtermProteinFull").get() ); // As should non-involved patches
+		TS_ASSERT( prts->name_mapOP("TYR:sulfated").get() != grts->name_mapOP("TYR:sulfated").get() ); // But the patch in question shouldn't
+		TS_ASSERT_EQUALS( prts->name_mapOP("TYR:sulfated")->interchangeability_group(), "FOO" );
+		TS_ASSERT_EQUALS( grts->name_mapOP("TYR:sulfated")->interchangeability_group(), "TYS" );
+	}
 
 
 

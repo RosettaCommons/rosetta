@@ -52,7 +52,6 @@
 #include <core/chemical/ResidueConnection.hh> /* for copying ResidueType */
 #include <core/chemical/residue_support.hh>
 
-#include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
 #include <core/chemical/mmCIF/mmCIFParser.hh>
 
 // Basic headers
@@ -78,7 +77,6 @@
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <core/chemical/orbitals/AssignOrbitals.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
@@ -686,14 +684,6 @@ GlobalResidueTypeSet::~GlobalResidueTypeSet() = default;
 // The useful stuff:  Accessor functions
 //////////////////////////////////////////////////////////////////////////////
 
-/// @brief   checks if name exists.
-/// @details actually instantiates the residue type if it does not yet exist.
-bool
-GlobalResidueTypeSet::has_name( std::string const & name ) const
-{
-	return generate_residue_type( name );
-}
-
 /// @brief Gets all types with the given aa type and variants
 /// @details The number of variants must match exactly.
 /// (It's assumed that the passed VariantTypeList contains no duplicates.)
@@ -751,12 +741,6 @@ GlobalResidueTypeSet::load_exclude_pdb_component_ids( std::string const & direct
 		TR.Warning << "For ResidueTypeSet " << name() << ", " << filename << " doesn't have any entries." << std::endl;
 		TR.Warning << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
 	}
-}
-
-bool
-GlobalResidueTypeSet::has_name_write_locked( std::string const & name ) const
-{
-	return generate_residue_type_write_locked( name );
 }
 
 /// @brief Attempt to lazily load the given residue type from data.
