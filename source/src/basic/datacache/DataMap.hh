@@ -94,19 +94,22 @@ DataMap::get( std::string const & type, std::string const & name ) const {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
-	std::map< std::string, utility::pointer::ReferenceCountOP > const dm( data_map_.find( type )->second );
-	for ( auto const & it : dm ) {
-		if ( it.first == name ) {
-			ret = dynamic_cast< Ty >( it.second.get() );
-			break;
+	std::map< std::string, utility::pointer::ReferenceCountOP > const & dm( data_map_.find( type )->second );
+	auto iter = dm.find( name );
+
+	if ( iter != dm.end() ) {
+		ret = dynamic_cast< Ty >( iter->second.get() );
+		if ( ! ret ) {
+			std::stringstream error_message;
+			error_message << "ERROR: Dynamic_cast failed for type "<<type<<" and name "<<name<<'\n';
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 		}
-	}
-	if ( ret==0 ) {
+	} else {
 		std::stringstream error_message;
-		error_message << "ERROR: Dynamic_cast failed for type "<<type<<" and name "<<name<<'\n';
+		error_message << "ERROR: Unable to find data with type \""<<type<<"\" and name \""<<name<< "\" in the data map\n";
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
-	return( ret );
+	return ret;
 }
 
 /// @details a template utility function to grab any type of object from the
@@ -126,19 +129,21 @@ DataMap::get_ptr( std::string const & type, std::string const & name ) const {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
-	std::map< std::string, utility::pointer::ReferenceCountOP > const dm( data_map_.find( type )->second );
-	for ( auto const & it : dm ) {
-		if ( it.first == name ) {
-			ret = utility::pointer::dynamic_pointer_cast< Ty >( it.second );
-			break;
+	std::map< std::string, utility::pointer::ReferenceCountOP > const & dm( data_map_.find( type )->second );
+	auto iter = dm.find( name );
+	if ( iter != dm.end() ) {
+		ret = utility::pointer::dynamic_pointer_cast< Ty >( iter->second );
+		if ( ! ret ) {
+			std::stringstream error_message;
+			error_message << "ERROR: Dynamic_cast failed for type "<<type<<" and name "<<name<<'\n';
+			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 		}
-	}
-	if ( ret==0 ) {
+	} else {
 		std::stringstream error_message;
-		error_message << "ERROR: Dynamic_cast failed for type "<<type<<" and name "<<name<<'\n';
+		error_message << "ERROR: Unable to find data with type \""<<type<<"\" and name \""<<name<< "\" in the data map\n";
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
-	return( ret );
+	return ret;
 }
 
 
