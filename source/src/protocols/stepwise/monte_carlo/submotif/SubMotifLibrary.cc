@@ -396,7 +396,7 @@ SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
 
 	using namespace core::chemical;
 	ResidueTypeSetCOP rts = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-	
+
 	TR.Debug << TR.Magenta << "Creating: " << submotif_tag << TR.Reset << std::endl;
 
 	if ( submotif_poses_by_tag_.find( submotif_tag ) == submotif_poses_by_tag_.end() ) {
