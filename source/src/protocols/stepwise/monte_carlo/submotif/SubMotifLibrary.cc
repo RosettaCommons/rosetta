@@ -20,7 +20,9 @@
 #include <core/import_pose/libraries/RNA_LibraryManager.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <core/pose/rna/util.hh>
+#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
@@ -354,6 +356,8 @@ SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches 
 	////////////////////////////////////////////////////////////////////////////
 	for ( Size const i_full : possible_next_res ) {
 
+		// Note: this indexing will fail (submotif_full_sequence will have to be met by
+		// submotif_nc_res_map) for any submotifs containing noncanonicals
 		if ( i_full <= pose_full_sequence.size() &&
 				submotif_full_sequence[ i_submotif - 1 ] == pose_full_sequence[ i_full - 1 ] &&
 				pose_domain_map[ i_full ] == 0 &&
@@ -390,6 +394,9 @@ SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
 	pose::Pose const & pose,
 	bool const & seed /*= false*/ ) const {
 
+	using namespace core::chemical;
+	ResidueTypeSetCOP rts = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	
 	TR.Debug << TR.Magenta << "Creating: " << submotif_tag << TR.Reset << std::endl;
 
 	if ( submotif_poses_by_tag_.find( submotif_tag ) == submotif_poses_by_tag_.end() ) {
@@ -400,9 +407,19 @@ SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
 
 	PoseOP new_pose = submotif_poses_by_tag_.find( submotif_tag )->second->clone();
 
+	// AMW: add code to ensure that D/L match as well. Also noncanonicals in general should break from this.
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
 	for ( Size n = 1; n <= move_element.size(); n++ ) {
 		runtime_assert( full_sequence[ move_element[ n ]-1 ] == new_pose->sequence()[ n - 1 ] );
+		if ( const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map().find( move_element[ n ] ) != const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map().end() ) {
+			// Have to flip the new pose.
+			ResidueTypeCOP rt = ResidueTypeFinder( *rts )
+				.residue_base_name( const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map().at( move_element[ n ] ) )
+				.get_representative_type();
+			if ( !rt ) continue;
+			core::conformation::Residue l_rsd( *rt, true );
+			new_pose->replace_residue( n, l_rsd, true );
+		}
 		// should also check that cutpoints match up.
 	}
 
