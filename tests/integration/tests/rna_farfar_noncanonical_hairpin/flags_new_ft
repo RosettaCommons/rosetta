@@ -1,0 +1,11 @@
+-s helix.pdb
+-fasta fasta 
+-secstruct_file secstruct 
+-cycles 1000
+-include_neighbor_base_stacks  
+-minimize_rna true
+-nstruct 1
+-score:weights rna/denovo/rna_hires.wts
+-superimpose_over_all false
+-new_fold_tree_initializer true
+-out:file:silent new_ft.out

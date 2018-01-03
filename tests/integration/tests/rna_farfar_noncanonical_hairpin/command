@@ -46,5 +46,9 @@ cd %(workdir)s
     | egrep -vf ../../ignore_list \
     > log
 
+%(bin)s/rna_denovo.%(binext)s %(additional_flags)s @flags_new_ft -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log_new_ft
+
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

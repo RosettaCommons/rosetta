@@ -67,7 +67,17 @@ MiniPose::MiniPose( core::pose::Pose const & pose )
 		atom_names_list_[ i ] = atom_name;
 		variant_types_list_[ i ] = pose.residue_type( i ).properties().get_list_of_variants();
 	}
-	sequence_ = pose.sequence();
+	// This needs to be the sequence without variants but *with* base_name annotations
+	//sequence_ = pose.sequence();
+	std::stringstream strstr;
+	for ( Size i = 1; i <= pose.size(); i++ ) {
+		strstr << pose.sequence()[ i - 1 ];
+		if ( pose.aa( i ) == core::chemical::aa_unk || pose.aa( i ) == core::chemical::aa_unp ) {
+			strstr << '[' << pose.residue_type( i ).base_name() << ']';
+		}
+	}
+	sequence_ = strstr.str();
+
 	fold_tree_ = pose.fold_tree();
 }
 

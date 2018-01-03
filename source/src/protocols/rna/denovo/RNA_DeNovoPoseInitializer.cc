@@ -634,6 +634,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		//////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Ideally following should be a utility function that should be held as PoseOP minipose.create_pose();
 		pose::PoseOP chunk_pose( new pose::Pose );
+		// AMW TODO: make it such that mini_pose->sequence() can return a sequence without variants but with X[FOO]?
 		pose::make_pose_from_sequence( *chunk_pose, mini_pose->sequence(), rsd_set );
 
 		// add the proper variant types -- otherwise build_full_model does not work
