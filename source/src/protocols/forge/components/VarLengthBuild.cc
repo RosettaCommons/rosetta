@@ -462,7 +462,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 			abego_.push_back("X");
 		}
 		// fix insertion code
-		for ( core::Size i=0; i<abego_.size(); i++ ) {
+		for ( core::Size i=1; i<=abego_.size(); i++ ) {
 			if ( (abego_[i] == "I") || (abego_[i] == "i") ) {
 				abego_[i] = "X";
 				//std::cout << "made I into an X" << std::endl;
