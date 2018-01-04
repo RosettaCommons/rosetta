@@ -33,6 +33,7 @@
 
 #include <numeric/random/random_permutation.hh>
 #include <numeric/random/random.hh>
+#include <numeric/constants.hh>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
@@ -58,9 +59,8 @@ Real logdgaussian( Real x, Real mean, Real sd, Real weight )
 {
 	using namespace std;
 	Real r = x - mean;
-	static Real sqrt_2pi = 2.50662721600161;
 
-	Real answer = log(weight / (sd * sqrt_2pi)) - ( r * r / (2*sd*sd) );
+	Real answer = log(weight / (sd * numeric::constants::r::sqrt_2pi)) - ( r * r / (2*sd*sd) );
 	return answer;
 }
 
@@ -85,8 +85,7 @@ Real dgaussian( Real x, Real mean, Real sd, Real weight ) {
 
 	using namespace std;
 	Real r = x - mean;
-	static Real sqrt_2pi = 2.50662721600161;
-	Real answer = weight * (1 / (sd * sqrt_2pi)) * exp( -1 * r * r / (2*sd*sd) );
+	Real answer = weight * (1 / (sd * numeric::constants::d::sqrt_2pi)) * exp( -1 * r * r / (2*sd*sd) );
 	return answer;
 }
 

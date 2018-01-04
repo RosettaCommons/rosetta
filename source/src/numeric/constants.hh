@@ -46,7 +46,7 @@ Type const degrees_to_radians = Traits::degrees_to_radians();
 Type const deg2rad            = Traits::deg2rad();
 Type const radians_to_degrees = Traits::radians_to_degrees();
 Type const rad2deg            = Traits::rad2deg();
-
+Type const sqrt_2pi           = Traits::sqrt_2pi();
 
 //Type const zero;
 //Type const one;
@@ -85,6 +85,7 @@ Type const degrees_to_radians = Traits::degrees_to_radians();
 Type const deg2rad            = Traits::deg2rad();
 Type const radians_to_degrees = Traits::radians_to_degrees();
 Type const rad2deg            = Traits::rad2deg();
+Type const sqrt_2pi           = Traits::sqrt_2pi();
 
 //Type const zero;
 //Type const one;
@@ -123,6 +124,7 @@ Type const degrees_to_radians = Traits::degrees_to_radians();
 Type const deg2rad            = Traits::deg2rad();
 Type const radians_to_degrees = Traits::radians_to_degrees();
 Type const rad2deg            = Traits::rad2deg();
+Type const sqrt_2pi           = Traits::sqrt_2pi();
 
 //Type const zero;
 //Type const one;
@@ -161,6 +163,7 @@ Type const degrees_to_radians = Traits::degrees_to_radians();
 Type const deg2rad            = Traits::deg2rad();
 Type const radians_to_degrees = Traits::radians_to_degrees();
 Type const rad2deg            = Traits::rad2deg();
+Type const sqrt_2pi           = Traits::sqrt_2pi();
 
 //Type const zero;
 //Type const one;

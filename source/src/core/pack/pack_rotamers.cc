@@ -47,6 +47,7 @@
 // option key includes
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <utility/thread/backwards_thread_local.hh> //For THREAD_LOCAL
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -202,11 +203,15 @@ pack_rotamers_setup(
 	rotsets->prepare_sets_for_packing( pose, scfxn );
 
 	if ( basic::options::option[ basic::options::OptionKeys::packing::dump_rotamer_sets ] ) { // hacking
-		static int counter(0);
+#ifndef MULTI_THREADED
+		static THREAD_LOCAL int counter(0);
 		++counter;
 		std::string const filename( "rotset"+lead_zero_string_of( counter,4 )+".pdb" );
 		tt << "dump rotsets: " << filename << std::endl;
 		rotsets->dump_pdb( pose, filename );
+#else
+		utility_exit_with_message("Error: the -packing:dump_rotamer_sets flag cannot be used in the multi-threaded build.");
+#endif
 	}
 
 	tt << "built " << rotsets->nrotamers() << " rotamers at "

@@ -71,6 +71,8 @@ struct NumericTraits
 	/// @brief 180/pi
 	inline constexpr static Type rad2deg()            { return Type( 57.2957795130823208767981548141051703L ); }
 
+	/// @brief sqrt(2*pi)
+	inline constexpr static Type sqrt_2pi()  { return Type( 2.50662827463100045355942661099500712L );}
 
 }; // NumericTraits
 
@@ -126,6 +128,9 @@ struct NumericTraits< float >
 
 	/// @brief 180/pi
 	inline constexpr static Type rad2deg()            { return 57.2957795130823208767981548141051703F; }
+
+	/// @brief sqrt(2*pi)
+	inline constexpr static Type sqrt_2pi()  { return 2.50662827463100045355942661099500712F; }
 
 	/// @brief Tolerance
 	inline constexpr static Type tolerance() { return 1.0E-6F; }
@@ -198,6 +203,9 @@ struct NumericTraits< double >
 	/// @brief 180/pi
 	inline constexpr static Type rad2deg()            { return 57.2957795130823208767981548141051703; }
 
+	/// @brief sqrt(2*pi)
+	inline constexpr static Type sqrt_2pi()  { return 2.50662827463100045355942661099500712; }
+
 	/// @brief Tolerance
 	inline constexpr static Type tolerance() { return 1.0E-9; }
 
@@ -268,6 +276,9 @@ struct NumericTraits< long double >
 
 	/// @brief 180/pi
 	inline constexpr static Type rad2deg()            { return 57.2957795130823208767981548141051703L; }
+
+	/// @brief sqrt(2*pi)
+	inline constexpr static Type sqrt_2pi()  { return 2.50662827463100045355942661099500712L; }
 
 	/// @brief Tolerance
 	inline constexpr static Type tolerance() { return 1.0E-9L; }

@@ -85,7 +85,7 @@ core::Real gdtsc(const core::pose::Pose& ref,
 	using std::map;
 	using std::string;
 
-	static map<char, string> gdtsc_atom = boost::assign::map_list_of
+	static const map<char, string> gdtsc_atom = boost::assign::map_list_of
 		('A',  "CA")
 		('C',  "SG")
 		('D', "OD2")
@@ -136,13 +136,13 @@ core::Real gdtsc(const core::pose::Pose& ref,
 		}
 
 		++actual_num_atoms;
-		const NamedAtomID ref_atom(gdtsc_atom[ref_residue], ref_idx);
+		const NamedAtomID ref_atom(gdtsc_atom.at(ref_residue), ref_idx);
 		const xyzVector<Real>& xyz_ref = ref.xyz(ref_atom);
 		coords_ref(1, count) = xyz_ref.x();
 		coords_ref(2, count) = xyz_ref.y();
 		coords_ref(3, count) = xyz_ref.z();
 
-		const NamedAtomID mod_atom(gdtsc_atom[mod_residue], mod_idx);
+		const NamedAtomID mod_atom(gdtsc_atom.at(mod_residue), mod_idx);
 		const xyzVector<Real>& xyz_mod = mod.xyz(mod_atom);
 		coords_mod(1, count) = xyz_mod.x();
 		coords_mod(2, count) = xyz_mod.y();

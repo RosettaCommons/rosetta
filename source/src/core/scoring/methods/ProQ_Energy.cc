@@ -38,6 +38,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/AA.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/ProQ.OptionKeys.gen.hh>
@@ -817,10 +818,10 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 					if ( res_contact_map(j,k) ) {
 						//std::cout << " Contact between " << j << " and " << k << " dist: " << res_contact_dist(j,k) << ",restype1: (" << pose.residue(j).name1()<< ")" << res_j << ", restype2: " << " (" << pose.residue(k).name1() << ") " << res_k << std::endl;
 						total_res_contacts_count++;
-						for ( int l=1; l<=20; l++ ) {
+						for ( int l( static_cast<int>( core::chemical::first_l_aa ) ); l <= static_cast<int>( core::chemical::num_canonical_aas ); l++ ) {
 							int res1=res6(profile_index_to_aa(l));
 
-							for ( int n=1; n<=20; n++ ) {
+							for ( int n( static_cast<int>( core::chemical::first_l_aa ) ); n <= static_cast<int>( core::chemical::num_canonical_aas ); n++ ) {
 								int res2=res6(profile_index_to_aa(n));
 								if ( basic::options::option[ basic::options::OptionKeys::ProQ::prof_bug ]() ) {
 									res2=res6(pose.residue(k));
@@ -1004,11 +1005,10 @@ int ProQ_Energy::res6(char const aa) const {
 	return 0;
 
 }
-char ProQ_Energy::profile_index_to_aa(int i) const {
 
-	static char aa[]={'A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V'};
+char ProQ_Energy::profile_index_to_aa(int i) const {
 	debug_assert(i>=1 && i<=20);
-	return aa[i-1];
+	return core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >(i));
 }
 
 //Closest residue distance as defined in ProQres.c
@@ -1044,7 +1044,7 @@ Real ProQ_Energy::crd(pose::Pose & pose,Size i,Size j) const {
 }
 
 void ProQ_Energy::sum_profile(Size j,ObjexxFCL::FArray1D< Real > & vec) const {
-	for ( int k=1; k<=20; k++ ) {
+	for ( int k( static_cast<int>( core::chemical::first_l_aa ) ); k<=static_cast<int>( core::chemical::num_canonical_aas ); k++ ) {
 		int res=res6(profile_index_to_aa(k));
 		vec(res)+=prob_profile_(j,k);
 	}

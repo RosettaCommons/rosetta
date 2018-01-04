@@ -117,7 +117,9 @@ PoseFromSFRBuilder::PoseFromSFRBuilder( chemical::ResidueTypeSetCOP rts, StructF
 	residue_type_set_(std::move( rts )),
 	options_( options ),
 	coordinates_assigned_( false ),
-	outputted_ignored_water_warning_( false )
+	outputted_ignored_water_warning_( false ),
+	nfix_(0),
+	showed_nfix_warning_(false)
 {}
 
 PoseFromSFRBuilder::~PoseFromSFRBuilder() = default;
@@ -166,10 +168,8 @@ void
 PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 {
 	// following is to show warnings or cap number.
-	static Size nfix( 0 );
 	static Size const max_fix( 2 );
 	static bool const show_all_fixup( options_.show_all_fixes() );
-	static bool showed_warning( false );
 
 	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
 		core::io::ResidueInformation & rinfo  = rinfos_[ ii ];
@@ -181,7 +181,7 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 				&& missing_O2prime( rinfo.atoms() ) )  {
 			std::string new_name( original_name ); new_name.replace( 1, 1, "D" ); // A --> dA
 			rinfo.resName( new_name );
-			if ( ++nfix <= max_fix || show_all_fixup ) {
+			if ( ++nfix_ <= max_fix || show_all_fixup ) {
 				TR << "Converting residue name " <<  original_name <<  " to " << rinfo.resName() << std::endl;
 			}
 		}
@@ -189,7 +189,7 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 		if ( core::io::NomenclatureManager::is_old_RNA( rinfo.resName() ) ) {
 			std::string new_name( original_name ); new_name.replace( 1, 1, " " ); // rA --> A
 			rinfo.resName( new_name );
-			if ( ++nfix <= max_fix || show_all_fixup ) {
+			if ( ++nfix_ <= max_fix || show_all_fixup ) {
 				TR << "Converting residue name " <<  original_name <<  " to " << rinfo.resName() << std::endl;
 			}
 		}
@@ -202,17 +202,17 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 			if ( atom_info.name.size() >= 1 && atom_info.name[atom_info.name.size()-1] == '*' ) {
 				std::string new_atom_name = atom_info.name.substr(0,atom_info.name.size()-1) + "\'";
 				rinfo.rename_atom( original_atom_name, new_atom_name );
-				if ( ++nfix <= max_fix || show_all_fixup ) {
+				if ( ++nfix_ <= max_fix || show_all_fixup ) {
 					TR << "Converting atom name    " << original_atom_name << " to " << new_atom_name << std::endl;
 				}
 			}
 		}
 	}
 
-	if ( nfix > max_fix && !show_all_fixup && !showed_warning ) {
+	if ( nfix_ > max_fix && !show_all_fixup && !showed_nfix_warning_ ) {
 		TR << "Number of nucleic acid residue fixups exceeds output limit. ";
 		TR << "Rerun with -show_all_fixes to show everything." << std::endl;
-		showed_warning = true;
+		showed_nfix_warning_ = true;
 	}
 }
 

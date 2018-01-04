@@ -162,7 +162,7 @@ Constraint::show_violations(
 core::scoring::func::Func const &
 Constraint::get_func() const {
 	unimplemented_method_error( std::string( "get_func" ) );
-	static core::scoring::func::HarmonicFunc dummy_func( 0.0, 0.0);
+	static const core::scoring::func::HarmonicFunc dummy_func( 0.0, 0.0);
 	return dummy_func; // satisfy compiler
 }
 

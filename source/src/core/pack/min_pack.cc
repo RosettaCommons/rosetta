@@ -66,6 +66,8 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <utility/vector1.hh>
 
+#include <utility/thread/backwards_thread_local.hh>
+
 // APL TEEEEMMMPPP
 // #include <ctime>
 
@@ -583,9 +585,12 @@ void compare_mingraph_and_energy_graph(
 	using namespace utility::graph;
 
 	bool discrepancy( false );
+
+#ifndef MULTI_THREADED //Pose dumping in this context should be limited to single-threaded builds
 	// AMW: cppcheck flags this as being reducible in scope, but since it's static
 	// I think it should stay as is
-	static int n_discreps( 0 );
+	static THREAD_LOCAL int n_discreps( 0 );
+#endif
 
 	EnergyMap const & one_body_emap( pose.energies().onebody_energies( resid ));
 	EnergyMap min_node_1b;
@@ -649,8 +654,12 @@ void compare_mingraph_and_energy_graph(
 	}
 
 	if ( discrepancy ) {
+#ifndef MULTI_THREADED //Pose dumping in this context should be limited to single-threaded builds
 		++n_discreps;
 		pose.dump_pdb( "discrepancy_pose_" + utility::to_string( n_discreps ) + ".pdb" );
+#else
+		TR.Warning << "Warning!  Discrepancy!  (Note that pose dumping on discrepancy detection is disabled in the multi-threaded build.)" << std::endl;
+#endif
 	}
 
 }
@@ -1053,9 +1062,12 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 
 
 	bool discrepancy( false );
+
+#ifndef MULTI_THREADED //Pose dumping in this context should be limited to single-threaded builds
 	// AMW: cppcheck flags this as being reducible in scope, but since it's static
 	// I think it should stay as-is
-	static int n_discreps( 0 );
+	static THREAD_LOCAL int n_discreps( 0 );
+#endif
 
 	EnergyMap const & one_body_emap( alt_pose.energies().onebody_energies( resid ));
 	Real onebody_energy = sfxn.weights().dot( one_body_emap );
@@ -1106,8 +1118,12 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 	}
 
 	if ( discrepancy ) {
+#ifndef MULTI_THREADED //Pose dumping in this context should be limited to single-threaded builds
 		++n_discreps;
 		alt_pose.dump_pdb( "discrepancy_pose_" + utility::to_string( n_discreps ) + ".pdb" );
+#else
+		TR.Warning << "Warning!  Discrepancy!  (Note that pose dumping on discrepancy detection is disabled in the multi-threaded build.)" << std::endl;
+#endif
 	}
 
 }

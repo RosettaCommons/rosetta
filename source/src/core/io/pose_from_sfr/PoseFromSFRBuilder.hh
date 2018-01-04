@@ -183,6 +183,12 @@ private:
 	std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > known_links_;
 
 	bool outputted_ignored_water_warning_;
+
+	/// @brief Used for nucleic acid input.
+	core::Size nfix_;
+
+	/// @brief Used for nucleic acid input.
+	bool showed_nfix_warning_;
 };
 
 std::string convert_atom_name( std::string const & res_name, std::string const & atom_name );
