@@ -1,5 +1,5 @@
 -parser:protocol inputs/test.xml
--nstruct 12
+-nstruct 6
 -in:file:fasta inputs/dummy.fasta
 -packing:linmem_ig 10
 -voids_penalty_energy_voxel_size 0.5
