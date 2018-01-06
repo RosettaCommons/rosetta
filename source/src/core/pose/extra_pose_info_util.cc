@@ -269,7 +269,8 @@ bool getPoseExtraScore(
 Real
 getPoseExtraScore(
 	core::pose::Pose const & pose,
-	std::string const & name ) {
+	std::string const & name
+) {
 	Real value;
 	runtime_assert( getPoseExtraScore( pose, name, value ) );
 	return value;

@@ -533,6 +533,7 @@ sources = {
 		"DdgFilter",
 		"DdGScan",
 		"LongestContinuousPolarSegmentFilterTests",
+		"ReadPoseExtraScoreFilter",
 		"ResidueCountFilter",
 		"RotamerBoltzmannWeight2",
 		"TotalSasaFilter",

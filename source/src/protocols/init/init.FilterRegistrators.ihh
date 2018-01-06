@@ -159,6 +159,7 @@ static FilterRegistrator< protocols::simple_filters::PackStatFilterCreator > reg
 static FilterRegistrator< protocols::simple_filters::PoseCommentFilterCreator > reg_PoseCommentFilterCreator;
 static FilterRegistrator< protocols::simple_filters::PoseInfoFilterCreator > reg_PoseInfoFilterCreator;
 static FilterRegistrator< protocols::simple_filters::RangeFilterCreator > reg_RangeFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ReadPoseExtraScoreFilterCreator > reg_ReadPoseExtraScoreFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ReportFilterCreator > reg_ReportFilterCreator;
 static FilterRegistrator< protocols::simple_filters::RepeatParameterFilterCreator > reg_RepeatParameterFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueBurialFilterCreator > reg_ResidueBurialFilterCreator;

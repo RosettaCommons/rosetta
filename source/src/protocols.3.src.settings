@@ -653,6 +653,7 @@ sources = {
 		"OperatorFilter",
 		"ChiWellRmsdEvaluator",
 		"ChiWellRmsdEvaluatorCreator",
+		"ReadPoseExtraScoreFilter",
 		"RmsdTargetEvaluatorCreator",
 		"RotamerBoltzmannWeight",
 		"RotamerBoltzmannWeight2",

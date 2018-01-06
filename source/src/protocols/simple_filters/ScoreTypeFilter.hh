@@ -61,15 +61,15 @@ public:
 	/// @brief Sets the scorefunction.
 	/// @details Note that this filter stores a clone of the scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	inline void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in ) { scorefxn_ = sfxn_in->clone(); return; }
+	inline void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in ) { scorefxn_ = sfxn_in->clone(); }
 
 	/// @brief Sets the score term that will be used for scoring.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	inline void set_score_type( core::scoring::ScoreType const scoretype_in) { score_type_ = scoretype_in; return; };
+	inline void set_score_type( core::scoring::ScoreType const scoretype_in) { score_type_ = scoretype_in; };
 
 	/// @brief Sets the energy threshold used for filtering.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	inline void set_threshold( core::Real const &thresh_in) { score_type_threshold_ = thresh_in; return; }
+	inline void set_threshold( core::Real const &thresh_in) { score_type_threshold_ = thresh_in; }
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;

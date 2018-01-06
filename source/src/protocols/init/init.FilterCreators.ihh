@@ -144,6 +144,7 @@
 #include <protocols/simple_filters/RangeFilterCreator.hh>
 #include <protocols/simple_filters/RepeatParameterFilterCreator.hh>
 #include <protocols/simple_filters/ReportFilterCreator.hh>
+#include <protocols/simple_filters/ReadPoseExtraScoreFilterCreator.hh>
 #include <protocols/simple_filters/ResidueBurialFilterCreator.hh>
 #include <protocols/simple_filters/ResidueCountFilterCreator.hh>
 #include <protocols/simple_filters/ResidueDistanceFilterCreator.hh>
