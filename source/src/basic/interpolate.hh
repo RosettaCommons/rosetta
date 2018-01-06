@@ -17,11 +17,9 @@
 // Package headers
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray2.hh>   // for FArray2
 #include <ObjexxFCL/FArray2A.hh>  // for FArray2A, FArray2A::IR, FArray2A<>:...
 #include <ObjexxFCL/FArray3A.hh>  // for FArray3A, FArray3A::IR, FArray3A<>:...
 #include <ObjexxFCL/Fmath.hh>     // for mod
-#include "ObjexxFCL/FArray3.hh"   // for FArray3
 
 // util_interpolate Function Declarations
 namespace basic {

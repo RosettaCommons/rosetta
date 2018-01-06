@@ -19,6 +19,10 @@
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
 // package headers
+#include <basic/datacache/CacheableData.hh>
+#include <basic/datacache/WriteableCacheableData.fwd.hh>
+// The necessity of this header makes no sense. But
+// WriteableCacheableMap won't compile unless here.
 #include <basic/datacache/WriteableCacheableData.hh>
 
 
@@ -29,17 +33,9 @@
 
 #include <platform/types.hh>
 #include <utility/down_cast.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <cassert>
 #include <cstddef>
 #include <iosfwd>
-#include <basic/datacache/CacheableData.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

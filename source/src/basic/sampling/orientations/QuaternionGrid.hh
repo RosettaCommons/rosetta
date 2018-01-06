@@ -29,7 +29,7 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/types.hh>
 
 // C++ headers

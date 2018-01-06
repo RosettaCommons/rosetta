@@ -27,6 +27,8 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <core/chemical/rna/util.hh>
+
 
 //Utility Headers
 #include <numeric/xyzVector.fwd.hh>
@@ -51,7 +53,10 @@ public:
 	BasePairConstraint();
 
 	/// @brief Constructor
-	BasePairConstraint( Size const res1, Size const res2 );
+	BasePairConstraint( Size const res1, Size const res2,
+		core::chemical::rna::BaseEdge const edge1 = core::chemical::rna::WATSON_CRICK,
+		core::chemical::rna::BaseEdge const edge2 = core::chemical::rna::WATSON_CRICK,
+		core::chemical::rna::LW_BaseDoubletOrientation const orientation = core::chemical::rna::CIS );
 
 	virtual ConstraintOP clone() const;
 	virtual ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const;
@@ -70,6 +75,9 @@ public:
 	void
 	read_def( std::istream& data, pose::Pose const& pose, func::FuncFactory const& func_factory );
 
+	void
+	init_subsidiary_constraints( pose::Pose const & pose );
+
 	virtual bool operator == ( Constraint const & other ) const;
 	virtual bool same_type_as_me( Constraint const & other ) const;
 
@@ -79,6 +87,7 @@ public:
 
 	/// @brief number of atoms involved in this BasePairConstraint
 	Size natoms() const { return 0; }
+
 	virtual
 	AtomID const & atom( Size const n ) const{
 		debug_assert( n <= member_atoms_.size() );
@@ -104,6 +113,9 @@ public:
 		return constraints_;
 	}
 
+	void
+	set_constraints( ConstraintCOPs const & setting ) { constraints_ = setting; }
+
 protected:
 	/// @brief Copy constructor for derived classes to ensure that they perform a deep copy on the
 	/// approriate data members
@@ -115,6 +127,9 @@ private:
 
 	Size res1_;
 	Size res2_;
+	core::chemical::rna::BaseEdge edge1_;
+	core::chemical::rna::BaseEdge edge2_;
+	core::chemical::rna::LW_BaseDoubletOrientation orientation_;
 	utility::vector1< AtomID > member_atoms_;
 
 #ifdef    SERIALIZATION

@@ -18,13 +18,13 @@
 #include <protocols/simple_moves/symmetry/TaskAwareSymMinMover.fwd.hh>
 #include <protocols/simple_moves/symmetry/TaskAwareSymMinMoverCreator.hh>
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+// #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+// #include <protocols/rosetta_scripts/util.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>

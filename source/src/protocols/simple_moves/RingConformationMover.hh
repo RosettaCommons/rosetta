@@ -20,7 +20,6 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 

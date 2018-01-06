@@ -22,6 +22,7 @@
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
+#include <core/pose/rna/leontis_westhof_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/SequenceMapping.hh>
 
@@ -56,16 +57,28 @@ BasePairConstraint::BasePairConstraint():
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-BasePairConstraint::BasePairConstraint( Size const res1, Size const res2 ):
+BasePairConstraint::BasePairConstraint( Size const res1, Size const res2,
+	core::chemical::rna::BaseEdge const edge1,
+	core::chemical::rna::BaseEdge const edge2,
+	core::chemical::rna::LW_BaseDoubletOrientation const orientation ):
 	Constraint( base_pair_constraint ),
 	res1_( res1 ),
-	res2_( res2 )
+	res2_( res2 ),
+	edge1_( edge1 ),
+	edge2_( edge2 ),
+	orientation_( orientation )
 {
 }
 
 ConstraintOP
 BasePairConstraint::clone() const {
-	return ConstraintOP( new BasePairConstraint( res1_, res2_ ) );
+	auto bpc = BasePairConstraintOP( new BasePairConstraint( res1_, res2_, edge1_, edge2_, orientation_ ) );
+	core::scoring::constraints::ConstraintCOPs constraints;
+	for ( auto const & cst : constraints_ ) {
+		constraints.push_back( cst->clone() );
+	}
+	bpc->set_constraints( constraints );
+	return ConstraintOP( bpc ); //new BasePairConstraint( res1_, res2_, edge1_, edge2_, orientation_ ) );
 }
 
 Real
@@ -86,7 +99,7 @@ ConstraintOP BasePairConstraint::remapped_clone( pose::Pose const& /*src*/, pose
 	Size const res2 = (*smap)[ res2_ ];
 
 	if ( res1 == 0 || res2 == 0 ) return nullptr;
-	return ConstraintOP( new BasePairConstraint( (*smap)[ res1 ], (*smap)[ res2 ] ) );
+	return ConstraintOP( new BasePairConstraint( res1, res2, edge1_, edge2_, orientation_ ) );
 }
 
 ConstraintOP
@@ -95,7 +108,7 @@ BasePairConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 	Size const res1 = seqmap[ res1_ ];
 	Size const res2 = seqmap[ res2_ ];
 	if ( seqmap[ res1_ ] != 0 && seqmap[ res2_ ] != 0 ) {
-		return ConstraintOP( new BasePairConstraint( res1, res2 ) );
+		return ConstraintOP( new BasePairConstraint( res1, res2, edge1_, edge2_, orientation_ ) );
 	} else {
 		return nullptr;
 	}
@@ -114,6 +127,9 @@ BasePairConstraint::operator == ( Constraint const & other_cst ) const
 	auto const & other( static_cast< BasePairConstraint const & > (other_cst) );
 	if ( res1_ != other.res1_ ) return false;
 	if ( res2_ != other.res2_ ) return false;
+	if ( edge1_ != other.edge1_ ) return false;
+	if ( edge2_ != other.edge2_ ) return false;
+	if ( orientation_ != other.orientation_ ) return false;
 
 	return true;
 }
@@ -130,6 +146,7 @@ BasePairConstraint::same_type_as_me( Constraint const & other ) const
 void
 BasePairConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
+	//std::cout << "Hello! You have made it to BasePairConstraint::score. There are " << constraints_.size() << " constraints." << std::endl;
 	for ( auto const & cst : constraints_ ) {
 		cst->score( xyz_func, weights, emap );
 	}
@@ -156,12 +173,21 @@ BasePairConstraint::show( std::ostream& out) const
 {
 	/// APL -- you cannot show the active constraint in the absence of a Pose.
 	out << "BasePairConstraint between " << res1_ << " and " << res2_ << std::endl;
+	out << "There are " << constraints_.size() << " constraints." << std::endl;
 }
 
 Size
 BasePairConstraint::show_violations( std::ostream& /*out*/, pose::Pose const& /*pose*/, Size /*verbose_level*/, Real /*threshold*/ ) const
 {
 	return 0; // STUBBED OUT!
+}
+
+inline
+core::chemical::rna::BaseEdge get_edge_from_char( char const c ) {
+	if ( c == 'W' ) return core::chemical::rna::WATSON_CRICK;
+	if ( c == 'H' ) return core::chemical::rna::HOOGSTEEN;
+	if ( c == 'S' ) return core::chemical::rna::SUGAR;
+	utility_exit_with_message( "Impossible character specified for edge in BasePairConstraint definition: \'"+std::string(1,c)+"\'" );
 }
 
 void
@@ -171,7 +197,22 @@ BasePairConstraint::read_def(
 	func::FuncFactory const & //func_factory
 ) {
 	std::string tempres1, tempres2;
-	data >> tempres1 >> tempres2;
+	char edgechar1, edgechar2, orientationchar;
+	data >> tempres1 >> tempres2 >> edgechar1 >> edgechar2 >> orientationchar;
+
+	edge1_ = get_edge_from_char( edgechar1 );
+	edge2_ = get_edge_from_char( edgechar2 );
+	if ( orientationchar == 'C' ) {
+		orientation_ = core::chemical::rna::CIS;
+	} else if ( orientationchar == 'T' ) {
+		orientation_ = core::chemical::rna::TRANS;
+	} else if ( orientationchar == 'A' ) {
+		orientation_ = core::pose::rna::get_LW_orientation( edge1_, edge2_, core::chemical::rna::ANTIPARALLEL );
+	} else if ( orientationchar == 'P' ) {
+		orientation_ = core::pose::rna::get_LW_orientation( edge1_, edge2_, core::chemical::rna::PARALLEL );
+	} else {
+		utility_exit_with_message( "Impossible character specified for orientation in BasePairConstraint definition: \'"+std::string(1,orientationchar)+"\'" );
+	}
 
 	ConstraintIO::parse_residue( pose, tempres1, res1_ );
 	ConstraintIO::parse_residue( pose, tempres2, res2_ );
@@ -190,6 +231,11 @@ BasePairConstraint::read_def(
 		return;
 	}
 
+	init_subsidiary_constraints( pose );
+}
+
+void
+BasePairConstraint::init_subsidiary_constraints( core::pose::Pose const & pose ) {
 	// OK, now set up all the AtomPairConstraints and everything...
 	// NOTE: currently we use the same method rna_helix does for defining the
 	// constraints, but we could easily accept functions from the constraint definition
@@ -203,27 +249,33 @@ BasePairConstraint::read_def(
 	// So UR3 (3-methyl uridine) can still make a "Watson-Crick base pair" with
 	// one of its carbonyls. It's just lame-o.
 
+	using namespace core::scoring::func;
 	Real const WC_distance( 1.9 );
 	Real const distance_stddev( 0.25 );
-	core::scoring::func::FuncOP const distance_func( new core::scoring::func::HarmonicFunc( WC_distance, distance_stddev ) );
+	FuncOP const distance_func( new HarmonicFunc( WC_distance, distance_stddev ) );
 
 	// Need to force base pairing -- not base stacking!
 	Real const C1prime_distance( 10.5 );
 	Real const C1prime_distance_stddev( 1.0 ); //Hmm. Maybe try linear instead?
-	core::scoring::func::FuncOP const C1prime_distance_func( new core::scoring::func::HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
+	FuncOP const C1prime_distance_func( new HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
 
 	Size const atom1 = pose.residue_type( res1_ ).RNA_info().c1prime_atom_index();
 	Size const atom2 = pose.residue_type( res2_ ).RNA_info().c1prime_atom_index();
-	constraints_.emplace_back( new AtomPairConstraint( id::AtomID( atom1, res1_ ), id::AtomID(atom2, res2_ ), C1prime_distance_func, base_pair_constraint ) );
+	constraints_.emplace_back( new AtomPairConstraint( id::AtomID( atom1, res1_ ), id::AtomID( atom2, res2_ ), C1prime_distance_func, base_pair_constraint ) );
 
 	utility::vector1< std::string > atom_ids1, atom_ids2;
-	// yo I am gonna have to make this function work with NCNTs.
-	chemical::rna::get_watson_crick_base_pair_atoms( pose.residue_type( res1_ ), pose.residue_type( res2_ ), atom_ids1, atom_ids2 );
+	using namespace chemical::rna;
+	get_base_pair_atoms( pose.residue_type( res1_ ), pose.residue_type( res2_ ), atom_ids1, atom_ids2, edge1_, edge2_, orientation_ );
 
 	for ( Size p = 1; p <= atom_ids1.size(); p++ ) {
 
 		Size const atom1 = pose.residue_type( res1_ ).atom_index( atom_ids1[ p ] ) ;
 		Size const atom2 = pose.residue_type( res2_ ).atom_index( atom_ids2[ p ] ) ;
+
+		// AMW TODO: check to see each RT has the atom in question (only important for chemical
+		// modifications) and accordingly skip. After the loop, if no constraints have been added,
+		// warn as a result that you might be adding a Dumb Constraint. (Or maybe not! After all,
+		// C1' distances have been restrained.)
 
 		tr.Debug << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(res1_).name1() << res1_ << " <-->  " <<
 			pose.residue_type(res2_).name1() << res2_ << "   " <<
@@ -255,6 +307,9 @@ core::scoring::constraints::BasePairConstraint::save( Archive & arc ) const {
 	arc( CEREAL_NVP( constraints_ ) ); // ConstraintCOPs
 	arc( CEREAL_NVP( res1_ ) ); // Size
 	arc( CEREAL_NVP( res2_ ) ); // Size
+	arc( CEREAL_NVP( edge1_ ) ); // enum
+	arc( CEREAL_NVP( edge2_ ) ); // enum
+	arc( CEREAL_NVP( orientation_ ) ); // enum
 	arc( CEREAL_NVP( member_atoms_ ) ); // utility::vector1<AtomID>
 }
 
@@ -266,6 +321,9 @@ core::scoring::constraints::BasePairConstraint::load( Archive & arc ) {
 	arc( constraints_ ); // ConstraintCOPs
 	arc( res1_ ); // Size
 	arc( res2_ ); // Size
+	arc( edge1_ ); // enum
+	arc( edge2_ ); // enum
+	arc( orientation_ ); // enum
 	arc( member_atoms_ ); // utility::vector1<AtomID>
 }
 

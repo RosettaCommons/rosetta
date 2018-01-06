@@ -18,6 +18,7 @@
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
+#include <basic/datacache/WriteableCacheableData.hh>
 
 // Cereal headers
 #include <cereal/types/map.hpp>

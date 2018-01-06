@@ -110,11 +110,14 @@ get_watson_crick_base_pair_atoms(
 	std::string & atom2 );
 
 void
-get_watson_crick_base_pair_atoms(
+get_base_pair_atoms(
 	chemical::ResidueType const & rsd_type1,
 	chemical::ResidueType const & rsd_type2,
 	utility::vector1< std::string > & atom_ids1,
-	utility::vector1< std::string > & atom_ids2  );
+	utility::vector1< std::string > & atom_ids2,
+	chemical::rna::BaseEdge const edge1,
+	chemical::rna::BaseEdge const edge2,
+	chemical::rna::LW_BaseDoubletOrientation const orientation );
 
 //Copied from Parin SRC on Dec 23, 2011.
 numeric::xyzVector<core::Real>

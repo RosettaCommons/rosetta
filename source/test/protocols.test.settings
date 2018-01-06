@@ -501,6 +501,7 @@ sources = {
 	
 	"rna" : [
 		"AlignmentEnergy",
+		"BasePairConstraints",
 		"RNA_DeNovoOptimizerTest",
 		"RNA_DeNovoProtocolTest",
 	],

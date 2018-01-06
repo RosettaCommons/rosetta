@@ -24,6 +24,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/thread/threadsafe_creation.hh>
+#include <numeric/xyzMatrix.hh>
 
 // C++ headers
 #include <cassert>

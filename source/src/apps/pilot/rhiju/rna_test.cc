@@ -3554,7 +3554,7 @@ rotamerize_rna_test()
 	utility::vector1< std::string > atom_ids1, atom_ids2;
 	Size i( 1 );
 	Size j( pose.size() );
-	get_watson_crick_base_pair_atoms( pose.residue_type(i), pose.residue_type(j), atom_ids1, atom_ids2 );
+	get_base_pair_atoms( pose.residue_type(i), pose.residue_type(j), atom_ids1, atom_ids2, WATSON_CRICK, WATSON_CRICK, CIS );
 
 	for ( Size p = 1; p <= atom_ids1.size(); p++ ) {
 

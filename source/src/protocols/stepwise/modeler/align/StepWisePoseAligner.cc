@@ -291,7 +291,7 @@ StepWisePoseAligner::get_res_list_in_reference( pose::Pose const & pose ) const 
 
 ///////////////////////////////////////////////////////////////////////////////////
 void
-StepWisePoseAligner::update_calc_rms_atom_id_map( pose::Pose const & pose ){
+StepWisePoseAligner::update_calc_rms_atom_id_map( pose::Pose const & pose ) {
 
 	// first need to slice up reference_pose to match residues in actual pose.
 	// define atoms over which to compute RMSD, using rmsd_res.

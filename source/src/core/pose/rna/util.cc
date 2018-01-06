@@ -1579,6 +1579,7 @@ get_stub_stub( conformation::Residue const & rsd1,
 	}
 }
 
+
 /////////////////////////////////////////////////////////
 /// @details
 ///
@@ -1608,7 +1609,6 @@ setup_base_pair_constraints(
 	Real const scale_factor /* = 1.0 */,
 	bool const use_flat_harmonic /* = false */ )
 {
-	using namespace ObjexxFCL;
 	using namespace core::scoring::constraints;
 	using namespace core::scoring::func;
 
@@ -1646,7 +1646,7 @@ setup_base_pair_constraints(
 				C1prime_distance_func, core::scoring::base_pair_constraint ) ) ) );
 
 			utility::vector1< std::string > atom_ids1, atom_ids2;
-			get_watson_crick_base_pair_atoms( pose.residue_type(i), pose.residue_type(j), atom_ids1, atom_ids2 );
+			get_base_pair_atoms( pose.residue_type(i), pose.residue_type(j), atom_ids1, atom_ids2, WATSON_CRICK, WATSON_CRICK, CIS );
 
 			for ( Size p = 1; p <= atom_ids1.size(); p++ ) {
 
@@ -1663,7 +1663,6 @@ setup_base_pair_constraints(
 					id::AtomID(atom2,j),
 					distance_func, core::scoring::base_pair_constraint ) ) ) );
 			}
-
 		} else { //coarse-grained RNA
 
 			static Real const coarse_WC_SUG_distance_min( 12.3 );
@@ -1792,7 +1791,6 @@ get_base_pairing_list(
 		}
 	}
 
-
 	base_pair_list0.sort();
 	base_pairing_list.clear();
 	for ( auto const & elem : base_pair_list0 ) {
@@ -1803,26 +1801,30 @@ get_base_pairing_list(
 // @brief   check that pose has OP1/OP2 with chirality matching Rosetta standard
 // @details an ancient function; see also ensure_phosphate_nomenclature_matches_mini()
 void
-assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose)
+assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose )
 {
 	runtime_assert( pose.size() > 1 );
 
-	for ( Size res_num=1; res_num<=pose.size(); res_num++ ) {
+	pose::Pose mini_pose; //Could move this part outside the for loop
+	make_pose_from_sequence( mini_pose, "aa", pose.residue_type_set_for_pose( pose.residue_type( 1 ).mode() ) );
+	for ( Size res_num = 1; res_num <= pose.size(); ++res_num ) {
 
-		Real sign1 = core::pose::rna::get_op2_op1_sign( pose,  res_num);
+		Real sign1 = core::pose::rna::get_op2_op1_sign( pose, res_num );
 
-		pose::Pose mini_pose; //Could move this part outside the for loop
-		make_pose_from_sequence( mini_pose, "aa", pose.residue_type_set_for_pose( pose.residue_type(res_num).mode() ) );
-		Real const sign2 = core::pose::rna::get_op2_op1_sign( mini_pose);
+		Real const sign2 = core::pose::rna::get_op2_op1_sign( mini_pose );
 
 		if ( sign1 * sign2 < 0 ) {
-			utility_exit_with_message("In the assert_phosphate_nomenclature_matches_mini function: phosphate_nomenclature_matches does not match mini!");
-			if ( !pose.residue_type(res_num).is_RNA() ) { //Consistency check!
-				utility_exit_with_message("residue # " + ObjexxFCL::string_of(res_num)+ " should be a RNA nucleotide!");
+			utility_exit_with_message( "In the assert_phosphate_nomenclature_matches_mini function: phosphate_nomenclature_matches does not match mini!" );
+			if ( !pose.residue_type( res_num ).is_RNA() ) { //Consistency check!
+				utility_exit_with_message( "residue # " + ObjexxFCL::string_of( res_num )+ " should be a RNA nucleotide!" );
 			}
 		}
 	}
 }
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 void

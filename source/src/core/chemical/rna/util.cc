@@ -30,6 +30,7 @@
 #include <utility/vector1.hh>
 
 #include <basic/options/option.hh>
+#include <basic/Tracer.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/string.functions.hh>
@@ -41,6 +42,8 @@
 namespace core {
 namespace chemical {
 namespace rna {
+
+static basic::Tracer TR( "core.chemical.rna" );
 
 ///////////////////////////////////////////////////////////////////////////////
 Size
@@ -316,61 +319,812 @@ get_watson_crick_base_pair_atoms(
 
 /////////////////////////////////////////////////////////////////////
 void
-get_watson_crick_base_pair_atoms(
+get_base_pair_atoms(
 	chemical::ResidueType const & rsd_type1,
 	chemical::ResidueType const & rsd_type2,
 	utility::vector1< std::string > & atom_ids1,
-	utility::vector1< std::string > & atom_ids2  )
-{
+	utility::vector1< std::string > & atom_ids2,
+	chemical::rna::BaseEdge const edge1,
+	chemical::rna::BaseEdge const edge2,
+	chemical::rna::LW_BaseDoubletOrientation const orientation
+) {
+	// AMW TODO: Cis BPs between the same AA are problematic.
+	// (They're order dependent.)
+	// AMW TODO: In 2018, convert this to some kind of map.
+
+	// All possible BPs -- counting orientation -- so far observed in NDB:
+	// cWW: All but GG; AA, CC, CU are rare
+	// tWW: AA, GC, UA most common; AC, CC, UC, UG, UU, GG possible; AG unseen
+	// cWH: AA, AC, CA, GC, GU, UC impossible; GG, UA most common; CC, GA, UG, UU, AG, AU, CU, CG possible
+	// tWH: UA most common, then (still fairly common) AA, CA, GG; then CC, AG, CG, UG, GU, UU
+	// cWS: all possible. AA, AC most common
+	// tWS: AG, GU most common; only GA and GG are impossible
+	// cHS: UG best, followed by CA, AA; all but GC, GU possible
+	// tHS: AG best, then AA; all but GA, GC, GU, CG, UC, UU possible
+	// cSS: all possible but AA, CA, UA, GA best
+	// tSS: CC, UU impossible; AG most common, then AA, AC, AU
+
 	using namespace chemical;
 
 	atom_ids1.clear();
 	atom_ids2.clear();
 
-	AA const & aa1 = rsd_type1.aa();
-	AA const & aa2 = rsd_type2.aa();
+	// Enable na_analogue once it is also kept track of by BasePair
+	AA const aa1 = rsd_type1.aa();// == aa_unk ? rsd_type1.na_analogue() : rsd_type1.aa();
+	AA const aa2 = rsd_type2.aa();// == aa_unk ? rsd_type2.na_analogue() : rsd_type2.aa();
+	if ( edge1 == WATSON_CRICK && edge2 == WATSON_CRICK ) {
+		if ( orientation == CIS ) {
+			if ( aa1 == na_rad && aa2 == na_ura ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H3 " );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O4 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " N3 " );
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O2 " );
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H41" );
+			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H3 " );
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " O2 " );
+			} else if ( aa2 == na_rad && aa1 == na_ura ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H3 " );
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O4 " );
+			} else if ( aa2 == na_rgu && aa1 == na_rcy ) {
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " N3 " );
+				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O2 " );
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H41" );
+			} else if ( aa2 == na_rgu && aa1 == na_ura ) {
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H3 " );
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " O2 " );
 
-	if ( aa1 == na_rad && aa2 == na_ura ) {
-		atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H3 " );
-		atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O4 " );
-		return;
-	} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
-		atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " N3 " );
-		atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O2 " );
-		atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H41" );
-		return;
-	} else if ( aa1 == na_rgu && aa2 == na_ura ) {
-		atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H3 " );
-		atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " O2 " );
-		return;
-	} else if ( aa2 == na_rad && aa1 == na_ura ) {
-		atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H3 " );
-		atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O4 " );
-		return;
-	} else if ( aa2 == na_rgu && aa1 == na_rcy ) {
-		atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " N3 " );
-		atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O2 " );
-		atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H41" );
-		return;
-	} else if ( aa2 == na_rgu && aa1 == na_ura ) {
-		atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H3 " );
-		atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " O2 " );
-		return;
+				// special case -- isoG/isoC
+			} else if ( rsd_type2.name3() == " IG" && rsd_type1.name3() == " IC" ) {
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O4 " );
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " N3 " );
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H21" );
+			} else if ( rsd_type1.name3() == " IG" && rsd_type2.name3() == " IC" ) {
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O4 " );
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " N3 " );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H21" );
 
-		// special case -- isoG/isoC
-	} else if ( rsd_type2.name3() == " IG" && rsd_type1.name3() == " IC" ) {
-		atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O4 " );
-		atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " N3 " );
-		atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H21" );
-		return;
-	} else if ( rsd_type1.name3() == " IG" && rsd_type2.name3() == " IC" ) {
-		atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O4 " );
-		atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " N3 " );
-		atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H21" );
-		return;
+
+				// Noncanonical cWW base pairs
+				// cWW: All but GG; AA, CC, CU are rare
+			} else if ( aa1 == na_rad && aa2 == na_rad ) {
+				// Could go either way?
+				// BasePair needs a way to say "for this type of ,
+				// I need a way to flip the atom IDs, but not for others (where that
+				// wouldn't make sense because different edges or AAs are used."
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H61" );
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " N1 " ); // ugh
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " O2 " ); // ugh
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa2 == na_rad && aa1 == na_rcy ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " O2 " ); // ugh
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H1 " );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O6 " );
+			} else if ( aa2 == na_rad && aa1 == na_rgu ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H1 " );
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O6 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rcy ) {
+				// Could go either way?
+				// BasePair needs a way to say "for this type of ,
+				// I need a way to flip the atom IDs, but not for others (where that
+				// wouldn't make sense because different edges or AAs are used."
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H41" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " N3 " ); // ugh
+			} else if ( aa1 == na_rcy && aa2 == na_ura ) {
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " O4 " );
+			} else if ( aa2 == na_rcy && aa1 == na_ura ) {
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " O4 " );
+			} else if ( aa1 == na_ura && aa2 == na_ura ) {
+				// Could go either way?
+				// BasePair needs a way to say "for this type of ,
+				// I need a way to flip the atom IDs, but not for others (where that
+				// wouldn't make sense because different edges or AAs are used."
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( " H3 " );
+				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " O2 " );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		} else { // trans
+			// tWW: AA, GC, UA most common; AC, CC, UC, UG, UU, GG possible; AG unseen
+			if ( aa1 == na_rad && aa2 == na_rad ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H61" );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " N1 " );
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H41" );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa2 == na_rad && aa1 == na_rcy ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H41" );
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_ura ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H3 " );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O2 " );
+			} else if ( aa2 == na_rad && aa1 == na_ura ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H3 " );
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O2 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rcy ) {
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H41" );
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " O2 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rgu ) {
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H21" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H1 " );
+			} else if ( aa2 == na_rcy && aa1 == na_rgu ) {
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " H21" );
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H1 " );
+			} else if ( aa1 == na_rcy && aa2 == na_ura ) {
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " O2 " );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H3 " );
+			} else if ( aa2 == na_rcy && aa1 == na_ura ) {
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " O2 " );
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " H3 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " O2 " );
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H1 " );
+			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H3 " );
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " O4 " );
+			} else if ( aa2 == na_rgu && aa1 == na_ura ) {
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H3 " );
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " O4 " );
+			} else if ( aa2 == na_ura && aa1 == na_ura ) {
+				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " O4 " );
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( " H3 " );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		}
+	} else if ( edge1 == WATSON_CRICK && edge2 == HOOGSTEEN ) {
+		// cWH: AA, AC, CA, GC, GU, UC impossible; GG, UA most common; CC, GA, UG, UU, AG, AU, CU, CG possible
+		// tWH: UA most common, then (still fairly common) AA, CA, GG; then CC, AG, CG, UG, GU, UU
+		if ( orientation == CIS ) {
+			if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O6 " );
+				//atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " N7 " ); // Not confident in eventual length.
+			} else if ( aa1 == na_rad && aa2 == na_ura ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H3 " );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O4 " );
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) { // Part of the jump library
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H42" );
+				// Not a good interaction but necessary to anchor this BP vs. trans
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " H41" );
+			} else if ( aa1 == na_rcy && aa2 == na_rcy ) {
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H42" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H5 " ); // lame
+			} else if ( aa1 == na_rcy && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " O6 " );
+				//atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " N7 " ); // not really
+			} else if ( aa1 == na_rcy && aa2 == na_ura ) {
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " O4 " );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H5 " ); // lame
+			} else if ( aa1 == na_rgu && aa2 == na_rad ) {
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H62" );
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " N7 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " N7 " );
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " O6 " );
+			} else if ( aa1 == na_ura && aa2 == na_rad ) {
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H62" );
+				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " N7 " );
+			} else if ( aa1 == na_ura && aa2 == na_rgu ) {
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H8 " ); // lame
+				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " N7 " );
+			} else if ( aa1 == na_ura && aa2 == na_ura ) {
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H5 " ); // lame
+				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " O4 " );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		} else {
+			if ( aa1 == na_rad && aa2 == na_rad ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H62" );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " N7 " );
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " N7 " );
+				//atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " O6 " ); // can't trust distance
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) { // Part of the jump library
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H42" );
+				// Not a good interaction but necessary to anchor this BP vs. trans
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " H5 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rad ) {
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H62" );
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " N7 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rcy ) {
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H5 " );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H42" );
+			} else if ( aa1 == na_rcy && aa2 == na_rgu ) {
+				//atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " 06 " ); // can't trust
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " N7 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " N7 " );
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O6 " );
+			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
+				atom_ids1.push_back( " 06 " );  atom_ids2.push_back( " H5 " );
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " 04" );
+			} else if ( aa1 == na_ura && aa2 == na_rad ) {
+				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " N7 " );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H62" );
+			} else if ( aa1 == na_ura && aa2 == na_rgu ) {
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( " H8 " ); // lame
+				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " N7 " );
+			} else if ( aa1 == na_ura && aa2 == na_ura ) {
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( " H5 " ); // lame
+				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " O4 " );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		}
+	} else if ( edge1 == HOOGSTEEN && edge2 == WATSON_CRICK ) {
+		// cWH: AA, AC, CA, GC, GU, UC impossible; GG, UA most common; CC, GA, UG, UU, AG, AU, CU, CG possible
+		// tWH: UA most common, then (still fairly common) AA, CA, GG; then CC, AG, CG, UG, GU, UU
+		if ( orientation == CIS ) {
+			if ( aa2 == na_rad && aa1 == na_rgu ) {
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O6 " );
+				//atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " N7 " ); // Not confident in eventual length.
+			} else if ( aa2 == na_rad && aa1 == na_ura ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H3 " );
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O4 " );
+			} else if ( aa2 == na_rad && aa1 == na_rcy ) { // Part of the jump library
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H42" );
+				// Not a good interaction but necessary to anchor this BP vs. trans
+				atom_ids2.push_back( " H2 " );  atom_ids1.push_back( " H41" );
+			} else if ( aa2 == na_rcy && aa1 == na_rcy ) {
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " H42" );
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H5 " ); // lame
+			} else if ( aa2 == na_rcy && aa1 == na_rgu ) {
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " O6 " );
+				//atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " N7 " ); // not really
+			} else if ( aa2 == na_rcy && aa1 == na_ura ) {
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " O4 " );
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " H5 " ); // lame
+			} else if ( aa2 == na_rgu && aa1 == na_rad ) {
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H62" );
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " N7 " );
+			} else if ( aa2 == na_rgu && aa1 == na_rgu ) {
+				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " N7 " );
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " O6 " );
+			} else if ( aa2 == na_ura && aa1 == na_rad ) {
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H62" );
+				atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " N7 " );
+			} else if ( aa2 == na_ura && aa1 == na_rgu ) {
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H8 " ); // lame
+				atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " N7 " );
+			} else if ( aa2 == na_ura && aa1 == na_ura ) {
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H5 " ); // lame
+				atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " O4 " );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		} else {
+			if ( aa2 == na_rad && aa1 == na_rad ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H62" );
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " N7 " );
+			} else if ( aa2 == na_rad && aa1 == na_rgu ) {
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " N7 " );
+				//atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " O6 " ); // can't trust distance
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) { // Part of the jump library
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H42" );
+				// Not a good interaction but necessary to anchor this BP vs. trans
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " H5 " );
+			} else if ( aa2 == na_rcy && aa1 == na_rad ) {
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " H62" );
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " N7 " );
+			} else if ( aa2 == na_rcy && aa1 == na_rcy ) {
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " H5 " );
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H42" );
+			} else if ( aa2 == na_rcy && aa1 == na_rgu ) {
+				//atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " 06 " ); // can't trust
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " N7 " );
+			} else if ( aa2 == na_rgu && aa1 == na_rgu ) {
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " N7 " );
+				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O6 " );
+			} else if ( aa2 == na_rgu && aa1 == na_ura ) {
+				atom_ids2.push_back( " 06 " );  atom_ids1.push_back( " H5 " );
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " 04" );
+			} else if ( aa2 == na_ura && aa1 == na_rad ) {
+				atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " N7 " );
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H62" );
+			} else if ( aa2 == na_ura && aa1 == na_rgu ) {
+				atom_ids2.push_back( " O4 " );  atom_ids1.push_back( " H8 " ); // lame
+				atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " N7 " );
+			} else if ( aa2 == na_ura && aa1 == na_ura ) {
+				atom_ids2.push_back( " O4 " );  atom_ids1.push_back( " H5 " ); // lame
+				atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " O4 " );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		}
+	} else if ( edge1 == HOOGSTEEN && edge2 == HOOGSTEEN ) {
+		// cHH: GA, GC, GG: possible but rare
+		// tHH: all possible but CC, UU, GU; AA by far most common
+		if ( orientation == CIS ) {
+			if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " O6 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rad ) {
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " O6 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H6 " ); // lame
+			} else if ( aa1 == na_rcy && aa2 == na_rgu ) {
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H6 " ); // lame
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
+				// Asymmetric, of course.
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H8 " ); // lame
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+
+		} else {
+			if ( aa1 == na_rad && aa2 == na_rad ) {
+				atom_ids1.push_back( " N7 " );  atom_ids2.push_back( " H62" );
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " N7 " );
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) {
+				atom_ids1.push_back( " N7 " );  atom_ids2.push_back( " H42" );
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rad ) {
+				atom_ids2.push_back( " N7 " );  atom_ids1.push_back( " H42" );
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " O6 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rad ) {
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " O6 " );
+			} else if ( aa1 == na_rad && aa2 == na_ura ) {
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " O4 " );
+			} else if ( aa1 == na_ura && aa2 == na_rad ) {
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " O4 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rcy ) {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			} else if ( aa1 == na_rcy && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " N7 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " N7 " );
+			} else if ( aa1 == na_rcy && aa2 == na_ura ) {
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " O4 " );
+			} else if ( aa1 == na_ura && aa2 == na_rcy ) {
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " O4 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
+				// heck this is asymmetric too
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H8 " );
+			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			} else if ( aa1 == na_ura && aa2 == na_rgu ) {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			} else if ( aa1 == na_ura && aa2 == na_ura ) {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		}
+	} else if ( edge1 == WATSON_CRICK && edge2 == SUGAR ) {
+		if ( orientation == CIS ) {
+			if ( aa1 == na_rad && aa2 == na_rad ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( "HO2'" );
+				//atom_ids1.push_back( " H61" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_ura ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( "HO2'" );
+				//atom_ids1.push_back( " H61" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rcy && aa2 == na_rad ) {
+				// these (and below) are VASTLY different cis vs. trans.
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rcy ) {
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				//atom_ids1.push_back( " H41" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rcy && aa2 == na_rgu ) {
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rcy && aa2 == na_ura ) {
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				//atom_ids1.push_back( " H41" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rgu && aa2 == na_rad ) {
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " N3 " );
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H2 " ); // lame
+			} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O2'" );
+				//atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H22" );
+			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O2'" );
+				//atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " H6 " ); // nah
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		} else {
+			if ( aa1 == na_rad && aa2 == na_rad ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H2 " ); // lame
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) {
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " O2'" );
+				//atom_ids1.push_back( " H61" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( " H22" );
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_ura ) {
+				atom_ids1.push_back( " N1 " );  atom_ids2.push_back( "HO2'" );
+				//atom_ids1.push_back( " H61" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rcy && aa2 == na_rad ) {
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rcy ) {
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " O2'" );
+				//atom_ids1.push_back( " H41" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rcy && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rcy && aa2 == na_ura ) {
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " O2'" );
+				//atom_ids1.push_back( " H41" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( "HO2'" );
+				//atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( "HO2'" );
+				//atom_ids1.push_back( " H1 " );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_ura && aa2 == na_rad ) {
+				atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " N3 " );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H2 " ); // lame
+			} else if ( aa1 == na_ura && aa2 == na_rcy ) {
+				//atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " H6 " ); // nah
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( "HO2'" );
+			} else if ( aa1 == na_ura && aa2 == na_rgu ) {
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( " H22" );
+			} else if ( aa1 == na_ura && aa2 == na_ura ) {
+				//atom_ids1.push_back( " H3 " );  atom_ids2.push_back( " H6 " ); // nah
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( "HO2'" ); // lame
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		}
+	} else if ( edge1 == SUGAR && edge2 == WATSON_CRICK ) {
+		if ( orientation == CIS ) {
+			if ( aa2 == na_rad && aa1 == na_rad ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( "HO2'" );
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rad && aa1 == na_rcy ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( "HO2'" );
+				//atom_ids2.push_back( " H61" );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rad && aa1 == na_rgu ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( "HO2'" );
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rad && aa1 == na_ura ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( "HO2'" );
+				//atom_ids2.push_back( " H61" );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rcy && aa1 == na_rad ) {
+				// these (and below) are VASTLY different cis vs. trans.
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( "HO2'" );
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rcy && aa1 == na_rcy ) {
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( "HO2'" );
+				//atom_ids2.push_back( " H41" );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rcy && aa1 == na_rgu ) {
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( "HO2'" );
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rcy && aa1 == na_ura ) {
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( "HO2'" );
+				//atom_ids2.push_back( " H41" );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rgu && aa1 == na_rad ) {
+				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " N3 " );
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H2 " ); // lame
+			} else if ( aa2 == na_rgu && aa1 == na_rcy ) {
+				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O2'" );
+				//atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rgu && aa1 == na_rgu ) {
+				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H22" );
+			} else if ( aa2 == na_rgu && aa1 == na_ura ) {
+				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O2'" );
+				//atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " H6 " ); // nah
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		} else {
+			if ( aa2 == na_rad && aa1 == na_rad ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H2 " ); // lame
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rad && aa1 == na_rcy ) {
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " O2'" );
+				//atom_ids2.push_back( " H61" );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rad && aa1 == na_rgu ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( " H22" );
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rad && aa1 == na_ura ) {
+				atom_ids2.push_back( " N1 " );  atom_ids1.push_back( "HO2'" );
+				//atom_ids2.push_back( " H61" );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rcy && aa1 == na_rad ) {
+				// Could require "O4 atom name" for thio residues.
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " O4'" );
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rcy && aa1 == na_rcy ) {
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " O2'" );
+				//atom_ids2.push_back( " H41" );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rcy && aa1 == na_rgu ) {
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rcy && aa1 == na_ura ) {
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " O2'" );
+				//atom_ids2.push_back( " H41" );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rgu && aa1 == na_rcy ) {
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( "HO2'" );
+				//atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_rgu && aa1 == na_ura ) {
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( "HO2'" );
+				//atom_ids2.push_back( " H1 " );  atom_ids1.push_back( " H6 " ); // nah
+			} else if ( aa2 == na_ura && aa1 == na_rad ) {
+				atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " N3 " );
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H2 " ); // lame
+			} else if ( aa2 == na_ura && aa1 == na_rcy ) {
+				//atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " H6 " ); // nah
+				atom_ids2.push_back( " O4 " );  atom_ids1.push_back( "HO2'" );
+			} else if ( aa2 == na_ura && aa1 == na_rgu ) {
+				atom_ids2.push_back( " O2 " );  atom_ids1.push_back( " H22" );
+			} else if ( aa2 == na_ura && aa1 == na_ura ) {
+				//atom_ids2.push_back( " H3 " );  atom_ids1.push_back( " H6 " ); // nah
+				atom_ids2.push_back( " O4 " );  atom_ids1.push_back( "HO2'" ); // lame
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		}
+	} else if ( edge1 == HOOGSTEEN && edge2 == SUGAR ) {
+		if ( orientation == CIS ) {
+			if ( aa1 == na_rad && aa2 == na_rad ) {
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( " N7 " );  atom_ids2.push_back( " H22" );
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) { // part of jump library
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " O2 " );
+				atom_ids1.push_back( " N7 " );  atom_ids2.push_back( "HO2'" );
+			} else if ( aa1 == na_rcy && aa2 == na_rad ) {
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rad ) {
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H2 " ); // lame
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H22" );
+			} else if ( aa1 == na_ura && aa2 == na_rad ) {
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( " H2 " ); // lame
+			} else if ( aa1 == na_ura && aa2 == na_rcy ) {
+				atom_ids1.push_back( " H5 " );  atom_ids2.push_back( " O2 " );
+			} else if ( aa1 == na_ura && aa2 == na_rgu ) {
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( " H22" ); // lame
+			} else if ( aa1 == na_ura && aa2 == na_ura ) {
+				atom_ids1.push_back( " H5 " );  atom_ids2.push_back( " O2 " );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		} else {
+			if ( aa1 == na_rad && aa2 == na_rad ) {
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " N3 " );
+				atom_ids1.push_back( " N7 " );  atom_ids2.push_back( " H2 " ); // lame
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) {
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " O2 " );
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " N3 " );
+				atom_ids1.push_back( " N7 " );  atom_ids2.push_back( " H22" );
+			} else if ( aa1 == na_rad && aa2 == na_ura ) {
+				atom_ids1.push_back( " H61" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H62" );  atom_ids2.push_back( " O2 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rad ) {
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rcy && aa2 == na_rcy ) {
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " O2 " );
+			} else if ( aa1 == na_rcy && aa2 == na_ura ) {
+				atom_ids1.push_back( " H41" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " H42" );  atom_ids2.push_back( " O2 " );
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
+				atom_ids1.push_back( " O6 " );  atom_ids2.push_back( " H22" );
+			} else if ( aa1 == na_ura && aa2 == na_rad ) {
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( " H2 " ); // lame
+			} else if ( aa1 == na_ura && aa2 == na_rgu ) {
+				atom_ids1.push_back( " O4 " );  atom_ids2.push_back( " H22" );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		}
+	} else if ( edge1 == SUGAR && edge2 == HOOGSTEEN ) {
+		if ( orientation == CIS ) {
+			if ( aa2 == na_rad && aa1 == na_rad ) {
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rad && aa1 == na_rgu ) {
+				atom_ids2.push_back( " N7 " );  atom_ids1.push_back( " H22" );
+			} else if ( aa2 == na_rad && aa1 == na_rcy ) { // part of jump library
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " O2 " );
+				atom_ids2.push_back( " N7 " );  atom_ids1.push_back( "HO2'" );
+			} else if ( aa2 == na_rcy && aa1 == na_rad ) {
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rcy && aa1 == na_rgu ) {
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rgu && aa1 == na_rad ) {
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H2 " ); // lame
+			} else if ( aa2 == na_rgu && aa1 == na_rgu ) {
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H22" );
+			} else if ( aa2 == na_ura && aa1 == na_rad ) {
+				atom_ids2.push_back( " O4 " );  atom_ids1.push_back( " H2 " ); // lame
+			} else if ( aa2 == na_ura && aa1 == na_rcy ) {
+				atom_ids2.push_back( " H5 " );  atom_ids1.push_back( " O2 " );
+			} else if ( aa2 == na_ura && aa1 == na_rgu ) {
+				atom_ids2.push_back( " O4 " );  atom_ids1.push_back( " H22" ); // lame
+			} else if ( aa2 == na_ura && aa1 == na_ura ) {
+				atom_ids2.push_back( " H5 " );  atom_ids1.push_back( " O2 " );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		} else {
+			if ( aa2 == na_rad && aa1 == na_rad ) {
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " N3 " );
+				atom_ids2.push_back( " N7 " );  atom_ids1.push_back( " H2 " ); // lame
+			} else if ( aa2 == na_rad && aa1 == na_rcy ) {
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " O2 " );
+			} else if ( aa2 == na_rad && aa1 == na_rgu ) {
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " N3 " );
+				atom_ids2.push_back( " N7 " );  atom_ids1.push_back( " H22" );
+			} else if ( aa2 == na_rad && aa1 == na_ura ) {
+				atom_ids2.push_back( " H61" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " H62" );  atom_ids1.push_back( " O2 " );
+			} else if ( aa2 == na_rcy && aa1 == na_rad ) {
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " N3 " );
+			} else if ( aa2 == na_rcy && aa1 == na_rcy ) {
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " O2 " );
+			} else if ( aa2 == na_rcy && aa1 == na_ura ) {
+				atom_ids2.push_back( " H41" );  atom_ids1.push_back( " O2'" );
+				atom_ids2.push_back( " H42" );  atom_ids1.push_back( " O2 " );
+			} else if ( aa2 == na_rgu && aa1 == na_rgu ) {
+				atom_ids2.push_back( " O6 " );  atom_ids1.push_back( " H22" );
+			} else if ( aa2 == na_ura && aa1 == na_rad ) {
+				atom_ids2.push_back( " O4 " );  atom_ids1.push_back( " H2 " ); // lame
+			} else if ( aa2 == na_ura && aa1 == na_rgu ) {
+				atom_ids2.push_back( " O4 " );  atom_ids1.push_back( " H22" );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		}
+	} else if ( edge1 == SUGAR && edge2 == SUGAR ) {
+		if ( orientation == CIS ) {
+			// Obviously -- symmetry issues.
+			if ( aa1 == na_rad && aa2 == na_rad ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " N3 " ); // lame
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " O2 " ); // lame
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " N3 " ); // lame
+			} else if ( aa1 == na_rad && aa2 == na_ura ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " O2 " ); // lame
+			} else if ( aa1 == na_rcy && aa2 == na_rad ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( "HO2'" ); // lame
+			} else if ( aa1 == na_rcy && aa2 == na_rcy ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( "HO2'" ); // lame
+			} else if ( aa1 == na_rcy && aa2 == na_rgu ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( "HO2'" ); // lame
+			} else if ( aa1 == na_rcy && aa2 == na_ura ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( "HO2'" ); // lame
+			} else if ( aa1 == na_rad && aa2 == na_rad ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H22" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_rcy ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				//atom_ids1.push_back( " H22" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H22" );  atom_ids2.push_back( " N3 " );
+			} else if ( aa1 == na_rad && aa2 == na_ura ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( "HO2'" );
+				//atom_ids1.push_back( " H22" );  atom_ids2.push_back( " H6 " ); // nah
+			} else if ( aa1 == na_ura && aa2 == na_rad ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( "HO2'" ); // lame
+			} else if ( aa1 == na_ura && aa2 == na_rcy ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( "HO2'" ); // lame
+			} else if ( aa1 == na_ura && aa2 == na_rgu ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( "HO2'" ); // lame
+			} else if ( aa1 == na_ura && aa2 == na_ura ) {
+				atom_ids1.push_back( "HO2'" );  atom_ids2.push_back( " O2'" );
+				atom_ids1.push_back( " O2 " );  atom_ids2.push_back( "HO2'" ); // lame
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		} else {
+			if ( aa1 == na_rad && aa2 == na_rad ) {
+				// Some of these interactions must be transient. The N1-HO2' makes it
+				// more like a WC-S, so I'm going for the reflexive one
+				//atom_ids1.push_back( " N1 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " N3 " ); // lame
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H2 " ); // lame
+			} else if ( aa1 == na_rad && aa2 == na_rgu ) {
+				// Some of these interactions must be transient. The N1-HO2' makes it
+				// more like a WC-S, so I'm going for the reflexive one
+				//atom_ids1.push_back( " N1 " );  atom_ids2.push_back( "HO2'" );
+				atom_ids1.push_back( " H2 " );  atom_ids2.push_back( " N3 " ); // lame
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H22" );
+			} else if ( aa1 == na_rgu && aa2 == na_rad ) {
+				// Some of these interactions must be transient. The N1-HO2' makes it
+				// more like a WC-S, so I'm going for the reflexive one
+				//atom_ids2.push_back( " N1 " );  atom_ids1.push_back( "HO2'" );
+				atom_ids2.push_back( " H2 " );  atom_ids1.push_back( " N3 " ); // lame
+				atom_ids2.push_back( " N3 " );  atom_ids1.push_back( " H22" );
+			} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O2'" );
+			} else if ( aa2 == na_rgu && aa1 == na_rcy ) {
+				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O2'" );
+			} else if ( aa1 == na_rgu && aa2 == na_rgu ) {
+				atom_ids1.push_back( " O2'" );  atom_ids2.push_back( " H21" );
+				atom_ids1.push_back( " N3 " );  atom_ids2.push_back( " H22" );
+				atom_ids1.push_back( " H22" );  atom_ids2.push_back( " N3 " );
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O2'" );
+			} else if ( aa1 == na_rgu && aa2 == na_ura ) {
+				atom_ids1.push_back( " H21" );  atom_ids2.push_back( " O2'" );
+			} else if ( aa2 == na_rgu && aa1 == na_ura ) {
+				atom_ids2.push_back( " H21" );  atom_ids1.push_back( " O2'" );
+			} else {
+				TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+				TR.Debug << "These residues don't cleanly base pair in that orientation." << std::endl;
+			}
+		}
+	} else {
+		TR.Debug << "Requested " << edge1 << " " << edge2 << " base pairing atoms for " << aa1 << " " << aa2 << "." << std::endl;
+		TR.Debug << "These residues might base pair in that orientation, but we don't support it yet." << std::endl;
+
 	}
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //Unify the version in StepWiseRNA_Utill.cc and RNA_CentroidInfo.cc on June 25, 2011

@@ -28,6 +28,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>

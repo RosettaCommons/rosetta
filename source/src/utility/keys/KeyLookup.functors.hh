@@ -14,6 +14,8 @@
 /// @note Convenience header for inclusion/injection into key collection namespaces
 /// @note Must typedef the collection key type to KeyType above point of inclusion
 
+#include <utility/keys/KeyLookup.hh>
+
 /// @brief Key collection iterators
 typedef  utility::keys::KeyLookup< KeyType >::const_iterator  const_iterator;
 typedef  utility::keys::KeyLookup< KeyType >::const_iterator  ConstIterator;

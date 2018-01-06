@@ -80,6 +80,7 @@ AmbiguousConstraint::init_cst_score_types()
 	cst_score_types_.push_back(constant_constraint);
 	cst_score_types_.push_back(coordinate_constraint);
 	cst_score_types_.push_back(atom_pair_constraint);
+	cst_score_types_.push_back(base_pair_constraint);
 	cst_score_types_.push_back(angle_constraint);
 	cst_score_types_.push_back(dihedral_constraint);
 	cst_score_types_.push_back(backbone_stub_constraint);
@@ -136,6 +137,7 @@ AmbiguousConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & w
 			low_EMap_[constant_constraint]      = temp_EMap_[constant_constraint];
 			low_EMap_[coordinate_constraint]    = temp_EMap_[coordinate_constraint];
 			low_EMap_[atom_pair_constraint]     = temp_EMap_[atom_pair_constraint];
+			low_EMap_[base_pair_constraint]     = temp_EMap_[base_pair_constraint];
 			low_EMap_[angle_constraint]         = temp_EMap_[angle_constraint];
 			low_EMap_[dihedral_constraint]      = temp_EMap_[dihedral_constraint];
 			low_EMap_[backbone_stub_constraint] = temp_EMap_[backbone_stub_constraint];
@@ -148,6 +150,7 @@ AmbiguousConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & w
 	emap[constant_constraint]      += low_EMap_[constant_constraint];
 	emap[coordinate_constraint]    += low_EMap_[coordinate_constraint];
 	emap[atom_pair_constraint]     += low_EMap_[atom_pair_constraint];
+	emap[base_pair_constraint]     += low_EMap_[base_pair_constraint];
 	emap[angle_constraint]         += low_EMap_[angle_constraint];
 	emap[dihedral_constraint]      += low_EMap_[dihedral_constraint];
 	emap[backbone_stub_constraint] += low_EMap_[backbone_stub_constraint];
@@ -166,6 +169,7 @@ AmbiguousConstraint::calculate_total_cst_score( EnergyMap const & weights, Energ
 		emap[constant_constraint]             * weights[constant_constraint] +
 		emap[coordinate_constraint]           * weights[coordinate_constraint] +
 		emap[atom_pair_constraint]            * weights[atom_pair_constraint] +
+		emap[base_pair_constraint]            * weights[base_pair_constraint] +
 		emap[angle_constraint]                * weights[angle_constraint] +
 		emap[dihedral_constraint]             * weights[dihedral_constraint] +
 		emap[backbone_stub_constraint]        * weights[backbone_stub_constraint] +

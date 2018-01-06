@@ -17,24 +17,24 @@
 #include <basic/resource_manager/JobOptions.fwd.hh>
 
 #include <utility/options/OptionCollection.fwd.hh> // for the OptionTypes enum
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/options/keys/BooleanVectorOptionKey.hh>
-#include <utility/options/keys/FileOptionKey.hh>
-#include <utility/options/keys/FileVectorOptionKey.hh>
-#include <utility/options/keys/IntegerOptionKey.hh>
-#include <utility/options/keys/IntegerVectorOptionKey.hh>
-#include <utility/options/keys/PathOptionKey.hh>
-#include <utility/options/keys/PathVectorOptionKey.hh>
-#include <utility/options/keys/RealOptionKey.hh>
-#include <utility/options/keys/RealVectorOptionKey.hh>
-#include <utility/options/keys/StringOptionKey.hh>
-#include <utility/options/keys/StringVectorOptionKey.hh>
+#include <utility/options/keys/BooleanOptionKey.fwd.hh>
+#include <utility/options/keys/BooleanVectorOptionKey.fwd.hh>
+#include <utility/options/keys/FileOptionKey.fwd.hh>
+#include <utility/options/keys/FileVectorOptionKey.fwd.hh>
+#include <utility/options/keys/IntegerOptionKey.fwd.hh>
+#include <utility/options/keys/IntegerVectorOptionKey.fwd.hh>
+#include <utility/options/keys/PathOptionKey.fwd.hh>
+#include <utility/options/keys/PathVectorOptionKey.fwd.hh>
+#include <utility/options/keys/RealOptionKey.fwd.hh>
+#include <utility/options/keys/RealVectorOptionKey.fwd.hh>
+#include <utility/options/keys/StringOptionKey.fwd.hh>
+#include <utility/options/keys/StringVectorOptionKey.fwd.hh>
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/PathName.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/file/FileName.fwd.hh>
+#include <utility/file/PathName.fwd.hh>
 
 // Platform Headers
 #include <platform/types.hh>

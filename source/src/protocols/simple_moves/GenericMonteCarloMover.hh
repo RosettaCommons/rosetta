@@ -37,10 +37,10 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/filters/Filter.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.fwd.hh>
 
 // Package headers

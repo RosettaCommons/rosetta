@@ -16,15 +16,9 @@
 
 //unit headers
 #include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/types.hh>
 
 //project headers
 #include <utility/excn/Exceptions.hh>
-
-//utility headers
-#include <utility/pointer/ReferenceCount.hh>
-
-// numeric headers
 
 //C++ headers
 #include <sstream>
