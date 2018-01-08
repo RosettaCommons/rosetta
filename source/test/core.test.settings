@@ -207,6 +207,7 @@ sources = {
 	],
 	"pack/rotamers" : [
 		"SingleNCAARotamerLibraryTests",
+		"SingleNCAARotamerLibraryTests_Dun02",
 		"SingleResidueRotamerLibrary",
 		"SingleLigandRotamerLibrary",
 		"StoredRotamerLibrarySpecification",
@@ -913,7 +914,9 @@ testinputfiles = [
 	"pack/rotamer_set/GOL.params",
 	"pack/rotamers/6SA.params",
 	"pack/rotamers/LEU_NCAA.params",
+	"pack/rotamers/LEU_NCAA_DUN02.params",
 	"pack/rotamers/lxx.bbdep.rotamers.lib",
+	"pack/rotamers/lx2.bbdep.rotamers.lib",
 	"pack/rotamers/4tim.params",
 	"pack/rotamers/4tim_confs.pdb",
 	"pack/task/EX_test.resfile",
