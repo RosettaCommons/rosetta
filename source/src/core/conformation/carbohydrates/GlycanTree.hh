@@ -105,6 +105,10 @@ public:
 
 public:
 
+	///@brief Does this node exist?
+	bool
+	has_node( core::Size resnum ) const;
+
 	///@brief Get the GlycanNode of a particular glycan residue
 	/// GlycanNode has lots of information on the particular residue as part of this glycan tree.
 	///

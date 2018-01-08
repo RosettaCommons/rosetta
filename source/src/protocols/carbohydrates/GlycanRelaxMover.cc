@@ -186,7 +186,7 @@ void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	//Append for MoveMap, scorefxn, and task_operation tags.
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
-	rosetta_scripts::attributes_for_parse_residue_selector( attlist );
+	rosetta_scripts::attributes_for_parse_residue_selector( attlist, "Residue Selector containing only glycan residues.  This is not needed, as this class will automatically select ALL glycan residues in the pose to model.  See the GlycanResidueSelector and the GlycanLayerSelector for control glycan selection.  Note that the ASN is not technically a glycan.  Since dihedral angles are defined for a sugar from the upper to lower residue, the dihedral angles between the first glycan and the ASN are defined by the first glycan. " );
 
 	XMLSchemaSimpleSubelementList subelements;
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),

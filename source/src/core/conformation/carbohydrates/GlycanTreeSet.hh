@@ -131,15 +131,17 @@ public:
 	///                    ///
 	///////////////////////////////////////////////////////////////////////
 
-
+	///@brief Does the current glycan tree set have the node?
+	bool
+	has_node( core::Size glycan_residue ) const;
 
 	///@brief Convenience function to get the node of a particular residue
 	GlycanNodeCOP
-	get_node( core::Size const glycan_residue ) const;
+	get_node( core::Size glycan_residue ) const;
 
 	///@brief Convenience function to get the parent residue number from a GlycanNode
 	core::Size
-	get_parent( core::Size const glycan_residue ) const;
+	get_parent( core::Size glycan_residue ) const;
 
 	///@brief Convenience function to get the starting position of a particular tree which contains the residue.
 	/// This is the first Glycan Residue of the tree.
@@ -157,7 +159,7 @@ public:
 	///@brief Get the residue distance from this glycan residue to the root of the glycan.
 	/// Used for Layer-based glycan sampling.
 	core::Size
-	get_distance_to_start( core::Size const glycan_residue ) const;
+	get_distance_to_start( core::Size glycan_residue ) const;
 
 	/// @brief Linkage number on the parent residue.
 	/// @details an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the

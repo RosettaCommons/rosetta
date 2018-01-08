@@ -41,6 +41,7 @@
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
 #include <utility/vector1.srlz.hh>
+#include <utility/string_util.hh>
 
 // Numeric serialization headers
 #include <numeric/xyz.serialization.hh>
@@ -176,9 +177,19 @@ GlycanTree::get_start() const {
 	return start_pos_;
 }
 
+bool
+GlycanTree::has_node( core::Size resnum) const {
+	return has_glycan_residue( resnum );
+}
+
 GlycanNodeCOP
 GlycanTree::get_node(core::Size resnum) const{
-	return tree_.at( resnum );
+	if ( has_node( resnum ) ) {
+		return tree_.at( resnum );
+	} else {
+		TR << "Total Nodes: " << tree_.size() << std::endl;
+		utility_exit_with_message("Could not find GlycanNode at " + utility::to_string( resnum ));
+	}
 }
 
 utility::vector1< Size > const &

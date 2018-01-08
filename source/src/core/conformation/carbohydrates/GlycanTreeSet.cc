@@ -38,6 +38,7 @@
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
 #include <utility/vector1.srlz.hh>
+#include <utility/string_util.hh>
 
 // Numeric serialization headers
 #include <numeric/xyz.serialization.hh>
@@ -149,7 +150,12 @@ GlycanTreeSet::has_tree(const core::Size glycan_start_position) const {
 
 GlycanTreeCOP
 GlycanTreeSet::get_tree(const core::Size glycan_start_position) const {
-	return glycan_tree_set_.at( glycan_start_position );
+	if ( has_tree( glycan_start_position) ) {
+		return glycan_tree_set_.at( glycan_start_position );
+	} else {
+		TR << "Total Trees: " << glycan_tree_set_.size() << std::endl;
+		utility_exit_with_status("Could not find GlycanTree at position "+utility::to_string(glycan_start_position));
+	}
 }
 
 std::map<Size, GlycanTreeOP> const &
@@ -180,9 +186,30 @@ GlycanTreeSet::get_tree_containing_residue(const core::Size glycan_residue) cons
 	return glycan_res_to_tree_.at(glycan_residue);
 }
 
+bool
+GlycanTreeSet::has_node( core::Size glycan_residue ) const {
+	bool result = glycan_res_to_tree_.count(glycan_residue) != 0;
+	return result;
+}
+
 GlycanNodeCOP
 GlycanTreeSet::get_node(const core::Size glycan_residue) const {
-	return glycan_res_to_tree_.at(glycan_residue)->get_node(glycan_residue);
+	if ( has_node( glycan_residue ) ) {
+		return glycan_res_to_tree_.at(glycan_residue)->get_node(glycan_residue);
+	} else {
+		TR << "Total Trees: " << glycan_tree_set_.size() << std::endl << "Total ResToTrees: "<< glycan_res_to_tree_.size() << std::endl;
+		TR << "Writing debugging output" << std::endl;
+		for ( auto pair : glycan_tree_set_ ) {
+			TR << "TreeStart: " << pair.first << std::endl;
+			utility::vector1< core::Size > nodes = pair.second->get_residues();
+			TR << " Nodes: " << utility::to_string( nodes ) << std::endl;
+			for ( core::Size node_res : nodes ) {
+				TR << "Parent " << get_parent( node_res ) << std::endl;
+
+			}
+		}
+		utility_exit_with_message("Could not find Node at " + utility::to_string( glycan_residue ));
+	}
 }
 
 core::Size
@@ -227,11 +254,14 @@ void
 GlycanTreeSet::setup_glycan_trees(conformation::Conformation const & conf){
 	glycan_tree_set_.clear();
 	// find the first residue of all glycans and use them to populate the set.
+
+	TR << "Setting up Glycan Trees" << std::endl;
 	utility::vector1< bool > start_points =  conformation::carbohydrates::get_glycan_start_points( conf );
 
 
 	for ( core::Size i = 1; i <= conf.size(); ++i ) {
 		if ( start_points[i] ) {
+			//TR << "Setting up " << start_points[i] << std::endl;
 			GlycanTreeOP GT = GlycanTreeOP( new GlycanTree( conf, i ));
 			glycan_tree_set_[i] = GT;
 
@@ -241,6 +271,7 @@ GlycanTreeSet::setup_glycan_trees(conformation::Conformation const & conf){
 			}
 		}
 	}
+	TR << "Found " << glycan_tree_set_.size() << " glycan trees." << std::endl;
 
 	//pose.reference_pose_from_current(ref_pose_name_, true /*Replace any currently set refpose*/);
 

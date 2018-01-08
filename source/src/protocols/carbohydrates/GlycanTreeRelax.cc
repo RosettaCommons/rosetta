@@ -29,6 +29,8 @@
 #include <core/select/residue_selector/AndResidueSelector.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
@@ -175,18 +177,16 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		"Brief: Set the layer size we will be using.  A layer is a set of glycan residues that we will be optimizing.\n"
 		"  We work our way through the layers, while the rest of the residues are virtual (not scored).\n"
 		" \n"
-		"Details: \n"
-		" \n"
+		"  Details: \n"
 		"  The distance that make up a layer.  If we have a distance of 2,\n"
 		"  we first model all glycans that are equal to or less than 2 residue distance to the root.\n"
 		"  We then slide this layer up.  So we take all residues that have a distance between 3 and 1, and so on.\n")
 
 
 		+ XMLSchemaAttribute("window_size", xsct_non_negative_integer,
-		"\tBrief: Set the window size.  This is the overlap of the layers during modeling. \n"
-		" \n"
-		"  Details: \n"
+		"Brief: Set the window size.  This is the overlap of the layers during modeling. \n"
 		"  \n"
+		"  Details: \n"
 		"  The layers are slid down throught the tree of the glycan.  The window size represents the overlap in the layers.\n"
 		"  A window size of 1, means that the last residue (or residues of layer 1) from the last modeling effort, will be used again as \n"
 		"  part of the next layer.  A window size of 0, means that no residues will be re-modeled. \n"
@@ -244,9 +244,14 @@ void GlycanTreeRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		"The layers are slid down throught the tree of the glycan.  The window size represents the overlap in the layers. \n"
 		"A window size of 1, means that the last residue (or residues of layer 1) from the last modeling effort, will be used again as \n"
 		"part of the next layer.  A window size of 0, means that no residues will be re-modeled. \n"
-		"Typically, we would want at least a window size of 1. \n";
+		"Typically, we would want at least a window size of 1. \n"
+		"--Residue Selection-- \n"
+		"\n"
+		" You do not need a ResidueSelector passed in.  It will select all glycan residues automatically.\n"
+		" However, if you do, you must only pass in glycan residues.  See the GlycanResidueSelector and the GlycanLayerSelector for a very easy way to select specific glycan trees and residues. ";
 
-	rosetta_scripts::attributes_for_parse_residue_selector( attlist );
+	rosetta_scripts::attributes_for_parse_residue_selector( attlist, "Residue Selector containing only glycan residues.  This is not needed, as this class will automatically select ALL glycan residues in the pose to model.  See the GlycanResidueSelector and the GlycanLayerSelector for control glycan selection.  Note that the ASN is not technically a glycan.  Since dihedral angles are defined for a sugar from the upper to lower residue, the dihedral angles between the first glycan and the ASN are defined by the first glycan. " );
+
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), documentation, attlist );
 }
@@ -384,7 +389,13 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	utility::vector1< core::Size > all_trees = pose.glycan_tree_set()->get_start_points();
 	utility::vector1< core::Size > tree_subset;
 
+	//JAB - Check to make sure we are using all glycans.
+	for ( core::Size i = 1; i <= starting_subset.size(); ++i ) {
+		if ( starting_subset[ i ] && !pose.residue( i).is_carbohydrate() ) {
+			utility_exit_with_message("Non-Carbohydrate residue in selection. Please see the GlycanResidueSelector for custom input.  Not setting a selector will automatically model ALL glycan residues in the pose. Residue: "+utility::to_string( i )+" : "+pose.pdb_info()->pose2pdb( i ));
+		}
 
+	}
 	core::Size max_end = pose.glycan_tree_set()->get_largest_glycan_tree_layer( starting_subset );
 	TR << "Largest glycan layer: " << max_end << std::endl;
 	//Setup for quench mode

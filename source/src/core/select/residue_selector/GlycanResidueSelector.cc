@@ -24,6 +24,7 @@
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh> // for xml schema utility functions
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/Residue.hh>
@@ -239,6 +240,7 @@ GlycanResidueSelector::apply(
 
 			for ( core::Size x = 1; x <= branching_residues.size(); ++x ) {
 				core::Size branching_resnum = branching_residues[ x ];
+				//TR << branching_resnum <<" : " << pose.pdb_info()->pose2pdb( branching_resnum ) << std::endl;
 				subset[ branching_resnum ] = true;
 
 			}
