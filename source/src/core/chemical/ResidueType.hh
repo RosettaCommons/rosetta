@@ -2258,7 +2258,8 @@ public:
 	void show( std::ostream & output=std::cout, bool output_atomic_details=false ) const;
 
 	/// @brief Change which atom type set this ResidueType points to
-	/// WARNING - This doesn't actually change (or even touch) any of the atom type indicies
+	/// WARNING - While this tries to switch over the atom types, it will null out
+	/// any that don't have exact name correspondences.
 	/// You NEED to go through and manually reset the types on all atoms.
 	/// Exposed for black-magic use only.
 	void

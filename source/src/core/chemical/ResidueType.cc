@@ -1170,6 +1170,13 @@ ResidueType::set_atom_type( VD atom, std::string const & atom_type_name )
 
 	// Get the new AtomType and its index.
 	// (includes internal check for invalid type name)
+	if ( atom_type_name.empty() ) {
+		tr.Debug << "Setting atom type on atom " << atom_name( atom ) << " to null." << std::endl;
+		a.atom_type_index( 0 ); // Null it out
+		a.element_type( nullptr ); // Null it out
+		return; // Nothing more to do
+	}
+
 	core::uint const atom_type_index = atom_types_->atom_type_index( atom_type_name );
 	AtomType const & atype = ( *atom_types_ )[atom_type_index];
 
@@ -4890,8 +4897,24 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 void
 ResidueType::set_atom_type_set( AtomTypeSetCOP setting ) {
 	debug_assert( setting );
+
+	utility::vector1< std::string > old_types;
+	if ( atom_types_ ) {
+		for ( core::Size ii(1); ii <= natoms(); ++ii ) {
+			std::string const & old_name( (*atom_types_)[ graph_[ ordered_atoms_[ii] ].atom_type_index() ].name() );
+			old_types.push_back( old_name );
+			set_atom_type( atom_vertex(ii), "" ); // Null it out under the current atom type set.
+		}
+	}
+
 	atom_types_ = setting;
 	mode_ = atom_types_->mode();
+
+	for ( core::Size ii(1); ii <= natoms(); ++ii ) {
+		if ( old_types.size() >= ii && setting->has_atom( old_types[ii] ) ) {
+			set_atom_type( atom_vertex(ii), old_types[ii] );
+		}
+	}
 }
 
 //////////////////////////////////////////////////////

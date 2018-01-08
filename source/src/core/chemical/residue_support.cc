@@ -439,9 +439,8 @@ make_centroid( ResidueType const & res ) {
 
 	AtomTypeSetCOP centroid_ats_ptr( ChemicalManager::get_instance()->atom_type_set( core::chemical::CENTROID )  );
 	AtomTypeSet const & centroid_ats( *centroid_ats_ptr );
-	centroid->set_atom_type_set( centroid_ats_ptr );
 
-	utility::vector1< std::string > to_delete; // Don't modify ResidueType while iterating.
+	utility::vector1< std::string > new_types;
 	for ( core::Size ii(1); ii <= centroid->natoms(); ++ii ) {
 		core::Size old_index = res.atom(ii).atom_type_index();
 		std::string const & old_string( old_ats[ old_index ].name() );
@@ -457,6 +456,15 @@ make_centroid( ResidueType const & res ) {
 			// This is how the molfile_to_params.py script does the translation for unrecognized atoms.
 			new_string = "CAbb";
 		}
+
+		new_types.push_back( new_string );
+	}
+
+	centroid->set_atom_type_set( centroid_ats_ptr ); // Will zero out unknown types.
+
+	utility::vector1< std::string > to_delete; // Don't modify ResidueType while iterating.
+	for ( core::Size ii(1); ii <= centroid->natoms(); ++ii ) {
+		std::string const & new_string( new_types[ii] );
 
 		if ( new_string.empty() ) {
 			to_delete.push_back( centroid->atom_name( ii ) );

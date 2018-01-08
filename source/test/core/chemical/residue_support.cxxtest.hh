@@ -433,4 +433,21 @@ public:
 
 	}
 
+	// Test to make sure that none of the ResidueTypes in the standard FA_STANDARD set crash when being converted.
+	void test_make_centroid_no_crash() {
+		using namespace core::chemical;
+
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		ResidueTypeSetCOP fa_rts = cm->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP cen_rts = cm->residue_type_set( CENTROID );
+
+		for ( core::chemical::ResidueTypeCOP fa_rsd: fa_rts->base_residue_types() ) {
+			TS_ASSERT_THROWS_NOTHING( make_centroid( *fa_rsd ) );
+		}
+		for ( core::chemical::ResidueTypeCOP fa_rsd: fa_rts->unpatchable_residue_types() ) {
+			TS_ASSERT_THROWS_NOTHING( make_centroid( *fa_rsd ) );
+		}
+
+	}
+
 };
