@@ -79,6 +79,24 @@ create_glycan_movemap_from_residue_selector(
 	bool include_bb_torsions = true);
 
 
+///@brief Turn on/off IUPAC CHIs for a particular residue number.
+void
+set_glycan_iupac_chi_torsions(
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMap & movemap,
+	core::Size resnum,
+	bool action=true );
+
+///@brief Turn on/off IUPAC BBs for a particular residue number.
+void
+set_glycan_iupac_bb_torsions(
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMap & movemap,
+	core::Size resnum,
+	bool action=true);
+
+
+
 /////////////////////////////////   Glycosylation    ////////////////////////////////////////
 
 /// @brief  Idealize the glycosidic torsion angles for the last n glycan residues added or built.

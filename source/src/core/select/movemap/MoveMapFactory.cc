@@ -11,7 +11,7 @@
 /// @brief  The MoveMapFactory class builds a MoveMap given a Pose using instructions
 ///         from ResidueSelectors, and JumpSelectors (and eventually, TorsionIDSelectors)
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
-
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - Carbohydrate compatibility
 // Unit headers
 #include <core/select/movemap/MoveMapFactory.hh>
 
@@ -21,10 +21,12 @@
 #include <core/select/jump_selector/JumpSelector.hh>
 #include <core/select/jump_selector/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/carbohydrates/util.hh>
 #include <core/chemical/ResidueType.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
+#include <core/id/types.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -174,6 +176,9 @@ MoveMapFactory::edit_movemap_given_pose(
 	using residue_selector::ResidueSubset;
 	using jump_selector::JumpSelectorCOP;
 	using jump_selector::JumpSubset;
+	using core::id::TorsionID;
+	using core::pose::carbohydrates::set_glycan_iupac_bb_torsions;
+	using core::pose::carbohydrates::set_glycan_iupac_chi_torsions;
 
 	std::map< ResidueSelectorCOP, ResidueSubset > res_selections;
 	std::map< JumpSelectorCOP, JumpSubset > jump_selections;
@@ -191,7 +196,11 @@ MoveMapFactory::edit_movemap_given_pose(
 
 		for ( Size ii = 1; ii <= selection.size(); ++ii ) {
 			if ( selection[ ii ] ) {
-				mm.set_bb( ii, bb_act.action );
+				if ( pose.residue_type( ii ).is_carbohydrate() ) {
+					set_glycan_iupac_bb_torsions( pose, mm, ii, bb_act.action );
+				} else {
+					mm.set_bb( ii, bb_act.action );
+				}
 			}
 		}
 	}
@@ -225,7 +234,13 @@ MoveMapFactory::edit_movemap_given_pose(
 
 		for ( Size ii = 1; ii <= selection.size(); ++ii ) {
 			if ( selection[ ii ] ) {
-				mm.set_chi( ii, chi_act.action );
+
+				if ( pose.residue_type( ii ).is_carbohydrate() ) {
+					set_glycan_iupac_chi_torsions( pose, mm, ii, chi_act.action );
+				} else {
+					mm.set_chi( ii, chi_act.action );
+				}
+
 			}
 		}
 	}
