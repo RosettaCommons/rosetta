@@ -35,3 +35,19 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 # test to see if exe terminated abnormaly
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+# run executable
+%(bin)s/relax.%(binext)s @flags_relax_nocst -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+     | egrep -vf ../../ignore_list \
+     > log_relax_nocst
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+# run executable
+%(bin)s/relax.%(binext)s @flags_relax_peptoid_nocst -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+     | egrep -vf ../../ignore_list \
+     > log_relax_peptoid_nocst
+
+# test to see if exe terminated abnormaly
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+

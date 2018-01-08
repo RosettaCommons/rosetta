@@ -942,8 +942,7 @@ display_residues_wireframe(
 
 			AtomIndices const & nbrs( rsd.bonded_neighbor(m) );
 
-			for ( Size jj=1; jj<= nbrs.size(); ++jj ) {
-				Size const n( nbrs[jj] );
+			for ( Size const n : nbrs ) {
 				if ( n < m ) continue;
 				//if ( rsd.atom_type(m).is_hydrogen() && graphics::exclude_hydrogens ) continue;
 
@@ -1603,8 +1602,7 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 		for ( Size i=1; i<= natoms; ++i ) {
 			core::chemical::AtomIndices const & nbrs( residues[r]->bonded_neighbor(i) );
 
-			for ( Size jj=1; jj<= nbrs.size(); ++jj ) {
-				Size const j( nbrs[jj] );
+			for ( Size const j : nbrs ) {
 				if ( j < i ) continue;
 				if ( residues[r]->is_virtual(j) ) continue; //no virtual atoms
 				if ( residues[r]->atom_type(j).is_hydrogen() && gs.show_H_state == SHOW_NO_H ) continue;
@@ -1879,7 +1877,7 @@ display_density(
 	using namespace conformation;
 	using namespace chemical;
 
-	if ( triangles.size() == 0 ) return;
+	if ( triangles.empty() ) return;
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );  // wireframe
 
 	glMatrixMode(GL_MODELVIEW);
@@ -1922,6 +1920,8 @@ display_density(
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 fill_nres_for_graphics( GraphicsState & gs, utility::vector1< conformation::ResidueCOP > const & residues ) {
+	// AMW: Since this only counts protein and NA, this will disappoint the functions draw_conformation and
+	// draw_conformation_and_density, which also counts virts, carbohydrates, and other.
 	Size nres( 0 );
 	for ( Size n = 1; n <= residues.size(); n++ ) {
 		if ( residues[ n ]->is_protein() || residues[ n ]->is_NA() ) {

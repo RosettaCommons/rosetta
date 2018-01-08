@@ -667,17 +667,16 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 {
 	vector1< std::string> const & patch_variant_types = patch->types();
 
-	for ( Size n = 1; n <= patch_variant_types.size(); n++ ) {
+	for ( auto const & patch_variant_type_string : patch_variant_types ) {
+		VariantType const patch_variant = ResidueProperties::get_variant_from_string( patch_variant_type_string );
 
-		VariantType const patch_variant = ResidueProperties::get_variant_from_string( patch_variant_types[ n ] );
-
-		for ( Size k = 1; k <= variants_in_sets_.size(); k++ ) {
-			if ( variants_in_sets_[ k ].has_value( patch_variant ) ) return true;
+		for ( auto const & variant_in_set : variants_in_sets_ ) {
+			if ( variant_in_set.has_value( patch_variant ) ) return true;
 		}
 
-		for ( Size k = 1; k <= custom_variants_.size(); k++ ) {
+		for ( auto const & custom_variant : custom_variants_ ) {
 
-			if ( custom_variants_[ k ] == patch_variant_types[ n ] ) return true;
+			if ( custom_variant == patch_variant_type_string ) return true;
 			// AMW: I am kicking an issue down the road a ways because I imagine
 			// that once the PackerPalette and variant type design are out, we
 			// may think about variant type matching a little differently.
@@ -688,8 +687,8 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 
 			// If we do the C++11 transition before finishing palette, rewrite as
 			// a regex. Right now I think the variant types form an appropriate prefix code.
-			if ( custom_variants_[ k ].substr(0, custom_variants_.size()-1) == patch_variant_types[ n ] ) return true;
-			if ( custom_variants_[ k ].substr(0, custom_variants_.size()-2) == patch_variant_types[ n ] ) return true;
+			if ( custom_variant.substr(0, custom_variants_.size()-1) == patch_variant_type_string ) return true;
+			if ( custom_variant.substr(0, custom_variants_.size()-2) == patch_variant_type_string ) return true;
 
 		}
 
@@ -987,7 +986,7 @@ ResidueTypeFinder::filter_all_properties( ResidueTypeCOPs const & rsd_types )  c
 	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
 		TR << "No ResidueTypes remain after filtering for the presence of all properties." << std::endl;
 		TR << "    Properties sought: ";
-		for ( Size m = 1; m <= properties_.size(); m++ )  { TR << properties_[ m ] << "   "; }
+		for ( Size m = 1; m <= properties_.size(); m++ )  { TR << ResidueProperties::get_string_from_property( properties_[ m ] ) << "   "; }
 		TR << std::endl;
 	}
 	return filtered_rsd_types;
@@ -1010,7 +1009,7 @@ ResidueTypeFinder::filter_disallow_variants( ResidueTypeCOPs const & rsd_types )
 	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
 		TR << "No ResidueTypes remain after filtering against the presence of variants." << std::endl;
 		TR << "    Variants prohibited: ";
-		for ( Size m = 1; m <= disallow_variants_.size(); m++ )  { TR << disallow_variants_[ m ] << "   "; }
+		for ( Size m = 1; m <= disallow_variants_.size(); m++ )  { TR << ResidueProperties::get_string_from_variant( disallow_variants_[ m ] ) << "   "; }
 		TR << std::endl;
 	}
 	return filtered_rsd_types;
@@ -1033,7 +1032,7 @@ ResidueTypeFinder::filter_disallow_properties( ResidueTypeCOPs const & rsd_types
 	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
 		TR << "No ResidueTypes remain after filtering against the presence of properties." << std::endl;
 		TR << "    Properties prohibited: ";
-		for ( Size m = 1; m <= disallow_properties_.size(); m++ )  { TR << disallow_properties_[ m ] << "   "; }
+		for ( Size m = 1; m <= disallow_properties_.size(); m++ )  { TR << ResidueProperties::get_string_from_property( disallow_properties_[ m ] ) << "   "; }
 		TR << std::endl;
 	}
 	return filtered_rsd_types;

@@ -2026,6 +2026,23 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief virtualize sidechain
+class VirtualizeSidechain: public PatchOperation {
+public:
+	/// @brief constructor
+	VirtualizeSidechain() {};
+
+	bool
+	apply( ResidueType & rsd ) const override;
+
+	/// @brief Return the name of this PatchOperation ("VirtualizeSidechain").
+	/// @author Andrew M. Watkins (amw579@stanford.edu).
+	std::string
+	name() const override;
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set virtual shadow atoms
 class SetVirtualShadow : public PatchOperation {
 public:

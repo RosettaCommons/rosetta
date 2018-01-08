@@ -1,7 +1,7 @@
 ## Acetylated N Terminus Patch by Doug Renfrew (renfrew@unc.edu)
 
 NAME AcetylatedNtermProteinFull
-TYPES LOWER_TERMINUS_VARIANT ACETYLATED_NTERMINUS_VARIANT
+TYPES ACETYLATED_NTERMINUS_VARIANT
 
 #############################################################################################
 ## general requirements

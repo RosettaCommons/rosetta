@@ -94,8 +94,8 @@ Constraints::setup_for_scoring( func::XYZ_Func const & xyz, ScoreFunction const 
 // call the setup_for_derivatives for each constraint
 void
 Constraints::setup_for_derivatives( func::XYZ_Func const & xyz, ScoreFunction const &scfxn ) const {
-	for ( auto const & constraint : constraints_ ) {
-		constraint->setup_for_derivatives( xyz, scfxn );
+	for ( auto const & cst : constraints_ ) {
+		cst->setup_for_derivatives( xyz, scfxn );
 	}
 }
 
@@ -110,10 +110,9 @@ Constraints::eval_intrares_atom_derivative(
 ) const
 {
 	func::ResidueXYZ resxyz( residue );
-	for ( auto const & constraint : constraints_ ) {
-		Constraint const & cst( *constraint );
+	for ( auto const & cst : constraints_ ) {
 		Vector f1(0.0), f2(0.0);
-		cst.fill_f1_f2( atom_id, resxyz, f1, f2, weights );
+		cst->fill_f1_f2( atom_id, resxyz, f1, f2, weights );
 		F1 += f1;
 		F2 += f2;
 	}
@@ -130,10 +129,9 @@ Constraints::eval_respair_atom_derivative(
 ) const
 {
 	func::ResiduePairXYZ respairxyz( residue1, residue2 );
-	for ( auto const & constraint : constraints_ ) {
-		Constraint const & cst( *constraint );
+	for ( auto const & cst : constraints_ ) {
 		Vector f1(0.0), f2(0.0);
-		cst.fill_f1_f2( atom_id, respairxyz, f1, f2, weights );
+		cst->fill_f1_f2( atom_id, respairxyz, f1, f2, weights );
 		F1 += f1;
 		F2 += f2;
 	}
@@ -149,10 +147,9 @@ Constraints::eval_ws_atom_derivative(
 ) const
 {
 	func::ConformationXYZ confxyz( conformation );
-	for ( auto const & constraint : constraints_ ) {
-		Constraint const & cst( *constraint );
+	for ( auto const & cst : constraints_ ) {
 		Vector f1(0.0), f2(0.0);
-		cst.fill_f1_f2( atom_id, confxyz, f1, f2, weights );
+		cst->fill_f1_f2( atom_id, confxyz, f1, f2, weights );
 		F1 += f1;
 		F2 += f2;
 	}
@@ -169,9 +166,8 @@ Constraints::energy(
 	EnergyMap & emap
 ) const
 {
-	for ( auto const & constraint : constraints_ ) {
-		Constraint const & cst( *constraint );
-		cst.score( xyz_func, weights, emap );
+	for ( auto const & cst : constraints_ ) {
+		cst->score( xyz_func, weights, emap );
 		//cst.show( std::cout );
 	}
 }

@@ -730,6 +730,7 @@ residue_types/l-ncaa/homophenylalanine.params
 residue_types/l-ncaa/homoserine.params
 residue_types/l-ncaa/n-in-methyl-tryptophan.params
 residue_types/l-ncaa/ornithine.params
+residue_types/l-ncaa/4J5.params
 residue_types/l-ncaa/penicillamine.params
 residue_types/l-ncaa/phenylglycine.params
 residue_types/l-ncaa/phenyl-serine.params
@@ -988,6 +989,7 @@ residue_types/terpenes/isoprene.params
 
 ## Terminal types
 residue_types/terminal/ACE.params
+residue_types/terminal/ACY.params
 residue_types/terminal/NME.params
 residue_types/terminal/BZO.params
 residue_types/terminal/BZA.params

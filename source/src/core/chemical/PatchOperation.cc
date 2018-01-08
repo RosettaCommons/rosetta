@@ -2333,6 +2333,25 @@ ReplaceProtonWithHydroxyl::name() const {
 }
 
 bool
+VirtualizeSidechain::apply( ResidueType & rsd ) const {
+	for ( Size ii = rsd.first_sidechain_atom() + 1; ii <= rsd.natoms(); ++ii ) {
+		rsd.set_atom_type( rsd.atom_name( ii ), "VIRT" );
+		rsd.set_mm_atom_type( rsd.atom_name( ii ), "VIRT" );
+		rsd.atom( ii ).charge( 0.0 );
+		rsd.atom( ii ).is_virtual( true );
+	}
+	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("VirtualizeSidechain").
+/// @author Andrew M. Watkins (amw579@stanford.edu).
+std::string
+VirtualizeSidechain::name() const {
+	return "VirtualizeSidechain";
+}
+
+
+bool
 AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 	if ( !rsd.has( atom_ ) ) return true; // failure!
 
@@ -2971,6 +2990,8 @@ patch_operation_from_patch_file_line(
 		//std::string atom1, atom2;
 		//l >> atom1 >> atom2;
 		return PatchOperationOP( new ChiralFlipAtoms );//( atom1, atom2 ) );
+	} else if ( tag == "VIRTUALIZE_SIDECHAIN" ) {
+		return PatchOperationOP( new VirtualizeSidechain );//( atom1, atom2 ) );
 	} else if ( tag == "VIRTUALIZE_ALL" ) {
 		return PatchOperationOP( new VirtualizeAll );//( atom1, atom2 ) );
 	} else if ( tag == "SET_VIRTUAL_SHADOW" ) {

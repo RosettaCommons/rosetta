@@ -188,8 +188,7 @@ read_additional_pdb_data(
 
 	//Added by Daniel-Adriano Silva, used to read PDBinfo-LABEL
 	//TR.Debug << "Setting PDBinfo-labels from PDB file." << std::endl;
-	for ( i=1; i<= lines.size(); ++i ) {
-		std::string const & line( lines[i] );
+	for ( std::string const line : lines ) {
 		if ( line.size() > 21 && line.substr(0,21) == "REMARK PDBinfo-LABEL:" ) {
 			//Parse and split string
 			utility::vector1 < std::string > remark_values;
@@ -220,8 +219,7 @@ read_additional_pdb_data(
 
 	if ( (!read_fold_tree) && (!options.fold_tree_io()) ) return;
 
-	for ( i=1; i<= lines.size(); ++i ) {
-		std::string const & line( lines[i] );
+	for ( std::string const & line : lines ) {
 		// Look for fold_tree info
 		if ( line.size() >= 16 && line.substr(0,16) == "REMARK FOLD_TREE" ) {
 			std::istringstream l( line );
@@ -376,8 +374,6 @@ pose_from_file(
 		build_pose( sfr, pose, residue_set, options );
 
 	}
-
-
 }
 
 void
@@ -1886,6 +1882,7 @@ reorder_pose( pose::Pose & pose, utility::vector1< Size > & res_list ) {
 // in fasta file.
 bool
 just_modeling_RNA( utility::vector1< std::string > const & fasta_files ) {
+	runtime_assert( fasta_files.size() >= 1 );
 	std::string sequence = core::sequence::read_fasta_file_return_str( fasta_files[1] );
 	core::sequence::parse_out_non_standard_residues( sequence );
 	return ( pose::just_modeling_RNA( sequence ) );

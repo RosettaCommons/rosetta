@@ -1,0 +1,4 @@
+-s peptoid_link.pdb
+-write_pdb_link_records
+-score:weights mm_std
+-out:suffix _relax_peptoid_nocst

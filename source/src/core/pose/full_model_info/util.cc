@@ -470,26 +470,25 @@ get_move_elements_from_full_model_info_const( pose::Pose const & pose ){
 	utility::vector1< utility::vector1< Size > > move_elements;
 	std::map< Size, utility::vector1< Size > > move_element_map;
 
-	for ( Size i = 1; i <= res_list.size(); i++ ) {
-		Size const i_full = res_list[ i ];
-		Size const & domain = input_domain_map[ i_full ];
+	for ( Size const resi : res_list ) {
+		Size const domain = input_domain_map[ resi ];
 
 		// calebgeniesse: do not consider virt roots, required for electron density scoring
-		if ( pose.residue( full_to_sub( i_full, pose ) ).is_virtual_residue() ) {
+		if ( pose.residue( full_to_sub( resi, pose ) ).is_virtual_residue() ) {
 			continue;
 		}
 
 		if ( domain == 0 ) {
 			// single residues
-			move_elements.push_back( utility::tools::make_vector1( i_full ) );
+			move_elements.push_back( utility::tools::make_vector1( resi ) );
 		} else {
 			// domains
-			move_element_map[ domain ].push_back( i_full );
+			move_element_map[ domain ].push_back( resi );
 		}
 	}
 
-	for ( auto const & move_elem : move_element_map ) {
-		move_elements.push_back( move_elem.second );
+	for ( auto const & elem : move_element_map ) {
+		move_elements.push_back( elem.second );
 	}
 
 	return move_elements;

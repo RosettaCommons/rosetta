@@ -1587,7 +1587,7 @@ Residue::connect_atom( Residue const & other ) const
 		return rsd_type_.residue_connection( connections_to_residues_.find( Size( other_seqpos) )->second[ 1 ] ).atomno();
 	}
 
-	TR.Error << "Residue::conect_atom: I'm not bonded to that other residue!! (" << seqpos() << " " << other_seqpos << ")" << std::endl;
+	TR.Error << "This residue (number " << seqpos() << ") is not bonded to the requested residue (" << other.seqpos() << ")!" << std::endl;
 	TR.Error << type().name() << " " << other.type().name() << std::endl;
 	utility_exit();
 	return 0;

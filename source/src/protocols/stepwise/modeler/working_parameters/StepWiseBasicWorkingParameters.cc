@@ -53,10 +53,10 @@ StepWiseBasicWorkingParameters::actually_moving_res() const{
 //////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 StepWiseBasicWorkingParameters::working_res_list() const{
-	if ( sub_to_full_.size() == 0 ) utility_exit_with_message( "sub_to_full_.size() == 0. Cannot output working_res_list" );
+	if ( sub_to_full_.empty() ) utility_exit_with_message( "sub_to_full_.size() == 0. Cannot output working_res_list" );
 	utility::vector1< Size > working_res_list;
-	for ( auto it : sub_to_full_ ) {
-		working_res_list.push_back( it.second );
+	for ( auto const & elem : sub_to_full_ ) {
+		working_res_list.push_back( elem.second );
 	}
 	return working_res_list;
 }
@@ -147,11 +147,10 @@ StepWiseBasicWorkingParameters::update_working_moving_suite(){
 //////////////////////////////////////////////////////////////////////////////////////////
 std::map< core::Size, core::Size >  //Parin Jan 18, 2009
 StepWiseBasicWorkingParameters::create_sub_to_full_map( std::map< core::Size, core::Size > const & full_to_sub ) const{
-	std::map< core::Size, core::Size > ::const_iterator it, end ;
 	std::map< core::Size, core::Size > sub_to_full;
 	sub_to_full.clear();
-	for ( it = full_to_sub.begin(), end = full_to_sub.end(); it != end; ++it ) {
-		sub_to_full[it->second] = it->first;
+	for ( auto const & elem : full_to_sub ) {
+		sub_to_full[ elem.second ] = elem.first;
 	}
 	return sub_to_full;
 }
@@ -163,18 +162,9 @@ void StepWiseBasicWorkingParameters::update_working_sequence(){
 	if ( is_working_res_.size() == 0 ) return;
 
 	working_sequence_ = "";
-
-	for ( Size full_seq_num = 1, string_index = 0; string_index < full_sequence_.size(); ++full_seq_num, ++string_index ) {
+	for ( Size full_seq_num = 1; full_seq_num <= full_sequence_.size(); ++full_seq_num ) {
 		if ( !is_working_res_[ full_seq_num ] ) continue;
-
-		if ( full_sequence_[ string_index ] == 'X' ) {
-			working_sequence_ += full_sequence_[ string_index++ ];
-			working_sequence_ += full_sequence_[ string_index++ ];
-			working_sequence_ += full_sequence_[ string_index++ ];
-			working_sequence_ += full_sequence_[ string_index++ ];
-			working_sequence_ += full_sequence_[ string_index++ ];
-		}
-		working_sequence_ += full_sequence_[ string_index ]; //i-1 because std::string elements starts at 0...
+		working_sequence_ += full_sequence_[ full_seq_num - 1 ]; //i-1 because std::string elements starts at 0...
 	}
 }
 

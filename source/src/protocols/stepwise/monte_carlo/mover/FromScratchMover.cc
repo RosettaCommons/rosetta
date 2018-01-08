@@ -105,7 +105,6 @@ FromScratchMover::apply( core::pose::Pose & pose,
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
 
-	// an alias:
 	utility::vector1< Size > resnum = residues_to_instantiate_in_full_model_numbering;
 
 	// only do dinucleotides for now.
@@ -114,12 +113,12 @@ FromScratchMover::apply( core::pose::Pose & pose,
 	std::string new_sequence;
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
 	std::map< Size, std::string > const & nc_res_map = const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map();
-	for ( Size n = 1; n <= resnum.size(); n++ ) {
-		char newrestype = full_sequence[ resnum[n]-1 ];
+	for ( Size const res : resnum ) {
+		char newrestype = full_sequence[ res - 1 ];
 		modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );
 		new_sequence += newrestype;
-		if ( nc_res_map.find( resnum[n] ) != nc_res_map.end() ) {
-			new_sequence += "[" + nc_res_map.at( resnum[n] ) + "]";
+		if ( nc_res_map.find( res ) != nc_res_map.end() ) {
+			new_sequence += "[" + nc_res_map.at( res ) + "]";
 		}
 	}
 

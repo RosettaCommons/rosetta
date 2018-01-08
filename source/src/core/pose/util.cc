@@ -358,8 +358,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 
 	// check for terminal ligands
 	int last_peptide_res = nres;
-	while ( !pose.residue( last_peptide_res ).is_polymer() )
-			last_peptide_res--;
+	while ( !pose.residue( last_peptide_res ).is_polymer() ) last_peptide_res--;
 
 	// try to avoid putting the vrt too close to termini
 	int i_min = 1;
@@ -1539,7 +1538,7 @@ declare_cutpoint_chemical_bond(
 	Size const next_res_in /* = 0 */
 ) {
 	using namespace core::conformation;
-
+	// AMW TODO: ensure this refers to the residue connected at UPPER instead of cutpoint_res + 1
 	Size const next_res = ( next_res_in == 0 ) ? ( cutpoint_res + 1 ) : next_res_in; // user might specify a different "next_res" to cyclize.
 
 	// Need to clear out any chemical bonds that might have been previously tied to upper/lower of these residues.
@@ -1678,8 +1677,10 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 
 				TR << "Adding harmonic constraints to the angle formed by atoms N, C, O ( 120 ) and ";
 				TR << "the improper torsion N, C, O, CA (180) and the dihedral CA, N, C, CA ( 180 ) " <<std::endl;
+				continue;
+			}
 
-			} else if ( record.name1 == " C  " && record.name2 == " N  " ) {
+			if ( record.name1 == " C  " && record.name2 == " N  " ) {
 				// swapped; nuc is actually elec and vice versa
 
 				id::AtomID aidCA2( ELEC.atom_index( "CA" ), id2 );
@@ -1708,6 +1709,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 					ConstraintCOP omgimp( new DihedralConstraint( aidNUC, aidC, aidH, aidCA2, dih_func ) );
 					pose.add_constraint( omgimp );
 				}
+				continue;
 			}
 
 			// Now let's add constraints based on residue identities and atom names. For example, let's cover
@@ -1726,8 +1728,10 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 
 				TR << "Assuming thiol-ene, adding harmonic constraints to the angle formed by CB, SG, CZ ( 90 )" << std::endl;// and ";
 				//TR << "the dihedral CB, SG, CZ, CE2 ( 180 ) " << std::endl;
+				continue;
+			}
 
-			} else if ( record.name2 == " C  " ) {
+			if ( record.name2 == " C  " ) {
 				// the C-terminal conjugation case:
 				id::AtomID aidCA( ELEC.atom_index( "CA" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
@@ -1735,7 +1739,10 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				pose.add_constraint( ang );
 				ConstraintCOP dih( new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-			} else if ( record.name2 == " CD " ) {
+				continue;
+			}
+
+			if ( record.name2 == " CD " ) {
 				// The sidechain conjugation to glx case
 				id::AtomID aidCA( ELEC.atom_index( "CG" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OE1" ), id2 );
@@ -1743,7 +1750,10 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 				pose.add_constraint( ang );
 				ConstraintCOP dih( new DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-			} else if ( record.name2 == " CG " ) {
+				continue;
+			}
+
+			if ( record.name2 == " CG " ) {
 				// The sidechain conjugation to asx case
 				id::AtomID aidCA( ELEC.atom_index( "CB" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OD1" ), id2 );
@@ -1774,6 +1784,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep co
 					pose.add_constraint( ConstraintCOP( new AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
 
 				}
+				continue;
 			}
 		}
 	}
@@ -1970,9 +1981,6 @@ set_bfactors_from_atom_id_map(Pose & pose, id::AtomID_Map< Real > const & bfacto
 	}
 
 }
-
-
-// Stepwise
 
 /////////////////////////////////////////////////////////////////////////////
 bool

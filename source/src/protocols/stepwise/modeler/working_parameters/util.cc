@@ -92,7 +92,7 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	}
 
 	utility::vector1< Size > bridge_res = user_defined_bridge_res; // for protein loop closure.
-	if ( bridge_res.size() == 0 ) bridge_res = protein::get_bridge_res( pose, moving_res_list );
+	if ( bridge_res.empty() ) bridge_res = protein::get_bridge_res( pose, moving_res_list );
 
 	utility::vector1< Size > is_working_res( full_sequence.size(), Size(0) );
 	//std::string working_sequence;
@@ -105,7 +105,7 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	}
 
 	utility::vector1< Size > calc_rms_res_ = full_model_info.full_model_parameters()->get_res_list( CALC_RMS );
-	if ( calc_rms_res_.size() == 0 ) calc_rms_res_ = full_model_info.sub_to_full( moving_res_list );
+	if ( calc_rms_res_.empty() ) calc_rms_res_ = full_model_info.sub_to_full( moving_res_list );
 
 	utility::vector1< Size > fixed_res;
 	utility::vector1< Size > const & extra_minimize_res = const_full_model_info( pose ).extra_minimize_res();

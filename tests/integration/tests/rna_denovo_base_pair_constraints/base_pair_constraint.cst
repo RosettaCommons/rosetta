@@ -3,11 +3,11 @@
 # Either the two residues next to the stem or the other two. 
 AmbiguousConstraint
 	MultiConstraint
-		BasePair 2 11 
-		BasePair 3 10 
+		BasePair 2 11 W W C 
+		BasePair 3 10 W W C
 	END
 	MultiConstraint
-		BasePair 3 10
-		BasePair 4 9 
+		BasePair 3 10 W W C
+		BasePair 4 9 W W C
 	END
 END
