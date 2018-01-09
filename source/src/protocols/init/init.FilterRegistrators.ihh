@@ -90,6 +90,9 @@ static FilterRegistrator< protocols::ligand_docking::MolarMassFilterCreator > re
 
 static FilterRegistrator< protocols::loops::filters::LoopAnalyzerFilterCreator > reg_LoopAnalyzerFilterCreator;
 
+static FilterRegistrator< protocols::dna_dock::DNAClashCheckFilterCreator > reg_DNAClashCheckFilterCreator;
+static FilterRegistrator< protocols::dna_dock::PropagateClashCheckFilterCreator > reg_PropagateClashCheckFilterCreator;
+
 static FilterRegistrator< protocols::matdes::ClashCheckFilterCreator > reg_ClashCheckFilterCreator;
 static FilterRegistrator< protocols::matdes::GetRBDOFValuesCreator > reg_GetRBDOFValuesCreator;
 static FilterRegistrator< protocols::matdes::InterfacePackingFilterCreator > reg_InterfacePackingFilterCreator;

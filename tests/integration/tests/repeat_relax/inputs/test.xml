@@ -1,0 +1,17 @@
+<ROSETTASCRIPTS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+<SCOREFXNS>
+    <ScoreFunction name="sfxn_beta" weights="beta_cart"/>
+</SCOREFXNS>
+<FILTERS>
+</FILTERS>
+<MOVERS>
+    <RepeatProteinRelax name="repeat_relax" numb_repeats="4" scorefxn="sfxn_beta" minimize="false" cartesian="true" loop_cutpoint_mode="false" relax_iterations="1">
+    </RepeatProteinRelax>
+</MOVERS>
+<PROTOCOLS>
+    <Add mover="repeat_relax"/>
+</PROTOCOLS>
+</ROSETTASCRIPTS>
+

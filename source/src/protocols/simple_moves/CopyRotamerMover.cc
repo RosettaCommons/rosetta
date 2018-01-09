@@ -55,6 +55,43 @@ CopyRotamerMover::CopyRotamerMover( CopyRotamerMover const & /*src*/ ) = default
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 CopyRotamerMover::~CopyRotamerMover()= default;
 
+
+//////////////////////////////////////////////////////////////////////////////
+/// Mover Methods ///
+/////////////////////
+
+/// @brief Apply the mover
+void
+CopyRotamerMover::apply_from_template_pose(
+	core::pose::Pose &target_pose,
+	core::pose::Pose const &template_pose,
+	Size target_res_index,
+	Size template_res_index) {
+	target_res_index_ = target_res_index;
+	template_res_index_ = template_res_index;
+	runtime_assert_string_msg( template_res_index_ > 0 && template_res_index_ <=template_pose.total_residue(), "Error in protocols::simple_moves::CopyRotamerMover::apply(): The template residue index is out of range (less than one or greater than the number of residues in the pose)." );
+	runtime_assert_string_msg( target_res_index_ > 0 && target_res_index_ <=target_pose.total_residue(), "Error in protocols::simple_moves::CopyRotamerMover::apply(): The target residue index is out of range (less than one or greater than the number of residues in the pose)." );
+
+	//First, copy residue identity:
+	if ( copy_identity_ ) {
+		MutateResidue mutres( target_res_index_, template_pose.residue_type(template_res_index_).name() ); //A mover to change the residue identity.
+		mutres.apply( target_pose );
+	}
+
+	//Next, set side-chain torsions
+	if ( copy_torsions_ ) {
+		for ( core::Size i=1, imax=template_pose.residue_type(template_res_index_).nchi(); i<=imax; ++i ) {
+			if ( i <= target_pose.residue_type(target_res_index_).nchi() ) {
+				target_pose.set_chi( i, target_res_index_, template_pose.chi( i, template_res_index_ ) );
+			} else {
+				TR.Warning << "skipping chi " << i << ", which is not present in target residue." << std::endl;
+			}
+		}
+	}
+	//TODO -- add support for copying bond angles and bond lenghts.
+
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///
 /////////////////////

@@ -804,6 +804,7 @@ void JobDistributor::write_output_from_job(
 )
 {
 	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	begin_critical_section();
 
@@ -817,8 +818,18 @@ void JobDistributor::write_output_from_job(
 
 		std::string tag;
 		core::Size i_additional_pose = 1;
+
+		//we want two different behaviors when the get_additional_output flag is triggered.
+		//A.The first is that the mover controls the output name. This is new & controlled by out::mover_controlled_output_name]() flag
+		//B.The name of the get_additional_pose is used on all the structures.  This is the default.
+
+		//output main pose with protocol controlled flag
+		if ( option[out::mover_controlled_output_name]() ) {
+			job_succeeded(pose, jobtime, tag); //Must be output before the tag is changed
+		}
+
 		core::pose::PoseOP additional_pose( mover_copy->get_additional_output() );
-		if ( additional_pose ) {
+		if ( additional_pose && !option[out::mover_controlled_output_name]() ) {
 			// Attach tag to main pose as well for consistent numbering
 			std::ostringstream s;
 			s << std::setfill('0') << std::setw(4) << i_additional_pose;
@@ -826,14 +837,20 @@ void JobDistributor::write_output_from_job(
 			++i_additional_pose;
 		}
 
-		// Output main pose
-		job_succeeded(pose, jobtime, tag);
+		// Output main pose default method
+		if ( !option[out::mover_controlled_output_name]() ) {
+			job_succeeded(pose, jobtime, tag);
+		}
 
 		// Collect additional poses from mover
 		while ( additional_pose ) {
 			std::ostringstream s;
 			s << std::setfill('0') << std::setw(4) << i_additional_pose;
-			job_succeeded_additional_output(*additional_pose, s.str());
+			if ( !option[out::mover_controlled_output_name]() ) {
+				job_succeeded_additional_output(*additional_pose, s.str());
+			} else {
+				job_succeeded_additional_output(*additional_pose, "");
+			}
 			++i_additional_pose;
 			additional_pose = mover_copy->get_additional_output();
 		}

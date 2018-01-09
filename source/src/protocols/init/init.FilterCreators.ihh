@@ -73,6 +73,10 @@
 
 #include <protocols/loops/filters/LoopAnalyzerFilterCreator.hh>
 
+#include <protocols/dna_dock/DNAClashCheckFilterCreator.hh>
+#include <protocols/dna_dock/PropagateClashCheckFilterCreator.hh>
+
+
 #include <protocols/matdes/ClashCheckFilterCreator.hh>
 #include <protocols/matdes/GetRBDOFValuesCreator.hh>
 #include <protocols/matdes/InterfacePackingFilterCreator.hh>

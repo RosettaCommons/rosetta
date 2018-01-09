@@ -129,12 +129,14 @@ public:// parser
 private:
 
 	Real filtered_value_;
-	Size ignore_terminal_SS_;
+	Size ignore_n_terminal_SS_;
+	Size ignore_c_terminal_SS_;
 	bool only_n_term_;
 	bool only_c_term_;
 	Real threshold_;
 	Size contacts_between_ssElement_threshold_;
 	bool report_avg_;
+	bool use_atomic_contact_filter_; //normally use motifs
 	core::scoring::motif::MotifHashManager *mman_;
 };
 

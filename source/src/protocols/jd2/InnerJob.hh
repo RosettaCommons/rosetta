@@ -97,6 +97,16 @@ public:
 	/// @brief return the input tag (a string of space separated PDB filenames)
 	std::string const & input_tag() const;
 
+	/// @brief returns a job name controlled by the mover. Must be turned with the optional_output_name out flag. This flag is typically used in conjuction with a mover
+	std::string const & optional_output_name() const {
+		return optional_output_name_;
+	}
+
+	/// @brief sets a job name controlled by the mover
+	void optional_output_name(std::string output_name){
+		optional_output_name_ = output_name;
+	}
+
 	/// @brief
 	core::Size nstruct_max() const;
 
@@ -126,6 +136,7 @@ protected:
 
 private:
 	std::string const input_tag_;
+	std::string optional_output_name_;
 	core::Size const nstruct_max_;
 	core::pose::PoseCOP pose_;
 	bool bad_;

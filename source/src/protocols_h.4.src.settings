@@ -10,6 +10,10 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"protocols/dna_dock": [
+		"DNAClashCheckFilter",
+		"PropagateClashCheckFilter",
+	],
 	"protocols/docking": [
 		"ConformerSwitchMover",
 		"DockFilters",

@@ -23,6 +23,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/sequence/ABEGOManager.hh>
+
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -458,14 +460,41 @@ Dssp::get_dssp_secstruct() {
 }
 
 std::string
-Dssp::get_dssp_reduced_IG_as_L_secstruct() {
-	dssp_reduced_IG_as_L( dssp_secstruct_ );
+Dssp::get_dssp_unreduced_secstruct() {
 	std::string sequence;
 	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		sequence += dssp_secstruct_( i );
 	}
 	return sequence;
 }
+
+std::string
+Dssp::get_dssp_plus_abego_L_def(core::pose::Pose const & pose) {
+	dssp_reduced_IG_as_L_if_adjcent_H( dssp_secstruct_ );
+	std::string sequence;
+	core::sequence::ABEGOManager abego_manager;
+	utility::vector1< std::string >  abego_vector = abego_manager.get_symbols(pose);
+	std::string abego_string = abego_manager.get_abego_string(abego_vector);
+	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
+		if ( dssp_secstruct_( i ) == 'H' && abego_string.at(i-1)!='A' ) {
+			sequence += 'L';
+		} else {
+			sequence += dssp_secstruct_( i );
+		}
+	}
+	return sequence;
+}
+
+std::string
+Dssp::get_dssp_reduced_IG_as_L_secstruct() {
+	dssp_reduced_IG_as_L_if_adjcent_H( dssp_secstruct_ );
+	std::string sequence;
+	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
+		sequence += dssp_secstruct_( i );
+	}
+	return sequence;
+}
+
 
 float
 Dssp::bb_pair_score( Size res1, Size res2 )

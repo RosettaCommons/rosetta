@@ -20,6 +20,7 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/chemical/AA.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
@@ -41,19 +42,22 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/pose/variant_util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/rms_util.hh>
+
 #include <core/types.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
@@ -64,6 +68,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/relax/CentroidRelax.hh>
 #include <protocols/relax/cst_util.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/toolbox/superimpose.hh>
@@ -94,55 +99,60 @@
 
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <boost/foreach.hpp>
 
-using namespace core;
-using namespace std;
-using utility::vector1;
 
 namespace protocols {
 namespace simple_moves {
+
+using core::pose::Pose;
+using namespace core;
+using namespace std;
+using namespace protocols::moves;
+using utility::vector1;
+
 static basic::Tracer TR( "protocols.simple_moves.RepeatPropagationMover" );
-// XRW TEMP std::string RepeatPropagationMoverCreator::keyname() const
-// XRW TEMP {
-// XRW TEMP  return RepeatPropagationMover::mover_name();
-// XRW TEMP }
 
+RepeatPropagationMover::RepeatPropagationMover():moves::Mover("RepeatPropagationMover"){}
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP RepeatPropagationMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new RepeatPropagationMover );
-// XRW TEMP }
-
-
-// XRW TEMP std::string RepeatPropagationMover::mover_name(){
-// XRW TEMP  return "RepeatPropagation";
-// XRW TEMP }
-
-// apl note -- this appeared in master around 9/28?std::string RepeatPropagationMoverCreator::mover_name(){
-// apl note -- this appeared in master around 9/28? return "RepeatPropagationMover";
-// apl note -- this appeared in master around 9/28?}
-
-
-RepeatPropagationMover::RepeatPropagationMover() :
-	moves::Mover( mover_name() )
-{}
+RepeatPropagationMover::RepeatPropagationMover(core::Size numb_repeats):moves::Mover("RepeatPropagationMover"){
+	//used by the Make junction mover to automatically detect the repeat position & length
+	numb_repeats_ = numb_repeats;
+	extract_repeat_info_from_pose_=true;
+	extract_repeat_template_repeat_=2;
+	maintain_cap_sequence_only_=true;
+	maintain_cap_ = false;
+	start_pose_length_ = 0;
+	start_pose_duplicate_residues_ = 0;
+	start_pose_numb_repeats_=4;
+	repeat_without_replacing_pose_=false;
+	maintain_cap_ = false;
+	maintain_ligand_ = false;
+	deal_with_length_change_scar_ = false;
+	ideal_repeat_=true;
+}
 
 void RepeatPropagationMover::apply(core::pose::Pose & pose) {
-	if ( pose.size()== last_res_ ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "can not handle situation where last_res is being repeated (yet...)");
+	if ( extract_repeat_info_from_pose_ ) {
+		extract_repeat_info_from_pose(pose);
 	}
-	if ( orig_pdb_length_!=9999 ) {
-		detect_last_repeat_residue(pose);
+	if ( pose.size()== last_res_ ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "can not handle situation where last_res is being repeated (yet...)");
+	}
+	if ( numb_repeats_ <  2 ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, "The minimum number of repeats is two. Else the ability to maintain caps would be undefined.");
 	}
 	if ( repeat_without_replacing_pose_ ) {
 		copy_phi_psi_omega(pose,pose);
 	} else {
 		core::pose::PoseOP repeat_poseOP( new core::pose::Pose() );
-
 		initialize_repeat_pose(pose,*repeat_poseOP);
-		copy_phi_psi_omega(pose,*repeat_poseOP);
+		copy_phi_psi_omega(pose,*repeat_poseOP); //**********************DO NOT ERASE
 		if ( maintain_cap_ ) {
-			add_caps(pose,*repeat_poseOP);
+			add_cap_seq_and_structure(pose,*repeat_poseOP);
+		}
+		if ( maintain_cap_sequence_only_ ) {
+			add_cap_seq(pose,*repeat_poseOP);
 		}
 		if ( maintain_ligand_ ) {
 			repeat_ligand(pose,*repeat_poseOP);
@@ -151,37 +161,37 @@ void RepeatPropagationMover::apply(core::pose::Pose & pose) {
 		}
 		pose = *repeat_poseOP;
 		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
-		if ( deal_with_ideal_loop_closure_scar_ ) {
+		if ( deal_with_length_change_scar_ ) {
+			//std::cout << "dealing with repeat scar" << deal_with_length_change_scar_ << std::endl;
 			trim_back_repeat_to_repair_scar(pose);
 		}
 	}
-
 	//rd2
-	//  std::cout <<"after propogation_______________________________________________________________________________" << std::endl;
-	//  for(Size ii=1; ii<= 75; ii++){
-	//   Real distN_CA = pose.residue(ii).xyz("N").distance(pose.residue(ii).xyz("CA"));
-	//   Real distCA_C = pose.residue(ii).xyz("CA").distance(pose.residue(ii).xyz("C"));
-	//   Real distC_N = pose.residue(ii).xyz("C").distance(pose.residue(ii+1).xyz("N"));
-	//   conformation::Residue const & rsd1( pose.residue( ii ) );
-	//   conformation::Residue const & rsd2( pose.residue( ii+1 ) );
-	//   AtomID const n1( rsd1.atom_index("N" ), ii );
-	//   AtomID const ca1( rsd1.atom_index("CA"), ii );
-	//   AtomID const c1( rsd1.atom_index("C" ), ii );
-	//   AtomID const n2( rsd2.atom_index("N" ), ii+1 );
-	//   AtomID const ca2( rsd2.atom_index("CA"), ii+1 );
-	//   AtomID const c2( rsd2.atom_index("C" ), ii+1 );
-	//   Real angle1 = pose.atom_tree().bond_angle(n1,ca1,c1);
-	//   Real angle2 = pose.atom_tree().bond_angle(ca1,c1,n2);
-	//   Real angle3 = pose.atom_tree().bond_angle(c1,n2,ca2);
-	//   std::cout << ii << ",a:" << pose.phi(ii) <<"," <<  pose.psi(ii) << "," << pose.omega(ii) << "," <<distN_CA << ","<< distCA_C << "," << distC_N <<"||" <<angle1 <<"," << angle2 <<"," << angle3 << std::endl;
-	//  }
+	// std::cout <<"after propogation_______________________________________________________________________________" << std::endl;
+	// for(Size ii=1; ii<= 75; ii++){
+	//  Real distN_CA = pose.residue(ii).xyz("N").distance(pose.residue(ii).xyz("CA"));
+	//  Real distCA_C = pose.residue(ii).xyz("CA").distance(pose.residue(ii).xyz("C"));
+	//  Real distC_N = pose.residue(ii).xyz("C").distance(pose.residue(ii+1).xyz("N"));
+	//  conformation::Residue const & rsd1( pose.residue( ii ) );
+	//  conformation::Residue const & rsd2( pose.residue( ii+1 ) );
+	//  core::id::AtomID const n1( rsd1.atom_index("N" ), ii );
+	//  core::id::AtomID const ca1( rsd1.atom_index("CA"), ii );
+	//  core::id::AtomID const c1( rsd1.atom_index("C" ), ii );
+	//  core::id::AtomID const n2( rsd2.atom_index("N" ), ii+1 );
+	//  core::id::AtomID const ca2( rsd2.atom_index("CA"), ii+1 );
+	//  core::id::AtomID const c2( rsd2.atom_index("C" ), ii+1 );
+	//  Real angle1 = pose.atom_tree().bond_angle(n1,ca1,c1);
+	//  Real angle2 = pose.atom_tree().bond_angle(ca1,c1,n2);
+	//  Real angle3 = pose.atom_tree().bond_angle(c1,n2,ca2);
+	//  std::cout << ii << ",a:" << pose.phi(ii) <<"," <<  pose.psi(ii) << "," << pose.omega(ii) << "," <<distN_CA << ","<< distCA_C << "," << distC_N <<"||" <<angle1 <<"," << angle2 <<"," << angle3 << std::endl;
+	// }
 }
 
 void RepeatPropagationMover::initialize_repeat_pose( Pose & pose, Pose & repeat_pose){
 	duplicate_residues_by_type(pose,repeat_pose);
 }
 
-void RepeatPropagationMover::add_caps(Pose & pose, Pose & repeat_pose){
+void RepeatPropagationMover::add_cap_seq_and_structure(Pose & pose, Pose & repeat_pose){
 	//create c-term subpose first
 	Size repeat_size = last_res_-first_res_+1;
 	if ( cTerm_cap_size_>0 ) {
@@ -216,7 +226,65 @@ void RepeatPropagationMover::add_caps(Pose & pose, Pose & repeat_pose){
 	}
 }
 
-vector<Real> RepeatPropagationMover::get_center_of_mass(const Real* coordinates, int number_of_atoms){
+void RepeatPropagationMover::add_cap_seq(Pose & pose, Pose & repeat_pose){
+	//create c-term subpose first
+	using namespace core::chemical;
+	std::string protein_seq = pose.sequence();
+	if ( cTerm_cap_size_>0 ) {
+		std::string cTerm_cap_seq = protein_seq.substr(pose.total_residue()-cTerm_cap_size_,cTerm_cap_size_);
+		simple_moves::MutateResidueOP mutation_mover;
+		for ( Size ii=1; ii<=cTerm_cap_seq.size(); ii++ ) {
+			Size pose_res=pose.total_residue()-cTerm_cap_size_+ii;
+			Size repeat_pose_res=repeat_pose.total_residue()-cTerm_cap_size_+ii;
+			AA my_aa =aa_from_oneletter_code(cTerm_cap_seq.at(ii-1));
+			mutation_mover = simple_moves::MutateResidueOP ( new simple_moves::MutateResidue (
+				repeat_pose.total_residue()-cTerm_cap_size_+ii, //position
+				my_aa//residue
+				) );
+
+			mutation_mover->apply( repeat_pose );
+			//copy chi's if full_atom
+			if ( pose.is_fullatom() ) {
+				Size n_chi = pose.residue_type(pose_res).nchi();
+				for ( core::Size i=1; i<=n_chi; ++i ) {
+					Real tmp_chi=pose.chi( i,pose_res);
+					repeat_pose.set_chi(i,repeat_pose_res,tmp_chi);
+				}
+			}
+		}
+	}
+	if ( nTerm_cap_size_>0 ) {
+		std::string nTerm_cap_seq = protein_seq.substr(0,nTerm_cap_size_);
+		simple_moves::MutateResidueOP mutation_mover;
+		for ( Size ii=1; ii<=nTerm_cap_seq.size(); ii++ ) {
+			Size pose_res=ii;
+			Size repeat_pose_res=ii;
+			if ( repeat_pose_res==1 ) {
+				remove_lower_terminus_type_from_pose_residue(repeat_pose,1);
+				remove_lower_terminus_type_from_pose_residue(pose,1);
+			}
+			AA my_aa =aa_from_oneletter_code(nTerm_cap_seq.at(ii-1));
+			mutation_mover = simple_moves::MutateResidueOP ( new simple_moves::MutateResidue (
+				ii, //position
+				my_aa//residue
+				) );
+			mutation_mover->apply( repeat_pose );
+			if ( pose.is_fullatom() ) {
+				Size n_chi = pose.residue_type(pose_res).nchi();
+				for ( core::Size i=1; i<=n_chi; ++i ) {
+					Real tmp_chi=pose.chi( i,pose_res);
+					repeat_pose.set_chi(i,repeat_pose_res,tmp_chi);
+				}
+			}
+			if ( repeat_pose_res==1 ) {
+				add_lower_terminus_type_to_pose_residue(repeat_pose,1);
+				add_lower_terminus_type_to_pose_residue(pose,1);
+			}
+		}
+	}
+}
+
+vector<Real> RepeatPropagationMover::get_center_of_mass(Real* coordinates, int number_of_atoms){
 	vector<Real> center;
 	center.push_back(0);
 	center.push_back(0);
@@ -237,7 +305,7 @@ vector<Real> RepeatPropagationMover::get_center_of_mass(const Real* coordinates,
 
 void RepeatPropagationMover::repeat_ligand(Pose & pose, Pose & repeat_pose){
 	using namespace chemical;
-	using Matrix = numeric::xyzMatrix<Real>;
+	typedef numeric::xyzMatrix< Real >  Matrix;
 	Size ligand_residue = 0;
 	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( ! pose.residue( i ).is_protein() ) {
@@ -319,11 +387,11 @@ vector1<Size> RepeatPropagationMover::initial_constrained_residues(const Pose & 
 	using namespace core::scoring::constraints;
 	vector1<Size> constrained_residues;
 	ConstraintCOPs constraints = pose.constraint_set()->get_all_constraints();
-	for ( ConstraintCOP const c : constraints ) {
+	BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
 		if ( c->type() == "MultiConstraint" ) {
 			MultiConstraintCOP multi_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::MultiConstraint const > ( c ) );
 			ConstraintCOPs constraints_l2=multi_cst->member_constraints();
-			for ( ConstraintCOP const c_l2 : constraints_l2 ) {
+			BOOST_FOREACH ( ConstraintCOP const c_l2, constraints_l2 ) {
 				if ( c_l2->type() == "AtomPair" ) {
 					AtomPairConstraintCOP cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( c_l2 ) );
 					Size res1  =  cst->atom1().rsd();
@@ -379,11 +447,11 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	Size repeat_length = last_res_ - first_res_+1;
 	ConstraintCOPs constraints = pose.constraint_set()->get_all_constraints();
 	for ( Size ii=1; ii<=numb_repeats_-1; ++ii ) {
-		for ( ConstraintCOP const c : constraints ) {
+		BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
 			if ( c->type() == "MultiConstraint" ) {
 				MultiConstraintCOP multi_cst_old( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::MultiConstraint const > ( c ) );
 				ConstraintCOPs constraints_l2=multi_cst_old->member_constraints();
-				for ( ConstraintCOP const c_l2 : constraints_l2 ) {
+				BOOST_FOREACH ( ConstraintCOP const c_l2, constraints_l2 ) {
 					if ( c_l2->type() == "AtomPair" ) { //it seemed like the wrong residue numbering was stored in the top level multi-constraint
 						AtomPairConstraintCOP old_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( c_l2 ) );
 						core::id::SequenceMapping seq_map;
@@ -444,8 +512,7 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	for ( Size ii=1; ii<=numb_repeats_-1; ++ii ) {
 		Size repeat_ligand_position = repeat_length*numb_repeats_+ii; //protein length + number of repeats.
 		core::id::SequenceMapping seqmap = setup_repeat_seqmap(ii,pose_ligand_position,repeat_ligand_position);
-		std::cout << "seqmap about to be applied" << std::endl;
-		seqmap.show(std::cout);
+		//seqmap.show(std::cout);
 		for ( Size jj=1; jj<=n_csts_pose; ++jj ) {
 			Size cst_location_in_cst_cache = ((int)ii-1)*n_csts_pose+jj;
 			EnzdesCstParamCacheOP tmp_param_cache =pose_cst_cache->param_cache(jj);
@@ -473,14 +540,14 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	}
 	//debug print out first and last residues to constrain
 	EnzdesCstParamCacheOP extra_res_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache());
-	for ( auto & first_repeat_constrained_re : first_repeat_constrained_res ) {
-		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( first_repeat_constrained_re.first );
-		TR <<"Constraining additional residue" <<  first_repeat_constrained_re.first << std::endl;
+	for ( std::map<Size,std::string>::iterator itr =first_repeat_constrained_res.begin() ; itr != first_repeat_constrained_res.end(); ++itr ) {
+		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( itr->first );
+		TR <<"Constraining additional residue" <<  itr->first << std::endl;
 
 	}
-	for ( auto & last_repeat_constrained_re : last_repeat_constrained_res ) {
-		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( last_repeat_constrained_re.first );
-		TR <<"Constraining additional residue" <<  last_repeat_constrained_re.first << std::endl;
+	for ( std::map<Size,std::string>::iterator itr =last_repeat_constrained_res.begin() ; itr != last_repeat_constrained_res.end(); ++itr ) {
+		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( itr->first );
+		TR <<"Constraining additional residue" <<  itr->first << std::endl;
 	}
 	repeat_cst_cache->set_param_cache(n_csts_repeat_pose+1 , extra_res_param_cache);
 	// EnzdesCstParamCacheOP tmp_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache());
@@ -516,7 +583,6 @@ void RepeatPropagationMover::duplicate_residues_by_type( Pose & pose, Pose & rep
 	for ( Size rep=1; rep<=tmp_numb_repeats; ++rep ) {
 		for ( Size res=first_res_; res<=last_res_; ++res ) {
 			repeat_pose.append_residue_by_bond(pose.residue(res),true/*ideal bonds*/);
-
 		}
 	}
 	if ( first_res_==1 ) {
@@ -537,6 +603,12 @@ void RepeatPropagationMover::copy_phi_psi_omega(Pose & pose, Pose & repeat_pose)
 	Real loop_omega = 0;
 	char loop_secstruct = 'H';
 	Size segment_length = last_res_ - first_res_+1;
+	vector1<Real> chi;
+	Size n_chi=0;
+	//initialize chi to 0
+	for ( int i=0; i<10; ++i ) {
+		chi.push_back(0);
+	}
 	for ( Size ii=1; ii<=segment_length; ++ii ) {
 		Size pose_res = first_res_-1+ii;
 		Size repeat_pose_res = ii;
@@ -545,17 +617,64 @@ void RepeatPropagationMover::copy_phi_psi_omega(Pose & pose, Pose & repeat_pose)
 			loop_psi = pose.psi(pose_res+segment_length);
 			loop_omega = pose.omega(pose_res+segment_length);
 			loop_secstruct = pose.secstruct(pose_res+segment_length);
+			if ( pose.is_fullatom() ) {
+				n_chi = pose.residue_type(pose_res+segment_length).nchi();
+				for ( core::Size i=1; i<=n_chi; ++i ) {
+					chi[i]=pose.chi( i, pose_res+segment_length);
+				}
+			}
 		} else {
 			loop_phi = pose.phi(pose_res);
 			loop_psi = pose.psi(pose_res);
 			loop_omega =pose.omega(pose_res);
 			loop_secstruct = pose.secstruct(pose_res);
+			if ( pose.is_fullatom() ) {
+				n_chi = pose.residue_type(pose_res).nchi();
+				for ( core::Size i=1; i<=n_chi; ++i ) {
+					chi[i]=pose.chi( i, pose_res);
+				}
+			}
 		}
 		for ( int rep=0; rep<(int)numb_repeats_; ++rep ) {
 			repeat_pose.set_phi(repeat_pose_res+( segment_length*rep), loop_phi );
 			repeat_pose.set_psi(repeat_pose_res+( segment_length*rep), loop_psi );
 			repeat_pose.set_omega( repeat_pose_res+(segment_length*rep),loop_omega );
 			repeat_pose.set_secstruct( repeat_pose_res+(segment_length*rep),loop_secstruct );
+			if ( pose.is_fullatom() ) {
+				for ( core::Size i=1; i<=n_chi; ++i ) {
+					repeat_pose.set_chi(i, repeat_pose_res+(segment_length*rep), chi[i]);
+				}
+			}
+			if ( !ideal_repeat_ ) {
+				conformation::Residue const & rsd1( pose.residue( pose_res ) );
+				conformation::Residue const & rsd2( pose.residue( pose_res+1 ) );
+				core::id::AtomID const n1( rsd1.atom_index("N" ), pose_res );
+				core::id::AtomID const ca1( rsd1.atom_index("CA"), pose_res );
+				core::id::AtomID const c1( rsd1.atom_index("C" ), pose_res );
+				core::id::AtomID const n2( rsd2.atom_index("N" ), pose_res+1 );
+				core::id::AtomID const ca2( rsd2.atom_index("CA"), pose_res+1 );
+				core::id::AtomID const c2( rsd2.atom_index("C" ), pose_res+1 );
+				core::id::AtomID const n1_rep( rsd1.atom_index("N" ), repeat_pose_res+( segment_length*rep) );
+				core::id::AtomID const ca1_rep( rsd1.atom_index("CA"), repeat_pose_res+( segment_length*rep) );
+				core::id::AtomID const c1_rep( rsd1.atom_index("C" ), repeat_pose_res+( segment_length*rep) );
+				Real angle1 = pose.conformation().bond_angle(n1,ca1,c1);
+				Real angle2 = pose.conformation().bond_angle(ca1,c1,n2);
+				Real angle3 = pose.conformation().bond_angle(c1,n2,ca2);
+				Real distN_CA = pose.conformation().bond_length(n1,ca1);
+				Real distCA_C = pose.conformation().bond_length(ca1,c1);
+				Real distC_N = pose.conformation().bond_length(c1,n2);
+				repeat_pose.conformation().set_bond_angle(n1_rep,ca1_rep,c1_rep,angle1);
+				repeat_pose.conformation().set_bond_length(n1_rep,ca1_rep,distN_CA);
+				repeat_pose.conformation().set_bond_length(ca1_rep,c1_rep,distCA_C);
+				if ( repeat_pose_res+( segment_length*rep)+1<=repeat_pose.size() ) {
+					core::id::AtomID const n2_rep( rsd2.atom_index("N" ), repeat_pose_res+( segment_length*rep)+1 );
+					core::id::AtomID const ca2_rep( rsd2.atom_index("CA"), repeat_pose_res+( segment_length*rep)+1 );
+					core::id::AtomID const c2_rep( rsd2.atom_index("C" ), repeat_pose_res+( segment_length*rep)+1 );
+					repeat_pose.conformation().set_bond_angle(ca1_rep,c1_rep,n2_rep,angle2);
+					repeat_pose.conformation().set_bond_angle(c1_rep,n2_rep,ca2_rep,angle3);
+					repeat_pose.conformation().set_bond_length(c1_rep,n2_rep,distC_N);
+				}
+			}
 		}
 	}
 }
@@ -677,16 +796,76 @@ void RepeatPropagationMover::generate_overlap(Pose & pose, Pose & parent_pose, s
 	renumber_pdbinfo_based_on_conf_chains(pose);
 }
 
-// XRW TEMP std::string RepeatPropagationMover::get_name() const { return "RepeatPropagationMover"; }
 
-void RepeatPropagationMover::detect_last_repeat_residue(const Pose & pose){
-	int length_change = pose.total_residue()-orig_pdb_length_;
-	Size orig_repeat_length = orig_pdb_length_/orig_number_repeats_;
-	Size new_repeat_length = orig_repeat_length+length_change;
-	//std::cout << "length_change" << length_change << " orig_repeat_length"<< orig_repeat_length << " new_repeat_length" << new_repeat_length << std::endl;
-	first_res_ = 15; //Randomly picked. to skip 1/2 the first repeat. May need to be changed
-	last_res_ = first_res_+new_repeat_length-1;
-	//std::cout << "first_res" << first_res_ << " last_res" << last_res_ << std::endl;
+void RepeatPropagationMover::extract_repeat_info_from_pose(const Pose & pose){
+	//-Note this code may change when tomponenet like architecture is pulled completely through the code
+	//description: determine start & ending residues plus repeat_length.
+	//Case 2: start_pose_length_==pose.length()
+	//Case 3: start_pose_length_!=pose.length() && (start_pose_length_!=0)
+	//Case 1: start_pose_duplicate_residues_ != 0
+	//std::cout << "hereA, pose length" << pose.total_residue() << ", start pose length" <<start_pose_length_ << "start_pose_duplicate_residues_" << start_pose_duplicate_residues_ << std::endl;
+	Size repeat_length=0;
+	if ( start_pose_duplicate_residues_!=0 ) {
+		//figure out how many residues are identical in the front and back.
+		//typically used in the DNA case with Carl.
+		bool found=false;
+		Real tolerance = 0.1; //allows a .1 degree change
+		Size max_residue_change = 3;
+		//Check no change first, because that is most likely and there is always a chance of error if the phi/psi is identical
+		//***********problems could occur here if the phi/psi are identical************
+		//Checking 6 residues in
+		Real n_term_psi_minus1 = pose.psi(5);
+		Real n_term_phi = pose.phi(6);
+		Real n_term_psi = pose.psi(6);
+		Size c_term_pos = pose.size()-start_pose_duplicate_residues_+6;
+		Real c_term_psi_minus1 = pose.psi(c_term_pos-1);
+		Real c_term_phi = pose.phi(c_term_pos);
+		Real c_term_psi = pose.psi(c_term_pos);
+		Size numb_duplicate_residues = 0;
+		if ( (fabs(n_term_phi - c_term_phi) < tolerance) && (fabs(n_term_psi - c_term_psi) < tolerance) && (fabs(n_term_psi_minus1 - c_term_psi_minus1) < tolerance) ) {
+			found=true;
+			numb_duplicate_residues=start_pose_duplicate_residues_;
+		}
+		if ( found==false ) {
+			for ( int ii=-max_residue_change; ii<=(int)max_residue_change && !found; ii++ ) {
+				c_term_pos = pose.size()-start_pose_duplicate_residues_+6+ii;
+				c_term_psi_minus1 = pose.psi(c_term_pos-1);
+				c_term_phi = pose.phi(c_term_pos);
+				c_term_psi = pose.psi(c_term_pos);
+				if ( (fabs(n_term_phi - c_term_phi) < tolerance) && (fabs(n_term_psi - c_term_psi) < tolerance) && (fabs(n_term_psi_minus1 - c_term_psi_minus1) < tolerance) ) {
+					found=true;
+					numb_duplicate_residues=start_pose_duplicate_residues_-ii;
+				}
+			}
+		}
+		first_res_=6;
+		last_res_=pose.total_residue()-numb_duplicate_residues+6-1;
+		repeat_length = last_res_-first_res_+1;
+		deal_with_length_change_scar_=true;
+		numb_repeats_ = numb_repeats_+1; //One repeat will be supsequently deleted.
+	} else {
+		if ( start_pose_length_!=pose.size() && (start_pose_length_!=0) ) {
+			//stanard case. For when a protein has been resized
+			int adjustment_length = pose.total_residue()-start_pose_length_;
+			repeat_length = start_pose_length_/start_pose_numb_repeats_+adjustment_length;
+			first_res_=6; //anything less than this and there's issues propogating code designed with tomponent
+			last_res_=first_res_+repeat_length-1;
+			deal_with_length_change_scar_=true;
+			numb_repeats_ = numb_repeats_+1; //One repeat will be supsequently deleted.
+		} else {
+			repeat_length = pose.size()/start_pose_numb_repeats_;
+			Size offset = (extract_repeat_template_repeat_-1)*repeat_length;
+			first_res_=1+offset;
+			last_res_= first_res_+repeat_length-1;
+		}
+	}
+	//set caps if needed
+	if ( maintain_cap_sequence_only_ ) {
+		nTerm_cap_size_ = repeat_length;
+		cTerm_cap_size_ = repeat_length;
+	}
+	//std::cout << "repeat_length" << repeat_length << std::endl;
+	//std::cout << "first_res_" << first_res_ << "last_res_" << last_res_ << "deal_with_length_change_scar_" << deal_with_length_change_scar_ << std::endl;
 }
 
 void RepeatPropagationMover::trim_back_repeat_to_repair_scar(Pose & pose){
@@ -697,14 +876,13 @@ void RepeatPropagationMover::trim_back_repeat_to_repair_scar(Pose & pose){
 	Size trim_stop_Nterm = repeat_length-first_res_+1;
 	Size trim_start_Cterm =pose.total_residue()-first_res_+2; //unsure why +2 but it looks most right
 	Size trim_stop_Cterm = pose.total_residue();
-	std::cout << "trimming" << trim_start_Nterm << " to " << trim_stop_Nterm << " and " << trim_start_Cterm << " to " << trim_stop_Cterm<< std::endl;
 	pose.conformation().delete_residue_range_slow(trim_start_Cterm,trim_stop_Cterm);
 	pose.conformation().delete_residue_range_slow(trim_start_Nterm,trim_stop_Nterm);
 	renumber_pdbinfo_based_on_conf_chains(pose,true,false,false,false);
 }
 
 
-// XRW TEMP std::string RepeatPropagationMover::get_name() const { return "RepeatPropagationMover"; }
+std::string RepeatPropagationMover::get_name() const { return "RepeatPropagationMover"; }
 
 void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
@@ -713,49 +891,34 @@ void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 	Pose const & //pose
 )
 {
-	if ( !tag->hasOption("first_template_res") ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "repeat mover requires the first residue be entered with first_res tag");
-	}
-	first_res_ = tag->getOption<Size>("first_template_res");
+	first_res_ = tag->getOption<Size>("first_template_res",9999);
 	last_res_ = tag->getOption<Size>("last_template_res",9999);
-	std::string detect_repeat_length_change_str (tag->getOption< std::string >( "detect_repeat_length_change","9999,9999") ); //number of repeats,original length
-	utility::vector1< std::string > detect_repeat_length_change_split( utility::string_split( detect_repeat_length_change_str , ',' ) );
-	orig_number_repeats_ = atoi(detect_repeat_length_change_split[1].c_str());
-	orig_pdb_length_ = atoi(detect_repeat_length_change_split[2].c_str());
-	if ( !tag->hasOption("last_template_res") && orig_pdb_length_==9999 ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "repeat mover requires the last residue to be entered with last_res tag or auto detected");
-	}
-	if ( !tag->hasOption("numb_repeats") ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "repeat mover requires the number of repeats be entered with numb_repeats tag");
-	}
 	numb_repeats_ = tag->getOption<Size>("numb_repeats");
-	deal_with_ideal_loop_closure_scar_ = false;
-	if ( orig_pdb_length_==9999 ) {
-		deal_with_ideal_loop_closure_scar_ = false;
-	} else {
-		deal_with_ideal_loop_closure_scar_ = true;
-		numb_repeats_=numb_repeats_+1;
+	ideal_repeat_ = tag->getOption<bool>("ideal_repeat",true);
+	if ( !tag->hasOption("numb_repeats") ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception,  "repeat mover requires the number of repeats be entered with numb_repeats tag");
 	}
+	//other random flags
 	repeat_without_replacing_pose_ = tag->getOption<bool>("repeat_without_replacing_pose",false);//for speed.
 	maintain_cap_ = tag->getOption<bool>("maintain_cap",false);
+	maintain_cap_sequence_only_ = tag->getOption<bool>("maintain_cap_sequence_only",false);
 	maintain_ligand_ = tag->getOption<bool>("maintain_ligand",false);
+	//various options when extracting repeat info from template
+	extract_repeat_info_from_pose_ = tag->getOption<bool>("extract_repeat_info_from_pose",false);
+	extract_repeat_template_repeat_ = tag->getOption<Size>("extract_repeat_template_repeat",1);
+	deal_with_length_change_scar_ = false;
+	start_pose_numb_repeats_ = tag->getOption<Size>("start_pose_numb_repeats",4);
+	start_pose_length_ = tag->getOption<Size>("start_pose_length",0);
+	start_pose_duplicate_residues_ = tag->getOption<Size>("start_pose_duplicate_residues",0);
 	nTerm_cap_size_=0;
 	cTerm_cap_size_=0;
-	if ( maintain_cap_ ) {
+	if ( (maintain_cap_ ||maintain_cap_sequence_only_) && !extract_repeat_info_from_pose_ ) {
 		if ( (!tag->hasOption("nTerm_cap_size"))||(!tag->hasOption("cTerm_cap_size")) ) {
-			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "repeat mover requires cTerm_cap and nTerm_cap defined if trying to maintain cap sequence or structure");
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "repeat mover requires cTerm_cap and nTerm_cap defined if trying to maintain cap sequence or structure");
 		}
 		nTerm_cap_size_ = tag->getOption<Size>("nTerm_cap_size");
 		cTerm_cap_size_ = tag->getOption<Size>("cTerm_cap_size");
 	}
-}
-
-std::string RepeatPropagationMover::get_name() const {
-	return mover_name();
-}
-
-std::string RepeatPropagationMover::mover_name() {
-	return "RepeatPropagationMover";
 }
 
 void RepeatPropagationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -763,16 +926,28 @@ void RepeatPropagationMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "first_template_res", xsct_non_negative_integer, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "last_template_res", xsct_non_negative_integer, "XRW TO DO", "9999" )
-		+ XMLSchemaAttribute::attribute_w_default( "detect_repeat_length_change", xsct_size_cs_pair, "XRW TO DO", "9999,9999" )
-		+ XMLSchemaAttribute::required_attribute( "numb_repeats", xsct_non_negative_integer, "XRW TO DO" )
-		+ XMLSchemaAttribute::attribute_w_default( "repeat_without_replacing_pose", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "maintain_cap", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "maintain_ligand", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute( "nTerm_cap_size", xsct_non_negative_integer, "XRW TO DO")
-		+ XMLSchemaAttribute( "cTerm_cap_size", xsct_non_negative_integer, "XRW TO DO" );
+		+ XMLSchemaAttribute::attribute_w_default( "first_template_res", xsct_non_negative_integer, "first template residue" ,"9999" )
+		+ XMLSchemaAttribute::attribute_w_default( "last_template_res", xsct_non_negative_integer, "last template residue", "9999" )
+		+ XMLSchemaAttribute::required_attribute( "numb_repeats", xsct_non_negative_integer, "number of repeats to output" )
+		+ XMLSchemaAttribute::attribute_w_default("ideal_repeat", xsct_rosetta_bool, "is the repeat internally ideal","true")
+		+ XMLSchemaAttribute::attribute_w_default( "repeat_without_replacing_pose", xsct_rosetta_bool, "for speed when the duplicating the same length pose", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "maintain_cap", xsct_rosetta_bool, "if you want the cap structure and sequence maintained", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "maintain_cap_sequence_only", xsct_rosetta_bool, "maintain only the sequence in cap", "false" )
+		+ XMLSchemaAttribute( "nTerm_cap_size", xsct_non_negative_integer, "Size of n_term of cap")
+		+ XMLSchemaAttribute( "cTerm_cap_size", xsct_non_negative_integer, "Size of c_term of cap" )
+		+ XMLSchemaAttribute::attribute_w_default( "maintain_ligand", xsct_rosetta_bool, "maintain ligand", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "extract_repeat_info_from_pose", xsct_rosetta_bool, "mode where repeat info is extracted from input pose", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "extract_repeat_template_repeat", xsct_non_negative_integer, "location where repeat info is extracted from input pose", "1" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "start_pose_numb_repeats", xsct_non_negative_integer, "number of repeats in input pose", "4" )
+		+ XMLSchemaAttribute::attribute_w_default( "start_pose_length", xsct_non_negative_integer, "orig length of input pose. This is used to catch pose length changes", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "start_pose_duplicate_residues", xsct_non_negative_integer, "used when only 1 repeat in input pose and there are identical residues in N_term and C_term", "0" );
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RepeatPropagationMover::mover_name(){
+	return "RepeatPropagationMover";
 }
 
 std::string RepeatPropagationMoverCreator::keyname() const {
@@ -788,8 +963,6 @@ void RepeatPropagationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaD
 {
 	RepeatPropagationMover::provide_xml_schema( xsd );
 }
-
-
 
 } // moves
 } // protocols

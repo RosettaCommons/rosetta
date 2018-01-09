@@ -414,6 +414,8 @@ static MoverRegistrator< recces::scratch::ThermalMinimizerCreator > reg_ThermalM
 static MoverRegistrator< relax::AtomCoordinateCstMoverCreator> reg_AtomCoordinateCstMoverCreator;
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 static MoverRegistrator< relax::LocalRelaxCreator> reg_LocalRelaxCreator;
+static MoverRegistrator< relax::RepeatProteinRelaxCreator> reg_RepeatProteinRelaxCreator;
+
 
 static MoverRegistrator< relax::membrane::MPFastRelaxMoverCreator > reg_MPFastRelaxMoverCreator;
 
@@ -456,6 +458,7 @@ static MoverRegistrator< legacy_sewing::LegacyEnumerateAssemblyMoverCreator > re
 static MoverRegistrator< simple_moves::AddChainMoverCreator > reg_AddChainMoverCreator;
 static MoverRegistrator< simple_moves::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;
 static MoverRegistrator< simple_moves::AddJobPairDataCreator > reg_AddJobPairDataCreator;
+static MoverRegistrator< simple_moves::AddResidueLabelMoverCreator > reg_AddResidueLabelMoverCreator;
 static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
 static MoverRegistrator< simple_moves::ChangeAndResetFoldTreeMoverCreator > reg_ChangeAndResetFoldTreeMoverCreator;
 static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
@@ -489,8 +492,10 @@ static MoverRegistrator< simple_moves::GenericMonteCarloMoverCreator > reg_Gener
 static MoverRegistrator< simple_moves::GenericSimulatedAnnealerCreator > reg_GenericSimulatedAnnealerCreator;
 static MoverRegistrator< simple_moves::LoadPDBMoverCreator > reg_LoadPDBMoverCreator;
 static MoverRegistrator< simple_moves::LoadUnboundRotMoverCreator > reg_LoadUnboundRotMoverCreator;
+static MoverRegistrator< simple_moves::MakeJunctionsMoverCreator > reg_MakeJunctionsMoverCreator;
 static MoverRegistrator< simple_moves::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
 static MoverRegistrator< simple_moves::MembraneTopologyCreator > reg_MembraneTopologyCreator;
+static MoverRegistrator< simple_moves::MergePDBatOverlapMoverCreator > reg_MergePDBatOverlapMoverCreator;
 static MoverRegistrator< simple_moves::MergePDBMoverCreator > reg_MergePDBMoverCreator;
 static MoverRegistrator< simple_moves::MinMoverCreator > reg_MinMoverCreator;
 static MoverRegistrator< simple_moves::MinPackMoverCreator > reg_MinPackMoverCreator;
@@ -509,6 +514,7 @@ static MoverRegistrator< simple_moves::RandomOmegaFlipMoverCreator > reg_RandomO
 static MoverRegistrator< simple_moves::RandomTorsionMoverCreator > reg_RandomTorsionMoverCreator;
 static MoverRegistrator< simple_moves::RepeatPropagationMoverCreator > reg_RepeatPropagationMoverCreator;
 static MoverRegistrator< simple_moves::ReportEffectivePKACreator > ReportEffectivePKACreator;
+static MoverRegistrator< simple_moves::ReportXYZCreator > reg_ReportXYZCreator;
 static MoverRegistrator< simple_moves::ResetBaselineMoverCreator > reg_ResetBaselineMoverCreator;
 static MoverRegistrator< simple_moves::ResetFoldTreeCreator > ResetFoldTreeCreator;
 static MoverRegistrator< simple_moves::ResidueTypeConstraintMoverCreator > ResidueTypeConstraintMoverCreator;

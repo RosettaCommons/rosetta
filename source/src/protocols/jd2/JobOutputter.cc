@@ -16,6 +16,7 @@
 
 // package headers
 #include <protocols/jd2/Job.hh>
+#include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobInputter.fwd.hh>
 #include <protocols/jd2/util.hh>
@@ -68,6 +69,14 @@ void JobOutputter::flush() {}
 /// input tags are usually file names).  Otherwise, it will keep the entire input
 /// tag as-is.
 std::string JobOutputter::affixed_numbered_name( JobCOP job ){
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+	if ( option[out::mover_controlled_output_name]() ) {
+		std::string pose_name = job->inner_job()->optional_output_name();
+		if ( pose_name.size()>0 ) {
+			return(pose_name);
+		}
+	}
 	// Use at least 4 digits in number to match Rosetta++
 	core::Size nstruct_width = 0;
 	core::Size const nstruct = job->nstruct_max();

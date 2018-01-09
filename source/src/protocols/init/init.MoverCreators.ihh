@@ -402,6 +402,7 @@
 #include <protocols/relax/AtomCoordinateCstMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
 #include <protocols/relax/LocalRelaxCreator.hh>
+#include <protocols/relax/RepeatProteinRelaxCreator.hh>
 
 #include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh>
 
@@ -443,6 +444,7 @@
 #include <protocols/simple_moves/AddChainMoverCreator.hh>
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMoverCreator.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>
+#include <protocols/simple_moves/AddResidueLabelMoverCreator.hh>
 #include <protocols/simple_moves/AlignChainMoverCreator.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
 #include <protocols/simple_moves/BBGaussianMoverCreator.hh>
@@ -474,8 +476,10 @@
 #include <protocols/simple_moves/GenericSimulatedAnnealerCreator.hh>
 #include <protocols/simple_moves/LoadPDBMoverCreator.hh>
 #include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>
+#include <protocols/simple_moves/MakeJunctionsMoverCreator.hh>
 #include <protocols/simple_moves/MakePolyXMoverCreator.hh>
 #include <protocols/simple_moves/MembraneTopologyCreator.hh>
+#include <protocols/simple_moves/MergePDBatOverlapMoverCreator.hh>
 #include <protocols/simple_moves/MergePDBMoverCreator.hh>
 #include <protocols/simple_moves/MinMoverCreator.hh>
 #include <protocols/simple_moves/MinPackMoverCreator.hh>
@@ -494,6 +498,7 @@
 #include <protocols/simple_moves/RandomTorsionMoverCreator.hh>
 #include <protocols/simple_moves/RepeatPropagationMoverCreator.hh>
 #include <protocols/simple_moves/ReportEffectivePKACreator.hh>
+#include <protocols/simple_moves/ReportXYZCreator.hh>
 #include <protocols/simple_moves/ResetBaselineMoverCreator.hh>
 #include <protocols/simple_moves/ResetFoldTreeCreator.hh>
 #include <protocols/simple_moves/ResidueTypeConstraintMoverCreator.hh>

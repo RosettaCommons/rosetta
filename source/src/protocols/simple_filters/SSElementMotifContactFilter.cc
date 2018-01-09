@@ -19,11 +19,13 @@
 #include <numeric/xyzVector.hh>
 
 // Project Headers
+
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 #include <core/types.hh>
@@ -46,6 +48,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/simple_filters/AtomicContactFilter.hh>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
@@ -57,7 +60,7 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-static basic::Tracer tr("protocols.filters.SSElementMotifContactFilter");
+static basic::Tracer TR("protocols.filters.SSElementMotifContactFilter");
 
 namespace protocols {
 namespace simple_filters {
@@ -74,10 +77,7 @@ SSElementMotifContactFilter::SSElementMotifContactFilter():
 {}
 
 // @brief copy constructor
-SSElementMotifContactFilter::SSElementMotifContactFilter( SSElementMotifContactFilter const & rval ):
-	Super( rval ),
-	filtered_value_( rval.filtered_value_ )
-{}
+SSElementMotifContactFilter::SSElementMotifContactFilter( SSElementMotifContactFilter const & ) = default;
 
 // @brief destructor
 SSElementMotifContactFilter::~SSElementMotifContactFilter() = default;
@@ -90,7 +90,7 @@ void SSElementMotifContactFilter::filtered_value( Real const & value )
 
 /// @brief
 SSElementMotifContactFilter::Real
-SSElementMotifContactFilter::report_sm( const Pose & pose ) const
+SSElementMotifContactFilter::report_sm( Pose const & pose ) const
 {
 	return  compute( pose );
 }
@@ -112,8 +112,8 @@ protocols::loops::Loops SSElementMotifContactFilter::get_ss_elements(const Pose 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	core::scoring::dssp::Dssp dssp( pose );
-	dssp.dssp_reduced();
-	char lastSecStruct = dssp.get_dssp_secstruct( 1 );
+	std::string dssp_secstruct = dssp.get_dssp_plus_abego_L_def(pose);
+	char lastSecStruct = dssp_secstruct.at(0);
 	Size startSS = 0;
 	Size endSS = 0;
 	Size nres1 = pose.size();
@@ -124,20 +124,20 @@ protocols::loops::Loops SSElementMotifContactFilter::get_ss_elements(const Pose 
 		}
 	}
 	protocols::loops::Loops ss_elements;
-	if ( dssp.get_dssp_secstruct(1)=='H' || dssp.get_dssp_secstruct(1)=='E' ) {
+	if ( dssp_secstruct.at(0)=='H' || dssp_secstruct.at(0)=='E' ) {
 		startSS=  1;
 	}
 	for ( core::Size ii = 2; ii <= nres1; ++ii ) {
-		if ( (dssp.get_dssp_secstruct(ii) == 'H' || dssp.get_dssp_secstruct(ii)) && lastSecStruct == 'L' ) {
+		if ( (dssp_secstruct.at(ii-1) == 'H' || dssp_secstruct.at(ii-1)) && lastSecStruct == 'L' ) {
 			startSS = ii;
 		}
-		if ( dssp.get_dssp_secstruct(ii)!=lastSecStruct && (lastSecStruct ==  'H' || lastSecStruct ==  'E') ) {
+		if ( dssp_secstruct.at(ii-1)!=lastSecStruct && (lastSecStruct ==  'H' || lastSecStruct ==  'E') ) {
 			endSS = ii-1;
 			if ( endSS-startSS >= 2 ) {
 				ss_elements.add_loop(Loop(startSS,endSS));
 			}
 		}
-		lastSecStruct = dssp.get_dssp_secstruct(ii);
+		lastSecStruct = dssp_secstruct.at(ii-1);
 	}
 	return(ss_elements);
 }
@@ -169,13 +169,13 @@ Size SSElementMotifContactFilter::get_ssElements_in_contact_w_threshold(std::mul
 }
 
 
-Size SSElementMotifContactFilter::get_SSelements_in_contact(Size element,protocols::loops::Loops ssElements, const Pose & pose) const{
+Size SSElementMotifContactFilter::get_SSelements_in_contact(Size element,protocols::loops::Loops ssElements, Pose const & pose) const{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using core::kinematics::FoldTree;
 	std::multiset<Size> ssElements_in_contact;
 	core::scoring::dssp::Dssp dssp( pose );
-	const FoldTree& tree = pose.fold_tree();
+	FoldTree const tree = pose.fold_tree();
 	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
@@ -189,23 +189,34 @@ Size SSElementMotifContactFilter::get_SSelements_in_contact(Size element,protoco
 		char aa1 = pose.residue(ir).name1();
 		for ( size_t jr = 1; jr <= nres1; ++jr ) {
 			if ( !tree.is_jump_point(ir) && !tree.is_jump_point(jr) ) {
-				Real dist = pose.residue(ir).xyz("CA").distance(pose.residue(jr).xyz("CA"));
-				if ( dist < 12 ) {
-					char ss2 = dssp.get_dssp_secstruct( jr );
-					char aa2 = pose.residue(jr).name1();
-					Xform const jbb_stub = core::pose::motif::get_backbone_reference_frame(pose,jr);
-					Xform const Xbb = ibb_stub.inverse() * jbb_stub;
-					core::scoring::motif::XformScoreCOP xs_bb_fxn1(mman_->get_xform_score_BB_BB(ss1,ss2,aa1,aa2));
-					core::scoring::motif::XformScoreCOP xs_bb_fxn2(mman_->get_xform_score_BB_BB(ss2,ss1,aa2,aa1));
-					Real tmpScore = 0;
-					if ( xs_bb_fxn1 != nullptr ) {
-						tmpScore += xs_bb_fxn1->score_of_bin(Xbb);
-						tmpScore += xs_bb_fxn2->score_of_bin(Xbb.inverse());
-					}
-					if ( tmpScore>0 ) {
+				if ( use_atomic_contact_filter_ ) {
+					protocols::simple_filters::AtomicContactFilter contact_filter(ir,jr,4.5,1,1,0 );
+					bool in_contact = contact_filter.apply(pose);
+					if ( in_contact ) {
 						Size resHit = which_ssElement(jr,ssElements);
 						if ( resHit != 0 && resHit !=element ) { //must be in SS element and not the current element
 							ssElements_in_contact.insert(resHit);
+						}
+					}
+				} else {
+					Real dist = pose.residue(ir).xyz("CA").distance(pose.residue(jr).xyz("CA"));
+					if ( dist < 12 ) {
+						char ss2 = dssp.get_dssp_secstruct( jr );
+						char aa2 = pose.residue(jr).name1();
+						Xform const jbb_stub = core::pose::motif::get_backbone_reference_frame(pose,jr);
+						Xform const Xbb = ibb_stub.inverse() * jbb_stub;
+						core::scoring::motif::XformScoreCOP xs_bb_fxn1(mman_->get_xform_score_BB_BB(ss1,ss2,aa1,aa2));
+						core::scoring::motif::XformScoreCOP xs_bb_fxn2(mman_->get_xform_score_BB_BB(ss2,ss1,aa2,aa1));
+						Real tmpScore = 0;
+						if ( xs_bb_fxn1 != nullptr ) {
+							tmpScore += xs_bb_fxn1->score_of_bin(Xbb);
+							tmpScore += xs_bb_fxn2->score_of_bin(Xbb.inverse());
+						}
+						if ( tmpScore>0 ) {
+							Size resHit = which_ssElement(jr,ssElements);
+							if ( resHit != 0 && resHit !=element ) { //must be in SS element and not the current element
+								ssElements_in_contact.insert(resHit);
+							}
 						}
 					}
 				}
@@ -224,10 +235,19 @@ SSElementMotifContactFilter::compute( const Pose & pose ) const
 	protocols::loops::Loops ss_elements = get_ss_elements(pose);
 	Size startElement = 1;
 	Size endElement = ss_elements.size();
-	if ( ignore_terminal_SS_>0 ) {
-		startElement+=ignore_terminal_SS_;
-		endElement-=ignore_terminal_SS_;
+	if ( ignore_n_terminal_SS_>0 ) {
+		startElement+=ignore_n_terminal_SS_;
 	}
+	if ( ignore_c_terminal_SS_>0 ) {
+		endElement-=ignore_c_terminal_SS_;
+	}
+	TR.Debug << "total_elements" << ss_elements.size() << "startElement:" << startElement << "endElement:" << endElement << std::endl;
+	//debug begin
+	TR.Debug << "ss element positions" << std::endl;
+	for ( Size ii=1; ii<=ss_elements.size(); ++ii ) {
+		TR.Debug << ii <<", " << ss_elements[ii].start() <<", " << ss_elements[ii].stop() << std::endl;
+	}
+	//end debug
 	Real score = 0;
 	if ( only_n_term_ ) {
 		return(get_SSelements_in_contact(1,ss_elements,pose));
@@ -264,12 +284,12 @@ SSElementMotifContactFilter::compute( const Pose & pose ) const
 bool SSElementMotifContactFilter::apply(const Pose & pose ) const
 {
 	Real value = compute( pose );
-	tr << "value" << value << "filtered_value_" << threshold_ << std::endl;
+	TR << "value" << value << "filtered_value_" << threshold_ << std::endl;
 	if ( value >= threshold_ ) {
-		tr << "Successfully filtered: " << value << std::endl;
+		TR << "Successfully filtered: " << value << std::endl;
 		return true;
 	} else {
-		tr << "Filter failed current/threshold=" << value << "/" << threshold_ << std::endl;
+		TR << "Filter failed current/threshold=" << value << "/" << threshold_ << std::endl;
 		return false;
 	}
 } // apply_filter
@@ -287,7 +307,14 @@ SSElementMotifContactFilter::parse_my_tag(
 	threshold_ = tag->getOption<Real>("threshold",0);
 	contacts_between_ssElement_threshold_ = tag->getOption<Real>("contacts_between_ssElement_threshold",3);
 	report_avg_ = tag->getOption<bool>( "report_avg", true );
-	ignore_terminal_SS_ = tag->getOption<Size>("ignore_terminal_ss",0);
+	ignore_n_terminal_SS_ = tag->getOption<Size>("ignore_n_terminal_ss",0);
+	ignore_c_terminal_SS_ = tag->getOption<Size>("ignore_c_terminal_ss",0);
+	Size ignore_terminal_SS = tag->getOption<Size>("ignore_terminal_ss",0);
+	if ( ignore_terminal_SS != 0 ) {
+		ignore_n_terminal_SS_ = ignore_terminal_SS;
+		ignore_c_terminal_SS_ = ignore_terminal_SS;
+	}
+	use_atomic_contact_filter_ = tag->getOption<bool>("use_atomic_contact_filter",false);
 	only_n_term_ = tag->getOption<bool>("only_n_term",false);
 	only_c_term_ = tag->getOption<bool>("only_c_term",false);
 	mman_ = core::scoring::motif::MotifHashManager::get_instance();
@@ -316,8 +343,11 @@ void SSElementMotifContactFilter::provide_xml_schema( utility::tag::XMLSchemaDef
 		+ XMLSchemaAttribute::attribute_w_default("contacts_between_ssElement_threshold", xsct_real, "XRW TO DO", "3")
 		+ XMLSchemaAttribute::attribute_w_default("report_avg", xsct_rosetta_bool, "XRW TO DO", "true")
 		+ XMLSchemaAttribute::attribute_w_default("ignore_terminal_ss", xsct_non_negative_integer, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("ignore_n_terminal_ss", xsct_non_negative_integer, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("ignore_c_terminal_ss", xsct_non_negative_integer, "XRW TO DO", "0")
 		+ XMLSchemaAttribute::attribute_w_default("only_n_term", xsct_rosetta_bool, "XRW TO DO", "false")
-		+ XMLSchemaAttribute::attribute_w_default("only_c_term", xsct_rosetta_bool, "XRW TO DO", "false");
+		+ XMLSchemaAttribute::attribute_w_default("only_c_term", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("use_atomic_contact_filter", xsct_rosetta_bool, "uses the atomic contact filter instead of motifs. only applicable if structure already FA", "false");
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
 }

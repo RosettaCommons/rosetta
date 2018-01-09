@@ -14,15 +14,16 @@
 #ifndef INCLUDED_protocols_simple_moves_MergePDBMover_hh
 #define INCLUDED_protocols_simple_moves_MergePDBMover_hh
 
-
-#include <protocols/simple_moves/MergePDBMover.fwd.hh>
-#include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/simple_moves/MergePDBMover.fwd.hh>
+#include <utility/vector1.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 
@@ -32,6 +33,9 @@ namespace simple_moves {
 class MergePDBMover : public moves::Mover {
 
 public:
+	typedef core::select::residue_selector::ResidueSelectorOP ResidueSelectorOP;
+	typedef core::select::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+
 	struct Overlap{
 		Size start_overlap_xmlPose;
 		Size end_overlap_xmlPose;
@@ -47,10 +51,23 @@ public:
 			std::cout << start_overlap_xmlPose <<"," << end_overlap_xmlPose << "::" << start_overlap_pose << "," << end_overlap_pose << std::endl;
 		}
 	};
+	/// @brief  Constructor
 	MergePDBMover();
-	utility::vector1<Overlap> determine_overlap(Pose const pose);
-	utility::vector1<core::pose::PoseOP> generate_overlaps(Pose & pose, utility::vector1<MergePDBMover::Overlap> overlaps);
-	utility::vector1<core::pose::PoseOP> pack_and_minimize(utility::vector1<core::pose::PoseOP> poses, utility::vector1<MergePDBMover::Overlap> overlaps,core::Real baseline_score);
+	/// @brief Determines the overlaps. stores the start and end position in the struct Overlap
+	utility::vector1<Overlap> determine_overlap(Pose const pose,Size chain_id);
+	/// @brief fast check to maake sure the pose isn't a structural duplicate
+	bool check_duplicate(Pose &pose, utility::vector1<core::pose::PoseOP> outputPoses);
+	/// @brief Uses the overlap to generate poses
+	utility::vector1<core::pose::PoseOP> generate_overlaps(Pose & pose, utility::vector1<MergePDBMover::Overlap> overlaps,Size chain_id);
+	/// @brief Figures out the closest residue that's not part of the overlap.
+	core::Size closest_non_overlap_residue(core::pose::Pose const & pose, core::Size resid, core::Size start_overlap_resid, core::Size end_overlap_resid);
+	/// @brief Gets the entire SS element the match is on
+	void increase_range_to_ignore_ss_element(core::pose::Pose const & pose, Size init_start, Size init_end, Size & ss_start, Size & ss_end);
+	/// @brief Copies the sequence in the overlap region as appropriate. This sets the initial residues before the pack and minimize is called
+	void copy_sequence(core::Size start_overlap_resid, core::Size end_overlap_resid, core::Size start_overlap_input_pose_resid,core::Size start_overlap_xml_pose_resid,core::pose::Pose const & input_pose,core::pose::Pose const & xml_pose,core::pose::Pose & output_pose);
+	/// @brief packs and minimizes if no clashes as determined by score0
+	utility::vector1<core::pose::PoseOP> pack_and_minimize(utility::vector1<core::pose::PoseOP> poses,core::Real baseline_score);
+	/// @brief any poses that score lower than the input files is output
 	core::pose::PoseOP get_additional_output() override;
 
 	void apply( core::pose::Pose & pose ) override;
@@ -60,7 +77,7 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
@@ -84,13 +101,20 @@ private:
 	std::string overlap_location_pose_;
 	core::Real overlap_max_rmsd_;
 	Size overlap_length_;
-	Size overlap_scan_range_;
+	Size overlap_scan_range_cmdLine_;
+	Size overlap_scan_range_xml_;
 	core::Real design_range_;
 	core::Real packing_range_;
 	core::scoring::ScoreFunctionOP sfxn_;
+	core::scoring::ScoreFunctionOP asymm_score_;
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool do_minimize_;
-
+	std::string chain_;
+	std::string symm_file_;
+	std::string no_design_label_;
+	std::string init_overlap_sequence_;
+	core::Real duplicate_rmsd_pose_threshold_;
+	bool detect_disulf_before_repack_;
 };
 
 } // simple_moves

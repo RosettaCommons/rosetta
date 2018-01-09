@@ -75,6 +75,8 @@ public:
 	char get_dssp_secstruct( core::Size resid );
 
 	std::string get_dssp_secstruct();
+	std::string get_dssp_unreduced_secstruct();
+	std::string get_dssp_plus_abego_L_def(core::pose::Pose const & pose); //uses IG as L plus where ABEGO is defined as B/G etc.
 	std::string get_dssp_reduced_IG_as_L_secstruct();
 
 	float bb_pair_score( Size res1, Size res2 );

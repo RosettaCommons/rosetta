@@ -1,0 +1,7 @@
+-parser:protocol inputs/test.xml
+-nstruct 1
+-mute all
+-in:file:s inputs/start.pdb
+-beta_cart
+-symmetry_definition stoopid
+-old_sym_min true

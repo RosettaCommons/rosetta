@@ -1,0 +1,4 @@
+-parser:protocol inputs/test.xml
+-nstruct 1
+-mute all
+-in:file:s inputs/start.pdb

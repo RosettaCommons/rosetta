@@ -1113,22 +1113,26 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				}
 			}
 		}
-		ScoreFunctionOP sfxStage0_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
 		ScoreFunctionOP sfxStage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
+		ScoreFunctionOP sfxStage2_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
+		ScoreFunctionOP sfxStage3_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
+		ScoreFunctionOP sfxStage4_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
 		// if(option[OptionKeys::remodel::staged_sampling::fa_mode].user()){
 		//  //experimental code
-		//  sfxStage0_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
 		//  sfxStage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
+		//  sfxStage3_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
 		//  core::util::switch_to_residue_type_set(pose, core::chemical::FA_STANDARD);
 		//  core::util::switch_to_residue_type_set(repeat_pose_, core::chemical::FA_STANDARD);
 		// }
-		sfxStage0_OP->set_weight(scoring::atom_pair_constraint, 0.0);
-		sfxStage1_OP->set_weight(scoring::atom_pair_constraint, 1.0);
+		sfxStage1_OP->set_weight(scoring::atom_pair_constraint, 0.0);
+		sfxStage3_OP->set_weight(scoring::atom_pair_constraint, 1.0);
+
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			sfxStage1_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
+			sfxStage3_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
+			sfxStage3_OP->set_weight(scoring::atom_pair_constraint, 1.0);
 
 		}
-		sfxStage1_OP->show_pretty(TR);
+		sfxStage3_OP->show_pretty(TR);
 		//setup fragments so they sample correctly-----------
 		Real fragScoreThreshold = 0.99999;  //1.00XX indicates 1 ABEGO or HLE mismatch.  I chose to use the numbers for future finer control
 		if ( !option[OptionKeys::remodel::staged_sampling::require_frags_match_blueprint] ) {
@@ -1141,7 +1145,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		//Initialize with any full length fragments-------------------------------
 		if ( option[OptionKeys::remodel::use_same_length_fragments] ) {
 			//999 allows for frags > 9 resiudes
-			abinitio_stage( pose,999, movemap,sfxStage1_OP,1,100,sampleAllResidues,true,"full_length_frags",false,fragScoreThreshold);
+			abinitio_stage( pose,999, movemap,sfxStage3_OP,1,100,sampleAllResidues,true,"full_length_frags",false,fragScoreThreshold);
 		}
 		//Sample with 9mers in all positions------------------------------
 		//This should be read in from staging file.
@@ -1150,45 +1154,68 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		Size stage3_cycles = 500;
 		Size stage4_cycles = 500;
 
-		// Size stage1_cycles = 100;
-		// Size stage2_cycles = 200;
-		// Size stage3_cycles = 100;
-		// Size stage4_cycles = 200;
 		if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] ) {
 			stage1_cycles = 10;
 			stage2_cycles = 10;
 			stage3_cycles = 10;
 			stage4_cycles = 10;
 		}
-		//NOTE: Absolutely no optimization went into picking the number of fragments per cycle. The value was arbritraily picked.
+
+		//set if entered in the command line
+		if ( option[ OptionKeys::remodel::staged_sampling::loop_9mer_score_file ].user() ) {
+			sfxStage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function(option[OptionKeys::remodel::staged_sampling::loop_9mer_score_file] ));
+		}
+		if ( option[OptionKeys::remodel::staged_sampling::loop_3mer_score_file].user() ) {
+			sfxStage2_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function(option[OptionKeys::remodel::staged_sampling::loop_3mer_score_file] ));
+		}
+		if ( option[OptionKeys::remodel::staged_sampling::all_9mer_score_file].user() ) {
+			sfxStage3_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function(option[OptionKeys::remodel::staged_sampling::all_9mer_score_file] ));
+		}
+		if ( option[OptionKeys::remodel::staged_sampling::all_3mer_score_file].user() ) {
+			sfxStage4_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function(option[OptionKeys::remodel::staged_sampling::all_3mer_score_file] ));
+		}
+		if ( option[OptionKeys::remodel::staged_sampling::loop_9mer_cycles].user() ) {
+			stage1_cycles = option[OptionKeys::remodel::staged_sampling::loop_9mer_cycles];
+		}
+		if ( option[OptionKeys::remodel::staged_sampling::loop_3mer_cycles].user() ) {
+			stage2_cycles = option[OptionKeys::remodel::staged_sampling::loop_3mer_cycles];
+		}
+		if ( option[OptionKeys::remodel::staged_sampling::all_9mer_cycles].user() ) {
+			stage3_cycles = option[OptionKeys::remodel::staged_sampling::all_9mer_cycles];
+		}
+		if ( option[OptionKeys::remodel::staged_sampling::all_3mer_cycles].user() ) {
+			stage4_cycles = option[OptionKeys::remodel::staged_sampling::all_3mer_cycles];
+		}
+		//NOTE: Absolutely no optimization went into picking the number of fragments per cycle. The value was arbritraily picked. & The code below should be cleaned up.
+		//
 		if ( option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
 			stage1_cycles = 300;
 			stage2_cycles = 100;
 			stage3_cycles = 500;
-			abinitio_stage( pose, 9, movemap,sfxStage0_OP,3,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
-			abinitio_stage( pose, 3, movemap,sfxStage0_OP,3,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
-			abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
+			abinitio_stage( pose, 9, movemap,sfxStage1_OP,3,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
+			abinitio_stage( pose, 3, movemap,sfxStage1_OP,3,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
+			abinitio_stage( pose, 9, movemapAll,sfxStage3_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
 		}
 		if ( option[OptionKeys::remodel::staged_sampling::fa_mode].user() ) {
 			//compact the structure in centroid
 			if ( option[OptionKeys::remodel::staged_sampling::pre_centroid].user() ) {
-				abinitio_stage( pose, 9, movemap,sfxStage0_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
-				abinitio_stage( pose, 3, movemap,sfxStage0_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
+				abinitio_stage( pose, 9, movemap,sfxStage1_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
+				abinitio_stage( pose, 3, movemap,sfxStage1_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
 			}
-			sfxStage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
+			sfxStage3_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
 			core::util::switch_to_residue_type_set(pose, core::chemical::FA_STANDARD);
 			core::util::switch_to_residue_type_set(repeat_pose_, core::chemical::FA_STANDARD);
 			//fa switch----------------------------
 			abinitio_stage( pose, 9, movemap,sfxStage1_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
-			abinitio_stage( pose, 3, movemap,sfxStage0_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
-			abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
-			abinitio_stage( pose, 3, movemapAll,sfxStage1_OP,3,stage4_cycles,sampleAllResidues,true,"3mers_allPos",false,fragScoreThreshold);
+			abinitio_stage( pose, 3, movemap,sfxStage1_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
+			abinitio_stage( pose, 9, movemapAll,sfxStage3_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
+			abinitio_stage( pose, 3, movemapAll,sfxStage3_OP,3,stage4_cycles,sampleAllResidues,true,"3mers_allPos",false,fragScoreThreshold);
 		}
 		if ( !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() && !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
-			abinitio_stage( pose, 9, movemap,sfxStage0_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
-			abinitio_stage( pose, 3, movemap,sfxStage0_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
-			abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
-			abinitio_stage( pose, 3, movemapAll,sfxStage1_OP,3,stage4_cycles,sampleAllResidues,true,"3mers_allPos",false,fragScoreThreshold);
+			abinitio_stage( pose, 9, movemap,sfxStage1_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
+			abinitio_stage( pose, 3, movemap,sfxStage2_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
+			abinitio_stage( pose, 9, movemapAll,sfxStage3_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
+			abinitio_stage( pose, 3, movemapAll,sfxStage4_OP,3,stage4_cycles,sampleAllResidues,true,"3mers_allPos",false,fragScoreThreshold);
 		}
 		if ( option[OptionKeys::remodel::staged_sampling::fa_relax_moves]() ) {
 			fa_relax_stage(pose);

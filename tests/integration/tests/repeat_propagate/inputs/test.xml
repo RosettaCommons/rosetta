@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+<SCOREFXNS>
+</SCOREFXNS>
+<FILTERS>
+</FILTERS>
+<MOVERS>
+    <RepeatPropagationMover name="prop" numb_repeats="40" extract_repeat_info_from_pose="true" start_pose_numb_repeats="1" ideal_repeat="false" start_pose_duplicate_residues="19"/>
+</MOVERS>
+<PROTOCOLS>
+    <Add mover="prop"/>
+</PROTOCOLS>
+</ROSETTASCRIPTS>
+

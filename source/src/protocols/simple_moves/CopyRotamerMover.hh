@@ -58,6 +58,15 @@ public:
 	void
 	apply( core::pose::Pose & pose ) override;
 
+
+	/// @brief Apply the mover on another pose, not accessible from rosetta_scripts
+	void
+	apply_from_template_pose(
+		core::pose::Pose &target_pose,
+		core::pose::Pose const &template_pose,
+		core::Size target_res_index,
+		core::Size template_res_index);
+
 	/// @brief Show the contents of the Mover
 
 	void
