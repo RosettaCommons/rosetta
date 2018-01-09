@@ -60,7 +60,8 @@ public:
 	HBNetStapleInterface();
 	HBNetStapleInterface( std::string const name );
 	//Constructor from code
-	HBNetStapleInterface( core::scoring::ScoreFunctionCOP scorefxn,
+	HBNetStapleInterface(
+		core::scoring::ScoreFunctionCOP scorefxn,
 		core::Size max_unsat_Hpol,
 		core::Size min_network_size=3,
 		core::Real hb_threshold=-0.5,
@@ -73,13 +74,13 @@ public:
 		bool only_extend=false
 	);
 
-	protocols::moves::MoverOP clone() const override;
-	protocols::moves::MoverOP fresh_instance() const override;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
 	//destructor
 	~HBNetStapleInterface();
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ) override;
 	void setup_packer_task_and_starting_residues( core::pose::Pose const & pose ) override;
 	void prepare_output() override;
 	std::string print_additional_info_for_net( hbond_net_struct & i, core::pose::Pose const & pose ) override;

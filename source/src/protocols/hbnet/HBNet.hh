@@ -24,6 +24,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/Graph.hh>
+#include <utility/pointer/memory.hh>
 
 // CORE INCLUDES
 #include <core/types.hh>
@@ -99,6 +100,7 @@ struct hbond_res_struct : public utility::pointer::ReferenceCount {
 };
 
 // Owning pointers to hbond_res_struct
+using HBondResStruct = hbond_res_struct;
 typedef utility::pointer::shared_ptr< hbond_res_struct > HBondResStructOP; //get rid of typedefs for c++11?
 typedef utility::pointer::shared_ptr< hbond_res_struct const > HBondResStructCOP;
 
@@ -266,6 +268,7 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 };
 
 //Owning pointers to hbond_net_struct
+using HBondNetStruct = hbond_net_struct;
 typedef utility::pointer::shared_ptr< hbond_net_struct > HBondNetStructOP;
 typedef utility::pointer::shared_ptr< hbond_net_struct const > HBondNetStructCOP;
 
@@ -356,7 +359,7 @@ static core::Real const SC_RMSD_CUTOFF = { 0.5 };
 //static core::Real const DEFAULT_HB_THRESHOLD = { -0.5 };
 
 
-class HBNet : public protocols::moves::Mover
+class HBNet : public moves::Mover
 {
 public:
 
@@ -364,7 +367,8 @@ public:
 	HBNet();
 	HBNet( std::string const name );
 
-	HBNet(core::scoring::ScoreFunctionCOP scorefxn,
+	HBNet(
+		core::scoring::ScoreFunctionCOP scorefxn,
 		core::Size max_unsat,
 		core::Size min_network_size = 3,
 		core::Real hb_threshold = -0.75,
@@ -383,10 +387,10 @@ public:
 	virtual ~HBNet();
 
 	//virtuals derived from Mover class
-	protocols::moves::MoverOP clone() const override;
-	protocols::moves::MoverOP fresh_instance() const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &,
+		moves::Movers_map const &, core::pose::Pose const & ) override;
 	void apply( core::pose::Pose & pose ) override;
 
 	//optional virtuals that can be derived from HBNet to control behavior
@@ -410,7 +414,7 @@ public:
 	bool symmetric() const { return symmetric_; }
 	void symmetric ( bool const is_symmetric_pose ){ symmetric_ = is_symmetric_pose; }
 	core::conformation::symmetry::SymmetryInfoCOP get_symm_info() const { return symm_info_; }
-	void set_symm_info( core::conformation::symmetry::SymmetryInfoCOP const symminfo ){ symm_info_ = symminfo; }
+	void set_symm_info( core::conformation::symmetry::SymmetryInfoCOP const & symminfo ){ symm_info_ = symminfo; }
 	bool multi_component() const { return multi_component_; }
 	void multi_component( bool const multi_component ){ multi_component_ = multi_component; }
 	bool verbose() const { return verbose_; }
@@ -422,9 +426,9 @@ public:
 	void set_start_res_vec( std::set< core::Size > const start_resnums ){ start_res_vec_ = start_resnums; }
 	void set_start_resnums( std::set< core::Size > const start_resnums ){ start_res_vec_ = start_resnums; }
 	core::pack::task::PackerTaskOP get_task() const { return task_; }
-	void set_task( core::pack::task::PackerTaskOP const task ){ task_ = task; }
-	void task_factory( core::pack::task::TaskFactoryOP task_factory );
-	core::pack::task::TaskFactoryOP task_factory() const;
+	void set_task( core::pack::task::PackerTaskOP const & task ){ task_ = task; }
+	inline void task_factory( core::pack::task::TaskFactoryOP const & task_factory ){ task_factory_ = task_factory; }
+	core::pack::task::TaskFactoryOP task_factory() const{ return task_factory_; }
 	void set_core_residues( core::select::residue_selector::ResidueSubset core_residues ){ core_residues_ = core_residues; }
 	core::select::residue_selector::ResidueSubset get_core_residues(){ return core_residues_; }
 	core::select::residue_selector::ResidueSelectorOP get_core_selector(){ return core_selector_; }
@@ -459,10 +463,17 @@ public:
 		return nullptr; // if id does not exist
 	}
 
-	core::pose::Pose const & get_orig_pose() { return *orig_pose_; }
-	void set_orig_pose( core::pose::Pose & pose ){ orig_pose_ = core::pose::PoseOP( new core::pose::Pose (pose) ); }
-	core::pose::Pose const & get_ala_pose() { return *ala_pose_; }
-	void set_ala_pose( core::pose::Pose & pose ){ ala_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) ); }
+	inline core::pose::Pose const & get_orig_pose() { return *orig_pose_; }
+
+	inline void set_orig_pose( core::pose::Pose & pose ){
+		orig_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
+	}
+
+	inline core::pose::Pose const & get_ala_pose() { return *ala_pose_; }
+
+	inline void set_ala_pose( core::pose::Pose & pose ){
+		ala_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
+	}
 
 	char get_aa_for_state( core::Size const res, core::Size const rot ) const;
 	bool res_is_boundary( core::Size const res ) const;
@@ -512,8 +523,7 @@ public:
 		return network_vector_;
 	}
 
-	void set_score_function( core::scoring::ScoreFunctionCOP sf )
-	{
+	inline void set_score_function( core::scoring::ScoreFunctionCOP const & sf ) {
 		runtime_assert( sf != 0 );
 		scorefxn_ = sf->clone();
 	}
@@ -662,7 +672,8 @@ protected:
 	///@brief monte carlo protocol needs to use a different net_clash call because its IG is not populated
 	bool monte_carlo_net_clash( utility::vector1< HBondResStructCOP > const & residues_i, utility::vector1< HBondResStructCOP > const & residues_j ) const;
 
-	bool rotamer_state_compatible( HBondResStructCOP i, HBondResStructCOP j );
+	// I commented this out because it does not seem to be declared anywhere - Jack Maguire
+	//bool rotamer_state_compatible( HBondResStructCOP i, HBondResStructCOP j );
 
 	///@brief This function finds all networks that share a common rotamer, and then for ones that do not clash, branches them together in
 	///   all possible combination to find all possible networks.
@@ -711,8 +722,8 @@ protected:
 	//
 	//    void write_pymol_files( std::string name );
 
-	void write_network_pdb( HBondNetStructOP p );
-	void set_constraints( core::pose::Pose & pose, core::scoring::constraints::ConstraintSet & constraints, HBondNetStructOP p, bool write_cst_file=false );
+	void write_network_pdb( HBondNetStructOP & p );
+	void set_constraints( core::pose::Pose & pose, core::scoring::constraints::ConstraintSet & constraints, HBondNetStruct & p, bool write_cst_file=false );
 
 
 	// ///@brief turns on .cst contraints for the network

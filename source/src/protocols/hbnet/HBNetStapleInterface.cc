@@ -104,6 +104,7 @@ using namespace core;
 using namespace pack;
 using namespace task;
 using namespace std;
+using namespace utility;
 using namespace core::scoring::hbonds;
 using namespace interaction_graph;
 using namespace core::pack::rotamer_set;
@@ -161,7 +162,8 @@ HBNetStapleInterface::HBNetStapleInterface( std::string const name ) :
 {}
 
 //Constructor from code
-HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scorefxn,
+HBNetStapleInterface::HBNetStapleInterface(
+	core::scoring::ScoreFunctionCOP scorefxn,
 	Size max_unsat_Hpol,
 	Size min_network_size, /* 3 */
 	Real hb_threshold, /* -0.75 */
@@ -173,7 +175,7 @@ HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scor
 	bool extend_existing, /*false*/
 	bool only_extend /*false*/
 ) :
-	HBNet( scorefxn, max_unsat_Hpol, min_network_size, hb_threshold, max_network_size, des_residues, find_native, only_native, keep_existing, extend_existing, only_extend ),
+	HBNet( std::move( scorefxn ), max_unsat_Hpol, min_network_size, hb_threshold, max_network_size, des_residues, find_native, only_native, keep_existing, extend_existing, only_extend ),
 	all_helices_(false),
 	span_all_helices_(false),
 	only_symm_interfaces_(false),
@@ -198,18 +200,24 @@ HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scor
 //destructor
 HBNetStapleInterface::~HBNetStapleInterface()= default;
 
-protocols::moves::MoverOP
+moves::MoverOP
 HBNetStapleInterface::clone() const {
-	return( protocols::moves::MoverOP( new HBNetStapleInterface( *this ) ) );
+	return pointer::make_shared< HBNetStapleInterface >( *this );
 }
 
-protocols::moves::MoverOP
+moves::MoverOP
 HBNetStapleInterface::fresh_instance() const {
-	return protocols::moves::MoverOP( new HBNetStapleInterface );
+	return pointer::make_shared< HBNetStapleInterface>( );
 }
 
 void
-HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &fmap, protocols::moves::Movers_map const &mmap, core::pose::Pose const & pose ){
+HBNetStapleInterface::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	filters::Filters_map const &fmap,
+	moves::Movers_map const &mmap,
+	core::pose::Pose const & pose
+){
 
 	// for all options that inherit from base class HBNet
 	HBNet::parse_my_tag( tag, data, fmap, mmap, pose);
@@ -269,7 +277,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 	bool no_init_taskfactory(false);
 	if ( task_factory() == nullptr ) {
 		no_init_taskfactory = true;
-		task_factory( TaskFactoryOP( new TaskFactory ) );
+		task_factory( pointer::make_shared< TaskFactory>( ) );
 	}
 
 	if ( jump_nums_.empty() ) {
@@ -327,8 +335,8 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 	if ( no_init_taskfactory ) {
 		if ( get_start_res_vec().empty() ) {
 			for ( auto const & jump_num : jump_nums_ ) {
-				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
-				interf->distance(interf_distance_);
+				scoring::InterfaceOP interf = pointer::make_shared< scoring::Interface >( jump_num );
+				interf->distance( interf_distance_ );
 				interf->calculate( pose ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
 				if ( TR.visible() ) TR << " Storing interface residues for interface " << jump_num << ":" << std::endl;
 				for ( Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
@@ -408,7 +416,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 			}
 		}
 		//task_factory_ = new TaskFactory;
-		protocols::toolbox::task_operations::DesignAroundOperationOP desaround = protocols::toolbox::task_operations::DesignAroundOperationOP( new protocols::toolbox::task_operations::DesignAroundOperation() );
+		toolbox::task_operations::DesignAroundOperationOP desaround = pointer::make_shared< toolbox::task_operations::DesignAroundOperation >();
 		std::set< core::Size > temp_start_vec( get_start_res_vec() );
 		for ( core::Size it : temp_start_vec ) {
 			desaround->include_residue(it);
@@ -422,7 +430,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 		set_task( create_ptask(pose) ); //temp task
 		if ( get_start_res_vec().empty() ) {
 			for ( auto const & jump_num : jump_nums_ ) {
-				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
+				scoring::InterfaceOP interf = pointer::make_shared< scoring::Interface >( jump_num );
 				interf->distance(interf_distance_);
 				interf->calculate( pose ); //within 8 angstroms of Ala nbr residue
 				//interf->calculate( *ala_pose_ ); //within 8 angstroms of Ala nbr residue
@@ -632,15 +640,25 @@ HBNetStapleInterface::network_meets_final_criteria( Pose const & pose, hbond_net
 		}
 		//utility::vector1< HBondResStructCOP > temp_residues( i.residues );
 		if ( network_spans_entire_symm_interface ) {
-			for ( utility::vector1< HBondResStructCOP >::const_iterator ir = i.residues.begin(); ir != i.residues.end(); ++ir ) {
-				if ( find_hbond_res_struct( i.asymm_residues, (*ir)->resnum ) == i.asymm_residues.end() ) {
-					i.asymm_residues.push_back( *ir );
+			for ( HBondResStructCOP const & ir : i.residues ) {
+				//for ( utility::vector1< HBondResStructCOP >::const_iterator ir = i.residues.begin(); ir != i.residues.end(); ++ir ) {
+				if ( find_hbond_res_struct( i.asymm_residues, ir->resnum ) == i.asymm_residues.end() ) {
+					i.asymm_residues.push_back( ir );
 				}
-				utility::vector1<Size> resi_clones( SymmConf.Symmetry_Info()->bb_clones( (*ir)->resnum ) );
-				for ( utility::vector1<Size>::const_iterator r = resi_clones.begin(); r != resi_clones.end(); ++r ) {
-					if ( find_hbond_res_struct( i.residues, *r ) == i.residues.end() ) {
-						//i.asymm_residues.push_back( HBondResStructCOP( new hbond_res_struct( *r, 0, (*ir)->aa, pose.pdb_info()->chain(*r), pose.residue(*r).is_protein(), pose.residue(*r).is_water(), pose.residue(*r).is_ligand() ) ) );
-						i.asymm_residues.push_back( HBondResStructCOP( new hbond_res_struct( *r, 0, (*ir)->aa, pose.pdb_info()->chain(*r), pose.residue(*r).is_protein(), pose.residue(*r).name1() == 'w', pose.residue(*r).is_ligand() ) ) );
+				utility::vector1< Size > resi_clones( SymmConf.Symmetry_Info()->bb_clones( ir->resnum ) );
+				for ( Size r : resi_clones ) {
+					if ( find_hbond_res_struct( i.residues, r ) == i.residues.end() ) {
+						i.asymm_residues.push_back(
+							pointer::make_shared< hbond_res_struct >(
+							r,
+							0,
+							ir->aa,
+							pose.pdb_info()->chain(r),
+							pose.residue(r).is_protein(),
+							pose.residue(r).name1() == 'w',
+							pose.residue(r).is_ligand()
+							)
+						);
 					}
 				}
 			}
@@ -995,16 +1013,16 @@ void HBNetStapleInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		+ XMLSchemaAttribute::attribute_w_default( "interface_distance", xsct_real, "Desired distance between partners at interface", "8.0" )
 		+ XMLSchemaAttribute( "jump", xs_string, "A comma-separated list of jumps across interface" );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "\"Staples\" interface specificity with a hydrogen bond network.", attlist );
+	moves::xsd_type_definition_w_attributes( xsd, mover_name(), "\"Staples\" interface specificity with a hydrogen bond network.", attlist );
 }
 
 std::string HBNetStapleInterfaceCreator::keyname() const {
 	return HBNetStapleInterface::mover_name();
 }
 
-protocols::moves::MoverOP
+moves::MoverOP
 HBNetStapleInterfaceCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HBNetStapleInterface );
+	return pointer::make_shared< HBNetStapleInterface >();
 }
 
 void HBNetStapleInterfaceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

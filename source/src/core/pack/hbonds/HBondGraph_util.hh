@@ -19,14 +19,19 @@
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
+
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
+
 #include <core/conformation/Residue.fwd.hh>
-#include <utility/graph/Graph.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <utility/graph/Graph.hh>
+#include <utility/pointer/memory.hh>
+
 
 namespace core {
 namespace pack {
@@ -37,15 +42,13 @@ void init_node_info( scoring::hbonds::graph::AbstractHBondGraph & graph, rotamer
 
 ///@brief This combines the hbondgraph constructor and init_node_info(). The HBondGraph constructor can not take core.4 objects because it is in core.3 (as of the time this was written).
 inline scoring::hbonds::graph::HBondGraphOP create_and_init_hbond_graph( rotamer_set::RotamerSets const & rotamer_sets ){
-	scoring::hbonds::graph::HBondGraphOP graph ( new scoring::hbonds::graph::HBondGraph( rotamer_sets.nrotamers() ) );
-	// scoring::hbonds::graph::HBondGraphOP graph = std::make_shared< scoring::hbonds::graph::HBondGraph >( rotamer_sets.nrotamers() );
+	scoring::hbonds::graph::HBondGraphOP graph = utility::pointer::make_shared< scoring::hbonds::graph::HBondGraph >( rotamer_sets.nrotamers() );
 	init_node_info( * graph, rotamer_sets );
 	return graph;
 }
 
 ///@brief This combines the AtomLevelHBondGraph constructor and init_node_info(). The AtomLevelHBondGraph constructor can not take core.4 objects because it is in core.3 (as of the time this was written).
 inline scoring::hbonds::graph::AtomLevelHBondGraphOP create_and_init_atom_level_hbond_graph( rotamer_set::RotamerSets const & rotamer_sets ){
-	//scoring::hbonds::graph::AtomLevelHBondGraphOP graph = std::make_shared< scoring::hbonds::graph::AtomLevelHBondGraph > ( rotamer_sets.nrotamers() );
 	scoring::hbonds::graph::AtomLevelHBondGraphOP graph ( new scoring::hbonds::graph::AtomLevelHBondGraph ( rotamer_sets.nrotamers() ) );
 	init_node_info( * graph, rotamer_sets );
 	return graph;

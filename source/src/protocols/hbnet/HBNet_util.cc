@@ -19,6 +19,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/Graph.hh>
+#include <utility/pointer/memory.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -55,6 +56,7 @@ namespace hbnet {
 using namespace core;
 using namespace core::pose;
 using namespace core::scoring::hbonds;
+using namespace utility;
 
 std::string
 print_list_to_string( hbond_net_struct const & network, bool chainid/* true */, bool term_w_start/*=false*/,
@@ -188,7 +190,6 @@ find_hbond_res_struct( utility::vector1< HBondResStructCOP > const & residues, S
 	return r;
 }
 
-//utility::vector1< HBondCOP >
 void
 get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion /* false */ )
 {
@@ -201,7 +202,7 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 	new_options.use_hb_env_dep(false);
 	new_options.bb_donor_acceptor_check(bb_exclusion); // don't use bb exclusion logic when penalizing unsatisfied -- ideally would only eclude N-H donors and not exclude C=O with only 1 h-bond
 	new_options.exclude_intra_res_protein( false ); // we want to count this for unsat calc, by default they are excluded
-	HBondSetOP full_hbond_set( new HBondSet(new_options) );
+	HBondSetOP full_hbond_set( pointer::make_shared< HBondSet >( new_options ) );
 
 	//setting this to false will calculate all hbonds in pose
 	//full_hbond_set.setup_for_residue_pair_energies( pose, false/*calculate_derivative*/, false/*backbone_only*/ );
@@ -240,7 +241,7 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 }
 
 bool
-hbond_exists_in_vector( utility::vector1<HBondCOP> const & hbond_vec, HBondCOP h2 )
+hbond_exists_in_vector( utility::vector1<HBondCOP> const & hbond_vec, HBondCOP & h2 )
 {
 	for ( auto const & h1 : hbond_vec ) {
 		if ( h1->acc_res() == h2->acc_res() && h1->don_res() == h2->don_res() && h1->acc_atm() == h2->acc_atm() && h1->don_hatm() == h2->don_hatm() ) {
@@ -254,7 +255,7 @@ void
 add_reslabels_to_pose( Pose & pose, hbond_net_struct & i, std::string label /* "HBNet" */ )
 {
 	if ( !( pose.pdb_info() ) ) {
-		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
+		pose.pdb_info( pointer::make_shared< core::pose::PDBInfo >( pose, true ) );
 	}
 	for ( utility::vector1< HBondResStructCOP >::const_iterator res = i.residues.begin(); res != i.residues.end(); ++res ) {
 		pose.pdb_info()->add_reslabel( (*res)->resnum, label );
@@ -294,7 +295,7 @@ get_num_edges_for_res( Size const res, ObjexxFCL::FArray2D_int & path_dists )
 void
 hbnet_one_body_energies(
 	pose::Pose const & pose,
-	core::pack::rotamer_set::RotamerSetOP rotset_op,
+	core::pack::rotamer_set::RotamerSet & rotset,
 	core::scoring::ScoreFunction const & sf,
 	utility::vector1< core::PackerEnergy > & energies
 	//bool add_background_energies
@@ -302,12 +303,12 @@ hbnet_one_body_energies(
 {
 	std::fill( energies.begin(), energies.end(), core::PackerEnergy( 0.0 ) );
 
-	int const nrotamers = (int)(rotset_op->num_rotamers());
+	int const nrotamers = (int)(rotset.num_rotamers());
 	//Size const theresid = rotset_op->resid();
 
 	for ( int ii = 1; ii <= nrotamers; ++ii ) {
 		core::scoring::EnergyMap emap;
-		core::conformation::ResidueCOP temprot = rotset_op->rotamer(ii);
+		core::conformation::ResidueCOP temprot = rotset.rotamer(ii);
 		//sf.eval_ci_1b( *temprot, pose, emap );
 		sf.eval_cd_1b( *temprot, pose, emap );
 		energies[ ii ] += static_cast< core::PackerEnergy > (sf.weights().dot( emap ));
@@ -319,10 +320,10 @@ hbnet_one_body_energies(
 void
 hbnet_symm_one_body_energies(
 	pose::Pose const & pose,
-	core::pack::rotamer_set::RotamerSetOP rotset_op,
+	core::pack::rotamer_set::RotamerSet & rotset,
 	core::scoring::ScoreFunction const & sf,
 	core::pack::task::PackerTask const & task,
-	utility::graph::GraphCOP packer_neighbor_graph,
+	utility::graph::Graph const & packer_neighbor_graph,
 	utility::vector1< core::PackerEnergy > & energies
 )
 {
@@ -335,12 +336,12 @@ hbnet_symm_one_body_energies(
 	std::fill( energies.begin(), energies.end(), core::PackerEnergy( 0.0 ) );
 	utility::vector1< core::PackerEnergy > temp_energies = energies;
 
-	int const nrotamers = (int)(rotset_op->num_rotamers());
-	Size const theresid = rotset_op->resid();
+	int const nrotamers = (int)(rotset.num_rotamers());
+	Size const theresid = rotset.resid();
 
 	for ( int ii = 1; ii <= nrotamers; ++ii ) {
 		core::scoring::EnergyMap emap;
-		core::conformation::ResidueCOP temprot = rotset_op->rotamer(ii);
+		core::conformation::ResidueCOP temprot = rotset.rotamer(ii);
 		sf.eval_cd_1b( *temprot, pose, emap );
 		energies[ ii ] += static_cast< core::PackerEnergy > (sf.weights().dot( emap ))*(symm_info->score_multiply_factor());
 	}
@@ -350,8 +351,8 @@ hbnet_symm_one_body_energies(
 
 	//Detect self 2-body interactions and store in 1-body
 	for ( utility::graph::Graph::EdgeListConstIter
-			ir  = packer_neighbor_graph->get_node( theresid )->const_edge_list_begin(),
-			ire = packer_neighbor_graph->get_node( theresid )->const_edge_list_end();
+			ir  = packer_neighbor_graph.get_node( theresid )->const_edge_list_begin(),
+			ire = packer_neighbor_graph.get_node( theresid )->const_edge_list_end();
 			ir != ire; ++ir ) {
 		int const neighbor_id( (*ir)->get_other_ind( theresid ) );
 		if ( task.pack_residue( neighbor_id ) ) continue;
@@ -364,7 +365,7 @@ hbnet_symm_one_body_energies(
 			// We have a self interaction. Self 2-body interactions between ind res and its symm_clones stored in 1-body e
 			for ( int jj = 1; jj <= nrotamers; ++jj ) {
 				// make a new rotamer set that is going to be translated to the neighbor interation residue
-				conformation::ResidueOP sym_rsd( rotset_op->rotamer( jj )->clone() );
+				conformation::ResidueOP sym_rsd( rotset.rotamer( jj )->clone() );
 				core::pack::rotamer_set::RotamerSetOP one_rotamer_set = rsf.create_rotamer_set( *sym_rsd );
 				one_rotamer_set->set_resid( theresid );
 				one_rotamer_set->add_rotamer( *sym_rsd );

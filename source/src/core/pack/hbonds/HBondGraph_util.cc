@@ -49,9 +49,7 @@ scoring::hbonds::graph::HBondGraphOP create_init_and_create_edges_for_hbond_grap
 ){
 	scoring::hbonds::graph::HBondGraphOP hbond_graph = create_and_init_hbond_graph( * rotamer_sets );
 
-	//TODO change back once utility::pointer::make_shared enters master
-	//MCHBNetInteractionGraphOP ig = utility::pointer::make_shared< MCHBNetInteractionGraph >( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold );
-	MCHBNetInteractionGraphOP ig( new MCHBNetInteractionGraph( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold ) );
+	MCHBNetInteractionGraphOP ig = utility::pointer::make_shared< MCHBNetInteractionGraph >( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold );
 	ig->initialize( *rotamer_sets );
 
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, rotamer_sets->task() );
@@ -71,9 +69,7 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 ){
 	scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph = create_and_init_atom_level_hbond_graph( * rotamer_sets );
 
-	//TODO change back once utility::pointer::make_shared enters master
-	//MCHBNetInteractionGraphOP ig = std::make_shared< MCHBNetInteractionGraph >( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold );
-	MCHBNetInteractionGraphOP ig( new MCHBNetInteractionGraph ( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold ) );
+	MCHBNetInteractionGraphOP ig = utility::pointer::make_shared< MCHBNetInteractionGraph >( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold );
 	ig->initialize( *rotamer_sets );
 
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, rotamer_sets->task() );

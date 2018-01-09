@@ -20,7 +20,6 @@
 #include <core/scoring/hbonds/graph/HBondInfo.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
-//#include <core/scoring/hbonds/graph/LKAtomLevelHBondGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 
 #include <numeric/xyzVector.hh>
@@ -28,8 +27,15 @@
 namespace protocols {
 namespace hbnet {
 
+using mres_unsat_pair=std::pair< unsigned int /*mres*/, utility::vector1< core::scoring::hbonds::graph::AtomInfo > >;
+
 struct polar_atom {
-	polar_atom( unsigned int sequence_position, numeric::xyzVector< float > const & atom_position, bool hydroxyl, bool satisfied=false /*, bool buried */ ){
+	polar_atom(
+		unsigned int sequence_position,
+		numeric::xyzVector< float > const & atom_position,
+		bool hydroxyl,
+		bool satisfied = false
+	){
 		seqpos = sequence_position;
 		xyz = atom_position;
 		is_hydroxyl = hydroxyl; // worth it to store here, because so many special cases revolve around OH's
@@ -49,12 +55,28 @@ struct polar_atom {
 	bool is_satisfied;
 };
 
+struct compare_mres_unsat_pair : public std::binary_function< mres_unsat_pair, mres_unsat_pair, bool >{
+	bool operator()( mres_unsat_pair const & a, mres_unsat_pair const & b ) const {
+		return a.first < b.first;
+	}
+
+	bool operator()( mres_unsat_pair const & a, unsigned int b ) const {
+		return a.first < b;
+	}
+
+	bool operator()( unsigned int a, mres_unsat_pair const & b ) const {
+		return a < b.first;
+	}
+
+};
+
+
 struct NetworkState{
 
 	NetworkState(
 		core::scoring::hbonds::graph::HBondEdge const * monte_carlo_seed_in,
-		core::scoring::hbonds::graph::AbstractHBondGraphOP hbond_graph,
-		core::pack::rotamer_set::RotamerSetsOP rotsets
+		core::scoring::hbonds::graph::AbstractHBondGraphOP const & hbond_graph,
+		core::pack::rotamer_set::RotamerSetsOP const & rotsets
 	) :
 		monte_carlo_seed( monte_carlo_seed_in ),
 		full_twobody_energy( monte_carlo_seed->energy() ),
@@ -90,15 +112,16 @@ struct NetworkState{
 			unsigned int const mres2 = hbond_graph->get_hbondnode( monte_carlo_seed->get_second_node_ind() )->moltenres();
 
 			if ( first_node_is_donor ) {
-				AtomLevelHBondNode::remove_atom_info_from_vec_stable( unsatisfied_sc_atoms[ mres2 ], local_atom_id_A );
+				//AtomLevelHBondNode::remove_atom_info_from_vec_stable( unsatisfied_sc_atoms[ mres2 ], local_atom_id_A );
+				AtomLevelHBondNode::remove_atom_info_from_vec_stable( get_unsats_for_mres( mres2 )->second, local_atom_id_A );
 
-				utility::vector1< AtomInfo > & donor_atom_vec = unsatisfied_sc_atoms[ mres1 ];
+				utility::vector1< AtomInfo > & donor_atom_vec = get_unsats_for_mres( mres1 )->second;
 				AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
 				AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
 			} else {
-				AtomLevelHBondNode::remove_atom_info_from_vec_stable( unsatisfied_sc_atoms[ mres1 ], local_atom_id_A );
+				AtomLevelHBondNode::remove_atom_info_from_vec_stable( get_unsats_for_mres( mres1 )->second, local_atom_id_A );
 
-				utility::vector1< AtomInfo > & donor_atom_vec = unsatisfied_sc_atoms[ mres2 ];
+				utility::vector1< AtomInfo > & donor_atom_vec = get_unsats_for_mres( mres2 )->second;
 				AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_D );
 				AtomLevelHBondNode::remove_atom_info_from_vec_stable( donor_atom_vec, local_atom_id_H );
 			}
@@ -111,13 +134,55 @@ struct NetworkState{
 
 	void add_polar_atoms(
 		core::scoring::hbonds::graph::HBondNode const * node,
-		core::pack::rotamer_set::RotamerSetsOP rotsets
+		core::pack::rotamer_set::RotamerSetsOP const & rotsets
 	){
 		core::Size const mres = rotsets->moltenres_for_rotamer( node->get_node_index() );
-		if ( unsatisfied_sc_atoms.find( mres ) != unsatisfied_sc_atoms.end() ) return;
-		unsatisfied_sc_atoms[ mres ] = static_cast< core::scoring::hbonds::graph::AtomLevelHBondNode const * >( node )->polar_sc_atoms_not_satisfied_by_background(); //copy ctor
+		auto iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
+		auto const & atoms_to_copy = static_cast< core::scoring::hbonds::graph::AtomLevelHBondNode const * >( node )->polar_sc_atoms_not_satisfied_by_background();
+
+		if ( iter == unsatisfied_sc_atoms_.end() || iter->first != mres ) {
+			iter = unsatisfied_sc_atoms_.insert(
+				iter,
+				std::make_pair( mres, atoms_to_copy )
+			);
+		} else {
+			iter->second = atoms_to_copy;
+		}
+
 	}
 
+	utility::vector1< mres_unsat_pair >::iterator get_unsats_for_mres( unsigned int mres ) {
+		auto iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
+		runtime_assert( iter != unsatisfied_sc_atoms_.end() );
+		runtime_assert( iter->first == mres );
+		return iter;
+	}
+
+	utility::vector1< mres_unsat_pair >::const_iterator get_unsats_for_mres( unsigned int mres ) const {
+		auto const iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
+		runtime_assert( iter != unsatisfied_sc_atoms_.end() );
+		runtime_assert( iter->first == mres );
+		return iter;
+	}
+
+	inline bool mres_has_unsats( unsigned int mres ) const {
+		auto iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
+		if ( iter == unsatisfied_sc_atoms_.end() ) return false;
+		if ( iter->first != mres ) return false;
+		return ! iter->second.empty();
+	}
+
+	inline bool mres_has_heavy_unsats ( unsigned int mres ) const {
+		auto iter = std::lower_bound( unsatisfied_sc_atoms_.begin(), unsatisfied_sc_atoms_.end(), mres, sorter_ );
+		if ( iter == unsatisfied_sc_atoms_.end() ) return false;
+		if ( iter->first != mres ) return false;
+		if ( iter->second.empty() ) return false;
+		return iter->second[ 1 ].is_hydrogen();
+	}
+
+	inline utility::vector1< mres_unsat_pair > const & unsatisfied_sc_atoms_const() const {
+		return unsatisfied_sc_atoms_;
+	}
 
 	utility::vector1< core::scoring::hbonds::graph::HBondNode const * > nodes;
 	utility::vector1< core::scoring::hbonds::graph::HBondEdge const * > edges;
@@ -126,9 +191,14 @@ struct NetworkState{
 	core::Real full_twobody_energy;//Sum of hbond score + clash score for all residue pairs in "residues" data object
 	core::Real score;//This holds whatever metric is used for sorting
 
-	//This is a map of all unsatisfied atoms ( Heavy and H both included ) for every moltenres in the network:
-	std::map < unsigned int /*mres*/, utility::vector1< core::scoring::hbonds::graph::AtomInfo > > unsatisfied_sc_atoms;
-	//TODO turn this into a sorted vector - maps are slow for this
+private:
+	utility::vector1< mres_unsat_pair > unsatisfied_sc_atoms_;
+	compare_mres_unsat_pair sorter_;
+
+	/*utility::vector1< mres_unsat_pair >::iterator get_unsats_for_mres( unsigned int mres ) {
+	auto const iter = std::lower_bound( unsatisfied_sc_atoms.begin(), unsatisfied_sc_atoms.end(), mres );
+	}*/
+
 };
 
 struct NetworkStateScoreComparator{

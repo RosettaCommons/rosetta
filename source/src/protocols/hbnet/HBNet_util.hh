@@ -53,7 +53,7 @@ utility::vector1< HBondResStructCOP >::const_iterator find_hbond_res_struct( uti
 
 void get_hbond_atom_pairs( hbond_net_struct & network, core::pose::Pose & pose, bool bb_exlcusion=false );
 
-bool hbond_exists_in_vector( utility::vector1<core::scoring::hbonds::HBondCOP> const & hbond_vec, core::scoring::hbonds::HBondCOP h2 );
+bool hbond_exists_in_vector( utility::vector1<core::scoring::hbonds::HBondCOP> const & hbond_vec, core::scoring::hbonds::HBondCOP & h2 );
 
 void add_reslabels_to_pose( core::pose::Pose & pose, hbond_net_struct & i, std::string label="HBNet" );
 
@@ -63,15 +63,15 @@ core::Size get_num_edges_for_res( core::Size const res, ObjexxFCL::FArray2D_int 
 
 void hbnet_symm_one_body_energies(
 	core::pose::Pose const & pose,
-	core::pack::rotamer_set::RotamerSetOP rotset_op,
+	core::pack::rotamer_set::RotamerSet & rotset_op,
 	core::scoring::ScoreFunction const & sf,
 	core::pack::task::PackerTask const & task,
-	utility::graph::GraphCOP packer_neighbor_graph,
+	utility::graph::Graph const & packer_neighbor_graph,
 	utility::vector1< core::PackerEnergy > & energies
 );
 void hbnet_one_body_energies(
 	core::pose::Pose const & pose,
-	core::pack::rotamer_set::RotamerSetOP rotset_op,
+	core::pack::rotamer_set::RotamerSet & rotset_op,
 	core::scoring::ScoreFunction const & sf,
 	utility::vector1< core::PackerEnergy > & energies
 );
@@ -94,7 +94,7 @@ inline bool contains( utility::vector1< core::scoring::hbonds::graph::AtomInfo >
 
 
 inline bool edge_satisfies_heavy_unsat_for_node( NetworkState const & current_state, core::scoring::hbonds::graph::AtomLevelHBondNode const * node, core::scoring::hbonds::graph::AtomLevelHBondEdge const * edge ){
-	utility::vector1< core::scoring::hbonds::graph::AtomInfo > const & atom_vec = current_state.unsatisfied_sc_atoms.at( node->moltenres() );
+	utility::vector1< core::scoring::hbonds::graph::AtomInfo > const & atom_vec = current_state.get_unsats_for_mres( node->moltenres() )->second;
 	bool const node_is_first_node_ind = ( node->get_node_index() == edge->get_first_node_ind() );
 
 	for ( core::scoring::hbonds::graph::HBondInfo const & hbond : edge->hbonds() ) {
