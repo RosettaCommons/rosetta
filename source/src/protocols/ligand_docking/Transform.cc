@@ -24,6 +24,11 @@
 #include <protocols/rigid/RB_geometry.hh>
 
 #include <core/conformation/Conformation.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <core/pose/Pose.hh>
@@ -33,6 +38,8 @@
 
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random_xyz.hh>
@@ -130,6 +137,26 @@ void Transform::parse_my_tag
 
 	use_conformers_ = tag->getOption<bool>("use_conformers",true);
 
+	use_constraints_ = tag->getOption<bool>("use_constraints",false);
+
+	if ( use_constraints_ ) {
+		//XML file takes precedence over command line option
+		if ( tag->hasOption("cst_fa_file") ) {
+			cst_fa_file_ = tag->getOption<std::string>("cst_fa_file");
+		} else if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file].user() ) {
+			cst_fa_file_ = basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file]().front();
+		}
+
+		if ( cst_fa_file_.empty() ) utility_exit_with_message("use_constraints=true requires cst_fa_file tag or cst_fa_file command-line option");
+	}
+
+	//XML file takes precedence over command line option
+	if ( tag->hasOption("cst_fa_weight") ) {
+		cst_fa_weight_ = tag->getOption<core::Real>("cst_fa_weight");
+	} else if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_weight].user() ) {
+		cst_fa_weight_ = basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_weight]();
+	}
+
 	initial_perturb_ = tag->getOption<core::Real>("initial_perturb",0.0);
 	if ( initial_perturb_ < 0 ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The initial_perturb option to the Transform mover must be positive.");
@@ -165,6 +192,22 @@ void Transform::apply(core::pose::Pose & pose)
 
 	core::conformation::Residue original_residue = pose.residue(begin);
 	core::chemical::ResidueType residue_type = pose.residue_type(begin);
+
+	//Duplicate pose to avoid overriding existing constraints
+	core::pose::PoseOP cst_pose;
+	core::scoring::ScoreFunctionOP cst_function(new core::scoring::ScoreFunction);
+
+	//Setup constraints
+	if ( use_constraints_ ) {
+		cst_pose = pose.clone();
+		core::scoring::constraints::ConstraintSetOP cstset_ = core::scoring::constraints::ConstraintIO::get_instance()->read_constraints(cst_fa_file_, core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), *cst_pose);
+		cst_pose->constraint_set( cstset_ );
+
+		cst_function->set_weight( core::scoring::atom_pair_constraint, cst_fa_weight_ );
+		cst_function->set_weight( core::scoring::angle_constraint,  cst_fa_weight_ );
+		cst_function->set_weight( core::scoring::dihedral_constraint,  cst_fa_weight_  );
+		cst_function->set_weight( core::scoring::coordinate_constraint,  cst_fa_weight_ );
+	}
 
 	if ( grid_set_prototype_ == nullptr ) {
 		utility_exit_with_message( "The Transform mover needs to have the GridSet prototype set in order to work." );
@@ -241,19 +284,24 @@ void Transform::apply(core::pose::Pose & pose)
 				}
 			}
 			if ( n_perturb_trials >= 10*ligand_conformers_.size() ) {
-				TR.Error << "Could not get a decent initial perturbation - check grid size, ligand size, and initial pertubation size." << std::endl;
-				TR.Error << "    For this system, with a pertubation of " << initial_perturb_
+				TR.Error << "Could not get a decent initial perturbation - check grid size, ligand size, and initial perturbation size." << std::endl;
+				TR.Error << "    For this system, with a perturbation of " << initial_perturb_
 					<< ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
 				set_last_move_status( protocols::moves::FAIL_RETRY );
 				return;
 			} else if ( n_perturb_trials > 10 ) {
-				TR.Warning << "It took more than 10 tries to get a decent inital perturbation. You likely want to check your grid size and initial perturbation size." << std::endl;
-				TR.Warning << "    With the current purturbation setting of " << initial_perturb_ << ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
+				TR.Warning << "It took more than 10 tries to get a decent initial perturbation. You likely want to check your grid size and initial perturbation size." << std::endl;
+				TR.Warning << "    With the current perturbation setting of " << initial_perturb_ << ", a grid size of at least " << utility::Real2string(recommended_grid_size(),1) << " is recommended." << std::endl;
 			}
 			last_accepted_ligand_residue = ligand_residue;
 		}
 
 		last_score = grid_set->total_score(ligand_residue);
+
+		if ( use_constraints_ ) {
+			last_score += score_constraints(*cst_pose, ligand_residue, cst_function);
+		}
+
 
 		//Define starting ligand model (after perturb) as best model/score
 		best_score = last_score;
@@ -303,6 +351,11 @@ void Transform::apply(core::pose::Pose & pose)
 			}
 
 			core::Real current_score = grid_set->total_score(ligand_residue);
+
+			if ( use_constraints_ ) {
+				current_score += score_constraints(*cst_pose, ligand_residue, cst_function);
+			}
+
 			core::Real const boltz_factor((last_score-current_score)/temperature);
 			core::Real const probability = std::exp( boltz_factor ) ;
 
@@ -547,6 +600,12 @@ bool Transform::check_rmsd(core::conformation::UltraLightResidue const & start, 
 
 }
 
+core::Real Transform::score_constraints(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue, core::scoring::ScoreFunctionOP & sfxn)
+{
+	residue.update_conformation(pose.conformation());
+	return (*sfxn)(pose);
+}
+
 std::string Transform::get_name() const {
 	return mover_name();
 }
@@ -585,6 +644,12 @@ void Transform::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"Total number of repeats of the monte carlo simulation to be performed.", "1")
 		+ XMLSchemaAttribute::attribute_w_default("optimize_until_score_is_negative", xsct_rosetta_bool,
 		"Continue sampling beyond \"cycles\" if score is positive", "false")
+		+ XMLSchemaAttribute::attribute_w_default("use_constraints", xsct_rosetta_bool,
+		"Adjust scores based on constraint file input", "false")
+		+ XMLSchemaAttribute::attribute_w_default("cst_fa_file", xs_string,
+		"Full atom constraint file to read constraints from", "")
+		+ XMLSchemaAttribute::attribute_w_default("cst_fa_weight", "non_negative_real" ,
+		"Weight for full atom constraints. Default of 1.0", "1.0")
 		+ XMLSchemaAttribute::attribute_w_default("initial_perturb", "non_negative_real" ,
 		"Make an initial, unscored translation and rotation "
 		"Translation will be selected uniformly in a sphere of the given radius (Angstrom)."

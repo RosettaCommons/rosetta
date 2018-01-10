@@ -18,6 +18,11 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <core/pose/util.hh>
@@ -34,110 +39,93 @@
 //#include <test/core/init_util.hh>
 
 
-static basic::Tracer TR("protocols.ligand_docking.StartFrom.cxxtest");
+static basic::Tracer TR("protocols.ligand_docking.Transform.cxxtest");
 
 
 class TransformTests : public CxxTest::TestSuite {
+
+private:
+
+	core::pose::Pose pose_;
+	protocols::ligand_docking::Transform mover_;
+	core::Size begin_;
 
 public:
 
 	void setUp() {
 		core_init_with_additional_options("-extra_res_fa protocols/ligand_docking/ZNx.params protocols/ligand_docking/7cpa.params");
-		// Residue definitions can't be supplied on the command line b/c
-		// the ResidueTypeSet is already initialized.
-		//  using namespace core::chemical;
-		//  utility::vector1< std::string > params_files;
-		//  ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-		//  ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		//  if ( !residue_set.has_name("ZNx") ) params_files.push_back("protocols/ligand_docking/ZNx.params");
-		//  if ( !residue_set.has_name("CP1") ) params_files.push_back("protocols/ligand_docking/7cpa.params");
-		//  residue_set.read_files_for_custom_residue_types(params_files);
+
+		core::import_pose::pose_from_file( pose_, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
+		begin_ = pose_.conformation().chain_begin(core::pose::get_chain_id_from_chain('X', pose_));
+
 	}
 
 	void tearDown() {}
 
-	//inline void core_init_with_additional_options( std::string const & commandline_in );
-
-	void test_initial_perturb() {
+	void test_score_constraints(){
 		using namespace protocols::ligand_docking;
+		core::conformation::UltraLightResidue test_ligand(pose_.residue(begin_).get_self_ptr());
+
+		core::pose::Pose copy_pose = pose_;
+		core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc( 2.5 , 0.5 ) );
+
+		//  core::Size begin=pose_.conformation().chain_begin(core::pose::get_chain_id_from_chain('X', pose_));
+
+		//Actual distance between identified atoms is 2.262014
+		core::scoring::constraints::AtomPairConstraintOP cst1( new core::scoring::constraints::AtomPairConstraint(
+			core::id::AtomID( pose_.residue( 248 ).atom_index( "OH" ), 248 ),
+			core::id::AtomID( pose_.residue( begin_ ).atom_index( "H32"   ), begin_ ),
+			func ) );
+
+		copy_pose.add_constraint( cst1 );
+
+		core::scoring::ScoreFunctionOP sfxn(new core::scoring::ScoreFunction);
+		sfxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+
+		TS_ASSERT_DELTA(mover_.score_constraints(copy_pose, test_ligand, sfxn), 0.226549, 0.001);
+	}
+
+	void test_randomize_ligand() {
+		using namespace protocols::ligand_docking;
+
+		core::conformation::UltraLightResidue test_ligand(pose_.residue(begin_).get_self_ptr());
+		core::conformation::UltraLightResidue start_ligand(test_ligand);
 
 		numeric::random::rg().set_seed( "mt19937", time(0) );
 
-		core::pose::Pose pose;
-		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
-
-		Transform mover;
-
-		core::Size chain_id=core::pose::get_chain_id_from_chain('X', pose);
-		core::Size begin=pose.conformation().chain_begin(chain_id);
-
-		core::conformation::UltraLightResidue test_ligand(pose.residue(begin).get_self_ptr());
-		core::conformation::UltraLightResidue start_ligand(test_ligand);
 		core::Vector start_center(start_ligand.center());
 
 		//Test initial perturb of residue
-		core::Size rejected = 0;
-		core::Size accepted = 0;
 
-		for ( core::Size i=0; i <= 500; i++ ) {
-			mover.randomize_ligand(test_ligand, 5, 360);
-			core::Real distance = test_ligand.center().distance(start_center);
-
-			if ( distance > 5.0 ) {
-				rejected++;
-			} else {
-				accepted++;
-			}
-
+		for ( core::Size i=0; i <= 100; i++ ) {
+			mover_.randomize_ligand(test_ligand, 5, 360);
+			TS_ASSERT_LESS_THAN(test_ligand.center().distance(start_center), 5);
 			test_ligand = start_ligand;
 		}
 
-		TS_ASSERT_EQUALS(rejected, 0.0);
+	}
+
+	void test_conformer_change(){
 
 		//Test conformer change of residue
-		rejected = 0;
-		accepted = 0;
-		core::Real deviation = 0;
 
-		mover.setup_conformers(pose, begin);
+		core::conformation::UltraLightResidue test_ligand(pose_.residue(begin_).get_self_ptr());
+		core::conformation::UltraLightResidue start_ligand(test_ligand);
 
-		for ( core::Size i=0; i <= 500; i++ ) {
-			mover.change_conformer(test_ligand);
-			core::Real distance = test_ligand.center().distance(start_center);
+		core::Vector start_center(start_ligand.center());
 
-			if ( distance > 5.0 ) {
-				rejected++;
-			} else {
-				accepted++;
-			}
+		core::Size begin=pose_.conformation().chain_begin(core::pose::get_chain_id_from_chain('X', pose_));
 
-			TR << "conformer distance: " << distance << std::endl;
-			deviation = 0;
+		mover_.setup_conformers(pose_, begin);
 
-			utility::vector1<core::PointPosition > target_coords = start_ligand.coords_vector();
-			utility::vector1<core::PointPosition > copy_coords = test_ligand.coords_vector();
-
-			for ( core::Size i=1; i <= copy_coords.size(); ++i ) {
-				core::Real deviation_x = ((copy_coords[i][0]-target_coords[i][0]) * (copy_coords[i][0]-target_coords[i][0]));
-				core::Real deviation_y = ((copy_coords[i][1]-target_coords[i][1]) * (copy_coords[i][1]-target_coords[i][1]));
-				core::Real deviation_z = ((copy_coords[i][2]-target_coords[i][2]) * (copy_coords[i][2]-target_coords[i][2]));
-
-				core::Real total_dev = deviation_x + deviation_y + deviation_z;
-				deviation += total_dev;
-			}
-
-			deviation /= (core::Real)copy_coords.size();
-			deviation = sqrt(deviation);
-
-			TR << "RMSD: " << deviation << std::endl;
-
+		for ( core::Size i=0; i <= 100; i++ ) {
+			mover_.change_conformer(test_ligand);
+			TS_ASSERT_LESS_THAN(test_ligand.center().distance(start_center), 5);
 			test_ligand = start_ligand;
 		}
-
-		TS_ASSERT_EQUALS(rejected, 0.0);
-
 
 
 	}
+
 };
 

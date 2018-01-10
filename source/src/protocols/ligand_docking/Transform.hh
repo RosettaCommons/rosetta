@@ -21,6 +21,7 @@
 #include <core/conformation/UltraLightResidue.fwd.hh>
 #include <core/kinematics/Jump.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -119,6 +120,9 @@ public:
 	/// @brief check ligand still inside the grid
 	bool check_grid(qsar::scoring_grid::GridSet const & grid, core::conformation::UltraLightResidue & ligand_residue, core::Real distance = 0);
 
+	/// @brief score constraints by updating pose and applying score_function_
+	core::Real score_constraints(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue, core::scoring::ScoreFunctionOP & sfxn);
+
 private:
 	/// @brief Estimate how much the ligand will travel during the MC translation
 	/// @details - success_rate is the MC success rate. Will be bumped to a reasonable minimum
@@ -132,6 +136,9 @@ private:
 	bool output_sampled_space_ = false;
 	bool check_rmsd_ = false;
 	bool use_conformers_ = true;
+	bool use_constraints_ = false;
+	std::string cst_fa_file_ = "";
+	core::Real cst_fa_weight_ = 1.0;
 	std::string sampled_space_file_;
 	core::Real initial_perturb_ = 0.0;
 	core::Real initial_angle_perturb_ = -360.0;
