@@ -28,6 +28,7 @@
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 
 #define EXPECTEDDIST 2.01
 #define DISTTHRESH 0.05
@@ -53,6 +54,14 @@ public:
 	void test_mixed_disulf() {
 		core::pose::PoseOP pose( new core::pose::Pose );
 		core::import_pose::pose_from_file( *pose, "protocols/cyclic_peptide/mixed_disulf_test.pdb" , core::import_pose::PDB_file);
+
+		//Get rid of other beta-amino acids, which can't repack because I don't distribute rotamer libraries for all of them with Rosetta:
+		protocols::simple_moves::MutateResidue mutres33( 33, "B3A" );
+		protocols::simple_moves::MutateResidue mutres35( 35, "B3A" );
+		protocols::simple_moves::MutateResidue mutres39( 39, "B3A" );
+		mutres33.apply(*pose);
+		mutres35.apply(*pose);
+		mutres39.apply(*pose);
 
 		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
 		sfxn->set_weight( core::scoring::dslf_fa13, 1.0 );

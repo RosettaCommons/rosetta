@@ -20,21 +20,30 @@
 #include <test/core/init_util.hh>
 
 // Project Headers
-
+#include <numeric/xyzVector.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/dunbrack/DunbrackEnergy.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/MinimizationData.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 
 // Protocols Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh> //To make it easier to build poses
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/relax/FastRelax.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
@@ -48,7 +57,7 @@ class DunbrackEnergyTests_oligourea : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init_with_additional_options( "-out:levels core.pack.rotamer_set.ContinuousRotamerSet:500 -extra_res_fa core/pack/dunbrack/dummy_type.params" );
+		core_init_with_additional_options( "-out:levels core.pack.rotamer_set.ContinuousRotamerSet:500 -extra_res_fa core/pack/dunbrack/dummy_type.params -output_virtual" );
 	}
 
 	void tearDown(){
@@ -102,9 +111,9 @@ public:
 		TR.precision( 10 );
 		TR << "Scores are: " << score1 << " " << score2 << " " << score3 << " " << score4 << " " << score5 << std::endl;
 
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score2-score1) );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score3-score1) );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score4-score1) );
+		TS_ASSERT_LESS_THAN( 0.01, std::abs(score2-score1) );
+		TS_ASSERT_LESS_THAN( 0.01, std::abs(score3-score1) );
+		TS_ASSERT_LESS_THAN( 0.01, std::abs(score4-score1) );
 		TS_ASSERT_DELTA( score5, score1, 0.00001 );
 	}
 
@@ -161,9 +170,9 @@ public:
 		TR.precision( 10 );
 		TR << "Scores are: " << score1 << " " << score2 << " " << score3 << " " << score4 << " " << score5 << " " << score6 << std::endl;
 
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score2-score1) );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score3-score1) );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score4-score1) );
+		TS_ASSERT_LESS_THAN( 0.01, std::abs(score2-score1) );
+		TS_ASSERT_LESS_THAN( 0.01, std::abs(score3-score1) );
+		TS_ASSERT_LESS_THAN( 0.01, std::abs(score4-score1) );
 		TS_ASSERT_DELTA( score5, score1, 0.00001 );
 		TS_ASSERT_DELTA( score6, score1, 0.00001 );
 	}
@@ -221,10 +230,10 @@ public:
 		TR.precision( 10 );
 		TR << "Scores are: " << score1 << " " << score2 << " " << score3 << " " << score4 << " " << score5 << " " << score6 << std::endl;
 
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score2-score1) );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score3-score1) );
+		TS_ASSERT_LESS_THAN( 0.01, std::abs(score2-score1) );
+		TS_ASSERT_LESS_THAN( 0.01, std::abs(score3-score1) );
 		TS_ASSERT_DELTA( score4, score1, 0.00001 );
-		TS_ASSERT_LESS_THAN( 0.1, std::abs(score5-score1) );
+		TS_ASSERT_LESS_THAN( 0.01, std::abs(score5-score1) );
 		TS_ASSERT_DELTA( score6, score1, 0.00001 );
 	}
 
@@ -308,6 +317,110 @@ public:
 			TS_ASSERT_LESS_THAN( 0.1, std::abs(score1d) );
 			TS_ASSERT_DELTA( score1e, 0.0, 0.00001 );
 		}
+	}
+
+	/// @brief Test fa_dun scoring of oligourea-proline.
+	void test_oligourea_proline_score() {
+		protocols::cyclic_peptide::PeptideStubMover builder;
+		builder.add_residue("Append", "ALA:NtermProteinFull", 1, true, "", 0, 1, "");
+		builder.add_residue("Append", "OU3_PRO", 2, false, "N", 0, 1, "C");
+		builder.add_residue("Append", "ALA:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		core::pose::Pose pose;
+		builder.apply(pose); //Build the peptide.
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::fa_dun, 1.0 );
+
+		pose.set_phi(1, -135);
+		pose.set_psi(1, 135);
+		pose.set_omega(1, 180);
+		pose.set_phi(3, -135);
+		pose.set_psi(3, 135);
+		pose.set_omega(3, 180);
+
+		//Test case:
+		pose.set_phi(2, -120);
+		pose.set_theta(2, -150);
+		pose.set_psi(2, 50);
+		pose.set_mu(2, 180);
+		pose.set_omega(2, 180);
+		pose.set_chi(1, 2, -25.1);
+		pose.set_chi(2, 2, 36.2);
+		pose.set_chi(3, 2, -31.7);
+		pose.update_residue_neighbors();
+		core::Real const rot1score( (*sfxn)(pose) );
+		pose.set_chi(1, 2, 28.5);
+		pose.set_chi(2, 2, -34.7);
+		pose.set_chi(3, 2, 26.4);
+		pose.update_residue_neighbors();
+		core::Real const rot2score( (*sfxn)(pose) );
+		pose.set_chi(1, 2, 77);
+		pose.set_chi(2, 2, -94.7);
+		pose.set_chi(3, 2, 102.4);
+		pose.update_residue_neighbors();
+		core::Real const nonrotscore( (*sfxn)(pose) );
+
+		TS_ASSERT_LESS_THAN( rot1score, nonrotscore );
+		TS_ASSERT_LESS_THAN( rot2score, nonrotscore );
+		TS_ASSERT_LESS_THAN( rot1score, rot2score );
+		TS_ASSERT_LESS_THAN( rot1score, 10.0 );
+		TS_ASSERT_LESS_THAN( rot2score, 10.0 );
+
+		TR << "Rot1Score:\t" << rot1score << std::endl;
+		TR << "Rot2Score:\t" << rot2score << std::endl;
+		TR << "NonRotScore:\t" << nonrotscore << std::endl;
+	}
+
+	/// @brief Test FastRelax with oligourea-proline, confirming that pro_close keeps the proline ring closed.
+	void test_oligourea_proline_pack() {
+		protocols::cyclic_peptide::PeptideStubMover builder;
+		builder.add_residue("Append", "ALA:NtermProteinFull", 1, true, "", 0, 1, "");
+		builder.add_residue("Append", "OU3_PRO", 2, false, "N", 0, 1, "C");
+		builder.add_residue("Append", "ALA:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		core::pose::Pose pose;
+		builder.apply(pose); //Build the peptide.
+
+		pose.set_phi(1, -135);
+		pose.set_psi(1, 135);
+		pose.set_omega(1, 180);
+		pose.set_phi(2, -77.6);
+		pose.set_theta(2, 48.1);
+		pose.set_psi(2, 102.2);
+		pose.set_mu(2, 180);
+		pose.set_omega(2, 180);
+		pose.set_phi(3, -135);
+		pose.set_psi(3, 135);
+		pose.set_omega(3, 180);
+		pose.set_chi(1, 2, 100); //Set a ridiculous chi
+		pose.set_chi(2, 2, 100); //Set a ridiculous chi
+		pose.set_chi(3, 2, 100); //Set a ridiculous chi
+		pose.update_residue_neighbors();
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::fa_dun, 1.0 );
+		sfxn->set_weight( core::scoring::pro_close, 1.0 );
+
+		(*sfxn)(pose);
+
+		core::Real const pro_dist1( pose.xyz( core::id::NamedAtomID("NV", 2) ).distance( pose.xyz( core::id::NamedAtomID("N", 2) ) ) );
+		TR << "Pre-relax proline distance: " << pro_dist1 << std::endl;
+
+		TS_ASSERT_LESS_THAN( 1.0, pro_dist1 );
+
+		protocols::relax::FastRelax frlx(sfxn, 1);
+		frlx.apply(pose);
+
+		/*core::pack::task::TaskFactoryOP taskfact( new core::pack::task::TaskFactory );
+		taskfact->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::RestrictToRepacking ) );
+		protocols::simple_moves::PackRotamersMover pack(sfxn, taskfact->create_task_and_apply_taskoperations(pose));
+		pack.apply(pose);*/
+
+		core::Real const pro_dist2( pose.xyz( core::id::NamedAtomID("NV", 2) ).distance( pose.xyz( core::id::NamedAtomID("N", 2) ) ) );
+		TR << "Post-relax proline distance: " << pro_dist2 << std::endl;
+
+		TS_ASSERT_LESS_THAN( pro_dist2, pro_dist1 );
+		TS_ASSERT_LESS_THAN( pro_dist2, 0.1 );
+
 	}
 
 };

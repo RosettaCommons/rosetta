@@ -118,7 +118,7 @@ ProClosureEnergy::defines_score_for_residue_pair(
 	if ( !res_moving_wrt_eachother ) return false;
 
 	bool const res1_is_upper( ( (rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr) || (rsd1.aa() == ou3_pro) ) && rsd1.is_bonded( rsd2 ) && rsd2.has_upper_connect() && rsd2.residue_connection_partner( rsd2.upper_connect().index() ) == rsd1.seqpos() );
-	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) || (rsd1.aa() == ou3_pro) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
+	bool const res2_is_upper( ( (rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr) || (rsd2.aa() == ou3_pro) ) && rsd2.is_bonded( rsd1 ) && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() );
 
 	return (res1_is_upper || res2_is_upper);
 }
@@ -172,7 +172,7 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & upper_res( res1_is_upper ? rsd1 : rsd2 );
 	conformation::Residue const & lower_res( res1_is_upper ? rsd2 : rsd1 );
 
-	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) || (rsd1.aa() == chemical::ou3_pro) );
+	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) || (upper_res.aa() == chemical::ou3_pro) );
 	const core::Real d_multiplier = (upper_res.type().is_d_aa() ? -1.0 : 1.0); //A multiplier for the derivative to invert it if this is a D-amino acid.
 
 	utility::vector1< DerivVectorPair > & upper_res_atom_derivs( res1_is_upper ? r1_atom_derivs : r2_atom_derivs );

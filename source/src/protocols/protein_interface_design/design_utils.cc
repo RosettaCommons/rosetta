@@ -550,7 +550,7 @@ hbonded(
 	HBondDatabaseCOP hb_database( HBondDatabase::get_database( background_hbond_set.hbond_options().params_database_tag()));
 
 	if ( bb_bb ) {
-		TR << "decomposing bb hydrogen bond terms" << std::endl;
+		TR.Debug << "decomposing bb hydrogen bond terms" << std::endl;
 		core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn->energy_method_options()) );
 		energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn->set_energy_method_options(*energy_options);

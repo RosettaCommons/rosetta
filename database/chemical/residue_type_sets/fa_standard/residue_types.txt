@@ -530,8 +530,13 @@ residue_types/oligourea/OU3_ALA.params
 residue_types/oligourea/OU3_ILE.params
 residue_types/oligourea/OU3_LEU.params
 residue_types/oligourea/OU3_PHE.params
+residue_types/oligourea/OU3_ASN.params
 residue_types/oligourea/OU3_PRO.params
+residue_types/oligourea/OU3_THR.params
+residue_types/oligourea/OU3_GLN.params
 residue_types/oligourea/OU3_VAL.params
+residue_types/oligourea/OU3_TRP.params
+residue_types/oligourea/OU3_TYR.params
 
 ## Metal Ion Types
 residue_types/metal_ions/CA.params

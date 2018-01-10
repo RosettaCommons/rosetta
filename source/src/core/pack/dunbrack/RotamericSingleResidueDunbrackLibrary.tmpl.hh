@@ -368,10 +368,12 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 	interpolate_rotamers( rsd, pose, scratch, packed_rotno, interpolated_rotamer );
 
-	if ( dun02() && aa() < core::chemical::last_D_aa ) {
+	if ( dun02() && core::chemical::is_canonical_L_aa( aa() ) ) {
 		for ( Size ii = 1; ii <= T; ++ii ) chidev[ ii ] = subtract_chi_angles( chi[ ii ], chimean[ ii ], aa(), ii );
 	} else {
-		for ( Size ii = 1; ii <= T; ++ii ) chidev[ ii ] = basic::periodic_range( chi[ ii ] - chimean[ ii ], 360 );
+		for ( Size ii = 1; ii <= T; ++ii ) {
+			chidev[ ii ] = basic::periodic_range( chi[ ii ] - chimean[ ii ], 360 );
+		}
 	}
 
 	for ( Size ii = 1; ii <= T; ++ii ) {
@@ -805,7 +807,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	/// for the 2002 library.  However, the 2008 and 2010 libraries are not yet up to
 	/// speed with cubic interpolation (requiring tricubic splines), so keep this value
 	/// around for the moment.  Also being preserved for the sake of backwards compatibility.
-	interpolate_polylinear_by_value( rotprob, bb_alpha, binw, false, // treat as angles
+	interpolate_polylinear_by_value( rotprob, bb_alpha, binw, false /*Do not treat as angles*/ ,
 		scratch.rotprob(), scratch_drotprob_dbb );
 
 	for ( Size i = 1; i <= N; ++i ) scratch.drotprob_dbb()[ i ] = scratch_drotprob_dbb[ i ];
@@ -854,8 +856,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 		}
 		utility::fixedsizearray1< Real, N > binw( BB_BINRANGE );
 
-		interpolate_polylinear_by_value( chi_mean, bb_alpha, binw, true, scratch.chimean()[ ii ], scratch_dchi_mean );
+		interpolate_polylinear_by_value( chi_mean, bb_alpha, binw, N <= 2 /*Note that angle interpolation is broken for N > 2, so value interpolation is necessary.*/, scratch.chimean()[ ii ], scratch_dchi_mean );
 		interpolated_rotamer.chi_mean( ii ) = scratch.chimean()[ ii ];
+		//std::cout << "********** After interpolate_polylinear_by_value, scratch.chimean()[" << ii << "]=" << scratch.chimean()[ii] << std::endl;
 		interpolate_polylinear_by_value( chi_sd, bb_alpha, binw, false, scratch.chisd()[ ii ], scratch_dchi_sd );
 		interpolated_rotamer.chi_sd( ii ) = scratch.chisd()[ ii ];
 
@@ -2240,7 +2243,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 						Size jp1kp1lp1 = jj * N_BB_BINS[3] * N_BB_BINS[2] + kk * N_BB_BINS[3] + ll+1;
 						Size sortedrotno = packed_rotno_2_sorted_rotno_( jp1kp1lp1, ii );
 						PackedDunbrackRotamer< T, N > & rot = rotamers_( jp1kp1lp1, sortedrotno );
-						rot.rotamer_probability() = rotamers_( jp1kp1lp1, sortedrotno ).rotamer_probability();
+						//rot.rotamer_probability() = rotamers_( jp1kp1lp1, sortedrotno ).rotamer_probability();
 						//if ( rot.rotamer_probability() <= 1e-6 ) rot.rotamer_probability() = 1e-6;
 						DunbrackReal rotamer_energy = -std::log( rot.rotamer_probability() );
 						rot.n_derivs()[ 1 ] = rotamer_energy;
@@ -2395,7 +2398,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static(
 	if ( dun02() ) {
 		core::chemical::AA aa2( aa() );
 		if ( core::chemical::is_canonical_D_aa( aa2 ) ) aa2 = core::chemical::get_L_equivalent( aa2 );
-		if ( aa() < core::chemical::last_D_aa ) { rotamer_from_chi_02( chi, aa2, T, rot ); return; }
+		if ( is_canonical_L_aa( aa2 ) ) { rotamer_from_chi_02( chi, aa2, T, rot ); return; }
 	}
 
 	debug_assert( chi.size() >= T );
