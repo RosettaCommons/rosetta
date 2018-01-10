@@ -7594,6 +7594,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'fiveprime_cap', 'ResidueChainVector',desc='fiveprime capped residues and their corresponding 7MGs',default=[]),
                 Option( 'other_poses', 'StringVector',desc='list of PDB files containing other poses'),
                 Option( 'jump_res', 'ResidueChainVector', desc= "optional: residues for defining jumps -- please supply in pairs", default=[] ),
+		Option( 'disulfide_res', 'ResidueChainVector', desc= "optional: residues for defining disulfides -- please supply in pairs", default=[] ),
 		Option( 'extra_min_res', 'ResidueChainVector', desc= "specify residues other than those being built that should be minimized", default=[] ),
 		Option( 'extra_min_jump_res', 'ResidueChainVector', desc= "specify jump-connected pairs  other than those being built that should be minimized", default=[] ),
 		Option( 'root_res', 'ResidueChainVector', desc= "optional: desired root res (used in SWM move testing)", default=[] ),

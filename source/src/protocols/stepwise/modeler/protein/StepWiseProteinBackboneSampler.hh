@@ -25,7 +25,8 @@
 #include <protocols/stepwise/modeler/protein/MainChainTorsionSet.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/scoring/Ramachandran.hh>
+#include <core/scoring/Ramachandran.fwd.hh>
+#include <core/scoring/RamaPrePro.fwd.hh>
 #include <string>
 #include <map>
 
@@ -218,6 +219,12 @@ private:
 	core::Real
 	get_rotamer_angle( core::Size const i, core::Size const N_SAMPLE );
 
+	core::Real
+	rama_energy(
+		core::Size const n,
+		core::pose::Pose const & pose,
+		utility::vector1< core::Real > const & mainchain_torsions );
+
 private:
 
 	protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters_;
@@ -241,6 +248,7 @@ private:
 	Size nstruct_centroid_;
 
 	core::scoring::Ramachandran const & ramachandran_;
+	core::scoring::RamaPrePro const & rama_pre_pro_;
 
 	MainChainTorsionSetList  main_chain_torsion_set_for_moving_residues_;
 	utility::vector1< MainChainTorsionSetList > main_chain_torsion_sets_for_moving_residues_;
@@ -257,6 +265,8 @@ private:
 	utility::vector1< bool > is_fixed_res_input_;
 
 	bool expand_loop_takeoff_;
+
+	bool use_rama_pre_pro_;
 
 };
 

@@ -251,6 +251,10 @@ FullModelInfo::jump_pairs() const {
 	return full_model_parameters_->get_res_list_as_pairs( JUMP );
 }
 utility::vector1< std::pair< Size, Size > >
+FullModelInfo::disulfide_pairs() const {
+	return full_model_parameters_->get_res_list_as_pairs( DISULFIDE );
+}
+utility::vector1< std::pair< Size, Size > >
 FullModelInfo::cyclize_res() const {
 	return full_model_parameters_->get_res_list_as_pairs( CYCLIZE_RES );
 }

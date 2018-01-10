@@ -106,6 +106,7 @@ public:
 	utility::vector1< Size > const & rna_sample_sugar_res() const;
 	utility::vector1< std::pair< Size, Size > > fiveprime_cap() const;
 	utility::vector1< std::pair< Size, Size > > jump_pairs() const;
+	utility::vector1< std::pair< Size, Size > > disulfide_pairs() const;
 	utility::vector1< std::pair< Size, Size > > cyclize_res() const;
 	utility::vector1< std::pair< Size, Size > > twoprime_res() const;
 	utility::vector1< Size > const & jump_res_map() const;

@@ -65,6 +65,7 @@
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <utility/vector1.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 
 static basic::Tracer TR( "core.conformation.util" );
@@ -543,7 +544,7 @@ copy_residue_coordinates_and_rebuild_missing_atoms(
 
 		for ( Size ia=1; ia<=natoms; ++ia ) { //Loop through all atoms
 			std::string const & atom_name( target_rsd.atom_name(ia) );
-			if ( ia <= to_preserve && source_rsd.has( atom_name ) ) { //If this is a mainchain atom and it's present in both target and source
+			if ( ia <= to_preserve && source_rsd.has( atom_name ) ) {
 				target_rsd.atom(ia).xyz( source_rsd.atom(atom_name).xyz() );
 			} else {
 				if ( TR.Debug.visible() ) TR.Debug << "copy_residue_coordinates_and_rebuild_missing_atoms: missing atom " << target_rsd.name() << ' ' << atom_name << std::endl;
@@ -2119,6 +2120,11 @@ form_disulfide(
 
 	// Break existing disulfide bonds to lower
 	if ( conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) ) { // full atom residue
+
+		// In rare cases this connection-matching logic breaks.
+		// A disulfide bond can be reciprocal even if the other residue's disulfide connection number
+		// is different (for example: if you have no LOWER or UPPER or something)
+
 		std::string lcatom = conformation.residue_type(lower_res).get_disulfide_atom_name();
 		Size const connect_atom( conformation.residue( lower_res ).atom_index( lcatom ) );
 		Size other_res( 0 );
@@ -2135,10 +2141,18 @@ form_disulfide(
 		}
 
 		if ( other_res == upper_res ) {
-			// Already a disulfide bond
-			runtime_assert_msg(conformation.residue( upper_res ).connect_map( conn ).resid() == lower_res,
+			// Already a disulfide bond:
+			// A better "reciprocal" test: is its lower_res connect_atom() its disulfide atom?
+			// This way the ATOM contains the constant upper_res information.
+			TR.Trace << "Connect atom on " << upper_res << " was " << conformation.residue_type( upper_res ).atom_name( conformation.residue( upper_res ).connect_atom( conformation.residue( lower_res ) ) ) << std::endl;
+			runtime_assert_msg( ObjexxFCL::stripped(
+				conformation.residue_type( upper_res ).atom_name(
+				conformation.residue( upper_res ).connect_atom( conformation.residue( lower_res ) ) ) )
+				== conformation.residue_type( upper_res ).get_disulfide_atom_name(),
 				"Error: Disulfide bond wasn't reciprocal");
-			return;
+			//runtime_assert_msg(conformation.residue( upper_res ).connect_map( conn ).resid() == lower_res,
+			// "Error: Disulfide bond wasn't reciprocal");
+			//return;
 		}
 
 		// Break the disulfide bond to upper_res
@@ -2174,17 +2188,16 @@ form_disulfide(
 	} //If !upper_is_symm_equivalent_of_lower()
 
 	// Both residues are now CYD
-	runtime_assert( conformation.residue(lower_res).has_variant_type(chemical::DISULFIDE) );
-	runtime_assert( conformation.residue(upper_res).has_variant_type(chemical::DISULFIDE) );
+	runtime_assert( conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) );
+	runtime_assert( conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE ) );
 
 	//form the bond between the two residues
 	// NOW we still need to get the lc and uc atoms, because we couldn't get them before
 	// since this function doesn't necessarily start with a cys type
 	// (damn this function!)
-	std::string lcatom = conformation.residue_type(lower_res).get_disulfide_atom_name();
-	std::string ucatom = conformation.residue_type(upper_res).get_disulfide_atom_name();
-	conformation.declare_chemical_bond(lower_res,lcatom,upper_res,ucatom);
-
+	std::string const & lcatom = conformation.residue_type( lower_res ).get_disulfide_atom_name();
+	std::string const & ucatom = conformation.residue_type( upper_res ).get_disulfide_atom_name();
+	conformation.declare_chemical_bond( lower_res, lcatom, upper_res, ucatom );
 }
 
 /// @brief Helper function for the form_disulfide function.

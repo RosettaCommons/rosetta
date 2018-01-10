@@ -84,7 +84,7 @@ RamaPrePro::eval_rpp_rama_score(
 ) const {
 	core::chemical::AA const res_aa1( res1->backbone_aa() );
 	if ( (core::chemical::is_canonical_L_aa(res_aa1) || core::chemical::is_canonical_D_aa(res_aa1) || res_aa1 == core::chemical::aa_gly ) &&
-			!res1->defines_custom_rama_prepro_map( is_N_substituted( res2 ) )
+			!res1->defines_custom_rama_prepro_map( res2 && is_N_substituted( res2 ) )
 			) {
 		debug_assert( mainchain_torsions.size() == 2 );
 		core::Real denergy_dphi, denergy_dpsi;
@@ -108,7 +108,7 @@ RamaPrePro::eval_rpp_rama_score(
 
 	ScoringManager* manager( ScoringManager::get_instance() );
 
-	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table( manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, is_N_substituted( res2 ) ) );
+	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table( manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, res2 && is_N_substituted( res2 ) ) );
 	if ( !cur_table ) { //No scoring table defined for this residue type.
 		if ( return_derivs ) {
 			gradient.resize( res1->mainchain_atoms().size() - 1 );
@@ -183,7 +183,9 @@ RamaPrePro::eval_rpp_rama_score(
 		phipsi[2] = d_multiplier * psi;
 		utility::vector1 < core::Real > derivs(2);
 		core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table;
-		if ( is_N_substituted( res2 ) ) { //VKM -- crude approximation: this residue is considered "pre-pro" if it precedes an L- or D-proline.  (The N and CD are achiral).
+		// AMW: res2 must also be non-null. These functions are public and could be called (for good reason)
+		// from environments where this term could be evaluated on a (currently) terminal residue.
+		if ( res2 && is_N_substituted( res2 ) ) { //VKM -- crude approximation: this residue is considered "pre-pro" if it precedes an L- or D-proline.  (The N and CD are achiral).
 			cur_table =  canonical_prepro_score_tables_.at(res_aa1_copy);
 		} else {
 			cur_table =  canonical_score_tables_.at(res_aa1_copy);

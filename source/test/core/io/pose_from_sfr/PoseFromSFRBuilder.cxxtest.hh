@@ -29,7 +29,9 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -120,6 +122,38 @@ public:
 		TS_ASSERT_EQUALS( pose.residue(1).aa(), chemical::aa_ala );
 		TS_ASSERT( pose.residue_type(1).has_property( "ACETYLATED_NTERMINUS" ));
 		TS_ASSERT( pose.residue_type(1).has_property( "METHYLATED_CTERMINUS" ));
+	}
+
+	void test_1rgr() {
+		core::io::StructFileReaderOptions options;
+		std::string ace_as_own_residue_pdb = utility::file_contents( "core/io/pose_from_sfr/1rgr_apo.pdb" );
+		core::io::StructFileRep sfr = core::io::pdb::create_sfr_from_pdb_file_contents( ace_as_own_residue_pdb, options );
+
+		chemical::ResidueTypeSetCOP residue_set
+			( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+		PoseFromSFRBuilder builder( residue_set, options );
+		pose::Pose pose;
+		builder.build_pose( sfr, pose );
+
+		// This pose has the following chemical connectivity:
+		// Residues 1-6 are connected polymerically as normal.
+		// Residue 3's sidechain is connected to residue 7's Cterm
+		// Residue 5's sidechain is connected to residue 7's Nterm
+		TS_ASSERT_EQUALS( pose.residue(1).n_current_residue_connections(), 1 );
+		TS_ASSERT_EQUALS( pose.residue(2).n_current_residue_connections(), 2 );
+		TS_ASSERT_EQUALS( pose.residue(3).n_current_residue_connections(), 3 );
+		TS_ASSERT_EQUALS( pose.residue(4).n_current_residue_connections(), 2 );
+		TS_ASSERT_EQUALS( pose.residue(5).n_current_residue_connections(), 3 );
+		TS_ASSERT_EQUALS( pose.residue(6).n_current_residue_connections(), 1 );
+		TS_ASSERT_EQUALS( pose.residue(7).n_current_residue_connections(), 2 );
+
+
+		// But enough with chemical connectivity. What about a reasonable foldtree?
+		// When does that happen?
+		// OK, this isn't properly a test of the PoseFromSFRBuilder anymore.
+		core::pose::set_reasonable_fold_tree( pose );
+		TS_ASSERT_EQUALS( pose.fold_tree().num_jump(), 0 );
+
 	}
 
 	/// @brief This tests the ability for Rosetta to read in a cyclic peptide that has a LINK

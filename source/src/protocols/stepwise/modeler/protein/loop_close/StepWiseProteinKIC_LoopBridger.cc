@@ -126,7 +126,7 @@ StepWiseProteinKIC_LoopBridger::apply( core::pose::Pose & pose )
 	}
 
 	// Kind of silly -- should have at least one output.
-	if ( main_chain_torsion_sets_for_moving_residues_.size() == 0  ) grab_main_chain_torsion_set_list( pose );
+	if ( main_chain_torsion_sets_for_moving_residues_.empty()  ) grab_main_chain_torsion_set_list( pose );
 
 	std::cout << "Total time in StepWiseProteinKIC_LoopBridger: " <<
 		static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;

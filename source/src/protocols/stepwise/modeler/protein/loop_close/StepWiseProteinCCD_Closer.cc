@@ -146,7 +146,6 @@ StepWiseProteinCCD_Closer::CCD_loop_close( core::pose::Pose & pose )
 
 	// cutoff for acceptance
 	Real const rmsd_acceptance_cutoff =  1.5; // can be a little relaxed, since there will be a minimize afterwards.
-
 	ccd_loop_closure_mover_->apply( pose );
 
 	ntries_++;
@@ -241,15 +240,15 @@ StepWiseProteinCCD_Closer::setup_torsions( core::pose::Pose const & pose ) {
 	which_torsions_.clear();
 
 	//save psi,omega at 'takeoff' residue.
-	for ( Size k = 2; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.push_back( TorsionID( loop_.start(), BB, k ) );
+	for ( Size k = 2; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.emplace_back( loop_.start(), BB, k );
 
 	//save all mc torsions (for alphas, phi,psi,omega) inside loop
 	for ( Size n = loop_.start() + 1; n < loop_.stop(); n++ ) {
-		for ( Size k = 1; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
+		for ( Size k = 1; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.emplace_back( n, BB, k );
 	}
 
 	//save phi at 'landing' residue.
-	which_torsions_.push_back( TorsionID( loop_.stop(), BB, 1 ) );
+	which_torsions_.emplace_back( loop_.stop(), BB, 1 );
 }
 
 
