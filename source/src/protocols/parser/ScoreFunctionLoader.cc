@@ -142,13 +142,13 @@ void ScoreFunctionLoader::load_data(
 					emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_voxel_size") );
 				}
 				if ( mod_tag->hasOption("voids_penalty_energy_voxel_grid_padding") ) {
-					emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_voxel_grid_padding") );
+					emoptions.voids_penalty_energy_voxel_grid_padding( mod_tag->getOption<core::Real>("voids_penalty_energy_voxel_grid_padding") );
 				}
 				if ( mod_tag->hasOption("voids_penalty_energy_cone_dotproduct_cutoff") ) {
-					emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_dotproduct_cutoff") );
+					emoptions.voids_penalty_energy_cone_dotproduct_cutoff( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_dotproduct_cutoff") );
 				}
 				if ( mod_tag->hasOption("voids_penalty_energy_cone_distance_cutoff") ) {
-					emoptions.voids_penalty_energy_voxel_size( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_distance_cutoff") );
+					emoptions.voids_penalty_energy_cone_distance_cutoff( mod_tag->getOption<core::Real>("voids_penalty_energy_cone_distance_cutoff") );
 				}
 				if ( mod_tag->hasOption("voids_penalty_energy_disabled_except_during_packing") ) {
 					emoptions.voids_penalty_energy_disabled_except_during_packing( mod_tag->getOption<bool>("voids_penalty_energy_disabled_except_during_packing") );
