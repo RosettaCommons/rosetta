@@ -14,7 +14,8 @@ cat all_usings.txt | egrep -v '^src/devel/' | egrep -v '^src/apps/pilot/' > clea
 
 grep 'using namespace' clean_usings.txt | sed "s/^/[`date`] /" > using_namespace.log 
 
-grep -v -F -f known_usings.txt clean_usings.txt | sed "s/^/[`date`] /" > usings.log
+#Remove known/approved usings in headers, as well as the new 'using as replacement for typedef' syntax
+grep -v -F -f known_usings.txt clean_usings.txt | grep -v '=' | sed "s/^/[`date`] /" > usings.log
 
 # Changes in all_usings.txt will show up the first time, but shouldn't change after that.
 #rm -f all_usings.txt
