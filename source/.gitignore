@@ -1,7 +1,7 @@
 !/external/lib/*/*/*.so
 external/DAlpahBall/DAlphaBall.*
-/build/*
-/bin/*
+/build
+/bin
 /html/
 /external/dbio/mysql/**
 /external/dbio/postgreSQL/**
