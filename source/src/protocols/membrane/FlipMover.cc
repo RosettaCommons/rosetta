@@ -225,7 +225,7 @@ void FlipMover::apply( core::pose::Pose & pose ) {
 	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
 	// reorder foldtree
-	Size mem_rsd = pose.conformation().membrane_info()->membrane_rsd_num();
+	Size mem_rsd = pose.membrane_info()->membrane_rsd_num();
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
 	foldtree.reorder( mem_rsd );
 	pose.fold_tree( foldtree );
@@ -234,7 +234,7 @@ void FlipMover::apply( core::pose::Pose & pose ) {
 
 	TR << "upstream jump res: " << foldtree.upstream_jump_residue( jump_num_ ) << std::endl;
 	TR << "downstream jump res: " << foldtree.downstream_jump_residue( jump_num_ ) << std::endl;
-	TR << "membrane res: " << pose.conformation().membrane_info()->membrane_rsd_num() << std::endl;
+	TR << "membrane res: " << pose.membrane_info()->membrane_rsd_num() << std::endl;
 
 	// if jump is not membrane jump
 	if ( foldtree.upstream_jump_residue( jump_num_ ) != mem_rsd &&
@@ -244,7 +244,7 @@ void FlipMover::apply( core::pose::Pose & pose ) {
 
 		// split pose and topology by jump
 		Pose pose_up, pose_down;
-		SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+		SpanningTopologyOP topo = pose.membrane_info()->spanning_topology();
 		SpanningTopology topo_up, topo_down;
 
 		// call function
@@ -275,7 +275,7 @@ void FlipMover::apply( core::pose::Pose & pose ) {
 
 		TR << "jump is either zero or membrane jump" << std::endl;
 
-		jump_num_ = pose.conformation().membrane_info()->membrane_jump();
+		jump_num_ = pose.membrane_info()->membrane_jump();
 
 		// axis is x-axis
 		if ( axis_.length() == 0 ) {

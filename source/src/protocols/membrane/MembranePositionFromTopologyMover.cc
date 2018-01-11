@@ -147,7 +147,7 @@ MembranePositionFromTopologyMover::apply( core::pose::Pose & pose ) {
 	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message("Warning! Pose is not a membrane pose. Cannot perform mpframework operation on a non membrane pose~" );
 	}
-	if ( pose.conformation().membrane_info()->spanning_topology()->nspans() == 0 ) {
+	if ( pose.membrane_info()->spanning_topology()->nspans() == 0 ) {
 		utility_exit_with_message("The SpanningTopology object in MembraneInfo is empty!" );
 	}
 

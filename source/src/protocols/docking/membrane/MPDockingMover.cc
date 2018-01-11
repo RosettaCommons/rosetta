@@ -362,7 +362,7 @@ void MPDockingMover::apply( Pose & pose ) {
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
 
 	// reorder foldtree
-	foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
+	foldtree.reorder( pose.membrane_info()->membrane_rsd_num() );
 	pose.fold_tree( foldtree );
 
 	// show foldtree

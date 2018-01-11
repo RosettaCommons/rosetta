@@ -1771,9 +1771,17 @@ Pose::glycan_tree_set() const {
 	return conformation_->glycan_tree_set();
 
 }
+// @brief Return a const memrbane info object
+conformation::membrane::MembraneInfoOP
+Pose::membrane_info() const {
+	return conformation_->membrane_info();
+}
 
-
-
+// @brief Returning a nonconst membrane info object
+conformation::membrane::MembraneInfoOP
+Pose::membrane_info() {
+	return conformation_->membrane_info();
+}
 
 /// @details Dumps an mmcif formatted file if the extension on the input file_name_string is .cif
 void

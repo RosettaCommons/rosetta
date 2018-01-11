@@ -556,8 +556,8 @@ AddMembraneMover::apply( Pose & pose ) {
 	// Step 5: Accommodate user defined positions
 	if ( user_defined_ ) {
 		TR << "Setting initial membrane center and normal to position used by the user-provided membrane residue" << std::endl;
-		center_ = pose.conformation().membrane_info()->membrane_center(pose.conformation());
-		normal_ = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+		center_ = pose.membrane_info()->membrane_center(pose.conformation());
+		normal_ = pose.membrane_info()->membrane_normal(pose.conformation());
 
 		// get anchor points from chains
 		utility::vector1< core::Size > anchors( get_anchor_points_for_tmcom( pose ) );

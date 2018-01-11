@@ -112,12 +112,12 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 	}
 
 	// Check the membrane fold tree is reasonable
-	if ( ! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
+	if ( ! pose.membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 
 	// Compute random rotation
-	core::Vector current_normal( pose.conformation().membrane_info()->membrane_normal(pose.conformation()) );
+	core::Vector current_normal( pose.membrane_info()->membrane_normal(pose.conformation()) );
 	current_normal.normalize();
 	core::Real theta = 2*numeric::random::rg().uniform() * rot_mag_;
 
@@ -198,7 +198,7 @@ RandomPositionTranslationMover::apply( core::pose::Pose & pose ) {
 	}
 
 	// Check the membrane fold tree is reasonable
-	if ( ! pose.conformation().membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
+	if ( ! pose.membrane_info()->check_membrane_fold_tree( pose.fold_tree() ) ) {
 		utility_exit_with_message( "Cannot apply membrane move with unreasonable membrane fold tree" );
 	}
 

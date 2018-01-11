@@ -201,7 +201,7 @@ void TiltMover::apply( core::pose::Pose & pose ) {
 	TR << "angle is " << angle_ << std::endl;
 
 	// compute downstream empedding
-	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+	SpanningTopologyOP topo = pose.membrane_info()->spanning_topology();
 	SpanningTopologyOP topo_up_( new SpanningTopology() );
 	SpanningTopologyOP topo_down_( new SpanningTopology() );
 
@@ -214,7 +214,7 @@ void TiltMover::apply( core::pose::Pose & pose ) {
 
 	// compute tilt axis
 	core::Vector emb_cnt_vector = emb_down->center() - emb_up->center();
-	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+	core::Vector mem_normal = pose.membrane_info()->membrane_normal(pose.conformation());
 	core::Vector tangent_axis = cross( emb_cnt_vector, mem_normal );
 
 	// tilt the downstream partner

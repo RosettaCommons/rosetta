@@ -410,7 +410,7 @@ SetMembraneCenterMover::apply( core::pose::Pose & pose ) {
 	}
 
 	// Get current normal
-	core::Vector current_normal( pose.conformation().membrane_info()->membrane_normal(pose.conformation()) );
+	core::Vector current_normal( pose.membrane_info()->membrane_normal(pose.conformation()) );
 
 	// Apply translation
 	pose.conformation().update_membrane_position( center_, current_normal );

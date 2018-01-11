@@ -146,7 +146,7 @@ mem_bb_rmsd_no_super(
 	}
 
 	// Pick transmembrane spanning regions
-	SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
+	SpanningTopologyOP topology( pose.membrane_info()->spanning_topology() );
 	ObjexxFCL::FArray1D_bool tm_regions ( pose.size(), false );
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( topology->in_span(i) ) {
@@ -177,7 +177,7 @@ mem_all_atom_rmsd_no_super(
 	}
 
 	// Pick transmembrane spanning regions
-	core::conformation::membrane::SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
+	core::conformation::membrane::SpanningTopologyOP topology( pose.membrane_info()->spanning_topology() );
 	ObjexxFCL::FArray1D_bool tm_regions ( pose.size(), false );
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( topology->in_span(i) ) {
@@ -208,7 +208,7 @@ mem_bb_rmsd_with_super(
 	}
 
 	// Pick transmembrane spanning regions
-	SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
+	SpanningTopologyOP topology( pose.membrane_info()->spanning_topology() );
 	ObjexxFCL::FArray1D_bool tm_regions ( pose.size(), false );
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( topology->in_span(i) ) {
@@ -239,7 +239,7 @@ mem_all_atom_rmsd_with_super(
 	}
 
 	// Pick transmembrane spanning regions
-	SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
+	SpanningTopologyOP topology( pose.membrane_info()->spanning_topology() );
 	ObjexxFCL::FArray1D_bool tm_regions ( pose.size(), false );
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( topology->in_span(i) ) {
@@ -269,7 +269,7 @@ calc_helix_tilt_angle(
 	using namespace core::conformation::membrane;
 
 	// Get membrane normal from membrane info
-	Vector normal( pose.conformation().membrane_info()->membrane_normal( pose.conformation() ) );
+	Vector normal( pose.membrane_info()->membrane_normal( pose.conformation() ) );
 
 	// Calculate an axis representing the "axis of the helix"
 	Vector helix_axis( calc_helix_axis( pose, span_no ) );
@@ -303,7 +303,7 @@ calc_helix_axis(
 	using namespace core::conformation::membrane;
 
 	// Get the span from the pose
-	SpanOP helix_span( pose.conformation().membrane_info()->spanning_topology()->span( span_no ) );
+	SpanOP helix_span( pose.membrane_info()->spanning_topology()->span( span_no ) );
 
 	// Check the core::Size of the span is sufficient for the this calculation
 	if ( helix_span->end() - helix_span->start() < 6 ) {
@@ -383,8 +383,8 @@ utility::vector1< core::Real > pose_tilt_angle_and_center_distance( core::pose::
 	utility::vector1< core::Real > angle_and_distance;
 
 	// membrane center
-	core::Vector mem_center = pose.conformation().membrane_info()->membrane_center( pose.conformation() );
-	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal( pose.conformation() );
+	core::Vector mem_center = pose.membrane_info()->membrane_center( pose.conformation() );
+	core::Vector mem_normal = pose.membrane_info()->membrane_normal( pose.conformation() );
 
 	// compute structure-based embedding
 	EmbeddingDefOP emb( compute_structure_based_embedding( pose ) );
@@ -423,8 +423,8 @@ is_membrane_fixed( core::pose::Pose & pose ) {
 	}
 
 	// Get membrane res, jump & upstream residue
-	core::Size membrane_rsd( pose.conformation().membrane_info()->membrane_rsd_num() );
-	core::Size membrane_jump( pose.conformation().membrane_info()->membrane_jump() );
+	core::Size membrane_rsd( pose.membrane_info()->membrane_rsd_num() );
+	core::Size membrane_jump( pose.membrane_info()->membrane_jump() );
 	core::Size upstream_res( pose.conformation().fold_tree().upstream_jump_residue( membrane_jump ) );
 
 	if ( upstream_res == membrane_rsd &&
@@ -456,8 +456,8 @@ is_membrane_moveable_by_itself( core::pose::Pose & pose ) {
 	FoldTree const & current_ft( pose.conformation().fold_tree() );
 
 	// Grab membrane info from the pose
-	core::Size membrane_rsd( pose.conformation().membrane_info()->membrane_rsd_num() );
-	core::Size membrane_jump( pose.conformation().membrane_info()->membrane_jump() );
+	core::Size membrane_rsd( pose.membrane_info()->membrane_rsd_num() );
+	core::Size membrane_jump( pose.membrane_info()->membrane_jump() );
 
 	if ( current_ft.num_jump() > 1 ) {
 
@@ -489,7 +489,7 @@ void reorder_membrane_foldtree( core::pose::Pose & pose ) {
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
 
 	// reorder foldtree
-	foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
+	foldtree.reorder( pose.membrane_info()->membrane_rsd_num() );
 
 	// set foldtree in pose
 	pose.fold_tree( foldtree );
@@ -562,7 +562,7 @@ core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & po
 	ft.simple_tree( pose.size() );
 
 	// get membrane residue
-	core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
+	core::Size memrsd = pose.membrane_info()->membrane_rsd_num();
 
 	TR << "partners " << partners << std::endl;
 	TR << "mem rsd " << memrsd << std::endl;
@@ -593,7 +593,7 @@ core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & po
 	pose.fold_tree( ft );
 
 	// set the membrane jump in MembraneInfo
-	pose.conformation().membrane_info()->set_membrane_jump( static_cast< core::SSize >( 1 ) );
+	pose.membrane_info()->set_membrane_jump( static_cast< core::SSize >( 1 ) );
 
 	return static_cast< core::Size >( interface_jump );
 
@@ -761,7 +761,7 @@ utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmc
 	}
 
 	// add jump from MEM to first chain anchor
-	core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
+	core::Size memrsd = pose.membrane_info()->membrane_rsd_num();
 	core::Size cutpoint = chain_ends[ 1 ];
 	core::Vector jump1( anchors[ 1 ], memrsd, cutpoint );
 	all_anchors.push_back( jump1 );
@@ -886,7 +886,7 @@ void create_membrane_foldtree_from_anchors(
 
 	// [2]
 	// get membrane residue
-	core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
+	core::Size memrsd = pose.membrane_info()->membrane_rsd_num();
 
 	// [3]
 	// start with simple tree
@@ -911,7 +911,7 @@ void create_membrane_foldtree_from_anchors(
 	pose.fold_tree( ft );
 
 	// set the membrane jump in MembraneInfo
-	pose.conformation().membrane_info()->set_membrane_jump( static_cast< core::SSize >( 1 ) );
+	pose.membrane_info()->set_membrane_jump( static_cast< core::SSize >( 1 ) );
 
 } // create membrane foldtree from anchors
 
@@ -935,8 +935,8 @@ core::Size create_specific_membrane_foldtree( core::pose::Pose & pose, utility::
 	ft.simple_tree( pose.size() );
 
 	// membrane residue and jump
-	core::Size mem_rsd = pose.conformation().membrane_info()->membrane_rsd_num();
-	core::Size mem_jump = static_cast< core::Size > ( pose.conformation().membrane_info()->membrane_jump() );
+	core::Size mem_rsd = pose.membrane_info()->membrane_rsd_num();
+	core::Size mem_jump = static_cast< core::Size > ( pose.membrane_info()->membrane_jump() );
 
 	// go through anchor points
 	for ( core::Size i = 1; i <= anchors.size(); ++i ) {
@@ -959,7 +959,7 @@ core::Size create_specific_membrane_foldtree( core::pose::Pose & pose, utility::
 	pose.fold_tree( ft );
 
 	// set the membrane jump in MembraneInfo
-	pose.conformation().membrane_info()->set_membrane_jump( static_cast< core::SSize >( mem_jump ) );
+	pose.membrane_info()->set_membrane_jump( static_cast< core::SSize >( mem_jump ) );
 
 	// returns main anchor for MEM on first chain
 	return anchors[1].x();
@@ -1202,7 +1202,7 @@ void compute_structure_based_embedding(
 	using namespace core::conformation::membrane;
 
 	// get topology from MembraneInfo
-	SpanningTopology topo( *pose.conformation().membrane_info()->spanning_topology() );
+	SpanningTopology topo( *pose.membrane_info()->spanning_topology() );
 
 	// create EmbeddingDef to return
 	compute_structure_based_embedding( pose, topo, center, normal );
@@ -1241,7 +1241,7 @@ compute_structure_based_embedding( core::pose::Pose const & pose ){
 	using namespace core::conformation::membrane;
 
 	// get topology from MembraneInfo
-	SpanningTopology topo( *pose.conformation().membrane_info()->spanning_topology() );
+	SpanningTopology topo( *pose.membrane_info()->spanning_topology() );
 
 	return compute_structure_based_embedding( pose, topo );
 
@@ -1258,7 +1258,7 @@ compute_embeddings_by_chain( core::pose::Pose const & pose ) {
 	using namespace protocols::membrane::geometry;
 
 	// get topology from pose
-	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+	SpanningTopologyOP topo = pose.membrane_info()->spanning_topology();
 
 	// split topology by chain
 	utility::vector1< SpanningTopologyOP > chain_topos( split_topology_by_chain_noshift( pose, topo ) );
@@ -1376,7 +1376,7 @@ update_partner_embeddings(
 	using namespace core::conformation::membrane;
 
 	// SpanningTopology objects
-	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+	SpanningTopologyOP topo = pose.membrane_info()->spanning_topology();
 	SpanningTopologyOP topo_up( new SpanningTopology() ); // upstream partner
 	SpanningTopologyOP topo_down( new SpanningTopology() ); // downstream partner
 
@@ -1405,7 +1405,7 @@ core::Vector pose_tm_com( core::pose::Pose const & pose ) {
 	using namespace core::conformation::membrane;
 
 	// get topology from MembraneInfo
-	SpanningTopologyOP topo( pose.conformation().membrane_info()->spanning_topology() );
+	SpanningTopologyOP topo( pose.membrane_info()->spanning_topology() );
 
 	// initialize vector
 	core::Vector com( 0, 0, 0 );
@@ -1458,12 +1458,12 @@ core::Vector chain_tm_com( core::pose::Pose const & pose, core::Size chain ) {
 	using namespace core::conformation::membrane;
 
 	// check that the chain isn't the membrane residue
-	if ( chain == pose.chain( pose.conformation().membrane_info()->membrane_rsd_num() ) ) {
+	if ( chain == pose.chain( pose.membrane_info()->membrane_rsd_num() ) ) {
 		utility_exit_with_message("You are trying to compute the center-of-mass for the membrane residue as a chain. Choose a different one...");
 	}
 
 	// get topology and split it by chain without shifting the numbering in topology
-	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+	SpanningTopologyOP topo = pose.membrane_info()->spanning_topology();
 	utility::vector1< SpanningTopologyOP > split_topo = split_topology_by_chain_noshift( pose, topo );
 
 	// initializations
@@ -1547,7 +1547,7 @@ core::Size rsd_closest_to_pose_tm_com( core::pose::Pose const & pose ) {
 core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, core::Size chainid ) {
 
 	// check that the chain isn't the membrane residue
-	if ( pose.conformation().is_membrane() == true && chainid == pose.chain( pose.conformation().membrane_info()->membrane_rsd_num() ) ) {
+	if ( pose.conformation().is_membrane() == true && chainid == pose.chain( pose.membrane_info()->membrane_rsd_num() ) ) {
 		utility_exit_with_message("You are trying to compute the center-of-mass for the membrane residue as a chain. Choose a different one...");
 	}
 
@@ -1592,7 +1592,7 @@ core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, core::Siz
 	}
 
 	// get membrane residue number and chain for checking
-	core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
+	core::Size memrsd = pose.membrane_info()->membrane_rsd_num();
 	core::Size mem_chain = pose.residue( memrsd ).chain();
 
 	if ( chainid == mem_chain ) {
@@ -1687,7 +1687,7 @@ core::Vector const membrane_axis( core::pose::Pose & pose, int jumpnum )
 	core::Vector tmp_axis = emb_up.center() - emb_down.center();
 
 	// get membrane normal
-	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+	core::Vector mem_normal = pose.membrane_info()->membrane_normal(pose.conformation());
 
 	// compute axis orthogonal to both tmp_axis and membrane normal
 	core::Vector ortho = cross( mem_normal, tmp_axis );
@@ -1720,7 +1720,7 @@ void split_topology_by_jump(
 	core::conformation::membrane::SpanningTopology & topo_down  // topology of downstream pose
 ) {
 	// can't split pose by membrane jump, partition_pose_by_jump function will fail
-	if ( jumpnum == static_cast< core::Size > ( pose.conformation().membrane_info()->membrane_jump() ) ) {
+	if ( jumpnum == static_cast< core::Size > ( pose.membrane_info()->membrane_jump() ) ) {
 		utility_exit_with_message("Cannot split pose by membrane jump! Quitting...");
 	}
 
@@ -1769,7 +1769,7 @@ void split_topology_by_jump_noshift(
 	core::conformation::membrane::SpanningTopologyOP topo_down // topology of downstream pose
 ) {
 	// can't split pose by membrane jump, partition_pose_by_jump function will fail
-	if ( jumpnum == static_cast< core::Size > ( pose.conformation().membrane_info()->membrane_jump() ) ) {
+	if ( jumpnum == static_cast< core::Size > ( pose.membrane_info()->membrane_jump() ) ) {
 		utility_exit_with_message("Cannot split pose by membrane jump! Quitting...");
 	}
 

@@ -99,8 +99,8 @@ MPFastRelaxMover::show_protocol( core::pose::Pose & pose ) {
 	using namespace core;
 
 	// Get the membrane position
-	Vector center( pose.conformation().membrane_info()->membrane_center(pose.conformation()) );
-	Vector normal( pose.conformation().membrane_info()->membrane_normal(pose.conformation()) );
+	Vector center( pose.membrane_info()->membrane_center(pose.conformation()) );
+	Vector normal( pose.membrane_info()->membrane_normal(pose.conformation()) );
 
 	TR << "Membrane Relax protocol + MEM Optimization" << std::endl;
 	TR << "Relax Type: " << relax_protocol_->get_name() << std::endl;
@@ -177,7 +177,7 @@ MPFastRelaxMover::apply( core::pose::Pose & pose ) {
 
 	// Setup custom movemap based on the position of the membrane jump
 	// Then set movemap in protocol
-	core::SSize mem_jump( pose.conformation().membrane_info()->membrane_jump() );
+	core::SSize mem_jump( pose.membrane_info()->membrane_jump() );
 	MoveMapOP movemap( new MoveMap() );
 	movemap->set_chi( true );
 	movemap->set_bb( true );
@@ -239,12 +239,12 @@ MPFastRelaxMover::setup_relax_foldtree( core::pose::Pose & pose ) {
 	core::Size njumps( 1 );
 
 	// Add a jump between the protein COM and the membrane residue
-	core::Size membrane_rsd( pose.conformation().membrane_info()->membrane_rsd_num() );
+	core::Size membrane_rsd( pose.membrane_info()->membrane_rsd_num() );
 	core::Size rsd_com( residue_center_of_mass( pose, 1, pose.size()-1 ) ); // Get the center of mass and don't include the membrane residue!
 	ft.new_jump( rsd_com, membrane_rsd, rsd_com );
 
 	// Set the membrane jump in memInfo
-	pose.conformation().membrane_info()->set_membrane_jump( njumps );
+	pose.membrane_info()->set_membrane_jump( njumps );
 
 	// Rebuild chain jumps in order
 	++njumps;

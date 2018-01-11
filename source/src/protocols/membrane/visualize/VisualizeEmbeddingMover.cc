@@ -164,7 +164,7 @@ VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 		bool fullatom = pose.is_fullatom();
 
 		// get topology
-		SpanningTopology topo = *pose.conformation().membrane_info()->spanning_topology();
+		SpanningTopology topo = *pose.membrane_info()->spanning_topology();
 
 		// get embedding object from pose and topology if not set previously
 		if ( embeddings_->nspans() == 0 ) {
@@ -177,7 +177,7 @@ VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 		utility::vector1< ResidueOP > embedding_residues;
 
 		// get thickness from MembraneInfo
-		Size thickness = pose.conformation().membrane_info()->membrane_thickness();
+		Size thickness = pose.membrane_info()->membrane_thickness();
 
 		// grab residues out of embedding object
 		for ( Size i = 1; i <= embeddings_->nspans(); ++i ) {

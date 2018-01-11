@@ -184,7 +184,7 @@ void MPRangeRelaxMover::apply( Pose & pose ) {
 	// set residues in TM region to helical secondary structure
 	if ( set_tm_helical_ == true ) {
 		for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
-			if ( pose.conformation().membrane_info()->spanning_topology()->in_span( i ) == true ) {
+			if ( pose.membrane_info()->spanning_topology()->in_span( i ) == true ) {
 
 				TR << "Setting residue " << i << " to helical dihedral angles." << std::endl;
 

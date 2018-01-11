@@ -334,7 +334,7 @@ void QuickRelaxPartnersSeparately::finalize_setup( Pose & pose ) {
 
 	// reorder foldtree to have membrane at root
 	core::kinematics::FoldTree ft = pose.fold_tree();
-	ft.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
+	ft.reorder( pose.membrane_info()->membrane_rsd_num() );
 	pose.fold_tree( ft );
 	TR << "reordered foltree: " << std::endl;
 	pose.fold_tree().show( TR );
@@ -343,7 +343,7 @@ void QuickRelaxPartnersSeparately::finalize_setup( Pose & pose ) {
 	///////////////////// TOPOLOGY ///////////////////////
 
 	// SpanningTopology objects
-	topo_ = pose.conformation().membrane_info()->spanning_topology();
+	topo_ = pose.membrane_info()->spanning_topology();
 	topo_->show();
 	TR << "jump number: " << jump_ << std::endl;
 

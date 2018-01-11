@@ -214,7 +214,7 @@ void SpinAroundPartnerMover::apply( core::pose::Pose & pose ) {
 	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
 	// compute downstream empedding
-	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+	SpanningTopologyOP topo = pose.membrane_info()->spanning_topology();
 	SpanningTopologyOP topo_up_( new SpanningTopology() );
 	SpanningTopologyOP topo_down_( new SpanningTopology() );
 

@@ -204,8 +204,8 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	pose2_cp.dump_pdb("pose2superposed.pdb");
 
 	// get topologies of poses
-	SpanningTopologyOP topo1 = pose1->conformation().membrane_info()->spanning_topology();
-	SpanningTopologyOP topo2 = pose2->conformation().membrane_info()->spanning_topology();
+	SpanningTopologyOP topo1 = pose1->membrane_info()->spanning_topology();
+	SpanningTopologyOP topo2 = pose2->membrane_info()->spanning_topology();
 
 	// concatenate topologies
 	SpanningTopologyOP total_topo( topo1 );

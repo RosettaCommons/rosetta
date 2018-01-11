@@ -250,7 +250,7 @@ void OptimizeMembranePositionMover::optimize_membrane_center( Pose & pose ) {
 
 	// starting membrane center
 	TR << "Optimizing membrane center" << std::endl;
-	TR << "Starting MemInfo center: " << pose.conformation().membrane_info()->membrane_center(pose.conformation()).to_string() << std::endl;
+	TR << "Starting MemInfo center: " << pose.membrane_info()->membrane_center(pose.conformation()).to_string() << std::endl;
 
 	// initialize new center
 	core::Vector new_center;
@@ -311,8 +311,8 @@ void OptimizeMembranePositionMover::optimize_membrane_center( Pose & pose ) {
 	TR << "Final score from center search: " << score_best_ << std::endl;
 
 	// final membrane center
-	best_center_ = pose.conformation().membrane_info()->membrane_center(pose.conformation());
-	TR << "Final MemInfo center: " << pose.conformation().membrane_info()->membrane_center(pose.conformation()).to_string() << std::endl;
+	best_center_ = pose.membrane_info()->membrane_center(pose.conformation());
+	TR << "Final MemInfo center: " << pose.membrane_info()->membrane_center(pose.conformation()).to_string() << std::endl;
 
 } // optimize membrane center
 
@@ -323,10 +323,10 @@ void OptimizeMembranePositionMover::optimize_membrane_normal( Pose & pose ) {
 
 	// starting membrane normal
 	TR << "Optimizing membrane normal" << std::endl;
-	TR << "Starting MemInfo normal: " << pose.conformation().membrane_info()->membrane_normal(pose.conformation()).to_string() << std::endl;
+	TR << "Starting MemInfo normal: " << pose.membrane_info()->membrane_normal(pose.conformation()).to_string() << std::endl;
 
 	// initialize best normal
-	best_normal_ = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+	best_normal_ = pose.membrane_info()->membrane_normal(pose.conformation());
 	core::Real angle( 0 );
 	core::Real new_x, new_y, new_z;
 	core::Vector new_normal;
@@ -404,8 +404,8 @@ void OptimizeMembranePositionMover::optimize_membrane_normal( Pose & pose ) {
 	TR << "Final score from normal search: " << score_new << std::endl;
 
 	// final membrane info
-	TR << "Final MemInfo center: " << pose.conformation().membrane_info()->membrane_center(pose.conformation()).to_string() << std::endl;
-	TR << "Final MemInfo normal: " << pose.conformation().membrane_info()->membrane_normal(pose.conformation()).to_string() << std::endl;
+	TR << "Final MemInfo center: " << pose.membrane_info()->membrane_center(pose.conformation()).to_string() << std::endl;
+	TR << "Final MemInfo normal: " << pose.membrane_info()->membrane_normal(pose.conformation()).to_string() << std::endl;
 
 } // optimize membrane normal
 

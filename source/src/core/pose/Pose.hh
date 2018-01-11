@@ -50,6 +50,7 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.fwd.hh>
+#include <core/conformation/membrane/MembraneInfo.fwd.hh>
 
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -1684,20 +1685,31 @@ public:
 	conformation::carbohydrates::GlycanTreeSetCOP
 	glycan_tree_set() const;
 
-	/// @brief Get information on any glycan trees within this pose.
-	///  Add or update the GlycanTree if needed.
+	/// @brief Get information about the membrane orientaiton, geometry, and
+	/// lipid composition within this pose
 	///
-	/// @details The GlycanTreeSet holds information on the connectivity of the glycan residues and if
-	///  they are free or attached to a pose.
+	/// @details MembraneInfo contains all information pertaining to
+	/// the conformation and composition of a membrane enviornment
 	///
 	/// example(s):
-	///  pose.glycan_trees()
-	/// See also:
-	///  pose.residue(3).is_carbohydrate()
-	///  pose.residue(3).carbohydrate_info()
+	///  pose.membrane_info()
+	///  conformation.membrane_info()
 	///
-	//GlycanTreeSetCOP
-	//glycan_trees();
+	conformation::membrane::MembraneInfoOP
+	membrane_info() const;
+
+	/// @brief Get information about the membrane orientaiton, geometry, and
+	/// lipid composition within this pose
+	///
+	/// @details MembraneInfo contains all information pertaining to
+	/// the conformation and composition of a membrane enviornment
+	///
+	/// example(s):
+	///  pose.membrane_info()
+	///  conformation.membrane_info()
+	///
+	conformation::membrane::MembraneInfoOP
+	membrane_info();
 
 	/// @brief Empty the pose contents
 	///

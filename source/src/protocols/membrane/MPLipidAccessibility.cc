@@ -151,8 +151,8 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 	//////////////////////// COMPUTE HULL///// /////////////////////////////
 
 	// compute concave hull with membrane boundary
-	core::Real minz = - pose.conformation().membrane_info()->membrane_thickness();
-	core::Real maxz =   pose.conformation().membrane_info()->membrane_thickness();
+	core::Real minz = - pose.membrane_info()->membrane_thickness();
+	core::Real maxz =   pose.membrane_info()->membrane_thickness();
 
 	// compute the outer shell
 	// default parameters are a little different for smaller proteins, like GPCRs
@@ -198,7 +198,7 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 			for ( core::Size a = 1; a <= pose.residue( resi_[ s ][ r ] ).natoms(); ++a ) {
 
 				// is this a 2TM protein? if yes, all residues are lipid exposed
-				if ( pose.conformation().membrane_info()->spanning_topology()->nspans() <= 2 ) {
+				if ( pose.membrane_info()->spanning_topology()->nspans() <= 2 ) {
 					pose.pdb_info()->bfactor( resi_[ s ][ r ], a, 50.0 );
 				}
 
@@ -306,7 +306,7 @@ void MPLipidAccessibility::finalize_setup( core::pose::Pose & pose ){
 
 	// count the number of (helical) residues in the membrane
 	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
-		if ( pose.conformation().membrane_info()->in_membrane( pose.conformation(), i ) ) {
+		if ( pose.membrane_info()->in_membrane( pose.conformation(), i ) ) {
 			nmem++;
 
 			if ( secstruct[ i ] == 'E' ) {
@@ -326,7 +326,7 @@ void MPLipidAccessibility::finalize_setup( core::pose::Pose & pose ){
 	fill_up_slices( pose );
 
 	// set different default parameters for smaller proteins, like GPCRs
-	if ( pose.conformation().membrane_info()->spanning_topology()->nspans() <= 7 ) {
+	if ( pose.membrane_info()->spanning_topology()->nspans() <= 7 ) {
 
 		// this flag only specifies whether we want to use an angle cutoff:
 		// beta-barrels have one but helical ones don't
@@ -384,10 +384,10 @@ void MPLipidAccessibility::fill_up_slices( core::pose::Pose & pose ) {
 		utility_exit_with_message( "Something went wrong, the AddMembraneMover still didn't make it a membrane protein. Quitting..." );
 	}
 
-	core::Real iter = - pose.conformation().membrane_info()->membrane_thickness();
+	core::Real iter = - pose.membrane_info()->membrane_thickness();
 
 	// go through protein in the membrane and get slices and arrays for them
-	while ( iter <= pose.conformation().membrane_info()->membrane_thickness() ) {
+	while ( iter <= pose.membrane_info()->membrane_thickness() ) {
 
 		slice_zmin_.push_back( iter );
 

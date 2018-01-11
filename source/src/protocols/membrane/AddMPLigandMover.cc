@@ -181,7 +181,7 @@ AddMPLigandMover::apply( core::pose::Pose & pose ) {
 	}
 
 	// Get the following parameters from the foldtree: Residue COM, MP rsd position
-	core::Size mp_rsd( pose.conformation().membrane_info()->membrane_rsd_num() );
+	core::Size mp_rsd( pose.membrane_info()->membrane_rsd_num() );
 
 	// get all pose chains
 	utility::vector1< core::Size > chain_end_residues( chain_end_res( pose ) );

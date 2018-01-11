@@ -210,7 +210,7 @@ TranslationMover::apply( core::pose::Pose & pose ) {
 
 		// if pose is membrane pose and jump is undefined, use membrane jump as default
 		if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
-			jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
+			jumpnum_ = pose.membrane_info()->membrane_jump();
 		} else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ) {
 			jumpnum_ = 2;
 		}
@@ -417,7 +417,7 @@ RotationMover::apply( Pose & pose ) {
 
 		// if pose membrane pose, use membrane jump as default
 		if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
-			jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
+			jumpnum_ = pose.membrane_info()->membrane_jump();
 		} else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ) {
 			jumpnum_ = 2;
 		}
@@ -621,7 +621,7 @@ TranslationRotationMover::apply( Pose & pose ) {
 
 	// if pose membrane pose, use membrane jump as default
 	if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
-		jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
+		jumpnum_ = pose.membrane_info()->membrane_jump();
 	} else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ) {
 		jumpnum_ = 2;
 	}

@@ -210,7 +210,7 @@ MPSymDockMover::position_membrane_at_topology_com( core::pose::Pose & pose ) {
 	using namespace protocols::membrane::symmetry;
 
 	// Symmetrize the spanning topology
-	SpanningTopologyOP symmetrized_topology = symmetrize_spans( pose, *pose.conformation().membrane_info()->spanning_topology() );
+	SpanningTopologyOP symmetrized_topology = symmetrize_spans( pose, *pose.membrane_info()->spanning_topology() );
 	symmetrized_topology->show();
 	Embedding embeddings = Embedding( *symmetrized_topology, pose );
 	EmbeddingDefOP final_embed = embeddings.total_embed();

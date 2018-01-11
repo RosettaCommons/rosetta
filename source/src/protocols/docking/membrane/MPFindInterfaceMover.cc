@@ -383,7 +383,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		} else {
 			TR << "====================SMALL TILTS WITH FLIP MOVER==================" << std::endl;
 			update_partner_embeddings( pose, jump_, emb_up, emb_down );
-			core::Vector mem_norm = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+			core::Vector mem_norm = pose.membrane_info()->membrane_normal(pose.conformation());
 			core::Real angle_mem_emb = numeric::conversions::degrees( angle_of( mem_norm, emb_down.normal() ) );
 
 			// if angle between membrane normal and embedding is smaller 90
@@ -631,12 +631,12 @@ void MPFindInterfaceMover::finalize_setup( Pose & pose ) {
 	jump_ = create_membrane_docking_foldtree_from_partners( pose, partners_ );
 	jumps_.push_back( jump_ );
 	TR << "interface jump_ from foldtree: " << jump_ << std::endl;
-	TR << "membrane jump: " << pose.conformation().membrane_info()->membrane_jump() << std::endl;
+	TR << "membrane jump: " << pose.membrane_info()->membrane_jump() << std::endl;
 
 	//////////////// TOPOLOGY //////////////////////
 
 	// get topology
-	topo_ = pose.conformation().membrane_info()->spanning_topology();
+	topo_ = pose.membrane_info()->spanning_topology();
 
 	// splitting topology by jump into upstream and downstream topology
 	split_topology_by_jump_noshift( pose, jump_, topo_, topo_up_, topo_down_ );
