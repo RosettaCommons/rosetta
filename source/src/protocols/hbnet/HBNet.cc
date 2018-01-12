@@ -1654,7 +1654,7 @@ void HBNet::MC_branch_overlapping_networks(){
 	short int next_milestone_title = 1;
 
 	core::Size const num_seeds = monte_carlo_seeds_.size();
-	if( num_seeds == 0 ){
+	if ( num_seeds == 0 ) {
 		utility_exit_with_message( "MC HBNet could not find any seed hydrogen bonds to branch from." );
 	}
 
