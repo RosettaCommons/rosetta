@@ -18,6 +18,7 @@ sources = {
 		"constants",
 		"cyclic_coordinate_descent",
 		"HomogeneousTransform.srlz",
+		"MathMatrix.srlz",
 		"MathVector.srlz",
 		"MultiDimensionalHistogram",
 		"polynomial",

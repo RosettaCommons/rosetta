@@ -21,6 +21,7 @@ sources = {
 		"EulerAngles",
 		"HomogeneousTransform",
 		"interpolate",
+		"MathMatrix_serialization",
 		"MathNTensor",
 		"MathNTensor_io",
 		"MultiDimensionalHistogram",
