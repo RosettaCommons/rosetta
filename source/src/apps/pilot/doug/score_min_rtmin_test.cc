@@ -17,8 +17,8 @@
 // protocol headers
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // core headers
 #include <core/pose/Pose.hh>
@@ -81,7 +81,7 @@ main( int argc, char * argv [] )
 		movemap->set_chi( true );
 
 		// minimize nbt
-		protocols::simple_moves::MinMoverOP min_mover_nbt(new protocols::simple_moves::MinMover( movemap, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+		protocols::minimization_packing::MinMoverOP min_mover_nbt(new protocols::minimization_packing::MinMover( movemap, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		TR << "Score before min NBT: " << (*score_fxn)( pose_min_nbt ) << std::endl;
 		TR << "Minimize NBT" << std::endl;
 		min_mover_nbt->apply( pose_min_nbt );
@@ -89,7 +89,7 @@ main( int argc, char * argv [] )
 		pose_min_nbt.dump_pdb( after_min_nbt_filename );
 
 		// minimize nbf
-		protocols::simple_moves::MinMoverOP min_mover_nbf(new protocols::simple_moves::MinMover( movemap, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, false ) );
+		protocols::minimization_packing::MinMoverOP min_mover_nbf(new protocols::minimization_packing::MinMover( movemap, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, false ) );
 		TR << "Score before min NBF: " << (*score_fxn)( pose_min_nbf ) << std::endl;
 		TR << "Minimize NBF" << std::endl;
 		min_mover_nbf->apply( pose_min_nbf );
@@ -101,7 +101,7 @@ main( int argc, char * argv [] )
 		core::pack::task::operation::RestrictToRepackingOP rtr( new  core::pack::task::operation::RestrictToRepacking() );
 		tf->push_back( rtr );
 
-		protocols::simple_moves::RotamerTrialsMinMoverOP rtmm( new protocols::simple_moves::RotamerTrialsMinMover( score_fxn, tf ) );
+		protocols::minimization_packing::RotamerTrialsMinMoverOP rtmm( new protocols::minimization_packing::RotamerTrialsMinMover( score_fxn, tf ) );
 
 		TR << "Score before RTMin: " << (*score_fxn)( pose_rtmin ) << std::endl;
 		for ( core::Size i(1); i <= 100; ++i ) {

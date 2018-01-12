@@ -37,7 +37,7 @@
 #include <numeric/angle.functions.hh>
 
 // protocol headers
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // external headers
 #include <boost/lexical_cast.hpp>
@@ -200,7 +200,7 @@ min_rotamers( RotVec & rotamers,  core::scoring::ScoreFunctionOP scrfxn, std::st
 			mvmp->set( bb1, true );
 		}
 
-		protocols::simple_moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
+		protocols::minimization_packing::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
 
 
 		Real current_ener( orig_ener), previous_ener;
@@ -659,7 +659,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		if ( !is_peptoid ) {
 			mvmp->set( bb1, true );
 		}
-		protocols::simple_moves::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
+		protocols::minimization_packing::MinMover mnmvr( mvmp, scrfxn, "linmin", 0.0001, true );
 		for ( Size j=1; j<= 25; ++j ) {
 			//TR << " ----- " << j << " ----- " << std::flush << std::endl;
 			mnmvr.apply( pose );

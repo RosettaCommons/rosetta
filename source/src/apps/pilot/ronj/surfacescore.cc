@@ -34,7 +34,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/SurfaceCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
@@ -263,7 +263,7 @@ void repack_pose( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
 	//repack_task->set_bump_check( true );
 	repack_task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
 
-	protocols::simple_moves::PackRotamersMoverOP repack_protocol( new protocols::simple_moves::PackRotamersMover( scorefxn, repack_task, 3 /*ndruns value hardcoded*/ ) );
+	protocols::minimization_packing::PackRotamersMoverOP repack_protocol( new protocols::minimization_packing::PackRotamersMover( scorefxn, repack_task, 3 /*ndruns value hardcoded*/ ) );
 	repack_protocol->apply( pose );
 
 	return;
@@ -498,7 +498,7 @@ main( int argc, char* argv[] ) {
 				designtask->initialize_from_command_line();
 				parse_refile(pose, *designtask);
 
-				protocols::simple_moves::PackRotamersMoverOP design_protocol( new protocols::simple_moves::PackRotamersMover( scorefxn, designtask, (Size)basic::options::option[packing::ndruns].value() ) );
+				protocols::minimization_packing::PackRotamersMoverOP design_protocol( new protocols::minimization_packing::PackRotamersMover( scorefxn, designtask, (Size)basic::options::option[packing::ndruns].value() ) );
 				design_protocol->apply( pose );
 
 				Energy design_score = (*scorefxn)( pose );
@@ -613,7 +613,7 @@ main( int argc, char* argv[] ) {
 						scan_task->num_to_be_packed();
 						//std::cout << *scan_task << std::endl;  // generates a TON of output
 
-						protocols::simple_moves::PackRotamersMoverOP mutant_repack( new protocols::simple_moves::PackRotamersMover( scorefxn, scan_task, 2 /*ndruns*/) );
+						protocols::minimization_packing::PackRotamersMoverOP mutant_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn, scan_task, 2 /*ndruns*/) );
 						mutant_repack->apply( pose_copy );
 
 						Energy mutant_repacked_score = (*scorefxn)( pose_copy );

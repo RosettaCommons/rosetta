@@ -17,8 +17,8 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -126,11 +126,11 @@ BindingStrainFilter::compute( core::pose::Pose const & p ) const{
 	unbind( pose );
 	core::Real const energy_before_pack( stf.compute( pose ));
 
-	protocols::simple_moves::PackRotamersMoverOP prm;
+	protocols::minimization_packing::PackRotamersMoverOP prm;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		prm = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), pack ) );
+		prm = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover( scorefxn(), pack ) );
 	} else {
-		prm = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), pack ) );
+		prm = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), pack ) );
 	}
 	prm->apply( pose );
 	core::Real const energy_after_pack( stf.compute( pose ) );

@@ -23,7 +23,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>

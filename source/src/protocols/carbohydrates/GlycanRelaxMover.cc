@@ -49,13 +49,13 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMOLMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/bb_sampler/SugarBBSampler.hh>
 #include <protocols/simple_moves/bb_sampler/SmallBBSampler.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <basic/Tracer.hh>
@@ -81,7 +81,8 @@ namespace carbohydrates {
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::bb_sampler;
-using namespace protocols::simple_moves::symmetry;
+using namespace protocols::minimization_packing;
+using namespace protocols::minimization_packing::symmetry;
 
 using namespace core::pack::task;
 using namespace basic::options;
@@ -257,9 +258,9 @@ GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
 	//I don't have a pose to check its conformation for symmetry, so I must rely on the mover name here.
 	if ( src.min_mover_ ) {
 		if ( src.min_mover_->get_name() == "SymMinMover" ) {
-			min_mover_ = simple_moves::symmetry::SymMinMoverOP( new simple_moves::symmetry::SymMinMover( *src.min_mover_));
+			min_mover_ = minimization_packing::symmetry::SymMinMoverOP( new minimization_packing::symmetry::SymMinMover( *src.min_mover_));
 		} else {
-			min_mover_ = simple_moves::MinMoverOP( new simple_moves::MinMover( *src.min_mover_));
+			min_mover_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover( *src.min_mover_));
 		}
 	}
 	if ( src.packer_ ) {
@@ -670,7 +671,7 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	using namespace protocols::moves;
 	using namespace protocols::simple_moves;
 	using namespace core::kinematics;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::minimization_packing::symmetry;
 
 	TR << "initializing objects " << std::endl;
 

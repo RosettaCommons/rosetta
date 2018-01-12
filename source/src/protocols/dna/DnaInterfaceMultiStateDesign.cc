@@ -86,7 +86,7 @@ using basic::t_trace;
 static basic::Tracer TR( "protocols.dna.DnaInterfaceMultiStateDesign", t_info );
 
 DnaInterfaceMultiStateDesign::DnaInterfaceMultiStateDesign()
-: protocols::simple_moves::PackRotamersMover( DnaInterfaceMultiStateDesign::mover_name() ),
+: protocols::minimization_packing::PackRotamersMover( DnaInterfaceMultiStateDesign::mover_name() ),
 	gen_alg_(/* 0 */),
 	multistate_packer_(/* 0 */),
 	dna_chains_(/* 0 */),

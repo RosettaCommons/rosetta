@@ -73,15 +73,15 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -101,6 +101,7 @@
 
 using namespace protocols;
 using namespace protocols::moves;
+using namespace protocols::minimization_packing;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::a3b_hbs;
 
@@ -293,8 +294,8 @@ int main ( int argc, char* argv[] )
 		}
 		pert_mm->set_jump( 1, true );
 		//pert_mm->set_branches( 4, true );
-		protocols::simple_moves::MinMoverOP min_mover(
-			new simple_moves::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+		protocols::minimization_packing::MinMoverOP min_mover(
+			new minimization_packing::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 
 		for ( Real apc = 0; apc <= 2; apc += 0.01 ) {
 			scorefxn->set_weight( atom_pair_constraint, apc );
@@ -394,7 +395,7 @@ int main ( int argc, char* argv[] )
 		pert_mm2->set_bb( 3, true );
 		pert_mm2->set_chi( 3, true );
 		pert_mm2->set_jump( 1, true );
-		protocols::simple_moves::MinMoverOP min_mover2( new simple_moves::MinMover( pert_mm2, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+		protocols::minimization_packing::MinMoverOP min_mover2( new minimization_packing::MinMover( pert_mm2, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 
 		for ( Real apc = 0; apc <= 2; apc += 0.01 ) {
 			scorefxn->set_weight( atom_pair_constraint, apc );

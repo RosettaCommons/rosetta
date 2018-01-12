@@ -48,13 +48,13 @@
 //#include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <utility/exit.hh>
@@ -354,7 +354,7 @@ void GraftMover::set_packer_default(
 	task = pack::task::TaskFactory::create_packer_task( pose_in );
 	task->restrict_to_repacking();
 	task->or_include_current( include_current );
-	GraftMover::packer_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn, task ) );
+	GraftMover::packer_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn, task ) );
 
 } // GraftMover set_packer_default
 
@@ -688,8 +688,8 @@ CloseOneMover::close_one_loop_stem_helper(
 	if ( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover(
-		new protocols::simple_moves::MinMover( loop_map,
+	protocols::minimization_packing::MinMoverOP loop_min_mover(
+		new protocols::minimization_packing::MinMover( loop_map,
 		lowres_scorefxn, min_type, min_tolerance, nb_list ) );
 
 	// more params
@@ -869,7 +869,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 		allow_repack);
 	loop_map->set_chi( allow_repack );
 
-	protocols::simple_moves::PackRotamersMoverOP loop_repack( new protocols::simple_moves::PackRotamersMover(highres_scorefxn_) );
+	protocols::minimization_packing::PackRotamersMoverOP loop_repack( new protocols::minimization_packing::PackRotamersMover(highres_scorefxn_) );
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
 	tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
@@ -880,7 +880,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	if ( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
+	protocols::minimization_packing::MinMoverOP loop_min_mover( new protocols::minimization_packing::MinMover( loop_map,
 		highres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
@@ -923,7 +923,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
 	tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 		highres_scorefxn_, tf_ ) );
 
 	pack_rottrial->apply( pose_in );
@@ -956,7 +956,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 			setup_packer_task( pose_in );
 			( *highres_scorefxn_ )( pose_in );
 			tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
-			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+			protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 				highres_scorefxn_, tf_ ) );
 			pack_rottrial->apply( pose_in );
 
@@ -965,7 +965,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 			if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
 				// repack trial
-				loop_repack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ ) );
+				loop_repack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( highres_scorefxn_ ) );
 				setup_packer_task( pose_in );
 				( *highres_scorefxn_ )( pose_in );
 				tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );

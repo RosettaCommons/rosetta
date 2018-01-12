@@ -23,10 +23,10 @@
 #include <core/pose/chains_util.hh>
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //Options headers

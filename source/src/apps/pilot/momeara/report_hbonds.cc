@@ -55,7 +55,7 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/ShakeStructureMover.hh>
 #include <protocols/relax_protocols.hh>
 // utility headers

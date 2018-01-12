@@ -23,9 +23,9 @@
 #include <protocols/relax/RelaxProtocolBase.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -127,9 +127,9 @@ public:
 
 	void set_mc ( moves::MonteCarloOP new_mc_ );
 
-	void set_full_repack ( protocols::simple_moves::PackRotamersMoverOP new_pack_full_repack );
+	void set_full_repack ( protocols::minimization_packing::PackRotamersMoverOP new_pack_full_repack );
 
-	void set_rottrial ( protocols::simple_moves::RotamerTrialsMoverOP new_pack_rottrial );
+	void set_rottrial ( protocols::minimization_packing::RotamerTrialsMoverOP new_pack_rottrial );
 
 	void setPoseExtraScore( core::pose::Pose &pose );
 
@@ -154,7 +154,7 @@ public:
 private:
 	// protocol stuff
 
-	protocols::simple_moves::MinMoverOP min_mover_;
+	protocols::minimization_packing::MinMoverOP min_mover_;
 	protocols::checkpoint::CheckPointer checkpoints_;
 
 	// THese three are special in the sense that they require a Pose at creating time.
@@ -169,11 +169,11 @@ private:
 	void check_default_mc( core::pose::Pose & pose  );
 	// stuff to do with packing
 
-	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
+	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack_;
 	bool use_default_pack_full_repack_;
 	void check_default_full_repacker( core::pose::Pose & pose, core::kinematics::MoveMap & movemap );
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_;
+	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial_;
 	bool use_default_pack_rottrial_;
 	void check_default_rottrial( core::pose::Pose & pose, core::kinematics::MoveMap & movemap );
 

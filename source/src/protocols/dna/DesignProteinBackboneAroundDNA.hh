@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_dna_DesignProteinBackboneAroundDNA_hh
 
 #include <protocols/dna/DesignProteinBackboneAroundDNA.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/dna/DnaDesignDef.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
@@ -33,7 +33,7 @@ namespace protocols {
 namespace dna {
 
 // conceptually this not really a PackRotamersMover, but deriving this way makes sense on a practical level
-class DesignProteinBackboneAroundDNA : public protocols::simple_moves::PackRotamersMover {
+class DesignProteinBackboneAroundDNA : public protocols::minimization_packing::PackRotamersMover {
 public:
 	typedef loops::Loops Loops;
 

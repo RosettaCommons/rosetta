@@ -33,7 +33,7 @@
 //#include <core/pack/task/TaskFactory.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -55,7 +55,7 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <protocols/ncbb/oop/OopCreatorMover.hh>
-#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
+#include <protocols/ncbb/oop/OopRandomSmallMover.hh>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -91,7 +91,7 @@ pose.set_phi( 1, psi );
 kinematics::MoveMapOP mm(new kinematics::MoveMap);
 mm->set_bb( 2, true );
 
-protocols::simple_moves::MinMover min( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );
+protocols::minimization_packing::MinMover min( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );
 min.apply( pose );
 std::cout << (*scorefxn)(pose) << "\t";
 }

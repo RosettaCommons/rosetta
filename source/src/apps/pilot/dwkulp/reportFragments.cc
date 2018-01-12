@@ -21,7 +21,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/TaskOperations.fwd.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>

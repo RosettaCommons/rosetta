@@ -29,10 +29,10 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -216,9 +216,9 @@ design_pose_motifs_only(
 	if ( !task ) return;
 
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover(sf,task).apply(pose);
+		protocols::minimization_packing::symmetry::SymPackRotamersMover(sf,task).apply(pose);
 	} else {
-		protocols::simple_moves::PackRotamersMover(sf,task).apply(pose);
+		protocols::minimization_packing::PackRotamersMover(sf,task).apply(pose);
 	}
 
 	// // pose.dump_pdb("test1.pdb");
@@ -230,9 +230,9 @@ design_pose_motifs_only(
 		movemap->set_chi(opts.minimize_chi);
 		// core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
-			protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+			protocols::minimization_packing::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 		} else {
-			protocols::simple_moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+			protocols::minimization_packing::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 		}
 	}
 

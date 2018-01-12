@@ -44,13 +44,13 @@
 
 #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
@@ -391,7 +391,7 @@ void DockingHighResLegacy::set_dock_min_protocol() {
 
 	TR << "::::::::::::::::::DOCK_MIN:::::::::::::::::::" << std::endl;
 
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ ) );
 	TrialMoverOP minimize_trial( new TrialMover( min_mover, mc_ ) );
 	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
@@ -422,7 +422,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	using namespace protocols::toolbox::task_operations;
 
 	//set up minimizer movers
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ ) );
 
 	//set up rigid body movers
 	rigid::RigidBodyPerturbMoverOP rb_perturb( new rigid::RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , rigid::partner_downstream, true ) );
@@ -432,26 +432,26 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	TaskFactoryOP tf( new TaskFactory( *task_factory() ) );
 	tf->push_back( TaskOperationCOP( new RestrictToInterface( movable_jumps() ) ) );
 	set_task_factory( tf );
-	//RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack(), task_factory() );
+	//RotamerTrialsMoverOP pack_rottrial = new protocols::minimization_packing::RotamerTrialsMover( scorefxn_pack(), task_factory() );
 
 	//need to explicitly convert to COP from OP in order for SidechainMinMover to work
 	//besides, need to use init_task_factory_, which is otherwise not used from task_factory()
 	core::pack::task::TaskFactoryCOP ctf=init_task_factory_;
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack(), ctf ) );
+	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover( scorefxn_pack(), ctf ) );
 	SequenceMoverOP interface_repack_and_move_loops( new moves::SequenceMover );
 
 	std::string const flex_bb_docking_type = option[ OptionKeys::docking::flexible_bb_docking ]();
 	if ( flex_bb_docking_type == "fixedbb" ) {
 		// Call pack_rotamers, no backbone movement
-		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover( scorefxn_pack() ) );
+		protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn_pack() ) );
 		//pack_interface_repack->task_factory( task_factory() );
 		pack_interface_repack->task_factory( ctf );
 		interface_repack_and_move_loops->add_mover( pack_interface_repack );
 	} else {
 
 		// Call pack_rotamer before and after loop movement
-		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover( scorefxn_pack() ) );
+		protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn_pack() ) );
 		//pack_interface_repack->task_factory( task_factory() );
 		pack_interface_repack->task_factory( ctf );
 		interface_repack_and_move_loops->add_mover( pack_interface_repack );
@@ -514,7 +514,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 
 	TrialMoverOP pack_interface_and_move_loops_trial( new TrialMover( interface_repack_and_move_loops, mc_ ) );
 
-	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack(), ctf ) );
+	protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin( new protocols::minimization_packing::RotamerTrialsMinMover( scorefxn_pack(), ctf ) );
 	TrialMoverOP rtmin_trial( new TrialMover( rtmin, mc_ ) );
 
 	//InterfaceSidechainMinMoverOP scmin_mover = new InterfaceSidechainMinMover(rb_jump_, scorefxn_pack() );
@@ -624,8 +624,8 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 
 	PackerTaskOP task = task_factory()->create_task_and_apply_taskoperations( pose ); // does not include restrict to interface
 
-	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack( new protocols::simple_moves::PackRotamersMover( scorefxn_pack(), task ) );
-	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack(), *task ) );
+	protocols::minimization_packing::PackRotamersMoverOP prepack_full_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn_pack(), task ) );
+	protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin_mover( new protocols::minimization_packing::RotamerTrialsMinMover( scorefxn_pack(), *task ) );
 	SidechainMinMoverOP scmin_mover( new SidechainMinMover(scorefxn_pack(), task) );
 
 	// set up protocol

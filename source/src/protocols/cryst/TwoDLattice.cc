@@ -54,11 +54,11 @@
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/viewer/viewers.hh>

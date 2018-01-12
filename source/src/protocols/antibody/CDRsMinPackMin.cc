@@ -30,10 +30,10 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -156,11 +156,11 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 	}
 
 	// 1. rotamer_trial
-	simple_moves::RotamerTrialsMoverOP rotamer_trial_mover( new simple_moves::RotamerTrialsMover( loop_scorefxn_highres_, tf_ ) );
+	minimization_packing::RotamerTrialsMoverOP rotamer_trial_mover( new minimization_packing::RotamerTrialsMover( loop_scorefxn_highres_, tf_ ) );
 	cdr_sequence_move_->add_mover(rotamer_trial_mover);
 
 	// 2. all_cdr_min_moves
-	simple_moves::MinMoverOP  all_cdr_min_moves( new simple_moves::MinMover( allcdr_map_,loop_scorefxn_highres_, min_type_, min_tolerance_, true ) );
+	minimization_packing::MinMoverOP  all_cdr_min_moves( new minimization_packing::MinMover( allcdr_map_,loop_scorefxn_highres_, min_type_, min_tolerance_, true ) );
 	if ( !turnoff_minimization_ ) cdr_sequence_move_ -> add_mover(all_cdr_min_moves);
 
 
@@ -168,7 +168,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 
 
 	// 3. PackRotamer and Trial
-	simple_moves::PackRotamersMoverOP repack( new simple_moves::PackRotamersMover( loop_scorefxn_highres_ ) );
+	minimization_packing::PackRotamersMoverOP repack( new minimization_packing::PackRotamersMover( loop_scorefxn_highres_ ) );
 	repack->task_factory( tf_ );
 	moves::TrialMoverOP repack_trial( new moves::TrialMover(repack, mc) );
 	cdr_sequence_move_ -> add_mover(repack_trial);
@@ -176,7 +176,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 
 	// 4. optional, rt_min_ or sc_min_
 	if ( rt_min_ ) {
-		simple_moves::RotamerTrialsMinMoverOP rtmin( new simple_moves::RotamerTrialsMinMover( loop_scorefxn_highres_, tf_ ) );
+		minimization_packing::RotamerTrialsMinMoverOP rtmin( new minimization_packing::RotamerTrialsMinMover( loop_scorefxn_highres_, tf_ ) );
 		moves::TrialMoverOP rtmin_trial( new moves::TrialMover( rtmin, mc ) );
 		cdr_sequence_move_ -> add_mover(rtmin_trial);
 	}

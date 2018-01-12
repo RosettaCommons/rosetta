@@ -30,8 +30,8 @@
 #include <protocols/simple_moves/ChangeAndResetFoldTreeMover.fwd.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/moves/MoverApplyingMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/DockingLowRes.hh>
@@ -245,34 +245,34 @@ public:
 	
 	
 	/// @brief Generate a packer and optionally set as the current mover
-	simple_moves::PackRotamersMoverOP
+	minimization_packing::PackRotamersMoverOP
 	generate_repack_cdrs( core::pose::Pose const & pose );
 	
 	//@brief Setup a packer to repack CDRs set.
 	void
-	setup_repack_cdrs( core::pose::Pose const & pose, simple_moves::PackRotamersMoverOP packer );
+	setup_repack_cdrs( core::pose::Pose const & pose, minimization_packing::PackRotamersMoverOP packer );
 
 	
 	/// @brief Get a pre-configured Packer to repack the interface between Antibody and Antigen.
 	/// If set_as_mover is true, will set the needed ab-ag foldtree to this class which the task op will use.
-	protocols::simple_moves::PackRotamersMoverOP
+	protocols::minimization_packing::PackRotamersMoverOP
 	generate_repack_antigen_ab_interface( Pose const & pose );
 	
 	/// @brief Configure a packer to repack the interface between Antibody and Antigen
 	/// If set_as_mover is true, will set the needed ab-ag foldtree to this class which the task op will use.
 	void
-	setup_repack_antigen_ab_interface( core::pose::Pose const & pose, simple_moves::PackRotamersMoverOP packer );
+	setup_repack_antigen_ab_interface( core::pose::Pose const & pose, minimization_packing::PackRotamersMoverOP packer );
 	
 	
 	/// @brief Vanilla minimizer using dfpmin_armijo_nonmonotone at .001 tolerance (or lfbgs for cartmin).
 	/// If set_as_mover is true, will set the appropriate FoldTree to this class.
-	simple_moves::MinMoverOP
+	minimization_packing::MinMoverOP
 	generate_minimizer( core::pose::Pose & pose );
 	
 	/// @brief Vanilla minimizer using dfpmin_armijo_nonmonotone at .001 tolerance (or lfbgs for cartmin).
 	/// If set_as_mover is true, will set the appropriate FoldTree to this class.
 	void
-	setup_minimizer( core::pose::Pose & pose, simple_moves::MinMoverOP min_mover);
+	setup_minimizer( core::pose::Pose & pose, minimization_packing::MinMoverOP min_mover);
 	
 	
 	/// @brief Generate FastRelax of CDRs +/or Interface.  

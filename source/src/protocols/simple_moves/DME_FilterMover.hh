@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_simple_moves_DME_FilterMover_hh
 
 // Package headers
-// #include <protocols/simple_moves/MinMover.hh>
+// #include <protocols/minimization_packing/MinMover.hh>
 // #include <protocols/moves/MonteCarlo.fwd.hh>
 // #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>

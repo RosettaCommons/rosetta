@@ -47,9 +47,9 @@
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -437,7 +437,7 @@ CartesianSampler::apply_frame(
 	}
 	core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
 	main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( nonsymm_fa_scorefxn );
 
@@ -541,7 +541,7 @@ CartesianSampler::apply_frame(
 		// set up packer
 		core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
 		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
-		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 		pack_mover->task_factory( main_task_factory );
 		pack_mover->score_function( nonsymm_fa_scorefxn );
 
@@ -562,7 +562,7 @@ CartesianSampler::apply_frame(
 		// if fullatom do a repack here
 		if ( fullatom_ ) {
 			if ( core::pose::symmetry::is_symmetric(pose) ) {
-				protocols::simple_moves::PackRotamersMoverOP sympack_mover( new protocols::simple_moves::symmetry::SymPackRotamersMover );
+				protocols::minimization_packing::PackRotamersMoverOP sympack_mover( new protocols::minimization_packing::symmetry::SymPackRotamersMover );
 				sympack_mover->task_factory( main_task_factory );
 				sympack_mover->score_function( fa_scorefxn_ );
 				sympack_mover->apply( pose );

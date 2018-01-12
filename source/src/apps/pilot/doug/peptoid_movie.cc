@@ -39,10 +39,10 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 
 #include <protocols/moves/PyMOLMover.hh>
@@ -154,7 +154,7 @@ PeptiodMovieMover::apply( core::pose::Pose & pose )
 	pert_tf->push_back( pert_rtrp );
 
 	// create a rotamer trials mover
-	protocols::simple_moves::RotamerTrialsMoverOP pert_rt(new protocols::simple_moves::EnergyCutRotamerTrialsMover( score_fxn, pert_tf, main_mc, 0.1 /*energycut*/ ) );
+	protocols::minimization_packing::RotamerTrialsMoverOP pert_rt(new protocols::minimization_packing::EnergyCutRotamerTrialsMover( score_fxn, pert_tf, main_mc, 0.1 /*energycut*/ ) );
 
 	// create a sequence move to hold random and rotamer trials movers
 	moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
@@ -178,7 +178,7 @@ PeptiodMovieMover::apply( core::pose::Pose & pose )
 	desn_tf->push_back( desn_rrop );
 
 	// create a pack rotamers mover
-	protocols::simple_moves::PackRotamersMoverOP desn_pr( new protocols::simple_moves::PackRotamersMover() );
+	protocols::minimization_packing::PackRotamersMoverOP desn_pr( new protocols::minimization_packing::PackRotamersMover() );
 	desn_pr->task_factory( desn_tf );
 	desn_pr->score_function( score_fxn );
 	desn_pr->nloop( 1 );
@@ -200,8 +200,8 @@ PeptiodMovieMover::apply( core::pose::Pose & pose )
 	}
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min_sc_bb( new simple_moves::MinMover( desn_mm_sc_bb, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
-	simple_moves::MinMoverOP desn_min_sc( new simple_moves::MinMover( desn_mm_sc, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+	minimization_packing::MinMoverOP desn_min_sc_bb( new minimization_packing::MinMover( desn_mm_sc_bb, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+	minimization_packing::MinMoverOP desn_min_sc( new minimization_packing::MinMover( desn_mm_sc, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 
 	// create a sequence mover to hold pack rotamers and minimization movers
 	moves::SequenceMoverOP desn_sequence( new moves::SequenceMover() );

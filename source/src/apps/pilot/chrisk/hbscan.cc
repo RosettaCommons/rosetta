@@ -100,10 +100,10 @@
 
 //protocols library (Movers)
 #include <protocols/viewer/viewers.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -435,7 +435,7 @@ scan_hbond_jumps(
 		pack::task::PackerTaskOP task( task_factory->create_task_and_apply_taskoperations( pose ));
 		core::scoring::ScoreFunctionOP fadun_scorefxn( new core::scoring::ScoreFunction() );
 		fadun_scorefxn->set_weight( fa_dun, 1.0 );
-		protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( fadun_scorefxn, task, 1 ) );
+		protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( fadun_scorefxn, task, 1 ) );
 		pack->apply( pose );
 	}
 	//\end give ideal conformation...
@@ -481,7 +481,7 @@ scan_hbond_jumps(
 	//just min the new jump
 	//MoveMapOP mm = new MoveMap;
 	//mm->set_jump( jump_number, true );
-	//protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.01, true );
+	//protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm, scorefxn, "dfpmin", 0.01, true );
 
 	//new naive fold tree
 	FoldTree f_rot( pose.size() );

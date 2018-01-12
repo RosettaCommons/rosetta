@@ -19,7 +19,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMOLMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/simple_moves/CyclizationMover.hh>
 

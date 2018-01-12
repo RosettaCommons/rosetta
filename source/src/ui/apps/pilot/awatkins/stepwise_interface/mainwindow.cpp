@@ -45,8 +45,8 @@
 #include <protocols/helical_bundle/PerturbBundle.hh>
 #include <protocols/helical_bundle/PerturbBundleOptions.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 //Rosetta ui headers
 #include <ui/ui_protocols/helical_bundle/HelicalBundleDialogueWidget.h>
@@ -354,7 +354,7 @@ void MainWindow::on_button_run_minimizer_clicked()
 		movemap->set_chi( i, selection[i] );
 	}
 
-	protocols::simple_moves::MinMover minmove( movemap, core::scoring::get_score_function(), "lbfgs_armijo_nonmonotone", 0.0000001, false );
+	protocols::minimization_packing::MinMover minmove( movemap, core::scoring::get_score_function(), "lbfgs_armijo_nonmonotone", 0.0000001, false );
 	minmove.apply(*pose_);
 	pose_draw_widget_->update_pose_draw();
 }

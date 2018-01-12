@@ -38,9 +38,9 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>
 #include <core/scoring/Energies.hh>
-#include <protocols/simple_moves/RepackSidechainsMover.hh>
+#include <protocols/minimization_packing/RepackSidechainsMover.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <protocols/simple_moves/MutateResidue.hh>

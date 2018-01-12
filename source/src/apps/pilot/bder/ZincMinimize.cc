@@ -39,14 +39,14 @@
 #include <utility/vector1.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>
 // C++ headers
 #include <iostream>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/Energies.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -152,7 +152,7 @@ public:
 		movemap_ = movemap;
 
 		//minmover
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_, scorefxn_zn_, "dfpmin_armijo", 0.01, true );
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( movemap_, scorefxn_zn_, "dfpmin_armijo", 0.01, true );
 		min_mover_ = min_mover;
 
 		return;
@@ -177,7 +177,7 @@ public:
 			TR << "Reading resfile from user input." << std::endl;
 		}
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::minimization_packing::PackRotamersMoverOP packrot_mover = new protocols::minimization_packing::PackRotamersMover;
 		packrot_mover->score_function( scorefxn_zn_ );
 		packrot_mover->task_factory( task_factory );
 
@@ -242,7 +242,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::scoring::ScoreFunctionOP scorefxn_zn_;
 	kinematics::MoveMapOP movemap_;
-	protocols::simple_moves::MinMoverOP min_mover_;
+	protocols::minimization_packing::MinMoverOP min_mover_;
 
 };
 

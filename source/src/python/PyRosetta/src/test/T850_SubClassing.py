@@ -120,7 +120,7 @@ sf_new = rosetta.core.scoring.ScoreFunction()
 seq = rosetta.protocols.moves.SequenceMover()
 seq.add_mover( new_mover )
 
-minmover = rosetta.protocols.simple_moves.MinMover()
+minmover = rosetta.protocols.minimization_packing.MinMover()
 
 old_phi = pose.phi(1)
 seq.apply(pose)

@@ -14,9 +14,6 @@
 #ifndef INCLUDED_basic_resource_manager_fallback_configuration_creator_FWD_HH
 #define INCLUDED_basic_resource_manager_fallback_configuration_creator_FWD_HH
 
-//unit headers
-#include <basic/resource_manager/FallbackConfigurationCreator.fwd.hh>
-
 // package headers
 #include <basic/resource_manager/ResourceManager.fwd.hh>
 

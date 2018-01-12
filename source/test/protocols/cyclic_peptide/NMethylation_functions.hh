@@ -20,7 +20,7 @@
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -50,6 +50,7 @@ public:
 	void common_test_linear_nmethyl_peptide() {
 		using namespace ::protocols::cyclic_peptide;
 		using namespace ::protocols::simple_moves;
+		using namespace ::protocols::minimization_packing;
 		using namespace ::protocols::relax;
 
 		core::pose::PoseOP mypose( new core::pose::Pose );

@@ -23,7 +23,7 @@
 #include <core/scoring/methods/Methods.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -31,8 +31,8 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 // #include <protocols/moves/rigid_body_moves.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 
 #include <protocols/loops/ccd_closure.hh>
@@ -578,7 +578,7 @@ pep_scan_analysis(
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_mut_nbr );
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+			protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			//define design task and repack task
 			pack::task::RestrictResidueToRepackingOperationOP restrict_to_repack_taskop( new pack::task::RestrictResidueToRepackingOperation() );
@@ -600,8 +600,8 @@ pep_scan_analysis(
 			rottrial_task_factory->push_back( restrict_to_repack_taskop );
 			rottrial_task_factory->push_back( prevent_repack_taskop );
 
-			protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, rp_task, 1 ) );
-			protocols::simple_moves::RotamerTrialsMoverOP rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
+			protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, rp_task, 1 ) );
+			protocols::minimization_packing::RotamerTrialsMoverOP rottrial ( new protocols::minimization_packing::RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
 			SequenceMoverOP design_seq = new SequenceMover;
 			if ( !option[ pep_spec::test_no_pack ] ) {
 				design_seq->add_mover( pack );
@@ -631,7 +631,7 @@ pep_scan_analysis(
 			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 			mm_min->set_chi( is_mut_nbr );
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+			protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			//define design task and repack task
 			pack::task::RestrictResidueToRepackingOperationOP restrict_to_repack_taskop( new pack::task::RestrictResidueToRepackingOperation() );
@@ -653,8 +653,8 @@ pep_scan_analysis(
 			rottrial_task_factory->push_back( restrict_to_repack_taskop );
 			rottrial_task_factory->push_back( prevent_repack_taskop );
 
-			protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, rp_task, 1 ) );
-			protocols::simple_moves::RotamerTrialsMoverOP rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
+			protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, rp_task, 1 ) );
+			protocols::minimization_packing::RotamerTrialsMoverOP rottrial ( new protocols::minimization_packing::RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
 			SequenceMoverOP design_seq = new SequenceMover;
 			if ( !option[ pep_spec::test_no_pack ] ) {
 				design_seq->add_mover( pack );
@@ -886,12 +886,12 @@ packmin_unbound_pep(
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().or_include_current( true );
 	task->restrict_to_repacking();
-	protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, task, 1 ) );
+	protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, task, 1 ) );
 	pack->apply( pose );
 	if ( !option[ pep_spec::test_no_min ] ) {
 		kinematics::MoveMapOP mm ( new kinematics::MoveMap );
 		mm->set_chi( true );
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 		min_mover->apply( pose );
 	}
 	return pose;
@@ -1015,7 +1015,7 @@ RunPepSpec()
 		}
 		*/
 		//define movers//
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 		//define design task and repack task
 		pack::task::PackerTaskOP dz_task( pack::task::TaskFactory::create_packer_task( pose ));
@@ -1026,8 +1026,8 @@ RunPepSpec()
 		task_factory->push_back( new pack::task::InitializeFromCommandlineOperation() );
 		task_factory->push_back( new pack::task::RestrictToRepackingOperation() );
 
-		protocols::simple_moves::PackRotamersMoverOP dz_pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, dz_task, 1 ) );
-		protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, task_factory ) );
+		protocols::minimization_packing::PackRotamersMoverOP dz_pack( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, dz_task, 1 ) );
+		protocols::minimization_packing::RotamerTrialsMoverOP dz_rottrial ( new protocols::minimization_packing::RotamerTrialsMover( soft_scorefxn, task_factory ) );
 		SequenceMoverOP design_seq = new SequenceMover;
 		design_seq->add_mover( dz_pack );
 		design_seq->add_mover( dz_rottrial );

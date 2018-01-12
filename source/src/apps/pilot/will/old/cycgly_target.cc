@@ -67,12 +67,12 @@
 #include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 // #include <protocols/moves/ReplicaExchangeMC.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -195,7 +195,7 @@ void minimize(Pose & pose, ScoreFunctionOP sf) {
 	movemap->set_bb(true);
 	movemap->set_chi(true);
 	movemap->set_jump(true);
-	protocols::simple_moves::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::minimization_packing::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 }
 
@@ -437,7 +437,7 @@ public:
 		movemap->set_bb(true);
 		movemap->set_chi(true);
 		movemap->set_jump(true);
-		minmover_ = new protocols::simple_moves::MinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+		minmover_ = new protocols::minimization_packing::MinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 
 		using namespace core::pack::task;
 		PackerTaskOP task = TaskFactory::create_packer_task(pose);
@@ -446,7 +446,7 @@ public:
 			task->nonconst_residue_task(i).restrict_to_repacking();
 		}
 		// TR << *task << std::endl;
-		packmover_ = new protocols::simple_moves::PackRotamersMover( sf, task );
+		packmover_ = new protocols::minimization_packing::PackRotamersMover( sf, task );
 	}
 	void apply(core::pose::Pose & pose) {
 		mover_->apply(pose);

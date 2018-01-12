@@ -70,10 +70,10 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
 #include <sstream>
 #include <utility/excn/Exceptions.hh>
@@ -227,10 +227,10 @@ void minimize(Pose & pose, ScoreFunctionOP sf, vector1<Size> matchres) {
 				movemap->set_jump(i,true);
 			}
 		}
-		protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+		protocols::minimization_packing::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 		m.apply(pose);
 	} else {
-		protocols::simple_moves::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+		protocols::minimization_packing::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 		m.apply(pose);
 	}
 
@@ -333,10 +333,10 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
 	// pose.dump_pdb("test.pdb");
 	// if(uniform() > 0.2) std::exit(-1);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );
+		protocols::minimization_packing::PackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	}
 
@@ -358,10 +358,10 @@ void repack(Pose & pose, ScoreFunctionOP sf, Size /*end_of_prot_1*/, vector1<Siz
 		}
 	}
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );
+		protocols::minimization_packing::PackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	}
 }
@@ -446,10 +446,10 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 	// pose.dump_pdb("test.pdb");
 	// if(uniform() > 0.2) std::exit(-1);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );
+		protocols::minimization_packing::PackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	}
 

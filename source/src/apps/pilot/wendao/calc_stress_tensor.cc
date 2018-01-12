@@ -7,11 +7,11 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <core/scoring/Energies.hh>
@@ -149,7 +149,7 @@ public:
         // repack pose
         // core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
         // main_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
-        // protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+        // protocols::minimization_packing::PackRotamersMoverOP pack_mover = new protocols::minimization_packing::PackRotamersMover;
         // pack_mover->task_factory( main_task_factory );
         // pack_mover->score_function( score_function );
 

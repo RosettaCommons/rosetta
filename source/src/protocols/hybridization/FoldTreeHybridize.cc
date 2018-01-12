@@ -60,7 +60,7 @@
 // symmetry
 #include <core/pose/symmetry/util.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -111,7 +111,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <protocols/jumping/JumpSetup.hh>
-#include <protocols/simple_moves/ExtendedPoseMover.hh>
+#include <protocols/pose_creation/ExtendedPoseMover.hh>
 #include <protocols/jumping/SheetBuilder.hh>
 #include <protocols/jumping/RandomSheetBuilder.hh>
 #include <core/scoring/dssp/StrandPairing.hh>
@@ -767,7 +767,7 @@ FoldTreeHybridize::add_strand_pairing(
 
 	// create a pose with the strand pairing
 	core::pose::PoseOP pairing_pose( new core::pose::Pose() );
-	protocols::simple_moves::ExtendedPoseMover m(target_sequence_);
+	protocols::pose_creation::ExtendedPoseMover m(target_sequence_);
 	m.apply(*pairing_pose);
 	pairing_pose->fold_tree( jump_sample_.fold_tree() );
 	jump_mover->apply_at_all_positions( *pairing_pose );

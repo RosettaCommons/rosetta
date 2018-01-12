@@ -16,7 +16,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
@@ -63,7 +63,7 @@ public:
 private:
 	core::pose::PoseOP saved_pose_;
 	simple_moves::DesignRepackMoverOP design_mover_;
-	protocols::simple_moves::PackRotamersMoverOP design_mover2_;//ugly adaptation for the PackRotamers baseclass
+	protocols::minimization_packing::PackRotamersMoverOP design_mover2_;//ugly adaptation for the PackRotamers baseclass
 	bool pssm_;
 };
 

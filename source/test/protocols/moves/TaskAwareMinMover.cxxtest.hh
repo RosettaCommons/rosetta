@@ -23,8 +23,8 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -85,39 +85,39 @@ public:
 
 		/////////////////////////minimizer movers/////////////////////////////////////////
 		using namespace core::scoring;
-		using protocols::simple_moves::MinMoverOP;
-		using protocols::simple_moves::MinMover;
-		using protocols::simple_moves::TaskAwareMinMoverOP;
-		using protocols::simple_moves::TaskAwareMinMover;
+		using protocols::minimization_packing::MinMoverOP;
+		using protocols::minimization_packing::MinMover;
+		using protocols::minimization_packing::TaskAwareMinMoverOP;
+		using protocols::minimization_packing::TaskAwareMinMover;
 
 		ScoreFunctionOP sf(get_score_function());
 
 		//TA + minmover for all positions fixed
-		protocols::simple_moves::MinMoverOP min_mover_all( new protocols::simple_moves::MinMover(
+		protocols::minimization_packing::MinMoverOP min_mover_all( new protocols::minimization_packing::MinMover(
 			mm_start,
 			sf,
 			"dfpmin_armijo", //faster and irrelevant for the purpose...
 			0.01,
 			true /*use_nblist*/ ) );
-		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_all( new protocols::simple_moves::TaskAwareMinMover(min_mover_all, task_factory_all) );
+		protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover_all( new protocols::minimization_packing::TaskAwareMinMover(min_mover_all, task_factory_all) );
 
 		//TA + minmover for one position fixed
-		protocols::simple_moves::MinMoverOP min_mover_one( new protocols::simple_moves::MinMover(
+		protocols::minimization_packing::MinMoverOP min_mover_one( new protocols::minimization_packing::MinMover(
 			mm_start,
 			sf,
 			"dfpmin_armijo", //faster and irrelevant for the purpose...
 			0.01,
 			true /*use_nblist*/ ) );
-		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_one( new protocols::simple_moves::TaskAwareMinMover(min_mover_one, task_factory_one) );
+		protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover_one( new protocols::minimization_packing::TaskAwareMinMover(min_mover_one, task_factory_one) );
 
 		//TA + minmover for no positions fixed
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
+		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover(
 			mm_start,
 			sf,
 			"dfpmin_armijo", //faster and irrelevant for the purpose...
 			0.01,
 			true /*use_nblist*/ ) );
-		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(min_mover, task_factory) );
+		protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover( new protocols::minimization_packing::TaskAwareMinMover(min_mover, task_factory) );
 
 
 		//now the not-task-aware part
@@ -131,7 +131,7 @@ public:
 		mm->set_bb(false); mm->set_jump(false); mm->set_chi(true);
 
 		//MinMover for all positions fixed
-		protocols::simple_moves::MinMoverOP noTA_min_mover_all( new protocols::simple_moves::MinMover(
+		protocols::minimization_packing::MinMoverOP noTA_min_mover_all( new protocols::minimization_packing::MinMover(
 			mm_all,
 			sf,
 			"dfpmin_armijo", //faster and irrelevant for the purpose...
@@ -139,7 +139,7 @@ public:
 			true /*use_nblist*/ ) );
 
 		//MinMover for one position fixed
-		protocols::simple_moves::MinMoverOP noTA_min_mover_one( new protocols::simple_moves::MinMover(
+		protocols::minimization_packing::MinMoverOP noTA_min_mover_one( new protocols::minimization_packing::MinMover(
 			mm_one,
 			sf,
 			"dfpmin_armijo", //faster and irrelevant for the purpose...
@@ -147,7 +147,7 @@ public:
 			true /*use_nblist*/ ) );
 
 		//MinMover for no positions fixed
-		protocols::simple_moves::MinMoverOP noTA_min_mover( new protocols::simple_moves::MinMover(
+		protocols::minimization_packing::MinMoverOP noTA_min_mover( new protocols::minimization_packing::MinMover(
 			mm,
 			sf,
 			"dfpmin_armijo", //faster and irrelevant for the purpose...

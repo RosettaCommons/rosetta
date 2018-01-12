@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -39,8 +39,8 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
 
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
@@ -181,7 +181,7 @@ public:
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::minimization_packing::PackRotamersMoverOP packrot_mover = new protocols::minimization_packing::PackRotamersMover;
 		packrot_mover->score_function( scorefxn );
 		packrot_mover->task_factory( task_factory );
 
@@ -273,7 +273,7 @@ public:
 		mm->set_chi ( true ); //will only minimize one sidechain
 		mm->set_jump( true ); //to move the zinc atom
 
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin_armijo", 0.01, true );
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm, scorefxn, "dfpmin_armijo", 0.01, true );
 
 		TR << "Preminimizing sc" << std::endl;
 		min_mover->apply(pose);
@@ -409,7 +409,7 @@ public:
 					core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 					task->nonconst_residue_task(this_res).restrict_absent_canonical_aas( allow_single_aas[aa_index] );
 
-					protocols::simple_moves::PackRotamersMoverOP pack_rotamers = new protocols::simple_moves::PackRotamersMover();
+					protocols::minimization_packing::PackRotamersMoverOP pack_rotamers = new protocols::minimization_packing::PackRotamersMover();
 					pack_rotamers->score_function(scorefxn);
 					pack_rotamers->task_factory(task_factory);
 
@@ -558,7 +558,7 @@ public:
 		mm->set_jump( true ); //to move the zinc atom
 
 		//mm->set_jump( true );
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin_armijo", 0.01, true );
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm, scorefxn, "dfpmin_armijo", 0.01, true );
 		TR << "Minimizing" << std::endl;
 		min_mover->apply(pose);
 

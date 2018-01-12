@@ -32,7 +32,7 @@
 
 #include <protocols/match/BumpGrid.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/motifs/Motif.hh>
 #include <protocols/motifs/MotifDnaPacker.hh>
@@ -197,7 +197,7 @@ void MotifLoopBuild::apply(core::pose::Pose & pose)
 	}
 	tr << "Desiging positions: " << designable.str()  << std::endl;
 
-	protocols::moves::MoverOP design_seqOP( new protocols::simple_moves::PackRotamersMover(scorefxnOP, seq_design_taskOP) );
+	protocols::moves::MoverOP design_seqOP( new protocols::minimization_packing::PackRotamersMover(scorefxnOP, seq_design_taskOP) );
 	design_seqOP->apply(pose);
 	pose.dump_pdb("remodel_only.pdb");
 

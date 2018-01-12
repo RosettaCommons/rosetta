@@ -92,8 +92,8 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
@@ -164,7 +164,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		}
 	}
 	// TR << *task << std::endl;
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
 
@@ -251,7 +251,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	}
 	TR << *task << std::endl;
 
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
 
@@ -315,7 +315,7 @@ void design_dyad(Pose & pose, Size const r1, Size const r2, ScoreFunctionOP sf, 
 		}
 	}
 	// TR << *task << std::endl;
-	protocols::simple_moves::PackRotamersMover repack( sf, task );
+	protocols::minimization_packing::PackRotamersMover repack( sf, task );
 	repack.apply(pose);
 
 	sf->show(pose);
@@ -337,7 +337,7 @@ void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
 
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::minimization_packing::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 
 	m.apply(pose);
 

@@ -55,7 +55,7 @@
 #include <protocols/cluster/APCluster.hh>
 
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/scoring/constraints/Constraint.hh>
@@ -1075,7 +1075,7 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 	}
 
 	//core::pack::pack_rotamers( pose, *scorefxn, packer_task );
-	protocols::simple_moves::PackRotamersMover packrotamersmover( scorefxn, packer_task, 1 /*nloops*/ );
+	protocols::minimization_packing::PackRotamersMover packrotamersmover( scorefxn, packer_task, 1 /*nloops*/ );
 	packrotamersmover.apply( pose );
 	return;
 }

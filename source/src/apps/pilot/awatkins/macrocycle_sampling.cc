@@ -33,7 +33,7 @@
 //#include <core/pack/task/TaskFactory.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
@@ -75,7 +75,7 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <protocols/ncbb/oop/OopCreatorMover.hh>
-#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
+#include <protocols/ncbb/oop/OopRandomSmallMover.hh>
 
 using namespace basic::options;
 using namespace utility;

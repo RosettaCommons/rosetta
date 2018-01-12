@@ -46,8 +46,8 @@
 #include <protocols/relax/FastRelax.fwd.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/RepackSidechainsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/RepackSidechainsMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/uniform.hh>

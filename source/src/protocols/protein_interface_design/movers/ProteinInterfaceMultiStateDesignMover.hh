@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_protein_interface_design_movers_ProteinInterfaceMultiStateDesignMover_hh
 #define INCLUDED_protocols_protein_interface_design_movers_ProteinInterfaceMultiStateDesignMover_hh
 #include <protocols/protein_interface_design/movers/ProteinInterfaceMultiStateDesignMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/multistate_design/MultiStatePacker.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
@@ -35,7 +35,7 @@ namespace protein_interface_design {
 namespace movers {
 
 /// @brief wraps protein-interface specific considerations around the general multistate design / genetic algorithm framework
-class ProteinInterfaceMultiStateDesignMover : public protocols::simple_moves::PackRotamersMover {
+class ProteinInterfaceMultiStateDesignMover : public protocols::minimization_packing::PackRotamersMover {
 public:
 	typedef multistate_design::PosType PosType;
 	typedef core::pack::task::PackerTaskCOP PackerTaskCOP;
@@ -75,7 +75,7 @@ public:
 private:
 	void initialize( Pose & );
 
-	using protocols::simple_moves::PackRotamersMover::run;
+	using protocols::minimization_packing::PackRotamersMover::run;
 	void run();
 	/// @brief add target and competitor states
 	void add_states( Pose const & );

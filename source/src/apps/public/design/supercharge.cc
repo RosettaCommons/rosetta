@@ -67,8 +67,8 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
@@ -428,7 +428,7 @@ public:
 		utility::file::FileName input_pdbname( pose.pdb_info()->name() );
 		std::string input_namebase( input_pdbname.base() );
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover );
+		protocols::minimization_packing::PackRotamersMoverOP packrot_mover( new protocols::minimization_packing::PackRotamersMover );
 		packrot_mover->score_function( scorefxn );
 		packrot_mover->task_factory( task_factory );
 		packrot_mover->apply( pose ); /////////////////APPLY PACKROT MOVER
@@ -484,7 +484,7 @@ public:
 		scorefxn->set_energy_method_options( energymethodoptions );
 		scorefxn_ = scorefxn;
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover );
+		protocols::minimization_packing::PackRotamersMoverOP packrot_mover( new protocols::minimization_packing::PackRotamersMover );
 		packrot_mover->score_function( scorefxn_ );
 
 		core::pack::task::operation::RestrictToRepackingOP restrict_to_repack( new core::pack::task::operation::RestrictToRepacking() );
@@ -499,8 +499,8 @@ public:
 		movemap_scbb->set_chi( true );
 		movemap_scbb->set_bb( true );
 
-		protocols::simple_moves::MinMoverOP min_sc( new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "lbfgs_armijo", 0.01, true ) );
-		protocols::simple_moves::MinMoverOP min_scbb( new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "lbfgs_armijo", 0.01, true ) );
+		protocols::minimization_packing::MinMoverOP min_sc( new protocols::minimization_packing::MinMover( movemap_sc, scorefxn_, "lbfgs_armijo", 0.01, true ) );
+		protocols::minimization_packing::MinMoverOP min_scbb( new protocols::minimization_packing::MinMover( movemap_scbb, scorefxn_, "lbfgs_armijo", 0.01, true ) );
 
 
 		TR << "Packrotamers" << std::endl;
@@ -795,7 +795,7 @@ public:
 		TR << "Using SCORE12 with custom reference weights\n" << *customref_scorefxn << std::flush;
 		scorefxn_ = scorefxn;
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover );
+		protocols::minimization_packing::PackRotamersMoverOP packrot_mover( new protocols::minimization_packing::PackRotamersMover );
 		packrot_mover->score_function( customref_scorefxn );
 		packrot_mover->task_factory( task_factory );
 
@@ -1050,7 +1050,7 @@ public:
 		core::pack::task::operation::RestrictToRepackingOP restrict_to_repack( new core::pack::task::operation::RestrictToRepacking() );
 		task_factory->push_back( restrict_to_repack );
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover );
+		protocols::minimization_packing::PackRotamersMoverOP packrot_mover( new protocols::minimization_packing::PackRotamersMover );
 		packrot_mover->score_function( scorefxn_ );
 		packrot_mover->task_factory( task_factory );
 
@@ -1060,8 +1060,8 @@ public:
 		//movemap_scbb->set_chi( true );
 		//movemap_scbb->set_bb( true );
 
-		//protocols::simple_moves::MinMoverOP min_sc = new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "lbfgs_armijo", 0.01, true );
-		//protocols::simple_moves::MinMoverOP min_scbb = new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "lbfgs_armijo", 0.01, true );
+		//protocols::minimization_packing::MinMoverOP min_sc = new protocols::minimization_packing::MinMover( movemap_sc, scorefxn_, "lbfgs_armijo", 0.01, true );
+		//protocols::minimization_packing::MinMoverOP min_scbb = new protocols::minimization_packing::MinMover( movemap_scbb, scorefxn_, "lbfgs_armijo", 0.01, true );
 
 		TR << "Packing designed" << std::endl;
 		packrot_mover->apply( pose );

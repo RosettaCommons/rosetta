@@ -36,7 +36,7 @@
 #include <protocols/idealize/IdealizeMover.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 //Basic Headers

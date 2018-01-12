@@ -65,14 +65,14 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -327,7 +327,7 @@ TriazoleCreator::apply(
 		pose.conformation().update_polymeric_connection(i);
 	}
 
-	protocols::simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+	protocols::minimization_packing::MinMoverOP desn_min( new minimization_packing::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 	desn_min->cartesian( true );
 
 	std::cout << "Dump initial" << std::endl;

@@ -59,7 +59,7 @@
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 
 #include <core/scoring/packstat/compute_sasa.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
@@ -767,7 +767,7 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 
 	//setup mover to pack interface
 	//core::Size ndruns = option[packing::ndruns];
-	protocols::simple_moves::PackRotamersMoverOP repacker( new protocols::simple_moves::PackRotamersMover( sf_ ) );
+	protocols::minimization_packing::PackRotamersMoverOP repacker( new protocols::minimization_packing::PackRotamersMover( sf_ ) );
 
 	if ( pack_input_ ) {
 		core::pack::task::PackerTaskOP task = setup_task( complexed_pose );
@@ -1398,7 +1398,7 @@ void InterfaceAnalyzerMover::mut_to_gly( core::pose::Pose complex_pose, core::po
 #endif
 
 	//apply mutations
-	protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover( sf_ , task ) );
+	protocols::minimization_packing::PackRotamersMoverOP packrot_mover( new protocols::minimization_packing::PackRotamersMover( sf_ , task ) );
 	packrot_mover->apply( copy_complex );
 	packrot_mover->apply( copy_separate );
 	data_.gly_dG =(*sf_) ( copy_complex ) - (*sf_) ( copy_separate );

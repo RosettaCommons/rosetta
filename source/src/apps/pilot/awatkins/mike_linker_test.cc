@@ -51,12 +51,12 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-//#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
+//#include <protocols/ncbb/hbs/HbsRandomSmallMover.hh>
+#include <protocols/ncbb/hbs/HbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -530,7 +530,7 @@ MikeLinkerMover::apply(
 
 
 
-	protocols::simple_moves::MinMoverOP minmover( new MinMover( movemap, score_fxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+	protocols::minimization_packing::MinMoverOP minmover( new protocols::minimization_packing::MinMover( movemap, score_fxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 	minmover->cartesian( true );
 	minmover->apply( pose );
 
@@ -581,7 +581,7 @@ MikeLinkerMover::apply(
 	pert_tf->push_back( pert_rtrp );
 
 	// create a rotamer trials mover
-	simple_moves::RotamerTrialsMoverOP pert_rt( new simple_moves::EnergyCutRotamerTrialsMover( score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	minimization_packing::RotamerTrialsMoverOP pert_rt( new minimization_packing::EnergyCutRotamerTrialsMover( score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	// create a random mover to hold the docking, and peptide pertubation movers
 	moves::RandomMoverOP pert_random( new moves::RandomMover() );

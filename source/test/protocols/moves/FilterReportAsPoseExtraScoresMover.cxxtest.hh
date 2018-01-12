@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 
-#include <protocols/simple_moves/MakePolyXMover.hh>
+#include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 
 // Package headers
@@ -83,7 +83,7 @@ public:
 			ref,
 			8675309 /*garbage number, with style*/));
 
-		polyx = protocols::moves::MoverOP(new protocols::simple_moves::MakePolyXMover());
+		polyx = protocols::moves::MoverOP(new protocols::pose_creation::MakePolyXMover());
 
 		//tiny, fast, yay!
 		pose = create_twores_1ubq_pose(); //I think this fxn is global namespace

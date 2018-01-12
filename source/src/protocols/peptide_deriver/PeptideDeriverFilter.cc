@@ -61,7 +61,7 @@
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/DisulfideInsertionMover.hh>
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 
@@ -255,7 +255,7 @@ PeptideDeriverFilter::minimize(core::pose::Pose & pose) const {
 	// TODO : consider using whatever is mentioned in -run:min_type and -run:min_tolerance
 	//        and maybe change the defaults to this for Peptiderive app
 
-	protocols::simple_moves::MinMover minimizer( movemap, scorefxn_minimizer_,
+	protocols::minimization_packing::MinMover minimizer( movemap, scorefxn_minimizer_,
 		"dfpmin_armijo_atol", 0.01, true /*nb_list*/ );
 
 	// minimize pose
@@ -902,7 +902,7 @@ PeptideDeriverFilter::generate_N2C_cyclic_peptide_protein_complex(core::pose::Po
 	// minimization of the structure to actually close the bond
 	core::kinematics::MoveMapOP N2C_minimize_movemap ( new core::kinematics::MoveMap );
 	N2C_minimize_movemap->set_bb_true_range(pep_nter_idx, pep_cter_idx);
-	protocols::simple_moves::MinMover N2C_minimizer( N2C_minimize_movemap, scorefxn_N2C_minimize, "dfpmin_armijo_atol", 0.01 /*tolerance*/, true /*nb_list*/ );
+	protocols::minimization_packing::MinMover N2C_minimizer( N2C_minimize_movemap, scorefxn_N2C_minimize, "dfpmin_armijo_atol", 0.01 /*tolerance*/, true /*nb_list*/ );
 	N2C_minimizer.apply( *pose_for_N2C_cyclization );
 	// additional bond declaration to correct the position of the amide proton and the carboxyl oxygen,
 	// as the N-ter phi and C-ter psi are not sampled during minimization

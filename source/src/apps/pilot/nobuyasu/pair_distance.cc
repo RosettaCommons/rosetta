@@ -27,7 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MakePolyXMover.hh>
+#include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>

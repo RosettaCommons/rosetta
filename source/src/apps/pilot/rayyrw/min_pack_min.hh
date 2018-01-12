@@ -15,10 +15,10 @@
 
 #include <protocols/electron_density/util.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/pack/task/PackerTask.hh>
@@ -126,7 +126,7 @@ rigid_body_minimization(
 	rbmin << "before applying minmover\n" << std::endl;
 	scorefxn->show( rbmin, pose );
 
-	protocols::moves::MoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone", 1e-5, true ) );
+	protocols::moves::MoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone", 1e-5, true ) );
 
 	bool densInMinimizer = core::scoring::electron_density::getDensityMap().getUseDensityInMinimizer();
 	core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( true );
@@ -181,7 +181,7 @@ backbone_minimization(
 	bbmin << "before applying minmover\n" << std::endl;
 	scorefxn->show( bbmin, pose );
 
-	protocols::moves::MoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone", 0.01, true ) );
+	protocols::moves::MoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone", 0.01, true ) );
 
 	bool densInMinimizer = core::scoring::electron_density::getDensityMap().getUseDensityInMinimizer();
 	core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( true );
@@ -233,7 +233,7 @@ pack_sidechains(
 	repack_movemap->set_jump( false );
 
 	// Make PackRots movers
-	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
+	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );
 	packer->task_factory( tf );
 	packer->score_function( scorefxn );
 

@@ -15,7 +15,7 @@
 #include <protocols/simple_moves/CyclizationMover.hh>
 
 // protocols headers
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // core headers
 #include <core/types.hh>
@@ -506,7 +506,7 @@ CyclizationMover::minimize_rebuild( core::pose::Pose & pose )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	simple_moves::MinMoverOP min_mover( new simple_moves::MinMover( move_map_, score_fxn_, option[ run::min_type ].value(), 0.01, true ) );
+	minimization_packing::MinMoverOP min_mover( new minimization_packing::MinMover( move_map_, score_fxn_, option[ run::min_type ].value(), 0.01, true ) );
 
 	min_mover->apply( pose );
 

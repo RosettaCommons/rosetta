@@ -54,7 +54,7 @@ scorefxn( pose )
 
 print( "_____ Check point 3" )
 print( 'Making MinMover...' )
-min_mover = protocols.simple_moves.MinMover()
+min_mover = protocols.minimization_packing.MinMover()
 min_mover.movemap(movemap)
 min_mover.score_function(scorefxn)
 

@@ -72,7 +72,7 @@
 // #include <protocols/sic_dock/SICFast.hh>
 // #include <protocols/sic_dock/util.hh>
 // #include <protocols/sic_dock/read_biounit.hh>
-// #include <protocols/simple_moves/MinMover.hh>
+// #include <protocols/minimization_packing/MinMover.hh>
 // #include <protocols/simple_moves/AddConstraintsToCurrentConformationMover.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>

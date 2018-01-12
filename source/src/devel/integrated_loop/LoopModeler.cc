@@ -34,11 +34,11 @@
 
 //protocols
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/loops/looprelax_protocols.hh>
 
@@ -299,7 +299,7 @@ void LoopRefiner::apply_mod( core::pose::Pose & pose )
 		TR << "LoopRefiner apply " << it->loop_begin() << " " << it->loop_end() << " " << it->cutpoint() << " " << it->skip_rate() << "\n";
 		set_one_loop_fold_tree( pose, *it );
 		//v  set_movemap( *it );
-		min_mover_ = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type, tolerance, nblist );
+		min_mover_ = new protocols::minimization_packing::MinMover( movemap_, scorefxn_, min_type, tolerance, nblist );
 		protocols::moves::SequenceMoverOP BBPerturb( new protocols::moves::SequenceMover() );
 		//  BBPerturb->add_mover( SmallMovesRotTrial );
 		//  BBPerturb->add_mover( ShearMovesRotTrial );
@@ -339,7 +339,7 @@ void LoopRefiner::apply( core::pose::Pose & pose )
 
 	movemap_ = new core::kinematics::MoveMap();
 	set_movemap( LoopList_, movemap_ );//all loops minimized
-	min_mover_ = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type, tolerance, nblist );
+	min_mover_ = new protocols::minimization_packing::MinMover( movemap_, scorefxn_, min_type, tolerance, nblist );
 
 	if ( !mc_created ) {
 		set_default_mc( pose );
@@ -438,7 +438,7 @@ protocols::moves::SequenceMoverOP LoopRefiner::shear_move_rot_trial_mover(
 //////////////////////////////////////////////////////////////////////////
 /// @brief LoopRefiner Rotamer_trials
 //////////////////////////////////////////////////////////////////////////
-protocols::simple_moves::RotamerTrialsMoverOP LoopRefiner::rotamer_trial_mover(
+protocols::minimization_packing::RotamerTrialsMoverOP LoopRefiner::rotamer_trial_mover(
 	core::pose::Pose & pose
 )
 {
@@ -447,7 +447,7 @@ protocols::simple_moves::RotamerTrialsMoverOP LoopRefiner::rotamer_trial_mover(
 	task_ = pack::task::TaskFactory::create_packer_task( pose );
 	task_->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
 	task_->set_bump_check( true );
-	protocols::simple_moves::RotamerTrialsMoverOP RotTrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_, *task_ );
+	protocols::minimization_packing::RotamerTrialsMoverOP RotTrial = new protocols::minimization_packing::RotamerTrialsMover( scorefxn_, *task_ );
 	return RotTrial;
 
 }

@@ -17,8 +17,8 @@
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -50,8 +50,8 @@ namespace carbohydrates {
 
 using namespace core::kinematics;
 using namespace core::scoring;
-using namespace protocols::simple_moves;
-using namespace protocols::simple_moves::symmetry;
+using namespace protocols::minimization_packing;
+using namespace protocols::minimization_packing::symmetry;
 
 /////////////////////
 /// Constructors  ///
@@ -94,9 +94,9 @@ GlycanTreeMinMover::GlycanTreeMinMover( GlycanTreeMinMover const & src ):
 	//I don't have a pose to check its conformation for symmetry, so I must rely on the mover name here.
 	if ( src.min_mover_ ) {
 		if ( src.min_mover_->get_name() == "SymMinMover" ) {
-			min_mover_ = simple_moves::symmetry::SymMinMoverOP( new simple_moves::symmetry::SymMinMover( *src.min_mover_));
+			min_mover_ = minimization_packing::symmetry::SymMinMoverOP( new minimization_packing::symmetry::SymMinMover( *src.min_mover_));
 		} else {
-			min_mover_ = simple_moves::MinMoverOP( new simple_moves::MinMover( *src.min_mover_));
+			min_mover_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover( *src.min_mover_));
 		}
 	}
 }
@@ -127,8 +127,8 @@ GlycanTreeMinMover::set_min_bb( bool min_bb ){
 ///@brief Set a pre-configured MinMover for this class.
 ///  Will OVERRIDE movemap settings.
 void
-GlycanTreeMinMover::set_minmover( protocols::simple_moves::MinMoverCOP min_mover){
-	min_mover_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover( *min_mover));
+GlycanTreeMinMover::set_minmover( protocols::minimization_packing::MinMoverCOP min_mover){
+	min_mover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( *min_mover));
 }
 
 

@@ -16,7 +16,6 @@
 
 // Unit Headers
 #include <protocols/rosetta_scripts/PoseSelectorFactory.fwd.hh>
-#include <protocols/rosetta_scripts/PoseSelectorFactory.hh>
 #include <protocols/rosetta_scripts/PoseSelector.fwd.hh>
 #include <protocols/rosetta_scripts/PoseSelector.hh>
 #include <protocols/rosetta_scripts/PoseSelectorCreator.hh>

@@ -87,10 +87,10 @@
 //protocols library (Movers)
 #include <devel/init.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 //#include <protocols/moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/dssp/Dssp.hh>

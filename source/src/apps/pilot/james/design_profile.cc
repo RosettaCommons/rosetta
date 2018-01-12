@@ -26,7 +26,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/not_universal_main.hh>
@@ -71,8 +71,8 @@ public:
 	/// @brief Uses fixed-backbone design to compute a profile for the given Pose.
 	virtual void apply( core::pose::Pose & pose ) {
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-		protocols::simple_moves::PackRotamersMoverOP pack_mover
-			= new protocols::simple_moves::PackRotamersMover;
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover
+			= new protocols::minimization_packing::PackRotamersMover;
 		pack_mover->score_function( scorefxn );
 
 		core::sequence::SequenceAlignment aln;

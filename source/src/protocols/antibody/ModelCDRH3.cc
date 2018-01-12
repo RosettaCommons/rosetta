@@ -28,7 +28,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <utility/exit.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/H3PerturbCCD.hh>

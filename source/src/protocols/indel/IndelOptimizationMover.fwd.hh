@@ -19,7 +19,6 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
-#include <protocols/indel/IndelOptimizationMover.fwd.hh>
 #include <utility/vector1.hh>
 
 

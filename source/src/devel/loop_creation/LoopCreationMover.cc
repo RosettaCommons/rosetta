@@ -44,9 +44,9 @@
 
 #include <protocols/jd2/util.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <protocols/filters/BasicFilters.hh>
 
@@ -499,7 +499,7 @@ LoopCreationMover::refine_loop(
 	scorefxn_min->set_weight( scoring::chainbreak, 100.0 );//loop should already be closed, so this will just prevent re-breaking by minimization
 
 	//Initialize a mover if we haven't already
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 	pack_mover->score_function( scorefxn_ );
 
 	//Setup task factory for minimization and packing
@@ -557,7 +557,7 @@ LoopCreationMover::refine_loop(
 		}
 		TR.Debug << "Movemap for minimization: " << *movemap << std::endl;
 
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(movemap, scorefxn_min, "lbfgs_armijo_nonmonotone", 0.01, false ) );
+		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover(movemap, scorefxn_min, "lbfgs_armijo_nonmonotone", 0.01, false ) );
 
 		TR << "Score prior to minimization: " << scorefxn_min->score(pose) << std::endl;
 		//  pose.dump_pdb("pre_minimization.pdb");

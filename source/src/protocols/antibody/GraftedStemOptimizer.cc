@@ -23,9 +23,9 @@
 #include <core/select/util.hh>
 #include <core/conformation/util.hh> //idealize
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -101,6 +101,7 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	//pymol->keep_history(true);
 
 	using namespace protocols::simple_moves;
+	using namespace protocols::minimization_packing;
 
 	/// Small_Mover and Shear_Mover
 	Real high_move_temp = 2.00;

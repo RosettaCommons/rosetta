@@ -129,12 +129,12 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>
 //#include <protocols/simple_filters/RmsdEvaluator.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 //#include <protocols/looprelax/looprelax_main.hh>
 //#include <protocols/comparative_modeling/ConstraintRemodelMover.hh>
 
@@ -282,7 +282,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 	core::pack::task::PackerTaskOP pt(pack::task::TaskFactory::create_packer_task(p));
 	pt->restrict_to_repacking();
 	pt->or_include_current(true);
-	protocols::simple_moves::RotamerTrialsMoverOP rottrial_mover( new protocols::simple_moves::RotamerTrialsMover(s,(*pt)) );
+	protocols::minimization_packing::RotamerTrialsMoverOP rottrial_mover( new protocols::minimization_packing::RotamerTrialsMover(s,(*pt)) );
 	moves::RandomMoverOP apply_random_move( new moves::RandomMover() );
 
 	if ( BACKBONE_MOVEMENT ) {

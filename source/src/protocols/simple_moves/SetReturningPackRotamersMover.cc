@@ -13,7 +13,7 @@
 
 // Unit headers
 #include <protocols/simple_moves/SetReturningPackRotamersMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // Project headers
 #include <core/pack/task/PackerTask.hh>
@@ -46,7 +46,7 @@ using namespace pack;
 
 // default c'tor
 SetReturningPackRotamersMover::SetReturningPackRotamersMover( Size ndruns ) :
-	protocols::simple_moves::PackRotamersMover()
+	protocols::minimization_packing::PackRotamersMover()
 {
 	repacked_poses_.resize( ndruns );
 }
@@ -57,7 +57,7 @@ SetReturningPackRotamersMover::SetReturningPackRotamersMover(
 	task::PackerTaskCOP task,
 	Size ndruns
 ) :
-	protocols::simple_moves::PackRotamersMover( scorefxn, task, ndruns ),
+	protocols::minimization_packing::PackRotamersMover( scorefxn, task, ndruns ),
 	ndruns_(ndruns)
 {
 	repacked_poses_.resize( ndruns );

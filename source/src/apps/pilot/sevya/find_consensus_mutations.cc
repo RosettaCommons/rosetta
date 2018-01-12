@@ -27,11 +27,11 @@
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <core/chemical/ResidueType.hh>
-#include <protocols/simple_moves/MinPackMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinPackMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/NegativePackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <devel/init.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 // option key includes
@@ -157,7 +157,7 @@ main( int argc, char * argv [] )
 		soft_rep->set_weight( core::scoring::res_type_constraint, 1.0 );
 		sfxn_design->set_weight( core::scoring::res_type_constraint, 1.0 );
 
-		protocols::simple_moves::PackRotamersMoverOP rp = new protocols::simple_moves::PackRotamersMover;
+		protocols::minimization_packing::PackRotamersMoverOP rp = new protocols::minimization_packing::PackRotamersMover;
 		rp->score_function( sfxn_clean );
 		rp->task_factory( packing_min_task_factory );
 

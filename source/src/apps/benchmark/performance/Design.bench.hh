@@ -14,7 +14,7 @@
 /// takes about 1 minute on my machine
 /// @author Gordon Lemmon
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -30,7 +30,7 @@ class DesignBenchmark : public PerformanceBenchmark
 public:
 	DesignBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
-	protocols::simple_moves::PackRotamersMover pack_mover;
+	protocols::minimization_packing::PackRotamersMover pack_mover;
 	core::pose::Pose design_pose;
 
 	virtual void setUp() {

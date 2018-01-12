@@ -22,7 +22,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/simple_moves/GreenPacker.fwd.hh>
+#include <protocols/minimization_packing/GreenPacker.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -77,7 +77,7 @@ public:
 		core::pose::Pose & pose,
 		core::Size const & resi,
 		core::chemical::AA const & target_aa,
-		protocols::simple_moves::GreenPackerOP green_packer
+		protocols::minimization_packing::GreenPackerOP green_packer
 	);
 
 	void eval_filters(

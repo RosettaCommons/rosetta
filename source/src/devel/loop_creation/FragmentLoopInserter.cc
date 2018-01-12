@@ -54,7 +54,7 @@
 
 //protocols
 #include <protocols/loops/Loop.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 //utility
 #include <utility/tag/Tag.hh>
@@ -334,8 +334,8 @@ FragmentLoopInserter::build_fragment_loop(
 	// design_=true;
 	// if(pack_ || design_)
 	// {
-	//  protocols::simple_moves::PackRotamersMoverOP repack_mover =
-	//   new protocols::simple_moves::PackRotamersMover;
+	//  protocols::minimization_packing::PackRotamersMoverOP repack_mover =
+	//   new protocols::minimization_packing::PackRotamersMover;
 	//  core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	//
 	//  core::pack::task::TaskFactoryOP task_factory = new pack::task::TaskFactory;

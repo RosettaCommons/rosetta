@@ -26,8 +26,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
@@ -54,7 +54,7 @@ main( int argc, char *argv[] )
 		using namespace pose;
 		using namespace scoring;
 		using namespace pack::task;
-		using namespace protocols::simple_moves;
+		using namespace protocols::minimization_packing;
 
 		// Initialize core.
 		devel::init( argc, argv );

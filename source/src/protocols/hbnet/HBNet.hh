@@ -59,7 +59,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-//#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+//#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 
 namespace protocols {
 namespace hbnet {

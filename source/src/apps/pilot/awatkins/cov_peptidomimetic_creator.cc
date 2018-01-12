@@ -70,14 +70,14 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -317,8 +317,8 @@ CovalentPeptidomimeticCreator::apply(
 	pert_tf->push_back( pert_rtrp );
 
 	// create a rotamer trials mover
-	simple_moves::RotamerTrialsMoverOP pert_rt(new simple_moves::EnergyCutRotamerTrialsMover( scorefxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
-	protocols::simple_moves::MinMoverOP min_mover( new simple_moves::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+	minimization_packing::RotamerTrialsMoverOP pert_rt(new minimization_packing::EnergyCutRotamerTrialsMover( scorefxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new minimization_packing::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 
 	core::id::AtomID const SG( cys.atom_index( "SG" ), resi_cys );
 	core::id::AtomID const CZ( vdp.atom_index( "CZ"  ), resi_vdp );

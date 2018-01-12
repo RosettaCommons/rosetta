@@ -66,7 +66,7 @@
 #include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/RepeatMover.hh>
@@ -193,7 +193,7 @@ static basic::Tracer TR( "cycgly_superimpose" );
 //  movemap->set_bb(true);
 //  movemap->set_chi(true);
 //  movemap->set_jump(true);
-//  protocols::simple_moves::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+//  protocols::minimization_packing::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 //  m.apply(pose);
 // }
 

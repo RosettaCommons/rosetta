@@ -47,7 +47,7 @@
 #include <protocols/relax/util.hh>
 #include <protocols/relax/cst_util.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 
 //Utility headers

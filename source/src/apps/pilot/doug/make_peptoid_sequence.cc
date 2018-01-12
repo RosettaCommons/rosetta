@@ -53,9 +53,9 @@
 #include <core/kinematics/MoveMap.hh>
 
 // protocols headers
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // basic headers
 #include <basic/database/open.hh>

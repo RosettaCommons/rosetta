@@ -47,7 +47,7 @@
 //#include <core/scoring/ScoreFunction.hh>
 //#include <protocols/ligand_docking/LigandDockProtocol.hh>
 //#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #if defined GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>
@@ -549,7 +549,7 @@ EnzdesRemodelMover::remodel_pose(
 			if ( res_to_repack.find( i ) != res_to_repack.end() ) task->nonconst_residue_task( i ).restrict_to_repacking();
 			else task->nonconst_residue_task( i ).prevent_repacking();
 		}
-		protocols::simple_moves::PackRotamersMoverOP packrot( new protocols::simple_moves::PackRotamersMover( enz_prot_->get_scorefxn(), task ) );
+		protocols::minimization_packing::PackRotamersMoverOP packrot( new protocols::minimization_packing::PackRotamersMover( enz_prot_->get_scorefxn(), task ) );
 		packrot->apply( pose );
 		(*enz_prot_->reduced_scorefxn())( pose );
 	} // if(keep_existing_aa_identities)

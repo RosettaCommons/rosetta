@@ -32,8 +32,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/util.hh>
@@ -459,9 +459,9 @@ public:
 				}
 				local_tf->push_back( prevent_some );
 
-				protocols::simple_moves::PackRotamersMoverOP pack_full_repack( new protocols::simple_moves::PackRotamersMover( scorefxn ) );
+				protocols::minimization_packing::PackRotamersMoverOP pack_full_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn ) );
 				if ( core::pose::symmetry::is_symmetric( pose ) )  {
-					pack_full_repack = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover( scorefxn ) );
+					pack_full_repack = protocols::minimization_packing::PackRotamersMoverOP( new minimization_packing::symmetry::SymPackRotamersMover( scorefxn ) );
 				}
 				pack_full_repack->task_factory(local_tf);
 				pack_full_repack->apply( pose );

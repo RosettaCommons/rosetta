@@ -32,9 +32,9 @@
 //#include <core/pack/task/PackerTask.hh>
 //#include <core/pack/task/TaskFactory.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
-//#include <protocols/simple_moves/PackRotamersMover.hh>
+//#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/util.hh>
@@ -62,7 +62,7 @@ main( int argc, char *argv[] )
 		using namespace import_pose;
 		using namespace pose;
 		using namespace protocols;
-		using namespace simple_moves;
+		using namespace minimization_packing;
 
 		// initialize core
 		devel::init( argc, argv );

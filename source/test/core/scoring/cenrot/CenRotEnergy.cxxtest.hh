@@ -42,7 +42,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -162,7 +162,7 @@ public:
 		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 
-		protocols::simple_moves::PackRotamersMover packrotamersmover;
+		protocols::minimization_packing::PackRotamersMover packrotamersmover;
 		packrotamersmover.task_factory(main_task_factory);
 		packrotamersmover.score_function(sfop);
 

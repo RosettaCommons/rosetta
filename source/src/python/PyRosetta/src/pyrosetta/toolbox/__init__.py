@@ -104,7 +104,7 @@ def mutate_residue(pose, mutant_position, mutant_aa,
 
     # apply the mutation and pack nearby residues
     #print task
-    packer = rosetta.protocols.simple_moves.PackRotamersMover(pack_scorefxn, task)
+    packer = rosetta.protocols.minimization_packing.PackRotamersMover(pack_scorefxn, task)
     packer.apply(pose)
 
 def restrict_non_nbrs_from_repacking(pose, res, task, pack_radius):

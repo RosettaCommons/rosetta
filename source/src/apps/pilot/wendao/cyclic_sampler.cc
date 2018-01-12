@@ -67,7 +67,7 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/Minimizer.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -143,7 +143,7 @@ public:
 
 		// core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
 		// main_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
-		// pack_mover_ = new protocols::simple_moves::PackRotamersMover;
+		// pack_mover_ = new protocols::minimization_packing::PackRotamersMover;
 		// pack_mover_->task_factory( main_task_factory );
 		// pack_mover_->score_function( core::scoring::getScoreFunction() );
 	}
@@ -338,7 +338,7 @@ private:
 	utility::vector1< Size > pivots_;
 	Real factorA_;
 	Real factorB_;
-	//protocols::simple_moves::PackRotamersMoverOP pack_mover_;
+	//protocols::minimization_packing::PackRotamersMoverOP pack_mover_;
 };
 
 class MyProtocol : public Mover

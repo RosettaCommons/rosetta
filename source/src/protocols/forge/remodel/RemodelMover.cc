@@ -48,7 +48,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
@@ -116,8 +116,8 @@
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_filters/DisulfideEntropyFilter.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh> // dihedral constraint
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
@@ -1068,8 +1068,8 @@ void RemodelMover::apply( Pose & pose ) {
 					centroid_sfx_->set_weight( core::scoring::env, 0.0);
 					}*/
 
-					//simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true);
-					simple_moves::MinMoverOP minMover( new simple_moves::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true) );
+					//minimization_packing::MinMoverOP minMover = new minimization_packing::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true);
+					minimization_packing::MinMoverOP minMover( new minimization_packing::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true) );
 					TR << "cen_minimize pose foldtree: " << pose.fold_tree() << std::endl;
 					minMover->apply(pose);
 
@@ -1814,7 +1814,7 @@ bool RemodelMover::design_refine_cart_relax(
 	using namespace protocols::loops;
 	using protocols::loops::Loops;
 	using protocols::loops::loop_mover::refine::LoopMover_Refine_CCD;
-	using protocols::simple_moves::PackRotamersMover;
+	using protocols::minimization_packing::PackRotamersMover;
 	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
 	using namespace core::scoring::constraints;
 	using namespace basic::options;
@@ -1956,7 +1956,7 @@ bool RemodelMover::design_refine_cart_relax(
 		std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
 	}
 
-	simple_moves::MinMoverOP minMover( new simple_moves::MinMover( cmmop , sfx , "lbfgs_armijo", 0.01, true ));
+	minimization_packing::MinMoverOP minMover( new minimization_packing::MinMover( cmmop , sfx , "lbfgs_armijo", 0.01, true ));
 	minMover->cartesian(true);
 
 	// run design-refine cycle

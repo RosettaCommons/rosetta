@@ -54,8 +54,8 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -139,7 +139,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
 		}
 	}
 	// TR << *task << std::endl;
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
 
@@ -226,7 +226,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 	}
 	TR << *task << std::endl;
 
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
 
@@ -243,7 +243,7 @@ void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
 
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::minimization_packing::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 
 	m.apply(pose);
 

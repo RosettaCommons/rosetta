@@ -39,7 +39,7 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
 
 #include <protocols/cluster/APCluster.hh>

@@ -46,7 +46,7 @@
 
 
 //minimization stuff
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/Mover.hh>
 
 
@@ -266,9 +266,9 @@ public:
 		movemap->set_chi(68, true);
 
 
-		protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
+		protocols::minimization_packing::MinMoverOP dfpMinTightTol( new protocols::minimization_packing::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 
-		protocols::simple_moves::MinMoverOP dfpMinTightTol2( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
+		protocols::minimization_packing::MinMoverOP dfpMinTightTol2( new protocols::minimization_packing::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 
 
 		TR << "scoring seems to work, doing minimization...  ";

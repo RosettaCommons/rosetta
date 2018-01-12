@@ -33,10 +33,10 @@
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
 // Utility Headers
 
@@ -113,11 +113,11 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 	//core::pack::rtmin(pose, *scorefxn_, pack_task);
 	//return;
 
-	protocols::simple_moves::PackRotamersMoverOP fullRepack( new protocols::simple_moves::PackRotamersMover(scorefxn_, pack_task) );
+	protocols::minimization_packing::PackRotamersMoverOP fullRepack( new protocols::minimization_packing::PackRotamersMover(scorefxn_, pack_task) );
 	fullRepack->apply(pose);
 
 	// Is this necessary?  How well does the repack converge?
-	protocols::simple_moves::RotamerTrialsMoverOP rotamerTrials( new protocols::simple_moves::RotamerTrialsMover(scorefxn_, *pack_task) );
+	protocols::minimization_packing::RotamerTrialsMoverOP rotamerTrials( new protocols::minimization_packing::RotamerTrialsMover(scorefxn_, *pack_task) );
 	rotamerTrials->apply(pose);
 
 	// Set up move map for minimizing.
@@ -128,7 +128,7 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 			movemap->set_chi(i, true);
 		}
 	}
-	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP dfpMinTightTol( new protocols::minimization_packing::MinMover( movemap, scorefxn_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->min_options()->nblist_auto_update(true);
 	dfpMinTightTol->apply(pose);
 

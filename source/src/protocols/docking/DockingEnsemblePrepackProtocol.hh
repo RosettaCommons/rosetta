@@ -26,8 +26,8 @@
 // Project headers
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -71,8 +71,8 @@ private:
 	core::Real trans_magnitude_;
 	bool movers_setup_; //only append sequence mover once
 
-	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_mover_;
-	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack_;
+	protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin_mover_;
+	protocols::minimization_packing::PackRotamersMoverOP prepack_full_repack_;
 	SidechainMinMoverOP scmin_mover_;
 	protocols::moves::SequenceMoverOP pack_operations_;
 

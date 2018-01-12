@@ -54,7 +54,7 @@
 #include <protocols/ncbb/util.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
 #include <numeric/conversions.hh>
@@ -87,7 +87,7 @@ using namespace pose;
 using namespace protocols;
 using namespace protocols::ncbb;
 using namespace protocols::moves;
-using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

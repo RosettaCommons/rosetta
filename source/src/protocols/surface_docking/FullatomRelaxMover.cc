@@ -23,7 +23,7 @@
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -124,7 +124,7 @@ void FullatomRelaxMover::setup_movers( const core::pose::Pose & pose )
 
 	Real tolerance=0.001;
 	small_mover_ = simple_moves::SmallMoverOP( new simple_moves::SmallMover(move_map_,kT_,nmoves_) );
-	small_min_mover_ = simple_moves::MinMoverOP( new simple_moves::MinMover(move_map_,
+	small_min_mover_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover(move_map_,
 		score_high_res_,small_min_type_,tolerance,true,false,false) );
 
 	small_sequence_mover_ = moves::SequenceMoverOP( new moves::SequenceMover() );
@@ -134,7 +134,7 @@ void FullatomRelaxMover::setup_movers( const core::pose::Pose & pose )
 
 	shear_mover_ = simple_moves::ShearMoverOP( new simple_moves::ShearMover(move_map_,kT_,nmoves_/2) );
 
-	shear_min_mover_ = simple_moves::MinMoverOP( new simple_moves::MinMover(move_map_,score_high_res_,
+	shear_min_mover_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover(move_map_,score_high_res_,
 		shear_min_type_,tolerance,true,false,false) );
 
 	shear_sequence_mover_ = moves::SequenceMoverOP( new moves::SequenceMover() );

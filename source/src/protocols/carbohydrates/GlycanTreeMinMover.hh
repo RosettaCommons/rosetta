@@ -17,7 +17,7 @@
 // Unit headers
 #include <protocols/carbohydrates/GlycanTreeMinMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // Protocol headers
 #include <protocols/filters/Filter.fwd.hh>
@@ -100,7 +100,7 @@ public:
 	///@brief Set a pre-configured MinMover for this class.
 	///  Will OVERRIDE movemap settings.
 	void
-	set_minmover( protocols::simple_moves::MinMoverCOP min_mover);
+	set_minmover( protocols::minimization_packing::MinMoverCOP min_mover);
 
 public:
 
@@ -139,7 +139,7 @@ private:
 	bool min_chi_ = true;
 
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
-	protocols::simple_moves::MinMoverOP min_mover_ = nullptr;
+	protocols::minimization_packing::MinMoverOP min_mover_ = nullptr;
 
 };
 

@@ -126,7 +126,7 @@
 
 
 //protocols
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 //#include <protocols/looprelax/looprelax_main.hh>

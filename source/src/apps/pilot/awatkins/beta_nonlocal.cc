@@ -51,12 +51,12 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/hbs/HbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -164,7 +164,7 @@ main( int argc, char* argv[] )
 			mm->set( TorsionID( ii, id::BB, 4 ), false );
 		}
 
-		protocols::simple_moves::MinMoverOP min( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+		protocols::minimization_packing::MinMoverOP min( new protocols::minimization_packing::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 		min->apply( pose );
 

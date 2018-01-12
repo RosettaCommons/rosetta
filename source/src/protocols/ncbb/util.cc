@@ -34,9 +34,9 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 // Filter headers
@@ -69,7 +69,7 @@ using namespace scoring;
 using namespace pose;
 using namespace protocols;
 using namespace protocols::moves;
-using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace protocols::rigid;
 using namespace protocols::toolbox;
 using namespace protocols::toolbox::pose_metric_calculators;
@@ -216,7 +216,7 @@ ncbb_design_main_loop( Size loop_num, Size pert_num, core::pose::Pose pose, Tria
 		}
 
 		// create a pack rotamers mover
-		simple_moves::PackRotamersMoverOP desn_pr( new simple_moves::PackRotamersMover(score_fxn, task) );
+		minimization_packing::PackRotamersMoverOP desn_pr( new minimization_packing::PackRotamersMover(score_fxn, task) );
 
 		// create a sequence mover to hold pack rotamers and minimization movers
 		moves::SequenceMoverOP desn_sequence( new moves::SequenceMover() );
@@ -248,7 +248,7 @@ final_design_min( core::pose::Pose & pose, ScoreFunctionOP score_fxn_, core::pac
 	}
 
 	// create a pack rotamers mover for the final design
-	simple_moves::PackRotamersMoverOP final_desn_pr( new simple_moves::PackRotamersMover(score_fxn_, final_desn_pt, 10 ) );
+	minimization_packing::PackRotamersMoverOP final_desn_pr( new minimization_packing::PackRotamersMover(score_fxn_, final_desn_pt, 10 ) );
 	//final_desn_pr->packer_task( final_desn_pt );
 	//final_desn_pr->score_function( score_fxn );
 	//final_desn_pr->nloop( 10 );
@@ -263,7 +263,7 @@ final_design_min( core::pose::Pose & pose, ScoreFunctionOP score_fxn_, core::pac
 	final_min_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+	minimization_packing::MinMoverOP final_min( new minimization_packing::MinMover( final_min_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 	// final min (okay to use ta min here)
 	final_min->apply( pose );
 }
@@ -319,7 +319,7 @@ calculate_statistics( core::pose::Pose const & pose, core::scoring::ScoreFunctio
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );
-	simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
+	minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );
 	packer->task_factory( tf );
 	packer->score_function( score_fxn );
 	packer->apply( repack_stats_pose );
@@ -331,7 +331,7 @@ calculate_statistics( core::pose::Pose const & pose, core::scoring::ScoreFunctio
 	separate_min_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+	minimization_packing::MinMoverOP separate_min( new minimization_packing::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 	// final min (okay to use ta min here)
 	separate_min->apply( repack_stats_pose );
 

@@ -50,15 +50,15 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/oop/OopRandomPuckMover.hh>
-#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
-#include <protocols/simple_moves/oop/OopPatcher.hh>
+#include <protocols/ncbb/oop/OopRandomPuckMover.hh>
+#include <protocols/ncbb/oop/OopRandomSmallMover.hh>
+#include <protocols/ncbb/oop/OopPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 

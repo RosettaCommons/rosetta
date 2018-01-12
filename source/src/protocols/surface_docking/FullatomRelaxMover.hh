@@ -25,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -122,12 +122,12 @@ private:
 	moves::MonteCarloOP  monte_carlo_;
 
 	simple_moves::SmallMoverOP small_mover_;
-	simple_moves::MinMoverOP small_min_mover_;
+	minimization_packing::MinMoverOP small_min_mover_;
 	moves::SequenceMoverOP small_sequence_mover_;
 	moves::TrialMoverOP small_trial_min_mover_;
 
 	simple_moves::ShearMoverOP shear_mover_;
-	simple_moves::MinMoverOP shear_min_mover_;
+	minimization_packing::MinMoverOP shear_min_mover_;
 	moves::SequenceMoverOP shear_sequence_mover_;
 	moves::TrialMoverOP shear_trial_min_mover_;
 

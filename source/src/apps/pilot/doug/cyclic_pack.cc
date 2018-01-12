@@ -19,10 +19,10 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMOLMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/simple_moves/CyclizationMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // core headers
 #include <core/scoring/ScoreFunction.hh>
@@ -160,7 +160,7 @@ main( int argc, char * argv [] )
 	core::scoring::ScoreFunctionOP scrfxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::MM_STD_WTS ) );
 
 	// setup pack rotamers movie
-	PackRotamersMoverOP pm( new protocols::simple_moves::PackRotamersMover() );
+	PackRotamersMoverOP pm( new protocols::minimization_packing::PackRotamersMover() );
 	pm->task_factory( tf );
 	pm->score_function( scrfxn );
 

@@ -33,7 +33,7 @@
 
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <devel/init.hh>
 
@@ -69,7 +69,7 @@
 
 using namespace core;
 using namespace core::id;
-using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace pose;
 using namespace chemical;
 using namespace utility;

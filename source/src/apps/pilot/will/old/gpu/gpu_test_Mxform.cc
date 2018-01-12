@@ -39,8 +39,8 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 //#include <protocols/scoring/ImplicitFastClashCheck.hh>
-//#include <protocols/simple_moves/MinMover.hh>
-//#include <protocols/simple_moves/PackRotamersMover.hh>
+//#include <protocols/minimization_packing/MinMover.hh>
+//#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -77,7 +77,7 @@ typedef cl_uint8 uint8;
 //   core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(arg);
 //   task->restrict_to_repacking();
 //   for(Size i=1; i<=arg.size(); ++i) if(arg.residue(i).name3()=="HIS") task->nonconst_residue_task(i).prevent_repacking();
-//   protocols::simple_moves::PackRotamersMover repack( sf, task );
+//   protocols::minimization_packing::PackRotamersMover repack( sf, task );
 //   repack.apply(arg);
 // }
 

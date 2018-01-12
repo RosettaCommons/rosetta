@@ -21,7 +21,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/sequence/util.hh>
-#include <protocols/simple_moves/ExtendedPoseMover.hh>
+#include <protocols/pose_creation/ExtendedPoseMover.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -53,7 +53,7 @@ GenericJobInputter::GenericJobInputter() {
 /// into it.
 /// why does this code live in comparative_modeling?
 void GenericJobInputter::pose_from_job( core::pose::Pose& pose, protocols::jd2::JobOP job) {
-	using protocols::simple_moves::ExtendedPoseMover;
+	using protocols::pose_creation::ExtendedPoseMover;
 	using std::string;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

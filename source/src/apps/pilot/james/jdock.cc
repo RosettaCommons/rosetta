@@ -28,7 +28,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/SaneMinMover.hh>
+#include <protocols/minimization_packing/SaneMinMover.hh>
 
 #include <core/scoring/rms_util.hh>
 
@@ -178,7 +178,7 @@ main( int argc, char * argv [] ) {
 			// case 1: 100 rounds of 20 iterations each.
 			min_options->max_iter(20);
 			for ( Size ii = 1; ii <= 100; ++ii ) {
-				protocols::simple_moves::SaneMinMover min_mover( mm, scorefxn, min_options );
+				protocols::minimization_packing::SaneMinMover min_mover( mm, scorefxn, min_options );
 				min_mover.apply(pose);
 
 				std::string tag( "case_1." + ObjexxFCL::string_of(ii) );
@@ -187,14 +187,14 @@ main( int argc, char * argv [] ) {
 		} else {
 			// case 2: 1 round of 2000 iterations
 			min_options->max_iter(2000);
-			protocols::simple_moves::SaneMinMover min_mover( mm, scorefxn, min_options );
+			protocols::minimization_packing::SaneMinMover min_mover( mm, scorefxn, min_options );
 			std::string tag( "case_2.final" );
 			min_mover.apply(pose);
 			dump_pose(tag,pose,orig_pose,scorefxn);
 		}
 		scorefxn->show(pose);
 
-		protocols::simple_moves::SaneMinMover min_mover( mm, scorefxn, min_options );
+		protocols::minimization_packing::SaneMinMover min_mover( mm, scorefxn, min_options );
 		min_mover.apply(pose);
 		std::string const fn_out( "post_min_final.pdb" );
 		pose.dump_pdb(fn_out);

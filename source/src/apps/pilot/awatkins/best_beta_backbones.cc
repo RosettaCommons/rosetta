@@ -52,12 +52,12 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/hbs/HbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -231,7 +231,7 @@ report_proportion_accessible(
 	for ( Size ii = 1; ii <= pose.residue_type( 2 ).nchi(); ++ii ) {
 		pose.set_torsion( id::TorsionID( 2, id::CHI, ii ), 180 );
 	}
-	protocols::simple_moves::MinMoverOP min( new protocols::simple_moves::MinMover( mm, score_fxn, "linmin_iterated", 0.001, true ) );
+	protocols::minimization_packing::MinMoverOP min( new protocols::minimization_packing::MinMover( mm, score_fxn, "linmin_iterated", 0.001, true ) );
 
 	for ( Real phi = -175; phi <= 180; phi += 5 ) {
 		for ( Real tht = -175; tht <= 180; tht += 5 ) {
@@ -279,7 +279,7 @@ report_proportion_accessible_alpha(
 
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_chi( 2, true );
-	protocols::simple_moves::MinMoverOP min( new protocols::simple_moves::MinMover( mm, score_fxn, "linmin_iterated", 0.001, true ) );
+	protocols::minimization_packing::MinMoverOP min( new protocols::minimization_packing::MinMover( mm, score_fxn, "linmin_iterated", 0.001, true ) );
 
 	for ( Real phi = -175; phi <= 180; phi += 5 ) {
 		for ( Real psi = -175; psi <= 180; psi += 5 ) {

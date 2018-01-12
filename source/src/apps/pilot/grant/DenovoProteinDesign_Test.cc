@@ -36,7 +36,7 @@
 #include <protocols/evaluation/RmsdEvaluator.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/relax_protocols.hh>
 
 

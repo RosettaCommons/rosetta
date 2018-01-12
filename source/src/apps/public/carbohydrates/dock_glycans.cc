@@ -21,10 +21,10 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/RingConformationMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
@@ -132,8 +132,8 @@ public:  // Standard Rosetta methods
 		simple_moves::RingConformationMover::register_options();
 		simple_moves::SmallMover::register_options();
 		simple_moves::ShearMover::register_options();
-		simple_moves::PackRotamersMover::register_options();
-		simple_moves::MinMover::register_options();
+		minimization_packing::PackRotamersMover::register_options();
+		minimization_packing::MinMover::register_options();
 	}
 
 	/// @brief  Generate string representation of DockGlycansProtocol for debugging purposes.
@@ -342,6 +342,7 @@ private:  // Private methods
 		using namespace basic::options;
 		using namespace core::pack::task;
 		using namespace simple_moves;
+		using namespace minimization_packing;
 
 		type( "DockGlycansProtocol" );
 
@@ -596,12 +597,12 @@ private:  // Private data
 	//protocols::rigid::RigidBodyRandomizeMoverOP randomizerB_;
 	protocols::docking::FaDockingSlideIntoContactOP slider_;
 	protocols::rigid::RigidBodyPerturbMoverOP perturber_;
-	protocols::simple_moves::MinMoverOP jump_minimizer_;
+	protocols::minimization_packing::MinMoverOP jump_minimizer_;
 	protocols::simple_moves::RingConformationMoverOP ring_mover_;
 	protocols::simple_moves::SmallMoverOP small_mover_;
 	protocols::simple_moves::ShearMoverOP shear_mover_;
-	protocols::simple_moves::PackRotamersMoverOP packer_;
-	protocols::simple_moves::MinMoverOP torsion_minimizer_;
+	protocols::minimization_packing::PackRotamersMoverOP packer_;
+	protocols::minimization_packing::MinMoverOP torsion_minimizer_;
 
 	core::Size n_cycles_;
 

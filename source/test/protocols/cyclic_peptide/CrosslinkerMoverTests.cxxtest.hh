@@ -21,7 +21,7 @@
 #include <protocols/cyclic_peptide/CrosslinkerMover.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -97,7 +97,7 @@ public:
 		movemap->set_jump(false);
 		movemap->set_chi(false);
 		movemap->set_chi(2, true);
-		protocols::simple_moves::MinMover minmove(movemap, sfxn, "dfpmin", 0.0000001, false, false, false);
+		protocols::minimization_packing::MinMover minmove(movemap, sfxn, "dfpmin", 0.0000001, false, false, false);
 		pose.set_chi(1,2,30.0);
 		pose.set_chi(2,2,30.0);
 		pose.set_chi(3,2,30.0);

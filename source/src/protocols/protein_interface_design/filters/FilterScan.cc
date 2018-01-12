@@ -32,17 +32,17 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/simple_filters/DeltaFilter.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
-#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -242,21 +242,21 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 		}
 	}
 	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
-	protocols::simple_moves::PackRotamersMoverOP pack;
+	protocols::minimization_packing::PackRotamersMoverOP pack;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
+		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
 	} else {
-		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue ) );
+		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
 	}
 	pack->apply( pose );
 	if ( rtmin() ) {
 		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			protocols::simple_moves::symmetry::SymRotamerTrialsMover rt( scorefxn(), *mutate_residue );
+			protocols::minimization_packing::symmetry::SymRotamerTrialsMover rt( scorefxn(), *mutate_residue );
 			rt.apply( pose );
 		} else {
-			protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
-			rtmin = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
+			protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin;
+			rtmin = protocols::minimization_packing::RotamerTrialsMinMoverOP( new protocols::minimization_packing::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
 			rtmin->apply(pose);
 		}
 	}

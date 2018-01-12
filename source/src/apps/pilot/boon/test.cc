@@ -28,7 +28,7 @@
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
@@ -44,7 +44,7 @@
 #include <protocols/docking/DockFilters.fwd.hh>
 #include <protocols/docking/DockFilters.hh>
 #include <protocols/docking/DockingEnsemble.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/scoring/ScoreType.hh>
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
 		//bool deriv_check_in = false;  // unused ~Labonte
 		//bool deriv_check_verbose_in = false;  // unused ~Labonte
 		// create a MinMover
-		protocols::simple_moves::MinMover minmover = protocols::simple_moves::MinMover(mm, scorefxn, min_type_in, tolerance_in, true, false, false) ;
+		protocols::minimization_packing::MinMover minmover = protocols::minimization_packing::MinMover(mm, scorefxn, min_type_in, tolerance_in, true, false, false) ;
 		// print
 		std::cout << "print MinMover:" << std::endl << minmover << std::endl;
 
@@ -315,7 +315,7 @@ int main(int argc, char *argv[])
 		std::cout << loopmover2 << std::endl;*/
 
 		/* // print empty rtmover
-		protocols::simple_moves::RotamerTrialsMinMover rtmover;
+		protocols::minimization_packing::RotamerTrialsMinMover rtmover;
 		std::cout << rtmover << std::endl;
 
 		// create a custom scorefxn
@@ -336,7 +336,7 @@ int main(int argc, char *argv[])
 		//core::Size nloop = 1;
 
 		// print rtmover2
-		protocols::simple_moves::RotamerTrialsMinMover rtmover2 = protocols::simple_moves::RotamerTrialsMinMover(scorefxn, *fine_task);
+		protocols::minimization_packing::RotamerTrialsMinMover rtmover2 = protocols::minimization_packing::RotamerTrialsMinMover(scorefxn, *fine_task);
 		std::cout << rtmover2 << std::endl;*/
 
 		//protocols::docking::ConformerSwitchMover mover;

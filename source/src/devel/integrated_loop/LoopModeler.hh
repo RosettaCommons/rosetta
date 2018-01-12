@@ -30,10 +30,10 @@
 
 //Loops
 #include <protocols/loops/LoopClass.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.fwd.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/loops/looprelax_protocols.hh>
 
 //Fragments
@@ -104,7 +104,7 @@ protected:
 	Real mc_temperature_;//default temperature
 	Size nmoves_;
 	protocols::moves::MonteCarloOP mc_;
-	protocols::simple_moves::MinMoverOP min_mover_;
+	protocols::minimization_packing::MinMoverOP min_mover_;
 	bool mc_created;
 
 };
@@ -164,11 +164,11 @@ private:
 
 	protocols::moves::SequenceMoverOP small_move_rot_trial_mover( core::kinematics::MoveMapOP movemap_one_loop );
 	protocols::moves::SequenceMoverOP shear_move_rot_trial_mover( core::kinematics::MoveMapOP movemap_one_loop );
-	protocols::simple_moves::RotamerTrialsMoverOP rotamer_trial_mover( core::pose::Pose & pose );
+	protocols::minimization_packing::RotamerTrialsMoverOP rotamer_trial_mover( core::pose::Pose & pose );
 
 	//	moves::SequenceMoverOP SmallMovesRotTrial;
 	//	moves::SequenceMoverOP ShearMovesRotTrial;
-	//	protocols::simple_moves::RotamerTrialsMoverOP RotTrial;
+	//	protocols::minimization_packing::RotamerTrialsMoverOP RotTrial;
 
 };
 

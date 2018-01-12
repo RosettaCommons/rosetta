@@ -17,9 +17,9 @@
 #include <protocols/frags/VallData.hh>
 #include <protocols/frags/TorsionFragment.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -1063,7 +1063,7 @@ dna_deriv_test()
 
 	// setup the options
 	scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
-	protocols::simple_moves::MinMover min_mover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
+	protocols::minimization_packing::MinMover min_mover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
 
 	{
 		scorefxn->set_weight( dna_bs, 0.5 );
@@ -1604,7 +1604,7 @@ simple_hbond_test()
 	mm4->set( THETA, true );
 	mm4->set( D, true );
 
-	protocols::simple_moves::MinMover min_mover( mm1, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/,
+	protocols::minimization_packing::MinMover min_mover( mm1, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/,
 		true /*deriv_check*/ );
 
 	dump_pdb( pose, "output/before.pdb" );
@@ -1906,17 +1906,17 @@ small_min_test()
 	mm->set_chi( true );
 
 	// options for minimizer
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
 
 	// packer options
 	pack::task::PackerTaskOP task
 		( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
-	protocols::simple_moves::PackRotamersMoverOP pack_full_repack( new protocols::simple_moves::PackRotamersMover( scorefxn, task ) );
+	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn, task ) );
 	/// @bug accumulate_residue_total_energies has to be called before anything can be done
 	(*scorefxn)( pose );
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( pose );
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *task, mc, 0.01 /*energycut*/ ) );
+	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( scorefxn, *task, mc, 0.01 /*energycut*/ ) );
 	// pack_rottrial->setup_rottrial_task( pose, mc, 0.01 /*energycut*/ );
 
 	// setup the move objects

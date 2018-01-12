@@ -54,7 +54,7 @@
 #include <utility/tag/Tag.hh>
 
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <protocols/simple_moves/MakePolyXMover.hh>
+#include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
@@ -96,14 +96,14 @@ namespace flxbb {
 
 /// @brief default constructor
 FlxbbDesignPack::FlxbbDesignPack() :
-	protocols::simple_moves::PackRotamersMover( std::string("FlxbbDesignPack") )
+	protocols::minimization_packing::PackRotamersMover( std::string("FlxbbDesignPack") )
 {}
 
 FlxbbDesignPack::FlxbbDesignPack(
 	ScoreFunctionCOP scorefxn,
 	PackerTaskCOP task,
 	FilterStructsOP filter ):
-	protocols::simple_moves::PackRotamersMover( scorefxn, task ),
+	protocols::minimization_packing::PackRotamersMover( scorefxn, task ),
 	filter_(std::move( filter ))
 {}
 
@@ -498,7 +498,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 	using protocols::moves::MoverOP;
 	using protocols::relax::FastRelax;
 	using protocols::relax::ClassicRelax;
-	using protocols::simple_moves::MakePolyXMover;
+	using protocols::pose_creation::MakePolyXMover;
 
 	// set pose to fullatom
 	if ( ! pose.is_fullatom() ) {

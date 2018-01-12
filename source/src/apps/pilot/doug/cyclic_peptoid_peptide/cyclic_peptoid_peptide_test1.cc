@@ -53,9 +53,9 @@
 #include <core/kinematics/MoveMap.hh>
 
 // protocols headers
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // basic headers
 #include <basic/database/open.hh>
@@ -143,7 +143,7 @@ main( int argc, char * argv [] )
 	movemap->set_bb( true );
 	movemap->set_chi( true );
 
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, score_fxn, basic::options::option[ basic::options::OptionKeys::run::min_type ].value(), 0.01, true );
+	protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( movemap, score_fxn, basic::options::option[ basic::options::OptionKeys::run::min_type ].value(), 0.01, true );
 
 	min_mover->apply( pose );
 

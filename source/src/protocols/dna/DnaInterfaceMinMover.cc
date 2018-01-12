@@ -76,7 +76,7 @@ static basic::Tracer TR( "protocols.dna.DnaInterfaceMinMover", t_info );
 // XRW TEMP }
 
 DnaInterfaceMinMover::DnaInterfaceMinMover()
-: protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
+: protocols::minimization_packing::MinMover("DnaInterfaceMinMover"),
 	interface_(/* 0 */),
 	chi_(true),
 	bb_(false)
@@ -87,7 +87,7 @@ DnaInterfaceMinMover::DnaInterfaceMinMover()
 
 DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceMinMover const & src ) :
 	//utility::pointer::ReferenceCount(),
-	protocols::simple_moves::MinMover( src )
+	protocols::minimization_packing::MinMover( src )
 {
 	*this = src;
 }
@@ -107,7 +107,7 @@ DnaInterfaceMinMover::operator = ( DnaInterfaceMinMover const & src )
 DnaInterfaceMinMover::~DnaInterfaceMinMover()= default;
 
 DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceFinderOP interface )
-: protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
+: protocols::minimization_packing::MinMover("DnaInterfaceMinMover"),
 	interface_( interface ),
 	chi_(true),
 	bb_(false)

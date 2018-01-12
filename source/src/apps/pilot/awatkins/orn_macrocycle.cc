@@ -56,8 +56,8 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/CyclizationMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
@@ -245,7 +245,7 @@ main( int argc, char* argv[] )
 		mm->set_jump( 1, true );
 
 		// create minimization mover
-		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+		minimization_packing::MinMoverOP minM( new protocols::minimization_packing::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 		/********************************************************\
 		Initial MC

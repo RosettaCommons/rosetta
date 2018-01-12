@@ -49,7 +49,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <sstream>
@@ -661,7 +661,7 @@ void repack(Pose & arg) {
 	ScoreFunctionOP sf = core::scoring::get_score_function();
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task(arg);
 	task->restrict_to_repacking();
-	protocols::simple_moves::PackRotamersMover repack( sf, task );
+	protocols::minimization_packing::PackRotamersMover repack( sf, task );
 	repack.apply(arg);
 }
 

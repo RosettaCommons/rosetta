@@ -70,8 +70,8 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -881,10 +881,10 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );
+		protocols::minimization_packing::PackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	}
 
@@ -905,10 +905,10 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 
 	// if( core::pose::symmetry::is_symmetric(pose) ) {
 	//  core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-	//  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	//  protocols::minimization_packing::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	//  m.apply(pose);
 	// } else {
-	//  protocols::simple_moves::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	//  protocols::minimization_packing::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	//  m.apply(pose);
 	// }
 	// //TR << "done" << std::endl;
@@ -943,10 +943,10 @@ void repack_iface(Pose & p, ScoreFunctionOP sf, Size Ntri, vector1<bool> & iface
 
 	if ( core::pose::symmetry::is_symmetric(p) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(p,task);
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 		repack.apply(p);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );
+		protocols::minimization_packing::PackRotamersMover repack( sf, task );
 		repack.apply(p);
 	}
 	//sf->set_weight(core::scoring::fa_rep,rorig);

@@ -39,9 +39,9 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/SetReturningPackRotamersMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/HPatchCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
@@ -388,8 +388,8 @@ int main( int argc, char* argv[] ) {
 		mutant_repacker->get_repacked_poses( repacked_mutant_poses );
 
 		// the side-chain minimization mover
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
-		protocols::simple_moves::TaskAwareMinMoverOP task_aware_min_mover = new protocols::simple_moves::TaskAwareMinMover( min_mover, mutant_tf );
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+		protocols::minimization_packing::TaskAwareMinMoverOP task_aware_min_mover = new protocols::minimization_packing::TaskAwareMinMover( min_mover, mutant_tf );
 
 		Energy sum_repacked_scores_mutant = 0.0;
 		Energy average_repacked_score_mutant = 0.0;
@@ -444,8 +444,8 @@ int main( int argc, char* argv[] ) {
 		wt_repacker->get_repacked_poses( repacked_poses );
 
 		// the side-chain minimization mover
-		protocols::simple_moves::MinMoverOP wt_min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
-		protocols::simple_moves::TaskAwareMinMoverOP wt_task_aware_min_mover = new protocols::simple_moves::TaskAwareMinMover( wt_min_mover, wt_tf );
+		protocols::minimization_packing::MinMoverOP wt_min_mover = new protocols::minimization_packing::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+		protocols::minimization_packing::TaskAwareMinMoverOP wt_task_aware_min_mover = new protocols::minimization_packing::TaskAwareMinMover( wt_min_mover, wt_tf );
 
 		Energy sum_repacked_scores_wt = 0.0;
 		Energy average_repacked_score_wt = 0.0;

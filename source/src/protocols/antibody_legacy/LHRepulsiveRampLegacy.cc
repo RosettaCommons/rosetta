@@ -49,10 +49,10 @@
 #include <ObjexxFCL/string.functions.hh>
 using namespace ObjexxFCL::format;
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
@@ -295,14 +295,14 @@ void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
 void LHRepulsiveRampLegacy::snugfit_MC_min(pose::Pose & pose, core::scoring::ScoreFunctionOP temp_scorefxn) {
 	using namespace moves;
 
-	simple_moves::MinMoverOP
-		min_mover( new simple_moves::MinMover( cdr_dock_map_, temp_scorefxn,  min_type_, min_threshold_, true/*nb_list*/ ) );
+	minimization_packing::MinMoverOP
+		min_mover( new minimization_packing::MinMover( cdr_dock_map_, temp_scorefxn,  min_type_, min_threshold_, true/*nb_list*/ ) );
 
 	rigid::RigidBodyPerturbMoverOP
 		rb_perturb( new rigid::RigidBodyPerturbMover(pose, *cdr_dock_map_, rot_mag_, trans_mag_, rigid::partner_downstream, true ) );
 
-	simple_moves::RotamerTrialsMoverOP
-		pack_rottrial( new simple_moves::RotamerTrialsMover( pack_scorefxn_, tf_ ) );
+	minimization_packing::RotamerTrialsMoverOP
+		pack_rottrial( new minimization_packing::RotamerTrialsMover( pack_scorefxn_, tf_ ) );
 
 	SequenceMoverOP rb_mover( new SequenceMover );
 	rb_mover->add_mover( rb_perturb );

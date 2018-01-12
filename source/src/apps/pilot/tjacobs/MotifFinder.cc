@@ -38,7 +38,7 @@
 #include <core/conformation/util.hh>
 
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <utility/io/ozstream.hh>
 
@@ -211,7 +211,7 @@ main( int argc, char * argv [] ) {
 		}
 		task_factory->push_back(res_repack);
 
-		protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover();
+		protocols::minimization_packing::PackRotamersMoverOP packer = new protocols::minimization_packing::PackRotamersMover();
 		packer->task_factory(task_factory);
 		packer->apply(query_pose);
 		core::pose::addVirtualResAsRoot(query_pose);

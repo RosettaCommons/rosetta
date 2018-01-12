@@ -61,8 +61,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <protocols/sic_dock/xyzStripeHashPoseWithMeta.hh>
 #include <sstream>
@@ -352,7 +352,7 @@ Real repackmin(core::pose::Pose & pose, core::scoring::ScoreFunction const & sfx
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
 	movemap->set_bb(false); movemap->set_chi(true); movemap->set_jump(false);
 	// movemap->set_dof();
-	protocols::simple_moves::MinMover min(movemap, &sfxn, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::minimization_packing::MinMover min(movemap, &sfxn, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	min.apply(pose);
 
 	Real s = sfxn(pose);

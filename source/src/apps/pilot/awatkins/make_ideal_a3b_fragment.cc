@@ -53,7 +53,7 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/ncbb/SecStructFinder.hh>
 #include <protocols/ncbb/SecStructMinimizeMultiFunc.hh>
 
@@ -146,7 +146,7 @@ int main ( int argc, char* argv[] )
 		kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 		movemap->set_bb( false );
 		movemap->set_chi( true );
-		protocols::simple_moves::MinMover minmover( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );
+		protocols::minimization_packing::MinMover minmover( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );
 
 		pose.dump_pdb ( "B3A_initial.pdb");
 		Real score = ( *scorefxn ) ( pose );

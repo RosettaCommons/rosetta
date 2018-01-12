@@ -36,11 +36,11 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 

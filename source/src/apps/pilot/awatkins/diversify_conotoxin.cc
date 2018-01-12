@@ -54,8 +54,8 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/CyclizationMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
@@ -242,7 +242,7 @@ main( int argc, char* argv[] )
 
 
 					// create minimization mover
-					simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone"/*option[ OptionKeys::run::min_type ].value()*/, 0.01, true ) );
+					minimization_packing::MinMoverOP minM( new protocols::minimization_packing::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone"/*option[ OptionKeys::run::min_type ].value()*/, 0.01, true ) );
 					for ( Real mi = 0.01; mi <= 2; mi += 0.2 ) {
 						TR << "Minimization with apc weight " << mi << std::endl;
 						score_fxn->set_weight( atom_pair_constraint, mi );
@@ -329,7 +329,7 @@ main( int argc, char* argv[] )
 				//mm->set_chi( copy_pose.pdb_info()->pdb2pose( 'F', thiol_partners[ ii ]  ), true );
 
 				// create minimization mover
-				simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone"/*option[ OptionKeys::run::min_type ].value()*/, 0.01, true ) );
+				minimization_packing::MinMoverOP minM( new protocols::minimization_packing::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone"/*option[ OptionKeys::run::min_type ].value()*/, 0.01, true ) );
 				for ( Real mi = 0.01; mi <= 2; mi += 0.2 ) {
 					score_fxn->set_weight( atom_pair_constraint, mi );
 					minM->apply( copy_pose );

@@ -41,8 +41,8 @@
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_filters/BuriedUnsatHbondFilter.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 
 // Core headers
 #include <core/chemical/ChemicalManager.fwd.hh>

@@ -41,8 +41,8 @@
 
 // Protocols Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh> //To make it easier to build poses
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/relax/FastRelax.hh>
 
 // Utility, etc Headers

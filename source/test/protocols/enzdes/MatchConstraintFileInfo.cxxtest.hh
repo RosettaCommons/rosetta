@@ -46,7 +46,7 @@
 
 //minimization stuff
 //#include <core/kinematics/MoveMap.hh>
-//#include <protocols/simple_moves/MinMover.hh>
+//#include <protocols/minimization_packing/MinMover.hh>
 //#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>

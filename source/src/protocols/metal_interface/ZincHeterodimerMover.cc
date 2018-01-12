@@ -33,9 +33,9 @@
 #include <protocols/rigid/RotateJumpAxisMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Random, Sequence Mover
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/OutputMovers.hh> //PDBDump for movie
 #include <protocols/moves/DualMonteCarlo.hh>
 
@@ -221,7 +221,7 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	/////////////////////////////end perturb, begin fullatom design/refinement////////////////////
 
 	////////////////////////////PackRotamersMover////////////////////////////////////////////
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 	pack_mover->task_factory( factory_ );
 	pack_mover->score_function( fullatom_scorefunction_ );
 
@@ -229,18 +229,18 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	//movemap is empty, TAmin_mover will fill it
 	core::kinematics::MoveMapOP map( new core::kinematics::MoveMap() );
 
-	using protocols::simple_moves::MinMoverOP;
-	using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
+	using protocols::minimization_packing::MinMoverOP;
+	using protocols::minimization_packing::MinMover;
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover(
 		map,
 		fullatom_scorefunction_,
 		option[ basic::options::OptionKeys::run::min_type ].value(),
 		0.01,
 		true /*use_nblist*/ ) );
 
-	using protocols::simple_moves::TaskAwareMinMoverOP;
-	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(min_mover, factory_) );
+	using protocols::minimization_packing::TaskAwareMinMoverOP;
+	using protocols::minimization_packing::TaskAwareMinMover;
+	protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover( new protocols::minimization_packing::TaskAwareMinMover(min_mover, factory_) );
 
 	//let's examine the task
 	//TR << *(factory_->create_task_and_apply_taskoperations( pose )) << std::endl;

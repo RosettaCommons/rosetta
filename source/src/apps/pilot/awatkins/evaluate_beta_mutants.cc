@@ -50,12 +50,12 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/hbs/HbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -131,7 +131,7 @@ Real evaluate_interface(
 	tf->push_back( operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );
-	simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
+	minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );
 	packer->task_factory( tf );
 	packer->score_function( score_fxn );
 	packer->apply( pose );
@@ -140,7 +140,7 @@ Real evaluate_interface(
 	separate_min_mm->set_bb( true );
 	separate_min_mm->set_chi( true );
 	separate_min_mm->set_jump( 1, true );
-	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+	minimization_packing::MinMoverOP separate_min( new minimization_packing::MinMover( separate_min_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 	separate_min->apply( pose );
 
 	Real v2 = ( *score_fxn )( pose );
@@ -253,17 +253,17 @@ main( int argc, char* argv[] )
 		kinematics::MoveMapOP trp_mm( new kinematics::MoveMap );
 		trp_mm->set_bb( true, trp_pos );
 		trp_mm->set_chi( true, trp_pos );
-		protocols::simple_moves::MinMoverOP trp_min( new protocols::simple_moves::MinMover( trp_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+		protocols::minimization_packing::MinMoverOP trp_min( new protocols::minimization_packing::MinMover( trp_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 		kinematics::MoveMapOP leu_mm( new kinematics::MoveMap );
 		leu_mm->set_bb( true, leu_pos );
 		leu_mm->set_chi( true, leu_pos );
-		protocols::simple_moves::MinMoverOP leu_min( new protocols::simple_moves::MinMover( leu_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+		protocols::minimization_packing::MinMoverOP leu_min( new protocols::minimization_packing::MinMover( leu_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 		kinematics::MoveMapOP phe_mm( new kinematics::MoveMap );
 		phe_mm->set_bb( true, phe_pos );
 		phe_mm->set_chi( true, phe_pos );
-		protocols::simple_moves::MinMoverOP phe_min( new protocols::simple_moves::MinMover( phe_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+		protocols::minimization_packing::MinMoverOP phe_min( new protocols::minimization_packing::MinMover( phe_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 
 		// This starting pose is the first

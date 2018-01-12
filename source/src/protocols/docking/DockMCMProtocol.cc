@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <core/kinematics/FoldTree.hh>
 // Utility Headers
@@ -45,7 +45,7 @@
 #include <protocols/moves/TrialMover.fwd.hh>  //JQX: add this
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -192,7 +192,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	}
 
 	//JQX: define the initial_pack, and this initial_pack was defined as a trial mover
-	protocols::simple_moves::PackRotamersMoverOP initial_pack( new protocols::simple_moves::PackRotamersMover() );
+	protocols::minimization_packing::PackRotamersMoverOP initial_pack( new protocols::minimization_packing::PackRotamersMover() );
 	initial_pack->score_function( scorefxn_pack() );
 	initial_pack->task_factory( task_factory() );
 	if ( dock_mcm_->get_mc()->last_accepted_pose().empty() ) { dock_mcm_->init_mc(pose); } //JQX: use the dock_mcm_'s "mc_" object
@@ -205,7 +205,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	initial_repack_sequence->add_mover(initial_pack_trial);
 
 	if ( rt_min() ) {
-		simple_moves::RotamerTrialsMinMoverOP rtmin( new simple_moves::RotamerTrialsMinMover( scorefxn_pack(), task_factory() ) );
+		minimization_packing::RotamerTrialsMinMoverOP rtmin( new minimization_packing::RotamerTrialsMinMover( scorefxn_pack(), task_factory() ) );
 		moves::TrialMoverOP rtmin_trial( new moves::TrialMover( rtmin, dock_mcm_->get_mc() ) );
 		initial_repack_sequence->add_mover(rtmin_trial);
 		dock_mcm_->set_rtmin(true);

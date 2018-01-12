@@ -40,7 +40,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/forge/build/Interval.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MakePolyXMover.hh>
+#include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>

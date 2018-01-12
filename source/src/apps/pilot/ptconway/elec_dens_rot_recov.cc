@@ -42,9 +42,9 @@
 #include <devel/init.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/GenericMonteCarloMover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.hh>
@@ -262,7 +262,7 @@ public:
 		}
 
 		// setup the minimizer mover
-		protocols::simple_moves::MinMoverOP minimizer = new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn, option[ OptionKeys::relax::min_type ]() , 0.0001, true, false, false );
+		protocols::minimization_packing::MinMoverOP minimizer = new protocols::minimization_packing::symmetry::SymMinMover( mm, scorefxn, option[ OptionKeys::relax::min_type ]() , 0.0001, true, false, false );
 		minimizer->cartesian( true );
 
 		// setup the packer mover
@@ -271,7 +271,7 @@ public:
 		task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
 		task_factory->push_back( new core::pack::task::operation::IncludeCurrent );
 		core::pack::task::PackerTaskOP packer_task( task_factory->create_task_and_apply_taskoperations( pose ) );
-		protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn, packer_task );     //extend this to handle asymmetry, etc
+		protocols::moves::MoverOP packer = new protocols::minimization_packing::symmetry::SymPackRotamersMover( scorefxn, packer_task );     //extend this to handle asymmetry, etc
 
 		// setup the sequence mover
 		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;

@@ -38,7 +38,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -76,6 +76,7 @@ ForceDisulfidesMover::apply( Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace protocols::toolbox::task_operations;
 	using core::pack::task::operation::TaskOperationCOP;
+	using namespace protocols::minimization_packing;
 
 	DesignAroundOperationOP dao( new DesignAroundOperation );
 	dao->design_shell( 0.0 );

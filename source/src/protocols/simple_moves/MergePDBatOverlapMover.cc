@@ -66,7 +66,7 @@ static basic::Tracer TR( "protocols.simple_moves.MergePDBatOverlapMover" );
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/superimpose.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 

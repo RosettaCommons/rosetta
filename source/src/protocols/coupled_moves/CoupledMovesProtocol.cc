@@ -26,9 +26,9 @@
 //
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/CoupledMover.hh>
-#include <protocols/simple_moves/MinPackMover.hh>
+#include <protocols/minimization_packing/MinPackMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/jd2/util.hh>
@@ -284,8 +284,8 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	coupled_mover->set_bump_check( option[OptionKeys::coupled_moves::bump_check] );
 	coupled_mover->set_uniform_backrub( option[OptionKeys::coupled_moves::uniform_backrub] );
 
-	protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( score_fxn_, task, 1 ) );
-	protocols::simple_moves::MinPackMoverOP minpack(new protocols::simple_moves::MinPackMover( score_fxn_, task ));
+	protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( score_fxn_, task, 1 ) );
+	protocols::minimization_packing::MinPackMoverOP minpack(new protocols::minimization_packing::MinPackMover( score_fxn_, task ));
 
 	if ( option[OptionKeys::coupled_moves::initial_repack] ) {
 		if ( option[OptionKeys::coupled_moves::min_pack] ) {

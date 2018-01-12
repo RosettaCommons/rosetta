@@ -79,10 +79,10 @@ static basic::Tracer TR( "protocols.simple_moves.MergePDBMover" );
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/superimpose.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/CopyRotamerMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/AddResidueLabelMover.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
@@ -554,12 +554,13 @@ vector1<core::pose::PoseOP> MergePDBMover::pack_and_minimize(vector1<core::pose:
 		operate_on_packing->op( restrict_to_repacking );
 		taskfactorOP->push_back(operate_on_packing);
 		Size pack_rounds=5;
-		protocols::simple_moves::PackRotamersMover packer = PackRotamersMover(sfxn_);
+		protocols::minimization_packing::PackRotamersMover packer = protocols::minimization_packing::PackRotamersMover(sfxn_);
 		packer.nloop( pack_rounds );
 		packer.task_factory(taskfactorOP);
 		//pack
+		using namespace protocols::minimization_packing;
 		if ( pose_symmetric ) {
-			protocols::simple_moves::symmetry::SymPackRotamersMover symm_packer = PackRotamersMover(packer);
+			protocols::minimization_packing::symmetry::SymPackRotamersMover symm_packer = PackRotamersMover(packer);
 			symm_packer.apply(*poses[kk]);
 		} else {
 			packer.apply(*poses[kk]);
@@ -569,7 +570,7 @@ vector1<core::pose::PoseOP> MergePDBMover::pack_and_minimize(vector1<core::pose:
 			if ( pose_symmetric ) {
 				kinematics::MoveMapOP mm_locOP( new core::kinematics::MoveMap() );
 				mm_locOP->set_jump( false ); mm_locOP->set_bb( false ); mm_locOP->set_chi( true );
-				protocols::simple_moves::symmetry::SymMinMover symm_min_mover(mm_locOP,sfxn_,"lbfgs_armijo_nonmonotone",0.02,true);
+				protocols::minimization_packing::symmetry::SymMinMover symm_min_mover(mm_locOP,sfxn_,"lbfgs_armijo_nonmonotone",0.02,true);
 				symm_min_mover.apply(*poses[kk]);
 			} else {
 				optimization::MinimizerOptions minopt( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );

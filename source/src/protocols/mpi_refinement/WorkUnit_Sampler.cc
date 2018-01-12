@@ -127,7 +127,7 @@ WorkUnit_Sampler::repack( core::pose::Pose &pose,
 	core::scoring::ScoreFunctionOP sfxn )
 {
 	core::kinematics::MoveMapOP mmpack = get_movemap( pose, "pack", false );
-	protocols::simple_moves::PackRotamersMoverOP packer = setup_packer( pose, *mmpack, sfxn );
+	protocols::minimization_packing::PackRotamersMoverOP packer = setup_packer( pose, *mmpack, sfxn );
 	packer->apply( pose );
 }
 
@@ -180,7 +180,7 @@ WorkUnit_Sampler::ramp_minpack_loop2( core::pose::Pose &pose,
 		}
 	}
 
-	protocols::simple_moves::PackRotamersMoverOP packer = setup_packer( pose, mm, sfxn );
+	protocols::minimization_packing::PackRotamersMoverOP packer = setup_packer( pose, mm, sfxn );
 	core::optimization::CartesianMinimizer minimizer1;
 	core::optimization::AtomTreeMinimizer minimizer2;
 	core::optimization::MinimizerOptions minoption( "lbfgs_armijo_nonmonotone",

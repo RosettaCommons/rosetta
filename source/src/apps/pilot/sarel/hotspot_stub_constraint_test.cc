@@ -31,7 +31,7 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -126,8 +126,8 @@ void run_test() {
 	movemap->set_jump( rb_move_jump, true );
 	bool const deriv_check(true);
 	bool const deriv_check_verbose(true);
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "linmin", 0.00001, true, deriv_check, deriv_check_verbose ) );
-	// protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true, deriv_check, deriv_check_verbose );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, scorefxn, "linmin", 0.00001, true, deriv_check, deriv_check_verbose ) );
+	// protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true, deriv_check, deriv_check_verbose );
 	(*scorefxn)(pose);
 	min_mover->apply( pose );
 	pose.dump_pdb("minimized.pdb");

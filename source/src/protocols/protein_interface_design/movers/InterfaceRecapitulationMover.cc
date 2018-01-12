@@ -17,7 +17,7 @@
 
 // Package headers
 #include <protocols/protein_interface_design/ReportPSSMDifference.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -165,7 +165,7 @@ InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::dat
 	if ( mover_found ) {
 		design_mover_ = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
 		if ( !design_mover_ ) {
-			design_mover2_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::PackRotamersMover > ( find_mover->second );
+			design_mover2_ = utility::pointer::dynamic_pointer_cast< protocols::minimization_packing::PackRotamersMover > ( find_mover->second );
 			if ( !design_mover2_ ) {
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "dynamic cast failed in tag in RecapitulateMover. Make sure that the mover is either PackRotamers or DesignRepackMover derived" );
 			}

@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
@@ -92,7 +92,7 @@ void run() {
 		movemap->set_chi(true);
 		movemap->set_bb(false);
 		movemap->set_jump(false);
-		protocols::simple_moves::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+		protocols::minimization_packing::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 		m.apply(pose);
 
 		sf->score(pose);

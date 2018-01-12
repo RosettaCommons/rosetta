@@ -53,17 +53,17 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/hbs/HbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
@@ -283,7 +283,7 @@ void A3BHbsCreatorMover::repack(
 	}
 
 	// create a pack rotamers mover
-	simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover );
+	minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover );
 	packer->task_factory( tf );
 	packer->score_function( score_fxn_ );
 	packer->apply(pose);
@@ -359,7 +359,7 @@ void A3BHbsCreatorMover::do_mc(
 	pert_tf->push_back( pert_rtrp );
 
 	// create a rotamer trials mover
-	simple_moves::RotamerTrialsMoverOP pert_rt(new simple_moves::EnergyCutRotamerTrialsMover( score_fxn_, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	minimization_packing::RotamerTrialsMoverOP pert_rt(new minimization_packing::EnergyCutRotamerTrialsMover( score_fxn_, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	/*********************************************************
 	Common Setup
@@ -394,7 +394,7 @@ void A3BHbsCreatorMover::do_mc(
 	desn_tf->push_back( desn_rrop );
 
 	// create a pack rotamers mover
-	simple_moves::PackRotamersMoverOP desn_pr( new simple_moves::PackRotamersMover() );
+	minimization_packing::PackRotamersMoverOP desn_pr( new minimization_packing::PackRotamersMover() );
 	desn_pr->task_factory( desn_tf );
 	desn_pr->score_function( score_fxn_ );
 
@@ -410,11 +410,11 @@ void A3BHbsCreatorMover::do_mc(
 	desn_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+	minimization_packing::MinMoverOP desn_min( new minimization_packing::MinMover( desn_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//definitely want sidechain minimization here
-	using protocols::simple_moves::TaskAwareMinMoverOP;
-	using protocols::simple_moves::TaskAwareMinMover;
+	using protocols::minimization_packing::TaskAwareMinMoverOP;
+	using protocols::minimization_packing::TaskAwareMinMover;
 	TaskAwareMinMoverOP desn_ta_min = TaskAwareMinMoverOP( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	/*********************************************************
@@ -478,7 +478,7 @@ void A3BHbsCreatorMover::scan(
 
 	littlemm->set_chi( true );
 	littlemm->set_jump( 1, true );
-	simple_moves::MinMoverOP littlemin( new protocols::simple_moves::MinMover( littlemm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 1, true ) );
+	minimization_packing::MinMoverOP littlemin( new protocols::minimization_packing::MinMover( littlemm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 1, true ) );
 
 	core::Real bin = 15;
 
@@ -807,7 +807,7 @@ A3BHbsCreatorMover::apply(
 	kinematics::MoveMapOP promutmm( new kinematics::MoveMap() );
 	promutmm->set_bb( true );
 	promutmm->set_chi( true );
-	simple_moves::MinMoverOP promutmin( new protocols::simple_moves::MinMover( promutmm, score_fxn_/*cart_*/, "lbfgs_armijo_nonmonotone", 1, true ) );
+	minimization_packing::MinMoverOP promutmin( new protocols::minimization_packing::MinMover( promutmm, score_fxn_/*cart_*/, "lbfgs_armijo_nonmonotone", 1, true ) );
 	promutmin->cartesian( false );//true );
 	promutmin->apply( a3bpose );
 
@@ -884,7 +884,7 @@ A3BHbsCreatorMover::apply(
 	kinematics::MoveMapOP a3blittlemm( new kinematics::MoveMap() );
 	a3blittlemm->set_bb( true );
 	a3blittlemm->set_chi( true );
-	simple_moves::MinMoverOP a3blittlemin( new protocols::simple_moves::MinMover( a3blittlemm, score_fxn_/*cart_*/, "lbfgs_armijo_nonmonotone", 1, true ) );
+	minimization_packing::MinMoverOP a3blittlemin( new protocols::minimization_packing::MinMover( a3blittlemm, score_fxn_/*cart_*/, "lbfgs_armijo_nonmonotone", 1, true ) );
 	a3blittlemin->cartesian( false );
 	for ( Size ii = 0; ii <= 10; ++ii ) {
 		score_fxn_->set_weight_if_zero( atom_pair_constraint, 0.01*ii );
@@ -966,7 +966,7 @@ A3BHbsCreatorMover::apply(
 	littlemm->set_jump( 1, true );
 
 	TR << "Creating littlemin minmover " << std::endl;
-	simple_moves::MinMoverOP littlemin( new protocols::simple_moves::MinMover( littlemm, score_fxn_/*cart_*/, option[ OptionKeys::run::min_type ].value(), 1, true ) );
+	minimization_packing::MinMoverOP littlemin( new protocols::minimization_packing::MinMover( littlemm, score_fxn_/*cart_*/, option[ OptionKeys::run::min_type ].value(), 1, true ) );
 	littlemin->cartesian( false );//true );
 	// Ramp constraint weights?
 	for ( Size ii = 1; ii <= 10; ++ii ) {
@@ -1057,7 +1057,7 @@ A3BHbsCreatorMover::apply(
 		}
 		mm->set_chi( true );
 		//mm->set_jump( 1, true );
-		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+		minimization_packing::MinMoverOP minM( new protocols::minimization_packing::MinMover( mm, score_fxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		minM->cartesian( false );
 
 		for ( Size ii = 5; ii >= 1; --ii ) {

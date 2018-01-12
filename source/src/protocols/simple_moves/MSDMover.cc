@@ -35,7 +35,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
 //#include <core/scoring/constraints/ConstraintSet.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/string_util.hh>
@@ -278,7 +278,7 @@ void
 MSDMover::update_packer_task () {
 	// if my submover is pack rotamers, allow it to take in multiple resfiles from the tag
 	if ( design_mover_->get_name() == "PackRotamersMover" ) {
-		simple_moves::PackRotamersMoverOP design_packer = utility::pointer::dynamic_pointer_cast< simple_moves::PackRotamersMover >( design_mover_ );
+		minimization_packing::PackRotamersMoverOP design_packer = utility::pointer::dynamic_pointer_cast< minimization_packing::PackRotamersMover >( design_mover_ );
 
 		// If mover already has task factory modify it -> otherwise create a new one
 		core::pack::task::TaskFactoryOP factory;

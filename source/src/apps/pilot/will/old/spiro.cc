@@ -52,8 +52,8 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <sstream>
 
 //Auto Headers
@@ -109,7 +109,7 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf) {
 	movemap->set_chi(true);
 	movemap->set_bb(true);
 	// movemap->set_bb(1,false);
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-4, true );
+	protocols::minimization_packing::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-4, true );
 	m.apply(pose);
 }
 
@@ -266,7 +266,7 @@ void repack(PoseWrap & pw, ScoreFunctionOP sf) {
 	task->restrict_to_repacking();
 	task->or_include_current(true);
 	task->nonconst_residue_task(1).prevent_repacking();
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
 
@@ -289,7 +289,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf) {
 		task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 		// }
 	}
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 
 

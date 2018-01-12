@@ -86,8 +86,8 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
@@ -2664,7 +2664,7 @@ make_float_sc_min_mover(core::pose::Pose & pose, vector1<Size> rsd_, Real tol) {
 	core::conformation::symmetry::make_symmetric_movemap( pose, *movemap );
 	// print_movemap(*movemap);
 	// std::exit(-1);
-	MoverOP min_ = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf_, "lbfgs_armijo_nonmonotone", tol, true, false, false );
+	MoverOP min_ = new protocols::minimization_packing::symmetry::SymMinMover( movemap, sf_, "lbfgs_armijo_nonmonotone", tol, true, false, false );
 	return min_;
 }
 
@@ -2773,7 +2773,7 @@ void repack(PoseWrap & pw, ScoreFunctionOP sf, bool fsc_only=false) {
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).and_extrachi_cutoff(0);
 		task->nonconst_residue_task(pw.attached_scattach_res_[i]).restrict_to_repacking();
 	}
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 }
 
@@ -2854,7 +2854,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf, bool do_trp = false) {
 	// }
 
 
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	TR << *task << std::endl;
 	repack.apply(pose);
 	pw.check_scattach_res();
@@ -2881,7 +2881,7 @@ void cen_design(PoseWrap & pw, ScoreFunctionOP sf) {
 	for ( Size i = 1; i <= pw.floating_scs_.size(); ++i ) {
 		task->nonconst_residue_task(pw.floating_scs_[i]).prevent_repacking();
 	}
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 	pw.check_scattach_res();
 }
@@ -2925,7 +2925,7 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf, int bb=0, bool jmp=true, bool c
 	TR << "///////////////////////////////" << std::endl;
 	core::conformation::symmetry::make_symmetric_movemap( pose, *movemap );
 	print_movemap(*movemap);
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::minimization_packing::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 
 	// TR << "movemap " << std::endl;
 	// for(std::map< DOF_ID, bool >::const_iterator i = movemap->dof_id_begin(); i != movemap->dof_id_end(); ++i) {

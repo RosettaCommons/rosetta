@@ -20,7 +20,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/NullMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>

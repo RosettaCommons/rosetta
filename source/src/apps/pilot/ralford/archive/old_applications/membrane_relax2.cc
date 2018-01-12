@@ -44,7 +44,7 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

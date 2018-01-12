@@ -1,0 +1,52 @@
+# -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
+sources = {
+	"protocols/init": [
+		"init",
+	],
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+	"protocols.7",
+	"protocols_e.6",
+	"protocols_d.6",
+	"protocols_c.6",
+	"protocols_b.6",
+	"protocols_a.6",
+	"protocols_h.5",
+	"protocols_g.5",
+	"protocols_f.5",
+	"protocols_e.5",
+	"protocols_d.5",
+	"protocols_c.5",
+	"protocols_b.5",
+	"protocols_a.5",
+	"protocols.4",
+	"protocols.3",
+	"protocols_b.2",
+	"protocols_a.2",
+	"protocols.1",
+	"core.5",
+	"core.4",
+	"core.3",
+	"core.2",
+	"core.1",
+	"basic",
+	"numeric",
+	"utility",
+	"ObjexxFCL",
+]

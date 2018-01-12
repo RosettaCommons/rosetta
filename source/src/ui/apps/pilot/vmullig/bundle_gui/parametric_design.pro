@@ -28,21 +28,22 @@ FORMS    += mainwindow.ui
 
 LIBS += \
         -L$$OUT_PWD/../ui                       -lui \
+        -L$$OUT_PWD/../rosetta/protocols_8      -lprotocols_8 \
         -L$$OUT_PWD/../rosetta/protocols_7      -lprotocols_7 \
-        -L$$OUT_PWD/../rosetta/protocols_6      -lprotocols_6 \
+        -L$$OUT_PWD/../rosetta/protocols_e_6    -lprotocols_e_6 \
+        -L$$OUT_PWD/../rosetta/protocols_d_6    -lprotocols_d_6 \
+        -L$$OUT_PWD/../rosetta/protocols_c_6    -lprotocols_c_6 \
+        -L$$OUT_PWD/../rosetta/protocols_b_6    -lprotocols_b_6 \
+        -L$$OUT_PWD/../rosetta/protocols_a_6    -lprotocols_a_6 \
+        -L$$OUT_PWD/../rosetta/protocols_h_5    -lprotocols_h_5 \
+        -L$$OUT_PWD/../rosetta/protocols_g_5    -lprotocols_g_5 \
+        -L$$OUT_PWD/../rosetta/protocols_f_5    -lprotocols_f_5 \
         -L$$OUT_PWD/../rosetta/protocols_e_5    -lprotocols_e_5 \
         -L$$OUT_PWD/../rosetta/protocols_d_5    -lprotocols_d_5 \
         -L$$OUT_PWD/../rosetta/protocols_c_5    -lprotocols_c_5 \
         -L$$OUT_PWD/../rosetta/protocols_b_5    -lprotocols_b_5 \
         -L$$OUT_PWD/../rosetta/protocols_a_5    -lprotocols_a_5 \
-        -L$$OUT_PWD/../rosetta/protocols_h_4    -lprotocols_h_4 \
-        -L$$OUT_PWD/../rosetta/protocols_g_4    -lprotocols_g_4 \
-        -L$$OUT_PWD/../rosetta/protocols_f_4    -lprotocols_f_4 \
-        -L$$OUT_PWD/../rosetta/protocols_e_4    -lprotocols_e_4 \
-        -L$$OUT_PWD/../rosetta/protocols_d_4    -lprotocols_d_4 \
-        -L$$OUT_PWD/../rosetta/protocols_c_4    -lprotocols_c_4 \
-        -L$$OUT_PWD/../rosetta/protocols_b_4    -lprotocols_b_4 \
-        -L$$OUT_PWD/../rosetta/protocols_a_4    -lprotocols_a_4 \
+        -L$$OUT_PWD/../rosetta/protocols_4      -lprotocols_4 \
         -L$$OUT_PWD/../rosetta/protocols_3      -lprotocols_3 \
         -L$$OUT_PWD/../rosetta/protocols_b_2    -lprotocols_b_2 \
         -L$$OUT_PWD/../rosetta/protocols_a_2    -lprotocols_a_2 \

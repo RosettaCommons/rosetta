@@ -27,7 +27,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <protocols/moves/ReportToDB.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 
 // Project Headers
@@ -429,7 +429,7 @@ public:
 		movemap->set_jump(false);
 		string min_type("lbfgs_armijo_nonmonotone");
 		bool use_nb_list( true );  //default for Classic Relax
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(movemap, scfxn, min_type, tolerance, use_nb_list ));
+		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover(movemap, scfxn, min_type, tolerance, use_nb_list ));
 
 		Real score_before( (*scfxn)(*pose));
 		tr.Debug << "score before minimizing:" << endl;

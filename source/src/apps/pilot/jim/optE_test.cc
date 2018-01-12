@@ -57,7 +57,7 @@
 #include <basic/options/util.hh>
 
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 
 #include <utility/vector1.hh>
@@ -782,7 +782,7 @@ measure_sequence_recovery(
 	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
 	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
 
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover = new protocols::minimization_packing::PackRotamersMover;
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( sfxn );
 

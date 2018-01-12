@@ -29,15 +29,15 @@
 #include <core/kinematics/MoveMap.hh>
 
 //protocols library (Movers)
-#include <protocols/simple_moves/MinPackMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinPackMoverCreator.hh>
-#include <protocols/simple_moves/PackRotamersMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/MinMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinPackMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinPackMoverCreator.hh>
+#include <protocols/minimization_packing/PackRotamersMoverCreator.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/MinMoverCreator.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/util.hh>
@@ -92,7 +92,7 @@ public:
 		core::scoring::list_read_options_in_get_score_function( opts );
 		core::pack::task::PackerTask::list_options_read( opts );
 		core::pack::task::operation::ReadResfile::list_options_read( opts );
-		protocols::simple_moves::PackRotamersMover::list_options_read( opts );
+		protocols::minimization_packing::PackRotamersMover::list_options_read( opts );
 		add_options( opts );
 		add_option( basic::options::OptionKeys::minimize_sidechains );
 		add_option( basic::options::OptionKeys::min_pack );
@@ -251,7 +251,7 @@ public:
 			core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function( *job_options );
 
 			//create the PackRotamersMover which will do the packing
-			protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+			protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 			pack_mover->task_factory( main_task_factory );
 			pack_mover->score_function( score_fxn );
 			seq->add_mover( pack_mover );

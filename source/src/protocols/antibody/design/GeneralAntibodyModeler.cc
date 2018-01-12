@@ -39,11 +39,11 @@
 //Protocol Headers
 #include <protocols/backrub/BackrubProtocol.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/CentroidRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/util.hh>
@@ -79,6 +79,7 @@ using namespace core::scoring;
 using namespace core::pack::task;
 using namespace core::pack::task::operation;
 using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace protocols::toolbox::task_operations;
 using namespace protocols::antibody::clusters;
 using core::Size;
@@ -478,7 +479,7 @@ GeneralAntibodyModeler::minimize_cdrs(Pose & pose,
 
 	//Tolerance of .001 is slower by ~25% or less.  However, it can also decrease energies significantly compared to .01.
 	//(In a test set of one protein minimized by bb - write a script to test this )
-	protocols::simple_moves::MinMover min_mover(mm, local_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, false /*use_nblist*/ );
+	protocols::minimization_packing::MinMover min_mover(mm, local_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, false /*use_nblist*/ );
 
 	if ( cartmin ) {
 		min_mover.min_type("lbfgs_armijo_nonmonotone");
@@ -624,7 +625,7 @@ GeneralAntibodyModeler::minimize_interface(Pose& pose, bool min_interface_sc /* 
 
 	ScoreFunctionOP local_scorefxn = scorefxn_->clone();
 	local_scorefxn->set_weight_if_zero(atom_pair_constraint, atom_pair_weight_);
-	protocols::simple_moves::MinMover min_mover(mm, local_scorefxn, "lbfgs_armijo_nonmonotone", 0.01, false /*use_nblist*/ );
+	protocols::minimization_packing::MinMover min_mover(mm, local_scorefxn, "lbfgs_armijo_nonmonotone", 0.01, false /*use_nblist*/ );
 	min_mover.apply(pose);
 
 

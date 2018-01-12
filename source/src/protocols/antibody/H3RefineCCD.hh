@@ -26,8 +26,8 @@
 
 #include <protocols/loops/Loops.hh>
 
-#include <protocols/simple_moves/MinMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
@@ -110,9 +110,9 @@ private:
 	// the objects
 	moves::ChangeFoldTreeMoverOP change_FT_to_simpleloop_;
 	moves::ChangeFoldTreeMoverOP change_FT_to_flankloop_;
-	simple_moves::MinMoverOP loop_min_mover_;
+	minimization_packing::MinMoverOP loop_min_mover_;
 	moves::SequenceMoverOP wiggle_cdr_h3_;
-	simple_moves::PackRotamersMoverOP loop_repack_;
+	minimization_packing::PackRotamersMoverOP loop_repack_;
 	moves::MonteCarloOP mc_;
 
 	utility::vector1< bool> allow_repack_;

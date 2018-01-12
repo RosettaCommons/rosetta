@@ -39,8 +39,8 @@
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <basic/options/option.hh>
@@ -146,13 +146,13 @@ void DockingPrepackProtocol::score_and_output(std::string outfilename,
 
 void DockingPrepackProtocol::setup_pack_operation_movers()
 {
-	prepack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+	prepack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
 	prepack_full_repack_->score_function( scorefxn_pack() );
 	prepack_full_repack_->task_factory( task_factory() );
 	pack_operations_->add_mover(prepack_full_repack_);
 
 	if ( rt_min() ) {
-		rtmin_mover_ = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( ) );
+		rtmin_mover_ = protocols::minimization_packing::RotamerTrialsMinMoverOP( new protocols::minimization_packing::RotamerTrialsMinMover( ) );
 		rtmin_mover_->score_function( scorefxn_pack() );
 		rtmin_mover_->task_factory( task_factory() );
 		pack_operations_->add_mover(rtmin_mover_);

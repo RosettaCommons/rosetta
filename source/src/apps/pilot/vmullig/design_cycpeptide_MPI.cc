@@ -136,7 +136,7 @@ Modified 22 August 2014 by VKM:
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/kinematics/MoveMap.hh>
-//#include <protocols/simple_moves/RepackSidechainsMover.hh>
+//#include <protocols/minimization_packing/RepackSidechainsMover.hh>
 #include <numeric/random/random.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>

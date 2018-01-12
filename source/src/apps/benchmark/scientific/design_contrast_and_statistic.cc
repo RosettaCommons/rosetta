@@ -39,7 +39,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 
 // option key includes
@@ -312,7 +312,7 @@ int main( int argc, char * argv [] )
 			main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 		}
 		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
-		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 		pack_mover->task_factory( main_task_factory );
 		pack_mover->score_function( score_fxn );
 		TR << "before the loop" << std::endl;

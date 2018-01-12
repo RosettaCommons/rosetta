@@ -37,8 +37,8 @@
 #include <core/kinematics/MoveMap.hh>
 
 // Protocl headers
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 
 // Basic/Utility headers
@@ -56,7 +56,9 @@ static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeRelax" );
 
 namespace protocols {
 namespace carbohydrates {
+
 using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace core::scoring;
 using namespace core::pose;
 

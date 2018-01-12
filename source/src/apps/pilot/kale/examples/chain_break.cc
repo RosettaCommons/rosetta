@@ -15,8 +15,8 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 
 // Utility headers
@@ -45,8 +45,8 @@ int main(int argc, char** argv) {
 	pose.fold_tree(tree);
 
 	using core::pose::symmetry::is_symmetric;
-  using protocols::simple_moves::MinMover;
-  using protocols::simple_moves::MinMoverOP;
+  using protocols::minimization_packing::MinMover;
+  using protocols::minimization_packing::MinMoverOP;
   using protocols::loops::loop_mover::loops_set_chainbreak_weight;
 
   MinMoverOP minimizer = new MinMover();

@@ -35,15 +35,15 @@
 //#include <core/kinematics/MoveMap.hh>
 
 //protocols library (Movers)
-//#include <protocols/simple_moves/MinPackMover.hh>
-//#include <protocols/simple_moves/PackRotamersMover.hh>
-//#include <protocols/simple_moves/MinPackMoverCreator.hh>
-//#include <protocols/simple_moves/PackRotamersMoverCreator.hh>
-//#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-//#include <protocols/simple_moves/MinMover.hh>
-//#include <protocols/simple_moves/MinMoverCreator.hh>
-//#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-//#include <protocols/simple_moves/TaskAwareMinMover.hh>
+//#include <protocols/minimization_packing/MinPackMover.hh>
+//#include <protocols/minimization_packing/PackRotamersMover.hh>
+//#include <protocols/minimization_packing/MinPackMoverCreator.hh>
+//#include <protocols/minimization_packing/PackRotamersMoverCreator.hh>
+//#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+//#include <protocols/minimization_packing/MinMover.hh>
+//#include <protocols/minimization_packing/MinMoverCreator.hh>
+//#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+//#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>

@@ -17,7 +17,6 @@
 #define INCLUDED_protocols_stepwise_modeler_StepWiseModeler_HH
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/packer/StepWiseMasterPacker.fwd.hh>

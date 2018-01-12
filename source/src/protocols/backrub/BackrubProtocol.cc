@@ -28,11 +28,11 @@
 #include <protocols/jd2/util.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
@@ -103,7 +103,7 @@ BackrubProtocol::BackrubProtocol():
 	backrubmover_(BackrubMoverOP( new BackrubMover() )),
 	smallmover_(protocols::simple_moves::SmallMoverOP(new protocols::simple_moves::SmallMover())),
 	sidechainmover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP(new protocols::simple_moves::sidechain_moves::SidechainMover())),
-	packrotamersmover_(protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover())),
+	packrotamersmover_(protocols::minimization_packing::PackRotamersMoverOP(new protocols::minimization_packing::PackRotamersMover())),
 	movemap_smallmover_(nullptr),
 	minimize_movemap_(nullptr),
 	packing_operation_(nullptr),
@@ -544,7 +544,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			core::kinematics::MoveMapOP minimize_movemap_progressive( new core::kinematics::MoveMap );
 
 			// setup the MinMover
-			protocols::simple_moves::MinMover minmover;
+			protocols::minimization_packing::MinMover minmover;
 			minmover.score_function(scorefxn_);
 			minmover.min_type("dfpmin");
 

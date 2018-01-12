@@ -39,7 +39,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <utility/vector1.functions.hh>
 #include <utility/vector1.hh>
@@ -208,7 +208,7 @@ main( int argc, char* argv[] )
 		scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 		//initialize PackRotamersMover with defined task factory and score function
-		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover = new protocols::minimization_packing::PackRotamersMover;
 		pack_mover->task_factory( generate_factory() );
 		pack_mover->score_function( scorefxn );
 

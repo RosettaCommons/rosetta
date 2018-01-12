@@ -28,7 +28,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <devel/init.hh>
 
@@ -67,7 +67,7 @@ int main( int argc, char * argv [] )
 
 	T("Score:") << scorefxn->score(pose)  << std::endl;
 
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover() );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover() );
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	//min_mover->movemap(movemap);
 	min_mover->apply(pose);

@@ -45,8 +45,8 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/ncbb/SecStructMinimizeMultiFunc.hh>
@@ -364,7 +364,7 @@ SecStructFinder::apply( Pose & pose )
 	min_mm->set_bb( true );
 	min_mm->set_chi( true );
 
-	protocols::simple_moves::MinMover minmover( min_mm, score_fxn_, "lbfgs_armijo_nonmonotone", 0.0001, true );
+	protocols::minimization_packing::MinMover minmover( min_mm, score_fxn_, "lbfgs_armijo_nonmonotone", 0.0001, true );
 	minmover.cartesian( cart_ );
 	utility::vector1< Pose > poses_to_min;
 	utility::vector1< utility::vector1< Real > > dihedrals_to_min;

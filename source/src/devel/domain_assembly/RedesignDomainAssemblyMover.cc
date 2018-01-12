@@ -55,9 +55,9 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 
 // ObjexxFCL Headers
@@ -194,10 +194,10 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	small_mover->angle_max( 'L', 4.0 );
 
 	// MOVER: rotamer trials
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
+	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
 
 	// MOVER minimization
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_local, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap_local, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
 
 	//// STAGE1 ////
 	protocols::moves::SequenceMoverOP stage1_seq( new protocols::moves::SequenceMover );
@@ -313,7 +313,7 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 			movemap_local->set_chi( to_repack );
 			movemap_local->set_bb( to_repack );
 
-			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_local, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
+			protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap_local, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
 			min_mover->apply( pose );
 
 			// redesign of residues on the LOV-side of the interface

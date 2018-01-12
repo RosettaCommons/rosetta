@@ -33,10 +33,10 @@
 //Protocol Headers
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 //Option Headers
@@ -58,6 +58,7 @@ namespace relax {
 using namespace basic::options;
 using namespace core::scoring;
 using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace core::pack::task;
 using namespace protocols::moves;
 using namespace core::kinematics;
@@ -385,7 +386,7 @@ CentroidRelax::apply(Pose& pose){
 					task->temporarily_set_pack_residue(i, true);
 				}
 			}
-			protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(fa_scorefxn_, task) );
+			protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover(fa_scorefxn_, task) );
 			packer->apply(pose);
 			fa_scorefxn_->show(TR, pose);
 		}

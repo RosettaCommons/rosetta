@@ -49,9 +49,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/PyMOLMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-//#include <protocols/simple_moves/oop/OopPatcher.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+//#include <protocols/ncbb/oop/OopPatcher.hh>
 //#include <protocols/simple_moves/chiral/ChiralMover.hh>
 //#include <protocols/hotspot_hashing/HotspotStubSet.hh>
 //#include <protocols/hotspot_hashing/HotspotStub.hh>

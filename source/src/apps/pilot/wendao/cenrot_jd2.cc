@@ -72,7 +72,7 @@
 #include <core/optimization/Minimizer.hh>
 
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -92,7 +92,7 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/NullMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/ReplicaExchangeMC.hh>
 
 #include <protocols/simple_moves/BBGaussianMover.hh>
@@ -308,7 +308,7 @@ public:
 		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 
-		protocols::simple_moves::PackRotamersMover packrotamersmover;
+		protocols::minimization_packing::PackRotamersMover packrotamersmover;
 		packrotamersmover.task_factory(main_task_factory);
 		packrotamersmover.score_function(scfxn_);
 
@@ -551,7 +551,7 @@ private:
 
 	moves::MonteCarloOP mc_;
 
-	simple_moves::PackRotamersMoverOP pack_rotamers_;
+	minimization_packing::PackRotamersMoverOP pack_rotamers_;
 	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
 	moves::TrialMoverOP trial_;
 	moves::SequenceMoverOP combo_;
@@ -583,7 +583,7 @@ public:
 
 		//repack
 		using core::pack::task::operation::TaskOperationCOP;
-		pack_rotamers_ = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+		pack_rotamers_ = minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
 		TaskFactoryOP main_task_factory( new TaskFactory );
 		main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
 		pack_rotamers_->task_factory(main_task_factory);
@@ -735,7 +735,7 @@ class SmoothFragRepackMover : public Mover
 private:
 	simple_moves::ClassicFragmentMoverOP sms_;
 	core::fragment::FragSetCOP fragset_small_;
-	simple_moves::PackRotamersMoverOP pack_rotamers_;
+	minimization_packing::PackRotamersMoverOP pack_rotamers_;
 	moves::TrialMoverOP smooth_trial_small_pack_;
 	moves::SequenceMoverOP combo_smooth_;
 
@@ -761,7 +761,7 @@ public:
 
 		//repack
 		using core::pack::task::operation::TaskOperationCOP;
-		pack_rotamers_ = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+		pack_rotamers_ = minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
 		TaskFactoryOP main_task_factory( new TaskFactory );
 		main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
 		pack_rotamers_->task_factory(main_task_factory);
@@ -861,7 +861,7 @@ public:
 		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 
-		protocols::simple_moves::PackRotamersMover packrotamersmover;
+		protocols::minimization_packing::PackRotamersMover packrotamersmover;
 		packrotamersmover.task_factory(main_task_factory);
 		packrotamersmover.score_function(scorefxn);
 

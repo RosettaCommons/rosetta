@@ -44,7 +44,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/ncbb/util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -75,7 +75,7 @@ using namespace scoring;
 using namespace pose;
 using namespace protocols;
 using namespace protocols::moves;
-using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

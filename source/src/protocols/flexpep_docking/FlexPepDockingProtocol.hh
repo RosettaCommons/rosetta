@@ -29,7 +29,7 @@
 #include <protocols/flexpep_docking/FlexPepDockingPoseMetrics.hh>
 #include <string>
 
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -264,12 +264,12 @@ private:
 	core::pack::task::TaskFactoryOP interface_tf_;
 
 	// for packing the docking interface
-	protocols::simple_moves::PackRotamersMoverOP interface_packer_;
+	protocols::minimization_packing::PackRotamersMoverOP interface_packer_;
 
 	// for designing the peptide;
 	//core::pack::task::operation::RestrictResidueToRepackingOP receptor_protector_oper_; // operation to prevent the receptor from being redesigned
 	//core::pack::task::PackerTaskOP design_task_;
-	//protocols::simple_moves::PackRotamersMoverOP design_mover_;
+	//protocols::minimization_packing::PackRotamersMoverOP design_mover_;
 
 	// the flexpepdock protocol movemap // may change throughout the run
 	core::kinematics::MoveMapOP movemap_;

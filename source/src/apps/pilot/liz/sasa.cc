@@ -93,7 +93,7 @@
 #include <core/io/pdb/pdb_writer.hh>
 
 //protocols
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 

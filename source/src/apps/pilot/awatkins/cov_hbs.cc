@@ -68,15 +68,15 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -229,7 +229,7 @@ CovalentPeptidomimeticDockDesign::apply(
 	limited_task->restrict_to_residues( packable );
 	limited_task->restrict_to_repacking();
 
-	simple_moves::MinMoverOP min( new simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true )  );
+	minimization_packing::MinMoverOP min( new minimization_packing::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true )  );
 
 	// Use cartesian minimization
 	//min->cartesian( true );
@@ -256,7 +256,7 @@ CovalentPeptidomimeticDockDesign::apply(
 
 	// create a rotamer trials mover
 
-	//simple_moves::RotamerTrialsMoverOP pert_rt(new simple_moves::EnergyCutRotamerTrialsMover( scorefxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	//minimization_packing::RotamerTrialsMoverOP pert_rt(new minimization_packing::EnergyCutRotamerTrialsMover( scorefxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 	SCmover->set_task( limited_task );
@@ -279,7 +279,7 @@ CovalentPeptidomimeticDockDesign::apply(
 
 
 	// create a pack rotamers mover
-	simple_moves::PackRotamersMoverOP desn_pr( new simple_moves::PackRotamersMover() );
+	minimization_packing::PackRotamersMoverOP desn_pr( new minimization_packing::PackRotamersMover() );
 	desn_pr->task_factory( desn_tf );
 	desn_pr->score_function( scorefxn );
 

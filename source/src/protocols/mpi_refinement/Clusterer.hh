@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_mpi_refinement_Clusterer_hh
 
 #include <protocols/mpi_refinement/util.hh>
-#include <protocols/mpi_refinement/Clusterer.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
 #include <core/io/silent/SilentStruct.hh>

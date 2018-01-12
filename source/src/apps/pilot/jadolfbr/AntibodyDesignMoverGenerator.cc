@@ -38,14 +38,14 @@
 
 //Protocol Headers
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/ChangeAndResetFoldTreeMover.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/CentroidRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/util.hh>
@@ -430,7 +430,7 @@ AntibodyDesignMoverGenerator::generate_repack_antigen_ab_interface( Pose const &
 }
 
 void
-AntibodyDesignMoverGenerator::setup_repack_antigen_ab_interface(Pose const& pose, simple_moves::PackRotamersMoverOP packer) {
+AntibodyDesignMoverGenerator::setup_repack_antigen_ab_interface(Pose const& pose, minimization_packing::PackRotamersMoverOP packer) {
 	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
 	if ( antigen_chains.size() == 0 ) {
 		TR <<" Antigen not present to repack interface!" << std::endl;

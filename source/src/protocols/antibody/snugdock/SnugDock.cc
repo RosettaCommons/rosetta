@@ -33,7 +33,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/RepackSidechainsMover.hh>
+#include <protocols/minimization_packing/RepackSidechainsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>

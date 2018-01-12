@@ -201,7 +201,7 @@ public:
 		// non-core level code has no place in a "core" test!
 		// furthermore, core does not (and should not) link the protocols lib!
 		// move this test to protocols if you want to include/test code from protocols!!
-		// protocols::simple_moves::MinMover min_mover( mm, scorefxn, "linmin", 10.0, true
+		// protocols::minimization_packing::MinMover min_mover( mm, scorefxn, "linmin", 10.0, true
 		//  /*use_nblist*/, true /*deriv_check*/, false /*no verbose-deriv-check, default*/ );
 
 		{ // test out a couple different scoring functions

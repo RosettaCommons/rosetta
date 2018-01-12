@@ -31,7 +31,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
 #include <protocols/abinitio/ClassicAbinitio.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <protocols/docking/DockingInitialPerturbation.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 
@@ -126,7 +126,7 @@ private:
 	SurfaceOrientMoverOP surface_orient_;
 	protocols::abinitio::ClassicAbinitioOP abinitio_;
 	protocols::surface_docking::CentroidRelaxMoverOP centroid_relax_;
-	protocols::simple_moves::PackRotamersMoverOP pack_rotamers_fullatom_;
+	protocols::minimization_packing::PackRotamersMoverOP pack_rotamers_fullatom_;
 	protocols::rigid::RigidBodyTransMoverOP slide_away_from_surface_;
 	protocols::docking::FaDockingSlideIntoContactOP slide_into_surface_;
 	protocols::surface_docking::FullatomRelaxMoverOP fullatom_relax_;

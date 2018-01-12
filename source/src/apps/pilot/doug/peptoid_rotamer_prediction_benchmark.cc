@@ -19,9 +19,9 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMOLMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/CyclizationMover.hh>
 
 // core headers
@@ -184,7 +184,7 @@ PeptoidRotamerRecoverer::apply( core::pose::Pose & pose )
 	core::scoring::ScoreFunctionOP scrfxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::MM_STD_WTS ) );
 
 	// setup pack rotamers mover
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scrfxn, pt ) );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover( scrfxn, pt ) );
 
 	// repack the pose
 	pack_mover->apply( pose );

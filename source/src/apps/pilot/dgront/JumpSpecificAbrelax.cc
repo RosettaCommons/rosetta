@@ -154,7 +154,7 @@
 #include <protocols/simple_filters/SheetFilter.hh>
 
 
-//#include <protocols/simple_moves/MinMover.hh>
+//#include <protocols/minimization_packing/MinMover.hh>
 
 //numeric headers
 #include <numeric/random/random.hh>
@@ -591,7 +591,7 @@ void JumpSpecificAbrelax::setup() {
 //   core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cut+1 );
 //  }
 
-//  protocols::simple_moves::MinMoverOP min_move_ = new protocols::simple_moves::MinMover;
+//  protocols::minimization_packing::MinMoverOP min_move_ = new protocols::minimization_packing::MinMover;
 //  min_move_->movemap( movemap );
 //  min_move_->min_type( "lbfgs_armijo_nonmonotone" );
 //  //get currently used score_function...

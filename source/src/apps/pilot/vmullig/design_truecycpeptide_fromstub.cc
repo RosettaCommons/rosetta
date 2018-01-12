@@ -53,7 +53,7 @@ at specific positions.
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <protocols/simple_moves/RepackSidechainsMover.hh>
+#include <protocols/minimization_packing/RepackSidechainsMover.hh>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -78,8 +78,8 @@ at specific positions.
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/chemical/AA.hh>
 
 #define PI 3.1415926535897932384626433832795
@@ -1094,7 +1094,7 @@ void designloop(
 	}
 
 	//Repack, using the PackerTask declared above:
-	protocols::simple_moves::PackRotamersMover repack( sfxn, task );
+	protocols::minimization_packing::PackRotamersMover repack( sfxn, task );
 	repack.apply(mypose);
 
 	printf("Design complete.  Sequence is ");
@@ -1129,7 +1129,7 @@ void relaxloop(
 	const core::Size endres,
 	const core::Size loop_length,
 	protocols::relax::FastRelaxOP frlx,
-	protocols::simple_moves::MinMoverOP minmove,
+	protocols::minimization_packing::MinMoverOP minmove,
 	core::kinematics::MoveMapOP mm,
 	const utility::vector1 < core::Size > &no_repack_positions, //Positions whose sidechains can NOT repack or relax (takes precidence over can_repack positions -- entries in both lists can NOT repack or relax).
 	const utility::vector1 < core::Size > &can_repack_positions //Positions whose sidechains CAN repack or relax.
@@ -1325,7 +1325,7 @@ int main( int argc, char * argv [] ) {
 	mm->set_bb(option[relaxbb]());
 	mm->set_chi(true);
 	// AMW: VKM prefers dfpmin here
-	protocols::simple_moves::MinMoverOP minmove = new protocols::simple_moves::MinMover(mm, sfxn, "dfpmin_armijo_nonmonotone", 0.0000001, true, false, false);
+	protocols::minimization_packing::MinMoverOP minmove = new protocols::minimization_packing::MinMover(mm, sfxn, "dfpmin_armijo_nonmonotone", 0.0000001, true, false, false);
 	protocols::relax::FastRelaxOP frlx;
 	if ( option[OptionKeys::relax::script].user() ) {
 		frlx = new protocols::relax::FastRelax(sfxn, option[OptionKeys::relax::script]()); //A fastrelax mover initialized from a script

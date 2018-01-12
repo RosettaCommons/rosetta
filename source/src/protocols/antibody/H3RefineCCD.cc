@@ -51,10 +51,10 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 
 
@@ -64,6 +64,7 @@ using basic::Warning;
 static basic::Tracer TR( "protocols.antibody.H3RefineCCD" );
 
 using namespace core;
+
 namespace protocols {
 namespace antibody {
 
@@ -223,6 +224,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 	// below are the definitions of a bunch of movers
 	using namespace protocols;
 	using namespace protocols::simple_moves;
+	using namespace protocols::minimization_packing;
 	using namespace protocols::loops;
 	using namespace protocols::moves;
 	using namespace protocols::toolbox::task_operations;
@@ -253,7 +255,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 
 	// pack the loop and its neighboring residues
-	loop_repack_ = simple_moves::PackRotamersMoverOP( new PackRotamersMover(highres_scorefxn_) );
+	loop_repack_ = minimization_packing::PackRotamersMoverOP( new PackRotamersMover(highres_scorefxn_) );
 	tf_ = setup_packer_task( start_pose_);
 	( *highres_scorefxn_ )( pose );
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack_ ) ) );
@@ -280,7 +282,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 
 	// minimization mover
-	loop_min_mover_ = simple_moves::MinMoverOP( new MinMover( flank_cdrh3_map_, highres_scorefxn_, minimization_type_, min_tolerance_, true /*nb_list*/ ) );
+	loop_min_mover_ = minimization_packing::MinMoverOP( new MinMover( flank_cdrh3_map_, highres_scorefxn_, minimization_type_, min_tolerance_, true /*nb_list*/ ) );
 
 
 	// put everything into a sequence mover
@@ -297,6 +299,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 //APPLY
 void H3RefineCCD::apply( pose::Pose & pose ) {
 	using namespace protocols::simple_moves;
+	using namespace protocols::minimization_packing;
 	using namespace protocols::moves;
 	using namespace protocols::toolbox::task_operations;
 	using namespace pack::task;
@@ -397,7 +400,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 
 				if ( numeric::mod(j,Size(20))==0 || j==inner_cycles_ ) {
 					// repack trial
-					loop_repack_ = simple_moves::PackRotamersMoverOP( new PackRotamersMover( highres_scorefxn_ ) );
+					loop_repack_ = minimization_packing::PackRotamersMoverOP( new PackRotamersMover( highres_scorefxn_ ) );
 					tf_ = setup_packer_task( start_pose_);
 					( *highres_scorefxn_ )( pose );
 					tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack_ ) ) );

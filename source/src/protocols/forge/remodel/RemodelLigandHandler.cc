@@ -48,7 +48,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 
 // numeric headers
@@ -156,10 +156,10 @@ void RemodelLigandHandler::minimize( core::pose::Pose & pose )
 	movemap->set_jump(jump_id, true);
 
 	//minimize cst_only
-	simple_moves::MinMoverOP minMover( new simple_moves::MinMover( movemap , cst_sfx_, "lbfgs_armijo", 0.01, true) );
+	minimization_packing::MinMoverOP minMover( new minimization_packing::MinMover( movemap , cst_sfx_, "lbfgs_armijo", 0.01, true) );
 	minMover->apply(pose);
 	//minimize full atom
-	simple_moves::MinMoverOP fullminMover( new simple_moves::MinMover( movemap , fullatom_sfx_, "lbfgs_armijo", 0.01, true) );
+	minimization_packing::MinMoverOP fullminMover( new minimization_packing::MinMover( movemap , fullatom_sfx_, "lbfgs_armijo", 0.01, true) );
 	fullminMover->apply(pose);
 
 }

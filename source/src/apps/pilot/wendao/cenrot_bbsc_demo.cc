@@ -63,12 +63,12 @@
 //#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/Minimizer.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -169,11 +169,11 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 	TaskFactoryOP main_task_factory = new TaskFactory;
 	operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
 	main_task_factory->push_back( rtrop );
-	protocols::simple_moves::PackRotamersMoverOP packrotamersmover(new protocols::simple_moves::PackRotamersMover());
+	protocols::minimization_packing::PackRotamersMoverOP packrotamersmover(new protocols::minimization_packing::PackRotamersMover());
 	packrotamersmover->task_factory(main_task_factory);
 	packrotamersmover->score_function(score_sc_fxn);
 
-	protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::RotamerTrialsMover());
+	protocols::minimization_packing::RotamerTrialsMoverOP rt_mover(new protocols::minimization_packing::RotamerTrialsMover());
 	rt_mover->task_factory(main_task_factory);
 	rt_mover->score_function(score_sc_fxn);
 

@@ -50,12 +50,12 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/oop/OopPuckMover.hh>
-#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
-#include <protocols/simple_moves/oop/OopPatcher.hh>
+#include <protocols/ncbb/oop/OopPuckMover.hh>
+#include <protocols/ncbb/oop/OopRandomSmallMover.hh>
+#include <protocols/ncbb/oop/OopPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/ncbb/oop/OopCreatorMover.hh>
 

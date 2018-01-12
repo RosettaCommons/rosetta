@@ -60,8 +60,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
@@ -277,7 +277,7 @@ void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 
 	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
 	pose.add_constraints( res_cst );
 
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 
 	// cleanup 2
@@ -289,7 +289,7 @@ void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 
 	movemap->set_jump(true);
 	movemap->set_bb(true);
 	movemap->set_chi(true);
-	protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+	protocols::minimization_packing::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 
 
 }
@@ -315,7 +315,7 @@ void dock(Pose init, std::string const & fn) {
 	// sf->set_weight(core::scoring::angle_constraint,1.0);
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
-	protocols::simple_moves::MinMover( movemap, sfnosym, "lbfgs_armijo_nonmonotone", 1e-3, true, false, false ).apply(init);
+	protocols::minimization_packing::MinMover( movemap, sfnosym, "lbfgs_armijo_nonmonotone", 1e-3, true, false, false ).apply(init);
 	/*///////////////////////////////////////////////////////////////////////////////////*/ tr << "make mbcount" << endl; /*//////////////////////*/
 	vector1<Size> nbcount(init.size(),0);
 	for ( Size ir = 1; ir <= init.size(); ++ir ) {
@@ -532,7 +532,7 @@ void dock(Pose init, std::string const & fn) {
 
 				//sf->show(q);
 				//q.dump_pdb("test0.pdb");
-				protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-3, true, false, false ).apply(q);
+				protocols::minimization_packing::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-3, true, false, false ).apply(q);
 				sf->show(q);
 				//q.dump_pdb("test1.pdb");
 				//utility_exit_with_message("aorsitn");

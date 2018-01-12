@@ -23,7 +23,7 @@
 #include <core/scoring/methods/Methods.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -31,8 +31,8 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 // #include <protocols/moves/rigid_body_moves.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 
 #include <protocols/loops/ccd_closure.hh>
@@ -571,13 +571,13 @@ RunPepSpec()
 		if( seqpos >= eval_prot_begin && seqpos <= eval_prot_end ) prot_eval_task->nonconst_residue_task( seqpos ).restrict_to_repacking();
 		else prot_eval_task->nonconst_residue_task( seqpos ).prevent_repacking();
 		}
-		protocols::simple_moves::PackRotamersMoverOP prot_eval_pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, prot_eval_task, 1 ) );
+		protocols::minimization_packing::PackRotamersMoverOP prot_eval_pack( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, prot_eval_task, 1 ) );
 		prot_eval_pack->apply( prot_eval_pose );
 		}
 		if( option[ pep_spec::score_binding_min ] ){
 		kinematics::MoveMapOP mm_prot_eval ( new kinematics::MoveMap );
 		mm_prot_eval->set_chi( true );
-		protocols::simple_moves::MinMoverOP prot_eval_min_mover = new protocols::simple_moves::MinMover( mm_prot_eval, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+		protocols::minimization_packing::MinMoverOP prot_eval_min_mover = new protocols::minimization_packing::MinMover( mm_prot_eval, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 		prot_eval_min_mover->apply( prot_eval_pose );
 		prot_score = prot_eval_pose.energies().total_energies().dot( full_scorefxn->weights() );
 		dump_pdb( prot_eval_pose,  option[ out::file::o ] + "_prot.pdb" );
@@ -869,7 +869,7 @@ RunPepSpec()
 			mc_rep->recover_low( pose );
 			}
 			if( has_clash( pose, is_pep_not_anchor, rep_scorefxn, 5.0 ) ){
-			protocols::simple_moves::MinMoverOP rep_min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+			protocols::minimization_packing::MinMoverOP rep_min_mover = new protocols::minimization_packing::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 			rep_min_mover->apply( pose );
 			}
 			*/
@@ -890,7 +890,7 @@ RunPepSpec()
 			soft_clash_scorefxn->set_etable( FA_STANDARD_SOFT );
 			for( Size ramp_loop = 1; ramp_loop <= n_ramp_loop + 1; ++ramp_loop ){
 
-			protocols::simple_moves::PackRotamersMoverOP ramp_pack( new protocols::simple_moves::PackRotamersMover( soft_clash_scorefxn, dz_task, 1 ) );
+			protocols::minimization_packing::PackRotamersMoverOP ramp_pack( new protocols::minimization_packing::PackRotamersMover( soft_clash_scorefxn, dz_task, 1 ) );
 			( *soft_clash_scorefxn )( pose );
 			soft_clash_scorefxn->accumulate_residue_total_energies( pose );
 			if( option[ pep_spec::use_input_seq ] )ramp_pack->apply( pose );
@@ -904,7 +904,7 @@ RunPepSpec()
 			clash_scorefxn->set_weight( fa_atr, new_full_fa_atr  );
 			soft_clash_scorefxn->set_weight( fa_rep, new_soft_fa_rep  );
 			soft_clash_scorefxn->set_weight( fa_atr, new_soft_fa_atr  );
-			protocols::simple_moves::MinMoverOP clash_min_mover = new protocols::simple_moves::MinMover( mm_min, soft_clash_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+			protocols::minimization_packing::MinMoverOP clash_min_mover = new protocols::minimization_packing::MinMover( mm_min, soft_clash_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 			clash_min_mover->apply( pose );
 			if( option[ pep_spec::test_dump_all_ramp ] ) dump_efactor_pdb( pose, full_scorefxn,  option[ out::file::o ] + "_" + string_of( peptide_loop ) + "_ramp" + string_of( ramp_loop - 1 ) + ".pdb" );
 			}
@@ -928,15 +928,15 @@ RunPepSpec()
 			if ( !option[ pep_spec::freeze_pep_anchor ] ) mm_min->set_jump( 1, true );
 
 			//define movers//
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+			protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover( mm_move, 5.0, 1 ) ); //LOOP
 			shear_mover->angle_max( 'H', 5.0 );
 			shear_mover->angle_max( 'E', 5.0 );
 			shear_mover->angle_max( 'L', 5.0 );
 
-			protocols::simple_moves::PackRotamersMoverOP dz_pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, dz_task, 1 ) );
-			protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
+			protocols::minimization_packing::PackRotamersMoverOP dz_pack( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, dz_task, 1 ) );
+			protocols::minimization_packing::RotamerTrialsMoverOP dz_rottrial ( new protocols::minimization_packing::RotamerTrialsMover( soft_scorefxn, rottrial_task_factory ) );
 			SequenceMoverOP design_seq = new SequenceMover;
 			if ( !option[ pep_spec::test_no_pack ] ) {
 				design_seq->add_mover( dz_pack );
@@ -1047,7 +1047,7 @@ RunPepSpec()
 					if ( option[ pep_spec::score_binding_repack ] ) {
 						pack::task::PackerTaskOP pep_eval_task( pack::task::TaskFactory::create_packer_task( pep_eval_pose ));
 						pep_eval_task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
-						protocols::simple_moves::PackRotamersMoverOP pep_eval_pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, pep_eval_task, 1 ) );
+						protocols::minimization_packing::PackRotamersMoverOP pep_eval_pack( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, pep_eval_task, 1 ) );
 						pep_eval_pack->apply( pep_eval_pose );
 					}
 					if ( option[ pep_spec::score_binding_min ] ) {
@@ -1056,7 +1056,7 @@ RunPepSpec()
 						kinematics::MoveMapOP mm_pep_eval ( new kinematics::MoveMap );
 						mm_pep_eval->set_chi( true );
 						//      mm_pep_eval->set_bb( true );
-						protocols::simple_moves::MinMoverOP pep_eval_min_mover = new protocols::simple_moves::MinMover( mm_pep_eval, final_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+						protocols::minimization_packing::MinMoverOP pep_eval_min_mover = new protocols::minimization_packing::MinMover( mm_pep_eval, final_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 						Real premin_pep_score = pep_eval_pose.energies().total_energies().dot( final_scorefxn->weights() );
 						//Pose pep_eval_premin_pose( pep_eval_pose );
 						pep_eval_min_mover->apply( pep_eval_pose );

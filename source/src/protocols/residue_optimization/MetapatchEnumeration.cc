@@ -47,10 +47,10 @@
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/ncbb/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -97,7 +97,7 @@ using namespace scoring;
 using namespace pose;
 using namespace protocols;
 using namespace protocols::moves;
-using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace protocols::rigid;
 using namespace protocols::toolbox;
 using namespace protocols::toolbox::pose_metric_calculators;
@@ -294,7 +294,7 @@ void
 MetapatchEnumeration::initial_sampling(
 	Pose & pose
 ) {
-	simple_moves::MinMoverOP min( new simple_moves::MinMover( mm_, sampling_score_fxn_, "lbfgs_armijo_nonmonotone", 0.01, true )  );
+	minimization_packing::MinMoverOP min( new minimization_packing::MinMover( mm_, sampling_score_fxn_, "lbfgs_armijo_nonmonotone", 0.01, true )  );
 
 	if ( pack_ ) {
 		PackerTaskOP setup_pack = TaskFactory::create_packer_task( pose );
@@ -305,7 +305,7 @@ MetapatchEnumeration::initial_sampling(
 			setup_pack->nonconst_residue_task( resj ).restrict_to_repacking();
 		}
 
-		protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( sampling_score_fxn_, setup_pack ) );
+		protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( sampling_score_fxn_, setup_pack ) );
 
 		Real score = 100000;
 		for ( Size pc = 1; pc <= 10; ++pc ) {
@@ -351,7 +351,7 @@ void MetapatchEnumeration::final_sampling(
 	// mut_mm->set_chi( ii, true );
 	//}
 
-	simple_moves::MinMoverOP mut_min( new simple_moves::MinMover( mut_mm, sampling_score_fxn_, "lbfgs_armijo_nonmonotone", 0.01, true )  );
+	minimization_packing::MinMoverOP mut_min( new minimization_packing::MinMover( mut_mm, sampling_score_fxn_, "lbfgs_armijo_nonmonotone", 0.01, true )  );
 
 	if ( pack_ ) {
 		TaskFactoryOP mutant_tf( new TaskFactory );
@@ -365,7 +365,7 @@ void MetapatchEnumeration::final_sampling(
 			mutant_pt->nonconst_residue_task( resj ).or_ex2_sample_level( pack::task::EX_SIX_QUARTER_STEP_STDDEVS );
 			mutant_pt->nonconst_residue_task( resj ).restrict_to_repacking();
 		}
-		protocols::simple_moves::PackRotamersMoverOP pack_mut( new protocols::simple_moves::PackRotamersMover( sampling_score_fxn_, mutant_pt ) );
+		protocols::minimization_packing::PackRotamersMoverOP pack_mut( new protocols::minimization_packing::PackRotamersMover( sampling_score_fxn_, mutant_pt ) );
 
 		Real score = 100000;
 		for ( Size pc = 1; pc <= 10; ++pc ) {

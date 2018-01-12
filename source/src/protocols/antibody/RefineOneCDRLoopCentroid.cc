@@ -37,7 +37,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
+#include <protocols/minimization_packing/MinMover.hh>//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
 
 using basic::Error;
 using basic::Warning;
@@ -45,6 +45,7 @@ using basic::Warning;
 static basic::Tracer TR( "protocols.antibody.RefineOneCDRLoopCentroid" );
 
 using namespace core;
+
 namespace protocols {
 namespace antibody {
 
@@ -147,6 +148,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 {
 	using namespace protocols;
 	using namespace protocols::simple_moves;
+	using namespace protocols::minimization_packing;
 	using namespace protocols::loops;
 	using namespace protocols::moves;
 

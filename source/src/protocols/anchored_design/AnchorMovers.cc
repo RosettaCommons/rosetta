@@ -58,10 +58,10 @@
 #include <protocols/moves/Mover.fwd.hh> //MoverOP
 #include <protocols/simple_moves/BackboneMover.hh> //SmallMover
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
@@ -69,7 +69,7 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 
 #include <protocols/jd2/util.hh>
 
@@ -558,7 +558,7 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 
 	//pose.dump_pdb("pre_delete_interface_sidechains_test.pdb");
 	//create a PackRotamersMover and do it
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 	pack_mover->task_factory( tf );
 	pack_mover->score_function( interface_->get_fullatom_scorefunction() );
 	pack_mover->apply(pose);
@@ -1053,9 +1053,9 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	if ( debug_ ) debug_dump_pose(pose, posecopy, "perturbed_nomin", allloops_subsequence);
 
 	/////////////////////////minimizer mover/////////////////////////////////////////
-	using protocols::simple_moves::MinMoverOP;
-	using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
+	using protocols::minimization_packing::MinMoverOP;
+	using protocols::minimization_packing::MinMover;
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover(
 		interface_->movemap_cen_all(),
 		interface_->get_centroid_scorefunction_min(),
 		min_type_,
@@ -1109,12 +1109,12 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	TaskFactoryOP task_factory( new TaskFactory(*(interface_->get_late_factory())) ); //late factory = more rotamers
 	task_factory->push_back(core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ));
 
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 	pack_mover->task_factory( task_factory );
 	pack_mover->score_function( interface_->get_fullatom_scorefunction() );
 
-	//using protocols::simple_moves::MinMoverOP; //using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP min_mover_fa( new protocols::simple_moves::MinMover(
+	//using protocols::minimization_packing::MinMoverOP; //using protocols::minimization_packing::MinMover;
+	protocols::minimization_packing::MinMoverOP min_mover_fa( new protocols::minimization_packing::MinMover(
 		interface_->movemap_cen_all(), //even though this is fullatom; we do not yet want to minimize inside the anchor if we are using constraints
 		interface_->get_fullatom_scorefunction(),
 		min_type_,
@@ -1122,9 +1122,9 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 		true /*use_nblist*/ ) );
 
 	//definitely want sidechain minimization here
-	using protocols::simple_moves::TaskAwareMinMoverOP;
-	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa( new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory) );
+	using protocols::minimization_packing::TaskAwareMinMoverOP;
+	using protocols::minimization_packing::TaskAwareMinMover;
+	protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover_fa( new protocols::minimization_packing::TaskAwareMinMover(min_mover_fa, task_factory) );
 	pack_mover->apply( pose );
 	TAmin_mover_fa->apply( pose );
 
@@ -1273,23 +1273,23 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 		refine_temp_ ) ); //temperature, default 0.8
 
 	/////////////////////////////generate full repack mover//////////////////////////////
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 	pack_mover->task_factory( interface_->get_task_factory() );
 	pack_mover->score_function( interface_->get_fullatom_scorefunction() );
 
 	//////////////////////////////////generate minimizer mover/////////////////////////
-	using protocols::simple_moves::MinMoverOP;
-	using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP packing_min_mover( new protocols::simple_moves::MinMover(
+	using protocols::minimization_packing::MinMoverOP;
+	using protocols::minimization_packing::MinMover;
+	protocols::minimization_packing::MinMoverOP packing_min_mover( new protocols::minimization_packing::MinMover(
 		interface_->movemap_fa_all(),
 		interface_->get_fullatom_scorefunction(),
 		min_type_,
 		0.01,
 		true /*use_nblist*/ ) );
 
-	using protocols::simple_moves::TaskAwareMinMoverOP;
-	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP packing_TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(packing_min_mover, interface_->get_task_factory()) );
+	using protocols::minimization_packing::TaskAwareMinMoverOP;
+	using protocols::minimization_packing::TaskAwareMinMover;
+	protocols::minimization_packing::TaskAwareMinMoverOP packing_TAmin_mover( new protocols::minimization_packing::TaskAwareMinMover(packing_min_mover, interface_->get_task_factory()) );
 
 	////////////////////////////////////create repacking sequence///////////////////////////
 	using protocols::moves::SequenceMover;
@@ -1415,9 +1415,9 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	TaskFactoryOP rt_task_factory( new TaskFactory(*(interface_->get_task_factory())) ); //local copy so we can modify it
 	rt_task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 
-	using protocols::simple_moves::RotamerTrialsMoverOP;
-	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
-	protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
+	using protocols::minimization_packing::RotamerTrialsMoverOP;
+	using protocols::minimization_packing::EnergyCutRotamerTrialsMover;
+	protocols::minimization_packing::RotamerTrialsMoverOP rt_mover( new protocols::minimization_packing::EnergyCutRotamerTrialsMover(
 		interface_->get_fullatom_scorefunction(),
 		rt_task_factory,
 		mc,
@@ -1427,7 +1427,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	refine_sequence->add_mover(rt_mover);
 
 	/////////////////////////minimizer mover/////////////////////////////////////////
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover(
 		interface_->movemap_fa_all(),
 		interface_->get_fullatom_scorefunction(),
 		min_type_,

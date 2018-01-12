@@ -70,7 +70,7 @@
 #include <protocols/nonlocal/Policy.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
 #include <protocols/nonlocal/util.hh>
-#include <protocols/simple_moves/SaneMinMover.hh>
+#include <protocols/minimization_packing/SaneMinMover.hh>
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 
 // Package headers
@@ -340,7 +340,7 @@ StarAbinitio::StarAbinitio() {
 	using core::optimization::MinimizerOptionsOP;
 	using core::kinematics::MoveMap;
 	using core::kinematics::MoveMapOP;
-	using protocols::simple_moves::SaneMinMover;
+	using protocols::minimization_packing::SaneMinMover;
 
 	FragmentIO io;
 	fragments_lg_ = io.read_data(option[in::file::frag9]());
@@ -367,7 +367,7 @@ StarAbinitio::StarAbinitio() {
 	mm->set_chi(true);
 	mm->set_jump(true);
 
-	minimizer_ = protocols::simple_moves::SaneMinMoverOP( new SaneMinMover(mm, min_score, min_options, true) );
+	minimizer_ = protocols::minimization_packing::SaneMinMoverOP( new SaneMinMover(mm, min_score, min_options, true) );
 }
 
 std::string StarAbinitio::get_name() const {

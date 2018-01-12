@@ -31,7 +31,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/string_util.hh>
@@ -175,7 +175,7 @@ void FindConsensusSequence::apply( core::pose::Pose & /*pose*/ ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error: no poses initialized. Did you try to run this from Rosetta Scripts? That's not supported right now");
 	}
 	using namespace core::pack::task;
-	simple_moves::PackRotamersMoverOP packer ( new simple_moves::PackRotamersMover );
+	minimization_packing::PackRotamersMoverOP packer ( new minimization_packing::PackRotamersMover );
 	packer->score_function( sfxn_ );
 	operation::RestrictToRepackingOP rtr ( new operation::RestrictToRepacking );
 	if ( !task_factory_ ) {

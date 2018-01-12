@@ -26,7 +26,7 @@
 #include <core/select/residue_selector/PhiSelector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_filters/PoseCommentFilter.hh>
 
 // Utility headers
@@ -100,7 +100,7 @@ public:
 		TR << "Getting Mover" << std::endl;
 		try {
 			protocols::moves::MoverOP mover = objs->get_mover("min_mover");
-			protocols::simple_moves::MinMoverOP casted = std::dynamic_pointer_cast< protocols::simple_moves::MinMover >( mover );
+			protocols::minimization_packing::MinMoverOP casted = std::dynamic_pointer_cast< protocols::minimization_packing::MinMover >( mover );
 			(void)casted;
 		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
@@ -177,7 +177,7 @@ public:
 		try {
 			protocols::moves::MoverOP mover = XmlObjects::static_get_mover(
 				"<MinMover name=\"min_mover\" bb=\"true\" chi=\"true\"/>\n");
-			protocols::simple_moves::MinMoverOP casted = std::dynamic_pointer_cast< protocols::simple_moves::MinMover >( mover );
+			protocols::minimization_packing::MinMoverOP casted = std::dynamic_pointer_cast< protocols::minimization_packing::MinMover >( mover );
 			(void)casted;
 		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;
@@ -186,7 +186,7 @@ public:
 		try {
 			protocols::moves::MoverOP mover = XmlObjects::static_get_mover(
 				"<MinMover bb=\"true\" chi=\"true\"/>\n");
-			protocols::simple_moves::MinMoverOP casted = std::dynamic_pointer_cast< protocols::simple_moves::MinMover >( mover );
+			protocols::minimization_packing::MinMoverOP casted = std::dynamic_pointer_cast< protocols::minimization_packing::MinMover >( mover );
 			(void)casted;
 		} catch (utility::excn::Exception const & e ) {
 			TR << e.msg() << std::endl;

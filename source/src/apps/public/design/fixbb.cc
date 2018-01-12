@@ -26,12 +26,12 @@
 #include <core/kinematics/MoveMap.hh>
 
 //protocols library (Movers)
-#include <protocols/simple_moves/MinPackMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinPackMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
@@ -106,11 +106,11 @@ main( int argc, char * argv [] )
 
 
 		//create the PackRotamersMover which will do the packing
-		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 
 		// Use the symmetric packer if necessary
 		if ( option[ symmetry::symmetry_definition ].user() ) {
-			pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover );
+			pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover );
 		}
 
 		pack_mover->task_factory( main_task_factory );
@@ -126,7 +126,7 @@ main( int argc, char * argv [] )
 		}
 
 		if ( option[ min_pack ] || option[ off_rotamer_pack ] ) {
-			protocols::simple_moves::MinPackMoverOP minpack_mover( new protocols::simple_moves::MinPackMover );
+			protocols::minimization_packing::MinPackMoverOP minpack_mover( new protocols::minimization_packing::MinPackMover );
 			minpack_mover->task_factory( main_task_factory );
 			minpack_mover->score_function( score_fxn );
 			if ( option[ off_rotamer_pack ] ) minpack_mover->off_rotamer_pack( true );
@@ -138,9 +138,9 @@ main( int argc, char * argv [] )
 		//If sidechain minimization is requested, include that too
 		if ( option[ minimize_sidechains ] ) {
 			core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
-			protocols::simple_moves::MinMoverOP min_mover;
+			protocols::minimization_packing::MinMoverOP min_mover;
 			if ( option [ symmetry::symmetry_definition ].user() ) {
-				min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::symmetry::SymMinMover(
+				min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::symmetry::SymMinMover(
 					movemap,
 					score_fxn,
 					basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
@@ -148,7 +148,7 @@ main( int argc, char * argv [] )
 					true
 					) );
 			} else {
-				min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
+				min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
 					movemap,
 					score_fxn,
 					basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
@@ -156,7 +156,7 @@ main( int argc, char * argv [] )
 					true
 					));
 			}
-			protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(min_mover, main_task_factory) );
+			protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover( new protocols::minimization_packing::TaskAwareMinMover(min_mover, main_task_factory) );
 			seq_mover->add_mover( TAmin_mover );
 		} // end optional side chain minimization
 

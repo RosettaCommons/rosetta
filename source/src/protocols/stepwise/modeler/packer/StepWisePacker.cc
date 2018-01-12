@@ -39,8 +39,8 @@
 #include <basic/Tracer.hh>
 
 //GreenPacker
-#include <protocols/simple_moves/GreenPacker.hh>
-#include <protocols/simple_moves/GreenPacker.fwd.hh>
+#include <protocols/minimization_packing/GreenPacker.hh>
+#include <protocols/minimization_packing/GreenPacker.fwd.hh>
 
 #include <utility>
 #include <utility/exit.hh>

@@ -120,7 +120,7 @@ def packer_task(pose, PDB_out = False):
     # packing and design can be performed by a PackRotamersMover, it requires
     #    a ScoreFunction, for optimizing the sidechains and a PackerTask,
     #    setting the packing and design options
-    packmover = protocols.simple_moves.PackRotamersMover(scorefxn, pose_packer)
+    packmover = protocols.minimization_packing.PackRotamersMover(scorefxn, pose_packer)
 
     scorefxn(pose)    # to prevent verbose output on the next line
     print( '\nPre packing score:', scorefxn(test_pose) )
@@ -171,7 +171,7 @@ def packer_task(pose, PDB_out = False):
     test_pose.assign(pose)
 
     # perform design
-    designmover = protocols.simple_moves.PackRotamersMover(scorefxn, pose_design)
+    designmover = protocols.minimization_packing.PackRotamersMover(scorefxn, pose_design)
     print( '\nDesign with all proteogenic amino acids at (pose numbered)\
         residues', center - 2, 'to', center + 2 )
     print( 'Pre-design score:', scorefxn(test_pose) )

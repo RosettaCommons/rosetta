@@ -38,8 +38,8 @@
 
 #include <core/types.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <devel/init.hh>
 
@@ -68,8 +68,8 @@ class orphan_restypes_tests : public CxxTest::TestSuite {
 	core::chemical::ElementSetCAP elements_;
 	core::chemical::MMAtomTypeSetCAP mm_atom_types_;
 	core::chemical::orbitals::OrbitalTypeSetCAP orbital_types_;
-	protocols::simple_moves::PackRotamersMoverOP pack_;
-	protocols::simple_moves::MinMoverOP min_;
+	protocols::minimization_packing::PackRotamersMoverOP pack_;
+	protocols::minimization_packing::MinMoverOP min_;
 
 public:
 
@@ -93,12 +93,12 @@ public:
 		core::pack::task::TaskFactoryOP taskfactory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::RestrictToRepackingOP rtrp( new core::pack::task::operation::RestrictToRepacking );
 		taskfactory->push_back( rtrp );
-		pack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover );
+		pack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
 		pack_->score_function( scorefxn_ );
 		pack_->task_factory( taskfactory );
 
 		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
-		min_ = protocols::simple_moves::MinMoverOP(new protocols::simple_moves::MinMover);
+		min_ = protocols::minimization_packing::MinMoverOP(new protocols::minimization_packing::MinMover);
 		min_->score_function( scorefxn_ );
 		min_->movemap( movemap );
 		min_->tolerance(0.1); // Don't bother to do a good min - just see that we can.
@@ -160,7 +160,7 @@ public:
 		pose.append_residue_by_jump(new_rsd, 1);
 
 		TR << "Cartesian Minimizing" << std::endl;
-		protocols::simple_moves::MinMoverOP cartmin( new protocols::simple_moves::MinMover( *min_ ) );
+		protocols::minimization_packing::MinMoverOP cartmin( new protocols::minimization_packing::MinMover( *min_ ) );
 		cartmin->cartesian( true );
 		cartmin->min_type( "lbfgs_armijo_nonmonotone" );
 

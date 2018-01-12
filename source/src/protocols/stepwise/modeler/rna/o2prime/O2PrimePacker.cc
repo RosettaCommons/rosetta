@@ -17,7 +17,7 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/scoring_util.hh>
-#include <protocols/simple_moves/GreenPacker.hh>
+#include <protocols/minimization_packing/GreenPacker.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -69,12 +69,12 @@ O2PrimePacker::initialize_o2prime_packer_task(){
 void
 O2PrimePacker::initialize_o2prime_green_packer()
 {
-	using namespace protocols::simple_moves;
+	using namespace protocols::minimization_packing;
 	using namespace core::pack;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-	o2prime_green_packer_ = protocols::simple_moves::GreenPackerOP( new protocols::simple_moves::GreenPacker );
+	o2prime_green_packer_ = protocols::minimization_packing::GreenPackerOP( new protocols::minimization_packing::GreenPacker );
 
 	if ( partition_definition_.size() == 0 ) utility_exit_with_message( "To use green packer, make sure to set partition definition." );
 	bool const root_partition = partition_definition_( o2prime_pack_pose_.fold_tree().root() );

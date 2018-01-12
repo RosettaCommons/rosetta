@@ -197,7 +197,7 @@ def sample_docking(pdb_filename, partners,
     # the MinMover can minimize score based on a jump degree of freedom, this
     #    will find the distance between the docking partners which minimizes
     #    the score
-    minmover = protocols.simple_moves.MinMover()
+    minmover = protocols.minimization_packing.MinMover()
     minmover.movemap(movemap)
     minmover.score_function(scorefxn_high_min)
 

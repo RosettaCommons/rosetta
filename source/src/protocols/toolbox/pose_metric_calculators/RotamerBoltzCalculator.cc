@@ -16,7 +16,7 @@
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
 
 // Protocol Headers
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/toolbox/EnergyLandscapeEvaluator.hh>
 
 // Core Headers
@@ -45,8 +45,8 @@
 #include <core/pose/Pose.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/types.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMoverLazy.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMoverLazy.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 
 #include <utility/string_util.hh>
@@ -148,7 +148,7 @@ RotamerBoltzCalculator::computeAllBoltz( core::pose::Pose const & pose )
 
 core::Real RotamerBoltzCalculator::computeBoltzWeight(core::pose::Pose& pose, Size resi){
 	core::pack::task::PackerTaskOP task = init_task(pose,resi);
-	protocols::simple_moves::MinMoverOP  mm = init_minmover(pose, resi, true, task);
+	protocols::minimization_packing::MinMoverOP  mm = init_minmover(pose, resi, true, task);
 	return computeBoltzWeight(pose, resi, mm, task);//assume unbound
 }
 
@@ -156,7 +156,7 @@ core::Real
 RotamerBoltzCalculator::computeBoltzWeight(
 	core::pose::Pose & pose,
 	core::Size resi,
-	protocols::simple_moves::MinMoverOP min_mover,
+	protocols::minimization_packing::MinMoverOP min_mover,
 	core::pack::task::PackerTaskOP task )
 {
 	if ( lazy_ ) {
@@ -176,7 +176,7 @@ core::Real
 RotamerBoltzCalculator::compute_boltz_weight_packrotamers(
 	core::pose::Pose & pose,
 	core::Size const resi,
-	protocols::simple_moves::MinMoverOP min_mover,
+	protocols::minimization_packing::MinMoverOP min_mover,
 	core::pack::task::PackerTaskOP task ) const
 {
 	// filter used for scoring
@@ -220,7 +220,7 @@ RotamerBoltzCalculator::compute_boltz_weight_packrotamers(
 }
 
 
-core::Real RotamerBoltzCalculator::computeBoltzWeight_lazy(core::pose::Pose& pose, Size resi,  protocols::simple_moves::MinMoverOP min_mover, core::pack::task::PackerTaskOP task){
+core::Real RotamerBoltzCalculator::computeBoltzWeight_lazy(core::pose::Pose& pose, Size resi,  protocols::minimization_packing::MinMoverOP min_mover, core::pack::task::PackerTaskOP task){
 	///user doesn't have movemap, so can't initialize min_mover himself right now.
 
 	//core::pose::Pose& pose = pose();
@@ -229,7 +229,7 @@ core::Real RotamerBoltzCalculator::computeBoltzWeight_lazy(core::pose::Pose& pos
 	using namespace core::pack::rotamer_set;
 	using namespace core::pack::task;
 	using namespace core::conformation;
-	protocols::simple_moves::PackRotamersMoverLazy pmover(scorefxn());
+	protocols::minimization_packing::PackRotamersMoverLazy pmover(scorefxn());
 	task->set_bump_check(false);
 	pmover.task(task);
 	pmover.call_setup(pose);
@@ -316,7 +316,7 @@ RotamerBoltzCalculator::init_task( core::pose::Pose const & pose, core::Size con
 	return task;
 }
 
-protocols::simple_moves::MinMoverOP RotamerBoltzCalculator::init_minmover(core::pose::Pose& pose, core::Size, bool unbound, core::pack::task::PackerTaskOP  task){
+protocols::minimization_packing::MinMoverOP RotamerBoltzCalculator::init_minmover(core::pose::Pose& pose, core::Size, bool unbound, core::pack::task::PackerTaskOP  task){
 	using namespace core::conformation;
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
@@ -341,12 +341,12 @@ protocols::simple_moves::MinMoverOP RotamerBoltzCalculator::init_minmover(core::
 		}
 	}
 
-	protocols::simple_moves::MinMoverOP min_mover;
+	protocols::minimization_packing::MinMoverOP min_mover;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::symmetry::SymMinMover(
+		min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::symmetry::SymMinMover(
 			mm, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
 	} else {
-		min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
+		min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
 			mm, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
 	}
 	return min_mover;

@@ -40,10 +40,10 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/GreenPacker.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/GreenPacker.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_filters/TaskAwareScoreTypeFilter.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
@@ -440,13 +440,13 @@ MatDesPointMutationCalculator::mutate_and_relax(
 		mutate_residue->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
 		TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
 		//run PackRotamers with mutate_residue task
-		protocols::simple_moves::PackRotamersMoverOP pack;
-		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
+		protocols::minimization_packing::PackRotamersMoverOP pack;
+		protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin;
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			mutate_residue->request_symmetrize_by_union();
-			pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
+			pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
 		} else {
-			pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue ) );
+			pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
 		}
 		pack->apply( pose );
 		if ( rtmin ) {
@@ -454,7 +454,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				utility_exit_with_message("Cannot currently use MatDesPointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");
 			}
-			rtmin = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
+			rtmin = protocols::minimization_packing::RotamerTrialsMinMoverOP( new protocols::minimization_packing::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
 			rtmin->apply( pose );
 			TR<<"Finished rtmin"<<std::endl;
 		}
@@ -471,7 +471,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 	pose::Pose & pose,
 	Size const & resi,
 	AA const & target_aa,
-	protocols::simple_moves::GreenPackerOP green_packer
+	protocols::minimization_packing::GreenPackerOP green_packer
 ){
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
@@ -695,9 +695,9 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 			"packing will be slower because GreedyOpt can't use GreenPacker precomputed rotamer pair energies" << std::endl;
 		use_precomp_rot_pair_nrgs = false;
 	}
-	protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new protocols::simple_moves::UserDefinedGroupDiscriminator );
+	protocols::minimization_packing::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new protocols::minimization_packing::UserDefinedGroupDiscriminator );
 	user_defined_group_discriminator->set_group_ids( group_ids );
-	protocols::simple_moves::GreenPackerOP green_packer( new protocols::simple_moves::GreenPacker );
+	protocols::minimization_packing::GreenPackerOP green_packer( new protocols::minimization_packing::GreenPacker );
 	green_packer->set_group_discriminator( user_defined_group_discriminator );
 	green_packer->set_scorefunction( *scorefxn() );
 	green_packer->set_reference_round_task_factory( task_factory() );

@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -107,7 +107,7 @@ SidechainMinMover::SidechainMinMover(
 //destructor
 SidechainMinMover::~SidechainMinMover() = default;
 
-void SidechainMinMover::set_minmover( protocols::simple_moves::MinMoverOP minmover ){ minmover_ = minmover; }
+void SidechainMinMover::set_minmover( protocols::minimization_packing::MinMoverOP minmover ){ minmover_ = minmover; }
 
 //default options setup for SidechainMinMover
 void SidechainMinMover::set_default()
@@ -116,7 +116,7 @@ void SidechainMinMover::set_default()
 		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 		movemap_->set_chi( true );
 	}
-	minmover_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(movemap_, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
+	minmover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(movemap_, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
 }
 
 std::string

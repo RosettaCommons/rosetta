@@ -58,8 +58,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
@@ -126,7 +126,7 @@ void minimize(core::pose::Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_r
 	movemap->set_chi(true);
 	// uncomment this to minimize BB in interface res
 	// for(vector1<Size>::iterator i = iface_res.begin(); i != iface_res.end(); ++i) movemap->set_bb(*i,true);
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true );
+	protocols::minimization_packing::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true );
 	m.apply(pose);
 }
 
@@ -185,7 +185,7 @@ void design(Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_res ) {
 
 	// do the design
 	core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 
 

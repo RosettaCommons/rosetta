@@ -50,14 +50,14 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/PackRotamersMoverCreator.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMoverCreator.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/filters/Filter.hh>
 
 #include <protocols/jd2/util.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -269,7 +269,7 @@ LegacyAssemblyMover::refine_assembly(
 	assembly->prepare_for_packing(pose, task_factory, base_native_bonus_, neighbor_cutoff_);
 
 	//Pack
-	// protocols::simple_moves::PackRotamersMoverOP pack = new protocols::simple_moves::PackRotamersMover();
+	// protocols::minimization_packing::PackRotamersMoverOP pack = new protocols::minimization_packing::PackRotamersMover();
 	// pack->score_function(fa_scorefxn_);
 	// pack->task_factory(task_factory);
 

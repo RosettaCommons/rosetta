@@ -15,7 +15,7 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/rigid_body_moves.hh>
 
 #include <protocols/loops/ccd_closure.hh>

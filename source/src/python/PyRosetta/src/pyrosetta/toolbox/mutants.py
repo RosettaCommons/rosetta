@@ -24,7 +24,7 @@ from pyrosetta import Pose, make_pose_from_sequence, create_score_function
 from rosetta.utility import vector1_bool
 from rosetta.core.pack.task import TaskFactory
 from rosetta.core.chemical import aa_from_oneletter_code
-from rosetta.protocols.simple_moves import PackRotamersMover
+from rosetta.protocols.minimization_packing import PackRotamersMover
 
 from rosetta.core.pose import PDBInfo
 

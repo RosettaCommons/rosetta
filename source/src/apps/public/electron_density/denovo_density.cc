@@ -37,13 +37,13 @@
 #include <protocols/electron_density/DensitySymmInfo.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/electron_density/DockIntoDensityMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/idealize/IdealizeMover.fwd.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/OptH.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -1538,7 +1538,7 @@ ConsensusFragmentMover::run() {
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		TaskFactoryOP tf( new TaskFactory() );
 		tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
-		protocols::simple_moves::PackRotamersMoverOP pack_full_repack( new protocols::simple_moves::PackRotamersMover( scorefxn ) );
+		protocols::minimization_packing::PackRotamersMoverOP pack_full_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn ) );
 		pack_full_repack->task_factory(tf);
 		pack_full_repack->apply( averaged_pose );
 

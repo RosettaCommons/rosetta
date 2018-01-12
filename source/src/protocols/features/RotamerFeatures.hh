@@ -19,8 +19,6 @@
 #include <protocols/features/RotamerFeatures.fwd.hh>
 #include <basic/database/schema_generator/Schema.hh>
 
-
-#include <protocols/features/RotamerFeatures.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>

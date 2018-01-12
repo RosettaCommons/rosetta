@@ -24,7 +24,7 @@
 // Project headers
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -271,7 +271,7 @@ void SurfaceDockingProtocol::setup_movers ( core::pose::Pose const & pose, Size 
 	}
 	setup_slide_movers(pose);
 	pack::task::PackerTaskOP my_task_fullatom = create_surface_packer_task(pose, first_protein_residue);
-	pack_rotamers_fullatom_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( score_sidechain_pack_,  my_task_fullatom ) );
+	pack_rotamers_fullatom_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( score_sidechain_pack_,  my_task_fullatom ) );
 
 	fullatom_relax_ = protocols::surface_docking::FullatomRelaxMoverOP( new protocols::surface_docking::FullatomRelaxMover() );
 	fullatom_relax_->set_surface_contact_mover(slide_into_surface_);

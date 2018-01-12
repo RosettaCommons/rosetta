@@ -47,7 +47,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/RepackSidechainsMover.hh>
+#include <protocols/minimization_packing/RepackSidechainsMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
@@ -263,7 +263,7 @@ void DockingProtocol::setup_objects()
 	using protocols::moves::MoverOP;
 	protocols::moves::SequenceMoverOP to_all_atom_and_repack( new protocols::moves::SequenceMover );
 	to_all_atom_and_repack->add_mover( MoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) ) );
-	to_all_atom_and_repack->add_mover( MoverOP( new protocols::simple_moves::RepackSidechainsMover( docking_scorefxn_pack_ ) ) );
+	to_all_atom_and_repack->add_mover( MoverOP( new protocols::minimization_packing::RepackSidechainsMover( docking_scorefxn_pack_ ) ) );
 	to_all_atom_=to_all_atom_and_repack;
 
 	sync_objects_with_flags();

@@ -25,9 +25,9 @@
 #include <core/kinematics/MoveMap.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -163,16 +163,16 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 	// setup movers:
 
 	// packmover
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scorefxn_, pack_task, 25 ) );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover( scorefxn_, pack_task, 25 ) );
 
 	// min mover
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", min_tol_, true ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", min_tol_, true ) );
 
 	// rb mover
 	RB_MoverOP rb_mover( new RB_Mover( mm, trans_mag_, rot_mag_ ) );
 
 	// rotamer trials w/ energycut
-	protocols::simple_moves::EnergyCutRotamerTrialsMoverOP rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_, *rottrial_task, mc, energycut_ ) );
+	protocols::minimization_packing::EnergyCutRotamerTrialsMoverOP rottrial_mover( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( scorefxn_, *rottrial_task, mc, energycut_ ) );
 
 	// trials:
 	TrialMoverOP rb_min_trial = setup_MCM_trial( rb_mover, rottrial_mover, min_mover, mc );

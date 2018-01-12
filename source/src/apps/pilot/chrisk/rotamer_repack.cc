@@ -63,10 +63,10 @@
 
 //protocols library (Movers)
 #include <protocols/viewer/viewers.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -780,7 +780,7 @@ minimize_all_sidechains(
 		}
 	}
 
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 	min_mover->apply( pose );
 }
 
@@ -799,7 +799,7 @@ minimize_sidechain(
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_chi( false );
 	mm->set_chi( seqpos, true );
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 	min_mover->apply( pose );
 
 }
@@ -878,7 +878,7 @@ rottrial_residue(
 	core::pack::task::PackerTaskOP packer_task( single_res_task( pose, seqpos, no_incl_curr, design ) );
 
 	//create movers
-	protocols::simple_moves::RotamerTrialsMoverOP rottrial ( new protocols::simple_moves::RotamerTrialsMover( scorefxn, *packer_task ) );
+	protocols::minimization_packing::RotamerTrialsMoverOP rottrial ( new protocols::minimization_packing::RotamerTrialsMover( scorefxn, *packer_task ) );
 
 	//and apply
 	rottrial->apply( pose );
@@ -903,7 +903,7 @@ rottrialmin_residue(
 	core::pack::task::PackerTaskOP packer_task( single_res_task( pose, seqpos, false, design ) );
 
 	//create movers
-	protocols::simple_moves::RotamerTrialsMinMoverOP rottrialmin ( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn, *packer_task ) );
+	protocols::minimization_packing::RotamerTrialsMinMoverOP rottrialmin ( new protocols::minimization_packing::RotamerTrialsMinMover( scorefxn, *packer_task ) );
 
 	//and apply
 	rottrialmin->apply( pose );

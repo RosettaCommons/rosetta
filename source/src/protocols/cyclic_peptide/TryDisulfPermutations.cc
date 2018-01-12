@@ -31,8 +31,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/Energies.hh>
@@ -405,7 +405,7 @@ core::Real TryDisulfPermutations::repack_minimize_disulfides(
 	sfxn->set_weight( core::scoring::fa_dun, 0.7 );
 
 	//PackRotamers mover:
-	protocols::simple_moves::PackRotamersMoverOP packrot( new protocols::simple_moves::PackRotamersMover( sfxn ) );
+	protocols::minimization_packing::PackRotamersMoverOP packrot( new protocols::minimization_packing::PackRotamersMover( sfxn ) );
 	//Set up TaskOperations:
 	core::pack::task::TaskFactoryOP taskfact( new core::pack::task::TaskFactory() );
 	taskfact->push_back(core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() )); //Prevent design
@@ -429,7 +429,7 @@ core::Real TryDisulfPermutations::repack_minimize_disulfides(
 	for ( core::Size i=1, imax=pose->size(); i<=imax; ++i ) {
 		movemap->set_chi(i, is_in_list(i, disulf_res) ); //Set disulfide-forming residues as minimizable, all else as not.
 	}
-	protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, sfxn, mintype(), mintolerance(), true ) );
+	protocols::minimization_packing::MinMoverOP minmover( new protocols::minimization_packing::MinMover( movemap, sfxn, mintype(), mintolerance(), true ) );
 	minmover->apply(*pose); //Minimize the pose.
 
 	//Score the pose with the disulfide term only:

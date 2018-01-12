@@ -34,7 +34,7 @@
 //#include <core/scoring/ScoreFunctionFactory.hh>
 #include <ObjexxFCL/format.hh>
 //#include <ObjexxFCL/FArray2D.hh>
-//#include <protocols/simple_moves/RepackSidechainsMover.hh>
+//#include <protocols/minimization_packing/RepackSidechainsMover.hh>
 
 #include <stdio.h>
 #include <stdlib.h>

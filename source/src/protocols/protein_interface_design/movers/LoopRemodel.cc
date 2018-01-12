@@ -37,7 +37,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 
 #include <core/kinematics/FoldTree.hh>
@@ -55,7 +55,7 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -268,7 +268,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 						}
 					}
 				}
-				protocols::simple_moves::PackRotamersMover pack( hires_score_, task );
+				protocols::minimization_packing::PackRotamersMover pack( hires_score_, task );
 				pack.apply( pose );
 
 				if ( refine_ ) {
@@ -276,7 +276,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					core::scoring::ScoreFunctionOP copy_score( hires_score_->clone() );
 					copy_score->set_weight( core::scoring::chainbreak, 10.0 ); // upweight chainbreak, to strongly disfavor breaks
 					copy_score->set_weight( core::scoring::omega, 0.5 ); // omega term to keep backbone healthy
-					protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, copy_score, "lbfgs_armijo_nonmonotone", 1e-5, true) ); // DJM has reported better results with dfpmin
+					protocols::minimization_packing::MinMoverOP minmover( new protocols::minimization_packing::MinMover( movemap, copy_score, "lbfgs_armijo_nonmonotone", 1e-5, true) ); // DJM has reported better results with dfpmin
 					minmover->apply( pose );
 				} // if refine
 				outer_mc.boltzmann( pose );

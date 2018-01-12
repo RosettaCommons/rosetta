@@ -40,11 +40,11 @@ History:
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Jump.hh>
 #include <numeric/EulerAngles.hh>
-#include <protocols/simple_moves/RepackSidechainsMover.hh>
+#include <protocols/minimization_packing/RepackSidechainsMover.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 //#include <protocols/relax/FastRelax.hh>
@@ -351,7 +351,7 @@ int main( int argc, char * argv [] ) {
 
 	//Repack and minimize movers:
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn); //Create the RepackSidechains mover and set the score function.
-	protocols::simple_moves::MinMover minmove(mm, sfxn, "dfpmin_armijo_nonmonotone", 0.0000000001, true);
+	protocols::minimization_packing::MinMover minmove(mm, sfxn, "dfpmin_armijo_nonmonotone", 0.0000000001, true);
 
 	for ( core::Size istruct=1; istruct<=pcafiles.size(); istruct++ ) {
 

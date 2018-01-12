@@ -33,7 +33,7 @@
 
 
 //  Movers
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh> //Small Mover
 #include <protocols/moves/MoverContainer.hh> //SequenceMover
@@ -204,7 +204,7 @@ void PepMinMover::apply (pose::Pose& pose ) {
 	dock_mover->moves::Mover::set_native_pose( pose_op );
 
 	//minimization
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+	protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( movemap, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
 	TR<< "Minimizing with: " << option[ OptionKeys::run::min_type ].value() << std::endl;
 	//backbone moves
 	Size nmoves (5);

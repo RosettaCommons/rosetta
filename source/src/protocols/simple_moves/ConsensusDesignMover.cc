@@ -33,8 +33,8 @@
 
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperation.hh>
 
@@ -137,10 +137,10 @@ ConsensusDesignMover::apply( core::pose::Pose & pose )
 	}
 
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover packer( sfxn_, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover packer( sfxn_, task );
 		packer.apply( pose );
 	} else {
-		protocols::simple_moves::PackRotamersMover packer( sfxn_, task );
+		protocols::minimization_packing::PackRotamersMover packer( sfxn_, task );
 		packer.apply( pose );
 	}
 

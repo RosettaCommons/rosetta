@@ -37,10 +37,10 @@
 #include <basic/options/option.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/frags/TorsionFragment.hh>
 #include <protocols/frags/VallData.hh>
 #include <protocols/loops/loops_main.hh>

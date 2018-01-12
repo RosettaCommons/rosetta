@@ -44,7 +44,7 @@
 //#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/Minimizer.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <basic/options/option.hh>
@@ -59,7 +59,7 @@
 
 
 #include <protocols/simple_moves/BBGaussianMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/PyMOLMover.hh>
 
@@ -112,7 +112,7 @@ int main( int argc, char * argv [] ) {
 	if ( !option[debug_cenrot_min]() ) {
 		// obsolete
 		std::cout << "min_init" << std::endl;
-		protocols::simple_moves::MinMover minmover;
+		protocols::minimization_packing::MinMover minmover;
 		minmover.score_function(*score_fxn);
 		minmover.min_type("lbfgs_armijo_nonmonotone");
 		minmover.tolerance(1e-4);

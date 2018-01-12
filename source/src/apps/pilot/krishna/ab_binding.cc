@@ -42,11 +42,11 @@
 #include <core/id/AtomID_Map.hh>
 
 #include <protocols/relax/ClassicRelax.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
@@ -394,7 +394,7 @@ public:
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			my_task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
-		protocols::simple_moves::PackRotamersMoverOP prepack_mover( new protocols::simple_moves::PackRotamersMover( std_scorefxn, my_task ) );
+		protocols::minimization_packing::PackRotamersMoverOP prepack_mover( new protocols::minimization_packing::PackRotamersMover( std_scorefxn, my_task ) );
 		prepack_mover->apply( pose );
 	}
 
@@ -558,7 +558,7 @@ public:
 		for( utility::vector1_int::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
 		movemap->set_jump(*it, true);
 		}
-		protocols::simple_moves::MinMoverOP minmover ( new protocols::simple_moves::MinMover(movemap, score_fxn, "linmin", 0.1, false use_nblist) );
+		protocols::minimization_packing::MinMoverOP minmover ( new protocols::minimization_packing::MinMover(movemap, score_fxn, "linmin", 0.1, false use_nblist) );
 		minmover->apply(pose);*/
 
 		//Calculate and print out interaction / binding scores

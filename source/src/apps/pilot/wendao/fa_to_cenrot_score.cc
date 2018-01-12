@@ -63,11 +63,11 @@
 //#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/Minimizer.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -480,7 +480,7 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 	TaskFactoryOP main_task_factory = new TaskFactory;
 	operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
 	main_task_factory->push_back( rtrop );
-	protocols::simple_moves::PackRotamersMoverOP packrotamersmover(new protocols::simple_moves::PackRotamersMover());
+	protocols::minimization_packing::PackRotamersMoverOP packrotamersmover(new protocols::minimization_packing::PackRotamersMover());
 	packrotamersmover->task_factory(main_task_factory);
 	packrotamersmover->score_function(score_sc_fxn);
 
@@ -497,7 +497,7 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 	moves::TrialMoverOP trial ( new moves::TrialMover(combo, mc) );
 	moves::RepeatMoverOP run( new moves::RepeatMover(trial, option[relax_step_per_cycle]) );
 
-	protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover();
+	protocols::minimization_packing::MinMoverOP minmover = new protocols::minimization_packing::MinMover();
 	minmover->score_function(*score_bb_fxn);
 	minmover->min_type("lbfgs_armijo_nonmonotone");
 	minmover->tolerance(1e-6);
@@ -608,7 +608,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 			sf_pack->set_weight(core::scoring::vdw, 4.0);
 		}
 
-		protocols::simple_moves::PackRotamersMover packrotamersmover;
+		protocols::minimization_packing::PackRotamersMover packrotamersmover;
 		packrotamersmover.task_factory(main_task_factory);
 		packrotamersmover.score_function(sf_pack);
 

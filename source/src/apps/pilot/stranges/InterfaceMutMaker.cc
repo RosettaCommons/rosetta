@@ -40,7 +40,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/SetReturningPackRotamersMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
@@ -496,7 +496,7 @@ main( int argc, char* argv[] ) {
 #endif
 
 		//apply mutation
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover (scorefxn, muttask) );
+		protocols::minimization_packing::PackRotamersMoverOP packrot_mover( new protocols::minimization_packing::PackRotamersMover (scorefxn, muttask) );
 		packrot_mover->apply ( mut_pose );  //makes the passed in mutation
 
 
@@ -544,9 +544,9 @@ main( int argc, char* argv[] ) {
 		////////////////////////////////////////////////////////
 
 		//first do minimization mover making
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
-		protocols::simple_moves::MinMoverOP min_mover_sc = new protocols::simple_moves::MinMover( movemap_sc, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
-		protocols::simple_moves::MinMoverOP min_mover_split = new protocols::simple_moves::MinMover( movemap_split, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+		protocols::minimization_packing::MinMoverOP min_mover_sc = new protocols::minimization_packing::MinMover( movemap_sc, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+		protocols::minimization_packing::MinMoverOP min_mover_split = new protocols::minimization_packing::MinMover( movemap_split, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
 
 		TR << "Minimizing with: " << option[ OptionKeys::run::min_type ].value() << "." << std::endl;
 		//make vectors to hold repacked poses

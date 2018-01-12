@@ -46,10 +46,10 @@
 // Mover headers
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMOLMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
-#include <protocols/simple_moves/oop/OopMover.hh>
+#include <protocols/ncbb/oop/OopMover.hh>
 
 //Basic headers
 #include <basic/resource_manager/ResourceManager.hh>
@@ -265,7 +265,7 @@ LDConverterMover::apply(
 
 
 		// create a pack rotamers mover
-		simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
+		minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );
 		packer->task_factory( tf );
 		packer->score_function( score_fxn );
 
@@ -304,7 +304,7 @@ LDConverterMover::apply(
 		mm->set_jump( 1, true );
 
 		// create minimization mover
-		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+		minimization_packing::MinMoverOP minM( new protocols::minimization_packing::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 		//kdrew: only turn on pymol observer in debug mode
 		//#ifndef NDEBUG

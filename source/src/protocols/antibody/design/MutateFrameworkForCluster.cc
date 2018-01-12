@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
@@ -410,7 +410,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 	turn_off_design.apply(pose, *task);
 	turn_off_packing.apply(pose, *task);
 
-	simple_moves::PackRotamersMover packer = simple_moves::PackRotamersMover(scorefxn_, task);
+	minimization_packing::PackRotamersMover packer = minimization_packing::PackRotamersMover(scorefxn_, task);
 	packer.apply(pose);
 
 }

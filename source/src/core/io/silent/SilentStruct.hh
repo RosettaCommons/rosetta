@@ -15,7 +15,7 @@
 #ifndef INCLUDED_core_io_silent_SilentStruct_hh
 #define INCLUDED_core_io_silent_SilentStruct_hh
 
-#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
 
 // unit headers
 #include <core/io/silent/silent.fwd.hh>

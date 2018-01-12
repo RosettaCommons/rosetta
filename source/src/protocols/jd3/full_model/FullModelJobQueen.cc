@@ -137,7 +137,7 @@ FullModelJobQueen::FullModelJobQueen() :
 	core::scoring::list_read_options_in_get_score_function( opts );
 	core::pack::task::PackerTask::list_options_read( opts );
 	core::pack::task::operation::ReadResfile::list_options_read( opts );
-	protocols::simple_moves::PackRotamersMover::list_options_read( opts );
+	protocols::minimization_packing::PackRotamersMover::list_options_read( opts );
 	add_options( opts );
 	add_option( basic::options::OptionKeys::minimize_sidechains );
 	add_option( basic::options::OptionKeys::min_pack );

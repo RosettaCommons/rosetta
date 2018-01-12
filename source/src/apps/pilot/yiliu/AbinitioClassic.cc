@@ -106,7 +106,7 @@
 
 #include <protocols/abinitio/KinematicTaskControl.hh>
 
-//#include <protocols/simple_moves/MinMover.hh>
+//#include <protocols/minimization_packing/MinMover.hh>
 
 //numeric headers
 #include <numeric/random/random.hh>

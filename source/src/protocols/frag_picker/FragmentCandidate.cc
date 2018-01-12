@@ -54,7 +54,7 @@
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 
 // Utility
@@ -283,7 +283,7 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, st
 		taskstd->restrict_to_repacking();
 		taskstd->or_include_current(true);
 		taskstd->restrict_to_residues( needToRepack );
-		protocols::simple_moves::PackRotamersMover pack1( sfxn, taskstd );
+		protocols::minimization_packing::PackRotamersMover pack1( sfxn, taskstd );
 		pack1.apply( relax_pose );
 
 		// quick SC minimization

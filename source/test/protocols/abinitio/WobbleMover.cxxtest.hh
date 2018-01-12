@@ -98,7 +98,7 @@ void WobbleMoverTest::test_wobble() {
 #if 0
 	kinematics::MoveMapOP hardly_moves( new kinematics::MoveMap );
 	hardly_moves->set_bb( pose_.size(), true );
-	protocols::simple_moves::MinMover minimize(
+	protocols::minimization_packing::MinMover minimize(
 		hardly_moves,
 		get_score_function(),
 		"dfpmin",

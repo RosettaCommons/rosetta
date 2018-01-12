@@ -50,15 +50,15 @@ using namespace ObjexxFCL::format;
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <core/io/raw_data/ScoreMap.hh>
@@ -989,7 +989,7 @@ ubi_e2c_modeler::initial_cter_perturbation(
 
 	shear_mover->angle_max( 90.0 );
 
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover ( ub_cter_map, lowres_cst_scorefxn_,
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover ( ub_cter_map, lowres_cst_scorefxn_,
 		"linmin", min_tolerance_, nb_list_, false, false ) );
 
 	perturb_min_cter->add_mover( small_mover );
@@ -1417,7 +1417,7 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 			temperature_, 5 /*n_moves*/ ) );
 		shear_mover->angle_max( 90.0 );
 
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(flex_cter_map_, lowres_cst_scorefxn_,
+		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover(flex_cter_map_, lowres_cst_scorefxn_,
 			"linmin", min_tolerance_, nb_list_, false /*deriv_check*/,
 			false /* non verbose-deriv-check, default*/ ) );
 
@@ -1510,7 +1510,7 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 
 	SequenceMoverOP fullatom_optimizer( new SequenceMover() ); // **MAIN**
 
-	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
+	protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::PackRotamersMover(
 		pack_scorefxn_ ) );
 	pack_interface_repack->task_factory(tf_);
 
@@ -1518,18 +1518,18 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 	//pack_interface_repack->apply( pose_in );
 
 	//set up minimizer movers
-	protocols::simple_moves::MinMoverOP k48r_dock_min_mover( new protocols::simple_moves::MinMover( k48r_docking_map_,
+	protocols::minimization_packing::MinMoverOP k48r_dock_min_mover( new protocols::minimization_packing::MinMover( k48r_docking_map_,
 		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
-	protocols::simple_moves::MinMoverOP d77_dock_min_mover( new protocols::simple_moves::MinMover( d77_docking_map_,
+	protocols::minimization_packing::MinMoverOP d77_dock_min_mover( new protocols::minimization_packing::MinMover( d77_docking_map_,
 		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
-	protocols::simple_moves::MinMoverOP dock_min_mover( new protocols::simple_moves::MinMover( docking_map_,
+	protocols::minimization_packing::MinMoverOP dock_min_mover( new protocols::minimization_packing::MinMover( docking_map_,
 		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
-	protocols::simple_moves::MinMoverOP flex_cter_min_mover( new protocols::simple_moves::MinMover( flex_cter_map_,
+	protocols::minimization_packing::MinMoverOP flex_cter_min_mover( new protocols::minimization_packing::MinMover( flex_cter_map_,
 		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
-	protocols::simple_moves::MinMoverOP all_dof_min_mover( new protocols::simple_moves::MinMover( all_dof_map_,
+	protocols::minimization_packing::MinMoverOP all_dof_min_mover( new protocols::minimization_packing::MinMover( all_dof_map_,
 		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
-	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover(
+	protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin( new protocols::minimization_packing::RotamerTrialsMinMover(
 		pack_scorefxn_, tf_ ) );
 
 	// set up rigid body movers
@@ -1542,7 +1542,7 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 		e2_d77_jump_, rot_magnitude, trans_magnitude, rigid::partner_downstream,
 		true ) );
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 		pack_scorefxn_, tf_ ) );
 
 	MonteCarloOP mc;
@@ -1685,7 +1685,7 @@ ubi_e2c_modeler::initial_repack(
 	setup_packer_task( pose_in );
 	// restrict_to_interfacial_loop_packing( pose_in );
 
-	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
+	protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::PackRotamersMover(
 		pack_scorefxn_ ) );
 	pack_interface_repack->task_factory(tf_);
 	TrialMoverOP pack_interface_and_loops_trial( new TrialMover(
@@ -2193,7 +2193,7 @@ ubi_e2c_modeler::evaluate_native( pose::Pose & pose_in ) {
 	TR << "Native Pack Score    : " << score << std::endl;
 
 	setup_packer_task( pose_in );
-	protocols::simple_moves::PackRotamersMoverOP repack( new protocols::simple_moves::PackRotamersMover( pack_score ) );
+	protocols::minimization_packing::PackRotamersMoverOP repack( new protocols::minimization_packing::PackRotamersMover( pack_score ) );
 	repack->task_factory( tf_ );
 	repack->apply( pose_in );
 
@@ -2247,14 +2247,14 @@ ubi_e2c_modeler::optimize_cov_bond(
 
 	setup_packer_task( pose_in );
 
-	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover( pack_cst_scorefxn_ ) );
+	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover( pack_cst_scorefxn_ ) );
 	packer->task_factory(tf_);
 
 	//set up minimizer
-	protocols::simple_moves::MinMoverOP flex_cter_min_mover( new protocols::simple_moves::MinMover( flex_cter_map_,
+	protocols::minimization_packing::MinMoverOP flex_cter_min_mover( new protocols::minimization_packing::MinMover( flex_cter_map_,
 		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 		pack_cst_scorefxn_, tf_ ) );
 
 	flex_cter_min_mover->apply( pose_in ); // **REAL** MINIMIZE C TER
@@ -2686,7 +2686,7 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 
 	shear_mover->angle_max( 90.0 );
 
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover ( ub_cter_map, lowres_cst_scorefxn_,
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover ( ub_cter_map, lowres_cst_scorefxn_,
 		"linmin", min_tolerance_, nb_list_, false, false ) );
 
 	perturb_min_cter->add_mover( small_mover );
@@ -2831,7 +2831,7 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 			temperature_, 5 /*n_moves*/ ) );
 		shear_mover->angle_max( 90.0 );
 
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
+		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( monoub_flex_cter_map_,
 			lowres_cst_scorefxn_, "linmin", min_tolerance_, nb_list_,
 			false /*deriv_check*/,false /* non verbose-deriv-check,default*/) );
 
@@ -2899,19 +2899,19 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 
 	SequenceMoverOP fullatom_optimizer( new SequenceMover() ); // **MAIN**
 
-	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
+	protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::PackRotamersMover(
 		pack_scorefxn_ ) );
 	pack_interface_repack->task_factory(tf_);
 
 	//set up minimizer movers
-	protocols::simple_moves::MinMoverOP monoub_dock_min_mover( new protocols::simple_moves::MinMover( monoub_docking_map_,
+	protocols::minimization_packing::MinMoverOP monoub_dock_min_mover( new protocols::minimization_packing::MinMover( monoub_docking_map_,
 		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
-	protocols::simple_moves::MinMoverOP flex_cter_min_mover( new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
+	protocols::minimization_packing::MinMoverOP flex_cter_min_mover( new protocols::minimization_packing::MinMover( monoub_flex_cter_map_,
 		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
-	protocols::simple_moves::MinMoverOP all_dof_min_mover( new protocols::simple_moves::MinMover( monoub_all_dof_map_,
+	protocols::minimization_packing::MinMoverOP all_dof_min_mover( new protocols::minimization_packing::MinMover( monoub_all_dof_map_,
 		dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
-	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover(
+	protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin( new protocols::minimization_packing::RotamerTrialsMinMover(
 		pack_scorefxn_, tf_ ) );
 
 	// set up rigid body movers
@@ -2920,7 +2920,7 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 	rigid::RigidBodyPerturbMoverOP monoub_perturb( new rigid::RigidBodyPerturbMover(
 		1, rot_magnitude, trans_magnitude , rigid::partner_downstream,
 		true ) );
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 		pack_scorefxn_, tf_ ) );
 
 	MonteCarloOP mc;

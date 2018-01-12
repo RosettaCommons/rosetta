@@ -15,9 +15,9 @@
 #include <protocols/protein_interface_design/movers/RandomMutation.hh>
 #include <protocols/protein_interface_design/movers/RandomMutationCreator.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -139,11 +139,11 @@ RandomMutation::apply( core::pose::Pose & pose )
 		}
 	}
 	TR<<"Mutating residue "<<pose.residue( random_entry ).name3()<<random_entry<<" to ";
-	protocols::simple_moves::PackRotamersMoverOP pack;
+	protocols::minimization_packing::PackRotamersMoverOP pack;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
+		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
 	} else {
-		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue ) );
+		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
 	}
 	pack->apply( pose );
 	TR<<pose.residue( random_entry ).name3()<<std::endl;

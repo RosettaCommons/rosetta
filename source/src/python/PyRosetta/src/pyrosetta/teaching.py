@@ -14,6 +14,7 @@ from rosetta.core.scoring import *
 
 from rosetta.protocols.moves import *
 from rosetta.protocols.simple_moves import *
+from rosetta.protocols.minimization_packing import *
 
 from rosetta.protocols.loops import *
 from rosetta.protocols.docking import *

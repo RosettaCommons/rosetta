@@ -44,7 +44,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
@@ -147,7 +147,7 @@ int main ( int argc, char* argv[] )
 		//make a minmover, let it min everything
 		kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 		movemap->set_bb( true);
-		protocols::simple_moves::MinMover minmover( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );//"dfpmin_strong_wolfe", 0.0001, true );
+		protocols::minimization_packing::MinMover minmover( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );//"dfpmin_strong_wolfe", 0.0001, true );
 
 		// iterate over possible sets of bond angles, test them all! Record the best.
 

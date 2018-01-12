@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/simple_moves/oop/OopPuckMover.cxxtest.hh
+/// @file   protocols/ncbb/oop/OopPuckMover.cxxtest.hh
 /// @brief  test suite for protocols::simple_moves::oop::OopPuckMover.cc
 /// @author Kevin Drew
 
@@ -25,8 +25,8 @@
 #include <core/types.hh>
 
 // Unit headers
-#include <protocols/simple_moves/oop/OopPuckMover.hh>
-#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
+#include <protocols/ncbb/oop/OopPuckMover.hh>
+#include <protocols/ncbb/oop/OopRandomSmallMover.hh>
 
 // Package headers
 #include <core/io/pdb/pdb_writer.hh>

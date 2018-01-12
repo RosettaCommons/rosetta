@@ -50,11 +50,11 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-//#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
+//#include <protocols/ncbb/hbs/HbsRandomSmallMover.hh>
+#include <protocols/ncbb/hbs/HbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -276,7 +276,7 @@ HbsCreatorMover::apply(
 	//mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP littlemin( new protocols::simple_moves::MinMover( littlemm, score_fxn, option[ OptionKeys::run::min_type ].value(), 1, true ) );
+	minimization_packing::MinMoverOP littlemin( new protocols::minimization_packing::MinMover( littlemm, score_fxn, option[ OptionKeys::run::min_type ].value(), 1, true ) );
 
 	littlemin->apply( pose );
 
@@ -338,7 +338,7 @@ HbsCreatorMover::apply(
 
 
 		// create a pack rotamers mover
-		simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
+		minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );
 		packer->task_factory( tf );
 		packer->score_function( score_fxn );
 
@@ -370,7 +370,7 @@ HbsCreatorMover::apply(
 		score_fxn->set_weight( angle_constraint, 0.5 );
 
 		// create minimization mover
-		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+		minimization_packing::MinMoverOP minM( new protocols::minimization_packing::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		//minM->cartesian( true );
 		minM->apply( pose );
 

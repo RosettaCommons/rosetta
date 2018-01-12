@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/sequence/util.hh>
-//#include <protocols/simple_moves/ExtendedPoseMover.hh>
+//#include <protocols/pose_creation/ExtendedPoseMover.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -54,7 +54,7 @@ LargeNstructJobInputter::LargeNstructJobInputter() {
 /// that pose to the Job. If the pose pre-exists it just copies the COP's pose
 /// into it.
 void LargeNstructJobInputter::pose_from_job( core::pose::Pose& pose, protocols::jd2::JobOP job) {
-	//using protocols::simple_moves::ExtendedPoseMover;
+	//using protocols::pose_creation::ExtendedPoseMover;
 	using std::string;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

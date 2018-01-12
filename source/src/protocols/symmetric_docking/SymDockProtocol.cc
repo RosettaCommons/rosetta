@@ -54,7 +54,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/util.hh>
 
@@ -587,12 +587,12 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 	//tf->push_back( new SymRestrictTaskForDocking( docking_score_pack_, true, 1000 ) );
 	tf->push_back( TaskOperationCOP( new RestrictToInterface( 1 ) ) );
 
-	protocols::simple_moves::PackRotamersMoverOP dock_pack( new protocols::simple_moves::symmetry::SymPackRotamersMover(docking_score_pack_) );
+	protocols::minimization_packing::PackRotamersMoverOP dock_pack( new protocols::minimization_packing::symmetry::SymPackRotamersMover(docking_score_pack_) );
 	dock_pack->task_factory( tf );
 	dock_pack->apply( pose );
 
 	if ( rtmin_ ) {
-		//  protocols::simple_moves::RotamerTrialsMinMoverOP rtmin_trial = new protocols::simple_moves::RotamerTrialsMinMover( docking_score_pack_, tf);
+		//  protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin_trial = new protocols::minimization_packing::RotamerTrialsMinMover( docking_score_pack_, tf);
 		//  rtmin_trial->apply( pose );
 	}
 	if ( basic::options::option[ basic::options::OptionKeys::docking::sc_min ]() ) {

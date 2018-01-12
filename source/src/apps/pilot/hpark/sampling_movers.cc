@@ -288,7 +288,7 @@ test_loophash( pose::Pose const pose,
       mm = get_movemap( false );
     }
 
-    protocols::simple_moves::PackRotamersMoverOP packer = setup_packer( pose, *mm, sfxn );
+    protocols::minimization_packing::PackRotamersMoverOP packer = setup_packer( pose, *mm, sfxn );
 
     // Store
     pose::Pose pose_tmp;

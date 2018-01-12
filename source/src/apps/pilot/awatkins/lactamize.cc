@@ -65,8 +65,8 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/CyclizationMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
@@ -454,7 +454,7 @@ main( int argc, char* argv[] )
 					pert_mm->set_chi( ii, true );
 				}
 			}
-			protocols::simple_moves::MinMoverOP min_mover( new simple_moves::MinMover( pert_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+			protocols::minimization_packing::MinMoverOP min_mover( new minimization_packing::MinMover( pert_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 			min_mover->cartesian( score_fxn->get_weight( cart_bonded )  > 0 );
 
 			// neighbor graph

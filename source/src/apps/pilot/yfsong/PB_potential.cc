@@ -37,7 +37,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // utility
 #include <ObjexxFCL/format.hh>

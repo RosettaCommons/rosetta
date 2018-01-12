@@ -233,7 +233,7 @@ def sample_single_loop_modeling(pdb_filename,
     task_pack = core.pack.task.TaskFactory.create_packer_task(starting_p)
     task_pack.restrict_to_repacking()    # prevents design, packing only
     task_pack.or_include_current(True)    # considers original sidechains
-    pack = protocols.simple_moves.PackRotamersMover(scorefxn_high, task_pack)
+    pack = protocols.minimization_packing.PackRotamersMover(scorefxn_high, task_pack)
 
     # 11. setup the high resolution refinement
     # by creating a Loops object,

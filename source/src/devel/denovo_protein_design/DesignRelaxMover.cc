@@ -39,7 +39,7 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
@@ -127,7 +127,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 		// by default the designfxn_ will be soft
 		// convert taskfactory into PackerTaskOP
 		core::pack::task::PackerTaskOP designtask = designtaskfactory_->create_task_and_apply_taskoperations( pose );
-		protocols::simple_moves::PackRotamersMover design_step( designfxn_, designtask );
+		protocols::minimization_packing::PackRotamersMover design_step( designfxn_, designtask );
 		design_step.apply( pose );
 
 		if ( debug ) {

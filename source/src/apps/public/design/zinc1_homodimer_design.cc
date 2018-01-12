@@ -20,7 +20,7 @@
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
@@ -45,9 +45,9 @@
 
 // Symmetry Headers
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/symmetry/util.hh>
 //Constraint Headers
@@ -496,11 +496,11 @@ private:
 	core::kinematics::MoveMapOP sc_move_map_;
 	core::kinematics::MoveMapOP sc_bb_move_map_;
 
-	protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
+	protocols::minimization_packing::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
 	protocols::simple_moves::symmetry::SymRotamerTrialsMoverOP sym_rottrials_mover_;
-	protocols::simple_moves::symmetry::SymMinMoverOP softrep_min_mover_;
-	protocols::simple_moves::symmetry::SymMinMoverOP sc_min_mover_;
-	protocols::simple_moves::symmetry::SymMinMoverOP sc_bb_min_mover_;
+	protocols::minimization_packing::symmetry::SymMinMoverOP softrep_min_mover_;
+	protocols::minimization_packing::symmetry::SymMinMoverOP sc_min_mover_;
+	protocols::minimization_packing::symmetry::SymMinMoverOP sc_bb_min_mover_;
 	protocols::moves::MonteCarloOP mc_;
 	protocols::anchored_design::InterfaceAnalyzerMoverOP interface_analyzer_;
 

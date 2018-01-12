@@ -20,7 +20,7 @@
 #define INCLUDED_core_scoring_membrane_MPPairEnergy_hh
 
 // Unit Headers
-#include <core/scoring/membrane/MPPairEnergy.hh>
+//#include <core/scoring/membrane/MPPairEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>

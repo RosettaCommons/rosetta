@@ -22,7 +22,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.fwd.hh>
 
@@ -171,7 +171,7 @@ private:
 	//Originally NOT Owning pointers!
 	protocols::simple_moves::SmallMoverOP smallmover_;
 	protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechainmover_;
-	protocols::simple_moves::PackRotamersMoverOP packrotamersmover_;
+	protocols::minimization_packing::PackRotamersMoverOP packrotamersmover_;
 
 private:
 	//New

@@ -35,7 +35,7 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 
 #include <core/types.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -44,8 +44,8 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
 
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
@@ -188,7 +188,7 @@ public:
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::minimization_packing::PackRotamersMoverOP packrot_mover = new protocols::minimization_packing::PackRotamersMover;
 		packrot_mover->score_function( scorefxn );
 		packrot_mover->task_factory( task_factory );
 

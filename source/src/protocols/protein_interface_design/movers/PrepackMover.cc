@@ -25,8 +25,8 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
@@ -35,7 +35,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/options/option.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -80,7 +80,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.PrepackMover
 // XRW TEMP }
 
 PrepackMover::PrepackMover() :
-	protocols::simple_moves::PackRotamersMover( PrepackMover::mover_name() ),
+	protocols::minimization_packing::PackRotamersMover( PrepackMover::mover_name() ),
 	scorefxn_( /* NULL */ ),
 	jump_num_( 0 ),
 	min_bb_( false ),
@@ -91,7 +91,7 @@ PrepackMover::PrepackMover(
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::Size jump_num
 ) :
-	protocols::simple_moves::PackRotamersMover( PrepackMover::mover_name() ),
+	protocols::minimization_packing::PackRotamersMover( PrepackMover::mover_name() ),
 	scorefxn_(std::move( scorefxn )),
 	jump_num_( jump_num )
 {}
@@ -155,7 +155,7 @@ void PrepackMover::apply( pose::Pose & pose )
 			if ( pose.residue(i).type().is_disulfide_bonded() ) mm_general->set_chi( i, false );
 		}
 
-		protocols::simple_moves::MinMover min_bb_mover( mm_general, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
+		protocols::minimization_packing::MinMover min_bb_mover( mm_general, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
 		min_bb_mover.apply( pose );
 	} else {
 		mm_general = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
@@ -172,15 +172,15 @@ void PrepackMover::apply( pose::Pose & pose )
 	}
 	mm_general->set_bb( false );
 	mm_general->set_jump( false );
-	protocols::simple_moves::MinMover min_mover( mm_general, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
+	protocols::minimization_packing::MinMover min_mover( mm_general, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
 	// pre-minimize sidechains
 	min_mover.apply( pose );
 
 	if ( basic::options::option[basic::options::OptionKeys::docking::dock_rtmin].user() ) {
-		protocols::simple_moves::RotamerTrialsMinMover rtmin( scorefxn_, tf );
+		protocols::minimization_packing::RotamerTrialsMinMover rtmin( scorefxn_, tf );
 		rtmin.apply( pose );
 	} else {
-		protocols::simple_moves::PackRotamersMover pack( scorefxn_, task );
+		protocols::minimization_packing::PackRotamersMover pack( scorefxn_, task );
 		pack.apply( pose );
 	}
 

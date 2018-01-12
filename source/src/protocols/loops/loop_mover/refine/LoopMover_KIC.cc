@@ -40,7 +40,7 @@
 #include <core/kinematics/MoveMap.hh>
 //#include <core/optimization/AtomTreeMinimizer.hh>
 //#include <core/optimization/MinimizerOptions.hh>
-#include <protocols/simple_moves/MinMover.hh> // AS FEb 6, 2013 -- rerouting minimization to include cartmin
+#include <protocols/minimization_packing/MinMover.hh> // AS FEb 6, 2013 -- rerouting minimization to include cartmin
 
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
@@ -50,7 +50,7 @@
 #include <core/pose/symmetry/util.hh>
 
 //#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -296,16 +296,16 @@ void LoopMover_Refine_KIC::apply(
 	protocols::moves::MonteCarlo mc( pose, *local_scorefxn, temperature );
 
 	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which allows seamless integration of cartesian minimization
-	protocols::simple_moves::MinMoverOP min_mover;
+	protocols::minimization_packing::MinMoverOP min_mover;
 
 	const std::string min_type = "lbfgs_armijo_nonmonotone";
 	core::Real dummy_tol( 0.001 );
 	bool use_nblist( true ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 	if ( use_cartmin ) runtime_assert( min_scorefxn->get_weight( core::scoring::cart_bonded ) > 1e-3 );
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		min_mover = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover() );
+		min_mover = protocols::minimization_packing::MinMoverOP( new minimization_packing::symmetry::SymMinMover() );
 	} else {
-		min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover() );
+		min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover() );
 	}
 	min_mover->score_function( min_scorefxn );
 	min_mover->min_type( min_type );

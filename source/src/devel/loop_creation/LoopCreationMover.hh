@@ -24,8 +24,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <devel/loop_creation/LoopCloser.fwd.hh>
 #include <devel/loop_creation/LoopInserter.fwd.hh>

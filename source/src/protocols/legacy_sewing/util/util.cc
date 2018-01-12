@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/analysis/LoopAnalyzerMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>

@@ -45,7 +45,7 @@
 // C++ headers
 #include <protocols/ddg/ddGMover.hh>
 #include <protocols/scoring/Interface.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
@@ -443,7 +443,7 @@ main( int argc, char * argv [] )
 						packer_task->nonconst_residue_task(j).prevent_repacking();
 					}
 				}
-				protocols::simple_moves::PackRotamersMoverOP packer(new protocols::simple_moves::PackRotamersMover( score_fxn, packer_task ));
+				protocols::minimization_packing::PackRotamersMoverOP packer(new protocols::minimization_packing::PackRotamersMover( score_fxn, packer_task ));
 				packer->apply(work_pose);
 			}
 

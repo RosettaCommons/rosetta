@@ -62,14 +62,14 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -296,7 +296,7 @@ A3BPeptideBuilder::apply(
 		desn_mm->set( bb3, false ); // needed for mm_std, which has no omega tether
 	}
 	desn_mm->set_chi( true );
-	protocols::simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+	protocols::minimization_packing::MinMoverOP desn_min( new minimization_packing::MinMover( desn_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 
 	std::cout << "Dump initial" << std::endl;
 	pose.dump_scored_pdb( "B3A_initial.pdb", *scorefxn);
@@ -330,8 +330,8 @@ A3BPeptideBuilder::apply(
 	TaskFactoryOP desn_tf( new TaskFactory() );
 	desn_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
-	using protocols::simple_moves::TaskAwareMinMoverOP;
-	using protocols::simple_moves::TaskAwareMinMover;
+	using protocols::minimization_packing::TaskAwareMinMoverOP;
+	using protocols::minimization_packing::TaskAwareMinMover;
 	TaskAwareMinMoverOP desn_ta_min( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
@@ -353,7 +353,7 @@ A3BPeptideBuilder::apply(
 			task->nonconst_residue_task(i).initialize_from_command_line();
 		}
 		// create a pack rotamers mover
-		simple_moves::PackRotamersMoverOP desn_pr( new simple_moves::PackRotamersMover(scorefxn, task) );
+		minimization_packing::PackRotamersMoverOP desn_pr( new minimization_packing::PackRotamersMover(scorefxn, task) );
 		moves::SequenceMoverOP desn_sequence( new moves::SequenceMover() );
 		desn_sequence->add_mover( desn_pr );
 		desn_sequence->add_mover( desn_ta_min );

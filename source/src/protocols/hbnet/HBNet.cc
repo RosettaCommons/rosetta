@@ -98,15 +98,15 @@
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 //#include <protocols/scoring/Interface.hh>
-#include <protocols/simple_moves/MakePolyXMover.hh>
+#include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd2/util.hh>
 // XSD XRW Includes
@@ -1180,12 +1180,12 @@ HBNet::minimize_network( Pose & pose, hbond_net_struct & network, bool residues_
 		mm->set_chi( (*rit)->resnum, true );
 	}
 	// TODO NEED TO ADD CODE HERE FOR BRIDGING_WATER CASE; NEED TO CHECK RESIDUE NUMBERS OF NETWORK RESIDUES AFTER WATER
-	simple_moves::MinMoverOP min_mover;
+	protocols::minimization_packing::MinMoverOP min_mover;
 	if ( symmetric_ ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
-		min_mover = pointer::make_shared< simple_moves::symmetry::SymMinMover >( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.0001, true );
+		min_mover = pointer::make_shared< minimization_packing::symmetry::SymMinMover >( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.0001, true );
 	} else {
-		min_mover = pointer::make_shared< simple_moves::MinMover >( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.0001, true );
+		min_mover = pointer::make_shared< minimization_packing::MinMover >( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.0001, true );
 	}
 	min_mover->apply(pose);
 	pose.update_residue_neighbors();

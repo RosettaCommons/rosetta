@@ -32,13 +32,13 @@
 // #include <utility/excn/Exceptions.hh>
 
 // #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 // #include <protocols/moves/MonteCarlo.hh>
 // #include <protocols/moves/Mover.hh>
-// #include <protocols/simple_moves/PackRotamersMover.hh>
+// #include <protocols/minimization_packing/PackRotamersMover.hh>
 // #include <protocols/moves/MoverContainer.hh>
 // #include <protocols/moves/OutputMovers.hh>
-// #include <protocols/simple_moves/RotamerTrialsMover.hh>
+// #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 // #include <protocols/rigid/RigidBodyMover.hh>
 // //#include <protocols/moves/rigid_body_moves.hh>
 // #include <protocols/moves/TrialMover.hh>
@@ -314,8 +314,8 @@ bk_test()
 
 		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
 		movemap->set_jump(1,true);
-		protocols::simple_moves::symmetry::SymMinMoverOP min_mover
-			( new protocols::simple_moves::symmetry::SymMinMover(movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.00001, true ) );
+		protocols::minimization_packing::symmetry::SymMinMoverOP min_mover
+			( new protocols::minimization_packing::symmetry::SymMinMover(movemap, scorefxn, "lbfgs_armijo_nonmonotone", 0.00001, true ) );
 
 		min_mover->apply( dimer );
 		dimer.dump_pdb("dimer_aftermin.pdb");

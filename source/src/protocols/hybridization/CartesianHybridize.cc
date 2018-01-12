@@ -22,7 +22,7 @@
 //#include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -90,7 +90,7 @@
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -466,10 +466,10 @@ CartesianHybridize::apply( Pose & pose ) {
 		residue_sample_abinitio_.resize(nres_nonvirt, true);
 	}
 
-	simple_moves::PackRotamersMoverOP pack_rotamers;
+	minimization_packing::PackRotamersMoverOP pack_rotamers;
 
 	if ( cenrot_ ) {
-		pack_rotamers = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+		pack_rotamers = minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
 		TaskFactoryOP main_task_factory( new TaskFactory );
 		main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
 		pack_rotamers->task_factory( main_task_factory );

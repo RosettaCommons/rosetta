@@ -56,7 +56,7 @@
 #include <core/chemical/util.hh>
 #include <core/util/disulfide_util.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -167,7 +167,7 @@ main( int argc, char * argv [] )
 		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 		movemap->set_bb(true);
 		movemap->set_chi(true);
-		protocols::simple_moves::MinMover minimizer(movemap, scorefxn, "lbfgs_armijo_atol", 0.01, true /*nb_list*/);
+		protocols::minimization_packing::MinMover minimizer(movemap, scorefxn, "lbfgs_armijo_atol", 0.01, true /*nb_list*/);
 		/////////////////////////////////////////////////////////////////////
 
 		//minimize pose

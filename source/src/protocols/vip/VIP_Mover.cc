@@ -35,9 +35,9 @@
 #include <protocols/relax/MiniRelax.hh>
 #include <protocols/relax/ClassicRelax.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/AddCavitiesMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 
 #include <iostream>
@@ -110,7 +110,7 @@ void VIP_Mover::minimize_conformation(){
 	movemap->set_jump(false);
 	movemap->set_chi(true);
 	movemap->set_bb(true);
-	protocols::moves::MoverOP min_native( new protocols::simple_moves::MinMover( movemap, sf2, "lbfgs_armijo_nonmonotone", 1e-2, true ) );
+	protocols::moves::MoverOP min_native( new protocols::minimization_packing::MinMover( movemap, sf2, "lbfgs_armijo_nonmonotone", 1e-2, true ) );
 	min_native->apply( pose );
 	initial_pose = pose;
 }
@@ -253,7 +253,7 @@ void VIP_Mover::try_point_mutants(){
 				command->residue_action(*task,void_mutatables[aa]);
 			}
 		}
-		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover(score_fxn, task) );
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover(score_fxn, task) );
 		pack_mover->apply( pack_pose );
 		// Store this single residue
 		temp_residues.push_back( pack_pose.residue(temp_positions[aa]).clone() );

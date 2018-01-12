@@ -20,7 +20,7 @@
 #include <core/scoring/func/FlatHarmonicFunc.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -28,8 +28,8 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 // #include <protocols/moves/rigid_body_moves.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 
 #include <protocols/loops/ccd_closure.hh>
@@ -598,19 +598,19 @@ run_pep_prep()
 
 			pack::task::PackerTaskOP prepack_task( pack::task::TaskFactory::create_packer_task( pose ));
 			prepack_task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
-			protocols::simple_moves::PackRotamersMoverOP prepack_mover( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, prepack_task, 1 ) );
+			protocols::minimization_packing::PackRotamersMoverOP prepack_mover( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, prepack_task, 1 ) );
 			prepack_mover->apply( pose );
 
 			pack::task::TaskFactoryOP prepack_task_factory( new pack::task::TaskFactory );
 			prepack_task_factory->push_back( new pack::task::operation::InitializeFromCommandline() );
 			prepack_task_factory->push_back( new pack::task::operation::IncludeCurrent() );
 			prepack_task_factory->push_back( new pack::task::operation::RestrictToRepacking() );
-			protocols::simple_moves::RotamerTrialsMoverOP prepack_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, prepack_task_factory ) );
+			protocols::minimization_packing::RotamerTrialsMoverOP prepack_rottrial ( new protocols::minimization_packing::RotamerTrialsMover( soft_scorefxn, prepack_task_factory ) );
 			prepack_rottrial->apply( pose );
 
 			kinematics::MoveMapOP mm_prepack ( new kinematics::MoveMap );
 			mm_prepack->set_chi( true );
-			protocols::simple_moves::MinMoverOP prepack_min_mover = new protocols::simple_moves::MinMover( mm_prepack, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+			protocols::minimization_packing::MinMoverOP prepack_min_mover = new protocols::minimization_packing::MinMover( mm_prepack, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 			prepack_min_mover->apply( pose );
 
 			dump_pdb( pose, pdb_filename + ".prepack" );
@@ -1087,7 +1087,7 @@ run_pep_prep()
 				//mm_min->set_jump( pep_jump, true );
 				mm_min->set_chi( pep_anchor );
 				mm_min->set_chi( is_pep_nbr );
-				protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+				protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm_min, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 				min_mover->apply( pose );
 			}
 			mc_dock->boltzmann( pose );
@@ -1101,7 +1101,7 @@ run_pep_prep()
 				else if ( i == pep_anchor || is_pep_nbr[ i ] ) task->nonconst_residue_task( i ).restrict_to_repacking();
 				else task->nonconst_residue_task( i ).prevent_repacking();
 			}
-			protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, task, 1 ) );
+			protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, task, 1 ) );
 			packer->apply( pose );
 			( *scorefxn )( pose );
 
@@ -1110,7 +1110,7 @@ run_pep_prep()
 				//mm_min->set_jump( pep_jump, true );
 				mm_min->set_chi( pep_anchor );
 				mm_min->set_chi( is_pep_nbr );
-				protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+				protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm_min, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 				min_mover->apply( pose );
 			}
 			mc_dock->boltzmann( pose );

@@ -22,8 +22,8 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <basic/options/option.hh>
 //#include <basic/options/util.hh>
@@ -248,18 +248,18 @@ public:
 				using core::pack::task::operation::TaskOperationCOP;
 				core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
 				main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
-				using protocols::simple_moves::PackRotamersMoverOP;
-				using protocols::simple_moves::PackRotamersMover;
-				PackRotamersMoverOP pack_rotamers(new protocols::simple_moves::PackRotamersMover());
+				using protocols::minimization_packing::PackRotamersMoverOP;
+				using protocols::minimization_packing::PackRotamersMover;
+				PackRotamersMoverOP pack_rotamers(new protocols::minimization_packing::PackRotamersMover());
 				pack_rotamers->task_factory( main_task_factory );
 				pack_rotamers->score_function( score_fxn );
 				pack_rotamers->apply(pose);
 			} //skip all this if no residues!
 
 			//step 5: minimizing
-			using protocols::simple_moves::MinMoverOP;
-			using protocols::simple_moves::MinMover;
-			MinMoverOP min_mover(new protocols::simple_moves::MinMover());
+			using protocols::minimization_packing::MinMoverOP;
+			using protocols::minimization_packing::MinMover;
+			MinMoverOP min_mover(new protocols::minimization_packing::MinMover());
 			min_mover->score_function( score_fxn );
 			min_mover->apply(pose);
 		}//skip_pack_and_min

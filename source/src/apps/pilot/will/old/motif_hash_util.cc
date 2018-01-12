@@ -63,7 +63,7 @@
 #include <protocols/sic_dock/SICFast.hh>
 #include <protocols/sic_dock/util.hh>
 #include <protocols/sic_dock/read_biounit.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMover.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -893,7 +893,7 @@ Real harvest_time_refine(Pose & pose, core::scoring::ScoreFunction const & sf, s
 	for ( Real cart_wt = 0.1; cart_wt < 13.0; cart_wt *= 2.0 ) {
 		cout << "cart_min " << cart_wt << endl;
 		sfcart->set_weight(core::scoring::cart_bonded,cart_wt);
-		simple_moves::MinMoverOP minMover = new simple_moves::MinMover( mmap, sfcart, "lbfgs_armijo", 0.01, true );
+		minimization_packing::MinMoverOP minMover = new minimization_packing::MinMover( mmap, sfcart, "lbfgs_armijo", 0.01, true );
 		minMover->cartesian(true);
 		minMover->apply(pose);
 		sfcart->show(pose);
@@ -902,7 +902,7 @@ Real harvest_time_refine(Pose & pose, core::scoring::ScoreFunction const & sf, s
 	protocols::idealize::IdealizeMover().apply(pose);
 	{
 		sfcart->set_weight(core::scoring::cart_bonded,0.0);
-		simple_moves::MinMoverOP minMover = new simple_moves::MinMover( mmap, sfcart, "lbfgs_armijo", 0.01, true );
+		minimization_packing::MinMoverOP minMover = new minimization_packing::MinMover( mmap, sfcart, "lbfgs_armijo", 0.01, true );
 		minMover->cartesian(false);
 		minMover->apply(pose);
 		pose.dump_pdb(option[out::file::o]()+"/"+utility::file_basename(fname)+"_ideal.pdb");

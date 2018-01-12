@@ -45,7 +45,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperation.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 
 //#include <core/chemical/ResidueTypeSet.hh>
@@ -280,7 +280,7 @@ repack_connection_and_residues_in_movemap(
 	tf->push_back(mm_task_op);
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
-	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task) );
+	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover(fa_scorefxn, task) );
 	packer->apply(pose);
 }
 
@@ -311,7 +311,7 @@ repack_connection_and_residues_in_movemap_and_piece(
 	tf->push_back(mm_task_op);
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
-	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task) );
+	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover(fa_scorefxn, task) );
 	packer->apply(pose);
 }
 
@@ -343,7 +343,7 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	tf->push_back(mm_task_op);
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
-	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task) );
+	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover(fa_scorefxn, task) );
 	packer->apply(pose);
 }
 

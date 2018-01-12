@@ -52,7 +52,7 @@
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <sstream>
 #include <iostream>

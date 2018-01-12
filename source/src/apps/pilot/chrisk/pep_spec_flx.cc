@@ -23,7 +23,7 @@
 #include <core/scoring/methods/Methods.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -31,8 +31,8 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 // #include <protocols/moves/rigid_body_moves.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/backrub/BackrubMover.hh>
@@ -934,7 +934,7 @@ gen_pep_bb_sequential(
 			rp_task_factory->push_back( restrict_to_repack_taskop );
 			rp_task_factory->push_back( prevent_repack_taskop );
 			core::scoring::ScoreFunctionOP soft_scorefxn(  ScoreFunctionFactory::create_score_function( option[ pep_spec::soft_wts ] ) );
-			protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, rp_task_factory ) );
+			protocols::minimization_packing::RotamerTrialsMoverOP dz_rottrial ( new protocols::minimization_packing::RotamerTrialsMover( soft_scorefxn, rp_task_factory ) );
 			}
 			*/
 			if ( mc_frag->boltzmann( pose ) ) {
@@ -1199,7 +1199,7 @@ refine_fa_pep_bb(
 	rep_small_mover->angle_max( 'E', 1.0 );
 	rep_small_mover->angle_max( 'L', 1.0 );
 
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+	protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 	RandomMoverOP rand_mover( new protocols::moves::RandomMover() );
 	rand_mover->add_mover( rep_small_mover, 8 );
@@ -1250,7 +1250,7 @@ mutate_random_residue(
 		mut_task_factory->push_back( restrict_to_repack_taskop );
 		mut_task_factory->push_back( prevent_repack_taskop );
 	}
-	protocols::simple_moves::RotamerTrialsMoverOP mut_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, mut_task_factory ) );
+	protocols::minimization_packing::RotamerTrialsMoverOP mut_rottrial ( new protocols::minimization_packing::RotamerTrialsMover( soft_scorefxn, mut_task_factory ) );
 	mut_rottrial->apply( pose );
 
 	//get seqpos nbrs from energy map
@@ -1277,7 +1277,7 @@ mutate_random_residue(
 		rp_task_factory->push_back( restrict_to_repack_taskop );
 		rp_task_factory->push_back( prevent_repack_taskop );
 	}
-	protocols::simple_moves::RotamerTrialsMoverOP rp_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, rp_task_factory ) );
+	protocols::minimization_packing::RotamerTrialsMoverOP rp_rottrial ( new protocols::minimization_packing::RotamerTrialsMover( soft_scorefxn, rp_task_factory ) );
 	rp_rottrial->apply( pose );
 
 	/*
@@ -1297,7 +1297,7 @@ mutate_random_residue(
 	kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
 	if ( !option[ pep_spec::test_no_min ] ) mm_min->set_chi( seqpos );
 	if ( !option[ pep_spec::test_no_min ] ) mm_min->set_chi( is_nbr );
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+	protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 	min_mover->apply( pose );
 }
 
@@ -1312,12 +1312,12 @@ packmin_unbound_pep(
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().or_include_current( true );
 	task->restrict_to_repacking();
-	protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( full_scorefxn, task, 1 ) );
+	protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( full_scorefxn, task, 1 ) );
 	pack->apply( pose );
 	if ( !option[ pep_spec::test_no_min ] ) {
 		kinematics::MoveMapOP mm ( new kinematics::MoveMap );
 		mm->set_chi( true );
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 		min_mover->apply( pose );
 	}
 }
@@ -1765,7 +1765,7 @@ RunPepSpec()
 			if ( option[ pep_spec::constrain_pep_anchor ] ) mm_min->set_jump( 1, true );
 
 			//define movers//
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+			protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover( mm_min, full_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 			MonteCarloOP mc_relax ( new MonteCarlo( pose, *full_scorefxn, 1.0 ) );
 
@@ -1802,8 +1802,8 @@ RunPepSpec()
 					IGreweight->add_reweighter( upweighter );
 				}
 
-				protocols::simple_moves::PackRotamersMoverOP dz_pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, dz_task, 1 ) );
-				protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::EnergyCutRotamerTrialsMover( soft_scorefxn, dz_task_factory, mc_relax, 0.01 ) );
+				protocols::minimization_packing::PackRotamersMoverOP dz_pack( new protocols::minimization_packing::PackRotamersMover( soft_scorefxn, dz_task, 1 ) );
+				protocols::minimization_packing::RotamerTrialsMoverOP dz_rottrial ( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( soft_scorefxn, dz_task_factory, mc_relax, 0.01 ) );
 				SequenceMoverOP design_seq = new SequenceMover;
 				if ( !option[ pep_spec::test_no_pack ] ) {
 					design_seq->add_mover( dz_pack );
@@ -1828,8 +1828,8 @@ RunPepSpec()
 					IGreweight->add_reweighter( upweighter );
 				}
 
-				protocols::simple_moves::PackRotamersMoverOP dz_pack( new protocols::simple_moves::PackRotamersMover( full_scorefxn, dz_task, 1 ) );
-				protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::EnergyCutRotamerTrialsMover( full_scorefxn, dz_task_factory, mc_relax, 0.01 ) );
+				protocols::minimization_packing::PackRotamersMoverOP dz_pack( new protocols::minimization_packing::PackRotamersMover( full_scorefxn, dz_task, 1 ) );
+				protocols::minimization_packing::RotamerTrialsMoverOP dz_rottrial ( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( full_scorefxn, dz_task_factory, mc_relax, 0.01 ) );
 				SequenceMoverOP design_seq = new SequenceMover;
 				if ( !option[ pep_spec::test_no_pack ] ) {
 					design_seq->add_mover( dz_pack );
@@ -1872,7 +1872,7 @@ RunPepSpec()
 					backrub_mover->optimize_branch_angles( pose );
 				}
 				rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
-				//    protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::EnergyCutRotamerTrialsMover( full_scorefxn, dz_task_factory, mc_relax, 0.01 ) );
+				//    protocols::minimization_packing::RotamerTrialsMoverOP dz_rottrial ( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( full_scorefxn, dz_task_factory, mc_relax, 0.01 ) );
 				//random mover
 				RandomMoverOP rand_mover( new protocols::moves::RandomMover() );
 				//    rand_mover->add_mover( sidechain_mover, 2 );

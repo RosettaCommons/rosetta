@@ -25,9 +25,9 @@
 #include <devel/init.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/relax/ClassicRelax.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
@@ -194,7 +194,7 @@ public:
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			my_task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
-		protocols::simple_moves::PackRotamersMoverOP prepack_mover( new protocols::simple_moves::PackRotamersMover( score_fxn, my_task ) );
+		protocols::minimization_packing::PackRotamersMoverOP prepack_mover( new protocols::minimization_packing::PackRotamersMover( score_fxn, my_task ) );
 
 		(*score_fxn)(pose);
 		TR << " SCORE FOR " << pdbname << " BEFORE PREPACK " << (*score_fxn)(pose) << std::endl;
@@ -268,8 +268,8 @@ public:
 			//   scoring::ScoreFunctionOP score_fxn2( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
 			core::scoring::methods::pHEnergy::set_pH ( curr_pH );
 
-			//   protocols::simple_moves::RotamerTrialsMinMoverOP pack_mover( new protocols::simple_moves::RotamerTrialsMinMover( score_fxn, *task ) );
-			protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( score_fxn, task ) );
+			//   protocols::minimization_packing::RotamerTrialsMinMoverOP pack_mover( new protocols::minimization_packing::RotamerTrialsMinMover( score_fxn, *task ) );
+			protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover( score_fxn, task ) );
 			pack_mover->apply(curr_pose_);
 
 			(*score_fxn)(curr_pose_);

@@ -88,8 +88,8 @@
 #include <protocols/moves/RampingMover.hh>
 
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
@@ -502,7 +502,7 @@ void ZNCoordinationConstraintPlacerMover::mutate_the_interface_to_alanine( core:
 	core::scoring::ScoreFunctionOP fa_sfxn = core::scoring::get_score_function();
 	(*fa_sfxn)( p );
 
-	protocols::simple_moves::symmetry::SymPackRotamersMover sympack;
+	protocols::minimization_packing::symmetry::SymPackRotamersMover sympack;
 	mutate_interface_residues_to_alanine_task_ = core::pack::task::TaskFactory::create_packer_task( p );
 	core::pack::make_symmetric_PackerTask_by_truncation( p, mutate_interface_residues_to_alanine_task_ );
 	protocols::toolbox::task_operations::RestrictToInterface rti_taskop;
@@ -753,7 +753,7 @@ ZNCoordinationConstraintPlacerMover::minimize_zinc_coordination( core::pose::Pos
 	mm->set_chi( m1_.res2(), true );
 	mm->set_chi( m2_.res1(), true );
 	mm->set_chi( m2_.res2(), true );
-	protocols::simple_moves::symmetry::SymMinMoverOP symminmover( new protocols::simple_moves::symmetry::SymMinMover( mm, fa_sfxn, "lbfgs_armijo_nonmonotone", 1e-4, true ) );
+	protocols::minimization_packing::symmetry::SymMinMoverOP symminmover( new protocols::minimization_packing::symmetry::SymMinMover( mm, fa_sfxn, "lbfgs_armijo_nonmonotone", 1e-4, true ) );
 
 	core::scoring::EnergyMap start_weights = fa_sfxn->weights();
 	core::scoring::EnergyMap end_weights = start_weights;

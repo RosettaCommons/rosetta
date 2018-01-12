@@ -26,11 +26,11 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <protocols/viewer/viewers.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/DME_FilterMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -1326,10 +1326,10 @@ capri15_relax(
 	// setup movers:
 
 	// packmover
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scorefxn, pack_task, 25 ) );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover( scorefxn, pack_task, 25 ) );
 
 	// min mover
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone_atol", min_atol, true ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone_atol", min_atol, true ) );
 
 	// rb mover
 	MoverOP sam_mover( new protocols::simple_moves::DME_FilterMover( new RB_Mover( mm, trans_mag, rot_mag ), dme_threshold, max_tries ) );
@@ -1341,8 +1341,8 @@ capri15_relax(
 	MoverOP small_mover( new protocols::simple_moves::SmallMover( mm, small_mover_temperature, small_mover_nmoves ) );
 
 	// rotamer trials w/ energycut
-	protocols::simple_moves::EnergyCutRotamerTrialsMoverOP rottrial_mover
-		( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *rottrial_task, mc, energycut ) );
+	protocols::minimization_packing::EnergyCutRotamerTrialsMoverOP rottrial_mover
+		( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( scorefxn, *rottrial_task, mc, energycut ) );
 
 	// trials:
 	TrialMoverOP sam_min_trial = setup_MCM_trial( sam_mover, rottrial_mover, min_mover, mc );

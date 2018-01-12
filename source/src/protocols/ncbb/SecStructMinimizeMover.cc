@@ -30,7 +30,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <numeric/conversions.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>

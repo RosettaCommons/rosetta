@@ -37,7 +37,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/jd2/util.hh>
 
@@ -193,7 +193,7 @@ void PlaceProbeMover::perform_local_refinement(core::pose::Pose & target_pose, c
 {
 	core::pack::task::PackerTaskOP packer_task = create_refinement_packing_task(target_pose, target_residue);
 
-	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(refinement_scorefxn_, packer_task) );
+	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover(refinement_scorefxn_, packer_task) );
 
 	packer->apply(target_pose);
 }

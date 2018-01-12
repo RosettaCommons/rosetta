@@ -23,8 +23,8 @@
 // Protocols headers
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 
 // C++ headers
 #include <iostream>
@@ -42,9 +42,9 @@ using core::optimization::MinimizerOptionsOP;
 using core::optimization::MinimizerOptionsCOP;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
-using protocols::simple_moves::MinMover;
-using protocols::simple_moves::MinMoverOP;
-using protocols::simple_moves::symmetry::SymMinMover;
+using protocols::minimization_packing::MinMover;
+using protocols::minimization_packing::MinMoverOP;
+using protocols::minimization_packing::symmetry::SymMinMover;
 
 // XRW TEMP protocols::moves::MoverOP MinimizationRefinerCreator::create_mover() const {
 // XRW TEMP  return protocols::moves::MoverOP( new MinimizationRefiner );

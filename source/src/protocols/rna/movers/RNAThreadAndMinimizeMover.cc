@@ -47,7 +47,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Protocols
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 
 
@@ -201,8 +201,8 @@ RNAThreadAndMinimizeMover::long_mutate_strategy( core::pose::Pose & pose ) {
 			utility::vector1< Size > just_one;
 			just_one.push_back( *it );
 
-			protocols::simple_moves::MinMoverOP minm(
-				new protocols::simple_moves::MinMover(
+			protocols::minimization_packing::MinMoverOP minm(
+				new protocols::minimization_packing::MinMover(
 				mm_from_residues( pose, just_one, true ),
 				scorefxn_,
 				"lbfgs_armijo_nonmonotone",
@@ -374,7 +374,7 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 			cart_scorefxn->set_weight( core::scoring::chainbreak, ii );
 			cart_scorefxn->set_weight( core::scoring::linear_chainbreak, ii );
 			if ( ii > 0.2 ) scorefxn_->set_weight( core::scoring::coordinate_constraint, 1/ii );
-			protocols::simple_moves::MinMoverOP ins_minm( new protocols::simple_moves::MinMover( ins_mm, cart_scorefxn, "lbfgs_armijo_nonmonotone", 1, true ) );
+			protocols::minimization_packing::MinMoverOP ins_minm( new protocols::minimization_packing::MinMover( ins_mm, cart_scorefxn, "lbfgs_armijo_nonmonotone", 1, true ) );
 			ins_minm->apply( pose );
 			ins_minm->apply( recovered_low );
 
@@ -427,7 +427,7 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 	cart_scorefxn->set_weight( core::scoring::cart_bonded, 1 );
 	cart_scorefxn->set_weight( core::scoring::pro_close, 0 );
 
-	protocols::simple_moves::MinMoverOP ins_minm( new protocols::simple_moves::MinMover( ins_mm, cart_scorefxn, "lbfgs_armijo_nonmonotone", 1, true ) );
+	protocols::minimization_packing::MinMoverOP ins_minm( new protocols::minimization_packing::MinMover( ins_mm, cart_scorefxn, "lbfgs_armijo_nonmonotone", 1, true ) );
 	//ins_minm->cartesian( true );
 	ins_minm->apply( pose );
 	ins_minm->apply( recovered_low );
@@ -450,7 +450,7 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 		final_mm->set_chi( ii, true );
 	}
 
-	protocols::simple_moves::MinMoverOP final_minm( new protocols::simple_moves::MinMover( final_mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+	protocols::minimization_packing::MinMoverOP final_minm( new protocols::minimization_packing::MinMover( final_mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 	final_minm->apply( pose );
 	final_minm->apply( recovered_low );
 
@@ -517,7 +517,7 @@ RNAThreadAndMinimizeMover::mutate_all_at_once( core::pose::Pose & pose ) {
 	// OK, we have a vector of changed residues. Setup a MoveMap accordingly.
 	core::kinematics::MoveMapOP mm( mm_from_residues( pose, changed_pos, true ) );
 
-	protocols::simple_moves::MinMoverOP minm( new protocols::simple_moves::MinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+	protocols::minimization_packing::MinMoverOP minm( new protocols::minimization_packing::MinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 	minm->apply( pose );
 }

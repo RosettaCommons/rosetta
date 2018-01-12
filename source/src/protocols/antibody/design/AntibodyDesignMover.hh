@@ -38,7 +38,7 @@
 // Protocol Includes
 #include <protocols/grafting/CCDEndsGraftMover.fwd.hh>
 #include <protocols/grafting/AnchoredGraftMover.fwd.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // Core Includes
 #include <core/pose/Pose.fwd.hh>
@@ -389,7 +389,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_cart_graft_ = nullptr;
 
 	GeneralAntibodyModelerOP modeler_ = nullptr;
-	protocols::simple_moves::MinMoverOP cart_min_graft_ = nullptr;
+	protocols::minimization_packing::MinMoverOP cart_min_graft_ = nullptr;
 
 	protocols::moves::MonteCarloOP mc_ = nullptr;
 

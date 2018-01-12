@@ -22,7 +22,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 
-#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -60,7 +60,7 @@ public:
 	void set_default();
 
 
-	void set_minmover( protocols::simple_moves::MinMoverOP minmover );
+	void set_minmover( protocols::minimization_packing::MinMoverOP minmover );
 
 	void update_movemap( core::pose::Pose & pose );
 
@@ -68,7 +68,7 @@ public:
 	std::string get_name() const override;
 
 protected:
-	protocols::simple_moves::MinMoverOP minmover_;
+	protocols::minimization_packing::MinMoverOP minmover_;
 	core::kinematics::MoveMapOP movemap_;
 	core::pack::task::PackerTaskOP task_;
 	bool update_movemap_;

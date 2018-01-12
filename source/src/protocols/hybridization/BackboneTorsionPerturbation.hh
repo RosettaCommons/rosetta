@@ -28,7 +28,7 @@
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 
@@ -121,7 +121,7 @@ private:
 
 	core::Size perturbed_res_;
 	utility::vector1< core::Size > residue_list_;
-	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
+	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack_;
 	core::optimization::AtomTreeMinimizerOP minimizer_;
 	//core::optimization::CartesianMinimizerOP minimizer_;
 

@@ -26,7 +26,7 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/rotamer_trials.hh>
 
-//#include <protocols/simple_moves/PackRotamersMover.hh> //I wish
+//#include <protocols/minimization_packing/PackRotamersMover.hh> //I wish
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

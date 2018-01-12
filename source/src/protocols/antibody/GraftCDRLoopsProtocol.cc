@@ -36,7 +36,7 @@
 
 #include <protocols/loops/loops_main.hh>
 
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 

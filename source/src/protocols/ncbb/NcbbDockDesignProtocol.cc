@@ -33,14 +33,14 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/oop/OopRandomPuckMover.hh>
-#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
+#include <protocols/ncbb/oop/OopRandomPuckMover.hh>
+#include <protocols/ncbb/oop/OopRandomSmallMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/ncbb/NcbbDockDesignProtocol.hh>
@@ -316,7 +316,7 @@ NcbbDockDesignProtocol::apply(
 	pert_tf->push_back( pert_rtrp );
 
 	// create a rotamer trials mover
-	simple_moves::RotamerTrialsMoverOP pert_rt( new simple_moves::EnergyCutRotamerTrialsMover( pert_score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	minimization_packing::RotamerTrialsMoverOP pert_rt( new minimization_packing::EnergyCutRotamerTrialsMover( pert_score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	/*********************************************************
 	Common Setup
@@ -357,7 +357,7 @@ NcbbDockDesignProtocol::apply(
 	}
 
 	// create a pack rotamers mover
-	simple_moves::PackRotamersMoverOP desn_pack_rotamers( new simple_moves::PackRotamersMover() );
+	minimization_packing::PackRotamersMoverOP desn_pack_rotamers( new minimization_packing::PackRotamersMover() );
 	desn_pack_rotamers->task_factory( desn_tf );
 	desn_pack_rotamers->score_function( pert_score_fxn );
 
@@ -373,11 +373,11 @@ NcbbDockDesignProtocol::apply(
 	desn_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+	minimization_packing::MinMoverOP desn_min( new minimization_packing::MinMover( desn_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	// definitely want sidechain minimization here
-	using protocols::simple_moves::TaskAwareMinMoverOP;
-	using protocols::simple_moves::TaskAwareMinMover;
+	using protocols::minimization_packing::TaskAwareMinMoverOP;
+	using protocols::minimization_packing::TaskAwareMinMover;
 	TaskAwareMinMoverOP desn_ta_min( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	/*********************************************************

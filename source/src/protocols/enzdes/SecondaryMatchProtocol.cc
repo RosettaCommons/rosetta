@@ -48,7 +48,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <basic/Tracer.hh>
@@ -309,7 +309,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 				} else task->nonconst_residue_task( i ).prevent_repacking();
 			}
 
-			protocols::simple_moves::PackRotamersMoverOP trial_packer( new protocols::simple_moves::PackRotamersMover(reduced_scofx_, task) );
+			protocols::minimization_packing::PackRotamersMoverOP trial_packer( new protocols::minimization_packing::PackRotamersMover(reduced_scofx_, task) );
 			trial_packer->apply( pose );
 
 			(*reduced_scofx_)( pose );

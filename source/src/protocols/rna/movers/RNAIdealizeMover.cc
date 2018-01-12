@@ -54,7 +54,7 @@
 #include <protocols/stepwise/modeler/rna/o2prime/O2PrimePacker.hh>
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
@@ -456,7 +456,7 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 			}
 		}
 
-		protocols::simple_moves::MinMoverOP minm( new protocols::simple_moves::MinMover( suite_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+		protocols::minimization_packing::MinMoverOP minm( new protocols::minimization_packing::MinMover( suite_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 		TR << TR.Blue << "Suite-fix iteration " << ii << "," << " score " << ( *scorefxn )( pose ) << "." << std::endl;
 		TR            << "RMS to starting: " << core::scoring::all_atom_rmsd( pose, first_basis_pose ) << "." << std::endl;
@@ -605,7 +605,7 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 		mm->set_bb( true, res );
 	}
 
-	protocols::simple_moves::MinMoverOP minm( new protocols::simple_moves::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+	protocols::minimization_packing::MinMoverOP minm( new protocols::minimization_packing::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 	Pose const basis_pose = pose;
 	for ( Size ii = 1; ii <= iterations_; ++ii ) {

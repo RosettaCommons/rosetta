@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
@@ -83,7 +83,7 @@ main( int argc, char *argv[] )
 		mm->set_bb( true );
 		mm->set_chi( true );
 		mm->set_branches( true );
-		protocols::simple_moves::MinMover minimizer;
+		protocols::minimization_packing::MinMover minimizer;
 		minimizer.movemap( mm );
 		minimizer.score_function( sf );
 

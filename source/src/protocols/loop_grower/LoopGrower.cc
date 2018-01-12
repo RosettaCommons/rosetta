@@ -100,13 +100,13 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/relax/util.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
 #include <protocols/loop_grower/SheetSampler.hh>
 #include <protocols/loop_grower/DensSkeleton.hh>
@@ -1243,12 +1243,12 @@ LoopGrower::refine_cycle( core::pose::Pose & refinepose, core::pose::Pose & refi
 
 		pack_core->add_loop( protocols::loops::Loop( lower_min, upper_min ) );
 
-		protocols::simple_moves::PackRotamersMoverOP pack_mover;
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover;
 		if ( core::pose::symmetry::is_symmetric( refinepose ) ) {
-			protocols::simple_moves::PackRotamersMoverOP symmpack( new protocols::simple_moves::symmetry::SymPackRotamersMover );
-			pack_mover = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::PackRotamersMover >(symmpack);
+			protocols::minimization_packing::PackRotamersMoverOP symmpack( new protocols::minimization_packing::symmetry::SymPackRotamersMover );
+			pack_mover = utility::pointer::dynamic_pointer_cast< protocols::minimization_packing::PackRotamersMover >(symmpack);
 		} else {
-			pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover );
+			pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
 		}
 		repackaround->set_loops(pack_core);
 		main_task_factory->push_back( repackaround );

@@ -20,7 +20,7 @@
 // protocols headers
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // core headers
 #include <core/types.hh>
@@ -489,7 +489,7 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 	}
 
 	// setup the minimize mover to use linmin
-	protocols::simple_moves::MinMover mnmvr( mvmp, scrfxn_, "linmin", 0.0001, true );
+	protocols::minimization_packing::MinMover mnmvr( mvmp, scrfxn_, "linmin", 0.0001, true );
 
 	// score the pose
 	Real orig_ener( ( *scrfxn_ )( pose ) );

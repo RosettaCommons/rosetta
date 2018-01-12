@@ -27,7 +27,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/loops/loops_main.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -161,8 +161,7 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 	using namespace core::pack::task;
 	using namespace core::scoring;
 	using namespace core::pack::task::operation;
-
-
+	using namespace protocols::minimization_packing;
 
 	//This could have just as easily have been a task op.
 
@@ -239,7 +238,7 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 	turn_off_design.apply(pose, *task);
 	turn_off_packing.apply(pose, *task);
 
-	protocols::simple_moves::PackRotamersMover packer = PackRotamersMover(scorefxn_, task, pack_rounds_);
+	PackRotamersMover packer = PackRotamersMover(scorefxn_, task, pack_rounds_);
 	packer.apply(pose);
 	TR << "Complete" <<std::endl;
 

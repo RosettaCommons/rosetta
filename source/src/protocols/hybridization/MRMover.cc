@@ -18,7 +18,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
@@ -66,7 +66,7 @@
 #include <core/pose/symmetry/util.hh>
 
 
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/string_util.hh>
 
@@ -357,10 +357,10 @@ void MRMover::pack_missing_sidechains( Pose & pose ) {
 	taskstd->restrict_to_residues(needToRepack);
 
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
 		pack1.apply( pose );
 	} else {
-		protocols::simple_moves::PackRotamersMover pack1( fa_scorefxn_, taskstd );
+		protocols::minimization_packing::PackRotamersMover pack1( fa_scorefxn_, taskstd );
 		pack1.apply( pose );
 	}
 }

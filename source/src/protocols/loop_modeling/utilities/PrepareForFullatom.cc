@@ -18,8 +18,8 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 
 // Core headers
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -70,9 +70,9 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using core::util::switch_to_residue_type_set;
 
-using protocols::simple_moves::PackRotamersMover;
-using protocols::simple_moves::PackRotamersMoverOP;
-using protocols::simple_moves::symmetry::SymPackRotamersMover;
+using protocols::minimization_packing::PackRotamersMover;
+using protocols::minimization_packing::PackRotamersMoverOP;
+using protocols::minimization_packing::symmetry::SymPackRotamersMover;
 // }}}1
 
 namespace protocols {

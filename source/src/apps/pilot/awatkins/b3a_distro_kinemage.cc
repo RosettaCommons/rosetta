@@ -53,8 +53,8 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -192,7 +192,7 @@ main( int argc, char* argv[] )
 		movemap_sc->set(bb4, false);
 		movemap_sc->set(omg, false);
 
-		protocols::simple_moves::MinMover minmover_sc(movemap_sc, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true);
+		protocols::minimization_packing::MinMover minmover_sc(movemap_sc, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true);
 
 		ObjexxFCL::FArray3D< Real > energies( 36, 36, 36 );
 		Real minscore = 9999999999;

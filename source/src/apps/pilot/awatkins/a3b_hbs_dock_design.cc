@@ -40,14 +40,14 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
+#include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -363,7 +363,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 	//pert_tf->push_back( pert_rtio );
 
 	// create a rotamer trials mover
-	simple_moves::RotamerTrialsMoverOP pert_rt(new simple_moves::EnergyCutRotamerTrialsMover( pert_score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	minimization_packing::RotamerTrialsMoverOP pert_rt(new minimization_packing::EnergyCutRotamerTrialsMover( pert_score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	/*********************************************************
 	Common Setup
@@ -404,7 +404,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 
 
 	// create a pack rotamers mover
-	simple_moves::PackRotamersMoverOP desn_pr( new simple_moves::PackRotamersMover() );
+	minimization_packing::PackRotamersMoverOP desn_pr( new minimization_packing::PackRotamersMover() );
 	desn_pr->task_factory( desn_tf );
 	desn_pr->score_function( pert_score_fxn );
 
@@ -422,11 +422,11 @@ A3BHbsDockDesignMinimizeMover::apply(
 	desn_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+	minimization_packing::MinMoverOP desn_min( new minimization_packing::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//definitely want sidechain minimization here
-	using protocols::simple_moves::TaskAwareMinMoverOP;
-	using protocols::simple_moves::TaskAwareMinMover;
+	using protocols::minimization_packing::TaskAwareMinMoverOP;
+	using protocols::minimization_packing::TaskAwareMinMover;
 	TaskAwareMinMoverOP desn_ta_min = TaskAwareMinMoverOP( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	/*********************************************************
@@ -529,7 +529,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 		}
 
 		// create a pack rotamers mover for the final design
-		simple_moves::PackRotamersMoverOP final_desn_pr( new simple_moves::PackRotamersMover(score_fxn, final_desn_pt, 10 ) );
+		minimization_packing::PackRotamersMoverOP final_desn_pr( new minimization_packing::PackRotamersMover(score_fxn, final_desn_pt, 10 ) );
 
 		// design with final pr mover
 		final_desn_pr->apply( pose );
@@ -541,7 +541,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 		final_min_mm->set_jump( 1, true );
 
 		// create minimization mover
-		simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+		minimization_packing::MinMoverOP final_min( new minimization_packing::MinMover( final_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 		// final min (okay to use ta min here)
 		final_min->apply( pose );
 	}
@@ -572,7 +572,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );
-	simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
+	minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );
 	packer->task_factory( tf );
 	packer->score_function( score_fxn );
 	packer->apply( repack_stats_pose );
@@ -584,7 +584,7 @@ A3BHbsDockDesignMinimizeMover::apply(
 	separate_min_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+	minimization_packing::MinMoverOP separate_min( new minimization_packing::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 	// final min (okay to use ta min here)
 	separate_min->apply( repack_stats_pose );
 

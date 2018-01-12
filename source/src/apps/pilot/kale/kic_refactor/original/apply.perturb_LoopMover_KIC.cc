@@ -99,7 +99,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	// Setup the minimizer {{{1
 	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which
 	// allows seamless integration of cartesian minimization
-	protocols::simple_moves::MinMoverOP min_mover;
+	protocols::minimization_packing::MinMoverOP min_mover;
 	MoveMapOP mm_one_loop_OP = new core::kinematics::MoveMap( mm_one_loop ); // it appears we need a move map OP to do this...
 
 	const std::string min_type = "linmin";
@@ -107,11 +107,11 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	bool use_nblist( false ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 	if ( use_cartmin ) runtime_assert( scorefxn()->get_weight( core::scoring::cart_bonded ) > 1e-3 ); // AS -- actually I'm not sure if this makes any sense in centroid... ask Frank?
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		min_mover = new simple_moves::symmetry::SymMinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
-		//min_mover = new simple_moves::symmetry::SymMinMover();
+		min_mover = new minimization_packing::symmetry::SymMinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
+		//min_mover = new minimization_packing::symmetry::SymMinMover();
 	} else {
-		min_mover = new protocols::simple_moves::MinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
-		//min_mover = new protocols::simple_moves::MinMover(); // version above doesn't work, but setting all one by one does.. try again with scorefxn() w/o the star though
+		min_mover = new protocols::minimization_packing::MinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
+		//min_mover = new protocols::minimization_packing::MinMover(); // version above doesn't work, but setting all one by one does.. try again with scorefxn() w/o the star though
 	}
 	min_mover->cartesian( use_cartmin );
 

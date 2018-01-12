@@ -30,7 +30,7 @@
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>

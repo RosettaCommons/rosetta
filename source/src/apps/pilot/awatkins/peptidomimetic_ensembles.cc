@@ -36,7 +36,7 @@
 //#include <core/pack/task/TaskFactory.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -60,7 +60,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <protocols/ncbb/oop/OopCreatorMover.hh>
-#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
+#include <protocols/ncbb/oop/OopRandomSmallMover.hh>
 
 using namespace std;
 using namespace utility;
@@ -72,6 +72,7 @@ using namespace import_pose;
 using namespace pose;
 using namespace protocols;
 using namespace simple_moves;
+using namespace minimization_packing;
 using namespace oop;
 using namespace basic;
 using namespace basic::options;
@@ -139,7 +140,7 @@ main( int argc, char *argv[] )
 		// Okay, now sample.
 		pose.dump_pdb( "init.pdb" );
 
-		protocols::simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( pert_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+		protocols::minimization_packing::MinMoverOP desn_min( new minimization_packing::MinMover( pert_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 		desn_min->cartesian( option[ peptidomimetic_ensembles::cartesian_min ].value() );
 
 		gradual_minimization( pose, desn_min, score_fxn );

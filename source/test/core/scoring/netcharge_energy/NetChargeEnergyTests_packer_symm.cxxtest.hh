@@ -55,7 +55,7 @@
 
 // Convenience for setting up symmetry and packing:
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -130,7 +130,7 @@ public:
 		utility::vector0< int > rot_to_pack;
 		core::pack::pack_rotamers_setup( pose, *scorefxn, task, sym_rotamer_sets, symmetric_ig );
 
-		//protocols::simple_moves::PackRotamersMover packer( scorefxn, task, 1 );
+		//protocols::minimization_packing::PackRotamersMover packer( scorefxn, task, 1 );
 
 		for ( core::Size i(1); i<=5; ++i ) {
 			// Test via pack_rotamers run five times.

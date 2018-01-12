@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocols headers
-#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {

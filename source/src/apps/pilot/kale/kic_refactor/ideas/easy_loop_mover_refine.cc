@@ -104,16 +104,16 @@ void LoopMover_Refine_KIC::apply(core::pose::Pose & pose) {
 	// Setup the minimizer {{{1
 	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which 
 	// allows seamless integration of cartesian minimization
-	protocols::simple_moves::MinMoverOP min_mover;
+	protocols::minimization_packing::MinMoverOP min_mover;
 	
 	const std::string min_type = "lbfgs_armijo_nonmonotone";
 	core::Real dummy_tol( 0.001 ); 
 	bool use_nblist( true ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 	if ( use_cartmin ) runtime_assert( min_scorefxn->get_weight( core::scoring::cart_bonded ) > 1e-3 ); 
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		min_mover = new simple_moves::symmetry::SymMinMover(); 
+		min_mover = new minimization_packing::symmetry::SymMinMover(); 
 	} else {
-		min_mover = new protocols::simple_moves::MinMover();
+		min_mover = new protocols::minimization_packing::MinMover();
 	}
 	min_mover->score_function( min_scorefxn );
 	min_mover->min_type( min_type );

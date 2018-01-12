@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/simple_moves/PackRotamersMoverPackRotamersMoverCreator.hh
+/// @file protocols/minimization_packing/PackRotamersMoverPackRotamersMoverCreator.hh
 /// @brief This class will create instances of protocols::moves::Mover ConsensusDesignMover for the protocols::moves::MoverFactory
 /// @author Florian Richter, floric@u.washington.edu
 

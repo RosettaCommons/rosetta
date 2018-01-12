@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/ShortBackrubMover.hh>
-#include <protocols/simple_moves/BoltzmannRotamerMover.hh>
+#include <protocols/minimization_packing/BoltzmannRotamerMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -93,7 +93,7 @@ public:
 	void set_rotation_magnitude( core::Real rotation_magnitude );
 	void set_translation_magnitude( core::Real translation_magnitude );
 	void set_short_backrub_mover( protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover );
-	// void set_boltzmann_rotamer_mover( protocols::simple_moves::BoltzmannRotamerMoverOP boltzmann_rotamer_mover );
+	// void set_boltzmann_rotamer_mover( protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover );
 	void set_rigid_body_mover( protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover );
 	void set_score_fxn( core::scoring::ScoreFunctionOP score_fxn );
 
@@ -112,7 +112,7 @@ public:
 	core::Real get_rotation_magnitude() const;
 	core::Real get_translation_magnitude() const;
 	protocols::simple_moves::ShortBackrubMoverOP get_short_backrub_mover() const;
-	//protocols::simple_moves::BoltzmannRotamerMoverOP get_boltzmann_rotamer_mover() const;
+	//protocols::minimization_packing::BoltzmannRotamerMoverOP get_boltzmann_rotamer_mover() const;
 	protocols::rigid::RigidBodyPerturbMoverOP get_rigid_body_mover() const;
 	core::scoring::ScoreFunctionOP get_score_fxn() const;
 	core::pack::task::PackerTaskOP get_packer_task() const;
@@ -181,7 +181,7 @@ private:
 	protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover_;
 
 	/// @brief mover used for side-chain moves
-	//protocols::simple_moves::BoltzmannRotamerMoverOP boltzmann_rotamer_mover_;
+	//protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover_;
 
 	/// @brief mover used for rigid body rotation and translation
 	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_;

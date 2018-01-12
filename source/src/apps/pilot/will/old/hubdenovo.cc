@@ -88,8 +88,8 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
@@ -111,7 +111,7 @@ using core::conformation::symmetry::SymmDataOP;
 using core::conformation::symmetry::SymmetryInfo;
 using core::conformation::symmetry::SymmetryInfoOP;
 using core::pose::symmetry::make_symmetric_pose;
-using protocols::simple_moves::symmetry::SymMinMover;
+using protocols::minimization_packing::symmetry::SymMinMover;
 using protocols::moves::MoverOP;
 using core::scoring::constraints::ConstraintOP;
 using core::id::NamedAtomID;
@@ -947,7 +947,7 @@ struct HubDenovo {
 		movemap->set_bb(true);
 		movemap->set_bb(1,false);
 		movemap->set_chi(true);
-		famin = protocols::moves::MoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsymnocst, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ) );
+		famin = protocols::moves::MoverOP( new protocols::minimization_packing::symmetry::SymMinMover( movemap, sfsymnocst, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ) );
 
 		if ( option[OptionKeys::hub_pdb].user() ) {
 			hub_ = *core::import_pose::pose_from_file(*rtsfa, option[OptionKeys::hub_pdb]() , core::import_pose::PDB_file);
@@ -1061,7 +1061,7 @@ struct HubDenovo {
 			p.set_jump(i->first,j);
 			break;
 		}
-		cenmin = protocols::moves::MoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap, sf3, "lbfgs_armijo_nonmonotone", 1e-3, true, false, false ) );
+		cenmin = protocols::moves::MoverOP( new protocols::minimization_packing::symmetry::SymMinMover( movemap, sf3, "lbfgs_armijo_nonmonotone", 1e-3, true, false, false ) );
 
 		Size STOP = cfg.get_highest_intrahub_seqsep() + 4;
 		//TR << "rnd 1 ssep STOP " << STOP << endl;
@@ -1125,7 +1125,7 @@ struct HubDenovo {
 		movemap->set_bb(true);
 		movemap->set_bb(1,false);
 		movemap->set_chi(true);
-		protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+		protocols::minimization_packing::symmetry::SymMinMover( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 		sf->set_weight(core::scoring::atom_pair_constraint,1.0);
 		sf->set_weight(core::scoring::    angle_constraint,1.0);
 	}
@@ -1162,7 +1162,7 @@ struct HubDenovo {
 		// TR << "TASK:" << std::endl;
 		// TR << *task << std::endl;
 		// utility_exit_with_message("aritns");
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 		TR << "predes: " << sf->score(p) << std::endl;
 		repack.apply(p);
 		TR << "postdes: " << sf->score(p) << std::endl;

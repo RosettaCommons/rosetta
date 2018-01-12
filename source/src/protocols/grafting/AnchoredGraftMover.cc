@@ -40,11 +40,11 @@
 #include <core/chemical/VariantType.hh>
 
 //Protocol Headers
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/Loop.hh>
@@ -78,6 +78,7 @@ using namespace core::pack::task;
 using namespace basic::options;
 using namespace protocols::loops;
 using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace core::kinematics;
 
 using core::pose::Pose;
@@ -85,7 +86,7 @@ using core::kinematics::MoveMapCOP;
 using core::kinematics::MoveMapOP;
 using core::scoring::ScoreFunctionCOP;
 using core::scoring::ScoreFunctionOP;
-using protocols::simple_moves::MinMoverOP;
+using protocols::minimization_packing::MinMoverOP;
 using protocols::simple_moves::SmallMoverOP;
 using core::Size;
 

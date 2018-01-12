@@ -89,7 +89,7 @@ CoupledMover::CoupledMover() : protocols::moves::Mover()
 	translation_magnitude_ = 0.1;
 	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover() );
 	short_backrub_mover_->set_rotation_std_dev( rotation_std_dev_ );
-	// boltzmann_rotamer_mover_ = protocols::simple_moves::BoltzmannRotamerMoverOP( new protocols::simple_moves::BoltzmannRotamerMover() );
+	// boltzmann_rotamer_mover_ = protocols::minimization_packing::BoltzmannRotamerMoverOP( new protocols::minimization_packing::BoltzmannRotamerMover() );
 	//boltzmann_rotamer_mover_->set_temperature( temperature_ );
 	//boltzmann_rotamer_mover_->set_bias_sampling( bias_sampling_ );
 	//boltzmann_rotamer_mover_->set_ligand_resnum( ligand_resnum_ );
@@ -121,7 +121,7 @@ CoupledMover::CoupledMover(
 	translation_magnitude_ = 0.1;
 	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover( pose ) );
 	short_backrub_mover_->set_rotation_std_dev( rotation_std_dev_ );
-	// boltzmann_rotamer_mover_ = protocols::simple_moves::BoltzmannRotamerMoverOP( new protocols::simple_moves::BoltzmannRotamerMover( score_fxn, packer_task ) );
+	// boltzmann_rotamer_mover_ = protocols::minimization_packing::BoltzmannRotamerMoverOP( new protocols::minimization_packing::BoltzmannRotamerMover( score_fxn, packer_task ) );
 	//boltzmann_rotamer_mover_->set_temperature( temperature_ );
 	//boltzmann_rotamer_mover_->set_bias_sampling( bias_sampling_ );
 	//boltzmann_rotamer_mover_->set_ligand_resnum( ligand_resnum_ );
@@ -156,7 +156,7 @@ CoupledMover::CoupledMover(
 	translation_magnitude_ = 0.1;
 	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover( pose ) );
 	short_backrub_mover_->set_rotation_std_dev( rotation_std_dev_ );
-	//boltzmann_rotamer_mover_ = protocols::simple_moves::BoltzmannRotamerMoverOP( new protocols::simple_moves::BoltzmannRotamerMover( score_fxn, packer_task ) );
+	//boltzmann_rotamer_mover_ = protocols::minimization_packing::BoltzmannRotamerMoverOP( new protocols::minimization_packing::BoltzmannRotamerMover( score_fxn, packer_task ) );
 	//boltzmann_rotamer_mover_->set_temperature( temperature_ );
 	//boltzmann_rotamer_mover_->set_bias_sampling( bias_sampling_ );
 	//boltzmann_rotamer_mover_->set_ligand_resnum( ligand_resnum_ );
@@ -189,7 +189,7 @@ CoupledMover::fresh_instance() const
 void
 CoupledMover::apply( core::pose::Pose & pose )
 {
-	using protocols::simple_moves::BoltzmannRotamerMover;
+	using protocols::minimization_packing::BoltzmannRotamerMover;
 
 	BoltzmannRotamerMover boltzmann_rotamer_mover( score_fxn_, packer_task_ );
 	boltzmann_rotamer_mover.set_temperature( temperature_ );
@@ -280,7 +280,7 @@ void CoupledMover::set_translation_magnitude( core::Real translation_magnitude )
 	rigid_body_mover_->trans_magnitude( translation_magnitude );
 }
 void CoupledMover::set_short_backrub_mover( protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover ) { short_backrub_mover_ = short_backrub_mover; }
-//void CoupledMover::set_boltzmann_rotamer_mover( protocols::simple_moves::BoltzmannRotamerMoverOP boltzmann_rotamer_mover ) { boltzmann_rotamer_mover_ = boltzmann_rotamer_mover; }
+//void CoupledMover::set_boltzmann_rotamer_mover( protocols::minimization_packing::BoltzmannRotamerMoverOP boltzmann_rotamer_mover ) { boltzmann_rotamer_mover_ = boltzmann_rotamer_mover; }
 void CoupledMover::set_rigid_body_mover( protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover ) { rigid_body_mover_ = rigid_body_mover; }
 void CoupledMover::set_score_fxn( core::scoring::ScoreFunctionOP score_fxn ) { score_fxn_ = score_fxn; }
 
@@ -341,7 +341,7 @@ protocols::simple_moves::ShortBackrubMoverOP
 CoupledMover::get_short_backrub_mover() const {
 	return short_backrub_mover_;
 }
-//protocols::simple_moves::BoltzmannRotamerMoverOP
+//protocols::minimization_packing::BoltzmannRotamerMoverOP
 //CoupledMover::get_boltzmann_rotamer_mover() const {
 // return boltzmann_rotamer_mover_;
 //}

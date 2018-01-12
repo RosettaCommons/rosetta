@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <protocols/simple_moves/PeptideStapleMover.fwd.hh>
+#include <protocols/ncbb/PeptideStapleMover.fwd.hh>
 #include <utility/vector1.hh>
 
 

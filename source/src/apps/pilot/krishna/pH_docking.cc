@@ -31,11 +31,11 @@
 #include <core/conformation/Conformation.hh>
 
 #include <protocols/relax/ClassicRelax.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
@@ -227,7 +227,7 @@ public:
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			my_task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
-		protocols::simple_moves::RotamerTrialsMinMoverOP prepack_mover( new protocols::simple_moves::RotamerTrialsMinMover( std_scorefxn, *my_task ) );
+		protocols::minimization_packing::RotamerTrialsMinMoverOP prepack_mover( new protocols::minimization_packing::RotamerTrialsMinMover( std_scorefxn, *my_task ) );
 		prepack_mover->apply( pose );
 
 	}
@@ -313,7 +313,7 @@ public:
 		core::scoring::ScoreFunctionOP pack_score_fxn( core::scoring::get_score_function() );
 		TR << "Tot_E of pose1:" << pdb_file_name_ << "\t" << "\tweighted_scores:\t" << pose.energies().total_energies().weighted_string_of( score_fxn->weights() ) << "\ttotal_score:\t" << pose.energies().total_energies().dot( score_fxn->weights() ) << std::endl;
 
-		protocols::simple_moves::RotamerTrialsMinMoverOP pack_mover( new protocols::simple_moves::RotamerTrialsMinMover( pack_score_fxn, *task ) );
+		protocols::minimization_packing::RotamerTrialsMinMoverOP pack_mover( new protocols::minimization_packing::RotamerTrialsMinMover( pack_score_fxn, *task ) );
 		pack_mover->apply(pose);
 		(*score_fxn)(pose);
 
@@ -367,7 +367,7 @@ public:
 			pack::task::TaskFactoryOP mut_task_factory = new pack::task::TaskFactory;
 			mut_task_factory->push_back( new pack::task::operation::ReadResfile );
 			pack::task::PackerTaskOP mut_task = mut_task_factory->create_task_and_apply_taskoperations( pose );
-			protocols::simple_moves::RotamerTrialsMinMoverOP mut_pack_mover( new protocols::simple_moves::RotamerTrialsMinMover( mut_score_fxn, *mut_task ) );
+			protocols::minimization_packing::RotamerTrialsMinMoverOP mut_pack_mover( new protocols::minimization_packing::RotamerTrialsMinMover( mut_score_fxn, *mut_task ) );
 			mut_pack_mover->apply(pose);
 		}
 
@@ -378,7 +378,7 @@ public:
 		for ( utility::vector1_int::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
 			movemap->set_jump(*it, true);
 		}
-		protocols::simple_moves::MinMoverOP minmover ( new protocols::simple_moves::MinMover(movemap, score_fxn, "linmin", 0.1, false /*use_nblist*/) );
+		protocols::minimization_packing::MinMoverOP minmover ( new protocols::minimization_packing::MinMover(movemap, score_fxn, "linmin", 0.1, false /*use_nblist*/) );
 		minmover->apply( pose );
 
 		//calculate ddG for mutants given a resfile

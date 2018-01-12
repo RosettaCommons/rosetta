@@ -47,7 +47,7 @@ recover_sidechains = protocols.simple_moves.ReturnSidechainMover(starting_p)
 task_pack = TaskFactory.create_packer_task(starting_p)
 task_pack.restrict_to_repacking()
 task_pack.or_include_current( True )
-pack = protocols.simple_moves.PackRotamersMover( scorefxn_high, task_pack )
+pack = protocols.minimization_packing.PackRotamersMover( scorefxn_high, task_pack )
 
 #convert to centroid mode
 to_centroid.apply(p)

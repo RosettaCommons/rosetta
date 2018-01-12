@@ -54,11 +54,11 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-//#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
+//#include <protocols/ncbb/hbs/HbsRandomSmallMover.hh>
+#include <protocols/ncbb/hbs/HbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -202,7 +202,7 @@ main( int argc, char* argv[] )
 		//pose.conformation().declare_chemical_bond( 1, "CYH", 3, "CZH" );
 
 		// create minimization mover
-		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+		minimization_packing::MinMoverOP minM( new protocols::minimization_packing::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		minM->cartesian( true );
 		for ( Real wt = 0.1; wt <= 1.0; wt += 0.1 ) {
 			TR << "Weight " << wt << std::endl;

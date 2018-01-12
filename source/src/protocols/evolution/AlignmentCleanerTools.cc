@@ -16,7 +16,7 @@
 #include <core/pose/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -46,11 +46,11 @@ thread_sequence_on_pose(core::pose::Pose & pose, std::string const & thread_seq,
 	tf->push_back(tso);
 	PackerTaskOP ptask = tf->create_task_and_apply_taskoperations(pose);
 
-	protocols::simple_moves::PackRotamersMoverOP pack;
+	protocols::minimization_packing::PackRotamersMoverOP pack;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		utility_exit_with_message("Not developed for symmetry!");
 	} else {
-		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn, ptask ) );
+		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn, ptask ) );
 	}
 	pack->apply( pose );
 	(*scorefxn)(pose);

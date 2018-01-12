@@ -21,7 +21,7 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.fwd.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.fwd.hh>
 
 // Utility Headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -62,7 +62,7 @@ ncbb_design_main_loop(
 	utility::vector1<core::Size> designable_positions,
 	core::Size pep_start,
 	core::Size pep_end,
-	protocols::simple_moves::TaskAwareMinMoverOP desn_ta_min,
+	protocols::minimization_packing::TaskAwareMinMoverOP desn_ta_min,
 	core::scoring::ScoreFunctionOP score_fxn,
 	protocols::moves::MonteCarloOP mc
 );

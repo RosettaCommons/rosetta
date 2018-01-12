@@ -67,7 +67,7 @@
 #include <core/pose/util.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/conformation/symmetry/SymmData.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -635,7 +635,7 @@ public:
 			//minimize
 			option[OptionKeys::symmetry::symmetry_definition].value( path_to_symdef );
 			core::pose::symmetry::make_symmetric_movemap( symm_pose, *movemap );
-			protocols::simple_moves::symmetry::SymMinMover symm_min( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+			protocols::minimization_packing::symmetry::SymMinMover symm_min( movemap, scorefxn, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 			symm_min.apply(symm_pose);
 			option[OptionKeys::symmetry::symmetry_definition].value( "" );
 

@@ -51,9 +51,9 @@
 #include <core/pack/task/PackerTask.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 
 #include <core/scoring/packstat/types.hh>
@@ -142,11 +142,11 @@ test_suck_res( std::string fname ) {
 										 << F(8,4,ps ) << " "
 										 << std::endl;
 
-	protocols::simple_moves::MinMover minstd( mm, sfstd , "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
+	protocols::minimization_packing::MinMover minstd( mm, sfstd , "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
 	minstd.min_options()->nblist_auto_update(true);
 	pack::task::PackerTaskOP taskstd = pack::task::TaskFactory::create_packer_task( pose );
 	taskstd->restrict_to_repacking();
-	protocols::simple_moves::RotamerTrialsMover packstd( sfstd, *taskstd );
+	protocols::minimization_packing::RotamerTrialsMover packstd( sfstd, *taskstd );
 	minstd .apply( pose );
 	packstd.apply( pose );
 	// core::Real score_before = (*sfstd)(pose), score_mid=0,score_after=0;
@@ -165,11 +165,11 @@ test_suck_res( std::string fname ) {
 										 << F(8,4,ps ) << " "
 										 << std::endl;
 
-	protocols::simple_moves::MinMover min( mm, sf , "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
+	protocols::minimization_packing::MinMover min( mm, sf , "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
 	min.min_options()->nblist_auto_update(true);
 	pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose );
 	task->restrict_to_repacking();
-	protocols::simple_moves::RotamerTrialsMover pack( sf, *task );
+	protocols::minimization_packing::RotamerTrialsMover pack( sf, *task );
 
 
 	// vector1<Real> pscores;
@@ -183,10 +183,10 @@ test_suck_res( std::string fname ) {
 
 		taskstd = pack::task::TaskFactory::create_packer_task( pose );
 		taskstd->restrict_to_repacking();
-		packstd = protocols::simple_moves::RotamerTrialsMover( sfstd, *taskstd );
+		packstd = protocols::minimization_packing::RotamerTrialsMover( sfstd, *taskstd );
 		task = pack::task::TaskFactory::create_packer_task( pose );
 		task->restrict_to_repacking();
-		pack = protocols::simple_moves::RotamerTrialsMover( sf, *task );
+		pack = protocols::minimization_packing::RotamerTrialsMover( sf, *task );
 
 		core::Real sckwts[] =	{ 0, 1.0, 5, 12.0, 35.5,  3.0, 1.5, 0.0 };
 		core::Real cc_wts[] = { 0, 1.0, 2,  5.0,  9.0, 16.0, 3.0, 0.0 };
@@ -215,10 +215,10 @@ test_suck_res( std::string fname ) {
 		rem_cav.apply(pose);
 		taskstd = pack::task::TaskFactory::create_packer_task( pose );
 		taskstd->restrict_to_repacking();
-		packstd = protocols::simple_moves::RotamerTrialsMover( sfstd, *taskstd );
+		packstd = protocols::minimization_packing::RotamerTrialsMover( sfstd, *taskstd );
 		task = pack::task::TaskFactory::create_packer_task( pose );
 		task->restrict_to_repacking();
-		pack = protocols::simple_moves::RotamerTrialsMover( sf, *task );
+		pack = protocols::minimization_packing::RotamerTrialsMover( sf, *task );
 
 		// std::cerr << "pack" << std::endl;
 		packstd.apply(pose);
@@ -282,17 +282,17 @@ test_suck_res( std::string fname ) {
 // 	}
 // 	pose.constraint_set( cstset );
 //
-// 	protocols::simple_moves::MinMover mincst( mm, sf   , "lbfgs_armijo_nonmonotone", 0.1, true );
+// 	protocols::minimization_packing::MinMover mincst( mm, sf   , "lbfgs_armijo_nonmonotone", 0.1, true );
 // 	mincst.min_options()->nblist_auto_update(true);
-// 	protocols::simple_moves::MinMover minnoc( mm, sfnoc, "lbfgs_armijo_nonmonotone", 0.1, true );
+// 	protocols::minimization_packing::MinMover minnoc( mm, sfnoc, "lbfgs_armijo_nonmonotone", 0.1, true );
 // 	minnoc.min_options()->nblist_auto_update(true);
 //
 // 	pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose );
 // 	task->restrict_to_repacking();
-// 	// protocols::simple_moves::PackRotamersMover packcst( sf, *task );
-// 	// protocols::simple_moves::PackRotamersMover packnoc( sfnoc, *task );
-// 	protocols::simple_moves::RotamerTrialsMover packcst( sf, *task );
-// 	protocols::simple_moves::RotamerTrialsMover packnoc( sfnoc, *task );
+// 	// protocols::minimization_packing::PackRotamersMover packcst( sf, *task );
+// 	// protocols::minimization_packing::PackRotamersMover packnoc( sfnoc, *task );
+// 	protocols::minimization_packing::RotamerTrialsMover packcst( sf, *task );
+// 	protocols::minimization_packing::RotamerTrialsMover packnoc( sfnoc, *task );
 //
 // 	ofstream out( (fname.substr(0,fname.size()-4)+"_before.pdb").c_str(), ios_base::app );
 // 	dump_pdb( pose, out );

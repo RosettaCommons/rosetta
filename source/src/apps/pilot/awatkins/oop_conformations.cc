@@ -34,7 +34,7 @@
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -54,7 +54,7 @@
 //#include <algorithm>
 
 #include <protocols/ncbb/oop/OopCreatorMover.hh>
-#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
+#include <protocols/ncbb/oop/OopRandomSmallMover.hh>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -168,8 +168,8 @@ main( int argc, char *argv[] )
 		//mvmp->set_chi( 1, true );
 
 		mvmp->set_bb( true );
-		protocols::simple_moves::MinMover mnmvr( mvmp, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );
-		protocols::simple_moves::MinMover mnmvr_no_hbond( mvmp, scorefxn_no_hbond, "lbfgs_armijo_nonmonotone", 0.0001, true );
+		protocols::minimization_packing::MinMover mnmvr( mvmp, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true );
+		protocols::minimization_packing::MinMover mnmvr_no_hbond( mvmp, scorefxn_no_hbond, "lbfgs_armijo_nonmonotone", 0.0001, true );
 		//mnmvr.cartesian( true );
 		//mnmvr_no_hbond.cartesian( true );
 

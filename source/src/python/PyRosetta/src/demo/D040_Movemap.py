@@ -118,7 +118,7 @@ def movemap(pose, PDB_out = False):
     pose_move_map.set_bb_true_range(int(pose.total_residue() / 4),
                                     int(pose.total_residue() * 3 / 4) )
     # create the MinMover
-    minmover = protocols.simple_moves.MinMover()
+    minmover = protocols.minimization_packing.MinMover()
     minmover.score_function(scorefxn)
     minmover.movemap(pose_move_map)
 

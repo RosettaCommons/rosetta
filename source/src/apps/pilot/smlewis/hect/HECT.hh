@@ -54,11 +54,11 @@
 
 //movers
 #include <protocols/simple_moves/BackboneMover.hh> //SmallMover
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/TorsionDOFMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
@@ -512,9 +512,9 @@ public:
 		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *fullatom_scorefunction_, 0.8 ) );
 
 		/////////////////////////////////rotamer trials mover///////////////////////////////////////////
-		using protocols::simple_moves::RotamerTrialsMoverOP;
-		using protocols::simple_moves::EnergyCutRotamerTrialsMover;
-		protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
+		using protocols::minimization_packing::RotamerTrialsMoverOP;
+		using protocols::minimization_packing::EnergyCutRotamerTrialsMover;
+		protocols::minimization_packing::RotamerTrialsMoverOP rt_mover(new protocols::minimization_packing::EnergyCutRotamerTrialsMover(
 			fullatom_scorefunction_,
 			task_factory_,
 			mc,
@@ -569,21 +569,21 @@ public:
 		random_mover->add_mover(shear_mover, 1.0);
 
 		/////////////////////////////generate full repack mover////////////////////////////////////////
-		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover = new protocols::minimization_packing::PackRotamersMover;
 		pack_mover->task_factory( task_factory_ );
 		pack_mover->score_function( fullatom_scorefunction_ );
 
 		///////////////////////////////////////////Minimizer mover and TAMinmover///////////////////////////
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover(
 			movemap_,
 			fullatom_scorefunction_,
 			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 			0.01,
 			true /*use_nblist*/ );
 
-		using protocols::simple_moves::TaskAwareMinMoverOP;
-		using protocols::simple_moves::TaskAwareMinMover;
-		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, task_factory_);
+		using protocols::minimization_packing::TaskAwareMinMoverOP;
+		using protocols::minimization_packing::TaskAwareMinMover;
+		protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover = new protocols::minimization_packing::TaskAwareMinMover(min_mover, task_factory_);
 
 		///////////////////////package RT/min for JumpOutMover////////////////////////////////////////
 		protocols::moves::SequenceMoverOP RT_min_seq( new protocols::moves::SequenceMover );

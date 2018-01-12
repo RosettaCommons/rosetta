@@ -30,8 +30,8 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 
@@ -228,8 +228,8 @@ private:
 	LinkageConformerMoverOP linkage_mover_;
 	moves::RandomMoverOP weighted_random_mover_;
 
-	simple_moves::MinMoverOP min_mover_;
-	simple_moves::PackRotamersMoverOP packer_;
+	minimization_packing::MinMoverOP min_mover_;
+	minimization_packing::PackRotamersMoverOP packer_;
 
 	core::Size rounds_ = 25; // cmdline
 	core::Real kt_ = 2.0; // cmdline

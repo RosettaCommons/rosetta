@@ -83,8 +83,8 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
@@ -103,7 +103,7 @@ using core::conformation::symmetry::SymmDataOP;
 using core::conformation::symmetry::SymmetryInfo;
 using core::conformation::symmetry::SymmetryInfoOP;
 using core::pose::symmetry::make_symmetric_pose;
-using protocols::simple_moves::symmetry::SymMinMover;
+using protocols::minimization_packing::symmetry::SymMinMover;
 
 
 OPT_KEY( String, hub_sequence )
@@ -177,7 +177,7 @@ static core::io::silent::SilentFileData sfd;
 // 	  	movemap->set_bb(true);
 // 	  	movemap->set_chi(true);
 // 	  	core::pose::symmetry::make_symmetric_movemap(p,*movemap);
-// 	//	protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+// 	//	protocols::minimization_packing::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 
 
 // 		// get frags
@@ -436,7 +436,7 @@ int main(int argc, char *argv[]) {
   	movemap->set_bb(true);
   	movemap->set_chi(true);
   	core::pose::symmetry::make_symmetric_movemap(p,*movemap);
-//	protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+//	protocols::minimization_packing::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 
 
 	// get frags
@@ -539,7 +539,7 @@ int main(int argc, char *argv[]) {
 	// 			// 	p.set_psi(1,uniform()*360.0);
 	// 			// 	p.set_omega(1,170.0+uniform()*20.0);
 	// 			// }
-	// 		 	//  protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+	// 		 	//  protocols::minimization_packing::symmetry::SymMinMover( movemap, sfsym, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 	// 			if(1==ippo) tmp.set_phi  (ir,tmp.phi  (ir)+10.0);
 	// 			if(2==ippo) tmp.set_psi  (ir,tmp.psi  (ir)+10.0);
 	// 			if(3==ippo) tmp.set_omega(ir,tmp.omega(ir)+10.0);

@@ -46,7 +46,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -174,7 +174,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 		task = core::pack::task::TaskFactory::create_packer_task( pose );
 		task->initialize_from_command_line().restrict_to_repacking();
 	}
-	pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn_, task ) );
+	pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn_, task ) );
 	//task->show_all_residue_tasks();
 
 	pose.conformation().detect_disulfides();

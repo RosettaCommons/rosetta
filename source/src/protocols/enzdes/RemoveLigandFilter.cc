@@ -24,7 +24,7 @@
 
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilter.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -51,7 +51,7 @@ namespace enzdes {
 using namespace protocols::filters;
 using namespace protocols::moves;
 using namespace utility::tag;
-using protocols::simple_moves::MinMover;
+using protocols::minimization_packing::MinMover;
 using protocols::protein_interface_design::filters::RmsdFilter;
 using core::kinematics::MoveMapOP;
 using core::pose::PoseOP;

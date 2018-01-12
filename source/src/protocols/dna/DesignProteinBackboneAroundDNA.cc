@@ -101,7 +101,7 @@ static basic::Tracer TR( "protocols.dna.DesignProteinBackboneAroundDNA", t_info 
 // XRW TEMP }
 
 DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA() :
-	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNA::mover_name() ),
+	protocols::minimization_packing::PackRotamersMover( DesignProteinBackboneAroundDNA::mover_name() ),
 	type_("ccd"),
 	gapspan_( option[ OptionKeys::loops::gapspan ]() ),
 	spread_( option[ OptionKeys::loops::spread ]() ),
@@ -117,7 +117,7 @@ DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA(
 	std::string const & type,
 	ScoreFunctionCOP scorefxn
 ) :
-	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNA::mover_name() ),
+	protocols::minimization_packing::PackRotamersMover( DesignProteinBackboneAroundDNA::mover_name() ),
 	type_(type),
 	gapspan_( option[ OptionKeys::loops::gapspan ]() ),
 	spread_( option[ OptionKeys::loops::spread ]() ),

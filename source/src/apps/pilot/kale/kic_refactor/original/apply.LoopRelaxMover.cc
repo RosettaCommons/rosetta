@@ -582,7 +582,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			//fpd symmetrize this
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
-				simple_moves::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
+				minimization_packing::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
 				pack1.apply( pose );
 
 				core::optimization::symmetry::SymAtomTreeMinimizer mzr;
@@ -591,7 +591,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 				mzr.run( pose, *mm, *fa_scorefxn_, options );
 			} else {
-				protocols::simple_moves::PackRotamersMover pack1( fa_scorefxn_, taskstd );
+				protocols::minimization_packing::PackRotamersMover pack1( fa_scorefxn_, taskstd );
 				pack1.apply( pose );
 
 				// quick SC minimization

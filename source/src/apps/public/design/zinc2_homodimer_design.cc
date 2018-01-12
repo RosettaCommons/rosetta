@@ -19,8 +19,8 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -41,9 +41,9 @@
 
 //SYMMETRY
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 //#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 //#include <core/conformation/symmetry/util.hh>
 //#include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -231,7 +231,7 @@ public:
 
 		//MOVERS --> sym_pack_mover
 		TR << "Generating sym pack mover..." << std::endl;
-		sym_pack_mover_ = protocols::simple_moves::symmetry::SymPackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover );
+		sym_pack_mover_ = protocols::minimization_packing::symmetry::SymPackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover );
 		sym_pack_mover_->task_factory( taskfactory_ );
 		sym_pack_mover_->score_function( fa_metal_scorefxn_ );
 
@@ -252,9 +252,9 @@ public:
 		movemap_->set_jump( true ); //first and second jumps are to zinc from chain A
 
 
-		sym_minmover_sc_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_sc_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
-		sym_minmover_bb_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_bb_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
-		sym_minmover_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
+		sym_minmover_sc_ = protocols::minimization_packing::symmetry::SymMinMoverOP( new protocols::minimization_packing::symmetry::SymMinMover( movemap_sc_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
+		sym_minmover_bb_ = protocols::minimization_packing::symmetry::SymMinMoverOP( new protocols::minimization_packing::symmetry::SymMinMover( movemap_bb_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
+		sym_minmover_ = protocols::minimization_packing::symmetry::SymMinMoverOP( new protocols::minimization_packing::symmetry::SymMinMover( movemap_, fa_metal_scorefxn_, "lbfgs_armijo", 0.01, true ) );
 
 
 		return;
@@ -343,10 +343,10 @@ private:
 	core::scoring::ScoreFunctionOP fa_metal_scorefxn_;
 	core::scoring::symmetry::SymmetricScoreFunctionOP fa_metal_sym_scorefxn_;
 
-	protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
-	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_;
-	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_sc_;
-	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_bb_;
+	protocols::minimization_packing::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
+	protocols::minimization_packing::symmetry::SymMinMoverOP sym_minmover_;
+	protocols::minimization_packing::symmetry::SymMinMoverOP sym_minmover_sc_;
+	protocols::minimization_packing::symmetry::SymMinMoverOP sym_minmover_bb_;
 
 	core::kinematics::MoveMapOP movemap_;
 	core::kinematics::MoveMapOP movemap_sc_;

@@ -38,7 +38,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/ShakeStructureMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>

@@ -29,7 +29,7 @@
 
 
 //Protocols
-#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/tag/Tag.hh>
@@ -261,7 +261,7 @@ protected:
 	set_test_control_mode(bool test_control_mode);
 
 protected:
-	virtual protocols::simple_moves::MinMoverOP
+	virtual protocols::minimization_packing::MinMoverOP
 	setup_default_min_mover();
 
 	virtual protocols::simple_moves::SmallMoverOP

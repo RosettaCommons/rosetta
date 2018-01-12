@@ -55,7 +55,7 @@
 #include <string>
 
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.fwd.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -136,9 +136,9 @@ protected:
 	//@brief change the movemap ( is propagated to mover-objects )
 	void set_movemap ( core::kinematics::MoveMapCOP mm ) override;
 
-	void set_min_move( protocols::simple_moves::MinMoverOP mm);
+	void set_min_move( protocols::minimization_packing::MinMoverOP mm);
 
-	protocols::simple_moves::MinMover& min_move() {
+	protocols::minimization_packing::MinMover& min_move() {
 		return *min_move_;
 	}
 
@@ -182,7 +182,7 @@ private:
 	core::Real
 	evaluate_constraint_energy( core::pose::Pose& pose, core::scoring::ScoreFunction const& ) const;
 
-	protocols::simple_moves::MinMoverOP min_move_;
+	protocols::minimization_packing::MinMoverOP min_move_;
 
 	constraints_additional::MaxSeqSepConstraintSetOP constraints_;
 	core::Real constraint_weight_;

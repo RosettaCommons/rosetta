@@ -14,7 +14,7 @@
 
 // Unit headers
 #include <protocols/enzdes/PackRotamersMoverPartGreedy.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
 #include <basic/datacache/DataMap.hh>
@@ -33,7 +33,7 @@
 #include <core/select/util.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
@@ -207,7 +207,7 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
 	TR<< std::endl;
 	task->initialize_from_command_line().or_include_current( true );
 	//Next hand over these to regular PackRotamers mover and we're done!
-	protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( scorefxn_repack_ , task ) );
+	protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( scorefxn_repack_ , task ) );
 	pack->apply( pose );
 
 }
@@ -269,14 +269,14 @@ PackRotamersMoverPartGreedy::greedy_around(
 					else mutate_residue->nonconst_residue_task( i ).prevent_repacking();
 				}
 				// Now run design on one position
-				protocols::simple_moves::PackRotamersMoverOP prm( new protocols::simple_moves::PackRotamersMover( scorefxn, mutate_residue, 1 ) );
+				protocols::minimization_packing::PackRotamersMoverOP prm( new protocols::minimization_packing::PackRotamersMover( scorefxn, mutate_residue, 1 ) );
 				prm->apply( working_pose );
 				//Minimize the sidechains of all designed residues so far
 				core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 				movemap->set_jump( false );
 				movemap->set_bb( false );
 				movemap->set_chi( allow_minimization );
-				protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, scorefxn_minimize_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/) );
+				protocols::minimization_packing::MinMoverOP minmover( new protocols::minimization_packing::MinMover( movemap, scorefxn_minimize_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/) );
 				minmover->apply(working_pose);
 
 				//Check energy

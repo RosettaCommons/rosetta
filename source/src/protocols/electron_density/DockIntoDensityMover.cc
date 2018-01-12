@@ -66,8 +66,8 @@
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rigid/RB_geometry.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <utility/file/file_sys_util.hh>
@@ -758,7 +758,7 @@ DockIntoDensityMover::do_refinement (
 
 	core::kinematics::MoveMapOP bbmm( new core::kinematics::MoveMap );
 	bbmm->set_bb( true ); bbmm->set_chi( true ); bbmm->set_jump( true );
-	protocols::simple_moves::MinMoverOP bbmin( new protocols::simple_moves::MinMover(
+	protocols::minimization_packing::MinMoverOP bbmin( new protocols::minimization_packing::MinMover(
 		bbmm, scorefxn_refine, "lbfgs_armijo_nonmonotone", 1e-5, true ) );
 	bbmin->max_iter(200); // make a parameter?
 
@@ -767,7 +767,7 @@ DockIntoDensityMover::do_refinement (
 	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() )); // get extra rotamer flags from command line
 	tf->push_back( TaskOperationCOP( new operation::IncludeCurrent )); // include current rotamer by default
 	tf->push_back( TaskOperationCOP( new RestrictToRepacking() )); // do not design
-	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
+	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );
 	packer->task_factory( tf );
 	packer->score_function( scorefxn_refine );
 
@@ -791,7 +791,7 @@ DockIntoDensityMover::do_refinement (
 		for ( core::Size i=1; i<=root_edges.size(); ++i ) rbmm->set_jump ( root_edges[i].label() , true );
 
 		// Setup rigid-body min now!
-		protocols::simple_moves::MinMoverOP rbmin( new protocols::simple_moves::MinMover( rbmm, scorefxn_refine_rb, "lbfgs_armijo_nonmonotone", 1e-5, true ) );
+		protocols::minimization_packing::MinMoverOP rbmin( new protocols::minimization_packing::MinMover( rbmm, scorefxn_refine_rb, "lbfgs_armijo_nonmonotone", 1e-5, true ) );
 		rbmin->max_iter(200); // make a parameter?
 
 		core::Real scoreb = (*scorefxn_dens)(*posecopy), scorei=0;

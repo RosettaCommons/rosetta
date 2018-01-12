@@ -49,7 +49,7 @@
 #include <utility/graph/Graph.hh>
 
 // protocols headers
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // basic headers
 #include <basic/database/open.hh>
@@ -166,7 +166,7 @@ main( int argc, char * argv [] )
 	if ( option[ packing::resfile ].user() ) {
 		task_factory->push_back( new pack::task::operation::ReadResfile );
 	}
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover = new protocols::minimization_packing::PackRotamersMover;
 	pack_mover->task_factory( task_factory );
 	pack_mover->score_function( score_fxn );
 	std::string before_filename( "before.pdb" );

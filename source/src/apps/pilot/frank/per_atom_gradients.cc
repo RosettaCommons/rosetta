@@ -7,11 +7,11 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <core/scoring/ScoreFunction.hh>

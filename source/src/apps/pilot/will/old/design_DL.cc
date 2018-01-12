@@ -46,7 +46,7 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <apps/pilot/will/mynamespaces.ihh>
 #include <apps/pilot/will/will_util.ihh>
 
@@ -91,7 +91,7 @@ int main (int argc, char *argv[]) {
 				}
 			}
 
-			protocols::simple_moves::PackRotamersMover repack( sf, task );
+			protocols::minimization_packing::PackRotamersMover repack( sf, task );
 			repack.apply(pose);
 
 			pose.dump_pdb(infile+"_DL.pdb");

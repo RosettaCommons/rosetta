@@ -290,7 +290,7 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 	mintype_(src.mintype_)
 {
 	using namespace protocols::grafting;
-	using namespace protocols::simple_moves;
+	using namespace protocols::minimization_packing;
 
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
 	if ( src.scorefxn_min_ ) scorefxn_min_ = src.scorefxn_min_->clone();
@@ -656,7 +656,7 @@ AntibodyDesignMover::setup_default_graft_settings(){
 
 void
 AntibodyDesignMover::setup_cart_minimizer(){
-	cart_min_graft_ = simple_moves::MinMoverOP( new simple_moves::MinMover());
+	cart_min_graft_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover());
 	cart_min_graft_->cartesian(true);
 	cart_min_graft_->min_type("lbfgs_armijo_nonmonotone");
 	cart_min_graft_->min_options()->max_iter(200);

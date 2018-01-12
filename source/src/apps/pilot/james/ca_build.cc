@@ -52,7 +52,7 @@
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/CompositionMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -226,7 +226,7 @@ main( int argc, char* argv [] ) {
 
 				//core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 				//l_container.add_mover(
-				//	new protocols::simple_moves::MinMover(
+				//	new protocols::minimization_packing::MinMover(
 				//		new core::kinematics::MoveMap, scorefxn, "lbfgs_armijo_nonmonotone", 1e-5, true
 				//	)
 				//);

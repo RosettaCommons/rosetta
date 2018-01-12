@@ -35,7 +35,7 @@
 #include <devel/init.hh>
 
 //#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -89,7 +89,7 @@ main( int argc, char * argv [] )
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
 	//create the PackRotamersMover which will do the packing
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover = new protocols::minimization_packing::PackRotamersMover;
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( score_fxn );
 

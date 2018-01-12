@@ -53,10 +53,10 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/PyMOLMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/oop/OopPatcher.hh>
-#include <protocols/simple_moves/hbs/HbsPatcher.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/ncbb/oop/OopPatcher.hh>
+#include <protocols/ncbb/hbs/HbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
@@ -217,7 +217,7 @@ HotspotPlacementMover::apply(
 	place_hs_mm->set_bb( false );
 	place_hs_mm->set_chi( false );
 	place_hs_mm->set_jump( 1, true );
-	protocols::simple_moves::MinMoverOP place_hs_min( new protocols::simple_moves::MinMover( place_hs_mm, place_hs_score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+	protocols::minimization_packing::MinMoverOP place_hs_min( new protocols::minimization_packing::MinMover( place_hs_mm, place_hs_score_fxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 	//Primary Hotspot Setup
 	protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
@@ -240,7 +240,7 @@ HotspotPlacementMover::apply(
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	core::pack::task::operation::RestrictToRepackingOP rtrp( new core::pack::task::operation::RestrictToRepacking() );
 	tf->push_back( rtrp );
-	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
+	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover() );
 	packer->task_factory( tf );
 	packer->score_function( score_fxn );
 	//packer->score_function( bump_scorefxn );
@@ -256,7 +256,7 @@ HotspotPlacementMover::apply(
 	min_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP min( new simple_moves::MinMover( min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
+	minimization_packing::MinMoverOP min( new minimization_packing::MinMover( min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ) );
 
 	//kdrew: setup default packer task for both L and D residues
 	utility::vector1< bool > aas(20,false);

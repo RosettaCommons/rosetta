@@ -178,7 +178,7 @@ def sample_refinement(pdb_filename,
     #shearmover.angle_max('L', backbone_angle_max)
 
     # 7. create a MinMover, for backbone torsion minimization
-    minmover = protocols.simple_moves.MinMover()
+    minmover = protocols.minimization_packing.MinMover()
     minmover.movemap(movemap)
     minmover.score_function(scorefxn)
 
@@ -188,7 +188,7 @@ def sample_refinement(pdb_filename,
     to_pack = standard_packer_task(starting_pose)
     to_pack.restrict_to_repacking()    # prevents design, packing only
     to_pack.or_include_current(True)    # considers the original sidechains
-    packmover = protocols.simple_moves.PackRotamersMover(scorefxn, to_pack)
+    packmover = protocols.minimization_packing.PackRotamersMover(scorefxn, to_pack)
 
     #### assess the new structure
     # 9. create a PyMOLMover

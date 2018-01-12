@@ -52,8 +52,8 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/abinitio/FragmentMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -471,7 +471,7 @@ void repack(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	//   // task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
 	//  }
 	// }
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -495,7 +495,7 @@ void design_target(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -510,7 +510,7 @@ void design_all(core::pose::Pose & cc, ScoreFunctionOP sf) {
 			// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
 		}
 	}
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -532,7 +532,7 @@ void design_FILV(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -555,7 +555,7 @@ void design_AFILV(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -575,7 +575,7 @@ void design_AL(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -599,7 +599,7 @@ void design_FILVEK(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -624,14 +624,14 @@ void design_AFILVEK(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
 
 void minimize(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	core::kinematics::MoveMapOP movemap = make_move_map(cc);
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-2, true );
+	protocols::minimization_packing::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-2, true );
 	m.apply(cc);
 }
 
@@ -808,7 +808,7 @@ align_sf4(
 	mm->set_chi(false); mm->set_bb(false); mm->set_jump(false);
 	mm->set_jump(4, true);
 	mm->set(core::id::RB1,false); mm->set(core::id::RB2,false); mm->set(core::id::RB3,false);
-	protocols::simple_moves::MinMover mnm( mm, sf, "lbfgs_armijo_nonmonotone", 1e-4, true );
+	protocols::minimization_packing::MinMover mnm( mm, sf, "lbfgs_armijo_nonmonotone", 1e-4, true );
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
 	ResidueOP cys = ResidueFactory::create_residue( residue_set->name_map("CYV") );
 	ResidueOP sf4 = ResidueFactory::create_residue( residue_set->name_map("SF4") );

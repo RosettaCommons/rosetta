@@ -22,7 +22,7 @@
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <devel/init.hh>
 #include <utility/vector1.hh>
@@ -30,11 +30,6 @@
 #include <basic/Tracer.hh>
 
 #include <unistd.h>
-
-/*#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path_traits.hpp>
-#include <boost/filesystem/config.hpp>*/
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces
@@ -46,7 +41,7 @@ using namespace scoring;
 using namespace func;
 using namespace constraints;
 using namespace pose;
-using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 
 // tracer - used to replace cout
 static basic::Tracer TR("BetaScScan");
@@ -86,7 +81,7 @@ void set_up_movemap( std::string const & n3, core::pose::Pose const & pose,  kin
 
 void scan_chi( core::pose::Pose & pose, core::scoring::ScoreFunctionOP score_fxn, kinematics::MoveMapOP mm, std::string const & ext ) {
 
-	protocols::simple_moves::MinMoverOP min( new protocols::simple_moves::MinMover( mm, score_fxn, "linmin_iterated", 0.001, true ) );//lbfgs_armijo_nonmonotone", 0.001, true ) );
+	protocols::minimization_packing::MinMoverOP min( new protocols::minimization_packing::MinMover( mm, score_fxn, "linmin_iterated", 0.001, true ) );//lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 
 	utility::vector1< utility::vector1< Real > > results;

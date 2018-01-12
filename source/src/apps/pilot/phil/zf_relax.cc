@@ -21,10 +21,10 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <protocols/viewer/viewers.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -550,15 +550,15 @@ zf_relax_test()
 			cst_scorefxn ) ) );
 		MoverOP rb_mover( new ZF_PatchupMover( new devel::dna::RB_Mover( protein_jumps_mm, rb_mover_trans_mag,
 			rb_mover_rot_mag ) ) );
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( min_mm, scorefxn, "lbfgs_armijo_nonmonotone", min_tol, true ) );
-		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover( scorefxn, pack_task, 25 ) );
+		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( min_mm, scorefxn, "lbfgs_armijo_nonmonotone", min_tol, true ) );
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover( scorefxn, pack_task, 25 ) );
 
 		// rotamer trials w/ energycut
-		protocols::simple_moves::EnergyCutRotamerTrialsMoverOP rottrial_mover
-			( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *rottrial_task, mc, energycut ) );
+		protocols::minimization_packing::EnergyCutRotamerTrialsMoverOP rottrial_mover
+			( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( scorefxn, *rottrial_task, mc, energycut ) );
 
-		protocols::simple_moves::RotamerTrialsMoverOP full_rottrial_mover
-			( new protocols::simple_moves::RotamerTrialsMover( scorefxn, *rottrial_task ) );
+		protocols::minimization_packing::RotamerTrialsMoverOP full_rottrial_mover
+			( new protocols::minimization_packing::RotamerTrialsMover( scorefxn, *rottrial_task ) );
 
 		// trials:
 		TrialMoverOP   rb_min_trial = devel::dna::setup_MCM_trial(   rb_mover,      rottrial_mover, min_mover, mc );

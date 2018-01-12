@@ -346,7 +346,7 @@ def mutate_residue(pose, mutant_position, mutant_aa,
             task.nonconst_residue_task(i).prevent_repacking()
 
     # apply the mutation and pack nearby residues
-    packer = protocols.simple_moves.PackRotamersMover(pack_scorefxn, task)
+    packer = protocols.minimization_packing.PackRotamersMover(pack_scorefxn, task)
     packer.apply(test_pose)
 
     return test_pose
@@ -387,7 +387,7 @@ def calc_binding_energy(pose, scorefxn, center, cutoff = 8.0):
     tf.push_back(prevent_repacking)
 
     # setup a PackRotamersMover
-    packer = protocols.simple_moves.PackRotamersMover(scorefxn)
+    packer = protocols.minimization_packing.PackRotamersMover(scorefxn)
     packer.task_factory(tf)
 
     #### create a Mover for performing translation

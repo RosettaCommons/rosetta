@@ -23,7 +23,7 @@
 // packing
 
 //#include <protocols/symmetrical_docking/SymRestrictTaskForDocking.hh>
-//#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+//#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 
 
 #include <basic/Tracer.hh>
@@ -143,7 +143,7 @@ SymmDataTest()
 
 	// pose.dump_pdb("after_min.pdb");
 	// std::exit(0);
-	//  protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::symmetry::SymPackRotamersMover( scfx_cop, packer_task );
+	//  protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack = new minimization_packing::symmetry::SymPackRotamersMover( scfx_cop, packer_task );
 	// pack_interface_repack->apply(pose);
 	protocols::symmetric_docking::SymDockProtocolOP dock_mover = new protocols::symmetric_docking::SymDockProtocol();
 	dock_mover->apply(pose);

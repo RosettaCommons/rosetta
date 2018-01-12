@@ -28,7 +28,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/relax/FastRelax.hh>
 
 #include <devel/init.hh>
@@ -225,8 +225,8 @@ rebuild_test()
 		movemap->set_chi( pose.size(), false );
 
 		bool const use_nblist( true ), deriv_check( true ), deriv_check_verbose( false );
-		protocols::simple_moves::symmetry::SymMinMoverOP min_mover
-			( new protocols::simple_moves::symmetry::SymMinMover(movemap, fa_scorefxn, "dfpmin_armijo_nonmonotone", 1e-2,
+		protocols::minimization_packing::symmetry::SymMinMoverOP min_mover
+			( new protocols::minimization_packing::symmetry::SymMinMover(movemap, fa_scorefxn, "dfpmin_armijo_nonmonotone", 1e-2,
 			use_nblist, deriv_check, deriv_check_verbose ) );
 
 		min_mover->apply( pose );

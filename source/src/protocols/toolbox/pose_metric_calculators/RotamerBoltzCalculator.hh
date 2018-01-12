@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator_hh
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <protocols/toolbox/EnergyLandscapeEvaluator.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
@@ -68,12 +68,12 @@ protected:
 	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
 	virtual std::string print( std::string const & key ) const;
 	virtual void recompute( core::pose::Pose const & this_pose );
-	core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi, protocols::simple_moves::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
+	core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi, protocols::minimization_packing::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
 
 	core::scoring::ScoreFunctionOP scorefxn() const {return scorefxn_;};
 	core::Real computeBoltzSum(core::Real init_score, utility::vector1<core::Real> scores);
 
-	protocols::simple_moves::MinMoverOP init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task);
+	protocols::minimization_packing::MinMoverOP init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task);
 
 	core::pack::task::PackerTaskOP
 	init_task( core::pose::Pose const & pose, core::Size const resi );
@@ -105,11 +105,11 @@ private:
 	compute_boltz_weight_packrotamers(
 		core::pose::Pose & pose,
 		core::Size const resi,
-		protocols::simple_moves::MinMoverOP min_mover,
+		protocols::minimization_packing::MinMoverOP min_mover,
 		core::pack::task::PackerTaskOP task ) const;
 
 	core::Real
-	computeBoltzWeight_lazy(core::pose::Pose& pose, Size resi,  protocols::simple_moves::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
+	computeBoltzWeight_lazy(core::pose::Pose& pose, Size resi,  protocols::minimization_packing::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
 
 	core::pack::rotamer_set::RotamerSetOP
 	create_rotamer_set( core::pose::Pose const & pose, core::Size const resi ) const;
@@ -126,7 +126,7 @@ private:
 	utility::vector0<int> init_rot_to_pack(core::pack::rotamer_set::RotamerSetsCOP rotamer_sets, core::Size moltenres, core::Size rot_to_fix);
 	core::scoring::ScoreFunctionOP scorefxn_;
 	//core::kinematics::MoveMapOP mm_;
-	//protocols::simple_moves::MinMover min_mover_;
+	//protocols::minimization_packing::MinMover min_mover_;
 	core::Real temperature_;
 	//protocols::simple_filters::ScoreTypeFilter const stf_;
 	utility::vector1< core::Real > all_boltz_;

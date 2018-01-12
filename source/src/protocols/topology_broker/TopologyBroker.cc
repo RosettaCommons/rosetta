@@ -39,8 +39,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -1024,13 +1024,13 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose & pose ) {
 	if ( tr.Debug.visible() ) pose.constraint_set()->show_numbers( tr.Debug );
 
 	if ( pose::symmetry::is_symmetric( pose ) ) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover pack1( repack_scorefxn_ , taskstd );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover pack1( repack_scorefxn_ , taskstd );
 		pack1.apply( pose );
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 		core::optimization::symmetry::SymAtomTreeMinimizer smzr;
 		smzr.run( pose, *mm, *repack_scorefxn_, options );
 	} else {
-		protocols::simple_moves::PackRotamersMover pack1( repack_scorefxn_ , taskstd );
+		protocols::minimization_packing::PackRotamersMover pack1( repack_scorefxn_ , taskstd );
 		pack1.apply( pose );
 
 		// quick SC minimization

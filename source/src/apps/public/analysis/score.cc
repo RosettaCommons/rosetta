@@ -17,7 +17,7 @@
 
 #include <protocols/jobdist/standard_mains.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/ProlineFixMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
@@ -188,7 +188,7 @@ catch ( utility::excn::Exception &excn )  {
 			if ( option[ score_app::linmin ]() ) {
 				core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 				movemap->set_bb( true ); movemap->set_chi( true );
-				protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover(
+				protocols::minimization_packing::MinMoverOP minmover( new protocols::minimization_packing::MinMover(
 					movemap, sfxn, "linmin", 1e-4,
 					true /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/ ) );
 				seqmov->add_mover( minmover );

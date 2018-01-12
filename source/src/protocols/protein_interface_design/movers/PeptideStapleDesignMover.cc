@@ -24,7 +24,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/simple_moves/PeptideStapleMover.hh>
+#include <protocols/ncbb/PeptideStapleMover.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes

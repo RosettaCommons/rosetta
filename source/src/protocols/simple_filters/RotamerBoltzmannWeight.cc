@@ -30,7 +30,7 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <utility/vector1.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -41,7 +41,7 @@
 // Neil headers 110621
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/make_symmetric_task.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/jd2/util.hh>
 #include <ObjexxFCL/format.hh>
 
@@ -394,9 +394,9 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	core::pack::pack_rotamers( pose, *scorefxn_, task );
 	protocols::moves::MoverOP min_mover;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		min_mover = protocols::moves::MoverOP( new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) ); // NK 110621
+		min_mover = protocols::moves::MoverOP( new protocols::minimization_packing::symmetry::SymMinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) ); // NK 110621
 	} else {
-		min_mover = protocols::moves::MoverOP( new protocols::simple_moves::MinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) ); // NK 110621
+		min_mover = protocols::moves::MoverOP( new protocols::minimization_packing::MinMover( mm, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) ); // NK 110621
 	}
 	min_mover->apply( pose );
 	core::pose::Pose const const_min_pose( pose );

@@ -36,7 +36,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
@@ -94,7 +94,7 @@ get_touched_res( core::pose::Pose const pose,
 	core::Real dist_cut = 6.0
 );
 
-protocols::simple_moves::PackRotamersMoverOP
+protocols::minimization_packing::PackRotamersMoverOP
 setup_packer( core::pose::Pose const &pose,
 	core::kinematics::MoveMap const mm,
 	core::scoring::ScoreFunctionCOP sfxn );

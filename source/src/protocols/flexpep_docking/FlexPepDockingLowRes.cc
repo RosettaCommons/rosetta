@@ -33,7 +33,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -110,7 +110,7 @@ FlexPepDockingLowRes::setup_for_apply( core::pose::Pose& pose )
 	// setup minimizer
 	std::string min_type = "lbfgs_armijo_atol"; // armijo_nonmonotone? different tolerance?
 	double min_func_tol = 0.1;
-	minimizer_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
+	minimizer_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
 		movemap_, scorefxn_, min_type, min_func_tol, true /*nb_list accel.*/ ) );
 }
 

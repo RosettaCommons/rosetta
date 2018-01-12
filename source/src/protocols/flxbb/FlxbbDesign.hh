@@ -35,7 +35,7 @@
 
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -303,7 +303,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-class FlxbbDesignPack: public protocols::simple_moves::PackRotamersMover {
+class FlxbbDesignPack: public protocols::minimization_packing::PackRotamersMover {
 public:
 
 	typedef core::pack::task::PackerTaskCOP PackerTaskCOP;

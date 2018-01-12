@@ -46,7 +46,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
-#include <protocols/simple_moves/RotamerizeMover.hh>
+#include <protocols/minimization_packing/RotamerizeMover.hh>
 
 #include <devel/init.hh>
 

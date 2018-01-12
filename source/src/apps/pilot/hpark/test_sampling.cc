@@ -25,7 +25,7 @@
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 #include <protocols/simple_moves/BBGaussianMover.hh>
@@ -431,7 +431,7 @@ test_loophash( pose::Pose const pose,
       mm = get_movemap( false );
     }
 
-    protocols::simple_moves::PackRotamersMoverOP packer = setup_packer( pose, *mm, sfxn );
+    protocols::minimization_packing::PackRotamersMoverOP packer = setup_packer( pose, *mm, sfxn );
 
     // Store
     pose::Pose pose_tmp;

@@ -48,7 +48,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
@@ -205,7 +205,7 @@ ClassicAbinitio::ClassicAbinitio(
 
 	using namespace core::pack::task;
 	//init the packer
-	pack_rotamers_ = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+	pack_rotamers_ = minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
 	TaskFactoryOP main_task_factory( new TaskFactory );
 	main_task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) );
 	//main_task_factory->push_back( new operation::PreserveCBeta );

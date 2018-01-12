@@ -20,7 +20,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/simple_moves/GreenPacker.fwd.hh>
+#include <protocols/minimization_packing/GreenPacker.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 namespace protocols {
@@ -77,7 +77,7 @@ private:
 	bool use_green_packer_;
 
 	core::pack::task::PackerTaskOP o2prime_pack_task_;
-	protocols::simple_moves::GreenPackerOP o2prime_green_packer_;
+	protocols::minimization_packing::GreenPackerOP o2prime_green_packer_;
 
 	core::scoring::ScoreFunctionCOP o2prime_pack_scorefxn_;
 

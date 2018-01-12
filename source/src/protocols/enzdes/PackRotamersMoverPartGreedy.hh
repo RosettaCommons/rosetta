@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_enzdes_PackRotamersMoverPartGreedy_hh
 
 // Unit headers
-//#include <protocols/simple_moves/PackRotamersMoverPartGreedy.fwd.hh>
+//#include <protocols/minimization_packing/PackRotamersMoverPartGreedy.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project headers

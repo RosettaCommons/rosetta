@@ -62,7 +62,7 @@ recover_sidechains = protocols.simple_moves.ReturnSidechainMover( starting_p )
 task_pack = TaskFactory.create_packer_task( starting_p )
 task_pack.restrict_to_repacking()
 task_pack.or_include_current( True )
-pack = protocols.simple_moves.PackRotamersMover( scorefxn_high, task_pack )
+pack = protocols.minimization_packing.PackRotamersMover( scorefxn_high, task_pack )
 
 #convert to centroid mode
 to_centroid.apply( p )
@@ -74,7 +74,7 @@ movemap.set_bb( True )
 # set up centroid stage line minimizer
 tol = 0.001
 min_type = "linmin"
-linmin_mover = protocols.simple_moves.MinMover( mm, scorefxn_low, min_type, tol, True )
+linmin_mover = protocols.minimization_packing.MinMover( mm, scorefxn_low, min_type, tol, True )
 
 # save starting pose
 starting_p_centroid = Pose()

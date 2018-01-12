@@ -19,7 +19,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -106,7 +106,7 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover(move_map ,kT_,nmoves_/2) );
 	small_mover->angle_max(30); // max angle deviation.
 	//Default Values copied from  MinMover.cc
-	simple_moves::MinMoverOP small_min_mover( new simple_moves::MinMover(move_map ,
+	minimization_packing::MinMoverOP small_min_mover( new minimization_packing::MinMover(move_map ,
 		score_low_res_,small_min_type_,tolerance,true,false,false) );
 	//smallsequenceMover_ =
 	///     new moves::SequenceMover(smallmover_,smallminmover_);
@@ -120,7 +120,7 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(move_map ,kT_,nmoves_) );
 	shear_mover->angle_max(30);
 	//Default Values copied from  MinMover.cc
-	simple_moves::MinMoverOP shear_min_mover( new simple_moves::MinMover(move_map ,score_low_res_,
+	minimization_packing::MinMoverOP shear_min_mover( new minimization_packing::MinMover(move_map ,score_low_res_,
 		shear_min_type_,tolerance,true,false,false) );
 
 	moves::SequenceMoverOP shear_sequence_mover( new moves::SequenceMover() );

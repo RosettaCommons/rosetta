@@ -60,7 +60,7 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -280,7 +280,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 		/*minimizer_score=*/scorefxn_);
 
 	// add our dfpmin minimization - increases number of cases where successful closure is achieved compared to lbfgs_armijo_nonmonotone
-	protocols::simple_moves::MinMover minimizer( movemap, scorefxn_, "dfpmin_armijo_atol", 0.01 /*tolerance*/, true /*nb_list*/ );
+	protocols::minimization_packing::MinMover minimizer( movemap, scorefxn_, "dfpmin_armijo_atol", 0.01 /*tolerance*/, true /*nb_list*/ );
 	minimizer.apply( peptide_receptor_pose );
 
 	if ( constraint_weight_ > 0 ) { // save some code-running if no constraint it set

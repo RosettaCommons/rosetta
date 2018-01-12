@@ -56,7 +56,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 namespace protocols {

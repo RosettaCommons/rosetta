@@ -33,7 +33,7 @@
 #include <core/pose/Pose.hh>
 #include <core/init/init.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
@@ -302,7 +302,7 @@ rna_design_test()
 		// TODO: also fill results vector
 		core::pose::Pose start_pose = pose;
 		for ( Size ii = 1; ii <= nstruct; ++ii ) {
-			protocols::simple_moves::PackRotamersMover prm( scorefxn, task );
+			protocols::minimization_packing::PackRotamersMover prm( scorefxn, task );
 			prm.apply( pose );
 			if ( option[ final_minimize ] ) {
 				AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );

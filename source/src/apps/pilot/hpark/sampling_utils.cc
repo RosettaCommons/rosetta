@@ -15,7 +15,7 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <utility/vector1.hh>
 
 #include <iostream>
@@ -86,7 +86,7 @@ get_movemap( bool const nonideal )
   return mm;
 }
 
-protocols::simple_moves::PackRotamersMoverOP
+protocols::minimization_packing::PackRotamersMoverOP
 setup_packer( pose::Pose const &pose,
 	      kinematics::MoveMap const mm,
 	      scoring::ScoreFunctionCOP sfxn )
@@ -110,8 +110,8 @@ setup_packer( pose::Pose const &pose,
   //Include current rotamer by default
   local_tf->push_back( new IncludeCurrent() );
 
-  protocols::simple_moves::PackRotamersMoverOP packer
-    = new protocols::simple_moves::PackRotamersMover( sfxn );
+  protocols::minimization_packing::PackRotamersMoverOP packer
+    = new protocols::minimization_packing::PackRotamersMover( sfxn );
 
   packer->task_factory(local_tf);
 
@@ -129,7 +129,7 @@ ramp_repack_min( pose::Pose &pose,
 
 
   // Movemap, Packer: full repack/min
-  protocols::simple_moves::PackRotamersMoverOP packer = setup_packer( pose, mm, sfxn );
+  protocols::minimization_packing::PackRotamersMoverOP packer = setup_packer( pose, mm, sfxn );
 
   packer->apply( pose );
   

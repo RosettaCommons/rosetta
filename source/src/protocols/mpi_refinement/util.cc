@@ -35,7 +35,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/loops/loops_main.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -310,7 +310,7 @@ get_touched_res( core::pose::Pose const pose,
 	return touched_res;
 }
 
-protocols::simple_moves::PackRotamersMoverOP
+protocols::minimization_packing::PackRotamersMoverOP
 setup_packer( core::pose::Pose const &pose,
 	core::kinematics::MoveMap const mm,
 	core::scoring::ScoreFunctionCOP sfxn )
@@ -334,8 +334,8 @@ setup_packer( core::pose::Pose const &pose,
 	//Include current rotamer by default
 	local_tf->push_back( TaskOperationCOP( new IncludeCurrent() ) );
 
-	protocols::simple_moves::PackRotamersMoverOP packer
-		( new protocols::simple_moves::PackRotamersMover( sfxn ) );
+	protocols::minimization_packing::PackRotamersMoverOP packer
+		( new protocols::minimization_packing::PackRotamersMover( sfxn ) );
 
 	packer->task_factory(local_tf);
 
@@ -394,7 +394,7 @@ void ramp_minpack_loop( core::pose::Pose &pose,
 		}
 	}
 
-	protocols::simple_moves::PackRotamersMoverOP packer = setup_packer( pose, mm, sfxn );
+	protocols::minimization_packing::PackRotamersMoverOP packer = setup_packer( pose, mm, sfxn );
 
 	core::optimization::CartesianMinimizer minimizer;
 	core::optimization::MinimizerOptions minoption( "lbfgs_armijo_nonmonotone",

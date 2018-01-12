@@ -44,9 +44,9 @@
 
 #include <core/id/AtomID_Map.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 
@@ -399,8 +399,8 @@ repack_this_residue(
 	OperateOnResidueSubsetOP inv_subset( new OperateOnResidueSubset( prevent_repacking, the_residue, true) );
 	local_tf->push_back( inv_subset );
 
-	protocols::simple_moves::PackRotamersMoverOP repack(
-		new protocols::simple_moves::PackRotamersMover( scorefxn ) );
+	protocols::minimization_packing::PackRotamersMoverOP repack(
+		new protocols::minimization_packing::PackRotamersMover( scorefxn ) );
 	repack->task_factory( local_tf );
 	repack->apply( pose );
 }
@@ -438,8 +438,8 @@ repack_these_residues(
 	OperateOnResidueSubsetOP inv_subset( new OperateOnResidueSubset( prevent_repacking, these_residues, true) );
 	local_tf->push_back( inv_subset );
 
-	protocols::simple_moves::PackRotamersMoverOP repack(
-		new protocols::simple_moves::PackRotamersMover( scorefxn ) );
+	protocols::minimization_packing::PackRotamersMoverOP repack(
+		new protocols::minimization_packing::PackRotamersMover( scorefxn ) );
 	repack->task_factory( local_tf );
 	repack->apply( pose );
 }

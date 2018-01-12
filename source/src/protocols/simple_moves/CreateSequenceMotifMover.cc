@@ -15,7 +15,7 @@
 #include <protocols/simple_moves/CreateSequenceMotifMover.hh>
 #include <protocols/simple_moves/CreateSequenceMotifMoverCreator.hh>
 #include <protocols/toolbox/task_operations/SequenceMotifTaskOperation.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -48,6 +48,7 @@ namespace simple_moves {
 
 using namespace core::select::residue_selector;
 using namespace protocols::simple_moves;
+using namespace protocols::minimization_packing;
 using namespace protocols::toolbox::task_operations;
 using namespace core::pack::task::operation;
 using namespace core::pack::task;

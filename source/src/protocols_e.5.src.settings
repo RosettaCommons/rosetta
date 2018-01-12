@@ -10,37 +10,20 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"protocols/medal": [
-		"MedalExchangeMover",
-		"MedalMain",
-		"MedalMover",
+	"protocols/pmut_scan": [
+                "AlterSpecDisruptionDriver",
+		"Mutant",
+		"PointMutScanDriver",
+	],
+	"protocols/sparta": [
+		"ANN",
+		"ChemicalShiftEvaluator",
+		"ChemicalShiftEvaluatorCreator",
+		"GDB",
+		"PDB",
+		"Sparta",
+		"SpartaUtil",
 		"util",
-	],
-	"protocols/nonlocal": [
-		"BiasedFragmentMover",
-		"Chunk",
-		"HelixRotate",
-		"PolicyFactory",
-		"Region",
-		"SheetTranslate",
-		"SimpleTreeBuilder",
-		"SingleFragmentMover",
-		"SingleFragmentMoverCreator",
-		"SmoothPolicy",
-		"StarTreeBuilder",
-		"TreeBuilderFactory",
-		"UniformPolicy",
-		"util",
-	],
-	"protocols/star" : [
-                "Extender",
-		"StarAbinitio",
-                "StarAbinitioMain",
-                "util",
-	],
-	"protocols/frag_picker/nonlocal": [
-		"NonlocalFrags",
-		"NonlocalFragsMain",
 	],
 }
 include_path = [
@@ -50,7 +33,7 @@ library_path = [
 libraries = [
 ]
 subprojects = [
-	"protocols_g.4",
+	"protocols.4",
 	"protocols.3",
 	"protocols_a.2",
 	"protocols.1",

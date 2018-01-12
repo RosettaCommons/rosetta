@@ -45,12 +45,12 @@
 #include <protocols/ligand_docking/RandomConformerMover.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
@@ -290,7 +290,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	// Set up move map for minimizing.
 	// Have to do this after initial perturb so we get the "right" interface defn.
 	// Putting it here, we will get a slightly different interface than is used during classic_protocol() ...
-	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP dfpMinTightTol( new protocols::minimization_packing::MinMover( movemap, scorefxn_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->min_options()->nblist_auto_update(true);
 	dfpMinTightTol->apply(pose);
 
@@ -303,7 +303,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	// //relax_task->initialize_from_command_line().restrict_to_repacking();
 	// relax_task->restrict_to_repacking(); // -ex1, -ex2, etc make this take too long for whole protein!
 	// relax_task->or_include_current( true );
-	// protocols::simple_moves::PackRotamersMoverOP relax_full_repack = new protocols::simple_moves::PackRotamersMover( scorefxn_, relax_task );
+	// protocols::minimization_packing::PackRotamersMoverOP relax_full_repack = new protocols::minimization_packing::PackRotamersMover( scorefxn_, relax_task );
 	// relax.set_full_repack(relax_full_repack); // ligand torsions are still constrained during this...
 	// relax.apply( pose );
 	//}
@@ -352,8 +352,8 @@ LigandDockProtocol::classic_protocol(
 		// this problem did not manifest until I fixed the ScoreFunctionCOP definition in ScoreFunction.fwd.hh
 		MoverOP pack_mover(
 			(cycle % repack_every_Nth == 1) ?
-			(Mover *) new protocols::simple_moves::PackRotamersMover(scorefxn, repack_task) :
-			(Mover *) new protocols::simple_moves::RotamerTrialsMover(scorefxn, *rottrials_task)
+			(Mover *) new protocols::minimization_packing::PackRotamersMover(scorefxn, repack_task) :
+			(Mover *) new protocols::minimization_packing::RotamerTrialsMover(scorefxn, *rottrials_task)
 		);
 		// Wrap it in something to disable the torsion constraints before packing!
 		pack_mover = MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, ligand_torsion_restraints_ ) );
@@ -361,7 +361,7 @@ LigandDockProtocol::classic_protocol(
 		//MoverOP dockmcm_mover = make_dockmcm_mover(pose, jump_id, pack_mover, simple_rigbod, movemap, scorefxn, monteCarlo);
 		//dockmcm_mover->apply(pose);
 		{
-			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+			protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 			min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 			core::Real const score1 = (*scorefxn)( pose );
@@ -423,7 +423,7 @@ LigandDockProtocol::shear_min_protocol(
 	//monteCarlo->reset_counters();
 	for ( core::Size cycle = 1; cycle <= num_cycles; ++cycle ) {
 		//TR << "shear_min_protocol(), cycle " << cycle << std::endl;
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 		//core::Real const score1 = (*scorefxn)( pose );
 
@@ -704,7 +704,7 @@ LigandDockProtocol::make_dockmcm_mover(
 {
 	using namespace protocols::moves;
 
-	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 	min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 	MoverOP sequence_mover( new SequenceMover(

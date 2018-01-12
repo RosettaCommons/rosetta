@@ -29,7 +29,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 
@@ -217,7 +217,7 @@ main( int argc, char * argv [] )
 				// Check for disulfide bonded cysteines
 				if ( pose.residue(i).type().is_disulfide_bonded() ) mm->set_chi( i, false );
 			}
-			protocols::simple_moves::MinMover min_mover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
+			protocols::minimization_packing::MinMover min_mover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  );
 			min_mover.apply( pose );
 
 			pose.update_residue_neighbors(); // make sure graph_state == GOOD

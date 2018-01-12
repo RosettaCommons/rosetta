@@ -22,7 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/ligand_docking/LigandDockProtocol.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/ConsensusDesignMover.hh>
 
 #include <basic/Tracer.hh>
@@ -152,7 +152,7 @@ EnzdesFixBBProtocol::apply(
 		(*scorefxn_)( pose );
 		repack_task = create_enzdes_pack_task( pose, false ); //remake task in case the ligand has moved a lot
 		tr.Info << "Starting after design unconstrained repack/minimization... " << std::endl;
-		protocols::simple_moves::PackRotamersMoverOP enzdes_repack( new protocols::simple_moves::PackRotamersMover(scorefxn_, repack_task) );
+		protocols::minimization_packing::PackRotamersMoverOP enzdes_repack( new protocols::minimization_packing::PackRotamersMover(scorefxn_, repack_task) );
 		enzdes_repack->apply( pose );
 
 		if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_min] ) cst_minimize(pose, repack_task);

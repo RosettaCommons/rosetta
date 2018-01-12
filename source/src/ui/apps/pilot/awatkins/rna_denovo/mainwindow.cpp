@@ -53,7 +53,6 @@
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <core/import_pose/RNA_DeNovoSetup.hh>
 #include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
-#include <protocols/simple_moves/MinMover.hh>
 
 //Rosetta ui headers
 #include <ui/ui_protocols/helical_bundle/HelicalBundleDialogueWidget.h>

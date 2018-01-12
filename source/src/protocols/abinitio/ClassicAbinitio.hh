@@ -35,7 +35,7 @@
 
 #include <protocols/abinitio/Protocol.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -440,7 +440,7 @@ private:
 	moves::TrialMoverOP smooth_trial_small_pack_;
 
 	// Cenrot Sidechain Mover
-	simple_moves::PackRotamersMoverOP pack_rotamers_;
+	minimization_packing::PackRotamersMoverOP pack_rotamers_;
 
 	Size total_trials_;
 

@@ -42,13 +42,13 @@
 //movers
 #include <protocols/simple_moves/BackboneMover.hh> //SmallMover
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <basic/options/keys/TailSegment.OptionKeys.gen.hh>
@@ -145,19 +145,19 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 
 
 	/////////////////////////////generate full repack&minimize mover//////////////////////////////
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 	pack_mover->task_factory( task_factory_ );
 	pack_mover->score_function( fullatom_scorefunction_ );
 
-	protocols::simple_moves::MinMoverOP min_mover_fa( new protocols::simple_moves::MinMover(
+	protocols::minimization_packing::MinMoverOP min_mover_fa( new protocols::minimization_packing::MinMover(
 		movemap_,
 		fullatom_scorefunction_,
 		"lbfgs_armijo_nonmonotone",
 		0.01,
 		true /*use_nblist*/ ) );
 
-	using protocols::simple_moves::TaskAwareMinMoverOP;
-	using protocols::simple_moves::TaskAwareMinMover;
+	using protocols::minimization_packing::TaskAwareMinMoverOP;
+	using protocols::minimization_packing::TaskAwareMinMover;
 	//getting the start and end tail residues from the movemap
 	core::Size const nres(pose.size());
 	for ( core::Size i(1); i<=nres; ++i ) {
@@ -183,7 +183,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 
 	} //for
 	task_factory_min->push_back(dao);
-	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa( new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_min) );
+	protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover_fa( new protocols::minimization_packing::TaskAwareMinMover(min_mover_fa, task_factory_min) );
 
 	/////////////////////////repack/minimize once to fix sidechains//////////////////////////////////
 	// TR << "packing" << std::endl;
@@ -212,9 +212,9 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	protocols::moves::MonteCarloOP mc_fa( new protocols::moves::MonteCarlo( pose, *fullatom_scorefunction_, temp_initial_ ) );
 
 	/////////////////////////////////rotamer trials mover///////////////////////////////////////////
-	using protocols::simple_moves::RotamerTrialsMoverOP;
-	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
-	protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
+	using protocols::minimization_packing::RotamerTrialsMoverOP;
+	using protocols::minimization_packing::EnergyCutRotamerTrialsMover;
+	protocols::minimization_packing::RotamerTrialsMoverOP rt_mover( new protocols::minimization_packing::EnergyCutRotamerTrialsMover(
 		fullatom_scorefunction_,
 		task_factory_,
 		mc_fa,

@@ -14,9 +14,6 @@
 #ifndef INCLUDED_basic_resource_manager_ResourceManagerCreator_FWD_HH
 #define INCLUDED_basic_resource_manager_ResourceManagerCreator_FWD_HH
 
-//unit headers
-#include <basic/resource_manager/ResourceManagerCreator.fwd.hh>
-
 // package headers
 #include <basic/resource_manager/ResourceManager.fwd.hh>
 

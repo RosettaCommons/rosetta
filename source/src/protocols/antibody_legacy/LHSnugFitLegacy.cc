@@ -49,10 +49,10 @@
 #include <ObjexxFCL/string.functions.hh>
 using namespace ObjexxFCL::format;
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
@@ -166,7 +166,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	*cdr_dock_map=ab_info_->get_MoveMap_for_LoopsandDock(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 
 	//set up minimizer movers
-	simple_moves::MinMoverOP min_mover( new simple_moves::MinMover( cdr_dock_map, dock_scorefxn, min_type_, min_threshold, nb_list ) );
+	minimization_packing::MinMoverOP min_mover( new minimization_packing::MinMover( cdr_dock_map, dock_scorefxn, min_type_, min_threshold, nb_list ) );
 
 	//set up rigid body movers
 	rigid::RigidBodyPerturbMoverOP rb_perturb( new rigid::RigidBodyPerturbMover( pose,
@@ -191,9 +191,9 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 
-	simple_moves::RotamerTrialsMoverOP pack_rottrial( new simple_moves::RotamerTrialsMover( pack_scorefxn, tf_ ) );
+	minimization_packing::RotamerTrialsMoverOP pack_rottrial( new minimization_packing::RotamerTrialsMover( pack_scorefxn, tf_ ) );
 
-	simple_moves::PackRotamersMoverOP pack_interface_repack( new simple_moves::PackRotamersMover( pack_scorefxn ) );
+	minimization_packing::PackRotamersMoverOP pack_interface_repack( new minimization_packing::PackRotamersMover( pack_scorefxn ) );
 	pack_interface_repack->task_factory(tf_);
 
 

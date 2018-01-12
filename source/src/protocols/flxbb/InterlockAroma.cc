@@ -30,7 +30,7 @@
 #include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
-#include <protocols/simple_moves/MakePolyXMover.hh>
+#include <protocols/pose_creation/MakePolyXMover.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -121,7 +121,7 @@ InterlockAroma::apply( Pose & pose )
 	using protocols::fldsgn::filters::InterlockingAromaFilter;
 	using protocols::fldsgn::topology::SS_Info2;
 	using protocols::fldsgn::topology::SS_Info2_OP;
-	using protocols::simple_moves::MakePolyXMover;
+	using protocols::pose_creation::MakePolyXMover;
 
 	// set pose to fullatom
 	runtime_assert( pose.is_fullatom() );

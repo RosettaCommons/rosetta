@@ -55,7 +55,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -771,10 +771,10 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );
+		protocols::minimization_packing::PackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	}
 
@@ -794,10 +794,10 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 
 	// if( core::pose::symmetry::is_symmetric(pose) ) {
 	//  core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-	//  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	//  protocols::minimization_packing::symmetry::SymMinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	//  m.apply(pose);
 	// } else {
-	//  protocols::simple_moves::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
+	//  protocols::minimization_packing::MinMover m( movemap, sf, "lbfgs_armijo_nonmonotone", 1e-5, true, false, false );
 	//  m.apply(pose);
 	// }
 	// //TR << "done" << std::endl;
@@ -837,10 +837,10 @@ Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real &
 	//TR << "ddg repack 1" << std::endl;
 	if ( core::pose::symmetry::is_symmetric(p) ) {
 		core::pack::make_symmetric_PackerTask_by_truncation(p,task);
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 		repack.apply(p);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );
+		protocols::minimization_packing::PackRotamersMover repack( sf, task );
 		repack.apply(p);
 	}
 	Real s0 = sf->score(p);
@@ -852,10 +852,10 @@ Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real &
 	for ( Size ir = 1; ir <= Ntri; ++ir ) for ( Size ia = 1; ia <= p.residue_type(ir).natoms(); ++ia ) p.set_xyz(AtomID(ia,ir),p.xyz(AtomID(ia,ir))+Vec(9999,9999,9999));
 	TR << "ddg repack 1" << std::endl;
 	if ( core::pose::symmetry::is_symmetric(p) ) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		protocols::minimization_packing::symmetry::SymPackRotamersMover repack( sf, task );
 		repack.apply(p);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );
+		protocols::minimization_packing::PackRotamersMover repack( sf, task );
 		repack.apply(p);
 	}
 	Real s1 = sf->score(p);

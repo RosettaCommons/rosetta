@@ -63,8 +63,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/cryst/refinable_lattice.hh>
 #include <protocols/cryst/cryst_rms.hh>
@@ -649,8 +649,8 @@ public:
 		///
 		// 1 soft design+min+hard pack+min
 		{
-			protocols::simple_moves::symmetry::SymPackRotamersMoverOP design_soft (
-				new protocols::simple_moves::symmetry::SymPackRotamersMover( sfsoft, designtask ) );
+			protocols::minimization_packing::symmetry::SymPackRotamersMoverOP design_soft (
+				new protocols::minimization_packing::symmetry::SymPackRotamersMover( sfsoft, designtask ) );
 			design_soft->apply( pose );
 			minimizer.run( pose, *mm, *sf, options );
 
@@ -661,8 +661,8 @@ public:
 			for ( core::Size i=1; i<=nres_asu; ++i ) repacktask->nonconst_residue_task( i ).or_include_current( true );
 			for ( core::Size i=1; i<=fixedres.size(); ++i ) repacktask->nonconst_residue_task( fixedres[i] ).prevent_repacking(  );
 
-			protocols::simple_moves::symmetry::SymPackRotamersMoverOP repack_hard (
-				new protocols::simple_moves::symmetry::SymPackRotamersMover( sf, repacktask ) );
+			protocols::minimization_packing::symmetry::SymPackRotamersMoverOP repack_hard (
+				new protocols::minimization_packing::symmetry::SymPackRotamersMover( sf, repacktask ) );
 			repack_hard->apply( pose );
 			minimizer.run( pose, *mm, *sf, options );
 		}
@@ -682,8 +682,8 @@ public:
 
 		// 3 hard design+min+hard pack+min
 		{
-			protocols::simple_moves::symmetry::SymPackRotamersMoverOP design_hard (
-				new protocols::simple_moves::symmetry::SymPackRotamersMover( sf, designtask ) );
+			protocols::minimization_packing::symmetry::SymPackRotamersMoverOP design_hard (
+				new protocols::minimization_packing::symmetry::SymPackRotamersMover( sf, designtask ) );
 			design_hard->apply( pose );
 			minimizer.run( pose, *mm, *sf, options );
 
@@ -694,8 +694,8 @@ public:
 			for ( core::Size i=1; i<=nres_asu; ++i ) repacktask->nonconst_residue_task( i ).or_include_current( true );
 			for ( core::Size i=1; i<=fixedres.size(); ++i ) repacktask->nonconst_residue_task( fixedres[i] ).prevent_repacking(  );
 
-			protocols::simple_moves::symmetry::SymPackRotamersMoverOP repack_hard (
-				new protocols::simple_moves::symmetry::SymPackRotamersMover( sf, repacktask ) );
+			protocols::minimization_packing::symmetry::SymPackRotamersMoverOP repack_hard (
+				new protocols::minimization_packing::symmetry::SymPackRotamersMover( sf, repacktask ) );
 			repack_hard->apply( pose );
 			minimizer.run( pose, *mm, *sf, options );
 		}
@@ -919,14 +919,14 @@ public:
 			core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
 
 			// repack interface + rbmin
-			protocols::simple_moves::symmetry::SymPackRotamersMoverOP repack_soft (
-				new protocols::simple_moves::symmetry::SymPackRotamersMover( sfsoft, repacktask ) );
+			protocols::minimization_packing::symmetry::SymPackRotamersMoverOP repack_soft (
+				new protocols::minimization_packing::symmetry::SymPackRotamersMover( sfsoft, repacktask ) );
 			repack_soft->apply( pose );
 			minimizer.run( pose, *mm, *sf, options );
 
 			// repack interface + rbmin
-			protocols::simple_moves::symmetry::SymPackRotamersMoverOP repack (
-				new protocols::simple_moves::symmetry::SymPackRotamersMover( sf, repacktask ) );
+			protocols::minimization_packing::symmetry::SymPackRotamersMoverOP repack (
+				new protocols::minimization_packing::symmetry::SymPackRotamersMover( sf, repacktask ) );
 			repack->apply( pose );
 			minimizer.run( pose, *mm, *sf, options );
 
@@ -1033,14 +1033,14 @@ public:
 				core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
 
 				// repack interface + rbmin
-				protocols::simple_moves::symmetry::SymPackRotamersMoverOP repack_soft (
-					new protocols::simple_moves::symmetry::SymPackRotamersMover( sfsoft, repacktask ) );
+				protocols::minimization_packing::symmetry::SymPackRotamersMoverOP repack_soft (
+					new protocols::minimization_packing::symmetry::SymPackRotamersMover( sfsoft, repacktask ) );
 				repack_soft->apply( pose );
 				minimizer.run( pose, *mm, *sf, options );
 
 				// repack interface + rbmin
-				protocols::simple_moves::symmetry::SymPackRotamersMoverOP repack (
-					new protocols::simple_moves::symmetry::SymPackRotamersMover( sf, repacktask ) );
+				protocols::minimization_packing::symmetry::SymPackRotamersMoverOP repack (
+					new protocols::minimization_packing::symmetry::SymPackRotamersMover( sf, repacktask ) );
 				repack->apply( pose );
 				minimizer.run( pose, *mm, *sf, options );
 

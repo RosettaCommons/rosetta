@@ -33,11 +33,11 @@
 #include <protocols/sewing/LoopCreationMover.hh>
 
 // Protocols
-#include <protocols/simple_moves/MinPackMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinPackMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/loops/Loops.hh>
@@ -125,7 +125,7 @@ main( int argc, char * argv [] )
 	//create a ScoreFunction from commandline options
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::minimization_packing::PackRotamersMoverOP pack_mover = new protocols::minimization_packing::PackRotamersMover;
 
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( score_fxn );
@@ -135,7 +135,7 @@ main( int argc, char * argv [] )
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_bb(true);
 	movemap->set_chi(true);
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
+	protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover(
 		movemap,
 		score_fxn,
 		basic::options::option [ basic::options::OptionKeys::run::min_type ].value(),

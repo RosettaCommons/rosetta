@@ -32,7 +32,7 @@
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 //basic
 #include <basic/Tracer.hh>
@@ -137,7 +137,7 @@ CartminLoopCloser::apply(
 	TR.Debug << "Minimizing residues: " << loop().start() << " " << loop().stop() << std::endl;
 	TR.Debug << "Cutpoint: " << loop().cut() << std::endl;
 
-	protocols::simple_moves::MinMoverOP min_mover(new protocols::simple_moves::MinMover(mm, scorefxn_, "dfpmin_armijo_nonmonotone", minimization_tolerance_, false ));
+	protocols::minimization_packing::MinMoverOP min_mover(new protocols::minimization_packing::MinMover(mm, scorefxn_, "dfpmin_armijo_nonmonotone", minimization_tolerance_, false ));
 	min_mover->cartesian(true);
 	min_mover->apply(pose);
 

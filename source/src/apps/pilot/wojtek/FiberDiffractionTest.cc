@@ -26,10 +26,10 @@
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <devel/init.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -160,8 +160,8 @@ main( int argc, char * argv [] )
 		movemap->set_chi( false );
 
 
-		protocols::simple_moves::MinMoverOP min_mover(
-			new protocols::simple_moves::symmetry::SymMinMover( movemap, core::scoring::get_score_function(), "lbfgs_armijo_nonmonotone",0.2, false, false, false) ); //Last two should be true to have deriv check
+		protocols::minimization_packing::MinMoverOP min_mover(
+			new protocols::minimization_packing::symmetry::SymMinMover( movemap, core::scoring::get_score_function(), "lbfgs_armijo_nonmonotone",0.2, false, false, false) ); //Last two should be true to have deriv check
 		min_mover->apply(pose);
 		scoremover->apply(pose);
 		pose.dump_pdb("min.pdb");

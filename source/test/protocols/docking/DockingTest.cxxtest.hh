@@ -39,10 +39,10 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 
@@ -172,8 +172,8 @@ public:
 	}
 
 	void test_DockingPacking() {
-		using protocols::simple_moves::PackRotamersMover;
-		using protocols::simple_moves::PackRotamersMoverOP;
+		using protocols::minimization_packing::PackRotamersMover;
+		using protocols::minimization_packing::PackRotamersMoverOP;
 
 		core::scoring::ScoreFunctionOP scorefxn_pack = core::scoring::get_score_function();
 		core::scoring::ScoreFunctionOP scorefxn_dockmin = core::scoring::ScoreFunctionFactory::create_score_function("docking", "docking_min");
@@ -194,14 +194,14 @@ public:
 		core::Real temperature = 0.8;
 		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(fullatom_pose, *scorefxn_dockmin, temperature) );
 
-		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover( scorefxn_pack, task ) );
+		protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn_pack, task ) );
 
 		pack_interface_repack->apply(fullatom_pose);
 
 		mc->reset(fullatom_pose);
 
 		core::Real energy_cut = 0.01;
-		protocols::simple_moves::RotamerTrialsMoverOP rotamer_trials( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_dockmin, *task, mc, energy_cut ) );
+		protocols::minimization_packing::RotamerTrialsMoverOP rotamer_trials( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( scorefxn_dockmin, *task, mc, energy_cut ) );
 		rotamer_trials->apply(fullatom_pose);
 
 		test::UTracer UT("protocols/docking/DockingPacking.pdb");
@@ -227,8 +227,8 @@ public:
 	}
 
 	void test_DockingRigidBodyMinimize() {
-		using protocols::simple_moves::MinMover;
-		using protocols::simple_moves::MinMoverOP;
+		using protocols::minimization_packing::MinMover;
+		using protocols::minimization_packing::MinMoverOP;
 
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
 
@@ -241,7 +241,7 @@ public:
 		std::string min_type = "dfpmin_armijo_nonmonotone";
 		bool nb_list = true;
 
-		protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover(movemap, scorefxn, min_type, tolerance, nb_list) );
+		protocols::minimization_packing::MinMoverOP minmover( new protocols::minimization_packing::MinMover(movemap, scorefxn, min_type, tolerance, nb_list) );
 		minmover->apply(fullatom_pose);
 		test::UTracer UT("protocols/docking/DockingRigidBodyMinimize.pdb");
 		UT.abs_tolerance(0.003);

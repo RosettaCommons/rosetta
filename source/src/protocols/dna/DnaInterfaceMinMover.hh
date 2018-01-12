@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_dna_DnaInterfaceMinMover_hh
 
 #include <protocols/dna/DnaInterfaceMinMover.fwd.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 #include <protocols/dna/DnaInterfaceFinder.fwd.hh>
@@ -28,7 +28,7 @@
 namespace protocols {
 namespace dna {
 
-class DnaInterfaceMinMover : public protocols::simple_moves::MinMover {
+class DnaInterfaceMinMover : public protocols::minimization_packing::MinMover {
 public:
 	typedef utility::tag::TagCOP TagCOP;
 public:

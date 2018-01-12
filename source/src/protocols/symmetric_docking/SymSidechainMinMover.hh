@@ -27,7 +27,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -52,7 +52,7 @@ public:
 
 	void set_default_options();
 
-	void set_minmover( protocols::simple_moves::MinMoverOP minmover_in );
+	void set_minmover( protocols::minimization_packing::MinMoverOP minmover_in );
 
 	void update_movemap( core::pose::Pose & pose );
 
@@ -62,7 +62,7 @@ public:
 protected:
 
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	protocols::simple_moves::MinMoverOP minmover_;
+	protocols::minimization_packing::MinMoverOP minmover_;
 	core::kinematics::MoveMapOP movemap_;
 	core::pack::task::PackerTaskOP task_;
 	core::pack::task::TaskFactoryOP tf_;

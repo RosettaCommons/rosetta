@@ -64,8 +64,8 @@
 #include <protocols/docking/util.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
 #include <string>
@@ -187,7 +187,7 @@ design(core::pose::Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> desig
 
 	// Actually perform design.
 	make_symmetric_PackerTask_by_truncation(pose, task);
-	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+	protocols::moves::MoverOP packer = new protocols::minimization_packing::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
 
 }

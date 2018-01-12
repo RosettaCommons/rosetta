@@ -17,7 +17,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/simple_moves/MSDMover.hh>
 #include <protocols/simple_moves/FindConsensusSequence.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -58,6 +58,7 @@ public:
 
 	void test_resfile_parsing () {
 		using namespace core::pose;
+		using namespace protocols::minimization_packing;
 		using namespace protocols::simple_moves;
 		using namespace core::scoring::constraints;
 		utility::vector1< PoseOP > poses;
@@ -136,6 +137,7 @@ public:
 	void test_correct_constraints () {
 
 		using namespace core::pose;
+		using namespace protocols::minimization_packing;
 		using namespace protocols::simple_moves;
 		using namespace core::scoring::constraints;
 		utility::vector1< PoseOP > poses;
@@ -190,6 +192,7 @@ public:
 
 	void test_keeps_constraints () {
 		using namespace core::pose;
+		using namespace protocols::minimization_packing;
 		using namespace protocols::simple_moves;
 		using namespace core::scoring::constraints;
 		utility::vector1< PoseOP > poses;
@@ -218,6 +221,7 @@ public:
 
 	void test_consensus_sequence () {
 		using namespace core::pose;
+		using namespace protocols::minimization_packing;
 		using namespace protocols::simple_moves;
 		FindConsensusSequenceOP fcs ( new FindConsensusSequence );
 		utility::vector1< PoseOP > poses;

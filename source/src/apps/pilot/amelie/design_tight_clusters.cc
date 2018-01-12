@@ -27,7 +27,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
@@ -39,7 +39,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <protocols/relax/FastRelax.hh>
-//#include <protocols/simple_moves/MinPackMover.hh> // for MinPacker
+//#include <protocols/minimization_packing/MinPackMover.hh> // for MinPacker
 #include <core/pack/min_pack.hh> // core/unwrapped MinPacker
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/rtmin.hh> // rotamer trials with minimization
@@ -327,7 +327,7 @@ void repack_step (
 
 		// minimize with hard -- requires movemap that must be derived from PackerTask
 		core::kinematics::MoveMapOP mm = derive_MoveMap_from_cluster_lst(repacked, allow_repacked);
-		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover() ); // no symmetry support for now
+		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover() ); // no symmetry support for now
 		//const std::string min_type = "lbfgs_armijo_nonmonotone"; // use as many defaults as possible -- not sure if we want to fix this, actually
 		//min_mover->min_type( min_type );
 		min_mover->score_function( score_fxn );

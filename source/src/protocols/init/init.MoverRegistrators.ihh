@@ -455,6 +455,23 @@ static MoverRegistrator< legacy_sewing::LegacyAddStartnodeFragmentsCreator > reg
 static MoverRegistrator< legacy_sewing::LegacyRepeatAssemblyMoverCreator > reg_LegacyRepeatAssemblyMoverCreator;
 static MoverRegistrator< legacy_sewing::LegacyEnumerateAssemblyMoverCreator > reg_LegacyEnumerateAssemblyMoverCreator;
 
+static MoverRegistrator< minimization_packing::BoltzmannRotamerMoverCreator > reg_BoltzmannRotamerMoverCreator;
+static MoverRegistrator< minimization_packing::MinMoverCreator > reg_MinMoverCreator;
+static MoverRegistrator< minimization_packing::MinPackMoverCreator > reg_MinPackMoverCreator;
+static MoverRegistrator< minimization_packing::PertMinMoverCreator > reg_PertMinMoverCreator;
+static MoverRegistrator< minimization_packing::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
+static MoverRegistrator< minimization_packing::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;
+static MoverRegistrator< minimization_packing::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
+static MoverRegistrator< minimization_packing::SaneMinMoverCreator > reg_SaneMinMoverCreator;
+static MoverRegistrator< minimization_packing::TaskAwareMinMoverCreator > reg_TaskAwareMinMoverCreator;
+static MoverRegistrator< minimization_packing::symmetry::SymMinMoverCreator > reg_SymMinMoverCreator;
+static MoverRegistrator< minimization_packing::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
+static MoverRegistrator< minimization_packing::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
+static MoverRegistrator< minimization_packing::symmetry::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
+
+static MoverRegistrator< pose_creation::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
+static MoverRegistrator< pose_creation::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
+
 static MoverRegistrator< simple_moves::AddChainMoverCreator > reg_AddChainMoverCreator;
 static MoverRegistrator< simple_moves::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;
 static MoverRegistrator< simple_moves::AddJobPairDataCreator > reg_AddJobPairDataCreator;
@@ -462,7 +479,6 @@ static MoverRegistrator< simple_moves::AddResidueLabelMoverCreator > reg_AddResi
 static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
 static MoverRegistrator< simple_moves::ChangeAndResetFoldTreeMoverCreator > reg_ChangeAndResetFoldTreeMoverCreator;
 static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
-static MoverRegistrator< simple_moves::BoltzmannRotamerMoverCreator > reg_BoltzmannRotamerMoverCreator;
 static MoverRegistrator< simple_moves::ClearConstraintsMoverCreator > reg_ClearConstraintsMoverCreator;
 static MoverRegistrator< simple_moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
 static MoverRegistrator< simple_moves::ConstraintSetMoverCreator > reg_ConstraintSetMoverCreator;
@@ -478,7 +494,6 @@ static MoverRegistrator< simple_moves::DisulfideInsertionMoverCreator > reg_Disu
 static MoverRegistrator< simple_moves::DumpSingleResidueRotamersCreator > reg_DumpSingleResidueRotamersCreator;
 static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
 static MoverRegistrator< simple_moves::AddPDBInfoMoverCreator > reg_AddPDBInfoMoverCreator;
-static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 
 static MoverRegistrator< simple_moves::ConvertRealToVirtualMoverCreator > reg_ConvertRealToVirtualMoverCreator;
 
@@ -493,22 +508,17 @@ static MoverRegistrator< simple_moves::GenericSimulatedAnnealerCreator > reg_Gen
 static MoverRegistrator< simple_moves::LoadPDBMoverCreator > reg_LoadPDBMoverCreator;
 static MoverRegistrator< simple_moves::LoadUnboundRotMoverCreator > reg_LoadUnboundRotMoverCreator;
 static MoverRegistrator< simple_moves::MakeJunctionsMoverCreator > reg_MakeJunctionsMoverCreator;
-static MoverRegistrator< simple_moves::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
 static MoverRegistrator< simple_moves::MembraneTopologyCreator > reg_MembraneTopologyCreator;
 static MoverRegistrator< simple_moves::MergePDBatOverlapMoverCreator > reg_MergePDBatOverlapMoverCreator;
 static MoverRegistrator< simple_moves::MergePDBMoverCreator > reg_MergePDBMoverCreator;
-static MoverRegistrator< simple_moves::MinMoverCreator > reg_MinMoverCreator;
-static MoverRegistrator< simple_moves::MinPackMoverCreator > reg_MinPackMoverCreator;
 static MoverRegistrator< simple_moves::ModifyVariantTypeMoverCreator > reg_ModifyVariantTypeMoverCreator;
 static MoverRegistrator< simple_moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
 static MoverRegistrator< simple_moves::MonteCarloResetCreator > reg_MonteCarloResetCreator;
 static MoverRegistrator< simple_moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
 static MoverRegistrator< simple_moves::MSDMoverCreator > reg_MSDMoverCreator;
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
-static MoverRegistrator< simple_moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
 static MoverRegistrator< simple_moves::PeriodicBoxMoverCreator > reg_PeriodicBoxMoverCreator;
-static MoverRegistrator< simple_moves::PertMinMoverCreator > reg_PertMinMoverCreator;
 static MoverRegistrator< simple_moves::PSSM2BfactorMoverCreator > reg_PSSM2BfactorMoverCreator;
 static MoverRegistrator< simple_moves::RandomOmegaFlipMoverCreator > reg_RandomOmegaFlipMoverCreator;
 static MoverRegistrator< simple_moves::RandomTorsionMoverCreator > reg_RandomTorsionMoverCreator;
@@ -519,9 +529,6 @@ static MoverRegistrator< simple_moves::ResetBaselineMoverCreator > reg_ResetBase
 static MoverRegistrator< simple_moves::ResetFoldTreeCreator > ResetFoldTreeCreator;
 static MoverRegistrator< simple_moves::ResidueTypeConstraintMoverCreator > ResidueTypeConstraintMoverCreator;
 static MoverRegistrator< simple_moves::RingConformationMoverCreator > reg_RingConformationMoverCreator;
-static MoverRegistrator< simple_moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;
-static MoverRegistrator< simple_moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
-static MoverRegistrator< simple_moves::SaneMinMoverCreator > reg_SaneMinMoverCreator;
 static MoverRegistrator< simple_moves::SaveSequenceToCommentsMoverCreator > reg_SaveSequenceToCommentsMoverCreator;
 static MoverRegistrator< simple_moves::ScoreMoverCreator > reg_ScoreMoverCreator;
 static MoverRegistrator< simple_moves::SequenceProfileMoverCreator > reg_SequenceProfileMoverCreator;
@@ -536,7 +543,6 @@ static MoverRegistrator< simple_moves::StructProfileMoverCreator > reg_StructPro
 static MoverRegistrator< simple_moves::SuperimposeMoverCreator > reg_SuperimposeMoverCreator;
 static MoverRegistrator< simple_moves::SwitchResidueTypeSetMoverCreator > reg_SwitchResidueTypeSetMoverCreator;
 static MoverRegistrator< simple_moves::SwitchChainOrderMoverCreator > reg_SwitchChainOrderMoverCreator;
-static MoverRegistrator< simple_moves::TaskAwareMinMoverCreator > reg_TaskAwareMinMoverCreator;
 static MoverRegistrator< simple_moves::TumbleCreator > reg_TumbleCreator;
 static MoverRegistrator< simple_moves::VirtualRootMoverCreator > reg_VirtualRootMoverCreator;
 
@@ -555,10 +561,6 @@ static MoverRegistrator< simple_moves::symmetry::ExtractAsymmetricPoseMoverCreat
 static MoverRegistrator< simple_moves::symmetry::SetupForSymmetryMoverCreator > reg_SetupForSymmetryMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::DetectSymmetryMoverCreator > reg_DetectSymmetryMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SetupNCSMoverCreator > reg_SetupNCSMoverCreator;
-static MoverRegistrator< simple_moves::symmetry::SymMinMoverCreator > reg_SymMinMoverCreator;
-static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
-static MoverRegistrator< simple_moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
-static MoverRegistrator< simple_moves::symmetry::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 static MoverRegistrator< simple_moves::WriteFiltersToPoseCreator > reg_WriteFiltersToPoseCreator;
 
 static MoverRegistrator< stepwise::monte_carlo::mover::AddMoverCreator > reg_AddMoverCreator;

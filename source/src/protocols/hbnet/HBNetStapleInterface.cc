@@ -32,7 +32,7 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh>
-#include <protocols/simple_moves/MakePolyXMover.hh>
+#include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/simple_moves/FavorSequenceProfile.hh>
 #include <protocols/scoring/Interface.hh>

@@ -44,7 +44,7 @@
 #include <boost/algorithm/string/predicate.hpp>//for comparing string case insensitive
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/rigid/RB_geometry.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/Atom.hh>
@@ -67,7 +67,7 @@
 #include <utility/vector1.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/datacache/DataMapObj.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
@@ -96,7 +96,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/scoring/constraints/Constraints.hh>
@@ -1140,7 +1140,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		tf_thread->push_back(dao_for_threading);
 		tf_thread->push_back(tso);
 		PackerTaskOP ptask = tf_thread->create_task_and_apply_taskoperations(pose);
-		protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
+		protocols::minimization_packing::PackRotamersMover prm(scorefxn(), ptask);
 		prm.apply(pose);
 		if ( debug_ ) {
 			pose.dump_pdb(mover_name_+"_after_threading.pdb");
@@ -1464,7 +1464,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			}
 
 			PackerTaskOP ptask = tf_in->create_task_and_apply_taskoperations(pose);
-			protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
+			protocols::minimization_packing::PackRotamersMover prm(scorefxn(), ptask);
 			utility::vector1<core::Size> Repackable_residues = residue_packer_states(pose, tf_in, false, true);
 			TR << "Residues Allowed to Repack: "<< std::endl;
 			for ( utility::vector1<core::Size>::const_iterator i(Repackable_residues.begin());
@@ -1474,7 +1474,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			TR << std::endl;
 			prm.apply(pose);
 			// I also want rtmin, Gideon Sep14
-			protocols::simple_moves::RotamerTrialsMinMover rtmin(scorefxn(), *ptask);
+			protocols::minimization_packing::RotamerTrialsMinMover rtmin(scorefxn(), *ptask);
 			rtmin.apply(pose);
 			if ( debug_ ) {
 				pose.dump_pdb(mover_name_+"_rtmin_after_ccd.pdb");
@@ -1615,7 +1615,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		tf_in->push_back(dao);
 
 		PackerTaskOP ptask = tf_in->create_task_and_apply_taskoperations(pose);
-		protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
+		protocols::minimization_packing::PackRotamersMover prm(scorefxn(), ptask);
 		//  pose.conformation().detect_disulfides();
 		//  pose.update_residue_neighbors();
 		//  (*scorefxn())(pose);
@@ -1642,7 +1642,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			TaskFactoryOP tf_rtmin( new TaskFactory(*tf) );//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
 			tf_rtmin->push_back(TaskOperationCOP( new operation::RestrictToRepacking() )); //W don't rtmin to do design
 			ptask = tf_rtmin->create_task_and_apply_taskoperations(pose);
-			protocols::simple_moves::RotamerTrialsMinMover rtmin(scorefxn(), *ptask);
+			protocols::minimization_packing::RotamerTrialsMinMover rtmin(scorefxn(), *ptask);
 			rtmin.apply(pose);
 			if ( debug_ ) {
 				pose.dump_pdb(mover_name_+"after_rtmin.pdb");
@@ -1713,7 +1713,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			TR<<"Fold tree before minimization: "<<pose.fold_tree()<<std::endl;
 			core::scoring::ScoreFunctionOP scorefxn_with_chainbrk = scorefxn()->clone();
 			scorefxn_with_chainbrk->set_weight( core::scoring::chainbreak, 1.0 );
-			protocols::simple_moves::MinMover min_mover( mm, scorefxn_with_chainbrk, "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
+			protocols::minimization_packing::MinMover min_mover( mm, scorefxn_with_chainbrk, "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
 
 			TR << "scorefxn before min mover " << std::endl;
 			scorefxn_with_chainbrk->show(pose);

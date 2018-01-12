@@ -26,11 +26,11 @@
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <core/chemical/ResidueType.hh>
-#include <protocols/simple_moves/MinPackMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/MinPackMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/NegativePackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <devel/init.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 // option key includes
@@ -373,9 +373,9 @@ main( int argc, char * argv [] )
 		}
 
 		/* Create movers to do the design */
-		utility::vector1< protocols::simple_moves::PackRotamersMoverOP > soft_des_vector;
+		utility::vector1< protocols::minimization_packing::PackRotamersMoverOP > soft_des_vector;
 		for ( core::Size i = 1; i <= rrf_vector.size(); ++i ) {
-			protocols::simple_moves::PackRotamersMoverOP soft_des = new protocols::simple_moves::PackRotamersMover;
+			protocols::minimization_packing::PackRotamersMoverOP soft_des = new protocols::minimization_packing::PackRotamersMover;
 			soft_des->score_function( soft_rep_design );
 			soft_des->task_factory( design_task_factories[i] );
 			soft_des_vector.push_back( soft_des );
@@ -390,9 +390,9 @@ main( int argc, char * argv [] )
 			neg_design_vector.push_back( neg_design );
 		}
 
-		utility::vector1< protocols::simple_moves::PackRotamersMoverOP > pos_design_vector;
+		utility::vector1< protocols::minimization_packing::PackRotamersMoverOP > pos_design_vector;
 		for ( core::Size i = 1; i <= rrf_vector.size(); ++i ) {
-			protocols::simple_moves::PackRotamersMoverOP pos_design = new protocols::simple_moves::PackRotamersMover;
+			protocols::minimization_packing::PackRotamersMoverOP pos_design = new protocols::minimization_packing::PackRotamersMover;
 			pos_design->score_function( sfxn_design );
 			pos_design->task_factory( design_task_factories[ i ] );
 			pos_design_vector.push_back( pos_design );
@@ -401,56 +401,56 @@ main( int argc, char * argv [] )
 
 
 		/* Create pack rotamer movers to use during minimization */
-		protocols::simple_moves::PackRotamersMoverOP soft_rp = new protocols::simple_moves::PackRotamersMover;
+		protocols::minimization_packing::PackRotamersMoverOP soft_rp = new protocols::minimization_packing::PackRotamersMover;
 		soft_rp->score_function( soft_rep_clean );
 		soft_rp->task_factory( packing_min_task_factory );
 
-		protocols::simple_moves::PackRotamersMoverOP rp = new protocols::simple_moves::PackRotamersMover;
+		protocols::minimization_packing::PackRotamersMoverOP rp = new protocols::minimization_packing::PackRotamersMover;
 		rp->score_function( sfxn_clean );
 		rp->task_factory( packing_min_task_factory );
 
 		//create task aware minimization movers to do minimization
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 
-		protocols::simple_moves::MinMoverOP soft_min_mover  = new protocols::simple_moves::MinMover;
+		protocols::minimization_packing::MinMoverOP soft_min_mover  = new protocols::minimization_packing::MinMover;
 		soft_min_mover->min_type( min_type );
 		soft_min_mover->tolerance( 0.001 );
 		soft_min_mover->score_function( soft_rep_clean );
 
-		protocols::simple_moves::TaskAwareMinMoverOP soft_min = new protocols::simple_moves::TaskAwareMinMover(
+		protocols::minimization_packing::TaskAwareMinMoverOP soft_min = new protocols::minimization_packing::TaskAwareMinMover(
 			soft_min_mover, min_task_factory );
 		soft_min->chi(1);
 		soft_min->bb(1);
 		soft_min->jump(1);
 
-		protocols::simple_moves::MinMoverOP soft_min_sc_mover = new protocols::simple_moves::MinMover;
+		protocols::minimization_packing::MinMoverOP soft_min_sc_mover = new protocols::minimization_packing::MinMover;
 		soft_min_sc_mover->min_type( min_type );
 		soft_min_mover->tolerance( 0.001 );
 		soft_min_mover->score_function( soft_rep_clean );
 
-		protocols::simple_moves::TaskAwareMinMoverOP soft_min_sc = new protocols::simple_moves::TaskAwareMinMover(
+		protocols::minimization_packing::TaskAwareMinMoverOP soft_min_sc = new protocols::minimization_packing::TaskAwareMinMover(
 			soft_min_sc_mover, min_task_factory );
 		soft_min_sc->chi(1);
 		soft_min_sc->bb(0);
 		soft_min_sc->jump(0);
 
-		protocols::simple_moves::MinMoverOP min_sc_mover = new protocols::simple_moves::MinMover;
+		protocols::minimization_packing::MinMoverOP min_sc_mover = new protocols::minimization_packing::MinMover;
 		min_sc_mover->min_type( min_type );
 		soft_min_mover->tolerance( 0.001 );
 		soft_min_mover->score_function( sfxn_clean );
 
-		protocols::simple_moves::TaskAwareMinMoverOP min_sc = new protocols::simple_moves::TaskAwareMinMover(
+		protocols::minimization_packing::TaskAwareMinMoverOP min_sc = new protocols::minimization_packing::TaskAwareMinMover(
 			min_sc_mover, min_task_factory );
 		min_sc->chi(1);
 		min_sc->bb(0);
 		min_sc->jump(0);
 
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover;
+		protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover;
 		min_mover->min_type( min_type );
 		min_mover->tolerance( 0.001 );
 		min_mover->score_function( sfxn_clean );
 
-		protocols::simple_moves::TaskAwareMinMoverOP min = new protocols::simple_moves::TaskAwareMinMover(
+		protocols::minimization_packing::TaskAwareMinMoverOP min = new protocols::minimization_packing::TaskAwareMinMover(
 			min_mover, min_task_factory );
 		min->chi(1);
 		min->bb(1);

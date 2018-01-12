@@ -15,12 +15,9 @@
 #ifndef INCLUDED_protocols_jd3_pose_inputters_PoseInputSource_HH
 #define INCLUDED_protocols_jd3_pose_inputters_PoseInputSource_HH
 
-//unit headers
-#include <protocols/jd3/pose_inputters/PoseInputSource.fwd.hh>
-
-//project headers
-#include <core/pose/Pose.fwd.hh>
-
+// Utility headers
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace jd3 {

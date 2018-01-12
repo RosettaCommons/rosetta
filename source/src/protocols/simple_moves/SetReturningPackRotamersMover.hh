@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <protocols/simple_moves/SetReturningPackRotamersMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh> // needed b/c we are extending from PackRotamersMover
+#include <protocols/minimization_packing/PackRotamersMover.hh> // needed b/c we are extending from PackRotamersMover
 
 // Project headers
 #include <core/types.hh>
@@ -35,7 +35,7 @@ namespace protocols {
 namespace simple_moves {
 
 
-class SetReturningPackRotamersMover : public protocols::simple_moves::PackRotamersMover {
+class SetReturningPackRotamersMover : public protocols::minimization_packing::PackRotamersMover {
 
 public:
 	SetReturningPackRotamersMover( Size ndruns );

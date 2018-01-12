@@ -42,7 +42,7 @@
 
 #include <protocols/analysis/LoopAnalyzerMover.hh>
 
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LoopHashMap.hh>
@@ -710,7 +710,7 @@ LegacyLoophashAssemblyMover::build_loop_pose(
 	//  }
 	// }
 	//
-	// protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover();
+	// protocols::minimization_packing::MinMoverOP min_mover = new protocols::minimization_packing::MinMover();
 	// min_mover->score_function(loop_scorefxn_);
 	// min_mover->movemap(move_map);
 	// min_mover->cartesian(true);

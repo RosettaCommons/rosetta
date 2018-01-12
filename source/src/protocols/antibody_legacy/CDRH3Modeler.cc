@@ -54,13 +54,13 @@
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <utility/exit.hh>
@@ -208,8 +208,8 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 		recover_sidechains.apply( antibody_in_.Fv );
 
 		// Packer
-		protocols::simple_moves::PackRotamersMoverOP packer;
-		packer = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ ) );
+		protocols::minimization_packing::PackRotamersMoverOP packer;
+		packer = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( highres_scorefxn_ ) );
 		packer->task_factory(tf_);
 		packer->apply( antibody_in_.Fv );
 	}
@@ -221,8 +221,8 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 			if ( antibody_refine_ && !snug_fit_ ) {
 				repack_cycles = 3;
 			}
-			protocols::simple_moves::PackRotamersMoverOP packer;
-			packer = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ ) );
+			protocols::minimization_packing::PackRotamersMoverOP packer;
+			packer = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( highres_scorefxn_ ) );
 			packer->task_factory(tf_);
 			packer->nloop( repack_cycles );
 			packer->apply( antibody_in_.Fv );
@@ -1194,7 +1194,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 		allow_repack);
 	cdrh3_map->set_chi( allow_repack );
 
-	protocols::simple_moves::PackRotamersMoverOP loop_repack( new protocols::simple_moves::PackRotamersMover(highres_scorefxn_) );
+	protocols::minimization_packing::PackRotamersMoverOP loop_repack( new protocols::minimization_packing::PackRotamersMover(highres_scorefxn_) );
 	setup_packer_task( start_pose_ );
 	( *highres_scorefxn_ )( pose_in );
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
@@ -1205,7 +1205,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	if ( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( cdrh3_map,
+	protocols::minimization_packing::MinMoverOP loop_min_mover( new protocols::minimization_packing::MinMover( cdrh3_map,
 		highres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
@@ -1272,7 +1272,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	setup_packer_task( start_pose_ );
 	( *highres_scorefxn_ )( pose_in );
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 		highres_scorefxn_, tf_ ) );
 
 	pack_rottrial->apply( pose_in );
@@ -1315,7 +1315,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 			setup_packer_task( start_pose_ );
 			( *highres_scorefxn_ )( pose_in );
 			tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
-			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+			protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 				highres_scorefxn_, tf_ ) );
 			pack_rottrial->apply( pose_in );
 
@@ -1361,7 +1361,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 
 			if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
 				// repack trial
-				loop_repack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ ) );
+				loop_repack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( highres_scorefxn_ ) );
 				setup_packer_task( start_pose_ );
 				( *highres_scorefxn_ )( pose_in );
 				tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
@@ -1469,7 +1469,7 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 	if ( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "lbfgs_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
+	protocols::minimization_packing::MinMoverOP loop_min_mover( new protocols::minimization_packing::MinMover( loop_map,
 		lowres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
