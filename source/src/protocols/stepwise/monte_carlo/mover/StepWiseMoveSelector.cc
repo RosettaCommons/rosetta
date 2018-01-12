@@ -755,8 +755,8 @@ StepWiseMoveSelector::check_for_intramolecular_submotif_jump(
 	Size const & attached_res
 ) const {
 	utility::vector1< Size > const & check_res = utility::tools::make_vector1( moving_res, attached_res );
-	bool const & in_a_submotif = const_full_model_info( pose ).in_a_submotif( check_res );
-	bool const & jump_exists = pose.fold_tree().jump_exists( moving_res, attached_res );
+	bool const in_a_submotif = const_full_model_info( pose ).in_a_submotif( check_res );
+	bool const jump_exists = pose.fold_tree().jump_exists( moving_res, attached_res );
 	return ( in_a_submotif && jump_exists );
 }
 
@@ -919,8 +919,8 @@ StepWiseMoveSelector::get_docking_add_move_elements( pose::Pose const & pose,
 	Size const nres( pose.size() );
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-	utility::vector1< Size > const dock_domain_map = const_full_model_info( pose ).dock_domain_map();
-	utility::vector1< Size > const working_res = const_full_model_info( pose ).working_res();
+	utility::vector1< Size > const & dock_domain_map = const_full_model_info( pose ).dock_domain_map();
+	//utility::vector1< Size > const & working_res = const_full_model_info( pose ).working_res();
 
 	if ( res_list.size() == 0 ) return;
 
@@ -941,8 +941,7 @@ StepWiseMoveSelector::get_docking_add_move_elements( pose::Pose const & pose,
 
 			if ( already_docked[ std::make_pair( dock_domain_i, dock_domain_j ) ] ) continue;
 			if ( dock_domain_j == 0 ) continue; // not a working res.
-			// Special for from_scratch_frequency 0.0 -- i.e., the build_full_model case
-			if ( dock_domain_i == dock_domain_j && options_->from_scratch_frequency() != 0.0 ) continue;
+			if ( dock_domain_i == dock_domain_j ) continue;
 			if ( !is_addable_res( j_full, pose ) ) continue;
 
 			if ( preferred_jump_pair.find( std::make_pair( dock_domain_i, dock_domain_j ) ) !=

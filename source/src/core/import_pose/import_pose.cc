@@ -1822,18 +1822,17 @@ figure_out_dock_domain_map( utility::vector1< Size > & cutpoint_open_in_full_mod
 		if ( ( n == 1 || !working_res.has_value( n - 1 )) && working_res.has_value( n ) ) new_chain = true;
 		if ( n > 1 && cutpoint_open_in_full_model.has_value( n - 1 ) ) new_chain = true;
 		if ( new_chain ) chain_number++;
-		chains[ n ]= chain_number; // every working_res gets a chain number.
+		chains[ n ] = chain_number; // every working_res gets a chain number.
 	}
 
 	// which segments are connected by input poses?
 	vector1< pair< Size, Size > > chain_connections;
-	for ( Size n = 1; n <= pose_res_lists.size(); n++ ) {
-		vector1< Size > const & res_list = pose_res_lists[ n ];
+	for ( vector1< Size > const & res_list : pose_res_lists ) {
 		std::set< Size > chains_in_pose;
-		for ( Size k = 1; k <= res_list.size(); k++ ) {
-			if ( sample_res.has_value( res_list[ k ] ) ) continue;
-			if ( !working_res.has_value( res_list[ k ] ) ) continue;
-			chains_in_pose.insert( chains[ res_list[ k ] ] );
+		for ( Size const seqpos : res_list ) {
+			if ( sample_res.has_value( seqpos ) ) continue;
+			if ( !working_res.has_value( seqpos ) ) continue;
+			chains_in_pose.insert( chains[ seqpos ] );
 		}
 		for ( auto it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
 			for ( auto it2 = it1; it2 != end; ++it2 ) {

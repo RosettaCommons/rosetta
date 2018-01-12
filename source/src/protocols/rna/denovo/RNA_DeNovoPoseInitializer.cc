@@ -24,6 +24,7 @@
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
 #include <core/import_pose/libraries/ChunkSet.hh>
+#include <core/import_pose/import_pose.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 
 // Package Headers
@@ -623,18 +624,19 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 	//////////////////////////////
 	// Set up pose chunks (for input structures (-in:file:s, -in:file:silent))
 	//////////////////////////////
+	utility::vector1< utility::vector1< Size > > all_res_lists;
 
 	// Create little pose chunks that correspond to each domain 1, 2, 3, ... N in the atom_level_domain_map as separate poses with reasonable fold trees.
 	for ( auto chunk_set : chunk_library.chunk_sets() ) {
 		utility::vector1< Size > res_list;
 		for ( auto const & elem : chunk_set->res_map() ) res_list.push_back( elem.first );
+		all_res_lists.push_back( res_list );
 		// ChunkSet stores miniposes, not poses.
 		pose::MiniPoseCOP mini_pose = chunk_set->mini_pose( 1 );
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Ideally following should be a utility function that should be held as PoseOP minipose.create_pose();
 		pose::PoseOP chunk_pose( new pose::Pose );
-		// AMW TODO: make it such that mini_pose->sequence() can return a sequence without variants but with X[FOO]?
 		pose::make_pose_from_sequence( *chunk_pose, mini_pose->sequence(), rsd_set );
 
 		// add the proper variant types -- otherwise build_full_model does not work
@@ -694,25 +696,26 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		// if not, make a little one residue pose for the first residue in that chain
 		if ( !center_jumps_in_single_stranded_ ) {
 			for ( Size i=1; i<=chains.size(); ++i ) {
-				if ( std::find( chains_covered.begin(), chains_covered.end(), chains[i] ) == chains_covered.end() ) {
-					// it's not covered, make a 1 residue pose for the chain
-					pose::PoseOP little_pose( new pose::Pose );
-					std::string seq = full_model_params_input_pose->full_sequence().substr( i-1, 1 );
+				// If chain has already been covered, move on.
+				if ( std::find( chains_covered.begin(), chains_covered.end(), chains[i] ) != chains_covered.end() ) continue;
 
-					pose::make_pose_from_sequence( *little_pose, seq, rsd_set );
-					// add lower terminus variant type
-					pose::add_variant_type_to_pose_residue( *little_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
+				// it's not covered, make a 1 residue pose for the chain
+				pose::PoseOP little_pose( new pose::Pose );
+				std::string seq = full_model_params_input_pose->full_sequence().substr( i-1, 1 );
 
-					// add full model info
-					utility::vector1< Size > res_list;
-					res_list.push_back( i );
-					FullModelInfoOP full_model_info( new FullModelInfo( full_model_params_input_pose ) );
-					full_model_info->set_res_list( res_list );
-					set_full_model_info( *little_pose, full_model_info );
-					chunk_poses.push_back( little_pose );
+				pose::make_pose_from_sequence( *little_pose, seq, rsd_set );
+				// add lower terminus variant type
+				pose::add_variant_type_to_pose_residue( *little_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 
-					chains_covered.push_back( chains[i] ); // add the chain to the list of chains covered
-				}
+				// add full model info
+				utility::vector1< Size > res_list;
+				res_list.push_back( i );
+				FullModelInfoOP full_model_info( new FullModelInfo( full_model_params_input_pose ) );
+				full_model_info->set_res_list( res_list );
+				set_full_model_info( *little_pose, full_model_info );
+				chunk_poses.push_back( little_pose );
+
+				chains_covered.push_back( chains[i] ); // add the chain to the list of chains covered
 			}
 		} else { // center_jumps_in_single_stranded_
 
@@ -721,50 +724,51 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 			std::string const & rna_secstruct_legacy( rna_params_.rna_secstruct_legacy() );
 
 			for ( Size i=1; i<=chains.size(); ++i ) {
-				if ( std::find( chains_covered.begin(), chains_covered.end(), chains[i] ) == chains_covered.end() ) {
-					// it's not covered, make a 1 residue pose for the chain
-					// this is the start of the chain then
-					Size chain_start = i;
-					Size chain_stop = i;
-					// find the end of the chain
-					for ( Size j=i; j<=chains.size(); ++j ) {
-						if ( chains[j] != chains[i] ) {
-							chain_stop = j-1;
-							break;
-						}
-						if ( j == chains.size() ) chain_stop = j;
+				// If chain has already been covered, move on.
+				if ( std::find( chains_covered.begin(), chains_covered.end(), chains[i] ) != chains_covered.end() ) continue;
+
+				// it's not covered, make a 1 residue pose for the chain
+				// this is the start of the chain then
+				Size chain_start = i;
+				Size chain_stop = i;
+				// find the end of the chain
+				for ( Size j=i; j<=chains.size(); ++j ) {
+					if ( chains[j] != chains[i] ) {
+						chain_stop = j-1;
+						break;
 					}
-
-					// figure out whether there's any secondary structure in this region
-					// if not, add the middle residue
-					std::string secstruct_chain = rna_secstruct_legacy.substr( chain_start -1, chain_stop-chain_start +1 );
-					Size resid_to_add = i;
-					if ( std::find( secstruct_chain.begin(), secstruct_chain.end(), 'H' ) == secstruct_chain.end() ) {
-						resid_to_add = i + (( chain_stop - chain_start ) / 2);
-					}
-
-					pose::PoseOP little_pose( new pose::Pose );
-					std::string seq = full_model_params_input_pose->full_sequence().substr( resid_to_add-1, 1 );
-
-					pose::make_pose_from_sequence( *little_pose, seq, rsd_set );
-					// add lower terminus variant type if we added the first residue in the chain
-					if ( resid_to_add == chain_start ) {
-						pose::add_variant_type_to_pose_residue( *little_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
-					}
-					if ( resid_to_add == chain_stop ) {
-						pose::add_variant_type_to_pose_residue( *little_pose, chemical::UPPER_TERMINUS_VARIANT, 1 );
-					}
-
-					// add full model info
-					utility::vector1< Size > res_list;
-					res_list.push_back( resid_to_add );
-					FullModelInfoOP full_model_info( new FullModelInfo( full_model_params_input_pose ) );
-					full_model_info->set_res_list( res_list );
-					set_full_model_info( *little_pose, full_model_info );
-					chunk_poses.push_back( little_pose );
-
-					chains_covered.push_back( chains[i] ); // add the chain to the list of chains covered
+					if ( j == chains.size() ) chain_stop = j;
 				}
+
+				// figure out whether there's any secondary structure in this region
+				// if not, add the middle residue
+				std::string secstruct_chain = rna_secstruct_legacy.substr( chain_start -1, chain_stop-chain_start +1 );
+				Size resid_to_add = i;
+				if ( std::find( secstruct_chain.begin(), secstruct_chain.end(), 'H' ) == secstruct_chain.end() ) {
+					resid_to_add = i + (( chain_stop - chain_start ) / 2);
+				}
+
+				pose::PoseOP little_pose( new pose::Pose );
+				std::string seq = full_model_params_input_pose->full_sequence().substr( resid_to_add-1, 1 );
+
+				pose::make_pose_from_sequence( *little_pose, seq, rsd_set );
+				// add lower terminus variant type if we added the first residue in the chain
+				if ( resid_to_add == chain_start ) {
+					pose::add_variant_type_to_pose_residue( *little_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
+				}
+				if ( resid_to_add == chain_stop ) {
+					pose::add_variant_type_to_pose_residue( *little_pose, chemical::UPPER_TERMINUS_VARIANT, 1 );
+				}
+
+				// add full model info
+				utility::vector1< Size > res_list;
+				res_list.push_back( resid_to_add );
+				FullModelInfoOP full_model_info( new FullModelInfo( full_model_params_input_pose ) );
+				full_model_info->set_res_list( res_list );
+				set_full_model_info( *little_pose, full_model_info );
+				chunk_poses.push_back( little_pose );
+
+				chains_covered.push_back( chains[i] ); // add the chain to the list of chains covered
 			}
 		}
 
@@ -1022,6 +1026,21 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		}
 		nonconst_full_model_info( start_pose ).set_other_pose_list( other_poses );
 
+		// We need to set up the dock domain map
+		//
+		std::string const clean_desired_seq = core::pose::rna::remove_bracketed( const_full_model_info( start_pose ).full_sequence() );
+		Size const desired_nres = clean_desired_seq.size();
+
+		utility::vector1< Size > nonconst_cutpoints_who_fucking_cares = nonconst_full_model_info( start_pose ).cutpoint_open_in_full_model();
+		utility::vector1< Size > const dock_domain_map = core::import_pose::figure_out_dock_domain_map( nonconst_cutpoints_who_fucking_cares,
+			all_res_lists,
+			const_full_model_info( start_pose ).working_res(),
+			const_full_model_info( start_pose ).sample_res(),
+			desired_nres );
+		FullModelParametersOP fmp = nonconst_full_model_info( start_pose ).full_model_parameters()->clone();
+		fmp->set_parameter( DOCK_DOMAIN,   dock_domain_map  );
+		nonconst_full_model_info( start_pose ).set_full_model_parameters( fmp );
+
 	} else if ( chunk_poses.size() > 0 ) {
 		// make poses 2, 3, ... "other poses" in pose 1.
 		start_pose = *chunk_poses[ 1 ];
@@ -1032,6 +1051,28 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		// and now make these the other poses
 		nonconst_full_model_info( start_pose ).set_other_pose_list( other_poses );
 		fill_in_default_jump_atoms( start_pose );
+
+
+		std::string const clean_desired_seq = core::pose::rna::remove_bracketed( const_full_model_info( start_pose ).full_sequence() );
+		Size const desired_nres = clean_desired_seq.size();
+
+		utility::vector1< utility::vector1< Size > > all_res_lists;
+		all_res_lists.push_back( const_full_model_info( start_pose ).res_list() );
+		/*for ( Size n = 1; n<=remaining_chunk_poses.size(); ++n ) {
+		all_res_lists.push_back( remaining_chunk_poses[n] );
+		}*/
+		utility::vector1< Size > nonconst_cutpoints_who_fucking_cares = nonconst_full_model_info( start_pose ).cutpoint_open_in_full_model();
+		utility::vector1< Size > const dock_domain_map = core::import_pose::figure_out_dock_domain_map( nonconst_cutpoints_who_fucking_cares,
+			all_res_lists,
+			const_full_model_info( start_pose ).working_res(),
+			const_full_model_info( start_pose ).sample_res(),
+			desired_nres );
+		FullModelParametersOP fmp = nonconst_full_model_info( start_pose ).full_model_parameters()->clone();
+		fmp->set_parameter( DOCK_DOMAIN,   dock_domain_map  );
+		nonconst_full_model_info( start_pose ).set_full_model_parameters( fmp );
+
+
+
 	} else { // THIS DOESN'T REALLY WORK YET!
 		// no chunk_poses -- so just create pose denovo.
 		TR.Warning << "-new_fold_tree_initializer is not yet set up to work without any -s provided (please provide at least one -s structure or use legacy fold tree set up" << std::endl;
