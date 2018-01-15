@@ -1,0 +1,20 @@
+
+cd %(workdir)s
+
+touch case_issues.txt
+
+#Only run this if we're on a git checkout.
+if which git && git rev-parse HEAD; then
+
+  # Mac has a less-fully featured uniq - will only output one instead of both.
+  if uname | grep -q "[Dd]arwin"; then
+    git ls-tree --full-tree --name-only -t -r HEAD | sort -f | uniq -i -d | sed "s/^/[`date`] /" > case_issues.txt
+  else
+    git ls-tree --full-tree --name-only -t -r HEAD | sort -f | uniq -i -D | sed "s/^/[`date`] /" > case_issues.txt 
+  fi
+fi
+
+if [ -s case_issues.txt ]; then
+   echo ">>> Files with case sensitivity issues detected!"
+   exit -1
+fi
