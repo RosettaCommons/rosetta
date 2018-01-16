@@ -1,0 +1,15 @@
+-fasta 5P_j12_leadzyme.fasta
+-native 5P_j12_leadzyme_NATIVE_1nuj_RNA.pdb
+-s 5P_j12_leadzyme_START1_1nuj_RNA.pdb
+-working_res A:24 C:24-26 D:46 E:22-27 F:44-46 G:24
+-block_stack_above_res  C:26 F:46  
+-block_stack_below_res  C:24 F:44  
+-minimize_rna true
+-cycles 200
+-save_times
+-exclusion_match_type MATCH_YR
+-score:weights stepwise/rna/rna_res_level_energy7beta.wts
+-new_fold_tree_initializer true
+-nstruct 2
+-exclude_native_fragments true
+-fragment_homology_rmsd 1.5

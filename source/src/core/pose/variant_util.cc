@@ -177,11 +177,12 @@ add_variant_type_to_pose_residue(
 
 	// update connections
 	for ( Size i_con=1; i_con<=pose.conformation().residue_type(seqpos).n_possible_residue_connections(); ++i_con ) {
-		if ( pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0 ) {
-			Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
-			Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
-			pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
-		}
+		// skip unfulfilled connections; no update necessary
+		if ( pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con) == 0 ) continue;
+
+		Size connected_seqpos = pose.conformation().residue(seqpos).connected_residue_at_resconn(i_con);
+		Size connected_id = pose.residue(seqpos).connect_map(i_con).connid();
+		pose.conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
 	}
 
 	if ( variant_type == core::chemical::CUTPOINT_LOWER || variant_type == core::chemical::CUTPOINT_UPPER ) {

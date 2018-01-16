@@ -509,10 +509,19 @@ void
 Residue::update_connections_to_other_residue( Residue const &other_rsd)
 {
 	for ( core::Size ic=1, ic_max=other_rsd.type().n_possible_residue_connections(); ic<=ic_max; ++ic ) {
-		if ( other_rsd.connected_residue_at_resconn(ic)==seqpos() ) { //If the other's connection lists this residue's sequence position
-			core::Size const this_conn_id = other_rsd.connect_map(ic).connid();
-			//TR << "this_res=" << seqpos() << "other_res=" << other_rsd.seqpos() << " this_conn_id=" << this_conn_id << std::endl; //DELETE ME
-			//runtime_assert_string_msg(connect_map_size() >= this_conn_id, "Residue::update_connections_to_other_residue() error:  Connection id reported by other residue doesn't exist in current residue!");
+
+		if ( other_rsd.connected_residue_at_resconn( ic ) != seqpos() ) continue;
+
+		core::Size const this_conn_id = other_rsd.connect_map(ic).connid();
+		//TR << "this_res=" << seqpos() << "other_res=" << other_rsd.seqpos() << " this_conn_id=" << this_conn_id << std::endl; //DELETE ME
+		//runtime_assert_string_msg(connect_map_size() >= this_conn_id, "Residue::update_connections_to_other_residue() error:  Connection id reported by other residue doesn't exist in current residue!");
+		if ( this_conn_id > connect_map_.size() ) {
+			TR.Error << "DESYNC. The other residue " << other_rsd.seqpos() << " uses " << ic
+				<< " to connect to this residue " << seqpos() << " by its alleged " << this_conn_id
+				<< " but that is larger than this residue's connect_map" << std::endl;
+			TR.Error << "For context, the other residue is " << other_rsd.name() << " and "
+				<< " this residue is " << name() << std::endl;
+		} else {
 			if ( connected_residue_at_resconn(this_conn_id)!=other_rsd.seqpos() ) {
 				TR.Warning << "While updating residue " << seqpos() << "'s connections to residue " << other_rsd.seqpos() << ", a connection to residue " << connected_residue_at_resconn(this_conn_id) << " was overwritten!" << std::endl;
 			}
@@ -1333,10 +1342,8 @@ Residue::mark_connect_incomplete( Size resconn_index )
 void
 Residue::clear_residue_connections()
 {
-	for ( Size ii = 1; ii <= connect_map_.size(); ++ii ) {
-		//connect_map_[ ii ].resid( 0 );
-		//connect_map_[ ii ].connid( 0 );
-		connect_map_[ ii ].mark_incomplete();
+	for ( auto & conn : connect_map_ ) {
+		conn.mark_incomplete();
 	}
 	connections_to_residues_.clear();
 	pseudobonds_.clear();

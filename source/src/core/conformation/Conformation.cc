@@ -2004,6 +2004,16 @@ Conformation::update_noncanonical_connection(
 {
 	if ( lower_seqpos < 1 || lower_seqpos > size() ) return;
 	if ( upper_seqpos < 1 || upper_seqpos > size() ) return;
+	// Is this a sensible connect id for connected_seqpos?
+	// AMW: some applications fail because... well, this call tries to update residue torsions
+	// and apparently we are currently (for some apps) in an invalid state to do so from. In
+	// particular with the FoldTree? so switch residue() to residues_[]
+	if ( ur_conn_id == 0 || ur_conn_id > residues_[ upper_seqpos ]->connect_map_size() ) {
+		TR.Error << "Trying to update a noncanonical connection from " << lower_seqpos << " conn " << lr_conn_id
+			<< " to " << upper_seqpos << " conn " << ur_conn_id << std::endl;
+		TR.Error << "but the latter residue doesn't have that many connections... Something is out of date." << std::endl;
+		return;
+	}
 
 	set_noncanonical_connection( lower_seqpos, lr_conn_id, upper_seqpos, ur_conn_id );
 }
