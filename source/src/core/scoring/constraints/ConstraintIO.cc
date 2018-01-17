@@ -26,6 +26,8 @@
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -489,6 +491,7 @@ ConstraintIO::read_constraints_new(
 	}
 	return read_constraints_new( data, cset, pose, force_pdb_info_mapping );
 }
+
 ConstraintSetOP
 ConstraintIO::read_constraints_new(
 	std::istream & data,
@@ -632,6 +635,19 @@ ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char cons
 {
 	// this option is a vector1< bool > for pretty arcane reasons -- rosetta does not provide a set default option for bool, but does so for vector< bool>.
 	using namespace basic::options;
+	using namespace core::pose::full_model_info;
+	// Presence of FullModelInfo overrides... in which case, this might indicate a residue that's not yet in the pose.
+	if ( /*chain != 0 &&*/ full_model_info_defined( pose ) ) {
+		// AMW TODO: presence of segid in constraints here.
+		if ( const_full_model_info( pose ).full_to_sub().find(
+				const_full_model_info( pose ).full_model_parameters()->conventional_to_full( resnum, chain, "    " ) )
+				!= const_full_model_info( pose ).full_to_sub().end() ) {
+			//tr << "I am mapping apparent resnum " << resnum << " chain \'" << chain << "\' to "
+			// << const_full_model_info( pose ).full_to_sub()[ const_full_model_info( pose ).full_model_parameters()->conventional_to_full( resnum, chain, "    " ) ] << std::endl;
+			//tr << const_full_model_info( pose ).full_to_sub() << std::endl;
+			return const_full_model_info( pose ).full_to_sub()[ const_full_model_info( pose ).full_model_parameters()->conventional_to_full( resnum, chain, "    " ) ];
+		}
+	}
 	if ( chain != 0 && pose.pdb_info() ) {
 		return pose.pdb_info()->pdb2pose( chain, resnum );
 	}

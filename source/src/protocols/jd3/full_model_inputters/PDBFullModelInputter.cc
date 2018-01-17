@@ -224,6 +224,7 @@ PDBFullModelInputter::list_options_read(
 		+ full_model::rna::sample_sugar_res
 		+ OptionKeys::stepwise::protein::disulfide_file
 		+ constraints::cst_file
+		+ OptionKeys::stepwise::monte_carlo::full_model_constraints
 		+ stepwise::monte_carlo::vary_loop_length_frequency;
 }
 

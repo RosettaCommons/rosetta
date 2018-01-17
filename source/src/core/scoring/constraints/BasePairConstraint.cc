@@ -219,15 +219,19 @@ BasePairConstraint::read_def(
 
 	tr.Debug << "read: " << res1_ << " " << res2_ << std::endl;
 
-	if ( res1_ > pose.size() || res2_ > pose.size() ) {
+	if ( res1_ > pose.size() || res2_ > pose.size() || res1_ == 0 || res2_ == 0 ) {
 		tr.Warning  << "ignored constraint (requested residue numbers exceed numbers of residues in pose): " << "Total in Pose: " << pose.size() << " "
 			<< res1_ << " " << res2_ << std::endl;
-		data.setstate( std::ios_base::failbit );
+		tr.Warning  << "Also possible that you provided resnum-chain information,"
+			<< " and the residue isn't found in the pose so the mapping returned zero." << std::endl;
+		// We can't set this. It nukes parent constraints that might just not be 'right yet'
+		//data.setstate( std::ios_base::failbit );
 		return;
 	}
 	if ( !pose.residue_type( res1_ ).is_RNA() || !pose.residue_type( res2_ ).is_RNA() ) {
 		tr.Warning  << "ignored constraint (requested residue numbers may not be RNA): " << "Total in Pose: " << pose.size() << " " << res1_ << " " << res2_ << std::endl;
-		data.setstate( std::ios_base::failbit );
+		// We can't set this. It nukes parent constraints that might just not be 'right yet'
+		//data.setstate( std::ios_base::failbit );
 		return;
 	}
 

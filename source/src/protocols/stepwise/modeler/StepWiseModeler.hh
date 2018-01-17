@@ -104,6 +104,9 @@ private:
 	initialize_scorefunctions( core::pose::Pose const & pose );
 
 	void
+	initialize_constraints( core::pose::Pose & pose );
+
+	void
 	do_prepacking( core::pose::Pose & pose );
 
 	void

@@ -210,7 +210,13 @@ ConstraintOP MultiConstraint::remapped_clone(
 {
 	MultiConstraintOP new_multi = empty_clone();
 	for ( auto const & cst : member_constraints_ ) {
-		new_multi->add_individual_constraint( cst->remapped_clone( src, dest, map ) );
+		if ( !cst ) continue;
+		auto remapped_cloned_component_constraint = cst->remapped_clone( src, dest, map );
+
+		// If the cloned constraint doesn't exist meaningfully in the context of this new pose
+		// (for example: it now contains nonexistnt residues or atoms) it will be nullptr
+		if ( !remapped_cloned_component_constraint ) continue;
+		new_multi->add_individual_constraint( remapped_cloned_component_constraint );
 	}
 	return new_multi;
 }

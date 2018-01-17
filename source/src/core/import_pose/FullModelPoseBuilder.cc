@@ -198,7 +198,11 @@ FullModelPoseBuilder::initialize_further_from_options() {
 	//set_full_model_parameters( full_model_parameters_ );
 	set_global_seq_file( options_[ full_model::global_seq_file ].value() );
 	set_disulfide_file( options_[ OptionKeys::stepwise::protein::disulfide_file ]() );
-	if ( options_[ OptionKeys::constraints::cst_file ].user() ) set_constraint_file( options_[ OptionKeys::constraints::cst_file ]()[ 1 ] );
+	// AMW: We actually have to use a somewhat different cst_file here, because otherwise
+	// we risk alerting other Rosetta machinery to the existence of these constraints.
+	// Application of constraints to a Pose whose length will be regularly changing during
+	// the simulation is very risky!
+	if ( options_[ OptionKeys::stepwise::monte_carlo::full_model_constraints ].user() ) set_constraint_file( options_[ OptionKeys::stepwise::monte_carlo::full_model_constraints ]()[ 1 ] );
 }
 
 PoseOP FullModelPoseBuilder::build() { // can't be const because it can change input_poses_

@@ -39,6 +39,7 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility>
 #include <utility/stream_util.hh>
@@ -137,8 +138,11 @@ StepWiseModeler::apply( pose::Pose & pose ){
 
 //////////////////////////////////////////////////////////////////////////////
 void
-StepWiseModeler::initialize( pose::Pose & pose ){
+StepWiseModeler::initialize( pose::Pose & pose ) {
+	// initializes constraints from alignment and full model info
+	// also sets up single residue centric full model params
 	initialize_working_parameters_and_root( pose );
+
 	runtime_assert( moving_res_list_.size() > 0 || prepack_res_was_inputted_ || figure_out_prepack_res_ ); // otherwise this is a no op.
 	initialize_scorefunctions( pose );
 	pose_list_.clear();
@@ -157,6 +161,31 @@ StepWiseModeler::do_prepacking( core::pose::Pose & pose ) {
 	master_packer_->set_working_pack_res( working_prepack_res_ );
 	master_packer_->do_prepack( pose ); // will split at moving_res_list
 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseModeler::initialize_constraints( core::pose::Pose & pose ) {
+	// If cst_string is empty, don't do this.
+	if ( core::pose::full_model_info::const_full_model_info( pose ).full_model_parameters()->cst_string() == "" )  return;
+
+	using namespace core::scoring::constraints;
+
+	ConstraintSetOP total_constraints = nullptr;
+	if ( pose.constraint_set() ) {
+		total_constraints = pose.constraint_set()->clone();
+	} else {
+		total_constraints = ConstraintSetOP( new core::scoring::constraints::ConstraintSet );
+	}
+
+	std::istringstream strm( core::pose::full_model_info::const_full_model_info( pose ).full_model_parameters()->cst_string() );
+	ConstraintSetOP full_model_constraints = ConstraintIO::read_constraints_new(
+		strm,
+		total_constraints,
+		pose,
+		false );
+	total_constraints->add_constraints( full_model_constraints );
+	pose.constraint_set( total_constraints );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,6 +270,7 @@ StepWiseModeler::initialize_working_parameters_and_root( pose::Pose & pose ){
 	Real const rmsd_screen = options_->rmsd_screen();
 	cst_set_ = pose.constraint_set()->clone();
 	if ( !options_->disallow_realign() ) align::align_pose_and_add_rmsd_constraints( pose, get_native_pose(), moving_res_list_, rmsd_screen );
+	initialize_constraints( pose );
 
 	working_parameters_ = working_parameters::setup_working_parameters_for_swa( moving_res_list_, pose, get_native_pose(),
 		options_->bridge_res(), working_minimize_res_  );

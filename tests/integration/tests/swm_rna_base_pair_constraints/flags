@@ -1,0 +1,26 @@
+-nstruct 1
+-cycles 20
+#-s helix.pdb
+#-fasta target.fasta
+-s farfar_loopE_354d_START.pdb
+-fasta farfar.fasta
+-native farfar_loopE_354d_RNA.pdb
+-out:file:silent swm_rebuild.out
+# Let's give it every opportunity we can to satisfy the constraint.
+-extra_minimize_res A:1-22
+-block_stack_below_res A:1 A:12 
+-block_stack_above_res A:11 A:22
+-terminal_res A:1 A:11 A:12 A:22
+-stepwise::monte_carlo::full_model_constraints base_pair_constraint.cst
+-set_weights base_pair_constraint 1
+# I don't want anything complicated to happen: since we have a short
+# trajectory, let's minimize the chance we get into a complicated state.
+-submotif_frequency 0.0
+-from_scratch_frequency 0.0
+-skip_deletions true
+-add_proposal_density_factor 100000
+-score:weights stepwise/rna/rna_res_level_energy7beta.wts
+# We need to set this to false to read in constraints for stepwise
+# because at first most constraints (those on 'sample_res') will be
+# bad.
+-constraints:exit_on_bad_read false

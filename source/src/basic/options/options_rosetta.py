@@ -7469,6 +7469,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		  Option( 'designing_with_noncanonicals', 'Boolean', desc="Are we designing with noncanonicals, meaning 'n' has to read from a set of possible symbols (instead of 4 canonical NAs)?", default='false'),
 		  Option( 'checkpointing_frequency', 'Integer', desc="How often should we output checkpoint files?", default='100'),
 		  Option( 'continue_until_none_missing', 'Boolean', desc="If there are missing residues when we've reached n-cycles, just keep going! Suggested with checkpointing.", default='false'),
+		  Option( 'full_model_constraints', 'FileVector', desc="One or more files containing constraints to be applied in a 'full-model' setting, i.e., only in the Modeler and only once residues exist.", default=[]),
 		  Option_Group( 'csa',
 				  Option( 'csa_bank_size', 'Integer', desc='Do conformational space annealing (population monte carlo) with this number of models in the bank',default='0' ),
 				  Option( 'csa_rmsd', 'Real', desc='RMSD cutoff for calling two poses different in conformational space annealing (population monte carlo)',default='1.0' ),

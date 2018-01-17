@@ -1,0 +1,7 @@
+# This is the rna_denovo_bps case, but just putting base pair
+# constraints on a ton of uninstantiated residues!
+BasePair 3A 20A S H T 
+BasePair 4A 19A H W T 
+BasePair 7A 16A W H T 
+BasePair 8A 15A W H T 
+BasePair 9A 14A H S T 
