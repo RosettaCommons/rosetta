@@ -354,6 +354,19 @@ void xyzVector_add_on_binder(pybind11::class_<numeric::xyzVector<T>, std::shared
 	cl.def(pybind11::self -  T());
     cl.def(pybind11::self *= T());
     cl.def(pybind11::self /= T());
+
+	cl.def("__len__", [](Vector const &) { return 3; } );
+
+	cl.def("__getitem__", [](Vector const &v, int i) -> T {
+			if( i > 2 ) throw pybind11::index_error();
+			return v[i];
+		});
+
+	cl.def("__setitem__", [](Vector &v, int i, T const & t) {
+			if( i > 2 ) throw pybind11::index_error();
+			v[i] = t;
+		});
+
 }
 
 template< typename T >
