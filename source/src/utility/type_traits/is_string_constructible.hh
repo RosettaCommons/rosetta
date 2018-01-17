@@ -46,6 +46,9 @@ template<>
 struct is_string_constructible<std::string> : public std::true_type {};
 
 template<>
+struct is_string_constructible<std::string const> : public std::true_type {};
+
+template<>
 struct is_string_constructible<std::string &> : public std::true_type {};
 
 template<>

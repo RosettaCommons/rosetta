@@ -102,6 +102,7 @@
 ///
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- Added human-readable XML schema output.
+/// @author Sergey Lyskov, optimization
 
 #ifndef INCLUDED_utility_tag_XMLSchemaGeneration_HH
 #define INCLUDED_utility_tag_XMLSchemaGeneration_HH
@@ -111,6 +112,8 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/type_traits/is_string_constructible.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Boost headers
 #include <boost/function.hpp>
@@ -128,6 +131,9 @@
 
 namespace utility {
 namespace tag {
+
+/// @brief Check if given string contain any of '<>&' and if so return found character. If no character is found return 0.
+char string_contains_gt_lt_or_ampersand(std::string const &s );
 
 /// @brief An enum listing lots of commonly-used simple types so they don't have to be added manually
 /// in lots of places.  If you create an XMLSchemaType using this enum, then the corresponding
@@ -179,8 +185,20 @@ public:
 	XMLSchemaType();
 	XMLSchemaType( XMLSchemaDataType setting );
 	XMLSchemaType( XMLSchemaCommonType setting );
-	XMLSchemaType( std::string const & custom_type );
-	XMLSchemaType( char const * custom_type );
+
+	template <class T,
+		typename = typename std::enable_if< utility::type_traits::is_string_constructible<T>::value >::type >
+	XMLSchemaType( T&& custom_type ) :
+		type_( xs_custom ),
+		common_type_( xsct_none ),
+		custom_type_name_( std::forward<T>(custom_type) )
+	{}
+
+	XMLSchemaType(XMLSchemaType const & )    = default;
+	XMLSchemaType(XMLSchemaType&& ) noexcept = default;
+
+	XMLSchemaType & operator= (XMLSchemaType const  & ) = default;
+
 	void type( XMLSchemaDataType setting );
 	void common_type( XMLSchemaCommonType setting );
 	void custom_type_name( std::string const & setting );
@@ -226,7 +244,27 @@ public:
 class XMLSchemaAttribute : public XMLSchemaTopLevelElement {
 public:
 	XMLSchemaAttribute();
-	XMLSchemaAttribute( std::string const & name, XMLSchemaType const & type, std::string const & desc );
+
+	template <class Tname, class Tdesc,
+		typename = typename std::enable_if< utility::type_traits::is_string_constructible<Tname>::value >::type,
+		typename = typename std::enable_if< utility::type_traits::is_string_constructible<Tdesc>::value >::type
+	>
+	XMLSchemaAttribute(Tname && name, XMLSchemaType const & type, Tdesc && description) :
+		name_( std::forward<Tname>(name) ),
+		type_( type ),
+		is_required_( false ),
+		description_( std::forward<Tdesc>(description) )
+	{
+		if ( auto ch = string_contains_gt_lt_or_ampersand(description_) ) {
+			throw CREATE_EXCEPTION(utility::excn::Exception, std::string("Desciption for attribute \"") + name_ + "\" may not contain either '<', '>' or '&'. Found '" + ch + "' in: " + description_ );
+		}
+	}
+
+	XMLSchemaAttribute(XMLSchemaAttribute const & )    = default;
+	XMLSchemaAttribute(XMLSchemaAttribute&& ) noexcept = default;
+
+	XMLSchemaAttribute & operator= (XMLSchemaAttribute const  & ) = default;
+
 	//XMLSchemaAttribute( std::string const & name, XMLSchemaType type, std::string const & default_value ); // temp -- find attribtues w/ default values
 	//static XMLSchemaAttribute required_attribute( std::string const & name, XMLSchemaType type );
 	static XMLSchemaAttribute required_attribute( std::string const & name, XMLSchemaType type, std::string const & desc );

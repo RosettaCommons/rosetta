@@ -11,6 +11,7 @@
 /// @brief  Definitions of the classes used to define an XML Schema
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- Added human-readable XML schema output.
+/// @author Sergey Lyskov, optimization
 
 // Unit headers
 #include <utility>
@@ -21,28 +22,18 @@
 
 // Utility headers
 #include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/xsd_util/util.hh>
 
 namespace utility {
 namespace tag {
 
-bool
-string_contains_gt_or_lt( std::string const & str )
+/// @details Check if given string contain any of '<>&' and if so return found character. If no character is found return 0.
+char string_contains_gt_lt_or_ampersand(std::string const & str)
 {
 	for ( char ch : str ) {
-		if ( ch == '<' || ch == '>' ) return true;
+		if ( ch == '<'  or  ch == '>'  or  ch == '&' ) return ch;
 	}
-	return false;
-}
-
-bool
-string_contains_ampersand( std::string const & str )
-{
-	for ( char ch : str ) {
-		if ( ch == '&' ) return true;
-	}
-	return false;
+	return 0;
 }
 
 // AMW: This is a drop-in replacement for chr_chains_nonrepeated, which has <>
@@ -131,18 +122,6 @@ XMLSchemaType::XMLSchemaType( XMLSchemaCommonType setting ) :
 	common_type_( setting )
 {}
 
-XMLSchemaType::XMLSchemaType( std::string const & custom_type ) :
-	type_( xs_custom ),
-	common_type_( xsct_none ),
-	custom_type_name_( custom_type )
-{}
-
-XMLSchemaType::XMLSchemaType( char const * custom_type ) :
-	type_( xs_custom ),
-	common_type_( xsct_none ),
-	custom_type_name_( custom_type )
-{}
-
 void XMLSchemaType::type( XMLSchemaDataType setting ) { type_ = setting; common_type_ = xsct_none; }
 void XMLSchemaType::common_type( XMLSchemaCommonType setting ) { type_ = xs_common; common_type_ = setting; }
 void XMLSchemaType::custom_type_name( std::string const & setting ) { type_ = xs_custom; common_type_ = xsct_none; custom_type_name_ = setting; }
@@ -167,24 +146,6 @@ XMLSchemaCommonType XMLSchemaType::common_type() const { return common_type_; }
 XMLSchemaAttribute::XMLSchemaAttribute() :
 	is_required_( false )
 {}
-
-XMLSchemaAttribute::XMLSchemaAttribute(
-	std::string const & name,
-	XMLSchemaType const & type,
-	std::string const & description
-) :
-	name_( name ),
-	type_( type ),
-	is_required_( false ),
-	description_( description )
-{
-	if ( string_contains_gt_or_lt( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for attribute \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
-	}
-	if ( string_contains_ampersand( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for attribute \"" + name + "\" may not contain '&'. Offending string: " + description );
-	}
-}
 
 // XMLSchemaAttribute::XMLSchemaAttribute(
 //  std::string const & name,
@@ -249,13 +210,12 @@ XMLSchemaAttribute & XMLSchemaAttribute::name( std::string const & setting ) { n
 XMLSchemaAttribute & XMLSchemaAttribute::type( XMLSchemaType setting ) { type_ = setting; return *this; }
 XMLSchemaAttribute & XMLSchemaAttribute::is_required( bool setting ) { is_required_ = setting; return *this; }
 XMLSchemaAttribute & XMLSchemaAttribute::default_value( std::string const & setting ) { default_value_ = setting; return *this; }
-XMLSchemaAttribute & XMLSchemaAttribute::description( std::string const & setting ) {
+XMLSchemaAttribute & XMLSchemaAttribute::description( std::string const & setting )
+{
 	description_ = setting;
-	if ( string_contains_gt_or_lt( description_ ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for attribute \"" + name_ + "\" may not contain either '<' or '>'. Offending string: " + description_ );
-	}
-	if ( string_contains_ampersand( description_ ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for attribute \"" + name_ + "\" may not contain '&'. Offending string: " + description_ );
+
+	if ( auto ch = string_contains_gt_lt_or_ampersand(description_) ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, std::string("Desciption for attribute \"") + name_ + "\" may not contain either '<', '>' or '&'. Found '" + ch + "' in: " + description_ );
 	}
 
 	return *this;
@@ -805,14 +765,14 @@ std::ostream & operator << ( std::ostream & os, XMLSchemaModelGroupType type ) {
 XMLSchemaComplexType::XMLSchemaComplexType() = default;
 
 XMLSchemaComplexType & XMLSchemaComplexType::name( std::string const & setting ) { name_ = setting; return *this; }
-XMLSchemaComplexType & XMLSchemaComplexType::description( std::string const & setting ) {
+XMLSchemaComplexType & XMLSchemaComplexType::description( std::string const & setting )
+{
 	desc_ = setting;
-	if ( string_contains_gt_or_lt( desc_ ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for complexType \"" + name_ + "\" may not contain either '<' or '>'. Offending string: " + setting );
+
+	if ( auto ch = string_contains_gt_lt_or_ampersand(desc_) ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, std::string("Desciption for complexType \"") + name_ + "\" may not contain either '<', '>' or '&'. Found '" + ch + "' in: " + desc_ );
 	}
-	if ( string_contains_ampersand( desc_ ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for complexType \"" + name_ + "\" may not contain '&'. Offending string: " + setting );
-	}
+
 
 	return *this;
 }
@@ -1041,11 +1001,8 @@ XMLSchemaSimpleSubelementList::add_simple_subelement(
 	std::string const & description
 )
 {
-	if ( string_contains_gt_or_lt( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
-	}
-	if ( string_contains_ampersand( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+	if ( auto ch = string_contains_gt_lt_or_ampersand(description) ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, std::string("Desciption for simple subelement \"") + name + "\" may not contain either '<', '>' or '&'. Found '" + ch + "' in: " + description );
 	}
 
 	ElementSummary summary = element_summary_as_simple_subelement( name, attributes, description );
@@ -1062,11 +1019,8 @@ XMLSchemaSimpleSubelementList::add_simple_subelement(
 	int max_occurs
 )
 {
-	if ( string_contains_gt_or_lt( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
-	}
-	if ( string_contains_ampersand( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+	if ( auto ch = string_contains_gt_lt_or_ampersand(description) ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, std::string("Desciption for simple subelement \"") + name + "\" may not contain either '<', '>' or '&'. Found '" + ch + "' in: " + description );
 	}
 
 	ElementSummary summary = element_summary_as_simple_subelement( name, attributes, description, min_occurs, max_occurs );
@@ -1189,13 +1143,9 @@ XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(
 	std::string const & description
 )
 {
-	if ( string_contains_gt_or_lt( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+	if ( auto ch = string_contains_gt_lt_or_ampersand(description) ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, std::string("Desciption for simple subelement \"") + name + "\" may not contain either '<', '>' or '&'. Found '" + ch + "' in: " + description );
 	}
-	if ( string_contains_ampersand( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
-	}
-
 
 	ElementSummary summary;
 	summary.element_type = ElementSummary::ct_simple;
@@ -1218,13 +1168,9 @@ XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(
 	int max_occurs
 )
 {
-	if ( string_contains_gt_or_lt( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+	if ( auto ch = string_contains_gt_lt_or_ampersand(description) ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, std::string("Desciption for simple subelement \"") + name + "\" may not contain either '<', '>' or '&'. Found '" + ch + "' in: " + description );
 	}
-	if ( string_contains_ampersand( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
-	}
-
 
 	ElementSummary summary;
 	summary.element_type = ElementSummary::ct_simple;
@@ -1475,16 +1421,12 @@ void XMLSchemaComplexTypeGeneratorImpl::element_name( std::string const & elemen
 	element_name_ = element_name;
 }
 
-void XMLSchemaComplexTypeGeneratorImpl::description( std::string const & desc ) {
-	if ( string_contains_gt_or_lt( desc ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for complexType for element \"" + element_name_ + "\" may not contain either '<' or '>'. Offending string: " + desc );
-	}
-	if ( string_contains_ampersand( desc ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for complexType for element \"" + element_name_ + "\" may not contain '&'. Offending string: " + desc );
+void XMLSchemaComplexTypeGeneratorImpl::description( std::string const & description ) {
+	if ( auto ch = string_contains_gt_lt_or_ampersand(description) ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, std::string("Desciption for complexType for element \"") + element_name_ + "\" may not contain either '<', '>' or '&'. Found '" + ch + "' in: " + description );
 	}
 
-
-	description_ = desc;
+	description_ = description;
 }
 
 void XMLSchemaComplexTypeGeneratorImpl::complex_type_naming_func(
@@ -2278,11 +2220,8 @@ XMLSchemaRepeatableCTNode::set_element_w_attributes(
 	std::string const & description
 )
 {
-	if ( string_contains_gt_or_lt( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for CTNode \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
-	}
-	if ( string_contains_ampersand( description ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, "Desciption for CTNode \"" + name + "\" may not contain '&'. Offending string: " + description );
+	if ( auto ch = string_contains_gt_lt_or_ampersand(description) ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, std::string("Desciption for CTNode \"") + name + "\" may not contain either '<', '>' or '&'. Found '" + ch + "' in: " + description );
 	}
 
 	element_ = XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(
