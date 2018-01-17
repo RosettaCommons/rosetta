@@ -40,11 +40,16 @@ NAME3 CYS
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -82,11 +87,16 @@ NAME3 DCS
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -125,11 +135,16 @@ NAME3 ASP
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -167,11 +182,16 @@ NAME3 DAS
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -209,11 +229,16 @@ NAME3 GLU
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -251,11 +276,16 @@ NAME3 DGU
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -293,11 +323,16 @@ NAME3 PHE
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -335,11 +370,16 @@ NAME3 DPH
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -377,11 +417,16 @@ NAME3 HIS
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -419,11 +464,16 @@ NAME3 DHI
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -461,11 +511,16 @@ NAME3 ILE
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -503,11 +558,16 @@ NAME3 DIL
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -545,11 +605,16 @@ NAME3 LYS
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -587,11 +652,16 @@ NAME3 DLY
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -629,11 +699,16 @@ NAME3 LEU
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -671,11 +746,16 @@ NAME3 DLE
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -713,11 +793,16 @@ NAME3 MET
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -755,11 +840,16 @@ NAME3 DME
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -797,11 +887,16 @@ NAME3 ASN
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -839,11 +934,16 @@ NAME3 DAN
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -881,11 +981,16 @@ NAME3 GLN
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -923,11 +1028,16 @@ NAME3 DGN
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -965,11 +1075,16 @@ NAME3 ARG
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1007,11 +1122,16 @@ NAME3 DAR
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1049,11 +1169,16 @@ NAME3 SER
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1091,11 +1216,16 @@ NAME3 DSE
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1133,11 +1263,16 @@ NAME3 THR
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1175,11 +1310,16 @@ NAME3 DTH
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1217,11 +1357,16 @@ NAME3 VAL
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1259,11 +1404,16 @@ NAME3 DVA
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1301,11 +1451,16 @@ NAME3 TRP
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1343,11 +1498,16 @@ NAME3 DTR
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1385,11 +1545,16 @@ NAME3 TYR
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1427,11 +1592,16 @@ NAME3 DTY
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1471,11 +1641,16 @@ NAME3 GLY
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1513,11 +1688,16 @@ PROPERTY D_AA
 END_SELECTOR
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
@@ -1544,11 +1724,16 @@ END_CASE
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 # Add a methyl group, and delete the amide proton:
-ADD_ATOM  CN  CH3   CT3   -0.17
-ADD_ATOM 1HN  Hapo  HA    0.014
-ADD_ATOM 2HN  Hapo  HA    0.014
-ADD_ATOM 3HN  Hapo  HA    0.014
+ADD_ATOM  CN  CH3   CT3   -0.2352
+ADD_ATOM 1HN  Hapo  HA    0.1920
+ADD_ATOM 2HN  Hapo  HA    0.1920
+ADD_ATOM 3HN  Hapo  HA    0.1920
 DELETE_ATOM  H
+
+# Update the nitrogen
+SET_ATOM_TYPE N Npro
+SET_MM_ATOM_TYPE N NXX
+SET_ATOMIC_CHARGE N -0.7438
 
 # Define the connectivity of the added atoms:
 ADD_BOND  N   CN
