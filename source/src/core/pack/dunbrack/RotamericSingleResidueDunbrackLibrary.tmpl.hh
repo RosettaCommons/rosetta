@@ -21,6 +21,7 @@
 
 // Unit Headers
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
+#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.hh>
 
 // Package Headers
 #include <core/pack/dunbrack/RotamerLibrary.hh>
@@ -737,13 +738,32 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_bins(
 template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_bins(
-	utility::fixedsizearray1< Real, N > bbs,
+	utility::fixedsizearray1< Real, N > const & bbs,
 	utility::fixedsizearray1< Size, N > & bb_bin
 ) const
 {
 	utility::fixedsizearray1< Size, N > bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
+}
+
+/// @brief Version for external, non-template classes to access.
+/// @details Converts to fixedsizearrays internally.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+template < Size T, Size N >
+void
+RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_bins(
+	utility::vector1< core::Real > const & bbs,
+	utility::vector1< core::Size > & bb_bin
+) const
+{
+	runtime_assert_string_msg( bbs.size() == N, "Error in RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_bins(): The dimensionality of the vector passed to this function was not N." );
+	utility::fixedsizearray1< core::Real, N > bbs_array;
+	utility::fixedsizearray1< core::Size, N > bb_bin_array;
+	for ( core::Size i(1); i<=N; ++i ) bbs_array[i] = bbs[i];
+	get_bb_bins(bbs_array, bb_bin_array);
+	bb_bin.resize(N);
+	for ( core::Size i(1); i<=N; ++i ) bb_bin[i] = bb_bin_array[i];
 }
 
 template < Size T, Size N >
@@ -1192,38 +1212,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::verify_bb_bins(
 			utility_exit();
 		}
 	}
-}
-
-/// @brief When the first non-comment line is read from a rotamer file, check whether there's an extra column (signifying that this is a
-/// Shapovalov file, which has an extra column in the middle.)
-/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
-template < Size T, Size N >
-bool
-RotamericSingleResidueDunbrackLibrary< T, N >::check_for_extra_column(
-	utility::io::izstream & infile,
-	bool const first_line_three_letter_code_already_read
-) const {
-	std::string line;
-	infile.getline( line );
-	//This is SUPER hacky, but need to rewind to the start of the line, and without using seekg or tellg (which aren't available for gzipped streams):
-	for ( core::Size linelength( line.length() + 1 ) ; linelength > 0; --linelength ) {
-		infile.stream().unget();
-	}
-	//Need to remove whitespace:
-	utility::trim( line, " \t" );
-	core::Size const shift( first_line_three_letter_code_already_read ? 1 : 0 );
-
-	std::istringstream curline(line);
-	std::string dummy; //Dummy string as recepticle for parsing line.
-	core::Size counter(0);
-	//Count how many whitespace-separated things there are in the line:
-	while ( !curline.eof() ) {
-		curline >> dummy;
-		++counter;
-	}
-	if ( counter == 15 + N - shift ) return false;
-	runtime_assert_string_msg( counter == 16 + N - shift, "Error in core::pack::dunbrack::RotamericSingleResidueDunbrackLibrary::check_for_extra_column(): A rotamer file must have either 15+N or 16+N columns." );
-	return true;
 }
 
 /// @details once a list of chi samples has been enumerated, this function
@@ -1965,8 +1953,13 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 	}
 }
 
+/// @brief Read from input stream; stream may contain data for other amino acids.
+/// Quit once another amino acid is specified in the input file, returning the
+/// name of the next amino acid specifed (since it's already been extracted from
+/// the input stream).  Return the empty string if no other amino acid is specified.
 /// @details Returns the three letter string of the next amino acid specified in the
 /// input library.
+/// @author Rewritten on 8 January 2018 by Vikram K. Mulligan (vmullig@uw.edu).
 template < Size T, Size N >
 std::string
 RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
@@ -1974,207 +1967,12 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 	bool first_line_three_letter_code_already_read
 )
 {
-	Size const num_bb_bins = product( N_BB_BINS );
-
-	std::string const my_name( chemical::name_from_aa( aa() ) );
-	std::string next_name; // empty string to start
-
-	/// Read all the data from the first phi/psi bin and keep it temporarily.
-	/// Note all the rotamer wells encountered along the way; then declare_all_rotwells_encountered,
-	/// allocate the big tables, transfer the data in the temporary arrays into the big table,
-	typename utility::vector1< DunbrackRotamer< T, N > > first_phipsibin_data;
-	first_phipsibin_data.reserve( n_possible_rots() );
-
-	utility::fixedsizearray1< Real, N > bb;
-	DunbrackReal probability(0.0);
-	//MaximCode
-	//The natural logarithm is the base-e logarithm: the inverse of the natural exponential function (exp).
-	DunbrackReal minusLogProbability(-1e-10);
-
-	utility::fixedsizearray1< Size, N > bb_bin;
-	utility::fixedsizearray1< Size, N > last_bb_bin;
-	Size count( 0 );
-	bool very_first_rotamer( true );
-	bool finished_first_phipsi_bin( false );
-	Size count_in_this_phipsi_bin( 1 );
-	utility::vector1< Size > rotwell( DUNBRACK_MAX_SCTOR, 0 );
-	utility::vector1< DunbrackReal > chimean( DUNBRACK_MAX_SCTOR, 0.0 );
-	utility::vector1< DunbrackReal > chisd( DUNBRACK_MAX_SCTOR, 0.0 );
-	std::string three_letter_code;
-	Size count_read_rotamers(0);
-
-	bool is_shapovalov_file(false);
-	bool first_noncomment_line(true);
-
-	while ( infile ) { // if the file should suddenly end, we'd be in trouble.
-
-
-		/// 1. peek at the line; if it starts with #, skip to the next line.
-		/// Also, set up an istringstream for the line.
-		char first_char = infile.peek();
-		if ( first_char == '#' ) {
-			std::string line;
-			infile.getline( line );
-			continue;
-		}
-
-		/// 1b. Shapovalov files have an extra column in the MIDDLE, which is a pain in the neck.
-		/// First, we need to determine whether that applies here.
-		/// (Added by VKM, 11 July 2016).
-		if ( first_noncomment_line ) {
-			first_noncomment_line = false; //We only do this once per file, since it requires two parses of the same line.  We use the first line that isn't commented out.
-			is_shapovalov_file = check_for_extra_column(infile, first_line_three_letter_code_already_read);
-		}
-
-
-		/// 2. Read the line.  Format is:
-		/// a.   three-letter-code,
-		/// b.   phi,
-		/// c.   psi,
-		/// d.   count
-		/// e..h r1..r4
-		/// i.   probability
-		/// j..m chimean1..chimean4
-		/// n..q chisd1..chisd4
-
-		if ( first_line_three_letter_code_already_read ) {
-			/// The last library to read from this file already ate my three letter code;
-			/// skip directly to reading phi/psi values...
-			first_line_three_letter_code_already_read = false;
-		} else {
-			infile >> three_letter_code;
-			// AMW: this is an issue. What if we are a variant lib like TRP,
-			// but our TLC is UNK? thankfully we can add in that exact condition.
-			if ( three_letter_code != my_name && three_letter_code != "UNK" ) {
-				next_name = three_letter_code;
-
-				initialize_bicubic_splines();
-				/// Entropy setup once reading is finished
-				if ( dun_entropy_correction() ) {
-					setup_entropy_correction();
-				}
-
-				return next_name;
-			}/// else, we're still reading data for the intended amino acid, so let's continue...
-		}
-
-		for ( Size ii = 1; ii <= N; ++ii ) {
-			infile >> bb[ ii ];
-		}
-
-		infile >> count;
-		infile >> rotwell[ 1 ] >> rotwell[ 2 ] >> rotwell[ 3 ] >> rotwell[ 4 ];
-		infile >> probability;
-		//MaximCode
-		if ( is_shapovalov_file ) {
-			infile >> minusLogProbability;
-		}
-		infile >> chimean[ 1 ] >> chimean[ 2 ] >> chimean[ 3 ] >> chimean[ 4 ];
-		infile >> chisd[ 1 ] >> chisd[ 2 ] >> chisd[ 3 ] >> chisd[ 4 ];
-
-		bool cont = false;
-		for ( Size ii = 1; ii <= N; ++ii ) if ( bb[ ii ] == -180 ) cont = true; // duplicated data...
-		if ( cont ) continue;
-
-		++count_read_rotamers;
-
-		/// AVOID INF!
-		for ( Size ii = 1; ii <= T; ++ii ) if ( chisd[ ii ] == 0.0 ) chisd[ ii ] = 5; // bogus!
-
-		if ( probability <= 1e-6 ) {
-			probability = 1e-6;
-			/// APL -- On the advice of Roland Dunbrack, modifying the minimum probability to the
-			/// resolution of the library.  This helps avoid overwhelmingly unfavorable energies
-			/// (5 log-units difference between 1e-4 and 1e-9) for rare rotamers.
-			/// AMW -- Changing this to be a <= criterion and to 1e-6 to actually match the resolution
-			/// of the library
-		}
-
-		get_bb_bins( bb, bb_bin );
-
-		if ( finished_first_phipsi_bin ) {
-			Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
-			if ( packed_rotno < 1 || packed_rotno > parent::n_packed_rots() ) {
-				std::cerr << "ERROR in converting rotwell to packed rotno: ";
-				for ( Size ii = 1; ii <= T; ++ii ) std::cerr << " " << rotwell[ ii ];
-				std::cerr << " " << packed_rotno << std::endl;
-				utility_exit();
-			}
-			PackedDunbrackRotamer< T, N > rotamer( chimean, chisd, probability, packed_rotno );
-
-			for ( Size ii = 1; ii <= N; ++ii ) {
-				if ( bb_bin[ ii ] != last_bb_bin[ ii ] ) {
-					count_in_this_phipsi_bin = 1; break;
-				}
-			}
-			if ( count_in_this_phipsi_bin > parent::n_packed_rots() ) break;
-
-			Size bb_bin_index = make_index< N >( N_BB_BINS, bb_bin );
-			rotamers_( bb_bin_index, count_in_this_phipsi_bin ) = rotamer;
-			packed_rotno_2_sorted_rotno_( bb_bin_index, packed_rotno ) = count_in_this_phipsi_bin;
-
-			++count_in_this_phipsi_bin;
-			for ( Size ii = 1; ii <= N; ++ii ) last_bb_bin[ ii ] = bb_bin[ ii ];
-
-		} else {
-			bool notdone = false;
-			for ( Size ii = 1; ii <= N; ++ii ) {
-				if ( bb_bin[ ii ] != last_bb_bin[ ii ] ) {
-					notdone = true; break;
-				}
-			}
-			if ( !very_first_rotamer && notdone ) {
-				// We have now read all rotamers from this phi/psi bin.
-				// 1. Declare all existing rotwells encountered
-				// 2. Allocate space for rotamer data
-				// 3. Store data from first rotwell.
-				// 4. Store the data from the rotamer we just read.
-
-				// 1.
-				declare_all_existing_rotwells_encountered();
-				// 2.
-				rotamers_.dimension( num_bb_bins, n_packed_rots() );//, PackedDunbrackRotamer< T, N >() );
-				packed_rotno_2_sorted_rotno_.dimension( num_bb_bins, n_packed_rots() );
-				// 3.
-				utility::vector1< Size > first_bin_rotwell( DUNBRACK_MAX_SCTOR, 0 );
-				for ( Size ii = 1; ii <= first_phipsibin_data.size(); ++ii ) {
-					for ( Size jj = 1; jj <= T; ++jj ) first_bin_rotwell[ jj ] = first_phipsibin_data[ ii ].rotwell( jj );
-					Size const packed_rotno = rotwell_2_packed_rotno( first_bin_rotwell );
-					if ( packed_rotno < 1 || packed_rotno > parent::n_packed_rots() ) {
-						std::cerr << "ERROR in converting rotwell to packed rotno: ";
-						for ( Size ii = 1; ii <= T; ++ii ) std::cerr << " " << rotwell[ ii ];
-						std::cerr << " " << packed_rotno << std::endl;
-						utility_exit();
-					}
-
-					Size bb_bin_index = make_index< N >( N_BB_BINS, last_bb_bin );
-					rotamers_( bb_bin_index, ii ) = PackedDunbrackRotamer< T, N >( first_phipsibin_data[ ii ], packed_rotno );
-					rotamers_( bb_bin_index, ii ).rotamer_probability() = first_phipsibin_data[ ii ].rotamer_probability();
-
-					packed_rotno_2_sorted_rotno_( bb_bin_index, packed_rotno ) = ii;
-				}
-
-				// 4.
-				debug_assert( count_in_this_phipsi_bin == 1 );
-				Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
-				PackedDunbrackRotamer< T, N > rotamer( chimean, chisd, probability, packed_rotno );
-				Size bb_bin_index = make_index< N >( N_BB_BINS, bb_bin );
-
-				rotamers_( bb_bin_index, count_in_this_phipsi_bin ) = rotamer;
-				packed_rotno_2_sorted_rotno_( bb_bin_index, packed_rotno ) = count_in_this_phipsi_bin;
-				++count_in_this_phipsi_bin;
-				for ( Size bbi = 1; bbi <= N; ++bbi ) last_bb_bin[ bbi ] = bb_bin[ bbi ];
-
-				finished_first_phipsi_bin = true;
-			} else {
-				very_first_rotamer = false;
-				mark_rotwell_exists( rotwell );
-				first_phipsibin_data.push_back( DunbrackRotamer< T, N >( chimean, chisd, probability, rotwell ) );
-				first_phipsibin_data[first_phipsibin_data.size()].rotamer_probability() = probability;
-				for ( Size bbi = 1; bbi <= N; ++bbi ) last_bb_bin[ bbi ] = bb_bin[ bbi ];
-			}
-		}
-	}
+	// Create the parser for the file.  The parser is a convenient place to put the parse functions, and a convenient place to store temporary
+	// data during the parse:
+	RotamericSingleResidueDunbrackLibraryParser parser( N, DUNBRACK_MAX_SCTOR, n_possible_rots() );
+	// Do the parse and analysis, and return the name of the next amino acid (or an empty string if there is no next amino acid):
+	std::string const next_name( parser.read_file( infile, first_line_three_letter_code_already_read, aa() ) );
+	parser.configure_rotameric_single_residue_dunbrack_library(*this, N_BB_BINS);
 
 	initialize_bicubic_splines();
 	/// Entropy setup once reading is finished

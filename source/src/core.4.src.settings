@@ -66,6 +66,7 @@ sources = {
 		"RotamerConstraint",
 		"RotamerLibrary",
 		"RotamerLibraryScratchSpace",
+		"RotamericSingleResidueDunbrackLibraryParser",
 		"SemiRotamericSingleResidueDunbrackLibrary",
 		"SingleResidueDunbrackLibrary",
 		"SingleResidueDunbrackLibraryCreator",

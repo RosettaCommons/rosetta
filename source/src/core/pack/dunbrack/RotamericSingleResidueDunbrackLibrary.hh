@@ -17,6 +17,7 @@
 
 // Unit Headers
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.fwd.hh>
+#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.fwd.hh>
 
 // Package Headers
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
@@ -42,6 +43,9 @@ namespace dunbrack {
 template < Size T, Size N >
 class RotamericSingleResidueDunbrackLibrary : public SingleResidueDunbrackLibrary
 {
+
+	friend class RotamericSingleResidueDunbrackLibraryParser;
+
 public:
 	typedef SingleResidueDunbrackLibrary parent;
 
@@ -224,6 +228,9 @@ public:
 	/// Quit once another amino acid is specified in the input file, returning the
 	/// name of the next amino acid specifed (since it's already been extracted from
 	/// the input stream).  Return the empty string if no other amino acid is specified.
+	/// @details Returns the three letter string of the next amino acid specified in the
+	/// input library.
+	/// @author Rewritten on 8 January 2018 by Vikram K. Mulligan (vmullig@uw.edu).
 	std::string
 	read_from_file(
 		utility::io::izstream & in,
@@ -246,7 +253,7 @@ public:
 	utility::fixedsizearray1< std::function< Real( conformation::Residue const & rsd, pose::Pose const & pose ) >, N > IVs;
 
 protected:
-	/// Read and write access for derived classes
+	/// Read and write access for derived classes and parser class
 
 	typename ObjexxFCL::FArray2D< PackedDunbrackRotamer< T, N > > const &
 	rotamers() const {
@@ -355,6 +362,9 @@ protected:
 		conformation::Residue const & rsd
 	) const override;
 
+
+public:
+
 	void
 	get_bb_bins(
 		utility::fixedsizearray1< Real, N > const & bbs,
@@ -365,9 +375,20 @@ protected:
 
 	void
 	get_bb_bins(
-		utility::fixedsizearray1< Real, N > bbs,
+		utility::fixedsizearray1< Real, N > const & bbs,
 		utility::fixedsizearray1< Size, N > & bb_bin
 	) const;
+
+	/// @brief Version for external, non-template classes to access.
+	/// @details Converts to fixedsizearrays internally.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void
+	get_bb_bins(
+		utility::vector1< core::Real > const & bbs,
+		utility::vector1< core::Size > & bb_bin
+	) const;
+
+protected:
 
 	utility::fixedsizearray1< Real, N >
 	get_IVs_from_rsd(
@@ -416,11 +437,6 @@ private:
 		utility::fixedsizearray1< Size, N > const & bb_bin,
 		utility::fixedsizearray1< Size, N > const & bb_bin_next
 	) const;
-
-	/// @brief When the first non-comment line is read from a rotamer file, check whether there's an extra column (signifying that this is a
-	/// Shapovalov file, which has an extra column in the middle.)
-	/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
-	bool check_for_extra_column( utility::io::izstream & infile, bool const first_line_three_letter_code_already_read ) const;
 
 protected:
 
