@@ -417,6 +417,7 @@ sources = {
 	"moves" : [
 		"BackrubMover",
                 "FilterReportAsPoseExtraScoresMover",
+                "MonteCarloTests",
 		"MoverContainer",
 		"MoversTest",
 		"MoverFactory",

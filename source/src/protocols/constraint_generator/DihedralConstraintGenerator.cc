@@ -141,11 +141,9 @@ DihedralConstraintGenerator::apply( core::pose::Pose const & pose) const
 		constraints.push_back(cst);
 		return constraints;
 	}
-
 	if ( selector_ == nullptr ) {
 		utility_exit_with_message("ResidueSelector required for the DihedralConstraintGenerator!");
 	}
-
 	utility::vector1< bool > subset = selector_->apply( pose );
 	utility::vector1< core::Size > cst_residues = selection_positions( subset );
 	for ( core::Size i : cst_residues ) {
@@ -268,7 +266,6 @@ DihedralConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		" Will only work on ONE type of dihedral angle to allow complete customization.";
 
 	protocols::rosetta_scripts::attributes_for_parse_residue_selector( attlist );
-
 	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
 		xsd,
 		class_name(),

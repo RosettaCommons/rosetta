@@ -1459,6 +1459,23 @@ Options = Option_Group( '',
 		Option( 'hbond_new_sp3_acc',"Boolean", desc="fade_factor for hbond geometry softmax", default='false' ),
 		Option( 'alignment_sharpness',"Real", desc="When computing a harmonic function of RMSD for the alignment score, what should the standard deviation be?", default='1.0' ),
 		Option( 'rna_torsion_potential', 'String', desc="In RNA torsion calculation, directory containing 1D torsional potentials" , default="ps_04282011"), # probably should be in score:rna namespace, but hardwired as score:rna_torsion_potential in ERRASER, etc.
+		
+		Option('mc_optimize_dG', 'Boolean',
+			desc = 'Optimize the dG during MonteCarlo.  It is not possible to do this within overall scoring, \
+			but where possible, do this during MC calls.  This option does not globally-use the MonteCarloInterface object, but is protocol-specific. \
+			This is due to needing to know the interface it will be used on. \
+			dG is measured by the InterfaceAnalyzerMover. \
+			Supported Code is currently RosettaAntibodyDesign and RosettaDock',
+			default='false'
+			),
+		Option('mc_interface_weight', 'Real',
+			desc = 'Weight of interface score if using MonteCarloInterface with a particular protocol.',
+			default = '1.0'
+			),
+		Option('mc_total_weight', 'Real',
+			desc = 'Weight of total score if using MonteCarloInterface with a particular protocol',
+			default = '0.0'
+			),
 		Option( 'voids_penalty_energy_containing_cones_cutoff', "Integer", desc="A parameter for the voids_penalty score term.  The minimum number of cones projecting from side-chains in which a voxel must lie in order for that voxel to be considerd to be buried.  Defaults to 6 cones.", default='6' ),
 		Option( 'voids_penalty_energy_cone_dotproduct_cutoff', "Real", desc="A parameter for the voids_penalty score term.  The cutoff value for the dot product of a cone vector and a cone base-test point vector below which we declare the test point not to be within the cone.  Effectively, this is the cone width.  Lower values make broader cones.  Default 0.1.  Can range from 1.0 (infinitely thin cone) to -1.0 (full spherical volume), with 0.0 represeting all points on one side of the plane perpendicular to the cone vector.", default='0.1' ),
 		Option( 'voids_penalty_energy_cone_distance_cutoff', "Real", desc="A parameter for the voids_penalty score term.  The cutoff value for the distance from the cone base at which we are considered no longer to be within the cone.  Defaults to 8.0 Angstroms.", default='8.0' ),
@@ -3849,7 +3866,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3'],
 				),
 			Option('primary_cdrs', 'StringVector',
-				desc="Manually set the CDRs which can be chosen in the outer cycle. Normally, we pick any that are sequence-designing.",
+				desc="Manually set the CDRs which can be chosen in the outer cycle. Normally, we pick any that are sequence or graft -designing.",
 				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3', 'H4', 'L4', 'h1', 'h4'],
 				),
 			Option('mintype', 'String',

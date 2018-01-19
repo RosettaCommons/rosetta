@@ -383,6 +383,10 @@ GeneralAntibodyModeler::get_movemap_from_task(core::pose::Pose const & pose, cor
 	return mm;
 }
 
+std::string
+GeneralAntibodyModeler::get_dock_chains() const {
+	return get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
+}
 
 ////////////////////////////////////////////////////////// Modeling Functions /////////////////////////////////////////////
 
@@ -479,7 +483,9 @@ GeneralAntibodyModeler::minimize_cdrs(Pose & pose,
 
 	//Tolerance of .001 is slower by ~25% or less.  However, it can also decrease energies significantly compared to .01.
 	//(In a test set of one protein minimized by bb - write a script to test this )
-	protocols::minimization_packing::MinMover min_mover(mm, local_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, false /*use_nblist*/ );
+
+	protocols::minimization_packing::MinMover min_mover(mm, local_scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/ );
+
 
 	if ( cartmin ) {
 		min_mover.min_type("lbfgs_armijo_nonmonotone");
@@ -625,10 +631,9 @@ GeneralAntibodyModeler::minimize_interface(Pose& pose, bool min_interface_sc /* 
 
 	ScoreFunctionOP local_scorefxn = scorefxn_->clone();
 	local_scorefxn->set_weight_if_zero(atom_pair_constraint, atom_pair_weight_);
-	protocols::minimization_packing::MinMover min_mover(mm, local_scorefxn, "lbfgs_armijo_nonmonotone", 0.01, false /*use_nblist*/ );
+
+	protocols::minimization_packing::MinMover min_mover(mm, local_scorefxn, "lbfgs_armijo_nonmonotone", 0.01, true /*use_nblist*/ );
 	min_mover.apply(pose);
-
-
 	pose.fold_tree(original_ft);
 }
 

@@ -208,7 +208,8 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	explicit_constructor_(true),
 	pack_input_(pack_input),
 	pack_separated_(pack_separated),
-	use_jobname_(use_jobname)
+	use_jobname_(use_jobname),
+	included_nres_(0)
 	//hbond_exposure_ratio_(0),
 	//total_hb_sasa_(0),
 
@@ -767,7 +768,9 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 
 	//setup mover to pack interface
 	//core::Size ndruns = option[packing::ndruns];
+
 	protocols::minimization_packing::PackRotamersMoverOP repacker( new protocols::minimization_packing::PackRotamersMover( sf_ ) );
+	repacker->nloop( pack_rounds_ ); //JAB - increasing as an nloop of 1 is not enough.
 
 	if ( pack_input_ ) {
 		core::pack::task::PackerTaskOP task = setup_task( complexed_pose );
@@ -868,41 +871,42 @@ void InterfaceAnalyzerMover::compute_separated_sasa(core::pose::Pose & complexed
 	data_.separated_SASA = mv_sep_sasa.value();
 
 
-	//Get per residue data
-	TR << "Calculating per-res data" << std::endl;
 	per_residue_data_.separated_sasa = mv_sep_res_sasa.value();
 	per_residue_data_.complexed_sasa = mv_complex_res_sasa.value();
 
-	per_residue_data_.dSASA = calc_per_residue_dSASA( complexed_pose, mv_sep_res_sasa.value(), mv_complex_res_sasa.value() );
 
 
-	//Avoiding more cycles through total residue
-	for ( core::Size i = 1; i <= complexed_pose.size(); ++i ) {
 
-		per_residue_data_.dSASA_sc[ i ] = calc_per_residue_dSASA_general( i, complexed_pose,
-			mv_sep_res_sasa_sc.value()[ i ],
-			mv_complex_res_sasa_sc.value()[ i ],
-			data_.dSASA_sc );
+	if ( compute_separated_sasa_ ) {
+		TR << "Calculating per-res dSASA data" << std::endl;
+		per_residue_data_.dSASA = calc_per_residue_dSASA( complexed_pose, mv_sep_res_sasa.value(), mv_complex_res_sasa.value() );
+		for ( core::Size i = 1; i <= complexed_pose.size(); ++i ) {
 
-		per_residue_data_.dhSASA[ i ] = calc_per_residue_dSASA_general( i, complexed_pose,
-			mv_sep_res_hsasa.value()[ i ],
-			mv_complex_res_hsasa.value()[ i ],
-			data_.dhSASA );
+			per_residue_data_.dSASA_sc[ i ] = calc_per_residue_dSASA_general( i, complexed_pose,
+				mv_sep_res_sasa_sc.value()[ i ],
+				mv_complex_res_sasa_sc.value()[ i ],
+				data_.dSASA_sc );
+
+			per_residue_data_.dhSASA[ i ] = calc_per_residue_dSASA_general( i, complexed_pose,
+				mv_sep_res_hsasa.value()[ i ],
+				mv_complex_res_hsasa.value()[ i ],
+				data_.dhSASA );
 
 
-		per_residue_data_.dhSASA_sc[ i ] = calc_per_residue_dSASA_general( i, complexed_pose,
-			mv_sep_res_hsasa_sc.value()[ i ],
-			mv_complex_res_hsasa_sc.value()[ i ],
-			data_.dhSASA_sc );
+			per_residue_data_.dhSASA_sc[ i ] = calc_per_residue_dSASA_general( i, complexed_pose,
+				mv_sep_res_hsasa_sc.value()[ i ],
+				mv_complex_res_hsasa_sc.value()[ i ],
+				data_.dhSASA_sc );
 
-		per_residue_data_.dhSASA_rel_by_charge[ i ] = calc_per_residue_dSASA_general( i, complexed_pose,
-			mv_sep_res_rel_hsasa.value()[ i ],
-			mv_complex_res_rel_hsasa.value()[ i ],
-			data_.dhSASA_rel_by_charge );
+			per_residue_data_.dhSASA_rel_by_charge[ i ] = calc_per_residue_dSASA_general( i, complexed_pose,
+				mv_sep_res_rel_hsasa.value()[ i ],
+				mv_complex_res_rel_hsasa.value()[ i ],
+				data_.dhSASA_rel_by_charge );
+		}
+
+		calc_interface_to_surface_fraction( separated_pose, mv_sep_res_sasa.value() );
+		return;
 	}
-
-	calc_interface_to_surface_fraction( separated_pose, mv_sep_res_sasa.value() );
-	return;
 }
 
 Real
@@ -1808,7 +1812,17 @@ void InterfaceAnalyzerMover::set_use_resfile( bool const use_resfile ) { use_res
 void InterfaceAnalyzerMover::set_use_centroid_dG( bool const use_centroid ) { use_centroid_ = use_centroid; }
 void InterfaceAnalyzerMover::set_compute_packstat( bool const compute_packstat ) { compute_packstat_ = compute_packstat; }
 void InterfaceAnalyzerMover::set_pack_input( bool const pack_input) { pack_input_ = pack_input; }
-void InterfaceAnalyzerMover::set_interface_jump( core::Size const interface_jump ) { interface_jump_ = interface_jump; }
+void InterfaceAnalyzerMover::set_interface_jump( core::Size const interface_jump ) {
+
+	interface_jump_ = interface_jump;
+	explicit_constructor_ = false;
+}
+
+void InterfaceAnalyzerMover::set_interface( std::string const & interface ){
+	dock_chains_ = interface;
+	explicit_constructor_ = true;
+}
+
 void InterfaceAnalyzerMover::set_use_tracer( bool const tracer) {tracer_ = tracer;}
 //void InterfaceAnalyzerMover::set_calcs_ready(bool const calcs_ready) {calcs_ready_ = calcs_ready;}
 void InterfaceAnalyzerMover::set_use_jobname( bool const use_jobname) { use_jobname_ = use_jobname; }

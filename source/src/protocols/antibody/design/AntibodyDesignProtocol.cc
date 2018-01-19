@@ -57,7 +57,7 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-
+#include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
@@ -268,6 +268,10 @@ AntibodyDesignProtocol::model_post_design(core::pose::Pose & pose){
 	//If no constraints are set - add constraints to pose CDRs.
 	core::Real start = scorefxn_->score(pose);
 
+	if ( run_snugdock_ | run_relax_ ) {
+		TR << "Running Post-Graft modeling" << std::endl;
+	}
+
 	if ( run_snugdock_ ) {
 		snugdock::SnugDockOP snug( new snugdock::SnugDock() );
 		AntibodyInfoOP updated_ab_info( new AntibodyInfo(pose, AHO_Scheme, North) ); //Should be a reset method in AbInfo..
@@ -391,8 +395,12 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 
 	if ( remove_antigen_ && ab_info_->antigen_present() ) {
 		DeleteChainsMover remove_chains_mover = DeleteChainsMover();
-		remove_chains_mover.set_chains(ab_info_->get_antigen_chain_string(), pose);
-		remove_chains_mover.apply( pose );
+
+		//JAB - This needs to go through every chain, or you hit an assert error.  The DeleteChainsMover logic is BAD.
+		for ( char chain : ab_info_->get_antigen_chain_string() ) {
+			remove_chains_mover.set_chains(utility::to_string(chain));
+			remove_chains_mover.apply( pose );
+		}
 
 		//Reinit AbInfo.  Will call reinit function once we actually have that.
 		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose, AHO_Scheme, North) );
@@ -403,7 +411,7 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	setup_scorefxns();
 	setup_design_mover();
 
-	core::Real native_score = (*scorefxn_)(pose);
+	//core::Real native_score = (*scorefxn_)(pose);
 	TR <<"Score without constraints:" << std::endl;
 	scorefxn_->show(TR, pose);
 
@@ -458,12 +466,11 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	}
 
 
-	TR << "Running Post-Graft modeling" << std::endl;
 	for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
 		this->model_post_design(*final_pose_ensemble[ i ]);
 	}
 
-	TR <<"Native: "<< native_score << std::endl;
+	//TR <<"Native: "<< native_score << std::endl; //Does not include any constraints
 	for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
 		TR << "Pose " << i << std::endl;
 		scorefxn_->show( TR, *final_pose_ensemble[ i ] );

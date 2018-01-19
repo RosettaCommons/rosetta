@@ -348,7 +348,7 @@ NeighborhoodResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes + XMLSchemaAttribute( "selector", xs_string        , "XRW TO DO" )
-		+ XMLSchemaAttribute( "resnums",  xsct_int_cslist     , "XRW TO DO" )
+		+ XMLSchemaAttribute( "resnums",  xs_string     , "XRW TO DO" )
 		+ XMLSchemaAttribute( "distance", xsct_real , "XRW TO DO" )
 		+ XMLSchemaAttribute("atom_names_for_distance_measure", xs_string, "A list of comma separated atom names, for each focus residue, the positions of which will be used for measuring distance to find neighbors." )
 		+ XMLSchemaAttribute::attribute_w_default("include_focus_in_subset", xsct_rosetta_bool, "XRW TO DO", "true");

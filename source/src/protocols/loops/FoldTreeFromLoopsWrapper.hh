@@ -65,6 +65,7 @@ public:
 	void
 	add_cutpoint_variants( bool add_cp_variants );
 
+
 private:
 	std::string loop_str_; // loaded at parsetime but only realized at apply
 	LoopsOP loops_; // a different interface into FoldTreeFromLoops, which takes precedence over loop_str_;

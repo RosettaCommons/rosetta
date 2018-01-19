@@ -187,8 +187,6 @@ set_glycan_iupac_bb_torsions(
 			}
 		}
 	}
-
-
 }
 
 

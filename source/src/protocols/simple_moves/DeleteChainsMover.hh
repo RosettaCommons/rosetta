@@ -44,10 +44,7 @@ public:
 	DeleteChainsMover();
 
 	/// @brief Constructor with chain
-	DeleteChainsMover( utility::vector1< core::Size > const & chains );
-
-	/// @brief Constructor with chain
-	DeleteChainsMover( std::string const & chains, core::pose::Pose const & pose );
+	DeleteChainsMover( std::string const & chains );
 
 	void
 	apply( core::pose::Pose & pose ) override;
@@ -57,15 +54,12 @@ public:
 public:
 
 	/// @brief Set the chain
+	///  Will figure out the chainIDs at apply time.
 	void
-	set_chains( utility::vector1< core::Size > const & chains );
-
-	/// @brief Set the chain
-	void
-	set_chains( std::string const & chains, core::pose::Pose const & pose );
+	set_chains( std::string const & chains );
 
 	/// @brief Get the chain
-	utility::vector1< core::Size >
+	std::string
 	chains() const;
 
 	/// @brief Set the class to detect bonds after full deletion of chains?
@@ -116,7 +110,7 @@ public:
 private:
 
 
-	utility::vector1< core::Size > chains_;
+	std::string chains_;
 
 	bool detect_bonds_;
 	bool detect_pseudobonds_;

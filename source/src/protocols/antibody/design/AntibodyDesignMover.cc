@@ -53,6 +53,8 @@
 // Protocol Includes
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/simple_moves/MonteCarloInterface.hh>
+
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>
@@ -96,9 +98,12 @@ using namespace protocols::antibody;
 using namespace protocols::grafting;
 using namespace protocols::antibody::clusters;
 using namespace protocols::antibody::constraints;
+using namespace protocols::simple_moves;
+using namespace protocols::moves;
 using namespace core::pack::task;
 using namespace core::pack::task::operation;
 using namespace core::scoring;
+
 using basic::datacache::DataCache_CacheableData;
 using core::Size;
 using core::pose::Pose;
@@ -235,6 +240,9 @@ AntibodyDesignMover::read_command_line_options(){
 	if ( option[ OptionKeys::antibody::design::mintype].user() ) {
 		mintype_ = option [OptionKeys::antibody::design::mintype]();
 	}
+
+	mc_optimize_dG_ = option[ OptionKeys::score::mc_optimize_dG].value();
+
 }
 
 protocols::moves::MoverOP
@@ -287,7 +295,10 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 	instruction_file_(src.instruction_file_),
 	stats_cutoff_( src.stats_cutoff_),
 	mutate_framework_for_cluster_(src.mutate_framework_for_cluster_),
-	mintype_(src.mintype_)
+	mintype_(src.mintype_),
+	mc_optimize_dG_( src.mc_optimize_dG_),
+	mc_interface_weight_( src.mc_interface_weight_),
+	mc_total_weight_( src.mc_total_weight_)
 {
 	using namespace protocols::grafting;
 	using namespace protocols::minimization_packing;
@@ -311,6 +322,8 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 	if ( src.modeler_ ) modeler_ = GeneralAntibodyModelerOP( new GeneralAntibodyModeler( *src.modeler_ ));
 	if ( src.cart_min_graft_ ) cart_min_graft_ = MinMoverOP( new MinMover( *src.cart_min_graft_ ));
 	if ( src.mc_ ) mc_ = src.mc_->clone();
+	if ( src.inner_mc_ ) inner_mc_ = src.inner_mc_->clone();
+
 	if ( src.paratope_epitope_cst_mover_ ) paratope_epitope_cst_mover_ = ParatopeEpitopeSiteConstraintMoverOP( new constraints::ParatopeEpitopeSiteConstraintMover( *src.paratope_epitope_cst_mover_));
 	if ( src.paratope_cst_mover_ ) paratope_cst_mover_ = ParatopeSiteConstraintMoverOP( new ParatopeSiteConstraintMover( *src.paratope_cst_mover_));
 	if ( src.cdr_dihedral_cst_mover_ ) cdr_dihedral_cst_mover_ = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover( *src.cdr_dihedral_cst_mover_));
@@ -413,6 +426,11 @@ AntibodyDesignMover::parse_my_tag(
 		paratope_cdrs_.clear();
 		paratope_cdrs_.resize(6, true);
 	}
+
+	mc_optimize_dG_ = tag->getOption< bool >( "mc_optimize_dG", mc_optimize_dG_);
+	mc_interface_weight_ = tag->getOption< core::Real >( "mc_interface_weight", mc_interface_weight_);
+	mc_total_weight_ = tag->getOption< core::Real >( "mc_total_weight", mc_total_weight_);
+
 }
 
 
@@ -675,6 +693,8 @@ AntibodyDesignMover::setup_modeler(){
 
 	std::string ab_dock_chains = "A_" +ab_info_->get_antibody_chain_string();
 	modeler_->ab_dock_chains(ab_dock_chains);
+	modeler_->set_overhang(2); //The default overhang so that a few residues into the CDR have give.
+
 }
 
 void
@@ -731,13 +751,16 @@ AntibodyDesignMover::setup_paratope_epitope_constraints(Pose & pose){
 
 	//The residues need to be regenerated if size is changing.
 	// An observer could be used here, but it seems to be slower then re-initing everything.
-	if ( use_epitope_constraints_ ) {
+
+	//JAB - only add these constraints if we are doing docking.
+	//  Otherwise, they don't make a lot of sense and can lead to wierd energies without much reason.
+	if ( use_epitope_constraints_ && dock_post_graft_ ) {
 		paratope_epitope_cst_mover_->set_defaults(); //Clear everything
 		paratope_epitope_cst_mover_->constrain_to_paratope_cdrs(paratope_cdrs_); //Regenerates paratope residues
 		paratope_epitope_cst_mover_->constrain_to_epitope_residues(epitope_residues_, pose);
 		paratope_epitope_cst_mover_->set_interface_distance(interface_dis_);
 		paratope_epitope_cst_mover_->apply(pose);
-	} else {
+	} else if ( dock_post_graft_ ) {
 		paratope_cst_mover_->set_defaults(); //Clear everything
 		paratope_cst_mover_->constrain_to_paratope_cdrs(paratope_cdrs_);
 		paratope_cst_mover_->set_interface_distance(interface_dis_);
@@ -862,6 +885,10 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 			///Pass cached pose or on-the-fly pose.  I don't want to store the on-the-fly pose anywhere, so this is why its like this.
 			if ( cdr_pose.pose == nullptr ) {
 				core::pose::PoseOP grafting_pose = db_manager_->load_cdr_pose( cdr_pose );
+
+				if ( grafting_pose == nullptr ) {
+					return false;
+				}
 				cb = run_graft(temp_pose, *grafting_pose, cdr, cdr_pose.cluster, graft_mover_);
 
 				if ( cb.first && adapt_graft_ ) {
@@ -985,15 +1012,19 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 		//
 		if ( min_post_graft ) {
 			TR << "Beginning MinProtocol" << std::endl;
-			protocols::moves::MonteCarlo mc = protocols::moves::MonteCarlo(pose, *scorefxn_, inner_kt_);
+
+			//Reset the scores for the constructed inner monte carlo object.
+			inner_mc_->reset( pose );
+
+
 			for ( core::Size i = 1; i <= inner_cycles_; ++i ) {
 
 				TR << "Inner round: "<< i << std::endl;
-				run_optimization_cycle(pose, mc, cdr);
+				run_optimization_cycle(pose, *inner_mc_, cdr);
 			}
-			mc.recover_low(pose);
+			inner_mc_->recover_low(pose);
 		}
-		TR << "Cycle complete" << std::endl;
+		TR << "Min Cycle complete" << std::endl;
 		return true;
 	}
 catch ( utility::excn::Exception& excn ) {
@@ -1001,6 +1032,7 @@ catch ( utility::excn::Exception& excn ) {
 	excn.show( std::cerr );
 	excn.show( TR );
 	TR << "caught exception.  skipping graft. printing structures." << std::endl;
+
 
 	//Attempt output of structures for debugging.
 
@@ -1187,6 +1219,7 @@ AntibodyDesignMover::check_for_top_designs(core::pose::Pose & pose){
 	core::Real score = (*scorefxn_)(pose);
 	auto score_it = top_scores_.begin();
 	auto pose_it = top_designs_.begin();
+
 	if ( top_scores_.size()==0 ) {
 		top_scores_.push_back(score);
 		top_designs_.push_back(core::pose::PoseOP( new Pose() ));
@@ -1369,21 +1402,32 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 
 		bool successful = apply_to_cdr(pose, cdr_type, cdr_index);
 		if ( successful ) {
+
+
+			bool accepted = mc_->boltzmann(pose);
 			check_for_top_designs(pose);
 
-			core::Real energy = scorefxn_->score(pose);
-			bool accepted = mc_->boltzmann(pose);
-			std::string out = to_string(i)+" "+to_string(energy)+" "+to_string(accepted);
-			accept_log_.push_back(out);
+			std::string raw = "SCORE " + utility::to_string(i) + " " + utility::to_string(mc_->last_score())+" "+utility::to_string(accepted);
+			accept_log_.push_back(raw);
 
-			out = "FINAL "+to_string(i)+" "+to_string(scorefxn_->score(pose));
-			accept_log_.push_back(out);
+			std::string fin = "FINAL " + utility::to_string(i) + " " + utility::to_string(mc_->last_accepted_score())+" "+"1";
+
+			accept_log_.push_back(fin);
 		} else {
 			pose = mc_->last_accepted_pose();
 		}
+		//TR << "Last Accepted Score: " << mc_->last_accepted_score() << std::endl;
+		//TR << "Lowest        Score:" << mc_->lowest_score() << std::endl;
+		//TR << "Checking current scores of pose " << std::endl;
+		mc_->boltzmann( pose );
+
 	}
+	mc_->boltzmann( pose );
+
 	mc_->recover_low(pose);
-	std::string out = "FINAL END "+to_string(scorefxn_->score(pose));
+	mc_->boltzmann( pose );
+
+	std::string out = "FINAL LOW "+utility::to_string(mc_->lowest_score())+" "+"1";
 	accept_log_.push_back(out);
 	mc_->show_counters();
 }
@@ -1403,8 +1447,9 @@ AntibodyDesignMover::run_deterministic_graft_algorithm(core::pose::Pose & pose,v
 			continue;
 		}
 		//Only check for top designs after all combinations have been grafted.
-		check_for_top_designs(trial_pose);
+
 		mc_->eval_lowest_score_pose(trial_pose, false, true);
+		check_for_top_designs(trial_pose);
 	}
 	mc_->recover_low(pose);
 	mc_->show_counters();
@@ -1453,16 +1498,25 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	core::Real native_score = (*scorefxn_)(pose);
 
 	///Energy Log:
-	std::string out = "-1 "+utility::to_string(native_score)+" NA";
+	std::string out = "SCORE -1 "+utility::to_string(native_score)+" NA";
 	accept_log_.push_back(out);
 	if ( benchmark_ ) {
 		this->setup_random_start_pose(pose, cdrs_to_design_);
-		out = "0 "+utility::to_string(scorefxn_->score(pose))+" NA";
+		out = "SCORE 0 "+utility::to_string(scorefxn_->score(pose))+" NA";
 		accept_log_.push_back(out);
 	}
 
 	//////////// Setup Monte carlo ////////////////////////////////////////////
-	mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(pose, *scorefxn_, outer_kt_) );
+
+
+	if ( mc_optimize_dG_ ) {
+		mc_ =       MonteCarloInterfaceOP( new MonteCarloInterface( pose, *scorefxn_, outer_kt_, modeler_->get_dock_chains() ) );
+		inner_mc_ = MonteCarloInterfaceOP( new MonteCarloInterface( pose, *scorefxn_, inner_kt_, modeler_->get_dock_chains() ) );
+	} else {
+		mc_ =       MonteCarloOP( new MonteCarlo(pose, *scorefxn_, outer_kt_) );
+		inner_mc_ = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, inner_kt_) );
+	}
+
 	core::Real benchmark_start_score = scorefxn_->score(pose);
 
 	//////////// Run Main Algorithms ///////////////////////////////////////////
@@ -1486,6 +1540,7 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 		TR << "Benchmarked Pose: "<< benchmark_start_score << std::endl;
 	}
 	TR << "Final Pose: " << (*scorefxn_)(pose) << std::endl;
+	scorefxn_->show( TR, pose );
 
 	for ( core::Size i = 2; i<= top_scores_.size(); ++i ) {
 		TR << "Top Ensemble " << i << " : " << (*scorefxn_)(*top_designs_[i]) << std::endl;
@@ -1501,9 +1556,9 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 			}
 		}
 		for ( core::Size i = 1; i <= accept_log_.size(); ++i ) {
-			core::pose::add_comment(pose, "ACCEPT LOG "+utility::to_string(i), accept_log_[i]);
+			core::pose::add_comment(pose, "ACCEPT LOG "+accept_log_[i], " ");
 			for ( core::Size x = 1; x <= top_designs_.size(); ++x ) {
-				core::pose::add_comment(*top_designs_[x], "ACCEPT LOG "+utility::to_string(i), accept_log_[i]);
+				core::pose::add_comment(*top_designs_[x], "ACCEPT LOG "+accept_log_[i], " ");
 			}
 		}
 	}
@@ -1664,7 +1719,7 @@ void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 	attlist + XMLSchemaAttribute(
 		"mintype", xs_string,
-		"Set the mintype for all designign CDRs.  Can be set individually in the CDR instructions file. \n"
+		"Set the mintype for all designign CDRs.  Default min. Can be set individually in the CDR instructions file.  relax is much more intensive, but takes significantly longer \n"
 		" Understood Options: legal = [min, cartmin, relax, backrub, pack, dualspace_relax, cen_relax, none]");
 
 	attlist + XMLSchemaAttribute(
@@ -1672,10 +1727,27 @@ void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		"Path to the CDR instruction file (see application documentation for format)");
 	attlist + XMLSchemaAttribute(
 		"instructions_file", xs_string,
-		"used if instruction_file attribute is not specified");
+		"used if instruction_file attribute is not specified. Deprecated option.");
 	attlist + XMLSchemaAttribute(
 		"cdr_instructions_file", xs_string,
-		"used if instructions_file attribute is not specified");
+		"used if instructions_file attribute is not specified. Deprecated option.");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mc_optimize_dG", xsct_rosetta_bool,
+		"Optimize the dG during MonteCarlo.  dG is calculated by InterfaceAnalyzer. \n"
+		"It is not possible to do this within overall scoring, but where possible, do this during MC calls.\n"
+		" This option results in better dGs.  See the options mc_interface_weight and mc_total_weight to control the components of each to the score. \n"
+		" Default is interface weight at 1.0, total weight at 0. ", "false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mc_interface_weight", xsct_real,
+		"Weight of interface score (dG) if using mc_optimize_dG",
+		"1.0");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mc_total_weight", xsct_real,
+		"Weight of the classic total score if using mc_optimize_dG",
+		"0.0");
 
 	XMLSchemaRestriction ABdesign_enum;
 	ABdesign_enum.name("ABdesign_protocols");

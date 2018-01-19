@@ -781,6 +781,7 @@ sources = {
 		"MergePDBatOverlapMover",
 		"MergePDBMover",
 		"MissingDensityToJumpMover",
+		"MonteCarloInterface",
 		"MonteCarloRecover",
 		"MonteCarloTest",
 		"MonteCarloReset",

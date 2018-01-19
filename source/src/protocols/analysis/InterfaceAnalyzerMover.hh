@@ -284,16 +284,27 @@ public:
 
 	void
 	set_compute_packstat(bool const compute_packstat);
+
+	///@brief Compute the Lawrence and Coleman Shape Complementarity score?
 	void
 	set_compute_interface_sc(bool const compute_interface_sc) {compute_interface_sc_ = compute_interface_sc;}
+
 	void
 	set_compute_separated_sasa(bool const compute_separated_sasa) {compute_separated_sasa_ = compute_separated_sasa;}
+
+	void
+	set_calc_dSASA( bool calc_dSASA ){ compute_separated_sasa_ = calc_dSASA; }
+
 	void
 	set_compute_interface_energy(bool const iface_en) {compute_interface_energy_ = iface_en;}
+
 	void
 	set_calc_hbond_sasaE(bool const calc_hbond_sasaE) {calc_hbond_sasaE_ = calc_hbond_sasaE;}
+
 	void
 	set_compute_interface_delta_hbond_unsat(bool const IDHU) {compute_interface_delta_hbond_unsat_ = IDHU;}
+
+
 
 	/// @brief Repack the interface of the complex before separation.
 	void
@@ -303,6 +314,11 @@ public:
 	void
 	set_pack_separated(bool const pack_separated);
 
+	///@brief If pack separated or together is set, this controls how many rounds of packing we do.
+	/// Default is 1, but that certainly may not be enough...
+	void
+	set_pack_rounds( core::Size pack_rounds ){ pack_rounds_ = pack_rounds; }
+
 	/// @brief Repack any interface between ignored chains and others.  Used by dock_chains constructor if the dock_chains interface is less than the total number of pose chains.
 	/// @details Ex:  LHA pose, pass L_H dock_chains to get the interface between L and H.  A will be translated away from the L H interface to do the calculation.
 	/// If this option is set - it will repack any SC that would make an LH_A interface after separation
@@ -310,6 +326,9 @@ public:
 
 	void
 	set_interface_jump(core::Size const interface_jump);
+
+	void
+	set_interface( std::string const & interface );
 
 	void
 	set_skip_reporting(bool const skip_reporting) {skip_reporting_ = skip_reporting;}
@@ -657,6 +676,8 @@ private:
 	std::string BuriedUnsatisfiedPolars_;
 
 	std::map< std::string, core::Real > score_data_;
+
+	core::Size pack_rounds_ = 1;
 
 }; //class InterfaceAnalyzerMover
 

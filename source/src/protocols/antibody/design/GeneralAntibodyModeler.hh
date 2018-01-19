@@ -226,6 +226,17 @@ public:
 	core::kinematics::MoveMapOP
 	get_movemap_from_task(core::pose::Pose const & pose, core::pack::task::PackerTaskCOP task) const;
 
+public:
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	// Utilities
+	//
+	//
+
+	//Get the dock chains for LH and Interface.
+	std::string
+	get_dock_chains() const;
+
 private:
 	void
 	set_defaults();

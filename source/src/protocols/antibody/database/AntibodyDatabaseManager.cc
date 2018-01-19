@@ -56,6 +56,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
 #include <utility/py/PyAssert.hh>
+#include <utility/excn/Exceptions.hh>
 #include <boost/algorithm/string.hpp>
 #include <fstream>
 
@@ -199,44 +200,68 @@ AntibodyDatabaseManager::get_cluster_totals(bool use_outliers) const{
 	utility::vector1<core::Size> totals(CDRClusterEnum_total, 0);
 
 	CDRClusterEnumManagerCOP manager = ab_info_->get_cdr_cluster_enum_manager();
-
-	std::string seq_table = use_outliers ? "cdr_res_prob_outliers_true" : "cdr_res_prob_outliers_false_liberal";
-	//Check to make sure cluster is present in antibody database
-	std::string base_statement =
-		"SELECT \n"
-		"\tfullcluster, \n"
-		"\ttotal_seq \n"
-		"FROM\n"
-		+ seq_table+"\n"
-		"order by fullcluster";
-
-	//TR << "Reading from: " << db_path_ << std::endl;
-
-	cppdb::statement select_statement(basic::database::safely_prepare_statement(base_statement, db_session_));
-	cppdb::result total_result(basic::database::safely_read_from_database(select_statement));
+	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs( true /* include CDR4 */)); ++i ) {
+		auto cdr = static_cast<CDRNameEnum>( i );
+		std::string const & CDR_name( ab_info_->get_CDR_name(cdr) ); // To extend lifetime
 
 
-	//core::Size total_seq;
-	while ( total_result.next() ) {
+		std::string seq_table = use_outliers ? "cdr_res_prob_outliers_true" : "cdr_res_prob_outliers_false_liberal";
+		//Check to make sure cluster is present in antibody database
+		std::string base_statement =
+			"SELECT \n"
+			"\tfullcluster \n"
+			"FROM\n"
+			"\tcdr_data\n"
+			"WHERE\n"
+			"\tCDR = ? \n";
 
-		if ( total_result.empty() ) {
-			break;
+
+		//TR << "Reading from: " << db_path_ << std::endl;
+
+		//Lambda vs Kappa
+		//JAB - 1/15/18 - From Roland - we now count cluster totals by lambda/kappa
+		if ( ab_info_->get_light_chain_type_enum() != unknown && (ab_info_->get_light_chain_type_enum() != lambda) ) {
+			base_statement += "\t AND (gene = 'heavy' OR gene = '"+ab_info_->get_light_chain_type()+"')\n";
+		} else if ( ab_info_->get_light_chain_type_enum() == lambda ) {
+			base_statement += "\t AND (gene = 'heavy' OR gene = 'lambda6' OR gene = 'lambda')\n";
 		}
 
-		core::Size total_seq;
-		std::string fullcluster;
-		total_result >> fullcluster >> total_seq;
-
-		if ( manager->cdr_cluster_is_present(fullcluster) ) {
-
-			CDRClusterEnum cluster = ab_info_->get_cluster_enum(fullcluster);
-			totals[ cluster ] = total_seq;
-
-		} else {
-			utility_exit_with_message("Cluster "+fullcluster+" not present in Enums!!");
+		if ( ! use_outliers  ) {
+			base_statement = base_statement +"\n"+
+				"          AND (bb_rmsd_cdr_align < 1.5 OR DistDegree < 40)\n"
+				"          AND DistDegree != -1\n"
+				"          AND bb_rmsd_cdr_align != -1\n";
 		}
+		base_statement +=   "\tAND datatag != 'loopKeyNotInPaper' \n";
+		base_statement +=  " order by fullcluster";
+
+		cppdb::statement select_statement(basic::database::safely_prepare_statement(base_statement, db_session_));
+		select_statement.bind(1, CDR_name);
+
+		cppdb::result total_result(basic::database::safely_read_from_database(select_statement));
+
+
+		//core::Size total_seq;
+		while ( total_result.next() ) {
+
+			if ( total_result.empty() ) {
+				break;
+			}
+
+			std::string fullcluster;
+			total_result >> fullcluster ;
+
+			if ( manager->cdr_cluster_is_present(fullcluster) ) {
+
+				CDRClusterEnum cluster = ab_info_->get_cluster_enum(fullcluster);
+				totals[ cluster ] +=1 ;
+
+			} else {
+				utility_exit_with_message("Cluster "+fullcluster+" not present in Enums!!");
+			}
+		}
+
 	}
-
 	db_session_->close();
 
 	///H3 Outlier change here.
@@ -251,9 +276,14 @@ AntibodyDatabaseManager::load_cdr_pose(protocols::antibody::CDRDBPose & db_pose)
 	protocols::features::ProteinSilentReport reporter = protocols::features::ProteinSilentReport();
 	core::pose::PoseOP pose( new core::pose::Pose() );
 
-
-	reporter.load_pose( db_session_, db_pose.struct_id, *pose );
-	pose->conformation().detect_disulfides();
+	try {
+		reporter.load_pose( db_session_, db_pose.struct_id, *pose );
+		pose->conformation().detect_disulfides();
+	}catch ( utility::excn::Exception & excn ){
+		TR << "Leaving out bad structure:  "<< db_pose.pdb << std::endl;
+		excn.show( TR.Debug );
+		return nullptr;
+	}
 
 	if ( pose->size() !=  db_pose.structure_length ) {
 		TR << "Leaving out bad structure:  "<< db_pose.pdb << " num residues in pose do not match cluster cdr length with overhang. " <<std::endl;
@@ -453,7 +483,6 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 		//TR<< "Final Statement:\n"<< base_statement << std::endl;
 
-
 		cppdb::statement select_statement(basic::database::safely_prepare_statement(base_statement, db_session_));
 		std::string const & CDR_name( ab_info_->get_CDR_name(cdr) ); // To extend lifetime
 		select_statement.bind(1, CDR_name);
@@ -550,8 +579,8 @@ AntibodyDatabaseManager::load_cdr_poses(
 				CDRClusterEnum cluster_enum = ab_info_->get_cluster_enum(cluster);
 				if ( options->cluster_sampling_cutoff() != 0 ) {
 					if ( totals[ cluster_enum ] < options->cluster_sampling_cutoff() ) {
-						TR << "Removed "<< cluster << " at " << totals[ cluster_enum ] << std::endl;
-						clusters_removed[ cluster_enum ] = clusters_removed[ cluster_enum ] + 1;
+						TR.Debug << "Removed structure of "<< cluster << " at " << totals[ cluster_enum ] << std::endl;
+						clusters_removed[ cluster_enum ] += 1;
 						continue;
 					}
 				}
@@ -587,6 +616,10 @@ AntibodyDatabaseManager::load_cdr_poses(
 			for ( core::Size i = 1; i <= clusters_removed.size(); ++i ) {
 				if ( clusters_removed[ i ] > 0 ) {
 					total_removed_clusters+=1;
+					CDRClusterEnum cluster = static_cast<CDRClusterEnum>(i);
+					std::string cluster_name = ab_info_->get_cluster_name( cluster );
+
+					TR << "Removed " << cluster_name << "( " << clusters_removed[i] << " structures )" << std::endl;
 					total_removed_sequences = total_removed_sequences + clusters_removed[ i ];
 				}
 			}
@@ -639,12 +672,19 @@ AntibodyDatabaseManager::load_cdr_poses(
 					continue;
 				}
 
-				if ( high_mem_mode_ || total_loaded_poses < cdr_cache_limit_ ) {
-
-					core::pose::PoseOP pose( new core::pose::Pose() );
+				//We attempt to load all poses - even we are not using high_mem_mode.  This is to prevent issues down the line.
+				// This slows some runs down a bit, but prevents crashes and odd results.
+				core::pose::PoseOP pose( new core::pose::Pose() );
+				try{
 					reporter.load_pose( db_session_, struct_id, *pose );
 					pose->conformation().detect_disulfides();
+				}catch ( utility::excn::Exception& excn ){
+					TR << "Could not load CDR Pose from DB. " << tags[k] << std::endl;
+					excn.show( TR.Debug );
+					continue;
+				}
 
+				if ( high_mem_mode_ || total_loaded_poses < cdr_cache_limit_ ) {
 
 					CDRDBPose cdr_pose = CDRDBPose(pose, clusters[ k ], tag, distances[ k ], normalized_distances[ k ], resolutions[ k ], structure_length );
 					cdr_set[cdr].push_back(cdr_pose);

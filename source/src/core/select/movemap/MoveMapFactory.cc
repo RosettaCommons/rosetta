@@ -234,13 +234,11 @@ MoveMapFactory::edit_movemap_given_pose(
 
 		for ( Size ii = 1; ii <= selection.size(); ++ii ) {
 			if ( selection[ ii ] ) {
-
 				if ( pose.residue_type( ii ).is_carbohydrate() ) {
 					set_glycan_iupac_chi_torsions( pose, mm, ii, chi_act.action );
 				} else {
 					mm.set_chi( ii, chi_act.action );
 				}
-
 			}
 		}
 	}

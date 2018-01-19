@@ -41,14 +41,7 @@ DeleteChainsMover::DeleteChainsMover()
 	set_defaults();
 }
 
-DeleteChainsMover::DeleteChainsMover( std::string const & chains, core::pose::Pose const & pose)
-: moves::Mover("DeleteChainsMover")
-{
-	set_chains( chains, pose );
-	set_defaults();
-}
-
-DeleteChainsMover::DeleteChainsMover( utility::vector1< core::Size > const & chains )
+DeleteChainsMover::DeleteChainsMover( std::string const & chains )
 : moves::Mover("DeleteChainsMover")
 {
 	set_chains( chains );
@@ -62,20 +55,11 @@ DeleteChainsMover::set_defaults(){
 }
 
 void
-DeleteChainsMover::set_chains( std::string const & chains, core::pose::Pose const & pose ){
-	chains_.clear();
-	for ( char chain : chains ) {
-		core::Size chain_id = core::pose::get_chain_id_from_chain( chain, pose );
-		chains_.push_back(chain_id);
-	}
-}
-
-void
-DeleteChainsMover::set_chains( utility::vector1< core::Size > const & chains ){
+DeleteChainsMover::set_chains( std::string const & chains ){
 	chains_ = chains;
 }
 
-utility::vector1< core::Size >
+std::string
 DeleteChainsMover::chains() const {
 	return chains_;
 }
@@ -106,14 +90,14 @@ DeleteChainsMover::parse_my_tag(
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const &  )
 {
 	set_defaults();
 	if ( ! tag->hasOption( "chains") ) {
 		utility_exit_with_message("Must pass chains tag to DeleteChainsMover...");
 	}
 
-	set_chains( tag->getOption< std::string >( "chains"), pose );
+	set_chains( tag->getOption< std::string >( "chains"));
 
 	set_detect_bonds( tag->getOption< bool >( "detect_bonds", detect_bonds_) );
 	set_detect_pseudobonds( tag->getOption< bool >( "detect_pseudobonds", detect_pseudobonds_ ) );
@@ -126,9 +110,10 @@ DeleteChainsMover::apply( Pose & pose )
 		utility_exit_with_message("DeleteChainsMover requires chains to be set...");
 	}
 
-	for ( core::Size i = 1; i <= chains_.size(); ++i ) {
+	for ( char chain : chains_ ) {
+		core::Size chain_id = core::pose::get_chain_id_from_chain( chain, pose );
 
-		pose.conformation().delete_residue_range_slow( pose.conformation().chain_begin( chains_ [ i ] ), pose.conformation().chain_end( chains_ [ i ] ) );
+		pose.conformation().delete_residue_range_slow( pose.conformation().chain_begin( chain_id ), pose.conformation().chain_end( chain_id ) );
 	}
 
 	pose.pdb_info()->obsolete( false );
@@ -200,7 +185,7 @@ void DeleteChainsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	AttributeList attlist;
 
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "chains", xs_string, "delete these chains.  The format appears to be unseparated chain letters, like 'AHLR'") //XRW TODO, I guess this could have a restriction, but it's not clear that the PDB rules for what you can put in the chain column are really that valid here
+		+ XMLSchemaAttribute::required_attribute( "chains", xs_string, "delete these chains.  The format is unseparated chain letters, like 'AHLR'") //XRW TODO, I guess this could have a restriction, but it's not clear that the PDB rules for what you can put in the chain column are really that valid here
 		+ XMLSchemaAttribute( "detect_bonds", xsct_rosetta_bool, "detect and delete broken bonds afterwards")
 		+ XMLSchemaAttribute( "detect_pseudobonds", xsct_rosetta_bool, "detect and delete broken pseudobonds afterwards");
 

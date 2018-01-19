@@ -392,6 +392,7 @@ private:
 	protocols::minimization_packing::MinMoverOP cart_min_graft_ = nullptr;
 
 	protocols::moves::MonteCarloOP mc_ = nullptr;
+	protocols::moves::MonteCarloOP inner_mc_ = nullptr;
 
 	constraints::ParatopeEpitopeSiteConstraintMoverOP paratope_epitope_cst_mover_ = nullptr;
 	constraints::ParatopeSiteConstraintMoverOP paratope_cst_mover_ = nullptr;
@@ -454,6 +455,10 @@ private:
 	bool mutate_framework_for_cluster_;
 
 	std::string mintype_ = "NA";
+
+	bool mc_optimize_dG_ = false;
+	core::Real mc_interface_weight_ = 1.0;
+	core::Real mc_total_weight_ = 0.0;
 };
 
 }

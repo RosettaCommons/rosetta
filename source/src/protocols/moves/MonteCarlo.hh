@@ -198,6 +198,23 @@ public:
 		bool check_lowest_score = true
 	);
 
+	/// @brief Applies the Metropolis Criterion on the inputted
+	/// pose based on the supplied score delta.
+	/// Updates the Pose Structure accordingly.
+	///
+	/// example(s):
+	///
+	/// See also:
+	///     MonteCarlo
+	virtual bool
+	boltzmann(
+		core::Real score,
+		Pose & pose,
+		std::string const & move_type = "unk",
+		core::Real const proposal_density_ratio = 1,
+		core::Real const inner_score_delta_over_temperature = 0,
+		bool check_lowest_score = true
+	);
 
 	/// @brief Sets lowest score pose and last accepted pose to
 	/// the score of  <pose>
@@ -226,18 +243,18 @@ public:
 	/// @note (does not reset counters)
 	void
 	set_last_accepted_pose(
-		core::pose::Pose const& pose,
+		core::pose::Pose const & pose,
 		core::Real score
 	);
 
 	void
 	set_lowest_score_pose(
-		core::pose::Pose const& pose
+		core::pose::Pose const & pose
 	);
 
 	void
 	set_lowest_score_pose(
-		core::pose::Pose const& pose,
+		core::pose::Pose const & pose,
 		core::Real score
 	);
 
@@ -489,6 +506,18 @@ public:
 	///     MonteCarlo.show_state
 	Real last_accepted_score() const;
 
+	/// @brief Returns the score value of the last score
+	///
+	/// example(s):
+	///     mc.last_accepted_score()
+	/// See also:
+	///     MonteCarlo
+	///     MonteCarlo.last_accept
+	///     MonteCarlo.last_accepted_pose
+	///     MonteCarlo.show_counters
+	///     MonteCarlo.show_scores
+	///     MonteCarlo.show_state
+	Real last_score() const;
 
 	/// @brief Returns the score value of the lowest score pose encountered
 	///
@@ -572,16 +601,26 @@ public:
 	void push_back( moves::MonteCarloExceptionConvergeOP );
 	/////////////////////////////////////////////////////////////////////////////
 
+public:
+	Size
+	check_frequency() const {
+		return check_frequency_;
+	}
+
+public:
+
 	// manual setting of scores to use MonteCarlo mover with modified scores
-	void set_total_score_last_considered (core::Real score)
+	void
+	set_total_score_last_considered (core::Real score)
 	{total_score_of_last_considered_pose_ = score;}
 
-	void set_last_accepted (core::Real score)
+	void
+	set_last_accepted (core::Real score)
 	{last_accepted_score_ = score;}
 
-	void set_lowest (core::Real score)
+	void
+	set_lowest (core::Real score)
 	{lowest_score_ = score;}
-
 
 	// private methods
 protected:
@@ -596,10 +635,18 @@ protected:
 	void
 	evaluate_convergence_checks( core::pose::Pose const& pose, bool reject, bool final );
 
-public:
-	Size
-	check_frequency() const {
-		return check_frequency_;
+	/// @brief Returns the non-const last accepted pose (for subclasses)
+	///
+	/// example(s):
+	///     mc.last_accepted_pose()
+	/// See also:
+	///     MonteCarlo
+	///     MonteCarlo.last_accept
+	///     MonteCarlo.last_accepted_score
+	Pose &
+	last_accepted_pose_non_const()
+	{
+		return *last_accepted_pose_;
 	}
 
 private:
@@ -608,6 +655,7 @@ private:
 
 
 protected:
+
 	void set_last_accepted_score(
 		core::Real score
 	) {
@@ -618,6 +666,7 @@ protected:
 	set_mc_accepted( MCA value ) {
 		mc_accepted_ = value;
 	}
+
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 private:
@@ -649,6 +698,7 @@ private:
 
 	Real total_score_of_last_considered_pose_;
 	Real last_accepted_score_;
+	Real last_score_;
 	Real lowest_score_;
 
 	Size heat_after_cycles_;
