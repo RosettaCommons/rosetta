@@ -18,7 +18,6 @@
 
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
 
@@ -94,7 +93,7 @@ SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 	// this builds on the hard coded hack bellow
 	// since NCAAs are aa_unk we cannot hard code the information
 	// alternativly it is added to the residue type paramater files
-	if ( rt.is_canonical_aa() ) {
+	if ( rt.aa() != chemical::aa_unk ) {
 		n_rotamer_bins_for_aa( rt, n_chi_bins_, dun02 );
 		for ( Size ii = n_rotameric_chi_; ii > 1; --ii ) {
 			n_chi_products_[ ii - 1 ] = n_chi_products_[ ii ] * n_chi_bins_[ ii ];
@@ -732,12 +731,8 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 
 	#define INIT( CHI, BB ) \
 RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( rsd.type(), false, true, true, 1.0, 1.0 ); \
-RotamericSingleResidueDunbrackLibraryParser parser_ ## CHI ## _ ## BB( BB, DUNBRACK_MAX_SCTOR, rsrdl_ ## CHI ## _ ## BB.n_possible_rots() ); \
-parser_ ## CHI ## _ ## BB.configure_rotameric_single_residue_dunbrack_library< CHI, BB >( rsrdl_ ## CHI ## _ ## BB , utility::fixedsizearray1< core::Size, BB >( 0 ) ); \
 SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( rsd.type(), true, true, false, true, true, 1.0, 1.0 ); \
 PackedDunbrackRotamer< CHI, BB, Real > prot_ ## CHI ## _ ## BB; \
-utility::fixedsizearray1< core::Real, BB > dummyarrayreal_ ## CHI ## _ ## BB(0); \
-utility::fixedsizearray1< core::Size, BB > dummyarraysize_ ## CHI ## _ ## BB(0); \
 rsrdl_ ## CHI ## _ ## BB.nchi(); \
 srsrdl_ ## CHI ## _ ## BB.nchi(); \
 rsrdl_ ## CHI ## _ ## BB.n_rotamer_bins(); \
@@ -754,12 +749,6 @@ rsrdl_ ## CHI ## _ ## BB.write_to_file( ozs ); \
 srsrdl_ ## CHI ## _ ## BB.write_to_file( ozs ); \
 rsrdl_ ## CHI ## _ ## BB.write_to_binary( os ); \
 srsrdl_ ## CHI ## _ ## BB.write_to_binary( os ); \
-rsrdl_ ## CHI ## _ ## BB.get_bb_bins( dummyarrayreal_ ## CHI ## _ ## BB, dummyarraysize_ ## CHI ## _ ## BB, dummyarraysize_ ## CHI ## _ ## BB, dummyarrayreal_ ## CHI ## _ ## BB ); \
-srsrdl_ ## CHI ## _ ## BB.get_bb_bins( dummyarrayreal_ ## CHI ## _ ## BB, dummyarraysize_ ## CHI ## _ ## BB, dummyarraysize_ ## CHI ## _ ## BB, dummyarrayreal_ ## CHI ## _ ## BB ); \
-rsrdl_ ## CHI ## _ ## BB.get_bb_bins( dummyarrayreal_ ## CHI ## _ ## BB, dummyarraysize_ ## CHI ## _ ## BB ); \
-srsrdl_ ## CHI ## _ ## BB.get_bb_bins( dummyarrayreal_ ## CHI ## _ ## BB, dummyarraysize_ ## CHI ## _ ## BB ); \
-rsrdl_ ## CHI ## _ ## BB.get_bb_bins( utility::vector1< core::Real >(BB), dummyvect ); \
-srsrdl_ ## CHI ## _ ## BB.get_bb_bins( utility::vector1< core::Real >(BB), dummyvect ); \
 rsrdl_ ## CHI ## _ ## BB.read_from_binary( is ); \
 srsrdl_ ## CHI ## _ ## BB.read_from_binary( is ); \
 rsrdl_ ## CHI ## _ ## BB.memory_usage_in_bytes(); \
@@ -858,8 +847,6 @@ INIT(  FIVE,  FIVE )
 	utility::io::izstream is;
 
 	utility::vector1< Real > chi; utility::vector1< Size > rot;
-
-	utility::vector1< core::Size > dummyvect;
 
 	FOREACH_Chi_BB( INIT );
 }

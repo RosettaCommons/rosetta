@@ -85,7 +85,7 @@ int main( int argc, char * argv [] ) {
 		TR << "Starting energy_based_clustering application." << std::endl;
 		TR << "This application was first called \"bettercluster\", and was created on 6 May 2013 by Vikram K. Mulligan (vmullig@uw.edu)." << std::endl;
 		TR << "It was upgraded to a public application on 18 July 2017." << std::endl;
-		TR << "\n************************************************************************************\nIF YOU USE THIS APPLICATION, PLEASE CITE:\nHosseinzadeh P., Bhardwaj G., Mulligan V., et al.  (2017).  Comprehensive computational design of ordered peptide macrocycles.  Science 358(6369):1461-6.\n************************************************************************************" << std::endl;
+		TR << "\n************************************************************************************\nIF YOU USE THIS APPLICATION, PLEASE CITE:\nHosseinzadeh P., Bhardwaj G., Mulligan V., et al.  (2017).  Manuscript under review.\n************************************************************************************" << std::endl;
 
 		EnergyBasedClusteringOptions options(true);
 		EnergyBasedClusteringProtocol cluster_protocol( options );

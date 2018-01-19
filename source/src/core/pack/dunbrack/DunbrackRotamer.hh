@@ -97,24 +97,6 @@ inline Size make_index(
 	return index;
 }
 
-/// @brief Variant of above make_index function for bb_bin as a vector.
-template< Size N >
-inline Size make_index(
-	utility::fixedsizearray1< Size, N > num_bins,
-	utility::vector1< Size > const & bb_bin
-) {
-	debug_assert( bb_bin.size() == N );
-	Size index = 1;
-	for ( Size bbi = 1; bbi <= N; ++bbi ) {
-		Size addend = ( bb_bin[ bbi ] - 1 );
-		for ( Size bbj = N; bbj > bbi; --bbj ) {
-			addend *= num_bins[ bbj ];
-		}
-		index += addend;
-	}
-	return index;
-}
-
 template < Size N >
 inline Size make_conditional_index(
 	utility::fixedsizearray1< Size, N > num_bins,
