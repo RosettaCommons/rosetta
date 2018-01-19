@@ -19,6 +19,7 @@
 #include <core/scoring/carbohydrates/util.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
@@ -105,6 +106,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		TR.Debug << "Applying linkage type: " << linkage_type << std::endl;
 
 		if ( linkage_type == LINKAGE_NA ) {
+			TR << resnum << " "<< pose.pdb_info()->pose2pdb(resnum) << " torsion: " << torsion_type_ << " " << std::endl;
 			std::string msg = "No data for linkage.  Either this is psi and previous residue is not carbohydrate or we do not have a pyranose ring in the previous residue.";
 			//Throw here.  We expect an angle, better to use exception then throw a bogus angle.
 			//Catch this to keep going.
@@ -135,6 +137,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		OmegaPreferenceType preference_type = get_omega_preference_for_residue_in_pose( pose, resnum );
 
 		if ( preference_type == PREFERENCE_NA ) {
+			TR << resnum << " "<< pose.pdb_info()->pose2pdb(resnum) << " torsion: " << torsion_type_ << " " << std::endl;
 			std::string msg = "No data for preference type.  This is either not a carbohydrate residue, or it is the first residue in the pose and not attached to anything!";
 			TR << msg << std::endl;
 			throw CREATE_EXCEPTION(utility::excn::Exception,  msg );

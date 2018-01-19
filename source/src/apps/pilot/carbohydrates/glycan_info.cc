@@ -20,17 +20,10 @@
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/analysis/GlycanInfoMover.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/carbohydrates/util.hh>
-#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
-#include <core/conformation/carbohydrates/GlycanTree.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
@@ -53,182 +46,6 @@ void register_options() {
 
 }
 
-// Class Definitions //////////////////////////////////////////////////////////
-
-/// @brief  Class to print out info specific to glycan poses.  Will be expanded as needed.
-class GlycanInfoMover : public protocols::moves::Mover {
-public:  // Standard methods
-	/// @brief  Default constructor.
-	GlycanInfoMover() : protocols::moves::Mover()
-	{
-		init();
-	}
-
-	/// @brief  Copy constructor.
-	GlycanInfoMover( GlycanInfoMover const & object_to_copy ) : Mover( object_to_copy )
-	{
-		copy_data( *this, object_to_copy );
-	}
-
-	// Assignment operator
-	GlycanInfoMover &
-	operator=( GlycanInfoMover const & object_to_copy )
-	{
-		// Abort self-assignment.
-		if ( this == &object_to_copy ) {
-			return *this;
-		}
-
-		protocols::moves::Mover::operator=( object_to_copy );
-		copy_data( *this, object_to_copy );
-		return *this;
-	}
-
-	// Destructor
-	~GlycanInfoMover() override = default;
-
-
-public:  // Standard Rosetta methods
-
-
-
-	/// @brief  Generate string representation of DockGlycansProtocol for debugging purposes.
-
-	void
-	show( std::ostream & output=std::cout ) const override
-	{
-		protocols::moves::Mover::show( output );  // name, type, tag
-	}
-
-
-	// Mover methods
-	/// @brief  Return the name of the Mover.
-
-	std::string
-	get_name() const override
-	{
-		return type();
-	}
-
-
-	protocols::moves::MoverOP
-	clone() const override
-	{
-		return protocols::moves::MoverOP( new GlycanInfoMover( *this ) );
-	}
-
-
-	protocols::moves::MoverOP
-	fresh_instance() const override
-	{
-		return protocols::moves::MoverOP( new GlycanInfoMover );
-	}
-
-	std::string
-	get_attachment_point_string( core::pose::Pose const & pose, core::Size resnum){
-		using utility::to_string;
-		using namespace core::chemical::carbohydrates;
-
-		CarbohydrateInfoCOP info = pose.residue(resnum).carbohydrate_info();
-		std::string outstring = "";
-		std::string attach = "_->";
-
-		if ( info->mainchain_glycosidic_bond_acceptor() ) {
-			outstring = attach + to_string(info->mainchain_glycosidic_bond_acceptor());
-		}
-
-		for ( uint i = 1; i <= info->n_branches(); ++i ) {
-			outstring = outstring + "," +attach + to_string( info->branch_point( i ));
-		}
-		return outstring;
-	}
-	/// @brief  Apply the corresponding protocol to <pose>.
-
-	void
-	apply( core::pose::Pose & pose ) override
-	{
-		using namespace core::pose::carbohydrates;
-
-		core::Size protein_branches = 0;
-		core::Size carbohydrate_residues = 0;
-		for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
-			if ( pose.residue( resnum ).is_carbohydrate() ) {
-				std::string attachment_points = get_attachment_point_string( pose, resnum);
-				core::Size parent_res = pose.glycan_tree_set()->get_parent( resnum );
-				bool bp = pose.residue( resnum ).is_branch_point();
-
-
-				std::cout << "Carbohydrate: "<< resnum  <<" "<< pose.pdb_info()->pose2pdb(resnum) << " Parent: " << parent_res << " BP: "<<bp <<" "<< pose.pdb_info()->pose2pdb(resnum) << " " << " CON: " << " DIS: " << pose.glycan_tree_set()->get_distance_to_start( resnum )
-					<< utility::pad_right( attachment_points, 10) << pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
-
-				carbohydrate_residues += 1;
-
-			} else if ( pose.residue( resnum ).is_branch_point() ) {
-				std::cout << "Branch Point: " << pose.residue( resnum ).name3()<<" "<< resnum <<" " <<pose.pdb_info()->pose2pdb(resnum) << std::endl;
-				protein_branches += 1;
-
-			}
-		}
-		std::cout << "Glycan Residues: " << carbohydrate_residues <<std::endl;
-		std::cout << "Protein BPs: " << protein_branches << std::endl;
-
-		std::cout << "TREES" << std::endl;
-		for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
-			if ( pose.glycan_tree_set()->has_tree(resnum) ) {
-				core::Size length = pose.glycan_tree_set()->get_tree(resnum)->get_size();
-				core::Size root = pose.glycan_tree_set()->get_tree(resnum)->get_root();
-				if ( root != 0 ) {
-					std::cout << root << " " <<pose.pdb_info()->pose2pdb(root) <<" "<<"Length: "<< length << std::endl;
-				} else {
-					std::cout << root <<" "<<"Length: "<< length << std::endl;
-				}
-			}
-		}
-	}
-
-	bool
-	reinitialize_for_each_job() const override {
-		return true;
-	}
-
-
-private:  // Private methods
-	// Set command-line options.  (Called by init())
-	//void
-	//set_commandline_options()
-	//{
-	// using namespace basic::options;
-
-	//}
-
-
-	// Initialize data members from arguments.
-	void
-	init()
-	{
-
-		type( "GlycanInfoMover" );
-
-
-
-	}
-
-	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
-	void
-	copy_data( GlycanInfoMover & /*object_to_copy_to*/, GlycanInfoMover const & /*object_to_copy_from*/ )
-	{
-
-	}
-
-
-
-private:  // Private data
-
-
-
-};
-
-using GlycanInfoMoverOP = utility::pointer::shared_ptr<GlycanInfoMover>;
 
 int
 main( int argc, char * argv [] )
@@ -261,7 +78,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 
 
-		GlycanInfoMoverOP mover_protocol( new GlycanInfoMover() );
+		protocols::analysis::GlycanInfoMoverOP mover_protocol( new protocols::analysis::GlycanInfoMover() );
 
 		protocols::jd2::JobDistributor::get_instance()->go( mover_protocol );
 

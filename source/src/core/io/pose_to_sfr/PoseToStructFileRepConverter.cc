@@ -656,14 +656,14 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 			// If this is a lower connect to the upper connect of the previous residue, skip it unless it's a carbohydrate.
 			if ( ii_res.has_lower_connect() && conn == ii_res.type().lower_connect_id() &&
 					jj == ii - 1 && pose.residue(jj).has_upper_connect() && jj_conn == pose.residue_type( jj ).upper_connect_id() &&
-					( !pose.residue_type( jj ).is_carbohydrate() || !options_.write_glycan_pdb_codes() ) ) {
+					( !pose.residue_type( jj ).is_carbohydrate() ) ) {
 				continue;
 			}
 
 			// If this is a upper connect to the lowe connect of the next residue, skip it.
 			if ( ii_res.has_upper_connect() && conn == ii_res.type().upper_connect_id() &&
 					jj == ii + 1 && pose.residue(jj).has_lower_connect() && jj_conn == pose.residue_type( jj ).lower_connect_id() &&
-					( !pose.residue_type( jj ).is_carbohydrate() || !options_.write_glycan_pdb_codes() ) )  {
+					( !pose.residue_type( jj ).is_carbohydrate() ) )  {
 				continue;
 			}
 

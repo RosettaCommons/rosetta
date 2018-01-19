@@ -38,6 +38,7 @@ static MoverRegistrator< abinitio::abscript::AbscriptLoopCloserCMCreator > reg_A
 static MoverRegistrator< abinitio::abscript::StructPerturberCMCreator > reg_StructPerturberCMCreator;
 static MoverRegistrator< abinitio::abscript::RigidChunkCMCreator > reg_RigidChunkCMCreator;
 
+static MoverRegistrator< analysis::GlycanInfoMoverCreator > reg_GlycanInfoMoverCreator;
 static MoverRegistrator< analysis::InterfaceAnalyzerMoverCreator > reg_InterfaceAnalyzerMoverCreator;
 static MoverRegistrator< analysis::LoopAnalyzerMoverCreator > reg_LoopAnalyzerMoverCreator;
 

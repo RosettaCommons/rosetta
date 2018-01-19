@@ -18,6 +18,7 @@ sources = {
 		"util",
 	],
 	"protocols/analysis": [
+		"GlycanInfoMover",
 		"InterfaceAnalyzerMover",
 		"LoopAnalyzerMover",
 		"PackStatMover",

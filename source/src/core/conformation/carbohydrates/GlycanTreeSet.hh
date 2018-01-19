@@ -115,6 +115,7 @@ public:
 	core::Size
 	get_largest_glycan_tree_length() const;
 
+
 	///@brief Get the largest glycan tree layer (from 0 to N).
 	core::Size
 	get_largest_glycan_tree_layer() const;
@@ -122,7 +123,16 @@ public:
 	///@brief Get the largest glycan tree layer (from 0 to N). of the glycan node residues passed in
 	core::Size
 	get_largest_glycan_tree_layer( utility::vector1< bool > const & subset ) const;
-
+	
+	
+	///@brief Get the smallest glycan tree layer (from 0 to N).
+	core::Size
+	get_smallest_glycan_tree_layer() const;
+	
+	///@brief Get the smallest glycan tree layer (from 0 to N).
+	core::Size
+	get_smallest_glycan_tree_layer( utility::vector1< bool > const & subset ) const;
+	
 public:
 
 	///////////////////////////////////////////////////////////////////////

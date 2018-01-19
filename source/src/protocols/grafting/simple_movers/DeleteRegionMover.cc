@@ -200,13 +200,13 @@ void DeleteRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute( "rechain", xsct_rosetta_bool, "Add terminus variants and recompute chains after deleting" )
-		+ XMLSchemaAttribute( "start", xsct_non_negative_integer, "First residue in region to delete" )
-		+ XMLSchemaAttribute( "end", xsct_non_negative_integer, "Last residue in region to delete" )
+		+ XMLSchemaAttribute( "start", xs_string, "First residue in region to delete (PDBNum (24A) or RosettaNum " )
+		+ XMLSchemaAttribute( "end", xs_string,  "Last residue in region to delete" )
 		+ XMLSchemaAttribute( "nter_overhang", xsct_non_negative_integer, "Number of additional residues to delete on the N terminal side" )
 		+ XMLSchemaAttribute( "cter_overhang", xsct_non_negative_integer, "Number of additional residues to delete on the C terminal side" );
 
 	//Define things to do with the residue selector
-	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "XRW_TODO" );
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "ResidueSelector with region(s) to delete" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Deletes a region from a pose", attlist );
 }

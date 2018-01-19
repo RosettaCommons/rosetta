@@ -145,8 +145,15 @@ public:
 
 		TR << "5FYL FT: " << pose.fold_tree() << std::endl;
 
+		///Make sure we can load it back in after export.
+		TS_ASSERT_THROWS_NOTHING(import_pose::pose_from_file(pose,tmp_file_name));
+		
+		//Test the contents.
 		std::string const correct_output_file_name("core/io/5FYL_correct_output.pdb");
 		TS_ASSERT_FILE_EQ(correct_output_file_name.c_str(), tmp_file_name.c_str());
+		
+
+		
 	}
 
 };

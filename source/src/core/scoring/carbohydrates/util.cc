@@ -24,6 +24,7 @@
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -83,7 +84,10 @@ get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose::Pose con
 		// If this is not a saccharide residue, do nothing.
 
 		Residue const & prev_rsd( pose.residue( prev_rsd_num ));
-		if ( ! prev_rsd.is_carbohydrate() ) { return LINKAGE_NA; }
+		if ( ! prev_rsd.is_carbohydrate() ) {
+			//std::cout <<" getChiFunctionLinkageType "<< "Previous residue is not a carbohydrate!" << std::endl;
+			return LINKAGE_NA;
+		}
 
 		if ( prev_rsd.type().is_cyclic() ) {
 			// What is our connecting atom?
@@ -119,6 +123,7 @@ get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose::Pose con
 					}
 					break;
 				case NEITHER :
+					//std::cout <<" getChiFunctionLinkageType " << "Connection neither axial nor equitorial" << std::endl;
 					return LINKAGE_NA;
 				}
 			}
@@ -204,8 +209,10 @@ get_CHI_energy_function_linkage_type_for_residue_in_pose(
 	core::uint rsd_num )
 {
 	if ( torsion == id::phi_dihedral ) {
+		//std::cout <<" getChiFunctionLinkageType "<< "Phi Dihedral" << std::endl;
 		return get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose, rsd_num );
 	} else if ( torsion == id::psi_dihedral ) {
+		//std::cout <<" getChiFunctionLinkageType "<< "Psi Dihedral" << std::endl;
 		return get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose, rsd_num );
 	}
 	return LINKAGE_NA;  // CHI Energy Functions only exist for phi and psi.

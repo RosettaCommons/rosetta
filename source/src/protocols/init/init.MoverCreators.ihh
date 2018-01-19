@@ -33,6 +33,7 @@
 #include <protocols/abinitio/abscript/StructPerturberCMCreator.hh>
 #include <protocols/abinitio/abscript/RigidChunkCMCreator.hh>
 
+#include <protocols/analysis/GlycanInfoMoverCreator.hh>
 #include <protocols/analysis/InterfaceAnalyzerMoverCreator.hh>
 #include <protocols/analysis/LoopAnalyzerMoverCreator.hh>
 
