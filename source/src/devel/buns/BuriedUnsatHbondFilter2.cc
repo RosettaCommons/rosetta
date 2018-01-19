@@ -57,6 +57,7 @@ BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2( core::Size const upper_thresho
 // @brief copy constructor
 BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2( BuriedUnsatHbondFilter2 const & rval ):
 	Filter( rval ),
+	sfxn_( rval.sfxn_ ),
 	upper_threshold_( rval.upper_threshold_ ),
 	jump_num_( rval.jump_num_ ),
 	task_factory_( rval.task_factory_ ),
