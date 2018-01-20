@@ -74,11 +74,11 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+protected:
+	using protocols::minimization_packing::PackRotamersMover::run;
 
 private:
 	void initialize( Pose & );
-
-	using protocols::minimization_packing::PackRotamersMover::run;
 
 	void run();
 	void add_dna_states( Pose const & , PackerTaskCOP );

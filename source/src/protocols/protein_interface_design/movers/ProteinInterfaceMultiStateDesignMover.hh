@@ -72,10 +72,12 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
+protected:
+	using protocols::minimization_packing::PackRotamersMover::run;
+
 private:
 	void initialize( Pose & );
 
-	using protocols::minimization_packing::PackRotamersMover::run;
 	void run();
 	/// @brief add target and competitor states
 	void add_states( Pose const & );
