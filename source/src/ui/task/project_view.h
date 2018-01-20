@@ -16,6 +16,8 @@
 
 #include <ui/task/project_model.h>
 
+#include <ui/task/project.fwd.h>
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -47,15 +49,13 @@ private Q_SLOTS:
 
 	void on_action_preferences_triggered();
 
-    void on_project_doubleClicked(const QModelIndex &index);
+    void on_tasks_doubleClicked(const QModelIndex &index);
 
 private:
 
     Ui::ProjectView *ui;
 
-	ProjectModel * project_model_ = nullptr;
-
-	ProjectSP project_;
+	ProjectUP project_;
 };
 
 } // namespace task

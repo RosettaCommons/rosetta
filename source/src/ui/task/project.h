@@ -16,6 +16,7 @@
 
 #include <ui/task/project.fwd.h>
 
+#include <ui/task/project_model.h>
 
 //#include <ui/task/node.h>
 #include <ui/task/task.fwd.h>
@@ -40,31 +41,33 @@ class Project final : public QObject
     Q_OBJECT
 
 public:
-	using Map = std::map< QString, TaskSP >;
-	using Key = Map::key_type;
+	//using Map = std::map< QString, TaskSP >;
+	//using Key = Map::key_type;
 
 	//explicit Project(QUuid _project_id);
 	explicit Project();
 
 	//std::string type() const override;
 
-
 	/// Add new Task
-    void add(Key const &, TaskSP const &);
+    //void add(Key const &, TaskSP const &);
+	void add_task(TaskSP const &task);
 
 	// erase given Task from this project
 	bool erase(TaskSP const &task);
 
 	// return number of tasks in Project
-	int size() const { return tasks_.size(); }
-
+	//int size() const { return tasks_.size(); }
 
 	// GUI helper function
 	// return key of task or nullptr if leaf could not be found
-	Key const * find(Task *leaf) const;
+	//Key const * find(Task *leaf) const;
 
 	// Assign 'project_' of given Task to this (assuming it was already inserted into tasks_)
 	void assign_ownership(TaskSP const &t);
+
+	// return i'th task from tasks list, return empty SP if index is invalid
+	TaskSP task(int index);
 
 	bool operator ==(Project const &r) const;
 	bool operator !=(Project const &r) const { return not (*this == r); }
@@ -73,19 +76,32 @@ public:
 	QString file_name() const { return file_name_; }
 	void file_name(QString const &file_name) { file_name_ = file_name; }
 
+
+	std::vector<TaskSP> const & tasks() const { return tasks_; }
+
+	ProjectTasksModel * model() { return &task_model_; }
+
 	// serialization
 	friend QDataStream &operator<<(QDataStream &, Project const&);
 	friend QDataStream &operator>>(QDataStream &, Project &);
 
+Q_SIGNALS:
+
+
+private Q_SLOTS:
+	void changed();
+
 private:
 	//void listen_to_updates();
 
+	/// assign ownership of all tasks (needed for serialization)
+	void assign_ownership();
+
+
 private:
-
-	Map tasks_;
+	std::vector<TaskSP> tasks_;
+	ProjectTasksModel task_model_;
 	QString file_name_;
-
-	friend struct PNode;
 };
 
 

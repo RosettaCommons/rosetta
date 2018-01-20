@@ -26,24 +26,25 @@ Q_SIGNALS:
 public Q_SLOTS:
 
 private Q_SLOTS:
-	void on_description_textChanged(void);
-	void on_nstruct_valueChanged(int);
+	// void on_description_textChanged(void);
+	// void on_nstruct_valueChanged(int);
 
-	void on_input_set_from_file_clicked();
-	void on_flags_set_from_file_clicked();
-	void on_script_set_from_file_clicked();
+	// void on_input_set_from_file_clicked();
+	// void on_flags_set_from_file_clicked();
+	// void on_script_set_from_file_clicked();
 
 	void update_ui_from_task();
 
-	void on_submit_clicked();
+	//void on_submit_clicked();
 
     void on_output_clicked(const QModelIndex &index);
 
 	void create_output_context_menu(const QPoint &pos);
-	void on_action_output_save_as();
+	void action_output_save_as();
 
+	void on_export_all_files_clicked();
 
-	void on_queues_finished();
+	void update_syncing_progress();
 
 private:
 
@@ -51,14 +52,11 @@ private:
 private:
 	QWidget * create_viewer_for_file(FileSP const &);
 
-
 	Ui::TaskView *ui;
 
 	TaskSP task_;
 
 	QWidget *viewer_ = nullptr;
-
-	NetworkCall queues;
 };
 
 } // namespace task

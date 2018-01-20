@@ -15,7 +15,8 @@
 
 #include <ui/task/task.h>
 
-#include <ui/task/util.h>
+//#include <ui/task/util.h>
+#include <ui/util/serialization.h>
 
 #include <cassert>
 
@@ -37,64 +38,97 @@ Project::Project()
 
 
 /// Add new Task
-void Project::add(Key const &key, TaskSP const &task)
+// void Project::add(Key const &key, TaskSP const &task)
+// {
+// 	if( task->project_ ) task->project_->erase(task);
+
+// 	tasks_[key] = task;
+//     task->project_ = this;
+// }
+
+/// Add new Task
+void Project::add_task(TaskSP const &task)
 {
 	if( task->project_ ) task->project_->erase(task);
 
-	tasks_[key] = task;
+	tasks_.push_back(task);
     task->project_ = this;
+
+	task_model_.update_from_tasks(tasks_);
+
+	connect(task.get(), &Task::changed, this, &Project::changed);
 }
 
 
 // erase given Task from this project
 bool Project::erase(TaskSP const &task)
 {
-    //auto it = find_if(tasks_.begin(), tasks_.end(), [&](Map::value_type const &p) { return p.second.get() == task; } );
-    auto it = find_if(tasks_.begin(), tasks_.end(), [&](Map::value_type const &p) { return p.second == task; } );
+	if( task->project_ == this ) {
+		auto sz = tasks_.size();
 
-	if( it == tasks_.end() ) return false;
+		tasks_.erase( std::remove(tasks_.begin(), tasks_.end(), task), tasks_.end() );
 
-    tasks_.erase(it);
-	task->project_ = nullptr;
-   	return true;
+		task->project_ = nullptr;
+
+		disconnect(task.get(), &Task::changed, this, &Project::changed);
+		bool res = sz != tasks_.size();
+
+		if(res) Q_EMIT changed();
+
+		return res;
+	}
+	else return false;
+}
+
+void Project::changed()
+{
+	qDebug() << "Project::changed()";
+	task_model_.update_from_tasks(tasks_);
 }
 
 // GUI helper function
 // return key of task or nullptr if leaf could not be found
-Project::Key const * Project::find(Task *leaf) const
-{
-    auto it = find_if(tasks_.begin(), tasks_.end(), [&](Map::value_type const &p) { return p.second.get() == leaf; } );
+// Project::Key const * Project::find(Task *leaf) const
+// {
+//     auto it = find_if(tasks_.begin(), tasks_.end(), [&](Map::value_type const &p) { return p.second.get() == leaf; } );
 
-	if( it == tasks_.end() ) return nullptr;
-	else return &it->first;
+// 	if( it == tasks_.end() ) return nullptr;
+// 	else return &it->first;
+// }
+
+
+void Project::assign_ownership(TaskSP const &task)
+{
+	assert( task->project_ == nullptr );
+	task->project_ = this;
+	connect(task.get(), &Task::changed, this, &Project::changed);
 }
 
-
-void Project::assign_ownership(TaskSP const &t)
+TaskSP Project::task(int index)
 {
-	assert( t->project_ == nullptr );
+	if(index < 0  or  index >= static_cast<int>( tasks_.size() ) ) return TaskSP();
 
-	t->project_ = this;
+	return tasks_[index];
 }
 
 
 bool Project::operator ==(Project const &rhs) const
 {
+	return tasks_ == rhs.tasks_;
 
+	// if( tasks_.size() != rhs.tasks_.size() ) return false;
 
-	if( tasks_.size() != rhs.tasks_.size() ) return false;
+	// if( not std::equal( tasks_.begin(), tasks_.end(), rhs.tasks_.begin(),
+	// 				[](Map::value_type const &l, Map::value_type const &r) {
+	// 					if( l.first  != r.first  ) return false;
+	// 					if( *l.second != *r.second ) return false;
+	// 					return true;
+	// 				})
+	// 	) {
+	// 	return false;
+	// }
 
-	if( not std::equal( tasks_.begin(), tasks_.end(), rhs.tasks_.begin(),
-					[](Map::value_type const &l, Map::value_type const &r) {
-						if( l.first  != r.first  ) return false;
-						if( *l.second != *r.second ) return false;
-						return true;
-					})
-		) {
-		return false;
-	}
-
-	return true;
+	// return true;
 }
 
 
@@ -103,19 +137,14 @@ bool Project::operator ==(Project const &rhs) const
 // 	for(auto & p : tasks_) p.listen_to_updates();
 // }
 
-
-
-quint64 const _Project_magic_number_   = 0xFFF1D6BF94D5E57F;
 quint32 const _Project_stream_version_ = 0x00000001;
-
 
 QDataStream &operator<<(QDataStream &out, Project const &p)
 {
 	out.setVersion(QDataStream::Qt_5_6);
 
-	out << _Project_magic_number_;
+	out << ui::util::_Project_magic_number_;
 	out << _Project_stream_version_;
-
 
 	using namespace ui::util;
 	out << p.tasks_;
@@ -130,18 +159,21 @@ QDataStream &operator>>(QDataStream &in, Project &p)
 
 	quint64 magic;
 	in >> magic;
-	if( magic != _Project_magic_number_ ) throw ui::util::BadFileFormatException();  // ProjectBadFileFormatException();
+	if( magic != ui::util::_Project_magic_number_ ) throw ui::util::BadFileFormatException( QString("Invalid _Project_magic_number_: read %1, was expecting %2...").arg(magic).arg(ui::util::_Project_magic_number_) );
 
 	quint32 version;
 	in >> version;
-	if( version != _Project_stream_version_ ) throw ui::util::BadFileFormatException();  // ProjectBadFileFormatException();
+	if( version != _Project_stream_version_ ) throw ui::util::BadFileFormatException( QString("Invalid _Project_stream_version_: read %1, was expecting %2...").arg(magic).arg(_Project_stream_version_) );
 
+	using namespace ui::util;
 	in >> p.tasks_;
 
-	for(auto &t : p.tasks_) {
-		p.assign_ownership(t.second);
+	for(auto & t : p.tasks_) {
+		p.assign_ownership(t);
 		//listen_to_updates();  // moved to Task operator>>
 	}
+
+	p.task_model_.update_from_tasks(p.tasks_);
 
 	return in;
 }

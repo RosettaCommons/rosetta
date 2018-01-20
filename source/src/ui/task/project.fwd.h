@@ -23,5 +23,7 @@ class Project;
 using ProjectSP  = std::shared_ptr< Project >;
 using ProjectCSP = std::shared_ptr< Project const >;
 
+using ProjectUP  = std::unique_ptr< Project >;
+
 } // namespace task
 } // namespace ui

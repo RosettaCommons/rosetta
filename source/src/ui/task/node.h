@@ -34,10 +34,6 @@ namespace ui {
 namespace task {
 
 
-QNetworkAccessManager * network_access_manager();
-
-QString server_url();
-
 class Node;
 using NodeWP  = std::weak_ptr< Node >;
 using NodeSP  = std::shared_ptr< Node >;
@@ -87,7 +83,7 @@ private:
 
 	bool listen_ = true;
 
-	QPointer<QNetworkReply> reply_;
+	QNetworkReply * reply_ = nullptr;
 };
 
 
@@ -192,7 +188,7 @@ public:
 
 
 	// check if current node is syncing and if so return number of syncing nodes
-	int syncing(bool recursive=false) const;
+	int is_syncing(bool recursive=false) const;
 
 	// return number of nodes in tree
 	int tree_size() const;
@@ -212,6 +208,9 @@ Q_SIGNALS:
 
 	/// Emitted when node and all its leafs finished synced operation
     void tree_synced();
+
+	/// Emitted when node or sub-node syncing state changed
+	void syncing();
 
 	/// Emitted when node recieve new topology from remote server
 	// moved to callback void topology_updated(Node const *, std::vector<QString> const & new_keys, std::vector<QString> const & errased_keys);
@@ -258,6 +257,7 @@ private:
 	// sync state
 	bool recursive_;
 	QPointer<QNetworkReply> reply_;
+	bool syncing_ = false;
 	TimeStamp local_modification_time_  = _T_outdated_;
 	TimeStamp server_modification_time_ = _T_unknown_;
 };

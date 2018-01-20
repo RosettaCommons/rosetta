@@ -431,8 +431,9 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
 
     platform_suffix = platform_to_pretty_string(platform)
     build_path = '{rosetta_dir}/source/build/ui.{platform_suffix}.static'.format(**vars())
+    qt_extras = '-spec linux-clang ' if (platform['compiler'] == 'clang' and platform['os'] == 'linux') else ''
 
-    command_line = 'cd {rosetta_dir}/source/src/ui && python update_ui_project.py && cd ../../build && mkdir -p {build_path} && cd {build_path} && {config[qmake.static]} -r ../qt/qt.pro && make -j{config[cpu_count]}'.format(**vars())
+    command_line = 'cd {rosetta_dir}/source/src/ui && python update_ui_project.py && cd ../../build && mkdir -p {build_path} && cd {build_path} && {config[qmake.static]} -r ../qt/qt.pro {qt_extras}&& make -j{config[cpu_count]}'.format(**vars())
 
     if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
     else: res, output = execute('Compiling...', command_line, return_='tuple', add_message_and_command_line_to_output=True)

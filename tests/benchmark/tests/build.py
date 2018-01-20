@@ -39,7 +39,7 @@ tests = dict(
 
     cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}"', incremental=False),
 
-    ui  = NT(command='cd src/ui && python update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} -r ../qt/qt.pro && make -j{jobs}', incremental=True),
+    ui  = NT(command='cd src/ui && python update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} -r ../qt/qt.pro {qt_extras}&& make -j{jobs}', incremental=True),
 )
 
 # def set_up():
@@ -68,14 +68,18 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
+    platform_suffix = platform_to_pretty_string(platform)
 
-    command_line = tests[test].command.format( **dict(config, compiler=compiler, jobs=jobs, extras=extras, platform_suffix=platform_to_pretty_string(platform)) )
+    qmake = config['qmake']
+    qt_extras = '-spec linux-clang ' if (compiler == 'clang' and platform['os'] == 'linux') else ''
+
+    command_line = tests[test].command.format( **vars() )
 
     if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
     else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
 
     # re-running builds in case we got error - so we can get nice error message
-    if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format( **dict(config, compiler=compiler, jobs=1, extras=extras, platform_suffix=platform_to_pretty_string(platform) ) ) ), return_='tuple')
+    if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format( **vars() ) ), return_='tuple')
 
     codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write( u'Running: {}\n{}\n'.format(command_line, output) )
 

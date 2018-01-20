@@ -14,56 +14,35 @@
 #ifndef UI_TASK_PROJECTMODEL_H
 #define UI_TASK_PROJECTMODEL_H
 
-#include <QAbstractItemModel>
+#include <ui/task/task.fwd.h>
 
-#include <ui/task/project.h>
-
+#include <QAbstractTableModel>
 
 namespace ui {
 namespace task {
 
-struct PNode;
-using  PNodeSP  = std::shared_ptr< PNode >;
-using  PNodeCSP = std::shared_ptr< PNode const >;
-
-class ProjectModel : public QAbstractItemModel
+class ProjectTasksModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    explicit ProjectModel(QObject *parent = 0);
+	using QAbstractTableModel::QAbstractTableModel;
 
-    // Header:
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-    // Basic functionality:
-    QModelIndex index(int row, int column, QModelIndex const &parent = QModelIndex()) const override;
-    QModelIndex parent(const QModelIndex &index) const override;
-
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int	columnCount(const QModelIndex &parent = QModelIndex()) const override;
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
+	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	//Node * root() const { return root_; }
-
-	TaskSP task(QModelIndex const &index);
-
-	ProjectSP project() const { return project_; }
-
-	void set(ProjectSP const &);
-
+	void update_from_tasks(std::vector<TaskSP> const &tasks);
 private:
-	PNode * root() const;
+	struct Row {
+		QString name, state;
+	};
 
-	PNode *get_item(const QModelIndex &index) const;
-
-	ProjectSP project_;
-
-	mutable PNodeSP root_;
+	std::vector<Row> rows_;
 };
 
 } // namespace task

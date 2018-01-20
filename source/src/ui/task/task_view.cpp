@@ -35,13 +35,12 @@ TaskView::TaskView(TaskSP const &task,QWidget *parent) :
 
 	connect(task_.get(), SIGNAL(changed()), this, SLOT(update_ui_from_task()));
 
+	connect(task_.get(), SIGNAL(syncing()), this, SLOT(update_syncing_progress()));
+
 	ui->output->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->output, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(create_output_context_menu(const QPoint &)));
 
 	setAttribute(Qt::WA_DeleteOnClose);
-
-	connect(&queues, &NetworkCall::finished, this, &TaskView::on_queues_finished);
-	queues.call("queues");
 }
 
 TaskView::~TaskView()
@@ -54,26 +53,30 @@ void TaskView::update_ui_from_task()
 {
     //qDebug() << "TaskView::update_ui_from_task";
 
-	ui->name->setText( task_->project() ? *task_->project()->find(task_.get()) : "no-project");
+	ui->name->setText( task_->name() );
+
+	ui->app->setText( task_->app() );
+
+	ui->queue->setText( task_->queue() );
 
 	ui->state->setText( Task::to_string( task_->state() ) );
 
 	ui->description->document()->setPlainText( task_->description() );
 
-	ui->input_file_name->setText( task_->input().file_name() );
+	// ui->input_file_name->setText( task_->input().file_name() );
 	//ui->input->document()->setPlainText( task_->input().data() );
 
-	ui->script_file_name->setText( task_->script().file_name() );
-	ui->script->document()->setPlainText( task_->script().data() );
+	// ui->script_file_name->setText( task_->script().file_name() );
+	// ui->script->document()->setPlainText( task_->script().data() );
 
-	ui->flags_file_name->setText( task_->flags().file_name() );
-	ui->flags->document()->setPlainText( task_->flags().data() );
+	//ui->flags_file_name->setText( task_->flags().file_name() );
+	ui->flags->document()->setPlainText( task_->flags() );
 
-	ui->nstruct->setValue( task_->nstruct() );
+	ui->nstruct->setText( QString::number( task_->nstruct() ) );
 
 	if( auto model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
 		QStringList output_files;
-		for(auto const &k_fsp : task_->output() ) {
+		for(auto const &k_fsp : task_->files() ) {
 			//qDebug() << "TaskView::update_ui_from_task adding output file: " << k_fsp.first;
 			//if( not k_fsp.second->data().isEmpty() ) output_files << k_fsp.first;
 			output_files << k_fsp.first;
@@ -83,108 +86,107 @@ void TaskView::update_ui_from_task()
 		qDebug() << "TaskView::update_ui_from_task: no QStringListModel!!!";
 	}
 
-	if( task_->input().data().size() and (not ui->input_preview->pose()) ) {
-		core::pose::PoseOP pose = std::make_shared<core::pose::Pose>();
+	ui->files_count->setText( QString::number( task_->files().size() ) );
 
-		core::import_pose::pose_from_pdbstring(*pose, std::string( task_->input().data().constData(), task_->input().data().length() ), task_->input().file_name().toUtf8().constData() );
+	// if( task_->input().data().size() and (not ui->input_preview->pose()) ) {
+	// 	core::pose::PoseOP pose = std::make_shared<core::pose::Pose>();
+	// 	core::import_pose::pose_from_pdbstring(*pose, std::string( task_->input().data().constData(), task_->input().data().length() ), task_->input().file_name().toUtf8().constData() );
+	// 	ui->input_preview->set_pose(pose);
+	// }
 
-		ui->input_preview->set_pose(pose);
-	}
+	// QWidget * inputs[] = {ui->name, ui->description, ui->input_file_name, ui->script_file_name, ui->script, ui->flags_file_name, ui->flags, ui->nstruct};
 
-	QWidget * inputs[] = {ui->name, ui->description, ui->input_file_name, ui->script_file_name, ui->script, ui->flags_file_name, ui->flags, ui->nstruct};
+	// if( task_->state() == Task::State::_draft_  and (not syncing) ) {
+	// 	ui->submit->show();
 
-	auto syncing = task_->is_syncing();
-	if( task_->state() == Task::State::_draft_  and (not syncing) ) {
-		ui->submit->show();
+	// 	for(auto w : inputs) w->setEnabled(true);
+	// }
+	// else {
+	// 	ui->submit->hide();
 
-		for(auto w : inputs) w->setEnabled(true);
-	}
-	else {
-		ui->submit->hide();
+	// 	for(auto w : inputs) w->setEnabled(false);
+	// }
+	update_syncing_progress();
+}
 
-		for(auto w : inputs) w->setEnabled(false);
-	}
+void TaskView::update_syncing_progress()
+{
+    //qDebug() << "TaskView::update_syncing_progress()...";
 
-	if(syncing) {
+	if( task_->is_syncing() ) {
 		auto sp = task_->syncing_progress();
 		ui->syncing_progress->setMaximum(sp.second);
-		ui->syncing_progress->setValue(sp.second - sp.first);
+		ui->syncing_progress->setValue(sp.first);
 
-		qDebug() << "TaskView::update_ui_from_task: progress:" << sp;
+		//qDebug() << "TaskView::update_ui_from_task: progress:" << sp;
 		ui->syncing->show();
+
+		//ui->syncing_progress->update();
 	}
-	else ui->syncing->hide();
-}
-
-void TaskView::on_description_textChanged()
-{
-    //qDebug() << "TaskView::on_description_textChanged";
-	task_->description( ui->description->document()->toPlainText() );
-}
-
-void TaskView::on_nstruct_valueChanged(int)
-{
-    //qDebug() << "TaskView::on_nstruct_valueChanged";
-	task_->nstruct( ui->nstruct->value() );
-}
-
-void TaskView::on_input_set_from_file_clicked()
-{
-    qDebug() << "TaskView::on_input_set_from_file_clicked";
-
-	QString file_name = QFileDialog::getOpenFileName(this, tr("Open PDB file"), "", tr("PDB (*.pdb)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
-	if( not file_name.isEmpty() ) {
-		// File f(file_name);
-		// task_->input( std::move(f) );
-
-		ui->input_preview->set_pose( core::pose::PoseOP() );
-		ui->input_preview->update_pose_draw();
-
-		task_->input( File(file_name) );
+	else {
+		ui->syncing->hide();
+		//ui->syncing->update();
 	}
 }
 
 
-void TaskView::on_script_set_from_file_clicked()
-{
-    qDebug() << "TaskView::on_script_set_from_file_clicked";
-
-	QString file_name = QFileDialog::getOpenFileName(this, tr("Open Rosetta XML script"), "", tr("XML (*.xml)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
-	if( not file_name.isEmpty() ) {
-		task_->script( File(file_name) );
-	}
-}
-
-// void TaskView::on_script_textChanged()
+// void TaskView::on_input_set_from_file_clicked()
 // {
-//     //qDebug() << "TaskView::on_description_textChanged";
-// 	task_->script( ui->script->document()->toPlainText() );
+//     qDebug() << "TaskView::on_input_set_from_file_clicked";
+
+// 	QString file_name = QFileDialog::getOpenFileName(this, tr("Open PDB file"), "", tr("PDB (*.pdb)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
+// 	if( not file_name.isEmpty() ) {
+// 		// File f(file_name);
+// 		// task_->input( std::move(f) );
+
+// 		ui->input_preview->set_pose( core::pose::PoseOP() );
+// 		ui->input_preview->update_pose_draw();
+
+// 		//task_->input( File(file_name) );
+// 	}
 // }
 
-void TaskView::on_flags_set_from_file_clicked()
-{
-    qDebug() << "TaskView::on_flags_set_from_file_clicked";
 
-	QString file_name = QFileDialog::getOpenFileName(this, tr("Open Rosetta flags script"), "", tr("(*.flags *.*)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
-	if( not file_name.isEmpty() ) {
-		task_->flags( File(file_name) );
-	}
-}
+// void TaskView::on_script_set_from_file_clicked()
+// {
+//     qDebug() << "TaskView::on_script_set_from_file_clicked";
+
+// 	QString file_name = QFileDialog::getOpenFileName(this, tr("Open Rosetta XML script"), "", tr("XML (*.xml)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
+// 	if( not file_name.isEmpty() ) {
+// 		//task_->script( File(file_name) );
+// 	}
+// }
+
+// // void TaskView::on_script_textChanged()
+// // {
+// //     //qDebug() << "TaskView::on_description_textChanged";
+// // 	task_->script( ui->script->document()->toPlainText() );
+// // }
+
+// void TaskView::on_flags_set_from_file_clicked()
+// {
+//     qDebug() << "TaskView::on_flags_set_from_file_clicked";
+
+// 	QString file_name = QFileDialog::getOpenFileName(this, tr("Open Rosetta flags script"), "", tr("(*.flags *.*)"), Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
+// 	if( not file_name.isEmpty() ) {
+// 		//task_->flags( File(file_name) );
+// 	}
+// }
 
 
-void TaskView::on_submit_clicked()
-{
-    qDebug() << "TaskView::on_submit_clicked queue:" << ui->queue->currentText();
+// void TaskView::on_submit_clicked()
+// {
+//     qDebug() << "TaskView::on_submit_clicked queue:" << ui->queue->currentText();
 
-	Project * project = task_->project();
+// 	Project * project = task_->project();
 
-	if( project  and  check_submit_requirements(*project) ) {
-		ui->submit->setEnabled(false);
-		task_->submit( ui->queue->currentText() );
+// 	if( project  and  check_submit_requirements(*project) ) {
+// 		ui->submit->setEnabled(false);
+// 		task_->submit( ui->queue->currentText() );
 
-		save_project(*project, /* always_ask_for_file_name = */ false);
-	}
-}
+// 		save_project(*project, /* always_ask_for_file_name = */ false);
+// 	}
+// }
 
 void TaskView::create_output_context_menu(const QPoint &pos)
 {
@@ -193,7 +195,7 @@ void TaskView::create_output_context_menu(const QPoint &pos)
 
 		QMenu submenu;
 		submenu.addAction("Open...");
-		submenu.addAction("Save as...", this, SLOT( on_action_output_save_as() ));
+		submenu.addAction("Save as...", this, SLOT( action_output_save_as() ));
 		/*QAction* rightClickItem =*/ submenu.exec(item);
 		// if(rightClickItem && rightClickItem->text().contains("Open...") ) {
 		// 	//qDebug() << ui->output->indexAt(pos).row();
@@ -212,9 +214,9 @@ void TaskView::create_output_context_menu(const QPoint &pos)
 }
 
 
-void TaskView::on_action_output_save_as()
+void TaskView::action_output_save_as()
 {
-    //qDebug() << "TaskView::on_action_output_save_as";
+    //qDebug() << "TaskView::action_output_save_as";
 
 	if( QStringListModel *model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
 		QModelIndexList indexes = ui->output->selectionModel()->selectedIndexes();
@@ -229,7 +231,7 @@ void TaskView::on_action_output_save_as()
 			if( qv.isValid() ) {
 				QString line = qv.toString();
 
-				std::map<QString, FileSP> const & output = task_->output();
+				std::map<QString, FileSP> const & output = task_->files();
 
 				auto it = output.find(line);
 				if( it != output.end() ) {
@@ -244,12 +246,31 @@ void TaskView::on_action_output_save_as()
 
 					QFile file(file_name);
 					if( file.open(QIODevice::WriteOnly) ) {
-						qDebug() << "TaskView::on_action_output_save_as: file:" << file_name;
+						qDebug() << "TaskView::action_output_save_as: file:" << file_name;
 						file.write( it->second->data() );
 						file.close();
 					}
 				}
 			}
+		}
+	}
+}
+
+
+void TaskView::on_export_all_files_clicked()
+{
+    qDebug() << "TaskView::on_export_all_files_clicked()...";
+
+	QString dir;
+	dir = QFileDialog::getExistingDirectory(this, tr("Save Output file to dir...") );
+
+	for(auto const & it : task_->files() ) {
+		QString file_name = dir + '/' + it.first;
+		QFile file(file_name);
+		if( file.open(QIODevice::WriteOnly) ) {
+			qDebug() << "TaskView::on_export_all_files_clicked: saving file:" << file_name;
+			file.write( it.second->data() );
+			file.close();
 		}
 	}
 }
@@ -262,7 +283,7 @@ QWidget * TaskView::create_viewer_for_file(FileSP const &f)
 	if( not list.isEmpty() ) {
 		QString ext = list.last();
 
-		if( ext == "pdb" ) {
+		if( false  and  ext == "pdb" ) {
 			ui_core::pose_draw::SimplePoseDrawOpenGLWidget *pv = new ui_core::pose_draw::SimplePoseDrawOpenGLWidget(this->ui->preview);
 
 			core::pose::PoseOP pose = std::make_shared<core::pose::Pose>();
@@ -303,7 +324,7 @@ void TaskView::on_output_clicked(const QModelIndex &index)
 		if( qv.isValid() ) {
 			QString line = qv.toString();
 
-			std::map<QString, FileSP> const & output = task_->output();
+			std::map<QString, FileSP> const & output = task_->files();
 
 			auto it = output.find(line);
 			if( it != output.end() ) {
@@ -319,21 +340,6 @@ void TaskView::on_output_clicked(const QModelIndex &index)
 			}
 		}
 	}
-}
-
-
-void TaskView::on_queues_finished()
-{
-	qDebug() << "TaskView::on_queues_finished data:" << queues.result();
-	QJsonDocument jd = queues.json();
-	QJsonArray root = jd.array();
-
-    for (QJsonArray::const_iterator it = root.constBegin(); it != root.constEnd(); ++it) {
-		//qDebug() << "TaskView::on_queues_finished: " << *it;
-		ui->queue->addItem( it->toString() );
-    }
-
-	if( not root.isEmpty() ) ui->submit->setEnabled(true);
 }
 
 

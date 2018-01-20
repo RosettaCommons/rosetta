@@ -3,8 +3,6 @@
 #include <ui/util/exception.h>
 #include <ui/task/project.fwd.h>
 
-
-#include <map>
 #include <memory>
 
 #include <QDataStream>
@@ -27,25 +25,47 @@ TimeStamp get_utc_timestamp();
 int get_retry_interval();
 
 
+QNetworkAccessManager * network_access_manager();
+
+QString server_base_url();
+
+/// deprecated: basic url for Node-base API
+QString server_url();
+
+QString task_api_url();
+
+
+
 /// Simple wrapper around QNetworkReply to model RPC calls
 /// Store results and perform retry if needed
 class NetworkCall final : public QObject
 {
     Q_OBJECT
 public:
-	NetworkCall(QObject * parent=nullptr);
+	using TerminationCodes = std::vector<int>;
 
-	void call(QString const & address, QNetworkAccessManager::Operation operation, QJsonDocument const &post_data=QJsonDocument());
-	void call(QString const & address, QNetworkAccessManager::Operation operation = QNetworkAccessManager::Operation::GetOperation, QByteArray const &post_data=QByteArray(), QString const &content_type="application/octet-stream");
+	NetworkCall(QObject * parent=nullptr);
+	~NetworkCall();
+
+	void set_termination_codes(TerminationCodes const & termination_codes) { termination_codes_ = termination_codes; }
+
+	using CustomHeader = std::pair<QByteArray, QByteArray>;
+
+	void call(QString const & address, QNetworkAccessManager::Operation operation, QJsonDocument const &post_data);
+	void call(QString const & address, QNetworkAccessManager::Operation operation = QNetworkAccessManager::Operation::GetOperation, QByteArray const &post_data=QByteArray(), QString const &content_type="application/octet-stream", std::vector<CustomHeader> const & raw_headers=std::vector<CustomHeader>());
 
 	QByteArray result() const;
-	QJsonDocument json() const;
+	int status_code() const { return status_code_; }
 
+	QJsonDocument result_as_json() const;
 
 Q_SIGNALS:
 	void finished();
 
+public Q_SLOTS:
+
 private Q_SLOTS:
+	void call();
 	void network_operation_is_finished();
 
 private:
@@ -55,8 +75,13 @@ private:
 	QString content_type_;
 	QByteArray post_data_;
 	QNetworkAccessManager::Operation operation_;
+	std::vector<CustomHeader> raw_headers_;
 
-	QPointer<QNetworkReply> reply_;
+	QNetworkReply * reply_ = nullptr;
+
+	TerminationCodes termination_codes_;
+
+	int status_code_ = 0;
 	QByteArray result_;
 };
 
@@ -68,52 +93,6 @@ bool save_project(Project &, bool always_ask_for_file_name);
 
 /// Check if system have enough configuration for Task to be submitted. Right now this include credentials and file-name for project.
 bool check_submit_requirements(Project &project);
-
-
-quint64 const _std_map_QDataStream_magic_number_   = 0xFFF2C04ABB492107;
-
-
-template <typename K, typename T>
-QDataStream &operator<<(QDataStream &out, std::map<K, std::shared_ptr<T> > const&m)
-{
-	out << _std_map_QDataStream_magic_number_;
-
-	out << (qint64) m.size();
-
-	for(auto const & p : m) out << p.first << *p.second;
-
-	return out;
-}
-
-
-template <typename K, typename T>
-QDataStream &operator>>(QDataStream &in, std::map<K, std::shared_ptr<T> > &r)
-{
-	quint64 magic;
-	in >> magic;
-	if( magic != _std_map_QDataStream_magic_number_ ) throw ui::util::BadFileFormatException( QString("Invalid _Node_magic_number_: read %1, was expecting %2...").arg(magic).arg(_std_map_QDataStream_magic_number_) );
-
-	using Map = std::map<K, std::shared_ptr<T> >;
-	Map m;
-
-	qint64 size;
-	in >> size;
-
-	for(int i=0; i<size; ++i) {
-		std::pair<K, std::shared_ptr<T>> v;
-		v.second = std::make_shared<T>();
-
-		in >> v.first >> *v.second;
-
-		m.insert(  std::move(v) );
-	}
-
-	std::swap(m, r);
-	return in;
-}
-
-
-
 
 } // namespace task
 } // namespace ui

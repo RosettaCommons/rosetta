@@ -13,12 +13,17 @@
 
 #include <ui/task/task.h>
 #include <ui/task/util.h>
+#include <ui/util/serialization.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>
 //#include <QVariant>
 #include <QDataStream>
 #include <QFile>
+#include <QDir>
+#include <QTimer>
+
+#include <iterator>
 
 namespace ui {
 namespace task {
@@ -32,6 +37,18 @@ File::File(QString const &file_name)
 {
 	init_from_file(file_name);
 }
+
+File::File(QByteArray const & file_data)
+{
+	data(file_data);
+}
+
+
+File::File(QString const & file_name, QByteArray const & file_data) : file_name_(file_name)
+{
+	data(file_data);
+}
+
 
 File& File::operator=(File&& other) noexcept
 {
@@ -48,8 +65,18 @@ void File::init_from_file(QString const & file_name)
 	file_name_ = file_name;
 	QFile file(file_name_);
     if( file.open(QIODevice::ReadOnly) ) {
-		file_data_ = file.readAll();
+		data( file.readAll() );
 	}
+}
+
+QByteArray File::data() const
+{
+	return qUncompress(file_data_);
+}
+
+void File::data(QByteArray const &file_data)
+{
+	file_data_ = qCompress(file_data);
 }
 
 
@@ -72,7 +99,151 @@ QDataStream &operator>>(QDataStream &in, File &f)
 	return in;
 }
 
+
+
+
+
+
+/*
+NodeTaskSyncer::NodeTaskSyncer(Task *task) : task_(task)
+{
+}
+
+void NodeTaskSyncer::submit(QString const & queue)
+{
+	queue_ = queue;
+	state_ = State::_draft_;
+
+	create_sync_tree();
+	qDebug() << "Task[" << task_id() << "]: Task::submit() Name:" << (project_ ? *project_->find(this) : "''") << " queue:" << queue_;
+
+	connect(root_.get(), SIGNAL(tree_synced()), this, SLOT(draft_to_queued()));
+
+	root_->data_is_fresh(true);
+
+	Q_EMIT task_->changed();
+}
+
+
+
+void NodeTaskSyncer::create_sync_tree()
+{
+	//QUuid task_id = QUuid::createUuid();  /// each distinct submitted Task _must_ have unique id
+
+	root_ = std::make_shared<Node>("task", Node::Flags::data_in | Node::Flags::data_out | Node::Flags::topology_out);
+
+	auto files_node = std::make_shared<Node>(Node::Flags::all);
+	root_->add("files", files_node);
+	//assign_input_node();
+
+
+
+
+	auto script_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
+	root_->add("script", script_node);
+	//assign_script_node();  //script_node_ = script_node;
+
+	auto flags_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
+	root_->add("flags", flags_node);
+	//assign_flags_node();
+
+	auto output_node = std::make_shared<Node>(Node::Flags::topology_in);
+	root_->add("output", output_node);
+	//assign_output_node();
+
+	connect_task_and_nodes();
+}
+*/
+
+
+
+QVariant FileTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (role == Qt::DisplayRole) {
+		if (orientation == Qt::Horizontal) {
+			switch (section) {
+				case 0: return QString("name");
+				case 1: return QString("local path");
+			}
+		} else if (orientation == Qt::Vertical) {
+			return QString::number(section+1);
+		}
+	}
+    return QVariant();
+}
+
+
+int FileTableModel::rowCount(const QModelIndex &/*parent*/) const
+{
+	return rows_.size();
+}
+
+int	FileTableModel::columnCount(const QModelIndex &/*parent*/) const
+{
+	return 2;
+}
+
+Qt::ItemFlags FileTableModel::flags(const QModelIndex &index) const
+{
+    if (!index.isValid()) return Qt::NoItemFlags;
+
+	if( index.column() == 0  and  editable_ ) return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+
+	return QAbstractItemModel::flags(index);
+}
+
+QVariant FileTableModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid()) return QVariant();
+    if (role != Qt::DisplayRole && role != Qt::EditRole) return QVariant();
+
+	//if( index.column() == 0 ) {
+	//return QStringLiteral("r%1 c%2").arg(index.row()).arg(index.column());
+
+	if( index.row() < static_cast<int>( rows_.size() ) ) {
+
+		if( index.column() == 0 ) return rows_[index.row()].name;
+		else if ( index.column() == 1 ) return rows_[index.row()].path;
+	}
+	return QVariant();
+}
+
+bool FileTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (role != Qt::EditRole) return false;
+
+	QString s = value.toString();
+	if( not s.isEmpty()  and  static_cast<std::size_t>(index.row()) < rows_.size() ) {
+		QString previous_value = rows_[index.row()].name;
+		//QTimer::singleShot(0, this, [=]() { Q_EMIT this->rename_file(previous_value, s); } );  //SLOT( rename(previous_value, s) ) );
+		Q_EMIT this->rename_file(previous_value, s);
+	}
+
+    return false;
+}
+
+
+void FileTableModel::update_from_task(Task const &task)
+{
+	beginResetModel();
+
+	editable_ = task.state() == Task::State::_none_;
+
+	QDir project_path;
+	if( auto project = task.project() ) project_path = QDir( QFileInfo( project->file_name() ).dir() );
+
+	auto const & files = task.files();
+
+	rows_.clear();
+	rows_.reserve( files.size() );
+	for(auto const & it : files) rows_.push_back( Row{it.first, project_path.relativeFilePath( it.second->file_name() ) } );
+
+	endResetModel();
+}
+
+
 static std::map<QString, Task::State> const _String_to_Task_State_ = {
+	{"none",     Task::State::_none_},
 	{"draft",    Task::State::_draft_},
 	{"queued",   Task::State::_queued_},
 	{"running",  Task::State::_running_},
@@ -98,17 +269,67 @@ Task::State Task::from_string(QString const &s)
 }
 
 
-//Task::Task(QUuid _node_id) : Node(_node_id)
-Task::Task(QString const &description) : description_(description)
+Task::Task() : syncer_(this)
 {
-	//input(); // forcing creation in input node
-	//output(); // forcing creation in output node
+	app_ = "docking_protocol";
+	version_ = "master";
+	connect(&files_model_, SIGNAL( rename_file(QString const &, QString const &) ), this, SLOT( rename_file(QString const &, QString const &) ) );
 }
+
+//Task::Task(QUuid _node_id) : Node(_node_id)
+// Task::Task(QString const &description) : description_(description)
+// {
+// 	//input(); // forcing creation in input node
+// 	//output(); // forcing creation in output node
+// }
 
 Task::~Task()
 {
 	//qDebug() << "Task::~Task()";
 }
+
+void Task::add_file(QString const &name, FileSP const &file)
+{
+	files_[name] = file;
+	files_model_.update_from_task(*this);
+}
+
+/// delete file from task, return true if file was in task files
+bool Task::delete_file(QString const &name)
+{
+	auto it = files_.find(name);
+
+	if( it == files_.end() ) return false;
+
+	files_.erase(it);
+	files_model_.update_from_task(*this);
+
+	return true;
+}
+
+
+void Task::name(QString const &n)
+{
+	if( name_ != n ) { name_ = n; Q_EMIT changed(); }
+}
+
+void Task::app(QString const &a)
+{
+	if( app_ != a ) { app_ = a; Q_EMIT changed(); }
+}
+
+
+void Task::version(QString const &v)
+{
+	if( version_ != v ) { version_ = v; Q_EMIT changed(); }
+}
+
+void Task::flags(QString const &f)
+{
+	if( flags_ != f ) { flags_ = f; Q_EMIT changed(); }
+}
+
+
 
 void Task::description(QString const &d)
 {
@@ -126,220 +347,100 @@ void Task::nstruct(int n)
 	}
 }
 
+
 void Task::subscribe()
 {
-	// if(auto sp = output_node_.lock() ) {
-	// 	qDebug() << "Task[" << task_id() << "]: Name:" << (project_ ? *project_->find(this) : "''") << " Task::subscribe";
-	// 	Updater::get().subscribe( sp.get() );
+	// if(root_) {
+	// 	qDebug() << "Task[" << task_id() << "]: Name:" << name_ << " Task::subscribe";
+	// 	Updater::get().subscribe( root_.get() );
 	// }
-	if(root_) {
-		qDebug() << "Task[" << task_id() << "]: Name:" << (project_ ? *project_->find(this) : "''") << " Task::subscribe";
-		Updater::get().subscribe( root_.get() );
-	}
+	syncer_.subscribe();
 }
 
-
-// void Task::input(File &&input)
-// {
-// 	input_ = std::move(input);
-// }
-
-// File &Task::input()
-// {
-// 	return input_;
-// }
-
-// void Task::script(File &&script)
-// {
-// 	script_ = std::move(script);
-// }
-
-// File &Task::script()
-// {
-// 	return script_;
-// }
-
-// void Task::script(File &&script)
-// {
-// 	script_ = std::move(script);
-// }
-
-// File &Task::script()
-// {
-// 	return script_;
-// }
-
-
-// /// return pointer to 'input' node which will contain all input data
-// Node &Task::input()
-// {
-// 	return at(_input_key_);
-// }
-// /// return pointer to 'output' node which will contain all input data
-// Node &Task::output()
-// {
-// 	return at(_output_key_);
-// }
-
 /// return task UUID if task was already submitted other wise return NULL UUID
-QUuid Task::task_id() const
+QString Task::task_id() const
 {
-	if(root_) return root_->node_id();
-	else return QUuid();
+	// if(root_) return root_->node_id();
+	// else return QUuid();
+	return task_id_.toString();
 }
 
 bool Task::is_syncing() const
 {
-	if(root_) return root_->syncing(true);
-	return false;
+	return syncing_progress_.first != syncing_progress_.second;
 }
 
 // return <current_value, max_value> for syncing operation progress
 std::pair<int, int> Task::syncing_progress() const
 {
-	if(root_) {
-		return std::make_pair(root_->syncing(true), root_->tree_size());
-	}
-	else return std::make_pair(0, 0);
+	return syncing_progress_;
 }
 
+// set <current_value, max_value> for syncing operation progress
+void Task::syncing_progress(int value, int max)
+{
+	auto syncing_progress = std::make_pair(value, max);
+	if( syncing_progress_ != syncing_progress ) {
+		syncing_progress_ = syncing_progress;
+		Q_EMIT syncing();
+	}
+}
+
+void Task::syncing_progress_advance(int value)
+{
+	syncing_progress(syncing_progress_.first + value, syncing_progress_.second);
+}
 
 
 void Task::submit(QString const & queue)
 {
-	queue_ = queue;
-	state_ = State::_draft_;
+	// queue_ = queue;
+	// state_ = State::_draft_;
 
-	create_sync_tree();
-	qDebug() << "Task[" << task_id() << "]: Task::submit() Name:" << (project_ ? *project_->find(this) : "''") << " queue:" << queue_;
+	// create_sync_tree();
+	// qDebug() << "Task[" << task_id() << "]: Task::submit() Name:" << name_ << " queue:" << queue_;
 
-	connect(root_.get(), SIGNAL(tree_synced()), this, SLOT(draft_to_queued()));
+	// connect(root_.get(), SIGNAL(tree_synced()), this, SLOT(draft_to_queued()));
 
-	root_->data_is_fresh(true);
+	// root_->data_is_fresh(true);
 
-	Q_EMIT changed();
+	// Q_EMIT changed();
+
+	syncer_.submit(queue);
 }
 
 
-void Task::draft_to_queued(void)
+void Task::rename_file(QString const &previous_value, QString const &new_value)
 {
-	if( root_ )  {
-		qDebug() << "Task[" << task_id() << "]: draft_to_queued()...";
-		disconnect(root_.get(), SIGNAL(tree_synced()), this, SLOT(draft_to_queued()) );
+	{ qDebug() << "Task::rename_file: " << previous_value << " -> " << new_value; }
 
-		state_ = State::_queued_;
-
-		connect(root_.get(), SIGNAL(synced()), this, SLOT(post_submit()));
-		root_->data_is_fresh(false);
-
-		if( project_ and !project_->file_name().isEmpty() ) save_project(*project_, /* always_ask_for_file_name = */ false);
+	auto it = files_.find(previous_value);
+	if( it != files_.end()  and  (not new_value.isEmpty() ) ) {
+		auto file = it->second;
+		files_.erase(it);
+		files_.emplace(new_value, file);
+		files_model_.update_from_task(*this);
 	}
 }
-
-void Task::post_submit(void)
-{
-	qDebug() << "Task[" << task_id() << "]: post_submit()...";
-	disconnect(root_.get(), SIGNAL(synced()), this, SLOT(post_submit()));
-	Q_EMIT submitted();
-	Q_EMIT changed();
-	subscribe();
-}
-
-
-void Task::create_sync_tree()
-{
-	//QUuid task_id = QUuid::createUuid();  /// each distinct submitted Task _must_ have unique id
-
-	root_ = std::make_shared<Node>("task", Node::Flags::data_in | Node::Flags::data_out | Node::Flags::topology_out/*, task_id*/);
-
-	auto input_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
-	root_->add("input", input_node);
-	//assign_input_node();
-
-	auto script_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
-	root_->add("script", script_node);
-	//assign_script_node();  //script_node_ = script_node;
-
-	auto flags_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
-	root_->add("flags", flags_node);
-	//assign_flags_node();
-
-	auto output_node = std::make_shared<Node>(Node::Flags::topology_in);
-	root_->add("output", output_node);
-	//assign_output_node();
-
-	connect_task_and_nodes();
-}
-
-void Task::connect_task_and_nodes()
-{
-	if(root_) {
-		TaskQP qtask(this);
-
-		root_->get_data_callback( [qtask]() { if(qtask) return qtask->task_data(); else return QJsonValue(); } );
-		root_->set_data_callback( [qtask](QJsonValue const &ba) { if(qtask) return qtask->task_data(ba); } );
-
-		input_node_ = root_->leaf("input");
-		if(auto input_node = input_node_.lock() ) input_node->get_data_callback( [qtask]() -> QJsonValue { if(qtask) return QJsonValue( QLatin1String( qtask->input_.data().toBase64() ) ); else return QJsonValue(); } );
-
-		script_node_ = root_->leaf("script");
-		if(auto script_node = script_node_.lock() )  script_node->get_data_callback( [qtask]() -> QJsonValue { if(qtask) return QJsonValue( QLatin1String( qtask->script_.data().toBase64() ) ); else return QJsonValue(); } );
-
-		flags_node_ = root_->leaf("flags");
-		if(auto flags_node = flags_node_.lock() ) flags_node->get_data_callback( [qtask]() -> QJsonValue { if(qtask) return QJsonValue( QLatin1String( qtask->flags_.data().toBase64() ) ); else return QJsonValue(); } );
-
-		output_node_ = root_->leaf("output");
-		if(auto output_node = output_node_.lock() ) {
-			output_node->topology_updated_callback(
-				[qtask](Node const *node, std::vector<QString> const & new_keys, std::vector<QString> const & errased_keys) -> void
-				{ if(qtask) qtask->output_topology_updated(node, new_keys, errased_keys); }
-		    );
-			// connect(output_node.get(), SIGNAL(        topology_updated(Node const *, std::vector<QString> const & , std::vector<QString> const & ) ),
-			// 		this,                SLOT( output_topology_updated(Node const *, std::vector<QString> const & , std::vector<QString> const & ) ));
-		}
-
-		connect(root_.get(), SIGNAL(tree_synced()), this, SIGNAL(changed()));
-
-	} else {
-		input_node_.reset();
-		script_node_.reset();
-		flags_node_.reset();
-		output_node_.reset();
-	}
-}
-
-/*void Task::assign_input_node()
-{
-	if(root_) input_node_ = root_->leaf("input");
-	else input_node_.reset();
-}
-void Task::assign_script_node()
-{
-	if(root_) script_node_ = root_->leaf("script");
-	else script_node_.reset();
-}
-void Task::assign_flags_node()
-{
-	if(root_) flags_node_ = root_->leaf("flags");
-	else flags_node_.reset();
-}
-void Task::assign_output_node()
-{
-	if(root_) output_node_ = root_->leaf("output");
-	else output_node_.reset();
-}*/
 
 QJsonValue Task::task_data()
 {
 	//qDebug() << "Task[" << task_id() << "]: task_data()...";
 	QJsonObject r;
+	r["name"] = name_;
 	r["state"] = to_string(state_);
 	r["queue"] = queue_;
 	r["description"] = description_;
 	r["nstruct"] = nstruct_;
+	r["flags"] = flags_;
+	r["app"] = app_;
+	r["version"] = version_;
 
 	//QJsonDocument jd = QJsonDocument::fromVariant(r);
 	//return jd.toJson(QJsonDocument::Compact);
+
+	//qDebug() << "Task[" << task_id() << "]: task_data():" << r;
+
 	return r;
 }
 
@@ -349,6 +450,15 @@ void Task::task_data(QJsonValue const &jv)
 
 	bool changed = false;
 	QJsonObject const o = jv.toObject();
+
+	auto nm = o["name"];
+	if( nm.isString() ) {
+		auto name = nm.toString();
+		if( name != name_) {
+			name_ = name;
+			changed = true;
+		}
+	}
 
 	QJsonValue st = o["state"];
 	if( st.isString() ) {
@@ -387,81 +497,92 @@ void Task::task_data(QJsonValue const &jv)
 		}
 	}
 
+	auto fl = o["flags"];
+	if( fl.isString() ) {
+		auto flags = fl.toString();
+		if( flags != flags_) {
+			flags_ = flags;
+			changed = true;
+		}
+	}
+
+	auto ve = o["version"];
+	if( ve.isString() ) {
+		auto version = ve.toString();
+		if( version != version_) {
+			version_ = version;
+			changed = true;
+		}
+	}
+
+	auto ap = o["app"];
+	if( ap.isString() ) {
+		auto app = ap.toString();
+		if( app != app) {
+			app_ = app;
+			changed = true;
+		}
+	}
+
+	auto ti = o["task_id"];
+	if( ti.isDouble() ) {
+		auto task_id = ti.toInt();
+		if( task_id != task_id_) {
+			task_id_ = task_id;
+			changed = true;
+		}
+	}
+
+
 	if(changed) Q_EMIT this->changed();
 }
 
-void Task::output_topology_updated(Node const *, std::vector<QString> const & new_keys, std::vector<QString> const & errased_keys)
-{
-	qDebug() << "Task::output_topology_updated: New keys: " << new_keys << " Errased keys:" << errased_keys;
+// bool Task::operator ==(Task const &rhs) const
+// {
+// 	if( state_ != rhs.state_ ) return false;
 
-	if(auto output_node = output_node_.lock() ) {
-		TaskQP qtask(this);
+// 	if( flags_ != rhs.flags_ ) return false;
 
-		for(auto const &k : errased_keys) output_.erase(k);
+// 	if( name_ != rhs.name_ ) return false;
 
-		for(auto const &k : new_keys) {
-			if(NodeSP leaf = output_node->leaf(k) ) {
-				FileSP file_sp = std::make_shared<File>();
-				file_sp->file_name(k);
-				output_[k] = file_sp;
+// 	if( description_ != rhs.description_ ) return false;
 
-				qDebug() << "Task::output_topology_updated: setting set-data-callback for node: " << leaf->node_id();
-				leaf->set_data_callback( [qtask, file_sp](QJsonValue const &jv) {
-						//qDebug() << "Data update for output key(jv):" << jv;
-						auto ba = QByteArray::fromBase64( jv.toVariant().toByteArray() );
+// 	if( nstruct_ != rhs.nstruct_ ) return false;
 
-						qDebug() << "Data update for output key:" << file_sp->file_name() << "  data: " << ba.left(64) << ( ba.size() > 64 ? "..." : "");
-						if(qtask) {
-							file_sp->data(ba);
-							Q_EMIT qtask->changed();
-						}
-					} );
+// 	// if( bool(root_) xor bool(rhs.root_) ) return false;
+// 	// if( bool(root_) and bool(rhs.root_)  and  *root_ != *rhs.root_ ) return false;
 
-			}
-		}
-	}
-}
+// 	if( syncer_ != rhs.syncer_ ) return false;
 
+// 	return true;
+// }
 
-bool Task::operator ==(Task const &rhs) const
-{
-	if( state_ != rhs.state_ ) return false;
-
-	if( description_ != rhs.description_ ) return false;
-
-	if( script_ != rhs.script_ ) return false;
-
-	if( bool(root_) xor bool(rhs.root_) ) return false;
-	if( bool(root_) and bool(rhs.root_)  and  *root_ != *rhs.root_ ) return false;
-
-	return true;
-}
-
-quint64 const _Task_magic_number_   = 0xFFF2D9FACD279EE1;
 quint32 const _Task_stream_version_ = 0x00000001;
 
 QDataStream &operator<<(QDataStream &out, Task const&t)
 {
 	out.setVersion(QDataStream::Qt_5_6);
 
-	out << _Task_magic_number_;
+	out << ui::util::_Task_magic_number_;
 	out << _Task_stream_version_;
 
 	using I = std::underlying_type<Task::State>::type;
 	qint32 state = static_cast<I>(t.state_);
 	out << state;
 
+	out << t.task_id_;
+	out << t.name_;
+	out << t.app_;
+	out << t.version_;
+	out << t.nstruct_;
+	out << t.flags_;
 	out << t.description_;
 
-	out << t.input_;
-	out << t.script_;
-	out << t.flags_;
-	out << t.nstruct_;
+	out << t.queue_;
 
-	out << t.output_;
+	out << t.files_;
 
-	out << (t.root_ != nullptr);
-    if( t.root_ != nullptr ) out << *t.root_;
+	out << t.syncer_;
 
 	return out;
 }
@@ -473,39 +594,34 @@ QDataStream &operator>>(QDataStream &in, Task &t)
 
 	quint64 magic;
 	in >> magic;
-	if( magic != _Task_magic_number_ ) throw ui::util::BadFileFormatException();  //TaskFileFormatException();
+	if( magic != ui::util::_Task_magic_number_ ) throw ui::util::BadFileFormatException( QString("Invalid _Task_magic_number_: read %1, was expecting %2...").arg(magic).arg(ui::util::_Task_magic_number_) );
 
 	quint32 version;
 	in >> version;
-	if( version != _Task_stream_version_ ) throw ui::util::BadFileFormatException();  // TaskBadFileFormatException();
+	if( version != _Task_stream_version_ ) throw ui::util::BadFileFormatException( QString("Invalid _Task_stream_version_: read %1, was expecting %2...").arg(magic).arg(_Task_stream_version_) );
 
 	qint32 state;
 	in >> state;
 	t.state_ = static_cast<Task::State>(state);
 
+	in >> t.task_id_;
+	in >> t.name_;
+	in >> t.app_;
+	in >> t.version_;
+	in >> t.nstruct_;
+	in >> t.flags_;
 	in >> t.description_;
 
-	in >> t.input_;
-	in >> t.script_;
-	in >> t.flags_;
-	in >> t.nstruct_;
+	in >> t.queue_;
 
-	in >> t.output_;
+	in >> t.files_;
+	t.files_model_.update_from_task(t);
 
-	bool root;
-	in >> root;
-	if(root) {
-		t.root_ = std::make_shared<Node>();
-		in >> *t.root_;
+	in >> t.syncer_;
 
-		t.connect_task_and_nodes();
-		// t.assign_input_node();
-		// t.assign_script_node();
-		// t.assign_flags_node();
-		// t.assign_output_node();
+	// moved to TaskSyncer operator>>  if( t.state_ != Task::State::_none_ ) t.subscribe();
 
-		if( t.state_ != Task::State::_draft_ ) t.subscribe();
-	}
+	Q_EMIT t.changed();
 
 	return in;
 }

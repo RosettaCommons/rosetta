@@ -20,10 +20,10 @@ int main(int argc, char *argv[])
 
     protocols::init::init(argc, argv);
 
-	{ // creating dummy pose object so later we can create Pose in async mode
-		core::pose::Pose p;
-		core::import_pose::pose_from_pdbstring(p, "ATOM     17  N   ILE A   1      16.327  47.509  23.466  1.00  0.00\n");
-	}
+	// { // creating dummy pose object so later we can create Pose in async mode
+	// 	core::pose::Pose p;
+	// 	core::import_pose::pose_from_pdbstring(p, "ATOM     17  N   ILE A   1      16.327  47.509  23.466  1.00  0.00\n");
+	// }
 
     //ui::ui_lib_test::test();
 

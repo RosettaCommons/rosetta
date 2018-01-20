@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QTimer>
+#include <QAuthenticator>
 
 #include <ctime>
 
@@ -25,7 +26,7 @@ TimeStamp get_utc_timestamp()
 int get_retry_interval()
 {
 	const double desired_interval = 5;
-	const double series_length = 5;
+	const double series_length = 32;
 
 	static /*thread_local*/ double current_interval = desired_interval;
 	static /*thread_local*/ double average_interval = desired_interval;
@@ -50,13 +51,62 @@ int get_retry_interval()
 	return current_interval;
 }
 
+
+QNetworkAccessManager * network_access_manager()
+{
+	static QSharedPointer<QNetworkAccessManager> manager = QSharedPointer<QNetworkAccessManager>(new QNetworkAccessManager);
+
+	QAbstractSocket::connect(manager.data(), &QNetworkAccessManager::authenticationRequired, /*SIGNAL( authenticationRequired(QNetworkReply *, QAuthenticator *) )*/
+							 [=](QNetworkReply * reply, QAuthenticator * authenticator) {
+								 qDebug() << "authenticationRequired! " << reply->url().host();
+
+								 //UserCredentials c = get_user_credentials( reply->url().host() );
+								 config::UserCredentials c = config::get_user_credentials();
+								 authenticator->setUser(c.user);
+								 authenticator->setPassword(c.password);
+							 });
+
+	return manager.data();
+}
+
+// QString const data_url = "http://127.0.0.1:64078/data";
+// QString const node_url = "http://127.0.0.1:64078/node";
+// QString const meta_url = "http://127.0.0.1:64078/meta";
+// QString const sync_url = "http://127.0.0.1:64078/sync";
+// QString const updates_url = "http://127.0.0.1:64078/updates";
+
+QString server_base_url()
+{
+	return "http://ui.graylab.jhu.edu/";
+}
+
+QString server_url()
+{
+	//return "http://127.0.0.1:8082/api.node";
+	return server_base_url() + "api.node";
+}
+
+QString task_api_url()
+{
+	//return "http://127.0.0.1:8082/api.node";
+	return server_base_url() + "api";
+}
+
+
 NetworkCall::NetworkCall(QObject * parent) : QObject(parent)
 {}
+
+NetworkCall::~NetworkCall()
+{
+	//qDebug() << "NetworkCall::~NetworkCall()...";
+	abort_network_operation();
+}
+
 
 void NetworkCall::abort_network_operation()
 {
 	if(reply_) {
-		//qDebug() << "NetworkCall::abort_network_operation ABORTING previous request!";
+		qDebug() << "NetworkCall::abort_network_operation ABORTING previous request!";
 		disconnect(reply_, SIGNAL(finished()), 0, 0); // we have to disconnet 'finished' signal because call to abort() will issue 'finished'
 		Q_EMIT reply_->abort();
 		reply_->deleteLater();
@@ -66,24 +116,39 @@ void NetworkCall::abort_network_operation()
 
 void NetworkCall::call(QString const & address, QNetworkAccessManager::Operation operation, QJsonDocument const &post_json_data)
 {
+	//qDebug() << "NetworkCall::call: post_json_data:" << post_json_data;
 	call(address, operation, post_json_data.toJson(QJsonDocument::Compact), "application/json; charset=utf-8");
 }
 
-
-void NetworkCall::call(QString const & address, QNetworkAccessManager::Operation operation, QByteArray const &post_data, QString const &content_type)
+void NetworkCall::call(QString const & address, QNetworkAccessManager::Operation operation, QByteArray const &post_data, QString const &content_type, std::vector<CustomHeader> const & raw_headers)
 {
+	address_ = address;  operation_ = operation;  post_data_ = post_data;  content_type_ = content_type;  raw_headers_ = raw_headers;
+	call();
+}
+
+void NetworkCall::call()
+{
+	//qDebug() << "NetworkCall::call to address:" << address_ << ", " << operation_;
+
 	abort_network_operation();
 	result_.clear();
 
-	address_ = address;  operation_ = operation;  post_data_ = post_data;  content_type_ = content_type;
-
-    QUrl url( server_url() + '/' + address);
+    QUrl url(address_);
 	QNetworkRequest request(url);
-	request.setHeader( QNetworkRequest::ContentTypeHeader, content_type);
+	request.setHeader( QNetworkRequest::ContentTypeHeader, content_type_);
 
-	if      ( operation == QNetworkAccessManager::Operation::GetOperation )    reply_ = network_access_manager()->get           (request);
-	else if ( operation == QNetworkAccessManager::Operation::PostOperation )   reply_ = network_access_manager()->post          (request, post_data);
-	else if ( operation == QNetworkAccessManager::Operation::DeleteOperation ) reply_ = network_access_manager()->deleteResource(request);
+	for(auto const & h : raw_headers_ ) request.setRawHeader(h.first, h.second);
+
+	if( address_.startsWith( server_base_url() ) ) {
+		config::UserCredentials c = config::get_user_credentials();
+		QByteArray data = (c.user + ":" + c.password).toLocal8Bit().toBase64();
+		QString header = "Basic " + data;
+		request.setRawHeader("Authorization", header.toLocal8Bit());
+	}
+
+	if      ( operation_ == QNetworkAccessManager::Operation::GetOperation )    reply_ = network_access_manager()->get           (request);
+	else if ( operation_ == QNetworkAccessManager::Operation::PostOperation )   reply_ = network_access_manager()->post          (request, post_data_);
+	else if ( operation_ == QNetworkAccessManager::Operation::DeleteOperation ) reply_ = network_access_manager()->deleteResource(request);
 	else Q_ASSERT_X(false, "NetworkCall::call", "Unknown operation!");
 
 	//connect(reply_, &QNetworkReply::finished, this, &NetworkCall::network_operation_is_finished); // does not work on old GCC compilers
@@ -93,31 +158,52 @@ void NetworkCall::call(QString const & address, QNetworkAccessManager::Operation
 
 void NetworkCall::network_operation_is_finished()
 {
+	//qDebug() << "NetworkCall::network_operation_is_finished()";
 	if(reply_) {
- 		reply_->deleteLater();
-
+		int status = -1;
 		QVariant qv_status_code = reply_->attribute( QNetworkRequest::HttpStatusCodeAttribute );
 		if( qv_status_code.isValid() ) {
-			// if( int status = qv_status_code.toInt()) {
-			// 	//qDebug() << "Node::upload_finished for " << node_id_ << " status:" << status;
-			// }
+			if( (status = qv_status_code.toInt() ) ) {
+				//qDebug() << "NetworkCall::network_operation_is_finished with code:" << status;
+				status_code_ = status;
+			}
 		}
 
         if( reply_->error() == QNetworkReply::NoError ) {
 
 			result_ = reply_->readAll();
-			reply_ = nullptr;
-			//qDebug() << "NetworkCall::network_operation_is_finished data: " << data_;
+			//qDebug() << "NetworkCall::network_operation_is_finished data: " << result_;
 
+			reply_->deleteLater();
+			reply_ = nullptr;
 			Q_EMIT finished();
 
 		} else {
-            qDebug() << "NetworkCall::call with error: " << reply_->error() << " reply:" << reply_->readAll() << " aborting...";
+			auto it = std::find(termination_codes_.cbegin(), termination_codes_.cend(), status);
+			if( it != termination_codes_.cend() ) {
+				qDebug() << "NetworkCall::network_operation_is_finished error code:" << status << " it is in termination_codes[...], teminating NetworkCall...";
+
+				result_ = reply_->readAll();
+				reply_->deleteLater();
+				reply_ = nullptr;
+				Q_EMIT finished();
+
+				return;
+			}
+
+			// if( qv_status_code.isValid() ) {
+			// 	if( int status = qv_status_code.toInt() ) {
+			// 		qDebug() << "NetworkCall::network_operation_is_finished error code:" << status;
+			// 	}
+			// }
+            qDebug() << "NetworkCall::call with error when accessing:" << address_ << " operation:" << operation_ << " content-type:" << content_type_ << " reply:" << reply_->error() << " reply:" << reply_->readAll() << " retrying...";
 
             //qDebug() << "NetworkCall::call with error: " << reply_->error() << " reply:" << reply_->readAll() << " initiating retry...";
+
+			reply_->deleteLater();
 			reply_ = nullptr;
 
-			QTimer::singleShot(get_retry_interval()*1000.0, [this]() { call(address_, operation_, post_data_); });
+			QTimer::singleShot(get_retry_interval()*1000.0, this, SLOT( call() ) );
 		}
  	}
 }
@@ -127,7 +213,7 @@ QByteArray NetworkCall::result() const
 	return result_;
 }
 
-QJsonDocument NetworkCall::json() const
+QJsonDocument NetworkCall::result_as_json() const
 {
 	//QJsonDocument jd = QJsonDocument::fromJson(data);
 	//QJsonObject root = jd.object();

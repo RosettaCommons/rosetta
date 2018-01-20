@@ -14,46 +14,18 @@
 #include <ui/task/node.h>
 
 #include <ui/config/util.h>
+#include <ui/util/serialization.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTimer>
 #include <QDataStream>
-#include <QAuthenticator>
 
 #include <ctime>
 #include <algorithm>
 
 namespace ui {
 namespace task {
-
-QNetworkAccessManager * network_access_manager()
-{
-	static QSharedPointer<QNetworkAccessManager> manager = QSharedPointer<QNetworkAccessManager>(new QNetworkAccessManager);
-
-	QAbstractSocket::connect(manager.data(), &QNetworkAccessManager::authenticationRequired, /*SIGNAL( authenticationRequired(QNetworkReply *, QAuthenticator *) )*/
-							 [=](QNetworkReply * reply, QAuthenticator * authenticator) {
-								 qDebug() << "authenticationRequired! " << reply->url().host();
-
-								 //UserCredentials c = get_user_credentials( reply->url().host() );
-								 config::UserCredentials c = config::get_user_credentials();
-								 authenticator->setUser(c.user);
-								 authenticator->setPassword(c.password);
-							 });
-
-	return manager.data();
-}
-
-// QString const data_url = "http://127.0.0.1:64078/data";
-// QString const node_url = "http://127.0.0.1:64078/node";
-// QString const meta_url = "http://127.0.0.1:64078/meta";
-// QString const sync_url = "http://127.0.0.1:64078/sync";
-// QString const updates_url = "http://127.0.0.1:64078/updates";
-
-QString server_url()
-{
-	return "http://ui.graylab.jhu.edu/api";
-}
 
 Updater & Updater::get()
 {
@@ -414,6 +386,8 @@ int Node::tree_size() const
 
 void Node::abort_network_operation()
 {
+	syncing_ = false;
+
 	if(reply_) {
 		qDebug() << "Node::abort_network_operation ABORTING previous request!";
 		disconnect(reply_, SIGNAL(finished()), 0, 0); // we have to disconnet 'finished' signal because call to abort() will issue 'finished'
@@ -423,17 +397,17 @@ void Node::abort_network_operation()
 	}
 }
 
-int Node::syncing(bool recursive) const
+int Node::is_syncing(bool recursive) const
 {
 	int r = 0;
-	if(reply_) {
+	if(syncing_) {
 		//qDebug() << "Node " << node_id_ << " is still syncing...";
 		++r;
 	}
 
 	if(recursive) {
 		for(auto const &l : leafs_) {
-			r += l.second->syncing(true);
+			r += l.second->is_syncing(true);
 		}
 	}
 	return r;
@@ -444,8 +418,10 @@ void Node::node_synced()
 	if( parent_ ) parent_->node_synced();
 	else {
 		//qDebug() << "node_synced: root:" << node_id_;
-		if( not syncing(true) ) Q_EMIT tree_synced();
+		if( not is_syncing(true) ) Q_EMIT tree_synced();
 	}
+
+	Q_EMIT syncing();
 }
 
 
@@ -495,6 +471,8 @@ bool Node::operator ==(Node const &rhs) const
 void Node::data_is_fresh(bool recursive)
 {
 	abort_network_operation();
+
+	syncing_ = true;
 
     local_modification_time_ = get_utc_timestamp();
 
@@ -568,13 +546,14 @@ void Node::data_is_fresh(bool recursive)
 		}
 	}
 	*/
+
+	Q_EMIT syncing();
 }
 
 void Node::data_upload_finished(void)
 {
 	if(reply_) {
- 		reply_->deleteLater();
-		//qDebug() << "Node::data_upload_finished for " << node_id_;
+ 		//qDebug() << "Node::data_upload_finished for " << node_id_;
 
 		QVariant qv_status_code = reply_->attribute( QNetworkRequest::HttpStatusCodeAttribute );
 		if( qv_status_code.isValid() ) {
@@ -588,18 +567,23 @@ void Node::data_upload_finished(void)
 
 			if(recursive_) {
 				for(auto &l : leafs_) {
-					if( not l.second->syncing() ) {
+					if( not l.second->is_syncing() ) {
 						Q_EMIT l.second->data_is_fresh(true);
 					}
 				}
 			}
 
+			reply_->deleteLater();
 			reply_ = nullptr;
+
+			syncing_ = false;
 			Q_EMIT synced();
 			node_synced();
 
 		} else {
             qDebug() << "Node::upload_finished with error: " << reply_->error() << " reply:" << reply_->readAll() << " initiating retry...";
+
+			reply_->deleteLater();
 			reply_ = nullptr;
 
 			//QTimer::singleShot(get_retry_interval()*1000.0, this, SLOT(data_is_fresh()));
@@ -615,7 +599,9 @@ void Node::data_is_outdated()
 	qDebug() << "Node::data_is_outdated for" << node_id_;
 	abort_network_operation();
 
-        //server_modification_time = modification_time;
+	syncing_ = true;
+
+	//server_modification_time = modification_time;
 
     QUrl url( server_url() + "/node/"  +/* project_id().toString().mid(1, 36) + '/' + */ node_id_.toString().mid(1, 36) );
 
@@ -628,20 +614,19 @@ void Node::data_is_outdated()
     connect(reply_, SIGNAL(finished()), this, SLOT(data_download_finished()));
 
     if( reply_->isFinished() ) { data_download_finished(); }
+
+	Q_EMIT syncing();
 }
 
 
 void Node::data_download_finished(void)
 {
 	if(reply_) {
- 		reply_->deleteLater();
-
 		qDebug() << "Node::data_download_finished for" << node_id_;
 
         if( reply_->error() == QNetworkReply::NoError ) {
 			//reply_->deleteLater();
 			QByteArray data = reply_->readAll();
-			reply_ = nullptr;
 			//qDebug() << "Node::data_download_finished data: " << data;
 
 			QJsonDocument jd = QJsonDocument::fromJson(data);
@@ -651,17 +636,27 @@ void Node::data_download_finished(void)
 
 			update_from_json(root, true);
 
+			syncing_ = false;
+
+			reply_->deleteLater();
+			reply_ = nullptr;
+
 			node_synced();
 			Q_EMIT synced();
 		} else {
 			if( reply_->error() == QNetworkReply::ContentGoneError ) { // node is no longer there...
 				qDebug() << "Node::data_download_finished with error: " << reply_->error() << " aborting...";
+
+				reply_->deleteLater();
 				reply_ = nullptr;
 
+				syncing_ = false;
 				node_synced();
 				Q_EMIT synced();
 			} else {
 				qDebug() << "Node::data_download_finished with error: " << reply_->error() << " initiating retry...";
+
+				reply_->deleteLater();
 				reply_ = nullptr;
 
 				QTimer::singleShot(0, this, SLOT( data_is_outdated() ));
@@ -800,19 +795,15 @@ void Node::update_from_json(QJsonObject const &root, bool forced)
 }
 
 
-
-
-
-
-quint64 const _Node_magic_number_   = 0x1A5CD6BF94D5E57F;
 quint32 const _Node_stream_version_ = 0x00000001;
+
 
 
 QDataStream &operator<<(QDataStream &out, Node const&n)
 {
 	out.setVersion(QDataStream::Qt_5_6);
 
-	out << _Node_magic_number_;
+	out << util::_Node_magic_number_;
 	out << _Node_stream_version_;
 
 	out << n.type_;
@@ -837,7 +828,7 @@ QDataStream &operator>>(QDataStream &in, Node &n)
 
 	quint64 magic;
 	in >> magic;
-	if( magic != _Node_magic_number_ ) throw ui::util::BadFileFormatException( QString("Invalid _Node_magic_number_: read %1, was expecting %2...").arg(magic).arg(_Node_magic_number_) );  // NodeFileFormatException();
+	if( magic != util::_Node_magic_number_ ) throw ui::util::BadFileFormatException( QString("Invalid _Node_magic_number_: read %1, was expecting %2...").arg(magic).arg(util::_Node_magic_number_) );  // NodeFileFormatException();
 
 	quint32 version;
 	in >> version;
@@ -851,7 +842,8 @@ QDataStream &operator>>(QDataStream &in, Node &n)
 
 	in >> n.node_id_;
 
-	in >> n.leafs_;
+	using namespace ui::util;
+	//in >> n.leafs_;
 
 	for( auto & l : n.leafs_ ) l.second->parent_ = &n;
 
