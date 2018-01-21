@@ -369,6 +369,9 @@ public:
 	void set_output_filters( bool const setting ){ output_filters_ = setting; }
 	bool output_filters() const { return output_filters_; }
 
+	void set_save_times( bool const setting ){ save_times_ = setting; }
+	bool save_times() const { return save_times_; }
+
 private:
 
 	Size rounds_;
@@ -485,6 +488,7 @@ private:
 	std::string align_pdb_;
 
 	Size symm_hack_arity_ = 1;
+	bool save_times_;
 };
 
 } //options

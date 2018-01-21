@@ -60,6 +60,7 @@
 #include <basic/database/open.hh>
 
 #include <basic/Tracer.hh>
+#include <ctime>
 #include <utility/tools/make_vector.hh>
 
 static basic::Tracer TR( "protocols.rna.denovo.RNA_FragmentMonteCarlo" );
@@ -130,6 +131,8 @@ RNA_FragmentMonteCarlo::initialize( pose::Pose & pose ) {
 ////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
+
+	std::clock_t start_time = clock();
 
 	using namespace stepwise::modeler::align;
 
@@ -446,6 +449,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		}
 
 		//TR << "Outputting to silent file: " << silent_file << std::endl;
+		if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time ) / CLOCKS_PER_SEC );
 
 	}
 

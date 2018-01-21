@@ -198,9 +198,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 		Real pnph = parent::PEPTIDE_NEUTRAL_PHI, pnps = parent::PEPTIDE_NEUTRAL_PSI;
 
 		for ( Size ii = 1; ii <= N; ++ii ) {
-			Size iimax = N;
-
-			IVs[ ii ] = [ii, pnph, pnps, iimax] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
+			IVs[ ii ] = [ii, pnph, pnps] ( conformation::Residue const & rsd, pose::Pose const & /*pose*/ ) {
 
 				int bb_torsion_index(-1);
 				// Figure out whether this is a residue type with rotamers that depend on only a subset of mainchain torsion angles:

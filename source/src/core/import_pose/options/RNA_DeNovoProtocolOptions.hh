@@ -64,9 +64,6 @@ public:
 	void set_binary_rna_output( bool const setting ){ binary_rna_output_ = setting; }
 	bool binary_rna_output() const { return binary_rna_output_; }
 
-	void set_save_times( bool const setting ){ save_times_ = setting; }
-	bool save_times() const { return save_times_; }
-
 	void set_use_legacy_setup( bool const setting ){ use_legacy_setup_ = setting; }
 	bool use_legacy_setup() const { return use_legacy_setup_; }
 
@@ -99,7 +96,6 @@ private:
 
 	bool overwrite_;
 	bool binary_rna_output_;
-	bool save_times_;
 	bool use_legacy_setup_;
 	bool cst_gap_;
 	bool dump_stems_;

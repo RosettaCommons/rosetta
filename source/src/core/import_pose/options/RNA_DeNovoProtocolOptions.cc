@@ -43,7 +43,6 @@ RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
 	align_output_( true ),
 	overwrite_( false ),
 	binary_rna_output_( false ),
-	save_times_( false ),
 	use_legacy_setup_( false ),
 	cst_gap_( false ),
 	dump_stems_( false )
@@ -72,6 +71,7 @@ RNA_DeNovoProtocolOptions::clone() const
 ///////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocolOptions::initialize_from_command_line() {
+	RNA_FragmentMonteCarloOptions::initialize_from_options( basic::options::option );
 	initialize_from_options( basic::options::option );
 }
 
@@ -117,8 +117,6 @@ RNA_DeNovoProtocolOptions::initialize_from_options( utility::options::OptionColl
 			close_loops() ||
 			vary_bond_geometry() ) set_binary_rna_output( true );
 
-	save_times_ = opts[ OptionKeys::out::save_times ]();
-
 	use_legacy_setup_ = opts[ basic::options::OptionKeys::rna::denovo::use_legacy_setup ]();
 
 	cst_gap_ = opts[ basic::options::OptionKeys::rna::denovo::cst_gap ]();
@@ -141,7 +139,6 @@ RNA_DeNovoProtocolOptions::list_options_read( utility::options::OptionKeyList & 
 		+ OptionKeys::rna::denovo::lores_scorefxn
 		+ OptionKeys::in::file::silent_struct_type
 		+ OptionKeys::rna::denovo::out::binary_output
-		+ OptionKeys::out::save_times
 		+ OptionKeys::rna::denovo::use_legacy_setup
 		+ OptionKeys::rna::denovo::cst_gap
 		+ OptionKeys::rna::denovo::dump_stems

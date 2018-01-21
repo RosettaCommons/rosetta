@@ -81,7 +81,6 @@
 
 //C++ headers
 #include <iostream>
-#include <ctime>
 
 //Auto Headers
 #include <protocols/viewer/GraphicsState.hh>
@@ -256,7 +255,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		std::string const out_file_tag = "S_"+lead_zero_string_of( n++, 6 );
 		if ( tag_is_done_[ out_file_tag ] ) continue;
 
-		std::clock_t start_time = clock();
+		//std::clock_t start_time = clock();
 
 		if ( refine_pose_list_.size() > 0 ) {
 			pose = *refine_pose_list_[ refine_pose_id ];
@@ -284,7 +283,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		std::string const out_file_name = out_file_tag + ".pdb";
 		if ( options_->dump_pdb() ) dump_pdb( pose,  out_file_name );
 
-		if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time ) / CLOCKS_PER_SEC );
+		//if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time ) / CLOCKS_PER_SEC );
 
 		align_and_output_to_silent_file( pose, options_->silent_file(), out_file_tag );
 	}

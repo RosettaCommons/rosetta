@@ -324,6 +324,7 @@ SequenceMapping::clear()
 Size
 SequenceMapping::operator[]( Size const pos1 ) const {
 	if ( pos1 > mapping_.size() ) return 0;
+	if ( pos1 == 0 ) return 0;
 	return mapping_[ pos1 ];
 }
 

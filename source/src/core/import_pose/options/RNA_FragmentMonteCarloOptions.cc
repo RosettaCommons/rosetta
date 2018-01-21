@@ -120,7 +120,8 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	rna_params_file_( "" ),
 	jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) ),
 	rmsd_screen_( 0.0 ),
-	disallow_realign_( true )
+	disallow_realign_( true ),
+	save_times_( false )
 {}
 
 //Destructor
@@ -145,6 +146,7 @@ RNA_FragmentMonteCarloOptions::clone() const
 ///////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
+	RNA_MinimizerOptions::initialize_from_options( basic::options::option ); // includes RNA_BasicOptions
 	initialize_from_options( basic::options::option );
 }
 
@@ -311,6 +313,8 @@ RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::Option
 	}
 
 	if ( opts[ basic::options::OptionKeys::rna::denovo::symm_hack_arity ].user() ) set_symm_hack_arity( opts[ basic::options::OptionKeys::rna::denovo::symm_hack_arity ] );
+
+	save_times_ = opts[ OptionKeys::out::save_times ]();
 }
 
 void
@@ -402,7 +406,8 @@ RNA_FragmentMonteCarloOptions::list_options_read( utility::options::OptionKeyLis
 		+ OptionKeys::rna::denovo::helical_substructs
 		+ OptionKeys::rna::denovo::override_refine_pose_rounds
 		+ OptionKeys::rna::denovo::refine_native_get_good_FT
-		+ OptionKeys::rna::denovo::symm_hack_arity;
+		+ OptionKeys::rna::denovo::symm_hack_arity
+		+ OptionKeys::out::save_times;
 }
 
 

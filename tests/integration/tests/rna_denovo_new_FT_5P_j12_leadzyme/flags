@@ -6,7 +6,6 @@
 -block_stack_below_res  C:24 F:44  
 -minimize_rna true
 -cycles 200
--save_times
 -exclusion_match_type MATCH_YR
 -score:weights stepwise/rna/rna_res_level_energy7beta.wts
 -new_fold_tree_initializer true

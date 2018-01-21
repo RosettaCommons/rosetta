@@ -70,6 +70,7 @@ RNA_MinimizerOptions::clone() const
 ///////////////////////////////////////////////////////////////////
 void
 RNA_MinimizerOptions::initialize_from_command_line() {
+	RNA_BasicOptions::initialize_from_options( basic::options::option );
 	initialize_from_options( basic::options::option );
 }
 
