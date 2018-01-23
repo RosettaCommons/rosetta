@@ -28,7 +28,8 @@ namespace pack {
 namespace dunbrack {
 
 Size const DUNBRACK_MAX_BBTOR = 5;
-Size const DUNBRACK_MAX_SCTOR = 4;
+Size const DUNBRACK_MAX_SCTOR = 5; //The maximum number of allowed chi angles
+Size const DUNBRACK_FILE_DEFAULT_SCTOR = 4; //The default number in a Dunbrack file.
 
 typedef utility::fixedsizearray1< utility::fixedsizearray1< Real, DUNBRACK_MAX_SCTOR >, DUNBRACK_MAX_BBTOR > FiveReal4;
 typedef utility::fixedsizearray1< Real, DUNBRACK_MAX_SCTOR > Real4;

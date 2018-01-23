@@ -50,7 +50,7 @@ public:
 
 	void setUp(){
 		// This is just leucine, but treated as though it's a non-canonical amino acid.
-		core_init_with_additional_options("-extra_res_fa core/pack/rotamers/LEU_NCAA.params ");
+		core_init_with_additional_options("-extra_res_fa core/pack/rotamers/LEU_NCAA.params core/pack/rotamers/DAB_corrected_order.params");
 	}
 
 	void tearDown(){
@@ -224,5 +224,65 @@ public:
 
 		TR << std::endl;
 	}
+
+	/// @brief Ensure that rotamer order doesn't matter in a rotamer library.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	/*void XXXX_equvalence_independent_of_rotamer_order() {
+	core::pose::Pose pose_badorder, pose_goodorder;
+	core::pose::make_pose_from_sequence(pose_badorder, "GX[DAB]G", "fa_standard");
+	core::pose::make_pose_from_sequence(pose_goodorder, "GX[DAB_goodorder]G", "fa_standard");
+
+	// A scorefunction:
+	core::scoring::ScoreFunction sfxn;
+	sfxn.set_weight( core::scoring::fa_dun, 1.0 );
+
+	// Initial, netural backbone conformation:
+	for( core::Size i(1), imax(pose_badorder.total_residue()); i<=imax; ++i ) {
+	pose_badorder.set_phi(i, -135);
+	pose_badorder.set_phi(i, 135);
+	pose_badorder.set_omega(i, 180);
+	pose_goodorder.set_phi(i, -135);
+	pose_goodorder.set_phi(i, 135);
+	pose_goodorder.set_omega(i, 180);
+	}
+
+	// The conformations that I'll try:
+	utility::vector1< utility::fixedsizearray1< core::Real, 4 > > trial_conformations(8); //1 = phi, 2=psi, 3=chi1, 4=chi2
+	trial_conformations[1][1] = -61.0; trial_conformations[1][2] = -41.0; trial_conformations[1][3] = 32.0; trial_conformations[1][4] = -53.0;
+	trial_conformations[2][1] = -135.0; trial_conformations[2][2] = 135.0; trial_conformations[2][3] = 32.0; trial_conformations[2][4] = -53.0;
+	trial_conformations[3][1] = -61.0; trial_conformations[3][2] = -41.0; trial_conformations[3][3] = 72.0; trial_conformations[3][4] = 63.0;
+	trial_conformations[4][1] = -61.0; trial_conformations[4][2] = -41.0; trial_conformations[4][3] = -42.0; trial_conformations[4][4] = -122.0;
+	trial_conformations[5][1] = -135.0; trial_conformations[5][2] = 135.0; trial_conformations[5][3] = -42.0; trial_conformations[5][4] = -122.0;
+	trial_conformations[6][1] = -60.0; trial_conformations[6][2] = -40.0; trial_conformations[6][3] = 59.0; trial_conformations[6][4] = -119.0;
+	trial_conformations[7][1] = -60.0; trial_conformations[7][2] = -40.0; trial_conformations[7][3] = 119; trial_conformations[7][4] = -119.0;
+	trial_conformations[8][1] = -60.0; trial_conformations[8][2] = -40.0; trial_conformations[8][3] = 30; trial_conformations[8][4] = -80.0;
+
+	utility::vector1< core::Real > energies_badorder, energies_goodorder;
+
+	TR << "\nPHI\tPSI\tCHI1\tCHI2\tBADSCORE\tGOODSCORE\n";
+	for(core::Size i(1); i<=trial_conformations.size(); ++i) {
+	// Set the trial conformation:
+	pose_badorder.set_phi(2, trial_conformations[i][1]);
+	pose_badorder.set_psi(2, trial_conformations[i][2]);
+	pose_badorder.set_chi(1, 2, trial_conformations[i][3]);
+	pose_badorder.set_chi(2, 2, trial_conformations[i][4]);
+	pose_goodorder.set_phi(2, trial_conformations[i][1]);
+	pose_goodorder.set_psi(2, trial_conformations[i][2]);
+	pose_goodorder.set_chi(1, 2, trial_conformations[i][3]);
+	pose_goodorder.set_chi(2, 2, trial_conformations[i][4]);
+	pose_badorder.update_residue_neighbors();
+	pose_goodorder.update_residue_neighbors();
+
+	energies_badorder.push_back( sfxn(pose_badorder) );
+	energies_goodorder.push_back( sfxn(pose_goodorder) );
+	TR << trial_conformations[i][1] << "\t" << trial_conformations[i][2] << "\t" << trial_conformations[i][3] << "\t" << trial_conformations[i][4] << "\t" << energies_badorder[i] << "\t" << energies_goodorder[i] << "\n";
+	}
+	TR << std::endl;
+
+	for(core::Size i(1); i<=energies_badorder.size(); ++i) {
+	TS_ASSERT_DELTA(energies_badorder[i], energies_goodorder[i], 0.0001);
+	}
+
+	}*/
 
 };

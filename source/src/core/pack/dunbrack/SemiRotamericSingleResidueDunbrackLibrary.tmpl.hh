@@ -643,7 +643,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 template < Size T, Size N >
 utility::vector1< DunbrackRotamerSampleData >
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples(
-	utility::fixedsizearray1< Real, 5 > bbs
+	Real5 bbs
 ) const
 {
 	return get_all_rotamer_samples_bbdep( bbs );
@@ -693,7 +693,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::n_rotamer_bins() const
 template < Size T, Size N >
 utility::vector1< DunbrackRotamerSampleData >
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples_bbdep(
-	utility::fixedsizearray1< Real, 5 > bbs2
+	Real5 bbs2
 ) const
 {
 	RotamerLibraryScratchSpace scratch;

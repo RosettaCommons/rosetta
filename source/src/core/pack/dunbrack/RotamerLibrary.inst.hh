@@ -52,6 +52,13 @@ template class RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FOUR
 template class RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FOUR, core::pack::dunbrack::FOUR >;
 template class RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FOUR, core::pack::dunbrack::FIVE >;
 
+template class RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::ONE >;
+template class RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::TWO >;
+template class RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::THREE >;
+template class RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::FOUR >;
+template class RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::FIVE >;
+
+
 template class SemiRotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::ONE, core::pack::dunbrack::ONE >;
 template class SemiRotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::ONE, core::pack::dunbrack::TWO >;
 template class SemiRotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::ONE, core::pack::dunbrack::THREE >;
@@ -88,6 +95,12 @@ inline void __instantiate__(RotamericSingleResidueDunbrackLibrary< core::pack::d
 inline void __instantiate__(RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FOUR, core::pack::dunbrack::THREE > & ) {};
 inline void __instantiate__(RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FOUR, core::pack::dunbrack::FOUR > & ) {};
 inline void __instantiate__(RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FOUR, core::pack::dunbrack::FIVE > & ) {};
+
+inline void __instantiate__(RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::ONE > & ) {};
+inline void __instantiate__(RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::TWO > & ) {};
+inline void __instantiate__(RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::THREE > & ) {};
+inline void __instantiate__(RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::FOUR > & ) {};
+inline void __instantiate__(RotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::FIVE, core::pack::dunbrack::FIVE > & ) {};
 
 inline void __instantiate__(SemiRotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::ONE, core::pack::dunbrack::ONE > & ) {};
 inline void __instantiate__(SemiRotamericSingleResidueDunbrackLibrary< core::pack::dunbrack::ONE, core::pack::dunbrack::TWO > & ) {};

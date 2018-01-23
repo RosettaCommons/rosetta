@@ -101,7 +101,7 @@ public:
 	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
-		utility::fixedsizearray1< Real, 5 > bbs
+		Real5 bbs
 	) const = 0;
 
 	/// @brief Return the probability for a particular rotamer where rotamers are
@@ -118,7 +118,7 @@ public:
 	/*virtual
 	Real
 	get_probability_for_rotamer(
-	utility::fixedsizearray1< Real > bbs,
+	Real5 bbs,
 	Size rot_ind
 	) const = 0;*/
 

@@ -42,9 +42,9 @@ namespace protocols {
 namespace analysis {
 
 
-	/////////////////////
-	/// Constructors  ///
-	/////////////////////
+/////////////////////
+/// Constructors  ///
+/////////////////////
 
 /// @brief Default constructor
 GlycanInfoMover::GlycanInfoMover():
@@ -66,8 +66,8 @@ GlycanInfoMover::GlycanInfoMover( GlycanInfoMover const & src ):
 GlycanInfoMover::~GlycanInfoMover(){}
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Mover Methods ///
-	/////////////////////
+/// Mover Methods ///
+/////////////////////
 
 /// @brief Apply the mover
 void
@@ -89,7 +89,7 @@ GlycanInfoMover::apply_const(const core::pose::Pose &pose){
 
 
 			std::cout << "Carbohydrate: "<< resnum  <<" "<< pose.pdb_info()->pose2pdb(resnum) << " Parent: " << parent_res << " BP: "<<bp <<" "<< pose.pdb_info()->pose2pdb(resnum) << " " << " CON: " << utility::pad_right( attachment_points, 10) << " DIS: " << pose.glycan_tree_set()->get_distance_to_start( resnum )
-				 << " ShortName: "<< pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
+				<< " ShortName: "<< pose.residue( resnum ).carbohydrate_info()->short_name() << std::endl;
 
 			carbohydrate_residues += 1;
 
@@ -136,8 +136,8 @@ GlycanInfoMover::get_attachment_point_string( core::pose::Pose const & pose, cor
 	}
 	return outstring;
 }
-	
-	
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Show the contents of the Mover
 void
@@ -147,8 +147,8 @@ GlycanInfoMover::show(std::ostream & output) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Rosetta Scripts Support ///
-	///////////////////////////////
+/// Rosetta Scripts Support ///
+///////////////////////////////
 
 /// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
@@ -218,16 +218,16 @@ void GlycanInfoMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// private methods ///
-	///////////////////////
+/// private methods ///
+///////////////////////
 
 
-	std::ostream &
-	operator<<( std::ostream & os, GlycanInfoMover const & mover )
-	{
-		mover.show(os);
-		return os;
-	}
+std::ostream &
+operator<<( std::ostream & os, GlycanInfoMover const & mover )
+{
+	mover.show(os);
+	return os;
+}
 
 } //protocols
 } //analysis

@@ -915,6 +915,8 @@ testinputfiles = [
 	"pack/rotamer_set/glycerol.pdb",
 	"pack/rotamer_set/GOL.params",
 	"pack/rotamers/6SA.params",
+	"pack/rotamers/B53_corrected.rotlib",
+	"pack/rotamers/DAB_corrected_order.params",
 	"pack/rotamers/LEU_NCAA.params",
 	"pack/rotamers/LEU_NCAA_DUN02.params",
 	"pack/rotamers/lxx.bbdep.rotamers.lib",

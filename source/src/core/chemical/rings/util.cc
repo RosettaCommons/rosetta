@@ -107,7 +107,7 @@ is_atom_axial_or_equatorial_to_ring(
 	// AXIAL: 0 +/- 30
 	// EQUATORIAL: 90 +/- 30
 	// NEITHER: 45 +/- 15
-	
+
 	if ( theta < 30 * pi_over_180 ) {
 		return AXIAL;
 	} else if ( theta > 60 * pi_over_180 ) {

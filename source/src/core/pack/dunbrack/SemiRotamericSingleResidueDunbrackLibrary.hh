@@ -308,7 +308,7 @@ public:
 	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
-		utility::fixedsizearray1< Real, 5 > bbs
+		Real5 bbs
 	) const override;
 
 	virtual
@@ -440,7 +440,7 @@ protected:
 
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples_bbdep(
-		utility::fixedsizearray1<Real, 5> bbs
+		Real5 bbs
 	) const;
 
 	Real

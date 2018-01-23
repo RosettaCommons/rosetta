@@ -57,10 +57,10 @@ public:
 	/// @brief Apply the mover
 	void
 	apply( core::pose::Pose & pose ) override;
-	
+
 	void
 	apply_const (core::pose::Pose const & pose );
-	
+
 	void
 	show( std::ostream & output = std::cout ) const override;
 
@@ -81,14 +81,14 @@ public:
 	reinitialize_for_each_job() const override {
 		return true;
 	}
-	
+
 public:
-	
+
 	///@brief Get a string of where the attachment is occuring (1/4 etc.)
 	std::string
 	get_attachment_point_string( core::pose::Pose const & pose, core::Size resnum);
-	
-	
+
+
 
 	//GlycanInfoMover & operator=( GlycanInfoMover const & src );
 

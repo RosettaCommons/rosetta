@@ -368,7 +368,7 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	}
 	scorefxn_->score( pose );
 
-	
+
 	//Check that we don't have FUNKY things in our ResidueSelector.
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( starting_subset[ i ] ) {
@@ -377,12 +377,12 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 			}
 		}
 	}
-	
+
 	core::Size total_glycan_residues = count_selected(starting_subset);
-	if (total_glycan_residues == 0){
+	if ( total_glycan_residues == 0 ) {
 		utility_exit_with_message("GlycanTreeRelax: No glycan residues to model.  Cannot continue.");
 	}
-	
+
 	// Setup GlycanRelax
 	GlycanRelaxMover glycan_relax = GlycanRelaxMover();
 	if ( scorefxn_ ) {
@@ -420,23 +420,22 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	}
 	core::Size max_end = pose.glycan_tree_set()->get_largest_glycan_tree_layer( starting_subset );
 	core::Size min_layer = pose.glycan_tree_set()->get_smallest_glycan_tree_layer( starting_subset );
-	
+
 	TR << "Smallest glycan layer: " << min_layer << std::endl;
 	TR << "Largest  glycan layer: " << max_end << std::endl;
-	
+
 	//Setup for quench mode
 	if ( selector_ ) {
 		for ( core::Size tree_start : all_trees ) {
-		
-			if (starting_subset[ tree_start]){
+
+			if ( starting_subset[ tree_start] ) {
 				tree_subset.push_back( tree_start );
 				continue;
-			}
-			else {
+			} else {
 				utility::vector1< core::Size > tree_residues = pose.glycan_tree_set()->get_tree( tree_start )->get_residues();
-			
-				for (core::Size & resnum : tree_residues){
-			
+
+				for ( core::Size & resnum : tree_residues ) {
+
 					if ( starting_subset[ resnum ] ) {
 						tree_subset.push_back( tree_start );
 						break;
@@ -444,22 +443,22 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 				}
 				// For Tree Residues
 			}
-			
+
 		} //For All Trees
 	} else {
 		tree_subset = all_trees;
 	}
-	
+
 	trees_to_model_ = tree_subset.size();
 
 	core::Real starting_score = scorefxn_->score( pose );
 	TR << "Starting Score: " << starting_score << std::endl;
 
 	ResidueSubset mask = starting_subset; //All the glycan residues we will be modeling
-	
+
 	MonteCarloOP mc = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, 1.0) );
 	mc->set_last_accepted_pose(pose);
-	
+
 	while ( ! is_quenched() ) {
 
 		if ( quench_mode_ ) {
@@ -489,7 +488,7 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 
 			//Remove the tree from the list to model.
 			tree_subset.pop( tree_start );
-			
+
 			min_layer = pose.glycan_tree_set()->get_smallest_glycan_tree_layer( starting_subset );
 			max_end = pose.glycan_tree_set()->get_largest_glycan_tree_layer( starting_subset );
 
@@ -570,14 +569,13 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 					real_to_virt.apply( pose );
 
 					TR << "Running GlycanRelax on layer [ start -> end (including) ]: " << current_start << " " << current_end << std::endl;
-					
+
 					core::Size n_in_layer = count_selected( and_selector->apply( pose ) );
-					
-					if (n_in_layer > 0 ){
+
+					if ( n_in_layer > 0 ) {
 						glycan_relax.set_selector( and_selector );
 						glycan_relax.apply( pose );
-					}
-					else {
+					} else {
 						TR << "No residues in layer, continueing." << std::endl;
 					}
 
@@ -624,17 +622,16 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 					and_selector->add_residue_selector( store_subset );
 					and_selector->add_residue_selector( modeling_layer_selector );
 
-					
-					
+
+
 					//If there are no residues in the layer, we continue.  With glycan masking, this is actually possible.
 					// Not recommended by any means, but definitely posssible..
 					core::Size n_in_layer = count_selected( and_selector->apply( pose ) );
 
-					if (n_in_layer > 0){
+					if ( n_in_layer > 0 ) {
 						glycan_relax.set_selector( and_selector );
 						glycan_relax.apply( pose );
-					}
-					else {
+					} else {
 						TR << "No residues in layer, continueing." << std::endl;
 					}
 
@@ -645,18 +642,18 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 			}
 
 			} //End Switch, end of Round.
-			
+
 			TR << "round " << i << " " << scorefxn_->score( pose ) << std::endl;
 			bool accepted = mc->boltzmann( pose );
 			TR << "accepted " << accepted << std::endl << std::endl;
 			TR << "round " << i << " " << scorefxn_->score( pose ) << " final " << std::endl << std::endl;
-			
+
 		} //End for loop
 
 		completed_quenches_+=1;
 
 	}
-	
+
 	TR << "Final Score: " << scorefxn_->score( pose ) << std::endl;
 	if ( final_min_pack_min_ ) {
 
@@ -691,15 +688,15 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 		TR << "Start- : " << starting_score << std::endl;
 		TR << "Pre  - : " << prefinal << std::endl;
 		TR << "Post - : " << scorefxn_->score( pose ) << std::endl;
-		
+
 		mc->boltzmann(pose);
 
 	}
 	mc->recover_low(pose);
-	
+
 	TR << "Final- : " << scorefxn_->score( pose ) << std::endl;
-	
-	if (rounds_ > 1){
+
+	if ( rounds_ > 1 ) {
 		mc->show_counters();
 	}
 

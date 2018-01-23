@@ -1552,6 +1552,43 @@ RotamerLibrary::create_rotameric_dunlib(
 				boost::lexical_cast<std::string>(n_bb) );
 		}
 	} break;
+	case 5 : {
+		switch ( n_bb ) {
+		case 1 : {
+			auto * r4 = new RotamericSingleResidueDunbrackLibrary< FIVE, ONE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
+			next_aa_in_library = r4->read_from_file( library, first_three_letter_code_already_read );
+			rotlib = SingleResidueDunbrackLibraryOP(r4);
+			break;
+		}
+		case 2 : {
+			auto * r4 = new RotamericSingleResidueDunbrackLibrary< FIVE, TWO >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
+			next_aa_in_library = r4->read_from_file( library, first_three_letter_code_already_read );
+			rotlib = SingleResidueDunbrackLibraryOP(r4);
+			break;
+		}
+		case 3 : {
+			auto * r4 = new RotamericSingleResidueDunbrackLibrary< FIVE, THREE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
+			next_aa_in_library = r4->read_from_file( library, first_three_letter_code_already_read );
+			rotlib = SingleResidueDunbrackLibraryOP(r4);
+			break;
+		}
+		case 4 : {
+			auto * r4 = new RotamericSingleResidueDunbrackLibrary< FIVE, FOUR >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
+			next_aa_in_library = r4->read_from_file( library, first_three_letter_code_already_read );
+			rotlib = SingleResidueDunbrackLibraryOP(r4);
+			break;
+		}
+		case 5 : {
+			auto * r1 = new RotamericSingleResidueDunbrackLibrary< FIVE, FIVE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_ );
+			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
+			rotlib = SingleResidueDunbrackLibraryOP(r1);
+			break;
+		}
+		default :
+			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
+				boost::lexical_cast<std::string>(n_bb) );
+		}
+	} break;
 	default :
 		utility_exit_with_message( "ERROR: too many chi angles desired for Dunbrack library: " +
 			boost::lexical_cast<std::string>(n_chi) );
@@ -1683,6 +1720,33 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		case 5 : {
 			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR, FIVE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			break;
+		}
+		default :
+			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
+				boost::lexical_cast<std::string>(n_bb) );
+		}
+	} break;
+	case 5 : {
+		switch ( n_bb ) {
+		case 1 : {
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, ONE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			break;
+		}
+		case 2 : {
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, TWO >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			break;
+		}
+		case 3 : {
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, THREE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			break;
+		}
+		case 4 : {
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, FOUR >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
+			break;
+		}
+		case 5 : {
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FIVE, FIVE >( rt, dun02, use_bicubic_, entropy_correction_, prob_buried_, prob_nonburied_, reduced_resolution_library ) );
 			break;
 		}
 		default :
