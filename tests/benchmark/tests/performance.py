@@ -21,7 +21,7 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 _api_version_ = '1.0'  # api version
 
 _individual_test_run_time_ = 64  # time in seconds which individual tests allowed to run
-_failure_threshold_pct_    = 64  # specify how much execution time could deviate (percent) from previous value without raising the alarm
+_failure_threshold_pct_    = 20  # specify how much execution time could deviate (percent) from previous value without raising the alarm
 
 
 def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
@@ -57,7 +57,9 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
         if debug and False: res, output = 0, 'run_performance_tests: debug is enabled, skipping actual run...\n'
         else:
             if os.path.isfile(json_results_file): os.remove(json_results_file)
-            hpc_driver.execute(executable=command_line, arguments='', working_dir='{rosetta_dir}/source/src/apps/benchmark/performance'.format(**vars()), name='performance_benchmark', shell_wrapper=True)  # we using Shell redirects so shell_wrapper=True
+
+            #hpc_driver.execute(executable=command_line, arguments='', working_dir='{rosetta_dir}/source/src/apps/benchmark/performance'.format(**vars()), name='performance_benchmark', shell_wrapper=True)  # we using Shell redirects so shell_wrapper=True
+            execute('Running performance tests...', 'cd {rosetta_dir}/source/src/apps/benchmark/performance && {command_line}'.format( **vars() ) )
 
         output = codecs.open(output_log_file, encoding='utf-8', errors='replace').read()
         results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output

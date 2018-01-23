@@ -41,7 +41,7 @@ def run(test, options):
     minidir = os.path.join(options.main, "source")
 
     bindir = os.path.join(options.main, "source", "bin")
-    compiler = 'gcc'
+    compiler = options.compiler
     mode = 'release'
     binext = platform+compiler+mode
 
@@ -167,6 +167,10 @@ def main(argv):
       help="Run tests in deamon mode. This will skip some steps and void generation of file with old results.",
     )
 
+    parser.add_option("--compiler",
+                      default="gcc",
+                      help="Specify which compiler to use. (default: gcc)",
+    )
 
     (options, args) = parser.parse_args(argv)
 

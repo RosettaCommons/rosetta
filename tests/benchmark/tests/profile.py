@@ -26,7 +26,7 @@ _api_version_ = '1.0'  # api version
 _failure_threshold_min_execution_time_   = 128
 _failure_threshold_min_alloacted_memory_ = 256
 
-_failure_threshold_execution_time_pct_       = 96
+_failure_threshold_execution_time_pct_       = 20
 _failure_threshold_max_memory_allocated_pct_ = 4
 
 
@@ -40,7 +40,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
                      _LogKey_ : u'Building rosetta failed!\n{}\n{}\n'.format(build_command_line, output) }
     else:
         extension = calculate_extension(platform)
-
+        compiler  = platform['compiler']
 
         json_results_file = '{rosetta_dir}/tests/profile/.profile_test_results.json'.format( **vars() )
         if os.path.isfile(json_results_file): os.remove(json_results_file)  # removing old results file if it is present
@@ -48,8 +48,10 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         output_log_file = '{working_dir}/profile_py.log'.format( **vars() )
 
         # running profile script on HPC cluster
-        hpc_driver.execute(executable='cd'.format(**vars()), arguments='{rosetta_dir}/tests/profile && ./profile.py --daemon 2>&1 >{}'.format(output_log_file, rosetta_dir=rosetta_dir),  # relax_native ligand_dock_script fixbb jd2test
-                           working_dir=working_dir, name='profile', shell_wrapper=True)
+        # hpc_driver.execute(executable='cd'.format(**vars()), arguments='{rosetta_dir}/tests/profile && ./profile.py --compiler={compiler} --daemon 2>&1 >{output_log_file}'.format(output_log_file=output_log_file, rosetta_dir=rosetta_dir, compiler=compiler),  # relax_native ligand_dock_script fixbb jd2test
+        #                    working_dir=working_dir, name='profile', shell_wrapper=True)
+
+        execute('Running Profile tests...', 'cd {rosetta_dir}/tests/profile && ./profile.py --compiler={compiler} --daemon 2>&1 >{output_log_file}'.format(output_log_file=output_log_file, rosetta_dir=rosetta_dir, compiler=compiler) )
 
         files_location = '{rosetta_dir}//tests/profile/tests'.format( **vars() )
 
