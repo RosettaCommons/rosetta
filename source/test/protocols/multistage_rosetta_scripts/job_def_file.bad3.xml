@@ -1,0 +1,131 @@
+<JobDefinitionFile>
+
+  Negative number is given as Stage1 attribute
+
+  <Job>
+    <Input>
+      <PDB filename="protocols/multistage_rosetta_scripts/3U3B_A.pdb"/>
+    </Input>
+
+    <SCOREFXNS>
+      <ScoreFunction name="individual_sfxn" weights="beta_nov15.wts"/>
+    </SCOREFXNS>
+
+    <RESIDUE_SELECTORS>
+      <Chain name="individual_res_selector" chains="A"/>
+    </RESIDUE_SELECTORS>
+
+    <TASKOPERATIONS>
+      <OperateOnResidueSubset name="individual_task_op_calling_individual_res_selector" selector="individual_res_selector">
+	<PreventRepackingRLT/>
+      </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="protocols/multistage_rosetta_scripts/3U3B_B.pdb"/>
+    </Input>
+
+    <SCOREFXNS>
+      <ScoreFunction name="individual_sfxn" weights="beta_nov15_cst.wts"/>
+    </SCOREFXNS>
+
+    <RESIDUE_SELECTORS>
+      <RandomResidue name="individual_res_selector" num_residues="5"/>
+    </RESIDUE_SELECTORS>
+
+    <TASKOPERATIONS>
+      <OperateOnResidueSubset name="individual_task_op_calling_individual_res_selector" selector="individual_res_selector">
+	<RestrictToRepackingRLT/>
+      </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+  </Job>
+
+  <Common>
+    <SCOREFXNS>
+      <ScoreFunction name="common_sfxn" weights="beta_nov15.wts"/>
+    </SCOREFXNS>
+
+    <RESIDUE_SELECTORS>
+      <Index name="common_res_selector" resnums="4-9"/>
+    </RESIDUE_SELECTORS>
+
+    <TASKOPERATIONS>
+      <OperateOnResidueSubset name="common_task_op_calling_common_res_selector" selector="common_res_selector">
+	<PreventRepackingRLT/>
+      </OperateOnResidueSubset>
+
+      <OperateOnResidueSubset name="common_task_op_calling_individual_res_selector" selector="individual_res_selector">
+	<PreventRepackingRLT/>
+      </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+
+    <MOVERS>
+      	<FastRelax name="m.1.1" scorefxn="common_sfxn" task_operations="common_task_op_calling_common_res_selector"/>
+
+	<FastRelax name="m.2.1" scorefxn="individual_sfxn" task_operations="individual_task_op_calling_individual_res_selector"/>
+	<Idealize  name="m.2.2"/>
+
+	<FastRelax name="m.3.1" scorefxn="common_sfxn" task_operations="common_task_op_calling_individual_res_selector"/>
+
+	<FastRelax name="m.4.1" scorefxn="individual_sfxn" task_operations="common_task_op_calling_individual_res_selector"/>
+	<Idealize  name="m.4.2"/>
+	<Idealize  name="m.4.3"/>
+    </MOVERS>
+
+    <FILTERS>
+	<ScoreType name="f.1.1" scorefxn="common_sfxn" score_type="total_score" threshold="0"/>
+
+	<ScoreType name="f.2.1" scorefxn="individual_sfxn" score_type="total_score" threshold="0"/>
+
+	<Sasa      name="f.3.1" />
+	<ScoreType name="f.3.2" scorefxn="individual_sfxn" score_type="total_score" threshold="0"/>
+
+	<Sasa      name="f.4.1" />
+	<ScoreType name="f.4.2" scorefxn="common_sfxn" score_type="total_score" threshold="0"/>
+    </FILTERS>
+
+    <PROTOCOLS>
+
+      Test common data, partitioning
+      <Stage num_runs_per_input_struct="-1" total_num_results_to_keep="4">
+	<Add mover_name="m.1.1" filter_name="f.1.1"/>
+	<Sort filter_name="f.1.1"/>
+      </Stage>
+
+
+      Test individual data, multiple movers
+      <Stage num_runs_per_input_struct="2" total_num_results_to_keep="4" merge_results_after_this_stage="1">
+	<Add mover_name="m.2.1" />
+	<Add mover_name="m.2.2" filter_name="f.2.1"/>
+	<Sort filter_name="f.1.1"/>
+      </Stage>
+
+
+      Test mixed data (common calling ind), result_cutoff, multiple filters
+      <Stage num_runs_per_input_struct="1" total_num_results_to_keep="3" result_cutoff="7">
+	<Add mover_name="m.3.1" filter_name="f.3.1"/>
+	<Add filter_name="f.3.2" />
+	<Sort filter_name="f.1.1"/>
+      </Stage>
+
+
+      Test mixed data, max_num_results_per_instance, multiple movers and filters
+      <Stage num_runs_per_input_struct="1" total_num_results_to_keep="4" max_num_results_per_instance="3">
+	<Add mover_name="m.4.1" />
+	<Add mover_name="m.4.2" />
+	<Add mover_name="m.4.3" />
+	<Add filter_name="f.4.1" />
+	<Add mover_name="m.4.2" />
+	<Add mover_name="m.4.3" />
+	<Add filter_name="f.4.1" />
+	<Add mover_name="m.4.2" />
+	<Add filter_name="f.4.2" />
+	<Sort filter_name="f.1.1"/>
+      </Stage>
+
+    </PROTOCOLS>
+  </Common>
+
+</JobDefinitionFile>

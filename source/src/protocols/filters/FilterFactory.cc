@@ -94,6 +94,7 @@ FilterFactory::provide_xml_schema(
 /// @brief return new Filter by key lookup in filter_prototype_map_ (new Filter parses Tag if provided)
 FilterOP
 FilterFactory::newFilter( std::string const & filter_type )
+const
 {
 	FilterMap::const_iterator iter( filter_creator_map_.find( filter_type ) );
 	if ( iter != filter_creator_map_.end() ) {
@@ -137,14 +138,21 @@ FilterFactory::newFilter(
 	basic::datacache::DataMap & data,
 	filters::Filters_map const & filters,
 	moves::Movers_map const & movers,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & pose,
+	std::string user_defined_name )
+const
 {
 	FilterOP filter( newFilter( tag->getName() ) );
 	runtime_assert( filter != nullptr );
-	if ( ! tag->hasOption("name") ) {
+	std::string filter_name;
+	if ( tag->hasOption("name") ) {
+		filter_name = tag->getOption<std::string>("name");
+	} else if ( user_defined_name.size() != 0 ) {
+		filter_name = user_defined_name;
+	} else {
 		utility_exit_with_message("Can't define unnamed Filter");
 	}
-	filter->set_user_defined_name( tag->getOption<std::string>("name") );
+	filter->set_user_defined_name( filter_name );
 	filter->parse_my_tag( tag, data, filters, movers, pose );
 	// if confidence specified, link to StochasticFilter and wrap inside CompoundFilter
 	core::Real const confidence( tag->getOption< core::Real >( "confidence", 1.0 ) );

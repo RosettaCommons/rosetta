@@ -99,6 +99,7 @@ StandardJobQueen::StandardJobQueen() :
 	use_factory_provided_pose_inputters_( true ),
 	use_factory_provided_pose_outputters_( true ),
 	override_default_outputter_( false ),
+	common_block_precedes_job_blocks_( true ),
 	required_initialization_performed_( false ),
 	larval_job_counter_( 0 ),
 	preliminary_larval_jobs_determined_( false ),
@@ -355,8 +356,14 @@ StandardJobQueen::job_definition_xsd() const
 
 	XMLSchemaComplexTypeGenerator job_def_file_ct;
 	XMLSchemaSimpleSubelementList job_def_subelements;
-	job_def_subelements.add_already_defined_subelement( "Common", & job_def_complex_type_name, 0, 1 );
-	job_def_subelements.add_already_defined_subelement( "Job", & job_def_complex_type_name, 1, xsminmax_unbounded );
+
+	if ( common_block_precedes_job_blocks_ ) {
+		job_def_subelements.add_already_defined_subelement( "Common", & job_def_complex_type_name, 0, 1 );
+		job_def_subelements.add_already_defined_subelement( "Job", & job_def_complex_type_name, 1, xsminmax_unbounded );
+	} else {
+		job_def_subelements.add_already_defined_subelement( "Job", & job_def_complex_type_name, 1, xsminmax_unbounded );
+		job_def_subelements.add_already_defined_subelement( "Common", & job_def_complex_type_name, 0, 1 );
+	}
 	job_def_file_ct.element_name( "JobDefinitionFile" )
 		.complex_type_naming_func( & job_def_complex_type_name )
 		.description( "XRW TO DO" )
@@ -826,6 +833,7 @@ StandardJobQueen::determine_preliminary_job_list()
 		determine_preliminary_job_list_from_command_line();
 	}
 
+	parse_job_definition_tags( common_block_tags_, preliminary_larval_jobs() );
 }
 
 /// @brief Read access for the subset of nodes in the job DAG which the %StandardJobQueen
@@ -919,8 +927,25 @@ StandardJobQueen::expand_job_list( StandardInnerLarvalJobOP inner_job, core::Siz
 StandardInnerLarvalJobOP
 StandardJobQueen::create_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const
 {
-	return StandardInnerLarvalJobOP( new StandardInnerLarvalJob( nstruct, prelim_job_node ) );
+	StandardInnerLarvalJobOP inner_job( new StandardInnerLarvalJob( nstruct, prelim_job_node ) );
+	return inner_job;
 }
+
+StandardInnerLarvalJobOP
+StandardJobQueen::create_and_init_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const
+{
+	StandardInnerLarvalJobOP inner_job = create_inner_larval_job( nstruct, prelim_job_node );
+
+	PreliminaryLarvalJob const & prelim_job = preliminary_larval_jobs_[ prelim_job_node ];
+	StandardInnerLarvalJobCOP src = prelim_job.inner_job;
+	inner_job->job_tag( src->job_tag() );
+	inner_job->input_source( src->input_source_cop() );
+	inner_job->jobdef_tag( src->jobdef_tag() );
+	inner_job->outputter( src->outputter() );
+
+	return inner_job;
+}
+
 
 /// @details Factory method instantiates the base-class LarvalJob to start.
 /// Non-const so that derived classes may do thing like keep track of each of the
@@ -1089,7 +1114,7 @@ void StandardJobQueen::add_options( utility::options::OptionKeyList const & opts
 
 void StandardJobQueen::add_option( utility::options::OptionKey const & key )
 {
-	options_.emplace_back(key );
+	options_.emplace_back( key );
 }
 
 /// @details TO DO
@@ -1107,16 +1132,24 @@ StandardJobQueen::pose_for_job(
 	utility::options::OptionCollection const & options
 )
 {
-	using namespace pose_inputters;
-	// either read the Pose in using the pose_inputter (and then keep a copy
-	// in the resource manager), or retrieve the Pose from the resource manager
-	// initial version: just read the pose in for each job.
-
 	StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
 	if ( ! inner_job ) { throw bad_inner_job_exception(); }
 
-	auto const & input_source = dynamic_cast< PoseInputSource const & >( inner_job->input_source() );
-	TR << "Looking for input source " << job->inner_job()->input_source().input_tag() << " with pose_id " << job->inner_job()->input_source().pose_id() << std::endl;
+	return pose_for_inner_job( inner_job, options );
+}
+
+core::pose::PoseOP
+StandardJobQueen::pose_for_inner_job(
+	StandardInnerLarvalJobCOP inner_job,
+	utility::options::OptionCollection const & options
+)
+{
+	// either read the Pose in using the pose_inputter (and then keep a copy
+	// in the resource manager), or retrieve the Pose from the resource manager
+	// initial version: just read the pose in for each job.
+	auto const & input_source = dynamic_cast< pose_inputters::PoseInputSource const & >( inner_job->input_source() );
+	TR << "Looking for input source " << input_source.input_tag() << " with pose_id " << input_source.pose_id() << std::endl;
+
 	if ( input_pose_index_map_.count( input_source.pose_id() ) ) {
 
 		core::pose::PoseOP pose( new core::pose::Pose );
@@ -1138,12 +1171,22 @@ StandardJobQueen::pose_for_job(
 	}
 
 	core::pose::PoseOP input_pose = pose_inputter_for_job( *inner_job )->pose_from_input_source( input_source, options, inputter_tag );
-	TR << "Storing Pose for input source " << job->inner_job()->input_source().input_tag() << " with pose_id " << job->inner_job()->input_source().pose_id() << std::endl;
+	TR << "Storing Pose for input source " << input_source.input_tag() << " with pose_id " << input_source.pose_id() << std::endl;
 	input_pose_index_map_[ input_source.pose_id() ] = input_pose;
 
 	core::pose::PoseOP pose( new core::pose::Pose );
 	pose->detached_copy( *input_pose );
 	return pose;
+}
+
+core::pose::PoseOP
+StandardJobQueen::pose_for_inner_job(
+	StandardInnerLarvalJobCOP inner_job
+) {
+	runtime_assert( inner_job );
+	utility::options::OptionCollectionOP options = options_for_job( * inner_job );
+	runtime_assert( options );
+	return pose_for_inner_job( inner_job, * options );
 }
 
 //ResourceManagerOP StandardJobQueen::resource_manager()

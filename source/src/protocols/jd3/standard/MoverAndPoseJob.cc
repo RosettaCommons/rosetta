@@ -130,8 +130,11 @@ void MoverAndPoseJob::finalize_job_result( PoseJobResultOP ) {}
 /// being prepared.
 void MoverAndPoseJob::finalize_job_summary( EnergyJobSummaryOP ) {}
 
-
 PoseJobResult::PoseJobResult() = default;
+PoseJobResult::PoseJobResult( core::pose::PoseOP setting ) :
+	pose_( std::move( setting ) )
+{}
+
 PoseJobResult::~PoseJobResult() = default;
 
 JobStatus PoseJobResult::status() const { return jd3_job_status_success; }
@@ -141,6 +144,9 @@ core::pose::PoseCOP PoseJobResult::pose() const { return pose_; }
 void PoseJobResult::pose( core::pose::PoseOP setting ) { pose_ = setting; }
 
 EnergyJobSummary::EnergyJobSummary() : energy_( 0.0 ) {}
+
+EnergyJobSummary::EnergyJobSummary( core::Real energy ) : energy_( energy ) {}
+
 EnergyJobSummary::~EnergyJobSummary() = default;
 
 core::Real

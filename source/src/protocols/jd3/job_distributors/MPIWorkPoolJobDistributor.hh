@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/MPIWorkPoolJobDistributor.hh
+/// @file   protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh
 /// @brief  jd3 version of header for MPIWorkPoolJobDistributor - intended for MPI jobs on
 ///         large numbers of nodes where the head node is dedicated to handing out new
 ///         jobs to workers.  This code cannot be compiled without C++11 and Serialization,
@@ -336,11 +336,13 @@ private:
 		LarvalJobOP larval_job
 	) const;
 
+protected:
 	LarvalJobAndResult
 	deserialize_larval_job_and_result(
 		std::string const & job_and_result_string
 	) const;
 
+private:
 	std::string
 	serialize_larval_job_and_result(
 		LarvalJobAndResult job_and_result

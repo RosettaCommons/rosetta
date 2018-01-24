@@ -122,7 +122,7 @@ public:
 		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_subset_mapping_out_of_bounds_set_next_coorespondence" << std::endl;
 			//std::cout << e.msg() << std::endl;
-			std::string expected_err_msg = "subset_mapping::set_next_correspondence recieved an out-of-bounds source id (11) with a source-enumeration size of 10";
+			std::string expected_err_msg = "subset_mapping::set_next_correspondence received an out-of-bounds source id (11) with a source-enumeration size of 10";
 			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}
@@ -136,7 +136,7 @@ public:
 		} catch (utility::excn::Exception & e ) {
 			//std::cout << "test_subset_mapping_overwrite_correspondence" << std::endl;
 			//std::cout << e.msg() << std::endl;
-			std::string expected_err_msg = "subset_mapping::set_next_correspondence recieved an already-mapped source id (5) which had been previously assigned to destination id 1";
+			std::string expected_err_msg = "subset_mapping::set_next_correspondence received an already-mapped source id (5) which had been previously assigned to destination id 1";
 			TS_ASSERT( e.msg().find(expected_err_msg) != std::string::npos );
 		}
 	}

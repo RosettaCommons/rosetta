@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd3/JobDistributor.cc
-/// @brief  JobDistributor class declaration
+/// @file   protocols/jd3/VanillaJobDistributor.cc
+/// @brief  VanillaJobDistributor class declaration
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_protocols_jd3_JobDistributor_FWD_HH
-#define INCLUDED_protocols_jd3_JobDistributor_FWD_HH
+#ifndef INCLUDED_protocols_jd3_VanillaJobDistributor_FWD_HH
+#define INCLUDED_protocols_jd3_VanillaJobDistributor_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -21,12 +21,12 @@
 namespace protocols {
 namespace jd3 {
 
-class JobDistributor;
+class VanillaJobDistributor;
 
-typedef utility::pointer::shared_ptr< JobDistributor > JobDistributorOP;
-typedef utility::pointer::shared_ptr< JobDistributor const > JobDistributorCOP;
+typedef utility::pointer::shared_ptr< VanillaJobDistributor > VanillaJobDistributorOP;
+typedef utility::pointer::shared_ptr< VanillaJobDistributor const > VanillaJobDistributorCOP;
 
 }//jd2
 }//protocols
 
-#endif //INCLUDED_protocols_jd3_JobDistributor_HH
+#endif //INCLUDED_protocols_jd3_VanillaJobDistributor_HH

@@ -253,10 +253,24 @@ InnerLarvalJob::input_source() const
 	return *input_sources_[1];
 }
 
+InputSourceCOP const &
+InnerLarvalJob::input_source_cop() const
+{
+	debug_assert( input_sources_.size() == 1 );
+	return input_sources_[1];
+}
+
+
 InputSource const &
 InnerLarvalJob::input_source( Size index ) const
 {
 	return *input_sources_[ index ];
+}
+
+InputSourceCOP const &
+InnerLarvalJob::input_source_cop( Size index ) const
+{
+	return input_sources_[ index ];
 }
 
 utility::vector1< JobResultID > const &

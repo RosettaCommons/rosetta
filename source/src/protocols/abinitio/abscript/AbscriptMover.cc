@@ -256,7 +256,7 @@ void AbscriptMover::apply( core::pose::Pose& pose ){
 	using namespace basic::options;
 
 	if ( ! pose.is_centroid() ) {
-		throw CREATE_EXCEPTION(utility::excn::BadInput,  "AbscriptMover recieved a non-centroid pose. Only centroid poses are accepted because of the score functions used in this algorithm." );
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  "AbscriptMover received a non-centroid pose. Only centroid poses are accepted because of the score functions used in this algorithm." );
 	}
 	StageTracker tracker( mc_ );
 
@@ -448,7 +448,7 @@ AbscriptMover::parse_my_tag(
 				selector,
 				stagetag->getOption< bool >( "initialize", true ));
 		} else {
-			tr.Error << "AbscriptMover recieved illegal tag ('Stage' and 'Fragments' are acceptable): '" << stagetag << "'" << std::endl;
+			tr.Error << "AbscriptMover received illegal tag ('Stage' and 'Fragments' are acceptable): '" << stagetag << "'" << std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Illegal AbscriptMover subtag.");
 		}
 	}

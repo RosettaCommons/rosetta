@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd3/output/ResultOutputter.fwd.hh
-/// @brief  Declaration of the %ResultOutputter class
+/// @file   protocols/jd3/output/StandardResultOutputter.fwd.hh
+/// @brief  Declaration of the %StandardResultOutputter class
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd3_output_ResultOutputter_FWD_HH
-#define INCLUDED_protocols_jd3_output_ResultOutputter_FWD_HH
+#ifndef INCLUDED_protocols_jd3_output_StandardResultOutputter_FWD_HH
+#define INCLUDED_protocols_jd3_output_StandardResultOutputter_FWD_HH
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -21,13 +21,13 @@ namespace protocols {
 namespace jd3 {
 namespace output {
 
-class ResultOutputter;
+class StandardResultOutputter;
 
-typedef utility::pointer::shared_ptr< ResultOutputter > ResultOutputterOP;
-typedef utility::pointer::shared_ptr< ResultOutputter const > ResultOutputterCOP;
+typedef utility::pointer::shared_ptr< StandardResultOutputter > StandardResultOutputterOP;
+typedef utility::pointer::shared_ptr< StandardResultOutputter const > StandardResultOutputterCOP;
 
 } // namespace output
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_output_ResultOutputter_FWD_HH
+#endif //INCLUDED_protocols_jd3_output_StandardResultOutputter_FWD_HH

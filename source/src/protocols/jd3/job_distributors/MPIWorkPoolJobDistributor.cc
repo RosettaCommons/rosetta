@@ -1142,6 +1142,9 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 	utility::vector0< int > n_discarded_jobs( n_archives_ + 1, 0 );
 
 	for ( JobResultID result_id : jobs_to_discard ) {
+#ifndef NDEBUG
+		TR << "Discarding JobResultID with job=" << result_id.first << " and resid=" << result_id.second << std::endl;
+#endif
 		if ( job_result_location_map_.count( result_id ) == 0 ) {
 			// TO DO: better diagnostic message here
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to find job result " +
@@ -1591,7 +1594,7 @@ MPIWorkPoolJobDistributor::retrieve_job_maturation_data()
 	LarvalJobOP larval_job;
 	try {
 		larval_job = deserialize_larval_job( larval_job_string );
-		TR << "Recieved job " << larval_job->job_index() << std::endl;
+		TR << "Received job " << larval_job->job_index() << std::endl;
 	} catch ( cereal::Exception & e ) {
 		std::ostringstream oss;
 		oss << "Failed to deserialize larval job on worker node " << mpi_rank_ << ". Exiting.\nError message from cereal library:\n";

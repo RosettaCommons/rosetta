@@ -30,7 +30,7 @@ void
 WriteableCacheableDataFactory::factory_register( WriteableCacheableDataCreatorOP creator )
 {
 	if ( !creator ) {
-		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  "WriteableCacheableDataFactory recieved a null creator pointer." );
+		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  "WriteableCacheableDataFactory received a null creator pointer." );
 	}
 
 	std::string const& data_type = creator->keyname();

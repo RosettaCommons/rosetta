@@ -169,7 +169,7 @@ void ChainSelector::select_chain_by_pdb_chain_char(
 {
 	if ( !pose.pdb_info() ) {
 		std::ostringstream err;
-		err << get_name() << "Selector recieved a pose without a valid PDBInfo--chains cannot be selected.";
+		err << get_name() << "Selector received a pose without a valid PDBInfo--chains cannot be selected.";
 		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  err.str() );
 	}
 

@@ -78,7 +78,7 @@ public:
 	void provide_xml_schema( std::string const &mover_name, utility::tag::XMLSchemaDefinition & xsd ) const;
 
 	/// @brief Create a mover given its identifying string
-	MoverOP newMover( std::string const & );
+	MoverOP newMover( std::string const & ) const;
 
 	/// @brief return new Mover by Tag parsing; the identifying string for the Mover is in the Tag
 	MoverOP
@@ -88,7 +88,7 @@ public:
 		protocols::filters::Filters_map const &,
 		Movers_map const &,
 		Pose const &
-	);
+	) const;
 
 	/// @brief Read access to the set of all MoverCreators; for unit testing purposes
 	MoverMap const & mover_creator_map() const;

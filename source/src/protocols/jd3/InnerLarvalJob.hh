@@ -154,9 +154,11 @@ public:
 	/// this job should be constructed.  Requires that there is only a single InputSource
 	/// for this job.
 	InputSource const & input_source() const;
+	InputSourceCOP const & input_source_cop() const;
 
 	/// @brief Retrieve a particular InputSource
 	InputSource const & input_source( Size index ) const;
+	InputSourceCOP const & input_source_cop( Size index ) const;
 
 	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
 	/// already-executed (Lavral)Jobs

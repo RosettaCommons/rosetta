@@ -10,19 +10,68 @@
 /// @file   protocols/jd3/JobGenealogist.hh
 /// @brief  class declaration for JobGenealogist
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Jack Maguire, jack@med.unc.edu
+/// @details See here for more information: https://www.rosettacommons.org/docs/latest/development_documentation/tutorials/jd3_derived_jq/classes/job_genealogist
+/*!
 
+This class was designed to help job queen developers
+keep track of the sources for their jobs.
+
+The underlying data in this class are represented
+by a directed acyclic graph alternating between
+job nodes and results nodes. Consider this example:
+
+Job1 -|-- Result 1 -|-- Job 3 --- Result 1
+|             |
+|             |-- Job 4 -|- Result 1
+|                        |
+|-- Result 2             |- Result 2
+
+
+Job2 -|-- Result 1 -|-- Job 5
+|
+|-- Job 6
+
+
+Let's say Nobs 1 & 2 come from the first node in the job DAG
+and the rest come from the second job DAG node. We can use this to:
+
+1) Track the original input source (<Job> tag, most likely) for each job.
+
+2) Find job results to discard. Maybe we originally wanted to keep result { Job1, Result2 }
+but now we can delete all of the jobs from DAG node 1 that do not have offspring such as { Job1, Result2 }.
+The garbage_collection() method helps us find those job results.
+
+
+Jobs are represented using JGJobNodes and results with JGResultNodes.
+This does not have to be a tree; you can have a JGJobNode with multiple parents (JGResultNodes).
+
+
+To keep this up to date (only on node 0, of course), make sure to:
+
+1) call JobGenealogist::register_new_job() inside JobQueen::determine_job_list()
+
+2) call JobGenealogist::note_job_completed() inside JobQueen::note_job_completed()
+
+3) call JobGenealogist::discard_job_result() for every job result id returned in JobQueen::job_results_that_should_be_discarded()
+*/
 #ifndef INCLUDED_protocols_jd3_JobGenealogist_hh
 #define INCLUDED_protocols_jd3_JobGenealogist_hh
 
 // Project headers
 #include <core/types.hh>
+#include <protocols/jd3/JobGenealogist.fwd.hh>
+#include <protocols/jd3/CompletedJobOutput.fwd.hh>
 
 // Utility headers
 #include <utility/graph/Digraph.hh>
 #include <utility/vector1.hh>
+#include <utility/graph/unordered_object_pool.hpp>
+#include <boost/pool/pool.hpp>
 
 // Numeric headers
 #include <numeric/DiscreteIntervalEncodingTree.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <map>
@@ -32,168 +81,317 @@
 namespace protocols {
 namespace jd3 {
 
-/// @brief The JobGenealogist is meant to manage the annoying / complex / delicate
-/// task of keeping track of what jobs belong to which node and what their parents
-/// and whether a job has any undiscarded descendants. This task would otherwise fall
-/// to the JobQueen, and there are already enough tasks for the JobQueen to manage.
-///
-/// @details The typical usage scenario is that the JobQueen tells the JobGenealogist
-/// I have N nodes and for each node, here is an upper bound on the number of jobs
-/// that will be run for this node. It's alright if the JobQueen doesn't have all of
-/// that information to start; she can tell the JobGenealogist about new nodes in
-/// the JobDAG as she gets to them. (The JobQueen does not need to tell the
-/// JobGenealogist about the edges in the JobDAG -- only the nodes). The JG will
-/// alot job-index ranges for each node based on the upper bounds. These are the
-/// "target ranges."
-///
-/// For example, if you had a 5 stage protocol where you were going to take the
-/// best 10 structures out of those that pass some quality filter that resulted
-/// from each stage and use them as seeds for 1000 new jobs (100 replicates for
-/// each one), then you would say that each of the 5 nodes has a projected 1000
-/// jobs -- but you don't know if there are going to actually be 1000 jobs,
-/// because it's possible that only 9 strucures will pass the filters.
-///
-/// When it is time to begin preparing for stage 2, e.g., the JQ will tell the
-/// JG, jobs 150, 221, 388, ..., and 658 will be the parent to 100 replicates
-/// using the "append_parents_and_n_replicate_jobs_for_node" function. As results
-/// for round 2 trickle in, and the JobQueen filters out the worst ones, she
-/// will tell the JG that those jobs have been discarded using the note_job_discarded()
-/// function.
-///
-/// The geneologist needs to be informed of the actual job range for a node if you
-/// are not using the "append_parents_..." method. If you have a set of jobs that
-/// do not have parents, you can either call the "append_parents_..." function
-/// where you pass in a vector of empty vectors, OR you can call
-/// set_actual_njobs_for_node.
-///
-/// The JobQueen can even ask the JG to keep track of the jobs she has handed out
-/// for each node using the jobs_remain_for_node and get_next_job_for_node functions
-///
-/// Perhaps the most important functionality of the JobGenealogist is keeping track
-/// of ancestries. If you want to keep hold of intermediate structures so that you
-/// can output the structures that led to the most interesting / lowest-energy
-/// structures at the end of protocol, then JG will manage the tricky task of telling
-/// you which intermidiate structures its safe to discard given that they do not
-/// have any descendants that have not been discarded. (If you do go and discard those
-/// jobs, make sure to tell the JobGenealogist about it.) The JG can also track which
-/// jobs have and have not been discarded. It uses a Discrete Interval Encoding Tree (DIET)
-/// to efficiently do so.
-class JobGenealogist
-{
-public:
-	typedef core::Size Size;
-	typedef utility::vector1< Size > Sizes;
+class JGJobNode{
 
 public:
-	JobGenealogist();
-	JobGenealogist( JobGenealogist const & );
-	~JobGenealogist();
-	JobGenealogist & operator = ( JobGenealogist const & rhs );
 
-	void set_num_nodes( Size num_nodes );
-	void add_node();
-	void set_target_num_jobs_for_node( Size node_id, Size num_jobs );
+	JGJobNode();
 
-	void append_parents_and_n_replicate_jobs_for_node(
-		Size node_id,
-		Sizes const & parent_job_index,
-		Sizes const & n_replicate_jobs_for_each_parent_group
+	JGJobNode(
+		core::Size global_job,
+		unsigned int job_dag_node,
+		JGResultNode * parent_node,
+		unsigned int input_source
 	);
 
-	void append_parents_and_n_replicate_jobs_for_node(
-		Size node_id,
-		Sizes const & parent_job_index,
-		Size n_replicate_jobs_for_all_parent_group
-	);
+	~JGJobNode() = default;
 
-	void append_parents_and_n_replicate_jobs_for_node(
-		Size node_id,
-		utility::vector1< Sizes > const & parent_job_indices,
-		Sizes const & n_replicate_jobs_for_each_parent_group
-	);
+	///@brief This is purely for the sake of sorting
+	bool operator < ( JGJobNode const & rhs) const {
+		return global_job_id_ < rhs.global_job_id_;
+	}
 
-	void append_parents_and_n_replicate_jobs_for_node(
-		Size node_id,
-		utility::vector1< Sizes > const & parents_job_indices,
-		Size n_replicate_jobs_for_all_parent_group
-	);
+	///@brief Like humans, the JGJobNode can have more than one parent.
+	///@details please only set tell_parent_to_add_child to false if you plan on adding this job node to p's vector of children. The parent/child relationship is very complicated when only one of the two parties knows about the relationship.
+	void add_parent( JGResultNode * p, bool tell_parent_to_add_child = true );
 
-	/// @brief Inform the geneologist of how many jobs for a given node there
-	/// are in the event that the the node will not have
-	/// append_ancestors_and_n_replicate_jobs_for_node called for it.
-	void set_actual_njobs_for_node( Size node_id, Size num_jobs );
+	///@details please only set tell_parent_to_add_child to false if you plan on removing this job node from p's vector of children. The parent/child relationship is very complicated when only one of the two parties knows that the relationship has ended.
+	bool remove_parent( JGResultNode * p, bool tell_parent_to_remove_child = true );
 
-	void note_job_discarded( Size job_id );
-	bool job_has_been_discarded( Size job_id ) const;
+public: //getters and setters
 
-	bool jobs_remain_for_node( Size node_id ) const;
-	Size get_next_job_for_node( Size node_id );
+	core::Size global_job_id() const {
+		return global_job_id_;
+	}
 
-	Size get_num_nodes() const;
-	Size get_node_target_range_begin( Size node_id ) const;
-	Size get_node_target_range_end(   Size node_id ) const;
-	Size get_node_actual_range_begin( Size node_id ) const;
-	Size get_node_actual_range_end(   Size node_id ) const;
+	void global_job_id( core::Size global_job_id ) {
+		global_job_id_ = global_job_id;
+	}
 
-	bool job_has_any_parents( Size job_id ) const;
-	bool job_from_node_has_any_parents( Size job_id, Size node_id ) const;
-	Size get_parent_for_job( Size job_id ) const;
-	Sizes const & get_parents_for_job( Size job_id ) const;
-	Sizes const & get_parents_for_job_for_node( Size job_id, Size node_id ) const;
-	Sizes get_all_ancestors_for_job( Size job_id ) const;
+	unsigned int node() const {
+		return node_;
+	}
 
-	std::list< Size >
-	find_descendentless_jobs_backwards_from_node( Size job_id );
+	///@brief "Node" is the most over-used word in this file. This method calls node() but has a more descriptive name so that we know what type of node we are talking about.
+	unsigned int job_dag_node() const {
+		return node_;
+	}
 
-	Size node_for_jobid( Size job_id ) const;
+	void node( unsigned int node ) {
+		node_ = node;
+	}
 
-	Size replicate_id_for_jobid( Size job_id ) const;
+	///@brief "Node" is the most over-used word in this file. This method calls node() but has a more descriptive name so that we know what type of node we are talking about.
+	void job_dag_node( unsigned int node ) {
+		node_ = node;
+	}
 
-	std::pair< Size, Size > node_and_replicate_id_for_jobid( Size job_id ) const;
+	unsigned int input_source_id() const {
+		return input_source_id_;
+	}
 
-	Size replicate_id_for_jobid_from_node( Size job_id, Size node_id ) const;
+	void input_source_id( unsigned int input_source_id ) {
+		input_source_id_ = input_source_id;
+	}
+
+	utility::vector1< JGResultNode * > & parents() {
+		return parents_;
+	}
+
+	///@brief Be careful here! The vector is const but the elements are not
+	utility::vector1< JGResultNode * > const & parents() const {
+		return parents_;
+	}
+
+	utility::vector1< JGResultNode * > & children() {
+		return children_;
+	}
+
+	///@brief Be careful here! The vector is const but the elements are not
+	utility::vector1< JGResultNode * > const & children() const {
+		return children_;
+	}
+
 
 private:
+	core::Size global_job_id_;
+	unsigned int node_;
+	unsigned int input_source_id_;
 
-	Size pjg_ind_for_job_from_node( Size job_id, Size node_id ) const;
-
-	bool job_is_from_node( Size job_id, Size node_id ) const;
-
-	void
-	add_upstream_nodes_to_bfs_queue(
-		Size const target_node,
-		std::list< core::Size > & bfs_node_list,
-		utility::vector1< char > & node_in_bfs_list
-	) const;
-
-private:
-
-	Size num_nodes_;
-	Size committed_job_range_max_;
-	Sizes target_njobs_for_node_;
-	Sizes actual_njobs_for_node_;
-	//utility::vector1< bool > nodes_finished_;
-	utility::vector1< std::pair< Size, Size > > target_jobid_ranges_for_node_;
-	utility::vector1< std::pair< Size, Size > > actual_jobid_ranges_for_node_;
-
-	utility::vector1< utility::vector1< Sizes > > parent_job_groups_for_node_;
-	utility::vector1< Sizes > n_replicate_jobs_for_pjg_for_node_;
-	utility::vector1< Sizes > start_job_index_for_pjg_for_node_;
-	utility::vector1< std::set< Size > > all_parental_jobs_for_node_;
-	utility::vector1< std::map< Size, Sizes > > pjgs_for_parental_job_for_node_;
-
-	utility::vector1< std::set< Size > > living_jobs_w_descendants_for_node_;
-
-	Sizes last_delivered_job_for_node_;
-
-	Sizes job_lookup_jobid_start_;
-	Sizes job_lookup_node_index_;
-
-	numeric::DiscreteIntervalEncodingTree< Size > discarded_jobs_;
-	utility::graph::Digraph job_dag_;
-
+	utility::vector1< JGResultNode * > parents_;
+	utility::vector1< JGResultNode * > children_;
 };
 
+
+class JGResultNode {
+
+public:
+
+	JGResultNode();
+
+	JGResultNode( unsigned int result, JGJobNode * par );
+
+	~JGResultNode() = default;
+
+	///@brief Some people like to sort. This is for sorting.
+	bool operator < ( JGResultNode const & rhs) const {
+		if ( parent_->node() != rhs.parent_->node() ) return parent_->node() < rhs.parent_->node();
+		return result_id_ < rhs.result_id_;
+	}
+
+	///@brief Like humans, the JGResultNode can have more than one child.
+	///@details please only set tell_child_to_add_parent to false if you plan on adding this result node to c's vector of parents. The parent/child relationship is very complicated when only one of the two parties knows about the relationship.
+	void add_child( JGJobNode * c, bool tell_child_to_add_parent = true );
+
+	///@details please only set tell_child_to_remove_parent to false if you plan on removing this result node from c's vector of parents. The parent/child relationship is very complicated when only one of the two parties knows that the relationship has ended.
+	bool remove_child( JGJobNode * c, bool tell_child_to_remove_parent = true );
+public://getters and setters
+
+	unsigned int result_id() const {
+		return result_id_;
+	}
+
+	void result_id( unsigned int result_id ) {
+		result_id_ = result_id;
+	}
+
+	JGJobNode * parent() {
+		return parent_;
+	}
+
+	JGJobNode const * parent() const {
+		return parent_;
+	}
+
+	void parent( JGJobNode * parent ) {
+		parent_ = parent;
+	}
+
+	utility::vector1< JGJobNode * > & children() {
+		return children_;
+	}
+
+	///@brief Be careful here! The vector is const but the elements are not
+	utility::vector1< JGJobNode * > const & children() const {
+		return children_;
+	}
+
+private:
+
+	unsigned int result_id_;
+	JGJobNode * parent_;
+	utility::vector1< JGJobNode * > children_;
+};
+
+struct compare_job_nodes : public std::binary_function< JGJobNode const *, JGJobNode const *, bool >{
+	bool operator()( JGJobNode const * const a, JGJobNode const * const b) const {
+		return a->global_job_id() < b->global_job_id();
+	}
+
+	bool operator()( JGJobNode * const & a, const JGJobNode & b ) const {
+		return a->global_job_id() < b.global_job_id();
+	}
+};
+
+
+class JobGenealogist : public utility::pointer::ReferenceCount{
+
+public:
+	JobGenealogist(
+		core::Size num_job_dag_nodes,
+		core::Size num_input_sources
+	);
+
+	~JobGenealogist();
+
+public:
+	///@brief register a new job that does not depend on a previous job result but rather takes a pose directly from an input source
+	JGJobNode * register_new_job(
+		core::Size job_dag_node_id,
+		core::Size global_job_id,
+		core::Size input_source_id
+	);
+
+	///@brief register a new job that depends on a single parent job result
+	JGJobNode * register_new_job(
+		core::Size job_dag_node_id,
+		core::Size global_job_id,
+		core::Size job_dag_node_id_of_parent,
+		core::Size global_job_id_of_parent,
+		core::Size result_id_of_parent
+	);
+
+	///@brief register a new job that depends on a single parent job result
+	JGJobNode * register_new_job(
+		core::Size job_dag_node_id,
+		core::Size global_job_id,
+		core::Size job_dag_node_id_of_parent,
+		jd3::JobResultID const & id
+	) {
+		return register_new_job( job_dag_node_id, global_job_id, job_dag_node_id_of_parent, id.first, id.second );
+	}
+
+	///@brief register a new job that depends on a single parent job result
+	JGJobNode * register_new_job(
+		core::Size job_dag_node_id,
+		core::Size global_job_id,
+		JGResultNode * parent
+	);
+
+	///@brief register a new job that depends on multiple parent job results
+	JGJobNode * register_new_job(
+		core::Size job_dag_node_id,
+		core::Size global_job_id,
+		utility::vector1< JGResultNode * > const & parents
+	);
+
+	///@brief Creates nresults new JGResultNodes for this job_node
+	void note_job_completed( JGJobNode * job_node, core::Size nresults );
+
+	///@brief wrapper for the other overload. This one is designed to more closely match the argument provided to JobQueen::note_job_completed
+	inline void note_job_completed( core::Size dag_node_id, core::Size global_job_id, core::Size nresults ) {
+		JGJobNode * job_node = get_job_node( dag_node_id, global_job_id );
+		debug_assert( job_node );
+		note_job_completed( job_node, nresults );
+	}
+
+	///@brief At the end of job_results_that_should_be_discarded(), call this funciton for every JobResultID in the list
+	void discard_job_result( core::Size job_dag_node, core::Size global_job_id, core::Size result_id );
+
+	///@brief At the end of job_results_that_should_be_discarded(), call this funciton for every JobResultID in the list
+	inline void discard_job_result( core::Size job_dag_node, jd3::JobResultID const & id ) {
+		discard_job_result( job_dag_node, id.first, id.second );
+	}
+
+	///@brief return every job result id in this job_dag_node that does not have any jobs spawned after it.
+	///@param[out] container_for_discarded_result_ids
+	///@details Consider the patter Job1 -> Result1 -> Job5 and Job5 has no children (results). Should Job1/Result1 be garbage collected? If so, set delete_downstream_job_if_it_has_no_results to true.
+	void garbage_collection(
+		core::Size job_dag_node,
+		bool delete_downstream_job_if_it_has_no_results,
+		std::list< jd3::JobResultID > & container_for_discarded_result_ids
+	);
+
+	///@brief This method populates the list with every JobResultID for this job dag node
+	///@param[out] container_for_output
+	void all_job_results_for_node(
+		core::Size job_dag_node,
+		std::list< jd3::JobResultID > & container_for_output
+	) const;
+
+	///@brief This returns the connectivity of the graph as a newick tree. If you graph is not a tree, this will have duplicate elements.
+	std::string newick_tree() const;
+
+	core::Size input_source_for_job( core::Size job_dag_node, core::Size global_job_id ) const;
+
+	JGJobNode const * get_job_node( core::Size job_dag_node, core::Size global_job_id ) const;
+
+	JGResultNode const * get_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const;
+
+	///@brief This is more for debugging than anything. Print the global_job_ids for every job dag node to the screen
+	void print_all_nodes();
+
+protected:
+
+	JGJobNode * get_job_node( core::Size job_dag_node, core::Size global_job_id );
+
+	JGResultNode * get_result_node( core::Size node, core::Size global_job_id, core::Size result_id );
+
+	///@brief Are you all done with this JGJobNode? If so, this method deletes it and removes all traces of it.
+	///THIS DOES NOT DELETE ANY OF THE CHILDREN
+	void delete_node( JGJobNode * job_node, unsigned int job_dag_node, bool delete_from_vec = true );
+
+	///@brief Are you all done with this JGJobNode? If so, this method deletes it and removes all traces of it.
+	///THIS DOES NOT DELETE ANY OF THE CHILDREN
+	inline void delete_node( JGJobNode * job_node, bool delete_from_vec = true ){
+		debug_assert( job_node->node() );
+		delete_node( job_node, job_node->node(), delete_from_vec );
+	}
+
+	///@brief Are you all done with this JGResultNode? If so, this method deletes it and removes all traces of it.
+	///THIS DOES NOT DELETE ANY OF THE CHILDREN
+	inline void delete_node( JGResultNode * result_node ){
+		result_node_pool_.destroy( result_node );
+	}
+
+	///@brief This is currently just a wrapper for JGJobNode::input_source_id(). I am leaving it as a method because it may become more complicated in the future.
+	inline unsigned int input_source_for_node( JGJobNode const * job_node ) const {
+		debug_assert( job_node );
+		return job_node->input_source_id();
+	}
+
+private:
+	///@brief recursive utility function for std::string newick_tree();
+	void add_newick_tree_for_node( JGResultNode const *, std::stringstream & ) const;
+
+private:
+	core::Size num_input_sources_;
+
+	utility::vector1< utility::vector1< JGJobNode * > > job_nodes_for_dag_node_;
+
+	boost::unordered_object_pool< JGJobNode > job_node_pool_;
+	boost::unordered_object_pool< JGResultNode > result_node_pool_;
+
+	compare_job_nodes sorter;
+};
+
+
+inline core::Size JobGenealogist::input_source_for_job( core::Size job_dag_node, core::Size global_job_id ) const {
+	debug_assert( get_job_node( job_dag_node, global_job_id ) );
+	JGJobNode const * const job_node = get_job_node( job_dag_node, global_job_id );
+	debug_assert( job_node );
+	return input_source_for_node( job_node );
+}
 
 } // namespace jd3
 } // namespace protocols

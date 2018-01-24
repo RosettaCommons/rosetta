@@ -135,6 +135,7 @@ sources = {
 
 	"protocols/jd3": [
 		"InnerLarvalJob",
+		"InputSource",
 		"Job",
 		"JobDigraph",
 		"JobDistributor",
@@ -145,8 +146,10 @@ sources = {
 		"JobResult",
 		"JobSummary",
 		"LarvalJob",
-		"InputSource",
 		"util",
+	],
+	"protocols/jd3/dag_node_managers": [
+	        "NodeManager",
 	],
 	"protocols/jd3/deallocation": [
 		"DeallocationMessage",

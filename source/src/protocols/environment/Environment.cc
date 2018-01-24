@@ -135,7 +135,7 @@ core::pose::Pose Environment::start( core::pose::Pose const & in_pose ){
 core::pose::Pose Environment::end( core::pose::Pose const & pose ){
 	ProtectedConformationCOP conf = utility::pointer::dynamic_pointer_cast< ProtectedConformation const >( pose.conformation_ptr() );
 	if ( !conf ) {
-		tr.Error << "Environment::end recieved a pose that contains an unprotcted Conformation."
+		tr.Error << "Environment::end received a pose that contains an unprotcted Conformation."
 			<< std::endl;
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Nonprotected pose came in to Environment::end" );
 	}

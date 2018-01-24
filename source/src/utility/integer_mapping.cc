@@ -56,12 +56,12 @@ void subset_mapping::set_next_correspondence( platform::Size source_id )
 {
 	if ( source_id > src_2_dst_.size() || source_id == 0 ) {
 		throw CREATE_EXCEPTION(excn::Exception, "subset_mapping::set_next_correspondence "
-			"recieved an out-of-bounds source id (" + to_string( source_id ) + ") "
+			"received an out-of-bounds source id (" + to_string( source_id ) + ") "
 			"with a source-enumeration size of " + to_string( src_2_dst_.size() ) );
 	}
 	if ( src_2_dst_[ source_id ] != UNMAPPED ) {
 		throw CREATE_EXCEPTION(excn::Exception, "subset_mapping::set_next_correspondence "
-			"recieved an already-mapped source id (" + to_string( source_id ) + ") "
+			"received an already-mapped source id (" + to_string( source_id ) + ") "
 			"which had been previously assigned to destination id " + to_string( src_2_dst_[ source_id ] ) );
 	}
 	dst_2_src_.push_back( source_id );

@@ -390,6 +390,9 @@ sources = {
 	],
 
 	# J ######################################################################
+        "pilot/jackmaguire" : [
+                "multistage_rosetta_scripts",
+        ],
 	"pilot/jadolfbr" : [
 		"rosetta_scripts_jd3",
 	],

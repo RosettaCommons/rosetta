@@ -191,7 +191,7 @@ void EnvMover::parse_subtag( utility::tag::TagCOP tag,
 void EnvMover::add_apply_mover( protocols::moves::MoverOP mover_in ) {
 	if ( !mover_in ) {
 		std::ostringstream ss;
-		ss << "Mover '" << this->get_name() << "' recieved a null pointer in " << __FUNCTION__ << ".";
+		ss << "Mover '" << this->get_name() << "' received a null pointer in " << __FUNCTION__ << ".";
 		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  ss.str() );
 	}
 	movers_->add_mover( mover_in );
@@ -200,7 +200,7 @@ void EnvMover::add_apply_mover( protocols::moves::MoverOP mover_in ) {
 void EnvMover::add_registered_mover( protocols::moves::MoverOP mover_in ) {
 	if ( !mover_in ) {
 		std::ostringstream ss;
-		ss << "Mover '" << this->get_name() << "' recieved a null pointer in " << __FUNCTION__ << ".";
+		ss << "Mover '" << this->get_name() << "' received a null pointer in " << __FUNCTION__ << ".";
 		throw CREATE_EXCEPTION(utility::excn::NullPointerError,  ss.str() );
 	}
 	reg_only_movers_.insert( mover_in );

@@ -86,7 +86,7 @@ public:
 	void provide_xml_schema( std::string const &filter_name, utility::tag::XMLSchemaDefinition & xsd ) const;
 
 	/// @brief Create a filter given its identifying string
-	FilterOP newFilter( std::string const & );
+	FilterOP newFilter( std::string const & ) const;
 
 	/// @brief return new Filter by Tag parsing; the identifying string for the Filter is in the Tag
 	FilterOP
@@ -95,8 +95,9 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const &
-	);
+		Pose const &,
+		std::string user_defined_name = ""
+	) const;
 
 	/// @brief Read access to the set of all FilterCreators; for unit testing purposes
 	FilterMap const & filter_creator_map() const;

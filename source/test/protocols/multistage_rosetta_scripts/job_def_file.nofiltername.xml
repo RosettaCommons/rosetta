@@ -1,0 +1,106 @@
+<JobDefinitionFile>
+
+  Missing Filter Name
+
+  <Job>
+    <Input>
+      <PDB filename="protocols/multistage_rosetta_scripts/3U3B_A.pdb"/>
+    </Input>
+
+    <SCOREFXNS>
+      <ScoreFunction name="individual_sfxn" weights="beta_nov15.wts"/>
+    </SCOREFXNS>
+
+    <RESIDUE_SELECTORS>
+      <Chain name="individual_res_selector" chains="A"/>
+    </RESIDUE_SELECTORS>
+
+    <TASKOPERATIONS>
+      <OperateOnResidueSubset name="individual_task_op_calling_individual_res_selector" selector="individual_res_selector">
+	<PreventRepackingRLT/>
+      </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="protocols/multistage_rosetta_scripts/3U3B_B.pdb"/>
+    </Input>
+
+    <SCOREFXNS>
+      <ScoreFunction name="individual_sfxn" weights="beta_nov15_cst.wts"/>
+    </SCOREFXNS>
+
+    <RESIDUE_SELECTORS>
+      <RandomResidue name="individual_res_selector" num_residues="5"/>
+    </RESIDUE_SELECTORS>
+
+    <TASKOPERATIONS>
+      <OperateOnResidueSubset name="individual_task_op_calling_individual_res_selector" selector="individual_res_selector">
+	<RestrictToRepackingRLT/>
+      </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+  </Job>
+
+  <Common>
+    <SCOREFXNS>
+      <ScoreFunction name="common_sfxn" weights="beta_nov15.wts"/>
+    </SCOREFXNS>
+
+    <RESIDUE_SELECTORS>
+      <Index name="common_res_selector" resnums="4-9"/>
+    </RESIDUE_SELECTORS>
+
+    <TASKOPERATIONS>
+      <OperateOnResidueSubset name="common_task_op_calling_common_res_selector" selector="common_res_selector">
+	<PreventRepackingRLT/>
+      </OperateOnResidueSubset>
+
+      <OperateOnResidueSubset name="common_task_op_calling_individual_res_selector" selector="individual_res_selector">
+	<PreventRepackingRLT/>
+      </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+
+    <Protocol>
+
+      Test common data, segregation
+      <Stage num_runs_per_input_struct="5" total_num_results_to_keep="4">
+	<FastRelax scorefxn="common_sfxn" task_operations="common_task_op_calling_common_res_selector"/>
+	<ScoreType name="scoretypename" scorefxn="common_sfxn" score_type="total_score" threshold="0"/>
+      </Stage>
+
+
+      Test individual data, multiple movers
+      <Stage num_runs_per_input_struct="2" total_num_results_to_keep="4" merge_results_after_this_stage="1">
+	<FastRelax scorefxn="individual_sfxn" task_operations="individual_task_op_calling_individual_res_selector"/>
+	<Idealize/>
+	<ScoreType name="scoretypename" scorefxn="individual_sfxn" score_type="total_score" threshold="0"/>
+      </Stage>
+
+
+      Test mixed data (common calling ind), result_cutoff, multiple filters
+      <Stage num_runs_per_input_struct="1" total_num_results_to_keep="3" result_cutoff="7">
+	<FastRelax scorefxn="common_sfxn" task_operations="common_task_op_calling_individual_res_selector"/>
+	<Sasa name="dummy_filter"/>
+	<ScoreType name="scoretypename" scorefxn="individual_sfxn" score_type="total_score" threshold="0"/>
+      </Stage>
+
+
+      Test mixed data, max_num_results_per_instance, multiple movers and filters
+      <Stage num_runs_per_input_struct="1" total_num_results_to_keep="4" max_num_results_per_instance="3">
+	<FastRelax scorefxn="individual_sfxn" task_operations="common_task_op_calling_individual_res_selector"/>
+	<Idealize/>
+	<Idealize/>
+	ERROR MISSING NAME FOR SASA
+	<Sasa/>
+	<Idealize/>
+	<Idealize/>
+	<Sasa name="dummy2"/>
+	<Idealize/>
+	<ScoreType name="scoretypename" scorefxn="common_sfxn" score_type="total_score" threshold="0"/>
+      </Stage>
+
+    </Protocol>
+  </Common>
+
+</JobDefinitionFile>

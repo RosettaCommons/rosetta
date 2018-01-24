@@ -127,6 +127,8 @@ public:
 	/// The same score function will be used for evaluating moves, packing and discriminating
 	void set_highres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_high );
 
+	core::scoring::ScoreFunctionCOP get_highres_scorefxn() const { return docking_scorefxn_high_;}
+
 	/// @brief Sets the score function that will be used in the high-resolution phase.
 	/// The first scorefunction will be used for evaluating moves and discriminating, the second will be used for packing
 	void set_highres_scorefxn(

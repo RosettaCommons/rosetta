@@ -67,7 +67,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

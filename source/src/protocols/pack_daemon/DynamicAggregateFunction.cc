@@ -197,7 +197,7 @@ IterativeVectorExpression::vector_values() const
 		vec_of_values[ ii ] = input_vector_expressions_[ ii ]->vector_values();
 		if ( ii != 1 ) {
 			if ( vec_of_values[ ii ].size() != vec_of_values[ ii - 1 ].size() ) {
-				utility_exit_with_message( "IterativeVectorExpression " + name() + " recieved vectors of uneven sizes from its children: "
+				utility_exit_with_message( "IterativeVectorExpression " + name() + " received vectors of uneven sizes from its children: "
 					+ input_vector_expressions_[ ii   ]->name() + " with " + utility::to_string( vec_of_values[ ii   ].size()) + " values, and "
 					+ input_vector_expressions_[ ii-1 ]->name() + " with " + utility::to_string( vec_of_values[ ii-1 ].size()) + " values." );
 			}
@@ -700,7 +700,7 @@ ExpressionCOP
 DynamicAggregateFunction::variable_expression( ArithmeticASTValue const & var_node ) const
 {
 	if ( var_node.is_literal() ) {
-		utility_exit_with_message( "Error in DynamicAggregateFunction::variable_expression; non-variable (literal) node recieved" +
+		utility_exit_with_message( "Error in DynamicAggregateFunction::variable_expression; non-variable (literal) node received" +
 			utility::to_string( var_node.literal_value() ));
 	}
 
@@ -2528,7 +2528,7 @@ ExpressionCOP
 EntityFunc::variable_expression( ArithmeticASTValue const & var_node ) const
 {
 	if ( var_node.is_literal() ) {
-		utility_exit_with_message( "Error in EntityFunc::variable_expression; non-variable (literal) node recieved" +
+		utility_exit_with_message( "Error in EntityFunc::variable_expression; non-variable (literal) node received" +
 			utility::to_string( var_node.literal_value() ));
 	}
 

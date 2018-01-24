@@ -12,8 +12,8 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_protocols_jd3_InputSource_HH
-#define INCLUDED_protocols_jd3_InputSource_HH
+#ifndef INCLUDED_protocols_jd3_InputSource_FWD_HH
+#define INCLUDED_protocols_jd3_InputSource_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -32,4 +32,4 @@ typedef utility::vector1< InputSourceOP > InputSources;
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_InputSource_HH
+#endif //INCLUDED_protocols_jd3_InputSource_FWD_HH

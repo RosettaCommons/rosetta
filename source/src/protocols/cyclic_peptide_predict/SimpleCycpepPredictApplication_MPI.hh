@@ -225,7 +225,7 @@ private:
 
 	/// @brief Receive an integer from my parent indicating that I should add N jobs to my set to carry out or to pass to my children.
 	/// @details Recieves message with tag NEW_JOBS_DOWNARD.  Receives zero if no jobs remain in parent to send.
-	/// @param[in,out] njobs The number of jobs held on this node that are to be done.  Incremented by this function with however many are recieved from above.
+	/// @param[in,out] njobs The number of jobs held on this node that are to be done.  Incremented by this function with however many are received from above.
 	void receive_njobs_from_above( core::Size &njobs ) const;
 
 	/// @brief Non-emperor nodes must call this when the emperor calls emperor_broadcast_silent_struct.

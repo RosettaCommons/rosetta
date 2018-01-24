@@ -289,7 +289,7 @@ public: //mutators
 	void return_complex_type_for_MatcherConstraint(
 		utility::tag::XMLSchemaSimpleSubelementList & ssl, utility::tag::XMLSchemaDefinition & xsd );
 
-	void initialize_from_tag( utility::tag::TagCOP const tag );
+	void initialize_from_tag( utility::tag::TagCOP tag );
 
 	/// @brief data reading routine
 	bool
@@ -371,7 +371,7 @@ public:
 #endif // SERIALIZATION
 
 private:
-	void add_enzyme_template( core::Size index, utility::tag::TagCOP const tag);
+	void add_enzyme_template( core::Size index, utility::tag::TagCOP tag);
 
 };
 

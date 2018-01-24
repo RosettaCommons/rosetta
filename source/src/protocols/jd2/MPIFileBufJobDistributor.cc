@@ -323,7 +323,7 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 		Size const slave_job_id( mpi_buf[ 1 ] );
 		Size const slave_batch_id( mpi_buf[ 2 ]);
 		Real const runtime( mpi_buf[ 3 ]);
-		tr.Debug << "Master Node: Recieved message from  " << slave_rank << " with tag "
+		tr.Debug << "Master Node: Received message from  " << slave_rank << " with tag "
 						 << msg_tag << " slave_jobid " << slave_job_id << " slave batchid " << slave_batch_id << std::endl;
 
 		//process message

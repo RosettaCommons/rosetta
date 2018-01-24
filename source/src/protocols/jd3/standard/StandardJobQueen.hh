@@ -48,6 +48,18 @@
 // numeric headers
 #include <numeric/DiscreteIntervalEncodingTree.hh>
 
+#ifdef PYROSETTA
+#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/options/OptionCollection.hh>
+#include <protocols/jd3/pose_inputters/PoseInputter.hh>
+#include <protocols/jd3/pose_inputters/PoseInputterCreator.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputSpecification.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
+#include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.hh>
+#endif
+
 //c++ headers
 #include <string>
 #include <map>
@@ -279,10 +291,22 @@ protected:
 
 	/// @brief Allow the derived JobQueen to tell the %StandardJobQueen to initialize the preliminary
 	/// job list; this is perhaps necessary in the context of multi-round protocols when job-definition
-	/// file specifies the JobDAG.
+	/// file specifies the JobDAG. parse_job_definition_tags() is called at the end of this method.
 	virtual
 	void
 	determine_preliminary_job_list();
+
+	/// @author Jack Maguire, jack@med.unc.edu
+	/// @brief This gives the derived JobQueen a chance to read any relevant information from the
+	/// job-definition file. The second argument holds a PreliminaryLarvalJob for every job block
+	/// and the PreliminaryLarvalJob itself has all of the information given in its corresponding
+	/// block.
+	virtual
+	void
+	parse_job_definition_tags(
+		utility::tag::TagCOP, //common_block_tags,
+		utility::vector1< PreliminaryLarvalJob > const &
+	){};
 
 	/// @brief Allow the derived job queen the opportunity to update the StandardJobQueen's
 	/// job_graph_ data member by adding nodes as well as edges that land on the new nodes.
@@ -363,6 +387,10 @@ protected:
 	/// method just as jobs are prepared. If the base StandardInnerLarvalJob class is desired, then do
 	/// not override this method.
 	virtual StandardInnerLarvalJobOP create_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const;
+
+	/// @brief Calls create_inner_larval_job() and adds information regarding the job definition
+	/// (job tag, input source, jobdef tag, and outputter).
+	virtual StandardInnerLarvalJobOP create_and_init_inner_larval_job( core::Size nstruct, core::Size prelim_job_node ) const;
 
 	/// @brief Factory method for derived classes if they wish to rely on classes derived
 	/// from LarvalJob.  This is invoked by the StandardJobQueen in the expand_job_list method.
@@ -507,8 +535,13 @@ protected:
 	/// once per execution.
 	utility::tag::TagCOP common_block_tags() const;
 
-	/// @brief Return a copy of the Pose to be used with the given job
+	/// @brief Return a copy of the Pose to be used with the given job. Wrapper for pose_for_inner_job()
 	core::pose::PoseOP pose_for_job( LarvalJobCOP job, utility::options::OptionCollection const & options );
+
+	/// @brief Return a copy of the Pose to be used with the given inner job
+	core::pose::PoseOP pose_for_inner_job( StandardInnerLarvalJobCOP inner_job, utility::options::OptionCollection const & options );
+
+	core::pose::PoseOP pose_for_inner_job( StandardInnerLarvalJobCOP inner_job );
 
 	// ResourceManagerOP resource_manager();
 
@@ -541,6 +574,12 @@ protected:
 
 	utility::options::OptionCollectionOP
 	options_from_tag( utility::tag::TagCOP job_options_tags ) const;
+
+	///@brief By default, the common block is given before the job blocks in the job definition file.
+	///Setting this value to false reverses the order and the common block goes at the end of the file.
+	void set_common_block_precedes_job_blocks( bool setting ){
+		common_block_precedes_job_blocks_ = setting;
+	}
 
 private:
 
@@ -617,6 +656,7 @@ private:
 	// Often, you want to use the same pose outputter for multiple jobs.
 	std::map< std::string, pose_outputters::PoseOutputterOP > pose_outputters_;
 
+	bool common_block_precedes_job_blocks_;
 	bool required_initialization_performed_;
 	utility::tag::TagCOP job_definition_file_tags_;
 	utility::tag::TagCOP common_block_tags_;

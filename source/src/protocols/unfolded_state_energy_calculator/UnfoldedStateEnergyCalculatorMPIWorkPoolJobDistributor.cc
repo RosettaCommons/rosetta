@@ -168,7 +168,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 	while ( n_nodes_left_to_spin_down > 0 ) {
 		TR << "Master Node: Waiting for " << n_nodes_left_to_spin_down << " slaves to finish jobs" << std::endl;
 		MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		TR << "Master Node: Recieved message from  " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
+		TR << "Master Node: Received message from  " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
 		switch ( status.MPI_TAG ) {

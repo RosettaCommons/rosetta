@@ -167,7 +167,7 @@ OccupiedSpaceHash::prepare_to_note_hits_for_completed_round()
 {
 	/// Increment the revision id.  This signals to observing ClassicMatchAlgorithms that
 	/// hits generated in previous rounds might no-longer be viable; after this round
-	/// any hit such that none of it's 64 voxels recieved any hits from this round is unable
+	/// any hit such that none of it's 64 voxels received any hits from this round is unable
 	/// to yield a match.
 	///
 	/// Rounds that use secondary matching on upstream residues will not

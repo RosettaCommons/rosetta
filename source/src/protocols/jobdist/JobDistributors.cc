@@ -153,13 +153,13 @@ bool BaseJobDistributor::next_job(BasicJobOP & job, int & struct_n)
 		master_node_distribute_jobs();
 		return false;
 	} else {
-		bool const job_recieved = request_job_from_master_node();
-		if ( job_recieved ) {
+		bool const job_received = request_job_from_master_node();
+		if ( job_received ) {
 			job = jobs_[ current_job_ ];
 			struct_n = current_nstruct_;
 		}
 		job->set_output_file_name( get_output_filename() );
-		return job_recieved;
+		return job_received;
 	}
 #else // one machine, Condor cluster, or BOINC
 	bool job_found = find_available_job();

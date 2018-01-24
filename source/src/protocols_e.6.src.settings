@@ -16,6 +16,12 @@ sources = {
 		"MedalMover",
 		"util",
 	],
+	"protocols/multistage_rosetta_scripts": [
+                "MRSJob",
+                "MRSJobQueen",
+                "MRSJobQueenChecker",
+                "TagManager",
+       	],
 	"protocols/nonlocal": [
 		"BiasedFragmentMover",
 		"Chunk",

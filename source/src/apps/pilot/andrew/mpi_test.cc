@@ -62,7 +62,7 @@ int main( int argc, char ** argv )
 			TR << "Node " << mpi_rank() << " received double message";
 			for ( int ii = 1; ii <= double_message.size(); ++ii ) TR << " " << double_message[ ii ];
 			TR << std::endl;
-			TR << "Node " << mpi_rank() << " recieved a single double " << receive_double_from_node( 0 ) << std::endl;
+			TR << "Node " << mpi_rank() << " received a single double " << receive_double_from_node( 0 ) << std::endl;
 		}
 
 	} catch (utility::excn::Exception const & e ) {

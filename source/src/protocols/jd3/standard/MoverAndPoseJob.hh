@@ -81,12 +81,14 @@ class PoseJobResult : public JobResult
 {
 public:
 	PoseJobResult();
+	PoseJobResult( core::pose::PoseOP pose );
 	~PoseJobResult() override;
 
 	JobStatus status() const override;
 
 	core::pose::PoseOP pose();
 	core::pose::PoseCOP pose() const;
+
 	void pose( core::pose::PoseOP setting );
 private:
 
@@ -103,6 +105,8 @@ class EnergyJobSummary : public JobSummary
 {
 public:
 	EnergyJobSummary();
+	EnergyJobSummary( core::Real energy );
+
 	virtual ~EnergyJobSummary();
 
 	core::Real energy() const;

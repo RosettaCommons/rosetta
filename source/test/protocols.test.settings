@@ -306,6 +306,7 @@ sources = {
 		"StandardJobQueen",
 		"StandardJobQueenOverrideInputter",
 		"StandardJobQueenOverrideOutputter",
+                "NodeManagers",
 	#	"validate_w_xsd",
 	],
 	"jd3/pose_inputters" : [
@@ -433,6 +434,10 @@ sources = {
 		"TorsionSamplingKinematicPerturber",
 		"VicinitySamplingKinematicPerturber",
 	],
+
+        "multistage_rosetta_scripts" : [
+                "MRSJobQueen",
+        ],
 
 	"nonlocal" : [
 		"Chunk",
@@ -925,6 +930,13 @@ testinputfiles = [
 	"membrane/symmetry/1afo_tr.span",
 	"membrane/symmetry/1afo_tr_input.pdb",
 	"membrane/symmetry/1afo_tr.c2.symm",
+	"multistage_rosetta_scripts/job_def_file.xml",
+	"multistage_rosetta_scripts/job_def_file.bad1.xml",
+	"multistage_rosetta_scripts/job_def_file.bad2.xml",
+	"multistage_rosetta_scripts/job_def_file.bad3.xml",
+	"multistage_rosetta_scripts/job_def_file.nofiltername.xml",
+	"multistage_rosetta_scripts/3U3B_A.pdb",
+	"multistage_rosetta_scripts/3U3B_B.pdb",
 	"nonlocal/2GB3.pdb",
 	"nonlocal/alignment.filt",
 	"optimize_weights/1UAD.wt_complex.pdb",

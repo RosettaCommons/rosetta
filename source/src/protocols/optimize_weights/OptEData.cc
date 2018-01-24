@@ -2778,7 +2778,7 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 		}
 		natives_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 		natives_[ ii ]->rms( rms[ ii-1 ] );
-		//std::cout << "recieved native with rms: " << rms[ (ii-1) ] << std::endl;
+		//std::cout << "received native with rms: " << rms[ (ii-1) ] << std::endl;
 	}
 
 	delete [] rms;// rms = 0;
@@ -2807,7 +2807,7 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 		}
 		decoys_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 		decoys_[ ii ]->rms( rms[ ii - 1 ] );
-		//std::cout << "recieved decoy  with rms: " << rms[ (ii-1) ] << std::endl;
+		//std::cout << "received decoy  with rms: " << rms[ (ii-1) ] << std::endl;
 	}
 
 

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh
-/// @brief  Declaration of the %SecondaryPoseOutputter class
+/// @file   protocols/jd3/pose_outputters/ScoreFileOutputter.fwd.hh
+/// @brief  Declaration of the %ScoreFileOutputter class
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd3_pose_outputters_SecondaryPoseOutputter_FWD_HH
-#define INCLUDED_protocols_jd3_pose_outputters_SecondaryPoseOutputter_FWD_HH
+#ifndef INCLUDED_protocols_jd3_pose_outputters_ScoreFileOutputter_FWD_HH
+#define INCLUDED_protocols_jd3_pose_outputters_ScoreFileOutputter_FWD_HH
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -21,13 +21,13 @@ namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
 
-class SecondaryPoseOutputter;
+class ScoreFileOutputter;
 
-typedef utility::pointer::shared_ptr< SecondaryPoseOutputter > SecondaryPoseOutputterOP;
-typedef utility::pointer::shared_ptr< SecondaryPoseOutputter const > SecondaryPoseOutputterCOP;
+typedef utility::pointer::shared_ptr< ScoreFileOutputter > ScoreFileOutputterOP;
+typedef utility::pointer::shared_ptr< ScoreFileOutputter const > ScoreFileOutputterCOP;
 
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_pose_outputters_SecondaryPoseOutputter_FWD_HH
+#endif //INCLUDED_protocols_jd3_pose_outputters_ScoreFileOutputter_FWD_HH

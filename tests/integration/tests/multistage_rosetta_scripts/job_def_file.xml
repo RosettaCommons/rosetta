@@ -1,0 +1,76 @@
+<JobDefinitionFile>
+  <Job>
+    <Input>
+      <PDB filename="3U3B_A.pdb"/>
+    </Input>
+
+    <RESIDUE_SELECTORS>
+      <RandomResidue name="residue_to_mutate" />
+    </RESIDUE_SELECTORS>
+
+    <SCOREFXNS>
+      <ScoreFunction name="individual_sfxn" weights="ref2015.wts"/>
+    </SCOREFXNS>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="3U3B_B.pdb"/>
+    </Input>
+
+    <RESIDUE_SELECTORS>
+      <RandomResidue name="residue_to_mutate" num_residues="2"/>
+    </RESIDUE_SELECTORS>
+
+    <SCOREFXNS>
+      <ScoreFunction name="individual_sfxn" weights="ref2015_cst.wts"/>
+    </SCOREFXNS>
+  </Job>
+
+  <Common>
+    <SCOREFXNS>
+      <ScoreFunction name="common_sfxn" weights="ref2015.wts"/>
+    </SCOREFXNS>
+
+    <RESIDUE_SELECTORS>
+      <Not name="residues_to_fix" selector="residue_to_mutate"/>
+    </RESIDUE_SELECTORS>
+
+    <TASKOPERATIONS>
+      <OperateOnResidueSubset name="fix_most_residues" selector="residues_to_fix">
+	<PreventRepackingRLT/>
+      </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+
+    <MOVERS>
+      <Idealize name="idealize" fast="true"/>
+      <Shear name="Shear" nmoves="10"/>
+      <RandomMutation name="mutate" task_operations="fix_most_residues" scorefxn="common_sfxn"/>
+    </MOVERS>
+
+    <FILTERS>
+      <ScoreType name="c" scorefxn="common_sfxn" score_type="total_score" threshold="9999"/>
+      <ScoreType name="i" scorefxn="individual_sfxn" score_type="total_score" threshold="9999"/>
+    </FILTERS>
+
+    <PROTOCOLS>
+
+      <Stage num_runs_per_input_struct="5" total_num_results_to_keep="4">
+	<Add mover="mutate"/>
+	<Sort filter_name="c"/>
+      </Stage>
+
+      <Stage num_runs_per_input_struct="2" total_num_results_to_keep="4" merge_results_after_this_stage="1">
+	<Add mover="Shear"/>
+	<Sort filter="i"/>
+      </Stage>
+
+      <Stage num_runs_per_input_struct="1" total_num_results_to_keep="3" result_cutoff="7">
+	<Add mover="idealize"/>
+	<Sort filter="c" />
+      </Stage>
+
+    </PROTOCOLS>
+  </Common>
+
+</JobDefinitionFile>

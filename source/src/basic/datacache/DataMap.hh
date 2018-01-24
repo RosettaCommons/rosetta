@@ -50,7 +50,7 @@ public:
 
 	// @brief add an object to the map, returning false if an object of that
 	// name already exists
-	bool add(
+	virtual bool add(
 		std::string const & type,
 		std::string const & name,
 		utility::pointer::ReferenceCountOP const op

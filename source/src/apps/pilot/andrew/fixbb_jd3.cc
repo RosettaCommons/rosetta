@@ -153,6 +153,12 @@ public:
 		// TO DO: Is there anything else that needs to be set?
 	}
 
+	void
+	parse_job_definition_tags(
+		utility::tag::TagCOP,
+		utility::vector1< protocols::jd3::standard::PreliminaryLarvalJob > const &
+	) override {}
+
 
 
 	protocols::jd3::JobOP

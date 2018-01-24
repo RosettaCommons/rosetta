@@ -110,7 +110,7 @@ MoverFactory::provide_xml_schema(
 
 /// @brief return new Mover by key lookup in mover_prototype_map_ (new Mover parses Tag if provided)
 MoverOP
-MoverFactory::newMover( std::string const & mover_type )
+MoverFactory::newMover( std::string const & mover_type ) const
 {
 	MoverMap::const_iterator iter( mover_creator_map_.find( mover_type ) );
 	if ( iter != mover_creator_map_.end() ) {
@@ -139,7 +139,7 @@ MoverFactory::newMover(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	moves::Movers_map const & movers,
-	Pose const & pose )
+	Pose const & pose ) const
 {
 	MoverOP mover( newMover( tag->getName() ) );
 	runtime_assert( mover != nullptr );
