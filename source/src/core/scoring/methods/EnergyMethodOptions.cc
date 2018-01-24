@@ -823,7 +823,7 @@ bool EnergyMethodOptions::voids_penalty_energy_disabled_except_during_packing() 
 /// to be "buried".
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void EnergyMethodOptions::voids_penalty_energy_containing_cones_cutoff( core::Size const setting ) {
-	voids_penalty_energy_cone_distance_cutoff_ = setting;
+	voids_penalty_energy_containing_cones_cutoff_ = setting;
 }
 
 /// @brief Set the cone distance cutoff for the voids penalty energy.
