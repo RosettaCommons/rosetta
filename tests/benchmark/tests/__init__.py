@@ -288,7 +288,7 @@ def get_path_to_python_executable(platform, config):
 
     # for security reasons we only allow installs for version listed here with hand-coded URL's
     python_sources = {
-        '2.7' : 'https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz',
+        '2.7' : 'https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz',
 
         '3.5' : 'https://www.python.org/ftp/python/3.5.4/Python-3.5.4.tgz',
         '3.6' : 'https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tgz',
