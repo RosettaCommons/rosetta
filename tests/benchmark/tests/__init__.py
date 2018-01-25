@@ -278,6 +278,7 @@ def get_path_to_python_executable(platform, config):
     '''
     prefix = config['prefix']
     jobs = config['cpu_count']
+    compiler = 'clang' if platform['os'] == 'mac' else 'gcc'  # disregarding platform compiler setting and instead use default compiler for platform
 
     python_version = platform.get('python', '3.6')
 
@@ -308,12 +309,12 @@ def get_path_to_python_executable(platform, config):
     extra = extras.get( (platform['os'],)  , ('', '') )
     extra = extras.get( (platform['os'], python_version) , extra)
 
-    signature = 'url: {url}\nextra: {extra}\npackages: {packages}\n'.format( **vars() )
+    signature = 'url: {url}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'.format( **vars() )
 
     machine_name = os.uname()[1]
     suffix = platform['os'] + '.' + machine_name
 
-    root = os.path.abspath(prefix + '/' + suffix + '/python-' + python_version)
+    root = os.path.abspath(prefix + '/' + suffix + '/python-' + python_version + '.' +  compiler)
 
     signature_file_name = root + '/.signature'
 
@@ -352,7 +353,7 @@ def get_path_to_python_executable(platform, config):
 
         execute('Unpacking {}'.format(archive), 'cd {build_prefix} && tar -xvzf {archive}'.format(**vars()) )
 
-        execute('Building and installing...', 'cd {} && {extra[0]} ./configure {extra[1]} --prefix={root} && make -j{jobs} && make install'.format(build_dir, **vars()) )
+        execute('Building and installing...', 'cd {} && CC={compiler} {extra[0]} ./configure {extra[1]} --prefix={root} && make -j{jobs} && make install'.format(build_dir, **vars()) )
 
         shutil.rmtree(build_prefix)
 

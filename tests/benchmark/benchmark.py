@@ -47,10 +47,7 @@ def main(args):
                                            "Use the --skip-compile to skip the build phase when testing locally. "
                                            "Example Command: /benchmark.py -j2 integration.valgrind")
 
-    parser.add_argument('-j', '--jobs',
-      default=1, type=int,
-      help="Number of processors to use on when building. (default: use all avaliable memory)",
-    )
+    parser.add_argument('-j', '--jobs', default=0, type=int, help="Number of processors to use on when building. (default: use value from config file or 1)")
 
     parser.add_argument('-m', '--memory',
       default=0, type=int,
@@ -104,6 +101,7 @@ def main(args):
 
     else:
         Config = ConfigParser()
+        Config.set('DEFAULT', 'cpu_count',  '1')
         Config.set('DEFAULT', 'hpc_driver', 'MultiCore')
         Config.set('DEFAULT', 'branch',     'unknown')
         Config.set('DEFAULT', 'revision',   '42')
@@ -111,11 +109,11 @@ def main(args):
         Config.set('DEFAULT', 'user_email', 'jane.roe@university.edu')
         Config.add_section('config')
 
-    Config.set('DEFAULT', 'cpu_count', str(Options.jobs) )
+    if Options.jobs: Config.set('DEFAULT', 'cpu_count', str(Options.jobs) )
     Config.set('DEFAULT', 'memory',    str(memory) )
 
     config = Config.items('config')
-    config = dict(config, cpu_count=Options.jobs, memory=memory)
+    config = dict(config, cpu_count=Config.getint('DEFAULT', 'cpu_count'), memory=memory)
     if 'prefix' not in config: config['prefix'] = os.path.abspath('./results/prefix')
     if Options.skip_compile is not None:
         config['skip_compile'] = Options.skip_compile
