@@ -136,6 +136,7 @@ sources = {
                 "HBNetStapleInterface",
                 "HBNetTaskOperations",
 		"HBNet_util",
+		"NetworkState",
         ],
 	"protocols/hotspot_hashing": [
 		"HotspotStub",

@@ -753,15 +753,15 @@ protected://Monte Carlo Protocol Protected Methods
 	virtual bool edge_can_yield_monte_carlo_seed( core::pack::interaction_graph::EdgeBase const * ) const;
 
 	///@brief get_next_node() randomly decides how the current_state will grow during the monte carlo branching protocol
-	core::scoring::hbonds::graph::HBondNode * get_next_node( NetworkState & current_state );
+	core::scoring::hbonds::graph::AtomLevelHBondNode * get_next_node( NetworkState & current_state );
 
 	///@brief returns true if this hbond can not create a network
-	bool monte_carlo_seed_is_dead_end( core::scoring::hbonds::graph::HBondEdge const * monte_carlo_seed );
+	bool monte_carlo_seed_is_dead_end( core::scoring::hbonds::graph::AtomLevelHBondEdge const * monte_carlo_seed );
 
 	///@brief called at the end of the monte carlo branching protocol. Adds all of the monte carlo networks to the data elements used by the traditional HBNet protocol
 	void append_to_network_vector( utility::vector1< DecoratedNetworkState > const & designed_networks );
 
-	void add_residue_to_network_state( NetworkState & current_state, core::scoring::hbonds::graph::HBondNode * node_being_added ) const;
+	void add_residue_to_network_state( NetworkState & current_state, core::scoring::hbonds::graph::AtomLevelHBondNode * node_being_added ) const;
 
 	///@brief quick and dirty satisfaction check
 	bool network_state_is_satisfied( NetworkState & current_state ) const;
@@ -776,10 +776,10 @@ protected://Monte Carlo Protocol Protected Methods
 	) const;
 
 	///@brief returns false if there is a clash between the node_being_added and any node currently in the current_state
-	static bool node_is_compatible( NetworkState const & current_state, core::scoring::hbonds::graph::HBondNode const * node_being_added );
+	static bool node_is_compatible( NetworkState const & current_state, core::scoring::hbonds::graph::AtomLevelHBondNode const * node_being_added );
 
 	///@brief This is only being used for debug purposes right now. Makes sure that there are no possible nodes that can be added to current_state
-	static bool network_state_is_done_growing( NetworkState const & current_state, core::scoring::hbonds::graph::AbstractHBondGraphCOP hbond_graph );
+	static bool network_state_is_done_growing( NetworkState const & current_state, core::scoring::hbonds::graph::AtomLevelHBondGraphCOP hbond_graph );
 
 	///@brief TODO
 	core::Real estimate_saturation( NetworkState const & ) const;
@@ -870,7 +870,7 @@ private:
 	core::scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph_;
 
 	//"init state" == "seed hbond"
-	utility::vector1< core::scoring::hbonds::graph::HBondEdge const * > monte_carlo_seeds_;
+	utility::vector1< core::scoring::hbonds::graph::AtomLevelHBondEdge const * > monte_carlo_seeds_;
 	core::Real monte_carlo_seed_threshold_;//twobody energy threshold
 	bool monte_carlo_seed_must_be_buried_;//only branch from hbonds where both residues are in the core
 	bool monte_carlo_seed_must_be_fully_buried_;//only branch from hbonds where both residues are in the core
