@@ -55,7 +55,7 @@ public:
 	void
 	parse_my_tag( utility::tag::TagCOP ){}
 
-	/// @brief The class name (its type) for a particular ResourceOptions instance.
+	/// @brief The class name (its type) for a particular instance.
 	/// This function allows for better error message delivery.
 	virtual
 	std::string

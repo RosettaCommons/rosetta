@@ -18,11 +18,12 @@
 #include <basic/resource_manager/ResourceLoader.fwd.hh>
 
 //package headers
-#include <basic/resource_manager/ResourceOptions.fwd.hh>
+#include <basic/resource_manager/ResourceManager.fwd.hh>
 #include <basic/resource_manager/types.hh>
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.hh>
 
 //C++ headers
 #include <istream>
@@ -32,29 +33,29 @@ namespace resource_manager {
 
 /// @brief The ResourceLoader is responsible for instantiating a Resource object
 /// and initializing it.  In order to do so, the ResourceLoader is given an input
-/// stream and a ResourceOptions object.  Note that the ResourceOptions object has
-/// to be of the right type, or the ResourceLoader will not be able to read the
-/// data that it needs out of it.  If the ResourceLoader is given the wrong kind
-/// of ResourceOptions object, it will throw an exception.
+/// stream and a XML "Tag" object. The ResourceLoader can also request other
+/// Resources from the ResourceManager in trying to construct a particular resource.
 class ResourceLoader : public utility::pointer::ReferenceCount
 {
 public:
-	~ResourceLoader() override;
+	virtual ~ResourceLoader();
 
 	/// @brief Create a resource, held in an owning pointer, of any type
-	/// which will be stored and whose lifetime will be governed by the
-	/// ResourceManager
+	/// which will be stored in the ResourceManager; a resource may depend
+	/// on another resource held / managed by the ResourceManager. If a
+	/// second (or third, or fourth, etc.) resource is requested during the
+	/// construction of this resource, the resource manager will take note of
+	/// their interdependency and preserve the second resource for as long
+	/// as the first one has not been deallocated.
 	virtual
-	ResourceOP
+	ResourceCOP
 	create_resource(
-		ResourceOptions const & options,
-		LocatorID const & locator_id,
+		ResourceManager & resource_manager,
+		utility::tag::TagCOP resource_tag,
+		std::string const & input_id,
 		std::istream & istream
 	) const = 0;
 
-	virtual
-	ResourceOptionsOP
-	default_options() const = 0;
 };
 
 } // namespace resource_manager

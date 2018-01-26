@@ -55,7 +55,7 @@ StepWiseMoveSelectorOptions::~StepWiseMoveSelectorOptions() = default;
 
 /// @brief copy constructor
 StepWiseMoveSelectorOptions::StepWiseMoveSelectorOptions( StepWiseMoveSelectorOptions const & src ) :
-	ResourceOptions( src )
+	ReferenceCount()
 {
 	*this = src;
 }

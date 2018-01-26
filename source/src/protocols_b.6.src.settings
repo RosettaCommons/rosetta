@@ -145,8 +145,6 @@ sources = {
 		"SurfaceOrientMover",
 		"SurfaceParameters",
 		"SurfaceVectorLoader",
-		"SurfaceVectorFallbackConfiguration",
-		"SurfaceVectorOptions",
 	],
 	"protocols/symmetric_docking": [
 		"SymDockBaseProtocol",

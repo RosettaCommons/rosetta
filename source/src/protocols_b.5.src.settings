@@ -56,7 +56,7 @@ sources = {
         ],
         "protocols/forge/remodel": [
                 "RemodelAccumulator",
-								"RemodelConstraintGenerator",
+		"RemodelConstraintGenerator",
                 "RemodelData",
                 "RemodelDesignMover",
                 "RemodelEnzdesCstModule",
@@ -68,7 +68,7 @@ sources = {
                 "RemodelLigandHandler",
                 "ResidueVicinityRCG",
         ],
-        
+
 	"protocols/loophash": [
 		"BackboneDB",
 		"FastGapMover",
@@ -76,7 +76,6 @@ sources = {
 		"LoopHashDiversifier",
 		"LoopHashLibrary",
 		"LoopHashLibraryLoader",
-		"LoopHashLibraryOptions",
 		#"LoophashLoopInserter",
 		"LoopHashMap",
 		"LoopHashMoverWrapper",
@@ -90,16 +89,16 @@ sources = {
 	],
 	"protocols/loop_modeler": [
 		"LoopModeler",
-    "perturbers/LoopHashPerturber",
+		"perturbers/LoopHashPerturber",
 	],
-  "protocols/pockets": [
+	"protocols/pockets": [
 		"Fingerprint",
 		"FingerprintMultifunc",
 		"PocketConstraint",
 		"PocketGrid",
-    "PocketExemplarMultifunc",
+		"PocketExemplarMultifunc",
 		"GenPharmacophore",
-    "DarcParticleSwarmMinimizer",
+		"DarcParticleSwarmMinimizer",
 	],
 	"protocols/pose_reporters": [
 		"BasicPosePropertyReporters",

@@ -18,12 +18,9 @@
 // Project headers
 #include <protocols/surface_docking/SurfaceVectorLoader.hh>
 #include <protocols/surface_docking/SurfaceParameters.hh>
-#include <protocols/loops/LoopsFileOptions.hh> //this is crazy
 
-// Utility headers
-
-
-// Numeric headers
+// basic headers
+#include <basic/resource_manager/ResourceManager.hh>
 
 // C++ headers
 #include <string>
@@ -45,15 +42,15 @@ public:
 		std::istringstream lstream( surf_vec_file );
 		std::istringstream lstream2( surf_vec_file2);
 
-		protocols::loops::LoopsFileOptions opts;
+		basic::resource_manager::ResourceManager rm;
+		utility::tag::TagCOP tag;
 
-
-		utility::pointer::ReferenceCountOP resource = loader.create_resource( opts, "unit_test", lstream );
-		utility::pointer::ReferenceCountOP resource2 = loader.create_resource( opts, "unit_test", lstream2 );
+		utility::pointer::ReferenceCountCOP resource = loader.create_resource( rm, tag, "unit_test", lstream );
+		utility::pointer::ReferenceCountCOP resource2 = loader.create_resource( rm, tag, "unit_test", lstream2 );
 
 		TS_ASSERT( resource ); // make sure a resource was returned
 
-		SurfaceParametersOP spptr = utility::pointer::dynamic_pointer_cast< protocols::surface_docking::SurfaceParameters > ( resource );
+		SurfaceParametersCOP spptr = utility::pointer::dynamic_pointer_cast< protocols::surface_docking::SurfaceParameters const > ( resource );
 		TS_ASSERT( spptr ); // make sure we're actually returned the correct type
 
 		//SurfaceParameters const & sp( *spptr() ); // no copy ctor!

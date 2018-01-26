@@ -78,12 +78,15 @@ namespace loophash {
 static basic::Tracer TR( "LoopHashLibrary" );
 
 
-LoopHashLibrary::LoopHashLibrary( const utility::vector1< core::Size > &init_sizes, const core::Size num_partitions,
-	const core::Size assigned_num) :
-	scorefxn_rama_cst( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
-	scorefxn_cen_cst( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
-	options( "dfpmin", 0.2, true , false ),
-	options2( "dfpmin", 0.02, true , false )
+LoopHashLibrary::LoopHashLibrary(
+	const utility::vector1< core::Size > & init_sizes,
+	const core::Size num_partitions,
+	const core::Size assigned_num
+) :
+	scorefxn_rama_cst_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+	scorefxn_cen_cst_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+	options_( "dfpmin", 0.2, true , false ),
+	options2_( "dfpmin", 0.02, true , false )
 {
 	// create the score functions needed for the grafting process
 	set_default_score_functions();
@@ -108,10 +111,10 @@ LoopHashLibrary::LoopHashLibrary( const utility::vector1< core::Size > &init_siz
 
 
 void
-LoopHashLibrary::mem_foot_print(){
-	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
-		TR << "Hash: " << *it << std::endl;
-		hash_[ *it ].mem_foot_print();
+LoopHashLibrary::mem_foot_print() const {
+	for ( core::Size hash_size : hash_sizes_ ) {
+		TR << "Hash: " << hash_size << std::endl;
+		hash_.find( hash_size )->second.mem_foot_print();
 	}
 	TR << "BackboneDB: " << bbdb_.get_mem_foot_print() << std::endl;
 }
@@ -127,15 +130,28 @@ LoopHashLibrary::setup_hash_maps()
 	}
 }
 
-LoopHashMap &
-LoopHashLibrary::gethash( core::Size size )
+LoopHashMap const &
+LoopHashLibrary::gethash( core::Size size ) const
 {
-	if ( hash_.count( size ) == 1 ) return hash_[ size ];
-	// and if that's not true something is wrong
+	auto iter = hash_.find( size );
+	if ( iter != hash_.end() ) return iter->second;
+
 	throw CREATE_EXCEPTION(EXCN_Invalid_Hashmap, size );
 
 	// We should never get here -this is just to satisfy the compiler.
-	return hash_[ 0 ];
+	return iter->second;
+}
+
+LoopHashMap &
+LoopHashLibrary::gethash( core::Size size )
+{
+	auto iter = hash_.find( size );
+	if ( iter != hash_.end() ) return iter->second;
+
+	throw CREATE_EXCEPTION(EXCN_Invalid_Hashmap, size );
+
+	// We should never get here -this is just to satisfy the compiler.
+	return iter->second;
 }
 
 void
@@ -146,14 +162,15 @@ LoopHashLibrary::sort() {
 }
 
 void
-LoopHashLibrary::save_db()
+LoopHashLibrary::save_db() const
 {
 	long starttime = time(nullptr);
 	TR.Info << "Saving bbdb_ (BackboneDatabase) " << assigned_string_ << " with extras" << std::endl;
 	bbdb_.write_db( db_path_ + "backbone" + assigned_string_ + ".db" );
-	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
-		TR.Info << "Saving loopdb (LoopHashDatabase) " << assigned_string_ << " with loop size " << *it << std::endl;
-		hash_[ *it ].write_db(db_path_ + "loopdb." + utility::to_string( *it ) + assigned_string_ + ".db" );
+	for ( core::Size hash_size : hash_sizes_ ) {
+		TR.Info << "Saving loopdb (LoopHashDatabase) " << assigned_string_ << " with loop size " << hash_size << std::endl;
+		auto hash_iter = hash_.find( hash_size );
+		hash_iter->second.write_db(db_path_ + "loopdb." + utility::to_string( hash_size ) + assigned_string_ + ".db" );
 	}
 	long endtime = time(nullptr);
 	TR << "Save LoopHash Library: " << endtime - starttime << " seconds " << std::endl;
@@ -249,13 +266,13 @@ LoopHashLibrary::merge(
 
 		// do NOT use bucket interface, boost can't guarantee 1 bucket = 1 key even with rehash
 		//iterate through all the members of second_loopdb
-		std::pair< BackboneIndexMap::iterator, BackboneIndexMap::iterator > range;
+		std::pair< BackboneIndexMap::const_iterator, BackboneIndexMap::const_iterator > range;
 		second_hashmap.bbdb_range( range );
 
 		std::vector < BackboneSegment > bs_vec_;
 		std::vector < LeapIndex > leap_vec_;
 		boost::uint64_t key = 0;
-		for ( BackboneIndexMap::iterator it = range.first; it != range.second; ++it ) {
+		for ( BackboneIndexMap::const_iterator it = range.first; it != range.second; ++it ) {
 			bool same_as_last = false;
 			bool add_this_ = true;
 
@@ -400,21 +417,21 @@ LoopHashLibrary::set_default_score_functions()
 {
 	using namespace core::scoring;
 
-	scorefxn_rama_cst->set_weight( coordinate_constraint, 0.5 );
-	scorefxn_rama_cst->set_weight( rama, 1.0 );
+	scorefxn_rama_cst_->set_weight( coordinate_constraint, 0.5 );
+	scorefxn_rama_cst_->set_weight( rama, 1.0 );
 
 
-	scorefxn_cen_cst->set_weight( coordinate_constraint, 0.05 );
-	scorefxn_cen_cst->set_weight( env   , 1.0);
-	scorefxn_cen_cst->set_weight( pair   , 1.0);
-	scorefxn_cen_cst->set_weight( cbeta  , 1.0);
-	scorefxn_cen_cst->set_weight( vdw   , 1.0);
-	scorefxn_cen_cst->set_weight( rg    , 3.0);
-	scorefxn_cen_cst->set_weight( cenpack , 1.0);
-	scorefxn_cen_cst->set_weight( hs_pair , 1.0);
-	scorefxn_cen_cst->set_weight( ss_pair , 1.0);
-	scorefxn_cen_cst->set_weight( rsigma  , 1.0);
-	scorefxn_cen_cst->set_weight( sheet  , 1.0);
+	scorefxn_cen_cst_->set_weight( coordinate_constraint, 0.05 );
+	scorefxn_cen_cst_->set_weight( env   , 1.0);
+	scorefxn_cen_cst_->set_weight( pair   , 1.0);
+	scorefxn_cen_cst_->set_weight( cbeta  , 1.0);
+	scorefxn_cen_cst_->set_weight( vdw   , 1.0);
+	scorefxn_cen_cst_->set_weight( rg    , 3.0);
+	scorefxn_cen_cst_->set_weight( cenpack , 1.0);
+	scorefxn_cen_cst_->set_weight( hs_pair , 1.0);
+	scorefxn_cen_cst_->set_weight( ss_pair , 1.0);
+	scorefxn_cen_cst_->set_weight( rsigma  , 1.0);
+	scorefxn_cen_cst_->set_weight( sheet  , 1.0);
 }
 
 
@@ -425,7 +442,8 @@ LoopHashLibrary::graft_loop(
 	protocols::loops::Loop myloop
 )
 {
-
+	// These two variables used to mask the member variables before I added the trailing underscores
+	// to the names of the member variables.
 	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.2 , true , false );
 	core::optimization::MinimizerOptions options2( "lbfgs_armijo_nonmonotone", 0.02 ,true , false );
 
@@ -444,13 +462,13 @@ LoopHashLibrary::graft_loop(
 
 	core::pose::transfer_phi_psi( src_pose, pose, myloop.start(), myloop.stop() );
 
-	core::optimization::AtomTreeMinimizer().run( pose, final_mm, *scorefxn_rama_cst, options );
+	core::optimization::AtomTreeMinimizer().run( pose, final_mm, *scorefxn_rama_cst_, options );
 
 	core::Real premin_rms = core::scoring::CA_rmsd( pose, tgt_pose );
 	TR.Info << "Graft: Premin RMS: " << premin_rms << std::endl;
 	TR.Info << "Graft: Min Score3 " << std::endl;
-	//scorefxn_cen_cst->show( TR.Info, *newpose );
-	core::optimization::AtomTreeMinimizer().run( pose, final_mm, *scorefxn_cen_cst, options2 );
+	//scorefxn_cen_cst_->show( TR.Info, *newpose );
+	core::optimization::AtomTreeMinimizer().run( pose, final_mm, *scorefxn_cen_cst_, options2 );
 
 	transfer_phi_psi( pose, tgt_pose );
 }
@@ -816,7 +834,7 @@ LoopHashLibrary::get_all(
 				core::pose::transfer_phi_psi( start_pose, newpose );
 				add_coordinate_constraints_to_pose( newpose, original_pose, exclude_region );
 				new_bs.apply_to_pose( newpose, ir );
-				//scorefxn_rama_cst->show( TR.Info, *newpose );
+				//scorefxn_rama_cst_->show( TR.Info, *newpose );
 
 
 				// just for comparison with cut!
@@ -825,19 +843,19 @@ LoopHashLibrary::get_all(
 				//newpose2->dump_pdb("rep_" + utility::to_string( ir ) + "_" + utility::to_string( jr ) + "_" + utility::to_string( int(xyzdist) ) + "_" + utility::to_string( int(angdist) ) + ".cut.pdb" );
 
 
-				//scorefxn_rama_cst->show( TR.Info, *newpose );
+				//scorefxn_rama_cst_->show( TR.Info, *newpose );
 				//newpose->dump_pdb("rep_" + utility::to_string( ir ) + "_" + utility::to_string( jr ) + "_" + utility::to_string( int(xyzdist) ) + "_" + utility::to_string( int(angdist) ) + ".bef.pdb" );
-				AtomTreeMinimizer().run( newpose, final_mm, *scorefxn_rama_cst, options );
-				//scorefxn_rama_cst->show( TR.Info, *newpose );
+				AtomTreeMinimizer().run( newpose, final_mm, *scorefxn_rama_cst_, options_ );
+				//scorefxn_rama_cst_->show( TR.Info, *newpose );
 				//newpose->dump_pdb("rep_" + utility::to_string( ir ) + "_" + utility::to_string( jr ) + "_" + utility::to_string( int(xyzdist) ) + "_" + utility::to_string( int(angdist) ) + ".aft.pdb" );
 				//newpose->dump_pdb("rep_" + utility::to_string( ir ) + "_" + utility::to_string( jr ) + "_" + utility::to_string( int(xyzdist) ) + "_" + utility::to_string( int(angdist) ) + ".pdb" );
 
 				core::Real premin_rms = core::scoring::CA_rmsd( newpose, original_pose );
 				TR.Info << "Premin RMS: " << premin_rms << std::endl;
 				TR.Info << "Min Score3 " << std::endl;
-				//scorefxn_cen_cst->show( TR.Info, *newpose );
-				AtomTreeMinimizer().run( newpose, final_mm, *scorefxn_cen_cst, options2 );
-				//scorefxn_cen_cst->show( TR.Info, *newpose );
+				//scorefxn_cen_cst_->show( TR.Info, *newpose );
+				AtomTreeMinimizer().run( newpose, final_mm, *scorefxn_cen_cst_, options2_ );
+				//scorefxn_cen_cst_->show( TR.Info, *newpose );
 
 				// get final RMS
 

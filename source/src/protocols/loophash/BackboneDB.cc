@@ -227,7 +227,7 @@ core::Real get_rmsd( const BackboneSegment &bs1, const BackboneSegment &bs2 ){
 }
 
 core::Real
-BackboneDB::angle( core::Size index, core::Size offset )
+BackboneDB::angle( core::Size index, core::Size offset ) const
 {
 	if ( index >= data_.size() ) utility_exit_with_message( "Out of bounds error" );
 	if ( offset >= data_[index].angles.size() ) utility_exit_with_message( "Out of bounds error" );
@@ -301,7 +301,7 @@ BackboneDB::get_backbone_segment(
 	bs = BackboneSegment( phi, psi, omega );
 }
 
-void BackboneDB::write_db( std::string filename )
+void BackboneDB::write_db( std::string filename ) const
 {
 	std::ofstream file( filename.c_str() );
 	if ( !file ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  filename, "write" );

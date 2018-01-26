@@ -15,19 +15,26 @@
 #include <basic/resource_manager/locator/DatabaseResourceLocator.hh>
 #include <basic/resource_manager/locator/DatabaseResourceLocatorCreator.hh>
 
+// Package headers
+#include <basic/resource_manager/locator/locator_schemas.hh>
+
 //project headers
-#include <utility>
-#include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <basic/resource_manager/locator/StringResourceStream.hh>
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/database/sql_utils.hh>
+
+// Utility headers
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 //External Headers
 #include <cppdb/frontend.h>
 
 //C++ headers
 #include <istream>
+#include <utility>
 
 namespace basic {
 namespace resource_manager {
@@ -61,7 +68,14 @@ DatabaseResourceLocatorCreator::create_resource_locator() const {
 
 string
 DatabaseResourceLocatorCreator::locator_type() const {
-	return "DatabaseResourceLocator";
+	return DatabaseResourceLocator::classname();
+}
+
+void
+DatabaseResourceLocatorCreator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	return DatabaseResourceLocator::provide_xml_schema( xsd );
 }
 
 
@@ -99,7 +113,7 @@ DatabaseResourceLocator::show(
 
 std::string
 DatabaseResourceLocator::type() const {
-	return "DatabaseResourceLocator";
+	return classname();
 }
 
 
@@ -109,38 +123,12 @@ DatabaseResourceLocator::~DatabaseResourceLocator() = default;
 /// source, so that its stream can be passed to the ResourceLoader
 ResourceStreamOP
 DatabaseResourceLocator::locate_resource_stream(
-	string const & locator_id
-) const {
+	string const & input_id
+) const
+{
 
-	if ( !ResourceManager::get_instance()->has_resource(database_session_resource_tag_) ) {
-		stringstream err_msg;
-		err_msg
-			<< "Attempting to locate the data for key='" << locator_id << "' "
-			<< "in the DatabaseResourceLocator with tag '" << locator_tag() << "'. "
-			<< "However, a database session could not be found "
-			<< "because the resource tag given for the database session, "
-			<< "'" << database_session_resource_tag_ << "' "
-			<< "does not exist in the ResourceManager.";
-		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
-	}
-
-	sessionOP db_session(utility::pointer::dynamic_pointer_cast< session > (
-		ResourceManager::get_instance()->find_resource(database_session_resource_tag_)));
-
-	if ( !db_session ) {
-		stringstream err_msg;
-		err_msg
-			<< "Attempting to locate the data for key='" << locator_id << "' "
-			<< "in the DatabaseResourceLocator with tag '" << locator_tag() << "'. "
-			<< "However, a database session could not be found "
-			<< "because the resource given for the database session tag, "
-			<< "'" << database_session_resource_tag_ << "' "
-			<< "could is not a DatabaseResourceLocator.";
-		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
-	}
-
-	statement select_stmt(safely_prepare_statement(sql_command_, db_session));
-	select_stmt.bind(1, locator_id);
+	statement select_stmt(safely_prepare_statement(sql_command_, db_session_ ));
+	select_stmt.bind(1, input_id);
 	result res(safely_read_from_database(select_stmt));
 
 	if ( !res.next() ) {
@@ -148,7 +136,7 @@ DatabaseResourceLocator::locate_resource_stream(
 		err_msg
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
 			<< sql_command_ << endl
-			<< "with parameter '?' <- '" << locator_id << "' returned no rows." << endl;
+			<< "with parameter '?' <- '" << input_id << "' returned no rows." << endl;
 		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
@@ -158,7 +146,7 @@ DatabaseResourceLocator::locate_resource_stream(
 		err_msg
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
 			<< sql_command_ << endl
-			<< "with parameter '?' <- '" << locator_id << "' returned '" << res.cols() << "' columns." << endl;
+			<< "with parameter '?' <- '" << input_id << "' returned '" << res.cols() << "' columns." << endl;
 		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
@@ -177,7 +165,7 @@ DatabaseResourceLocator::locate_resource_stream(
 		err_msg
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
 			<< sql_command_ << endl
-			<< "with parameter '?' <- '" << locator_id << "' returned more than on row." << endl;
+			<< "with parameter '?' <- '" << input_id << "' returned more than on row." << endl;
 		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
@@ -190,25 +178,48 @@ DatabaseResourceLocator::locate_resource_stream(
 void
 DatabaseResourceLocator::parse_my_tag(
 	TagCOP tag
-) {
-	if ( tag->hasOption("database_session_tag") ) {
-		database_session_resource_tag_ = tag->getOption<string>("database_session_tag");
-	} else {
-		throw CREATE_EXCEPTION(utility::excn::Exception,
-			"The DatabaseResourceLocator requires a 'database_session_tag' that corresponds with a 'DatabaseSession' resource defined in a <Resources/> block.");
-	}
+)
+{
+	db_session_ = basic::database::parse_database_connection( tag );
 
 	if ( tag->hasOption("sql_command") ) {
 		sql_command_ = tag->getOption<string>("sql_command");
 		basic::database::check_statement_sanity(sql_command_);
 	} else {
 		throw CREATE_EXCEPTION(utility::excn::Exception,
-			"The DatabaseResourceLocator requires a 'sql_command' tag that is an SQL SELECT statement with one parameter '?' and as a key returns a result set with a single column and and a single row containing the data.");
+			"The DatabaseResourceLocator requires a 'sql_command' attribute that is an SQL SELECT statement with one parameter '?' and as a key returns a result set with a single column and and a single row containing the data.");
 	}
 
 	column_separator_ = tag->getOption<string>("column_separator", "\n");
 
 }
+
+void
+DatabaseResourceLocator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+)
+{
+	using namespace utility::tag;
+	AttributeList attrs;
+	basic::database::attributes_for_parse_database_connection( attrs, xsd );
+	attrs
+		+ XMLSchemaAttribute::required_attribute( "sql_command", xs_string, "The command that will"
+		" be used to query the database (along with the 'input_id' of the resource) for the string that"
+		" will be used to construct a resource. This command should have a single question mark that"
+		" the input_id will be substituted for" )
+		+ XMLSchemaAttribute( "column_separator", xs_string, "When multiple columns are returned by the query, the 'column_separator' string can be used to separate each column in the final string that is used to construct the Resource" );
+
+	xsd_type_definition_w_attributes( xsd, classname(), "The database resource locator will open a"
+		" session with the indicated database and then use the given sql_command to retrieve data from"
+		" the database that will then be used to construct a resource", attrs );
+}
+
+std::string
+DatabaseResourceLocator::classname()
+{
+	return "DatabaseResourceLocator";
+}
+
 
 } // namespace locator
 } // namespace resource_manager

@@ -16,14 +16,16 @@
 #ifndef INCLUDED_protocols_stepwise_options_StepWiseBasicOptions_HH
 #define INCLUDED_protocols_stepwise_options_StepWiseBasicOptions_HH
 
-#include <basic/resource_manager/ResourceOptions.hh>
+
 #include <protocols/stepwise/options/StepWiseBasicOptions.fwd.hh>
 #include <protocols/stepwise/modeler/StepWiseMinimizer.hh> // for MinimizerMode enum
 #include <core/types.hh>
-#include <utility/vector1.hh>
-#include <utility/tag/Tag.fwd.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
 #include <utility/tag/Tag.hh>
@@ -33,7 +35,7 @@ namespace protocols {
 namespace stepwise {
 namespace options {
 
-class StepWiseBasicOptions: public virtual basic::resource_manager::ResourceOptions {
+class StepWiseBasicOptions: public virtual utility::pointer::ReferenceCount {
 
 public:
 

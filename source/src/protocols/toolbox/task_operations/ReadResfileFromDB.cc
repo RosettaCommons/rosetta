@@ -17,11 +17,12 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Project Headers
+#include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
+//#include <basic/resource_manager/ResourceManager.hh>
+//#include <basic/resource_manager/util.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -43,6 +44,8 @@
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
+
+static basic::Tracer TR( "protocols.toolbox.task_operations.ReadResfileFromDB" );
 
 using namespace core::pack::task::operation;
 using namespace utility::tag;
@@ -103,12 +106,15 @@ TaskOperationOP ReadResfileFromDB::clone() const {
 void
 ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 
-	string tag(protocols::jd2::current_input_tag());
+	std::string selection_tag( selection_tag_ );
+	if ( selection_tag == "" ) {
+		selection_tag = protocols::jd2::current_input_tag();
+	}
 
 	stringstream sql_stmt;
 	sql_stmt
 		<< "SELECT resfile FROM " << database_table_
-		<< " WHERE tag='" << tag << "';";
+		<< " WHERE tag='" << selection_tag << "';";
 	string sql(sql_stmt.str());
 	check_statement_sanity(sql);
 	statement select_stmt(safely_prepare_statement(sql, db_session_));
@@ -117,17 +123,20 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 		stringstream error_message;
 		error_message
 			<< "Unable to locate resfile for job distributor input tag '"
-			<< tag << "' in the database." << endl;
+			<< selection_tag << "' in the database." << endl;
 		throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str());
 	}
 	string resfile;
 	res >> resfile;
+	TR << "Retrieved the following resfile for selection_tag " << selection_tag << "\n";
+	TR << resfile;
+	TR << std::endl;
 	try {
-		parse_resfile_string(pose, task, "<resfile from database table '" + database_table_ + "' with tag '" + tag + "'>", resfile);
+		parse_resfile_string(pose, task, "<resfile from database table '" + database_table_ + "' with tag '" + selection_tag + "'>", resfile);
 	} catch( ResfileReaderException const & e ){
 		stringstream error_message;
 		error_message
-			<< "Failed to process resfile stored for input tag '" << tag << "'" << endl
+			<< "Failed to process resfile stored for input tag '" << selection_tag << "'" << endl
 			<< "RESFILE:" << endl
 			<< resfile << endl;
 		throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str());
@@ -152,37 +161,34 @@ ReadResfileFromDB::database_table() const {
 }
 
 void
-ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & )
+ReadResfileFromDB::selection_tag( std::string const & setting )
 {
-	using namespace basic::resource_manager;
+	selection_tag_ = setting;
+}
 
-	if ( tag->hasOption("db") ) {
-		utility_exit_with_message(
-			"The 'db' tag has been deprecated. Please use 'database_name' instead.");
-	}
+std::string const &
+ReadResfileFromDB::selection_tag() const
+{
+	return selection_tag_;
+}
 
-	if ( tag->hasOption("db_mode") ) {
-		utility_exit_with_message(
-			"The 'db_mode' tag has been deprecated. "
-			"Please use the 'database_mode' instead.");
-	}
 
+void
+ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & datamap )
+{
 	if ( tag->hasOption("database_table") ) {
 		database_table_ = tag->getOption<string>("database_table");
 	} else if ( tag->hasOption("table") ) {
 		database_table_ = tag->getOption<string>("table");
 	}
 
-	if ( tag->hasOption("resource_description") ) {
-		std::string resource_description = tag->getOption<string>("resource_description");
-		if ( !ResourceManager::get_instance()->has_resource_with_description(
-				resource_description) ) {
-			throw CREATE_EXCEPTION(utility::excn::Exception,  "You specified a resource_description of " + resource_description + " for ReadResfileFromDB, but the ResourceManager doesn't have a resource with that description" );
-		}
-		db_session_ = get_resource< utility::sql_database::session >( resource_description );
-	} else {
-		db_session_ = basic::database::parse_database_connection(tag);
+	if ( ! tag->hasOption( "selection_tag" ) ) {
+		std::ostringstream oss;
+		oss << "ERROR: The ReadResfileFromDB task operation requires a selection_tag attribute to identify which row of the table to pull results from\n";
+		throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
 	}
+	selection_tag( tag->getOption< std::string >( "selection_tag" ));
+	db_session_ = protocols::rosetta_scripts::parse_database_session(tag, datamap);
 }
 
 void ReadResfileFromDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -190,12 +196,20 @@ void ReadResfileFromDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute( "database_table", xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute( "table", xs_string , "XRW TO DO" );
+		+ XMLSchemaAttribute( "database_table", xs_string , "The table in the database from which to read" )
+		+ XMLSchemaAttribute( "table", xs_string , "The table in the database from which to read (same as database_table)" )
+		+ XMLSchemaAttribute::required_attribute( "selection_tag", xs_string, "The tag to use to identify"
+		" the row in the indicated table that will be read from for the indicated job. In JD3, this"
+		" can/should be combined with the script_vars flag so that different jobs can read different"
+		" resfiles. This is a marked departure from the JD2 functionality which relied on the global"
+		" data representing the currently-running job. That functionality is now removed." );
 
-	basic::database::attributes_for_parse_database_connection(attributes, xsd);
+	protocols::rosetta_scripts::attributes_for_parse_database_session( xsd, attributes );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "This task operation will query a"
+		" database for a resfile string. The table in the database should have a column named 'resfile'"
+		" and a (key) column named 'tag'. The 'selection_tag' attribute for this task operation should"
+		" be used to say which row to query from the database." );
 }
 
 

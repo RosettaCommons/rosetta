@@ -19,6 +19,7 @@
 #include <protocols/surface_docking/FullatomRelaxMover.hh>
 #include <protocols/surface_docking/SurfaceOrientMover.hh>
 #include <protocols/surface_docking/SurfaceParameters.hh>
+#include <protocols/surface_docking/SurfaceVectorLoader.hh>
 #include <core/scoring/solid_surface/SurfaceEnergies.hh>
 
 // Project headers
@@ -46,12 +47,13 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
+//#include <basic/resource_manager/ResourceManager.hh>
+//#include <basic/resource_manager/util.hh>
 
 //Utility Headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
+#include <utility/io/izstream.hh>
 
 //C++ Headers
 #include <string>
@@ -241,12 +243,17 @@ void SurfaceDockingProtocol::initialize_surface_energies(core::pose::Pose & pose
 
 void SurfaceDockingProtocol::set_surface_parameters ( core::pose::Pose &)
 {
-	if ( ! basic::resource_manager::ResourceManager::get_instance()->has_resource_with_description("surface_vectors") ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception, " Either a resource definition file or the command line option "\
-			"-in:file:surface_vectors must be specified for surface docking");
+	if ( ! basic::options::option[ basic::options::OptionKeys::in::file::surface_vectors ].user() ) {
+		std::ostringstream oss;
+		oss << "Error: Surface vectors filename must be specified on the command line with -in::file::surface_vectors flag";
+		throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
 	}
 
-	surface_parameters_ = basic::resource_manager::get_resource<SurfaceParameters>("surface_vectors");
+	std::string surf_vect_fname = basic::options::option[ basic::options::OptionKeys::in::file::surface_vectors ];
+	utility::io::izstream infile( surf_vect_fname );
+
+	surface_parameters_ = SurfaceVectorLoader::create_surface_params( surf_vect_fname, infile );
+
 }
 
 void SurfaceDockingProtocol::setup_movers ( core::pose::Pose const & pose, Size const first_protein_residue )

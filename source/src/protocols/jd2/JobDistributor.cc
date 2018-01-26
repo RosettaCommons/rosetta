@@ -619,7 +619,10 @@ JobDistributor::run_one_job(
 			// generate_mover_from_pose returns true if there was a pose change
 			// (i.e. NOT if only the mover changed)
 			if ( parser_->generate_mover_from_pose( pose, mover_copy, new_input,
-					"" /*empty xml_fname, this means go to options system*/, gaurantee_new_mover ) ) {
+					"" /*empty xml_fname, this means go to options system*/,
+					"" /*empty input name; do not set this data in the data map*/,
+					"" /*empty output name; do not set thsi data in the data map*/,
+					gaurantee_new_mover ) ) {
 
 				if ( allow_job_update && new_input ) {
 					// Store the modified pose into the job.  This is done only if new_input is true even if

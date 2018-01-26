@@ -33,6 +33,10 @@ class FileSystemResourceLocatorTests : public CxxTest::TestSuite {
 
 public:
 
+	void setUp() {
+		core_init();
+	}
+
 	void test_FileSystemResourceLocator_locate_file() {
 		using namespace basic::resource_manager;
 		using namespace basic::resource_manager::locator;

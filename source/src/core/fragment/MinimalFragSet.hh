@@ -86,6 +86,7 @@ public:
 	bool empty() const override;
 
 	void read_fragment_file( std::string filename, Size top25 = 0, Size ncopies = 1 );
+	void read_fragment_stream( std::string const & filename, std::string const & first_line, std::istream & data, Size top25 = 0, Size ncopies = 1 );
 
 protected:
 

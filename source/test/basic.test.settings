@@ -18,9 +18,10 @@ sources = {
 	],
 	"resource_manager" : [
 		"ResourceLoaderFactory",
-		"ResourceOptionsFactory",
+		"ResourceManager",
 	],
 	"resource_manager/locator" : [
+		"DatabaseResourceLocator",
 		"FileSystemResourceLocatorTests",
 		"StringResourceStream",
 	],

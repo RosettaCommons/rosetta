@@ -129,7 +129,7 @@ RNA_FragmentMonteCarloOptions::~RNA_FragmentMonteCarloOptions() = default;
 
 /// @brief copy constructor
 RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions( RNA_FragmentMonteCarloOptions const & src ) :
-	ResourceOptions( src ),
+	ReferenceCount(),
 	RNA_BasicOptions( src ),
 	RNA_MinimizerOptions( src )
 {

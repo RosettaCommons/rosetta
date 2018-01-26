@@ -5,12 +5,15 @@
 #
 # Use as input, structures S_56 and S_73 from the collection of
 # structures stored in the binary silent file for the cluster test:
--in
- -file
-  -fullatom
-  -silent_struct_type binary
-  -silent ../../tests/cluster/t288_.score.50.out
-  -tags S_56 S_73
+-job_definition_file job_defs.xml
+
+# -in
+#  -file
+#   -fullatom
+#   -silent_struct_type binary
+#   -silent ../../tests/cluster/t288_.score.50.out
+#   -tags S_56 S_73
+
 #
 # Since the important output is the feature database,
 # ignore the job distributor output.

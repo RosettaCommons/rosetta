@@ -115,7 +115,7 @@ public:
 
 protected:
 
-	protocols::loophash::LoopHashLibraryOP lh_library_;
+	protocols::loophash::LoopHashLibraryCOP lh_library_;
 	// HashBuckets hash_buckets_;
 
 	core::Real min_torsion_rms_;

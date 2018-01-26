@@ -135,7 +135,7 @@ Size
 count_linkers(
 	Xform const & lower,
 	Xform const & upper,
-	protocols::loophash::LoopHashLibraryOP loop_hash_library,
+	protocols::loophash::LoopHashLibraryCOP loop_hash_library,
 	Sizes const & loopsizes,
 	core::Size radius
 ){
@@ -161,7 +161,7 @@ dump_loophash_linkers(
 	Xform const & upper,
 	// core::pose::Pose const & pose1,
 	// core::pose::Pose const & pose2,
-	protocols::loophash::LoopHashLibraryOP loop_hash_library,
+	protocols::loophash::LoopHashLibraryCOP loop_hash_library,
 	Sizes const & loopsizes,
 	Size radius,
 	std::string const & outtag
@@ -175,7 +175,7 @@ dump_loophash_linkers(
 	protocols::loophash::BackboneSegment backbone_;
 	core::Size ndumped = 0;
 	for ( core::Size loopsize : loopsizes ) {
-		protocols::loophash::LoopHashMap & hashmap( loop_hash_library->gethash(loopsize) );
+		protocols::loophash::LoopHashMap const & hashmap( loop_hash_library->gethash(loopsize) );
 
 		numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
 		if ( rt_6[1]*rt_6[1]+rt_6[2]*rt_6[2]+rt_6[3]*rt_6[3] > 10.0*Real(loopsize)*Real(loopsize) ) continue;

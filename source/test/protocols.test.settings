@@ -293,10 +293,6 @@ sources = {
                 "mover_creators"
         ],
 	"jd2" : [
-		"JD2ResourceManager",
-		"JD2ResourceManagerJobInputter",
-		"JD2ResourceManagerJobInputterSimplifiedInput",
-		"JD2ResourceManagerJobInputterMultipleJobTags",
 		"JobOutputter",
 		"MultiThreadedJobDistributor",
 	],
@@ -349,10 +345,8 @@ sources = {
 	"loops" : [
 		"Loop",
 		"Loops",
-		"LoopsFileFallbackConfiguration",
 		"LoopsFileIO",
 		"LoopsFileLoader",
-		"LoopsFileOptions",
 		"LoopsFoldTree",
 		"LoopsUtil",
 	],
@@ -504,7 +498,6 @@ sources = {
 		"RotateJumpAxisMover",
 		"UniformRigidBody",
 	],
-	
 	"rna" : [
 		"AlignmentEnergy",
 		"BasePairConstraints",
@@ -514,8 +507,9 @@ sources = {
 
 	"rosetta_scripts" : [
 		"MultiplePoseMover",
-        "RosettaScriptsParser",
-        "XmlObjects",
+		"RosettaScriptsJobQueen",
+		"RosettaScriptsParser",
+		"XmlObjects",
 	],
 
 	"rotamer_recovery" : [
@@ -975,6 +969,9 @@ testinputfiles = [
 	"rigid/RotateJumpAxisMover_range.pdb",
 	"rigid/RotateJumpAxisMover_single.pdb",
 	"rigid/RotateJumpAxisMover_underspecified_jump.pdb",
+	"rosetta_scripts/1abc.pdb",
+	"rosetta_scripts/2def.pdb",
+	"rosetta_scripts/example_resource_using_script.xml",
 	"rosetta_scripts/include1.xml",
 	"rosetta_scripts/include2.xml",
 	"rosetta_scripts/include3.xml",

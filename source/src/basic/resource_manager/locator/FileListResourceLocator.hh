@@ -18,6 +18,8 @@
 #include <basic/resource_manager/ResourceLocator.hh>
 #include <basic/resource_manager/locator/FileListResourceLocator.fwd.hh>
 
+// Utility headers
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace basic {
 namespace resource_manager {
@@ -37,16 +39,18 @@ public:
 
 	/// @brief Describe the %FileListResourceLocator to the output stringstream; since
 	/// this class has no data, merely prints the name of the class.
-	virtual
 	void
 	show(
 		std::ostream & out
-	) const;
+	) const override;
 
 	/// @brief Return the name for this class: "FileListResourceLocator"
-	virtual
 	std::string
-	type() const;
+	type() const override;
+
+	static
+	std::string
+	classname();
 
 	void
 	set_open_mode(
@@ -59,18 +63,20 @@ public:
 	/// @brief Take the input locator tag and split it by whitespace, interpret each substring
 	/// as the name of a file, and concatenate each file into a single stringstream to be
 	/// returned.
-	virtual
 	ResourceStreamOP
 	locate_resource_stream(
-		std::string const & locator_tag
-	) const;
+		std::string const & input_id
+	) const override;
 
 	/// @brief Do nothing, since there is no data that the %FileListResourceLocator needs.
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
-	);
+	) override;
+
+	/// @brief Describe the schema for this resource locator to the XSD.
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::ios_base::openmode open_mode_;

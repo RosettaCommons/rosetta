@@ -27,7 +27,7 @@
 // Utility headers
 #include <utility/options/keys/OptionKeyList.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh> // to be used in the near future
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
 
 // Tracer instance for this file
@@ -374,14 +374,60 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 
 }
 
-/// @details The StructFileRepOptions object can be defined as a ResourceOption
-/// and read in by the ResourceManager and stored as a resource for use in Pose
-/// initialization.  The attributes (aka options) listed here are those read in
-/// the parse_my_tag method.
+/// @details The StructFileRepOptions object can be used to initialize a Pose within
+/// the ResourceManager and elsewhere. The attributes (aka options) listed here are
+/// those read in the parse_my_tag method.
 void
-StructFileRepOptions::provide_xml_schema( utility::tag::XMLSchemaDefinition &  )
+StructFileRepOptions::append_schema_attributes( utility::tag::AttributeList & attributes )
 {
-	// TO DO!
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+
+	attributes
+		+ Attr::attribute_w_default( "Ntermini", xs_string, "TO DO", "ALL" )
+		+ Attr::attribute_w_default( "Ctermini", xs_string, "TO DO", "ALL" )
+		+ Attr::attribute_w_default( "skip_connect_info", xsct_rosetta_bool, "TO DO", "0" )
+		+ Attr::attribute_w_default( "connect_info_cutoff", xsct_real, "TO DO", "0.0" )
+		+ Attr::attribute_w_default( "do_not_autoassign_SS", xsct_rosetta_bool, "Requires output_secondary_structure to be set to true",  "false" )
+		+ Attr::attribute_w_default( "exit_if_missing_heavy_atoms", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "fold_tree_io", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "ignore_unrecognized_res", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "include_sugars", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "ignore_waters", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "ignore_zero_occupancy", xsct_rosetta_bool, "TO DO",  "1" )
+		+ Attr::attribute_w_default( "guarantee_no_DNA", xsct_rosetta_bool, "TO DO",  "1" )
+		+ Attr::attribute_w_default( "keep_input_protonation_state", xsct_rosetta_bool, "TO DO",   "0" )
+		+ Attr::attribute_w_default( "preserve_header", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "preserve_crystinfo", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "missing_dens_as_jump", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "no_chainend_ter", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "no_output_cen", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "normalize_to_thk", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "output_secondary_structure", xsct_rosetta_bool, "TO DO",  "false" )
+		+ Attr::attribute_w_default( "output_torsions", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "output_virtual", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "output_virtual_zero_occ", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "pdb_comments", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "pdb_parents", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "per_chain_renumbering", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "randomize_missing_coords", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "remember_unrecognized_res", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "remember_unrecognized_water", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "renumber_pdb", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "suppress_zero_occ_pdb_output", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "auto_detect_glycan_connections", xsct_rosetta_bool, "TO DO", "0" )
+		+ Attr::attribute_w_default( "write_glycan_pdb_codes", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "maintain_links", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "max_bond_length", xsct_real, "TO DO",  "1.6" )
+		+ Attr::attribute_w_default( "min_bond_length", xsct_real, "TO DO", "1.3" )
+		+ Attr::attribute_w_default( "use_pdb_format_HETNAM_records", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "write_pdb_link_records", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "write_pdb_parametric_info", xsct_rosetta_bool, "TO DO", "1")
+		+ Attr::attribute_w_default( "write_all_connect_info", xsct_rosetta_bool, "TO DO", "0" )
+		+ Attr::attribute_w_default( "treat_residues_in_these_chains_as_separate_chemical_entities", xs_string, "TO DO", " " )
+		+ Attr::attribute_w_default( "remap_pdb_atom_names_for", xs_string, "Comma separated list of atom names to remap to other names", "" )
+		+ Attr::attribute_w_default( "show_all_fixes", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "constraints_from_link_records", xsct_rosetta_bool, "TO DO", "0" );
 
 }
 
@@ -616,7 +662,6 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 template< class Archive >
 void
 core::io::StructFileRepOptions::save( Archive & arc ) const {
-	// arc( cereal::base_class< basic::resource_manager::ResourceOptions >( this ) );
 	arc( CEREAL_NVP( check_if_residues_are_Ntermini_ ) ); // std::string
 	arc( CEREAL_NVP( check_if_residues_are_Ctermini_ ) ); // std::string
 	arc( CEREAL_NVP( skip_connect_info_ ) ); // _Bool
@@ -670,7 +715,6 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 template< class Archive >
 void
 core::io::StructFileRepOptions::load( Archive & arc ) {
-	// arc( cereal::base_class< basic::resource_manager::ResourceOptions >( this ) );
 	arc( check_if_residues_are_Ntermini_ ); // std::string
 	arc( check_if_residues_are_Ctermini_ ); // std::string
 	arc( skip_connect_info_ ); // _Bool

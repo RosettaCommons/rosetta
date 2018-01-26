@@ -89,8 +89,6 @@ sources = {
 		"InnerJob",
 		"InnerMultiThreadingJob",
 		"internal_util",
-		"JD2ResourceManager",
-		"JD2ResourceManagerJobInputter",
 		"Job",
 		"JobDistributor",
 		"JobDistributorFactory",
@@ -154,6 +152,7 @@ sources = {
 	"protocols/jd3/deallocation": [
 		"DeallocationMessage",
 		"InputPoseDeallocationMessage",
+		"ResourceDeallocationMessage",
 	],
 	"protocols/jd3/full_model_inputters": [
 		"FullModelInputter",
@@ -275,6 +274,7 @@ sources = {
 	"protocols/parser": [
 		"BluePrint",
 		"ConstraintGeneratorLoader",
+		"DatabaseSessionLoader",
 		"DataLoader",
 		"DataLoaderCreator",
 		"DataLoaderFactory",
@@ -298,6 +298,7 @@ sources = {
 		"PoseSelector",
 		"PoseSelectorCreator",
 		"PoseSelectorFactory",
+		"RosettaScriptsJobQueen",
 		"RosettaScriptsParser",
 		"SavePoseMover",
 		"util",

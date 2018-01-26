@@ -46,7 +46,7 @@ RNA_BasicOptions::~RNA_BasicOptions() = default;
 
 /// @brief copy constructor
 RNA_BasicOptions::RNA_BasicOptions( RNA_BasicOptions const & src ) :
-	ResourceOptions( src )
+	ReferenceCount()
 {
 	*this = src;
 }

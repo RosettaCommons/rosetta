@@ -1,3 +1,7 @@
 -overwrite
 -resource_definition_files resources.xml
 -parser:protocol parser_script.xml
+-s ../../tests/make_symmdef_file/inputs/1xu1FH_D.pdb
+#-symmetry_definition ../../tests/repack_with_elec_dens/inputs/1xu1FH_D.symm
+-constant_seed
+

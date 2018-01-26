@@ -1,4 +1,0 @@
--overwrite
--resource_definition_files resources.xml
--mute protocols.jd2.PDBJobInputter core.scoring.etable basic.io.database
--out:pdb

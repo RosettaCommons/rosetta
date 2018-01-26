@@ -22,8 +22,6 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>          // for databa...
 #include <basic/options/keys/out.OptionKeys.gen.hh>            // for all, db
 #include <basic/options/option.hh>                             // for Option...
-#include <basic/resource_manager/ResourceManager.hh>           // for Resour...
-#include <basic/resource_manager/util.hh>                      // for get_re...
 
 #include <cppdb/errors.h>                                      // for cppdb_...
 #include <cppdb/frontend.h>                                    // for statement
@@ -737,40 +735,29 @@ parse_database_connection(
 	using namespace basic::options::OptionKeys::inout;
 	using namespace basic::options::OptionKeys;
 	using utility::sql_database::DatabaseSessionManager;
-	using namespace basic::resource_manager;
 
 	bool separate_database = option[ inout::dbms::separate_db_per_mpi_process ]();
 	int database_partition = option[ inout::dbms::database_partition]();
 
-	if ( tag->hasOption("database_resource") ) {
-		std::string database_resource = tag->getOption<string>("database_resource");
-		if ( ! ResourceManager::get_instance()->has_resource_with_description( database_resource ) ) {
-			throw CREATE_EXCEPTION(utility::excn::Exception,
-				"You specified a database_resource of '" + database_resource +
-				"', but the ResourceManager doesn't have a resource with that description." );
-		}
-		return get_resource< utility::sql_database::session >( database_resource );
-	}
-
-	if ( tag->hasOption("database_resource_tag") ) {
-		std::string database_resource_tag = tag->getOption<string>(
-			"database_resource_tag");
-		if ( ! ResourceManager::get_instance()->has_resource(
-				database_resource_tag ) ) {
-			throw CREATE_EXCEPTION(utility::excn::Exception,
-				"You specified a database_resource_tag of '" + database_resource_tag +
-				"', but the ResourceManager doesn't have a resource with that tag." );
-		}
-		utility::sql_database::sessionOP db_session(utility::pointer::dynamic_pointer_cast< utility::sql_database::session > (
-			ResourceManager::get_instance()->find_resource(database_resource_tag)));
-		if ( !db_session ) {
-			stringstream err_msg;
-			err_msg
-				<< "You specified a database_resource_tag of '" + database_resource_tag + "', while the ResourceManager does have a resource with that tag, it couldn't cast into a database session.";
-			throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
-		}
-		return db_session;
-	}
+	//if ( tag->hasOption("database_resource_tag") ) {
+	// std::string database_resource_tag = tag->getOption<string>(
+	//  "database_resource_tag");
+	// if ( ! ResourceManager::get_instance()->has_resource(
+	//   database_resource_tag ) ) {
+	//  throw CREATE_EXCEPTION(utility::excn::Exception,
+	//   "You specified a database_resource_tag of '" + database_resource_tag +
+	//   "', but the ResourceManager doesn't have a resource with that tag." );
+	// }
+	// utility::sql_database::sessionOP db_session(utility::pointer::dynamic_pointer_cast< utility::sql_database::session > (
+	//  ResourceManager::get_instance()->find_resource(database_resource_tag)));
+	// if ( !db_session ) {
+	//  stringstream err_msg;
+	//  err_msg
+	//   << "You specified a database_resource_tag of '" + database_resource_tag + "', while the ResourceManager does have a resource with that tag, it couldn't cast into a database session.";
+	//  throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
+	// }
+	// return db_session;
+	//}
 
 	utility::sql_database::TransactionMode::e transaction_mode = utility::sql_database::transaction_mode_from_name(
 		tag->getOption<string>("transaction_mode", "standard"));
@@ -823,7 +810,11 @@ parse_database_connection(
 	}
 
 	std::string database_dir;
-	if ( option[ out::path::db ].user() ) {
+	if ( database_name.size() > 0 && database_name[ 0 ] == '/' ) {
+		// The user has given the full path to the database; do not append
+		// a command-line option to it.
+		database_dir = "";
+	} else if ( option[ out::path::db ].user() ) {
 		database_dir = option[ out::path::db ]().path();
 	} else if ( option[ inout::dbms::path ].user() ) {
 		database_dir = option[ inout::dbms::path ]().path();
@@ -1010,19 +1001,16 @@ attributes_for_parse_database_connection(
 
 
 	attlist
-		+ XMLSchemaAttribute( "resource_description", xs_string, "Resource description referring to the resource to be output" )
-		+ XMLSchemaAttribute( "database_resource", xs_string, "Resource description referring to the output database" )
-		+ XMLSchemaAttribute( "database_resource_tag", xs_string, "Tag referring to the output database" )
 		+ XMLSchemaAttribute::attribute_w_default( "transaction_mode", "database_transaction_mode_string", "Transaction mode for database output", "standard" )
 		+ XMLSchemaAttribute( "database_mode", "database_mode_string", "Which type of output database to use?" )
 		+ XMLSchemaAttribute( "database_name", xs_string, "Name of output database" )
 		+ XMLSchemaAttribute( "database_pq_schema", xs_string, "Schema name within the database" )
-		+ XMLSchemaAttribute( "database_separate_db_per_mpi_process", xsct_rosetta_bool, "Use a separate database for each MPI process? Specific to sqlite3" )
-		+ XMLSchemaAttribute( "database_partition", xs_integer, "Database partition to use" )
-		+ XMLSchemaAttribute( "database_read_only", xsct_rosetta_bool, "Is the database read-only?" )
-		+ XMLSchemaAttribute( "database_host", xs_string, "URI to the database server (postgres only)" )
-		+ XMLSchemaAttribute( "database_user", xs_string, "Username for database access( postgres only)" )
-		+ XMLSchemaAttribute( "database_password", xs_string, "Password for database access (postgres only)" )
+		+ XMLSchemaAttribute( "database_separate_db_per_mpi_process", xsct_rosetta_bool, "Use a separate database for each MPI process? (sqlite3 only.) Incompatible with database_partition." )
+		+ XMLSchemaAttribute( "database_partition", xs_integer, "Database partition to use. (sqlite3 only.) Incompatible with database_separate_db_per_mpi_process." )
+		+ XMLSchemaAttribute( "database_read_only", xsct_rosetta_bool, "Is the database read-only? (sqlite3 only)" )
+		+ XMLSchemaAttribute( "database_host", xs_string, "URI to the database server (postgres and mysql only)" )
+		+ XMLSchemaAttribute( "database_user", xs_string, "Username for database access( postgres and mysql only)" )
+		+ XMLSchemaAttribute( "database_password", xs_string, "Password for database access (postgres and mysql only)" )
 		+ XMLSchemaAttribute( "database_port", xsct_non_negative_integer, "Port to use for access to database server (postgres only)" )
 		+ XMLSchemaAttribute( "batch_description", xs_string, "Description of features database" )
 		+ XMLSchemaAttribute( "protocol_id", xsct_non_negative_integer, "Manually controls protocol_id associated with this ReportToDB tag. Autoincrements by default." )

@@ -103,7 +103,7 @@ public:
 	///     ClassicFragmentMover
 	void read_fragment_file( std::string filename, Size top25 = 0, Size ncopies = 1, bool bAnnotation = false  );
 
-	void read_fragment_stream( utility::io::izstream & data, Size top25 = 0, Size ncopies = 1, bool bAnnotation = false  );
+	void read_fragment_stream( std::string const & filename, std::string const & first_line, std::istream & data, Size top25 = 0, Size ncopies = 1, bool bAnnotation = false  );
 
 	// void print_fragments();
 	/// @brief there is only one Frame per position, end / max_overlap are ignored

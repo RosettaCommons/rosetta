@@ -71,7 +71,7 @@
 
 
 //Basic headers
-#include <basic/resource_manager/ResourceManager.hh>
+//#include <basic/resource_manager/ResourceManager.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -271,8 +271,7 @@ void A3BHbsCreatorMover::repack(
 	tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	tf->push_back( operation::TaskOperationCOP( new operation::IncludeCurrent ) );
 
-	using namespace basic::resource_manager;
-	if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
+	if ( option[ packing::resfile ].user() ) {
 		operation::ReadResfileOP rrop( new operation::ReadResfile );
 		rrop->default_filename();
 		tf->push_back( rrop );

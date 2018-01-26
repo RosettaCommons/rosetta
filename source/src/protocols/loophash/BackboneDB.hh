@@ -52,11 +52,12 @@ core::Real ShortToRealAngle( short angle );
 // Structs for storing data
 struct BBExtraData{
 	std::string pdb_id;
-	std::vector < int > rotamer_id;
+	std::vector< int > rotamer_id;
 	std::string sequence;
 };
+
 struct BBData {
-	std::vector < short > angles;
+	std::vector< short > angles;
 	core::Size  extra_key = 0;
 };
 
@@ -108,7 +109,7 @@ class BackboneDB
 public:
 	BackboneDB(){ extra_ = false; }
 
-	core::Real angle( core::Size index, core::Size offset );
+	core::Real angle( core::Size index, core::Size offset ) const;
 
 	// Always grab extra data from Vall
 	void add_pose( const core::pose::Pose &pose, core::Size nres, core::Size &offset, protocols::frag_picker::VallChunkOP chunk = nullptr );
@@ -133,7 +134,7 @@ public:
 	core::Size extra_size() const { return extra_data_.size(); }
 
 	// Only supports writing to text, extra data is mandatory
-	void write_db( std::string filename );
+	void write_db( std::string filename ) const;
 
 	// Only supports reading from text, extra data must exist in db, loading is optional
 	// Returns a range of keys of which protein is read
@@ -155,7 +156,7 @@ public:
 	// Reads in homologs into homologs_
 	void read_homologs();
 
-	core::Size get_mem_foot_print(){ return data_.size() * sizeof( BBData ) + data_.size() * sizeof( BBExtraData ) + sizeof(BackboneDB); };
+	core::Size get_mem_foot_print() const { return data_.size() * sizeof( BBData ) + data_.size() * sizeof( BBExtraData ) + sizeof(BackboneDB); };
 
 private:
 
@@ -166,8 +167,8 @@ private:
 	// Extra info is stored in a separate struct (BBExtraData) with an index in the BBData struct
 
 	// std::vector < short > data_;
-	std::vector < BBData > data_;
-	std::vector < BBExtraData > extra_data_;
+	std::vector< BBData > data_;
+	std::vector< BBExtraData > extra_data_;
 
 	// if this flag is true, extra_data_ is populated
 	bool extra_;

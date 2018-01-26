@@ -17,12 +17,15 @@
 
 //package headers
 #include <protocols/surface_docking/SurfaceParameters.hh>
-#include <protocols/surface_docking/SurfaceVectorOptions.hh>
+
+// basic headers
+#include <basic/resource_manager/loader_schemas.hh>
 
 //utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // numeric headers
 #include <numeric/xyzVector.hh>
@@ -42,12 +45,22 @@ SurfaceVectorLoader::~SurfaceVectorLoader() = default;
 /// @details Takes a locator id and istream, ensures that the correct number of points are present and performs error
 /// checking that points are of the correct type before using the points to construct SurfaceParameters
 /// @throws EXCN_Msg_Exception
-utility::pointer::ReferenceCountOP
+utility::pointer::ReferenceCountCOP
 SurfaceVectorLoader::create_resource(
-	basic::resource_manager::ResourceOptions const &,
-	basic::resource_manager::LocatorID const & locator_id,
+	basic::resource_manager::ResourceManager &,
+	utility::tag::TagCOP,
+	std::string const & input_id,
 	std::istream & istream
 ) const
+{
+	return create_surface_params( input_id, istream );
+}
+
+SurfaceParametersOP
+SurfaceVectorLoader::create_surface_params(
+	std::string const & input_id,
+	std::istream & istream
+)
 {
 	using boost::lexical_cast;
 	using core::Real;
@@ -66,8 +79,7 @@ SurfaceVectorLoader::create_resource(
 	vector1< xyzVector<Real> > surf_coords(number_of_points);
 
 	string line;
-	while ( getline( istream, line ) )
-			{
+	while ( getline( istream, line ) ) {
 		++lines_read;
 		if ( lines_read > number_of_points ) {
 			break;
@@ -77,7 +89,7 @@ SurfaceVectorLoader::create_resource(
 		if ( point_coords.size() != number_of_dimensions ) {
 			std::ostringstream err;
 			err << "The input coordinates must specify a point in three-dimensional space, but the point on line ";
-			err << lines_read << " of " << locator_id << " has " << point_coords.size() << " coordinates listed.";
+			err << lines_read << " of " << input_id << " has " << point_coords.size() << " coordinates listed.";
 			throw CREATE_EXCEPTION(Exception, err.str());
 		}
 		surf_coords[lines_read] = xyzVector<Real>(lexical_cast<Real>(point_coords[1]),lexical_cast<Real>(point_coords[2]),
@@ -86,20 +98,35 @@ SurfaceVectorLoader::create_resource(
 
 	if ( lines_read > number_of_points ) {
 		throw CREATE_EXCEPTION(Exception,  "SurfaceVectorLoader expected to be given exactly three points to " \
-			"define the periodicity of the surface, but more than three points were provided in "  + locator_id + ".");
+			"define the periodicity of the surface, but more than three points were provided in "  + input_id + ".");
 	} else if ( lines_read < number_of_points ) {
 		throw CREATE_EXCEPTION(Exception,  "SurfaceVectorLoader expected to be given exactly three points to " \
-			"define the periodicity of the surface, but less than three points were provided in "  + locator_id + ".");
+			"define the periodicity of the surface, but less than three points were provided in "  + input_id + ".");
 	}
 
-	return utility::pointer::ReferenceCountOP( new SurfaceParameters(surf_coords[1], surf_coords[2], surf_coords[3]) );
+	return std::make_shared< SurfaceParameters >( surf_coords[1], surf_coords[2], surf_coords[3] );
 }
 
-basic::resource_manager::ResourceOptionsOP
-SurfaceVectorLoader::default_options() const
+std::string
+SurfaceVectorLoader::classname()
 {
-	return basic::resource_manager::ResourceOptionsOP( new SurfaceVectorOptions() );
+	return "SurfaceVector";
 }
+
+
+void
+SurfaceVectorLoader::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+)
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	basic::resource_manager::resource_loader_xsd_type_definition_w_attributes( xsd, classname(),
+		"The SurfaceVectorLoader reads from the input stream identified by the Resource's 'input_id';"
+		" This file should contain three points to define the periodicity of the Surface",
+		attlist );
+}
+
 
 basic::resource_manager::ResourceLoaderOP SurfaceVectorLoaderCreator::create_resource_loader() const
 {
@@ -108,7 +135,12 @@ basic::resource_manager::ResourceLoaderOP SurfaceVectorLoaderCreator::create_res
 
 std::string SurfaceVectorLoaderCreator::loader_type() const
 {
-	return "SurfaceVector";
+	return SurfaceVectorLoader::classname();
+}
+
+void SurfaceVectorLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	return SurfaceVectorLoader::provide_xml_schema( xsd );
 }
 
 } // namespace surface_docking

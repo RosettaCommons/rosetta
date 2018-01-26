@@ -52,7 +52,7 @@
 #include <protocols/ncbb/oop/OopMover.hh>
 
 //Basic headers
-#include <basic/resource_manager/ResourceManager.hh>
+//#include <basic/resource_manager/ResourceManager.hh>
 
 #include <numeric/conversions.hh>
 
@@ -252,8 +252,7 @@ LDConverterMover::apply(
 		TaskFactoryOP tf( new TaskFactory() );
 		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
-		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
+		if ( option[ packing::resfile ].user() ) {
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
 			tf->push_back( rrop );

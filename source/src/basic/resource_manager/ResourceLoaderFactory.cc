@@ -81,9 +81,20 @@ ResourceLoaderFactory::factory_register( ResourceLoaderCreatorOP creator )
 void
 ResourceLoaderFactory::set_throw_on_double_registration() { throw_on_double_registration_ = true; }
 
+std::map< std::string, ResourceLoaderCreatorOP > const &
+ResourceLoaderFactory::loader_map() const
+{
+	return creator_map_;
+}
+
+std::string
+ResourceLoaderFactory::complex_type_name_for_loader( std::string const & element_name )
+{
+	return "resource_loader_" + element_name + "_type";
+}
+
 /// singleton has a private constructor
 ResourceLoaderFactory::ResourceLoaderFactory() : throw_on_double_registration_( false ) {}
-
 
 } // namespace resource_manager
 } // namespace basic

@@ -22,6 +22,8 @@
 
 //project headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 //C++ headers
 #include <istream>
@@ -79,13 +81,13 @@ public:
 
 	/// @brief Create a ResourceStream object from the given resource
 	/// source, so that its stream can be passed to the ResourceLoader
-	/// using the input "locator_tag" which is bound to the partially formed
+	/// using the input "input_id" which is bound to the partially formed
 	/// SQL select statement that was provided at construction or in
 	/// parse_my_tag
 	virtual
 	ResourceStreamOP
 	locate_resource_stream(
-		std::string const & locator_tag
+		std::string const & input_id
 	) const;
 
 	/// @brief Initialize the %DatabaseResourceLoader from the input set of tags
@@ -98,11 +100,19 @@ public:
 		utility::tag::TagCOP tag
 	);
 
+	/// @brief Describe the schema for this resource locator to the XSD.
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static std::string classname();
+
 private:
 
 	std::string database_session_resource_tag_;
 	std::string sql_command_;
 	std::string column_separator_;
+
+	utility::sql_database::sessionOP db_session_;
+
 };
 
 } // namespace locator

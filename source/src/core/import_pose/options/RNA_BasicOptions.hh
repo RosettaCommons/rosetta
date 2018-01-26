@@ -16,17 +16,20 @@
 #ifndef INCLUDED_core_import_pose_options_RNA_BasicOptions_HH
 #define INCLUDED_core_import_pose_options_RNA_BasicOptions_HH
 
-#include <basic/resource_manager/ResourceOptions.hh>
 #include <core/import_pose/options/RNA_BasicOptions.fwd.hh>
+
+// Utility headers
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.hh>
 
 namespace core {
 namespace import_pose {
 namespace options {
 
 
-class RNA_BasicOptions: public virtual basic::resource_manager::ResourceOptions {
+class RNA_BasicOptions: public virtual utility::pointer::ReferenceCount {
 
 public:
 

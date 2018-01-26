@@ -53,7 +53,7 @@ RNA_DeNovoProtocolOptions::~RNA_DeNovoProtocolOptions() = default;
 
 /// @brief copy constructor
 RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions( RNA_DeNovoProtocolOptions const & src ) :
-	ResourceOptions( src ),
+	ReferenceCount(),
 	RNA_BasicOptions( src ),
 	RNA_MinimizerOptions( src ),
 	RNA_FragmentMonteCarloOptions( src )

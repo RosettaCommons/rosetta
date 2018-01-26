@@ -906,8 +906,8 @@ public: // Properties
 	Value // Have to return by value: Not efficient for large Value types
 	value_or( Value const & value_a ) const
 	{
-		//been_accessed();
 		if ( state_ != INACTIVE ) { // Return active value
+			been_accessed();
 			return value_;
 		} else { // Return passed value
 			return value_a;
@@ -920,8 +920,8 @@ public: // Properties
 	Value // Have to return by value: Not efficient for large Value types
 	user_or( Value const & value_a ) const
 	{
-		been_accessed();
 		if ( state_ == USER ) { // Return user-specified value
+			been_accessed();
 			return value_;
 		} else { // Return passed value
 			return value_a;

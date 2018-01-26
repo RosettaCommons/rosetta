@@ -16,13 +16,15 @@
 #ifndef INCLUDED_protocols_stepwise_monte_carlo_mover_options_StepWiseMoveSelectorOptions_HH
 #define INCLUDED_protocols_stepwise_monte_carlo_mover_options_StepWiseMoveSelectorOptions_HH
 
-#include <basic/resource_manager/ResourceOptions.hh>
 #include <protocols/stepwise/monte_carlo/mover/options/StepWiseMoveSelectorOptions.fwd.hh>
 #include <core/types.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
 #include <utility/tag/Tag.hh>
@@ -34,7 +36,7 @@ namespace monte_carlo {
 namespace mover {
 namespace options {
 
-class StepWiseMoveSelectorOptions: public virtual basic::resource_manager::ResourceOptions {
+class StepWiseMoveSelectorOptions: public virtual utility::pointer::ReferenceCount {
 
 public:
 
@@ -42,7 +44,7 @@ public:
 	StepWiseMoveSelectorOptions();
 
 	//destructor
-	~StepWiseMoveSelectorOptions();
+	virtual ~StepWiseMoveSelectorOptions();
 
 	StepWiseMoveSelectorOptions( StepWiseMoveSelectorOptions const & src );
 

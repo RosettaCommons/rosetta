@@ -145,7 +145,7 @@ public:
 
 private:
 
-	protocols::loophash::LoopHashLibraryOP lh_library_;
+	protocols::loophash::LoopHashLibraryCOP lh_library_;
 	protocols::loops::Loops built_loops_;
 	core::Size max_loop_segments_to_build_;
 	core::Real max_loop_distance_;

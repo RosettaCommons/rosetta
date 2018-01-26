@@ -47,7 +47,7 @@ StepWiseBasicModelerOptions::~StepWiseBasicModelerOptions() = default;
 
 /// @brief copy constructor
 StepWiseBasicModelerOptions::StepWiseBasicModelerOptions( StepWiseBasicModelerOptions const & src ) :
-	ResourceOptions( src ),
+	ReferenceCount(),
 	StepWiseBasicOptions( src )
 {
 	*this = src;

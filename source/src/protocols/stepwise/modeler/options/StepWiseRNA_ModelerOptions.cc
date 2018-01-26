@@ -52,7 +52,7 @@ StepWiseRNA_ModelerOptions::~StepWiseRNA_ModelerOptions() = default;
 
 /// @brief copy constructor
 StepWiseRNA_ModelerOptions::StepWiseRNA_ModelerOptions( StepWiseRNA_ModelerOptions const & src ) :
-	ResourceOptions ( src )
+	ReferenceCount()
 {
 	*this = src;
 }

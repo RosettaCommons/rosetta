@@ -54,7 +54,7 @@ platform::Size
 count_linkers(
 	Xform const & lower,
 	Xform const & upper,
-	protocols::loophash::LoopHashLibraryOP loop_hash_library,
+	protocols::loophash::LoopHashLibraryCOP loop_hash_library,
 	utility::vector1<platform::Size> const & loopsizes,
 	platform::Size radius = 0
 );
@@ -65,7 +65,7 @@ dump_loophash_linkers(
 	Xform const & upper,
 	// core::pose::Pose const & pose1,
 	// core::pose::Pose const & pose2,
-	protocols::loophash::LoopHashLibraryOP loop_hash_library,
+	protocols::loophash::LoopHashLibraryCOP loop_hash_library,
 	utility::vector1<platform::Size> const & loopsizes,
 	platform::Size radius = 0,
 	std::string const & outtag = ""

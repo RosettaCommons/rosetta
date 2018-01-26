@@ -14,14 +14,17 @@
 #ifndef INCLUDED_basic_resource_manager_ResourceLoaderFactory_hh
 #define INCLUDED_basic_resource_manager_ResourceLoaderFactory_hh
 
-
-//package headers
+// Unit headers
 #include <basic/resource_manager/ResourceLoaderCreator.fwd.hh>
 #include <basic/resource_manager/ResourceLoader.fwd.hh>
+
+// Package headers
+#include <basic/resource_manager/ResourceManager.fwd.hh>
 
 //utility headers
 #include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.hh>
 
 //C++ headers
 #include <list>
@@ -76,9 +79,19 @@ public:
 
 	/// @brief Only useful for unit testing.  Since factory registration happens (sometimes) at
 	/// load time, there may be no one to catch a thrown exception in the event of a name collision
-	/// two FallbackConfigurationCreators that register for the same
 	void
 	set_throw_on_double_registration();
+
+	/// @brief Read access to the set of creators that the factry holds; used to create the
+	/// schema definition for the ResourceManager.
+	std::map< std::string, ResourceLoaderCreatorOP > const &
+	loader_map() const;
+
+	/// @brief The name mangling function used by ResourceLoaders when they define their complexTypes
+	/// in the XML Schema.
+	static
+	std::string
+	complex_type_name_for_loader( std::string const & loader_name );
 
 private:
 

@@ -1,0 +1,22 @@
+<JobDefinitionFile>
+
+   <Job>
+      <Input>
+         <Silent silent_files="../../tests/cluster/t288_.score.50.out" tags="S_56" in_fullatom="true" in_silent_struct_type="binary"/>
+      </Input>
+      <Options>
+         <parser__script_vars value="resfile_from_db_select_tag=S_56"/>
+      </Options>
+   </Job>
+
+   <Job>
+      <Input>
+         <Silent silent_files="../../tests/cluster/t288_.score.50.out" tags="S_73" in_fullatom="true" in_silent_struct_type="binary"/>
+      </Input>
+      <Options>
+         <parser__script_vars value="resfile_from_db_select_tag=S_73"/>
+      </Options>
+   </Job>
+
+
+</JobDefinitionFile>

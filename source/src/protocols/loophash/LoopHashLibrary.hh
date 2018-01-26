@@ -90,17 +90,21 @@ public:
 	void setup_hash_maps();
 
 	// simple accessors
+	LoopHashMap const & gethash( core::Size size ) const;
+
+	// Requires non-const access to the loop hash library -- note that this is not
+	// an option if the LoopHashLibrary is being managed by the ResourceManager
 	LoopHashMap & gethash( core::Size size );
 
 
-	const std::vector < core::Size > & hash_sizes() const { return hash_sizes_; }
+	std::vector< core::Size > const & hash_sizes() const { return hash_sizes_; }
 
-	const BackboneDB & backbone_database() const { return bbdb_; }
+	BackboneDB const & backbone_database() const { return bbdb_; }
 
-	const std::pair< core::Size, core::Size > loopdb_range() { return loopdb_range_; }
+	std::pair< core::Size, core::Size > loopdb_range() const { return loopdb_range_; }
 
 	// Only support writing to text, always include extra data
-	void save_db();
+	void save_db() const;
 
 	// Only support reading from text, extra data is mandatory
 	// used when created merged text db
@@ -144,7 +148,7 @@ public:
 	void set_default_score_functions();
 
 
-	void mem_foot_print();
+	void mem_foot_print() const;
 
 	bool get_extra() const { return extra_; }
 
@@ -183,11 +187,11 @@ private:
 
 	// Used for grafting - ultimately to move into a separate Mover class.
 
-	core::scoring::ScoreFunctionOP scorefxn_rama_cst;
-	core::scoring::ScoreFunctionOP scorefxn_cen_cst;
+	core::scoring::ScoreFunctionOP scorefxn_rama_cst_;
+	core::scoring::ScoreFunctionOP scorefxn_cen_cst_;
 
-	core::optimization::MinimizerOptions options;
-	core::optimization::MinimizerOptions options2;
+	core::optimization::MinimizerOptions options_;
+	core::optimization::MinimizerOptions options2_;
 };
 
 } // namespace loops

@@ -27,23 +27,11 @@
 #include <protocols/init/init.EnergyMethodCreators.ihh>
 #include <protocols/init/init.EnergyMethodRegistrators.ihh>
 
-#include <protocols/init/init.FallbackConfigurationCreators.ihh>
-#include <protocols/init/init.FallbackConfigurationRegistrators.ihh>
-
 #include <protocols/init/init.RDFFunctionCreators.ihh>
 #include <protocols/init/init.RDFFunctionRegistrators.ihh>
 
 #include <protocols/init/init.ResourceLoaderCreators.ihh>
 #include <protocols/init/init.ResourceLoaderRegistrators.ihh>
-
-#include <protocols/init/init.ResourceLocatorCreators.ihh>
-#include <protocols/init/init.ResourceLocatorRegistrators.ihh>
-
-#include <protocols/init/init.ResourceOptionsCreators.ihh>
-#include <protocols/init/init.ResourceOptionsRegistrators.ihh>
-
-#include <protocols/init/init.ResourceManagerCreators.ihh>
-#include <protocols/init/init.ResourceManagerRegistrators.ihh>
 
 #include <protocols/init/init.RotamerRecoveryCreators.ihh>
 #include <protocols/init/init.RotamerRecoveryRegistrators.ihh>

@@ -1,9 +1,12 @@
 <ROSETTASCRIPTS>
+	<DATABASE_SESSIONS>
+		<DatabaseSession name="score_db" database_mode="sqlite3" database_name="score.db3"/>
+	</DATABASE_SESSIONS>
 	<SCOREFXNS>
 	        <ScoreFunction name="s" weights="ref2015"/>
 	</SCOREFXNS>
 	<MOVERS>
-		<ReportToDB name="report_scores" resource_description="database_session" batch_description="Test using database_session resource">
+		<ReportToDB name="report_scores" db_session_name="score_db" batch_description="Test using database_session created and previously placed in the DataMap">
 			<ScoreTypeFeatures/>
 			<StructureScoresFeatures scorefxn="s"/>
 		</ReportToDB>

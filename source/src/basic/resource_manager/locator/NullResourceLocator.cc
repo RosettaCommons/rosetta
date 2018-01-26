@@ -15,13 +15,14 @@
 #include <basic/resource_manager/locator/NullResourceLocator.hh>
 #include <basic/resource_manager/locator/NullResourceLocatorCreator.hh>
 
-//project headers
-#include <utility/io/izstream.hh>
+// Package headers
+#include <basic/resource_manager/locator/locator_schemas.hh>
 #include <basic/Tracer.hh>
-
 
 //utility headers
 #include <utility/vector1.hh>
+#include <utility/io/izstream.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 //C++ headers
 #include <istream>
@@ -54,8 +55,14 @@ NullResourceLocatorCreator::create_resource_locator() const {
 
 string
 NullResourceLocatorCreator::locator_type() const {
-	return "NullResourceLocator";
+	return NullResourceLocator::classname();
 }
+
+void
+NullResourceLocatorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return NullResourceLocator::provide_xml_schema( xsd );
+}
+
 
 ///// NullStream //////
 
@@ -84,14 +91,14 @@ NullResourceLocator::show(
 
 std::string
 NullResourceLocator::type() const {
-	return "NullResourceLocator";
+	return classname();
 }
 
 NullResourceLocator::~NullResourceLocator() = default;
 
 ResourceStreamOP
 NullResourceLocator::locate_resource_stream(
-	string const & /*locator_tag*/
+	string const & /*input_id*/
 ) const {
 	return ResourceStreamOP( new NullStream() );
 }
@@ -101,6 +108,28 @@ NullResourceLocator::parse_my_tag(
 	TagCOP
 )
 {}
+
+
+void
+NullResourceLocator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+)
+{
+	using namespace utility::tag;
+	AttributeList attrs;
+
+	xsd_type_definition_w_attributes( xsd, classname(),
+		"The NullResourceLocator is meant for cases where a resource can"
+		" be created without reading from an input file. It goes through the motions"
+		" of returning a ResourceStream (an empty NullStream) as is required of all"
+		" ResourceLocators, but the stream that it creates will not be used.", attrs );
+}
+
+std::string
+NullResourceLocator::classname()
+{
+	return "NullResourceLocator";
+}
 
 } // namespace locator
 } // namespace resource_manager

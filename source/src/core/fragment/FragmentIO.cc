@@ -100,7 +100,7 @@ FragFactory & FragmentIO::get_frag_factory(void) {
 	return frag_factory_;
 }
 
-void FragmentIO::read_next_frames( std::istream& data, std::string& next_line, FrameList &next_frames ) {
+void FragmentIO::read_next_frames( std::istream & data, std::string & next_line, FrameList &next_frames ) {
 	//read lines defining the FRAMES for a given block of Fragments
 	do {
 		if ( !next_line.size() ) continue; //skip empty lines
@@ -189,11 +189,11 @@ void FragmentIO::read_frag_data( std::istream& data, std::string& next_line, Fra
 	}
 }
 
-void FragmentIO::read_data( std::istream& data, FrameList& all_frames ) {
+void FragmentIO::read_frames_from_stream( std::string const & fname, std::string const & first_line, std::istream & data, FrameList & all_frames ) {
 	tr.Info << " read fragments options: top = " << top_ << " copies: " << ncopies_
 		<< " annotate: " << ( bAnnotate_ ? "yes" : "no" ) << std::endl;
 
-	std::string next_line;
+	std::string next_line = first_line;
 	while ( data.good() ) {
 		FrameList new_frames;
 
@@ -212,17 +212,19 @@ void FragmentIO::read_data( std::istream& data, FrameList& all_frames ) {
 		}
 	}
 	if ( data.fail() || data.bad() ) {
-		tr.Error << "reading failed at line " << next_line << std::endl;
+		tr.Error << "reading of fragment file \"" << fname << "\" failed at line " << next_line << std::endl;
 	}
 }
 
-FragSetOP FragmentIO::read_data( std::string const& filename ) {
-	//detect format:
-	std::string line;
-
+/// @details Open a file and construct a FragmentSet from its contents.
+/// Note that this function stores the constructed FragmentSet in GLOBAL DATA
+/// making it ABSOLUTELY TERRIBLE.
+FragSetOP FragmentIO::read_data( std::string const & filename )
+{
 	if ( frag_cache_.find( filename ) == frag_cache_.end() ) {
 		//okay we are about to read a new fragment file...
 		// at this moment we loose trust in fragments that are only referenced by the frag_cache..
+		// NOTE THAT THE CLEANING HAS BEEN DISABLED SO THAT THIS JUST ACCUMULATES MEMORY FOREVER
 		clean_frag_cache();
 
 		// format check...
@@ -231,41 +233,50 @@ FragSetOP FragmentIO::read_data( std::string const& filename ) {
 			utility_exit_with_message("ERROR: FragmentIO: could not open file " + filename );
 		}
 
-		tr.Info << "reading fragments from file: " << filename << " ... " << std::endl;
-		getline( data, line );
-		std::istringstream str( line );
-		std::string tag;
-		str >> tag;
-		if ( tag == "position:" ) {
-			tr.Info << "rosetta++ fileformat detected! Calling legacy reader... "
-				<< std::endl;
-
-			ConstantLengthFragSetOP frags( new ConstantLengthFragSet );
-			frags->read_fragment_file( filename, top_, ncopies_, bAnnotate_ );
-			frag_cache_[ filename ] = frags;
-			return frags;
-		} else if ( tag == "#" ) {
-			str >> tag;
-			if ( tag == "index" ) {
-				tr.Info << "minimal fragment fileformat detected! Calling indexed reader... "
-					<< std::endl;
-				MinimalFragSetOP frags( new MinimalFragSet );
-				frags->read_fragment_file( filename, top_, ncopies_ );
-				frag_cache_[ filename ] = frags;
-				return frags;
-			}
-		}
-
-		FrameList frames;
-		read_data( filename, frames );
-
-		//find out if ConstantLengthFragSet is sufficient...
-		//  for now always use OrderedFragSet
-		FragSetOP frags( new OrderedFragSet() );
-		frags->add( frames );
+		tr.Info << "reading fragments from file: " << data.filename() << " ... " << std::endl;
+		FragSetOP frags = read_data_from_stream( data.filename(), data );
 		frag_cache_[ filename ] = frags;
 	}
 	return frag_cache_[ filename ];
+}
+
+/// @details With the opened file, read the first line to determine the format of the fragment
+/// file, and then construct the appropriate FragmentSet. Note that this function does
+/// not store the fragment set in the abomination that is the frag_cache_
+FragSetOP FragmentIO::read_data_from_stream( std::string const & filename, std::istream & data )
+{
+	//detect format:
+	std::string first_line;
+	getline( data, first_line );
+	std::istringstream str( first_line );
+	std::string tag;
+	str >> tag;
+	if ( tag == "position:" ) {
+		tr.Info << "rosetta++ fileformat detected! Calling legacy reader... "
+			<< std::endl;
+
+		ConstantLengthFragSetOP frags( new ConstantLengthFragSet );
+		frags->read_fragment_stream( filename, first_line, data, top_, ncopies_, bAnnotate_ );
+		return frags;
+	} else if ( tag == "#" ) {
+		str >> tag;
+		if ( tag == "index" ) {
+			tr.Info << "minimal fragment fileformat detected! Calling indexed reader... "
+				<< std::endl;
+			MinimalFragSetOP frags( new MinimalFragSet );
+			frags->read_fragment_stream( filename, first_line, data, top_, ncopies_ );
+			return frags;
+		}
+	}
+
+	FrameList frames;
+	read_frames_from_stream( filename, first_line, data, frames );
+
+	//find out if ConstantLengthFragSet is sufficient...
+	//  for now always use OrderedFragSet
+	FragSetOP frags( new OrderedFragSet() );
+	frags->add( frames );
+	return frags;
 }
 
 void FragmentIO::clean_frag_cache() {
@@ -282,12 +293,19 @@ void FragmentIO::clean_frag_cache() {
 	*/
 }
 
-void FragmentIO::read_data( std::string const& filename, FrameList& frames ) {
+void FragmentIO::read_frames_from_file( std::string const& filename, FrameList& frames ) {
 	utility::io::izstream data( filename );
 	if ( !data.good() ) utility_exit_with_message("ERROR: FragmentIO: could not open file " + filename );
-	tr.Info << "reading fragment frames from file: " << filename << " ... " << std::endl;
+	tr.Info << "reading fragment frames from file: " << data.filename() << " ... " << std::endl;
 
-	read_data( data, frames);
+	std::string firstline;
+	if ( ! getline( data, firstline ) )  {
+		std::ostringstream oss;
+		oss <<"Failed to read any data from fragment file \"" << filename << "\"";
+		throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+	}
+
+	read_frames_from_stream( data.filename(), firstline, data, frames);
 	if ( data.fail() ) {
 		utility_exit_with_message( "failed to read fragments from file " + filename );
 	}

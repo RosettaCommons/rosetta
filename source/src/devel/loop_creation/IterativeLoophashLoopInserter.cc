@@ -169,7 +169,7 @@ IterativeLoophashLoopInserter::apply(
 			get_random_fragment(hash_buckets);
 
 		//apply random fragment and get deviations
-		LoopHashMap & hashmap = lh_library_->gethash( random_fragment.first );
+		LoopHashMap const & hashmap = lh_library_->gethash( random_fragment.first );
 		LeapIndex cp = hashmap.get_peptide( random_fragment.second );
 
 		BackboneSegment lh_fragment_bs;

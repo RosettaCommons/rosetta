@@ -105,24 +105,31 @@ Size MinimalFragSet::frames( Size pos, FrameList &out_frames ) const
 }
 
 void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size ncopies ) {
+	utility::io::izstream data( filename );
+	if ( !data.good() ) {
+		std::cerr << "Open failed for file: " << filename << std::endl;
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+	}
+
+	std::string first_line;
+	bool ok( getline( data, first_line ) );
+	if ( ok ) read_fragment_stream( filename, first_line, data, top25, ncopies );
+}
+
+void MinimalFragSet::read_fragment_stream( std::string const & filename, std::string const & first_line, std::istream & data, Size top25, Size ncopies ) {
 	using std::cerr;
 	using std::endl;
 	using std::istringstream;
 	using std::string;
 
-	utility::io::izstream data( filename );
-	if ( !data.good() ) {
-		cerr << "Open failed for file: " << data.filename() << endl;
-		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-	}
 	// read torsions only vall
-	string line;
+	string line( first_line );
 	utility::vector1<torsions> vall_torsions;
 	Size insertion_pos = 1;
 	FrameOP frame;
 	std::map<std::pair<Size,Size>, Size> frame_counts;
 	Size n_frags( 0 );
-	while ( getline( data, line ) ) {
+	do {
 		if ( line.substr(0,1) == "#" ) {
 			std::string vallname;
 			Size vall_start_line;
@@ -206,7 +213,7 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 			if ( !top25 || frame_counts[p] < top25*ncopies ) {
 				FrameOP frame = FrameOP( new Frame( insertion_pos ) );
 				if ( !frame->add_fragment( current_fragment ) ) {
-					tr.Fatal << "Incompatible Fragment in file: " << data.filename() << endl;
+					tr.Fatal << "Incompatible Fragment in file: " << filename << endl;
 					utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 				} else {
 					frame_counts[p]++;
@@ -221,10 +228,10 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 				n_frags = std::max( n_frags, frame_counts[p] );
 			}
 		}
-	}
+	} while ( getline( data, line ) );
 
 	tr.Info << "finished reading top " << n_frags << " "
-		<< max_frag_length() << "mer fragments from file " << data.filename()
+		<< max_frag_length() << "mer fragments from file " << filename
 		<< endl;
 }
 

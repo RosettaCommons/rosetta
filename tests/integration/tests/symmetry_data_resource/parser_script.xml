@@ -1,6 +1,9 @@
 <ROSETTASCRIPTS>
+	<RESOURCES>
+		<Resource name="1xu1FH_D_symmdef"/>
+	</RESOURCES>
 	<MOVERS>
-	        <SetupForSymmetry name="setup_symm" resource_description="symmdata"/>
+	        <SetupForSymmetry name="setup_symm" symmetry_resource="1xu1FH_D_symmdef"/>
 		<ExtractAsymmetricUnit name="extract_asu"/>
 	</MOVERS>
 	<PROTOCOLS>

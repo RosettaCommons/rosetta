@@ -63,9 +63,6 @@
 
 #include <numeric/conversions.hh>
 
-//Basic headers
-#include <basic/resource_manager/ResourceManager.hh>
-
 
 // Filter headers
 #include <basic/MetricValue.hh>
@@ -358,8 +355,7 @@ OopCreatorMover::apply(
 		TaskFactoryOP tf( new TaskFactory() );
 		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
-		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
+		if ( option[ packing::resfile ].user() ) {
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
 			tf->push_back( rrop );
@@ -416,8 +412,8 @@ OopCreatorMover::apply(
 		TaskFactoryOP tf( new TaskFactory() );
 		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
-		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
+
+		if ( option[ packing::resfile ].user() ) {
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
 			tf->push_back( rrop );
@@ -481,8 +477,7 @@ OopCreatorMover::clone() const
 }
 
 void
-OopCreatorMover::parse_my_tag
-(
+OopCreatorMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,

@@ -34,7 +34,7 @@ public:
 	/// @brief Return the string identifier for the associated ResourceLoader (LoopHashLibrary).
 
 	std::string loader_type() const override;
-
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } // namespace

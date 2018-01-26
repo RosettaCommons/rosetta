@@ -27,7 +27,6 @@
 #include <protocols/rosetta_scripts/XmlObjects.hh>
 
 // Project headers
-#include <basic/options/option.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pose/Pose.hh>
@@ -36,6 +35,11 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/types.hh>
+
+// Basic headers
+#include <basic/options/option.hh>
+#include <basic/resource_manager/ResourceManager.hh>
+#include <basic/datacache/DataMapObj.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -131,9 +135,14 @@ RosettaScriptsParser::set_recursion_limit(const utility::options::OptionCollecti
 ///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
 ///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, std::string const & xml_fname){
+RosettaScriptsParser::generate_mover_and_apply_to_pose(
+	core::pose::Pose & pose,
+	std::string const & xml_fname,
+	std::string const & current_input_name,
+	std::string const & current_output_name
+){
 	bool modified_pose;
-	return generate_mover_and_apply_to_pose(pose, basic::options::option, modified_pose, xml_fname);
+	return generate_mover_and_apply_to_pose( pose, basic::options::option, modified_pose, xml_fname, current_input_name, current_output_name );
 }
 
 
@@ -142,12 +151,17 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, 
 ///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
 ///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, bool & modified_pose, std::string const & xml_fname){
-
+RosettaScriptsParser::generate_mover_and_apply_to_pose(
+	core::pose::Pose & pose,
+	bool & modified_pose,
+	std::string const & xml_fname,
+	std::string const & current_input_name,
+	std::string const & current_output_name
+){
 	modified_pose = false ;
 	utility::vector1< std::string > empty_vector;
 	TagCOP tag = create_tag_from_xml( xml_fname, empty_vector);
-	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option );
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option, current_input_name, current_output_name );
 	return in_mover;
 }
 
@@ -157,12 +171,17 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, 
 ///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
 ///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, bool & modified_pose, std::string const & xml_fname,
-	utility::vector1< std::string > const & script_vars){
-
+RosettaScriptsParser::generate_mover_and_apply_to_pose(
+	core::pose::Pose & pose,
+	bool & modified_pose,
+	std::string const & xml_fname,
+	utility::vector1< std::string > const & script_vars,
+	std::string const & current_input_name,
+	std::string const & current_output_name
+){
 	modified_pose = false;
 	TagCOP tag = create_tag_from_xml( xml_fname, script_vars);
-	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option );
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option, current_input_name, current_output_name );
 	return in_mover;
 }
 
@@ -173,11 +192,16 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, 
 ///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
 ///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose){
+RosettaScriptsParser::generate_mover_and_apply_to_pose(
+	core::pose::Pose & pose,
+	utility::options::OptionCollection const & options,
+	bool & modified_pose,
+	std::string const & current_input_name,
+	std::string const & current_output_name,
+	basic::resource_manager::ResourceManagerOP resource_manager
+){
 	debug_assert(options[ OptionKeys::parser::protocol ].user());
-
-	return generate_mover_and_apply_to_pose( pose, options, modified_pose, options[ OptionKeys::parser::protocol ]() );
-
+	return generate_mover_and_apply_to_pose( pose, options, modified_pose, options[ OptionKeys::parser::protocol ](), current_input_name, current_output_name, nullptr, resource_manager );
 }
 
 /// @brief Convenience function to construct a ParsedProtocol from a file
@@ -185,12 +209,19 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, 
 ///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
 ///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose, std::string const & xml_fname,
-	XmlObjectsOP xml_objects /* = nullptr */ ) {
-
+RosettaScriptsParser::generate_mover_and_apply_to_pose(
+	core::pose::Pose & pose,
+	utility::options::OptionCollection const & options,
+	bool & modified_pose,
+	std::string const & xml_fname,
+	std::string const & current_input_name,
+	std::string const & current_output_name,
+	XmlObjectsOP xml_objects,
+	basic::resource_manager::ResourceManagerOP resource_manager
+) {
 	modified_pose = false;
 	TagCOP tag = create_tag_from_xml( xml_fname, options);
-	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, options, xml_objects );
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, options, current_input_name, current_output_name, xml_objects, resource_manager );
 	return in_mover;
 
 }
@@ -201,12 +232,19 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose(core::pose::Pose & pose, 
 ///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
 ///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose_xml_string(core::pose::Pose & pose, utility::options::OptionCollection const & options, bool & modified_pose, std::string const & xml_text,
-	XmlObjectsOP xml_objects /* = nullptr */ ) {
+RosettaScriptsParser::generate_mover_and_apply_to_pose_xml_string(
+	core::pose::Pose & pose,
+	utility::options::OptionCollection const & options,
+	bool & modified_pose,
+	std::string const & xml_text,
+	std::string const & current_input_name,
+	std::string const & current_output_name,
+	XmlObjectsOP xml_objects /* = nullptr */
+) {
 
 	modified_pose = false;
 	TagCOP tag = create_tag_from_xml_string( xml_text, options);
-	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, options, xml_objects );
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, options, current_input_name, current_output_name, xml_objects );
 	return in_mover;
 
 }
@@ -226,8 +264,11 @@ RosettaScriptsParser::create_tag_from_xml( std::string const & xml_fname, utilit
 }
 
 TagCOP
-RosettaScriptsParser::create_tag_from_xml_string( std::string const & xml_text, utility::vector1< std::string > const & script_vars ){
-
+RosettaScriptsParser::create_tag_from_xml_string(
+	std::string const & xml_text,
+	utility::vector1< std::string > const & script_vars
+)
+{
 	std::string xml_fname = "XmlString (not real file)";
 	// A list of all of the files that have been included, which is checked whenever a
 	// new file is included to prevent circular dependencies.
@@ -238,15 +279,17 @@ RosettaScriptsParser::create_tag_from_xml_string( std::string const & xml_text, 
 	std::string substituted_contents;
 	read_in_and_recursively_replace_includes( xml_fname, substituted_contents, filenames_encountered, 0, false, xml_text );
 	return finish_creating_tag( xml_fname, script_vars, substituted_contents );
-
 }
 
 // private method
 /// @brief To be called after the full xml tree has been loaded into a string from create_tag_from_xml*
 /// @details xml_fname only used for tracer output.
 TagCOP
-RosettaScriptsParser::finish_creating_tag( std::string const & xml_fname, utility::vector1< std::string > const & script_vars,
-	std::string const & substituted_contents ) const {
+RosettaScriptsParser::finish_creating_tag(
+	std::string const & xml_fname,
+	utility::vector1< std::string > const & script_vars,
+	std::string const & substituted_contents
+) const {
 
 	std::stringstream fin( substituted_contents );
 
@@ -277,8 +320,8 @@ RosettaScriptsParser::finish_creating_tag( std::string const & xml_fname, utilit
 
 ///@brief Create a tag from an XML string.  Read from a local options collection.
 TagCOP
-RosettaScriptsParser::create_tag_from_xml_string( std::string const & xml_text, utility::options::OptionCollection const & options){
-
+RosettaScriptsParser::create_tag_from_xml_string( std::string const & xml_text, utility::options::OptionCollection const & options )
+{
 	// Do substitution of the script_vars in the stream
 	if ( options[ OptionKeys::parser::script_vars ].user() ) {
 		return create_tag_from_xml_string(xml_text, options[ OptionKeys::parser::script_vars ]());
@@ -290,8 +333,8 @@ RosettaScriptsParser::create_tag_from_xml_string( std::string const & xml_text, 
 
 ///@brief Create a tag from an XML file.  Read from a local options collection.
 TagCOP
-RosettaScriptsParser::create_tag_from_xml( std::string const & xml_fname, utility::options::OptionCollection const & options){
-
+RosettaScriptsParser::create_tag_from_xml( std::string const & xml_fname, utility::options::OptionCollection const & options )
+{
 	// Do substitution of the script_vars in the stream
 	if ( options[ OptionKeys::parser::script_vars ].user() ) {
 		return create_tag_from_xml(xml_fname, options[ OptionKeys::parser::script_vars ]());
@@ -343,6 +386,8 @@ RosettaScriptsParser::generate_mover_from_pose(
 	moves::MoverOP & in_mover,
 	bool new_input,
 	std::string const & xml_fname,
+	std::string const & current_input_name,
+	std::string const & current_output_name,
 	bool guarantee_new_mover
 )
 {
@@ -355,7 +400,7 @@ RosettaScriptsParser::generate_mover_from_pose(
 
 	TagCOP tag = create_tag_from_xml( dock_design_filename, basic::options::option);
 
-	in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option );
+	in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option, current_input_name, current_output_name );
 
 	return modified_pose;
 }
@@ -367,7 +412,10 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	bool & modified_pose,
 	TagCOP tag,
 	utility::options::OptionCollection const & options,
-	XmlObjectsOP xml_objects /* = nullptr */
+	std::string const & current_input_name /* = "" */,
+	std::string const & current_output_name /* = "" */,
+	XmlObjectsOP xml_objects,
+	basic::resource_manager::ResourceManagerOP resource_manager
 )
 {
 	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
@@ -381,6 +429,22 @@ RosettaScriptsParser::generate_mover_for_protocol(
 
 	typedef std::pair< std::string const, MoverOP > StringMover_pair;
 	typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
+
+	// Set the names for this job -- the input names and the output names
+	{
+		using StringWrapper = basic::datacache::DataMapObj< std::string >;
+		if ( current_input_name != "" ) {
+			auto input_name = std::make_shared< StringWrapper >();
+			input_name->obj = current_input_name;
+			data[ "strings" ][ "current_input_name" ] = input_name;
+		}
+		if ( current_output_name != "" ) {
+			auto output_name = std::make_shared< StringWrapper >();
+			output_name->obj = current_output_name;
+			data[ "strings" ][ "current_output_name" ] = output_name;
+		}
+	}
+
 
 	//setting up some defaults
 	protocols::filters::FilterOP true_filter( new protocols::filters::TrueFilter );
@@ -415,6 +479,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	// so that arbitrary data, living in any library, can be loaded into the DataMap
 	// through the XML interface.
 	std::set< std::string > non_data_loader_tags;
+	non_data_loader_tags.insert( "RESOURCES" );
 	non_data_loader_tags.insert( "MOVERS" );
 	non_data_loader_tags.insert( "APPLY_TO_POSE" );
 	non_data_loader_tags.insert( "FILTERS" );
@@ -437,45 +502,76 @@ RosettaScriptsParser::generate_mover_for_protocol(
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "parser::protocol file must specify PROTOCOLS section");
 	}
 
-	// Round 1: Import previously defined filters and movers
+	// Round 1: Import previously defined filters and movers, and add Resources to the DataMap from the
+	// ResourceManager
+	std::ostringstream resource_error_oss;
 	for ( TagCOP const curr_tag : all_tags ) {
 
 		////// IMPORT
-		if ( curr_tag->getName() != "IMPORT" ) {
+		if ( curr_tag->getName() != "IMPORT" && curr_tag->getName() != "RESOURCES" ) {
 			continue;
 		}
 
-		if ( curr_tag->hasOption("taskoperations") ) {
-			// Import task operations
-			std::string taskoperations_str( curr_tag->getOption<std::string>("taskoperations") );
-			std::istringstream taskoperation_ss(taskoperations_str);
-			std::string taskoperation_name;
-			while ( std::getline(taskoperation_ss, taskoperation_name, ',') ) {
-				import_tag_names.insert(std::make_pair("TASKOPERATIONS", taskoperation_name));
-			}
-		}//fi taskoperations
+		if ( curr_tag->getName() == "IMPORT" ) {
 
-		if ( curr_tag->hasOption("filters") ) {
-			// Import filters
-			std::string filters_str( curr_tag->getOption<std::string>("filters") );
-			std::istringstream filters_ss(filters_str);
-			std::string filter_name;
-			while ( std::getline(filters_ss, filter_name, ',') ) {
-				import_tag_names.insert(std::make_pair("FILTERS", filter_name));
-			}
-		}//fi filters
+			if ( curr_tag->hasOption("taskoperations") ) {
+				// Import task operations
+				std::string taskoperations_str( curr_tag->getOption<std::string>("taskoperations") );
+				std::istringstream taskoperation_ss(taskoperations_str);
+				std::string taskoperation_name;
+				while ( std::getline(taskoperation_ss, taskoperation_name, ',') ) {
+					import_tag_names.insert(std::make_pair("TASKOPERATIONS", taskoperation_name));
+				}
+			}//fi taskoperations
 
-		if ( curr_tag->hasOption("movers") ) {
-			// Import movers
-			std::string movers_str( curr_tag->getOption<std::string>("movers") );
-			std::istringstream movers_ss(movers_str);
-			std::string mover_name;
-			while ( std::getline(movers_ss, mover_name, ',') ) {
-				import_tag_names.insert(std::make_pair("MOVERS", mover_name));
+			if ( curr_tag->hasOption("filters") ) {
+				// Import filters
+				std::string filters_str( curr_tag->getOption<std::string>("filters") );
+				std::istringstream filters_ss(filters_str);
+				std::string filter_name;
+				while ( std::getline(filters_ss, filter_name, ',') ) {
+					import_tag_names.insert(std::make_pair("FILTERS", filter_name));
+				}
+			}//fi filters
+
+			if ( curr_tag->hasOption("movers") ) {
+				// Import movers
+				std::string movers_str( curr_tag->getOption<std::string>("movers") );
+				std::istringstream movers_ss(movers_str);
+				std::string mover_name;
+				while ( std::getline(movers_ss, mover_name, ',') ) {
+					import_tag_names.insert(std::make_pair("MOVERS", mover_name));
+				}
+			}//fi movers
+		} else if ( curr_tag->getName() == "RESOURCES" ) {
+			for ( auto const & subtag : curr_tag->getTags() ) {
+				debug_assert( subtag->getName() == "Resource" );
+				std::string resource_name = subtag->getOption< std::string >( "name" );
+				if ( ! resource_manager ) {
+					resource_error_oss << "The requested resource \"" << resource_name << "\" cannot be retrieved because";
+					resource_error_oss << " no ResourceManager has been provided. Perhaps you are not using rosetta_scripts_jd3?\n";
+				} else if ( ! resource_manager->has_resource( resource_name ) ) {
+					resource_error_oss << "The requested resource \"" << resource_name << "\" was not found in the";
+					resource_error_oss << " ResourceManager. The following resources are available from the ResourceManager\n";
+					for ( auto const & resname : resource_manager->resources_that_have_been_declared() ) {
+						resource_error_oss << "   " << resname << "\n";
+					}
+				} else {
+					TR << "Loading resource \"" << resource_name << "\" into the DataMap" << std::endl;
+					data.add_resource( resource_name, resource_manager->get_resource( resource_name ) );
+				}
 			}
-		}//fi movers
+		}
 
 	}// for curr_tag
+
+	{ // scope -- process possible errors from the RESOURCES block.
+		std::string errstring = resource_error_oss.str();
+		if ( ! errstring.empty() ) {
+			throw CREATE_EXCEPTION( utility::excn::Exception, errstring );
+		}
+	}
+
 
 	// Attempt to find and import requested objects; throws exception on failure
 	if ( import_tag_names.size() > 0 ) {
@@ -651,7 +747,7 @@ RosettaScriptsParser::parse_protocol_tag( Pose & pose, utility::tag::TagCOP prot
 {
 	bool modified_pose = false;
 
-	ParsedProtocolOP mover = generate_mover_for_protocol(pose, modified_pose, protocol_tag, options);
+	ParsedProtocolOP mover = generate_mover_for_protocol(pose, modified_pose, protocol_tag, options, "", "" );
 
 	if ( modified_pose ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");
@@ -1124,6 +1220,7 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 
 	// We have lots of complexTypes to define; we need them for the following elements:
 	//
+	// RESOURCES
 	// MOVERS
 	// FILTERS
 	// All the data loaders, (TASKOPERATIONS, SCOREFXNS, etc.)
@@ -1137,9 +1234,15 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 	// DataLoaderFactory for these.
 
 	// Do the ROSETTASCRIPTS complex type first, so that if we recurse here, we can
-	// quit
+	// quit (Note that the MoverFactory will recurse to the RosettaScriptsParser via
+	// the ParsedProtocol mover)
+
+	XMLSchemaSimpleSubelementList rosetta_scripts_resources_subelement;
+	rosetta_scripts_resources_subelement.add_already_defined_subelement(
+		"RESOURCES", & rosetta_scripts_complex_type_naming_func );
+
 	XMLSchemaSimpleSubelementList rosetta_scripts_initial_subelements;
-	for ( auto data_loader_pair : protocols::parser::DataLoaderFactory::get_instance()->loader_map() ) {
+	for ( auto const & data_loader_pair : protocols::parser::DataLoaderFactory::get_instance()->loader_map() ) {
 		rosetta_scripts_initial_subelements.add_already_defined_subelement(
 			data_loader_pair.first, data_loader_pair.second->schema_ct_naming_function() );
 	}
@@ -1166,6 +1269,7 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 		.description( "The main ROSETTASCRIPTS block allows the definition of many different types of objects which can be generated"
 		" from a text file. The combination of Movers and Filters can define an end-to-end protocol, and the use of the MultiplePoseMover"
 		" can define pseudo-parallel diversification and pruning of a set of structures." )
+		.add_ordered_subelement_set_as_optional( rosetta_scripts_resources_subelement )
 		.add_ordered_subelement_set_as_repeatable( rosetta_scripts_initial_subelements )
 		.add_ordered_subelement_set_as_required( rosetta_scripts_protocols_subelement )
 		.add_ordered_subelement_set_as_optional( rosetta_scripts_output_subelement )
@@ -1174,11 +1278,27 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 
 	// Make sure the schemas for the DataLoaders, for all of the Movers, and all of the Filters are
 	// written to the XSD.
-	for ( auto data_loader_pair : protocols::parser::DataLoaderFactory::get_instance()->loader_map() ) {
+	for ( auto const & data_loader_pair : protocols::parser::DataLoaderFactory::get_instance()->loader_map() ) {
 		data_loader_pair.second->provide_xml_schema( xsd );
 	}
 	moves::MoverFactory::get_instance()->define_mover_xml_schema( xsd );
 	filters::FilterFactory::get_instance()->define_filter_xml_schema( xsd );
+
+	// RESOURCES
+	AttributeList resource_attributes;
+	resource_attributes + XMLSchemaAttribute::required_attribute( "name", xs_string, "The name of the resource that will"
+		" be used in this XML file; to be used, this resource must have been declared in a resource-definition file and"
+		" read in by the ResourceManager" );
+	XMLSchemaSimpleSubelementList resources_subelements;
+	resources_subelements.add_simple_subelement( "Resource", resource_attributes, "Each Resource to be used in a given job"
+		" must be listed first at the beginning of the XML file so that the parser may request the Resource from the"
+		" ResourceManager and put into the DataMap" );
+	XMLSchemaComplexTypeGenerator resources_ctgen;
+	resources_ctgen.element_name( "RESOURCES" )
+		.complex_type_naming_func( & rosetta_scripts_complex_type_naming_func )
+		.description( "Declare all of the Resources that should be loaded into the DataMap from the ResourceManager for this job; JD3 only." )
+		.set_subelements_repeatable( resources_subelements )
+		.write_complex_type_to_schema( xsd );
 
 	// MOVERS
 	XMLSchemaSimpleSubelementList movers_subelements;

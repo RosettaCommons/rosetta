@@ -54,7 +54,7 @@ RNA_MinimizerOptions::~RNA_MinimizerOptions() = default;
 
 /// @brief copy constructor
 RNA_MinimizerOptions::RNA_MinimizerOptions( RNA_MinimizerOptions const & src ) :
-	ResourceOptions( src ),
+	ReferenceCount(),
 	RNA_BasicOptions( src )
 {
 	*this = src;

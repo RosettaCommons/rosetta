@@ -47,7 +47,7 @@ StepWiseModelerOptions::~StepWiseModelerOptions() = default;
 
 /// @brief copy constructor
 StepWiseModelerOptions::StepWiseModelerOptions( StepWiseModelerOptions const & src ) :
-	ResourceOptions( src ),
+	ReferenceCount(),
 	StepWiseBasicModelerOptions( src ),
 	StepWiseProteinModelerOptions( src ),
 	StepWiseRNA_ModelerOptions( src )

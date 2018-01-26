@@ -55,9 +55,6 @@
 //Utility headers
 #include <basic/Tracer.hh>
 
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
-
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
@@ -134,18 +131,15 @@ LegacyLoophashAssemblyMover::init(){
 	using namespace core;
 	using namespace core::scoring;
 	using namespace protocols::loophash;
-	using namespace basic::resource_manager;
 	using namespace basic::options;
 
-	if ( ResourceManager::get_instance()->has_resource_with_description("LoopHashLibrary") ) {
-		TR << "Retrieving lh library from resource manager." << std::endl;
-		lh_library_ = get_resource<LoopHashLibrary>( "LoopHashLibrary" );
-	} else {
-		utility::vector1<core::Size> loop_sizes = option[ OptionKeys::lh::loopsizes ].value();
-		TR << "Initializing lh library from command line" << std::endl;
-		lh_library_ = new LoopHashLibrary( loop_sizes );
-		lh_library_->load_mergeddb();
-	}
+	// it seems premature to call this function when parse_my_tag might be called
+	// in just a bit; this is called immediately after construction!
+	utility::vector1<core::Size> loop_sizes = option[ OptionKeys::lh::loopsizes ].value();
+	TR << "Initializing lh library from command line" << std::endl;
+	LoopHashLibraryOP local_lh_library = new LoopHashLibrary( loop_sizes );
+	local_lh_library->load_mergeddb();
+	lh_library_ = local_lh_library();
 
 	loop_scorefxn_ = new ScoreFunction();
 	loop_scorefxn_->set_weight(coordinate_constraint,  0.5 );
@@ -790,6 +784,11 @@ LegacyLoophashAssemblyMover::parse_my_tag(
 	using namespace basic::options;
 
 	LegacyAssemblyMover::parse_my_tag(tag, data, filters, movers, pose);
+
+	if ( tag->hasOption( "loop_hash_library_resource" ) ) {
+		lh_library_ = datamap->get_resource< protocols::loophash::LoopHashLibrary >(
+			tag->getOption< std::string >( "loop_hash_library_resource" ) );
+	}
 
 	if ( tag->hasOption("max_loop_segments_to_build") ) {
 		max_loop_segments_to_build_ = tag->getOption<core::Size>("max_loop_segments_to_build");

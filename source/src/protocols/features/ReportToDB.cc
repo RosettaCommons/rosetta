@@ -28,6 +28,7 @@
 // Platform Headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/CacheableString.fwd.hh>
+#include <basic/datacache/DataMapObj.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/ResidueType.hh>
@@ -60,8 +61,6 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
 
 // Numeric Headers
 #include <numeric>
@@ -121,7 +120,7 @@ using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_task_operations;
 using protocols::rosetta_scripts::parse_score_function;
-using basic::database::parse_database_connection;
+//using basic::database::parse_database_connection;
 using std::string;
 using std::endl;
 using std::accumulate;
@@ -525,17 +524,35 @@ ReportToDB::parse_my_tag(
 	}
 
 	// Name of output features database:
-	// EXAMPLE: db=features_<batch_description>.db3
+	// EXAMPLE: db_session_name=features_<batch_description>.db3
 	// REQUIRED
-	if ( tag->hasOption("resource_description") ) {
-		std::string resource_description = tag->getOption<string>("resource_description");
-		if ( ! basic::resource_manager::ResourceManager::get_instance()->has_resource_with_description( resource_description ) ) {
-			throw CREATE_EXCEPTION(utility::excn::Exception, "You specified a resource_description of " + resource_description +
-				" for ReportToDB, but the ResourceManager doesn't have a resource with that description" );
+	try {
+		db_session_ = rosetta_scripts::parse_database_session( tag, data );
+	} catch ( utility::excn::Exception & e ) {
+		std::ostringstream oss;
+		oss << "ERROR: failed to create a database session from the input tag for the ReportToDB mover";
+		if ( tag->hasOption( "name" ) ) {
+			oss << " named \"" << tag->getOption< std::string >( "name" ) << "\"";
 		}
-		db_session_ = basic::resource_manager::get_resource< utility::sql_database::session >( resource_description );
-	} else {
-		db_session_ = parse_database_connection(tag);
+		oss << "\n";
+		oss << e.msg();
+		throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+	}
+
+	// Name of the currently running job, placed in the DataMap by the RosettaScriptsParser
+	// Used by JD3. SHOULD be used by JD2, also. Not yet.
+	if ( data.has( "strings", "current_input_name" ) ) {
+		using StringWrapper = basic::datacache::DataMapObj< std::string >;
+		auto ptr = data.get_ptr< StringWrapper >( "strings", "current_input_name" );
+		runtime_assert( ptr );
+		set_structure_input_tag( ptr->obj );
+	}
+
+	if ( data.has( "strings", "current_output_name" ) ) {
+		using StringWrapper = basic::datacache::DataMapObj< std::string >;
+		auto ptr = data.get_ptr< StringWrapper >( "strings", "current_output_name" );
+		runtime_assert( ptr );
+		set_structure_tag( ptr->obj );
 	}
 
 	// Name of report to db mover. A new batch will be created for each uniquely named
@@ -735,6 +752,7 @@ ReportToDB::initialize_relevant_residues(
 void
 ReportToDB::apply( Pose& pose ){
 
+	ensure_structure_tags_are_ready();
 	initialize_pose(pose);
 	vector1< bool > relevant_residues(initialize_relevant_residues(pose));
 
@@ -743,7 +761,7 @@ ReportToDB::apply( Pose& pose ){
 		<< accumulate(relevant_residues.begin(), relevant_residues.end(), 0)
 		<< " of the " << pose.size()
 		<< " total residues in the pose "
-		<< protocols::jd2::current_output_name()
+		<< structure_tag_
 		<< " for batch '" << batch_name_ << "'." << endl;
 
 
@@ -760,17 +778,14 @@ ReportToDB::apply( Pose& pose ){
 		} else {
 			set_protocol_and_batch_id(protocol_id_, batch_id_, batch_name_, batch_description_, features_reporters_, db_session_);
 		}
+	} catch(cppdb::cppdb_error & except) {
+		TR.Warning << "There was an error writing protocol and batch id. You are likely using MPI mode "
+			<< "with a user-specified protocol_id and/or batch_id. This workflow is for advanced users "
+			<< "only and is not recommended. The cppdb error is: " << except.what() << std::endl;
 	}
-catch(cppdb::cppdb_error & except)
-{
-	TR.Warning << "There was an error writing protocol and batch id. You are likely using MPI mode "
-		<< "with a user-specified protocol_id and/or batch_id. This workflow is for advanced users "
-		<< "only and is not recommended. The cppdb error is: " << except.what() << std::endl;
-}
 	//Write linking tables after we have a valid batch_id
 	// write_linking_tables();
 
-	ensure_structure_tags_are_ready();
 	StructureID struct_id = report_structure_features();
 	report_features(pose, struct_id, relevant_residues);
 
@@ -905,7 +920,7 @@ ReportToDB::attributes_for_report_to_db(
 	utility::tag::XMLSchemaDefinition & xsd
 )
 {
-	basic::database::attributes_for_parse_database_connection( attlist, xsd );
+	rosetta_scripts::attributes_for_parse_database_session( xsd, attlist );
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 }
 
@@ -920,7 +935,6 @@ ReportToDBCreator::create_mover() const {
 
 void ReportToDBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	// + required_name_attribute( "Unique name of ReportToDBMover" )
 	ReportToDB::provide_xml_schema( xsd );
 }
 

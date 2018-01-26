@@ -15,15 +15,21 @@
 #include <basic/resource_manager/locator/FileSystemResourceLocator.hh>
 #include <basic/resource_manager/locator/FileSystemResourceLocatorCreator.hh>
 
-//project headers
+// Package headers
+#include <basic/resource_manager/locator/locator_schemas.hh>
+
+// Utility headers
+#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
-#include <basic/Tracer.hh>
-
-
-//utility headers
 #include <utility/vector1.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //C++ headers
 #include <istream>
@@ -57,18 +63,16 @@ FileSystemResourceLocatorCreator::create_resource_locator() const {
 
 string
 FileSystemResourceLocatorCreator::locator_type() const {
-	return "FileSystemResourceLocator";
+	return FileSystemResourceLocator::classname();
+}
+
+void
+FileSystemResourceLocatorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FileSystemResourceLocator::provide_xml_schema( xsd );
 }
 
 ///// FileStream //////
-
-/// @detail This is private. The FileStream shouldn't be copied
-FileStream::FileStream(
-	FileStream const & src
-) :
-	ResourceStream( src ),
-	stream_()
-{}
 
 /// @detail If you use this constructor be sure to use the open
 ///function before accessing the stream
@@ -129,8 +133,18 @@ FileSystemResourceLocator::FileSystemResourceLocator(
 ) :
 	basic::resource_manager::ResourceLocator(),
 	open_mode_(open_mode),
-	base_path_("")
-{}
+	search_paths_( 1, "./" )
+{
+	if ( basic::options::option[ basic::options::OptionKeys::in::path::path ].user() ) {
+		for ( std::string path : basic::options::option[ basic::options::OptionKeys::in::path::path ]() ) {
+			if ( path.size() > 0 && path[ path.size()-1 ] == '/' ) {
+				search_paths_.push_back( path );
+			} else {
+				search_paths_.push_back( path + "/" );
+			}
+		}
+	}
+}
 
 
 FileSystemResourceLocator::FileSystemResourceLocator(
@@ -138,8 +152,18 @@ FileSystemResourceLocator::FileSystemResourceLocator(
 ) :
 	basic::resource_manager::ResourceLocator(),
 	open_mode_(src.open_mode_),
-	base_path_(src.base_path_)
+	search_paths_( 1, "./" )
 {}
+
+FileSystemResourceLocator::~FileSystemResourceLocator() = default;
+
+void
+FileSystemResourceLocator::set_search_paths(
+	utility::vector1< std::string > const & search_paths
+)
+{
+	search_paths_ = search_paths;
+}
 
 void
 FileSystemResourceLocator::show(
@@ -154,22 +178,21 @@ FileSystemResourceLocator::show(
 		<< ((std::ios_base::in & open_mode_) ? " input" : "")
 		<< ((std::ios_base::out & open_mode_) ? " output" : "")
 		<< ((std::ios_base::trunc & open_mode_) ? " truncate" : "")
-		<< "  base search path for resources: "
-		<< (base_path_ == "" ? "none" : base_path_)
-		<< std::endl;
+		<< "  search paths for resources:";
+	for ( auto const & search_path : search_paths_ ) {
+		out << " " << search_path;
+	}
+	out << std::endl;
 }
-
-//std::ostream &
-//FileSystemResourceLocator::operator<< (
-// std::ostream & out,
-// const FileSystemResourceLocator & file_system_resource_locator
-//) {
-// file_system_resource_locator.show(out);
-// return out;
-//}
 
 std::string
 FileSystemResourceLocator::type() const
+{
+	return classname();
+}
+
+std::string
+FileSystemResourceLocator::classname()
 {
 	return "FileSystemResourceLocator";
 }
@@ -187,31 +210,70 @@ FileSystemResourceLocator::get_open_mode() const {
 	return open_mode_;
 }
 
-FileSystemResourceLocator::~FileSystemResourceLocator() = default;
-
 /// @brief
 ResourceStreamOP
 FileSystemResourceLocator::locate_resource_stream(
-	string const & locator_tag
+	string const & input_id
 ) const {
 	// Concatenate base_path_ and the locator tag to generate the appropriate filename.
-	std::stringstream fully_specified_locator_tag;
-	fully_specified_locator_tag << base_path_ << locator_tag;
-	return ResourceStreamOP( new FileStream( fully_specified_locator_tag.str(), open_mode_ ) );
+	for ( std::string const & search_path : search_paths_ ) {
+		std::string fname = search_path + input_id;
+		std::ifstream ifstr( fname.c_str() );
+		if ( ! ifstr.fail() ) {
+			return ResourceStreamOP( new FileStream( fname, open_mode_ ) );
+		}
+	}
+
+	std::ostringstream oss;
+	oss << "Error in trying to locate file '" << input_id << "' in any of the following locations:\n";
+	for ( std::string const & search_path : search_paths_ ) {
+		oss << "    " << search_path + input_id << "\n";
+	}
+	oss << "Note that it is possible that the file exists by that you do not have permission to read it.\n";
+	throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+
+	// appease compiler
+	return ResourceStreamOP();
 }
 
-/// @details Set the value for base_path if specified in the ResourceDefintionFile.
+/// @details Set the value for base_path if specified in the ResourceDefinitionFile.
 void
 FileSystemResourceLocator::parse_my_tag(
 	TagCOP tag
 )
 {
-	if ( tag && tag->hasOption("base_path") ) {
-		std::stringstream base_path_with_trailing_space;
-		base_path_with_trailing_space << tag->getOption<string>("base_path") << "/";
-		base_path_ = base_path_with_trailing_space.str();
+	if ( tag && tag->hasOption("search_paths") ) {
+		std::string paths = tag->getOption<string>("search_paths");
+		utility::vector1< std::string > path_vector = utility::string_split( paths, ',' );
+		if ( path_vector.size() != 0 ) {
+			search_paths_.clear();
+			search_paths_.reserve( path_vector.size() );
+			for ( std::string const & path : path_vector ) {
+				if ( path.size() == 0 ) {
+					search_paths_.push_back( "./" );
+				} else if ( path[ path.size() - 1 ] != '/' ) {
+					search_paths_.push_back( path + '/' );
+				} else {
+					search_paths_.push_back( path );
+				}
+			}
+		}
 	}
 }
+
+void
+FileSystemResourceLocator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+)
+{
+	using namespace utility::tag;
+	AttributeList attrs;
+	attrs + XMLSchemaAttribute( "search_paths", xs_string, "The comma-separated list of directories where the requested files should be looked for; either an empty string or './' can be used to designate the present working directory" );
+
+	xsd_type_definition_w_attributes( xsd, classname(), "The file system resource locator will interpret the input_id for a Resource as a file name and search"
+		" for a file with that name.", attrs );
+}
+
 
 } // namespace locator
 } // namespace resource_manager

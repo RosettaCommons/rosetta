@@ -22,8 +22,8 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
+//#include <basic/resource_manager/ResourceManager.hh>
+//#include <basic/resource_manager/util.hh>
 
 // Utility headers
 #include <utility/vector0.hh>
@@ -58,19 +58,19 @@ void FiberDiffraction::init() {
 FiberDiffraction::~FiberDiffraction() = default;
 
 FiberDiffraction& getFiberDiffractionData( core::Real c, core::Real res_cutoff_high, core::Real res_cutoff_low,  bool force_reload ) {
-	if ( basic::resource_manager::ResourceManager::get_instance()->
-			has_resource_with_description("FiberDiffractionLayerLines") ) {
-		FiberDiffractionOP fiber_diffraction(
-			basic::resource_manager::get_resource< FiberDiffraction >(
-			"FiberDiffractionLayerLines"));
-		return *fiber_diffraction;
-	} else {
-		return getFiberDiffractionData_legacy(c, res_cutoff_high, res_cutoff_low, force_reload);
-	}
+	return getFiberDiffractionData_legacy(c, res_cutoff_high, res_cutoff_low, force_reload);
 }
 
 
-FiberDiffraction& getFiberDiffractionData_legacy(core::Real c, core::Real res_cutoff_high, core::Real res_cutoff_low, bool force_reload ) {
+FiberDiffraction& getFiberDiffractionData_legacy(
+	core::Real c,
+	core::Real res_cutoff_high,
+	core::Real res_cutoff_low,
+	bool force_reload
+) {
+
+	// SO TERRIBLE AND UGLY!!!
+	// THIS CODE SHOULD NEVER HAVE BEEN WRITTEN!
 	static FiberDiffraction theFiberDiffractionData;
 
 	if ( !theFiberDiffractionData.isFiberDataLoaded() || force_reload ) {

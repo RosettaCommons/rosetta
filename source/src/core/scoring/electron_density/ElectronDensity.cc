@@ -48,8 +48,8 @@
 
 
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
+//#include <basic/resource_manager/ResourceManager.hh>
+//#include <basic/resource_manager/util.hh>
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>
@@ -128,22 +128,18 @@ static void swap4_aligned(void *v, long ndata) {
 ///
 ///  ELECTRON DENSITY CLASS DEFINITIONS
 ///
-ElectronDensity& getDensityMap(std::string const & filename, bool force_reload) {
-	if ( basic::resource_manager::ResourceManager::get_instance()->
-			has_resource_with_description("electron_density") ) {
-
-		ElectronDensityOP electron_density(
-			basic::resource_manager::get_resource< ElectronDensity >(
-			"electron_density"));
-
-		return *electron_density;
-	} else {
-		return getDensityMap_legacy(filename, force_reload);
-	}
+ElectronDensity &
+getDensityMap(std::string const & filename, bool force_reload) {
+	return getDensityMap_legacy(filename, force_reload);
 }
 
 
-ElectronDensity& getDensityMap_legacy(std::string const & filename, bool force_reload) {
+ElectronDensity &
+getDensityMap_legacy( std::string const & filename, bool force_reload) {
+
+	// SO UNBEARABLY UGLY!!!!!
+	// THIS CODE IS CAUSTIC!
+	// IT SHOULD NEVER HAVE BEEN WRITTEN!
 	static ElectronDensity theDensityMap;
 
 #ifdef GL_GRAPHICS

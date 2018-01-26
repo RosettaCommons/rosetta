@@ -147,6 +147,21 @@ namespace CxxTest
 		return r;
 	}
 
+	void doAssertStringContains(
+		const char *file, unsigned line,
+		const char *xExpr, std::string const &x,
+		const char *yExpr, std::string const &y,
+		const char *message )
+	{
+		bool contains = x.find(y) != std::string::npos;
+
+        if ( !contains ) {
+            if ( message )
+                tracker().failedTest( file, line, message );
+            tracker().failedAssertContains( file, line, xExpr, yExpr, TS_AS_STRING(x), TS_AS_STRING(y) );
+            TS_ABORT();
+        }
+	}
 
 
 	/// New, for MiniRosetta unit tests

@@ -19,7 +19,6 @@
 #include <basic/resource_manager/ResourceLoader.hh>
 #include <basic/resource_manager/ResourceLoaderCreator.hh>
 #include <basic/resource_manager/ResourceLoaderFactory.hh>
-#include <basic/resource_manager/ResourceOptions.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
@@ -32,38 +31,45 @@
 
 using namespace basic::resource_manager;
 
+class DummyResource : public utility::pointer::ReferenceCount
+{
+private:
+	int myint_;
+public:
+	DummyResource() { myint_ = 5; }
+	int intval() const { return myint_; }
+};
+
 class DummyResourceLoader : public ResourceLoader {
 public:
 	DummyResourceLoader() {}
 
-	virtual
-	utility::pointer::ReferenceCountOP
+	basic::resource_manager::ResourceCOP
 	create_resource(
-		ResourceOptions const & ,
-		std::string const & ,
+		basic::resource_manager::ResourceManager & ,
+		utility::tag::TagCOP ,
+		std::string const &,
 		std::istream &
-	) const {
-		return 0;
-	}
-
-	virtual
-	ResourceOptionsOP
-	default_options() const {
-		return 0;
+	) const override
+	{
+		return std::make_shared< DummyResource >();
 	}
 
 };
 
 class DummyResourceLoaderCreator : public ResourceLoaderCreator {
 public:
-	virtual
-	ResourceLoaderOP
-	create_resource_loader() const {
-		return ResourceLoaderOP( new DummyResourceLoader );
+	basic::resource_manager::ResourceLoaderOP
+	create_resource_loader() const override {
+		return std::make_shared< DummyResourceLoader >();
 	}
 
-	virtual
-	std::string loader_type() const { return "DummyResource"; }
+
+	std::string loader_type() const override { return "DummyResource"; }
+
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override
+	{}
 
 };
 

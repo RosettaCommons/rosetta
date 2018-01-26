@@ -49,7 +49,7 @@ StepWiseBasicOptions::~StepWiseBasicOptions() = default;
 
 /// @brief copy constructor
 StepWiseBasicOptions::StepWiseBasicOptions( StepWiseBasicOptions const & src ) :
-	ResourceOptions ( src )
+	ReferenceCount()
 {
 	*this = src;
 }

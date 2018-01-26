@@ -39,6 +39,11 @@ using std::stringstream;
 class StringUtilTests : public CxxTest::TestSuite {
 public:
 
+	// void test_assert_string_contains() {
+	//  TS_ASSERT_STRING_CONTAINS("abc_123_qwe", "123");
+	//  TS_ASSERT_STRING_CONTAINS("abc_123_qwe", "1234"); // should fail
+	// }
+
 	// duplicated implementation in FileName... now it's just an alias for utility::basename
 	void test_file_basename() {
 		TS_ASSERT_EQUALS(utility::file_basename("core/scoring/ScoreFunction.cc"),

@@ -24,7 +24,6 @@
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/ConstDataMap.hh>
-#include <basic/resource_manager/JobOptions.hh>
 
 //C++ headers
 #include <string>

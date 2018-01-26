@@ -1,6 +1,9 @@
 <ROSETTASCRIPTS>
 	<TASKOPERATIONS>
-		<ReadResfileFromDB name="loop_residues" database_name="rosetta_inputs.db3" database_table="resfiles"/>
+		<ReadResfileFromDB name="loop_residues" database_name="rosetta_inputs.db3" database_table="resfiles" selection_tag="4fxn.start_0001.pdb"/>
+		This is a little silly, having the selection tag seemingly tied to the nstruct iteration. This is not the recommended way of setting up
+		a database; it's just legacy at this point. You are welcome to use whatever string in the database you would like to identify the resfile
+		that you need; it needn't be tied to the job id.
 	</TASKOPERATIONS>
 	<LOOP_DEFINITIONS>
 		<Loops name="loops_A">

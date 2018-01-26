@@ -17,7 +17,6 @@
 
 // Unit headers
 #include <core/import_pose/import_pose_options.hh>
-#include <core/import_pose/import_pose_options_creator.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -32,6 +31,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
 // C++ headers
@@ -40,26 +40,6 @@ namespace core {
 namespace import_pose {
 
 static basic::Tracer tr( "core.import_pose.import_pose_options" );
-
-
-///// ImportPoseOptionsCreator /////
-ImportPoseOptionsCreator::ImportPoseOptionsCreator() = default;
-
-ImportPoseOptionsCreator::~ImportPoseOptionsCreator() = default;
-
-basic::resource_manager::ResourceOptionsOP
-ImportPoseOptionsCreator::create_options() const {
-	return basic::resource_manager::ResourceOptionsOP( new ImportPoseOptions );
-}
-
-/// @detail NOTE: This creator creates an options type called
-///'PoseFromPDBOptions' to make it consistent with
-///'PoseFromPDBLoader'.
-std::string
-ImportPoseOptionsCreator::options_type() const {
-	return "PoseFromPDBOptions";
-}
-
 
 ImportPoseOptions::ImportPoseOptions() { init_from_options( basic::options::option ); }
 
@@ -179,6 +159,28 @@ void ImportPoseOptions::list_options_read( utility::options::OptionKeyList & rea
 		+ in::metals_distance_constraint_multiplier
 		+ in::metals_angle_constraint_multiplier;
 
+}
+
+void ImportPoseOptions::append_schema_attributes( utility::tag::AttributeList & attributes )
+{
+	core::io::StructFileReaderOptions::append_schema_attributes( attributes );
+
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+
+	attributes
+		+ Attr::attribute_w_default( "centroid", xsct_rosetta_bool, "TO DO", "false" )
+		// base class already does this! + Attr::attribute_w_default( "fold_tree_io", xsct_rosetta_bool, "TO DO", "false" )
+		+ Attr::attribute_w_default( "membrane", xsct_rosetta_bool, "TO DO", "false" )
+		+ Attr::attribute_w_default( "no_optH", xsct_rosetta_bool, "TO DO", "false" )
+		+ Attr::attribute_w_default( "pack_missing_sidechains", xsct_rosetta_bool, "TO DO", "true" )
+		+ Attr::attribute_w_default( "read_fold_tree", xsct_rosetta_bool, "TO DO", "false" )
+		+ Attr::attribute_w_default( "skip_set_reasonable_fold_tree", xsct_rosetta_bool, "TO DO", "false" )
+		+ Attr::attribute_w_default( "residue_type_set", xs_string, "TO DO", "fa_standard" )
+		+ Attr::attribute_w_default( "auto_setup_metals", xsct_rosetta_bool, "TO DO", "false" )
+		+ Attr::attribute_w_default( "metals_detection_LJ_multiplier", xsct_real, "TO DO", "1.0" )
+		+ Attr::attribute_w_default( "metals_distance_constraint_multiplier", xsct_real, "TO DO", "1.0" )
+		+ Attr::attribute_w_default( "metals_angle_constraint_multiplier", xsct_real, "TO DO", "1.0" );
 }
 
 bool

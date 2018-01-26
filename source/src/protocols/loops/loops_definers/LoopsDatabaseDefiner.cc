@@ -20,6 +20,7 @@
 
 // Project Headers
 #include <protocols/jd2/util.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -46,7 +47,6 @@ using utility::tag::TagCOP;
 using core::pose::Pose;
 using basic::datacache::DataMap;
 using utility::sql_database::sessionOP;
-using basic::database::parse_database_connection;
 using cppdb::result;
 
 namespace protocols {
@@ -75,11 +75,11 @@ LoopsDatabaseDefiner::clone(
 void
 LoopsDatabaseDefiner::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap const &,
+	basic::datacache::DataMap const & datamap,
 	Pose const &
 ) {
 
-	db_session_ = parse_database_connection(tag);
+	db_session_ = protocols::rosetta_scripts::parse_database_session(tag,datamap);
 
 	database_table_ =
 		tag->getOption<std::string>("database_table", "loops");
@@ -143,7 +143,7 @@ void LoopsDatabaseDefiner::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		+ XMLSchemaAttribute::attribute_w_default( "database_table", xs_string,
 		"The name of the table in the database from which the loops are to be read", "loops" )
 		+ required_name_attribute();
-	basic::database::attributes_for_parse_database_connection( attributes, xsd );
+	protocols::rosetta_scripts::attributes_for_parse_database_session( xsd, attributes );
 
 	xsd_type_definition_w_attributes( xsd, class_name(), "Load the loop defintions from a table in a database; the table from"
 		" which this LoopsDefiner reads may be specified, but if it is not then it will look for a table named 'loops'."

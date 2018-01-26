@@ -207,8 +207,7 @@ public:
 	);
 
 	void
-	apply(
-		Pose& pose) override;
+	apply( Pose & pose ) override;
 
 	StructureID
 	report_structure_features() const;

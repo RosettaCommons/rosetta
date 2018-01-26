@@ -21,7 +21,6 @@ static JobInputterRegistrator< enzdes::EnzdesJobInputterCreator > reg_EnzdesJobI
 static JobInputterRegistrator< protein_interface_design::ParserJobInputterCreator > reg_ParserJobInputterCreator;
 static JobInputterRegistrator< PDBJobInputterCreator > reg_PDBJobInputterCreator;
 static JobInputterRegistrator< LazySilentFileJobInputterCreator > reg_LazySilentFileJobInputterCreator;
-static JobInputterRegistrator< JD2ResourceManagerJobInputterCreator > reg_JD2ResourceManagerJobInputterCreator;
 static JobInputterRegistrator< SilentFileJobInputterCreator > reg_SilentFileJobInputterCreator;
 static JobInputterRegistrator< AtomTreeDiffJobInputterCreator > reg_AtomTreeDiffJobInputterCreator;
 static JobInputterRegistrator< comparative_modeling::ThreadingJobInputterCreator > reg_ThreadingJobInputterCreator;

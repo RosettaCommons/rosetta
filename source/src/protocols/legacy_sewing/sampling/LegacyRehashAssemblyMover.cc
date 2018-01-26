@@ -54,9 +54,6 @@
 //Utility headers
 #include <basic/Tracer.hh>
 
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
-
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>

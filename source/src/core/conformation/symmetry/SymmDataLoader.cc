@@ -14,12 +14,15 @@
 //unit headers
 #include <core/conformation/symmetry/SymmDataLoader.hh>
 #include <core/conformation/symmetry/SymmDataLoaderCreator.hh>
-#include <core/conformation/symmetry/SymmDataOptionsCreator.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 
 //package headers
-#include <basic/resource_manager/ResourceOptions.fwd.hh>
 #include <basic/resource_manager/types.hh>
+#include <basic/resource_manager/loader_schemas.hh>
+
+// Utility headers
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 //C++ headers
 #include <istream>
@@ -28,32 +31,35 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
+SymmDataLoader::SymmDataLoader() {}
+SymmDataLoader::~SymmDataLoader() = default;
 
-basic::resource_manager::ResourceOP
+basic::resource_manager::ResourceCOP
 SymmDataLoader::create_resource(
-	basic::resource_manager::ResourceOptions const &,
-	basic::resource_manager::LocatorID const &,
-	std::istream & istream
+	basic::resource_manager::ResourceManager &,
+	utility::tag::TagCOP,
+	std::string const &,
+	std::istream & symstream
 ) const {
 	SymmDataOP symm_data( new SymmData() );
-	symm_data->read_symmetry_data_from_stream(istream);
+	symm_data->read_symmetry_data_from_stream( symstream );
 	return symm_data;
 }
 
-
-///// SymmDataOptionsCreator /////
-SymmDataOptionsCreator::SymmDataOptionsCreator() = default;
-
-SymmDataOptionsCreator::~SymmDataOptionsCreator() = default;
-
-basic::resource_manager::ResourceOptionsOP
-SymmDataOptionsCreator::create_options() const {
-	return basic::resource_manager::ResourceOptionsOP( new SymmDataOptions );
+std::string
+SymmDataLoader::classname()
+{
+	return "SymmData";
 }
 
-std::string
-SymmDataOptionsCreator::options_type() const {
-	return "SymmDataOptions";
+void
+SymmDataLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	basic::resource_manager::resource_loader_xsd_type_definition_w_attributes( xsd,
+		classname(), "Load a SymmData object in from the indicated input_id",
+		attlist );
 }
 
 //// SymmDataLoaderCreator
@@ -65,9 +71,13 @@ SymmDataLoaderCreator::create_resource_loader() const
 
 std::string SymmDataLoaderCreator::loader_type() const
 {
-	return "SymmData";
+	return SymmDataLoader::classname();
 }
 
+void
+SymmDataLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	SymmDataLoader::provide_xml_schema( xsd );
+}
 
 } // namespace
 } // namespace

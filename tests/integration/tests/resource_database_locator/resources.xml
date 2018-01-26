@@ -1,39 +1,12 @@
-<JD2ResourceManagerJobInputter>
+<ResourceDefinitions>
 
-	Configure Input Database:
-	<ResourceOptions>
-		<DatabaseSessionOptions tag="input_db_options" database_mode="sqlite3" database_name="rosetta_inputs.db3"/>
-	</ResourceOptions>
-	<Resources>
-	    <DatabaseSession tag="rosetta_inputs_db" options="input_db_options" locator="NULL"/>
-	</Resources>
+  <ResourceLocators>
+    <DatabaseResourceLocator name="symmetry_definitions" database_mode="sqlite3" database_name="rosetta_inputs.db3" sql_command="SELECT symmdef_file FROM symmetry_definitions WHERE pdb_code = ?;"/>
+  </ResourceLocators>
 
-	Configure Output Database:
-	<ResourceOptions>
-		<DatabaseSessionOptions tag="scores_db_options" database_mode="sqlite3" database_name="scores.db3"/>
-	</ResourceOptions>
-	<Resources>
-	    <DatabaseSession tag="scores_db" options="scores_db_options" locator="NULL"/>
-	</Resources>
-
-	Configure Job Resources:
-	<ResourceLocators>
-		<DatabaseResourceLocator tag="starting_structures" database_session_tag="rosetta_inputs_db" sql_command="SELECT pdb_file FROM starting_structures WHERE pdb_code = ?;"/>
-		<DatabaseResourceLocator tag="symmetry_definitions" database_session_tag="rosetta_inputs_db" sql_command="SELECT symmdef_file FROM symmetry_definitions WHERE pdb_code = ?;"/>
-	</ResourceLocators>
-	<ResourceOptions>
-		<PoseFromPDBOptions tag="1xu1FH_D_options" ignore_unrecognized_res="1"/>
-	</ResourceOptions>
-	<Resources>
-	    <PoseFromPDB tag="1xu1FH_D_starting_struct" locator="starting_structures" locatorID="1xu1FH_D" options="1xu1FH_D_options"/>
-	    <SymmData tag="1xu1FH_D_symmdef" locator="symmetry_definitions" locatorID="1xu1FH_D"/>
-	</Resources>
-
-	<Jobs>
-		<Job name="1xu1FH_D">
-			<Data desc="startstruct" resource_tag="1xu1FH_D_starting_struct"/>
-			<Data desc="symmdef" resource_tag="1xu1FH_D_symmdef"/>
-			<Data desc="scores_db" resource_tag="scores_db"/>
-		</Job>
-	</Jobs>
-</JD2ResourceManagerJobInputter>
+  <Resources>
+    <Resource name="1xu1FH_D_symmdef" locator="symmetry_definitions" input_id="1xu1FH_D">
+      <SymmData/>
+    </Resource>
+  </Resources>
+</ResourceDefinitions>

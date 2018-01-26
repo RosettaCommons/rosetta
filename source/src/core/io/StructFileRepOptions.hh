@@ -21,13 +21,12 @@
 // Core headers
 #include <core/types.hh>
 
-// Basic headers
-#include <basic/resource_manager/ResourceOptions.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -43,7 +42,7 @@
 namespace core {
 namespace io {
 
-class StructFileRepOptions : public basic::resource_manager::ResourceOptions
+class StructFileRepOptions : public utility::pointer::ReferenceCount
 {
 public:
 	/// @brief Constructor that takes default values from the global OptionCollection object, basic::options::option.
@@ -56,9 +55,9 @@ public:
 	/// @brief Copy this object and return an owning pointer to the copy.
 	virtual StructFileRepOptionsOP clone() const;
 
-	void parse_my_tag( utility::tag::TagCOP tag ) override;
+	virtual void parse_my_tag( utility::tag::TagCOP tag );
 
-	std::string type() const override;
+	virtual std::string type() const;
 
 	// accessors
 	std::string const & check_if_residues_are_Ntermini() const;
@@ -168,7 +167,7 @@ public:
 	/// @brief Describe the XML Schema for this ResourceOption object
 	static
 	void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	append_schema_attributes( utility::tag::AttributeList & attributes );
 
 
 	bool

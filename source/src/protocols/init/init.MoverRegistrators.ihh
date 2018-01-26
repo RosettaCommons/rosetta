@@ -484,6 +484,8 @@ static MoverRegistrator< simple_moves::ClearConstraintsMoverCreator > reg_ClearC
 static MoverRegistrator< simple_moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
 static MoverRegistrator< simple_moves::ConstraintSetMoverCreator > reg_ConstraintSetMoverCreator;
 static MoverRegistrator< simple_moves::ContingentAcceptMoverCreator > reg_ContingentAcceptMoverCreator;
+static MoverRegistrator< simple_moves::ConvertRealToVirtualMoverCreator > reg_ConvertRealToVirtualMoverCreator;
+static MoverRegistrator< simple_moves::ConvertVirtualToRealMoverCreator > reg_ConvertVirtualToRealMoverCreator;
 static MoverRegistrator< simple_moves::CopyRotamerMoverCreator > reg_CopyRotamerMoverCreator;
 static MoverRegistrator< simple_moves::CoupledMoverCreator> reg_CoupledMoverCreator;
 static MoverRegistrator< simple_moves::CreateSequenceMotifMoverCreator > reg_CreateSequenceMotifMoverCreator;
@@ -495,11 +497,6 @@ static MoverRegistrator< simple_moves::DisulfideInsertionMoverCreator > reg_Disu
 static MoverRegistrator< simple_moves::DumpSingleResidueRotamersCreator > reg_DumpSingleResidueRotamersCreator;
 static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
 static MoverRegistrator< simple_moves::AddPDBInfoMoverCreator > reg_AddPDBInfoMoverCreator;
-
-static MoverRegistrator< simple_moves::ConvertRealToVirtualMoverCreator > reg_ConvertRealToVirtualMoverCreator;
-
-static MoverRegistrator< simple_moves::ConvertVirtualToRealMoverCreator > reg_ConvertVirtualToRealMoverCreator;
-
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 static MoverRegistrator< simple_moves::FavorSymmetricSequenceCreator > reg_FavorSymmetricSequenceCreator;
 static MoverRegistrator< simple_moves::FindConsensusSequenceCreator > reg_FindConsensusSequenceCreator;
@@ -520,6 +517,7 @@ static MoverRegistrator< simple_moves::MSDMoverCreator > reg_MSDMoverCreator;
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
 static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
 static MoverRegistrator< simple_moves::PeriodicBoxMoverCreator > reg_PeriodicBoxMoverCreator;
+static MoverRegistrator< simple_moves::PoseFromPoseResourceMoverCreator > reg_PoseFromPoseResourceMoverCreator;
 static MoverRegistrator< simple_moves::PSSM2BfactorMoverCreator > reg_PSSM2BfactorMoverCreator;
 static MoverRegistrator< simple_moves::RandomOmegaFlipMoverCreator > reg_RandomOmegaFlipMoverCreator;
 static MoverRegistrator< simple_moves::RandomTorsionMoverCreator > reg_RandomTorsionMoverCreator;

@@ -217,7 +217,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 			protocol_ = factory->get_rotamer_recovery_protocol(protocol_name);
 		}
 	}
-	// TO DO: protocol_->parse_attributes( tag );
+	protocol_->parse_attributes_from_tag( data, tag );
 
 	//mjo if there are many options to be passed to the components,
 	//consider passing the tag to the components themselves to do their

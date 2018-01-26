@@ -1,5 +1,6 @@
 -overwrite
--in:path ../../tests/repack_with_elec_dens/inputs ../../tests/make_symmdef_file/inputs
+-s ../../tests/make_symmdef_file/inputs/1xu1FH_D.pdb
+-in:path ../../tests/repack_with_elec_dens/inputs
 -resource_definition_files resources.xml
 -parser:protocol parser_script.xml
 -mute protocols.jd2.PDBJobInputter core.scoring.etable basic.io.database

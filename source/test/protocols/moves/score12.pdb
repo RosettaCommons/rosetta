@@ -1938,7 +1938,7 @@ ATOM   1937 2HD2 LEU A 116       0.200  42.791  86.095  1.00  0.00           H
 ATOM   1938 3HD2 LEU A 116      -0.490  41.716  87.335  1.00  0.00           H  
 TER                                                                             
 # All scores below are weighted scores, not raw scores.
-#BEGIN_POSE_ENERGIES_TABLE 
+#BEGIN_POSE_ENERGIES_TABLE protocols/moves/score12.pdb._tmp_
 label fa_atr fa_rep fa_sol fa_intra_rep pro_close fa_pair hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_ss_dst dslf_cs_ang dslf_ss_dih dslf_ca_dih rama omega fa_dun p_aa_pp ref total
 weights 0.8 0.44 0.65 0.004 1 0.49 0.585 1.17 1.17 1.1 1 1 1 1 0.2 0.5 0.56 0.32 1 NA
 pose -484.056 361.44 250.603 2.12563 17.2169 -10.4038 -37.3981 -1.4902 -7.2043 -2.14863 0 0 0 0 25.4415 5.33728 464.56 -9.80352 -30.36 543.861
@@ -2058,7 +2058,7 @@ LEU_113 -4.10345 1.34611 2.15993 0.00883 0 0 0 0 -0.77348 0 0 0 0 0 -0.08241 0.0
 HIS_114 -3.26787 0.78706 2.03424 0.00355 2.30677 -0.1645 0 0 0 -0.06786 0 0 0 0 -0.08208 0.02417 1.34288 0.01473 0.56 3.49107
 PRO_115 -3.44358 2.62506 1.97513 0.00308 2.36734 0 0 0 0 0 0 0 0 0 4 8e-05 2.87338 -0.89843 0.02 9.52205
 LEU:CtermProteinFull_116 -2.37509 2.58851 1.72572 0.00924 0 0 0 0 0 0 0 0 0 0 0 0 10.1864 0 -0.1 12.0347
-#END_POSE_ENERGIES_TABLE 
+#END_POSE_ENERGIES_TABLE protocols/moves/score12.pdb._tmp_
 
 allatom_rms 5.9697e-07
 gdtmm 1

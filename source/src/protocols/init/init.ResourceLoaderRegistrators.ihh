@@ -17,7 +17,6 @@
 namespace protocols {
 using basic::resource_manager::ResourceLoaderRegistrator;
 
-static ResourceLoaderRegistrator< basic::database::DatabaseSessionLoaderCreator > DatabaseSessionLoaderCreator_registrator;
 static ResourceLoaderRegistrator< protocols::loophash::LoopHashLibraryLoaderCreator > LoopsHashLibraryLoaderCreator_registrator;
 static ResourceLoaderRegistrator< protocols::loops::LoopsFileLoaderCreator > LoopsFileLoaderCreator_registrator;
 static ResourceLoaderRegistrator< protocols::surface_docking::SurfaceVectorLoaderCreator > SurfaceVectorLoaderCreator_registrator;

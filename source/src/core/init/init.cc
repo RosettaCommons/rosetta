@@ -338,18 +338,15 @@ using basic::Warning;
 // ResourceManager includes
 #include <basic/resource_manager/ResourceLoaderRegistrator.hh>
 #include <core/conformation/symmetry/SymmDataLoaderCreator.hh>
-#include <core/conformation/symmetry/SymmDataOptionsCreator.hh>
-#include <core/io/silent/SilentFileLoaderCreator.hh>
-#include <core/io/silent/SilentFileRMOptionsCreator.hh>
-#include <core/import_pose/PoseFromPDBLoaderCreator.hh>
-#include <core/import_pose/import_pose_options_creator.hh>
-#include <basic/resource_manager/ResourceOptionsRegistrator.hh>
-#include <core/scoring/electron_density/ElectronDensityLoaderCreator.hh>
-#include <core/scoring/electron_density/ElectronDensityOptionsCreator.hh>
-#include <core/scoring/fiber_diffraction/FiberDiffractionLoaderCreator.hh>
-#include <core/scoring/fiber_diffraction/FiberDiffractionOptionsCreator.hh>
-#include <core/chemical/ResidueLoaderCreator.hh>
-#include <core/chemical/ResidueLoaderOptionsCreator.hh>
+#include <core/import_pose/PoseResourceLoaderCreator.hh>
+
+#include <core/init/init.ResourceLocatorCreators.ihh>
+#include <core/init/init.ResourceLocatorRegistrators.ihh>
+
+
+//#include <core/scoring/electron_density/ElectronDensityLoaderCreator.hh>
+//#include <core/scoring/fiber_diffraction/FiberDiffractionLoaderCreator.hh>
+//#include <core/chemical/ResidueLoaderCreator.hh>
 
 //option key includes for deprecated pdbs
 #include <basic/options/keys/LoopModel.OptionKeys.gen.hh>
@@ -757,19 +754,10 @@ static JumpSelectorRegistrator< InterchainJumpSelectorCreator > reg_InterchainJu
 
 using basic::resource_manager::ResourceLoaderRegistrator;
 static ResourceLoaderRegistrator< core::conformation::symmetry::SymmDataLoaderCreator > SymmDataLoaderCreator_registrator;
-static ResourceLoaderRegistrator< core::io::silent::SilentFileLoaderCreator > SilentFileLoaderCreator_registrator;
-static ResourceLoaderRegistrator< core::import_pose::PoseFromPDBLoaderCreator > PoseFromPDBLoaderCreator_registrator;
-static ResourceLoaderRegistrator< core::scoring::electron_density::ElectronDensityLoaderCreator > ElectronDensityLoaderCreator_registrator;
-static ResourceLoaderRegistrator< core::scoring::fiber_diffraction::FiberDiffractionLoaderCreator > FiberDiffractionLoaderCreator_registrator;
-static ResourceLoaderRegistrator< core::chemical::ResidueLoaderCreator > ResidueLoaderCreator_registrator;
-
-using basic::resource_manager::ResourceOptionsRegistrator;
-static ResourceOptionsRegistrator< core::conformation::symmetry::SymmDataOptionsCreator > SymmDataOptionsCreator_registrator;
-static ResourceOptionsRegistrator< core::import_pose::ImportPoseOptionsCreator > ImportPoseOptionsCreator_registrator;
-static ResourceOptionsRegistrator< core::io::silent::SilentFileRMOptionsCreator > SilentFileRMOptionsCreator_registrator;
-static ResourceOptionsRegistrator< core::scoring::electron_density::ElectronDensityOptionsCreator > ElectronDensityOptionsCreator_registrator;
-static ResourceOptionsRegistrator< core::scoring::fiber_diffraction::FiberDiffractionOptionsCreator > FiberDiffractionOptionsCreator_registrator;
-static ResourceOptionsRegistrator< core::chemical::ResidueLoaderOptionsCreator > ResiudeLoaderOptionsCreator_registrator;
+static ResourceLoaderRegistrator< core::import_pose::PoseResourceLoaderCreator > PoseResourceLoaderCreator_registrator;
+//static ResourceLoaderRegistrator< core::scoring::electron_density::ElectronDensityLoaderCreator > ElectronDensityLoaderCreator_registrator;
+//static ResourceLoaderRegistrator< core::scoring::fiber_diffraction::FiberDiffractionLoaderCreator > FiberDiffractionLoaderCreator_registrator;
+//static ResourceLoaderRegistrator< core::chemical::ResidueLoaderCreator > ResidueLoaderCreator_registrator;
 
 #endif
 

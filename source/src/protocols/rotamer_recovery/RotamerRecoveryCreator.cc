@@ -53,7 +53,9 @@ RRProtocolReferenceStructureCreator::type_name() const {
 	return "RRProtocolReferenceStructure";
 }
 
-void RRProtocolReferenceStructureCreator::append_attributes( utility::tag::AttributeList & ) const {}
+void RRProtocolReferenceStructureCreator::append_attributes( utility::tag::AttributeList & attlist ) const {
+	RRProtocolReferenceStructure::append_attributes( attlist );
+}
 
 //////////////// RTMin ///////////////////
 RRProtocolOP

@@ -23,12 +23,18 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
+#include <core/import_pose/import_pose.hh>
+
+// Basic headers
+#include <basic/datacache/DataMap.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ Headers
 #include <string>
@@ -81,6 +87,42 @@ RRProtocolReferenceStructure::reference_structure(
 	reference_pose_ = reference_pose;
 }
 
+void
+RRProtocolReferenceStructure::parse_attributes_from_tag(
+	basic::datacache::DataMap const & datamap,
+	utility::tag::TagCOP tag
+) {
+
+	if ( ! tag->hasOption( "reference_pdb" ) && ! tag->hasOption( "reference_pose" ) ) {
+		std::ostringstream oss;
+		oss << "ERROR in parsing attributes from the RRProtocolReferenceStructure: one of either the \"reference_pdb\" or \"reference_pose\" attributes must be given\n";
+		CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+	}
+
+	if ( tag->hasOption( "reference_pdb" ) && tag->hasOption( "reference_pose" ) ) {
+		std::ostringstream oss;
+		oss << "ERROR in parsing attributes from the RRProtocolReferenceStructure: only one of the \"reference_pdb\" or \"reference_pose\" attributes may be given\n";
+		CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+	}
+
+	if ( tag->hasOption( "reference_pdb" ) ) {
+		// load in a PDB
+		std::string fname = tag->getOption< std::string >( "reference_pdb" );
+		TR << "Loading reference Pose from PDB: " << fname << std::endl;
+		core::pose::PoseOP pose = core::import_pose::pose_from_file( fname );
+		reference_structure( pose );
+	}
+
+	if ( tag->hasOption( "reference_pose" ) ) {
+		std::string posename = tag->getOption< std::string >( "reference_pose" );
+		TR << "Loading reference Pose from resource pose named: " << posename << std::endl;
+		reference_structure( datamap.get_ptr< core::pose::Pose >( "poses", posename ));
+	}
+
+}
+
+
+
 /// @details  measure rotamer recovery for each residue
 void
 RRProtocolReferenceStructure::run(
@@ -92,17 +134,16 @@ RRProtocolReferenceStructure::run(
 ) {
 	// Assume score_function.setup_for_scoring(pose) has already been called.
 
-	using namespace basic::resource_manager;
-
 	if ( !reference_pose_ ) {
-		if ( ResourceManager::get_instance()->
-				has_resource_with_description("native") ) {
-			reference_pose_ = get_resource< Pose >("native");
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
+			TR << "Setting reference Pose from the command-line \"native\" flag" << std::endl;
+			reference_structure( core::import_pose::pose_from_file(
+				basic::options::option[ basic::options::OptionKeys::in::file::native ] ));
 		} else {
 			stringstream err_msg;
 			err_msg
 				<< "Attempting to run the Rotamer Recovery against a Reference Structure, "
-				<< "but no pose with resource decription could be found.";
+				<< "but native has not been set.";
 			utility_exit_with_message(err_msg.str());
 		}
 	}
@@ -124,6 +165,17 @@ RRProtocolReferenceStructure::run(
 			pose.residue(ii), reference_pose_->residue(ii) );
 	}
 }
+
+void RRProtocolReferenceStructure::append_attributes(
+	utility::tag::AttributeList & attlist
+){
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+	attlist
+		+ Attr( "reference_pdb", xs_string, "For use with the RRProtocolReferenceStructure. The PDB formatted file that should be compared against. Mutually exclusive with the 'reference_pose' attribute, but at least one of the two must be provided." )
+		+ Attr( "reference_pose", xs_string, "For use with the RRProtocolReferenceStructure. The Pose held in the DataMap that should be compared against. This Pose should be loaded into the DataMap using the ResourceManager and the PoseFromPoseResourceMover. Mutually exclusive with the 'reference_pose' attribute, but at least one of the two must be provided." );
+}
+
 
 } // rotamer_recovery
 } // protocols

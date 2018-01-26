@@ -117,7 +117,7 @@ dump_pdb(
 		TR.Error << "StructFileRep::dump_pdb: Unable to open file:" << file_name << " for writing!!!" << std::endl;
 		return false;
 	}
-	dump_pdb(pose, file, options);
+	dump_pdb(pose, file, options, file_name );
 	file.close();
 
 	return true;
@@ -128,10 +128,11 @@ dump_pdb(
 void
 dump_pdb(
 	core::pose::Pose const & pose,
-	std::ostream & out
+	std::ostream & out,
+	std::string const & out_fname
 ){
 	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
-	dump_pdb(pose, out, options);
+	dump_pdb(pose, out, options, out_fname);
 }
 
 /// @details Convert given Pose object in to PDB format and send it to the given stream.
@@ -139,12 +140,16 @@ void
 dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
-	core::io::StructFileRepOptionsCOP options
+	core::io::StructFileRepOptionsCOP options,
+	std::string const & out_fname
 ) {
 	String data;
 
 	io::pose_to_sfr::PoseToStructFileRepConverter pu( *options );
 	pu.init_from_pose( pose );
+	if ( out_fname != "" ) {
+		pu.sfr()->score_table_filename() = out_fname;
+	}
 
 	data = create_pdb_contents_from_sfr(*pu.sfr(), options);
 	out.write( data.c_str(), data.size() );

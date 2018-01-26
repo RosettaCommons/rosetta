@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
 #ifdef    SERIALIZATION
@@ -84,6 +85,21 @@ StructFileReaderOptions::list_options_read( utility::options::OptionKeyList & re
 		+ in::file::obey_ENDMDL
 		+ run::preserve_header
 		+ carbohydrates::glycam_pdb_format;
+}
+
+void
+StructFileReaderOptions::append_schema_attributes( utility::tag::AttributeList & attributes )
+{
+	StructFileRepOptions::append_schema_attributes( attributes );
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+
+	attributes
+		+ Attr::attribute_w_default( "new_chain_order", xsct_rosetta_bool, "TO DO", "false" )
+		+ Attr::attribute_w_default( "obey_ENDMDL", xsct_rosetta_bool, "TO DO", "false" )
+		// + Attr::attribute_w_default( "preserve_header", xsct_rosetta_bool, "TO DO", "false" ) // already done by base class
+		+ Attr::attribute_w_default( "glycam_pdb_format", xsct_rosetta_bool, "TO DO", "false" );
+
 }
 
 

@@ -34,6 +34,7 @@
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 
 // Utillity Headers
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.fwd.hh>
@@ -302,6 +303,21 @@ parse_xyz_vector( utility::tag::TagCOP xyz_vector_tag );
 void
 attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist );
 
+/////////////////////////////////////////////////////////
+//////////////DATABASE SESSIONS//////////////////////////
+
+utility::sql_database::sessionOP
+parse_database_session(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap const & datamap
+);
+
+void
+attributes_for_parse_database_session(
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::AttributeList & attlist
+);
+
 
 ///This is kind of a strange place for this, but for library-level reasons it needs to be more accessible than a more logical home with ReportToDB, and cannot live in basic because it needs other functions in this file.  (There is also value in not creating a new file b/c it breaks the fast-compile system XML XSD XRW is using, and it's 6pm on Friday!)
 
@@ -328,6 +344,8 @@ void print_information( utility::vector1 < std::string > const &component_names 
 
 /// @brief Saves the XSD to the given file.
 void save_schema(  std::string const & filename );
+
+
 
 } // RosettaScripts
 } // protocols

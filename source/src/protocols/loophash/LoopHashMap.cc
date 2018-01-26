@@ -344,7 +344,8 @@ get_rt_over_leap_without_foldtree_bs(
 }
 
 
-LoopHashMap::LoopHashMap( core::Size loop_size){
+LoopHashMap::LoopHashMap( core::Size loop_size )
+{
 	loop_size_ = loop_size;
 	setup(loop_size);
 }
@@ -363,17 +364,17 @@ LoopHashMap & LoopHashMap::operator=(LoopHashMap const & other)
 
 }
 
-void LoopHashMap::mem_foot_print(){
+void LoopHashMap::mem_foot_print() const {
 	TR << "loopdb_: " << loopdb_.size() << " Size: " << loopdb_.size() * sizeof( LeapIndex ) << std::endl;
 	TR << "BackboneIndexMap: " << backbone_index_map_.size() << " Size: " << backbone_index_map_.size() * (sizeof(boost::uint64_t) + sizeof(core::Size) ) << std::endl;
 }
 
 void LoopHashMap::sort() {
-	std::sort( loopdb_.begin(), loopdb_.end(), by_index() );
+	std::sort( loopdb_.begin(), loopdb_.end(), [] (LeapIndex const & a, LeapIndex const & b) { return a.index < b.index; } );
 }
 
 void
-LoopHashMap::setup( core::Size loop_size)
+LoopHashMap::setup( core::Size loop_size )
 {
 	loop_size_ = loop_size;
 
@@ -485,14 +486,21 @@ void LoopHashMap::hash_index( numeric::geometry::hashing::Real6 transform, core:
 }
 
 
-void LoopHashMap::bbdb_range( std::pair< BackboneIndexMap::iterator, BackboneIndexMap::iterator > & range ){
+void
+LoopHashMap::bbdb_range(
+	std::pair< BackboneIndexMap::const_iterator, BackboneIndexMap::const_iterator > & range
+) const
+{
 	range.first = backbone_index_map_.begin();
 	range.second = backbone_index_map_.end();
 }
 
 // append to a bucket of vectors in the appropriate bin
 void
-LoopHashMap::lookup(  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result )
+LoopHashMap::lookup(
+	numeric::geometry::hashing::Real6 transform,
+	std::vector < core::Size > & result
+) const
 {
 	// Hash the transform
 	if ( ! hash_->contains( transform ) ) {
@@ -508,10 +516,10 @@ LoopHashMap::lookup(  numeric::geometry::hashing::Real6 transform, std::vector <
 
 	TR.Info << "backbone bucket size:  " << backbone_index_map_.bucket_count() << std::endl;
 	TR.Info << "backbone_index_map_.find(bin_index):  " << backbone_index_map_.count(bin_index) << std::endl;
-	std::pair<  BackboneIndexMap::iterator,
-		BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( bin_index );
+	std::pair< BackboneIndexMap::const_iterator, BackboneIndexMap::const_iterator > range =
+		backbone_index_map_.equal_range( bin_index );
 
-	for ( BackboneIndexMap::iterator it = range.first;
+	for ( BackboneIndexMap::const_iterator it = range.first;
 			it != range.second;
 			++it ) {
 		TR.Info << it->second << std::endl;
@@ -520,7 +528,11 @@ LoopHashMap::lookup(  numeric::geometry::hashing::Real6 transform, std::vector <
 	}
 }
 
-void LoopHashMap::radial_lookup( core::Size radius,  numeric::geometry::hashing::Real6 center, std::vector < core::Size > &result )
+void LoopHashMap::radial_lookup(
+	core::Size radius,
+	numeric::geometry::hashing::Real6 center,
+	std::vector < core::Size > & result
+) const
 {
 
 	center[4] = numeric::nonnegative_principal_angle_degrees(center[4] );
@@ -531,8 +543,9 @@ void LoopHashMap::radial_lookup( core::Size radius,  numeric::geometry::hashing:
 	for ( auto & i : bin_index_vec ) {
 		//TR.Info << "bin_index_vec[i]:  " << bin_index_vec[i] << std::endl;
 		// now get an iterator over that map entry
-		std::pair< BackboneIndexMap::iterator,BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( i );
-		for ( BackboneIndexMap::iterator it = range.first; it != range.second; ++it ) {
+		std::pair< BackboneIndexMap::const_iterator, BackboneIndexMap::const_iterator > range =
+			backbone_index_map_.equal_range( i );
+		for ( BackboneIndexMap::const_iterator it = range.first; it != range.second; ++it ) {
 			//TR.Info << "result:  " << result << std::endl;
 			result.push_back( it->second );
 		}
@@ -554,31 +567,35 @@ Size LoopHashMap::radial_count( core::Size radius, numeric::geometry::hashing::R
 void
 LoopHashMap::lookup(
 	core::Size index,
-	std::vector < core::Size > &result
-)
+	std::vector < core::Size > & result
+) const
 {
 	if ( index > backbone_index_map_.bucket_count() ) {
 		//TR.Error << "OutofBOIUNDS! " << std::endl;
 		return;
 	}
 
-	BackboneIndexMap::local_iterator begin = backbone_index_map_.begin( index );
-	BackboneIndexMap::local_iterator end = backbone_index_map_.end( index );
+	BackboneIndexMap::const_local_iterator begin = backbone_index_map_.begin( index );
+	BackboneIndexMap::const_local_iterator end = backbone_index_map_.end( index );
 
-	for ( BackboneIndexMap::local_iterator it = begin; it != end; ++it ) {
+	for ( BackboneIndexMap::const_local_iterator it = begin; it != end; ++it ) {
 		result.push_back( it->second );
 	}
 }
 
 boost::uint64_t
-LoopHashMap::return_key( core::Size bb_index )
+LoopHashMap::return_key( core::Size bb_index ) const
 {
 	LeapIndex leap_index = get_peptide( bb_index );
 	return leap_index.key;
 }
 
 void
-LoopHashMap::radial_lookup_withkey( boost::uint64_t key, core::Size radius, std::vector < core::Size > &result )
+LoopHashMap::radial_lookup_withkey(
+	boost::uint64_t key,
+	core::Size radius,
+	std::vector < core::Size > & result
+) const
 {
 	// get center of bin from key
 	numeric::geometry::hashing::Real6 center = hash_->bin_center_point( hash_->bin_from_index( key ) );
@@ -586,12 +603,12 @@ LoopHashMap::radial_lookup_withkey( boost::uint64_t key, core::Size radius, std:
 }
 
 void
-LoopHashMap::lookup_withkey( boost::uint64_t key, std::vector < core::Size > &result )
+LoopHashMap::lookup_withkey( boost::uint64_t key, std::vector < core::Size > & result ) const
 {
-	std::pair<  BackboneIndexMap::iterator,
-		BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( key );
+	std::pair<  BackboneIndexMap::const_iterator,
+		BackboneIndexMap::const_iterator> range = backbone_index_map_.equal_range( key );
 
-	for ( BackboneIndexMap::iterator it = range.first; it != range.second; ++it ) {
+	for ( BackboneIndexMap::const_iterator it = range.first; it != range.second; ++it ) {
 		result.push_back( it->second );
 	}
 	return;
@@ -619,7 +636,7 @@ void LoopHashMap::read_legacydb(std::string filename )
 	TR.Info << "Rehashed dataset:  OUTOFBOUNDS: " <<  loopdb_.size() - backbone_index_map_.size() << std::endl;
 }
 
-void LoopHashMap::write_db( std::string filename ){
+void LoopHashMap::write_db( std::string filename ) const {
 	std::ofstream file( filename.c_str() );
 	if ( !file ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  filename, "write" );
 	for ( auto & i : loopdb_ ) {
@@ -632,7 +649,8 @@ void
 LoopHashMap::read_db(
 	std::string filename, std::pair< core::Size, core::Size > loopdb_range,
 	std::map< core::Size, bool > & homolog_index
-){
+)
+{
 	std::ifstream file( filename.c_str() );
 	if ( !file ) throw CREATE_EXCEPTION(EXCN_DB_IO_Failed,  filename, "read" );
 	std::string line;

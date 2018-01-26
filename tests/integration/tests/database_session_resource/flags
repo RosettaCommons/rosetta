@@ -1,8 +1,8 @@
 -out
  -nooutput
 -overwrite
+-in:file:s 1xu1FH_D.pdb
 -in:path ../../tests/make_symmdef_file/inputs
--resource_definition_files resources.xml
 -parser:protocol parser_script.xml
 -mute protocols.jd2.PDBJobInputter
 -mute core.scoring.etable

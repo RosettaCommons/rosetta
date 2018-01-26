@@ -700,7 +700,7 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 		if ( rt_exists==true ) {
 			// Get the fragment bucket
 			// leap_index_bucket contains loophash hits (see pilot app to extract the backbone)
-			protocols::loophash::LoopHashMap &hashmap = library->gethash( loop_size );
+			protocols::loophash::LoopHashMap const & hashmap = library->gethash( loop_size );
 			radial_counts = hashmap.radial_count(radius_size,loop_transform);
 			tr.Info << "radius_size:  " << radius_size << "\tloop_size:  " << loop_size << "\tnumber of hits:  " << radial_counts << std::endl;
 			loop_and_counts = std::make_pair(loop_size, radial_counts);

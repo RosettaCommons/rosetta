@@ -96,7 +96,7 @@ StepWiseMonteCarloOptions::~StepWiseMonteCarloOptions() = default;
 
 /// @brief copy constructor
 StepWiseMonteCarloOptions::StepWiseMonteCarloOptions( StepWiseMonteCarloOptions const & src ) :
-	ResourceOptions( src ),
+	ReferenceCount(),
 	StepWiseBasicOptions( src ),
 	StepWiseMoveSelectorOptions( src )
 {

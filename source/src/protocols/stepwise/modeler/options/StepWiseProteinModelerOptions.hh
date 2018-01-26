@@ -16,11 +16,12 @@
 #ifndef INCLUDED_protocols_stepwise_modeler_protein_StepWiseProteinModelerOptions_HH
 #define INCLUDED_protocols_stepwise_modeler_protein_StepWiseProteinModelerOptions_HH
 
-#include <basic/resource_manager/ResourceOptions.hh>
 #include <protocols/stepwise/modeler/options/StepWiseProteinModelerOptions.fwd.hh>
 #include <core/types.hh>
-#include <utility/vector1.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
@@ -34,7 +35,7 @@ namespace modeler {
 namespace options {
 
 // multiple inheritance -- bad form -- but will replace with composition later, perhaps.
-class StepWiseProteinModelerOptions: public virtual basic::resource_manager::ResourceOptions {
+class StepWiseProteinModelerOptions: public virtual utility::pointer::ReferenceCount {
 
 public:
 

@@ -83,7 +83,7 @@ struct LegacyLeapIndex{
 /// @brief the loop hash map stores LeapIndexes and a hashmap to access those LeapIndexes quickly by their 6D coordinates.
 
 
-class LoopHashMap{
+class LoopHashMap {
 public:
 	/// @brief Constructor - must give loop_size
 	LoopHashMap( core::Size loop_size = 10);
@@ -110,7 +110,9 @@ public:
 	void add_legacyleap( const LegacyLeapIndex &legacyleap_index );
 
 	/// @brief Obtain an index to a given peptide saved
-	inline const LeapIndex & get_peptide( core::Size index ){
+	inline
+	LeapIndex const &
+	get_peptide( core::Size index ) const {
 		runtime_assert( index < loopdb_.size() );
 		return loopdb_[ index ];
 	}
@@ -121,31 +123,31 @@ public:
 
 	/// @brief Return a vector of loops with equal keys  given a key
 	//  And any keys within a radius around the original key
-	void radial_lookup_withkey( boost::uint64_t key, core::Size radius, std::vector < core::Size > &result );
+	void radial_lookup_withkey( boost::uint64_t key, core::Size radius, std::vector < core::Size > &result ) const;
 
 	/// @brief Return a vector of loops with equal keys  given a key
 	//  Identical to radial_lookup_withkey(radius=0), but faster
-	void lookup_withkey( boost::uint64_t key, std::vector < core::Size > &result );
+	void lookup_withkey( boost::uint64_t key, std::vector < core::Size > & result ) const;
 
 	/// @brief Append to a bucket of vectors in the appropriate bin, lookup by transform
-	void lookup(  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result );
+	void lookup(  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result ) const;
 
 	/// @brief Append to a bucket of vectors in the appropriate bin, radial lookup by transform
-	void radial_lookup( core::Size radius,  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result );
+	void radial_lookup( core::Size radius,  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result ) const;
 
 	/// @brief count hits in the appropriate bin, radial lookup by transform
 	core::Size radial_count( core::Size radius, numeric::geometry::hashing::Real6 center ) const;
 
 	/// @brief Append to a bucket of vectors in the appropriate bin, lookup by bin index
 	/// Using core::Size instead of boost::uinst64_t
-	void lookup( core::Size index, std::vector < core::Size > &result );
+	void lookup( core::Size index, std::vector < core::Size > &result ) const;
 
 	/// @brief Returns begin() and end() of backbone_index_map_
-	void  bbdb_range( std::pair< BackboneIndexMap::iterator, BackboneIndexMap::iterator > & range );
+	void bbdb_range( std::pair< BackboneIndexMap::const_iterator, BackboneIndexMap::const_iterator > & range ) const;
 
 	/// @brief Returns a hashmap key given a member of a bucket
 	/// Don't think boost implements this, have to manually look it up
-	boost::uint64_t return_key( core::Size bb_index );
+	boost::uint64_t return_key( core::Size bb_index ) const;
 
 	/// @brief Query the loopsize of this LoopHashMap
 	inline core::Size get_loop_size() const { return loop_size_; }
@@ -154,7 +156,7 @@ public:
 	void read_legacydb( std::string filename );
 
 	/// @brief Basic IO functionality - allows reading and writing text states to/from disk
-	void write_db( std::string filename );
+	void write_db( std::string filename ) const;
 
 	/// @brief Basic IO functionality - allows reading and writing text states to/from disk
 	void read_db( std::string filename, std::pair< core::Size, core::Size > loopdb_range,
@@ -167,7 +169,7 @@ public:
 	}
 
 	/// @brief Return the memory usage of this class
-	void mem_foot_print();
+	void mem_foot_print() const;
 
 	/// @brief Sorts the loopdb_ by leap_index.index
 	void sort();
@@ -181,18 +183,18 @@ private:  // Private data
 	/// @brief The actual Boost-based hashmap
 	BackboneIndexMap                          backbone_index_map_;
 
-	/// @brief List of LeadIndexes
-	std::vector< LeapIndex>                   loopdb_;
+	/// @brief List of LeapIndexes
+	std::vector< LeapIndex >                  loopdb_;
 
 	/// @brief The length of the the loops in number of residues
 	core::Size                                loop_size_;
 
-	/// @brief A functor for sort()
-	struct by_index {
-		bool operator()( LeapIndex const &a, LeapIndex const &b ) const {
-			return a.index < b.index;
-		}
-	};
+	///// @brief A functor for sort()
+	//struct by_index {
+	// bool operator()( LeapIndex const &a, LeapIndex const &b ) const {
+	//  return a.index < b.index;
+	// }
+	//};
 
 
 };

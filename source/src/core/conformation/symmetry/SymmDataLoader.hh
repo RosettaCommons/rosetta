@@ -16,15 +16,14 @@
 
 //unit headers
 #include <core/conformation/symmetry/SymmDataLoader.fwd.hh>
-#include <core/conformation/symmetry/SymmDataOptions.hh>
 #include <basic/resource_manager/ResourceLoader.hh>
 
 //package headers
-#include <basic/resource_manager/ResourceOptions.hh>
 #include <basic/resource_manager/types.hh>
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
 #include <istream>
@@ -36,19 +35,25 @@ namespace symmetry {
 class SymmDataLoader : public basic::resource_manager::ResourceLoader
 {
 public:
-	virtual ~SymmDataLoader() {}
+	SymmDataLoader();
+	virtual ~SymmDataLoader();
 
-	virtual
-	basic::resource_manager::ResourceOP
+	basic::resource_manager::ResourceCOP
 	create_resource(
-		basic::resource_manager::ResourceOptions const &,
-		basic::resource_manager::LocatorID const &,
-		std::istream & istream
-	) const;
+		basic::resource_manager::ResourceManager & resource_manager,
+		utility::tag::TagCOP resource_tag,
+		std::string const & input_id,
+		std::istream & input_stream
+	) const override;
 
-	virtual
-	basic::resource_manager::ResourceOptionsOP
-	default_options() const { return basic::resource_manager::ResourceOptionsOP( new SymmDataOptions() );}
+	static
+	std::string
+	classname();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 } // namespace

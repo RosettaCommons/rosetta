@@ -138,7 +138,7 @@ XmlObjects::create_from_string(
 	// This try catch block should be removed once PyRosetta can correctly output the error
 	try {
 		parsed_protocol = parser.generate_mover_and_apply_to_pose_xml_string(
-			pose, options, modified_pose, prepared_text, objs );
+			pose, options, modified_pose, prepared_text, "", "", objs );
 	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl;
 		TR << "Error creating parsed protocol." << std::endl;
@@ -192,7 +192,7 @@ XmlObjects::create_from_file(
 	// This try catch block should be removed once PyRosetta can correctly output the error
 	try {
 		parsed_protocol = parser.generate_mover_and_apply_to_pose(
-			pose, options, modified_pose, filename, objs );
+			pose, options, modified_pose, filename, "", "", objs );
 	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl;
 		TR << "Error creating parsed protocol." << std::endl;

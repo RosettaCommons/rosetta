@@ -70,6 +70,18 @@ ResourceLocatorFactory::factory_register( ResourceLocatorCreatorOP creator )
 void
 ResourceLocatorFactory::set_throw_on_double_registration() { throw_on_double_registration_ = true; }
 
+std::map< std::string, ResourceLocatorCreatorOP > const &
+ResourceLocatorFactory::locator_map() const
+{
+	return creator_map_;
+}
+
+std::string
+ResourceLocatorFactory::complex_type_name_for_locator( std::string const & locator_name )
+{
+	return "resource_locator_" + locator_name + "_type";
+}
+
 
 /// singleton has a private constructor
 ResourceLocatorFactory::ResourceLocatorFactory() : throw_on_double_registration_( false ) {}

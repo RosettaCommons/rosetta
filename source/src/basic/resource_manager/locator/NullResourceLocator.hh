@@ -15,12 +15,15 @@
 #define INCLUDED_basic_resource_manager_locator_NullResourceLocater_hh
 
 //unit headers
-#include <basic/resource_manager/ResourceLocator.hh>
 #include <basic/resource_manager/locator/NullResourceLocator.fwd.hh>
 
+// Package headers
+#include <basic/resource_manager/ResourceLocator.hh>
 
-//project headers
+//utility headers
 #include <utility/io/izstream.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
 #include <istream>
@@ -66,30 +69,30 @@ public:
 
 	/// @brief Describe this instance to the given output stream; since there is no
 	/// data in this class, merely print the name of this class.
-	virtual
 	void
 	show(
-		std::ostream & out) const;
+		std::ostream & out) const override;
 
 	/// @brief Return the name of this class: "NullResourceLocator"
-	virtual
 	std::string
-	type() const;
+	type() const override;
 
 	/// @brief Create an empty NullResource object that will not be used
-	virtual
 	ResourceStreamOP
 	locate_resource_stream(
-		std::string const & locator_tag
-	) const;
+		std::string const & input_id
+	) const override;
 
 	/// @brief Noop, since there is no data in this class.
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
-	);
+	) override;
 
+	/// @brief Describe the schema for this resource locator to the XSD.
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static std::string classname();
 };
 
 } // namespace locator

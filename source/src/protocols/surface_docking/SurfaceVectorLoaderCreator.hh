@@ -30,13 +30,9 @@ namespace surface_docking {
 class SurfaceVectorLoaderCreator : public basic::resource_manager::ResourceLoaderCreator
 {
 public:
-
-	basic::resource_manager::ResourceLoaderOP
-	create_resource_loader() const override;
-
-
+	basic::resource_manager::ResourceLoaderOP create_resource_loader() const override;
 	std::string loader_type() const override;
-
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } // namespace surface_docking

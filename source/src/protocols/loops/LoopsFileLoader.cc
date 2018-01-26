@@ -11,18 +11,20 @@
 /// @brief
 /// @author
 
-//unit headers
+// unit headers
 #include <protocols/loops/LoopsFileLoader.hh>
 #include <protocols/loops/LoopsFileLoaderCreator.hh>
 
-//package headers
-#include <protocols/loops/LoopsFileOptions.hh>
+// package headers
 #include <protocols/loops/LoopsFileIO.hh>
 
-//utility headers
-#include <utility/excn/Exceptions.hh>
+// Basic headers
+#include <basic/resource_manager/loader_schemas.hh>
 
-// numeric headers
+// utility headers
+#include <utility/excn/Exceptions.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 //C++ headers
 #include <istream>
@@ -33,32 +35,44 @@ namespace loops {
 LoopsFileLoader::LoopsFileLoader() = default;
 LoopsFileLoader::~LoopsFileLoader() = default;
 
-/// @details Ensure the %ResourceOptions is a LoopsFileOptions instance and construct a new LoopsFileData from the
-/// istream and the options.  The locator_id is used solely for reporting accurate error messages.
-/// @throws utility::excn::EXCN_Msg_Exception
-utility::pointer::ReferenceCountOP
+basic::resource_manager::ResourceCOP
 LoopsFileLoader::create_resource(
-	basic::resource_manager::ResourceOptions const & options,
-	basic::resource_manager::LocatorID const & locator_id,
-	std::istream & istream
+	basic::resource_manager::ResourceManager &,
+	utility::tag::TagCOP resource_tag,
+	std::string const & input_id,
+	std::istream & loopfstream
 ) const
 {
-	if ( ! dynamic_cast< LoopsFileOptions const * > ( &options ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception,  "LoopsFileLoader expected to be given a LoopsFileOptions object, " \
-			"but was given a non-LoopsFileOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
-	}
-	auto const & loops_opts = static_cast< LoopsFileOptions const & > ( options );
+	bool prohibit_single_residue_loops = resource_tag->getOption< bool >( "prohibit_single_residue_loops", true );
 	LoopsFileIO lfio;
-	LoopsFileDataOP lfd = lfio.read_loop_file_stream( istream, locator_id, loops_opts.prohibit_single_residue_loops() );
+	LoopsFileDataOP lfd = lfio.read_loop_file_stream( loopfstream, input_id, prohibit_single_residue_loops );
+
 	return lfd;
 }
 
-/// @details Return an owning pointer to a newly constructed default instance of LoopsFileOptions.
-basic::resource_manager::ResourceOptionsOP
-LoopsFileLoader::default_options() const
+std::string
+LoopsFileLoader::classname()
 {
-	return basic::resource_manager::ResourceOptionsOP( new LoopsFileOptions );
+	return "LoopsFile";
 }
+
+void
+LoopsFileLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "prohibit_single_residue_loops", xsct_rosetta_bool,
+		"Prevent loop definitions that describe only a single residue? Defaults to true", "true" );
+
+	basic::resource_manager::resource_loader_xsd_type_definition_w_attributes( xsd,
+		classname(), "If a different LoopsFile should be loaded for different jobs, then using the"
+		" ResourceManager to specify which loops file goes with with job can be done; this may"
+		" be strictly unnecessary because specifying the filename directly with an XML tag and"
+		" the per-job script_vars could substitute in the filename you want for a given job.",
+		attlist );
+}
+
 
 /// @details Return an owning pointer to a newly constructed default instance of LoopsFileLoader.
 basic::resource_manager::ResourceLoaderOP LoopsFileLoaderCreator::create_resource_loader() const
@@ -69,7 +83,12 @@ basic::resource_manager::ResourceLoaderOP LoopsFileLoaderCreator::create_resourc
 /// @details Return a string specifying the type of %ResourceLoader to create (LoopsFile).
 std::string LoopsFileLoaderCreator::loader_type() const
 {
-	return "LoopsFile";
+	return LoopsFileLoader::classname();
+}
+
+void
+LoopsFileLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	LoopsFileLoader::provide_xml_schema( xsd );
 }
 
 } // namespace loops

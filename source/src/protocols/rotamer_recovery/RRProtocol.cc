@@ -39,6 +39,13 @@ RRProtocol::~RRProtocol() = default;
 
 static Tracer TR("protocol.moves.RRProtocol");
 
+void
+RRProtocol::parse_attributes_from_tag(
+	basic::datacache::DataMap const &,
+	utility::tag::TagCOP
+)
+{}
+
 bool
 RRProtocol::measure_rotamer_recovery(
 	RRComparerOP comparer,

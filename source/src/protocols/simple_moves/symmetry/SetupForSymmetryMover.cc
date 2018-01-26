@@ -27,11 +27,12 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
+//#include <basic/resource_manager/ResourceManager.hh>
+//#include <basic/resource_manager/util.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
@@ -175,7 +176,7 @@ SetupForSymmetryMover::process_symmdef_file(std::string tag) {
 		return;
 	}
 
-	symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
+	symmdef_.reset( new core::conformation::symmetry::SymmData() );
 	symmdef_->read_symmetry_data_from_file(tag);
 }
 
@@ -267,19 +268,19 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 
 void SetupForSymmetryMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
+	basic::datacache::DataMap & datamap,
 	filters::Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & /*pose*/ ) {
+	core::pose::Pose const & /*pose*/
+) {
 
 	using namespace basic::options;
-	using namespace basic::resource_manager;
 
 	preserve_datacache_ = tag->getOption< bool >( "preserve_datacache", preserve_datacache_ );
-	if ( tag->hasOption("definition") && tag->hasOption("resource_description") ) {
+	if ( tag->hasOption("definition") && tag->hasOption("symmetry_resource") ) {
 		throw CREATE_EXCEPTION(utility::excn::BadInput,
 			"SetupForSymmetry takes either a 'definition' OR "
-			"a 'resource_description' tag but not both.");
+			"a 'symmetry_resource' tag but not both.");
 	}
 
 	if ( tag->hasOption("definition") ) {
@@ -290,29 +291,39 @@ void SetupForSymmetryMover::parse_my_tag(
 		// I don't like it, but for compatibility I'm going to set it to the correct filename
 		//option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 		option[OptionKeys::symmetry::symmetry_definition].value( tag->getOption< std::string >( "definition" ) );
-	} else if ( tag->hasOption("resource_description") ) {
-		symmdef_ = get_resource< core::conformation::symmetry::SymmData >(
-			tag->getOption<std::string>("resource_description") );
+	} else if ( tag->hasOption("symmetry_resource") ) {
+
+		std::string symdef_resource = tag->getOption<std::string>("symmetry_resource");
+		if ( datamap.has_resource( symdef_resource ) ) {
+			symmdef_ = datamap.get_resource< core::conformation::symmetry::SymmData >( symdef_resource )->clone();
+		} else {
+			std::ostringstream oss;
+			oss << "Error trying to retrieve SymmData resource from the datamap with name '" <<
+				symdef_resource << "' while parsing the SetupForSymmetryMover named '" <<
+				tag->getOption< std::string >( "name", "(unnamed") << "'. Has this Resource" <<
+				" been declared in the ResourceDefinition file and also been imported " <<
+				" in the RESOURCES block at the top of this XML file?\n";
+			throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+		}
 
 		// TL: Setting global option flags like this is dangerous!
 		//     Setting global option flags to invalid values is even more dangerous!
 		// To illustrate, there is at least one mover that checks this flag and uses
 		// this 'dummy' value.  I think the following line should be removed altogether,
-		// but for now I will leave it and refrain from using the 'resource_description'
+		// but for now I will leave it and refrain from using the 'symmetry_resource'
 		// XML option
+		// APL: Just to clarify -- Symmetry is shamefully a "mode" in Rosetta in that
+		// in order for the proper type of ScoreFunction to be created and used, the
+		// option[symmetry_definition] flag has to be "on". This is so so sad. I fret
+		// over this regularly.
 		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 	} else if ( ! symdef_fname_from_options_system_.empty() ) {
 		process_symmdef_file( symdef_fname_from_options_system_ );
 	} else {
 		throw CREATE_EXCEPTION(utility::excn::BadInput,
-			"To use SetupForSymmetryMover with rosetta scripts please supply either a 'definition' tag, a 'resource_decription' tag or specify -symmetry:symmetry_definition the command line.");
+			"To use SetupForSymmetryMover with rosetta scripts please supply either a 'definition' tag, a 'symmetry_resource' tag or specify -symmetry:symmetry_definition the command line.");
 	}
 }
-
-// XRW TEMP std::string
-// XRW TEMP SetupForSymmetryMover::get_name() const {
-// XRW TEMP  return SetupForSymmetryMover::mover_name();
-// XRW TEMP }
 
 std::string SetupForSymmetryMover::get_name() const {
 	return mover_name();
@@ -329,7 +340,7 @@ void SetupForSymmetryMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	// XRW TO DO: check these attributes
 	attlist + XMLSchemaAttribute( "definition", xs_string , "The path and filename for a symmetry definition file. This is optional because you can also specify -symmetry:symmetry_definition {pathto/filename_symmetry_definition_file} on the command line." )
 		+ XMLSchemaAttribute::attribute_w_default( "preserve_datacache", xsct_rosetta_bool , "If true, the datacache from the input asymmetric pose will be copied into the new symmetric pose. If false, the pose datacache will be cleared. Default is false for historical reasons." , "0" )
-		+ XMLSchemaAttribute( "resource_description", xs_string, "ResourceManager resource description for symmetry definition file. THIS OPTION IS DEPRECATED!" );
+		+ XMLSchemaAttribute( "symmetry_resource", xs_string, "The name for symmetry definition object created by the ResourceManager; this Resource must be declared in the RESOURCES block at the top of the protocol XML file" );
 	// At XSD XRW, we choose to purposefully not document "resource_description." -UN
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Given a symmetry definition file that describes configuration and scoring of a symmetric system, this mover 'symmetrizes' an asymmetric pose.", attlist );
@@ -352,8 +363,6 @@ SetupForSymmetryMover::set_refinable_lattice( bool setting )
 	refinable_lattice_was_set_ = true;
 	refinable_lattice_ = setting;
 }
-
-
 
 std::string SetupForSymmetryMoverCreator::keyname() const {
 	return SetupForSymmetryMover::mover_name();

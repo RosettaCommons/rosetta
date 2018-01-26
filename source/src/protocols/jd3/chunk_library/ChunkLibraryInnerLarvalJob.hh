@@ -31,7 +31,7 @@
 
 // Basic headers
 #include <basic/datacache/ConstDataMap.fwd.hh>
-#include <basic/resource_manager/JobOptions.fwd.hh>
+//#include <basic/resource_manager/JobOptions.fwd.hh>
 
 //C++ headers
 #include <string>

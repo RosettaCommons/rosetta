@@ -21,7 +21,9 @@
 
 //project headers
 #include <utility/io/izstream.hh>
+
 //utility headers
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
 #include <istream>
@@ -43,13 +45,6 @@ public:
 		std::ios_base::openmode open_mode = std::ios_base::in
 	);
 
-private:
-	/// @brief This is private. The FileStream shouldn't be copied
-	FileStream(
-		FileStream const & src);
-
-public:
-
 	virtual
 	~FileStream();
 
@@ -62,9 +57,12 @@ public:
 
 	/// @brief Return non-const access to the internal stream so that it can be
 	/// used to construct a resource.
-	virtual
 	std::istream &
-	stream();
+	stream() override;
+
+private:
+	/// @brief This is private and unimplemented. The FileStream shouldn't be copied
+	FileStream( FileStream const & );
 
 private: // members
 	utility::io::izstream stream_;
@@ -89,15 +87,22 @@ public:
 
 	virtual ~FileSystemResourceLocator();
 
-	virtual
+	/// @brief Set the search paths; expects that the paths all end with a trailing "/";
+	/// Use "./" to include the present working directory in the search paths.
+	void
+	set_search_paths( utility::vector1< std::string > const & search_paths );
+
 	void
 	show(
 		std::ostream & out
-	) const;
+	) const override;
 
-	virtual
 	std::string
-	type() const;
+	type() const override;
+
+	static
+	std::string
+	classname();
 
 	void
 	set_open_mode(
@@ -107,23 +112,27 @@ public:
 	std::ios_base::openmode
 	get_open_mode() const;
 
-	/// @brief Construct a FileStream object given a file's name (its locator_tag)
-	virtual
+	/// @brief Construct a FileStream object given a file's name (its input_id)
 	ResourceStreamOP
 	locate_resource_stream(
-		std::string const & locator_tag
-	) const;
+		std::string const & input_id
+	) const override;
 
 	/// @brief Allows a default base_path to be specified for the locator.
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag
+	) override;
+
+	static
+	void
+	provide_xml_schema(
+		utility::tag::XMLSchemaDefinition & xsd
 	);
 
 private:
 	std::ios_base::openmode open_mode_;
-	std::string base_path_;
+	utility::vector1< std::string > search_paths_;
 
 };
 

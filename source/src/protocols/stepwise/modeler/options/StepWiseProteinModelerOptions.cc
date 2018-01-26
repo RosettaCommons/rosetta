@@ -49,7 +49,7 @@ StepWiseProteinModelerOptions::~StepWiseProteinModelerOptions() = default;
 
 /// @brief copy constructor
 StepWiseProteinModelerOptions::StepWiseProteinModelerOptions( StepWiseProteinModelerOptions const & src ) :
-	ResourceOptions ( src )
+	ReferenceCount()
 {
 	*this = src;
 }

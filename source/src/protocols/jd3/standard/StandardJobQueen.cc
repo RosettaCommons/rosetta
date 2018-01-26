@@ -518,6 +518,15 @@ void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, S
 {
 	Size const job_id( job->job_index() );
 	completed_jobs_.insert( job_id );
+	Size pjn_index = preliminary_job_node_for_job_index( job->job_index() );
+	if ( pjn_index != 0 ) {
+		--outstanding_job_count_for_prelim_[ pjn_index ];
+		if ( outstanding_job_count_for_prelim_[ pjn_index ] == 0 ) {
+			// Let the derived JobQueen know that all of the jobs for a PJN have completed
+			note_preliminary_job_node_is_complete( pjn_index );
+		}
+	}
+
 	if ( status == jd3_job_status_success ) {
 		StandardInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< StandardInnerLarvalJob const > ( job->inner_job() );
 		if ( ! inner_job ) { throw bad_inner_job_exception(); }
@@ -876,6 +885,23 @@ StandardJobQueen::preliminary_larval_jobs() const
 {
 	return preliminary_larval_jobs_;
 }
+
+core::Size
+StandardJobQueen::preliminary_job_node_for_job_index( core::Size job_id ) const
+{
+	// TO DO: Replace with binary search?
+	for ( Size ii = 1; ii <= pjn_job_ind_begin_.size(); ++ii ) {
+		if ( job_id >= pjn_job_ind_begin_[ ii ] && job_id <= pjn_job_ind_end_[ ii ] ) {
+			return ii;
+		}
+	}
+	return 0;
+}
+
+void
+StandardJobQueen::note_preliminary_job_node_is_complete( core::Size )
+{}
+
 
 numeric::DiscreteIntervalEncodingTree< core::Size > const &
 StandardJobQueen::completed_jobs() const
@@ -1509,6 +1535,7 @@ StandardJobQueen::determine_preliminary_job_list_from_xml_file(
 			prelim_job.pose_inputter = inputter;
 
 			preliminary_larval_jobs_.push_back( prelim_job );
+			outstanding_job_count_for_prelim_.push_back( nstruct );
 		}
 	}
 }
@@ -1625,6 +1652,7 @@ StandardJobQueen::determine_preliminary_job_list_from_command_line()
 		prelim_job.job_options = job_options;
 		prelim_job.pose_inputter = input_pose.second;
 		preliminary_larval_jobs_.push_back( prelim_job );
+		outstanding_job_count_for_prelim_.push_back( nstruct );
 	}
 }
 
@@ -1693,6 +1721,10 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 			jobs.splice( jobs.end(), curr_jobs );
 			if ( n_made + njobs_made_for_curr_inner_larval_job_ < curr_inner_larval_job->nstruct_max() ) {
 				njobs_made_for_curr_inner_larval_job_ += n_made;
+				// update the end index for this node; it is perhaps not the final job that will be submitted
+				// for this node, but we want to be able to definitively answer the question for a job
+				// that has been submitted as to whether it came from this node.
+				pjn_job_ind_end_[ job_node_index ] = larval_job_counter_;
 				return jobs;
 			} else {
 				++curr_inner_larval_job_index_;

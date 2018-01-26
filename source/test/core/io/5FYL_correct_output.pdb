@@ -28058,7 +28058,7 @@ CONECT2200521995
 CONECT2200621995                                                                
 CONECT2200721996                                                                
 # All scores below are weighted scores, not raw scores.
-#BEGIN_POSE_ENERGIES_TABLE 
+#BEGIN_POSE_ENERGIES_TABLE PDB_w_glycans_IO_cxxtest.pdb._tmp_
 label total
 weights NA
 pose 0
@@ -29648,5 +29648,5 @@ VAL_1583 0
 ALA_1584 0
 PRO_1585 0
 THR:CtermProteinFull_1586 0
-#END_POSE_ENERGIES_TABLE 
+#END_POSE_ENERGIES_TABLE PDB_w_glycans_IO_cxxtest.pdb._tmp_
 

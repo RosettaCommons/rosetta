@@ -63,11 +63,15 @@ public:
 	void database_table(std::string const & database_table );
 	std::string const & database_table() const;
 
+	void selection_tag( std::string const & setting );
+	std::string const & selection_tag() const;
+
 	virtual void parse_tag(utility::tag::TagCOP, DataMap &);
 	static std::string keyname() { return "ReadResfileFromDB"; }
 
 private:
 	std::string database_table_;
+	std::string selection_tag_;
 	utility::sql_database::sessionOP db_session_;
 };
 

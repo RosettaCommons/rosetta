@@ -49,9 +49,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-// Resource Manager Headers
-#include <basic/resource_manager/util.hh>
-
 #include <basic/options/option.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

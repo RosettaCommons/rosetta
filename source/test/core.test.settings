@@ -101,8 +101,8 @@ sources = {
 		"3-letter_code_ambiguity_resolution",
 		"component_reading",
 		"ImportPoseOptions",
-		"PoseFromPDBResourceLoader",
-		"PoseFromFile",
+		"PoseResourceLoader",
+		#"PoseFromFile", # this seems to be a complete duplication of PoseResourceLoader (previously PoseFromPDBResourceLoader)
 	],
 	"indexed_structure_store" : [
 		"FragmentLookup",
@@ -383,7 +383,7 @@ sources = {
 		"RNA_FA_ElecEnergy",
 	],
 	"scoring/electron_density" : [
-		"ElectronDensityLoader",
+		#"ElectronDensityLoader",
 	],
 	"scoring/etable" : [
 		"EtableEnergy",

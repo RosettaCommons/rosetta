@@ -78,7 +78,7 @@ RECCES_Options::~RECCES_Options() = default;
 
 /// @brief copy constructor
 RECCES_Options::RECCES_Options( RECCES_Options const & src ) :
-	ResourceOptions( src )
+	ReferenceCount()
 {
 	*this = src;
 }

@@ -25,10 +25,12 @@
 // Platform Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-
-//Auto Headers
 #include <core/types.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -61,12 +63,20 @@ public: // public interface
 		core::pose::PoseCOP reference_pose);
 
 	void
+	parse_attributes_from_tag(
+		basic::datacache::DataMap const & dm,
+		utility::tag::TagCOP tag ) override;
+
+	void
 	run(
 		RRComparerOP comparer,
 		RRReporterOP reporter,
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const &,
 		core::pack::task::PackerTask const & packer_task) override;
+
+	static
+	void append_attributes( utility::tag::AttributeList & attlist );
 
 private: // member data
 	core::pose::PoseCOP reference_pose_;

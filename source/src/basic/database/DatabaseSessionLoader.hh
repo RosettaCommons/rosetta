@@ -44,6 +44,7 @@ public:
 
 	basic::resource_manager::ResourceOptionsOP
 	default_options() const override { return basic::resource_manager::ResourceOptionsOP( new DatabaseSessionOptions() );}
+
 };
 
 } // database

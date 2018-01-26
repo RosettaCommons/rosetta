@@ -1242,6 +1242,8 @@ Options = Option_Group( '',
 		Option( 'nthreads', 'Integer', desc = "For the multithreaded job distributor, how many threads should be run at the same time" ),
 		Option( 'archive_on_disk', 'String', desc='Sometimes job results use a ton of memory. This option tells Rosetta to store job results on disk instead of in memory. The string you pass here should be the name of a (preferably empty) directoy where we can put all of our temporary files. You can delete this directory and everything in it when Rosetta is done running.', default='null' ),
 		Option( 'compress_job_results', 'Boolean', desc='Sometimes job results use a ton of memory. This option tells Rosetta to compress all job results so they use less memory.', default='true' ),
+		Option( 'resource_definition_files', 'FileVector', desc = 'Specify all the resources to available for the jobs running.', ),
+		Option( 'resource_definition_schema', 'File', desc='If provided on the command line, the job distributor will write the XML Schema for the applciation\'s resource definition file out to disk and then exit' ),
 	), # -jd3
 
 	# jd2 Options ---------------------------------------------------------
@@ -1272,7 +1274,6 @@ Options = Option_Group( '',
 		Option( 'buffer_silent_output', 'Integer', default = '1', desc = 'write structures to silent-files in blocks of N structures to', ),
 		Option( 'buffer_flush_frequency', 'Real', default = '1.0', desc = 'when N structures (buffer_silent_output) are collected dump to file with probability X' ),
 		Option( 'delete_old_poses', 'Boolean', default = 'false', desc = 'Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.', ),# NOTE: This option should probably be used by default, however it may have issues with special uses of the job distributor.  Once these issues are resolved, either enable it by default, or just do it with out asking.
-		Option( 'resource_definition_files', 'FileVector', desc = 'Specify all the jobs and all of their resources to the new JD2ResourceManager system', ),
 		Option( 'checkpoint_file', 'File', desc='write/read nstruct-based checkpoint files to the desired filename.' ),
 		#Option( 'nthreads', 'Integer', desc='The maximum number of threads to run at once using the MultiThreadedJobDistributor' ),
 		Option( 'failed_job_exception', 'Boolean', default = 'true', desc = 'If JD2 encounters an error during job execution, raise an exception at the end of the run', ),

@@ -34,7 +34,6 @@
 // project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose_options.fwd.hh>
-#include <basic/resource_manager/JobOptions.fwd.hh>
 
 //utility headers
 #include <utility/options/OptionCollection.fwd.hh>

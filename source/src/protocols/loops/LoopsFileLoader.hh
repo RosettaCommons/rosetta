@@ -19,12 +19,12 @@
 
 //project headers
 #include <basic/resource_manager/ResourceLoader.hh>
-#include <basic/resource_manager/ResourceOptions.fwd.hh>
 #include <basic/resource_manager/types.hh>
-
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
 #include <istream>
@@ -47,17 +47,22 @@ public:
 
 	/// @brief Return a LoopsFileDataOP constructed from the given input stream (istream).
 
-	utility::pointer::ReferenceCountOP
+	basic::resource_manager::ResourceCOP
 	create_resource(
-		basic::resource_manager::ResourceOptions const & options,
-		basic::resource_manager::LocatorID const & locator_id,
-		std::istream & istream
+		basic::resource_manager::ResourceManager & resource_manager,
+		utility::tag::TagCOP resource_tag,
+		std::string const & input_id,
+		std::istream & input_stream
 	) const override;
 
-	/// @brief Return a ResourceOptionsOP with the default set of options.
+	static
+	std::string
+	classname();
 
-	basic::resource_manager::ResourceOptionsOP
-	default_options() const override;
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 };
 

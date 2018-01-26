@@ -2043,7 +2043,7 @@ void RemodelLoopMover::loophash_stage(
 
 
 		BackboneSegment backbone_;
-		LoopHashMap &hashmap = loop_hash_library->gethash(loopsize);
+		LoopHashMap const & hashmap = loop_hash_library->gethash(loopsize);
 
 		Size lh_ex_limit =option[OptionKeys::remodel::lh_ex_limit];
 		std::vector < core::Size > leap_index_list;

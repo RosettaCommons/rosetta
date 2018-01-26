@@ -27,8 +27,6 @@ sources = {
 		"TracerToFile",
 	],
 	"basic/database": [
-		"DatabaseSessionLoader",
-		"DatabaseSessionOptions",
 		"open",
 		"sql_utils",
 	],
@@ -95,11 +93,7 @@ sources = {
 		"OptionKeys15",
 	],
 	"basic/resource_manager" : [
-		"FallbackConfiguration",
-		"FallbackConfigurationCreator",
-		"FallbackConfigurationFactory",
-		"JobOptions",
-		"LazyResourceManager",
+		"loader_schemas",
 		"ResourceLoader",
 		"ResourceLoaderCreator",
 		"ResourceLoaderFactory",
@@ -109,19 +103,14 @@ sources = {
 		"ResourceManager",
 		"ResourceManagerCreator",
 		"ResourceManagerFactory",
-		"ResourceOptions",
-		"ResourceOptionsCreator",
-		"ResourceOptionsFactory",
 	],
 	"basic/resource_manager/locator" : [
 		"DatabaseResourceLocator",
 		"FileListResourceLocator",
 		"FileSystemResourceLocator",
+		"locator_schemas",
 		"NullResourceLocator",
 		"StringResourceStream",
-	],
-	"basic/resource_manager/fallback_configuration" : [
-		"NativeFallbackConfiguration",
 	],
         "basic/sampling/orientations": [
 		"QuaternionGrid",

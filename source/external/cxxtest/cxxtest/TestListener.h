@@ -19,7 +19,7 @@ namespace CxxTest
     public:
         TestListener() {}
         virtual ~TestListener() {}
-        
+
         virtual void enterWorld( const WorldDescription & /*desc*/ ) {}
         virtual void enterSuite( const SuiteDescription & /*desc*/ ) {}
         virtual void enterTest( const TestDescription & /*desc*/ ) {}
@@ -32,6 +32,9 @@ namespace CxxTest
         virtual void failedAssert( const char * /*file*/, unsigned /*line*/,
                                    const char * /*expression*/ ) {}
         virtual void failedAssertEquals( const char * /*file*/, unsigned /*line*/,
+                                         const char * /*xStr*/, const char * /*yStr*/,
+                                         const char * /*x*/, const char * /*y*/ ) {}
+        virtual void failedAssertContains( const char * /*file*/, unsigned /*line*/,
                                          const char * /*xStr*/, const char * /*yStr*/,
                                          const char * /*x*/, const char * /*y*/ ) {}
         virtual void failedAssertSameData( const char * /*file*/, unsigned /*line*/,

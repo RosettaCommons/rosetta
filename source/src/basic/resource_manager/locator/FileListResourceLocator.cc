@@ -16,11 +16,14 @@
 #include <basic/resource_manager/locator/FileListResourceLocator.hh>
 #include <basic/resource_manager/locator/FileListResourceLocatorCreator.hh>
 
+// Package headers
+#include <basic/resource_manager/locator/locator_schemas.hh>
 #include <basic/resource_manager/locator/FileSystemResourceLocator.hh>
 #include <basic/resource_manager/locator/StringResourceStream.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 namespace basic {
 namespace resource_manager {
@@ -41,7 +44,12 @@ FileListResourceLocatorCreator::create_resource_locator() const
 std::string
 FileListResourceLocatorCreator::locator_type() const
 {
-	return "FileListResourceLocator";
+	return FileListResourceLocator::classname();
+}
+
+void
+FileListResourceLocatorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return FileListResourceLocator::provide_xml_schema( xsd );
 }
 
 FileListResourceLocator::FileListResourceLocator() :
@@ -71,6 +79,12 @@ FileListResourceLocator::show(std::ostream & out) const
 std::string
 FileListResourceLocator::type() const
 {
+	return classname();
+}
+
+std::string
+FileListResourceLocator::classname()
+{
 	return "FileListResourceLocator";
 }
 
@@ -88,9 +102,9 @@ FileListResourceLocator::get_open_mode() const {
 }
 
 ResourceStreamOP
-FileListResourceLocator::locate_resource_stream(std::string const & locator_tag) const
+FileListResourceLocator::locate_resource_stream(std::string const & input_id) const
 {
-	utility::vector1<std::string> path_vector(utility::string_split(locator_tag));
+	utility::vector1<std::string> path_vector(utility::string_split(input_id));
 
 	StringResourceStreamOP string_stream( new StringResourceStream );
 
@@ -109,9 +123,20 @@ FileListResourceLocator::locate_resource_stream(std::string const & locator_tag)
 }
 
 void
-FileListResourceLocator::parse_my_tag(utility::tag::TagCOP)
-{
+FileListResourceLocator::parse_my_tag(utility::tag::TagCOP) {}
 
+void
+FileListResourceLocator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+)
+{
+	using namespace utility::tag;
+	AttributeList attrs;
+	xsd_type_definition_w_attributes( xsd, classname(), "The file list resource locator will"
+		" construct a single stream from the contents of one or more files listed in the 'input_id'"
+		" of the Resource that needs to be constructed. These files should be separated by spaces."
+		" This could be useful for constructing a single Pose from two separate chains, e.g.. It"
+		" will not search for these files beyond the paths given in the input_id.", attrs );
 }
 
 }

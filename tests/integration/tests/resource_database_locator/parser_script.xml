@@ -1,10 +1,17 @@
 <ROSETTASCRIPTS>
+
+	<RESOURCES>
+		<Resource name="1xu1FH_D_symmdef"/>
+	</RESOURCES>
 	<SCOREFXNS>
 	        <ScoreFunction name="s" weights="ref2015" symmetric="1"/>
 	</SCOREFXNS>
+	<DATABASE_SESSIONS>
+	        <DatabaseSession name="session1" database_mode="sqlite3" database_name="scores.db3"/>
+	</DATABASE_SESSIONS>
 	<MOVERS>
-	        <SetupForSymmetry name="setup_symm" resource_description="symmdef"/>
-		<ReportToDB name="report_scores" resource_description="scores_db" batch_description="Demo DatabaseResourceLocator by reporting symmetric scores">
+	        <SetupForSymmetry name="setup_symm" symmetry_resource="1xu1FH_D_symmdef"/>
+		<ReportToDB name="report_scores" batch_description="Demo DatabaseResourceLocator by reporting symmetric scores" db_session_name="session1">
 			<ScoreTypeFeatures/>
 			<StructureScoresFeatures scorefxn="s"/>
 		</ReportToDB>

@@ -21,7 +21,6 @@
 
 // Basic headers
 #include <utility/vector1.hh>
-#include <basic/resource_manager/ResourceOptions.hh>
 
 // C++ headers
 #include <string>
@@ -68,6 +67,10 @@ public:
 	static
 	void
 	list_options_read( utility::options::OptionKeyList & read_options );
+
+	static
+	void
+	append_schema_attributes( utility::tag::AttributeList & attributes );
 
 	bool
 	operator == ( StructFileReaderOptions const & other ) const;

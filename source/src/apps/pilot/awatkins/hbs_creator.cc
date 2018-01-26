@@ -60,9 +60,6 @@
 
 #include <numeric/conversions.hh>
 
-//Basic headers
-#include <basic/resource_manager/ResourceManager.hh>
-
 // Utility Headers
 #include <devel/init.hh>
 #include <basic/options/util.hh>
@@ -325,8 +322,7 @@ HbsCreatorMover::apply(
 		TaskFactoryOP tf(new TaskFactory());
 		tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
 
-		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
+		if ( option[ packing::resfile ].user() ) {
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
 			tf->push_back( rrop );

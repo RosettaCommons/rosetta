@@ -21,7 +21,6 @@
 #include <protocols/protein_interface_design/ParserJobInputterCreator.hh>
 #include <protocols/comparative_modeling/GenericJobInputterCreator.hh>
 #include <protocols/jd2/LazySilentFileJobInputterCreator.hh>
-#include <protocols/jd2/JD2ResourceManagerJobInputterCreator.hh>
 #include <protocols/jd2/SilentFileJobInputterCreator.hh>
 #include <protocols/comparative_modeling/ThreadingJobInputterCreator.hh>
 #include <protocols/jd2/AtomTreeDiffJobInputterCreator.hh>

@@ -66,12 +66,15 @@ public:
 	/// @brief read a FragSet... note that this function caches the fragment set.
 	/// i.e., if you read the same set from multiple positions in the code you get
 	/// the same set. if you read a new file ... we'll check the cache for stale
-	/// references and delete them...
+	/// references and delete them.
+	/// NOTE that this is using global data and is thread unsafe and is evil.
 	FragSetOP read_data( std::string const & filename );
 
-	void read_data( std::string const& filename, FrameList& );
+	FragSetOP read_data_from_stream( std::string const & filename, std::istream & data );
 
-	void read_data( std::istream& data, FrameList& );
+	void read_frames_from_file( std::string const& filename, FrameList & );
+
+	void read_frames_from_stream( std::string const & filename, std::string const & firstline, std::istream & data, FrameList & );
 
 	void write_data( std::string const& file, FragSet const& frags );
 

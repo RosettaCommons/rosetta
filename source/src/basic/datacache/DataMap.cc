@@ -36,6 +36,21 @@ DataMap::add( std::string const & type, std::string const & name, utility::point
 	return true;
 }
 
+// @brief add a resource to the data map, returning false if a resource of that
+// name already exists
+bool DataMap::add_resource(
+	std::string const & resource_name,
+	utility::pointer::ReferenceCountCOP op
+)
+{
+	if ( has_resource( resource_name ) ) {
+		TR << "A resource has already been stored in the data map with name " << resource_name << std::endl;
+		return false;
+	}
+	resource_map_[ resource_name ] = op;
+	return true;
+}
+
 bool
 DataMap::has_type( std::string const & type ) const {
 	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator it;
@@ -45,6 +60,13 @@ DataMap::has_type( std::string const & type ) const {
 
 	return true;
 }
+
+/// @brief Does the data map contain a resource with the given name?
+bool DataMap::has_resource( std::string const & resource_name ) const
+{
+	return resource_map_.find( resource_name ) != resource_map_.end();
+}
+
 
 bool
 DataMap::has( std::string const & type, std::string const & name ) const {
@@ -63,6 +85,21 @@ std::map< std::string, utility::pointer::ReferenceCountOP > &
 DataMap::operator []( std::string const & type ) {
 	return data_map_[ type ];
 }
+
+std::map< std::string, utility::pointer::ReferenceCountOP > const &
+DataMap::category_map(
+	std::string const & type
+) const
+{
+	auto iter = data_map_.find( type );
+	if ( data_map_.end() == iter ) {
+		std::ostringstream oss;
+		oss << "Failed to find map for category \"" << type << "\"";
+		throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+	}
+	return iter->second;
+}
+
 
 // Below is the old implementation of the operator [] function.
 // The problem with this implementation is that the addition and then

@@ -1,0 +1,11 @@
+<ROSETTASCRIPTS>
+  <RESOURCES>
+    <Resource name="%%native%%"/>
+  </RESOURCES>
+  <MOVERS>
+    <%%mover%% name="themover"/>
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover="themover"/>
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

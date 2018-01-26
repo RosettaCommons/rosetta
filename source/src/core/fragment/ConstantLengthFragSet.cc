@@ -154,11 +154,12 @@ void ConstantLengthFragSet::read_fragment_file( std::string filename, Size top25
 		cerr << "Open failed for file: " << data.filename() << endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
-
-	read_fragment_stream(data,top25,ncopies,bAnnotation);
+	std::string first_line;
+	bool ok( getline( data, first_line ) );
+	if ( ok ) read_fragment_stream( filename, first_line, data, top25, ncopies, bAnnotation );
 }
 
-void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, Size top25, Size ncopies, bool bAnnotation ) {
+void ConstantLengthFragSet::read_fragment_stream( std::string const & filename, std::string const & first_line, std::istream & data, Size top25, Size ncopies, bool bAnnotation ) {
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
 	using std::endl;
@@ -166,14 +167,14 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 	using std::string;
 
 	Real score = 0.0;
-	string line;
+	string line = first_line;
 
 	Size insertion_pos = 1;
 	FragDataOP current_fragment( nullptr );
 	FrameOP frame;
 
 	Size n_frags( 0 );
-	while ( getline( data, line ) ) {
+	do {
 		// skip blank lines
 		if ( line == "" || line == " " ) {
 			// add current_fragment to the appropriate frame
@@ -181,7 +182,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 				if ( !top25 || frame->nr_frags() < top25*ncopies ) {
 					current_fragment->set_valid(); //it actually contains data
 					if ( !frame->add_fragment( current_fragment ) ) {
-						tr.Fatal << "Incompatible Fragment in file: " << data.filename() << endl;
+						tr.Fatal << "Incompatible Fragment in file: " << filename << endl;
 						utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 					} else {
 						for ( Size i = 2; i <= ncopies; i++ ) frame->add_fragment( current_fragment );
@@ -269,7 +270,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 		}
 		current_fragment->add_residue(res);
 		current_fragment->set_score(score);
-	} // while ( getline( data, line ) )
+	}  while ( getline( data, line ) );
 
 	if ( frame && frame->is_valid() ) {
 		add( frame );
@@ -277,7 +278,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 	}
 
 	tr.Info << "finished reading top " << n_frags << " "
-		<< max_frag_length() << "mer fragments from file " << data.filename()
+		<< max_frag_length() << "mer fragments from file " << filename
 		<< endl;
 }
 

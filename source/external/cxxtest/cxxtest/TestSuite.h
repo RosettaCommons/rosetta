@@ -61,6 +61,14 @@ namespace CxxTest
         }
     }
 
+#ifdef _CXXTEST_HAVE_STD
+	void doAssertStringContains(
+		const char *file, unsigned line,
+		const char *xExpr, std::string const &x,
+		const char *yExpr, std::string const &y,
+		const char *message );
+#endif // _CXXTEST_HAVE_STD
+
     void doAssertSameData( const char *file, unsigned line,
                            const char *xExpr, const void *x,
                            const char *yExpr, const void *y,
@@ -77,8 +85,6 @@ namespace CxxTest
                          const char *file2Expr, const char *file2,
                          double abs_p, double rel_p,
                          const char *message );
-
-
 
     template<class X, class Y>
     bool differs( X x, Y y )
@@ -273,7 +279,8 @@ namespace CxxTest
 #   define ETSM_ASSERT_EQUALS(m,x,y) _ETSM_ASSERT_EQUALS(__FILE__,__LINE__,m,x,y)
 #   define TSM_ASSERT_EQUALS(m,x,y) _TSM_ASSERT_EQUALS(__FILE__,__LINE__,m,x,y)
 
-    // TS_ASSERT_SAME_DATA
+
+// TS_ASSERT_SAME_DATA
 #   define ___ETS_ASSERT_SAME_DATA(f,l,x,y,s,m) CxxTest::doAssertSameData( (f), (l), #x, (x), #y, (y), #s, (s), (m) )
 #   define ___TS_ASSERT_SAME_DATA(f,l,x,y,s,m) { _TS_TRY { ___ETS_ASSERT_SAME_DATA(f,l,x,y,s,m); } __TS_CATCH(f,l) }
 
@@ -306,6 +313,27 @@ namespace CxxTest
 
 #   define ETSM_ASSERT_FILE_EQ(m,x,y) _ETSM_ASSERT_FILE_EQ(__FILE__,__LINE__,m,x,y)
 #   define TSM_ASSERT_FILE_EQ(m,x,y) _TSM_ASSERT_FILE_EQ(__FILE__,__LINE__,m,x,y)
+
+
+
+//  TS_ASSERT_STRING_CONTAINS
+#   define ___ETS_ASSERT_STRING_CONTAINS(f,l,x,y,m) CxxTest::doAssertStringContains( (f), (l), #x, (x), #y, (y), (m) )
+#   define ___TS_ASSERT_STRING_CONTAINS(f,l,x,y,m) { _TS_TRY { ___ETS_ASSERT_STRING_CONTAINS(f,l,x,y,m); } __TS_CATCH(f,l) }
+
+#   define _ETS_ASSERT_STRING_CONTAINS(f,l,x,y) ___ETS_ASSERT_STRING_CONTAINS(f,l,x,y,0)
+#   define _TS_ASSERT_STRING_CONTAINS(f,l,x,y) ___TS_ASSERT_STRING_CONTAINS(f,l,x,y,0)
+
+#   define ETS_ASSERT_STRING_CONTAINS(x,y) _ETS_ASSERT_STRING_CONTAINS(__FILE__,__LINE__,x,y)
+#   define TS_ASSERT_STRING_CONTAINS(x,y) _TS_ASSERT_STRING_CONTAINS(__FILE__,__LINE__,x,y)
+
+#   define _ETSM_ASSERT_STRING_CONTAINS(f,l,m,x,y) ___ETS_ASSERT_STRING_CONTAINS(f,l,x,y,TS_AS_STRING(m))
+#   define _TSM_ASSERT_STRING_CONTAINS(f,l,m,x,y) ___TS_ASSERT_STRING_CONTAINS(f,l,x,y,TS_AS_STRING(m))
+
+#   define ETSM_ASSERT_STRING_CONTAINS(m,x,y) _ETSM_ASSERT_STRING_CONTAINS(__FILE__,__LINE__,m,x,y)
+#   define TSM_ASSERT_STRING_CONTAINS(m,x,y) _TSM_ASSERT_STRING_CONTAINS(__FILE__,__LINE__,m,x,y)
+
+
+
 
 //    void doAssertFileEQ_AsDouble( const char *file, unsigned line,
 //                         const char *file1Expr, const char *file1,

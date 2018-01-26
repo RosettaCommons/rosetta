@@ -16,11 +16,12 @@
 #ifndef INCLUDED_protocols_recces_options_RECCES_Options_HH
 #define INCLUDED_protocols_recces_options_RECCES_Options_HH
 
-#include <basic/resource_manager/ResourceOptions.hh>
+
 #include <protocols/recces/options/RECCES_Options.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/rna/RNA_SecStruct.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
@@ -31,7 +32,7 @@ namespace protocols {
 namespace recces {
 namespace options {
 
-class RECCES_Options: public virtual basic::resource_manager::ResourceOptions {
+class RECCES_Options: public virtual utility::pointer::ReferenceCount {
 
 public:
 

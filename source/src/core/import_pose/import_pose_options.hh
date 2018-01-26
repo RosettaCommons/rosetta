@@ -81,6 +81,7 @@ public:
 	void set_metal_bond_angle_constraint_multiplier(core::Real invalue );
 
 	static void list_options_read( utility::options::OptionKeyList & read_options );
+	static void append_schema_attributes( utility::tag::AttributeList & attrs );
 
 	bool operator == ( ImportPoseOptions const & other ) const;
 	bool operator <  ( ImportPoseOptions const & other ) const;

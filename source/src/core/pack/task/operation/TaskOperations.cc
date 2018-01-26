@@ -46,9 +46,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-// basic headers
-#include <basic/resource_manager/ResourceManager.hh>
-
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
@@ -999,16 +996,13 @@ TaskOperationOP ReadResfile::clone() const
 void
 ReadResfile::apply( pose::Pose const & pose, PackerTask & task ) const
 {
-	using namespace basic::resource_manager;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	if ( !file_was_read_ ) {
-		/// If no file has been read, try to get a resfile from the ResourceManager.  Unfortunately, this is the one
-		/// case in which caching will not work, and read from disk will happen every time at apply time.
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
-			parse_resfile(pose, task, ResourceManager::get_instance()->get_option( packing::resfile )[ 1 ] ); //Note that in this case, the selector is not applied
-		} /// else, if no file was provided directly or through the options system -- do not change the input PackerTask at all. Noop.
+		if ( option[ packing::resfile ].user() ) {
+			parse_resfile(pose, task, option[ packing::resfile ][ 1 ] ); //Note that in this case, the selector is not applied
+		} // else, if no file was provided directly or through the options system -- do not change the input PackerTask at all. Noop.
 		return; //Do nothing if no resfile was read in and nothing is provided via the options system.
 	}
 
@@ -1040,16 +1034,15 @@ ReadResfile::set_residue_selector(
 core::select::residue_selector::ResidueSelectorCOP
 ReadResfile::residue_selector() const { return residue_selector_; }
 
-/// @brief Assign the filename from the ResourceManager, if a resfile has been assigned for the
-/// current job, and fall back on the options system, if a resfile has not been assigned.
+/// @brief Assign the filename from options system, if the command-line flag has been set,
+/// or to the empty string otherwise.
 void
 ReadResfile::default_filename()
 {
-	using namespace basic::resource_manager;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
-		resfile_filename_ = ResourceManager::get_instance()->get_option( packing::resfile )[ 1 ];
+	if ( option[ packing::resfile ].user() ) {
+		resfile_filename_ = option[ packing::resfile ][ 1 ];
 	} else {
 		resfile_filename_ = "";
 	}
@@ -1074,8 +1067,8 @@ ReadResfile::parse_tag( TagCOP tag , DataMap &datamap )
 	// special case: if "COMMANDLINE" string specified, use commandline option setting.
 	// This is wholy unneccessary of course.  In the absence of a specified filename, the command line
 	// will be read from, anyways.
-	// if no filename is given, then the ReadResfile command will read either from the ResourceManager
-	// or from the packing::resfile option on the command line.
+	// if no filename is given, then the ReadResfile command will read from
+	// the packing::resfile option on the command line.
 	if ( resfile_filename_ == "COMMANDLINE" ) default_filename();
 
 	if ( tag->hasOption( "selector" ) ) {
@@ -1097,13 +1090,12 @@ ReadResfile::parse_tag( TagCOP tag , DataMap &datamap )
 /// doesn't have to be read over and over again at apply time.
 void
 ReadResfile::cache_resfile() {
-	using namespace basic::resource_manager;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	if ( resfile_filename_ == "" ) {
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
-			resfile_filename_ = ResourceManager::get_instance()->get_option( packing::resfile )[ 1 ];
+		if ( option[ packing::resfile ].user() ) {
+			resfile_filename_ = option[ packing::resfile ][ 1 ];
 		}
 	}
 

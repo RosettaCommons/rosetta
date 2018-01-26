@@ -22,6 +22,7 @@
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
 #ifdef WIN32
@@ -49,6 +50,9 @@ public:
 	virtual
 	std::string loader_type() const = 0;
 
+	virtual
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
 };
 
 } // namespace resource_manager

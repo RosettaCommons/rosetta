@@ -16,16 +16,15 @@
 
 //unit headers
 #include <protocols/loophash/LoopHashLibraryLoader.fwd.hh>
-#include <protocols/loophash/LoopHashLibraryOptions.hh>
 #include <basic/resource_manager/ResourceLoader.hh>
 
 //package headers
-#include <basic/resource_manager/ResourceOptions.hh>
 #include <basic/resource_manager/types.hh>
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
 #include <istream>
@@ -35,7 +34,7 @@ namespace loophash {
 
 /// @brief %LoopHashLibraryLoader constructs a LoopHashLibrary instance from data provided by the %ResourceManager.
 /// @details The %LoopHashLibraryLoader is given a LoopHashLibraryOptions containing a %vector of loop lengths from the
-/// ResourceManager.  This information is then used to produce a LoopHashLibraryOP to return to the protocol.
+/// ResourceManager.  This information is then used to produce a LoopHashLibraryCOP to return to the protocol.
 class LoopHashLibraryLoader : public basic::resource_manager::ResourceLoader
 {
 public:
@@ -43,21 +42,25 @@ public:
 	LoopHashLibraryLoader();
 
 	/// @brief Destructor.
-	~LoopHashLibraryLoader() override = default;
+	virtual ~LoopHashLibraryLoader();
 
-	/// @brief Return a LoopHashLibraryOP constructed from the given ResourceOptions.
+	/// @brief Return a LoopHashLibraryCOP constructed from the given ResourceOptions.
 
-	basic::resource_manager::ResourceOP
+	basic::resource_manager::ResourceCOP
 	create_resource(
-		basic::resource_manager::ResourceOptions const & options,
-		basic::resource_manager::LocatorID const &,
-		std::istream &
+		basic::resource_manager::ResourceManager & resource_manager,
+		utility::tag::TagCOP resource_tag,
+		std::string const & input_id,
+		std::istream & istream
 	) const override;
 
-	/// @brief Return a ResourceOptionsOP with the default set of options.
+	static
+	std::string
+	classname();
 
-	basic::resource_manager::ResourceOptionsOP
-	default_options() const override { return basic::resource_manager::ResourceOptionsOP( new LoopHashLibraryOptions() );}
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 } // namespace

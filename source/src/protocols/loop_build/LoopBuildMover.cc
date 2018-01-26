@@ -31,8 +31,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
+//#include <basic/resource_manager/ResourceManager.hh>
+//#include <basic/resource_manager/util.hh>
 
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
@@ -49,6 +49,8 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <protocols/simple_filters/RmsdEvaluator.hh>
+
+#include <numeric/random/random.hh>
 
 #ifdef WIN32
 #include <ctime>
@@ -215,13 +217,26 @@ std::string LoopBuildMover::get_name() const
 }
 void LoopBuildMover::setup_loop_definition()
 {
-	using namespace basic::resource_manager;
+	//using namespace basic::resource_manager;
 	// load loopfile
-	if ( ! ResourceManager::get_instance()->has_resource_with_description( "LoopsFile" ) ) {
-		throw CREATE_EXCEPTION(utility::excn::Exception,  "No loop file specified." );
+	//if ( ! ResourceManager::get_instance()->has_resource_with_description( "LoopsFile" ) ) {
+	// throw CREATE_EXCEPTION(utility::excn::Exception,  "No loop file specified." );
+	//}
+	//protocols::loops::LoopsFileDataOP loops_from_file = get_resource< protocols::loops::LoopsFileData >( "LoopsFile" );
+	//loop_relax_mover_.loops_file_data( *loops_from_file );
+
+	// TO DO: Put this functionality into its own function since it seem like it could
+	// be used in more than this one location?
+	utility::vector1< std::string > loops_files = basic::options::option[ basic::options::OptionKeys::loops::loop_file ].value_or( utility::vector1< std::string >() );
+	if ( ! loops_files.size() ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, "The -loop_file flag has not been specified on the command line");
 	}
-	protocols::loops::LoopsFileDataOP loops_from_file = get_resource< protocols::loops::LoopsFileData >( "LoopsFile" );
-	loop_relax_mover_.loops_file_data( *loops_from_file );
+	core::Size const which_loops_file( loops_files.size() == 1 ? 1 : core::Size( numeric::random::rg().random_range(1,( loops_files.size() ))));
+	std::string loop_file = loops_files[ which_loops_file ];
+	loops::LoopsFileIO lfio;
+	loops::LoopsFileDataOP lfd = lfio.read_loop_file( loop_file, true /*prohibit_single_residue_loops*/ );
+	loop_relax_mover_.loops_file_data( *lfd );
+
 }
 
 }//loop_build

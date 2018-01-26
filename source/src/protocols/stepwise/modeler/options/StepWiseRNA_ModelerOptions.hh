@@ -16,11 +16,13 @@
 #ifndef INCLUDED_protocols_stepwise_modeler_rna_StepWiseRNA_ModelerOptions_HH
 #define INCLUDED_protocols_stepwise_modeler_rna_StepWiseRNA_ModelerOptions_HH
 
-#include <basic/resource_manager/ResourceOptions.hh>
 #include <protocols/stepwise/modeler/options/StepWiseRNA_ModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 #include <core/types.hh>
+
 #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -28,7 +30,7 @@ namespace modeler {
 namespace options {
 
 // multiple inheritance -- bad form -- but will replace with composition later, perhaps.
-class StepWiseRNA_ModelerOptions: public virtual basic::resource_manager::ResourceOptions {
+class StepWiseRNA_ModelerOptions: public virtual utility::pointer::ReferenceCount {
 
 public:
 
@@ -54,7 +56,7 @@ public:
 	void
 	parse_my_tag( utility::tag::TagCOP ){}
 
-	/// @brief The class name (its type) for a particular ResourceOptions instance.
+	/// @brief The class name (its type) for a particular instance.
 	/// This function allows for better error message delivery.
 	virtual
 	std::string

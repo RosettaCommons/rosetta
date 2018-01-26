@@ -64,6 +64,13 @@ public:
 	void
 	set_throw_on_double_registration();
 
+	std::map< std::string, ResourceLocatorCreatorOP > const &
+	locator_map() const;
+
+	static
+	std::string
+	complex_type_name_for_locator( std::string const & locator_name );
+
 private:
 
 	/// @brief Singleton has a private constructor

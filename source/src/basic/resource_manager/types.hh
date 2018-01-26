@@ -23,31 +23,15 @@
 namespace basic {
 namespace resource_manager {
 
-// A resource can be any type of rosetta recongnized object
+// A resource can be any type of rosetta-recongnized object
+// After it is created, it will be const through its lifetime.
+// You may very well desire that a resource should be constructed
+// with very complex properties or data -- perhaps even data that
+// depends on a Pose. That is fine: the Pose should also be a
+// resource and should be requested from the ResourceManager
+// during the construction of the object.
 typedef utility::pointer::ReferenceCount Resource;
-typedef utility::pointer::ReferenceCountOP ResourceOP;
-
-// This identifies a resource, eg native, fragments:3mer, native:electron_density
-// It may make sense to use the utility::key framework for this
-typedef std::string ResourceDescription;
-
-// These identify specific instances of a resource, 1j2n
-typedef std::string ResourceTag;
-
-// This identifies which instance of a ResourceDescription should be returned to a protocol
-typedef std::string JobTag;
-
-// Identify a resource locator with the ResourceLocatorFactory
-typedef std::string LocatorType;
-typedef std::string LocatorTag;
-typedef std::string LocatorID;
-
-
-// Identify a resource loader with the ResourceLoaderFactory
-typedef std::string LoaderType;
-
-typedef std::string ResourceOptionsTag;
-
+typedef utility::pointer::ReferenceCountCOP ResourceCOP;
 
 } // namespace
 } // namespace

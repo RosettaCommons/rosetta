@@ -19,99 +19,27 @@
 #include <devel/init.hh>
 
 // protocol headers
-#include <protocols/moves/mover_schemas.hh>
-
-#include <protocols/jd3/Job.hh>
-#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
 #include <protocols/jd3/JobDistributor.hh>
 #include <protocols/jd3/JobDistributorFactory.hh>
-#include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputter.hh>
-#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
-#include <protocols/jd3/standard/MoverAndPoseJob.hh>
-#include <protocols/jd3/standard/StandardJobQueen.hh>
 #include <protocols/jd3/util.hh>
 
-#include <protocols/rosetta_scripts/ParsedProtocol.hh>
-#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsJobQueen.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
 
 // Basic headers
-#include <basic/datacache/ConstDataMap.hh>
-#include <basic/datacache/DataMap.hh>
-
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
-
-// Utility headers
-#include <utility/options/OptionCollection.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
 
 
 static basic::Tracer TR("rosetta_scripts_jd3");
 
-
 using namespace protocols::rosetta_scripts;
-
-/// Define your JobQueen
-class ParsedProtocolJobQueen : public protocols::jd3::standard::StandardJobQueen
-{
-public:
-	ParsedProtocolJobQueen()
-	{
-
-		//This is where you will list the options you will be using.  These options are command-line options
-		// that can be specified at the <common> and <job> level.
-
-		utility::options::OptionKeyList opts;
-
-		/// Static Functions setup the OptionKeyList:
-		//
-		RosettaScriptsParser::list_options_read( opts );
-
-		add_options( opts );
-		parser_ = RosettaScriptsParserOP( new RosettaScriptsParser() );
-	}
-
-	~ParsedProtocolJobQueen() override = default;
-
-
-	protocols::jd3::JobOP
-	complete_larval_job_maturation(
-		protocols::jd3::LarvalJobCOP larval_job,
-		utility::options::OptionCollectionCOP job_options,
-		utility::vector1< protocols::jd3::JobResultCOP > const &
-	) override
-	{
-
-		TR << "Completing larval job maturation" << std::endl;
-
-		protocols::jd3::standard::MoverAndPoseJobOP mature_job( new protocols::jd3::standard::MoverAndPoseJob );
-		core::pose::PoseOP pose = pose_for_job( larval_job, *job_options );
-		mature_job->pose( pose );
-
-		bool modified_pose;
-
-		parser_->set_recursion_limit( *job_options );
-		protocols::rosetta_scripts::ParsedProtocolOP mover_protocol = parser_->generate_mover_and_apply_to_pose(*pose, *job_options, modified_pose );
-
-		mature_job->mover( mover_protocol );
-		return mature_job;
-	}
-
-	virtual bool more_jobs_remain() { return false; }
-
-private:
-	protocols::rosetta_scripts::RosettaScriptsParserOP parser_;
-
-};
+using namespace protocols::jd3;
 
 int
 main( int argc, char * argv [] )
@@ -128,7 +56,7 @@ main( int argc, char * argv [] )
 			protocols::rosetta_scripts::print_information( option[ parser::info ]() );
 		} else if ( option[ parser::output_schema ].user() ) {
 			protocols::rosetta_scripts::save_schema( option[ parser::output_schema ] );
-		} else if ( ! option[ in::file::job_definition_file ].user() ) { // Just print a template script and exit if no input script is provided.
+		} else if ( ! option[ in::file::job_definition_file ].user() && ! option[ parser::protocol ].user() ) { // Just print a template script and exit if no input script is provided.
 
 			protocols::rosetta_scripts::print_template_script();
 			protocols::jd3::print_job_template();
@@ -143,8 +71,7 @@ main( int argc, char * argv [] )
 
 			protocols::jd3::JobDistributorOP jd = protocols::jd3::JobDistributorFactory::create_job_distributor();
 
-			protocols::jd3::JobQueenOP queen( new ParsedProtocolJobQueen );
-
+			protocols::jd3::JobQueenOP queen( new protocols::rosetta_scripts::RosettaScriptsJobQueen );
 			jd->go( queen );
 		}
 

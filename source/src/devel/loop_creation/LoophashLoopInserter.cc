@@ -24,8 +24,6 @@
 #include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 
 //Basic
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -50,6 +48,8 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
+
+#include <basic/datacache/DataMap.hh>
 
 //utility
 #include <utility/tag/Tag.hh>
@@ -126,22 +126,17 @@ LoophashLoopInserter::init(
 ){
 	using namespace core;
 	using namespace protocols::loophash;
-	using namespace basic::resource_manager;
 	using namespace basic::options;
 
 	if ( !lh_initialized_ ) {
-		if ( ResourceManager::get_instance()->has_resource("LoopHashLibrary") ) {
-			TR << "Retrieving lh library from resource manager." << std::endl;
-			lh_library_ = get_resource<LoopHashLibrary>( "LoopHashLibrary" );
-		} else {
-			TR << "Initializing lh library from command line" << std::endl;
-			utility::vector1<core::Size> actual_lh_fragment_sizes(loop_sizes_.size());
-			for ( core::Size i=1; i<=loop_sizes_.size(); ++i ) {
-				actual_lh_fragment_sizes[i]=loop_sizes_[i]+(2*num_flanking_residues_to_match_);
-			}
-			lh_library_ = protocols::loophash::LoopHashLibraryOP( new LoopHashLibrary( actual_lh_fragment_sizes ) );
-			lh_library_->load_mergeddb();
+		TR << "Initializing lh library from command line" << std::endl;
+		utility::vector1<core::Size> actual_lh_fragment_sizes(loop_sizes_.size());
+		for ( core::Size i=1; i<=loop_sizes_.size(); ++i ) {
+			actual_lh_fragment_sizes[i]=loop_sizes_[i]+(2*num_flanking_residues_to_match_);
 		}
+		protocols::loophash::LoopHashLibraryOP local_lh_library( new LoopHashLibrary( actual_lh_fragment_sizes ) );
+		local_lh_library->load_mergeddb();
+		lh_library_ = local_lh_library;
 		lh_initialized_=true;
 	}
 
@@ -277,7 +272,7 @@ LoophashLoopInserter::find_fragments(
 		if ( loop_size > max_fragment_size ) { continue; }
 		if ( loop_size < min_fragment_size ) { continue; }
 
-		LoopHashMap &hashmap = lh_library_->gethash( loop_size );
+		LoopHashMap const & hashmap = lh_library_->gethash( loop_size );
 
 		std::vector<core::Size> leap_index_bucket;
 		hashmap.radial_lookup( core::Size(max_lh_radius_), loop_transform, leap_index_bucket);
@@ -342,7 +337,7 @@ LoophashLoopInserter::build_loop(
 	core::Size loop_size = lh_fragment_size - (2*num_flanking_residues_to_match_);
 	TR << "Inserting a " << loop_size << " element loop" << std::endl;
 
-	LoopHashMap & hashmap = lh_library_->gethash( lh_fragment_size );
+	LoopHashMap const & hashmap = lh_library_->gethash( lh_fragment_size );
 	LeapIndex cp = hashmap.get_peptide( retrieve_index );
 
 	BackboneSegment lh_fragment_bs;
@@ -449,7 +444,7 @@ LoophashLoopInserter::build_loop(
 
 void
 LoophashLoopInserter::parse_my_tag(
-	utility::tag::TagCOP tag, basic::datacache::DataMap & /*data*/,
+	utility::tag::TagCOP tag, basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/
@@ -459,6 +454,12 @@ LoophashLoopInserter::parse_my_tag(
 	using namespace protocols::loophash;
 
 	parse_loop_anchor(tag);
+
+	if ( tag->hasOption( "loop_hash_library_resource" ) ) {
+		lh_library_ = datamap.get_resource< protocols::loophash::LoopHashLibrary >(
+			tag->getOption< std::string >( "loop_hash_library_resource" ) );
+		lh_initialized_ = true;
+	}
 
 	//Maximum RMSD of torsion angles to flanking residues
 	if ( tag->hasOption("max_torsion_rms") || option[lh::max_bbrms].user() ) {

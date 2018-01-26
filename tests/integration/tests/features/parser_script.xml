@@ -5,7 +5,7 @@
 		</ScoreFunction>	
 	</SCOREFXNS>
 	<TASKOPERATIONS>
-		<ReadResfileFromDB name="all" database_name="resfiles.db3" database_mode="sqlite3" database_table="resfiles"/>
+		<ReadResfileFromDB name="all" database_name="resfiles.db3" database_mode="sqlite3" database_table="resfiles" selection_tag="%%resfile_from_db_select_tag%%"/>
 	</TASKOPERATIONS>
 	<MOVERS>
 		<SavePoseMover name="init_struct" reference_name="init_struct"/>

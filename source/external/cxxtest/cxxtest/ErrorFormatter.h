@@ -210,6 +210,14 @@ namespace CxxTest
                 x << " != " << y << ")" << endl;
         }
 
+        void failedAssertContains( const char *file, unsigned line,
+                                 const char *xStr, const char *yStr,
+                                 const char *x, const char *y )
+        {
+            stop( file, line ) << "Error: Expected (" << xStr << " to contain " << yStr << "), found (" <<
+                x << " not containing " << y << ")" << endl;
+        }
+
         void failedAssertSameData( const char *file, unsigned line,
                                    const char *xStr, const char *yStr,
                                    const char *sizeStr, const void *x,

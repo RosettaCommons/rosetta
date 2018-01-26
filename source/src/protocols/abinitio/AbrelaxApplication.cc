@@ -633,7 +633,7 @@ void AbrelaxApplication::insert_template_frags( core::pose::Pose &pose, kinemati
 	using namespace basic::options::OptionKeys;
 	if ( option[ templates::fix_frag_file ].user() ) {
 		FrameList fix_frames;
-		fragment::FragmentIO().read_data( option[ templates::fix_frag_file ](), fix_frames );
+		fragment::FragmentIO().read_frames_from_file( option[ templates::fix_frag_file ](), fix_frames );
 		Size const frame_id ( static_cast< int >( numeric::random::rg().uniform() * fix_frames.size() ) + 1 );
 		FrameOP frame( fix_frames[ frame_id ] );
 		Size const frag_id ( static_cast< int >( numeric::random::rg().uniform() * frame->nr_frags() ) + 1 );

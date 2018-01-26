@@ -416,7 +416,7 @@ public:
 		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), false );
 		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), false );
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   4 );
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 0 );
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   0 );
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
@@ -464,7 +464,7 @@ public:
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   5 );
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 6 );
-		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   11 );
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
 		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
 
@@ -581,6 +581,7 @@ public:
 
 	void test_sjq_remote_node_mature_larval_job() {
 		TS_ASSERT( true );
+		// heh - looks like I never wrote this unit test?
 	}
 
 private:

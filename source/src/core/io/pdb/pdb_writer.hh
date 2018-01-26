@@ -57,18 +57,26 @@ dump_pdb(
 
 /// @brief Writes  <pose>  to a given stream in PDB file format
 ///  Use default StructFileRepOptions
-void
-dump_pdb(
-	core::pose::Pose const & pose,
-	std::ostream & out
-);
-
-/// @brief Writes  <pose>  to a given stream in PDB file format
+/// If a non-empty string is given for the out_fname variable, then
+/// the Pose energy table at the bottom of the PDB will be labeled
+/// with this string.
 void
 dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
-	core::io::StructFileRepOptionsCOP options
+	std::string const & out_fname = ""
+);
+
+/// @brief Writes  <pose>  to a given stream in PDB file format
+/// If a non-empty string is given for the out_fname variable, then
+/// the Pose energy table at the bottom of the PDB will be labeled
+/// with this string.
+void
+dump_pdb(
+	core::pose::Pose const & pose,
+	std::ostream & out,
+	core::io::StructFileRepOptionsCOP options,
+	std::string const & out_fname = ""
 );
 
 

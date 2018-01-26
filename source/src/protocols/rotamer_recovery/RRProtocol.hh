@@ -26,8 +26,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
+// Basic headers
+#include <basic/datacache/DataMap.fwd.hh>
+
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -70,6 +74,13 @@ public: // public interface
 	virtual
 	std::string
 	get_parameters() const = 0;
+
+	/// @brief As the RRProtocol is being read in
+	virtual
+	void
+	parse_attributes_from_tag(
+		basic::datacache::DataMap const & dm,
+		utility::tag::TagCOP tag );
 
 	virtual
 	void

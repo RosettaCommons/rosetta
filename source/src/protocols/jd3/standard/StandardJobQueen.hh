@@ -31,10 +31,13 @@
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh>
 #include <protocols/jd3/standard/StandardInnerLarvalJob.fwd.hh>
 
+#ifdef PYROSETTA
+#include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
+#endif
+
 // project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose_options.fwd.hh>
-#include <basic/resource_manager/JobOptions.fwd.hh>
 
 //utility headers
 #include <utility/options/OptionCollection.fwd.hh>
@@ -171,7 +174,8 @@ public:
 	deallocation_messages() override;
 
 	/// @brief A deallocation message first sent to the JobDistributor on this host originating from
-	/// a remote JobQueen
+	/// a remote JobQueen. If a derived JobQueen has deallocation messages she needs to recieve,
+	/// she should override derived_process_deallocation_message.
 	void
 	process_deallocation_message( deallocation::DeallocationMessageOP message ) override;
 
@@ -342,6 +346,17 @@ protected:
 	/// been called.
 	utility::vector1< PreliminaryLarvalJob > const &
 	preliminary_larval_jobs() const;
+
+	/// @brief Return the index of the preliminary job that a particular job_index corresponds to,
+	/// or return 0 to indicate that the job does not come from a preliminary job node.
+	core::Size preliminary_job_node_for_job_index( core::Size job_index ) const;
+
+	/// @brief The SJQ tracks which preliminary-job-nodes have had all of their jobs complete
+	/// and lets the derived job queens know. DerivedJobQueens wishing to track when, e.g.,
+	/// all of the jobs that might depend on a particular Resource held by the ResourceManager
+	/// have completed can override this method and then be updated by the SJQ at the completion
+	/// of every PJN.
+	virtual void note_preliminary_job_node_is_complete( core::Size pjn_index );
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -682,6 +697,7 @@ private:
 	utility::vector1< core::Size > pjn_job_ind_begin_;
 	utility::vector1< core::Size > pjn_job_ind_end_;
 	utility::vector1< char > preliminary_job_nodes_complete_; // complete == all jobs assigned
+	utility::vector1< core::Size > outstanding_job_count_for_prelim_; // how many jobs have not completed?
 
 	typedef numeric::DiscreteIntervalEncodingTree< core::Size > SizeDIET;
 

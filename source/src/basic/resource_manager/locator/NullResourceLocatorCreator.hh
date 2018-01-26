@@ -32,8 +32,9 @@ public:
 	NullResourceLocatorCreator();
 	virtual ~NullResourceLocatorCreator();
 
-	virtual ResourceLocatorOP create_resource_locator() const;
-	virtual std::string locator_type() const;
+	ResourceLocatorOP create_resource_locator() const override;
+	std::string locator_type() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace

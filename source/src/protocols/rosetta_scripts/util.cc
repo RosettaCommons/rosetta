@@ -51,9 +51,10 @@
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
+#include <basic/database/sql_utils.hh>
 
 // Utility Headers
-#include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -800,6 +801,62 @@ parse_xyz_vector( utility::tag::TagCOP const xyz_vector_tag ){
 
 }
 
+utility::sql_database::sessionOP
+parse_database_session(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap const & datamap
+)
+{
+	using utility::sql_database::session;
+	using utility::sql_database::sessionOP;
+
+	if ( tag->hasOption( "db_session_name" ) ) {
+		std::string session_name = tag->getOption< std::string >( "db_session_name" );
+		TR << "Retrieving DatabaseSession named \"" << session_name << "\" from DataMap" << std::endl;
+		sessionOP session_ptr;
+		try {
+			session_ptr = datamap.get_ptr< utility::sql_database::session >( "db_sessions", session_name );
+		} catch ( utility::excn::Exception & e ) {
+			std::ostringstream oss;
+			oss << "ERROR: Failed to retrieve database session \"" << session_name <<
+				"\" from the DataMap. Was it previously declared in a DATABASE_SESSIONS block?\n";
+			if ( datamap.has_type( "db_sessions" ) ) {
+				oss << "Available sessions in the data map are:\n";
+				auto const & sessions_map = datamap.category_map( "db_sessions" );
+				for ( auto const & name_ptr_pair : sessions_map ) {
+					oss << "  " << name_ptr_pair.first << "\n";
+				}
+			} else {
+				oss << "No database sessions were found in the DataMap at all.\n";
+			}
+			oss << e.msg();
+			throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+		}
+
+		return session_ptr;
+	} else {
+		TR << "Invoking basic::database::parse_database_connection" << std::endl;
+		return basic::database::parse_database_connection( tag );
+	}
+}
+
+void
+attributes_for_parse_database_session(
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::AttributeList & attlist
+)
+{
+	using namespace utility::tag;
+
+	attlist + XMLSchemaAttribute( "db_session_name", xs_string,
+		"The name for the (previously declared) DatabaseSession object to retrieve from the DataMap;"
+		" if this option is given, then it will take precedence over the other database-session-defining"
+		" attributes that are also allowed for this element. DatabaseSession objects are declared in the"
+		" DATABASE_SESSIONS top-level block in RosettaScripts." );
+
+	basic::database::attributes_for_parse_database_connection( attlist, xsd );
+
+}
 
 // void
 // attributes_for_report_to_db( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd)
