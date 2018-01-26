@@ -343,6 +343,7 @@ rna_design_test()
 			if ( option[ dump ] ) pose.dump_pdb( name );
 		}
 	} else {
+		std::cout << "About to do pack rotamers loop" << std::endl;
 		pack::pack_rotamers_loop( pose, *scorefxn, task, nstruct, results, pose_list);
 		if ( option[ final_minimize ]() ) {
 			for ( auto const & poseop : pose_list ) {

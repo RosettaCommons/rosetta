@@ -119,7 +119,8 @@ AtomID_Mapper::initialize( core::pose::Pose const & pose, bool const map_to_vani
 		// pose.residue_type( 1 ).residue_type_set(), false /*auto_termini*/ );
 		using namespace core::conformation;
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-			if ( !pose.residue( ii ).is_protein() ) {
+
+			if ( pose.residue( ii ).is_polymer() && !pose.residue( ii ).is_protein() ) {
 				// If this residue type does not havea base name, just use the name.
 				// With any luck, these will mostly be CCD-generated residues... which
 				// may have few variants anyway!

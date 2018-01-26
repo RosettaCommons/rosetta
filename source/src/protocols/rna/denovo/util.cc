@@ -44,7 +44,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/variant_util.hh>
-#include <core/io/silent/RNA_SilentStruct.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/id/AtomID.hh>
@@ -282,7 +282,7 @@ export_packer_results(  utility::vector1< std::pair< Real, std::string > > & res
 		pose::Pose & pose( *pose_list[n] );
 		(*scorefxn)( pose );
 		std::string const tag( "S_"+lead_zero_string_of( n, 4 ) );
-		RNA_SilentStruct s( opts, pose, tag );
+		BinarySilentStruct s( opts, pose, tag );
 		if ( dump ) pose.dump_pdb( tag+".pdb");
 		silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
 	}

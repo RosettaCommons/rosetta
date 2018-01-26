@@ -1328,3 +1328,7 @@ CT3 CC  NH2 CT2 1.6000  2   180.00
  P      NR1    CPH1     HR3  3.0000 2 180.00
 CPH1    NR1     P       ON3  0.6000 3  60.00  # radical guess
 CPH2    NR1     P       ON3  0.6000 3  60.00
+
+CT1 CT2 S S 0.5 3 180
+HA CT2 S S 0.5 3 180
+CT2 S S HS 0.5 2 90

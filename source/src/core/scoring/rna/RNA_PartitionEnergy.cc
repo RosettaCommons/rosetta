@@ -200,7 +200,6 @@ RNA_PartitionEnergy::get_partition_score(
 	command_line = command_line + " | tail -n 3 | head -n 1";
 	// retrieve FE ensemble in kcal/mol from Vienna's output line
 	command_line = command_line + " | sed 's/[][]//g' | awk '{ print $2 }'";
-
 	try {
 		std::string cmd_result;
 		exec_cmd(command_line , cmd_result);
