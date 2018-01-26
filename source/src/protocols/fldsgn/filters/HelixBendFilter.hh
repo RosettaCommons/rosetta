@@ -39,9 +39,14 @@ public:
 	// destructor (important for properly forward-declaring smart-pointer members)
 	~HelixBendFilter() override;
 
-	// @brief set secondary structure
+	/// @brief set secondary structure
 	void
 	secstruct( std::string const & ss );
+
+	/// @brief set secondary structure using a blueprint file
+	/// @details This triggers a read from disk; use with caution.
+	void
+	set_secstruct_from_bp( std::string const & bp_file_path );
 
 	/// @brief minimum angle for filtering
 	void
@@ -54,6 +59,11 @@ public:
 	/// @brief returns true if the structure passes the filter, false otherwise
 	bool
 	apply( core::pose::Pose const & pose ) const override;
+
+	/// @brief computes filter value
+
+	void
+	compute( core::pose::Pose const & pose ) const;
 
 	/// @brief required for reporting score values
 	core::Real
@@ -96,6 +106,7 @@ private:
 	core::Real threshold_ ;
 	core::Size helix_id_ ;
 	mutable bool filter_status_;
+	mutable core::Real filter_val_;
 };
 
 } //protocols
