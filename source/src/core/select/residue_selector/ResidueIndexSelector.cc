@@ -51,22 +51,26 @@ namespace residue_selector {
 
 ResidueIndexSelector::ResidueIndexSelector():
 	index_str_(),
-	error_on_out_of_bounds_index_(true)
+	error_on_out_of_bounds_index_(true),
+	reverse_(false)
 {}
 
 ResidueIndexSelector::ResidueIndexSelector( std::string const & index_str ):
 	index_str_( index_str ),
-	error_on_out_of_bounds_index_(true)
+	error_on_out_of_bounds_index_(true),
+	reverse_(false)
 {}
 
 /// @brief Convenience constructor for a single residue index
-ResidueIndexSelector::ResidueIndexSelector( core::Size index_in )
+ResidueIndexSelector::ResidueIndexSelector( core::Size index_in ):
+	reverse_(false)
 {
 	append_index( index_in );
 }
 
 /// @brief Convenience constructor for a vector of indexes
-ResidueIndexSelector::ResidueIndexSelector( utility::vector1< core::Size > const & index_in )
+ResidueIndexSelector::ResidueIndexSelector( utility::vector1< core::Size > const & index_in ):
+	reverse_(false)
 {
 	append_index( index_in );
 }
@@ -88,7 +92,6 @@ ResidueSubset
 ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 {
 	runtime_assert_string_msg( !index_str_.empty(), "A residue index string must be supplied to the ResidueIndexSelector." );
-
 	ResidueSubset subset( pose.size(), false );
 	std::set< Size > const res_set( get_resnum_list( index_str_, pose ) );
 
@@ -103,7 +106,11 @@ ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 				continue;
 			}
 		}
-		subset[ res ] = true;
+		if ( !reverse_ ) {
+			subset[ res ] = true;
+		} else {
+			subset[subset.size()-res+1]=true;
+		}
 	}
 	return subset;
 }
@@ -113,6 +120,11 @@ ResidueIndexSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &)
 {
+	reverse_=tag->getOption<bool>("reverse", false);
+	if ( reverse_ ) {
+		TR << "WARNING: Reverse = true" << std::endl;
+	}
+
 	try {
 		set_index( tag->getOption< std::string >( "resnums" ) );
 	} catch ( utility::excn::Exception & e ) {
@@ -186,7 +198,8 @@ ResidueIndexSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	"(Note, residues that contain insertion codes cannot be properly identified by these PDB numbered schemes).");
 	*/
 	core::pose::attributes_for_get_resnum_selector( attributes, xsd, "resnums" );
-	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default( "error_on_out_of_bounds_index", xsct_rosetta_bool, "If true (the default), this selector throws an error if an index is selected that is not in the pose (e.g. residue 56 of a 55-residue structure).  If false, indices that don't exist in the pose are silently ignored.", "true" );
+	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default( "error_on_out_of_bounds_index", xsct_rosetta_bool, "If true (the default), this selector throws an error if an index is selected that is not in the pose (e.g. residue 56 of a 55-residue structure).  If false, indices that don't exist in the pose are silently ignored.", "true" )
+		+ utility::tag::XMLSchemaAttribute::attribute_w_default( "reverse", xsct_rosetta_bool, "If true(default false), this selector reverses the index. So 1-50  selects the last 50 residues of a protein", "false" );
 	xsd_type_definition_w_attributes(
 		xsd, class_name(),
 		"The ResidueIndexSelector sets the positions corresponding to the residues given in the resnums string to true, and all other positions to false. Note that it does not support PDB insertion codes.",
@@ -221,6 +234,7 @@ void
 core::select::residue_selector::ResidueIndexSelector::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( CEREAL_NVP( index_str_ ) ); // std::string
+	arc( CEREAL_NVP( reverse_ ) );
 	arc( CEREAL_NVP( error_on_out_of_bounds_index_ ) ); //bool
 }
 
@@ -230,6 +244,7 @@ void
 core::select::residue_selector::ResidueIndexSelector::load( Archive & arc ) {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( index_str_ ); // std::string
+	arc( reverse_ );
 	arc( error_on_out_of_bounds_index_ ); //bool
 }
 

@@ -1,0 +1,18 @@
+<ROSETTASCRIPTS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+<SCOREFXNS>
+</SCOREFXNS>
+    <RESIDUE_SELECTORS>
+        <SSElement name="selector" selection="1,H,M" to_selection="2,H,M"/>
+    </RESIDUE_SELECTORS>
+<FILTERS>
+</FILTERS>
+<MOVERS>
+    <AddResidueLabel name="label" residue_selector="selector" label="RosettaRocks"/>
+</MOVERS>
+<PROTOCOLS>
+    <Add mover="label"/>
+</PROTOCOLS>
+</ROSETTASCRIPTS>
+

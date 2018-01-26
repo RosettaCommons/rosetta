@@ -78,10 +78,18 @@ void AddResidueLabelMover::apply(core::pose::Pose & pose) {
 
 	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
 		if ( subset[resid] ) { // Add label if residue is in the selector
-			TR.Info << "Adding label to residue #" << std::to_string(resid) << std::endl;
+			TR.Info << "Adding to residue #" << std::to_string(resid) << ", label: " << label_ << std::endl;
 			pose.pdb_info()->add_reslabel(resid, label_);
 		}
 	}
+
+	//pymol selection output
+	TR.Info << "select " << label_ << ", resi ";
+	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
+		if ( subset[resid] ) {
+			TR.Info << std::to_string(resid) << "+";
+		}
+	} TR.Info << std::endl;
 
 	//core::pose::PoseOP & target_;
 	//std::string label;

@@ -1,0 +1,2 @@
+-parser:protocol inputs/test.xml
+-in:file:s inputs/start.pdb

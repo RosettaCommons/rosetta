@@ -102,11 +102,13 @@ public:
 
 private: // data members
 	std::string index_str_;
-
 	/// @brief If false, then there is no error if an index that is not in the pose is
 	/// selected.  True by default, which means that you get an error if you try to
 	/// select an index that's not in the pose.
 	bool error_on_out_of_bounds_index_;
+	/// @brief If true, will reverse the index selection from the end of the pose.
+	bool reverse_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;
