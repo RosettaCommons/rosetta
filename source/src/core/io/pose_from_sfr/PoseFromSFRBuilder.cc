@@ -983,7 +983,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	core::pose::ncbb::initialize_ncbbs( pose );
 
 	// 1 residue fragments for ligand design.
-	if ( pose.size() > 1 ) {
+	if ( !options_.no_detect_pseudobonds() && pose.size() > 1 ) {
 		pose.conformation().detect_pseudobonds();
 	}
 

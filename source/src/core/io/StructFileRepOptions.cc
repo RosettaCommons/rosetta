@@ -84,6 +84,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_preserve_crystinfo( tag->getOption< bool >( "preserve_crystinfo", false ) );
 	set_missing_dens_as_jump( tag->getOption< bool >( "missing_dens_as_jump", false ) );
 	set_no_chainend_ter( tag->getOption< bool >( "no_chainend_ter", false ) );
+	set_no_detect_pseudobonds( tag->getOption< bool >("no_detect_pseudobonds", false) );
 	set_no_output_cen( tag->getOption< bool >( "no_output_cen", false ) );
 	set_normalize_to_thk( tag->getOption< bool >( "normalize_to_thk", false ) );
 	set_output_secondary_structure( tag->getOption< bool >( "output_secondary_structure", false ) );
@@ -141,6 +142,7 @@ bool StructFileRepOptions::preserve_header() const { return preserve_header_; }
 bool StructFileRepOptions::preserve_crystinfo() const { return preserve_crystinfo_; }
 bool StructFileRepOptions::missing_dens_as_jump() const { return missing_dens_as_jump_; }
 bool StructFileRepOptions::no_chainend_ter() const { return no_chainend_ter_; }
+bool StructFileRepOptions::no_detect_pseudobonds() const { return no_detect_pseudobonds_; }
 bool StructFileRepOptions::no_output_cen() const { return no_output_cen_; }
 bool StructFileRepOptions::normalize_to_thk() const { return normalize_to_thk_; }
 bool StructFileRepOptions::output_secondary_structure() const { return output_secondary_structure_; }
@@ -227,6 +229,9 @@ void StructFileRepOptions::set_missing_dens_as_jump( bool const missing_dens_as_
 
 void StructFileRepOptions::set_no_chainend_ter( bool const no_chainend_ter )
 { no_chainend_ter_ = no_chainend_ter; }
+
+void StructFileRepOptions::set_no_detect_pseudobonds( bool const setting )
+{ no_detect_pseudobonds_ = setting; }
 
 void StructFileRepOptions::set_no_output_cen( bool const no_output_cen )
 { no_output_cen_ = no_output_cen; }
@@ -339,6 +344,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::preserve_crystinfo
 		+ in::missing_density_to_jump
 		+ out::file::no_chainend_ter
+		+ in::file::no_detect_pseudobonds
 		+ out::file::no_output_cen
 		+ mp::output::normalize_to_thk
 		+ out::file::output_secondary_structure
@@ -470,6 +476,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_preserve_crystinfo( options[ in::preserve_crystinfo ]() );
 	set_missing_dens_as_jump( options[ in::missing_density_to_jump ]() );
 	set_no_chainend_ter( options[ OptionKeys::out::file::no_chainend_ter ]() );
+	set_no_detect_pseudobonds( options[OptionKeys::in::file::no_detect_pseudobonds]() );
 	set_no_output_cen( options[ OptionKeys::out::file::no_output_cen ]() );
 	set_normalize_to_thk( options[ OptionKeys::mp::output::normalize_to_thk ]() );
 	set_output_secondary_structure( options[ OptionKeys::out::file::output_secondary_structure ]() );
@@ -525,6 +532,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( preserve_crystinfo_                                    != other.preserve_crystinfo_                                   ) return false;
 	if ( missing_dens_as_jump_                                  != other.missing_dens_as_jump_                                 ) return false;
 	if ( no_chainend_ter_                                       != other.no_chainend_ter_                                      ) return false;
+	if ( no_detect_pseudobonds_        != other.no_detect_pseudobonds_       ) return false;
 	if ( no_output_cen_                                         != other.no_output_cen_                                        ) return false;
 	if ( normalize_to_thk_                                      != other.normalize_to_thk_                                     ) return false;
 	if ( output_secondary_structure_                            != other.output_secondary_structure_                           ) return false;
@@ -557,6 +565,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	return true;
 }
 
+/// @note This function makes no sense.  If ANY option is less than that in other, this returns true. --VKM 24 Jan 2018.
 bool
 StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 {
@@ -592,6 +601,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( missing_dens_as_jump_                                  != other.missing_dens_as_jump_                                 ) return false;
 	if ( no_chainend_ter_                                       <  other.no_chainend_ter_                                      ) return true;
 	if ( no_chainend_ter_                                       != other.no_chainend_ter_                                      ) return false;
+	if ( no_detect_pseudobonds_        <  other.no_detect_pseudobonds_       ) return true;
+	if ( no_detect_pseudobonds_        !=  other.no_detect_pseudobonds_       ) return false;
 	if ( no_output_cen_                                         <  other.no_output_cen_                                        ) return true;
 	if ( no_output_cen_                                         != other.no_output_cen_                                        ) return false;
 	if ( normalize_to_thk_                                      <  other.normalize_to_thk_                                     ) return true;
@@ -679,6 +690,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( preserve_crystinfo_ ) ); // _Bool
 	arc( CEREAL_NVP( missing_dens_as_jump_ ) ); // _Bool
 	arc( CEREAL_NVP( no_chainend_ter_ ) ); // _Bool
+	arc( CEREAL_NVP( no_detect_pseudobonds_ ) ); // _Bool
 	arc( CEREAL_NVP( no_output_cen_ ) ); // _Bool
 	arc( CEREAL_NVP( normalize_to_thk_ ) ); // _Bool
 	arc( CEREAL_NVP( output_secondary_structure_ ) ); // _Bool
@@ -732,6 +744,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( preserve_crystinfo_ ); // _Bool
 	arc( missing_dens_as_jump_ ); // _Bool
 	arc( no_chainend_ter_ ); // _Bool
+	arc( no_detect_pseudobonds_ ); // _Bool
 	arc( no_output_cen_ ); // _Bool
 	arc( normalize_to_thk_ ); // _Bool
 	arc( output_secondary_structure_ ); // _Bool

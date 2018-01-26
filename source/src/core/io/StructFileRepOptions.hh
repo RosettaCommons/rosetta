@@ -77,6 +77,7 @@ public:
 	bool preserve_crystinfo() const;
 	bool missing_dens_as_jump() const;
 	bool no_chainend_ter() const;
+	bool no_detect_pseudobonds() const;
 	bool no_output_cen() const;
 	bool normalize_to_thk() const;
 	bool output_secondary_structure() const;
@@ -127,6 +128,7 @@ public:
 	void set_preserve_crystinfo( bool const preserve_crystinfo );
 	void set_missing_dens_as_jump( bool const missing_dens_as_jump );
 	void set_no_chainend_ter( bool const no_chainend_ter );
+	void set_no_detect_pseudobonds( bool const setting );
 	void set_no_output_cen( bool const no_output_cen );
 	void set_normalize_to_thk( bool const normalize_to_thk );
 	void set_output_secondary_structure( bool const output_secondary_structure );
@@ -199,6 +201,7 @@ private:
 	bool preserve_crystinfo_;
 	bool missing_dens_as_jump_;
 	bool no_chainend_ter_;
+	bool no_detect_pseudobonds_;
 	bool no_output_cen_;
 	bool normalize_to_thk_;
 	bool output_secondary_structure_;
