@@ -1,5 +1,7 @@
 README
 
+AMW: In response to the recent split of protocols.3, we are doing some emergency migration to cmake. Your usual workflow of "cd into this directory and then type the usual make_project.py all" will still work, but instead of what it used to do, it will be going into a cmake directory and doing some work, then copying the file to this directory.
+
 How to get these scripts to be useful in building a native xcode project for mini.
 
 1) cd into this directory
