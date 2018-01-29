@@ -166,9 +166,9 @@ HelixBendFilter::compute( core::pose::Pose const & pose ) const
 	bool filter( true );
 	numeric::xyzVector<core::Real> v1;
 	numeric::xyzVector<core::Real> v2;
-	core::Size h_len = end_res - begin_res;
-	if ( h_len < 4 ) {
-		TR << "This helix is too short for measuring curvature or H-bond geometry, passing by default with average curve = 180.0" << std::endl;
+	core::Size h_len = end_res - begin_res + 1;
+	if ( h_len < 8 ) {
+		TR << "This helix is too short for measuring curvature, passing by default with max curve = 180.0" << std::endl;
 		min_curve = 180.0;
 	} else {
 		for ( core::Size i=begin_res+4; i<=end_res-4; i++ ) {
@@ -204,14 +204,17 @@ HelixBendFilter::compute( core::pose::Pose const & pose ) const
 }
 
 core::Real
-HelixBendFilter::report_sm( core::pose::Pose const & ) const
+HelixBendFilter::report_sm( core::pose::Pose const & pose) const
 {
-	///compute(pose);
+	compute(pose);
 	if ( filter_status_ ) {
 		TR << "Filter passed: all helix turns CA angle are above threshold "<< threshold_ << "." << std::endl;
 		TR << "All H-bonding heavy atom pairs have a distance below 3.6A." << std::endl;
 		TR << "Max bending (min angle) of helix observed: "<< filter_val_ << std::endl;
+	} else {
+		TR << "Filter did not pass." << std::endl;
 	}
+
 	return filter_val_;
 }
 
