@@ -95,6 +95,16 @@ public:
 		mutres17->set_update_polymer_dependent( true );
 		mutres17->apply(*initial_pose_2chain);
 
+		initial_pose_2chain->set_chi( 1, 3, 68.0 );
+		initial_pose_2chain->set_chi( 2, 3, 62.0 );
+		initial_pose_2chain->set_chi( 3, 3, 72.0 );
+
+		initial_pose_2chain->set_chi( 1, 17, -71.0 );
+		initial_pose_2chain->set_chi( 2, 17, -63.0 );
+		initial_pose_2chain->set_chi( 3, 17, -74.0 );
+
+		initial_pose_2chain->update_residue_neighbors();
+
 		poses_2chain_.clear();
 		mirror_poses_2chain_.clear();
 
@@ -113,8 +123,54 @@ public:
 			mirror_poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(12);
 			mirror_poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(24);
 
+			for ( core::Size j(1), jmax(mirror_poses_2chain_[i+1]->total_residue()); j<=jmax; ++j ) {
+				for ( core::Size ichi(1), ichimax(mirror_poses_2chain_[i+1]->residue(j).type().nchi()); ichi<=ichimax; ++ichi ) {
+					poses_2chain_[i+1]->set_chi(ichi, j, initial_pose_2chain->chi( ichi, (j + i > jmax ? j + i - jmax: j + i) ) );
+					poses_2chain_[i+1]->update_residue_neighbors();
+					mirror_poses_2chain_[i+1]->set_chi(ichi, j, -1.0*poses_2chain_[i+1]->chi( ichi, j ) );
+					mirror_poses_2chain_[i+1]->update_residue_neighbors();
+				}
+			}
 		}
 
+		//Delete the following -- for debugging only.
+		/*  core::scoring::ScoreFunction tempsfxn;
+		tempsfxn.set_weight( core::scoring::fa_dun, 1.0 );
+		for(core::Size i(1); i<=poses_2chain_.size(); ++i) {
+		char outfile[256];
+		sprintf( outfile, "V_2CHAIN_TEMP_%04lu.pdb", i );
+		tempsfxn( *poses_2chain_[i] );
+		poses_2chain_[i]->dump_pdb(std::string(outfile));
+		sprintf( outfile, "V_2CHAIN_TEMP_MIRROR_%04lu.pdb", i );
+		tempsfxn( *mirror_poses_2chain_[i] );
+		mirror_poses_2chain_[i]->dump_pdb(std::string(outfile));
+		}
+
+		//Delete the following -- also for debugging only:
+		for(core::Size i(1); i<=poses_2chain_.size(); ++i) {
+		TR << "\nPose\tResidue\tMirror?\tPHI\tPSI\tOMEGA\tCHI1\tCHI2\tCHI3\tCHI4\n";
+		if( i>1 ) break;
+		for( core::Size ir(1), irmax(poses_2chain_[i]->total_residue()); ir<=irmax; ++ir) {
+		TR << i << "\t" << ir << "\t" << "NO" << "\t";
+		TR << poses_2chain_[i]->phi(ir) << "\t";
+		TR << poses_2chain_[i]->psi(ir) << "\t";
+		TR << poses_2chain_[i]->omega(ir) << "\t";
+		for(core::Size ichi(1), ichimax(poses_2chain_[i]->residue(ir).nchi() ); ichi<=ichimax; ++ichi) {
+		TR << poses_2chain_[i]->residue(ir).chi(ichi) << "\t";
+		}
+		TR << "\n";
+		TR << i << "\t" << ir << "\t" << "YES" << "\t";
+		TR << mirror_poses_2chain_[i]->phi(ir) << "\t";
+		TR << mirror_poses_2chain_[i]->psi(ir) << "\t";
+		TR << mirror_poses_2chain_[i]->omega(ir) << "\t";
+		for(core::Size ichi(1), ichimax(mirror_poses_2chain_[i]->residue(ir).nchi() ); ichi<=ichimax; ++ichi) {
+		TR << mirror_poses_2chain_[i]->residue(ir).chi(ichi) << "\t";
+		}
+		TR << "\n";
+		}
+		TR.flush();
+		}
+		*/
 	}
 
 	void tearDown() {

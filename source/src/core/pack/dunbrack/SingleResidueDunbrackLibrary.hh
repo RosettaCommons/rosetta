@@ -21,6 +21,7 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
+#include <core/chemical/AA.hh>
 
 // Utility Headers
 #include <utility/assert.hh>
@@ -305,7 +306,7 @@ public:
 				"chi angle must be between -180 and 180: "+utility::to_string(chi));
 		}
 
-		if ( aa_ == chemical::aa_pro || aa_ == chemical::aa_dpr /*D-proline*/ ) {
+		if ( aa_ == chemical::aa_pro || aa_ == chemical::aa_dpr /*D-proline*/ || aa_ == chemical::aa_b3p || aa_ == chemical::ou3_pro  ) {
 			if ( which_chi == 1 ) {
 				if ( chi > 0 ) { return 1; }
 				else { return 2; }

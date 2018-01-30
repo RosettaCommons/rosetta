@@ -782,7 +782,8 @@ rsrdl_ ## CHI ## _ ## BB.get_probability_for_rotamer( bb_ ## BB, 1 ); \
 srsrdl_ ## CHI ## _ ## BB.get_probability_for_rotamer( bb_ ## BB, 1 ); \
 rsrdl_ ## CHI ## _ ## BB.get_rotamer( bb_ ## BB, 1 ); \
 srsrdl_ ## CHI ## _ ## BB.get_rotamer( bb_ ## BB, 1 ); \
-srsrdl_ ## CHI ## _ ## BB.interpolate_nrchi_values( sizevec_ ## BB, sizevec_ ## BB, realvec_ ## BB, 1, realvec );
+srsrdl_ ## CHI ## _ ## BB.interpolate_nrchi_values( sizevec_ ## BB, sizevec_ ## BB, realvec_ ## BB, 1, realvec ); \
+rsrdl_ ## CHI ## _ ## BB.get_rotamer_from_chi_static_voronoi( chi, rotwell, rsd, pose );
 
 	// If you are adding support for rotamers with more than four chis or five
 	// backbone dihedrals, good for you. Have you created const Sizes for the

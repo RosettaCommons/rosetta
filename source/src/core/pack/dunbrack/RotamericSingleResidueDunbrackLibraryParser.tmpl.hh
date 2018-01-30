@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.hh
-/// @brief A helper class to assist in parsing rotamer libraries.
+/// @file core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.tmpl.hh
+/// @brief A helper class to assist in parsing rotamer libraries.  Template functions are declared here.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
 

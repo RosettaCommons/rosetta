@@ -143,6 +143,8 @@ mirror_pose_with_disulfides( core::pose::PoseCOP master) {
 
 	form_disulfides(output_pose);
 
+	output_pose->update_residue_neighbors();
+
 	return output_pose;
 }
 

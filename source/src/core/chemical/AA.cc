@@ -324,7 +324,7 @@ is_canonical_D_aa( AA const aa )
 /// @author Steven Cobms (steven.combs1@gmail.com)
 //////////////////////////////////////////////////////////
 bool
-is_canonical_L_aa( AA const aa){
+is_canonical_L_aa_or_gly( AA const aa){
 	if ( aa>=first_l_aa && aa<=num_canonical_aas ) return true;
 	return false;
 }

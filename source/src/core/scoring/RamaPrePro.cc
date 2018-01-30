@@ -83,7 +83,7 @@ RamaPrePro::eval_rpp_rama_score(
 	bool const return_derivs
 ) const {
 	core::chemical::AA const res_aa1( res1->backbone_aa() );
-	if ( (core::chemical::is_canonical_L_aa(res_aa1) || core::chemical::is_canonical_D_aa(res_aa1) || res_aa1 == core::chemical::aa_gly ) &&
+	if ( (core::chemical::is_canonical_L_aa_or_gly(res_aa1) || core::chemical::is_canonical_D_aa(res_aa1) || res_aa1 == core::chemical::aa_gly ) &&
 			!res1->defines_custom_rama_prepro_map( res2 && is_N_substituted( res2 ) )
 			) {
 		debug_assert( mainchain_torsions.size() == 2 );
@@ -157,7 +157,7 @@ RamaPrePro::eval_rpp_rama_score(
 	core::Real const d_multiplier( is_d ? -1.0 : 1.0 );
 
 	//If this is neither a canonical D-amino acid, nor a canonical L-amino acid, nor glycine return 0:
-	if ( !core::chemical::is_canonical_L_aa( res_aa1 ) && !is_d && res_aa1 != core::chemical::aa_gly ) {
+	if ( !core::chemical::is_canonical_L_aa_or_gly( res_aa1 ) && !is_d && res_aa1 != core::chemical::aa_gly ) {
 		if ( return_derivs ) {
 			denergy_dphi = 0.0;
 			denergy_dpsi = 0.0;
@@ -221,7 +221,7 @@ RamaPrePro::random_mainchain_torsions(
 ) const {
 	core::chemical::AA const res_aa1( res1->backbone_aa() );
 
-	if ( (core::chemical::is_canonical_L_aa(res_aa1) || core::chemical::is_canonical_D_aa(res_aa1) || res_aa1 == core::chemical::aa_gly ) &&
+	if ( (core::chemical::is_canonical_L_aa_or_gly(res_aa1) || core::chemical::is_canonical_D_aa(res_aa1) || res_aa1 == core::chemical::aa_gly ) &&
 			!res1->defines_custom_rama_prepro_map( is_N_substituted( res2 ) )
 			) { //This is canonical.
 		random_mainchain_torsions( res_aa1, res2, torsions );

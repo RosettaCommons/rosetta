@@ -50,7 +50,7 @@ public:
 
 	void setUp(){
 		// This is just leucine, but treated as though it's a non-canonical amino acid.
-		core_init_with_additional_options("-extra_res_fa core/pack/rotamers/LEU_NCAA_DUN02.params -dun10 false");
+		core_init_with_additional_options("-extra_res_fa core/pack/rotamers/LEU_NCAA_DUN02.params -dun10 false -fa_dun_canonicals_use_voronoi true -fa_dun_noncanonicals_use_voronoi true");
 	}
 
 	void tearDown(){

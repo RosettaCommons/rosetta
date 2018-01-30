@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/scoring/dunbrack/RotamericSingleResidueDunbrackLibrary.hh
+/// @file core/scoring/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh
 /// @brief   Declaration of rotameric rotamer libraries from Jun08 (as opposed to semi-rotameric)
 /// @author  Andrew Leaver-Fay
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Added Voronoi method for noncanonical fa_dun scoring.
 
 
 #ifndef INCLUDED_core_pack_dunbrack_RotamericSingleResidueDunbrackLibrary_tmpl_hh
@@ -50,6 +51,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Boost Headers
 #include <boost/cstdint.hpp>
@@ -116,7 +118,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 	bool const reduced_resolution_library
 ) :
 	parent( rt, T, dun02, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied ),
-	peptoid_( rt.is_peptoid() )
+	peptoid_( rt.is_peptoid() ),
+	canonical_aa_( rt.is_canonical_aa() && core::chemical::is_canonical_L_aa_or_gly( rt.aa() ) ),
+	canonicals_use_voronoi_( basic::options::option[ basic::options::OptionKeys::corrections::score::fa_dun_canonicals_use_voronoi ]() ),
+	noncanonicals_use_voronoi_( basic::options::option[ basic::options::OptionKeys::corrections::score::fa_dun_noncanonicals_use_voronoi ]() )
 {
 	// This is horrible but temporarily necessarily until we figure out how to distribute full beta rotlibs
 	// Betas automatically (if 3 BB) have phipsi binrange of 30
@@ -320,8 +325,12 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 ) const
 {
 	ChiVector chi ( rsd.chi() );
-	//Invert if we're dealing with a D-amino acid.
-	if ( rsd.type().is_d_aa() ) for ( core::Size i = 1; i <= chi.size(); i++ ) chi[ i ] *= -1.0;
+	if ( rsd.type().is_d_aa() ) {
+		for ( core::Size i(1), imax(chi.size()); i<=imax; ++i ) {
+			//Invert if we're dealing with a D-amino acid.
+			chi[ i ] *= -1.0;
+		}
+	}
 
 	Real4 & chimean           ( scratch.chimean()           );
 	Real4 & chisd             ( scratch.chisd()             );
@@ -355,8 +364,12 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	// compute rotamer number from chi
 	Size4 & rotwell( scratch.rotwell() );
 
-	/// Don't use derived class's version of this function.
-	RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static( chi, rotwell );
+	if ( ( canonical_aa_ && canonicals_use_voronoi_ ) || ( !canonical_aa_ && noncanonicals_use_voronoi_ ) ) {
+		get_rotamer_from_chi_static_voronoi( chi, rotwell, rsd, pose );
+	} else {
+		// Don't use derived class's version of this function.
+		RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static( chi, rotwell ); //Use old logic for canonicals.
+	}
 
 	Size packed_rotno( rotwell_2_packed_rotno( rotwell ) );
 
@@ -368,7 +381,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 	interpolate_rotamers( rsd, pose, scratch, packed_rotno, interpolated_rotamer );
 
-	if ( dun02() && core::chemical::is_canonical_L_aa( aa() ) ) {
+	if ( dun02() && canonical_aa_ ) {
 		for ( Size ii = 1; ii <= T; ++ii ) chidev[ ii ] = subtract_chi_angles( chi[ ii ], chimean[ ii ], aa(), ii );
 	} else {
 		for ( Size ii = 1; ii <= T; ++ii ) {
@@ -638,7 +651,11 @@ RotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 	Real maxprob( 0 );
 	if ( curr_rotamer_only ) {
 		Size4 & rotwell( scratch.rotwell() );
-		RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static( rsd.chi(), rotwell );
+		if ( ( canonical_aa_ && canonicals_use_voronoi_ ) || ( !canonical_aa_ && noncanonicals_use_voronoi_ ) ) {
+			get_rotamer_from_chi_static_voronoi( rsd.chi(), rotwell, rsd, pose );
+		} else {
+			RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static( rsd.chi(), rotwell );
+		}
 		Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
 		PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
 		interpolate_rotamers( rsd, pose, scratch, packed_rotno, interpolated_rotamer );
@@ -2159,6 +2176,47 @@ Size RotamericSingleResidueDunbrackLibrary< T, N >::memory_usage_dynamic() const
 	return total;
 }
 
+
+/// @brief Given chi values and a pose residue, return indices specifying the nearest rotamer well centre.
+/// @details This version uses a Voronoi-inspired algorithm: the nearest rotamer well to the input chi values, in wraparound
+/// angle space, is returned.  This is compatible with non-canonicals.  Might be slightly slower.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+template< Size T, Size N >
+void
+RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static_voronoi(
+	ChiVector const & chi,
+	Size4 & rot,
+	core::conformation::Residue const &rsd,
+	core::pose::Pose const &pose
+) const {
+	//Get current backbone bin:
+	utility::fixedsizearray1< core::Real, N > const bbs( get_IVs_from_rsd( rsd, pose ) );
+	utility::fixedsizearray1< core::Size, N > bb_bin;
+	get_bb_bins( bbs, bb_bin );
+	core::Size const bb_index( make_index< N >( N_BB_BINS, bb_bin ) );
+
+	//Loop through all rotamers in this backbone bin, and get closest to current chi.
+	core::Real dist_sq(0.0), lowest_dist_sq(0.0);
+	PackedDunbrackRotamer< T, N > const * lowest_rotamer( nullptr ); //Temporary use of raw pointer is simplest here.  Note that ownership of object pointed to is not an issue.
+	bool first(true);
+	for ( core::Size irot(1), irotmax(rotamers_.size2()); irot<=irotmax; ++irot ) {
+		PackedDunbrackRotamer< T, N > const &cur_rot( rotamers_( bb_index, irot ) );
+		dist_sq = 0;
+		for ( core::Size ichi(1), ichimax( rsd.type().nchi() - rsd.type().n_proton_chi() ); ichi<=ichimax; ++ichi ) {
+			dist_sq += pow( basic::subtract_degree_angles( cur_rot.chi_mean(ichi), chi[ichi] ), 2 );
+		}
+		if ( first || dist_sq < lowest_dist_sq ) {
+			lowest_rotamer = &cur_rot;
+			lowest_dist_sq = dist_sq;
+			first = false;
+		}
+	}
+	debug_assert( lowest_rotamer != nullptr ); //Should be guaranteed true.
+
+	// Get the rotamer bins, and store them in rot:
+	packed_rotno_2_rotwell( lowest_rotamer->packed_rotno(), rot );
+}
+
 template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi(
@@ -2195,7 +2253,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static(
 	if ( dun02() ) {
 		core::chemical::AA aa2( aa() );
 		if ( core::chemical::is_canonical_D_aa( aa2 ) ) aa2 = core::chemical::get_L_equivalent( aa2 );
-		if ( is_canonical_L_aa( aa2 ) ) { rotamer_from_chi_02( chi, aa2, T, rot ); return; }
+		if ( canonical_aa_ && is_canonical_L_aa_or_gly( aa2 ) ) { rotamer_from_chi_02( chi, aa2, T, rot ); return; }
 	}
 
 	debug_assert( chi.size() >= T );

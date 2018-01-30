@@ -125,7 +125,7 @@ OmegaTether::eval_omega_score_residue(
 	bool const is_d( rsd.type().is_d_aa() );
 	core::Real const d_multiplier( is_d ? -1.0 : 1.0 );
 	core::chemical::AA the_aa( rsd.aa() );
-	if ( !core::chemical::is_canonical_L_aa( the_aa ) /*includes gly*/ && !core::chemical::is_canonical_D_aa( the_aa ) ) {
+	if ( !core::chemical::is_canonical_L_aa_or_gly( the_aa ) /*includes gly*/ && !core::chemical::is_canonical_D_aa( the_aa ) ) {
 		the_aa = core::chemical::aa_gly;
 	} else if ( is_d ) {
 		the_aa = core::chemical::get_L_equivalent( the_aa );

@@ -178,7 +178,7 @@ ChunkSet::insert_protein_chunk_into_pose( core::pose::Pose & pose, Size const & 
 	for ( char const c : seq ) {
 		// a little more specific than we want, but ok for now...
 		core::chemical::AA aa = core::chemical::aa_from_oneletter_code( c );
-		if ( core::chemical::is_canonical_L_aa( aa ) ) {
+		if ( core::chemical::is_canonical_L_aa_or_gly( aa ) ) {
 			contains_protein = true;
 			break;
 		}

@@ -1597,7 +1597,7 @@ set_up_mapfile_reassignments_from_commandline(
 	ResidueTypeOP rsd
 ) {
 
-	if ( !is_canonical_L_aa( rsd->aa() ) ) return; //Note that is_canonical_L_aa() returns true also for glycine.
+	if ( !is_canonical_L_aa_or_gly( rsd->aa() ) ) return; //Note that is_canonical_L_aa_or_gly() returns true also for glycine.
 
 	bool const steep(basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_steep ]());
 	bool const nobidentate(basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_nobidentate ]());

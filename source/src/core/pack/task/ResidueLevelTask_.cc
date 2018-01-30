@@ -146,7 +146,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 			}
 		}
 		// allow noncanonical AAs and D-amino acids to be repacked
-		if ( !core::chemical::is_canonical_L_aa( original_residue.aa() ) ) {
+		if ( !core::chemical::is_canonical_L_aa_or_gly( original_residue.aa() ) ) {
 			allowed_residue_types_.push_back( original_residue.type_ptr() );
 		}
 

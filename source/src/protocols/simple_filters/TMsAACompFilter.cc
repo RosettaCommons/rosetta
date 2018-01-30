@@ -155,7 +155,7 @@ TMsAACompFilter::find_aa_composition( core::pose::Pose const & pose,
 
 	core::Real total = 0;
 	for ( core::Size i=start; i <= end; ++i ) {
-		if ( is_canonical_D_aa( pose.residue( i ).aa() ) || is_canonical_L_aa( pose.residue( i ).aa() ) ) {
+		if ( is_canonical_D_aa( pose.residue( i ).aa() ) || is_canonical_L_aa_or_gly( pose.residue( i ).aa() ) ) {
 			TR.Debug << "looking at " << i << " " << pose.residue( i  ).aa() << std::endl;
 			result.at( static_cast< char > ( oneletter_code_from_aa( pose.residue( i ).aa() ) ) ) += 1;
 			total++;

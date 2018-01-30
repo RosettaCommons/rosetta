@@ -94,6 +94,16 @@ public:
 		mutres17->set_update_polymer_dependent( true );
 		mutres17->apply(*initial_pose_2chain);
 
+		initial_pose_2chain->set_chi( 1, 3, 68.0 );
+		initial_pose_2chain->set_chi( 2, 3, 62.0 );
+		initial_pose_2chain->set_chi( 3, 3, 72.0 );
+
+		initial_pose_2chain->set_chi( 1, 17, -71.0 );
+		initial_pose_2chain->set_chi( 2, 17, -63.0 );
+		initial_pose_2chain->set_chi( 3, 17, -74.0 );
+
+		initial_pose_2chain->update_residue_neighbors();
+
 		poses_2chain_.clear();
 		mirror_poses_2chain_.clear();
 
@@ -112,8 +122,15 @@ public:
 			mirror_poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(12);
 			mirror_poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(24);
 
+			for ( core::Size j(1), jmax(mirror_poses_2chain_[i+1]->total_residue()); j<=jmax; ++j ) {
+				for ( core::Size ichi(1), ichimax(mirror_poses_2chain_[i+1]->residue(j).type().nchi()); ichi<=ichimax; ++ichi ) {
+					poses_2chain_[i+1]->set_chi(ichi, j, initial_pose_2chain->chi( ichi, (j + i > jmax ? j + i - jmax: j + i) ) );
+					poses_2chain_[i+1]->update_residue_neighbors();
+					mirror_poses_2chain_[i+1]->set_chi(ichi, j, -1.0*poses_2chain_[i+1]->chi( ichi, j ) );
+					mirror_poses_2chain_[i+1]->update_residue_neighbors();
+				}
+			}
 		}
-
 	}
 
 	void tearDown() {

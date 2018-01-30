@@ -197,7 +197,7 @@ is_canonical_D_aa( AA const aa );
 /// @author Steven Cobms (steven.combs1@gmail.com)
 //////////////////////////////////////////////////////////
 bool
-is_canonical_L_aa( AA const aa );
+is_canonical_L_aa_or_gly( AA const aa );
 
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type, return true if and only if

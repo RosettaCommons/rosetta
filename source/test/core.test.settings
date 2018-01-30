@@ -208,6 +208,10 @@ sources = {
 	"pack/rotamers" : [
 		"SingleNCAARotamerLibraryTests",
 		"SingleNCAARotamerLibraryTests_Dun02",
+		"SingleNCAARotamerLibraryTests_Dun02_no_voronoi",
+		"SingleNCAARotamerLibraryTests_equivalency_voronoi",
+		"SingleNCAARotamerLibraryTests_equivalency_no_voronoi",
+		"SingleNCAARotamerLibraryTests_oligourea",
 		"SingleResidueRotamerLibrary",
 		"SingleLigandRotamerLibrary",
 		"StoredRotamerLibrarySpecification",

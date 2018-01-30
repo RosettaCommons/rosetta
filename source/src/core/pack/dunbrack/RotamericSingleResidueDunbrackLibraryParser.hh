@@ -106,6 +106,32 @@ private:
 	/// @brief Confirm that all data vectors have the same length.  Throw an error if they don't.
 	void check_correct_vector_lengths() const;
 
+	/// @brief Determine the remapping for the indices of the rotamer wells read from disk to ensure that they
+	/// have the order consistent with the Rosetta convention.
+	/// @details Rotamers should be in order from lowest to highest in the range [0, 360).  Returns true if this is NOT the case, false otherwise.
+	/// If true, the rotamer_well_reordering map (which is cleared by this operation) is populated with a remapping that sorts the rotamers properly.
+	/// @note This uses the first backbone bin to determine the reordering.  After applying this to all rotamer wells, it is necessary
+	/// to check that no further reordering is needed.  The filename parameter is only used for error messages.
+	bool determine_rotamer_well_order( utility::vector1< std::map< core::Size, core::Size > > & rotamer_well_reordering, std::string const &filename ) const;
+
+	/// @brief This does a simple check of all of the rotamer well order, to determine whether it's consistent with
+	/// the Rosetta convention.
+	/// @details Rotamers should be in order from lowest to highest in the range [0, 360).  Returns true if this is NOT the case, false otherwise.
+	/// @note This checks ALL backbone bins.
+	bool check_rotamer_well_order() const;
+
+	/// @brief Given a map defining a reordering of rotamer wells, reorder rotamer wells.
+	void update_rotamer_well_order( utility::vector1< std::map< core::Size, core::Size > > const & rotamer_well_reordering );
+
+	/// @brief Performs a number of checks and corrections.
+	/// @details Calls check_correct_vector_lengths(), determine_rotamer_well_order(), check_rotamer_well_order(), and update_rotamer_well_order(), and , currently.  Additional checks
+	/// and corrections may be added in the future.
+	/// @param[in] filename The name of the rotamer file currently being read.  This is only used for error messages.
+	void do_all_checks_and_corrections( std::string const & filename );
+
+	/// @brief Given a Size->Size map, determine whether there exists a key that maps to a given value.
+	bool value_is_in_map( std::map< core::Size, core::Size > const &the_map, core::Size the_value ) const;
+
 private:
 
 	/// @brief This function forces the instantiation of virtual templated methods in the derived classes.
@@ -148,6 +174,12 @@ private:
 
 	/// @brief The chi standard deviation values, which define the ramping of each chi well.
 	utility::vector1< utility::vector1 < core::Real > > chi_std_devs_;
+
+	/// @brief Is this library a canonical amino acid's Dunbrack2002 library?
+	/// @details If it is, we need to skip the correction step, since the canonical Dun02 library has
+	/// wonky rotamer well orders that are corrected some other way.
+	bool is_canonical_dun02_library_;
+
 };
 
 } //core

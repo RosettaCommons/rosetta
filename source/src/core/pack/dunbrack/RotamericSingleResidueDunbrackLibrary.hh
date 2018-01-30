@@ -207,6 +207,18 @@ protected:
 	void
 	initialize_bicubic_splines();
 
+	/// @brief Given chi values and a pose residue, return indices specifying the nearest rotamer well centre.
+	/// @details This version uses a Voronoi-inspired algorithm: the nearest rotamer well to the input chi values, in wraparound
+	/// angle space, is returned.  This is compatible with non-canonicals.  Might be slightly slower.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void
+	get_rotamer_from_chi_static_voronoi(
+		ChiVector const & chi,
+		Size4 & rot,
+		core::conformation::Residue const &rsd,
+		core::pose::Pose const &pose
+	) const;
+
 	/// @brief When given a statically sized fixedsizearray, use this method.
 	void
 	get_rotamer_from_chi_static(
@@ -422,7 +434,6 @@ private:
 		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
 	) const;
 
-
 	void verify_phipsi_bins(
 		Real phi,
 		Real psi,
@@ -519,6 +530,19 @@ private:
 
 	// AMW: one peptoid flag needed
 	bool peptoid_ = false;
+
+	/// @brief Is this a canonical amino acid?
+	bool canonical_aa_;
+
+	/// @brief Should canonicals use Voronoi-based detection of nearest rotamer well (true), or hard-coded definitions (false)?
+	/// @details Read from options system in constructor.  Defaults to false (old behaviour preserved), though if we switch this to true
+	/// at some point in the future, we could deprecate a lot of hard-coded well definitions.
+	bool canonicals_use_voronoi_;
+
+	/// @brief Should noncanonicals use Voronoi-based detection of nearest rotamer well (true), or hard-coded definitions (false)?
+	/// @details Read from options system in constructor.  Defaults to false (old behaviour preserved), though if we switch this to true
+	/// at some point in the future, we could deprecate a lot of hard-coded well definitions.
+	bool noncanonicals_use_voronoi_;
 
 };
 
