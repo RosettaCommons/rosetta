@@ -412,9 +412,8 @@ void RelaxProtocolBase::apply_disulfides( core::pose::Pose & pose ){
 	using namespace scoring;
 	using namespace core::pose::datacache;
 
-
 	if ( ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) ||
-			( basic::options::option[ basic::options::OptionKeys::in::detect_disulf ].user() ) ) {
+			( basic::options::option[ basic::options::OptionKeys::in::detect_disulf ]() ) ) {  //changed to make sure it doesn't flag "-detect_disulf false" as true
 
 		std::string weight_set("score12_justdisulfides");
 		core::scoring::ScoreFunctionOP disulf_score_only(scoring::ScoreFunctionFactory::create_score_function( weight_set));
