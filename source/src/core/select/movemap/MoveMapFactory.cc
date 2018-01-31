@@ -459,11 +459,11 @@ void MoveMapFactory::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 	AttributeList mmfact_attributes;
 	mmfact_attributes
-		+ XMLSchemaAttribute( "bb", xsct_rosetta_bool, "Enable or disable movement for all backbone torsions (default: disabled)" )
-		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool, "Enable or disable movement for all chi torsions (default: disabled)" )
-		+ XMLSchemaAttribute( "nu", xsct_rosetta_bool, "Enable or disable movement for all nu torsions (default: disabled)" )
-		+ XMLSchemaAttribute( "branches", xsct_rosetta_bool, "Enable or disable movement for all branch torsions (default: disabled)" )
-		+ XMLSchemaAttribute( "jump", xsct_rosetta_bool, "Enable or disable movement for all jump DOFs (default: disabled)" );
+		+ XMLSchemaAttribute( "bb", xsct_rosetta_bool, "Enable or disable movement for all backbone torsions." )
+		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool, "Enable or disable movement for all chi torsions." )
+		+ XMLSchemaAttribute( "nu", xsct_rosetta_bool, "Enable or disable movement for all nu torsions." )
+		+ XMLSchemaAttribute( "branches", xsct_rosetta_bool, "Enable or disable movement for all branch torsions." )
+		+ XMLSchemaAttribute( "jumps", xsct_rosetta_bool, "Enable or disable movement for all jump DOFs." );
 
 	XMLSchemaComplexTypeGenerator xsct;
 	xsct.element_name( element_name() )
