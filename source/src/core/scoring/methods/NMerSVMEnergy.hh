@@ -55,6 +55,28 @@ public:
 	NMerSVMEnergy( utility::vector1< std::string > const & svm_fnames );
 
 
+	NMerSVMEnergy(
+		core::Size const nmer_length,
+		bool const gate_svm_scores,
+		core::Size const term_length,
+		bool const use_pssm_features,
+		core::Real const nmer_svm_scorecut,
+		utility::vector1< std::string > const & svm_fname_vec,
+		utility::vector1< std::string > const & pssm_fname_vec
+	);
+
+
+	NMerSVMEnergy(
+		core::Size const nmer_length,
+		bool const gate_svm_scores,
+		core::Size const term_length,
+		bool const use_pssm_features,
+		core::Real const nmer_svm_scorecut,
+		utility::vector1< std::string > const & svm_fname_vec,
+		utility::vector1< std::string > const & pssm_fname_vec,
+		std::string const & aa_matrix
+	);
+
 	virtual ~NMerSVMEnergy();
 
 	virtual
@@ -100,10 +122,12 @@ public:
 		core::Real &,
 		utility::vector1< core::Real > &
 	) const;
-	void read_nmer_svm_list( std::string const );
-	void read_nmer_svm( std::string const );
+
+	void read_nmer_svm_list( std::string );
+	void read_nmer_svm_fname_vector( utility::vector1< std::string > const & );
+	void read_nmer_svm( std::string );
 	core::Size n_svms() const;
-	void read_aa_encoding_matrix( std::string const );
+	void read_aa_encoding_matrix( std::string const & );
 	void nmer_length( core::Size const );
 	core::Size nmer_length() const;
 	void term_length( core::Size const );
@@ -111,12 +135,12 @@ public:
 	void use_pssm_features( bool const );
 	void gate_svm_scores( bool const );
 	void nmer_svm_scorecut( core::Real const );
-	utility::vector1< utility::libsvm::Svm_node_rosettaOP > get_svm_nodes( utility::vector1< core::Real > const ) const;
-	utility::vector1< core::Real > encode_aa_string( std::string const ) const;
-	utility::vector1< core::Real > encode_wtd_avg_aa_string( std::string const, utility::vector1< core::Real > const ) const;
-	utility::vector1< core::Real > encode_nmer( std::string const, core::Size const, core::Size const ) const;
-	void add_encoded_termini( std::string const, core::Size const, utility::vector1< core::Real > & ) const;
-	void add_pssm_features( std::string const, core::Size const, utility::vector1< core::Real > & ) const;
+	utility::vector1< utility::libsvm::Svm_node_rosettaOP > get_svm_nodes( utility::vector1< core::Real > const & ) const;
+	utility::vector1< core::Real > encode_aa_string( std::string const & ) const;
+	utility::vector1< core::Real > encode_wtd_avg_aa_string( std::string const &, utility::vector1< core::Real > const & ) const;
+	utility::vector1< core::Real > encode_nmer( std::string const &, core::Size const, core::Size const ) const;
+	void add_encoded_termini( std::string const &, core::Size const, utility::vector1< core::Real > & ) const;
+	void add_pssm_features( std::string const &, core::Size const, utility::vector1< core::Real > & ) const;
 
 private:
 	utility::vector1< utility::libsvm::Svm_rosettaOP > all_nmer_svms_;

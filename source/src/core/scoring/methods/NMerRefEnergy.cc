@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <basic/database/open.hh>
 #include <utility/file/file_sys_util.hh>
 
@@ -68,6 +69,12 @@ NMerRefEnergy::nmer_length( Size const nmer_length ){
 	nmer_cterm_ = nmer_length_ - 1 ;
 }
 
+Size
+NMerRefEnergy::n_tables() const
+{
+	return nmer_ref_energies_.size();
+}
+
 void
 NMerRefEnergy::initialize_from_options()
 {
@@ -82,15 +89,25 @@ NMerRefEnergy::NMerRefEnergy() :
 	read_nmer_tables_from_options();
 }
 
-NMerRefEnergy::NMerRefEnergy( std::map< std::string, core::Real > const & nmer_ref_energies_in ):
+NMerRefEnergy::NMerRefEnergy( utility::vector1< std::map< std::string, core::Real > > const & nmer_ref_energies_in ):
 	parent( methods::EnergyMethodCreatorOP( new NMerRefEnergyCreator ) )
 {
 	NMerRefEnergy::initialize_from_options();
 
 	nmer_ref_energies_.clear();
-	for ( auto const & it : nmer_ref_energies_in ) {
-		nmer_ref_energies_.insert( it );
+	for ( Size i = 1; i <= nmer_ref_energies_in.size(); ++i ) {
+		nmer_ref_energies_.push_back( nmer_ref_energies_in[ i ]  );
 	}
+}
+
+NMerRefEnergy::NMerRefEnergy(
+	core::Size const nmer_length,
+	utility::vector1< std::string > const & fname_vec
+) :
+	parent( methods::EnergyMethodCreatorOP( new NMerRefEnergyCreator ) )
+{
+	NMerRefEnergy::nmer_length( nmer_length  );
+	NMerRefEnergy::read_nmer_fname_vector( fname_vec );
 }
 
 NMerRefEnergy::~NMerRefEnergy() = default;
@@ -136,6 +153,17 @@ void NMerRefEnergy::read_nmer_table_list( std::string const & ref_list_fname ) {
 	}
 }
 
+//load tables from a vector of filenames
+void
+NMerRefEnergy::read_nmer_fname_vector( utility::vector1< std::string > const & fname_vec ) {
+	//now loop over all names in vector
+	for ( Size i = 1; i<= fname_vec.size(); ++i ) {
+		std::string const & fname( fname_vec[ i ] );
+		NMerRefEnergy::read_nmer_table( fname );
+	}
+}
+
+// this now appends a new table (map) to the vector of tables (maps) every time new file is read
 void NMerRefEnergy::read_nmer_table( std::string const & ref_fname ) {
 
 	TR << "checking for NMerRefEnergy scores" << std::endl;
@@ -151,6 +179,10 @@ void NMerRefEnergy::read_nmer_table( std::string const & ref_fname ) {
 	if ( !in_stream.good() ) {
 		utility_exit_with_message( "[ERROR] Error opening NMerRefEnergy file at " + ref_fname );
 	}
+
+	// single new empty map object to store nmer energies
+	std::map< std::string, core::Real > nmer_ref_energy;
+
 	std::string line;
 	while ( getline( in_stream, line) ) {
 		utility::vector1< std::string > const tokens ( utility::split( line ) );
@@ -168,17 +200,16 @@ void NMerRefEnergy::read_nmer_table( std::string const & ref_fname ) {
 		}
 		//everything is cool! nothing is fucked!
 		Real const energy( atof( tokens[ 2 ].c_str() ) );
-		//Hmmmm... if we have duplicate entries, say in multiple tables, what should we do? error, replace, or sum?
-		//I think we should sum them; that is, all lists are correct, even if they say diff things about diff nmers
-		//  if( nmer_ref_energies_.count( sequence ) ) utility_exit_with_message( "[ERROR] NMer ref energy database file "
-		//    + ref_fname + " has double entry for sequence " + sequence );
-		if ( nmer_ref_energies_.count( sequence ) ) {
+		//Hmmmm... if we have duplicate entries in one table, what should we do? error, replace, or sum?
+		//I think we should sum them; that is, all entries are correct, even if they say diff things about same sequence may be true statements that are combined in objective function
+		if ( nmer_ref_energy.count( sequence ) ) {
 			TR.Warning << "NMer ref energy database file "
 				+ ref_fname + " has double entry for sequence " + sequence + " Summing with prev value..." << std::endl ;
-			nmer_ref_energies_[ sequence ] += energy;
-		} else nmer_ref_energies_[ sequence ] = energy;
+			nmer_ref_energy[ sequence ] += energy;
+		} else nmer_ref_energy[ sequence ] = energy;
 	}
-
+	// append map to vector of maps
+	nmer_ref_energies_.push_back( nmer_ref_energy );
 }
 
 
@@ -188,6 +219,53 @@ NMerRefEnergy::clone() const
 	return EnergyMethodOP( new NMerRefEnergy( nmer_ref_energies_ ) );
 }
 
+void
+NMerRefEnergy::get_residue_energy_by_table(
+	pose::Pose const & pose,
+	Size const & seqpos,
+	Real & rsd_energy_sum,
+	utility::vector1< Real > & rsd_table_energies
+) const
+{
+	debug_assert( rsd_table_energies.size() == n_tables() );
+	//for now, just assign all of the p1=seqpos frame's nmer_table energy to this residue
+	//TODO: distribute frame's nmer_table energy evenly across the nmer
+	//TODO: avoid wasting calc time by storing nmer_value, nmer_val_out_of_date in pose cacheable data
+	Size p1_seqpos( seqpos );
+
+	//get the nmer string
+	//TODO: how deal w/ sequences shorter than nmer_length_?
+	// this matters at both termini… maybe take max of all overlapping frames w/ missing res as 'X'?
+	// go ahead and bail if we fall off the end of the chain
+	if ( p1_seqpos + nmer_length_ - 1 <= pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ) {
+		//need p1 position in this chain's sequence, offset with index of first res
+		std::string chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
+
+		rsd_energy_sum = 0.;
+		for ( Size i = 1; i <= n_tables(); ++i ) {
+
+			std::map < std::string, core::Real > nmer_ref_energy( nmer_ref_energies_[ i ] );
+			if ( nmer_ref_energy.empty() ) return;
+			//skip if not a NMer center
+			if ( seqpos < 1 || seqpos > pose.size() - nmer_cterm_ ) return;
+			//get the NMer centered on seqpos
+			std::string sequence;
+			for ( Size iseq = seqpos; iseq <= seqpos + nmer_cterm_; ++iseq ) {
+				sequence += pose.residue( iseq ).name1();
+			}
+			//bail if seq not in table
+			if ( !nmer_ref_energy.count( sequence ) ) continue;
+			//must use find because this is a const function!
+			//the [] operator will add the element to the map if key not found, which changes the state of this function
+			Real const rsd_table_energy( nmer_ref_energy.find( sequence )->second );
+
+			//store this tables rsd energy
+			rsd_table_energies[ i ] = rsd_table_energy;
+			//total score is just sum of all tables
+			rsd_energy_sum += rsd_table_energy;
+		}
+	}
+}
 
 //retrieves ref energy of NMer centered on seqpos
 void
@@ -197,25 +275,13 @@ NMerRefEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-	using namespace chemical;
-
 	if ( nmer_ref_energies_.empty() ) return;
 	Size const seqpos( rsd.seqpos() );
-	//skip if not a NMer center
-	if ( seqpos < 1 || seqpos > pose.size() - nmer_cterm_ ) return;
-	//get the NMer centered on seqpos
-	std::string sequence;
-	for ( Size iseq = seqpos; iseq <= seqpos + nmer_cterm_; ++iseq ) {
-		sequence += pose.residue( iseq ).name1();
-	}
-	//bail if seq not in table
-	if ( !nmer_ref_energies_.count( sequence ) ) return;
-	//must use find because this is a const function!
-	//the [] operator will add the element to the map if key not found, which changes the state of this function
-	Real const energy( nmer_ref_energies_.find( sequence )->second );
-	emap[ nmer_ref ] += energy;
 
-	return;
+	Real rsd_energy( 0. );
+	utility::vector1< Real > rsd_table_energies( n_tables(), Real( 0. ) );
+	get_residue_energy_by_table( pose, seqpos, rsd_energy, rsd_table_energies );
+	emap[ nmer_ref ] += rsd_energy;
 
 }
 
@@ -245,4 +311,3 @@ NMerRefEnergy::version() const
 } // methods
 } // scoring
 } // core
-

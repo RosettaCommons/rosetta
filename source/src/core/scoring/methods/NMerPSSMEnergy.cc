@@ -109,10 +109,26 @@ NMerPSSMEnergy::NMerPSSMEnergy( utility::vector1< std::map< chemical::AA, utilit
 		for ( auto const & it : nmer_pssm_in ) {
 			nmer_pssm.insert( it );
 		}
-		//append new copy to our cleared instance
+		// append new copy to our cleared instance
 		all_nmer_pssms_.push_back( nmer_pssm );
 	}
 }
+
+// full ctor, init pssm fnames with vector of fnames
+NMerPSSMEnergy::NMerPSSMEnergy(
+	core::Size const nmer_length,
+	bool const gate_pssm_scores,
+	core::Real const nmer_pssm_scorecut,
+	utility::vector1< std::string > const & pssm_fname_vec
+) :
+	parent( methods::EnergyMethodCreatorOP( new NMerPSSMEnergyCreator ) )
+{
+	NMerPSSMEnergy::nmer_length( nmer_length  );
+	NMerPSSMEnergy::gate_pssm_scores( gate_pssm_scores );
+	NMerPSSMEnergy::nmer_pssm_scorecut( nmer_pssm_scorecut );
+	NMerPSSMEnergy::read_nmer_pssm_fname_vector( pssm_fname_vec );
+}
+
 
 NMerPSSMEnergy::~NMerPSSMEnergy() = default;
 
@@ -140,6 +156,8 @@ void NMerPSSMEnergy::read_nmer_pssm_list( std::string pssm_list_fname ) {
 		pssm_list_fname = basic::database::full_name( pssm_list_fname, false );
 	}
 	TR << "reading NMerPSSMEnergy list from " << pssm_list_fname << std::endl;
+	TR << "PSSMs are cleared each time a list is loaded!" << std::endl;
+	all_nmer_pssms_.clear();
 	utility::io::izstream in_stream( pssm_list_fname );
 	if ( !in_stream.good() ) {
 		utility_exit_with_message( "[ERROR] Error opening NMerPSSMEnergy list file" );
@@ -150,6 +168,15 @@ void NMerPSSMEnergy::read_nmer_pssm_list( std::string pssm_list_fname ) {
 		utility::vector1< std::string > const tokens( utility::split( pssm_fname ) );
 		//skip comments
 		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
+		NMerPSSMEnergy::read_nmer_pssm( pssm_fname );
+	}
+}
+
+//read pssm files from vector of filenames
+void NMerPSSMEnergy::read_nmer_pssm_fname_vector( utility::vector1< std::string > const & pssm_fname_vec ) {
+	//now loop over all names in vector
+	for ( Size i = 1; i<= pssm_fname_vec.size(); ++i ) {
+		std::string const & pssm_fname( pssm_fname_vec[ i ] );
 		NMerPSSMEnergy::read_nmer_pssm( pssm_fname );
 	}
 }
@@ -302,4 +329,3 @@ NMerPSSMEnergy::version() const
 } // methods
 } // scoring
 } // core
-

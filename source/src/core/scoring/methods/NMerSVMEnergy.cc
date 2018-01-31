@@ -150,6 +150,61 @@ NMerSVMEnergy::NMerSVMEnergy( utility::vector1< std::string > const & svm_fnames
 	}
 }
 
+// full ctor init with vector of svm filenames with default blosum encoding matrix
+NMerSVMEnergy::NMerSVMEnergy(
+	core::Size const nmer_length,
+	bool const gate_svm_scores,
+	core::Size const term_length,
+	bool const use_pssm_features,
+	core::Real const nmer_svm_scorecut,
+	utility::vector1< std::string > const & svm_fname_vec,
+	utility::vector1< std::string > const & pssm_fname_vec
+) :
+	parent( methods::EnergyMethodCreatorOP( new NMerSVMEnergyCreator ) )
+{
+	NMerSVMEnergy::nmer_length( nmer_length  );
+	NMerSVMEnergy::gate_svm_scores( gate_svm_scores );
+	NMerSVMEnergy::term_length( term_length );
+	NMerSVMEnergy::use_pssm_features( use_pssm_features );
+	NMerSVMEnergy::nmer_svm_scorecut( nmer_svm_scorecut );
+	NMerSVMEnergy::read_nmer_svm_fname_vector( svm_fname_vec );
+	NMerSVMEnergy::read_aa_encoding_matrix(
+		//default to database BLOSUM62
+		basic::database::full_name( "sequence/substitution_matrix/BLOSUM62.prob.rescale" ) );
+	// set pssm options and pssm file paths
+	nmer_pssm_.nmer_length( nmer_length );
+	nmer_pssm_.gate_pssm_scores( false );
+	nmer_pssm_.nmer_pssm_scorecut( 0.0 );
+	nmer_pssm_.read_nmer_pssm_fname_vector( pssm_fname_vec );
+}
+
+// full ctor init with vector of svm filenames with custom encoding matrix
+NMerSVMEnergy::NMerSVMEnergy(
+	Size const nmer_length,
+	bool const gate_svm_scores,
+	Size const term_length,
+	bool const use_pssm_features,
+	core::Real const nmer_svm_scorecut,
+	utility::vector1< std::string > const & svm_fname_vec,
+	utility::vector1< std::string > const & pssm_fname_vec,
+	std::string const & aa_matrix
+) :
+	parent( methods::EnergyMethodCreatorOP( new NMerSVMEnergyCreator ) )
+{
+	NMerSVMEnergy::nmer_length( nmer_length  );
+	NMerSVMEnergy::gate_svm_scores( gate_svm_scores );
+	NMerSVMEnergy::term_length( term_length );
+	NMerSVMEnergy::use_pssm_features( use_pssm_features );
+	NMerSVMEnergy::nmer_svm_scorecut( nmer_svm_scorecut );
+	NMerSVMEnergy::read_nmer_svm_fname_vector( svm_fname_vec );
+	NMerSVMEnergy::read_aa_encoding_matrix( aa_matrix );
+	// set pssm options and pssm file paths
+	nmer_pssm_.nmer_length( nmer_length );
+	nmer_pssm_.gate_pssm_scores( false );
+	nmer_pssm_.nmer_pssm_scorecut( 0.0 );
+	nmer_pssm_.read_nmer_pssm_fname_vector( pssm_fname_vec );
+}
+
 NMerSVMEnergy::~NMerSVMEnergy() = default;
 
 void
@@ -161,12 +216,12 @@ NMerSVMEnergy::read_nmer_svms_from_options() {
 
 	//check for svm list file
 	if ( option[ OptionKeys::score::nmer_svm_list ].user() ) {
-		std::string const svm_list_fname( option[ OptionKeys::score::nmer_svm_list ] );
+		std::string const & svm_list_fname( option[ OptionKeys::score::nmer_svm_list ] );
 		NMerSVMEnergy::read_nmer_svm_list( svm_list_fname );
 	}
 	//use single svm file
 	if ( option[ OptionKeys::score::nmer_svm ].user() ) {
-		std::string const svm_fname( option[ OptionKeys::score::nmer_svm ] );
+		std::string const & svm_fname( option[ OptionKeys::score::nmer_svm ] );
 		NMerSVMEnergy::read_nmer_svm( svm_fname );
 	}
 }
@@ -178,6 +233,8 @@ NMerSVMEnergy::read_nmer_svm_list( std::string svm_list_fname ) {
 		svm_list_fname = basic::database::full_name( svm_list_fname, false );
 	}
 	TR << "reading NMerSVMEnergy list from " << svm_list_fname << std::endl;
+	TR << "SVM cache is cleared each time a list is loaded!" << std::endl;
+	all_nmer_svms_.clear();
 	utility::io::izstream in_stream( svm_list_fname );
 	if ( !in_stream.good() ) {
 		utility_exit_with_message( "Error opening NMerSVMEnergy list file" );
@@ -188,6 +245,16 @@ NMerSVMEnergy::read_nmer_svm_list( std::string svm_list_fname ) {
 		utility::vector1< std::string > const tokens( utility::split( svm_fname ) );
 		//skip comments
 		if ( tokens[ 1 ][ 0 ] == '#' ) continue;
+		NMerSVMEnergy::read_nmer_svm( svm_fname );
+	}
+}
+
+//load svms from a vector of filenames
+void
+NMerSVMEnergy::read_nmer_svm_fname_vector( utility::vector1< std::string > const & svm_fname_vec ) {
+	//now loop over all names in vector
+	for ( Size i = 1; i<= svm_fname_vec.size(); ++i ) {
+		std::string const & svm_fname( svm_fname_vec[ i ] );
 		NMerSVMEnergy::read_nmer_svm( svm_fname );
 	}
 }
@@ -208,7 +275,7 @@ NMerSVMEnergy::read_nmer_svm( std::string svm_fname ) {
 //for smooth encoding, load BLOSUM62 or similar
 //for exact encoding, load an identity matrix
 void
-NMerSVMEnergy::read_aa_encoding_matrix( std::string const fname ){
+NMerSVMEnergy::read_aa_encoding_matrix( std::string const & fname ){
 
 	//clear the old data in case we're re-init'ing
 	aa_encoder_.clear();
@@ -248,7 +315,7 @@ NMerSVMEnergy::clone() const
 
 //methods called by const methods must be const!
 vector1< Svm_node_rosettaOP >
-NMerSVMEnergy::get_svm_nodes( vector1< Real > const feature_vals ) const
+NMerSVMEnergy::get_svm_nodes( vector1< Real > const & feature_vals ) const
 {
 	vector1< Svm_node_rosettaOP > features;
 	Size feature_idx( 1 );
@@ -261,7 +328,7 @@ NMerSVMEnergy::get_svm_nodes( vector1< Real > const feature_vals ) const
 
 //methods called by const methods must be const!
 vector1< Real >
-NMerSVMEnergy::encode_aa_string( std::string const seq ) const
+NMerSVMEnergy::encode_aa_string( std::string const & seq ) const
 {
 	vector1< Real > feature_vals;
 	for ( Size iseq = 0; iseq <= seq.size() - 1; ++iseq ) {
@@ -281,7 +348,7 @@ NMerSVMEnergy::encode_aa_string( std::string const seq ) const
 
 //return feature vector with features averaged over sequence positions
 vector1< Real >
-NMerSVMEnergy::encode_wtd_avg_aa_string( std::string const seq, vector1< Real > const wts ) const
+NMerSVMEnergy::encode_wtd_avg_aa_string( std::string const & seq, vector1< Real > const & wts ) const
 {
 	debug_assert( seq.length() == wts.size() );
 	//get scale factors from relative wts, must sum to one!
@@ -292,7 +359,7 @@ NMerSVMEnergy::encode_wtd_avg_aa_string( std::string const seq, vector1< Real > 
 
 	vector1< Real > feature_vals;
 	for ( Size iseq = 0; iseq <= seq.size() - 1; ++iseq ) {
-		std::string aa( seq.substr( iseq, 1 ) );
+		std::string const aa( seq.substr( iseq, 1 ) );
 		vector1< Real > aa_feature_vals( encode_aa_string( aa ) );
 		for ( Size ival = 1; ival <= aa_feature_vals.size(); ++ival ) {
 			Real val_norm( wts_norm[ iseq + 1 ] * aa_feature_vals[ ival ] );
@@ -307,7 +374,7 @@ NMerSVMEnergy::encode_wtd_avg_aa_string( std::string const seq, vector1< Real > 
 
 //chain_seqpos is the P1 position of the epitope
 vector1< Real >
-NMerSVMEnergy::encode_nmer( std::string const chain_sequence, Size const chain_seqpos, Size const isvm ) const
+NMerSVMEnergy::encode_nmer( std::string const & chain_sequence, Size const chain_seqpos, Size const isvm ) const
 {
 	std::string const nmer_seq( chain_sequence.substr( chain_seqpos - 1, nmer_length_ ) );
 	vector1< Real > feature_vals( encode_aa_string( nmer_seq ) );
@@ -322,7 +389,7 @@ NMerSVMEnergy::encode_nmer( std::string const chain_sequence, Size const chain_s
 
 //chain_seqpos is the P1 position of the epitope
 void
-NMerSVMEnergy::add_encoded_termini( std::string const chain_sequence, Size const chain_seqpos, vector1< Real > & feature_vals ) const
+NMerSVMEnergy::add_encoded_termini( std::string const & chain_sequence, Size const chain_seqpos, vector1< Real > & feature_vals ) const
 {
 	//get term nmers upstream and downstrem of core, use dummy - for missing res
 	std::string nterm_seq, cterm_seq;
@@ -354,11 +421,11 @@ NMerSVMEnergy::add_encoded_termini( std::string const chain_sequence, Size const
 // make sure you prescale these pssms! use the same ones for training and here
 // lets prescale them by logoddsing against backgroun distribution
 void
-NMerSVMEnergy::add_pssm_features( std::string const seq, Size const isvm, vector1< Real > & feature_vals ) const
+NMerSVMEnergy::add_pssm_features( std::string const & seq, Size const isvm, vector1< Real > & feature_vals ) const
 {
 	if ( isvm > nmer_pssm_.n_pssms() ) {
 		utility_exit_with_message(
-			"NMerSVMEnergy pssm features require one pssm per svm model. Check your svm and pssm lists for same length!\n" );
+			"NMerSVMEnergy pssm features require one pssm per svm model. Check your svm and pssm lists for same length! NMerPSSMEnergy has " + std::to_string( nmer_pssm_.n_pssms() ) + " models defined. NMerSVMEnergy has " + std::to_string( n_svms() ) + " models defined\n" );
 	}
 	for ( Size iseq = 0; iseq <= seq.size() - 1; ++iseq ) {
 		//iter through encoding vector for each char of seq
@@ -380,7 +447,7 @@ NMerSVMEnergy::get_residue_energy_by_svm(
 	//for now, just assign all of the p1=seqpos frame's nmer_svm energy to this residue
 	//TODO: distribute frame's nmer_svm energy evenly across the nmer
 	//TODO: avoid wasting calc time by storing nmer_value, nmer_val_out_of_date in pose cacheable data
-	Size p1_seqpos( seqpos );
+	Size const p1_seqpos( seqpos );
 
 	//get the nmer string
 	//TODO: how deal w/ sequences shorter than nmer_length_?
@@ -388,8 +455,8 @@ NMerSVMEnergy::get_residue_energy_by_svm(
 	// go ahead and bail if we fall off the end of the chain
 	if ( p1_seqpos + nmer_length_ - 1 <= pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ) {
 		//need p1 position in this chain's sequence, offset with index of first res
-		Size chain_p1_seqpos( p1_seqpos - pose.conformation().chain_begin( pose.chain( p1_seqpos ) ) + 1 );
-		std::string chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
+		Size const chain_p1_seqpos( p1_seqpos - pose.conformation().chain_begin( pose.chain( p1_seqpos ) ) + 1 );
+		std::string const & chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
 
 		rsd_energy_avg = 0.;
 		//encode nmer string --> feature(Svm_node) vector
@@ -454,4 +521,3 @@ NMerSVMEnergy::version() const
 } // methods
 } // scoring
 } // core
-

@@ -53,6 +53,14 @@ public:
 	NMerPSSMEnergy( utility::vector1< std::map< core::chemical::AA, utility::vector1< core::Real > > > const & all_nmer_pssms_in );
 
 
+	NMerPSSMEnergy(
+		core::Size const nmer_length,
+		bool const gate_pssm_scores,
+		core::Real const nmer_pssm_scorecut,
+		utility::vector1< std::string > const & pssm_fname_vec
+	);
+
+
 	virtual ~NMerPSSMEnergy();
 
 	virtual
@@ -91,12 +99,21 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
-	void read_nmer_pssm_list( std::string const );
-	void read_nmer_pssm( std::string const );
+	/// @brief read a file containing a list of pssm filenames and load them
+	void read_nmer_pssm_list( std::string );
+	/// @brief accept a vector of pssm filenames and load them
+	void read_nmer_pssm_fname_vector( utility::vector1< std::string > const & );
+	/// @brief read a pssm file and load it
+	void read_nmer_pssm( std::string );
+	/// @brief define length N of NMer polymer subsequence to calculate (must match pssm)
 	void nmer_length( core::Size const );
+	/// @brief set minimum value for low scoring nmers?
 	void gate_pssm_scores( bool const );
+	/// @brief nmer pssm scorecut gate for ignoring low scoring nmers
 	void nmer_pssm_scorecut( core::Real const );
+	/// @brief return the pssm energy of a single pssm for one entry in the pssm matrix
 	core::Real pssm_energy_at_frame_seqpos( core::Size const, core::chemical::AA const, core::Size const ) const;
+	/// @brief return the number of total pssms loaded
 	core::Size n_pssms() const;
 
 private:

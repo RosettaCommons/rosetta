@@ -50,7 +50,13 @@ public:
 	NMerRefEnergy();
 
 
-	NMerRefEnergy( std::map< std::string, core::Real > const & nmer_ref_energies_in );
+	NMerRefEnergy( utility::vector1< std::map< std::string, core::Real > > const & nmer_ref_energies_in );
+
+
+	NMerRefEnergy(
+		core::Size const nmer_length,
+		utility::vector1< std::string > const & fname_vec
+	);
 
 
 	virtual ~NMerRefEnergy();
@@ -63,6 +69,14 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
+	/// @brief return the reference energy for a given reference list at a nmer frame sequence position
+	void
+	get_residue_energy_by_table(
+		core::pose::Pose const &,
+		core::Size const &,
+		core::Real &,
+		utility::vector1< core::Real > &
+	) const;
 
 	virtual
 	void
@@ -91,18 +105,26 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
+	/// @brief read reference energy lists from a vector of filenames
+	void read_nmer_fname_vector( utility::vector1< std::string > const & );
 
 	//methods to init from outside (for filter construction)
 	void nmer_length( Size const nmer_length );
+	/// @brief init all options from option flags
 	void initialize_from_options();
+	/// @brief return number of tables currently loaded in memory
+	core::Size n_tables() const;
 
 private:
-	std::map< std::string, core::Real > nmer_ref_energies_;
+	utility::vector1< std::map< std::string, core::Real > > nmer_ref_energies_;
 	core::Size nmer_length_;
 	core::Size nmer_cterm_;
 
+	/// @brief read reference energies from a file containing seq strings and values
 	void read_nmer_table( std::string const & ref_fname );
+	/// @brief read reference energy lists from a file containing a list of filenames
 	void read_nmer_table_list( std::string const & ref_list_fname );
+	/// @brief read reference tables from option flags
 	void read_nmer_tables_from_options();
 	virtual
 	core::Size version() const;

@@ -474,6 +474,7 @@ sources = {
 		"LinearChainbreakEnergy",
 		"MMBondAngleEnergy",
 		"MMTorsionEnergy",
+		"NMerSVMEnergy",
 		"PairEnergy",
 		"P_AA_pp_Energy",
 		"P_AA_pp_Energy_symmgly",
