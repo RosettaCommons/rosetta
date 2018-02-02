@@ -54,6 +54,7 @@ public:
 	void CA_only( bool pick ) { CA_only_ = pick; }
 	void GDT( bool pick ) { gdt_ = pick; }
 	void superimpose( bool pick ) { superimpose_ = pick; }
+	void count_residues( bool pick ) { count_residues_ = pick; }
 	void reference_selector( core::select::residue_selector::ResidueSelectorCOP const &  select ) { reference_select_ = select; }
 	void reference_selector( core::select::residue_selector::ResidueSelector const &  select ) { reference_select_ = select.clone(); }
 	void query_selector( core::select::residue_selector::ResidueSelectorCOP const &  select ) { query_select_ = select; }
@@ -97,6 +98,7 @@ private:
 	inline static bool default_ca_selection() { return true; }
 	inline static bool default_gdt_selection() { return false; }
 	inline static bool default_superimpose_selection() { return true; }
+	inline static bool default_count_residues() { return true; }
 
 private:
 	core::select::residue_selector::ResidueSelectorCOP reference_select_;
@@ -107,6 +109,7 @@ private:
 	bool CA_only_;
 	bool gdt_;
 	bool superimpose_;
+	bool count_residues_;
 
 };
 

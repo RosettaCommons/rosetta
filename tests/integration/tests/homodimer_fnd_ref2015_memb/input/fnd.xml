@@ -118,7 +118,7 @@
     <ScoreType name="a_helicality_symm" scorefxn="helicality" score_type="mp_helicality" confidence="0" threshold="10"/>
     <MPSpanAngle name="a_angle_1" tm="1" ang_min="0" ang_max="50" confidence="0"/>
     <MPSpanAngle name="a_angle_2" tm="2" ang_min="0" ang_max="50" confidence="0"/>
-    <RmsdFromResidueSelector name="a_rmsd" CA_only="1" reference_selector="layer" query_selector="layer" confidence="0" threshold="15"/>
+    <RmsdFromResidueSelectorFilter name="a_rmsd" CA_only="1" reference_selector="layer" query_selector="layer" confidence="0" count_residues="false" threshold="15"/>
     <BindingStrain name="a_bind" scorefxn="%%energy_function%%" jump="1" confidence="0" threshold="5"/>
     <PoseInfo name="info"/>
   </FILTERS>

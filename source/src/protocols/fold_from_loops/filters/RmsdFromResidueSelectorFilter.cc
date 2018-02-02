@@ -64,7 +64,8 @@ RmsdFromResidueSelectorFilter::RmsdFromResidueSelectorFilter() :
 	sensitivity_( 0.001 ),
 	CA_only_ ( default_ca_selection() ),
 	gdt_( default_gdt_selection() ),
-	superimpose_( default_superimpose_selection() )
+	superimpose_( default_superimpose_selection() ),
+	count_residues_( default_count_residues() )
 {
 }
 
@@ -108,8 +109,10 @@ RmsdFromResidueSelectorFilter::compute( core::pose::Pose const & pose ) const
 	// runtime_assert_msg( count_selected( query_subset ) == count_selected( reference_subset ),
 	//  "Selections must have the same number of residues.");
 
-	if ( count_selected( query_subset ) != count_selected( reference_subset ) ) {
-		throw CREATE_EXCEPTION(utility::excn::BadInput,  info.str() );
+	if ( count_residues_ ) {
+		if ( count_selected( query_subset ) != count_selected( reference_subset ) ) {
+			throw CREATE_EXCEPTION(utility::excn::BadInput,  info.str() );
+		}
 	}
 
 	grafting::simple_movers::DeleteRegionMover deleter;
@@ -187,6 +190,7 @@ RmsdFromResidueSelectorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::da
 	CA_only( tag->getOption<bool>( "CA_only", default_ca_selection() ) );
 	GDT( tag->getOption<bool>( "use_gdt", default_gdt_selection() ) );
 	superimpose( tag->getOption<bool>( "superimpose", default_superimpose_selection() ) );
+	count_residues( tag->getOption<bool>( "count_residues", default_count_residues() ) );
 
 	reference_selector( core::select::residue_selector::get_residue_selector( tag->getOption< std::string >( "reference_selector" ), data_map ) );
 	query_selector( core::select::residue_selector::get_residue_selector( tag->getOption< std::string >( "query_selector" ), data_map ) );
@@ -201,6 +205,8 @@ void RmsdFromResidueSelectorFilter::provide_xml_schema( utility::tag::XMLSchemaD
 		+ XMLSchemaAttribute::attribute_w_default( "CA_only", xsct_rosetta_bool, "When selected, use only CA RMSD", std::to_string( default_ca_selection() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "use_gdt", xsct_rosetta_bool, "When selected, use GDTm algorithm", std::to_string( default_gdt_selection() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "superimpose", xsct_rosetta_bool, "Superimpose before evaluation", std::to_string( default_superimpose_selection() ) )
+		+ XMLSchemaAttribute::attribute_w_default( "count_residues", xsct_rosetta_bool, "When true (default; recomended) enforce the same number of residues "
+		"for both query and reference.", std::to_string( default_count_residues() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold in RMSD above which the filter fails", std::to_string( default_rmsd_threshold() ) );
 	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
 	core::select::residue_selector::attributes_for_parse_residue_selector_when_required( attlist, "reference_selector", "Selector specifying residues to take into account in the reference pose" );
