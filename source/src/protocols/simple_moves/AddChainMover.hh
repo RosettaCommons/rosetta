@@ -56,6 +56,9 @@ public:
 	bool random_access() const{ return random_access_; }
 	void random_access( bool const b ){ random_access_ = b; }
 
+	void update_PDBInfo( bool const n ){ update_PDBInfo_ = n; }
+	bool update_PDBInfo() const{ return update_PDBInfo_; }
+
 	void add_new_chain( core::pose::Pose & pose ) const; // Adds new chain to pose
 	void swap_chain( core::pose::Pose & pose ) const; // Adds new chain to pose
 
@@ -75,6 +78,7 @@ private:
 	std::string fname_; //dflt ""; pdb names to load (can accept a comma-separated list)
 	bool new_chain_; //dflt true; add as a new chain?
 	bool random_access_; //dflt false; if true randomly choose one file name from a list and work with that throughout the run.
+	bool update_PDBInfo_; //dflt true; update chain ids.
 	core::Size swap_chain_number_; //dflt 2; swap chain with specified chain number
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12; used to score the new pose
 };

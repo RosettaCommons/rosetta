@@ -239,8 +239,56 @@ private:
 	Size next_move_; //< index into movers_, may need modulo operation first
 }; // CycleMover class
 
+/// @brief SwitchMover can hold multiple movers and execute only the requested one
+/// @details In terms of RosettaScripts, it allows to have a single script with N-
+/// different behaviours that can be called through the parser:script_vars (for example).
+/// And it will log in the scores which mover was used.
+class SwitchMover : public MoverContainer {
+public:
+
+	// constructor
+	SwitchMover() : MoverContainer(), user_name_(""), mover_names_(utility::vector0<std::string>()), selected_(""), available_(false) {}
+
+	/// @brief Copy constructor.  Performs a deep copy of all contained movers.
+	SwitchMover( SwitchMover const & );
+
+	MoverOP clone() const override;
+	MoverOP fresh_instance() const override;
+
+	void apply( core::pose::Pose & pose ) override;
+
+	MoverOP get_selected_mover();
+	std::string selected() const { return selected_; };
+	void selected( std::string sele ) { selected_ = sele; };
+
+	//fpd Only making this MoverContainer parsile since the other MoverContainers already have an RS equivalent
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
+private:
+	std::string user_name_;
+	utility::vector0<std::string> mover_names_;
+	std::string selected_;
+	bool available_;
+}; // SwitchMover class
+
 } // moves
 } // protocols
-
 
 #endif //INCLUDED_protocols_moves_MoverContainer_HH

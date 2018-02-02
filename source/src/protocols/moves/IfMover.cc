@@ -147,4 +147,3 @@ void IfMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 } //moves
 } //protocols
-

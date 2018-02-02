@@ -187,5 +187,3 @@ void InsertPoseIntoPoseMoverCreator::provide_xml_schema( utility::tag::XMLSchema
 }
 }
 }
-
-

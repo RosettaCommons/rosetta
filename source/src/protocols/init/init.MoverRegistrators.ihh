@@ -189,9 +189,16 @@ static MoverRegistrator< flexpep_docking::FlexPepDockingProtocolCreator > reg_Fl
 static MoverRegistrator< flxbb::FlxbbDesignCreator > reg_FlxbbDesignCreator;
 static MoverRegistrator< flxbb::InterlockAromaCreator > reg_InterlockAromaCreator;
 
-static MoverRegistrator< fold_from_loops::ReleaseConstraintFromResidueMoverCreator > reg_ReleaseConstraintFromResidueMoverCreator;
-static MoverRegistrator< fold_from_loops::SplitAndMixPoseMoverCreator > reg_SplitAndMixPoseMoverCreator;
-static MoverRegistrator< fold_from_loops::LabelPoseFromResidueSelectorMoverCreator > reg_LabelPoseFromResidueSelectorMoverCreator;
+static MoverRegistrator< fold_from_loops::movers::AlignByResidueSelectorMoverCreator > reg_AlignByResidueSelectorMoverCreator;
+static MoverRegistrator< fold_from_loops::movers::DisplayPoseLabelsMoverCreator > reg_DisplayPoseLabelsMoverCreator;
+static MoverRegistrator< fold_from_loops::movers::ReleaseConstraintFromResidueMoverCreator > reg_ReleaseConstraintFromResidueMoverCreator;
+static MoverRegistrator< fold_from_loops::movers::SplitAndMixPoseMoverCreator > reg_SplitAndMixPoseMoverCreator;
+static MoverRegistrator< fold_from_loops::movers::LabelPoseFromResidueSelectorMoverCreator > reg_LabelPoseFromResidueSelectorMoverCreator;
+static MoverRegistrator< fold_from_loops::movers::ResidueLabelsToPymolSelectionMoverCreator > reg_ResidueLabelsToPymolSelectionMoverCreator;
+static MoverRegistrator< fold_from_loops::movers::SavePDBInfoMoverCreator > reg_SavePDBInfoMoverCreator;
+static MoverRegistrator< fold_from_loops::movers::MoveMapFactoryToNamedMoveMapMoverCreator > reg_MoveMapFactoryToNamedMoveMapMoverCreator;
+static MoverRegistrator< fold_from_loops::movers::NubInitioLoopClosureMoverCreator > reg_NubInitioLoopClosureMoverCreator;
+static MoverRegistrator< fold_from_loops::NubInitioMoverCreator > reg_NubInitioMoverCreator;
 
 static MoverRegistrator< forge::constraints::InverseRotamersCstGeneratorCreator > reg_InverseRotamersCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::InvrotTreeCstGeneratorCreator > reg_InvrotTreeCstGeneratorCreator;
@@ -331,6 +338,7 @@ static MoverRegistrator< motif_grafting::movers::MotifGraftCreator> reg_MotifGra
 static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;
 static MoverRegistrator< moves::RandomMoverCreator > reg_RandomMoverCreator;
+static MoverRegistrator< moves::SwitchMoverCreator > reg_SwitchMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
 static MoverRegistrator< moves::PyMOLMoverCreator > reg_PyMOLMoverCreator;
 static MoverRegistrator< moves::RampingMoverCreator > reg_RampingMoverCreator;

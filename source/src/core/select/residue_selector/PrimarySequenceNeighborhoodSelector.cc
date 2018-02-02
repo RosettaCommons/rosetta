@@ -202,4 +202,3 @@ PrimarySequenceNeighborhoodSelectorCreator::provide_xml_schema( utility::tag::XM
 } //namespace residue_selector
 } //namespace select
 } //namespace core
-

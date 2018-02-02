@@ -50,7 +50,9 @@
 #include <protocols/fldsgn/filters/StrandCurvatureByLevelsCreator.hh>
 #include <protocols/fldsgn/filters/StrandHelixGeometryFilterCreator.hh>
 
-#include <protocols/fold_from_loops/RmsdFromResidueSelectorFilterCreator.hh>
+#include <protocols/fold_from_loops/filters/RmsdFromResidueSelectorFilterCreator.hh>
+#include <protocols/fold_from_loops/filters/ScorePoseSegmentFromResidueSelectorFilterCreator.hh>
+#include <protocols/fold_from_loops/filters/ConstraintFulfilmentFilterCreator.hh>
 
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>
 #include <protocols/denovo_design/filters/PreProlineFilterCreator.hh>
@@ -118,6 +120,7 @@
 #include <protocols/simple_filters/ChainBreakFilterCreator.hh>
 #include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/simple_filters/ConstraintScoreFilterCreator.hh>
+#include <protocols/simple_filters/ChainCountFilterCreator.hh>
 #include <protocols/simple_filters/DdgFilterCreator.hh>
 #include <protocols/simple_filters/DeltaFilterCreator.hh>
 #include <protocols/simple_filters/DisulfideEntropyFilterCreator.hh>

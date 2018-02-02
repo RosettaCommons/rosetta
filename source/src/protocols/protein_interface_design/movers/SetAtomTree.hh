@@ -54,6 +54,9 @@ public :
 	void start_tree_at_chain( char const c ){ start_tree_at_chain_ = c; }
 	void ab_fold_tree(bool b){ab_fold_tree_=b;}
 	bool ab_fold_tree(){return ab_fold_tree_;}
+	void update_residue_variants(bool b){update_residue_variants_=b;}
+	bool update_residue_variants(){return update_residue_variants_;}
+	void add_cutpoint_variants( core::pose::Pose & pose );
 
 	std::string
 	get_name() const override;
@@ -74,6 +77,8 @@ private :
 	core::Size host_chain_; //dflt 2
 	core::kinematics::FoldTreeOP fold_tree_; // dflt NULL; if set just use it without any other options. Reading a foldtree from file parses the fold tree at parse time and then just applies it at apply.
 	bool ab_fold_tree_; //dflt false; NOOOOOOOOO. MUST SET BOOLS EXPLICITLY. SILLY C++.  Caught from integration test fail. --rhiju
+	bool update_residue_variants_; // dflt false to keep default functionality. If true, will set CUTPOINT_LOWER/UPPER according to FoldTree.
+	std::string remark_foldtree_; // if added a REMARK key, the FoldTree is loaded from a REMARK with that key, other inputs will be ignored.
 };
 
 } // movers

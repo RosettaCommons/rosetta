@@ -276,6 +276,27 @@ utility::vector1< core::Size > selection_positions( ResidueSubset const & select
 	}
 	return results;
 }
+/// @brief Evaluate if two ResidueSubsets are equal
+bool are_selections_equal( ResidueSubset const & selection1, ResidueSubset const & selection2 )
+{
+	if ( selection1.size() != selection2.size() ) {
+		return false;
+	}
+	return std::equal( selection1.begin(), selection1.end(), selection2.begin() );
+}
+/// @brief Returns a string representing the ResidueSubset (· for non selected, * for selected)
+std::string represent_residue_selector( ResidueSubset const & selection, std::string const & is_true, std::string const & is_false )
+{
+	std::string output = "";
+	for ( auto sele : selection ) {
+		if ( sele ) {
+			output.append( is_true );
+		} else {
+			output.append( is_false );
+		}
+	}
+	return output;
+}
 
 ResidueSelectorOP
 OR_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {

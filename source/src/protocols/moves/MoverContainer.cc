@@ -17,8 +17,11 @@
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
 #include <protocols/moves/MoverStatus.hh>
+#include <protocols/moves/NullMover.hh>
 
 // Random number generator
 #include <numeric/random/random.hh>
@@ -207,6 +210,10 @@ SequenceMover::get_name() const {
 	return "SequenceMover";
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// Random Mover //////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 void RandomMover::apply( core::pose::Pose & pose )
 {
 	Real weight_sum(0.0);
@@ -384,6 +391,115 @@ std::ostream &operator<< (std::ostream &os, MoverContainer const &mover)
 
 	return os;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// Switch Mover //////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+void SwitchMover::apply( core::pose::Pose & pose )
+{
+	runtime_assert_msg( available_, "This mover is only available through RosettaScripts");
+	MoverOP workmover = get_selected_mover( );
+	workmover->apply( pose );
+	TR << "Switch "<< user_name_ << " changes to mover " << selected_ << std::endl;
+	core::pose::add_score_line_string( pose, user_name_, selected_ );
+	core::pose::setPoseExtraScore( pose, user_name_, selected_ );
+	protocols::moves::Mover::set_last_move_status(workmover->get_last_move_status());
+}
+
+MoverOP SwitchMover::get_selected_mover()
+{
+	runtime_assert_msg(
+		std::find(mover_names_.begin(), mover_names_.end(), selected_) != mover_names_.end(),
+		"The selected tag name does not belong to any of the provided movers"
+	);
+
+	for ( core::Size i = 0; i < mover_names_.size(); ++i ) {
+		if (  mover_names_[i] == selected_ ) {
+			return movers_[i];
+		}
+	}
+	MoverOP null( new NullMover() );
+	return null;
+}
+
+SwitchMover::SwitchMover( SwitchMover const & ) = default;
+
+MoverOP
+SwitchMover::clone() const {
+	return MoverOP( new SwitchMover( *this ) );
+}
+
+MoverOP
+SwitchMover::fresh_instance() const {
+	return MoverOP( new RandomMover() );
+}
+
+void
+SwitchMover::parse_my_tag( utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &movers,
+	core::pose::Pose const & ) {
+	available_ = true;
+	using namespace protocols::filters;
+
+	mover_names_ = utility::string_split( tag->getOption< std::string >("movers"), ',');
+	for ( core::Size i=0; i<mover_names_.size(); ++i ) {
+		protocols::moves::MoverOP mover = find_mover_or_die(mover_names_[i], tag, movers);
+		add_mover( mover, 1 );
+	}
+
+	selected_  = tag->getOption< std::string >( "selected" );
+	user_name_ = tag->getOption< std::string >( "name" );
+
+	// make sure # movers matches # weights
+	runtime_assert_msg(
+		std::find(mover_names_.begin(), mover_names_.end(), selected_) != mover_names_.end(),
+		"The selected tag name does not belong to any of the provided movers"
+	);
+
+}
+
+std::string SwitchMover::get_name() const {
+	return mover_name();
+}
+
+std::string SwitchMover::mover_name() {
+	return "SwitchMover";
+}
+
+void SwitchMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"movers", xs_string,
+		"The movers tag takes a comma separated list of mover names" );
+	attlist + XMLSchemaAttribute::required_attribute(
+		"selected", xs_string,
+		"Tag of the expected Mover to execute" );
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Apply the requested mover from a list of them", attlist );
+}
+
+std::string SwitchMoverCreator::keyname() const {
+	return SwitchMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SwitchMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SwitchMover );
+}
+
+void SwitchMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SwitchMover::provide_xml_schema( xsd );
+}
+
 
 }  // namespace moves
 }  // namespace protocols

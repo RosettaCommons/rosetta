@@ -744,4 +744,3 @@ void ParsedProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 } //rosetta_scripts
 } //protocols
-

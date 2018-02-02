@@ -62,7 +62,7 @@ void
 SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	if ( tag->hasOption("reference_name") ) {
-		reference_pose_ = saved_reference_pose(tag,data_map );
+		reference_pose_ = saved_reference_pose( tag, data_map );
 	} else throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Need to specify name under which to save pose.");
 
 	if ( tag->hasOption( "pdb_file" ) ) {
@@ -70,7 +70,7 @@ SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_
 		core::import_pose::pose_from_file( *reference_pose_, template_pdb_fname , core::import_pose::PDB_file);
 		TR <<"reading in " << template_pdb_fname << " pdb with " << reference_pose_->size() <<" residues"<<std::endl;
 	}
-
+	TR.Trace << TR.Green << tag->hasOption("reference_name") << " stored at " << reference_pose_ << TR.Reset << std::endl;
 
 	if ( tag->hasOption("restore_pose") ) {
 		restore_pose_ = tag->getOption<bool>("restore_pose",true);

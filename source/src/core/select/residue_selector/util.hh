@@ -161,6 +161,18 @@ get_embedded_residue_selector(  utility::tag::TagCOP tag, basic::datacache::Data
 utility::vector1< ResidueSelectorOP >
 get_embedded_residue_selectors( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap );
 
+/// @brief If sele1 is already an OrResidueSelector, add sele2 to it.
+/// If not, return a new OrResidueSelector which combines the two.
+/// @details If either of the selectors are a nullptr, just return the other.
+ResidueSelectorOP
+OR_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 );
+
+/// @brief If sele1 is already an AndResidueSelector, add sele2 to it.
+/// If not, return a new AndResidueSelector which combines the two.
+/// @details If either of the selectors are a nullptr, just return the other.
+ResidueSelectorOP
+AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 );
+
 /// @brief Returns True if all the positions in the ResidueSubset are False
 bool all_false_selection( ResidueSubset const & selection );
 /// @brief Returns True if all the positions in the ResidueSubset are True
@@ -173,18 +185,10 @@ bool has_any_true_selection( ResidueSubset const & selection );
 core::Size count_selected( ResidueSubset const & selection );
 /// @brief Returns the Rosetta Numbering corresponding to the selected residues
 utility::vector1< core::Size > selection_positions( ResidueSubset const & selection );
-
-/// @brief If sele1 is already an OrResidueSelector, add sele2 to it.
-/// If not, return a new OrResidueSelector which combines the two.
-/// @details If either of the selectors are a nullptr, just return the other.
-ResidueSelectorOP
-OR_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 );
-
-/// @brief If sele1 is already an AndResidueSelector, add sele2 to it.
-/// If not, return a new AndResidueSelector which combines the two.
-/// @details If either of the selectors are a nullptr, just return the other.
-ResidueSelectorOP
-AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 );
+/// @brief Evaluate if two ResidueSubsets are equal
+bool are_selections_equal( ResidueSubset const & selection1, ResidueSubset const & selection2 );
+/// @brief Returns a string representing the ResidueSubset (- for non selected, * for selected)
+std::string represent_residue_selector( ResidueSubset const & selection, std::string const & is_true="*", std::string const & is_false="-" );
 
 }
 }

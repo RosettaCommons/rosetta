@@ -201,12 +201,37 @@ sources = {
 	"protocols/topology_broker/claims": [
 		"DofClaim",
 	],
-	"protocols/fold_from_loops": [
-		"SegmentedAtomPairConstraintGenerator",
-		"ReleaseConstraintFromResidueMover",
+	"protocols/fold_from_loops/filters": [
 		"RmsdFromResidueSelectorFilter",
-		"SplitAndMixPoseMover",
+		"ScorePoseSegmentFromResidueSelectorFilter",
+		"ConstraintFulfilmentFilter",
+	],
+	"protocols/fold_from_loops/selectors": [
+		"ProteinResidueSelector",
+		"CutpointResidueSelector",
+		"ConstraintResidueSelector",
+	],
+	"protocols/fold_from_loops/constraint_generator": [
+		"SegmentedAtomPairConstraintGenerator",
+		"AutomaticSheetConstraintGenerator",
+	],
+	"protocols/fold_from_loops/movers": [
+		"AlignByResidueSelectorMover",
+		"DisplayPoseLabelsMover",
 		"LabelPoseFromResidueSelectorMover",
+		"ReleaseConstraintFromResidueMover",
+		"SplitAndMixPoseMover",
+		"ResidueLabelsToPymolSelectionMover",
+		"SavePDBInfoMover",
+		"MoveMapFactoryToNamedMoveMapMover",
+		"NubInitioLoopClosureMover",
+	],
+	"protocols/fold_from_loops/utils": [
+		"utils",
+		"Nub",
+	],
+	"protocols/fold_from_loops": [
+		"NubInitioMover",
 	]
 }
 include_path = [

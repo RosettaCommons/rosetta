@@ -31,6 +31,11 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
+#include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueType.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/vector0.hh>
@@ -87,7 +92,9 @@ SetAtomTree::SetAtomTree() :
 	connect_from_( "" ),
 	host_chain_( 2 ),
 	fold_tree_( /* NULL */ ),
-	ab_fold_tree_(false)
+	ab_fold_tree_(false),
+	update_residue_variants_( false ),
+	remark_foldtree_( std::string() )
 {
 	start_tree_at_chain_ = '\0';
 }
@@ -102,6 +109,12 @@ SetAtomTree::clone() const {
 void
 SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
+	update_residue_variants( tag->getOption< bool >( "update_residue_variants", false) );
+	if ( tag->hasOption( "from_remark" ) ) {
+		remark_foldtree_ = tag->getOption< std::string >( "from_remark", "" );
+		return;
+	}
+
 	if ( tag->hasOption( "start_tree_at_chain" ) ) {
 		start_tree_at_chain( tag->getOption< char >( "start_tree_at_chain", '\0' ) );
 		return;
@@ -143,6 +156,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 	host_chain_ = tag->getOption< core::Size >( "host_chain", 2);
 	two_parts_chain1( tag->getOption< bool >( "two_parts_chain1", false ) );
 	TR<<"resnum: "<<resnum_<<" anchor: "<< anchor_res_<<std::endl;
+
 }//end parse my tag
 
 core::kinematics::FoldTreeOP
@@ -247,18 +261,48 @@ SetAtomTree::set_ab_fold_tree( core::pose::Pose & pose)
 	return;
 }
 
+void
+SetAtomTree::add_cutpoint_variants( core::pose::Pose & pose )
+{
+	using namespace core::chemical;
+	core::kinematics::FoldTree const & tree( pose.fold_tree() );
+	for ( core::Size i = 1; i < pose.size(); ++i ) {  // First Clean all variants
+		core::pose::remove_variant_type_from_pose_residue( pose,  CUTPOINT_UPPER, i );
+		core::pose::remove_variant_type_from_pose_residue( pose,  CUTPOINT_LOWER, i );
+	}
+	for ( core::Size i = 1; i < pose.size(); ++i ) { // Less than because cutpoints are between i and i+1
+		if ( tree.is_cutpoint( i ) ) {
+			if ( !pose.residue(i).has_variant_type( UPPER_TERMINUS_VARIANT ) ) {
+				core::pose::correctly_add_cutpoint_variants( pose, i, false );
+			}
+		}
+	}
+}
+
 
 void
 SetAtomTree::apply( core::pose::Pose & pose )
 {
+	if ( remark_foldtree_ != "" ) {
+		std::string remark_tree = "";
+		core::pose::get_comment( pose, remark_foldtree_, remark_tree );
+		runtime_assert( remark_tree != "" );
+		TR << "READ: " << remark_tree << std::endl;
+		std::istringstream data(remark_tree);
+		fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree );
+		data >> *fold_tree_;
+		TR << "Read fold tree from remark: " << *fold_tree_ << std::endl;
+		runtime_assert( fold_tree_->check_fold_tree() );
+	}
 	if ( fold_tree_ ) {
 		TR<<"Applying fold_tree: "<<*fold_tree_<<std::endl;
 		pose.fold_tree( *fold_tree_ );
-
+		if ( update_residue_variants_ ) add_cutpoint_variants( pose );
 		return;
 	}
 	if ( ab_fold_tree_ ) {
 		set_ab_fold_tree(pose);
+		if ( update_residue_variants_ ) add_cutpoint_variants( pose );
 		return;
 	}
 	if ( docking_ft_ ) {
@@ -269,6 +313,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		protocols::docking::setup_foldtree( pose, partners, jumps );
 		TR<<"Setting up docking foldtree over jump "<<jump_<<'\n';
 		TR<<"Docking foldtree: "<<pose.fold_tree()<<std::endl;
+		if ( update_residue_variants_ ) add_cutpoint_variants( pose );
 		return;
 	}
 	if ( simple_ft() ) {
@@ -287,6 +332,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		TR<<new_ft<<std::endl;
 		pose.fold_tree( new_ft );
 		TR<<"Simple tree: "<<pose.fold_tree()<<std::endl;
+		if ( update_residue_variants_ ) add_cutpoint_variants( pose );
 		return;
 	}
 	if ( two_parts_chain1() ) {
@@ -325,6 +371,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 			new_ft.reorder( 1 );
 			TR<<new_ft<<std::endl;
 			pose.fold_tree( new_ft );
+			if ( update_residue_variants_ ) add_cutpoint_variants( pose );
 			return;
 		} else {
 			using namespace protocols::geometry;
@@ -357,6 +404,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 			new_ft.reorder( 1 );
 			TR<<new_ft<<std::endl;
 			pose.fold_tree( new_ft );
+			if ( update_residue_variants_ ) add_cutpoint_variants( pose );
 			return;
 		}
 	}
@@ -389,6 +437,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		new_ft.delete_self_edges();
 		TR<<"New fold tree: "<<new_ft<<std::endl;
 		pose.fold_tree( new_ft );
+		if ( update_residue_variants_ ) add_cutpoint_variants( pose );
 		return;
 	}
 
@@ -422,6 +471,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 
 	TR<<"Previous fold tree: "<<pose.fold_tree()<<'\n';
 	pose.fold_tree( *create_atom_tree( pose, host_chain_, resnum, anchor_num , connect_to, connect_from ) );
+	if ( update_residue_variants_ ) add_cutpoint_variants( pose );
 	TR<<"New fold tree: "<<pose.fold_tree()<<std::endl;
 }
 
@@ -468,7 +518,9 @@ void SetAtomTree::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		// This isn't passed through parse_resnum ANYWHERE. That's a shame. Have to keep a string.
 		+ XMLSchemaAttribute( "anchor_res", xs_string, "Anchor residue for the foldtree" )
 		+ XMLSchemaAttribute( "connect_from", xs_string, "Corresponding atom on the anchor residue" )
-		+ XMLSchemaAttribute::attribute_w_default( "two_parts_chain1", xsct_rosetta_bool, "Is the aim actually to cut chain 1 in two parts?", "false" );
+		+ XMLSchemaAttribute::attribute_w_default( "two_parts_chain1", xsct_rosetta_bool, "Is the aim actually to cut chain 1 in two parts?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "update_residue_variants", xsct_rosetta_bool, "Add CUTPOINT variant types according to the FoldTree", "0" )
+		+ XMLSchemaAttribute( "from_remark", xs_string, "If a KEY is provided, the FoldTree is loaded from a REMARK with that KEY.");
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }
@@ -491,4 +543,3 @@ void SetAtomTreeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 } //movers
 } //protein_interface_design
 } //protocols
-

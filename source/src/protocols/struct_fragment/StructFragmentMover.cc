@@ -31,6 +31,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/sasa/SasaCalc.hh>
 #include <core/sequence/Sequence.hh>
@@ -114,6 +115,7 @@ void StructFragmentMover::apply( cp::Pose & pose ) {
 			utility::vector1< cf::FragSetOP > frag_result;
 			core::Size status = evaluate_job();
 
+			TR << "JobStatus is " << status << std::endl;
 			if (  status == 0 ) {
 				TR << "Small fragment file " << small_frag_file_ << " and large fragment file " << large_frag_file_ << " are provided." << std::endl;
 				TR << "Reading fragments from provided fragment files." << std::endl;
@@ -139,6 +141,8 @@ void StructFragmentMover::apply( cp::Pose & pose ) {
 
 			smallF_->add( *frag_result[1] );
 			largeF_->add( *frag_result[2] );
+		} else {
+			TR << "Fragments are already loaded" << std::endl;
 		}
 
 		TR.Trace << TR.Green << "small fragments pointer address " << smallF_ << " size: " << smallF_->size() << TR.Reset << std::endl;
@@ -146,6 +150,7 @@ void StructFragmentMover::apply( cp::Pose & pose ) {
 	} else {
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Pose was empty.");
 	}
+	changed_frags_ = false;
 } // end apply method
 
 utility::vector1< cf::FragSetOP > StructFragmentMover::get_fragments( cp::Pose const & pose ) {
@@ -212,8 +217,10 @@ utility::vector1< cf::FragSetOP > StructFragmentMover::steal_fragments( cp::Pose
 		ideal_pose.pdb_info()->name( pose.pdb_info()->name() );
 		if ( steal_small_frags_ ) fsets[1] = steal_fragments_by_size( ideal_pose, fsets[1], small_frag_size_);
 		if ( steal_large_frags_ ) fsets[2] = steal_fragments_by_size( ideal_pose, fsets[2], large_frag_size_);
+		changed_frags_ = true;
+		steal_large_frags_ = false;
+		steal_small_frags_ = false;
 	}
-	changed_frags_ = true;
 	return fsets;
 }
 
@@ -239,24 +246,35 @@ pfp::FragmentPickerOP StructFragmentMover::make_fragment_picker( cp::Pose pose, 
 
 	// get sequence and structure; DSSP has to be executed before the SS can be set
 	std::string sequence = pose.sequence();
+	TR.Debug << "SEQ: " << sequence << std::endl;
 	std::string structure = pose.secstruct();
+	TR.Debug << "STR: " << structure << std::endl;
 
 	// get accessible surface area
 	core::scoring::sasa::SasaCalcOP sasa_calc( new core::scoring::sasa::SasaCalc() );
 	sasa_calc->calculate( pose );   // calculate sasa for whole pose first before extracting the per residue sasa
 	utility::vector1< core::Real > res_sasa = sasa_calc->get_residue_sasa();
+	TR.Debug << "SASA per residue calculated" << std::endl;
 
 	// angles
 	utility::vector1< core::Real > psi_angles;
 	utility::vector1< core::Real > phi_angles;
+	pose.conformation().detect_disulfides();
 	// get angles for all residues
 	for ( core::Size pos = 1; pos <= num_res; ++pos ) {
-		psi_angles.push_back( pose.psi( pos ) );
-		phi_angles.push_back( pose.phi( pos ) );
+		TR.Trace << "angles for: " << pos << std::endl;
+		if ( pose.residue(pos).is_protein() ) {
+			psi_angles.push_back( pose.psi( pos ) );
+			phi_angles.push_back( pose.phi( pos ) );
+			TR.Trace << "--- added" << std::endl;
+		} else {
+			TR.Trace << "--- skipped" << std::endl;
+		}
 	}
 
 	// set default confidence for phi and psi angles
-	utility::vector1<core::Real> angle_conf( num_res, loop_angle_conf_ );
+	utility::vector1<core::Real> angle_conf( psi_angles.size(), loop_angle_conf_ );
+	TR.Debug << "Phi-Psi angles calculated" << std::endl;
 
 	// set all values needed for fragment picking
 	core::sequence::SequenceProfileOP q_prof( new core::sequence::SequenceProfile );
@@ -445,9 +463,10 @@ StructFragmentMover::parse_my_tag(
 
 	smallF_ = core::fragment::FragSetOP(new core::fragment::ConstantLengthFragSet );
 	largeF_ = core::fragment::FragSetOP(new core::fragment::ConstantLengthFragSet );
-	if ( !data.has( "FragSet", "small" ) && !data.has( "FragSet", "large" ) ) {
-		data.add( "FragSet", "small", smallF_ );
-		data.add( "FragSet", "large", largeF_ );
+
+	if ( !data.has( "FragSet", structPicker_->prefix_ + "small" ) && !data.has( "FragSet", structPicker_->prefix_ + "large" ) ) {
+		data.add( "FragSet", structPicker_->prefix_ + "small", smallF_ );
+		data.add( "FragSet", structPicker_->prefix_ + "large", largeF_ );
 		TR.Trace << TR.Green << "small fragments pointer address " << smallF_ << TR.Reset << std::endl;
 		TR.Trace << TR.Green << "large fragments pointer address " << largeF_ << TR.Reset << std::endl;
 	}
@@ -469,7 +488,8 @@ void StructFragmentMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		+ XMLSchemaAttribute( "vall_file", xs_string, "Path to vall file (required when no fragment files are provided)" )
 		+ XMLSchemaAttribute::attribute_w_default( "n_candidates", xsct_non_negative_integer, "Set the number of candidates", utility::to_string( default_value_for_n_candidates() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "n_frags", xsct_non_negative_integer, "Set the number of fragments", utility::to_string( default_value_for_n_frags() ) )
-		+ XMLSchemaAttribute::attribute_w_default( "prefix", xs_string, "Prefix of output files", default_value_for_prefix() );
+		+ XMLSchemaAttribute::required_attribute( "prefix", xs_string, "Prefix of output files and the fragments stored in the DataMap." );
+
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Create fragments from a supplied pose.", attlist );
 }

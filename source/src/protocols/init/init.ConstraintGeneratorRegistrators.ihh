@@ -31,7 +31,8 @@ static ConstraintGeneratorRegistrator< constraint_generator::TerminiConstraintGe
 static ConstraintGeneratorRegistrator< denovo_design::constraints::FileConstraintGeneratorCreator > reg_FileConstraintGeneratorCreator;
 
 static ConstraintGeneratorRegistrator< fldsgn::SheetConstraintGeneratorCreator > reg_SheetConstraintGeneratorCreator;
-static ConstraintGeneratorRegistrator< fold_from_loops::SegmentedAtomPairConstraintGeneratorCreator > reg_SegmentedAtomPairConstraintGeneratorCreator;
+static ConstraintGeneratorRegistrator< fold_from_loops::constraint_generator::SegmentedAtomPairConstraintGeneratorCreator > reg_SegmentedAtomPairConstraintGeneratorCreator;
+static ConstraintGeneratorRegistrator< fold_from_loops::constraint_generator::AutomaticSheetConstraintGeneratorCreator > reg_AutomaticSheetConstraintGeneratorCreator;
 
 
 } // namespace protocols

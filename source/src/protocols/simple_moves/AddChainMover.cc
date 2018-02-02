@@ -67,6 +67,7 @@ AddChainMover::AddChainMover()
 : moves::Mover("AddChain"),
 	fname_( "" ),
 	new_chain_( true ),
+	update_PDBInfo_( true ),
 	scorefxn_( /* NULL */ )
 {
 	random_access_ = false;
@@ -100,17 +101,25 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 	std::string const curr_fname( split_names[ random_num ] );
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
 
-	TR<<"Before addchain, total residues: "<<pose.size()<<std::endl;
+	core::Size old_len = pose.size();
+	TR<<"Before addchain, total residues: "<<old_len<<std::endl;
 	core::import_pose::pose_from_file( new_pose, curr_fname , core::import_pose::PDB_file);
 	new_pose.conformation().detect_disulfides();
 	(*scorefxn()) ( new_pose );
+	PDBInfoOP new_info = new_pose.pdb_info();
+	core::Size new_len = new_pose.size();
 
 	append_pose_to_pose( pose, new_pose, new_chain() );
 	pose.conformation().detect_disulfides();
 	pose.update_residue_neighbors();
 	pose.update_pose_chains_from_pdb_chains();
+
 	(*scorefxn())( pose );
-	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
+	if ( update_PDBInfo_ ) {
+		pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
+	} else {
+		pose.pdb_info()->copy( *new_info, 1, new_len, old_len + 1 );
+	}
 	TR<<"After addchain, total residues: "<<pose.size()<<std::endl;
 
 	core::pose::add_comment(pose,"AddedChainName ",curr_fname);
@@ -241,6 +250,7 @@ AddChainMover::parse_my_tag(
 		//  fname( split_names[ random_num ] );
 	}
 	new_chain( tag->getOption< bool >( "new_chain", true ) );
+	update_PDBInfo( tag->getOption< bool >( "update_PDBInfo", true ) );
 	swap_chain_number( tag->getOption< core::Size >( "swap_chain_number", 0 ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	TR<<"AddChain sets fname: "<<fname()<<" new_chain: "<<new_chain()<<std::endl;
@@ -267,6 +277,11 @@ void AddChainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default( "random_access", xsct_rosetta_bool, "if true randomly choose one file name from a list and work with that throughout the run.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "update_PDBInfo", xsct_rosetta_bool,
+		"When true (default) it will reset the PDBInfo of the merged pose, residue count starting from 1 on the first chain, "
+		"chains starting from A. PDB numbering starting from 1 in each chain. When false, it will merge the info from the two PDBInfos from each Pose "
+		"by appending the second one to the first one. If both Poses have the same chain name, they will keep it (with the expected issues); be aware of that "
+		"when setting this option to false. This option is always true when swap_chain_number is called.", "true" )
 		+ XMLSchemaAttribute::required_attribute( "file_name", xs_string, "Either a path to the file to read chains from, or a comma-separated list of such if random_access is true." )
 		+ XMLSchemaAttribute::attribute_w_default( "new_chain", xsct_rosetta_bool, chain_warning + "add as a new chain?", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "swap_chain_number", xsct_non_negative_integer, chain_warning + "swap chain with specified chain number", "0" ); //0 is valid as a flag value, so it really is a default and not required

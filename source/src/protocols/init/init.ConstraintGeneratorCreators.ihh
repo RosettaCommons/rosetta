@@ -27,4 +27,5 @@
 #include <protocols/denovo_design/constraints/FileConstraintGeneratorCreator.hh>
 
 #include <protocols/fldsgn/SheetConstraintGeneratorCreator.hh>
-#include <protocols/fold_from_loops/SegmentedAtomPairConstraintGeneratorCreator.hh>
+#include <protocols/fold_from_loops/constraint_generator/SegmentedAtomPairConstraintGeneratorCreator.hh>
+#include <protocols/fold_from_loops/constraint_generator/AutomaticSheetConstraintGeneratorCreator.hh>

@@ -24,6 +24,11 @@ static ResidueSelectorRegistrator< protocols::cyclic_peptide::RamaMutationSelect
 
 static ResidueSelectorRegistrator< protocols::denovo_design::residue_selectors::NamedSegmentSelectorCreator > reg_NamedSegmentSelectorCreator;
 static ResidueSelectorRegistrator< protocols::denovo_design::residue_selectors::PairedSheetResidueSelectorCreator > reg_PairedSheetResidueSelectorCreator;
+
+static ResidueSelectorRegistrator< protocols::fold_from_loops::selectors::ProteinResidueSelectorCreator > reg_ProteinResidueSelectorCreator;
+static ResidueSelectorRegistrator< protocols::fold_from_loops::selectors::CutpointResidueSelectorCreator > reg_CutpointResidueSelectorCreator;
+static ResidueSelectorRegistrator< protocols::fold_from_loops::selectors::ConstraintResidueSelectorCreator > reg_ConstraintResidueSelectorCreator;
+
 static ResidueSelectorRegistrator< protocols::residue_selectors::HBondSelectorCreator > reg_HBondSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::LigandMetalContactSelectorCreator > reg_LigandMetalContactSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::StoredResidueSubsetSelectorCreator > reg_StoredResidueSubsetSelectorCreator;
@@ -32,4 +37,3 @@ static ResidueSelectorRegistrator< protocols::residue_selectors::TaskSelectorCre
 static ResidueSelectorRegistrator< protocols::residue_selectors::UnsatSelectorCreator > reg_UnsatSelectorCreator;
 
 } // namespace protocols
-

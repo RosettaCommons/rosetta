@@ -577,6 +577,7 @@ sources = {
 		"BuriedUnsatHbondFilter",
 		"CamShiftEvaluator",
 		"CamShiftEvaluatorCreator",
+		"ChainCountFilter",
 		"ChainBreakFilter",
 		"COFilter",
 		"ConservedPosMutationFilter",
@@ -717,9 +718,9 @@ sources = {
 		"AddCavitiesMover",
 		"WriteFiltersToPose",
 		"AddChainMover",
-		
+
 		"AddConstraintsToCurrentConformationMover",
-		
+
 		"AddJobPairData",
 		"AddResidueLabelMover",
 		"AlignChainMover",
@@ -730,16 +731,16 @@ sources = {
 		"BBGaussianMover",
 		"BBDihedralSamplerMover",
 		"ChainSplitMover",
-		
+
 		"ClearConstraintsMover",
-		
+
 		"CombinePoseMover",
-		
+
 		"ConsensusDesignMover",
-		
+
 		"ConstrainToIdealMover",
 		"ConstraintSetMover",
-		
+
 		"ContingentAcceptMover",
 		"ConvertRealToVirtualMover",
 		"ConvertVirtualToRealMover",
@@ -747,9 +748,9 @@ sources = {
 		"CopyRotamerMover",
 		"CoupledMover",
 		"CreateSequenceMotifMover",
- 		
+
 		"CstInfoMover",
-		
+
 		"CutChainMover",
  		"CyclizationMover",
 		"ddG",
@@ -761,9 +762,9 @@ sources = {
 		"DisulfideInsertionMover",
 		"DisulfideInsertionMoverCreator",
 		"DumpPdb",
-		
+
 		"AddPDBInfoMover",
-		
+
 		"DumpSingleResidueRotamers",
 		"FavorSequenceProfile",
 		"FavorSymmetricSequence",

@@ -498,4 +498,3 @@ void MoveMapFactory::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 } //namespace movemap
 } //namespace select
 } //namespace core
-

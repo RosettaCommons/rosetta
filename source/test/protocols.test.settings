@@ -187,6 +187,21 @@ sources = {
 		"SetSecStructEnergiesMoverTests",
 	],
 
+	"fold_from_loops/constraint_generator": [
+		"SegmentedAtomPairConstraintGenerator",
+	],
+	"fold_from_loops/filters": [
+		"RmsdFromResidueSelectorFilter",
+	],
+	"fold_from_loops/movers": [
+		"AlignByResidueSelectorMover",
+		"LabelPoseFromResidueSelectorMover",
+		"NubInitioLoopClosureMover",
+	],
+	"fold_from_loops": [
+		"NubInitioMover",
+	],
+
 	"frag_picker" : [
 		"FragmentCandidatesTests",
 		"TorsionBinIO",
@@ -498,6 +513,7 @@ sources = {
 		"RotateJumpAxisMover",
 		"UniformRigidBody",
 	],
+
 	"rna" : [
 		"AlignmentEnergy",
 		"BasePairConstraints",
@@ -593,7 +609,7 @@ sources = {
 
 	"toolbox/pose_manipulation" : [
 		"pose_manipulation",
-	],	
+	],
 
 	"toolbox/pose_metric_calculators" : [
 		"Neighbor_Calculators",
@@ -789,6 +805,11 @@ testinputfiles = [
 	"features/3B83_nochain.pdb", # needed for SandwichFeaturesTests.cxxtest, I can't use 2J88 for this
 	"fldsgn/filters/ss_filter_test.pdb",
 	"fldsgn/filters/test_sheet.pdb",
+	"fold_from_loops/constraint_generator/SegmentedAtomPairConstraintGenerator_input_default.cst",
+	"fold_from_loops/constraint_generator/SegmentedAtomPairConstraintGenerator_input_inner.cst",
+	"fold_from_loops/constraint_generator/SegmentedAtomPairConstraintGenerator_input_outer.cst",
+	"fold_from_loops/movers/frags.200.3mers",
+	"fold_from_loops/movers/frags.200.9mers",
 	"forge/remodel/bad_pair.blueprint",
 	"forge/remodel/test.blueprint",
 	"forge/remodel/test.pdb",

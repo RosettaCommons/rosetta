@@ -37,6 +37,10 @@ class CycleMover;
 typedef utility::pointer::shared_ptr< CycleMover > CycleMoverOP;
 typedef utility::pointer::shared_ptr< CycleMover const > CycleMoverCOP;
 
+class SwitchMover;
+typedef utility::pointer::shared_ptr< SwitchMover > SwitchMoverOP;
+typedef utility::pointer::shared_ptr< SwitchMover const > SwitchMoverCOP;
+
 }//moves
 }//protocols
 

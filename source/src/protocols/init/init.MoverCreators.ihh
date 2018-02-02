@@ -174,9 +174,16 @@
 #include <protocols/flxbb/FlxbbDesignCreator.hh>
 #include <protocols/flxbb/InterlockAromaCreator.hh>
 
-#include <protocols/fold_from_loops/ReleaseConstraintFromResidueMoverCreator.hh>
-#include <protocols/fold_from_loops/SplitAndMixPoseMoverCreator.hh>
-#include <protocols/fold_from_loops/LabelPoseFromResidueSelectorMoverCreator.hh>
+#include <protocols/fold_from_loops/movers/AlignByResidueSelectorMoverCreator.hh>
+#include <protocols/fold_from_loops/movers/DisplayPoseLabelsMoverCreator.hh>
+#include <protocols/fold_from_loops/movers/ReleaseConstraintFromResidueMoverCreator.hh>
+#include <protocols/fold_from_loops/movers/SplitAndMixPoseMoverCreator.hh>
+#include <protocols/fold_from_loops/movers/LabelPoseFromResidueSelectorMoverCreator.hh>
+#include <protocols/fold_from_loops/movers/ResidueLabelsToPymolSelectionMoverCreator.hh>
+#include <protocols/fold_from_loops/movers/SavePDBInfoMoverCreator.hh>
+#include <protocols/fold_from_loops/movers/MoveMapFactoryToNamedMoveMapMoverCreator.hh>
+#include <protocols/fold_from_loops/movers/NubInitioLoopClosureMoverCreator.hh>
+#include <protocols/fold_from_loops/NubInitioMoverCreator.hh>
 
 #include <protocols/forge/constraints/InverseRotamersCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/InvrotTreeCstGeneratorCreator.hh>
