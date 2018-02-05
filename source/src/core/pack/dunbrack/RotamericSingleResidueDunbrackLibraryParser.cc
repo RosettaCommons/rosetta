@@ -526,12 +526,79 @@ RotamericSingleResidueDunbrackLibraryParser::do_all_checks_and_corrections( std:
 			}
 		}
 	} else {
-		if ( ( utility::filename( filename ).compare("bbdep02.May.sortlib-correct.12.2010") ) && ( utility::filename( filename ).compare("bbdep02.May.sortlib") ) ) {
+		bool const old_dun02_library( is_old_canonical_dun02_library( filename ) );
+		bool const beta_nov16_library( is_canonical_beta_nov16_library(filename) );
+		bool const talaris_library( is_canonical_talaris_library(filename) );
+		if ( !old_dun02_library && !beta_nov16_library && !talaris_library ) {
 			TR.Warning << TR.Red << "Rotamer file " << filename  << " appears to be a non-canonical rotamer library, of Dunbrack2002 format, for a canonical amino acid.  This can happen, for example, when a canonical amino acid is modified (e.g. N-methylated).  It will be assumed that rotamer well identities match those for the corresponding canonical amino acid.  Skipping rotamer order corrections."  << TR.Reset << std::endl;
+		} else if ( (beta_nov16_library || talaris_library) && !old_dun02_library ) {
+			TR.Debug << "Rotamer file " << filename << " is a canonical rotamer file for ";
+			if ( beta_nov16_library ) {
+				TR.Debug << "the new beta_nov16 ";
+			} else {
+				TR.Debug << "the old talaris ";
+			}
+			TR.Debug << "energy function (which uses Dunbrack2002-formatted rotamer files).  Skipping rotamer well order corrections." << std::endl;
+			if ( talaris_library ) {
+				TR.Debug << "Please consider switching to a newer energy function, since support for the talaris energy function will not be maintained indefinitely." << std::endl;
+			}
 		} else {
-			TR.Warning << TR.Red << "Rotamer file " << filename << " is a canonical rotamer file for the old Dunbrack2002 libraries.  Skipping rotamer well order corrections -- but please note that these libraries will soon be deprecated.  Please consider switching to the current default scoring function." << TR.Reset << std::endl;
+			TR.Debug << "Rotamer file " << filename << " is a canonical rotamer file for the old Dunbrack2002 libraries.  Skipping rotamer well order corrections -- but please note that these libraries will soon be deprecated.  Please consider switching to the current default scoring function." << std::endl;
 		}
 	}
+}
+
+/// @brief Given a filename, return true if this is a talaris library for a canonical amino acid, false otherwise.
+bool
+RotamericSingleResidueDunbrackLibraryParser::is_canonical_talaris_library(
+	std::string const &filename
+) const {
+	std::string const path( utility::pathname( filename ) );
+	if ( path.find( "/rotamer/ExtendedOpt1-5/" ) == std::string::npos ) return false;
+
+	std::string const filename_stripped( utility::filename( filename ) );
+	return
+		!filename_stripped.compare( "cys.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "ile.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "lys.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "leu.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "met.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "pro.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "arg.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "ser.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "thr.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "val.bbdep.rotamers.lib.gz" );
+}
+
+
+/// @brief Given a filename, return true if this is a beta_nov16 library for a canonical amino acid, false otherwise.
+bool
+RotamericSingleResidueDunbrackLibraryParser::is_canonical_beta_nov16_library(
+	std::string const &filename
+) const {
+	std::string const path( utility::pathname( filename ) );
+	if ( path.find( "/rotamer/beta_nov2016/" ) == std::string::npos ) return false;
+
+	std::string const filename_stripped( utility::filename( filename ) );
+	return
+		!filename_stripped.compare( "cys.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "ile.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "lys.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "leu.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "met.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "pro.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "arg.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "ser.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "thr.bbdep.rotamers.lib.gz" ) ||
+		!filename_stripped.compare( "val.bbdep.rotamers.lib.gz" );
+}
+
+/// @brief Given a filename, return true if this is an old Dunbrack 2002 library for a canonical amino acid, false otherwise.
+bool
+RotamericSingleResidueDunbrackLibraryParser::is_old_canonical_dun02_library(
+	std::string const &filename
+) const {
+	return !( utility::filename( filename ).compare("bbdep02.May.sortlib-correct.12.2010") ) || !( utility::filename( filename ).compare("bbdep02.May.sortlib") );
 }
 
 /// @brief Given a Size->Size map, determine whether there exists a key that maps to a given value.

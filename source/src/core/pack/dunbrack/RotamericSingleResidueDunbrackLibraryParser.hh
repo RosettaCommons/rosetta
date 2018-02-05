@@ -129,6 +129,15 @@ private:
 	/// @param[in] filename The name of the rotamer file currently being read.  This is only used for error messages.
 	void do_all_checks_and_corrections( std::string const & filename );
 
+	/// @brief Given a filename, return true if this is a talaris library for a canonical amino acid, false otherwise.
+	bool is_canonical_talaris_library( std::string const &filename) const;
+
+	/// @brief Given a filename, return true if this is a beta_nov16 library for a canonical amino acid, false otherwise.
+	bool is_canonical_beta_nov16_library( std::string const &filename) const;
+
+	/// @brief Given a filename, return true if this is an old Dunbrack 2002 library for a canonical amino acid, false otherwise.
+	bool is_old_canonical_dun02_library( std::string const &filename ) const;
+
 	/// @brief Given a Size->Size map, determine whether there exists a key that maps to a given value.
 	bool value_is_in_map( std::map< core::Size, core::Size > const &the_map, core::Size the_value ) const;
 
