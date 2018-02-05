@@ -16,6 +16,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
@@ -268,9 +269,11 @@ rna_score_test()
 			//native_pose->dump_pdb("native_pose_dump.pdb");
 			core::util::switch_to_residue_type_set( *native_pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */ );
 		}
-
+		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ].user() &&
+				option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() ) {
+			core::pose::rna::virtualize_free_rna_moieties( *native_pose );
+		}
 	}
-
 
 	// score function setup
 	core::scoring::ScoreFunctionOP scorefxn;
@@ -282,6 +285,7 @@ rna_score_test()
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
+	if ( option[ out::overwrite ]() ) core::io::silent::remove_silent_file_if_it_exists( silent_file );
 	SilentFileOptions opts; // initialized from the command line
 	SilentFileData silent_file_data(opts);
 
@@ -382,15 +386,15 @@ rna_score_test()
 			Real rmsd;
 			if ( option[ rmsd_nosuper ]() ) {
 				if ( option[ rmsd_residues ].user() ) {
-					//rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
 					rmsd = protocols::stepwise::modeler::align::get_rmsd( *pose, *native_pose, option[ rmsd_residues ]() );
 				} else {
-					rmsd      = all_atom_rmsd_nosuper( *native_pose, *pose );
+					rmsd = all_atom_rmsd_nosuper( *native_pose, *pose );
 				}
 			} else {
-				//Real const rmsd      = all_atom_rmsd( *native_pose, pose );
 				rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( *pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
-				//Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+				if ( option[ rmsd_residues ].user() ) {
+					rmsd = protocols::stepwise::modeler::align::get_rmsd( *pose, *native_pose, option[ rmsd_residues ]() );
+				}
 			}
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "new_rms", rmsd );
@@ -467,7 +471,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( full_model::cutpoint_open );
 		option.add_relevant( score::weights );
 		option.add_relevant( score::just_calc_rmsd );
+		option.add_relevant( OptionKeys::stepwise::virtualize_free_moieties_in_native );
 		option.add_relevant( OptionKeys::rna::data_file );
+		option.add_relevant( out::overwrite );
 		NEW_OPT( original_input, "If you want to rescore the poses using the original FullModelInfo from a SWM run, input those original PDBs here", blank_string_vector );
 		NEW_OPT( virtualize_free, "virtualize no-contact bases (and attached no-contact sugars/phosphates)", false );
 		NEW_OPT( params_file, "Input file for pairings", "" );
@@ -475,7 +481,7 @@ main( int argc, char * argv [] )
 		NEW_OPT( soft_rep, "use soft_rep params for color_by_score", false ); // how about for actual scoring?
 		NEW_OPT( rmsd_nosuper, "Calculate rmsd without superposition first", false);
 		NEW_OPT( convert_protein_centroid, "convert the protein residues to centroid rep", false);
-		NEW_OPT( rmsd_residues, "residues to calculate rmsd for", 1);
+		NEW_OPT( rmsd_residues, "residues to calculate rmsd for; superimposition is still over ALL residues", utility::vector1<Size>() );
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup
