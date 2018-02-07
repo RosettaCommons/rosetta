@@ -32,11 +32,17 @@
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+
 // utility headers
 #include <utility/excn/Exceptions.hh>
+#include <utility/pointer/memory.hh>
 
 // Basic headers
+#include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/ConstDataMap.hh>
+#include <basic/datacache/CacheableString.hh>
 #include <basic/datacache/DataMap.hh>
 
 #include <basic/Tracer.hh>
@@ -121,15 +127,20 @@ RosettaScriptsJobQueen::complete_larval_job_maturation(
 
 	TR << "Completing larval job maturation" << std::endl;
 
+	protocols::jd3::JobOutputIndex index;
+	index.primary_output_index = larval_job->nstruct_index();
+
 	protocols::jd3::standard::MoverAndPoseJobOP mature_job( new protocols::jd3::standard::MoverAndPoseJob );
 	core::pose::PoseOP pose = pose_for_job( larval_job, *job_options );
+	using basic::datacache::CacheableString;
+	pose->data().set(
+		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
+		utility::pointer::make_shared< CacheableString > ( larval_job->job_tag_with_index_suffix( index )));
 	mature_job->pose( pose );
 
 	bool modified_pose;
 
 	parser_->set_recursion_limit( *job_options );
-	protocols::jd3::JobOutputIndex index;
-	index.primary_output_index = larval_job->nstruct_index();
 	protocols::rosetta_scripts::ParsedProtocolOP mover_protocol = parser_->generate_mover_and_apply_to_pose(
 		*pose, *job_options, modified_pose,
 		larval_job->input_tag(),
