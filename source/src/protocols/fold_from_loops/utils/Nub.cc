@@ -392,18 +392,25 @@ Nub::get_nub_pieces( core::pose::Pose & pose )
 				pieces_[p]->pdb_info()->add_reslabel(i, flexible_label() );
 			}
 			// EDITABILITY
-			ResidueIndexSelector colds;
-			for ( core::Size i = 1; i <=  piece_properties_[p].coldspots.size(); ++i ) {
-				colds.append_index( piece_properties_[p].coldspots[i] );
+			if ( piece_properties_[p].coldspots.size() > 0 ) {
+				ResidueIndexSelector colds;
+				for ( core::Size i = 1; i <=  piece_properties_[p].coldspots.size(); ++i ) {
+					colds.append_index( piece_properties_[p].coldspots[i] );
+				}
+				ResidueSelectorCOP coldscop( new ResidueIndexSelector( colds ) );
+				labeler.residue_selector( coldscop );
+				labeler.label( coldspot_label() );
+				labeler.apply( *pieces_[p] );
+				ResidueSelectorCOP hots( new NotResidueSelector( coldscop ) );
+				labeler.residue_selector( hots );
+				labeler.label( hotspot_label() );
+				labeler.apply( *pieces_[p] );
+			} else {
+				ResidueSelectorCOP hots( new TrueResidueSelector );
+				labeler.residue_selector( hots );
+				labeler.label( hotspot_label() );
+				labeler.apply( *pieces_[p] );
 			}
-			ResidueSelectorCOP coldscop( new ResidueIndexSelector( colds ) );
-			ResidueSelectorCOP hots( new NotResidueSelector( coldscop ) );
-			labeler.residue_selector( coldscop );
-			labeler.label( coldspot_label() );
-			labeler.apply( *pieces_[p] );
-			labeler.residue_selector( hots );
-			labeler.label( hotspot_label() );
-			labeler.apply( *pieces_[p] );
 		}
 	} else {
 		for ( core::Size p = 1; p <= pieces_.size(); ++p ) {

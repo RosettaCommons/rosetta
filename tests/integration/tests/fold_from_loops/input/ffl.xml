@@ -1,0 +1,47 @@
+<ROSETTASCRIPTS>
+  <RESIDUE_SELECTORS>
+    <Index name="motif" resnums="1A-6A,16A-20A" />
+    <Chain name="design" chains="A" />
+    <Chain name="binder" chains="B" />
+  </RESIDUE_SELECTORS>
+  <FILTERS>
+	</FILTERS>
+  <MOVERS>
+    # ** SavePoseMover used like this does not need to be called during PROTOCOL to work.
+    <SavePoseMover name="readMotif" reference_name="motif_pose" pdb_file="%%pdb%%" />
+
+    ## PREPROCESSING: Template can only be a single-chain Pose.
+    <DeleteRegionMover name="cleanPose" residue_selector="binder" />
+
+    ## PREPROCESSING: MAKING FRAGMENTS
+    <StructFragmentMover name="FragmentPicker" prefix="frags"
+      small_frag_file="%%frag_small%%" large_frag_file="%%frag_large%%"  />
+
+    ## PREPROCESSING: CONSTRAINTS
+    <AddConstraints name="foldCST" >
+      <AtomPairConstraintGenerator name="atompairCST1" sd="1.5" ca_only="true"
+        use_harmonic="true" unweighted="true" min_seq_sep="4" residue_selector="design"
+      />
+    </AddConstraints>
+
+    # MAIN: NUBINITIO FOLDING
+    <NubInitioMover name="FFL" fragments_id="frags" template_motif_selector="motif" >
+      <Nub reference_name="motif_pose" residue_selector="motif" binder_selector="binder" >
+        <Segment order="1" n_term_flex="0" c_term_flex="1" editable="2,3" />
+        <Segment order="2" n_term_flex="1" c_term_flex="0" />
+      </Nub>
+    </NubInitioMover>
+
+    # POSTPROCESSING: LOOP CLOSURE
+    <NubInitioLoopClosureMover name="loopC" fragments_id="frags"
+      break_side_ramp="true" design="true" />
+
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover="cleanPose" />
+    <Add mover="FragmentPicker" />
+    <Add mover="foldCST" />
+    <Add mover="FFL" />
+    <Add mover="loopC" />
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

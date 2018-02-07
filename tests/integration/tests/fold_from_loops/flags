@@ -1,0 +1,12 @@
+-parser:protocol ./input/ffl.xml
+-s ./input/dimer.pdb
+
+-parser:script_vars pdb=./input/dimer.pdb
+-parser:script_vars frag_small=./input/dimer.200.3mers
+-parser:script_vars frag_large=./input/dimer.200.9mers
+
+-out:mute protocols.abinitio
+
+-run:constant_seed
+-nodelay
+-overwrite

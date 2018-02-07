@@ -101,7 +101,8 @@ NubInitioLoopClosureMover::NubInitioLoopClosureMover():
 	altered_residues_( core::select::residue_selector::ReturnResidueSubsetSelector() ),
 	trust_( default_trust() ),
 	label_( default_label() ),
-	centroid_( default_centroid() )
+	centroid_( default_centroid() ),
+	design_( default_design() )
 {}
 
 NubInitioLoopClosureMover::~NubInitioLoopClosureMover()= default;

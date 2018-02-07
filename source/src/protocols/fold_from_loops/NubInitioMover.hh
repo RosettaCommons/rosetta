@@ -147,6 +147,12 @@ public:
 	/// @brief weight for dihedral constraints, to provide to the ab initio process
 	void dihedral_weight( core::Real value );
 	core::Real dihedral_weight() const;
+	/// @brief value automatically applied to weight to improve alpha/beta fold
+	void correction_weights( core::Real value );
+	core::Real correction_weights() const;
+	/// @brief if true, apply the correction weights
+	bool use_correction_weights() const;
+	void use_correction_weights( bool pick );
 	/// @brief if true, generate silentfile with the centroid-level protein
 	bool dump_centroid() const;
 	void dump_centroid( bool pick );
@@ -202,6 +208,8 @@ private:
 	static core::Real default_mc_binder_weight();
 	static core::Real default_mc_angle_weight();
 	static core::Real default_mc_dihedral_weight();
+	static core::Real default_mc_correction_weights();
+	static bool default_use_correction_weights();
 	static bool default_dump_centroid();
 	static bool default_drop_unfolded_pose();
 	static bool default_design();
@@ -248,6 +256,8 @@ private:
 	core::Real mc_binder_weight_;
 	core::Real mc_angle_weight_;
 	core::Real mc_dihedral_weight_;
+	core::Real mc_correction_weights_;
+	bool use_correction_weights_;
 	bool has_betas_;  // internal
 	bool has_alphas_; // internal
 	bool dump_centroid_;

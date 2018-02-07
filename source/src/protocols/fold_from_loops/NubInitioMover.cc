@@ -121,6 +121,11 @@ NubInitioMover::NubInitioMover():
 	fragments_id_( std::string() ),
 	trials_( 1 ),
 	max_trials_( default_max_trials() ),
+	mc_binder_weight_( default_mc_binder_weight() ),
+	mc_angle_weight_( default_mc_angle_weight() ),
+	mc_dihedral_weight_( default_mc_dihedral_weight() ),
+	mc_correction_weights_( default_mc_correction_weights() ),
+	use_correction_weights_( default_use_correction_weights() ),
 	dump_centroid_( default_dump_centroid() ),
 	drop_unfolded_pose_( default_drop_unfolded_pose() ),
 	design_( default_design() ),
@@ -179,6 +184,7 @@ NubInitioMover::parse_my_tag(
 	binder_weight( tag->getOption< core::Real >( "binder_weight", default_mc_binder_weight() ) );
 	angle_weight( tag->getOption< core::Real >( "angle_weight", default_mc_angle_weight() ) );
 	dihedral_weight( tag->getOption< core::Real >( "dihedral_weight", default_mc_dihedral_weight() ) );
+	use_correction_weights( tag->getOption< bool > ( "correction_weights", default_use_correction_weights() ) );
 
 	repack_disulfides( tag->getOption< bool > ( "repack_disulfides", default_repack_disulfides() ) );
 	disulfides_bb( tag->getOption< bool > ( "disulfides_bb", default_disulfides_bb() ) );
@@ -239,6 +245,8 @@ NubInitioMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"Weight for angle constraints to add to the AbInitio MonteCarlo's evaluator default score (0 - no weight).", std::to_string( default_mc_angle_weight() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "dihedral_weight", xsct_real,
 		"Weight for dihedral constraints to add to the AbInitio MonteCarlo's evaluator default score (0 - no weight).", std::to_string( default_mc_dihedral_weight() ) )
+		+ XMLSchemaAttribute::attribute_w_default( "correction_weights", xsct_rosetta_bool,
+		"When true (default), it will autodetect the presence of helix/sheet in the template and add scoring terms appropiately.", std::to_string( default_use_correction_weights() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "repack_disulfides", xsct_rosetta_bool,
 		"Force disulfide awarenes to guide ab initio.", std::to_string( default_repack_disulfides() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "disulfides_bb", xsct_rosetta_bool,
@@ -577,30 +585,30 @@ NubInitioMover::apply_abinitio( core::pose::Pose & pose )
 		abinitio = ClassicAbinitioOP( new FoldConstraints( nub_->small_fragments(), nub_->large_fragments() , nub_->movemap()->clone() ) );
 	}
 	abinitio->init( pose );
-	if ( has_alphas_ ) {
-		abinitio->set_score_weight( core::scoring::hbond_sr_bb, 1.17);
+	if ( use_correction_weights_ and has_alphas_ ) {
+		abinitio->set_score_weight( core::scoring::hbond_sr_bb, mc_correction_weights_ );
 	}
-	if ( has_betas_ ) {
-		abinitio->set_score_weight( core::scoring::hbond_lr_bb, 1.17);
-		abinitio->set_score_weight( core::scoring::rsigma,      1.17);
-		abinitio->set_score_weight( core::scoring::sheet,       1.17);
-		abinitio->set_score_weight( core::scoring::ss_pair,     1.17);
+	if ( use_correction_weights_ and has_betas_ ) {
+		abinitio->set_score_weight( core::scoring::hbond_lr_bb, mc_correction_weights_ );
+		abinitio->set_score_weight( core::scoring::rsigma,      mc_correction_weights_ );
+		abinitio->set_score_weight( core::scoring::sheet,       mc_correction_weights_ );
+		abinitio->set_score_weight( core::scoring::ss_pair,     mc_correction_weights_ );
 	}
-	if ( has_alphas_ and has_betas_ ) {
-		abinitio->set_score_weight( core::scoring::hs_pair, 1.17);
+	if ( use_correction_weights_ and has_alphas_ and has_betas_ ) {
+		abinitio->set_score_weight( core::scoring::hs_pair, mc_correction_weights_ );
 	}
-	if ( nub_->has_binder() and mc_binder_weight_ > 0 ) {
-		abinitio->set_score_weight( core::scoring::interchain_pair,   mc_binder_weight_);
-		abinitio->set_score_weight( core::scoring::interchain_env,   mc_binder_weight_);
-		abinitio->set_score_weight( core::scoring::interchain_contact, mc_binder_weight_);
-		abinitio->set_score_weight( core::scoring::interchain_vdw,   mc_binder_weight_);
+	if ( use_correction_weights_ and nub_->has_binder() and mc_binder_weight_ > 0 ) {
+		abinitio->set_score_weight( core::scoring::interchain_pair,    mc_binder_weight_ );
+		abinitio->set_score_weight( core::scoring::interchain_env,     mc_binder_weight_ );
+		abinitio->set_score_weight( core::scoring::interchain_contact, mc_binder_weight_ );
+		abinitio->set_score_weight( core::scoring::interchain_vdw,     mc_binder_weight_ );
 	}
 	if ( nub_->disulfides().size() > 0 and repack_disulfides_ ) {
 		abinitio->set_score_weight( core::scoring::dslfc_cen_dst, 5.0 );
-		abinitio->set_score_weight( core::scoring::dslfc_cb_dst, 4.0 );
-		abinitio->set_score_weight( core::scoring::dslfc_ang,   2.5 );
-		abinitio->set_score_weight( core::scoring::dslfc_cb_dih, 0.5 );
-		abinitio->set_score_weight( core::scoring::dslfc_bb_dih, 0.5 );
+		abinitio->set_score_weight( core::scoring::dslfc_cb_dst,  4.0 );
+		abinitio->set_score_weight( core::scoring::dslfc_ang,     2.5 );
+		abinitio->set_score_weight( core::scoring::dslfc_cb_dih,  0.5 );
+		abinitio->set_score_weight( core::scoring::dslfc_bb_dih,  0.5 );
 	}
 	if ( mc_angle_weight_ > 0 ) {
 		abinitio->set_score_weight( core::scoring::angle_constraint, mc_angle_weight_ );
@@ -988,6 +996,25 @@ NubInitioMover::dihedral_weight() const {
 	return mc_dihedral_weight_;
 }
 
+void
+NubInitioMover::correction_weights( core::Real value ) {
+	mc_correction_weights_ = value;
+}
+
+core::Real
+NubInitioMover::correction_weights() const {
+	return mc_correction_weights_;
+}
+
+bool
+NubInitioMover::use_correction_weights() const {
+	return use_correction_weights_;
+}
+void
+NubInitioMover::use_correction_weights( bool pick ) {
+	use_correction_weights_ = pick;
+}
+
 bool
 NubInitioMover::dump_centroid() const {
 	return dump_centroid_;
@@ -1211,6 +1238,16 @@ NubInitioMover::default_mc_angle_weight() {
 core::Real
 NubInitioMover::default_mc_dihedral_weight() {
 	return 0.0;
+}
+
+core::Real
+NubInitioMover::default_mc_correction_weights() {
+	return 1.17;
+}
+
+bool
+NubInitioMover::default_use_correction_weights() {
+	return true;
 }
 
 bool
