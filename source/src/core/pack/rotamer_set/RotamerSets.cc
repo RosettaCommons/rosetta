@@ -220,27 +220,8 @@ RotamerSets::build_rotamers(
 					}
 					set_of_rotamer_sets_[ resid_2_moltenres_[ resid ] ] = rotset;
 				}
-			}
-		} //if quasiflag == false
-
-		if ( quasiflag == false ) {
-			//adding code to define a template residue in link-residues that is processed after layer-design etc. does pruning. This works independent to where linkres is placed in the task-operator list
-			for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
-				Size resid = moltenres_2_resid(ii);
-				if ( task_->rotamer_links()->get_template(resid) != resid ) {
-					RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
-					RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
-					rotset->set_resid( resid );
-					for ( auto const & itr : *bufferset ) {
-						conformation::ResidueOP cloneRes( new conformation::Residue(*itr->clone()) );
-						copy_residue_conenctions_and_variants(pose,cloneRes,resid, asym_length);
-						rotset->add_rotamer(*cloneRes);
-
-					}
-					set_of_rotamer_sets_[ resid_2_moltenres_[ resid ] ] = rotset;
-				}
 			} //end addition template residue code
-		}
+		} //if quasiflag == false
 
 		utility::vector1<bool> visited(asym_length,false);
 		int expected_rot_count = 0;
