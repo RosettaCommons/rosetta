@@ -504,16 +504,30 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		TR.Debug << "apply other_overlap to output_pose" << std::endl;
 		add_other_overlap.apply(*output_poseOP);
 
-		//store and copy back labels due to symmetry wiping it
-		if ( input_pose_symmetric ) {
-			//store
-			std::map<core::Size, vector1<std::string> > res_label_map;
-			for ( core::Size ii = 1; ii <=output_poseOP->size(); ++ii ) {
-				vector1<std::string> tmp_labels = output_poseOP->pdb_info()->get_reslabels(ii);
-				res_label_map.insert(std::pair<Size,vector1<std::string> >(ii,tmp_labels));
+
+		//store PDBInfoLabels
+		std::map<core::Size, vector1<std::string> > res_label_map;
+		for ( core::Size ii = 1; ii <=output_poseOP->size(); ++ii ) {
+			vector1<std::string> tmp_labels = output_poseOP->pdb_info()->get_reslabels(ii);
+			res_label_map.insert(std::pair<Size,vector1<std::string> >(ii,tmp_labels));
+		}
+		//reset pdbinfos
+		renumber_pdbinfo_based_on_conf_chains(*output_poseOP,true,false,false,false);
+
+		//reapply residue_label to output_pose
+		std::map<core::Size, vector1<std::string> >::iterator res_label_map_itr;
+		vector1<std::string>::iterator res_label_itr;
+		for ( res_label_map_itr=res_label_map.begin(); res_label_map_itr!=res_label_map.end(); ++res_label_map_itr ) {
+			Size resid = res_label_map_itr->first;
+			vector1<std::string> tmp_labels = res_label_map_itr->second;
+			for ( res_label_itr=tmp_labels.begin(); res_label_itr!=tmp_labels.end(); ++res_label_itr ) {
+				output_poseOP->pdb_info()->add_reslabel(resid, *res_label_itr);
 			}
+		}
+
+		//store and copy back labels due to symmetry wiping it **symmetry cases only**
+		if ( input_pose_symmetric ) {
 			//clean and regenerate symmetry
-			renumber_pdbinfo_based_on_conf_chains(*output_poseOP,true,false,false,false);
 			core::pose::symmetry::make_symmetric_pose(*output_poseOP,symm_file_);
 			sfxn_->score(*output_poseOP);
 

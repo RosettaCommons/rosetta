@@ -34,6 +34,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -45,6 +46,8 @@
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
+
+static basic::Tracer TR( "core.select.residue_selector.SSElementSelector" );
 
 namespace core {
 namespace select {
@@ -72,14 +75,19 @@ utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core:
 		end_pose_res = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
 	//chain entered case  ------
+	bool skip_first_SS=false;
 	if ( chain_!="" ) {
-		//check chain existance
+		//check chain existence
 		if ( !has_chain(chain_[0],pose) ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "chain does not exist");
 		}
 		utility::vector1<core::Size> resnums = get_resnums_for_chain(pose, chain_[0]);
 		start_pose_res=resnums[1];
 		end_pose_res=resnums[resnums.size()];
+		TR.Debug << "Chain " << chain_ << " selected; resi " << start_pose_res << "-" << end_pose_res << std::endl;
+		if ( chain_ != "A" ) { //need to skip the first SS in the list later because of chain offset if not chain A
+			skip_first_SS=true;
+		}
 	}
 	//pass 1----------------------------------------
 	char lastSecStruct = dssp.get_dssp_secstruct( start_pose_res );
@@ -87,10 +95,18 @@ utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core:
 	Size endSS = 0;
 	for ( core::Size ii = start_pose_res+1; ii <= end_pose_res; ++ii ) {
 		if ( dssp.get_dssp_secstruct(ii)!=lastSecStruct ) {
-			endSS = ii-1;
-			SSElementSelector::SSElement ss_element_tmp(startSS,endSS,lastSecStruct);
-			ss_elements.push_back(ss_element_tmp);
-			startSS=ii;
+			if ( !skip_first_SS ) { //skip SS assignment for the first loop to compensate for chain offset
+				endSS = ii-1;
+				TR.Debug << "type: " << lastSecStruct << " startSS: " << startSS << " endSS: " << endSS << std::endl;
+				SSElementSelector::SSElement ss_element_tmp(startSS,endSS,lastSecStruct);
+				ss_elements.push_back(ss_element_tmp);
+				startSS=ii;
+			} else {
+				TR.Debug << "Chain " << chain_ << " selected, first SS skipped (chain offset)." << std::endl;
+				endSS = ii-1;
+				startSS=ii;
+				skip_first_SS=false;
+			}
 		}
 		lastSecStruct = dssp.get_dssp_secstruct(ii);
 	}
@@ -105,18 +121,18 @@ utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core:
 	bool delete_n_term_loop=false;
 	bool delete_c_term_loop=false;
 	Size ss_length = ss_elements[1].end_res-ss_elements[1].start_res;
-	if ( (ss_length<2)&&(ss_elements[1].type=="L") ) {
+	if ( (ss_length<reassign_short_terminal_loop_)&&(ss_elements[1].type=="L") ) {
 		ss_elements[2].start_res =ss_elements[1].start_res;
 		delete_n_term_loop=true;
 	}
 	ss_length = ss_elements[ss_elements.size()].end_res-ss_elements[ss_elements.size()].start_res;
-	if ( (ss_length<2)&&(ss_elements[ss_elements.size()].type=="L") ) {
+	if ( (ss_length<reassign_short_terminal_loop_)&&(ss_elements[ss_elements.size()].type=="L") ) {
 		ss_elements[ss_elements.size()-1].end_res =ss_elements[ss_elements.size()].end_res;
 		delete_c_term_loop=true;
 	}
 	Size start_pos = 1;
 	if ( delete_n_term_loop ) {
-		start_pos=2;
+		start_pos=reassign_short_terminal_loop_;
 	}
 	Size end_pos = ss_elements.size();
 	if ( delete_c_term_loop ) {
@@ -266,7 +282,7 @@ void SSElementSelector::parse_my_tag(
 	start_ = tag->getOption< std::string >("selection");
 	end_ = tag->getOption< std::string >("to_selection","");//switched naming because it can get confusing when using negative indices
 	chain_ = tag->getOption<std::string >("chain","");
-	reassign_short_terminal_loop_ = tag->getOption< bool>("reassign_short_terminal_loop","true");
+	reassign_short_terminal_loop_ = tag->getOption< core::Size >("reassign_short_terminal_loop",2);
 }
 
 
@@ -285,7 +301,7 @@ SSElementSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attributes + XMLSchemaAttribute( "selection", xs_string , "H=helix,L=Loop,S=Sheet,N=n_terminal,C=terminal can define only start" )
 		+ XMLSchemaAttribute::attribute_w_default( "to_selection", xs_string , "H=helix,L=Loop,S=Sheet,N=n_terminal,C=terminal","" )
 		+ XMLSchemaAttribute::attribute_w_default( "chain", xs_string , "chain letter","" )
-		+ XMLSchemaAttribute::attribute_w_default( "reassign_short_terminal_loop", xsct_rosetta_bool , "if terminal less than 2 residues loop is reasigned to neighboring SS element","true");
+		+ XMLSchemaAttribute::attribute_w_default( "reassign_short_terminal_loop", xsct_non_negative_integer , "if terminal less than X residues loop is reassigned to neighboring SS element (default=2; 0=no reassignment).","2");
 	xsd_type_definition_w_attributes( xsd, class_name(), "a selector for choosing parts of secondary structure", attributes );
 }
 
@@ -320,7 +336,7 @@ core::select::residue_selector::SSElementSelector::save( Archive & arc ) const {
 	arc( CEREAL_NVP( start_ ) ); // std::string
 	arc( CEREAL_NVP( end_ ) ); // std::string
 	arc( CEREAL_NVP( chain_) ); //std::string
-	arc( CEREAL_NVP(reassign_short_terminal_loop_) ); // bool
+	arc( CEREAL_NVP(reassign_short_terminal_loop_) ); // core::Size
 }
 
 /// @brief Automatically generated deserialization method
@@ -331,7 +347,7 @@ core::select::residue_selector::SSElementSelector::load( Archive & arc ) {
 	arc( start_ ); // std::string
 	arc( end_ ); // std::string
 	arc( chain_ ); //std::string
-	arc( reassign_short_terminal_loop_ ); // std::string
+	arc( reassign_short_terminal_loop_ ); // core::Size
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::SSElementSelector );

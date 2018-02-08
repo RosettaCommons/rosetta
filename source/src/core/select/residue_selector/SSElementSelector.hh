@@ -108,7 +108,7 @@ private: // data members
 	std::string start_;
 	std::string end_;
 	std::string chain_;
-	bool reassign_short_terminal_loop_;
+	core::Size reassign_short_terminal_loop_;
 
 #ifdef    SERIALIZATION
 public:
