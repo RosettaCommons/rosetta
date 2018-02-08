@@ -3,6 +3,7 @@
 
 #include <ui/task/task.h>
 #include <ui/task/task_view.h>
+#include <ui/task/job_submit.h>
 
 #include <ui/util/apps.gen.h>
 
@@ -46,10 +47,12 @@ TaskSubmit::TaskSubmit(TaskSP const &task, QWidget *parent) :
 	connect(fw, SIGNAL(backspace_pressed()), this, SLOT(backspace_pressed_on_files()));
 
 	//auto apps = {"AbinitioRelax", "docking_protocol", "relax"};
-	for(auto const & a : util::rosetta_app_list) ui->app->addItem(a);
+	//for(auto const & a : util::rosetta_app_list) ui->app->addItem(a);
 
 	update_ui_from_task();
 	connect(task_.get(), SIGNAL(changed()), this, SLOT(update_ui_from_task()));
+
+	connect(ui->jobs->tabBar(), &QTabBar::tabMoved, this, &TaskSubmit::s_on_jobs_tabMoved);
 
 	connect(&queues, &NetworkCall::finished, this, &TaskSubmit::s_on_queues_finished);
 	queues.call(task_api_url() + '/' + "queues");
@@ -70,7 +73,7 @@ void TaskSubmit::update_ui_from_task()
 
 	ui->name->setText( task_->name() );
 
-	ui->app->setCurrentText( task_->app() );
+	//ui->app->setCurrentText( task_->app() );
 
 	ui->version->setText( task_->version() );
 
@@ -79,7 +82,7 @@ void TaskSubmit::update_ui_from_task()
 	ui->description->document()->setPlainText( task_->description() );
 
 
-	ui->flags->document()->setPlainText( task_->flags() );
+	//ui->flags->document()->setPlainText( task_->flags() );
 
 
 	// ui->input_file_name->setText( task_->input().file_name() );
@@ -91,7 +94,14 @@ void TaskSubmit::update_ui_from_task()
 	// ui->flags_file_name->setText( task_->flags().file_name() );
 	// ui->flags->document()->setPlainText( task_->flags().data() );
 
-	ui->nstruct->setValue( task_->nstruct() );
+	//ui->nstruct->setValue( task_->nstruct() );
+
+	for(int i=ui->jobs->count(); i>0 ; --i) ui->jobs->removeTab(i-1);
+
+	for(auto const & job : task_->jobs() ) {
+		auto js = new JobSubmit(job, task_);
+		ui->jobs->addTab(js, job->name);
+	}
 }
 
 void TaskSubmit::on_name_textChanged(QString const &text)
@@ -100,11 +110,11 @@ void TaskSubmit::on_name_textChanged(QString const &text)
 	task_->name( text /*ui->name->text() */);
 }
 
-void TaskSubmit::on_app_activated(const QString &text)
-{
-    qDebug() << "TaskSubmit::on_app_currentIndexChanged";
-	task_->app( text /*ui->app->currentText()*/ );
-}
+// void TaskSubmit::on_app_activated(const QString &text)
+// {
+//     qDebug() << "TaskSubmit::on_app_currentIndexChanged";
+// 	task_->app( text /*ui->app->currentText()*/ );
+// }
 
 void TaskSubmit::on_version_textChanged(QString const &text)
 {
@@ -112,11 +122,11 @@ void TaskSubmit::on_version_textChanged(QString const &text)
 	task_->version( text /*ui->version->text()*/ );
 }
 
-void TaskSubmit::on_nstruct_valueChanged(int)
-{
-    //qDebug() << "TaskSubmit::on_nstruct_valueChanged";
-	task_->nstruct( ui->nstruct->value() );
-}
+// void TaskSubmit::on_nstruct_valueChanged(int)
+// {
+//     //qDebug() << "TaskSubmit::on_nstruct_valueChanged";
+// 	task_->nstruct( ui->nstruct->value() );
+// }
 
 void TaskSubmit::on_description_textChanged()
 {
@@ -124,10 +134,10 @@ void TaskSubmit::on_description_textChanged()
 	task_->description( ui->description->document()->toPlainText() );
 }
 
-void TaskSubmit::on_flags_textChanged()
-{
-	task_->flags( ui->flags->document()->toPlainText() );
-}
+// void TaskSubmit::on_flags_textChanged()
+// {
+// 	task_->flags( ui->flags->document()->toPlainText() );
+// }
 
 void TaskSubmit::on_add_input_structure_clicked()
 {
@@ -149,18 +159,17 @@ void TaskSubmit::on_add_native_structure_clicked()
 	}
 }
 
-void TaskSubmit::on_flags_from_file_clicked()
-{
-    //qDebug() << "TaskSubmit::on_flags_from_file_clicked";
-
-	QString file_name = QFileDialog::getOpenFileName(this, tr("Open Rosetta flags script"), "", "", Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
-	if( not file_name.isEmpty() ) {
-		QFile file(file_name);
-		if( file.open(QIODevice::ReadOnly) ) {
-			task_->flags( file.readAll() );
-		}
-	}
-}
+// void TaskSubmit::on_flags_from_file_clicked()
+// {
+//     //qDebug() << "TaskSubmit::on_flags_from_file_clicked";
+// 	QString file_name = QFileDialog::getOpenFileName(this, tr("Open Rosetta flags script"), "", "", Q_NULLPTR/*, QFileDialog::DontUseNativeDialog*/);
+// 	if( not file_name.isEmpty() ) {
+// 		QFile file(file_name);
+// 		if( file.open(QIODevice::ReadOnly) ) {
+// 			task_->flags( file.readAll() );
+// 		}
+// 	}
+// }
 
 void TaskSubmit::backspace_pressed_on_files()
 {
@@ -188,13 +197,15 @@ void TaskSubmit::on_add_files_clicked()
 			qDebug() << "file: " << *it;
 			QString name = QFileInfo(*it).fileName();
 
-			if( name == "flags" ) {
-				QFile file(*it);
-				if( file.open(QIODevice::ReadOnly) ) {
-					task_->flags( file.readAll() );
-				}
-			}
-			else task_->add_file(name, std::make_shared<File>(*it) );
+			// if( name == "flags" ) {
+			// 	QFile file(*it);
+			// 	if( file.open(QIODevice::ReadOnly) ) {
+			// 		task_->flags( file.readAll() );
+			// 	}
+			// }
+			// else task_->add_file(name, std::make_shared<File>(*it) );
+
+			task_->add_file(name, std::make_shared<File>(*it) );
 
 			// // File f(file_name);
 			// // task_->input( std::move(f) );
@@ -207,8 +218,61 @@ void TaskSubmit::on_add_files_clicked()
 	}
 }
 
+void TaskSubmit::on_add_job_clicked()
+{
+	//qDebug() << "TaskSubmit::on_add_job_clicked...";
 
-void TaskSubmit::s_on_queues_finished()
+	auto job = task_->add_job();
+	job->app = *util::rosetta_app_list.begin();
+
+	auto js = new JobSubmit(job, task_);
+
+	ui->jobs->setCurrentIndex( ui->jobs->addTab(js, job->name) );
+}
+
+void TaskSubmit::s_on_jobs_tabMoved(int from, int to)
+{
+	qDebug() << "TaskSubmit::on_jobs_tabMoved:" << from << " ->" << to;
+
+	task_->swap_jobs(from, to);
+}
+
+
+void TaskSubmit::on_files_clicked(const QModelIndex &index)
+{
+	if( FileTableModel *model = qobject_cast<FileTableModel*>( ui->files->model() ) ) {
+		// QVariant qv = model->data(index, Qt::DisplayRole);
+		// if( qv.isValid() ) {
+		// 	QString line = qv.toString();
+		// 	std::map<QString, FileSP> const & files = task_->files();
+		// 	auto it = files.find(line);
+		// 	if( it != files.end() ) {
+		// 		qDebug() << "TaskView::on_output_clicked: file:" << it->second->file_name();
+		// 		if(viewer_) viewer_->deleteLater();
+		// 		viewer_ = create_viewer_for_file(ui->preview, it->second);
+		// 		if(viewer_) {
+		// 			viewer_->resize( this->ui->preview->size() );
+		// 			viewer_->show();
+		// 		}
+		// 	}
+		// }
+		std::map<QString, FileSP> const & files = task_->files();
+		if( index.isValid()  and  index.row() >=0  and  index.row() < static_cast<int>( files.size() ) ) {
+			auto it = files.begin();
+			std::advance(it, index.row() );
+
+			if(viewer_) viewer_->deleteLater();
+			viewer_ = create_viewer_for_file(ui->preview, it->second);
+			if(viewer_) {
+				viewer_->resize( this->ui->preview->size() );
+				viewer_->show();
+			}
+
+		}
+	}
+}
+
+	void TaskSubmit::s_on_queues_finished()
 {
 	qDebug() << "TaskSubmit::on_queues_finished data:" << queues.result();
 	QJsonDocument jd = queues.result_as_json();
@@ -229,6 +293,13 @@ void TaskSubmit::on_submit_clicked()
 	//Project * project = task_->project();
 
 	ui->submit->setEnabled(false);
+
+	auto const & files = task_->files();
+
+	std::vector<QString> names;
+	for(auto const & it : files) names.push_back(it.first);
+	for(auto const & n : names) task_->rename_file(n, "input/" + n);
+
 	task_->submit( ui->queue->currentText() );
 
 	// if( project  and  check_submit_requirements(*project) ) {
@@ -242,7 +313,6 @@ void TaskSubmit::on_submit_clicked()
 
 	this->close();
 }
-
 
 
 } // namespace task

@@ -17,230 +17,18 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
+
 //#include <QVariant>
 #include <QDataStream>
 #include <QFile>
-#include <QDir>
+//#include <QDir>
 #include <QTimer>
 
 #include <iterator>
 
 namespace ui {
 namespace task {
-
-Node::Key const _input_key_ {"input"};
-Node::Key const _output_key_{"output"};
-
-Node::Key const _script_key_ {"script"};
-
-File::File(QString const &file_name)
-{
-	init_from_file(file_name);
-}
-
-File::File(QByteArray const & file_data)
-{
-	data(file_data);
-}
-
-
-File::File(QString const & file_name, QByteArray const & file_data) : file_name_(file_name)
-{
-	data(file_data);
-}
-
-
-File& File::operator=(File&& other) noexcept
-{
-    if(this != &other) { // no-op on self-move-assignment
-		file_name_.swap(other.file_name_);
-		file_data_.swap(other.file_data_);
-    }
-    return *this;
-}
-
-
-void File::init_from_file(QString const & file_name)
-{
-	file_name_ = file_name;
-	QFile file(file_name_);
-    if( file.open(QIODevice::ReadOnly) ) {
-		data( file.readAll() );
-	}
-}
-
-QByteArray File::data() const
-{
-	return qUncompress(file_data_);
-}
-
-void File::data(QByteArray const &file_data)
-{
-	file_data_ = qCompress(file_data);
-}
-
-
-bool File::operator ==(File const &rhs) const
-{
-	return (file_name_ == rhs.file_name_) and (file_data_ == rhs.file_data_);
-}
-
-QDataStream &operator<<(QDataStream &out, File const&f)
-{
-	out << f.file_name_;
-	out << f.file_data_;
-	return out;
-}
-
-QDataStream &operator>>(QDataStream &in, File &f)
-{
-	in >> f.file_name_;
-	in >> f.file_data_;
-	return in;
-}
-
-
-
-
-
-
-/*
-NodeTaskSyncer::NodeTaskSyncer(Task *task) : task_(task)
-{
-}
-
-void NodeTaskSyncer::submit(QString const & queue)
-{
-	queue_ = queue;
-	state_ = State::_draft_;
-
-	create_sync_tree();
-	qDebug() << "Task[" << task_id() << "]: Task::submit() Name:" << (project_ ? *project_->find(this) : "''") << " queue:" << queue_;
-
-	connect(root_.get(), SIGNAL(tree_synced()), this, SLOT(draft_to_queued()));
-
-	root_->data_is_fresh(true);
-
-	Q_EMIT task_->changed();
-}
-
-
-
-void NodeTaskSyncer::create_sync_tree()
-{
-	//QUuid task_id = QUuid::createUuid();  /// each distinct submitted Task _must_ have unique id
-
-	root_ = std::make_shared<Node>("task", Node::Flags::data_in | Node::Flags::data_out | Node::Flags::topology_out);
-
-	auto files_node = std::make_shared<Node>(Node::Flags::all);
-	root_->add("files", files_node);
-	//assign_input_node();
-
-
-
-
-	auto script_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
-	root_->add("script", script_node);
-	//assign_script_node();  //script_node_ = script_node;
-
-	auto flags_node = std::make_shared<Node>(Node::Flags::data_out | Node::Flags::topology_out);
-	root_->add("flags", flags_node);
-	//assign_flags_node();
-
-	auto output_node = std::make_shared<Node>(Node::Flags::topology_in);
-	root_->add("output", output_node);
-	//assign_output_node();
-
-	connect_task_and_nodes();
-}
-*/
-
-
-
-QVariant FileTableModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-	if (role == Qt::DisplayRole) {
-		if (orientation == Qt::Horizontal) {
-			switch (section) {
-				case 0: return QString("name");
-				case 1: return QString("local path");
-			}
-		} else if (orientation == Qt::Vertical) {
-			return QString::number(section+1);
-		}
-	}
-    return QVariant();
-}
-
-
-int FileTableModel::rowCount(const QModelIndex &/*parent*/) const
-{
-	return rows_.size();
-}
-
-int	FileTableModel::columnCount(const QModelIndex &/*parent*/) const
-{
-	return 2;
-}
-
-Qt::ItemFlags FileTableModel::flags(const QModelIndex &index) const
-{
-    if (!index.isValid()) return Qt::NoItemFlags;
-
-	if( index.column() == 0  and  editable_ ) return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
-
-	return QAbstractItemModel::flags(index);
-}
-
-QVariant FileTableModel::data(const QModelIndex &index, int role) const
-{
-    if (!index.isValid()) return QVariant();
-    if (role != Qt::DisplayRole && role != Qt::EditRole) return QVariant();
-
-	//if( index.column() == 0 ) {
-	//return QStringLiteral("r%1 c%2").arg(index.row()).arg(index.column());
-
-	if( index.row() < static_cast<int>( rows_.size() ) ) {
-
-		if( index.column() == 0 ) return rows_[index.row()].name;
-		else if ( index.column() == 1 ) return rows_[index.row()].path;
-	}
-	return QVariant();
-}
-
-bool FileTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    if (role != Qt::EditRole) return false;
-
-	QString s = value.toString();
-	if( not s.isEmpty()  and  static_cast<std::size_t>(index.row()) < rows_.size() ) {
-		QString previous_value = rows_[index.row()].name;
-		//QTimer::singleShot(0, this, [=]() { Q_EMIT this->rename_file(previous_value, s); } );  //SLOT( rename(previous_value, s) ) );
-		Q_EMIT this->rename_file(previous_value, s);
-	}
-
-    return false;
-}
-
-
-void FileTableModel::update_from_task(Task const &task)
-{
-	beginResetModel();
-
-	editable_ = task.state() == Task::State::_none_;
-
-	QDir project_path;
-	if( auto project = task.project() ) project_path = QDir( QFileInfo( project->file_name() ).dir() );
-
-	auto const & files = task.files();
-
-	rows_.clear();
-	rows_.reserve( files.size() );
-	for(auto const & it : files) rows_.push_back( Row{it.first, project_path.relativeFilePath( it.second->file_name() ) } );
-
-	endResetModel();
-}
-
 
 static std::map<QString, Task::State> const _String_to_Task_State_ = {
 	{"none",     Task::State::_none_},
@@ -271,7 +59,7 @@ Task::State Task::from_string(QString const &s)
 
 Task::Task() : syncer_(this)
 {
-	app_ = "docking_protocol";
+	//app_ = "docking_protocol";
 	version_ = "master";
 	connect(&files_model_, SIGNAL( rename_file(QString const &, QString const &) ), this, SLOT( rename_file(QString const &, QString const &) ) );
 }
@@ -287,6 +75,57 @@ Task::~Task()
 {
 	//qDebug() << "Task::~Task()";
 }
+
+/// add a new job at the end of jobs queue and return poiinter to it
+Task::JobSP Task::add_job()
+{
+	JobSP job = std::make_shared<Job>();
+	jobs_.push_back(job);
+
+	QString name = QString::number(jobs_.size());
+	for(;;) {
+		if( rename_job( job, name ) ) break;
+		name += ".1";
+	}
+	return job;
+}
+
+/// delete given job
+void Task::delete_job(JobSP const &job)
+{
+	jobs_.erase(std::remove(jobs_.begin(), jobs_.end(), job), jobs_.end());
+}
+
+/// try to rename job, return true on success
+bool Task::rename_job(JobSP const &job, QString const & name)
+{
+	if( name.isEmpty() ) return false;
+
+	bool found_job = false;
+	for(auto const & j : jobs_) {
+		if( j == job ) found_job = true;
+		else if( j->name == name ) return false;
+	}
+
+	if(found_job) {
+		job->name = name;
+		return true;
+	}
+	return false;
+
+	// if( index >= static_cast<int>(jobs_.size())  or  index < 0 ) return false;
+	// for(int i=0; i < static_cast<int>(jobs_.size()); ++i) {
+	// 	if( i != index  and  jobs_[i]->name == name ) return false;
+	// }
+	// jobs_[index]->name = name;
+	// return true;
+}
+
+void Task::swap_jobs(int i, int j)
+{
+	if( i >= 0  and  j >= 0  and  i < static_cast<int>( jobs_.size() )  and  j < static_cast<int>( jobs_.size() ) ) std::swap( jobs_[i], jobs_[j] );
+}
+
 
 void Task::add_file(QString const &name, FileSP const &file)
 {
@@ -313,22 +152,11 @@ void Task::name(QString const &n)
 	if( name_ != n ) { name_ = n; Q_EMIT changed(); }
 }
 
-void Task::app(QString const &a)
-{
-	if( app_ != a ) { app_ = a; Q_EMIT changed(); }
-}
-
 
 void Task::version(QString const &v)
 {
 	if( version_ != v ) { version_ = v; Q_EMIT changed(); }
 }
-
-void Task::flags(QString const &f)
-{
-	if( flags_ != f ) { flags_ = f; Q_EMIT changed(); }
-}
-
 
 
 void Task::description(QString const &d)
@@ -338,15 +166,6 @@ void Task::description(QString const &d)
 		Q_EMIT changed();
 	}
 }
-
-void Task::nstruct(int n)
-{
-	if( nstruct_ != n ) {
-		nstruct_ = n;
-		Q_EMIT changed();
-	}
-}
-
 
 void Task::subscribe()
 {
@@ -431,10 +250,18 @@ QJsonValue Task::task_data()
 	r["state"] = to_string(state_);
 	r["queue"] = queue_;
 	r["description"] = description_;
-	r["nstruct"] = nstruct_;
-	r["flags"] = flags_;
-	r["app"] = app_;
 	r["version"] = version_;
+
+	QJsonArray jobs;
+	for(auto const &job : jobs_) {
+		QJsonObject j;
+		j["name"]    = job->name;
+		j["app"]     = job->app;
+		j["flags"]   = job->flags;
+		j["nstruct"] = job->nstruct;
+		jobs.append(j);
+	}
+	r["jobs"] = jobs;
 
 	//QJsonDocument jd = QJsonDocument::fromVariant(r);
 	//return jd.toJson(QJsonDocument::Compact);
@@ -488,23 +315,23 @@ void Task::task_data(QJsonValue const &jv)
 		}
 	}
 
-	auto ns = o["nstruct"];
-	if( ns.isDouble() ) {
-		auto nstruct = ns.toInt();
-		if( nstruct != nstruct_) {
-			nstruct_ = nstruct;
-			changed = true;
-		}
-	}
+	// auto ns = o["nstruct"];
+	// if( ns.isDouble() ) {
+	// 	auto nstruct = ns.toInt();
+	// 	if( nstruct != nstruct_) {
+	// 		nstruct_ = nstruct;
+	// 		changed = true;
+	// 	}
+	// }
 
-	auto fl = o["flags"];
-	if( fl.isString() ) {
-		auto flags = fl.toString();
-		if( flags != flags_) {
-			flags_ = flags;
-			changed = true;
-		}
-	}
+	// auto fl = o["flags"];
+	// if( fl.isString() ) {
+	// 	auto flags = fl.toString();
+	// 	if( flags != flags_) {
+	// 		flags_ = flags;
+	// 		changed = true;
+	// 	}
+	// }
 
 	auto ve = o["version"];
 	if( ve.isString() ) {
@@ -515,14 +342,14 @@ void Task::task_data(QJsonValue const &jv)
 		}
 	}
 
-	auto ap = o["app"];
-	if( ap.isString() ) {
-		auto app = ap.toString();
-		if( app != app) {
-			app_ = app;
-			changed = true;
-		}
-	}
+	// auto ap = o["app"];
+	// if( ap.isString() ) {
+	// 	auto app = ap.toString();
+	// 	if( app != app) {
+	// 		app_ = app;
+	// 		changed = true;
+	// 	}
+	// }
 
 	auto ti = o["task_id"];
 	if( ti.isDouble() ) {
@@ -532,7 +359,6 @@ void Task::task_data(QJsonValue const &jv)
 			changed = true;
 		}
 	}
-
 
 	if(changed) Q_EMIT this->changed();
 }
@@ -557,6 +383,45 @@ void Task::task_data(QJsonValue const &jv)
 // 	return true;
 // }
 
+
+
+quint32 const _Task_Job_stream_version_ = 0x00000001;
+
+QDataStream &operator<<(QDataStream &out, Task::Job const&j)
+{
+	out.setVersion(QDataStream::Qt_5_6);
+
+	out << ui::util::_Task_Job_magic_number_;
+	out << _Task_Job_stream_version_;
+
+	out << j.name;
+	out << j.app;
+	out << j.nstruct;
+	out << j.flags;
+
+	return out;
+}
+
+QDataStream &operator>>(QDataStream &in, Task::Job &j)
+{
+	in.setVersion(QDataStream::Qt_5_6);
+
+	quint64 magic;
+	in >> magic;
+	if( magic != ui::util::_Task_Job_magic_number_ ) throw ui::util::BadFileFormatException( QString("Invalid _Task_Job_magic_number_: read %1, was expecting %2...").arg(magic).arg(ui::util::_Task_Job_magic_number_) );
+
+	quint32 version;
+	in >> version;
+	if( version != _Task_Job_stream_version_ ) throw ui::util::BadFileFormatException( QString("Invalid _Task_Job_stream_version_: read %1, was expecting %2...").arg(magic).arg(_Task_Job_stream_version_) );
+
+	in >> j.name;
+	in >> j.app;
+	in >> j.nstruct;
+	in >> j.flags;
+
+	return in;
+}
+
 quint32 const _Task_stream_version_ = 0x00000001;
 
 QDataStream &operator<<(QDataStream &out, Task const&t)
@@ -572,10 +437,8 @@ QDataStream &operator<<(QDataStream &out, Task const&t)
 
 	out << t.task_id_;
 	out << t.name_;
-	out << t.app_;
+	out << t.jobs_;
 	out << t.version_;
-	out << t.nstruct_;
-	out << t.flags_;
 	out << t.description_;
 
 	out << t.queue_;
@@ -606,10 +469,8 @@ QDataStream &operator>>(QDataStream &in, Task &t)
 
 	in >> t.task_id_;
 	in >> t.name_;
-	in >> t.app_;
+	in >> t.jobs_;
 	in >> t.version_;
-	in >> t.nstruct_;
-	in >> t.flags_;
 	in >> t.description_;
 
 	in >> t.queue_;

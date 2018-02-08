@@ -23,6 +23,8 @@ private Q_SLOTS:
 	void update_ui_from_user_settings();
 	void update_user_settings_from_ui();
 
+	void on_pdb_viewer_browse_clicked();
+
 private:
     Ui::ConfigDialog *ui;
 };

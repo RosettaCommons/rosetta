@@ -54,7 +54,7 @@ void ProjectView::on_new_task_clicked()
 {
     qDebug() << "ProjectView::on_new_task_clicked()";
 
-	if( check_submit_requirements(*project_) ) {
+	if( true or check_submit_requirements(*project_) ) {
 
 		//QString label = QString("Task-%1").arg( project_->size() );
 

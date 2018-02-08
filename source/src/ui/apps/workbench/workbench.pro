@@ -1,4 +1,4 @@
-QT += core gui network widgets
+QT += core gui network widgets charts
 
 CONFIG += object_parallel_to_source c++11 no_keywords
 

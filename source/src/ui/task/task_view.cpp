@@ -1,9 +1,14 @@
-#include "task_view.h"
+#include <ui/task/task_view.h>
 #include "ui_task_view.h"
 
+#include <ui/task/task_submit.h>
+#include <ui/task/job_view.h>
 #include <ui/task/task.h>
+#include <ui/task/file.h>
 
-#include <ui/ui_core/pose_draw/SimplePoseDrawOpenGLWidget.h>
+#include <ui/config/util.h>
+#include <ui/config/config_dialog.h>
+#include <ui/viewers/score_file_view.h>
 
 #include <QFileDialog>
 #include <QStringListModel>
@@ -12,9 +17,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QMessageBox>
-
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
+#include <QTemporaryFile>
 
 namespace ui {
 namespace task {
@@ -40,6 +43,11 @@ TaskView::TaskView(TaskSP const &task,QWidget *parent) :
 	ui->output->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->output, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(create_output_context_menu(const QPoint &)));
 
+	for(auto const & job : task_->jobs()) {
+		auto jv = new JobView(job, task_);
+		ui->jobs->addTab(jv, job->name);
+	}
+
 	setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -55,24 +63,19 @@ void TaskView::update_ui_from_task()
 
 	ui->name->setText( task_->name() );
 
-	ui->app->setText( task_->app() );
-
 	ui->queue->setText( task_->queue() );
 
 	ui->state->setText( Task::to_string( task_->state() ) );
 
 	ui->description->document()->setPlainText( task_->description() );
 
+	ui->task_id->setText( task_->task_id() );
+
 	// ui->input_file_name->setText( task_->input().file_name() );
 	//ui->input->document()->setPlainText( task_->input().data() );
 
 	// ui->script_file_name->setText( task_->script().file_name() );
 	// ui->script->document()->setPlainText( task_->script().data() );
-
-	//ui->flags_file_name->setText( task_->flags().file_name() );
-	ui->flags->document()->setPlainText( task_->flags() );
-
-	ui->nstruct->setText( QString::number( task_->nstruct() ) );
 
 	if( auto model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
 		QStringList output_files;
@@ -194,7 +197,7 @@ void TaskView::create_output_context_menu(const QPoint &pos)
 		QPoint item = ui->output->mapToGlobal(pos);
 
 		QMenu submenu;
-		submenu.addAction("Open...");
+		submenu.addAction("Open...", this, &TaskView::action_output_open);
 		submenu.addAction("Save as...", this, SLOT( action_output_save_as() ));
 		/*QAction* rightClickItem =*/ submenu.exec(item);
 		// if(rightClickItem && rightClickItem->text().contains("Open...") ) {
@@ -210,6 +213,33 @@ void TaskView::create_output_context_menu(const QPoint &pos)
 		// 		}
 		// 	}
 		// }
+	}
+}
+
+
+void TaskView::action_output_open()
+{
+	if( QStringListModel *model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
+		QModelIndexList indexes = ui->output->selectionModel()->selectedIndexes();
+
+		//QString dir;
+		//if( indexes.size() > 1 ) dir = QFileDialog::getExistingDirectory(this, tr("Save Output file to dir...") );
+
+		for (int i = 0; i <indexes.size(); ++i) {
+			QModelIndex index = indexes[i];
+
+			QVariant qv = model->data(index, Qt::DisplayRole);
+			if( qv.isValid() ) {
+				QString line = qv.toString();
+
+				auto const & files = task_->files();
+
+				auto it = files.find(line);
+				if( it != files.end() ) {
+					open_file_viewer(*it, task_, this);
+				}
+			}
+		}
 	}
 }
 
@@ -275,7 +305,7 @@ void TaskView::on_export_all_files_clicked()
 	}
 }
 
-
+/*
 QWidget * TaskView::create_viewer_for_file(FileSP const &f)
 {
 	QStringList list = f->file_name().split('.');
@@ -316,7 +346,7 @@ QWidget * TaskView::create_viewer_for_file(FileSP const &f)
 
 	return nullptr;
 }
-
+*/
 void TaskView::on_output_clicked(const QModelIndex &index)
 {
 	if( QStringListModel *model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
@@ -331,7 +361,7 @@ void TaskView::on_output_clicked(const QModelIndex &index)
 				qDebug() << "TaskView::on_output_clicked: file:" << it->second->file_name();
 
 				if(viewer_) viewer_->deleteLater();
-				viewer_ = create_viewer_for_file(it->second);
+				viewer_ = create_viewer_for_file(ui->preview, it->second);
 
 				if(viewer_) {
 					viewer_->resize( this->ui->preview->size() );
@@ -341,6 +371,56 @@ void TaskView::on_output_clicked(const QModelIndex &index)
 		}
 	}
 }
+
+
+void open_file_viewer(std::pair<QString const, FileSP> const & name_and_file, TaskSP const &task, QWidget *parent)
+{
+	QFileInfo fi( name_and_file.first );
+	QString file_name = fi.fileName();
+
+	//qDebug() << "temp: " << it->first << file_name;
+
+	if( file_name.endsWith(".pdb") ) {
+		QTemporaryFile * file = new QTemporaryFile("XXXXXX." + file_name, parent);
+		if( file->open() ) {
+			QString file_system_name = file->fileName();
+			qDebug() << "file_system_name:" << file_system_name;
+			file->write( name_and_file.second->data() );
+			file->close();
+
+			QString program = config::get_pdb_viewer_path();
+
+			if( program.isEmpty() ) {
+
+				QMessageBox msgBox;
+				msgBox.setText( QString("External PDB viewer app is not set, would you like to set it now?") );
+				msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+				msgBox.setDefaultButton(QMessageBox::Cancel);
+
+				if( msgBox.exec() == QMessageBox::Ok) {
+					config::ConfigDialog * preferences = new config::ConfigDialog(parent);
+					preferences->show();
+				}
+			}
+			else {
+				QStringList arguments;
+				arguments << file_system_name; //arguments << "-style" << "fusion";
+				QProcess * process = new QProcess(parent);
+				process->start(program, arguments);
+
+				//QProcess *myProcess = new QProcess(this);
+				//myProcess->start(program, arguments);
+				//process->setProgram(program);
+				//process->setArguments(arguments);
+				//process->startDetached()
+			}
+		}
+	} else if( file_name.endsWith(".score") ) {
+		auto sfv = new viewers::ScoreFileView(name_and_file, task, nullptr);
+		sfv->show();
+	}
+}
+
 
 
 } // namespace task

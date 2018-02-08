@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1137</width>
-    <height>688</height>
+    <height>761</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>220</y>
+     <y>320</y>
      <width>1121</width>
      <height>391</height>
     </rect>
@@ -70,8 +70,8 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>411</width>
-     <height>211</height>
+     <width>451</width>
+     <height>281</height>
     </rect>
    </property>
    <property name="title">
@@ -85,7 +85,7 @@
      <rect>
       <x>50</x>
       <y>10</y>
-      <width>141</width>
+      <width>151</width>
       <height>21</height>
      </rect>
     </property>
@@ -109,24 +109,11 @@
      <string>name:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_11">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>0</y>
-      <width>61</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>app:</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>40</y>
+      <x>210</x>
+      <y>10</y>
       <width>51</width>
       <height>21</height>
      </rect>
@@ -139,7 +126,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
+      <y>40</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -152,26 +139,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>100</y>
-      <width>391</width>
+      <y>60</y>
+      <width>431</width>
       <height>101</height>
      </rect>
     </property>
     <property name="readOnly">
      <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_14">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>60</y>
-      <width>51</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>nstruct:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="version">
@@ -180,9 +154,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>40</y>
-      <width>341</width>
+      <x>270</x>
+      <y>10</y>
+      <width>171</width>
       <height>21</height>
      </rect>
     </property>
@@ -196,88 +170,11 @@
      <string>master</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="app">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>10</y>
-      <width>141</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::StrongFocus</enum>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="nstruct">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>70</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::StrongFocus</enum>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_2">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>0</y>
-     <width>711</width>
-     <height>121</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>flags</string>
-   </property>
-   <widget class="QPlainTextEdit" name="flags">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>691</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_3">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>120</y>
-     <width>711</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>info</string>
-   </property>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>30</y>
+      <x>20</x>
+      <y>170</y>
       <width>41</width>
       <height>21</height>
      </rect>
@@ -289,8 +186,8 @@
    <widget class="QLabel" name="state">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>30</y>
+      <x>70</x>
+      <y>170</y>
       <width>60</width>
       <height>21</height>
      </rect>
@@ -311,8 +208,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>30</y>
+      <x>290</x>
+      <y>200</y>
       <width>141</width>
       <height>21</height>
      </rect>
@@ -327,8 +224,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>30</y>
+      <x>240</x>
+      <y>200</y>
       <width>41</width>
       <height>21</height>
      </rect>
@@ -337,27 +234,14 @@
      <string>queue:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>30</y>
-      <width>41</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>files:</string>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="files_count">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>30</y>
+      <x>60</x>
+      <y>200</y>
       <width>101</width>
       <height>21</height>
      </rect>
@@ -369,12 +253,25 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>200</y>
+      <width>41</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>files:</string>
+    </property>
+   </widget>
    <widget class="QWidget" name="syncing" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
-      <width>671</width>
+      <y>230</y>
+      <width>431</width>
       <height>41</height>
      </rect>
     </property>
@@ -383,7 +280,7 @@
       <rect>
        <x>80</x>
        <y>2</y>
-       <width>581</width>
+       <width>341</width>
        <height>41</height>
       </rect>
      </property>
@@ -405,18 +302,66 @@
      </property>
     </widget>
    </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>170</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>task_id:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="task_id">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>170</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QPushButton" name="export_all_files">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>620</y>
+     <y>720</y>
      <width>191</width>
      <height>32</height>
     </rect>
    </property>
    <property name="text">
     <string>export all files</string>
+   </property>
+  </widget>
+  <widget class="QTabWidget" name="jobs">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>10</y>
+     <width>661</width>
+     <height>281</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>-1</number>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

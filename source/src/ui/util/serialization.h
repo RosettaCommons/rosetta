@@ -12,6 +12,7 @@ quint64 const _Node_magic_number_                     = 0x1A5CD6BF94D5E57F;
 quint64 const _TaskSyncer_NodeStrategy_magic_number_  = 0xFFF2D9FACD201111;
 quint64 const _TaskSyncer_TaskStrategy_magic_number_  = 0xFFF2D9FACD201121;
 quint64 const _Task_magic_number_                     = 0xFFF2D9FACD279EE1;
+quint64 const _Task_Job_magic_number_                 = 0xFFF2D9FACD27A001;
 quint64 const _Project_magic_number_                  = 0xFFF1D6BF94D5E57F;
 
 quint64 const _std_map_QDataStream_magic_number_      = 0xFFF2C04ABB492107;

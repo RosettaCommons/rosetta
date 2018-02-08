@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>582</width>
     <height>300</height>
    </rect>
   </property>
@@ -35,9 +35,9 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>30</y>
-     <width>361</width>
+     <x>10</x>
+     <y>10</y>
+     <width>401</width>
      <height>101</height>
     </rect>
    </property>
@@ -49,7 +49,7 @@
      <rect>
       <x>80</x>
       <y>30</y>
-      <width>271</width>
+      <width>311</width>
       <height>21</height>
      </rect>
     </property>
@@ -85,14 +85,43 @@
      <rect>
       <x>80</x>
       <y>60</y>
-      <width>271</width>
+      <width>311</width>
       <height>21</height>
      </rect>
     </property>
     <property name="echoMode">
-     <enum>QLineEdit::Normal</enum>
+     <enum>QLineEdit::Password</enum>
     </property>
    </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>130</y>
+     <width>561</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>pdb viewer:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="pdb_viewer"/>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pdb_viewer_browse">
+      <property name="text">
+       <string>browse</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

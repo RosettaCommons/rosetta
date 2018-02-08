@@ -21,6 +21,7 @@ namespace config {
 
 static QString const _credentials_prefix_ = "credentials/";
 
+static QString const _pdb_viewer_path_    = "pdb_viewer";
 
 UserCredentials get_user_credentials()
 {
@@ -41,6 +42,19 @@ void set_user_credentials(UserCredentials const &c)
 
 	settings.setValue(_credentials_prefix_ + "user", c.user);
 	settings.setValue(_credentials_prefix_ + "password", c.password);
+}
+
+
+QString get_pdb_viewer_path()
+{
+	QSettings settings;
+	return settings.value(_pdb_viewer_path_).toString();;
+}
+
+void set_pdb_viewer_path(QString const &path)
+{
+	QSettings settings;
+	settings.setValue(_pdb_viewer_path_, path);
 }
 
 

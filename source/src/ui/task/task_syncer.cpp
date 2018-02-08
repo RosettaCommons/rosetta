@@ -529,7 +529,7 @@ void TaskSyncer_TaskStrategy::subscribe()
 					}
 					else {
 						if( qtask->state() == Task::State::_running_) QTimer::singleShot(1000*60*1, qtask, &Task::subscribe );
-						else  QTimer::singleShot(1000*60*5, qtask, &Task::subscribe );
+						else  QTimer::singleShot(1000*60*1, qtask, &Task::subscribe );
 					}
 					//Q_EMIT qtask->syncing();
 

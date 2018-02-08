@@ -2,6 +2,7 @@
 #define TASK_VIEW_H
 
 #include <ui/task/task.fwd.h>
+#include <ui/task/file.fwd.h>
 
 #include <ui/task/util.h>
 
@@ -13,6 +14,9 @@ class TaskView;
 
 namespace ui {
 namespace task {
+
+void open_file_viewer( std::pair<QString const, FileSP> const & file, TaskSP const &, QWidget *parent=nullptr);
+
 
 class TaskView : public QWidget
 {
@@ -40,6 +44,8 @@ private Q_SLOTS:
     void on_output_clicked(const QModelIndex &index);
 
 	void create_output_context_menu(const QPoint &pos);
+
+	void action_output_open();
 	void action_output_save_as();
 
 	void on_export_all_files_clicked();
@@ -50,7 +56,7 @@ private:
 
 
 private:
-	QWidget * create_viewer_for_file(FileSP const &);
+	//QWidget * create_viewer_for_file(FileSP const &);
 
 	Ui::TaskView *ui;
 

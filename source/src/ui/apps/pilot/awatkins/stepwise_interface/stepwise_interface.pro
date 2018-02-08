@@ -1,4 +1,4 @@
-QT += core gui widgets opengl
+QT += core gui widgets opengl charts
 
 CONFIG += object_parallel_to_source c++11 no_keywords
 

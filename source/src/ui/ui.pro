@@ -1,4 +1,4 @@
-QT += core gui network widgets
+QT += core gui network widgets charts
 
 CONFIG += object_parallel_to_source c++11 no_keywords
 
@@ -22,6 +22,9 @@ SOURCES += \
     ui_lib_test.cpp \
     config/config_dialog.cpp \
     config/util.cpp \
+    task/job_submit.cpp \
+    task/job_view.cpp \
+    task/file.cpp \
     task/functor.cpp \
     task/node.cpp \
     task/project.cpp \
@@ -35,12 +38,18 @@ SOURCES += \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.cpp \
     ui_protocols/helical_bundle/HelixOptionWidget.cpp \
     ui_core/pose_draw/SimplePoseDrawOpenGLWidget.cpp \
-    ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.cpp
+    ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.cpp \
+    viewers/score_file_view.cpp
+
 
 HEADERS  += \
     ui_lib_test.h \
     config/config_dialog.h \
     config/util.h \
+    task/job_submit.h \
+    task/job_view.h \
+    task/file.fwd.h \
+    task/file.h \
     task/functor.fwd.h \
     task/functor.h \
     task/node.h \
@@ -63,16 +72,19 @@ HEADERS  += \
     ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.h \
     ui_protocols/helical_bundle/HelicalBundlePoseDrawOpenGLWidget.fwd.h \
     util/exception.h \
-    util/serialization.h
+    util/serialization.h \
+    viewers/score_file_view.h
 
 FORMS    += \
     config/config_dialog.ui \
+    task/job_submit.ui \
+    task/job_view.ui \
     task/task_submit.ui \
     task/project_view.ui \
     task/task_view.ui \
     ui_protocols/helical_bundle/HelicalBundleDialogueWidget.ui \
-    ui_protocols/helical_bundle/HelixOptionWidget.ui
-
+    ui_protocols/helical_bundle/HelixOptionWidget.ui \
+    viewers/score_file_view.ui
 
 LIBS += \
         -L$$OUT_PWD/../rosetta/external         -lexternal \

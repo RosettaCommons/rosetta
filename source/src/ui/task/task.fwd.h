@@ -11,11 +11,7 @@ class Task;
 using TaskSP  = std::shared_ptr< Task >;
 using TaskCSP = std::shared_ptr< Task const >;
 using TaskQP  = QPointer<Task>;
-
-class File;
-using FileSP  = std::shared_ptr< File >;
-using FileCSP = std::shared_ptr< File const >;
-using FileQP  = QPointer<File>;
+using TaskWP  = std::weak_ptr< Task >;
 
 } // namespace task
 } // namespace ui
