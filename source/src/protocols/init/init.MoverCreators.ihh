@@ -536,6 +536,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMoverCreator.hh>
 #include <protocols/simple_moves/TumbleCreator.hh>
 #include <protocols/simple_moves/VirtualRootMoverCreator.hh>
+#include <protocols/simple_moves/WriteSSEMoverCreator.hh>
 
 #include <protocols/simple_moves/bin_transitions/InitializeByBinsCreator.hh>
 #include <protocols/simple_moves/bin_transitions/PerturbByBinsCreator.hh>

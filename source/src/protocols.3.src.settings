@@ -826,6 +826,7 @@ sources = {
 		"Tumble",
 		"UniformPositionMover",
 		"VirtualRootMover",
+		"WriteSSEMover",
 		"WobbleMover",
 	],
 	"protocols/simple_moves/asym_fold_and_dock": [

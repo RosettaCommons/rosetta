@@ -552,6 +552,7 @@ static MoverRegistrator< simple_moves::SwitchResidueTypeSetMoverCreator > reg_Sw
 static MoverRegistrator< simple_moves::SwitchChainOrderMoverCreator > reg_SwitchChainOrderMoverCreator;
 static MoverRegistrator< simple_moves::TumbleCreator > reg_TumbleCreator;
 static MoverRegistrator< simple_moves::VirtualRootMoverCreator > reg_VirtualRootMoverCreator;
+static MoverRegistrator< simple_moves::WriteSSEMoverCreator > reg_WriteSSEMoverCreator;
 
 static MoverRegistrator< simple_moves::bin_transitions::InitializeByBinsCreator > reg_InitializeByBinsCreator;
 static MoverRegistrator< simple_moves::bin_transitions::PerturbByBinsCreator > reg_PerturbByBinsCreator;
