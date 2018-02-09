@@ -169,7 +169,6 @@ struct FilterBucket {
 	bool filter_gly{false};
 };
 
-// @brief create a set of structures for a the given range of residues and other parameters
 void
 LoopHashSampler::build_structures(
 	const core::pose::Pose& start_pose,

@@ -38,7 +38,10 @@
 namespace protocols {
 namespace loophash {
 
-// @brief Manages the insertion of an arbitrary length of backbone in a local manner
+/// @brief Manages the insertion of an arbitrary length of backbone in a local 
+/// manner.
+/// @details This is a pure virtual superclass, and the intention is that 
+/// different subclasses can use different methods to keep the insertion local.
 class LocalInserter : public utility::pointer::ReferenceCount {
 public:
 
@@ -48,6 +51,12 @@ public:
 	LocalInserter(){
 	}
 
+	/// @brief Insert a backbone segment.
+	/// @param[out] start_pose
+	/// @param[in] original_pose
+	/// @param[in] new_bs The backbone segment to insert
+	/// @param[in] respos The residue where the start of the given backbone 
+	/// segment should be inserted.
 	virtual
 	core::Real
 	make_local_bb_change(
@@ -57,7 +66,13 @@ public:
 		core::Size res_pos
 	) = 0;
 
-	// closes gaps between ir and jr
+	/// @brief Insert a backbone segment, and close any chainbreaks in the region 
+	/// where the segment is being inserted.
+	/// @param[out] start_pose
+	/// @param[in] original_pose
+	/// @param[in] new_bs The backbone segment to insert
+	/// @param[in] respos The residue where the start of the given backbone 
+	/// segment should be inserted.
 	virtual
 	core::Real
 	make_local_bb_change_close_gaps(
@@ -67,8 +82,13 @@ public:
 		core::Size res_pos
 	) = 0;
 
-	// closes many gaps outside of ir and jr
-	// will die if gap exists between ir and jr
+	/// @brief Closes many gaps outside of ir and jr.
+	/// @details Will die if gap exists between ir and jr.
+	/// @param[out] start_pose
+	/// @param[in] original_pose
+	/// @param[in] new_bs The backbone segment to insert
+	/// @param[in] respos The residue where the start of the given backbone 
+	/// segment should be inserted.
 	virtual
 	core::Real
 	make_local_bb_change_include_cut(
@@ -82,7 +102,8 @@ private:
 
 };
 
-// @brief
+/// @brief Insert a backbone segment and use minimization with coordinate 
+/// constraints to keep the insertion local.
 class LocalInserter_SimpleMin : public LocalInserter{
 public:
 	LocalInserter_SimpleMin():
@@ -95,21 +116,28 @@ public:
 		set_default_score_functions();
 	}
 
-	/// @brief set the score function for the first round of minimization
-	///during a loophash insert
+	/// @brief Set the score function for the first round of minimization
+	/// during a loophash insert.
 	void
 	scorefxn_rama_cst(
 		core::scoring::ScoreFunction const &  scorefxn
 	);
 
-	/// @brief set the score function for the second round of minimization
-	///during a loophash insert
+	/// @brief Set the score function for the second round of minimization
+	/// during a loophash insert.
 	void
 	scorefxn_cen_cst(
 		core::scoring::ScoreFunction const & scorefxn
 	);
 
-
+	/// @details This method uses the following algorithm:
+	/// - Constrain atoms outside the region where the insertion will occur to 
+	///   their initial coordinates.
+	/// - Apply the torsions from the given backbone segment.
+	/// - Minimize first with only the rama term
+	/// - Minimize again with a hard-coded centroid-like score function (see 
+	///   LocalInserter_SimpleMin::set_default_score_functions() for details) and 
+	///   a stricter convergence tolerance.
 	core::Real
 	make_local_bb_change(
 		core::pose::Pose &start_pose,
@@ -118,7 +146,12 @@ public:
 		core::Size res_pos
 	) override;
 
-
+	/// @details Similar to make_local_bb_change(), but before the torsions from 
+	/// the given backbone segment are inserted, the bond lengths and angles for 
+	/// those residues are idealized, so that if there was a chainbreak, it would 
+	/// be fixed.
+	/// @note This whole function, with the exception of the "idx" for-loop, is 
+	/// duplicated from make_local_bb_change().  This could be easily refactored.
 	core::Real
 	make_local_bb_change_close_gaps(
 		core::pose::Pose &start_pose,
@@ -127,7 +160,8 @@ public:
 		core::Size res_pos
 	) override;
 
-
+	/// @details It looks to me like this method applies coordinate constraints 
+	/// and inserts the given backbone segment, but never does any minimization.  
 	core::Real
 	make_local_bb_change_include_cut(
 		core::pose::Pose &start_pose,
@@ -137,7 +171,8 @@ public:
 	) override;
 
 private:
-	// setup scorefunctions for
+	/// @brief Define hard-coded default scorefunctions for the minimization 
+	/// steps.
 	void set_default_score_functions();
 
 	// the scorefunctions themselves

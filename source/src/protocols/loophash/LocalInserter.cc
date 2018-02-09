@@ -45,9 +45,6 @@ static basic::Tracer TR( "LocalInserter" );
 /// @details Auto-generated virtual destructor
 LocalInserter::~LocalInserter() = default;
 
-
-/// @brief set the score function for the first round of minimization
-///during a loophash insert
 void
 LocalInserter_SimpleMin::scorefxn_rama_cst(
 	core::scoring::ScoreFunction const & scorefxn
@@ -55,8 +52,6 @@ LocalInserter_SimpleMin::scorefxn_rama_cst(
 	scorefxn_rama_cst_=scorefxn.clone();
 }
 
-/// @brief set the score function for the second round of minimization
-///during a loophash insert
 void
 LocalInserter_SimpleMin::scorefxn_cen_cst(
 	core::scoring::ScoreFunction const & scorefxn
@@ -80,7 +75,14 @@ LocalInserter_SimpleMin::make_local_bb_change(
 	exclude_region.add_loop( protocols::loops::Loop( res_pos, res_pos + new_bs.length() ) );
 	//core::pose::Pose newpose( original_pose );
 	transfer_phi_psi( original_pose, newpose );
+	// Add constraints everywhere except for the residues in the backbone segment 
+	// being inserted.  This is how we'll keep the insertion "local".
 	add_coordinate_constraints_to_pose( newpose, original_pose, exclude_region );
+	// What kind of fold tree does the pose have?  If it's nothing fancy, this 
+	// would really blow everything up and rely on the minimizer with coordinate 
+	// constraints being able to pull it all back together.  apply_to_pose() will 
+	// create a foldtree if its "cut" argument is true, but it's false by default 
+	// and not specified here. -KBK
 	new_bs.apply_to_pose( newpose, res_pos );
 	pose::set_ss_from_phipsi( newpose );
 

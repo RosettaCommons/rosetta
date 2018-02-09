@@ -39,6 +39,7 @@ typedef utility::pointer::shared_ptr< LoopHashRelaxProtocol > LoopHashRelaxProto
 typedef utility::pointer::shared_ptr< LoopHashRelaxProtocol const > LoopHashRelaxProtocolCOP;
 
 
+/// @brief Not implemented!
 class LoopHashRelaxProtocol: public protocols::moves::Mover {
 public:
 

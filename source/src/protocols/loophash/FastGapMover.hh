@@ -29,12 +29,12 @@ namespace protocols {
 namespace loophash {
 
 
-/// @brief Mover class for closing gaps.
-/// This Mover checks for any gaps using residue residue distances
-/// Then eats back at the chain surrounding it until loophash finds
-/// a fragment that fits in the space without changing the rest of
-/// pose too much.
-
+/// @brief Not implemented!  Mover class for closing gaps.
+/// @details This Mover checks for any gaps using residue residue distances, 
+/// then eats back at the chain surrounding it until LoopHash finds a fragment 
+/// that fits in the space without changing the rest of pose too much.  This 
+/// mover depends on LoopHashSampler::close_gaps(), which is currently not 
+/// implemented.
 class FastGapMover : public moves::Mover {
 
 public:
