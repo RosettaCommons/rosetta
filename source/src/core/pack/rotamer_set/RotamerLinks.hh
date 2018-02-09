@@ -42,6 +42,9 @@ public:
 	{
 		links_.resize(res);
 		template_residues_.resize(res);
+		for ( Size ii=1; ii<=res; ++ii ) {
+			template_residues_[ii] = ii;
+		}
 	}
 
 	utility::vector1< Size >
