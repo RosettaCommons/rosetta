@@ -2,10 +2,10 @@
 
 -resfile resfile
 
--ex1 
+-ex1
 -ex2
 -extrachi_cutoff 0
 
--nstruct 300
+-nstruct 600
 
 -overwrite

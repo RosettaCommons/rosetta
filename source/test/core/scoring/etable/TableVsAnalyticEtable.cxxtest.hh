@@ -39,6 +39,7 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
+#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh> // needed for Mac staic build
 
 using basic::Error;
 using basic::Warning;
