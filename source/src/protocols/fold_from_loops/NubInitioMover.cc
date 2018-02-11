@@ -32,6 +32,7 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/simple_moves/DumpPdb.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
@@ -49,6 +50,7 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
@@ -95,6 +97,8 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <string>
 
@@ -129,7 +133,8 @@ NubInitioMover::NubInitioMover():
 	dump_centroid_( default_dump_centroid() ),
 	drop_unfolded_pose_( default_drop_unfolded_pose() ),
 	design_( default_design() ),
-	residue_type_( default_residue_type() )
+	residue_type_( default_residue_type() ),
+	pose_name_( std::string() )
 {}
 
 NubInitioMover::~NubInitioMover(){}
@@ -336,12 +341,24 @@ NubInitioMover::make_unfolded_pose( core::pose::Pose & pose ) {
 core::Size
 NubInitioMover::refold_pose( core::pose::Pose & pose )
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	trials_ = 1;
+	pose_name_ = pose.pdb_info()->name();
 	movers::DisplayPoseLabelsMover display;
 	simple_moves::SwitchResidueTypeSetMoverOP switcher( new simple_moves::SwitchResidueTypeSetMover );
 	while ( trials_ < max_trials_ ) {
 		TR << "Transfer Pose and Label Residues" << std::endl;
 		nub_->transfer_unfolded_conformation( pose );
+
+		if ( option[OptionKeys::run::show_simulation_in_pymol].user()
+				&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0 ) {
+			pose.pdb_info()->name( pose_name_  + "_centroid" );
+			protocols::moves::AddPyMOLObserver(pose,
+				option[OptionKeys::run::keep_pymol_simulation_history](),
+				option[OptionKeys::run::show_simulation_in_pymol].value());
+		}
 
 		TR << "Unfolded Pose Summary" << std::endl;
 		display.movemap_factory( nub_->movemapfactory() );
@@ -382,6 +399,9 @@ void
 NubInitioMover::post_process( core::pose::Pose & pose ) {
 
 	using namespace core::chemical;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	protocols::moves::DsspMover dssp;
 	movers::DisplayPoseLabelsMover display;
 	simple_moves::SwitchResidueTypeSetMoverOP switcher( new simple_moves::SwitchResidueTypeSetMover );
@@ -413,6 +433,12 @@ NubInitioMover::post_process( core::pose::Pose & pose ) {
 
 	TR << "Refitting side chains" << std::endl;
 	switcher->type_set_tag( core::chemical::FA_STANDARD );
+
+	if ( option[OptionKeys::run::show_simulation_in_pymol].user()
+			&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0 ) {
+		pose.pdb_info()->name( pose_name_ );
+	}
+
 	switcher->apply( pose );
 	nub_->refit_motif_sidechains( pose );
 	repack_minimize_disulfides( pose );

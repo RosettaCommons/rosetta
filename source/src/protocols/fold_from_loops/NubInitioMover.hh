@@ -265,6 +265,7 @@ private:
 	bool design_;
 	std::string residue_type_;
 	core::io::silent::SilentFileDataOP silent_score_file_;
+	std::string pose_name_; // internal
 
 };
 
