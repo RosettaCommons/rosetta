@@ -83,13 +83,13 @@ public:
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 1 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.0240031, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.1115, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 2 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.243551, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.2871, 1e-4 );
 		}
 
 		{
@@ -137,24 +137,22 @@ public:
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 10 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.0651805, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.0679, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 11 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.267079, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], -0.2730, 1e-4 );
 		}
 
 		{
 			EnergyMap emap;
 			nmer_svm_energy.residue_energy( trpcage.residue( 12 ), trpcage, emap );
-			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.165212, 1e-4 );
+			TS_ASSERT_DELTA( emap[ nmer_svm ], 0.1517, 1e-4 );
 		}
 
 	}
 
 
 };
-
-

@@ -42,6 +42,8 @@
 #include <utility/libsvm/Svm_rosetta.hh>
 #include <utility/vector1.hh>
 
+#include <utility/exit.hh>
+
 static basic::Tracer TR( "core.scoring.methods.NMerSVMEnergy" );
 
 namespace core {
@@ -388,19 +390,40 @@ NMerSVMEnergy::encode_nmer( std::string const & chain_sequence, Size const chain
 }
 
 //chain_seqpos is the P1 position of the epitope
+//OK to ask for chain seqpos + nmer that goes beyond end of string; just fill X.
 void
 NMerSVMEnergy::add_encoded_termini( std::string const & chain_sequence, Size const chain_seqpos, vector1< Real > & feature_vals ) const
 {
-	//get term nmers upstream and downstrem of core, use dummy - for missing res
+	//get term nmers upstream and downstream of core, use dummy X for nonexistent res
 	std::string nterm_seq, cterm_seq;
-	for ( Size offset = 1; offset <= term_length_; ++offset ) {
-		if ( chain_seqpos - offset >= 1 ) {
-			nterm_seq = chain_sequence[ ( chain_seqpos - 1 ) - offset ] + nterm_seq;
-		} else nterm_seq = "X" + nterm_seq;
-		if ( chain_seqpos + offset <= chain_sequence.length() ) {
-			cterm_seq = cterm_seq + chain_sequence[ ( chain_seqpos - 1 ) + ( nmer_length_ - 1 ) + offset ];
-		} else cterm_seq = cterm_seq + "X";
+	for ( core::Size offset(1); offset <= term_length_; ++offset ) {
+
+		//N terminus: if chain_seqpos is not greater than offset, we will underflow the string
+		//also check that the index will be valid against the string's length.
+		core::Size const nterm_index(( chain_seqpos - 1 ) - offset);
+		if ( (chain_seqpos > offset) && (nterm_index < chain_sequence.length()) ) {
+			nterm_seq = chain_sequence[ nterm_index ] + nterm_seq;
+		} else {
+			nterm_seq = "X" + nterm_seq;
+		}
+
+		//C terminus: (chain_seqpos - 1) means "chain_seqpos but indexed from 0 instead of 1 because strings".
+		//(offset - 1) makes the offset line up: start the c terminus 0 characters after the end of the epitope, not 1 after (which would skip a position)
+		//nmer_length_ skips us past the part of the sequence string that's the epitope we are looking at
+		//This is not algebraically simplest but it is easiest to understand; the compiler is smart.
+		core::Size const cterm_index(( chain_seqpos - 1 ) + nmer_length_ + ( offset - 1 ));
+
+		//index==chain_sequence.length() is valid C++, but then chain_sequence[index] returns a null character
+		if ( cterm_index < chain_sequence.length() ) {
+			cterm_seq = cterm_seq + chain_sequence[ cterm_index ];
+		} else {
+			cterm_seq = cterm_seq + "X";
+		}
 	}
+
+	//useful to debug that the above code actually worked...
+	//TR << "chain sequence " << chain_sequence << " nterm " << nterm_seq << " cterm " << cterm_seq << std::endl;
+
 	//construct wts
 	vector1< Real > nterm_wts( term_length_, 1.0 ), cterm_wts( term_length_, 1.0 );
 	//currently hardcoded to weight linearly down as we go away from central core sequence
