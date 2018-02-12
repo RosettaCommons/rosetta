@@ -57,18 +57,18 @@ get_rt_over_leap_without_foldtree_bs(
 
 
 /// @brief Store information about a particular Leap.
-/// @details A LeapIndex holds the original high precision rigid body transform 
-/// and an Index to a Backbone Database (BackboneDB) that has the actual phi 
-/// psi angles. The storage of the precise RT takes a lot of space and may be 
-/// deprecated at some point, since once it is hashed, it is rarely needed and 
-/// can be recomputed if it is.  Note that the length of the loop is not stored 
-/// either, this is again done for saving memory, as huge lists of Leaps are 
-/// typically created all with the same length. The length is stored and 
-/// handled by the owner of LeapIndex list.  The LeapIndex does not store the 
-/// actual backbone coordinates of the Leap. It merely contains an index (the 
-/// BackboneIndex) which refers to a serial store of backbone triples (phi,psi, 
-/// omega) which are stored somewhere else in a BackboneDB.  This is important 
-/// to save memory storage since multiple Leaps can share the same backbone 
+/// @details A LeapIndex holds the original high precision rigid body transform
+/// and an Index to a Backbone Database (BackboneDB) that has the actual phi
+/// psi angles. The storage of the precise RT takes a lot of space and may be
+/// deprecated at some point, since once it is hashed, it is rarely needed and
+/// can be recomputed if it is.  Note that the length of the loop is not stored
+/// either, this is again done for saving memory, as huge lists of Leaps are
+/// typically created all with the same length. The length is stored and
+/// handled by the owner of LeapIndex list.  The LeapIndex does not store the
+/// actual backbone coordinates of the Leap. It merely contains an index (the
+/// BackboneIndex) which refers to a serial store of backbone triples (phi,psi,
+/// omega) which are stored somewhere else in a BackboneDB.  This is important
+/// to save memory storage since multiple Leaps can share the same backbone
 /// triple and redundant storage would be hugely wasteful.
 struct LeapIndex{
 	core::Size index;

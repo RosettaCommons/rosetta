@@ -34,7 +34,7 @@ namespace protocols {
 namespace loophash {
 
 
-/// @brief Create candidate structures where some residues have been sampled by 
+/// @brief Create candidate structures where some residues have been sampled by
 /// loophash.
 class LoopHashSampler : public utility::pointer::ReferenceCount  {
 public:
@@ -49,26 +49,26 @@ public:
 	/// @brief Load default values from the command line.
 	void set_defaults();
 
-	/// @brief Create a set of structures for the given range of residues and 
+	/// @brief Create a set of structures for the given range of residues and
 	/// other parameters stored in this class.
 	/// @param[in] start_pose The pose to sample.
 	/// @param[out] lib_structs The resulting structures.
 	/// @details The algorithm, in pseudocode:
 	/// - For each residue between \p start_res and \p stop_res:
 	///   - For each loop length in the database
-	///     - Calculate the rigid-body transformation between the ends of a loop 
+	///     - Calculate the rigid-body transformation between the ends of a loop
 	///       starting at the current residue and extending the current length.
 	///     - For each radius from 0 to \p max_radius:
 	///       - Do a radial hashmap search for that radius.
 	///       - For each hit:
-	///         - Discard if the RMSD to the starting pose is either too low or 
+	///         - Discard if the RMSD to the starting pose is either too low or
 	///           too high
 	///         - Discard if there are Ramachandran outliers.
 	///         - Otherwise, keep!
 	///       - For each remaining hit:
 	///         - Insert the hit into a copy of the starting pose.
-	///         - Create a silent file representation of that pose and some 
-	///           information describing to how it was generated, and add it to 
+	///         - Create a silent file representation of that pose and some
+	///           information describing to how it was generated, and add it to
 	///           \p lib_structs.
 	void build_structures(
 		const core::pose::Pose& start_pose,
@@ -108,8 +108,8 @@ public:
 	bool       get_filter_by_phipsi() { return  filter_by_phipsi_; }
 
 	/// @brief Pre-filter structures with a scorefunction.
-	/// @details This is done using a chainbroken pose (before constraint 
-	/// minimization!) and is useful for experimentally derived scorefunctions 
+	/// @details This is done using a chainbroken pose (before constraint
+	/// minimization!) and is useful for experimentally derived scorefunctions
 	/// (eg density).
 	void use_prefiltering( core::scoring::ScoreFunctionOP score_filt, core::Size nstruct ) {
 		score_filt_ = score_filt;
@@ -121,7 +121,7 @@ private:
 	/// @brief Pointer to the library used for insertion.
 	LoopHashLibraryOP library_;
 
-	/// @brief Pointer to the insertion functor which provides the peptide 
+	/// @brief Pointer to the insertion functor which provides the peptide
 	/// insertion facility.
 	LocalInserterOP inserter_;
 

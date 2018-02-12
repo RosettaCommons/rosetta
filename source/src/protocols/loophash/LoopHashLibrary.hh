@@ -97,7 +97,7 @@ public:
 	LoopHashMap & gethash( core::Size size );
 
 
-  /// @brief Return a list of the loop lengths present in the library.
+	/// @brief Return a list of the loop lengths present in the library.
 	std::vector< core::Size > const & hash_sizes() const { return hash_sizes_; }
 
 	BackboneDB const & backbone_database() const { return bbdb_; }
@@ -107,11 +107,11 @@ public:
 	/// @details Only support writing to text, always include extra data
 	void save_db() const;
 
-	/// @details Only support reading from text, extra data is mandatory.  Used 
+	/// @details Only support reading from text, extra data is mandatory.  Used
 	/// when created merged text db.
 	void load_db();
 
-	/// @details Only support reading from merged text.  Extra data is optional 
+	/// @details Only support reading from merged text.  Extra data is optional
 	/// and handled by extra_.
 	void load_mergeddb();
 
@@ -121,10 +121,10 @@ public:
 	void delete_db();
 
 	/// @brief Take two LoopHash libraries and merge them.
-	/// @details Throws out non-unique fragments defined as follows: if a new 
-	/// fragment is in a bucket with a key also in the master library, and if the 
-	/// RMS between the new fragment and the members of the master bucket is 
-	/// lower than the @p rms_cutoff, it is non-unique.  Thus, an @p rms_cutoff 
+	/// @details Throws out non-unique fragments defined as follows: if a new
+	/// fragment is in a bucket with a key also in the master library, and if the
+	/// RMS between the new fragment and the members of the master bucket is
+	/// lower than the @p rms_cutoff, it is non-unique.  Thus, an @p rms_cutoff
 	/// of zero will not throw away any fragments.
 	void merge( LoopHashLibraryOP second_lib, utility::vector1< core::Real> rms_cutoffs );
 
@@ -132,8 +132,8 @@ public:
 	/// @details Just takes Data structs from one and copies to the other
 	bool merge_bbdb( const BackboneDB & second_bbdb, core::Size & index_offset );
 
-	/// @details This function destroys the backbone_index_map reference, so 
-	/// sorting is only done when the hash will not longer be used.  Required 
+	/// @details This function destroys the backbone_index_map reference, so
+	/// sorting is only done when the hash will not longer be used.  Required
 	/// after merging, before saving so that merged db can be loaded as slices.
 	void sort();
 
@@ -178,11 +178,11 @@ private:
 	/// @brief Need so we can set the database string once.
 	std::string assigned_string_;
 
-	/// @brief Whether this database holds extra data in the backbone database or 
+	/// @brief Whether this database holds extra data in the backbone database or
 	/// not.
 	bool extra_;
 
-	/// @brief The proteins of the backbone database that are loaded (when 
+	/// @brief The proteins of the backbone database that are loaded (when
 	/// loading a merged database, otherwise (0,0))
 	std::pair< core::Size, core::Size > loopdb_range_;
 

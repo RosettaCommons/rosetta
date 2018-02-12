@@ -31,13 +31,13 @@
 namespace protocols {
 namespace loophash {
 
-/// @brief Use LoopHash to sample new high-resolution conformations for the 
+/// @brief Use LoopHash to sample new high-resolution conformations for the
 /// given pose.
 /// @details The algorithm in pseudo-code:
 /// - Insert as many loops as you can into the regions you're interested in.
-/// - Score each insertion using the "centroid" filter, and discard the ones 
+/// - Score each insertion using the "centroid" filter, and discard the ones
 ///   that don't score well if you have too many.
-/// - Use FastRelax in "batch-mode" (what's that? KBK) to relax the remaining 
+/// - Use FastRelax in "batch-mode" (what's that? KBK) to relax the remaining
 ///   insertions with a full-atom score function.
 /// - Score each relaxed structure using the "fullatom" filter.
 /// - Apply the best-scoring one.

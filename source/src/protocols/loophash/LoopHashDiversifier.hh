@@ -31,26 +31,26 @@
 namespace protocols {
 namespace loophash {
 
-/// @brief Use LoopHash to generate low-resolution alternate conformations for 
+/// @brief Use LoopHash to generate low-resolution alternate conformations for
 /// the given pose.
-/// @details It's possible to limit the amount of movement based on the 
-/// secondary structure, such that secondary structure elements either move 
+/// @details It's possible to limit the amount of movement based on the
+/// secondary structure, such that secondary structure elements either move
 /// less than loops or don't move at all.  The algorithm in pseudo-code:
 ///
 /// - Convert the pose to centroid mode.
 ///
 /// - For num_iterations():
 ///
-/// 	- Randomly pick a window to diversify with LoopHash.
+///  - Randomly pick a window to diversify with LoopHash.
 ///
-/// 	- If \p diversify_loop_only_ is \t true and there are no loops in the 
-/// 	   window, skip the rest of the iteration.
+///  - If \p diversify_loop_only_ is \t true and there are no loops in the
+///     window, skip the rest of the iteration.
 ///
-/// 	- Set the amount of backbone movement to allow (i.e. minimum and maximum 
-/// 	   allowed RMSD of backbone segments) based on whether or not the 
-/// 	   secondary structure changes within the window.
+///  - Set the amount of backbone movement to allow (i.e. minimum and maximum
+///     allowed RMSD of backbone segments) based on whether or not the
+///     secondary structure changes within the window.
 ///
-/// 	- Keep all the insertions that pass a filter.
+///  - Keep all the insertions that pass a filter.
 ///
 /// - Convert the best-scoring diversified pose to full-atom mode and apply it.
 class LoopHashDiversifier : public protocols::moves::Mover
