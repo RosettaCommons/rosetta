@@ -9,7 +9,7 @@
 
 /// @file   protocols/jd3/JobGenealogist.fwd.hh
 /// @brief
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_protocols_jd3_JobGenealogist_fwd_hh
 #define INCLUDED_protocols_jd3_JobGenealogist_fwd_hh

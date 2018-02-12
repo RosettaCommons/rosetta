@@ -35,7 +35,7 @@ To get the most out of this class, call:
 
 5) get_nth_job_result_id() during JobQueen::determine_job_list() for downstream job dag nodes
 */
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_NodeManager_HH
@@ -43,6 +43,7 @@ To get the most out of this class, call:
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/jd3/dag_node_managers/NodeManager.fwd.hh>
+#include <protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh>
 
 // Package headers
 #include <protocols/jd3/Job.hh>
@@ -54,27 +55,6 @@ namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
 
-struct result_elements{
-	result_elements( core::Size global_job_id_in, core::Size local_result_id_in, core::Real score_in ){
-		global_job_id = global_job_id_in;
-		local_result_id = local_result_id_in;
-		score = score_in;
-	}
-
-	core::Size global_job_id;
-	core::Size local_result_id;
-	core::Real score;
-
-	///@brief returns the differences in scores.
-	core::Real operator-( result_elements const & other ) const{
-		return score - other.score;
-	}
-
-	///@brief this is for sorting
-	bool operator<( result_elements const & other ) const{
-		return score < other.score;
-	}
-};
 
 class NodeManager : public utility::pointer::ReferenceCount {
 
@@ -91,7 +71,8 @@ public:
 		core::Size num_jobs_total,
 		core::Size num_partitions,
 		utility::vector1< core::Size > num_results_to_keep_for_part,
-		utility::vector1< core::Size > result_threshold_per_part = utility::vector1< core::Size > ( 0 )
+		utility::vector1< core::Size > result_threshold_per_part = utility::vector1< core::Size > ( 0 ),
+		bool return_results_depth_first = false
 	);
 
 	//destructor
@@ -129,7 +110,7 @@ public:
 	}
 
 	///@brief this has better future-proofing over results_to_keep()[ int ]. Returns {0,0} if no result
-	jd3::JobResultID get_nth_job_result_id( core::Size n ) const;
+	jd3::JobResultID get_nth_job_result_id( core::Size n );
 
 public://status checkers
 
@@ -154,7 +135,7 @@ public://status checkers
 public: //getters, setters
 
 	///@brief old way to access the results. get_nth_job_result_id() is prefered.
-	utility::vector1< result_elements > const & results_to_keep() const;
+	utility::vector1< result_elements > results_to_keep();
 
 	inline core::Size num_jobs() const {
 		return num_jobs_total_;
@@ -198,6 +179,10 @@ protected:
 		return true;
 	}
 
+	void set_return_results_depth_first( bool setting ){
+		results_to_keep_.set_return_results_depth_first( setting );
+	}
+
 private:
 
 	core::Size job_offset_;//The first job for this node will be job_offset_ + 1
@@ -218,53 +203,37 @@ private:
 	core::Size num_jobs_completed_;
 
 	core::Size num_partitions_;
-	utility::vector1< utility::vector1< result_elements > > results_to_keep_;
-	mutable utility::vector1< result_elements > all_results_to_keep_;
-	mutable bool results_have_been_requested_at_least_once_;
+	//utility::vector1< utility::vector1< result_elements > > results_to_keep_;
+	NodeManagerStorageMatrix results_to_keep_;
+
+	//mutable utility::vector1< result_elements > all_results_to_keep_;
 
 	std::list< jd3::JobResultID > job_results_that_should_be_discarded_;
 };
 
-/*class NodeManagerInternalStorageUnit {
-
-NodeManagerInternalStorageUnit( core::Size num_results_to_keep ) :
-results_to_keep_( 0 ),
-last_element_touched_( 0 ),
-num_results_to_keep_( num_results_to_keep )
-{
-results_to_keep_.reserve( num_results_to_keep + 1 );
+inline
+void
+NodeManager::note_job_completed( core::Size, core::Size nresults ){//first arg is global_job_id
+	++num_jobs_completed_;
+	num_results_total_ += nresults;
 }
 
-public:
-//returns thing being removed
-inline result_elements insert( result_elements const & new_guy ){
-utility::vector1< result_elements >::iterator first_available_position = results_to_keep_.begin() + last_element_touched_;
-if( first_available_position == results_to_keep_.end() ) return new_guy;
-
-results_to_keep_.insert(
-std::upper_bound( first_available_position, results_to_keep_.end(), new_guy ),
-new_guy
-);
-
-if( results_to_keep_.size() > num_results_to_keep_ ){
-result_elements const return_val = results_to_keep_.back();
-results_to_keep_.pop_back();
-return return_val;
+inline
+utility::vector1< result_elements >
+NodeManager::results_to_keep() {
+	//Have to stop early because this freezes the result matrix.
+	//This is one of the main reasons not to use this method.
+	stopped_early_ = true;
+	return results_to_keep_.linear_vector_of_results();
 }
 
-};
 
-inline result_elements const & element( core::Size index ) const{
-if( index > last_element_touched_ ){
-last_element_touched_ = index;
+inline
+jd3::JobResultID
+NodeManager::get_nth_job_result_id( core::Size n ) {
+	return results_to_keep_.get_nth_element( n ).job_result_id();
 }
-return results_to_keep_[ index ];
-}
-private:
-utility::vector1< result_elements > results_to_keep_;
-core::Size last_element_touched_;
-core::Size num_results_to_keep_;
-};*/
+
 
 } //dag_node_managers
 } //jd3

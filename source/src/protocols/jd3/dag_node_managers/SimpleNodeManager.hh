@@ -10,7 +10,7 @@
 /// @file protocols/jd3/dag_node_managers/SimpleNodeManager.hh
 /// @brief Node Manager that does not discriminate between job results. All results are added to the same pool.
 /// @detailed See here for more info: https://www.rosettacommons.org/docs/latest/development_documentation/tutorials/jd3_derived_jq/classes/node_manager
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_SimpleNodeManager_HH
@@ -34,14 +34,16 @@ public:
 		core::Size job_offset,
 		core::Size num_jobs_total,
 		core::Size num_results_to_keep,
-		core::Size result_threshold = 0
+		core::Size result_threshold = 0,
+		bool return_results_depth_first = false
 	) :
 		EvenlyPartitionedNodeManager (
 		job_offset,
 		num_jobs_total,
 		num_results_to_keep,
 		1,
-		result_threshold
+		result_threshold,
+		return_results_depth_first
 		)
 	{}
 

@@ -10,7 +10,7 @@
 /// @file protocols/multistage_rosetta_scripts/MRSJob.cc
 /// @brief
 /// @detailed
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #include <protocols/multistage_rosetta_scripts/MRSJob.hh>
@@ -37,9 +37,8 @@ namespace protocols {
 namespace multistage_rosetta_scripts {
 
 //Constructor
-MRSJob::MRSJob( core::Size num_times_to_repeat, core::Size max_num_results ) :
-	max_num_results_( max_num_results ),
-	num_times_to_repeat_ (num_times_to_repeat )
+MRSJob::MRSJob( core::Size max_num_results ) :
+	max_num_results_( max_num_results )
 {}
 
 //Destructor
@@ -48,34 +47,10 @@ MRSJob::~MRSJob()
 
 jd3::CompletedJobOutput MRSJob::run() {
 	runtime_assert( pose_ );
-	core::pose::PoseOP orig_pose = pose_;
+	//core::pose::PoseOP orig_pose = pose_;
 
-	jd3::CompletedJobOutput output;
-	debug_assert( num_times_to_repeat_ );
-	for ( core::Size ii = 1; ii <= num_times_to_repeat_; ++ii ) {
-		if ( ii != num_times_to_repeat_ ) {
-			pose_ = orig_pose->clone();
-		} else {
-			pose_ = orig_pose;
-		}
+	jd3::CompletedJobOutput output = run_inner( );
 
-		if ( ii != 1 ) {
-			for ( mover_or_filter & mof : protocols_ ) {
-				if ( mof.mover ) {
-					mof.mover = mof.mover->clone();
-				}
-
-				if ( mof.filter ) {
-					mof.filter = mof.filter->clone();
-				}
-			}
-		}
-
-		jd3::CompletedJobOutput output_ii = run_inner();
-		for ( auto & jr_ii : output_ii.job_results ) {
-			output.job_results.push_back( jr_ii );
-		}
-	}
 	if ( output.job_results.size() ) {
 		output.status = jd3::jd3_job_status_success;
 	} else {
@@ -182,6 +157,9 @@ MRSJob::parse_my_tag(
 	moves::MoverFactory const * mover_factory = moves::MoverFactory::get_instance();
 	filters::FilterFactory const * filter_factory = filters::FilterFactory::get_instance();
 
+	boost::container::flat_map< std::string, moves::MoverOP > local_mover_map;
+	boost::container::flat_map< std::string, filters::FilterOP > local_filter_map;
+
 	utility::vector0< utility::tag::TagCOP > const & subtags = stage_subtag->getTags();
 	for ( unsigned short int i = 0; i<subtags.size(); ++i ) {
 		utility::tag::TagCOP subtag = subtags[ i ];
@@ -197,10 +175,18 @@ MRSJob::parse_my_tag(
 					utility_exit_with_message( "No Mover Named: " + mover_name );
 				}
 				utility::tag::TagCOP mover_tag = iter->second;
-				protocols_.push_back( mover_or_filter( mover_factory->newMover( mover_tag, map, filters, movers, pose ) ) );
+				auto mover_it = local_mover_map.find( mover_name );
+				if ( mover_it != local_mover_map.end() ) {
+					protocols_.emplace_back( mover_it->second );
+				} else {
+					moves::MoverOP new_mover = mover_factory->newMover( mover_tag, map, filters, movers, pose );
+					//protocols_.push_back( mover_or_filter( new_mover ) );
+					protocols_.emplace_back( new_mover );
+					local_mover_map[ mover_name ] = new_mover;
+				}
 				debug_assert( protocols_.back().mover );
 			}
-		} else {
+		} else { //Is Sort
 			positive_scores_are_better_ = ! subtag->getOption< bool >( "negative_score_is_good", true );
 		}
 
@@ -213,11 +199,22 @@ MRSJob::parse_my_tag(
 				utility_exit_with_message( "No Filter Named: " + filter_name );
 			}
 			utility::tag::TagCOP filter_tag = iter->second;
-			protocols_.push_back( mover_or_filter( filter_factory->newFilter( filter_tag, map, filters, movers, pose ) ) );
+
+			auto filter_it = local_filter_map.find( filter_name );
+			if ( filter_it != local_filter_map.end() ) {
+				protocols_.emplace_back( filter_it->second );
+			} else {
+				filters::FilterOP new_filter = filter_factory->newFilter( filter_tag, map, filters, movers, pose );
+				protocols_.emplace_back( new_filter );
+				local_filter_map[ filter_name ] = new_filter;
+			}
+
 			debug_assert( protocols_.back().filter );
-		} else if ( i == subtags.size() - 1 ) {
-			utility_exit_with_message( "All stages need to finish with a filter." );
 		}
+		//This is handled by <Sort/> now
+		/* else if ( i == subtags.size() - 1 ) {
+		utility_exit_with_message( "All stages need to finish with a filter." );
+		}*/
 
 	}
 }

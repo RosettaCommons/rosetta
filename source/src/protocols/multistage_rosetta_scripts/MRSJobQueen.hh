@@ -9,7 +9,7 @@
 
 /// @file protocols/multistage_rosetta_scripts/MRSJobQueen.hh
 /// @brief Derived Job Queen for Multistage Rosetta Scripts
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJobQueen_HH
@@ -122,7 +122,7 @@ public:
 		jd3::JobSummaryOP summary
 	) override;
 
-	inline void completed_job_summary(
+	void completed_job_summary(
 		jd3::LarvalJobCOP job,
 		core::Size result_index,
 		jd3::JobSummaryOP summary
@@ -130,7 +130,7 @@ public:
 		completed_job_summary( job->job_index(), result_index, summary );
 	}
 
-	inline core::Size stage_for_global_job_id( core::Size global_job_id ) const;
+	core::Size stage_for_global_job_id( core::Size global_job_id ) const;
 
 	std::list< jd3::JobResultID > job_results_that_should_be_discarded() override;
 
@@ -141,6 +141,12 @@ public:
 	}
 
 	void determine_validity_of_stage_tags();
+
+	core::Size num_input_structs() const { return num_input_structs_; }
+	core::Size num_stages() const { return num_stages_; }
+	core::Size num_results_to_keep_for_stage( core::Size stage ) const {
+		return num_results_to_keep_for_stage_[ stage ];
+	}
 
 protected:
 
@@ -191,7 +197,7 @@ protected:
 		return "protocols_multistage_rosetta_scripts_job_" + name + "_complex_type";
 	}
 
-	inline core::Size input_pose_id_for_jobid( core::Size global_jobid ) const;
+	core::Size input_pose_id_for_jobid( core::Size global_jobid ) const;
 
 	void print_job_lineage() const;
 
@@ -203,15 +209,10 @@ protected:
 	) override;
 
 	void assign_output_index(
-		core::Size input_job,
+		core::Size global_job_id,
+		core::Size local_result_id,
 		jd3::JobOutputIndex & output_index
 	);
-
-	inline core::Size num_input_structs() const { return num_input_structs_; }
-	inline core::Size num_stages() const { return num_stages_; }
-	inline core::Size num_results_to_keep_for_stage( core::Size stage ) const {
-		return num_results_to_keep_for_stage_[ stage ];
-	}
 
 private:
 	bool has_been_initialized_;
@@ -226,7 +227,6 @@ private:
 	utility::vector1< core::Size > max_num_results_per_instance_for_stage_;
 	utility::vector1< core::Size > num_jobs_per_input_for_stage_;
 	utility::vector1< core::Size > result_cutoffs_for_stage_;
-	utility::vector1< core::Size > bundle_size_for_stage_;
 	utility::vector1< core::Size > job_results_have_been_discarded_for_stage_;
 
 	utility::vector1< jd3::dag_node_managers::NodeManagerOP > node_managers_;
@@ -248,6 +248,8 @@ private:
 	std::map< jd3::JobResultID, jd3::output::OutputSpecificationOP > pose_output_specification_for_job_result_id_;
 
 	PoseForPoseID most_recent_pose_id_;
+
+	utility::vector1< std::pair< core::Size, utility::tag::TagCOP > > checkpoints_;
 };
 
 inline core::Size MRSJobQueen::stage_for_global_job_id( core::Size global_job_id ) const {

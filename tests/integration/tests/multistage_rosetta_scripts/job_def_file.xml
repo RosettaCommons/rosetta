@@ -65,6 +65,8 @@
 	<Sort filter="i"/>
       </Stage>
 
+      <Checkpoint filename="test.check"/>
+
       <Stage num_runs_per_input_struct="1" total_num_results_to_keep="3" result_cutoff="7">
 	<Add mover="idealize"/>
 	<Sort filter="c" />

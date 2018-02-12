@@ -10,7 +10,7 @@
 /// @file core/pack/hbonds/MCHBNetInteractionGraph.fwd.hh
 /// @brief Dervied class of PDInteractionGraph that does not save twobody energy calculations but rather passes them directly to a HBondGraph
 /// @details This is a HBondGraph creator that is wearing an InteractionGraph disguise so that monte carlo HBNet can collect energy information without having to create custom interfaces in many other classes. This class should not be used as an InteractionGraph because it does not store all of the information that InteractionGraphs need to store. There are a few utility_exit_with_message() calls sprinkled within this class to make sure it is not being misused, but there really is not any need to use it for anything other than HBondGraph creation.
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_core_pack_hbonds_MCHBNetInteractionGraph_FWD_HH

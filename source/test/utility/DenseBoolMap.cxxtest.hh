@@ -9,7 +9,7 @@
 
 /// @file   utility/DenseBoolMap.cxxtest.hh
 /// @brief  test suite for utility::DenseBoolMap
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 // Package headers
 #include <utility/DenseBoolMap.hh>

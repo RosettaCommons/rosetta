@@ -9,7 +9,7 @@
 
 /// @file   protocols/simple_filters/ReadPoseExtraScoreFilter.fwd.hh
 /// @brief
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_protocols_simple_filters_ReadPoseExtraScoreFilter_fwd_hh
 #define INCLUDED_protocols_simple_filters_ReadPoseExtraScoreFilter_fwd_hh

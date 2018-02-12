@@ -215,7 +215,7 @@ DockingInitialPerturbation::init_from_options()
 	}
 
 	if ( option[ OptionKeys::docking::randomize2 ].user() ) {
-		set_randomize2(option[ OptionKeys::docking::randomize2 ]());
+		or_randomize2( option[ OptionKeys::docking::randomize2 ]() );
 	}
 
 	if ( option[ OptionKeys::docking::use_ellipsoidal_randomization ].user() ) {

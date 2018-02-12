@@ -10,12 +10,13 @@
 /// @file protocols/multistage_rosetta_scripts/MRSJobQueen.cc
 /// @brief Queen for JD3 multistep protocol
 /// @detailed
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #include <protocols/multistage_rosetta_scripts/MRSJobQueen.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJob.hh>
 
+#include <numeric>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
@@ -176,7 +177,8 @@ MRSJobQueen::complete_larval_job_maturation(
 		runtime_assert( pose );
 	}
 
-	MRSJobOP msp_job = pointer::make_shared< MRSJob >( bundle_size_for_stage_[ stage ], max_num_results_per_instance_for_stage_[ stage ] );
+	MRSJobOP msp_job =
+		pointer::make_shared< MRSJob >( max_num_results_per_instance_for_stage_[ stage ] );
 
 	msp_job->set_pose( pose );
 
@@ -295,7 +297,7 @@ MRSJobQueen::job_results_that_should_be_discarded(){
 }
 
 std::list< output::OutputSpecificationOP >
-MRSJobQueen::jobs_that_should_be_output(){
+MRSJobQueen::jobs_that_should_be_output() {
 	if ( ! node_managers_.back()->all_results_are_in() ) {
 		return std::list< output::OutputSpecificationOP >( 0 );
 	}
@@ -318,12 +320,12 @@ MRSJobQueen::jobs_that_should_be_output(){
 
 		debug_assert( res_elem_os );
 
-		list_to_return.push_back( res_elem_os );
-
-		unsigned int const prelim_lar_job_for_elem = job_genealogist_->input_source_for_job( num_stages_, res_elem.global_job_id );
+		// unsigned int const prelim_lar_job_for_elem = job_genealogist_->input_source_for_job( num_stages_, res_elem.global_job_id );
 		JobOutputIndex index;
-		assign_output_index( prelim_lar_job_for_elem, index );
-		list_to_return.back()->output_index( index );
+		assign_output_index( res_elem.global_job_id, res_elem.local_result_id, index );
+		res_elem_os->output_index( index );
+
+		list_to_return.push_back( res_elem_os );
 	}
 
 	return list_to_return;
@@ -482,10 +484,6 @@ MRSJobQueen::append_common_tag_subelements(
 
 	XMLSchemaAttribute result_cutoff( "result_cutoff", XMLSchemaType(xsct_non_negative_integer), "Setting this to non-zero allows a stage to finish early if it reaches a certain number of results. For example, if you set this to 100 then this stage will stop running once it generates 100 results that pass filters." );
 
-	XMLSchemaAttribute job_bundle_size( "job_bundle_size", XMLSchemaType(xsct_positive_integer), "Decrease overhead by bundling identical jobs to the same CPU. The value for this option defines the number of jobs that are bundled together to the same node. This number may be rounded down by us to fit into num_runs_per_input_struct evenly and ( num_runs_per_input_struct / job_bundle_size ) should be relatively small compared to the total number of CPUs. 1 means there is no job bundling");
-	job_bundle_size.default_value( "1" );
-	job_bundle_size.is_required( false );
-
 	XMLSchemaAttribute total_num_results_to_keep( "total_num_results_to_keep", XMLSchemaType(xsct_non_negative_integer), "Defines the number of results accross all jobs for this mover to keep");
 	total_num_results_to_keep.is_required( true );
 
@@ -509,6 +507,7 @@ MRSJobQueen::append_common_tag_subelements(
 		stage_elements.add_already_defined_subelement( filter.first, & filters::complex_type_name_for_filter );
 	}
 
+	//ADD
 	//please keep this up to date with whatever src/protocol/rosetta_scripts/ParsedProtocol is using:
 	XMLSchemaSimpleSubelementList ssl;
 	AttributeList add_subattlist;
@@ -538,14 +537,32 @@ MRSJobQueen::append_common_tag_subelements(
 		.add_attribute( max_num_results_per_instance )
 		.add_attribute( result_cutoff )
 		.add_attribute( merge_results_after_this_stage )
-		.add_attribute( job_bundle_size )
+		.complex_type_naming_func( & protocols_subelement_mangler )
+		.write_complex_type_to_schema( xsd );
+
+	//Checkpoint
+	XMLSchemaAttribute cp_filename( "filename", XMLSchemaType( xs_string ),
+		"The name of the file created to store the information for this checkpoint");
+	num_runs_per_input_struct.is_required( true );
+
+	XMLSchemaAttribute cp_old_filename( "previous_filename_to_delete", XMLSchemaType( xsct_non_negative_integer ),
+		"(Optional) Perhaps you want to delete an earlier checkpoint once this one is completed. If so, provide the filename of the old one here.");
+	num_runs_per_input_struct.default_value( "" );
+	num_runs_per_input_struct.is_required( false );
+
+	XMLSchemaComplexTypeGenerator checkpoint_block_ct_gen;
+	checkpoint_block_ct_gen
+		.element_name( "Checkpoint" )
+		.description( "Allows the user to save progress." )
+		.add_attribute( cp_filename )
+		.add_attribute( cp_old_filename )
 		.complex_type_naming_func( & protocols_subelement_mangler )
 		.write_complex_type_to_schema( xsd );
 
 	XMLSchemaSimpleSubelementList mandatory_protocols_list;
 	mandatory_protocols_list.add_already_defined_subelement( "Stage", & protocols_subelement_mangler );
+	mandatory_protocols_list.add_already_defined_subelement( "Checkpoint", & protocols_subelement_mangler );
 	protocols_block_ct_gen.add_ordered_subelement_set_as_repeatable( mandatory_protocols_list );
-
 
 	protocols_block_ct_gen
 		.element_name( "PROTOCOLS" )
@@ -593,23 +610,22 @@ void MRSJobQueen::parse_common_tag( utility::tag::TagCOP common_tag ){
 	for ( auto subtag : subtags ) {
 		if ( subtag->getName() == "PROTOCOLS" ) {
 			utility::vector0< utility::tag::TagCOP > const & protocol_subtags = subtag->getTags();
-			//TODO we can calculate num_stages_ this way after developmental debugging is done
-			//num_stages_ = protocol_subtags.size();
-			//num_total_jobs_for_stage_.reserve( num_stages_ );
-			//num_results_to_keep_for_stage_.reserve( num_stages_ );
-			//max_num_results_per_instance_for_stage_.reserve( num_stages_ );
-			//num_jobs_per_input_for_stage_.reserve( num_stages_ );
-			core::Size stage_to_merge_after = 0;//equivalent to 1. Keeping it at 0 for debugging purposes
 
+			core::Size stage_to_merge_after = 0;
 			core::Size current_stage = 0;
-			while ( current_stage < protocol_subtags.size() ) {
-				utility::tag::TagCOP stage_subtag = protocol_subtags[ current_stage ];
-				runtime_assert( stage_subtag->getName() == "Stage" );//TODO reconsider this assertation once we implement checkpoints
-				++current_stage;
-				if ( stage_subtag->getOption< bool > ("merge_results_after_this_stage", false ) ) {
-					stage_to_merge_after = current_stage;
+			for ( utility::tag::TagCOP stage_subtag : protocol_subtags ) {
+				if ( stage_subtag->getName() == "Stage" ) {
+					++current_stage;
+					if ( stage_subtag->getOption< bool > ("merge_results_after_this_stage", false ) ) {
+						stage_to_merge_after = current_stage;
+					}
+					parse_single_stage_tag( stage_subtag );
+				} else if ( stage_subtag->getName() == "Checkpoint" ) {
+					checkpoints_.push_back(
+						std::pair< core::Size, utility::tag::TagCOP >( current_stage+1, std::move( stage_subtag ) ) );
+				} else {
+					utility_exit_with_message( stage_subtag->getName() + " is not expected in PROTOCOLS" );
 				}
-				parse_single_stage_tag( stage_subtag );
 			}
 
 			TR << "Will merge results after stage " << stage_to_merge_after << std::endl;
@@ -625,7 +641,8 @@ void MRSJobQueen::parse_common_tag( utility::tag::TagCOP common_tag ){
 						num_total_jobs_for_stage_[ ii ],
 						num_results_to_keep_for_stage_[ ii ],
 						num_input_structs_,
-						result_cutoffs_for_stage_[ ii ]
+						result_cutoffs_for_stage_[ ii ],
+						true
 						)
 					);
 				} else {
@@ -634,7 +651,8 @@ void MRSJobQueen::parse_common_tag( utility::tag::TagCOP common_tag ){
 						job_offset,
 						num_total_jobs_for_stage_[ ii ],
 						num_results_to_keep_for_stage_[ ii ],
-						result_cutoffs_for_stage_[ ii ]
+						result_cutoffs_for_stage_[ ii ],
+						true
 						)
 					);
 				}
@@ -656,22 +674,9 @@ void MRSJobQueen::parse_single_stage_tag( utility::tag::TagCOP stage_subtag ){
 
 	core::Size num_runs_per_input_struct =
 		stage_subtag->getOption< core::Size >( "num_runs_per_input_struct", 1 );
-	core::Size bundle_size =
-		stage_subtag->getOption< core::Size >( "job_bundle_size", 1 );
-	if ( num_runs_per_input_struct % bundle_size != 0 ) {
-		bundle_size = num_runs_per_input_struct / ( ( num_runs_per_input_struct / bundle_size ) + 1 );
-		num_runs_per_input_struct = num_runs_per_input_struct / bundle_size;
-		TR << "Decreased bundle_size from " << stage_subtag->getOption< core::Size >( "job_bundle_size", 1 )
-			<< " to " << bundle_size
-			<< " for num_runs_per_input_struct of " << stage_subtag->getOption< core::Size >( "num_runs_per_input_struct", 1 ) << std::endl;
-	} else {
-		num_runs_per_input_struct = num_runs_per_input_struct / bundle_size;
-		TR << "bundle_size is " << bundle_size << " for num_runs_per_input_struct " << num_runs_per_input_struct <<std::endl;
-	}
-	runtime_assert( bundle_size );
+
 	runtime_assert( num_runs_per_input_struct );
 	num_jobs_per_input_for_stage_.push_back( num_runs_per_input_struct );
-	bundle_size_for_stage_.push_back( bundle_size );
 
 	if ( stage == 1 ) {
 		core::Size const num_total_jobs = num_runs_per_input_struct * num_input_structs_;
@@ -824,25 +829,25 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 
 void MRSJobQueen::assign_output_index(
 	LarvalJobCOP larval_job,
-	Size,
+	Size result_index_for_job,
 	Size,
 	JobOutputIndex & output_index
 ) {
-	core::Size const input_job =
-		static_cast< standard::StandardInnerLarvalJob const & >( * larval_job->inner_job() ).prelim_job_node();
-	assign_output_index( input_job, output_index );
+	assign_output_index( larval_job->job_index(), result_index_for_job, output_index );
 }
 
 void MRSJobQueen::assign_output_index(
-	core::Size input_job,
+	core::Size global_job_id,
+	core::Size local_result_id,
 	JobOutputIndex & output_index
 ) {
-	output_index.primary_output_index = input_job;
-	output_index.n_primary_outputs = num_results_to_keep_for_stage_.back();
-	output_index.secondary_output_index = ++num_structs_output_for_input_job_tag_[ input_job ];
-	output_index.n_secondary_outputs = num_results_to_keep_for_stage_.back();
-}
+	output_index.primary_output_index = global_job_id;
+	output_index.n_primary_outputs =
+		std::accumulate( num_total_jobs_for_stage_.begin(), num_total_jobs_for_stage_.end(), 0 );
 
+	output_index.secondary_output_index = local_result_id;
+	output_index.n_secondary_outputs = max_num_results_per_instance_for_stage_.back();
+}
 
 } //multistage_rosetta_scripts
 } //protocols

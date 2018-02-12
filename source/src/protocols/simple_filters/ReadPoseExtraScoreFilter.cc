@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/simple_filters/ReadPoseExtraScoreFilter.cc
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 //Unit Headers

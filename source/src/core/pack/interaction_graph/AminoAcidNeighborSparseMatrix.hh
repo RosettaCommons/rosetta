@@ -612,7 +612,7 @@ public:
 	}
 
 	/// @brief delcare every submatrix to be not worth keeping
-	/// @author Jack Maguire, jack@med.unc.edu
+	/// @author Jack Maguire, jackmaguire1444@gmail.com
 	void drop_all_submatrices()
 	{
 		ObjexxFCL::FArray2D_bool submatrix_worth_keeping( num_aa_, num_aa_, false);

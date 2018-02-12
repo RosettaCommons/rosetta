@@ -300,7 +300,7 @@ protected:
 	void
 	determine_preliminary_job_list();
 
-	/// @author Jack Maguire, jack@med.unc.edu
+	/// @author Jack Maguire, jackmaguire1444@gmail.com
 	/// @brief This gives the derived JobQueen a chance to read any relevant information from the
 	/// job-definition file. The second argument holds a PreliminaryLarvalJob for every job block
 	/// and the PreliminaryLarvalJob itself has all of the information given in its corresponding

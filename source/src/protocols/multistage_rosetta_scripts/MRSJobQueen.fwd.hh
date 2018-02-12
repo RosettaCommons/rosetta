@@ -10,7 +10,7 @@
 /// @file protocols/multistage_rosetta_scripts/MRSJobQueen.fwd.hh
 /// @brief
 /// @detailed
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJobQueen_FWD_HH

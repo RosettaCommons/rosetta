@@ -9,7 +9,7 @@
 
 /// @file core/pack/hbonds/HBondGraph_util.cc
 /// @brief A collections of methods that are useful for dealing with HBondGraphs
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #include <core/pack/hbonds/HBondGraph_util.hh>
 #include <core/pack/hbonds/MCHBNetInteractionGraph.hh>

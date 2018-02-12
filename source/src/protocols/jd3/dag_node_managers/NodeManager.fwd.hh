@@ -10,7 +10,7 @@
 /// @file protocols/jd3/dag_node_managers/NodeManager.fwd.hh
 /// @brief
 /// @detailed
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_NodeManager_FWD_HH

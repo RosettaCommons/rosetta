@@ -9,7 +9,7 @@
 
 /// @file core/pack/hbonds/HBondGraph_util.hh
 /// @brief A collections of methods that are useful for dealing with HBondGraphs. These are all methods that would normally resid in the HBondGraph itself but they need core.4 info and the HBondGraph needs to be in core.3
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_core_pack_hbonds_HBondGraphUtil_HH
 #define INCLUDED_core_pack_hbonds_HBondGraphUtil_HH

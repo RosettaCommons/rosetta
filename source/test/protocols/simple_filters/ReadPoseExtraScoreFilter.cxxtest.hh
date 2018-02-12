@@ -9,7 +9,7 @@
 
 /// @file   protocols/simple_filters/ReadPoseExtraScoreFilter.cxxtest.hh
 /// @brief  test for ReadPoseExtraScoreFilter
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 // Test headers
 #include <cxxtest/TestSuite.h>

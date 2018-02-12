@@ -11,7 +11,7 @@
 /// @brief class headers for AtomLevelHBondGraph, AtomLevelHBondNode, and AtomLevelHBondEdge
 /// @details This graph is different from a HBondGraph because it stores atom information for hbonds and residues.
 /// See core/pack/hbonds/HBondGraph_util.hh (especially create_init_and_create_edges_for_atom_level_hbond_graph() ) and HBondGraph.hh for instructions on how to best use this data structure
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_core_scoring_hbonds_graph_AtomLevelHBondGraph_HH
 #define INCLUDED_core_scoring_hbonds_graph_AtomLevelHBondGraph_HH

@@ -10,7 +10,7 @@
 /// @file protocols/multistage_rosetta_scripts/MRSJob.hh
 /// @brief JD3 job class to be used by Multistage Rosetta Scripts (MRS)
 /// @detailed
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJob_HH
@@ -36,6 +36,8 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+
+#include <boost/container/flat_map.hpp>
 
 namespace protocols {
 namespace multistage_rosetta_scripts {
@@ -68,6 +70,16 @@ struct mover_or_filter{
 
 	~mover_or_filter(){}
 
+	mover_or_filter deep_clone(){
+		if ( is_mover ) {
+			mover_or_filter clone( mover->clone() );
+			return clone;
+		} else {
+			mover_or_filter clone( filter->clone() );
+			return clone;
+		}
+	}
+
 	bool is_mover;
 	moves::MoverOP mover;
 	filters::FilterOP filter;
@@ -77,7 +89,11 @@ struct mover_or_filter{
 		is_mover( false ),
 		mover( 0 ),
 		filter( 0 )
-	{}
+	{
+#ifndef PYROSETTA
+		utility_exit_with_message( "Bad Ctor Called" );
+#endif
+	}
 };
 
 class MRSJob: public jd3::Job {
@@ -86,8 +102,7 @@ public:
 
 	//constructor
 	MRSJob(
-		core::Size num_times_to_repeat = 1,
-		core::Size max_num_results = 0
+		core::Size max_num_results = 1
 	);
 
 	//destructor
@@ -147,7 +162,6 @@ public:
 		return protocols_;
 	}
 
-
 private:
 	jd3::CompletedJobOutput run_inner();
 
@@ -155,7 +169,6 @@ private:
 	std::list< mover_or_filter > protocols_;
 	core::Size max_num_results_;
 
-	core::Size const num_times_to_repeat_;
 	bool positive_scores_are_better_;
 };
 

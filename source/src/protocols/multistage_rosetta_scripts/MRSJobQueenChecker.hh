@@ -9,7 +9,7 @@
 
 /// @file protocols/multistage_rosetta_scripts/MRSJobQueenChecker.hh
 /// @brief This class is derived from the MRSJobQueen and is intended to be a "dry run" equivalent - used to check conditions of the run without doing heavy computation
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJobQueenChecker_HH

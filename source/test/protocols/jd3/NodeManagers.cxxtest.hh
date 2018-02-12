@@ -9,7 +9,7 @@
 
 /// @file   test/protocols/jd3/NodeManagers.cxxtest.hh
 /// @brief
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -19,6 +19,7 @@
 // Unit headers
 #include <protocols/jd3/dag_node_managers/NodeManager.hh>
 #include <protocols/jd3/dag_node_managers/SimpleNodeManager.hh>
+#include <protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh>
 
 #include <basic/Tracer.hh>
 static basic::Tracer TR("protocols.jd3.JD3NodeManagersTests");
@@ -432,6 +433,128 @@ public:
 		TS_ASSERT_DELTA( results[ 2 ].score, -88, 0.1 );
 		TS_ASSERT_DELTA( results[ 3 ].score, -87, 0.1 );
 	}
+
+	void test_storage_matric_depth_first(){
+		/*
+		Structure:
+
+		partition
+		1          -2  -1   x
+		2          -4  -3  -1
+
+		*/
+
+		using namespace protocols::jd3::dag_node_managers;
+
+		utility::vector1< core::Size > n_results_to_keep_for_partition;
+		n_results_to_keep_for_partition.push_back( 3 );
+		n_results_to_keep_for_partition.push_back( 3 );
+		bool depth_first = true;
+
+		NodeManagerStorageMatrix matrix( n_results_to_keep_for_partition, depth_first );
+
+		matrix.insert( 1, result_elements( 1, 1, -1 ) );
+		matrix.insert( 1, result_elements( 1, 1, -2 ) );
+
+		matrix.insert( 2, result_elements( 1, 1, 3 ) );
+		matrix.insert( 2, result_elements( 1, 1, -1 ) );
+		matrix.insert( 2, result_elements( 1, 1, -4 ) );
+		matrix.insert( 2, result_elements( 1, 1, 7 ) );
+		matrix.insert( 2, result_elements( 1, 1, -3 ) );
+		matrix.insert( 2, result_elements( 1, 1, 5 ) );
+
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 1 ).score, -2 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 2 ).score, -1 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 3 ).score, 0 );
+
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 4 ).score, -4 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 5 ).score, -3 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 6 ).score, -1 );
+	}
+
+	void test_storage_matric_breadth_first(){
+		/*
+		Structure:
+
+		partition
+		1          -2  -1   x
+		2          -4  -3  -1
+
+		*/
+
+		using namespace protocols::jd3::dag_node_managers;
+
+		utility::vector1< core::Size > n_results_to_keep_for_partition;
+		n_results_to_keep_for_partition.push_back( 4 );
+		n_results_to_keep_for_partition.push_back( 4 );
+		bool depth_first = false;
+
+		NodeManagerStorageMatrix matrix( n_results_to_keep_for_partition, depth_first );
+
+		matrix.insert( 1, result_elements( 1, 1, -1 ) );
+		matrix.insert( 1, result_elements( 1, 1, -2 ) );
+
+		matrix.insert( 2, result_elements( 1, 1, -1 ) );
+		matrix.insert( 2, result_elements( 1, 1, -4 ) );
+		matrix.insert( 2, result_elements( 1, 1, -3 ) );
+
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 1 ).score, -2 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 3 ).score, -1 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 5 ).score, 0 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 2 ).score, -4 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 4 ).score, -3 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 6 ).score, -1 );
+
+		matrix.insert( 1, result_elements( 1, 1, -6 ) );
+
+		matrix.insert( 2, result_elements( 1, 1, -6 ) );
+		matrix.insert( 2, result_elements( 1, 1, -7 ) );
+
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 7 ).score, -6 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 8 ).score, -7 );
+	}
+
+	void test_storage_matric_breadth_first2(){
+		/*
+		Structure:
+
+		partition
+		1          -2  -1   x
+		2          -4  -3  -1
+
+		*/
+
+		using namespace protocols::jd3::dag_node_managers;
+
+		utility::vector1< core::Size > n_results_to_keep_for_partition;
+		n_results_to_keep_for_partition.push_back( 3 );
+		n_results_to_keep_for_partition.push_back( 4 );
+		bool depth_first = false;
+
+		NodeManagerStorageMatrix matrix( n_results_to_keep_for_partition, depth_first );
+
+		matrix.insert( 1, result_elements( 1, 1, -1 ) );
+		matrix.insert( 1, result_elements( 1, 1, -2 ) );
+
+		matrix.insert( 2, result_elements( 1, 1, -1 ) );
+		matrix.insert( 2, result_elements( 1, 1, -4 ) );
+		matrix.insert( 2, result_elements( 1, 1, -3 ) );
+
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 1 ).score, -2 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 3 ).score, -1 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 5 ).score, 0 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 2 ).score, -4 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 4 ).score, -3 );
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 6 ).score, -1 );
+
+		matrix.insert( 1, result_elements( 1, 1, -6 ) );
+
+		matrix.insert( 2, result_elements( 1, 1, -6 ) );
+		matrix.insert( 2, result_elements( 1, 1, -7 ) );
+
+		TS_ASSERT_EQUALS( matrix.get_nth_element( 7 ).score, -7 );
+	}
+
 
 private:
 

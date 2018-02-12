@@ -9,7 +9,7 @@
 
 /// @file protocols/hbnet/HBNetScore.cc
 /// @brief
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #include <protocols/hbnet/HBNetScore.hh>
 #include <protocols/hbnet/HBNetScoreFilterCreator.hh>

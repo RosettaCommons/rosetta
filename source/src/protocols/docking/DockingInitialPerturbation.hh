@@ -88,6 +88,8 @@ public:
 	/// @brief set functions
 	void set_randomize1(bool randomize1){ randomize1_ = randomize1; }
 	void set_randomize2(bool randomize2){ randomize2_ = randomize2; }
+	void or_randomize2(bool randomize2){ randomize2_ |= randomize2; }
+
 	void set_use_ellipsoidal_randomization(bool use_ellipsoidal_randomization){
 		use_ellipsoidal_randomization_ = use_ellipsoidal_randomization;
 	}

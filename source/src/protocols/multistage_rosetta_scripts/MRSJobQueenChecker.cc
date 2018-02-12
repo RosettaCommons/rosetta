@@ -10,7 +10,7 @@
 /// @file protocols/multistage_rosetta_scripts/MRSJobQueenChecker.cc
 /// @brief
 /// @detailed
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #include <protocols/multistage_rosetta_scripts/MRSJobQueenChecker.hh>

@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/hbonds/graph/HBondGraph.cxxtest.hh
 /// @brief  test suite for HBondGraph, AtomLevelHBondGraph, AtomInfo
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 // Test headers
 #include <cxxtest/TestSuite.h>

@@ -9,7 +9,7 @@
 
 /// @file protocols/multistage_rosetta_scripts/TagManager.hh
 /// @brief This class was designed to help the MRSJobQueen handle tags for many input jobs
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_TagManager_HH
@@ -122,11 +122,11 @@ public:
 		return generate_data_for_input_pose_id( input_pose_id, dummy_pose_ );
 	}
 
-protected:
 	std::vector< TagListOP > const & tag_list_for_input_pose_id() const {
 		return tag_list_for_input_pose_id_;
 	}
 
+protected:
 	std::vector< TagListOP > & tag_list_for_input_pose_id() {
 		return tag_list_for_input_pose_id_;
 	}

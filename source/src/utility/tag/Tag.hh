@@ -146,6 +146,9 @@ public:
 	void read(std::istream& in);
 	void write(std::ostream& out, int num_tabs = 0 ) const;
 
+	///@brief returns the string that would be written by write()
+	std::string to_string( int num_tabs = 0 ) const;
+
 	TagCOP const &
 	operator[](std::string const& key) const;
 

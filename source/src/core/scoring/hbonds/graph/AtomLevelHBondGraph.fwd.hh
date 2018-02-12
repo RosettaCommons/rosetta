@@ -9,7 +9,7 @@
 
 /// @file core/scoring/hbonds/graph/HBondGraph.fwd.hh
 /// @brief AtomLevelHBondGraph forward declarations
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_core_scoring_hbonds_graph_AtomLevelHBondGraph_FWD_HH

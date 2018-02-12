@@ -10,7 +10,7 @@
 /// @file protocols/hbnet/HBNetScore.hh
 /// @brief header file for HBNet filter
 /// @details Calculates HBNet's score used for evaulation and scoring. The score is equal to ( sum of all hbond energies in network / num residues in network ) + penalty for unsatisfaction. The best networks get scores < 0 but there are still some good networks with slightly positive scores ( 0 - 5.0 ) so a threshold of 0 is on the conservative side. More benchmarking needs to be done.
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_protocols_hbnet_HBNetScore_HH
 #define INCLUDED_protocols_hbnet_HBNetScore_HH

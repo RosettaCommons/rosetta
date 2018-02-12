@@ -81,6 +81,7 @@
 #include <boost/spirit/include/classic_functor_parser.hpp>
 
 #include <string>
+#include <sstream>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -257,6 +258,14 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 	}
 
 } // Tag::write
+
+std::string
+Tag::to_string( int num_tabs ) const {
+	std::stringstream ss;
+	write( ss, num_tabs );
+	return ss.str();
+}
+
 
 size_t Tag::size() const {
 	size_t rval = 1;

@@ -10,7 +10,7 @@
 /// @file core/scoring/hbonds/graph/AtomLevelHBondGraph.hh
 /// @brief class headers for AtomLevelHBondGraph, AtomLevelHBondNode, and AtomLevelHBondEdge
 /// @details This class is used to store and traverse data used for HBNet's monte carlo branching protocol. Most (if not all) of the information held in this graph is from HBNet's RotamerSets and InteractionGraph. Nodes in this graph represent rotamers from the rotamer set (node id == global rotamer id) and edges respresent hydrogen bonds.
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_core_scoring_hbonds_graph_HBondInfo_HH
 #define INCLUDED_core_scoring_hbonds_graph_HBondInfo_HH

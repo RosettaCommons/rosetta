@@ -10,7 +10,7 @@
 /// @file   protocols/jd3/JobGenealogist.hh
 /// @brief  class declaration for JobGenealogist
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 /// @details See here for more information: https://www.rosettacommons.org/docs/latest/development_documentation/tutorials/jd3_derived_jq/classes/job_genealogist
 /*!
 

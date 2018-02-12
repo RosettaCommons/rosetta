@@ -9,7 +9,7 @@
 
 /// @file core/scoring/hbonds/graph/AtomLevelHBondGraph.cc
 /// @brief AtomLevelHBondGraph, AtomLevelHBondNode, and AtomLevelHBondEdge classes
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
 

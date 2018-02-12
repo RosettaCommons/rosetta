@@ -9,7 +9,7 @@
 
 /// @file protocols/hbnet/NetworkState.hh
 /// @brief specialized structs for MC-HBNet to store hbond network info
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_protocols_hbnet_NetworkState_hh
 #define INCLUDED_protocols_hbnet_NetworkState_hh

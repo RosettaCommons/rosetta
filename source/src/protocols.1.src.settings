@@ -148,6 +148,7 @@ sources = {
 	],
 	"protocols/jd3/dag_node_managers": [
 	        "NodeManager",
+	        "NodeManagerStorageMatrix",
 	],
 	"protocols/jd3/deallocation": [
 		"DeallocationMessage",

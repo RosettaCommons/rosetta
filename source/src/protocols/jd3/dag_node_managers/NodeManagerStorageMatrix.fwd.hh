@@ -7,14 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/jd3/dag_node_managers/EvenlyPartitionedNodeManager.fwd.hh
-/// @brief
-/// @detailed
+/// @file protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.fwd.hh
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
-
-#ifndef INCLUDED_protocols_jd3_dag_node_managers_EvenlyPartitionedNodeManager_FWD_HH
-#define INCLUDED_protocols_jd3_dag_node_managers_EvenlyPartitionedNodeManager_FWD_HH
+#ifndef INCLUDED_protocols_jd3_dag_node_managers_NodeManagerStorageMatrix_FWD_HH
+#define INCLUDED_protocols_jd3_dag_node_managers_NodeManagerStorageMatrix_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -22,9 +19,11 @@ namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
 
-class EvenlyPartitionedNodeManager;
-typedef utility::pointer::shared_ptr< EvenlyPartitionedNodeManager > EvenlyPartitionedNodeManagerOP;
-typedef utility::pointer::shared_ptr< EvenlyPartitionedNodeManager const > EvenlyPartitionedNodeManagerCOP;
+struct result_elements;
+
+class NodeManagerStorageMatrix;
+typedef utility::pointer::shared_ptr< NodeManagerStorageMatrix > NodeManagerStorageMatrixOP;
+typedef utility::pointer::shared_ptr< NodeManagerStorageMatrix const > NodeManagerStorageMatrixCOP;
 
 }
 } //jd3

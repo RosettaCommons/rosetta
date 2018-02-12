@@ -34,10 +34,14 @@
 #include <core/pose/Pose.hh>
 #endif
 
+#include <apps/pilot/jackmaguire/reverse_conversion_util.hh>
+
 OPT_1GRP_KEY( Boolean, mrs, convert )
+OPT_1GRP_KEY( Boolean, mrs, revert )
+OPT_1GRP_KEY( Boolean, mrs, reverse_convert )
 OPT_1GRP_KEY( Boolean, mrs, xml_template )
 OPT_1GRP_KEY( Boolean, mrs, estimate_memory )
-OPT_1GRP_KEY( String, mrs, unarchive )
+OPT_1GRP_KEY( StringVector, mrs, unarchive )
 
 static basic::Tracer TR( "apps.pilot.jackmaguire.MultistageRosettaScripts" );
 
@@ -92,9 +96,11 @@ void insert_stage_tag( std::string & s ){
 	s.insert( protocols_open + 11, ss1.str() );
 
 	//replace <Add with \t<Add
+	core::Size add_count = 0;
 	core::Size add = s.find("<Add", protocols_open );
 	core::Size protocols_close = s.find( std::string("</PROTOCOLS>") );
 	while ( add != std::string::npos && add < protocols_close ) {
+		++add_count;
 		s.insert( add, std::string("\t") );
 
 		add = s.find("<Add", add+6 );
@@ -102,8 +108,46 @@ void insert_stage_tag( std::string & s ){
 	}
 
 	std::stringstream ss2;
+	if ( add_count == 0 ) ss2 << "\t\t";
 	ss2 << "\t\t<Sort filter=\"TODO\"/>" << std::endl << std::endl << "\t\t\t</Stage>" << std::endl << "\t\t";
 	s.insert( protocols_close, ss2.str() );
+}
+
+void reverse_convert(){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	runtime_assert( option[ in::file::job_definition_file ].user() );
+
+	std::string const in_fname = option[ in::file::job_definition_file ]();
+	std::string const in_string = utility::file_contents( in_fname );
+	utility::tag::TagOP mrs_tag = utility::tag::Tag::create( in_string );
+
+	std::string const out_string = reverse_convert( * mrs_tag );
+
+	bool print_to_cout = true;
+	std::string out_fname;
+
+	if ( option[ parser::protocol ].user() ) {
+		out_fname = option[ parser::protocol ]();
+		print_to_cout = false;
+	} else if ( option[ out::output ].user() ) {
+		out_fname = option[ out::output ]();
+		print_to_cout = false;
+	}
+
+	if ( ! print_to_cout ) {
+		std::ofstream out( out_fname );
+		if ( ! out.good() ) {
+			print_to_cout = true;
+		} else {
+			out << out_string;
+		}
+		out.close();
+	}
+	if ( print_to_cout ) {
+		std::cout << out_string;
+	}
+
 }
 
 void convert( ){
@@ -129,11 +173,8 @@ void convert( ){
 			<< "\t</FILTERS>\n"
 			<< "\t<MOVERS>\n"
 			<< "\t</MOVERS>\n"
-			//<< "\t<APPLY_TO_POSE>\n"
-			//<< "\t</APPLY_TO_POSE>\n"
 			<< "\t<PROTOCOLS>\n"
 			<< "\t</PROTOCOLS>\n"
-			//<< "\t<OUTPUT />\n"
 			<< "</ROSETTASCRIPTS>\n\n";
 		rosetta_scripts_tag = utility::tag::Tag::create( rss_template.str() );
 	}
@@ -206,15 +247,20 @@ int main( int argc, char* argv[] ){
 		using namespace basic::options::OptionKeys;
 
 		NEW_OPT( mrs::convert, "Convert a traditional rosetta script to one that is compatible with this program. Use -parser:protocol to declare the original and -job_definition_file to give the filename for the new file. The converter may take advantage of other flags (such as -s and -nstruct) so it is recommended to run this with all of your production flags present.", false );
+		NEW_OPT( mrs::revert, "Exactly the opposite of '-convert'. Takes the MRS scripts defined by -job_definition_file and converts it to a traditional rosetta script (will only keep the datamap elements in <Common/>). Will print to console or to file if -parser:protocol is used.", false );
+		NEW_OPT( mrs::reverse_convert, "Idential to '-revert'", false );
+
 		NEW_OPT( mrs::xml_template, "Dump template to console.", false );
 		NEW_OPT( mrs::estimate_memory, "(Experimental) estimate the maximum amount of memory needed by the archive nodes at any given time. So far, this has been shown to underestimate but not by more than 2x.", false );
-		NEW_OPT( mrs::unarchive, "If you previously ran with -archive_on_disk, you can pass in one of those archive files here and it will be dumped as a pdb using the naming scheme of the archive file. Please run with all of your original command line options present", "" );
+		NEW_OPT( mrs::unarchive, "If you previously ran with -archive_on_disk, you can pass in one of those archive files here and it will be dumped as a pdb using the naming scheme of the archive file. Please run with all of your original command line options present", utility::vector1<std::string>() );
 
 		devel::init( argc, argv );
 
 		if ( option[ mrs::convert ] || option[ mrs::xml_template ] ) {
-			TR.Debug << "Converting" << std::endl;
 			convert();
+			return 0;
+		} else if ( option[ mrs::revert ] || option[ mrs::reverse_convert ] ) {
+			reverse_convert();
 			return 0;
 		}
 
@@ -229,7 +275,12 @@ int main( int argc, char* argv[] ){
 		if ( option[ mrs::unarchive ].user() ) {
 			TR.Debug << "Unarchiving" << std::endl;
 #ifdef SERIALIZATION
-			unarchive( option[ mrs::unarchive ] );
+			utility::vector1< std::string > filenames = option[ mrs::unarchive ];
+			runtime_assert( filenames.size() > 0 );
+			for ( auto filename : filenames ) {
+				unarchive( filename );
+			}
+			//unarchive( option[ mrs::unarchive ] );
 #else
 			TR << "The -unarchive option only works when you compile with serialization" << std::endl;
 #endif
@@ -237,8 +288,9 @@ int main( int argc, char* argv[] ){
 		}
 
 		if ( option[ parser::info ].user() ) {
-			TR.Debug << "Printing Info" << std::endl;
+			TR << "Printing Info" << std::endl;
 			protocols::rosetta_scripts::print_information( option[ parser::info ]() );
+			return 0;
 		}
 
 		protocols::multistage_rosetta_scripts::MRSJobQueenOP queen ( new protocols::multistage_rosetta_scripts::MRSJobQueen );

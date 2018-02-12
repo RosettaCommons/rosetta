@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/hbnet/NetworkState.cc
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 //Headers
 #include <protocols/hbnet/NetworkState.hh>

@@ -9,7 +9,7 @@
 
 /// @file core/pack/hbonds/AtomLevelHBondGraph.hh
 /// @brief This class holds the info needed to track potentially unsatisfied atoms. Used initially by the AtomLevelHBondGraph.
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_core_scoring_hbonds_graph_AtomInfo_HH
 #define INCLUDED_core_scoring_hbonds_graph_AtomInfo_HH

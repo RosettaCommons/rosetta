@@ -10,7 +10,7 @@
 /// @file protocols/hbnet/HBNetScore.fwd.hh
 /// @brief
 /// @detailed
-/// @author Jack Maguire, jack@med.unc.edu
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
 
 #ifndef INCLUDED_protocols_hbnet_HBNetScore_FWD_HH
