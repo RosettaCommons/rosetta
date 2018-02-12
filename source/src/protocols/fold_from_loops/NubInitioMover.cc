@@ -130,6 +130,8 @@ NubInitioMover::NubInitioMover():
 	mc_dihedral_weight_( default_mc_dihedral_weight() ),
 	mc_correction_weights_( default_mc_correction_weights() ),
 	use_correction_weights_( default_use_correction_weights() ),
+	has_betas_( false ),
+	has_alphas_( false ),
 	dump_centroid_( default_dump_centroid() ),
 	drop_unfolded_pose_( default_drop_unfolded_pose() ),
 	design_( default_design() ),
