@@ -1026,8 +1026,8 @@ PowerDiagram::get_intersections_for_atom( PDsphere* psph )
 
 			//   TR << "Found full circle intersection!" << std::endl;
 			Vector new_inter_pt( center_in_plane );
-			PDvertexCOP vrt1( (*key_range.first).second );
-			PDinterOP new_inter( new PDinter( new_inter_pt, vrt1.get(), vrt1.get() ) );
+			PDvertex const * vrt1( (*key_range.first).second );
+			PDinterOP new_inter( new PDinter( new_inter_pt, vrt1, vrt1 ) );
 			new_inter->add_atom( osph );
 			new_inter->nonconst_circle() = true;
 			intersections.push_back( new_inter );
@@ -1348,7 +1348,7 @@ get_cycles_from_intersections(
 				// Full circles aren't part of other cycles.
 				if ( interp->circle() ) continue;
 
-				if ( share_axis_atoms( interp, this_sph, other_sph ) ) {
+				if ( share_axis_atoms( interp.get(), this_sph, other_sph ) ) {
 					// Calculate angle for this intersection point
 					//     TR << "Checking angle for intersections" << std::endl;
 					//     TR << "Current Inter atoms " << i_current->atoms()[1]->atom() << "   "
@@ -1472,8 +1472,8 @@ get_sasa_from_cycles(
 void
 get_derivs_from_cycles(
 	utility::vector1< utility::vector1< SAnode > > & cycles,
-	PDsphereOP & this_atom,
-	PDsphereOP & check_atom,
+	PDsphere * this_atom,
+	PDsphere * check_atom,
 	Vector & f1,
 	Vector & f2 )
 {
@@ -1488,8 +1488,8 @@ get_derivs_from_cycles(
 void
 get_derivs_from_cycle(
 	utility::vector1< SAnode > & cycle,
-	PDsphereOP & this_atom,
-	PDsphereOP & check_atom,
+	PDsphere * this_atom,
+	PDsphere * check_atom,
 	Vector & f1,
 	Vector & f2 )
 {
@@ -1502,7 +1502,7 @@ get_derivs_from_cycle(
 
 	// Handle full circles here
 	if ( (*cycle.begin()).inter()->circle() ) {
-		PDsphereCOP other_atom( (*cycle.begin()).inter()->atoms()[1] );
+		PDsphere const * other_atom( (*cycle.begin()).inter()->atoms()[1] );
 		if ( other_atom != check_atom ) { return; }
 
 		//  TR << "Handling full circle derivative case" << std::endl;
@@ -1546,20 +1546,20 @@ get_derivs_from_cycle(
 		//if ( arc_num_p1 > cycle.size() ) arc_num_p1 = 1;
 		//  TR << "Working indices are " << arc_num << " and " << arc_num_m1 << std::endl;
 
-		PDsphereCOP other_atom( cycle[ arc_num ].other_atom() );
+		//PDsphereCOP other_atom( cycle[ arc_num ].other_atom() );
 
-		if ( other_atom != check_atom ) { continue; }
+		if ( cycle[ arc_num ].other_atom() != check_atom ) { continue; }
 
 		//  TR << "Handling arc derivative case" << std::endl;
 
 		Real const this_rad( this_atom->rad() );
 		//  Real const other_rad( cycle[arc_num].inter()->atoms()[1]->rad() );
-		Real const other_rad( other_atom->rad() );
-		Real const atom_dist( this_atom->xyz().distance( other_atom->xyz() ) );
+		Real const other_rad( check_atom->rad() );
+		Real const atom_dist( this_atom->xyz().distance( check_atom->xyz() ) );
 		Real const phi_i( cycle[arc_num].phi() );
 
 		Vector const p1( this_atom->xyz() );
-		Vector const p2( other_atom->xyz() );
+		Vector const p2( check_atom->xyz() );
 		Vector const r12( p2 - p1 );
 
 		Real const perp_dist_denom( atom_dist * atom_dist );
@@ -1591,10 +1591,6 @@ get_derivs_from_cycle(
 		f1 += para_fac*p2_cross_r12 + perp_fac*p2.cross_product(chord_cross_r12);
 		f2 += -1.0*para_fac*r12 - perp_fac*chord_cross_r12;
 
-		//  f1 += para_fac_full*p2_cross_r12 + (perp_fac-perp_fac2)*p2.cross_product(chord_cross_r12);
-		//  f2 += -1.0*para_fac_full*r12 - (perp_fac-perp_fac2)*chord_cross_r12;
-
-
 		continue;
 
 	}
@@ -1607,7 +1603,7 @@ get_derivs_from_cycle(
 
 bool
 share_axis_atoms(
-	PDinterCOP v1,
+	PDinter const * v1,
 	PDsphere const * a1,
 	PDsphere const * a2
 )

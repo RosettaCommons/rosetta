@@ -333,11 +333,11 @@ get_sasa_from_cycles( utility::vector1< utility::vector1< SAnode > > & cycles, P
 
 void
 get_derivs_from_cycles( utility::vector1< utility::vector1< SAnode > > & cycles,
-	PDsphereOP & this_atom, PDsphereOP & check_atom, Vector & f1, Vector & f2 );
+	PDsphere * this_atom, PDsphere * check_atom, Vector & f1, Vector & f2 );
 
 void
 get_derivs_from_cycle( utility::vector1< SAnode > & cycle,
-	PDsphereOP & this_atom, PDsphereOP & check_atom, Vector & f1, Vector & f2 );
+	PDsphere * this_atom, PDsphere * check_atom, Vector & f1, Vector & f2 );
 
 #ifdef NOTDEF
 void
@@ -353,7 +353,7 @@ check_deriv_cycle(
 		PDsphereOP & this_atom, PDsphereOP & check_atom );
 #endif
 
-bool share_axis_atoms( PDinterCOP v1, PDsphere const * a1, PDsphere const * a2 );
+bool share_axis_atoms( PDinter const * v1, PDsphere const * a1, PDsphere const * a2 );
 
 core::Real get_area_from_cycle( PDsphere* this_atom, utility::vector1< SAnode > & cycle );
 

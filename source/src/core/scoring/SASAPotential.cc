@@ -193,7 +193,7 @@ SASAPotential::eval_residue_pair_derivatives(
 	for ( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
 		if ( rsd1.is_virtual( atm1 ) ) continue;
 
-		PDsphereOP patom1( pd_->sphere_lookup( res1, atm1 ) );
+		PDsphere * patom1( pd_->sphere_lookup( res1, atm1 ) );
 		//  std::list< power_diagram::PDinterOP > intersections1( pd_->get_intersections_for_atom( res1, atm1 ) );
 
 		//  for( std::list< power_diagram::PDinterOP >::iterator itr = intersections1.begin() ;
@@ -212,7 +212,7 @@ SASAPotential::eval_residue_pair_derivatives(
 
 			//   if( same_res && ( atm1 == atm2 ) ) { continue; }
 
-			PDsphereOP patom2( pd_->sphere_lookup( res2, atm2 ) );
+			PDsphere * patom2( pd_->sphere_lookup( res2, atm2 ) );
 			//   std::list< power_diagram::PDinterOP > intersections2( pd_->get_intersections_for_atom( res2, atm2 ) );
 
 			//   for( std::list< power_diagram::PDinterOP >::iterator itr = intersections2.begin() ;
