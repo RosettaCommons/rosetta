@@ -33,8 +33,11 @@
 namespace protocols {
 namespace jd2 {
 
-/// @brief is this application running with JD2
-/// Useful for code that might not be running under JD2
+/// @brief is this application running with JD2?  Useful for code that might not be running under JD2.
+/// @details This works by checking whether the JD2 job distributor has been instantiated.  If it has not, then it returns false.  If it has, then
+/// it interrogates the job distributor for information about whether it's a dummy job distributor (in which case it returns false).  If it is not
+/// a dummy job distributor, it returns true.
+/// @note Can return a false negative if the job distributor has not yet been instantiated!
 bool jd2_used();
 
 //////////////////////////////////////////////////////

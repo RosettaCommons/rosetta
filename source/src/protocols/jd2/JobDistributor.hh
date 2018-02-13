@@ -91,6 +91,11 @@ private:
 
 public:
 
+	/// @brief Has the job distributor been instantiated?
+	/// @details Returns true for yes and false for no.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	static bool has_been_instantiated();
+
 	static
 	JobDistributor *
 	get_instance();

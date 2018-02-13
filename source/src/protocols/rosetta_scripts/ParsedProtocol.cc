@@ -566,9 +566,9 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 	// report filter values to tracer output
 	report_all( pose );
 
-	std::string job_name ( protocols::jd2::current_output_name() );
 	if ( report_call_order() ) {
-		TR_call_order << job_name<<" ";
+		std::string job_name ( protocols::jd2::jd2_used() ? protocols::jd2::current_output_name() : "CURRENT_JOB" );
+		TR_call_order << job_name << " ";
 		for ( MoverFilterPair const & p : movers_ ) {
 			TR_call_order<<p.first.second<<" ";
 		}

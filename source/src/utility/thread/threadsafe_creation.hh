@@ -26,7 +26,6 @@
 #include <memory>
 #endif
 
-
 // C++ headers
 #include <map>
 
@@ -111,7 +110,29 @@ safely_create_singleton(
 		instance = creation_func();
 	}
 #endif
+}
 
+
+/// @brief Given a pointer, determine whether the singleton to which it points has already been created.
+/// @details The determination is threadsafe (though there is no guarantee that the singleton won't be created by
+/// another thread immediately after this thread is done with this inquiry).
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+template < class T >
+inline
+bool
+safely_determine_whether_singleton_exists(
+#if defined MULTI_THREADED
+	std::atomic< T * > const & instance
+#else
+	T * const & instance
+#endif
+) {
+#ifdef MULTI_THREADED
+	T * local_instance = instance.load( std::memory_order_relaxed );
+	return local_instance != nullptr;
+#else
+	return instance != nullptr;
+#endif
 }
 
 /// @brief Safely instantiate a singleton class in a (possibly)

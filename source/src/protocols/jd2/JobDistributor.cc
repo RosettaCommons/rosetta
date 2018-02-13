@@ -124,6 +124,14 @@ std::mutex & JobDistributor::singleton_mutex() { return singleton_mutex_; }
 
 #endif
 
+/// @brief Has the job distributor been instantiated?
+/// @details Returns true for yes and false for no.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+JobDistributor::has_been_instantiated() {
+	return utility::thread::safely_determine_whether_singleton_exists( instance_ );
+}
+
 /// @brief static function to get the instance of ( pointer to) this singleton class
 JobDistributor * JobDistributor::get_instance()
 {
