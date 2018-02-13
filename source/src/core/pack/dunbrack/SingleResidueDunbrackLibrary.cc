@@ -732,7 +732,7 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 
 	#define INIT( CHI, BB ) \
 RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( rsd.type(), false, true, true, 1.0, 1.0 ); \
-RotamericSingleResidueDunbrackLibraryParser parser_ ## CHI ## _ ## BB( BB, DUNBRACK_MAX_SCTOR, rsrdl_ ## CHI ## _ ## BB.n_possible_rots() ); \
+RotamericSingleResidueDunbrackLibraryParser parser_ ## CHI ## _ ## BB( BB, DUNBRACK_MAX_SCTOR, rsrdl_ ## CHI ## _ ## BB.n_possible_rots(), false ); \
 parser_ ## CHI ## _ ## BB.configure_rotameric_single_residue_dunbrack_library< CHI, BB >( rsrdl_ ## CHI ## _ ## BB , utility::fixedsizearray1< core::Size, BB >( 0 ) ); \
 SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( rsd.type(), true, true, false, true, true, 1.0, 1.0 ); \
 PackedDunbrackRotamer< CHI, BB, Real > prot_ ## CHI ## _ ## BB; \

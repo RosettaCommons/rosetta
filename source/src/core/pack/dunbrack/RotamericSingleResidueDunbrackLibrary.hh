@@ -544,6 +544,10 @@ private:
 	/// at some point in the future, we could deprecate a lot of hard-coded well definitions.
 	bool noncanonicals_use_voronoi_;
 
+	/// @brief If true, the order of rotamer wells is auto-corrected from the input rotamer file.  False by default -- shouldn't be necessary
+	/// any more, with voronoi-based rotamer interpolation.
+	bool correct_rotamer_well_order_on_read_;
+
 };
 
 

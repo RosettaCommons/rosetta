@@ -2320,6 +2320,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'bbdep_bond_devs', 'Boolean', desc="Enable phi-psi dependent deviations for bondlengths and bondangles", ),
 			Option( 'fa_dun_canonicals_use_voronoi', 'Boolean', desc="If true, then canonical amino acids use Voronoi-style detection of neareset rotamer wells during fa_dun scoring instead of hard-coded rotamer well definitions.  False by default (i.e. hard-coded definitions are used by defaults).", default='false'  ),
 			Option( 'fa_dun_noncanonicals_use_voronoi', 'Boolean', desc="If true, then noncanonical amino acids and other polymer building blocks use Voronoi-style detection of neareset rotamer wells during fa_dun scoring instead of hard-coded rotamer well definitions.  True by default (i.e. Voronoi-style detection is used by default).  Setting this to false creates problems with many noncanonicals that have rotamer wells that aren't simple gauche+/gauche-/anti wells.", default='true'  ),
+			Option( 'fa_dun_correct_rotamer_well_order', 'Boolean', desc="If true, the rotamer well order for rotamer files is corrected automatically to the Rosetta convention of lowest to highest in the range [0,360).  False by default.", default='false' ),
 			Option( 'no_his_his_pairE', 'Boolean', desc="Set pair term for His-His to zero", ),
 			Option( 'no_his_DE_pairE', 'Boolean', desc="Set pair term for His-Glu and His-Asp to zero", ),
 #			Option( 'hbond_His_Phil_fix', 'Boolean', desc="Phil's fix on Histidine interaction angular dependence"),

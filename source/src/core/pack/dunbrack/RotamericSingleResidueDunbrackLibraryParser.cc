@@ -43,10 +43,12 @@ namespace dunbrack {
 /// @param[in] num_mainchain_torsions The number of mainchain torsions on which this rotamer library depends.
 /// @param[in] max_possible_chis The maximum number of chis allowed in this rotamer library.  This is the number of chi columns in the file (usually 4).
 /// @param[in] max_possible_rotamers The maximum number of rotamers that this rotamer library can define.
+/// @param[in] correct_rotamer_well_order_on_read Should rotamer wells be auto-sorted so that they're in order form least to greatest in the interval [0,360)?  Note that this should not be necessary, so this defaults to false.
 RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibraryParser(
 	core::Size const num_mainchain_torsions,
 	core::Size const max_possible_chis,
-	core::Size const max_possible_rotamers
+	core::Size const max_possible_rotamers,
+	bool const correct_rotamer_well_order_on_read
 ):
 	utility::pointer::ReferenceCount(),
 	read_file_was_called_(false),
@@ -59,7 +61,8 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 	probabilities_(),
 	chimeans_(),
 	chi_std_devs_(),
-	is_canonical_dun02_library_(false)
+	is_canonical_dun02_library_(false),
+	correct_rotamer_well_order_on_read_(correct_rotamer_well_order_on_read)
 {
 	debug_assert( num_mainchain_torsions_ > 0 );
 	debug_assert( max_possible_chis_ > 0);
@@ -80,7 +83,8 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 	probabilities_(src.probabilities_),
 	chimeans_(src.chimeans_),
 	chi_std_devs_(src.chi_std_devs_),
-	is_canonical_dun02_library_(src.is_canonical_dun02_library_)
+	is_canonical_dun02_library_(src.is_canonical_dun02_library_),
+	correct_rotamer_well_order_on_read_(src.correct_rotamer_well_order_on_read_)
 {
 	debug_assert( num_mainchain_torsions_ > 0 );
 	debug_assert( max_possible_chis_ > 0);
@@ -515,37 +519,39 @@ RotamericSingleResidueDunbrackLibraryParser::do_all_checks_and_corrections( std:
 	check_correct_vector_lengths();
 
 	//Checks for rotamer well order:
-	if ( !is_canonical_dun02_library_ ) {
-		utility::vector1< std::map <core::Size, core::Size> > rotamer_well_reordering;
-		bool const rotamer_well_order_bad( determine_rotamer_well_order( rotamer_well_reordering, filename ) );
-		if ( rotamer_well_order_bad ) {
-			TR.Warning << TR.Red << "Rotamer file " << filename << " has incorrect rotamer well assignments.  The Rosetta convention is to number rotamer wells from lowest to highest in the range [0,360).  Attempting to correct automatically." << TR.Reset << std::endl;
-			update_rotamer_well_order( rotamer_well_reordering );
-			if ( check_rotamer_well_order() ) {
-				TR.Warning << TR.Red << "Rotamer file " << filename << " has inconsistent rotamer well assignments even after reordering.  This may or may not indicate a badly formatted file." << TR.Reset << std::endl;
-			}
-		}
-	} else {
-		bool const old_dun02_library( is_old_canonical_dun02_library( filename ) );
-		bool const beta_nov16_library( is_canonical_beta_nov16_library(filename) );
-		bool const talaris_library( is_canonical_talaris_library(filename) );
-		if ( !old_dun02_library && !beta_nov16_library && !talaris_library ) {
-			TR.Warning << TR.Red << "Rotamer file " << filename  << " appears to be a non-canonical rotamer library, of Dunbrack2002 format, for a canonical amino acid.  This can happen, for example, when a canonical amino acid is modified (e.g. N-methylated).  It will be assumed that rotamer well identities match those for the corresponding canonical amino acid.  Skipping rotamer order corrections."  << TR.Reset << std::endl;
-		} else if ( (beta_nov16_library || talaris_library) && !old_dun02_library ) {
-			TR.Debug << "Rotamer file " << filename << " is a canonical rotamer file for ";
-			if ( beta_nov16_library ) {
-				TR.Debug << "the new beta_nov16 ";
-			} else {
-				TR.Debug << "the old talaris ";
-			}
-			TR.Debug << "energy function (which uses Dunbrack2002-formatted rotamer files).  Skipping rotamer well order corrections." << std::endl;
-			if ( talaris_library ) {
-				TR.Debug << "Please consider switching to a newer energy function, since support for the talaris energy function will not be maintained indefinitely." << std::endl;
+	if ( correct_rotamer_well_order_on_read_ ) {
+		if ( !is_canonical_dun02_library_ ) {
+			utility::vector1< std::map <core::Size, core::Size> > rotamer_well_reordering;
+			bool const rotamer_well_order_bad( determine_rotamer_well_order( rotamer_well_reordering, filename ) );
+			if ( rotamer_well_order_bad ) {
+				TR.Warning << TR.Red << "Rotamer file " << filename << " has incorrect rotamer well assignments.  The Rosetta convention is to number rotamer wells from lowest to highest in the range [0,360).  Attempting to correct automatically." << TR.Reset << std::endl;
+				update_rotamer_well_order( rotamer_well_reordering );
+				if ( check_rotamer_well_order() ) {
+					TR.Warning << TR.Red << "Rotamer file " << filename << " has inconsistent rotamer well assignments even after reordering.  This may or may not indicate a badly formatted file." << TR.Reset << std::endl;
+				}
 			}
 		} else {
-			TR.Debug << "Rotamer file " << filename << " is a canonical rotamer file for the old Dunbrack2002 libraries.  Skipping rotamer well order corrections -- but please note that these libraries will soon be deprecated.  Please consider switching to the current default scoring function." << std::endl;
+			bool const old_dun02_library( is_old_canonical_dun02_library( filename ) );
+			bool const beta_nov16_library( is_canonical_beta_nov16_library(filename) );
+			bool const talaris_library( is_canonical_talaris_library(filename) );
+			if ( !old_dun02_library && !beta_nov16_library && !talaris_library ) {
+				TR.Warning << TR.Red << "Rotamer file " << filename  << " appears to be a non-canonical rotamer library, of Dunbrack2002 format, for a canonical amino acid.  This can happen, for example, when a canonical amino acid is modified (e.g. N-methylated).  It will be assumed that rotamer well identities match those for the corresponding canonical amino acid.  Skipping rotamer order corrections."  << TR.Reset << std::endl;
+			} else if ( (beta_nov16_library || talaris_library) && !old_dun02_library ) {
+				TR.Debug << "Rotamer file " << filename << " is a canonical rotamer file for ";
+				if ( beta_nov16_library ) {
+					TR.Debug << "the new beta_nov16 ";
+				} else {
+					TR.Debug << "the old talaris ";
+				}
+				TR.Debug << "energy function (which uses Dunbrack2002-formatted rotamer files).  Skipping rotamer well order corrections." << std::endl;
+				if ( talaris_library ) {
+					TR.Debug << "Please consider switching to a newer energy function, since support for the talaris energy function will not be maintained indefinitely." << std::endl;
+				}
+			} else {
+				TR.Debug << "Rotamer file " << filename << " is a canonical rotamer file for the old Dunbrack2002 libraries.  Skipping rotamer well order corrections -- but please note that these libraries will soon be deprecated.  Please consider switching to the current default scoring function." << std::endl;
+			}
 		}
-	}
+	} //if correct_rotamer_well_order_on_read_
 }
 
 /// @brief Given a filename, return true if this is a talaris library for a canonical amino acid, false otherwise.
@@ -647,31 +653,31 @@ RotamericSingleResidueDunbrackLibraryParser::hacky_parser_init_workaround() {
 	RotamericSingleResidueDunbrackLibrary< 5, 4 > lib_5_4( rt, false, false, false, 0.1, 0.1, false );
 	RotamericSingleResidueDunbrackLibrary< 5, 5 > lib_5_5( rt, false, false, false, 0.1, 0.1, false );
 
-	RotamericSingleResidueDunbrackLibraryParser parser_1_1( 1, 1, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_1_2( 1, 2, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_1_3( 1, 3, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_1_4( 1, 4, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_1_5( 1, 5, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_1( 2, 1, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_2( 2, 2, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_3( 2, 3, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_4( 2, 4, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_2_5( 2, 5, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_1( 3, 1, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_2( 3, 2, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_3( 3, 3, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_4( 3, 4, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_3_5( 3, 5, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_1( 4, 1, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_2( 4, 2, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_3( 4, 3, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_4( 4, 4, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_4_5( 4, 5, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_1( 5, 1, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_2( 5, 2, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_3( 5, 3, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_4( 5, 4, 1 );
-	RotamericSingleResidueDunbrackLibraryParser parser_5_5( 5, 5, 1 );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_1( 1, 1, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_2( 1, 2, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_3( 1, 3, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_4( 1, 4, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_1_5( 1, 5, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_1( 2, 1, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_2( 2, 2, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_3( 2, 3, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_4( 2, 4, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_2_5( 2, 5, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_1( 3, 1, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_2( 3, 2, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_3( 3, 3, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_4( 3, 4, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_3_5( 3, 5, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_1( 4, 1, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_2( 4, 2, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_3( 4, 3, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_4( 4, 4, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_4_5( 4, 5, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_1( 5, 1, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_2( 5, 2, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_3( 5, 3, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_4( 5, 4, 1, false );
+	RotamericSingleResidueDunbrackLibraryParser parser_5_5( 5, 5, 1, false );
 
 	parser_1_1.configure_rotameric_single_residue_dunbrack_library< 1, 1 >( lib_1_1, utility::fixedsizearray1< core::Size, 1 >(0) );
 	parser_1_2.configure_rotameric_single_residue_dunbrack_library< 1, 2 >( lib_1_2, utility::fixedsizearray1< core::Size, 2 >(0) );

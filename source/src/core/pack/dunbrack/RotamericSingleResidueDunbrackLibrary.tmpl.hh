@@ -121,7 +121,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 	peptoid_( rt.is_peptoid() ),
 	canonical_aa_( rt.is_canonical_aa() && core::chemical::is_canonical_L_aa_or_gly( rt.aa() ) ),
 	canonicals_use_voronoi_( basic::options::option[ basic::options::OptionKeys::corrections::score::fa_dun_canonicals_use_voronoi ]() ),
-	noncanonicals_use_voronoi_( basic::options::option[ basic::options::OptionKeys::corrections::score::fa_dun_noncanonicals_use_voronoi ]() )
+	noncanonicals_use_voronoi_( basic::options::option[ basic::options::OptionKeys::corrections::score::fa_dun_noncanonicals_use_voronoi ]() ),
+	correct_rotamer_well_order_on_read_( basic::options::option[ basic::options::OptionKeys::corrections::score::fa_dun_correct_rotamer_well_order ]() )
 {
 	// This is horrible but temporarily necessarily until we figure out how to distribute full beta rotlibs
 	// Betas automatically (if 3 BB) have phipsi binrange of 30
@@ -1985,7 +1986,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 {
 	// Create the parser for the file.  The parser is a convenient place to put the parse functions, and a convenient place to store temporary
 	// data during the parse:
-	RotamericSingleResidueDunbrackLibraryParser parser( N, DUNBRACK_FILE_DEFAULT_SCTOR, n_possible_rots() );
+	RotamericSingleResidueDunbrackLibraryParser parser( N, DUNBRACK_FILE_DEFAULT_SCTOR, n_possible_rots(), correct_rotamer_well_order_on_read_);
 	// Do the parse and analysis, and return the name of the next amino acid (or an empty string if there is no next amino acid):
 	std::string const next_name( parser.read_file( infile, first_line_three_letter_code_already_read, aa() ) );
 	parser.configure_rotameric_single_residue_dunbrack_library(*this, N_BB_BINS);

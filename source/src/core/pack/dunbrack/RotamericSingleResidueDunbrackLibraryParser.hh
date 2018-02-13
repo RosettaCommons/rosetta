@@ -44,7 +44,8 @@ public:
 	/// @param[in] num_mainchain_torsions The number of mainchain torsions on which this rotamer library depends.
 	/// @param[in] max_possible_chis The maximum number of chis allowed in this rotamer library.  This is the number of chi columns in the file (usually 4).
 	/// @param[in] max_possible_rotamers The maximum number of rotamers that this rotamer library can define.
-	RotamericSingleResidueDunbrackLibraryParser( core::Size const num_mainchain_torsions, core::Size const max_possible_chis, core::Size const max_possible_rotamers );
+	/// @param[in] correct_rotamer_well_order_on_read Should rotamer wells be auto-sorted so that they're in order form least to greatest in the interval [0,360)?  Note that this should not be necessary, so this defaults to false.
+	RotamericSingleResidueDunbrackLibraryParser( core::Size const num_mainchain_torsions, core::Size const max_possible_chis, core::Size const max_possible_rotamers, bool const correct_rotamer_well_order_on_read );
 
 	RotamericSingleResidueDunbrackLibraryParser(RotamericSingleResidueDunbrackLibraryParser const & src);
 
@@ -188,6 +189,10 @@ private:
 	/// @details If it is, we need to skip the correction step, since the canonical Dun02 library has
 	/// wonky rotamer well orders that are corrected some other way.
 	bool is_canonical_dun02_library_;
+
+	/// @brief Should the rotamer wells be auto-corrected?
+	/// @details Probably no longer necessary if Voronoi-based interpolation is used.
+	bool correct_rotamer_well_order_on_read_;
 
 };
 
