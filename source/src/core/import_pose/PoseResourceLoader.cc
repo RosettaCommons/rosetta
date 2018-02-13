@@ -38,6 +38,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/pointer/memory.hh>
 
 // numeric headers
 
@@ -83,8 +84,7 @@ PoseResourceLoader::create_resource(
 		SilentStructOP silent_struct = sfd[ silent_tag ];
 		silent_struct->fill_pose( *pose );
 	}
-
-	return std::make_shared< PoseResource >( pose );
+	return utility::pointer::make_shared< PoseResource >( pose );
 }
 
 std::string

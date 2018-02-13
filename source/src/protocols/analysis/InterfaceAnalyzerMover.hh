@@ -32,6 +32,10 @@
 
 #include <core/id/AtomID.fwd.hh>
 
+#ifdef WIN32
+#undef interface
+#undef set_interface
+#endif
 
 namespace protocols {
 namespace analysis {

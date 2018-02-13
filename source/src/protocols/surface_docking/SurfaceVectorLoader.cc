@@ -26,6 +26,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/pointer/memory.hh>
 
 // numeric headers
 #include <numeric/xyzVector.hh>
@@ -104,7 +105,7 @@ SurfaceVectorLoader::create_surface_params(
 			"define the periodicity of the surface, but less than three points were provided in "  + input_id + ".");
 	}
 
-	return std::make_shared< SurfaceParameters >( surf_coords[1], surf_coords[2], surf_coords[3] );
+	return utility::pointer::make_shared< SurfaceParameters >( surf_coords[1], surf_coords[2], surf_coords[3] );
 }
 
 std::string

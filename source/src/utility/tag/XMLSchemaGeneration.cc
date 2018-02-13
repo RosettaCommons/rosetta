@@ -31,7 +31,7 @@ namespace tag {
 char string_contains_gt_lt_or_ampersand(std::string const & str)
 {
 	for ( char ch : str ) {
-		if ( ch == '<'  or  ch == '>'  or  ch == '&' ) return ch;
+		if ( ch == '<'  ||  ch == '>'  ||  ch == '&' ) return ch;
 	}
 	return 0;
 }

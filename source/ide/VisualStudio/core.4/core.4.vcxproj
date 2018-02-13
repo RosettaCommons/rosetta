@@ -1208,6 +1208,30 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__interaction_graph__HPatchEnergy.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__interaction_graph__HPatchEnergy.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyVoxelGrid.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyEnergy.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\dunbrack\cenrot\SingleResidueCenrotLibraryCreator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.xdc</XMLDocumentationFileName>
@@ -1328,18 +1352,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibraryCreator.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibraryCreator.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibraryCreator.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibrary.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
@@ -1351,18 +1363,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamers__SingleLigandRotamerLibrary.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibrary.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamers__SingleResiduePeptoidLibrary.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamers\StoredRotamerLibraryCreator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamers__StoredRotamerLibraryCreator.obj</ObjectFileName>
@@ -2024,6 +2024,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__dunbrack__DunbrackConstraint.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__dunbrack__DunbrackConstraint.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibraryParser.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__dunbrack__RotamericSingleResidueDunbrackLibraryParser.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\dunbrack\RotamerConstraint.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamerConstraint.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__RotamerConstraint.xdc</XMLDocumentationFileName>
@@ -2408,6 +2420,12 @@
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\AnnealableGraphBase.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\SymmLinMemInteractionGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\interaction_graph\AminoAcidNeighborSparseMatrix.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyEnergyCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyVoxelGrid.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyEnergy.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyEnergy.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyVoxelGrid.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyVoxelGridTests.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\CenRotDunEnergy.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\SingleResidueCenrotLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\cenrot\SingleResidueCenrotLibraryCreator.fwd.hh" />
@@ -2422,9 +2440,7 @@
     <ClInclude Include="..\..\..\src\core\optimization\symmetry\SymMinimizerMap.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\optimization\symmetry\SymAtomTreeMinimizer.hh" />
     <ClInclude Include="..\..\..\src\core\optimization\symmetry\SymAtomTreeMinimizer.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamers\RotamericSingleResiduePeptoidLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibraryCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamers\RotamericSingleResiduePeptoidLibrary.tmpl.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleBasicRotamerLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibrary.fwd.hh" />
@@ -2432,19 +2448,14 @@
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibraryCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibraryCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleNCAARotamerLibraryCreator.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibraryCreator.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamers\RotamericSingleResiduePeptoidLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibraryCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleBasicRotamerLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\StoredRotamerLibraryCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResidueRotamerLibraryFactory.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleBasicRotamerLibraryCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibraryCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleNCAARotamerLibraryCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibrary.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleResiduePeptoidLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\rotamers\SingleLigandRotamerLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\rna\RNA_ResidueLevelTask.hh" />
     <ClInclude Include="..\..\..\src\core\pack\task\rna\RNA_ResidueLevelTask.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\optimization\ParticleSwarmMinimizer.fwd.hh" />
@@ -2535,6 +2546,7 @@
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\ChiSet.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibraryCreator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibraryParser.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibrary.tmpl.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerConstraint.fwd.hh" />
@@ -2542,15 +2554,17 @@
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerLibrary.inst.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibraryCreator.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackEnergyCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibraryParser.tmpl.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerLibraryScratchSpace.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackRotamer.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SingleResidueDunbrackLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackEnergy.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerLibraryScratchSpace.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SemiRotamericSingleResidueDunbrackLibrary.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\pack\dunbrack\SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh" />
+    <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamericSingleResidueDunbrackLibraryParser.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\SemiRotamericSingleResidueDunbrackLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\RotamerConstraint.hh" />
     <ClInclude Include="..\..\..\src\core\pack\dunbrack\DunbrackRotamer.fwd.hh" />

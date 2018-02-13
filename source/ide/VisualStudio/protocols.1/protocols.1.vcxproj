@@ -500,6 +500,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__ScoreFileOutputter.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__ScoreFileOutputter.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\pose_outputters\DeNovoSilentFilePoseOutputter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__DeNovoSilentFilePoseOutputter.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jd3\pose_outputters\SilentFilePoseOutputSpecification.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__SilentFilePoseOutputSpecification.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__pose_outputters__SilentFilePoseOutputSpecification.xdc</XMLDocumentationFileName>
@@ -1088,6 +1100,42 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__output__OutputSpecification.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__output__OutputSpecification.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\chunk_library\MoverAndChunkLibraryJob.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library__MoverAndChunkLibraryJob.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\chunk_library\ChunkLibraryInnerLarvalJob.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryInnerLarvalJob.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\chunk_library\ChunkLibraryJobQueen.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library__ChunkLibraryJobQueen.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jd3\full_model_inputters\FullModelInputter.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__full_model_inputters__FullModelInputter.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__full_model_inputters__FullModelInputter.xdc</XMLDocumentationFileName>
@@ -1267,6 +1315,66 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__environment__claims__XYZClaim.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__environment__claims__XYZClaim.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__environment__claims__XYZClaim.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputSource.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputSource.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\chunk_library_inputters\PDBChunkLibraryInputter.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__PDBChunkLibraryInputter.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\chunk_library_inputters\chunk_library_inputter_schemas.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__chunk_library_inputter_schemas.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputterFactory.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__chunk_library_inputters__ChunkLibraryInputterFactory.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jd3\full_model\FullModelInnerLarvalJob.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__full_model__FullModelInnerLarvalJob.obj</ObjectFileName>
@@ -1532,6 +1640,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__filters__TimeFilter.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__filters__TimeFilter.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\dag_node_managers\NodeManager.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__dag_node_managers__NodeManager.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jd2\archive\MPIArchiveJobDistributor.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__archive__MPIArchiveJobDistributor.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__archive__MPIArchiveJobDistributor.xdc</XMLDocumentationFileName>
@@ -1676,6 +1796,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__job_distributors__MultiThreadedJobDistributor.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__job_distributors__MultiThreadedJobDistributor.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\parser\DatabaseSessionLoader.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\parser\FragSetLoader.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__FragSetLoader.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__FragSetLoader.xdc</XMLDocumentationFileName>
@@ -1711,6 +1843,18 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__parser__BluePrint.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__BluePrint.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__BluePrint.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\parser\JumpSelectorLoader.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\parser\ConstraintGeneratorLoader.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__ConstraintGeneratorLoader.obj</ObjectFileName>
@@ -1807,18 +1951,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__parser__FragmentReader.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__FragmentReader.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__FragmentReader.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\parser\JumpSelectorLoader.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__parser__JumpSelectorLoader.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\parser\MoveMapFactoryLoader.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__parser__MoveMapFactoryLoader.obj</ObjectFileName>
@@ -2191,6 +2323,18 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__rosetta_scripts__MultipleOutputWrapper.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__rosetta_scripts__MultipleOutputWrapper.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__rosetta_scripts__MultipleOutputWrapper.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\rosetta_scripts\RosettaScriptsJobQueen.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__rosetta_scripts__RosettaScriptsJobQueen.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\sasa_scores\sasapack.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__sasa_scores__sasapack.obj</ObjectFileName>
@@ -2648,30 +2792,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__MPIFileBufJobDistributor.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__MPIFileBufJobDistributor.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\jd2\JD2ResourceManager.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManager.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\jd2\MultiThreadingJob.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jd2\FileSystemJobDistributor.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__FileSystemJobDistributor.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__FileSystemJobDistributor.xdc</XMLDocumentationFileName>
@@ -2707,18 +2827,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd2__JobInputterCreator.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__JobInputterCreator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__JobInputterCreator.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\jd2\JD2ResourceManagerJobInputter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__JD2ResourceManagerJobInputter.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jd2\EnsembleJobInputter.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__EnsembleJobInputter.obj</ObjectFileName>
@@ -3020,6 +3128,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__InnerMultiThreadingJob.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__InnerMultiThreadingJob.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd2\MultiThreadingJob.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd2__MultiThreadingJob.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jd2\ShuffleJobDistributor.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__ShuffleJobDistributor.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd2__ShuffleJobDistributor.xdc</XMLDocumentationFileName>
@@ -3200,6 +3320,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__deallocation__InputPoseDeallocationMessage.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__deallocation__InputPoseDeallocationMessage.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\protocols\jd3\deallocation\ResourceDeallocationMessage.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.1__protocols__jd3__deallocation__ResourceDeallocationMessage.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jd3\deallocation\DeallocationMessage.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__DeallocationMessage.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.1__protocols__jd3__deallocation__DeallocationMessage.xdc</XMLDocumentationFileName>
@@ -3215,10 +3347,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\SilentFilePoseOutputterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\DeNovoSilentFilePoseOutputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\ScoreFileOutputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\PoseOutputterFactory.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\PDBPoseOutputterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\PoseOutputter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\DeNovoSilentFilePoseOutputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\PoseOutputterCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\PoseOutputterFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\SilentFilePoseOutputSpecification.hh" />
@@ -3235,6 +3369,7 @@
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\PDBPoseOutputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\PoseOutputterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\SecondaryPoseOutputterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\DeNovoSilentFilePoseOutputterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\SilentFilePoseOutputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\ScoreFileOutputterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\pose_outputters\PDBPoseOutputSpecification.fwd.hh" />
@@ -3333,6 +3468,12 @@
     <ClInclude Include="..\..\..\src\protocols\jd3\output\ResultOutputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\output\OutputSpecification.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\output\MultipleOutputSpecification.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library\MoverAndChunkLibraryJob.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library\MoverAndChunkLibraryJob.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library\ChunkLibraryJobQueen.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library\ChunkLibraryInnerLarvalJob.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library\ChunkLibraryInnerLarvalJob.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library\ChunkLibraryJobQueen.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\full_model_inputters\SilentFileFullModelInputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\full_model_inputters\FullModelInputterCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\full_model_inputters\FullModelInputterFactory.fwd.hh" />
@@ -3365,6 +3506,18 @@
     <ClInclude Include="..\..\..\src\protocols\environment\claims\CutBiasClaim.hh" />
     <ClInclude Include="..\..\..\src\protocols\environment\claims\VirtResClaim.hh" />
     <ClInclude Include="..\..\..\src\protocols\environment\claims\JumpClaim.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputterFactory.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputSource.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputterFactory.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\PDBChunkLibraryInputter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\PDBChunkLibraryInputter.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\PDBChunkLibraryInputterCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputSource.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\ChunkLibraryInputterCreator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\chunk_library_inputters\chunk_library_inputter_schemas.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\full_model\FullModelJobQueen.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\full_model\FullModelInnerLarvalJob.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\full_model\MoverAndFullModelJob.fwd.hh" />
@@ -3414,6 +3567,12 @@
     <ClInclude Include="..\..\..\src\protocols\filters\ContingentFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\filters\ReplicateFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\filters\FilterFactory.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\dag_node_managers\SimpleNodeManager.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\dag_node_managers\NodeManager.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\dag_node_managers\SimpleNodeManager.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\dag_node_managers\EvenlyPartitionedNodeManager.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\dag_node_managers\NodeManager.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\dag_node_managers\EvenlyPartitionedNodeManager.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\archive\EvaluatedArchive.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\archive\NormalizedEvaluatedArchive.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\archive\ArchiveBase.fwd.hh" />
@@ -3443,13 +3602,15 @@
     <ClInclude Include="..\..\..\src\protocols\parser\ConstraintGeneratorLoaderCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\DataLoader.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\ResidueSelectorLoader.hh" />
-    <ClInclude Include="..\..\..\src\protocols\parser\JumpSelectorLoader.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\TaskOperationLoader.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\FragSetLoader.hh" />
+    <ClInclude Include="..\..\..\src\protocols\parser\DatabaseSessionLoader.hh" />
+    <ClInclude Include="..\..\..\src\protocols\parser\JumpSelectorLoader.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\JumpSelectorLoaderCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\ConstraintGeneratorLoader.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\StandardLoaderCreators.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\MoveMapFactoryLoaderCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\parser\DatabaseSessionLoaderCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\BluePrint.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\DataLoader.hh" />
     <ClInclude Include="..\..\..\src\protocols\parser\DataLoaderCreator.hh" />
@@ -3513,6 +3674,7 @@
     <ClInclude Include="..\..\..\src\protocols\rosetta_scripts\PosePropertyReporter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\rosetta_scripts\PosePropertyReporter.hh" />
     <ClInclude Include="..\..\..\src\protocols\rosetta_scripts\MultiplePoseMoverCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\rosetta_scripts\RosettaScriptsJobQueen.hh" />
     <ClInclude Include="..\..\..\src\protocols\rosetta_scripts\AdditionalOutputWrapper.hh" />
     <ClInclude Include="..\..\..\src\protocols\rosetta_scripts\util.hh" />
     <ClInclude Include="..\..\..\src\protocols\rosetta_scripts\PosePropertyReporterCreator.hh" />
@@ -3575,6 +3737,7 @@
     <ClInclude Include="..\..\..\src\protocols\jd3\JobDistributor.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\JobSummary.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\LarvalJob.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\JobGenealogist.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\JobQueen.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\JobGenealogist.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\Job.hh" />
@@ -3605,7 +3768,7 @@
     <ClInclude Include="..\..\..\src\protocols\jd2\JobOutputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\ScreeningJobInputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\JobOutputterFactory.hh" />
-    <ClInclude Include="..\..\..\src\protocols\jd2\JD2ResourceManagerJobInputter.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd2\LazySilentFileJobInputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\ScoreOnlyJobOutputterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\JobDistributor.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\JobInputterFactory.hh" />
@@ -3614,16 +3777,14 @@
     <ClInclude Include="..\..\..\src\protocols\jd2\PDBJobInputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\Job.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\BOINCJobDistributor.hh" />
-    <ClInclude Include="..\..\..\src\protocols\jd2\JobDistributorFactory.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\wwPDBJobOutputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\MultiThreadingJob.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\SilentFileJobOutputterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\InnerMultiThreadingJob.hh" />
-    <ClInclude Include="..\..\..\src\protocols\jd2\JD2ResourceManager.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd2\JobDistributorFactory.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\InnerJob.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\JobOutputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\PoseInputStreamJobInputter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\jd2\JD2ResourceManager.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\MultiThreadingJob.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\MSDJobDistributor.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\wwPDBJobOutputter.fwd.hh" />
@@ -3646,7 +3807,6 @@
     <ClInclude Include="..\..\..\src\protocols\jd2\SilentFileJobOutputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\AtomTreeDiffJobInputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\NoOutputJobOutputter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\jd2\JD2ResourceManagerCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\MPIWorkPartitionJobDistributor.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\FileSystemJobDistributor.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\JobDistributor.hh" />
@@ -3664,7 +3824,6 @@
     <ClInclude Include="..\..\..\src\protocols\jd2\FileJobOutputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\SilentFileJobInputterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\MPIFileBufJobDistributor.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\jd2\JD2ResourceManagerJobInputterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\PoseInputStreamJobInputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\MpiFileBuffer.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\PDBJobInputterCreator.hh" />
@@ -3679,7 +3838,6 @@
     <ClInclude Include="..\..\..\src\protocols\jd2\ScoreOnlyJobOutputter.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\LargeNstructJobInputterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\AtomTreeDiffJobInputterCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\jd2\LazySilentFileJobInputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\mmCIFJobOutputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\PDBJobInputter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd2\InnerMultiThreadingJob.fwd.hh" />
@@ -3711,8 +3869,10 @@
     <ClInclude Include="..\..\..\src\protocols\idealize\idealize.hh" />
     <ClInclude Include="..\..\..\src\protocols\idealize\IdealizeMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\deallocation\InputPoseDeallocationMessage.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\deallocation\ResourceDeallocationMessage.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\deallocation\DeallocationMessage.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\deallocation\InputPoseDeallocationMessage.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\jd3\deallocation\ResourceDeallocationMessage.hh" />
     <ClInclude Include="..\..\..\src\protocols\jd3\deallocation\DeallocationMessage.fwd.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

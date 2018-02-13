@@ -45,6 +45,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
+#include <utility/pointer/memory.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -434,12 +435,12 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	{
 		using StringWrapper = basic::datacache::DataMapObj< std::string >;
 		if ( current_input_name != "" ) {
-			auto input_name = std::make_shared< StringWrapper >();
+			auto input_name = utility::pointer::make_shared< StringWrapper >();
 			input_name->obj = current_input_name;
 			data[ "strings" ][ "current_input_name" ] = input_name;
 		}
 		if ( current_output_name != "" ) {
-			auto output_name = std::make_shared< StringWrapper >();
+			auto output_name = utility::pointer::make_shared< StringWrapper >();
 			output_name->obj = current_output_name;
 			data[ "strings" ][ "current_output_name" ] = output_name;
 		}

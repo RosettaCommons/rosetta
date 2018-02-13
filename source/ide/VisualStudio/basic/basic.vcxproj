@@ -658,18 +658,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__svd__SVD_Solver.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__svd__SVD_Solver.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\fallback_configuration\NativeFallbackConfiguration.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\basic\resource_manager\locator\FileListResourceLocator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__locator__FileListResourceLocator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__locator__FileListResourceLocator.xdc</XMLDocumentationFileName>
@@ -693,6 +681,18 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__locator__FileSystemResourceLocator.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__locator__FileSystemResourceLocator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__locator__FileSystemResourceLocator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\basic\resource_manager\locator\locator_schemas.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__locator__locator_schemas.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\basic\resource_manager\locator\StringResourceStream.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__locator__StringResourceStream.obj</ObjectFileName>
@@ -910,30 +910,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__sampling__orientations__QuaternionGrid.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__sampling__orientations__QuaternionGrid.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\database\DatabaseSessionLoader.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__database__DatabaseSessionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__database__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__database__DatabaseSessionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__database__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__database__DatabaseSessionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__database__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__database__DatabaseSessionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__database__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__database__DatabaseSessionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__database__DatabaseSessionLoader.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\database\DatabaseSessionOptions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__database__DatabaseSessionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__database__DatabaseSessionOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__database__DatabaseSessionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__database__DatabaseSessionOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__database__DatabaseSessionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__database__DatabaseSessionOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__database__DatabaseSessionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__database__DatabaseSessionOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__database__DatabaseSessionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__database__DatabaseSessionOptions.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\basic\database\open.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__database__open.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__database__open.xdc</XMLDocumentationFileName>
@@ -1138,18 +1114,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLocator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLocator.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\LazyResourceManager.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__LazyResourceManager.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\basic\resource_manager\ResourceManagerCreator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceManagerCreator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceManagerCreator.xdc</XMLDocumentationFileName>
@@ -1161,42 +1125,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceManagerCreator.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceManagerCreator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceManagerCreator.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\FallbackConfigurationFactory.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationFactory.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\ResourceOptions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceOptions.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\ResourceLoaderCreator.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\basic\resource_manager\ResourceManagerFactory.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceManagerFactory.obj</ObjectFileName>
@@ -1246,42 +1174,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLocatorCreator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLocatorCreator.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\ResourceOptionsCreator.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceOptionsCreator.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\FallbackConfigurationCreator.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__FallbackConfigurationCreator.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\ResourceOptionsFactory.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceOptionsFactory.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\basic\resource_manager\ResourceManager.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceManager.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceManager.xdc</XMLDocumentationFileName>
@@ -1293,18 +1185,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceManager.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceManager.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceManager.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\JobOptions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__JobOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__JobOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__JobOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__JobOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__JobOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__JobOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__JobOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__JobOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__JobOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__JobOptions.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\basic\resource_manager\ResourceLoader.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoader.obj</ObjectFileName>
@@ -1318,17 +1198,29 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLoader.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLoader.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\basic\resource_manager\FallbackConfiguration.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__FallbackConfiguration.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\basic\resource_manager\ResourceLoaderCreator.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__ResourceLoaderCreator.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\basic\resource_manager\loader_schemas.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__loader_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__resource_manager__loader_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__loader_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)basic__basic__resource_manager__loader_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__loader_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)basic__basic__resource_manager__loader_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__loader_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)basic__basic__resource_manager__loader_schemas.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__loader_schemas.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)basic__basic__resource_manager__loader_schemas.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\basic\options\keys\OptionKeys0.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)basic__basic__options__keys__OptionKeys0.obj</ObjectFileName>
@@ -1556,9 +1448,6 @@
     <ClInclude Include="..\..\..\src\basic\database\schema_generator\PrimaryKey.hh" />
     <ClInclude Include="..\..\..\src\basic\svd\SVD_Solver.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\svd\SVD_Solver.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\fallback_configuration\NativeFallbackConfiguration.fwd.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\fallback_configuration\NativeFallbackConfigurationCreator.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\fallback_configuration\NativeFallbackConfiguration.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\locator\DatabaseResourceLocatorCreator.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\locator\StringResourceStream.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\locator\NullResourceLocator.hh" />
@@ -1567,6 +1456,7 @@
     <ClInclude Include="..\..\..\src\basic\resource_manager\locator\NullResourceLocator.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\locator\FileSystemResourceLocator.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\locator\FileListResourceLocator.hh" />
+    <ClInclude Include="..\..\..\src\basic\resource_manager\locator\locator_schemas.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\locator\DatabaseResourceLocator.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\locator\StringResourceStream.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\locator\DatabaseResourceLocator.hh" />
@@ -1606,7 +1496,6 @@
     <ClInclude Include="..\..\..\src\basic\database\sql_utils.hh" />
     <ClInclude Include="..\..\..\src\basic\database\open.hh" />
     <ClInclude Include="..\..\..\src\basic\database\DatabaseSessionOptions.fwd.hh" />
-    <ClInclude Include="..\..\..\src\basic\database\DatabaseSessionOptionsCreator.hh" />
     <ClInclude Include="..\..\..\src\basic\database\DatabaseSessionLoader.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\database\DatabaseSessionLoader.hh" />
     <ClInclude Include="..\..\..\src\basic\database\DatabaseSessionOptions.hh" />
@@ -1630,42 +1519,26 @@
     <ClInclude Include="..\..\..\src\basic\report.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\MemTracer.hh" />
     <ClInclude Include="..\..\..\src\basic\pymol_chains.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceOptionsFactory.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\FallbackConfigurationCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLocatorFactory.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\types.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\LazyResourceManager.fwd.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\FallbackConfigurationFactory.fwd.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\FallbackConfiguration.hh" />
+    <ClInclude Include="..\..\..\src\basic\resource_manager\loader_schemas.hh" />
+    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLoader.hh" />
+    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLocatorCreator.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLocator.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceManager.fwd.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceOptions.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLocator.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\util.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLocatorCreator.hh" />
+    <ClInclude Include="..\..\..\src\basic\resource_manager\types.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceManager.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceManagerCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLocatorCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLocatorRegistrator.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLoaderCreator.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\JobOptions.fwd.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\JobOptions.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLoader.fwd.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\LazyResourceManager.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLoaderCreator.fwd.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceOptionsCreator.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceOptionsCreator.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLoaderRegistrator.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\FallbackConfigurationCreator.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceManagerFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLoaderFactory.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceOptions.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceManagerFactory.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\FallbackConfiguration.fwd.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\FallbackConfigurationFactory.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceOptionsRegistrator.hh" />
     <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceManagerCreator.hh" />
-    <ClInclude Include="..\..\..\src\basic\resource_manager\ResourceLoader.hh" />
     <ClInclude Include="..\..\..\src\basic\options\keys\OptionKeys.cc.gen2.hh" />
     <ClInclude Include="..\..\..\src\basic\options\keys\krassk.OptionKeys.gen.hh" />
     <ClInclude Include="..\..\..\src\basic\options\keys\OptionKeys.cc.gen8.hh" />

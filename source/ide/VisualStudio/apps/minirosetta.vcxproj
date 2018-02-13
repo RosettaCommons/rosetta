@@ -310,15 +310,15 @@
       <DisableSpecificWarnings>4996;4005;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libvcruntime.lib;libcmt.lib;libcpmt.lib;libucrt.lib;legacy_stdio_definitions.lib;oldnames.lib;kernel32.lib;zlibstatic.lib;delayimp.lib;libboinc_staticcrt.lib;libboincapi_staticcrt.lib;libgraphics2.lib;libboinczip_staticcrt.lib;odbc32.lib;odbccp32.lib;utility.lib;basic.lib;sqlite3.lib;cppdb.lib;cifparse.lib;libxml2.lib;devel.lib;core.2.lib;core.3.lib;core.4.lib;core.5.lib;numeric.lib;ObjexxFCL.lib;protocols.1.lib;protocols.3.lib;protocols.6.lib;protocols.7.lib;protocols_a.2.lib;protocols_a.4.lib;protocols_a.5.lib;protocols_b.2.lib;protocols_b.4.lib;protocols_b.5.lib;protocols_c.4.lib;protocols_c.5.lib;protocols_d.4.lib;protocols_d.5.lib;protocols_e.4.lib;protocols_e.5.lib;protocols_f.4.lib;protocols_g.4.lib;protocols_h.4.lib;Ws2_32.lib;opengl32.lib;glu32.lib;gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)rosetta_4.07_windows_x86_64.exe</OutputFile>
+      <AdditionalDependencies>libvcruntime.lib;libcmt.lib;libcpmt.lib;libucrt.lib;legacy_stdio_definitions.lib;oldnames.lib;kernel32.lib;zlibstatic.lib;delayimp.lib;libboinc_staticcrt.lib;libboincapi_staticcrt.lib;libgraphics2.lib;libboinczip_staticcrt.lib;odbc32.lib;odbccp32.lib;utility.lib;basic.lib;sqlite3.lib;cppdb.lib;cifparse.lib;libxml2.lib;devel.lib;core.1.lib;core.2.lib;core.3.lib;core.4.lib;core.5.lib;numeric.lib;ObjexxFCL.lib;protocols.1.lib;protocols.3.lib;protocols.4.lib;protocols.7.lib;protocols.8.lib;protocols_a.2.lib;protocols_a.5.lib;protocols_a.6.lib;protocols_b.2.lib;protocols_b.5.lib;protocols_b.6.lib;protocols_c.5.lib;protocols_c.6.lib;protocols_d.5.lib;protocols_d.6.lib;protocols_e.5.lib;protocols_e.6.lib;protocols_f.5.lib;protocols_g.5.lib;protocols_h.5.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)rosetta_beta_4.07_windows_x86_64.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);..\..\..\external\lib;..\..\..\external\boinc\win_build\Build\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libboost_date_time-vc140-mt-s-1_55.lib;libboost_thread-vc140-mt-s-1_55.lib;libboost_system-vc140-mt-s-1_55.lib;libboost_chrono-vc140-mt-s-1_55.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(OutDir)rosetta_4.07_windows_x86_64.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)rosetta_beta_4.07_windows_x86_64.pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>
       </StripPrivateSymbols>
       <SubSystem>Console</SubSystem>

@@ -43,8 +43,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{ED05A226-10AD-4CDF-B792-643E5522B83F}</ProjectGuid>
-    <RootNamespace>protocols_d.4</RootNamespace>
+    <ProjectGuid>{221C95E4-F8A5-4203-A593-00791FDB457B}</ProjectGuid>
+    <RootNamespace>protocols_c.6</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -428,91 +428,78 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\protocols\coupled_moves\CoupledMovesProtocol.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__coupled_moves__CoupledMovesProtocol.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingProtocol.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingProtocol.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\cartesian\md.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__cartesian__md.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__cartesian__md.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__cartesian__md.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingFlags.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingFlags.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorUtil.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingPoseMetrics.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingPoseMetrics.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorJobDistributor.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingLowRes.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingLowRes.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMover.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingAbInitio.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_c.6__protocols__flexpep_docking__FlexPepDockingAbInitio.xdc</XMLDocumentationFileName>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\protocols\coupled_moves\CoupledMovesProtocol.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\coupled_moves\CoupledMovesProtocol.hh" />
-    <ClInclude Include="..\..\..\src\protocols\coupled_moves\CoupledMovesProtocolCreator.hh" />
-    <ClInclude Include="..\..\..\src\protocols\cartesian\md.hh" />
-    <ClInclude Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMover.hh" />
-    <ClInclude Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorJobDistributor.hh" />
-    <ClInclude Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorUtil.hh" />
-    <ClInclude Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh" />
-    <ClInclude Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMover.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorJobDistributor.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingLowRes.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingAbInitio.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingPoseMetrics.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingAbInitio.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingProtocolCreator.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingFlags.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingFlags.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingProtocol.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingLowRes.fwd.hh" />
+    <ClInclude Include="..\..\..\src\protocols\flexpep_docking\FlexPepDockingPoseMetrics.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -84,7 +84,7 @@ RosettaScriptsJobQueen::RosettaScriptsJobQueen()
 
 	add_options( opts );
 	parser_ = RosettaScriptsParserOP( new RosettaScriptsParser() );
-	resource_manager_ = std::make_shared< basic::resource_manager::ResourceManager >();
+	resource_manager_ = utility::pointer::make_shared< basic::resource_manager::ResourceManager >();
 	if ( basic::options::option[ basic::options::OptionKeys::jd3::resource_definition_files ].user() ) {
 
 		for ( std::string const & fname : basic::options::option[ basic::options::OptionKeys::jd3::resource_definition_files ]  ) {
@@ -182,7 +182,7 @@ RosettaScriptsJobQueen::note_preliminary_job_node_is_complete( core::Size pjn_in
 		pjns_requiring_resources_[ resource_name ].erase( pjn_index );
 		if ( pjns_requiring_resources_[ resource_name ].empty() ) {
 			deallocation_messages_to_send_.push_back(
-				std::make_shared< deallocation::ResourceDeallocationMessage >( resource_name ) );
+				utility::pointer::make_shared< deallocation::ResourceDeallocationMessage >( resource_name ) );
 			resource_manager_->deallocate_resource( resource_name );
 		}
 	}

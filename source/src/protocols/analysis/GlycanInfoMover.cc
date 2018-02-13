@@ -131,7 +131,7 @@ GlycanInfoMover::get_attachment_point_string( core::pose::Pose const & pose, cor
 		outstring = attach + to_string(info->mainchain_glycosidic_bond_acceptor());
 	}
 
-	for ( uint i = 1; i <= info->n_branches(); ++i ) {
+	for ( unsigned int i = 1; i <= info->n_branches(); ++i ) {
 		outstring = outstring + "," +attach + to_string( info->branch_point( i ));
 	}
 	return outstring;

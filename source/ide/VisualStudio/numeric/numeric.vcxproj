@@ -742,6 +742,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)numeric__numeric__agglomerative_hierarchical_clustering.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\numeric\MathMatrix.srlz.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__MathMatrix.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__MathMatrix.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__MathMatrix.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)numeric__numeric__MathMatrix.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__MathMatrix.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)numeric__numeric__MathMatrix.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__MathMatrix.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)numeric__numeric__MathMatrix.srlz.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)numeric__numeric__MathMatrix.srlz.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)numeric__numeric__MathMatrix.srlz.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\numeric\MathVector.srlz.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)numeric__numeric__MathVector.srlz.xdc</XMLDocumentationFileName>
@@ -1233,7 +1245,7 @@
     <ClInclude Include="..\..\..\src\numeric\MathNTensor.hh" />
     <ClInclude Include="..\..\..\src\numeric\ClusteringTreeNode.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\xyzTransform.fwd.hh" />
-    <ClInclude Include="..\..\..\src\numeric\MathNTensor.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\BodyPosition.hh" />
     <ClInclude Include="..\..\..\src\numeric\MathMatrix_operations.hh" />
     <ClInclude Include="..\..\..\src\numeric\MathVector_operations.hh" />
     <ClInclude Include="..\..\..\src\numeric\xyz.functions.fwd.hh" />
@@ -1254,8 +1266,9 @@
     <ClInclude Include="..\..\..\src\numeric\roc_curve.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\ClusteringTreeNode.hh" />
     <ClInclude Include="..\..\..\src\numeric\xyzVector.io.hh" />
-    <ClInclude Include="..\..\..\src\numeric\BodyPosition.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathNTensor.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\MathNTensorBase.fwd.hh" />
+    <ClInclude Include="..\..\..\src\numeric\MathMatrix.srlz.hh" />
     <ClInclude Include="..\..\..\src\numeric\Quaternion.io.hh" />
     <ClInclude Include="..\..\..\src\numeric\xyzVector.fwd.hh" />
     <ClInclude Include="..\..\..\src\numeric\EulerAngles.fwd.hh" />

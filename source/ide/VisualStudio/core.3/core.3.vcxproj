@@ -1532,17 +1532,17 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__util.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pose\rna\RNA_RawBaseBaseInfo.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\pose\rna\BasePairStep.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__BasePairStep.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__BasePairStep.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__rna__BasePairStep.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__rna__BasePairStep.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__rna__BasePairStep.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__rna__BasePairStep.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__rna__BasePairStep.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__rna__BasePairStep.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__BasePairStep.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__BasePairStep.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pose\rna\RNA_FilteredBaseBaseInfo.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__RNA_FilteredBaseBaseInfo.obj</ObjectFileName>
@@ -1615,6 +1615,18 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__rna__RNA_DataInfo.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__RNA_DataInfo.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__RNA_DataInfo.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pose\rna\RNA_RawBaseBaseInfo.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__RNA_RawBaseBaseInfo.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pose\rna\VDW_Grid.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__VDW_Grid.obj</ObjectFileName>
@@ -3896,18 +3908,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__electron_density__SplineInterp.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__electron_density__SplineInterp.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\scoring\electron_density\ElectronDensityOptions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityOptions.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\scoring\electron_density\FastDensEnergy.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__electron_density__FastDensEnergy.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__electron_density__FastDensEnergy.xdc</XMLDocumentationFileName>
@@ -3967,18 +3967,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElecDensEnergy.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__electron_density__ElecDensEnergy.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__electron_density__ElecDensEnergy.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\scoring\electron_density\ElectronDensityLoader.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__electron_density__ElectronDensityLoader.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\scoring\hbnet_energy\HBNetEnergy.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__hbnet_energy__HBNetEnergy.obj</ObjectFileName>
@@ -6440,6 +6428,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__sc__ShapeComplementarityCalculator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__sc__ShapeComplementarityCalculator.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\select\util\interface_vector_calculate.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\select\util\SelectResiduesByLayer.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__util__SelectResiduesByLayer.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__util__SelectResiduesByLayer.xdc</XMLDocumentationFileName>
@@ -6452,17 +6452,17 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__util__SelectResiduesByLayer.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__util__SelectResiduesByLayer.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\select\util\interface_vector_calculate.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__util__interface_vector_calculate.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__util__interface_vector_calculate.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\select\util\burial_utilities.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__util__burial_utilities.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__util__burial_utilities.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__select__util__burial_utilities.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__select__util__burial_utilities.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__select__util__burial_utilities.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__select__util__burial_utilities.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__select__util__burial_utilities.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__select__util__burial_utilities.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__util__burial_utilities.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__util__burial_utilities.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\scoring\mm\mmtrie\MMEnergyTableAtom.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__mm__mmtrie__MMEnergyTableAtom.obj</ObjectFileName>
@@ -6691,6 +6691,18 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__select__residue_selector__JumpDownstreamSelector.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__residue_selector__JumpDownstreamSelector.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__residue_selector__JumpDownstreamSelector.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\select\residue_selector\SSElementSelector.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__select__residue_selector__SSElementSelector.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\select\residue_selector\ResidueSelector.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__select__residue_selector__ResidueSelector.obj</ObjectFileName>
@@ -6943,30 +6955,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__hankel_kiss_fft.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__fiber_diffraction__hankel_kiss_fft.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__fiber_diffraction__hankel_kiss_fft.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionOptions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionOptions.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionLoader.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffractionLoader.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffraction.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__fiber_diffraction__FiberDiffraction.obj</ObjectFileName>
@@ -7232,6 +7220,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__metrics__PoseMetricContainer.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__metrics__PoseMetricContainer.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pose\rna\secstruct_legacy\RNA_SecStructLegacyInfo.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__rna__secstruct_legacy__RNA_SecStructLegacyInfo.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\io\pose_from_sfr\PoseFromSFRBuilder.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__pose_from_sfr__PoseFromSFRBuilder.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__pose_from_sfr__PoseFromSFRBuilder.xdc</XMLDocumentationFileName>
@@ -7256,18 +7256,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__pose_from_sfr__chirality_resolution.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__pose_from_sfr__chirality_resolution.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\io\silent\RigidBodySilentStruct.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\io\silent\SilentStructFactory.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__SilentStructFactory.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__SilentStructFactory.xdc</XMLDocumentationFileName>
@@ -7280,6 +7268,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__SilentStructFactory.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__SilentStructFactory.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\io\silent\RigidBodySilentStruct.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__RigidBodySilentStruct.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\io\silent\ScoreJumpFileSilentStruct.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__ScoreJumpFileSilentStruct.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__ScoreJumpFileSilentStruct.xdc</XMLDocumentationFileName>
@@ -7291,18 +7291,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__ScoreJumpFileSilentStruct.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__ScoreJumpFileSilentStruct.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__ScoreJumpFileSilentStruct.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\io\silent\SilentFileLoader.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__SilentFileLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__SilentFileLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__io__silent__SilentFileLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__io__silent__SilentFileLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__io__silent__SilentFileLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__io__silent__SilentFileLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__SilentFileLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__SilentFileLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__SilentFileLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__SilentFileLoader.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\io\silent\BinarySilentStruct.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__BinarySilentStruct.obj</ObjectFileName>
@@ -7351,18 +7339,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__SilentStruct.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__SilentStruct.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__SilentStruct.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\io\silent\SilentFileRMOptions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__io__silent__SilentFileRMOptions.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\io\silent\SilentFileData.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__io__silent__SilentFileData.obj</ObjectFileName>
@@ -9284,6 +9260,30 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__hbonds__graph__AtomLevelHBondGraph.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__scoring__hbonds__graph__AtomLevelHBondGraph.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pose\toolbox\AtomLevelDomainMap.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__toolbox__AtomLevelDomainMap.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\pose\toolbox\AtomID_Mapper.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.3__core__pose__toolbox__AtomID_Mapper.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\scoring\hackaro\HackAroEnergy.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__hackaro__HackAroEnergy.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.3__core__scoring__hackaro__HackAroEnergy.xdc</XMLDocumentationFileName>
@@ -9513,8 +9513,10 @@
     <ClInclude Include="..\..\..\src\core\pose\rna\RNA_SecStruct.hh" />
     <ClInclude Include="..\..\..\src\core\pose\rna\RNA_IdealCoord.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pose\rna\VDW_RepScreenInfo.hh" />
+    <ClInclude Include="..\..\..\src\core\pose\rna\BasePairStep.hh" />
     <ClInclude Include="..\..\..\src\core\pose\rna\BasePair.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pose\rna\BaseStack.hh" />
+    <ClInclude Include="..\..\..\src\core\pose\rna\BasePairStep.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pose\rna\RNA_SuiteName.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\pose\rna\VDW_Grid.hh" />
     <ClInclude Include="..\..\..\src\core\pose\rna\RNA_DataInfo.fwd.hh" />
@@ -9880,23 +9882,23 @@
     <ClInclude Include="..\..\..\src\core\scoring\dssp\PairingsList.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\dssp\PairingsList.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElecDensEnergy.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityLoader.hh" />
+    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityLoader.hh.legacy" />
+    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityOptionsCreator.hh.legacy" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensity.hh" />
+    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityOptions.fwd.hh.legacy" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElecDensCenEnergy.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityLoader.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityLoaderCreator.hh.legacy" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElecDensEnergyCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityOptionsCreator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElecDensAllAtomCenEnergy.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityLoaderCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityOptions.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\util.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\SplineInterp.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\FastDensEnergyCreator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElecDensCenEnergyCreator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensity.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityOptions.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\FastDensEnergy.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\xray_scattering.hh" />
+    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityLoader.fwd.hh.legacy" />
+    <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElectronDensityOptions.hh.legacy" />
     <ClInclude Include="..\..\..\src\core\scoring\electron_density\ElecDensAllAtomCenEnergyCreator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\hbnet_energy\HBNetEnergyCreator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\hbnet_energy\HBNetEnergy.hh" />
@@ -10379,6 +10381,7 @@
     <ClInclude Include="..\..\..\src\core\scoring\sc\ShapeComplementarityCalculator.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\sc\ShapeComplementarityCalculator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\sc\MolecularSurfaceCalculator.hh" />
+    <ClInclude Include="..\..\..\src\core\select\util\burial_utilities.hh" />
     <ClInclude Include="..\..\..\src\core\select\util\SelectResiduesByLayer.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\select\util\SelectResiduesByLayer.hh" />
     <ClInclude Include="..\..\..\src\core\select\util\interface_vector_calculate.hh" />
@@ -10397,6 +10400,7 @@
     <ClInclude Include="..\..\..\src\core\select\residue_selector\util.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\NumNeighborsSelector.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\PrimarySequenceNeighborhoodSelectorCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\select\residue_selector\SSElementSelector.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\TrueResidueSelector.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\ResidueVector.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\ScoreTermValueBasedSelector.fwd.hh" />
@@ -10428,6 +10432,7 @@
     <ClInclude Include="..\..\..\src\core\select\residue_selector\JumpDownstreamSelector.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\ResidueSelectorCreators.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\CachedResidueSubset.hh" />
+    <ClInclude Include="..\..\..\src\core\select\residue_selector\SSElementSelector.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\NotResidueSelector.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\BinSelector.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\BondedResidueSelector.hh" />
@@ -10463,28 +10468,28 @@
     <ClInclude Include="..\..\..\src\core\select\residue_selector\LayerSelector.hh" />
     <ClInclude Include="..\..\..\src\core\select\residue_selector\ResidueIndexSelector.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffraction.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionOptions.hh" />
+    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionOptionsCreator.hh.legacy" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FAScatter.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionEnergy.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FAScatter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionLoader.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionLoader.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\CentroidScatter.hh" />
+    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionLoader.hh.legacy" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionKernelGpu.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionEnergyDensCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionOptions.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionEnergyGpu.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\util.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\hankel_kiss_fft.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionOptionsCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionOptions.hh.legacy" />
+    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionLoaderCreator.hh.legacy" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\util_ndft.hh" />
-    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionLoaderCreator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionEnergyGpuCreator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionEnergyDens.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\CentroidScatter.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffraction.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\xray_scattering.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionEnergyCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionLoader.fwd.hh.legacy" />
+    <ClInclude Include="..\..\..\src\core\scoring\fiber_diffraction\FiberDiffractionOptions.fwd.hh.legacy" />
     <ClInclude Include="..\..\..\src\core\scoring\elec\electrie\ElecTrieEvaluator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\elec\electrie\ElecTrie.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\elec\electrie\ElecAtom.fwd.hh" />
@@ -10514,6 +10519,8 @@
     <ClInclude Include="..\..\..\src\core\pose\metrics\CalculatorFactory.hh" />
     <ClInclude Include="..\..\..\src\core\pose\metrics\PoseMetricContainer.hh" />
     <ClInclude Include="..\..\..\src\core\pose\metrics\PoseMetricContainer.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pose\rna\secstruct_legacy\RNA_SecStructLegacyInfo.hh" />
+    <ClInclude Include="..\..\..\src\core\pose\rna\secstruct_legacy\RNA_SecStructLegacyInfo.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\io\pose_from_sfr\chirality_resolution.hh" />
     <ClInclude Include="..\..\..\src\core\io\pose_from_sfr\chirality_resolution.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\io\pose_from_sfr\PoseFromSFRBuilder.hh" />
@@ -10522,28 +10529,22 @@
     <ClInclude Include="..\..\..\src\core\io\silent\ProteinSilentStruct.tmpl.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SilentStruct.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SilentFileData.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\io\silent\SilentFileRMOptions.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SilentFileData.hh" />
-    <ClInclude Include="..\..\..\src\core\io\silent\SilentFileLoader.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SilentStructCreator.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\ProteinSilentStruct.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\RNA_SilentStruct.hh" />
-    <ClInclude Include="..\..\..\src\core\io\silent\SilentStructFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\silent.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\io\silent\SilentFileLoader.hh" />
+    <ClInclude Include="..\..\..\src\core\io\silent\SilentStructFactory.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\util.hh" />
-    <ClInclude Include="..\..\..\src\core\io\silent\SilentFileLoaderCreator.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\BasicSilentStructCreators.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\EnergyNames.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\ScoreJumpFileSilentStruct.hh" />
-    <ClInclude Include="..\..\..\src\core\io\silent\SilentFileRMOptionsCreator.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\BinarySilentStruct.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SilentFileOptions.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SilentStruct.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\ScoreFileSilentStruct.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SilentStructFactory.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SharedSilentData.hh" />
-    <ClInclude Include="..\..\..\src\core\io\silent\SilentFileRMOptions.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SilentFileOptions.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\RigidBodySilentStruct.hh" />
     <ClInclude Include="..\..\..\src\core\io\silent\SilentStructCreator.fwd.hh" />
@@ -10870,6 +10871,7 @@
     <ClInclude Include="..\..\..\src\core\scoring\rna\StackElecEnergy.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\annealing\ResidueArrayAnnealableEnergy.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\annealing\ResidueArrayAnnealableEnergy.hh" />
+    <ClInclude Include="..\..\..\src\core\scoring\annealing\RotamerSets.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\lkball\LK_BallEnergy.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\lkball\LK_BallEnergy.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\lkball\LK_BallInfo.hh" />
@@ -10880,6 +10882,10 @@
     <ClInclude Include="..\..\..\src\core\scoring\hbonds\graph\HBondInfo.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\hbonds\graph\HBondGraph.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\hbonds\graph\AtomLevelHBondGraph.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pose\toolbox\AtomID_Mapper.hh" />
+    <ClInclude Include="..\..\..\src\core\pose\toolbox\AtomID_Mapper.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\pose\toolbox\AtomLevelDomainMap.hh" />
+    <ClInclude Include="..\..\..\src\core\pose\toolbox\AtomLevelDomainMap.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\hackaro\HackAroEnergy.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\hackaro\HackAroEnergyCreator.hh" />
     <ClInclude Include="..\..\..\src\core\scoring\hackaro\HackAroEnergy.fwd.hh" />

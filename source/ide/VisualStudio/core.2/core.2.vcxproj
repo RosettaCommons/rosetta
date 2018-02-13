@@ -1304,18 +1304,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__rotamers__CenrotRotamerLibrarySpecification.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__rotamers__CenrotRotamerLibrarySpecification.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\chemical\rotamers\PeptoidRotamerLibrarySpecification.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__rotamers__PeptoidRotamerLibrarySpecification.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\chemical\rotamers\StoredRotamerLibrarySpecification.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__rotamers__StoredRotamerLibrarySpecification.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__rotamers__StoredRotamerLibrarySpecification.xdc</XMLDocumentationFileName>
@@ -1603,18 +1591,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.2__core__chemical__MMAtomTypeSet.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__MMAtomTypeSet.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__MMAtomTypeSet.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\chemical\ResidueLoaderOptions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__ResidueLoaderOptions.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\chemical\CacheableResidueTypeSets.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__CacheableResidueTypeSets.obj</ObjectFileName>
@@ -1915,18 +1891,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.2__core__chemical__adduct_util.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__adduct_util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__adduct_util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\chemical\ResidueLoader.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__ResidueLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__ResidueLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.2__core__chemical__ResidueLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.2__core__chemical__ResidueLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.2__core__chemical__ResidueLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.2__core__chemical__ResidueLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.2__core__chemical__ResidueLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.2__core__chemical__ResidueLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__ResidueLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.2__core__chemical__ResidueLoader.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\chemical\AtomProperty_mappings.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.2__core__chemical__AtomProperty_mappings.obj</ObjectFileName>
@@ -2415,7 +2379,6 @@
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymmetryTransform.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymmetricConformation.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymmDataOptions.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymmDataOptions.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymDof.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymmetryInfo.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymmetricConformation.hh" />
@@ -2429,7 +2392,6 @@
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\MirrorSymmetricConformation.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymmetryTransform.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymSlideInfo.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymmDataOptionsCreator.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymDof.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\util.hh" />
     <ClInclude Include="..\..\..\src\core\conformation\symmetry\SymmDataLoader.hh" />
@@ -2544,7 +2506,6 @@
     <ClInclude Include="..\..\..\src\core\chemical\carbohydrates\CarbohydrateInfo.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\carbohydrates\CarbohydrateInfoManager.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\BasicRotamerLibrarySpecification.hh" />
-    <ClInclude Include="..\..\..\src\core\chemical\rotamers\PeptoidRotamerLibrarySpecification.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\NCAARotamerLibrarySpecificationCreator.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\BasicRotamerLibrarySpecification.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\RotamerLibrarySpecificationRegistrator.hh" />
@@ -2559,7 +2520,6 @@
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\CenrotRotamerLibrarySpecificationCreator.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\DunbrackRotamerLibrarySpecification.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\PDBRotamerLibrarySpecificationCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\chemical\rotamers\PeptoidRotamerLibrarySpecificationCreator.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\NCAARotamerLibrarySpecification.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\NCAARotamerLibrarySpecification.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\DunbrackRotamerLibrarySpecificationCreator.hh" />
@@ -2568,7 +2528,6 @@
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\PDBRotamerLibrarySpecification.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\StoredRotamerLibrarySpecificationCreator.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\rotamers\RotamerLibrarySpecificationCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\chemical\rotamers\PeptoidRotamerLibrarySpecification.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\AtomICoor.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueType.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueTypeSelector.fwd.hh" />
@@ -2583,11 +2542,11 @@
     <ClInclude Include="..\..\..\src\core\chemical\ResidueTypeSet.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueTypeSet.srlz.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueType.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoaderOptions.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\Orbital.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\Bond.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueTypeKinWriter.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ChemicalManager.hh" />
+    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoader.fwd.hh.posterity" />
     <ClInclude Include="..\..\..\src\core\chemical\CacheableResidueTypeSets.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ElementSet.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\MergeBehaviorManager.fwd.hh" />
@@ -2597,8 +2556,8 @@
     <ClInclude Include="..\..\..\src\core\chemical\AtomProperty.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\Adduct.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\MMAtomType.hh" />
-    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoader.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueDatabaseIO.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoader.hh.posterity" />
     <ClInclude Include="..\..\..\src\core\chemical\bond_support.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\Patch.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueProperty.hh" />
@@ -2610,13 +2569,13 @@
     <ClInclude Include="..\..\..\src\core\chemical\adduct_util.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ElementSet.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\CacheableResidueTypeSets.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoaderCreator.hh.posterity" />
     <ClInclude Include="..\..\..\src\core\chemical\ElectronConfiguration.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResConnID.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\Patch.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\AtomTypeSet.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueConnection.hh" />
-    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoaderCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoaderOptionsCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoaderOptions.hh.posterity" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueTypeFinder.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\RestypeDestructionEvent.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueDatabaseIO.hh" />
@@ -2629,8 +2588,8 @@
     <ClInclude Include="..\..\..\src\core\chemical\AA.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\GreekDistance.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\PatchOperation.hh" />
+    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoaderOptions.fwd.hh.posterity" />
     <ClInclude Include="..\..\..\src\core\chemical\Orbital.hh" />
-    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoaderOptions.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueTypeSetCache.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\NucleotideTools.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\GlobalResidueTypeSet.fwd.hh" />
@@ -2644,10 +2603,10 @@
     <ClInclude Include="..\..\..\src\core\chemical\AtomPropertiesManager.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\Metapatch.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ChemicalManager.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoader.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\RestypeDestructionEvent.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\Element.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueTypeSetCache.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\chemical\ResidueLoaderOptionsCreator.hh.posterity" />
     <ClInclude Include="..\..\..\src\core\chemical\AtomTypeSet.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\AtomType.hh" />
     <ClInclude Include="..\..\..\src\core\chemical\ResidueTypeKinWriter.hh" />

@@ -440,17 +440,89 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\core\import_pose\atom_tree_diffs\atom_tree_diff.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\MetaPoseInputStream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\util.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\PDBPoseInputStream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\SilentFilePoseInputStream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\LazySilentFilePoseInputStream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\ExtendedPoseInputStream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\PoseInputStream.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\enzymes\database_io.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__enzymes__database_io.obj</ObjectFileName>
@@ -488,6 +560,54 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__enzymes__EnzymeManager.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__enzymes__EnzymeManager.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\RNA_JumpMover.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_JumpMover.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\RNA_BasePairHandler.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_BasePairHandler.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\RNA_DeNovoParameters.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_DeNovoParameters.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\RNA_HelixAssembler.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_HelixAssembler.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\import_pose\PDBSilentStruct.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PDBSilentStruct.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PDBSilentStruct.xdc</XMLDocumentationFileName>
@@ -512,17 +632,29 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__FullModelPoseBuilder.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__FullModelPoseBuilder.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\import_pose\import_pose.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\import_pose\RNA_DeNovoSetup.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__RNA_DeNovoSetup.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\PoseResource.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PoseResource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PoseResource.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__PoseResource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__PoseResource.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__PoseResource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__PoseResource.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__PoseResource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__PoseResource.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__PoseResource.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__PoseResource.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\import_pose\import_pose_options.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__import_pose_options.obj</ObjectFileName>
@@ -536,6 +668,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__import_pose_options.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__import_pose_options.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\import_pose.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__import_pose.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__import_pose.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\import_pose\PDBSilentStructCreator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PDBSilentStructCreator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PDBSilentStructCreator.xdc</XMLDocumentationFileName>
@@ -548,17 +692,137 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__PDBSilentStructCreator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__PDBSilentStructCreator.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\import_pose\PoseFromPDBLoader.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__PoseFromPDBLoader.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\import_pose\PoseResourceLoader.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__PoseResourceLoader.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\options\RNA_MinimizerOptions.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__options__RNA_MinimizerOptions.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\options\RNA_BasicOptions.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__options__RNA_BasicOptions.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\options\RNA_DeNovoProtocolOptions.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__options__RNA_DeNovoProtocolOptions.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\options\RNA_FragmentMonteCarloOptions.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__options__RNA_FragmentMonteCarloOptions.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\libraries\BasePairStepLibrary.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__BasePairStepLibrary.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\libraries\RNA_ChunkLibrary.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__RNA_ChunkLibrary.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\libraries\RNA_JumpLibrary.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__RNA_JumpLibrary.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\libraries\ChunkSet.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__ChunkSet.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\libraries\RNA_LibraryManager.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__libraries__RNA_LibraryManager.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\import_pose\atom_tree_diffs\atom_tree_diff.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__atom_tree_diffs__atom_tree_diff.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\fragment\picking_old\vall\util.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__util.obj</ObjectFileName>
@@ -608,41 +872,89 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__VallResidue.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__VallResidue.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\fragment\picking_old\vall\gen\SecStructGen.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\init\init.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\fragment\picking_old\vall\gen\VallFragmentGen.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\init\score_function_corrections.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\fragment\picking_old\vall\gen\LengthGen.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\fragment\rna\FragmentLibrary.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__FragmentLibrary.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\fragment\rna\FullAtomRNA_Fragments.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__FullAtomRNA_Fragments.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\fragment\rna\RNA_FragmentHomologyExclusion.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__RNA_FragmentHomologyExclusion.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\fragment\rna\TorsionSet.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__TorsionSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__TorsionSet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__TorsionSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__TorsionSet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__TorsionSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__TorsionSet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__TorsionSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__TorsionSet.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__TorsionSet.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__TorsionSet.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\fragment\rna\RNA_Fragments.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__rna__RNA_Fragments.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\fragment\picking_old\FragmentLibraryManager.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__FragmentLibraryManager.obj</ObjectFileName>
@@ -776,17 +1088,17 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__FragmentRmsd.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__FragmentRmsd.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\fragment\SingleResidueFragData.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\fragment\FragmentSetLoader.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__FragmentSetLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__FragmentSetLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__FragmentSetLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__FragmentSetLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__FragmentSetLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__FragmentSetLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__FragmentSetLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__FragmentSetLoader.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__FragmentSetLoader.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__FragmentSetLoader.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\fragment\FrameIterator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__FrameIterator.obj</ObjectFileName>
@@ -944,6 +1256,18 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__FragID.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__FragID.xdc</XMLDocumentationFileName>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\core\fragment\SingleResidueFragData.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__SingleResidueFragData.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__SingleResidueFragData.xdc</XMLDocumentationFileName>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\core\fragment\SecondaryStructure.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__SecondaryStructure.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__SecondaryStructure.xdc</XMLDocumentationFileName>
@@ -968,133 +1292,102 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__BBTorsionAndAnglesSRFD.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__BBTorsionAndAnglesSRFD.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\MetaPoseInputStream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__MetaPoseInputStream.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\fragment\picking_old\vall\gen\SecStructGen.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__SecStructGen.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\util.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__util.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__util.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\fragment\picking_old\vall\gen\VallFragmentGen.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__VallFragmentGen.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\PDBPoseInputStream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__PDBPoseInputStream.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\SilentFilePoseInputStream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__SilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\LazySilentFilePoseInputStream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__LazySilentFilePoseInputStream.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\ExtendedPoseInputStream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__ExtendedPoseInputStream.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\import_pose\pose_stream\PoseInputStream.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__import_pose__pose_stream__PoseInputStream.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\init\init.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__init__init.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__init__init.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\init\score_function_corrections.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__init__score_function_corrections.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__init__score_function_corrections.xdc</XMLDocumentationFileName>
+    <ClCompile Include="..\..\..\src\core\fragment\picking_old\vall\gen\LengthGen.cc">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.5__core__fragment__picking_old__vall__gen__LengthGen.xdc</XMLDocumentationFileName>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\core\import_pose\atom_tree_diffs\atom_tree_diff.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\PoseInputStream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\SilentFilePoseInputStream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\LazySilentFilePoseInputStream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\ExtendedPoseInputStream.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\SilentFilePoseInputStream.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\LazySilentFilePoseInputStream.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\MetaPoseInputStream.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\MetaPoseInputStream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\util.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\PoseInputStream.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\PDBPoseInputStream.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\PDBPoseInputStream.hh" />
     <ClInclude Include="..\..\..\src\core\enzymes\database_io.hh" />
     <ClInclude Include="..\..\..\src\core\enzymes\EnzymeData.hh" />
     <ClInclude Include="..\..\..\src\core\enzymes\EnzymeManager.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\enzymes\EnzymeManager.hh" />
     <ClInclude Include="..\..\..\src\core\enzymes\consensus_sequence_parsers.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\import_pose.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\import_pose_options_creator.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\PDBSilentStructCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\import_pose_options.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\PoseResourceLoader.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\PoseResource.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_HelixAssembler.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\import_pose\FullModelPoseBuilder.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\PoseFromPDBLoader.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_BasePairHandler.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\PDBSilentStructCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_DeNovoSetup.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_JumpMover.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\PoseResourceLoaderCreator.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\PoseResource.hh" />
     <ClInclude Include="..\..\..\src\core\import_pose\FullModelPoseBuilder.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\PoseFromPDBLoaderCreator.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\import_pose_options.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\import_pose_options.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_BasePairHandler.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\PoseResourceLoader.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\import_pose.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_HelixAssembler.hh" />
     <ClInclude Include="..\..\..\src\core\import_pose\PDBSilentStruct.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\PoseFromPDBLoader.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_DeNovoParameters.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_DeNovoParameters.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_DeNovoSetup.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\RNA_JumpMover.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\import_pose_options.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\options\RNA_MinimizerOptions.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\options\RNA_DeNovoProtocolOptions.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\options\RNA_BasicOptions.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\options\RNA_FragmentMonteCarloOptions.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\options\RNA_FragmentMonteCarloOptions.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\options\RNA_BasicOptions.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\options\RNA_DeNovoProtocolOptions.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\options\RNA_MinimizerOptions.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\RNA_ChunkLibrary.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\RNA_ChunkLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\BasePairStepLibrary.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\ChunkSet.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\RNA_LibraryManager.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\RNA_JumpLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\ChunkSet.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\RNA_JumpLibrary.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\BasePairStepLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\libraries\RNA_LibraryManager.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\import_pose\atom_tree_diffs\atom_tree_diff.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\VallLibrarian.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\VallSection.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\VallLibrary.hh" />
@@ -1105,12 +1398,20 @@
     <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\VallLibrary.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\util.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\VallResidue.hh" />
-    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\LengthGen.hh" />
-    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\VallFragmentGen.hh" />
-    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\SecStructGen.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\SecStructGen.hh" />
-    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\VallFragmentGen.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\LengthGen.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\init\score_function_corrections.hh" />
+    <ClInclude Include="..\..\..\src\core\init\init.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\RNA_FragmentsClasses.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\RNA_Fragments.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\RNA_FragmentHomologyExclusion.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\FragmentLibrary.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\RNA_MatchType.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\RNA_FragmentHomologyExclusion.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\TorsionSet.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\FullAtomRNA_Fragments.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\RNA_Fragments.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\FullAtomRNA_Fragments.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\TorsionSet.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\rna\FragmentLibrary.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\picking_old\FragmentLibraryManager.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\picking_old\FragmentLibraryManager.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\eval\EnergyEval.hh" />
@@ -1142,6 +1443,7 @@
     <ClInclude Include="..\..\..\src\core\fragment\ConstantLengthFragSet.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\OrderedFragSetIterator_.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\FragmentIO.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\FragmentSetLoaderCreator.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\JumpSRFD.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\JumpingFrame.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\IndependentBBTorsionSRFD.fwd.hh" />
@@ -1160,6 +1462,7 @@
     <ClInclude Include="..\..\..\src\core\fragment\Frame.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\FragCache.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\FrameIterator.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\FragmentSetLoader.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\FragSetCollection.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\BBTorsionSRFD.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\Frame.fwd.hh" />
@@ -1167,23 +1470,16 @@
     <ClInclude Include="..\..\..\src\core\fragment\MinimalFragSet.fwd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\FragmentRmsd.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\SingleResidueFragData.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\FragmentSetLoader.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\MinimalFragSet.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\IndependentBBTorsionSRFD.hh" />
     <ClInclude Include="..\..\..\src\core\fragment\util.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\PoseInputStream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\SilentFilePoseInputStream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\LazySilentFilePoseInputStream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\ExtendedPoseInputStream.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\SilentFilePoseInputStream.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\LazySilentFilePoseInputStream.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\MetaPoseInputStream.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\MetaPoseInputStream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\util.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\PoseInputStream.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\PDBPoseInputStream.fwd.hh" />
-    <ClInclude Include="..\..\..\src\core\import_pose\pose_stream\PDBPoseInputStream.hh" />
-    <ClInclude Include="..\..\..\src\core\init\score_function_corrections.hh" />
-    <ClInclude Include="..\..\..\src\core\init\init.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\LengthGen.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\VallFragmentGen.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\SecStructGen.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\SecStructGen.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\VallFragmentGen.fwd.hh" />
+    <ClInclude Include="..\..\..\src\core\fragment\picking_old\vall\gen\LengthGen.fwd.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
