@@ -94,14 +94,14 @@ public:
 
 	bool same_helix(utility::vector1< std::pair<core::Size,core::Size> > const helix_boundaries, core::Size const r1, core::Size const r2);
 	bool interhelical_contact(utility::vector1< std::pair<core::Size,core::Size> > const helix_boundaries, core::Size const r1, core::Size const r2, core::pose::Pose const & pose);
-	core::Size get_helix_id( core::Size r1 );
+	core::Size get_helix_id( core::Size r1 ) const;
 
 	//void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, HBondNetStructOP new_network, core::Size staple_count );
 	void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::set< core::Size > net_ids, core::Size staple_count );
 
-	bool network_spans_all_helices( hbond_net_struct const & i );
-	core::Size num_helices_w_hbond( hbond_net_struct const & i );
-	core::Size num_helices_w_hbond( utility::vector1< HBondResStructCOP > const & residues );
+	bool network_spans_all_helices( hbond_net_struct const & i ) const;
+	core::Size num_helices_w_hbond( hbond_net_struct const & i ) const;
+	core::Size num_helices_w_hbond( utility::vector1< HBondResStructCOP > const & residues ) const;
 	bool has_pH_His( core::pose::Pose const & pose, hbond_net_struct & i );
 	bool residues_are_interface_pairs( core::Size const res1, core::Size const res2 );
 
@@ -123,7 +123,7 @@ public:
 protected://Monte Carlo Protocol
 
 	inline bool edge_can_yield_monte_carlo_seed( core::Size resid1, core::Size resid2 ) const override{
-		if ( !symmetric() && chain_for_resid( resid1 ) == chain_for_resid( resid2 ) ) return false;
+		if ( !symmetric() && !all_helices_ && chain_for_resid( resid1 ) == chain_for_resid( resid2 ) ) return false;
 		else return HBNet::edge_can_yield_monte_carlo_seed( resid1, resid2 );
 	}
 
@@ -135,6 +135,9 @@ private:
 	bool allow_onebody_networks_;
 	bool his_tyr_;
 	bool pH_His_;
+	bool at_least_one_net_w_aromatic_sc_;
+	bool at_least_one_net_spans_all_helices_;
+	bool at_least_one_net_fully_satisfied_;
 	bool boundary_his_must_to_hbond_pos_charge_;
 	bool only_start_at_interface_pairs_;
 	bool use_aa_dependent_weights_;

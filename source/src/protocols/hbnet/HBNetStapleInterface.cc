@@ -123,6 +123,9 @@ HBNetStapleInterface::HBNetStapleInterface( ) :
 	allow_onebody_networks_(false),
 	his_tyr_(false),
 	pH_His_(false),
+	at_least_one_net_w_aromatic_sc_(false),
+	at_least_one_net_spans_all_helices_(false),
+	at_least_one_net_fully_satisfied_(false),
 	boundary_his_must_to_hbond_pos_charge_(false),
 	only_start_at_interface_pairs_(false),
 	use_aa_dependent_weights_(false),
@@ -146,6 +149,9 @@ HBNetStapleInterface::HBNetStapleInterface( std::string const name ) :
 	allow_onebody_networks_(false),
 	his_tyr_(false),
 	pH_His_(false),
+	at_least_one_net_w_aromatic_sc_(false),
+	at_least_one_net_spans_all_helices_(false),
+	at_least_one_net_fully_satisfied_(false),
 	boundary_his_must_to_hbond_pos_charge_(false),
 	only_start_at_interface_pairs_(false),
 	use_aa_dependent_weights_(false),
@@ -182,6 +188,9 @@ HBNetStapleInterface::HBNetStapleInterface(
 	allow_onebody_networks_(false),
 	his_tyr_(false),
 	pH_His_(false),
+	at_least_one_net_w_aromatic_sc_(false),
+	at_least_one_net_spans_all_helices_(false),
+	at_least_one_net_fully_satisfied_(false),
 	boundary_his_must_to_hbond_pos_charge_(false),
 	only_start_at_interface_pairs_(false),
 	use_aa_dependent_weights_(false),
@@ -232,6 +241,9 @@ HBNetStapleInterface::parse_my_tag(
 	allow_onebody_networks_ = tag->getOption<bool>("allow_onebody_networks",false);
 	his_tyr_ = tag->getOption< bool >( "his_tyr", false);
 	pH_His_ = tag->getOption<bool>("pH_His", false);
+	at_least_one_net_w_aromatic_sc_ = tag->getOption<bool>("at_least_one_net_w_aromatic_sc", false);
+	at_least_one_net_spans_all_helices_ = tag->getOption<bool>("at_least_one_net_spans_all_helices", false);
+	at_least_one_net_fully_satisfied_ = tag->getOption<bool>("at_least_one_net_fully_satisfied", false);
 	only_start_at_interface_pairs_ = tag->getOption<bool>("only_start_at_interface_pairs",false);
 	use_aa_dependent_weights_ = tag->getOption<bool>("use_aa_dependent_weights",false);
 
@@ -306,7 +318,8 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 		}
 	}
 
-	if ( all_helices_ || span_all_helices_ || min_helices_contacted_by_network_ ) {
+	if ( all_helices_ || span_all_helices_ || min_helices_contacted_by_network_ || at_least_one_net_spans_all_helices_ ) {
+		helix_boundaries_.clear();
 		Pose dssp_pose = pose;
 		core::scoring::dssp::Dssp new_ss(dssp_pose);
 		new_ss.insert_ss_into_pose(dssp_pose);
@@ -754,7 +767,46 @@ HBNetStapleInterface::scale_twobody_energy( core::Real input_twobody_energy, cha
 void
 HBNetStapleInterface::prepare_output()
 {
+	// prescreen for critria if selected
+	bool criteria_met(false);
+	bool span_criteria_met( at_least_one_net_spans_all_helices_ ? false : true );
+	//bool aromatic_sc_criteria_met( at_least_one_net_w_aromatic_sc_ ? false : true ); // no need to check this here
+	bool satisfied_criteria_met( at_least_one_net_fully_satisfied_ ? false : true );
+	for ( std::vector< HBondNetStructOP >::const_iterator netit = get_net_vec().begin(); netit != get_net_vec().end(); ++netit ) {
+		if ( at_least_one_net_spans_all_helices_ && network_spans_all_helices( **netit ) ) {
+			span_criteria_met = true;
+		}
+		if ( at_least_one_net_fully_satisfied_ && (*netit)->num_unsat_Hpol == 0 ) {
+			satisfied_criteria_met = true;
+		}
+	}
+	criteria_met = span_criteria_met && satisfied_criteria_met;
+	if ( !criteria_met ) { // delete this set of networks from output_vector_
+		return;
+	}
+
 	output_networks( min_networks_per_pose_ == 1 ); //will add single networks to output vector
+
+	// if requiring at least one networks spans all helices, put these first
+	//  everything will still remaining sorted by prior criteria, just with the ones that span all helices first
+	if ( at_least_one_net_spans_all_helices_ ) { // sort with those at the front
+		std::vector< HBondNetStructOP > spans_all_helices_net_vec(0);
+		std::vector< HBondNetStructOP > temp_net_vec(0);
+		for ( auto & net : get_net_vec() ) {
+			if ( network_spans_all_helices( ( *net ) ) ) {
+				spans_all_helices_net_vec.push_back( net );
+			} else {
+				temp_net_vec.push_back( net );
+			}
+		}
+		get_net_vec().clear();
+		for ( auto & netit : spans_all_helices_net_vec ) {
+			get_net_vec().push_back( netit );
+		}
+		for ( auto & netit : temp_net_vec ) {
+			get_net_vec().push_back( netit );
+		}
+	}
 
 	if ( only_native() && ( get_native_vec().size() < min_networks_per_pose_ ) ) {
 		get_native_vec().clear();
@@ -811,11 +863,40 @@ HBNetStapleInterface::prepare_output()
 			rec_add_staple( netit, net_ids, 1 );
 		}
 	}
+
+	// CHECK CRITERIA THAT ONLY APPLIES TO AT LEAST ONE OF COMBINED NETWORKS
+	//  need cleaner more modular way to add and evaluate these type of criteria, but since just 2 so far, going with this for now:
+	auto net_ids_it = get_output_vector().begin();
+	while ( net_ids_it != get_output_vector().end() ) {
+		auto const combined_nets = *net_ids_it;
+		bool criteria_met(false);
+		bool span_criteria_met( at_least_one_net_spans_all_helices_ ? false : true );
+		bool aromatic_sc_criteria_met( at_least_one_net_w_aromatic_sc_ ? false : true );
+		bool satisfied_criteria_met( at_least_one_net_fully_satisfied_ ? false : true );
+		for ( const auto & net_id : combined_nets ) {
+			if ( at_least_one_net_spans_all_helices_ && network_spans_all_helices( *(get_network_by_id( net_id )) ) ) {
+				span_criteria_met = true;
+			}
+			if ( at_least_one_net_w_aromatic_sc_ && ( network_contains_aa('Y', *(get_network_by_id( net_id )) ) || network_contains_aa('H', *(get_network_by_id( net_id )) ) || network_contains_aa('W', *(get_network_by_id( net_id )) )) ) {
+				aromatic_sc_criteria_met = true;
+			}
+			if ( at_least_one_net_fully_satisfied_ && get_network_by_id( net_id )->num_unsat_Hpol == 0 ) {
+				satisfied_criteria_met = true;
+			}
+		}
+		criteria_met = span_criteria_met && aromatic_sc_criteria_met && satisfied_criteria_met;
+		if ( !criteria_met ) { // delete this set of networks from output_vector_
+			net_ids_it = get_output_vector().erase(net_ids_it);
+		} else {
+			++net_ids_it;
+		}
+	}
+
 	TR.flush();
 }
 
 bool
-HBNetStapleInterface::network_spans_all_helices( hbond_net_struct const & i )
+HBNetStapleInterface::network_spans_all_helices( hbond_net_struct const & i ) const
 {
 	if ( num_helices_w_hbond( i ) == helix_boundaries_.size() ) {
 		return true;
@@ -824,13 +905,13 @@ HBNetStapleInterface::network_spans_all_helices( hbond_net_struct const & i )
 }
 
 Size
-HBNetStapleInterface::num_helices_w_hbond( hbond_net_struct const & i )
+HBNetStapleInterface::num_helices_w_hbond( hbond_net_struct const & i ) const
 {
 	return ( i.asymm_residues.empty() ) ? num_helices_w_hbond( i.residues ) : num_helices_w_hbond( i.asymm_residues );
 }
 
 Size
-HBNetStapleInterface::num_helices_w_hbond( utility::vector1< HBondResStructCOP > const & residues )
+HBNetStapleInterface::num_helices_w_hbond( utility::vector1< HBondResStructCOP > const & residues ) const
 {
 	Size num_helices(0);
 	utility::vector1< bool > helix_has_hbond_residue( helix_boundaries_.size(), false );
@@ -922,7 +1003,7 @@ HBNetStapleInterface::interhelical_contact( utility::vector1< std::pair<Size,Siz
 
 ///@details returns false if residues is not part of a helix
 Size
-HBNetStapleInterface::get_helix_id( Size r1 )
+HBNetStapleInterface::get_helix_id( Size r1 ) const
 {
 	runtime_assert( !(helix_boundaries_.empty()) );
 	//for (utility::vector1< std::pair<Size,Size> >::iterator h = helix_boundaries.begin(); h != helix_boundaries.end(); ++h){
@@ -1006,6 +1087,9 @@ void HBNetStapleInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		+ XMLSchemaAttribute::attribute_w_default( "allow_onebody_networks", xsct_rosetta_bool, "Allow networks within a pose", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "his_tyr", xsct_rosetta_bool, "Include histidine and tyrosine in the network", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "pH_His", xsct_rosetta_bool, "Identify and handle pH-sensitive histidines", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "at_least_one_net_w_aromatic_sc", xsct_rosetta_bool, "ensures each output pose has at least one net with at least one HYW; can be combined with other nets that don't", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "at_least_one_net_spans_all_helices", xsct_rosetta_bool, "ensures each output pose has at least one net that spans all helices; can be combined with other nets that don't", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "at_least_one_net_fully_satisfied", xsct_rosetta_bool, "ensures each output pose has at least one net that with 0 unseats, including 0 unsat Hpol; can be combined with other nets that don't", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "only_start_at_interface_pairs", xsct_rosetta_bool, "Only start IG traversal with h-bonds that span across interface (different chains)", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "use_aa_dependent_weights", xsct_rosetta_bool, "weight twobody IG energies depending on aa type", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "all_helical_interfaces", xsct_rosetta_bool, "Interfaces must be composed of helices", "false" )

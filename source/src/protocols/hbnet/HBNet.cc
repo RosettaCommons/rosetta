@@ -1068,15 +1068,17 @@ HBNet::monte_carlo_net_clash( utility::vector1< HBondResStructCOP > const & resi
 
 	utility::vector1< core::Size > global_rots1;
 	global_rots1.reserve( residues_i.size() );
-	core::Size const offset1 = rotamer_sets_->nrotamer_offset_for_moltenres( rotamer_sets_->resid_2_moltenres( residues_i.front()->resnum ) );
+	//core::Size const offset1 = rotamer_sets_->nrotamer_offset_for_moltenres( rotamer_sets_->resid_2_moltenres( residues_i.front()->resnum ) );
 	for ( HBondResStructCOP const & res : residues_i ) {
+		core::Size const offset1 = rotamer_sets_->nrotamer_offset_for_moltenres( rotamer_sets_->resid_2_moltenres( res->resnum ) );
 		global_rots1.push_back( offset1 + res->rot_index );
 	}
 
 	utility::vector1< core::Size > global_rots2;
 	global_rots2.reserve( residues_j.size() );
-	core::Size const offset2 = rotamer_sets_->nrotamer_offset_for_moltenres( rotamer_sets_->resid_2_moltenres( residues_j.front()->resnum ) );
+	//core::Size const offset2 = rotamer_sets_->nrotamer_offset_for_moltenres( rotamer_sets_->resid_2_moltenres( residues_j.front()->resnum ) );
 	for ( HBondResStructCOP const & res : residues_j ) {
+		core::Size const offset2 = rotamer_sets_->nrotamer_offset_for_moltenres( rotamer_sets_->resid_2_moltenres( res->resnum ) );
 		global_rots2.push_back( offset2 + res->rot_index );
 	}
 
@@ -1084,6 +1086,20 @@ HBNet::monte_carlo_net_clash( utility::vector1< HBondResStructCOP > const & resi
 		AtomLevelHBondNode const * node1 = hbond_graph_->get_atomlevel_hbondnode( rot1 );
 		for ( core::Size const rot2 : global_rots2 ) {
 			if ( node1->clashes( rot2 ) ) return true;
+
+			// check for networks that have common intersections that rotamers are compatible
+			if ( rotamer_sets_->moltenres_for_rotamer(rot1) == rotamer_sets_->moltenres_for_rotamer(rot2) && ( rot1 != rot2 ) ) {
+				if ( rotamer_sets_->rotamer(rot1)->name1() != rotamer_sets_->rotamer(rot2)->name1() ) {
+					return true;
+				} else {
+					core::conformation::ResidueCOP r_1 = rotamer_sets_->rotamer(rot1);
+					core::conformation::ResidueCOP r_2 = rotamer_sets_->rotamer(rot2);
+					//if ( core::scoring::automorphic_rmsd(*r_i, *r_j, true) > SC_RMSD_CUTOFF ) {
+					if ( core::scoring::residue_sc_rmsd_no_super( r_1, r_2, true ) > SC_RMSD_CUTOFF ) {
+						return true;
+					}
+				}
+			}
 		}
 	}
 
