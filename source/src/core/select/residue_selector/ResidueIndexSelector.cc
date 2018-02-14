@@ -24,6 +24,8 @@
 // Project headers
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility Headers
 #include <utility>
@@ -95,6 +97,16 @@ ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 	ResidueSubset subset( pose.size(), false );
 	std::set< Size > const res_set( get_resnum_list( index_str_, pose ) );
 
+	//check for symmetry
+	bool sym_check = core::pose::symmetry::is_symmetric( pose );
+	core::Size asu_size=0;
+	if ( sym_check ) {
+		if ( reverse_ ) {
+			TR << "Pose is symmetric. Using asymmetric pose size for reverse index." << std::endl;
+		}
+		asu_size = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+	}
+
 	for ( Size const res : res_set ) {
 		if ( res == 0 || res > subset.size() ) {
 			if ( error_on_out_of_bounds_index() ) {
@@ -109,7 +121,10 @@ ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 		if ( !reverse_ ) {
 			subset[ res ] = true;
 		} else {
-			subset[subset.size()-res+1]=true;
+			if ( sym_check ) {
+				//Pose is symmetric, but using asymmetric pose size for reverse index
+				subset[asu_size-res+1]=true;
+			} else subset[subset.size()-res+1]=true;
 		}
 	}
 	return subset;

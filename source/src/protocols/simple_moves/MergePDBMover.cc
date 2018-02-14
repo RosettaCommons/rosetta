@@ -470,9 +470,9 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		core::pose::PoseOP centroidPoseOP = output_poseOP->clone();
 		tocen->apply( *centroidPoseOP );
 		Real score0 = sfxn0->score( *centroidPoseOP );
-		TR << "ASYMMETRIC score0 for clash_check (cutoff 10): " << score0 << std::endl;
+		TR << "ASYMMETRIC score0 for clash_check (threshold: " << clash_threshold_ << " );" << score0 << std::endl;
 		bool duplicate = check_duplicate(*output_poseOP);
-		if ( score0>10.0 || duplicate ) {
+		if ( score0>clash_threshold_ || duplicate ) {
 			//no output
 			overlaps_[kk].output_poseOP = NULL;
 			TR << "ASYMMETRIC clash_check failed OR duplicate structure, tossing structure #: " << kk << std::endl;
@@ -535,9 +535,9 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 			core::pose::PoseOP centroidPoseOP = output_poseOP->clone();
 			tocen->apply( *centroidPoseOP );
 			Real score0 = sfxn0->score( *centroidPoseOP );
-			TR << "SYMMETRIC score0 for clash_check (cutoff 10): " << score0 << std::endl;
+			TR << "SYMMETRIC score0 for clash_check (threshold: " << clash_threshold_ << " );" << score0 << std::endl;
 			bool duplicate = check_duplicate(*output_poseOP);
-			if ( score0>10.0 || duplicate ) {
+			if ( score0>clash_threshold_ || duplicate ) {
 				//no output
 				overlaps_[kk].output_poseOP = NULL;
 				TR << "SYMMETRIC clash_check failed OR duplicate structure, tossing structure #: " << kk << std::endl;
@@ -927,9 +927,13 @@ void MergePDBMover::apply( Pose & pose )
 	TR << "STEP2: Combine (generate_overlaps)" << std::endl;
 	generate_overlaps(pose,chain_id);
 
-	//Step 3 combine sequence
-	TR << "STEP3: Combine Sequence (pack_and_minimize)" << std::endl;
-	pack_and_minimize(pose,baseline_score);
+	if ( do_design_ ) {
+		//Step 3 combine sequence
+		TR << "STEP3: Combine Sequence (pack_and_minimize)" << std::endl;
+		pack_and_minimize(pose,baseline_score);
+	} else {
+		TR << "Skipping STEP3; do_design=" << do_design_ << std::endl;
+	}
 
 	core::pose::PoseOP tmpPoseOP=get_additional_output();
 	if ( tmpPoseOP!=nullptr ) {
@@ -962,6 +966,8 @@ void MergePDBMover::parse_my_tag(
 	output_only_first_ = tag->getOption< bool >( "output_only_first" ,false );
 	output_overlap_positions_ = tag->getOption<bool>("output_overlap_positions",false);
 	xml_input_pose_ = core::pose::PoseOP( new pose::Pose );
+	do_design_ = tag->getOption<bool>("do_design",true);
+	clash_threshold_ = tag->getOption<Real>("clash_threshold",10.0);
 	core::import_pose::pose_from_file(*xml_input_pose_, fname , core::import_pose::PDB_file);
 	if ( tag->hasOption("scorefxn") ) {
 		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn") );
@@ -1023,7 +1029,9 @@ void MergePDBMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		+ XMLSchemaAttribute::attribute_w_default("init_overlap_sequence","init_overlap_sequence_type","where to take the overlap sequence from input_pose, xml_pose, or both which takes from closest element on a different SS.","input_pose")
 		+ XMLSchemaAttribute( "scorefxn", xs_string, "Score function used for packing and design." )
 		+ XMLSchemaAttribute::attribute_w_default( "output_only_first", xsct_rosetta_bool, "only does minimization on the first overlap and outputs", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "output_overlap_positions", xsct_rosetta_bool, "outputs overlap positions", "false" );
+		+ XMLSchemaAttribute::attribute_w_default( "output_overlap_positions", xsct_rosetta_bool, "outputs overlap positions", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "do_design", xsct_rosetta_bool, "Perform design on sequence", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "clash_threshold", xsct_real, "score0 clash threshold", "10" );
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Align + combine parts of the pdb", attlist );
 }

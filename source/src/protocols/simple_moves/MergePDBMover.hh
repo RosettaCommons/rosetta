@@ -128,6 +128,8 @@ private:
 	bool detect_disulf_before_repack_;
 	bool output_only_first_;
 	bool output_overlap_positions_;
+	bool do_design_;
+	core::Real clash_threshold_;
 };
 
 } // simple_moves
