@@ -994,6 +994,7 @@ PoseToStructFileRepConverter::grab_torsion_records(
 			out << "REMARK torsions: res    res    chain seq dssp phi psi omega" << std::endl;
 		}
 		for ( core::Size i=1; i<=pose.size(); ++i ) {
+			if ( !pose.residue_type(i).is_protein() && !pose.residue_type(i).is_peptoid() && !pose.residue_type(i).is_carbohydrate() ) continue;
 			if ( pdb_info ) {
 				out << "REMARK " << I( 4, i ) << " " << I( 4, pose.pdb_info()->number(i)) << " " << pose.pdb_info()->chain(i) << " " << pose.residue_type( i ).name1() << " " <<
 					dssp_reduced_secstruct(i) << " " << F( 9, 3, pose.phi(i)) << " " << F( 9, 3, pose.psi(i)) << " " << F( 9, 3, pose.omega(i)) << std::endl;

@@ -46,6 +46,7 @@
 #include <protocols/frag_picker/Contact.hh>
 #include <protocols/frag_picker/ContactCounts.hh>
 #include <protocols/frag_picker/nonlocal/NonlocalPair.hh>
+#include <protocols/frag_picker/Faraggi_SA.hh>
 
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <core/sequence/util.hh>
@@ -1237,16 +1238,36 @@ void FragmentPicker::read_spine_x(std::string const & file_name) {
 		data.close();
 		utility_exit_with_message( "Can't read spine-x file: "+file_name );
 	}
-	std::string line, jnk;
+	std::string line, jnk, col2;
 	core::Real phi, psi, asa, pkc_phi, pkc_psi;
 	query_sa_prediction_.clear();
 	query_phi_prediction_.clear();
 	query_psi_prediction_.clear();
 	getline( data, line ); // skip header
+	std::istringstream header_stream( line );
+	header_stream >> jnk >> col2;
+	core::Size seq_pos = 0;
 	while ( getline( data, line ) ) {
 		std::istringstream line_stream( line );
-		//#                index   AA    SS     phi1  psi1    P_E    P_C    P_H    phi0   psi0   ASA    S_pk   S_SS  pk_phi pk_psi  pkc_phi    pkc_ps
-		line_stream >> jnk >> jnk >> jnk >> phi >> psi >> jnk >> jnk >> jnk >> jnk >> jnk >> asa >> jnk >> jnk >> jnk >> jnk >> pkc_phi >> pkc_psi;
+		if ( col2 == "SEQ" ) {
+			// spider3
+			//# SEQ SS ASA Phi Psi Theta(i-1=>i+1) Tau(i-2=>i+2) HSE_alpha_up HSE_alpha_down P(C) P(H) P(E)
+			line_stream >> jnk >> jnk >> jnk >> asa >> phi >> psi >> jnk >> jnk >> jnk >> jnk >> jnk >> jnk >> jnk;
+			pkc_phi = .0;
+			pkc_psi = .0;
+		} else if ( col2 == "SS" ) {
+			// spider3_np (single sequence)
+			//# SS SS8 ASA Phi Psi Theta Tau HSE_alpha_up HSE_alpha_down CN13
+			line_stream >> jnk >> jnk >> asa >> phi >> psi;
+			asa = asa * protocols::frag_picker::sa_faraggi_max( get_query_seq_string()[seq_pos] );
+			pkc_phi = .0;
+			pkc_psi = .0;
+			seq_pos++;
+		} else {
+			// spine-x
+			//# index AA SS phi1 psi1 P_E P_C P_H phi0 psi0 ASA S_pk S_SS pk_phi pk_psi pkc_phi pkc_ps
+			line_stream >> jnk >> jnk >> jnk >> phi >> psi >> jnk >> jnk >> jnk >> jnk >> jnk >> asa >> jnk >> jnk >> jnk >> jnk >> pkc_phi >> pkc_psi;
+		}
 		query_sa_prediction_.push_back( asa );
 		query_phi_prediction_.push_back( phi );
 		query_psi_prediction_.push_back( psi );
