@@ -91,16 +91,8 @@ SingleResidueRotamerLibraryFactory::get_cachetag( core::chemical::ResidueType co
 
 /// @brief Get the SingleResidueRotamerLibrary coresponding to the given ResidueType.
 /// If forcebasic is true, a SingleBasicRotamerLibrary will be returned instead of a null pointer.
-/// @details For thread safety in accessing the cache, we use a "Software Transactional Memory"-type approach.
-/// We lock the cache to see if we have something cached. If not, we release the lock and build the new SRRL.
-/// This allows other threads to potentially access the shared cache for other residue types in the meantime.
-/// We then re-lock the cache, check that the generated library is still needed, and then put it in the cache.
-/// If another thread got in before us, we discard the work we did and use the previously made one.
-/// (The cache is write-once.) This should work so long as cacheable SRRLs made from SRRLSpecifications with the
-/// same type tag and cache string are functionally identical.
-/// @note This was updated on 14 Aug 2017 to use the more efficient ReadWriteMutex scheme used to access maps managed
-/// by the ScoringManager.  This allows multiple threads to be performing reads from the cache_ object simultaneously,
-/// and ensures that it is only ever locked entirely when adding a new rotamer library.
+/// @details If a cachetag exists for the ResidueType, store the information in the cache.
+/// If not, always regenerate the RotamerLibrary
 /// @author Rocco Moretti
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- implemented more efficient locking scheme.
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
@@ -116,48 +108,64 @@ SingleResidueRotamerLibraryFactory::get( core::chemical::ResidueType const & res
 	}
 	std::string cachetag( get_cachetag(restype) );
 	std::pair< std::string, std::string > cachepair(type,cachetag);
+
 	if ( cachetag.size() ) {
+		{ // Scope for read lock
 #ifdef MULTI_THREADED
-		utility::thread::ReadLockGuard readlock(cache_mutex_); // mutex will release when this scope exits
+			utility::thread::ReadLockGuard readlock(cache_mutex_); // mutex will release when this scope exits
 #endif
-		if ( cache_.count( cachepair ) ) {
-			if ( ! cache_[ cachepair ] && forcebasic ) {
-				return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
-			} else {
-				return cache_[ cachepair ];
+			if ( cache_.count( cachepair ) ) {
+				if ( ! cache_[ cachepair ] && forcebasic ) {
+					return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+				} else {
+					return cache_[ cachepair ];
+				}
 			}
-		}
-	}
+		} // End scope for read lock
 
-	auto entry(creator_map_.find( type ) );
-	debug_assert( entry != creator_map_.end() );
-	core::pack::rotamers::SingleResidueRotamerLibraryCOP library( entry->second->create( restype ) );
-
-	// Some creators (e.g. Dunbrack for Gly/Ala) will return empty residue library pointers
-	// We can cache a null pointer (don't cache a SingleBasicRotamerLibrary, as not all calls will forcebasic)
-
-	if ( cachetag.size() ) {
-		{
+		{ // Scope for write lock
+			// We grab the write lock early, as we want to avoid memory spikes when
+			// large numbers of threads all attempt to speculatively create the library at the same time.
 #ifdef MULTI_THREADED
 			utility::thread::WriteLockGuard writelock(cache_mutex_); // mutex will release when this scope exits
 #endif
+			//Check again -- creation might have happened between read guard release and write guard acquire:
+			if ( cache_.count( cachepair ) ) {
+				if ( ! cache_[ cachepair ] && forcebasic ) {
+					return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+				} else {
+					return cache_[ cachepair ];
+				}
+			}
+
+			auto entry( creator_map_.find( type ) );
+			debug_assert( entry != creator_map_.end() );
+			core::pack::rotamers::SingleResidueRotamerLibraryCOP library( entry->second->create( restype ) );
+
+			// Some creators (e.g. Dunbrack for Gly/Ala) will return empty residue library pointers
+			// We can cache a null pointer (don't cache a SingleBasicRotamerLibrary, as not all calls will forcebasic)
 			if ( ! cache_.count( cachepair ) ) {
 				cache_[ cachepair ] = library;
 			}
-		} //Release write lock, if present
-#ifdef MULTI_THREADED
-		utility::thread::ReadLockGuard readlock(cache_mutex_); // mutex will release when this scope exits
-#endif
-		if ( ! cache_[ cachepair ] && forcebasic ) {
+
+			if ( ! library && forcebasic ) {
+				return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
+			} else {
+				return library;
+			}
+		} // End scope for write lock
+	} else { // No cache tag - no locking needed
+		auto entry( creator_map_.find( type ) );
+		debug_assert( entry != creator_map_.end() );
+		core::pack::rotamers::SingleResidueRotamerLibraryCOP library( entry->second->create( restype ) );
+
+		if ( ! library && forcebasic ) {
 			return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
 		} else {
-			return cache_[ cachepair ]; // Catch case where another thread already assigned cachepair
+			return library;
 		}
-	} //Release read lock, if present.
-	if ( ! library && forcebasic ) {
-		return SingleResidueRotamerLibraryCOP( new SingleBasicRotamerLibrary );
 	}
-	return library;
+	return nullptr; // Should never get here.
 }
 
 core::pack::rotamers::SingleResidueRotamerLibraryCOP

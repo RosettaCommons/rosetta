@@ -164,8 +164,15 @@ ParsedProtocol::apply( Pose & pose )
 			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
 		}
 
-	} catch( ... ) {
+	} catch( utility::excn::Exception & excn ) {
+		TR.Error << "Exception while processing procotol: " << excn.msg() << std::endl;
+		if ( protocols::jd2::jd2_used() ) {
+			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
+		}
 
+		throw(excn);
+
+	} catch( ... ) { /*To handle other exceptions*/
 		TR.Error << "Exception while processing procotol:" << std::endl;
 		if ( protocols::jd2::jd2_used() ) {
 			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
