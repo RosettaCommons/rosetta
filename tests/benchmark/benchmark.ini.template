@@ -24,7 +24,7 @@ branch = unknown
 revision = 42
 
 # Path to boost python library (Required for most PyRosetta builds and tests)
-boost_python_library = /Users/benchmark/G/PyRosetta.develop.boost-1.55/PyRosetta.Develop.64/lib/libboost_python.dylib
+#boost_python_library = /Users/benchmark/G/PyRosetta.develop.boost-1.55/PyRosetta.Develop.64/lib/libboost_python.dylib
 
 # Path to release's dir-tree
 release_dir = ./results/_release_

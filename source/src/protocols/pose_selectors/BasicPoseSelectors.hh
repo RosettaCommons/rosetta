@@ -46,12 +46,13 @@ protected:
 	LogicalSelector();
 	~LogicalSelector() override;
 
+	LogicalSelector(LogicalSelector const &) = default;
+
 public:
 	static std::string name() { return "LogicalSelector"; }
 	static utility::tag::XMLSchemaComplexTypeGeneratorOP complex_type_generator_for_logical_selector( utility::tag::XMLSchemaDefinition & );
 	std::string get_name() const override { return name(); }
 	rosetta_scripts::PoseSelectorFlags get_flags() const override;
-
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
