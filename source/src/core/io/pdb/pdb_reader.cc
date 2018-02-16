@@ -125,14 +125,14 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 
 		// Title Section //////////////////////////////////////////////////////
 		// Record contains "header information", i.e., is from the Title Section of the PDB file.
-		if ( record_type == "HEADER" || record_type == "KEYWDS" ||
+		if ( (record_type == "HEADER" || record_type == "KEYWDS" ||
 				record_type == "TITLE " || record_type == "COMPND" ||
-				record_type == "EXPDTA" ) {
+				record_type == "EXPDTA" ) && (! options.read_only_ATOM_entries() ) ) {
 			// TODO: Add rest of Title Section records.
 			sfr.header()->store_record( records[ i ] );
 
 			// Record contains a remark from the Title Section of the PDB file.
-		} else if ( record_type == "REMARK" )  {
+		} else if ( record_type == "REMARK" && ! options.read_only_ATOM_entries() )  {
 			RemarkInfo ri;
 			ri.num = atoi( records[ i ][ "remarkNum" ].value.c_str() ),
 				ri.value = records[ i ][ "value" ].value;
@@ -147,67 +147,67 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 
 			// Primary Structure Section //////////////////////////////////////////
 			// Record contains cross-references from PDB sequence fragments to a corresponding database sequence.
-		} else if ( record_type == "DBREF " || record_type == "DBREF1" || record_type == "DBREF2" ||
-				record_type == "SEQADV" ) {
+		} else if ( ( record_type == "DBREF " || record_type == "DBREF1" || record_type == "DBREF2" ||
+				record_type == "SEQADV" ) && ( ! options.read_only_ATOM_entries() ) ) {
 			//sfr.primary_struct_info()->store_sequence_database_refs( records[ i ] );  // TODO
 			continue;  // TEMP
 
 			// Record contains a linear (or cyclic) primary sequence declaration.
-		} else if ( record_type == "SEQRES" ) {
+		} else if ( record_type == "SEQRES" && ! options.read_only_ATOM_entries() ) {
 			store_chain_sequence_record_in_sfr( records[ i ], sfr );
 
 			// Record that a residue is modified and how.
-		} else if ( record_type == "MODRES" ) {
+		} else if ( record_type == "MODRES" && ! options.read_only_ATOM_entries() ) {
 			store_mod_res_record_in_sfr( records[ i ], sfr );
 
 
 			// Heterogen Section //////////////////////////////////////////////////
 			// Record contains heterogen nomenclature information.
-		} else if ( record_type == "HETNAM" ) {
+		} else if ( record_type == "HETNAM" && ! options.read_only_ATOM_entries() ) {
 			store_heterogen_name_record_in_sfr( records[ i ], sfr );
 
 			// Record contains heterogen synonym information.
-		} else if ( record_type == "HETSYN" ) {
+		} else if ( record_type == "HETSYN" && ! options.read_only_ATOM_entries() ) {
 			store_heterogen_synonym_record_in_sfr( records[ i ], sfr );
 
 			// Record contains formula information.
-		} else if ( record_type == "FORMUL" ) {
+		} else if ( record_type == "FORMUL" && ! options.read_only_ATOM_entries() ) {
 			store_formula_record_in_sfr( records[ i ], sfr );
 
 
 			// Secondary Structure Section ////////////////////////////////////////
 			// Record contains helix definitions.
-		} else if ( record_type == "HELIX " ) {
+		} else if ( record_type == "HELIX " && ! options.read_only_ATOM_entries() ) {
 			// TODO: Store HELIX record types here.
 			continue;
 
 			// Record contains sheet definitions.
-		} else if ( record_type == "SHEET " ) {
+		} else if ( record_type == "SHEET " && ! options.read_only_ATOM_entries() ) {
 			// TODO: Store SHEET record types here.
 			continue;
 
 
 			// Connectivity Annotation Section ////////////////////////////////////
 			// Record contains disulfide linkage information.
-		} else if ( record_type == "SSBOND" ) {
+		} else if ( record_type == "SSBOND" && ! options.read_only_ATOM_entries() ) {
 			store_ssbond_record_in_sfr( records[ i ], sfr );
 
 			// Record contains nonstandard polymer linkage information.
-		} else if ( record_type == "LINK  " ) {
+		} else if ( record_type == "LINK  " && ! options.read_only_ATOM_entries() ) {
 			store_link_record_in_sfr( records[ i ], sfr );
 
-		} else if ( record_type == "CISPEP" ) {
+		} else if ( record_type == "CISPEP" && ! options.read_only_ATOM_entries() ) {
 			store_cis_peptide_record_in_sfr( records[ i ], sfr );
 
 
 			// Miscellaneous Features Section /////////////////////////////////////
-		} else if ( record_type == "SITE  " ) {
+		} else if ( record_type == "SITE  " && ! options.read_only_ATOM_entries() ) {
 			// TODO: Store SITE record types here.
 			continue;
 
 			// Crystallographic and Coordinate Transformation Section /////////////
 			// Record contains crystal information.
-		} else if ( records[i]["type"].value == "CRYST1" )  {
+		} else if ( records[i]["type"].value == "CRYST1" && ! options.read_only_ATOM_entries() )  {
 			store_crystallographic_parameter_record_in_sfr( records[ i ], sfr );
 
 
@@ -240,6 +240,7 @@ create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileRea
 			// Record contains atom information.
 		} else if ( record_type == "ATOM  " || record_type == "HETATM" ) {
 			if ( stop_reading_coordinate_section ) continue;
+			if ( record_type == "HETATM" && options.read_only_ATOM_entries() ) continue;
 
 			// TODO: Refactor?
 			Record & R( records[ i ] );

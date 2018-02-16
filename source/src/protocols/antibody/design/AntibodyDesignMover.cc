@@ -862,10 +862,11 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 	core::pose::Pose original_pose = pose;
 	std::string graft_id;
 
-	try{
 
-		if ( cdr_graft_design_options_[ cdr ]->design() ) {
 
+	if ( cdr_graft_design_options_[ cdr ]->design() ) {
+
+		try{
 
 			CDRDBPose & cdr_pose = cdr_set_[cdr][index];
 
@@ -973,60 +974,7 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 					cdr_dihedral_cst_mover_->apply(pose);
 				}
 			}
-		} else {
-			// No Graft.  Make sure clusters are setup.
-			graft_id = "no_graft";
-			ab_info_->setup_CDR_clusters(pose, true /* setup data from any datacache */);
-			ab_info_->get_CDR_cluster_set()->set_cacheable_cluster_data_to_pose(pose);
-
-
-			////////// Constraints /////////////////////////////////////////////
-			//
-			//
-			for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
-				auto cdr_in_pose = static_cast<CDRNameEnum>(i);
-				cdr_dihedral_cst_mover_->set_cdr(cdr_in_pose);
-				cdr_dihedral_cst_mover_->set_remove_any_set_forced_cluster();
-				cdr_dihedral_cst_mover_->apply(pose);
-			}
-		}
-
-		///////// Framework Mutations for Cluster //////////////////////////////
-		//
-		// (Note: Too late to put in packer and extremely complicated to combine it)
-		//
-		if ( mutate_framework_for_cluster_ ) {
-			framework_mutator_->set_cdr_only(cdr);
-			framework_mutator_->apply(pose);
-		}
-		setup_paratope_epitope_constraints(pose);
-
-		///Graphics.
-
-#ifdef GL_GRAPHICS
-		moves::DsspMover dssp = moves::DsspMover();
-		dssp.apply(pose);
-#endif
-		////////// Minimization ////////////////////////////////////////////////
-		//
-		//
-		if ( min_post_graft ) {
-			TR << "Beginning MinProtocol" << std::endl;
-
-			//Reset the scores for the constructed inner monte carlo object.
-			inner_mc_->reset( pose );
-
-
-			for ( core::Size i = 1; i <= inner_cycles_; ++i ) {
-
-				TR << "Inner round: "<< i << std::endl;
-				run_optimization_cycle(pose, *inner_mc_, cdr);
-			}
-			inner_mc_->recover_low(pose);
-		}
-		TR << "Min Cycle complete" << std::endl;
-		return true;
-	}
+		} //End Try
 catch ( utility::excn::Exception& excn ) {
 	std::cerr << "Exception : " << std::endl;
 	excn.show( std::cerr );
@@ -1051,7 +999,61 @@ catch ( utility::excn::Exception& excn ) {
 
 	pose = original_pose;
 	return false;
-}
+} //End catch
+
+	} else {
+		// No Graft.  Make sure clusters are setup.
+		graft_id = "no_graft";
+		ab_info_->setup_CDR_clusters(pose, true /* setup data from any datacache */);
+		ab_info_->get_CDR_cluster_set()->set_cacheable_cluster_data_to_pose(pose);
+
+
+		////////// Constraints /////////////////////////////////////////////
+		//
+		//
+		for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
+			auto cdr_in_pose = static_cast<CDRNameEnum>(i);
+			cdr_dihedral_cst_mover_->set_cdr(cdr_in_pose);
+			cdr_dihedral_cst_mover_->set_remove_any_set_forced_cluster();
+			cdr_dihedral_cst_mover_->apply(pose);
+		}
+	}
+
+	///////// Framework Mutations for Cluster //////////////////////////////
+	//
+	// (Note: Too late to put in packer and extremely complicated to combine it)
+	//
+	if ( mutate_framework_for_cluster_ ) {
+		framework_mutator_->set_cdr_only(cdr);
+		framework_mutator_->apply(pose);
+	}
+	setup_paratope_epitope_constraints(pose);
+
+	///Graphics.
+
+#ifdef GL_GRAPHICS
+	moves::DsspMover dssp = moves::DsspMover();
+	dssp.apply(pose);
+#endif
+	////////// Minimization ////////////////////////////////////////////////
+	//
+	//
+	if ( min_post_graft ) {
+		TR << "Beginning MinProtocol" << std::endl;
+
+		//Reset the scores for the constructed inner monte carlo object.
+		inner_mc_->reset( pose );
+
+
+		for ( core::Size i = 1; i <= inner_cycles_; ++i ) {
+
+			TR << "Inner round: "<< i << std::endl;
+			run_optimization_cycle(pose, *inner_mc_, cdr);
+		}
+		inner_mc_->recover_low(pose);
+	}
+	TR << "Min Cycle complete" << std::endl;
+	return true;
 }
 
 
@@ -1322,7 +1324,9 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 	top_scores_.push_back((*scorefxn_)(pose));
 	top_designs_.push_back(core::pose::PoseOP( new Pose() ));
 	*(top_designs_[1]) = pose;
-	mc_->set_last_accepted_pose(pose);
+	mc_->reset(pose);
+
+	core::Real native_score = mc_->last_score();
 
 	//Setup Weights
 	utility::vector1<core::Real> cdr_weights;
@@ -1355,6 +1359,7 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 	//  utility::vector1< core::Size > > ::iterator cluster_based_CDRDBPose_indexes_it_type;
 
 	//Choose random weighted CDR, graft in CDR, minimize
+	core::Size total_success = 0;
 	for ( core::Size i = 1; i <= outer_cycles_; ++i ) {
 		TR << "Outer round: " << i <<std::endl;
 
@@ -1403,29 +1408,36 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 		bool successful = apply_to_cdr(pose, cdr_type, cdr_index);
 		if ( successful ) {
 
+			total_success+=1;
 
 			bool accepted = mc_->boltzmann(pose);
 			check_for_top_designs(pose);
 
 			std::string raw = "SCORE " + utility::to_string(i) + " " + utility::to_string(mc_->last_score())+" "+utility::to_string(accepted);
+			TR << std::endl << raw << std::endl;
 			accept_log_.push_back(raw);
 
 			std::string fin = "FINAL " + utility::to_string(i) + " " + utility::to_string(mc_->last_accepted_score())+" "+"1";
+			TR << fin << std::endl;
 
 			accept_log_.push_back(fin);
 		} else {
 			pose = mc_->last_accepted_pose();
 		}
-		//TR << "Last Accepted Score: " << mc_->last_accepted_score() << std::endl;
-		//TR << "Lowest        Score:" << mc_->lowest_score() << std::endl;
-		//TR << "Checking current scores of pose " << std::endl;
-		mc_->boltzmann( pose );
-
+		TR << std::endl << "Last Accepted Score: " << mc_->last_accepted_score() << std::endl;
+		TR << "Lowest        Score:" << mc_->lowest_score() << std::endl << std::endl;
 	}
-	mc_->boltzmann( pose );
+
+	if ( total_success == 0 ) {
+		utility_exit_with_message("No successful outer cycles were completed.  Please check log files.");
+	}
+
+	TR << "Outer cycles attempted: " << outer_cycles_ << " Outer cycles completed: " << total_success << std::endl;
 
 	mc_->recover_low(pose);
-	mc_->boltzmann( pose );
+
+	TR << std::endl << "Native Pose (MC): " << native_score << std::endl;
+	TR << "Final Pose (MC): " << mc_->lowest_score() << std::endl << std::endl;
 
 	std::string out = "FINAL LOW "+utility::to_string(mc_->lowest_score())+" "+"1";
 	accept_log_.push_back(out);
@@ -1535,11 +1547,11 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 
 
 	//////// Print Score Information ///////////////////////////////////////////
-	TR << "Native Pose: " << native_score << std::endl;
+	TR << std::endl << "Native Pose (Total): " << native_score << std::endl;
 	if ( benchmark_ ) {
-		TR << "Benchmarked Pose: "<< benchmark_start_score << std::endl;
+		TR << "Benchmarked Pose (Total): "<< benchmark_start_score << std::endl;
 	}
-	TR << "Final Pose: " << (*scorefxn_)(pose) << std::endl;
+	TR << "Final Pose (Total): " << (*scorefxn_)(pose) << std::endl;
 	scorefxn_->show( TR, pose );
 
 	for ( core::Size i = 2; i<= top_scores_.size(); ++i ) {

@@ -116,7 +116,7 @@ AntibodyNumberingParser::read_numbering_scheme_file(std::string const & file_pat
 		}
 	}
 	TR << "Antibody numbering scheme definitions read successfully" << std::endl;
-
+	numbering_file.close();
 
 }
 

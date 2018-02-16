@@ -580,6 +580,11 @@ MonteCarlo::last_score() const
 	return last_score_;
 }
 
+void
+MonteCarlo::set_last_score( core::Real last_score)
+{
+	last_score_ = last_score;
+}
 
 Real
 MonteCarlo::lowest_score() const

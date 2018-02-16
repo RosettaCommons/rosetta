@@ -258,6 +258,11 @@ public:
 		core::Real score
 	);
 
+	///@brief Set the last score.
+	void
+	set_last_score( core::Real score
+	);
+
 	/// @brief Returns the last accepted pose
 	///
 	/// example(s):

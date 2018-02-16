@@ -114,7 +114,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	Block& block = cifFile->GetBlock( cifFile->GetFirstBlockName() );
 
 	// "header information", i.e., is from the Title Section of the PDB file.
-	if ( read_pdb_header ) {
+	if ( read_pdb_header && ! options.read_only_ATOM_entries() ) {
 		if ( block.IsTablePresent( "citation" ) ) {
 			ISTable& citation  = block.GetTable( "citation" );
 
@@ -157,7 +157,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	// There isn't a coherent "REMARKs" object. AMW TODO
 
 	// HETNAM
-	if ( block.IsTablePresent( "chem_comp" ) ) {
+	if ( block.IsTablePresent( "chem_comp" ) && ! options.read_only_ATOM_entries() ) {
 		ISTable& chem_comp = block.GetTable("chem_comp");
 		for ( Size i = 0; i <= chem_comp.GetLastRowIndex(); ++i ) {
 			std::string name = chem_comp( i, "name" );
@@ -171,7 +171,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	}
 
 	// LINK
-	if ( block.IsTablePresent( "struct_conn" ) ) {
+	if ( block.IsTablePresent( "struct_conn" ) && ! options.read_only_ATOM_entries() ) {
 		ISTable& struct_conn = block.GetTable("struct_conn");
 		for ( Size i = 0; i < struct_conn.GetLastRowIndex(); ++i ) {
 
@@ -253,7 +253,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 	}
 
 	// CRYST1
-	if ( block.IsTablePresent( "cell" ) ) {
+	if ( block.IsTablePresent( "cell" ) && ! options.read_only_ATOM_entries() ) {
 		ISTable& cell = block.GetTable("cell");
 		CrystInfo ci;
 		ci.A( atof( cell(0, "length_a" ).c_str() ) );
@@ -308,8 +308,10 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				}
 			}
 
+			bool is_het = (atom_site( i, "group_PDB" ) == "HETATM" );
+			if ( is_het && options.read_only_ATOM_entries() ) continue;
 
-			ai.isHet = ( atom_site( i, "group_PDB" ) == "HETATM" );
+			ai.isHet = is_het;
 			ai.serial = atoi( atom_site( i, "id" ).c_str() );
 			ai.name = atom_site( i, "auth_atom_id" );
 			ai.altLoc = 0;

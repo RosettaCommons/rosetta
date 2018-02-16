@@ -32,6 +32,7 @@
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector.hh>
 #include <protocols/features/util.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -516,7 +517,8 @@ ProteinResidueConformationFeatures::check_num_requested_atoms(
 			errmsg
 				<< "The residue type in the database is '" << db_res_type << "' and it matches the pose residue type." << std::endl;
 		}
-		utility_exit_with_message(errmsg.str());
+		TR << errmsg.str() << std::endl;
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Atom mismatch in ProteinResidueConformation"); //JAB - temporary
 	}
 }
 

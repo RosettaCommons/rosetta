@@ -90,6 +90,7 @@ public:
 	bool remember_unrecognized_res() const;
 	bool remember_unrecognized_water() const;
 	bool renumber_pdb() const;
+	bool read_only_ATOM_entries() const;
 	bool suppress_zero_occ_pdb_output() const;
 	bool auto_detect_glycan_connections() const;
 	bool write_glycan_pdb_codes() const;
@@ -141,6 +142,7 @@ public:
 	void set_remember_unrecognized_res( bool const remember_unrecognized_res );
 	void set_remember_unrecognized_water( bool const remember_unrecognized_water );
 	void set_renumber_pdb( bool const setting );
+	void set_read_only_ATOM_entries( bool const setting );
 	void set_suppress_zero_occ_pdb_output( bool const setting );
 	void set_auto_detect_glycan_connections( bool const auto_detect_glycan_connections );
 	void set_write_glycan_pdb_codes( bool const write_glycan_pdb_codes );
@@ -214,6 +216,7 @@ private:
 	bool remember_unrecognized_res_;
 	bool remember_unrecognized_water_;
 	bool renumber_pdb_;
+	bool read_only_ATOM_entries_;
 	bool suppress_zero_occ_pdb_output_;
 	bool auto_detect_glycan_connections_;
 	bool write_glycan_pdb_codes_;

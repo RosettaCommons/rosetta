@@ -155,6 +155,7 @@ bool StructFileRepOptions::randomize_missing_coords() const { return randomize_m
 bool StructFileRepOptions::remember_unrecognized_res() const { return remember_unrecognized_res_; }
 bool StructFileRepOptions::remember_unrecognized_water() const { return remember_unrecognized_water_; }
 bool StructFileRepOptions::renumber_pdb() const { return renumber_pdb_; }
+bool StructFileRepOptions::read_only_ATOM_entries() const { return read_only_ATOM_entries_; }
 bool StructFileRepOptions::suppress_zero_occ_pdb_output() const { return suppress_zero_occ_pdb_output_; }
 bool StructFileRepOptions::auto_detect_glycan_connections() const { return auto_detect_glycan_connections_; }
 bool StructFileRepOptions::write_glycan_pdb_codes() const { return write_glycan_pdb_codes_; }
@@ -272,6 +273,9 @@ void StructFileRepOptions::set_remember_unrecognized_water( bool const remember_
 void StructFileRepOptions::set_renumber_pdb( bool const setting )
 { renumber_pdb_ = setting; }
 
+void StructFileRepOptions::set_read_only_ATOM_entries( bool const setting )
+{ read_only_ATOM_entries_ = setting; }
+
 void StructFileRepOptions::set_suppress_zero_occ_pdb_output( bool const setting )
 { suppress_zero_occ_pdb_output_ = setting; }
 
@@ -376,7 +380,8 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::maintain_links
 		+ in::auto_detect_glycan_connections
 		+ in::max_bond_length
-		+ in::min_bond_length;
+		+ in::min_bond_length
+		+ in::read_only_ATOM_entries;
 
 }
 
@@ -497,6 +502,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_maintain_links( options[ in::maintain_links ]() );
 	set_max_bond_length( options[ in::max_bond_length ]() );
 	set_min_bond_length( options[ in::min_bond_length ]() );
+	set_read_only_ATOM_entries( options[ in::read_only_ATOM_entries ]() );
 	set_use_pdb_format_HETNAM_records( options[ OptionKeys::out::file::use_pdb_format_HETNAM_records ]() );
 	set_write_pdb_link_records( options[ out::file::write_pdb_link_records ]() );
 	set_chains_whose_residues_are_separate_chemical_entities( options[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
@@ -703,6 +709,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( remember_unrecognized_res_ ) ); // _Bool
 	arc( CEREAL_NVP( remember_unrecognized_water_ ) ); // _Bool
 	arc( CEREAL_NVP( renumber_pdb_ ) ); // _Bool
+	arc( CEREAL_NVP( read_only_ATOM_entries_ ) ); // _Bool
 	arc( CEREAL_NVP( suppress_zero_occ_pdb_output_ ) ); // _Bool
 	arc( CEREAL_NVP( auto_detect_glycan_connections_ ) ); // _Bool
 	arc( CEREAL_NVP( write_glycan_pdb_codes_ ) ); // _Bool
@@ -757,6 +764,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( remember_unrecognized_res_ ); // _Bool
 	arc( remember_unrecognized_water_ ); // _Bool
 	arc( renumber_pdb_ ); // _Bool
+	arc( read_only_ATOM_entries_ ); // _Bool
 	arc( suppress_zero_occ_pdb_output_ ); // _Bool
 	arc( auto_detect_glycan_connections_ ); // _Bool
 	arc( write_glycan_pdb_codes_ ); // _Bool

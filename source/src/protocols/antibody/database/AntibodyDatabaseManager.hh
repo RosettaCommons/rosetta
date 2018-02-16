@@ -255,6 +255,10 @@ private:
 	std::string
 	get_ands(std::string name, core::Size n) const;
 
+	///Loads a text file with structures to SKIP from the database or are OK to load.
+	void
+	load_structure_loading_info();
+
 private:
 
 	//protocols::features::ProteinSilentReportOP protein_silent_report_;
@@ -268,6 +272,9 @@ private:
 	bool high_mem_mode_ = false;
 	core::Size cdr_cache_limit_ = 300;
 	bool ignore_light_chain_ = false;
+
+	utility::vector1< std::string > loadable_structure_tags_;
+	utility::vector1< std::string > skip_structure_tags_;
 
 };
 

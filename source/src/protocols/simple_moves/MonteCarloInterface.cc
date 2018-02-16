@@ -42,6 +42,7 @@ MonteCarloInterface::MonteCarloInterface(
 	init_interface_analyzer();
 	set_interface( interface );
 	read_cmd_line_options();
+	reset(init_pose);
 }
 
 
@@ -186,6 +187,7 @@ MonteCarloInterface::reset( Pose const & pose )
 
 	set_last_accepted( score );
 	set_lowest_score_pose( last_accepted_pose() , score);
+	set_last_score( score );
 
 }
 

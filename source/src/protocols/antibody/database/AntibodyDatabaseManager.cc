@@ -35,9 +35,13 @@
 //Database Headers
 #include <utility>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/string_util.hh>
+#include <utility/io/util.hh>
+#include <utility/py/PyAssert.hh>
 #include <protocols/features/ProteinSilentReport.hh>
 #include <protocols/features/util.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/database/open.hh>
 #include <boost/uuid/uuid.hpp>
 #include <cppdb/frontend.h>
 #include <basic/database/open.hh>
@@ -119,6 +123,7 @@ AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool f
 
 	///Close the database session until we are ready to actually read from it.
 	db_session_->close();
+	//load_structure_loading_info();
 
 }
 
@@ -132,7 +137,9 @@ AntibodyDatabaseManager::AntibodyDatabaseManager( AntibodyDatabaseManager const 
 	use_only_H3_kinked_( src.use_only_H3_kinked_ ),
 	high_mem_mode_( src.high_mem_mode_),
 	cdr_cache_limit_( src.cdr_cache_limit_),
-	ignore_light_chain_( src.ignore_light_chain_)
+	ignore_light_chain_( src.ignore_light_chain_),
+	loadable_structure_tags_( src.loadable_structure_tags_),
+	skip_structure_tags_( src.skip_structure_tags_)
 
 {
 	using namespace utility::sql_database;
@@ -294,6 +301,51 @@ AntibodyDatabaseManager::load_cdr_pose(protocols::antibody::CDRDBPose & db_pose)
 	return pose;
 }
 
+void
+AntibodyDatabaseManager::load_structure_loading_info(){
+
+
+	loadable_structure_tags_.clear();
+	skip_structure_tags_.clear();
+
+	TR << "Checking loadable structures" << std::endl;
+
+	std::string path= "sampling/antibodies/db_structure_loading.txt";
+	std::string fname = basic::database::full_name( path );
+
+	vector1< string > const lines( utility::io::get_lines_from_file_data( fname ));
+
+	core::Size skipped = 0;
+	for ( auto line : lines ) {
+
+		//Skip any comments + empty lines
+		if ( utility::startswith(line, "#") ) {
+			continue;
+		}
+		if ( utility::startswith(line, "\n") ) {
+			continue;
+		}
+		utility::trim(line, "\n"); //Remove trailing line break
+		vector1< std::string > lineSP = utility::string_split_multi_delim(line);
+		if ( (lineSP.size()) == 0 ) continue;
+
+		std::string type = lineSP[1];
+		std::string tag = lineSP[2];
+
+		//TR << type << ":" <<tag<< std::endl;
+
+		if ( type == "SKIP" ) {
+			skip_structure_tags_.push_back( tag );
+			skipped+=1;
+		} else if ( type == "LOADED" ) {
+			loadable_structure_tags_.push_back( tag );
+		}
+	}
+	TR << "Skipping " << skipped << " structures from reading " << std::endl;
+
+}
+
+
 
 CDRDBPoseSet
 AntibodyDatabaseManager::load_cdr_poses(
@@ -304,6 +356,8 @@ AntibodyDatabaseManager::load_cdr_poses(
 
 	//Check to make sure everything is kosher
 	check_for_graft_instruction_inconsistencies(instructions);
+	load_structure_loading_info();
+
 	protocols::features::ProteinSilentReport reporter = protocols::features::ProteinSilentReport();
 
 	utility::vector1<core::Size> totals = this->get_cluster_totals();
@@ -672,19 +726,32 @@ AntibodyDatabaseManager::load_cdr_poses(
 					continue;
 				}
 
+				bool skip = skip_structure_tags_.contains(tags[k]);
+				if ( skip ) {
+					continue;
+				}
 				//We attempt to load all poses - even we are not using high_mem_mode.  This is to prevent issues down the line.
 				// This slows some runs down a bit, but prevents crashes and odd results.
 				core::pose::PoseOP pose( new core::pose::Pose() );
-				try{
-					reporter.load_pose( db_session_, struct_id, *pose );
-					pose->conformation().detect_disulfides();
-				}catch ( utility::excn::Exception& excn ){
-					TR << "Could not load CDR Pose from DB. " << tags[k] << std::endl;
-					excn.show( TR.Debug );
-					continue;
+
+				bool previous_load = loadable_structure_tags_.contains(tags[k]);
+				if ( ! previous_load ) {
+					try{
+						reporter.load_pose( db_session_, struct_id, *pose );
+						pose->conformation().detect_disulfides();
+						std::cout << "LOADED " << tags[k] << std::endl;
+					}catch ( utility::excn::Exception& excn ){
+						TR << "Could not load CDR Pose from DB. " << tags[k] << std::endl;
+						excn.show( TR.Debug );
+						std::cout << "SKIP "<<tags[k] << std::endl;
+						continue;
+					}
 				}
 
 				if ( high_mem_mode_ || total_loaded_poses < cdr_cache_limit_ ) {
+
+					reporter.load_pose( db_session_, struct_id, *pose );
+					pose->conformation().detect_disulfides();
 
 					CDRDBPose cdr_pose = CDRDBPose(pose, clusters[ k ], tag, distances[ k ], normalized_distances[ k ], resolutions[ k ], structure_length );
 					cdr_set[cdr].push_back(cdr_pose);
