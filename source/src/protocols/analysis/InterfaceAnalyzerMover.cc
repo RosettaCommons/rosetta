@@ -436,8 +436,8 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 /// @details InterfaceAnalyzerMover computes various interface statistics and makes them available through getters
 void InterfaceAnalyzerMover::apply( core::pose::Pose & pose )
 {
-	apply_const(pose);
-
+	apply_const( pose );
+	add_score_info_to_pose( pose );
 }//end apply
 
 // XRW TEMP std::string
