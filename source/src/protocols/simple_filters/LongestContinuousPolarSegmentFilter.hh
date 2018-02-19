@@ -36,8 +36,12 @@ class LongestContinuousPolarSegmentFilter : public protocols::filters::Filter {
 
 public:
 	/// @brief Constructor.
-	///
+	/// @details this constructor sets count_gly_as_polar to true
 	LongestContinuousPolarSegmentFilter();
+
+	/// @brief Constructor.
+	/// @details this constructor sets count_gly_as_polar to false
+	LongestContinuousPolarSegmentFilter( std::string const &filter_name );
 
 	/// @brief destructor (important for properly forward-declaring smart-pointer members)
 	///
@@ -117,6 +121,15 @@ public:
 	protocols::filters::FilterOP
 	clone() const override;
 
+	/// @brief Given a residue type, determine whether it's one of the types that this filter
+	/// should count.
+	/// @details Based on whether the residue type has the POLAR property.  Special-case exception
+	/// is made for glycine, depending on whether count_gly_as_polar_ is true.
+	virtual bool is_counted( core::chemical::ResidueType const &restype ) const;
+
+	/// @brief returns type of counted residues (polar)
+	virtual std::string counted_residue_description() const;
+
 private: //Functions
 
 	/// @brief Given a pose, actually compute the number of residues in the longest stretch, and return this value,
@@ -137,12 +150,6 @@ private: //Functions
 		core::Size &longest_stretch_start,
 		core::Size &longest_stretch_end
 	) const;
-
-	/// @brief Given a residue type, determine whether it's one of the types that this filter
-	/// should count.
-	/// @details Based on whether the residue type has the POLAR property.  Special-case exception
-	/// is made for glycine, depending on whether count_gly_as_polar_ is true.
-	bool is_counted( core::chemical::ResidueType const &restype ) const;
 
 private: //Variables
 

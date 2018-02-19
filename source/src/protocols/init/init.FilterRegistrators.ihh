@@ -152,6 +152,7 @@ static FilterRegistrator< protocols::simple_filters::InterfaceBindingEnergyDensi
 static FilterRegistrator< protocols::simple_filters::InterRepeatContactFilterCreator > reg_InterRepeatContactFilterCreator;
 static FilterRegistrator< protocols::simple_filters::IntraRepeatContactFilterCreator > reg_IntraRepeatContactFilterCreator;
 static FilterRegistrator< protocols::simple_filters::LeastNativeLike9merFilterCreator > reg_LeastNativeLike9merFilterCreator;
+static FilterRegistrator< protocols::simple_filters::LongestContinuousApolarSegmentFilterCreator > reg_LongestContinuousApolarSegmentFilterCreator;
 static FilterRegistrator< protocols::simple_filters::LongestContinuousPolarSegmentFilterCreator > reg_LongestContinuousPolarSegmentFilterCreator;
 static FilterRegistrator< protocols::simple_filters::MotifScoreFilterCreator > reg_MotifScoreFilterCreator;
 static FilterRegistrator< protocols::simple_filters::MultipleSigmoidsFilterCreator > reg_MultipleSigmoidsFilterCreator;

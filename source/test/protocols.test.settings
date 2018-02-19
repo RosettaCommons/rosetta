@@ -548,6 +548,7 @@ sources = {
 	"simple_filters" : [
 		"DdgFilter",
 		"DdGScan",
+		"LongestContinuousApolarSegmentFilterTests",
 		"LongestContinuousPolarSegmentFilterTests",
 		"ReadPoseExtraScoreFilter",
 		"ResidueCountFilter",

@@ -604,6 +604,7 @@ sources = {
 		"InterRepeatContactFilter",
 		"IntraRepeatContactFilter",
 		"LeastNativeLike9merFilter",
+		"LongestContinuousApolarSegmentFilter",
 		"LongestContinuousPolarSegmentFilter",
 		"MotifScoreFilter",
 		"JScoreEvaluator",

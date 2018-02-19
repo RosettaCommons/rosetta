@@ -36,11 +36,23 @@ static basic::Tracer TR( "protocols.simple_filters.LongestContinuousPolarSegment
 namespace protocols {
 namespace simple_filters {
 
-/// @brief Constructor.
+/// @brief Constructor
+/// @details this constructor sets count_gly_as_polar to true
 LongestContinuousPolarSegmentFilter::LongestContinuousPolarSegmentFilter():
 	protocols::filters::Filter( "LongestContinuousPolarSegmentFilter" ),
 	exclude_chain_termini_(true),
 	count_gly_as_polar_(true),
+	filter_out_high_(true),
+	cutoff_(5),
+	residue_selector_(nullptr)
+{}
+
+/// @brief constructor for derived classes to call
+/// @details this constructor sets count_gly_as_polar to false
+LongestContinuousPolarSegmentFilter::LongestContinuousPolarSegmentFilter( std::string const &filter_name ):
+	protocols::filters::Filter( filter_name ),
+	exclude_chain_termini_(true),
+	count_gly_as_polar_(false),
 	filter_out_high_(true),
 	cutoff_(5),
 	residue_selector_(nullptr)
@@ -88,24 +100,24 @@ LongestContinuousPolarSegmentFilter::apply( core::pose::Pose const &pose ) const
 	compute( pose, residue_selector_, exclude_chain_termini_, longest_count, longest_start, longest_end );
 
 	if ( TR.visible() && longest_count != 0 ) {
-		TR << "In the current pose, the longest stretch of polar residues is " << longest_count << " residues.  (Residue " << pose.residue(longest_start).name3() << longest_start << " through " << pose.residue(longest_end).name3() << longest_end << ".)" << std::endl;
+		TR << "In the current pose, the longest stretch of " << counted_residue_description() << " residues is " << longest_count << " residues.  (Residue " << pose.residue(longest_start).name3() << longest_start << " through " << pose.residue(longest_end).name3() << longest_end << ".)" << std::endl;
 	}
 
 	if ( filter_out_high_ ) {
 		if ( longest_count > cutoff_ ) {
-			TR << "The length of the longest stretch of polar residues (" << longest_count << ") is greater than the maximum cutoff threshold (" << cutoff_ << ").  Filter fails." << std::endl;
+			TR << "The length of the longest stretch of " << counted_residue_description() << " residues (" << longest_count << ") is greater than the maximum cutoff threshold (" << cutoff_ << ").  Filter fails." << std::endl;
 			return false;
 		} else {
-			TR << "The length of the longest stretch of polar residues (" << longest_count << ") is less than or equal to than the maximum cutoff threshold (" << cutoff_ << ").  Filter passes." << std::endl;
+			TR << "The length of the longest stretch of " << counted_residue_description() << " residues (" << longest_count << ") is less than or equal to than the maximum cutoff threshold (" << cutoff_ << ").  Filter passes." << std::endl;
 			return true;
 		}
 	}
 
 	if ( longest_count < cutoff_ ) {
-		TR << "The length of the longest stretch of polar residues (" << longest_count << ") is less than the minimum cutoff threshold (" << cutoff_ << ").  Filter fails." << std::endl;
+		TR << "The length of the longest stretch of " << counted_residue_description() << " residues (" << longest_count << ") is less than the minimum cutoff threshold (" << cutoff_ << ").  Filter fails." << std::endl;
 		return false;
 	} else {
-		TR << "The length of the longest stretch of polar residues (" << longest_count << ") is greater than or equal to than the minimum cutoff threshold (" << cutoff_ << ").  Filter passes." << std::endl;
+		TR << "The length of the longest stretch of " << counted_residue_description() << " residues (" << longest_count << ") is greater than or equal to than the minimum cutoff threshold (" << cutoff_ << ").  Filter passes." << std::endl;
 		return true;
 	}
 
@@ -129,7 +141,7 @@ LongestContinuousPolarSegmentFilter::report( std::ostream &os, core::pose::Pose 
 	core::Size longest_count, longest_start, longest_end;
 	compute( pose, residue_selector_, exclude_chain_termini_, longest_count, longest_start, longest_end );
 
-	os << "The LongestContinuousPolarSegmentFilter reports that the longest stretch of polar residues in the pose, " << ( exclude_chain_termini_ ? "excluding chain terminal segments," : "including chain terminal segments," ) << " is " << longest_count << " residues long.";
+	os << "The " << name() << "Filter reports that the longest stretch of " << counted_residue_description() << " residues in the pose, " << ( exclude_chain_termini_ ? "excluding chain terminal segments," : "including chain terminal segments," ) << " is " << longest_count << " residues long.";
 	if ( longest_count > 0 ) {
 		os << "  It runs from " << pose.residue(longest_start).name3() << longest_start << " through " << pose.residue(longest_end).name3() << longest_end << ".";
 	}
@@ -256,7 +268,7 @@ LongestContinuousPolarSegmentFilter::compute(
 	}
 
 	if ( longest_stretch_res_count == 0 ) {
-		TR.Warning << "No polar stretch was found in this pose!" << std::endl;
+		TR.Warning << "No " << counted_residue_description() << "stretch was found in this pose!" << std::endl;
 	}
 }
 
@@ -273,6 +285,10 @@ LongestContinuousPolarSegmentFilter::is_counted(
 	return false;
 }
 
+std::string
+LongestContinuousPolarSegmentFilter::counted_residue_description() const {
+	return "polar";
+}
 
 /////////////// Creator ///////////////
 

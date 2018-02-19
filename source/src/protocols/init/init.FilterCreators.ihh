@@ -136,6 +136,7 @@
 #include <protocols/simple_filters/InterRepeatContactFilterCreator.hh>
 #include <protocols/simple_filters/IntraRepeatContactFilterCreator.hh>
 #include <protocols/simple_filters/LeastNativeLike9merFilterCreator.hh>
+#include <protocols/simple_filters/LongestContinuousApolarSegmentFilterCreator.hh>
 #include <protocols/simple_filters/LongestContinuousPolarSegmentFilterCreator.hh>
 #include <protocols/simple_filters/MotifScoreFilterCreator.hh>
 #include <protocols/simple_filters/MultipleSigmoidsFilterCreator.hh>
