@@ -1,0 +1,3 @@
+cd %(bin)s/../
+grep '^[[:space:]]*#define INCLUDED' -r src | awk -F: '{print $2}' | sort | uniq -c | sort -nk1 | awk 'int($1)>=2' | sed "s/^/[`date`] /" > %(workdir)s/all_duplicate_headers.txt 
+cd %(workdir)s
