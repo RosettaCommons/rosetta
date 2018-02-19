@@ -113,31 +113,31 @@ public:
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 	typedef InterfaceTaskOperation parent;
 public:
-	RestrictToInterface() : parent(), distance_( 8 ), loopy_interface_( false )
+	RestrictToInterface() : parent(), distance_( 8 ), loopy_interface_( false ), include_all_water_( false )
 	{
 		set_movable_jumps( utility::tools::make_vector1< int >( 1 ) );
 	}
 
 	RestrictToInterface( int rb_jump_in, core::Real distance_in = 8 ) :
-		parent(), distance_ ( distance_in ), loopy_interface_( false ) {
+		parent(), distance_ ( distance_in ), loopy_interface_( false ), include_all_water_( false ) {
 		set_movable_jumps( utility::tools::make_vector1< int >( rb_jump_in ) );
 	}
 
 	/// @brief Constructor with arguments for multiple jumps
-	RestrictToInterface( utility::vector1_int rb_jump_in, core::Real distance_in
-		= 8 ) : parent(), distance_ ( distance_in ), loopy_interface_( false ) {
+	RestrictToInterface( utility::vector1_int rb_jump_in, core::Real distance_in = 8, bool include_all_water_in = false ) :
+		parent(), distance_ ( distance_in ), loopy_interface_( false ), include_all_water_( include_all_water_in ) {
 		set_movable_jumps( rb_jump_in );
 	}
 
 	RestrictToInterface( utility::vector1_int rb_jump_in,
 		ObjexxFCL::FArray1D_bool loop_residues ) : parent(), distance_( 8 ),
-		loopy_interface_( true ) {
+		loopy_interface_( true ), include_all_water_( false ) {
 		loop_residues_ = loop_residues;
 		set_movable_jumps( rb_jump_in );
 	}
 
 	RestrictToInterface( ObjexxFCL::FArray1D_bool loop_residues ) :
-		parent(), distance_( 8 ), loopy_interface_( true ) {
+		parent(), distance_( 8 ), loopy_interface_( true ), include_all_water_( false ) {
 		loop_residues_ = loop_residues;
 	}
 
@@ -165,6 +165,7 @@ private:
 	//utility::vector1_int rb_jump_;
 	core::Real distance_;
 	bool loopy_interface_;
+	bool include_all_water_;
 	ObjexxFCL::FArray1D_bool loop_residues_;
 };
 

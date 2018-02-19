@@ -717,7 +717,6 @@ sources = {
 	],
 	"protocols/simple_moves": [
 		"AddCavitiesMover",
-		"WriteFiltersToPose",
 		"AddChainMover",
 
 		"AddConstraintsToCurrentConformationMover",
@@ -788,6 +787,7 @@ sources = {
 		"MonteCarloReset",
 		"MSDMover",
 		"MutateResidue",
+		"PackPwatRotamersMover",
 		"PDBReloadMover",
 		"PeriodicBoxMover",
 		"PoseFromPoseResourceMover",
@@ -827,8 +827,10 @@ sources = {
 		"Tumble",
 		"UniformPositionMover",
 		"VirtualRootMover",
+		"WaterBoxMover",
 		"WriteSSEMover",
 		"WobbleMover",
+		"WriteFiltersToPose",
 	],
 	"protocols/simple_moves/asym_fold_and_dock": [
 		"AsymFoldandDockMoveRbJumpMover",

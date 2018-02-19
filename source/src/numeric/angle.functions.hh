@@ -20,6 +20,8 @@
 // Package headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/NumericTraits.hh>
+#include <numeric/Quaternion.hh>
+#include <numeric/xyzMatrix.hh>
 
 // C++ headers
 #include <cmath>
@@ -115,6 +117,48 @@ T
 nearest_angle_degrees( T const & angle, T const & base_angle )
 {
 	return angle - ( nearest_ssize( ( angle - base_angle ) / T( 360.0 ) ) * T( 360.0 ) );
+}
+
+
+/// @brief Interconvert Quaternion <=> Rotation Matrix
+template <typename T>
+inline
+void R2quat( xyzMatrix< T > const &R, Quaternion< T > &Q ) {
+	T S;
+	if ( R.xx() > R.yy() && R.xx() > R.zz() )  {
+		S  = sqrt( 1.0 + R.xx() - R.yy() - R.zz() ) * 2;
+		Q.x(0.25 * S);
+		Q.y((R.xy() + R.yx() ) / S);
+		Q.z((R.zx() + R.xz() ) / S);
+		Q.w((R.zy() - R.yz() ) / S);
+	} else if ( R.yy() > R.zz() ) {
+		S  = sqrt( 1.0 + R.yy() - R.xx() - R.zz() ) * 2;
+		Q.x((R.yx() + R.xy() ) / S);
+		Q.y(0.25 * S);
+		Q.z((R.zy() + R.yz() ) / S);
+		Q.w((R.xz() - R.zx() ) / S);
+	} else {
+		S  = sqrt( 1.0 + R.zz() - R.xx() - R.yy() ) * 2;
+		Q.x((R.xz() + R.zx() ) / S);
+		Q.y((R.zy() + R.yz() ) / S);
+		Q.z(0.25 * S);
+		Q.w((R.yx() - R.xy()) / S);
+	}
+}
+
+
+/// @brief Interconvert Quaternion <=> Rotation Matrix
+template <typename T>
+inline
+void
+quat2R( Quaternion< T > const &Q ,xyzMatrix< T > &R ) {
+	T xx = Q.x()*Q.x(); T xy = Q.x()*Q.y(); T xz = Q.x()*Q.z();
+	T xw = Q.x()*Q.w(); T yy = Q.y()*Q.y(); T yz = Q.y()*Q.z();
+	T yw = Q.y()*Q.w(); T zz = Q.z()*Q.z(); T zw = Q.z()*Q.w();
+
+	R.xx(1-2*(yy+zz)); R.xy(  2*(xy-zw)); R.xz(  2*(xz+yw));
+	R.yx(  2*(xy+zw)); R.yy(1-2*(xx+zz)); R.yz(  2*(yz-xw));
+	R.zx(  2*(xz-yw)); R.zy(  2*(yz+xw)); R.zz(1-2*(xx+yy));
 }
 
 

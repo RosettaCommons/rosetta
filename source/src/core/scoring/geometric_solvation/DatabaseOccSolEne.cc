@@ -102,6 +102,7 @@ void DatabaseOccSolEne::init_don_mapping(chemical::AtomTypeSet const & atom_set)
 	don_type_mapping_[ atom_set.atom_type_index("HOH") ] = atom_set.atom_type_index("OH");
 	don_type_mapping_[ atom_set.atom_type_index("OW") ] = atom_set.atom_type_index("OH");
 	don_type_mapping_[ atom_set.atom_type_index("OHha") ] = atom_set.atom_type_index("OH");
+	don_type_mapping_[ atom_set.atom_type_index("Owat") ] = atom_set.atom_type_index("OH");
 
 	// hpark: below is added for beta_nov15
 	don_type_mapping_[ atom_set.atom_type_index("NtrR") ] = atom_set.atom_type_index("Ntrp");
@@ -142,6 +143,7 @@ void DatabaseOccSolEne::init_acc_mapping(chemical::AtomTypeSet const & atom_set)
 	acc_type_mapping_[ atom_set.atom_type_index("OC3") ] = atom_set.atom_type_index("ONH2");
 	acc_type_mapping_[ atom_set.atom_type_index("OSi") ] = atom_set.atom_type_index("OH");
 	acc_type_mapping_[ atom_set.atom_type_index("Oice") ] = atom_set.atom_type_index("OH");
+	acc_type_mapping_[ atom_set.atom_type_index("Owat") ] = atom_set.atom_type_index("OH");
 
 	// check that all acceptors have pwSHO parameters
 	Size const PROTEIN_TYPE = atom_set.atom_type_index("aroC");

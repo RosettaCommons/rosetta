@@ -54,6 +54,9 @@ HS        1.0
 Hapo      1.17
 Haro      1.0
 HNbb      1.0
+Hwat      1.0
+Owat      1.4000
+Opoint    1.4000
 HOH       1.4000
 Bsp2      1.7537 # modified from Nhis based on ratio of van der Waals radii
 F         1.3

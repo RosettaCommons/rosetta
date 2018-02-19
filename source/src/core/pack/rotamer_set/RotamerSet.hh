@@ -88,6 +88,13 @@ public:
 		utility::graph::GraphCOP packer_neighbor_graph
 	) = 0;
 
+	virtual
+	void build_pwat_rotamers(
+		pose::Pose const & pose,
+		Size resid,
+		utility::vector1< Vector > const & new_pwat_rotset
+	) = 0;
+
 	/// @brief Append a rotamer to the list; it will not be sorted into the same group as other rotamers
 	/// of the same group or amino acid unless the last group/amino acid is already the same. Instead it
 	/// will sit at the end of the list of Rotamers. There are performance implications of using this

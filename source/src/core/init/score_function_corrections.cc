@@ -1946,6 +1946,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 		params.push_back( "hbacc_IMD:1.13");
 		params.push_back( "hbacc_IME:1.17");
 		params.push_back( "hbacc_PBA:1.19");
+		params.push_back( "hbacc_H2O:1.15");
 		options[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
@@ -1962,6 +1963,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options ) {
 		params.push_back( "hbdon_IME:1.42");
 		params.push_back( "hbdon_IND:1.15");
 		params.push_back( "hbdon_PBA:1.45");
+		params.push_back( "hbdon_H2O:1.15");
 		options[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
 	} else {
 		TR.Warning << "Flag -beta_nov16 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;

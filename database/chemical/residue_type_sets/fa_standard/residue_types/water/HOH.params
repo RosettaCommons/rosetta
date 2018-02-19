@@ -1,17 +1,17 @@
-# This HOH params is currently a direct copy of TP3.params
-# Its in fa_standard so that some PDBs can get HOH read in directly without cleanup.
-# (TP3.params looks for the residue name "WAT" in PDBs)
-# Might potentially want to unify with TP3.params.
-#
-# taken from TP3 params in amber: dat/leap/lib/solvents.cmd
+# This used to be a direct copy of TP3.params but is now modified
+# for use with Frank and Ryan's solvation methods, giving the
+# water its own atom types for parameterization with the beta-nov16 ff
+# Did not want to use the TP3 residue type, since TP3 implies a particular
+# set of parameters and liquid behavior that is not matched here
+
 NAME HOH
 IO_STRING HOH w
 TYPE LIGAND
 AA H2O
 
-ATOM  O   OW   OH1  -0.834 ## HACK: USING OH ATOMTYPE, amber uses OW atomtype
-ATOM  H1  Hpol H    0.417
-ATOM  H2  Hpol H    0.417
+ATOM  O   Owat  OH1  -0.834
+ATOM  H1  Hwat  H    0.417
+ATOM  H2  Hwat  H    0.417
 
 BOND O H1
 BOND O H2
@@ -22,9 +22,7 @@ NBR_ATOM O
 
 ## hack -- max distance from hbond anchor atom to farthest O position, since packing assumes that NBR_ATOM doesnt move during packing which is not true with repackable position waters...
 ## need a better solution for this
-##
 NBR_RADIUS 3.2
-#NBR_RADIUS 0.0 ## distance from O to farthest heavyatom
 
 FIRST_SIDECHAIN_ATOM ALL
 

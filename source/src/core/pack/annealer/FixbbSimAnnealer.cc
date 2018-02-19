@@ -21,12 +21,18 @@
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <basic/Tracer.hh>
 
+#include <numeric/random/random.hh>
 #include <utility>
 #include <utility/exit.hh>
 
+#include <utility/exit.hh>
 
 #include <iostream>
 #include <fstream>
+
+// option key includes
+#include <basic/options/option.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <utility/vector0.hh>
@@ -147,6 +153,9 @@ void FixbbSimAnnealer::run()
 
 	int outeriterations = get_outeriterations();
 
+	/// if pose has water molecules then check if virtualization is allowed
+	/// (default=true) so that water molecules may be virtualized 50% of the time
+	bool include_vrt = basic::options::option[ basic::options::OptionKeys::corrections::water::include_vrt ].value();
 
 	std::ofstream annealer_trajectory;
 	if ( record_annealer_trajectory_ ) {
@@ -173,8 +182,21 @@ void FixbbSimAnnealer::run()
 			if ( ranrotamer == -1 ) continue;
 
 			int const moltenres_id = rotamer_sets()->moltenres_for_rotamer( ranrotamer );
-			int const rotamer_state_on_moltenres = rotamer_sets()->rotid_on_moltenresidue( ranrotamer );
+
+			/// removed const from rotamer_state_on_moltenres for code that virtualizes waters half the time
+			int rotamer_state_on_moltenres = rotamer_sets()->rotid_on_moltenresidue( ranrotamer );
 			int const prevrotamer_state = state_on_node(moltenres_id);
+
+			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
+
+			// for waters, set to virtual 50% of the time
+			core::conformation::Residue curres( *rotamer_sets()->rotamer_for_moltenres(moltenres_id, rotamer_state_on_moltenres) );
+			if ( ( curres.name3() == "HOH" ) && ( include_vrt ) ) {  // don't want to do this for waters without a virtual state, like TP3
+				double rand_num = numeric::random::rg().uniform();
+				double nrot = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
+				/// last state is the virtual state
+				if ( rand_num < (nrot/2.0-1)/nrot ) rotamer_state_on_moltenres = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
+			}
 
 			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
 

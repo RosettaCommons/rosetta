@@ -33,6 +33,9 @@ HS        0.5400
 Hapo      1.0800
 Haro      1.0800
 HNbb      0.5400
+Hwat      0.5400
+Owat      1.4400
+Opoint    1.4400
 HOH       1.4400
 Bsp2      1.6293  # modified from Nhis based on ratio of van der Waals radii
 F         1.7100  # taken from MM3 forcefield

@@ -317,6 +317,8 @@ enum ScoreType {
 	facts_solv,
 	facts_sasa,
 
+	// low-resolution pointwater
+	pointwater,
 
 	// Goap
 	goap,

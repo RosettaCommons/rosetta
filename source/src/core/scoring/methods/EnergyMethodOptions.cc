@@ -28,6 +28,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/unfolded_state.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
@@ -126,6 +127,8 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	cartbonded_linear_(false),
 	pb_bound_tag_("bound"),
 	pb_unbound_tag_("unbound"),
+	ordered_wat_penalty_(1.5),
+	ordered_pt_wat_penalty_(2.15),
 	symmetric_gly_tables_(false),
 	loop_close_use_6D_potential_(false),
 	fa_stack_base_all_(false),
@@ -211,6 +214,8 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		pb_bound_tag_ = src.pb_bound_tag_;
 		pb_unbound_tag_ = src.pb_unbound_tag_;
 		fastdens_perres_weights_ = src.fastdens_perres_weights_;
+		ordered_wat_penalty_ = src.ordered_wat_penalty_;
+		ordered_pt_wat_penalty_ = src.ordered_pt_wat_penalty_;
 		symmetric_gly_tables_ = src.symmetric_gly_tables_;
 		loop_close_use_6D_potential_ = src.loop_close_use_6D_potential_;
 		fa_stack_base_all_ = src.fa_stack_base_all_;
@@ -292,6 +297,9 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 		fastdens_perres_weights_.resize( core::chemical::num_canonical_aas, options[ basic::options::OptionKeys::edensity::sc_scaling ]() );
 	}
 
+	ordered_wat_penalty_ = options[ basic::options::OptionKeys::corrections::water::ordered_wat_penalty ]();
+	ordered_pt_wat_penalty_ = options[ basic::options::OptionKeys::corrections::water::ordered_pt_wat_penalty ]();
+
 }
 
 /// @details If you add a read to an option in initialize_from_options above, you must
@@ -343,7 +351,9 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::voids_penalty_energy_disabled_except_during_packing
 		+ basic::options::OptionKeys::score::water_dielectric
 		+ basic::options::OptionKeys::unfolded_state::split_unfolded_energies_file
-		+ basic::options::OptionKeys::unfolded_state::unfolded_energies_file;
+		+ basic::options::OptionKeys::unfolded_state::unfolded_energies_file
+		+ basic::options::OptionKeys::corrections::water::ordered_wat_penalty
+		+ basic::options::OptionKeys::corrections::water::ordered_pt_wat_penalty;
 }
 
 
@@ -995,6 +1005,16 @@ EnergyMethodOptions::bond_angle_residue_type_param_set(core::scoring::mm::MMBond
 	bond_angle_residue_type_param_set_ = param_set;
 }
 
+core::Real
+EnergyMethodOptions::ordered_wat_penalty() const {
+	return ordered_wat_penalty_;
+}
+
+core::Real
+EnergyMethodOptions::ordered_pt_wat_penalty() const {
+	return ordered_pt_wat_penalty_;
+}
+
 /// used inside ScoreFunctionInfo::operator==
 bool
 operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
@@ -1054,6 +1074,8 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
 		( a.pb_bound_tag_ == b.pb_bound_tag_ ) &&
 		( a.pb_unbound_tag_ == b.pb_unbound_tag_ ) &&
+		( a.ordered_wat_penalty_ == b.ordered_wat_penalty_ ) &&
+		( a.ordered_pt_wat_penalty_ == b.ordered_pt_wat_penalty_ ) &&
 		( a.voids_penalty_energy_containing_cones_cutoff_ == b.voids_penalty_energy_containing_cones_cutoff_ ) &&
 		( a.voids_penalty_energy_cone_distance_cutoff_ == b.voids_penalty_energy_cone_distance_cutoff_ ) &&
 		( a.voids_penalty_energy_cone_dotproduct_cutoff_ == b.voids_penalty_energy_cone_dotproduct_cutoff_ ) &&
@@ -1152,14 +1174,14 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_bound_tag: " << pb_bound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
-
+	out << "EnergyMethodOptions::show: ordered_wat_penalty: " << ordered_wat_penalty_ << std::endl;
+	out << "EnergyMethodOptions::show: ordered_pt_wat_penalty: " << ordered_pt_wat_penalty_ << std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_containing_cones_cutoff_:" << voids_penalty_energy_containing_cones_cutoff_ << std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_cone_distance_cutoff_: " << voids_penalty_energy_cone_distance_cutoff_ << std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_cone_dotproduct_cutoff_: " << voids_penalty_energy_cone_dotproduct_cutoff_ << std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_voxel_grid_padding_: " << voids_penalty_energy_voxel_grid_padding_ << std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_voxel_size_: " << voids_penalty_energy_voxel_size_<< std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_disabled_except_during_packing_: " << (voids_penalty_energy_disabled_except_during_packing_ ? "TRUE" : "FALSE")  << std::endl;
-
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
 	if ( bond_angle_residue_type_param_set_ ) {
 		out << "setting ignored";
@@ -1338,6 +1360,12 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_keys.push_back("cartbonded_linear");
 	option_values.push_back(cartbonded_linear_ ? "1" : "0");
 
+	option_keys.push_back("ordered_wat_penalty");
+	option_values.push_back(boost::lexical_cast<std::string>(ordered_wat_penalty_));
+
+	option_keys.push_back("ordered_pt_wat_penalty");
+	option_values.push_back(boost::lexical_cast<std::string>(ordered_wat_penalty_));
+
 	string statement_string;
 	switch(db_session->get_db_mode()){
 	case utility::sql_database::DatabaseMode::sqlite3 :
@@ -1440,6 +1468,8 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( voids_penalty_energy_disabled_except_during_packing_ ) ); //bool
 	arc( CEREAL_NVP( bond_angle_central_atoms_to_score_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( bond_angle_residue_type_param_set_ ) ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
+	arc( CEREAL_NVP( ordered_pt_wat_penalty_ ) );
+	arc( CEREAL_NVP( ordered_wat_penalty_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -1510,6 +1540,8 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( voids_penalty_energy_disabled_except_during_packing_ ); //bool
 	arc( bond_angle_central_atoms_to_score_ ); // utility::vector1<std::string>
 	arc( bond_angle_residue_type_param_set_ ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
+	arc( ordered_pt_wat_penalty_ );
+	arc( ordered_wat_penalty_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::EnergyMethodOptions );

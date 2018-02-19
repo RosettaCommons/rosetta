@@ -156,7 +156,7 @@ public:
 		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory RTIVO_factory;
 		//these are the default values but hard code anyway, test for chain #s
-		RTIVO_factory.push_back( TaskOperationCOP( new RestrictToInterfaceVectorOperation(1,2,10,5.5,75,9.0) ) );
+		RTIVO_factory.push_back( TaskOperationCOP( new RestrictToInterfaceVectorOperation(1,2,10,5.5,75,9.0,false) ) );
 		//run
 		test::UTracer UT_RTIVO("protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.u");
 		//this call returns PackerTaskOP; we are dumping the ptask to utracer
@@ -168,7 +168,7 @@ public:
 		RTIVO_factory.clear();
 		utility::vector1< int > interface_jump;
 		interface_jump.push_back(1);
-		RTIVO_factory.push_back( TaskOperationCOP( new RestrictToInterfaceVectorOperation(interface_jump,10,5.5,75,9.0) ) );
+		RTIVO_factory.push_back( TaskOperationCOP( new RestrictToInterfaceVectorOperation(interface_jump,10,5.5,75,9.0,false) ) );
 		//std::cout <<"Interface Jump RestrictToInterfaceVectorOperation \n "
 		//<< *(RTIVO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
 		UT_RTIVO2 << *(RTIVO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;

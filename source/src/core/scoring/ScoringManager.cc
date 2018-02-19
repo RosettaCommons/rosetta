@@ -40,6 +40,7 @@
 #include <core/scoring/Ramachandran2B.hh>
 #include <core/scoring/P_AA_ABEGO3.hh>
 #include <core/scoring/OmegaTether.hh>
+#include <core/scoring/PointWaterPotential.hh>
 #include <core/scoring/GenBornPotential.hh>
 #include <core/scoring/HydroxylTorsionPotential.hh>
 #include <core/scoring/MultipoleElecPotential.hh>
@@ -186,6 +187,7 @@ ScoringManager::ScoringManager() :
 	membranedata_mutex_(),
 	membrane_fapot_mutex_(),
 	proq_mutex_(),
+	pwp_mutex_(),
 	poissonboltzman_mutex_(),
 	splitunfolded_2body_mutex_(),
 	fa_disulf_potential_mutex_(),
@@ -250,6 +252,7 @@ ScoringManager::ScoringManager() :
 	membranedata_bool_(false),
 	membrane_fapot_bool_(false),
 	proq_bool_(false),
+  pwp_bool_(false),
 	poissonboltzman_bool_(false),
 	splitunfolded_2body_bool_(false),
 	fa_disulf_potential_bool_(false),
@@ -303,6 +306,7 @@ ScoringManager::ScoringManager() :
 	membrane_potential_( /* 0 */ ),
 	membrane_fapotential_( /* 0 */ ), //pba
 	ProQ_potential_(/* 0 */),
+	pwp_(/* 0 */),
 	PB_potential_(/* 0 */),
 	sutbp_( /* 0 */),
 	unf_state_( /* 0 */ ),
@@ -951,6 +955,19 @@ ScoringManager::get_ProQPotential() const
 	boost::function< ProQPotentialOP () > creator( boost::bind( &ScoringManager::create_proq_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, ProQ_potential_, SAFELY_PASS_MUTEX( proq_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( proq_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *ProQ_potential_;
+}
+
+/// @brief Get an instance of PointWaterPotential scoring object.
+PointWaterPotential const &
+ScoringManager::get_PointWaterPotential() const
+{
+	boost::function< PointWaterPotentialOP () > creator( boost::bind( &ScoringManager::create_point_water_potential_instance ) );
+	utility::thread::safely_create_load_once_object_by_OP( creator, pwp_, SAFELY_PASS_MUTEX( pwp_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( pwp_bool_ ) );
+	return *pwp_;
+	//  if ( pwp_ == 0 ) {
+	//    pwp_ =  PointWaterPotentialOP( new PointWaterPotential );
+	//  }
+	//  return *pwp_;
 }
 
 /// @brief Get an instance of the PoissonBoltzmannPotential scoring object.
@@ -1921,6 +1938,15 @@ ScoringManager::create_membrane_fa_potential_instance() {
 ProQPotentialOP
 ScoringManager::create_proq_potential_instance() {
 	return ProQPotentialOP( new ProQPotential );
+}
+
+/// @brief Create an instance of the ProQPotential object, by owning pointer.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+PointWaterPotentialOP
+ScoringManager::create_point_water_potential_instance() {
+	return PointWaterPotentialOP( new PointWaterPotential );
 }
 
 /// @brief Create an instance of the PoissonBoltzmannPotential object, by owning pointer.

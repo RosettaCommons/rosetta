@@ -955,7 +955,7 @@ void CartesianMD::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"Use Rattle algorithm to constraint hydrogen locations. "
 		"This automatically sets integration step = 2fs. "
 		"Otherwise uses integration step = 1fs" );
-	attlist + XMLSchemaAttribute( "scorefxns", xs_string,
+	attlist + XMLSchemaAttribute( "scorefxn", xs_string,
 		"Specify a scorefunction to run MD simulation with" );
 	attlist + XMLSchemaAttribute( "scorefxn_obj", xs_string,
 		"Optional, identical to scorefxn unless specified. "

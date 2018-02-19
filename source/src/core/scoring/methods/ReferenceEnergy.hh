@@ -46,10 +46,10 @@ public:
 public:
 
 
-	ReferenceEnergy();
+	ReferenceEnergy( Real ordered_wat_penalty );
 
 
-	ReferenceEnergy( utility::vector1< Real > const & aa_weights_in );
+	ReferenceEnergy( utility::vector1< Real > const & aa_weights_in, Real ordered_wat_penalty );
 
 
 	virtual ~ReferenceEnergy();
@@ -103,6 +103,7 @@ public:
 
 private:
 	utility::vector1< Real > aa_weights_;
+	Real ordered_wat_penalty_;
 	virtual
 	core::Size version() const;
 

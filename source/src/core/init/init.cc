@@ -228,6 +228,7 @@
 #ifdef USECUDA
 #include <core/scoring/fiber_diffraction/FiberDiffractionEnergyGpuCreator.hh>
 #endif
+#include <core/scoring/methods/PointWaterEnergyCreator.hh>
 
 // Rotamer Library registration
 #include <core/chemical/rotamers/RotamerLibrarySpecificationRegistrator.hh>
@@ -588,6 +589,7 @@ static EnergyMethodRegistrator< scoring::saxs::FastSAXSEnergyCreator > FastSAXSE
 static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreatorCEN > SAXSEnergyCreatorCEN_registrator;
 static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreatorFA > SAXSEnergyCreatorFA_registrator;
 static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreator > SAXSEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::PointWaterEnergyCreator > PointWaterEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< scoring::fiber_diffraction::FiberDiffractionEnergyCreator > FiberDiffractionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::fiber_diffraction::FiberDiffractionEnergyDensCreator > FiberDiffractionEnergyDensCreator_registrator;

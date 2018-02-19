@@ -107,7 +107,7 @@ while ( my $line = <HHR> ) {
 
 		# done!  now push onto the arrays
 		push @altpdbs, $altpdbs;
-		push @pdbids, $pdbid;
+		push @pdbids, lc $pdbid;
 		push @chainids, $chainid;
 		push @templates, $templseq;
 		push @targets, $targetseq;

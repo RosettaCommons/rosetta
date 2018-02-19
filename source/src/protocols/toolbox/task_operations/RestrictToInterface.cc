@@ -33,6 +33,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
+#include <basic/Tracer.hh>
+
+static basic::Tracer TR( "protocols.toolbox.task_operations.RestrictToInterface" );
 
 namespace protocols {
 namespace toolbox {
@@ -172,7 +175,7 @@ DockingNoRepack2::apply(
 RestrictToInterface::~RestrictToInterface()= default;
 
 RestrictToInterface::RestrictToInterface(utility::vector1<bool> loop_residues):
-	parent(), distance_( 8 ), loopy_interface_( true ) {
+	parent(), distance_( 8 ), loopy_interface_( true ), include_all_water_( false ) {
 	set_movable_jumps( utility::vector1_int() );
 	ObjexxFCL::FArray1D_bool hack_loop_residues( loop_residues.size(), false );
 	for ( core::Size ii = 1; ii <= loop_residues.size(); ii++ ) {
@@ -220,6 +223,7 @@ RestrictToInterface::apply(
 
 		for ( Size ii=1; ii<=pose.size(); ++ii ) {
 			if ( interface.is_interface(ii) ) {
+				//        TR << " adding residue " << pose.residue(ii).name() << " " << ii << " to interface" << std::endl;
 				is_interface[ii] = true;
 			}
 		}
@@ -228,6 +232,16 @@ RestrictToInterface::apply(
 	if ( loopy_interface_ ) {
 		for ( Size ii=1; ii<=pose.size(); ++ii ) {
 			if ( loop_residues_(ii) ) {
+				is_interface[ii] = true;
+			}
+		}
+	}
+
+	// set all waters to part of the interface
+	if ( include_all_water_ ) {
+		for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+			if ( pose.residue(ii).is_water() ) {
+				//        TR << " adding residue " << pose.residue(ii).name() << " " << ii << " to interface" << std::endl;
 				is_interface[ii] = true;
 			}
 		}
@@ -277,6 +291,7 @@ RestrictToInterface::parse_tag( TagCOP tag , DataMap & )
 {
 	add_movable_jump( ( tag->getOption< core::Size >( "jump", 1 ) ) );
 	distance_ = tag->getOption< core::Real >( "distance", 8 )  ;
+	include_all_water_ = tag->getOption<bool>( "include_all_water", 0 );
 }
 
 void RestrictToInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -285,7 +300,8 @@ void RestrictToInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 	attributes
 		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "XRW TO DO",  "1"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "distance", xsct_real, "XRW TO DO",  "8"  );
+		+ XMLSchemaAttribute::attribute_w_default(  "distance", xsct_real, "XRW TO DO",  "8"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "include_all_water", xsct_rosetta_bool, "add all water to interface",  "false"  );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }

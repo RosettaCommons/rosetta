@@ -34,8 +34,8 @@
 #include <basic/database/schema_generator/DbDataType.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-
 
 // Utility Headers
 #include <utility>

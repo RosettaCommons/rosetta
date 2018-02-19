@@ -1594,7 +1594,6 @@ public:
 
 	void set_adduct_flag( bool adduct_in );
 
-
 	/// @brief Add a numeric property.
 	void add_numeric_property( std::string const & tag, core::Real value );
 
@@ -1612,11 +1611,9 @@ public:
 	ResidueTypeCOP get_base_type_cop() const;
 
 	/// @brief Reset the base type COP to be null.  This implies that this ResidueType is a base type.
-	///
 	void reset_base_type_cop();
 
 	/// @brief Set the base type COP.  This implies that this ResidueType is NOT a base type.
-	///
 	void set_base_type_cop( ResidueTypeCOP new_base_type );
 
 	/// @brief is polymer?
@@ -1635,22 +1632,21 @@ public:
 	bool is_protein() const;
 
 	/// @brief Is this an alpha-amino acid?
-	///
 	bool is_alpha_aa() const;
 
 	/// @brief Is this a beta-amino acid?
-	///
 	bool is_beta_aa() const;
 
 	/// @brief Is this a gamma-amino acid?
-	///
 	bool is_gamma_aa() const;
+
+	/// @brief is this a water residue type?
+	bool is_water() const;
 
 	/// @brief Is this an oligourea?
 	bool is_oligourea() const;
 
 	/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
-	///
 	bool has_polymer_dependent_groups() const;
 
 	/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on the lower polymeric connection?
@@ -1674,11 +1670,9 @@ public:
 	void net_formal_charge( signed long int charge_in );
 
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
-	///
 	bool is_sri() const;
 
 	/// @brief Is this a triazolemer?
-	///
 	bool is_triazolemer() const;
 
 	/// @brief is this a d-amino acid?

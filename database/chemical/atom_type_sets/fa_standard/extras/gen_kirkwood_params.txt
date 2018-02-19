@@ -35,6 +35,9 @@ HS        1.2000
 Hapo      1.2000
 Haro      1.2000
 HNbb      1.2000
+Hwat      1.2000
+Owat      1.5200
+Opoint    1.5200
 HOH       1.5200
 Bsp2      1.7537
 F         1.4700

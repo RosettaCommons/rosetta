@@ -55,7 +55,8 @@ public:
 		core::Real CB_dist_cutoff,
 		core::Real nearby_atom_cutoff,
 		core::Real vector_angle_cutoff,
-		core::Real vector_dist_cutoff);
+		core::Real vector_dist_cutoff,
+		bool include_all_water);
 
 	//basic jump constructor
 	RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps );
@@ -65,7 +66,8 @@ public:
 		core::Real CB_dist_cutoff,
 		core::Real nearby_atom_cutoff,
 		core::Real vector_angle_cutoff,
-		core::Real vector_dist_cutoff);
+		core::Real vector_dist_cutoff,
+		bool include_all_water);
 
 
 	// //if you want to use chain characters this is probably the best way, define the calculator separately
@@ -93,6 +95,7 @@ public:
 	void nearby_atom_cutoff(core::Real nearby_atom_cutoff);
 	void vector_angle_cutoff(core::Real vector_angle_cutoff);
 	void vector_dist_cutoff(core::Real vector_dist_cutoff);
+	void include_all_water(bool include_all_water);
 	/// @brief parse_tag function for rosetta scripts
 	void parse_tag( TagCOP tag , DataMap & );
 
@@ -115,6 +118,7 @@ private:
 	core::Real nearby_atom_cutoff_; // used for finding atoms that are close
 	core::Real vector_angle_cutoff_; // used for cutoff for res1 CB to res2 CB angle cutoff
 	core::Real vector_dist_cutoff_; // used for distance between CBs for vector
+	bool include_all_water_; // add all waters to interface
 	//char upper_chain_char_, lower_chain_char;
 	//int jump_vector_; //what jump is the interface across
 };

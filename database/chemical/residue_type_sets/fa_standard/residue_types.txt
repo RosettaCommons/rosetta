@@ -616,6 +616,9 @@ residue_types/staple/08B.params
 residue_types/water/TP3.params
 residue_types/water/TP5.params
 residue_types/water/HOH.params
+residue_types/water/HOH_V.params
+residue_types/water/PWAT.params
+residue_types/water/PWAT_V.params
 
 ## Types needed to model cyclosporin
 residue_types/cyclosporin/BMT.params

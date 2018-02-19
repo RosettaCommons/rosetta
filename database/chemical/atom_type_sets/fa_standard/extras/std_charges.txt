@@ -1,10 +1,10 @@
 NAME	CHARGE
 CNH2	0.550
-COO	 0.620
-CH0	 0.000
-CH1	-0.090
-CH2	-0.180
-CH3	-0.270
+COO		0.620
+CH0		0.000
+CH1		-0.090
+CH2		-0.180
+CH3		-0.270
 aroC	-0.115
 Ntrp	-0.610
 Nhis	-0.530
@@ -13,11 +13,11 @@ NH2O	-0.470
 Nlys	-0.620
 Narg	-0.750
 Npro	-0.370
-OH	-0.660
-OW	-0.660
+OH		-0.660
+OW		-0.660
 Oaro	-0.660
 ONH2	-0.550
-OOC	-0.760
+OOC		-0.760
 Oet2	-0.550
 Oet3	-0.660
 S    	-0.160
@@ -27,22 +27,25 @@ CAbb     0.070
 CObb	 0.510
 OCbb	-0.510
 Phos	1.500
-Pbb	1.500	#copied from Phos
+Pbb		1.500	#copied from Phos
 Hpol	0.430
 HS		0.430
 Hapo	0.095
 Haro	0.115
 HNbb	0.310
-H2O	0.000
-HOH	0.000
-Bsp2  0.000 # Unknown
-F	-0.250
-Cl	-0.130
-Br	-0.100
-I	-0.090
+Hwat    0.430
+Owat    0.000
+Opoint  0.000
+H2O		0.000
+HOH		0.000
+Bsp2	0.000 # Unknown
+F		-0.250
+Cl		-0.130
+Br		-0.100
+I		-0.090
 Zn2p	2.000
-Co2p  2.000
-Cu2p  2.000
+Co2p	2.000
+Cu2p	2.000
 Fe2p	2.000
 Fe3p	3.000
 Mg2p	2.000

@@ -523,6 +523,7 @@ static MoverRegistrator< simple_moves::MonteCarloResetCreator > reg_MonteCarloRe
 static MoverRegistrator< simple_moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
 static MoverRegistrator< simple_moves::MSDMoverCreator > reg_MSDMoverCreator;
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
+static MoverRegistrator< simple_moves::PackPwatRotamersMoverCreator > reg_PackPwatRotamersMoverCreator;
 static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
 static MoverRegistrator< simple_moves::PeriodicBoxMoverCreator > reg_PeriodicBoxMoverCreator;
 static MoverRegistrator< simple_moves::PoseFromPoseResourceMoverCreator > reg_PoseFromPoseResourceMoverCreator;
@@ -552,6 +553,7 @@ static MoverRegistrator< simple_moves::SwitchResidueTypeSetMoverCreator > reg_Sw
 static MoverRegistrator< simple_moves::SwitchChainOrderMoverCreator > reg_SwitchChainOrderMoverCreator;
 static MoverRegistrator< simple_moves::TumbleCreator > reg_TumbleCreator;
 static MoverRegistrator< simple_moves::VirtualRootMoverCreator > reg_VirtualRootMoverCreator;
+static MoverRegistrator< simple_moves::WaterBoxMoverCreator > reg_WaterBoxMoverCreator;
 static MoverRegistrator< simple_moves::WriteSSEMoverCreator > reg_WriteSSEMoverCreator;
 
 static MoverRegistrator< simple_moves::bin_transitions::InitializeByBinsCreator > reg_InitializeByBinsCreator;

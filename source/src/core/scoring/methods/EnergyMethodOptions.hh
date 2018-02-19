@@ -597,6 +597,12 @@ public:
 		cartbonded_linear_ = lin_in;
 	}
 
+	core::Real
+	ordered_wat_penalty() const;
+
+	core::Real
+	ordered_pt_wat_penalty() const;
+
 	/// used inside ScoreFunctionInfo::operator==
 	friend
 	bool
@@ -680,6 +686,8 @@ private:
 	std::string pb_bound_tag_;
 	std::string pb_unbound_tag_;
 	utility::vector1< core::Real > fastdens_perres_weights_;
+	core::Real ordered_wat_penalty_;    //fpd -> penalty for removing water from bulk (HOH_V->HOH)
+	core::Real ordered_pt_wat_penalty_; //fpd -> penalty for removing point water from bulk (PWAT_V->PWAT)
 	bool symmetric_gly_tables_;
 	bool loop_close_use_6D_potential_;
 	bool fa_stack_base_all_;

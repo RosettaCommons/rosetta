@@ -264,6 +264,13 @@ public: // noop functions:
 	);
 
 	virtual
+	void build_pwat_rotamers(
+		pose::Pose const & pose,
+		core::Size resid,
+		utility::vector1< Vector > const & new_pwat_rotset
+	);
+
+	virtual
 	void
 	compute_one_body_energies(
 		pose::Pose const & pose,

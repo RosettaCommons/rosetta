@@ -85,7 +85,6 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	Real & score,
 	bool & recovered
 ) {
-
 	if ( res1.aa() != res2.aa()  || res1.nheavyatoms() != res2.nheavyatoms() ) {
 		TR << "Cannot measure rotamer recovery of residue " << res1.seqpos() << " because" << endl;
 		TR << "\nresidue 1 has type '" << res1.type().name() << "'" << endl;
@@ -122,13 +121,10 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	(*scorefxn)(pose2);
 
 	// electron density correlation
+	// from RRProtocolReference structure, pose1 is the reference pose
 	Real pose1_corr = core::scoring::electron_density::getDensityMap().matchRes( res1.seqpos(), res1, pose1, nullptr , false);
 	Real pose2_corr = core::scoring::electron_density::getDensityMap().matchRes( res2.seqpos(), res2, pose2, nullptr , false);
-	Real corr_diff = pose1_corr - pose2_corr;    //if Rosetta fixes an error in native density fitting, count as recovered
-	//pose1 must be native
-
-	// TR << "type: " << res1.name3() << " seqpos: " << res1.seqpos() << " corr diff: " << corr_diff << std::endl;
-	// TR << "type: " << res1.name3() << " seqpos: " << res1.seqpos() << " native_corr: " << pose1_corr<< " pack_corr: " << pose2_corr << " corr diff: " << corr_diff << std::endl;
+	Real corr_diff = pose1_corr - pose2_corr;    // if Rosetta fixes an error in native density fitting, count as recovered
 
 	if ( corr_diff > recovery_threshold_ || pose2_corr < absolute_threshold_ ) {
 		recovered = false;

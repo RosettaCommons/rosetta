@@ -74,6 +74,12 @@ public:
 	);
 
 	void
+	build_pwat_rotsets(
+		pose::Pose & pose,
+		utility::vector1< utility::vector1< Vector > > const & new_pwat_rotsets
+	);
+
+	void
 	dump_pdb( pose::Pose const & pose, std::string const & filename ) const;
 
 	virtual uint nrotamers() const;

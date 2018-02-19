@@ -107,6 +107,23 @@ public: // Creation
 	}
 
 
+	// @brief Construct quaternion from rotation axis and angle
+	inline
+	Quaternion(
+		Axis const & u,
+		Value const & angle,
+		bool const precise = true
+	) :
+		w_( cos( angle/ 2.0 ) ),
+		x_( u.x() * sin( angle/ 2.0 ) ),
+		y_( u.y() * sin( angle/ 2.0 ) ),
+		z_( u.z() * sin( angle/ 2.0 ) )
+	{
+		assert( is_normalized() );
+		if ( precise ) normalize();
+	}
+
+
 	/// @brief Identity named constructor
 	inline
 	static
@@ -150,6 +167,41 @@ public: // copy assignment
 
 
 public: // Properties
+
+	/// @brief w
+	inline
+	void
+	w( Value newval )
+	{
+		w_ = newval;
+	}
+
+
+	/// @brief x
+	inline
+	void
+	x( Value newval )
+	{
+		x_ = newval;
+	}
+
+
+	/// @brief y
+	inline
+	void
+	y( Value newval )
+	{
+		y_ = newval;
+	}
+
+
+	/// @brief z
+	inline
+	void
+	z( Value newval )
+	{
+		z_ = newval;
+	}
 
 
 	/// @brief w
@@ -342,6 +394,14 @@ public: // Properties
 
 
 public: // Methods
+
+	/// @brief to_string, useful for utility exits
+	inline
+	std::string
+	to_string() const
+	{
+		return "(" + utility::to_string(w_) + ", " + utility::to_string(x_) + ", " + utility::to_string(y_) + ", " + utility::to_string(z_) + ")";
+	}
 
 
 	/// @brief Dot product
@@ -549,13 +609,13 @@ public: // Methods: generators
 	}
 
 
-	/// @brief Quaternion * Quaternion
-	friend
-	inline
-	Quaternion
-	operator *( Quaternion const & q2, Quaternion const & q1 )
+	/// @brief Quaternion * Quaternion (always normalizes return value)
+	template <class U>
+	friend inline
+	Quaternion<U>
+	operator *( Quaternion<U> const & q2, Quaternion<U> const & q1 )
 	{
-		return Quaternion(
+		return Quaternion< U >(
 			( q2.w_ * q1.w_ ) - ( q2.x_ * q1.x_ ) - ( q2.y_ * q1.y_ ) - ( q2.z_ * q1.z_ ),
 			( q2.w_ * q1.x_ ) + ( q2.x_ * q1.w_ ) + ( q2.y_ * q1.z_ ) - ( q2.z_ * q1.y_ ),
 			( q2.w_ * q1.y_ ) - ( q2.x_ * q1.z_ ) + ( q2.y_ * q1.w_ ) + ( q2.z_ * q1.x_ ),
@@ -563,22 +623,21 @@ public: // Methods: generators
 			).normalize();
 	}
 
-
 	/// @brief Product: Quaternion * Quaternion
-	friend
-	inline
-	Quaternion
-	product( Quaternion const & q2, Quaternion const & q1, bool const precise = true )
+	template <class U>
+	friend inline
+	Quaternion<U>
+	product( Quaternion<U> const & q2, Quaternion<U> const & q1, bool const precise=true )
 	{
 		if ( precise ) { // Return normalized product
-			return Quaternion(
+			return Quaternion< U >(
 				( q2.w_ * q1.w_ ) - ( q2.x_ * q1.x_ ) - ( q2.y_ * q1.y_ ) - ( q2.z_ * q1.z_ ),
 				( q2.w_ * q1.x_ ) + ( q2.x_ * q1.w_ ) + ( q2.y_ * q1.z_ ) - ( q2.z_ * q1.y_ ),
 				( q2.w_ * q1.y_ ) - ( q2.x_ * q1.z_ ) + ( q2.y_ * q1.w_ ) + ( q2.z_ * q1.x_ ),
 				( q2.w_ * q1.z_ ) + ( q2.x_ * q1.y_ ) - ( q2.y_ * q1.x_ ) + ( q2.z_ * q1.w_ )
 				).normalize();
 		} else { // Return product
-			return Quaternion(
+			return Quaternion< U >(
 				( q2.w_ * q1.w_ ) - ( q2.x_ * q1.x_ ) - ( q2.y_ * q1.y_ ) - ( q2.z_ * q1.z_ ),
 				( q2.w_ * q1.x_ ) + ( q2.x_ * q1.w_ ) + ( q2.y_ * q1.z_ ) - ( q2.z_ * q1.y_ ),
 				( q2.w_ * q1.y_ ) - ( q2.x_ * q1.z_ ) + ( q2.y_ * q1.w_ ) + ( q2.z_ * q1.x_ ),
@@ -586,7 +645,6 @@ public: // Methods: generators
 			);
 		}
 	}
-
 
 	/// @brief Identity Quaternion for expressions
 	/// @note  Default and identity() named constructors can be faster for construction
@@ -605,44 +663,37 @@ public: // Comparison
 
 
 	/// @brief Quaternion == Quaternion
-	friend
-	inline
-	bool
-	operator ==( Quaternion const & q1, Quaternion const & q2 )
+	template <class U>
+	friend inline
+	bool operator ==( Quaternion<U> const & q1, Quaternion<U> const & q2 )
 	{
 		return ( ( q1.w_ == q2.w_ ) && ( q1.x_ == q2.x_ ) && ( q1.y_ == q2.y_ ) && ( q1.z_ == q2.z_ ) );
 	}
 
 
 	/// @brief Quaternion != Quaternion
-	friend
-	inline
-	bool
-	operator !=( Quaternion const & q1, Quaternion const & q2 )
+	template <class U>
+	friend inline
+	bool operator !=( Quaternion<U> const & q1, Quaternion<U> const & q2 )
 	{
 		return ( ( q1.w_ != q2.w_ ) || ( q1.x_ != q2.x_ ) || ( q1.y_ != q2.y_ ) || ( q1.z_ != q2.z_ ) );
 	}
 
-
 	/// @brief Dot product
-	friend
-	inline
-	Value
-	dot( Quaternion const & q1, Quaternion const & q2 )
+	template <class U>
+	friend inline
+	Value dot( Quaternion<U> const & q1, Quaternion<U> const & q2 )
 	{
 		return ( q1.w_ * q2.w_ ) + ( q1.x_ * q2.x_ ) + ( q1.y_ * q2.y_ ) + ( q1.z_ * q2.z_ );
 	}
 
-
 	/// @brief Dot product
-	friend
-	inline
-	Value
-	dot_product( Quaternion const & q1, Quaternion const & q2 )
+	template <class U>
+	friend inline
+	Value dot_product( Quaternion<U> const & q1, Quaternion<U> const & q2 )
 	{
 		return ( q1.w_ * q2.w_ ) + ( q1.x_ * q2.x_ ) + ( q1.y_ * q2.y_ ) + ( q1.z_ * q2.z_ );
 	}
-
 
 private: // Fields
 
@@ -661,43 +712,6 @@ private: // Fields
 
 
 }; // Quaternion
-
-
-/// @brief Quaternion * Quaternion
-template< typename T >
-Quaternion< T >
-operator *( Quaternion< T > const & q2, Quaternion< T > const & q1 );
-
-
-/// @brief Product: Quaternion * Quaternion
-template< typename T >
-Quaternion< T >
-product( Quaternion< T > const & q2, Quaternion< T > const & q1, bool const precise );
-
-
-/// @brief Quaternion == Quaternion
-template< typename T >
-bool
-operator ==( Quaternion< T > const & q1, Quaternion< T > const & q2 );
-
-
-/// @brief Quaternion != Quaternion
-template< typename T >
-bool
-operator !=( Quaternion< T > const & q1, Quaternion< T > const & q2 );
-
-
-/// @brief Dot product
-template< typename T >
-T
-dot( Quaternion< T > const & q1, Quaternion< T > const & q2 );
-
-
-/// @brief Dot product
-template< typename T >
-T
-dot_product( Quaternion< T > const & q1, Quaternion< T > const & q2 );
-
 
 } // namespace numeric
 

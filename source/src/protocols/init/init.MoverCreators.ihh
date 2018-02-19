@@ -509,6 +509,7 @@
 #include <protocols/simple_moves/MonteCarloTestCreator.hh>
 #include <protocols/simple_moves/MSDMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>
+#include <protocols/simple_moves/PackPwatRotamersMoverCreator.hh>
 #include <protocols/simple_moves/PDBReloadMoverCreator.hh>
 #include <protocols/simple_moves/PeriodicBoxMoverCreator.hh>
 #include <protocols/simple_moves/PoseFromPoseResourceMoverCreator.hh>
@@ -536,6 +537,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMoverCreator.hh>
 #include <protocols/simple_moves/TumbleCreator.hh>
 #include <protocols/simple_moves/VirtualRootMoverCreator.hh>
+#include <protocols/simple_moves/WaterBoxMoverCreator.hh>
 #include <protocols/simple_moves/WriteSSEMoverCreator.hh>
 
 #include <protocols/simple_moves/bin_transitions/InitializeByBinsCreator.hh>

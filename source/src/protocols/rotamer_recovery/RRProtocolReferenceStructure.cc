@@ -22,6 +22,7 @@
 #include <basic/Tracer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -150,19 +151,21 @@ RRProtocolReferenceStructure::run(
 
 
 	if ( pose.size() != reference_pose_->size() ) {
-		stringstream err_msg;
-		err_msg
-			<< "Attempting to run the Rotamer Recovery against Reference Structure protocol, "
-			<< "but the saved structure has a different number of residues.";
-		utility_exit_with_message(err_msg.str());
+		// if waters are added to a pose, size may be longer than reference_pose
+		TR << "Warning:: -- attempting to compare reference pose of size " << reference_pose_->size() << " to pose of size " << pose.size() << std::endl;
+		//  stringstream err_msg;
+		//  err_msg
+		//   << "Attempting to run the Rotamer Recovery against Reference Structure protocol, "
+		//   << "but the saved structure has a different number of residues.";
+		//  utility_exit_with_message(err_msg.str());
 	}
 
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( !packer_task.pack_residue(ii) ) continue;
+	for ( Size ii = 1; ii <= reference_pose_->size(); ++ii ) {
+		if ( !packer_task.pack_residue(ii) || reference_pose_->residue(ii).is_water() ) continue;
 		measure_rotamer_recovery(
 			comparer, reporter,
-			pose, *reference_pose_,
-			pose.residue(ii), reference_pose_->residue(ii) );
+			*reference_pose_, pose,
+			reference_pose_->residue(ii), pose.residue(ii) );
 	}
 }
 

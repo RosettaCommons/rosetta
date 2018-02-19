@@ -465,6 +465,14 @@ RotamerSubset::build_dependent_rotamers(
 {}
 
 void
+RotamerSubset::build_pwat_rotamers(
+	pose::Pose const &,
+	core::Size,
+	utility::vector1< Vector > const &
+)
+{}
+
+void
 RotamerSubset::compute_one_body_energies(
 	pose::Pose const &,
 	scoring::ScoreFunction const &,

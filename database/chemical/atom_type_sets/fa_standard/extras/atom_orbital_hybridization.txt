@@ -33,8 +33,11 @@ HS      0                         0              0
 Hapo    0                         0              0
 Haro    0                         0              0
 HNbb    0                         0              0
+Hwat    0                         0              0
+Owat    0                         0              0
 H2O     0                         0              0
 HOH     0                         0              0
+Opoint  0                         0              0
 Bsp2    2                         1              0
 F       0                         0              0
 Cl      0                         0              0

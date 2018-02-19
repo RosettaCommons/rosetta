@@ -1,0 +1,27 @@
+# Point water residue type for use with 
+# statistical-based water potential when
+# predicting de novo solvation sites
+
+NAME PWAT
+IO_STRING HOH w
+TYPE LIGAND
+AA H2O
+
+ATOM  O   Opoint  OH1  0.000
+ATOM  V1  VIRT    H    0.000
+ATOM  V2  VIRT    H    0.000
+
+BOND O V1
+BOND O V2
+
+PROPERTIES WATER
+
+NBR_ATOM O
+
+NBR_RADIUS 3.2
+
+FIRST_SIDECHAIN_ATOM ALL
+
+ICOOR_INTERNAL    O      0.000000    0.000000    0.000000   O V1 V2
+ICOOR_INTERNAL    V1     0.000000  180.000000    0.957200   O V1 V2
+ICOOR_INTERNAL    V2     0.000000   75.480000    0.957200   O V1 V2

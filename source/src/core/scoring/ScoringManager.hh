@@ -35,6 +35,7 @@
 #include <core/scoring/P_AA.fwd.hh>
 #include <core/scoring/P_AA_ss.fwd.hh>
 #include <core/scoring/PairEPotential.fwd.hh>
+#include <core/scoring/PointWaterPotential.fwd.hh>
 #include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
 #include <core/scoring/ProQPotential.fwd.hh>
 #include <core/scoring/RamaPrePro.fwd.hh>
@@ -493,6 +494,8 @@ public:
 	/// @note Targeted object is also threadsafe, to the best of my ability to tell.
 	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 	ProQPotential const & get_ProQPotential() const;
+
+	PointWaterPotential const & get_PointWaterPotential() const;
 
 	/// @brief Get an instance of the PoissonBoltzmannPotential scoring object.
 	/// @details Threadsafe and lazily loaded.
@@ -968,6 +971,9 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	static ProQPotentialOP create_proq_potential_instance();
 
+	/// @brief Create an instance of the PointWaterPotential object by owning pointer.
+	static PointWaterPotentialOP create_point_water_potential_instance();
+
 	/// @brief Create an instance of the PoissonBoltzmannPotential object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 	/// @note Not intended for use outside of ScoringManager.
@@ -1094,6 +1100,7 @@ private:
 	mutable std::mutex membranedata_mutex_;
 	mutable std::mutex membrane_fapot_mutex_;
 	mutable std::mutex proq_mutex_;
+	mutable std::mutex pwp_mutex_;
 	mutable std::mutex poissonboltzman_mutex_;
 	mutable std::mutex splitunfolded_2body_mutex_;
 	mutable std::mutex fa_disulf_potential_mutex_;
@@ -1161,6 +1168,7 @@ private:
 	mutable std::atomic_bool membranedata_bool_;
 	mutable std::atomic_bool membrane_fapot_bool_;
 	mutable std::atomic_bool proq_bool_;
+  mutable std::atomic_bool pwp_bool_;
 	mutable std::atomic_bool poissonboltzman_bool_;
 	mutable std::atomic_bool splitunfolded_2body_bool_;
 	mutable std::atomic_bool fa_disulf_potential_bool_;
@@ -1223,6 +1231,7 @@ private:
 	mutable membrane::MembraneDataOP mp_base_potential_;
 	mutable Membrane_FAPotentialOP membrane_fapotential_; //pba
 	mutable ProQPotentialOP ProQ_potential_;
+	mutable PointWaterPotentialOP pwp_;
 	mutable PoissonBoltzmannPotentialOP PB_potential_;
 	mutable SplitUnfoldedTwoBodyPotentialOP sutbp_;
 	//ReferenceEnergyPotential referenceEnergyPotential_;

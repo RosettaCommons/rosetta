@@ -21,6 +21,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/import_pose/import_pose.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/features/ReportToDB.hh>
@@ -32,6 +33,10 @@
 #include <protocols/rotamer_recovery/RRProtocolRTMin.hh>
 #include <protocols/rotamer_recovery/RRProtocolRelax.hh>
 
+//option key includes
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Project Headers
 #include <basic/Tracer.hh>
@@ -191,8 +196,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 		}
 
 		if ( tag->hasOption("protocol") &&
-				!tag->getOption<string>("protocol").compare(
-				"RRProtocolReferenceStructure") ) {
+				(tag->getOption<string>("protocol") != "RRProtocolReferenceStructure") ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,
 				"Specifying 'reference_name' is only compatible with the "
 				"'RRProtocolReferenceStructure' protocol.");
@@ -201,6 +205,13 @@ RotamerRecoveryFeatures::parse_my_tag(
 		// Use with SavePoseMover
 		// WARNING! reference_pose is not initialized until apply time
 		PoseCOP reference_pose(saved_reference_pose(tag, data));
+
+		if ( reference_pose->size() == 0 || reference_pose == nullptr ) {
+			TR << "using -in:file:native as the reference pose " <<  std::endl;
+			reference_pose = core::import_pose::pose_from_file( basic::options::option[ basic::options::OptionKeys::in::file::native ].value() , core::import_pose::PDB_file);
+			TR << "loaded reference pose has " << reference_pose->size() << " residues" << std::endl;
+		}
+
 		protocol_ = protocols::rotamer_recovery::RRProtocolOP( new RRProtocolReferenceStructure(reference_pose) );
 	} else {
 		string const & protocol_name(tag->getOption<string>(
@@ -247,6 +258,10 @@ RotamerRecoveryFeatures::parse_my_tag(
 
 	if ( tag->hasOption("recovery_threshold") ) {
 		comparer_->set_recovery_threshold(tag->getOption<Real>("recovery_threshold"));
+	}
+
+	if ( tag->hasOption("absolute_threshold") ) {
+		comparer_->set_absolute_threshold(tag->getOption<Real>("absolute_threshold"));
 	}
 
 	task_factory_ = parse_task_operations(tag, data);
@@ -363,6 +378,10 @@ void RotamerRecoveryFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	attlist + XMLSchemaAttribute(
 		"recovery_threshold", xsct_real,
 		"recovery threshold of the comparer");
+
+	attlist + XMLSchemaAttribute(
+		"absolute_threshold", xsct_real,
+		"absolute electron density correlation that must be met by native to be considered in recovery statistics");
 
 	rosetta_scripts::attributes_for_parse_task_operations(attlist);
 

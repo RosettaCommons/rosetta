@@ -185,6 +185,8 @@ Interface::protein_calculate( core::pose::Pose const & pose )
 				iru != irue; ++iru ) {
 			auto const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
 			Size const j( edge->get_second_node_ind() );
+			// rpav -- prevent water from contributing to definition of protein/protein interface
+			if ( pose.residue(i).is_water() || pose.residue(j).is_water() ) continue;
 			if ( partner_(i) == partner_(j) ) continue;
 			// if ( is_interface_(i) && is_interface_(j) ) continue;
 			Real const cendist = edge->square_distance();

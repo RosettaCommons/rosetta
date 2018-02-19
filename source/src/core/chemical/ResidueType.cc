@@ -2311,6 +2311,11 @@ ResidueType::is_gamma_aa() const {
 	return properties_->has_property( GAMMA_AA );
 }
 
+bool
+ResidueType::is_water() const {
+	return properties_->has_property( WATER );
+}
+
 /// @brief Is this an oligourea?
 bool
 ResidueType::is_oligourea() const {

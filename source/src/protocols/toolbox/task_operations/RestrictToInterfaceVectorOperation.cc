@@ -72,11 +72,12 @@ std::string RestrictToInterfaceVectorOperationCreator::keyname() const
 /// @details, empty contructor for parser
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation() :
 	parent(), //inits a jump number 1
-	jump_active_(true),
+	jump_active_( true ),
 	CB_dist_cutoff_( 11.0 ),
 	nearby_atom_cutoff_( 5.5 ),
 	vector_angle_cutoff_( 75.0 ),
-	vector_dist_cutoff_( 9.0 )
+	vector_dist_cutoff_( 9.0 ),
+	include_all_water_( false )
 { }
 
 // /// @details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
@@ -88,11 +89,12 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation() :
 ///if you want to use chain characters make the calculator that way and pass it to the constructor above
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( core::Size const lower_chain_id, core::Size const upper_chain_id ):
 	parent(),
-	jump_active_(false),
+	jump_active_( false ),
 	CB_dist_cutoff_( 11.0 ),
 	nearby_atom_cutoff_( 5.5 ),
 	vector_angle_cutoff_( 75.0 ),
-	vector_dist_cutoff_( 9.0 )
+	vector_dist_cutoff_( 9.0 ),
+	include_all_water_( false )
 {
 	lower_chain(lower_chain_id);
 	upper_chain(upper_chain_id);
@@ -106,14 +108,16 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
 	core::Real CB_dist_cutoff,
 	core::Real nearby_atom_cutoff,
 	core::Real vector_angle_cutoff,
-	core::Real vector_dist_cutoff
+	core::Real vector_dist_cutoff,
+	bool include_all_water
 ):
 	parent(),
 	jump_active_(false),
 	CB_dist_cutoff_( CB_dist_cutoff ),
 	nearby_atom_cutoff_( nearby_atom_cutoff ),
 	vector_angle_cutoff_( vector_angle_cutoff ),
-	vector_dist_cutoff_( vector_dist_cutoff )
+	vector_dist_cutoff_( vector_dist_cutoff ),
+	include_all_water_( include_all_water )
 {
 	lower_chain(lower_chain_id);
 	upper_chain(upper_chain_id);
@@ -123,11 +127,12 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
 ///if you want to use chain characters make the calculator that way and pass it to the constructor above
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps ):
 	parent(),
-	jump_active_(true),
+	jump_active_( true ),
 	CB_dist_cutoff_( 11.0 ),
 	nearby_atom_cutoff_( 5.5 ),
 	vector_angle_cutoff_( 75.0 ),
-	vector_dist_cutoff_( 9.0 )
+	vector_dist_cutoff_( 9.0 ),
+	include_all_water_( false )
 { set_movable_jumps( movable_jumps ); }
 
 //full constructor
@@ -136,14 +141,16 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
 	core::Real CB_dist_cutoff,
 	core::Real nearby_atom_cutoff,
 	core::Real vector_angle_cutoff,
-	core::Real vector_dist_cutoff
+	core::Real vector_dist_cutoff,
+	bool include_all_water
 ):
 	parent(),
-	jump_active_(true),
+	jump_active_( true ),
 	CB_dist_cutoff_( CB_dist_cutoff ),
 	nearby_atom_cutoff_( nearby_atom_cutoff ),
 	vector_angle_cutoff_( vector_angle_cutoff ),
-	vector_dist_cutoff_( vector_dist_cutoff )
+	vector_dist_cutoff_( vector_dist_cutoff ),
+	include_all_water_( include_all_water )
 { set_movable_jumps( movable_jumps );}
 
 
@@ -186,7 +193,18 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 					repack_full[ii] = true;
 				}
 			}//end add repack to full_repack
-		}//itterate over jumps
+		}//iterate over jumps
+
+		// set all waters to part of the interface
+		if ( include_all_water_ ) {
+			for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+				if ( pose.residue(ii).is_water() == true ) {
+					//          TR << " adding residue " << pose.residue(ii).name() << " " << ii << " to interface" << std::endl;
+					repack_full[ii] = true;
+				}
+			}
+		}
+
 		task.restrict_to_residues(repack_full);
 	} else { //end if jump active // if using only the two chain case
 		//vector for filling packertask
@@ -212,6 +230,16 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 					if ( repack[ii] ) {
 						repack_full[ii] = true;
 					}
+				}
+			}
+		}
+
+		// set all waters to part of the interface
+		if ( include_all_water_ ) {
+			for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+				if ( pose.residue(ii).is_water() == true ) {
+					//          TR << " adding residue " << pose.residue(ii).name() << " " << ii << " to interface" << std::endl;
+					repack_full[ii] = true;
 				}
 			}
 		}
@@ -273,6 +301,10 @@ void
 RestrictToInterfaceVectorOperation::vector_dist_cutoff(core::Real vector_dist_cutoff){
 	vector_dist_cutoff_ = vector_dist_cutoff;
 }
+void
+RestrictToInterfaceVectorOperation::include_all_water(bool include_all_water){
+	include_all_water_ = include_all_water;
+}
 
 /*
 void
@@ -327,7 +359,7 @@ RestrictToInterfaceVectorOperation::parse_tag( TagCOP tag , DataMap & )
 	nearby_atom_cutoff( tag->getOption< core::Real >( "nearby_atom_cutoff", 5.5) );
 	vector_angle_cutoff( tag->getOption< core::Real >( "vector_angle_cutoff", 75.0) );
 	vector_dist_cutoff( tag->getOption< core::Real >( "vector_dist_cutoff", 9.0 ) );
-
+	include_all_water( tag->getOption<bool>( "include_all_water", 0 ) );
 }
 
 void RestrictToInterfaceVectorOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -341,7 +373,8 @@ void RestrictToInterfaceVectorOperation::provide_xml_schema( utility::tag::XMLSc
 		+ XMLSchemaAttribute::attribute_w_default(  "CB_dist_cutoff", xsct_real, "XRW TO DO",  "10.0"  )
 		+ XMLSchemaAttribute::attribute_w_default(  "nearby_atom_cutoff", xsct_real, "XRW TO DO",  "5.5"  )
 		+ XMLSchemaAttribute::attribute_w_default(  "vector_angle_cutoff", xsct_real, "XRW TO DO",  "75.0"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "vector_dist_cutoff", xsct_real, "XRW TO DO",  "9.0"  );
+		+ XMLSchemaAttribute::attribute_w_default(  "vector_dist_cutoff", xsct_real, "XRW TO DO",  "9.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "include_all_water", xsct_rosetta_bool, "add all waters to interface",  "false"  );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }

@@ -1844,6 +1844,13 @@ public:
 		return rsd_type_.is_carbohydrate();
 	}
 
+	/// @brief Returns true if this residue is water
+	bool
+	is_water() const
+	{
+		return rsd_type_.is_water();
+	}
+
 	/// @brief Returns true if this residue is a ligand
 	bool
 	is_ligand() const
