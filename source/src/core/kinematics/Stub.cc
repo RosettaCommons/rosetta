@@ -83,11 +83,16 @@ Stub::from_four_points(
 Vector
 Stub::build_fake_xyz( Size const index ) const
 {
-	Real const length( 1.4 );
-	Real const angle( numeric::conversions::radians( 120.0 ) );
+	return build_fake_xyz( index, 1.4, 1.4, 120.0 );
+}
+
+
+Vector
+Stub::build_fake_xyz( Size const index, Real const length1, Real const length2, Real const angle_degrees ) const
+{
 	Vector const xyz1( v );
-	Vector const xyz2( xyz1 + length * M * Vector( -1, 0, 0 ) );
-	Vector const xyz3( xyz2 + length * M * Vector( std::cos( angle ), std::sin( angle ), 0 ) );
+	Vector const xyz2( xyz1 + length1 * M * Vector( -1, 0, 0 ) );
+	Vector const xyz3( xyz2 + length2 * M * Vector( std::cos( numeric::conversions::radians( angle_degrees ) ), std::sin( numeric::conversions::radians( angle_degrees ) ), 0 ) );
 
 	switch( index ) {
 	case 1 :
@@ -103,6 +108,7 @@ Stub::build_fake_xyz( Size const index ) const
 	return Vector( 0.0 ); // wont get here
 
 }
+
 
 /// @details Floating point comparison is notoriously fickle.  Perform the same
 /// series of rotations and translations with ever so slightly different code, and

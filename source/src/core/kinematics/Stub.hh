@@ -162,6 +162,10 @@ public: // Methods
 	Vector
 	build_fake_xyz( Size const index ) const;
 
+	/// @brief  Build stubatom coords that would yield this stub
+	Vector
+	build_fake_xyz( Size const index, Real const length1, Real const length2, Real const angle_degrees ) const;
+
 	bool operator == ( Stub const & rhs ) const;
 
 public: // Fields

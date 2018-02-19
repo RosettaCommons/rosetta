@@ -316,6 +316,7 @@ sources = {
 		"NonResidueTypeConstraint",
 		"ResidueTypeConstraint",
 		"ResidueTypeLinkingConstraint",
+		"RTConstraint",
 		"SequenceProfileConstraint",
 		"SiteConstraint",
 		"SiteConstraintResidues",
