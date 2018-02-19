@@ -109,16 +109,16 @@ dump_stems( RNA_SecStruct const & working_secstruct, std::string const & working
 		utility::vector1< int > resnums;
 		utility::vector1< char > chains;
 		utility::vector1< std::string > segids;
-		for ( Size ii = 1; ii <= stem.size(); ++ii ) {
-			helix_seq_stream << working_sequence[stem[ii].first-1];
-			auto res_chain_segid = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( stem[ii].first );
+		for ( Size jj = 1; jj <= stem.size(); ++jj ) {
+			helix_seq_stream << working_sequence[stem[jj].first-1];
+			auto res_chain_segid = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( stem[jj].first );
 			resnums.push_back( std::get< 0 >( res_chain_segid ) );
 			chains.push_back( std::get< 1 >( res_chain_segid ) );
 			segids.push_back( std::get< 2 >( res_chain_segid ) );
 		}
-		for ( Size ii = stem.size(); ii >= 1; --ii ) {
-			helix_seq_stream << working_sequence[stem[ii].second-1];
-			auto res_chain_segid = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( stem[ii].second );
+		for ( Size kk = stem.size(); kk >= 1; --kk ) {
+			helix_seq_stream << working_sequence[stem[kk].second-1];
+			auto res_chain_segid = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( stem[kk].second );
 			resnums.push_back( std::get< 0 >( res_chain_segid ) );
 			chains.push_back( std::get< 1 >( res_chain_segid ) );
 			segids.push_back( std::get< 2 >( res_chain_segid ) );

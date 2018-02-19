@@ -26,8 +26,8 @@ namespace hbonds {
 namespace graph {
 
 class LKAtomInfo;
-typedef utility::pointer::shared_ptr< LKAtomInfo > LKAtomInfoOP;
-typedef utility::pointer::shared_ptr< LKAtomInfo const > LKAtomInfoCOP;
+using LKAtomInfoOP = utility::pointer::shared_ptr< LKAtomInfo >;
+using LKAtomInfoCOP = utility::pointer::shared_ptr< LKAtomInfo const >;
 
 class AtomInfo {
 

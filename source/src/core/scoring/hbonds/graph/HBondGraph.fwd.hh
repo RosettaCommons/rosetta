@@ -23,20 +23,20 @@ namespace hbonds {
 namespace graph {
 
 class HBondNode;
-typedef utility::pointer::shared_ptr< HBondNode > HBondNodeOP;
-typedef utility::pointer::shared_ptr< HBondNode const > HBondNodeCOP;
+using HBondNodeOP = utility::pointer::shared_ptr< HBondNode >;
+using HBondNodeCOP = utility::pointer::shared_ptr< HBondNode const >;
 
 class HBondEdge;
-typedef utility::pointer::shared_ptr< HBondEdge > HBondEdgeOP;
-typedef utility::pointer::shared_ptr< HBondEdge const > HBondEdgeCOP;
+using HBondEdgeOP = utility::pointer::shared_ptr< HBondEdge >;
+using HBondEdgeCOP = utility::pointer::shared_ptr< HBondEdge const >;
 
 class AbstractHBondGraph;
-typedef utility::pointer::shared_ptr< AbstractHBondGraph > AbstractHBondGraphOP;
-typedef utility::pointer::shared_ptr< AbstractHBondGraph const > AbstractHBondGraphCOP;
+using AbstractHBondGraphOP = utility::pointer::shared_ptr< AbstractHBondGraph >;
+using AbstractHBondGraphCOP = utility::pointer::shared_ptr< AbstractHBondGraph const >;
 
 class HBondGraph;
-typedef utility::pointer::shared_ptr< HBondGraph > HBondGraphOP;
-typedef utility::pointer::shared_ptr< HBondGraph const > HBondGraphCOP;
+using HBondGraphOP = utility::pointer::shared_ptr< HBondGraph >;
+using HBondGraphCOP = utility::pointer::shared_ptr< HBondGraph const >;
 
 } //graph
 } //hbonds

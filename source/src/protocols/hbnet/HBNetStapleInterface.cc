@@ -532,7 +532,7 @@ HBNetStapleInterface::residues_are_interface_pairs( Size const res1, Size const 
 }
 
 bool
-HBNetStapleInterface::has_pH_His( core::pose::Pose const & pose, hbond_net_struct & i )
+HBNetStapleInterface::has_pH_His( core::pose::Pose const & pose, HBondNetStruct & i )
 {
 	if ( !(network_contains_aa( 'H', i ) ) ) {
 		return false;
@@ -585,7 +585,7 @@ HBNetStapleInterface::has_pH_His( core::pose::Pose const & pose, hbond_net_struc
 }
 
 bool
-HBNetStapleInterface::network_meets_initial_criteria( hbond_net_struct const & network )
+HBNetStapleInterface::network_meets_initial_criteria( HBondNetStruct const & network )
 {
 	if ( !symmetric() && min_helices_contacted_by_network_ && ( num_helices_w_hbond( network ) < min_helices_contacted_by_network_ ) ) {
 		//if (verbose_)
@@ -596,7 +596,7 @@ HBNetStapleInterface::network_meets_initial_criteria( hbond_net_struct const & n
 }
 
 bool
-HBNetStapleInterface::network_meets_final_criteria( Pose const & pose, hbond_net_struct & i )
+HBNetStapleInterface::network_meets_final_criteria( Pose const & pose, HBondNetStruct & i )
 {
 	// update core residues
 	//core::select::residue_selector::ResidueSubset temp_core_residues = get_core_residues();
@@ -655,14 +655,14 @@ HBNetStapleInterface::network_meets_final_criteria( Pose const & pose, hbond_net
 		if ( network_spans_entire_symm_interface ) {
 			for ( HBondResStructCOP const & ir : i.residues ) {
 				//for ( utility::vector1< HBondResStructCOP >::const_iterator ir = i.residues.begin(); ir != i.residues.end(); ++ir ) {
-				if ( find_hbond_res_struct( i.asymm_residues, ir->resnum ) == i.asymm_residues.end() ) {
+				if ( find_HBondResStruct( i.asymm_residues, ir->resnum ) == i.asymm_residues.end() ) {
 					i.asymm_residues.push_back( ir );
 				}
 				utility::vector1< Size > resi_clones( SymmConf.Symmetry_Info()->bb_clones( ir->resnum ) );
 				for ( Size r : resi_clones ) {
-					if ( find_hbond_res_struct( i.residues, r ) == i.residues.end() ) {
+					if ( find_HBondResStruct( i.residues, r ) == i.residues.end() ) {
 						i.asymm_residues.push_back(
-							pointer::make_shared< hbond_res_struct >(
+							pointer::make_shared< HBondResStruct >(
 							r,
 							0,
 							ir->aa,
@@ -896,7 +896,7 @@ HBNetStapleInterface::prepare_output()
 }
 
 bool
-HBNetStapleInterface::network_spans_all_helices( hbond_net_struct const & i ) const
+HBNetStapleInterface::network_spans_all_helices( HBondNetStruct const & i ) const
 {
 	if ( num_helices_w_hbond( i ) == helix_boundaries_.size() ) {
 		return true;
@@ -905,7 +905,7 @@ HBNetStapleInterface::network_spans_all_helices( hbond_net_struct const & i ) co
 }
 
 Size
-HBNetStapleInterface::num_helices_w_hbond( hbond_net_struct const & i ) const
+HBNetStapleInterface::num_helices_w_hbond( HBondNetStruct const & i ) const
 {
 	return ( i.asymm_residues.empty() ) ? num_helices_w_hbond( i.residues ) : num_helices_w_hbond( i.asymm_residues );
 }
@@ -1029,7 +1029,7 @@ HBNetStapleInterface::print_additional_headers()
 }
 
 std::string
-HBNetStapleInterface::print_additional_info_for_net( hbond_net_struct & i, Pose const & pose )
+HBNetStapleInterface::print_additional_info_for_net( HBondNetStruct & i, Pose const & pose )
 {
 	std::stringstream output;
 	if ( min_intermolecular_hbonds_ > 0 ) {
@@ -1042,7 +1042,7 @@ HBNetStapleInterface::print_additional_info_for_net( hbond_net_struct & i, Pose 
 }
 
 Size
-HBNetStapleInterface::num_intermolecular_hbonds( hbond_net_struct & i, core::pose::Pose const & pose )
+HBNetStapleInterface::num_intermolecular_hbonds( HBondNetStruct & i, core::pose::Pose const & pose )
 {
 	// NEED TO SCORE FIRST IF GOING TO CALL get_hbond_atom_pairs()
 

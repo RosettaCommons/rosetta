@@ -38,26 +38,26 @@
 namespace protocols {
 namespace hbnet {
 
-std::string print_list_to_string( hbond_net_struct const & network, bool chainid=true, bool term_w_start=false,
+std::string print_list_to_string( HBondNetStruct const & network, bool chainid=true, bool term_w_start=false,
 	bool term_w_cycle=false, bool term_w_bb=false );
 
-std::string print_list_to_string( core::pose::Pose const & pose, hbond_net_struct const & network, bool chainid=true, bool term_w_start=false,
+std::string print_list_to_string( core::pose::Pose const & pose, HBondNetStruct const & network, bool chainid=true, bool term_w_start=false,
 	bool term_w_cycle=false, bool term_w_bb=false, bool use_pdb_numbering=true );
 
-std::string print_network( hbond_net_struct const & i, bool chainid=true );
-std::string print_network_w_pdb_numbering( core::pose::Pose const & pose, hbond_net_struct const & i, bool chainid );
+std::string print_network( HBondNetStruct const & i, bool chainid=true );
+std::string print_network_w_pdb_numbering( core::pose::Pose const & pose, HBondNetStruct const & i, bool chainid );
 
 std::string print_headers();
 
-utility::vector1< HBondResStructCOP >::const_iterator find_hbond_res_struct( utility::vector1< HBondResStructCOP > const & residues, core::Size resnum );
+utility::vector1< HBondResStructCOP >::const_iterator find_HBondResStruct( utility::vector1< HBondResStructCOP > const & residues, core::Size resnum );
 
-void get_hbond_atom_pairs( hbond_net_struct & network, core::pose::Pose & pose, bool bb_exlcusion=false );
+void get_hbond_atom_pairs( HBondNetStruct & network, core::pose::Pose & pose, bool bb_exlcusion=false );
 
 bool hbond_exists_in_vector( utility::vector1<core::scoring::hbonds::HBondCOP> const & hbond_vec, core::scoring::hbonds::HBondCOP & h2 );
 
-void add_reslabels_to_pose( core::pose::Pose & pose, hbond_net_struct & i, std::string label="HBNet" );
+void add_reslabels_to_pose( core::pose::Pose & pose, HBondNetStruct & i, std::string label="HBNet" );
 
-core::Size get_num_protein_sc_sc_hbonds( core::pose::Pose & pose, hbond_net_struct & i );
+core::Size get_num_protein_sc_sc_hbonds( core::pose::Pose & pose, HBondNetStruct & i );
 
 core::Size get_num_edges_for_res( core::Size const res, ObjexxFCL::FArray2D_int & path_dists );
 
@@ -76,9 +76,9 @@ void hbnet_one_body_energies(
 	utility::vector1< core::PackerEnergy > & energies
 );
 
-bool network_contains_aa( char aa_one_letter, hbond_net_struct const & i );
+bool network_contains_aa( char aa_one_letter, HBondNetStruct const & i );
 bool network_contains_aa( char aa_one_letter, utility::vector1< HBondResStructCOP > const & residues );
-bool his_tyr_connectivity( core::pose::Pose const & pose, hbond_net_struct & i );
+bool his_tyr_connectivity( core::pose::Pose const & pose, HBondNetStruct & i );
 
 
 //////////

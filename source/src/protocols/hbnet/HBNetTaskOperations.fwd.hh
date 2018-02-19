@@ -21,8 +21,8 @@ namespace protocols {
 namespace hbnet {
 
 class ConstrainHBondNetwork;
-typedef utility::pointer::shared_ptr< ConstrainHBondNetwork > ConstrainHBondNetworkOP;
-typedef utility::pointer::shared_ptr< ConstrainHBondNetwork const > ConstrainHBondNetworkCOP;
+using ConstrainHBondNetworkOP = utility::pointer::shared_ptr< ConstrainHBondNetwork >;
+using ConstrainHBondNetworkCOP = utility::pointer::shared_ptr< ConstrainHBondNetwork const >;
 
 }  //namespace hbnet
 }  //namespace protocols

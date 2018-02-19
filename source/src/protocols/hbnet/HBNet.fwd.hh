@@ -20,8 +20,16 @@ namespace protocols {
 namespace hbnet {
 
 class HBNet;
-typedef utility::pointer::shared_ptr< HBNet > HBNetOP;
-typedef utility::pointer::shared_ptr< HBNet const > HBNetCOP;
+using HBNetOP = utility::pointer::shared_ptr< HBNet >;
+using HBNetCOP = utility::pointer::shared_ptr< HBNet const >;
+
+struct HBondResStruct;
+using HBondResStructOP = utility::pointer::shared_ptr< HBondResStruct >;
+using HBondResStructCOP = utility::pointer::shared_ptr< HBondResStruct const >;
+
+struct HBondNetStruct;
+using HBondNetStructOP = utility::pointer::shared_ptr< HBondNetStruct >;
+using HBondNetStructCOP = utility::pointer::shared_ptr< HBondNetStruct const >;
 
 }  //namespace hbnet
 }  //namespace protocols

@@ -6,7 +6,7 @@ touch usings.log
 
 cd %(bin)s/../
 #Find headers with top-level usings, and sort for run-to-run consistency
-egrep '^using' src -R --include '*.hh' | sort > %(workdir)s/all_usings.txt
+egrep '^using' src -R --include '*.hh' | egrep -v '=' | sort > %(workdir)s/all_usings.txt
 cd %(workdir)s
 
 # ignore those in devel and apps/pilot

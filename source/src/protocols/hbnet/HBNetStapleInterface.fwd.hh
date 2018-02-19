@@ -20,8 +20,8 @@ namespace protocols {
 namespace hbnet {
 
 class HBNetStapleInterface;
-typedef utility::pointer::shared_ptr< HBNetStapleInterface > HBNetStapleInterfaceOP;
-typedef utility::pointer::shared_ptr< HBNetStapleInterface const > HBNetStapleInterfaceCOP;
+using HBNetStapleInterfaceOP = utility::pointer::shared_ptr< HBNetStapleInterface >;
+using HBNetStapleInterfaceCOP = utility::pointer::shared_ptr< HBNetStapleInterface const >;
 
 }  //namespace hbnet
 }  //namespace protocols

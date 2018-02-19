@@ -45,7 +45,6 @@
 #include <core/scoring/hbonds/graph/HBondInfo.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.fwd.hh>
-//#include <core/scoring/hbonds/graph/LKAtomLevelHBondGraph.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -65,11 +64,11 @@ namespace protocols {
 namespace hbnet {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-//                        hbond_res_struct and HBondResStructOP/COP                            //
+//                        HBondResStruct and HBondResStructOP/COP                            //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///@brief struct that represents minimal info for residue in an h-bond network
-struct hbond_res_struct : public utility::pointer::ReferenceCount {
+struct HBondResStruct : public utility::pointer::ReferenceCount {
 	core::Size resnum;
 	platform::uint rot_index;
 	char aa;
@@ -78,8 +77,8 @@ struct hbond_res_struct : public utility::pointer::ReferenceCount {
 	bool is_solvent;
 	bool is_ligand;
 
-	hbond_res_struct(){}
-	hbond_res_struct( core::Size const res, platform::uint const rot, char const a, char const c, bool const prot, bool const solv, bool const lig ) :
+	HBondResStruct(){}
+	HBondResStruct( core::Size const res, platform::uint const rot, char const a, char const c, bool const prot, bool const solv, bool const lig ) :
 		resnum(res),
 		rot_index(rot), //needed for quick look-ups in ig_ and rotamer_sets_
 		aa(a),
@@ -89,20 +88,15 @@ struct hbond_res_struct : public utility::pointer::ReferenceCount {
 		is_ligand(lig)
 	{}
 
-	bool operator<( hbond_res_struct const & a) const
+	bool operator<( HBondResStruct const & a) const
 	{
 		return resnum < a.resnum;
 	}
-	bool operator==( hbond_res_struct const & a ) const
+	bool operator==( HBondResStruct const & a ) const
 	{
 		return resnum == a.resnum;
 	}
 };
-
-// Owning pointers to hbond_res_struct
-using HBondResStruct = hbond_res_struct;
-typedef utility::pointer::shared_ptr< hbond_res_struct > HBondResStructOP; //get rid of typedefs for c++11?
-typedef utility::pointer::shared_ptr< hbond_res_struct const > HBondResStructCOP;
 
 //compare function for sorting vectors of HBondResStructOP's, by Res # and AA type
 struct compare_hbond_residues : public std::binary_function< HBondResStructCOP, HBondResStructCOP, bool>
@@ -125,15 +119,15 @@ struct compare_hbond_resnums : public std::binary_function< HBondResStructCOP, H
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-//                          hbond_net_struct and HBondNetStructOP/COP                          //
+//                          HBondNetStruct and HBondNetStructOP/COP                          //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-// TO-DO: hbond_net_struct is big enough now, should probably make it it's own class, HBondNetwork,
+// TO-DO: HBondNetStruct is big enough now, should probably make it it's own class, HBondNetwork,
 //   with pointer types HBondNetworkOP, COP, AP, CAP, and with default operator<
 // TO-DO: add graph connectivity and placeholders for bridging waters
 
 ///@brief struct that contains info needed for hbond networks
-struct hbond_net_struct : public utility::pointer::ReferenceCount {
+struct HBondNetStruct : public utility::pointer::ReferenceCount {
 	bool is_native;
 	bool is_extended;
 	bool term_w_bb;                                     //network terminates with sc_bb h-bond
@@ -170,7 +164,7 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 	//utility::vector1< core::conformation::ResidueCOP > waterrots;
 	//utility::vector1< std::pair< core::id::AtomID, core::conformation::ResidueOP > > waterrots;
 
-	hbond_net_struct() :
+	HBondNetStruct() :
 		is_native(false),
 		is_extended(false),
 		term_w_bb(false),
@@ -208,7 +202,7 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 	{};
 
 	//copy constructor
-	hbond_net_struct( hbond_net_struct const & hbns ) :
+	HBondNetStruct( HBondNetStruct const & hbns ) :
 		is_native(hbns.is_native),
 		is_extended(hbns.is_extended),
 		term_w_bb(hbns.term_w_bb),
@@ -245,7 +239,7 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 		//network()
 	{};
 
-	bool operator<( hbond_net_struct const & a ) const
+	bool operator<( HBondNetStruct const & a ) const
 	{
 		if ( sort_first_by_tot_unsat ) {
 			if ( !( lig_num_unsatisfied == a.lig_num_unsatisfied ) ) { //only happens in ligand case
@@ -266,11 +260,6 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 		}
 	}
 };
-
-//Owning pointers to hbond_net_struct
-using HBondNetStruct = hbond_net_struct;
-typedef utility::pointer::shared_ptr< hbond_net_struct > HBondNetStructOP;
-typedef utility::pointer::shared_ptr< hbond_net_struct const > HBondNetStructCOP;
 
 //compare function for sorting vectors of HBondNetStructOP's
 // This is needed to compare vectors of OP's; if the vector was of the structrs themselves then
@@ -398,15 +387,15 @@ public:
 	virtual void trim_additional_rotamers( core::pose::Pose & ){}
 	virtual void search_IG_for_networks( core::pose::Pose & pose );
 	virtual void prepare_output();
-	///@brief initial criteria for screening that just reuqires hbond_net_struct (no scoring or placement of rotamers on the pose)
-	virtual bool network_meets_initial_criteria( hbond_net_struct const & ){ return true; }
+	///@brief initial criteria for screening that just reuqires HBondNetStruct (no scoring or placement of rotamers on the pose)
+	virtual bool network_meets_initial_criteria( HBondNetStruct const & ){ return true; }
 	///@brief final criteria that reuqires network rotamers placed on pose
-	virtual bool network_meets_final_criteria( core::pose::Pose const &, hbond_net_struct & ){ return true; }
+	virtual bool network_meets_final_criteria( core::pose::Pose const &, HBondNetStruct & ){ return true; }
 	virtual bool state_is_starting_aa_type( core::Size const, core::Size const ){ return true; }
 	virtual bool pair_meets_starting_criteria( core::Size const, core::Size const, core::Size const, core::Size const ){ return true; }
 	core::Real upweight_starting_twobody_energy(){ return upweight_twobody_; }
 	virtual core::Real scale_twobody_energy( core::Real input_twobody_energy, char, char ){ return input_twobody_energy; }
-	virtual std::string print_additional_info_for_net( hbond_net_struct &, core::pose::Pose const & ){ return ""; }
+	virtual std::string print_additional_info_for_net( HBondNetStruct &, core::pose::Pose const & ){ return ""; }
 	virtual std::string print_additional_headers(){ return ""; }
 	virtual core::Size ligand(){ return 0; }
 
@@ -511,8 +500,8 @@ public:
 
 	utility::graph::GraphOP get_packer_graph(){ return packer_neighbor_graph_; }
 
-	core::Size num_core_res( hbond_net_struct const & network );
-	core::Size num_boundary_res( hbond_net_struct const & network );
+	core::Size num_core_res( HBondNetStruct const & network );
+	core::Size num_boundary_res( HBondNetStruct const & network );
 	void select_best_networks();
 
 	//return all hbond networks, sorted with best networks at the front, DEEP COPY
@@ -529,21 +518,21 @@ public:
 	}
 
 	///@brief checks if two h-bond networks clash; returns true if they do clash
-	bool net_clash(hbond_net_struct const & i, hbond_net_struct const & j);
+	bool net_clash(HBondNetStruct const & i, HBondNetStruct const & j);
 
 	void set_symmetry( core::pose::Pose & pose );
 
 	core::Size get_ind_res( core::pose::Pose const & pose, core::Size const res_i);
 
-	bool quick_and_dirty_network_has_heavy_atom_unsat( core::pose::Pose const & pose, hbond_net_struct const & network );
+	bool quick_and_dirty_network_has_heavy_atom_unsat( core::pose::Pose const & pose, HBondNetStruct const & network );
 	bool quick_and_dirty_heavy_atom_is_unsat( core::pose::Pose const & pose, core::id::AtomID const at_id );
 	bool atom_hbonds_to_bridging_water( core::pose::Pose const & pose, core::id::AtomID const at_id );
-	void find_unsats( core::pose::Pose const & pose, hbond_net_struct & i );
+	void find_unsats( core::pose::Pose const & pose, HBondNetStruct & i );
 
 	//bool atom_is_buried( core::pose::Pose const & pose, core::id::AtomID id );
 
 	///@brief places the rotamers of the provided h-bond network onto the provided pose
-	utility::vector1< core::Size > place_rots_on_pose( core::pose::Pose & pose, hbond_net_struct & residues, bool use_pose=false );
+	utility::vector1< core::Size > place_rots_on_pose( core::pose::Pose & pose, HBondNetStruct & residues, bool use_pose=false );
 
 	///@brief return the number of rotamers in a network that are identical in seq or rot to the original input pose:
 	core::Size get_num_native_rot(core::pose::Pose & pose, utility::vector1< HBondResStructCOP > const & residues, core::Real sc_rmsd_cut=0.25, bool super=true);
@@ -654,19 +643,19 @@ protected:
 	///@breif for efficiency, makes sure that an equivalent network has not already been stored
 	bool network_already_stored( utility::vector1< HBondResStructCOP > & residues, utility::vector1< HBondResStructCOP > & i_residues );
 
-	// store the h-bond network; writes it to a hbond_net_struct and pushed hbond_net_struct to the back of network_vector_
+	// store the h-bond network; writes it to a HBondNetStruct and pushed HBondNetStruct to the back of network_vector_
 	void store_network(utility::vector1< HBondResStructCOP > residues,  core::Real init_score=0.0,
 		bool term_w_start=false, bool term_w_cycle=false, bool score_now=false, bool native=false );
 
 	///@brief void score_networks( bool minimize=false);
-	void score_network_on_pose( core::pose::Pose & pose, hbond_net_struct & i );
-	void minimize_network( core::pose::Pose & pose, hbond_net_struct & network, bool residues_already_placed=true );
+	void score_network_on_pose( core::pose::Pose & pose, HBondNetStruct & i );
+	void minimize_network( core::pose::Pose & pose, HBondNetStruct & network, bool residues_already_placed=true );
 
 	///@brief check if a residue clashes with other reisdues in the network before adding it to the h-bond network.  true = clashes
 	bool check_clash(utility::vector1< HBondResStructCOP > const & residues, platform::uint my_node_ind,
 		core::Size mystate, core::Size myres, core::Real & init_score, bool & cycle);
 
-	///@brief used by net_clash( hbond_net_struct & i, hbond_net_struct & j ), should not be called externally!
+	///@brief used by net_clash( HBondNetStruct & i, HBondNetStruct & j ), should not be called externally!
 	bool net_clash(utility::vector1< HBondResStructCOP > const & residues_i, utility::vector1< HBondResStructCOP > const & residues_j);
 
 	///@brief monte carlo protocol needs to use a different net_clash call because its IG is not populated
@@ -681,7 +670,7 @@ protected:
 	///@brief used by branch_overlapping() to efficiently search for all combinations of compatible networks that can be merged
 	void rec_set_intersection(std::vector< core::Size > add_index_vec, std::vector< core::Size > next_index_list, core::Size pos);
 	//void alternative_branch_overlapping_networks();
-	//void recursive_branch_networks( hbond_net_struct const & original_network, hbond_net_struct const & new_network, HBondNetStructOP output_network, std::set< core::Size > & sets_of_networks_already_added );
+	//void recursive_branch_networks( HBondNetStruct const & original_network, HBondNetStruct const & new_network, HBondNetStructOP output_network, std::set< core::Size > & sets_of_networks_already_added );
 	//used by branch_overlapping_networks() to efficiently search for all combinations of compatible networks that can be merged
 
 	///@brief monte carlo alternative to branch_overlapping_networks(). Requires MC_traverse_IG() to be called ahead of time. Theoretically O( total_num_mc_runs_ )
@@ -689,11 +678,11 @@ protected:
 
 
 	///@brief Merges 2 networks (i,j) into a single h-bond network, new_network.
-	void merge_2_branched_networks( hbond_net_struct const & i, hbond_net_struct const & j, HBondNetStructOP new_network );
+	void merge_2_branched_networks( HBondNetStruct const & i, HBondNetStruct const & j, HBondNetStructOP new_network );
 	void merge_2_branched_networks(utility::vector1< HBondResStructCOP > const & residues1, utility::vector1< HBondResStructCOP > const & residues2, utility::vector1< HBondResStructCOP > & new_residues);
 
-	bool networks_unique( hbond_net_struct const & i, hbond_net_struct const & j, bool no_surface=true );
-	bool networks_identical_aa_sequence( hbond_net_struct const & i, hbond_net_struct const & j );
+	bool networks_unique( HBondNetStruct const & i, HBondNetStruct const & j, bool no_surface=true );
+	bool networks_identical_aa_sequence( HBondNetStruct const & i, HBondNetStruct const & j );
 	bool residues_identical( utility::vector1< HBondResStructCOP > & residues1, utility::vector1< HBondResStructCOP > & residues2 );
 	bool residues_not_unique( utility::vector1< HBondResStructCOP > & residues1, utility::vector1< HBondResStructCOP > & residues2 );
 

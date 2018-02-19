@@ -22,8 +22,8 @@ namespace protocols {
 namespace hbnet {
 
 class HBNetScore;
-typedef utility::pointer::shared_ptr< HBNetScore > HBNetScoreOP;
-typedef utility::pointer::shared_ptr< HBNetScore const > HBNetScoreCOP;
+using HBNetScoreOP = utility::pointer::shared_ptr< HBNetScore >;
+using HBNetScoreCOP = utility::pointer::shared_ptr< HBNetScore const >;
 
 } //hbnet
 } //protocols

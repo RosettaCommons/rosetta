@@ -83,11 +83,11 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ) override;
 	void setup_packer_task_and_starting_residues( core::pose::Pose const & pose ) override;
 	void prepare_output() override;
-	std::string print_additional_info_for_net( hbond_net_struct & i, core::pose::Pose const & pose ) override;
+	std::string print_additional_info_for_net( HBondNetStruct & i, core::pose::Pose const & pose ) override;
 	std::string print_additional_headers() override;
-	bool network_meets_initial_criteria( hbond_net_struct const & network ) override;
+	bool network_meets_initial_criteria( HBondNetStruct const & network ) override;
 	// final criteria that reuqires network rotamers placed on pose
-	bool network_meets_final_criteria( core::pose::Pose const & pose, hbond_net_struct & network ) override;
+	bool network_meets_final_criteria( core::pose::Pose const & pose, HBondNetStruct & network ) override;
 	bool state_is_starting_aa_type( core::Size const res, core::Size const rot_id ) override;
 	bool pair_meets_starting_criteria( core::Size const res1, core::Size const rot1, core::Size const res2, core::Size const rot2 ) override;
 	core::Real scale_twobody_energy( core::Real input_twobody_energy, char res1, char res2 ) override;
@@ -99,13 +99,13 @@ public:
 	//void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, HBondNetStructOP new_network, core::Size staple_count );
 	void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::set< core::Size > net_ids, core::Size staple_count );
 
-	bool network_spans_all_helices( hbond_net_struct const & i ) const;
-	core::Size num_helices_w_hbond( hbond_net_struct const & i ) const;
+	bool network_spans_all_helices( HBondNetStruct const & i ) const;
+	core::Size num_helices_w_hbond( HBondNetStruct const & i ) const;
 	core::Size num_helices_w_hbond( utility::vector1< HBondResStructCOP > const & residues ) const;
-	bool has_pH_His( core::pose::Pose const & pose, hbond_net_struct & i );
+	bool has_pH_His( core::pose::Pose const & pose, HBondNetStruct & i ) ;
 	bool residues_are_interface_pairs( core::Size const res1, core::Size const res2 );
 
-	core::Size num_intermolecular_hbonds( hbond_net_struct & i, core::pose::Pose const & pose );
+	core::Size num_intermolecular_hbonds( HBondNetStruct & i, core::pose::Pose const & pose );
 
 	std::string
 	get_name() const override;
@@ -118,7 +118,7 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	//core::Size symm_num_intermolecular_hbonds( hbond_net_struct & i, core::pose::Pose & pose );
+	//core::Size symm_num_intermolecular_hbonds( HBondNetStruct & i, core::pose::Pose & pose );
 
 protected://Monte Carlo Protocol
 

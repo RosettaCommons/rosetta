@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/hbnet/NetworkState.hh
-/// @brief specialized structs for MC-HBNet to store hbond network info
+/// @brief specialized structs for MC HBNet to store hbond network info
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_protocols_hbnet_NetworkState_hh
@@ -23,7 +23,7 @@
 namespace protocols {
 namespace hbnet {
 
-using mres_unsat_pair=std::pair< unsigned int /*mres*/, utility::vector1< core::scoring::hbonds::graph::AtomInfo > >;
+using mres_unsat_pair = std::pair< unsigned int /*mres*/, utility::vector1< core::scoring::hbonds::graph::AtomInfo > > ;
 
 struct compare_mres_unsat_pair : public std::binary_function< mres_unsat_pair, mres_unsat_pair, bool >{
 	bool operator()( mres_unsat_pair const & a, mres_unsat_pair const & b ) const {

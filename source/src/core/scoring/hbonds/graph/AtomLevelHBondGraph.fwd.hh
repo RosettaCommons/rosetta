@@ -24,16 +24,16 @@ namespace hbonds {
 namespace graph {
 
 class AtomLevelHBondNode;
-typedef utility::pointer::shared_ptr< AtomLevelHBondNode > AtomLevelHBondNodeOP;
-typedef utility::pointer::shared_ptr< AtomLevelHBondNode const > AtomLevelHBondNodeCOP;
+using AtomLevelHBondNodeOP = utility::pointer::shared_ptr< AtomLevelHBondNode >;
+using AtomLevelHBondNodeCOP = utility::pointer::shared_ptr< AtomLevelHBondNode const >;
 
 class AtomLevelHBondEdge;
-typedef utility::pointer::shared_ptr< AtomLevelHBondEdge > AtomLevelHBondEdgeOP;
-typedef utility::pointer::shared_ptr< AtomLevelHBondEdge const > AtomLevelHBondEdgeCOP;
+using AtomLevelHBondEdgeOP = utility::pointer::shared_ptr< AtomLevelHBondEdge >;
+using AtomLevelHBondEdgeCOP = utility::pointer::shared_ptr< AtomLevelHBondEdge const >;
 
 class AtomLevelHBondGraph;
-typedef utility::pointer::shared_ptr< AtomLevelHBondGraph > AtomLevelHBondGraphOP;
-typedef utility::pointer::shared_ptr< AtomLevelHBondGraph const > AtomLevelHBondGraphCOP;
+using AtomLevelHBondGraphOP = utility::pointer::shared_ptr< AtomLevelHBondGraph >;
+using AtomLevelHBondGraphCOP = utility::pointer::shared_ptr< AtomLevelHBondGraph const >;
 
 } //graph
 } //hbonds

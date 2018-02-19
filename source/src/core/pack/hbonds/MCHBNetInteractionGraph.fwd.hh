@@ -23,8 +23,8 @@ namespace pack {
 namespace hbonds {
 
 class MCHBNetInteractionGraph;
-typedef utility::pointer::shared_ptr< MCHBNetInteractionGraph > MCHBNetInteractionGraphOP;
-typedef utility::pointer::shared_ptr< MCHBNetInteractionGraph const > MCHBNetInteractionGraphCOP;
+using MCHBNetInteractionGraphOP = utility::pointer::shared_ptr< MCHBNetInteractionGraph >;
+using MCHBNetInteractionGraphCOP = utility::pointer::shared_ptr< MCHBNetInteractionGraph const >;
 
 } //hbonds
 } //pack

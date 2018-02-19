@@ -76,7 +76,6 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
-//#include <core/scoring/hbonds/graph/LKAtomLevelHBondGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -552,7 +551,7 @@ HBNet::traverse_IG( Real const hb_threshold ){
 					if ( one_body_i < onebody_hb_threshold_ ) {
 						utility::vector1< HBondResStructCOP > residues;
 						residues.push_back(
-							pointer::make_shared< hbond_res_struct >(
+							pointer::make_shared< HBondResStruct >(
 							res1_ind,
 							platform::uint( ii ),
 							rotamer_sets_->rotamer_set_for_moltenresidue( first_ni )->rotamer( ii )->name1(),
@@ -575,7 +574,7 @@ HBNet::traverse_IG( Real const hb_threshold ){
 						} else if ( one_body_j < onebody_hb_threshold_ ) {
 							utility::vector1< HBondResStructCOP > residues;
 							residues.push_back(
-								pointer::make_shared< hbond_res_struct >(
+								pointer::make_shared< HBondResStruct >(
 								res2_ind,
 								platform::uint( jj ),
 								rotamer_sets_->rotamer_set_for_moltenresidue( second_ni )->rotamer( jj )->name1(),
@@ -599,7 +598,7 @@ HBNet::traverse_IG( Real const hb_threshold ){
 						core::Real init_sc = twobody;
 						utility::vector1< HBondResStructCOP > residues;
 						residues.push_back(
-							pointer::make_shared< hbond_res_struct >(
+							pointer::make_shared< HBondResStruct >(
 							res1_ind,
 							platform::uint( ii ),
 							rotamer_sets_->rotamer_set_for_moltenresidue( first_ni )->rotamer( ii )->name1(),
@@ -625,7 +624,7 @@ HBNet::recursive_traverse( int const new_node_ind, int const newstate, Size cons
 	// secondary search option allows dead-end cases to search again with a lowered threshold
 	if ( !second_search ) {
 		residues.push_back(
-			pointer::make_shared< hbond_res_struct >(
+			pointer::make_shared< HBondResStruct >(
 			newres,
 			platform::uint( newstate ),
 			rotamer_sets_->rotamer_set_for_moltenresidue( new_node_ind )->rotamer( newstate )->name1(),
@@ -825,7 +824,7 @@ HBNet::traverse_native( Pose const & pose, Real const hb_threshold )
 				// Initialize lists
 				utility::vector1< HBondResStructCOP > residues;
 				residues.push_back(
-					pointer::make_shared< hbond_res_struct >(
+					pointer::make_shared< HBondResStruct >(
 					res1_ind,
 					0,
 					pose.residue( res1_ind ).name1(),
@@ -851,10 +850,10 @@ HBNet::rec_trav_native( Pose const & pose, Size new_res, Size prev_res, utility:
 			return;
 		}
 	}
-	//residues.push_back( HBondResStructCOP( new hbond_res_struct( new_res, 0, pose.residue(new_res).name1(), pose.pdb_info()->chain(new_res), pose.residue(new_res).is_protein(), pose.residue(new_res).is_water(), pose.residue(new_res).is_ligand() ) ) );
+	//residues.push_back( HBondResStructCOP( new HBondResStruct( new_res, 0, pose.residue(new_res).name1(), pose.pdb_info()->chain(new_res), pose.residue(new_res).is_protein(), pose.residue(new_res).is_water(), pose.residue(new_res).is_ligand() ) ) );
 
 	residues.push_back(
-		pointer::make_shared< hbond_res_struct >(
+		pointer::make_shared< HBondResStruct >(
 		new_res,
 		platform::uint( 0 ),
 		pose.residue( new_res ).name1(),
@@ -959,7 +958,7 @@ HBNet::check_clash(utility::vector1< HBondResStructCOP > const & residues, platf
 ///@details Function to check whether two h-bond networks clash with eachother
 ///    return of true = they clash, false = no clashes (networks i and j are compatible)
 bool
-HBNet::net_clash( hbond_net_struct const & i, hbond_net_struct const & j )
+HBNet::net_clash( HBondNetStruct const & i, HBondNetStruct const & j )
 {
 	return net_clash( i.residues, j.residues );
 }
@@ -1151,24 +1150,24 @@ HBNet::store_network(utility::vector1< HBondResStructCOP > residues, Real init_s
 				i->term_w_cycle = term_w_cycle;
 				i->residues = residues;
 				if ( (this->ligand()) ) {
-					i->lig_state_list.push_back((*(find_hbond_res_struct(i->residues, this->ligand())))->rot_index);
+					i->lig_state_list.push_back((*(find_HBondResStruct(i->residues, this->ligand())))->rot_index);
 				}
 				i->score = init_score; //don't need to adjust for symmetric_ because did that when tracking IG energies to generate init_score
 			} else if ( this->ligand() ) {
-				i->lig_state_list.push_back((*(find_hbond_res_struct(i->residues, this->ligand())))->rot_index);
+				i->lig_state_list.push_back((*(find_HBondResStruct(i->residues, this->ligand())))->rot_index);
 			}
 			return;
 		}
 	}
 	if ( !( already_stored ) ) {
-		HBondNetStructOP new_net = pointer::make_shared< hbond_net_struct >();
+		HBondNetStructOP new_net = pointer::make_shared< HBondNetStruct >();
 		new_net->is_native = native;
 		new_net->term_w_start = term_w_start;
 		new_net->term_w_cycle = term_w_cycle;
 		new_net->residues = residues;
 		new_net->lig_state_list.clear();
 		if ( (this->ligand()) ) {
-			new_net->lig_state_list.push_back((*(find_hbond_res_struct((new_net)->residues, this->ligand())))->rot_index);
+			new_net->lig_state_list.push_back((*(find_HBondResStruct((new_net)->residues, this->ligand())))->rot_index);
 		}
 		if ( score_now ) {
 			Pose copy = *ala_pose_;
@@ -1180,7 +1179,7 @@ HBNet::store_network(utility::vector1< HBondResStructCOP > residues, Real init_s
 }//store_network
 
 void
-HBNet::minimize_network( Pose & pose, hbond_net_struct & network, bool residues_already_placed /* true */ )
+HBNet::minimize_network( Pose & pose, HBondNetStruct & network, bool residues_already_placed /* true */ )
 {
 	if ( !residues_already_placed ) {
 		place_rots_on_pose( pose, network, network.is_native );
@@ -1209,7 +1208,7 @@ HBNet::minimize_network( Pose & pose, hbond_net_struct & network, bool residues_
 	Size old_total( (symmetric_) ? symm_info_->num_independent_residues() : orig_pose_->total_residue() );
 	network.rotamers.clear();
 	for ( Size r = 1; r <= old_total; r++ ) {
-		if ( find_hbond_res_struct( network.residues, r ) != network.residues.end() ) {
+		if ( find_HBondResStruct( network.residues, r ) != network.residues.end() ) {
 			network.rotamers.push_back( pose.residue(r).clone() );
 		}
 	}
@@ -1217,7 +1216,7 @@ HBNet::minimize_network( Pose & pose, hbond_net_struct & network, bool residues_
 
 
 void
-HBNet::score_network_on_pose( Pose & pose, hbond_net_struct & i )
+HBNet::score_network_on_pose( Pose & pose, HBondNetStruct & i )
 {
 	if ( i.scored ) return;
 
@@ -1279,7 +1278,7 @@ HBNet::merge_2_branched_networks(utility::vector1< HBondResStructCOP > const & r
 }
 
 void
-HBNet::merge_2_branched_networks(hbond_net_struct const & i, hbond_net_struct const & j, HBondNetStructOP new_network)
+HBNet::merge_2_branched_networks(HBondNetStruct const & i, HBondNetStruct const & j, HBondNetStructOP new_network)
 {
 	if ( (this->ligand()) && (i.lig_state_list.empty() || j.lig_state_list.empty()) ) {
 		return;
@@ -1306,8 +1305,8 @@ HBNet::merge_2_branched_networks(hbond_net_struct const & i, hbond_net_struct co
 		lit=std::set_intersection(liglist1.begin(), liglist1.end(), liglist2.begin(), liglist2.end(), new_lig_state_list.begin());
 		new_lig_state_list.resize(lit-new_lig_state_list.begin());
 		if ( new_lig_state_list.empty() ) {
-			new_lig_state_list.push_back((*(find_hbond_res_struct(i.residues, this->ligand())))->rot_index);
-			new_lig_state_list.push_back((*(find_hbond_res_struct(j.residues, this->ligand())))->rot_index);
+			new_lig_state_list.push_back((*(find_HBondResStruct(i.residues, this->ligand())))->rot_index);
+			new_lig_state_list.push_back((*(find_HBondResStruct(j.residues, this->ligand())))->rot_index);
 			new_network->lig_state_list = new_lig_state_list;
 		} else {
 			new_network->lig_state_list = new_lig_state_list;
@@ -1322,7 +1321,7 @@ HBNet::merge_2_branched_networks(hbond_net_struct const & i, hbond_net_struct co
 
 //consider Ser and Thr idential for benchmarking purposes
 bool
-HBNet::networks_identical_aa_sequence( hbond_net_struct const & i, hbond_net_struct const & j )
+HBNet::networks_identical_aa_sequence( HBondNetStruct const & i, HBondNetStruct const & j )
 {
 	if ( i.residues.size() == j.residues.size() ) {
 		std::vector< char > i_aa(0);
@@ -1533,14 +1532,14 @@ HBNet::branch_overlapping_networks()
 	for ( auto & merged_vec : merged_vecs_ ) {
 		if ( merged_vec.size()>1 ) {
 			auto m1 = merged_vec.begin();
-			HBondNetStructOP temp_hbond_net_struct = network_vector_[*m1];
+			HBondNetStructOP temp_HBondNetStruct = network_vector_[*m1];
 			std::string nets_being_merged("");
 			if ( verbose_ ) {
 				nets_being_merged = "       "+utility::to_string(mcount)+". branching together networks = ";
 				nets_being_merged = nets_being_merged+" ( #"+(utility::to_string(*m1+1))+": ";\
-					std::string tempstr = print_list_to_string( *temp_hbond_net_struct, false, false, false, false);
-				//std::string tempstr = print_list_to_string(temp_hbond_net_struct.rotlist, temp_hbond_net_struct.term_w_start,
-				//                                           temp_hbond_net_struct.term_w_cycle, temp_hbond_net_struct.term_w_bb );
+					std::string tempstr = print_list_to_string( *temp_HBondNetStruct, false, false, false, false);
+				//std::string tempstr = print_list_to_string(temp_HBondNetStruct.rotlist, temp_HBondNetStruct.term_w_start,
+				//                                           temp_HBondNetStruct.term_w_cycle, temp_HBondNetStruct.term_w_bb );
 				nets_being_merged = nets_being_merged+tempstr+" ) + ";
 			}
 			for ( auto m2 = m1; ++m2 != merged_vec.end(); ) {
@@ -1551,15 +1550,15 @@ HBNet::branch_overlapping_networks()
 					//                                           network_vector_[*m2].term_w_cycle, network_vector_[*m2].term_w_bb);
 					nets_being_merged = nets_being_merged+tempstr+" ) + ";
 				}
-				HBondNetStructOP new_network( pointer::make_shared< hbond_net_struct >() );
-				merge_2_branched_networks( *temp_hbond_net_struct, *(network_vector_[*m2]), new_network );
-				temp_hbond_net_struct = new_network;
+				HBondNetStructOP new_network( pointer::make_shared< HBondNetStruct >() );
+				merge_2_branched_networks( *temp_HBondNetStruct, *(network_vector_[*m2]), new_network );
+				temp_HBondNetStruct = new_network;
 			}
 			if ( verbose_ && TR.visible() ) {
 				TR << nets_being_merged << std::endl;
 			}
 
-			temp_net_vec.push_back( temp_hbond_net_struct );
+			temp_net_vec.push_back( temp_HBondNetStruct );
 			mcount++;
 		}
 	}
@@ -1739,7 +1738,7 @@ void add_network_resids_to_pose( core::pose::Pose & pose, utility::vector1< core
 
 
 utility::vector1< core::Size >
-HBNet::place_rots_on_pose( pose::Pose & pose, hbond_net_struct & i, bool use_pose )
+HBNet::place_rots_on_pose( pose::Pose & pose, HBondNetStruct & i, bool use_pose )
 {
 	if ( !( pose.pdb_info() ) ) {
 		pose.pdb_info( pointer::make_shared< core::pose::PDBInfo >( pose, true ) );
@@ -1782,7 +1781,7 @@ HBNet::place_rots_on_pose( pose::Pose & pose, hbond_net_struct & i, bool use_pos
 
 // to very quickly eliminate networks with 1 or more unsatisfied heavy-atom donors or acceptors
 bool
-HBNet::quick_and_dirty_network_has_heavy_atom_unsat( Pose const & pose, hbond_net_struct const & network )
+HBNet::quick_and_dirty_network_has_heavy_atom_unsat( Pose const & pose, HBondNetStruct const & network )
 {
 	for ( const auto & res : network.residues ) {
 		if ( res_is_core( res->resnum ) ) {
@@ -1883,7 +1882,7 @@ HBNet::update_core_and_boundary_residues( core::pose::Pose const & pose )
 }
 
 void
-HBNet::find_unsats( Pose const & pose, hbond_net_struct & network )
+HBNet::find_unsats( Pose const & pose, HBondNetStruct & network )
 {
 	// THIS SHOULD BE UPDATED AND REPLACED WITH CLEANER CODE
 
@@ -2137,7 +2136,7 @@ HBNet::residues_not_unique( utility::vector1< HBondResStructCOP > & residues1, u
 }
 
 bool
-HBNet::networks_unique( hbond_net_struct const & i, hbond_net_struct const & j, bool no_surface /* true */ )
+HBNet::networks_unique( HBondNetStruct const & i, HBondNetStruct const & j, bool no_surface /* true */ )
 {
 	utility::vector1< HBondResStructCOP > residues_i(0);
 	utility::vector1< HBondResStructCOP > residues_j(0);
@@ -2303,7 +2302,7 @@ HBNet::output_networks( bool finalize )
 				//if ( is_sub_residues( (*nit)->residues, (*i)->residues, dummy, true /* return true_if_identical (networks same size) */) ){
 				if ( is_sub_residues( (*nit)->residues, (*i)->residues ) ) {
 					// if extended is bigger (and meets criteria) or same size but few unsats, then erase native
-					//   bool operator< overridden by hbond_net_struct to define best network
+					//   bool operator< overridden by HBondNetStruct to define best network
 					Size i_size( (symmetric_ && !((*i)->asymm_residues.empty()) ) ? (*i)->asymm_residues.size() : (*i)->residues.size() );
 					Size nit_size( (symmetric_ && !(*nit)->asymm_residues.empty()) ? (*nit)->asymm_residues.size() : (*nit)->residues.size() );
 					if ( i_size > nit_size || ( i_size == nit_size && (*i)->num_unsat_Hpol < (*nit)->num_unsat_Hpol ) ) {
@@ -2845,7 +2844,7 @@ HBNet::prepare_output()
 }
 
 Size
-HBNet::num_core_res( hbond_net_struct const & network ){
+HBNet::num_core_res( HBondNetStruct const & network ){
 	Size num_core(0);
 	for ( const auto & residue : network.residues ) {
 		if ( res_is_core( residue->resnum ) ) ++num_core;
@@ -2854,7 +2853,7 @@ HBNet::num_core_res( hbond_net_struct const & network ){
 }
 
 Size
-HBNet::num_boundary_res( hbond_net_struct const & network ){
+HBNet::num_boundary_res( HBondNetStruct const & network ){
 	Size num_boundary(0);
 	for ( const auto & residue : network.residues ) {
 		if ( res_is_boundary( residue->resnum ) ) ++num_boundary;
@@ -3900,8 +3899,9 @@ void HBNet::append_to_network_vector( utility::vector1< DecoratedNetworkState > 
 	for ( DecoratedNetworkState const & dec_state : designed_networks ) {
 		NetworkState const & state = * dec_state.network_state;
 
-		utility::vector1< HBondResStructCOP > hbond_res_structs;
-		hbond_res_structs.reserve( state.nodes().size() );
+		utility::vector1< HBondResStructCOP > HBondResStructs;
+		HBondResStructs.reserve( state.nodes().size() );
+
 		std::string sequence = poly_A_sequence;
 
 		for ( AtomLevelHBondNode const * const hbond_node : state.nodes() ) {
@@ -3912,8 +3912,8 @@ void HBNet::append_to_network_vector( utility::vector1< DecoratedNetworkState > 
 
 			sequence[ mres - 1 ] = res_ptr->name1();
 
-			HBondResStructCOP const new_hbond_res_struct(
-				pointer::make_shared< hbond_res_struct >(
+			HBondResStructCOP const new_HBondResStruct(
+				pointer::make_shared< HBondResStruct >(
 				resid,
 				rot,
 				res_ptr->name1(),
@@ -3923,7 +3923,7 @@ void HBNet::append_to_network_vector( utility::vector1< DecoratedNetworkState > 
 				res_ptr->is_ligand()  //is_ligand
 				)
 			);
-			hbond_res_structs.push_back( new_hbond_res_struct );
+			HBondResStructs.push_back( new_HBondResStruct );
 		}//for network_res
 
 
@@ -3936,11 +3936,13 @@ void HBNet::append_to_network_vector( utility::vector1< DecoratedNetworkState > 
 			}
 		}
 
-		HBondNetStructOP network_struct = pointer::make_shared< hbond_net_struct >();
+		HBondNetStructOP network_struct = pointer::make_shared< HBondNetStruct >();
 		network_struct->is_native = false;
 		network_struct->term_w_start = false;
+
 		network_struct->term_w_cycle = state.edges().size() >= state.nodes().size();
-		network_struct->residues = hbond_res_structs;
+		network_struct->residues = HBondResStructs;
+
 		network_struct->lig_state_list.clear();
 		network_struct->total_hbonds = state.edges().size();//only counts 1 hbond per edge
 		network_struct->score = state.score();

@@ -59,7 +59,7 @@ using namespace core::scoring::hbonds;
 using namespace utility;
 
 std::string
-print_list_to_string( hbond_net_struct const & network, bool chainid/* true */, bool term_w_start/*=false*/,
+print_list_to_string( HBondNetStruct const & network, bool chainid/* true */, bool term_w_start/*=false*/,
 	bool term_w_cycle/*=false*/, bool term_w_bb/*=false*/ )
 {
 	utility::vector1< HBondResStructCOP > const residues( (network.asymm_residues.empty()) ? network.residues : network.asymm_residues );
@@ -94,7 +94,7 @@ print_list_to_string( hbond_net_struct const & network, bool chainid/* true */, 
 }
 
 std::string
-print_list_to_string( Pose const & pose, hbond_net_struct const & network, bool chainid, bool term_w_start/*=false*/,
+print_list_to_string( Pose const & pose, HBondNetStruct const & network, bool chainid, bool term_w_start/*=false*/,
 	bool term_w_cycle/*=false*/, bool term_w_bb/*=false*/, bool use_pdb_numbering/*=true*/ )
 {
 	Size total( pose.total_residue() );
@@ -149,7 +149,7 @@ print_list_to_string( Pose const & pose, hbond_net_struct const & network, bool 
 
 //BETTER TO PASS REFERENCES RATHER THAN OP's HERE SINCE WE ARE OUTSIDE OF ANY CLASS
 std::string
-print_network( hbond_net_struct const & i, bool chainid /* true */ )
+print_network( HBondNetStruct const & i, bool chainid /* true */ )
 {
 	Size const network_size( (i.asymm_residues.empty()) ? i.residues.size() : i.asymm_residues.size() );
 	std::string net_prefix("");
@@ -161,7 +161,7 @@ print_network( hbond_net_struct const & i, bool chainid /* true */ )
 }
 
 std::string
-print_network_w_pdb_numbering( Pose const & pose, hbond_net_struct const & i, bool chainid )
+print_network_w_pdb_numbering( Pose const & pose, HBondNetStruct const & i, bool chainid )
 {
 	Size const network_size( (i.asymm_residues.empty()) ? i.residues.size() : i.asymm_residues.size() );
 	std::string net_prefix("");
@@ -179,7 +179,7 @@ print_headers()
 }
 
 utility::vector1< HBondResStructCOP >::const_iterator
-find_hbond_res_struct( utility::vector1< HBondResStructCOP > const & residues, Size resnum )
+find_HBondResStruct( utility::vector1< HBondResStructCOP > const & residues, Size resnum )
 {
 	auto r = residues.begin();
 	for ( ; r != residues.end(); ++r ) {
@@ -191,7 +191,7 @@ find_hbond_res_struct( utility::vector1< HBondResStructCOP > const & residues, S
 }
 
 void
-get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion /* false */ )
+get_hbond_atom_pairs( HBondNetStruct & network, Pose & pose, bool bb_exclusion /* false */ )
 {
 	runtime_assert( pose.energies().energies_updated() );
 
@@ -252,7 +252,7 @@ hbond_exists_in_vector( utility::vector1<HBondCOP> const & hbond_vec, HBondCOP &
 }
 
 void
-add_reslabels_to_pose( Pose & pose, hbond_net_struct & i, std::string label /* "HBNet" */ )
+add_reslabels_to_pose( Pose & pose, HBondNetStruct & i, std::string label /* "HBNet" */ )
 {
 	if ( !( pose.pdb_info() ) ) {
 		pose.pdb_info( pointer::make_shared< core::pose::PDBInfo >( pose, true ) );
@@ -263,7 +263,7 @@ add_reslabels_to_pose( Pose & pose, hbond_net_struct & i, std::string label /* "
 }
 
 Size
-get_num_protein_sc_sc_hbonds( Pose & pose, hbond_net_struct & i )
+get_num_protein_sc_sc_hbonds( Pose & pose, HBondNetStruct & i )
 {
 	if ( i.hbond_vec.empty() ) {
 		return 0;
@@ -394,7 +394,7 @@ hbnet_symm_one_body_energies(
 }
 
 bool
-network_contains_aa( char aa_one_letter, hbond_net_struct const & i )
+network_contains_aa( char aa_one_letter, HBondNetStruct const & i )
 {
 	return network_contains_aa( aa_one_letter, i.residues );
 }
@@ -411,7 +411,7 @@ network_contains_aa( char aa_one_letter, utility::vector1< HBondResStructCOP > c
 }
 
 bool
-his_tyr_connectivity( Pose const & pose, hbond_net_struct & i )
+his_tyr_connectivity( Pose const & pose, HBondNetStruct & i )
 {
 	//runtime_assert( !(i.hbond_vec.empty() ) );
 	if ( i.hbond_vec.empty() ) {
