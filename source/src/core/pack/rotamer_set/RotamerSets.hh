@@ -277,10 +277,10 @@ public: // WHY? G++, WHY?!
 	show( std::ostream & out ) const;
 
 private:
-	uint nmoltenres_;
-	uint total_residue_;
+	uint nmoltenres_ = 0;
+	uint total_residue_ = 0;
 
-	uint nrotamers_;
+	uint nrotamers_ = 0;
 
 	RotamerSetVector set_of_rotamer_sets_;
 	utility::vector1< uint > resid_2_moltenres_;

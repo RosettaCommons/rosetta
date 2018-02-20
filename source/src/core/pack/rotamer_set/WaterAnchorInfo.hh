@@ -102,7 +102,7 @@ private:
 	Size nstep_;
 	bool enforced_;     // If true, the water molecule is forced to stay near the protein (present)
 	std::string rotamer_bonds_;   // Describes the number of hbonds the rotamers it builds will have with the protein
-	Size design_anchor_index_; // Local hydratable atom index (1 to 5)
+	Size design_anchor_index_ = 0; // Local hydratable atom index (1 to 5)
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

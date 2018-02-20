@@ -25,7 +25,8 @@ namespace rotamer_set {
 
 BumpSelector::BumpSelector() :
 	starting_rot_bumpenergy_( 1e9 ),
-	max_rot_bumpenergy_( 5.0 )
+	max_rot_bumpenergy_( 5.0 ),
+	best_rot_bumpenergy_(starting_rot_bumpenergy_)
 {}
 
 

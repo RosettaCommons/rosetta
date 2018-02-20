@@ -163,12 +163,12 @@ public:
 	full_sample_rot_index_2_moltenres_sample_rot_index( Size sample_rotno ) const;
 
 private:
-	Size total_residue_;
-	Size nmoltenres_;
+	Size total_residue_ = 0;
+	Size nmoltenres_ = 0;
 	utility::vector1< Size > moltenresid_2_resid_;
 	utility::vector1< Size > resid_2_moltenresid_;
 	utility::vector1< ContinuousRotamerSet > rotamer_sets_;
-	Size n_sample_rotamers_;
+	Size n_sample_rotamers_ = 0;
 	utility::vector1< Size > moltenres_for_sample_rot_;
 	utility::vector1< Size > moltenres_sample_rot_offset_;
 };
