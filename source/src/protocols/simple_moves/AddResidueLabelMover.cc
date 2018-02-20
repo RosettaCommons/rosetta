@@ -15,7 +15,6 @@
 #include <protocols/simple_moves/AddResidueLabelMover.hh>
 #include <protocols/simple_moves/AddResidueLabelMoverCreator.hh>
 
-
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -24,6 +23,10 @@
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
+
+//Project headers
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -76,8 +79,19 @@ void AddResidueLabelMover::apply(core::pose::Pose & pose) {
 	//core::select::residue_selector::ResidueSubsetCOP const subset( new core::select::residue_selector::ResidueSubset( selector_->apply( pose ) ) );
 	core::select::residue_selector::ResidueSubset const subset = selector_->apply( pose );
 
+	core::Size pose_size;
+
+	//check for symmetry
+	bool sym_check = core::pose::symmetry::is_symmetric( pose );
+	if ( sym_check ) {
+		TR.Info << "Pose is symmetric. Only labeling asymmetric unit." << std::endl;
+		pose_size = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+	} else {
+		pose_size = pose.size();
+	}
+
 	core::Size count=0;
-	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
+	for ( core::Size resid=1; resid<=pose_size; ++resid ) {
 		if ( subset[resid] ) { // Add label if residue is in the selector
 			TR.Info << "Adding to residue #" << std::to_string(resid) << ", label: " << label_ << std::endl;
 			pose.pdb_info()->add_reslabel(resid, label_);
@@ -88,7 +102,7 @@ void AddResidueLabelMover::apply(core::pose::Pose & pose) {
 
 	//pymol selection output
 	TR.Info << "select " << label_ << ", resi ";
-	for ( core::Size resid=1; resid<=pose.size(); ++resid ) {
+	for ( core::Size resid=1; resid<=pose_size; ++resid ) {
 		if ( subset[resid] ) {
 			TR.Info << std::to_string(resid) << "+";
 		}
