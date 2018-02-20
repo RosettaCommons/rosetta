@@ -553,6 +553,7 @@ sources = {
 		"ResidueSelectorFactory",
 		"NeighborhoodResidueSelector",
 		"SecondaryStructureSelector",
+		"SelectorLogicParser",
 	],
 	"sequence" : [
 		"ABEGOManager",

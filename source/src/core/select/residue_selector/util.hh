@@ -190,6 +190,24 @@ bool are_selections_equal( ResidueSubset const & selection1, ResidueSubset const
 /// @brief Returns a string representing the ResidueSubset (- for non selected, * for selected)
 std::string represent_residue_selector( ResidueSubset const & selection, std::string const & is_true="*", std::string const & is_false="-" );
 
+/// @brief Read a string from the input tag with the indicated attribute name and interpret it
+/// as boolean logical operations on a set of existing ResidueSelectors that are already stored
+/// in the DataMap.
+ResidueSelectorOP
+parse_residue_selector_logic_string(
+	basic::datacache::DataMap const & dm,
+	utility::tag::TagCOP const & tag,
+	std::string const & selector_logic_attribute_name = "selector_logic"
+);
+
+/// @brief Append an (optional) attribute that will be used in the call to parse_residue_selector_logic_string
+void
+attributes_for_parse_residue_selector_logic_string(
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::AttributeList & attributes,
+	std::string const & selector_logic_attribute_name = "selector_logic"
+);
+
 }
 }
 }

@@ -78,6 +78,14 @@ class ArithmeticASTFactor;
 typedef utility::pointer::shared_ptr< ArithmeticASTFactor > ArithmeticASTFactorOP;
 typedef utility::pointer::shared_ptr< ArithmeticASTFactor const > ArithmeticASTFactorCOP;
 
+class ArithmeticASTOrClause;
+typedef utility::pointer::shared_ptr< ArithmeticASTOrClause > ArithmeticASTOrClauseOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTOrClause const > ArithmeticASTOrClauseCOP;
+
+class ArithmeticASTAndClause;
+typedef utility::pointer::shared_ptr< ArithmeticASTAndClause > ArithmeticASTAndClauseOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTAndClause const > ArithmeticASTAndClauseCOP;
+
 class ArithmeticASTValue;
 typedef utility::pointer::shared_ptr< ArithmeticASTValue > ArithmeticASTValueOP;
 typedef utility::pointer::shared_ptr< ArithmeticASTValue const > ArithmeticASTValueCOP;
@@ -85,6 +93,14 @@ typedef utility::pointer::shared_ptr< ArithmeticASTValue const > ArithmeticASTVa
 class ArithmeticASTRestTerm;
 typedef utility::pointer::shared_ptr< ArithmeticASTRestTerm > ArithmeticASTRestTermOP;
 typedef utility::pointer::shared_ptr< ArithmeticASTRestTerm const > ArithmeticASTRestTermCOP;
+
+class ArithmeticASTRestAndClause;
+typedef utility::pointer::shared_ptr< ArithmeticASTRestAndClause > ArithmeticASTRestAndClauseOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTRestAndClause const > ArithmeticASTRestAndClauseCOP;
+
+class ArithmeticASTRestOrClause;
+typedef utility::pointer::shared_ptr< ArithmeticASTRestOrClause > ArithmeticASTRestOrClauseOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTRestOrClause const > ArithmeticASTRestOrClauseCOP;
 
 class ArithmeticASTRestExpression;
 typedef utility::pointer::shared_ptr< ArithmeticASTRestExpression > ArithmeticASTRestExpressionOP;

@@ -912,6 +912,7 @@ sources = {
 		"ReturnResidueSubsetSelector",
 		"ScoreTermValueBasedSelector",
 		"SecondaryStructureSelector",
+		"SelectorLogicParser",
 		"SSElementSelector",
 		"SymmetricalResidueSelector",
 		"TrueResidueSelector",

@@ -98,6 +98,23 @@ ResLvlTaskOperationFactory::newRLTO( std::string const & type ) const
 	}
 }
 
+ResLvlTaskOperationOP
+ResLvlTaskOperationFactory::newRLTO(
+	std::string const & type,
+	TagCOP tag
+) const
+{
+	auto iter( rltoc_map_.find( type ) );
+	if ( iter != rltoc_map_.end() ) {
+		ResLvlTaskOperationOP rlto( iter->second->create_res_level_task_operation() );
+		rlto->parse_tag( tag );
+		return rlto;
+	} else {
+		utility_exit_with_message( type + " is not known to the ResLvlTaskOperationFactory. Was its ResLvlTaskOperationCreator class registered at initialization?" );
+		return nullptr;
+	}
+}
+
 /// @details By convention, the named assigned to each of the complexTypes for ResLvlTaskOperations should be
 /// what is returned by the function "complex_type_name_for_res_lvl_task_op" (declared in
 /// core/pack/task/operation/task_op_schemas.hh) when given the argument returned by that ResLvlTaskOperation's

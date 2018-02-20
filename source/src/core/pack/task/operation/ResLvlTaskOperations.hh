@@ -68,6 +68,27 @@ private:
 	utility::vector1< bool > canonical_aas_to_keep_;
 };
 
+class RestrictAbsentCanonicalAASExceptNativeRLT : public ResLvlTaskOperation
+{
+public:
+	typedef ResLvlTaskOperation parent;
+public:
+	RestrictAbsentCanonicalAASExceptNativeRLT();
+	virtual ~RestrictAbsentCanonicalAASExceptNativeRLT();
+	virtual ResLvlTaskOperationOP clone() const;
+	virtual void apply( ResidueLevelTask & ) const;
+	// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
+	void aas_to_keep( utility::vector1< bool > const & );
+	void aas_to_keep( std::string const & );
+	virtual void parse_tag( TagCOP );
+
+	static std::string keyname();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+private:
+	utility::vector1< bool > canonical_aas_to_keep_;
+};
+
 class DisallowIfNonnativeRLT:  public ResLvlTaskOperation
 {
 public:

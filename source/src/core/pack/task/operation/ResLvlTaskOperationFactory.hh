@@ -61,8 +61,15 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void provide_xml_schema( std::string const &task_operation_name, utility::tag::XMLSchemaDefinition & xsd ) const;
 
-	/// @brief return new ResLvlTaskOperation by key lookup in rlto_map_ (new ResLvlTaskOperation parses Tag if provided)
+	/// @brief return new ResLvlTaskOperation by key lookup in rlto_map_
 	ResLvlTaskOperationOP newRLTO( std::string const & ) const;
+
+	/// @brief return new ResLvlTaskOperation by key lookup in rlto_map_ (with the
+	/// new ResLvlTaskOperation parsing the input Tag)
+	ResLvlTaskOperationOP newRLTO(
+		std::string const & class_keyname,
+		TagCOP tag
+	) const;
 
 	/// @brief The %ResLvlTaskOperationFactory is the point of entry for the definition of the XML Schemas
 	/// for every ResLvlTaskOperation that may be instantiated from a file.  It is  responsible for defining

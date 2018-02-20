@@ -265,6 +265,7 @@
 // for registering TaskOperations, ResLvlTaskOperations, and ResFilters
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationCreators.hh>
+#include <core/pack/task/operation/DesignRestrictionsCreator.hh>
 #include <core/pack/task/operation/EnableMultiCoolAnnealerCreator.hh>
 #include <core/pack/task/operation/OperateOnCertainResiduesCreator.hh>
 #include <core/pack/task/operation/OperateOnResidueSubsetCreator.hh>
@@ -664,6 +665,7 @@ static TaskOperationRegistrator< PreventRepackingCreator > PreventRepackingCreat
 static TaskOperationRegistrator< PreserveCBetaCreator > PreserveCBetaCreator_registrator;
 static TaskOperationRegistrator< AppendRotamerSetCreator > AppendRotamerSetCreator_registrator;
 static TaskOperationRegistrator< AppendRotamerCreator > AppendRotamerCreator_registrator;
+static TaskOperationRegistrator< DesignRestrictionsCreator > DesignRestrictionsCreator_registrator;
 static TaskOperationRegistrator< EnableMultiCoolAnnealerCreator > EnableMultiCoolAnnealerCreator_registrator;
 static TaskOperationRegistrator< ExtraRotamersCreator > ExtraRotamersCreator_registrator;
 static TaskOperationRegistrator< ExtraChiCutoffCreator > ExtraChiCutoffCreator_registrator;
@@ -690,6 +692,7 @@ static TaskOperationRegistrator< OptHCreator > OptHCreator_registrator;
 // register ResLvlTaskOperationCreators
 static ResLvlTaskOperationRegistrator< RestrictToRepackingRLTCreator > RestrictToRepackingRLTCreator_registrator;
 static ResLvlTaskOperationRegistrator< RestrictAbsentCanonicalAASRLTCreator > RestrictAbsentCanonicalAASRLTCreator_registrator;
+static ResLvlTaskOperationRegistrator< RestrictAbsentCanonicalAASExceptNativeRLTCreator > RestrictAbsentCanonicalAASExceptNativeRLTCreator_registrator;
 static ResLvlTaskOperationRegistrator< DisallowIfNonnativeRLTCreator > DisallowIfNonnativeRLTCreator_registrator;
 static ResLvlTaskOperationRegistrator< PreventRepackingRLTCreator > PreventRepackingRLTCreator_registrator;
 static ResLvlTaskOperationRegistrator< AddBehaviorRLTCreator > AddBehaviorRLTCreator_registrator;

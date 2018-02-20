@@ -20,6 +20,7 @@ using namespace parser;
 static DataLoaderRegistrator< DatabaseSessionLoaderCreator > reg_DatabaseSessionLoaderCreator;
 static DataLoaderRegistrator< ScoreFunctionLoaderCreator > reg_ScoreFunctionLoaderCreator;
 static DataLoaderRegistrator< TaskOperationLoaderCreator > reg_TaskOperationLoaderCreator;
+static DataLoaderRegistrator< ResLvlTaskOperationLoaderCreator > reg_ResLvlTaskOperationLoaderCreator;
 static DataLoaderRegistrator< MoveMapFactoryLoaderCreator > reg_MoveMapFactoryLoaderCreator;
 static DataLoaderRegistrator< JumpSelectorLoaderCreator > reg_JumpSelectorLoaderCreator;
 static DataLoaderRegistrator< protocols::qsar::scoring_grid::ScoringGridLoaderCreator > reg_ScoringGridLoaderCreator;

@@ -24,7 +24,7 @@ namespace operation {
 
 class ResLvlTaskOperation;
 typedef utility::pointer::shared_ptr< ResLvlTaskOperation > ResLvlTaskOperationOP;
-typedef utility::pointer::shared_ptr< ResLvlTaskOperation > ResLvlTaskOperationCOP;
+typedef utility::pointer::shared_ptr< ResLvlTaskOperation const > ResLvlTaskOperationCOP;
 
 } //namespace operation
 } //namespace task

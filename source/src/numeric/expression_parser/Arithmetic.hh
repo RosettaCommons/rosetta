@@ -45,7 +45,10 @@ enum TokenType {
 	PLUS_SYMBOL,
 	SUBTRACT_SYMBOL,
 	MULTIPLY_SYMBOL,
-	DIVIDE_SYMBOL//,
+	DIVIDE_SYMBOL,
+	AND_SYMBOL,
+	OR_SYMBOL,
+	NOT_SYMBOL
 	//TERMINAL_SYMBOL
 };
 
@@ -173,12 +176,12 @@ public:
 	void pop();
 
 	/// @brief Print contents after parser has encountered an error.
-	void log_error() const;
+	std::string log_error() const;
 	std::string print() const;
 protected:
 
 	/// @brief in the event of an error message, print the tokens up to the current token.
-	void
+	std::string
 	print_to_curr_pos() const;
 
 private:
@@ -197,6 +200,7 @@ public:
 	ArithmeticScanner( bool );
 	/// @brief Add the functions min, max and sqrt.
 	void add_standard_functions();
+	void treat_AND_and_OR_as_operators( bool setting );
 
 	void add_variable( std::string const & name );
 	void add_function( std::string const & name, numeric::Size nargs );
@@ -206,10 +210,11 @@ private:
 	LiteralTokenOP scan_literal( std::string const & input_string ) const;
 	TokenOP scan_identifier( std::string const & input_string ) const;
 
-	/// @brief print the contents of functions_ and variables_ to std error
-	void log_error() const;
+	/// @brief print the contents of functions_ and variables_ to a string
+	std::string log_error() const;
 
 private:
+	bool treat_AND_and_OR_as_operators_;
 	std::map< std::string, numeric::Size > functions_;
 	std::map< std::string, numeric::Size > variables_; // Size is a placeholder; the name string is the only important data.
 
@@ -315,8 +320,9 @@ private:
 class ArithmeticASTFactor : public ArithmeticASTNode
 {
 public:
-	~ArithmeticASTFactor() override;
+	ArithmeticASTFactor();
 
+	~ArithmeticASTFactor() override;
 
 	void
 	visit( ASTVisitor & visitor ) const override;
@@ -327,10 +333,62 @@ public:
 
 	ArithmeticASTNodeCOP
 	child() const;
+
+	TokenType not_token() const;
+
 private:
+	TokenType not_token_;
 	ArithmeticASTNodeCOP child_;
 
 };
+
+class ArithmeticASTOrClause : public ArithmeticASTNode
+{
+public:
+	~ArithmeticASTOrClause() override;
+
+	void
+	visit( ASTVisitor & visitor ) const override;
+
+	virtual
+	void
+	parse( TokenSet & tokens );
+
+	std::list< ArithmeticASTNodeCOP >::const_iterator
+	children_begin() const;
+
+	std::list< ArithmeticASTNodeCOP >::const_iterator
+	children_end() const;
+
+private:
+	std::list< ArithmeticASTNodeCOP > children_;
+
+};
+
+class ArithmeticASTAndClause : public ArithmeticASTNode
+{
+public:
+	~ArithmeticASTAndClause() override;
+
+	void
+	visit( ASTVisitor & visitor ) const override;
+
+	virtual
+	void
+	parse( TokenSet & tokens );
+
+	std::list< ArithmeticASTNodeCOP >::const_iterator
+	children_begin() const;
+
+	std::list< ArithmeticASTNodeCOP >::const_iterator
+	children_end() const;
+
+private:
+	std::list< ArithmeticASTNodeCOP > children_;
+
+
+};
+
 
 /// @brief either a variable or a literal.
 class ArithmeticASTValue : public ArithmeticASTNode
@@ -386,6 +444,61 @@ private:
 
 };
 
+class ArithmeticASTRestOrClause : public ArithmeticASTNode
+{
+public:
+	ArithmeticASTRestOrClause();
+
+	void
+	visit( ASTVisitor & visitor ) const override;
+
+	virtual
+	void
+	parse( TokenSet & tokens );
+
+	std::list< ArithmeticASTNodeCOP >::const_iterator
+	children_begin() const;
+
+	std::list< ArithmeticASTNodeCOP >::const_iterator
+	children_end() const;
+
+	TokenType
+	rest_or_clause_token() const;
+
+private:
+	TokenType rest_or_clause_token_;
+	std::list< ArithmeticASTNodeCOP > children_;
+
+};
+
+class ArithmeticASTRestAndClause : public ArithmeticASTNode
+{
+public:
+	ArithmeticASTRestAndClause();
+
+	void
+	visit( ASTVisitor & visitor ) const override;
+
+	virtual
+	void
+	parse( TokenSet & tokens );
+
+	std::list< ArithmeticASTNodeCOP >::const_iterator
+	children_begin() const;
+
+	std::list< ArithmeticASTNodeCOP >::const_iterator
+	children_end() const;
+
+	TokenType
+	rest_and_clause_token() const;
+
+private:
+	TokenType rest_and_clause_token_;
+	std::list< ArithmeticASTNodeCOP > children_;
+
+};
+
+
 class ArithmeticASTRestExpression : public ArithmeticASTNode
 {
 public:
@@ -425,6 +538,13 @@ public:
 	void
 	visit( ArithmeticASTExpression const & ) = 0;
 
+	virtual
+	void
+	visit( ArithmeticASTOrClause const & ) = 0;
+
+	virtual
+	void
+	visit( ArithmeticASTAndClause const & ) = 0;
 
 	virtual
 	void
@@ -448,6 +568,14 @@ public:
 
 	virtual
 	void
+	visit( ArithmeticASTRestAndClause const & ) = 0;
+
+	virtual
+	void
+	visit( ArithmeticASTRestOrClause const & ) = 0;
+
+	virtual
+	void
 	visit( ArithmeticASTRestExpression const & ) = 0;
 
 	virtual
@@ -462,11 +590,14 @@ class ASTPrinter : public ASTVisitor
 public:
 	ASTPrinter();
 
-
 	void
 	visit( ArithmeticASTExpression const & ) override;
 
+	void
+	visit( ArithmeticASTAndClause const & ) override;
 
+	void
+	visit( ArithmeticASTOrClause const & ) override;
 
 	void
 	visit( ArithmeticASTFunction const & ) override;
@@ -483,14 +614,17 @@ public:
 	void
 	visit( ArithmeticASTValue const & ) override;
 
-
 	void
 	visit( ArithmeticASTRestTerm const & ) override;
 
+	void
+	visit( ArithmeticASTRestAndClause const & ) override;
+
+	void
+	visit( ArithmeticASTRestOrClause const & ) override;
 
 	void
 	visit( ArithmeticASTRestExpression const & ) override;
-
 
 	void
 	visit( ArithmeticASTNode const & ) override;
@@ -528,30 +662,35 @@ public:
 	ExpressionCreator();
 	~ExpressionCreator() override;
 
-
 	void
 	visit( ArithmeticASTExpression const & ) override;
 
+	void
+	visit( ArithmeticASTAndClause const & ) override;
+
+	void
+	visit( ArithmeticASTOrClause const & ) override;
 
 	void
 	visit( ArithmeticASTFunction const & ) override;
 
-
 	void
 	visit( ArithmeticASTTerm const & ) override;
-
 
 	void
 	visit( ArithmeticASTFactor const & ) override;
 
-
 	void
 	visit( ArithmeticASTValue const & ) override;
-
 
 	void
 	visit( ArithmeticASTRestTerm const & ) override;
 
+	void
+	visit( ArithmeticASTRestAndClause const & ) override;
+
+	void
+	visit( ArithmeticASTRestOrClause const & ) override;
 
 	void
 	visit( ArithmeticASTRestExpression const & ) override;

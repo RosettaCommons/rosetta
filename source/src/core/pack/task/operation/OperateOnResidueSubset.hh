@@ -32,10 +32,10 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
-
-#include <utility/vector1.hh>
+#include <list>
 
 
 namespace core {
@@ -69,6 +69,10 @@ public:
 	/// @brief sets the ResLvlTaskOperation that will be applied to residues
 	void op( ResLvlTaskOperationCOP );
 
+	/// @brief Add a ResLvlTaskOperation to the list of those that will be applied to the selected
+	/// residues
+	void append_op( ResLvlTaskOperationCOP );
+
 	/// @brief sets the ResidueSelector that will be used to determine which residues to apply the RLTOP to
 	void selector( core::select::residue_selector::ResidueSelectorCOP );
 
@@ -87,7 +91,7 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	ResLvlTaskOperationCOP op_;
+	std::list< ResLvlTaskOperationCOP > ops_;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 	utility::vector1< bool > user_provided_subset_;
 	bool flip_subset_;

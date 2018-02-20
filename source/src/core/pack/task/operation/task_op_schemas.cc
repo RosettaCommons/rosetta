@@ -86,6 +86,7 @@ res_lvl_task_op_schema_empty(
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_res_lvl_task_op( task_op_name ));
 	task_op_def.description( description ) ;
+	append_name_and_attributes_to_complex_type( AttributeList(), task_op_def );
 	xsd.add_top_level_element( task_op_def );
 }
 
@@ -101,9 +102,7 @@ res_lvl_task_op_schema_w_attributes(
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_res_lvl_task_op( task_op_name ));
 	task_op_def.description ( description ) ;
-	for ( auto const & attribute : attributes ) {
-		task_op_def.add_attribute( attribute );
-	}
+	append_name_and_attributes_to_complex_type( attributes, task_op_def );
 	xsd.add_top_level_element( task_op_def );
 }
 

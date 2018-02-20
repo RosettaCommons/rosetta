@@ -22,9 +22,11 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
+#include <core/pack/task/operation/parsing_utilities.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/util.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
@@ -49,7 +51,6 @@ static basic::Tracer TR( "core.pack.task.operation.OperateOnResidueSubset", t_in
 
 OperateOnResidueSubset::OperateOnResidueSubset()
 : parent(),
-	op_(/* 0 */),
 	residue_selector_(/* 0 */),
 	flip_subset_(false)
 {}
@@ -60,19 +61,22 @@ OperateOnResidueSubset::OperateOnResidueSubset(
 	bool flip_subset
 )
 : parent(),
-	op_(std::move( rlto )),
 	residue_selector_(std::move( selector )),
 	flip_subset_(flip_subset)
-{}
+{
+	ops_.push_back( std::move(rlto) );
+}
 
 OperateOnResidueSubset::OperateOnResidueSubset(
 	ResLvlTaskOperationCOP rlto,
 	utility::vector1< bool > const & subset
 )
 : parent(),
-	op_(std::move( rlto )),
 	user_provided_subset_( subset )
-{}
+{
+	ops_.push_back( std::move(rlto) );
+
+}
 
 OperateOnResidueSubset::OperateOnResidueSubset( OperateOnResidueSubset const & src )
 : TaskOperation( src )
@@ -84,7 +88,7 @@ OperateOnResidueSubset &
 OperateOnResidueSubset::operator = ( OperateOnResidueSubset const & src )
 {
 	if ( this != & src ) {
-		op_ = src.op_;
+		ops_ = src.ops_;
 		residue_selector_ = src.residue_selector_;
 		user_provided_subset_ = src.user_provided_subset_;
 		flip_subset_ = src.flip_subset_;
@@ -120,13 +124,24 @@ OperateOnResidueSubset::apply( Pose const & pose, PackerTask & ptask ) const
 	}
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( subset[ ii ] ) op_->apply( ptask.nonconst_residue_task( ii ) );
+		if ( subset[ ii ] ) {
+			for ( auto const & op : ops_ ) {
+				op->apply( ptask.nonconst_residue_task( ii ) );
+			}
+		}
 	}
 }
 
 void OperateOnResidueSubset::op( ResLvlTaskOperationCOP op_in )
 {
-	op_ = op_in;
+	ops_.clear();
+	ops_.push_back( op_in );
+}
+
+void OperateOnResidueSubset::append_op( ResLvlTaskOperationCOP op_in )
+{
+	ops_.push_back( op_in );
+
 }
 
 void OperateOnResidueSubset::flip_subset( bool flip_subset ){
@@ -157,11 +172,21 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 {
 	using namespace core::select::residue_selector;
 
-	ResLvlTaskOperationCOP rltop;
-
 	std::string selector_name;
 	ResidueSelectorCOP selector;
-	if ( tag->hasOption( "selector" ) ) {
+	if ( tag->hasOption( "selector_logic" ) ) {
+		try {
+			selector = parse_residue_selector_logic_string( datamap, tag );
+		} catch ( utility::excn::Exception & e ) {
+			std::ostringstream oss;
+			oss << "Error in parsing selector_logic attribute of OperateOnResidueSubset tag";
+			if ( tag->hasOption( "name" ) ) {
+				oss << " with name \"" << tag->getOption< std::string >( "name" );
+			}
+			oss << "\nGenerated the following error message:\n" << e.msg();
+			throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+		}
+	} else if ( tag->hasOption( "selector" ) ) {
 		selector_name = tag->getOption< std::string >( "selector" );
 		try {
 			selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_name );
@@ -171,18 +196,19 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 		}
 	}
 
+	if ( tag->hasOption( "residue_level_operations" ) ) {
+		parse_residue_level_task_operations( tag, datamap, ops_ );
+	}
+
 	utility::vector0< TagCOP > const & subtags( tag->getTags() );
 	for ( auto const & subtag : subtags ) {
 		std::string const & type( subtag->getName() );
 		ResLvlTaskOperationFactory * rltof = ResLvlTaskOperationFactory::get_instance();
 		if ( rltof && rltof->has_type( type ) ) {
-			if ( rltop ) {
-				std::string error_message = "Error from OperateOnResidueSubset::parse_tag: multiple residue-level task operations given; only one allowed\n";
-				throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
-			}
-			rltop = rltof->newRLTO( type );
+			ResLvlTaskOperationOP rltop = rltof->newRLTO( type );
 			rltop->parse_tag( subtag );
-			TR(t_debug) << "using ResLvlTaskOperation of type " << type << std::endl;
+			ops_.push_back( rltop );
+			TR(t_debug) << "Adding ResLvlTaskOperation of type " << type << std::endl;
 			continue;
 		}
 		ResidueSelectorFactory * res_selector_factory = ResidueSelectorFactory::get_instance();
@@ -198,9 +224,9 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 		TR.Warning << type << " is not known to either the ResLvelTaskOperationFactory or the ResidueSelectorFactory. Ignorning it." << std::endl;
 	}
 
-	if ( ! rltop ) {
+	if ( ops_.empty() ) {
 		std::string error_message = "Error from OperateOnResidueSubset::parse_tag.  No residue-level task operation provided\n";
-		error_message += "The residue level task operation must be provided as a subtag of the OperateOnResidueSubset tag\n";
+		error_message += "The residue level task operation(s) must be provided either as a subtag of the OperateOnResidueSubset tag or with the residue_level_operations attribute\n";
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 	}
 	if ( ! selector ) {
@@ -210,7 +236,6 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
 	}
 
-	op_ = rltop;
 	residue_selector_ = selector;
 }
 
@@ -230,19 +255,24 @@ void OperateOnResidueSubset::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attlist + XMLSchemaAttribute(
 		"selector", xs_string,
 		"Residue selector that indicates to which residues the operation will be applied.");
+	select::residue_selector::attributes_for_parse_residue_selector_logic_string( xsd, attlist );
+	attributes_for_parse_residue_level_operations( attlist );
 
 	XMLSchemaComplexTypeGenerator ct_gen;
-	XMLSchemaSimpleSubelementList subelements;
+	XMLSchemaSimpleSubelementList rs_subelement, rlto_subelement;
 	// the ResidueSelector subelement is not required; it can be provided by name through the datamap; thus
 	// the min_occurs for this subelement is set to 0
-	subelements.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name, 0 /*min_occurs*/ );
-	subelements.add_group_subelement( & ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name );
+	rs_subelement.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name );
+	rlto_subelement.add_group_subelement( & ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name );
 	ct_gen.element_name( keyname() )
 		.description(
-		"OperateOnResidueSubset is a TaskOperation that applies a ResLevelTaskOperation "
-		"to the residues indicated by a ResidueSelector" )
+		"OperateOnResidueSubset is a TaskOperation that applies one or more ResLevelTaskOperations "
+		"to the residues indicated by a ResidueSelector. The ResidueSelector can either be previously "
+		"defined, or constructed as a subtag beneath the main tag, or can be composed using boolean "
+		"AND, OR, and ! (not) operations using the selector_logic attribute." )
 		.complex_type_naming_func( & complex_type_name_for_task_op )
-		.set_subelements_single_appearance_required_and_ordered( subelements )
+		.add_ordered_subelement_set_as_optional( rs_subelement )
+		.add_ordered_subelement_set_as_repeatable( rlto_subelement )
 		.add_attributes( attlist )
 		.write_complex_type_to_schema( xsd );
 }

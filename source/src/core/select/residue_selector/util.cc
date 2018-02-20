@@ -17,9 +17,9 @@
 // Package headers
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-
 #include <core/select/residue_selector/OrResidueSelector.hh>
 #include <core/select/residue_selector/AndResidueSelector.hh>
+#include <core/select/residue_selector/SelectorLogicParser.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -331,6 +331,35 @@ AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {
 		return ResidueSelectorOP( new AndResidueSelector( sele1, sele2 ) );
 	}
 }
+
+
+ResidueSelectorOP
+parse_residue_selector_logic_string(
+	basic::datacache::DataMap const & dm,
+	utility::tag::TagCOP const & tag,
+	std::string const & atname /*= "selector_logic" */
+)
+{
+	if ( ! tag->hasOption( atname ) ) return nullptr;
+
+	SelectorLogicParser parser;
+	return parser.parse_string_to_residue_selector( dm, tag->getOption< std::string >( atname ) );
+}
+
+void
+attributes_for_parse_residue_selector_logic_string(
+	utility::tag::XMLSchemaDefinition & /*xsd*/, // not yet needed
+	utility::tag::AttributeList & attributes,
+	std::string const & selector_logic_attribute_name /*= "selector_logic"*/
+)
+{
+	using namespace utility::tag;
+	attributes + XMLSchemaAttribute( selector_logic_attribute_name, xs_string,
+		"Logically combine already-delcared ResidueSelectors using boolean AND, OR, and ! (not)"
+		" operators. As convnetional, ! (not) has the highest precedence, then AND, then OR."
+		" Parentheses may be used to group operations together." );
+}
+
 
 }
 }

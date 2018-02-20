@@ -143,6 +143,76 @@ RestrictAbsentCanonicalAASRLTCreator::create_res_level_task_operation() const {
 	return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASRLT );
 }
 
+RestrictAbsentCanonicalAASExceptNativeRLT::RestrictAbsentCanonicalAASExceptNativeRLT()
+: canonical_aas_to_keep_( chemical::num_canonical_aas, false )
+{}
+
+RestrictAbsentCanonicalAASExceptNativeRLT::~RestrictAbsentCanonicalAASExceptNativeRLT() = default;
+
+
+ResLvlTaskOperationOP
+RestrictAbsentCanonicalAASExceptNativeRLT::clone() const { return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASExceptNativeRLT( *this ) ); }
+
+void RestrictAbsentCanonicalAASExceptNativeRLT::apply( ResidueLevelTask & rlt ) const
+{
+	rlt.restrict_nonnative_canonical_aas( canonical_aas_to_keep_ );
+}
+
+// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
+void RestrictAbsentCanonicalAASExceptNativeRLT::aas_to_keep( utility::vector1< bool > const & aa_flags )
+{
+	runtime_assert( aa_flags.size() == chemical::num_canonical_aas );
+	canonical_aas_to_keep_ = aa_flags;
+}
+
+void RestrictAbsentCanonicalAASExceptNativeRLT::aas_to_keep( std::string const & aastring )
+{
+	using namespace chemical;
+	runtime_assert( canonical_aas_to_keep_.size() == num_canonical_aas );
+	for ( char const code : aastring ) {
+		if ( oneletter_code_specifies_aa( code ) ) {
+			canonical_aas_to_keep_[ aa_from_oneletter_code( code ) ] = true;
+		} else {
+			std::ostringstream os;
+			os << "aa letter " << code << " does not not correspond to a canonical AA";
+			utility_exit_with_message( os.str() );
+		}
+	}
+}
+
+void RestrictAbsentCanonicalAASExceptNativeRLT::parse_tag( TagCOP tag )
+{
+	runtime_assert( tag != nullptr );
+	if ( tag->hasOption("aas") ) aas_to_keep( tag->getOption<std::string>("aas") );
+	else utility_exit_with_message("no aas tag option by which restrict absent canonical aas.");
+}
+
+std::string RestrictAbsentCanonicalAASExceptNativeRLT::keyname() { return "RestrictAbsentCanonicalAASExceptNativeRLT"; }
+
+void RestrictAbsentCanonicalAASExceptNativeRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	utility::tag::AttributeList attributes;
+	attributes + utility::tag::XMLSchemaAttribute::required_attribute(
+		"aas", utility::tag::xs_string,
+		"list of one letter codes of permitted amino acids, with no separator. "
+		"(e.g. aas=HYFW for only aromatic amino acids.)" );
+
+	res_lvl_task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Except for the native amino acid, do not allow design to amino acid identities that are not listed (i.e. permit only those listed + native) "
+		"at specific positions (selected by a ResidueSelector or a ResFilter).");
+}
+
+void RestrictAbsentCanonicalAASExceptNativeRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	RestrictAbsentCanonicalAASExceptNativeRLT::provide_xml_schema( xsd );
+}
+
+std::string RestrictAbsentCanonicalAASExceptNativeRLTCreator::keyname() const { return RestrictAbsentCanonicalAASExceptNativeRLT::keyname(); }
+
+ResLvlTaskOperationOP
+RestrictAbsentCanonicalAASExceptNativeRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASExceptNativeRLT );
+}
+
 //BEGIN DisallowIfNonnativeRLTRLT
 DisallowIfNonnativeRLT::DisallowIfNonnativeRLT():
 	disallowed_aas_ ( chemical::num_canonical_aas, false ),
@@ -334,7 +404,10 @@ std::string IncludeCurrentRLT::keyname() { return "IncludeCurrentRLT"; }
 void IncludeCurrentRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	res_lvl_task_op_schema_empty(
 		xsd, keyname(),
-		"Includes current rotamers (eg - from input pdb) in the rotamer set. ");
+		"Includes current rotamers in the rotamer set. If the input Pose comes directly from"
+		" the crystal structure when the packer is invoked, then this will include the crystal"
+		" rotamers; however, if something has happened to the Pose since it was read in, then"
+		" the crystal rotamers will not be added to the rotamer set." );
 }
 
 ResLvlTaskOperationOP

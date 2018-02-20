@@ -77,6 +77,12 @@ token_type_name( TokenType tt )
 		return "MULTIPLY_SYMBOL";
 	case DIVIDE_SYMBOL :
 		return "DIVIDE_SYMBOL";
+	case AND_SYMBOL :
+		return "AND_SYMBOL";
+	case OR_SYMBOL :
+		return "OR_SYMBOL";
+	case NOT_SYMBOL :
+		return "NOT_SYMBOL";
 	default :
 		return "ERROR IN token_type_name -- unrecognized token type!";
 	}
@@ -248,10 +254,10 @@ void TokenSet::pop()
 	++curr_pos_;
 }
 
-void
+std::string
 TokenSet::log_error() const
 {
-	print_to_curr_pos();
+	return print_to_curr_pos();
 }
 
 std::string
@@ -265,26 +271,29 @@ TokenSet::print() const
 	return ostream.str();
 }
 
-void
+std::string
 TokenSet::print_to_curr_pos() const
 {
-	std::cerr << "TokenSet parsing error" << std::endl;
+	std::ostringstream oss;
+	oss << "TokenSet parsing error" << std::endl;
 	Size count( 0 );
 	for ( std::list< TokenCOP >::const_iterator
 			iter = tokens_.begin(), iter_end = curr_pos_;
 			iter != iter_end; ++iter ) {
 		++count;
-		std::cerr << count << ": " << (*iter)->to_string() << std::endl;
+		oss << count << ": " << (*iter)->to_string() << "\n";
 	}
-
+	return oss.str();
 }
 
-ArithmeticScanner::ArithmeticScanner()
+ArithmeticScanner::ArithmeticScanner() :
+	treat_AND_and_OR_as_operators_( false )
 {
 	add_standard_functions();
 }
 
-ArithmeticScanner::ArithmeticScanner( bool /*dummy */ )
+ArithmeticScanner::ArithmeticScanner( bool /*dummy */ ) :
+	treat_AND_and_OR_as_operators_( false )
 {
 	/// no op -- do not add the standard functions.
 }
@@ -295,6 +304,11 @@ void ArithmeticScanner::add_standard_functions()
 	add_function( "min", 2 );
 	add_function( "max", 2 );
 	add_function( "sqrt", 1 );
+}
+
+void ArithmeticScanner::treat_AND_and_OR_as_operators( bool setting )
+{
+	treat_AND_and_OR_as_operators_ = setting;
 }
 
 void ArithmeticScanner::add_variable( std::string const & name )
@@ -354,7 +368,8 @@ ArithmeticScanner::scan( std::string const & input_string )
 					if ( curr_char == ' ' ||  curr_char == '(' ||
 							curr_char == ')' || curr_char == ',' ||
 							curr_char == '+' || curr_char == '*' ||
-							curr_char == '/' || curr_char == '\t' ) {
+							curr_char == '/' || curr_char == '\t' ||
+							curr_char == '!' ) {
 						done = true;
 					} else if ( curr_char == '-' ) {
 						done = true;
@@ -385,7 +400,8 @@ ArithmeticScanner::scan( std::string const & input_string )
 					if ( curr_char == ' ' ||  curr_char == '(' ||
 							curr_char == ')' || curr_char == ',' ||
 							curr_char == '+' || curr_char == '*' ||
-							curr_char == '/' || curr_char == '-' || curr_char == '\t' ) {
+							curr_char == '/' || curr_char == '-' ||
+							curr_char == '\t' || curr_char == '!' ) {
 						done = true;
 					}
 				}
@@ -429,6 +445,9 @@ ArithmeticScanner::scan( std::string const & input_string )
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == '/' ) {
 				tokens->append( TokenCOP( TokenOP( new SimpleToken( DIVIDE_SYMBOL ) ) ) );
+				++pos_token_begin;
+			} else if ( input_string[ pos_curr ] == '!' ) {
+				tokens->append( TokenCOP( TokenOP( new SimpleToken( NOT_SYMBOL ) ) ) );
 				++pos_token_begin;
 			} else if ( is_numeral( input_string[ pos_curr ] ) ) {
 				scanning_literal = true;
@@ -510,6 +529,14 @@ ArithmeticScanner::scan_identifier( std::string const & input_string ) const
 		}
 	}
 
+	if ( treat_AND_and_OR_as_operators_ ) {
+		if ( input_string == "AND" ) {
+			return TokenOP( new SimpleToken( AND_SYMBOL ) );
+		} else if ( input_string == "OR" ) {
+			return TokenOP( new SimpleToken( OR_SYMBOL ) );
+		}
+	}
+
 	/// try inserting as a variable
 	if ( variables_.find( input_string ) != variables_.end() ) {
 		return TokenOP( new VariableToken( input_string ) );
@@ -519,22 +546,25 @@ ArithmeticScanner::scan_identifier( std::string const & input_string ) const
 		return TokenOP( new FunctionToken( input_string, functions_.find( input_string )->second ) );
 	}
 
-	log_error();
-	utility_exit_with_message( "Error in scan_identifier: Failed to find input_string in either variables_ or functions_ maps\n" + input_string );
+	std::string error = log_error();
+	utility_exit_with_message( "Error in scan_identifier: Failed to find input_string in either variables_ or functions_ maps\n" + input_string + "\n" + error );
 	return nullptr; /// appease compiler
 }
 
 /// @brief print the contents of functions_ and variables_ to std error
-void ArithmeticScanner::log_error() const
+std::string
+ArithmeticScanner::log_error() const
 {
-	std::cerr << "An error has occurred.  ArithmeticScanner contents: " << std::endl;
+	std::ostringstream oss;
+	oss << "An error has occurred.  ArithmeticScanner contents: " << std::endl;
 	for ( auto const & variable : variables_ ) {
-		std::cerr << "variable: " << variable.first << std::endl;
+		oss << "variable: " << variable.first << std::endl;
 	}
 	for ( auto const & function : functions_ ) {
-		std::cerr << "functions: " << function.first << " #args: " << function.second << std::endl;
+		oss << "functions: " << function.first << " #args: " << function.second << std::endl;
 	}
-	std::cerr << std::endl;
+	oss << std::endl;
+	return oss.str();
 }
 
 
@@ -566,12 +596,12 @@ void
 ArithmeticASTExpression::parse( TokenSet & tokens )
 {
 	if ( tokens.empty() ) {
-		tokens.log_error();
-		utility_exit_with_message( "Error parsing ArithmeticASTExpression.  Empty token list!" );
+		std::string error = tokens.log_error();
+		utility_exit_with_message( "Error parsing ArithmeticASTExpression. Empty token list!\n" + error );
 	}
 
 	//std::cout << "ASTExpression " << token_type_name( tokens.top()->type() );
-	ArithmeticASTTermOP child1( new ArithmeticASTTerm );
+	ArithmeticASTOrClauseOP child1( new ArithmeticASTOrClause );
 	child1->parse( tokens );
 	children_.push_back( child1 );
 	ArithmeticASTRestExpressionOP child2( new ArithmeticASTRestExpression );
@@ -605,15 +635,15 @@ void
 ArithmeticASTFunction::parse( TokenSet & tokens )
 {
 	if ( tokens.empty() ) {
-		tokens.log_error();
-		utility_exit_with_message( "Error parsing ArithmeticASTFunction.  Empty token list!" );
+		std::string error = tokens.log_error();
+		utility_exit_with_message( "Error parsing ArithmeticASTFunction.  Empty token list!\n" + error );
 	}
 
 	if ( ! tokens.empty() ) {
 		//std::cout << "ArithmeticASTFunction " << token_type_name( tokens.top()->type() );
 		if ( tokens.top()->type() != FUNCTION ) {
-			tokens.log_error();
-			utility_exit_with_message( "Error in ArithmeticASTFunction parse: non function input!" );
+			std::string error = tokens.log_error();
+			utility_exit_with_message( "Error in ArithmeticASTFunction parse: non function input!\n" + error );
 		}
 		TokenCOP toptoken = tokens.top();
 		function_ = FunctionTokenCOP( utility::pointer::dynamic_pointer_cast< numeric::expression_parser::FunctionToken const > ( toptoken ) );
@@ -628,8 +658,8 @@ ArithmeticASTFunction::parse( TokenSet & tokens )
 		tokens.pop();
 
 		if ( tokens.top()->type() != LEFT_PAREN ) {
-			tokens.log_error();
-			utility_exit_with_message( "Error parsing ArithmeticASTFunction: expected left paren.");
+			std::string error = tokens.log_error();
+			utility_exit_with_message( "Error parsing ArithmeticASTFunction: expected left paren.\n" + error );
 		}
 		assert( tokens.top()->type() == LEFT_PAREN );
 		tokens.pop();
@@ -638,8 +668,8 @@ ArithmeticASTFunction::parse( TokenSet & tokens )
 			ArithmeticASTExpressionOP exp( new ArithmeticASTExpression );
 			exp->parse( tokens );
 			if ( tokens.top()->type() != COMMA ) {
-				tokens.log_error();
-				utility_exit_with_message( "Error in parsing ArithmeticASTFunction: expected comma." );
+				std::string error = tokens.log_error();
+				utility_exit_with_message( "Error in parsing ArithmeticASTFunction: expected comma.\n" + error );
 			}
 
 			assert( tokens.top()->type() == COMMA );
@@ -651,8 +681,8 @@ ArithmeticASTFunction::parse( TokenSet & tokens )
 		exp->parse( tokens );
 		children_.push_back( exp );
 		if ( tokens.top()->type() != RIGHT_PAREN ) {
-			tokens.log_error();
-			utility_exit_with_message( "Error in parsing ArithmeticASTFunction: expected right paren.");
+			std::string error = tokens.log_error();
+			utility_exit_with_message( "Error in parsing ArithmeticASTFunction: expected right paren.\n" + error );
 		}
 		tokens.pop();
 	}
@@ -690,8 +720,8 @@ void
 ArithmeticASTTerm::parse( TokenSet & tokens )
 {
 	if ( tokens.empty() ) {
-		tokens.log_error();
-		utility_exit_with_message("Error parsing ArithmeticASTTerm.  Empty token list!" );
+		std::string error = tokens.log_error();
+		utility_exit_with_message("Error parsing ArithmeticASTTerm.  Empty token list!\n" + error );
 	}
 	ArithmeticASTFactorOP factor( new ArithmeticASTFactor );
 	factor->parse( tokens );
@@ -713,6 +743,10 @@ ArithmeticASTTerm::children_end() const
 	return children_.end();
 }
 
+ArithmeticASTFactor::ArithmeticASTFactor() :
+	not_token_( INVALID_TOKEN_TYPE )
+{}
+
 ArithmeticASTFactor::~ArithmeticASTFactor() = default;
 
 void
@@ -725,7 +759,13 @@ void
 ArithmeticASTFactor::parse( TokenSet & tokens )
 {
 	TokenType toptype = tokens.top()->type();
-	if ( toptype == FUNCTION ) {
+	if ( toptype == NOT_SYMBOL ) {
+		not_token_ = toptype;
+		tokens.pop();
+		ArithmeticASTFactorOP child( new ArithmeticASTFactor );
+		child->parse( tokens );
+		child_ = child;
+	} else if ( toptype == FUNCTION ) {
 		ArithmeticASTFunctionOP func( new ArithmeticASTFunction );
 		func->parse( tokens );
 		child_ = func;
@@ -739,13 +779,13 @@ ArithmeticASTFactor::parse( TokenSet & tokens )
 		exp->parse( tokens );
 		child_ = exp;
 		if ( tokens.top()->type() != RIGHT_PAREN ) {
-			tokens.log_error();
-			utility_exit_with_message( "Parse error in ArithmeticASTFactor, expected RIGHT_PAREN but got " + token_type_name( tokens.top()->type() ) );
+			std::string error = tokens.log_error();
+			utility_exit_with_message( "Parse error in ArithmeticASTFactor, expected RIGHT_PAREN but got " + token_type_name( tokens.top()->type() ) + "\n" + error );
 		}
 		tokens.pop();
 	} else {
-		tokens.log_error();
-		utility_exit_with_message( "Parse error in ArithmeticASTFactor, expected a function, variable, literal or left-paren but got " + token_type_name( toptype ) );
+		std::string error = tokens.log_error();
+		utility_exit_with_message( "Parse error in ArithmeticASTFactor, expected a function, variable, literal or left-paren but got " + token_type_name( toptype ) + "\n" + error );
 	}
 }
 
@@ -754,6 +794,86 @@ ArithmeticASTFactor::child() const
 {
 	return child_;
 }
+
+TokenType
+ArithmeticASTFactor::not_token() const
+{
+	return not_token_;
+}
+
+ArithmeticASTOrClause::~ArithmeticASTOrClause() {}
+
+void
+ArithmeticASTOrClause::visit( ASTVisitor & visitor ) const
+{
+	visitor.visit( *this );
+}
+
+void
+ArithmeticASTOrClause::parse( TokenSet & tokens )
+{
+	if ( tokens.empty() ) {
+		std::string error = tokens.log_error();
+		utility_exit_with_message( "Error parsing ArithmeticASTOrClause. Empty token list!\n" + error );
+	}
+
+	ArithmeticASTAndClauseOP child1( new ArithmeticASTAndClause );
+	child1->parse( tokens );
+	children_.push_back( child1 );
+	ArithmeticASTRestOrClauseOP child2( new ArithmeticASTRestOrClause );
+	child2->parse( tokens );
+	children_.push_back( child2 );
+}
+
+std::list< ArithmeticASTNodeCOP >::const_iterator
+ArithmeticASTOrClause::children_begin() const
+{
+	return children_.begin();
+}
+
+std::list< ArithmeticASTNodeCOP >::const_iterator
+ArithmeticASTOrClause::children_end() const
+{
+	return children_.end();
+}
+
+ArithmeticASTAndClause::~ArithmeticASTAndClause() {}
+
+void
+ArithmeticASTAndClause::visit( ASTVisitor & visitor ) const
+{
+	visitor.visit( *this );
+}
+
+void
+ArithmeticASTAndClause::parse( TokenSet & tokens )
+{
+	if ( tokens.empty() ) {
+		std::string error = tokens.log_error();
+		utility_exit_with_message( "Error parsing ArithmeticASTAndClause.  Empty token list!\n" + error );
+	}
+
+	//std::cout << "ASTExpression " << token_type_name( tokens.top()->type() );
+	ArithmeticASTTermOP child1( new ArithmeticASTTerm );
+	child1->parse( tokens );
+	children_.push_back( child1 );
+	ArithmeticASTRestAndClauseOP child2( new ArithmeticASTRestAndClause );
+	child2->parse( tokens );
+	children_.push_back( child2 );
+}
+
+std::list< ArithmeticASTNodeCOP >::const_iterator
+ArithmeticASTAndClause::children_begin() const
+{
+	return children_.begin();
+}
+
+std::list< ArithmeticASTNodeCOP >::const_iterator
+ArithmeticASTAndClause::children_end() const
+{
+	return children_.end();
+}
+
 
 ArithmeticASTValue::ArithmeticASTValue()
 :
@@ -774,8 +894,8 @@ void
 ArithmeticASTValue::parse( TokenSet & tokens )
 {
 	if ( tokens.empty() ) {
-		tokens.log_error();
-		utility_exit_with_message( "Error parsing ArithmeticASTValue.  Token set empty" );
+		std::string error = tokens.log_error();
+		utility_exit_with_message( "Error parsing ArithmeticASTValue.  Token set empty\n" + error );
 	}
 	TokenType toptoken = tokens.top()->type();
 	if ( toptoken == VARIABLE ) {
@@ -792,8 +912,8 @@ ArithmeticASTValue::parse( TokenSet & tokens )
 		is_literal_ = true;
 		tokens.pop();
 	} else {
-		tokens.log_error();
-		utility_exit_with_message( "Error in parsing ArithmeticASTValue.  Expected variable or literal but got " + token_type_name( toptoken ) );
+		std::string error = tokens.log_error();
+		utility_exit_with_message( "Error in parsing ArithmeticASTValue.  Expected variable or literal but got " + token_type_name( toptoken ) + "\n" + error );
 	}
 
 }
@@ -876,6 +996,96 @@ ArithmeticASTRestTerm::rest_term_token() const
 	return rest_term_token_;
 }
 
+ArithmeticASTRestOrClause::ArithmeticASTRestOrClause() :
+	rest_or_clause_token_( INVALID_TOKEN_TYPE )
+{}
+
+void
+ArithmeticASTRestOrClause::visit( ASTVisitor & visitor ) const
+{
+	visitor.visit( *this );
+}
+
+void
+ArithmeticASTRestOrClause::parse( TokenSet & tokens )
+{
+	if ( tokens.empty() ) return;
+	TokenType toptoken = tokens.top()->type();
+	if ( toptoken == AND_SYMBOL ) {
+		rest_or_clause_token_ = toptoken;
+		tokens.pop();
+		ArithmeticASTAndClauseOP and_clause( new ArithmeticASTAndClause );
+		and_clause->parse( tokens );
+		children_.push_back( and_clause );
+		ArithmeticASTRestOrClauseOP restexpr( new ArithmeticASTRestOrClause );
+		restexpr->parse( tokens );
+		children_.push_back( restexpr );
+	}
+}
+
+std::list< ArithmeticASTNodeCOP >::const_iterator
+ArithmeticASTRestOrClause::children_begin() const
+{
+	return children_.begin();
+}
+
+std::list< ArithmeticASTNodeCOP >::const_iterator
+ArithmeticASTRestOrClause::children_end() const
+{
+	return children_.end();
+}
+
+TokenType
+ArithmeticASTRestOrClause::rest_or_clause_token() const
+{
+	return rest_or_clause_token_;
+}
+
+ArithmeticASTRestAndClause::ArithmeticASTRestAndClause() :
+	rest_and_clause_token_( INVALID_TOKEN_TYPE )
+{}
+
+void
+ArithmeticASTRestAndClause::visit( ASTVisitor & visitor ) const
+{
+	visitor.visit( *this );
+}
+
+void
+ArithmeticASTRestAndClause::parse( TokenSet & tokens )
+{
+	if ( tokens.empty() ) return;
+	TokenType toptoken = tokens.top()->type();
+	if ( toptoken == PLUS_SYMBOL || toptoken == SUBTRACT_SYMBOL ) {
+		rest_and_clause_token_ = toptoken;
+		tokens.pop();
+		ArithmeticASTTermOP term( new ArithmeticASTTerm );
+		term->parse( tokens );
+		children_.push_back( term );
+		ArithmeticASTRestAndClauseOP restexpr( new ArithmeticASTRestAndClause );
+		restexpr->parse( tokens );
+		children_.push_back( restexpr );
+	}
+}
+
+std::list< ArithmeticASTNodeCOP >::const_iterator
+ArithmeticASTRestAndClause::children_begin() const
+{
+	return children_.begin();
+}
+
+std::list< ArithmeticASTNodeCOP >::const_iterator
+ArithmeticASTRestAndClause::children_end() const
+{
+	return children_.end();
+}
+
+TokenType
+ArithmeticASTRestAndClause::rest_and_clause_token() const
+{
+	return rest_and_clause_token_;
+}
+
 ArithmeticASTRestExpression::ArithmeticASTRestExpression()
 :
 	rest_expression_token_( INVALID_TOKEN_TYPE )
@@ -892,12 +1102,12 @@ ArithmeticASTRestExpression::parse( TokenSet & tokens )
 {
 	if ( tokens.empty() ) return;
 	TokenType toptoken = tokens.top()->type();
-	if ( toptoken == PLUS_SYMBOL || toptoken == SUBTRACT_SYMBOL ) {
+	if ( toptoken == OR_SYMBOL ) {
 		rest_expression_token_ = toptoken;
 		tokens.pop();
-		ArithmeticASTTermOP term( new ArithmeticASTTerm );
-		term->parse( tokens );
-		children_.push_back( term );
+		ArithmeticASTOrClauseOP or_clause( new ArithmeticASTOrClause );
+		or_clause->parse( tokens );
+		children_.push_back( or_clause );
 		ArithmeticASTRestExpressionOP restexpr( new ArithmeticASTRestExpression );
 		restexpr->parse( tokens );
 		children_.push_back( restexpr );
@@ -961,6 +1171,43 @@ ASTPrinter::visit( ArithmeticASTExpression const & node )
 }
 
 void
+ASTPrinter::visit( ArithmeticASTAndClause const & node )
+{
+	last_dispatch_to_unknown_type_ = false;
+	indent_line();
+	ostrstream_ << "ArithmeticASTAndClause(";
+	finish_indented_line();
+	increment_indentation();
+	for ( auto iter = node.children_begin(),
+			iter_end = node.children_end(); iter != iter_end; ++iter ) {
+		(*iter)->visit( *this );
+		finish_indented_line();
+	}
+	decrement_indentation();
+	indent_line();
+	ostrstream_ << ")";
+}
+
+void
+ASTPrinter::visit( ArithmeticASTOrClause const & node )
+{
+	last_dispatch_to_unknown_type_ = false;
+	indent_line();
+	ostrstream_ << "ArithmeticASTOrClause(";
+	finish_indented_line();
+	increment_indentation();
+	for ( auto iter = node.children_begin(),
+			iter_end = node.children_end(); iter != iter_end; ++iter ) {
+		(*iter)->visit( *this );
+		finish_indented_line();
+	}
+	decrement_indentation();
+	indent_line();
+	ostrstream_ << ")";
+}
+
+
+void
 ASTPrinter::visit( ArithmeticASTFunction const & node )
 {
 	last_dispatch_to_unknown_type_ = false;
@@ -1009,7 +1256,18 @@ ASTPrinter::visit( ArithmeticASTFactor const & node )
 	ostrstream_ << "ArithmeticASTFactor( ";
 	finish_indented_line();
 	increment_indentation();
-	node.child()->visit( *this );
+	if ( node.not_token() == NOT_SYMBOL ) {
+		ostrstream_ << "NOT( ";
+		finish_indented_line();
+		increment_indentation();
+		node.child()->visit( *this );
+		finish_indented_line();
+		decrement_indentation();
+		indent_line();
+		ostrstream_ << ") ";
+	} else {
+		node.child()->visit( *this );
+	}
 	finish_indented_line();
 	decrement_indentation();
 	indent_line();
@@ -1039,6 +1297,52 @@ ASTPrinter::visit( ArithmeticASTRestTerm const & node )
 		ostrstream_ << "()";
 	} else {
 		ostrstream_ << ":" << token_type_name( node.rest_term_token() ) << "(";
+		finish_indented_line();
+		increment_indentation();
+		for ( auto iter = node.children_begin(),
+				iter_end = node.children_end(); iter != iter_end; ++iter ) {
+			(*iter)->visit( *this );
+			finish_indented_line();
+		}
+		decrement_indentation();
+		indent_line();
+		ostrstream_ << ")";
+	}
+}
+
+void
+ASTPrinter::visit( ArithmeticASTRestAndClause const & node )
+{
+	last_dispatch_to_unknown_type_ = false;
+	indent_line();
+	ostrstream_ << "ArithmeticASTRestAndClause";
+	if ( node.children_begin() == node.children_end() ) {
+		ostrstream_ << "()";
+	} else {
+		ostrstream_ << ":" << token_type_name( node.rest_and_clause_token() ) << "(";
+		finish_indented_line();
+		increment_indentation();
+		for ( auto iter = node.children_begin(),
+				iter_end = node.children_end(); iter != iter_end; ++iter ) {
+			(*iter)->visit( *this );
+			finish_indented_line();
+		}
+		decrement_indentation();
+		indent_line();
+		ostrstream_ << ")";
+	}
+}
+
+void
+ASTPrinter::visit( ArithmeticASTRestOrClause const & node )
+{
+	last_dispatch_to_unknown_type_ = false;
+	indent_line();
+	ostrstream_ << "ArithmeticASTRestOrClause";
+	if ( node.children_begin() == node.children_end() ) {
+		ostrstream_ << "()";
+	} else {
+		ostrstream_ << ":" << token_type_name( node.rest_or_clause_token() ) << "(";
 		finish_indented_line();
 		increment_indentation();
 		for ( auto iter = node.children_begin(),
@@ -1166,6 +1470,63 @@ ExpressionCreator::visit( ArithmeticASTExpression const & node)
 }
 
 void
+ExpressionCreator::visit( ArithmeticASTOrClause const & node)
+{
+	utility::vector1< ExpressionCOP > expressions;
+	expressions.reserve( 2 );
+
+	for ( auto iter = node.children_begin(),
+			iter_end = node.children_end(); iter != iter_end; ++iter ) {
+		(*iter)->visit( *this );
+		if ( last_constructed_expression_ ) {
+			expressions.push_back( last_constructed_expression_ );
+			semi_constructed_expression_ = last_constructed_expression_;
+		}
+	}
+
+	if ( expressions.size() == 1 ) {
+		last_constructed_expression_ = expressions[ 1 ];
+		semi_constructed_expression_.reset();
+	} else if ( expressions.size() == 2 ) {
+		last_constructed_expression_ = expressions[ 2 ];
+		semi_constructed_expression_.reset();
+	} else {
+		utility_exit_with_message( "Visited too many children of ArithmeticASTOrClause.  Cannot proceed! #children= " +
+			utility::to_string( expressions.size() ) );
+	}
+
+}
+
+void
+ExpressionCreator::visit( ArithmeticASTAndClause const & node)
+{
+	utility::vector1< ExpressionCOP > expressions;
+	expressions.reserve( 2 );
+
+	for ( auto iter = node.children_begin(),
+			iter_end = node.children_end(); iter != iter_end; ++iter ) {
+		(*iter)->visit( *this );
+		if ( last_constructed_expression_ ) {
+			expressions.push_back( last_constructed_expression_ );
+			semi_constructed_expression_ = last_constructed_expression_;
+		}
+	}
+
+	if ( expressions.size() == 1 ) {
+		last_constructed_expression_ = expressions[ 1 ];
+		semi_constructed_expression_.reset();
+	} else if ( expressions.size() == 2 ) {
+		last_constructed_expression_ = expressions[ 2 ];
+		semi_constructed_expression_.reset();
+	} else {
+		utility_exit_with_message( "Visited too many children of ArithmeticASTAndClause.  Cannot proceed! #children= " +
+			utility::to_string( expressions.size() ) );
+	}
+
+}
+
+
+void
 ExpressionCreator::visit( ArithmeticASTFunction const & node)
 {
 	utility::vector1< ExpressionCOP > args( node.function()->nargs(), nullptr );
@@ -1221,7 +1582,14 @@ ExpressionCreator::visit( ArithmeticASTTerm const & node )
 void
 ExpressionCreator::visit( ArithmeticASTFactor const & node )
 {
-	node.child()->visit( *this );
+	if ( node.not_token() == NOT_SYMBOL ) {
+		node.child()->visit( *this );
+		ExpressionOP not_expr( new NotExpression( last_constructed_expression_ ) );
+		last_constructed_expression_ = not_expr;
+		semi_constructed_expression_.reset();
+	} else {
+		node.child()->visit( *this );
+	}
 }
 
 void
@@ -1282,7 +1650,7 @@ ExpressionCreator::visit( ArithmeticASTRestTerm const & node )
 }
 
 void
-ExpressionCreator::visit( ArithmeticASTRestExpression const & node )
+ExpressionCreator::visit( ArithmeticASTRestAndClause const & node )
 {
 	if ( node.children_begin() == node.children_end() ) {
 		last_constructed_expression_.reset();
@@ -1302,12 +1670,12 @@ ExpressionCreator::visit( ArithmeticASTRestExpression const & node )
 			if ( last_constructed_expression_ ) {
 				expressions.push_back( last_constructed_expression_ );
 				if ( iter == node.children_begin() ) {
-					if ( node.rest_expression_token() == PLUS_SYMBOL ) {
+					if ( node.rest_and_clause_token() == PLUS_SYMBOL ) {
 						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new AddExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
-					} else if ( node.rest_expression_token() == SUBTRACT_SYMBOL ) {
+					} else if ( node.rest_and_clause_token() == SUBTRACT_SYMBOL ) {
 						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new SubtractExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
 					} else {
-						utility_exit_with_message( "Error visiting ArithmeticASTRestTerm: expected PLUS_SYMBOL or SUBTRACT_SYMBOL; got " + token_type_name( node.rest_expression_token() ) );
+						utility_exit_with_message( "Error visiting ArithmeticASTRestAndClause: expected PLUS_SYMBOL or SUBTRACT_SYMBOL; got " + token_type_name( node.rest_and_clause_token() ) );
 					}
 					my_completed_expression = semi_constructed_expression_;
 				}
@@ -1326,6 +1694,95 @@ ExpressionCreator::visit( ArithmeticASTRestExpression const & node )
 	}
 }
 
+void
+ExpressionCreator::visit( ArithmeticASTRestOrClause const & node )
+{
+
+	if ( node.children_begin() == node.children_end() ) {
+		last_constructed_expression_.reset();
+		semi_constructed_expression_.reset();
+	} else {
+		ExpressionCOP parents_semi_constructed_expression = semi_constructed_expression_;
+		ExpressionCOP my_completed_expression;
+		semi_constructed_expression_.reset();
+
+		utility::vector1< ExpressionCOP > expressions;
+		expressions.reserve( 2 );
+
+		for ( auto iter = node.children_begin(),
+				iter_end = node.children_end(); iter != iter_end; ++iter ) {
+			last_constructed_expression_.reset(); // in case the child doesn't zero this out?
+			(*iter)->visit( *this );
+			if ( last_constructed_expression_ ) {
+				expressions.push_back( last_constructed_expression_ );
+				if ( iter == node.children_begin() ) {
+					if ( node.rest_or_clause_token() == AND_SYMBOL ) {
+						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new AndExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
+					} else {
+						utility_exit_with_message( "Error visiting ArithmeticASTRestOrClause: expected AND_SYMBOL; got " + token_type_name( node.rest_or_clause_token() ) );
+					}
+					my_completed_expression = semi_constructed_expression_;
+				}
+			}
+		}
+		if ( expressions.size() == 1 ) {
+			last_constructed_expression_ = my_completed_expression;
+		} else if ( expressions.size() == 2 ) {
+			// last_constructed_expression_ is already current and was set by child
+			assert( last_constructed_expression_ );
+			semi_constructed_expression_.reset();
+		} else {
+			utility_exit_with_message( "Error in visiting children of ArithmeticASTRestOrClause: too many children ("
+				+ utility::to_string( expressions.size() ) + ")" );
+		}
+	}
+
+}
+
+void
+ExpressionCreator::visit( ArithmeticASTRestExpression const & node )
+{
+
+	if ( node.children_begin() == node.children_end() ) {
+		last_constructed_expression_.reset();
+		semi_constructed_expression_.reset();
+	} else {
+		ExpressionCOP parents_semi_constructed_expression = semi_constructed_expression_;
+		ExpressionCOP my_completed_expression;
+		semi_constructed_expression_.reset();
+
+		utility::vector1< ExpressionCOP > expressions;
+		expressions.reserve( 2 );
+
+		for ( auto iter = node.children_begin(),
+				iter_end = node.children_end(); iter != iter_end; ++iter ) {
+			last_constructed_expression_.reset(); // in case the child doesn't zero this out?
+			(*iter)->visit( *this );
+			if ( last_constructed_expression_ ) {
+				expressions.push_back( last_constructed_expression_ );
+				if ( iter == node.children_begin() ) {
+					if ( node.rest_expression_token() == OR_SYMBOL ) {
+						semi_constructed_expression_ = ExpressionCOP( ExpressionOP( new OrExpression( parents_semi_constructed_expression, last_constructed_expression_ ) ) );
+					} else {
+						utility_exit_with_message( "Error visiting ArithmeticASTRestExpression: expected OR_SYMBOL; got " + token_type_name( node.rest_expression_token() ) );
+					}
+					my_completed_expression = semi_constructed_expression_;
+				}
+			}
+		}
+		if ( expressions.size() == 1 ) {
+			last_constructed_expression_ = my_completed_expression;
+		} else if ( expressions.size() == 2 ) {
+			// last_constructed_expression_ is already current and was set by child
+			assert( last_constructed_expression_ );
+			semi_constructed_expression_.reset();
+		} else {
+			utility_exit_with_message( "Error in visiting children of ArithmeticASTRestExpression: too many children ("
+				+ utility::to_string( expressions.size() ) + ")" );
+		}
+	}
+
+}
 
 void
 ExpressionCreator::visit( ArithmeticASTNode const & )

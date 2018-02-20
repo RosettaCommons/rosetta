@@ -41,6 +41,13 @@ public:
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
+class RestrictAbsentCanonicalAASExceptNativeRLTCreator : public ResLvlTaskOperationCreator {
+public:
+	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+};
+
 class DisallowIfNonnativeRLTCreator : public ResLvlTaskOperationCreator {
 public:
 	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;

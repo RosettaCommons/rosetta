@@ -42,6 +42,15 @@ public:
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
+class ResLvlTaskOperationLoaderCreator : public DataLoaderCreator
+{
+public:
+	virtual DataLoaderOP create_loader() const;
+	virtual std::string keyname() const;
+	virtual DerivedNameFunction schema_ct_naming_function() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+};
+
 class FragSetLoaderCreator : public DataLoaderCreator
 {
 public:

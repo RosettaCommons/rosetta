@@ -53,7 +53,7 @@ public:
 		std::string test_string1( "1 + 3");
 		std::string test_string2( "1 + 3 * 2");
 		std::string test_string3( "1 * 3 + 2");
-		std::string test_string4( "1 * ( 3 + 2 )");
+		std::string test_string4( "2 * ( 3 + 2 )");
 		ArithmeticScanner as;
 		TokenSetOP tokens1 = as.scan( test_string1 );
 		TokenSetOP tokens2 = as.scan( test_string2 );
@@ -67,45 +67,131 @@ public:
 		std::string gold_tokstr1 = "Tokens:\nLITERAL(1)\nPLUS_SYMBOL\nLITERAL(3)\n";
 		std::string gold_tokstr2 = "Tokens:\nLITERAL(1)\nPLUS_SYMBOL\nLITERAL(3)\nMULTIPLY_SYMBOL\nLITERAL(2)\n";
 		std::string gold_tokstr3 = "Tokens:\nLITERAL(1)\nMULTIPLY_SYMBOL\nLITERAL(3)\nPLUS_SYMBOL\nLITERAL(2)\n";
-		std::string gold_tokstr4 = "Tokens:\nLITERAL(1)\nMULTIPLY_SYMBOL\nLEFT_PAREN\nLITERAL(3)\nPLUS_SYMBOL\nLITERAL(2)\nRIGHT_PAREN\n";
+		std::string gold_tokstr4 = "Tokens:\nLITERAL(2)\nMULTIPLY_SYMBOL\nLEFT_PAREN\nLITERAL(3)\nPLUS_SYMBOL\nLITERAL(2)\nRIGHT_PAREN\n";
 
-		TS_ASSERT( gold_tokstr1 == tokstr1 );
-		TS_ASSERT( gold_tokstr2 == tokstr2 );
-		TS_ASSERT( gold_tokstr3 == tokstr3 );
-		TS_ASSERT( gold_tokstr4 == tokstr4 );
+		TS_ASSERT_EQUALS( gold_tokstr1, tokstr1 );
+		TS_ASSERT_EQUALS( gold_tokstr2, tokstr2 );
+		TS_ASSERT_EQUALS( gold_tokstr3, tokstr3 );
+		TS_ASSERT_EQUALS( gold_tokstr4, tokstr4 );
 
 		//std::cout << "1:\n" << tokstr1 << std::endl;
 		//std::cout << "2:\n" << tokstr2 << std::endl;
 		//std::cout << "3:\n" << tokstr3 << std::endl;
 		//std::cout << "4:\n" << tokstr4 << std::endl;
-		ArithmeticASTExpressionOP expr1( new ArithmeticASTExpression );
-		ArithmeticASTExpressionOP expr2( new ArithmeticASTExpression );
-		ArithmeticASTExpressionOP expr3( new ArithmeticASTExpression );
-		ArithmeticASTExpressionOP expr4( new ArithmeticASTExpression );
-		expr1->parse( *tokens1 );
-		expr2->parse( *tokens2 );
-		expr3->parse( *tokens3 );
-		expr4->parse( *tokens4 );
+		ArithmeticASTExpressionOP expr_tree_1( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr_tree_2( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr_tree_3( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr_tree_4( new ArithmeticASTExpression );
+		expr_tree_1->parse( *tokens1 );
+		expr_tree_2->parse( *tokens2 );
+		expr_tree_3->parse( *tokens3 );
+		expr_tree_4->parse( *tokens4 );
 		ASTPrinter printer;
 		printer.pretty( false );
-		std::string ast_string1 = printer.ast_string( *expr1 );
-		std::string ast_string2 = printer.ast_string( *expr2 );
-		std::string ast_string3 = printer.ast_string( *expr3 );
-		std::string ast_string4 = printer.ast_string( *expr4 );
+		std::string ast_string1 = printer.ast_string( *expr_tree_1 );
+		std::string ast_string2 = printer.ast_string( *expr_tree_2 );
+		std::string ast_string3 = printer.ast_string( *expr_tree_3 );
+		std::string ast_string4 = printer.ast_string( *expr_tree_4 );
 		//std::cout << ast_string1 << std::endl << std::endl;
 		//std::cout << ast_string2 << std::endl << std::endl;
 		//std::cout << ast_string3 << std::endl << std::endl;
 		//std::cout << ast_string4 << std::endl << std::endl;
 
-		std::string gold_ast_string1 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) )";
-		std::string gold_ast_string2 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestExpression() ) )";
-		std::string gold_ast_string3 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestExpression:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) )";
-		std::string gold_ast_string4 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string1 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
 
-		TS_ASSERT( gold_ast_string1 == ast_string1 );
-		TS_ASSERT( gold_ast_string2 == ast_string2 );
-		TS_ASSERT( gold_ast_string3 == ast_string3 );
-		TS_ASSERT( gold_ast_string4 == ast_string4 );
+		std::string gold_ast_string2 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string3 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string4 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ) )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
+
+		TS_ASSERT_EQUALS( gold_ast_string1, ast_string1 );
+		TS_ASSERT_EQUALS( gold_ast_string2, ast_string2 );
+		TS_ASSERT_EQUALS( gold_ast_string3, ast_string3 );
+		TS_ASSERT_EQUALS( gold_ast_string4, ast_string4 );
+
+		ExpressionCreator expression_creator;
+		ExpressionCOP expr1 = expression_creator.create_expression_tree( *expr_tree_1 );
+		ExpressionCOP expr2 = expression_creator.create_expression_tree( *expr_tree_2 );
+		ExpressionCOP expr3 = expression_creator.create_expression_tree( *expr_tree_3 );
+		ExpressionCOP expr4 = expression_creator.create_expression_tree( *expr_tree_4 );
+
+		TS_ASSERT_EQUALS( (*expr1)(), 4 );
+		TS_ASSERT_EQUALS( (*expr2)(), 7 );
+		TS_ASSERT_EQUALS( (*expr3)(), 5 );
+		TS_ASSERT_EQUALS( (*expr4)(), 10 );
+
+	}
+
+	void test_parse_mix_boolean_and_arithmetic()
+	{
+		std::string test_string1( "1 + !2 AND 0" );
+		std::string test_string2( "2 OR 2 AND 0" );
+		std::string test_string3( "0 OR 1 + 2 * 0 AND 0" );
+		std::string test_string4( "2 AND 3 OR 0 + ! 5" );
+		ArithmeticScanner as;
+		as.treat_AND_and_OR_as_operators( true );
+		TokenSetOP tokens1 = as.scan( test_string1 );
+		TokenSetOP tokens2 = as.scan( test_string2 );
+		TokenSetOP tokens3 = as.scan( test_string3 );
+		TokenSetOP tokens4 = as.scan( test_string4 );
+		std::string tokstr1 = tokens1->print();
+		std::string tokstr2 = tokens2->print();
+		std::string tokstr3 = tokens3->print();
+		std::string tokstr4 = tokens4->print();
+		//std::cout << "1:\n" << tokstr1 << std::endl;
+		//std::cout << "2:\n" << tokstr2 << std::endl;
+		//std::cout << "3:\n" << tokstr3 << std::endl;
+		//std::cout << "4:\n" << tokstr4 << std::endl;
+
+		std::string gold_tokstr1 = "Tokens:\nLITERAL(1)\nPLUS_SYMBOL\nNOT_SYMBOL\nLITERAL(2)\nAND_SYMBOL\nLITERAL(0)\n";
+		std::string gold_tokstr2 = "Tokens:\nLITERAL(2)\nOR_SYMBOL\nLITERAL(2)\nAND_SYMBOL\nLITERAL(0)\n";
+		std::string gold_tokstr3 = "Tokens:\nLITERAL(0)\nOR_SYMBOL\nLITERAL(1)\nPLUS_SYMBOL\nLITERAL(2)\nMULTIPLY_SYMBOL\nLITERAL(0)\nAND_SYMBOL\nLITERAL(0)\n";
+		std::string gold_tokstr4 = "Tokens:\nLITERAL(2)\nAND_SYMBOL\nLITERAL(3)\nOR_SYMBOL\nLITERAL(0)\nPLUS_SYMBOL\nNOT_SYMBOL\nLITERAL(5)\n";
+
+		TS_ASSERT_EQUALS( gold_tokstr1, tokstr1 );
+		TS_ASSERT_EQUALS( gold_tokstr2, tokstr2 );
+		TS_ASSERT_EQUALS( gold_tokstr3, tokstr3 );
+		TS_ASSERT_EQUALS( gold_tokstr4, tokstr4 );
+
+		ArithmeticASTExpressionOP expr_tree_1( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr_tree_2( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr_tree_3( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr_tree_4( new ArithmeticASTExpression );
+		expr_tree_1->parse( *tokens1 );
+		expr_tree_2->parse( *tokens2 );
+		expr_tree_3->parse( *tokens3 );
+		expr_tree_4->parse( *tokens4 );
+		ASTPrinter printer;
+		printer.pretty( false );
+		std::string ast_string1 = printer.ast_string( *expr_tree_1 );
+		std::string ast_string2 = printer.ast_string( *expr_tree_2 );
+		std::string ast_string3 = printer.ast_string( *expr_tree_3 );
+		std::string ast_string4 = printer.ast_string( *expr_tree_4 );
+
+		//std::cout << ast_string1 << std::endl << std::endl;
+		//std::cout << ast_string2 << std::endl << std::endl;
+		//std::cout << ast_string3 << std::endl << std::endl;
+		//std::cout << ast_string4 << std::endl << std::endl;
+
+		std::string gold_ast_string1 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  NOT(  ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  )  )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause:AND_SYMBOL( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:0 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string2 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression:OR_SYMBOL( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause:AND_SYMBOL( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:0 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ) ArithmeticASTRestExpression() ) )";
+		std::string gold_ast_string3 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:0 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression:OR_SYMBOL( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:literal:0 )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause:AND_SYMBOL( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:0 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ) ArithmeticASTRestExpression() ) )";
+		std::string gold_ast_string4 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause:AND_SYMBOL( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ) ArithmeticASTRestExpression:OR_SYMBOL( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:0 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  NOT(  ArithmeticASTFactor(  ArithmeticASTValue:literal:5 )  )  )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ) )";
+
+		TS_ASSERT_EQUALS( gold_ast_string1, ast_string1 );
+		TS_ASSERT_EQUALS( gold_ast_string2, ast_string2 );
+		TS_ASSERT_EQUALS( gold_ast_string3, ast_string3 );
+		TS_ASSERT_EQUALS( gold_ast_string4, ast_string4 );
+
+		ExpressionCreator expression_creator;
+		ExpressionCOP expr1 = expression_creator.create_expression_tree( *expr_tree_1 );
+		ExpressionCOP expr2 = expression_creator.create_expression_tree( *expr_tree_2 );
+		ExpressionCOP expr3 = expression_creator.create_expression_tree( *expr_tree_3 );
+		ExpressionCOP expr4 = expression_creator.create_expression_tree( *expr_tree_4 );
+
+		TS_ASSERT_EQUALS( (*expr1)(), 0 );
+		TS_ASSERT_EQUALS( (*expr2)(), 1 );
+		TS_ASSERT_EQUALS( (*expr3)(), 0 );
+		TS_ASSERT_EQUALS( (*expr4)(), 1 );
 
 	}
 
@@ -138,10 +224,10 @@ public:
 		std::string gold_tokstr3 = "Tokens:\nLITERAL(1)\nMULTIPLY_SYMBOL\nVARIABLE(fa_rep)\nPLUS_SYMBOL\nVARIABLE(fa_sol)\n";
 		std::string gold_tokstr4 = "Tokens:\nLITERAL(1)\nMULTIPLY_SYMBOL\nLEFT_PAREN\nVARIABLE(fa_atr)\nSUBTRACT_SYMBOL\nVARIABLE(fa_rep)\nRIGHT_PAREN\n";
 
-		TS_ASSERT( gold_tokstr1 == tokstr1 );
-		TS_ASSERT( gold_tokstr2 == tokstr2 );
-		TS_ASSERT( gold_tokstr3 == tokstr3 );
-		TS_ASSERT( gold_tokstr4 == tokstr4 );
+		TS_ASSERT_EQUALS( gold_tokstr1, tokstr1 );
+		TS_ASSERT_EQUALS( gold_tokstr2, tokstr2 );
+		TS_ASSERT_EQUALS( gold_tokstr3, tokstr3 );
+		TS_ASSERT_EQUALS( gold_tokstr4, tokstr4 );
 
 		//std::cout << "1:\n" << tokstr1 << std::endl;
 		//std::cout << "2:\n" << tokstr2 << std::endl;
@@ -168,15 +254,15 @@ public:
 		//std::cout << ast_string3 << std::endl << std::endl;
 		//std::cout << ast_string4 << std::endl << std::endl;
 
-		std::string gold_ast_string1 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_atr )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) )";
-		std::string gold_ast_string2 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_sol )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestExpression() ) )";
-		std::string gold_ast_string3 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_rep )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestExpression:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_sol )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) )";
-		std::string gold_ast_string4 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_atr )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression:SUBTRACT_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_rep )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string1 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_atr )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string2 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_sol )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string3 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_rep )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_sol )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string4 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_atr )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:SUBTRACT_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:variable:fa_rep )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ) )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
 
-		TS_ASSERT( gold_ast_string1 == ast_string1 );
-		TS_ASSERT( gold_ast_string2 == ast_string2 );
-		TS_ASSERT( gold_ast_string3 == ast_string3 );
-		TS_ASSERT( gold_ast_string4 == ast_string4 );
+		TS_ASSERT_EQUALS( gold_ast_string1, ast_string1 );
+		TS_ASSERT_EQUALS( gold_ast_string2, ast_string2 );
+		TS_ASSERT_EQUALS( gold_ast_string3, ast_string3 );
+		TS_ASSERT_EQUALS( gold_ast_string4, ast_string4 );
 
 	}
 
@@ -202,10 +288,10 @@ public:
 		std::string gold_tokstr3 = "Tokens:\nLITERAL(1)\nMULTIPLY_SYMBOL\nFUNCTION(sqrt,1)\nLEFT_PAREN\nLITERAL(3)\nRIGHT_PAREN\n";
 		std::string gold_tokstr4 = "Tokens:\nLITERAL(1)\nMULTIPLY_SYMBOL\nLEFT_PAREN\nFUNCTION(sqrt,1)\nLEFT_PAREN\nLITERAL(2)\nRIGHT_PAREN\nPLUS_SYMBOL\nLITERAL(4.2)\nRIGHT_PAREN\n";
 
-		TS_ASSERT( gold_tokstr1 == tokstr1 );
-		TS_ASSERT( gold_tokstr2 == tokstr2 );
-		TS_ASSERT( gold_tokstr3 == tokstr3 );
-		TS_ASSERT( gold_tokstr4 == tokstr4 );
+		TS_ASSERT_EQUALS( gold_tokstr1, tokstr1 );
+		TS_ASSERT_EQUALS( gold_tokstr2, tokstr2 );
+		TS_ASSERT_EQUALS( gold_tokstr3, tokstr3 );
+		TS_ASSERT_EQUALS( gold_tokstr4, tokstr4 );
 
 		//std::cout << "1:\n" << tokstr1 << std::endl;
 		//std::cout << "2:\n" << tokstr2 << std::endl;
@@ -227,20 +313,20 @@ public:
 		std::string ast_string3 = printer.ast_string( *expr3 );
 		std::string ast_string4 = printer.ast_string( *expr4 );
 
-		///std::cout << ast_string1 << std::endl << std::endl;
-		///std::cout << ast_string2 << std::endl << std::endl;
-		///std::cout << ast_string3 << std::endl << std::endl;
+		//std::cout << ast_string1 << std::endl << std::endl;
+		//std::cout << ast_string2 << std::endl << std::endl;
+		//std::cout << ast_string3 << std::endl << std::endl;
 		//std::cout << ast_string4 << std::endl << std::endl;
 
-		std::string gold_ast_string1 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTFunction:max:2( ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ), ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) ) ) )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() )";
-		std::string gold_ast_string2 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTFunction:max:2( ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:0 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ), ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTFunction:min:2( ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ), ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:literal:4 )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() )";
-		std::string gold_ast_string3 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTFunction:sqrt:1( ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestExpression() )";
-		std::string gold_ast_string4 = "ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTFunction:sqrt:1( ArithmeticASTExpression( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:4.2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string1 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTFunction:max:2( ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ), ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string2 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTFunction:max:2( ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:0 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ), ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTFunction:min:2( ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ), ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTValue:literal:4 )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string3 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTFunction:sqrt:1( ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:3 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
+		std::string gold_ast_string4 = "ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:1 )  ArithmeticASTRestTerm:MULTIPLY_SYMBOL( ArithmeticASTFactor(  ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTFunction:sqrt:1( ArithmeticASTExpression( ArithmeticASTOrClause( ArithmeticASTAndClause( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ) ) )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause:PLUS_SYMBOL( ArithmeticASTTerm( ArithmeticASTFactor(  ArithmeticASTValue:literal:4.2 )  ArithmeticASTRestTerm() ) ArithmeticASTRestAndClause() ) ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() ) )  ArithmeticASTRestTerm() ) ) ArithmeticASTRestAndClause() ) ArithmeticASTRestOrClause() ) ArithmeticASTRestExpression() )";
 
-		TS_ASSERT( gold_ast_string1 == ast_string1 );
-		TS_ASSERT( gold_ast_string2 == ast_string2 );
-		TS_ASSERT( gold_ast_string3 == ast_string3 );
-		TS_ASSERT( gold_ast_string4 == ast_string4 );
+		TS_ASSERT_EQUALS( gold_ast_string1, ast_string1 );
+		TS_ASSERT_EQUALS( gold_ast_string2, ast_string2 );
+		TS_ASSERT_EQUALS( gold_ast_string3, ast_string3 );
+		TS_ASSERT_EQUALS( gold_ast_string4, ast_string4 );
 
 	}
 

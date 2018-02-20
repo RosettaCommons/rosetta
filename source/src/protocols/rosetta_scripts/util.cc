@@ -301,6 +301,23 @@ attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & at
 		+ utility::tag::XMLSchemaAttribute( "task_factory", utility::tag::xs_string , tf_descrip );
 }
 
+
+
+void
+parse_residue_level_task_operations(
+	utility::tag::TagCOP const & tag,
+	basic::datacache::DataMap & data,
+	std::list< core::pack::task::operation::ResLvlTaskOperationOP > & oplist
+);
+
+///////////////////// Attributes /////////////////////////
+
+void
+attributes_for_parse_residue_level_operations(
+	utility::tag::AttributeList & attributes
+);
+
+
 /////////////////////////////////////////////////////////////
 //////////////////// Residue Selectors //////////////////////
 
