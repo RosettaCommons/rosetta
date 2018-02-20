@@ -77,6 +77,9 @@ public:
 	void
 	set_preserve_datacache( bool const preserve_cache );
 
+	void
+	set_keep_pdb_info_labels( bool const keep_pdb_info_labels );
+
 	std::string
 	get_name() const override;
 
@@ -117,6 +120,7 @@ private:
 	std::string symdef_fname_from_options_system_;
 	bool refinable_lattice_was_set_;
 	bool refinable_lattice_;
+	bool keep_pdb_info_labels_;
 };
 
 ///////////////

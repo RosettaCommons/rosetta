@@ -69,6 +69,8 @@ private:
 	core::Real subunit_tolerance_;
 	core::Real plane_tolerance_;
 	bool ignore_single_jump_;
+	bool keep_pdb_info_labels_;
+	bool keep_pdb_remarks_;
 };
 
 } // symmetry

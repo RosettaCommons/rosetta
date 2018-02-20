@@ -117,7 +117,8 @@ SetupForSymmetryMover::SetupForSymmetryMover( utility::options::OptionCollection
 	preserve_datacache_(false),
 	symmdef_(),
 	refinable_lattice_was_set_( false ),
-	refinable_lattice_( false )
+	refinable_lattice_( false ),
+	keep_pdb_info_labels_( false )
 {
 	using namespace basic::options;
 	if ( options[ OptionKeys::symmetry::symmetry_definition ].user() ) {
@@ -190,6 +191,12 @@ SetupForSymmetryMover::set_preserve_datacache( bool const preserve_cache )
 	preserve_datacache_ = preserve_cache;
 }
 
+void
+SetupForSymmetryMover::set_keep_pdb_info_labels( bool const keep_pdb_info_labels )
+{
+	keep_pdb_info_labels_ = keep_pdb_info_labels;
+}
+
 /// @brief   constructs a symmetric pose with a symmetric conformation and energies object.
 /// @details Calls core::pose::make_symmetric_pose().  If preserve_datacache is set, this
 ///          also copies the datacache into the new symmetric pose.
@@ -202,7 +209,7 @@ SetupForSymmetryMover::make_symmetric_pose( core::pose::Pose & pose ) const
 	BasicDataCache cached;
 	if ( preserve_datacache_ ) cached = pose.data();
 
-	core::pose::symmetry::make_symmetric_pose( pose, *symmdef_ );
+	core::pose::symmetry::make_symmetric_pose( pose, *symmdef_, keep_pdb_info_labels_ );
 
 	if ( preserve_datacache_ ) pose.data() = cached;
 }
@@ -277,6 +284,7 @@ void SetupForSymmetryMover::parse_my_tag(
 	using namespace basic::options;
 
 	preserve_datacache_ = tag->getOption< bool >( "preserve_datacache", preserve_datacache_ );
+	keep_pdb_info_labels_ = tag->getOption< bool >( "keep_pdb_info_labels", false );
 	if ( tag->hasOption("definition") && tag->hasOption("symmetry_resource") ) {
 		throw CREATE_EXCEPTION(utility::excn::BadInput,
 			"SetupForSymmetry takes either a 'definition' OR "
@@ -340,6 +348,7 @@ void SetupForSymmetryMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	// XRW TO DO: check these attributes
 	attlist + XMLSchemaAttribute( "definition", xs_string , "The path and filename for a symmetry definition file. This is optional because you can also specify -symmetry:symmetry_definition {pathto/filename_symmetry_definition_file} on the command line." )
 		+ XMLSchemaAttribute::attribute_w_default( "preserve_datacache", xsct_rosetta_bool , "If true, the datacache from the input asymmetric pose will be copied into the new symmetric pose. If false, the pose datacache will be cleared. Default is false for historical reasons." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "keep_pdb_info_labels", xsct_rosetta_bool , "If true, keep PDB Info labels from input pose." , "0" )
 		+ XMLSchemaAttribute( "symmetry_resource", xs_string, "The name for symmetry definition object created by the ResourceManager; this Resource must be declared in the RESOURCES block at the top of the protocol XML file" );
 	// At XSD XRW, we choose to purposefully not document "resource_description." -UN
 

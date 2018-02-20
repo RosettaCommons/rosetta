@@ -68,7 +68,8 @@ make_symmetric_pose(
 void
 make_symmetric_pose(
 	pose::Pose & pose,
-	conformation::symmetry::SymmData & symmdata
+	conformation::symmetry::SymmData & symmdata,
+	bool keep_pdb_info_labels = false
 );
 
 void
@@ -107,7 +108,8 @@ void
 make_symmetric_pdb_info(
 	pose::Pose const & pose,
 	pose::PDBInfoOP pdb_info_src,
-	pose::PDBInfoOP pdb_info_target
+	pose::PDBInfoOP pdb_info_target,
+	bool keep_pdb_info_labels = false
 );
 
 // @details extract the pdbInfo from the asymmetric unit

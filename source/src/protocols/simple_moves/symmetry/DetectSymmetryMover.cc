@@ -15,6 +15,7 @@
 #include <protocols/simple_moves/symmetry/DetectSymmetryMoverCreator.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -67,13 +68,17 @@ static basic::Tracer TR( "protocols.simple_moves.symmetry.DetectSymmetry" );
 DetectSymmetry::DetectSymmetry():
 	subunit_tolerance_( 0.01),
 	plane_tolerance_( 1e-3 ),
-	ignore_single_jump_( false )
+	ignore_single_jump_( false ),
+	keep_pdb_info_labels_( false ),
+	keep_pdb_remarks_( false )
 { }
 
 DetectSymmetry::DetectSymmetry(core::Real subunit_tolerance, core::Real plane_tolerance):
 	subunit_tolerance_( subunit_tolerance ),
 	plane_tolerance_( plane_tolerance ),
-	ignore_single_jump_( false )
+	ignore_single_jump_( false ),
+	keep_pdb_info_labels_( false ),
+	keep_pdb_remarks_( false )
 {
 }
 
@@ -154,10 +159,25 @@ DetectSymmetry::apply(Pose & pose) {
 	// Turn symmetry hacks on
 	basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( db_file );
 	core::pose::symmetry::make_symmetric_pose( new_pose, symmdef );
+
+	// keep info labels if desired
+	if ( keep_pdb_info_labels_ ) {
+		for ( core::Size res = 1; res <= pose.total_residue(); ++res ) {
+			utility::vector1 < std::string > reslabels_for_res = pose.pdb_info()->get_reslabels(res);
+			runtime_assert( res <= new_pose.total_residue() && pose.residue(res).name1() == new_pose.residue(res).name1() );
+			for ( auto const reslabel : reslabels_for_res ) {
+				new_pose.pdb_info()->add_reslabel( res, reslabel );
+			}
+		}
+	}
+
+	// keep remarks if desired
+	if ( keep_pdb_remarks_ ) {
+		new_pose.pdb_info()->remarks(pose.pdb_info()->remarks());
+	}
 	pose = new_pose;
 
 }
-
 
 void
 DetectSymmetry::parse_my_tag(
@@ -171,6 +191,8 @@ DetectSymmetry::parse_my_tag(
 	subunit_tolerance_ = tag->getOption< core::Real >("subunit_tolerance", 0.01);
 	plane_tolerance_ = tag->getOption< core::Real >("plane_tolerance",1e-3);
 	ignore_single_jump_ = tag->getOption< bool >("ignore_single_jump", false);
+	keep_pdb_info_labels_ = tag->getOption< bool >("keep_pdb_info_labels", false);
+	keep_pdb_remarks_ = tag->getOption< bool >("keep_pdb_remarks", false);
 }
 
 std::string DetectSymmetry::get_name() const {
@@ -188,7 +210,9 @@ void DetectSymmetry::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	// XRW TO DO: check this
 	attlist + XMLSchemaAttribute::attribute_w_default( "subunit_tolerance" , xsct_real , "Maximum tolerated CA-rmsd between the chains." , "0.01" )
 		+ XMLSchemaAttribute::attribute_w_default( "plane_tolerance" , xsct_real , "Maximum accepted displacement(angstroms) of the center of mass of the whole pose from the xy-plane." , "1e-3" )
-		+ XMLSchemaAttribute::attribute_w_default( "ignore_single_jump" , xsct_rosetta_bool, "whether to ignore a single jump when caculating the symmetry" , "false" ) ;
+		+ XMLSchemaAttribute::attribute_w_default( "ignore_single_jump" , xsct_rosetta_bool, "whether to ignore a single jump when caculating the symmetry" , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "keep_pdb_info_labels" , xsct_rosetta_bool, "keep PDB-InfoLabel tags in new symmetric Pose object" , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "keep_pdb_remarks" , xsct_rosetta_bool, "keep PDB file remarks in new symmetric Pose object" , "false" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover takes a non-symmetric pose composed of symmetric chains and transforms it into a symmetric system. It only works with cyclic symmetries from C2 to C99.", attlist );
 }
 

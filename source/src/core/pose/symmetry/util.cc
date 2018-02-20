@@ -188,7 +188,8 @@ make_symmetric_pose(
 void
 make_symmetric_pose(
 	pose::Pose & pose,
-	conformation::symmetry::SymmData & symmdata
+	conformation::symmetry::SymmData & symmdata,
+	bool keep_pdb_info_labels /* false */
 )
 {
 
@@ -209,7 +210,7 @@ make_symmetric_pose(
 	pose.set_new_energies_object( symm_energy );
 
 	pose::PDBInfoOP pdb_info( new pose::PDBInfo( pose, true ) );
-	core::pose::symmetry::make_symmetric_pdb_info( pose, pdb_info_src, pdb_info );
+	core::pose::symmetry::make_symmetric_pdb_info( pose, pdb_info_src, pdb_info, keep_pdb_info_labels /* false */ );
 	pose.pdb_info( pdb_info );
 
 	debug_assert( is_symmetric( pose ) );
@@ -403,7 +404,8 @@ void
 make_symmetric_pdb_info(
 	pose::Pose const & pose,
 	pose::PDBInfoOP pdb_info_src,
-	pose::PDBInfoOP pdb_info_target
+	pose::PDBInfoOP pdb_info_target,
+	bool keep_pdb_info_labels /* false */
 )
 {
 	using namespace core::conformation::symmetry;
@@ -495,6 +497,14 @@ make_symmetric_pdb_info(
 			}
 
 			clone_counter++;
+		}
+
+		// keep info labels if desired
+		if ( keep_pdb_info_labels ) {
+			utility::vector1 < std::string > reslabels_for_res = pdb_info_src->get_reslabels(res);
+			for ( auto const reslabel : reslabels_for_res ) {
+				pdb_info_target->add_reslabel( src_res, reslabel );
+			}
 		}
 	}
 
