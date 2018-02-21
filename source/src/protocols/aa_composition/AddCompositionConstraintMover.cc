@@ -114,16 +114,34 @@ AddCompositionConstraintMover::apply( Pose &pose )
 void
 AddCompositionConstraintMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &datamap,
+	basic::datacache::DataMap & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {
-	runtime_assert_string_msg( tag->hasOption("filename"), "Error in protocols::aa_composition::AddCompositionConstraintMover::parse_my_tag(): A \"filename\" option MUST be provided." );
-	std::string const compfile( tag->getOption<std::string>("filename") );
-	if ( TR.visible() ) TR << "Set filename to " << compfile << "." << std::endl;
-	create_constraint_from_file( compfile );
+	if ( tag->hasOption("filename") ) {
+		std::string const compfile( tag->getOption<std::string>("filename") );
+
+		TR << "Set filename to " << compfile << "." << std::endl;
+		create_constraint_from_file( compfile );
+	} else if ( tag->getTags("Comp").size() > 0 ) {
+		std::string comp_contents;
+
+		for ( TagCOP subtag : tag->getTags("Comp") ) {
+			std::string curline("");
+			std::istringstream entries(subtag->getOption<std::string>("entry"));
+			while ( getline(entries, curline, ';') ) {
+				comp_contents += curline + "\n";
+			}
+		}
+
+		TR << "Read composition contraint from tags.";
+		create_constraint_from_file_contents( comp_contents );
+	} else {
+		std::string error_message = "Error in protocols::aa_composition::AddCompositionConstraintMover::parse_my_tag(): A \"filename\" option or \"Comp\" subtags must be provided.";
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
+	}
 
 	if ( tag->hasOption("selector") ) {
 		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
@@ -194,11 +212,18 @@ void AddCompositionConstraintMover::provide_xml_schema( utility::tag::XMLSchemaD
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute::required_attribute("filename", xs_string, "Name of composition constraint file" );
+	attlist + XMLSchemaAttribute("filename", xs_string, "Name of composition constraint file" );
 	// I would consider a complex type that ends in .pdb, but I want users to be
 	// able to provide cifs! Or name their files whatever!
 	attlist + XMLSchemaAttribute("selector", xs_string, "Residue selector named somewhere else in the script" );
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Add composition constraints from the provided file to the selected region", attlist );
+
+	AttributeList subtag_attributes;
+	subtag_attributes + XMLSchemaAttribute::required_attribute("entry", xs_string, "Composition constraint entries, optionally ';' separated." );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement("Comp", subtag_attributes, "Blocks of composition constraint entries, concatentated to form a full constraint definition." );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Add composition constraints from the provided file to the selected region", attlist, ssl );
 }
 
 std::string AddCompositionConstraintMoverCreator::keyname() const {

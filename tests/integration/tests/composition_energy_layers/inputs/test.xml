@@ -30,8 +30,26 @@
 		<AddCompositionConstraintMover name="addcomp1" filename="inputs/bad_compfile.comp" />
 		<ClearCompositionConstraintsMover name="clear_comp" />
 		<AddCompositionConstraintMover name="addcomp2" filename="inputs/fifty_fifty_core.comp" selector="corelayer" />		
-		<AddCompositionConstraintMover name="addcomp3" filename="inputs/fifty_fifty_surf.comp" selector="surflayer" />
-		
+		<AddCompositionConstraintMover name="addcomp3" selector="surflayer" >
+      <Comp entry="
+PENALTY_DEFINITION
+TYPE ASP
+DELTA_START -1
+DELTA_END 1
+PENALTIES 1 0 1 
+FRACTION 0.5
+BEFORE_FUNCTION QUADRATIC
+AFTER_FUNCTION QUADRATIC
+END_PENALTY_DEFINITION
+
+PENALTY_DEFINITION
+TYPE ARG; FRACTION 0.5
+DELTA_START -1; DELTA_END 1
+PENALTIES 1 0 1 
+BEFORE_FUNCTION QUADRATIC; AFTER_FUNCTION QUADRATIC
+END_PENALTY_DEFINITION
+      "/>
+  </AddCompositionConstraintMover>
 		<FastDesign name="fdes1" scorefxn="tala" repeats="2" task_operations="only_DRVA" >
 			<MoveMap name="fdes1_mm">
 				<Span begin="1" end="30" chi="1" bb="0" />
