@@ -154,6 +154,13 @@ void ScoreFunctionLoader::load_data(
 					emoptions.voids_penalty_energy_disabled_except_during_packing( mod_tag->getOption<bool>("voids_penalty_energy_disabled_except_during_packing") );
 				}
 
+				if ( mod_tag->hasOption("hbnet_bonus_function_ramping") ) {
+					emoptions.hbnet_bonus_function_ramping( mod_tag->getOption<std::string>("hbnet_bonus_function_ramping") );
+				}
+				if ( mod_tag->hasOption("hbnet_max_network_size") ) {
+					emoptions.hbnet_max_network_size( mod_tag->getOption< core::Size >("hbnet_max_network_size") );
+				}
+
 				if ( mod_tag->hasOption( "fa_elec_min_dis" ) ) {
 					emoptions.elec_min_dis( mod_tag->getOption<core::Real>( "fa_elec_min_dis" ) );
 				}
@@ -290,6 +297,15 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute::required_attribute( "scoretype", xs_string , "The name of a score term to be reweighted." )
 		+ XMLSchemaAttribute( "weight", xsct_real , "The score term weight to be assigned." );
 
+	XMLSchemaRestriction hbnet_option;
+	hbnet_option.name( "hbnet_bonus_function_allowed_types" );
+	hbnet_option.base_type( xs_string );
+	hbnet_option.add_restriction( xsr_enumeration, "quadratic" );
+	hbnet_option.add_restriction( xsr_enumeration, "linear" );
+	hbnet_option.add_restriction( xsr_enumeration, "logarithmic" );
+	hbnet_option.add_restriction( xsr_enumeration, "squareroot" );
+	xsd.add_top_level_element(hbnet_option);
+
 	// "Set" tag
 	AttributeList set_attributes;
 	core::scoring::hbonds::HBondOptions::append_schema_attributes( set_attributes );
@@ -314,7 +330,10 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "voids_penalty_energy_voxel_grid_padding", xsct_real , "The voxel grid padding (in Angstroms) used in the voids_penalty score term's calculation.  The bounding box for the pose is enlarged on every side by this amount.  Default 1.0 Angstroms." )
 		+ XMLSchemaAttribute( "voids_penalty_energy_cone_dotproduct_cutoff", xsct_real , "The dot product cutoff used in the voids_penalty score term's calculation.  This effectively sets the width of the cone projected along each side-chain when determining the number of neighbors to a test point in space.  The value can range from -1.0 to 1.0, though negative values are not recommended (since they yield cone angles greater than 180 degrees).  Default 0.1." )
 		+ XMLSchemaAttribute( "voids_penalty_energy_cone_distance_cutoff", xsct_real , "The cutoff distance used in the voids_penalty score term's calculation when determining whether a point lies near to a residue.  Default 8.0 Angstroms." )
-		+ XMLSchemaAttribute( "voids_penalty_energy_disabled_except_during_packing", xsct_rosetta_bool, "If true, then the voids_penalty score term is disabled outside of the context of the packer.  If false, then the voids_penalty score term is evaluated for packing and scoring (but not for minimizing).  True by default." );
+		+ XMLSchemaAttribute( "voids_penalty_energy_disabled_except_during_packing", xsct_rosetta_bool, "If true, then the voids_penalty score term is disabled outside of the context of the packer.  If false, then the voids_penalty score term is evaluated for packing and scoring (but not for minimizing).  True by default." )
+
+		+ XMLSchemaAttribute( "hbnet_bonus_function_ramping", "hbnet_bonus_function_allowed_types", "The hbnet score term's bonus function can scale in different ways as the size of a network grows.  The default is quadratic growth, though linear, logarithmic, and square root growth are all allowed." )
+		+ XMLSchemaAttribute( "hbnet_max_network_size", xsct_non_negative_integer, "The maximum size of a hydrogen bond network, beyond which the hbnet score term no longer gives a bonus.  Defaults to 0 (unlimited)." );
 
 	// ScoreFunction complex type
 	AttributeList scorefunction_ct_attributes;

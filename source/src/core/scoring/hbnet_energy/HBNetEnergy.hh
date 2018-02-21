@@ -47,6 +47,18 @@ namespace core {
 namespace scoring {
 namespace hbnet_energy {
 
+
+/// @brief Allowed types of HBNetEnergy rampings.
+/// @details If you add to this list, update the HBNetEnergy::hbnet_energy_ramping_string_from_enum() function.
+enum HBNetEnergyRamping {
+	HBNetEnergyRampQuadratic=1, //keep this first
+	HBNetEnergyRampLinear,
+	HBNetEnergyRampLogarithmic,
+	HBNetEnergyRampSquareRoot,
+	HBNetEnergyRampINVALID, //keep this last
+	HBNetEnergyRamp_end_of_list = HBNetEnergyRampINVALID //keep this last
+};
+
 /// @brief HBNetEnergy, an EnergyMethod that gives a bonus for hydrogen bond networks, which ramps nonlinearly with the size of the
 /// networks. This class is derived from base class WholeStructureEnergy, which is meaningful only on entire structures.
 /// These EnergyMethods do all of their work in the "finalize_total_energy" section of scorefunction evaluation.
@@ -98,6 +110,30 @@ public:
 	///
 	void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose const &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
 
+	/// @brief Set the way that HBNetEnergy scales with network size,
+	/// by string.
+	void set_hbnet_energy_ramping ( std::string const &ramping_string );
+
+	/// @brief Set the way that HBNetEnergy scales with network size,
+	/// by enum.
+	void set_hbnet_energy_ramping ( HBNetEnergyRamping const ramping_enum );
+
+	/// @brief Given a string for an HBNetEnergyRamping type, return the corresponding enum.
+	/// @details Returns HBNetEnergyRampINVALID if the string isn't recognized.
+	HBNetEnergyRamping hbnet_energy_ramping_enum_from_string( std::string const &ramping_string ) const;
+
+	/// @brief Given an enum for an HBNetEnergyRamping type, return the corresponding string.
+	/// @details Returns "INVALID" if the string isn't recognized.
+	std::string hbnet_energy_ramping_string_from_enum( HBNetEnergyRamping const ramping_enum ) const;
+
+	/// @brief Get the maximum network size, beyond which there is no bonus for making a network bigger.
+	/// @details A value of "0" (the default) means no max.
+	inline core::Size max_network_size() const { return max_network_size_; }
+
+	/// @brief Set the maximum network size, beyond which there is no bonus for making a network bigger.
+	/// @details A value of "0" (the default) means no max.
+	void max_network_size( core::Size const setting );
+
 private:
 
 	/******************
@@ -134,7 +170,7 @@ private:
 	/// @brief Given the size of a connected component in a graph, return a value to pass to the bonus function accumulator.
 	/// @details The value returned by this function is more POSITIVE for bigger bonuses; it should be SUBTRACTED from the accumulator
 	/// to yield a score that gets more negative with greater favourability.
-	core::Real bonus_function( core::Size const count_in ) const;
+	core::Real bonus_function( core::Size count_in ) const;
 
 	/// @brief Given the index of an asymmetric node in the hbonds_graph_ object, drop all of the edges for all corresponding symmetric nodes.
 	/// @details Assumes symm_info_ points to something.  Check symm_info != nullptr before calling this function.
@@ -169,6 +205,14 @@ private:
 
 	/// @brief Information about the symmetric state of the pose.  Will be nullptr if the pose is not symmetric.
 	mutable core::conformation::symmetry::SymmetryInfoCOP symm_info_;
+
+	/// @brief How does the energy scale with size of network?
+	/// @details Defaults to quadratic.  Can be logarithmic, square root, etc.
+	HBNetEnergyRamping ramping_type_;
+
+	/// @brief What is the maximum network size, beyond which we no longer get a bonus?
+	/// @details Defaults to 0 (no limit).  Values greater than 0 impose a limit.
+	core::Size max_network_size_;
 
 
 };

@@ -140,6 +140,9 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	voids_penalty_energy_voxel_grid_padding_(1.0),
 	voids_penalty_energy_disabled_except_during_packing_(true),
 
+	hbnet_bonus_ramping_function_("quadratic"),
+	hbnet_max_network_size_(0),
+
 	bond_angle_residue_type_param_set_(/* NULL */)
 {
 	initialize_from_options( options );
@@ -225,6 +228,8 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		voids_penalty_energy_voxel_size_ = src.voids_penalty_energy_voxel_size_;
 		voids_penalty_energy_voxel_grid_padding_ = src.voids_penalty_energy_voxel_grid_padding_;
 		voids_penalty_energy_disabled_except_during_packing_ = src.voids_penalty_energy_disabled_except_during_packing_;
+		hbnet_bonus_ramping_function_ = src.hbnet_bonus_ramping_function_;
+		hbnet_max_network_size_ = src.hbnet_max_network_size_;
 	}
 	return *this;
 }
@@ -275,13 +280,17 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	loop_close_use_6D_potential_ = options[ basic::options::OptionKeys::score::loop_close::use_6D_potential ]();
 	fa_stack_base_all_ = !options[ basic::options::OptionKeys::score::fa_stack_base_base_only ]();
 
-	runtime_assert_string_msg( options[basic::options::OptionKeys::score::voids_penalty_energy_containing_cones_cutoff]() >= 0, "Error in EnergyMethodOptions::initialize_from_options: The -score:voids_penalty_energy_containing_cones_cutoff flag must be set to a non-negative integer." );
+	runtime_assert_string_msg( options[basic::options::OptionKeys::score::voids_penalty_energy_containing_cones_cutoff]() >= 0, "Error in EnergyMethodOptions::initialize_from_options(): The -score:voids_penalty_energy_containing_cones_cutoff flag must be set to a non-negative integer." );
 	voids_penalty_energy_containing_cones_cutoff_ = options[basic::options::OptionKeys::score::voids_penalty_energy_containing_cones_cutoff]();
 	voids_penalty_energy_cone_dotproduct_cutoff_ = options[basic::options::OptionKeys::score::voids_penalty_energy_cone_dotproduct_cutoff]();
 	voids_penalty_energy_cone_distance_cutoff_ = options[basic::options::OptionKeys::score::voids_penalty_energy_cone_distance_cutoff]();
 	voids_penalty_energy_voxel_size_ = options[basic::options::OptionKeys::score::voids_penalty_energy_voxel_size]();
 	voids_penalty_energy_voxel_grid_padding_ = options[basic::options::OptionKeys::score::voids_penalty_energy_voxel_grid_padding]();
 	voids_penalty_energy_disabled_except_during_packing_ = options[basic::options::OptionKeys::score::voids_penalty_energy_disabled_except_during_packing]();
+
+	hbnet_bonus_ramping_function_ = options[ basic::options::OptionKeys::score::hbnet_bonus_function_ramping ]();
+	runtime_assert_string_msg( options[ basic::options::OptionKeys::score::hbnet_max_network_size ]() >= 0, "Error in EnergyMethodOptions::initialize_from_options(): the -score:hbnet_max_network_size flag must be set to a non-negative integer, if specified." );
+	hbnet_max_network_size_ = options[ basic::options::OptionKeys::score::hbnet_max_network_size ]();
 
 	// check to see if the unfolded state command line options are set by the user
 	if ( options[ basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
@@ -352,6 +361,8 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::water_dielectric
 		+ basic::options::OptionKeys::unfolded_state::split_unfolded_energies_file
 		+ basic::options::OptionKeys::unfolded_state::unfolded_energies_file
+		+ basic::options::OptionKeys::score::hbnet_bonus_function_ramping
+		+ basic::options::OptionKeys::score::hbnet_max_network_size
 		+ basic::options::OptionKeys::corrections::water::ordered_wat_penalty
 		+ basic::options::OptionKeys::corrections::water::ordered_pt_wat_penalty;
 }
@@ -869,6 +880,22 @@ void EnergyMethodOptions::voids_penalty_energy_voxel_size( core::Real const &set
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void EnergyMethodOptions::voids_penalty_energy_disabled_except_during_packing( bool const setting ) { voids_penalty_energy_disabled_except_during_packing_ = setting; }
 
+/// @brief Get the bonus function shape for the hbnet energy term.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+std::string const & EnergyMethodOptions::hbnet_bonus_function_ramping() const { return hbnet_bonus_ramping_function_; }
+
+/// @brief Set the bonus function shape for the hbnet energy term.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void EnergyMethodOptions::hbnet_bonus_function_ramping( std::string const & setting ) { hbnet_bonus_ramping_function_ = setting; }
+
+/// @brief Get the maximum hydrogen bond network size, beyond which the hbnet score term yields no futher bonus.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+core::Size EnergyMethodOptions::hbnet_max_network_size() const { return hbnet_max_network_size_; }
+
+/// @brief Set the maximum hydrogen bond network size, beyond which the hbnet score term yields no futher bonus.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void EnergyMethodOptions::hbnet_max_network_size( core::Size const setting ) { hbnet_max_network_size_ = setting; }
+
 bool
 EnergyMethodOptions::loop_close_use_6D_potential() const {
 	return loop_close_use_6D_potential_;
@@ -1082,7 +1109,9 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.voids_penalty_energy_voxel_grid_padding_ == b.voids_penalty_energy_voxel_grid_padding_ ) &&
 		( a.voids_penalty_energy_voxel_size_ == b.voids_penalty_energy_voxel_size_ ) &&
 		( a.voids_penalty_energy_disabled_except_during_packing_ == b.voids_penalty_energy_disabled_except_during_packing_ ) &&
-		( a.fastdens_perres_weights_ == b.fastdens_perres_weights_ ) );
+		( a.fastdens_perres_weights_ == b.fastdens_perres_weights_ ) &&
+		( a.hbnet_bonus_ramping_function_ == b.hbnet_bonus_ramping_function_ ) &&
+		( a.hbnet_max_network_size_ == b.hbnet_max_network_size_ ) );
 }
 
 /// used inside ScoreFunctionInfo::operator==
@@ -1182,6 +1211,10 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: voids_penalty_energy_voxel_grid_padding_: " << voids_penalty_energy_voxel_grid_padding_ << std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_voxel_size_: " << voids_penalty_energy_voxel_size_<< std::endl;
 	out << "EnergyMethodOptions::show: voids_penalty_energy_disabled_except_during_packing_: " << (voids_penalty_energy_disabled_except_during_packing_ ? "TRUE" : "FALSE")  << std::endl;
+
+	out << "EnergyMethodOptions::show: hbnet_bonus_ramping_function_: \"" << hbnet_bonus_ramping_function_ << "\"" << std::endl;
+	out << "EnergyMethodOptions::show: hbnet_max_network_size_: " << hbnet_max_network_size_ << std::endl;
+
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
 	if ( bond_angle_residue_type_param_set_ ) {
 		out << "setting ignored";
@@ -1468,6 +1501,8 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( voids_penalty_energy_disabled_except_during_packing_ ) ); //bool
 	arc( CEREAL_NVP( bond_angle_central_atoms_to_score_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( bond_angle_residue_type_param_set_ ) ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
+	arc( CEREAL_NVP( hbnet_bonus_ramping_function_ ) ); // std::string
+	arc( CEREAL_NVP( hbnet_max_network_size_ ) ); //core::Size
 	arc( CEREAL_NVP( ordered_pt_wat_penalty_ ) );
 	arc( CEREAL_NVP( ordered_wat_penalty_ ) );
 }
@@ -1540,6 +1575,8 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( voids_penalty_energy_disabled_except_during_packing_ ); //bool
 	arc( bond_angle_central_atoms_to_score_ ); // utility::vector1<std::string>
 	arc( bond_angle_residue_type_param_set_ ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
+	arc( hbnet_bonus_ramping_function_ ); //std::string
+	arc( hbnet_max_network_size_ ); //core::Size
 	arc( ordered_pt_wat_penalty_ );
 	arc( ordered_wat_penalty_ );
 }

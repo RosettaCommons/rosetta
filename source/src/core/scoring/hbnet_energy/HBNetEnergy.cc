@@ -84,15 +84,19 @@ HBNetEnergyCreator::score_types_for_method() const
 
 /// @brief Options constructor.
 ///
-HBNetEnergy::HBNetEnergy ( core::scoring::methods::EnergyMethodOptions const &/*options*/ ) :
+HBNetEnergy::HBNetEnergy ( core::scoring::methods::EnergyMethodOptions const &options ) :
 	parent1( core::scoring::methods::EnergyMethodCreatorOP( new HBNetEnergyCreator ) ),
 	parent2( ),
 	neighbour_graph_(),
 	hbonds_graph_(),
 	hbonds_graph_last_accepted_(),
 	bb_hbonds_graph_(),
-	symm_info_()
-{}
+	symm_info_(),
+	ramping_type_(HBNetEnergyRampQuadratic),
+	max_network_size_(options.hbnet_max_network_size())
+{
+	set_hbnet_energy_ramping( options.hbnet_bonus_function_ramping() );
+}
 
 /// @brief Default destructor.
 ///
@@ -217,6 +221,65 @@ HBNetEnergy::set_up_residuearrayannealableenergy_for_packing (
 ) {
 	initialize_graphs(pose);
 }
+
+/// @brief Set the way that HBNetEnergy scales with network size,
+/// by string.
+void
+HBNetEnergy::set_hbnet_energy_ramping (
+	std::string const &ramping_string
+) {
+	HBNetEnergyRamping const ramping_enum( hbnet_energy_ramping_enum_from_string( ramping_string ) );
+	runtime_assert_string_msg( ramping_enum != HBNetEnergyRampINVALID, "Error in HBNetEnergy::set_hbnet_energy_ramping(): \"" + ramping_string + "\" is not a valid ramping type." );
+	set_hbnet_energy_ramping( ramping_enum );
+}
+
+/// @brief Set the way that HBNetEnergy scales with network size,
+/// by enum.
+void
+HBNetEnergy::set_hbnet_energy_ramping (
+	HBNetEnergyRamping const ramping_enum
+) {
+	runtime_assert_string_msg( ramping_enum != HBNetEnergyRampINVALID, "Error in HBNetEnergy::set_hbnet_energy_ramping(): an invalid ramping type was passed to this function." );
+	ramping_type_ = ramping_enum;
+}
+
+/// @brief Given a string for an HBNetEnergyRamping type, return the corresponding enum.
+/// @details Returns HBNetEnergyRampINVALID if the string isn't recognized.
+HBNetEnergyRamping
+HBNetEnergy::hbnet_energy_ramping_enum_from_string(
+	std::string const &ramping_string
+) const {
+	for ( core::Size i(1); i<static_cast<core::Size>( HBNetEnergyRamp_end_of_list ); ++i ) {
+		if ( !ramping_string.compare( hbnet_energy_ramping_string_from_enum( static_cast< HBNetEnergyRamping >(i) ) ) ) {
+			return static_cast< HBNetEnergyRamping >(i);
+		}
+	}
+	return HBNetEnergyRampINVALID;
+}
+
+/// @brief Given an enum for an HBNetEnergyRamping type, return the corresponding string.
+/// @details Returns "INVALID" if the string isn't recognized.
+std::string
+HBNetEnergy::hbnet_energy_ramping_string_from_enum(
+	HBNetEnergyRamping const ramping_enum
+) const {
+	switch(ramping_enum) {
+	case HBNetEnergyRampQuadratic :
+		return "quadratic";
+	case HBNetEnergyRampLinear :
+		return "linear";
+	case HBNetEnergyRampLogarithmic :
+		return "logarithmic";
+	case HBNetEnergyRampSquareRoot :
+		return "squareroot";
+	default :
+		return "INVALID";
+	}
+}
+
+/// @brief Set the maximum network size, beyond which there is no bonus for making a network bigger.
+/// @details A value of "0" (the default) means no max.
+void HBNetEnergy::max_network_size( core::Size const setting ) { max_network_size_ = setting; }
 
 //////////////////////////////////PRIVATE FUNCTIONS//////////////////////////////////////
 
@@ -365,9 +428,23 @@ HBNetEnergy::has_bb_hbond(
 /// to yield a score that gets more negative with greater favourability.
 core::Real
 HBNetEnergy::bonus_function(
-	core::Size const count_in
+	core::Size count_in
 ) const {
-	return static_cast<core::Real>( count_in*count_in ); //Simply square the count for now.  We can always try more complicated functions later.
+	if ( max_network_size_ > 0  && count_in > max_network_size_ ) count_in = max_network_size_;
+
+	switch( ramping_type_ ) {
+	case HBNetEnergyRampQuadratic :
+		return static_cast<core::Real>( count_in*count_in );
+	case HBNetEnergyRampLinear :
+		return static_cast< core::Real >( count_in );
+	case HBNetEnergyRampLogarithmic :
+		return std::log( static_cast<core::Real>( count_in + 1 ) ); /*Plus one to get around ln(0) being undefined.*/
+	case HBNetEnergyRampSquareRoot :
+		return std::sqrt( static_cast<core::Real>( count_in ) );
+	default :
+		utility_exit_with_message("Error in HBNetEnergy::bonus_function(): The energy ramping was incorrectly set!");
+	}
+	return 0; //To keep compiler happy.
 }
 
 /// @brief Given the index of an asymmetric node in the hbonds_graph_ object, drop all of the edges for all corresponding symmetric nodes.

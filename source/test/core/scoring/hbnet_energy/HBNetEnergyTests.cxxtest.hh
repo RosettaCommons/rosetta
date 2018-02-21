@@ -29,6 +29,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Protocols Headers
 #include <protocols/cyclic_peptide/SymmetricCycpepAlign.hh>
@@ -97,5 +98,123 @@ public:
 
 		TS_ASSERT_DELTA( symm_score, asymm_score, 0.000001 );
 	}
+
+	void test_quadratic_scoring() {
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, "core/scoring/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
+		protocols::cyclic_peptide::DeclareBond decbond;
+		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
+		decbond.apply(pose);
+		pose.update_residue_neighbors();
+
+		core::scoring::methods::EnergyMethodOptions options;
+		options.hbnet_bonus_function_ramping("quadratic");
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::hbnet, 1.0 );
+		sfxn->set_energy_method_options( options );
+
+		core::Real const quadratic_score( (*sfxn)(pose) );
+
+		TR << "QUADRATIC_SCORE =\t" << quadratic_score << std::endl;
+
+		TS_ASSERT_DELTA( quadratic_score, -576.0, 1e-6 );
+	}
+
+	void test_max_network_size() {
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, "core/scoring/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
+		protocols::cyclic_peptide::DeclareBond decbond;
+		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
+		decbond.apply(pose);
+		pose.update_residue_neighbors();
+
+		for ( int i(27); i>=0; --i ) {
+			core::scoring::methods::EnergyMethodOptions options;
+			options.hbnet_max_network_size(i);
+
+			core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+			sfxn->set_weight( core::scoring::hbnet, 1.0 );
+			sfxn->set_energy_method_options( options );
+
+			core::Real const cutoff_score( (*sfxn)(pose) );
+
+			TR << "CUTOFF_SCORE[" << i << "] =\t" << cutoff_score << std::endl;
+
+			if ( i>=24 || i==0 ) {
+				TS_ASSERT_DELTA( cutoff_score, -576.0, 1e-6 );
+			} else {
+				TS_ASSERT_DELTA( cutoff_score, -i*i, 1e-6 );
+			}
+		}
+	}
+
+	void test_linear_scoring() {
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, "core/scoring/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
+		protocols::cyclic_peptide::DeclareBond decbond;
+		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
+		decbond.apply(pose);
+		pose.update_residue_neighbors();
+
+		core::scoring::methods::EnergyMethodOptions options;
+		options.hbnet_bonus_function_ramping("linear");
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::hbnet, 1.0 );
+		sfxn->set_energy_method_options( options );
+
+		core::Real const linear_score( (*sfxn)(pose) );
+
+		TR << "LINEAR_SCORE =\t" << linear_score << std::endl;
+
+		TS_ASSERT_DELTA( linear_score, -24.0, 1e-6 );
+	}
+
+	void test_log_scoring() {
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, "core/scoring/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
+		protocols::cyclic_peptide::DeclareBond decbond;
+		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
+		decbond.apply(pose);
+		pose.update_residue_neighbors();
+
+		core::scoring::methods::EnergyMethodOptions options;
+		options.hbnet_bonus_function_ramping("logarithmic");
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::hbnet, 1.0 );
+		sfxn->set_energy_method_options( options );
+
+		core::Real const log_score( (*sfxn)(pose) );
+
+		TR << "LOG_SCORE =\t" << log_score << std::endl;
+
+		TS_ASSERT_DELTA( log_score, -3.2188758248682006, 1e-6 );
+	}
+
+
+	void test_sqrt_scoring() {
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, "core/scoring/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
+		protocols::cyclic_peptide::DeclareBond decbond;
+		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
+		decbond.apply(pose);
+		pose.update_residue_neighbors();
+
+		core::scoring::methods::EnergyMethodOptions options;
+		options.hbnet_bonus_function_ramping("squareroot");
+
+		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction );
+		sfxn->set_weight( core::scoring::hbnet, 1.0 );
+		sfxn->set_energy_method_options( options );
+
+		core::Real const sqrt_score( (*sfxn)(pose) );
+
+		TR << "SQUAREROOT_SCORE =\t" << sqrt_score << std::endl;
+
+		TS_ASSERT_DELTA( sqrt_score, -4.898979485566356, 1e-6 );
+	}
+
 
 };

@@ -496,6 +496,22 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void voids_penalty_energy_disabled_except_during_packing( bool const setting );
 
+	/// @brief Get the bonus function shape for the hbnet energy term.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	std::string const & hbnet_bonus_function_ramping() const;
+
+	/// @brief Set the bonus function shape for the hbnet energy term.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void hbnet_bonus_function_ramping( std::string const & setting );
+
+	/// @brief Get the maximum hydrogen bond network size, beyond which the hbnet score term yields no futher bonus.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Size hbnet_max_network_size() const;
+
+	/// @brief Set the maximum hydrogen bond network size, beyond which the hbnet score term yields no futher bonus.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void hbnet_max_network_size( core::Size const setting );
+
 	bool loop_close_use_6D_potential() const;
 	void loop_close_use_6D_potential( bool const setting );
 
@@ -699,6 +715,10 @@ private:
 	core::Real voids_penalty_energy_voxel_size_;
 	core::Real voids_penalty_energy_voxel_grid_padding_;
 	bool voids_penalty_energy_disabled_except_during_packing_;
+
+	//Options for the HBNetEnergy:
+	std::string hbnet_bonus_ramping_function_;
+	core::Size hbnet_max_network_size_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;
