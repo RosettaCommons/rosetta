@@ -375,9 +375,7 @@ PackPwatRotamersMover::apply( Pose & pose )
 		std::sort(centroids.begin(),centroids.end(),sortDwell);
 
 		// add centroids to pose as rotatable waters
-		Size attach_to = pose.total_residue();
-		//Real watlim_scale = basic::options::option[ basic::options::OptionKeys::packing::cluster_radius ].value();
-		Size ncent;
+		Size attach_to, ncent;
 		if ( limit_waters_ ) {
 			ncent = std::ceil( waternum *  watlim_scale );
 			if ( ncent > centroids.size() ) {
@@ -405,8 +403,7 @@ PackPwatRotamersMover::apply( Pose & pose )
 		}
 	} else {
 		// no clustering -- rotamers within cutoff converted directly to HOH
-		Size attach_to = pose.total_residue();
-		Size nrot;
+		Size attach_to, nrot;
 		if ( limit_waters_ ) {
 			nrot = std::ceil( waternum * watlim_scale );
 			if ( nrot > rot_cutoff.size() ) {
