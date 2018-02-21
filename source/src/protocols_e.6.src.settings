@@ -20,7 +20,19 @@ sources = {
                 "MRSJob",
                 "MRSJobQueen",
                 "MRSJobQueenChecker",
+                "MRSJobSummary",
                 "TagManager",
+       	],
+	"protocols/multistage_rosetta_scripts/cluster": [
+                "ClusterMetric",
+                "ClusterMetricFactory",
+                "KMedoids",
+                "KMedoidsOnTheFly",
+                "util",
+       	],
+	"protocols/multistage_rosetta_scripts/cluster/metrics": [
+                "JumpMetric",
+                "SequenceMetric",
        	],
 	"protocols/nonlocal": [
 		"BiasedFragmentMover",

@@ -15,8 +15,8 @@
 /// @author  Patrick Barth (Original)
 /// @author  Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_core_scoring_membrane_FaMPSolvEnergy_cc
-#define INCLUDED_core_scoring_membrane_FaMPSolvEnergy_cc
+#ifndef INCLUDED_core_scoring_membrane_FaMPSolvEnergy_fwd_hh
+#define INCLUDED_core_scoring_membrane_FaMPSolvEnergy_fwd_hh
 
 // Unit Headers
 #include <core/scoring/membrane/FaMPSolvEnergy.hh>
@@ -54,4 +54,4 @@ typedef utility::pointer::shared_ptr< FaMPSolvEnergy const > FaMPSolvEnergyCOP;
 } // scoring
 } // core
 
-#endif // INCLUDED_core_scoring_methods_FaMPSolvEnergy_cc
+#endif // INCLUDED_core_scoring_methods_FaMPSolvEnergy_fwd_hh

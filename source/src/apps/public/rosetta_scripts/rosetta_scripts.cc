@@ -38,6 +38,7 @@
 
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>

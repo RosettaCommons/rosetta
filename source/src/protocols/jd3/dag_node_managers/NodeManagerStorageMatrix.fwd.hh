@@ -19,7 +19,7 @@ namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
 
-struct result_elements;
+struct ResultElements;
 
 class NodeManagerStorageMatrix;
 typedef utility::pointer::shared_ptr< NodeManagerStorageMatrix > NodeManagerStorageMatrixOP;

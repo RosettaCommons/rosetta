@@ -87,6 +87,9 @@
 #include <protocols/init/init.ConstraintGeneratorCreators.ihh>
 #include <protocols/init/init.ConstraintGeneratorRegistrators.ihh>
 
+#include <protocols/init/init.ClusterMetricCreators.ihh>
+#include <protocols/init/init.ClusterMetricRegistrators.ihh>
+
 namespace protocols {
 namespace init {
 

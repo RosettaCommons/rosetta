@@ -11,8 +11,8 @@
 /// @brief  Multiplexing packing graph container.
 /// @author Alex Ford (fordas@uw.edu)
 
-#ifndef INCLUDED_core_pack_interaction_graph_MultiplexedAnnealableGraph_hh
-#define INCLUDED_core_pack_interaction_graph_MultiplexedAnnealableGraph_hh
+#ifndef INCLUDED_core_pack_interaction_graph_MultiplexedAnnealableGraph_fwd_hh
+#define INCLUDED_core_pack_interaction_graph_MultiplexedAnnealableGraph_fwd_hh
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>

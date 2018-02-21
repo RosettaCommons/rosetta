@@ -17,6 +17,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJobQueen.fwd.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/TagManager.hh>
 
 //JD3
@@ -42,8 +43,20 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 
+#include <unordered_map>
+#include <boost/functional/hash/hash.hpp>
+
 namespace protocols {
 namespace multistage_rosetta_scripts {
+
+struct JobResultID_hash {
+	std::size_t operator () ( jd3::JobResultID const & id ) const {
+		std::size_t seed = 0;
+		boost::hash_combine( seed, id.first );
+		boost::hash_combine( seed, id.second );
+		return seed;
+	}
+};
 
 ///@brief We do not want to load all of the input poses into memory at once. Instead we use this struct to keep track of the most recent pose loaded (which is assumed to be the most likely one we are going to need next)
 struct PoseForPoseID
@@ -214,6 +227,8 @@ protected:
 		jd3::JobOutputIndex & output_index
 	);
 
+	void cluster( core::Size stage_about_to_start );
+
 private:
 	bool has_been_initialized_;
 
@@ -224,7 +239,8 @@ private:
 
 	utility::vector1< core::Size > num_total_jobs_for_stage_;
 	utility::vector1< core::Size > num_results_to_keep_for_stage_;
-	utility::vector1< core::Size > max_num_results_per_instance_for_stage_;
+	utility::vector1< core::Size > max_num_results_to_keep_per_instance_for_stage_;
+	utility::vector1< core::Size > max_num_results_to_keep_per_input_struct_for_stage_;
 	utility::vector1< core::Size > num_jobs_per_input_for_stage_;
 	utility::vector1< core::Size > result_cutoffs_for_stage_;
 	utility::vector1< core::Size > job_results_have_been_discarded_for_stage_;
@@ -250,6 +266,15 @@ private:
 	PoseForPoseID most_recent_pose_id_;
 
 	utility::vector1< std::pair< core::Size, utility::tag::TagCOP > > checkpoints_;
+
+
+	//Data for clustering:
+	utility::vector1< utility::tag::TagCOP > cluster_metric_tag_for_stage_;
+	utility::vector1< core::Size > num_results_to_keep_after_clustering_for_stage_;
+	utility::vector1< std::unordered_map< jd3::JobResultID, cluster::ClusterMetricCOP, JobResultID_hash > > cluster_data_for_results_of_stage_;
+
+	///@brief No need to store this data for more than one stage at a time
+	utility::vector1< jd3::JobResultID > most_recent_cluster_results_;
 };
 
 inline core::Size MRSJobQueen::stage_for_global_job_id( core::Size global_job_id ) const {

@@ -13,8 +13,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-#ifndef INCLUDED_protocols_STEPWISE_Clusterer_FWD_HH
-#define INCLUDED_protocols_STEPWISE_Clusterer_FWD_HH
+#ifndef INCLUDED_protocols_STEPWISE_LegacyClusterer_FWD_HH
+#define INCLUDED_protocols_STEPWISE_LegacyClusterer_FWD_HH
 
 namespace protocols {
 namespace stepwise {

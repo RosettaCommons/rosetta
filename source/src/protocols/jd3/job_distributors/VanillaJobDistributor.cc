@@ -210,7 +210,7 @@ VanillaJobDistributor::potentially_discard_some_job_results()
 		if ( result_iter == job_results_.end() ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to retrieve job result (" +
 				utility::to_string( result_id.first ) + ", " + utility::to_string( result_id.second ) +
-				+ ") for discardting as requested by the JobQeen. Has this job already been output?" );
+				+ ") for discarding as requested by the JobQeen. Has this job already been output?" );
 		}
 		job_results_.erase( result_iter );
 	}

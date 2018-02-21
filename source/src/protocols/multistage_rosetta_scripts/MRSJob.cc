@@ -14,6 +14,9 @@
 
 
 #include <protocols/multistage_rosetta_scripts/MRSJob.hh>
+#include <protocols/multistage_rosetta_scripts/MRSJobSummary.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricFactory.hh>
 
 #include <basic/Tracer.hh>
 
@@ -60,6 +63,17 @@ jd3::CompletedJobOutput MRSJob::run() {
 	return output;
 }
 
+cluster::ClusterMetricOP
+MRSJob::get_cluster_metric( core::pose::Pose const & pose ){
+	return
+		cluster::ClusterMetricFactory::get_instance()->new_cluster_metric(
+		tag_for_cluster_metric_->getName(),
+		pose,
+		tag_for_cluster_metric_,
+		* data_->data_map
+	);
+}
+
 jd3::CompletedJobOutput MRSJob::run_inner() {
 
 	jd3::CompletedJobOutput output;
@@ -84,7 +98,7 @@ jd3::CompletedJobOutput MRSJob::run_inner() {
 			it != protocols_.end(); ++it ) {
 
 		++count;
-		mover_or_filter const & protocol = (*it);//TODO clone here?
+		mover_or_filter const & protocol = *it;
 		if ( protocol.is_mover ) {
 			debug_assert( pose_ );
 			protocol.mover->apply( *pose_ );
@@ -107,7 +121,14 @@ jd3::CompletedJobOutput MRSJob::run_inner() {
 						if ( std::next( it2 ) == protocols_.end() ) {
 							core::Real score = filter_protocol.filter->score( *pose_ );
 							if ( positive_scores_are_better_ ) score *= -1;//The queen will sort assuming negative scores are better
-							jd3::JobSummaryOP summary( pointer::make_shared< jd3::standard::EnergyJobSummary >( score ) );
+
+							jd3::JobSummaryOP summary;
+							if ( tag_for_cluster_metric_ ) {
+								summary = pointer::make_shared< MRSJobSummary >( score, get_cluster_metric( * pose_ ) );
+							} else {
+								summary = pointer::make_shared< jd3::standard::EnergyJobSummary >( score );
+							}
+
 							jd3::JobResultOP result( pointer::make_shared< jd3::standard::PoseJobResult >( pose_ ) );
 							output.job_results.push_back( std::make_pair( summary, result ) );
 							output.status = jd3::jd3_job_status_success;
@@ -128,7 +149,14 @@ jd3::CompletedJobOutput MRSJob::run_inner() {
 
 			if ( std::next( it ) == protocols_.end() ) {
 				core::Real const score = protocol.filter->report_sm( *pose_ );
-				jd3::JobSummaryOP summary( pointer::make_shared< jd3::standard::EnergyJobSummary >( score ) );
+
+				jd3::JobSummaryOP summary;
+				if ( tag_for_cluster_metric_ ) {
+					summary = pointer::make_shared< MRSJobSummary >( score, get_cluster_metric( * pose_ ) );
+				} else {
+					summary = pointer::make_shared< jd3::standard::EnergyJobSummary >( score );
+				}
+
 				jd3::JobResultOP result( pointer::make_shared< jd3::standard::PoseJobResult >( pose_ ) );
 				output.job_results.push_back( std::make_pair( summary, result ) );
 				output.status = jd3::jd3_job_status_success;
@@ -211,10 +239,6 @@ MRSJob::parse_my_tag(
 
 			debug_assert( protocols_.back().filter );
 		}
-		//This is handled by <Sort/> now
-		/* else if ( i == subtags.size() - 1 ) {
-		utility_exit_with_message( "All stages need to finish with a filter." );
-		}*/
 
 	}
 }

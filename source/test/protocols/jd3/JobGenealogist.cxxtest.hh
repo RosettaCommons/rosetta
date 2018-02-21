@@ -43,11 +43,11 @@ public:
 		JobGenealogist( num_job_dag_nodes, num_input_sources ){}
 
 	JGJobNode const * _get_job_node( core::Size job_dag_node, core::Size global_job_id ) const {
-		return JobGenealogist::get_job_node( job_dag_node, global_job_id );
+		return JobGenealogist::get_const_job_node( job_dag_node, global_job_id );
 	}
 
 	JGResultNode const * _get_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const{
-		return JobGenealogist::get_result_node( node, global_job_id, result_id );
+		return JobGenealogist::get_const_result_node( node, global_job_id, result_id );
 	}
 
 	JGJobNode * _get_job_node( core::Size job_dag_node, core::Size global_job_id ){

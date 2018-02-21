@@ -10,6 +10,23 @@
 /// @file protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
+/*
+One of the options for this class involves the order in which results are returned
+accross partitions. To get a better understanding, consider the following example:
+
+..............Results
+
+Partition 1: A B C D
+
+Partition 2: E F G H
+
+Partition 3: I J K L
+
+Breadth-First Order: A E I B F J C G K D H L
+
+Depth-First Order:   A B C D E F G H I J K L
+
+*/
 
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_NodeManagerStorageMatrix_HH
 #define INCLUDED_protocols_jd3_dag_node_managers_NodeManagerStorageMatrix_HH
@@ -25,16 +42,23 @@ namespace protocols {
 namespace jd3 {
 namespace dag_node_managers {
 
-struct result_elements {
-	result_elements( core::Size global_job_id_in, core::Size local_result_id_in, core::Real score_in ){
-		global_job_id = global_job_id_in;
-		local_result_id = local_result_id_in;
-		score = score_in;
-	}
+struct ResultElements {
+	ResultElements(
+		core::Size global_job_id_in,
+		core::Size local_result_id_in,
+		core::Real score_in,
+		uint64_t token_in = 0
+	) :
+		global_job_id( global_job_id_in ),
+		local_result_id( local_result_id_in ),
+		score( score_in ),
+		token( token_in )
+	{}
 
 	core::Size global_job_id;
 	core::Size local_result_id;
 	core::Real score;
+	uint64_t token;
 
 	JobResultID
 	job_result_id() const {
@@ -42,7 +66,7 @@ struct result_elements {
 	}
 
 	///@brief this is for sorting
-	bool operator < ( result_elements const & other ) const{
+	bool operator < ( ResultElements const & other ) const{
 		return score < other.score;
 	}
 };
@@ -58,13 +82,20 @@ public:
 
 	virtual ~NodeManagerStorageMatrix();
 
-	//returns thing being removed
-	result_elements insert( core::Size partition, result_elements const & new_guy );
+	//returns the element being displaced/removed if applicable
+	ResultElements insert( core::Size partition, ResultElements const & new_guy );
 
-	result_elements const & get_nth_element( core::Size n );
-	result_elements const & get_specific_element( core::Size partition, core::Size index );
+	ResultElements const & get_nth_element( core::Size n );
+	ResultElements const & get_specific_element( core::Size partition, core::Size index_within_partition );
 
-	utility::vector1< result_elements > linear_vector_of_results();
+	///@brief Freezes the dynamic arrays and appends them onto each other (using the depth-first pattern)
+	utility::vector1< ResultElements >
+	linear_vector_of_results();
+
+	///@brief Consider example at the top of this file to learn more about this option
+	void set_return_results_depth_first( bool setting ) {
+		return_results_depth_first_ = setting;
+	}
 
 	void return_results_depth_first(){
 		return_results_depth_first_ = true;
@@ -74,16 +105,33 @@ public:
 		return_results_depth_first_ = false;
 	}
 
-	void set_return_results_depth_first( bool setting ) {
-		return_results_depth_first_ = setting;
+	///@brief Perhaps you have a diversity requirement and do not want too many results with the same token
+	/// (token can represent anything you want - as long as it can be stored as a uint64_t), this setting is for you.
+	void set_max_num_results_with_same_token_per_partition( core::Size setting ) {
+		max_num_results_with_same_token_per_partition_ = setting;
+	}
+
+	core::Size num_partitions() const {
+		core::Size const n_part = n_results_to_keep_for_partition_.size();
+		debug_assert( n_results_accessed_for_partition_.size() == n_part );
+		debug_assert( results_for_partition_.size() == n_part );
+		return n_part;
+	}
+
+	void clear(){
+		//n_results_to_keep_for_partition_.clear();
+		//n_results_accessed_for_partition_.clear();
+		results_for_partition_.clear();
 	}
 
 private:
 	utility::vector1< core::Size > n_results_to_keep_for_partition_;
 	utility::vector1< core::Size > n_results_accessed_for_partition_;
-	utility::vector1< utility::vector1< result_elements > > results_for_partition_;
+	utility::vector1< utility::vector1< ResultElements > > results_for_partition_;
 
 	bool return_results_depth_first_;
+
+	core::Size max_num_results_with_same_token_per_partition_;
 };
 
 } //dag_node_managers

@@ -48,12 +48,27 @@ public:
 	{}
 
 	///@brief override of NodeManager::register_result() so that the partition argument will always be 1.
-	void register_result( core::Size global_job_id, core::Size local_result_id, core::Real score, core::Size ) override {
-		NodeManager::register_result( global_job_id, local_result_id, score, 1 );
+	void register_result(
+		core::Size global_job_id,
+		core::Size local_result_id,
+		core::Real score,
+		core::Size, //partition
+		uint64_t token
+	) override {
+		NodeManager::register_result( global_job_id, local_result_id, score, 1, token );
 	}
 
 	void register_result( core::Size global_job_id, core::Size local_result_id, core::Real score ) {
-		register_result( global_job_id, local_result_id, score, 1 );
+		register_result( global_job_id, local_result_id, score, 1, 0 );
+	}
+
+	void register_result_with_token(
+		core::Size global_job_id,
+		core::Size local_result_id,
+		core::Real score,
+		uint64_t token
+	) {
+		register_result( global_job_id, local_result_id, score, 1, token );
 	}
 
 

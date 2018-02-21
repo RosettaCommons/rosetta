@@ -68,7 +68,7 @@ public:
 		manager.register_result( 3, 2, 4 );
 		manager.register_result( 3, 3, 4 );
 
-		utility::vector1< result_elements > const & elems = manager.results_to_keep();
+		utility::vector1< ResultElements > const & elems = manager.results_to_keep();
 		TS_ASSERT( manager.done_submitting() );
 
 		manager.get_next_local_jobid();
@@ -82,7 +82,7 @@ public:
 		TS_ASSERT_EQUALS( elems.size(), 3 );
 
 		int sum = 0;
-		for ( result_elements const & elem : elems ) {
+		for ( ResultElements const & elem : elems ) {
 			sum += core::Size( elem.score );
 		}
 		TS_ASSERT_EQUALS( sum, int( -50 - 40 - 30 ) );
@@ -120,7 +120,7 @@ public:
 		manager.append_job_results_that_should_be_discarded( dummy_list );
 		TS_ASSERT( manager.all_waste_is_discarded() );
 
-		utility::vector1< result_elements > const & results_to_keep = manager.results_to_keep();
+		utility::vector1< ResultElements > const & results_to_keep = manager.results_to_keep();
 		TS_ASSERT_EQUALS( results_to_keep.size(), 5 );
 		TS_ASSERT_EQUALS( results_to_keep[ 1 ].score, -100 );
 		TS_ASSERT_EQUALS( results_to_keep[ 2 ].score, -99 );
@@ -209,7 +209,7 @@ public:
 			TS_ASSERT_EQUALS( dummy_list.size(), 5 );
 			TS_ASSERT( manager.all_waste_is_discarded() );
 
-			utility::vector1< result_elements > const & results_to_keep = manager.results_to_keep();
+			utility::vector1< ResultElements > const & results_to_keep = manager.results_to_keep();
 			TS_ASSERT_EQUALS( results_to_keep.size(), 10 );
 			TS_ASSERT_EQUALS( results_to_keep[ 1 ].score, -4 );
 			TS_ASSERT_EQUALS( results_to_keep[ 2 ].score, -3.3 );
@@ -272,7 +272,7 @@ public:
 			TS_ASSERT_EQUALS( dummy_list.size(), 2 );
 			TS_ASSERT( manager.all_waste_is_discarded() );
 
-			utility::vector1< result_elements > const & results_to_keep = manager.results_to_keep();
+			utility::vector1< ResultElements > const & results_to_keep = manager.results_to_keep();
 			TS_ASSERT_EQUALS( results_to_keep.size(), 5 );
 			TS_ASSERT_EQUALS( results_to_keep[ 1 ].score, -10 );
 			TS_ASSERT_EQUALS( results_to_keep[ 2 ].score, -4 );
@@ -322,7 +322,7 @@ public:
 			TS_ASSERT_EQUALS( dummy_list.size(), 4 );
 			TS_ASSERT( manager.all_waste_is_discarded() );
 
-			utility::vector1< result_elements > const & results_to_keep = manager.results_to_keep();
+			utility::vector1< ResultElements > const & results_to_keep = manager.results_to_keep();
 			TS_ASSERT_EQUALS( results_to_keep.size(), 1 );
 			TS_ASSERT_EQUALS( results_to_keep[ 1 ].score, -4 );
 
@@ -383,10 +383,10 @@ public:
 			manager.register_result( ii.global_job_id, ii.local_result_id, ii.score, ii.input_pose_id );
 		}
 
-		utility::vector1< result_elements > results_to_keep = manager.results_to_keep();
+		utility::vector1< ResultElements > results_to_keep = manager.results_to_keep();
 		TS_ASSERT_EQUALS( results_to_keep.size(), num_results_to_keep );
 		int sum = 0;
-		for ( result_elements & elem : results_to_keep ) {
+		for ( ResultElements & elem : results_to_keep ) {
 			sum += int( elem.score );
 		}
 		TS_ASSERT_EQUALS( sum, 20 + 10 - 50 - 80 - 54);
@@ -428,7 +428,7 @@ public:
 		snm.append_job_results_that_should_be_discarded( list );
 		TS_ASSERT_EQUALS( list.size(), 90 - 3 );
 
-		utility::vector1< result_elements > const & results = snm.results_to_keep();
+		utility::vector1< ResultElements > const & results = snm.results_to_keep();
 		TS_ASSERT_DELTA( results[ 1 ].score, -89, 0.1 );
 		TS_ASSERT_DELTA( results[ 2 ].score, -88, 0.1 );
 		TS_ASSERT_DELTA( results[ 3 ].score, -87, 0.1 );
@@ -453,15 +453,15 @@ public:
 
 		NodeManagerStorageMatrix matrix( n_results_to_keep_for_partition, depth_first );
 
-		matrix.insert( 1, result_elements( 1, 1, -1 ) );
-		matrix.insert( 1, result_elements( 1, 1, -2 ) );
+		matrix.insert( 1, ResultElements( 1, 1, -1 ) );
+		matrix.insert( 1, ResultElements( 1, 1, -2 ) );
 
-		matrix.insert( 2, result_elements( 1, 1, 3 ) );
-		matrix.insert( 2, result_elements( 1, 1, -1 ) );
-		matrix.insert( 2, result_elements( 1, 1, -4 ) );
-		matrix.insert( 2, result_elements( 1, 1, 7 ) );
-		matrix.insert( 2, result_elements( 1, 1, -3 ) );
-		matrix.insert( 2, result_elements( 1, 1, 5 ) );
+		matrix.insert( 2, ResultElements( 1, 1, 3 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -1 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -4 ) );
+		matrix.insert( 2, ResultElements( 1, 1, 7 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -3 ) );
+		matrix.insert( 2, ResultElements( 1, 1, 5 ) );
 
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 1 ).score, -2 );
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 2 ).score, -1 );
@@ -491,12 +491,12 @@ public:
 
 		NodeManagerStorageMatrix matrix( n_results_to_keep_for_partition, depth_first );
 
-		matrix.insert( 1, result_elements( 1, 1, -1 ) );
-		matrix.insert( 1, result_elements( 1, 1, -2 ) );
+		matrix.insert( 1, ResultElements( 1, 1, -1 ) );
+		matrix.insert( 1, ResultElements( 1, 1, -2 ) );
 
-		matrix.insert( 2, result_elements( 1, 1, -1 ) );
-		matrix.insert( 2, result_elements( 1, 1, -4 ) );
-		matrix.insert( 2, result_elements( 1, 1, -3 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -1 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -4 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -3 ) );
 
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 1 ).score, -2 );
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 3 ).score, -1 );
@@ -505,10 +505,10 @@ public:
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 4 ).score, -3 );
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 6 ).score, -1 );
 
-		matrix.insert( 1, result_elements( 1, 1, -6 ) );
+		matrix.insert( 1, ResultElements( 1, 1, -6 ) );
 
-		matrix.insert( 2, result_elements( 1, 1, -6 ) );
-		matrix.insert( 2, result_elements( 1, 1, -7 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -6 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -7 ) );
 
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 7 ).score, -6 );
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 8 ).score, -7 );
@@ -533,12 +533,12 @@ public:
 
 		NodeManagerStorageMatrix matrix( n_results_to_keep_for_partition, depth_first );
 
-		matrix.insert( 1, result_elements( 1, 1, -1 ) );
-		matrix.insert( 1, result_elements( 1, 1, -2 ) );
+		matrix.insert( 1, ResultElements( 1, 1, -1 ) );
+		matrix.insert( 1, ResultElements( 1, 1, -2 ) );
 
-		matrix.insert( 2, result_elements( 1, 1, -1 ) );
-		matrix.insert( 2, result_elements( 1, 1, -4 ) );
-		matrix.insert( 2, result_elements( 1, 1, -3 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -1 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -4 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -3 ) );
 
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 1 ).score, -2 );
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 3 ).score, -1 );
@@ -547,14 +547,63 @@ public:
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 4 ).score, -3 );
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 6 ).score, -1 );
 
-		matrix.insert( 1, result_elements( 1, 1, -6 ) );
+		matrix.insert( 1, ResultElements( 1, 1, -6 ) );
 
-		matrix.insert( 2, result_elements( 1, 1, -6 ) );
-		matrix.insert( 2, result_elements( 1, 1, -7 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -6 ) );
+		matrix.insert( 2, ResultElements( 1, 1, -7 ) );
 
 		TS_ASSERT_EQUALS( matrix.get_nth_element( 7 ).score, -7 );
 	}
 
+	void test_tokens(){
+		using namespace protocols::jd3::dag_node_managers;
+		utility::vector1< core::Real > scores_for_token1;
+		utility::vector1< core::Real > scores_for_token2;
+		utility::vector1< core::Real > scores_for_token3;
+
+		scores_for_token1.push_back( -1.0 );
+		scores_for_token1.push_back( -2.0 );
+		scores_for_token1.push_back( -3.0 );
+		scores_for_token1.push_back( -4.0 );
+
+		scores_for_token2.push_back( 1.0 );
+		scores_for_token2.push_back( 2.0 );
+		scores_for_token2.push_back( 3.0 );
+		scores_for_token2.push_back( 4.0 );
+
+		scores_for_token3.push_back( 4.1 );
+		scores_for_token3.push_back( 4.4 );
+		scores_for_token3.push_back( 2.2 );
+		scores_for_token3.push_back( -3.5 );
+
+		utility::vector1< core::Size > const n_results_to_keep_for_partition( 1, 5 );
+		bool depth_first = false;
+		core::Size const max_num_results_with_same_token_per_partition = 2;
+
+		NodeManagerStorageMatrix matrix( n_results_to_keep_for_partition, depth_first );
+		matrix.set_max_num_results_with_same_token_per_partition( max_num_results_with_same_token_per_partition );
+
+		TS_ASSERT_EQUALS( matrix.num_partitions(), 1 );
+
+		//Results should look like:
+		//Score: -4.0 -3.5 -3.0 1.0 2.0
+		//Rank:  1    2    3    4   5
+		//Token: 1    3    1    2   2
+
+		for ( int i=1; i<5; ++i ) {
+			matrix.insert( 1, ResultElements( 1, i, scores_for_token1[ i ], 1 ) );
+			matrix.insert( 1, ResultElements( 2, i, scores_for_token2[ i ], 2 ) );
+			matrix.insert( 1, ResultElements( 3, i, scores_for_token3[ i ], 3 ) );
+		}
+
+		utility::vector1< ResultElements > linear_vector_of_results = matrix.linear_vector_of_results();
+
+		TS_ASSERT_EQUALS( linear_vector_of_results[ 1 ].token, 1 );
+		TS_ASSERT_EQUALS( linear_vector_of_results[ 2 ].token, 3 );
+		TS_ASSERT_EQUALS( linear_vector_of_results[ 3 ].token, 1 );
+		TS_ASSERT_EQUALS( linear_vector_of_results[ 4 ].token, 2 );
+		TS_ASSERT_EQUALS( linear_vector_of_results[ 5 ].token, 2 );
+	}
 
 private:
 

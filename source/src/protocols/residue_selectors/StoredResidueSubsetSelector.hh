@@ -58,6 +58,11 @@ public:
 
 	static std::string class_name();
 
+	std::string const &
+	get_subset_name() const {
+		return subset_name_;
+	}
+
 private: // data members
 	std::string subset_name_;
 };

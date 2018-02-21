@@ -11,8 +11,8 @@
 /// @brief Writes all filter results to the pose file.
 /// @author Cody Krivacic (krivacic@berkeley.edu)
 
-#ifndef INCLUDED_protocols_simple_filters_ReportFilter_hh
-#define INCLUDED_protocols_simple_filters_ReportFilter_hh
+#ifndef INCLUDED_protocols_simple_filters_WriteFiltersToPose_hh
+#define INCLUDED_protocols_simple_filters_WriteFiltersToPose_hh
 
 //unit headers
 #include <protocols/simple_moves/WriteFiltersToPose.fwd.hh>

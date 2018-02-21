@@ -50,6 +50,7 @@ public:
 
 public:
 	Tag();
+	Tag( std::string const & tag_string );
 
 	/// self pointers
 	inline TagCOP get_self_ptr() const { return shared_from_this(); }
@@ -144,6 +145,7 @@ public:
 	void setOptions( options_t const& options );
 
 	void read(std::istream& in);
+	void read( std::string const & tag_string );
 	void write(std::ostream& out, int num_tabs = 0 ) const;
 
 	///@brief returns the string that would be written by write()

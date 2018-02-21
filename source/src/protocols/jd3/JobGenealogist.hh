@@ -22,15 +22,15 @@ by a directed acyclic graph alternating between
 job nodes and results nodes. Consider this example:
 
 Job1 -|-- Result 1 -|-- Job 3 --- Result 1
-|             |
-|             |-- Job 4 -|- Result 1
-|                        |
-|-- Result 2             |- Result 2
+......|             |
+......|             |-- Job 4 -|- Result 1
+......|                        |
+......|-- Result 2             |- Result 2
 
 
 Job2 -|-- Result 1 -|-- Job 5
-|
-|-- Job 6
+....................|
+....................|-- Job 6
 
 
 Let's say Nobs 1 & 2 come from the first node in the job DAG
@@ -53,7 +53,8 @@ To keep this up to date (only on node 0, of course), make sure to:
 
 2) call JobGenealogist::note_job_completed() inside JobQueen::note_job_completed()
 
-3) call JobGenealogist::discard_job_result() for every job result id returned in JobQueen::job_results_that_should_be_discarded()
+3) call JobGenealogist::discard_job_result() for every job result id
+returned in JobQueen::job_results_that_should_be_discarded()
 */
 #ifndef INCLUDED_protocols_jd3_JobGenealogist_hh
 #define INCLUDED_protocols_jd3_JobGenealogist_hh
@@ -177,6 +178,9 @@ class JGResultNode {
 
 public:
 
+	friend class JGJobNode;
+	friend class JobGenealogist;
+
 	JGResultNode();
 
 	JGResultNode( unsigned int result, JGJobNode * par );
@@ -205,10 +209,6 @@ public://getters and setters
 		result_id_ = result_id;
 	}
 
-	JGJobNode * parent() {
-		return parent_;
-	}
-
 	JGJobNode const * parent() const {
 		return parent_;
 	}
@@ -217,12 +217,18 @@ public://getters and setters
 		parent_ = parent;
 	}
 
-	utility::vector1< JGJobNode * > & children() {
+	///@brief Be careful here! The vector is const but the elements are not
+	utility::vector1< JGJobNode * > const & children() const {
 		return children_;
 	}
 
-	///@brief Be careful here! The vector is const but the elements are not
-	utility::vector1< JGJobNode * > const & children() const {
+protected: //nonconst getters
+
+	JGJobNode * parent() {
+		return parent_;
+	}
+
+	utility::vector1< JGJobNode * > & children() {
 		return children_;
 	}
 
@@ -299,7 +305,7 @@ public:
 	void note_job_completed( JGJobNode * job_node, core::Size nresults );
 
 	///@brief wrapper for the other overload. This one is designed to more closely match the argument provided to JobQueen::note_job_completed
-	inline void note_job_completed( core::Size dag_node_id, core::Size global_job_id, core::Size nresults ) {
+	void note_job_completed( core::Size dag_node_id, core::Size global_job_id, core::Size nresults ) {
 		JGJobNode * job_node = get_job_node( dag_node_id, global_job_id );
 		debug_assert( job_node );
 		note_job_completed( job_node, nresults );
@@ -309,7 +315,7 @@ public:
 	void discard_job_result( core::Size job_dag_node, core::Size global_job_id, core::Size result_id );
 
 	///@brief At the end of job_results_that_should_be_discarded(), call this funciton for every JobResultID in the list
-	inline void discard_job_result( core::Size job_dag_node, jd3::JobResultID const & id ) {
+	void discard_job_result( core::Size job_dag_node, jd3::JobResultID const & id ) {
 		discard_job_result( job_dag_node, id.first, id.second );
 	}
 
@@ -334,9 +340,9 @@ public:
 
 	core::Size input_source_for_job( core::Size job_dag_node, core::Size global_job_id ) const;
 
-	JGJobNode const * get_job_node( core::Size job_dag_node, core::Size global_job_id ) const;
+	JGJobNode const * get_const_job_node( core::Size job_dag_node, core::Size global_job_id ) const;
 
-	JGResultNode const * get_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const;
+	JGResultNode const * get_const_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const;
 
 	///@brief This is more for debugging than anything. Print the global_job_ids for every job dag node to the screen
 	void print_all_nodes();
@@ -353,19 +359,19 @@ protected:
 
 	///@brief Are you all done with this JGJobNode? If so, this method deletes it and removes all traces of it.
 	///THIS DOES NOT DELETE ANY OF THE CHILDREN
-	inline void delete_node( JGJobNode * job_node, bool delete_from_vec = true ){
+	void delete_node( JGJobNode * job_node, bool delete_from_vec = true ){
 		debug_assert( job_node->node() );
 		delete_node( job_node, job_node->node(), delete_from_vec );
 	}
 
 	///@brief Are you all done with this JGResultNode? If so, this method deletes it and removes all traces of it.
 	///THIS DOES NOT DELETE ANY OF THE CHILDREN
-	inline void delete_node( JGResultNode * result_node ){
+	void delete_node( JGResultNode * result_node ){
 		result_node_pool_.destroy( result_node );
 	}
 
 	///@brief This is currently just a wrapper for JGJobNode::input_source_id(). I am leaving it as a method because it may become more complicated in the future.
-	inline unsigned int input_source_for_node( JGJobNode const * job_node ) const {
+	unsigned int input_source_for_node( JGJobNode const * job_node ) const {
 		debug_assert( job_node );
 		return job_node->input_source_id();
 	}
@@ -387,8 +393,7 @@ private:
 
 
 inline core::Size JobGenealogist::input_source_for_job( core::Size job_dag_node, core::Size global_job_id ) const {
-	debug_assert( get_job_node( job_dag_node, global_job_id ) );
-	JGJobNode const * const job_node = get_job_node( job_dag_node, global_job_id );
+	JGJobNode const * const job_node = get_const_job_node( job_dag_node, global_job_id );
 	debug_assert( job_node );
 	return input_source_for_node( job_node );
 }

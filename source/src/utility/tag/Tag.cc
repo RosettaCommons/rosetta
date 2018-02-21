@@ -116,6 +116,13 @@ Tag::Tag() :
 	quote_options_( true )
 {}
 
+Tag::Tag( std::string const & tag_string) :
+	parentTag_(/* NULL */),
+	quote_options_( true )
+{
+	read( tag_string );
+}
+
 void Tag::clear() {
 	name_.clear();
 	mOptions_.clear();
@@ -521,9 +528,13 @@ void print_error( ostream& out, string const& str, file_position const& lc ) {
 
 } // namespace
 
-void Tag::read(std::istream& in ) {
+void Tag::read( std::istream& in ) {
 	string str;
-	while ( in.peek() != EOF ) str.push_back(in.get());
+	while ( in.peek() != EOF ) str.push_back( in.get() );
+	read( str );
+}
+
+void Tag::read( std::string const & str ) {
 
 	using iterator_t = position_iterator<const char *>;
 	iterator_t begin(str.c_str(), str.c_str() + str.size(), "istream"); // is this remotely correct?

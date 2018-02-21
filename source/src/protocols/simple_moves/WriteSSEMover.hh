@@ -11,8 +11,8 @@
 /// @brief Writes SSE assignation from DSSP or prediction from PSIPRED as REMARK.
 /// @author Jaume Bonet (jaume.bonet@gmail.com)
 
-#ifndef INCLUDED_protocols_simple_filters_ReportFilter_hh
-#define INCLUDED_protocols_simple_filters_ReportFilter_hh
+#ifndef INCLUDED_protocols_simple_filters_WriteSSEMover_hh
+#define INCLUDED_protocols_simple_filters_WriteSSEMover_hh
 
 //unit headers
 #include <protocols/simple_moves/WriteSSEMover.fwd.hh>

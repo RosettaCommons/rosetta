@@ -26,7 +26,11 @@ namespace dag_node_managers {
 
 //////
 //UTIL
-inline utility::vector1< core::Size > determine_num_for_partition( core::Size num_partitions, core::Size num_results_to_keep, bool return_empty_array_if_0 ){
+inline utility::vector1< core::Size > determine_num_for_partition(
+	core::Size const num_partitions,
+	core::Size const num_results_to_keep,
+	bool return_empty_array_if_0
+){
 
 	if ( return_empty_array_if_0 && num_results_to_keep == 0 ) {
 		return utility::vector1< core::Size > ( 0 );

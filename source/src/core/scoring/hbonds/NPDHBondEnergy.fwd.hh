@@ -13,8 +13,8 @@
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_scoring_hbonds_HBondEnergy_fwd_hh
-#define INCLUDED_core_scoring_hbonds_HBondEnergy_fwd_hh
+#ifndef INCLUDED_core_scoring_hbonds_NPDHBondEnergy_fwd_hh
+#define INCLUDED_core_scoring_hbonds_NPDHBondEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

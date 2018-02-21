@@ -56,7 +56,9 @@ NodeManager::NodeManager(
 	num_jobs_completed_( 0 ),
 
 	num_partitions_( num_partitions ),
-	results_to_keep_( num_results_to_keep_for_part_, return_results_depth_first )
+	results_to_keep_( num_results_to_keep_for_part_, return_results_depth_first ),
+
+	max_num_results_with_same_token_per_partition_( 0 )
 {
 	for ( core::Size part = 1; part <= num_partitions; ++part ) {
 		TR.Debug << "Keeping " << num_results_to_keep_for_part_[ part ] << " results for partition " << part << std::endl;
@@ -70,13 +72,19 @@ NodeManager::~NodeManager()
 {}
 
 void
-NodeManager::register_result( core::Size global_job_id, core::Size local_result_id, core::Real score, core::Size partition ){
+NodeManager::register_result(
+	core::Size global_job_id,
+	core::Size local_result_id,
+	core::Real score,
+	core::Size partition,
+	uint64_t token
+){
 
 	++num_results_received_;
 	++num_results_received_for_part_[ partition ];
 
-	result_elements const new_element( global_job_id, local_result_id, score );
-	result_elements const elem_to_delete = results_to_keep_.insert( partition, new_element );
+	ResultElements const new_element( global_job_id, local_result_id, score, token );
+	ResultElements const elem_to_delete = results_to_keep_.insert( partition, new_element );
 
 	if ( elem_to_delete.global_job_id || elem_to_delete.local_result_id ) {
 		//Do not consider {0,0}
@@ -86,6 +94,14 @@ NodeManager::register_result( core::Size global_job_id, core::Size local_result_
 	if ( result_threshold_ && ready_to_finish_early() ) {
 		stopped_early_ = true;
 	}
+}
+
+void
+NodeManager::clear() {
+	//result_threshold_per_part_.clear();
+	//num_results_received_for_part_.clear();
+	//num_results_to_keep_for_part_.clear();
+	results_to_keep_.clear();
 }
 
 }

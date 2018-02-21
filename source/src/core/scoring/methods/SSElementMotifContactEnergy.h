@@ -1,4 +1,4 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+>// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/motif/MotifScore.cc
+/// @file   core/scoring/methods/SSElementMotifContactEnergy.hh
 /// @brief  Will's motif score to determine how well packed the protein core is
 /// @author TJ Brunette
 
 
-#ifndef INCLUDED_core_scoring_methods_CenPairMotifEnergy_hh
-#define INCLUDED_core_scoring_methods_CenPairMotifEnergy_hh
+#ifndef INCLUDED_core_scoring_methods_SSElementMotifEnergy_hh
+#define INCLUDED_core_scoring_methods_SSElementMotifEnergy_hh
 
 
 // Package headers

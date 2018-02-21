@@ -27,7 +27,7 @@ namespace residue_selector {
 
 /// @brief This templated class will register an instance of an
 /// ResidueSelectorCreator (class T) with the ResidueSelectorFactory.  It will ensure
-/// that no ResidueSelector creator is registered twice, and, centralizes
+/// that no ResidueSelector creator is registered twice, and centralizes
 /// this registration logic so that thread safety issues can be handled in
 /// one place
 template < class T >

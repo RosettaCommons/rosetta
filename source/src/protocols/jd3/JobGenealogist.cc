@@ -454,7 +454,7 @@ JGJobNode * JobGenealogist::get_job_node( core::Size job_dag_node, core::Size gl
 }
 
 
-JGJobNode const * JobGenealogist::get_job_node( core::Size job_dag_node, core::Size global_job_id ) const {
+JGJobNode const * JobGenealogist::get_const_job_node( core::Size job_dag_node, core::Size global_job_id ) const {
 	JGJobNode dummy;
 	dummy.global_job_id( global_job_id );
 	auto iter = std::lower_bound(
@@ -483,8 +483,8 @@ JGResultNode * JobGenealogist::get_result_node( core::Size node, core::Size glob
 	return 0;
 }
 
-JGResultNode const * JobGenealogist::get_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const {
-	JGJobNode const * job_node = get_job_node( node, global_job_id );
+JGResultNode const * JobGenealogist::get_const_result_node( core::Size node, core::Size global_job_id, core::Size result_id ) const {
+	JGJobNode const * job_node = get_const_job_node( node, global_job_id );
 	//TODO std::find_if() ?
 	for ( JGResultNode const * child : job_node->children() ) {
 		if ( child->result_id() == result_id ) return child;

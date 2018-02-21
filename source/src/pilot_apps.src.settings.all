@@ -374,6 +374,7 @@ sources = {
 
 	# J ######################################################################
         "pilot/jackmaguire" : [
+                "benchmark_k_medoids",
                 "multistage_rosetta_scripts",
         ],
 	"pilot/jadolfbr" : [

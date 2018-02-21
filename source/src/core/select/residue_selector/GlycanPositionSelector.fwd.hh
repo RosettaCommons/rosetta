@@ -12,8 +12,8 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_core_select_residue_selector_GlycanResidueSelector_fwd_hh
-#define INCLUDED_core_select_residue_selector_GlycanResidueSelector_fwd_hh
+#ifndef INCLUDED_core_select_residue_selector_GlycanPositionSelector_fwd_hh
+#define INCLUDED_core_select_residue_selector_GlycanPositionSelector_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

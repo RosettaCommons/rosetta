@@ -66,6 +66,7 @@ public:
 	///@param num_partitions The total number of partitions you want
 	///@param num_results_to_keep_for_part maximum number of results you want to keep per partition. num_results_to_keep_for_part.size() should equal num_partitions
 	///@param result_threshold_per_part If you want to have a result threshold, define here the threshold for each partition. result_threshold_per_part.size() should equal num_partitions
+	///@param return_results_depth_first please refer to protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh for more details about this option
 	NodeManager(
 		core::Size job_offset,
 		core::Size num_jobs_total,
@@ -77,6 +78,8 @@ public:
 
 	//destructor
 	~NodeManager() override;
+
+	void clear();
 
 public:
 
@@ -92,7 +95,8 @@ public:
 		core::Size global_job_id,
 		core::Size local_result_id,
 		core::Real score,
-		core::Size partition = 1
+		core::Size partition = 1,
+		uint64_t token = 0
 	);
 
 	///@brief This class can be used to determine which job should be submitted next.
@@ -135,7 +139,7 @@ public://status checkers
 public: //getters, setters
 
 	///@brief old way to access the results. get_nth_job_result_id() is prefered.
-	utility::vector1< result_elements > results_to_keep();
+	utility::vector1< ResultElements > results_to_keep();
 
 	inline core::Size num_jobs() const {
 		return num_jobs_total_;
@@ -165,6 +169,18 @@ public: //getters, setters
 
 	inline bool stopped_early() const { return stopped_early_; };
 
+	///@brief Perhaps you have a diversity requirement and do not want too many results with the same token
+	/// (token can represent anything you want - as long as it can be stored as a core::Size), this setting is for you.
+	void set_max_num_results_with_same_token_per_partition( core::Size setting ) {
+		max_num_results_with_same_token_per_partition_ = setting;
+		results_to_keep_.set_max_num_results_with_same_token_per_partition( setting );
+	}
+
+	///please refer to protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh for more details about this option
+	void set_return_results_depth_first( bool setting ){
+		results_to_keep_.set_return_results_depth_first( setting );
+	}
+
 protected:
 	inline core::Size num_results_received(){
 		return num_results_received_;
@@ -177,10 +193,6 @@ protected:
 			}
 		}
 		return true;
-	}
-
-	void set_return_results_depth_first( bool setting ){
-		results_to_keep_.set_return_results_depth_first( setting );
 	}
 
 private:
@@ -203,10 +215,9 @@ private:
 	core::Size num_jobs_completed_;
 
 	core::Size num_partitions_;
-	//utility::vector1< utility::vector1< result_elements > > results_to_keep_;
 	NodeManagerStorageMatrix results_to_keep_;
 
-	//mutable utility::vector1< result_elements > all_results_to_keep_;
+	core::Size max_num_results_with_same_token_per_partition_;
 
 	std::list< jd3::JobResultID > job_results_that_should_be_discarded_;
 };
@@ -219,7 +230,7 @@ NodeManager::note_job_completed( core::Size, core::Size nresults ){//first arg i
 }
 
 inline
-utility::vector1< result_elements >
+utility::vector1< ResultElements >
 NodeManager::results_to_keep() {
 	//Have to stop early because this freezes the result matrix.
 	//This is one of the main reasons not to use this method.

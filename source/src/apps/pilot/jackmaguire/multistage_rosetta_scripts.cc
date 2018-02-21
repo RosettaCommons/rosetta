@@ -7,6 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+/// @file   apps/pilot/jackmaguire/multistge_rosetta_scripts.cc
+/// @brief
+/// @author Jack Maguire, jackmaguire1444@gmail.com
+
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>

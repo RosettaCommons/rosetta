@@ -11,8 +11,8 @@
 /// @brief  High-resolution Timer (ns resolution)
 /// @author Luki Goldschmidt (luki@mbi.ucla.edu)
 
-#ifndef INCLUDED_basic_gpu_GPU_cc
-#define INCLUDED_basic_gpu_GPU_cc
+#ifndef INCLUDED_basic_gpu_TIMER_cc
+#define INCLUDED_basic_gpu_TIMER_cc
 
 #include <basic/gpu/Timer.hh>
 #include <iostream>
@@ -89,4 +89,4 @@ void Timer::Report(const char *tag) {
 } // gpu
 } // basic
 
-#endif // INCLUDED_basic_gpu_GPU_cc
+#endif // INCLUDED_basic_gpu_TIMER_cc

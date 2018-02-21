@@ -8,7 +8,7 @@
     </Input>
 
     <SCOREFXNS>
-      <ScoreFunction name="individual_sfxn" weights="beta_nov15.wts"/>
+      <ScoreFunction name="individual_sfxn" weights="ref2015.wts"/>
     </SCOREFXNS>
 
     <RESIDUE_SELECTORS>
@@ -28,7 +28,7 @@
     </Input>
 
     <SCOREFXNS>
-      <ScoreFunction name="individual_sfxn" weights="beta_nov15_cst.wts"/>
+      <ScoreFunction name="individual_sfxn" weights="ref2015_cst.wts"/>
     </SCOREFXNS>
 
     <RESIDUE_SELECTORS>
@@ -44,7 +44,7 @@
 
   <Common>
     <SCOREFXNS>
-      <ScoreFunction name="common_sfxn" weights="beta_nov15.wts"/>
+      <ScoreFunction name="common_sfxn" weights="ref2015.wts"/>
     </SCOREFXNS>
 
     <RESIDUE_SELECTORS>
@@ -114,8 +114,8 @@
       </Stage>
 
 
-      Test mixed data, max_num_results_per_instance, multiple movers and filters
-      <Stage num_runs_per_input_struct="1" total_num_results_to_keep="4" max_num_results_per_instance="3">
+      Test mixed data, max_num_results_to_keep_per_instance, multiple movers and filters
+      <Stage num_runs_per_input_struct="1" total_num_results_to_keep="4" max_num_results_to_keep_per_instance="3">
 	<Add mover_name="m.4.1" />
 	<Add mover_name="m.4.2" />
 	<Add mover_name="m.4.3" />

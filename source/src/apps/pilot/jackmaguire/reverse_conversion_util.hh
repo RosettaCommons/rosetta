@@ -7,14 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-//#include <devel/init.hh>
-//#include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
+/// @file   apps/pilot/jackmaguire/reverse_conversion_util.hh
+/// @brief
+/// @author Jack Maguire, jackmaguire1444@gmail.com
 
-//#include <utility/exit.hh>
-//#include <utility/excn/Exceptions.hh>
-//#include <protocols/rosetta_scripts/util.hh>
-//#include <fstream>
+#include <utility/tag/Tag.hh>
 #include <sstream>
 
 void add_protocols(

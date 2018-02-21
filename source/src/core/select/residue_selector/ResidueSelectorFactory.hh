@@ -53,7 +53,7 @@ public:
 	) const;
 
 	/// @brief Should the Factory throw an exception or call utility::exit when it encounters the
-	/// second of two ResidueSelctorCreators with the same keyname?  It's default behavior is to
+	/// second of two ResidueSelectorCreators with the same keyname?  It's default behavior is to
 	/// call utility::exit, but this method allows you to set it so that it will throw an
 	/// exception instead (which is unit testable).
 	void set_throw_on_double_registration();

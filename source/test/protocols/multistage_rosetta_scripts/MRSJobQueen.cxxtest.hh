@@ -696,46 +696,42 @@ public:
 		TS_ASSERT( exception_thrown );
 	}
 
-	//There is nothing wrong with this code, except that it is testing a feature that does not exist yet.
-	//Please uncomment this when JD3 supports PDBlists in the job definition file
-	//-Jack Maguire, Feb 2018
-	/*
 	void _test_pdblist(){
-	basic::options::option[ basic::options::OptionKeys::in::file::job_definition_file ]( "protocols/multistage_rosetta_scripts/job_def_file.pdblist.xml" );
+		basic::options::option[ basic::options::OptionKeys::in::file::job_definition_file ]( "protocols/multistage_rosetta_scripts/job_def_file.pdblist.xml" );
 
-	try{
-	MRSJobQueen queen;
-	JobDigraphOP job_dag = queen.initial_job_dag();
-	TS_ASSERT_EQUALS( queen.num_input_structs(), 3 );
+		try{
+			MRSJobQueen queen;
+			JobDigraphOP job_dag = queen.initial_job_dag();
+			TS_ASSERT_EQUALS( queen.num_input_structs(), 3 );
 
-	TagManager const & tag_manager = queen.tag_manager();
-	std::vector< TagListOP > const & tag_lists = tag_manager.tag_list_for_input_pose_id();
-	TS_ASSERT_EQUALS( tag_lists[ 0 ], tag_lists[ 1 ] );
-	TS_ASSERT( tag_lists[ 1 ] != tag_lists[ 2 ] );
+			TagManager const & tag_manager = queen.tag_manager();
+			std::vector< TagListOP > const & tag_lists = tag_manager.tag_list_for_input_pose_id();
+			TS_ASSERT_EQUALS( tag_lists[ 0 ], tag_lists[ 1 ] );
+			TS_ASSERT( tag_lists[ 1 ] != tag_lists[ 2 ] );
 
-	{
-	bool sfxn_exists = false;
-	for( auto const & tag : * tag_lists[ 2 ] ){
-	if( tag->getName() == "SCOREFXNS" ){
-	for( auto const & subtag : tag->getTags() ){
-	if( subtag->getName() == "ScoreFunction" ){
-	if( subtag->getOption< std::string >( "name" ) == "individual_sfxn" ){
-	sfxn_exists = true;
-	TS_ASSERT_EQUALS( subtag->getOption< std::string >( "weights" ), "beta_nov15_cst.wts" );
-	}
-	}
-	}
-	}
-	}
-	TS_ASSERT( sfxn_exists );
-	}
-	} catch( utility::excn::Exception const & e ){
-	TR << "caught exception: " << std::endl;
-	TR << e.msg() << std::endl;
-	TS_ASSERT( false );
-	}
+			{
+				bool sfxn_exists = false;
+				for ( auto const & tag : * tag_lists[ 2 ] ) {
+					if ( tag->getName() == "SCOREFXNS" ) {
+						for ( auto const & subtag : tag->getTags() ) {
+							if ( subtag->getName() == "ScoreFunction" ) {
+								if ( subtag->getOption< std::string >( "name" ) == "individual_sfxn" ) {
+									sfxn_exists = true;
+									TS_ASSERT_EQUALS( subtag->getOption< std::string >( "weights" ), "beta_nov15_cst.wts" );
+								}
+							}
+						}
+					}
+				}
+				TS_ASSERT( sfxn_exists );
+			}
+		} catch( utility::excn::Exception const & e ){
+			TR << "caught exception: " << std::endl;
+			TR << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
 
-	}*/
+	}
 
 
 	//GDB stuff

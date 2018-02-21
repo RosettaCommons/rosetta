@@ -1,0 +1,89 @@
+<JobDefinitionFile>
+
+  <Job>
+    <Input>
+      <PDB filename="AAAAA.pdb"/>
+    </Input>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="AAAAL.pdb"/>
+    </Input>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="AAAAR.pdb"/>
+    </Input>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="AAAAS.pdb"/>
+    </Input>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="RRRRR.pdb"/>
+    </Input>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="RRRRA.pdb"/>
+    </Input>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="RRRRS.pdb"/>
+    </Input>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="SSSSS.pdb"/>
+    </Input>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="SSSSA.pdb"/>
+    </Input>
+  </Job>
+
+  <Job>
+    <Input>
+      <PDB filename="SSSSR.pdb"/>
+    </Input>
+  </Job>
+
+  <Common>
+    <SCOREFXNS>
+      <ScoreFunction name="sfxn" weights="ref2015.wts"/>
+    </SCOREFXNS>
+
+    <FILTERS>
+      <ScoreType name="sfxn_filter" scorefxn="sfxn" score_type="total_score" threshold="9999"/>
+    </FILTERS>
+
+    <PROTOCOLS>
+
+      <Stage num_runs_per_input_struct="1" total_num_results_to_keep="10">
+	<Sort filter_name="sfxn"/>
+      </Stage>
+
+      <Cluster total_num_results_to_keep="3">
+	<Sequence/>
+      </Cluster>
+
+      <Stage num_runs_per_input_struct="1" total_num_results_to_keep="3">
+	<Sort filter_name="sfxn"/>
+      </Stage>
+
+    </PROTOCOLS>
+  </Common>
+
+</JobDefinitionFile>

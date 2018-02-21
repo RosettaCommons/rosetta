@@ -10,7 +10,6 @@
 /// @file protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.cc
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
-
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh>
 #include <algorithm>
@@ -26,7 +25,8 @@ NodeManagerStorageMatrix::NodeManagerStorageMatrix(
 	n_results_to_keep_for_partition_( std::move( n_results_to_keep_for_partition ) ),
 	n_results_accessed_for_partition_( n_results_to_keep_for_partition_.size(), 0 ),
 	results_for_partition_( n_results_to_keep_for_partition_.size() ),
-	return_results_depth_first_( return_results_depth_first )
+	return_results_depth_first_( return_results_depth_first ),
+	max_num_results_with_same_token_per_partition_( 0 )
 {
 	core::Size const n_partitions = n_results_to_keep_for_partition_.size();
 	for ( core::Size part = 1; part <= n_partitions; ++part ) {
@@ -37,35 +37,67 @@ NodeManagerStorageMatrix::NodeManagerStorageMatrix(
 
 NodeManagerStorageMatrix::~NodeManagerStorageMatrix(){}
 
-result_elements
-NodeManagerStorageMatrix::insert( core::Size const partition, result_elements const & new_guy ){
-	utility::vector1< result_elements > & partition_vec = results_for_partition_[ partition ];
+core::Size
+get_index_of_last_element_with_token (
+	utility::vector1< ResultElements > const & vec,
+	core::Size token
+){
+	for ( auto ii = vec.size(); ii > 0; --ii ) {
+		if ( vec[ ii ].token == token ) return ii;
+	}
+	utility_exit_with_message( "token: " + std::to_string(token) + " is not in vector." );
+	return 0;
+}
 
-	utility::vector1< result_elements >::iterator first_available_position =
-		partition_vec.begin() + n_results_accessed_for_partition_[ partition ];
+ResultElements
+NodeManagerStorageMatrix::insert( core::Size const partition, ResultElements const & new_guy ){
 
-	/*if( first_available_position == partition_vec.end() && ! partition_vec.empty() ) {
-	return new_guy;
+	utility::vector1< ResultElements > & partition_vec = results_for_partition_[ partition ];
+	ResultElements doomed_guy( 0, 0, 0 );
+
+	//First determine if this exceeds our token limit
+	if ( max_num_results_with_same_token_per_partition_ != 0 ) {
+		auto pred = [ & new_guy ]( ResultElements const & i ) -> bool { return i.token == new_guy.token; };
+		core::Size const num_elements_with_this_token =
+			std::count_if( partition_vec.begin(), partition_vec.end(), pred );
+
+		if ( num_elements_with_this_token >= max_num_results_with_same_token_per_partition_ ) {
+			//compare new_guy to the lowest rank result with the same element
+			unsigned int const index_of_last_token = get_index_of_last_element_with_token( partition_vec, new_guy.token );
+			if ( index_of_last_token <= n_results_accessed_for_partition_[ partition ] ) {
+				//region is frozen, can not add new guy
+				return new_guy;
+			} if ( new_guy.score >= partition_vec[ index_of_last_token ].score ) {
+				//new guy is not good enough
+				return new_guy;
+			} else {
+				//new guy is good enough. Delete
+				doomed_guy = partition_vec[ index_of_last_token ];
+				partition_vec.erase( partition_vec.begin() + index_of_last_token - 1 );
+			}
+		}
 	}
 
-	debug_assert( n_results_accessed_for_partition_[ partition ] < partition_vec.size() );
-	*/
+	utility::vector1< ResultElements >::iterator first_available_position =
+		partition_vec.begin() + n_results_accessed_for_partition_[ partition ];
+
 	partition_vec.insert(
 		std::upper_bound( first_available_position, partition_vec.end(), new_guy ),
 		new_guy
 	);
 
 	if ( partition_vec.size() > n_results_to_keep_for_partition_[ partition ] ) {
-		result_elements const return_val = partition_vec.back();
+		ResultElements const return_val = partition_vec.back();
 		partition_vec.pop_back();
+		debug_assert( ! ( doomed_guy.global_job_id || doomed_guy.local_result_id ) );
 		return return_val;
 	} else {
-		return result_elements( 0, 0, 0 );
+		return doomed_guy;
 	}
 
 }
 
-result_elements const &
+ResultElements const &
 NodeManagerStorageMatrix::get_nth_element( core::Size n ){
 
 	core::Size const n_partitions = n_results_accessed_for_partition_.size();
@@ -89,7 +121,7 @@ NodeManagerStorageMatrix::get_nth_element( core::Size n ){
 			}
 		}
 		utility_exit_with_message( "dead_code" );
-		//return result_elements( 0, 0, 0 );
+		//return ResultElements( 0, 0, 0 );
 	} else {
 		core::Size const minimum_num_results_to_keep =
 			* std::min_element( n_results_to_keep_for_partition_.begin(), n_results_to_keep_for_partition_.end() );
@@ -150,7 +182,7 @@ NodeManagerStorageMatrix::get_nth_element( core::Size n ){
 
 }
 
-result_elements const &
+ResultElements const &
 NodeManagerStorageMatrix::get_specific_element( core::Size partition, core::Size index ){
 	while ( index > results_for_partition_[ partition ].size() ) {
 		//pad with blanks so that more results can come in the future
@@ -165,18 +197,18 @@ NodeManagerStorageMatrix::get_specific_element( core::Size partition, core::Size
 	return results_for_partition_[ partition ][ index ];
 }
 
-utility::vector1< result_elements >
+utility::vector1< ResultElements >
 NodeManagerStorageMatrix::linear_vector_of_results() {
 	core::Size nresults = 0;
-	for ( utility::vector1< result_elements > const & subvec : results_for_partition_ ) {
+	for ( utility::vector1< ResultElements > const & subvec : results_for_partition_ ) {
 		nresults += subvec.size();
 	}
-	utility::vector1< result_elements > all_results;
+	utility::vector1< ResultElements > all_results;
 	all_results.reserve( nresults );
 
 	core::Size const n_partitions = n_results_to_keep_for_partition_.size();
 	for ( core::Size part = 1; part <= n_partitions; ++part ) {
-		utility::vector1< result_elements > const & subvec = results_for_partition_[ part ];
+		utility::vector1< ResultElements > const & subvec = results_for_partition_[ part ];
 		n_results_accessed_for_partition_[ part ] = subvec.size();
 		all_results.insert( all_results.end(), subvec.begin(), subvec.end() );
 	}
