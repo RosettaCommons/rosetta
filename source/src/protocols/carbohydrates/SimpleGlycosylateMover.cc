@@ -74,10 +74,9 @@ SimpleGlycosylateMover::SimpleGlycosylateMover( SimpleGlycosylateMover const & s
 	ref_pose_name_( src.ref_pose_name_ ),
 	idealize_glycosylation_( src.idealize_glycosylation_)
 {
-	if ( selector_ ) {
+	if ( src.selector_ ) {
 		selector_ = src.selector_->clone();
 	}
-
 }
 
 void
@@ -109,7 +108,7 @@ SimpleGlycosylateMover::parse_my_tag(
 		parsed_positions_.push_back( tag->getOption< std::string >("position") );
 	} else if ( tag->hasOption("positions") ) {
 		parsed_positions_ = utility::string_split_multi_delim( tag->getOption< std::string >("positions"), ",'`~+*&|;. ");
-	} else if  ( tag->hasTag( "residue_selector") ) {
+	} else if  ( tag->hasOption( "residue_selector") ) {
 		selector_ = parse_residue_selector( tag, data );
 	} else {
 		utility_exit_with_message(" Must pass either position or positions");
@@ -303,10 +302,12 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 		set_positions( subset);
 	}
 
-	if ( glycosylations_.size() == 0 || positions_.size() == 0 ) {
-		utility_exit_with_message(" Glycosylation(s) and position(s) need to be set! ");
+	if ( positions_.size() == 0 ) {
+		utility_exit_with_message(" Position(s) need to be set! ");
 	}
-
+	if ( glycosylations_.size() == 0 ) {
+		utility_exit_with_message(" Glycosylation(s) need to be set! ");
+	}
 	if ( glycosylation_weights_.size() > 0 && glycosylation_weights_.size() != glycosylations_.size() ) {
 		utility_exit_with_message("Number of weights must equal number of glycosylations!");
 	}
