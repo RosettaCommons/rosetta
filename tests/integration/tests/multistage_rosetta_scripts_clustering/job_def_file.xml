@@ -72,7 +72,7 @@
     <PROTOCOLS>
 
       <Stage num_runs_per_input_struct="1" total_num_results_to_keep="10">
-	<Sort filter_name="sfxn"/>
+	<Sort filter_name="sfxn_filter"/>
       </Stage>
 
       <Cluster total_num_results_to_keep="3">
@@ -80,7 +80,7 @@
       </Cluster>
 
       <Stage num_runs_per_input_struct="1" total_num_results_to_keep="3">
-	<Sort filter_name="sfxn"/>
+	<Sort filter_name="sfxn_filter"/>
       </Stage>
 
     </PROTOCOLS>

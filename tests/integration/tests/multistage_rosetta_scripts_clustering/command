@@ -12,7 +12,7 @@ date > start-time.ignore
     -job_definition_file job_def_file.xml \
     2>&1 | egrep -vf ../../ignore_list > info.log
 
-date > finish-time.ignore
-
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+date > finish-time.ignore
 

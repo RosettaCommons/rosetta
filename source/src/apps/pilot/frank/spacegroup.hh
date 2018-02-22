@@ -1,8 +1,8 @@
 /// @file
 /// @brief
 
-#ifndef INCLUDED_protocols_cryst_spacegroup_hh
-#define INCLUDED_protocols_cryst_spacegroup_hh
+#ifndef INCLUDED_apps_pilot_frank_spacegroup_hh
+#define INCLUDED_apps_pilot_frank_spacegroup_hh
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
