@@ -1,4 +1,4 @@
-import os, sys, os.path, json
+import os, sys, os.path, json, subprocess
 
 # Assert or bootstrap minimum setuptools version required for find_packages
 import ez_setup
@@ -25,12 +25,23 @@ class PyRosettaDistribution( Distribution ):
 
 
 def get_package_version():
-    version_file = os.path.dirname( os.path.abspath(__file__) ) + '/../version.json'
+    version_info = None
 
-    if os.path.isfile(version_file):
-        with open(version_file) as f: v = json.load(f)
+    package_version_file = os.path.dirname( os.path.abspath(__file__) ) + '/../version.json'
+    if os.path.isfile(package_version_file):
+        with open(package_version_file) as f: version_info = json.load(f)
 
-        if v['version']: return v['version']
+    try:
+        root_version_file = os.path.join(
+                subprocess.check_output(["git", "rev-parse", "--show-toplevel"]).strip().decode(),
+            "source/.version.json")
+        if os.path.isfile(root_version_file):
+            with open(root_version_file) as f: version_info = json.load(f)
+    except subprocess.CalledProcessError:
+        pass
+
+    if version_info and version_info["version"]:
+        return version_info['version']
 
     return 'v2017'
 

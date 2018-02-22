@@ -5,6 +5,7 @@ project(rosetta)
 
 # Add a CMake parameter for choosing a desired Python version
 set(PYROSETTA_PYTHON_VERSION "" CACHE STRING "Python version to use for compiling the PyRosetta library")
+set(PYROSETTA_STRIP_MODULE TRUE CACHE BOOL "Strip compiled modules in release mode to minimize file size.")
 
 include(CheckCXXCompilerFlag)
 
@@ -164,12 +165,14 @@ elseif (UNIX)
   if(APPLE)
     set_target_properties(rosetta PROPERTIES MACOSX_RPATH ".")
     set_target_properties(rosetta PROPERTIES LINK_FLAGS "-undefined dynamic_lookup ")
-    if (NOT ${U_CMAKE_BUILD_TYPE} MATCHES DEBUG)
+  endif()
+
+  if (NOT ${U_CMAKE_BUILD_TYPE} MATCHES DEBUG AND PYROSETTA_STRIP_MODULE)
+    if(APPLE)
       add_custom_command(TARGET rosetta POST_BUILD COMMAND strip -u -r ${PROJECT_BINARY_DIR}/pyrosetta/rosetta.so)
-    endif()
-  else()
-    if (NOT ${U_CMAKE_BUILD_TYPE} MATCHES DEBUG)
+    else()
       add_custom_command(TARGET rosetta POST_BUILD COMMAND strip ${PROJECT_BINARY_DIR}/pyrosetta/rosetta.so)
     endif()
   endif()
+
 endif()

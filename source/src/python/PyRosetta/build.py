@@ -480,6 +480,7 @@ def run_cmake(rosetta_source_path):
     prefix = get_binding_build_root(rosetta_source_path, build=True) + '/'
 
     config = '-DCMAKE_BUILD_TYPE={}'.format(Options.type)
+    config += ' -DPYROSETTA_STRIP_MODULE={build_type}'.format(build_type="TRUE" if Options.strip_module else "FALSE")
 
     if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
 
@@ -682,6 +683,12 @@ def create_package(rosetta_source_path, path):
 
     generate_version_file(rosetta_source_path, path + '/version.json')
 
+def create_wheel(rosetta_source_path, wheel_path):
+    print("Creating Python wheel at: {}...".format(wheel_path));  sys.stdout.flush()
+
+    build_prefix = get_binding_build_root(rosetta_source_path, build=True)
+
+    execute('Building wheel...', 'cd {build_prefix} && {python} setup.py bdist_wheel -d {output_path}'.format(python=sys.executable, output_path=os.path.abspath(wheel_path), **vars()))
 
 def main(args):
     ''' PyRosetta building script '''
@@ -691,6 +698,9 @@ def main(args):
     parser.add_argument('-s', '--skip-generation-phase', action="store_true", help="Assume that bindings code is already generaded and skipp the Binder call's")
     parser.add_argument('-d', '--skip-building-phase', action="store_true", help="Assume that bindings code is already generaded and skipp the Binder call's")
     parser.add_argument("--type", default='Release', choices=['Release', 'Debug', 'MinSizeRel', 'RelWithDebInfo'], help="Specify build type")
+    parser.add_argument("--strip-module", dest="strip_module", action="store_true", help="Strip symbols from compiled modules to produce minimum file size in release mode. (default on)")
+    parser.add_argument("--no-strip-module", dest="strip_module", action="store_false", help="Do not strip symbols from compiled modules to support tracebacks in release mode.")
+    parser.set_defaults(strip_module = True)
     parser.add_argument('--compiler', default='clang', help='Compiler to use, defualt is clang')
     parser.add_argument('--binder', default='', help='Path to Binder tool. If none is given then download, build and install binder into main/source/build/prefix. Use "--binder-debug" to control which mode of binder (debug/release) is used.')
     parser.add_argument("--binder-debug", action="store_true", help="Run binder tool in debug mode (only relevant if no '--binder' option was specified)")
@@ -702,6 +712,7 @@ def main(args):
     parser.add_argument('--trace', action="store_true", help='Binder will add trace output to to generated PyRosetta source files')
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
+    parser.add_argument('--create-wheel', default='', help='Create python wheel in the specified directory. (default is to skip creating wheel)')
     parser.add_argument('--external-link', default=None, choices=["debug", "release", "mac_graphics"],
         help="Optional, link externally compiled rosetta libraries from the given cmake build directory rather than rebuilding in extension modoule.")
 
@@ -757,6 +768,7 @@ def main(args):
 
     if Options.documentation: generate_documentation(rosetta_source_path, Options.documentation, Options.version)
     if Options.create_package: create_package(rosetta_source_path, Options.create_package)
+    if Options.create_wheel: create_wheel(rosetta_source_path, Options.create_wheel)
 
 
 if __name__ == "__main__":
