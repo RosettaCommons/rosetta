@@ -149,6 +149,7 @@ parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap cons
 {
 	std::string const selectorname = tag->getOption< std::string >( option_name, "" );
 	if ( selectorname.empty() ) {
+		TR.Warning << "Selector name is empty!" << std::endl;
 		return ResidueSelectorCOP();
 	}
 	return get_residue_selector( selectorname, data );

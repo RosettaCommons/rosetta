@@ -1,0 +1,39 @@
+<ROSETTASCRIPTS>
+	<RESIDUE_SELECTORS>
+		<Index name="cys_seqpos" resnums="8C" />
+		<Neighborhood name="cys_neighbors" selector="cys_seqpos" />
+		<Not name="not_cys_neighbors" selector="cys_neighbors" />
+		<ResidueName name="DMA" residue_name3="DMA" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="oors" selector="not_cys_neighbors" >
+			<PreventRepackingRLT />
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVE_MAP_FACTORIES>
+		<MoveMapFactory name="mmf" bb="false" chi="false" branches="false" nu="false" jumps="true" >
+			<Backbone residue_selector="cys_neighbors" />
+			<Backbone residue_selector="DMA" enable="false" />
+			<Backbone residue_selector="DMA" enable="true" bb_tor_index="1" />
+			<Backbone residue_selector="DMA" enable="true" bb_tor_index="3" />
+			<Backbone residue_selector="DMA" enable="true" bb_tor_index="4" />
+			<Chi residue_selector="cys_neighbors" />
+			<Nu residue_selector="cys_neighbors" />
+			<Branches residue_selector="cys_neighbors" />
+		</MoveMapFactory>
+	</MOVE_MAP_FACTORIES>
+	<MOVERS>
+		<InstallFarnesylMover name="install" residue_selector="cys_seqpos" /> cys_seqpos="733" />
+		<SampleFarnesylMover name="sample" enumerate="false" />
+		<FastRelax name="frlx" task_operations="oors" movemap_factory="mmf" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="install" />
+		<Add mover_name="sample" />
+		<Add mover_name="frlx" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

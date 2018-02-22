@@ -331,6 +331,10 @@ sources = {
     "protocols/stepwise/monte_carlo/submotif": [
         "SubMotifLibrary",
     ],
+	"protocols/farnesyl": [
+        "SampleFarnesylMover",
+        "InstallFarnesylMover",
+    ],
 }
 include_path = [
 ]

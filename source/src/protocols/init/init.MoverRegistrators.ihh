@@ -172,6 +172,9 @@ static MoverRegistrator< evolution::NucleotideMutationCreator > reg_NucleotideMu
 static MoverRegistrator< rna::movers::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
 static MoverRegistrator< rna::movers::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
 
+static MoverRegistrator< farnesyl::SampleFarnesylMoverCreator > reg_SampleFarnesylMoverCreator;
+static MoverRegistrator< farnesyl::InstallFarnesylMoverCreator > reg_InstallFarnesylMoverCreator;
+
 static MoverRegistrator< features::InterfaceDdGMoverCreator > reg_InterfaceDdGMoverCreator;
 static MoverRegistrator< features::ReportToDBCreator > reg_ReportToDBCreator;
 static MoverRegistrator< features::TrajectoryReportToDBCreator > reg_TrajectoryReportToDBCreator;

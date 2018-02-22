@@ -157,6 +157,9 @@
 #include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
 #include <protocols/rna/movers/RNAIdealizeMoverCreator.hh>
 
+#include <protocols/farnesyl/SampleFarnesylMoverCreator.hh>
+#include <protocols/farnesyl/InstallFarnesylMoverCreator.hh>
+
 #include <protocols/features/InterfaceDdGMoverCreator.hh>
 #include <protocols/features/ReportToDBCreator.hh>
 #include <protocols/features/TrajectoryReportToDBCreator.hh>
