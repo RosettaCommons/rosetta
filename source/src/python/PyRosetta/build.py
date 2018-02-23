@@ -172,10 +172,10 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
             print( 'No LLVM:{} + Binder install is detected! Going to check out LLVM and install Binder. This procedure will require ~3Gb of free disk space and will only be needed to be done once...\n'.format(release) )
             os.makedirs(prefix)
 
-        if not os.path.isdir(prefix+'/.git'): execute('Clonning llvm...', 'cd {} && git clone https://github.com/llvm-mirror/llvm.git .'.format(prefix) )
+        if not os.path.isdir(prefix+'/.git'): execute('Clonning llvm...', 'cd {} && git clone git@github.com:llvm-mirror/llvm.git .'.format(prefix) )
         execute('Checking out LLVM revision: {}...'.format(release), 'cd {prefix} && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
 
-        if not os.path.isdir(prefix+'/tools/clang'): execute('Clonning clang...', 'cd {}/tools && git clone https://github.com/llvm-mirror/clang.git clang'.format(prefix) )
+        if not os.path.isdir(prefix+'/tools/clang'): execute('Clonning clang...', 'cd {}/tools && git clone git@github.com:llvm-mirror/clang.git clang'.format(prefix) )
         execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
 
         if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
@@ -224,7 +224,7 @@ def install_pybind11(prefix, clean=True):
     if not os.path.isdir(prefix): os.makedirs(prefix)
     package_dir = prefix + '/pybind11'
 
-    if not os.path.isdir(package_dir): execute('Clonning pybind11...', 'cd {} && git clone https://github.com/RosettaCommons/pybind11.git'.format(prefix) )
+    if not os.path.isdir(package_dir): execute('Clonning pybind11...', 'cd {} && git clone git@github.com:RosettaCommons/pybind11.git'.format(prefix) )
     execute('Checking out PyBind11 revision: {}...'.format(_pybind11_version_), 'cd {package_dir} && ( {git_checkout} )'.format(package_dir=package_dir, git_checkout=git_checkout), silent=True)
     print()
 
