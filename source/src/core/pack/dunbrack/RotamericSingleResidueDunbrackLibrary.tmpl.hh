@@ -2191,7 +2191,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi_static_voron
 	core::pose::Pose const &pose
 ) const {
 	//Get current backbone bin:
-	utility::fixedsizearray1< core::Real, N > const bbs( get_IVs_from_rsd( rsd, pose ) );
+	utility::fixedsizearray1< core::Real, N > bbs( get_IVs_from_rsd( rsd, pose ) );
+	if ( rsd.type().is_d_aa() ) {
+		for ( core::Size i(1); i<=N; ++i ) bbs[i] *= -1.0;
+	}
 	utility::fixedsizearray1< core::Size, N > bb_bin;
 	get_bb_bins( bbs, bb_bin );
 	core::Size const bb_index( make_index< N >( N_BB_BINS, bb_bin ) );
