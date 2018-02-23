@@ -781,6 +781,7 @@ private:
 	bool write_network_pdbs_;                               //write .pdb's of the h-bond networks on Poly-Ala for easy visualization
 	bool write_cst_files_;
 	bool output_poly_ala_background_;
+	bool store_network_scores_in_pose_;
 	bool find_native_;
 	bool only_native_;                                      //only search for native networks in a static pose
 	bool keep_existing_networks_;

@@ -146,6 +146,7 @@ HBNet::HBNet( ) :
 	write_network_pdbs_(false),
 	write_cst_files_(true),
 	output_poly_ala_background_(false),
+	store_network_scores_in_pose_( false ),
 	find_native_(false),
 	only_native_(false),
 	keep_existing_networks_(false),
@@ -211,6 +212,7 @@ HBNet::HBNet( std::string const name ) :
 	write_network_pdbs_(false),
 	write_cst_files_(true),
 	output_poly_ala_background_(false),
+	store_network_scores_in_pose_( false ),
 	find_native_(false),
 	only_native_(false),
 	keep_existing_networks_(false),
@@ -291,6 +293,7 @@ HBNet::HBNet(
 	write_network_pdbs_(false),
 	write_cst_files_(true),
 	output_poly_ala_background_(false),
+	store_network_scores_in_pose_( false ),
 	find_native_(find_native),
 	only_native_(only_native),
 	keep_existing_networks_(keep_existing),
@@ -393,6 +396,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	write_network_pdbs_ = tag->getOption< bool >( "write_network_pdbs", false );
 	write_cst_files_ = tag->getOption< bool >( "write_cst_files", true );
 	output_poly_ala_background_ = tag->getOption< bool >( "output_poly_ala_background", false );
+	store_network_scores_in_pose_ = tag->getOption< bool >( "store_network_scores_in_pose", false );
 	max_rep_ = tag->getOption< Size >( "max_replicates", 1 );
 	max_replicates_before_branch_ = tag->getOption< Size >( "max_replicates_before_branch", 0 );
 	max_replicates_before_unsat_check_ = tag->getOption< Size >( "max_replicates_before_unsat_check", 1 );
@@ -1773,6 +1777,13 @@ HBNet::place_rots_on_pose( pose::Pose & pose, HBondNetStruct & i, bool use_pose 
 	//            optimize_waters( pose, i );
 	//        }
 	//    }
+
+	if ( store_network_scores_in_pose_ ) {
+		core::pose::setPoseExtraScore( pose, "HBNet_NumUnsatHpol", core::Real( i.num_unsat_Hpol ) );
+		core::pose::setPoseExtraScore( pose, "HBNet_Saturation", i.percent_hbond_capacity );
+		core::pose::setPoseExtraScore( pose, "HBNet_Score", i.score );
+	}
+
 	pose.update_residue_neighbors();
 	//pose.update_pose_chains_from_pdb_chains();
 
@@ -3524,6 +3535,11 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		"for keep_existing_networks=true or extend_existing_networks=true, "
 		"in addition to starting from \"HBNet\" PDBInfoLabel tags, "
 		"HBnet will find all native networks in your input pose that meet your criteria (specified by options).",
+		"false")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"store_network_scores_in_pose", xsct_rosetta_bool,
+		"Will store internal evaluation metrics in the pose so they will be included in score.sc files"
+		"and accessible via ReadPoseExtraScoreFilter.",
 		"false")
 		+ XMLSchemaAttribute::attribute_w_default(
 		"output_poly_ala_background", xsct_rosetta_bool,
