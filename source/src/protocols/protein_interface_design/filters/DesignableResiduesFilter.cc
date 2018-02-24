@@ -121,6 +121,7 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 	} else {
 		total_residue = pose.size();
 	}
+	packer_task->show(TR);
 	core::Size design_pos = 0;
 	if ( designable() ) {
 		std::string select_design_pos("select design_positions, resi ");
