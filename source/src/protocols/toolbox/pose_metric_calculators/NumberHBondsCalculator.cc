@@ -186,6 +186,9 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 		new_options.bb_donor_acceptor_check( false ); // don't use bb exclusion logic when penalizing unsatisfied -- ideally would only eclude N-H donors and not exclude C=O with only 1 h-bond
 		// according to ALF will get rid of exclusion logic soon
 		new_options.exclude_intra_res_protein( false ); // we want to count this for unsat calc, by default they are excluded
+		new_options.exclude_DNA_DNA( false );
+		new_options.exclude_intra_res_RNA( false );
+		new_options.exclude_self_hbonds(false);
 	}
 	HBondSetOP hb_set( new HBondSet( new_options, this_pose.size() ) ); // we need to recompute HBondSet each time
 
