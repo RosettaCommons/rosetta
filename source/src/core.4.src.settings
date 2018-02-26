@@ -167,6 +167,7 @@ sources = {
 		"RotamerSampleOptions",
 		"TaskFactory",
 		"util",
+        "xml_util",
 	],
 	"core/pack/task/rna": [
 		"RNA_ResidueLevelTask",

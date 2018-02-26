@@ -71,15 +71,8 @@ void init_spades_score_function_correction( utility::options::OptionCollection &
 /// @brief Initialize the latest and greatest score function parameters
 void init_score_function_corrections( utility::options::OptionCollection & options );
 
-/// @brief Check if a score function is requested with incompatible option flags
-/// Will return true if scorefunction is "sane" and false if not.
-/// If throw_exception is true, will raise an exception instead of returning false.
-bool check_score_function_sanity(
-	utility::options::OptionCollection const & options,
-	std::string const & scorefxn_key,
-	bool throw_exception = false );
-
-/// @brief  Apply some DNA-specific mods that are still in testing phase; only if -corrections::newdna present
+/// @brief  Apply some DNA-specific mods that are still in testing phase; only
+/// if -corrections::newdna present
 void
 init_dna_correction( utility::options::OptionCollection & options );
 

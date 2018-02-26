@@ -18,37 +18,39 @@
 #ifndef INCLUDED_protocols_rosetta_scripts_util_hh
 #define INCLUDED_protocols_rosetta_scripts_util_hh
 
-// Unit headers
-
-// Project Headers
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
+// Core headers
 #include <core/types.hh>
-#include <basic/datacache/DataMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/pack/task/xml_util.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/xml_util.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
+#include <core/select/residue_selector/util.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-// Utillity Headers
+// Protocol headers
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
+
+// Utility headers
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ headers
 #include <string>
 #include <set>
 
-#include <utility/vector1.hh>
-#include <basic/Tracer.hh>
-
 namespace protocols {
 namespace rosetta_scripts {
-
 
 /// @brief find source residue that is nearest to res on source. If distance is greater than 2.0A, return 0. chain=0, search all chains, chain=1,2,3 etc. search only that chain
 core::Size
@@ -66,162 +68,34 @@ find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res);
 utility::vector1< core::Size >
 residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/ );
 
-
-
 ///////////////////////////////////////////////////////////
 //////////////////// Task Operations //////////////////////
 
-utility::vector1< core::pack::task::operation::TaskOperationOP >
-get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
-
-core::pack::task::TaskFactoryOP
-parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
-
-/// allows the transfer of whole taskfactories on the datamap. This way a "base" taskfactory can be created, transferred on the datamap, and
-/// individual mover's specific taskoperations can be added on top
-core::pack::task::TaskFactoryOP
-parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap /*const*/ & data, core::pack::task::TaskFactoryOP & task_factory );
-
-core::pack::task::TaskFactoryOP
-parse_task_operations( std::string const & task_list, basic::datacache::DataMap const & data );
-
-
-///////////////////// Attributes /////////////////////////
-
-/// @brief Appends the 'task_operation' attribute
-/// @details "description" can be used to specify for what the TaskOperations are being used for.
-void
-attributes_for_parse_task_operations(
-	utility::tag::AttributeList & attributes,
-	std::string const & description = "" );
-
-/// @brief Appends the 'task_operation' and 'task_factory' attributes.
-void
-attributes_for_parse_task_operations_w_factory(
-	utility::tag::AttributeList & attributes,
-	std::string const & used_for_descr = "" );
-
+using core::pack::task::get_task_operations;
+using core::pack::task::parse_task_operations;
+using core::pack::task::attributes_for_parse_task_operations;
+using core::pack::task::attributes_for_parse_task_operations_w_factory;
 
 /////////////////////////////////////////////////////////////
 //////////////////// Residue Selectors //////////////////////
 
-/// @brief returns a residue selector given a tag and datamap
-/// @details Looks for "residue_selector" option in tag
-///          If that option isn't found, returns NULL ptr
-///          If that option is found, calls get_residue_selector()
-/// @note The default option is "residue_selector".  However, this function can be used to
-/// get selectors with other option names if another string is passed for the third parameter.
-/// This is useful in cases with multiple selectors (e.g. "first_selector", "second_selector",
-/// etc.).
-core::select::residue_selector::ResidueSelectorCOP
-parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const & option_name = "residue_selector" );
-
-/// @brief returns a residue selector given a selector's name and datamap
-/// @details Looks for selector in the datamap
-///          Returns a const ptr to the selector
-/// @throws utility::excn::EXCN_Msg_Exception if selector is not found in datamap
-core::select::residue_selector::ResidueSelectorCOP
-get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data );
-
-
-///////////////////// Attributes ///////////////////////////
+using core::select::residue_selector::parse_residue_selector;
+using core::select::residue_selector::get_residue_selector;
 
 /// @brief Appends the attributes read by parse_residue_selector
 void
 attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes, std::string const & description = "" );
 
-
 ///////////////////////////////////////////////////////////
 //////////////////// ScoreFunction ////////////////////////
 
-/// @brief Look up the score function defined in the <SCOREFXNS/>
-/// through the given option. Defaults to 'commandline'.
-core::scoring::ScoreFunctionOP
-parse_score_function(
-	utility::tag::TagCOP tag,
-	std::string const & option_name,
-	basic::datacache::DataMap const & data,
-	std::string const & dflt_key="commandline" );
-
-/// @brief Look up the score function defined in the <SCOREFXNS/>
-///through the option 'scorefxn='. Defaults to 'commandline'.
-core::scoring::ScoreFunctionOP
-parse_score_function(
-	utility::tag::TagCOP tag,
-	basic::datacache::DataMap const & data,
-	std::string const & dflt_key="commandline" );
-
-/// @brief Look up the name of assigned score function to the given
-///option. Use this to prevent hard coding default score functions into
-///protocols.
-std::string
-get_score_function_name(
-	utility::tag::TagCOP tag,
-	std::string const & option_name);
-
-/// @brief Look up the name of assigned score function to the 'scorefxn='
-///option. Use this to prevent hard coding default score functions into
-///protocols.
-std::string
-get_score_function_name(
-	utility::tag::TagCOP tag);
-
-
-///////////////////// Attributes ///////////////////////////
-
-/// @brief Appends the attributes read by get_score_function_name
-void
-attributes_for_get_score_function_name(
-	utility::tag::AttributeList & attributes );
-
-/// @brief Appends the attributes read by get_score_function_name w/ name argument
-void
-attributes_for_get_score_function_name(
-	utility::tag::AttributeList & attributes,
-	std::string const & option_name);
-
-/// @brief Appends the attributes read by get_score_function_name
-void
-attributes_for_get_score_function_name_w_description(
-	utility::tag::AttributeList & attributes,
-	std::string const & description );
-
-/// @brief Appends the attributes read by get_score_function_name w/ name argument
-void
-attributes_for_get_score_function_name_w_description(
-	utility::tag::AttributeList & attributes,
-	std::string const & option_name,
-	std::string const & description );
-
-/// @brief Appends the attributes read by parse_score_function
-void
-attributes_for_parse_score_function( utility::tag::AttributeList & attributes);
-
-/// @brief Appends the attributes read by parse_score_function w/ name argument
-void
-attributes_for_parse_score_function( utility::tag::AttributeList & attributes,
-	std::string const & sfxn_option_name );
-
-/// @brief Appends the attributes read by parse_score_function with description
-void
-attributes_for_parse_score_function_w_description( utility::tag::AttributeList & attributes,
-	std::string const & description );
-
-/// @brief Appends the attributes read by parse_score_function w/ name argument and description
-void
-attributes_for_parse_score_function_w_description( utility::tag::AttributeList & attributes,
-	std::string const & sfxn_option_name,
-	std::string const & description );
-
-/// @brief Appends the attributes read by parse_score_function w/ name argument and description.
-/// @details This version appends the attributes as required attributes.
-/// @author Vikram K. Mulligan.
-void
-attributes_for_parse_score_function_w_description_when_required( utility::tag::AttributeList & attributes,
-	std::string const & sfxn_option_name,
-	std::string const & description = ""
-);
-
+using core::scoring::parse_score_function;
+using core::scoring::get_score_function_name;
+using core::scoring::attributes_for_get_score_function_name;
+using core::scoring::attributes_for_get_score_function_name_w_description;
+using core::scoring::attributes_for_parse_score_function;
+using core::scoring::attributes_for_parse_score_function_w_description;
+using core::scoring::attributes_for_parse_score_function_w_description_when_required;
 
 /////////////////////////////////////////////////////////
 //////////////////// MoveMap ////////////////////////////
@@ -303,8 +177,14 @@ parse_xyz_vector( utility::tag::TagCOP xyz_vector_tag );
 void
 attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist );
 
-/////////////////////////////////////////////////////////
-//////////////DATABASE SESSIONS//////////////////////////
+
+///This is kind of a strange place for this, but for library-level reasons it needs to be more accessible than a more logical home with ReportToDB, and cannot live in basic because it needs other functions in this file.  (There is also value in not creating a new file b/c it breaks the fast-compile system XML XSD XRW is using, and it's 6pm on Friday!)
+
+//void
+//attributes_for_report_to_db( utility::tag::AttributeList &, utility::tag::XMLSchemaDefinition & );
+
+
+
 
 utility::sql_database::sessionOP
 parse_database_session(
@@ -344,8 +224,6 @@ void print_information( utility::vector1 < std::string > const &component_names 
 
 /// @brief Saves the XSD to the given file.
 void save_schema(  std::string const & filename );
-
-
 
 } // RosettaScripts
 } // protocols

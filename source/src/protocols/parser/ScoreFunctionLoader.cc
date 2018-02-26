@@ -16,6 +16,7 @@
 #include <protocols/parser/StandardLoaderCreators.hh>
 
 // Project Headers
+#include <core/scoring/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -23,7 +24,6 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/etable/EtableOptions.hh>
-#include <core/init/score_function_corrections.hh>
 #include <basic/Tracer.hh>
 
 // Basic headers
@@ -71,7 +71,7 @@ void ScoreFunctionLoader::load_data(
 
 		if (  scorefxn_tag->hasOption( "weights" ) ) {
 			std::string const scorefxn_weights( scorefxn_tag->getOption<std::string>( "weights" ) );
-			if ( ! core::init::check_score_function_sanity( basic::options::option, scorefxn_weights ) ) {
+			if ( ! core::scoring::check_score_function_sanity( basic::options::option, scorefxn_weights ) ) {
 				// The check should only really trigger on database files (explicit path will result in the heuristic not matching.)
 				TR.Error << "Incompatible weights and options detected for " << scorefxn_weights << " - either fix your options, or rename the weights file." << std::endl;
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Weights " + scorefxn_weights + " was requested with incompatible options.");

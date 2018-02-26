@@ -20,8 +20,10 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 
+#include <utility/options/OptionCollection.fwd.hh>
 #include <utility/vector1.hh>
 
+#include <string>
 
 namespace core {
 namespace scoring {
@@ -130,6 +132,15 @@ compute_sc_radius(
 	conformation::Residue const & r1,
 	Vector const & r1sc_centroid
 );
+
+/// @brief Check if a score function is requested with incompatible option
+/// flags
+/// Will return true if scorefunction is "sane" and false if not.
+/// If throw_exception is true, will raise an exception instead of returning false.
+bool check_score_function_sanity(
+	utility::options::OptionCollection const & options,
+	std::string const & scorefxn_key,
+	bool throw_exception = false );
 
 }
 }

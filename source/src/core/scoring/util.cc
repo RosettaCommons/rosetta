@@ -24,11 +24,23 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 
+// Utility headers
+#include <utility/excn/Exceptions.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/string_util.hh>
+#include <utility/vector1.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+
+
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
-#include <utility/vector1.hh>
-
+static basic::Tracer TR( "core.scoring.utils" );
 
 namespace core {
 namespace scoring {
@@ -194,6 +206,79 @@ compute_sc_radius(
 		if ( d2 > max_d2 ) max_d2 = d2;
 	}
 	return std::sqrt( max_d2 );
+}
+
+bool
+check_score_function_sanity(
+	utility::options::OptionCollection const & options,
+	std::string const & scorefxn_key,
+	bool throw_exception
+) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if ( utility::startswith( scorefxn_key, "score12" ) || utility::startswith( scorefxn_key, "pre_talaris" ) ) {
+		if ( ! options[ mistakes::restore_pre_talaris_2013_behavior ] ||
+				options[ corrections::restore_talaris_behavior ] ) {
+			TR.Error
+				<< "**********************************************" << std::endl
+				<< "To use the '" << scorefxn_key << "' score function" << std::endl
+				<< "please use the " << std::endl
+				<< std::endl
+				<< "        -restore_pre_talaris_2013_behavior" << std::endl
+				<< std::endl
+				<< "flag on the command line." << std::endl
+				<< std::endl
+				<< "(And do not use the -restore_talaris_behavior flag.)" << std::endl
+				<< "**********************************************" << std::endl;
+			if ( throw_exception ) {
+				throw CREATE_EXCEPTION(utility::excn::BadInput, "Missing -restore_pre_talaris_2013_behavior flag.");
+			} else {
+				return false;
+			}
+		}
+	} else if ( utility::startswith( scorefxn_key, "talaris20" ) ) {
+		if ( options[ mistakes::restore_pre_talaris_2013_behavior ] ||
+				! options[ corrections::restore_talaris_behavior ] ) {
+			TR.Error
+				<< "**********************************************" << std::endl
+				<< "To use the '" << scorefxn_key << "' score function" << std::endl
+				<< "please use the " << std::endl
+				<< std::endl
+				<< "        -restore_talaris_behavior" << std::endl
+				<< std::endl
+				<< "flag on the command line." << std::endl
+				<< std::endl
+				<< "(And do not use the -restore_pre_talaris_2013_behavior flag.)" << std::endl
+				<< "**********************************************" << std::endl;
+			if ( throw_exception ) {
+				throw CREATE_EXCEPTION(utility::excn::BadInput, "Missing -restore_talaris_behavior flag.");
+			} else {
+				return false;
+			}
+		}
+	} else if ( utility::startswith( scorefxn_key, "ref20" ) || utility::startswith( scorefxn_key, "beta_nov15" ) ) {
+		if ( options[ mistakes::restore_pre_talaris_2013_behavior ] ||
+				options[ corrections::restore_talaris_behavior ] ) {
+			TR.Error
+				<< "**********************************************" << std::endl
+				<< "To use the '" << scorefxn_key << "' score function" << std::endl
+				<< "please do not use either of the" << std::endl
+				<< std::endl
+				<< "        -restore_talaris_behavior" << std::endl
+				<< "        -restore_pre_talaris_2013_behavior" << std::endl
+				<< std::endl
+				<< "flags on the command line." << std::endl
+				<< "**********************************************" << std::endl;
+			if ( throw_exception ) {
+				throw CREATE_EXCEPTION(utility::excn::BadInput, "Using -restore_talaris_behavior or -restore_pre_talaris_2013_behavior with REF-era scorefunctions.");
+			} else {
+				return false;
+			}
+		}
+	}
+	// Likely sane score function
+	return true;
 }
 
 }

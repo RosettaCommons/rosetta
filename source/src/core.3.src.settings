@@ -250,6 +250,7 @@ sources = {
 		"util",
 		"VdWTinkerPotential",
 		"WaterAdductHBondPotential",
+        "xml_util",
 	],
 	"core/scoring/aa_composition_energy": [
 		"AACompositionConstraint",
