@@ -74,6 +74,7 @@ sources = {
 		"interface_energy",
 		"PeptideDeriver",
 		"per_residue_energies",
+                "ResidueDisorder",
 		"residue_energy_breakdown",
 		"score",
 		"score_jd2",

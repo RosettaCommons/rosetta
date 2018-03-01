@@ -1,0 +1,2 @@
+-in:file:l ./inputs/list.txt
+-restore_talaris_behavior

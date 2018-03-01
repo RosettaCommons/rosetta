@@ -1,0 +1,5 @@
+./inputs/1aj3_0001.pdb
+./inputs/1aj3_0002.pdb
+./inputs/1aj3_0003.pdb
+./inputs/1aj3_0004.pdb
+./inputs/1aj3_0005.pdb
