@@ -84,13 +84,26 @@ bool MinimizationRefiner::do_apply(Pose & pose) {
 	Loops const & loops = *get_loops();
 	MinMoverOP minimizer( is_symmetric(pose) ? new SymMinMover : new MinMover );
 	ScoreFunctionCOP score_function = get_score_function();
-	MoveMapOP move_map( new MoveMap ); loops_set_move_map(
+
+	// Set the move map according to the task factory
+
+	MoveMapOP move_map( new MoveMap );
+	loops_set_move_map(
 		pose, loops,
 		/*fix sidechains:*/ false,
 		*move_map,
-		/*neighbor radius:*/ 10.0,
+		/*neighbor radius:*/ 0.0,
 		/*allow omega moves:*/ true,
 		/*allow takeoff torsion moves:*/ false);
+
+	core::pack::task::TaskFactoryOP task_factory = get_tool<core::pack::task::TaskFactoryOP>(loop_modeling::ToolboxKeys::TASK_FACTORY);
+	core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations(pose);
+
+	for ( core::Size i = 1; i<= pose.size(); ++i ) {
+		if ( task->being_packed(i) ) {
+			move_map->set_chi(true, i);
+		}
+	}
 
 	minimizer->score_function(score_function);
 	minimizer->movemap(move_map);

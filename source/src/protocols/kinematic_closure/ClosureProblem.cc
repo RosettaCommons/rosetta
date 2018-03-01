@@ -696,6 +696,20 @@ AtomID ClosureProblem::id_from_index(Size index) const {
 
 void ClosureProblem::mutate_residues(core::pose::Pose &pose, utility::vector1<std::string> sequence) const{
 	runtime_assert(frame_called_);
+
+	// If there is no mutation, return
+
+	bool mutation_made = false;
+	for ( core::Size i=1; i<=pivots_.stop() - pivots_.start() + 1; ++i ) {
+		core::Size seqpos = pivots_.start() + i - 1;
+
+		if ( pose.residue(seqpos).name3() != sequence[i] ) {
+			mutation_made = true;
+		}
+	}
+
+	if ( !mutation_made ) { return;}
+
 	protocols::simple_moves::MutateResidue mutater;
 
 	// Change the fold tree such that the residue at the cutpoint won't cause problems

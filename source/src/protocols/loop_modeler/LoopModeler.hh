@@ -133,6 +133,9 @@ public:
 	/// @brief Set the task factory to be used on the next call to apply().
 	void set_task_factory(core::pack::task::TaskFactoryOP task_factory);
 
+	/// @brief Return a default task factory
+	core::pack::task::TaskFactoryOP get_default_task_factory(core::pose::Pose &pose);
+
 	/// @brief Set the score function to be used for the fullatom stage.
 	void set_fa_scorefxn(core::scoring::ScoreFunctionOP scorefxn);
 

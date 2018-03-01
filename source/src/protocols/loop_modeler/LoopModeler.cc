@@ -253,6 +253,17 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	if ( option[OptionKeys::in::file::native].user() ) {
 		pose_from_file(native_pose, option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
 	}
+
+	// Set default task factory if the user doesn't give one
+
+	bool use_default_task_factory = !get_tool<TaskFactoryOP>(loop_modeling::ToolboxKeys::TASK_FACTORY, TaskFactoryOP());
+
+	if ( use_default_task_factory ) {
+		TR << "Set default task factory." << std::endl;
+		set_task_factory(get_default_task_factory(pose));
+	}
+
+
 	prepare_for_fullatom_->set_original_pose(pose);
 
 	// Converting the pose to centroid mode can sometimes cause headaches with
@@ -352,6 +363,12 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 		Real delta_unsats = unsats.compute(pose) - unsats.compute(native_pose);
 		TR << "Delta Buried Unsatisfied H-bonds: " << showpos << delta_unsats << endl;
 		core::pose::setPoseExtraScore(pose, "delta_buried_unsats", delta_unsats);
+	}
+
+	// Clear the default task factory such that it could be refreshed for next structure
+
+	if ( use_default_task_factory ) {
+		set_task_factory(TaskFactoryOP());
 	}
 
 	return true;
@@ -545,6 +562,48 @@ TaskFactoryOP LoopModeler::get_task_factory(TaskFactoryOP fallback) { // {{{1
 
 void LoopModeler::set_task_factory(TaskFactoryOP task_factory) { // {{{1
 	set_tool(loop_modeling::ToolboxKeys::TASK_FACTORY, task_factory);
+}
+
+core::pack::task::TaskFactoryOP
+LoopModeler::get_default_task_factory(core::pose::Pose &pose){
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+
+	// Get residues that are packable
+
+	loop_modeling::LoopsCOP loops = get_loops();
+
+	utility::vector1<bool> is_packable( pose.size(), false );
+
+	TR << loops->size() << std::endl; ///DEBUG
+
+	pose.update_residue_neighbors();
+	select_loop_residues( pose, *loops,
+		/*include_neighbors*/ true, is_packable, /*cutoff_distance*/ 10.0 );
+
+	PreventRepackingOP turn_off_packing( new PreventRepacking() );
+
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
+		if ( !is_packable[i] ) {
+			turn_off_packing->include_residue(i);
+		}
+	}
+
+	// Use extra rotamers
+
+	ExtraRotamersGenericOP extra_rotamers( new ExtraRotamersGeneric );
+	extra_rotamers->ex1(true);
+	extra_rotamers->ex2(true);
+	extra_rotamers->extrachi_cutoff(0);
+
+	// Set the task factory
+
+	TaskFactoryOP task_factory = TaskFactoryOP( new TaskFactory );
+	task_factory->push_back(turn_off_packing);
+	task_factory->push_back(TaskOperationCOP( new RestrictToRepacking ));
+	task_factory->push_back(extra_rotamers);
+
+	return task_factory;
 }
 
 void LoopModeler::set_fa_scorefxn(ScoreFunctionOP function) { // {{{1

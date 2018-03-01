@@ -130,66 +130,20 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 		return_sidechains.apply(pose);
 	}
 
-	// Decide which sidechains to repack.  Every sidechain will be repacked if
-	// the original pose is in centroid mode or if a full repack was requested.
-	// Otherwise only sidechains within the loop are repacked.
-
-	vector1<bool> residues_to_repack(pose.size(), false);
-
-	for ( Size i = 1; i < pose.size(); i++ ) {
-		residues_to_repack[i] =
-			force_repack_ ||
-			original_pose_.is_centroid() ||
-			get_loops()->is_loop_residue(i);
-	}
-
-	pose.conformation().detect_disulfides();
-
-	ExtraRotamersGenericOP extra_rotamers( new ExtraRotamersGeneric );
-	extra_rotamers->ex1(true);
-	extra_rotamers->ex2(true);
-	extra_rotamers->extrachi_cutoff(0);
-
-	TaskFactoryOP task_factory( new TaskFactory );
-	task_factory->push_back(TaskOperationCOP( new RestrictToRepacking ));
-	task_factory->push_back(TaskOperationCOP( new NoRepackDisulfides ));
-	task_factory->push_back(extra_rotamers);
+	TaskFactoryOP task_factory = get_tool<TaskFactoryOP>(loop_modeling::ToolboxKeys::TASK_FACTORY);
 
 	PackerTaskOP task = task_factory->create_task_and_apply_taskoperations(pose);
-	make_residue_mask_symmetric(pose, residues_to_repack);
-	task->restrict_to_residues(residues_to_repack);
-
-	// Setup a move map for the minimizer that will allow only sidechain DOFs to
-	// move.  Again, disulfides are explicitly left in place.
-
-	MoveMap move_map;
-	move_map.set_bb(false);
-	move_map.set_chi(true);
-
-	for ( Size i = 1; i <= pose.size(); i++ ) {
-		if ( pose.residue(i).has_variant_type(DISULFIDE) ) {
-			move_map.set_chi(i, false);
-		}
-	}
-
-	// Apply the packer and the minimizer, accounting for symmetry.
 
 	PackRotamersMoverOP packer;
-	AtomTreeMinimizerOP minimizer;
-	MinimizerOptions min_options("lbfgs_armijo_nonmonotone", 1e-5, true, false);
 	ScoreFunctionCOP fa_score_function = get_score_function();
 
 	if ( is_symmetric(pose) ) {
 		packer = PackRotamersMoverOP( new SymPackRotamersMover(fa_score_function, task) );
-		minimizer = AtomTreeMinimizerOP( new SymAtomTreeMinimizer );
-		make_symmetric_movemap(pose, move_map);
 	} else {
 		packer = PackRotamersMoverOP( new PackRotamersMover(fa_score_function, task) );
-		minimizer = AtomTreeMinimizerOP( new AtomTreeMinimizer );
 	}
 
 	packer->apply(pose);
-	minimizer->run(pose, move_map, *fa_score_function, min_options);
 
 	return true;
 }
