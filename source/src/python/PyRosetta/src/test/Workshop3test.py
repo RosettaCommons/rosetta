@@ -32,11 +32,11 @@ print( ras.energies().show(24) )
 
 r1 = ras.residue(24)
 r2 = ras.residue(20)
-a1 = r1.atom("N")
-a2 = r2.atom("O")
+a1 = r1.atom_index("N")
+a2 = r2.atom_index("O")
 
 
-etable_atom_pair_energies(a1, a2, scorefxn)
+etable_atom_pair_energies(r1, a1, r2, a2, scorefxn)
 
 
 hbond_set = hbonds.HBondSet()

@@ -18,19 +18,20 @@ sfxn = create_score_function('ref2015')
 
 #calculating atom-atom pairwise interactions and summing
 #to get total energy (which should match, residue-residue energy!!!)
-atr_total, rep_total, solv_total = 0.0, 0.0, 0.0
+atr_total, rep_total, solv_total, fa_elec_total = 0.0, 0.0, 0.0, 0.0
 
 
 for i in range(residue_1.natoms()):
 	for j in range(residue_2.natoms()):
-		atom1 = residue_1.atom(i+1)
-		atom2 = residue_2.atom(j+1)
+		atom_index_1 = i+1
+		atom_index_2 = j+1
 
-		atr, rep ,solv = etable_atom_pair_energies(atom1, atom2, sfxn)
+		atr, rep ,solv, fa_elec = etable_atom_pair_energies(residue_1, atom_index_1, residue_2, atom_index_2, sfxn)
 
 		atr_total  += atr
 		rep_total  += rep
 		solv_total += solv
+		fa_elec_total += fa_elec
 
 
 emap = core.scoring.EMapVector()
@@ -50,7 +51,8 @@ print( 'Checking if scores match...' )
 
 if ( abs(emap[core.scoring.fa_atr] - atr_total) +
      abs(emap[core.scoring.fa_rep] - rep_total) +
-     abs(emap[core.scoring.fa_sol] - solv_total) ) > 1.0e-10:
+     abs(emap[core.scoring.fa_sol] - solv_total) +
+     abs(emap[core.scoring.fa_elec] - fa_elec_total) ) > 1.0e-10:
     print( 'Score did not match, exiting!!!' )
     sys.exit(1)
 else:
