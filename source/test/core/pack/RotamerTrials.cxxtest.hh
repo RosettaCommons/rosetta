@@ -33,6 +33,7 @@
 #include <core/types.hh>
 
 #include <numeric/angle.functions.hh>
+#include <numeric/conversions.hh>
 
 #include <test/UTracer.hh>
 
@@ -166,7 +167,7 @@ public:
 				//TS_ASSERT_DELTA( precomputed_chi_angles[precompute_counter], chi, delta );
 
 				// fpd
-				UT << "residue = " << i << " sin (chi) = " << sin( res_chi[ j ] ) << " cos(chi) = " << cos( res_chi[ j ] ) << std::endl;
+				UT << "residue = " << i << " sin (chi) = " << sin( numeric::conversions::radians<double>( res_chi[ j ] ) ) << " cos(chi) = " << cos( numeric::conversions::radians<double>( res_chi[ j ] ) ) << std::endl;
 			}
 		}
 	};
