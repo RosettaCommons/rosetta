@@ -2282,7 +2282,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'restore_talaris_behavior', 'Boolean', desc='Use talaris score function and residue_type_set', default='false'),
 		Option( 'correct', 'Boolean',
 			desc="turn on default corrections:"
-            "See src/core/init/score_function_corrections.cc",
+            "See src/core/init/score_function_corrections.cc.  Note that this is a flag for the older score12 scorefunction, which should NOT be used with talaris2013, talaris2014, ref2015, or the beta scorefunctions.",
 			default="false"),
 		Option( 'hbond_sp2_correction', 'Boolean',
 			desc="turn on the hbond Sp2 correction with a single flag"

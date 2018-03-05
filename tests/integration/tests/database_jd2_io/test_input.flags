@@ -1,6 +1,5 @@
 -ignore_unrecognized_res
 -overwrite
--correct
 -in
  -use_database
  -select_structures_from_database SELECT struct_id, tag FROM structures;

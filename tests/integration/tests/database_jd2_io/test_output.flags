@@ -1,6 +1,5 @@
 -ignore_unrecognized_res
 -overwrite
--correct
 -s ../../tests/make_symmdef_file/inputs/1xu1FH_D.pdb
 -inout
  -dbms:database_name structures.db3

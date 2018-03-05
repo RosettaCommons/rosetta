@@ -543,9 +543,7 @@ init_correct_correction( utility::options::OptionCollection & options ) {
 	if ( options[corrections::correct] ) {
 
 		/// Legacy warning
-		if ( ! options[ mistakes::restore_pre_talaris_2013_behavior ] ) {
-			TR.Warning << "-correct does not behave the way it did before talaris2013 became default; consider adding the -restore_pre_talaris_2013_behavior flag" << std::endl;
-		}
+		runtime_assert_string_msg( options[ mistakes::restore_pre_talaris_2013_behavior ](), "\"-correct\" does not behave the way it did before talaris2013 became default, and is not intended for scorefunctions later than score12.  It is not recommended for the talaris2013, talaris2014, ref2015, or beta scorefunctions.  If you wish to use score12 with the \"-correct\" flag, use the \"-restore_pre_talaris_2013_behavior\" flag as well.");
 
 		// Pair energy
 		if ( ! options[ corrections::score::no_his_his_pairE ].user() ) {

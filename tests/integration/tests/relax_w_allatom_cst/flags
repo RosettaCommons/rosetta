@@ -7,11 +7,6 @@
 #-nblist_autoupdate true
 #-flip_HNQ
 -use_input_sc
--correct
--no_his_his_pairE
--score::hbond_params correct_params
--lj_hbond_hdis 1.75
--lj_hbond_OH_donor_dis 2.6
 -no_optH false
 -constrain_relax_to_start_coords
 -relax:script inputs/short_relax_script

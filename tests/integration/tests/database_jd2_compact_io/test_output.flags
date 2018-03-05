@@ -1,6 +1,5 @@
 -ignore_unrecognized_res
 -overwrite
--correct
 -in
  -file
   -s 7cpa_7cpa_input.pdb.gz

@@ -1,6 +1,5 @@
 -ignore_unrecognized_res
 -overwrite
--correct
 -in
  -file
   -fullatom
