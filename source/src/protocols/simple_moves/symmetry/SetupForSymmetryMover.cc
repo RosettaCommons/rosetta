@@ -141,7 +141,8 @@ SetupForSymmetryMover::SetupForSymmetryMover(
 	preserve_datacache_(false),
 	symmdef_(std::move( symmdata )),
 	refinable_lattice_was_set_( false ),
-	refinable_lattice_( false )
+	refinable_lattice_( false ),
+	keep_pdb_info_labels_( false )
 {
 	read_refinable_lattice( options );
 }
@@ -160,7 +161,8 @@ SetupForSymmetryMover::SetupForSymmetryMover(
 	preserve_datacache_(false),
 	symmdef_(),
 	refinable_lattice_was_set_( false ),
-	refinable_lattice_( false )
+	refinable_lattice_( false ),
+	keep_pdb_info_labels_( false )
 {
 	process_symmdef_file(symmdef_file);
 	read_refinable_lattice( options );
