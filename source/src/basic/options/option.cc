@@ -97,6 +97,10 @@ pre_tracer_process() {
 			if ( ! option[ run::no_prof_info_in_silentout ].user() ) {
 				option[ run::no_prof_info_in_silentout ].value( true );
 			}
+
+			if ( ! option[ in::no_fconfig ].user() ) {
+				option[ in::no_fconfig ].value( true );
+			}
 #ifdef USEMPI
 			if ( ! option[ out::mpi_tracer_to_file ].user() ) {
 				option[ out::mpi_tracer_to_file ].value( "mpi_log" );

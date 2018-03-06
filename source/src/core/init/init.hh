@@ -106,6 +106,9 @@ void random_delay();
 /// @brief Locate rosetta_database
 void locate_rosetta_database();
 
+/// @brief Check if common config file exists and load it/them as flags files.
+void check_load_fconfig();
+
 /// @brief Profiling measures execution performance
 void init_profiling();
 

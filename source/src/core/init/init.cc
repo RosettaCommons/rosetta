@@ -364,6 +364,7 @@ using basic::Warning;
 #include <utility/version.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/file/file_sys_util.hh>
 #include <utility/CSI_Sequence.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
@@ -1246,6 +1247,51 @@ locate_rosetta_database(){
 #endif
 }
 
+// Check if common config file exists and load it/them as flags files.
+//  These files can be in the home directory as .rosetta/flags or the working directory.
+void
+check_load_fconfig(){
+
+	if ( option ( basic::options::OptionKeys::in::no_fconfig).value() ) {
+		return;
+	}
+
+	std::string homedir = utility::file::get_home_dir();
+	utility::vector1< std::string > flags = option( basic::options::OptionKeys::in::fconfig ).value();
+	std::string const db_path( homedir+"/.rosetta/flags/" );
+
+	TR << "Checking for fconfig files in pwd and ./rosetta/flags " << std::endl;
+
+	for ( auto & flag : flags ) {
+		TR.Debug <<"Checking for -" << flag << "- fconfig " << std::endl;
+		std::string final_file_path;
+
+		//Check if flags file exists, get path. Either in working dir or database and load.
+		std::string full_db_path = db_path + flag;
+		std::string cid;
+
+		//Load options from fconfig file into options collections if present
+		// Local overrides database.
+		if ( utility::file::file_exists( flag ) ) {
+			final_file_path = flag;
+		} else if ( utility::file::file_exists( full_db_path ) ) {
+			final_file_path = full_db_path;
+		} else {
+			continue;
+		}
+
+		try{
+			TR << "Reading fconfig..." << final_file_path << std::endl;
+			utility::io::izstream config_file( final_file_path );
+			option.load_options_from_stream( config_file, final_file_path, cid, true /*print*/);
+			TR << std::endl << std::endl;
+		} catch ( utility::excn::Exception& excn ) {
+			throw( CREATE_EXCEPTION(utility::excn::Exception,  "ERROR: " + excn.msg() ) );
+		}
+	}
+}
+
+
 void
 init_profiling(){
 	basic::prof_reset(); //reads option run::profile -- starts clock TOTAL
@@ -1280,6 +1326,9 @@ void init(int argc, char * argv [])
 
 		//Tracers control output to std::cout and std::cerr
 		init_tracers();
+
+		//Read flag config file (common options/custom setup)
+		check_load_fconfig();
 
 		// Invoke basic::options::process() which holds a set of complex logic
 		// for option system modifications; this function requires that the

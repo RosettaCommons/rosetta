@@ -492,6 +492,9 @@ class Tester:
         if Options.level:
             flags.extend(["-out:level"] + Options.level)
 
+        #No personal flag configs
+        flags.append("-no_fconfig")
+
         return flags
 
 def parse_valgrind_options(options, option_parser):

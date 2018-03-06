@@ -115,6 +115,17 @@ Options = Option_Group( '',
 	# Input options ---------------------------------------------------------------------------------------------------
 	Option_Group( 'in',
 #		Option( 'in', 'Boolean', desc="Input option group", legal='true', default='true' ),
+		
+		# Base Configuration Options (common options) -------------------------
+		Option( 'fconfig', 'FileVector', 
+			default=['common'], 
+			desc='A list of flag configurations to look for.  These can be in either your working directory or $HOME/.rosetta/flags directory.  Ex: -fconfig common design'
+			),
+		Option( 'no_fconfig', 'Boolean',
+			default='false',
+			desc='Do not load the [common] config file if present. '
+			),
+
 
 		# Termini options -----------------------------------------------------
 		#Option( 'termini', 'String', default = 'ALL', desc="Put full N and C termini on input structures"),

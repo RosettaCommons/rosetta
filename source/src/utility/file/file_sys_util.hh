@@ -59,6 +59,12 @@ file_size( std::string const & filename );
 std::string
 cwd();
 
+/// @brief Get the (absolute) path to the users home directory.
+/// @details If homedir could not be found, it will return an empty string.
+/// Rocco Moretti
+std::string
+get_home_dir();
+
 /// @brief Create a blank file if it doesn't already exist
 bool
 create_blank_file( std::string const & blank_file );

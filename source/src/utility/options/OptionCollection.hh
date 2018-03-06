@@ -483,7 +483,8 @@ public: // Methods
 	void load_options_from_stream(
 		std::istream& stream,
 		std::string const & file_string="STREAM", //for error msg, set if stream is connected to file_string
-		std::string const & cid=""
+		std::string const & cid="",
+		bool print_lines = false
 	);
 
 	/// @brief Check for problems in the option values

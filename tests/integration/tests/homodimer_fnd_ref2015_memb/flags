@@ -2,8 +2,6 @@
 
 -overwrite
 
--run:constant_seed
--nodelay
 -parser:protocol ./input/fnd.xml
 -in:file:fasta ./input/gpa2.fasta
 -overwrite

@@ -26,15 +26,18 @@
 
 // Utility headers
 #include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
+
 
 // C++ headers
 #include <algorithm>
 #include <iostream>
 #include <utility>
 //#include <list>
+
 
 #include <boost/algorithm/string/erase.hpp>
 
@@ -236,7 +239,7 @@ OptionCollection::load(
 		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: " + excn.msg() ));
 	}
 
-	// Check for problems in the option values
+// Check for problems in the option values
 	check_values();
 
 	{ // Generate any requested option outputs
@@ -288,7 +291,7 @@ OptionCollection::load(
 
 
 /// @brief Load all options in a flags file
-void OptionCollection::load_options_from_stream(std::istream& stream, std::string const & file_string, std::string const & cid) {
+void OptionCollection::load_options_from_stream(std::istream& stream, std::string const & file_string, std::string const & cid, bool print_lines /* false */) {
 	using std::string;
 	using size_type = std::string::size_type;
 
@@ -340,6 +343,9 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 			strip_whitespace( line );
 			size_type const line_length( line.length() );
 
+			if ( print_lines ) {
+				std::cout << line << std::endl;
+			}
 			// Tokenize the line into option identifier and values
 			size_type vb( line.find_first_of( FIRST_SEP ) ), ve(0); // Begin/end token indexes
 			string const opt_string( vb == string::npos ? line : line.substr( 0, vb ) );
@@ -495,6 +501,9 @@ void OptionCollection::load_option_from_file(
 
 }
 
+
+
+
 /// @brief Check for problems in the option values
 void
 OptionCollection::check_values() const
@@ -514,6 +523,7 @@ OptionCollection::check_values() const
 	if ( error ) std_exit_wrapper( EXIT_FAILURE );
 	//  only called in ::load --- no exception, keep the hard - exit
 }
+
 
 
 void OptionCollection::show_option_help(OptionKey const &key, std::string &group, std::ostream & stream )

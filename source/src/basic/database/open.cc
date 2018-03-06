@@ -252,22 +252,10 @@ full_cache_name(
 		}
 	}
 
-	// No luck? Then fall back to the user's home directories.
-	char const * homedir = getenv("XDG_CONFIG_HOME");
-	if ( ! homedir || strlen(homedir) == 0 ) {
-		homedir = getenv("HOME");
-	}
-#if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__) || defined(linux) || defined(__linux__) || defined(__linux)
-	if ( ! homedir || strlen(homedir) == 0 ) {
-		passwd const * unix_pwd( getpwuid(getuid()) );
-		if ( unix_pwd ) {
-			homedir = unix_pwd->pw_dir;
-		}
-	}
-#endif
+	std::string homedir = utility::file::get_home_dir();
 
-	if ( homedir && strlen(homedir) > 0 ) {
-		cache_name = std::string(homedir) + "/.rosetta/database/" + short_name;
+	if ( ! homedir.empty() ) {
+		cache_name = homedir + "/.rosetta/database/" + short_name;
 		if ( find_cache_file( cache_name, for_writing ) ) {
 			return cache_name;
 		}

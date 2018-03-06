@@ -7,6 +7,4 @@
 
 -out:mute protocols.abinitio
 
--run:constant_seed
--nodelay
 -overwrite

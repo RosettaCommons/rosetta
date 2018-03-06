@@ -42,6 +42,7 @@
 // C++ headers
 #include <iostream>
 #include <algorithm>
+#include <string.h>
 
 // Platforms headers
 #include <sys/stat.h>
@@ -81,6 +82,11 @@
 // Windows compatibility shim (*nixes should have it already defined.)
 #ifndef S_ISDIR
 #define S_ISDIR(mode)  (((mode) & S_IFMT) == S_IFDIR)
+#endif
+
+#if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__) || defined(linux) || defined(__linux__) || defined(__linux)
+// POSIX specific headers
+#include <pwd.h>
 #endif
 
 namespace utility {
@@ -510,6 +516,30 @@ cwd()
 	}
 	utility_exit_with_message("cannot detect current working directory.");
 	return "";
+}
+
+std::string
+get_home_dir() {
+
+	char const * homedir = getenv("XDG_CONFIG_HOME");
+	if ( ! homedir || strlen(homedir) == 0 ) {
+		homedir = getenv("HOME");
+	}
+#if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__) || defined(linux) || defined(__linux__) || defined(__linux)
+	if ( ! homedir || strlen(homedir) == 0 ) {
+		passwd const * unix_pwd( getpwuid(getuid()) );
+		if ( unix_pwd ) {
+			homedir = unix_pwd->pw_dir;
+		}
+	}
+#endif
+
+	if ( strlen(homedir) == 0 ) {
+		return "";
+
+	} else {
+		return std::string(homedir);
+	}
 }
 
 } // namespace file
