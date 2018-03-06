@@ -14,4 +14,3 @@ Rosetta/main (the repository you are looking at) contains the Rosetta source cod
 $ cd Rosetta/main/source
 $ ./scons.py -j<NumOfJobs> mode=[debug/release] [bin]
 ```
-

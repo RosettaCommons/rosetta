@@ -110,5 +110,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test == "ubsan":
         os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan
         return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, mode="ubsan")
-    elif test: return run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    else: return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'release': return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, mode='release')
+    #elif test: return run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == '': return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    else: raise BenchmarkError('Unknow scripts test: {}!'.format(test))
