@@ -153,6 +153,9 @@ sources = {
 		"docking_prepack_protocol",
 		"docking_protocol",
 	],
+	"public/DRRAFTER": [
+		"drrafter_error_estimation",
+	],
 	"public/electron_density": [
 		"denovo_density",
 		"density_tools",
