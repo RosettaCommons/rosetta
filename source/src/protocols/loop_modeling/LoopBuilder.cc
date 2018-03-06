@@ -10,7 +10,7 @@
 /// @author Kale Kundert
 /// @author Roland A. Pache, PhD
 
-// Headers {{{1
+// Headers
 #include <protocols/loop_modeling/LoopBuilder.hh>
 #include <protocols/loop_modeling/LoopBuilderCreator.hh>
 
@@ -36,20 +36,20 @@
 #include <protocols/kinematic_closure/solution_pickers/FilteredSolutions.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
+#include <protocols/loop_modeling/utilities/TrajectoryLogger.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
+#include <protocols/moves/mover_schemas.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
-// Namespaces {{{1
+// Namespaces
 using namespace std;
 using namespace basic::options;
 
@@ -59,23 +59,13 @@ using protocols::filters::Filters_map;
 using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 using basic::datacache::DataMap;
-// }}}1
 
 namespace protocols {
 namespace loop_modeling {
 
-static basic::Tracer tr( "protocols.loop_modeling.LoopBuilder" );
+static basic::Tracer TR( "protocols.loop_modeling.LoopBuilder" );
 
-// XRW TEMP moves::MoverOP LoopBuilderCreator::create_mover() const { // {{{1
-// XRW TEMP  return moves::MoverOP( new LoopBuilder );
-// XRW TEMP }
-
-// XRW TEMP string LoopBuilderCreator::keyname() const { // {{{1
-// XRW TEMP  return "LoopBuilder";
-// XRW TEMP }
-// }}}1
-
-LoopBuilder::LoopBuilder() { // {{{1
+LoopBuilder::LoopBuilder() {
 	using protocols::kinematic_closure::KicMover;
 	using protocols::kinematic_closure::KicMoverOP;
 	using protocols::kinematic_closure::perturbers::IdealizeNonPhiPsi;
@@ -87,6 +77,8 @@ LoopBuilder::LoopBuilder() { // {{{1
 	using protocols::kinematic_closure::solution_pickers::FilteredSolutionsOP;
 	using protocols::loop_modeling::refiners::MinimizationRefiner;
 	using protocols::loop_modeling::refiners::MinimizationRefinerOP;
+	using protocols::loop_modeling::utilities::TrajectoryLogger;
+	using protocols::loop_modeling::utilities::TrajectoryLoggerOP;
 
 	max_attempts_ = option[OptionKeys::loops::max_kic_build_attempts]();
 
@@ -107,11 +99,13 @@ LoopBuilder::LoopBuilder() { // {{{1
 	kic_mover_->set_solution_picker( solution_picker );
 
 	minimizer_ = add_child( MinimizationRefinerOP( new MinimizationRefiner ) );
+
+	logger_ = TrajectoryLoggerOP( new TrajectoryLogger );
 }
 
-LoopBuilder::~LoopBuilder() = default; // {{{1
+LoopBuilder::~LoopBuilder() = default;
 
-void LoopBuilder::parse_my_tag( // {{{1
+void LoopBuilder::parse_my_tag(
 	TagCOP tag,
 	DataMap & data,
 	Filters_map const & filters,
@@ -123,7 +117,7 @@ void LoopBuilder::parse_my_tag( // {{{1
 	max_attempts_ = tag->getOption<Size>("max_attempts", max_attempts_);
 }
 
-void LoopBuilder::use_fragments( // {{{1
+void LoopBuilder::use_fragments(
 	utility::vector1<core::fragment::FragSetCOP> const & frag_libs) {
 
 	using protocols::kinematic_closure::perturbers::IdealizeNonPhiPsi;
@@ -150,7 +144,7 @@ void LoopBuilder::use_fragments( // {{{1
 	kic_mover_->add_perturber(PerturberOP( new FragmentPerturber(frag_libs) ));
 }
 
-bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
+bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) {
 
 	// Only attempt to rebuild loops that are marked as "extended".
 
@@ -160,6 +154,7 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	kic_mover_->set_loop(loop);
 	minimizer_->set_loop(loop);
+	logger_->init(this);
 
 	// Idealize the loop. The fold tree is changed temporarily
 	// to preserve the positions of the start and stop residues.
@@ -176,8 +171,10 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	kic_mover_->was_successful(false);
 	for ( Size i = 1; i <= max_attempts_ && ! kic_mover_->was_successful(); i++ ) {
-		tr << "Loop building attempt: " << i << endl;
 		kic_mover_->apply(pose);
+
+		bool success = kic_mover_->was_successful();
+		logger_->record_move(TR, pose, i, success, success);
 	}
 
 	if ( ! kic_mover_->was_successful() ) return false;
@@ -190,42 +187,45 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	// Minimize the loop if it was successfully built.
 
 	minimizer_->apply(pose);
+	logger_->record_endpoint(TR, pose);
+
 	return minimizer_->was_successful();
 }
 
-
-Size LoopBuilder::get_max_attempts() const { // {{{1
+Size LoopBuilder::get_max_attempts() const {
 	return max_attempts_;
 }
 
-void LoopBuilder::set_max_attempts(Size attempts) { // {{{1
+void LoopBuilder::set_max_attempts(Size attempts) {
 	max_attempts_ = attempts;
 }
 
-ScoreFunctionOP LoopBuilder::get_score_function() { // {{{1
+ScoreFunctionOP LoopBuilder::get_score_function() const {
 	return get_tool<ScoreFunctionOP>(ToolboxKeys::SCOREFXN);
 }
 
-void LoopBuilder::set_score_function(ScoreFunctionOP score_function) { // {{{1
+void LoopBuilder::set_score_function(ScoreFunctionOP score_function) {
 	set_tool(ToolboxKeys::SCOREFXN, score_function);
 }
 
-std::string LoopBuilder::get_name() const {
+utilities::TrajectoryLoggerOP LoopBuilder::get_logger() const {
+	return logger_;
+}
+
+string LoopBuilder::get_name() const {
 	return mover_name();
 }
 
-std::string LoopBuilder::mover_name() {
+string LoopBuilder::mover_name() {
 	return "LoopBuilder";
 }
 
 // handle parse_score_function for derived classes
-void
-LoopBuilder::get_score_function_attributes( utility::tag::AttributeList &attlist ) {
+void LoopBuilder::get_score_function_attributes( utility::tag::AttributeList &attlist ) {
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
 }
 
-void LoopBuilder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
-{
+void LoopBuilder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	// Create a complex type and  get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
 	XMLSchemaComplexTypeGenerator ct_gen;
@@ -255,7 +255,6 @@ void LoopBuilderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	LoopBuilder::provide_xml_schema( xsd );
 }
 
-
 void LoopBuilder::idealize_loop(Pose & pose, Loop const & loop, core::kinematics::FoldTree &ft) const{
 	core::kinematics::FoldTree original_ft(pose.fold_tree());
 	pose.fold_tree(ft);
@@ -263,7 +262,6 @@ void LoopBuilder::idealize_loop(Pose & pose, Loop const & loop, core::kinematics
 	pose.fold_tree(original_ft);
 }
 
-// }}}1
 
 
 }

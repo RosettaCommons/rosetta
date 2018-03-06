@@ -15,6 +15,7 @@
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/LoopProtocol.fwd.hh>
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.fwd.hh>
+#include <protocols/loop_modeling/utilities/TrajectoryLogger.fwd.hh>
 #include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship
 
 // Core headers
@@ -200,7 +201,7 @@ public:
 	void mark_as_default();
 
 	/// @brief Get the score function to be used on the next call to apply().
-	core::scoring::ScoreFunctionOP get_score_function();
+	core::scoring::ScoreFunctionOP get_score_function() const;
 
 	/// @brief Set the score function to be used on the next call to apply().
 	void set_score_function(core::scoring::ScoreFunctionOP score_function);
@@ -213,7 +214,7 @@ public:
 
 	/// @brief Get the number of iterations the loop that ramps the score
 	/// function will make.
-	Size get_sfxn_cycles();
+	Size get_sfxn_cycles() const;
 
 	/// @brief Set the number of iterations the loop that ramps the temperature
 	/// should make.
@@ -229,7 +230,7 @@ public:
 	/// was passed to set_temp_cycles() and no loop has been specified yet.  The
 	/// value returned will always be the actual number of iterations that will
 	/// be carried out.
-	Size get_temp_cycles();
+	Size get_temp_cycles() const;
 
 	/// @brief Specify how many times the loops movers should be invoked after
 	/// the score function and temperature have been updated.
@@ -239,7 +240,7 @@ public:
 
 	/// @brief Return how many times the loops movers will be invoked after the
 	/// score function and temperature have been updated.
-	Size get_mover_cycles();
+	Size get_mover_cycles() const;
 
 	/// @brief Indicate that this protocol is being used for a test run.
 	/// @details This method simply limits the number of iterations that will be
@@ -263,6 +264,9 @@ public:
 	/// values during the simulation.
 	void set_temperature_schedule(Real start, Real stop);
 
+	/// @brief Return the object that report on the progress of the protocol.
+	utilities::TrajectoryLoggerOP get_logger() const;
+
 	std::string
 	get_name() const override;
 
@@ -280,6 +284,7 @@ public:
 private:
 	utilities::LoopMoverGroupOP protocol_;
 	utilities::LoopMoverGroupOP movers_, refiners_;
+	utilities::TrajectoryLoggerOP logger_;
 	protocols::moves::MonteCarloOP monte_carlo_;
 
 	Size sfxn_cycles_;

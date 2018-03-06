@@ -197,9 +197,7 @@ public:
 	static void setup_fold_tree(
 		Pose & pose, LoopsCOP loops, FoldTreeRequest request);
 
-	static
-	void
-	define_composition_schema(
+	static void define_composition_schema(
 		utility::tag::XMLSchemaDefinition & xsd,
 		utility::tag::XMLSchemaComplexTypeGenerator & ct_gen,
 		utility::tag::XMLSchemaSimpleSubelementList & subelements

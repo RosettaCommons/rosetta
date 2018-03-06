@@ -24,6 +24,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/HierarchicalDataMap.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -175,6 +176,16 @@ void LoopMover::setup_fold_tree( // {{{1
 	if ( request == FTR_DONT_CARE ) {
 		return;
 	} else if ( request & FTR_LOOPS_WITH_CUTS ) {
+		// Raise an exception if there aren't any loops.  This can happen if you
+		// misspell the path to a loops file, and it's hard to debug because what
+		// ends up happening is that the fold tree crashes when it realizes it
+		// doesn't have a root, but that doesn't give much indication that there's
+		// a problem with the loop file.  So here we try to point the user in the
+		// right direction with a better error message.
+		if ( loops->empty() ) {
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "No loops specified; can't create foldtree.  Check the path to the loop file, if you are using one.");
+		}
+
 		core::kinematics::FoldTree tree;
 		protocols::loops::fold_tree_from_loops(pose, *loops, tree, true);
 		pose.fold_tree(tree);

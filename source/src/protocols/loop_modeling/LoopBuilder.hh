@@ -14,6 +14,7 @@
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/LoopBuilder.fwd.hh>
+#include <protocols/loop_modeling/utilities/TrajectoryLogger.fwd.hh>
 #include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship.
 
 // Core headers
@@ -98,10 +99,13 @@ public:
 	void set_max_attempts(Size attempts);
 
 	/// @brief Get the score function to be used on the next call to apply().
-	core::scoring::ScoreFunctionOP get_score_function();
+	core::scoring::ScoreFunctionOP get_score_function() const;
 
 	/// @brief Set the score function to be used on the next call to apply().
 	void set_score_function(core::scoring::ScoreFunctionOP score_function);
+
+	/// @brief Return the object that report on the progress of the protocol.
+	utilities::TrajectoryLoggerOP get_logger() const;
 
 	std::string
 	get_name() const override;
@@ -133,6 +137,7 @@ private:
 
 	protocols::kinematic_closure::KicMoverOP kic_mover_;
 	refiners::MinimizationRefinerOP minimizer_;
+	utilities::TrajectoryLoggerOP logger_;
 	Size max_attempts_;
 
 };

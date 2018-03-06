@@ -350,6 +350,7 @@ sources = {
 		"utilities/LoopMoverGroup",
 		"utilities/PrepareForCentroid",
 		"utilities/PrepareForFullatom",
+		"utilities/TrajectoryLogger",
 	],
 	"protocols/md": [
 		"MDBase",

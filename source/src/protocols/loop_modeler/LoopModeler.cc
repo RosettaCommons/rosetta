@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-// Headers {{{1
+// Headers
 #include <protocols/loop_modeler/LoopModeler.hh>
 #include <protocols/loop_modeler/LoopModelerCreator.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
@@ -16,6 +16,7 @@
 #include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.hh>
 #include <protocols/loop_modeling/utilities/AcceptanceCheck.hh>
+#include <protocols/loop_modeling/utilities/TrajectoryLogger.hh>
 
 // Protocols headers
 #include <protocols/filters/Filter.hh>
@@ -36,6 +37,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
+#include <protocols/moves/mover_schemas.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
@@ -71,6 +73,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
@@ -83,11 +86,8 @@
 #include <iostream>
 #include <cmath>
 #include <ctime>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
-// Namespaces {{{1
+// Namespaces
 using namespace std;
 using namespace basic::options;
 
@@ -116,23 +116,13 @@ using utility::tag::TagCOP;
 using basic::datacache::DataMap;
 using protocols::filters::Filters_map;
 using protocols::moves::Movers_map;
-// }}}1
 
 namespace protocols {
 namespace loop_modeler {
 
 static basic::Tracer TR("protocols.loop_modeler.LoopModeler");
 
-// XRW TEMP MoverOP LoopModelerCreator::create_mover() const { // {{{1
-// XRW TEMP  return MoverOP( new LoopModeler );
-// XRW TEMP }
-
-// XRW TEMP string LoopModelerCreator::keyname() const { // {{{1
-// XRW TEMP  return "LoopModeler";
-// XRW TEMP }
-// }}}1
-
-LoopModeler::LoopModeler() { // {{{1
+LoopModeler::LoopModeler() {
 	build_stage_ = add_child( loop_modeling::LoopBuilderOP( new loop_modeling::LoopBuilder ) );
 	centroid_stage_ = add_child( loop_modeling::LoopProtocolOP( new loop_modeling::LoopProtocol ) );
 	fullatom_stage_ = add_child( loop_modeling::LoopProtocolOP( new loop_modeling::LoopProtocol ) );
@@ -146,12 +136,15 @@ LoopModeler::LoopModeler() { // {{{1
 	set_fa_scorefxn(loops::get_fa_scorefxn());
 	set_cen_scorefxn(loops::get_cen_scorefxn());
 
+	build_stage_->get_logger()->set_prefix("build_");
+	centroid_stage_->get_logger()->set_prefix("centroid_");
+
 	setup_kic_config();
 }
 
-LoopModeler::~LoopModeler() = default; // {{{1
+LoopModeler::~LoopModeler() = default;
 
-MoverOP LoopModeler::clone() const { // {{{1
+MoverOP LoopModeler::clone() const {
 	// This is dangerous.  It only works if something else is holding a shared
 	// pointer to this object.  The proper thing to do would be to construct a
 	// new loop modeler on the fly, but I think this is impossible because
@@ -159,7 +152,7 @@ MoverOP LoopModeler::clone() const { // {{{1
 	return utility::pointer::const_pointer_cast<Mover>(shared_from_this());
 }
 
-void LoopModeler::parse_my_tag( // {{{1
+void LoopModeler::parse_my_tag(
 	TagCOP tag,
 	DataMap & data,
 	Filters_map const & filters,
@@ -248,23 +241,22 @@ void LoopModeler::parse_my_tag( // {{{1
 	}
 }
 
-bool LoopModeler::do_apply(Pose & pose) { // {{{1
-	Pose native_pose(pose);
-	if ( option[OptionKeys::in::file::native].user() ) {
-		pose_from_file(native_pose, option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
-	}
+bool LoopModeler::do_apply(Pose & pose) {
+	// Save a copy of the pose with it's original sidechains before they're
+	// (possibly) removed below, so that we can restore them without having to
+	// repack the whole structure when we transition back into fullatom mode.
+
+	prepare_for_fullatom_->set_original_pose(pose);
 
 	// Set default task factory if the user doesn't give one
 
-	bool use_default_task_factory = !get_tool<TaskFactoryOP>(loop_modeling::ToolboxKeys::TASK_FACTORY, TaskFactoryOP());
+	bool use_default_task_factory = !get_tool<TaskFactoryOP>(
+		loop_modeling::ToolboxKeys::TASK_FACTORY, TaskFactoryOP());
 
 	if ( use_default_task_factory ) {
 		TR << "Set default task factory." << std::endl;
 		set_task_factory(get_default_task_factory(pose));
 	}
-
-
-	prepare_for_fullatom_->set_original_pose(pose);
 
 	// Converting the pose to centroid mode can sometimes cause headaches with
 	// non-canonical residue type sets, so this conditional makes sure that this
@@ -274,95 +266,32 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 		prepare_for_centroid_->apply(pose);
 	}
 
-	// Build stage
-
 	if ( is_build_stage_enabled_ ) {
-		long start_time = time(nullptr);
-		TR << "Build Stage" << endl;
+		TR << "*******************************************" << endl;
+		TR << "                                           " << endl;
+		TR << "   Build Stage                             " << endl;
+		TR << "                                           " << endl;
+		TR << "*******************************************" << endl;
 		build_stage_->apply(pose);
-		long end_time = time(nullptr);
-		TR << "Build Time: " << end_time - start_time << " sec" << endl;
 	}
-
-	// Output score and RMSD to debug tracer?  That sounds good.  I need two
-	// versions of a function that outputs score and rmsd.  One version uses the
-	// standard tracer, fills up the pose extra scores, and deals with buried
-	// H-bonds.  The other version just outputs to a debug tracer.
-	//
-	// Actually, I'm starting to think that I should move the score and rmsd code
-	// to LoopProtocol.  LoopModeler shouldn't do anything but combine other bits
-	// of code, and right now there's no other way to get this output behavior.
-	// If I were to move the code into LoopProtocol, both fullatom and centroid
-	// would report scores and RMSDs to the log.  The full atom extra pose scores
-	// would overwrite the centroid ones, which is good.  But LoopBuilder isn't a
-	// LoopProtocol, so I will have to move all this stuff into its own function
-	// in order to reuse it.  That's not so bad.  This really would be a
-	// generally useful function for evaluating the quality of a loop.  The
-	// argument would have to be a pose, a reference pose, a loop, and a tracer.
-	//
-	// Actually, only the LoopModeler knows about the original pose, doesn't it.
-	// So I probably can't move this function to the LoopProtocol.  Also, I
-	// should consider the fact that in real application the RMSD is meaningless
-	// and should probably not be displayed.  You know, I could have my utility
-	// function query -in:file:native.  Then I don't need to pass it a reference
-	// structure and I can easily omit RMSDs if there is no starting structure.
-	// That's perfect!
-
-	// Centroid stage
 
 	if ( is_centroid_stage_enabled_ ) {
-		long start_time = time(nullptr);
-		TR << "Centroid Stage" << endl;
+		TR << "*******************************************" << endl;
+		TR << "                                           " << endl;
+		TR << "   Centroid Stage                          " << endl;
+		TR << "                                           " << endl;
+		TR << "*******************************************" << endl;
 		centroid_stage_->apply(pose);
-		long end_time = time(nullptr);
-		TR << "Centroid Time: " << end_time - start_time << " sec" << endl;
 	}
-
-	// Fullatom stage
 
 	if ( is_fullatom_stage_enabled_ ) {
-		long start_time = time(nullptr);
-		TR << "Fullatom Stage" << endl;
+		TR << "*******************************************" << endl;
+		TR << "                                           " << endl;
+		TR << "   Fullatom Stage                          " << endl;
+		TR << "                                           " << endl;
+		TR << "*******************************************" << endl;
 		prepare_for_fullatom_->apply(pose);
 		fullatom_stage_->apply(pose);
-		long end_time = time(nullptr);
-		TR << "Fullatom Time: " << end_time - start_time << " sec" << endl;
-	}
-
-	// Report score and rmsd
-
-	loop_modeling::LoopsCOP loops = get_loops();
-	ObjexxFCL::FArray1D_bool loop_residues (pose.size(), false);
-
-	for ( Size i = 1; i <= pose.size(); i++ ) {
-		if ( loops->is_loop_residue(i) ) { loop_residues[i-1] = true; }
-	}
-
-	using core::scoring::rmsd_no_super_subset;
-	using core::scoring::is_protein_backbone;
-	using core::scoring::chainbreak;
-
-	Real total_score = pose.is_fullatom() ?
-		fullatom_stage_->get_score_function()->score(pose):
-		centroid_stage_->get_score_function()->score(pose);
-	Real chainbreak_score = pose.energies().total_energies()[chainbreak];
-	Real backbone_rmsd = rmsd_no_super_subset(
-		native_pose, pose, loop_residues, is_protein_backbone);
-
-	TR << "Total Score: " << total_score << endl;
-	TR << "Chainbreak Score: " << chainbreak_score << endl;
-	TR << "Loop Backbone RMSD: " << backbone_rmsd << endl;
-
-	core::pose::setPoseExtraScore(pose, "total_score", total_score);
-	core::pose::setPoseExtraScore(pose, "chainbreak_score", chainbreak_score);
-	core::pose::setPoseExtraScore(pose, "loop_backbone_rmsd", backbone_rmsd);
-
-	if ( pose.is_fullatom() ) {
-		//protocols::simple_filters::BuriedUnsatHbondFilter unsats(20, 0);
-		protocols::simple_filters::BuriedUnsatHbondFilter unsats(20); // 0 (jump_number no longer needed; default is full pose)
-		Real delta_unsats = unsats.compute(pose) - unsats.compute(native_pose);
-		TR << "Delta Buried Unsatisfied H-bonds: " << showpos << delta_unsats << endl;
-		core::pose::setPoseExtraScore(pose, "delta_buried_unsats", delta_unsats);
 	}
 
 	// Clear the default task factory such that it could be refreshed for next structure
@@ -374,7 +303,7 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	return true;
 }
 
-void LoopModeler::setup_empty_config() { // {{{1
+void LoopModeler::setup_empty_config() {
 	centroid_stage_->set_sfxn_cycles(5);
 	centroid_stage_->set_temp_cycles(20, true);
 	centroid_stage_->set_mover_cycles(1);
@@ -387,7 +316,7 @@ void LoopModeler::setup_empty_config() { // {{{1
 	fullatom_stage_->clear_movers_and_refiners();
 }
 
-void LoopModeler::setup_kic_config() { // {{{1
+void LoopModeler::setup_kic_config() {
 	using namespace protocols::kinematic_closure;
 	using namespace protocols::loop_modeling::refiners;
 	using namespace protocols::loop_modeling::utilities;
@@ -408,7 +337,7 @@ void LoopModeler::setup_kic_config() { // {{{1
 	fullatom_stage_->mark_as_default();
 }
 
-void LoopModeler::setup_kic_with_fragments_config() { // {{{1
+void LoopModeler::setup_kic_with_fragments_config() {
 	using namespace basic::options;
 	using namespace protocols::kinematic_closure;
 	using namespace protocols::kinematic_closure::perturbers;
@@ -452,7 +381,7 @@ void LoopModeler::setup_kic_with_fragments_config() { // {{{1
 	// must be created.
 }
 
-void LoopModeler::setup_loophash_kic_config(bool perturb_sequence, std::string seqposes_no_mutate_str) { // {{{1
+void LoopModeler::setup_loophash_kic_config(bool perturb_sequence, std::string seqposes_no_mutate_str) {
 	using namespace basic::options;
 	using namespace protocols::kinematic_closure;
 	using namespace protocols::kinematic_closure::pivot_pickers;
@@ -515,52 +444,51 @@ void LoopModeler::setup_loophash_kic_config(bool perturb_sequence, std::string s
 
 }
 
-
-loop_modeling::LoopBuilderOP LoopModeler::build_stage() { // {{{1
+loop_modeling::LoopBuilderOP LoopModeler::build_stage() {
 	return build_stage_;
 }
 
-loop_modeling::LoopProtocolOP LoopModeler::centroid_stage() { // {{{1
+loop_modeling::LoopProtocolOP LoopModeler::centroid_stage() {
 	return centroid_stage_;
 }
 
-loop_modeling::LoopProtocolOP LoopModeler::fullatom_stage() { // {{{1
+loop_modeling::LoopProtocolOP LoopModeler::fullatom_stage() {
 	return fullatom_stage_;
 }
 
-void LoopModeler::enable_build_stage() { // {{{1
+void LoopModeler::enable_build_stage() {
 	is_build_stage_enabled_ = true;
 }
 
-void LoopModeler::disable_build_stage() { // {{{1
+void LoopModeler::disable_build_stage() {
 	is_build_stage_enabled_ = false;
 }
 
-void LoopModeler::enable_centroid_stage() { // {{{1
+void LoopModeler::enable_centroid_stage() {
 	is_centroid_stage_enabled_ = true;
 }
 
-void LoopModeler::disable_centroid_stage() { // {{{1
+void LoopModeler::disable_centroid_stage() {
 	is_centroid_stage_enabled_ = false;
 }
 
-void LoopModeler::enable_fullatom_stage() { // {{{1
+void LoopModeler::enable_fullatom_stage() {
 	is_fullatom_stage_enabled_ = true;
 }
 
-void LoopModeler::disable_fullatom_stage() { // {{{1
+void LoopModeler::disable_fullatom_stage() {
 	is_fullatom_stage_enabled_ = false;
 }
 
-TaskFactoryOP LoopModeler::get_task_factory() { // {{{1
+TaskFactoryOP LoopModeler::get_task_factory() {
 	return get_tool<TaskFactoryOP>(loop_modeling::ToolboxKeys::TASK_FACTORY);
 }
 
-TaskFactoryOP LoopModeler::get_task_factory(TaskFactoryOP fallback) { // {{{1
+TaskFactoryOP LoopModeler::get_task_factory(TaskFactoryOP fallback) {
 	return get_tool<TaskFactoryOP>(loop_modeling::ToolboxKeys::TASK_FACTORY, fallback);
 }
 
-void LoopModeler::set_task_factory(TaskFactoryOP task_factory) { // {{{1
+void LoopModeler::set_task_factory(TaskFactoryOP task_factory) {
 	set_tool(loop_modeling::ToolboxKeys::TASK_FACTORY, task_factory);
 }
 
@@ -606,12 +534,12 @@ LoopModeler::get_default_task_factory(core::pose::Pose &pose){
 	return task_factory;
 }
 
-void LoopModeler::set_fa_scorefxn(ScoreFunctionOP function) { // {{{1
+void LoopModeler::set_fa_scorefxn(ScoreFunctionOP function) {
 	prepare_for_fullatom_->set_score_function(function);
 	fullatom_stage_->set_score_function(function);
 }
 
-void LoopModeler::set_cen_scorefxn(ScoreFunctionOP function) { // {{{1
+void LoopModeler::set_cen_scorefxn(ScoreFunctionOP function) {
 	build_stage_->set_score_function(function);
 	centroid_stage_->set_score_function(function);
 }
@@ -694,8 +622,6 @@ void LoopModelerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	LoopModeler::provide_xml_schema( xsd );
 }
 
-
-// }}}1
 
 }
 }
