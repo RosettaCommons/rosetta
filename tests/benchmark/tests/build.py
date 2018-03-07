@@ -12,7 +12,7 @@
 ## @brief  Rosetta/PyRosetta build tests
 ## @author Sergey Lyskov
 
-import os, json
+import os, json, shutil
 import codecs
 
 import imp
@@ -103,10 +103,26 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     return r
 
 
+
+def run_test_on_fresh_clone(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    ''' create a fresh clone and run specified test on it
+    '''
+    clean_main = 'clean_main'
+
+    execute('Cloning main...', 'cd {working_dir} && git clone {rosetta_dir} {clean_main}'.format(**vars()) )
+
+    res = run_test(test, working_dir + '/' + clean_main, working_dir, platform, config, hpc_driver, verbose, debug)
+
+    shutil.rmtree( working_dir + '/' + clean_main )  # removing local clone to avoid storing main/ files as test-result-files
+
+    return res
+
+
 def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
     raise BenchmarkError('Build script does not support TestSuite-like run!')
 
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if test: return run_test(test, rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test and test.startswith('clean.'): return run_test_on_fresh_clone( test[ len('clean.') : ], rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test: return run_test(test, rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
