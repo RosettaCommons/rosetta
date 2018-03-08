@@ -55,7 +55,7 @@ date > start-time.ignore
 ##     | egrep -vf ../../ignore_list \
 ##     > log
 
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s -tesing:INTEGRATION_TEST 2>&1 \
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
       | egrep -vf ../../ignore_list \
       > log
 
