@@ -457,6 +457,78 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, BRANCH, 2 ) ) );  // phi(4)
 	}
 
+	void test_get_non_NU_TorsionID_from_AtomIDs()
+	{
+		using namespace utility;
+		using namespace core::id;
+		using namespace core::conformation::carbohydrates;
+
+		TR << "Testing get_non_NU_TorsionID_from_AtomIDs() function." << std::endl;
+
+		// Bogus AtomIDs
+		vector1< AtomID > bogus_atoms( 4, AtomID::BOGUS_ATOM_ID() );
+		TS_ASSERT_EQUALS(
+			get_non_NU_TorsionID_from_AtomIDs( Lex_.conformation(), bogus_atoms ), TorsionID::BOGUS_TORSION_ID() );
+
+		// Torsion definitions for Lex:
+		vector1< AtomID > phi2_atoms( 4 );
+		phi2_atoms[ 4 ] = AtomID( Lex_.residue( 2 ).atom_index( " VO5" ), 2 );
+		phi2_atoms[ 3 ] = AtomID( Lex_.residue( 2 ).atom_index( " C1 " ), 2 );
+		phi2_atoms[ 2 ] = AtomID( Lex_.residue( 1 ).atom_index( " O4 " ), 1 );
+		phi2_atoms[ 1 ] = AtomID( Lex_.residue( 1 ).atom_index( " C4 " ), 1 );
+		TS_ASSERT_EQUALS(
+			get_non_NU_TorsionID_from_AtomIDs( Lex_.conformation(), phi2_atoms ), TorsionID( 1, BB, 5 ) );
+
+		vector1< AtomID > psi2_atoms( 4 );
+		// Do these ones in reverse of the others.
+		psi2_atoms[ 1 ] = AtomID( Lex_.residue( 2 ).atom_index( " C1 " ), 2 );
+		psi2_atoms[ 2 ] = AtomID( Lex_.residue( 1 ).atom_index( " O4 " ), 1 );
+		psi2_atoms[ 3 ] = AtomID( Lex_.residue( 1 ).atom_index( " C4 " ), 1 );
+		psi2_atoms[ 4 ] = AtomID( Lex_.residue( 1 ).atom_index( " C3 " ), 1 );
+		TS_ASSERT_EQUALS(
+			get_non_NU_TorsionID_from_AtomIDs( Lex_.conformation(), psi2_atoms ), TorsionID( 1, BB, 4 ) );
+
+		vector1< AtomID > phi3_atoms( 4 );
+		phi3_atoms[ 4 ] = AtomID( Lex_.residue( 3 ).atom_index( " VO5" ), 3 );
+		phi3_atoms[ 3 ] = AtomID( Lex_.residue( 3 ).atom_index( " C1 " ), 3 );
+		phi3_atoms[ 2 ] = AtomID( Lex_.residue( 1 ).atom_index( " O3 " ), 1 );
+		phi3_atoms[ 1 ] = AtomID( Lex_.residue( 1 ).atom_index( " C3 " ), 1 );
+		TS_ASSERT_EQUALS(
+			get_non_NU_TorsionID_from_AtomIDs( Lex_.conformation(), phi3_atoms ), TorsionID( 1, BRANCH, 1 ) );
+
+		vector1< AtomID > psi3_atoms( 4 );
+		psi3_atoms[ 4 ] = AtomID( Lex_.residue( 3 ).atom_index( " C1 " ), 3 );
+		psi3_atoms[ 3 ] = AtomID( Lex_.residue( 1 ).atom_index( " O3 " ), 1 );
+		psi3_atoms[ 2 ] = AtomID( Lex_.residue( 1 ).atom_index( " C3 " ), 1 );
+		psi3_atoms[ 1 ] = AtomID( Lex_.residue( 1 ).atom_index( " C2 " ), 1 );
+		TS_ASSERT_EQUALS(
+			get_non_NU_TorsionID_from_AtomIDs( Lex_.conformation(), psi3_atoms ), TorsionID( 1, CHI, 3 ) );
+
+
+		// Torsion definitions for isomaltose:
+		phi2_atoms[ 4 ] = AtomID( isomaltose_.residue( 2 ).atom_index( " VO5" ), 2 );
+		phi2_atoms[ 3 ] = AtomID( isomaltose_.residue( 2 ).atom_index( " C1 " ), 2 );
+		phi2_atoms[ 2 ] = AtomID( isomaltose_.residue( 1 ).atom_index( " O6 " ), 1 );
+		phi2_atoms[ 1 ] = AtomID( isomaltose_.residue( 1 ).atom_index( " C6 " ), 1 );
+		TS_ASSERT_EQUALS(
+			get_non_NU_TorsionID_from_AtomIDs( isomaltose_.conformation(), phi2_atoms ), TorsionID( 1, BB, 7 ) );
+
+		psi2_atoms[ 4 ] = AtomID( isomaltose_.residue( 2 ).atom_index( " C1 " ), 2 );
+		psi2_atoms[ 3 ] = AtomID( isomaltose_.residue( 1 ).atom_index( " O6 " ), 1 );
+		psi2_atoms[ 2 ] = AtomID( isomaltose_.residue( 1 ).atom_index( " C6 " ), 1 );
+		psi2_atoms[ 1 ] = AtomID( isomaltose_.residue( 1 ).atom_index( " C5 " ), 1 );
+		TS_ASSERT_EQUALS(
+			get_non_NU_TorsionID_from_AtomIDs( isomaltose_.conformation(), psi2_atoms ), TorsionID( 1, BB, 6 ) );
+
+		vector1< AtomID > omega2_atoms( 4 );
+		omega2_atoms[ 4 ] = AtomID( isomaltose_.residue( 1 ).atom_index( " O6 " ), 1 );
+		omega2_atoms[ 3 ] = AtomID( isomaltose_.residue( 1 ).atom_index( " C6 " ), 1 );
+		omega2_atoms[ 2 ] = AtomID( isomaltose_.residue( 1 ).atom_index( " C5 " ), 1 );
+		omega2_atoms[ 1 ] = AtomID( isomaltose_.residue( 1 ).atom_index( " C4 " ), 1 );
+		TS_ASSERT_EQUALS(
+			get_non_NU_TorsionID_from_AtomIDs( isomaltose_.conformation(), omega2_atoms ), TorsionID( 1, BB, 5 ) );
+	}
+
 	void test_get_downstream_residue_that_this_torsion_moves()
 	{
 		using namespace core::id;

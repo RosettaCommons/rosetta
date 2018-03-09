@@ -14,24 +14,25 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
-
-#include <core/conformation/Residue.hh>
-#include <core/types.hh>
 
 // Unit headers
 #include <protocols/simple_moves/BackboneMover.hh>
 
-// Package headers
+// Project headers
+#include <core/types.hh>
+#include <core/id/AtomID_Mask.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/annotated_sequence.hh>
 
+// Utility Header
+#include <utility/vector1.hh>
+
+// Basic Header
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <core/id/AtomID_Mask.hh>
-#include <utility/vector1.hh>
 
 static basic::Tracer TR("protocols.moves.SmallMover.cxxtest");
 
@@ -60,14 +61,18 @@ public:
 	chemical::ResidueTypeSetCAP residue_set;
 
 	PoseOP the_pose;
+	PoseOP the_sugar_pose;
 	SmallMoverTest() {}
 
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-include_sugars" );
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
 		the_pose = PoseOP( new Pose );
 		core::import_pose::pose_from_file( *the_pose, "protocols/moves/test_in.pdb" , core::import_pose::PDB_file);
+
+		the_sugar_pose = PoseOP( new Pose );
+		make_pose_from_saccharide_sequence( *the_sugar_pose, "->6)-a-D-Glcp-(1->6)-a-D-Glcp" );
 
 		core::init::init_random_generators(1000, "mt19937");
 	}
@@ -164,6 +169,25 @@ public:
 		TR << psi_rate << " ";
 		TS_ASSERT_LESS_THAN(0.6, psi_rate);
 		TR << "test_SmallMover completed!! " << std::endl;
+	}
+
+	void test_SmallMover_w_sugar() {
+		protocols::simple_moves::SmallMover mover;
+
+		// Force the 2nd residue of this two-residue sugar to move by only setting its parent's torsions free to move..
+		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+		mm->set_bb( false );
+		mm->set_bb( 1, true );
+		mover.movemap( mm );
+
+		Angle const initial_phi( the_sugar_pose->phi( 2 ) ),
+			initial_psi( the_sugar_pose->psi( 2 ) ),
+			initial_omega( the_sugar_pose->omega( 2 ) );
+		mover.apply( *the_sugar_pose );
+
+		TS_ASSERT( the_sugar_pose->phi( 2 ) != initial_phi );
+		TS_ASSERT( the_sugar_pose->psi( 2 ) != initial_psi );
+		TS_ASSERT( the_sugar_pose->omega( 2 ) != initial_omega );
 	}
 
 	// APL Note: removing the "test_comprehensiveSmallMover" unit test

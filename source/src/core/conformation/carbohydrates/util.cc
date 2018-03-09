@@ -12,6 +12,8 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 /// @author Labonte <JWLabonte@jhu.edu>
 
+
+// Unit Header
 #include <core/conformation/carbohydrates/util.hh>
 
 // Package Headers
@@ -182,23 +184,22 @@ get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd, c
 	//JAB - this looks OK to me - Jason - please check this over!
 	// This will be replaced with a graph-search of the ResidueType once I know how to do that.
 	core::Size parent_resnum = parent_rsd.seqpos();
-	core::Size parent_connect= 0;
-	//core::Size res_connect = 0;
+	core::Size parent_connect = 0;
 	for ( core::Size con = 1; con <= rsd.n_possible_residue_connections(); ++con ) {
-		if ( rsd.connected_residue_at_resconn(con) == parent_resnum ) {
+		if ( rsd.connected_residue_at_resconn( con ) == parent_resnum ) {
 
-			parent_connect = rsd.residue_connection_conn_id(con);
-			//res_connect = con;
+			parent_connect = rsd.residue_connection_conn_id( con );
 			break;
 		}
 	}
-	core::Size connect_atom = parent_rsd.residue_connect_atom_index(parent_connect);
+	core::Size connect_atom = parent_rsd.residue_connect_atom_index( parent_connect );
 
 	core::Size c_atom_index = 0;
 
-	//Get all bonded neighbors of this atom from the ResidueType.
-	//This is important.  Our upper neighbor Carbon is not present, and the only other bonded atom is the H that would be a monosacharide.
-	// So, we are good to go here as long as other carbons wouldn't be coming off of the O in any monosacharide (which i don't think is possible and still have a glycan linkage?
+	// Get all bonded neighbors of this atom from the ResidueType.
+	// This is important.  Our upper neighbor Carbon is not present, and the only other bonded atom is the H that would
+	// be a monosaccharide.  So, we are good to go here as long as other carbons wouldn't be coming off of the O in any
+	// monosaccharid,e (which I don't think is possible to still have a glycan linkage?) ~JAB
 	utility::vector1< core::Size > bonded_atoms = parent_rsd.bonded_neighbor( connect_atom );
 	for ( core::Size i  = 1; i <= bonded_atoms.size(); ++i ) {
 		c_atom_index = bonded_atoms[ i ];
@@ -208,8 +209,8 @@ get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd, c
 		}
 	}
 
-	std::string connect_atom_name = parent_rsd.atom_name(c_atom_index);
-	return utility::string2Size(utility::to_string(connect_atom_name[2]) );
+	std::string connect_atom_name = parent_rsd.atom_name( c_atom_index );
+	return utility::string2Size(utility::to_string( connect_atom_name[ 2 ] ) );
 }
 
 
@@ -550,6 +551,134 @@ get_reference_atoms( uint const torsion_id, Conformation const & conf, uint cons
 		utility_exit_with_message( "An invalid torsion angle was requested." );
 	}
 	return ref_atoms;
+}
+
+
+/// @brief   Get the main chain or branch TorsionID defined by these four AtomIDs.
+/// @params  <atoms>: A vector1 of AtomIDs with a size of 4.
+/// @return  A TorsionID guaranteed to have a BB, CHI, or BRANCH TorsionType.
+/// @note    Sometimes it is helpful to know which TorsionID corresponds to which four atoms.
+/// Since some torsions have multiple IDs, (e.g., for a aldohexopyranose, BB 2 and NU 2 are the same,) one cannot
+/// write such a function that returns a single TorsionID, hence the specificity of this function to return either a
+/// BB or BRANCH TorsionType or a CHI torsion defining a connection to a branch.\n
+/// This code is probably general enough for non-sugar residues, but I'm rushing it in for CAPRI Round 41 and keeping it
+/// here for now, just to be safe.
+/// @author  Labonte <JWLabonte@jhu.edu>
+core::id::TorsionID
+get_non_NU_TorsionID_from_AtomIDs( Conformation const & conf, utility::vector1< core::id::AtomID > const & atoms )
+{
+	using namespace std;
+	using namespace utility;
+	using namespace id;
+
+	// First, we assure that we have four atoms, since four atoms define a torsion angle.
+	if ( atoms.size() != 4 ) { return TorsionID::BOGUS_TORSION_ID(); }
+
+	// Second, if passed a bogus AtomID, return a bogus TorsionID.
+	if ( ! atoms[ 1 ].valid() ) { return TorsionID::BOGUS_TORSION_ID(); }
+
+	// Third, check to see if the order of atoms needs to be reversed.
+	// Then, get the desired atoms.
+	bool const reversed( atoms[ 4 ] < atoms[ 1 ] );
+
+	AtomID const & upstream_bond_atom_parent( ( ! reversed ) ? atoms[ 1 ] : atoms[ 4 ] );
+	AtomID const & upstream_bond_atom( ( ! reversed ) ? atoms[ 2 ] : atoms[ 3 ] );
+	AtomID const & downstream_bond_atom( ( ! reversed ) ? atoms[ 3 ] : atoms[ 2 ] );
+	AtomID const & downstream_bond_atom_child( ( ! reversed ) ? atoms[ 4 ] : atoms[ 1 ] );
+
+	// Prepare variables for the three parameters of a TorsionID.
+	// (The torsion always "belongs" to the same residue as the second atom.)
+	uint const resnum( upstream_bond_atom.rsd() );
+	Residue const & parent( conf.residue( resnum ) );
+
+	TorsionType type;
+	uint torsionnum( 0 );
+
+	if ( upstream_bond_atom_parent.rsd() != resnum ) {
+		// In this case, we must be at the first BB torsion.
+		// e.g., the phi of an AA has LOWER as the first atom of the definition.
+
+#ifndef NDEBUG
+		// Make sure all is right with the world.
+		vector1< uint > const & mainchain_atoms( parent.mainchain_atoms() );
+		if ( mainchain_atoms[ 2 ] != upstream_bond_atom.atomno() ||
+				mainchain_atoms[ 3 ] != downstream_bond_atom.atomno() ||
+				mainchain_atoms[ 4 ] != downstream_bond_atom_child.atomno() ) {
+			utility_exit_with_message( "get_non_NU_TorsionID_from_AtomIDs():"
+				"Four atoms with the pattern res(n-1) atom, res(n) atom, res(n) atom, res(n) atom "
+				"passed to this function, which can only be a 1st BB torsion, yet the 2nd, 3rd, and 4th atoms "
+				"do not match the atoms stored in the ResidueType for BB1!" );
+		}
+#endif
+
+		type = BB;
+		torsionnum = 1;
+	} else if ( upstream_bond_atom_parent.rsd() == downstream_bond_atom.rsd() ) {
+		// If both atoms across the bond are on the same residue, this is NOT a BRANCH torsion.
+		// Search the residue's main-chain atoms to find a match, followed by searching the chi atoms.
+
+		bool torsionnum_found( false );
+
+		vector1< uint > const & mainchain_atoms( parent.mainchain_atoms() );
+		Size const n_mainchain_atoms( mainchain_atoms.size() );
+		// Start at 2; BB1 covered above.
+		for ( uint i( 2 ); i < n_mainchain_atoms; ++i ) {
+			if ( mainchain_atoms[ i - 1 ] == upstream_bond_atom_parent.atomno() &&
+					mainchain_atoms[ i ] == upstream_bond_atom.atomno() &&
+					mainchain_atoms[ i + 1 ] == downstream_bond_atom.atomno() ) {
+				type = BB;
+				torsionnum = i;
+				torsionnum_found = true;
+				break;
+			}
+		}
+
+		if ( ! torsionnum_found ) {
+			vector1< vector1< uint > > const & chi_atoms( parent.chi_atoms() );
+			Size const n_chis( chi_atoms.size() );
+			for ( uint i( 1 ); i <= n_chis; ++i ) {
+				if ( chi_atoms[ i ][ 1 ] == upstream_bond_atom_parent.atomno() &&
+						chi_atoms[ i ][ 2 ] == upstream_bond_atom.atomno() &&
+						chi_atoms[ i ][ 3 ] == downstream_bond_atom.atomno() ) {
+					type = CHI;
+					torsionnum = i;
+					break;
+				}
+			}
+		}
+	} else /* the two atoms across the bond are not on the same residue */ {
+		// If both atoms across the bond are NOT on the same residue,
+		// this could be the final BB torsion or else a BRANCH torsion.
+
+		// See if it is the final BB torsion.
+		vector1< uint > const & mainchain_atoms( parent.mainchain_atoms() );
+		if ( mainchain_atoms[ mainchain_atoms.size() - 1 ] == upstream_bond_atom_parent.atomno() &&
+				mainchain_atoms[ mainchain_atoms.size() ] == upstream_bond_atom.atomno() ) {
+			type = BB;
+			torsionnum = parent.mainchain_atoms().size();
+		} else {  // It must be a branch.
+			type = BRANCH;
+
+			// Now figure out the BRANCH number from the ResidueConnection.
+			Size const n_polymer_connections( parent.n_polymeric_residue_connections() );
+			for ( uint i( n_polymer_connections + 1 );
+					i <= parent.n_possible_residue_connections(); ++i ) {
+				if ( parent.connected_residue_at_resconn( i ) == downstream_bond_atom.rsd() ) {
+					torsionnum = i - n_polymer_connections;
+					break;
+				}
+			}
+		}
+	}
+
+	if ( ! torsionnum ) {
+		TR.Error << "get_mainchain_or_branch_TorsionID_from_AtomIDs() could not determine the BB id for the";
+		TR.Error << "TorsionID defined by these atoms:";
+		TR.Error << upstream_bond_atom_parent << "; " << upstream_bond_atom << "; ";
+		TR.Error << downstream_bond_atom << "; " << downstream_bond_atom_child << endl;
+	}
+
+	return TorsionID( resnum, type, torsionnum );
 }
 
 

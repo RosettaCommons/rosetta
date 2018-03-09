@@ -100,6 +100,13 @@ utility::vector1< core::id::AtomID > get_reference_atoms( uint const named_torsi
 	Conformation const & conf,
 	uint const sequence_position );
 
+
+/// @brief  Get the main chain or branch TorsionID defined by these four AtomIDs.
+core::id::TorsionID get_non_NU_TorsionID_from_AtomIDs(
+	Conformation const & conf,
+	utility::vector1< core::id::AtomID > const & atoms );
+
+
 /// @brief  Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given
 /// conformation.
 void align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, uint const sequence_position );
@@ -115,6 +122,7 @@ bool is_glycosidic_psi_torsion( Conformation const & conf, id::TorsionID const &
 
 /// @brief  Is this is an omega torsion angle of a glycosidic linkage?
 bool is_glycosidic_omega_torsion( Conformation const & conf, id::TorsionID const & torsion_id );
+
 
 /// @brief  Return the sequence position of the immediate downstream (child) residue affected by this torsion.
 core::uint get_downstream_residue_that_this_torsion_moves( Conformation const & conf, id::TorsionID const & torsion_id );

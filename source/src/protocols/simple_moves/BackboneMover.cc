@@ -20,6 +20,7 @@
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/carbohydrates/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
@@ -437,6 +438,8 @@ SmallMover::setup_list( core::pose::Pose & pose )
 {
 	using namespace id;
 	using namespace utility;
+	using namespace conformation;
+	using namespace conformation::carbohydrates;
 	using namespace pose::carbohydrates;
 
 	//Mask by ResidueSelector:
@@ -445,7 +448,7 @@ SmallMover::setup_list( core::pose::Pose & pose )
 	core::kinematics::MoveMapCOP my_movemap( movemap( pose ) );
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! subset[ i ] ) { continue; } //Skip residues masked by the ResidueSelector.
-		conformation::Residue const & rsd( pose.residue( i ) );
+		Residue const & rsd( pose.residue( i ) );
 
 		// Check if the residue is protein and has a free psi and phi angle as determined by the MoveMap.
 		if ( (rsd.is_protein() && !rsd.type().is_oligourea()) &&
@@ -461,21 +464,27 @@ SmallMover::setup_list( core::pose::Pose & pose )
 					pos_list_.push_back( std::make_pair( i, mx ) );
 				}
 			}
+
 		} else if ( rsd.type().is_oligourea() ) {
 			Angle const mx( angle_max_.find( 'L' )->second );
 			if ( mx > 0.0 ) {
 				pos_list_.push_back( std::make_pair( i, mx ) );
 			}
-		} else if ( rsd.is_carbohydrate() ) { // Check if the residue is a monosaccharide and has a free phi and psi.
+
+			// Check if the residue is a monosaccharide and has a free phi and psi.
+		} else if ( rsd.is_carbohydrate() && ! rsd.is_lower_terminus() ) {
 			// Because a saccharide i's glycosidic torsions might not even belong to residue i from Rosetta's point of
-			// view, it is more direct to get the reference atoms and convert to DOF_ID and check the MoveMap that way.
-			conformation::Conformation const & conf( pose.conformation() );
-			DOF_ID const phi_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_phi( pose, i ) ) );
-			DOF_ID const psi_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_psi( pose, i ) ) );
-			DOF_ID const omega_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_1st_omega( pose, i ) ) );
-			if ( my_movemap->get( phi_dof_id ) && my_movemap->get( psi_dof_id ) ) {
+			// view, we need helper functions to get the appropriate TorsionIDs and check if they are each movable.
+			Conformation const & conf( pose.conformation() );
+			TorsionID const phi_torsion_id(
+				get_non_NU_TorsionID_from_AtomIDs( conf, get_reference_atoms_for_phi( pose, i ) ) );
+			TorsionID const psi_torsion_id(
+				get_non_NU_TorsionID_from_AtomIDs( conf, get_reference_atoms_for_psi( pose, i ) ) );
+			TorsionID const omega_torsion_id(
+				get_non_NU_TorsionID_from_AtomIDs( conf, get_reference_atoms_for_1st_omega( pose, i ) ) );
+			if ( my_movemap->get( phi_torsion_id ) && my_movemap->get( psi_torsion_id ) ) {
 				// If we have an omega, but we cannot move it, continue.
-				if ( ( omega_dof_id != DOF_ID::BOGUS_DOF_ID() ) && ( ! my_movemap->get( omega_dof_id ) ) ) {
+				if ( ( omega_torsion_id != TorsionID::BOGUS_TORSION_ID() ) && ( ! my_movemap->get( omega_torsion_id ) ) ) {
 					continue;
 				}
 				// Carbohydrates are always considered loops for now.
