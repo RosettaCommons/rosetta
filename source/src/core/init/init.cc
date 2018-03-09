@@ -284,6 +284,7 @@
 #include <core/select/residue_selector/PrimarySequenceNeighborhoodSelectorCreator.hh>
 #include <core/select/residue_selector/SymmetricalResidueSelectorCreator.hh>
 #include <core/pack/task/residue_selector/ClashBasedRepackShellSelectorCreator.hh>
+#include <core/select/residue_selector/CloseContactResidueSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
 #include <core/select/jump_selector/JumpSelectorRegistrator.hh>
@@ -725,6 +726,7 @@ static ResidueSelectorRegistrator< BinSelectorCreator > reg_BinSelectorCreator;
 static ResidueSelectorRegistrator< BondedResidueSelectorCreator > reg_BondedResidueSelectorCreator;
 static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
 static ResidueSelectorRegistrator< core::pack::task::residue_selector::ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
+static ResidueSelectorRegistrator< CloseContactResidueSelectorCreator > reg_CloseContactResidueSelectorCreator;
 static ResidueSelectorRegistrator< GlycanResidueSelectorCreator > reg_GlycanResidueSelectorCreator;
 static ResidueSelectorRegistrator< RandomGlycanFoliageSelectorCreator > reg_RandomGlycanFoliageSelectorCreator;
 static ResidueSelectorRegistrator< GlycanLayerSelectorCreator > reg_GlycanLayerSelectorCreator;
