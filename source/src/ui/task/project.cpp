@@ -56,7 +56,9 @@ void Project::add_task(TaskSP const &task)
 
 	task_model_.update_from_tasks(tasks_);
 
-	connect(task.get(), &Task::changed, this, &Project::changed);
+	connect(task.get(), &Task::changed,       this, &Project::changed);
+	connect(task.get(), &Task::name_changed,  this, &Project::tasks_changed);
+	connect(task.get(), &Task::state_changed, this, &Project::tasks_changed);
 }
 
 
@@ -73,7 +75,10 @@ bool Project::erase(TaskSP const &task)
 		disconnect(task.get(), &Task::changed, this, &Project::changed);
 		bool res = sz != tasks_.size();
 
-		if(res) Q_EMIT changed();
+		if(res) {
+			Q_EMIT changed();
+			Q_EMIT tasks_changed();
+		}
 
 		return res;
 	}
@@ -82,7 +87,12 @@ bool Project::erase(TaskSP const &task)
 
 void Project::changed()
 {
-	qDebug() << "Project::changed()";
+	//qDebug() << "Project::changed()";
+	//task_model_.update_from_tasks(tasks_);
+}
+
+void Project::tasks_changed()
+{
 	task_model_.update_from_tasks(tasks_);
 }
 

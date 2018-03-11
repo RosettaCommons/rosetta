@@ -48,6 +48,9 @@ public:
 	//explicit Task(QString const &description);
 	~Task();
 
+	/// create clone of Task
+	TaskSP clone() const;
+
 	// return current Task State
 	State state() const { return state_; }
 
@@ -132,6 +135,11 @@ Q_SIGNALS:
 	void submitted();
 
     void changed();
+    void name_changed();
+    void state_changed();
+
+	void file_list_changed();
+	void file_changed(QString const &);
 
 	/// Emitted when node or sub-node syncing state changed
 	void syncing();

@@ -41,6 +41,8 @@ private Q_SLOTS:
 	void update_ui_from_task();
 
 	void on_name_textChanged(QString const &);
+	//void on_name_textEdited(QString const &text);
+
 
 	void on_version_textChanged(QString const &);
 

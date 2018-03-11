@@ -36,9 +36,10 @@ TaskView::TaskView(TaskSP const &task,QWidget *parent) :
 	update_ui_from_task();
 	//task->blockSignals(old);
 
-	connect(task_.get(), SIGNAL(changed()), this, SLOT(update_ui_from_task()));
-
-	connect(task_.get(), SIGNAL(syncing()), this, SLOT(update_syncing_progress()));
+	connect(task_.get(), &Task::changed,           this, &TaskView::update_ui_from_task);
+	connect(task_.get(), &Task::file_list_changed, this, &TaskView::update_ui_file_list_from_task);
+	connect(task_.get(), &Task::syncing,           this, &TaskView::update_syncing_progress);
+	connect(task_.get(), &Task::file_changed,      this, &TaskView::file_changed);
 
 	ui->output->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->output, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(create_output_context_menu(const QPoint &)));
@@ -62,6 +63,7 @@ void TaskView::update_ui_from_task()
     //qDebug() << "TaskView::update_ui_from_task";
 
 	ui->name->setText( task_->name() );
+	ui->version->setText( task_->version() );
 
 	ui->queue->setText( task_->queue() );
 
@@ -76,20 +78,6 @@ void TaskView::update_ui_from_task()
 
 	// ui->script_file_name->setText( task_->script().file_name() );
 	// ui->script->document()->setPlainText( task_->script().data() );
-
-	if( auto model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
-		QStringList output_files;
-		for(auto const &k_fsp : task_->files() ) {
-			//qDebug() << "TaskView::update_ui_from_task adding output file: " << k_fsp.first;
-			//if( not k_fsp.second->data().isEmpty() ) output_files << k_fsp.first;
-			output_files << k_fsp.first;
-		}
-		model->setStringList(output_files);
-	} else {
-		qDebug() << "TaskView::update_ui_from_task: no QStringListModel!!!";
-	}
-
-	ui->files_count->setText( QString::number( task_->files().size() ) );
 
 	// if( task_->input().data().size() and (not ui->input_preview->pose()) ) {
 	// 	core::pose::PoseOP pose = std::make_shared<core::pose::Pose>();
@@ -109,7 +97,26 @@ void TaskView::update_ui_from_task()
 
 	// 	for(auto w : inputs) w->setEnabled(false);
 	// }
+
+	update_ui_file_list_from_task();
 	update_syncing_progress();
+}
+
+void TaskView::update_ui_file_list_from_task()
+{
+	if( auto model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
+		QStringList output_files;
+		for(auto const &k_fsp : task_->files() ) {
+			//qDebug() << "TaskView::update_ui_from_task adding output file: " << k_fsp.first;
+			//if( not k_fsp.second->data().isEmpty() ) output_files << k_fsp.first;
+			output_files << k_fsp.first;
+		}
+		model->setStringList(output_files);
+	} else {
+		qDebug() << "TaskView::update_ui_from_task: no QStringListModel!!!";
+	}
+
+	ui->files_count->setText( QString::number( task_->files().size() ) );
 }
 
 void TaskView::update_syncing_progress()
@@ -295,7 +302,11 @@ void TaskView::on_export_all_files_clicked()
 	dir = QFileDialog::getExistingDirectory(this, tr("Save Output file to dir...") );
 
 	for(auto const & it : task_->files() ) {
-		QString file_name = dir + '/' + it.first;
+		auto file_info = QFileInfo( dir + '/' + it.first );
+		auto dir = file_info.dir();
+		if( not dir.exists() ) dir.mkpath(".");
+
+		QString file_name = file_info.filePath();  //dir + '/' + it.first;
 		QFile file(file_name);
 		if( file.open(QIODevice::WriteOnly) ) {
 			qDebug() << "TaskView::on_export_all_files_clicked: saving file:" << file_name;
@@ -358,25 +369,66 @@ void TaskView::on_output_clicked(const QModelIndex &index)
 
 			auto it = output.find(line);
 			if( it != output.end() ) {
-				qDebug() << "TaskView::on_output_clicked: file:" << it->second->file_name();
+				qDebug() << "TaskView::on_output_clicked: file:" << it->first;
 
-				if(viewer_) viewer_->deleteLater();
-				viewer_ = create_viewer_for_file(ui->preview, it->second);
-
-				if(viewer_) {
-					viewer_->resize( this->ui->preview->size() );
-					viewer_->show();
-				}
+				preview_file(*it);
 			}
 		}
 	}
 }
 
 
+void TaskView::on_output_doubleClicked(const QModelIndex &index)
+{
+	if( QStringListModel *model = qobject_cast<QStringListModel*>( ui->output->model() ) ) {
+		QVariant qv = model->data(index, Qt::DisplayRole);
+		if( qv.isValid() ) {
+			QString line = qv.toString();
+
+			std::map<QString, FileSP> const & output = task_->files();
+
+			auto it = output.find(line);
+			if( it != output.end() ) {
+				qDebug() << "TaskView::on_output_doubleClicked: file:" << it->first;
+
+				//preview_file(*it);
+				open_file_viewer(*it, task_, this);
+			}
+		}
+	}
+}
+
+
+void TaskView::file_changed(QString const &file_name)
+{
+	if(file_name == previewed_file_name_) {
+		std::map<QString, FileSP> const & output = task_->files();
+
+		auto it = output.find(file_name);
+		if( it != output.end() ) preview_file(*it);
+	}
+}
+
+
+void TaskView::preview_file(std::pair<QString const, FileSP> const & name_and_file)
+{
+	previewed_file_name_ = name_and_file.first;
+
+	if(viewer_) viewer_->deleteLater();
+	viewer_ = create_viewer_for_file(ui->preview, name_and_file.second);
+
+	if(viewer_) {
+		viewer_->resize( this->ui->preview->size() );
+		viewer_->show();
+	}
+}
+
 void open_file_viewer(std::pair<QString const, FileSP> const & name_and_file, TaskSP const &task, QWidget *parent)
 {
 	QFileInfo fi( name_and_file.first );
 	QString file_name = fi.fileName();
+
+	if( name_and_file.second->data().isEmpty() ) return;
 
 	//qDebug() << "temp: " << it->first << file_name;
 

@@ -114,6 +114,53 @@ std::pair<int, int> FunctorSequence::progress() const
 }
 
 
+void FunctorASyncSequence::add_functor(ValueType const &v)
+{
+	sequence_.push_back(v);
+}
+
+void FunctorASyncSequence::run()
+{
+	if( !sequence_.empty() ) {
+		qDebug() << "FunctorASyncSequence<" << name() << ">::run()...";
+
+		for(auto & f : sequence_) {
+			connect(f.get(), &Functor::tick,  this, &Functor::tick);
+			connect(f.get(), &Functor::final, this, &FunctorASyncSequence::item_finished);
+			f->execute();
+		}
+	}
+	else finish();
+}
+
+
+void FunctorASyncSequence::item_finished()
+{
+	for(auto & f : sequence_) {
+		if( not f->is_finished() ) return;
+	}
+
+	finish();
+}
+
+// return <current_value, max_value> for execution progress
+std::pair<int, int> FunctorASyncSequence::progress() const
+{
+	if( is_running() ) {
+		std::pair<int, int> t {0, sequence_.size()};
+		for(auto const & f : sequence_) {
+			auto r = f->progress();
+			t.first  += r.first;
+			t.second += r.second;
+
+		}
+		return t;
+	}
+	else if( is_finished() ) return std::make_pair(0, 0);
+	else return std::make_pair(0, 0);
+}
+
+
 
 FunctorNetworkCall::FunctorNetworkCall(QString const &name, CallCallback const &, QObject *parent) : Functor(name, parent)
 {

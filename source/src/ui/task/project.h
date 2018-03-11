@@ -90,6 +90,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
 	void changed();
+	void tasks_changed();
 
 private:
 	//void listen_to_updates();

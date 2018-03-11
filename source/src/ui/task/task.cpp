@@ -76,6 +76,29 @@ Task::~Task()
 	//qDebug() << "Task::~Task()";
 }
 
+/// create clone of Task
+TaskSP Task::clone() const
+{
+	auto task = std::make_shared<Task>();
+
+	task->name_        = name_ + ".clone";
+	task->version_     = version_;
+	task->description_ = description_;
+
+	for(auto const & j : jobs_) task->jobs_.push_back( std::make_shared<Job>(*j) );
+
+	QString const input_prefix = "input/";
+
+	for(auto const & f : files_) {
+		auto get_data = [&]() { return std::make_shared<File>( f.second->file_name(), f.second->data() ); };
+		if( state_ == State::_none_ ) task->add_file(f.first, get_data() );
+		else if( f.first.startsWith(input_prefix) ) task->add_file( f.first.mid( input_prefix.size() ), get_data() );
+	}
+
+	return task;
+}
+
+
 /// add a new job at the end of jobs queue and return poiinter to it
 Task::JobSP Task::add_job()
 {
@@ -149,7 +172,11 @@ bool Task::delete_file(QString const &name)
 
 void Task::name(QString const &n)
 {
-	if( name_ != n ) { name_ = n; Q_EMIT changed(); }
+	if( name_ != n ) {
+		name_ = n;
+		Q_EMIT changed();
+		Q_EMIT name_changed();
+	}
 }
 
 
@@ -276,6 +303,9 @@ void Task::task_data(QJsonValue const &jv)
 	qDebug() << "Task[" << task_id() << "]: task_data(...): " << jv;
 
 	bool changed = false;
+    bool name_changed = false;
+    bool state_changed = false;
+
 	QJsonObject const o = jv.toObject();
 
 	auto nm = o["name"];
@@ -283,7 +313,7 @@ void Task::task_data(QJsonValue const &jv)
 		auto name = nm.toString();
 		if( name != name_) {
 			name_ = name;
-			changed = true;
+			name_changed = changed = true;
 		}
 	}
 
@@ -293,7 +323,7 @@ void Task::task_data(QJsonValue const &jv)
 
 		if( state != State::_unknown_  and  state != state_) {
 			state_ = state;
-			changed = true;
+			state_changed = changed = true;
 		}
 	}
 
@@ -361,6 +391,9 @@ void Task::task_data(QJsonValue const &jv)
 	}
 
 	if(changed) Q_EMIT this->changed();
+
+	if( name_changed ) Q_EMIT this->name_changed();
+    if( state_changed ) Q_EMIT this->state_changed();
 }
 
 // bool Task::operator ==(Task const &rhs) const

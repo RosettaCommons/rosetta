@@ -40,6 +40,7 @@ public  Q_SLOTS:
 
 private Q_SLOTS:
 	void on_new_task_clicked();
+	void on_clone_task_clicked();
     void on_delete_task_clicked();
 
     void on_action_new_project_triggered();

@@ -57,6 +57,8 @@ private slots:
 
 	void test_functor_sequence();
 
+	void test_functor_async_sequence();
+
 	void test_task_upload();
 
 	void test_compression();
@@ -113,6 +115,28 @@ void FunctorTest::test_functor_sequence()
 
 	QCOMPARE(spy_started . count(), 1);
 	QCOMPARE(spy_tick     .count(), 5);
+	QCOMPARE(spy_finished .count(), 1);
+	QCOMPARE(spy_final    .count(), 1);
+}
+
+
+void FunctorTest::test_functor_async_sequence()
+{
+	FunctorASyncSequence s("FunctorTest::test_functor_async_sequence");
+
+	for(int i=0; i<5; i++) {
+		s.add_functor( std::make_shared<Functor>( QString("f-%1").arg(i) ) );
+	}
+
+	QSignalSpy spy_started  ( &s, &Functor::started );
+	QSignalSpy spy_tick     ( &s, &Functor::tick );
+	QSignalSpy spy_finished ( &s, &Functor::finished );
+	QSignalSpy spy_final    ( &s, &Functor::final );
+
+	s.execute();
+
+	QCOMPARE(spy_started . count(), 1);
+	QCOMPARE(spy_tick     .count(), 6);
 	QCOMPARE(spy_finished .count(), 1);
 	QCOMPARE(spy_final    .count(), 1);
 }

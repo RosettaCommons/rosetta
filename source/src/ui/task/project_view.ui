@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>440</width>
-    <height>576</height>
+    <width>623</width>
+    <height>566</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,14 +45,21 @@
       <item>
        <widget class="QPushButton" name="new_task">
         <property name="text">
-         <string>New Task</string>
+         <string>new task</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clone_task">
+        <property name="text">
+         <string>clone task</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="delete_task">
         <property name="text">
-         <string>Delete Task</string>
+         <string>delete task</string>
         </property>
        </widget>
       </item>
@@ -78,7 +85,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>440</width>
+     <width>623</width>
      <height>22</height>
     </rect>
    </property>

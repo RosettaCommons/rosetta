@@ -71,16 +71,15 @@ void TaskSubmit::update_ui_from_task()
 {
     //qDebug() << "TaskSubmit::update_ui_from_task";
 
-	ui->name->setText( task_->name() );
+	if( ui->name->text() != task_->name() ) ui->name->setText( task_->name() );
 
 	//ui->app->setCurrentText( task_->app() );
 
-	ui->version->setText( task_->version() );
+	if( ui->version->text() != task_->version() ) ui->version->setText( task_->version() );
 
 	//ui->state->setText( Task::to_string( task_->state() ) );
 
-	ui->description->document()->setPlainText( task_->description() );
-
+	if( ui->description->document()->toPlainText() != task_->description() ) ui->description->document()->setPlainText( task_->description() );
 
 	//ui->flags->document()->setPlainText( task_->flags() );
 
@@ -109,6 +108,11 @@ void TaskSubmit::on_name_textChanged(QString const &text)
     //qDebug() << "TaskSubmit::on_name_textChanged";
 	task_->name( text /*ui->name->text() */);
 }
+
+// void TaskSubmit::on_name_textEdited(QString const &text)
+// {
+// 	task_->name( text /*ui->name->text() */);
+// }
 
 // void TaskSubmit::on_app_activated(const QString &text)
 // {

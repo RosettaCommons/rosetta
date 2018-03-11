@@ -264,6 +264,19 @@
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>name</tabstop>
+  <tabstop>version</tabstop>
+  <tabstop>description</tabstop>
+  <tabstop>add_native_structure</tabstop>
+  <tabstop>jobs</tabstop>
+  <tabstop>add_job</tabstop>
+  <tabstop>files</tabstop>
+  <tabstop>add_input_structure</tabstop>
+  <tabstop>submit</tabstop>
+  <tabstop>add_files</tabstop>
+  <tabstop>queue</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

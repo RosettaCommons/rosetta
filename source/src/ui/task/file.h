@@ -37,7 +37,7 @@ private:
 class File : public FileMixin
 {
 public:
-	explicit File() {}
+	explicit File();
 	explicit File(QString const & file_name);
 	explicit File(QByteArray const & file_data);
 	explicit File(QString const & file_name, QByteArray const & file_data);

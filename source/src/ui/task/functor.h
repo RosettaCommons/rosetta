@@ -79,7 +79,7 @@ private:
 	State state_ = State::_none_;
 };
 
-
+/// FunctorSequence is essentially a subroutine-like construct that allow you to call sequence of function one-by-one. It guarantee that the next in line function will be called only after all previous calls has finished.
 class FunctorSequence : public Functor
 {
     Q_OBJECT
@@ -111,6 +111,33 @@ private Q_SLOTS:
 private:
 	std::vector<ValueType> sequence_;
 };
+
+
+/// FunctorASyncSequence: same as FunctorSequence but start excution of all functors at once
+class FunctorASyncSequence : public Functor
+{
+    Q_OBJECT
+
+public:
+	using ValueType = FunctorSP;
+
+	using Functor::Functor;
+	FunctorASyncSequence(QString const & name, std::initializer_list<ValueType> sequence);
+
+	void add_functor(ValueType const &v);
+
+	// return <current_value, max_value> for execution progress
+	std::pair<int, int> progress() const override;
+
+private Q_SLOTS:
+	void run() override;
+
+	void item_finished();
+
+private:
+	std::vector<ValueType> sequence_;
+};
+
 
 /// Functor to execute NetworkCall operation untill success
 /// Network call will be initiated though user provided CallCallback

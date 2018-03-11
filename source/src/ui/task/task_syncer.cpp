@@ -33,6 +33,7 @@ void TaskSyncer_NodeStrategy::submit(QString const &queue)
 	root_->data_is_fresh(true);
 
 	Q_EMIT task_->changed();
+	Q_EMIT task_->state_changed();
 }
 
 void TaskSyncer_NodeStrategy::draft_to_queued(void)
@@ -47,6 +48,8 @@ void TaskSyncer_NodeStrategy::draft_to_queued(void)
 		root_->data_is_fresh(false);
 
 		if( task_->project_ and !task_->project_->file_name().isEmpty() ) save_project(*task_->project_, /* always_ask_for_file_name = */ false);
+
+		Q_EMIT task_->state_changed();
 	}
 }
 
@@ -250,8 +253,19 @@ QDataStream &operator>>(QDataStream &in, TaskSyncer_NodeStrategy &t)
 
 TaskSyncer_TaskStrategy::TaskSyncer_TaskStrategy(Task * task) : task_(task)
 {
+	// timer_ = new QTimer(this);
+	// connect(timer_, &QTimer::timeout, this, &TaskSyncer_TaskStrategy::update);
+
 	//connect(task_, &Task::submitted, this, &TaskSyncer_TaskStrategy::submitted);
 }
+
+// void TaskSyncer_TaskStrategy::update()
+// {
+// 	if( file_list_changed_ ) {
+// 		file_list_changed_ = false;
+// 		Q_EMIT task_->changed();
+// 	}
+// }
 
 
 void TaskSyncer_TaskStrategy::submit(QString const &queue)
@@ -264,6 +278,7 @@ void TaskSyncer_TaskStrategy::submit(QString const &queue)
 	task_data_upload();
 
 	Q_EMIT task_->changed();
+	Q_EMIT task_->state_changed();
 }
 
 void TaskSyncer_TaskStrategy::task_data_upload()
@@ -409,12 +424,15 @@ void TaskSyncer_TaskStrategy::task_queuing()
 	functor_->execute();
 
 	Q_EMIT task_->changed();
+	Q_EMIT task_->state_changed();
 }
 
 
 void TaskSyncer_TaskStrategy::subscribe()
 {
 	QPointer<Task> qtask = task_;
+	//QPointer<TaskSyncer_TaskStrategy> qsyncer = this;
+
 	QString task_id = task_->task_id();
 
 	struct TaskDiff {
@@ -454,18 +472,36 @@ void TaskSyncer_TaskStrategy::subscribe()
 				if(diff_functor_qp and qtask) {
 					diff->root = diff_functor_qp->result_as_json().object();
 
+					bool file_list_changed = false;
+
 					QJsonObject files = diff->root["files"].toObject();
 					QJsonArray deleted = files["deleted"].toArray();
 					for(int i=0; i < deleted.size(); ++i) {
 						QString file_name = deleted.at(i).toString();
-						qtask->delete_file(file_name);
+						if( qtask->delete_file(file_name) ) file_list_changed = true;
 					}
+
+					QJsonObject updated = files["updated"].toObject();
+					QStringList file_names = updated.keys();
+					for (int i = 0; i < file_names.size(); ++i) {
+						QString file_name = file_names.at(i);
+
+						auto & files = qtask->files();
+						auto it = files.find(file_name);
+						if( it == files.end() ) {
+							auto fl = std::make_shared<File>();
+							qtask->add_file(file_name, fl);
+
+							file_list_changed = true;
+						}
+					}
+					if(file_list_changed) { Q_EMIT qtask->file_list_changed(); }
 				}
 			});
 
 
-	auto file_downloader_functor = std::make_shared<FunctorSequence>("Task-sequence-file-downloader<'" + task_->name() + "' task_id=" + task_id+">");
-	QPointer<FunctorSequence> file_downloader_functor_qp = file_downloader_functor.get();
+	auto file_downloader_functor = std::make_shared<FunctorASyncSequence>("Task-sequence-file-downloader<'" + task_->name() + "' task_id=" + task_id+">");
+	QPointer<FunctorASyncSequence> file_downloader_functor_qp = file_downloader_functor.get();
 
 	connect(file_downloader_functor_qp, &Functor::started,
 			[qtask, task_id, file_downloader_functor_qp, diff]() {
@@ -496,13 +532,19 @@ void TaskSyncer_TaskStrategy::subscribe()
 									if(qd and qtask) {
 										if( qd->status_code() == 200 ) {
 
+											auto & files = qtask->files();
+											auto it = files.find(file_name);
+											bool file_list_changed = it == files.end();
+
 											QByteArray data = qd->result();
 
 											// should we re-calculate hash locally instead? //QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Md5);
 
 											auto fl = std::make_shared<File>(data); fl->hash(file_hash);
 											qtask->add_file(file_name, fl);
-											Q_EMIT qtask->changed();
+
+											if(file_list_changed) { Q_EMIT qtask->file_list_changed(); }
+											Q_EMIT qtask->file_changed(file_name);
 											//Q_EMIT qtask->syncing();
 
 											qDebug() << QString("Adding file %1 to task:%2").arg(file_name).arg( qtask->task_id() );
@@ -525,6 +567,11 @@ void TaskSyncer_TaskStrategy::subscribe()
 
 					qtask->task_data(diff->root);
 					if( qtask->state() == Task::State::_finished_) {
+						// if(qsyncer) {
+						// 	qsyncer->timer_->stop();
+						// 	Q_EMIT qsyncer->update();
+						// }
+
 						Q_EMIT qtask->final();
 					}
 					else {
@@ -549,6 +596,7 @@ void TaskSyncer_TaskStrategy::subscribe()
 	//connect(functor_.get(), &Functor::final, task_, &Task::syncing);
 
 	functor_->execute();
+	//timer_->start(4000);
 }
 
 bool TaskSyncer_TaskStrategy::is_syncing() const

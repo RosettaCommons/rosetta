@@ -64,6 +64,11 @@ Node::Key const _output_key_{"output"};
 
 Node::Key const _script_key_ {"script"};
 
+File::File()
+{
+	data( QByteArray() );
+}
+
 File::File(QString const &file_name)
 {
 	init_from_file(file_name);
@@ -119,6 +124,7 @@ bool File::operator ==(File const &rhs) const
 QDataStream &operator<<(QDataStream &out, File const&f)
 {
 	out << f.file_name_;
+	out << f.hash_;
 	out << f.file_data_;
 	return out;
 }
@@ -126,6 +132,7 @@ QDataStream &operator<<(QDataStream &out, File const&f)
 QDataStream &operator>>(QDataStream &in, File &f)
 {
 	in >> f.file_name_;
+	in >> f.hash_;
 	in >> f.file_data_;
 	return in;
 }

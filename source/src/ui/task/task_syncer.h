@@ -8,6 +8,8 @@
 #include <ui/task/functor.h>
 #include <ui/task/util.h>
 
+#include <QTimer>
+
 namespace ui {
 namespace task {
 
@@ -88,8 +90,11 @@ public:
 	friend QDataStream &operator<<(QDataStream &, TaskSyncer_TaskStrategy const&);
 	friend QDataStream &operator>>(QDataStream &, TaskSyncer_TaskStrategy &);
 
-// Q_SIGNALS:
+//Q_SIGNALS:
 // 	void submitted();
+
+private Q_SLOTS:
+	//void update();
 
 private:
 	/// initiate task data upload and when its done initiate files upload
@@ -111,6 +116,9 @@ private:
 	FunctorSP functor_;
 
 	Task * task_;
+
+	//QTimer *timer_;
+	//bool file_list_changed_ = false;
 };
 
 

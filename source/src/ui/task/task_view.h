@@ -38,10 +38,12 @@ private Q_SLOTS:
 	// void on_script_set_from_file_clicked();
 
 	void update_ui_from_task();
+	void update_ui_file_list_from_task();
 
 	//void on_submit_clicked();
 
     void on_output_clicked(const QModelIndex &index);
+	void on_output_doubleClicked(const QModelIndex &index);
 
 	void create_output_context_menu(const QPoint &pos);
 
@@ -52,8 +54,10 @@ private Q_SLOTS:
 
 	void update_syncing_progress();
 
-private:
+	void file_changed(QString const &file_name);
 
+private:
+	void preview_file(std::pair<QString const, FileSP> const & name_and_file);
 
 private:
 	//QWidget * create_viewer_for_file(FileSP const &);
@@ -63,6 +67,8 @@ private:
 	TaskSP task_;
 
 	QWidget *viewer_ = nullptr;
+
+	QString previewed_file_name_;
 };
 
 } // namespace task

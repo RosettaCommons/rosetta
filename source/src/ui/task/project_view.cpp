@@ -37,7 +37,13 @@ ProjectView::ProjectView(QWidget *parent) :
 	project_ = std::unique_ptr<Project>(new Project);  //std::make_shared<Project>();
 
 	ui->tasks->setModel( project_->model() );
-	ui->tasks->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	//ui->tasks->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	//ui->tasks->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	//ui->tasks->horizontalHeader()->setStretchLastSection(false);
+	//ui->tasks->horizontalHeader()->resizeSection(1, 100);
+
+	ui->tasks->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+	ui->tasks->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
 
 	// QItemSelectionModel *selectionModel = new QItemSelectionModel(model);
 	// ui->project->setSelectionModel(selectionModel);
@@ -54,7 +60,7 @@ void ProjectView::on_new_task_clicked()
 {
     qDebug() << "ProjectView::on_new_task_clicked()";
 
-	if( true or check_submit_requirements(*project_) ) {
+	if( check_submit_requirements(*project_) ) {
 
 		//QString label = QString("Task-%1").arg( project_->size() );
 
@@ -77,33 +83,33 @@ void ProjectView::on_new_task_clicked()
 	// }
 }
 
-/*
-void ProjectView::on_submit_clicked()
+
+void ProjectView::on_clone_task_clicked()
 {
-    qDebug() << "ProjectView::on_submit_clicked()";
+    qDebug() << "ProjectView::on_clone_task_clicked()";
 
-	if( ProjectModel * model = static_cast<ProjectModel*>( ui->project->model() ) ) {
-		bool valid = false;
+	QItemSelectionModel *select = ui->tasks->selectionModel();
 
-        QModelIndex index = ui->project->currentIndex();
+	if( select->hasSelection() ) {
+		auto rows = select->selectedIndexes();
 
-		// check if selection is actually highlighted to avoid accidents
-		QModelIndexList list = ui->project->selectionModel()->selectedIndexes();
-		for(QModelIndex const &i : list) {
-			//qDebug() << "row:" << i.row() << " column:" << i.column();
-			if( index.row() == i.row() ) valid = true;
+		std::set<int> selection;
+		for(auto const & index : rows) selection.insert( index.row() );
 
-			//if( index.row() == i.row() and index.column() == i.column()  and  i.column() == 0 ) valid = true;
-		}
+		std::vector<TaskSP> tasks_to_clone;
+		for(auto r : selection) tasks_to_clone.push_back( project_->task(r) );
 
-		//qDebug() << "currentIndex: " << index;
+		for(auto const & t : tasks_to_clone) {
+			auto task = t->clone();
 
-		if( valid and index.isValid() ) {
-			if( auto task = model->task(index) ) task->submit();
+			project_->add_task(task);
+
+			auto ts = new TaskSubmit(task);
+			ts->show();
 		}
 	}
 }
-*/
+
 void ProjectView::on_delete_task_clicked()
 {
     qDebug() << "ProjectView::on_delete_task_clicked()";
