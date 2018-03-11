@@ -148,7 +148,7 @@ void
 AntibodyDesignProtocol::read_cmd_line_options(){
 
 	run_graft_designer_= true;
-	set_run_snugdock(option [OptionKeys::antibody::design::run_snugdock]());
+	set_run_snugdock(option [OptionKeys::antibody::run_snugdock]());
 	set_run_relax(option [OptionKeys::antibody::design::run_relax]());
 
 	remove_antigen_ = option [OptionKeys::antibody::design::remove_antigen]();
@@ -446,7 +446,17 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	//Reorder pose ensemble before output
 	//reorder_poses(final_pose_ensemble); Need debugging - no time to run debugger
 
-	protocols::analysis::InterfaceAnalyzerMoverOP analyzer( new protocols::analysis::InterfaceAnalyzerMover(get_dock_chains_from_ab_dock_chains(ab_info_, "A_LH"), false, scorefxn_, false , true, false) );
+	std::string chains_str = "";
+	bool skip_IAM = false;
+	if ( pose.pdb_info()->chain(1) == 'L' ) {
+		chains_str = ab_info_->get_antibody_chain_string() + "_A";
+	} else if ( pose.pdb_info()->chain(pose.num_chains()) == 'H' ) {
+		chains_str = "A_" +ab_info_->get_antibody_chain_string();
+	} else {
+		skip_IAM = true;
+	}
+
+	protocols::analysis::InterfaceAnalyzerMoverOP analyzer( new protocols::analysis::InterfaceAnalyzerMover(get_dock_chains_from_ab_dock_chains(ab_info_, chains_str), false /* tracer */, scorefxn_, false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) );
 
 	if ( run_snugdock_ || run_relax_ ) {
 		for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
@@ -471,19 +481,21 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	}
 
 	//TR <<"Native: "<< native_score << std::endl; //Does not include any constraints
-	for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
-		TR << "Pose " << i << std::endl;
-		scorefxn_->show( TR, *final_pose_ensemble[ i ] );
-		ab_info_->setup_CDR_clusters( *final_pose_ensemble[ i ], false );
-		add_cluster_comments_to_pose( *final_pose_ensemble[ i ], ab_info_ );
-		check_fix_aho_cdr_numbering( ab_info_, *final_pose_ensemble[ i ] );
+	if ( ! skip_IAM ) {
+		for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
+			TR << "Pose " << i << std::endl;
+			scorefxn_->show( TR, *final_pose_ensemble[ i ] );
+			ab_info_->setup_CDR_clusters( *final_pose_ensemble[ i ], false );
+			add_cluster_comments_to_pose( *final_pose_ensemble[ i ], ab_info_ );
+			check_fix_aho_cdr_numbering( ab_info_, *final_pose_ensemble[ i ] );
 
-		if ( option [ OptionKeys::antibody::design::run_interface_analyzer ]() ) {
-			analyzer->init_on_new_input(*final_pose_ensemble[i]);
-			analyzer->apply(*final_pose_ensemble[i]);
-			analyzer->add_score_info_to_pose(*final_pose_ensemble[i]);
+			if ( option [ OptionKeys::antibody::design::run_interface_analyzer ]() ) {
+				analyzer->init_on_new_input(*final_pose_ensemble[i]);
+				analyzer->apply(*final_pose_ensemble[i]);
+				analyzer->add_score_info_to_pose(*final_pose_ensemble[i]);
+			}
+
 		}
-
 	}
 
 	//Output final ensembles.

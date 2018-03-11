@@ -160,6 +160,7 @@ private:
 	bool constrain_vlvh_qq_, constrain_cter_;
 	bool auto_constraint_;
 	bool all_atom_mode_constraint_;
+	bool run_snugdock_ = false;
 
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;

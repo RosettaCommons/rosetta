@@ -63,7 +63,9 @@
 #include <protocols/antibody/RefineOneCDRLoop.hh>
 #include <protocols/antibody/metrics.hh>
 #include <protocols/antibody/util.hh>
-
+#include <protocols/antibody/snugdock/SnugDock.hh>
+#include <protocols/antibody/design/util.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/jd2/util.hh>
 #include <core/io/raw_data/ScoreMap.hh>
 #include <protocols/loops/loops_main.hh>
@@ -179,6 +181,7 @@ void AntibodyModelerProtocol::register_options() {
 	option.add_relevant( OptionKeys::antibody::extend_h3_before_modeling);
 	option.add_relevant( OptionKeys::antibody::idealize_h3_stems_before_modeling);
 	option.add_relevant( OptionKeys::antibody::packonly_after_graft);
+	option.add_relevant( OptionKeys::antibody::run_snugdock);
 }
 
 
@@ -255,6 +258,8 @@ void AntibodyModelerProtocol::init_from_options() {
 		set_idealize_h3_stems_before_modeling(option[ OptionKeys::antibody::idealize_h3_stems_before_modeling]() );
 	}
 
+	run_snugdock_ = option[ OptionKeys::antibody::run_snugdock]();
+
 	//if ( option[ OptionKeys::antibody::middle_pack_min].user() ){
 	//  set_middle_pack_min( option[ OptionKeys::loops::refine ] )
 	//}
@@ -288,7 +293,7 @@ AntibodyModelerProtocol::setup_objects() {
 	}
 
 	// setup all the scoring functions
-	pack_scorefxn_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	pack_scorefxn_ = core::scoring::get_score_function(); //JAB - changing this to normal.
 	dock_scorefxn_highres_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 	dock_scorefxn_highres_->set_weight( core::scoring::chainbreak, 1.0 );
 	dock_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
@@ -367,6 +372,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	using namespace scoring;
 	using namespace core::scoring::constraints;
 	using namespace protocols::moves;
+	using namespace protocols::analysis;
 
 	// the default inital secstruct is all "L" loop!
 	pose::Pose start_pose_ = pose;
@@ -521,6 +527,43 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	basic::prof_show();
 	TR<<"Antibody Modeling Protocol Finished!!!!"<<std::endl<<std::endl<<std::endl;
+
+	if ( ab_info_->antigen_present() ) {
+
+		if ( run_snugdock_ ) {
+			core::Real start = pack_scorefxn_->score(pose);
+			TR << "Running Snugdock" << std::endl;
+			snugdock::SnugDockOP snug( new snugdock::SnugDock() );
+
+			snug->set_scorefxn(pack_scorefxn_);
+			snug->set_antibody_info(ab_info_);//Updated info for movemaps, foldtrees, etc.
+			snug->apply(pose);
+
+			core::Real post_snugdock = pack_scorefxn_->score(pose);
+			TR <<"start:            " << start <<std::endl;
+			TR <<"postSD:           " << post_snugdock << std::endl;
+
+		}
+
+		TR << "Running Interface AnalyzerMover" << std::endl;
+
+		std::string chains_str = "";
+		bool skip_IAM = false;
+		if ( pose.pdb_info()->chain(1) == 'L' ) {
+			chains_str = ab_info_->get_antibody_chain_string() + "_A";
+		} else if ( pose.pdb_info()->chain(pose.num_chains()) == 'H' ) {
+			chains_str = "A_" +ab_info_->get_antibody_chain_string();
+		} else {
+			skip_IAM = true;
+		}
+
+
+		if ( ! skip_IAM ) {
+			InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover(design::get_dock_chains_from_ab_dock_chains(ab_info_, chains_str), false /* tracer */, pack_scorefxn_, false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) ;
+
+			analyzer.apply(pose); //Adds PoseExtraScore_Float to be output into scorefile.
+		}
+	}
 
 }// end apply
 

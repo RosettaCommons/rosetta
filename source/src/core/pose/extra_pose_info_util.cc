@@ -354,6 +354,7 @@ void setPoseExtraScore(
 	data->map()[name] = value;
 }
 
+
 void add_comment(
 	core::pose::Pose & pose,
 	std::string const & key,

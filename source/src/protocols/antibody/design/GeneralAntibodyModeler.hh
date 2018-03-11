@@ -237,6 +237,7 @@ public:
 	std::string
 	get_dock_chains() const;
 
+
 private:
 	void
 	set_defaults();

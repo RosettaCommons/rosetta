@@ -24,8 +24,10 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/CDRsMinPackMin.hh>
 #include <protocols/antibody/RefineOneCDRLoop.hh>
+#include <protocols/antibody/design/util.hh>
 
 // Project headers
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/DockMCMCycle.hh>
 #include <protocols/docking/DockTaskFactory.hh>
@@ -185,6 +187,9 @@ void SnugDock::init_from_options() {
 }
 
 void SnugDock::apply( Pose & pose ) {
+
+	using namespace protocols::analysis;
+
 	TR << "Beginning apply function of " + get_name() + "." << std::endl;
 	show( TR );
 
@@ -210,6 +215,16 @@ void SnugDock::apply( Pose & pose ) {
 
 	/// Set the pose's foldtree to Ab-Ag docking (LH_A) to ensure the correct interface.
 	pose.fold_tree(antibody_info_->get_FoldTree_LH_A(pose));
+
+	if ( antibody_info_->antigen_present() ) {
+		TR << "Running Interface AnalyzerMover" << std::endl;
+
+		InterfaceAnalyzerMover analyzer = InterfaceAnalyzerMover(design::get_dock_chains_from_ab_dock_chains(antibody_info_,  antibody_info_->get_antibody_chain_string() + "_A"), false /* tracer */, scorefxn(), false /* compute_packstat */ , false /* pack_input */,  true /* pack_separated */) ;
+
+		analyzer.apply(pose); //Adds PoseExtraScore_Float to be output into scorefile.
+	}
+
+
 }
 
 Size SnugDock::number_of_high_resolution_cycles() const {

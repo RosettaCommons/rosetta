@@ -90,11 +90,6 @@ hasPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const & name );
 
-void setPoseExtraScore(
-	core::pose::Pose & pose,
-	std::string const & name,
-	core::Real value
-);
 
 void clearPoseExtraScore(
 	core::pose::Pose & pose,
@@ -112,6 +107,14 @@ bool getPoseExtraScore(
 	std::string & value
 );
 
+/// @brief Set an extra float score in the pose that will be written out to the scorefile.
+void setPoseExtraScore(
+	core::pose::Pose & pose,
+	std::string const & name,
+	core::Real value
+);
+
+/// @brief Set an extra score in the pose that will be written out to the scorefile.
 void setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string const & name,

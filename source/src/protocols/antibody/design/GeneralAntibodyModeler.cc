@@ -97,6 +97,9 @@ GeneralAntibodyModeler::GeneralAntibodyModeler(AntibodyInfoOP ab_info) :
 	setup_scorefxns();
 	setup_task_operations();
 
+	std::string dock_chains = "A_" +ab_info_->get_antibody_chain_string();
+	ab_dock_chains(dock_chains);
+
 }
 
 void

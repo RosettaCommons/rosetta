@@ -3649,6 +3649,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Check CDRs of input antibody for bad peptide bond geometry.  This checks Ca-C-N and C-N-Ca bond angles for -large- deviations from the min max values found in a recent analysis of protein geometry  - Conformation dependence of backbone geometry in proteins. Structure -.  If found, the model will not proceed.  Use FastRelax with bond angle min to fix issues.  These issues usually arise from poorly resolved crystal loops or incorrectly solved structures.  Many older antibody structures have some of these issues.',
 			default='false'
 			),
+
+		####### LEGACY ######
 		Option('numbering_scheme', 'String',
 			desc='Deprecated Numbering Scheme option',
 			default='Chothia_Scheme'
@@ -3713,6 +3715,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             desc='Choose specified template for heavy chain framework',
             default=''
             ),
+
+        	### End Legacy ####
+        	### Begin H3 Options ####
+        	Option( 'run_snugdock', 'Boolean',
+        		desc = 'Run Snugdock after Antibody_H3/RAbD?',
+        		default = 'false'
+        		),
+
 		Option( 'h3_no_stem_graft', 'Boolean',
 			desc='Graft CDR H3 from template, use stem to superimpose, but do not copy the stem',
 			default='false'
@@ -3958,10 +3968,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc='Set the main protocol to use.  Note that deterministic is currently only available for the grafting of one CDR.',
 				default='even_cluster_mc',
 				legal = ['gen_mc', 'even_cluster_mc', 'even_length_cluster_mc', 'deterministic_graft']
-				),
-			Option('run_snugdock', 'Boolean',
-				desc='Run snugdock on each ensemble after designing.',
-				default='false'
 				),
 			Option('run_relax', 'Boolean',
 				desc = 'Run Dualspace Relax on each ensemble after designing (after snugdock if run). Also output pre-relaxed structures',

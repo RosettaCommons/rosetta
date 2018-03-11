@@ -245,7 +245,8 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
-	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects) although it may toss data into the DataCache or a Job object.
+	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects).
+	/// It will add data to the pose for output into a scorefile.
 	void
 	apply( core::pose::Pose & pose ) override;
 
