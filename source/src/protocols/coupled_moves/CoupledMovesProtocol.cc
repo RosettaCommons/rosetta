@@ -67,7 +67,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/coupled_moves.OptionKeys.gen.hh>
 
-static basic::Tracer TR( "protocols.coupled_moves" );
+static basic::Tracer TR( "protocols.CoupledMovesProtocol" );
 
 namespace protocols {
 namespace coupled_moves {
@@ -261,6 +261,10 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 
 	TR << std::endl;
 
+	//Further code will assume move_positions is nonempty (which separately require design_positions to be nonempty)
+	bool const have_vectors((!move_positions.empty()) && (!design_positions.empty()));
+	runtime_assert_string_msg(have_vectors, "move_positions or design_positions empty in CoupledMovesProtocol. Probably you specified no design positions or set everything to unrepackable.");
+
 	// ASSUMPTION: the ligand(s) are the last residue(s) in the given PDB
 	for ( int i = 0 ; i < option[ OptionKeys::coupled_moves::number_ligands ] ; i++ ) {
 		ligand_resnums.push_back( pose_copy->size() - i );
@@ -340,7 +344,9 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	}
 
 	for ( core::Size i = 1; i <= ntrials; ++i ) {
-		core::Size random = numeric::random::random_range(1, move_positions.size());
+		core::Size const random = numeric::random::random_range(1, move_positions.size());
+		//This assumes move_positions is not empty.  We have checked above, but let's check again.
+		runtime_assert_string_msg(!move_positions.empty(), "move_positions empty in CoupledMovesProtocol. Probably you specified no design positions or set everything to unrepackable.");
 		core::Size resnum = move_positions[random];
 		std::string move_type;
 		core::Real move_prob = numeric::random::uniform();
