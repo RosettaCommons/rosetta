@@ -475,6 +475,17 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
     return modified
 
 
+def cmake_needs_to_be_run(rosetta_source_path):
+    ''' Perform some basic sanity checks on build directory to see if cmake was run before. This should help for cases when build script was aborted during rebuilds.
+    '''
+    cmake_list = get_binding_build_root(rosetta_source_path, source=True) + '/CMakeLists.txt'
+    build_ninja = get_binding_build_root(rosetta_source_path, build=True) + '/build.ninja'
+
+    if ( not os.path.isfile(build_ninja) ) or \
+       ( os.path.getmtime(cmake_list) >=  os.path.getmtime(build_ninja) ): return True
+    else: return False
+
+
 def run_cmake(rosetta_source_path):
     ''' Build generate bindings '''
     prefix = get_binding_build_root(rosetta_source_path, build=True) + '/'
@@ -490,6 +501,7 @@ def run_cmake(rosetta_source_path):
                                                                                                                                                                         py_lib=' -DPYTHON_LIBRARY='+Options.python_lib if Options.python_lib else '',
                                                                                                                                                                         py_include=' -DPYTHON_INCLUDE_DIR='+Options.python_include_dir if Options.python_include_dir else '',
                                                                                                                                                                         gcc_install_prefix=' -DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''))
+    sys.stdout.flush()
 
 
 def generate_bindings(rosetta_source_path):
@@ -533,7 +545,6 @@ def generate_bindings(rosetta_source_path):
                                 if 'SAVE_AND_LOAD_SERIALIZABLE' in line  and  '_SAVE_AND_LOAD_SERIALIZABLE' not in line :
                                     serialization_instantiation.append( line.replace('SAVE_AND_LOAD_SERIALIZABLE', 'EXTERN_SAVE_AND_LOAD_SERIALIZABLE') + '  // file:{}\n'.format(source) )
 
-
     all_includes.sort()
     serialization_instantiation.sort()
 
@@ -574,7 +585,7 @@ def generate_bindings(rosetta_source_path):
     with open(prefix+'rosetta.sources') as f: sources = f.read().split()
     modified = generate_cmake_file(rosetta_source_path, sources)
 
-    if modified or (signature != disk_signature): run_cmake(rosetta_source_path)
+    if modified or (signature != disk_signature) or cmake_needs_to_be_run(rosetta_source_path): run_cmake(rosetta_source_path)
     else: print('No changes in source files detected, skipping CMake run...')
 
 
