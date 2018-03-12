@@ -150,6 +150,13 @@ public:
 
 	void fragment_contacts( core::Size const fragment_size, utility::vector1<Candidates> const & fragment_set );
 
+	/// @brief returns a pointer to a scoring manager
+	scores::FragmentScoreManagerOP get_score_manager(core::Size index=1) {
+		debug_assert(index <= scores_.size());
+		return scores_[index];
+	}
+
+
 	// multi-threaded task
 	void nonlocal_pairs_at_positions( utility::vector1<core::Size> const & positions, core::Size const & fragment_size, utility::vector1<bool> const & skip,
 		utility::vector1<Candidates> const & fragment_set, utility::vector1<nonlocal::NonlocalPairOP> & pairs );
@@ -157,13 +164,6 @@ public:
 	void nonlocal_pairs( core::Size const fragment_size, utility::vector1<Candidates> const & fragment_set );
 
 	// these should be private methods but some classes directly access these
-
-
-	/// @brief returns a pointer to a scoring manager
-	scores::FragmentScoreManagerOP get_score_manager(core::Size index=1) {
-		debug_assert(index <= scores_.size());
-		return scores_[index];
-	}
 
 	// vall stuff -----------------
 	/// @brief reads a vall file
@@ -178,6 +178,29 @@ public:
 	/// @returns a pointer to Vall provider
 	inline VallProviderOP get_vall() {
 		return chunks_;
+	}
+
+	/// @brief Lets you set frag sizes outside the command line
+	void set_frag_sizes( utility::vector1< core::Size > size, bool clear );
+
+	/// @brief getter for frag_sizes_
+	utility::vector1< core::Size > get_frag_sizes() const;
+
+	/// @brief Sets n_frags_
+	void set_n_frags( core::Size n_frags );
+
+	/// @brief Gets n_frags_
+	core::Size get_n_frags() const;
+
+	/// @brief Sets n_candidates_
+	void set_n_candidates( core::Size n_candidates);
+
+	/// @brief Gets n_candidates_
+	core::Size get_n_candidates() const;
+
+	/// @brief Sets selector_
+	void set_selector( FragmentSelectingRuleOP selector ) {
+		selector_ = selector;
 	}
 
 	/// @brief Sets the query surface area
@@ -302,6 +325,9 @@ public:
 	/// @brief Asks the picker to pick fragments for given positions in a query sequence
 	void set_picked_positions(utility::vector1<core::Size>);
 
+	/// @brief returns vector of picked positions
+	utility::vector1<core::Size> get_picked_positions() const;
+
 	/// @brief picks fragment candidates.
 	/// @details These basically become fragments if pass the final selection.
 	/// Fragment candidates are stored in a container that a user must plug into the picker
@@ -310,6 +336,10 @@ public:
 	void pick_chunk_candidates(utility::vector1<VallChunkOP> const & chunks, core::Size const & index);
 
 	void pick_candidates();
+
+	void get_final_fragments(core::Size qPos, core::Size frag_size, Candidates &out);
+
+	void get_final_fragments(core::Size qPos, Candidates &out);
 
 	void pick_candidates(core::Size i_pos,core::Size frag_len);
 
@@ -339,6 +369,15 @@ public:
 		core::Real weight, core::Size index=1) {
 		if ( index > scores_.size() ) return;
 		scores_[index]->add_scoring_method(scoring_term, weight);
+	}
+
+	/// @brief Creates scoring methods from score file, same as using
+	/// frags::scoring::config command-line option
+	void create_scores(
+		std::string file_name ) {
+		for ( core::Size i = 1; i <= scores_.size(); ++i ) {
+			scores_[i]->create_scores( file_name, get_self_ptr() );
+		}
 	}
 
 	// Convert to a FragSet

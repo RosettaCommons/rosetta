@@ -194,6 +194,12 @@ parse_out_non_standard_residues( utility::vector1< core::sequence::SequenceOP > 
 std::map< core::Size, std::string > /* info on any non-standard residue names */
 parse_out_non_standard_residues( std::string & sequence /* gets replaced with one letter sequence*/ );
 
+std::string
+create_fasta_file( std::string const & pname, std::string const & seq );
+
+std::string
+convert_to_fasta( std::string const & pname, std::string const & seq );
+
 void
 output_fasta_file( std::string const & fasta_filename, core::pose::Pose const & pose  );
 

@@ -205,5 +205,6 @@ static FilterRegistrator< protocols::simple_filters::TaskAwareSASAFilterCreator 
 static FilterRegistrator< protocols::simple_filters::TaskAwareScoreTypeFilterCreator > reg_TaskAwareScoreTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::TerminusDistanceFilterCreator > reg_TerminusDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::TotalSasaFilterCreator > reg_TotalSasaFilterCreator;
+static FilterRegistrator< protocols::simple_filters::FragmentScoreFilterCreator > reg_FragmentScoreFilterCreator;
 
 } //namespace protocols

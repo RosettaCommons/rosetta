@@ -52,6 +52,8 @@ public:
 
 	~FragmentCrmsd();
 
+	void set_pose( core::pose::PoseOP const& pose );
+
 	void do_caching(VallChunkOP);
 	void clean_up();
 	bool score(FragmentCandidateOP, FragmentScoreMapOP);

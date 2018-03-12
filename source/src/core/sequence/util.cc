@@ -955,6 +955,49 @@ parse_out_non_standard_residues( std::string & sequence ) {
 	return non_standard_residues;
 }
 
+/// @brief Convert sequence string to fasta string with only 80
+/// characters per line
+std::string
+convert_to_fasta( std::string const & pname, std::string const & seq )
+{
+	std::string fasta_str( ">" + pname + "\n" );
+	for ( core::Size i=0; i<seq.size(); i++ ) {
+		fasta_str += seq[i];
+		if ( (i+1) % 80 == 0 ) {
+			fasta_str += "\n";
+		} //if 80 chars
+	} // for each residue
+	return fasta_str;
+}
+
+/// @brief Create fasta file from sequence string. Differs from
+/// output_fasta_file in that the output is in valid FASTA format,
+/// rather than including NTerm/CTerm tags.
+std::string
+create_fasta_file( std::string const & pname, std::string const & seq )
+{
+	std::string fasta_filename( pname + ".fasta" );
+	// get rid of the path and just use the current directory
+	if ( fasta_filename.find('/') != std::string::npos ) {
+		fasta_filename = fasta_filename.substr( fasta_filename.find_last_of( '/' )+1, std::string::npos );
+	}
+	std::string fasta( convert_to_fasta( pname, seq ) );
+	tr.Debug << "Fasta: " << fasta << std::endl;
+	tr << "Fasta filename: " << fasta_filename << std::endl;
+
+	// Write out a fasta file
+	std::ofstream fastafile( fasta_filename.c_str() );
+	if ( !fastafile.is_open() ) {
+		utility_exit_with_message( "Could not open " + fasta_filename + " for writing." );
+	}
+	fastafile << fasta << std::endl;
+	if ( fastafile.bad() ) {
+		utility_exit_with_message( "Encountered an error writing to " + fasta_filename );
+	}
+	fastafile.close();
+	return fasta_filename;
+}
+
 // @brief output annotated_sequence (as well as numbering/chain info) to FASTA-like file.
 void
 output_fasta_file( std::string const & fasta_filename, core::pose::Pose const & pose  )

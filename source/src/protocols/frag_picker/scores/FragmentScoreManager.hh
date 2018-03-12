@@ -76,6 +76,19 @@ public:
 		return score_weights_;
 	}
 
+	/// @brief Returns a desired scoring method from its name rather than index
+	/// @details Allowed inputs include the name of any scoring method as defined by get_score_name().
+	inline FragmentScoringMethodOP get_component_by_name(std::string score_name)
+	{
+		FragmentScoringMethodOP out;
+		for ( core::Size index = 1; index <= scores_.size(); ++index ) {
+			if ( scores_[index]->get_score_name() == score_name ) {
+				out = scores_[index];
+			}
+		}
+		return out;
+	}
+
 	/// @brief prints a nice table showing the registered scores
 	/// @details the table shows also the order in which the scores are evaluated
 	void show_scoring_methods(std::ostream& out);

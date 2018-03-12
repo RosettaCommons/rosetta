@@ -598,6 +598,7 @@ sources = {
 		"EvaluatedTrialMover",
 		"ExternalEvaluator",
 		"ExtraScoreEvaluatorCreator",
+        "FragmentScoreFilter",
 		"HolesFilter",
 		"AngleToVectorFilter",
 		"InterfaceSasaFilter",

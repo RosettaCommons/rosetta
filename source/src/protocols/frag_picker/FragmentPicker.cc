@@ -1303,6 +1303,7 @@ void FragmentPicker::add_query_ss(std::string query_secondary,
 	query_ss_profile_[prediction_name] = ss_profile;
 }
 
+
 void FragmentPicker::save_fragments() {
 	using namespace ObjexxFCL;
 	tr.Info << "Saving Fragments..." << std::endl;
@@ -1413,6 +1414,50 @@ void FragmentPicker::pick_candidates(core::Size i_pos,core::Size frag_len) {
 			<<i_pos<<", "<<sink->count_candidates()<<" in total"<< std::endl;
 		tr.flush();
 	} // all chunks done
+}
+
+// Functions so that final_fragments can be accessed from outside the class.
+void FragmentPicker::get_final_fragments(core::Size qPos, core::Size frag_size, Candidates & out) {
+	CandidatesCollectorOP storage = get_candidates_collector(frag_size);
+	Candidates in = storage->get_candidates(qPos);
+	selector_->select_fragments(in, out);
+}
+
+void FragmentPicker::get_final_fragments(core::Size qPos, Candidates &out) {
+	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) {
+		core::Size fragment_size = frag_sizes_[iFragSize];
+		get_final_fragments(qPos, fragment_size, out);
+	}
+}
+
+void FragmentPicker::set_frag_sizes( utility::vector1< core::Size > sizes, bool clear ){
+	if ( clear ) {
+		frag_sizes_.clear();
+	}
+	for ( utility::vector1<core::Size>::iterator it = sizes.begin(); it != sizes.end(); ++it ) {
+		frag_sizes_.push_back(*it);
+	}
+	max_frag_size_ = *std::max_element(frag_sizes_.begin(), frag_sizes_.end());
+}
+
+utility::vector1< core::Size > FragmentPicker::get_frag_sizes() const{
+	return frag_sizes_;
+}
+
+void FragmentPicker::set_n_frags( core::Size n_frags ){
+	n_frags_ = n_frags;
+}
+
+core::Size FragmentPicker::get_n_frags()const{
+	return n_frags_;
+}
+
+void FragmentPicker::set_n_candidates( core::Size n_candidates ){
+	n_candidates_ = n_candidates;
+}
+
+core::Size FragmentPicker::get_n_candidates() const{
+	return n_candidates_;
 }
 
 // called in main
@@ -1920,6 +1965,9 @@ void FragmentPicker::set_picked_positions(utility::vector1<core::Size> q_positio
 	}
 }
 
+utility::vector1<core::Size> FragmentPicker::get_picked_positions() const{
+	return query_positions_;
+}
 
 core::Size QuotaDebug::max_pools() {
 	return tags_.size();

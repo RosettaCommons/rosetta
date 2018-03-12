@@ -87,6 +87,16 @@ FragmentCrmsd::FragmentCrmsd(core::Size priority, core::Real lowest_acceptable_v
 	}
 }
 
+/// @brief Update pose/coordinates for rescoring (useful for
+/// RosettaScripts implementation of the FragmentPicker).
+void FragmentCrmsd::set_pose(core::pose::PoseOP const& pose){
+	reference_pose_ = pose;
+	n_atoms_ = reference_pose_->size();
+	reference_coordinates_.redimension(3, n_atoms_,0.0);
+	fill_CA_coords(*reference_pose_, reference_coordinates_, n_atoms_);
+	weights_.redimension(reference_pose_->size(), 1.0);
+}
+
 void FragmentCrmsd::fill_CA_coords(core::pose::Pose const& pose,
 	FArray2_double& coords, core::Size n_atoms) {
 
@@ -95,10 +105,16 @@ void FragmentCrmsd::fill_CA_coords(core::pose::Pose const& pose,
 		<< pose.residue(3).name3() << std::endl;
 
 	for ( core::Size i = 1; i <= n_atoms; i++ ) {
-		core::id::NamedAtomID idCA("CA", i);
-		core::PointPosition const& xyz = pose.xyz(idCA);
-		for ( core::Size d = 1; d <= 3; ++d ) {
-			coords(d, i) = xyz[d - 1];
+		if ( pose.residue(i).type().has( "CA" ) ) {
+			core::id::NamedAtomID idCA("CA", i);
+			core::PointPosition const& xyz = pose.xyz(idCA);
+			for ( core::Size d = 1; d <= 3; ++d ) {
+				coords(d, i) = xyz[d - 1];
+			}
+		} else {
+			for ( core::Size d = 1; d <= 3; ++d ) {
+				coords(d, i) = NAN;
+			}
 		}
 	}
 }

@@ -63,6 +63,7 @@
 #include <protocols/helical_bundle/BundleReporterFilterCreator.hh>
 
 #include <protocols/indexed_structure_store/filters/FragmentLookupFilterCreator.hh>
+#include <protocols/simple_filters/FragmentScoreFilterCreator.hh>
 
 #include <protocols/ligand_docking/AtomCountFilterCreator.hh>
 #include <protocols/ligand_docking/ChainExistsFilterCreator.hh>
