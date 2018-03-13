@@ -513,12 +513,7 @@ EnzScoreFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core::pose;
 	using namespace core::scoring;
 	PoseOP in_pose( new Pose( pose ) );
-	core::Size resnum;
-	if ( resnum_.empty() ) {
-		resnum = protocols::ligand_docking::LigandBaseProtocol::get_ligand_id(pose);
-	} else {
-		resnum = core::pose::parse_resnum( resnum_, pose );
-	}
+
 	core::Real weight(0.0), score(0.0);
 	if ( whole_pose_ ) {
 		(*scorefxn_)( *in_pose );
@@ -548,8 +543,17 @@ EnzScoreFilter::compute( core::pose::Pose const & pose ) const {
 			TR<<"Weighted Score is: " << weighted_score << std::endl;
 			return( weighted_score );
 		}
-	} else { //score for a particular residue/cstid
-		if ( ! (cstid_ =="") ) resnum = enzutil::get_resnum_from_cstid( cstid_, *in_pose );
+	} else { //If ! whole_pose, we need to score based on resnum
+		core::Size resnum;
+		//There are three cases for determining resnum: by cstid, by automatically determining resnum_, or by manually specifying resnum_.
+		if ( ! (cstid_ =="") ) { //If cstid is not empty, use it to pick resnum.
+			resnum = enzutil::get_resnum_from_cstid( cstid_, *in_pose );
+		} else if ( resnum_.empty() ) { //If resnum is not specified, use get_ligand_id to select the ligand.
+			resnum = protocols::ligand_docking::LigandBaseProtocol::get_ligand_id(pose);
+			//Note that get_ligand_id will not work if the pose is too complex, in which case a res_num must be specified.
+		} else { //Use the specified resnum.
+			resnum = core::pose::parse_resnum( resnum_, pose );
+		}
 		(*scorefxn_)( *in_pose );
 		TR<<"For Resid:"<< resnum << std::endl;
 		runtime_assert(resnum>0);
@@ -582,8 +586,7 @@ EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 	threshold_ = tag->getOption<core::Real>( "energy_cutoff", default_value_for_threshold() );
 	whole_pose_ = tag->getOption<bool>( "whole_pose" , default_value_for_whole_pose() );
 
-	//check to make sure one and only one of resnum, cstid and whole_pose are specified
-	runtime_assert( !resnum_.empty() || tag->hasOption( "cstid" ) || whole_pose_==1 );
+	//check to make sure only one of resnum, cstid and whole_pose are specified
 	runtime_assert(!( !resnum_.empty() &&  tag->hasOption( "cstid" )));
 	runtime_assert(!( !resnum_.empty() &&  whole_pose_==1));
 	runtime_assert(!(tag->hasOption( "cstid" ) &&  whole_pose_==1));
