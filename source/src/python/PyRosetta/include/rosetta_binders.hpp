@@ -31,6 +31,7 @@
 
 #include <set>
 #include <map>
+#include <list>
 
 namespace rosetta_binders {
 
@@ -436,8 +437,6 @@ void stringstream_add_on_binder(CL &cl)
 template< typename T >
 void set_add_on_binder(pybind11::class_<std::set<T>, std::shared_ptr< std::set<T> > > &cl)
 {
-
-
     cl.def("add", [](std::set<T> &s, T const &v) { s.insert(v); } );
 
 	cl.def("discard", [](std::set<T> &s, T const &v) {
@@ -447,7 +446,7 @@ void set_add_on_binder(pybind11::class_<std::set<T>, std::shared_ptr< std::set<T
 	cl.def("__bool__", [](std::set<T> const &s) -> bool {
 			return !s.empty();
 		},
-		"Check whether the list is nonempty");
+		"Check whether the set is nonempty");
 
 
 	cl.def("__len__", [](std::set<T> const &s) { return s.size(); } );
@@ -462,6 +461,31 @@ void set_add_on_binder(pybind11::class_<std::set<T>, std::shared_ptr< std::set<T
 
 }
 
+
+template< typename T >
+void list_add_on_binder(pybind11::class_<std::list<T>, std::shared_ptr< std::list<T> > > &cl)
+{
+    cl.def("append", [](std::list<T> &l, T const &v) { l.push_back(v); } );
+	cl.def("extend", [](std::list<T> &l, std::list<T> const &v) { l.insert(l.end(), v.begin(), v.end()); } );
+
+	//cl.def("remove", [](std::list<T> &l, T const &v) { l.remove(v); }, "remove element");
+
+	cl.def("__bool__", [](std::list<T> const &l) -> bool {
+			return !l.empty();
+		},
+		"Check whether the list is nonempty");
+
+
+	cl.def("__len__", [](std::list<T> const &l) { return l.size(); } );
+
+	cl.def("__iter__", [](std::list<T> &l) {
+			using ItType = typename std::list<T>::iterator;
+
+			return pybind11::make_iterator<pybind11::return_value_policy::reference_internal, ItType, ItType, T>(l.begin(), l.end());
+		},
+		pybind11::keep_alive<0, 1>() /* Essential: keep list alive while iterator exists */
+		);
+}
 
 
 } // namespace rosetta_binders
