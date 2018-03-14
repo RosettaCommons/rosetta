@@ -29,95 +29,120 @@ namespace graph {
 
 //dummy! please do not call these
 AtomLevelHBondNode::AtomLevelHBondNode() :
-	HBondNode( ),
+	utility::graph::Node( nullptr, 0 ),
+	mres_id_( 0 ),
+	rotamer_id_( 0 ),
+	ids_of_clashing_nodes_( 0 ),
 	polar_sc_atoms_not_satisfied_by_background_()
 { runtime_assert( false ); }
 
 AtomLevelHBondNode::AtomLevelHBondNode( const AtomLevelHBondNode & ) :
-	HBondNode( ),
+	utility::graph::Node( nullptr, 0 ),
+	mres_id_( 0 ),
+	rotamer_id_( 0 ),
+	ids_of_clashing_nodes_( 0 ),
 	polar_sc_atoms_not_satisfied_by_background_()
 { runtime_assert( false ); }
 ///////////
 
 
 //Constructor
-AtomLevelHBondNode::AtomLevelHBondNode( utility::graph::Graph* owner, core::Size node_id ) :
-	HBondNode( owner, node_id )
+AtomLevelHBondNode::AtomLevelHBondNode( utility::graph::Graph* owner, Size node_id ) :
+	utility::graph::Node( owner, node_id ),
+	mres_id_( 0 ),
+	rotamer_id_( 0 ),
+	ids_of_clashing_nodes_(),
+	polar_sc_atoms_not_satisfied_by_background_()
 {}
 
-AtomLevelHBondNode::AtomLevelHBondNode( utility::graph::Graph* owner, core::Size node_id, core::Size mres_id, core::Size rotamer_id ) :
-	HBondNode( owner, node_id, mres_id, rotamer_id )
+AtomLevelHBondNode::AtomLevelHBondNode( utility::graph::Graph* owner, Size node_id, Size mres_id, Size rotamer_id ) :
+	utility::graph::Node( owner, node_id ),
+	mres_id_( mres_id ),
+	rotamer_id_( rotamer_id ),
+	ids_of_clashing_nodes_(),
+	polar_sc_atoms_not_satisfied_by_background_()
 {}
 
 //Destructor
 AtomLevelHBondNode::~AtomLevelHBondNode() = default;
 
 void AtomLevelHBondNode::copy_from( utility::graph::Node const * source ){
-	HBondNode::copy_from( source );
+	utility::graph::Node::copy_from( source );
 
 	auto const * src = dynamic_cast< AtomLevelHBondNode const * >( source );
 	debug_assert( src );
-	polar_sc_atoms_not_satisfied_by_background_ = src->polar_sc_atoms_not_satisfied_by_background_;
+
+	mres_id_ = src->mres_id_;
+	rotamer_id_ = src->rotamer_id_;
+	ids_of_clashing_nodes_ = src->ids_of_clashing_nodes_;
+	polar_sc_atoms_not_satisfied_by_background_ =
+		src->polar_sc_atoms_not_satisfied_by_background_;
 }
 
-/*void AtomLevelHBondNode::print() const {
-TR << "AtomLevelHBondNode: rotamer_id:" << rotamer_id_ << " mres_id:" << mres_id_ << " num_edges: " << num_edges() << std::endl;
-}*/
+void AtomLevelHBondNode::print() const {
+	TR << "AtomLevelHBondNode: rotamer_id:" << rotamer_id_ << " mres_id:" << mres_id_ << " num_edges: " << num_edges() << std::endl;
+}
 
-core::Size AtomLevelHBondNode::count_static_memory() const
+Size AtomLevelHBondNode::count_static_memory() const
 {
 	return sizeof( AtomLevelHBondNode );
 }
 
-core::Size AtomLevelHBondNode::count_dynamic_memory() const
+Size AtomLevelHBondNode::count_dynamic_memory() const
 {
-	return HBondNode::count_dynamic_memory() + polar_sc_atoms_not_satisfied_by_background_.size() * sizeof( AtomInfo );
+	return utility::graph::Node::count_dynamic_memory()
+		+ polar_sc_atoms_not_satisfied_by_background_.size() * sizeof( AtomInfo )
+		+ ids_of_clashing_nodes_.size() * sizeof( unsigned int );
 }
 
 
 //Constructor
-AtomLevelHBondEdge::AtomLevelHBondEdge( utility::graph::Graph* owner, core::Size first_node_ind, core::Size second_node_ind ):
-	HBondEdge( owner, first_node_ind, second_node_ind )
+AtomLevelHBondEdge::AtomLevelHBondEdge( utility::graph::Graph* owner, Size first_node_ind, Size second_node_ind ):
+	utility::graph::Edge( owner, first_node_ind, second_node_ind ),
+	energy_( 0 ),
+	hbonds_( 0 )
 {}
 
-
-AtomLevelHBondEdge::AtomLevelHBondEdge( utility::graph::Graph* owner, core::Size first_node_ind, core::Size second_node_ind, core::Real energy ):
-	HBondEdge( owner, first_node_ind, second_node_ind, energy )
+AtomLevelHBondEdge::AtomLevelHBondEdge( utility::graph::Graph* owner, Size first_node_ind, Size second_node_ind, Real energy ):
+	utility::graph::Edge( owner, first_node_ind, second_node_ind ),
+	energy_( energy ),
+	hbonds_( 0 )
 {}
 
 //Destructor
 AtomLevelHBondEdge::~AtomLevelHBondEdge() = default;
 
 void AtomLevelHBondEdge::copy_from( utility::graph::Edge const * source ){
-	HBondEdge::copy_from( source );
+	utility::graph::Edge::copy_from( source );
 
 	auto const * src = dynamic_cast< AtomLevelHBondEdge const * >( source );
 	debug_assert( src );
+
+	energy_ = src->energy_;
 	hbonds_ = src->hbonds_;
 }
 
-core::Size AtomLevelHBondEdge::count_static_memory() const
+Size AtomLevelHBondEdge::count_static_memory() const
 {
 	return sizeof( AtomLevelHBondEdge );
 }
 
-core::Size AtomLevelHBondEdge::count_dynamic_memory() const
+Size AtomLevelHBondEdge::count_dynamic_memory() const
 {
-	return HBondEdge::count_dynamic_memory() + hbonds_.size() * sizeof( HBondInfo );
+	return utility::graph::Edge::count_dynamic_memory() + hbonds_.size() * sizeof( HBondInfo );
 }
-
 
 
 //Constructor
 AtomLevelHBondGraph::AtomLevelHBondGraph() :
-	AbstractHBondGraph(),
-	hbond_edge_pool_( new boost::unordered_object_pool< AtomLevelHBondEdge > ( 1024 ) )
+	hbond_edge_pool_( new boost::unordered_object_pool< AtomLevelHBondEdge > ( 1024 ) ),
+	hbond_node_pool_( new boost::unordered_object_pool< AtomLevelHBondNode > ( 1024 ) )
 {}
 
 
-AtomLevelHBondGraph::AtomLevelHBondGraph( core::Size num_nodes ) :
-	AbstractHBondGraph(),
-	hbond_edge_pool_( new boost::unordered_object_pool< AtomLevelHBondEdge > ( 1024 ) )
+AtomLevelHBondGraph::AtomLevelHBondGraph( Size num_nodes ) :
+	hbond_edge_pool_( new boost::unordered_object_pool< AtomLevelHBondEdge > ( 1024 ) ),
+	hbond_node_pool_( new boost::unordered_object_pool< AtomLevelHBondNode > ( num_nodes ) )
 {
 	set_num_nodes( num_nodes );
 }
@@ -128,27 +153,19 @@ AtomLevelHBondGraph::~AtomLevelHBondGraph()
 {
 	delete_everything();
 	delete hbond_edge_pool_;
+	delete hbond_node_pool_;
 	hbond_edge_pool_ = nullptr;
-}
-
-void
-AtomLevelHBondGraph::set_num_nodes( platform::Size num_nodes ){
-	all_nodes_.clear();
-	all_nodes_.reserve( num_nodes );
-	for ( core::Size ii = 1; ii <= num_nodes; ++ii ) {
-		all_nodes_.emplace_back( this, ii );
-	}
-	utility::graph::Graph::set_num_nodes( num_nodes );
+	hbond_node_pool_ = nullptr;
 }
 
 utility::graph::Node *
 AtomLevelHBondGraph::create_new_node( platform::Size node_index ){
-	return get_hbondnode( node_index );
+	return hbond_node_pool_->construct( this, node_index );
 	//return new AtomLevelHBondNode( this, node_index );
 }
 
 utility::graph::Edge *
-AtomLevelHBondGraph::create_new_edge( core::Size index1, core::Size index2 ){
+AtomLevelHBondGraph::create_new_edge( Size index1, Size index2 ){
 	return hbond_edge_pool_->construct( this, index1, index2 );
 }
 
@@ -162,22 +179,35 @@ AtomLevelHBondGraph::create_new_edge( utility::graph::Edge const * example_edge 
 }
 
 void
+AtomLevelHBondGraph::delete_node( utility::graph::Node * node )
+{
+	hbond_node_pool_->destroy( static_cast< AtomLevelHBondNode * >( node ) );
+}
+
+void
 AtomLevelHBondGraph::delete_edge( utility::graph::Edge * edge )
 {
 	hbond_edge_pool_->destroy( static_cast< AtomLevelHBondEdge * >( edge ) );
 }
 
-core::Size
+Size
 AtomLevelHBondGraph::count_static_memory() const
 {
 	return sizeof( AtomLevelHBondGraph );
 }
 
-core::Size
+Size
 AtomLevelHBondGraph::count_dynamic_memory() const
 {
 	//so basically we are not really overriding this at the moment
 	return utility::graph::Graph::count_dynamic_memory();
+}
+
+AtomLevelHBondEdge *
+AtomLevelHBondGraph::register_hbond( Size rotamerA, Size rotamerB, Real score ) {
+	AtomLevelHBondEdge * new_edge = static_cast< AtomLevelHBondEdge * >( add_edge( rotamerA, rotamerB ) );
+	new_edge->set_energy( score );
+	return new_edge;
 }
 
 

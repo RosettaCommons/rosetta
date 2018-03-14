@@ -11,61 +11,46 @@
 /// @brief A collections of methods that are useful for dealing with HBondGraphs
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
+#include <core/chemical/AtomType.hh>
+
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+
 #include <core/pack/hbonds/HBondGraph_util.hh>
 #include <core/pack/hbonds/MCHBNetInteractionGraph.hh>
-#include <core/scoring/hbonds/graph/HBondGraph.hh>
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
+#include <core/pack/packer_neighbors.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
+#include <core/pose/Pose.hh>
+
+#include <core/scoring/Energies.hh>
+
+#include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/packer_neighbors.hh>
-#include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
-#include <core/conformation/Residue.hh>
-#include <utility/graph/Graph.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/TenANeighborGraph.hh>
+
 #include <list>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
+
+#include <utility/graph/Graph.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace pack {
 namespace hbonds {
 
-using namespace core::scoring::hbonds::graph;
-
-scoring::hbonds::graph::HBondGraphOP create_init_and_create_edges_for_hbond_graph(
-	rotamer_set::RotamerSetsOP rotamer_sets,
-	core::scoring::ScoreFunction const & sfxn,
-	core::pose::Pose const & pose,
-	core::Real hydrogen_bond_threshold,
-	core::Real clash_threshold
-){
-	scoring::hbonds::graph::HBondGraphOP hbond_graph = create_and_init_hbond_graph( * rotamer_sets );
-
-	MCHBNetInteractionGraphOP ig = utility::pointer::make_shared< MCHBNetInteractionGraph >( hbond_graph, rotamer_sets, hydrogen_bond_threshold, clash_threshold );
-	ig->initialize( *rotamer_sets );
-
-	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, rotamer_sets->task() );
-	rotamer_sets->precompute_two_body_energies( pose, sfxn, packer_neighbor_graph, ig, true );
-
-	//If you are running with symmetry, you still need to score one-body interactions
-
-	return hbond_graph;
-}
+using namespace scoring::hbonds::graph;
 
 scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_atom_level_hbond_graph(
 	rotamer_set::RotamerSetsOP rotamer_sets,
-	core::scoring::ScoreFunction const & sfxn,
-	core::pose::Pose const & pose,
-	core::Real hydrogen_bond_threshold,
-	core::Real clash_threshold
+	scoring::ScoreFunction const & sfxn,
+	pose::Pose const & pose,
+	Real hydrogen_bond_threshold,
+	Real clash_threshold
 ){
 	scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph = create_and_init_atom_level_hbond_graph( * rotamer_sets );
 
@@ -80,7 +65,7 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 	determine_atom_level_edge_info_for_all_edges(
 		* hbond_graph,
 		* rotamer_sets,
-		* core::scoring::hbonds::HBondDatabase::get_database(),
+		* scoring::hbonds::HBondDatabase::get_database(),
 		pose.energies().tenA_neighbor_graph(),
 		pose
 	);
@@ -97,12 +82,12 @@ scoring::hbonds::graph::AtomLevelHBondGraphOP create_init_and_create_edges_for_a
 }
 
 
-void init_node_info( AbstractHBondGraph & graph, rotamer_set::RotamerSets const & rotamer_sets ){
-	core::Size const nrot = rotamer_sets.nrotamers();
+void init_node_info( AtomLevelHBondGraph & graph, rotamer_set::RotamerSets const & rotamer_sets ){
+	Size const nrot = rotamer_sets.nrotamers();
 
-	for ( core::Size rot = 1; rot <= nrot; ++rot ) {
-		HBondNode * node = graph.get_hbondnode( rot );
-		core::Size const mres = rotamer_sets.moltenres_for_rotamer( rot );
+	for ( Size rot = 1; rot <= nrot; ++rot ) {
+		AtomLevelHBondNode * node = graph.get_hbondnode( rot );
+		Size const mres = rotamer_sets.moltenres_for_rotamer( rot );
 		debug_assert( mres );
 		node->set_moltenres( mres );
 		node->set_local_rotamer_id( rotamer_sets.rotid_on_moltenresidue( rot ) );
@@ -111,11 +96,11 @@ void init_node_info( AbstractHBondGraph & graph, rotamer_set::RotamerSets const 
 
 
 void find_hbonds_in_residue_pair(
-	core::conformation::Residue const & resA,
-	core::conformation::Residue const & resB,
-	core::scoring::hbonds::HBondDatabase const & database,
+	conformation::Residue const & resA,
+	conformation::Residue const & resB,
+	scoring::hbonds::HBondDatabase const & database,
 	utility::graph::Graph const & tenA_neighbor_graph,
-	core::scoring::hbonds::HBondSet & set
+	scoring::hbonds::HBondSet & set
 ){
 	unsigned int const residA = resA.seqpos();
 	unsigned short int const num_nbrsA =
@@ -123,7 +108,7 @@ void find_hbonds_in_residue_pair(
 	unsigned short int const num_nbrsB =
 		tenA_neighbor_graph.get_node( resB.seqpos() )->num_neighbors_counting_self();
 
-	core::scoring::hbonds::identify_hbonds_1way(
+	scoring::hbonds::identify_hbonds_1way(
 		database,
 		resA,
 		resB,
@@ -140,7 +125,7 @@ void find_hbonds_in_residue_pair(
 		//bool bond_near_wat = false
 	);
 
-	core::scoring::hbonds::identify_hbonds_1way(
+	scoring::hbonds::identify_hbonds_1way(
 		database,
 		resB,
 		resA,
@@ -162,28 +147,26 @@ void find_hbonds_in_residue_pair(
 void determine_atom_level_edge_info_for_all_edges(
 	scoring::hbonds::graph::AtomLevelHBondGraph & hb_graph,
 	rotamer_set::RotamerSets const & rotamer_sets,
-	core::scoring::hbonds::HBondDatabase const & database,
+	scoring::hbonds::HBondDatabase const & database,
 	utility::graph::Graph const & tenA_neighbor_graph,
-	core::pose::Pose const & pose,
+	pose::Pose const & pose,
 	bool skip_edges_with_degree_zero,
-	core::Real hbond_energy_threshold_for_satisfaction,
-	core::conformation::symmetry::SymmetryInfoCOP symm_info
+	Real hbond_energy_threshold_for_satisfaction,
+	conformation::symmetry::SymmetryInfoCOP symm_info
 ){
 	for ( utility::graph::EdgeListIterator it = hb_graph.edge_list_begin();
 			it != hb_graph.edge_list_end(); ++it ) {
-		auto * edge = static_cast< AtomLevelHBondEdge * >( *it );
+		AtomLevelHBondEdge & edge = static_cast< AtomLevelHBondEdge & >( * ( * it ) );
 
 		if ( skip_edges_with_degree_zero ) {
-			if (
-					hb_graph.get_node( edge->get_first_node_ind()  )->num_edges() == 1 &&
-					hb_graph.get_node( edge->get_second_node_ind() )->num_edges() == 1
-					) {
+			if ( hb_graph.get_node( edge.get_first_node_ind() )->num_edges() == 1 &&
+					hb_graph.get_node( edge.get_second_node_ind() )->num_edges() == 1 ) {
 				continue;
 			}
 		}
 
 		determine_atom_level_edge_info(
-			* edge,
+			edge,
 			rotamer_sets,
 			database,
 			tenA_neighbor_graph,
@@ -194,12 +177,11 @@ void determine_atom_level_edge_info_for_all_edges(
 	}
 }
 
-Size
-get_symm_ind_res(
-	core::pose::Pose const & pose,
+Size get_symm_ind_res(
+	pose::Pose const & pose,
 	Size const resid,
-	core::conformation::symmetry::SymmetryInfoCOP symm_info,
-	std::map< char, std::pair< core::Size, core::Size > > chain_bounds
+	conformation::symmetry::SymmetryInfoCOP symm_info,
+	std::map< char, std::pair< Size, Size > > chain_bounds
 ) {
 	Size resi_ind( resid );
 	if ( resid > symm_info->num_independent_residues() ) {
@@ -219,23 +201,23 @@ get_symm_ind_res(
 void determine_atom_level_edge_info(
 	AtomLevelHBondEdge & hb_edge,
 	rotamer_set::RotamerSets const & rotamer_sets,
-	core::scoring::hbonds::HBondDatabase const & database,
+	scoring::hbonds::HBondDatabase const & database,
 	utility::graph::Graph const & tenA_neighbor_graph,
-	core::pose::Pose const & pose,
-	core::Real hbond_energy_threshold_for_satisfaction,
-	core::conformation::symmetry::SymmetryInfoCOP symm_info
+	pose::Pose const & pose,
+	Real hbond_energy_threshold_for_satisfaction,
+	conformation::symmetry::SymmetryInfoCOP symm_info
 ){
-	core::scoring::hbonds::HBondSet set;
+	scoring::hbonds::HBondSet set;
 
-	core::conformation::Residue const & resA = * rotamer_sets.rotamer( hb_edge.get_first_node_ind() );
-	core::conformation::Residue const & resB = * rotamer_sets.rotamer( hb_edge.get_second_node_ind() );
-	core::Size const residA = resA.seqpos();
-	core::Size const residB = resB.seqpos();
+	conformation::Residue const & resA = * rotamer_sets.rotamer( hb_edge.get_first_node_ind() );
+	conformation::Residue const & resB = * rotamer_sets.rotamer( hb_edge.get_second_node_ind() );
+	Size const residA = resA.seqpos();
+	Size const residB = resB.seqpos();
 
 	if ( symm_info ) {
 
 		//Stolen from HBNet.cc
-		std::map< char, std::pair< core::Size, core::Size > > chain_bounds;
+		std::map< char, std::pair< Size, Size > > chain_bounds;
 		for ( Size ic = 1; ic <= pose.conformation().num_chains(); ++ic ) {
 			Size ic_begin = pose.conformation().chain_begin( ic );
 			Size ic_end = pose.conformation().chain_end( ic );
@@ -244,12 +226,12 @@ void determine_atom_level_edge_info(
 			chain_bounds[ chain ].second = ic_end;
 		}
 
-		std::list< core::Size > resids_for_A_clones;
-		std::list< core::Size > resids_for_B_clones;
-		for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
+		std::list< Size > resids_for_A_clones;
+		std::list< Size > resids_for_B_clones;
+		for ( Size resid = 1; resid <= pose.size(); ++resid ) {
 			if ( resid == residA || resid == residB ) continue;
 
-			core::Size const resid_ind = get_symm_ind_res( pose, resid, symm_info, chain_bounds );
+			Size const resid_ind = get_symm_ind_res( pose, resid, symm_info, chain_bounds );
 			if ( resid_ind == residA ) {
 				resids_for_A_clones.push_back( resid );
 			}
@@ -264,17 +246,19 @@ void determine_atom_level_edge_info(
 
 		//We do not need to do an all-to-all comparison. We just need to iterate over one set of symmetric resids. If A is not symmetric, iterate over B
 		if ( resids_for_A_clones.size() ) {
-			core::pack::rotamer_set::symmetry::SymmetricRotamerSet_COP sym_set = utility::pointer::dynamic_pointer_cast< core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const > ( rotamer_sets.rotamer_set_for_residue( residA ) );
+			rotamer_set::symmetry::SymmetricRotamerSet_COP sym_set =
+				utility::pointer::dynamic_pointer_cast< rotamer_set::symmetry::SymmetricRotamerSet_ const > ( rotamer_sets.rotamer_set_for_residue( residA ) );
 			runtime_assert( sym_set );
-			for ( core::Size sympos : resids_for_A_clones ) {
-				core::conformation::ResidueOP resA_ii = sym_set->orient_rotamer_to_symmetric_partner( pose, resA, sympos );
+			for ( Size sympos : resids_for_A_clones ) {
+				conformation::ResidueOP resA_ii = sym_set->orient_rotamer_to_symmetric_partner( pose, resA, sympos );
 				find_hbonds_in_residue_pair( * resA_ii, resB, database, tenA_neighbor_graph, set );
 			}
 		} else if ( resids_for_B_clones.size() ) {
-			core::pack::rotamer_set::symmetry::SymmetricRotamerSet_COP sym_set = utility::pointer::dynamic_pointer_cast< core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const > ( rotamer_sets.rotamer_set_for_residue( residB ) );
+			rotamer_set::symmetry::SymmetricRotamerSet_COP sym_set =
+				utility::pointer::dynamic_pointer_cast< rotamer_set::symmetry::SymmetricRotamerSet_ const > ( rotamer_sets.rotamer_set_for_residue( residB ) );
 			runtime_assert( sym_set );
-			for ( core::Size sympos : resids_for_B_clones ) {
-				core::conformation::ResidueOP resB_ii = sym_set-> orient_rotamer_to_symmetric_partner( pose, resB, sympos );
+			for ( Size sympos : resids_for_B_clones ) {
+				conformation::ResidueOP resB_ii = sym_set-> orient_rotamer_to_symmetric_partner( pose, resB, sympos );
 				find_hbonds_in_residue_pair( resA, * resB_ii, database, tenA_neighbor_graph, set );
 			}
 		}
@@ -285,7 +269,7 @@ void determine_atom_level_edge_info(
 
 	unsigned short int const num_hbonds = set.nhbonds();
 	for ( unsigned short int ii = 1; ii <= num_hbonds; ++ii ) {
-		core::scoring::hbonds::HBond const & hbond = set.hbond( ii );
+		scoring::hbonds::HBond const & hbond = set.hbond( ii );
 		if ( hbond.energy() > hbond_energy_threshold_for_satisfaction ) continue;
 
 		bool const first_node_is_donor = hbond.don_res() == residA;
@@ -309,7 +293,7 @@ void determine_atom_level_node_info_for_all_nodes(
 	utility::vector1< bool > const & include_these_resids,
 	bool skip_nodes_with_no_edges
 ){
-	core::Size const num_nodes = hb_graph.num_nodes();
+	Size const num_nodes = hb_graph.num_nodes();
 	for ( unsigned int ii=1; ii <= num_nodes; ++ii ) {
 		auto * al_node = static_cast< AtomLevelHBondNode * >( hb_graph.get_node( ii ) );
 		if ( skip_nodes_with_no_edges && al_node->num_edges() == 0 ) {
@@ -325,10 +309,10 @@ void determine_atom_level_node_info(
 	rotamer_set::RotamerSets const & rotamer_sets,
 	utility::vector1< bool > const & include_these_resids
 ){
-	core::Size const rot = al_node.global_rotamer_id();
-	core::Size const mres = rotamer_sets.moltenres_for_rotamer( rot );
+	Size const rot = al_node.global_rotamer_id();
+	Size const mres = rotamer_sets.moltenres_for_rotamer( rot );
 
-	core::conformation::ResidueCOP rotamer = rotamer_sets.rotamer( rot );
+	conformation::ResidueCOP rotamer = rotamer_sets.rotamer( rot );
 	debug_assert( rotamer->seqpos() == rotamer_sets.moltenres_2_resid( mres ) );
 	if ( ! include_these_resids[ rotamer->seqpos() ] ) return;
 
@@ -378,17 +362,17 @@ void find_satisfying_interactions_with_background(
 	AtomLevelHBondNode & node,
 	rotamer_set::RotamerSets const & rotamer_sets,
 	utility::graph::Graph const & packer_neighbor_graph,
-	core::pose::Pose const & poly_ala_pose,
-	core::Real hbond_energy_threshold_for_satisfaction
+	pose::Pose const & poly_ala_pose,
+	Real hbond_energy_threshold_for_satisfaction
 ) {
 
-	core::conformation::ResidueCOP const rotamer = rotamer_sets.rotamer( node.global_rotamer_id() );
+	conformation::ResidueCOP const rotamer = rotamer_sets.rotamer( node.global_rotamer_id() );
 	unsigned int const resid = rotamer->seqpos();
 	debug_assert( resid == rotamer_sets.moltenres_2_resid( node.moltenres() ) );
 
 	utility::graph::Node const * const resid_nbr_node = packer_neighbor_graph.get_node( resid );
-	core::scoring::hbonds::HBondSet set;
-	auto const & database = * core::scoring::hbonds::HBondDatabase::get_database( set.hbond_options().params_database_tag() );
+	scoring::hbonds::HBondSet set;
+	auto const & database = * scoring::hbonds::HBondDatabase::get_database( set.hbond_options().params_database_tag() );
 
 	//////////////////
 	// FIND ALL HBONDS
@@ -398,7 +382,7 @@ void find_satisfying_interactions_with_background(
 			++it ) {
 
 		unsigned int const other_resid = (*it)->get_other_ind( resid );
-		core::conformation::Residue const & other_residue = poly_ala_pose.residue( other_resid );
+		conformation::Residue const & other_residue = poly_ala_pose.residue( other_resid );
 		find_hbonds_in_residue_pair( *rotamer, other_residue, database, poly_ala_pose.energies().tenA_neighbor_graph(), set );
 
 	}//for all neighbors
@@ -413,7 +397,7 @@ void find_satisfying_interactions_with_background(
 	// the container of unsatisfied atoms
 	unsigned short int const num_hbonds = set.nhbonds();
 	for ( unsigned short int ii = 1; ii <= num_hbonds; ++ii ) {
-		core::scoring::hbonds::HBond const & hbond = set.hbond( ii );
+		scoring::hbonds::HBond const & hbond = set.hbond( ii );
 		if ( hbond.energy() > hbond_energy_threshold_for_satisfaction ) continue;
 
 		if ( hbond.don_res() == resid ) {
@@ -429,20 +413,21 @@ void find_satisfying_interactions_with_background(
 	}// for all hbonds
 }
 
-void delete_edges_with_degree_zero( scoring::hbonds::graph::AbstractHBondGraph & hb_graph ){
+void delete_edges_with_degree_zero( scoring::hbonds::graph::AtomLevelHBondGraph & hb_graph ){
+	std::list< utility::graph::Edge * > edges_to_delete;
+
 	for ( utility::graph::EdgeListIterator it = hb_graph.edge_list_begin(), end = hb_graph.edge_list_end();
-			it != end; ) {
+			it != end; ++it ) {
 
-		utility::graph::Edge * edge = *it;
-
+		utility::graph::Edge * const edge = * it;
 		if ( hb_graph.get_node( edge->get_first_node_ind() )->num_edges() == 1 &&
-				hb_graph.get_node( edge->get_second_node_ind() )->num_edges() == 1
-				) {
-			++it;//very important to increment before deleting the edge that "it" is pointing to
-			hb_graph.delete_edge( edge );
-		} else {
-			++it;
+				hb_graph.get_node( edge->get_second_node_ind() )->num_edges() == 1 ) {
+			edges_to_delete.push_back( edge );
 		}
+	}
+
+	for ( utility::graph::Edge * doomed_edge : edges_to_delete ) {
+		hb_graph.delete_edge( doomed_edge );
 	}
 }
 

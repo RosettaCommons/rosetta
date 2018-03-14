@@ -8,21 +8,23 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file core/pack/hbonds/MCHBNetInteractionGraph.hh
-/// @brief Dervied class of PDInteractionGraph that does not save twobody energy calculations but rather passes them directly to a AbstractHBondGraph
-/// @details This is a AbstractHBondGraph creator that is wearing an InteractionGraph disguise so that monte carlo HBNet can collect energy information without having to create custom interfaces in many other classes. This class should not be used as an InteractionGraph because it does not store all of the information that InteractionGraphs need to store. There are a few utility_exit_with_message() calls sprinkled within this class to make sure it is not being misused, but there really is not any need to use it for anything other than AbstractHBondGraph creation.
+/// @brief Dervied class of PDInteractionGraph that does not save twobody energy calculations but rather passes them directly to a AtomLevelHBondGraph
+/// @details This is a AtomLevelHBondGraph creator that is wearing an InteractionGraph disguise so that monte carlo HBNet can collect energy information without having to create custom interfaces in many other classes. This class should not be used as an InteractionGraph because it does not store all of the information that InteractionGraphs need to store. There are a few utility_exit_with_message() calls sprinkled within this class to make sure it is not being misused, but there really is not any need to use it for anything other than AtomLevelHBondGraph creation.
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #ifndef INCLUDED_core_pack_hbonds_MCHBNetInteractionGraph_HH
 #define INCLUDED_core_pack_hbonds_MCHBNetInteractionGraph_HH
 
-#include <utility/pointer/ReferenceCount.hh>
-#include <core/pack/hbonds/MCHBNetInteractionGraph.fwd.hh>
-#include <core/pack/interaction_graph/PDInteractionGraph.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-#include <core/scoring/hbonds/graph/HBondGraph.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/pack/hbonds/MCHBNetInteractionGraph.fwd.hh>
+#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/PDInteractionGraph.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+
+#include <utility/pointer/ReferenceCount.hh>
+
 
 namespace core {
 namespace pack {
@@ -43,7 +45,7 @@ public:
 	void add_to_two_body_energies( ObjexxFCL::FArray2< PackerEnergy > const & res_res_energy_array ) override;
 
 	///@brief identical to add_to_two_body_energies()
-	inline void set_two_body_energy(int const rot1, int const rot2, PackerEnergy const twobody ) override{
+	void set_two_body_energy(int const rot1, int const rot2, PackerEnergy const twobody ) override{
 		add_to_two_body_energy( rot1, rot2, twobody );
 	}
 
@@ -67,7 +69,11 @@ class MCHBNetInteractionGraph : public interaction_graph::PDInteractionGraph {
 public:
 
 	//constructor
-	MCHBNetInteractionGraph( scoring::hbonds::graph::AbstractHBondGraphOP hbond_graph, rotamer_set::RotamerSetsCOP rotamer_sets, float hbond_threshold, float clash_threshold );
+	MCHBNetInteractionGraph(
+		scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph,
+		rotamer_set::RotamerSetsCOP rotamer_sets,
+		float hbond_threshold,
+		float clash_threshold );
 
 	//destructor
 	~MCHBNetInteractionGraph();
@@ -75,19 +81,22 @@ public:
 public:
 
 	///@brief look for hbonds and clashes
-	void eval_rot_pair( unsigned int const global_rot1, unsigned int const global_rot2, PackerEnergy const two_body_energy );
+	void eval_rot_pair(
+		unsigned int const global_rot1,
+		unsigned int const global_rot2,
+		PackerEnergy const two_body_energy );
 
 	interaction_graph::EdgeBase * create_new_edge( int index1, int index2) override{
 		return new BareMinimumPDEdge( this, index1, index2 );
 	}
 
-	inline rotamer_set::RotamerSetsCOP rotamer_sets(){
+	rotamer_set::RotamerSetsCOP rotamer_sets(){
 		return rotamer_sets_;
 	}
 
 private:
 
-	scoring::hbonds::graph::AbstractHBondGraphOP hbond_graph_;
+	scoring::hbonds::graph::AtomLevelHBondGraphOP hbond_graph_;
 	rotamer_set::RotamerSetsCOP rotamer_sets_;
 
 	float hbond_threshold_;
@@ -103,9 +112,9 @@ public://methods that we never want to be called
 	///@brief only twobody energies will get turned into edges. If you are running with symmetry, you need to call this to find edges between resids and their symmetric twins. Must be called after scoring.
 	void
 	find_symmetric_hbonds(
-		core::conformation::symmetry::SymmetryInfo const & symm_info,
-		core::pose::Pose const & pose,
-		core::Real hb_threshold
+		conformation::symmetry::SymmetryInfo const & symm_info,
+		pose::Pose const & pose,
+		Real hb_threshold
 	);
 
 
@@ -115,35 +124,11 @@ private:
 	Size get_ind_res(
 		pose::Pose const & pose,
 		Size const res_i,
-		core::conformation::symmetry::SymmetryInfo const & symm_info,
-		std::map< char, std::pair< core::Size, core::Size > > & chain_bounds
+		conformation::symmetry::SymmetryInfo const & symm_info,
+		std::map< char, std::pair< Size, Size > > & chain_bounds
 	) const;
 
 };
-
-inline void MCHBNetInteractionGraph::eval_rot_pair( unsigned int const global_rot1, unsigned int const global_rot2, PackerEnergy const two_body_energy ){
-	if ( two_body_energy > clash_threshold_ ) {
-		scoring::hbonds::graph::HBondNode * const node1 = static_cast< scoring::hbonds::graph::HBondNode * >( hbond_graph_->get_node( global_rot1 ) );
-		node1->register_clash( global_rot2 );
-
-		scoring::hbonds::graph::HBondNode * const node2 = static_cast< scoring::hbonds::graph::HBondNode * >( hbond_graph_->get_node( global_rot2 ) );
-		node2->register_clash( global_rot1 );
-		return;
-	}
-	if ( two_body_energy <= hbond_threshold_ ) {
-		utility::graph::Edge * const existing_edge = hbond_graph_->find_edge( global_rot1, global_rot2 );
-		if ( existing_edge ) {
-			//if edge exists, add energy to existing edge
-			scoring::hbonds::graph::HBondEdge * const existing_hbond_edge = static_cast< scoring::hbonds::graph::HBondEdge * >( existing_edge );
-			existing_hbond_edge->set_energy( existing_hbond_edge->energy() + two_body_energy );
-		} else {
-			scoring::hbonds::graph::HBondEdge * const new_edge = static_cast< scoring::hbonds::graph::HBondEdge * >( hbond_graph_->add_edge( global_rot1, global_rot2 ) );
-			if ( new_edge->energy() > two_body_energy ) {
-				new_edge->set_energy( two_body_energy );
-			}
-		}
-	}
-}
 
 } //hbonds
 } //pack

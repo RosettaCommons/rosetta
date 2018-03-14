@@ -17,84 +17,86 @@
 #include <protocols/hbnet/HBNet_util.hh>
 
 // Utility headers
-#include <utility>
-#include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/numbers.hh>
+#include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/vector1.hh>
+#include <utility>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 // Core headers
-#include <core/conformation/ResidueFactory.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/chemical/AtomType.hh>
+
 #include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/util.hh>
-#include <core/pose/extra_pose_info_util.hh>
-#include <core/pose/selection.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
-#include <core/pack/make_symmetric_task.hh>
+
+#include <core/id/AtomID.hh>
 #include <core/io/Remarks.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/hbonds/MCHBNetInteractionGraph.hh>
+#include <core/kinematics/MoveMap.hh>
+
 #include <core/pack/hbonds/HBondGraph_util.hh>
+#include <core/pack/hbonds/MCHBNetInteractionGraph.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
-#include <core/pack/pack_rotamers.hh>
+#include <core/pack/make_symmetric_task.hh>
 #include <core/pack/packer_neighbors.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/FuncFactory.hh>
-#include <core/scoring/hbonds/constants.hh>
-#include <core/scoring/sasa.hh>
-#include <core/scoring/facts/FACTSEnergy.hh>
-#include <core/scoring/hbonds/HBEvalTuple.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/selection.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/pose/util.hh>
+
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/scoring/util.hh>
-#include <core/scoring/rms_util.hh>
+#include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/id/AtomID.hh>
-#include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
-#include <core/select/residue_selector/ResidueNameSelector.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/FuncFactory.hh>
+#include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/constants.hh>
+#include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
+#include <core/scoring/hbonds/hbonds.hh>
+#include <core/scoring/hbonds/hbonds_geom.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/sasa.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/util.hh>
+
 #include <core/select/residue_selector/LayerSelector.hh>
+#include <core/select/residue_selector/ResidueNameSelector.hh>
+#include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/CachedResidueSubset.hh>
 #include <core/select/util.hh>
 
 // Protocols headers
-#include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -104,26 +106,25 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-//#include <protocols/scoring/Interface.hh>
 #include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd2/util.hh>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/residue_selectors/StoreResidueSubsetMover.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-//Monte Carlo Protocol
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-
 #include <numeric/random/random.hh>
-#include <core/select/residue_selector/CachedResidueSubset.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <protocols/residue_selectors/StoreResidueSubsetMover.hh>
+
+//Currently Unused
+//#include <core/chemical/ResidueTypeSet.hh>
+//#include <core/conformation/ResidueFactory.hh>
+//#include <core/pack/pack_rotamers.hh>
+//#include <core/pack/rotamer_set/RotamerSetFactory.hh>
+//#include <core/pack/rotamer_set/RotamerSet_.hh>
+//#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
+//#include <core/scoring/facts/FACTSEnergy.hh>
+//#include <core/scoring/hbonds/HBEvalTuple.hh>
+//#include <protocols/enzdes/AddorRemoveCsts.hh>
+//#include <protocols/scoring/Interface.hh>
 
 using namespace core;
 using namespace pose;
@@ -766,7 +767,7 @@ HBNet::MC_traverse_IG( ){
 	//Do not consider hbonds where one side clashes with the background
 	//Also, find satisfying interactions with background
 	for ( core::Size node_id = 1; node_id <= hbond_graph_->num_nodes(); ++node_id ) {
-		AtomLevelHBondNode * node = hbond_graph_->get_atomlevel_hbondnode( node_id );
+		AtomLevelHBondNode * node = hbond_graph_->get_hbondnode( node_id );
 		core::Real const one_body_1 = ig_->get_one_body_energy_for_node_state( node->moltenres(), node->local_rotamer_id() ) / scmult_1b;
 
 		if ( one_body_1 > clash_threshold_ ) {
@@ -786,8 +787,8 @@ HBNet::MC_traverse_IG( ){
 			it != hbond_graph_->const_edge_list_end(); ++it ) {
 		auto const * edge = static_cast< AtomLevelHBondEdge const * >( *it );
 
-		AtomLevelHBondNode const * node1 = hbond_graph_->get_atomlevel_hbondnode( edge->get_first_node_ind() );
-		AtomLevelHBondNode const * node2 = hbond_graph_->get_atomlevel_hbondnode( edge->get_second_node_ind() );
+		AtomLevelHBondNode const * node1 = hbond_graph_->get_hbondnode( edge->get_first_node_ind() );
+		AtomLevelHBondNode const * node2 = hbond_graph_->get_hbondnode( edge->get_second_node_ind() );
 
 		core::Size const resid1 = rotamer_sets_->moltenres_2_resid( node1->moltenres() );
 		core::Size const resid2 = rotamer_sets_->moltenres_2_resid( node2->moltenres() );
@@ -1086,7 +1087,7 @@ HBNet::monte_carlo_net_clash( utility::vector1< HBondResStructCOP > const & resi
 	}
 
 	for ( core::Size const rot1 : global_rots1 ) {
-		AtomLevelHBondNode const * node1 = hbond_graph_->get_atomlevel_hbondnode( rot1 );
+		AtomLevelHBondNode const * node1 = hbond_graph_->get_hbondnode( rot1 );
 		for ( core::Size const rot2 : global_rots2 ) {
 			if ( node1->clashes( rot2 ) ) return true;
 
@@ -1198,7 +1199,7 @@ HBNet::minimize_network( Pose & pose, HBondNetStruct & network, bool residues_al
 		mm->set_chi( (*rit)->resnum, true );
 	}
 	// TODO NEED TO ADD CODE HERE FOR BRIDGING_WATER CASE; NEED TO CHECK RESIDUE NUMBERS OF NETWORK RESIDUES AFTER WATER
-	protocols::minimization_packing::MinMoverOP min_mover;
+	minimization_packing::MinMoverOP min_mover;
 	if ( symmetric_ ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 		min_mover = pointer::make_shared< minimization_packing::symmetry::SymMinMover >( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.0001, true );
@@ -3819,7 +3820,7 @@ AtomLevelHBondNode * HBNet::get_next_node( NetworkState & current_state ){
 		core::Size const current_node_ind = current_node->global_rotamer_id();
 
 		for ( utility::graph::EdgeListConstIterator it = current_node->const_edge_list_begin(); it != current_node->const_edge_list_end(); ++it ) {
-			AtomLevelHBondNode * const proposed_new_node = hbond_graph_->get_atomlevel_hbondnode( (*it)->get_other_ind( current_node_ind ) );
+			AtomLevelHBondNode * const proposed_new_node = hbond_graph_->get_hbondnode( (*it)->get_other_ind( current_node_ind ) );
 			if ( ! node_is_compatible( current_state, proposed_new_node ) ) {
 				continue;
 			}
@@ -3833,7 +3834,7 @@ AtomLevelHBondNode * HBNet::get_next_node( NetworkState & current_state ){
 			core::Size num_nbrs = 1;//add dummy of 1
 			core::Size const proposed_new_node_ind = proposed_new_node->global_rotamer_id();
 			for ( utility::graph::EdgeListConstIterator it2 = proposed_new_node->const_edge_list_begin(); it2 != proposed_new_node->const_edge_list_end(); ++it2 ) {
-				AtomLevelHBondNode const * const proposed_nbr_node = hbond_graph_->get_atomlevel_hbondnode( ( *it2 )->get_other_ind( proposed_new_node_ind ) );
+				AtomLevelHBondNode const * const proposed_nbr_node = hbond_graph_->get_hbondnode( ( *it2 )->get_other_ind( proposed_new_node_ind ) );
 				if ( node_is_compatible( current_state, proposed_nbr_node ) ) {
 					++num_nbrs;
 				}
@@ -3872,8 +3873,8 @@ AtomLevelHBondNode * HBNet::get_next_node( NetworkState & current_state ){
 
 
 bool HBNet::monte_carlo_seed_is_dead_end( AtomLevelHBondEdge const * monte_carlo_seed ){
-	AtomLevelHBondNode const * const nodeA = hbond_graph_->get_atomlevel_hbondnode( monte_carlo_seed->get_first_node_ind()  );
-	AtomLevelHBondNode const * const nodeB = hbond_graph_->get_atomlevel_hbondnode( monte_carlo_seed->get_second_node_ind() );
+	AtomLevelHBondNode const * const nodeA = hbond_graph_->get_hbondnode( monte_carlo_seed->get_first_node_ind()  );
+	AtomLevelHBondNode const * const nodeB = hbond_graph_->get_hbondnode( monte_carlo_seed->get_second_node_ind() );
 
 	core::Size const nodeA_ind = nodeA->global_rotamer_id();
 	core::Size const nodeB_ind = nodeB->global_rotamer_id();
@@ -3882,7 +3883,7 @@ bool HBNet::monte_carlo_seed_is_dead_end( AtomLevelHBondEdge const * monte_carlo
 
 	for ( utility::graph::EdgeListConstIterator it_A = nodeA->const_edge_list_begin();
 			it_A != nodeA->const_edge_list_end(); ++it_A ) {
-		AtomLevelHBondNode const * const temp_node = hbond_graph_->get_atomlevel_hbondnode( (*it_A)->get_other_ind( nodeA_ind ) );
+		AtomLevelHBondNode const * const temp_node = hbond_graph_->get_hbondnode( (*it_A)->get_other_ind( nodeA_ind ) );
 
 		if ( temp_node->moltenres() == nodeB->moltenres() ) continue;
 		if ( nodeB->clashes( temp_node->global_rotamer_id() ) ) continue;
@@ -3892,7 +3893,7 @@ bool HBNet::monte_carlo_seed_is_dead_end( AtomLevelHBondEdge const * monte_carlo
 
 	for ( utility::graph::EdgeListConstIterator it_B = nodeB->const_edge_list_begin();
 			it_B != nodeB->const_edge_list_end(); ++it_B ) {
-		AtomLevelHBondNode const * const temp_node = hbond_graph_->get_atomlevel_hbondnode( (*it_B)->get_other_ind( nodeB_ind ) );
+		AtomLevelHBondNode const * const temp_node = hbond_graph_->get_hbondnode( (*it_B)->get_other_ind( nodeB_ind ) );
 
 		if ( temp_node->moltenres() == nodeA->moltenres() ) continue;
 		if ( nodeA->clashes( temp_node->global_rotamer_id() ) ) continue;
@@ -4117,7 +4118,7 @@ bool HBNet::network_state_is_done_growing( NetworkState const & current_state, A
 
 		for ( utility::graph::EdgeListConstIterator it = current_node->const_edge_list_begin(); it != current_node->const_edge_list_end(); ++it ) {
 			core::Size const other_ind = (*it)->get_other_ind( current_node_ind );
-			AtomLevelHBondNode const * const proposed_new_node = hbond_graph->get_atomlevel_hbondnode( other_ind );
+			AtomLevelHBondNode const * const proposed_new_node = hbond_graph->get_hbondnode( other_ind );
 			if ( node_is_compatible( current_state, proposed_new_node ) ) {
 				return false;
 			}

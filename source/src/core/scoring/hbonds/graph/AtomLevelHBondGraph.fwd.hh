@@ -11,12 +11,10 @@
 /// @brief AtomLevelHBondGraph forward declarations
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
-
 #ifndef INCLUDED_core_scoring_hbonds_graph_AtomLevelHBondGraph_FWD_HH
 #define INCLUDED_core_scoring_hbonds_graph_AtomLevelHBondGraph_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <core/scoring/hbonds/graph/HBondGraph.fwd.hh>
 
 namespace core {
 namespace scoring {

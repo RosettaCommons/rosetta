@@ -711,7 +711,7 @@ public:
 	}
 
 	/// @brief set the number of nodes in the graph -- deletes any existing edges in the graph
-	virtual void set_num_nodes( platform::Size num_nodes );
+	void set_num_nodes( platform::Size num_nodes );
 
 	/// @brief add an edge between two vertices.  Invokes "create_edge" from the derived class.
 	/// Returns a pointer to the edge after its been added, allowing the calling function

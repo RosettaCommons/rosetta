@@ -34,7 +34,6 @@
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
-#include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 
@@ -75,23 +74,13 @@ public:
 		rotsets.build_rotamers( testPose, *sfxn, packer_neighbor_graph );
 		core::Size const nrot = rotsets.nrotamers();
 
-		core::scoring::hbonds::graph::HBondGraph hbg( nrot );
-		core::pack::hbonds::init_node_info( hbg, rotsets );
-		TS_ASSERT_EQUALS( hbg.num_nodes(), nrot );
-
 		core::scoring::hbonds::graph::AtomLevelHBondGraph alhbg( nrot );
 		core::pack::hbonds::init_node_info( alhbg, rotsets );
 		TS_ASSERT_EQUALS( alhbg.num_nodes(), nrot );
 
 		for ( core::Size rot = 1; rot <= nrot; ++rot ) {
-			core::scoring::hbonds::graph::HBondNode const * hbg_node = dynamic_cast< core::scoring::hbonds::graph::HBondNode const * > ( hbg.get_node( rot ) );
-			TS_ASSERT( hbg_node );
-			TS_ASSERT_EQUALS( hbg_node->global_rotamer_id(), rot );
-			TS_ASSERT_EQUALS( hbg_node->moltenres(), rotsets.moltenres_for_rotamer( rot ) );
-			TS_ASSERT_EQUALS( hbg_node->local_rotamer_id(), rot - rotsets.nrotamer_offset_for_moltenres( rotsets.moltenres_for_rotamer( rot ) ) );
-
-			core::scoring::hbonds::graph::HBondNode const * alhbg_node = dynamic_cast< core::scoring::hbonds::graph::HBondNode const * > ( alhbg.get_node( rot ) );
-			TS_ASSERT( hbg_node );
+			core::scoring::hbonds::graph::AtomLevelHBondNode const * alhbg_node = dynamic_cast< core::scoring::hbonds::graph::AtomLevelHBondNode const * > ( alhbg.get_node( rot ) );
+			TS_ASSERT( alhbg_node );
 			TS_ASSERT_EQUALS( alhbg_node->global_rotamer_id(), rot );
 			TS_ASSERT_EQUALS( alhbg_node->moltenres(), rotsets.moltenres_for_rotamer( rot ) );
 			TS_ASSERT_EQUALS( alhbg_node->local_rotamer_id(), rot - rotsets.nrotamer_offset_for_moltenres( rotsets.moltenres_for_rotamer( rot ) ) );
@@ -100,23 +89,11 @@ public:
 		//Starting position for second moltenres
 		core::Size const offset = rotsets.nrotamer_offset_for_moltenres( 2 ) + 1;
 
-		hbg.register_hbond( 1, offset, -0.5 );
-		hbg.register_hbond( 2, offset, -0.5 );
-		hbg.register_hbond( 3, offset, -0.5 );
-		hbg.register_hbond( 4, offset, -0.5 );
-		hbg.register_hbond( 5, offset + 1, -0.5 );
-
 		alhbg.register_hbond( 1, offset, -0.5 );
 		alhbg.register_hbond( 2, offset, -0.5 );
 		alhbg.register_hbond( 3, offset, -0.5 );
 		alhbg.register_hbond( 4, offset, -0.5 );
 		alhbg.register_hbond( 5, offset + 1, -0.5 );
-
-		TS_ASSERT( hbg.find_hbondedge( 1, offset ) );
-		TS_ASSERT( hbg.find_hbondedge( 2, offset ) );
-		TS_ASSERT( hbg.find_hbondedge( 3, offset ) );
-		TS_ASSERT( hbg.find_hbondedge( 4, offset ) );
-		TS_ASSERT( hbg.find_hbondedge( 5, offset + 1 ) );
 
 		TS_ASSERT( alhbg.find_hbondedge( 1, offset ) );
 		TS_ASSERT( alhbg.find_hbondedge( 2, offset ) );
@@ -124,14 +101,7 @@ public:
 		TS_ASSERT( alhbg.find_hbondedge( 4, offset ) );
 		TS_ASSERT( alhbg.find_hbondedge( 5, offset + 1 ) );
 
-		core::pack::hbonds::delete_edges_with_degree_zero( hbg );
 		core::pack::hbonds::delete_edges_with_degree_zero( alhbg );
-
-		TS_ASSERT( hbg.find_hbondedge( 1, offset ) );
-		TS_ASSERT( hbg.find_hbondedge( 2, offset ) );
-		TS_ASSERT( hbg.find_hbondedge( 3, offset ) );
-		TS_ASSERT( hbg.find_hbondedge( 4, offset ) );
-		TS_ASSERT( ! hbg.find_hbondedge( 5, offset + 1 ) );
 
 		TS_ASSERT( alhbg.find_hbondedge( 1, offset ) );
 		TS_ASSERT( alhbg.find_hbondedge( 2, offset ) );

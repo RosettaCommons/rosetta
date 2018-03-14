@@ -28,7 +28,21 @@ class LKHBondInfo;
 
 class HBondInfo {
 public:
-	HBondInfo( LKHBondInfo * lk_info, bool first_node_is_donor, unsigned short int local_atom_id_A, unsigned short int local_atom_id_D, unsigned short int local_atom_id_H ) :
+	HBondInfo() :
+		first_node_is_donor_( 0 ),
+		local_atom_id_A_( 0 ),
+		local_atom_id_D_( 0 ),
+		local_atom_id_H_( 0 ),
+		lk_info_( 0 )
+	{}
+
+	HBondInfo(
+		LKHBondInfo * lk_info,
+		bool first_node_is_donor,
+		unsigned short int local_atom_id_A,
+		unsigned short int local_atom_id_D,
+		unsigned short int local_atom_id_H
+	) :
 		first_node_is_donor_( first_node_is_donor ),
 		local_atom_id_A_( local_atom_id_A ),
 		local_atom_id_D_( local_atom_id_D ),
@@ -36,7 +50,12 @@ public:
 		lk_info_( lk_info )
 	{}
 
-	HBondInfo( bool first_node_is_donor, unsigned short int local_atom_id_A, unsigned short int local_atom_id_D, unsigned short int local_atom_id_H ) :
+	HBondInfo(
+		bool first_node_is_donor,
+		unsigned short int local_atom_id_A,
+		unsigned short int local_atom_id_D,
+		unsigned short int local_atom_id_H
+	) :
 		first_node_is_donor_( first_node_is_donor ),
 		local_atom_id_A_( local_atom_id_A ),
 		local_atom_id_D_( local_atom_id_D ),

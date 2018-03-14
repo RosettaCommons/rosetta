@@ -41,7 +41,6 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/graph/HBondInfo.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/scoring/hbonds/graph/AtomLevelHBondGraph.fwd.hh>
