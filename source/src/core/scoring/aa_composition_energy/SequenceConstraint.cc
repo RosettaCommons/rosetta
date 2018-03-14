@@ -26,6 +26,15 @@
 #include <numeric/trig.functions.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
@@ -57,7 +66,36 @@ SequenceConstraint::SequenceConstraint( SequenceConstraint const &src ):
 ///
 SequenceConstraint::~SequenceConstraint() = default;
 
-
 } // aa_composition_energy
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+/// @details Default constructor that's needed by Cereal in order to deserialize a constraint.
+/// This should ONLY be used by derived classes in their default constructors and then only
+/// for the sake of deserializing a constraint.
+core::scoring::aa_composition_energy::SequenceConstraint::SequenceConstraint() :
+	core::scoring::constraints::Constraint(),
+	dummy_atomid_(0,0)
+	//TODO -- initialize variables here.
+{}
+
+template< class Archive >
+void
+core::scoring::aa_composition_energy::SequenceConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( CEREAL_NVP( dummy_atomid_ ) );
+}
+
+template< class Archive >
+void
+core::scoring::aa_composition_energy::SequenceConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( dummy_atomid_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::aa_composition_energy::SequenceConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::aa_composition_energy::SequenceConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_aa_composition_energy_SequenceConstraint )
+#endif // SERIALIZATION

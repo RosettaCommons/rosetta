@@ -40,6 +40,12 @@
 #include <utility/vector1.hh>
 #include <math.h>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace netcharge_energy {
@@ -253,11 +259,23 @@ private:
 	/// or constant, though.
 	std::pair <TailFunction, TailFunction > tailfunctions_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // netcharge_energy
 } // scoring
 } // core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_netcharge_energy_NetChargeEnergySetup )
+#endif // SERIALIZATION
 
 #endif // INCLUDED_core_scoring_EtableEnergy_HH

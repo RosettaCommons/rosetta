@@ -33,6 +33,13 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 
 namespace core {
 namespace scoring {
@@ -98,10 +105,23 @@ private:
 	/// @details Created on object construction
 	NetChargeEnergySetupOP netcharge_setup_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // netcharge_energy
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_netcharge_energy_NetChargeConstraint )
+#endif // SERIALIZATION
 
 #endif

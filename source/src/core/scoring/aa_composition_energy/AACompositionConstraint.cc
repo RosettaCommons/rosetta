@@ -27,6 +27,15 @@
 #include <numeric/trig.functions.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
@@ -136,3 +145,28 @@ AACompositionConstraint::show_def (std::ostream &TO, pose::Pose const &pose) con
 } // aa_composition_energy
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+template< class Archive >
+void
+core::scoring::aa_composition_energy::AACompositionConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::aa_composition_energy::SequenceConstraint >( this ) );
+	arc( CEREAL_NVP( selector_ ) );
+	arc( CEREAL_NVP( aa_comp_setup_ ) );
+}
+
+template< class Archive >
+void
+core::scoring::aa_composition_energy::AACompositionConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::aa_composition_energy::SequenceConstraint >( this ) );
+	arc( selector_ );
+	arc( aa_comp_setup_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::aa_composition_energy::AACompositionConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::aa_composition_energy::AACompositionConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_aa_composition_energy_AACompositionConstraint )
+#endif // SERIALIZATION
+
+

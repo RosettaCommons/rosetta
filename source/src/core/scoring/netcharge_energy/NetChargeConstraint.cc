@@ -27,6 +27,15 @@
 #include <numeric/trig.functions.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
@@ -136,3 +145,26 @@ NetChargeConstraint::show_def (std::ostream &TO, pose::Pose const &pose) const {
 } // netcharge_energy
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+template< class Archive >
+void
+core::scoring::netcharge_energy::NetChargeConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::aa_composition_energy::SequenceConstraint >( this ) );
+	arc( CEREAL_NVP( selector_ ) );
+	arc( CEREAL_NVP( netcharge_setup_ ) );
+}
+
+template< class Archive >
+void
+core::scoring::netcharge_energy::NetChargeConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::aa_composition_energy::SequenceConstraint >( this ) );
+	arc( selector_ );
+	arc( netcharge_setup_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::netcharge_energy::NetChargeConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::netcharge_energy::NetChargeConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_netcharge_energy_NetChargeConstraint )
+#endif // SERIALIZATION

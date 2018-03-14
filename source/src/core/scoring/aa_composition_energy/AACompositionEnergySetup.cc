@@ -43,6 +43,17 @@
 // C++ headers
 #include <cmath>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace aa_composition_energy {
@@ -795,3 +806,62 @@ void AACompositionEnergySetup::check_data() const {
 } // aa_composition_energy
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+template< class Archive >
+void
+core::scoring::aa_composition_energy::AACompositionPropertiesSet::save( Archive & arc ) const {
+	arc( CEREAL_NVP( included_types_ ) );
+	arc( CEREAL_NVP( excluded_types_ ) );
+	arc( CEREAL_NVP( included_properties_ ) );
+	arc( CEREAL_NVP( or_properties_ ) );
+	arc( CEREAL_NVP( excluded_properties_ ) );
+}
+
+template< class Archive >
+void
+core::scoring::aa_composition_energy::AACompositionPropertiesSet::load( Archive & arc ) {
+	arc( included_types_ );
+	arc( excluded_types_ );
+	arc( included_properties_ );
+	arc( or_properties_ );
+	arc( excluded_properties_ );
+}
+
+template< class Archive >
+void
+core::scoring::aa_composition_energy::AACompositionEnergySetup::save( Archive & arc ) const {
+	arc( CEREAL_NVP( property_sets_ ) );
+	arc( CEREAL_NVP( expected_by_properties_fraction_ ) );
+	arc( CEREAL_NVP( expected_by_properties_absolute_ ) );
+	arc( CEREAL_NVP( property_penalties_ ) );
+	arc( CEREAL_NVP( property_penalty_fracts_ ) );
+	arc( CEREAL_NVP( use_fract_ranges_ ) );
+	arc( CEREAL_NVP( property_deviation_ranges_ ) );
+	arc( CEREAL_NVP( fract_property_deviation_ranges_ ) );
+	arc( CEREAL_NVP( property_tailfunctions_ ) );
+}
+
+template< class Archive >
+void
+core::scoring::aa_composition_energy::AACompositionEnergySetup::load( Archive & arc ) {
+	arc( property_sets_ );
+	arc( expected_by_properties_fraction_ );
+	arc( expected_by_properties_absolute_);
+	arc( property_penalties_ );
+	arc( property_penalty_fracts_ );
+	arc( use_fract_ranges_ );
+	arc( property_deviation_ranges_ );
+	arc( fract_property_deviation_ranges_ );
+	arc( property_tailfunctions_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::aa_composition_energy::AACompositionPropertiesSet );
+CEREAL_REGISTER_TYPE( core::scoring::aa_composition_energy::AACompositionPropertiesSet )
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::aa_composition_energy::AACompositionEnergySetup );
+CEREAL_REGISTER_TYPE( core::scoring::aa_composition_energy::AACompositionEnergySetup )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_aa_composition_energy_AACompositionPropertiesSet )
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_aa_composition_energy_AACompositionEnergySetup )
+#endif // SERIALIZATION

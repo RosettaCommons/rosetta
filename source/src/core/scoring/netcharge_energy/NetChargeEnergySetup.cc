@@ -43,6 +43,18 @@
 // C++ headers
 #include <cmath>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace netcharge_energy {
@@ -320,3 +332,28 @@ void NetChargeEnergySetup::check_data() const {
 } // netcharge_energy
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+template< class Archive >
+void
+core::scoring::netcharge_energy::NetChargeEnergySetup::save( Archive & arc ) const {
+	arc( CEREAL_NVP( desired_charge_ ) );
+	arc( CEREAL_NVP( charge_penalties_range_ ) );
+	arc( CEREAL_NVP( penalties_ ) );
+	arc( CEREAL_NVP( tailfunctions_ ) );
+}
+
+template< class Archive >
+void
+core::scoring::netcharge_energy::NetChargeEnergySetup::load( Archive & arc ) {
+	arc( desired_charge_ );
+	arc( charge_penalties_range_ );
+	arc( penalties_ );
+	arc( tailfunctions_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::netcharge_energy::NetChargeEnergySetup );
+CEREAL_REGISTER_TYPE( core::scoring::netcharge_energy::NetChargeEnergySetup )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_netcharge_energy_NetChargeEnergySetup )
+#endif // SERIALIZATION

@@ -239,7 +239,7 @@ OptionCollection::load(
 		throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: " + excn.msg() ));
 	}
 
-// Check for problems in the option values
+	// Check for problems in the option values
 	check_values();
 
 	{ // Generate any requested option outputs

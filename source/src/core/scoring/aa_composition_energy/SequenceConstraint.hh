@@ -31,6 +31,12 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -83,10 +89,24 @@ private:
 	/// @details Not used for anything.
 	core::id::AtomID dummy_atomid_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SequenceConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // aa_composition_energy
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_aa_composition_energy_SequenceConstraint )
+#endif // SERIALIZATION
 
 #endif
