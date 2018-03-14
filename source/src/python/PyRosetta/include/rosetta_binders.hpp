@@ -433,6 +433,29 @@ void stringstream_add_on_binder(CL &cl)
 		// cl.def("swap", (void (utility::vectorL<1,core::scoring::rna::data::RNA_Reactivity,std::allocator<core::scoring::rna::data::RNA_Reactivity>>::*)(class utility::vectorL<1, class core::scoring::rna::data::RNA_Reactivity, class std::allocator<class core::scoring::rna::data::RNA_Reactivity> > &)) &utility::vectorL<1, core::scoring::rna::data::RNA_Reactivity, std::allocator<core::scoring::rna::data::RNA_Reactivity> >::swap, "doc", pybind11::arg("v"));
 
 
+template <typename, typename... Args> void set_add_on_binder_maybe_has_insertion_operator(const Args &...) { }
+
+template<typename T, typename C,
+		 typename = typename std::enable_if< has_insertion_operator_s<T>::value >::type >
+void set_add_on_binder_maybe_has_insertion_operator(C &cl)
+{
+	cl.def("__repr__", [](std::set<T> const &set_) {
+			std::ostringstream s;
+			s << "std_set" << '[';
+			if( !set_.empty() ) {
+				std::string delimeter;
+				for(auto const & v : set_) {
+					s << delimeter << v;
+					delimeter =  ", ";
+				}
+			}
+			s << ']';
+			return s.str();
+		});
+
+}
+
+
 
 template< typename T >
 void set_add_on_binder(pybind11::class_<std::set<T>, std::shared_ptr< std::set<T> > > &cl)
@@ -459,8 +482,43 @@ void set_add_on_binder(pybind11::class_<std::set<T>, std::shared_ptr< std::set<T
 		pybind11::keep_alive<0, 1>() /* Essential: keep list alive while iterator exists */
 		);
 
+	set_add_on_binder_maybe_has_insertion_operator<T>(cl);
 }
 
+
+
+template <typename, typename... Args> void list_add_on_binder_maybe_has_equal_operator(const Args &...) { }
+
+template<typename T, typename C,
+		 typename = typename std::enable_if< has_equal_operator_s<T>::value >::type >
+void list_add_on_binder_maybe_has_equal_operator(C &cl)
+{
+	cl.def("remove", [](std::list<T> &l, T const &v) { l.remove(v); }, "remove element");
+}
+
+
+
+template <typename, typename... Args> void list_add_on_binder_maybe_has_insertion_operator(const Args &...) { }
+
+template<typename T, typename C,
+		 typename = typename std::enable_if< has_insertion_operator_s<T>::value >::type >
+void list_add_on_binder_maybe_has_insertion_operator(C &cl)
+{
+	cl.def("__repr__", [](std::list<T> const &list_) {
+			std::ostringstream s;
+			s << "std_list" << '[';
+			if( !list_.empty() ) {
+				std::string delimeter;
+				for(auto const & v : list_) {
+					s << delimeter << v;
+					delimeter =  ", ";
+				}
+			}
+			s << ']';
+			return s.str();
+		});
+
+}
 
 template< typename T >
 void list_add_on_binder(pybind11::class_<std::list<T>, std::shared_ptr< std::list<T> > > &cl)
@@ -468,7 +526,7 @@ void list_add_on_binder(pybind11::class_<std::list<T>, std::shared_ptr< std::lis
     cl.def("append", [](std::list<T> &l, T const &v) { l.push_back(v); } );
 	cl.def("extend", [](std::list<T> &l, std::list<T> const &v) { l.insert(l.end(), v.begin(), v.end()); } );
 
-	//cl.def("remove", [](std::list<T> &l, T const &v) { l.remove(v); }, "remove element");
+	list_add_on_binder_maybe_has_equal_operator<T>(cl);
 
 	cl.def("__bool__", [](std::list<T> const &l) -> bool {
 			return !l.empty();
@@ -485,6 +543,8 @@ void list_add_on_binder(pybind11::class_<std::list<T>, std::shared_ptr< std::lis
 		},
 		pybind11::keep_alive<0, 1>() /* Essential: keep list alive while iterator exists */
 		);
+
+	list_add_on_binder_maybe_has_insertion_operator<T>(cl);
 }
 
 
