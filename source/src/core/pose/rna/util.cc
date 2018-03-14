@@ -671,7 +671,10 @@ is_torsion_valid(
 
 	// Oh, either this OR one of em has 5prime_cap
 	// Note that having to make this exception is awful.... at least make it earlier.
-	debug_assert( is_cutpoint_closed1 == is_cutpoint_closed_by_atom_name( rsd_1, rsd_2, rsd_3, rsd_4, id1, id2, id3, id4) ); // takes time
+	if ( !basic::options::option[ basic::options::OptionKeys::rna::denovo::initial_structures ].user() ) {
+		// I don't think this is an issue (but it is hacky) - Kalli
+		debug_assert( is_cutpoint_closed1 == is_cutpoint_closed_by_atom_name( rsd_1, rsd_2, rsd_3, rsd_4, id1, id2, id3, id4) ); // takes time
+	}
 
 	// AMW: If this isn't a cutpoint in the FT, the below is not a problem (fingers crossed -- hack)
 	if ( pose.fold_tree().is_cutpoint( id1.rsd() ) && is_cutpoint_closed1 && !is_virtual_torsion ) {

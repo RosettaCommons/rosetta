@@ -1,10 +1,275 @@
 #!/usr/bin/env python
 import os
 import argparse
-from get_sequence import get_sequences
-from read_pdb import read_pdb
-from make_tag import make_tag_with_dashes
-import parse_tag
+import string
+
+protein_one_letter = ['A', 'R', 'N', 'D', 'C', 
+	'E', 'Q', 'G', 'H', 'I', 'L', 'K', 'M', 
+	'F', 'P','S', 'T', 'W', 'Y', 'V']
+
+hetatm_map = { '5BU':'  U', ' MG':' MG', 'OMC':'  C', '5MC':'  C', 'CCC':'  C', ' DC':'  C', 'CBR':'  C', 'CBV':'  C', 'CB2':'  C', '2MG':'  G', 'H2U':'H2U', 'PSU':'PSU', '5MU':'  U', 'OMG':'  G', '7MG':'  G', '1MG':'  G', 'GTP':'  G', 'AMP':'  A', ' YG':'  G', '1MA':'  A', 'M2G':'  G', 'YYG':'  G', ' DG':'  G', 'G46':'  G', ' IC':' IC',' IG':' IG', 'ZMP':'ZMP' }
+
+longer_names={'ALA': 'A', 'ARG': 'R', 'ASN': 'N', 'ASP': 'D',
+              'CYS': 'C', 'GLU': 'E', 'GLN': 'Q', 'GLY': 'G',
+              'HIS': 'H', 'ILE': 'I', 'LEU': 'L', 'LYS': 'K',
+              'MET': 'M', 'PHE': 'F', 'PRO': 'P', 'SER': 'S',
+              'THR': 'T', 'TRP': 'W', 'TYR': 'Y', 'VAL': 'V',
+              ' rA': 'a', ' rC': 'c', ' rG': 'g', ' rU': 'u',
+              '  A': 'a', '  C': 'c', '  G': 'g', '  U': 'u',
+              ' MG': 'Z[MG]',' IC':'c[ICY]',' IG':'g[IGU]',
+              'ROS': 'Z[ROS]','HOH':'w[HOH]', 'H2U': 'X[H2U]',
+              'PSU': 'X[PSU]', '5MU': 'X[5MU]', 'FME': 'X[FME]',
+	      'U33': 'X[U33]', '  I': 'X[INO]', 'BRU': 'X[5BU]',
+              }
+
+def pdbslice( pdbfile, subset_or_excise, segment_residues, prefix ):
+
+	if not os.path.exists( pdbfile ):
+		print "ERROR: %s does not exist!" %(pdbfile)
+		exit( 1 )
+
+	use_subset = False
+	use_excise = False
+	if subset_or_excise == 'subset':
+		use_subset = True
+	elif subset_or_excise == 'excise':
+		use_excise = True
+
+	segment_resnums, segment_chains = parse_tag( segment_residues )
+
+	atomnums = []
+	outfile = open( prefix + os.path.basename( pdbfile ), 'w')
+
+	for line in open( pdbfile ):
+		if len( line ) > 4  and ( line[:6] == 'ATOM  ' or line[:6] == 'HETATM'):
+		    currentchain = line[21]
+		    currentresidue = line[22:26]
+		    atomnum = int( line[6:11] )
+		    try:
+		        currentresidue_val = int(currentresidue)
+		        if (use_subset and \
+		            not matches( currentresidue_val, currentchain, segment_resnums, segment_chains ) ): continue
+		        if (use_excise and \
+		            matches( currentresidue_val, currentchain, segment_resnums, segment_chains ) ): continue
+		    except:
+		        continue
+		
+		    atomnums.append( atomnum )
+		
+		    outfile.write(line)
+		
+		elif len( line ) > 6 and line[:6] == 'CONECT':
+		    atomnum1 = int( line[6:11] )
+		    atomnum2 = int( line[11:16] )
+		    if (atomnum1 in atomnums) and (atomnum2 in atomnums): outfile.write( line )
+
+	outfile.close()
+
+def matches( res, chain, match_res, match_chain ):
+	assert( len( match_res ) == len( match_chain ) )
+	for n in range( len( match_res ) ):
+	    if ( res == match_res[n] and ( match_chain[n] == ''  or match_chain[n] == chain ) ):
+	        return True
+	return False
+
+def make_tag( int_vector ):
+    tag = ''
+    for m in int_vector: tag += ' %d' % m
+    return tag
+
+def make_tag_with_dashes( int_vector, char_vector = 0 ):
+    tag = ''
+    if not isinstance( char_vector, list ) or len( char_vector ) == 0:
+         char_vector = []
+         for m in range( len( int_vector ) ): char_vector.append( '' )
+    assert( len( char_vector ) == len( int_vector ) )
+
+    start_res = int_vector[0]
+    for i in range( 1, len(int_vector)+1 ):
+        if i==len( int_vector)  or \
+                int_vector[i] != int_vector[i-1]+1 or \
+                char_vector[i] != char_vector[i-1] :
+
+            stop_res = int_vector[i-1]
+            tag += ' '
+            if len( char_vector[i-1] ) > 0:
+                assert( len( char_vector[i-1] ) == 1 )
+                tag += char_vector[i-1]+':'
+            if stop_res > start_res:
+                tag += '%d-%d' % (start_res, stop_res )
+            else:
+                tag += '%d' % (stop_res )
+
+            if ( i < len( int_vector) ): start_res = int_vector[i]
+
+    return tag
+
+def parse_tag( tag, alpha_sort=False ):
+
+    if isinstance( tag, list ):
+        tag = string.join( tag, ' ' )
+    
+    int_vector = []
+    char_vector= []
+    
+    xchar = ''
+
+    tag = tag.replace(',',' ')
+    tag = tag.replace(';',' ')
+    
+    for subtag in tag.split(' '):
+
+        if subtag == '': 
+            continue
+
+        if '-' in subtag: # '1-10' or 'A1-10' or 'A:1-10' or 'A:1-A:10'
+            ( start, stop ) = subtag.split('-')  
+            ( start_idx, start_char ) = parse_tag( start )
+            ( stop_idx, stop_char ) = parse_tag( stop )
+            assert( ( start_char[0] == stop_char[0] ) or ( stop_char[0] == '' ) )
+            if start_char[0] != '': 
+                xchar = start_char[0]
+            subtag = string.join([xchar+':'+str(x) for x in xrange(start_idx[0],stop_idx[0]+1)], ' ')
+            int_vector.extend( parse_tag( subtag )[0] )
+            char_vector.extend( parse_tag( subtag )[1] )
+            continue
+   
+        if ':' in subtag: # A:100
+            subtag = subtag.split(':')
+            xchar = subtag[0]
+            xint = int(subtag[-1])
+        else: # A100 or 100 or 0100            
+            for x in xrange( len( subtag ) ):
+                try: # 100
+                    xint = int(subtag[x:])
+                    break
+                except: # A100
+                    xchar = subtag[x]
+          
+        int_vector.append( xint )
+        char_vector.append( xchar )
+
+    assert( len(int_vector) == len(char_vector) ) 
+
+    if alpha_sort:
+        sorted = zip( char_vector, int_vector )
+        sorted.sort()
+        [ char_vector, int_vector ] = [ list(l) for l in zip(*sorted) ]
+        
+    return int_vector, char_vector
+
+def get_sequences( pdbname, removechain = 0 ):
+
+    netpdbname = pdbname
+    assert( os.path.exists(netpdbname))
+
+    lines = open(netpdbname,'r').readlines()
+
+    oldresnum = '   '
+    oldchain = ''
+    chain = oldchain
+    resnum = oldresnum
+    count = 0;
+    fasta_line = ''
+
+    sequences = []
+    all_chains = []
+    all_resnums = []
+
+    sequence = ''
+    chains = []
+    resnums = []
+
+    for line in lines:
+        if (len(line)<20): continue
+        line_edit = line
+        if (line[0:6] == 'HETATM') & (line[17:20]=='MSE'): #Selenomethionine
+            line_edit = 'ATOM  '+line[6:17]+'MET'+line[20:]
+            if (line_edit[12:14] == 'SE'):
+                line_edit = line_edit[0:12]+' S'+line_edit[14:]
+            if len(line_edit)>75:
+                if (line_edit[76:78] == 'SE'):
+                    line_edit = line_edit[0:76]+' S'+line_edit[78:]
+        elif (line[0:6] == 'HETATM') & ( line[17:20] in hetatm_map.keys()):
+            line_edit = 'ATOM  '+line[6:17]+ hetatm_map[line[17:20]] + line[20:]
+
+        if (line[0:6] == 'HETATM') & (line[17:20] in longer_names.keys() ):
+            line_edit = 'ATOM  '+line[6:]
+
+        if line_edit[0:4] == 'ATOM' or line_edit[0:6]=='HETATM':
+            resnum = line_edit[22:26].replace( ' ', '' )
+            chain = line_edit[21]
+
+        if ( line[0:3] == 'TER' or ( not chain == oldchain ) ) and len( sequence ) > 0:
+            sequences.append( sequence )
+            all_chains.append( chains )
+            all_resnums.append( resnums )
+            sequence = ''
+            chains   = []
+            resnums  = []
+            old_resnum = ''
+
+        if (not (resnum == oldresnum and chain == oldchain) ):
+            count = count + 1
+            longname = line_edit[17:20]
+            if longer_names.has_key(longname):
+                sequence +=  longer_names[longname]
+            else:
+                sequence +=  'X'
+            resnums.append( int(resnum) )
+            chains.append( chain )
+            oldresnum = resnum
+            oldchain = chain
+
+    if len( sequence ) > 0:
+        sequences.append( sequence )
+        if ( chain == ' ' ): chain = ''
+        all_chains.append( chains )
+        all_resnums.append( resnums )
+
+    return ( sequences, all_chains, all_resnums )
+
+def read_pdb( filename ):
+
+    coords = {}
+    pdb_lines = {}
+    sequence = {}
+
+    old_resnum = 0
+    old_chain  = ''
+    chains = []
+    residues = []
+    for line in open( filename ):
+
+        if (len(line)>54 and  (line[0:4] == 'ATOM' or line[0:4] == 'HETA' ) ):
+
+            resnum = int( line[22:26] )
+            chain = line[21]
+            atom_name = line[12:16]
+            position = [float(line[30:38]),float(line[38:46]),float(line[46:54])]
+
+            if not ( chain in coords.keys() ):
+                coords[chain] = {}
+                pdb_lines[chain] = {}
+                sequence[ chain ] = {}
+
+            sequence[chain][resnum] = line[17:20]
+
+            if not ( resnum in coords[chain].keys() ):
+                coords[chain][resnum] = {}
+                pdb_lines[chain][resnum] = {}
+
+            coords[chain][resnum][atom_name] = position
+            pdb_lines[chain][resnum][atom_name] = line[:-1]
+
+            if ( len(residues) == 0 or \
+                 resnum != old_resnum or chain != old_chain ):
+                chains.append( chain )
+                residues.append( resnum )
+            old_resnum = resnum
+            old_chain  = chain
+
+    return ( coords, pdb_lines, sequence, chains, residues )
 
 def get_coord_csts( ref_pdb, dist, exclude_resi=[] ):
 
@@ -142,7 +407,7 @@ def parse_fasta( fasta ):
 					tag += ' '
 				
 			# get the chain and residue numbers
-			resnums, chains = parse_tag.parse_tag( tag )
+			resnums, chains = parse_tag( tag )
 			for c in chains:
 				full_chains.append( c )
 			for r in resnums:
@@ -306,7 +571,7 @@ def setup_job( args ):
 	##########################
 	# 1. all remodel residues
 	##########################
-	remodel_resnums, remodel_chains = parse_tag.parse_tag( args.residues_to_model )
+	remodel_resnums, remodel_chains = parse_tag( args.residues_to_model )
 	remodel_chains_resnums = []
 	for x in range( len(remodel_chains) ):
 		remodel_chains_resnums.append( remodel_chains[x] + str( remodel_resnums[x] ) )
@@ -359,7 +624,7 @@ def setup_job( args ):
 	# 3. residues within distance cutoff of remodel residues in start_struct
 	##########################
 	#    and near -include_residues_around
-	all_include_residues_around_resnums, all_include_residues_around_chains = parse_tag.parse_tag( args.include_residues_around )
+	all_include_residues_around_resnums, all_include_residues_around_chains = parse_tag( args.include_residues_around )
 	# and then add all the remodel residues that are in the start_struct
 	start_struct_seq, start_struct_chains_sep, start_struct_resnums_sep = get_sequences( args.start_struct, removechain=False )
 	start_struct_chains = []
@@ -377,6 +642,19 @@ def setup_job( args ):
 		if res in start_struct_chains_resnums:
 			all_include_residues_around_chains.append( remodel_chains[index] )
 			all_include_residues_around_resnums.append( remodel_resnums[index] )
+
+	# also include residues connected to any of the remodel residues
+	for index in range(len(remodel_chains)):
+		# check the residue right before
+		residue_before = remodel_chains[ index ] + str( remodel_resnums[index]-1 )
+		if residue_before in start_struct_chains_resnums:
+			all_include_residues_around_chains.append( remodel_chains[index] )
+			all_include_residues_around_resnums.append( remodel_resnums[index]-1 )
+		# and check the residue right after
+		residue_after = remodel_chains[ index ] + str( remodel_resnums[index]+1 )
+		if residue_after in start_struct_chains_resnums:
+			all_include_residues_around_chains.append( remodel_chains[index] )
+			all_include_residues_around_resnums.append( remodel_resnums[index]+1 )
 
 	# find the residues in the starting structure that are near these residues
 	near_resnums, near_chains = get_near_residues( args.start_struct, 
@@ -424,9 +702,8 @@ def setup_job( args ):
 	created_extra_fixed_struct = False
 	if len( near_resnums_for_subset_pdb ) > 0: 
 		tag_for_fixed_struct = make_tag_with_dashes( near_resnums_for_subset_pdb, near_chains_for_subset_pdb )
-		# TODO: modify pdbslice.py so it can be imported!
-		os.system( 'pdbslice.py %s -subset %s fixed_struct_%s_' %( args.start_struct, tag_for_fixed_struct, args.job_name) )
-		os.system( 'mv fixed_struct_%s_%s fixed_struct_%s.pdb' %( args.job_name, args.start_struct, args.job_name ) )
+		pdbslice( args.start_struct, "subset", tag_for_fixed_struct, 'fixed_struct_%s_' %(args.job_name) )
+		os.system( 'mv fixed_struct_%s_%s fixed_struct_%s.pdb' %( args.job_name, os.path.basename(args.start_struct), args.job_name ) )
 		created_extra_fixed_struct = True
 
 	# residues_to_include
@@ -444,8 +721,8 @@ def setup_job( args ):
 	
 	# for the initial structure pdb (any residues that aren't in the start_struct will just be omitted)
 	if not args.no_initial_structures:
-		os.system( 'pdbslice.py %s -subset %s init_struct_%s_' %( args.start_struct, subset_to_include_tag, args.job_name) )
-		os.system( 'mv init_struct_%s_%s init_struct_%s.pdb' %(args.job_name, args.start_struct, args.job_name) )
+		pdbslice( args.start_struct, "subset", subset_to_include_tag, 'init_struct_%s_' %(args.job_name))
+		os.system( 'mv init_struct_%s_%s init_struct_%s.pdb' %(args.job_name, os.path.basename(args.start_struct), args.job_name) )
 		created_init_struct_pdb = True
 	
 	##########################
@@ -499,8 +776,8 @@ def setup_job( args ):
 		if args.ref_pdb_for_coord_csts:
 			# get a subset of this ref pdb with only the residues 
 			# that we're including in the run
-			os.system( 'pdbslice.py %s -subset %s ref_pdb_custom_%s_' %( args.ref_pdb_for_coord_csts, subset_to_include_tag, args.job_name) )
-			constraint_text = get_coord_csts( 'ref_pdb_custom_%s_%s' %(args.job_name, args.ref_pdb_for_coord_csts ), args.cst_dist)
+			pdbslice( args.ref_pdb_for_coord_csts, "subset", subset_to_include_tag, 'ref_pdb_custom_%s_' %(args.job_name) )
+			constraint_text = get_coord_csts( 'ref_pdb_custom_%s_%s' %(args.job_name, os.path.basename(args.ref_pdb_for_coord_csts) ), args.cst_dist)
 		elif args.constrain_rigid_bodies_only:
 			ref_pdb_chains = []
 			ref_pdb_resnums = []
@@ -511,15 +788,15 @@ def setup_job( args ):
 					ref_pdb_resnums.append( start_struct_resnums[x] )
 
 			ref_pdb_tag = make_tag_with_dashes( ref_pdb_resnums, ref_pdb_chains )
-			os.system('pdbslice.py %s -subset %s ref_pdb_%s_' %(args.start_struct,ref_pdb_tag,args.job_name))
-			constraint_text = get_coord_csts( 'ref_pdb_%s_%s' %(args.job_name, args.start_struct), args.cst_dist )
+			pdbslice( args.start_struct, "subset", ref_pdb_tag, 'ref_pdb_%s_' %(args.job_name) )
+			constraint_text = get_coord_csts( 'ref_pdb_%s_%s' %(args.job_name, os.path.basename(args.start_struct)), args.cst_dist )
 		else:
 			if not created_init_struct_pdb:
 				print "ERROR: No init struct pdb to use for coordinate constraints!"
 				print "Your options:"
 				print "1. use -constrain_rigid_bodies_only: all rigid bodies that are" \
 					" present in the starting structure will be constrained"
-				print "2. provide a custom reference pdb for the constraints: -ref_pdb" 
+				print "2. provide a custom reference pdb for the constraints: -ref_pdb (this could potentially be your -start_struct)"
 				print "3. Run without coordinate constraints: provide -no_csts"
 				print "4. Create a constraint file yourself (e.g. my_constraints.txt):" \
 					" provide -no_csts, and also provide -extra_flags '-cst_file my_constraints.txt'"
@@ -549,7 +826,7 @@ def setup_job( args ):
 	print "#################################################"
 
 def get_n_cycles( remodel_residues ):
-	resnums, chains = parse_tag.parse_tag( remodel_residues ) 
+	resnums, chains = parse_tag( remodel_residues ) 
 	return min(75000, len(resnums)*800)
 	
 
@@ -645,12 +922,39 @@ def estimate_error( args ):
 	for s in args.final_structures:
 		struct_str += s
 		struct_str += ' '
+	( sequences, chains, resnums) = get_sequences( args.final_structures[0], removechain=False )
+	contains_protein = False
+	reading_three_letter = False
+	for seq in sequences:
+		for r in seq:
+			if r == '[':
+				reading_three_letter = True
+				continue
+			if reading_three_letter: 
+				if r == ']':
+					reading_three_letter = False
+				continue
+			if r in protein_one_letter:
+				contains_protein = True
+
+	# check that there is both RNA and protein in the structures
+	# if not, then run -rmsd_nosuper and output a warning that we're not doing any superposition
+	# and if the user wants to do superposition, then please supply extra flags for this 
+	# (so then we also need to read extra_flags here)
 	rosetta_dir = args.rosetta_directory
 	if len(rosetta_dir) > 0 and not rosetta_dir.endswith('/'):
 		rosetta_dir += '/'
-	command = '%sdrrafter_error_estimation -s %s -mute core' %(rosetta_dir, struct_str )
+	command = '%sdrrafter_error_estimation -s %s -mute core ' %(rosetta_dir, struct_str )
+		
+	if len( args.extra_flags ) > 0:
+		for flag in args.extra_flags:
+			command += '-' + flag + ' '
+	if not contains_protein and 'align_residues' not in command and 'rmsd_nosuper' not in command:
+		print "\nWARNING: Your structures do not contain any protein residues for alignment, so RMSDs will be calculated without alignment"
+		print "If there are specific residues you would like to use for alignment, then pass these as e.g. -extra_flags 'align_residues 1-10' "
+		command += '-rmsd_nosuper true '
 	print "\nRUNNING ", command, '\n'
-	os.system( '%sdrrafter_error_estimation -s %s -mute core' %(rosetta_dir, struct_str ))
+	os.system( command )
 
 
 if __name__ == '__main__':

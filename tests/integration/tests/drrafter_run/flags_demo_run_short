@@ -1,0 +1,31 @@
+-fasta fasta_demo_run.txt
+-secstruct_file secstruct_demo_run.txt
+-initial_structures init_struct_demo_run.pdb
+-s protein_fit_into_density.pdb RNA_helix.pdb 
+-edensity:mapfile 1wsu_simulated_7A.mrc
+-edensity:mapreso 7.0
+-cst_file coord_csts_demo_run.txt
+-new_fold_tree_initializer true
+-minimize_rna true
+-minimize_protein_sc true
+-out:file:silent demo_run.out
+-rna:denovo:lores_scorefxn rna/denovo/rna_lores_with_rnp_aug.wts
+-rna_protein_docking true
+-rnp_min_first true
+-rnp_pack_first true
+-cycles 500
+-rnp_high_res_cycles 0
+-minimize_rounds 1
+-no_filters
+-nstruct 1
+-dock_into_density true
+-ignore_zero_occupancy false
+-convert_protein_CEN false
+-FA_low_res_rnp_scoring true
+-ramp_rnp_vdw true
+-docking_move_size 0.5
+-dock_each_chunk_per_chain true
+-helical_substructs RNA_helix.pdb 
+-mute protocols.moves.RigidBodyMover
+-mute protocols.rna.denovo.movers.RNA_HelixMover
+-use_legacy_job_distributor true
