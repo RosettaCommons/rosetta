@@ -64,6 +64,7 @@
 #include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerComb.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerOneTorsion.hh>
+#include <protocols/stepwise/sampler/StepWiseSamplerRingConformer.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.hh>
 #include <protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.hh>
@@ -696,6 +697,7 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 		if ( protein_connection_ ) {
 			sampler_ = initialize_protein_bond_sampler( pose );
 		} else if ( moving_res_ != 0 && pose.residue_type( moving_res_ ).is_carbohydrate() ) {
+			TR << "Sampling carbohydrate" << std::endl;
 			sampler_ = initialize_carbohydrate_bond_sampler( pose );
 		} else if ( moving_res_ != 0 && !pose.residue_type( moving_res_ ).is_polymer() ) {
 			initialize_euler_angle_grid_parameters();
@@ -774,12 +776,24 @@ StepWiseConnectionSampler::initialize_carbohydrate_bond_sampler( pose::Pose cons
 	using namespace sampler;
 	if ( moving_res_list_.size() == 0 ) return nullptr;
 
-	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
 	// Really should be sampling ring conformations or something. We'd need a special class for that.
+	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).n_ring_conformer_sets(); ++ii ) {
+		StepWiseSamplerRingConformerOP rc( new StepWiseSamplerRingConformer( ii, moving_res_, pose.residue_type( moving_res_ ).ring_conformer_set( ii ) ) );
+		sampler->add_external_loop_rotamer( rc );
+	}
+
 	//for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
+	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
+	// Chi 1 is also the connection to lower. As a pseudo-MC torsion, it should be sampled more finely
+	StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, 1 ), allowed_values ) );
+	sampler->add_external_loop_rotamer( foo );
+
+	utility::vector1< Real > sp3_rots{ -60, 60, 180 };
 	for ( Size ii = 2; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
-		StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
+		// There will (usually?) be one chi that is the hydroxyl that is "really a mainchain torsion" in the connected form.
+		// that isn't necessarily cause not to sample it, but be aware: if chi atom 3 is final mainchain atom, be wary.
+		StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, ii ), sp3_rots ) );
 		sampler->add_external_loop_rotamer( foo );
 	}
 	sampler->init();

@@ -28,6 +28,7 @@ static basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerOneValue" );
 namespace protocols {
 namespace stepwise {
 namespace sampler {
+
 ///////////////////////////////////////////////////////////////////////////
 StepWiseSamplerOneValue::StepWiseSamplerOneValue():
 	StepWiseSamplerSized()

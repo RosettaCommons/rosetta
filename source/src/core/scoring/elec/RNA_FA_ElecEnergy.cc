@@ -344,7 +344,6 @@ RNA_FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	pair_data.set_data( rna_elec_pair_nblist, nblist );
 }
 
-inline
 Real
 RNA_FA_ElecEnergy::score_atom_pair(
 	conformation::Residue const & rsd1,

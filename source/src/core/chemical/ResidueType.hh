@@ -873,6 +873,8 @@ public:
 	/// conformers possible for this residue's nth cycle.
 	core::chemical::rings::RingConformerSetCOP ring_conformer_set( core::uint ring_num ) const;
 
+	core::Size
+	n_ring_conformer_sets() const;
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////

@@ -1315,9 +1315,18 @@ ResidueType::orbital_type(int const orbital_index)const
 
 // Return a pointer to the object containing the set of ring conformers possible for this residue's nth cycle.
 core::chemical::rings::RingConformerSetCOP
-ResidueType::ring_conformer_set( core::uint ring_num ) const
+ResidueType::ring_conformer_set( core::uint ring_num ) const {
+	if ( ring_num <= conformer_sets_.size() ) {
+		return conformer_sets_[ ring_num ];
+	} else {
+		return nullptr;
+	}
+}
+
+core::Size
+ResidueType::n_ring_conformer_sets() const
 {
-	return conformer_sets_[ ring_num ];
+	return conformer_sets_.size();
 }
 
 void

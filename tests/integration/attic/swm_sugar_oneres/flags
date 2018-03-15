@@ -1,0 +1,11 @@
+-s 4fqc_justglycan_justtwo.pdb 
+-fasta 4fqc_justglycan_justtwo.fasta 
+-move RESAMPLE H:308  BOND_TO_PREVIOUS H:307 
+-include_sugars 
+-score:weights ref2015  
+-mute core.kinematics.AtomTree core.scoring.CartesianBondedEnergy 
+-nstruct 20 
+# Oddly, fa_elec isn't scoring carbohydrates locally. That doesn't make
+# sense to me, but in the the interest of ensuring meaningful integration
+# test results... just for now.
+-set_weights fa_elec 0.0

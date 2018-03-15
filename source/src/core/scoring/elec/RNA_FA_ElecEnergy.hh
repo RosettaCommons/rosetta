@@ -178,7 +178,6 @@ public:
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const;
 
-	inline
 	Real
 	score_atom_pair(
 		conformation::Residue const & rsd1,
