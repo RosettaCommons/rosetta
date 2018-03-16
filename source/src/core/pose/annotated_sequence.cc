@@ -20,10 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-//#include <core/pose/datacache/ObserverCache.hh>
-//#include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/carbohydrates/util.hh>
-//#include <core/pose/carbohydrates/GlycanTreeSetObserver.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -255,15 +252,18 @@ residue_types_from_saccharide_sequence_recursive( std::string const & sequence, 
 chemical::ResidueTypeCOPs
 residue_types_from_saccharide_sequence( std::string const & sequence, chemical::ResidueTypeSet const & residue_set )
 {
-	core::chemical::ResidueTypeCOPs residue_types = residue_types_from_saccharide_sequence_recursive( sequence, residue_set );
+	core::chemical::ResidueTypeCOPs residue_types =
+		residue_types_from_saccharide_sequence_recursive( sequence, residue_set );
 
-	std::reverse(residue_types.begin(), residue_types.end());
+	std::reverse( residue_types.begin(), residue_types.end() );
 
 	return residue_types;
 }
 
 chemical::ResidueTypeCOPs
-residue_types_from_saccharide_sequence_recursive( std::string const & sequence, chemical::ResidueTypeSet const & residue_set )
+residue_types_from_saccharide_sequence_recursive(
+	std::string const & sequence,
+	chemical::ResidueTypeSet const & residue_set )
 {
 	using namespace std;
 	using namespace utility;
@@ -317,7 +317,8 @@ residue_types_from_saccharide_sequence_recursive( std::string const & sequence, 
 				branch_sequence += character;
 			}
 			// Now recurse.
-			branch_residue_types.append( residue_types_from_saccharide_sequence_recursive( branch_sequence, residue_set ) );
+			branch_residue_types.append( residue_types_from_saccharide_sequence_recursive(
+				branch_sequence, residue_set ) );
 		} else if ( character != '-' ) {  // '-' is the morpheme delimiter
 			morpheme += character;
 		} else {  // Hyphen: The morpheme is complete; interpret it....
@@ -513,16 +514,20 @@ residue_types_from_saccharide_sequence_recursive( std::string const & sequence, 
 /// @details  This function was written primarily as a subroutine for code shared by
 /// make_pose_from_saccharide_sequence() and pose::carbohydrates:glycosylate_pose().  You probably do not want to call
 /// it directly.
-/// @param    <pose>: The Pose must be empty, in which case a new oligo- or polysaccharide pose will be created, or it
-/// must end in a saccharide residue to extend.  This function cannot add saccharide residues to any other positions,
-/// as that requires additional steps.  (See pose::carbohydrates:glycosylate_pose().)  The terminal Residue of the Pose
-/// must have unsatisfied ResidueConnections.
+/// @param    <pose>: The Pose must be either empty, in which case a new oligo- or polysaccharide pose will be created,
+/// or it must have a BRANCH_POINT variant residue to extend.  This Residue of the Pose must have unsatisfied
+/// ResidueConnections.  By default, it is assumed to be the last residue of the Pose.
 /// @param    <residue_types>: A list of ResidueTypes from which to build new residues for the Pose.  These must be
 /// ordered such that a branch is completely finished before a new one is begun.  Branches are constructed by assuming
 /// that branch connections are "satisfied" in the order in which they were created.  ResidueTypes must be of the
-/// correct VariantType to be appended properly, e.g.
+/// correct VariantType to be appended properly.  (See pose::carbohydrates:glycosylate_pose().)
+/// @param    <resnum_to_be_appended>: The sequence position to which the glycan will be appended.  It must be a
+/// BRANCH_POINT with an unsatisfied connection.  By default, it is assumed to be the last residue of the Pose.
 void
-append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs residue_types )
+append_pose_with_glycan_residues(
+	pose::Pose & pose,
+	chemical::ResidueTypeCOPs residue_types,
+	core::uint resnum_to_be_appended /* = 0 */ )
 {
 	using namespace std;
 	using namespace utility;
@@ -534,22 +539,22 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 	if ( pose.empty() ) {
 		TR.Debug << "Creating new oligosaccharide from provided ResidueTypes..." << endl;
 	} else {
-		Residue const & last_residue( pose.residue( pose.size() ) );
-		if ( ! last_residue.is_carbohydrate() ) {
-			TR.Warning << "append_pose_with_glycan_residues( " <<
-				"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
-				"The last residue of <pose> must be a carbohydrate to append." << endl;
-			return;
-		}
 		TR.Debug << "Appending Pose with provided ResidueTypes..." << endl;
 
-		// Check the terminal residue of the input Pose to see if it has unsatisfied branch points.
-		if ( last_residue.is_branch_point() ) {
-			vector1< string > const branch_atom_names( last_residue.type().branch_connect_atom_names() );
+		// Check the anchor residue of the input Pose to see if it has unsatisfied branch points.
+		if ( ! resnum_to_be_appended ) { resnum_to_be_appended = pose.size(); }
+		Residue const & residue_to_be_appended( pose.residue( resnum_to_be_appended ) );
+
+		if ( residue_to_be_appended.is_branch_point() ) {
+			vector1< string > const branch_atom_names( residue_to_be_appended.type().branch_connect_atom_names() );
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint i( 1 ); i <= n_branches; ++i ) {
-				branch_points.emplace_back( pose.size(), branch_atom_names[ i ] );
+				branch_points.emplace_back( resnum_to_be_appended, branch_atom_names[ i ] );
 			}
+		} else {
+			TR.Warning << "append_pose_with_glycan_residues( " <<
+				"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
+				"The provided anchor residue of <pose> has no branch point at which to append the glycan chain." << endl;
 		}
 	}
 
@@ -562,7 +567,7 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 		TR.Debug << "Connecting current residue " << new_rsd->name3();
 		// The residue_types are in a correct order here, so the lower of residue N is connected to the upper of residue N-1
 		// If the upper of N-1 doesn't exist, we're a branch connected elsewhere
-		if ( branch_points.size() && ( i == 1 || residue_types[ i-1 ]->is_upper_terminus() ) ) {
+		if ( branch_points.size() && ( i == 1 || residue_types[ i - 1 ]->is_upper_terminus() ) ) {
 			uint const anchor_residue( branch_points.front().first );  // First branch made is first branch connected.
 			string const anchor_atom( branch_points.front().second );
 			string const upper_atom( new_rsd->carbohydrate_info()->anomeric_carbon_name() );

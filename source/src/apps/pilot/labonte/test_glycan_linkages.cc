@@ -40,7 +40,7 @@
 int const SUCCESS( 0 );
 int const FAILURE( -1 );
 
-std::string const PATH = "/home/labonte/Workspace/Carbohydrates/";
+std::string const PATH = "/home/labonte/Workspace/Carbohydrates/testing/";
 
 
 int
@@ -52,9 +52,9 @@ main( int argc, char *argv[] )
 		using namespace core;
 		using namespace chemical;
 		using namespace pose;
-		using namespace scoring;
-		using namespace pack::task;
-		using namespace protocols::minimization_packing;
+		//using namespace scoring;
+		//using namespace pack::task;
+		//using namespace protocols::minimization_packing;
 
 		// Initialize core.
 		devel::init( argc, argv );
@@ -65,29 +65,37 @@ main( int argc, char *argv[] )
 
 
 		// Create initial test pose.
-		make_pose_from_sequence( starting_pose, "ANASA", *residue_set );
-		pose::carbohydrates::glycosylate_pose( starting_pose, 2, "b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" );
+		make_pose_from_sequence( starting_pose, "ANA", *residue_set );
 
-		std::cout << "Created pose." << std::endl;
+		cout << "Created pose (peptide only): " << starting_pose << endl;
 
 		// Extend peptide.
-		for ( core::uint i( 1 ); i <= 4; ++i ) {
+		for ( core::uint i( 1 ); i <=2 ; ++i ) {
 			starting_pose.set_omega( i, 180.0 );
 		}
 
-		std::cout << "Extended peptide." << std::endl;
+		cout << "Extended peptide." << endl;
+
+		pose::carbohydrates::glycosylate_pose( starting_pose, 2,
+			"b-D-GlcpNAc-(1->4)-[a-L-Fucp-(1->6)]-b-D-GlcpNAc-" );
+
+		cout << "Glycosylated pose: " << starting_pose << endl;
 
 		// Idealize glycan.
-		starting_pose.set_phi( 6, -75.0 );
-		starting_pose.set_phi( 7, -75.0 );
-		starting_pose.set_psi( 7, 115.0 );
+		//starting_pose.set_phi( 6, -75.0 );
+		//starting_pose.set_phi( 7, -75.0 );
+		//starting_pose.set_psi( 7, 115.0 );
+		//starting_pose.set_phi( 8, -75.0 );
+		//starting_pose.set_psi( 8, 115.0 );
+		//starting_pose.set_omega( 8, 180.0 );
 
-		std::cout << "Idealized glycan." << std::endl;
+		cout << "Idealized glycan." << endl;
 
 		starting_pose.dump_pdb( PATH + "N-linked_test.start.pdb" );
 
-		std::cout << "Output starting pose." << std::endl;
+		cout << "Output starting pose." << endl;
 
+		/*
 		// Set up ScoreFunction.
 		ScoreFunctionOP sf( get_score_function() );
 
@@ -103,15 +111,16 @@ main( int argc, char *argv[] )
 		pack_rotamers_mover.apply( pose );
 		pose.dump_pdb( PATH + "N-linked_test.prm.pdb" );
 
-		std::cout << "Output pose packed with PackRotamersMover." << std::endl;
+		cout << "Output pose packed with PackRotamersMover." << endl;
 
 		pose = starting_pose;
 		rotamer_trials_mover.apply( pose );
 		pose.dump_pdb( PATH + "N-linked_test.rtm.pdb" );
 
-		std::cout << "Output pose packed with RotamerTrialsMover." << std::endl;
+		cout << "Output pose packed with RotamerTrialsMover." << endl;
+		*/
 
-	} catch (utility::excn::Exception const & e ) {
+	} catch ( utility::excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return FAILURE;
 	}

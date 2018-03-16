@@ -226,7 +226,7 @@ create_glycan_movemap_from_residue_selector(
 
 	core::kinematics::MoveMapOP movemap = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
 
-	//@brief Make sure everything is OFF first.
+	// Make sure everything is OFF first.
 	movemap->set_bb(false);
 	movemap->set_chi(false);
 	movemap->set_branches(false);
@@ -265,9 +265,6 @@ create_glycan_movemap_from_residue_selector(
 }
 
 
-
-
-
 // Glycosylate the Pose at the given sequence position and atom using an IUPAC sequence.
 /// @details   Format for <iupac_sequence>:\n
 /// Prefixes apply to the residue to which they are attached, below indicated by residue n.\n
@@ -284,7 +281,7 @@ create_glycan_movemap_from_residue_selector(
 /// e.g., Glc is for glucose.  (A list of all recognized 3-letter codes for sugars can be found in
 /// database/chemical/carbohydrates/codes_to_roots.map.)\n
 /// 1-Letter suffix: If no suffix follows, residue n will be linear.  If a letter is present, it indicates the ring
-/// size, where "f" is furanose, "p" is puranose, and "s" is septanose.\n
+/// size, where "f" is furanose, "p" is pyranose, and "s" is septanose.\n
 /// Branches are indicated using nested brackets and are best explained by example:\n
 /// beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc- is:\n
 /// beta-D-Galp-(1->4)-D-GlcpNAc-\n
@@ -310,7 +307,7 @@ glycosylate_pose(
 	using namespace chemical;
 	using namespace conformation;
 
-	conformation::Residue const & residue( pose.residue( sequence_position ) );
+	Residue const & residue( pose.residue( sequence_position ) );
 	ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( residue.type().mode() ) );
 
 	// Get list of carbohydrate ResidueTypes from which to construct the Pose.
@@ -321,6 +318,16 @@ glycosylate_pose(
 		TR.Warning << "No saccharide residues in sequence to append to pose!" << endl;
 		return;
 	}
+
+	if ( TR.Trace.visible() ) {
+		TR.Trace << "Ready to append the following residue types:  " << endl;
+		for ( auto residue_type : residue_types ) {
+			TR.Trace << residue_type->name() << ' ';
+		}
+		TR.Trace << endl;
+	}
+
+	Size const initial_nres( pose.size() );  // used below for setting up PDBInfo
 
 	// Prepare the glycosylation site for branching.
 	// TODO: Add code to attach to lipids.
@@ -334,29 +341,17 @@ glycosylate_pose(
 
 
 	// Now we can extend the Pose.
-	// Keep track of branch points as we go.
-	list< pair< uint, string > > branch_points;
-
-	Size const initial_nres = pose.size();
-
-	// Begin with the first sugar.
-	ResidueType const & first_sugar_type( *residue_types.front() );
-	ResidueOP first_sugar( ResidueFactory::create_residue( first_sugar_type ) );
-	string const upper_atom( first_sugar->carbohydrate_info()->anomeric_carbon_name() );
-	pose.append_residue_by_atoms( *first_sugar, true, upper_atom, sequence_position, atom_name, true );
-
-	// Build any other sugars.
-	append_pose_with_glycan_residues( pose, ResidueTypeCOPs( residue_types.begin() + 1, residue_types.end() ) );
+	append_pose_with_glycan_residues( pose, residue_types, sequence_position );
 
 	// Let the Conformation know that it (now) contains sugars.
 	pose.conformation().contains_carbohydrate_residues( true );
 
 	//Size const final_nres = pose.size();
 	//Size const total_glycan_residues = final_nres - initial_nres;
-	Size const glycan_start_rosetta_num = initial_nres+1;
+	Size const glycan_start_rosetta_num = initial_nres + 1;
 
 
-	///New code.   Keep in an-tact PDBInfo and organize it nicely.
+	// Keep in an-tact PDBInfo and organize it nicely.
 	if ( keep_pdbinfo && pose.pdb_info() != nullptr ) {
 
 		char protein_chain = pose.pdb_info()->chain( sequence_position );
@@ -382,7 +377,7 @@ glycosylate_pose(
 
 		//Give the Mainchain residue number
 		//JAB- This is the more complicated way where the mainchain first gets numbers, and then each branch of children do.
-		// This is not completely nessessary (AFAIK), and this code is not yet finished.
+		// This is not completely necessary (AFAIK), and this code is not yet finished.
 		//utility::vector1< bool > mainchain_children = get_mainchain_children(pose, initial_nres+1, true /* include_initial */);
 		//for (core::Size i = 1; i <= pose.size(); ++i){
 		// if ( ! mainchain_children[ i ]) continue;
@@ -392,7 +387,7 @@ glycosylate_pose(
 		//}
 
 		pose.pdb_info()->resize_atom_records( pose );
-		pose.pdb_info()->rebuild_pdb2pose(); //JAB - this may not be nessessary - not sure.
+		pose.pdb_info()->rebuild_pdb2pose(); //JAB - this may not be necessary - not sure.
 
 		pose.pdb_info()->obsolete(false);
 	} else {
@@ -414,11 +409,10 @@ glycosylate_pose(
 		TR << "Idealizing glycosidic torsions." << endl;
 		idealize_last_n_glycans_in_pose( pose, n_types );
 	}
-
 }
 
 // Glycosylate the Pose at the given sequence position using an IUPAC sequence.
-/// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
+/// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, Ser, or Trp.
 void
 glycosylate_pose(
 	Pose & pose,
@@ -468,7 +462,7 @@ glycosylate_pose_by_file(
 }
 
 // Glycosylate the Pose at the given sequence position using a .GWS or IUPAC sequence file.
-/// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
+/// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, Ser, or Trp.
 void
 glycosylate_pose_by_file(
 	Pose & pose,

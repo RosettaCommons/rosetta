@@ -46,6 +46,10 @@ using namespace chemical;
 using namespace conformation;
 
 
+// Constants
+int const SUCCESS( 0 );
+int const FAILURE( -1 );
+
 string const PATH = "input/";
 
 
@@ -333,9 +337,11 @@ main( int argc, char *argv[] )
 
 		pose_from_file( bad_pdb, PATH + "pdb_w_bad_links.pdb", PDB_file );
 
-	} catch (utility::excn::Exception const & e ) {
+		cout << ".pdb file with bad LINK records imported successfully." << endl;
+
+	} catch ( utility::excn::Exception const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
-		return -1;
+		return FAILURE;
 	}
-	return 0;
+	return SUCCESS;
 }

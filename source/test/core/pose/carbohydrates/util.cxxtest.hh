@@ -876,8 +876,18 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( N_linked_14_mer.residue(15).connected_residue_at_resconn(3), 18 );
 
 		TS_ASSERT_EQUALS( N_linked_14_mer.fold_tree().to_string(),
-			"FOLD_TREE  EDGE 1 5 -1  EDGE 2 6 -2  ND2  C1   EDGE 6 14 -1  EDGE 8 15 -2  O6   C1   EDGE 15 17 -1  EDGE 15 18 -2  O6   C1   EDGE 18 19 -1 ");
+			"FOLD_TREE  EDGE 1 5 -1  EDGE 2 6 -2  ND2  C1   EDGE 6 14 -1  "
+			"EDGE 8 15 -2  O6   C1   EDGE 15 17 -1  EDGE 15 18 -2  O6   C1   EDGE 18 19 -1 ");
 
+
+		// This test covers the special case of core fucosylation, which unexpectedly failed in earlier versions.
+		core::pose::Pose core_fucosylated;
+		core::pose::make_pose_from_sequence( core_fucosylated, "ANA", "fa_standard" );
+		core::pose::carbohydrates::glycosylate_pose( core_fucosylated, 2,
+			"b-D-GlcpNAc-(1->4)-[a-L-Fucp-(1->6)]-b-D-GlcpNAc-" );
+
+		TS_ASSERT_EQUALS( core_fucosylated.fold_tree().to_string(),
+			"FOLD_TREE  EDGE 1 3 -1  EDGE 2 4 -2  ND2  C1   EDGE 4 5 -1  EDGE 4 6 -2  O6   C1  " );
 	}
 
 
