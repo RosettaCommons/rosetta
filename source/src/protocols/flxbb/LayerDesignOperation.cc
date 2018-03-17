@@ -870,7 +870,10 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		// non-default behaviour, but keeping it as an option.
 		if ( ignore_pikaa_natro() ) {
 			const std::string resfile_cmd =  task.residue_task( i ).command_string();
-			if ( resfile_cmd.find( "PIKAA" ) != std::string::npos || resfile_cmd.find( "NATRO" ) != std::string::npos ) {
+			if ( resfile_cmd.find( "PIKAA" ) != std::string::npos ||
+					resfile_cmd.find( "NATAA" ) != std::string::npos ||
+					resfile_cmd.find( "NATRO" ) != std::string::npos ) {
+
 				if ( TR.visible() && verbose_ ) {
 					TR << " ,Resfile info is used. (" << resfile_cmd  << ")"<< std::endl;
 				}
