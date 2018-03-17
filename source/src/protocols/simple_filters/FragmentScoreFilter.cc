@@ -394,8 +394,8 @@ core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 	core::pose::PoseOP pose_chain_OP = pose.split_by_chain( pose.chain( start_res_ ) );
 	core::Size residue_adjust = 0;
 	for ( core::Size i = 1; i < pose.chain( start_res_ ); i++ ) {
-		TR.Debug << "The size of chain " << i << " is " << pose.chain_sequence( pose.chain( i ) ).size() << std::endl;
-		residue_adjust += pose.chain_sequence( pose.chain( i ) ).size();
+		TR.Debug << "The size of chain " << i << " is " << pose.chain_sequence( i ).size() << std::endl;
+		residue_adjust += pose.chain_sequence( i ).size();
 	}
 	TR.Debug << "Adjusting start and end residues by " << residue_adjust << ", with initial start and end residues of " << start_res_ << " and " << end_res_ << std::endl;
 	core::Size start_res = start_res_ - residue_adjust;
