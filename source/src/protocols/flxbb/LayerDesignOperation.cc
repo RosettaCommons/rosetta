@@ -188,7 +188,8 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
 	srbl_( core::select::util::SelectResiduesByLayerOP( new core::select::util::SelectResiduesByLayer ) ),
-	blueprint_( nullptr )
+	blueprint_( nullptr ),
+	use_symmetry_(true)
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
 	design_layer_[std::string("core")]=dsgn_core;
