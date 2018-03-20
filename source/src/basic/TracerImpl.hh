@@ -196,9 +196,10 @@ public: // Public static member functions
 	static void set_default_final_stream();
 
 	/// @brief set ios hook for all tracer io operation.
-	/// @param monitoring_channels_list is space separated list of channels.
+	/// @param monitoring_channels_list is space separated list of channels.i
+	/// @param raw is ignored
 	//static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list);
-	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw=true);
+	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw=false);
 
 	static std::string const & get_all_channels_string();  // PyRosetta helper function
 
@@ -324,9 +325,6 @@ private: /// Data members
 	/// static data members
 	/// @brief link to Tracer like object where all output for selecting channels should go.
 	static otstreamOP & ios_hook(); // Not necessarily mutex protected - I/O mangling is
-
-	/// @brief should the ios_hook_ the raw output?
-	static bool & ios_hook_raw_(); // Use should be `tracer_static_data_mutex()` protected
 
 	/// @brief list of channels for which outout should be redirected.
 	static utility::vector1< std::string > & monitoring_list_(); // Use should be `tracer_static_data_mutex()` protected

@@ -71,20 +71,14 @@ public:
 
 	/// @brief: Helper function, that execute test on a given Mover object
 	///
-	void one_mover_test(const char *file, unsigned line, protocols::moves::MoverOP mover,
-						const char *fileIn, const char *fileOut, const char *nativeFileIn=0,
-						const char *fileTracerOut=0, const char * tracerChannelsList=0) {
+	void one_mover_test(const char * /*file*/, unsigned /*line*/, protocols::moves::MoverOP mover,
+						const char *fileIn, const char *fileOut, const char *nativeFileIn=0 ) {
 		//TR_I << "MoversTest: Testing " << mover->type().c_str() << "...\n";
 
 		core::init::init_random_generators(1000, "mt19937");
 
 		const std::string original_file_name( fileIn );
-		const std::string tmp_file_name = std::string(fileOut) + "._tmp_";
 
-		if( fileTracerOut && tracerChannelsList ) {
-			basic::otstreamOP ut( new test::UTracer(fileTracerOut) );
-			basic::Tracer::set_ios_hook(ut, tracerChannelsList);
-		}
 		//std::cout << " Testing: " << mover->type() << "..." << std::endl;
 
 		PoseOP pose( new Pose );
@@ -100,53 +94,15 @@ public:
 		mover->set_input_pose( pose );
 		mover->set_native_pose( n_pose );
 		mover->test_move( *pose );
-		pose->dump_pdb(tmp_file_name);
-		//TS_ASSERT_FILE_EQ( fileOut, tmp_file_name.c_str());
-		//_TS_ASSERT_FILE_EQ(file, line, fileOut, tmp_file_name.c_str())
-		/* std::string message = "MoversTest::" + mover->type() +"Files are not equal!\n";
-				CxxTest::doAssertFileEQ(file, line, fileOut, fileOut,
-								tmp_file_name.c_str(), tmp_file_name.c_str(), message.c_str());
-		 */
-		if( compareFileEQ(fileOut, tmp_file_name.c_str() ) ) {
-		} else {
-			std::cout << "File: " << file << " Line:" << line << std::endl;
-			std::cout << "MoversTest::" + mover->type() +" Files " << fileOut << " and " << tmp_file_name << " are not equal!" << std::endl;
-			std::cout << "CXXTEST_ERROR: test_AllMovers:" <<  mover->type() << " Failed!" << std::endl;
-			CxxTest::doFailTest(file, line, "test_AllMovers");
-		}
 
-		basic::Tracer::set_ios_hook(0, "");
+		// We use a UTracer here because it allows for fuzzy comparison of real numbers in the pose (e.g. energies)
+		UTracer UT( fileOut );
+		UT.abs_tolerance( 1e-6 );
+		pose->dump_pdb( UT );
+
 	}
-
 
 	void tearDown() {
-	}
-
-
-	/// @brief compare given files, return true if files are equal, false otherwise
-		bool compareFileEQ(const char *file1, const char *file2)
-	{
-		using std::string;
-		std::ifstream hFile1(file1);
-		std::ifstream hFile2(file2);
-
-		if( !hFile1.good() ) return false;
-		if( !hFile2.good() ) return false;
-
-		std::string line1, line2;
-		while( getline(hFile1, line1) ) {
-			if( getline(hFile2, line2) ) {
-				if( line1 != line2 ) {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}
-		if( getline(hFile2, line2) ) {
-			return false;
-		}
-		return true;
 	}
 
 };

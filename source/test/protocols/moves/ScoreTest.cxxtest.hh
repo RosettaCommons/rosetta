@@ -80,8 +80,7 @@ public:
 		std::cout << "Start All Scoring tests" << "\n";
 		//core_init_with_additional_options( "-score:weights score12 -out:output -restore_pre_talaris_2013_behaviorr" );
 		one_mover_test(__FILE__, __LINE__, protocols::moves::MoverOP( new protocols::simple_moves::ScoreMover ),
-			"protocols/moves/test_in.pdb", "protocols/moves/score12.pdb",
-			0, "protocols/moves/score12.u", "protocols");
+			"protocols/moves/test_in.pdb", "protocols/moves/score12.pdb", 0);
 		//std::cout << "End Scoring -score:patch score12 test" << "\n";
 		//std::cout << "End Scoring tests" << "\n";
 		core_init_with_additional_options( "" );

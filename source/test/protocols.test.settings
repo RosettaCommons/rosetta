@@ -886,7 +886,6 @@ testinputfiles = [
 	"moves/fullatom_typeset.test_in_short.pdb",
 	"moves/kinematic_closure/VicinitySamplingKinematicPerturber.u",
 	"moves/score12.pdb",
-	"moves/score12.u",
 	"moves/shearmoves_out.pdb",
 	"moves/smallmoves_out.pdb",
 	"moves/test_in.pdb",

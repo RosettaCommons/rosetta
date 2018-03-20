@@ -206,7 +206,7 @@ inline bool isEq(std::string const & s1, std::string const & s2,
 
 		if( I1.type == _IT_String_ ) {
 			if( I1.str != I2.str ) {
-				error_message = I1.str + " != " + I2.str;
+				error_message = "`" + I1.str + "` != `" + I2.str + "`";
 				return false;
 			}
 			j++;  continue;

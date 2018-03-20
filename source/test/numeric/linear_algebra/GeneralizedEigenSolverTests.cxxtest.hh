@@ -226,26 +226,28 @@ public:
 
 		// These eigenvectors have been manually checked.
 		// See the comments in the 2x2 tests.
+		//
+		// The epsilon used here (1e-6) is less stringent because of release-mode tests
 
-		check_eigenvector(solver, 0, 1e-8,
+		check_eigenvector(solver, 0, 1e-6,
 			-0.08639801,  0.36148133,
 			0.43085111,  0.10570383,
 			0.35560457,  0.09872071,
 			-0.54925363, -0.47663478);
 
-		check_eigenvector(solver, 1, 1e-8,
+		check_eigenvector(solver, 1, 1e-6,
 			-0.08639801, -0.36148133,
 			0.43085111, -0.10570383,
 			0.35560457, -0.09872071,
 			-0.54925363,  0.47663478);
 
-		check_eigenvector(solver, 2, 1e-8,
+		check_eigenvector(solver, 2, 1e-6,
 			0.41530214, -0.22931348,
 			-0.25794209, -0.16537696,
 			0.51372334, -0.12748241,
 			-0.63037770, -0.05929858);
 
-		check_eigenvector(solver, 3, 1e-8,
+		check_eigenvector(solver, 3, 1e-6,
 			0.41530214,  0.22931348,
 			-0.25794209,  0.16537696,
 			0.51372334,  0.12748241,

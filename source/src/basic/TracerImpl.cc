@@ -112,12 +112,6 @@ otstreamOP &TracerImpl::ios_hook()
 	return hook;
 }
 
-bool &TracerImpl::ios_hook_raw_()
-{
-	static bool raw = true;
-	return raw;
-}
-
 utility::vector1< std::string > &
 TracerImpl::monitoring_list_()
 {
@@ -582,33 +576,29 @@ void TracerImpl::t_flush(std::string const &str)
 #ifdef MULTI_THREADED
 	std::lock_guard< std::mutex > lock( tracer_static_data_mutex() );
 #endif
-	bool use_ios_hook = ios_hook() && ios_hook().get()!=this;
-	use_ios_hook = use_ios_hook && ( in(monitoring_list_(), channel_, false) || in(monitoring_list_(), get_all_channels_string(), true ) );
-	use_ios_hook = use_ios_hook && ( ios_hook_raw_() || visible() );
 
-	if ( use_ios_hook ) {
-		prepend_channel_name<otstream>( *ios_hook(), str );
-		ios_hook()->flush();
-	}
+	if ( visible() ) {
 
-	if ( !super_mute_() && visible() ) {
-		prepend_channel_name<std::ostream>( *final_stream(), str );
+		bool use_ios_hook = ios_hook() && ios_hook().get()!=this;
+		use_ios_hook = use_ios_hook && ( in(monitoring_list_(), channel_, false) || in(monitoring_list_(), get_all_channels_string(), true ) );
+
+		if ( use_ios_hook ) {
+			prepend_channel_name<otstream>( *ios_hook(), str );
+			ios_hook()->flush();
+		}
+
+		if ( !super_mute_() ) {
+			prepend_channel_name<std::ostream>( *final_stream(), str );
+		}
 	}
 }
 
 /// @details Set OStringStream object to which all Tracers output
-/// listed in the monitoring_channels_list should be copied.  Note
-/// this copies the output of channels even if they are invisible or
-/// muted.
+/// listed in the monitoring_channels_list should be copied.
 ///
-/// When raw==false same as above above but gives the option get only the
-/// visible and unmuted tracers.  It can be useful to get the raw
-/// output for applications like the comparing tracers, where the
-/// output should not change with command line parameters.  It can be
-/// useful to get the non-raw output in applications like using the
-/// jd2 with MPI, where the output each job should match the output if
-/// it was run on a single processor.
-void TracerImpl::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw)
+/// The boolean parameter is left for backward compatibility.
+/// (It used to control the ability to ignore visibility settings.)
+void TracerImpl::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool)
 {
 #ifdef MULTI_THREADED
 	std::lock_guard< std::mutex > lock( tracer_static_data_mutex() );
@@ -618,7 +608,6 @@ void TracerImpl::set_ios_hook(otstreamOP tr, std::string const & monitoring_chan
 	}
 	ios_hook() = tr;
 	monitoring_list_() = utility::split(monitoring_channels_list);
-	ios_hook_raw_() = raw;
 }
 
 } // namespace basic
