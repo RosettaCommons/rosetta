@@ -526,12 +526,18 @@ get_home_dir() {
 		homedir = getenv("HOME");
 	}
 #if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__) || defined(linux) || defined(__linux__) || defined(__linux)
-	if ( ! homedir || strlen(homedir) == 0 ) {
-		passwd const * unix_pwd( getpwuid(getuid()) );
-		if ( unix_pwd ) {
-			homedir = unix_pwd->pw_dir;
+#ifndef BLUEGENECLANG
+	try {
+		if ( ! homedir || strlen(homedir) == 0 ) {
+			passwd const * unix_pwd( getpwuid(getuid()) );
+			if ( unix_pwd ) {
+				homedir = unix_pwd->pw_dir;
+			}
 		}
+	} catch( ... ) {
+		homedir = "";
 	}
+#endif
 #endif
 
 	if ( strlen(homedir) == 0 ) {

@@ -157,6 +157,10 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release_bluegene" )
 			-DNDEBUG
 			#-DDISABLE_SQLITE
 	)
+	#list( APPEND mode
+	#		-g
+	#		-ggdb
+	#)
 endif()
 
 ###########################################################################
@@ -386,6 +390,10 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release_bluegene" )
 			-DBLUEGENECLANG
 			#-DDISABLE_SQLITE
 	)
+	#list( APPEND mode
+	#		-g
+	#		-ggdb
+	#)	
 endif()
 
 ###########################################################################

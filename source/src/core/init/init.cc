@@ -1257,8 +1257,8 @@ check_load_fconfig(){
 	if ( option ( basic::options::OptionKeys::in::no_fconfig).value() ) {
 		return;
 	}
+	std::string const homedir( utility::file::get_home_dir() );
 
-	std::string homedir = utility::file::get_home_dir();
 	utility::vector1< std::string > flags = option( basic::options::OptionKeys::in::fconfig ).value();
 	std::string const db_path( homedir+"/.rosetta/flags/" );
 
@@ -1276,7 +1276,7 @@ check_load_fconfig(){
 		// Local overrides database.
 		if ( utility::file::file_exists( flag ) ) {
 			final_file_path = flag;
-		} else if ( utility::file::file_exists( full_db_path ) ) {
+		} else if (  homedir != ""  && utility::file::file_exists( full_db_path ) ) {
 			final_file_path = full_db_path;
 		} else {
 			continue;
