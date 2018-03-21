@@ -135,7 +135,6 @@ AtomLevelDomainMap::get( core::id::TorsionID const & torsion_id, core::conformat
 			|| ( get_domain( id4 ) == FIXED_DOMAIN && get_domain( id1 ) != 0 ) ) return false;
 
 	return true;
-
 }
 
 //////////////////////////////////////////////////////////////////
@@ -343,13 +342,10 @@ AtomLevelDomainMap::calculate_atom_id_domain_map( core::pose::Pose const & pose 
 	std::map< core::id::AtomID, Size > calculated_atom_id_domain_map;
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
-
 		for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
 
 			AtomID const atom_id( j, i );
-
 			calculated_atom_id_domain_map[ atom_id ] = get_domain( atom_id );
-
 		}
 	}
 
@@ -371,21 +367,21 @@ AtomLevelDomainMap::setup_movemap( core::kinematics::MoveMap & mm,
 	mm.set_chi( false );
 	mm.set_jump( false );
 
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( Size ii = 1; ii <= pose.size(); ii++ ) {
 
 		utility::vector1< TorsionID > torsion_ids;
-		for ( Size torsion_number = 1; torsion_number <= pose.residue( i ).mainchain_torsions().size(); torsion_number++ ) {
+		for ( Size torsion_number = 1; torsion_number <= pose.residue( ii ).mainchain_torsions().size(); torsion_number++ ) {
 			if ( check_for_vrt_phos ) {
-				if ( pose.residue( i ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) &&
+				if ( pose.residue( ii ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) &&
 						( torsion_number==1 || torsion_number==2 || torsion_number==3 ) ) {
 					//  std::cout << "VRT PHOS AT " << i << " " << torsion_number << std::endl;
 					continue;
 				}
 			}
-			torsion_ids.push_back( TorsionID( i, id::BB, torsion_number ) );
+			torsion_ids.emplace_back( ii, id::BB, torsion_number );
 		}
-		for ( Size torsion_number = 1; torsion_number <= pose.residue_type( i ).nchi(); torsion_number++ ) {
-			torsion_ids.push_back( TorsionID( i, id::CHI, torsion_number ) );
+		for ( Size torsion_number = 1; torsion_number <= pose.residue_type( ii ).nchi(); torsion_number++ ) {
+			torsion_ids.emplace_back( ii, id::CHI, torsion_number );
 		}
 
 		for ( TorsionID const & torsion_id : torsion_ids ) {

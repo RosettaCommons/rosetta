@@ -70,7 +70,7 @@ recces_pose_setup( options::RECCES_Options const & options )
 	// Obtains base pairs and constraints from pose
 	if ( options.setup_base_pair_constraints() ) {
 		utility::vector1< std::pair< Size, Size > > pairings( options.rna_secstruct().base_pairs() ); // could be user-specified.
-		if ( pairings.size() == 0 ) core::pose::rna::get_base_pairing_list( *pose, pairings ); // infer from pose
+		if ( pairings.empty() ) core::pose::rna::get_base_pairing_list( *pose, pairings ); // infer from pose
 		core::pose::rna::setup_base_pair_constraints( *pose, pairings, 1.0 /*scale_factor*/, true /*use_flat_harmonic*/ );
 	}
 

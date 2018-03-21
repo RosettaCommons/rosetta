@@ -390,39 +390,38 @@ StepWiseMinimizer::check_pose_list( core::pose::Pose const & pose ){
 // could probably deprecate soon along with swa_rna_main and swa_protein_main.
 void
 StepWiseMinimizer::output_minimized_pose_list() const{
-	if ( options_->output_minimized_pose_list() ) {
-		if ( options_->rna_legacy_output_mode() ) {
-			// copied from StepWiseRNA_VirtualSugarSamplerFromStringList -- trying to be consistent with that crazy old thing.
-			//    output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
-			for ( Size n = 1; n <= pose_list_.size(); n++ ) {
-				Pose & pose = ( *pose_list_[n] ); //set viewer_pose;
-				std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
-				stepwise::modeler::rna::output_data( options_->silent_file(),
-					tag,
-					false /* write score only*/,
-					pose,
-					get_native_pose(),
-					working_parameters_,
-					true /*NAT_rmsd*/  );
-			}
-		} else if ( !protein::contains_protein( *pose_list_[1] ) ) {
-			for ( Size n = 1; n <= pose_list_.size(); n++ ) {
-				Pose & pose = ( *pose_list_[n] ); //set viewer_pose;
-				std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
-				stepwise::monte_carlo::output_to_silent_file( tag,
-					options_->silent_file(),
-					pose,
-					get_native_pose(),
-					false /*superimpose_over_all*/,
-					true /*rms_fill*/ );
-			}
-		} else { // well its protein legacy output mode then...
-			stepwise::legacy::modeler::protein::output_pose_list( pose_list_,
+	if ( !options_->output_minimized_pose_list() ) return;
+	if ( options_->rna_legacy_output_mode() ) {
+		
+		// copied from StepWiseRNA_VirtualSugarSamplerFromStringList -- trying to be consistent with that crazy old thing.
+		//    output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
+		for ( Size n = 1; n <= pose_list_.size(); n++ ) {
+			Pose & pose = ( *pose_list_[n] ); //set viewer_pose;
+			std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
+			stepwise::modeler::rna::output_data( options_->silent_file(),
+				tag,
+				false /* write score only*/,
+				pose,
 				get_native_pose(),
-				options_->silent_file(),
-				working_calc_rms_res_  );
-
+				working_parameters_,
+				true /*NAT_rmsd*/  );
 		}
+	} else if ( !protein::contains_protein( *pose_list_[1] ) ) {
+		for ( Size n = 1; n <= pose_list_.size(); n++ ) {
+			Pose & pose = ( *pose_list_[n] ); //set viewer_pose;
+			std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
+			stepwise::monte_carlo::output_to_silent_file( tag,
+				options_->silent_file(),
+				pose,
+				get_native_pose(),
+				false /*superimpose_over_all*/,
+				true /*rms_fill*/ );
+		}
+	} else { // well its protein legacy output mode then...
+		stepwise::legacy::modeler::protein::output_pose_list( pose_list_,
+			get_native_pose(),
+			options_->silent_file(),
+			working_calc_rms_res_  );
 	}
 }
 

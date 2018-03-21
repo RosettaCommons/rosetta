@@ -131,6 +131,9 @@ private:
 		bool const is_l_aa
 	);
 
+	bool lower_terminus_is_occupied_according_to_link_map( std::string const & resid );
+	bool upper_terminus_is_occupied_according_to_link_map( std::string const & resid );
+
 	void convert_nucleic_acid_residue_info_to_standard();
 
 	Size prev_residue_skipping_merges( Size resid ) const;

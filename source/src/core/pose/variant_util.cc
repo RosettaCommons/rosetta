@@ -381,7 +381,7 @@ correctly_add_cutpoint_variants(
 
 	// Update positions of virtual atoms:
 	if ( !pose.residue( cutpoint_res ).is_RNA() ) update_cutpoint_virtual_atoms_if_connected( pose, cutpoint_res, false );
-	if ( !pose.residue( next_res     ).is_RNA() ) update_cutpoint_virtual_atoms_if_connected( pose, next_res, false );
+	if ( !pose.residue( next_res  ).is_RNA() ) update_cutpoint_virtual_atoms_if_connected( pose, next_res, false );
 }
 
 /// @brief Remove variant types incompatible with CUTPOINT_LOWER from a position in a pose.
@@ -475,7 +475,6 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 		// can happen after deletions
 		remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, res );
 
-		// proteins...
 		if ( pose.residue_type( res ).is_protein() ) {
 			if ( res_list[ res ] < full_model_info.size() &&
 					chains_full[ res_list[ res ] + 1 ] == chains_full[ res_list[ res ] ] &&
@@ -487,9 +486,7 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 				add_variant_type_to_pose_residue( pose, UPPER_TERMINUS_VARIANT, res );
 			}
 		}
-
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -507,13 +504,12 @@ fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const 
 	// Could this be a chainbreak (cutpoint_closed )?
 
 	TR.Debug << "checking for cutpoint after prepend: " << res << " " << res_list[ res ] << " " << cutpoint_open_in_full_model.size() << std::endl;
-
 	if ( res > 1 &&
 			res_list[ res ] - 1 == res_list[ res - 1 ] &&
 			! cutpoint_open_in_full_model.has_value( res_list[ res - 1 ])  ) {
 
 		if ( pose.residue_type( res - 1 ).has_variant_type( CUTPOINT_LOWER ) &&
-				pose.residue_type( res     ).has_variant_type( CUTPOINT_UPPER ) ) return;
+				pose.residue_type( res  ).has_variant_type( CUTPOINT_UPPER ) ) return;
 
 		// can happen after additions
 		core::pose::correctly_add_cutpoint_variants( pose, res - 1 );
@@ -526,7 +522,6 @@ fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const 
 
 		// can happen after deletions
 		remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, res );
-
 		// proteins...
 		if ( pose.residue_type( res ).is_protein() ) {
 			if ( res_list[ res ] > 1 &&
@@ -579,7 +574,7 @@ fix_up_residue_type_variants_at_floating_base( pose::Pose & pose, Size const res
 
 ////////////////////////////////////////////////////////////////////
 void
-update_block_stack_variants( pose::Pose & pose, Size const & n ) {
+update_block_stack_variants( pose::Pose & pose, Size const n ) {
 	using namespace core::chemical;
 	using namespace core::pose::full_model_info;
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
@@ -603,13 +598,12 @@ update_block_stack_variants( pose::Pose & pose, Size const & n ) {
 ////////////////////////////////////////////////////////////////////
 void
 fix_up_residue_type_variants(
-#ifndef GL_GRAPHICS
-	pose::Pose & pose
+#ifdef GL_GRAPHICS
+	pose::Pose & pose_to_fix
 #else
-	pose::Pose & pose_to_fix 
+	pose::Pose & pose
 #endif
 ) {
-
 	using namespace core::chemical;
 	using namespace core::pose::full_model_info;
 #ifdef GL_GRAPHICS
@@ -650,6 +644,25 @@ fix_up_residue_type_variants(
 		update_block_stack_variants( pose, n );
 	}
 
+	// Form disulfides between any residues that both exist.
+	utility::vector1< std::pair< Size, Size > > target_disulfides = const_full_model_info( pose ).disulfide_pairs();
+	for ( auto const & elem : target_disulfides ) {
+		if ( res_list.contains( elem.first ) && res_list.contains( elem.second ) ) {
+			Size res1 = res_list.index( elem.first ); // const_full_model_info( pose ).full_model_parameters()->conventional_to_full( elem.first );
+			Size res2 = res_list.index( elem.second ); // const_full_model_info( pose ).full_model_parameters()->conventional_to_full( elem.second );
+			core::conformation::form_disulfide( pose.conformation(), res1, res2, true, false );
+		}
+		// Break disulfides between any residues only one or neither of which exist!
+		// We don't do this using the conformation utility method... we need merely
+		// to update variants on one. (Connections already nuked.)
+		if ( !res_list.contains( elem.first ) && res_list.contains( elem.second ) ) {
+			remove_variant_type_from_pose_residue( pose, chemical::DISULFIDE, res_list.index( elem.second ) );
+		}
+		if ( !res_list.contains( elem.second ) && res_list.contains( elem.first ) ) {
+			remove_variant_type_from_pose_residue( pose, chemical::DISULFIDE, res_list.index( elem.first ) );
+		}
+	}
+
 	for ( auto const & cyclize_pair : full_model_info.cyclize_res() ) {
 		Size const first = cyclize_pair.first;
 		Size const second = cyclize_pair.second;
@@ -673,13 +686,14 @@ fix_up_residue_type_variants(
 		}
 	}
 
-#ifdef GL_GRAPHICS
 	// Just copying the conformation() makes sure that other objects (such as other_pose_list) don't get cloned --
 	//  can be important if external functions are holding OPs to those objects.
+#ifdef GL_GRAPHICS
 	pose_to_fix.conformation() = pose.conformation();
 	pose_to_fix.pdb_info( pose.pdb_info() ); // silly -- ensures that PDBInfo is not flagged as 'obsolete'.
 #endif
 }
+
 
 } // pose
 } // core

@@ -997,7 +997,6 @@ residue_types/terpenes/isoprene.params
 
 ## Terminal types
 residue_types/terminal/ACE.params
-residue_types/terminal/ACY.params
 residue_types/terminal/NME.params
 residue_types/terminal/BZO.params
 residue_types/terminal/BZA.params

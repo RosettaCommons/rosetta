@@ -414,8 +414,8 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		bool const check_Ctermini_for_this_chain = determine_check_Ctermini_for_this_chain( chainID );
 
 		bool is_lower_terminus( ( ii == 1 || rinfos_.empty() || ! same_chain_prev  )
-			&& check_Ntermini_for_this_chain );
-		bool is_upper_terminus( ( ii == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain );
+			&& check_Ntermini_for_this_chain && ! lower_terminus_is_occupied_according_to_link_map( resid ) );
+		bool is_upper_terminus( ( ii == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain  && ! upper_terminus_is_occupied_according_to_link_map( resid ) );
 
 		// Determine if this residue is a D-AA residue, an L-AA residue, or neither.
 		StructFileRep::ResidueCoords const & xyz = rinfo.xyz();
@@ -525,6 +525,57 @@ void PoseFromSFRBuilder::pass_3_verify_sufficient_backbone_atoms()
 			}
 		}
 	}
+}
+
+bool PoseFromSFRBuilder::lower_terminus_is_occupied_according_to_link_map( std::string const & resid ) {
+
+	if ( sfr_.link_map().count( resid ) ) {  // if found in the linkage map
+		// The link map is keyed by resID of each branch point.
+		Size const n_branches( sfr_.link_map()[ resid ].size() );
+		for ( uint branch( 1 ); branch <= n_branches; ++branch ) {
+			LinkInformation const & link_info( sfr_.link_map()[ resid ][ branch ] );
+
+			// AMW Might want to filter for protein residue types here...
+			if ( link_info.name1 == " N  " || link_info.name1 == " P  " ) {
+				return true;
+			}
+		}
+	}
+
+	for ( auto const & elem : sfr_.link_map() ) {
+		for ( LinkInformation const & link_info : elem.second ) {
+			if ( resid == link_info.resID2 && ( link_info.name2 == " N  " || link_info.name2 == " P  " ) ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool PoseFromSFRBuilder::upper_terminus_is_occupied_according_to_link_map( std::string const & resid ) {
+	if ( sfr_.link_map().count( resid ) ) {  // if found in the linkage map
+		// The link map is keyed by resID of each branch point.
+		Size const n_branches( sfr_.link_map()[ resid ].size() );
+		for ( uint branch( 1 ); branch <= n_branches; ++branch ) {
+			LinkInformation const & link_info( sfr_.link_map()[ resid ][ branch ] );
+
+			// AMW Might want to filter for protein residue types here...
+			if ( link_info.name1 == " C  " || link_info.name1 == " O3'" ) {
+				return true;
+			}
+		}
+	}
+
+	for ( auto const & elem : sfr_.link_map() ) {
+		for ( LinkInformation const & link_info : elem.second ) {
+			if ( resid == link_info.resID2 && ( link_info.name2 == " C  " || link_info.name2 == " O3'" ) ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 /// @details Now take another pass over the residue types and for those residues that are now
@@ -675,7 +726,7 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 		TR.Trace << "...new residue is a polymer: " << ii_rsd->type().is_polymer() << std::endl;
 		if ( old_nres >= 1 ) {
-			TR.Trace << "...old residue is a polymer: " << pose.residue_type(old_nres).is_polymer() << std::endl;
+			TR.Trace << "...old residue is a polymer: " << pose.residue_type( old_nres ).is_polymer() << std::endl;
 		}
 
 		// Add the first new residue to the pose.
@@ -695,7 +746,6 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 				! last_residue_was_recognized( ii ) ) {
 			// A new chain because this is a lower terminus (see logic above for designation)
 			// and if we're not checking it then it's a different chain from the previous
-
 			core::Size root_index = 1;
 			// connect metal ions by a jump to the closest metal-binding residue that is lower in sequence.
 			if ( ii_rsd->is_metal() && basic::options::option[basic::options::OptionKeys::in::auto_setup_metals] ) {
@@ -1023,7 +1073,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 
 	if ( options_.pdb_comments() ) {
 		std::map< std::string, std::string > const & pdb_comments( sfr_.pdb_comments() );
-		for ( const auto & pdb_comment : pdb_comments ) {
+		for ( auto const & pdb_comment : pdb_comments ) {
 			core::pose::add_comment( pose, pdb_comment.first, pdb_comment.second );
 		}
 	}
@@ -1314,6 +1364,12 @@ PoseFromSFRBuilder::get_rsd_type(
 	bool const is_d_aa,
 	bool const is_l_aa )
 {
+	// AMW: Just changed so that protein residue types don't get patched for
+	// links to their polymer main chain (i.e., deprecates the weird 'neutral'
+	// patches that would make residues think they had no 'upper' but DID have a
+	// connection to C -- by the way, this should eventually make us not need to
+	// delete LINK records for NCAA main-chains...)
+
 	// you can be neither but not both
 	debug_assert( ! ( is_d_aa && is_l_aa ) );
 

@@ -1370,8 +1370,7 @@ revise_root_and_moving_res_list( pose::Pose & pose,
 
 	// find connection point to 'fixed res'
 	Size moving_res_at_connection( 0 ), reference_res( 0 );
-	for ( Size n = 1; n <= moving_res_list.size(); n++ ) {
-		Size const & moving_res = moving_res_list[n];
+	for ( Size const moving_res : moving_res_list ) {
 		Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
 		if ( moving_res_list.has_value( parent_res ) ) continue;
 		runtime_assert( moving_res_at_connection == 0 ); // moving_res_list must be contiguous in fold tree.
@@ -1520,8 +1519,7 @@ get_domain_boundary_res( pose::Pose const & pose ){
 	utility::vector1< core::Size > domain_boundary_suites = get_domain_boundary_suites( pose );
 
 	utility::vector1< core::Size > domain_boundary_res;
-	for ( Size n = 1; n <= domain_boundary_suites.size(); n++ ) {
-		Size const & i = domain_boundary_suites[ n ];
+	for ( Size const i : domain_boundary_suites ) {
 		if ( pose.fold_tree().get_parent_residue( i ) == i + 1 ) {
 			domain_boundary_res.push_back( i );
 		} else {

@@ -273,7 +273,7 @@ AddMover::do_append( core::pose::Pose & pose ){
 
 ////////////////////////////////////////////////////////////////////////
 void
-AddMover::do_prepend( core::pose::Pose & pose ){
+AddMover::do_prepend( core::pose::Pose & pose ) {
 
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	runtime_assert( res_to_add_in_full_model_numbering_ < res_to_build_off_in_full_model_numbering_ );
@@ -332,7 +332,7 @@ AddMover::prepend_other_pose( pose::Pose & pose, Size const offset,
 
 ////////////////////////////////////////////////////////////////////////
 void
-AddMover::append_residue( pose::Pose & pose, Size const offset ){
+AddMover::append_residue( pose::Pose & pose, Size const offset ) {
 
 	using namespace core::chemical;
 	using namespace core::chemical::rna;
@@ -420,7 +420,8 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 		remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE,res_to_build_off ); // got to be safe.
 		remove_variant_type_from_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, res_to_build_off ); // got to be safe.
 		remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT,   res_to_build_off ); // got to be safe.
-		remove_variant_type_from_pose_residue( pose, core::chemical::N_ACETYLATION,res_to_build_off ); // got to be safe.
+		remove_variant_type_from_pose_residue( pose, core::chemical::N_ACETYLATION,        res_to_build_off ); // got to be safe.
+
 		pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
 		suite_num_ = res_to_add;
 	} else {
@@ -554,8 +555,7 @@ AddMover::get_add_res( StepWiseMove const & swa_move, pose::Pose const & pose ) 
 	runtime_assert( res_list.has_value( attached_res ) );
 
 	MoveElement const & move_element = swa_move.move_element();
-	for ( Size n = 1; n <= move_element.size(); n++ ) {
-		Size const i = move_element[ n ];
+	for ( Size const i : move_element ) {
 		runtime_assert(  !res_list.has_value( i ) );
 	}
 

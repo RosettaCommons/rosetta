@@ -141,6 +141,9 @@ CyclizationMover::setup_connections( core::pose::Pose & pose )
 	runtime_assert( pose.residue( nterm_rsd_num_ ).type().is_protein() || pose.residue( nterm_rsd_num_ ).type().is_peptoid() );
 	runtime_assert( pose.residue( cterm_rsd_num_ ).type().is_protein() || pose.residue( cterm_rsd_num_ ).type().is_peptoid() );
 
+	// AMW: as of now, we don't need to add special patches for cyclization!
+	// The actual upper and lower connects can be used.
+	
 	// get types name for N-terminus and C-terminus (manipulating strings like this is a little hacky)
 	std::string nterm_connect_type_name(
 		pose.residue_type( nterm_rsd_num_ ).is_peptoid() ?
@@ -152,8 +155,8 @@ CyclizationMover::setup_connections( core::pose::Pose & pose )
 	);
 
 	// remove spaces if the name3 really only has 2 letters, Damn it Tim!
-	nterm_connect_type_name.erase( std::remove( nterm_connect_type_name.begin(), nterm_connect_type_name.end(), ' ' ), nterm_connect_type_name.end() );
-	cterm_connect_type_name.erase( std::remove( cterm_connect_type_name.begin(), cterm_connect_type_name.end(), ' ' ), cterm_connect_type_name.end() );
+	//nterm_connect_type_name.erase( std::remove( nterm_connect_type_name.begin(), nterm_connect_type_name.end(), ' ' ), nterm_connect_type_name.end() );
+	//cterm_connect_type_name.erase( std::remove( cterm_connect_type_name.begin(), cterm_connect_type_name.end(), ' ' ), cterm_connect_type_name.end() );
 
 	// get CtermConnect and NtermConnect variant types
 	ResidueTypeSetCOP rsd_type_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );

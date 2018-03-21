@@ -207,7 +207,7 @@ RECCES_Mover::initialize() {
 
 	weights_.clear();
 	utility::vector1< Real > const & orig_weights( options_->st_weights() );
-	if ( ( num_temperatures != orig_weights.size() ) && ( orig_weights.size() == 0 || orig_weights[1] != 0 ) ) weights_.push_back( 0 );
+	if ( ( num_temperatures != orig_weights.size() ) && ( orig_weights.empty() || orig_weights[1] != 0 ) ) weights_.push_back( 0 );
 	weights_.append( orig_weights );
 	runtime_assert( num_temperatures == weights_.size() );
 
@@ -260,7 +260,7 @@ RECCES_Mover::output_pdb_name( std::string const & tag ) const {
 	if ( options_->prefix_each_output_pdb() ) {
 		return ( options_->out_prefix() + "_" + tag + ".pdb" );
 	}
-	return (tag + ".pdb" );
+	return ( tag + ".pdb" );
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -407,23 +407,22 @@ RECCES_Mover::prepare_output_torsion_ids()
 	// REPLACE this with sampler.find(), looking over all torsions!
 	utility::vector1< Size > const & residues( options_->sample_residues() );
 	bb_torsion_ids_.clear();
-	bb_torsion_ids_.push_back( TorsionID( residues[1]-1, id::BB, EPSILON ) );
-	bb_torsion_ids_.push_back( TorsionID( residues[1]-1, id::BB, ZETA ) );
-	for ( Size i = 1; i <= residues.size(); ++i ) {
-		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, ALPHA) );
-		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, BETA) );
-		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, GAMMA) );
-		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, EPSILON) );
-		bb_torsion_ids_.push_back( TorsionID( residues[i], id::BB, ZETA) );
+	bb_torsion_ids_.emplace_back( residues[1]-1, id::BB, EPSILON );
+	bb_torsion_ids_.emplace_back( residues[1]-1, id::BB, ZETA );
+	for ( Size const residue : residues ) {
+		bb_torsion_ids_.emplace_back( residue, id::BB, ALPHA );
+		bb_torsion_ids_.emplace_back( residue, id::BB, BETA );
+		bb_torsion_ids_.emplace_back( residue, id::BB, GAMMA );
+		bb_torsion_ids_.emplace_back( residue, id::BB, EPSILON );
+		bb_torsion_ids_.emplace_back( residue, id::BB, ZETA );
 	}
-	bb_torsion_ids_.push_back( TorsionID( residues.back()+1, id::BB, ALPHA ) );
-	bb_torsion_ids_.push_back( TorsionID( residues.back()+1, id::BB, BETA ) );
-	bb_torsion_ids_.push_back( TorsionID( residues.back()+1, id::BB, GAMMA ) );
+	bb_torsion_ids_.emplace_back( residues.back()+1, id::BB, ALPHA );
+	bb_torsion_ids_.emplace_back( residues.back()+1, id::BB, BETA );
+	bb_torsion_ids_.emplace_back( residues.back()+1, id::BB, GAMMA );
 
 	chi_torsion_ids_.clear();
-	for ( Size i = 1; i<= residues.size(); ++i ) {
-		TorsionID chi_ID (TorsionID( residues[i] , id::CHI, 1));
-		chi_torsion_ids_.push_back( chi_ID );
+	for ( Size const residue : residues ) {
+		chi_torsion_ids_.emplace_back( residue , id::CHI, 1 );
 	}
 
 	std::stringstream name, name2;
