@@ -316,14 +316,14 @@ EXAMPLES For Running Demos/Tutorials
     #Print the current SHA1 for demos, main, and tools.
 
     print("\nCurrent Versions Tested:")
-    print("MAIN:  " + get_git_sha1(Options.mini_home).decode('utf-8', errors="replace"))
+    print("MAIN:  " + get_git_sha1(Options.mini_home))
     if get_git_sha1(Options.mini_home) != get_git_sha1(Options.database):
         print("\n====== WARNING WARNING WARNING ========")
         print("\t Rosetta database version doesn't match source version!")
-        print("\t DATABASE: " + get_git_sha1(Options.database).decode('utf-8', errors="replace"))
+        print("\t DATABASE: " + get_git_sha1(Options.database))
         print("====== WARNING WARNING WARNING ========\n")
-    print("TOOLS: " + get_git_sha1(root_tools_dir).decode('utf-8', errors="replace"))
-    print("DEMOS: " + get_git_sha1(root_demos_dir).decode('utf-8', errors="replace"))
+    print("TOOLS: " + get_git_sha1(root_tools_dir))
+    print("DEMOS: " + get_git_sha1(root_demos_dir))
     print("\n")
 
     #All tests are in a subdirectory.  We set these up here.
@@ -511,7 +511,7 @@ EXAMPLES For Running Demos/Tutorials
 
             if options.yaml:
                 try:
-                  data = dict(total=len(tests), failed=errors, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
+                  data = dict(total=len(tests), failed=errors, details=results, brief=makeBriefResults(full_log).decode('utf8', 'backslashreplace'))
                   with open(options.yaml, 'w') as f:
                       json.dump(data, f, sort_keys=True, indent=2)
                   '''
@@ -763,7 +763,9 @@ def get_git_sha1(dir):
     if not os.path.exists(dir):
         return "<<Directory '{dir}' not found.>>".format(dir=dir)
     cmd = "cd {dir}; git rev-parse HEAD; cd {workdir}".format(dir=dir, workdir=os.getcwd())
-    return subprocess.check_output(cmd, shell=True).strip()
+    # Let's return as a string, which means that for python2 we must decode here?
+    bytes_sha = subprocess.check_output(cmd, shell=True)
+    return bytes_sha.decode('utf-8', errors="backslashreplace").strip()
 
 #
 # Order tests based on decreasing expected runtime. Unknown tests get run first.
@@ -817,8 +819,8 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         output = ''
         for line in f:
             #po.poll()
-            if print_output: print(line.decode('utf-8', errors="replace"), end='')
-            output += line.decode('utf-8', errors="replace")
+            if print_output: print(line.decode('utf-8', errors="backslashreplace"), end='')
+            output += line.decode('utf-8', errors="backslashreplace")
             sys.stdout.flush()
         f.close()
         while po.returncode is None: po.wait()

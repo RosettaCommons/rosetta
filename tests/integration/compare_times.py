@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import json
 from math import isnan, isinf
 from sys import exit
@@ -10,25 +11,25 @@ def load_files():
     try:
             new = json.load(  open('new/runtimes.yaml') )
     except:
-            print 'Missing new/runtimes.yaml'
+            print('Missing new/runtimes.yaml')
     ref=None
     try:
             ref = json.load( open('ref/runtimes.yaml') )
     except:
-            print 'Missing new/runtimes.yaml'
+            print('Missing new/runtimes.yaml')
     return new, ref
 
 
 def write_and_print(file_, string, verbose):
     file_.write(string)
-    if verbose: print string
+    if verbose: print(string)
 
 
 def compare_times(verbose=True):
     new, ref = load_files()
 
     if not (new and ref):
-        if verbose: print 'No previous results found, skipping time comparison...'
+        if verbose: print('No previous results found, skipping time comparison...')
         return
 
     runtimes_compare = open('runtime_diffs.txt', 'w')
@@ -38,7 +39,7 @@ def compare_times(verbose=True):
     diffs=[]
     new_values=[]
     ref_values=[]
-    for key in set(new.keys() + ref.keys()):
+    for key in set(list(new.keys()) + list(ref.keys())):
         if key in new and key in ref:
             n = new[key]
             r = ref[key]
