@@ -27,6 +27,7 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <boost/format.hpp>
 
 // C++ headers
@@ -93,6 +94,8 @@ void TrajectoryLogger::record_move(
 	bool const proposed,
 	bool const accepted) const {
 
+	using namespace basic::options;
+
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "Propose move:         ";
 		tr.Trace << boost::format("iteration: %d,%d,%d; ") % i % j % k;
@@ -102,7 +105,9 @@ void TrajectoryLogger::record_move(
 		if ( have_native_pose_ ) {
 			tr.Trace << boost::format(u8"RMSD: %.3f Å; ") % calc_rmsd_to_native(pose);
 		}
-		tr.Trace << boost::format("time: %d s; ") % get_timer();
+		if ( ! option[ OptionKeys::run::no_prof_info_in_silentout ] ) {
+			tr.Trace << boost::format("time: %d s; ") % get_timer();
+		}
 		tr.Trace << endl;
 	}
 }
@@ -114,6 +119,8 @@ void TrajectoryLogger::record_move(
 	bool const proposed,
 	bool const accepted) const {
 
+	using namespace basic::options;
+
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "Propose move:         ";
 		tr.Trace << boost::format("iteration: %d; ") % i;
@@ -123,7 +130,9 @@ void TrajectoryLogger::record_move(
 		if ( have_native_pose_ ) {
 			tr.Trace << boost::format(u8"RMSD: %.3f Å; ") % calc_rmsd_to_native(pose);
 		}
-		tr.Trace << boost::format("time: %d s; ") % get_timer();
+		if ( ! option[ OptionKeys::run::no_prof_info_in_silentout ] ) {
+			tr.Trace << boost::format("time: %d s; ") % get_timer();
+		}
 		tr.Trace << endl;
 	}
 }
@@ -171,6 +180,7 @@ void TrajectoryLogger::record_endpoint(
 	basic::Tracer & tr,
 	Pose & pose) const {
 
+	using namespace basic::options;
 	using core::scoring::chainbreak;
 	using core::pose::setPoseExtraScore;
 	using protocols::simple_filters::BuriedUnsatHbondFilter;
@@ -220,9 +230,11 @@ void TrajectoryLogger::record_endpoint(
 
 	// Report how much time passed.
 
-	long elapsed_time = get_timer();
-	tr.Info << boost::format("Elapsed Time: %d sec") % elapsed_time << endl;
-	setPoseExtraScore(pose, prefix_ + "time", elapsed_time);
+	if ( ! option[ OptionKeys::run::no_prof_info_in_silentout ] ) {
+		long elapsed_time = get_timer();
+		tr.Info << boost::format("Elapsed Time: %d sec") % elapsed_time << endl;
+		setPoseExtraScore(pose, prefix_ + "time", elapsed_time);
+	}
 }
 
 Real TrajectoryLogger::calc_score(Pose & pose) const {
