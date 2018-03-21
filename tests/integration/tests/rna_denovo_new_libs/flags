@@ -1,0 +1,15 @@
+-native chunk002_1lnt_RNA.pdb
+-sequence ucagguaagcag
+-secstruct "(....()....)"
+-cutpoint_open 6
+-out:nstruct 1
+-out:file:silent chunk002_1lnt.out
+-cycles 1000
+-minimize_rna
+-filter_lores_base_pairs
+-output_lores_silent_file
+-dump
+-mute core.io.database
+-vary_geometry
+-vall_torsions RNA18_HUB_2.154_2.5.torsions
+-jump_library_file RNA18_HUB_2.154_2.5.jump

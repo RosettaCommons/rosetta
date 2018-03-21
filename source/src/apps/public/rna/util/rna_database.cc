@@ -288,105 +288,104 @@ create_bp_jump_database_test( ){
 
 	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
 
+	std::string outfile  = option[ out::file::o ];
+	utility::io::ozstream dataout( outfile );
+
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-	std::string infile  = option[ in::file::s ][1];
-	std::string outfile  = option[ out::file::o ];
+	for ( std::string const & infile : option[ in::file::s ]() ) {
+		//std::string infile  = option[ in::file::s ][1];
 
-	pose::Pose pose;
-	core::import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
-	core::pose::rna::make_phosphate_nomenclature_matches_mini( pose );
+		pose::Pose pose;
+		core::import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
+		core::pose::rna::make_phosphate_nomenclature_matches_mini( pose );
 
-	// core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
+		// core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
-	// Fill base pairing information... these are
-	// all functions used in scoring... see RNA_BaseBaseEnergy.cc
-	ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
-	(*lores_scorefxn)( pose );
-	lores_scorefxn->show( std::cout, pose );
+		// Fill base pairing information... these are
+		// all functions used in scoring... see RNA_BaseBaseEnergy.cc
+		ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
+		(*lores_scorefxn)( pose );
+		lores_scorefxn->show( std::cout, pose );
 
-	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
-	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	EnergyBasePairList scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+		RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
+		RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+		EnergyBasePairList scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
-	utility::io::ozstream dataout( outfile );
+		for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
+				it != scored_base_pair_list.end(); ++it ) {
 
-	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-			it != scored_base_pair_list.end(); ++it ) {
+			BasePair const & base_pair = it->second;
 
-		BasePair const base_pair = it->second;
+			int const i = base_pair.res1();
+			int const k = base_pair.edge1();
 
-		int const i = base_pair.res1();
-		int const k = base_pair.edge1();
-
-		int const j = base_pair.res2();
-		int const m = base_pair.edge2();
-
-		if ( is_num_in_list(i, exclude_res_list) || is_num_in_list(j, exclude_res_list) ) {
-			continue;
-		}
-
-		char const orientation = ( base_pair.orientation() == 1) ? 'A' : 'P';
-
-		char const edge_i = core::chemical::rna::get_edge_from_num( k );
-		char const edge_j = core::chemical::rna::get_edge_from_num( m );
-
-		//Figure out jump.
-		conformation::Residue const & rsd_i( pose.residue( i ) );
-		conformation::Residue const & rsd_j( pose.residue( j ) );
-		kinematics::Stub const stub_i( rsd_i.xyz( rsd_i.chi_atoms(1)[4] ),
-			rsd_i.xyz( rsd_i.chi_atoms(1)[3] ),
-			rsd_i.xyz( rsd_i.chi_atoms(1)[2] ) );
-		kinematics::Stub const stub_j( rsd_j.xyz( rsd_j.chi_atoms(1)[4] ),
-			rsd_j.xyz( rsd_j.chi_atoms(1)[3] ),
-			rsd_j.xyz( rsd_j.chi_atoms(1)[2] ) );
-
-		dataout << "PAIR " <<
-			I(5, i) << ' ' << edge_i << ' ' <<
-			I(5, j) << ' ' << edge_j << "   " <<
-			orientation << "   " <<
-			pose.residue(i).name1() << ' ' << pose.residue(j).name1() << " " <<
-			rsd_i.atom_name( rsd_i.chi_atoms(1)[4] ) <<  " " <<
-			rsd_j.atom_name( rsd_j.chi_atoms(1)[4] ) <<  " " <<
-			kinematics::Jump( stub_i, stub_j) <<
-			std::endl;
-
-	}
-
-	//How about 2' and Phosphate jumps?
-	// Look at each base.
-	core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-	for ( Size i = 1; i <= pose.size(); i++ ) {
-
-		// Neighboring residues making base-phosphate or base-2'OH contacts?
-		for ( utility::graph::Graph::EdgeListConstIter
-				iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-				irue = energy_graph.get_node(i)->const_edge_list_end();
-				iru != irue; ++iru ) {
-			auto const * edge( static_cast< EnergyEdge const *> ( *iru ) );
-			Size const j( edge->get_other_ind(i) );
+			int const j = base_pair.res2();
+			int const m = base_pair.edge2();
 
 			if ( is_num_in_list(i, exclude_res_list) || is_num_in_list(j, exclude_res_list) ) {
 				continue;
 			}
 
-			//   EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+			char const orientation = ( base_pair.orientation() == 1) ? 'A' : 'P';
 
-			check_for_contacts_and_output_jump_o2prime( pose, i, j, dataout );
+			char const edge_i = core::chemical::rna::get_edge_from_num( k );
+			char const edge_j = core::chemical::rna::get_edge_from_num( m );
 
-			if ( j > 1  ) check_for_contacts_and_output_jump_phosphate( pose, i, j, dataout );
+			//Figure out jump.
+			conformation::Residue const & rsd_i( pose.residue( i ) );
+			conformation::Residue const & rsd_j( pose.residue( j ) );
+			kinematics::Stub const stub_i( rsd_i.xyz( rsd_i.chi_atoms(1)[4] ),
+				rsd_i.xyz( rsd_i.chi_atoms(1)[3] ),
+				rsd_i.xyz( rsd_i.chi_atoms(1)[2] ) );
+			kinematics::Stub const stub_j( rsd_j.xyz( rsd_j.chi_atoms(1)[4] ),
+				rsd_j.xyz( rsd_j.chi_atoms(1)[3] ),
+				rsd_j.xyz( rsd_j.chi_atoms(1)[2] ) );
+
+			dataout << "PAIR " <<
+				I(5, i) << ' ' << edge_i << ' ' <<
+				I(5, j) << ' ' << edge_j << "   " <<
+				orientation << "   " <<
+				pose.residue(i).name1() << ' ' << pose.residue(j).name1() << " " <<
+				rsd_i.atom_name( rsd_i.chi_atoms(1)[4] ) <<  " " <<
+				rsd_j.atom_name( rsd_j.chi_atoms(1)[4] ) <<  " " <<
+				kinematics::Jump( stub_i, stub_j) <<
+				std::endl;
 
 		}
+
+		//How about 2' and Phosphate jumps?
+		// Look at each base.
+		core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+		for ( Size i = 1; i <= pose.size(); i++ ) {
+
+			// Neighboring residues making base-phosphate or base-2'OH contacts?
+			for ( utility::graph::Graph::EdgeListConstIter
+					iru  = energy_graph.get_node(i)->const_edge_list_begin(),
+					irue = energy_graph.get_node(i)->const_edge_list_end();
+					iru != irue; ++iru ) {
+				auto const * edge( static_cast< EnergyEdge const *> ( *iru ) );
+				Size const j( edge->get_other_ind(i) );
+
+				if ( is_num_in_list(i, exclude_res_list) || is_num_in_list(j, exclude_res_list) ) {
+					continue;
+				}
+
+				//   EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+
+				check_for_contacts_and_output_jump_o2prime( pose, i, j, dataout );
+
+				if ( j > 1  ) check_for_contacts_and_output_jump_phosphate( pose, i, j, dataout );
+
+			}
+		}
+		std::cout << "***********************************************************" << std::endl;
+		std::cout << "Put jumps from PDB file " <<  infile << " into " << outfile << std::endl;
+		std::cout << "***********************************************************" << std::endl;
 	}
 
-
 	dataout.close();
-
-	std::cout << "***********************************************************" << std::endl;
-	std::cout << "Put jumps from PDB file " <<  infile << " into " << outfile << std::endl;
-	std::cout << "***********************************************************" << std::endl;
-
 }
 
 ///////////////////////////////////////////////////////////////

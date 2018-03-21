@@ -19,6 +19,7 @@
 #include <core/import_pose/libraries/BasePairStepLibrary.hh>
 #include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
 
 static basic::Tracer TR( "core.import_pose.libraries.RNA_LibraryManager" );
 
@@ -54,6 +55,9 @@ RNA_LibraryManager::rna_jump_library_cop( std::string const & tag ) {
 RNA_JumpLibraryCOP const &
 RNA_LibraryManager::rna_jump_library_cop() {
 	RNA_FragmentMonteCarloOptions options; // default value is stored here.
+	// ... nope, we need to initialize_from_options
+	// since we don't have an OptionsCollection here, let's just say...
+	options.initialize_from_options( basic::options::option );
 	return rna_jump_library_cop( options.jump_library_file() );
 }
 

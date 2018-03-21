@@ -93,7 +93,7 @@ public:
 	void set_relax_structure( bool const & setting ){ relax_structure_ = setting; }
 	bool relax_structure() const { return relax_structure_; }
 
-	//void set_use_chem_shift_data( bool const & setting ){ use_chem_shift_data_ = setting; }
+	void set_use_chem_shift_data( bool const & setting ){ use_chem_shift_data_ = setting; }
 	bool use_chem_shift_data() const { return use_chem_shift_data_; }
 
 	void set_superimpose_over_all( bool const & setting ){ superimpose_over_all_ = setting; }
@@ -374,106 +374,106 @@ public:
 
 private:
 
-	Size rounds_;
-	Size monte_carlo_cycles_;
-	bool user_defined_cycles_;
-	bool minimize_structure_;
-	bool relax_structure_;
+	Size rounds_ = 10;
+	Size monte_carlo_cycles_ = 0; // will be reset later
+	bool user_defined_cycles_ = false; // will change to true if set_monte_carlo_cycles() is called
+	bool minimize_structure_ = false;
+	bool relax_structure_ = false;
 
-	core::Real temperature_; // default temperature for monte carlo
+	core::Real temperature_ = 2.0; // default temperature for monte carlo
 
-	bool ignore_secstruct_;
+	bool ignore_secstruct_ = false;
 
-	core::Real chainbreak_weight_;
-	core::Real linear_chainbreak_weight_;
-	bool close_loops_;
-	bool close_loops_after_each_move_;
+	core::Real chainbreak_weight_ = -1; // use rna/denovo/rna_lores.wts number unless user specified. -1.0 is never really used.
+	core::Real linear_chainbreak_weight_ = -1; // use rna/denovo/rna_lores.wts number unless user specified. -1.0 is never really used.
+	bool close_loops_ = true;
+	bool close_loops_after_each_move_ = false;
 
-	bool allow_bulge_, allow_consecutive_bulges_;
+	bool allow_bulge_ = false, allow_consecutive_bulges_ = false;
 
-	core::Real jump_change_frequency_;
+	core::Real jump_change_frequency_ = 0.1;
 
-	bool autofilter_;
-	core::Real autofilter_score_quantile_;
-	bool titrate_stack_bonus_;
-	bool root_at_first_rigid_body_;
-	bool dock_each_chunk_;
-	bool dock_each_chunk_per_chain_;
-	bool center_jumps_in_single_stranded_;
-	core::Real suppress_bp_constraint_;
+	bool autofilter_ = false;
+	core::Real autofilter_score_quantile_ = 0.20;
+	bool titrate_stack_bonus_ = true;
+	bool root_at_first_rigid_body_ = false;
+	bool dock_each_chunk_ = false;
+	bool dock_each_chunk_per_chain_ = false;
+	bool center_jumps_in_single_stranded_ = false;
+	core::Real suppress_bp_constraint_ = 1.0;
 
-	bool filter_lores_base_pairs_;
-	bool filter_lores_base_pairs_early_;
+	bool filter_lores_base_pairs_ = false;
+	bool filter_lores_base_pairs_early_ = false;
 
-	bool filter_chain_closure_;
-	core::Real filter_chain_closure_distance_;
-	bool filter_chain_closure_halfway_;
+	bool filter_chain_closure_ = true;
+	core::Real filter_chain_closure_distance_ = 6.0; // in Angstroms. This is pretty loose!
+	bool filter_chain_closure_halfway_ = true;
 
-	bool staged_constraints_;
+	bool staged_constraints_ = false;
 
-	Size output_score_frequency_;
-	std::string output_score_file_;
-	bool output_lores_silent_file_;
-	utility::vector1< core::Size > output_jump_res_;
-	bool output_jump_o3p_to_o5p_;
-	bool output_jump_chainbreak_;
-	bool output_rotation_vector_;
-	core::Vector output_jump_target_xyz_;
-	std::string output_jump_reference_RT_string_;
-	bool save_jump_histogram_;
-	std::string output_histogram_file_;
-	core::Real jump_histogram_boxsize_;
-	core::Real jump_histogram_binwidth_;
-	core::Real jump_histogram_binwidth_rotvector_;
+	Size output_score_frequency_ = 0;
+	std::string output_score_file_ = "";
+	bool output_lores_silent_file_ = false;
+	utility::vector1< core::Size > output_jump_res_ = utility::vector1< core::Size >( 0 );
+	bool output_jump_o3p_to_o5p_ = false;
+	bool output_jump_chainbreak_ = false;
+	bool output_rotation_vector_ = false;
+	core::Vector output_jump_target_xyz_ = core::Vector( 0 );
+	std::string output_jump_reference_RT_string_ = "";
+	bool save_jump_histogram_ = false;
+	std::string output_histogram_file_ = "";
+	core::Real jump_histogram_boxsize_ = 0.0;
+	core::Real jump_histogram_binwidth_ = 0.0;
+	core::Real jump_histogram_binwidth_rotvector_ = 0.0;
 
 	utility::vector1< core::Size > allowed_bulge_res_;
 
-	bool output_filters_;
-	bool filter_vdw_;
+	bool output_filters_ = false;
+	bool filter_vdw_ = false;
 	utility::vector1< std::string > VDW_rep_screen_info_;
-	bool vdw_rep_screen_include_sidechains_;
-	bool gradual_constraints_;
-	bool ramp_rnp_vdw_;
-	core::Real grid_vdw_weight_;
+	bool vdw_rep_screen_include_sidechains_ = false;
+	bool gradual_constraints_ = true;
+	bool ramp_rnp_vdw_ = false;
+	core::Real grid_vdw_weight_ = 1.0;
 
-	bool convert_protein_centroid_;
+	bool convert_protein_centroid_ = true;
 
-	bool rna_protein_docking_;
-	bool small_docking_moves_;
-	core::Real docking_move_size_;
-	bool rna_protein_docking_legacy_;
-	core::Real rna_protein_docking_freq_;
-	bool docking_;
+	bool rna_protein_docking_ = false;
+	bool small_docking_moves_ = false;
+	core::Real docking_move_size_ = 1.0;
+	bool rna_protein_docking_legacy_ = false;
+	core::Real rna_protein_docking_freq_ = 0.4;
+	bool docking_ = false;
 
-	bool randomize_init_rnp_;
-	bool rnp_high_res_relax_;
-	core::Size rnp_high_res_cycles_;
-	bool rnp_pack_first_;
-	bool rnp_ramp_rep_;
-	bool rnp_min_first_;
+	bool randomize_init_rnp_ = true;
+	bool rnp_high_res_relax_ = true;
+	core::Size rnp_high_res_cycles_ = 10;
+	bool rnp_pack_first_ = false;
+	bool rnp_ramp_rep_ = false;
+	bool rnp_min_first_ = false;
 
-	bool dock_into_density_legacy_;
-	bool new_fold_tree_initializer_;
-	bool initial_structures_provided_;
+	bool dock_into_density_legacy_ = false;
+	bool new_fold_tree_initializer_ = false;
+	bool initial_structures_provided_ = false;
 
-	bool simple_rmsd_cutoff_relax_;
+	bool simple_rmsd_cutoff_relax_ = false;
 
-	bool refine_pose_;
-	bool override_refine_pose_rounds_;
-	bool refine_native_get_good_FT_;
-	bool bps_moves_;
-	bool disallow_bps_at_extra_min_res_;
-	bool allow_fragment_moves_in_bps_;
-	Size frag_size_;
-	bool use_chem_shift_data_;
+	bool refine_pose_ = false;
+	bool override_refine_pose_rounds_ = false;
+	bool refine_native_get_good_FT_ = false;
+	bool bps_moves_ = false;
+	bool disallow_bps_at_extra_min_res_ = false;
+	bool allow_fragment_moves_in_bps_ = false;
+	Size frag_size_ = 0;
+	bool use_chem_shift_data_ = false; // gets reset in initialize_from_options
 
-	bool superimpose_over_all_;
+	bool superimpose_over_all_ = false;
 
-	bool fixed_stems_;
+	bool fixed_stems_ = false;
 
-	std::string all_rna_fragments_file_;
-	std::string rna_params_file_;
-	std::string jump_library_file_;
+	std::string all_rna_fragments_file_ = ""; // gets set in initialize_from_options
+	std::string rna_params_file_ = "";
+	std::string jump_library_file_ = "";
 
 	utility::vector1< std::string > chunk_pdb_files_;
 	utility::vector1< std::string > helical_substructs_;
@@ -483,12 +483,12 @@ private:
 	utility::vector1< core::Size > input_res_;
 	utility::vector1< core::Size > input_res_initialize_;
 
-	bool rmsd_screen_;
-	bool disallow_realign_;
-	std::string align_pdb_;
+	bool rmsd_screen_ = 0;
+	bool disallow_realign_ = true;
+	std::string align_pdb_ = "";
 
 	Size symm_hack_arity_ = 1;
-	bool save_times_;
+	bool save_times_ = false;
 };
 
 } //options

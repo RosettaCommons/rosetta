@@ -41,87 +41,7 @@ namespace import_pose {
 namespace options {
 
 //Constructor
-RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
-	rounds_( 10 ),
-	monte_carlo_cycles_( 0 ), /* will be reset later */
-	user_defined_cycles_( false ), /* will change to true if set_monte_carlo_cycles() is called */
-	minimize_structure_( false ),
-	relax_structure_( false ),
-	temperature_( 2.0 ),
-	ignore_secstruct_( false ),
-	chainbreak_weight_( -1.0 ), /* use rna/denovo/rna_lores.wts number unless user specified. -1.0 is never really used. */
-	linear_chainbreak_weight_( -1.0 ), /* use rna/denovo/rna_lores.wts number unless user specified. -1.0 is never really used. */
-	close_loops_( true ),
-	close_loops_after_each_move_( false ),
-	allow_bulge_( false ),
-	allow_consecutive_bulges_( false ),
-	jump_change_frequency_( 0.1 ),
-	autofilter_( false ),
-	autofilter_score_quantile_( 0.20 ),
-	titrate_stack_bonus_( true ),
-	root_at_first_rigid_body_( false ),
-	dock_each_chunk_( false ),
-	dock_each_chunk_per_chain_( false ),
-	center_jumps_in_single_stranded_( false ),
-	suppress_bp_constraint_( 1.0 ),
-	filter_lores_base_pairs_( false ),
-	filter_lores_base_pairs_early_( false ),
-	filter_chain_closure_( true ),
-	filter_chain_closure_distance_( 6.0 ), /* in Angstroms. This is pretty loose!*/
-	filter_chain_closure_halfway_( true ),
-	staged_constraints_( false ),
-	output_score_frequency_( 0 ),
-	output_lores_silent_file_( false ),
-	output_jump_res_( 0 ),
-	output_jump_o3p_to_o5p_( false ),
-	output_jump_chainbreak_( false ),
-	output_rotation_vector_( false ),
-	output_jump_target_xyz_( 0.0 ),
-	output_jump_reference_RT_string_( "" ),
-	save_jump_histogram_( false ),
-	jump_histogram_boxsize_( 0.0 ),
-	jump_histogram_binwidth_( 0.0 ),
-	jump_histogram_binwidth_rotvector_( 0.0 ),
-	output_filters_( false ),
-	filter_vdw_( false ),
-	vdw_rep_screen_include_sidechains_( false ),
-	gradual_constraints_( true ),
-	ramp_rnp_vdw_( false ),
-	grid_vdw_weight_( 1.0 ),
-	convert_protein_centroid_( true ),
-	rna_protein_docking_( false ),
-	small_docking_moves_( false ),
-	docking_move_size_( 1.0 ),
-	rna_protein_docking_legacy_( false ),
-	rna_protein_docking_freq_( 0.4 ),
-	docking_( false ),
-	randomize_init_rnp_( true ),
-	rnp_high_res_relax_( true ),
-	rnp_high_res_cycles_( 10 ),
-	rnp_pack_first_( false ),
-	rnp_ramp_rep_( false ),
-	rnp_min_first_( false ),
-	dock_into_density_legacy_( false ),
-	new_fold_tree_initializer_( false ),
-	initial_structures_provided_( false ),
-	simple_rmsd_cutoff_relax_( false ),
-	refine_pose_( false ),
-	override_refine_pose_rounds_( false ),
-	refine_native_get_good_FT_( false ),
-	bps_moves_( false ),
-	disallow_bps_at_extra_min_res_( false ),
-	allow_fragment_moves_in_bps_( false ),
-	frag_size_( 0 ),
-	// following is odd, but note that core::scoring::rna::chemical_shift machinery also checks global options system.
-	use_chem_shift_data_( option[ OptionKeys::score::rna::rna_chemical_shift_exp_data].user() ),
-	superimpose_over_all_( false ),
-	fixed_stems_( false ),
-	all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),
-	rna_params_file_( "" ),
-	jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) ),
-	rmsd_screen_( 0.0 ),
-	disallow_realign_( true ),
-	save_times_( false )
+RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions()
 {}
 
 //Destructor
@@ -154,57 +74,58 @@ void
 RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::OptionCollection const & opts ) {
 	RNA_MinimizerOptions::initialize_from_options( opts ); // includes RNA_BasicOptions
 
-	if ( opts[ basic::options::OptionKeys::rna::denovo::cycles ].user() ) {
-		set_monte_carlo_cycles( opts[ basic::options::OptionKeys::rna::denovo::cycles ]() );
+	if ( opts[ OptionKeys::rna::denovo::cycles ].user() ) {
+		set_monte_carlo_cycles( opts[ OptionKeys::rna::denovo::cycles ]() );
 		set_user_defined_cycles( true );
 	}
-	set_rounds( opts[ basic::options::OptionKeys::rna::denovo::rounds ]() );
-	minimize_structure_ = opts[ basic::options::OptionKeys::rna::denovo::minimize_rna ]();
-	relax_structure_ = opts[ basic::options::OptionKeys::rna::denovo::relax_rna ]();
-	allow_bulge_ = opts[ basic::options::OptionKeys::rna::denovo::allow_bulge ]();
-	set_temperature( opts[ basic::options::OptionKeys::rna::denovo::temperature ] );
-	set_ignore_secstruct( opts[ basic::options::OptionKeys::rna::denovo::ignore_secstruct ] );
-	set_jump_change_frequency( opts[ basic::options::OptionKeys::rna::denovo::jump_change_frequency ] );
-	set_close_loops( opts[ basic::options::OptionKeys::rna::denovo::close_loops] );
-	set_close_loops_after_each_move( opts[ basic::options::OptionKeys::rna::denovo::close_loops_after_each_move ] );
-	set_staged_constraints( opts[ basic::options::OptionKeys::rna::denovo::staged_constraints ] ) ;
-	set_filter_lores_base_pairs( opts[ basic::options::OptionKeys::rna::denovo::filter_lores_base_pairs] );
-	set_filter_lores_base_pairs_early( opts[ basic::options::OptionKeys::rna::denovo::filter_lores_base_pairs_early] );
-	set_suppress_bp_constraint( opts[ basic::options::OptionKeys::rna::denovo::suppress_bp_constraint ]() );
-	set_filter_chain_closure( opts[ basic::options::OptionKeys::rna::denovo::filter_chain_closure ]() );
-	set_filter_chain_closure_distance( opts[ basic::options::OptionKeys::rna::denovo::filter_chain_closure_distance ]() );
-	set_filter_chain_closure_halfway( opts[ basic::options::OptionKeys::rna::denovo::filter_chain_closure_halfway ]() );
-	set_vary_bond_geometry( opts[ basic::options::OptionKeys::rna::vary_geometry ] );
-	set_root_at_first_rigid_body( opts[ basic::options::OptionKeys::rna::denovo::root_at_first_rigid_body ] );
-	set_dock_each_chunk( opts[ basic::options::OptionKeys::rna::denovo::dock_each_chunk ]() );
-	set_dock_each_chunk_per_chain( opts[ basic::options::OptionKeys::rna::denovo::dock_each_chunk_per_chain ]() );
-	set_center_jumps_in_single_stranded( opts[ basic::options::OptionKeys::rna::denovo::center_jumps_in_single_stranded ]() );
-	set_autofilter( opts[ basic::options::OptionKeys::rna::denovo::autofilter ] );
-	set_bps_moves( opts[ basic::options::OptionKeys::rna::denovo::bps_moves ] );
-	set_disallow_bps_at_extra_min_res( opts[ basic::options::OptionKeys::rna::denovo::disallow_bps_at_extra_min_res ] );
-	set_allow_fragment_moves_in_bps( opts[ basic::options::OptionKeys::rna::denovo::allow_fragment_moves_in_bps ] );
-	set_frag_size( opts[ basic::options::OptionKeys::rna::denovo::frag_size ]() );
+	set_rounds( opts[ OptionKeys::rna::denovo::rounds ]() );
+	minimize_structure_ = opts[ OptionKeys::rna::denovo::minimize_rna ]();
+	relax_structure_ = opts[ OptionKeys::rna::denovo::relax_rna ]();
+	allow_bulge_ = opts[ OptionKeys::rna::denovo::allow_bulge ]();
+	set_temperature( opts[ OptionKeys::rna::denovo::temperature ] );
+	set_ignore_secstruct( opts[ OptionKeys::rna::denovo::ignore_secstruct ] );
+	set_jump_change_frequency( opts[ OptionKeys::rna::denovo::jump_change_frequency ] );
+	set_close_loops( opts[ OptionKeys::rna::denovo::close_loops] );
+	set_close_loops_after_each_move( opts[ OptionKeys::rna::denovo::close_loops_after_each_move ] );
+	set_staged_constraints( opts[ OptionKeys::rna::denovo::staged_constraints ] ) ;
+	set_filter_lores_base_pairs( opts[ OptionKeys::rna::denovo::filter_lores_base_pairs] );
+	set_filter_lores_base_pairs_early( opts[ OptionKeys::rna::denovo::filter_lores_base_pairs_early] );
+	set_suppress_bp_constraint( opts[ OptionKeys::rna::denovo::suppress_bp_constraint ]() );
+	set_filter_chain_closure( opts[ OptionKeys::rna::denovo::filter_chain_closure ]() );
+	set_filter_chain_closure_distance( opts[ OptionKeys::rna::denovo::filter_chain_closure_distance ]() );
+	set_filter_chain_closure_halfway( opts[ OptionKeys::rna::denovo::filter_chain_closure_halfway ]() );
+	set_vary_bond_geometry( opts[ OptionKeys::rna::vary_geometry ] );
+	set_root_at_first_rigid_body( opts[ OptionKeys::rna::denovo::root_at_first_rigid_body ] );
+	set_dock_each_chunk( opts[ OptionKeys::rna::denovo::dock_each_chunk ]() );
+	set_dock_each_chunk_per_chain( opts[ OptionKeys::rna::denovo::dock_each_chunk_per_chain ]() );
+	set_center_jumps_in_single_stranded( opts[ OptionKeys::rna::denovo::center_jumps_in_single_stranded ]() );
+	set_autofilter( opts[ OptionKeys::rna::denovo::autofilter ] );
+	set_bps_moves( opts[ OptionKeys::rna::denovo::bps_moves ] );
+	set_disallow_bps_at_extra_min_res( opts[ OptionKeys::rna::denovo::disallow_bps_at_extra_min_res ] );
+	set_allow_fragment_moves_in_bps( opts[ OptionKeys::rna::denovo::allow_fragment_moves_in_bps ] );
+	set_frag_size( opts[ OptionKeys::rna::denovo::frag_size ]() );
+	set_use_chem_shift_data( opts[ OptionKeys::score::rna::rna_chemical_shift_exp_data].user() );
 
-	set_output_score_frequency( opts[ basic::options::OptionKeys::rna::denovo::out::output_score_frequency ]() );
-	set_output_lores_silent_file( opts[ basic::options::OptionKeys::rna::denovo::out::output_lores_silent_file ] );
-	set_output_score_file( opts[ basic::options::OptionKeys::rna::denovo::out::output_score_file ]() );
-	set_output_jump_res( opts[ basic::options::OptionKeys::rna::denovo::out::output_jump_res ]() );
-	set_output_jump_o3p_to_o5p( opts[ basic::options::OptionKeys::rna::denovo::out::output_jump_o3p_to_o5p ]() );
-	set_output_jump_chainbreak( opts[ basic::options::OptionKeys::rna::denovo::out::output_jump_chainbreak ]() );
-	set_output_rotation_vector( opts[ basic::options::OptionKeys::rna::denovo::out::output_rotation_vector ]() );
-	if ( opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ].user() ) {
-		runtime_assert( opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]().size() == 3 );
+	set_output_score_frequency( opts[ OptionKeys::rna::denovo::out::output_score_frequency ]() );
+	set_output_lores_silent_file( opts[ OptionKeys::rna::denovo::out::output_lores_silent_file ] );
+	set_output_score_file( opts[ OptionKeys::rna::denovo::out::output_score_file ]() );
+	set_output_jump_res( opts[ OptionKeys::rna::denovo::out::output_jump_res ]() );
+	set_output_jump_o3p_to_o5p( opts[ OptionKeys::rna::denovo::out::output_jump_o3p_to_o5p ]() );
+	set_output_jump_chainbreak( opts[ OptionKeys::rna::denovo::out::output_jump_chainbreak ]() );
+	set_output_rotation_vector( opts[ OptionKeys::rna::denovo::out::output_rotation_vector ]() );
+	if ( opts[ OptionKeys::rna::denovo::out::target_xyz ].user() ) {
+		runtime_assert( opts[ OptionKeys::rna::denovo::out::target_xyz ]().size() == 3 );
 		set_output_jump_target_xyz( core::Vector(
-			opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]()[1],
-			opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]()[2],
-			opts[ basic::options::OptionKeys::rna::denovo::out::target_xyz ]()[3]) );
+			opts[ OptionKeys::rna::denovo::out::target_xyz ]()[1],
+			opts[ OptionKeys::rna::denovo::out::target_xyz ]()[2],
+			opts[ OptionKeys::rna::denovo::out::target_xyz ]()[3]) );
 	}
-	set_output_jump_reference_RT_string( opts[ basic::options::OptionKeys::rna::denovo::out::output_jump_reference_RT ]() );
-	set_save_jump_histogram( opts[ basic::options::OptionKeys::rna::denovo::out::save_jump_histogram ]() );
-	set_jump_histogram_boxsize( opts[ basic::options::OptionKeys::rna::denovo::out::jump_histogram_boxsize ]() );
-	set_jump_histogram_binwidth( opts[ basic::options::OptionKeys::rna::denovo::out::jump_histogram_binwidth ]() );
-	set_jump_histogram_binwidth_rotvector( opts[ basic::options::OptionKeys::rna::denovo::out::jump_histogram_binwidth_rotvector ]() );
-	set_output_histogram_file( opts[ basic::options::OptionKeys::rna::denovo::out::output_histogram_file ]() );
+	set_output_jump_reference_RT_string( opts[ OptionKeys::rna::denovo::out::output_jump_reference_RT ]() );
+	set_save_jump_histogram( opts[ OptionKeys::rna::denovo::out::save_jump_histogram ]() );
+	set_jump_histogram_boxsize( opts[ OptionKeys::rna::denovo::out::jump_histogram_boxsize ]() );
+	set_jump_histogram_binwidth( opts[ OptionKeys::rna::denovo::out::jump_histogram_binwidth ]() );
+	set_jump_histogram_binwidth_rotvector( opts[ OptionKeys::rna::denovo::out::jump_histogram_binwidth_rotvector ]() );
+	set_output_histogram_file( opts[ OptionKeys::rna::denovo::out::output_histogram_file ]() );
 	if ( output_score_file_.size() == 0 && ( output_score_frequency_ != 0 || output_jump_res_.size() > 0 ) ) {
 		output_score_file_ = opts[ out::file::silent ]();
 		std::string::size_type pos = output_score_file_.find( ".out", 0 );
@@ -220,80 +141,86 @@ RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::Option
 		output_histogram_file_.replace( pos, new_prefix.length(), new_prefix );
 	}
 
-	set_allow_consecutive_bulges( opts[ basic::options::OptionKeys::rna::denovo::allow_consecutive_bulges ]() ) ;
-	set_allowed_bulge_res( opts[ basic::options::OptionKeys::rna::denovo::allowed_bulge_res ]() ) ;
+	set_allow_consecutive_bulges( opts[ OptionKeys::rna::denovo::allow_consecutive_bulges ]() ) ;
+	set_allowed_bulge_res( opts[ OptionKeys::rna::denovo::allowed_bulge_res ]() ) ;
 
-	set_output_filters(  opts[ basic::options::OptionKeys::rna::denovo::output_filters ] );
-	if ( opts[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info ].user() ) {
+	set_output_filters(  opts[ OptionKeys::rna::denovo::output_filters ] );
+	if ( opts[ OptionKeys::stepwise::rna::VDW_rep_screen_info ].user() ) {
 		set_filter_vdw( true );
-		VDW_rep_screen_info_ = opts[basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_info]();
-		set_vdw_rep_screen_include_sidechains( opts[ basic::options::OptionKeys::rna::denovo::VDW_rep_screen_include_sidechains ]() );
+		VDW_rep_screen_info_ = opts[OptionKeys::stepwise::rna::VDW_rep_screen_info]();
+		set_vdw_rep_screen_include_sidechains( opts[ OptionKeys::rna::denovo::VDW_rep_screen_include_sidechains ]() );
 	}
-	set_gradual_constraints( opts[ basic::options::OptionKeys::rna::denovo::gradual_constraints ]() );
-	set_ramp_rnp_vdw( opts[ basic::options::OptionKeys::rna::denovo::ramp_rnp_vdw ]() );
-	set_grid_vdw_weight( opts[ basic::options::OptionKeys::rna::denovo::grid_vdw_weight ]() );
+	set_gradual_constraints( opts[ OptionKeys::rna::denovo::gradual_constraints ]() );
+	set_ramp_rnp_vdw( opts[ OptionKeys::rna::denovo::ramp_rnp_vdw ]() );
+	set_grid_vdw_weight( opts[ OptionKeys::rna::denovo::grid_vdw_weight ]() );
 
-	set_convert_protein_centroid( opts[ basic::options::OptionKeys::rna::denovo::convert_protein_CEN ]() );
+	set_convert_protein_centroid( opts[ OptionKeys::rna::denovo::convert_protein_CEN ]() );
 
-	set_rna_protein_docking( opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() );
-	set_rna_protein_docking_legacy( opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking_legacy ]() );
-	set_rna_protein_docking_freq( opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking_freq ]() );
+	set_rna_protein_docking( opts[ OptionKeys::rna::denovo::rna_protein_docking ]() );
+	set_rna_protein_docking_legacy( opts[ OptionKeys::rna::denovo::rna_protein_docking_legacy ]() );
+	set_rna_protein_docking_freq( opts[ OptionKeys::rna::denovo::rna_protein_docking_freq ]() );
 
-	set_small_docking_moves( opts[ basic::options::OptionKeys::rna::denovo::small_docking_moves ]() );
+	set_small_docking_moves( opts[ OptionKeys::rna::denovo::small_docking_moves ]() );
 
-	set_docking_move_size( opts[ basic::options::OptionKeys::rna::denovo::docking_move_size ]() );
+	set_docking_move_size( opts[ OptionKeys::rna::denovo::docking_move_size ]() );
 
-	set_randomize_init_rnp( opts[ basic::options::OptionKeys::rna::denovo::randomize_init_rnp ]() );
+	set_randomize_init_rnp( opts[ OptionKeys::rna::denovo::randomize_init_rnp ]() );
 
-	set_rnp_high_res_relax( opts[ basic::options::OptionKeys::rna::denovo::rnp_high_res_relax ]() );
-	set_rnp_high_res_cycles( opts[ basic::options::OptionKeys::rna::denovo::rnp_high_res_cycles ]() );
+	set_rnp_high_res_relax( opts[ OptionKeys::rna::denovo::rnp_high_res_relax ]() );
+	set_rnp_high_res_cycles( opts[ OptionKeys::rna::denovo::rnp_high_res_cycles ]() );
 
-	set_rnp_pack_first( opts[ basic::options::OptionKeys::rna::denovo::rnp_pack_first ]() );
-	set_rnp_ramp_rep( opts[ basic::options::OptionKeys::rna::denovo::rnp_ramp_rep ]() );
-	set_rnp_min_first( opts[ basic::options::OptionKeys::rna::denovo::rnp_min_first ]() );
+	set_rnp_pack_first( opts[ OptionKeys::rna::denovo::rnp_pack_first ]() );
+	set_rnp_ramp_rep( opts[ OptionKeys::rna::denovo::rnp_ramp_rep ]() );
+	set_rnp_min_first( opts[ OptionKeys::rna::denovo::rnp_min_first ]() );
 
 	// dock into density is default false, can only be true if user specifies true AND a mapfile is provided
-	if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
-		set_dock_into_density_legacy( opts[ basic::options::OptionKeys::rna::denovo::dock_into_density_legacy ]() );
+	if ( opts[ OptionKeys::edensity::mapfile ].user() ) {
+		set_dock_into_density_legacy( opts[ OptionKeys::rna::denovo::dock_into_density_legacy ]() );
 	}
 
-	if ( rna_protein_docking() || dock_into_density() || opts[ basic::options::OptionKeys::rna::denovo::virtual_anchor ]().size() > 0 ) {
+	if ( rna_protein_docking() || dock_into_density() || opts[ OptionKeys::rna::denovo::virtual_anchor ]().size() > 0 ) {
 		set_docking( true );
 	}
 
-	set_new_fold_tree_initializer( opts[ basic::options::OptionKeys::rna::denovo::new_fold_tree_initializer ]() );
+	set_new_fold_tree_initializer( opts[ OptionKeys::rna::denovo::new_fold_tree_initializer ]() );
 
-	if ( opts[ basic::options::OptionKeys::rna::denovo::initial_structures ].user() ) {
+	if ( opts[ OptionKeys::rna::denovo::initial_structures ].user() ) {
 		set_initial_structures_provided( true );
 	}
 
-	set_simple_rmsd_cutoff_relax( opts[ basic::options::OptionKeys::rna::denovo::simple_relax ] );
+	set_simple_rmsd_cutoff_relax( opts[ OptionKeys::rna::denovo::simple_relax ] );
 
-	set_override_refine_pose_rounds( opts[ basic::options::OptionKeys::rna::denovo::override_refine_pose_rounds ]() );
+	set_override_refine_pose_rounds( opts[ OptionKeys::rna::denovo::override_refine_pose_rounds ]() );
 
-	set_refine_native_get_good_FT( opts[ basic::options::OptionKeys::rna::denovo::refine_native_get_good_FT ]() );
+	set_refine_native_get_good_FT( opts[ OptionKeys::rna::denovo::refine_native_get_good_FT ]() );
 
 	set_superimpose_over_all( opts[ stepwise::superimpose_over_all ]() );
 
-	set_fixed_stems( opts[ basic::options::OptionKeys::rna::denovo::fixed_stems ]() );
+	set_fixed_stems( opts[ OptionKeys::rna::denovo::fixed_stems ]() );
 
 	std::string const in_path = opts[ in::path::path ]()[1];
-	if ( opts[ basic::options::OptionKeys::rna::denovo::vall_torsions ].user() ) {
-		// check in database first
-		std::string vall_torsions_file = basic::database::full_name("/sampling/rna/" + opts[ basic::options::OptionKeys::rna::denovo::vall_torsions ]() );
-		if ( !utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) ) vall_torsions_file = in_path + opts[ basic::options::OptionKeys::rna::denovo::vall_torsions ]();
+	
+	// vall torsions: check in database first
+	if ( opts[ OptionKeys::rna::denovo::use_1jj2_torsions ]() ) {
+		set_vall_torsions_file( basic::database::full_name("sampling/rna/1jj2.torsions") );
+	} else {
+		std::string vall_torsions_file = basic::database::full_name("sampling/rna/" + opts[ OptionKeys::rna::denovo::vall_torsions ]() );
+		if ( !utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) ) vall_torsions_file = in_path + opts[ OptionKeys::rna::denovo::vall_torsions ]();
 		set_vall_torsions_file( vall_torsions_file );
 	}
-	if ( opts[ basic::options::OptionKeys::rna::denovo::use_1jj2_torsions ]() ) set_vall_torsions_file( basic::database::full_name("sampling/rna/1jj2.torsions") );
-	if ( opts[ basic::options::OptionKeys::rna::denovo::jump_library_file ].user() ) set_jump_library_file( in_path + opts[ basic::options::OptionKeys::rna::denovo::jump_library_file] );
-	if ( opts[ basic::options::OptionKeys::rna::denovo::params_file ].user() ) set_rna_params_file( in_path + opts[ basic::options::OptionKeys::rna::denovo::params_file ] );
 
-	if ( opts[ basic::options::OptionKeys::rna::denovo::rna_lores_linear_chainbreak_weight ].user() ) set_linear_chainbreak_weight( opts[ basic::options::OptionKeys::rna::denovo::rna_lores_linear_chainbreak_weight ]() );
-	if ( opts[ basic::options::OptionKeys::rna::denovo::rna_lores_chainbreak_weight ].user() ) set_chainbreak_weight( opts[ basic::options::OptionKeys::rna::denovo::rna_lores_chainbreak_weight ]() );
+	std::string jump_library_file = basic::database::full_name("sampling/rna/" + opts[ OptionKeys::rna::denovo::jump_library_file ]() );
+	if ( !utility::file::file_exists( jump_library_file ) && !utility::file::file_exists( jump_library_file+ ".gz" ) ) jump_library_file = in_path + opts[ OptionKeys::rna::denovo::jump_library_file ]();
+	set_jump_library_file( jump_library_file );
+
+	if ( opts[ OptionKeys::rna::denovo::params_file ].user() ) set_rna_params_file( in_path + opts[ OptionKeys::rna::denovo::params_file ] );
+
+	if ( opts[ OptionKeys::rna::denovo::rna_lores_linear_chainbreak_weight ].user() ) set_linear_chainbreak_weight( opts[ OptionKeys::rna::denovo::rna_lores_linear_chainbreak_weight ]() );
+	if ( opts[ OptionKeys::rna::denovo::rna_lores_chainbreak_weight ].user() ) set_chainbreak_weight( opts[ OptionKeys::rna::denovo::rna_lores_chainbreak_weight ]() );
 
 	if ( filter_lores_base_pairs_early_ ) set_filter_lores_base_pairs( true );
 
-	if ( opts[ basic::options::OptionKeys::rna::denovo::no_filters ]() ) {
+	if ( opts[ OptionKeys::rna::denovo::no_filters ]() ) {
 		set_autofilter( false );
 		set_filter_chain_closure( false );
 		set_filter_chain_closure_distance( false );
@@ -312,7 +239,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::Option
 		align_pdb_ = "";
 	}
 
-	if ( opts[ basic::options::OptionKeys::rna::denovo::symm_hack_arity ].user() ) set_symm_hack_arity( opts[ basic::options::OptionKeys::rna::denovo::symm_hack_arity ] );
+	if ( opts[ OptionKeys::rna::denovo::symm_hack_arity ].user() ) set_symm_hack_arity( opts[ OptionKeys::rna::denovo::symm_hack_arity ] );
 
 	save_times_ = opts[ OptionKeys::out::save_times ]();
 }
@@ -407,7 +334,8 @@ RNA_FragmentMonteCarloOptions::list_options_read( utility::options::OptionKeyLis
 		+ OptionKeys::rna::denovo::override_refine_pose_rounds
 		+ OptionKeys::rna::denovo::refine_native_get_good_FT
 		+ OptionKeys::rna::denovo::symm_hack_arity
-		+ OptionKeys::out::save_times;
+		+ OptionKeys::out::save_times
+		+ OptionKeys::score::rna::rna_chemical_shift_exp_data;
 }
 
 
