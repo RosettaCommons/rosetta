@@ -1,13 +1,13 @@
 ## Simple aromatic modifications
-metapatches/aromatic_bromination.txt
-metapatches/aromatic_chlorination.txt
-metapatches/aromatic_fluorination.txt
-metapatches/aromatic_hydroxylation.txt
-metapatches/aromatic_iodination.txt
-metapatches/aromatic_trifluoromethylation.txt
-metapatches/aromatic_methylation.txt
-metapatches/aromatic_ethylation.txt
-metapatches/aromatic_methoxylation.txt
+#metapatches/aromatic_bromination.txt
+#metapatches/aromatic_chlorination.txt
+#metapatches/aromatic_fluorination.txt
+#metapatches/aromatic_hydroxylation.txt
+#metapatches/aromatic_iodination.txt
+#metapatches/aromatic_trifluoromethylation.txt
+#metapatches/aromatic_methylation.txt
+#metapatches/aromatic_ethylation.txt
+#metapatches/aromatic_methoxylation.txt
 metapatches/connect.txt
 metapatches/metal_connect.txt
 metapatches/pruneH.txt
