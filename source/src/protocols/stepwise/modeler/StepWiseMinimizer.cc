@@ -392,7 +392,7 @@ void
 StepWiseMinimizer::output_minimized_pose_list() const{
 	if ( !options_->output_minimized_pose_list() ) return;
 	if ( options_->rna_legacy_output_mode() ) {
-		
+
 		// copied from StepWiseRNA_VirtualSugarSamplerFromStringList -- trying to be consistent with that crazy old thing.
 		//    output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
 		for ( Size n = 1; n <= pose_list_.size(); n++ ) {

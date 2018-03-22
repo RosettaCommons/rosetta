@@ -199,7 +199,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_options( utility::options::Option
 	set_fixed_stems( opts[ OptionKeys::rna::denovo::fixed_stems ]() );
 
 	std::string const in_path = opts[ in::path::path ]()[1];
-	
+
 	// vall torsions: check in database first
 	if ( opts[ OptionKeys::rna::denovo::use_1jj2_torsions ]() ) {
 		set_vall_torsions_file( basic::database::full_name("sampling/rna/1jj2.torsions") );

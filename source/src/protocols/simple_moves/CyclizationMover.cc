@@ -143,7 +143,7 @@ CyclizationMover::setup_connections( core::pose::Pose & pose )
 
 	// AMW: as of now, we don't need to add special patches for cyclization!
 	// The actual upper and lower connects can be used.
-	
+
 	// get types name for N-terminus and C-terminus (manipulating strings like this is a little hacky)
 	std::string nterm_connect_type_name(
 		pose.residue_type( nterm_rsd_num_ ).is_peptoid() ?
