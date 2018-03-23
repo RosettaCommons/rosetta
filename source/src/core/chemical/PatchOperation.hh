@@ -968,6 +968,43 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief set residue's aa
+class Set_AA : public PatchOperation {
+public:
+	/// constructor
+	Set_AA(
+		std::string const & aa
+	) : aa_( aa ) {}
+
+	/// set atom's chemical type
+	bool
+	apply( ResidueType & rsd ) const override;
+
+	/// @brief Return the name of this PatchOperation ("Set_AA").
+	std::string
+	name() const override { return "Set_AA"; }
+
+	/// @brief Generates a new aa
+	bool
+	may_change_aa() override { return true; }
+
+	bool
+	applies_to_placeholder() const override { return true; }
+
+private:
+	std::string aa_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Set_AA();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set residue's name1 and name3
 class SetIO_String : public PatchOperation {
 public:
@@ -2070,6 +2107,39 @@ private:
 protected:
 	friend class cereal::access;
 	SetVirtualShadow();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief rename atom
+class RenameAtom : public PatchOperation {
+public:
+	/// constructor
+	RenameAtom(
+		std::string const & old_name,
+		std::string const & new_name
+	): old_name_( old_name ), new_name_( new_name ) {}
+
+	/// set atom's chemical type
+	bool
+	apply( ResidueType & rsd ) const override;
+
+	/// @brief Return the name of this PatchOperation ("RenameAtom").
+	std::string
+	name() const override { return "RenameAtom"; }
+
+private:
+	std::string old_name_;
+	std::string new_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	RenameAtom();
 
 public:
 	template< class Archive > void save( Archive & arc ) const;

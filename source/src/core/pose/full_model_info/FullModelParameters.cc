@@ -621,7 +621,10 @@ operator >>( std::istream & is, FullModelParameters & t )
 
 			TR.Debug << "Found tag " << tag << std::endl;
 			utility::vector1< std::string > cols = string_split( tag, ':');
-			runtime_assert( cols.size() == 2 );
+			// We used to assert there were == two columns. That isn't right: this could
+			// have patched residues. (For example, in DNA-as-RNA stepwise, where we
+			// add deoxxy residues.)
+			runtime_assert( cols.size() >= 2 );
 			Size pos = ObjexxFCL::int_of( cols[1] );
 			if ( !pos ) break; // tag may be loaded up with CONSTRAINTS or done entirely
 			t.non_standard_residue_map_nonconst()[ pos ] = cols[2];

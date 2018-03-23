@@ -130,7 +130,7 @@ RNA_BaseCentroidChecker::Initialize_base_stub_list( pose::Pose const & pose, boo
 
 		base_stub = core::kinematics::Stub(); //"default" stub, this will never be called
 		if ( !is_virtual_base_( seq_num ) &&
-				residue_object.is_RNA() ) {
+				residue_object.is_NA() ) {
 			Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object );
 			base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );
 		}
@@ -377,7 +377,8 @@ void
 RNA_BaseCentroidChecker::update_base_stub_list( core::pose::Pose const & pose ){
 
 	for ( Size const moving_res : moving_residues_ ) {
-		if ( !pose.residue_type( moving_res ).is_RNA() ) continue;
+		// Allow DNA too (particularly for DNA-as-RNA stuff)
+		if ( !pose.residue_type( moving_res ).is_NA() ) continue;
 		core::conformation::Residue const & residue_object( pose.residue( moving_res ) );
 		Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object );
 		core::kinematics::Stub base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );

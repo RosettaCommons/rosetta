@@ -193,11 +193,11 @@ RNA_AtomVDW::vdw_atom_list( chemical::ResidueType const & rt ) const
 {
 	using namespace core::chemical;
 	char which_nucleotide = aa_unp;
-	if ( rt.aa() == na_rad || rt.na_analogue() == na_rad ) {
+	if ( rt.aa() == na_rad || rt.aa() == na_ade || rt.na_analogue() == na_rad ) {
 		which_nucleotide = 'a';
-	} else if ( rt.aa() == na_rcy || rt.na_analogue() == na_rcy ) {
+	} else if ( rt.aa() == na_rcy || rt.aa() == na_cyt || rt.na_analogue() == na_rcy ) {
 		which_nucleotide = 'c';
-	} else if ( rt.aa() == na_rgu || rt.na_analogue() == na_rgu ) {
+	} else if ( rt.aa() == na_rgu || rt.aa() == na_gua || rt.na_analogue() == na_rgu ) {
 		which_nucleotide = 'g';
 	} else if ( rt.aa() == na_ura || rt.na_analogue() == na_ura ) {
 		which_nucleotide = 'u';

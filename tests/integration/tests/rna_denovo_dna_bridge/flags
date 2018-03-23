@@ -1,0 +1,43 @@
+-s 5f56_start.pdb
+-native 5f56.pdb
+-out:file:silent fafafarna_TEST.out
+
+# Note how the formatting of this fasta contains sequence info.
+# Also note that the 'dna' residues are named as modified RNA.
+-fasta target.fasta
+
+# For rna_denovo you MUST supply -minimize_rna. If false, you JUST get
+# fragment assembly and a quick-and-dirty structure. If true, you minimize
+# in a high resolution scorefunction afterwards.
+-minimize_rna true 
+
+# Increase to ~10000-20000 for production runs.
+-cycles 5000
+-nstruct 1
+
+# This scorefunction doesn't have DNA-specific torsions
+# but it'll get stuff mostly right. You could also use 
+# stepwise/rna/rna_res_level_energy7beta.wts, but you don't have to.
+-score:weights rna/denovo/rna_hires.wts 
+
+# rna_denovo uses its own job distributor instead of JD3, and I like to
+# suggest using it for 'new' applications by default.
+-use_legacy_job_distributor true
+
+# A couple torsions might be unrecognized
+-mute core.conformation.Conformation  core.kinematics.AtomTree
+
+# This makes sure the 'takeoff' residues adjacent to the loop get minimized
+# every move
+-motif_mode true
+
+# The following scoring terms take a while to precompute. (That's a work in progress
+# for us.) These are low-resolution terms useful for RNA-protein interactions.
+# Comment them back in for production runs if you'd like, but if they don't help
+# much just disregard.
+-set_weights       rnp_base_pair 0 rnp_stack 0 rnp_pair 0 rnp_aa_to_rna_backbone 0
+-set_lores_weights rnp_base_pair 0 rnp_stack 0 rnp_pair 0 rnp_aa_to_rna_backbone 0
+
+# There is a long relaxation phase for RNP complexes that's quite useful when there
+# is a big RNA protein interface. This may not be necessary even in production runs.
+-rnp_high_res_relax false

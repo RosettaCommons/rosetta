@@ -97,7 +97,7 @@ update_edge_hbond_numbers(
 	std::string const & atom_name = rsd.atom_name( atm );
 	// std::cout << atom_name << std::endl;
 
-	if ( rsd.aa() == na_rad || rsd.type().na_analogue() == na_rad ) {
+	if ( rsd.aa() == na_rad || rsd.aa() == na_ade || rsd.type().na_analogue() == na_rad ) {
 
 		if ( atom_name == " N1 "  ||
 				atom_name == " C2 "  ||
@@ -116,7 +116,7 @@ update_edge_hbond_numbers(
 				atom_name == " O3'"  ||
 				atom_name == " O2'"   ) N_S++;
 
-	} else if ( rsd.aa() == na_rcy || rsd.type().na_analogue() == na_rcy ) {
+	} else if ( rsd.aa() == na_rcy || rsd.aa() == na_cyt || rsd.type().na_analogue() == na_rcy ) {
 
 		// If the na_analogue is na_rcy, we may have S2 involved as well.
 
@@ -137,7 +137,7 @@ update_edge_hbond_numbers(
 				atom_name == " O3'"  ||
 				atom_name == " O2'"   ) N_S++;
 
-	} else if ( rsd.aa() == na_rgu || rsd.type().na_analogue() == na_rgu ) {
+	} else if ( rsd.aa() == na_rgu || rsd.aa() == na_gua || rsd.type().na_analogue() == na_rgu ) {
 
 		if ( atom_name == " N1 "  ||
 				atom_name == " N2 "  ||

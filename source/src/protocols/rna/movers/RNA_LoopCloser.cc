@@ -258,8 +258,8 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 
 	Size const cutpoint_next( core::scoring::methods::get_upper_cutpoint_partner_for_lower( input_pose, cutpoint ) );
 
-	if ( !input_pose.residue_type( cutpoint ).is_RNA() ||
-			!input_pose.residue_type( cutpoint_next ).is_RNA() ) {
+	if ( !input_pose.residue_type( cutpoint ).is_NA() ||
+			!input_pose.residue_type( cutpoint_next ).is_NA() ) {
 		utility_exit_with_message( "RNA CCD closure at "+string_of( cutpoint )+" but residues are not RNA?");
 	}
 

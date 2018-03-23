@@ -109,8 +109,10 @@ get_6D_trans_rot_potential_evaluator( LoopCycle const & loop_cycle,
 	// right now, set up for RNA. Later can generalize to protein, DNA, etc.
 	std::string tag;
 	core::conformation::Residue const & rsd = get_residue( takeoff_pos, pose );
-	if ( rsd.is_RNA() ) {
-		runtime_assert( get_residue( landing_pos, pose ).is_RNA() );
+
+	// Use RNA for DNA too
+	if ( rsd.is_NA() ) {
+		runtime_assert( get_residue( landing_pos, pose ).is_NA() );
 		tag = "rna";
 	}
 

@@ -101,7 +101,7 @@ RNA_CentroidInfo::initialize_base_centroids_and_stubs( pose::Pose const & pose )
 		Vector centroid_i( 0.0  );
 		kinematics::Stub stub_i;
 
-		if ( res_i.is_RNA() ) {
+		if ( res_i.is_NA() ) {
 			centroid_i = get_base_centroid( res_i );
 			stub_i     = get_base_coordinate_system( res_i, centroid_i );
 		}

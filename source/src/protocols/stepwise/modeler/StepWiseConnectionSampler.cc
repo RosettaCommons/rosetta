@@ -377,9 +377,13 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	}
 
 	// AMW: why no PCS for carbohydrate? don't care.
+	// AMW: also disable for DNA. Not QUITE sure why.
 	PartitionContactScreenerOP atr_rep_screener;
 	if ( options_->atr_rep_screen() && moving_res_list_.size() > 0 &&
-			( options_->atr_rep_screen_for_docking() || !rigid_body_modeler_ ) && !pose.residue_type( moving_res_ ).is_carbohydrate() ) {
+			( options_->atr_rep_screen_for_docking() || !rigid_body_modeler_ )
+			&& !pose.residue_type( moving_res_ ).is_carbohydrate()
+			&& !pose.residue_type( moving_res_ ).is_DNA()
+			&& !pose.residue_type( moving_res_ ).has_variant_type( core::chemical::DEOXY_O2PRIME ) ) {
 		atr_rep_screener = PartitionContactScreenerOP( new PartitionContactScreener( *screening_pose_, working_parameters_, use_loose_rep_cutoff, scorefxn_->energy_method_options() ) );
 		screeners_.push_back( atr_rep_screener );
 	}

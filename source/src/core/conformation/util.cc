@@ -622,8 +622,8 @@ check_good_cutpoint_neighbour(
 	runtime_assert_string_msg(
 		thistype.is_alpha_aa() || thistype.is_beta_aa() || thistype.is_gamma_aa() ||
 		thistype.is_sri() || thistype.has_property(core::chemical::TRIAZOLE_LINKER) ||
-		thistype.is_peptoid() || thistype.is_carbohydrate() || thistype.is_RNA() || thistype.is_oligourea(),
-		"Error in core::conformation::check_good_cutpoint_neighbour(): The selected residue is neither an alpha-, beta-, or gamma-amino acid, nor a peptoid, nor a sugar, nor a ribonucleic acid, nor an oligourea.  Nevertheless, it has a cutpoint variant type.  This should not be possible."
+		thistype.is_peptoid() || thistype.is_carbohydrate() || thistype.is_NA() || thistype.is_oligourea(),
+		"Error in core::conformation::check_good_cutpoint_neighbour(): The selected residue is neither an alpha-, beta-, or gamma-amino acid, nor a peptoid, nor a sugar, nor a nucleic acid, nor an oligourea.  Nevertheless, it has a cutpoint variant type.  This should not be possible."
 	);
 
 	if ( thistype.is_carbohydrate() ) {

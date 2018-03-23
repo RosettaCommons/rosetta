@@ -353,13 +353,13 @@ RNA_LowResolutionPotential::initialize_rna_repulsive_weights(){
 
 Size
 convert_na_to_1234( core::chemical::AA const foo ) {
-	if ( foo == core::chemical::na_rad ) {
+	if ( foo == core::chemical::na_rad || foo == core::chemical::na_ade ) {
 		return 1;
-	} else if ( foo == core::chemical::na_rcy ) {
+	} else if ( foo == core::chemical::na_rcy || foo == core::chemical::na_cyt ) {
 		return 2;
-	} else if ( foo == core::chemical::na_rgu ) {
+	} else if ( foo == core::chemical::na_rgu || foo == core::chemical::na_gua ) {
 		return 3;
-	} else if ( foo == core::chemical::na_ura ) {
+	} else if ( foo == core::chemical::na_ura || foo == core::chemical::na_thy ) {
 		return 4;
 	}
 	return 0;

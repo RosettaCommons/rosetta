@@ -306,7 +306,8 @@ is_virtual_base( conformation::Residue const & rsd ){
 
 	using namespace chemical;
 
-	if ( !rsd.is_RNA() ) return false;
+	// For DNA stepwise
+	if ( !rsd.is_NA() ) return false;
 
 	//Cytosine and Uracil contain 8 heavy base atoms. Adenine contains 10 heavy base atoms. Guanine contains 11 heavy base atoms.
 	if ( ( rsd.nheavyatoms() - rsd.first_sidechain_atom() + 2 ) < 8 ) { //plus 2 since need to count both start and end atom.
@@ -907,8 +908,9 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 	Size const & moving_res_1, Size const & moving_res_2,
 	Size & atom_count, Real & sum_sd, bool verbose, bool const ignore_virtual_atom ){
 
-	debug_assert( pose1.residue_type( moving_res_1 ).is_RNA() );
-	debug_assert( pose1.residue_type( moving_res_2 ).is_RNA() );
+	// For DNA stepwise making these NA checks
+	debug_assert( pose1.residue_type( moving_res_1 ).is_NA() );
+	debug_assert( pose1.residue_type( moving_res_2 ).is_NA() );
 	chemical::AA const & res_aa  =  pose1.residue_type( moving_res_1 ).aa();
 	chemical::AA const & res_aa2 =  pose2.residue_type( moving_res_2 ).aa();
 	runtime_assert( res_aa == res_aa2 );
@@ -1773,8 +1775,8 @@ figure_out_moving_rna_chain_breaks( pose::Pose const & pose,
 	rna_chain_break_gap_sizes.clear();
 
 	for ( Size n = 1; n <= chain_break_gap_sizes.size(); n++ ) {
-		if ( !pose.residue_type( five_prime_chain_breaks[n] ).is_RNA() ) continue;
-		runtime_assert( pose.residue_type( three_prime_chain_breaks[n] ).is_RNA() );
+		if ( !pose.residue_type( five_prime_chain_breaks[n] ).is_NA() ) continue;
+		runtime_assert( pose.residue_type( three_prime_chain_breaks[n] ).is_NA() );
 		rna_five_prime_chain_breaks.push_back( five_prime_chain_breaks[n] );
 		rna_three_prime_chain_breaks.push_back( three_prime_chain_breaks[n] );
 		rna_chain_break_gap_sizes.push_back( chain_break_gap_sizes[n] );

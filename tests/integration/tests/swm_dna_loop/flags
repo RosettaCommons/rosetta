@@ -1,0 +1,7 @@
+-fasta dna.fasta
+-s no_loop5_j44a_2R8SR.pdb
+-nstruct 1
+-cycles 35
+-out:file:silent swm_TEST.out
+-cut_at_rna_chainbreak true
+-score:weights stepwise/rna/rna_res_level_energy7beta.wts

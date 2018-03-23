@@ -686,6 +686,9 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 			rsd_type = chemical::ResidueTypeCOP( rsd_set->get_representative_type_base_name( newrestype3 ) );
 		}
 		TR << " variant." << std::endl;
+	} else if ( newrestype3.find(':') != std::string::npos ) {
+		// Like in the DNA case, here's an add move with a variant already on. Can't pretend it's base name.
+		rsd_type = chemical::ResidueTypeCOP( rsd_set->name_mapOP( newrestype3 ) );
 	} else {
 		rsd_type = chemical::ResidueTypeCOP( rsd_set->get_representative_type_base_name( newrestype3 ) );
 	}

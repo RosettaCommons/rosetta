@@ -1,0 +1,27 @@
+-s 5f56_start.pdb
+-native 5f56.pdb
+-out:file:silent swm_TEST.out
+
+# Note how the formatting of this fasta contains sequence info.
+# Also note that the 'dna' residues are named as modified RNA.
+-fasta target.fasta
+
+# Increase to ~40-100 for production runs. Consider comparing 
+# (for example) 500 structures at 20 cycles to 200 structures at 50.
+# That is: are longer simulations or more snapshots more important?
+-cycles 5
+-nstruct 1
+
+# This scorefunction doesn't have DNA-specific torsions
+# but it'll get stuff mostly right.
+-score:weights stepwise/rna/rna_res_level_energy7beta.wts
+
+# A couple torsions might be unrecognized
+-mute core.conformation.Conformation  core.kinematics.AtomTree
+
+# This makes sure the 'takeoff' residues adjacent to the loop get minimized
+# every move
+-motif_mode true
+
+# FROM_SCRATCH moves probably won't be useful for a 4-mer.
+-from_scratch_frequency 0.0

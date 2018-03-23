@@ -765,6 +765,14 @@ SetAtomType::name() const {
 	return "SetAtomType";
 }
 
+// Set_AA ////////////////////////////////////////////////////////////////////
+bool
+Set_AA::apply( ResidueType & rsd ) const
+{
+	rsd.aa( aa_ );
+	return false;
+}
+
 // SetIO_String //////////////////////////////////////////////////////////////
 
 SetIO_String::SetIO_String(
@@ -2513,6 +2521,16 @@ SetVirtualShadow::name() const {
 	return "SetVirtualShadow";
 }
 
+
+// RenameAtom //////////////////////////////////////////////////////////////
+
+bool
+RenameAtom::apply( ResidueType & rsd ) const
+{
+	rsd.atom( rsd.atom_index( old_name_ ) ).name( new_name_ );
+	return false;
+}
+
 PatchOperationOP
 patch_operation_from_patch_file_line(
 	std::string const & line,
@@ -2576,6 +2594,11 @@ patch_operation_from_patch_file_line(
 			return nullptr;
 		}
 		return PatchOperationOP( new SetBackboneHeavyatom( atom_name ) );
+
+	} else if ( tag == "SET_AA" ) { // 13 character tag
+		std::string aa;
+		l >> aa;
+		return PatchOperationOP( new Set_AA( aa ) );
 
 	} else if ( tag == "SET_IO_STRING" ) { // 13 character tag
 		// NOTE - USE FIXED WIDTH IO SINCE NAME3 CAN CONTAIN INTERNAL WHITESPACE (EG DNA,RNA)
@@ -3000,6 +3023,15 @@ patch_operation_from_patch_file_line(
 		l >> shadower >> shadowee;
 		if ( l.fail() ) utility_exit_with_message( "bad SET_VIRTUAL_SHADOW line in patchfile: " + line );
 		return PatchOperationOP( new SetVirtualShadow( shadower, shadowee ) );
+	} else if ( tag == "RENAME_ATOM" ) {
+		runtime_assert( l.good() );
+		//std::string old_name, new_name;
+		//l >> old_name >> new_name;
+		std::string old_name = line.substr( 12, 4 ); // Rosetta atom
+		std::string new_name = line.substr( 17, 4 );
+
+		if ( l.fail() ) utility_exit_with_message( "bad RENAME_ATOM line in patchfile: " + line );
+		return PatchOperationOP( new RenameAtom( old_name, new_name ) );
 	}
 	tr.Warning << "patch_operation_from_patch_file_line: bad line: " << line << std::endl;
 

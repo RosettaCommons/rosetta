@@ -214,6 +214,8 @@ std::string const default_jump_atom( chemical::ResidueType const & rsd ) {
 		} else {
 			return " Y  ";
 		}
+	} else if ( rsd.is_DNA() ) {
+		return chi1_torsion_atom( rsd );
 	}
 	if ( rsd.is_carbohydrate() ) {
 		return " C1 ";
@@ -1152,7 +1154,7 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 	}
 
 	//SML PHENIX conference
-	if ( !rsd.is_RNA() ) {
+	if ( !rsd.is_NA() ) {
 		std::cout << "name " << rsd.type().name() << std::endl;
 		if ( rsd.is_carbohydrate() || basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return Vector( 0.0, 0.0, 0.0 );
@@ -1169,7 +1171,8 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 	//if(rsd.type().atom_name(rsd.first_sidechain_atom()) !=" O2'") utility_exit_with_message( "rsd.type().atom_name(rsd.first_sidechain_atom()) !=\" O2'\" " );
 	//if(rsd.atom_name( rsd.first_sidechain_atom() )!=" O2'") utility_exit_with_message("rsd.atom_name( rsd.first_sidechain_atom() )!=\" O2'\"");
 
-	if ( rsd.RNA_info().o2prime_index() != rsd.first_sidechain_atom() ) {
+	// AMW: added is_RNA() condition because DNA may get down here.
+	if ( rsd.is_RNA() && rsd.RNA_info().o2prime_index() != rsd.first_sidechain_atom() ) {
 		utility_exit_with_message( "rsd.RNA_info().o2prime_index() != rsd.first_sidechain_atom() for residue "+rsd.name() );
 	}
 
@@ -1179,12 +1182,12 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 
 		if ( verbose ) std::cout << "atom " << i  << " " <<  "name = " << rsd.type().atom_name( i ) << " type = " << rsd.atom_type( i ).name()  << " " << rsd.atom_type_index( i ) << " " << rsd.atomic_charge( i );
 
-		if ( rsd.RNA_info().atom_is_virtual( i ) ) {
+		if ( rsd.is_RNA() && rsd.RNA_info().atom_is_virtual( i ) ) {
 			if ( verbose ) std::cout << "  Virtual type: Ignore! " << std::endl;
 			continue;
 		}
 
-		if ( rsd.atom_type( i ).is_repulsive() ) {
+		if ( rsd.is_RNA() && rsd.atom_type( i ).is_repulsive() ) {
 			if ( verbose ) std::cout << "  Repulsive: Ignore! " << std::endl;
 			continue;
 		}
@@ -1227,7 +1230,7 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 	using namespace chemical;
 
 	//SML PHENIX conference
-	if ( !rsd.is_RNA() && rsd.type().name() != "pdb_GAI" ) {
+	if ( !rsd.is_NA() && rsd.type().name() != "pdb_GAI" ) {
 		if ( rsd.is_carbohydrate() || basic::options::option[basic::options::OptionKeys::rna::erraser::rna_prot_erraser].value() ) {
 			return numeric::xyzMatrix< core::Real > ::identity();
 		} else if ( rsd.is_polymer() && !rsd.has_lower_connect() && !rsd.has_upper_connect() ) {
@@ -1241,6 +1244,11 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	AA res_type = rsd.aa();
 	if ( res_type == aa_unk || res_type == aa_unp ) res_type = rsd.type().na_analogue();
+	// convert DNA to RNA equivalent
+	if ( res_type == na_ade ) res_type = na_rad;
+	if ( res_type == na_cyt ) res_type = na_rcy;
+	if ( res_type == na_gua ) res_type = na_rgu;
+	if ( res_type == na_thy ) res_type = na_ura;
 
 	Vector x, y, z;
 

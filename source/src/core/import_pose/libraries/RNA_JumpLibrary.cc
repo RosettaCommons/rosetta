@@ -183,9 +183,9 @@ RNA_JumpLibrary::check_forward_backward(
 using namespace core;
 
 char one_letter_from_rt( chemical::ResidueType const & rt ) {
-	if ( rt.aa() == chemical::na_rad || rt.na_analogue() == chemical::na_rad ) return 'a';
-	if ( rt.aa() == chemical::na_rcy || rt.na_analogue() == chemical::na_rcy ) return 'c';
-	if ( rt.aa() == chemical::na_rgu || rt.na_analogue() == chemical::na_rgu ) return 'g';
+	if ( rt.aa() == chemical::na_rad || rt.aa() == chemical::na_ade || rt.na_analogue() == chemical::na_rad ) return 'a';
+	if ( rt.aa() == chemical::na_rcy || rt.aa() == chemical::na_cyt || rt.na_analogue() == chemical::na_rcy ) return 'c';
+	if ( rt.aa() == chemical::na_rgu || rt.aa() == chemical::na_gua || rt.na_analogue() == chemical::na_rgu ) return 'g';
 	if ( rt.aa() == chemical::na_ura || rt.na_analogue() == chemical::na_ura ) return 'u';
 	if ( rt.name1() == 't' ) return 'u';
 
