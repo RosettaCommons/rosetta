@@ -92,8 +92,6 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static void list_options_read( utility::options::OptionKeyList & read_options );
 
-private:
-
 	utility::file::FileName
 	filename_for_job(
 		utility::tag::TagCOP output_tag,

@@ -241,8 +241,20 @@ PDBPoseOutputter::output_pdb_name(
 	fn.base( ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) )
 		+ job.job_tag_with_index_suffix( output_index ) );
 
+	// Priority: ask for the options in order:
+	// 1. The path specified in the tag,
+	// 2. The path specified in out::path::pdb <-- most specific
+	// 3. The path specified in out::path::all <-- more general
+	// 4. The path specified in out::path::path <-- dunno if this is more or less general than out::path::all?
+
 	if ( tag && tag->hasOption( "path" ) ) {
 		fn.path( tag->getOption< std::string >( "path" ) );
+	} else if ( options[ basic::options::OptionKeys::out::path::pdb ].user() ) {
+		fn.path( options[ basic::options::OptionKeys::out::path::pdb ]() );
+	} else if ( options[ basic::options::OptionKeys::out::path::all ].user() ) {
+		fn.path( options[ basic::options::OptionKeys::out::path::all ]() );
+	} else if ( options[ basic::options::OptionKeys::out::path::path ].user() ) {
+		fn.path( options[ basic::options::OptionKeys::out::path::path ]() );
 	}
 
 	return fn();
@@ -306,7 +318,10 @@ PDBPoseOutputter::list_options_read(
 		+ basic::options::OptionKeys::out::pdb_gz
 		+ basic::options::OptionKeys::out::overwrite
 		+ basic::options::OptionKeys::out::prefix
-		+ basic::options::OptionKeys::out::suffix;
+		+ basic::options::OptionKeys::out::suffix
+		+ basic::options::OptionKeys::out::path::path
+		+ basic::options::OptionKeys::out::path::pdb
+		+ basic::options::OptionKeys::out::path::all;
 }
 
 PoseOutputterOP PDBPoseOutputterCreator::create_outputter() const

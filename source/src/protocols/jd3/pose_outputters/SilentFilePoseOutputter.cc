@@ -145,18 +145,44 @@ SilentFilePoseOutputter::create_output_specification(
 	debug_assert( !tag || tag->getName() == keyname() ); // I expect this Tag to point to my data
 
 	core::io::silent::SilentFileOptions opts( job_options );
-	std::string fname_out;
+	utility::file::FileName fname_out;
 	core::Size buffer_limit(0);
+	std::string base_name; // may contain a desired extension; we'll search for the "."
 	if ( tag ) {
 		opts.read_from_tag( tag );
-		fname_out = tag->getOption< std::string >( "filename" );
+		base_name = tag->getOption< std::string >( "filename" );
 		if ( tag->hasOption( "buffer_limit" ) ) {
 			buffer_limit = tag->getOption< core::Size >( "buffer_limit" );
 		}
 	} else {
 		using namespace basic::options::OptionKeys;
-		fname_out = job_options[ out::file::silent ]();
+		base_name = job_options[ out::file::silent ]();
 		// buffer limit? -- default of 0?
+	}
+
+	if ( base_name.find( '.' ) == std::string::npos ) {
+		fname_out = base_name;
+		fname_out.ext( ".out" );
+	} else {
+		fname_out = base_name;
+	}
+
+	// Priority: ask for the options in order:
+	// 1. The path specified in the tag,
+	// 2. The path specified in out::path::all <-- more general
+	// 3. The path specified in out::path::path <-- dunno if this is more or less general than out::path::all?
+
+	std::string base_path;
+	if ( tag && tag->hasOption( "path" ) ) {
+		base_path = tag->getOption< std::string >( "path" );
+	} else if ( job_options[ basic::options::OptionKeys::out::path::all ].user() ) {
+		base_path = job_options[ basic::options::OptionKeys::out::path::all ]();
+	} else if ( job_options[ basic::options::OptionKeys::out::path::path ].user() ) {
+		base_path = job_options[ basic::options::OptionKeys::out::path::path ]();
+	}
+
+	if ( ! base_path.empty() && fname_out.relative() ) {
+		fname_out.path( base_path + ( fname_out.path().empty() ? "" : ( base_path[ base_path.size() - 1 ] == '/' ? "" : "/" ) + fname_out.path() ) );
 	}
 
 	SilentFilePoseOutputSpecificationOP sf_pos( new SilentFilePoseOutputSpecification );
@@ -271,7 +297,11 @@ SilentFilePoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	AttributeList attributes;
 	attributes
 		+ XMLSchemaAttribute::required_attribute( "filename", xs_string , "The name of the output silent file that should be written to." )
-		+ XMLSchemaAttribute( "buffer_limit", xsct_non_negative_integer, "The number of Poses that should be held in memory between each write to disk" );
+		+ XMLSchemaAttribute( "buffer_limit", xsct_non_negative_integer, "The number of Poses that should be held in memory between each write to disk" )
+		+ XMLSchemaAttribute( "path", xs_string , "Give the directory to which the output silent file should be written."
+		" Note that the output path does not become part of the job name, so if you have two jobs with the same job"
+		" name written to different directories, then your log file and your score file (and any other secondary pose"
+		" outputter) will not distinguish between which of the two jobs it is writing output for" );
 	core::io::silent::SilentFileOptions::append_attributes_for_tag_parsing( xsd, attributes );
 
 
@@ -301,7 +331,10 @@ SilentFilePoseOutputter::list_options_read(
 	core::io::silent::SilentFileOptions::list_read_options( read_options );
 	read_options
 		+ out::silent_gz
-		+ out::file::silent;
+		+ out::file::silent
+		+ basic::options::OptionKeys::out::path::path
+		+ basic::options::OptionKeys::out::path::all;
+
 }
 
 

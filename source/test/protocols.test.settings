@@ -324,6 +324,11 @@ sources = {
 		"PDBPoseInputter",
 		"SilentFilePoseInputter",
 	],
+	"jd3/pose_outputters" : [
+		"PDBPoseOutputter",
+		"ScoreFileOutputter",
+		"SilentFilePoseOutputter",
+	],
 	"jd3/job_distributors" : [
 		"MPIWorkPoolJobDistributor",
 	],

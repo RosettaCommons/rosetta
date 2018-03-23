@@ -178,6 +178,7 @@ void ScoreFileOutputter::list_options_read( utility::options::OptionKeyList & re
 		+ out::file::scorefile
 		+ out::path::score
 		+ out::path::all
+		+ out::path::path
 		+ out::prefix
 		+ out::suffix;
 }
@@ -192,17 +193,20 @@ ScoreFileOutputter::filename_for_job(
 {
 	using namespace basic::options::OptionKeys;
 
+	bool scorefile_path_in_tag = false;
 	utility::file::FileName scorefile_name;
 
 	if ( output_tag && output_tag->hasTag( keyname() ) ) {
 		utility::tag::TagCOP score_tag = output_tag->getTag( keyname() );
 		if ( score_tag->hasOption( "filename" ) ) {
 			scorefile_name = score_tag->getOption< std::string >( "filename" );
-			if ( score_tag->hasOption( "path" ) ) {
-				utility::file::FileName scorefile_path( score_tag->getOption< std::string >( "path" ));
-				scorefile_name.path( scorefile_path.path() );
-			}
-			return scorefile_name;
+		} else {
+			scorefile_name = "score.sc";
+		}
+		if ( score_tag->hasOption( "path" ) ) {
+			utility::file::FileName scorefile_path( score_tag->getOption< std::string >( "path" ));
+			scorefile_name.path( scorefile_path.path() );
+			scorefile_path_in_tag = true;
 		}
 	}
 
@@ -213,14 +217,17 @@ ScoreFileOutputter::filename_for_job(
 
 	if ( job_options[ out::file::scorefile ].user() ) {
 		scorefile_name = job_options[ out::file::scorefile ]();
-		if ( job_options[ out::path::score ].user() ) {
-			scorefile_name.path( job_options[ out::path::score ]().path() );
-		} else if ( ! scorefile_name.absolute() && job_options[ out::path::all ].user() ) {
-			scorefile_name.path( job_options[ out::path::all ]().path() + "/" + scorefile_name.path() );
-		}
 	} else {
-		scorefile_name = "score"; // default name "score.sc"
+
+		// Deviation from JD2's score file naming scheme:
+		// Do not put .fasc at the end of a score file if the out::file::fullatom flag
+		// is on the command line; instead, if the user wants to
+		// say that their score file should should be named with the .fasc extension
+		// then they can give a name for the file explicitly.
+
+		scorefile_name = "score.sc"; // default name "score.sc"
 		std::ostringstream oss;
+
 		//prefix, suffix
 		oss << job_options[ out::prefix ]() << scorefile_name.base()
 			<< job_options[ out::suffix ]();
@@ -228,18 +235,28 @@ ScoreFileOutputter::filename_for_job(
 		//path
 		if ( job_options[ out::path::score ].user() ) {
 			scorefile_name.path( job_options[ out::path::score ]().path() );
-			scorefile_name.vol( job_options[ out::path::score ]().vol() );
 		} else if ( job_options[ out::path::all ].user() ) {
 			scorefile_name.path( job_options[ out::path::all ]().path() + "/" + scorefile_name.path() );
 		}
 
-		// Deviation from JD2's score file naming scheme:
-		// Do not put .fasc at the end of a score file if the out::file::fullatom flag
-		// is on the command line; instead, if the user wants to
-		// say that their score file should should be named with the .fasc extension
-		// then they can give a name for the file explicitly.
-		scorefile_name.ext( ".sc" );
 	}
+
+	if ( scorefile_path_in_tag ) {
+		// no op
+	} else if ( ! scorefile_name.absolute() && job_options[ out::path::score ].user() ) {
+		scorefile_name.path( job_options[ out::path::score ]().path() +
+			( scorefile_name.path().empty() ? "" : ( "/" + scorefile_name.path()  ) ));
+		scorefile_name.vol( job_options[ out::path::score ]().vol() );
+	} else if ( ! scorefile_name.absolute() && job_options[ out::path::all ].user() ) {
+		scorefile_name.path( job_options[ out::path::all ]().path() +
+			( scorefile_name.path().empty() ? "" : ( "/" + scorefile_name.path()  ) ));
+		scorefile_name.vol( job_options[ out::path::all ]().vol() );
+	} else if ( ! scorefile_name.absolute() && job_options[ out::path::path ].user() ) {
+		scorefile_name.path( job_options[ out::path::path ]().path() +
+			( scorefile_name.path().empty() ? "" : ( "/" + scorefile_name.path()  ) ));
+		scorefile_name.vol( job_options[ out::path::path ]().vol() );
+	}
+
 
 	return scorefile_name;
 }
