@@ -1,4 +1,7 @@
 -ignore_unrecognized_res
+-restore_pre_talaris_2013_behavior
+-score:weights score12.wts
+-correct
 -overwrite
 -in
  -file
