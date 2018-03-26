@@ -147,7 +147,7 @@ SiteConstraint::setup_csts(
 	Size end_res = pose.conformation().chain_end( constraint_chain );
 	utility::vector1<bool> residues(pose.size(), false);
 
-	for ( Size j = start_res ; j < end_res ; ++j ) {
+	for ( Size j = start_res ; j <= end_res ; ++j ) {
 		residues[j] = true;
 	}
 	setup_csts(res, atm_name, residues, pose, func);
@@ -165,7 +165,7 @@ SiteConstraint::setup_csts(
 	debug_assert( pose.size() == residues.size() );
 	id::AtomID target_atom( pose.residue_type( res ).atom_index( atm_name ), res );
 
-	for ( Size i = 1 ; i < pose.size() ; ++i ) {
+	for ( Size i = 1 ; i <= pose.size() ; ++i ) {
 
 		if ( residues[ i ] ) {
 			id::AtomID atom2;
