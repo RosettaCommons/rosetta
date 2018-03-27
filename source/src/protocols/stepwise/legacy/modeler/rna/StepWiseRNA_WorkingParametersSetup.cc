@@ -1480,7 +1480,7 @@ StepWiseWorkingParametersSetup::figure_out_prepend_internal( core::Size const ro
 
 		Size found_actual_working_res = 0;
 		utility::vector1< core::Size > actual_working_moving_res_list;
-		core::Size actual_working_moving_res;
+		core::Size actual_working_moving_res = 0;
 
 		//OK have to put moving_res AWAY from the root res...
 		if ( partition_definition( possible_working_res_1 ) != partition_definition( root_res ) ) {
@@ -1534,8 +1534,9 @@ StepWiseWorkingParametersSetup::figure_out_prepend_internal( core::Size const ro
 		}
 
 		// We must have hit at least one of the above branches, or else actual_working_moving_res is garbage
-		runtime_assert( partition_definition( possible_working_res_1 ) != partition_definition( root_res ) ||
-			partition_definition( possible_working_res_2 ) != partition_definition( root_res ) );
+		runtime_assert_string_msg( partition_definition( possible_working_res_1 ) != partition_definition( root_res ) ||
+			partition_definition( possible_working_res_2 ) != partition_definition( root_res ),
+			"Neither partition for possible_working_res_1 nor possible_working_res_2 is same as root_res." );
 
 		if ( actual_working_moving_res_list[1] != actual_working_moving_res ) {
 			TR.Debug << "actual_working_moving_res = " << actual_working_moving_res << std::endl;

@@ -142,7 +142,6 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 		// Does it hit homologs?
 		if ( exclude_fragments.find( i ) != exclude_fragments.end() ) {
 			TR.Trace << "Excluding due to hitting a homolog for " << RNA_string << " " << RNA_secstruct_string << " at " << i << std::endl;
-			match = false;
 			continue;
 		}
 
@@ -176,7 +175,6 @@ FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & 
 			if ( exclude_fragments.find( i ) != exclude_fragments.end() ) {
 				TR.Trace << "Excluding due to hitting a homologue for " << RNA_string << " " << RNA_secstruct_string << " at " << i << std::endl;
 				match = false;
-				continue;
 			}
 
 			for ( Size offset = 0; offset < size; offset++ ) {

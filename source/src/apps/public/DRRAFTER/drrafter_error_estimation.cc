@@ -98,7 +98,7 @@ get_median_structure( utility::vector1< std::string > all_pose_tags,
 	}
 
 	/// which one has the minimum RMSD?
-	Real min_rmsd;
+	Real min_rmsd = mean_pairwise_rmsd_per_struct[ all_pose_tags[ 1 ] ];
 	std::string median_struct;
 	for ( Size i = 1; i <= mean_pairwise_rmsd_per_struct.size(); ++i ) {
 		if ( i == 1 || mean_pairwise_rmsd_per_struct[ all_pose_tags[ i ] ] < min_rmsd ) {

@@ -9,7 +9,7 @@
 # Increase to ~40-100 for production runs. Consider comparing 
 # (for example) 500 structures at 20 cycles to 200 structures at 50.
 # That is: are longer simulations or more snapshots more important?
--cycles 5
+-cycles 2
 -nstruct 1
 
 # This scorefunction doesn't have DNA-specific torsions

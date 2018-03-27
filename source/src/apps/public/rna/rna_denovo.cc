@@ -300,7 +300,6 @@ public:
 		if ( refine_pose_list_.size() > 0 ) {
 			pose = *refine_pose_list_[ refine_pose_id ];
 			++refine_pose_id;
-			if ( refine_pose_id > refine_pose_list_.size() ) refine_pose_id = 1;
 		} else {
 			pose = start_pose;
 		}

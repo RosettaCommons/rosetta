@@ -12,7 +12,7 @@
 -minimize_rna true 
 
 # Increase to ~10000-20000 for production runs.
--cycles 5000
+-cycles 1000
 -nstruct 1
 
 # This scorefunction doesn't have DNA-specific torsions

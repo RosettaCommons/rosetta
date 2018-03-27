@@ -304,10 +304,10 @@ find_first_root_residue( kinematics::FoldTree const & f,
 	for ( Size n = 1; n <= f.nres(); n++ ) {
 		if ( working_res_subset.has_value( working_res[ n ] ) &&
 				f.possible_root( n ) ) {
-			found_root = true;
 			return n;
 		}
 	}
+	// If control flow reaches here, just exit
 	runtime_assert( found_root );
 	return 0;
 }
@@ -1478,7 +1478,7 @@ add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_list, pose::Pose
 bool
 is_protein( pose::Pose const & pose, utility::vector1< Size > const & moving_res_list ) {
 	Size const example_res = ( moving_res_list.size() > 0 ) ? moving_res_list[1] : 1;
-	if ( pose.residue_type( example_res ).is_protein() ) {
+	if ( pose.residue_type( example_res ).is_protein() || pose.residue_type( example_res ).is_peptoid() ) {
 		return true;
 	} else {
 		runtime_assert( pose.residue_type( example_res ).is_RNA() || pose.residue_type( example_res ).is_carbohydrate() || !pose.residue_type( example_res ).is_polymer() );
