@@ -23,11 +23,13 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/AA.hh>
 #include <core/select/util.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/loops/loops_main.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -36,7 +38,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static basic::Tracer TR("SimpleThreadingMover");
+static basic::Tracer TR("protocols.simple_moves.SimpleThreadingMover");
 
 namespace protocols {
 namespace simple_moves {
@@ -93,7 +95,6 @@ SimpleThreadingMover::parse_my_tag(
 
 	skip_unknown_mutant_ = tag->getOption< bool >("skip_unknown_mutant", skip_unknown_mutant_);
 	pack_rounds_ = tag->getOption< core::Size >("pack_rounds", pack_rounds_);
-
 }
 
 
@@ -169,6 +170,12 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 		utility_exit_with_message("Sequence not set for threading.  Cannot continue.");
 	}
 
+	//Because this relies on a packer task to make the changes, if pack_rounds = 0, this mover does nothing.
+	//A user might expect that if pack_rounds = 0, the substitutions will be made but no packing will occur.
+	if ( pack_rounds_ < 1 ) {
+		utility_exit_with_message("pack_rounds is less than 1.  SimpleThreadingMover needs at least 1 round of packing to make the substitution.");
+	}
+
 	if ( parsed_position_ !=  "NA" ) {
 		start_position_ = core::pose::parse_resnum(parsed_position_, pose);
 	}
@@ -238,8 +245,14 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 	turn_off_design.apply(pose, *task);
 	turn_off_packing.apply(pose, *task);
 
-	PackRotamersMover packer = PackRotamersMover(scorefxn_, task, pack_rounds_);
-	packer.apply(pose);
+	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover( scorefxn_, task, pack_rounds_ ) );
+	//Make a symmetric packer if pose is symmetric
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		TR << "Working on a symmetric pose.  Setting up the symmetric PackRotamersMover." << std::endl;
+		packer = protocols::minimization_packing::PackRotamersMoverOP( new minimization_packing::symmetry::SymPackRotamersMover( scorefxn_, task, pack_rounds_ ) );
+	}
+
+	packer->apply( pose );
 	TR << "Complete" <<std::endl;
 
 }
@@ -281,8 +294,8 @@ void SimpleThreadingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		"skip_unknown_mutant", xsct_rosetta_bool,
 		"Skip unknown amino acid in thread_sequence string instead of throwing an exception" );
 	attlist + XMLSchemaAttribute::attribute_w_default(
-		"pack_rounds", xsct_non_negative_integer,
-		"Number of packing rounds for threading", "5");
+		"pack_rounds", xsct_positive_integer,
+		"Number of packing rounds for threading.  Must be at least 1 so that substitutions are applied.", "5");
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
