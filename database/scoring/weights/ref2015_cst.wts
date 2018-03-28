@@ -32,5 +32,6 @@ atom_pair_constraint 1.0
 angle_constraint 1.0
 dihedral_constraint 1.0
 res_type_constraint 1.0
+metalbinding_constraint 1.0
 INCLUDE_INTRA_RES_PROTEIN
 NO_HB_ENV_DEP
