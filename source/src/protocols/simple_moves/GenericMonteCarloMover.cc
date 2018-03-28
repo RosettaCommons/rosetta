@@ -972,11 +972,11 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	auto  find_mover ( movers.find( user_defined_mover_name_ ));
 	auto find_filter( filters.find( filter_name ));
 	if ( find_mover == movers.end() && user_defined_mover_name_ != "" ) {
-		TR.Error << "mover not found in map: \n" << tag << std::endl;
+		TR.Error << "Mover \"" << user_defined_mover_name_ << "\" was not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context:)\n" << tag << std::endl;
 		runtime_assert( find_mover != movers.end() );
 	}
 	if ( find_filter == filters.end() ) {
-		TR.Error << "filter not found in map: \n" << tag << std::endl;
+		TR.Error << "Filter \"" << filter_name << "\"not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context):\n" << tag << std::endl;
 		runtime_assert( find_filter != filters.end() );
 	}
 	if ( user_defined_mover_name_ != "" ) {
@@ -1030,7 +1030,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 				String const filter_name( ftag->getOption< String >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
-					TR.Error << "filter not found in map: \n" << tag << std::endl;
+					TR.Error << "Filter \"" <<  filter_name << "\" was not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context:)\n" << tag << std::endl;
 					runtime_assert( find_filt != filters.end() );
 				}
 				auto const temp( ftag->getOption< Real >( "temperature", 1 ) );
