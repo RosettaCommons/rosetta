@@ -22,7 +22,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesSeqRecoveryCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
 #include <protocols/ligand_docking/ligand_functions.hh> //for minimizing ligand torsions
@@ -305,7 +305,7 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 	taskfactory.push_back( detect_enzdes_interface);
 	if ( design ) { // upweight ligand interactions and remove bad aromatic rotamers during design only
 		taskfactory.push_back( TaskOperationCOP( new ProteinLigandInterfaceUpweighter() ) );
-		taskfactory.push_back( TaskOperationCOP( new toolbox::task_operations::LimitAromaChi2Operation() ) );
+		taskfactory.push_back( TaskOperationCOP( new task_operations::LimitAromaChi2Operation() ) );
 	}
 	if ( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ) {
 		taskfactory.push_back( TaskOperationCOP( new AddRigidBodyLigandConfs() ) );

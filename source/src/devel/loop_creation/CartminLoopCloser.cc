@@ -31,7 +31,7 @@
 //protocols
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
+#include <protocols/pose_metric_calculators/ClashCountCalculator.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
 //basic

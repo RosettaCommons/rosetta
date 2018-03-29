@@ -46,7 +46,7 @@ using namespace ObjexxFCL::format;
 
 //Auto Headers
 #include <protocols/multistate_design/SingleStateEntityData.hh>
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
+#include <protocols/pose_metric_calculators/MetricValueGetter.hh>
 #include <utility/options/IntegerVectorOption.hh>
 
 

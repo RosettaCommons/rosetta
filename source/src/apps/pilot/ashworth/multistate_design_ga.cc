@@ -74,7 +74,7 @@ static basic::Tracer TR( "app.ga", t_info );
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
+#include <protocols/pose_metric_calculators/MetricValueGetter.hh>
 
 
 using namespace core;

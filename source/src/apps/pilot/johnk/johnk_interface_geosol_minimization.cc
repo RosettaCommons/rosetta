@@ -39,7 +39,7 @@
 #include <basic/options/option.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/pack_rotamers.hh>
 
 #include <numeric/constants.hh>
@@ -88,7 +88,7 @@ void define_interface( core::pose::Pose const & pose ) {
 	core::Size rb_jump = 1;
 	scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	pack::task::TaskFactory tf;
-	tf.push_back( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump, interface_dist ) );
+	tf.push_back( new protocols::simple_task_operations::RestrictToInterface( rb_jump, interface_dist ) );
 	pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
 	for ( core::Size i=1; i <= pose.size(); ++i ) {
 		if ( task->pack_residue(i) ) interface.at(i)=true;

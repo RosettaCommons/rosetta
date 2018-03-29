@@ -34,7 +34,7 @@
 #include <protocols/antibody/design/AntibodySeqDesignTFCreator.hh>
 #include <protocols/antibody/design/util.hh>
 
-#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
+#include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -57,7 +57,7 @@ using namespace protocols::antibody;
 using namespace protocols::antibody::design;
 using namespace core::pack::task::operation;
 using namespace core::pack::task;
-using namespace protocols::toolbox::task_operations;
+using namespace protocols::simple_task_operations;
 
 using utility::vector1;
 

@@ -19,7 +19,7 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <basic/MetricValue.hh>
 

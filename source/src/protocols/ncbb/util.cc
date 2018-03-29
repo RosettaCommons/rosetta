@@ -43,9 +43,9 @@
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -71,8 +71,7 @@ using namespace protocols;
 using namespace protocols::moves;
 using namespace protocols::minimization_packing;
 using namespace protocols::rigid;
-using namespace protocols::toolbox;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
 using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -437,7 +436,7 @@ setup_filter_stats() {
 		Warning() << "In setup_filters_stats, calculator " << "num_hbonds"
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new pose_metric_calculators::NumberHBondsCalculator() );
+		pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new simple_pose_metric_calculators::NumberHBondsCalculator() );
 		pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
 	}
 
@@ -446,7 +445,7 @@ setup_filter_stats() {
 		Warning() << "In setup_filters_stats, calculator " << "unsat"
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		pose::metrics::PoseMetricCalculatorOP unsat_calculator( new pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
+		pose::metrics::PoseMetricCalculatorOP unsat_calculator( new simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
 		pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
 	}
 

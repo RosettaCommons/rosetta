@@ -71,9 +71,9 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
 #include <devel/init.hh>

@@ -32,12 +32,12 @@
 #include <devel/init.hh>
 
 // neil stuff
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 
 #include <utility/tools/make_map.hh>
 

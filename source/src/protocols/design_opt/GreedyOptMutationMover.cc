@@ -13,7 +13,7 @@
 #include <protocols/design_opt/GreedyOptMutationMover.hh>
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
 #include <protocols/simple_filters/DeltaFilter.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
 #include <iostream>

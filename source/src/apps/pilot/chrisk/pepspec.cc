@@ -133,9 +133,9 @@
 #include <basic/options/keys/pepspec.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
-#include <protocols/toolbox/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
+#include <protocols/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
+#include <protocols/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
+#include <protocols/pose_metric_calculators/MetricValueGetter.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
@@ -1581,9 +1581,9 @@ RunPepSpec()
 
 	// set up the pose_metric_calculators
 	core::pose::metrics::CalculatorFactory & calculator_factory(core::pose::metrics::CalculatorFactory::Instance());
-	protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculatorOP res_decomp_calculator(new protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculator());
+	protocols::pose_metric_calculators::ResidueDecompositionByChainCalculatorOP res_decomp_calculator(new protocols::pose_metric_calculators::ResidueDecompositionByChainCalculator());
 	calculator_factory.register_calculator("residue_decomposition", res_decomp_calculator);
-	protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculatorOP decomp_reweight_calculator( new protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculator( "residue_decomposition" ) );
+	protocols::pose_metric_calculators::DecomposeAndReweightEnergiesCalculatorOP decomp_reweight_calculator( new protocols::pose_metric_calculators::DecomposeAndReweightEnergiesCalculator( "residue_decomposition" ) );
 	vector1< Real > reweight_vector( 1.0, 3 ); reweight_vector.push_back( 2.0 );
 	decomp_reweight_calculator->master_weight_vector( reweight_vector );
 	decomp_reweight_calculator->num_sets( ( Size ) 2 );

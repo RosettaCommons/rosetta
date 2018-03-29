@@ -25,13 +25,13 @@
 #include <numeric/xyzVector.hh>
 #include <string>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
+#include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
 //#include <core/pose/Pose.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -158,7 +158,7 @@ HotspotDisjointedFoldTreeMover::clone() const {
 void
 HotspotDisjointedFoldTreeMover::apply( core::pose::Pose & pose )
 {
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	using namespace core::pack::task::operation;
 
 	ProteinInterfaceDesignOperationOP pido( new ProteinInterfaceDesignOperation );
@@ -174,7 +174,7 @@ HotspotDisjointedFoldTreeMover::apply( core::pose::Pose & pose )
 	std::set< core::Size > residues( get_residues( pose ) );
 
 	if ( ddG_threshold() <= 100 ) {
-		protocols::simple_filters::RotamerBoltzmannWeight rbw;
+		protocols::calc_taskop_filters::RotamerBoltzmannWeight rbw;
 		rbw.ddG_threshold( ddG_threshold() );
 		rbw.scorefxn( scorefxn() );
 		rbw.repacking_radius( interface_radius() );

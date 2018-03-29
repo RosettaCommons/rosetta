@@ -20,7 +20,7 @@
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -224,7 +224,7 @@ main( int argc, char * argv [] )
 			core::Size rb_jump = 1;
 
 			pack::task::TaskFactory tf;
-			tf.push_back( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump, interface_dist ) );
+			tf.push_back( new protocols::simple_task_operations::RestrictToInterface( rb_jump, interface_dist ) );
 			pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( curr_pose );
 			for ( core::Size i=1; i <= curr_pose.size(); ++i ) {
 				if ( task->pack_residue(i) && curr_pose.pdb_info()->chain(i) == epitope_chain ) interface.at(i)=true;

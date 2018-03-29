@@ -36,7 +36,7 @@
 #include <core/conformation/Atom.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/toolbox/task_operations/ThreadSequenceOperation.hh>
+#include <protocols/task_operations/ThreadSequenceOperation.hh>
 #include <protocols/evolution/AlignmentCleanerTools.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>

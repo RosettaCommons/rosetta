@@ -36,14 +36,14 @@
 //Metrics
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/SaltBridgeCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/CatPiCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PiPiCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/SaltBridgeCalculator.hh>
+#include <protocols/pose_metric_calculators/CatPiCalculator.hh>
+#include <protocols/pose_metric_calculators/PiPiCalculator.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <protocols/analysis/PackStatMover.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -155,22 +155,22 @@ int main( int argc, char * argv [] ){
 		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( sasa_calc_name, sasa_calculator );
 
-		core::pose::metrics::PoseMetricCalculatorOP hbonds_calculator( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP hbonds_calculator( new protocols::simple_pose_metric_calculators::NumberHBondsCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( hbond_calc_name, hbonds_calculator );
 
-		core::pose::metrics::PoseMetricCalculatorOP packstat_calculator( new protocols::toolbox::pose_metric_calculators::PackstatCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP packstat_calculator( new protocols::pose_metric_calculators::PackstatCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( packstat_calc_name, packstat_calculator );
 
-		core::pose::metrics::PoseMetricCalculatorOP unsat_calculator( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, hbond_calc_name) );
+		core::pose::metrics::PoseMetricCalculatorOP unsat_calculator( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, hbond_calc_name) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( unsat_calc_name, unsat_calculator );
 
-		core::pose::metrics::PoseMetricCalculatorOP sb_calculator( new protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP sb_calculator( new protocols::pose_metric_calculators::SaltBridgeCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( sb_calc_name, sb_calculator );
 
-		core::pose::metrics::PoseMetricCalculatorOP catpi_calculator( new protocols::toolbox::pose_metric_calculators::CatPiCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP catpi_calculator( new protocols::pose_metric_calculators::CatPiCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( catpi_calc_name, catpi_calculator );
 
-		core::pose::metrics::PoseMetricCalculatorOP pipi_calculator( new protocols::toolbox::pose_metric_calculators::PiPiCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP pipi_calculator( new protocols::pose_metric_calculators::PiPiCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( pipi_calc_name, pipi_calculator );
 
 

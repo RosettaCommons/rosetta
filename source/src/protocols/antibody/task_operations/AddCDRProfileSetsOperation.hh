@@ -36,7 +36,7 @@ namespace task_operations {
 /// Essentially samples full sequences of CDRs within a particular CDR cluster randomly each time the packer is called.
 /// Does this for each CDR.
 ///
-/// See protocols/toolbox/task_operations/MutationSetDesignOperation for more info.
+/// See protocols/task_operations/MutationSetDesignOperation for more info.
 /// If a CDR has an unknown cluster or there are no data for that particular CDR, will skip that CDR.
 ///
 /// CDR definitions used are North/Dunbrack as the clusters are defined using it.

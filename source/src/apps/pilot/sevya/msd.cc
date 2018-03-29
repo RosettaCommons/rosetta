@@ -20,7 +20,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.hh>
+#include <protocols/task_operations/RestrictToInterfaceVectorOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
@@ -326,7 +326,7 @@ main( int argc, char * argv [] )
 		}
 
 
-		protocols::toolbox::task_operations::RestrictToInterfaceVectorOperationOP rtiv = new protocols::toolbox::task_operations::RestrictToInterfaceVectorOperation;
+		protocols::task_operations::RestrictToInterfaceVectorOperationOP rtiv = new protocols::task_operations::RestrictToInterfaceVectorOperation;
 		rtiv->CB_dist_cutoff(10);
 		rtiv->nearby_atom_cutoff(5.5);
 		rtiv->vector_angle_cutoff(75);

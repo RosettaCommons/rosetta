@@ -35,7 +35,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 //#include <protocols/topology_broker/TopologyBroker.hh>
 //#include <protocols/topology_broker/util.hh>
@@ -82,7 +82,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.TopologyBrok
 // XRW TEMP  return "TopologyBrokerMover";
 // XRW TEMP }
 
-TopologyBrokerMover::TopologyBrokerMover() : simple_moves::DesignRepackMover( TopologyBrokerMover::mover_name() ) {}
+TopologyBrokerMover::TopologyBrokerMover() : calc_taskop_movers::DesignRepackMover( TopologyBrokerMover::mover_name() ) {}
 TopologyBrokerMover::~TopologyBrokerMover() = default;
 
 void

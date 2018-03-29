@@ -10,7 +10,7 @@
 /// @author Sarel Fleishman (sarelf@uw.edu)
 #include <protocols/protein_interface_design/filters/FilterScan.hh>
 #include <protocols/protein_interface_design/filters/FilterScanCreator.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
 #include <iostream>
@@ -221,7 +221,7 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 	using namespace core::chemical;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 
 	utility::vector1< bool > allowed_aas;
 	allowed_aas.clear();

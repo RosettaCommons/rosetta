@@ -20,12 +20,12 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/RingConformationMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/util.hh>
@@ -124,7 +124,7 @@ public:  // Standard Rosetta methods
 		option.add_relevant( OptionKeys::run::n_cycles );
 
 		// Call register_options() on all other Movers used by this class.
-		simple_moves::ConstraintSetMover::register_options();
+		constraint_movers::ConstraintSetMover::register_options();
 		rigid::RigidBodyRandomizeMover::register_options();
 		rigid::RigidBodyRandomizeMover::register_options();
 		docking::FaDockingSlideIntoContact::register_options();
@@ -319,6 +319,7 @@ private:  // Private methods
 	{
 		using namespace basic::options;
 		using namespace simple_moves;
+		using namespace constraint_movers;
 
 		idealize_rings_ = option[ OptionKeys::rings::idealize_rings ];
 		lock_rings_ = option[ OptionKeys::rings::lock_rings ];
@@ -377,8 +378,8 @@ private:  // Private methods
 		TaskFactoryOP tf( new TaskFactory );
 		tf->push_back( operation::RestrictToRepackingOP( new operation::RestrictToRepacking ) );
 		tf->push_back( operation::IncludeCurrentOP( new operation::IncludeCurrent ) );
-		tf->push_back( toolbox::task_operations::RestrictToInterfaceOP(
-			new toolbox::task_operations::RestrictToInterface( JUMP_NUM ) ) );
+		tf->push_back( simple_task_operations::RestrictToInterfaceOP(
+			new simple_task_operations::RestrictToInterface( JUMP_NUM ) ) );
 		packer_ = PackRotamersMoverOP( new PackRotamersMover( sf_ ) );
 		packer_->task_factory( tf );
 
@@ -592,7 +593,7 @@ private:  // Private data
 	core::kinematics::MoveMapOP torsion_mm_;
 
 	// Movers
-	protocols::simple_moves::ConstraintSetMoverOP constraint_setter_;
+	protocols::constraint_movers::ConstraintSetMoverOP constraint_setter_;
 	protocols::rigid::RigidBodyRandomizeMoverOP randomizerA_;
 	//protocols::rigid::RigidBodyRandomizeMoverOP randomizerB_;
 	protocols::docking::FaDockingSlideIntoContactOP slider_;

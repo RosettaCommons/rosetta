@@ -13,7 +13,7 @@
 /// @brief
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/idealize/IdealizeMover.fwd.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/options/option.hh>
@@ -52,7 +52,7 @@ int main( int argc, char * argv [] ) {
 		using namespace protocols::idealize;
 		using namespace protocols::jd2;
 		using namespace protocols::moves;
-		using namespace protocols::simple_moves::symmetry;
+		using namespace protocols::symmetry;
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 

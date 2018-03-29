@@ -50,7 +50,7 @@
 #include <core/chemical/AA.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <protocols/toolbox/task_operations/ThreadSequenceOperation.hh>
+#include <protocols/task_operations/ThreadSequenceOperation.hh>
 
 #include <utility/vector0.hh>
 #include <map>

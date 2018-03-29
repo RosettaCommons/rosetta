@@ -46,7 +46,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
+#include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 
 
 #include <core/pose/symmetry/util.hh>
@@ -432,8 +432,8 @@ core::pack::task::PackerTaskOP LoopMover_Refine_CCD::get_packer_task( core::pose
 		// the default Packer behavior is defined here
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
-		using toolbox::task_operations::RestrictToLoopsAndNeighbors;
-		using toolbox::task_operations::RestrictToLoopsAndNeighborsOP;
+		using simple_task_operations::RestrictToLoopsAndNeighbors;
+		using simple_task_operations::RestrictToLoopsAndNeighborsOP;
 		task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory );
 		task_factory_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
 		task_factory_->push_back( TaskOperationCOP( new IncludeCurrent ) );

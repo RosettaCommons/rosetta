@@ -45,7 +45,7 @@
 
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -57,7 +57,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <core/scoring/constraints/util.hh>
 

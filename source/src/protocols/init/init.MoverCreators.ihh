@@ -79,6 +79,11 @@
 #include <protocols/constraint_generator/AddConstraintsCreator.hh>
 #include <protocols/constraint_generator/RemoveConstraintsCreator.hh>
 
+#include <protocols/constraint_movers/AddConstraintsToCurrentConformationMoverCreator.hh>
+#include <protocols/constraint_movers/ClearConstraintsMoverCreator.hh>
+#include <protocols/constraint_movers/ConstraintSetMoverCreator.hh>
+#include <protocols/constraint_movers/CstInfoMoverCreator.hh>
+
 #include <protocols/contact_map/ContactMapCreator.hh>
 #include <protocols/coupled_moves/CoupledMovesProtocolCreator.hh>
 
@@ -470,24 +475,20 @@
 #include <protocols/pose_creation/MakePolyXMoverCreator.hh>
 
 #include <protocols/simple_moves/AddChainMoverCreator.hh>
-#include <protocols/simple_moves/AddConstraintsToCurrentConformationMoverCreator.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>
 #include <protocols/simple_moves/AddResidueLabelMoverCreator.hh>
 #include <protocols/simple_moves/AlignChainMoverCreator.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
 #include <protocols/simple_moves/BBGaussianMoverCreator.hh>
 #include <protocols/simple_moves/ChangeAndResetFoldTreeMoverCreator.hh>
-#include <protocols/simple_moves/ClearConstraintsMoverCreator.hh>
-#include <protocols/simple_moves/ConsensusDesignMoverCreator.hh>
-#include <protocols/simple_moves/ConstraintSetMoverCreator.hh>
+#include <protocols/calc_taskop_movers/ConsensusDesignMoverCreator.hh>
 #include <protocols/simple_moves/ContingentAcceptMoverCreator.hh>
 #include <protocols/simple_moves/ConvertRealToVirtualMoverCreator.hh>
 #include <protocols/simple_moves/ConvertVirtualToRealMoverCreator.hh>
 #include <protocols/simple_moves/CopyRotamerMoverCreator.hh>
 #include <protocols/simple_moves/CoupledMoverCreator.hh>
-#include <protocols/simple_moves/CreateSequenceMotifMoverCreator.hh>
-#include <protocols/simple_moves/CstInfoMoverCreator.hh>
-#include <protocols/simple_moves/ddGCreator.hh>
+#include <protocols/calc_taskop_movers/CreateSequenceMotifMoverCreator.hh>
+#include <protocols/simple_ddg/ddGCreator.hh>
 #include <protocols/simple_moves/DeleteChainMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainsMoverCreator.hh>
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
@@ -497,19 +498,19 @@
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>
 #include <protocols/simple_moves/FindConsensusSequenceCreator.hh>
-#include <protocols/simple_moves/ForceDisulfidesMoverCreator.hh>
-#include <protocols/simple_moves/GenericMonteCarloMoverCreator.hh>
-#include <protocols/simple_moves/GenericSimulatedAnnealerCreator.hh>
-#include <protocols/simple_moves/LoadPDBMoverCreator.hh>
+#include <protocols/calc_taskop_movers/ForceDisulfidesMoverCreator.hh>
+#include <protocols/monte_carlo/GenericMonteCarloMoverCreator.hh>
+#include <protocols/monte_carlo/GenericSimulatedAnnealerCreator.hh>
+#include <protocols/pose_creation/LoadPDBMoverCreator.hh>
 #include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>
-#include <protocols/simple_moves/MakeJunctionsMoverCreator.hh>
+#include <protocols/pose_creation/MakeJunctionsMoverCreator.hh>
 #include <protocols/simple_moves/MembraneTopologyCreator.hh>
-#include <protocols/simple_moves/MergePDBatOverlapMoverCreator.hh>
-#include <protocols/simple_moves/MergePDBMoverCreator.hh>
+#include <protocols/pose_creation/MergePDBatOverlapMoverCreator.hh>
+#include <protocols/pose_creation/MergePDBMoverCreator.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMoverCreator.hh>
-#include <protocols/simple_moves/MonteCarloRecoverCreator.hh>
-#include <protocols/simple_moves/MonteCarloResetCreator.hh>
-#include <protocols/simple_moves/MonteCarloTestCreator.hh>
+#include <protocols/monte_carlo/MonteCarloRecoverCreator.hh>
+#include <protocols/monte_carlo/MonteCarloResetCreator.hh>
+#include <protocols/monte_carlo/MonteCarloTestCreator.hh>
 #include <protocols/simple_moves/MSDMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>
 #include <protocols/simple_moves/PackPwatRotamersMoverCreator.hh>
@@ -519,12 +520,12 @@
 #include <protocols/simple_moves/PSSM2BfactorMoverCreator.hh>
 #include <protocols/simple_moves/RandomOmegaFlipMoverCreator.hh>
 #include <protocols/simple_moves/RandomTorsionMoverCreator.hh>
-#include <protocols/simple_moves/RepeatPropagationMoverCreator.hh>
+#include <protocols/pose_creation/RepeatPropagationMoverCreator.hh>
 #include <protocols/simple_moves/ReportEffectivePKACreator.hh>
 #include <protocols/simple_moves/ReportXYZCreator.hh>
-#include <protocols/simple_moves/ResetBaselineMoverCreator.hh>
+#include <protocols/monte_carlo/ResetBaselineMoverCreator.hh>
 #include <protocols/simple_moves/ResetFoldTreeCreator.hh>
-#include <protocols/simple_moves/ResidueTypeConstraintMoverCreator.hh>
+#include <protocols/constraint_movers/ResidueTypeConstraintMoverCreator.hh>
 #include <protocols/simple_moves/RingConformationMoverCreator.hh>
 #include <protocols/simple_moves/SaveSequenceToCommentsMoverCreator.hh>
 #include <protocols/simple_moves/ScoreMoverCreator.hh>
@@ -553,9 +554,9 @@
 #include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMoverCreator.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMoverCreator.hh>
 
-#include <protocols/simple_moves/symmetry/DetectSymmetryMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMoverCreator.hh>
+#include <protocols/symmetry/DetectSymmetryMoverCreator.hh>
+#include <protocols/symmetry/SetupForSymmetryMoverCreator.hh>
+#include <protocols/symmetry/SetupNCSMoverCreator.hh>
 #include <protocols/simple_moves/WriteFiltersToPoseCreator.hh>
 
 #include <protocols/stepwise/monte_carlo/mover/AddMoverCreator.hh>
@@ -571,7 +572,7 @@
 
 // T //////////////////////////////////////////////////////////////////////////
 
-#include <protocols/toolbox/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
-#include <protocols/toolbox/task_operations/StoreCompoundTaskMoverCreator.hh>
-#include <protocols/toolbox/task_operations/StoreTaskMoverCreator.hh>
+#include <protocols/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
+#include <protocols/task_operations/StoreCompoundTaskMoverCreator.hh>
+#include <protocols/task_operations/StoreTaskMoverCreator.hh>
 #include <protocols/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>

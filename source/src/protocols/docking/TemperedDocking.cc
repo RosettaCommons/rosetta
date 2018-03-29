@@ -33,7 +33,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
@@ -374,7 +374,7 @@ void TemperedDocking::sync_objects_with_flags()
 		docking_constraint_ = nullptr;
 	} else {
 		if ( !docking_constraint_ ) {
-			docking_constraint_ = protocols::moves::MoverOP( new protocols::simple_moves::ConstraintSetMover() );
+			docking_constraint_ = protocols::moves::MoverOP( new protocols::constraint_movers::ConstraintSetMover() );
 		}
 	}
 

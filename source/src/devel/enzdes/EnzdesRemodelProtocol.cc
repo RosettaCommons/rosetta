@@ -73,10 +73,10 @@
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/simple_filters/ScoreCutoffFilter.hh>
+#include <protocols/score_filters/ScoreCutoffFilter.hh>
 #include <protocols/simple_filters/PackerNeighborGraphFilter.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/toolbox/pose_metric_calculators/NonlocalContactsCalculator.hh>
+#include <protocols/pose_metric_calculators/NonlocalContactsCalculator.hh>
 
 // option key includes
 
@@ -680,7 +680,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 	//score pose in reduced scorefxn to set up score filter correctly
 	(*enz_prot_->reduced_scorefxn())( pose );
 
-	protocols::simple_filters::ScoreCutoffFilterOP score_filter( new protocols::simple_filters::ScoreCutoffFilter() );
+	protocols::score_filters::ScoreCutoffFilterOP score_filter( new protocols::score_filters::ScoreCutoffFilter() );
 
 
 	//setting the predesign score filter to a pretty generous cutoff.
@@ -715,7 +715,7 @@ EnzdesRemodelMover::setup_packer_neighbor_graph_filter( core::pose::Pose const &
 
 	using namespace utility::graph;
 
-	protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator nl_calc( remodel_positions_, other_design_positions_ );
+	protocols::pose_metric_calculators::NonlocalContactsCalculator nl_calc( remodel_positions_, other_design_positions_ );
 	basic::MetricValue< core::Size > mval_size;
 	basic::MetricValue< utility::graph::GraphOP > mval_graph;
 

@@ -32,7 +32,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/make_symmetric_task.hh>
-#include <protocols/toolbox/task_operations/STMStoredTask.hh>
+#include <protocols/task_operations/STMStoredTask.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <ObjexxFCL/format.hh>
@@ -274,13 +274,13 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 
 	// If the pose doesn't have STM_STORED_TASK data, put a blank STMStoredTask in there.
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) {
-		//ORIGINAL// protocols::toolbox::task_operations::STMStoredTaskOP blank_tasks = new protocols::toolbox::task_operations::STMStoredTask();
-		protocols::toolbox::task_operations::STMStoredTaskOP blank_tasks( new protocols::toolbox::task_operations::STMStoredTask() );
+		//ORIGINAL// protocols::task_operations::STMStoredTaskOP blank_tasks = new protocols::task_operations::STMStoredTask();
+		protocols::task_operations::STMStoredTaskOP blank_tasks( new protocols::task_operations::STMStoredTask() );
 		pose.data().set( core::pose::datacache::CacheableDataType::STM_STORED_TASKS, blank_tasks );
 	}
 	// Grab a reference to the data
-	//ORIGINAL//   protocols::toolbox::task_operations::STMStoredTask & stored_tasks = *(                           static_cast< protocols::toolbox::task_operations::STMStoredTask* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS )() ) );
-	protocols::toolbox::task_operations::STMStoredTask & stored_tasks = *( utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) );
+	//ORIGINAL//   protocols::task_operations::STMStoredTask & stored_tasks = *(                           static_cast< protocols::task_operations::STMStoredTask* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS )() ) );
+	protocols::task_operations::STMStoredTask & stored_tasks = *( utility::pointer::static_pointer_cast< protocols::task_operations::STMStoredTask > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) );
 	//devel::matdes::STMStoredTask & stored_tasks = *( static_cast< devel::matdes::STMStoredTask* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS )() ) );
 
 	// If you haven't set overwrite to true and your task name already exists, fail. Otherwise, put the task you've made into the data cache.

@@ -45,7 +45,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/cyclic_peptide/CycpepSymmetryFilter.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 //Utility headers
@@ -1034,7 +1034,7 @@ EnergyBasedClusteringProtocol::add_user_constraints (
 	//Add each constraint file to the pose:
 	for ( core::Size i(1); i<=n_files; ++i ) {
 
-		protocols::simple_moves::ConstraintSetMoverOP cst_maker ( new protocols::simple_moves::ConstraintSetMover );
+		protocols::constraint_movers::ConstraintSetMoverOP cst_maker ( new protocols::constraint_movers::ConstraintSetMover );
 		std::string const & cstfile ( options_.cst_files_[i] );
 
 		cst_maker->constraint_file(cstfile);

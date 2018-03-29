@@ -54,7 +54,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 
 #include <numeric/conversions.hh>
@@ -730,7 +730,7 @@ LigandDockProtocol::make_dockmcm_mover(
 /// @brief Helper function to tame the PoseMetricCalculator madness.
 core::Size count_buried_unsat_Hbonds(core::pose::Pose const & pose)
 {
-	using namespace protocols::toolbox::pose_metric_calculators;
+	using namespace protocols::simple_pose_metric_calculators;
 	// Despite the name, it's counting H-bonders, not any old polars.
 	BuriedUnsatisfiedPolarsCalculator calc("default", "default");
 	basic::MetricValue< core::Size > val;
@@ -742,7 +742,7 @@ core::Size count_buried_unsat_Hbonds(core::pose::Pose const & pose)
 /// Because inquiring minds want to know: what Hbonds are precluded by this docking?
 void print_buried_unsat_Hbonds(core::pose::Pose const & bound, core::pose::Pose const & unbound)
 {
-	using namespace protocols::toolbox::pose_metric_calculators;
+	using namespace protocols::simple_pose_metric_calculators;
 	using core::id::AtomID_Map;
 	// Despite the name, it's counting H-bonders, not any old polars.
 	BuriedUnsatisfiedPolarsCalculator calc_bound("default", "default"), calc_unbound("default", "default");

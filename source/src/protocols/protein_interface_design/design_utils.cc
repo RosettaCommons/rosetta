@@ -46,7 +46,7 @@
 
 // Unit Headers
 #include <protocols/protein_interface_design/design_utils.hh>
-#include <protocols/simple_moves/ddG.hh>
+#include <protocols/simple_ddg/ddG.hh>
 
 #include <ObjexxFCL/format.hh>
 
@@ -156,7 +156,7 @@ core::Real
 ddG_cycles( pose::Pose const & pose, core::scoring::ScoreFunctionOP scorefxn, core::Size const cycles )
 {
 	pose::Pose temp_pose = pose;
-	protocols::simple_moves::ddG ddg( scorefxn );
+	protocols::simple_ddg::ddG ddg( scorefxn );
 	core::Real ddG_val( 0.0 );
 	for ( core::Size i = 1; i<=cycles; ++i ) {
 		ddg.calculate( temp_pose );

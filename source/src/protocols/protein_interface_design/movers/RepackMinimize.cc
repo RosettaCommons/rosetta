@@ -17,7 +17,7 @@
 
 // Package headers
 #include <protocols/protein_interface_design/design_utils.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 // Project headers
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -73,7 +73,7 @@ RepackMinimize::clone() const {
 }
 
 RepackMinimize::RepackMinimize() :
-	simple_moves::DesignRepackMover( RepackMinimize::mover_name() )
+	calc_taskop_movers::DesignRepackMover( RepackMinimize::mover_name() )
 {
 	min_rb_set_ = min_bb_set_ = min_sc_set_ = false;
 	optimize_foldtree_ = true;
@@ -89,7 +89,7 @@ RepackMinimize::RepackMinimize(
 	core::Real const interface_distance_cutoff/*=8.0*/,
 	bool const repack_non_ala/*=true*/
 ) :
-	simple_moves::DesignRepackMover( RepackMinimize::mover_name() )
+	calc_taskop_movers::DesignRepackMover( RepackMinimize::mover_name() )
 {
 	repack_partner2_ = repack_partner2;
 	repack_partner1_ = repack_partner1;
@@ -127,7 +127,7 @@ RepackMinimize::apply( pose::Pose & pose )
 	allowed_aas_[ chemical::aa_pro ] = false;
 
 	if ( symmetry_ ) {
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+		protocols::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::symmetry::SetupForSymmetryMover );
 		setup_mover->apply( pose );
 	}
 
@@ -154,7 +154,7 @@ void
 RepackMinimize::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &filters, Movers_map const & movers, core::pose::Pose const & pose )
 {
 	TR<<"repack minimize mover with the following parameters:"<<std::endl;
-	simple_moves::DesignRepackMover::parse_my_tag( tag, data, filters, movers, pose );
+	calc_taskop_movers::DesignRepackMover::parse_my_tag( tag, data, filters, movers, pose );
 }
 
 std::string RepackMinimize::get_name() const {
@@ -168,7 +168,7 @@ std::string RepackMinimize::mover_name() {
 void RepackMinimize::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-	XMLSchemaComplexTypeGeneratorOP ct_gen = simple_moves::DesignRepackMover::get_xsd_complex_type();
+	XMLSchemaComplexTypeGeneratorOP ct_gen = calc_taskop_movers::DesignRepackMover::get_xsd_complex_type();
 
 	ct_gen->description( "RepackMinimizeMover performs extensive interface remodeling" );
 	ct_gen->element_name( mover_name() );

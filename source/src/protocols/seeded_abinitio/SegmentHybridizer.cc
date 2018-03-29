@@ -46,7 +46,7 @@
 
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
 #include <core/scoring/rms_util.hh>

@@ -36,8 +36,8 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -608,7 +608,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 	if ( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( neighborhood_calc_ ) ) {
 		Warning() << "In AnchoredDesign, calculator " << neighborhood_calc_ << " already exists.  If you have multiple instances of AnchoredDesign with different loops coexisting in the same program, this is going to cause problems, because you will have the wrong loop definitions for determining what residues to pack" << std::endl;
 	} else {
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_, PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) ) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_, PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) ) );
 	}
 
 	//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
@@ -616,7 +616,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 	calcs_and_calcns.push_back(std::make_pair(interface_calc_, "interface_residues"));
 	calcs_and_calcns.push_back(std::make_pair(neighborhood_calc_, "neighbors"));
 
-	using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
+	using protocols::task_operations::RestrictByCalculatorsOperation;
 	operation::TaskOperationOP rbcop( new RestrictByCalculatorsOperation( calcs_and_calcns ) );
 
 	//command line operation

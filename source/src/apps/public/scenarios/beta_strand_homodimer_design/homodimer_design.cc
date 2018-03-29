@@ -49,14 +49,14 @@
 //protocols
 #include <protocols/moves/Mover.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
+#include <protocols/task_operations/RestrictToInterfaceOperation.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
-#include <protocols/simple_moves/ddG.hh>
+#include <protocols/simple_ddg/ddG.hh>
 //#include <protocols/moves/PymolMover.hh>
 //symmetry
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -209,13 +209,13 @@ void HDdesignMover::cloak_and_setup( pose::Pose & pose ){
 		zero_vector.push_back(0.0);
 		basic::options::option[ OptionKeys::symmetry::perturb_rigid_body_dofs ].value(zero_vector);
 		//setup apply
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+		protocols::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::symmetry::SetupForSymmetryMover );
 		setup_mover->apply(pose);
 		//uncloak
 		basic::options::option[ OptionKeys::symmetry::perturb_rigid_body_dofs ].value(pert_mags);
 	} else {
 		//setup apply
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+		protocols::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::symmetry::SetupForSymmetryMover );
 		setup_mover->apply(pose);
 	}
 
@@ -257,7 +257,7 @@ void HDdesignMover::task_constraint_setup( pose::Pose & pose ){
 		}
 
 		//restrict to interface
-		tf_design_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterfaceOperation( InterfaceNeighborDefinition_ ) ) );
+		tf_design_->push_back( TaskOperationCOP( new protocols::task_operations::RestrictToInterfaceOperation( InterfaceNeighborDefinition_ ) ) );
 	}
 
 
@@ -526,7 +526,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 	}
 
 	//find ddg
-	protocols::simple_moves::ddGOP ddG_mover( new protocols::simple_moves::ddG( scorefxn_, 1 /*jump*/ /* , true */ ) ); //ddG autodetects symmetry now
+	protocols::simple_ddg::ddGOP ddG_mover( new protocols::simple_ddg::ddG( scorefxn_, 1 /*jump*/ /* , true */ ) ); //ddG autodetects symmetry now
 	ddG_mover->calculate(pose);
 	core::Real ddgvalue = ddG_mover->sum_ddG();
 	//some dirty filtering

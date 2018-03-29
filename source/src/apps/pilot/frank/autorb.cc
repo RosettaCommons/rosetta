@@ -9,7 +9,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/rbsegment_relax/AutoRBRelaxMover.hh>
 
@@ -87,16 +87,16 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
-    try {
-	// initialize option and random number system
-    NEW_OPT(bbg::ntrials, "number of Monte Carlo trials to run", 1000);
-    NEW_OPT(bbg::kT, "MC temp", 0.6);
-	devel::init( argc, argv );
+	try {
+		// initialize option and random number system
+		NEW_OPT(bbg::ntrials, "number of Monte Carlo trials to run", 1000);
+		NEW_OPT(bbg::kT, "MC temp", 0.6);
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		protocols::viewer::viewer_main( my_main );
+	} catch (utility::excn::Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
-    }
+	}
+	return 0;
+}

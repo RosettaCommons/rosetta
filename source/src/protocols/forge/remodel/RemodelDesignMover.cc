@@ -46,9 +46,9 @@
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/forge/remodel/RemodelRotamerLinks.hh>
 #include <protocols/forge/methods/util.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 //#include <protocols/flxbb/LayerDesignOperation.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // C++ headers
@@ -81,7 +81,7 @@ RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
 
 	using core::pose::metrics::CalculatorFactory;
 	using core::pose::metrics::PoseMetricCalculatorOP;
-	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+	using protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 
 	remodel_data_ = remodel_data;
 	working_model_ = working_model;
@@ -302,7 +302,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	// setup calculators
 	using core::pose::metrics::CalculatorFactory;
 	using core::pose::metrics::PoseMetricCalculatorOP;
-	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+	using protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 	using core::pack::task::ResfileCommandOP;
 
 	//std::cout << "START REDUCE" << std::endl;
@@ -990,7 +990,7 @@ void RemodelDesignMover::mode4_packertask(Pose & pose){ // full manuaing namespa
 void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto design neighbor
 
 	using core::pose::metrics::CalculatorFactory;
-	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+	using protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 	using core::pose::metrics::PoseMetricCalculatorOP;
 	using namespace core::pose::symmetry;
 	using namespace core::scoring::constraints;
@@ -1065,7 +1065,7 @@ void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto desi
 
 	if ( is_sym ) {
 		//resymmetrize
-		// protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+		// protocols::symmetry::SetupForSymmetryMover pre_mover;
 		// pre_mover.apply(pose);
 		// pose.pdb_info()->obsolete(true);
 	}

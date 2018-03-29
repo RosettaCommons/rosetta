@@ -27,7 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
-#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
+#include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
 
@@ -265,7 +265,7 @@ private:
 	core::pack::task::TaskFactoryOP tf_; //Basic TF that gets cleared upon use..
 
 	//TaskOperations.  So that they are not constructed every graft.
-	protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP loops_operation_;
+	protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP loops_operation_;
 	core::pack::task::operation::InitializeFromCommandlineOP cmd_line_operation_;
 	core::pack::task::operation::RestrictToRepackingOP restrict_design_operation_;
 

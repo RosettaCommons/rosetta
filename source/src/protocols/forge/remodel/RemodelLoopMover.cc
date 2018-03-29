@@ -52,7 +52,7 @@
 #include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <core/scoring/Energies.hh>
 #include <core/chemical/AtomType.hh>
@@ -79,7 +79,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/symmetry/SetupNCSMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
@@ -98,7 +98,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -876,9 +876,9 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		ConstraintSetOP repeat_pose_cst_set( new ConstraintSet( *repeat_pose_.constraint_set() ) );
 
 		//unfortunately need separate movers for the operations
-		simple_moves::symmetry::SetupForSymmetryMover pre_mover1;
+		symmetry::SetupForSymmetryMover pre_mover1;
 		pre_mover1.apply( pose );
-		simple_moves::symmetry::SetupForSymmetryMover pre_mover2;
+		symmetry::SetupForSymmetryMover pre_mover2;
 		pre_mover2.apply( repeat_pose );
 
 		//reset constraints
@@ -943,9 +943,9 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		pose.pdb_info()->obsolete(true);
 		repeat_pose_.pdb_info()->obsolete(true);
 		if ( option[OptionKeys::symmetry::symmetry_definition].user() ) {
-			simple_moves::symmetry::SetupForSymmetryMover pre_mover1;
+			symmetry::SetupForSymmetryMover pre_mover1;
 			pre_mover1.apply( pose );
-			simple_moves::symmetry::SetupForSymmetryMover pre_mover2;
+			symmetry::SetupForSymmetryMover pre_mover2;
 			pre_mover2.apply( repeat_pose_ );
 			pose.pdb_info()->obsolete(true);
 			repeat_pose_.pdb_info()->obsolete(true);
@@ -954,7 +954,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 		/* not fully implemented yet, developmental
 		if (option[OptionKeys::symmetry::symmetry_definition].user() )  {
-		simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+		symmetry::SetupForSymmetryMover pre_mover;
 
 		//try making both symmetrical
 		//pre_mover.apply( repeat_pose_ );
@@ -976,7 +976,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 		// only use this type of cst file in this case
 		if ( option[OptionKeys::constraints::cst_file].user() ) {
-			protocols::simple_moves::ConstraintSetMoverOP repeat_constraint( new protocols::simple_moves::ConstraintSetMover() );
+			protocols::constraint_movers::ConstraintSetMoverOP repeat_constraint( new protocols::constraint_movers::ConstraintSetMover() );
 			repeat_constraint->apply( repeat_pose_ );
 		}
 
@@ -1030,7 +1030,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 	// Dihedral (NCS) Constraints
 	//std::cout << "NCS CST" << std::endl;
-	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+	protocols::symmetry::SetupNCSMover setup_ncs;
 	for (Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
 	std::stringstream targetSS;
 	targetSS << 1+(segment_length*rep) << "-" << segment_length + (segment_length*rep);
@@ -1378,7 +1378,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				pose.constraint_set(pose_cst_set);
 				pose.pdb_info()->obsolete(true);
 				//resymmetrize
-				protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+				protocols::symmetry::SetupForSymmetryMover pre_mover;
 				pre_mover.apply(pose);
 				pose.pdb_info()->obsolete(true);
 			} else {
@@ -2465,7 +2465,7 @@ void RemodelLoopMover::fa_relax_stage(
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 		fa_pose = repeat_pose_;
-		//protocols::simple_moves::symmetry::SetupNCSMover setup_ncs = generate_ncs_csts(pose);
+		//protocols::symmetry::SetupNCSMover setup_ncs = generate_ncs_csts(pose);
 		//setup_ncs.apply(fa_pose);
 	}
 	core::util::switch_to_residue_type_set( fa_pose, core::chemical::FULL_ATOM_t );
@@ -2493,12 +2493,12 @@ void RemodelLoopMover::fa_relax_stage(
 	}
 }
 
-protocols::simple_moves::symmetry::SetupNCSMover RemodelLoopMover::generate_ncs_csts(Pose & pose){
+protocols::symmetry::SetupNCSMover RemodelLoopMover::generate_ncs_csts(Pose & pose){
 	using namespace basic::options;
 	using namespace core;
 	using namespace core::pose::symmetry;
 	using namespace protocols;
-	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+	protocols::symmetry::SetupNCSMover setup_ncs;
 	Size asym_length = pose.size();
 	Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 	Size segment_length = asym_length/2;

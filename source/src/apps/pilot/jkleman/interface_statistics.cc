@@ -27,8 +27,8 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/PiPiCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/pose_metric_calculators/PiPiCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -71,7 +71,7 @@ using namespace core::pose;
 using namespace core::pose::metrics;
 using namespace protocols::moves;
 using namespace protocols::scoring;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
 
 class MPInterfaceStatistics : public Mover {
 
@@ -1037,7 +1037,7 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 /// @brief Get number of pi-stacking across interface
 Size MPInterfaceStatistics::get_number_pi_stacking( Pose & pose ) {
 
-	core::pose::metrics::PoseMetricCalculatorOP pi_pi_calculator ( new protocols::toolbox::pose_metric_calculators::PiPiCalculator() );
+	core::pose::metrics::PoseMetricCalculatorOP pi_pi_calculator ( new protocols::pose_metric_calculators::PiPiCalculator() );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "pi_pi", pi_pi_calculator );
 
 	TR.Warning << "PLEASE CHECK THE NUMBER OF YOUR Pi-stacking INTERACTIONS VISUALLY TO CONFIRM!" << std::endl;

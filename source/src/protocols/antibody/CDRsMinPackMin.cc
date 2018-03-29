@@ -22,7 +22,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -114,7 +114,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 	using namespace pack::task;
 	using namespace pack::task::operation;
 	using namespace protocols;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	using namespace protocols::moves;
 
 	cdr_sequence_move_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover() );

@@ -78,7 +78,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
+#include <protocols/pose_metric_calculators/ClashCountCalculator.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -172,8 +172,8 @@ class TestJD2Mover : public moves::Mover
 {
 public:
 	/// @brief
-	/// 	empty constructor fills values with the values
-	///		read in from the commandline
+	///  empty constructor fills values with the values
+	///  read in from the commandline
 	TestJD2Mover() :
 		Mover()
 	{
@@ -186,8 +186,8 @@ public:
 		protocols::jd2::JobDistributor *jd = protocols::jd2::JobDistributor::get_instance();
 
 		std::cout << jd->current_job()->input_tag()
-		          << jd->current_job()->nstruct_index()
-							<< std::endl;
+			<< jd->current_job()->nstruct_index()
+			<< std::endl;
 
 
 	};

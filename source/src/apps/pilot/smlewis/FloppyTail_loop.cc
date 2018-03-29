@@ -45,7 +45,7 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 
 
 //movers
@@ -61,9 +61,9 @@
 #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
 
 //calculators and neighbor detection machinery
-#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
+#include <protocols/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
+#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -369,7 +369,7 @@ public:
 			core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
 			TR << "removed a PoseMetricCalculator " << calc << ", hopefully this is due to multiple inputs to FloppyTail and not a name clash" << std::endl;
 		}
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, new protocols::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) );
 
 		//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation
 		utility::vector1< std::pair< std::string, std::string > > calculators_used;
@@ -386,13 +386,13 @@ public:
 				TR << "removed a PoseMetricCalculator " << calc_loop << ", hopefully this is due to multiple inputs to FloppyTail and not a name clash" << std::endl;
 			}
 			//create and register calculator
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_loop, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_loop, new protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) );
 
 			std::pair< std::string, std::string > NBDC_cmd( calc_loop, "neighbors" );
 			calculators_used.push_back( NBDC_cmd );
 		}
 
-		task_factory_->push_back( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) );
+		task_factory_->push_back( new protocols::task_operations::RestrictByCalculatorsOperation( calculators_used ) );
 
 
 		//debugging: print PackerTask

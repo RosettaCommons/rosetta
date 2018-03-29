@@ -50,8 +50,8 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/task_operations/RestrictToNeighborhoodOperation.hh>
 
 // Utility Headers
 #include <utility>
@@ -856,7 +856,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 	out << md.mutation_string() << "_mutant_nb_calculator";
 	std::string calculator_name = out.str();
 
-	pose::metrics::PoseMetricCalculatorOP mutant_nb_calculator( new toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( resid ) );
+	pose::metrics::PoseMetricCalculatorOP mutant_nb_calculator( new pose_metric_calculators::NeighborsByDistanceCalculator( resid ) );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( calculator_name, mutant_nb_calculator );
 
 	basic::MetricValue< std::set< Size > > mv_neighbors;
@@ -875,7 +875,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 	// the restrict operation class (which in the end is just a TaskOperation) takes a calculator during construction. I've already
 	// created that calculator above.  This operation will disable repacking and design at all positions except those in the neighborhood
 	// of the mutated position.
-	TaskOperationCOP nb_op( new toolbox::task_operations::RestrictToNeighborhoodOperation( calculator_name ) );
+	TaskOperationCOP nb_op( new task_operations::RestrictToNeighborhoodOperation( calculator_name ) );
 	native_tf->push_back( nb_op ); mutant_tf->push_back( nb_op );
 
 	// extra task operations we want to also include

@@ -18,7 +18,7 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/kinematics/Jump.hh>

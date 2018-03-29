@@ -21,7 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/toolbox/pose_metric_calculators/FragQualCalculator.hh>
+#include <protocols/pose_metric_calculators/FragQualCalculator.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -113,7 +113,7 @@ FragQualFilter::parse_my_tag(
 	Pose const & pose )
 {
 	using core::pose::metrics::CalculatorFactory;
-	using protocols::toolbox::pose_metric_calculators::FragQualCalculator;
+	using protocols::pose_metric_calculators::FragQualCalculator;
 
 	// set filtered type
 	filtered_type_ = tag->getOption<String>( "type", "num_goodfrag" );

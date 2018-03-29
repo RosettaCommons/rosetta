@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

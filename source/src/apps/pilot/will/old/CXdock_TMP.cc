@@ -73,7 +73,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
@@ -248,7 +248,8 @@ void dock(Pose const init, std::string const & fn, vector1<xyzVector<double> > c
 	for ( int iss = 1; iss <= ssamp.size(); ++iss ) { // loop over sphere samples "ssamp"
 		// status message
 		if ( iss%100==0 ) { TR << iss << " of " << NSS << " Nhits:"; for ( int ic = C_LO; ic <= C_HI; ic++ ) TR << " " << hits[ic].size();
-			TR <<std::endl; }
+			TR <<std::endl;
+		}
 		// axis of rot from sphere surf samples
 		Vec axs = ssamp[iss];
 		// loop axis of rot from sphere surf samples

@@ -24,8 +24,8 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/task_operations/RestrictToInterfaceOperation.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
@@ -44,9 +44,9 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Symmetry Headers
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
+#include <protocols/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/symmetry/util.hh>
@@ -149,7 +149,7 @@ public:
 	setup ( Pose & pose ) {
 		//pose.dump_pdb("initial_mono_pose.pdb");
 
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::simple_moves::symmetry::SetupForSymmetryMover(); // according to symm definition file included as an option
+		protocols::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::symmetry::SetupForSymmetryMover(); // according to symm definition file included as an option
 		make_monomeric_input_pose_symmetrical->apply( pose );
 
 		//pose.dump_pdb("initial_symm_pose.pdb");
@@ -224,7 +224,7 @@ public:
 			task_factory->push_back( new operation::ReadResfile );
 		}
 		TR << "Restricting to interface..." << std::endl;
-		task_factory->push_back(new protocols::toolbox::task_operations::RestrictToInterfaceOperation(1, 2));
+		task_factory->push_back(new protocols::task_operations::RestrictToInterfaceOperation(1, 2));
 
 		operation::PreventRepackingOP prevent_repack = new operation::PreventRepacking();
 		TR << "Preventing repacking of residues ";
@@ -315,7 +315,7 @@ public:
 	//setup
 	virtual void
 	setup_movers() {
-		using namespace protocols::simple_moves::symmetry;
+		using namespace protocols::symmetry;
 
 		TR << "Generating sym rottrials mover..." << std::endl;
 		sym_rottrials_mover_ = new SymRotamerTrialsMover;
@@ -497,7 +497,7 @@ private:
 	core::kinematics::MoveMapOP sc_bb_move_map_;
 
 	protocols::minimization_packing::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
-	protocols::simple_moves::symmetry::SymRotamerTrialsMoverOP sym_rottrials_mover_;
+	protocols::symmetry::SymRotamerTrialsMoverOP sym_rottrials_mover_;
 	protocols::minimization_packing::symmetry::SymMinMoverOP softrep_min_mover_;
 	protocols::minimization_packing::symmetry::SymMinMoverOP sc_min_mover_;
 	protocols::minimization_packing::symmetry::SymMinMoverOP sc_bb_min_mover_;

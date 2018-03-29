@@ -32,7 +32,7 @@
 // For some reason, the full header has to be included in the header. since it's there, it doesn't need to be included here too.
 // Ideally the forward declaration would be included in the header and the full header would be here.
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
+#include <protocols/simple_task_operations/InterfaceTaskOperation.hh>
 
 // ObjexxFCL Headers
 
@@ -173,7 +173,7 @@ void DockingHighRes::set_scorefxn_pack( core::scoring::ScoreFunctionOP scorefxn_
 	scorefxn_pack_ = scorefxn_pack;
 }
 
-void DockingHighRes::set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition )
+void DockingHighRes::set_interface_definition_task_operation( protocols::simple_task_operations::InterfaceTaskOperationOP interface_definition )
 {
 	tf2_->set_interface_definition_task_operation( interface_definition );
 }

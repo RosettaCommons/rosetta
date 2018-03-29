@@ -43,7 +43,7 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/SetReturningPackRotamersMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
@@ -438,7 +438,7 @@ main( int argc, char* argv[] ) {
 
 		//calculator to figure out set of neighbors around mutation
 		std::string const nb_calc("complex_neighboorhood_calculator");
-		pose::metrics::CalculatorFactory::Instance().register_calculator( nb_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( mutation_set ) );
+		pose::metrics::CalculatorFactory::Instance().register_calculator( nb_calc, new protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator( mutation_set ) );
 		basic::MetricValue< std::set< Size > > neighbor_mv;
 		mut_pose.metric( nb_calc, "neighbors", neighbor_mv);
 		std::set< Size > const neighbor_set ( neighbor_mv.value() );

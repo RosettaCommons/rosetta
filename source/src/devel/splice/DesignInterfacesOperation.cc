@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/toolbox/task_operations/DesignInterfacesOperation.cc
+/// @file   protocols/task_operations/DesignInterfacesOperation.cc
 /// @brief
 /// @author Sarelf Fleishman sarelf@uw.edu
 
 // Unit Headers
 #include <devel/splice/DesignInterfacesOperation.hh>
 #include <devel/splice/DesignInterfacesOperationCreator.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
@@ -34,7 +34,7 @@
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 // Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
+#include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/simple_moves/SwitchChainOrderMover.hh>
 #include <protocols/simple_moves/CutChainMover.hh>
 #include <core/pose/util.hh>
@@ -44,7 +44,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
+#include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 
 // C++ Headers
 #include <set>
@@ -109,7 +109,7 @@ void
 DesignInterfacesOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
 	using namespace core::pack::task;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	using namespace protocols::rosetta_scripts;
 
 	TaskFactoryOP tf( new TaskFactory );

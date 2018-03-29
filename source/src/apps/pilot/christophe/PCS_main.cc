@@ -142,7 +142,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
+#include <protocols/pose_metric_calculators/ClashCountCalculator.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>

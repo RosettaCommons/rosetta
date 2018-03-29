@@ -46,7 +46,7 @@
 #include <protocols/filters/ReplicateFilterCreator.hh>
 #include <protocols/filters/BasicFilterCreators.hh>
 #include <protocols/filters/TimeFilterCreator.hh>
-#include <protocols/simple_filters/RelativePoseFilterCreator.hh>
+#include <protocols/calc_taskop_filters/RelativePoseFilterCreator.hh>
 #include <protocols/simple_filters/StemFinderFilterCreator.hh>
 #include <protocols/simple_filters/SSMotifFinderFilterCreator.hh>
 #include <protocols/simple_filters/AngleToVectorFilterCreator.hh>
@@ -76,7 +76,7 @@
 #include <protocols/ligand_docking/HBondDonorFilterCreator.hh>
 #include <protocols/ligand_docking/MolecularMassFilterCreator.hh>
 #include <protocols/ligand_docking/MolarMassFilterCreator.hh>
-#include <protocols/loops/filters/LoopAnalyzerFilterCreator.hh>
+#include <protocols/analysis/LoopAnalyzerFilterCreator.hh>
 #include <protocols/matdes/ClashCheckFilterCreator.hh>
 #include <protocols/matdes/GetRBDOFValuesCreator.hh>
 #include <protocols/matdes/InterfacePackingFilterCreator.hh>
@@ -106,14 +106,14 @@
 #include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/StubScoreLoopsFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilterCreator.hh>
-#include <protocols/simple_filters/AlaScanCreator.hh>
+#include <protocols/simple_ddg/AlaScanCreator.hh>
 #include <protocols/simple_filters/AtomicContactFilterCreator.hh>
 #include <protocols/simple_filters/AtomicDistanceFilterCreator.hh>
 #include <protocols/simple_filters/AveragePathLengthFilterCreator.hh>
 #include <protocols/simple_filters/BuriedUnsatHbondFilterCreator.hh>
-#include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
-#include <protocols/simple_filters/ConstraintScoreFilterCreator.hh>
-#include <protocols/simple_filters/DdgFilterCreator.hh>
+#include <protocols/calc_taskop_filters/ConservedPosMutationFilterCreator.hh>
+#include <protocols/constraint_filters/ConstraintScoreFilterCreator.hh>
+#include <protocols/simple_ddg/DdgFilterCreator.hh>
 #include <protocols/simple_filters/DeltaFilterCreator.hh>
 #include <protocols/simple_filters/DisulfideEntropyFilterCreator.hh>
 #include <protocols/simple_filters/EnergyPerResidueFilterCreator.hh>
@@ -121,21 +121,21 @@
 #include <protocols/simple_filters/NonSequentialNeighborsFilterCreator.hh>
 #include <protocols/simple_filters/FileExistFilterCreator.hh>
 #include <protocols/simple_filters/FileRemoveFilterCreator.hh>
-#include <protocols/simple_filters/GeometryFilterCreator.hh>
+#include <protocols/score_filters/GeometryFilterCreator.hh>
 #include <protocols/simple_filters/HolesFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
-#include <protocols/simple_filters/InterfaceBindingEnergyDensityFilterCreator.hh>
+#include <protocols/simple_ddg/InterfaceBindingEnergyDensityFilterCreator.hh>
 #include <protocols/simple_filters/InterRepeatContactFilterCreator.hh>
 #include <protocols/simple_filters/IntraRepeatContactFilterCreator.hh>
 #include <protocols/simple_filters/LeastNativeLike9merFilterCreator.hh>
 #include <protocols/simple_filters/MotifScoreFilterCreator.hh>
-#include <protocols/simple_filters/MultipleSigmoidsFilterCreator.hh>
+#include <protocols/calc_taskop_filters/MultipleSigmoidsFilterCreator.hh>
 #include <protocols/simple_filters/MutationsFilterCreator.hh>
 #include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
 #include <protocols/simple_filters/NetChargeFilterCreator.hh>
 #include <protocols/simple_filters/NMerPSSMEnergyFilterCreator.hh>
 #include <protocols/simple_filters/NMerSVMEnergyFilterCreator.hh>
-#include <protocols/simple_filters/OperatorFilterCreator.hh>
+#include <protocols/calc_taskop_filters/OperatorFilterCreator.hh>
 #include <protocols/simple_filters/PackStatFilterCreator.hh>
 #include <protocols/simple_filters/PoseCommentFilterCreator.hh>
 #include <protocols/simple_filters/PoseInfoFilterCreator.hh>
@@ -148,18 +148,18 @@
 #include <protocols/simple_filters/ResidueIEFilterCreator.hh>
 #include <protocols/simple_filters/ResiduesInInterfaceFilterCreator.hh>
 #include <protocols/simple_filters/ResidueSetChainEnergyFilterCreator.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeightFilterCreator.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight2Creator.hh>
-#include <protocols/simple_filters/SavePoseConstraintToFileFilterCreator.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeightFilterCreator.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight2Creator.hh>
+#include <protocols/constraint_filters/SavePoseConstraintToFileFilterCreator.hh>
 #include <protocols/simple_filters/SSElementMotifContactFilterCreator.hh>
 #include <protocols/simple_filters/SaveResfileToDiskFilterCreator.hh>
-#include <protocols/simple_filters/ScoreCutoffFilterCreator.hh>
-#include <protocols/simple_filters/ScoreTypeFilterCreator.hh>
+#include <protocols/score_filters/ScoreCutoffFilterCreator.hh>
+#include <protocols/score_filters/ScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/ShapeComplementarityFilterCreator.hh>
-#include <protocols/simple_filters/SigmoidFilterCreator.hh>
+#include <protocols/calc_taskop_filters/SigmoidFilterCreator.hh>
 #include <protocols/simple_filters/SymmetricMotifFilterCreator.hh>
 #include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
-#include <protocols/simple_filters/DdGScanCreator.hh>
+#include <protocols/simple_ddg/DdGScanCreator.hh>
 #include <protocols/simple_filters/TaskAwareSASAFilterCreator.hh>
 #include <protocols/simple_filters/TaskAwareScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/TerminusDistanceFilterCreator.hh>
@@ -233,7 +233,7 @@ public:
 	{ protocols::filters::TimeFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Time" ); }
 
 	void test_protocols_simple_filters_RelativePoseFilterCreator_name()
-	{ protocols::simple_filters::RelativePoseFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RelativePose" ); }
+	{ protocols::calc_taskop_filters::RelativePoseFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RelativePose" ); }
 
 	void test_protocols_simple_filters_StemFinderFilterCreator_name()
 	{ protocols::simple_filters::StemFinderFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "StemFinder" ); }
@@ -410,7 +410,7 @@ public:
 	{ protocols::protein_interface_design::filters::TorsionCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Torsion" ); }
 
 	void test_protocols_simple_filters_AlaScanFilterCreator_name()
-	{ protocols::simple_filters::AlaScanFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AlaScan" ); }
+	{ protocols::simple_ddg::AlaScanFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AlaScan" ); }
 
 	void test_protocols_simple_filters_AtomicContactFilterCreator_name()
 	{ protocols::simple_filters::AtomicContactFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AtomicContact" ); }
@@ -425,13 +425,13 @@ public:
 	{ protocols::simple_filters::BuriedUnsatHbondFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "BuriedUnsatHbonds" ); }
 
 	void test_protocols_simple_filters_ConservedPosMutationFilterCreator_name()
-	{ protocols::simple_filters::ConservedPosMutationFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ConservedPosMutationFilter" ); }
+	{ protocols::calc_taskop_filters::ConservedPosMutationFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ConservedPosMutationFilter" ); }
 
 	void test_protocols_simple_filters_ConstraintScoreFilterCreator_name()
-	{ protocols::simple_filters::ConstraintScoreFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ConstraintScore" ); }
+	{ protocols::constraint_filters::ConstraintScoreFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ConstraintScore" ); }
 
 	void test_protocols_simple_filters_DdgFilterCreator_name()
-	{ protocols::simple_filters::DdgFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Ddg" ); }
+	{ protocols::simple_ddg::DdgFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Ddg" ); }
 
 	void test_protocols_simple_filters_DeltaFilterCreator_name()
 	{ protocols::simple_filters::DeltaFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Delta" ); }
@@ -455,7 +455,7 @@ public:
 	{ protocols::simple_filters::FileRemoveFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "FileRemove" ); }
 
 	void test_protocols_simple_filters_GeometryFilterCreator_name()
-	{ protocols::simple_filters::GeometryFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Geometry" ); }
+	{ protocols::score_filters::GeometryFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Geometry" ); }
 
 	void test_protocols_simple_filters_HolesFilterCreator_name()
 	{ protocols::simple_filters::HolesFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Holes" ); }
@@ -464,7 +464,7 @@ public:
 	{ protocols::simple_filters::InterfaceSasaFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Sasa" ); }
 
 	void test_protocols_simple_filters_InterfaceBindingEnergyDensityFilterCreator_name()
-	{ protocols::simple_filters::InterfaceBindingEnergyDensityFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "InterfaceBindingEnergyDensityFilter" ); }
+	{ protocols::simple_ddg::InterfaceBindingEnergyDensityFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "InterfaceBindingEnergyDensityFilter" ); }
 
 	void test_protocols_simple_filters_InterRepeatContactFilterCreator_name()
 	{ protocols::simple_filters::InterRepeatContactFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "InterRepeatContactsPerResidue" ); }
@@ -479,7 +479,7 @@ public:
 	{ protocols::simple_filters::MotifScoreFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MotifScore" ); }
 
 	void test_protocols_simple_filters_MultipleSigmoidsFilterCreator_name()
-	{ protocols::simple_filters::MultipleSigmoidsFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MultipleSigmoids" ); }
+	{ protocols::calc_taskop_filters::MultipleSigmoidsFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MultipleSigmoids" ); }
 
 	void test_protocols_simple_filters_MutationsFilterCreator_name()
 	{ protocols::simple_filters::MutationsFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Mutations" ); }
@@ -497,7 +497,7 @@ public:
 	{ protocols::simple_filters::NMerSVMEnergyFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "NMerSVMEnergy" ); }
 
 	void test_protocols_simple_filters_OperatorFilterCreator_name()
-	{ protocols::simple_filters::OperatorFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Operator" ); }
+	{ protocols::calc_taskop_filters::OperatorFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Operator" ); }
 
 	void test_protocols_simple_filters_PackStatFilterCreator_name()
 	{ protocols::simple_filters::PackStatFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "PackStat" ); }
@@ -536,13 +536,13 @@ public:
 	{ protocols::simple_filters::ResidueSetChainEnergyFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ResidueSetChainEnergy" ); }
 
 	void test_protocols_simple_filters_RotamerBoltzmannWeightFilterCreator_name()
-	{ protocols::simple_filters::RotamerBoltzmannWeightFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RotamerBoltzmannWeight" ); }
+	{ protocols::calc_taskop_filters::RotamerBoltzmannWeightFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RotamerBoltzmannWeight" ); }
 
 	void test_protocols_simple_filters_RotamerBoltzmannWeight2Creator_name()
-	{ protocols::simple_filters::RotamerBoltzmannWeight2Creator cr; TS_ASSERT_EQUALS( cr.keyname(), "RotamerBoltzmannWeight2" ); }
+	{ protocols::calc_taskop_filters::RotamerBoltzmannWeight2Creator cr; TS_ASSERT_EQUALS( cr.keyname(), "RotamerBoltzmannWeight2" ); }
 
 	void test_protocols_simple_filters_SavePoseConstraintToFileFilterCreator_name()
-	{ protocols::simple_filters::SavePoseConstraintToFileFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SavePoseConstraintToFile" ); }
+	{ protocols::constraint_filters::SavePoseConstraintToFileFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SavePoseConstraintToFile" ); }
 
 	void test_protocols_simple_filters_SSElementMotifContactFilterCreator_name()
 	{ protocols::simple_filters::SSElementMotifContactFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SSDegree" ); }
@@ -551,16 +551,16 @@ public:
 	{ protocols::simple_filters::SaveResfileToDiskFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SaveResfileToDisk" ); }
 
 	void test_protocols_simple_filters_ScoreCutoffFilterCreator_name()
-	{ protocols::simple_filters::ScoreCutoffFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ScoreCutoffFilter" ); }
+	{ protocols::score_filters::ScoreCutoffFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ScoreCutoffFilter" ); }
 
 	void test_protocols_simple_filters_ScoreTypeFilterCreator_name()
-	{ protocols::simple_filters::ScoreTypeFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ScoreType" ); }
+	{ protocols::score_filters::ScoreTypeFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ScoreType" ); }
 
 	void test_protocols_simple_filters_ShapeComplementarityFilterCreator_name()
 	{ protocols::simple_filters::ShapeComplementarityFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ShapeComplementarity" ); }
 
 	void test_protocols_simple_filters_SigmoidFilterCreator_name()
-	{ protocols::simple_filters::SigmoidFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Sigmoid" ); }
+	{ protocols::calc_taskop_filters::SigmoidFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Sigmoid" ); }
 
 	void test_protocols_simple_filters_SymmetricMotifFilterCreator_name()
 	{ protocols::simple_filters::SymmetricMotifFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SymmetricMotif" ); }
@@ -569,7 +569,7 @@ public:
 	{ protocols::simple_filters::SidechainRmsdFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SidechainRmsd" ); }
 
 	void test_protocols_simple_filters_DdGScanCreator_name()
-	{ protocols::simple_filters::DdGScanCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "DdGScan" ); }
+	{ protocols::simple_ddg::DdGScanCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "DdGScan" ); }
 
 	void test_protocols_simple_filters_TaskAwareSASAFilterCreator_name()
 	{ protocols::simple_filters::TaskAwareSASAFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "TaskAwareSASA" ); }
@@ -648,7 +648,7 @@ public:
 	//{ protocols::filters::TimeFilterCreator cr; std::cout << "protocols::filters::TimeFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_RelativePoseFilterCreator()
-	//{ protocols::simple_filters::RelativePoseFilterCreator cr; std::cout << "protocols::simple_filters::RelativePoseFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::calc_taskop_filters::RelativePoseFilterCreator cr; std::cout << "protocols::calc_taskop_filters::RelativePoseFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_StemFinderFilterCreator()
 	//{ protocols::simple_filters::StemFinderFilterCreator cr; std::cout << "protocols::simple_filters::StemFinderFilterCreator " << cr.keyname() << std::endl; }
@@ -822,7 +822,7 @@ public:
 	//{ protocols::protein_interface_design::filters::TorsionCreator cr; std::cout << "protocols::protein_interface_design::filters::TorsionCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_AlaScanFilterCreator()
-	//{ protocols::simple_filters::AlaScanFilterCreator cr; std::cout << "protocols::simple_filters::AlaScanFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::simple_ddg::AlaScanFilterCreator cr; std::cout << "protocols::simple_ddg::AlaScanFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_AtomicContactFilterCreator()
 	//{ protocols::simple_filters::AtomicContactFilterCreator cr; std::cout << "protocols::simple_filters::AtomicContactFilterCreator " << cr.keyname() << std::endl; }
@@ -834,16 +834,16 @@ public:
 	//{ protocols::simple_filters::AveragePathLengthFilterCreator cr; std::cout << "protocols::simple_filters::AveragePathLengthFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_BuriedUnsatHbondFilterCreator()
-	//{ protocols::simple_filters::BuriedUnsatHbondFilterCreator cr; std::cout << "protocols::simple_filters::BuriedUnsatHbondFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::calc_taskop_filters::BuriedUnsatHbondFilterCreator cr; std::cout << "protocols::calc_taskop_filters::BuriedUnsatHbondFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_ConservedPosMutationFilterCreator()
-	//{ protocols::simple_filters::ConservedPosMutationFilterCreator cr; std::cout << "protocols::simple_filters::ConservedPosMutationFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::calc_taskop_filters::ConservedPosMutationFilterCreator cr; std::cout << "protocols::calc_taskop_filters::ConservedPosMutationFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_ConstraintScoreFilterCreator()
-	//{ protocols::simple_filters::ConstraintScoreFilterCreator cr; std::cout << "protocols::simple_filters::ConstraintScoreFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::constraint_filters::ConstraintScoreFilterCreator cr; std::cout << "protocols::constraint_filters::ConstraintScoreFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_DdgFilterCreator()
-	//{ protocols::simple_filters::DdgFilterCreator cr; std::cout << "protocols::simple_filters::DdgFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::simple_ddg::DdgFilterCreator cr; std::cout << "protocols::simple_ddg::DdgFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_DeltaFilterCreator()
 	//{ protocols::simple_filters::DeltaFilterCreator cr; std::cout << "protocols::simple_filters::DeltaFilterCreator " << cr.keyname() << std::endl; }
@@ -867,7 +867,7 @@ public:
 	//{ protocols::simple_filters::FileRemoveFilterCreator cr; std::cout << "protocols::simple_filters::FileRemoveFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_GeometryFilterCreator()
-	//{ protocols::simple_filters::GeometryFilterCreator cr; std::cout << "protocols::simple_filters::GeometryFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::score_filters::GeometryFilterCreator cr; std::cout << "protocols::score_filters::GeometryFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_HolesFilterCreator()
 	//{ protocols::simple_filters::HolesFilterCreator cr; std::cout << "protocols::simple_filters::HolesFilterCreator " << cr.keyname() << std::endl; }
@@ -876,7 +876,7 @@ public:
 	//{ protocols::simple_filters::InterfaceSasaFilterCreator cr; std::cout << "protocols::simple_filters::InterfaceSasaFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_InterfaceBindingEnergyDensityFilterCreator()
-	//{ protocols::simple_filters::InterfaceBindingEnergyDensityFilterCreator cr; std::cout << "protocols::simple_filters::InterfaceBindingEnergyDensityFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::simple_ddg::InterfaceBindingEnergyDensityFilterCreator cr; std::cout << "protocols::simple_ddg::InterfaceBindingEnergyDensityFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_InterRepeatContactFilterCreator()
 	//{ protocols::simple_filters::InterRepeatContactFilterCreator cr; std::cout << "protocols::simple_filters::InterRepeatContactFilterCreator " << cr.keyname() << std::endl; }
@@ -891,7 +891,7 @@ public:
 	//{ protocols::simple_filters::MotifScoreFilterCreator cr; std::cout << "protocols::simple_filters::MotifScoreFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_MultipleSigmoidsFilterCreator()
-	//{ protocols::simple_filters::MultipleSigmoidsFilterCreator cr; std::cout << "protocols::simple_filters::MultipleSigmoidsFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::calc_taskop_filters::MultipleSigmoidsFilterCreator cr; std::cout << "protocols::calc_taskop_filters::MultipleSigmoidsFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_MutationsFilterCreator()
 	//{ protocols::simple_filters::MutationsFilterCreator cr; std::cout << "protocols::simple_filters::MutationsFilterCreator " << cr.keyname() << std::endl; }
@@ -909,7 +909,7 @@ public:
 	//{ protocols::simple_filters::NMerSVMEnergyFilterCreator cr; std::cout << "protocols::simple_filters::NMerSVMEnergyFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_OperatorFilterCreator()
-	//{ protocols::simple_filters::OperatorFilterCreator cr; std::cout << "protocols::simple_filters::OperatorFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::calc_taskop_filters::OperatorFilterCreator cr; std::cout << "protocols::calc_taskop_filters::OperatorFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_PackStatFilterCreator()
 	//{ protocols::simple_filters::PackStatFilterCreator cr; std::cout << "protocols::simple_filters::PackStatFilterCreator " << cr.keyname() << std::endl; }
@@ -948,13 +948,13 @@ public:
 	//{ protocols::simple_filters::ResidueSetChainEnergyFilterCreator cr; std::cout << "protocols::simple_filters::ResidueSetChainEnergyFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_RotamerBoltzmannWeightFilterCreator()
-	//{ protocols::simple_filters::RotamerBoltzmannWeightFilterCreator cr; std::cout << "protocols::simple_filters::RotamerBoltzmannWeightFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::calc_taskop_filters::RotamerBoltzmannWeightFilterCreator cr; std::cout << "protocols::calc_taskop_filters::RotamerBoltzmannWeightFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_RotamerBoltzmannWeight2Creator()
-	//{ protocols::simple_filters::RotamerBoltzmannWeight2Creator cr; std::cout << "protocols::simple_filters::RotamerBoltzmannWeight2Creator " << cr.keyname() << std::endl; }
+	//{ protocols::calc_taskop_filters::RotamerBoltzmannWeight2Creator cr; std::cout << "protocols::calc_taskop_filters::RotamerBoltzmannWeight2Creator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_SavePoseConstraintToFileFilterCreator()
-	//{ protocols::simple_filters::SavePoseConstraintToFileFilterCreator cr; std::cout << "protocols::simple_filters::SavePoseConstraintToFileFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::constraint_filters::SavePoseConstraintToFileFilterCreator cr; std::cout << "protocols::simple_filters::SavePoseConstraintToFileFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_SSElementMotifContactFilterCreator()
 	//{ protocols::simple_filters::SSElementMotifContactFilterCreator cr; std::cout << "protocols::simple_filters::SSElementMotifContactFilterCreator " << cr.keyname() << std::endl; }
@@ -963,16 +963,16 @@ public:
 	//{ protocols::simple_filters::SaveResfileToDiskFilterCreator cr; std::cout << "protocols::simple_filters::SaveResfileToDiskFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_ScoreCutoffFilterCreator()
-	//{ protocols::simple_filters::ScoreCutoffFilterCreator cr; std::cout << "protocols::simple_filters::ScoreCutoffFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::score_filters::ScoreCutoffFilterCreator cr; std::cout << "protocols::score_filters::ScoreCutoffFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_ScoreTypeFilterCreator()
-	//{ protocols::simple_filters::ScoreTypeFilterCreator cr; std::cout << "protocols::simple_filters::ScoreTypeFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::score_filters::ScoreTypeFilterCreator cr; std::cout << "protocols::score_filters::ScoreTypeFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_ShapeComplementarityFilterCreator()
 	//{ protocols::simple_filters::ShapeComplementarityFilterCreator cr; std::cout << "protocols::simple_filters::ShapeComplementarityFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_SigmoidFilterCreator()
-	//{ protocols::simple_filters::SigmoidFilterCreator cr; std::cout << "protocols::simple_filters::SigmoidFilterCreator " << cr.keyname() << std::endl; }
+	//{ protocols::calc_taskop_filters::SigmoidFilterCreator cr; std::cout << "protocols::calc_taskop_filters::SigmoidFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_SymmetricMotifFilterCreator()
 	//{ protocols::simple_filters::SymmetricMotifFilterCreator cr; std::cout << "protocols::simple_filters::SymmetricMotifFilterCreator " << cr.keyname() << std::endl; }
@@ -981,7 +981,7 @@ public:
 	//{ protocols::simple_filters::SidechainRmsdFilterCreator cr; std::cout << "protocols::simple_filters::SidechainRmsdFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_DdGScanCreator()
-	//{ protocols::simple_filters::DdGScanCreator cr; std::cout << "protocols::simple_filters::DdGScanCreator " << cr.keyname() << std::endl; }
+	//{ protocols::simple_ddg::DdGScanCreator cr; std::cout << "protocols::simple_ddg::DdGScanCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_TaskAwareSASAFilterCreator()
 	//{ protocols::simple_filters::TaskAwareSASAFilterCreator cr; std::cout << "protocols::simple_filters::TaskAwareSASAFilterCreator " << cr.keyname() << std::endl; }

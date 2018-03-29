@@ -30,7 +30,7 @@ namespace task_operations {
 
 
 /// @brief Add Framework Profiles as the task operation for a framework chain.
-/// See protocols/toolbox/task_operations/ResidueProbTaskOperation for more.
+/// See protocols/task_operations/ResidueProbTaskOperation for more.
 ///
 class AddFrameworkProfilesOperation : public core::pack::task::operation::TaskOperation {
 public:
@@ -73,7 +73,7 @@ private:
 } //antibody
 } //protocols
 
-#endif	//INCLUDED_protocols_antibody_task_operations_AddFrameworkProfilesOperation_hh
+#endif //INCLUDED_protocols_antibody_task_operations_AddFrameworkProfilesOperation_hh
 
 
 

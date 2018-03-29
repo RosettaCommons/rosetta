@@ -25,8 +25,8 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/membrane/OptimizeProteinEmbeddingMover.hh>
@@ -192,7 +192,7 @@ main( int argc, char * argv [] )
 		// add constraints from cmd line
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+			protocols::constraint_movers::ConstraintSetMoverOP loadCsts( new protocols::constraint_movers::ConstraintSetMover );
 			if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 			} else {
@@ -215,7 +215,7 @@ main( int argc, char * argv [] )
 		// set pose for symmetry
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
+			seqmov->add_mover( MoverOP( new protocols::symmetry::SetupForSymmetryMover ) );
 			seqmov->add_mover( scoremover );
 			scoremover = seqmov;
 		}

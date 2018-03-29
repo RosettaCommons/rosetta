@@ -44,7 +44,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -517,7 +517,7 @@ main( int argc, char * argv [] )
 //   if( spairs_string != "" && spairset->name() != spairs_string ) return;
 //  }
 
-//      using namespace protocols::toolbox::pose_metric_calculators;
+//      using namespace protocols::pose_metric_calculators;
 //    BuriedUnsatisfiedPolarsCalculator bu_calc( "default", "default" );
 //    bu_calc.special_region( region );
 //    basic::MetricValue< Size > val;

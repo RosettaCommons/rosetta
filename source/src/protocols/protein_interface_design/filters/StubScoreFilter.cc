@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
@@ -80,7 +80,7 @@ StubScoreFilter::compute( core::pose::Pose const & in_pose ) const{
 	dummy_min.cb_force( cb_force_ );
 	dummy_min.refresh_bbstub_constraints( pose );
 
-	protocols::simple_filters::ScoreTypeFilter const stf( stub_scorefxn, core::scoring::backbone_stub_constraint, 1.0 );
+	protocols::score_filters::ScoreTypeFilter const stf( stub_scorefxn, core::scoring::backbone_stub_constraint, 1.0 );
 	core::Real const stub_score( stf.compute( pose ) );
 	return( stub_score );
 }

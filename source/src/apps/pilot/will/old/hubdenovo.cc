@@ -87,11 +87,11 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
+#include <protocols/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
@@ -103,7 +103,7 @@
 #include <apps/pilot/will/frag_util.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/pack_rotamers.hh>
 
 using core::conformation::symmetry::SymmData;
@@ -1199,7 +1199,7 @@ struct HubDenovo {
 		rpk.apply( pose, *task_ );
 		core::pack::task::operation::NoRepackDisulfides nodisulf;
 		nodisulf.apply( pose, *task_ );
-		// protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
+		// protocols::simple_task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
 		// rti.apply( pose, *task_ );
 		pack::pack_rotamers( pose, *scorefxn_, task_ );
 		Real bounde = scorefxn_->score(pose);

@@ -31,7 +31,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/simple_moves/AddConstraintsToCurrentConformationMover.hh>
+#include <protocols/constraint_movers/AddConstraintsToCurrentConformationMover.hh>
 
 #include <devel/init.hh>
 

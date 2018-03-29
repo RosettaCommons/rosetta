@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/toolbox/task_operations/DesignInterfacesOperation.hh
+/// @file   protocols/task_operations/DesignInterfacesOperation.hh
 /// @brief  TaskOperation class that restricts a chain to repacking
 /// @author Sarel Fleishman sarelf@uw.edu
 
@@ -16,7 +16,7 @@
 
 // Unit Headers
 #include <devel/splice/DesignInterfacesOperation.fwd.hh>
-#include <protocols/toolbox/task_operations/RestrictOperationsBase.hh>
+#include <protocols/task_operations/RestrictOperationsBase.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -38,7 +38,7 @@ namespace devel {
 namespace splice {
 
 /// @details this class is a TaskOperation to prevent repacking of residues not near an interface.
-class DesignInterfacesOperation : public protocols::toolbox::task_operations::RestrictOperationsBase
+class DesignInterfacesOperation : public protocols::task_operations::RestrictOperationsBase
 {
 public:
 	typedef RestrictOperationsBase parent;

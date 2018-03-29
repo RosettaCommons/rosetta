@@ -60,15 +60,15 @@
 #include <core/pose/selection.hh>
 #include <core/select/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/ChargeCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/ChargeCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NonlocalContactsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/SurfaceCalculator.hh>
+#include <protocols/pose_metric_calculators/NonlocalContactsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/pose_metric_calculators/SurfaceCalculator.hh>
 
 #include <numeric/random/random.hh>
 
@@ -1147,31 +1147,31 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 
 	//before starting, we make sure that all necessary calculators are instantiated
 	if ( !CalculatorFactory::Instance().check_calculator_exists( hbond_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP hb_calc( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP hb_calc( new protocols::simple_pose_metric_calculators::NumberHBondsCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( hbond_calc_name, hb_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( burunsat_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", hbond_calc_name) );
+		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", hbond_calc_name) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( burunsat_calc_name, burunsat_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( packstat_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP pstat_calc( new protocols::toolbox::pose_metric_calculators::PackstatCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP pstat_calc( new protocols::pose_metric_calculators::PackstatCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( packstat_calc_name, pstat_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( noligpackstat_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP noligpstat_calc( new protocols::toolbox::pose_metric_calculators::PackstatCalculator( true ) );
+		core::pose::metrics::PoseMetricCalculatorOP noligpstat_calc( new protocols::pose_metric_calculators::PackstatCalculator( true ) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( noligpackstat_calc_name, noligpstat_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( nonlocalcontacts_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP nlcontacts_calc( new protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP nlcontacts_calc( new protocols::pose_metric_calculators::NonlocalContactsCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( nonlocalcontacts_calc_name, nlcontacts_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( surface_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP surface_calc( new protocols::toolbox::pose_metric_calculators::SurfaceCalculator( true ) );
+		core::pose::metrics::PoseMetricCalculatorOP surface_calc( new protocols::pose_metric_calculators::SurfaceCalculator( true ) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( surface_calc_name, surface_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP charge_calc( new protocols::toolbox::pose_metric_calculators::ChargeCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP charge_calc( new protocols::pose_metric_calculators::ChargeCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( charge_calc_name, charge_calc );
 	}
 

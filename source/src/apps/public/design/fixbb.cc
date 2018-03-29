@@ -33,7 +33,7 @@
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 //utilities
 #include <protocols/jd2/JobDistributor.hh>
@@ -122,7 +122,7 @@ main( int argc, char * argv [] )
 		// make symmetric pose if necessary
 		if ( option[ symmetry::symmetry_definition ].user() )  {
 			using protocols::moves::MoverOP;
-			seq_mover->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
+			seq_mover->add_mover( MoverOP( new protocols::symmetry::SetupForSymmetryMover ) );
 		}
 
 		if ( option[ min_pack ] || option[ off_rotamer_pack ] ) {

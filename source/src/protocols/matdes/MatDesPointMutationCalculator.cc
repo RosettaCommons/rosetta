@@ -12,7 +12,7 @@
 
 //#include <algorithm >
 #include <protocols/matdes/MatDesPointMutationCalculator.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
 #include <iostream>
@@ -53,7 +53,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <protocols/toolbox/task_operations/STMStoredTask.hh>
+#include <protocols/task_operations/STMStoredTask.hh>
 #include <core/pose/util.hh>
 
 //Auto Headers
@@ -412,7 +412,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 		pose.replace_residue( resi, reference_pose_->residue( resi ), true ); //Useful code to look at: src/core/conformation/Conformation.cc and src/protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.cc and src/core/conformation/Residue.cc
 		// Prevent that residue from repacking in any stored_tasks passed by the user.
 		utility::vector1< core::pack::task::PackerTaskOP > tmp_tasks;
-		protocols::toolbox::task_operations::STMStoredTaskOP stored_tasks = utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) );
+		protocols::task_operations::STMStoredTaskOP stored_tasks = utility::pointer::static_pointer_cast< protocols::task_operations::STMStoredTask > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) );
 		for ( Size itask = 1; itask <= stored_task_names_.size(); ++itask ) {
 			core::pack::task::PackerTaskOP tmp_task = stored_tasks->get_task( stored_task_names_[itask] )->clone();
 			//tmp_task->nonconst_residue_task(resi).restrict_absent_canonical_aas( allowed_aas );
@@ -428,7 +428,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 		//make mut_res task factory by copying input task_factory,
 		//then restrict to mutates resi to target_aa and repack 8A shell
 		core::pack::task::TaskFactoryOP mut_res( new core::pack::task::TaskFactory( *task_factory() ) );
-		protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op( new protocols::toolbox::task_operations::DesignAroundOperation );
+		protocols::task_operations::DesignAroundOperationOP repack_around_op( new protocols::task_operations::DesignAroundOperation );
 		repack_around_op->design_shell( design_shell_ ); //neg radius insures no designing nbrs, positive will do so!
 		repack_around_op->repack_shell( repack_shell_ );
 		repack_around_op->allow_design( true ); //because we still want to design resi
@@ -485,7 +485,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 	//make mut_res task factory by copying input task_factory,
 	//then restrict to mutates resi to target_aa and repack 8A shell
 	core::pack::task::TaskFactoryOP mut_res( new core::pack::task::TaskFactory( *task_factory() ) );
-	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op( new protocols::toolbox::task_operations::DesignAroundOperation );
+	protocols::task_operations::DesignAroundOperationOP repack_around_op( new protocols::task_operations::DesignAroundOperation );
 	repack_around_op->design_shell( design_shell_ ); //neg radius insures no designing nbrs
 	repack_around_op->repack_shell( repack_shell_ );
 	repack_around_op->allow_design( true ); //because we still want to design resi

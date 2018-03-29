@@ -57,8 +57,8 @@
 #include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
-#include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperation.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/task_operations/RestrictToMoveMapChiOperation.hh>
 #include <utility/vector0.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -378,8 +378,8 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 	using protocols::flxbb::FilterStructs_PackstatOP;
 	using protocols::flxbb::FilterStructs_TotalCharge;
 	using protocols::flxbb::FilterStructs_TotalChargeOP;
-	using protocols::toolbox::task_operations::LimitAromaChi2Operation;
-	using protocols::toolbox::task_operations::RestrictToMoveMapChiOperation;
+	using protocols::task_operations::LimitAromaChi2Operation;
+	using protocols::task_operations::RestrictToMoveMapChiOperation;
 	DesignTaskSet dts;
 
 	// create relax mover

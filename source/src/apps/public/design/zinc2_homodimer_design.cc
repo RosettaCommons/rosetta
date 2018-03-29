@@ -22,7 +22,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
+#include <protocols/task_operations/RestrictToInterfaceOperation.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -40,9 +40,9 @@
 #include <basic/Tracer.hh>
 
 //SYMMETRY
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
+#include <protocols/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-//#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
+//#include <protocols/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 //#include <core/conformation/symmetry/util.hh>
@@ -125,7 +125,7 @@ public:
 		pdbname_base_ = pdbfilename.base();
 
 		// make symmetric pose according to symm definition file included as an option
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical( new protocols::simple_moves::symmetry::SetupForSymmetryMover() );
+		protocols::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical( new protocols::symmetry::SetupForSymmetryMover() );
 		make_monomeric_input_pose_symmetrical->apply( pose );
 
 		pose.dump_pdb("sym.pdb");
@@ -209,7 +209,7 @@ public:
 		task_factory->push_back(prevent_repack);
 
 		//TASKFACTORY --> restrict to interface
-		task_factory->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterfaceOperation(1, 2) ));
+		task_factory->push_back(TaskOperationCOP( new protocols::task_operations::RestrictToInterfaceOperation(1, 2) ));
 		taskfactory_ = task_factory;
 
 

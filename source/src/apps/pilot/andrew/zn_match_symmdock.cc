@@ -46,12 +46,12 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RampingMover.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/enzdes/EnzdesMovers.hh>
@@ -175,7 +175,7 @@ int main( int argc, char * argv [] )
 		devel::init( argc, argv );
 
 		/// stolen from SymDockProtocol.cc
-		using namespace protocols::simple_moves::symmetry;
+		using namespace protocols::symmetry;
 		using namespace protocols::symmetric_docking;
 
 		/// Sequence mover will hold three movers for this protocol.

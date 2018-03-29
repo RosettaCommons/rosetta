@@ -32,7 +32,7 @@
 // C++ Headers
 #include <string>
 
-#include <protocols/simple_filters/DdGScan.fwd.hh>
+#include <protocols/simple_ddg/DdGScan.fwd.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -45,7 +45,7 @@ public:
 	DdGFeatures();
 
 	DdGFeatures(
-		protocols::simple_filters::DdGScanOP ddG_scan_mover
+		protocols::simple_ddg::DdGScanOP ddG_scan_mover
 	);
 
 	DdGFeatures(DdGFeatures const & src);
@@ -114,7 +114,7 @@ public:
 
 private:
 
-	protocols::simple_filters::DdGScanOP ddG_scan_mover_;
+	protocols::simple_ddg::DdGScanOP ddG_scan_mover_;
 
 };
 

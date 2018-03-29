@@ -53,8 +53,8 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -89,7 +89,7 @@ using namespace core;
 // XRW TEMP }
 
 PlacementAuctionMover::PlacementAuctionMover() :
-	simple_moves::DesignRepackMover( PlacementAuctionMover::mover_name() )
+	calc_taskop_movers::DesignRepackMover( PlacementAuctionMover::mover_name() )
 {}
 
 PlacementAuctionMover::~PlacementAuctionMover() = default;
@@ -163,11 +163,11 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	protocols::filters::FilterOP stf;
 	if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
 		only_stub_scorefxn->set_weight( backbone_stub_constraint, 1.0 );
-		stf = protocols::filters::FilterOP( new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_constraint, 1.0 ) );
+		stf = protocols::filters::FilterOP( new protocols::score_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_constraint, 1.0 ) );
 
 	} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
 		only_stub_scorefxn->set_weight( backbone_stub_linear_constraint, 1.0 );
-		stf = protocols::filters::FilterOP( new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_linear_constraint, 1.0 ) );
+		stf = protocols::filters::FilterOP( new protocols::score_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_linear_constraint, 1.0 ) );
 	} else {
 		utility_exit_with_message( "ERROR: unrecognized stub_energy_fxn_. Only support backbone_stub_constraint or backbone_stub_linear_constraint");
 	}

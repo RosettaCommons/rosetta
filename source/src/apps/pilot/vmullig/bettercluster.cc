@@ -96,7 +96,7 @@ about third-party libraries.
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/cyclic_peptide/CycpepSymmetryFilter.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 

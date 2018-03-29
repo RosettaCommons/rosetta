@@ -10,7 +10,7 @@
 /// @file protocols/interface/util.hh
 /// @brief Collection of useful interface functions - both by chain and by groups. In one place.
 ///  The namespace is for interface classes and functions that are general-use and protocol level.
-///  Many more specific classes and functions for interfaces can be found in their appropriate namespaces such as TaskOperations in protocols/toolbox/task_operations
+///  Many more specific classes and functions for interfaces can be found in their appropriate namespaces such as TaskOperations in protocols/task_operations
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_interface_UTIL_HH

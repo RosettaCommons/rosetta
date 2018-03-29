@@ -14,6 +14,9 @@
 //FilterCreator #includes
 #include <protocols/filters/FilterFactory.hh>
 
+#include <protocols/constraint_filters/ConstraintScoreFilterCreator.hh>
+#include <protocols/constraint_filters/SavePoseConstraintToFileFilterCreator.hh>
+#include <protocols/constraint_filters/ShowConstraintsFilterCreator.hh>
 #include <protocols/cyclic_peptide/CycpepSymmetryFilterCreator.hh>
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilterCreator.hh>
 
@@ -28,7 +31,7 @@
 #include <protocols/filters/CalculatorFilterCreator.hh>
 #include <protocols/filters/ContingentFilterCreator.hh>
 #include <protocols/filters/ReplicateFilterCreator.hh>
-#include <protocols/simple_filters/RelativePoseFilterCreator.hh>
+#include <protocols/calc_taskop_filters/RelativePoseFilterCreator.hh>
 #include <protocols/simple_filters/StemFinderFilterCreator.hh>
 #include <protocols/simple_filters/SSMotifFinderFilterCreator.hh>
 #include <protocols/simple_filters/AngleToVectorFilterCreator.hh>
@@ -63,7 +66,7 @@
 #include <protocols/helical_bundle/BundleReporterFilterCreator.hh>
 
 #include <protocols/indexed_structure_store/filters/FragmentLookupFilterCreator.hh>
-#include <protocols/simple_filters/FragmentScoreFilterCreator.hh>
+#include <protocols/frag_picker/FragmentScoreFilterCreator.hh>
 
 #include <protocols/ligand_docking/AtomCountFilterCreator.hh>
 #include <protocols/ligand_docking/ChainExistsFilterCreator.hh>
@@ -74,7 +77,7 @@
 #include <protocols/ligand_docking/MolecularMassFilterCreator.hh>
 #include <protocols/ligand_docking/MolarMassFilterCreator.hh>
 
-#include <protocols/loops/filters/LoopAnalyzerFilterCreator.hh>
+#include <protocols/analysis/LoopAnalyzerFilterCreator.hh>
 
 #include <protocols/dna_dock/DNAClashCheckFilterCreator.hh>
 #include <protocols/dna_dock/PropagateClashCheckFilterCreator.hh>
@@ -112,17 +115,17 @@
 #include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilterCreator.hh>
 
-#include <protocols/simple_filters/AlaScanCreator.hh>
+#include <protocols/simple_ddg/AlaScanCreator.hh>
 #include <protocols/simple_filters/AtomicContactFilterCreator.hh>
 #include <protocols/simple_filters/AtomicDistanceFilterCreator.hh>
 #include <protocols/simple_filters/AveragePathLengthFilterCreator.hh>
 #include <protocols/simple_filters/BuriedSurfaceAreaFilterCreator.hh>
 #include <protocols/simple_filters/BuriedUnsatHbondFilterCreator.hh>
 #include <protocols/simple_filters/ChainBreakFilterCreator.hh>
-#include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
-#include <protocols/simple_filters/ConstraintScoreFilterCreator.hh>
+#include <protocols/calc_taskop_filters/ConservedPosMutationFilterCreator.hh>
+#include <protocols/simple_ddg/DdgFilterCreator.hh>
+#include <protocols/constraint_filters/ConstraintScoreFilterCreator.hh>
 #include <protocols/simple_filters/ChainCountFilterCreator.hh>
-#include <protocols/simple_filters/DdgFilterCreator.hh>
 #include <protocols/simple_filters/DeltaFilterCreator.hh>
 #include <protocols/simple_filters/DisulfideEntropyFilterCreator.hh>
 #include <protocols/simple_filters/FileExistFilterCreator.hh>
@@ -130,23 +133,23 @@
 #include <protocols/simple_filters/EnergyPerResidueFilterCreator.hh>
 #include <protocols/simple_filters/ExpiryFilterCreator.hh>
 #include <protocols/simple_filters/NonSequentialNeighborsFilterCreator.hh>
-#include <protocols/simple_filters/GeometryFilterCreator.hh>
+#include <protocols/score_filters/GeometryFilterCreator.hh>
 #include <protocols/simple_filters/HolesFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
-#include <protocols/simple_filters/InterfaceBindingEnergyDensityFilterCreator.hh>
+#include <protocols/simple_ddg/InterfaceBindingEnergyDensityFilterCreator.hh>
 #include <protocols/simple_filters/InterRepeatContactFilterCreator.hh>
 #include <protocols/simple_filters/IntraRepeatContactFilterCreator.hh>
 #include <protocols/simple_filters/LeastNativeLike9merFilterCreator.hh>
 #include <protocols/simple_filters/LongestContinuousApolarSegmentFilterCreator.hh>
 #include <protocols/simple_filters/LongestContinuousPolarSegmentFilterCreator.hh>
 #include <protocols/simple_filters/MotifScoreFilterCreator.hh>
-#include <protocols/simple_filters/MultipleSigmoidsFilterCreator.hh>
+#include <protocols/calc_taskop_filters/MultipleSigmoidsFilterCreator.hh>
 #include <protocols/simple_filters/MutationsFilterCreator.hh>
 #include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
 #include <protocols/simple_filters/NetChargeFilterCreator.hh>
 #include <protocols/simple_filters/NMerPSSMEnergyFilterCreator.hh>
 #include <protocols/simple_filters/NMerSVMEnergyFilterCreator.hh>
-#include <protocols/simple_filters/OperatorFilterCreator.hh>
+#include <protocols/calc_taskop_filters/OperatorFilterCreator.hh>
 #include <protocols/simple_filters/PackStatFilterCreator.hh>
 #include <protocols/simple_filters/PoseCommentFilterCreator.hh>
 #include <protocols/simple_filters/PoseInfoFilterCreator.hh>
@@ -164,19 +167,17 @@
 #include <protocols/simple_filters/ResidueLipophilicityFilterCreator.hh>
 #include <protocols/simple_filters/MPSpanAngleFilterCreator.hh>
 #include <protocols/simple_filters/ResidueSetChainEnergyFilterCreator.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeightFilterCreator.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight2Creator.hh>
-#include <protocols/simple_filters/SavePoseConstraintToFileFilterCreator.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeightFilterCreator.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight2Creator.hh>
 #include <protocols/simple_filters/SSElementMotifContactFilterCreator.hh>
-#include <protocols/simple_filters/SSElementBisectddGFilterCreator.hh>
+#include <protocols/simple_ddg/SSElementBisectddGFilterCreator.hh>
 #include <protocols/simple_filters/SaveResfileToDiskFilterCreator.hh>
-#include <protocols/simple_filters/ScoreCutoffFilterCreator.hh>
-#include <protocols/simple_filters/ScoreTypeFilterCreator.hh>
+#include <protocols/score_filters/ScoreCutoffFilterCreator.hh>
+#include <protocols/score_filters/ScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/SequenceDistanceFilterCreator.hh>
-#include <protocols/simple_filters/SigmoidFilterCreator.hh>
+#include <protocols/calc_taskop_filters/SigmoidFilterCreator.hh>
 #include <protocols/simple_filters/SimpleHbondsToAtomFilterCreator.hh>
 #include <protocols/simple_filters/ShapeComplementarityFilterCreator.hh>
-#include <protocols/simple_filters/ShowConstraintsFilterCreator.hh>
 #include <protocols/simple_filters/SpanTopologyMatchPoseFilterCreator.hh>
 #include <protocols/simple_filters/TMsAACompFilterCreator.hh>
 #include <protocols/simple_filters/TMsSpanMembraneFilterCreator.hh>
@@ -185,7 +186,7 @@
 #include <protocols/simple_filters/HelixHelixAngleFilterCreator.hh>
 #include <protocols/simple_filters/SymmetricMotifFilterCreator.hh>
 #include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
-#include <protocols/simple_filters/DdGScanCreator.hh>
+#include <protocols/simple_ddg/DdGScanCreator.hh>
 #include <protocols/simple_filters/TaskAwareSASAFilterCreator.hh>
 #include <protocols/simple_filters/TaskAwareScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/TerminusDistanceFilterCreator.hh>

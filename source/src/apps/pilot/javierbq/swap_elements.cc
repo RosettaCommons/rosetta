@@ -38,7 +38,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <protocols/simple_moves/symmetry/DetectSymmetryMover.hh>
+#include <protocols/symmetry/DetectSymmetryMover.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>

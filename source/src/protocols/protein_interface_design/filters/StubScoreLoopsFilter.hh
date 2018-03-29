@@ -24,7 +24,7 @@
 #include <utility/vector1.fwd.hh>
 #include <protocols/protein_interface_design/filters/StubScoreLoopsFilter.fwd.hh>
 
-#include <protocols/simple_filters/ConstraintScoreCutoffFilter.hh>
+#include <protocols/constraint_filters/ConstraintScoreCutoffFilter.hh>
 
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
@@ -37,10 +37,10 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-class StubScoreLoopsFilter : public protocols::simple_filters::ConstraintScoreCutoffFilter
+class StubScoreLoopsFilter : public protocols::constraint_filters::ConstraintScoreCutoffFilter
 {
 private:
-	typedef protocols::simple_filters::ConstraintScoreCutoffFilter Parent;
+	typedef protocols::constraint_filters::ConstraintScoreCutoffFilter Parent;
 	typedef std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > StubSetStubPos;
 public:
 	/// @brief default ctor

@@ -15,7 +15,7 @@
 #include <devel/init.hh>
 
 // Project headers
-#include <protocols/membrane/MPMutateRelaxMover.hh>
+#include <protocols/relax/membrane/MPMutateRelaxMover.hh>
 
 // Package headers
 #include <protocols/jd2/JobDistributor.hh>

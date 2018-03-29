@@ -37,7 +37,7 @@
 #include <core/pack/task/operation/TaskOperationCreators.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <protocols/toolbox/task_operations/LinkResidues.hh>
+#include <protocols/task_operations/LinkResidues.hh>
 
 #include <protocols/jd2/util.hh>
 
@@ -48,7 +48,7 @@
 #include <protocols/relax/cst_util.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/symmetry/SetupNCSMover.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>

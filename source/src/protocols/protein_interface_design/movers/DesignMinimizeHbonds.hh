@@ -21,7 +21,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 
 namespace protocols {
@@ -31,7 +31,7 @@ namespace movers {
 /// @brief used to design a protein to hbond preferentially to a set of target residues on the partner.
 /// Hbonds involving backbone or sidechain on the target can be counted, and whether to design donors or
 /// acceptors can also be defined.
-class DesignMinimizeHbonds : public simple_moves::DesignRepackMover
+class DesignMinimizeHbonds : public calc_taskop_movers::DesignRepackMover
 {
 public:
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;

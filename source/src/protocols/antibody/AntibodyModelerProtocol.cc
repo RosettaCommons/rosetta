@@ -69,7 +69,7 @@
 #include <protocols/jd2/util.hh>
 #include <core/io/raw_data/ScoreMap.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
@@ -410,7 +410,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		TR<<"Centroid cst_weight: "<<cst_weight_<<std::endl;
 		if (  cst_weight_ != 0.0  ) {
 			if ( ! auto_constraint_ ) {
-				cdr_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new simple_moves::ConstraintSetMover() );
+				cdr_constraint_ = protocols::constraint_movers::ConstraintSetMoverOP( new constraint_movers::ConstraintSetMover() );
 				cdr_constraint_->apply( pose );
 			} else {
 				// Create constraints on-the-fly here.
@@ -453,7 +453,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	// call ConstraintSetMover
 	TR << "Full-atom cst_weight: " << cst_weight_ << std::endl;
 	if (  cst_weight_ != 0.0 && ! auto_constraint_ ) {
-		cdr_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new simple_moves::ConstraintSetMover() );
+		cdr_constraint_ = protocols::constraint_movers::ConstraintSetMoverOP( new constraint_movers::ConstraintSetMover() );
 		cdr_constraint_->apply( pose );
 	}
 

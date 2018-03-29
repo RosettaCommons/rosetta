@@ -84,8 +84,8 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -143,7 +143,7 @@ CoordinateConstraintStackOP CoordinateConstraintStack::parent() const { return p
 // XRW TEMP }
 
 PlaceStubMover::PlaceStubMover() :
-	simple_moves::DesignRepackMover( PlaceStubMover::mover_name() ),
+	calc_taskop_movers::DesignRepackMover( PlaceStubMover::mover_name() ),
 	score_threshold_( 0.0 ),
 	host_chain_( 2 ),
 	stub_set_( /* NULL */ ),
@@ -180,7 +180,7 @@ PlaceStubMover::PlaceStubMover(
 	bool const triage_positions/*=true*/,
 	core::Real stub_energy_threshold /*= 1.0*/
 ) :
-	simple_moves::DesignRepackMover( PlaceStubMover::mover_name() ),
+	calc_taskop_movers::DesignRepackMover( PlaceStubMover::mover_name() ),
 	score_threshold_( score_threshold ),
 	host_chain_( host_chain ),
 	hurry_(hurry),
@@ -401,7 +401,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	//by constraints. There are no explicit checks in the code for this and
 	//it is up to the user to make sure that all's well...
 
-	simple_filters::ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
+	score_filters::ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
 	core::Real const before_min( stf.compute( pose ) );
 	if ( before_min >= -0.0001 ) {
 		if ( stub != nullptr ) {
@@ -438,7 +438,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 		(*stub_scorefxn )( pose ); //to update values
 
 		//minimizing stub using user-defined movers or a default minimization (rb and sc of placed stubs)
-		typedef std::pair< simple_moves::DesignRepackMoverOP, core::Real > DesignMoverRealPair;
+		typedef std::pair< calc_taskop_movers::DesignRepackMoverOP, core::Real > DesignMoverRealPair;
 		if ( stub_minimize_movers_.size() ) {
 			TR<<"entering movers for stub minimization....\n";
 			//minimize rb and sc of previous place
@@ -446,7 +446,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 			MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, false /*optimize foldtree*/, no_targets, true/*simultaneous optimization*/);
 			//starting mover list
 			for ( utility::vector1< DesignMoverRealPair >::const_iterator it=stub_minimize_movers_.begin(); it!=stub_minimize_movers_.end(); ++it ) {
-				simple_moves::DesignRepackMoverOP const curr_mover( it->first );
+				calc_taskop_movers::DesignRepackMoverOP const curr_mover( it->first );
 				core::Real const bb_cst_weight( it->second );
 				TR<<"applying mover: "<<curr_mover->get_name()<<'\n';
 				//restricting movers for stub minimization
@@ -1179,7 +1179,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 				auto find_mover( movers.find( stub_mover_name ));
 				bool const stub_mover_found( find_mover != movers.end() );
 				if ( stub_mover_found ) {
-					simple_moves::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
+					calc_taskop_movers::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second->clone() );
 					if ( !drSOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP != nullptr );
@@ -1198,7 +1198,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 				auto find_mover( movers.find( mover_name ));
 				bool const mover_found( find_mover != movers.end() );
 				if ( mover_found ) {
-					simple_moves::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
+					calc_taskop_movers::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second->clone() );
 					if ( !drOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP != nullptr );

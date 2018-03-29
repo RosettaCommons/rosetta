@@ -54,7 +54,7 @@
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
+#include <protocols/symmetry/SymDockingInitialPerturbation.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
 // #include <devel/init.hh>

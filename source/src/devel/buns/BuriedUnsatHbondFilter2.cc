@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <devel/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
@@ -154,7 +154,7 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 	( *scorefxn )( bound );
 	bound.update_residue_neighbors();
 
-	using namespace protocols::toolbox::pose_metric_calculators;
+	using namespace protocols::simple_pose_metric_calculators;
 
 	basic::MetricValue< core::Size > total_buns_bound;
 	basic::MetricValue< utility::vector1< core::Size > > res_buns_bound;

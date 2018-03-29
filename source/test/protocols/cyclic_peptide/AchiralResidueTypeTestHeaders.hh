@@ -37,7 +37,7 @@
 #include <protocols/cyclic_peptide/FlipChiralityMover.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 
 namespace test {
@@ -102,7 +102,7 @@ public:
 		TR << "E2=" << asymm_energy_2 << std::endl;
 		TS_ASSERT_DELTA( asymm_energy_1, asymm_energy_2, 0.00001 ); //Make sure that the asymmetric pose and its mirror image score identically
 
-		::protocols::simple_moves::symmetry::SetupForSymmetryMover symm_setup("protocols/cyclic_peptide/c4m.symm");
+		::protocols::symmetry::SetupForSymmetryMover symm_setup("protocols/cyclic_peptide/c4m.symm");
 		symm_setup.apply(*pose);
 		symm_setup.apply(*pose2);
 

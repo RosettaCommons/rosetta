@@ -18,9 +18,9 @@
 #include <protocols/moves/Mover.hh>
 #include <devel/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
 #include <basic/options/keys/bunsat_calc2.OptionKeys.gen.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 
 #include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -62,7 +62,7 @@ using namespace conformation;
 using namespace chemical;
 using namespace utility;
 using namespace core::pose::metrics;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
 using namespace basic::options;
 
 typedef numeric::xyzVector< core::Real > Vector;

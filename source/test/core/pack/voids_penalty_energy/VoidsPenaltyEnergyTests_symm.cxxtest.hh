@@ -44,7 +44,7 @@
 
 // Protocols Headers -- for convenience in setting up test case.
 #include <protocols/helical_bundle/MakeBundle.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
@@ -79,7 +79,7 @@ public:
 		makebundle.add_helix();
 		makebundle.apply(pose);
 
-		protocols::simple_moves::symmetry::SetupForSymmetryMover set_up_d2( "core/pack/voids_penalty_energy/d2.symm" );
+		protocols::symmetry::SetupForSymmetryMover set_up_d2( "core/pack/voids_penalty_energy/d2.symm" );
 		set_up_d2.apply(pose);
 
 		core::select::residue_selector::LayerSelectorOP layer_selector( new core::select::residue_selector::LayerSelector );

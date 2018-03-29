@@ -35,8 +35,8 @@
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <core/select/util/SelectResiduesByLayer.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
@@ -107,7 +107,7 @@ HighestEnergyRegionOperation::apply( Pose const & pose, core::pack::task::Packer
 	utility::vector1< core::Size > res_list( residues_to_design( pose ) );
 
 	// now we can just apply a DesignAround operation using the residues that don't match
-	protocols::toolbox::task_operations::DesignAroundOperation design_around;
+	protocols::task_operations::DesignAroundOperation design_around;
 	runtime_assert( region_shell_ >= -0.000001 );
 	design_around.design_shell( region_shell_ );
 	// if we want to repack the whole protein, a huge repack shell is specified.
@@ -195,7 +195,7 @@ HighestEnergyRegionOperation::get_residues_to_design( core::pose::Pose const & p
 		for ( core::Size resi=1; resi<=posecopy.size(); ++resi ) {
 			utility::vector1<bool> outside_of_region( posecopy.size(), true );
 
-			protocols::toolbox::task_operations::DesignAroundOperation des_around;
+			protocols::task_operations::DesignAroundOperation des_around;
 			des_around.design_shell( region_shell_ );
 			des_around.repack_shell( region_shell_ );
 			des_around.include_residue( resi );
@@ -372,7 +372,7 @@ DesignByPackStatOperation::get_residues_to_design( core::pose::Pose const & pose
 {
 	// check for calculator; create if it doesn't exist
 	if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "PackStat" ) ) {
-		protocols::toolbox::pose_metric_calculators::PackstatCalculator calculator;
+		protocols::pose_metric_calculators::PackstatCalculator calculator;
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "PackStat", calculator.clone() );
 	}
 

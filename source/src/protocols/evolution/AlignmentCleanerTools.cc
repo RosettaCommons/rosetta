@@ -11,7 +11,7 @@
 /// @author Christoffer Norn (ch.norn@gmail.com)
 
 #include <protocols/evolution/AlignmentCleanerTools.hh>
-#include <protocols/toolbox/task_operations/ThreadSequenceOperation.hh>
+#include <protocols/task_operations/ThreadSequenceOperation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -33,7 +33,7 @@ void
 thread_sequence_on_pose(core::pose::Pose & pose, std::string const & thread_seq, core::scoring::ScoreFunctionOP scorefxn)
 {
 	// Now we thread on the sequence
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 

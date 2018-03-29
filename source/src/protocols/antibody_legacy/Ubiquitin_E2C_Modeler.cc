@@ -24,7 +24,7 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
@@ -49,7 +49,7 @@ using namespace ObjexxFCL::format;
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -633,7 +633,7 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 	}
 	*/
 
-	protocols::simple_moves::ConstraintSetMoverOP mtsl_constraint( new protocols::simple_moves::ConstraintSetMover() );
+	protocols::constraint_movers::ConstraintSetMoverOP mtsl_constraint( new protocols::constraint_movers::ConstraintSetMover() );
 	mtsl_constraint->apply( pose_in );
 
 	const pose::Pose start_pose( pose_in );
@@ -1760,7 +1760,7 @@ ubi_e2c_modeler::restrict_to_interfacial_loop_packing(
 	utility::vector1_size rb_jumps;
 	rb_jumps.push_back( e2_k48r_jump_ );
 	rb_jumps.push_back( e2_d77_jump_ );
-	tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( rb_jumps, loop_residues) ) );
+	tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( rb_jumps, loop_residues) ) );
 
 	TR << "UBI Done: Restricting To Interface" << std::endl;
 	return;
@@ -2436,7 +2436,7 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 
 	TR << "UBI Mono Ubi Apply Start" << std::endl;
 
-	protocols::simple_moves::ConstraintSetMoverOP mtsl_constraint( new protocols::simple_moves::ConstraintSetMover() );
+	protocols::constraint_movers::ConstraintSetMoverOP mtsl_constraint( new protocols::constraint_movers::ConstraintSetMover() );
 	mtsl_constraint->apply( pose_in );
 
 	const pose::Pose start_pose( pose_in );

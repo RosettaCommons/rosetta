@@ -54,7 +54,7 @@
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/viewer/viewers.hh>
@@ -66,7 +66,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <core/scoring/constraints/util.hh>
 
@@ -146,7 +146,7 @@ public:
 
 		// test 1: setup symmetric system
 		TR << "*** setup_for_symmetry ***" <<std::endl;
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+		protocols::symmetry::SetupForSymmetryMoverOP symm( new protocols::symmetry::SetupForSymmetryMover );
 		symm->apply( pose );
 		core::pose::symmetry::make_symmetric_movemap( pose, mm );
 		TR << "*** setup_for_symmetry done ***" <<std::endl;
@@ -178,7 +178,7 @@ public:
 void*
 my_main( void* ) {
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::symmetry;
 
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new MirrorSymmTest() ) );

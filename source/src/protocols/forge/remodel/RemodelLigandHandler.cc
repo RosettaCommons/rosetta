@@ -43,11 +43,11 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 

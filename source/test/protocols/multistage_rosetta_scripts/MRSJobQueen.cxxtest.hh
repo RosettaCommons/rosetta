@@ -32,7 +32,7 @@
 
 // Movers and Filters
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
 #include <protocols/filters/BasicFilters.hh>//True Filter
@@ -195,7 +195,7 @@ public:
 
 			TS_ASSERT( ! protocols.back().mover );
 			TS_ASSERT( protocols.back().filter );
-			TS_ASSERT_EQUALS( protocols.back().filter->name(), protocols::simple_filters::ScoreTypeFilter::class_name() );
+			TS_ASSERT_EQUALS( protocols.back().filter->name(), protocols::score_filters::ScoreTypeFilter::class_name() );
 
 			TS_ASSERT_EQUALS( zero_queen.stage_for_global_job_id( ljob->job_index() ), 1 );
 			TS_ASSERT_EQUALS( worker_queen.stage_for_global_job_id( ljob->job_index() ) + ljob->job_index(), 1 + ljob->job_index() );
@@ -309,7 +309,7 @@ public:
 
 			TS_ASSERT( ! protocols.back().mover );
 			TS_ASSERT( protocols.back().filter );
-			TS_ASSERT_EQUALS( protocols.back().filter->name(), protocols::simple_filters::ScoreTypeFilter::class_name() );
+			TS_ASSERT_EQUALS( protocols.back().filter->name(), protocols::score_filters::ScoreTypeFilter::class_name() );
 
 			TS_ASSERT_EQUALS( zero_queen.stage_for_global_job_id( ljob->job_index() ), 2 );
 			TS_ASSERT_EQUALS( worker_queen.stage_for_global_job_id( ljob->job_index() ) + ljob->job_index(), 2 + ljob->job_index() );
@@ -411,7 +411,7 @@ public:
 
 			TS_ASSERT( ! protocols.back().mover );
 			TS_ASSERT( protocols.back().filter );
-			TS_ASSERT_EQUALS( protocols.back().filter->name(), protocols::simple_filters::ScoreTypeFilter::class_name() );
+			TS_ASSERT_EQUALS( protocols.back().filter->name(), protocols::score_filters::ScoreTypeFilter::class_name() );
 
 			TS_ASSERT_EQUALS( zero_queen.stage_for_global_job_id( ljob->job_index() ), 3 );
 			TS_ASSERT_EQUALS( worker_queen.stage_for_global_job_id( ljob->job_index() ) + ljob->job_index(), 3 + ljob->job_index() );

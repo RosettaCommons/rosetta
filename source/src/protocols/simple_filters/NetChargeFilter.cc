@@ -31,10 +31,8 @@
 #include <numeric/random/random.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_filters/NetChargeFilter.hh>
 #include <protocols/simple_filters/NetChargeFilterCreator.hh>
-#include <protocols/simple_moves/ddG.hh>
 #include <string>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>

@@ -41,7 +41,7 @@
 #include <core/pack/task/operation/OptH.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
@@ -207,7 +207,7 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 		loop_residues(i) = sc_is_flexible[i];
 	} // check mapping
 
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 

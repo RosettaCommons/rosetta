@@ -61,7 +61,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -102,7 +102,7 @@ LoopMoverFromCommandLine::clone() const
 
 //call on empty constructor
 LoopMoverFromCommandLine::LoopMoverFromCommandLine() :
-	simple_moves::DesignRepackMover( LoopMoverFromCommandLine::mover_name() ),
+	calc_taskop_movers::DesignRepackMover( LoopMoverFromCommandLine::mover_name() ),
 	intermedrelax_( "no" ),
 	remodel_( "no" ),
 	relax_( "no" ),
@@ -122,7 +122,7 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 	std::string const & loop_file_name,
 	protocols::loops::LoopsCOP loops
 ) :
-	simple_moves::DesignRepackMover( LoopMoverFromCommandLine::mover_name()),
+	calc_taskop_movers::DesignRepackMover( LoopMoverFromCommandLine::mover_name()),
 	protocol_( protocol ),
 	perturb_( perturb),
 	refine_(refine),

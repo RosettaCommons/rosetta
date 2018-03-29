@@ -41,7 +41,7 @@
 #include <core/pack/task/PackerTask.hh>
 
 //needed for a benchmarking thing
-#include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
+#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -530,7 +530,7 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 	calcs_and_calcns.push_back(std::make_pair(interface_calc, "interface_residues"));
 	calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
 
-	using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
+	using protocols::task_operations::RestrictByCalculatorsOperation;
 	operation::TaskOperationOP rbcop( new RestrictByCalculatorsOperation( calcs_and_calcns ) );
 
 	tf->push_back(rbcop);

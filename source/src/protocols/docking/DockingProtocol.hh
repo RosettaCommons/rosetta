@@ -31,14 +31,14 @@
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
+#include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>  // Needs to be the full header so the scorefxn can default to NULL
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/simple_moves/ConstraintSetMover.fwd.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.fwd.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.fwd.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
@@ -155,7 +155,7 @@ public:
 	void set_use_legacy_protocol( bool const use_legacy_protocol );
 	void set_cst_weight( core::Real const cst_weight );
 	void set_use_constraints( bool const use_csts );
-	void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
+	void set_interface_definition_task_operation( protocols::simple_task_operations::InterfaceTaskOperationOP interface_definition );
 
 	void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
 	void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
@@ -293,7 +293,7 @@ private:
 	std::string ensemble1_filename_, ensemble2_filename_;
 
 	// constraint set mover
-	protocols::simple_moves::ConstraintSetMoverOP docking_constraint_;
+	protocols::constraint_movers::ConstraintSetMoverOP docking_constraint_;
 
 	protocols::simple_moves::ReturnSidechainMoverOP recover_sidechains_;
 

@@ -18,12 +18,12 @@
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
 #include <protocols/antibody/task_operations/AddCDRProfilesOperation.hh>
-#include <protocols/toolbox/task_operations/ResidueProbDesignOperation.hh>
-#include <protocols/toolbox/task_operations/ConservativeDesignOperation.hh>
+#include <protocols/task_operations/ResidueProbDesignOperation.hh>
+#include <protocols/task_operations/ConservativeDesignOperation.hh>
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
 
 #include <protocols/loops/Loops.fwd.hh>
-#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
+#include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -48,7 +48,8 @@ namespace design {
 using namespace basic::options;
 using namespace core::pack::task;
 using namespace core::pack::task::operation;
-using namespace protocols::toolbox::task_operations;
+using namespace protocols::task_operations;
+using namespace protocols::simple_task_operations;
 using namespace protocols::loops;
 using namespace protocols::antibody::task_operations;
 
@@ -498,21 +499,21 @@ AntibodySeqDesignTFCreator::get_design_cdr_loops_with_stem( const core::pose::Po
 	return get_design_cdr_loops( pose, stem_size_ );
 }
 
-protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
+protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP
 AntibodySeqDesignTFCreator::generate_task_op_cdr_design( core::pose::Pose const & pose, bool design_neighbors /*true*/) const{
 
 	protocols::loops::LoopsOP cdr_loops = get_design_cdr_loops( pose );
 	return this->get_general_loop_task_op(cdr_loops, design_neighbors);
 }
 
-protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
+protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP
 AntibodySeqDesignTFCreator::generate_task_op_cdr_design(const core::pose::Pose& pose, utility::vector1<bool> cdrs, bool design_neighbors /* true */) const {
 
 	LoopsOP cdr_loops = ab_info_->get_CDR_loops( pose, cdrs, stem_size_ );
 	return this->get_general_loop_task_op(cdr_loops, design_neighbors);
 }
 
-protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
+protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP
 AntibodySeqDesignTFCreator::generate_task_op_all_cdr_design( const core::pose::Pose& pose, bool design_neighbors /* true */ ) const {
 	///Limit Packing and Design to CDR loops and neighbors
 
@@ -527,7 +528,7 @@ AntibodySeqDesignTFCreator::generate_task_op_all_cdr_design( const core::pose::P
 	return this->get_general_loop_task_op(all_cdrs, design_neighbors);
 }
 
-protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
+protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP
 AntibodySeqDesignTFCreator::get_general_loop_task_op(LoopsOP loops, bool design_neighbors /* true */) const {
 
 	RestrictToLoopsAndNeighborsOP loop_task( new RestrictToLoopsAndNeighbors() );

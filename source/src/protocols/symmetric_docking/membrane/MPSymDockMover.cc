@@ -34,7 +34,7 @@
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -155,7 +155,7 @@ MPSymDockMover::apply( Pose & pose ) {
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 	using namespace core::scoring;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::symmetry;
 	using namespace protocols::membrane::symmetry;
 	using namespace protocols::symmetric_docking;
 

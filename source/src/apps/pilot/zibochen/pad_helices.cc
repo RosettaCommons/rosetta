@@ -108,13 +108,13 @@
 //#include <protocols/relax/FastRelax.hh>
 
 //#include <protocols/pose_creation/MakePolyXMover.hh>
-//#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+//#include <protocols/symmetry/SetupForSymmetryMover.hh>
 //#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 //#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 //#include <protocols/toolbox/SelectResiduesByLayer.hh>
 //#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-//#include <protocols/toolbox/task_operations/SelectBySASAOperation.hh>
+//#include <protocols/task_operations/SelectBySASAOperation.hh>
 
 //#include <core/pack/interaction_graph/InteractionGraphBase.hh>
 

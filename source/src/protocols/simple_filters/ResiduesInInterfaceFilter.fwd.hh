@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/simple_filters/RotamerBoltzmannWeightFilter.fwd.hh
+/// @file   protocols/calc_taskop_filters/RotamerBoltzmannWeightFilter.fwd.hh
 /// @brief  forward declaration for RotamerBoltzmannWeightFilter
 /// @author  Sarel Fleishman sarelf@uw.edu
 
@@ -17,7 +17,7 @@
 
 
 namespace protocols {
-namespace simple_filters{
+namespace simple_filters {
 // Forward
 class ResiduesInInterfaceFilter;
 

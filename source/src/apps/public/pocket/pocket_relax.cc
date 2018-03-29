@@ -71,9 +71,9 @@
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -251,7 +251,7 @@ main( int argc, char * argv [] )
 		// add constraints from cmd line
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+			protocols::constraint_movers::ConstraintSetMoverOP loadCsts( new protocols::constraint_movers::ConstraintSetMover );
 			if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 			} else {
@@ -275,7 +275,7 @@ main( int argc, char * argv [] )
 		//   to avoid adding extra VRTs
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
+			seqmov->add_mover( MoverOP( new protocols::symmetry::SetupForSymmetryMover ) );
 			seqmov->add_mover( protocol );
 			protocol = seqmov;
 		}

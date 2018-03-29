@@ -63,9 +63,9 @@
 //#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
-//#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-//#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
+//#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+//#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
 #include <basic/options/util.hh>
@@ -97,8 +97,7 @@ using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::oop;
 using namespace protocols::rigid;
-using namespace protocols::toolbox;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
 using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

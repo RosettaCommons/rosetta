@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
@@ -121,7 +121,7 @@ BindingStrainFilter::compute( core::pose::Pose const & p ) const{
 	PackerTaskOP pack = task_factory()->create_task_and_apply_taskoperations( p );
 	pack->restrict_to_repacking();
 	pack->initialize_from_command_line();
-	protocols::simple_filters::ScoreTypeFilter const stf( scorefxn(), core::scoring::total_score, 0.0 );
+	protocols::score_filters::ScoreTypeFilter const stf( scorefxn(), core::scoring::total_score, 0.0 );
 	core::pose::Pose pose( p );
 	unbind( pose );
 	core::Real const energy_before_pack( stf.compute( pose ));

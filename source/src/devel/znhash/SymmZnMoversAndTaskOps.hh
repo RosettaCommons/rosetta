@@ -24,7 +24,7 @@
 
 // Protocols headers
 #include <protocols/simple_moves/ReturnSidechainMover.fwd.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/moves/Mover.hh>
 
 // Core headers
@@ -356,7 +356,7 @@ private:
 	core::id::AtomID_Map< core::Size > atom_Hbonds_;
 	utility::vector1< core::Size > residue_Hbonds_;
 
-	protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator nhbcalc_;
+	protocols::simple_pose_metric_calculators::NumberHBondsCalculator nhbcalc_;
 	FindZnCoordinatingResidues finder_;
 #ifdef    SERIALIZATION
 public:

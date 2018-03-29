@@ -47,9 +47,9 @@
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/util.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
-#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
+#include <protocols/task_operations/PreventChainFromRepackingOperation.hh>
+#include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
@@ -80,7 +80,8 @@ using namespace core::pack::task;
 using namespace core::pack::task::operation;
 using namespace protocols::simple_moves;
 using namespace protocols::minimization_packing;
-using namespace protocols::toolbox::task_operations;
+using namespace protocols::task_operations;
+using namespace protocols::simple_task_operations;
 using namespace protocols::antibody::clusters;
 using core::Size;
 using std::string;
@@ -128,7 +129,7 @@ GeneralAntibodyModeler::GeneralAntibodyModeler( GeneralAntibodyModeler const & s
 	atom_pair_weight_( src.atom_pair_weight_ )
 
 {
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	using namespace core::pack::task::operation;
 	if ( src.ab_info_ ) ab_info_ = src.ab_info_->clone();
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
@@ -183,7 +184,7 @@ GeneralAntibodyModeler::setup_task_operations(){
 	tf_set_ = false;
 	cmd_line_operation_ = operation::InitializeFromCommandlineOP( new core::pack::task::operation::InitializeFromCommandline() );
 	restrict_design_operation_ = operation::RestrictToRepackingOP( new core::pack::task::operation::RestrictToRepacking() );
-	loops_operation_ = protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP( new RestrictToLoopsAndNeighbors() );
+	loops_operation_ = protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP( new RestrictToLoopsAndNeighbors() );
 
 	tf_ = TaskFactoryOP( new core::pack::task::TaskFactory() );
 	interface_tf_ = TaskFactoryOP( new core::pack::task::TaskFactory() );
@@ -416,7 +417,7 @@ GeneralAntibodyModeler::extend_CDR(Pose& pose, CDRNameEnum cdr) const {
 
 void
 GeneralAntibodyModeler::repack_cdrs(Pose& pose, bool include_neighbor_sc ) {
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 
 	protocols::loops::LoopsOP cdr_loops = get_cdr_loops_with_overhang(pose);
 

@@ -72,7 +72,7 @@ private:
 	core::Size upper_threshold_;
 	core::Size jump_num_;
 	core::pack::task::TaskFactoryOP task_factory_; // dflt NULL; only residues defined as packable by the taskoperations will be tested for burial
-	//protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator2OP calc_;
+	//protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator2OP calc_;
 	devel::buns::BuriedUnsatisfiedPolarsCalculator2OP calc_;
 	// std::string calc_name_;
 };

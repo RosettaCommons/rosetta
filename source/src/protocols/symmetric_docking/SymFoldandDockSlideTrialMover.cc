@@ -19,8 +19,8 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SymDockingInitialPerturbation.hh>
 
 #include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
@@ -59,7 +59,7 @@ SymFoldandDockSlideTrialMover::~SymFoldandDockSlideTrialMover()= default;
 
 void
 SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose ) {
-	protocols::simple_moves::symmetry::SetupForSymmetryMover setup;
+	protocols::symmetry::SetupForSymmetryMover setup;
 	setup.apply( pose );
 
 	using namespace core::conformation::symmetry;
@@ -80,21 +80,21 @@ SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose ) {
 
 	//fpd -- make these parsable
 	if ( slide_info.get_slide_type() == SEQUENTIAL ) {
-		simple_moves::symmetry::SequentialSymmetrySlider symm_slider
-			= simple_moves::symmetry::SequentialSymmetrySlider(
+		symmetry::SequentialSymmetrySlider symm_slider
+			= symmetry::SequentialSymmetrySlider(
 			pose, slide_info.get_SlideCriteriaType(), slide_info.get_SlideCriteriaVal() );
 		symm_slider.apply( pose );
 	}
 	if ( slide_info.get_slide_type() == ORDERED_SEQUENTIAL ) {
-		simple_moves::symmetry::OrderedSequentialSymmetrySlider symm_slider
-			= simple_moves::symmetry::OrderedSequentialSymmetrySlider(
+		symmetry::OrderedSequentialSymmetrySlider symm_slider
+			= symmetry::OrderedSequentialSymmetrySlider(
 			pose, slide_info.get_SlideCriteriaType(),
 			slide_info.get_SlideCriteriaVal(), slide_info.get_slide_order() );
 		symm_slider.apply( pose );
 	}
 	if ( slide_info.get_slide_type() == RANDOM ) {
-		simple_moves::symmetry::RandomSymmetrySlider symm_slider
-			= simple_moves::symmetry::RandomSymmetrySlider(
+		symmetry::RandomSymmetrySlider symm_slider
+			= symmetry::RandomSymmetrySlider(
 			pose, slide_info.get_SlideCriteriaType(), slide_info.get_SlideCriteriaVal() );
 		symm_slider.apply( pose );
 	}

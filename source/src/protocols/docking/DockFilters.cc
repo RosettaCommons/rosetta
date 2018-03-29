@@ -48,7 +48,7 @@ DockingLowResFilter::DockingLowResFilter() :
 	Filter(),
 	use_constraints_(false)
 {
-	using namespace protocols::simple_filters;
+	using namespace protocols::score_filters;
 	using namespace core::scoring;
 
 	ScoreCutoffFilterOP hascontacts( new ScoreCutoffFilter() );
@@ -73,7 +73,7 @@ DockingLowResFilter::~DockingLowResFilter() = default;
 void
 DockingLowResFilter::set_use_constraints( bool setting, core::Real cutoff )
 {
-	using namespace protocols::simple_filters;
+	using namespace protocols::score_filters;
 	using namespace core::scoring;
 
 	use_constraints_ = setting;
@@ -108,7 +108,7 @@ DockingHighResFilter::DockingHighResFilter( ) : Filter()
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
 	scorefunction_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
 	score_margin_ = 0.0;
-	scorefilter_ = protocols::simple_filters::ScoreCutoffFilterOP( new protocols::simple_filters::ScoreCutoffFilter() );
+	scorefilter_ = protocols::score_filters::ScoreCutoffFilterOP( new protocols::score_filters::ScoreCutoffFilter() );
 	scorefilter_->set_score_type( core::scoring::total_score );
 	scorefilter_->set_cutoff( 1000000.0 );
 }

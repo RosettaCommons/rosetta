@@ -50,14 +50,14 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <basic/options/keys/TailSegment.OptionKeys.gen.hh>
 
 
 //calculators and neighbor detection machinery
-#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
+#include <protocols/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
+#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
 
 // Utility Headers
 #include <basic/options/option.hh>
@@ -172,7 +172,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 			break;
 		}
 	}
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	TR<<"The start and and residue of the tail segment are:"<<start_<<"-"<<stop_<<std::endl;
 	core::pack::task::TaskFactoryOP task_factory_min( new core::pack::task::TaskFactory ); //set specific task factory for minimization
 	DesignAroundOperationOP dao( new DesignAroundOperation );

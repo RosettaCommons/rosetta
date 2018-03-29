@@ -192,7 +192,7 @@ SymmAbRelaxTest()
 	using namespace conformation::symmetry;
 	using namespace chemical;
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::symmetry;
 
 	// make extended chain
 	Pose extended_pose;

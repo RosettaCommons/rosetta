@@ -83,7 +83,7 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -122,7 +122,7 @@ LoopRemodel::clone() const {
 }
 
 LoopRemodel::LoopRemodel() :
-	simple_moves::DesignRepackMover( LoopRemodel::mover_name() )
+	calc_taskop_movers::DesignRepackMover( LoopRemodel::mover_name() )
 {}
 
 LoopRemodel::LoopRemodel(
@@ -140,7 +140,7 @@ LoopRemodel::LoopRemodel(
 	core::fragment::FragSetOP frag3,
 	core::fragment::FragSetOP frag9
 ) :
-	simple_moves::DesignRepackMover( LoopRemodel::mover_name() ),
+	calc_taskop_movers::DesignRepackMover( LoopRemodel::mover_name() ),
 	protocol_( protocol ),
 	loop_start_( loop_start ),
 	loop_end_( loop_end ),

@@ -10,7 +10,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
@@ -75,9 +75,9 @@ public:
 		move_map.set_bb  ( true );
 		move_map.set_chi ( true );
 		move_map.set_jump( true );
-		if (core::pose::symmetry::is_symmetric(pose)) {
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
 			core::conformation::symmetry::SymmetricConformation const & symm_conf (
-					dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+				dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 			core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 			// symmetrize scorefunct & movemap
@@ -92,7 +92,7 @@ public:
 		min_map.copy_dofs_from_pose( pose, vars );
 
 		utility::vector1< Multivec > dEros_dvars(16);
-		for (int ii=0; ii<16; ++ii) {
+		for ( int ii=0; ii<16; ++ii ) {
 			rosetta_scorefxn->set_weight( core::scoring::fa_atr      , (ii==0 || ii==1)? score_function_ref->get_weight(core::scoring::fa_atr) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::fa_rep      , (ii==0 || ii==2)? score_function_ref->get_weight(core::scoring::fa_rep) : 0.0 );
 			rosetta_scorefxn->set_weight( core::scoring::fa_sol      , (ii==0 || ii==3)? score_function_ref->get_weight(core::scoring::fa_sol) : 0.0 );
@@ -118,12 +118,12 @@ public:
 		}
 
 		// report
-		for (core::Size counter=0; counter<dEros_dvars[1].size()/3; ++counter) {
+		for ( core::Size counter=0; counter<dEros_dvars[1].size()/3; ++counter ) {
 			id::AtomID id = min_map.get_atom( counter+1 );
 			core::conformation::Residue const & rsd_i = pose.residue( id.rsd() );
-			if (id.atomno() <= rsd_i.nheavyatoms()) {
+			if ( id.atomno() <= rsd_i.nheavyatoms() ) {
 				std::cerr << "GRAD   " << rsd_i.name3() << " " << id.rsd() << " " << rsd_i.atom_name( id.atomno() );
-				for (int ii=0; ii<16; ++ii) {
+				for ( int ii=0; ii<16; ++ii ) {
 					core::Real grad_k = std::sqrt (
 						dEros_dvars[ii+1][3*counter+1]*dEros_dvars[ii+1][3*counter+1] +
 						dEros_dvars[ii+1][3*counter+2]*dEros_dvars[ii+1][3*counter+2] +
@@ -145,7 +145,7 @@ public:
 void*
 my_main( void* ) {
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::symmetry;
 
 	SequenceMoverOP seq( new SequenceMover() );
 	//seq->add_mover( new SetupForSymmetryMover() );
@@ -165,14 +165,14 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
-    try {
-	// initialize option and random number system
-	devel::init( argc, argv );
+	try {
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		protocols::viewer::viewer_main( my_main );
+	} catch (utility::excn::Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
-    }
+	}
+	return 0;
+}

@@ -79,13 +79,13 @@
 #include <protocols/relax/FastRelax.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <protocols/protein_interface_design/movers/ddG.hh>
-#include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
+#include <protocols/pose_metric_calculators/RotamerBoltzCalculator.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <basic/MetricValue.hh>
 //Auto Headers
@@ -398,11 +398,11 @@ average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Size intra_subs, R
 Real
 get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer) {
 
-	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
 	basic::MetricValue< id::AtomID_Map<bool> > bound_Amap;
 	unsat_calc_bound->get("atom_bur_unsat", bound_Amap, bound);
 
-	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
 	basic::MetricValue< id::AtomID_Map<bool> > unbound_Amap;
 	unsat_calc_unbound->get("atom_bur_unsat", unbound_Amap, unbound);
 
@@ -547,7 +547,7 @@ void
 			// Calculate the Boltzmann probability for the rotamer at each designed position
 			if ( option[matdes::mutalyze::calc_rot_boltz]() == 1 ) {
 				for ( Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos ) {
-					protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
+					protocols::calc_taskop_filters::RotamerBoltzmannWeight rbc = protocols::calc_taskop_filters::RotamerBoltzmannWeight();
 					rbc.scorefxn(scorefxn);
 					Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
 					std::cout << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;

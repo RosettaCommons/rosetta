@@ -154,7 +154,7 @@ Modified 22 August 2014 by VKM:
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/NamedAtomID.hh>
 
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 //For importing poses:
 #include <core/import_pose/pose_stream/PoseInputStream.hh>

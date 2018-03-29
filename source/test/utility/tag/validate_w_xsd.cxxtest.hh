@@ -27,10 +27,10 @@
 #include <utility/tag/XMLSchemaValidation.hh>
 
 // TEMP
-#include <protocols/toolbox/task_operations/DsspDesignOperation.hh>
-#include <protocols/toolbox/task_operations/LinkResidues.hh>
-#include <protocols/toolbox/task_operations/RestrictToAlignedSegments.hh>
-#include <protocols/toolbox/task_operations/SeqprofConsensusOperation.hh>
+#include <protocols/task_operations/DsspDesignOperation.hh>
+#include <protocols/task_operations/LinkResidues.hh>
+#include <protocols/task_operations/RestrictToAlignedSegments.hh>
+#include <protocols/task_operations/SeqprofConsensusOperation.hh>
 
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
@@ -475,22 +475,22 @@ public:
 	void dont_test_task_op_schemas() {
 		std::cout << "XSD for DsspDesignOperation: " << std::endl;
 		XMLSchemaDefinition xsd;
-		protocols::toolbox::task_operations::DsspDesignOperation::provide_xml_schema( xsd );
+		protocols::task_operations::DsspDesignOperation::provide_xml_schema( xsd );
 		std::cout << xsd.full_definition() << std::endl;
 
 		std::cout << "XSD for LinkResidues" << std::endl;
 		XMLSchemaDefinition xsd2;
-		protocols::toolbox::task_operations::LinkResidues::provide_xml_schema( xsd2 );
+		protocols::task_operations::LinkResidues::provide_xml_schema( xsd2 );
 		std::cout << xsd2.full_definition() << std::endl;
 
 		std::cout << "XSD for RestrictToAlignedSegments" << std::endl;
 		XMLSchemaDefinition xsd3;
-		protocols::toolbox::task_operations::RestrictToAlignedSegmentsOperation::provide_xml_schema( xsd3 );
+		protocols::task_operations::RestrictToAlignedSegmentsOperation::provide_xml_schema( xsd3 );
 		std::cout << xsd3.full_definition() << std::endl;
 
 		std::cout << "XSD for SeqprofConsensusOperation" << std::endl;
 		XMLSchemaDefinition xsd4;
-		protocols::toolbox::task_operations::SeqprofConsensusOperation::provide_xml_schema( xsd4 );
+		protocols::task_operations::SeqprofConsensusOperation::provide_xml_schema( xsd4 );
 		std::cout << xsd4.full_definition() << std::endl;
 
 		TS_ASSERT( xsd.full_definition().size() > 0 );

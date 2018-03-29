@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
@@ -61,19 +61,19 @@ using core::scoring::ScoreFunction;
 using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
-using protocols::simple_filters::RotamerBoltzmannWeight;
+using protocols::calc_taskop_filters::RotamerBoltzmannWeight;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using utility::tag::TagCOP;
 using cppdb::statement;
 
 RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures() :
-	rotamer_boltzmann_weight_(protocols::simple_filters::RotamerBoltzmannWeightFilterOP( new RotamerBoltzmannWeight() ))
+	rotamer_boltzmann_weight_(protocols::calc_taskop_filters::RotamerBoltzmannWeightFilterOP( new RotamerBoltzmannWeight() ))
 {}
 
 RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures(
 	ScoreFunctionOP scfxn) :
-	rotamer_boltzmann_weight_(protocols::simple_filters::RotamerBoltzmannWeightFilterOP( new RotamerBoltzmannWeight() ))
+	rotamer_boltzmann_weight_(protocols::calc_taskop_filters::RotamerBoltzmannWeightFilterOP( new RotamerBoltzmannWeight() ))
 {
 	rotamer_boltzmann_weight_->scorefxn(scfxn);
 	rotamer_boltzmann_weight_->type("monomer");

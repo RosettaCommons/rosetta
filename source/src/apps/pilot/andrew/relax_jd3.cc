@@ -44,8 +44,8 @@
 //#include <protocols/minimization_packing/MinMoverCreator.hh>
 //#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 //#include <protocols/minimization_packing/TaskAwareMinMover.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -110,7 +110,7 @@ public:
 		protocols::jd2::options_for_set_native_in_mover( opts );
 		core::scoring::constraints::options_for_get_cst_file_option( opts );
 		core::scoring::constraints::options_for_get_cst_fa_file_option( opts );
-		protocols::simple_moves::symmetry::SetupForSymmetryMover::options_read_in_ctor( opts );
+		protocols::symmetry::SetupForSymmetryMover::options_read_in_ctor( opts );
 		protocols::electron_density::SetupForDensityScoringMover::options_read_in_ctor( opts );
 		opts
 			+ constraints::cst_fa_file
@@ -175,7 +175,7 @@ public:
 		if ( (*job_options)[ OptionKeys::constraints::cst_fa_file ].user() ||
 				(*job_options)[ OptionKeys::constraints::cst_file ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			protocols::simple_moves::ConstraintSetMoverOP load_csts( new protocols::simple_moves::ConstraintSetMover );
+			protocols::constraint_movers::ConstraintSetMoverOP load_csts( new protocols::constraint_movers::ConstraintSetMover );
 			if ( (*job_options)[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				load_csts->constraint_file( core::scoring::constraints::get_cst_fa_file_option( *job_options ) );
 			} else {
@@ -199,7 +199,7 @@ public:
 		//   to avoid adding extra VRTs
 		if ( (*job_options)[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover( *job_options ) ) );
+			seqmov->add_mover( MoverOP( new protocols::symmetry::SetupForSymmetryMover( *job_options ) ) );
 			seqmov->add_mover( protocol );
 			protocol = seqmov;
 		}

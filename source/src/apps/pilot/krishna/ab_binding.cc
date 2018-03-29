@@ -25,7 +25,7 @@
 #include <core/pack/task/operation/OptH.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
@@ -495,7 +495,7 @@ public:
 		tf->push_back(new RestrictToRepacking);
 		tf->push_back(new NoRepackDisulfides);
 
-		using namespace protocols::toolbox::task_operations;
+		using namespace protocols::task_operations;
 		tf->push_back(new RestrictToInterface());
 
 		// unbound_rot

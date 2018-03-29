@@ -18,14 +18,14 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
@@ -387,7 +387,7 @@ void run_parallel_docking() {
 
 	//add cst to the scoring
 	if ( basic::options::option[basic::options::OptionKeys::constraints::cst_file].user() ) {
-		protocols::simple_moves::ConstraintSetMoverOP docking_constraint_ = new protocols::simple_moves::ConstraintSetMover();
+		protocols::constraint_movers::ConstraintSetMoverOP docking_constraint_ = new protocols::constraint_movers::ConstraintSetMover();
 		Real cst_weight_=basic::options::option[basic::options::OptionKeys::constraints::cst_weight];
 		docking_constraint_->apply(pose);
 		if ( basic::options::option[basic::options::OptionKeys::docking_parallel::use_cst] ) {

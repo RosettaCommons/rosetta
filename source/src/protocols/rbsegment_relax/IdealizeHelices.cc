@@ -32,7 +32,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/symmetry/SetupNCSMover.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -114,9 +114,9 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 	// TO DO
 
 	// see if the pose has NCS
-	simple_moves::symmetry::NCSResMappingOP ncs;
+	symmetry::NCSResMappingOP ncs;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-		ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
+		ncs = ( utility::pointer::static_pointer_cast< symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 	}
 
 	// pose to centroid

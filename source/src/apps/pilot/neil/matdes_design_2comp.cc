@@ -45,7 +45,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -78,13 +78,13 @@
 #include <utility/string_util.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
-#include <protocols/simple_moves/ddG.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/simple_ddg/ddG.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <basic/MetricValue.hh>
 
 static basic::Tracer TR( "2comp_design" );
@@ -259,7 +259,7 @@ void design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, 
 
 	make_symmetric_PackerTask_by_truncation(pose, task);
 	// Get rid of Nobu's rotamers of death
-	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
+	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::task_operations::LimitAromaChi2Operation();
 	limit_rots->apply(pose, *task);
 	// Actually perform design.
 	protocols::moves::MoverOP packer = new protocols::minimization_packing::symmetry::SymPackRotamersMover(sf, task);
@@ -318,7 +318,7 @@ design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utili
 	}
 	make_symmetric_PackerTask_by_truncation(pose, task);
 	// Get rid of Nobu's rotamers of death
-	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
+	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::task_operations::LimitAromaChi2Operation();
 	limit_rots->apply(pose, *task);
 	// Actually perform design
 	protocols::moves::MoverOP packer = new protocols::minimization_packing::symmetry::SymPackRotamersMover(sf, task);
@@ -479,11 +479,11 @@ Pose get_neighbor_subs(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, P
 Real
 get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer, string fn){
 
-	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
 	basic::MetricValue< id::AtomID_Map<bool> > bound_Amap;
 	unsat_calc_bound->get("atom_bur_unsat", bound_Amap, bound);
 
-	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
 	basic::MetricValue< id::AtomID_Map<bool> > unbound_Amap;
 	unsat_calc_unbound->get("atom_bur_unsat", unbound_Amap, unbound);
 
@@ -884,7 +884,7 @@ void *dostuff(void*) {
 						Real packing = get_atom_packing_score(pose_for_design, intra_subs1, intra_subs2, p1, p2, 9.0);
 
 						// Calculate the ddG of the monomer in the assembled and unassembled states
-						// protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(scorefxn, 1, true);
+						// protocols::simple_ddg::ddG ddG_mover = protocols::simple_ddg::ddG(scorefxn, 1, true);
 						// ddG_mover.calculate(pose_for_design);
 						Real ddG;// = ddG_mover.sum_ddG();
 						//must do ddG manually, moving each BB separately

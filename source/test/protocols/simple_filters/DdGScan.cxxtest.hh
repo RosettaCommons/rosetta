@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/simple_filters/DdGScan.cxxtest.hh
+/// @file   protocols/simple_ddg/DdGScan.cxxtest.hh
 /// @brief  test for DdGScan filter
 /// @author Kyle Barlow (kb@kylebarlow.com)
 
@@ -20,8 +20,8 @@
 // Project Headers
 #include <core/types.hh>
 
-#include <protocols/simple_filters/DdGScan.hh>
-#include <protocols/simple_moves/ddG.hh>
+#include <protocols/simple_ddg/DdGScan.hh>
+#include <protocols/simple_ddg/ddG.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -43,7 +43,7 @@ static basic::Tracer TR("protocols.simple_filters.DdGScan.cxxtest.hh");
 
 // ------------ Mock ddGMover Class --------- //
 
-class MockddG : public protocols::simple_moves::ddG {
+class MockddG : public protocols::simple_ddg::ddG {
 
 public:
 	MockddG() {
@@ -77,8 +77,8 @@ private:
 	core::pose::PoseOP test_dimer_pose_;
 	core::pose::PoseOP test_monomer_pose_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-	protocols::simple_moves::ddGOP ddg_mover_;
-	protocols::simple_filters::DdGScanOP ddg_scan_mover_;
+	protocols::simple_ddg::ddGOP ddg_mover_;
+	protocols::simple_ddg::DdGScanOP ddg_scan_mover_;
 	core::pack::task::TaskFactoryOP tf_;
 
 public:
@@ -90,8 +90,8 @@ public:
 		// test_monomer_pose_ = create_twores_1ubq_poseop();
 		scorefxn_ = scorefxn_ = core::scoring::get_score_function();
 
-		ddg_mover_ = protocols::simple_moves::ddGOP( new MockddG() );
-		ddg_scan_mover_ = protocols::simple_filters::DdGScanOP( new protocols::simple_filters::DdGScan() );
+		ddg_mover_ = protocols::simple_ddg::ddGOP( new MockddG() );
+		ddg_scan_mover_ = protocols::simple_ddg::DdGScanOP( new protocols::simple_ddg::DdGScan() );
 		ddg_scan_mover_->scorefxn( scorefxn_ );
 		ddg_scan_mover_->repeats( 1 );
 

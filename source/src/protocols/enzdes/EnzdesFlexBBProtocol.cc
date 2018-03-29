@@ -50,7 +50,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-#include <protocols/simple_filters/ScoreCutoffFilter.hh> // for filtering kinematic mover
+#include <protocols/score_filters/ScoreCutoffFilter.hh> // for filtering kinematic mover
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh> //input file reading
 #include <protocols/backrub/BackrubMover.hh>
@@ -718,7 +718,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	if ( basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
 
-		protocols::simple_filters::ScoreCutoffFilterOP bump_filter( new protocols::simple_filters::ScoreCutoffFilter() );
+		protocols::score_filters::ScoreCutoffFilterOP bump_filter( new protocols::score_filters::ScoreCutoffFilter() );
 		bump_filter->set_positions( flex_regions_[region]->positions() );
 		bump_filter->set_score_type( core::scoring::fa_rep );
 		bump_filter->set_cutoff( bump_filter->get_score( pose ) + region_size * 0.2 );

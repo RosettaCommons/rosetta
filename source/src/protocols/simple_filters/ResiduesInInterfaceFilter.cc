@@ -30,10 +30,9 @@
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <utility/tag/Tag.hh>
 //#include <protocols/moves/ResidueMover.hh>
-//#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+//#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <basic/MetricValue.hh>
 #include <numeric/random/random.hh>
 #include <core/chemical/AtomType.hh>
@@ -46,13 +45,6 @@
 
 //Objectxxxx header
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
-
-// Utility Headers
-
-// Unit Headers
-#include <protocols/simple_moves/ddG.hh>
-//#include <protocols/protein_interface_design/design_utils.hh>
 
 // C++ headers
 #include <map>

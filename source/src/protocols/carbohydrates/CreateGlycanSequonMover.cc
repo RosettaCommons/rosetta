@@ -15,7 +15,7 @@
 #include <protocols/carbohydrates/CreateGlycanSequonMover.hh>
 #include <protocols/carbohydrates/CreateGlycanSequonMoverCreator.hh>
 
-#include <protocols/simple_moves/CreateSequenceMotifMover.hh>
+#include <protocols/calc_taskop_movers/CreateSequenceMotifMover.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -43,7 +43,7 @@ static basic::Tracer TR( "protocols.carbohydrates.CreateGlycanSequonMover" );
 namespace protocols {
 namespace carbohydrates {
 using namespace core::select::residue_selector;
-using namespace protocols::simple_moves;
+using namespace protocols::calc_taskop_movers;
 using namespace protocols::rosetta_scripts;
 
 /////////////////////

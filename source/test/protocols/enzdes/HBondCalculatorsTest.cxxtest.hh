@@ -33,10 +33,10 @@
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NonlocalContactsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/pose_metric_calculators/NonlocalContactsCalculator.hh>
 
 
 //packing stuff
@@ -113,20 +113,20 @@ public:
 
 		time_t start1, end1, start2, end2;
 
-		core::pose::metrics::PoseMetricCalculatorOP hbtest_calc( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP hbtest_calc( new protocols::simple_pose_metric_calculators::NumberHBondsCalculator() );
 
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "hbcalcname", hbtest_calc );
-		core::pose::metrics::PoseMetricCalculatorOP unsattest_calc( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasacalcname","hbcalcname") );
+		core::pose::metrics::PoseMetricCalculatorOP unsattest_calc( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasacalcname","hbcalcname") );
 
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "unsatcalcname", unsattest_calc );
 
-		core::pose::metrics::PoseMetricCalculatorOP packstattest_calc( new protocols::toolbox::pose_metric_calculators::PackstatCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP packstattest_calc( new protocols::pose_metric_calculators::PackstatCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "packstatcalcname", packstattest_calc );
 
-		core::pose::metrics::PoseMetricCalculatorOP noligpackstattest_calc( new protocols::toolbox::pose_metric_calculators::PackstatCalculator(true) );
+		core::pose::metrics::PoseMetricCalculatorOP noligpackstattest_calc( new protocols::pose_metric_calculators::PackstatCalculator(true) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "noligpackstatcalcname", noligpackstattest_calc );
 
-		core::pose::metrics::PoseMetricCalculatorOP nlcontactstest_calc( new protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP nlcontactstest_calc( new protocols::pose_metric_calculators::NonlocalContactsCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nlcontactscalcname", nlcontactstest_calc );
 
 

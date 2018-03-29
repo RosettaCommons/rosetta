@@ -40,7 +40,7 @@
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+#include <protocols/task_operations/RestrictToNeighborhoodOperation.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 using utility::vector1;
@@ -187,7 +187,7 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 	task_factory2->push_back( operation::TaskOperationCOP( new IncludeCurrent ) );
 	// the following will disable packing outside of the neighborhood around design_positions
 
-	toolbox::task_operations::RestrictToNeighborhoodOperationOP nbop( new toolbox::task_operations::RestrictToNeighborhoodOperation( packing_positions ) );
+	task_operations::RestrictToNeighborhoodOperationOP nbop( new task_operations::RestrictToNeighborhoodOperation( packing_positions ) );
 	task_factory2->push_back( nbop );
 
 	// option-dependent designable second shell

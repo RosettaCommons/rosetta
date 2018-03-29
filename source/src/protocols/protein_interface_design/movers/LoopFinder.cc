@@ -49,7 +49,7 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -81,7 +81,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.LoopFinder" 
 // XRW TEMP }
 
 LoopFinder::LoopFinder() :
-	simple_moves::DesignRepackMover( LoopFinder::mover_name() )
+	calc_taskop_movers::DesignRepackMover( LoopFinder::mover_name() )
 {}
 
 LoopFinder::LoopFinder(
@@ -96,7 +96,7 @@ LoopFinder::LoopFinder(
 	core::Real const iface_cutoff,
 	protocols::loops::LoopsOP loops
 ) :
-	simple_moves::DesignRepackMover( LoopFinder::mover_name() ),
+	calc_taskop_movers::DesignRepackMover( LoopFinder::mover_name() ),
 	interface_(interface),
 	ch1_(ch1),
 	ch2_(ch2),

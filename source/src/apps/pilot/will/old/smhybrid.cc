@@ -85,11 +85,11 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
+#include <protocols/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>

@@ -66,7 +66,7 @@
 #include <utility/vector0.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 
 using namespace core::scoring;
@@ -311,7 +311,7 @@ generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, Movers_ma
 		auto find_mover( movers.find( mover_name ));
 		bool const mover_found( find_mover != movers.end() );
 		if ( mover_found ) {
-			simple_moves::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
+			calc_taskop_movers::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second );
 			if ( drOP ) { // don't do anything with non-DesignRepackMovers
 				TR<<"Setting the task factory of mover "<<find_mover->first<<" to be aware of PlaceSimultaneously's rotamer and sidechain choices.\n";
 				drOP->task_factory( task_factory );

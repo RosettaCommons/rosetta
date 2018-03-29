@@ -30,7 +30,7 @@
 #include <devel/splice/SpliceSegment.hh>
 #include <devel/splice/TailSegmentMover.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
+#include <protocols/task_operations/PreventChainFromRepackingOperation.hh>
 #include <devel/splice/SpliceCreator.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
@@ -42,7 +42,7 @@
 #include <protocols/protein_interface_design/filters/TorsionFilter.hh>
 #include <protocols/protein_interface_design/util.hh>
 #include <boost/algorithm/string/predicate.hpp>//for comparing string case insensitive
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
+#include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <core/pose/PDBInfo.hh>
@@ -84,10 +84,10 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueProperty.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
-#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
-#include <protocols/toolbox/task_operations/ThreadSequenceOperation.hh>
-#include <protocols/toolbox/task_operations/SeqprofConsensusOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
+#include <protocols/task_operations/ThreadSequenceOperation.hh>
+#include <protocols/task_operations/SeqprofConsensusOperation.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
@@ -1039,7 +1039,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		}
 	}
 	// pose.dump_pdb( "after_sequence_thread.pdb" );
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	ThreadSequenceOperationOP tso( new ThreadSequenceOperation );
@@ -1057,7 +1057,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	if ( restrict_to_repacking_chain2() ) {
 		for ( core::Size i = 2; i <= pose.conformation().num_chains(); ++i ) {
 			TR << "Restricting chain " << i << " to repacking only" << std::endl;
-			tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation(i) ));
+			tf->push_back(TaskOperationCOP( new protocols::task_operations::RestrictChainToRepackingOperation(i) ));
 		}
 	}
 
@@ -1406,7 +1406,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			if ( restrict_to_repacking_chain2() ) {
 				for ( core::Size i = 2; i <= pose.conformation().num_chains(); ++i ) {
 					TR << "Restricting chain " << i << " to repacking only" << std::endl;
-					tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation(i) ));
+					tf->push_back(TaskOperationCOP( new protocols::task_operations::RestrictChainToRepackingOperation(i) ));
 				}
 			}
 			tf->push_back(TaskOperationCOP( new operation::InitializeFromCommandline ));
@@ -2671,7 +2671,7 @@ utility::vector1<core::Size> find_residues_on_chain1_inside_interface(core::pose
 	}
 
 
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	ProteinInterfaceDesignOperationOP pido( new ProteinInterfaceDesignOperation );
 	if ( chainNum == 1 ) {
 		pido->repack_chain1(true);

@@ -40,13 +40,13 @@
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/GenericMonteCarloMover.hh>
+#include <protocols/monte_carlo/GenericMonteCarloMover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.hh>
@@ -59,7 +59,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <core/scoring/constraints/util.hh>
 
@@ -243,7 +243,7 @@ public:
 		int nres = pose.size(); //only consider the residues in the original pose, not symmetric copies
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+			protocols::symmetry::SetupForSymmetryMoverOP symm( new protocols::symmetry::SetupForSymmetryMover );
 			symm->apply( pose );
 			core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 		}
@@ -281,7 +281,7 @@ public:
 		seqmov->add_mover( minimizer );
 
 		// setup the GenericMonteCarlo mover
-		protocols::simple_moves::GenericMonteCarloMoverOP gmc = new protocols::simple_moves::GenericMonteCarloMover();
+		protocols::monte_carlo::GenericMonteCarloMoverOP gmc = new protocols::monte_carlo::GenericMonteCarloMover();
 		protocols::filters::FilterOP falseFilter = new protocols::filters::FalseFilter;
 		gmc->stopping_condition( falseFilter );
 		gmc->set_drift( false );
@@ -368,7 +368,7 @@ public:
 void*
 my_main( void* ) {
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::symmetry;
 
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go( new ElecDensMinPackMinMover() );

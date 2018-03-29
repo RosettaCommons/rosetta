@@ -18,7 +18,7 @@
 #include <test/core/select/residue_selector/DummySelectors.hh>
 
 // Package headers
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/select/residue_selector/TaskSelector.hh>
 
 // Project headers
@@ -65,7 +65,7 @@ public:
 		tag->read( ssgood );
 		TS_ASSERT_THROWS( rs->parse_my_tag( tag, dm ), utility::excn::RosettaScriptsOptionError );
 
-		protocols::toolbox::task_operations::DesignAroundOperationOP des_around( new protocols::toolbox::task_operations::DesignAroundOperation );
+		protocols::task_operations::DesignAroundOperationOP des_around( new protocols::task_operations::DesignAroundOperation );
 		des_around->include_residue( 2 );
 		dm.add( "task_operations", "test_op", des_around );
 		dm.add( "task_operations", "test_op2", des_around );

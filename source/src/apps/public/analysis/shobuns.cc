@@ -23,8 +23,8 @@
 /// 2. -tgt_res <TGTFIL> ,
 ///    to select all polar atoms from the residues specified in file <TGTFIL>.
 ///    The format of <TGTFIL> is specified in the comments to function
-///    protocols::toolbox::pose_metric_calculators::residue_subset() in file
-///    "protocols/toolbox/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.cc";
+///    protocols::pose_metric_calculators::residue_subset() in file
+///    "protocols/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.cc";
 ///
 /// 3. [NO FLAGS],
 ///    to select all polar atoms in the pose.
@@ -37,8 +37,8 @@
 ///       determining whether a polar atom is buried unsatisfied or not.
 
 
-#include <protocols/toolbox/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.fwd.hh>
-#include <protocols/toolbox/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.fwd.hh>
+#include <protocols/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
@@ -80,8 +80,8 @@ int main( int argc, char * argv [] )
 		(*scorefxn)(ps);
 
 		//// initialize SHO buried unsatisfied calculator from command line
-		using protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator;
-		using protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculatorOP;
+		using protocols::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator;
+		using protocols::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculatorOP;
 		SHOBuriedUnsatisfiedPolarsCalculatorOP shobuns_calculator;
 
 		using basic::options::OptionKeys::pose_metrics::shobuns::sho_cutoff;
@@ -103,7 +103,7 @@ int main( int argc, char * argv [] )
 
 			// select by residue indexes
 
-			using protocols::toolbox::pose_metric_calculators::residue_subset;
+			using protocols::pose_metric_calculators::residue_subset;
 			using basic::options::OptionKeys::pose_metrics::shobuns::tgt_res;
 
 			utility::vector1<core::Size> res;

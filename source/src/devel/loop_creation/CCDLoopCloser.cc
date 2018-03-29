@@ -30,7 +30,7 @@
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
+#include <protocols/pose_metric_calculators/ClashCountCalculator.hh>
 
 //basic
 #include <basic/Tracer.hh>
@@ -185,7 +185,7 @@ CCDLoopCloser::apply(
 
 		if ( deviation < tolerance_ ) {
 			//Calculator for backbone clash detection
-			core::pose::metrics::PoseMetricCalculatorOP clash_calculator( new protocols::toolbox::pose_metric_calculators::ClashCountCalculator(2.0) );
+			core::pose::metrics::PoseMetricCalculatorOP clash_calculator( new protocols::pose_metric_calculators::ClashCountCalculator(2.0) );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "clash_calculator", clash_calculator );
 
 			basic::MetricValue<core::Size> bb_clash_metric;

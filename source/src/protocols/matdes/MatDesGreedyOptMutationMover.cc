@@ -16,7 +16,7 @@
 #include <protocols/design_opt/GreedyOptMutationMover.hh>
 #include <protocols/matdes/MatDesGreedyOptMutationMoverCreator.hh>
 #include <protocols/simple_filters/DeltaFilter.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
 #include <iostream>
@@ -49,7 +49,7 @@
 #include <protocols/simple_filters/TaskAwareScoreTypeFilter.hh>
 
 //For stored tasks
-#include <protocols/toolbox/task_operations/STMStoredTask.hh>
+#include <protocols/task_operations/STMStoredTask.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -754,7 +754,7 @@ MatDesGreedyOptMutationMover::apply( core::pose::Pose & pose )
 			if ( force_natro_ ) {
 				utility::vector1< core::pack::task::PackerTaskOP > new_tasks;
 				for ( Size itask = 1; itask <= force_natro_for_stored_task_names_.size(); ++itask ) {
-					protocols::toolbox::task_operations::STMStoredTaskOP pfront_pose_stored_tasks = utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pfront_poses_[1].data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) );
+					protocols::task_operations::STMStoredTaskOP pfront_pose_stored_tasks = utility::pointer::static_pointer_cast< protocols::task_operations::STMStoredTask > ( pfront_poses_[1].data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) );
 					pfront_pose_stored_tasks->set_task( ptmut_calc->new_tasks()[itask]->clone(), force_natro_for_stored_task_names_[itask]);
 				}
 			}
@@ -853,7 +853,7 @@ MatDesGreedyOptMutationMover::apply( core::pose::Pose & pose )
 					if ( force_natro_ ) {
 						utility::vector1< core::pack::task::PackerTaskOP > new_tasks;
 						for ( Size itask = 1; itask <= force_natro_for_stored_task_names_.size(); ++itask ) {
-							protocols::toolbox::task_operations::STMStoredTaskOP pfront_pose_stored_tasks = utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pfront_poses_[1].data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) );
+							protocols::task_operations::STMStoredTaskOP pfront_pose_stored_tasks = utility::pointer::static_pointer_cast< protocols::task_operations::STMStoredTask > ( pfront_poses_[1].data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) );
 							pfront_pose_stored_tasks->set_task( ptmut_calc->new_tasks()[itask]->clone(), force_natro_for_stored_task_names_[itask]);
 						}
 					}

@@ -49,7 +49,7 @@
 #include <protocols/loops/util.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/symmetry/SetupNCSMover.hh>
 
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -114,9 +114,9 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	}
 
 	// see if the pose has NCS
-	simple_moves::symmetry::NCSResMappingOP ncs;
+	symmetry::NCSResMappingOP ncs;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-		ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
+		ncs = ( utility::pointer::static_pointer_cast< symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 	}
 
 	// get sses & choose cutpoints
@@ -370,9 +370,9 @@ void
 OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 	if ( loops_->size() != 0 && rebuild_cycles_!=0 ) {
 		// see if the pose has NCS
-		simple_moves::symmetry::NCSResMappingOP ncs;
+		symmetry::NCSResMappingOP ncs;
 		if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-			ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
+			ncs = ( utility::pointer::static_pointer_cast< symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 		}
 
 		core::kinematics::FoldTree f_in=pose.fold_tree(), f_new;

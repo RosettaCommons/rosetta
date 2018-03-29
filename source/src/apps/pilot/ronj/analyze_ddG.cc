@@ -42,9 +42,9 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/SetReturningPackRotamersMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
-#include <protocols/toolbox/pose_metric_calculators/HPatchCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+#include <protocols/pose_metric_calculators/HPatchCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/task_operations/RestrictToNeighborhoodOperation.hh>
 #include <basic/options/util.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -253,7 +253,7 @@ int main( int argc, char* argv[] ) {
 
 		// create an hpatch metric calculator, if this term is being used
 		if ( scorefxn->get_weight( scoring::hpatch ) != 0.0 ) {
-			hpatch_calculator = new protocols::toolbox::pose_metric_calculators::HPatchCalculator;
+			hpatch_calculator = new protocols::pose_metric_calculators::HPatchCalculator;
 			pose::metrics::CalculatorFactory::Instance().register_calculator( "hpatch", hpatch_calculator );
 
 			utility::vector1< Real > patch_scores_vector;
@@ -292,14 +292,14 @@ int main( int argc, char* argv[] ) {
 
 
 		// need to create a calculator here that I can use to identify neighbors of the mutated residue
-		pose::metrics::PoseMetricCalculatorOP mutant_nb_calculator = new toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( mutant_pose_resid );
+		pose::metrics::PoseMetricCalculatorOP mutant_nb_calculator = new pose_metric_calculators::NeighborsByDistanceCalculator( mutant_pose_resid );
 		pose::metrics::CalculatorFactory::Instance().register_calculator( "mutant_nb_calculator", mutant_nb_calculator );
 
 
 		// the restrict operation class (which in the end is just a TaskOperation) takes a calculator during construction. I've already
 		// created that calculator above.  This operation will disable repacking and design at all positions except those in the neighborhood
 		// of the mutated position.
-		TaskOperationCOP nb_op = new toolbox::task_operations::RestrictToNeighborhoodOperation( "mutant_nb_calculator" );
+		TaskOperationCOP nb_op = new task_operations::RestrictToNeighborhoodOperation( "mutant_nb_calculator" );
 
 		// extra operations we want to also include
 		// the restrict residue to repacking ops are used to make sure that only repacking and not design is done to the residues in the neighborhood

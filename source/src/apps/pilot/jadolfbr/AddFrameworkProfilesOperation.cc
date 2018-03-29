@@ -12,8 +12,8 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/antibody/task_operations/AddFrameworkProfilesOperation.hh>
-#include <protocols/toolbox/task_operations/ResidueProbDesignOperation.hh>
-#include <protocols/toolbox/task_operations/ConservativeDesignOperation.hh>
+#include <protocols/task_operations/ResidueProbDesignOperation.hh>
+#include <protocols/task_operations/ConservativeDesignOperation.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>

@@ -38,7 +38,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.hh>
+#include <protocols/task_operations/RestrictToInterfaceVectorOperation.hh>
 
 // Option keys
 #include <basic/options/keys/optE.OptionKeys.gen.hh>
@@ -204,7 +204,7 @@ void XMLprinterMover::apply (pose::Pose& pose ) {
 	setup_tf( task_factory );
 	//debugging
 	TR<< pose.pdb_info()->name() << " foldtree: "<< pose.fold_tree() << std::endl;
-	//task_factory->push_back( new protocols::toolbox::task_operations::RestrictToInterfaceVectorOperation);
+	//task_factory->push_back( new protocols::task_operations::RestrictToInterfaceVectorOperation);
 	std::set< Size > design_set;
 	design_set = fill_designable_set( pose, task_factory );
 	std::set< Size > packable_set;

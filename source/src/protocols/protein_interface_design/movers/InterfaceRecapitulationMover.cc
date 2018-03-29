@@ -47,7 +47,7 @@
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -163,7 +163,7 @@ InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::dat
 	auto find_mover( movers.find( mover_name ));
 	bool const mover_found( find_mover != movers.end() );
 	if ( mover_found ) {
-		design_mover_ = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
+		design_mover_ = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second );
 		if ( !design_mover_ ) {
 			design_mover2_ = utility::pointer::dynamic_pointer_cast< protocols::minimization_packing::PackRotamersMover > ( find_mover->second );
 			if ( !design_mover2_ ) {

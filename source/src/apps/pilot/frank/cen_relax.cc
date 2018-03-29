@@ -13,8 +13,8 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -119,8 +119,8 @@ my_main( void* ) {
 	using namespace basic::options::OptionKeys;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	if ( option[ symmetry::symmetry_definition ].user() ) seq->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover() );
-	if ( option[ constraints::cst_file ].user() ) seq->add_mover( new protocols::simple_moves::ConstraintSetMover(  ) );
+	if ( option[ symmetry::symmetry_definition ].user() ) seq->add_mover( new protocols::symmetry::SetupForSymmetryMover() );
+	if ( option[ constraints::cst_file ].user() ) seq->add_mover( new protocols::constraint_movers::ConstraintSetMover(  ) );
 	seq->add_mover( new protocols::simple_moves::MissingDensityToJumpMover );
 	seq->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid") );
 	seq->add_mover( new CenRelaxMover() );

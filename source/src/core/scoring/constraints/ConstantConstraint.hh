@@ -96,6 +96,8 @@ public:
 
 	void show( std::ostream& out ) const;
 
+	void show_def( std::ostream& out, pose::Pose const & ) const;
+
 protected:
 	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
 	/// of the Func this class contains.

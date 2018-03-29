@@ -22,7 +22,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -31,7 +31,7 @@ namespace protein_interface_design {
 namespace movers {
 
 /// @brief designs alanine residues in place of the residue identities at the interface. Retains interface glycines and prolines.
-class TopologyBrokerMover : public simple_moves::DesignRepackMover
+class TopologyBrokerMover : public calc_taskop_movers::DesignRepackMover
 {
 public:
 	typedef core::pose::Pose Pose;

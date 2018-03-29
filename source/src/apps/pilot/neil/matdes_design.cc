@@ -74,7 +74,7 @@
 #include <utility/string_util.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
-#include <protocols/simple_moves/ddG.hh>
+#include <protocols/simple_ddg/ddG.hh>
 
 static basic::Tracer TR( "matdes::design" );
 
@@ -792,7 +792,7 @@ void
 						scorefxn_no_dsf->set_weight(core::scoring::dslf_ss_dih,0.0);
 						scorefxn_no_dsf->set_weight(core::scoring::dslf_ca_dih,0.0);
 						scorefxn_no_dsf->set_weight(core::scoring::dslf_fa13,  0.0);
-						protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(scorefxn_no_dsf, 1, true);
+						protocols::simple_ddg::ddG ddG_mover = protocols::simple_ddg::ddG(scorefxn_no_dsf, 1, true);
 						ddG_mover.calculate(pose_for_design);
 						Real ddG = ddG_mover.sum_ddG();
 						TR << files[ifile] << " ddG = " << ddG << std::endl;

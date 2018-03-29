@@ -39,8 +39,8 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>  //really?
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/forge/methods/chainbreak_eval.hh>
 #include <protocols/rigid/RB_geometry.hh>
 // ObjexxFCL Headers
@@ -1928,7 +1928,7 @@ AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const {
 		loop_residues(i) = sc_is_packable[i];
 	} // check mapping
 
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	pack::task::TaskFactoryOP tf ;
 	tf= setup_packer_task(pose);
 	// tf->push_back( new RestrictToInterface(loop_residues) ); //JQX: not sure why we use loop_residues, in stead of sc_is_packable
@@ -1946,7 +1946,7 @@ AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose, CDRNameEnum const cdr_na
 	vector1< bool> sc_is_packable( pose.size(), false );
 
 	select_loop_residues( pose, *get_CDR_in_loopsop(cdr_name), true/*include_neighbors*/, sc_is_packable);
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	using core::pack::task::operation::TaskOperationCOP;
 
 	pack::task::TaskFactoryOP tf ;

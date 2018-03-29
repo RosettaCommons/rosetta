@@ -47,13 +47,13 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
+#include <protocols/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/symmetric_docking/SymDockingHiRes.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/util.hh>
@@ -72,7 +72,7 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
 #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -104,7 +104,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -127,7 +127,7 @@ using namespace ObjexxFCL;
 static basic::Tracer TR( "protocols.symmetric_docking.SymDockProtocol" );
 
 void SymDock_main() {
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::symmetry;
 	SetupForSymmetryMoverOP setup_mover( new SetupForSymmetryMover );
 	SymDockProtocolOP dock_mover( new SymDockProtocol );
 	protocols::moves::SequenceMoverOP seq_mover( new protocols::moves::SequenceMover );
@@ -379,11 +379,11 @@ SymDockProtocol::apply( pose::Pose & pose )
 			// first convert to centroid mode
 			to_centroid.apply( pose );
 			if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-				protocols::simple_moves::ConstraintSetMover().apply(pose);
+				protocols::constraint_movers::ConstraintSetMover().apply(pose);
 			}
 
 			// make starting perturbations based on command-line flags over each movable jump (takes care of dock_pert and randomize)
-			simple_moves::symmetry::SymDockingInitialPerturbation initial( true /*slide into contact*/ );
+			symmetry::SymDockingInitialPerturbation initial( true /*slide into contact*/ );
 			initial.apply( pose );
 
 			TR << "finished initial perturbation" << std::endl;
@@ -418,7 +418,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 			if ( !local_refine_ || !pose.is_fullatom() ) {
 				to_all_atom.apply( pose );
 				if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-					protocols::simple_moves::ConstraintSetMover().apply(pose);
+					protocols::constraint_movers::ConstraintSetMover().apply(pose);
 				}
 				recover_sidechains.apply( pose );
 				// recover_sidechains( pose, *get_input_pose());
@@ -573,7 +573,7 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 	using namespace moves;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	using core::pack::task::operation::TaskOperationOP;
 
 	// pack over each movable interface

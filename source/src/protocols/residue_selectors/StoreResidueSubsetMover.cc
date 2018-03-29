@@ -20,7 +20,7 @@
 // Protocol Headers
 #include <core/select/residue_selector/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
-/*#include <protocols/toolbox/task_operations/STMStoredTask.hh>
+/*#include <protocols/task_operations/STMStoredTask.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/pose/symmetry/util.hh>
 #include <basic/datacache/CacheableData.hh>

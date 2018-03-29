@@ -26,7 +26,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -125,7 +125,7 @@ main( int argc, char * argv [] )
 		MoverOP scoremover (new MyScoreMover);
 		// set pose for symmetry
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::simple_moves::symmetry::SetupForSymmetryMover symmover = protocols::simple_moves::symmetry::SetupForSymmetryMover();
+			protocols::symmetry::SetupForSymmetryMover symmover = protocols::symmetry::SetupForSymmetryMover();
 			symmover.apply(pose);
 		}
 

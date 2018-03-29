@@ -23,7 +23,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -60,39 +60,39 @@ class BUNS_Output : public protocols::moves::Mover {
 
 int main( int argc, char * argv [] ) {
 	try {
-	using core::pose::metrics::CalculatorFactory;
-	using core::scoring::ScoreFunctionOP;
-	using protocols::simple_moves::ScoreMover;
-	using protocols::simple_moves::ScoreMoverOP;
-	using protocols::jd2::JobDistributor;
-	using protocols::moves::SequenceMover;
-	using protocols::moves::SequenceMoverOP;
-	using protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator;
+		using core::pose::metrics::CalculatorFactory;
+		using core::scoring::ScoreFunctionOP;
+		using protocols::simple_moves::ScoreMover;
+		using protocols::simple_moves::ScoreMoverOP;
+		using protocols::jd2::JobDistributor;
+		using protocols::moves::SequenceMover;
+		using protocols::moves::SequenceMoverOP;
+		using protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator;
 
-	// initialize rosetta
-	devel::init( argc, argv );
+		// initialize rosetta
+		devel::init( argc, argv );
 
-	CalculatorFactory::Instance().register_calculator(
-		BUNS_CALC_NAME,
-		new BuriedUnsatisfiedPolarsCalculator(
+		CalculatorFactory::Instance().register_calculator(
+			BUNS_CALC_NAME,
+			new BuriedUnsatisfiedPolarsCalculator(
 			"default",
 			"default"
-		)
-	);
+			)
+		);
 
-	ScoreFunctionOP sfx = core::scoring::get_score_function();
-	ScoreMoverOP scoremover = new ScoreMover( sfx );
+		ScoreFunctionOP sfx = core::scoring::get_score_function();
+		ScoreMoverOP scoremover = new ScoreMover( sfx );
 
-	BUNS_Output * buns_output = new BUNS_Output();
+		BUNS_Output * buns_output = new BUNS_Output();
 
-	SequenceMoverOP seqmover = new SequenceMover;
-	seqmover->add_mover( scoremover );
-	seqmover->add_mover( buns_output );
+		SequenceMoverOP seqmover = new SequenceMover;
+		seqmover->add_mover( scoremover );
+		seqmover->add_mover( buns_output );
 
-	// run job
-	JobDistributor::get_instance()->go( seqmover );
-	 } catch (utility::excn::Exception const & e ) {
-		 std::cout << "caught exception " << e.msg() << std::endl;
+		// run job
+		JobDistributor::get_instance()->go( seqmover );
+	} catch (utility::excn::Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 }

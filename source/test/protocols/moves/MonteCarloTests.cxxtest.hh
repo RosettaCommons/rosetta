@@ -21,7 +21,7 @@
 
 // Project Headers
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MonteCarloInterface.hh>
+#include <protocols/monte_carlo/MonteCarloInterface.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/antibody/design/GeneralAntibodyModeler.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
@@ -39,7 +39,7 @@
 static basic::Tracer TR("MonteCarloTests");
 
 using namespace protocols::moves;
-using namespace protocols::simple_moves;
+using namespace protocols::monte_carlo;
 using namespace core::scoring;
 using namespace protocols::antibody::design;
 using namespace protocols::antibody;

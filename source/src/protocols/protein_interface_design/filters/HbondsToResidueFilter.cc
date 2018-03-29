@@ -37,8 +37,8 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
-//#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
+//#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <basic/MetricValue.hh>
 #include <numeric/random/random.hh>
 #include <core/chemical/AtomType.hh>
@@ -57,7 +57,7 @@
 // Utility Headers
 
 // Unit Headers
-#include <protocols/simple_moves/ddG.hh>
+#include <protocols/simple_ddg/ddG.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 
 // C++ headers
@@ -71,7 +71,7 @@
 #include <ObjexxFCL/format.hh>
 
 //Auto Headers
-#include <protocols/simple_filters/DdgFilter.hh>
+#include <protocols/simple_ddg/DdgFilter.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

@@ -46,7 +46,7 @@
 // Package headers
 #include <basic/datacache/DataMap.fwd.hh>
 //#include <protocols/moves/MoverApplyingMover.hh>
-#include <protocols/simple_moves/GenericMonteCarloMover.hh>
+#include <protocols/monte_carlo/GenericMonteCarloMover.hh>
 
 namespace protocols {
 namespace evolution {
@@ -58,8 +58,8 @@ typedef boost::function<bool(core::Size,
 	core::scoring::ScoreFunctionOP)> EvolutionaryDynamicsMoverTrigger;
 
 
-class EvolutionaryDynamicsMover : public protocols::simple_moves::GenericMonteCarloMover {
-	typedef protocols::simple_moves::GenericMonteCarloMover Super;
+class EvolutionaryDynamicsMover : public protocols::monte_carlo::GenericMonteCarloMover {
+	typedef protocols::monte_carlo::GenericMonteCarloMover Super;
 public:
 	typedef std::string String;
 	typedef core::Size Size;

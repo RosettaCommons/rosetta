@@ -30,8 +30,8 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
-#include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/PreventResiduesFromRepackingOperation.hh>
 #include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/simple_moves/FavorSequenceProfile.hh>
@@ -429,7 +429,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 			}
 		}
 		//task_factory_ = new TaskFactory;
-		toolbox::task_operations::DesignAroundOperationOP desaround = pointer::make_shared< toolbox::task_operations::DesignAroundOperation >();
+		task_operations::DesignAroundOperationOP desaround = pointer::make_shared< task_operations::DesignAroundOperation >();
 		std::set< core::Size > temp_start_vec( get_start_res_vec() );
 		for ( core::Size it : temp_start_vec ) {
 			desaround->include_residue(it);

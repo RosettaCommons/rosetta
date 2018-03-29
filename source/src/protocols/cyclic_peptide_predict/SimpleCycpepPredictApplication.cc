@@ -90,7 +90,7 @@
 
 //Disulfides
 #include <protocols/cyclic_peptide/TryDisulfPermutations.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 
 //N-methylation
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -2069,7 +2069,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			if ( pose->residue(ir).type().get_disulfide_atom_name() != "NONE" ) ++disulf_res_count; //Count disulfide-forming residues in the pose.
 		}
 		disulf_count = disulf_res_count / 2; //Div operator -- gives correct number of disulfides even in odd disulfide-forming residue case.
-		protocols::simple_filters::ScoreTypeFilterOP disulf_filter1( new protocols::simple_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_prerelax_ * static_cast<core::Real>(disulf_count) ) );
+		protocols::score_filters::ScoreTypeFilterOP disulf_filter1( new protocols::score_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_prerelax_ * static_cast<core::Real>(disulf_count) ) );
 		pp->add_mover_filter_pair( trydisulf, "Try_Disulfide_Permutations", disulf_filter1 );
 	}
 
@@ -2168,7 +2168,7 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	//Add more stringent disulfide filtering post-relax:
 	if ( try_all_disulfides_ ) {
-		protocols::simple_filters::ScoreTypeFilterOP disulf_filter2( new protocols::simple_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_postrelax_ * static_cast<core::Real>(disulf_count) ) );
+		protocols::score_filters::ScoreTypeFilterOP disulf_filter2( new protocols::score_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_postrelax_ * static_cast<core::Real>(disulf_count) ) );
 		pp->add_mover_filter_pair( nullptr, "Postrelax_disulfide_filter", disulf_filter2 );
 	}
 

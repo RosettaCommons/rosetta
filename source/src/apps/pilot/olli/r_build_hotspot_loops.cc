@@ -61,7 +61,7 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <core/fragment/FragSet.hh>
 #include <utility/exit.hh>
@@ -345,7 +345,7 @@ LoopBuild_main() {
 
 	// symmetrize start pose & loopfile
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+		protocols::symmetry::SetupForSymmetryMover pre_mover;
 		pre_mover.apply( start_pose );
 	}
 

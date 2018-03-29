@@ -15,8 +15,8 @@
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
@@ -74,11 +74,11 @@ public:
 		}
 		TR << "Registering num_Hbond Calculator" << std::endl;
 		if ( !CalculatorFactory::Instance().check_calculator_exists( "num_hbonds_calc_name" ) ) {
-			CalculatorFactory::Instance().register_calculator( "num_hbonds_calc_name", new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
+			CalculatorFactory::Instance().register_calculator( "num_hbonds_calc_name", new protocols::simple_pose_metric_calculators::NumberHBondsCalculator() );
 		}
 		TR << "Registering BurUnsatPolar Calculator" << std::endl;
 		if ( !CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_name" ) ) {
-			CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_name", new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "sasa_calc_name", "num_hbonds_calc_name", 0.01 /*sasa=0 is buried*/) );
+			CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_name", new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "sasa_calc_name", "num_hbonds_calc_name", 0.01 /*sasa=0 is buried*/) );
 		}
 
 		basic::MetricValue<id::AtomID_Map< bool > > bur_unsat_atomid_map;

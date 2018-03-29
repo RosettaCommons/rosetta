@@ -31,10 +31,10 @@
 #include <basic/MetricValue.hh>
 #include <core/types.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 // Utility headers
 #include <utility/file/FileName.hh>
@@ -299,19 +299,19 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 	}
 	// hbonds
 	if ( !CalculatorFactory::Instance().check_calculator_exists( hbond_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP hb_calc( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP hb_calc( new protocols::simple_pose_metric_calculators::NumberHBondsCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator
 			( hbond_calc_name, hb_calc );
 	}
 	// packstats
 	if ( !CalculatorFactory::Instance().check_calculator_exists( packstat_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP packstat_calc( new protocols::toolbox::pose_metric_calculators::PackstatCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP packstat_calc( new protocols::pose_metric_calculators::PackstatCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator
 			( packstat_calc_name, packstat_calc );
 	}
 	// burried unsatisfied polar
 	if ( !CalculatorFactory::Instance().check_calculator_exists( burunsat_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator
+		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator
 			(sasa_calc_name, hbond_calc_name) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator
 			( burunsat_calc_name, burunsat_calc );

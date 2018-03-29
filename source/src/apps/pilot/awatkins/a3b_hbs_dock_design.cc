@@ -57,9 +57,9 @@
 //#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -86,8 +86,7 @@ using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::a3b_hbs;
 using namespace protocols::rigid;
-using namespace protocols::toolbox;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
 using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -682,11 +681,11 @@ A3BHbsDockDesignMinimizeMover::setup_filter_stats()
 	pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 	// create and register hb calculator
-	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new pose_metric_calculators::NumberHBondsCalculator() );
+	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new simple_pose_metric_calculators::NumberHBondsCalculator() );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
 
 	// create and register unsat calculator
-	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
+	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
 	pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
 
 	// create and register packstat calculator

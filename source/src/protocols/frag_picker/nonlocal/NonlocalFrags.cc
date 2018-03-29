@@ -39,7 +39,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
-#include <protocols/simple_filters/DdgFilter.hh>
+#include <protocols/simple_ddg/DdgFilter.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -458,7 +458,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 						core::Real relaxed_score = (*scorefxn)( relax_sub_pose );
 
 						// DDG of relaxed fragment pair
-						protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( 1000, scorefxn, 1, 5);
+						protocols::simple_ddg::DdgFilter ddg = protocols::simple_ddg::DdgFilter( 1000, scorefxn, 1, 5);
 						core::Real relaxed_ddg_score = ddg.compute( relax_sub_pose );
 						if ( relaxed_ddg_score >= max_ddg_score_ ) {  // DDG FILTER VALUE
 							write_checkpoint( output_name + tag, "" );

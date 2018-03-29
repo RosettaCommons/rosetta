@@ -25,7 +25,7 @@
 #include <protocols/antibody/LHRepulsiveRamp.hh>
 #include <protocols/antibody_legacy/LHSnugFitLegacy.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/docking/util.hh>
@@ -109,7 +109,7 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 		loop_residues(i) = sc_is_flexible[i];
 	} // check mapping
 
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	if ( !tf_ ) {
 		tf_= setup_packer_task(pose);
 		tf_->push_back( TaskOperationCOP( new RestrictToInterface( LH_dock_jump_, loop_residues ) ) );

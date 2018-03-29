@@ -13,7 +13,7 @@
 
 // Unit headers
 #include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 // Package headers
 #include <core/pose/symmetry/util.hh>
@@ -46,7 +46,7 @@ void
 SymFoldandDockMoveRbJumpMover::apply( core::pose::Pose & pose )
 {
 	using namespace core::conformation::symmetry;
-	protocols::simple_moves::symmetry::SetupForSymmetryMover setup;
+	protocols::symmetry::SetupForSymmetryMover setup;
 	setup.apply( pose );
 	core::pose::symmetry::find_new_symmetric_jump_residues( pose );
 }

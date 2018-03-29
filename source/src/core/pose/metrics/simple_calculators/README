@@ -11,7 +11,7 @@ InterfaceNeighborDefinitionCalculator.cc
 InterfaceSasaDefinitionCalculator.cc
 SasaCalculator.cc
 
-were in protocols/toolbox/pose_metric_calculators before XRW2.  They were moved to main because the scripter (protocols/jd2/DockDesignParser) is directly dependent on them.  This is a partial solution.  Good full solutions:
+were in protocols/pose_metric_calculators before XRW2.  They were moved to main because the scripter (protocols/jd2/DockDesignParser) is directly dependent on them.  This is a partial solution.  Good full solutions:
 
-A) move all simple, core-only-dependencies calculators in protocols/toolbox/pose_metric_calculators to this directory
+A) move all simple, core-only-dependencies calculators in protocols/pose_metric_calculators to this directory
 B) Create a string-name-based load-time-factory-registration system for calculator _classes_ (not calculator objects as now) so that the Parser's dependency will be string-based or nonexistent

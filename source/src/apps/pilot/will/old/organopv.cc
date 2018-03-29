@@ -93,7 +93,7 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
+#include <protocols/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/relax/SimpleMultiRelax.hh>

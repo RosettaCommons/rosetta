@@ -83,8 +83,8 @@
 
 //Auto Headers
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -133,7 +133,7 @@ bool
 PlaceSimultaneouslyMover::minimize_no_bb( core::pose::Pose & pose ) const {
 
 	core::scoring::ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
-	simple_filters::ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
+	score_filters::ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
 	core::Real const before_min( stf.compute( pose ) );
 	if ( before_min >= -0.0001 ) {
 		TR<<"bb_cst evalutes to 0. Failing";
@@ -167,7 +167,7 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 		for ( MoverRealPair const & curr : minimization_movers_ ) {
 			using namespace core::scoring;
 
-			simple_moves::DesignRepackMoverOP const curr_mover( curr.first );
+			calc_taskop_movers::DesignRepackMoverOP const curr_mover( curr.first );
 			core::Real const bb_cst_weight( curr.second );
 			TR<<"applying mover: "<<curr_mover->get_name()<<std::endl;
 			//restricting movers for stub minimization
@@ -648,7 +648,7 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 	saved_coord_constraints_ = remove_coordinate_constraints_from_pose( pose );
 	for ( MoverRealPair const & mover_coord_cst : design_movers_ ) {//design movers
 		core::Real const sdev( mover_coord_cst.second );
-		simple_moves::DesignRepackMoverOP mover( mover_coord_cst.first );
+		calc_taskop_movers::DesignRepackMoverOP mover( mover_coord_cst.first );
 		TR<<"applying design mover "<<mover->get_name()<<std::endl;
 		if ( sdev >= 0 ) { //use constraints
 			core::Size const before_refresh( pose.constraint_set()->get_all_constraints().size() );
@@ -802,7 +802,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				auto find_mover( movers.find( stub_mover_name ));
 				bool const stub_mover_found( find_mover != movers.end() );
 				if ( stub_mover_found ) {
-					simple_moves::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
+					calc_taskop_movers::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second->clone() );
 					if ( !drSOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP != nullptr );
@@ -821,7 +821,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				auto find_mover( movers.find( mover_name ));
 				bool const mover_found( find_mover != movers.end() );
 				if ( mover_found ) {
-					simple_moves::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
+					calc_taskop_movers::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second );
 					if ( !drOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP != nullptr );
@@ -914,7 +914,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 }
 
 PlaceSimultaneouslyMover::PlaceSimultaneouslyMover() :
-	simple_moves::DesignRepackMover( PlaceSimultaneouslyMover::mover_name() )
+	calc_taskop_movers::DesignRepackMover( PlaceSimultaneouslyMover::mover_name() )
 {
 	residue_level_tasks_for_placed_hotspots_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );//watch out! Never allocate a new task factory for this guy after parsing has been done, b/c in parsing all task aware movers will be watching it through their task_factory_
 	// user_defined_auction_ = false;

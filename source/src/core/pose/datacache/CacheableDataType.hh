@@ -45,7 +45,7 @@ public:
 		// Pose annotation
 		POSE_BEFORE_CAVITIES_ADDED, // a core::pose::datacache::CacheablePoseRawPtr; used by AddCavitiesMover
 		TEMPLATE_HYBRIDIZATION_HISTORY,  // a protocols::hybridization:TemplateHistory; during template hybridization, the source id for each residue
-		NCS_RESIDUE_MAPPING, // a protocols::simple_moves::symmetry::NCSResMapping; used for Non-Crystollographic Symmetry
+		NCS_RESIDUE_MAPPING, // a protocols::symmetry::NCSResMapping; used for Non-Crystollographic Symmetry
 		FULL_MODEL_INFO, // a core::pose::full_model_info::FullModelInfo; [map residues/chains to full model, for stepwise buildup]
 		VDW_REP_SCREEN_INFO, // a protocols::stepwise::modeler::rns::checker::VDW_CachedRepScreenInfo; for stepwise modeling -- grid of peripheral regions that are sterically disallowed.
 		CDR_CLUSTER_INFO, // a protocols::antibody::clusters::BasicCDRClusterSet ( Cacheable Antibody CDR Cluster Information)

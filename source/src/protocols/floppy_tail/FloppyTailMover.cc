@@ -45,7 +45,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 
 //Symmetry Headers
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh> //to access symmetric pose data
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
@@ -65,9 +65,9 @@
 #include <protocols/moves/PyMOLMover.hh>
 
 //calculators and neighbor detection machinery
-#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
+#include <protocols/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
+#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
 
 // //JD headers
 #include <protocols/jd2/util.hh>
@@ -436,13 +436,13 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
 		TR << "removed a PoseMetricCalculator " << calc << ", hopefully this is due to multiple inputs to FloppyTail and not a name clash" << std::endl;
 	}
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, core::pose::metrics::PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) ) );
+	core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, core::pose::metrics::PoseMetricCalculatorOP( new protocols::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) ) );
 
 	//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation
 	utility::vector1< std::pair< std::string, std::string> > calculators_used;
 	std::pair< std::string, std::string> IGNC_cmd( calc, "neighbors" );
 	calculators_used.push_back( IGNC_cmd );
-	task_factory_->push_back( operation::TaskOperationOP( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) ) );
+	task_factory_->push_back( operation::TaskOperationOP( new protocols::task_operations::RestrictByCalculatorsOperation( calculators_used ) ) );
 
 	//debugging: print PackerTask
 	// TR << *(task_factory_->create_task_and_apply_taskoperations( pose )) << std::endl;
@@ -650,7 +650,7 @@ void FloppyTailMover::high_res( core::pose::Pose & pose ){
 	using protocols::minimization_packing::RotamerTrialsMoverOP;
 	using protocols::minimization_packing::EnergyCutRotamerTrialsMover;
 	protocols::minimization_packing::RotamerTrialsMoverOP rt_mover;
-	if ( option[ symmetry::symmetry_definition ].user() ) {
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
 		rt_mover = protocols::minimization_packing::RotamerTrialsMoverOP( new protocols::minimization_packing::symmetry::SymEnergyCutRotamerTrialsMover(
 			fullatom_scorefunction_,
 			task_factory_,
@@ -695,8 +695,8 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	using namespace basic::options::OptionKeys;
 
 	//apply symmetric pose setup here, if the symmetry flag is passed
-	if ( option[ symmetry::symmetry_definition ].user() ) {
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
+		protocols::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::symmetry::SetupForSymmetryMover );
 		setup_mover->apply( pose );
 	}
 

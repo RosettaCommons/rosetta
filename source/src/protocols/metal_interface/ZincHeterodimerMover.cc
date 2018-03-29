@@ -43,7 +43,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
+#include <protocols/task_operations/RestrictToInterfaceOperation.hh>
 
 // Numeric Headers
 
@@ -313,7 +313,7 @@ void ZincHeterodimerMover::generate_factory(){
 	}
 	task_factory->push_back(prop);
 	//this assumes that the two protein partners are chains 1 and 3 - this is dangerous!!!!
-	task_factory->push_back(operation::TaskOperationOP( new protocols::toolbox::task_operations::RestrictToInterfaceOperation(1, 3) ));
+	task_factory->push_back(operation::TaskOperationOP( new protocols::task_operations::RestrictToInterfaceOperation(1, 3) ));
 
 	TR << "using default TaskFactory (init from command line, read resfile, prevent repacking at metal site, detect interface" << std::endl;
 

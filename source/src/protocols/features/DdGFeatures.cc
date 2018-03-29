@@ -36,7 +36,7 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_filters/DdGScan.hh>
+#include <protocols/simple_ddg/DdGScan.hh>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
@@ -89,7 +89,7 @@ static basic::Tracer TR( "protocols.features.DdGFeatures" );
 DdGFeatures::DdGFeatures() = default;
 
 DdGFeatures::DdGFeatures(
-	protocols::simple_filters::DdGScanOP ddG_scan_mover
+	protocols::simple_ddg::DdGScanOP ddG_scan_mover
 )
 {
 	ddG_scan_mover_ = ddG_scan_mover;
@@ -160,7 +160,7 @@ DdGFeatures::parse_my_tag(
 ) {
 	if ( tag->hasOption("ddG_scan_mover") ) {
 		filters::FilterOP filter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ddG_scan_mover" ), filters );
-		ddG_scan_mover_ = utility::pointer::dynamic_pointer_cast < protocols::simple_filters::DdGScan > (filter);
+		ddG_scan_mover_ = utility::pointer::dynamic_pointer_cast < protocols::simple_ddg::DdGScan > (filter);
 	} else {
 		stringstream error_msg;
 		error_msg

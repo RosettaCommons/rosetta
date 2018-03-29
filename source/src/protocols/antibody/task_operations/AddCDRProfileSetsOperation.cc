@@ -19,7 +19,7 @@
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/util.hh>
-#include <protocols/toolbox/task_operations/MutationSetDesignOperation.hh>
+#include <protocols/task_operations/MutationSetDesignOperation.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -42,7 +42,7 @@ namespace antibody {
 namespace task_operations {
 using namespace core::pack::task::operation;
 using namespace core::pack::task;
-using namespace protocols::toolbox::task_operations;
+using namespace protocols::task_operations;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::antibody::design;

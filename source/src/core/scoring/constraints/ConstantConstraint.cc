@@ -125,6 +125,10 @@ void ConstantConstraint::show( std::ostream& out ) const {
 	func_->show( out );
 }
 
+void ConstantConstraint::show_def( std::ostream& out, pose::Pose const & ) const {
+	show( out );
+}
+
 ConstantConstraint::ConstantConstraint( ConstantConstraint const & src ) :
 	Constraint( src ),
 	func_( src.func_ ? src.func_->clone() : src.func_ )

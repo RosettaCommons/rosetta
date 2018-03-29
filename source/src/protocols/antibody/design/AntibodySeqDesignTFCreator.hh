@@ -22,11 +22,11 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.fwd.hh>
 #include <protocols/antibody/task_operations/AddCDRProfilesOperation.fwd.hh>
-#include <protocols/toolbox/task_operations/ConservativeDesignOperation.fwd.hh>
-#include <protocols/toolbox/task_operations/ResidueProbDesignOperation.fwd.hh>
+#include <protocols/task_operations/ConservativeDesignOperation.fwd.hh>
+#include <protocols/task_operations/ResidueProbDesignOperation.fwd.hh>
 
 #include <protocols/loops/Loops.hh>
-#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
+#include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
 
@@ -144,15 +144,15 @@ public:
 	generate_task_op_cdr_profiles(core::pose::Pose const & pose);
 
 	/// @brief Create a TaskOp to limit Packing and Design to only CDR loops with design on.  Use neighbor distance.
-	protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
+	protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP
 	generate_task_op_cdr_design(core::pose::Pose const & pose, bool design_neighbors = true) const;
 
 	/// @brief Create a TaskOp for only CDR loops set to True in the boolean vector.
-	protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
+	protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP
 	generate_task_op_cdr_design(core::pose::Pose const & pose, utility::vector1<bool> cdrs, bool design_neighbors = true) const;
 
 	/// @brief Create a TaskOp to limit Packing and Design to CDR loops and neighbors.
-	protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
+	protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP
 	generate_task_op_all_cdr_design( core::pose::Pose const & pose, bool design_neighbors = true ) const;
 
 
@@ -169,11 +169,11 @@ public:
 	disable_disallowed_aa( core::pack::task::TaskFactoryOP tf, const core::pose::Pose & pose ) const;
 
 	/// @brief Create a TaskOp for profile-based design of CDRs according to SeqDesign options.
-	//toolbox::task_operations::ResidueProbDesignOperationOP
+	//task_operations::ResidueProbDesignOperationOP
 	//generate_task_op_cdr_profile(core::pose::Pose const & pose);
 
 	/// @brief Create a TaskOp for conservative-based design of CDRs according to SeqDesign options.
-	//toolbox::task_operations::ConservativeDesignOperationOP
+	//task_operations::ConservativeDesignOperationOP
 	//generate_task_op_cdr_conservative(core::pose::Pose const & pose);
 
 
@@ -236,10 +236,10 @@ private:
 
 private:
 
-	toolbox::task_operations::ConservativeDesignOperationOP
+	protocols::task_operations::ConservativeDesignOperationOP
 	get_framework_conservative_op(core::pose::Pose const & pose);
 
-	protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP
+	protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP
 	get_general_loop_task_op(protocols::loops::LoopsOP loops, bool design_neighbors = true ) const;
 
 	/// @brief Add restrictions for non-CDR positions and residue types according to options.

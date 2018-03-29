@@ -46,7 +46,7 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 
@@ -57,7 +57,7 @@
 
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
@@ -76,7 +76,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <core/scoring/constraints/util.hh>
 
@@ -589,7 +589,7 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 		// set up packer
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
-		using namespace protocols::toolbox::task_operations;
+		using namespace protocols::simple_task_operations;
 		TaskFactoryOP tf (new TaskFactory);
 		tf->push_back( TaskOperationCOP(new InitializeFromCommandline) );
 		tf->push_back( TaskOperationCOP(new IncludeCurrent) );

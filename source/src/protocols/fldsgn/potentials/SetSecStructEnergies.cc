@@ -38,7 +38,7 @@
 #include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.hh>
 
 #include <basic/datacache/DataMap.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 #include <utility/tag/Tag.hh>
 // C++ headers
@@ -427,8 +427,8 @@ SetSecStructEnergies::get_secstruct( core::pose::Pose const & pose ) const
 {
 	using core::conformation::symmetry::SymmetricConformation;
 	using core::pose::symmetry::is_symmetric;
-	using protocols::simple_moves::symmetry::SetupForSymmetryMover;
-	using protocols::simple_moves::symmetry::SetupForSymmetryMoverOP;
+	using protocols::symmetry::SetupForSymmetryMover;
+	using protocols::symmetry::SetupForSymmetryMoverOP;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

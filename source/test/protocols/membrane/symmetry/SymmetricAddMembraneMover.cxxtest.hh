@@ -26,7 +26,7 @@
 
 // Package Headers
 #include <protocols/membrane/symmetry/SymmetricAddMembraneMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
 
@@ -54,7 +54,7 @@ using namespace core::kinematics;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
 using namespace core::conformation::symmetry;
-using namespace protocols::simple_moves::symmetry;
+using namespace protocols::symmetry;
 
 class SymmetricAddMembraneMoverTest : public CxxTest::TestSuite {
 
@@ -68,7 +68,6 @@ public: // test functions
 		using namespace core::import_pose;
 		using namespace core::pose;
 		using namespace protocols::membrane::symmetry;
-		using namespace protocols::simple_moves;
 		using namespace core::conformation::symmetry;
 
 		// Initialize core & options system

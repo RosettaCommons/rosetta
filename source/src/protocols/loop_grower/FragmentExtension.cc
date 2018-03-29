@@ -33,7 +33,7 @@
 
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/symmetry/SetupNCSMover.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
@@ -120,7 +120,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 
 #include <utility/excn/Exceptions.hh>

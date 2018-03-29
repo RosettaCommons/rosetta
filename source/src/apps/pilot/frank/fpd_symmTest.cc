@@ -6,7 +6,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <devel/init.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/symmetry/util.hh>
@@ -36,7 +36,7 @@ public:
 void*
 my_main( void* ) {
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::symmetry;
 
 	SequenceMoverOP seq( new SequenceMover() );
 	seq->add_mover( new SetupForSymmetryMover() );
@@ -56,14 +56,14 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
-    try {
-	// initialize option and random number system
-	devel::init( argc, argv );
+	try {
+		// initialize option and random number system
+		devel::init( argc, argv );
 
-	protocols::viewer::viewer_main( my_main );
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		protocols::viewer::viewer_main( my_main );
+	} catch (utility::excn::Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-    return 0;
-    }
+	}
+	return 0;
+}

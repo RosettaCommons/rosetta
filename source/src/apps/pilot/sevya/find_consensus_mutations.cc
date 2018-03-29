@@ -20,7 +20,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.hh>
+#include <protocols/task_operations/RestrictToInterfaceVectorOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>

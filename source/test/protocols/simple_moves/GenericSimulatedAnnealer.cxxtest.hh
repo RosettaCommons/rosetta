@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/protocols/simple_moves/GenericSimulatedAnnealer.cxxtest.hh
-/// @brief  test suite for protocols::simple_moves::GenericSimulatedAnnealer
+/// @file   test/protocols/monte_carlo/GenericSimulatedAnnealer.cxxtest.hh
+/// @brief  test suite for protocols::monte_carlo::GenericSimulatedAnnealer
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 
@@ -17,7 +17,7 @@
 #include <test/protocols/init_util.hh>
 
 // Unit headers
-#include <protocols/simple_moves/GenericSimulatedAnnealer.hh>
+#include <protocols/monte_carlo/GenericSimulatedAnnealer.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -35,13 +35,13 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/simple_filters/ResidueCountFilter.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // C++ headers
 #include <iostream>
 
-static basic::Tracer TR("protocols.simple_moves.GenericSimulatedAnnealer.cxxtest");
+static basic::Tracer TR("protocols.monte_carlo.GenericSimulatedAnnealer.cxxtest");
 
 // --------------- Test Class --------------- //
 class GenericSimulatedAnnealerTests : public CxxTest::TestSuite {
@@ -50,7 +50,7 @@ class GenericSimulatedAnnealerTests : public CxxTest::TestSuite {
 
 	// filter that simply returns the number of TRP residues
 	utility::pointer::shared_ptr< protocols::simple_filters::ResidueCountFilter > num_trp;
-	utility::pointer::shared_ptr< protocols::simple_filters::ScoreTypeFilter > score_filter;
+	utility::pointer::shared_ptr< protocols::score_filters::ScoreTypeFilter > score_filter;
 
 	// mutate residues to trp and ala
 	protocols::simple_moves::MutateResidueOP mut_to_trp, mut_to_trp2;
@@ -97,8 +97,8 @@ public:
 		mut_to_phe = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 25, "PHE" ) );
 
 		// get the total score
-		score_filter = utility::pointer::shared_ptr< protocols::simple_filters::ScoreTypeFilter >(
-			new protocols::simple_filters::ScoreTypeFilter( scorefxn,
+		score_filter = utility::pointer::shared_ptr< protocols::score_filters::ScoreTypeFilter >(
+			new protocols::score_filters::ScoreTypeFilter( scorefxn,
 			core::scoring::score_type_from_name( "total_score" ),
 			999999.9 ) );
 
@@ -117,7 +117,7 @@ public:
 		TR << "Starting test_acceptance()" << std::endl;
 		core::pose::Pose pose( input_pose );
 
-		protocols::simple_moves::GenericSimulatedAnnealer annealer;
+		protocols::monte_carlo::GenericSimulatedAnnealer annealer;
 		annealer.set_mover( mut_to_ala );
 		annealer.add_filter( num_trp, true, 0.0, "low", true );
 		annealer.set_maxtrials(2);
@@ -160,7 +160,7 @@ public:
 		// set up two genericsimulatedannealers
 		std::string const checkpoint_file( "protocols/simple_moves/mc" );
 		std::string const checkpoint_silent_file( checkpoint_file + ".out" );
-		protocols::simple_moves::GenericSimulatedAnnealer annealer;
+		protocols::monte_carlo::GenericSimulatedAnnealer annealer;
 		annealer.checkpoint_file( checkpoint_file );
 		annealer.set_mover( mut_to_ala );
 		annealer.add_filter( num_trp, true, 0.0, "low", true );
@@ -168,7 +168,7 @@ public:
 		TR << "Annealer filters: " << annealer.filters().size() << std::endl;
 		annealer.set_maxtrials(1);
 
-		protocols::simple_moves::GenericSimulatedAnnealer annealer2;
+		protocols::monte_carlo::GenericSimulatedAnnealer annealer2;
 		annealer2.checkpoint_file( checkpoint_file );
 		annealer2.set_mover( mut_to_ala2 );
 		annealer2.add_filter( num_trp, true, 0.0, "low", true );
@@ -271,7 +271,7 @@ public:
 		core::pose::Pose pose( input_pose );
 		core::pose::Pose start_pose( pose );
 		// now test with multiple filters
-		protocols::simple_moves::GenericSimulatedAnnealer annealer3;
+		protocols::monte_carlo::GenericSimulatedAnnealer annealer3;
 		annealer3.set_maxtrials( 2 );
 		annealer3.set_mover( mut_to_ala );
 		// this one counts trp residues and scores
@@ -293,8 +293,8 @@ public:
 		utility::vector1< core::Real > randoms( annealer3.filters().size(), 1.0 );
 		mut_to_ala->apply( pose );
 		// should be accepted
-		protocols::simple_moves::TrialResult result( annealer3.boltzmann_result( pose, randoms ) );
-		TS_ASSERT( result == protocols::simple_moves::ACCEPTED );
+		protocols::monte_carlo::TrialResult result( annealer3.boltzmann_result( pose, randoms ) );
+		TS_ASSERT( result == protocols::monte_carlo::ACCEPTED );
 		// ensure the scoring counts are tabulated properly
 		TR << "number of accepted scores is now: " << annealer3.num_accepted_scores() << std::endl;
 		TS_ASSERT( annealer3.num_accepted_scores() == 2 );
@@ -307,7 +307,7 @@ public:
 		// this one should be rejected -- it will have a worse score and all randoms are zero
 		mut_to_phe->apply( pose );
 		result = annealer3.boltzmann_result( pose, randoms );
-		TS_ASSERT( result == protocols::simple_moves::REJECTED );
+		TS_ASSERT( result == protocols::monte_carlo::REJECTED );
 		TS_ASSERT( annealer3.num_accepted_scores() == 2 );
 		TS_ASSERT( annealer3.accepted_scores( 2 ).size() == annealer3.filters().size() );
 		TS_ASSERT_DELTA( annealer3.last_accepted_scores()[1], num_trp->report_sm( pose ), 1e-6 );
@@ -322,7 +322,7 @@ public:
 		// make the mutation back to TRP, which should be rejected based on ntrp filter
 		mut_to_trp->apply( pose );
 		result = annealer3.boltzmann_result( pose, randoms );
-		TS_ASSERT( result == protocols::simple_moves::REJECTED );
+		TS_ASSERT( result == protocols::monte_carlo::REJECTED );
 		TS_ASSERT( annealer3.num_accepted_scores() == 2 );
 		TS_ASSERT( annealer3.accepted_scores( 2 ).size() == annealer3.filters().size() );
 		TS_ASSERT_DELTA( annealer3.last_accepted_scores()[1], num_trp->report_sm( pose ), 1e-6 );
@@ -338,7 +338,7 @@ public:
 		// make the mutation back to TRP, which should be accepted based on temperature
 		mut_to_trp->apply( pose );
 		result = annealer3.boltzmann_result( pose, randoms );
-		TS_ASSERT( result == protocols::simple_moves::ACCEPTED );
+		TS_ASSERT( result == protocols::monte_carlo::ACCEPTED );
 		TS_ASSERT( annealer3.num_accepted_scores() == 3 );
 		TS_ASSERT( annealer3.accepted_scores( 3 ).size() == annealer3.filters().size() );
 		TS_ASSERT_DELTA( annealer3.last_accepted_scores()[1], num_trp->report_sm( pose ), 1e-6 );
@@ -375,7 +375,7 @@ public:
 		// now switch res 25 to phe which will result in a new acceptance but with different temps
 		mut_to_phe->apply( pose );
 		result = annealer3.boltzmann_result( pose, randoms );
-		TS_ASSERT( result == protocols::simple_moves::ACCEPTED );
+		TS_ASSERT( result == protocols::monte_carlo::ACCEPTED );
 		TS_ASSERT( annealer3.num_accepted_scores() == 4 );
 		TS_ASSERT( annealer3.accepted_scores( 4 ).size() == annealer3.filters().size() );
 		TS_ASSERT_DELTA( annealer3.last_accepted_scores()[1], num_trp->report_sm( pose ), 1e-6 );

@@ -47,7 +47,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
@@ -68,9 +68,9 @@
 //#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -97,8 +97,7 @@ using namespace protocols;
 using namespace protocols::moves;
 using namespace protocols::minimization_packing;
 using namespace protocols::rigid;
-using namespace protocols::toolbox;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
 using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

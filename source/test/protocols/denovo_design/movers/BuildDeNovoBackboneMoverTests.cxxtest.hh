@@ -28,7 +28,7 @@
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
 #include <protocols/denovo_design/movers/BuildDeNovoBackboneMover.hh>
 #include <protocols/fldsgn/filters/SecondaryStructureFilter.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 // Core Headers
 #include <core/io/pdb/build_pose_as_is.hh>
@@ -106,7 +106,7 @@ public:
 	void test_symmetry()
 	{
 		using core::pose::Pose;
-		using protocols::simple_moves::symmetry::SetupForSymmetryMover;
+		using protocols::symmetry::SetupForSymmetryMover;
 
 		Pose pose = create_trpcage_ideal_pose();
 		Pose const input_pose = pose;

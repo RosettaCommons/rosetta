@@ -133,7 +133,7 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
-#include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
+#include <protocols/pose_metric_calculators/ClashCountCalculator.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
@@ -154,7 +154,7 @@
 #include <protocols/evaluation/util.hh>
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
-#include <protocols/loops/loop_closure/ccd/FASelectSlidingWindowLoopClosure.hh>
+#include <protocols/relax/loop_closure/FASelectSlidingWindowLoopClosure.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Exceptions.hh>
 #include <protocols/filters/Filter.hh>
@@ -381,7 +381,7 @@ void AbrelaxApplication::setup() {
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator_);
 
 	core::pose::metrics::PoseMetricCalculatorOP
-		clash_calculator( new protocols::toolbox::pose_metric_calculators::ClashCountCalculator( 2.0 ) );
+		clash_calculator( new protocols::pose_metric_calculators::ClashCountCalculator( 2.0 ) );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "clashes", clash_calculator );
 	add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "total" ) ) );
 	add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "bb" ) ) );

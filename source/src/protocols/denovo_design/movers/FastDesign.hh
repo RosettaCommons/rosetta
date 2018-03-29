@@ -24,7 +24,7 @@
 // Protocol headers
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.fwd.hh>
+#include <protocols/task_operations/DesignAroundOperation.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
 // Core headers

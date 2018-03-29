@@ -31,7 +31,7 @@
 
 #include <core/scoring/constraints/util.hh>
 #include <protocols/jobdist/not_universal_main.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -64,7 +64,7 @@ main( int argc, char * argv [] ) {
 		protocols::moves::MoverOP protocol = generate_relax_from_cmd();
 		if ( option[ constraints::cst_fa_file ].user() ) {
 			SequenceMoverOP seqmov( new SequenceMover );
-			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+			protocols::constraint_movers::ConstraintSetMoverOP loadCsts( new protocols::constraint_movers::ConstraintSetMover );
 			loadCsts->constraint_file( get_cst_fa_file_option() );
 			seqmov->add_mover( loadCsts );
 			seqmov->add_mover( protocol );

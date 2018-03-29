@@ -10,7 +10,7 @@
 /// @author Chris King (chrisk1@uw.edu)
 //#include <algorithm >
 #include <protocols/design_opt/PointMutationCalculator.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
 #include <iostream>
@@ -308,7 +308,7 @@ PointMutationCalculator::mutate_and_relax(
 	//make mut_res task factory by copying input task_factory,
 	//then restrict to mutates resi to target_aa and repack 8A shell
 	core::pack::task::TaskFactoryOP mut_res( new core::pack::task::TaskFactory( *task_factory() ) );
-	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op( new protocols::toolbox::task_operations::DesignAroundOperation );
+	protocols::task_operations::DesignAroundOperationOP repack_around_op( new protocols::task_operations::DesignAroundOperation );
 	repack_around_op->design_shell( design_shell_ ); //neg radius insures no designing nbrs, positive will do so!
 	repack_around_op->repack_shell( repack_shell_ );
 	repack_around_op->allow_design( true ); //because we still want to design resi
@@ -364,7 +364,7 @@ PointMutationCalculator::mutate_and_relax(
 	//make mut_res task factory by copying input task_factory,
 	//then restrict to mutates resi to target_aa and repack 8A shell
 	core::pack::task::TaskFactoryOP mut_res( new core::pack::task::TaskFactory( *task_factory() ) );
-	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op( new protocols::toolbox::task_operations::DesignAroundOperation );
+	protocols::task_operations::DesignAroundOperationOP repack_around_op( new protocols::task_operations::DesignAroundOperation );
 	repack_around_op->design_shell( design_shell_ ); //neg radius insures no designing nbrs
 	repack_around_op->repack_shell( repack_shell_ );
 	repack_around_op->allow_design( true ); //because we still want to design resi

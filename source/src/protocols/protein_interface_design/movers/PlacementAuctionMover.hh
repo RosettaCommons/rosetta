@@ -31,14 +31,14 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-class PlacementAuctionMover : public simple_moves::DesignRepackMover
+class PlacementAuctionMover : public calc_taskop_movers::DesignRepackMover
 {
 public:
 	typedef std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > StubSetStubPos;

@@ -29,7 +29,7 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
@@ -379,7 +379,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using namespace core::conformation::symmetry;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 
 	debug_assert( core::pose::symmetry::is_symmetric( pose ));
 	auto & symm_conf (

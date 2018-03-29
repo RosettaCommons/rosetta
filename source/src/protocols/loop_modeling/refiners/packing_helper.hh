@@ -21,7 +21,7 @@
 
 // Protocol headers
 #include <protocols/loops/Loops.hh>
-#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
+#include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 
 namespace protocols {
 namespace loop_modeling {
@@ -35,8 +35,8 @@ bool packing_helper(
 
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using protocols::toolbox::task_operations::RestrictToLoopsAndNeighbors;
-	using protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP;
+	using protocols::simple_task_operations::RestrictToLoopsAndNeighbors;
+	using protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP;
 
 	// See if this refiner was given a custom task factory.
 

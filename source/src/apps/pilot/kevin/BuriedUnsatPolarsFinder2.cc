@@ -16,9 +16,9 @@
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 
 #include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -60,7 +60,7 @@ using namespace core::conformation;
 using namespace chemical;
 using namespace utility;
 using namespace core::pose::metrics;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
 
 typedef numeric::xyzVector< core::Real > Vector;
 

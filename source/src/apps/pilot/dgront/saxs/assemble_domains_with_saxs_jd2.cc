@@ -51,7 +51,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/moves/CompositionMover.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <devel/init.hh>
 
@@ -78,53 +78,53 @@
 
 int
 main( int argc, char * argv [] ) {
-    try {
-	using namespace protocols;
-	using namespace protocols::domain_assembly;
-	using namespace protocols::jd2;
-	using namespace protocols::moves;
-	using namespace protocols::relax;
-	using namespace protocols::docking;
-	using namespace protocols::docking::stateless;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::scoring;
+	try {
+		using namespace protocols;
+		using namespace protocols::domain_assembly;
+		using namespace protocols::jd2;
+		using namespace protocols::moves;
+		using namespace protocols::relax;
+		using namespace protocols::docking;
+		using namespace protocols::docking::stateless;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::scoring;
 
-	devel::init(argc, argv);
-	CompositionMoverOP container( new CompositionMover );
+		devel::init(argc, argv);
+		CompositionMoverOP container( new CompositionMover );
 
-	core::scoring::ScoreFunctionOP score3 = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-	score3->set_weight( core::scoring::saxs_score, 1.0 );
+		core::scoring::ScoreFunctionOP score3 = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+		score3->set_weight( core::scoring::saxs_score, 1.0 );
 
-	// docking
-	container->add_mover( new AddAssemblyConstraints );
-	DockingProtocolOP docking = new SaneDockingProtocol;
-//	DockingLowResOP docking = new DockingLowRes( score3 );
-	docking->set_lowres_scorefxn( score3 );
-	docking->set_highres_scorefxn( scorefxn );
-//	docking->set_fullatom( false );
-	container->add_mover( docking );
+		// docking
+		container->add_mover( new AddAssemblyConstraints );
+		DockingProtocolOP docking = new SaneDockingProtocol;
+		// DockingLowResOP docking = new DockingLowRes( score3 );
+		docking->set_lowres_scorefxn( score3 );
+		docking->set_highres_scorefxn( scorefxn );
+		// docking->set_fullatom( false );
+		container->add_mover( docking );
 
-	// loop remodeling
-	if ( option[ OptionKeys::loops::frag_files ].user() ) {
-		using core::Size;
-		Size const min_loop_size( option[ cm::min_loop_size ]() );
-		utility::vector1< core::fragment::FragSetOP > frag_libs;
-		protocols::loops::read_loop_fragments( frag_libs );
-		MoverOP builder(
-			new AssembleLinkerMover( "quick_ccd", min_loop_size, frag_libs )
-		);
-		container->add_mover(builder);
-		container->add_mover( new FastRelax( get_score_function() ) );
-	}
+		// loop remodeling
+		if ( option[ OptionKeys::loops::frag_files ].user() ) {
+			using core::Size;
+			Size const min_loop_size( option[ cm::min_loop_size ]() );
+			utility::vector1< core::fragment::FragSetOP > frag_libs;
+			protocols::loops::read_loop_fragments( frag_libs );
+			MoverOP builder(
+				new AssembleLinkerMover( "quick_ccd", min_loop_size, frag_libs )
+			);
+			container->add_mover(builder);
+			container->add_mover( new FastRelax( get_score_function() ) );
+		}
 
-	// execution
-	JobDistributor::get_instance()->go(container);
-    } catch (utility::excn::Exception const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
+		// execution
+		JobDistributor::get_instance()->go(container);
+	} catch (utility::excn::Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-                                  }
-        return 0;
+	}
+	return 0;
 
 }

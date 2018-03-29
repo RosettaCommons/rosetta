@@ -26,7 +26,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/types.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+#include <protocols/task_operations/RestrictToNeighborhoodOperation.hh>
 
 
 //Basic Headers
@@ -534,8 +534,8 @@ RRReporterSQLite::report_predicted_features(
 	// TODO: Make a parameter
 	core::Real dist_cutoff(10);
 
-	toolbox::task_operations::RestrictToNeighborhoodOperationOP
-		restrict_to_neighborhood_operation( new toolbox::task_operations::RestrictToNeighborhoodOperation(
+	task_operations::RestrictToNeighborhoodOperationOP
+		restrict_to_neighborhood_operation( new task_operations::RestrictToNeighborhoodOperation(
 		central_residues,dist_cutoff) );
 	std::string neighborhood_calculator_name(
 		restrict_to_neighborhood_operation->get_calculator_name());

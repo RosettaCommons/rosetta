@@ -44,7 +44,7 @@
 #include <utility/io/izstream.hh>
 
 //Auto Headers
-#include <protocols/simple_filters/DdgFilter.hh>
+#include <protocols/simple_ddg/DdgFilter.hh>
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #undef interface
@@ -121,7 +121,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 		/*
 		Real const threshold = 100000; // dummy threshold
 		Size const repeats = 3;
-		protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( threshold, docking_scorefxn, rb_jump, repeats );
+		protocols::simple_ddg::DdgFilter ddg = protocols::simple_ddg::DdgFilter( threshold, docking_scorefxn, rb_jump, repeats );
 		interaction_energy += ddg.compute( pose );
 		*/
 		core::pose::Pose unbound_pose = complex_pose;

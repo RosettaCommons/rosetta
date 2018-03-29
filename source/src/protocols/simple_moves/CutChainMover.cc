@@ -54,7 +54,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/scoring/ScoreFunction.hh>

@@ -19,7 +19,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -45,7 +45,7 @@ main( int argc, char *argv[] )
 		pose_from_file( in_pose, PATH + "protein_with_glycans.pdb" , core::import_pose::PDB_file);
 		cout << in_pose << endl;
 
-		protocols::simple_moves::ConstraintSetMover constraint_setter;
+		protocols::constraint_movers::ConstraintSetMover constraint_setter;
 		constraint_setter.constraint_file( PATH + "glycan_to_protein_and_glycan.cst" );
 		constraint_setter.apply( in_pose );
 

@@ -29,7 +29,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -71,7 +71,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.SaveAndRetri
 // XRW TEMP }
 
 SaveAndRetrieveSidechains::SaveAndRetrieveSidechains() :
-	simple_moves::DesignRepackMover( SaveAndRetrieveSidechains::mover_name() )
+	calc_taskop_movers::DesignRepackMover( SaveAndRetrieveSidechains::mover_name() )
 {
 	allsc_ = false; // default
 	jumpid_ = 1; //default
@@ -89,7 +89,7 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
 	bool const ensure_variant_matching /*=false*/,
 	core::Size const jumpid /*=1*/
 ) :
-	simple_moves::DesignRepackMover( SaveAndRetrieveSidechains::mover_name() ),
+	calc_taskop_movers::DesignRepackMover( SaveAndRetrieveSidechains::mover_name() ),
 	allsc_( allsc ),
 	ensure_variant_matching_(ensure_variant_matching),
 	jumpid_( jumpid )

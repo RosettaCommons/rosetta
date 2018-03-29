@@ -53,7 +53,7 @@
 // Protocol Includes
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/simple_moves/MonteCarloInterface.hh>
+#include <protocols/monte_carlo/MonteCarloInterface.hh>
 
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -65,7 +65,7 @@
 #include <protocols/docking/util.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 
 // Numeric Includes
 #include <numeric/random/random.hh>
@@ -99,6 +99,7 @@ using namespace protocols::grafting;
 using namespace protocols::antibody::clusters;
 using namespace protocols::antibody::constraints;
 using namespace protocols::simple_moves;
+using namespace protocols::monte_carlo;
 using namespace protocols::moves;
 using namespace core::pack::task;
 using namespace core::pack::task::operation;
@@ -1140,7 +1141,7 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 		TR << "Setting up DockDesign TF" << std::endl;
 		dock_design_tf = seq_design_creator_->generate_tf_seq_design( pose );
 		seq_design_creator_->disable_design_for_non_designing_cdrs( dock_design_tf, pose );
-		dock_design_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( 1, interface_dis_) ));
+		dock_design_tf->push_back(TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( 1, interface_dis_) ));
 	}
 	//TR <<"DockDesign task" << std::endl;
 	//dock_design_tf->create_task_and_apply_taskoperations(pose)->show(TR);

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/simple_filters/RotamerBoltzmannWeight2.cxxtest.hh
+/// @file   protocols/calc_taskop_filters/RotamerBoltzmannWeight2.cxxtest.hh
 /// @brief  test for RotamerBoltzmannWeight2 filter
 /// @author Tom Linsky ( tlinsky at uw dot edu )
 
@@ -18,8 +18,8 @@
 
 // Protocol Headers
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight2.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight2.hh>
 #include <protocols/toolbox/EnergyLandscapeEvaluator.hh>
 
 // Core Headers
@@ -37,7 +37,7 @@
 // C++ Headers
 
 
-static basic::Tracer TR("protocols.simple_filters.RotamerBoltzmannWeight2.cxxtest.hh");
+static basic::Tracer TR("protocols.calc_taskop_filters.RotamerBoltzmannWeight2.cxxtest.hh");
 
 // --------------- Test Class --------------- //
 
@@ -53,7 +53,7 @@ public:
 	}
 
 	void test_calculator_ids() {
-		using namespace protocols::simple_filters;
+		using namespace protocols::calc_taskop_filters;
 		RotamerBoltzmannWeight2 rbw;
 		RotamerBoltzmannWeight2 rbw2;
 		TS_ASSERT_DIFFERS( rbw.calculator_id(), rbw2.calculator_id() );
@@ -68,7 +68,7 @@ public:
 	// lines; for the rbw2_pnear value, it is output right before the TS_ASSERT_EQUALS
 	// statement.
 	void test_rbw2_vs_rbw() {
-		using namespace protocols::simple_filters;
+		using namespace protocols::calc_taskop_filters;
 		using namespace protocols::toolbox;
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();

@@ -23,7 +23,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <core/id/AtomID.hh>
@@ -170,7 +170,7 @@ int main( int argc, char *argv [] )
 		Real dcut = 6.0;
 		bool do_score = option[ score::weights ].user();
 
-		protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+		protocols::constraint_movers::ConstraintSetMoverOP loadCsts( new protocols::constraint_movers::ConstraintSetMover );
 
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 			loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );

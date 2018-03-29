@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/simple_moves/ddG.cxxtest.hh
+/// @file   protocols/simple_ddg/ddG.cxxtest.hh
 /// @brief  test for ddG mover
 /// @author Rocco Moretti (rmoretti@u.washington.edu)
 /// @author Kyle Barlow (kb@kylebarlow.com)
@@ -21,7 +21,7 @@
 // Project Headers
 #include <core/types.hh>
 
-#include <protocols/simple_moves/ddG.hh>
+#include <protocols/simple_ddg/ddG.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -62,7 +62,7 @@ public:
 		StubMultiFilterOP sf( new StubMultiFilter( false ) );
 		sf->push_back( 211.0 ); // Bound
 		sf->push_back( 100 ); // Unbound
-		protocols::simple_moves::ddG ddg_mover(scorefxn_);
+		protocols::simple_ddg::ddG ddg_mover(scorefxn_);
 
 		(*scorefxn_)(*test_dimer_pose_);
 		ddg_mover.filter( sf );
@@ -82,14 +82,14 @@ public:
 
 		prime_Data( data );
 
-		protocols::simple_moves::ddG testmover;
+		protocols::simple_ddg::ddG testmover;
 		TagCOP tag = tagptr_from_string("<ddG name=test chain_num=1 />\n");
 		testmover.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
 
 		TS_ASSERT_EQUALS( testmover.chain_ids().size(), 1 );
 		TS_ASSERT_EQUALS( testmover.chain_ids()[1], 2 );
 
-		protocols::simple_moves::ddG testmover2;
+		protocols::simple_ddg::ddG testmover2;
 		tag = tagptr_from_string("<ddG name=test chain_num=3 />\n");
 		testmover2.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
 
@@ -108,7 +108,7 @@ public:
 		sf->push_back( 100 ); // Unbound
 		filters["sfT99"] = sf;
 
-		protocols::simple_moves::ddG testmover;
+		protocols::simple_ddg::ddG testmover;
 		TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
 		testmover.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
 
@@ -121,7 +121,7 @@ public:
 		StubMultiFilterOP sf( new StubMultiFilter( false ) );
 		sf->push_back( 211.0 ); // Bound
 		sf->push_back( 100 ); // Unbound
-		protocols::simple_moves::ddG ddg_mover(scorefxn_);
+		protocols::simple_ddg::ddG ddg_mover(scorefxn_);
 
 		(*scorefxn_)(*test_monomer_pose_);
 		ddg_mover.filter( sf );
@@ -143,7 +143,7 @@ public:
 		sf->push_back( 100 ); // Unbound
 		filters["sfT99"] = sf;
 
-		protocols::simple_moves::ddG testmover;
+		protocols::simple_ddg::ddG testmover;
 		TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
 		testmover.parse_my_tag( tag, data, filters, movers, *test_monomer_pose_ );
 		testmover.apply( *test_monomer_pose_ );

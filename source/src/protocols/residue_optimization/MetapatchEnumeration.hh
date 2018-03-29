@@ -47,7 +47,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 

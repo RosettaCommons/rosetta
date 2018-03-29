@@ -104,10 +104,10 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupNCSMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
+#include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 #include <protocols/loop_grower/SheetSampler.hh>
 #include <protocols/loop_grower/DensSkeleton.hh>
 
@@ -1237,8 +1237,8 @@ LoopGrower::refine_cycle( core::pose::Pose & refinepose, core::pose::Pose & refi
 
 		// setup task
 		core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-		protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP repackaround( new
-			protocols::toolbox::task_operations::RestrictToLoopsAndNeighbors);
+		protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP repackaround( new
+			protocols::simple_task_operations::RestrictToLoopsAndNeighbors);
 		protocols::loops::LoopsOP pack_core( new protocols::loops::Loops );
 
 		pack_core->add_loop( protocols::loops::Loop( lower_min, upper_min ) );

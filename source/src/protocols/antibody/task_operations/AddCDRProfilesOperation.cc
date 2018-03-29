@@ -21,8 +21,8 @@
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/design/AntibodyDesignEnumManager.hh>
 
-#include <protocols/toolbox/task_operations/ResidueProbDesignOperation.hh>
-#include <protocols/toolbox/task_operations/ConservativeDesignOperation.hh>
+#include <protocols/task_operations/ResidueProbDesignOperation.hh>
+#include <protocols/task_operations/ConservativeDesignOperation.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
 
@@ -46,7 +46,7 @@ namespace task_operations {
 using namespace core::pack::task::operation;
 using namespace protocols::antibody::design;
 using namespace protocols::antibody::clusters;
-using namespace protocols::toolbox::task_operations;
+using namespace protocols::task_operations;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace utility::tag;
@@ -136,7 +136,7 @@ AddCDRProfilesOperation::AddCDRProfilesOperation(AddCDRProfilesOperation const &
 
 
 {
-	using namespace toolbox::task_operations;
+	using namespace task_operations;
 
 	if ( src.ab_info_ ) ab_info_ = AntibodyInfoOP( new AntibodyInfo( *src.ab_info_));
 	if ( src.cons_task_ )  cons_task_ = ConservativeDesignOperationOP( new ConservativeDesignOperation( *src.cons_task_ ));

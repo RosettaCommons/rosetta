@@ -38,7 +38,7 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
+#include <protocols/task_operations/RestrictToInterfaceOperation.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <utility/vector1.functions.hh>
@@ -144,7 +144,7 @@ generate_factory(){
 	TaskFactoryOP task_factory = new TaskFactory();
 
 	//this assumes that the two protein partners are chains 1 and 2 - this is dangerous!!!!
-	task_factory->push_back( new protocols::toolbox::task_operations::RestrictToInterfaceOperation(1, 2));
+	task_factory->push_back( new protocols::task_operations::RestrictToInterfaceOperation(1, 2));
 	task_factory->push_back( new operation::RestrictToRepacking );
 	task_factory->push_back( new operation::InitializeFromCommandline() );
 	//std::cout << "using default TaskFactory ( prevent repacking at metal site, detect interface" << std::endl;

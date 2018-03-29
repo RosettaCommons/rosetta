@@ -203,9 +203,9 @@
 #include <protocols/moves/PyMOLMoverCreator.hh>
 #include <protocols/moves/RampingMoverCreator.hh>
 #include <protocols/moves/FilterReportAsPoseExtraScoresMoverCreator.hh>
-#include <protocols/simple_moves/MonteCarloResetCreator.hh>
+#include <protocols/monte_carlo/MonteCarloResetCreator.hh>
 #include <protocols/simple_moves/AlignChainMoverCreator.hh>
-#include <protocols/simple_moves/ResetBaselineMoverCreator.hh>
+#include <protocols/monte_carlo/ResetBaselineMoverCreator.hh>
 #include <protocols/simple_moves/RingConformationMoverCreator.hh>
 #include <protocols/simple_moves/SimpleThreadingMoverCreator.hh>
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
@@ -285,42 +285,42 @@
 #include <protocols/seeded_abinitio/SeedSetupMoverCreator.hh>
 #include <protocols/seeded_abinitio/SwapSegmentCreator.hh>
 #include <protocols/seeded_abinitio/SegmentHybridizerCreator.hh>
-#include <protocols/simple_moves/AddConstraintsToCurrentConformationMoverCreator.hh>
+#include <protocols/constraint_movers/AddConstraintsToCurrentConformationMoverCreator.hh>
 #include <protocols/simple_moves/AddChainMoverCreator.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>
 #include <protocols/simple_moves/ChangeAndResetFoldTreeMoverCreator.hh>
 #include <protocols/minimization_packing/BoltzmannRotamerMoverCreator.hh>
-#include <protocols/simple_moves/ClearConstraintsMoverCreator.hh>
-#include <protocols/simple_moves/ConsensusDesignMoverCreator.hh>
-#include <protocols/simple_moves/ConstraintSetMoverCreator.hh>
+#include <protocols/constraint_movers/ClearConstraintsMoverCreator.hh>
+#include <protocols/calc_taskop_movers/ConsensusDesignMoverCreator.hh>
+#include <protocols/constraint_movers/ConstraintSetMoverCreator.hh>
 #include <protocols/simple_moves/ContingentAcceptMoverCreator.hh>
 #include <protocols/simple_moves/CoupledMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainsMoverCreator.hh>
-#include <protocols/simple_moves/ddGCreator.hh>
+#include <protocols/simple_ddg/ddGCreator.hh>
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
 #include <protocols/pose_creation/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>
 #include <protocols/simple_moves/FindConsensusSequenceCreator.hh>
-#include <protocols/simple_moves/ForceDisulfidesMoverCreator.hh>
-#include <protocols/simple_moves/GenericMonteCarloMoverCreator.hh>
-#include <protocols/simple_moves/LoadPDBMoverCreator.hh>
+#include <protocols/calc_taskop_movers/ForceDisulfidesMoverCreator.hh>
+#include <protocols/monte_carlo/GenericMonteCarloMoverCreator.hh>
+#include <protocols/pose_creation/LoadPDBMoverCreator.hh>
 #include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>
 #include <protocols/pose_creation/MakePolyXMoverCreator.hh>
 #include <protocols/simple_moves/MembraneTopologyCreator.hh>
-#include <protocols/simple_moves/MergePDBMoverCreator.hh>
+#include <protocols/pose_creation/MergePDBMoverCreator.hh>
 #include <protocols/minimization_packing/MinMoverCreator.hh>
 #include <protocols/minimization_packing/MinPackMoverCreator.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMoverCreator.hh>
-#include <protocols/simple_moves/MonteCarloRecoverCreator.hh>
-#include <protocols/simple_moves/MonteCarloTestCreator.hh>
+#include <protocols/monte_carlo/MonteCarloRecoverCreator.hh>
+#include <protocols/monte_carlo/MonteCarloTestCreator.hh>
 #include <protocols/simple_moves/MSDMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>
 #include <protocols/minimization_packing/PackRotamersMoverCreator.hh>
 #include <protocols/simple_moves/PSSM2BfactorMoverCreator.hh>
-#include <protocols/simple_moves/RepeatPropagationMoverCreator.hh>
-#include <protocols/simple_moves/ResidueTypeConstraintMoverCreator.hh>
+#include <protocols/pose_creation/RepeatPropagationMoverCreator.hh>
+#include <protocols/constraint_movers/ResidueTypeConstraintMoverCreator.hh>
 #include <protocols/simple_moves/ReportEffectivePKACreator.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMoverCreator.hh>
 #include <protocols/minimization_packing/RotamerTrialsMoverCreator.hh>
@@ -350,16 +350,16 @@
 #include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMoverCreator.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbRotamerSidechainMoverCreator.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/DetectSymmetryMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMoverCreator.hh>
+#include <protocols/symmetry/SetupForSymmetryMoverCreator.hh>
+#include <protocols/symmetry/DetectSymmetryMoverCreator.hh>
+#include <protocols/symmetry/SetupNCSMoverCreator.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMoverCreator.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMoverCreator.hh>
 #include <protocols/minimization_packing/symmetry/SymRotamerTrialsMoverCreator.hh>
 #include <protocols/minimization_packing/symmetry/TaskAwareSymMinMoverCreator.hh>
-#include <protocols/toolbox/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
-#include <protocols/toolbox/task_operations/StoreCompoundTaskMoverCreator.hh>
-#include <protocols/toolbox/task_operations/StoreTaskMoverCreator.hh>
+#include <protocols/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
+#include <protocols/task_operations/StoreCompoundTaskMoverCreator.hh>
+#include <protocols/task_operations/StoreTaskMoverCreator.hh>
 #include <protocols/environment/EnvMoverCreator.hh>
 #include <protocols/environment/CoMTrackerCMCreator.hh>
 #include <protocols/environment/ScriptCMCreator.hh>
@@ -974,13 +974,13 @@ public:
 	{ protocols::moves::FilterReportAsPoseExtraScoresMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "FilterReportAsPoseExtraScoresMover" ); }
 
 	void test_protocols_simple_moves_MonteCarloResetCreator_name()
-	{ protocols::simple_moves::MonteCarloResetCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MonteCarloReset" ); }
+	{ protocols::monte_carlo::MonteCarloResetCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MonteCarloReset" ); }
 
 	void test_protocols_simple_moves_AlignChainMoverCreator_name()
 	{ protocols::simple_moves::AlignChainMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AlignChain" ); }
 
 	void test_protocols_simple_moves_ResetBaselineMoverCreator_name()
-	{ protocols::simple_moves::ResetBaselineMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ResetBaseline" ); }
+	{ protocols::monte_carlo::ResetBaselineMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ResetBaseline" ); }
 
 	void test_protocols_simple_moves_RingConformationMoverCreator_name()
 	{ protocols::simple_moves::RingConformationMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RingConformationMover" ); }
@@ -1226,7 +1226,7 @@ public:
 	{ protocols::seeded_abinitio::SegmentHybridizerCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SegmentHybridizer" ); }
 
 	void test_protocols_simple_moves_AddConstraintsToCurrentConformationMoverCreator_name()
-	{ protocols::simple_moves::AddConstraintsToCurrentConformationMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AddConstraintsToCurrentConformationMover" ); }
+	{ protocols::constraint_movers::AddConstraintsToCurrentConformationMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AddConstraintsToCurrentConformationMover" ); }
 
 	void test_protocols_simple_moves_AddChainMoverCreator_name()
 	{ protocols::simple_moves::AddChainMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AddChain" ); }
@@ -1241,13 +1241,13 @@ public:
 	{ protocols::minimization_packing::BoltzmannRotamerMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "BoltzmannRotamerMover" ); }
 
 	void test_protocols_simple_moves_ClearConstraintsMoverCreator_name()
-	{ protocols::simple_moves::ClearConstraintsMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ClearConstraintsMover" ); }
+	{ protocols::constraint_movers::ClearConstraintsMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ClearConstraintsMover" ); }
 
 	void test_protocols_simple_moves_ConsensusDesignMoverCreator_name()
-	{ protocols::simple_moves::ConsensusDesignMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ConsensusDesignMover" ); }
+	{ protocols::calc_taskop_movers::ConsensusDesignMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ConsensusDesignMover" ); }
 
 	void test_protocols_simple_moves_ConstraintSetMoverCreator_name()
-	{ protocols::simple_moves::ConstraintSetMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ConstraintSetMover" ); }
+	{ protocols::constraint_movers::ConstraintSetMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ConstraintSetMover" ); }
 
 	void test_protocols_simple_moves_ContingentAcceptMoverCreator_name()
 	{ protocols::simple_moves::ContingentAcceptMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ContingentAccept" ); }
@@ -1262,7 +1262,7 @@ public:
 	{ protocols::simple_moves::DeleteChainsMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "DeleteChainsMover" ); }
 
 	void test_protocols_simple_moves_ddGCreator_name()
-	{ protocols::simple_moves::ddGCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ddG" ); }
+	{ protocols::simple_ddg::ddGCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ddG" ); }
 
 	void test_protocols_simple_moves_DisulfideInsertionMoverCreator_name()
 	{ protocols::simple_moves::DisulfideInsertionMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "DisulfideInsertion" ); }
@@ -1280,10 +1280,10 @@ public:
 	{ protocols::simple_moves::FindConsensusSequenceCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "FindConsensusSequence" ); }
 
 	void test_protocols_simple_moves_ForceDisulfidesMoverCreator_name()
-	{ protocols::simple_moves::ForceDisulfidesMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ForceDisulfides" ); }
+	{ protocols::calc_taskop_movers::ForceDisulfidesMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ForceDisulfides" ); }
 
 	void test_protocols_simple_moves_GenericMonteCarloMoverCreator_name()
-	{ protocols::simple_moves::GenericMonteCarloMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "GenericMonteCarlo" ); }
+	{ protocols::monte_carlo::GenericMonteCarloMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "GenericMonteCarlo" ); }
 
 	void test_protocols_simple_moves_LoadPDBMoverCreator_name()
 	{ protocols::simple_moves::LoadPDBMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoadPDB" ); }
@@ -1297,8 +1297,8 @@ public:
 	void test_protocols_simple_moves_MembraneTopologyCreator_name()
 	{ protocols::simple_moves::MembraneTopologyCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MembraneTopology" ); }
 
-	void test_protocols_simple_moves_MergePDBMoverCreator_name()
-	{ protocols::simple_moves::MergePDBMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MergePDB" ); }
+	void test_protocols_pose_creation_MergePDBMoverCreator_name()
+	{ protocols::pose_creation::MergePDBMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MergePDB" ); }
 
 	void test_protocols_simple_moves_MinMoverCreator_name()
 	{ protocols::minimization_packing::MinMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MinMover" ); }
@@ -1310,10 +1310,10 @@ public:
 	{ protocols::simple_moves::ModifyVariantTypeMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ModifyVariantType" ); }
 
 	void test_protocols_simple_moves_MonteCarloRecoverCreator_name()
-	{ protocols::simple_moves::MonteCarloRecoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MonteCarloRecover" ); }
+	{ protocols::monte_carlo::MonteCarloRecoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MonteCarloRecover" ); }
 
 	void test_protocols_simple_moves_MonteCarloTestCreator_name()
-	{ protocols::simple_moves::MonteCarloTestCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MonteCarloTest" ); }
+	{ protocols::monte_carlo::MonteCarloTestCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MonteCarloTest" ); }
 
 	void test_protocols_simple_moves_MSDMoverCreator_name()
 	{ protocols::simple_moves::MSDMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MSDMover" ); }
@@ -1331,7 +1331,7 @@ public:
 	{ protocols::simple_moves::RepeatPropagationMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RepeatPropagationMover" ); }
 
 	void test_protocols_simple_moves_ResidueTypeConstraintMoverCreator_name()
-	{ protocols::simple_moves::ResidueTypeConstraintMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ResidueTypeConstraintMover" ); }
+	{ protocols::constraint_movers::ResidueTypeConstraintMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ResidueTypeConstraintMover" ); }
 
 	void test_protocols_simple_moves_ReportEffectivePKACreator_name()
 	{ protocols::simple_moves::ReportEffectivePKACreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ReportEffectivePKA" ); }
@@ -1421,19 +1421,19 @@ public:
 	{ protocols::simple_moves::sidechain_moves::PerturbChiSidechainMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "PerturbChiSidechain" ); }
 
 	void test_protocols_simple_moves_symmetry_ExtractAsymmetricUnitMoverCreator_name()
-	{ protocols::simple_moves::symmetry::ExtractAsymmetricUnitMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ExtractAsymmetricUnit" ); }
+	{ protocols::symmetry::ExtractAsymmetricUnitMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ExtractAsymmetricUnit" ); }
 
 	void test_protocols_simple_moves_symmetry_ExtractAsymmetricPoseMoverCreator_name()
-	{ protocols::simple_moves::symmetry::ExtractAsymmetricPoseMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ExtractAsymmetricPose" ); }
+	{ protocols::symmetry::ExtractAsymmetricPoseMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ExtractAsymmetricPose" ); }
 
 	void test_protocols_simple_moves_symmetry_SetupForSymmetryMoverCreator_name()
-	{ protocols::simple_moves::symmetry::SetupForSymmetryMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SetupForSymmetry" ); }
+	{ protocols::symmetry::SetupForSymmetryMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SetupForSymmetry" ); }
 
 	void test_protocols_simple_moves_symmetry_DetectSymmetryMoverCreator_name()
-	{ protocols::simple_moves::symmetry::DetectSymmetryMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "DetectSymmetry" ); }
+	{ protocols::symmetry::DetectSymmetryMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "DetectSymmetry" ); }
 
 	void test_protocols_simple_moves_symmetry_SetupNCSMoverCreator_name()
-	{ protocols::simple_moves::symmetry::SetupNCSMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SetupNCS" ); }
+	{ protocols::symmetry::SetupNCSMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SetupNCS" ); }
 
 	void test_protocols_simple_moves_symmetry_SymMinMoverCreator_name()
 	{ protocols::minimization_packing::symmetry::SymMinMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SymMinMover" ); }
@@ -1448,13 +1448,13 @@ public:
 	{ protocols::minimization_packing::symmetry::TaskAwareSymMinMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "TaskAwareSymMinMover" ); }
 
 	void test_protocols_toolbox_task_operations_StoreCombinedStoredTasksMoverCreator_name()
-	{ protocols::toolbox::task_operations::StoreCombinedStoredTasksMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "StoreCombinedStoredTasksMover" ); }
+	{ protocols::task_operations::StoreCombinedStoredTasksMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "StoreCombinedStoredTasksMover" ); }
 
 	void test_protocols_toolbox_task_operations_StoreCompoundTaskMoverCreator_name()
-	{ protocols::toolbox::task_operations::StoreCompoundTaskMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "StoreCompoundTaskMover" ); }
+	{ protocols::task_operations::StoreCompoundTaskMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "StoreCompoundTaskMover" ); }
 
 	void test_protocols_toolbox_task_operations_StoreTaskMoverCreator_name()
-	{ protocols::toolbox::task_operations::StoreTaskMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "StoreTaskMover" ); }
+	{ protocols::task_operations::StoreTaskMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "StoreTaskMover" ); }
 
 	void test_protocols_environment_EnvMoverCreator_name()
 	{ protocols::environment::EnvMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Environment" ); }
@@ -2126,13 +2126,13 @@ public:
 	// { protocols::moves::FilterReportAsPoseExtraScoresMoverCreator cr; std::cout << "protocols::moves::FilterReportAsPoseExtraScoresMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_MonteCarloResetCreator()
-	// { protocols::simple_moves::MonteCarloResetCreator cr; std::cout << "protocols::simple_moves::MonteCarloResetCreator " << cr.keyname() << std::endl; }
+	// { protocols::monte_carlo::MonteCarloResetCreator cr; std::cout << "protocols::monte_carlo::MonteCarloResetCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_AlignChainMoverCreator()
 	// { protocols::simple_moves::AlignChainMoverCreator cr; std::cout << "protocols::simple_moves::AlignChainMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ResetBaselineMoverCreator()
-	// { protocols::simple_moves::ResetBaselineMoverCreator cr; std::cout << "protocols::simple_moves::ResetBaselineMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::monte_carlo::ResetBaselineMoverCreator cr; std::cout << "protocols::monte_carlo::ResetBaselineMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_RingConformationMoverCreator()
 	// { protocols::simple_moves::RingConformationMoverCreator cr; std::cout << "protocols::simple_moves::RingConformationMoverCreator " << cr.keyname() << std::endl; }
@@ -2381,7 +2381,7 @@ public:
 	// { protocols::seeded_abinitio::SegmentHybridizerCreator cr; std::cout << "protocols::seeded_abinitio::SegmentHybridizerCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_AddConstraintsToCurrentConformationMoverCreator()
-	// { protocols::simple_moves::AddConstraintsToCurrentConformationMoverCreator cr; std::cout << "protocols::simple_moves::AddConstraintsToCurrentConformationMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::constraint_movers::AddConstraintsToCurrentConformationMoverCreator cr; std::cout << "protocols::simple_moves::AddConstraintsToCurrentConformationMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_AddChainMoverCreator()
 	// { protocols::simple_moves::AddChainMoverCreator cr; std::cout << "protocols::simple_moves::AddChainMoverCreator " << cr.keyname() << std::endl; }
@@ -2396,13 +2396,13 @@ public:
 	// { protocols::minimization_packing::BoltzmannRotamerMoverCreator cr; std::cout << "protocols::minimization_packing::BoltzmannRotamerMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ClearConstraintsMoverCreator()
-	// { protocols::simple_moves::ClearConstraintsMoverCreator cr; std::cout << "protocols::simple_moves::ClearConstraintsMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::constraint_movers::ClearConstraintsMoverCreator cr; std::cout << "protocols::simple_moves::ClearConstraintsMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ConsensusDesignMoverCreator()
-	// { protocols::simple_moves::ConsensusDesignMoverCreator cr; std::cout << "protocols::simple_moves::ConsensusDesignMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::calc_taskop_movers::ConsensusDesignMoverCreator cr; std::cout << "protocols::calc_taskop_movers::ConsensusDesignMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ConstraintSetMoverCreator()
-	// { protocols::simple_moves::ConstraintSetMoverCreator cr; std::cout << "protocols::simple_moves::ConstraintSetMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::constraint_movers::ConstraintSetMoverCreator cr; std::cout << "protocols::constraint_movers::ConstraintSetMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ContingentAcceptMoverCreator()
 	// { protocols::simple_moves::ContingentAcceptMoverCreator cr; std::cout << "protocols::simple_moves::ContingentAcceptMoverCreator " << cr.keyname() << std::endl; }
@@ -2417,7 +2417,7 @@ public:
 	// { protocols::simple_moves::DeleteChainsMoverCreator cr; std::cout << "protocols::simple_moves::DeleteChainsMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ddGCreator()
-	// { protocols::simple_moves::ddGCreator cr; std::cout << "protocols::simple_moves::ddGCreator " << cr.keyname() << std::endl; }
+	// { protocols::simple_ddg::ddGCreator cr; std::cout << "protocols::simple_ddg::ddGCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_DisulfideInsertionMoverCreator()
 	// { protocols::simple_moves::DisulfideInsertionMoverCreator cr; std::cout << "protocols::simple_moves::DisulfideInsertionMoverCreator " << cr.keyname() << std::endl; }
@@ -2438,10 +2438,10 @@ public:
 	// { protocols::simple_moves::FindConsensusSequenceCreator cr; std::cout << "protocols::simple_moves::FindConsensusSequenceCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ForceDisulfidesMoverCreator()
-	// { protocols::simple_moves::ForceDisulfidesMoverCreator cr; std::cout << "protocols::simple_moves::ForceDisulfidesMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::calc_taskop_movers::ForceDisulfidesMoverCreator cr; std::cout << "protocols::calc_taskop_movers::ForceDisulfidesMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_GenericMonteCarloMoverCreator()
-	// { protocols::simple_moves::GenericMonteCarloMoverCreator cr; std::cout << "protocols::simple_moves::GenericMonteCarloMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::monte_carlo::GenericMonteCarloMoverCreator cr; std::cout << "protocols::monte_carlo::GenericMonteCarloMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_LoadPDBMoverCreator()
 	// { protocols::simple_moves::LoadPDBMoverCreator cr; std::cout << "protocols::simple_moves::LoadPDBMoverCreator " << cr.keyname() << std::endl; }
@@ -2468,10 +2468,10 @@ public:
 	// { protocols::simple_moves::ModifyVariantTypeMoverCreator cr; std::cout << "protocols::simple_moves::ModifyVariantTypeMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_MonteCarloRecoverCreator()
-	// { protocols::simple_moves::MonteCarloRecoverCreator cr; std::cout << "protocols::simple_moves::MonteCarloRecoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::monte_carlo::MonteCarloRecoverCreator cr; std::cout << "protocols::monte_carlo::MonteCarloRecoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_MonteCarloTestCreator()
-	// { protocols::simple_moves::MonteCarloTestCreator cr; std::cout << "protocols::simple_moves::MonteCarloTestCreator " << cr.keyname() << std::endl; }
+	// { protocols::monte_carlo::MonteCarloTestCreator cr; std::cout << "protocols::monte_carlo::MonteCarloTestCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_MSDMoverCreator()
 	// { protocols::simple_moves::MSDMoverCreator cr; std::cout << "protocols::simple_moves::MSDMoverCreator " << cr.keyname() << std::endl; }
@@ -2489,7 +2489,7 @@ public:
 	// { protocols::simple_moves::RepeatPropagationMoverCreator cr; std::cout << "protocols::simple_moves::RepeatPropagationMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ResidueTypeConstraintMoverCreator()
-	// { protocols::simple_moves::ResidueTypeConstraintMoverCreator cr; std::cout << "protocols::simple_moves::ResidueTypeConstraintMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::constraint_movers::ResidueTypeConstraintMoverCreator cr; std::cout << "protocols::simple_moves::ResidueTypeConstraintMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_ReportEffectivePKACreator()
 	// { protocols::simple_moves::ReportEffectivePKACreator cr; std::cout << "protocols::simple_moves::ReportEffectivePKACreator " << cr.keyname() << std::endl; }
@@ -2579,19 +2579,19 @@ public:
 	// { protocols::simple_moves::sidechain_moves::PerturbChiSidechainMoverCreator cr; std::cout << "protocols::simple_moves::sidechain_moves::PerturbChiSidechainMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_symmetry_ExtractAsymmetricUnitMoverCreator()
-	// { protocols::simple_moves::symmetry::ExtractAsymmetricUnitMoverCreator cr; std::cout << "protocols::simple_moves::symmetry::ExtractAsymmetricUnitMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::symmetry::ExtractAsymmetricUnitMoverCreator cr; std::cout << "protocols::symmetry::ExtractAsymmetricUnitMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_symmetry_ExtractAsymmetricPoseMoverCreator()
-	// { protocols::simple_moves::symmetry::ExtractAsymmetricPoseMoverCreator cr; std::cout << "protocols::simple_moves::symmetry::ExtractAsymmetricPoseMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::symmetry::ExtractAsymmetricPoseMoverCreator cr; std::cout << "protocols::symmetry::ExtractAsymmetricPoseMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_symmetry_SetupForSymmetryMoverCreator()
-	// { protocols::simple_moves::symmetry::SetupForSymmetryMoverCreator cr; std::cout << "protocols::simple_moves::symmetry::SetupForSymmetryMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::symmetry::SetupForSymmetryMoverCreator cr; std::cout << "protocols::symmetry::SetupForSymmetryMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_symmetry_DetectSymmetryMoverCreator()
-	// { protocols::simple_moves::symmetry::DetectSymmetryMoverCreator cr; std::cout << "protocols::simple_moves::symmetry::DetectSymmetryMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::symmetry::DetectSymmetryMoverCreator cr; std::cout << "protocols::symmetry::DetectSymmetryMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_symmetry_SetupNCSMoverCreator()
-	// { protocols::simple_moves::symmetry::SetupNCSMoverCreator cr; std::cout << "protocols::simple_moves::symmetry::SetupNCSMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::symmetry::SetupNCSMoverCreator cr; std::cout << "protocols::symmetry::SetupNCSMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_simple_moves_symmetry_SymMinMoverCreator()
 	// { protocols::minimization_packing::symmetry::SymMinMoverCreator cr; std::cout << "protocols::minimization_packing::symmetry::SymMinMoverCreator " << cr.keyname() << std::endl; }
@@ -2606,13 +2606,13 @@ public:
 	// { protocols::minimization_packing::symmetry::TaskAwareSymMinMoverCreator cr; std::cout << "protocols::minimization_packing::symmetry::TaskAwareSymMinMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_toolbox_task_operations_StoreCombinedStoredTasksMoverCreator()
-	// { protocols::toolbox::task_operations::StoreCombinedStoredTasksMoverCreator cr; std::cout << "protocols::toolbox::task_operations::StoreCombinedStoredTasksMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::task_operations::StoreCombinedStoredTasksMoverCreator cr; std::cout << "protocols::task_operations::StoreCombinedStoredTasksMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_toolbox_task_operations_StoreCompoundTaskMoverCreator()
-	// { protocols::toolbox::task_operations::StoreCompoundTaskMoverCreator cr; std::cout << "protocols::toolbox::task_operations::StoreCompoundTaskMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::task_operations::StoreCompoundTaskMoverCreator cr; std::cout << "protocols::task_operations::StoreCompoundTaskMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_toolbox_task_operations_StoreTaskMoverCreator()
-	// { protocols::toolbox::task_operations::StoreTaskMoverCreator cr; std::cout << "protocols::toolbox::task_operations::StoreTaskMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::task_operations::StoreTaskMoverCreator cr; std::cout << "protocols::task_operations::StoreTaskMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_environment_EnvMoverCreator()
 	// { protocols::environment::EnvMoverCreator cr; std::cout << "protocols::environment::EnvMoverCreator " << cr.keyname() << std::endl; }

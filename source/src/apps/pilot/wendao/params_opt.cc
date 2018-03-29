@@ -46,7 +46,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
 
@@ -92,16 +92,16 @@ utility::vector1< utility::vector1<bool> >
 select_residues_for_evaluation(utility::vector1<core::pose::PoseOP> const &models) {
 	utility::vector1< utility::vector1<bool> > retval( models.size() );
 
-	for (int i=1; i<=models.size(); ++i) {
+	for ( int i=1; i<=models.size(); ++i ) {
 		retval[i].resize( models[i]->size() );
 		core::Size accepted_residues = 0;
 
-		for (int j=1; j<=models[i]->size(); ++j) {
+		for ( int j=1; j<=models[i]->size(); ++j ) {
 			core::Real Bsum=0.0, Bcount=0.0;
 			core::conformation::Residue const &rsd_i = models[i]->residue(j);
 
-			for (Size k=rsd_i.first_sidechain_atom(); k<=rsd_i.nheavyatoms(); ++k) {
-				if (rsd_i.is_virtual(k)) continue;
+			for ( Size k=rsd_i.first_sidechain_atom(); k<=rsd_i.nheavyatoms(); ++k ) {
+				if ( rsd_i.is_virtual(k) ) continue;
 				Real B = models[i]->pdb_info()->temperature( j, k );
 				Bsum += B;
 				Bcount += 1.0;
@@ -109,7 +109,7 @@ select_residues_for_evaluation(utility::vector1<core::pose::PoseOP> const &model
 			Bsum /= Bcount;
 
 			retval[i][j] = (Bsum<=30 && rsd_i.aa() != core::chemical::aa_gly && rsd_i.aa() != core::chemical::aa_ala);
-			if (retval[i][j]) accepted_residues++;
+			if ( retval[i][j] ) accepted_residues++;
 		}
 		std::cerr << "model " << i << " repacking " << accepted_residues << " / " << models[i]->size() << std::endl;
 	}
@@ -121,12 +121,12 @@ void
 sf2multivec( core::scoring::ScoreFunctionCOP scorefxn, Multivec &y, bool islow=false, bool ishigh=false) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	if (!option[rropt::ideal]()) {
+	if ( !option[rropt::ideal]() ) {
 		y.push_back( scorefxn->get_weight( core::scoring::cart_bonded_length ) );
 		y.push_back( scorefxn->get_weight( core::scoring::cart_bonded_angle ) );
 		y.push_back( scorefxn->get_weight( core::scoring::cart_bonded_torsion ) );
 	}
-	if (option[rropt::allwts]()) {
+	if ( option[rropt::allwts]() ) {
 		y.push_back( scorefxn->get_weight( core::scoring::fa_dun ) );
 		y.push_back( scorefxn->get_weight( core::scoring::fa_atr ) );
 		y.push_back( scorefxn->get_weight( core::scoring::fa_rep ) );
@@ -136,7 +136,7 @@ sf2multivec( core::scoring::ScoreFunctionCOP scorefxn, Multivec &y, bool islow=f
 		y.push_back( scorefxn->get_weight( core::scoring::fa_intra_atr ) );
 		y.push_back( scorefxn->get_weight( core::scoring::fa_elec ) );
 		y.push_back( scorefxn->get_weight( core::scoring::hbond_sr_bb ) );  // other hbond 'riding'
-		if (option[rropt::bbmove]()) {
+		if ( option[rropt::bbmove]() ) {
 			y.push_back( scorefxn->get_weight( core::scoring::rama ) );
 			y.push_back( scorefxn->get_weight( core::scoring::omega ) );
 		}
@@ -149,13 +149,13 @@ multivec2sf( Multivec const &vars, core::scoring::ScoreFunctionOP scorefxn ) {
 	using namespace basic::options::OptionKeys;
 	core::Size counter=1;
 
-	if (!option[rropt::ideal]()) {
+	if ( !option[rropt::ideal]() ) {
 		scorefxn->set_weight( core::scoring::cart_bonded_length       , vars[counter++]) ;
 		scorefxn->set_weight( core::scoring::cart_bonded_angle        , vars[counter++]) ;
 		scorefxn->set_weight( core::scoring::cart_bonded_torsion      , vars[counter++]) ;
 	}
 
-	if (option[rropt::allwts]()) {
+	if ( option[rropt::allwts]() ) {
 		scorefxn->set_weight( core::scoring::fa_dun , vars[counter++]) ;
 		scorefxn->set_weight( core::scoring::fa_atr , vars[counter++]) ;
 		scorefxn->set_weight( core::scoring::fa_rep , vars[counter++]) ;
@@ -168,7 +168,7 @@ multivec2sf( Multivec const &vars, core::scoring::ScoreFunctionOP scorefxn ) {
 		scorefxn->set_weight( core::scoring::hbond_lr_bb , vars[counter]) ;
 		scorefxn->set_weight( core::scoring::hbond_bb_sc , vars[counter]) ;
 		scorefxn->set_weight( core::scoring::hbond_sc , vars[counter++]*1.1/1.17) ;
-		if (option[rropt::bbmove]()) {
+		if ( option[rropt::bbmove]() ) {
 			scorefxn->set_weight( core::scoring::rama , vars[counter++]) ;
 			scorefxn->set_weight( core::scoring::omega, vars[counter++]) ;
 		}
@@ -182,7 +182,7 @@ dump_multivec( Multivec const &vars ) {
 	using namespace basic::options::OptionKeys;
 
 	std::cerr << "V[" << vars[1];
-	for (int i=2; i<=vars.size(); ++i) {
+	for ( int i=2; i<=vars.size(); ++i ) {
 		std::cerr << "," << vars[i];
 	}
 	std::cerr << "]";
@@ -192,10 +192,10 @@ dump_multivec( Multivec const &vars ) {
 
 void
 do_rtmin(
-		core::scoring::ScoreFunction const &sf,
-		core::pack::task::PackerTask const &packer_task,
-		core::pose::Pose const &pose, core::Real &rr_score,
-		core::Real &abs_rr_score ) {
+	core::scoring::ScoreFunction const &sf,
+	core::pack::task::PackerTask const &packer_task,
+	core::pose::Pose const &pose, core::Real &rr_score,
+	core::Real &abs_rr_score ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using core::chemical::aa_unk;
@@ -214,12 +214,12 @@ do_rtmin(
 
 	rr_score=0;
 	abs_rr_score=0;
-	for( core::Size ii = 1; ii <= pose.size(); ++ii ){
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 		if ( !pose.residue(ii).is_polymer() ) continue;
 
 		one_res_task->temporarily_set_pack_residue( ii, true );
-	    if ( ! packer_task.include_current( ii ) ) {
+		if ( ! packer_task.include_current( ii ) ) {
 			core::pack::rotamer_set::RotamerSetFactory rsf;
 			core::pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( working_pose.residue( ii ) ));
 			rotset->set_resid( ii );
@@ -232,7 +232,7 @@ do_rtmin(
 		}
 
 		rtmin.rtmin( working_pose, sf, one_res_task );
-/*
+		/*
 		utility::vector1 <core::Real> &scores = rtmin.get_scores(1);
 		utility::vector1 <utility::vector1 <core::Real> > &rots = rtmin.get_rotamers(1);
 
@@ -242,7 +242,7 @@ do_rtmin(
 
 		core::Real minscore=1e30;
 		for (core::Size jj=1; jj<=nrots; ++jj) {
-			minscore = std::min( scores[jj], minscore );
+		minscore = std::min( scores[jj], minscore );
 		}
 
 		// find closest rotamer
@@ -252,30 +252,30 @@ do_rtmin(
 		core::Real best_chidiff=0;
 		core::conformation::Residue const &res_ref = pose.residue(ii);
 		for (core::Size jj=1; jj<=nrots; ++jj) {
-			utility::vector1 <core::Real> const &res_rt = rots[jj];
-			core::Real max_chidiff_i=0.0;
-			for ( core::Size chi_index=1; chi_index <= res_ref.nchi(); ++chi_index ) {
-				if ( res_ref.type().chi_2_proton_chi( chi_index ) != 0 ) continue;
-				core::Real chidiff = std::abs(
-						core::pack::dunbrack::subtract_chi_angles( res_ref.chi(chi_index), res_rt[chi_index], res_ref.aa(), chi_index )
-					);
-				max_chidiff_i = std::max( max_chidiff_i, chidiff );
-			}
+		utility::vector1 <core::Real> const &res_rt = rots[jj];
+		core::Real max_chidiff_i=0.0;
+		for ( core::Size chi_index=1; chi_index <= res_ref.nchi(); ++chi_index ) {
+		if ( res_ref.type().chi_2_proton_chi( chi_index ) != 0 ) continue;
+		core::Real chidiff = std::abs(
+		core::pack::dunbrack::subtract_chi_angles( res_ref.chi(chi_index), res_rt[chi_index], res_ref.aa(), chi_index )
+		);
+		max_chidiff_i = std::max( max_chidiff_i, chidiff );
+		}
 
-			// find low-energy rotamer _excluding_ closest
-			//    anything within 20 deg is "right"
-			if (max_chidiff_i<20) {
-				prob_right += exp( -scores[jj]+minscore );
-				best_right = std::min( scores[jj], best_right );
-			} else {
-				best_wrong = std::min( scores[jj], best_wrong );
-			}
-			prob_all += exp( -scores[jj]+minscore );
+		// find low-energy rotamer _excluding_ closest
+		//    anything within 20 deg is "right"
+		if (max_chidiff_i<20) {
+		prob_right += exp( -scores[jj]+minscore );
+		best_right = std::min( scores[jj], best_right );
+		} else {
+		best_wrong = std::min( scores[jj], best_wrong );
+		}
+		prob_all += exp( -scores[jj]+minscore );
 
-			if (scores[jj] < best_all) {
-				best_all = scores[jj];
-				best_chidiff = max_chidiff_i;
-			}
+		if (scores[jj] < best_all) {
+		best_all = scores[jj];
+		best_chidiff = max_chidiff_i;
+		}
 		}
 
 		//rr_score += prob_right / prob_all;
@@ -349,7 +349,7 @@ public:
 #endif
 
 		core::Real absretval=0;
-		for (core::Size i=1; i<= poses_.size(); ++i) {
+		for ( core::Size i=1; i<= poses_.size(); ++i ) {
 			retval += thread_scores[i];
 			absretval += abs_thread_scores[i];
 		}
@@ -368,7 +368,7 @@ public:
 		core::Real H=option[rropt::H]();
 		core::Real score = (*this)(vars);
 
-		for (int i=1; i<=vars.size(); ++i) {
+		for ( int i=1; i<=vars.size(); ++i ) {
 			utility::vector1< core::Real > varsp = vars; varsp[ i ] += H;
 			core::Real offset_score = (*this)(varsp);
 			dE_dvars[i] = ( offset_score - score ) / (H);
@@ -417,13 +417,13 @@ int main( int argc, char * argv [] ) {
 	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1e-12, true, false, false );
 	options.max_iter(option[rropt::maxiter]());
 
-	for (int i=1; i<=option[rropt::ncyc](); ++i) {
+	for ( int i=1; i<=option[rropt::ncyc](); ++i ) {
 		utility::vector1<core::pose::PoseOP> models_i;
 		utility::vector1<std::string> names_i;
 		utility::vector1< utility::vector1<bool> > masks_i;
 
-		if (option[rropt::j]() < models.size()) {
-			for (int j=0; j< option[rropt::j](); ++j) {
+		if ( option[rropt::j]() < models.size() ) {
+			for ( int j=0; j< option[rropt::j](); ++j ) {
 				core::Size modelnum = numeric::random::random_range(1, models.size());
 				core::pose::PoseOP pose_i = new core::pose::Pose( *models[ modelnum ] );
 				models_i.push_back( pose_i );

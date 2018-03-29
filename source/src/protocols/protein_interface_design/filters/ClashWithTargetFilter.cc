@@ -30,7 +30,7 @@
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/simple_filters/DdgFilter.hh>
+#include <protocols/simple_ddg/DdgFilter.hh>
 //#include <protocols/motif_grafting/movers/MotifGraftMover.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
@@ -105,7 +105,7 @@ core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function("empty") );
 	scorefxn->set_weight( core::scoring::fa_atr, 0.8);
 	scorefxn->set_weight( core::scoring::fa_rep, 0.44);
-	protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( clash_score_cutoff_, scorefxn, 1, 1);
+	protocols::simple_ddg::DdgFilter ddg = protocols::simple_ddg::DdgFilter( clash_score_cutoff_, scorefxn, 1, 1);
 
 	core::Real score = ddg.compute( pose_copy );
 	return score;

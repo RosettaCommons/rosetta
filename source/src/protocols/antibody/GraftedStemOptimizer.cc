@@ -32,7 +32,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/moves/PyMOLMover.hh>
 
 
@@ -396,7 +396,7 @@ GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const
 		get_tenA_neighbor_residues(pose, sc_is_packable);
 	}
 
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	using namespace core::pack::task::operation;
 	tf->push_back( TaskOperationCOP( new RestrictToInterface(sc_is_packable) ) );
 

@@ -23,7 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/ligand_docking/LigandDockProtocol.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/simple_moves/ConsensusDesignMover.hh>
+#include <protocols/calc_taskop_movers/ConsensusDesignMover.hh>
 
 #include <basic/Tracer.hh>
 
@@ -135,7 +135,7 @@ EnzdesFixBBProtocol::apply(
 
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::make_consensus_mutations] ) {
 
-		simple_moves::ConsensusDesignMover consensus_mover( create_enzdes_pack_task( pose, false ), scorefxn_ );
+		calc_taskop_movers::ConsensusDesignMover consensus_mover( create_enzdes_pack_task( pose, false ), scorefxn_ );
 		consensus_mover.set_invert_task( true );
 		consensus_mover.set_use_seqprof_constraints( true );
 		consensus_mover.set_sasa_cutoff( 1.0 ); //let's prevent totally buried residues from being redesigned

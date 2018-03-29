@@ -37,7 +37,7 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
@@ -96,7 +96,7 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace core::select::residue_selector;
-		using namespace protocols::simple_moves::symmetry;
+		using namespace protocols::symmetry;
 		devel::init( argc, argv );
 		register_options();
 

@@ -22,7 +22,7 @@
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 // Core Headers
 #include <core/io/silent/SilentFileOptions.hh>
@@ -182,7 +182,7 @@ public:
 
 	void test_symmetry()
 	{
-		using protocols::simple_moves::symmetry::SetupForSymmetryMover;
+		using protocols::symmetry::SetupForSymmetryMover;
 		StructureDataFactory const & factory = *( StructureDataFactory::get_instance() );
 
 		core::pose::Pose pdbpose;

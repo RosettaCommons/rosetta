@@ -20,7 +20,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
+#include <protocols/pose_metric_calculators/MetricValueGetter.hh>
 
 #include <protocols/multistate_design/SingleStateEntityData.hh>
 #include <utility/vector1.hh>
@@ -149,7 +149,7 @@ MultiStateFitnessFunction::num_states( bool pos_neg ) const
 void
 MultiStateFitnessFunction::add_metric_value_getter(
 	std::string const & name,
-	protocols::toolbox::pose_metric_calculators::MetricValueGetter const & metric_value_getter
+	protocols::pose_metric_calculators::MetricValueGetter const & metric_value_getter
 )
 {
 	metric_value_getters_[name] = metric_value_getter;
@@ -158,7 +158,7 @@ MultiStateFitnessFunction::add_metric_value_getter(
 SingleStateOPs &
 MultiStateFitnessFunction::states() { return states_; }
 
-std::map< std::string, protocols::toolbox::pose_metric_calculators::MetricValueGetter > const &
+std::map< std::string, protocols::pose_metric_calculators::MetricValueGetter > const &
 MultiStateFitnessFunction::metric_value_getters() const { return metric_value_getters_; }
 
 } // namespace multistate_design

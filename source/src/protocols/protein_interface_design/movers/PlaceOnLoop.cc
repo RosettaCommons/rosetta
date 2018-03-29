@@ -24,8 +24,8 @@
 #include <basic/Tracer.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/Jump.hh>
-#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
+#include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
+#include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/datacache/DataMap.hh>
@@ -55,7 +55,7 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 #include <basic/options/keys/OptionKeys.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -91,7 +91,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceOnLoop"
 // XRW TEMP }
 
 PlaceOnLoop::PlaceOnLoop() :
-	simple_moves::DesignRepackMover( PlaceOnLoop::mover_name() ),
+	calc_taskop_movers::DesignRepackMover( PlaceOnLoop::mover_name() ),
 	loop_begin_( 0 ), loop_end_( 0 ),
 	hires_scorefxn_( /* NULL */ ), lores_scorefxn_( nullptr ),
 	chain_closing_attempts_( 100 ), host_chain_( 2 ), stub_set_( /* NULL */ ), minimize_toward_stub_( true )
@@ -136,7 +136,7 @@ PlaceOnLoop::minimize_toward_stub( core::pose::Pose & pose ) const
 	}
 	loop_mover::refine::LoopMover_Refine_KIC refine( loops, hires_scorefxn_ );
 	using namespace core::pack::task;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	using core::pack::task::operation::TaskOperationCOP;
 	core::pack::task::TaskFactoryOP tf( new TaskFactory );
 	tf->push_back( TaskOperationCOP( new ProteinInterfaceDesignOperation ) );

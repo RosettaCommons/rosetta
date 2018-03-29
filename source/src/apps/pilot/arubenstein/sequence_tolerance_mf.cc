@@ -16,13 +16,13 @@
 #include <protocols/multistate_design/PackingState.hh>
 #include <protocols/multistate_design/MetricCalculatorFitnessFunction.hh>
 #include <protocols/multistate_design/MultiStateEntity.hh>
-#include <protocols/toolbox/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
+#include <protocols/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
+#include <protocols/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/SurfaceCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/SurfaceCalculator.hh>
+#include <protocols/pose_metric_calculators/MetricValueGetter.hh>
 //#include <devel/mean_field/ResidueDecompositionIntoInterfaceCalculator.hh>
 //#include <devel/mean_field/ResidueDecompositionByTaskCalculator.hh>
 #include <protocols/mean_field/EnergiesByTaskCalculator.hh>
@@ -61,7 +61,7 @@ using namespace protocols::multistate_design;
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
+#include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
 
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/pdb/file_data.hh>
@@ -114,7 +114,7 @@ using namespace task;
 using namespace scoring;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
 
 #include <basic/options/option_macros.hh>
 
@@ -226,7 +226,7 @@ sequence_tolerance_mf_main( void * )
 	}
 	//automatically detect interface residues as basis for fitness function, if fitness_func_detect_interface is set to true
 	if ( option[ mean_field::ga_pack_detect_interface ] ) {
-		protocols::toolbox::task_operations::ProteinInterfaceDesignOperationOP pido( new protocols::toolbox::task_operations::ProteinInterfaceDesignOperation );
+		protocols::task_operations::ProteinInterfaceDesignOperationOP pido( new protocols::task_operations::ProteinInterfaceDesignOperation );
 		pido->modify_after_jump( false );
 		pido->allow_all_aas( true );
 		pido->design_all_aas( true );

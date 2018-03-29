@@ -31,7 +31,7 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
@@ -1087,7 +1087,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	using namespace protocols::simple_moves;
 	using namespace protocols::loops;
 	using namespace protocols::moves;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;

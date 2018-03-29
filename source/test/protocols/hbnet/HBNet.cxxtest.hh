@@ -34,7 +34,7 @@
 #include <protocols/hbnet/HBNet.hh>
 #include <protocols/hbnet/HBNetStapleInterface.hh>
 //#include <protocols/hbnet/HBNet_util.hh>
-//#include <protocols/simple_moves/symmetry/DetectSymmetryMover.hh>
+//#include <protocols/symmetry/DetectSymmetryMover.hh>
 
 static basic::Tracer TR("protocols.HBNet.cxxtest.hh");
 
@@ -60,7 +60,7 @@ public:
 		core::pose::Pose testPose;
 		core::import_pose::pose_from_file( testPose, "protocols/hbnet/SB13.pdb" , core::import_pose::PDB_file);
 
-		//protocols::simple_moves::symmetry::DetectSymmetry detect_symm;
+		//protocols::symmetry::DetectSymmetry detect_symm;
 		//detect_symm.apply(testPose);
 
 		//Create the mover

@@ -25,10 +25,10 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-#include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
-#include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh>
-#include <protocols/toolbox/task_operations/RestrictResiduesToRepackingOperation.hh>
+#include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
+#include <protocols/task_operations/PreventChainFromRepackingOperation.hh>
+#include <protocols/task_operations/PreventResiduesFromRepackingOperation.hh>
+#include <protocols/task_operations/RestrictResiduesToRepackingOperation.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/types.hh>
@@ -159,7 +159,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds (  core::pose::Pose & pose ,
 
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 
 	Size num_chains = pose.conformation().num_chains();
 
@@ -186,7 +186,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds (  core::pose::Pose & pose ,
 	/// disallow specified residues to repack:
 	if ( norepack_res.size() != 0 ) {
 		TR.Debug<<"disallow " << norepack_res.size() << " to repack " <<std::endl;
-		using namespace protocols::toolbox::task_operations;
+		using namespace protocols::task_operations;
 		PreventResiduesFromRepackingOperationOP prfr( new PreventResiduesFromRepackingOperation ) ;
 		prfr->set_residues( norepack_res );
 		tf->push_back( prfr );

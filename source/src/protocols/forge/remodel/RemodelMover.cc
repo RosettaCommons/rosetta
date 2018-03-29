@@ -46,8 +46,8 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/MetricValue.hh>
@@ -114,17 +114,17 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/moves/PyMOLMover.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_filters/DisulfideEntropyFilter.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh> // dihedral constraint
+#include <protocols/symmetry/SetupNCSMover.hh> // dihedral constraint
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/task_operations/RestrictToNeighborhoodOperation.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
@@ -502,8 +502,8 @@ void RemodelMover::apply( Pose & pose ) {
 	using protocols::moves::MS_SUCCESS;
 	using protocols::moves::FAIL_DO_NOT_RETRY;
 	using protocols::moves::FAIL_RETRY;
-	using protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator;
-	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+	using protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator;
+	using protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 	using namespace ObjexxFCL;
 
 #if defined GL_GRAPHICS
@@ -729,7 +729,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 		// only symmetrize here if not in the repeat structure mode. for repeats, stay monomer until repeat generation.
 		if ( option[OptionKeys::symmetry::symmetry_definition].user() && !option[OptionKeys::remodel::repeat_structure].user() )  {
-			simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+			symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 			// Remodel assumes chain ID is ' '
 			//pose::PDBInfoOP pdb_info ( pose.pdb_info() );
@@ -764,7 +764,7 @@ void RemodelMover::apply( Pose & pose ) {
 			// setup calculators
 			pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
 			pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_name(),
-				PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) ) );
+				PoseMetricCalculatorOP( new pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) ) );
 		}
 
 		/*
@@ -887,7 +887,7 @@ void RemodelMover::apply( Pose & pose ) {
 				//safety
 				//pose.remove_constraints();
 
-				protocols::simple_moves::ConstraintSetMoverOP constraint( new protocols::simple_moves::ConstraintSetMover() );
+				protocols::constraint_movers::ConstraintSetMoverOP constraint( new protocols::constraint_movers::ConstraintSetMover() );
 				constraint->apply( pose );
 
 				fullatom_sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
@@ -952,7 +952,7 @@ void RemodelMover::apply( Pose & pose ) {
 						// for now, accept all disulf build, as it is hard enough to do already.  Accept instead of cst filter?
 						// accumulator_.apply(disulf_copy_pose);
 						if ( option[OptionKeys::enzdes::cstfile].user() ) {
-							simple_filters::ScoreTypeFilter const pose_constraint( fullatom_sfx_, atom_pair_constraint, 10 );
+							score_filters::ScoreTypeFilter const pose_constraint( fullatom_sfx_, atom_pair_constraint, 10 );
 							bool CScore(pose_constraint.apply( disulf_copy_pose ));
 							if ( !CScore ) {  // if didn't pass, rebuild
 								continue;
@@ -1007,7 +1007,7 @@ void RemodelMover::apply( Pose & pose ) {
 					// flip residue type set for centroid minimize
 					util::switch_to_residue_type_set( pose, chemical::CENTROID_t, true );
 
-					protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+					protocols::symmetry::SetupNCSMover setup_ncs;
 
 					if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 						//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
@@ -1093,7 +1093,7 @@ void RemodelMover::apply( Pose & pose ) {
 				if ( option[OptionKeys::enzdes::cstfile].user() ||
 						option[OptionKeys::constraints::cst_file].user()
 						) {
-					simple_filters::ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint,option[OptionKeys::remodel::cstfilter] );
+					score_filters::ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint,option[OptionKeys::remodel::cstfilter] );
 					bool CScore(pose_constraint.apply( pose ));
 					if ( !CScore ) {  // if didn't pass, rebuild
 						TR << "built model did not pass constraints test." << std::endl;
@@ -1327,7 +1327,7 @@ void RemodelMover::apply( Pose & pose ) {
 				simple_filters::DisulfideEntropyFilterOP DisulfideEntropy( new simple_filters::DisulfideEntropyFilter() );
 				score = - DisulfideEntropy->compute_residual( *(*it) );
 			} else {
-				simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100 );
+				score_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100 );
 				score = pose_total_score.compute( *(*it) );
 			}
 
@@ -1349,7 +1349,7 @@ void RemodelMover::apply( Pose & pose ) {
 	// setup calculators
 	pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_name(),
-		PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) ) );
+		PoseMetricCalculatorOP( new pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) ) );
 
 	// if we've gotten to this point, then the structure has been built properly
 	set_last_move_status( MS_SUCCESS );
@@ -1360,14 +1360,14 @@ void RemodelMover::apply( Pose & pose ) {
 
 	pose::metrics::CalculatorFactory::Instance().register_calculator(
 		loops_buns_polar_calc_name(),
-		PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", manager_.union_of_intervals_containing_undefined_positions() ) )
+		PoseMetricCalculatorOP( new simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", manager_.union_of_intervals_containing_undefined_positions() ) )
 	);
 
 	basic::MetricValue< std::set< Size > > loops_neighborhood;
 	pose.metric( neighborhood_calc_name(), "neighbors", loops_neighborhood );
 	pose::metrics::CalculatorFactory::Instance().register_calculator(
 		neighborhood_buns_polar_calc_name(),
-		PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", loops_neighborhood.value() ) )
+		PoseMetricCalculatorOP( new simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", loops_neighborhood.value() ) )
 	);
 
 }
@@ -1469,7 +1469,7 @@ bool RemodelMover::centroid_build( Pose & pose, protocols::forge::build::BuildMa
 				RLM.repeat_generation_with_additional_residue( bufferPose, pose );
 				if ( option[OptionKeys::symmetry::symmetry_definition].user() ) {
 					//symmetrize if both rep+sym are used
-					simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+					symmetry::SetupForSymmetryMover pre_mover;
 					pre_mover.apply(pose);
 					pose.pdb_info()->obsolete(true);
 				}
@@ -1620,7 +1620,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 			RLM.repeat_generation_with_additional_residue( bufferPose, modified_archive_pose );
 			if ( option[OptionKeys::symmetry::symmetry_definition].user() ) {
 				//symmetrize if both rep+sym are used
-				simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+				symmetry::SetupForSymmetryMover pre_mover;
 				pre_mover.apply(modified_archive_pose);
 				modified_archive_pose.pdb_info()->obsolete(true);
 			}
@@ -1716,7 +1716,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	}
 
 
-	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+	protocols::symmetry::SetupNCSMover setup_ncs;
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 
 		// Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
@@ -1815,7 +1815,7 @@ bool RemodelMover::design_refine_cart_relax(
 	using protocols::loops::Loops;
 	using protocols::loops::loop_mover::refine::LoopMover_Refine_CCD;
 	using protocols::minimization_packing::PackRotamersMover;
-	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
+	using protocols::task_operations::RestrictToNeighborhoodOperation;
 	using namespace core::scoring::constraints;
 	using namespace basic::options;
 
@@ -1905,7 +1905,7 @@ bool RemodelMover::design_refine_cart_relax(
 	ConstraintSetOP cst_set_post_built( new ConstraintSet( *pose.constraint_set() ));
 	//}
 
-	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+	protocols::symmetry::SetupNCSMover setup_ncs;
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 
@@ -2009,7 +2009,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 	using namespace core;
 	using namespace protocols;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	using core::pack::task::operation::TaskOperationCOP;
 	using core::pack::task::operation::ResLvlTaskOperationCOP;
 
@@ -2038,7 +2038,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 	// setup the refine TaskFactory
 	pack::task::TaskFactoryOP refine_tf = generic_taskfactory();
-	refine_tf->push_back( TaskOperationCOP( new toolbox::task_operations::RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
+	refine_tf->push_back( TaskOperationCOP( new task_operations::RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
 	refine_tf->push_back( TaskOperationCOP( new pack::task::operation::RestrictToRepacking() ) );
 
 	// safety, clear the energies object
@@ -2142,7 +2142,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 
 	using namespace protocols::forge::methods;
 	using protocols::forge::build::Interval;
-	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
+	using protocols::task_operations::RestrictToNeighborhoodOperation;
 	using core::pack::task::operation::TaskOperationCOP;
 	using pack::task::operation::RestrictToRepacking;
 
@@ -2277,7 +2277,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 /// Only adds the NoRepackDisulfides, IncludeCurrent, and Init from command line ops. ReadResfile is not included.
 ///
 RemodelMover::TaskFactoryOP RemodelMover::generic_taskfactory() {
-	using protocols::toolbox::task_operations::LimitAromaChi2Operation;
+	using protocols::task_operations::LimitAromaChi2Operation;
 
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;

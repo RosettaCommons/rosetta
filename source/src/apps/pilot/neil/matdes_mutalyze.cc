@@ -79,17 +79,17 @@
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
-#include <protocols/simple_moves/ddG.hh>
-#include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
+#include <protocols/simple_ddg/ddG.hh>
+#include <protocols/pose_metric_calculators/RotamerBoltzCalculator.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
 //Auto Headers
 
 static basic::Tracer TR( "matdes::mutalyze" );
@@ -173,7 +173,7 @@ design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utili
 
 	make_symmetric_PackerTask_by_truncation(pose, task);
 	// Get rid of Nobu's rotamers of death
-	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
+	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::task_operations::LimitAromaChi2Operation();
 	limit_rots->apply(pose, *task);
 	// Actually perform design
 	protocols::moves::MoverOP packer = new protocols::minimization_packing::symmetry::SymPackRotamersMover(sf, task);
@@ -213,7 +213,7 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 	// Actually repack.
 	make_symmetric_PackerTask_by_truncation(pose, task);
 	// Get rid of Nobu's rotamers of death
-	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
+	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::task_operations::LimitAromaChi2Operation();
 	limit_rots->apply(pose, *task);
 	protocols::moves::MoverOP packer = new protocols::minimization_packing::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
@@ -465,11 +465,11 @@ average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Size intra_subs, R
 Real
 get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer) {
 
-	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
 	basic::MetricValue< id::AtomID_Map<bool> > bound_Amap;
 	unsat_calc_bound->get("atom_bur_unsat", bound_Amap, bound);
 
-	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
 	basic::MetricValue< id::AtomID_Map<bool> > unbound_Amap;
 	unsat_calc_unbound->get("atom_bur_unsat", unbound_Amap, unbound);
 
@@ -642,7 +642,7 @@ void
 					ScoreFunctionOP scorefxnasymm(  core::scoring::symmetry::asymmetrize_scorefunction(scorefxn) );
 					(*scorefxnasymm)(unbound_pose);
 					for ( Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos ) {
-						protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
+						protocols::calc_taskop_filters::RotamerBoltzmannWeight rbc = protocols::calc_taskop_filters::RotamerBoltzmannWeight();
 						rbc.scorefxn(scorefxnasymm);
 						Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
 						std::cout << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;
@@ -650,7 +650,7 @@ void
 				} else {
 					// intra_subs > 1
 					for ( Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos ) {
-						protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
+						protocols::calc_taskop_filters::RotamerBoltzmannWeight rbc = protocols::calc_taskop_filters::RotamerBoltzmannWeight();
 						rbc.scorefxn(scorefxn);
 						Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
 						TR << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;
@@ -683,7 +683,7 @@ void
 			em *= scorefxn->weights();
 
 			// Calculate the ddG of the monomer in the assembled and unassembled states
-			protocols::simple_moves::ddG ddG_mover2 = protocols::simple_moves::ddG(scorefxn, 1, true);
+			protocols::simple_ddg::ddG ddG_mover2 = protocols::simple_ddg::ddG(scorefxn, 1, true);
 			Real avg_ddG = 0;
 			for ( core::Size i=0; i<3; i++ ) {
 				ddG_mover2.calculate(pose);
@@ -733,7 +733,7 @@ void
 					design(pose_for_ala_scan, scorefxn, pos, id);
 
 					// Calculate the ddG of the monomer in the assembled and unassembled states
-					protocols::simple_moves::ddG ddG_mover3 = protocols::simple_moves::ddG(scorefxn, 1, true);
+					protocols::simple_ddg::ddG ddG_mover3 = protocols::simple_ddg::ddG(scorefxn, 1, true);
 					avg_ddG = 0;
 					for ( core::Size i=0; i<3; i++ ) {
 						ddG_mover3.calculate(pose_for_ala_scan);
@@ -765,7 +765,7 @@ void
 					design(pose_for_revert_scan, scorefxn, pos, id);
 
 					// Calculate the ddG of the monomer in the assembled and unassembled states
-					protocols::simple_moves::ddG ddG_mover4 = protocols::simple_moves::ddG(scorefxn, 1, true);
+					protocols::simple_ddg::ddG ddG_mover4 = protocols::simple_ddg::ddG(scorefxn, 1, true);
 					avg_ddG = 0;
 					for ( core::Size i=0; i<3; i++ ) {
 						ddG_mover4.calculate(pose_for_revert_scan);

@@ -103,17 +103,17 @@
 
 //calculator stuff
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
+#include <protocols/pose_metric_calculators/MetricValueGetter.hh>
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-//#include <protocols/toolbox/pose_metric_calculators/NumberWaterHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/SemiExplicitWaterUnsatisfiedPolarsCalculator.hh>
-//#include <protocols/toolbox/pose_metric_calculators/ExplicitWaterUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-//#include <protocols/toolbox/pose_metric_calculators/SemiExplicitWaterUnsatisfiedHBondsCalculator.hh>
-//#include <protocols/toolbox/pose_metric_calculators/ExplicitWaterUnsatisfiedHBondsCalculator.hh>
-//#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+//#include <protocols/pose_metric_calculators/NumberWaterHBondsCalculator.hh>
+#include <protocols/pose_metric_calculators/SemiExplicitWaterUnsatisfiedPolarsCalculator.hh>
+//#include <protocols/pose_metric_calculators/ExplicitWaterUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+//#include <protocols/pose_metric_calculators/SemiExplicitWaterUnsatisfiedHBondsCalculator.hh>
+//#include <protocols/pose_metric_calculators/ExplicitWaterUnsatisfiedHBondsCalculator.hh>
+//#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedHBondsCalculator.hh>
 
 //utilities
 
@@ -2084,28 +2084,28 @@ void
 register_calcs()
 {
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
+	core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::simple_pose_metric_calculators::NumberHBondsCalculator();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
-	// core::pose::metrics::PoseMetricCalculatorOP num_water_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberWaterHBondsCalculator();
+	// core::pose::metrics::PoseMetricCalculatorOP num_water_hbonds_calculator = new protocols::pose_metric_calculators::NumberWaterHBondsCalculator();
 	// core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_water_hbonds", num_water_hbonds_calculator );
 	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
-	core::pose::metrics::PoseMetricCalculatorOP bur_unsat_calculator = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "sasa", "num_hbonds" );
+	core::pose::metrics::PoseMetricCalculatorOP bur_unsat_calculator = new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "sasa", "num_hbonds" );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "bur_unsat_polars", bur_unsat_calculator );
-	// core::pose::metrics::PoseMetricCalculatorOP exsolv_unsat_calculator = new protocols::toolbox::pose_metric_calculators::ExplicitWaterUnsatisfiedPolarsCalculator( scorefxn );
+	// core::pose::metrics::PoseMetricCalculatorOP exsolv_unsat_calculator = new protocols::pose_metric_calculators::ExplicitWaterUnsatisfiedPolarsCalculator( scorefxn );
 	// core::pose::metrics::CalculatorFactory::Instance().register_calculator( "exsolv_unsat_polars", exsolv_unsat_calculator );
 	if ( option[ byres_data::solv_unsat_calc ] ) {
-		core::pose::metrics::PoseMetricCalculatorOP solv_unsat_calculator = new protocols::toolbox::pose_metric_calculators::SemiExplicitWaterUnsatisfiedPolarsCalculator("num_hbonds", scorefxn );
+		core::pose::metrics::PoseMetricCalculatorOP solv_unsat_calculator = new protocols::pose_metric_calculators::SemiExplicitWaterUnsatisfiedPolarsCalculator("num_hbonds", scorefxn );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "solv_unsat_polars", solv_unsat_calculator );
 	}
 	/*
-	core::pose::metrics::PoseMetricCalculatorOP bur_unsat_hb_calculator = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedHBondsCalculator( "sasa", "num_hbonds" );
+	core::pose::metrics::PoseMetricCalculatorOP bur_unsat_hb_calculator = new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedHBondsCalculator( "sasa", "num_hbonds" );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "bur_unsat_hbonds", bur_unsat_hb_calculator );
-	core::pose::metrics::PoseMetricCalculatorOP exsolv_unsat_hb_calculator = new protocols::toolbox::pose_metric_calculators::ExplicitWaterUnsatisfiedHBondsCalculator("num_hbonds" );
+	core::pose::metrics::PoseMetricCalculatorOP exsolv_unsat_hb_calculator = new protocols::pose_metric_calculators::ExplicitWaterUnsatisfiedHBondsCalculator("num_hbonds" );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "exsolv_unsat_hbonds", exsolv_unsat_hb_calculator );
 	if( option[ byres_data::solv_unsat_calc ] ){
-	core::pose::metrics::PoseMetricCalculatorOP solv_unsat_hb_calculator = new protocols::toolbox::pose_metric_calculators::SemiExplicitWaterUnsatisfiedHBondsCalculator("num_hbonds", scorefxn );
+	core::pose::metrics::PoseMetricCalculatorOP solv_unsat_hb_calculator = new protocols::pose_metric_calculators::SemiExplicitWaterUnsatisfiedHBondsCalculator("num_hbonds", scorefxn );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "solv_unsat_hbonds", solv_unsat_hb_calculator );
 	}
 	*/

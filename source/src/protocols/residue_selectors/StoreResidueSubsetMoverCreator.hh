@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/toolbox/task_operations/StoreResidueSubsetMoverCreator.hh
+/// @file protocols/task_operations/StoreResidueSubsetMoverCreator.hh
 /// @brief This class will create instances of Mover StoreResidueSubsetMover for the MoverFactory
 /// @author Tom Linsky ( tlinsky at uw dot edu )
 

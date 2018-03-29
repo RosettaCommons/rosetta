@@ -44,7 +44,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/util.hh>
-#include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperation.hh>
+#include <protocols/task_operations/RestrictToMoveMapChiOperation.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 
@@ -262,7 +262,7 @@ repack_connection_and_residues_in_movemap(
 	core::pose::Pose & pose, core::scoring::ScoreFunctionCOP fa_scorefxn,
 	core::Size const start, core::Size const end, core::kinematics::MoveMapCOP movemap){
 
-	using protocols::toolbox::task_operations::RestrictToMoveMapChiOperationOP;
+	using protocols::task_operations::RestrictToMoveMapChiOperationOP;
 	using namespace core::pack::task::operation;
 	using namespace core::pack::task;
 	MoveMapOP local =movemap->clone();
@@ -271,7 +271,7 @@ repack_connection_and_residues_in_movemap(
 	local->set_chi(end, true);
 	local->set_chi(end-1, true);
 
-	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local) );
+	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::task_operations::RestrictToMoveMapChiOperation(local) );
 	mm_task_op->set_include_neighbors(false);
 
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
@@ -289,7 +289,7 @@ repack_connection_and_residues_in_movemap_and_piece(
 	core::pose::Pose & pose, core::scoring::ScoreFunctionCOP fa_scorefxn,
 	core::Size const start, core::Size const end, core::kinematics::MoveMapCOP movemap){
 
-	using protocols::toolbox::task_operations::RestrictToMoveMapChiOperationOP;
+	using protocols::task_operations::RestrictToMoveMapChiOperationOP;
 	using namespace core::pack::task::operation;
 	using namespace core::pack::task;
 
@@ -302,7 +302,7 @@ repack_connection_and_residues_in_movemap_and_piece(
 		local->set_chi(i, true);
 	}
 
-	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local) );
+	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::task_operations::RestrictToMoveMapChiOperation(local) );
 	mm_task_op->set_include_neighbors(false);
 
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
@@ -320,7 +320,7 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	core::pose::Pose & pose, ScoreFunctionCOP fa_scorefxn,
 	core::Size const start, core::Size const end, MoveMapCOP movemap, core::Real neighbor_dis)
 {
-	using protocols::toolbox::task_operations::RestrictToMoveMapChiOperationOP;
+	using protocols::task_operations::RestrictToMoveMapChiOperationOP;
 	using namespace core::pack::task::operation;
 	using namespace core::pack::task;
 
@@ -333,7 +333,7 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 		local->set_chi(i, true);
 	}
 
-	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local) );
+	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::task_operations::RestrictToMoveMapChiOperation(local) );
 	mm_task_op->set_include_neighbors(true);
 	mm_task_op->set_cutoff_distance(neighbor_dis);
 

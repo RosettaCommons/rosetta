@@ -31,8 +31,8 @@
 #include <core/pack/rotamer_set/AddResiduesRotamerSetOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <protocols/toolbox/task_operations/LinkResidues.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/task_operations/LinkResidues.hh>
+#include <protocols/symmetry/SetupNCSMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
@@ -366,8 +366,8 @@ LegacyAssemblyConstraintsMover::apply_repeat(
 	TR << "Applying NCS Constraints to a repeating unit of size " << repeat_size << std::endl;
 
 	//Setup non-crystallographic constraints
-	protocols::simple_moves::symmetry::SetupNCSMoverOP ncs_mover (
-		new protocols::simple_moves::symmetry::SetupNCSMover() );
+	protocols::symmetry::SetupNCSMoverOP ncs_mover (
+		new protocols::symmetry::SetupNCSMover() );
 
 	//Create the target
 	std::stringstream source;

@@ -20,14 +20,14 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/ProlineFixMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/util.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility/excn/Exceptions.hh>
@@ -201,7 +201,7 @@ catch ( utility::excn::Exception &excn )  {
 		// add constraints from cmd line
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+			protocols::constraint_movers::ConstraintSetMoverOP loadCsts( new protocols::constraint_movers::ConstraintSetMover );
 			if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 			} else {
@@ -224,7 +224,7 @@ catch ( utility::excn::Exception &excn )  {
 		// set pose for symmetry
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
-			seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
+			seqmov->add_mover( MoverOP( new protocols::symmetry::SetupForSymmetryMover ) );
 			seqmov->add_mover( mover );
 			mover = seqmov;
 		}

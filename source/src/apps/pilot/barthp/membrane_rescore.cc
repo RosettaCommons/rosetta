@@ -116,7 +116,7 @@ main( int argc, char* argv [] )
 		topology.initialize(spanfile);
 
 
-		// core::pose::metrics::PoseMetricCalculatorOP center_normal= new protocols::toolbox::pose_metric_calculators::MembraneCenterNormal;
+		// core::pose::metrics::PoseMetricCalculatorOP center_normal= new protocols::pose_metric_calculators::MembraneCenterNormal;
 		//core::pose::metrics::CalculatorFactory::Instance().register_calculator("MCN",center_normal);
 		//basic::MetricValue<core::Vector> center;
 

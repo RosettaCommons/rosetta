@@ -46,7 +46,7 @@
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -443,7 +443,7 @@ remodel_generic_taskfactory(){
 	using core::pack::task::operation::InitializeFromCommandline;
 	using core::pack::task::operation::NoRepackDisulfides;
 	using core::pack::task::operation::TaskOperationCOP;
-	using protocols::toolbox::task_operations::LimitAromaChi2Operation;
+	using protocols::task_operations::LimitAromaChi2Operation;
 
 	core::pack::task::TaskFactoryOP TF( new core::pack::task::TaskFactory() );
 

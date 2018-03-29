@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/scoring/InterfaceInfo.hh>
@@ -386,7 +386,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	core::pose::Pose input_pose( pose );
 	( *sfxn_ )( input_pose ); // safeguard to ensure Pose is scored before counting h-bonds and checking unsats
 
-	using namespace protocols::toolbox::pose_metric_calculators;
+	using namespace protocols::simple_pose_metric_calculators;
 
 	std::string name_of_hbond_calc = ( generous_hbonds_ ) ? "default" : "legacy";
 

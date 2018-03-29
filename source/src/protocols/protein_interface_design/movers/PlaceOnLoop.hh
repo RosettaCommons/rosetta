@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 
 namespace protocols {
@@ -37,7 +37,7 @@ namespace protein_interface_design {
 namespace movers {
 
 
-class PlaceOnLoop : public simple_moves::DesignRepackMover
+class PlaceOnLoop : public calc_taskop_movers::DesignRepackMover
 {
 public:
 	PlaceOnLoop();

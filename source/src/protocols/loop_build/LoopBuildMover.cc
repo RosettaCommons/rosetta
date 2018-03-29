@@ -45,7 +45,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <protocols/simple_filters/RmsdEvaluator.hh>
@@ -79,7 +79,7 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 
 	// symmetrize start pose & loopfile
 	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-		protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+		protocols::symmetry::SetupForSymmetryMover pre_mover;
 		pre_mover.apply( pose );
 	}
 

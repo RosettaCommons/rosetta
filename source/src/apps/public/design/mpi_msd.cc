@@ -56,9 +56,9 @@
 #include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
 #include <protocols/multistate_design/util.hh>
 
-//#include <protocols/toolbox/pose_metric_calculators/HPatchCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+//#include <protocols/pose_metric_calculators/HPatchCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 // Devel headers
 //This comment brackets a snippet of code that is automatically stripped from the release, usually for semi-forbidden interactions with the unreleased devel library
@@ -325,12 +325,12 @@ public:
 		//end automatic stripping comment
 
 		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "num_hbonds" ) ) {
-			core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
+			core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new protocols::simple_pose_metric_calculators::NumberHBondsCalculator() );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
 		}
 
 		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "unsat" ) ) {
-			core::pose::metrics::PoseMetricCalculatorOP unsat_calculator( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") );
+			core::pose::metrics::PoseMetricCalculatorOP unsat_calculator( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
 		}
 

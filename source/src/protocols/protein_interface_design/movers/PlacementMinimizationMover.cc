@@ -55,7 +55,7 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -244,7 +244,7 @@ PlacementMinimizationMover::fresh_instance() const {
 PlacementMinimizationMover::~PlacementMinimizationMover()= default;
 
 PlacementMinimizationMover::PlacementMinimizationMover() :
-	simple_moves::DesignRepackMover( PlacementMinimizationMover::mover_name() ),
+	calc_taskop_movers::DesignRepackMover( PlacementMinimizationMover::mover_name() ),
 	host_chain_( 2 ),
 	cb_force_( 0.0 )
 {}

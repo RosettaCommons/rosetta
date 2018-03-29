@@ -19,7 +19,7 @@
 #include <core/conformation/find_neighbors.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <basic/MetricValue.hh>
 #include <core/pose/PDBInfo.hh>
 
@@ -235,7 +235,7 @@ main( int argc, char * argv [] )
 
 					/* std::string calcname("iface_nbrcalc"+utility::to_string(i));
 					std::cout << calcname << ": ";
-					core::pose::metrics::CalculatorFactory::Instance().register_calculator( calcname, new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( i, dist_cutoff ) );
+					core::pose::metrics::CalculatorFactory::Instance().register_calculator( calcname, new protocols::pose_metric_calculators::NeighborsByDistanceCalculator( i, dist_cutoff ) );
 					basic::MetricValue< std::set<core::Size> > neighbors_mv;
 					pose.metric( calcname, "neighbors", neighbors_mv );
 					std::ostream_iterator< Size > output( std::cout, " " );

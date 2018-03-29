@@ -33,7 +33,7 @@
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/viewer/viewers.hh>
@@ -45,7 +45,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <core/scoring/constraints/util.hh>
 #include <core/id/AtomID.hh>
@@ -122,7 +122,7 @@ public:
 
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::simple_moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+			protocols::symmetry::SetupForSymmetryMoverOP symm( new protocols::symmetry::SetupForSymmetryMover );
 			symm->apply( pose );
 			core::pose::symmetry::make_symmetric_movemap( pose, mm );
 		}
@@ -130,7 +130,7 @@ public:
 		/*
 		// csts
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-		protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+		protocols::constraint_movers::ConstraintSetMoverOP loadCsts( new protocols::constraint_movers::ConstraintSetMover );
 		loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 		loadCsts->apply(pose);
 		}
@@ -172,7 +172,7 @@ public:
 		core::scoring::constraints::ConstraintSetOP cstset;
 		cstset->add_constraints( csts );
 
-		protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
+		protocols::constraint_movers::ConstraintSetMoverOP loadCsts( new protocols::constraint_movers::ConstraintSetMover );
 		loadCsts->constraint_set( cstset );
 		loadCsts->apply(pose);
 		*/
@@ -234,7 +234,7 @@ public:
 void*
 my_main( void* ) {
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::symmetry;
 
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go( new MinTestMover() );

@@ -31,7 +31,7 @@
 #include <string>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight.fwd.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.fwd.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -100,7 +100,7 @@ public:
 
 
 private:
-	protocols::simple_filters::RotamerBoltzmannWeightFilterOP rotamer_boltzmann_weight_;
+	protocols::calc_taskop_filters::RotamerBoltzmannWeightFilterOP rotamer_boltzmann_weight_;
 
 };
 

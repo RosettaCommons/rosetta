@@ -75,13 +75,13 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <protocols/design_opt/GreedyOptMutationMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/toolbox/task_operations/JointSequenceOperation.hh>
+#include <protocols/task_operations/JointSequenceOperation.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -916,13 +916,13 @@ void run() {
 					using namespace core::pack::task;
 					using namespace core::pack::task::operation;
 					TaskFactoryOP task_factory( new TaskFactory );
-					protocols::toolbox::task_operations::JointSequenceOperationOP revert = new protocols::toolbox::task_operations::JointSequenceOperation;
+					protocols::task_operations::JointSequenceOperationOP revert = new protocols::task_operations::JointSequenceOperation;
 					Pose basesym(base);
 					core::pose::symmetry::make_symmetric_pose(basesym);
 					revert->add_pose(psym);
 					revert->add_pose(basesym);
 					task_factory->push_back(revert);
-					protocols::filters::FilterOP filter = new protocols::simple_filters::ScoreTypeFilter(sfsym,core::scoring::total_score,sfsym->score(psym));
+					protocols::filters::FilterOP filter = new protocols::score_filters::ScoreTypeFilter(sfsym,core::scoring::total_score,sfsym->score(psym));
 					// filter->apply(psym);
 					// double tmp1 = filter->report_sm(psym);
 					// double tmp2 =  sfsym->score(psym);

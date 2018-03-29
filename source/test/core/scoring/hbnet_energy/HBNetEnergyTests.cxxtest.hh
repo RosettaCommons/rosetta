@@ -33,7 +33,7 @@
 
 // Protocols Headers
 #include <protocols/cyclic_peptide/SymmetricCycpepAlign.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 
 // Utility, etc Headers
@@ -80,7 +80,7 @@ public:
 		symmalign.set_symmetry(4, true);
 		symmalign.set_trim_info(true, 1);
 		symmalign.apply(pose2);
-		protocols::simple_moves::symmetry::SetupForSymmetryMover setupsymm;
+		protocols::symmetry::SetupForSymmetryMover setupsymm;
 		setupsymm.process_symmdef_file( "core/scoring/hbnet_energy/S4.symm" );
 		setupsymm.apply(pose2);
 		protocols::cyclic_peptide::DeclareBond decbond2;

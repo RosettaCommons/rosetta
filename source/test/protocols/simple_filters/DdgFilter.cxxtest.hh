@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/simple_filters/DdgFilter.cxxtest.hh
+/// @file   protocols/simple_ddg/DdgFilter.cxxtest.hh
 /// @brief  test for ddG filter
 /// @author Rocco Moretti (rmoretti@u.washington.edu)
 
@@ -20,7 +20,7 @@
 // Project Headers
 #include <core/types.hh>
 
-#include <protocols/simple_filters/DdgFilter.hh>
+#include <protocols/simple_ddg/DdgFilter.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -61,7 +61,7 @@ public:
 		sf->push_back( 100 ); // Unbound
 		sf->push_back( 212.0 ); // Bound no repack
 		sf->push_back( 95 ); // Unbound no repack
-		protocols::simple_filters::DdgFilter ddg_filter(0.0 /*threshold*/, scorefxn_, 1 /*jump*/, 1 /*repeats*/);
+		protocols::simple_ddg::DdgFilter ddg_filter(0.0 /*threshold*/, scorefxn_, 1 /*jump*/, 1 /*repeats*/);
 
 		(*scorefxn_)(*testpose_);
 		ddg_filter.filter( sf );
@@ -86,7 +86,7 @@ public:
 
 		(*scorefxn_)(*testpose_);
 
-		protocols::simple_filters::DdgFilter testfilter;
+		protocols::simple_ddg::DdgFilter testfilter;
 		TagCOP tag = tagptr_from_string("<Ddg name=test filter=sfT99 />\n");
 		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
 

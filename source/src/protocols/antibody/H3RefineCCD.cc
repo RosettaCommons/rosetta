@@ -55,7 +55,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 
 
 using basic::Error;
@@ -227,7 +227,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 	using namespace protocols::minimization_packing;
 	using namespace protocols::loops;
 	using namespace protocols::moves;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;
@@ -301,7 +301,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 	using namespace protocols::simple_moves;
 	using namespace protocols::minimization_packing;
 	using namespace protocols::moves;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	using namespace pack::task;
 	using namespace pack::task::operation;
 

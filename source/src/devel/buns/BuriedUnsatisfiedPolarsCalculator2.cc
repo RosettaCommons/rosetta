@@ -28,9 +28,9 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 //#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/conformation/Residue.hh>
 #include <utility>
@@ -79,7 +79,8 @@ using namespace core::conformation;
 using namespace core::pose;
 using namespace basic::options;
 using namespace core::pose::metrics;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
+using namespace protocols::simple_pose_metric_calculators;
 using namespace utility;
 using Vector = numeric::xyzVector<core::Real>;
 
@@ -158,7 +159,7 @@ BuriedUnsatisfiedPolarsCalculator2::assert_calculators() {
 				PoseMetricCalculatorOP( new NumberHBondsCalculator() ));
 		}
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_weak_bunsat_calc_ ) ) {
-			using namespace protocols::toolbox::pose_metric_calculators;
+			using namespace protocols::pose_metric_calculators;
 			TR << "Registering new basic buried unsat calculator." << std::endl;
 			// need to set weak_bunsat_calc to legacy to maintain existing BUNS2 behavior
 			//   17/09/05 sboyken NEED TO MAKE SURE THAT THIS SETS DEFAULTS CORRECTLY AND MAINTAINS CURRENT BUNS2 BEHAVIOR

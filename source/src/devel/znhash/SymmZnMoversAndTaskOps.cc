@@ -87,12 +87,12 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RampingMover.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/enzdes/EnzdesMovers.hh>
@@ -505,7 +505,7 @@ void ZNCoordinationConstraintPlacerMover::mutate_the_interface_to_alanine( core:
 	protocols::minimization_packing::symmetry::SymPackRotamersMover sympack;
 	mutate_interface_residues_to_alanine_task_ = core::pack::task::TaskFactory::create_packer_task( p );
 	core::pack::make_symmetric_PackerTask_by_truncation( p, mutate_interface_residues_to_alanine_task_ );
-	protocols::toolbox::task_operations::RestrictToInterface rti_taskop;
+	protocols::simple_task_operations::RestrictToInterface rti_taskop;
 	for ( Size ii = 1; ii <= p.fold_tree().num_jump(); ++ii ) { rti_taskop.add_jump( ii ); }
 	rti_taskop.distance( 12 );
 	rti_taskop.apply( p, *mutate_interface_residues_to_alanine_task_ );
@@ -1362,7 +1362,7 @@ devel::znhash::ZnCoordNumHbondCalculator::save( Archive & arc ) const {
 	arc( CEREAL_NVP( all_Hbonds_ ) ); // core::Size
 	arc( CEREAL_NVP( atom_Hbonds_ ) ); // core::id::AtomID_Map<core::Size>
 	arc( CEREAL_NVP( residue_Hbonds_ ) ); // utility::vector1<core::Size>
-	arc( CEREAL_NVP( nhbcalc_ ) ); // protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator
+	arc( CEREAL_NVP( nhbcalc_ ) ); // protocols::simple_pose_metric_calculators::NumberHBondsCalculator
 	arc( CEREAL_NVP( finder_ ) ); // class devel::znhash::FindZnCoordinatingResidues
 }
 
@@ -1374,7 +1374,7 @@ devel::znhash::ZnCoordNumHbondCalculator::load( Archive & arc ) {
 	arc( all_Hbonds_ ); // core::Size
 	arc( atom_Hbonds_ ); // core::id::AtomID_Map<core::Size>
 	arc( residue_Hbonds_ ); // utility::vector1<core::Size>
-	arc( nhbcalc_ ); // protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator
+	arc( nhbcalc_ ); // protocols::simple_pose_metric_calculators::NumberHBondsCalculator
 	arc( finder_ ); // class devel::znhash::FindZnCoordinatingResidues
 }
 

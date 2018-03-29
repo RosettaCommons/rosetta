@@ -24,7 +24,7 @@
 #include <protocols/docking/types.hh>
 
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
+#include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/types.hh>
@@ -78,7 +78,7 @@ public:
 	void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
 	utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
 
-	void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
+	void set_interface_definition_task_operation( protocols::simple_task_operations::InterfaceTaskOperationOP interface_definition );
 	bool get_norepack1() const { return norepack1_; }
 	bool get_norepack2() const { return norepack2_; }
 	void set_prepack_only( bool prepack_only ) { prepack_only_ = prepack_only;} //JQX: add this function, one can decide to do restrict2interface
@@ -92,7 +92,7 @@ private:
 	utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations_;
 	bool prepack_only_;  //JQX
 
-	toolbox::task_operations::InterfaceTaskOperationOP restrict_to_interface_;
+	simple_task_operations::InterfaceTaskOperationOP restrict_to_interface_;
 
 	// core::pack::task::TaskFactoryOP init_tf_;
 };

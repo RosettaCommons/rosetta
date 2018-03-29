@@ -18,9 +18,9 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/docking/DockTaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh> // trans-clude <core/pack/task/operation/TaskOperation.hh>
-#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
+#include <protocols/simple_task_operations/InterfaceTaskOperation.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
+#include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
@@ -90,7 +90,7 @@ DockTaskFactory::set_default()
 	design_chains_.clear();
 	additional_task_operations_.clear();
 
-	restrict_to_interface_ = toolbox::task_operations::InterfaceTaskOperationOP( new toolbox::task_operations::RestrictToInterface() );
+	restrict_to_interface_ = simple_task_operations::InterfaceTaskOperationOP( new simple_task_operations::RestrictToInterface() );
 
 	// @TODO needs to change so that these options can be set through setters and
 	// do not have to be called from the commandline
@@ -153,7 +153,7 @@ utility::vector1< core::pack::task::operation::TaskOperationOP > DockTaskFactory
 	return additional_task_operations_;
 }
 
-void DockTaskFactory::set_interface_definition_task_operation(  protocols::toolbox::task_operations::InterfaceTaskOperationOP /*interface_definition*/ )
+void DockTaskFactory::set_interface_definition_task_operation(  protocols::simple_task_operations::InterfaceTaskOperationOP /*interface_definition*/ )
 {
 	//restrict_to_interface_ = interface_definition;
 	return;
@@ -166,7 +166,8 @@ DockTaskFactory::create_and_attach_task_factory(
 {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
+	using namespace protocols::task_operations;
 
 	TaskFactoryOP tf( new TaskFactory() );
 
@@ -180,7 +181,7 @@ DockTaskFactory::create_and_attach_task_factory(
 			core::Size const cutpoint = pose.fold_tree().cutpoint_by_jump( i );
 			char chain = pose.pdb_info()->chain( pose.pdb_info()->number( cutpoint ) );
 			if ( find( design_chains_.begin(), design_chains_.end(), chain ) != design_chains_.end() ) {
-				tf->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( chain ) ) );
+				tf->push_back( TaskOperationCOP( new protocols::task_operations::RestrictChainToRepackingOperation( chain ) ) );
 			}
 		}
 	} else {

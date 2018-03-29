@@ -44,7 +44,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 
 #include <basic/options/option.hh> //needed to set option
 // option key includes
@@ -181,7 +181,7 @@ public:
 
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
-		using namespace protocols::toolbox::task_operations;
+		using namespace protocols::simple_task_operations;
 
 		TaskFactoryOP tf( new TaskFactory );
 		tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );

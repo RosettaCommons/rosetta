@@ -22,7 +22,7 @@
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotential.hh>
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotential.hh>
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotentialCreator.hh>
-#include <protocols/simple_moves/ddG.hh>
+#include <protocols/simple_ddg/ddG.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
@@ -172,7 +172,7 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 	//-------------------------------------------------------------------------
 	// Initialize DDG for pre-scoring, which compute bound & unbound energies.
 	//-------------------------------------------------------------------------
-	ddg_ = protocols::simple_moves::ddGOP( new protocols::simple_moves::ddG() );
+	ddg_ = protocols::simple_ddg::ddGOP( new protocols::simple_ddg::ddG() );
 
 	// Must turn this ON to enable caculation of bound/unbound states. <-- comment from mystery original author
 
@@ -248,7 +248,7 @@ void SetupPoissonBoltzmannPotential::provide_xml_schema( utility::tag::XMLSchema
 
 	//rosetta_scripts::attributes_for_parse_score_function(attlist);
 
-	auto ct_gen = simple_moves::ddG::define_ddG_schema();
+	auto ct_gen = simple_ddg::ddG::define_ddG_schema();
 	ct_gen->element_name(mover_name())
 		.description(
 		"Initialize the runtime environment for Poisson-Boltzmann solver. "

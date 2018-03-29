@@ -30,7 +30,7 @@
 #include <protocols/moves/Mover.hh>
 
 //symmetry
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -118,7 +118,7 @@ void SymFixbbMover::setup_task_mm(core::pose::Pose & pose, core::pack::task::Tas
 
 //apply
 void SymFixbbMover::apply( core::pose::Pose & pose ) {
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::symmetry;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 

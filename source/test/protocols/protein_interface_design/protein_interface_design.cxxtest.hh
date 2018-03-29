@@ -35,7 +35,7 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh>
+#include <protocols/task_operations/PreventResiduesFromRepackingOperation.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
@@ -184,7 +184,7 @@ public:
 		utility::vector1<core::Size> nopack_residues;
 		nopack_residues.push_back(3);
 		nopack_residues.push_back(4);
-		protocols::toolbox::task_operations::PreventResiduesFromRepackingOperationOP prevent_3_repack( new protocols::toolbox::task_operations::PreventResiduesFromRepackingOperation(nopack_residues) );
+		protocols::task_operations::PreventResiduesFromRepackingOperationOP prevent_3_repack( new protocols::task_operations::PreventResiduesFromRepackingOperation(nopack_residues) );
 		select_12->push_back(prevent_3_repack);
 
 		AtomicContactCountFilter res12_filter;

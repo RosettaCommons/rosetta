@@ -44,16 +44,11 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/scoring/Interface.hh>
-#include <protocols/simple_filters/DdgFilter.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_filters/TMsSpanMembraneFilter.hh>
 #include <protocols/simple_filters/TMsSpanMembraneFilterCreator.hh>
-#include <protocols/simple_moves/ddG.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <string>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <iostream>

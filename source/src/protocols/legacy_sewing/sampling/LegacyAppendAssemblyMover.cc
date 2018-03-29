@@ -42,8 +42,8 @@
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
 #include <protocols/relax/cst_util.hh>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-#include <protocols/toolbox/task_operations/RestrictResiduesToRepackingOperation.hh>
+#include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
+#include <protocols/task_operations/RestrictResiduesToRepackingOperation.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
@@ -300,15 +300,15 @@ LegacyAppendAssemblyMover::refine_assembly(
 	task_factory->push_back(command_line);
 
 	//Restrict the partner pose from designing
-	protocols::toolbox::task_operations::RestrictChainToRepackingOperationOP restrict_chain (
-		new protocols::toolbox::task_operations::RestrictChainToRepackingOperation(2) );
+	protocols::task_operations::RestrictChainToRepackingOperationOP restrict_chain (
+		new protocols::task_operations::RestrictChainToRepackingOperation(2) );
 	task_factory->push_back(restrict_chain);
 
 	//Keep any residues specified by the user to be kept
 	if ( option[basic::options::OptionKeys::legacy_sewing::keep_model_residues].user() ) {
 		utility::vector1<int> pdb_residues_to_repack = option[OptionKeys::legacy_sewing::keep_model_residues].value();
-		protocols::toolbox::task_operations::RestrictResiduesToRepackingOperationOP restrict_residues(
-			new protocols::toolbox::task_operations::RestrictResiduesToRepackingOperation() );
+		protocols::task_operations::RestrictResiduesToRepackingOperationOP restrict_residues(
+			new protocols::task_operations::RestrictResiduesToRepackingOperation() );
 
 		utility::vector1<core::Size> assembly_residues_to_repack;
 		for ( core::Size i=1; i<=pdb_residues_to_repack.size(); ++i ) {

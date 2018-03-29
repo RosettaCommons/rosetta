@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 
 namespace protocols {
@@ -38,7 +38,7 @@ namespace movers {
 /// that saved pose. Notice, that only ALA positions will be replaced, so this is meant to work strictly along with
 /// BuildAlaPose moves. This way, if in the design process an interface residue is designed, that will not be reverted
 /// to w/t
-class SaveAndRetrieveSidechains : public simple_moves::DesignRepackMover
+class SaveAndRetrieveSidechains : public calc_taskop_movers::DesignRepackMover
 {
 public:
 	typedef core::pose::Pose Pose;

@@ -22,7 +22,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
@@ -132,7 +132,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	tf->push_back( unboundrot_operation );
 	core::pack::dunbrack::load_unboundrot(pose); // adds scoring bonuses for the "unbound" rotamers, if any
 
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	if ( basic::options::option[ basic::options::OptionKeys::docking::norepack1 ]() ) tf->push_back( TaskOperationCOP( new DockingNoRepack1( jump_num_) ) );
 	if ( basic::options::option[ basic::options::OptionKeys::docking::norepack2 ]() ) tf->push_back( TaskOperationCOP( new DockingNoRepack2( jump_num_) ) );
 

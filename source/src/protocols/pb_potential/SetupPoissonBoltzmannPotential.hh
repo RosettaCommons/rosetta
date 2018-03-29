@@ -28,7 +28,7 @@
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/ddG.fwd.hh>
+#include <protocols/simple_ddg/ddG.fwd.hh>
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotential.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
@@ -76,7 +76,7 @@ public:
 
 
 private:
-	protocols::simple_moves::ddGOP ddg_;  // used as pre-scoring & caching state data
+	protocols::simple_ddg::ddGOP ddg_;  // used as pre-scoring & caching state data
 };
 }
 }

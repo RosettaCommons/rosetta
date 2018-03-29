@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/toolbox/task_operations/FindEndpointsOperation.cc
+/// @file   protocols/task_operations/FindEndpointsOperation.cc
 /// @brief
 /// @author Sarelf Fleishman sarelf@uw.edu
 
@@ -26,7 +26,7 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -114,7 +114,7 @@ void
 FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
 	using namespace core::pack::task;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced(); // switch to simplified H E L notation
@@ -193,7 +193,7 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
 		}
 	}
 
-	protocols::toolbox::task_operations::DesignAroundOperation dao;
+	protocols::task_operations::DesignAroundOperation dao;
 	dao.repack_shell( 0.01 );
 	dao.design_shell( 0.01 );
 	TR<<"found "<<residues_pointing_in.size()<<" nterminal residues with enough neighbors"<<std::endl;

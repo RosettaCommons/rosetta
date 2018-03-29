@@ -18,7 +18,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/simple_moves/CstInfoMover.hh>
+#include <protocols/constraint_movers/CstInfoMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
@@ -62,6 +62,7 @@ main( int argc, char * argv [] )
 		using namespace protocols;
 		using namespace protocols::jd2;
 		using namespace protocols::simple_moves;
+		using namespace protocols::constraint_movers;
 
 		devel::init( argc, argv );
 
@@ -88,7 +89,7 @@ main( int argc, char * argv [] )
 			utility_exit_with_message("Must specify either -constraints:cst_file or -constraints:cst_fa_file for the cst_info application!");
 		} else {
 			for ( core::Size ii(1); ii <= cstfiles.size(); ++ii ) {
-				CstInfoMoverOP cstinfomover( new protocols::simple_moves::CstInfoMover() );
+				CstInfoMoverOP cstinfomover( new protocols::constraint_movers::CstInfoMover() );
 				cstinfomover->cst_file( cstfiles[ii] );
 				cstinfomover->recursive( true );
 				std::string prefix( "CstFile"+ utility::to_string( ii ) );

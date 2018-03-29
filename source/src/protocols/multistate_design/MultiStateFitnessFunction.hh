@@ -28,7 +28,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 #include <protocols/multistate_design/MultiStateFitnessFunction.fwd.hh>
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.fwd.hh>
+#include <protocols/pose_metric_calculators/MetricValueGetter.fwd.hh>
 #include <utility/vector1.hh>
 #include <map>
 
@@ -73,11 +73,11 @@ public:
 
 	virtual void add_metric_value_getter(
 		std::string const & name,
-		protocols::toolbox::pose_metric_calculators::MetricValueGetter const & metric_value_getter
+		protocols::pose_metric_calculators::MetricValueGetter const & metric_value_getter
 	);
 
 protected:
-	typedef std::map<std::string, protocols::toolbox::pose_metric_calculators::MetricValueGetter> MetricValueGetterMap;
+	typedef std::map<std::string, protocols::pose_metric_calculators::MetricValueGetter> MetricValueGetterMap;
 
 	virtual SingleStateOPs & states();
 	MetricValueGetterMap const & metric_value_getters() const;

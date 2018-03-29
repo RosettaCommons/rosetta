@@ -33,7 +33,7 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
@@ -872,7 +872,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	protocols::minimization_packing::PackRotamersMoverOP loop_repack( new protocols::minimization_packing::PackRotamersMover(highres_scorefxn_) );
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
+	tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( allow_repack ) ) );
 	loop_repack->task_factory(tf_);
 	loop_repack->apply( pose_in );
 
@@ -922,7 +922,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	loop_map->set_chi( allow_repack );
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
+	tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( allow_repack ) ) );
 	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 		highres_scorefxn_, tf_ ) );
 
@@ -955,7 +955,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 			loop_map->set_chi( allow_repack );
 			setup_packer_task( pose_in );
 			( *highres_scorefxn_ )( pose_in );
-			tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
+			tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( allow_repack ) ) );
 			protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
 				highres_scorefxn_, tf_ ) );
 			pack_rottrial->apply( pose_in );
@@ -968,7 +968,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 				loop_repack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( highres_scorefxn_ ) );
 				setup_packer_task( pose_in );
 				( *highres_scorefxn_ )( pose_in );
-				tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
+				tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( allow_repack ) ) );
 				loop_repack->task_factory( tf_ );
 				loop_repack->apply( pose_in );
 				mc->boltzmann( pose_in );

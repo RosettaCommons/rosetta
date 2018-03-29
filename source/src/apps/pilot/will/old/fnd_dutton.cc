@@ -27,7 +27,7 @@
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 // #include <devel/init.hh>
 
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -39,24 +39,24 @@ int main(int argc, char *argv[]) {
 
 	try {
 
-	protocols::abinitio::register_options_broker();
+		protocols::abinitio::register_options_broker();
 
-	devel::init(argc,argv);
-	using namespace std;
-	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::simple_moves::symmetry;
-	using namespace protocols::symmetric_docking;
+		devel::init(argc,argv);
+		using namespace std;
+		using namespace core::scoring;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace protocols::symmetry;
+		using namespace protocols::symmetric_docking;
 
-	SetupForSymmetryMoverOP setup_mover = new SetupForSymmetryMover;
-	SymDockProtocolOP dock_mover = new SymDockProtocol;
-	protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
-	seq_mover->add_mover( setup_mover );
-	seq_mover->add_mover( dock_mover );
-	protocols::jd2::JobDistributor::get_instance()->go( seq_mover );
+		SetupForSymmetryMoverOP setup_mover = new SetupForSymmetryMover;
+		SymDockProtocolOP dock_mover = new SymDockProtocol;
+		protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
+		seq_mover->add_mover( setup_mover );
+		seq_mover->add_mover( dock_mover );
+		protocols::jd2::JobDistributor::get_instance()->go( seq_mover );
 
-	return 0;
+		return 0;
 
 	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

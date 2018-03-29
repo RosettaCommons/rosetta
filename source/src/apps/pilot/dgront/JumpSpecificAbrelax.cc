@@ -112,7 +112,7 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
-#include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
+#include <protocols/pose_metric_calculators/ClashCountCalculator.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -550,7 +550,7 @@ void JumpSpecificAbrelax::setup() {
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
 
 	core::pose::metrics::PoseMetricCalculatorOP
-		clash_calculator = new protocols::toolbox::pose_metric_calculators::ClashCountCalculator( 2.0 );
+		clash_calculator = new protocols::pose_metric_calculators::ClashCountCalculator( 2.0 );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "clashes", clash_calculator );
 	add_evaluation( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "total" ) );
 	add_evaluation( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "bb" ) );

@@ -53,10 +53,10 @@
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/CalcInterNeighborGroup.hh>
-#include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
+#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
 
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -694,7 +694,7 @@ core::pose::Pose InterfaceAnalyzerMover::make_separated_pose( core::pose::Pose &
 void InterfaceAnalyzerMover::register_calculators()
 {
 	using namespace core::pose::metrics;
-	using namespace protocols::toolbox::pose_metric_calculators;
+	using namespace protocols::simple_pose_metric_calculators;
 	//determine name
 	std::ostringstream interface_jump_cast;
 	interface_jump_cast << interface_jump_;
@@ -1383,7 +1383,7 @@ void InterfaceAnalyzerMover::mut_to_gly( core::pose::Pose complex_pose, core::po
 	pose::Pose copy_separate( separated_pose );
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 
 	//setupt task info
 	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( ( copy_complex ) ) );
@@ -1434,7 +1434,7 @@ core::pack::task::PackerTaskOP
 InterfaceAnalyzerMover::setup_task( core::pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	//set up the task to match this calculation
 	//set up a packer task
 	TaskFactoryOP tf( new TaskFactory() );

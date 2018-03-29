@@ -41,7 +41,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 #include <protocols/protein_interface_design/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -229,7 +229,7 @@ MapHotspot::GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose &
 		core::pose::Pose best_pose;
 		core::Real lowest_energy( 100000 );
 		ScoreFunctionCOP scorefxn( get_score_function() );
-		simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100/*threshold*/ );
+		score_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100/*threshold*/ );
 		for ( auto const & rot_it : *rotset ) {
 			TR<<"Current rotamer: "<<curr_rotamer_num++<<'\n';
 			core::conformation::ResidueCOP rot( rot_it );

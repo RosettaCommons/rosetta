@@ -29,7 +29,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/pose_creation/MakePolyXMover.hh>
 
 // Utility headers
@@ -117,7 +117,7 @@ InterlockAroma::apply( Pose & pose )
 	using core::pack::rotamer_set::RotamerSet;
 	using core::pack::rotamer_set::RotamerSetOP;
 	using core::pack::rotamer_set::RotamerSetFactory;
-	using protocols::toolbox::task_operations::LimitAromaChi2Operation;
+	using protocols::task_operations::LimitAromaChi2Operation;
 	using protocols::fldsgn::filters::InterlockingAromaFilter;
 	using protocols::fldsgn::topology::SS_Info2;
 	using protocols::fldsgn::topology::SS_Info2_OP;

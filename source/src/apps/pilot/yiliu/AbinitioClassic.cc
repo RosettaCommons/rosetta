@@ -66,7 +66,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
+#include <protocols/pose_metric_calculators/ClashCountCalculator.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -183,69 +183,69 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace core;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using std::string;
-	using utility::vector1;
+		using namespace core;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using std::string;
+		using utility::vector1;
 
-	//YL, move the options register functions out of the boinc section
-	// has to be called before devel::init. Which is really stupid.
-	protocols::abinitio::ClassicAbinitio::register_options();
-	// options, random initialization
-	devel::init( argc, argv );
-	if ( option[ run::checkpoint ] || option[ run::checkpoint_interval ].user() ) {
-		protocols::checkpoint::checkpoint_with_interval( option[ run::checkpoint_interval ] );
-  }
-	//declare fragments file
-	std::string frag_large_file, frag_small_file;
+		//YL, move the options register functions out of the boinc section
+		// has to be called before devel::init. Which is really stupid.
+		protocols::abinitio::ClassicAbinitio::register_options();
+		// options, random initialization
+		devel::init( argc, argv );
+		if ( option[ run::checkpoint ] || option[ run::checkpoint_interval ].user() ) {
+			protocols::checkpoint::checkpoint_with_interval( option[ run::checkpoint_interval ] );
+		}
+		//declare fragments file
+		std::string frag_large_file, frag_small_file;
 
-	if ( option[ in::file::fragA ].user() ) {
-		frag_large_file  = option[ in::file::fragA ]();
-	} else {
-		frag_large_file  = option[ in::file::frag9 ]();
-	}
+		if ( option[ in::file::fragA ].user() ) {
+			frag_large_file  = option[ in::file::fragA ]();
+		} else {
+			frag_large_file  = option[ in::file::frag9 ]();
+		}
 
-	if ( option[ in::file::fragB ].user() ) {
-		frag_small_file  = option[ in::file::fragB ]();
-	} else {
-		frag_small_file  = option[ in::file::frag3 ]();
-	}
+		if ( option[ in::file::fragB ].user() ) {
+			frag_small_file  = option[ in::file::fragB ]();
+		} else {
+			frag_small_file  = option[ in::file::frag3 ]();
+		}
 
-  using namespace core::fragment;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+		using namespace core::fragment;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	// declare 9mer fragments
-	core::fragment::FragSetOP fragset_large;
-	fragset_large = FragmentIO().read(frag_large_file);
+		// declare 9mer fragments
+		core::fragment::FragSetOP fragset_large;
+		fragset_large = FragmentIO().read(frag_large_file);
 
-	// declare 3mer fragments
-	core::fragment::FragSetOP fragset_small;
-	fragset_small = FragmentIO().read( frag_small_file );
+		// declare 3mer fragments
+		core::fragment::FragSetOP fragset_small;
+		fragset_small = FragmentIO().read( frag_small_file );
 
-	kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
 
-	//yl, prepare for classic abinitio protocols
-	protocols::abinitio::ClassicAbinitio abinitio(
-		fragset_small,
-		fragset_large,
-		movemap
-	);
+		//yl, prepare for classic abinitio protocols
+		protocols::abinitio::ClassicAbinitio abinitio(
+			fragset_small,
+			fragset_large,
+			movemap
+		);
 
-	//core::pose::PoseOP native_pose;
-	//if ( option[ in::file::native ].user() ) {
-	//	native_pose = new pose::Pose;
-	//	core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
-	//	pose::set_ss_from_phipsi( *native_pose );
-	//}
+		//core::pose::PoseOP native_pose;
+		//if ( option[ in::file::native ].user() ) {
+		// native_pose = new pose::Pose;
+		// core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
+		// pose::set_ss_from_phipsi( *native_pose );
+		//}
 
-	abinitio.init(*native_pose);
-	int const nstruct = std::max( 1, option [ out::nstruct ]() );
-	while(nstruct){
-		abinitio.apply(*native_pose);
-	}
-	 } catch (utility::excn::Exception const & e ) {
+		abinitio.init(*native_pose);
+		int const nstruct = std::max( 1, option [ out::nstruct ]() );
+		while ( nstruct ) {
+			abinitio.apply(*native_pose);
+		}
+	} catch (utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}

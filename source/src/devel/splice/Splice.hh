@@ -28,7 +28,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
-#include <protocols/toolbox/task_operations/SeqprofConsensusOperation.fwd.hh>
+#include <protocols/task_operations/SeqprofConsensusOperation.fwd.hh>
 #include <basic/database/open.hh>
 #include <core/pack/task/PackerTask.hh>
 

@@ -70,8 +70,8 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -547,7 +547,7 @@ public:
 						basic::Warning() << "Calculator " << calcname.str() << " already exists, this is hopefully correct for your purposes" << std::endl;
 					} else {
 						using pose::metrics::PoseMetricCalculatorOP;
-						pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(res) ) );
+						pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborsByDistanceCalculator(res) ) );
 					}
 					calcname.str("");
 					++biggest_calc;

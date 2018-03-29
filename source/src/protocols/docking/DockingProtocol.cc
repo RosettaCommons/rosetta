@@ -37,7 +37,7 @@
 
 #include <core/pose/Pose.hh>
 
-#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
+#include <protocols/simple_task_operations/InterfaceTaskOperation.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -48,7 +48,7 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/minimization_packing/RepackSidechainsMover.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -340,7 +340,7 @@ void DockingProtocol::sync_objects_with_flags()
 		docking_constraint_ = nullptr;
 	} else {
 		if ( !docking_constraint_ ) {
-			docking_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new protocols::simple_moves::ConstraintSetMover() );
+			docking_constraint_ = protocols::constraint_movers::ConstraintSetMoverOP( new protocols::constraint_movers::ConstraintSetMover() );
 		}
 	}
 
@@ -477,7 +477,7 @@ DockingProtocol::register_options()
 	option.add_relevant( OptionKeys::docking::ensemble2 );
 
 	// This takes care of the cst_file flags.
-	simple_moves::ConstraintSetMover::register_options();
+	constraint_movers::ConstraintSetMover::register_options();
 }
 
 void
@@ -687,7 +687,7 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 		lhs.ensemble2_filename_ = rhs.ensemble2_filename_;
 	}
 	if ( rhs.docking_constraint_ ) {
-		lhs.docking_constraint_ = utility::pointer::static_pointer_cast< protocols::simple_moves::ConstraintSetMover > ( rhs.docking_constraint_->clone() );
+		lhs.docking_constraint_ = utility::pointer::static_pointer_cast< protocols::constraint_movers::ConstraintSetMover > ( rhs.docking_constraint_->clone() );
 	}
 	if ( rhs.recover_sidechains_ ) {
 		lhs.recover_sidechains_ = utility::pointer::static_pointer_cast< protocols::simple_moves::ReturnSidechainMover > ( rhs.recover_sidechains_->clone() );
@@ -810,7 +810,7 @@ void DockingProtocol::set_use_constraints( bool const use_csts )
 	}
 }
 
-void DockingProtocol::set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition )
+void DockingProtocol::set_interface_definition_task_operation( protocols::simple_task_operations::InterfaceTaskOperationOP interface_definition )
 {
 	check_high_res_protocol();
 	docking_highres_mover_->set_interface_definition_task_operation( interface_definition );

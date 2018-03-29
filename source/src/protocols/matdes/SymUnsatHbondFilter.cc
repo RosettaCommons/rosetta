@@ -48,7 +48,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -195,19 +195,19 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	}
 
 	(*scorehbond)(bound);
-	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );
 	basic::MetricValue< core::id::AtomID_Map<bool> > bound_Amap;
 	unsat_calc_bound->get("atom_bur_unsat", bound_Amap, bound);
 
 	(*scorehbond)(unbound);
-	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );
 	basic::MetricValue< core::id::AtomID_Map<bool> > unbound_Amap;
 	unsat_calc_unbound->get("atom_bur_unsat", unbound_Amap, unbound);
 
 	basic::MetricValue< core::id::AtomID_Map<bool> > unbound_refp_Amap;
 	if ( compare_to_ref_ ) {
 		(*scorehbond_refp)(unbound_refp);
-		core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound_refp( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );
+		core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound_refp( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );
 		unsat_calc_unbound_refp->get("atom_bur_unsat", unbound_refp_Amap, unbound_refp);
 	}
 	// Modes: bound_vs_unbound, unbound_design_vs_reference, unbound_mutated_sidechains, all

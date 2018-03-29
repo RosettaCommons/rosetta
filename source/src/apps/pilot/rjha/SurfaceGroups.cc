@@ -19,7 +19,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <basic/MetricValue.hh>
@@ -77,7 +77,7 @@ main( int argc, char* argv[] )
 			for ( core::Size res(1); res <= pose.size(); ++res ) {
 				if ( biggest_calc < res ) { //create calculator
 					calcname << calc_stem << res;
-					core::pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(res) );
+					core::pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), new protocols::pose_metric_calculators::NeighborsByDistanceCalculator(res) );
 					calcname.str("");
 					++biggest_calc;
 				}

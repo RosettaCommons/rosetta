@@ -30,7 +30,7 @@
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/ss_prediction/SS_predictor.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
@@ -288,7 +288,7 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 	}
 
 	// now we can just apply a DesignAround operation using the residues that don't match
-	protocols::toolbox::task_operations::DesignAroundOperation design_around;
+	protocols::task_operations::DesignAroundOperation design_around;
 	design_around.design_shell( region_shell() );
 	if ( repack_non_selected() ) {
 		design_around.repack_shell( 1000.0 );

@@ -94,9 +94,9 @@
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility headers
 #include <devel/init.hh>
@@ -127,7 +127,6 @@ using namespace scoring;
 using namespace pose;
 using namespace protocols;
 using namespace protocols::moves;
-using namespace protocols::toolbox;
 using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -715,15 +714,15 @@ DougsDockDesignMinimizeMagicMover::setup_filter_stats()
 	pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 	// create and register hb calculator
-	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
+	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new protocols::simple_pose_metric_calculators::NumberHBondsCalculator() );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
 
 	// create and register unsat calculator
-	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
+	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
 	pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
 
 	// create and register packstat calculator
-	pose::metrics::PoseMetricCalculatorOP pack_calcculator( new protocols::toolbox::pose_metric_calculators::PackstatCalculator() );
+	pose::metrics::PoseMetricCalculatorOP pack_calcculator( new protocols::pose_metric_calculators::PackstatCalculator() );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( "pack", pack_calcculator );
 
 }

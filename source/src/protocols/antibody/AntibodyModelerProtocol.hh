@@ -26,7 +26,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyModelerProtocol.fwd.hh>
-#include <protocols/simple_moves/ConstraintSetMover.fwd.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.fwd.hh>
 
 
 namespace protocols {
@@ -181,7 +181,7 @@ private:
 	core::scoring::ScoreFunctionOP pack_scorefxn_;
 
 	// constraint set mover
-	protocols::simple_moves::ConstraintSetMoverOP cdr_constraint_;
+	protocols::constraint_movers::ConstraintSetMoverOP cdr_constraint_;
 
 	// external objects
 	AntibodyInfoOP ab_info_;

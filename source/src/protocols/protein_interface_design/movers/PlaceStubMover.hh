@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 
 namespace protocols {
@@ -68,14 +68,14 @@ private:
 
 /// @brief choose a stub based on mc sampling, and place it on the pose.
 /// Iterates over stubs until one matches criteria.
-class PlaceStubMover : public simple_moves::DesignRepackMover
+class PlaceStubMover : public calc_taskop_movers::DesignRepackMover
 {
 public:
 	// used to define pairs of design/repack movers with an associated bool that
 	// determines whether to use the stub-based foldtree with cuts etc., or to
 	// use the default foldtree
-	typedef std::pair< simple_moves::DesignRepackMoverOP, bool > DesignMoverFoldTreePair;
-	typedef std::pair< simple_moves::DesignRepackMoverOP, core::Real > DesignMoverRealPair;
+	typedef std::pair< calc_taskop_movers::DesignRepackMoverOP, bool > DesignMoverFoldTreePair;
+	typedef std::pair< calc_taskop_movers::DesignRepackMoverOP, core::Real > DesignMoverRealPair;
 public:
 	PlaceStubMover();
 

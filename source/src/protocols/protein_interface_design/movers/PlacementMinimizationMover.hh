@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 
 namespace protocols {
@@ -38,7 +38,7 @@ namespace movers {
 
 /// @brief a simple rb-minimization in a bb-stub constraint biased forcefield.
 /// Note that this mover is dependent on a placement mover for setting its stubsets
-class PlacementMinimizationMover : public simple_moves::DesignRepackMover
+class PlacementMinimizationMover : public calc_taskop_movers::DesignRepackMover
 {
 public:
 	typedef std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > StubSetStubPos;

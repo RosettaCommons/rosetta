@@ -29,7 +29,7 @@
 #include <core/scoring/ScoreType.hh>
 
 #include <protocols/pose_creation/MakePolyXMover.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 
 // Package headers
 
@@ -78,7 +78,7 @@ public:
 		core::scoring::ScoreType ref(core::scoring::score_type_from_name("ref"));
 		sf->set_weight(ref, 1);
 		scorefilter = protocols::filters::FilterOP(
-			new protocols::simple_filters::ScoreTypeFilter(
+			new protocols::score_filters::ScoreTypeFilter(
 			sf,
 			ref,
 			8675309 /*garbage number, with style*/));

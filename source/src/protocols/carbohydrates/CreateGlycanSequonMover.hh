@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <protocols/carbohydrates/CreateGlycanSequonMover.fwd.hh>
-#include <protocols/simple_moves/CreateSequenceMotifMover.fwd.hh>
+#include <protocols/calc_taskop_movers/CreateSequenceMotifMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
@@ -203,7 +203,7 @@ private: // data
 	bool positions_as_start_of_sequon_ = false;
 	bool design_x_positions_;
 
-	simple_moves::CreateSequenceMotifMoverOP motif_mover_ ;
+	calc_taskop_movers::CreateSequenceMotifMoverOP motif_mover_ ;
 	bool pack_neighbors_ = true;
 	bool design_neighbors_ = false;
 	core::Real pack_distance_ = 6.0;

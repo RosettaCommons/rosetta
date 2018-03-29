@@ -50,7 +50,7 @@
 
 #include <protocols/filters/BasicFilters.hh>
 
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 //Devel
@@ -515,7 +515,7 @@ LoopCreationMover::refine_loop(
 	if ( include_neighbors_ ) {
 		string const nb_calc("neighbor_calculator");
 		pose::metrics::CalculatorFactory::Instance().register_calculator( nb_calc,
-			core::pose::metrics::PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_residues ) ) );
+			core::pose::metrics::PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_residues ) ) );
 
 		basic::MetricValue< set< Size > > neighbor_mv;
 		pose.metric( nb_calc, "neighbors", neighbor_mv);

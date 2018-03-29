@@ -1124,7 +1124,7 @@ main( int argc, char * argv [] )
 		using namespace scoring;
 		using namespace protocols;
 		using namespace moves;
-		using namespace simple_moves::symmetry;
+		using namespace symmetry;
 		using namespace core::pack::task;
 		using namespace ObjexxFCL::format;
 		using namespace id;

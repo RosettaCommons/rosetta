@@ -173,7 +173,7 @@ endrepeat
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <utility/excn/Exceptions.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/md/CartesianMD.hh>
@@ -666,7 +666,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 
 	if ( limit_aroma_chi2() ) {
-		local_tf->push_back(TaskOperationCOP( new toolbox::task_operations::LimitAromaChi2Operation() ));
+		local_tf->push_back(TaskOperationCOP( new task_operations::LimitAromaChi2Operation() ));
 	}
 
 	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack_( new protocols::minimization_packing::PackRotamersMover( local_scorefxn ) );

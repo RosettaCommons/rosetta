@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 
 // Unit headers
@@ -44,10 +44,10 @@ namespace protein_interface_design {
 namespace movers {
 
 
-class DisulfideMover : public protocols::simple_moves::DesignRepackMover
+class DisulfideMover : public protocols::calc_taskop_movers::DesignRepackMover
 {
 private:
-	typedef protocols::simple_moves::DesignRepackMover parent;
+	typedef protocols::calc_taskop_movers::DesignRepackMover parent;
 public:
 	/// @brief default ctor
 	DisulfideMover();

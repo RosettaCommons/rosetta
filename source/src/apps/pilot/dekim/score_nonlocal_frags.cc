@@ -72,7 +72,7 @@
 #include <fstream>
 
 //Auto Headers
-#include <protocols/simple_filters/DdgFilter.hh>
+#include <protocols/simple_ddg/DdgFilter.hh>
 
 
 static basic::Tracer TR( "main" );
@@ -199,7 +199,7 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	core::pose::setPoseExtraScore( pose, "nlf_rlx", relaxed_score );
 
 	// DDG of relaxed fragment pair
-	protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( 1000, sfxn_, 1, 5);
+	protocols::simple_ddg::DdgFilter ddg = protocols::simple_ddg::DdgFilter( 1000, sfxn_, 1, 5);
 	Real relaxed_ddg_score = ddg.compute( relax_sub_pose );
 	core::pose::setPoseExtraScore( pose, "nlf_ddg", relaxed_ddg_score );
 

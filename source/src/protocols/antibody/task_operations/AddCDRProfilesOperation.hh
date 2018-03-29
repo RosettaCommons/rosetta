@@ -23,7 +23,7 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.fwd.hh>
-#include <protocols/toolbox/task_operations/ConservativeDesignOperation.fwd.hh>
+#include <protocols/task_operations/ConservativeDesignOperation.fwd.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/chemical/AA.hh>
@@ -40,7 +40,7 @@ namespace task_operations {
 
 
 /// @brief Add Cluster-based CDR Profiles as the task operation for the set of CDRs by default.
-/// See protocols/toolbox/task_operations/ResidueProbTaskOperation for more.
+/// See protocols/task_operations/ResidueProbTaskOperation for more.
 ///
 /// CDR definitions used are North/Dunbrack as the clusters are defined using it.
 ///
@@ -207,7 +207,7 @@ private:
 
 	AntibodyInfoCOP ab_info_;
 	design::AntibodyCDRSeqDesignOptions seq_design_options_;
-	toolbox::task_operations::ConservativeDesignOperationOP cons_task_;
+	protocols::task_operations::ConservativeDesignOperationOP cons_task_;
 	AddCDRProfileSetsOperationOP profile_sets_task_;
 
 	//Profile Options

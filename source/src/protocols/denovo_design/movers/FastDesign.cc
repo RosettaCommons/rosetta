@@ -23,7 +23,7 @@
 #include <protocols/constraint_generator/RemoveConstraints.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
 
 //Core Headers
 #include <core/conformation/Residue.hh>
@@ -330,7 +330,7 @@ FastDesign::create_default_task_factory() const
 	local_tf->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent() ) );
 
 	if ( limit_aroma_chi2() ) {
-		local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
+		local_tf->push_back(TaskOperationCOP( new protocols::task_operations::LimitAromaChi2Operation() ));
 	}
 
 	return local_tf;

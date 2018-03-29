@@ -34,9 +34,9 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 
 #include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -179,7 +179,7 @@ public:
 
 			TR << "Registering NeighborsByDistance Calculator " << calcname.str() << std::endl;
 			if ( !CalculatorFactory::Instance().check_calculator_exists( calcname.str() ) ) {
-				CalculatorFactory::Instance().register_calculator( calcname.str(), new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( msr_[i]->get_seqpos() ) );
+				CalculatorFactory::Instance().register_calculator( calcname.str(), new protocols::pose_metric_calculators::NeighborsByDistanceCalculator( msr_[i]->get_seqpos() ) );
 			}
 
 			basic::MetricValue< SetSize > this_neighbors;

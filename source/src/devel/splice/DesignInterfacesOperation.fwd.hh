@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/toolbox/task_operations/DesignInterfacesOperation.fwd.hh
+/// @file   protocols/task_operations/DesignInterfacesOperation.fwd.hh
 /// @brief
 /// @author Sarel Fleishman sarelf@uw.edu
 

@@ -55,7 +55,7 @@
 
 #include <basic/Tracer.hh>
 
-#include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
+#include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
@@ -262,7 +262,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 
 	//JQX: set up rigid body movers
 	rigid::RigidBodyPerturbMoverOP rb_mover( new rigid::RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , rigid::partner_downstream, true ) );

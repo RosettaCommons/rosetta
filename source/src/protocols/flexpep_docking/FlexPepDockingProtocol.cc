@@ -58,7 +58,7 @@
 #include <protocols/flexpep_docking/FlexPepDockingProtocol.hh>
 #include <protocols/flexpep_docking/FlexPepDockingProtocolCreator.hh>
 #include <protocols/scoring/Interface.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -221,7 +221,7 @@ void FlexPepDockingProtocol::set_default()
 	// interface packer settings:
 	interface_tf_ = core::pack::task::TaskFactoryOP( new task::TaskFactory(*allprotein_tf_) ); // based on settings for allprotein_tf_
 	if ( ! flags_.pep_fold_only ) {
-		interface_tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump_ ) ));
+		interface_tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( rb_jump_ ) ));
 	}
 
 	interface_packer_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
@@ -239,7 +239,7 @@ void FlexPepDockingProtocol::set_default()
 	design_tf_->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
 	design_tf_->push_back( TaskOperationCOP( append_ubrot_taskoper );
 	design_tf_->push_back( TaskOperationCOP( new operation::ReadResfile );
-	design_tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump_ ) ));
+	design_tf_->push_back( TaskOperationCOP( new protocols::simple_task_operations::RestrictToInterface( rb_jump_ ) ));
 
 	receptor_protector_oper_ = options::RestrictResidueToRepackingOP( new options::restrict_to_repacking() );
 	receptor_protector_oper_->clear();

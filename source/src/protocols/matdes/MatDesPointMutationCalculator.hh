@@ -28,7 +28,7 @@
 #include <protocols/simple_filters/TaskAwareScoreTypeFilter.fwd.hh>
 
 // Stored tasks
-#include <protocols/toolbox/task_operations/STMStoredTask.hh>
+#include <protocols/task_operations/STMStoredTask.hh>
 
 #include <utility/vector1.hh>
 

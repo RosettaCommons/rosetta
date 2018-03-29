@@ -31,7 +31,7 @@
 
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/symmetry/SetupNCSMover.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/util.hh>
@@ -393,9 +393,9 @@ CartesianSampler::apply_frame(
 	frame.shift_to(1);
 
 	// see if the pose has NCS
-	simple_moves::symmetry::NCSResMappingOP ncs;
+	symmetry::NCSResMappingOP ncs;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-		ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
+		ncs = ( utility::pointer::static_pointer_cast< symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 	}
 
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
@@ -804,9 +804,9 @@ apply(
 	if ( !mc_scorefxn_ ) mc_scorefxn_ = scorefxn_;
 
 	// see if the pose has NCS
-	simple_moves::symmetry::NCSResMappingOP ncs;
+	symmetry::NCSResMappingOP ncs;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-		ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
+		ncs = ( utility::pointer::static_pointer_cast< symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 	}
 
 	// using the current fragment_bias_strategy_, compute bias

@@ -31,9 +31,9 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
+#include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
@@ -258,7 +258,7 @@ void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::LoopsOP
 
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	//RestrictTaskForDockingOP rtfd = new RestrictTaskForDocking( scorefxn_, rb_jump_, true, interface_dist );
 	pack::task::TaskFactory tf;
 	//tf.push_back( rtfd );
@@ -419,7 +419,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 
 	//set up minimizer movers
 	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ ) );
@@ -647,6 +647,7 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
+	using namespace protocols::simple_task_operations;
 	//set upconstructor packer options
 	TaskFactoryOP local_tf( new TaskFactory );
 
@@ -668,7 +669,7 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 		if ( repack_chains.size() > 0 ) {
 			for ( DockJumps::const_iterator it = repack_chains.begin(); it != repack_chains.end(); ++it ) {
 				TR << "Not designing chain " << *it << std::endl;
-				local_tf->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( *it ) ) ); //
+				local_tf->push_back( TaskOperationCOP( new protocols::task_operations::RestrictChainToRepackingOperation( *it ) ) ); //
 			}
 		}
 	} else { // default case -- restrict everything to repacking.
@@ -683,7 +684,7 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 	// DockingNoRepack only works over the first rb_jump in movable_jumps
 	// In a 2-body case this separates 1 & 2 based on the only cutpoint
 	// In a multibody case, this separates 1 & 2 based on the first cutpoint
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	if ( option[ OptionKeys::docking::norepack1 ].user() ) local_tf->push_back( TaskOperationCOP( new DockingNoRepack1( movable_jumps()[1] ) ) );
 	if ( option[ OptionKeys::docking::norepack2 ].user() ) local_tf->push_back( TaskOperationCOP( new DockingNoRepack2( movable_jumps()[1] ) ) );
 

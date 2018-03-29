@@ -15,13 +15,13 @@
 #include <protocols/multistate_design/PackingState.hh>
 #include <protocols/multistate_design/MetricCalculatorFitnessFunction.hh>
 #include <protocols/multistate_design/MultiStateEntity.hh>
-#include <protocols/toolbox/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
+#include <protocols/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
+#include <protocols/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/SurfaceCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/SurfaceCalculator.hh>
+#include <protocols/pose_metric_calculators/MetricValueGetter.hh>
 using namespace protocols::genetic_algorithm;
 using namespace protocols::multistate_design;
 
@@ -81,7 +81,8 @@ using namespace operation;
 using namespace scoring;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::pose_metric_calculators;
+using namespace protocols::simple_pose_metric_calculators;
 
 #include <basic/options/option_macros.hh>
 

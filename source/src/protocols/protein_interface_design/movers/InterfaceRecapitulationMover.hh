@@ -27,7 +27,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 
 // Unit headers
@@ -62,7 +62,7 @@ public:
 
 private:
 	core::pose::PoseOP saved_pose_;
-	simple_moves::DesignRepackMoverOP design_mover_;
+	calc_taskop_movers::DesignRepackMoverOP design_mover_;
 	protocols::minimization_packing::PackRotamersMoverOP design_mover2_;//ugly adaptation for the PackRotamers baseclass
 	bool pssm_;
 };

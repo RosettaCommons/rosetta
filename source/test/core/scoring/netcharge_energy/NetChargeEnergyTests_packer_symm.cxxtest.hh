@@ -54,7 +54,7 @@
 #include <basic/Tracer.hh>
 
 // Convenience for setting up symmetry and packing:
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 //Auto Headers
@@ -77,7 +77,7 @@ using namespace core::pack;
 using namespace core::pack::task;
 using namespace core::pack::rotamer_set;
 
-using namespace protocols::simple_moves::symmetry;
+using namespace protocols::symmetry;
 
 class NetChargeEnergyTests_packer_symm : public CxxTest::TestSuite {
 

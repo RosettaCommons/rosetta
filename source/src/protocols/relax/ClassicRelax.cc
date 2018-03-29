@@ -51,7 +51,7 @@
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <protocols/simple_moves/GunnCost.hh>
@@ -414,7 +414,7 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 
 		if ( limit_aroma_chi2() ) {
-			local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
+			local_tf->push_back(TaskOperationCOP( new protocols::task_operations::LimitAromaChi2Operation() ));
 		}
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
@@ -473,7 +473,7 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 
 		if ( limit_aroma_chi2() ) {
-			local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
+			local_tf->push_back(TaskOperationCOP( new protocols::task_operations::LimitAromaChi2Operation() ));
 		}
 		(*get_scorefxn())( pose );
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies( pose ); // fix this

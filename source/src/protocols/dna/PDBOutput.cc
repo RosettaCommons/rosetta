@@ -15,8 +15,8 @@
 
 #include <protocols/dna/util.hh> // dna_full_name3
 #include <protocols/dna/DnaInterfaceFinder.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
@@ -534,7 +534,8 @@ PDBOutput::output_buried_unsatisfied_hbonds( ozstream & pdbout )
 {
 	if ( !option[ OptionKeys::run::decoystats ]() ) return;
 
-	using namespace protocols::toolbox::pose_metric_calculators;
+	using namespace protocols::pose_metric_calculators;
+	using namespace protocols::simple_pose_metric_calculators;
 	using id::AtomID_Map;
 	BuriedUnsatisfiedPolarsCalculator bu_calc( "default", "default" );
 

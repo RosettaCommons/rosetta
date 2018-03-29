@@ -44,9 +44,9 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/task_operations/RestrictToNeighborhoodOperation.hh>
 
 // C++ headers
 #include <utility>
@@ -194,8 +194,8 @@ void BDR::apply( Pose & pose ) {
 	using protocols::moves::MS_SUCCESS;
 	using protocols::moves::FAIL_DO_NOT_RETRY;
 	using protocols::moves::FAIL_RETRY;
-	using protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator;
-	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+	using protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator;
+	using protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 
 	// assign secondary structure
 	Dssp dssp( pose );
@@ -368,7 +368,7 @@ bool BDR::design_refine(
 	using protocols::loops::Loops;
 	using protocols::loops::loop_mover::refine::LoopMover_Refine_CCD;
 	using protocols::minimization_packing::PackRotamersMover;
-	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
+	using protocols::task_operations::RestrictToNeighborhoodOperation;
 
 	using core::pose::annotated_to_oneletter_sequence;
 	using protocols::forge::methods::intervals_to_loops;

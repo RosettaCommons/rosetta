@@ -27,7 +27,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 
 //Utility
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -233,7 +233,7 @@ ModelFeatures::report_features(
 
 		std::string const nb_calc("neighbor_calculator_" + utility::to_string(i));
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( nb_calc,
-			core::pose::metrics::PoseMetricCalculatorOP (new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( central_residues, distance_cutoff_ ) ) );
+			core::pose::metrics::PoseMetricCalculatorOP (new protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator( central_residues, distance_cutoff_ ) ) );
 
 		//Get the neighbors of the current residue
 		basic::MetricValue< std::set< core::Size > > neighbor_mv;

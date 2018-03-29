@@ -32,7 +32,7 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -62,7 +62,7 @@ using namespace ObjexxFCL::format;
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody_legacy/CDRH3Modeler.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/antibody_legacy/GraftMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -202,7 +202,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	using namespace protocols::moves;
 
 	if ( model_h3_ && ( cst_weight_ != 0.00 ) ) {
-		protocols::simple_moves::ConstraintSetMoverOP cdr_constraint( new protocols::simple_moves::ConstraintSetMover() );
+		protocols::constraint_movers::ConstraintSetMoverOP cdr_constraint( new protocols::constraint_movers::ConstraintSetMover() );
 		cdr_constraint->apply( pose_in );
 	}
 	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
@@ -476,7 +476,7 @@ AntibodyModeler::relax_cdrs() {
 	using namespace pack::task;
 	using namespace pack::task::operation;
 	using namespace protocols;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	using namespace protocols::moves;
 	// Storing initial fold tree
 	kinematics::FoldTree const input_tree( antibody_in_.Fv.fold_tree() );
@@ -773,7 +773,7 @@ AntibodyModeler::snugfit_MC_min (
 	for ( Size i = 1; i <= nres; i++ ) {
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
 	}
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 	protocols::minimization_packing::RotamerTrialsMoverOP pack_rottrial( new protocols::minimization_packing::RotamerTrialsMover(
@@ -873,7 +873,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	for ( Size i = 1; i <= nres; i++ ) {
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
 	}
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::simple_task_operations;
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 

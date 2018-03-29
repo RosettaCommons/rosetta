@@ -40,7 +40,7 @@
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <basic/options/option.hh>
-#include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
+#include <protocols/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -85,7 +85,7 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -117,7 +117,7 @@ using Pose = core::pose::Pose;
 // XRW TEMP }
 
 BackrubDDMover::BackrubDDMover() :
-	simple_moves::DesignRepackMover( "BackrubDD" ),
+	calc_taskop_movers::DesignRepackMover( "BackrubDD" ),
 	backrub_partner1_( false ),
 	backrub_partner2_( true ),
 	interface_distance_cutoff_( 8.0 ),
@@ -147,7 +147,7 @@ BackrubDDMover::BackrubDDMover
 	core::Real const sidechain_move_prob,
 	utility::vector1<core::Size> const & residues
 )
-: simple_moves::DesignRepackMover( "Backrub" )
+: calc_taskop_movers::DesignRepackMover( "Backrub" )
 {
 	core::Real const mm_bend_weight( 1.0 );
 
@@ -230,7 +230,7 @@ BackrubDDMover::apply( Pose & pose )
 	bbg8t3amover.set_native_pose( pose_copy );
 
 	using namespace core::pack::task::operation;
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 	backrub_mover.clear_segments();
 	TaskFactoryOP main_task_factory;
 	TaskFactoryCOP ancestral_task( task_factory() );

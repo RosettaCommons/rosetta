@@ -24,7 +24,7 @@
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
+#include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 

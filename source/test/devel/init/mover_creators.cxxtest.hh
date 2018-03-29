@@ -35,7 +35,7 @@
 #include <devel/denovo_design/ConnectJumpsCreator.hh>
 #include <devel/denovo_design/DumpStatsSSCreator.hh>
 #include <devel/denovo_design/RestrictRegionCreator.hh>
-#include <protocols/simple_moves/GenericSimulatedAnnealerCreator.hh>
+#include <protocols/monte_carlo/GenericSimulatedAnnealerCreator.hh>
 #include <devel/loop_creation/LoopCreationMoverCreator.hh>
 #include <devel/loop_creation/FragmentLoopInserterCreator.hh>
 #include <devel/loop_creation/CCDLoopCloserCreator.hh>
@@ -88,7 +88,7 @@ public:
 	{ devel::denovo_design::RestrictRegionCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "RestrictRegion" ); }
 
 	void test_devel_denovo_design_GenericSimulatedAnnealerCreator_name()
-	{ protocols::simple_moves::GenericSimulatedAnnealerCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "GenericSimulatedAnnealer" ); }
+	{ protocols::monte_carlo::GenericSimulatedAnnealerCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "GenericSimulatedAnnealer" ); }
 
 	void test_devel_loop_creation_LoopCreationMoverCreator_name()
 	{ devel::loop_creation::LoopCreationMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoopCreationMover" ); }

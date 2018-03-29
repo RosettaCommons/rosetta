@@ -1,8 +1,8 @@
 /****************************************************************************************************
-	PCA_internal_test.cc
+PCA_internal_test.cc
 
-	A test of Rosetta's numeric library and its ability to do principal component analysis in
-	more than 3 dimensions.
+A test of Rosetta's numeric library and its ability to do principal component analysis in
+more than 3 dimensions.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -57,7 +57,7 @@
 //#include <core/io/silent/SilentFileData.hh>
 //#include <core/io/silent/SilentStruct.hh>
 
-//#include <protocols/simple_moves/ConstraintSetMover.hh>
+//#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <numeric/PCA.hh>
 
@@ -128,8 +128,8 @@ int main( int argc, char * argv [] ) {
 	inputmatrix.push_back(v3);
 
 	printf("Input matrix:\n");
-	for(core::Size j=1; j<=5; ++j){
-		for(core::Size i=1; i<=inputmatrix.size(); ++i) {
+	for ( core::Size j=1; j<=5; ++j ) {
+		for ( core::Size i=1; i<=inputmatrix.size(); ++i ) {
 			printf("%.2f\t", inputmatrix[i][j]);
 		}
 		printf("\n");
@@ -142,8 +142,8 @@ int main( int argc, char * argv [] ) {
 	utility::vector1 <core::Real> &variances (result.second);
 
 	printf("Output matrix:\n");
-	for(core::Size j=1; j<=5; ++j){
-		for(core::Size i=1; i<=5; ++i) {
+	for ( core::Size j=1; j<=5; ++j ) {
+		for ( core::Size i=1; i<=5; ++i ) {
 			printf("%.4f\t", vectors[i][j]);
 		}
 		printf("\n");
@@ -151,9 +151,9 @@ int main( int argc, char * argv [] ) {
 	printf("\n"); fflush(stdout);
 
 	printf("Output variances:\n");
-	for(core::Size i=1; i<=5; ++i) printf("%.1f\t", variances[i]);
+	for ( core::Size i=1; i<=5; ++i ) printf("%.1f\t", variances[i]);
 	printf("\n"); fflush(stdout);
-	
+
 	printf("\n*****JOB COMPLETED*****\n"); fflush(stdout);
 	return 0;
 }

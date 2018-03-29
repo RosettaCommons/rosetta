@@ -26,7 +26,7 @@
 #include <core/scoring/Energies.hh>
 
 // Protocols headers
-#include <protocols/simple_moves/ClearConstraintsMover.hh>
+#include <protocols/constraint_movers/ClearConstraintsMover.hh>
 
 
 // Basic/Utility headers
@@ -185,7 +185,7 @@ CrosslinkerMoverHelper::filter_by_constraints_energy(
 	core::pose::Pose pose_copy( pose ); //Scoring alters the energies in the pose, so we need a copy here.  We're also going to manipulate it a bit.
 
 	//Remove constraints from pose, and add back only those for the linker:
-	protocols::simple_moves::ClearConstraintsMover clear_csts;
+	protocols::constraint_movers::ClearConstraintsMover clear_csts;
 	clear_csts.apply(pose_copy);
 	if ( symmetric ) {
 		add_linker_constraints_symmetric( pose_copy, selection, linker_was_added );

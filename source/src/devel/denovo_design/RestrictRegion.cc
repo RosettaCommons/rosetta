@@ -22,7 +22,7 @@
 #include <protocols/parser/BluePrint.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/Frame.hh>

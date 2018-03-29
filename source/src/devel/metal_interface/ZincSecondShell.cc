@@ -17,8 +17,8 @@
 #include <devel/metal_interface/MetalSiteResidue.hh>
 
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <core/pose/Pose.hh>
@@ -104,7 +104,7 @@ ZincSecondShell::get_atom_hbonds() {
 void
 ZincSecondShell::register_calculators() {
 	using namespace pose::metrics;
-	//using namespace protocols::toolbox::pose_metric_calculators;
+	//using namespace protocols::pose_metric_calculators;
 
 	TR << "Registering sasa Calculator" << std::endl;
 	if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc" ) ) {
@@ -113,7 +113,7 @@ ZincSecondShell::register_calculators() {
 
 	TR << "Registering hbond Calculator" << std::endl;
 	if ( !CalculatorFactory::Instance().check_calculator_exists( "hbond_calc" ) ) {
-		CalculatorFactory::Instance().register_calculator( "hbond_calc", new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
+		CalculatorFactory::Instance().register_calculator( "hbond_calc", new protocols::simple_pose_metric_calculators::NumberHBondsCalculator() );
 	}
 
 	return;

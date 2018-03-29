@@ -37,10 +37,10 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
+#include <protocols/task_operations/RestrictToNeighborhoodOperation.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
+#include <protocols/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -330,7 +330,7 @@ public:
 
 
 		//borrowing IGNC's typedefs to set up the group pairs
-		using namespace protocols::toolbox::pose_metric_calculators;
+		using namespace protocols::pose_metric_calculators;
 		InterGroupNeighborsCalculator::group_set groups;
 		//push back pairs of sets for the regions we need:
 		// E3hinge_self
@@ -356,13 +356,13 @@ public:
 
 		//make the calculator
 		std::string const calc_g("IGNC_g");
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_g, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(groups) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_g, new protocols::pose_metric_calculators::InterGroupNeighborsCalculator(groups) );
 
 		//this is the constructor parameter for the TaskOperation - pairs of calculators and calculations to perform
 		utility::vector1< std::pair< std::string, std::string> > calcs_and_calcns;
 		calcs_and_calcns.push_back(std::make_pair(calc_g, "neighbors"));
 
-		using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
+		using protocols::task_operations::RestrictByCalculatorsOperation;
 		task_factory_->push_back( new RestrictByCalculatorsOperation( calcs_and_calcns ) );
 
 		return;

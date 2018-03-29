@@ -48,11 +48,11 @@
 //Metrics
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/SaltBridgeCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/CatPiCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PiPiCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/pose_metric_calculators/SaltBridgeCalculator.hh>
+#include <protocols/pose_metric_calculators/CatPiCalculator.hh>
+#include <protocols/pose_metric_calculators/PiPiCalculator.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <protocols/analysis/PackStatMover.hh>
 
@@ -200,19 +200,19 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
-	core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
+	core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::simple_pose_metric_calculators::NumberHBondsCalculator();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
 
-	core::pose::metrics::PoseMetricCalculatorOP unsat_calculator = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds");
+	core::pose::metrics::PoseMetricCalculatorOP unsat_calculator = new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds");
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
 
-	core::pose::metrics::PoseMetricCalculatorOP sb_calculator = new protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator();
+	core::pose::metrics::PoseMetricCalculatorOP sb_calculator = new protocols::pose_metric_calculators::SaltBridgeCalculator();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sb", sb_calculator );
 
-	core::pose::metrics::PoseMetricCalculatorOP cat_pi_calculator = new protocols::toolbox::pose_metric_calculators::CatPiCalculator();
+	core::pose::metrics::PoseMetricCalculatorOP cat_pi_calculator = new protocols::pose_metric_calculators::CatPiCalculator();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "cat_pi", cat_pi_calculator );
 
-	core::pose::metrics::PoseMetricCalculatorOP pi_pi_calculator = new protocols::toolbox::pose_metric_calculators::PiPiCalculator();
+	core::pose::metrics::PoseMetricCalculatorOP pi_pi_calculator = new protocols::pose_metric_calculators::PiPiCalculator();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "pi_pi", pi_pi_calculator );
 
 

@@ -45,10 +45,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 #include <protocols/constraints_additional/COMCoordinateConstraint.hh>
 
@@ -521,7 +521,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 
 	if ( is_sym ) { //re-symmetrize
 		ConstraintSetOP pose_cst_set( new ConstraintSet( *pose.constraint_set() ) );
-		simple_moves::symmetry::SetupForSymmetryMover pre_mover1;
+		symmetry::SetupForSymmetryMover pre_mover1;
 		pre_mover1.apply( pose );
 		pose.constraint_set(pose_cst_set);
 		pose.pdb_info()->obsolete(true);

@@ -26,8 +26,8 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
+#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/conformation/Residue.hh>
@@ -82,7 +82,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::jd2;
 using namespace core::pose::metrics;
-using namespace protocols::toolbox::pose_metric_calculators;
+using namespace protocols::simple_pose_metric_calculators;
 
 
 basic::options::BooleanOptionKey const print_only_unsat( "print_only_unsat" );
@@ -241,7 +241,7 @@ void CalcsTestMover::calc_stuff(
 	core::id::AtomID_Map< core::Real > & atom_sasa,
 	core::id::AtomID_Map< core::Size > & atom_hbonds
 ){
-	using namespace protocols::toolbox::pose_metric_calculators;
+	using namespace protocols::simple_pose_metric_calculators;
 
 	//setup initial values
 	n_burried_unsat_ = 0;
@@ -343,7 +343,7 @@ void CalcsTestMover::pretty_print(
 //register the calculators used here...
 void CalcsTestMover::register_calculators(){
 	using namespace core::pose::metrics;
-	using namespace protocols::toolbox::pose_metric_calculators;
+	using namespace protocols::simple_pose_metric_calculators;
 
 	//find name of job
 	// protocols::jd2::JobOP const job_me( JobDistributor::get_instance()->current_job() );

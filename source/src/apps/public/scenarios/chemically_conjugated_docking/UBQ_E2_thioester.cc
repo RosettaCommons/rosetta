@@ -27,7 +27,7 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
+#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -72,9 +72,9 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
@@ -144,7 +144,7 @@ public:
 		TR << "Using fullatom scorefunction from commandline:\n" << *fullatom_scorefunction_;
 
 		using namespace core::pose::metrics;
-		using namespace protocols::toolbox::pose_metric_calculators;
+		using namespace protocols::pose_metric_calculators;
 		//magic number: chains 1 and 2; set up interface SASA calculator
 		if ( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ) {
 			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)) ));
@@ -386,7 +386,7 @@ public:
 		if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) {
 			task_factory_->push_back( TaskOperationCOP( new ReadResfile ) );
 		}
-		//task_factory_->push_back( new protocols::toolbox::task_operations::RestrictToInterfaceOperation );
+		//task_factory_->push_back( new protocols::task_operations::RestrictToInterfaceOperation );
 		task_factory_->push_back( TaskOperationCOP( new IncludeCurrent ) );
 		//prevent repacking at linkage cysteine!
 		PreventRepackingOP prevent( new PreventRepacking );
@@ -404,14 +404,14 @@ public:
 			std::string const interface_calc("UBQE2_InterfaceNeighborDefinitionCalculator");
 			std::string const neighborhood_calc("UBQE2_NeighborhoodByDistanceCalculator");
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) ) );
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) ) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) ) );
 
 			//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
 			utility::vector1< std::pair< std::string, std::string> > calcs_and_calcns;
 			calcs_and_calcns.push_back(std::make_pair(interface_calc, "interface_residues"));
 			calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
 
-			using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
+			using protocols::task_operations::RestrictByCalculatorsOperation;
 			task_factory_->push_back(TaskOperationCOP( new RestrictByCalculatorsOperation( calcs_and_calcns ) ));
 
 		} else {
@@ -517,19 +517,19 @@ public:
 				core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
 				TR.Error << "removed a PoseMetricCalculator " << calc << ", track down why" << std::endl;
 			}
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) ) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, PoseMetricCalculatorOP( new protocols::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) ) );
 
 			//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation
 			utility::vector1< std::pair< std::string, std::string> > calculators_used;
 			std::pair< std::string, std::string> IGNC_cmd( calc, "neighbors" );
 			calculators_used.push_back( IGNC_cmd );
-			task_factory_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) ) );
+			task_factory_->push_back( TaskOperationCOP( new protocols::task_operations::RestrictByCalculatorsOperation( calculators_used ) ) );
 
 		}
 
 		//calculator for number of neighbors for I44
 		if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::publication].value() ) {
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "I44neighbors", PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( 198 ) ) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "I44neighbors", PoseMetricCalculatorOP( new protocols::pose_metric_calculators::NeighborsByDistanceCalculator( 198 ) ) );
 		}
 
 		//add constraints; protected internally if no constraints

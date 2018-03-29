@@ -33,7 +33,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -67,7 +67,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.BuildAlaPose
 // XRW TEMP  return "build_Ala_pose";
 // XRW TEMP }
 
-BuildAlaPose::BuildAlaPose() : simple_moves::DesignRepackMover( BuildAlaPose::mover_name() ),
+BuildAlaPose::BuildAlaPose() : calc_taskop_movers::DesignRepackMover( BuildAlaPose::mover_name() ),
 	AA_("ALA")
 {}
 
@@ -77,7 +77,7 @@ BuildAlaPose::BuildAlaPose(
 	core::Real interface_distance_cutoff,
 	std::string AA
 ) :
-	simple_moves::DesignRepackMover( BuildAlaPose::mover_name() )
+	calc_taskop_movers::DesignRepackMover( BuildAlaPose::mover_name() )
 {
 	repack_partner1_=design_partner1_=partner1;
 	repack_partner2_=design_partner2_=partner2;

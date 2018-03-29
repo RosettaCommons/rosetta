@@ -38,7 +38,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <protocols/simple_moves/AddConstraintsToCurrentConformationMover.hh>
+#include <protocols/constraint_movers/AddConstraintsToCurrentConformationMover.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/ScalarWeightedFunc.hh>
@@ -137,7 +137,7 @@ void setup_fullatom_constraints(
 		// automatic fa constraints
 		generate_fullatom_constraints( pose, templates, template_weights );
 	} else if ( fa_cst_file == "SELF" ) {
-		protocols::simple_moves::AddConstraintsToCurrentConformationMover add_constraints;
+		protocols::constraint_movers::AddConstraintsToCurrentConformationMover add_constraints;
 		add_constraints.apply(pose);
 	} else if ( !fa_cst_file.empty() && fa_cst_file != "NONE" ) {
 		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( fa_cst_file, ConstraintSetOP( new ConstraintSet ), pose );

@@ -38,7 +38,7 @@
 #include <protocols/minimization_packing/MinMoverCreator.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/util.hh>
 

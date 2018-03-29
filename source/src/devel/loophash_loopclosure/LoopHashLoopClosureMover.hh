@@ -26,7 +26,7 @@
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/ddG.fwd.hh>
+#include <protocols/simple_ddg/ddG.fwd.hh>
 #include <protocols/forge/remodel/RemodelMover.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMover.fwd.hh>

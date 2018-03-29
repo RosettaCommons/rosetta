@@ -20,7 +20,7 @@
 
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/membrane/HelixFromSequence.hh>
+#include <protocols/pose_creation/HelixFromSequence.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/OptimizeProteinEmbeddingMover.hh>

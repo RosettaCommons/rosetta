@@ -78,8 +78,8 @@
 #include <protocols/relax/FastRelax.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <protocols/protein_interface_design/movers/ddG.hh>
-#include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
-#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
+#include <protocols/pose_metric_calculators/RotamerBoltzCalculator.hh>
+#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 //Auto Headers
 
 static basic::Tracer TR( "des_pos_ddG" );
@@ -418,7 +418,7 @@ void
 
 		// Calculate the Boltzmann probability for the rotamer at each designed position
 		for ( Size ipos = 1; ipos <= revert_pos.size(); ++ipos ) {
-			protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
+			protocols::calc_taskop_filters::RotamerBoltzmannWeight rbc = protocols::calc_taskop_filters::RotamerBoltzmannWeight();
 			rbc.scorefxn(scorefxn);
 			Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, revert_pos[ipos]);
 			std::cout << path_fn_vector[(path_fn_vector.size()-1)] << " " << revert_ids[ipos] << revert_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;

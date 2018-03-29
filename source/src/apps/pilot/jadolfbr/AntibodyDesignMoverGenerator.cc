@@ -49,8 +49,8 @@
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/util.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
+#include <protocols/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/loops/util.hh>
@@ -77,7 +77,7 @@ using namespace core::scoring;
 using namespace core::pack::task;
 using namespace core::pack::task::operation;
 using namespace protocols::simple_moves;
-using namespace protocols::toolbox::task_operations;
+using namespace protocols::task_operations;
 using namespace protocols::antibody::clusters;
 using namespace protocols::relax;
 using namespace protocols::docking;
@@ -201,7 +201,7 @@ AntibodyDesignMoverGenerator::setup_task_operations(){
 
 	cmd_line_operation_ = core::pack::task::operation::InitializeFromCommandlineOP( new core::pack::task::operation::InitializeFromCommandline() );
 	restrict_design_operation_ = core::pack::task::operation::RestrictToRepackingOP( new core::pack::task::operation::RestrictToRepacking() );
-	loops_operation_ = protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsOP( new RestrictToLoopsAndNeighbors() );
+	loops_operation_ = protocols::simple_task_operations::RestrictToLoopsAndNeighborsOP( new RestrictToLoopsAndNeighbors() );
 
 	tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
 	interface_tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
@@ -384,7 +384,7 @@ AntibodyDesignMoverGenerator::setup_dock_foldtree(core::pose::Pose const & pose,
 
 PackRotamersMoverOP
 AntibodyDesignMoverGenerator::generate_repack_cdrs(Pose const & pose) {
-	using namespace protocols::toolbox::task_operations;
+	using namespace protocols::task_operations;
 
 	PackRotamersMoverOP packer( new PackRotamersMover(scorefxn_) );
 	setup_repack_cdrs(pose, packer);

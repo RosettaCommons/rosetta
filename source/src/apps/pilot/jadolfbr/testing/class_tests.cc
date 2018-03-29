@@ -13,7 +13,7 @@
 
 #include <devel/init.hh>
 
-#include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperation.hh>
+#include <protocols/task_operations/RestrictToMoveMapChiOperation.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
@@ -89,7 +89,7 @@ public:
 	apply(core::pose::Pose & pose){
 
 		using namespace core::pack::task::operation;
-		using namespace protocols::toolbox::task_operations;
+		using namespace protocols::task_operations;
 		using namespace protocols::simple_moves;
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;

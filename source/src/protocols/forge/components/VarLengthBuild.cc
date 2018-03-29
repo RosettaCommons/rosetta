@@ -41,8 +41,8 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -532,7 +532,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 			RLM.repeat_generation_with_additional_residue( bufferPose, archive_pose );
 			if ( option[ OptionKeys::symmetry::symmetry_definition].user() ) {
 				//symmetrize if both rep+sym are used
-				simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+				symmetry::SetupForSymmetryMover pre_mover;
 				pre_mover.apply(archive_pose);
 				archive_pose.pdb_info()->obsolete(true);
 			}
@@ -804,7 +804,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		//safety
 		//pose.remove_constraints();
 
-		protocols::simple_moves::ConstraintSetMoverOP constraint( new protocols::simple_moves::ConstraintSetMover() );
+		protocols::constraint_movers::ConstraintSetMoverOP constraint( new protocols::constraint_movers::ConstraintSetMover() );
 		constraint->apply( pose );
 
 		sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);

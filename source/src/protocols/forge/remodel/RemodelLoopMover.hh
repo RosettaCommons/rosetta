@@ -28,7 +28,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/symmetry/SetupNCSMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
@@ -421,7 +421,7 @@ protected: // loop modeling stages
 	);
 
 	/// @ brief sets up ncs constraints
-	protocols::simple_moves::symmetry::SetupNCSMover generate_ncs_csts(Pose & pose);
+	protocols::symmetry::SetupNCSMover generate_ncs_csts(Pose & pose);
 
 	/// @brief small_move stage: only small moves
 	void small_move_stage(

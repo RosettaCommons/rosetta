@@ -64,7 +64,7 @@
 #include <protocols/sic_dock/util.hh>
 #include <protocols/sic_dock/read_biounit.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/simple_moves/AddConstraintsToCurrentConformationMover.hh>
+#include <protocols/constraint_movers/AddConstraintsToCurrentConformationMover.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/fixedsizearray1.hh>
@@ -874,7 +874,7 @@ Real harvest_time_refine(Pose & pose, core::scoring::ScoreFunction const & sf, s
 	//  }
 	// }
 	Pose orig(pose);
-	protocols::simple_moves::AddConstraintsToCurrentConformationMover tether;
+	protocols::constraint_movers::AddConstraintsToCurrentConformationMover tether;
 	tether.bb_only() = false;
 	tether.CA_only() = false;
 	tether.use_distance_cst() = false;

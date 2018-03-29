@@ -25,10 +25,10 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
@@ -1387,7 +1387,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// (3) apply symmetry
 		std::string symmdef_file = symmdef_files_[initial_template_index];
 		if ( !symmdef_file.empty() && symmdef_file != "NULL" ) {
-			protocols::simple_moves::symmetry::SetupForSymmetryMover makeSymm( symmdef_file );
+			protocols::symmetry::SetupForSymmetryMover makeSymm( symmdef_file );
 			makeSymm.apply(pose);
 
 			//fpd   to get the right rotamer set we need to do this

@@ -56,8 +56,8 @@
 
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh>
-#include <protocols/toolbox/pose_metric_calculators/NonlocalContactsCalculator.hh>
+#include <protocols/task_operations/PreventResiduesFromRepackingOperation.hh>
+#include <protocols/pose_metric_calculators/NonlocalContactsCalculator.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <utility/string_util.hh>
@@ -354,7 +354,7 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	core::pack::task::TaskFactoryOP taskf( new core::pack::task::TaskFactory() );
 	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
 	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ) );
-	taskf->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::PreventResiduesFromRepackingOperation( prevent_repack ) ) );
+	taskf->push_back( TaskOperationCOP( new protocols::task_operations::PreventResiduesFromRepackingOperation( prevent_repack ) ) );
 
 	frelax->set_task_factory( taskf );
 	frelax->set_movemap( mm );
@@ -411,7 +411,7 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	core::Real diffsco_anchor(0.0);
 
 	int diff_contacts_anchor(0);
-	protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator nlc_calc(15, -0.5);
+	protocols::pose_metric_calculators::NonlocalContactsCalculator nlc_calc(15, -0.5);
 	basic::MetricValue< utility::vector1< Size > > start_nlc, relax_nlc;
 	nlc_calc.get( "residue_nlcontacts", start_nlc, start_pose );
 	nlc_calc.notify_energy_change();

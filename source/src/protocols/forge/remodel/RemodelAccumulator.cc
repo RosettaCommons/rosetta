@@ -24,7 +24,7 @@
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <basic/options/option.hh>
 #include <fstream>
@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/score_filters/ScoreTypeFilter.hh>
 
 
 // numeric headers
@@ -97,7 +97,7 @@ RemodelAccumulator::MoverOP RemodelAccumulator::fresh_instance() const {
 //in the future this can be split off into its own function
 void RemodelAccumulator::apply( Pose & pose, core::Real & score ){
 	using namespace core::scoring;
-	using namespace protocols::simple_filters;
+	using namespace protocols::score_filters;
 	using namespace basic::options;
 
 	//make the object's own collection of poses
@@ -124,7 +124,7 @@ void RemodelAccumulator::apply( Pose & pose, core::Real & score ){
 
 void RemodelAccumulator::apply( Pose & pose ){
 	using namespace core::scoring;
-	using namespace protocols::simple_filters;
+	using namespace protocols::score_filters;
 	using namespace basic::options;
 
 	//make the object's own collection of poses
@@ -231,7 +231,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 	using core::import_pose::pose_from_file;
-	using namespace protocols::simple_filters;
+	using namespace protocols::score_filters;
 	using namespace basic::options;
 
 	//if reading checkpoint, make sure there's no info stored
@@ -270,7 +270,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 				if ( option[OptionKeys::constraints::cst_file].user() ) {
-					protocols::simple_moves::ConstraintSetMoverOP repeat_constraint( new protocols::simple_moves::ConstraintSetMover() );
+					protocols::constraint_movers::ConstraintSetMoverOP repeat_constraint( new protocols::constraint_movers::ConstraintSetMover() );
 					repeat_constraint->apply( dummyPose );
 				}
 
