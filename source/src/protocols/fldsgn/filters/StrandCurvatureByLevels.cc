@@ -227,10 +227,14 @@ bool StrandCurvatureByLevels::apply( Pose const & pose ) const
 			p1 = k ;
 			p2 = k + step ;
 			if ( (pose.residue(p1).aa() == core::chemical::aa_gly ) or ( pose.residue(p2).aa() == core::chemical::aa_gly ) ) {
-				if ( pose.residue(p1).aa() == core::chemical::aa_gly ) {
-					twist = numeric::dihedral_degrees( pose.residue(p1).xyz("2HA"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("CB") ) ;
+				if ( ( pose.residue(p1).aa() == core::chemical::aa_gly ) and ( pose.residue(p2).aa() == core::chemical::aa_gly ) ) {
+					twist = numeric::dihedral_degrees( pose.residue(p1).xyz("2HA"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("2HA") ) ;
 				} else {
-					twist = numeric::dihedral_degrees( pose.residue(p1).xyz("CB"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("2HA") ) ;
+					if ( pose.residue(p1).aa() == core::chemical::aa_gly ) {
+						twist = numeric::dihedral_degrees( pose.residue(p1).xyz("2HA"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("CB") ) ;
+					} else {
+						twist = numeric::dihedral_degrees( pose.residue(p1).xyz("CB"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("2HA") ) ;
+					}
 				}
 			} else {
 				twist = numeric::dihedral_degrees( pose.residue(p1).xyz("CB"), pose.residue(p1).xyz("CA"), pose.residue(p2).xyz("CA"),pose.residue(p2).xyz("CB") ) ;
