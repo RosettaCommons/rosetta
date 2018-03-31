@@ -50,6 +50,16 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/kinematics/Edge.hh>
 
+// numeric headers
+#include <numeric/random/uniform.hh>
+#include <numeric/types.hh>
+
+// basic headers
+#include <basic/Tracer.hh>
+
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 // utility headers
 #include <utility/vector1.hh>
 #include <utility/io/zipstream.ipp>
@@ -57,12 +67,8 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 
-// numeric headers
-#include <numeric/random/uniform.hh>
-#include <numeric/types.hh>
+#include <utility/exit.hh>
 
-// basic headers
-#include <basic/Tracer.hh>
 #include <sstream>
 
 // c++ headers
@@ -88,6 +94,11 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 #ifndef _WIN32
 #include "pthread.h"
 // XSD XRW Includes
+#endif
+
+
+#ifdef __native_client__
+#include <errno.h>
 #endif
 
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -117,8 +128,11 @@ getRG()
 }
 
 
-UDPSocketClient::UDPSocketClient(std::string const & address, int port) : sentCount_(0)
+UDPSocketClient::UDPSocketClient(std::string const & address, unsigned int port, unsigned int max_packet_size) : max_packet_size_(max_packet_size), sentCount_(0)
 {
+	if ( port < 1  or  port > 65535 ) utility_exit_with_message("UDPSocketClient::UDPSocketClient: Invalid value for port:" + std::to_string(port) + " expected value must be in [1, 65535] range!");
+	if ( max_packet_size_ < 1500  or  max_packet_size_ > 65535 ) utility_exit_with_message("UDPSocketClient::UDPSocketClient: Invalid value for max_packet_size:" + std::to_string(max_packet_size_) + " expected value must be in [1500, 65535] range!");
+
 #ifndef  __native_client__
 	/*
 #ifdef __APPLE__
@@ -127,7 +141,7 @@ UDPSocketClient::UDPSocketClient(std::string const & address, int port) : sentCo
 	max_packet_size_ = 64512; // 1024*63
 #endif */
 
-	max_packet_size_ = 8192-512-2;  // Choosing max pocket size seems to be less obvious when we have cross OS link, we have to pick less common denominator
+	// moved to PyMOLMover::_default_max_packet_size_, was:  max_packet_size_ = 8192-512-2;  // Choosing max pocket size seems to be less obvious when we have cross OS link, we have to pick less common denominator
 
 	//#ifndef WIN_PYROSETTA
 	// generating random uuid by hands
@@ -140,6 +154,9 @@ UDPSocketClient::UDPSocketClient(std::string const & address, int port) : sentCo
 	socket_addr_.sin_addr.s_addr = inet_addr( address.c_str() );
 
 	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
+
+	if ( socket_h_ == -1 ) utility_exit_with_message("UDPSocketClient::UDPSocketClient: Could not open socket, got error:" + std::to_string(errno) + "!");
+
 	//#endif
 #endif
 }
@@ -252,8 +269,9 @@ UDPSocketClient::show(std::ostream & output) const
 	output << std::endl;
 
 	output << "socket address family: " << socket_addr_.sin_family << std::endl;
-	output << "socket address port: " << socket_addr_.sin_port << std::endl;
 	output << "socket address address: " << socket_addr_.sin_addr.s_addr << std::endl;
+	output << "socket address port: " << socket_addr_.sin_port << std::endl;
+	output << "socket max_packet_size: " << max_packet_size_ << std::endl;
 #endif
 }
 
@@ -268,12 +286,41 @@ operator<<(std::ostream & output, UDPSocketClient const & client)
 PyMOLMover Class
 ---------------------------------------------------------------------------------------------- */
 
-std::string const PyMOLMover::_default_address_ = "127.0.0.1";
-unsigned int const PyMOLMover::_default_port_   = 65000;
+// std::string  const PyMOLMover::_default_address_         = "127.0.0.1";
+// unsigned int const PyMOLMover::_default_port_            = 65000;
+// unsigned int const PyMOLMover::_default_max_packet_size_ = 8192-512-2;  // Choosing max pocket size seems to be less obvious when we have cross OS link, we have to pick less common denominator
+
+std::string PyMOLMover::default_address()
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::run::PyMOLMover;
+	return option[address].user() ? option[address].value() : "127.0.0.1";
+}
+
+unsigned int PyMOLMover::default_port()
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::run::PyMOLMover;
+	return option[port].user() ? option[port].value() : 65000;
+}
+
+unsigned int PyMOLMover::default_max_packet_size(std::string const & address)
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::run::PyMOLMover;
+	if ( option[max_packet_size].user() ) return option[max_packet_size].value();
+	else {
+		// Choosing max pocket size seems to be less obvious when we have cross OS link, we have to pick less common denominator
+		// the 8192-512-2 is a max value that seems to work on FreeBSD kernels
+		if ( address == "127.0.0.1" ) return 8192-512-2;
+		else return 1500; // MTU for enthernet equpment
+	}
+}
+
 
 /// @brief ctor
-PyMOLMover::PyMOLMover(std::string const & address, int port) :
-	link_(address, port),
+PyMOLMover::PyMOLMover(std::string const & address, unsigned int port, unsigned int max_packet_size) :
+	link_( address, port, max_packet_size ? max_packet_size : default_max_packet_size(address) ),
 	update_energy_(false),
 	energy_type_(core::scoring::total_score),
 	update_membrane_(false),
@@ -1094,13 +1141,14 @@ PyMOLMover::parse_my_tag(
 ) {
 	keep_history(tag->getOption<bool>( "keep_history", keep_history_ ) );
 
-	std::string address = tag->getOption<std::string>("address", _default_address_);
-	auto port = tag->getOption<unsigned int>("port", _default_port_);
+	std::string address = tag->getOption<std::string>("address", default_address());
+	auto port = tag->getOption<unsigned int>("port", default_port());
+	auto max_packet_size = tag->getOption<unsigned int>("max_packet_size", default_max_packet_size(address));
 
 	//TR << "Settin addres to: " << address << std::endl;
 	//TR << "Settin port to: " << port << std::endl;
 
-	link_ = UDPSocketClient(address, port);
+	link_ = UDPSocketClient(address, port, max_packet_size);
 }
 
 /// @brief required in the context of the parser/scripting scheme
@@ -1128,6 +1176,13 @@ std::string PyMOLMover::mover_name() {
 void PyMOLMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
+
+	XMLSchemaRestriction port_range = integer_range_restriction( "port_range", 1, 65535);
+	xsd.add_top_level_element(port_range);
+
+	XMLSchemaRestriction max_packet_size_range = integer_range_restriction( "max_packet_size_range", 1500, 65535);
+	xsd.add_top_level_element(max_packet_size_range);
+
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"keep_history", xsct_rosetta_bool,
@@ -1135,8 +1190,9 @@ void PyMOLMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"an object in PyMOL rather than overwriting it. Frames can then be "
 		"played back like a movie to visualize the flow of a protocol.",
 		"0")
-		+ XMLSchemaAttribute::attribute_w_default("address", xs_string, "IP address of machine running PyMOL with PyMOL-RosettaServer.py script running.", _default_address_)
-		+ XMLSchemaAttribute::attribute_w_default("port",    xsct_positive_integer, "Port number to which UDP/IP connection should be made", std::to_string(_default_port_) )
+		+ XMLSchemaAttribute::attribute_w_default("address",         xs_string, "IP address of machine running PyMOL with PyMOL-RosettaServer.py script running.", default_address())
+		+ XMLSchemaAttribute::attribute_w_default("port",            "port_range", "Port number to which UDP/IP connection should be made", std::to_string( default_port() ) )
+		+ XMLSchemaAttribute::attribute_w_default("max_packet_size", "max_packet_size_range", "Max size of packets to send over UDP/IP connection. Default value is dependable from address: for 127.0.0.1 it will be set to 7678 and any other addresses to 1500.", std::to_string( default_max_packet_size(default_address()) ) )
 		;
 
 	protocols::moves::xsd_type_definition_w_attributes(

@@ -245,7 +245,7 @@ class UDPSocketClient
 {
 public:
 	/// @brief ctor
-	UDPSocketClient(std::string const & address, int port);
+	UDPSocketClient(std::string const & address, unsigned int port, unsigned int max_packet_size);
 
 	/// @brief cctor
 	UDPSocketClient( UDPSocketClient const & other );
@@ -264,9 +264,9 @@ private:
 
 	void sendRAWMessage(int globalPacketID, int packetI, int packetCount, char * msg_begin, char *msg_end);
 
-	/// @brief last know mximum size of suspenseful sended UDP packet.
+	/// @brief last know maximum size of suspenseful sended UDP packet.
 	///        ~64k for local connection and ~10k for inet connection
-	unsigned int max_packet_size_;  // last know mximum size of suspenseful sended UDP packet.
+	unsigned int max_packet_size_;  // last know maximum size of suspenseful sended UDP packet.
 
 	/// @brief unique id of this socket client
 	union UUID {
@@ -289,13 +289,14 @@ std::ostream &operator<< (std::ostream & output, UDPSocketClient const & client)
 
 class PyMOLMover : public protocols::moves::Mover
 {
-	static std::string const  _default_address_;
-	static unsigned int const _default_port_;
+	static std::string  default_address();
+	static unsigned int default_port();
+	static unsigned int default_max_packet_size(std::string const & address);
 
 public:
 
 	/// @brief ctor
-	PyMOLMover(std::string const & address=_default_address_, int port=_default_port_);
+	PyMOLMover(std::string const & address = default_address(), unsigned int port = default_port(), unsigned int max_packet_size = 0);
 
 	/// @brief cctor
 	PyMOLMover( PyMOLMover const & other );

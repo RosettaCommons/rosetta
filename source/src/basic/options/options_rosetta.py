@@ -115,10 +115,10 @@ Options = Option_Group( '',
 	# Input options ---------------------------------------------------------------------------------------------------
 	Option_Group( 'in',
 #		Option( 'in', 'Boolean', desc="Input option group", legal='true', default='true' ),
-		
+
 		# Base Configuration Options (common options) -------------------------
-		Option( 'fconfig', 'FileVector', 
-			default=['common'], 
+		Option( 'fconfig', 'FileVector',
+			default=['common'],
 			desc='A list of flag configurations to look for.  These can be in either your working directory or $HOME/.rosetta/flags directory.  Ex: -fconfig common design'
 			),
 		Option( 'no_fconfig', 'Boolean',
@@ -1227,8 +1227,11 @@ Options = Option_Group( '',
 		Option( 'update_pymol_on_energy_changes_only', 'Boolean', default = 'false', desc= 'Only Update the simulation in on energy change.  Useful if pymol observer is segfaulting on length changes.'),
 		Option( 'update_pymol_on_conformation_changes_only', 'Boolean', default = 'false', desc = 'Only update the simulation in pymol on conformation change.'),
 		Option( 'keep_pymol_simulation_history', 'Boolean', desc='Keep history when using show_simulation_in_pymol flag?', default='false' ),
-
-
+                Option_Group( 'PyMOLMover',
+                    Option( 'address',         'String',  desc='TCP port address to use when initializing PyMOLMover', default=''),
+                    Option( 'port',            'Integer', desc='TCP port to use when initializing PyMOLMover', default='0' ),
+                    Option( 'max_packet_size', 'Integer', desc='Max size of packet to send to PyMOL. Default value is dependable from address: for 127.0.0.1 it will be set to 7678 and any other addresses to 1500.', default='0' ),
+                ), # -PyMOLMover
 
 	), # -run
 
@@ -1477,7 +1480,7 @@ Options = Option_Group( '',
 		Option( 'hbond_new_sp3_acc',"Boolean", desc="fade_factor for hbond geometry softmax", default='false' ),
 		Option( 'alignment_sharpness',"Real", desc="When computing a harmonic function of RMSD for the alignment score, what should the standard deviation be?", default='1.0' ),
 		Option( 'rna_torsion_potential', 'String', desc="In RNA torsion calculation, directory containing 1D torsional potentials" , default="ps_04282011"), # probably should be in score:rna namespace, but hardwired as score:rna_torsion_potential in ERRASER, etc.
-		
+
 		Option('mc_optimize_dG', 'Boolean',
 			desc = 'Optimize the dG during MonteCarlo.  It is not possible to do this within overall scoring, \
 			but where possible, do this during MC calls.  This option does not globally-use the MonteCarloInterface object, but is protocol-specific. \
