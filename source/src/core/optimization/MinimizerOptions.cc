@@ -57,7 +57,8 @@ MinimizerOptions::MinimizerOptions(
 	bx_init_( 0.2 ),
 	brent_abs_tolerance_( 0.01 ),
 	linmin_deriv_cutoff_( 0.0001 ),
-	ga_mutation_probability_( 0.5 )
+	ga_mutation_probability_( 0.5 ),
+	armijo_max_step_limit_( 1.0 )
 {
 	using namespace basic::options;
 	if ( option[ OptionKeys::run::nblist_autoupdate ].user() ) {
@@ -252,6 +253,9 @@ void MinimizerOptions::max_iter(int n) { max_iter_ = n; }
 Real MinimizerOptions::ga_mutation_probability() const { return ga_mutation_probability_; }
 void MinimizerOptions::ga_mutation_probability(Real p) { ga_mutation_probability_ = p; }
 
+
+Real MinimizerOptions::armijo_max_step_limit() const { return armijo_max_step_limit_; }
+void MinimizerOptions::armijo_max_step_limit( Real lim ) { armijo_max_step_limit_ = lim; }
 
 } // namespace optimization
 } // namespace core

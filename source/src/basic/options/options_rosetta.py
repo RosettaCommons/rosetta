@@ -5279,6 +5279,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'da_eval_pose_map','File', desc='input file that maps pose coordinates to structurally related positions of native pose'),
 	), # -DomainAssembly
 
+	Option_Group( 'dump_trajectory',
+		Option( 'prefix', 'String', desc='Prefix to use when dumping trajectories with dump_trajectory ScoreType.', default='traj'),
+		Option( 'gz', 'Boolean', desc='Dump trajectories in .pdb.gz format.', default='false'),
+	), # -dump_trajectory
+
 	Option_Group( 'edensity',
 		Option( 'debug', 'Boolean', default = 'false'),
 		Option( 'mapfile', 'String' ),

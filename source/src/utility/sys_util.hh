@@ -41,6 +41,14 @@ timestamp();
 std::string
 timestamp_short();
 
+/// @brief Generate timestamp string with millis
+std::string
+timestamp_millis();
+
+/// @brief Generate timestamp string with millis, short format
+std::string
+timestamp_millis_short();
+
 } // namespace utility
 
 

@@ -85,6 +85,7 @@
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
 #include <core/scoring/methods/GoapEnergyCreator.hh>
 #include <core/scoring/methods/RingClosureEnergyCreator.hh>
+#include <core/scoring/util_methods/DumpTrajectoryEnergyCreator.hh>
 #include <core/scoring/netcharge_energy/NetChargeEnergyCreator.hh>
 
 #include <core/pack/dunbrack/DunbrackEnergyCreator.hh>
@@ -448,6 +449,7 @@ static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_Energy
 static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RingClosureEnergyCreator > RingClosureEnergyCreator_registrator;
 static EnergyMethodRegistrator< carbohydrates::SugarBackboneEnergyCreator > SugarBackboneEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::util_methods::DumpTrajectoryEnergyCreator > DumpTrajectoryEnergy_registrator;
 static EnergyMethodRegistrator< scoring::netcharge_energy::NetChargeEnergyCreator > NetChargeEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::voids_penalty_energy::VoidsPenaltyEnergyCreator > VoidsPenaltyEnergyCreator_registrator;
 

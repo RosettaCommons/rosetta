@@ -855,6 +855,9 @@ sources = {
 		"TrieCollection",
 		"TrieCountPairBase",
 	],
+	"core/scoring/util_methods": [
+		"DumpTrajectoryEnergy",
+	],
 	"core/scoring/vdwaals": [
 		"VDW_Energy",
 		"VDWTrie",

@@ -636,6 +636,10 @@ enum ScoreType {
 	dna_env,
 	dna_pair,
 
+	// util_method scoretypes
+	dump_trajectory, //ScoreType to dump trajectories. Uses dump_trajectory::* flags to control behavior.
+
+
 #ifdef PYROSETTA
 		PyRosettaEnergy_first,
 		PyRosettaEnergy_last = PyRosettaEnergy_first + 10,

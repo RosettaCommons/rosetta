@@ -344,7 +344,6 @@ ArmijoLineMinimization::operator()(
 	Real const FACTOR( 0.5 );
 	int const problem_size( current_position.size() );
 	// Real max_step_limit( _nonmonotone ? 2.0 : 1.0 );
-	Real max_step_limit( 1.0 );
 
 	_num_linemin_calls++;
 
@@ -367,7 +366,7 @@ ArmijoLineMinimization::operator()(
 
 	//initial trial stepsize
 	Real init_step( _last_accepted_step / FACTOR );
-	if ( init_step > max_step_limit ) init_step = max_step_limit;
+	if ( init_step > max_step_limit_ ) init_step = max_step_limit_;
 
 	Real final_value = Armijo( init_step, this_line_func );
 

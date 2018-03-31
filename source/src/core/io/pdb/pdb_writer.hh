@@ -94,8 +94,6 @@ dump_pdb(
 
 
 
-
-
 void
 dump_pdb(
 	core::pose::Pose const & pose,
@@ -103,6 +101,81 @@ dump_pdb(
 	utility::vector1< core::Size > const & residue_indices,
 	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
+
+
+/// @brief Writes poses to a single PDB file, returns false if an error occurs
+///  Use default StructFileRepOptions
+bool
+dump_multimodel_pdb(
+	utility::vector1< core::pose::PoseCOP > const & poses,
+	std::string const & file_name
+);
+
+/// @brief Writes poses to a single PDB file, returns false if an error occurs
+bool
+dump_multimodel_pdb(
+	utility::vector1< core::pose::PoseCOP > const & poses,
+	std::string const & file_name,
+	core::io::StructFileRepOptionsCOP options
+);
+
+/// @brief Writes poses to a given stream in PDB file format
+///  Use default StructFileRepOptions
+void
+dump_multimodel_pdb(
+	utility::vector1< core::pose::PoseCOP > const & poses,
+	std::ostream & out
+);
+
+/// @brief Writes poses to a given stream in PDB file format
+void
+dump_multimodel_pdb(
+	utility::vector1< core::pose::PoseCOP > const & poses,
+	std::ostream & out,
+	core::io::StructFileRepOptionsCOP options
+);
+
+
+/// @brief Adds a pose to a multimodel pdb file (or creates the file)
+///  Use default StructFileRepOptions
+bool
+add_to_multimodel_pdb(
+	core::pose::Pose const & pose,
+	std::string const & file_name,
+	std::string const & model_tag,
+	bool clear_existing_structures = false
+);
+
+/// @brief Adds a pose to a multimodel pdb file (or creates the file)
+bool
+add_to_multimodel_pdb(
+	core::pose::Pose const & pose,
+	std::string const & file_name,
+	std::string const & model_tag,
+	core::io::StructFileRepOptionsCOP options,
+	bool clear_existing_structures = false
+);
+
+/// @brief Adds a pose to a multimodel pdb file
+///  Use default StructFileRepOptions
+void
+add_to_multimodel_pdb(
+	core::pose::Pose const & pose,
+	std::ostream & out,
+	std::string const & model_tag
+);
+
+/// @brief Adds a pose to a multimodel pdb file
+void
+add_to_multimodel_pdb(
+	core::pose::Pose const & pose,
+	std::ostream & out,
+	std::string const & model_tag,
+	core::io::StructFileRepOptionsCOP options
+);
+
+
+
 
 /// @brief PyRosetta-Compatible; Writes pdb data for the given residue, beginning from the given atom number
 std::string
@@ -153,6 +226,8 @@ std::vector< Record > create_records_from_sfr(
 	StructFileRep const & sfr,
 	core::io::StructFileRepOptionsCOP options=core::io::StructFileRepOptionsCOP( new core::io::StructFileRepOptions )
 );
+
+
 
 
 

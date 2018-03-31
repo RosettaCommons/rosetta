@@ -167,14 +167,16 @@ public:
 class ArmijoLineMinimization : public LineMinimizationAlgorithm
 {
 public:
-	ArmijoLineMinimization( Multifunc const & score_fxn, bool nonmonotone, Size dim ) :
+	ArmijoLineMinimization( Multifunc const & score_fxn, bool nonmonotone, Size dim, Real max_step_limit ) :
 		LineMinimizationAlgorithm( score_fxn, dim ),
-		_num_calls( 0 ) { _nonmonotone = nonmonotone; };
+		_num_calls( 0 ),
+		max_step_limit_( max_step_limit ) { _nonmonotone = nonmonotone; };
 	bool provide_stored_derivatives() override{ return false; };
 	Real operator()( Multivec & curr_pos, Multivec & curr_dir ) override;
 	Real Armijo( Real init_step, func_1d & func_eval );
 
 	int _num_calls;
+	Real max_step_limit_;
 };
 
 /////////////////////////////////////////////////////////

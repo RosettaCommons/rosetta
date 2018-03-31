@@ -167,6 +167,8 @@ public:
 	Real ga_mutation_probability() const;
 	void ga_mutation_probability(Real p);
 
+	Real armijo_max_step_limit() const;
+	void armijo_max_step_limit( Real lim );
 
 	///////
 	// data
@@ -198,6 +200,7 @@ private:
 	Real linmin_deriv_cutoff_;
 
 	Real ga_mutation_probability_;
+	Real armijo_max_step_limit_;
 
 }; // MinimizerOptions
 

@@ -65,6 +65,7 @@ Minimizer::run(
 	Real end_func;
 	DFPMinConvergedFractional fractional_converge_test( options_.minimize_tolerance() );
 	DFPMinConvergedAbsolute absolute_converge_test( options_.minimize_tolerance() );
+	Real const ARMMAXSTEP( options_.armijo_max_step_limit() );
 	int const ITMAX( options_.max_iter() );
 
 	if ( type == "linmin" ) {
@@ -77,21 +78,21 @@ Minimizer::run(
 	} else if ( type == "dfpmin" ) {
 		dfpmin( phipsi, end_func, fractional_converge_test, ITMAX );
 	} else if ( type == "dfpmin_armijo" ) {
-		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size(), ARMMAXSTEP ) );
 		armijo_line_search->silent( options_.silent() );
 		dfpmin_armijo( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "dfpmin_armijo_nonmonotone" ) {
-		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size(), ARMMAXSTEP ) );
 		armijo_line_search->silent( options_.silent() );
 		dfpmin_armijo( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "dfpmin_atol" ) {
 		dfpmin( phipsi, end_func, absolute_converge_test, ITMAX );
 	} else if ( type == "dfpmin_armijo_atol" ) {
-		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size(), ARMMAXSTEP ) );
 		armijo_line_search->silent( options_.silent() );
 		dfpmin_armijo( phipsi, end_func, absolute_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "dfpmin_armijo_nonmonotone_atol" ) {
-		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size(), ARMMAXSTEP ) );
 		armijo_line_search->silent( options_.silent() );
 		dfpmin_armijo( phipsi, end_func, absolute_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "dfpmin_strong_wolfe" ) {
@@ -105,23 +106,23 @@ Minimizer::run(
 		brent_line_search->silent( options_.silent() );
 		lbfgs( phipsi, end_func, fractional_converge_test, brent_line_search, ITMAX );
 	} else if ( type == "lbfgs_armijo" ) {
-		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size(), ARMMAXSTEP ) );
 		armijo_line_search->silent( options_.silent() );
 		lbfgs( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "lbfgs_armijo_rescored" ) {
-		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size(), ARMMAXSTEP ) );
 		armijo_line_search->silent( options_.silent() );
 		lbfgs( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX, true );
 	} else if ( type == "lbfgs_armijo_atol" ) {
-		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size(), ARMMAXSTEP ) );
 		armijo_line_search->silent( options_.silent() );
 		lbfgs( phipsi, end_func, absolute_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "lbfgs_armijo_nonmonotone" ) {
-		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size(), ARMMAXSTEP ) );
 		armijo_line_search->silent( options_.silent() );
 		lbfgs( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "lbfgs_armijo_nonmonotone_atol" ) {
-		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size(), ARMMAXSTEP ) );
 		armijo_line_search->silent( options_.silent() );
 		lbfgs( phipsi, end_func, absolute_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "lbfgs_strong_wolfe" ) {

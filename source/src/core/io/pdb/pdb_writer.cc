@@ -189,6 +189,127 @@ dump_pdb(
 }
 
 
+/// @brief Writes poses to a single PDB file, returns false if an error occurs
+///  Use default StructFileRepOptions
+bool
+dump_multimodel_pdb(
+	utility::vector1< core::pose::PoseCOP > const & poses,
+	std::string const & file_name
+){
+	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	return dump_multimodel_pdb(poses, file_name, options);
+}
+
+/// @brief Writes poses to a single PDB file, returns false if an error occurs
+bool
+dump_multimodel_pdb(
+	utility::vector1< core::pose::PoseCOP > const & poses,
+	String const & file_name,
+	core::io::StructFileRepOptionsCOP options
+) {
+	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
+	if ( !file ) {
+		Error() << "StructFileRep::dump_multimodel_pdb: Unable to open file:" << file_name << " for writing!!!" << std::endl;
+		return false;
+	}
+	dump_multimodel_pdb(poses, file, options);
+	file.close();
+
+	return true;
+}
+
+/// @brief Writes poses to a given stream in PDB file format
+///  Use default StructFileRepOptions
+void
+dump_multimodel_pdb(
+	utility::vector1< core::pose::PoseCOP > const & poses,
+	std::ostream & out
+){
+	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	dump_multimodel_pdb(poses, out, options);
+}
+
+/// @brief Writes poses to a given stream in PDB file format
+void
+dump_multimodel_pdb(
+	utility::vector1< core::pose::PoseCOP > const & poses,
+	std::ostream & out,
+	core::io::StructFileRepOptionsCOP options
+) {
+	// multimodel PDB method stolen from protocols/canonical_sampling/PDBTrajectoryRecorder.cc
+	for ( Size i = 1; i <= poses.size(); i++ ) {
+		pose::PoseCOP pose = poses[i];
+		std::stringstream model_tag;
+		model_tag << std::setfill('0') << std::setw( utility::get_num_digits( poses.size() ) ) << i;
+
+		add_to_multimodel_pdb( *pose, out, model_tag.str(), options);
+
+	}
+}
+
+/// @brief Adds a pose to a multimodel pdb file (or creates the file)
+///  Use default StructFileRepOptions
+bool
+add_to_multimodel_pdb(
+	core::pose::Pose const & pose,
+	std::string const & file_name,
+	std::string const & model_tag,
+	bool clear_existing_structures /* = false */
+) {
+	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	return add_to_multimodel_pdb( pose, file_name, model_tag, options, clear_existing_structures );
+}
+
+/// @brief Adds a pose to a multimodel pdb file (or creates the file)
+bool
+add_to_multimodel_pdb(
+	core::pose::Pose const & pose,
+	std::string const & file_name,
+	std::string const & model_tag,
+	core::io::StructFileRepOptionsCOP options,
+	bool clear_existing_structures /* = false */
+) {
+	utility::io::ozstream file( file_name.c_str(), std::ios::out | std::ios::binary |
+		( clear_existing_structures ? std::ios::trunc : std::ios::app ) );
+	if ( !file ) {
+		Error() << "StructFileRep::add_to_multimodel_pdb: Unable to open file:" << file_name << " for writing!!!" << std::endl;
+		return false;
+	}
+
+	add_to_multimodel_pdb( pose, file, model_tag, options );
+
+	file.close();
+	return true;
+}
+
+/// @brief Adds a pose to a multimodel pdb file
+///  Use default StructFileRepOptions
+void
+add_to_multimodel_pdb(
+	core::pose::Pose const & pose,
+	std::ostream & out,
+	std::string const & model_tag
+) {
+	StructFileRepOptionsCOP options=StructFileRepOptionsCOP( new core::io::StructFileRepOptions );
+	add_to_multimodel_pdb( pose, out, model_tag, options );
+}
+
+/// @brief Adds a pose to a multimodel pdb file
+void
+add_to_multimodel_pdb(
+	core::pose::Pose const & pose,
+	std::ostream & out,
+	std::string const & model_tag,
+	core::io::StructFileRepOptionsCOP options
+) {
+	out << "MODEL     " << model_tag << std::endl;
+	dump_pdb( pose, out, options );
+	out << "ENDMDL" << std::endl;
+}
+
+
+
+
 /// @brief create a full pdb as a string given a StructFileRep object
 std::string
 create_pdb_contents_from_sfr(

@@ -1,0 +1,16 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+	  	  <ScoreFunction name="scorefxn" weights="ref2015" >
+            <Reweight scoretype="dump_trajectory" weight="1" />
+        </ScoreFunction>
+   	</SCOREFXNS>
+   	<MOVERS>
+
+        <MinMover name="min_mover" scorefxn="scorefxn" chi="1" bb="0" type="linmin_iterated" tolerance="0.1" max_iter="10" />
+
+	</MOVERS>
+	<PROTOCOLS>
+        <Add mover="min_mover"/>
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

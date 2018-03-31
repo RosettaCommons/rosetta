@@ -24,6 +24,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <chrono>
 
 // Platform headers
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
@@ -133,6 +134,72 @@ timestamp_short()
 		<< setw( 2 ) << ( now->tm_hour )
 		<< setw( 2 ) << ( now->tm_min )
 		<< setw( 2 ) << ( now->tm_sec );
+
+	return timestamp.str();
+}
+
+/// @brief Generate timestamp string with millis
+std::string
+timestamp_millis()
+{
+	using std::ostringstream;
+	using std::setw;
+	using std::time;
+	using std::time_t;
+	using std::tm;
+	using namespace std::chrono;
+
+	//https://stackoverflow.com/questions/12835577/how-to-convert-stdchronotime-point-to-calendar-datetime-string-with-fraction
+	high_resolution_clock::time_point high_precision_now = high_resolution_clock::now();
+	milliseconds ms = duration_cast<milliseconds>( high_precision_now.time_since_epoch() );
+	seconds s = duration_cast<seconds>( ms );
+	std::time_t t = s.count();
+
+	struct tm * now = std::localtime( &t );
+
+	ostringstream timestamp;
+	timestamp
+		<< "["
+		<< setw( 4 ) << ( now->tm_year + 1900 ) << "-"
+		<< setw( 2 ) << ( now->tm_mon + 1 ) << "-"
+		<< setw( 2 ) << ( now->tm_mday ) << " "
+		<< setw( 2 ) << ( now->tm_hour ) << ":"
+		<< setw( 2 ) << ( now->tm_min ) << ":"
+		<< setw( 2 ) << ( now->tm_sec ) << "."
+		<< setw( 3 ) << ( ms.count() % 1000)
+		<< "]";
+
+	return timestamp.str();
+}
+
+/// @brief Generate timestamp string with millis, short format
+std::string
+timestamp_millis_short()
+{
+	using std::ostringstream;
+	using std::setw;
+	using std::time;
+	using std::time_t;
+	using std::tm;
+	using namespace std::chrono;
+
+	//https://stackoverflow.com/questions/12835577/how-to-convert-stdchronotime-point-to-calendar-datetime-string-with-fraction
+	high_resolution_clock::time_point high_precision_now = high_resolution_clock::now();
+	milliseconds ms = duration_cast<milliseconds>( high_precision_now.time_since_epoch() );
+	seconds s = duration_cast<seconds>( ms );
+	std::time_t t = s.count();
+
+	struct tm * now = std::localtime( &t );
+
+	ostringstream timestamp;
+	timestamp << std::setfill('0')
+		<< setw( 4 ) << ( now->tm_year + 1900 )
+		<< setw( 2 ) << ( now->tm_mon + 1 )
+		<< setw( 2 ) << ( now->tm_mday )
+		<< setw( 2 ) << ( now->tm_hour )
+		<< setw( 2 ) << ( now->tm_min )
+		<< setw( 2 ) << ( now->tm_sec )
+		<< setw( 3 ) << ( ms.count() % 1000 );
 
 	return timestamp.str();
 }
