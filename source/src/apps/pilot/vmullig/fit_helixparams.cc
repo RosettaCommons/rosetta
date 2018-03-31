@@ -11,12 +11,14 @@
 /// @brief Constructs a piece of secondary structure with repeating mainchain torsion values,
 /// and fits the Crick parameters for a helix to the structure.
 /// @details Updated 29 May 2015 to permit the repeating unit to be more than one residue.
+/// Updated 29 March 2018 to permit the repeating unit to be a PDB file.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 //General includes
 #include <basic/options/option.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
@@ -64,6 +66,8 @@ OPT_KEY (RealVector, delta_z1_guesses)
 OPT_KEY (StringVector, nonideal_angles)
 OPT_KEY (StringVector, nonideal_bondlengths)
 
+OPT_KEY (String, repeating_unit_pdb )
+
 /// @brief Set up the options for this pilot app.
 void register_options()
 {
@@ -103,6 +107,8 @@ void register_options()
 	NEW_OPT( delta_z1_guesses, "Initial guesses for the value of delta_z1 of all atoms (the axial offset, in Angstroms).  The guess for the reference atom will be disregarded, since delta_z1 is always zero for the reference atom.  Unused if not specified, but if specified, one guess must be provided for each atom.", emptyreal);
 	NEW_OPT( nonideal_angles, "Mainchain bond angles that are nonideal.  These must be specified as a list of the form \"<resnum1> <first_atomname> <resnum2> <second_atomname> <resnum3> <third_atomname> <angle>\".  For example, if we were working with alpha-amino acids and we wanted to specify that the N-CA-C bond angle for the second residue in the repeating unit was 110 degrees, we would use \"-nonideal_angles 2 N 2 CA 2 C 110.0\".  Not used if not specified.", emptystring);
 	NEW_OPT( nonideal_bondlengths, "Mainchain bond lengths that are nonideal.  These must be specified as a list of the form \"<resnum1> <preceding_atomname> <resnum2> <following_atomname> <length>\".  For example, if we were working with alpha-amino acids and we wanted to specify that the CA-C bond length for the second residue in the repeating unit was 1.3 Angstroms, we would use \"-nonideal_bondlengths 2 CA 2 C 1.3\".  Not used if not specified.",  emptystring);
+
+	NEW_OPT( repeating_unit_pdb, "A PDB file consisting of the repeating unit, padded by one extra residue on each of the N- and C-termini.  If provided, then the -residue_type, -mainchain_torsions, -nonideal_angles, and -nonideal_bondlengths options need not be provided, since these are inferred from the input PDB.  Not used if not provided.", "" );
 
 	return;
 }
@@ -179,15 +185,20 @@ void set_pose_conformation(
 		for ( core::Size j=1, jmax=nonstandard_bondangle_list.size(); j<=jmax; ++j ) {
 			runtime_assert_string_msg( nonstandard_bondangle_list[j].first.size() == 3, "Internal program error: nonstandard_bondangle_list vectors are the wrong size." );
 			core::id::AtomID at1( nonstandard_bondangle_list[j].first[1].atomno(), nonstandard_bondangle_list[j].first[1].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			if ( at1.rsd() > pose.total_residue() ) continue;
 			core::id::AtomID at2( nonstandard_bondangle_list[j].first[2].atomno(), nonstandard_bondangle_list[j].first[2].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			if ( at2.rsd() > pose.total_residue() ) continue;
 			core::id::AtomID at3( nonstandard_bondangle_list[j].first[3].atomno(), nonstandard_bondangle_list[j].first[3].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			if ( at3.rsd() > pose.total_residue() ) continue;
 			pose.conformation().set_bond_angle( at1, at2, at3, nonstandard_bondangle_list[j].second );
 		}
 		pose.update_residue_neighbors();
 		for ( core::Size j=1, jmax=nonstandard_bondlength_list.size(); j<=jmax; ++j ) {
 			runtime_assert_string_msg( nonstandard_bondlength_list[j].first.size() == 2, "Internal program error: nonstandard_bondlength_list vectors are the wrong size." );
 			core::id::AtomID at1( nonstandard_bondlength_list[j].first[1].atomno(), nonstandard_bondlength_list[j].first[1].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			if ( at1.rsd() > pose.total_residue() ) continue;
 			core::id::AtomID at2( nonstandard_bondlength_list[j].first[2].atomno(), nonstandard_bondlength_list[j].first[2].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			if ( at2.rsd() > pose.total_residue() ) continue;
 			pose.conformation().set_bond_length( at1, at2, nonstandard_bondlength_list[j].second );
 		}
 		pose.update_residue_neighbors();
@@ -393,6 +404,49 @@ void parse_nonstandard_bondlengths(
 	return;
 }
 
+/// @brief Initialize the repeating unit from a pose instead of from commandline options.
+void initialize_from_pdb(
+	std::string const &filename,
+	utility::vector1<std::string> &restypes_from_input_pdb,
+	utility::vector1<core::Real> &mainchain_torsions_from_input_pdb,
+	utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > &nonstandard_angle_list,
+	utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > &nonstandard_bondlength_list
+) {
+	//Import the pose:
+	core::pose::Pose pose;
+	core::import_pose::pose_from_file( pose, filename );
+	pose.update_residue_neighbors();
+
+	runtime_assert_string_msg( pose.total_residue() >= 3, "Error in repeating unit initialization: The provided pose for the repeating unit must be padded by one residue on each of the N- and C-termini." );
+
+	for ( core::Size ir(2), irmax(pose.total_residue()); ir<irmax; ++ir ) { //Loop through residues of the repeating unit.
+		restypes_from_input_pdb.push_back( pose.residue_type(ir).name() );
+
+		core::conformation::Residue const &curres( pose.residue(ir) );
+
+		for ( core::Size itors(1), itorsmax( curres.mainchain_torsions().size() ); itors<=itorsmax; ++itors ) {
+			mainchain_torsions_from_input_pdb.push_back( curres.mainchain_torsion(itors) );
+		}
+
+		for ( core::Size iat(1), iatmax( curres.n_mainchain_atoms() ); iat <= iatmax; ++iat ) {
+			core::id::AtomID const atid1( iat, ir );
+			core::id::AtomID const atid2( iat < iatmax ? iat + 1 : 1, iat < iatmax ? ir : ir + 1 );
+			core::id::AtomID const atid3( iat + 1 < iatmax ? iat + 2 : 2, iat + 1 < iatmax ? ir : ir + 1 );
+			core::Real const angle( numeric::angle_of( pose.xyz(atid1), pose.xyz(atid2), pose.xyz(atid3) ) );
+			utility::vector1< core::id::AtomID > tempvect{ atid1, atid2, atid3 };
+			nonstandard_angle_list.push_back( std::pair< utility::vector1< core::id::AtomID >, core::Real >( tempvect, angle ) );
+		}
+
+		for ( core::Size iat(1), iatmax( curres.n_mainchain_atoms() ); iat <= iatmax; ++iat ) {
+			core::id::AtomID const atid1( iat, ir );
+			core::id::AtomID const atid2( iat < iatmax ? iat + 1 : 1, iat < iatmax ? ir : ir + 1 );
+			core::Real const length( pose.xyz(atid1).distance( pose.xyz(atid2) ) );
+			utility::vector1< core::id::AtomID > tempvect{ atid1, atid2 };
+			nonstandard_bondlength_list.push_back( std::pair< utility::vector1< core::id::AtomID >, core::Real >( tempvect, length ) );
+		}
+	}
+}
+
 int
 main( int argc, char * argv [] )
 {
@@ -410,27 +464,39 @@ main( int argc, char * argv [] )
 			TR << "For questions, contact vmullig@uw.edu." << std::endl << std::endl;
 		}
 
+		utility::vector1<std::string> restypes_from_input_pdb;
+		utility::vector1<core::Real> mainchain_torsions_from_input_pdb;
+		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > nonstandard_angle_list;
+		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > nonstandard_bondlength_list;
+
+		if ( option[repeating_unit_pdb].user() ) {
+			runtime_assert_string_msg( !option[residue_type].user(), "Error in input flags: If the -repeating_unit_pdb flag is provided, then the -residue_type flag cannot be." );
+			runtime_assert_string_msg( !option[mainchain_torsions].user(), "Error in input flags: If the -repeating_unit_pdb flag is provided, then the -mainchain_torsions flag cannot be." );
+			runtime_assert_string_msg( !option[nonideal_angles].user(), "Error in input flags: If the -repeating_unit_pdb flag is provided, then the -nonideal_angles flag cannot be." );
+			runtime_assert_string_msg( !option[nonideal_bondlengths].user(), "Error in input flags: If the -repeating_unit_pdb flag is provided, then the -nonideal_bondlengths flag cannot be." );
+			initialize_from_pdb( option[repeating_unit_pdb](), restypes_from_input_pdb, mainchain_torsions_from_input_pdb, nonstandard_angle_list, nonstandard_bondlength_list );
+		}
+
 		//Copy user inputs from the options system:
-		utility::vector1<std::string> const restypes( option[residue_type]() );
+		utility::vector1<std::string> const restypes( option[repeating_unit_pdb].user() ? restypes_from_input_pdb : option[residue_type]() );
 		core::Size const residues_per_repeat( restypes.size() ); //How many residues are there per repeating unit?
 		runtime_assert_string_msg( option[repeats]()>0, "Error in user input from command-line flags.  The number of repeats must be greater than zero." );
 		auto const nrepeats( static_cast<core::Size>(option[repeats]()) );
-		utility::vector1<core::Real> const mainchaintorsions( option[mainchain_torsions]() );
+		utility::vector1<core::Real> const mainchaintorsions( option[repeating_unit_pdb].user() ? mainchain_torsions_from_input_pdb : option[mainchain_torsions]() );
 
 		utility::vector1<core::Real> const r1guesses( option[r1_guesses]() );
 		utility::vector1<core::Real> const deltaomega1_guesses( option[delta_omega1_guesses]() );
 		utility::vector1<core::Real> const deltaz1_guesses( option[delta_z1_guesses]() );
-
-		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > nonstandard_angle_list;
-		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > nonstandard_bondlength_list;
 
 		core::pose::Pose pose; //Make the empty pose
 
 		build_polymer(pose, restypes, residues_per_repeat, nrepeats); //Build the repeating secondary structure element
 
 		//Set up the AtomIDs for the nonstandard bond angles and bond lengths:
-		parse_nonstandard_angles( nonstandard_angle_list, pose, residues_per_repeat );
-		parse_nonstandard_bondlengths( nonstandard_bondlength_list, pose, residues_per_repeat );
+		if ( !option[repeating_unit_pdb].user() ) {
+			parse_nonstandard_angles( nonstandard_angle_list, pose, residues_per_repeat );
+			parse_nonstandard_bondlengths( nonstandard_bondlength_list, pose, residues_per_repeat );
+		}
 
 		set_pose_conformation(pose, nrepeats, residues_per_repeat, mainchaintorsions, nonstandard_angle_list, nonstandard_bondlength_list); //Set the pose conformation.
 
