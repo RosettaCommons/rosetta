@@ -335,9 +335,9 @@ void parse_nonstandard_angles(
 		ss >> angleval;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
 
-		core::id::AtomID id1( pose.residue(res1+1).type().atom_index( at1str ), res1 );
-		core::id::AtomID id2( pose.residue(res2+1).type().atom_index( at2str ), res2 );
-		core::id::AtomID id3( pose.residue(res3+1).type().atom_index( at3str ), res3 );
+		core::id::AtomID id1( pose.residue_type(res1+1).atom_index( at1str ), res1 );
+		core::id::AtomID id2( pose.residue_type(res2+1).atom_index( at2str ), res2 );
+		core::id::AtomID id3( pose.residue_type(res3+1).atom_index( at3str ), res3 );
 		utility::vector1< core::id::AtomID > idvect;
 		idvect.push_back(id1);
 		idvect.push_back(id2);
@@ -392,8 +392,8 @@ void parse_nonstandard_bondlengths(
 		ss >> lengthval;
 		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
 
-		core::id::AtomID id1( pose.residue(res1+1).type().atom_index( at1str ), res1 );
-		core::id::AtomID id2( pose.residue(res2+1).type().atom_index( at2str ), res2 );
+		core::id::AtomID id1( pose.residue_type(res1+1).atom_index( at1str ), res1 );
+		core::id::AtomID id2( pose.residue_type(res2+1).atom_index( at2str ), res2 );
 		utility::vector1< core::id::AtomID > idvect;
 		idvect.push_back(id1);
 		idvect.push_back(id2);
