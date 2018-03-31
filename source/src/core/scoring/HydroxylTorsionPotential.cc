@@ -131,8 +131,11 @@ HydroxylTorsionPotential::eval_residue_energy(
 		for ( it2 = range.first; it2 != range.second; ++it2 ) {
 			TorsionParams const &p = it2->second;
 
-			debug_assert( rsd.has(p.atm[1]) && rsd.has(p.atm[2]) &&
-				rsd.has(p.atm[3]) && rsd.has(p.atm[4]) );
+			if ( !rsd.has(p.atm[1]) || !rsd.has(p.atm[2]) ||
+					!rsd.has(p.atm[3]) || !rsd.has(p.atm[4])
+					) {
+				continue; //Skip residues that lack the relevant torsion.  This arises, for example, when serine is bonded to a metal, and the -auto_setup_metals code strips off the serine hydroxyl proton.
+			}
 
 			Real tors = numeric::dihedral_radians(
 				rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
@@ -177,8 +180,11 @@ HydroxylTorsionPotential::eval_residue_derivative(
 		for ( it2 = range.first; it2 != range.second; ++it2 ) {
 			TorsionParams const &p = it2->second;
 
-			debug_assert( rsd.has(p.atm[1]) && rsd.has(p.atm[2]) &&
-				rsd.has(p.atm[3]) && rsd.has(p.atm[4]) );
+			if ( !rsd.has(p.atm[1]) || !rsd.has(p.atm[2]) ||
+					!rsd.has(p.atm[3]) || !rsd.has(p.atm[4])
+					) {
+				continue; //Skip residues that lack the relevant torsion.  This arises, for example, when serine is bonded to a metal, and the -auto_setup_metals code strips off the serine hydroxyl proton.
+			}
 
 			core::Size const at1_index( rsd.atom_index( p.atm[1] ) );
 			core::Size const at2_index( rsd.atom_index( p.atm[2] ) );

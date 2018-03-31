@@ -267,6 +267,7 @@ sources = {
 	],
 	"scoring" : [
 		"backbone_aa",
+		"BetaNov16WithAutoSetupMetalsTests",
 		"cyclic_geometry",
 		"cyclic_geometry_2chain",
 		"cyclic_geometry_betanov15",
@@ -945,6 +946,7 @@ testinputfiles = [
 	"pose/copydofs/excise_bp_7_14_min_again_relax_full_RNA_P_overlap_reR-hbond_sc_wildtype_bound.pdb",
 	"scoring/2GB3.pdb",
 	"scoring/4dO8B.pdb",
+	"scoring/4mmx_context_0001_renumbered_trimmed.pdb",
 	"scoring/1pqc.params",
 	"scoring/1pqc_0001.pdb",
 	"scoring/1pqc_0003.pdb",
