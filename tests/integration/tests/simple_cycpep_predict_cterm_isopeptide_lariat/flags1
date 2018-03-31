@@ -1,16 +1,13 @@
 -nstruct 5
 ##### these are general flags
-#-score:weights talaris2014
--inout:write_all_connect_info true
--sequence_file inputs/seq1.txt
--genkic_closure_attempts 200
--fast_relax_rounds 1
--min_genkic_hbonds 0
--min_final_hbonds 0
 -symmetric_gly_tables true
--cyclic_peptide:rama_cutoff 3.0
--cyclic_peptide:sample_cis_pro_frequency 0.25
-#-cyclic_peptide:use_classic_rama_for_sampling true
--cyclic_peptide:n_methyl_positions 2 4
+-inout:write_all_connect_info true
+-inout:connect_info_cutoff 0.0
+-sequence_file inputs/seq1.txt
+-genkic_closure_attempts 2000
+-fast_relax_rounds 1
+-min_genkic_hbonds 1
+-min_final_hbonds 1
+-cyclic_peptide:cyclization_type cterm_isopeptide_lariat
+-cyclic_peptide:rama_cutoff 5.0
 -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
-#-restore_talaris_behavior

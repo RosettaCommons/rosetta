@@ -124,8 +124,6 @@ HYDROXYLATION2 # Add a hydroxyl group to the "primary" (sidechain) location for 
 CARBOXYLATION  # Add a carboxy (COO-) group the "standard" (sidechain) location
 DIIODINATION   # Add two iodines to the "standard" (sidechain) locations
 
-N_METHYLATION  # Add a methyl group to an A.A. backbone nitrogen *without* altering the LOWER connect
-
 # REPRESENTATIONAL VARIANTS
 
 ## VIRTUALIZATION 

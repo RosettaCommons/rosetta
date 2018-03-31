@@ -2,7 +2,6 @@
 patches/D_AA.txt
 patches/CtermProteinFull.txt
 patches/NtermProteinFull.txt
-patches/N_methylation.txt #Methyl group replacing amide proton in residues in the middle of a sequence (NOT N-termini).  Must precede protein_cutpoint_upper, unfortunately.
 patches/protein_cutpoint_upper.txt
 patches/peptoid_cutpoint_upper.txt #Note that there is no peptoid_cutpoint_lower.txt because the protein patch works for peptoids.
 patches/protein_cutpoint_lower.txt
@@ -63,7 +62,6 @@ patches/branching/aryl-O-conjugated.txt
 patches/branching/aryl-C-conjugated.txt
 patches/branching/S-linked_conjugation.txt
 #patches/branching/C-terminal_conjugation.txt  # Something is broken with this patch. ~Labonte
-patches/branching/sidechain_carboxyl_conjugation.txt
 patches/branching/sidechain_electrophile_conjugation.txt
 patches/branching/phg_cd1_conjugation.txt
 patches/branching/phg_cd2_conjugation.txt

@@ -729,7 +729,7 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	);
 
 
-	/// @brief Rebuilds the atoms that are depenent on polymer bonds for the specified residue only.
+	/// @brief Rebuilds the atoms that are dependent on polymer bonds for the specified residue only.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void rebuild_polymer_bond_dependent_atoms_this_residue_only ( Size seqpos );
 

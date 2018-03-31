@@ -35,7 +35,6 @@ patches/nucleic/rna/Virtual_Phosphate.txt
 patches/branching/S-linked_conjugation.txt
 patches/branching/N-linked_conjugation.txt
 patches/branching/O-linked_conjugation.txt
-patches/branching/sidechain_carboxyl_conjugation.txt
 
 ## carbohydrate patches (These are currently direct copies of the fa patches.)
 ### termini

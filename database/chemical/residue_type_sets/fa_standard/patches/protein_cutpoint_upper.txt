@@ -9,20 +9,6 @@ NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
 NOT VARIANT_TYPE CUTPOINT_UPPER
 END_SELECTOR
 
-BEGIN_CASE ################################# N-methylation
-# Added by Vikram K. Mulligan (vmullig@uw.edu) on 10 June 2017 as part of the
-# 2017 Noncanonicals Hackathon in New York City.
-BEGIN_SELECTOR
-PROPERTY N_METHYLATED
-END_SELECTOR
-
-ADD_ATOM OVU1 VIRT VIRT 0.0
-ADD_BOND N OVU1
-SET_BACKBONE_HEAVYATOM OVU1
-SET_ICOOR OVU1 180.0 58.3 1.329 N CA CN
-
-END_CASE
-
 BEGIN_CASE ################################# proline
 
 BEGIN_SELECTOR

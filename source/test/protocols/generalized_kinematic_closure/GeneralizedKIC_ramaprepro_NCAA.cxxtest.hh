@@ -64,7 +64,7 @@ public:
 	void do_ramaprepro_test(
 		std::string const &seq,
 		core::Size const sampled_pos,
-		bool const n_methylate,
+		bool const /*n_methylate*/,
 		bool const flip_chirality
 	) {
 		using namespace protocols::generalized_kinematic_closure;
@@ -74,15 +74,6 @@ public:
 		//Make the pose:
 		core::pose::PoseOP pose( new core::pose::Pose );
 		core::pose::make_pose_from_sequence(*pose, seq, "fa_standard", false);
-
-		if ( n_methylate ) {
-			core::chemical::ResidueTypeSetCOP rsd_set(pose->residue_type_set_for_pose( pose->residue_type(sampled_pos).mode() ));
-			core::chemical::ResidueTypeCOP rsd_type( pose->residue_type_ptr(sampled_pos) );
-			core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_residue_type_with_variant_added( *rsd_type,
-				core::chemical::ResidueProperties::get_variant_from_string( "N_METHYLATION" ) ).get_self_ptr() );
-			core::pose::replace_pose_residue_copying_existing_coordinates( *pose, sampled_pos, *new_rsd_type );
-			//pose->dump_pdb("vtemp_genkic_ramaprepro.pdb"); //DELETE ME
-		}
 
 		if ( flip_chirality ) {
 			protocols::cyclic_peptide::FlipChiralityMover flipper;

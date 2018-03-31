@@ -47,20 +47,11 @@ static basic::Tracer TR_util("RamaPrePro_util");
 inline
 void do_ramaprepro_test(
 	std::string const &seq,
-	bool const add_nmethyl,
+	bool const /*add_nmethyl*/,
 	bool const flip_chirality
 ) {
 	core::pose::PoseOP pose( new core::pose::Pose );
 	core::pose::make_pose_from_sequence(*pose, seq, "fa_standard", false);
-
-	if ( add_nmethyl ) {
-		core::chemical::ResidueTypeSetCOP rsd_set(pose->residue_type_set_for_pose( pose->residue_type(2).mode() ));
-		core::chemical::ResidueTypeCOP rsd_type( pose->residue_type_ptr(2) );
-		core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_residue_type_with_variant_added( *rsd_type,
-			core::chemical::ResidueProperties::get_variant_from_string( "N_METHYLATION" ) ).get_self_ptr() );
-		core::pose::replace_pose_residue_copying_existing_coordinates( *pose, 2, *new_rsd_type );
-		//pose->dump_pdb("vtemp_ramaprepro.pdb"); //DELETE ME
-	}
 
 	if ( flip_chirality ) {
 		protocols::cyclic_peptide::FlipChiralityMover flipper;

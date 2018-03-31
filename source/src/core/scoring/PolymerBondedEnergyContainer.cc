@@ -24,6 +24,9 @@
 #include <core/pose/symmetry/util.hh>
 #include <utility>
 
+// Tracer
+#include <basic/Tracer.hh>
+
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
@@ -41,6 +44,9 @@
 
 namespace core {
 namespace scoring {
+
+static basic::Tracer TR( "core.scoring.PolymerBondedEnergyContainer" );
+static basic::Tracer TR_it( "core.scoring.PolymerBondedNeighborIterator" );
 
 ///////////////////////////////////////////////////////
 
@@ -233,8 +239,23 @@ PolymerBondedEnergyContainer::PolymerBondedEnergyContainer(
 	score_types_( score_type_in )
 {
 	initialize_peptide_bonded_pair_indices( pose ); //Sets size_ and peptide_bonded_pair_indices_.
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Initialized PolymerBondedEnergyContainer for pose with sequence \"" << pose.annotated_sequence(true) << "\".\n";
+		TR.Debug << *this << std::endl;
+	}
 }
 
+/// @brief Operator to allow object to be summarized.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::ostream &
+operator <<( std::ostream & os, PolymerBondedEnergyContainer const & t )
+{
+	os << "This PolymerBondedEnergyContainer has " << t.size_ << " residue index connections:\n";
+	for ( std::multimap<core::Size, core::Size>::const_iterator it( t.chemical_edges_.begin() ); it!=t.chemical_edges_.end(); ++it ) {
+		os << it->first << "\t" << it->second << "\n";
+	}
+	return os;
+}
 
 bool PolymerBondedEnergyContainer::empty() const {
 	return ( size_ == 0 );

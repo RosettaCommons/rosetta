@@ -25,6 +25,7 @@
 #include <core/types.hh>
 
 // Project Headers
+#include <protocols/generalized_kinematic_closure/GeneralizedKIC.fwd.hh>
 #include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
 #include <protocols/denovo_design/movers/FastDesign.fwd.hh>
 #include <protocols/filters/BasicFilters.fwd.hh>
@@ -56,6 +57,9 @@ namespace cyclic_peptide_predict {
 enum SCPA_cyclization_type {
 	SCPA_n_to_c_amide_bond = 1, //Keep this first
 	SCPA_terminal_disulfide,
+	SCPA_nterm_isopeptide_lariat,
+	SCPA_cterm_isopeptide_lariat,
+	SCPA_sidechain_isopeptide,
 	SCPA_invalid_type, //Keep this second-to-last
 	SCPA_number_of_types = SCPA_invalid_type //Keep this last
 };
@@ -199,6 +203,18 @@ private:
 	/// @brief Is a value in a vector?
 	bool is_in_list( core::Size val, utility::vector1 <core::Size> const & vect ) const;
 
+	///  @brief Is a given cyclization type a lariat type (i.e. one where a side-chain connects to backbone)?
+	bool is_lariat_type( SCPA_cyclization_type const type_in ) const;
+
+	/// @brief Check that the loop formed is long enough.
+	void check_loop_length( utility::vector1< std::string > const &resnames ) const;
+
+	/// @brief Given a pose, find the first and last isopeptide bond-forming residues.
+	/// @details Bases this on lariat_sidechain_index_ for lariat types, unless set to 0, in which case it finds the
+	/// suitable type closest to the opposite terminus.  Bases this on sidechain_isopeptide_indices_ for sidechain isopeptide
+	/// cyclization, unless set to 0, in which case it finds the suitable types that are furthest apart.
+	void find_first_and_last_isopeptide_residues( core::pose::PoseCOP pose, core::Size &firstres, core::Size &lastres ) const;
+
 	/// @brief Count the number of cis-peptide bonds in the pose.
 	///
 	core::Size count_cis_peptide_bonds(
@@ -222,13 +238,6 @@ private:
 	void build_polymer(
 		core::pose::PoseOP pose,
 		utility::vector1<std::string> const &restypes
-	) const;
-
-	/// @brief Add N-methylation.
-	///
-	void add_n_methylation(
-		core::pose::PoseOP pose,
-		core::Size const cyclic_offset
 	) const;
 
 	/// @brief Given the name of a Rama_Table_Type, set the default Rama_Table_Type.
@@ -273,6 +282,15 @@ private:
 		core::Size const first_disulf_res
 	) const;
 
+	/// @brief Set up the mover that creates N-terminal isopeptide bonds.
+	void set_up_nterm_isopeptide_cyclization_mover( protocols::cyclic_peptide::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
+
+	/// @brief Set up the mover that creates C-terminal isopeptide bonds.
+	void set_up_cterm_isopeptide_cyclization_mover( protocols::cyclic_peptide::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
+
+	/// @brief Set up the mover that creates sidechain isopeptide bonds.
+	void set_up_sidechain_isopeptide_cyclization_mover( protocols::cyclic_peptide::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
+
 	/// @brief Set up the DeclareBond mover used to connect the termini, or whatever
 	/// atoms are involved in the cyclization.  (Handles different cyclization modes).
 	void
@@ -311,7 +329,14 @@ private:
 	) const;
 
 	/// @brief Function to add cyclic constraints to a pose.
-	///
+	/// @details This version does this for N-to-C amide bonds and isopeptide bonds.
+	/// @param[in] pose The pose to modify.
+	/// @param[in] n_index The index of the N-terminal sidechain for an isopeptide bond.  Set to 0 for N-terminus.
+	/// @param[in] c_index The index of the C-terminal sidechain for an isopeptide bond.  Set to 0 for C-terminus.
+	void add_amide_bond_cyclic_constraints ( core::pose::PoseOP pose, core::Size n_index, core::Size c_index ) const;
+
+	/// @brief Function to add cyclic constraints to a pose.
+	/// @details Calls functions that do this for particular cyclization types.
 	void add_cyclic_constraints ( core::pose::PoseOP pose ) const;
 
 	/// @brief Sets all omega values to 180, and randomizes mainchain torsions.
@@ -332,6 +357,22 @@ private:
 		core::Real const &min_hbonds
 	) const;
 
+	/// @brief Set up the logic to close the bond at the cyclization point.
+	/// @details This version is for N-to-C amide bond cyclization.
+	void add_closebond_logic_n_to_c_amide_bond( core::pose::PoseCOP pose, core::Size const cyclization_point_start, core::Size const cyclization_point_end, protocols::generalized_kinematic_closure::GeneralizedKICOP genkic ) const;
+
+	/// @brief Set up the logic to close the bond at the cyclization point.
+	/// @details This version is for terminal disulfide cyclization.
+	void add_closebond_logic_terminal_disulfide( core::pose::PoseCOP pose, core::Size const cyclization_point_start, core::Size const cyclization_point_end, protocols::generalized_kinematic_closure::GeneralizedKICOP genkic ) const;
+
+	/// @brief Set up the logic to close the bond at the cyclization point.
+	/// @details This version is for all types of isopeptide bond cyclization.
+	void add_closebond_logic_isopeptide( core::pose::PoseCOP pose, core::Size const cyclization_point_start, core::Size const cyclization_point_end, protocols::generalized_kinematic_closure::GeneralizedKICOP genkic ) const;
+
+	/// @brief Set up the logic to close the bond at the cyclization point.
+	/// @details Calls different functions for different cyclization types.
+	void add_closebond_logic( core::pose::PoseCOP pose, core::Size const cyclization_point_start, core::Size const cyclization_point_end, protocols::generalized_kinematic_closure::GeneralizedKICOP genkic ) const;
+
 	/// @brief Use GeneralizedKIC to close the pose.
 	///
 	bool
@@ -347,7 +388,7 @@ private:
 	/// @brief Set up the TaskOperations that conrol the design process, given user inputs.
 	/// @details Default behaviour is designing all positions with L-canonicals and their
 	/// D-equivalents EXCEPT cys and met (and gly), unless the user overrides this.
-	void set_up_design_taskoperations( protocols::denovo_design::movers::FastDesignOP fdes, core::Size const cyclic_offset, core::Size const nres ) const;
+	void set_up_design_taskoperations( protocols::denovo_design::movers::FastDesignOP fdes, core::Size const cyclic_offset, core::Size const nres, core::pose::PoseCOP pose ) const;
 
 	/// @brief Given a vector of full residue names of canonical residues, give me a concatenated list of one-letter codes.
 	/// @details Does no checking for duplicates.
@@ -543,6 +584,18 @@ private:
 	/// @brief Given a pose, add disulfide variant types to the first and last cysteine residues in the pose.
 	/// @details This should ONLY be called on a pose just before a bond is declared between these residues.
 	void set_up_terminal_disulfide_variants( core::pose::PoseOP pose ) const;
+
+	/// @brief Given a pose, add sidechain conjugation variant types to sidechains involved in making an isopeptide
+	/// bond, and strip termini from termini involved in the isopeptide bond.
+	void set_up_isopeptide_variants( core::pose::PoseOP pose ) const;
+
+	/// @brief Given the basename of a residue type, return true if this is a type that can donate the nitrogen to an
+	/// isopeptide bond, false otherwise.
+	bool is_isopeptide_forming_amide_type( std::string const &basename ) const;
+
+	/// @brief Given the AA of a residue type, return true if this is a type that can donate the carbonyl to an
+	/// isopeptide bond, false otherwise.
+	bool is_isopeptide_forming_carbonyl_type( core::chemical::AA const aa ) const;
 
 private:
 	/// ------------- Data -------------------------------
@@ -829,10 +882,6 @@ private:
 	/// @details Default true.
 	bool use_rama_prepro_for_sampling_;
 
-	/// @brief List of positions (in original sequence indexing -- not permuted) that are N-methylated.
-	/// @details Defaults to empty list.
-	utility::vector1< core::Size > n_methyl_positions_;
-
 	/// @brief List of positions linked by 1,3,5-tris(bromomethyl)benzene.
 	/// @details This is a vector of lists of three residues.
 	mutable utility::vector1< utility::vector1 < core::Size >  > tbmb_positions_;
@@ -886,6 +935,16 @@ private:
 	/// @brief The random perturbation, in degrees, to be applied when copying mainchain torsion values to produce symmetric conformations.
 	/// @details Defaults to 0.0 (no perturbation).
 	core::Real required_symmetry_perturbation_;
+
+	/// @brief If the cyclization type is a lariat type, this is the index of the residue that provides the sidechain that
+	/// connects to the N- or C-terminus.
+	/// @details If set to zero (default), the residue of appropriate type that's closest to the other end is used.
+	core::Size lariat_sidechain_index_;
+
+	/// @brief If the cyclization type is sidechain_isopeptide, these are the indices of the residues forming the
+	/// sidechain-sidechain isopeptide bond.
+	/// @details If (0, 0), the default, then the most widely-separated pair of appropriate type is automatically chosen.
+	std::pair < core::Size, core::Size > sidechain_isopeptide_indices_;
 
 };
 

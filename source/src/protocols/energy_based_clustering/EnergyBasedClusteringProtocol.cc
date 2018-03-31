@@ -835,9 +835,7 @@ EnergyBasedClusteringProtocol::use_in_rmsd(
 
 	//The name of the atom:
 	std::string atname1( utility::strip( pose1.residue(resno).atom_name(atomno), " " ) );
-	if ( atname1 == "CN" && pose1.residue_type(resno).is_alpha_aa() && pose1.residue_type(resno).is_n_methylated() ) atname1 = "CA1"; //Allow N-methyl amino acids to be aligned to peptoids.
 	if ( !pose2.residue_type(resno).has(atname1) ) {
-		if ( atname1 == "CA1" && pose2.residue_type(resno).is_alpha_aa() && pose2.residue_type(resno).is_n_methylated() && pose2.residue_type(resno).has("CN") ) return true;
 		return false;
 	}
 
@@ -1176,8 +1174,6 @@ EnergyBasedClusteringProtocol::mutate_to_alanine(
 			} else {
 				aaname="B3A";
 			}
-		} else if ( mypose.residue_type(ir).is_peptoid() ) { //If it's a peptoid, mutate to sarcosine.
-			aaname="GLY:N_Methylation"; //Sarcosine is "GLY:N_Methylation" in Rosetta.
 		} else if ( mypose.residue_type(ir).is_oligourea() ) { //If it's an oligourea, mutate to OU3_ALA.
 			aaname="OU3_ALA"; //An alanine-like oligourea.
 		}

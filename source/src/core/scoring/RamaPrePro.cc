@@ -67,7 +67,7 @@ RamaPrePro::RamaPrePro() :
 }
 
 /// @brief Evaluate the rama score for this residue (res1) given the identity of the next (res2).
-/// @details This version only works for noncanonical or canonical residues with any number of mainchain
+/// @details This version works for noncanonical or canonical residues with any number of mainchain
 /// torsions.  If the next residue's identity is pro or d-pro, a different score table is used.  Note:
 /// if return_derivs is true, the gradient vector is populated only.  If it is false, then only the
 /// score_rama value is populated.
@@ -337,7 +337,7 @@ RamaPrePro::is_N_substituted(
 	core::chemical::ResidueTypeCOP restype
 ) const {
 	core::chemical::AA const aa( restype->aa() );
-	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || aa == core::chemical::ou3_pro || restype->is_n_methylated() || restype->is_peptoid() );
+	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || aa == core::chemical::ou3_pro || restype->is_peptoid() );
 }
 
 /// @brief Ensure that the RamaPrePro scoring tables for the 20 canonical amino acids are set up, and that we are storing

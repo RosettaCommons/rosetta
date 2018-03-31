@@ -1663,6 +1663,10 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool atom_depends_on_polymeric_connection( core::Size const atom_index ) const;
 
+	/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on a particular connection ID?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool atom_depends_on_connection( core::Size const atom_index, core::Size const connection_id ) const;
+
 	/// @brief Get the net formal charge on this residue type.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	signed long int net_formal_charge() const;
@@ -1688,10 +1692,6 @@ public:
 
 	/// @brief is this an l-RNA?
 	bool is_l_rna() const;
-
-	/// @brief Is this residue N-methylated?
-	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	bool is_n_methylated() const;
 
 	/// @brief is this an achiral backbone?
 	bool is_achiral_backbone() const;
@@ -2342,6 +2342,11 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void update_polymer_dependent_groups();
 
+	/// @brief Determine which atoms are nonpolymer bond-dependent.
+	/// @details Should only be called from update_derived_data() function.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void update_nonpolymer_dependent_groups();
+
 	/// @brief If there is an NCAARotamerLibrarySpecification, ensure that the rotamer backbone dependicies have been set.
 	/// If they have not, set them to all mainchain torsions except omega (the final, inter-residue torsion).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -2861,6 +2866,13 @@ private:
 	/// polymer bond.
 	/// @details empty if this is a ligand instead of a polymer bond.
 	utility::vector1 < bool > atom_depends_on_upper_polymeric_connection_;
+
+	/// @brief Does this ResidueType have groups with icoors that depend, directly or indirectly, on non-polymeric bonds?
+	bool has_nonpolymer_connection_dependent_groups_;
+
+	/// @brief An outer vector indexed to connection ID, and an inner vector indexed to atom ids.  "True" means that the atom id for the
+	/// inner vector depends on the connection ID for the outer.
+	utility::vector1< utility::vector1< bool > > atom_depends_on_connection_;
 
 	/// @brief The formal charge on this residue.
 	/// @details Must be an integer, but can be negative or positive.  Defaults to 0.

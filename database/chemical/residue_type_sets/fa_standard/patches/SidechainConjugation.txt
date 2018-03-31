@@ -9,7 +9,9 @@ TYPES SIDECHAIN_CONJUGATION
 ## require protein, ignore anything that's already nterm patched:
 
 BEGIN_SELECTOR
-NAME3 LYS DLY ORN DOR DAB DDA DPP DDP # Add to this list as more sidechain-conjugable types are added.
+NAME3 ASP GLU DAS DGU LYS DLY ORN DOR DAB DDA DPP DDP # Add to this list as more sidechain-conjugable types are added.
+NOT VARIANT_TYPE SC_BRANCH_POINT
+NOT VARIANT_TYPE PROTONATED
 NOT VARIANT_TYPE SIDECHAIN_CONJUGATION
 NOT VARIANT_TYPE TRIMETHYLATION
 NOT VARIANT_TYPE DIMETHYLATION
@@ -20,6 +22,72 @@ END_SELECTOR
 
 ## now we search for a case that matches the residue, take the first one
 ## so put generic case last
+
+BEGIN_CASE ## aspartate (ASP), L- or D-version #################################################
+
+## These define which residues match this case:
+BEGIN_SELECTOR
+NAME3 ASP DAS #L- or D-version.
+END_SELECTOR
+
+# These are the operations involved:
+
+# Delete a sidechain oxygen:
+DELETE_ATOM OD2
+
+# Add a sidechain connection and a virtual atom: 
+ADD_ATOM  V1  VIRT VIRT 0.00
+ADD_CONNECT CG ICOOR 180.0 63.800026 1.328685 CG CB CA
+
+# Add new bonds:
+ADD_BOND CG V1
+
+# Set position of the new V1 atom:
+SET_ICOOR  V1    0.00 63.800026 1.328685 CG CB CONN%LASTCONN
+SET_ICOOR  OD1 180.000000   61.605602    1.208247   CG    CB   CONN%LASTCONN
+
+# Modify existing atoms:
+SET_ATOM_TYPE CG CObb
+SET_MM_ATOM_TYPE CG C
+SET_ATOMIC_CHARGE OD1 -0.619133
+
+SET_NET_FORMAL_CHARGE 0
+
+END_CASE
+
+BEGIN_CASE ## glutamate (GLU), L- or D-version #################################################
+
+## These define which residues match this case:
+BEGIN_SELECTOR
+NAME3 GLU DGU #L- or D-version.
+END_SELECTOR
+
+# These are the operations involved:
+
+# Delete a sidechain oxygen:
+DELETE_ATOM OE2
+
+# Add a sidechain connection and a virtual atom: 
+ADD_ATOM  V1  VIRT VIRT 0.00
+ADD_CONNECT CD ICOOR 180.0 63.800026 1.328685 CD CG CB
+
+# Add new bonds:
+ADD_BOND CD V1
+
+# Set position of the new V1 atom:
+SET_ICOOR  V1    0.00 63.800026 1.328685 CD CG CONN%LASTCONN
+SET_ICOOR OE1  180.000008   61.553535    1.207582   CD    CG   CONN%LASTCONN
+
+# Modify existing atoms:
+SET_ATOM_TYPE CD CObb
+SET_MM_ATOM_TYPE CD C
+SET_ATOMIC_CHARGE CG -0.0369952
+SET_ATOMIC_CHARGE CD  0.6390635
+
+SET_NET_FORMAL_CHARGE 0
+
+END_CASE
+
 
 BEGIN_CASE ## lysine (LYS), L- or D-version #################################################
 
@@ -63,6 +131,7 @@ SET_ATOMIC_CHARGE 1HE 0.17
 SET_ATOMIC_CHARGE 2HE 0.17
 
 SET_FORMAL_CHARGE NZ 0
+SET_NET_FORMAL_CHARGE 0
 
 END_CASE
 
@@ -109,6 +178,7 @@ SET_ATOMIC_CHARGE 1HD 0.17
 SET_ATOMIC_CHARGE 2HD 0.17
 
 SET_FORMAL_CHARGE NE 0
+SET_NET_FORMAL_CHARGE 0
 
 END_CASE
 
@@ -154,6 +224,7 @@ SET_ATOMIC_CHARGE 1HG 0.17
 SET_ATOMIC_CHARGE 2HG 0.17
 
 SET_FORMAL_CHARGE ND 0
+SET_NET_FORMAL_CHARGE 0
 
 END_CASE
 
@@ -199,5 +270,6 @@ SET_ATOMIC_CHARGE 1HB 0.17
 SET_ATOMIC_CHARGE 2HB 0.17
 
 SET_FORMAL_CHARGE NG 0
+SET_NET_FORMAL_CHARGE 0
 
 END_CASE

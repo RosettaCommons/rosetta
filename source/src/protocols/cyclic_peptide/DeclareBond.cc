@@ -109,6 +109,8 @@ void DeclareBond::apply( core::pose::Pose & pose )
 	//printf("Rebuilding bond-dependent atoms.\n"); fflush(stdout); //DELETE ME
 	pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(res1_);
 	pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(res2_);
+	pose.conformation().rebuild_residue_connection_dependent_atoms( res1_, pose.residue_type(res1_).residue_connection_id_for_atom( pose.residue_type(res1_).atom_index(atom1_) ) );
+	pose.conformation().rebuild_residue_connection_dependent_atoms( res2_, pose.residue_type(res2_).residue_connection_id_for_atom( pose.residue_type(res2_).atom_index(atom2_) ) );
 
 	if ( rebuild_fold_tree_ ) {
 		core::pose::Pose const pose_copy(pose); //Make a reference copy of pose (const to prevent accidentally altering it).

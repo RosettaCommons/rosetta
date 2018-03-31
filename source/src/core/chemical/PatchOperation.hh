@@ -930,6 +930,39 @@ public:
 
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// @brief   A patch operation for setting the net formal charge of a whole ResidueType.
+/// @author  Vikram K. Mulligan (vmullig@uw.edu)
+class SetNetFormalCharge : public PatchOperation {
+public:
+
+	/// @brief Constructor
+	/// @details Note that this deliberately takes a signed int.
+	SetNetFormalCharge( signed int const charge_in );
+
+	/// @brief  Apply this patch to the given ResidueType.
+	bool apply( ResidueType & rsd ) const override;
+
+	/// @brief Return the name of this PatchOperation ("SetNetFormalCharge").
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	std::string
+	name() const override;
+
+private:
+	signed int charge_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetNetFormalCharge();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set atom's chemical type

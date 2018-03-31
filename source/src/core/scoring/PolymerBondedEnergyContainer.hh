@@ -153,6 +153,9 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	PolymerBondedEnergyContainer( core::pose::Pose const & pose, utility::vector1< ScoreType > const & score_type_in );
 
+	/// @brief Operator to allow object to be summarized.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	friend std::ostream & operator <<(std::ostream & os, PolymerBondedEnergyContainer const & t);
 
 	bool empty() const override;
 

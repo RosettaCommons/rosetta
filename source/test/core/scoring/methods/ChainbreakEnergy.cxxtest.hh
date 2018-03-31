@@ -240,58 +240,6 @@ public:
 
 	}
 
-	/// @brief Check that cyclic geometry is handled correctly with peptoids.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_chainbreak_n_methylation_cyclic_geometry_deriv_check() {
-		using namespace core::chemical;
-		using namespace core::kinematics;
-		using namespace core::pose;
-		using namespace core::scoring;
-
-		core::pose::PoseOP pose( core::import_pose::pose_from_file( "core/scoring/methods/cyclic_pep.pdb" ) );
-
-		core::pose::remove_variant_type_from_pose_residue( *pose, core::chemical::LOWER_TERMINUS_VARIANT, 1 );
-		core::pose::remove_variant_type_from_pose_residue( *pose, core::chemical::UPPER_TERMINUS_VARIANT, pose->total_residue() );
-
-		core::pose::add_variant_type_to_pose_residue( *pose, core::chemical::N_METHYLATION, 1);
-
-		core::pose::add_variant_type_to_pose_residue( *pose, core::chemical::CUTPOINT_UPPER, 1);
-		core::pose::add_variant_type_to_pose_residue( *pose, core::chemical::CUTPOINT_LOWER, pose->total_residue());
-
-		TS_ASSERT( pose->residue_type(1).has_variant_type(core::chemical::N_METHYLATION) );
-
-		//First, confirm scoring doesn't crash (but returns zero) if we have no terminal bond.
-		ScoreFunction sfxn;
-		sfxn.set_weight( chainbreak, 0.5 );
-		TS_ASSERT_DELTA( sfxn( *pose ), 0.0, 1e-3 );
-
-		pose->conformation().declare_chemical_bond( 1, "N", pose->total_residue(), "C" );
-		pose->conformation().update_polymeric_connection( pose->total_residue(), true );
-		pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
-		pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(pose->total_residue());
-
-		//pose->dump_pdb("test_chainbreak_n_methylation_cyclic_geometry_deriv_check.pdb"); //DELETE ME.
-
-		TS_ASSERT_DELTA( sfxn( *pose ), 0.000, 1e-3 );
-
-		{
-			MoveMap movemap( create_movemap_to_allow_all_torsions() );
-			AtomDerivValidator adv( *pose, sfxn, movemap );
-			adv.simple_deriv_check( true, 1e-6 );
-		}
-
-		pose->set_phi( 3, pose->phi(3) + 10.0 ); //Add a little perturbation to the pose, and do the checks again.
-
-		TS_ASSERT( sfxn( *pose ) > 0 );
-
-		{
-			MoveMap movemap( create_movemap_to_allow_all_torsions() );
-			AtomDerivValidator adv( *pose, sfxn, movemap );
-			adv.simple_deriv_check( true, 1e-6 );
-		}
-
-	}
-
 	void test_chainbreak_deriv_check_with_sugars()
 	{
 		using namespace core::chemical;

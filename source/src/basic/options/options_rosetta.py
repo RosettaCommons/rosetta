@@ -4720,7 +4720,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	## Options for cyclic peptide structure prediction app (simple_cycpep_predict) -- Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu) ##
 	Option_Group( 'cyclic_peptide',
-		Option( 'cyclization_type', 'String', desc="The type of cyclization for the peptide (e.g. N-to-C amide bond, terminal disulfide, etc.", default="n_to_c_amide_bond", legal=['n_to_c_amide_bond','terminal_disulfide'] ),
+		Option( 'cyclization_type', 'String', desc="The type of cyclization for the peptide (e.g. N-to-C amide bond, terminal disulfide, isopeptide N-terminal lariat, etc.", default="n_to_c_amide_bond", legal=['n_to_c_amide_bond','terminal_disulfide', 'nterm_isopeptide_lariat', 'cterm_isopeptide_lariat', 'sidechain_isopeptide' ] ),
 		Option( 'rand_checkpoint_file', 'String', desc="The name of the checkpoint file used for the random number generator.  Defaults to rng.state.gz.  Not used if the -cyclic_peptide:checkpoint_job_identifier flag isn't used.", default="rng.state.gz" ),
 		Option( 'checkpoint_file', 'String', desc="The name of the checkpoint file.  Defaults to checkpoint.txt.  Not used if the -cyclic_peptide:checkpoint_job_identifier flag isn't used.", default="checkpoint.txt" ),
 		Option( 'checkpoint_job_identifier', 'String', desc="A unique job name for checkpointing.  If none is provided, jobs are not checkpointed.", default="" ),
@@ -4760,8 +4760,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'angle_length_relax_rounds', 'Integer', desc="The number of rounds of FastRelax to perform with flexible bond angles and bond lengths after each standard FastRelax step in the simple_cycpep_predict protocol.  Default 0 (unused).", default='0' ),
 		Option( 'cartesian_relax_rounds', 'Integer', desc="The number of rounds of Cartesian FastRelax to perform after each standard FastRelax step in the simple_cycpep_predict protocol.  Default 0 (unused).", default='0' ),
 		Option( 'use_classic_rama_for_sampling', 'Boolean', desc="If true, classic Ramachandran tables are used for sampling instead of the RamaPrePro tables.  Default false (i.e. newer RamaPrePro tables are used by default).", default='false'),
-		Option( 'n_methyl_positions', 'IntegerVector', desc="If provided, then these positions are N-methylated.  Not used if not specified." ),
-
+		Option( 'lariat_sidechain_index', 'Integer', desc="If a lariat cyclization type is specified (e.g. nterm_isopeptide_lariat, cterm_isopeptide_lariat), then this is the residue that provides the side-chain that connects to the N- or C-terminus of the peptide.  If not specified, the residue of appropriate type closest to the other end is used.", default='0' ),
+		Option( 'sidechain_isopeptide_indices', 'IntegerVector', desc="If the sidechain_isopeptide cyclization type is specified, these are the indices of the residues that are linked by a sidechain-sidechain isopeptide bond to make the loop.  If not specified, the residues furthest apart of appropriate types are used.  Note that exactly two indices must be given." ),
 		Option( 'TBMB_positions', 'IntegerVector', desc="If provided, then these positions will be linked by a 1,3,5-tris(bromomethyl)benzene crosslinker.  3N positions must be specified, and every group of three will be linked.  Unused if not specified." ),
 		Option( 'use_TBMB_filters', 'Boolean', desc="If true, then filters are applied based on distance between TBMB cysteines and on constraints to discard GenKIC solutions that can't be crosslinked easily.  True by default.", default='true' ),
 		Option( 'TBMB_sidechain_distance_filter_multiplier', 'Real', desc="A multiplier for the distance cutoff for TBMB cysteines.  Higher values result in more permissive filtering.  Default 1.0.", default='1.0' ),

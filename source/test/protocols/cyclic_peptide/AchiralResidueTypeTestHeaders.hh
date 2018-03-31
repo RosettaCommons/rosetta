@@ -67,25 +67,13 @@ public:
 	void test_mirror_symmetry(
 		basic::Tracer &TR,
 		std::string const &residue_type_name,
-		bool const prepro,
-		bool const n_methylate
+		bool const /*prepro*/,
+		bool const //n_methylate
 	) {
 		core::pose::PoseOP pose( core::import_pose::pose_from_file( "protocols/cyclic_peptide/c4m_test_pose.pdb", false, core::import_pose::PDB_file) );
 
 		::protocols::simple_moves::MutateResidue mut3( 2, residue_type_name );
 		mut3.apply(*pose);
-		if ( n_methylate ) {
-			::protocols::simple_moves::ModifyVariantTypeMover modvartype;
-			::core::select::residue_selector::ResidueIndexSelectorOP index( new ::core::select::residue_selector::ResidueIndexSelector );
-			index->set_index("2");
-			modvartype.set_residue_selector(index);
-			modvartype.set_additional_type_to_add( "N_METHYLATION" );
-			modvartype.apply(*pose);
-		}
-		if ( prepro ) {
-			::protocols::simple_moves::MutateResidue mut4( 3, "PRO" );
-			mut4.apply(*pose);
-		}
 
 		core::pose::PoseOP pose2( pose->clone() );
 
@@ -127,7 +115,7 @@ public:
 		basic::Tracer &TR,
 		std::string const &residue_type_name,
 		bool const prepro,
-		bool const n_methylate,
+		bool const /*n_methylate*/,
 		core::Real const &threshold
 	) {
 		core::pose::PoseOP pose( pdb1ubq5to13_poseop() );
@@ -137,15 +125,6 @@ public:
 		mut2.apply(*pose);
 		mut4.apply(*pose);
 		mut5.apply(*pose);
-
-		if ( n_methylate ) {
-			::protocols::simple_moves::ModifyVariantTypeMover modvartype;
-			::core::select::residue_selector::ResidueIndexSelectorOP index( new ::core::select::residue_selector::ResidueIndexSelector );
-			index->set_index("2,4");
-			modvartype.set_residue_selector(index);
-			modvartype.set_additional_type_to_add( "N_METHYLATION" );
-			modvartype.apply(*pose);
-		}
 
 		core::scoring::ScoringManager const &score_man( *(core::scoring::ScoringManager::get_instance()) );
 		core::scoring::RamaPrePro const &rama( score_man.get_RamaPrePro() );

@@ -33,8 +33,6 @@
 			<Append resname="ALA" />
 		</PeptideStubMover>
 
-		<ModifyVariantType name="add_n_methyl" add_type="N_METHYLATION" residue_selector="select_five" />
-		
 		<SetTorsion name="tors1">
 			<Torsion torsion_name="omega" residue="ALL" angle="180" />
 		</SetTorsion>
@@ -104,7 +102,6 @@
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
 		<Add mover="build1" />
-		<Add mover="add_n_methyl" />
 		<Add mover="tors1" />
 		<Add mover="bond1" />
 		<Add mover="close1" />

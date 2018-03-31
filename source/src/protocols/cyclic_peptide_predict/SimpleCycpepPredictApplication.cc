@@ -41,6 +41,8 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/ResLvlTaskOperations.hh>
+#include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/select/residue_selector/PhiSelector.hh>
 #include <core/select/residue_selector/BinSelector.hh>
@@ -92,7 +94,6 @@
 #include <protocols/cyclic_peptide/TryDisulfPermutations.hh>
 #include <protocols/score_filters/ScoreTypeFilter.hh>
 
-//N-methylation
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 
@@ -176,7 +177,8 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::angle_length_relax_rounds            );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling        );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::n_methyl_positions                   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices         );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_positions                       );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_TBMB_filters                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_sidechain_distance_filter_multiplier  );
@@ -233,6 +235,12 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::get_cyclizati
 		return "n_to_c_amide_bond";
 	case SCPA_terminal_disulfide :
 		return "terminal_disulfide";
+	case SCPA_nterm_isopeptide_lariat :
+		return "nterm_isopeptide_lariat";
+	case SCPA_cterm_isopeptide_lariat :
+		return "cterm_isopeptide_lariat";
+	case SCPA_sidechain_isopeptide :
+		return "sidechain_isopeptide";
 	case SCPA_invalid_type :
 		return "INVALID";
 	}
@@ -317,7 +325,6 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	angle_length_relax_rounds_(0),
 	cartesian_relax_rounds_(0),
 	use_rama_prepro_for_sampling_(true),
-	n_methyl_positions_(),
 	tbmb_positions_(),
 	link_all_cys_with_tbmb_(false),
 	use_tbmb_filters_(true),
@@ -330,7 +337,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	required_symmetry_repeats_(1),
 	required_symmetry_mirroring_(false),
 	required_symmetry_angle_threshold_(10.0),
-	required_symmetry_perturbation_(0.0)
+	required_symmetry_perturbation_(0.0),
+	lariat_sidechain_index_(0),
+	sidechain_isopeptide_indices_(std::pair<core::Size, core::Size>(0,0))
 	//TODO -- initialize variables here.
 {
 	initialize_from_options();
@@ -412,7 +421,6 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	angle_length_relax_rounds_(src.angle_length_relax_rounds_),
 	cartesian_relax_rounds_(src.cartesian_relax_rounds_),
 	use_rama_prepro_for_sampling_(src.use_rama_prepro_for_sampling_),
-	n_methyl_positions_(src.n_methyl_positions_),
 	tbmb_positions_(src.tbmb_positions_),
 	link_all_cys_with_tbmb_(src.link_all_cys_with_tbmb_),
 	use_tbmb_filters_(src.use_tbmb_filters_),
@@ -425,7 +433,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	required_symmetry_repeats_(src.required_symmetry_repeats_),
 	required_symmetry_mirroring_(src.required_symmetry_mirroring_),
 	required_symmetry_angle_threshold_(src.required_symmetry_angle_threshold_),
-	required_symmetry_perturbation_(src.required_symmetry_perturbation_)
+	required_symmetry_perturbation_(src.required_symmetry_perturbation_),
+	lariat_sidechain_index_(src.lariat_sidechain_index_),
+	sidechain_isopeptide_indices_(src.sidechain_isopeptide_indices_)
 	//TODO -- copy variables here.
 {
 	if ( src.scorefxn_ ) scorefxn_ = (src.scorefxn_)->clone();
@@ -458,8 +468,8 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		"Error in simple-cycpep_predict_app: linking all cysteine residues with TBMB (\"-cyclic_peptide:link_all_cys_with_TBMB\" flag) is incompatible with teriminal disulfide cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
 	);
 	runtime_assert_string_msg(
-		!( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 2 && cyclization_type() == SCPA_terminal_disulfide ),
-		"Error in simple-cycpep_predict_app: quasi-symmetric sampling (\"-cyclic_peptide:require_symmetry_repeats\" flag) is incompatible with teriminal disulfide cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
+		!( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 2 && (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide) ),
+		"Error in simple-cycpep_predict_app: quasi-symmetric sampling (\"-cyclic_peptide:require_symmetry_repeats\" flag) is incompatible with teriminal disulfide cyclization or with isopeptide bond cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
 	);
 
 	//Copy options to private member variables:
@@ -467,10 +477,10 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	genkic_closure_attempts_ = static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::genkic_closure_attempts]() );
 	genkic_min_solution_count_ = static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::genkic_min_solution_count]() );
 
-	if ( cyclization_type() == SCPA_terminal_disulfide ) {
+	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 		cyclic_permutations_ = false;
 		if ( option[basic::options::OptionKeys::cyclic_peptide::cyclic_permutations]() && TR.Warning.visible() ) {
-			TR.Warning << "Warning: the \"-cyclic_peptide:cyclic_permutations\" option was set to \"true\", but this is incompatible with the \"terminal_disulfide\" cyclization mode (\"-cyclic_peptide:cyclization_type terminal_disulfide\".  Disabling cyclic permutations." << std::endl;
+			TR.Warning << "Warning: the \"-cyclic_peptide:cyclic_permutations\" option was set to \"true\", but this is incompatible with the chosen cyclization mode (\"-cyclic_peptide:cyclization_type\").  Disabling cyclic permutations." << std::endl;
 		}
 	} else {
 		cyclic_permutations_ = option[basic::options::OptionKeys::cyclic_peptide::cyclic_permutations]();
@@ -626,16 +636,6 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		set_use_rama_prepro_for_sampling( !option[basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling]() );
 	}
 
-	//Store the N-methylated positions.
-	if ( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions].user() ) {
-		core::Size const npos( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]().size() );
-		n_methyl_positions_.resize( npos );
-		for ( core::Size i=1; i<=npos; ++i ) {
-			runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]()[i] > 0, "Error in simple_cycpep_predict app: The N-methylated positions must all have indices greater than zero." );
-			n_methyl_positions_[i] = static_cast< core::Size >( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]()[i] );
-		}
-	}
-
 	//Store the TBMB positions.
 	if ( option[basic::options::OptionKeys::cyclic_peptide::TBMB_positions].user() ) {
 		runtime_assert_string_msg( !option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB].user(), "Error in simple_cycpep_predict application: The \"-TBMB_positions\" flag and the \"-link_all_cys_with_TBMB\" flag cannot be used together." );
@@ -689,6 +689,23 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	required_symmetry_mirroring_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_mirroring]();
 	required_symmetry_angle_threshold_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_angle_threshold]();
 	required_symmetry_perturbation_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_perturbation]();
+
+	if ( option[basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index].user() ) {
+		runtime_assert_string_msg( is_lariat_type( cyclization_type_ ), "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lariat_sidechain_index\" option may only be used with a lariat cyclization type." );
+	}
+	lariat_sidechain_index_ = option[basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index]();
+
+	if ( option[basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices].user() ) {
+		runtime_assert_string_msg( cyclization_type_ == SCPA_sidechain_isopeptide, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:sidechain_isopeptide_indices\" option may only be used with the \"sidechain_isopeptide\" cyclization type." );
+		runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices]().size() == 2, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:sidechain_isopeptide_indices\" option must be followed by exactly two residue indices." );
+		runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices]()[1] > 0 && option[basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices]()[2] > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:sidechain_isopeptide_indices\" option must be used to provide residue indices.  Residue indices must be positive." );
+		sidechain_isopeptide_indices_.first = static_cast< core::Size >(option[basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices]()[1]);
+		sidechain_isopeptide_indices_.second = static_cast< core::Size >(option[basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices]()[2]);
+	} else { \
+		//If not specified:
+		sidechain_isopeptide_indices_.first = 0;
+		sidechain_isopeptide_indices_.second = 0;
+	}
 
 	return;
 } //initialize_from_options()
@@ -975,20 +992,8 @@ SimpleCycpepPredictApplication::run() const {
 	read_sequence( sequence_file_, resnames );
 	sequence_length_ = resnames.size(); //Store the number of residues in the sequence, excluding crosslinkers.
 
-	//Check that, if we're doing cyclization through a terminal disulfide, the loop formed is long enough:
-	if ( cyclization_type() == SCPA_terminal_disulfide ) {
-		//Create a temporary pose for analysis.  We need this because the check is based
-		//on disulfide-forming residue types.  This is slightly inefficient, but it only
-		//happens once:
-		core::pose::PoseOP temp_pose( new core::pose::Pose );
-		build_polymer(temp_pose, resnames);
-		core::Size const firstdisulf( find_first_disulf_res( temp_pose  ) );
-		core::Size const lastdisulf( find_last_disulf_res( temp_pose  ) );
-		runtime_assert_string_msg(
-			lastdisulf > firstdisulf + 3,
-			"Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::run(): The sequence provided has terminal disulfide-forming residues that are too close together.  There must be at least three residues between the terminal disulfide-forming residues to allow cyclization."
-		);
-	}
+	//Check that, if we're doing cyclization through a sidechain, the loop formed is long enough:
+	check_loop_length( resnames );
 
 	//Check that, if we're enforcing symmetry, the sequence length is an integer multiple of the number of symmetry repeats:
 	if ( required_symmetry_repeats_ > 1 ) {
@@ -1071,6 +1076,8 @@ SimpleCycpepPredictApplication::run() const {
 		//Add disulfide variants, if we're doing disulfide cyclization.
 		if ( cyclization_type() == SCPA_terminal_disulfide ) {
 			set_up_terminal_disulfide_variants( pose );
+		} else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
+			set_up_isopeptide_variants( pose );
 		}
 
 		//Mover to cyclize the polymer and to update terminal peptide bond O and H atoms:
@@ -1078,16 +1085,11 @@ SimpleCycpepPredictApplication::run() const {
 		set_up_cyclization_mover( termini, pose ); //Handles the cyclization appropriately, contingent on the cyclization type.
 		termini->apply(*pose);
 
-		//Add cyclic constraints:
-		if ( cyclization_type() == SCPA_n_to_c_amide_bond ) {
-			add_cyclic_constraints(pose);
-		}
+		//Add cyclic constraints for appropriate cyclization type:
+		add_cyclic_constraints(pose);
 
 		//Set all omega values to 180 and randomize mainchain torsions:
 		set_mainchain_torsions(pose, cyclic_offset);
-
-		//Add N-methylation:
-		add_n_methylation( pose, cyclic_offset );
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
@@ -1279,6 +1281,127 @@ SimpleCycpepPredictApplication::is_in_list(
 	return false;
 }
 
+///  @brief Is a given cyclization type a lariat type (i.e. one where a side-chain connects to backbone)?
+bool
+SimpleCycpepPredictApplication::is_lariat_type(
+	SCPA_cyclization_type const type_in
+) const {
+	if ( type_in == SCPA_nterm_isopeptide_lariat || type_in == SCPA_cterm_isopeptide_lariat ) return true;
+	return false;
+}
+
+/// @brief Check that the loop formed is long enough.
+void
+SimpleCycpepPredictApplication::check_loop_length(
+	utility::vector1< std::string > const &resnames
+) const {
+	if ( cyclization_type() == SCPA_terminal_disulfide ) {
+		//Create a temporary pose for analysis.  We need this because the check is based
+		//on disulfide-forming residue types.  This is slightly inefficient, but it only
+		//happens once:
+		core::pose::PoseOP temp_pose( new core::pose::Pose );
+		build_polymer(temp_pose, resnames);
+		core::Size const firstdisulf( find_first_disulf_res( temp_pose  ) );
+		core::Size const lastdisulf( find_last_disulf_res( temp_pose  ) );
+		runtime_assert_string_msg(
+			lastdisulf > firstdisulf + 3,
+			"Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::check_loop_length(): The sequence provided has terminal disulfide-forming residues that are too close together.  There must be at least three residues between the terminal disulfide-forming residues to allow cyclization."
+		);
+	} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
+		//Create a temporary pose for analysis.
+		core::pose::PoseOP temp_pose( new core::pose::Pose );
+		build_polymer(temp_pose, resnames);
+		core::Size firstres, lastres;
+		find_first_and_last_isopeptide_residues( temp_pose, firstres, lastres );
+		runtime_assert_string_msg( lastres - firstres > 3, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::check_loop_length(): The sequence provided has isopeptide bond-forming residues that are too close together.  There must be at least three residues between the isopeptide bond-forming residues to allow cyclization." );
+	}
+}
+
+/// @brief Given a pose, find the first and last isopeptide bond-forming residues.
+/// @details Bases this on lariat_sidechain_index_ for lariat types, unless set to 0, in which case it finds the
+/// suitable type closest to the opposite terminus.  Bases this on sidechain_isopeptide_indices_ for sidechain isopeptide
+/// cyclization, unless set to 0, in which case it finds the suitable types that are furthest apart.
+void
+SimpleCycpepPredictApplication::find_first_and_last_isopeptide_residues(
+	core::pose::PoseCOP pose,
+	core::Size &firstres,
+	core::Size &lastres
+) const {
+	using namespace core::chemical;
+
+	runtime_assert( cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide );
+	if ( cyclization_type() == SCPA_cterm_isopeptide_lariat ) {
+		lastres = sequence_length();
+		if ( lariat_sidechain_index_ != 0 ) {
+			firstres = lariat_sidechain_index_;
+			return;
+		}
+		//If we reach here, we need to search for the first amine residue:
+		for ( core::Size ir(1), irmax(pose->total_residue()); ir < irmax; ++ir ) {
+			std::string const & curbasename( pose->residue_type(ir).base_name() );
+			if ( is_isopeptide_forming_amide_type(curbasename) ) {
+				firstres = ir;
+				return;
+			}
+		}
+		//If we reach here, we've failed to find a carboxyl-containing residue:
+		utility_exit_with_message("Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::find_first_and_last_isopeptide_residues(): No amine-containing sidechain was found that could form an isopeptide bond with the peptide C-terminus!");
+	} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat ) {
+		firstres = 1;
+		if ( lariat_sidechain_index_ != 0 ) {
+			lastres = lariat_sidechain_index_;
+			return;
+		}
+		//If we reach here, we need to search for the last carboxyl residue:
+		for ( core::Size ir(pose->total_residue()); ir > 1; --ir ) {
+			AA const curaa( pose->residue(ir).aa() );
+			if ( is_isopeptide_forming_carbonyl_type(curaa) ) {
+				lastres = ir;
+				return;
+			}
+		}
+		//If we reach here, we've failed to find a carboxyl-containing residue:
+		utility_exit_with_message("Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::find_first_and_last_isopeptide_residues(): No carboxyl-containing sidechain was found that could form an isopeptide bond with the peptide N-terminus!");
+	} else if ( cyclization_type() == SCPA_sidechain_isopeptide ) {
+		if ( sidechain_isopeptide_indices_.first != 0 && sidechain_isopeptide_indices_.second != 0 ) {
+			firstres = sidechain_isopeptide_indices_.first;
+			lastres = sidechain_isopeptide_indices_.second;
+			if ( firstres > lastres ) {
+				core::Size const temp( firstres );
+				firstres = lastres;
+				lastres = temp;
+			}
+			return;
+		}
+		//If we reach here, we need to search.  Two possibilities: nitrogenous aa first, carboxyl aa second, or the converse.
+		core::Size first_nitrog(0), last_nitrog(0), first_carbox(0), last_carbox(0);
+		for ( core::Size ir(1), irmax(pose->total_residue()); ir<=irmax; ++ir ) {
+			std::string const & curbasename( pose->residue_type(ir).base_name() );
+			AA const curaa( pose->residue_type(ir).aa() );
+			if ( is_isopeptide_forming_amide_type(curbasename) ) {
+				if ( !first_nitrog ) {
+					first_nitrog = ir;
+				}
+				last_nitrog = ir;
+			} else if ( is_isopeptide_forming_carbonyl_type(curaa) ) {
+				if ( !first_carbox ) {
+					first_carbox = ir;
+				}
+				last_carbox = ir;
+			}
+		}
+		runtime_assert_string_msg( first_carbox && first_nitrog, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::find_first_and_last_isopeptide_residues(): Two residues able to form an isopeptide bond through their side-chains were not found!" );
+		if ( (static_cast<signed int>(last_nitrog) - static_cast<signed int>(first_carbox)) > (static_cast<signed int>(last_carbox) - static_cast<signed int>(first_nitrog)) ) {
+			lastres = last_nitrog;
+			firstres = first_carbox;
+			return;
+		}
+		lastres = last_carbox;
+		firstres = first_nitrog;
+		return;
+	}
+	utility_exit_with_message( "PROGRAM ERROR.  IT SHOULD NOT BE POSSIBLE TO REACH THIS POINT." );
+}
 
 /// @brief Count the number of cis-peptide bonds in the pose.
 /// @details Counts as cis if in the range (-90,90].
@@ -1379,32 +1502,6 @@ SimpleCycpepPredictApplication::build_polymer(
 
 	return;
 } //build_polymer()
-
-/// @brief Add N-methylation.
-/// @details Must be called after pose is cyclized.
-void
-SimpleCycpepPredictApplication::add_n_methylation(
-	core::pose::PoseOP pose,
-	core::Size const cyclic_offset
-) const {
-	if ( n_methyl_positions_.size() == 0 ) { return; } //Do nothing if there's no N-methylation.
-
-	core::Size const nres(sequence_length());
-
-	TR << "Adding N-methylation" << std::endl;
-	protocols::simple_moves::ModifyVariantTypeMover add_nmethyl;
-	add_nmethyl.set_additional_type_to_add("N_METHYLATION");
-	core::select::residue_selector::ResidueIndexSelectorOP selector( new core::select::residue_selector::ResidueIndexSelector );
-	for ( core::Size i=1, imax=n_methyl_positions_.size(); i<=imax; ++i ) {
-		runtime_assert_string_msg( n_methyl_positions_[i] > 0  && n_methyl_positions_[i] <= nres, "Error in simple_cycpep_predict app: The N-methylation position indices must be within the pose!" );
-		int permuted_position( static_cast<int>(n_methyl_positions_[i]) - static_cast<int>(cyclic_offset) );
-		if ( permuted_position < 1 ) permuted_position += static_cast<int>(nres);
-		selector->append_index( static_cast<core::Size>(permuted_position) );
-	}
-	add_nmethyl.set_residue_selector(selector);
-	add_nmethyl.apply(*pose);
-
-}
 
 /// @brief Given the name of a Rama_Table_Type, set the default Rama_Table_Type.
 /// @details Error if unknown type.
@@ -1599,6 +1696,81 @@ SimpleCycpepPredictApplication::set_up_terminal_disulfide_cyclization_mover (
 }
 
 
+/// @brief Set up the mover that creates N-terminal isopeptide bonds.
+void
+SimpleCycpepPredictApplication::set_up_nterm_isopeptide_cyclization_mover(
+	protocols::cyclic_peptide::DeclareBondOP termini,
+	core::pose::PoseCOP pose
+) const {
+	debug_assert(termini); //Should already exist.
+	debug_assert(cyclization_type() == SCPA_nterm_isopeptide_lariat); //Should be true.
+
+	core::Size firstres, lastres;
+	find_first_and_last_isopeptide_residues( pose, firstres, lastres );
+
+	//Get the name of the sidechain connection atom:
+	core::chemical::ResidueType const &restype( pose->residue_type(lastres) );
+	core::Size const lastres_sc_connection_id( restype.n_possible_residue_connections() ); //We will assume that the highest-numbered residue connection is the sidechain connection ID.
+	core::Size const lastres_sc_connection_atom_index( restype.residue_connect_atom_index( lastres_sc_connection_id ) );
+	std::string const lastres_sc_connection_atom( restype.atom_name( lastres_sc_connection_atom_index ) );
+
+	TR << "Setting up isopeptide bond from N-terminus to residue " << restype.name3() << lastres << "." << std::endl;
+
+	termini->set( firstres, "N", lastres, lastres_sc_connection_atom, false );
+}
+
+/// @brief Set up the mover that creates C-terminal isopeptide bonds.
+void
+SimpleCycpepPredictApplication::set_up_cterm_isopeptide_cyclization_mover(
+	protocols::cyclic_peptide::DeclareBondOP termini,
+	core::pose::PoseCOP pose
+) const {
+	debug_assert(termini); //Should already exist.
+	debug_assert(cyclization_type() == SCPA_cterm_isopeptide_lariat); //Should be true.
+
+	core::Size firstres, lastres;
+	find_first_and_last_isopeptide_residues( pose, firstres, lastres );
+
+	//Get the name of the sidechain connection atom:
+	core::chemical::ResidueType const &restype( pose->residue_type(firstres) );
+	core::Size const firstres_sc_connection_id( restype.n_possible_residue_connections() ); //We will assume that the highest-numbered residue connection is the sidechain connection ID.
+	core::Size const firstres_sc_connection_atom_index( restype.residue_connect_atom_index( firstres_sc_connection_id ) );
+	std::string const firstres_sc_connection_atom( restype.atom_name( firstres_sc_connection_atom_index ) );
+
+	TR << "Setting up isopeptide bond from C-terminus to residue " << restype.name3() << firstres << "." << std::endl;
+
+	termini->set( lastres, "C", firstres, firstres_sc_connection_atom, false );
+}
+
+/// @brief Set up the mover that creates sidechain isopeptide bonds.
+void
+SimpleCycpepPredictApplication::set_up_sidechain_isopeptide_cyclization_mover(
+	protocols::cyclic_peptide::DeclareBondOP termini,
+	core::pose::PoseCOP pose
+) const {
+	debug_assert(termini); //Should already exist.
+	debug_assert(cyclization_type() == SCPA_sidechain_isopeptide); //Should be true.
+
+	core::Size firstres, lastres;
+	find_first_and_last_isopeptide_residues( pose, firstres, lastres );
+
+	//Get the name of the first sidechain connection atom:
+	core::chemical::ResidueType const &restype( pose->residue_type(firstres) );
+	core::Size const firstres_sc_connection_id( restype.n_possible_residue_connections() ); //We will assume that the highest-numbered residue connection is the sidechain connection ID.
+	core::Size const firstres_sc_connection_atom_index( restype.residue_connect_atom_index( firstres_sc_connection_id ) );
+	std::string const firstres_sc_connection_atom( restype.atom_name( firstres_sc_connection_atom_index ) );
+
+	//Get the name of the second sidechain connection atom:
+	core::chemical::ResidueType const &restype2( pose->residue_type(lastres) );
+	core::Size const lastres_sc_connection_id( restype2.n_possible_residue_connections() ); //We will assume that the highest-numbered residue connection is the sidechain connection ID.
+	core::Size const lastres_sc_connection_atom_index( restype2.residue_connect_atom_index( lastres_sc_connection_id ) );
+	std::string const lastres_sc_connection_atom( restype2.atom_name( lastres_sc_connection_atom_index ) );
+
+	TR << "Setting up isopeptide bond from " << restype.name3() << firstres << " to residue " << restype2.name3() << lastres << "." << std::endl;
+
+	termini->set( lastres, lastres_sc_connection_atom, firstres, firstres_sc_connection_atom, false );
+}
+
 /// @brief Set up the DeclareBond mover used to connect the termini, or whatever
 /// atoms are involved in the cyclization.  (Handles different cyclization modes).
 void
@@ -1615,6 +1787,15 @@ SimpleCycpepPredictApplication::set_up_cyclization_mover (
 		return;
 	case SCPA_terminal_disulfide :
 		set_up_terminal_disulfide_cyclization_mover( termini, pose, native, last_res, first_res );
+		return;
+	case SCPA_nterm_isopeptide_lariat :
+		set_up_nterm_isopeptide_cyclization_mover( termini, pose );
+		return;
+	case SCPA_cterm_isopeptide_lariat :
+		set_up_cterm_isopeptide_cyclization_mover( termini, pose );
+		return;
+	case SCPA_sidechain_isopeptide :
+		set_up_sidechain_isopeptide_cyclization_mover( termini, pose );
 		return;
 	case SCPA_invalid_type :
 		break;
@@ -1700,19 +1881,23 @@ SimpleCycpepPredictApplication::set_up_native (
 		);
 	}
 
-	if ( cyclization_type() == SCPA_n_to_c_amide_bond ) {
+	if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat ) {
 		TR << "Stripping termini from native structure." << std::endl;
-		if ( native_pose->residue_type(1).is_lower_terminus() ) {
-			core::pose::remove_lower_terminus_type_from_pose_residue(*native_pose, 1);
-			TR << "Removed lower terminus type from first residue." << std::endl;
-		} else {
-			TR << "No lower terminus type found on first residue.  (The PDB file may contain a LINK record specifying cyclic geometry.)" << std::endl;
+		if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat ) {
+			if ( native_pose->residue_type(1).is_lower_terminus() ) {
+				core::pose::remove_lower_terminus_type_from_pose_residue(*native_pose, 1);
+				TR << "Removed lower terminus type from first residue." << std::endl;
+			} else {
+				TR << "No lower terminus type found on first residue.  (The PDB file may contain a LINK record specifying cyclic geometry.)" << std::endl;
+			}
 		}
-		if ( native_pose->residue_type(last_res).is_upper_terminus() ) {
-			core::pose::remove_upper_terminus_type_from_pose_residue(*native_pose, last_res);
-			TR << "Removed upper terminus type from last residue." << std::endl;
-		} else {
-			TR << "No upper terminus type found on last residue.  (The PDB file may contain a LINK record specifying cyclic geometry.)" << std::endl;
+		if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_cterm_isopeptide_lariat ) {
+			if ( native_pose->residue_type(last_res).is_upper_terminus() ) {
+				core::pose::remove_upper_terminus_type_from_pose_residue(*native_pose, last_res);
+				TR << "Removed upper terminus type from last residue." << std::endl;
+			} else {
+				TR << "No upper terminus type found on last residue.  (The PDB file may contain a LINK record specifying cyclic geometry.)" << std::endl;
+			}
 		}
 	} else if ( cyclization_type() == SCPA_terminal_disulfide ) {
 		//Set up disulfide variants, if we're doing disulfide cyclization.
@@ -1729,8 +1914,10 @@ SimpleCycpepPredictApplication::set_up_native (
 /// @brief Function to add cyclic constraints to a pose.
 ///
 void
-SimpleCycpepPredictApplication::add_cyclic_constraints (
-	core::pose::PoseOP pose
+SimpleCycpepPredictApplication::add_amide_bond_cyclic_constraints (
+	core::pose::PoseOP pose,
+	core::Size n_index,
+	core::Size c_index
 ) const {
 	using namespace core::pose;
 	using namespace core::scoring::constraints;
@@ -1739,23 +1926,52 @@ SimpleCycpepPredictApplication::add_cyclic_constraints (
 
 	TR << "Setting up cyclic constraints." << std::endl;
 
-	core::Size const nres(sequence_length());
+	bool n_term(false), c_term(false);
+
+	if ( !n_index ) {
+		n_index = 1;
+		n_term = true;
+	}
+	if ( !c_index ) {
+		c_index = sequence_length();
+		c_term = true;
+	}
+
+	//The residue types of the N and C residues:
+	core::chemical::ResidueType const & ntype( pose->residue_type(n_index) );
+	core::chemical::ResidueType const & ctype( pose->residue_type(c_index) );
 
 	//The four atoms defining the peptide bond:
-	AtomID const atom_a( pose->residue(nres).type().icoor(pose->residue(nres).upper_connect_atom()).stub_atom1().atomno(), nres );
-	AtomID const atom_b( pose->residue(nres).upper_connect_atom(), nres );
-	AtomID const atom_c( pose->residue(1).lower_connect_atom(), 1 );
+	AtomID const atom_a(
+		c_term ?
+		ctype.icoor(ctype.upper_connect_atom()).stub_atom1().atomno() :
+		ctype.icoor(ctype.residue_connect_atom_index(ctype.n_possible_residue_connections())).stub_atom1().atomno()
+		, c_index );
+	AtomID const atom_b(
+		c_term ?
+		ctype.upper_connect_atom() :
+		ctype.residue_connect_atom_index( ctype.n_possible_residue_connections() )
+		, c_index );
+	AtomID const atom_c(
+		n_term ?
+		ntype.lower_connect_atom() :
+		ntype.residue_connect_atom_index( ntype.n_possible_residue_connections() )
+		, n_index );
 	core::Size atom_d_index(0);
-	for ( core::Size i=1, imax=pose->residue(1).n_mainchain_atoms(); i<=imax; ++i ) { //Find the atom index of the first mainchain atom with the lower_connect atom as a parent.
-		if ( i == atom_c.atomno() ) continue;
-		if ( pose->residue(1).type().icoor(i).stub_atom1().atomno() == atom_c.atomno() ) {
-			atom_d_index=i;
-			break;
+	if ( n_term ) {
+		for ( core::Size i=1, imax=ntype.mainchain_atoms().size(); i<=imax; ++i ) { //Find the atom index of the first mainchain atom with the lower_connect atom as a parent.
+			if ( i == atom_c.atomno() ) continue;
+			if ( ntype.icoor(i).stub_atom1().atomno() == atom_c.atomno() ) {
+				atom_d_index=i;
+				break;
+			}
 		}
+	} else {
+		atom_d_index = ntype.icoor( ntype.residue_connect_atom_index( ntype.n_possible_residue_connections() ) ).stub_atom1().atomno();
 	}
-	AtomID const atom_d( atom_d_index, 1 );
+	AtomID const atom_d( atom_d_index, n_index );
 
-	TR << "The following four atoms define the terminal bond:" << std::endl;
+	TR << "The following four atoms define the " << ( c_term && n_term ? "terminal" : "isopeptide" ) << " bond:" << std::endl;
 	TR << "1.\tRes=" << atom_a.rsd() << "\tAtom=" << pose->residue(atom_a.rsd()).atom_name(atom_a.atomno()) << std::endl;
 	TR << "2.\tRes=" << atom_b.rsd() << "\tAtom=" << pose->residue(atom_b.rsd()).atom_name(atom_b.atomno()) << std::endl;
 	TR << "3.\tRes=" << atom_c.rsd() << "\tAtom=" << pose->residue(atom_c.rsd()).atom_name(atom_c.atomno()) << std::endl;
@@ -1788,6 +2004,45 @@ SimpleCycpepPredictApplication::add_cyclic_constraints (
 	return;
 }
 
+/// @brief Function to add cyclic constraints to a pose.
+/// @details Calls functions that do this for particular cyclization types.
+void
+SimpleCycpepPredictApplication::add_cyclic_constraints(
+	core::pose::PoseOP pose
+) const {
+	switch( cyclization_type() ) {
+	case SCPA_n_to_c_amide_bond :
+		add_amide_bond_cyclic_constraints( pose, 0, 0 );
+		return;
+	case SCPA_terminal_disulfide :
+		//Do nothing.  The constraints are handled by the dslf_fa13 score term.
+		return;
+	case SCPA_nterm_isopeptide_lariat :
+		{
+		core::Size firstres, lastres;
+		find_first_and_last_isopeptide_residues( pose, firstres, lastres );
+		add_amide_bond_cyclic_constraints( pose, 0, lastres );
+		return;
+	}
+	case SCPA_cterm_isopeptide_lariat :
+		{
+		core::Size firstres, lastres;
+		find_first_and_last_isopeptide_residues( pose, firstres, lastres );
+		add_amide_bond_cyclic_constraints( pose, firstres, 0 );
+		return;
+	}
+	case SCPA_sidechain_isopeptide :
+		{
+		core::Size firstres, lastres;
+		find_first_and_last_isopeptide_residues( pose, firstres, lastres );
+		add_amide_bond_cyclic_constraints( pose, firstres, lastres );
+		return;
+	}
+	case SCPA_invalid_type :
+		utility_exit_with_message("Error in SimpleCycpepPredictApplication::add_cyclic_constraints(): Invalid cyclization type!");
+	}
+}
+
 
 /// @brief Sets all omega values to 180, and randomizes mainchain torsions.
 /// @details For alpha-amino acids, mainchain torsions are randomized by the Ramachandran plot.
@@ -1817,7 +2072,7 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 			} else {
 				if ( use_rama_prepro_for_sampling() ) { //Using rama_prepro tables for sampling:
 					core::chemical::ResidueTypeCOP following_rsd(
-						cyclization_type() == SCPA_terminal_disulfide && i == nres
+						( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) && i == nres
 						?
 						core::chemical::ResidueTypeFinder( *( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) ).residue_base_name("ALA").get_representative_type()
 						:
@@ -1903,6 +2158,238 @@ SimpleCycpepPredictApplication::set_up_hbond_filter(
 	return;
 }
 
+/// @brief Set up the logic to close the bond at the cyclization point.
+/// @details This version is for N-to-C amide bond cyclization.
+void
+SimpleCycpepPredictApplication::add_closebond_logic_n_to_c_amide_bond(
+	core::pose::PoseCOP pose,
+	core::Size const /*cyclization_point_start*/,
+	core::Size const /*cyclization_point_end*/,
+	protocols::generalized_kinematic_closure::GeneralizedKICOP genkic
+) const {
+	debug_assert ( cyclization_type() == SCPA_n_to_c_amide_bond );
+	std::string const firstatom( pose->residue(1).atom_name( pose->residue(1).lower_connect_atom() ) );
+	std::string const lastatom( pose->residue(sequence_length()).atom_name( pose->residue(sequence_length()).upper_connect_atom() ) );
+	genkic->close_bond( sequence_length(), lastatom, 1, firstatom, 0, "", 0, "", SimpleCycpepPredictApplication_PEPBOND_LENGTH, SimpleCycpepPredictApplication_PEPBOND_C_ANGLE/numeric::constants::d::pi*180.0, SimpleCycpepPredictApplication_PEPBOND_N_ANGLE/numeric::constants::d::pi*180.0, 180.0, false, false );
+}
+
+/// @brief Set up the logic to close the bond at the cyclization point.
+/// @details This version is for terminal disulfide cyclization.
+void
+SimpleCycpepPredictApplication::add_closebond_logic_terminal_disulfide(
+	core::pose::PoseCOP pose,
+	core::Size const cyclization_point_start,
+	core::Size const cyclization_point_end,
+	protocols::generalized_kinematic_closure::GeneralizedKICOP genkic
+) const {
+	debug_assert( cyclization_type() == SCPA_terminal_disulfide );
+	//Close S-S bond:
+	std::string const startatom( pose->residue_type(cyclization_point_start).get_disulfide_atom_name() );
+	std::string const endatom( pose->residue_type(cyclization_point_end).get_disulfide_atom_name() );
+	genkic->close_bond( cyclization_point_start, startatom, cyclization_point_end, endatom, 0, "", 0, "",
+		SimpleCycpepPredictApplication_DISULFBOND_LENGTH,
+		SimpleCycpepPredictApplication_DISULFBOND_ANGLE/numeric::constants::d::pi*180.0,
+		SimpleCycpepPredictApplication_DISULFBOND_ANGLE/numeric::constants::d::pi*180.0,
+		0 /*Will be sampled later*/,
+		false,
+		false
+	);
+
+	//Randomize S-S bond:
+	{
+		genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+		utility::vector1< core::id::NamedAtomID > SSvect;
+		SSvect.push_back( core::id::NamedAtomID( startatom, cyclization_point_start ) );
+		SSvect.push_back( core::id::NamedAtomID( endatom, cyclization_point_end ) );
+		genkic->add_atomset_to_perturber_atomset_list( SSvect );
+	}
+
+	//Randomize sidechains:
+	for ( core::Size l1(1); l1<=2; ++l1 ) {
+		core::Size const curres( l1 == 1 ? cyclization_point_start : cyclization_point_end );
+		genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+		core::Size const first_sc_at( pose->residue_type(curres).first_sidechain_atom() );
+		core::Size const first_sc_at_parent( pose->residue_type(curres).icoor(first_sc_at).stub_atom1().atomno() );
+		for ( core::Size curat( pose->residue_type(curres).atom_index( pose->residue_type(curres).get_disulfide_atom_name() ) ); curat!=first_sc_at_parent; curat = pose->residue_type(curres).icoor(curat).stub_atom1().atomno() ) { //March up from the thiol atom
+			core::Size const otherat( pose->residue_type(curres).icoor(curat).stub_atom1().atomno() ); //Get the parent of the current atom
+			utility::vector1< core::id::NamedAtomID > sc_vect;
+			sc_vect.push_back( core::id::NamedAtomID( pose->residue_type(curres).atom_name(curat), curres ) );
+			sc_vect.push_back( core::id::NamedAtomID( pose->residue_type(curres).atom_name(otherat), curres ) );
+			genkic->add_atomset_to_perturber_atomset_list( sc_vect );
+		}
+	}
+
+	//Randomize upper cysteine backbone:
+	{
+		genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+		utility::vector1< core::id::NamedAtomID > bb_vect;
+		if ( pose->residue_type( cyclization_point_start ).is_alpha_aa() || pose->residue_type(cyclization_point_start).is_oligourea() || pose->residue_type( cyclization_point_start ).is_peptoid() || pose->residue_type(cyclization_point_start).is_beta_aa() ) {
+			bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
+			bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_start ) );
+		} else if ( pose->residue_type(cyclization_point_start).is_gamma_aa() ) {
+			bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
+			bb_vect.push_back( core::id::NamedAtomID( "C4", cyclization_point_start ) );
+		}
+		genkic->add_atomset_to_perturber_atomset_list( bb_vect );
+	}
+
+	//Randomize lower cysteine backbone:
+	{
+		genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+		if ( pose->residue_type( cyclization_point_end ).is_alpha_aa() || pose->residue_type( cyclization_point_end ).is_peptoid() ) {
+			utility::vector1< core::id::NamedAtomID > bb_vect;
+			bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
+			bb_vect.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect );
+		} else if ( pose->residue_type(cyclization_point_end).is_beta_aa() || pose->residue_type(cyclization_point_end).is_oligourea() ) {
+			utility::vector1< core::id::NamedAtomID > bb_vect1, bb_vect2;
+			bb_vect1.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
+			bb_vect1.push_back( core::id::NamedAtomID( "CM", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect1 );
+			bb_vect2.push_back( core::id::NamedAtomID( "CM", cyclization_point_end ) );
+			bb_vect2.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect2 );
+		} else if ( pose->residue_type(cyclization_point_end).is_gamma_aa() ) {
+			utility::vector1< core::id::NamedAtomID > bb_vect1, bb_vect2, bb_vect3;
+			bb_vect1.push_back( core::id::NamedAtomID( "C4", cyclization_point_end ) );
+			bb_vect1.push_back( core::id::NamedAtomID( "C3", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect1 );
+			bb_vect2.push_back( core::id::NamedAtomID( "C3", cyclization_point_end ) );
+			bb_vect2.push_back( core::id::NamedAtomID( "C2", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect2 );
+			bb_vect3.push_back( core::id::NamedAtomID( "C2", cyclization_point_end ) );
+			bb_vect3.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect3 );
+		}
+	}
+}
+
+/// @brief Set up the logic to close the bond at the cyclization point.
+/// @details This version is for all types of isopeptide bond cyclization.
+/// @note cyclization_point_start > cyclization_point_end
+void
+SimpleCycpepPredictApplication::add_closebond_logic_isopeptide(
+	core::pose::PoseCOP pose,
+	core::Size const cyclization_point_start,
+	core::Size const cyclization_point_end,
+	protocols::generalized_kinematic_closure::GeneralizedKICOP genkic
+) const {
+	debug_assert( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide );
+	debug_assert( cyclization_point_start > cyclization_point_end );
+
+	//Some stuff we'll use:
+	core::chemical::ResidueType const & rt_start( pose->residue_type( cyclization_point_start ) );
+	core::chemical::ResidueType const & rt_end( pose->residue_type( cyclization_point_end ) );
+	bool const backward_bond( cyclization_type() == SCPA_sidechain_isopeptide && is_isopeptide_forming_amide_type( rt_end.name3() ) && is_isopeptide_forming_carbonyl_type( rt_start.aa() ));
+
+	//Close isopeptide bond:
+	std::string const startatom (
+		cyclization_type() == SCPA_cterm_isopeptide_lariat ?
+		rt_start.atom_name( rt_start.upper_connect_atom() ) :
+		rt_start.atom_name( rt_start.residue_connect_atom_index( rt_start.n_possible_residue_connections() ) )
+	);
+	std::string const endatom (
+		cyclization_type() == SCPA_nterm_isopeptide_lariat ?
+		rt_end.atom_name( rt_end.lower_connect_atom() ) :
+		rt_end.atom_name( rt_end.residue_connect_atom_index( rt_end.n_possible_residue_connections() ) )
+	);
+	if ( backward_bond ) {
+		genkic->close_bond( cyclization_point_start, startatom, cyclization_point_end, endatom, 0, "", 0, "", SimpleCycpepPredictApplication_PEPBOND_LENGTH, SimpleCycpepPredictApplication_PEPBOND_C_ANGLE/numeric::constants::d::pi*180.0, SimpleCycpepPredictApplication_PEPBOND_N_ANGLE/numeric::constants::d::pi*180.0, 180.0, false, false );
+	} else {
+		genkic->close_bond( cyclization_point_start, startatom, cyclization_point_end, endatom, 0, "", 0, "", SimpleCycpepPredictApplication_PEPBOND_LENGTH, SimpleCycpepPredictApplication_PEPBOND_N_ANGLE/numeric::constants::d::pi*180.0, SimpleCycpepPredictApplication_PEPBOND_C_ANGLE/numeric::constants::d::pi*180.0, 180.0, false, false );
+	}
+
+	//Randomize sidechains:
+	for ( core::Size l1(1); l1<=2; ++l1 ) {
+		core::Size const curres( l1 == 1 ? cyclization_point_start : cyclization_point_end );
+		if ( curres == cyclization_point_start && cyclization_type() == SCPA_cterm_isopeptide_lariat ) continue;
+		if ( curres == cyclization_point_end && cyclization_type() == SCPA_nterm_isopeptide_lariat ) continue;
+
+		genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+		core::Size const first_sc_at( pose->residue_type(curres).first_sidechain_atom() );
+		core::chemical::ResidueType const & curtype( pose->residue_type(curres) );
+		for ( core::Size curat( curtype.residue_connect_atom_index( curtype.n_possible_residue_connections() ) ); curat!=first_sc_at; curat = curtype.icoor(curat).stub_atom1().atomno() ) { //March up from the thiol atom
+			core::Size const otherat( curtype.icoor(curat).stub_atom1().atomno() ); //Get the parent of the current atom
+			utility::vector1< core::id::NamedAtomID > sc_vect;
+			sc_vect.push_back( core::id::NamedAtomID( curtype.atom_name(curat), curres ) );
+			sc_vect.push_back( core::id::NamedAtomID( curtype.atom_name(otherat), curres ) );
+			genkic->add_atomset_to_perturber_atomset_list( sc_vect );
+		}
+	}
+
+	//Randomize backbone of upper res:
+	if ( cyclization_type() != SCPA_cterm_isopeptide_lariat ) {
+		genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+		utility::vector1< core::id::NamedAtomID > bb_vect;
+		if ( pose->residue_type( cyclization_point_start ).is_alpha_aa() || pose->residue_type(cyclization_point_start).is_oligourea() || pose->residue_type( cyclization_point_start ).is_peptoid() || pose->residue_type(cyclization_point_start).is_beta_aa() ) {
+			bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
+			bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_start ) );
+		} else if ( pose->residue_type(cyclization_point_start).is_gamma_aa() ) {
+			bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
+			bb_vect.push_back( core::id::NamedAtomID( "C4", cyclization_point_start ) );
+		}
+		genkic->add_atomset_to_perturber_atomset_list( bb_vect );
+	}
+
+	//Randomize lower res backbone:
+	if ( cyclization_type() != SCPA_nterm_isopeptide_lariat ) {
+		genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+		if ( pose->residue_type( cyclization_point_end ).is_alpha_aa() || pose->residue_type( cyclization_point_end ).is_peptoid() ) {
+			utility::vector1< core::id::NamedAtomID > bb_vect;
+			bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
+			bb_vect.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect );
+		} else if ( pose->residue_type(cyclization_point_end).is_beta_aa() || pose->residue_type(cyclization_point_end).is_oligourea() ) {
+			utility::vector1< core::id::NamedAtomID > bb_vect1, bb_vect2;
+			bb_vect1.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
+			bb_vect1.push_back( core::id::NamedAtomID( "CM", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect1 );
+			bb_vect2.push_back( core::id::NamedAtomID( "CM", cyclization_point_end ) );
+			bb_vect2.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect2 );
+		} else if ( pose->residue_type(cyclization_point_end).is_gamma_aa() ) {
+			utility::vector1< core::id::NamedAtomID > bb_vect1, bb_vect2, bb_vect3;
+			bb_vect1.push_back( core::id::NamedAtomID( "C4", cyclization_point_end ) );
+			bb_vect1.push_back( core::id::NamedAtomID( "C3", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect1 );
+			bb_vect2.push_back( core::id::NamedAtomID( "C3", cyclization_point_end ) );
+			bb_vect2.push_back( core::id::NamedAtomID( "C2", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect2 );
+			bb_vect3.push_back( core::id::NamedAtomID( "C2", cyclization_point_end ) );
+			bb_vect3.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
+			genkic->add_atomset_to_perturber_atomset_list( bb_vect3 );
+		}
+	}
+
+}
+
+/// @brief Set up the logic to close the bond at the cyclization point.
+/// @details Calls different functions for different cyclization types.
+void
+SimpleCycpepPredictApplication::add_closebond_logic(
+	core::pose::PoseCOP pose,
+	core::Size const cyclization_point_start,
+	core::Size const cyclization_point_end,
+	protocols::generalized_kinematic_closure::GeneralizedKICOP genkic
+) const {
+	switch(cyclization_type()) {
+	case SCPA_n_to_c_amide_bond :
+		add_closebond_logic_n_to_c_amide_bond( pose, cyclization_point_start, cyclization_point_end, genkic );
+		return;
+	case SCPA_terminal_disulfide :
+		add_closebond_logic_terminal_disulfide( pose, cyclization_point_start, cyclization_point_end, genkic );
+		return;
+		//The following three cases all call the same function:
+	case SCPA_nterm_isopeptide_lariat:
+	case SCPA_cterm_isopeptide_lariat:
+	case SCPA_sidechain_isopeptide :
+		add_closebond_logic_isopeptide( pose, cyclization_point_start, cyclization_point_end, genkic );
+		return;
+	case SCPA_invalid_type :
+		utility_exit_with_message("Error in SimpleCycpepPredictApplication::add_closebond_logic(): Invalid cyclization type!");
+	}
+}
+
 
 /// @brief Use GeneralizedKIC to close the pose.
 ///
@@ -1930,13 +2417,20 @@ SimpleCycpepPredictApplication::genkic_close(
 	//Randomly pick one of the middle residues to be the anchor residue (or one of the middle residues of the asymmetric unit if this peptide has symmetry):
 	core::Size cyclization_point_start( nres );
 	core::Size cyclization_point_end(1);
+
 	if ( cyclization_type() == SCPA_terminal_disulfide ) {
 		cyclization_point_start = find_last_disulf_res(pose);
 		cyclization_point_end = find_first_disulf_res(pose);
+	} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
+		find_first_and_last_isopeptide_residues( pose, cyclization_point_end, cyclization_point_start );
 	}
-	core::Size const anchor_res_min( cyclization_type() == SCPA_terminal_disulfide ? cyclization_point_end + 2 : 2 );
+	core::Size const anchor_res_min(
+		cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ?
+		cyclization_point_end + 2 :
+		2
+	);
 	core::Size const anchor_res_max(
-		( cyclization_type() == SCPA_terminal_disulfide ?
+		( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ?
 		cyclization_point_start - 2 :
 		( required_symmetry_repeats_ > 1 ?
 		res_per_symm_repeat :
@@ -1944,12 +2438,13 @@ SimpleCycpepPredictApplication::genkic_close(
 		)
 		)
 	);
+
 	core::Size const anchor_res( numeric::random::rg().random_range(anchor_res_min, anchor_res_max) );
 	core::Size const first_loop_res( anchor_res + 1 );
 	core::Size const last_loop_res( anchor_res - 1 );
 
 	//The following should be guaranteed true:
-	if ( cyclization_type() == SCPA_terminal_disulfide ) {
+	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 		debug_assert( cyclization_point_end < last_loop_res );
 		debug_assert( first_loop_res < cyclization_point_start );
 	} else {
@@ -1972,7 +2467,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	//Update O and H atoms at the cyclization point:
 	protocols::cyclic_peptide::DeclareBondOP update_OH( new protocols::cyclic_peptide::DeclareBond );
 	set_up_cyclization_mover( update_OH, pose );
-	if ( cyclization_type() == SCPA_n_to_c_amide_bond ) {
+	if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 		pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_polymer_dependent_atoms_1", nullptr );
 	}
 
@@ -2114,26 +2609,26 @@ SimpleCycpepPredictApplication::genkic_close(
 
 		if ( fast_relax_rounds_ > 0 ) {
 			protocols::denovo_design::movers::FastDesignOP fdes( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond, fast_relax_rounds_) );
-			set_up_design_taskoperations( fdes, cyclic_offset, pose->size() );
+			set_up_design_taskoperations( fdes, cyclic_offset, pose->size(), pose );
 			pp->add_mover_filter_pair( fdes, "High_Hbond_FastDesign", nullptr );
 		}
 		if ( angle_relax_rounds() > 0 ) {
 			protocols::denovo_design::movers::FastDesignOP fdes2( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, angle_relax_rounds()) );
 			fdes2->minimize_bond_angles(true);
-			set_up_design_taskoperations( fdes2, cyclic_offset, pose->size() );
+			set_up_design_taskoperations( fdes2, cyclic_offset, pose->size(), pose );
 			pp->add_mover_filter_pair( fdes2, "High_Hbond_FastDesign_angle_relax", nullptr );
 		}
 		if ( angle_length_relax_rounds() > 0 ) {
 			protocols::denovo_design::movers::FastDesignOP fdes3( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, angle_length_relax_rounds()) );
 			fdes3->minimize_bond_angles(true);
 			fdes3->minimize_bond_lengths(true);
-			set_up_design_taskoperations( fdes3, cyclic_offset, pose->size() );
+			set_up_design_taskoperations( fdes3, cyclic_offset, pose->size(), pose );
 			pp->add_mover_filter_pair( fdes3, "High_Hbond_FastDesign_angle_length_relax", nullptr );
 		}
 		if ( cartesian_relax_rounds() > 0 ) {
 			protocols::denovo_design::movers::FastDesignOP fdes4( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, cartesian_relax_rounds()) );
 			fdes4->cartesian(true);
-			set_up_design_taskoperations( fdes4, cyclic_offset, pose->size() );
+			set_up_design_taskoperations( fdes4, cyclic_offset, pose->size(), pose );
 			pp->add_mover_filter_pair( fdes4, "High_Hbond_FastDesign_Cartesian_relax", nullptr );
 		}
 
@@ -2162,7 +2657,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	}
 
 	//Update O and H atoms at the cyclization point:
-	if ( cyclization_type() == SCPA_n_to_c_amide_bond ) {
+	if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 		pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_polymer_dependent_atoms_2", nullptr );
 	}
 
@@ -2214,7 +2709,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	for ( core::Size i=cyclization_point_end; i<=last_loop_res; ++i ) { genkic->add_loop_residue(i); }
 
 	//Add tail residues, if relevant:
-	if ( cyclization_type() == SCPA_terminal_disulfide ) {
+	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 		if ( cyclization_point_end > 1 ) {
 			for ( core::Size i=cyclization_point_end-1; i>=1; --i ) { genkic->add_tail_residue(i); }
 		}
@@ -2241,102 +2736,21 @@ SimpleCycpepPredictApplication::genkic_close(
 	genkic->set_pivot_atoms( first_loop_res, at1, middle_loop_res, at2, last_loop_res, at3 );
 
 	//Close the bond:
-	if ( cyclization_type() == SCPA_n_to_c_amide_bond ) {
-		std::string const firstatom( pose->residue(1).atom_name( pose->residue(1).lower_connect_atom() ) );
-		std::string const lastatom( pose->residue(nres).atom_name( pose->residue(nres).upper_connect_atom() ) );
-		genkic->close_bond( nres, lastatom, 1, firstatom, 0, "", 0, "", SimpleCycpepPredictApplication_PEPBOND_LENGTH, SimpleCycpepPredictApplication_PEPBOND_C_ANGLE/numeric::constants::d::pi*180.0, SimpleCycpepPredictApplication_PEPBOND_N_ANGLE/numeric::constants::d::pi*180.0, 180.0, false, false );
-	} else if ( cyclization_type() == SCPA_terminal_disulfide ) {
-		//Close S-S bond:
-		std::string const startatom( pose->residue_type(cyclization_point_start).get_disulfide_atom_name() );
-		std::string const endatom( pose->residue_type(cyclization_point_end).get_disulfide_atom_name() );
-		genkic->close_bond( cyclization_point_start, startatom, cyclization_point_end, endatom, 0, "", 0, "",
-			SimpleCycpepPredictApplication_DISULFBOND_LENGTH,
-			SimpleCycpepPredictApplication_DISULFBOND_ANGLE/numeric::constants::d::pi*180.0,
-			SimpleCycpepPredictApplication_DISULFBOND_ANGLE/numeric::constants::d::pi*180.0,
-			0 /*Will be sampled later*/,
-			false,
-			false
-		);
-
-		//Randomize S-S bond:
-		{
-			genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
-			utility::vector1< core::id::NamedAtomID > SSvect;
-			SSvect.push_back( core::id::NamedAtomID( startatom, cyclization_point_start ) );
-			SSvect.push_back( core::id::NamedAtomID( endatom, cyclization_point_end ) );
-			genkic->add_atomset_to_perturber_atomset_list( SSvect );
-		}
-
-		//Randomize sidechains:
-		for ( core::Size l1(1); l1<=2; ++l1 ) {
-			core::Size const curres( l1 == 1 ? cyclization_point_start : cyclization_point_end );
-			genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
-			core::Size const first_sc_at( pose->residue_type(curres).first_sidechain_atom() );
-			core::Size const first_sc_at_parent( pose->residue_type(curres).icoor(first_sc_at).stub_atom1().atomno() );
-			for ( core::Size curat( pose->residue_type(curres).atom_index( pose->residue_type(curres).get_disulfide_atom_name() ) ); curat!=first_sc_at_parent; curat = pose->residue_type(curres).icoor(curat).stub_atom1().atomno() ) { //March up from the thiol atom
-				core::Size const otherat( pose->residue_type(curres).icoor(curat).stub_atom1().atomno() ); //Get the parent of the current atom
-				utility::vector1< core::id::NamedAtomID > sc_vect;
-				sc_vect.push_back( core::id::NamedAtomID( pose->residue_type(curres).atom_name(curat), curres ) );
-				sc_vect.push_back( core::id::NamedAtomID( pose->residue_type(curres).atom_name(otherat), curres ) );
-				genkic->add_atomset_to_perturber_atomset_list( sc_vect );
-			}
-		}
-
-		//Randomize upper cysteine backbone:
-		{
-			genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
-			utility::vector1< core::id::NamedAtomID > bb_vect;
-			if ( pose->residue_type( cyclization_point_start ).is_alpha_aa() || pose->residue_type(cyclization_point_start).is_oligourea() || pose->residue_type( cyclization_point_start ).is_peptoid() || pose->residue_type(cyclization_point_start).is_beta_aa() ) {
-				bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
-				bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_start ) );
-			} else if ( pose->residue_type(cyclization_point_start).is_gamma_aa() ) {
-				bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
-				bb_vect.push_back( core::id::NamedAtomID( "C4", cyclization_point_start ) );
-			}
-			genkic->add_atomset_to_perturber_atomset_list( bb_vect );
-		}
-
-		//Randomize lower cysteine backbone:
-		{
-			genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
-			if ( pose->residue_type( cyclization_point_end ).is_alpha_aa() || pose->residue_type( cyclization_point_end ).is_peptoid() ) {
-				utility::vector1< core::id::NamedAtomID > bb_vect;
-				bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
-				bb_vect.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
-				genkic->add_atomset_to_perturber_atomset_list( bb_vect );
-			} else if ( pose->residue_type(cyclization_point_end).is_beta_aa() || pose->residue_type(cyclization_point_end).is_oligourea() ) {
-				utility::vector1< core::id::NamedAtomID > bb_vect1, bb_vect2;
-				bb_vect1.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
-				bb_vect1.push_back( core::id::NamedAtomID( "CM", cyclization_point_end ) );
-				genkic->add_atomset_to_perturber_atomset_list( bb_vect1 );
-				bb_vect2.push_back( core::id::NamedAtomID( "CM", cyclization_point_end ) );
-				bb_vect2.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
-				genkic->add_atomset_to_perturber_atomset_list( bb_vect2 );
-			} else if ( pose->residue_type(cyclization_point_end).is_gamma_aa() ) {
-				utility::vector1< core::id::NamedAtomID > bb_vect1, bb_vect2, bb_vect3;
-				bb_vect1.push_back( core::id::NamedAtomID( "C4", cyclization_point_end ) );
-				bb_vect1.push_back( core::id::NamedAtomID( "C3", cyclization_point_end ) );
-				genkic->add_atomset_to_perturber_atomset_list( bb_vect1 );
-				bb_vect2.push_back( core::id::NamedAtomID( "C3", cyclization_point_end ) );
-				bb_vect2.push_back( core::id::NamedAtomID( "C2", cyclization_point_end ) );
-				genkic->add_atomset_to_perturber_atomset_list( bb_vect2 );
-				bb_vect3.push_back( core::id::NamedAtomID( "C2", cyclization_point_end ) );
-				bb_vect3.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
-				genkic->add_atomset_to_perturber_atomset_list( bb_vect3 );
-			}
-		}
-	}
+	add_closebond_logic( pose, cyclization_point_start, cyclization_point_end, genkic );
 
 	//Add backbone perturbers:
 	for ( core::Size i=anchor_res+1; i!=anchor_res; ++i ) {
 		if ( i > cyclization_point_start ) i = cyclization_point_end;
 
 		if ( i==anchor_res ) continue; //Can't perturb the anchor residue.
-		if ( cyclization_type() == SCPA_terminal_disulfide ) { //If we're cyclizing through a disulfide, don't randomize by rama
+		if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide ) { //If we're cyclizing through a disulfide, don't randomize by rama
 			if ( i==cyclization_point_start || i==cyclization_point_end ) {
 				continue;
 			}
-		}
+		} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat && i == cyclization_point_end ) { continue; }
+		else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && i == cyclization_point_start ) { continue; }
+
+
 		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() ) {
 			core::Size const res_in_original( original_position(i, cyclic_offset, pose->size() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
 			if ( user_set_alpha_dihedrals_.count(res_in_original) ) { //If this position is being set to a particular value...
@@ -2431,7 +2845,7 @@ SimpleCycpepPredictApplication::genkic_close(
 
 			if ( cyclization_type() == SCPA_n_to_c_amide_bond && i==1 && nres==anchor_res ) continue; //Can't perturb the anchor residue.
 			if ( i-1 == anchor_res ) continue; //Can't perturb the anchor residue.
-			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr || pose->residue_type(i).is_n_methylated() ) {
+			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr || pose->residue_type(i).is_peptoid() ) {
 				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::sample_cis_peptide_bond );
 				genkic->add_value_to_perturber_value_list( sample_cis_pro_frequency() );
 				genkic->add_residue_to_perturber_residue_list( i==1 ? nres : i-1 ); //The residue PRECEDING the proline is perturbed
@@ -2446,7 +2860,11 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( use_rama_filter() ) {
 		for ( core::Size i=1; i<=nres; ++i ) {
 			if ( i!=first_loop_res && i!=middle_loop_res && i!=last_loop_res ) continue; //Just filter the pivots.
-			if ( cyclization_type() == SCPA_terminal_disulfide && ( i == cyclization_point_end || i == cyclization_point_start ) ) continue;
+			if ( (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide ) &&
+					( i == cyclization_point_end || i == cyclization_point_start ) ) continue;
+			else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat && i == cyclization_point_end ) continue;
+			else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && i == cyclization_point_start ) continue;
+
 			if ( use_rama_prepro_for_sampling() ) {
 				genkic->add_filter( protocols::generalized_kinematic_closure::filter::rama_prepro_check );
 				genkic->set_filter_resnum(i);
@@ -2476,7 +2894,8 @@ void
 SimpleCycpepPredictApplication::set_up_design_taskoperations(
 	protocols::denovo_design::movers::FastDesignOP fdes,
 	core::Size const cyclic_offset,
-	core::Size const nres
+	core::Size const nres,
+	core::pose::PoseCOP pose
 ) const {
 	fdes->set_up_default_task_factory();
 
@@ -2551,6 +2970,23 @@ SimpleCycpepPredictApplication::set_up_design_taskoperations(
 	fdes->get_task_factory()->push_back( L_resfile_taskop );
 	if ( prohibit_L_at_positive_phi_ ) fdes->get_task_factory()->push_back( L_empty_resfile_taskop );
 	fdes->get_task_factory()->push_back( D_resfile_taskop );
+
+	//Prohibit design at isopeptide cyclization positions:
+	if ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
+		core::select::residue_selector::ResidueIndexSelectorOP linker_selector( new core::select::residue_selector::ResidueIndexSelector );
+		core::Size firstres, lastres;
+		find_first_and_last_isopeptide_residues(pose, firstres, lastres);
+		if ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
+			linker_selector->append_index( lastres );
+		}
+		if ( cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
+			linker_selector->append_index( firstres );
+		}
+
+		core::pack::task::operation::RestrictToRepackingRLTOP restrict_repacking( new core::pack::task::operation::RestrictToRepackingRLT );
+		core::pack::task::operation::OperateOnResidueSubsetOP op_on_subset( new core::pack::task::operation::OperateOnResidueSubset( restrict_repacking, linker_selector ) );
+		fdes->get_task_factory()->push_back(op_on_subset);
+	}
 }
 
 /// @brief Given a vector of full residue names of canonical residues, give me a concatenated list of one-letter codes.
@@ -3032,7 +3468,52 @@ SimpleCycpepPredictApplication::set_up_terminal_disulfide_variants(
 	selector->append_index( find_last_disulf_res(pose) );
 	add_disulf_var.set_residue_selector(selector);
 	add_disulf_var.apply(*pose);
+	core::pose::add_lower_terminus_type_to_pose_residue( *pose, 1 );
+	core::pose::add_upper_terminus_type_to_pose_residue( *pose, sequence_length() );
 }
+
+/// @brief Given a pose, add sidechain conjugation variant types to sidechains involved in making an isopeptide
+/// bond, and strip termini from termini involved in the isopeptide bond.
+void
+SimpleCycpepPredictApplication::set_up_isopeptide_variants(
+	core::pose::PoseOP pose
+) const {
+	runtime_assert( cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide );
+
+	core::Size firstres, lastres;
+	find_first_and_last_isopeptide_residues(pose, firstres, lastres);
+
+	if ( cyclization_type() == SCPA_cterm_isopeptide_lariat ) {
+		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::SIDECHAIN_CONJUGATION, firstres);
+		core::pose::remove_upper_terminus_type_from_pose_residue( *pose, lastres );
+		core::pose::add_lower_terminus_type_to_pose_residue( *pose, 1 );
+	} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat ) {
+		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::SIDECHAIN_CONJUGATION, lastres);
+		core::pose::remove_lower_terminus_type_from_pose_residue( *pose, firstres );
+		core::pose::add_upper_terminus_type_to_pose_residue( *pose, sequence_length() );
+	} else if ( cyclization_type() == SCPA_sidechain_isopeptide ) {
+		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::SIDECHAIN_CONJUGATION, firstres);
+		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::SIDECHAIN_CONJUGATION, lastres);
+		core::pose::add_lower_terminus_type_to_pose_residue( *pose, 1 );
+		core::pose::add_upper_terminus_type_to_pose_residue( *pose, sequence_length() );
+	}
+	pose->update_residue_neighbors();
+}
+
+/// @brief Given the basename of a residue type, return true if this is a type that can donate the nitrogen to an
+/// isopeptide bond, false otherwise.
+bool SimpleCycpepPredictApplication::is_isopeptide_forming_amide_type( std::string const &basename ) const {
+	return (!basename.compare("LYS") || !basename.compare("ORN") || !basename.compare("DAB") || !basename.compare("DPP") ||
+		!basename.compare("DLYS") || !basename.compare("DORN") || !basename.compare("DDAB") || !basename.compare("DDPP"));
+}
+
+/// @brief Given the AA of a residue type, return true if this is a type that can donate the carbonyl to an
+/// isopeptide bond, false otherwise.
+bool SimpleCycpepPredictApplication::is_isopeptide_forming_carbonyl_type( core::chemical::AA const aa ) const {
+	using namespace core::chemical;
+	return (aa == aa_asp || aa == aa_glu || aa == aa_das || aa == aa_dgu);
+}
+
 
 } //cyclic_peptide_predict
 } //protocols

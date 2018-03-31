@@ -377,15 +377,14 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 	using namespace core::chemical;
 	using numeric::conversions::degrees;
 
+	if ( res.is_terminus() || res.is_virtual_residue() ) return Energy( 0.0 );
+
 	AA const aa( is_canonical_d_aminoacid( res.aa() ) ? get_l_equivalent( res.aa() ) : ( res.backbone_aa() == aa_unk ? res.aa() : res.backbone_aa() ) ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
 
 	if ( aa > chemical::num_canonical_aas ) return 0.0; //Excludes noncanonicals that aren't templated on a canonical.
 
 	// sets up for eventual removal of prior condition
 	const core::Real d_multiplier = res.has_property( "D_AA" ) ? -1.0 : 1.0 ; //A multiplier that's -1 for D-amino acids and 1 for L-amino acids, used to invert phi and psi for D.
-
-	//ToDo Also exclude chainbreaks
-	if ( res.is_terminus() || res.is_virtual_residue()  ) return Energy( 0.0 );
 
 	// Probabilities for this amino acid are present in files and it is not a terminus
 	Angle const phi( d_multiplier*res.mainchain_torsion( 1 ) );

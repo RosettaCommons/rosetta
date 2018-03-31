@@ -1685,7 +1685,7 @@ Conformation::declare_chemical_bond(
 	if ( !residue( seqpos2 ).is_RNA() ) update_cutpoint_virtual_atoms_if_connected( *this, seqpos2, false );
 }
 
-/// @brief Rebuilds the atoms that are depenent on polymer bonds for the specified residue only.
+/// @brief Rebuilds the atoms that are dependent on polymer bonds for the specified residue only.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
 Conformation::rebuild_polymer_bond_dependent_atoms_this_residue_only ( Size const seqpos )
@@ -1708,11 +1708,11 @@ Conformation::rebuild_polymer_bond_dependent_atoms( Size const seqpos )
 void
 Conformation::rebuild_residue_connection_dependent_atoms( Size const seqpos, Size const connid )
 {
-	// assumes no interdependencies among the atoms being built
 	update_residue_coordinates();
 	Residue const & rsd( residue_(seqpos) );
-	for ( Size i=1, ie=rsd.natoms(); i<= ie; ++i ) {
-		if ( rsd.icoor(i).depends_on_residue_connection( connid ) ) {
+	core::chemical::ResidueType const &restype( rsd.type() );
+	for ( Size i(1), imax(rsd.natoms()); i<=imax; ++i ) {
+		if ( ( restype.atom_depends_on_connection( i, connid ) && rsd.connected_residue_at_resconn( connid ) != 0 ) ) {
 			set_xyz( AtomID(i,seqpos), rsd.icoor(i).build( rsd, *this ) );
 		}
 	}

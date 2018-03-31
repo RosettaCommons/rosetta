@@ -182,7 +182,7 @@ RamaPreProEnergy::eval_intraresidue_dof_derivative(
 		if ( tor_id.rsd() != res_lo.seqpos() ) return 0.0;
 		if ( res_lo.is_terminus() || !res_lo.has_lower_connect() || !res_lo.has_upper_connect() ) return 0.0;
 
-		core::Size const conn_partner( res_lo.connected_residue_at_lower() );
+		core::Size const conn_partner( res_lo.connected_residue_at_upper() );
 		if ( !conn_partner ) return 0.0;
 
 		conformation::Residue const &res_hi( pose.residue( conn_partner ) );

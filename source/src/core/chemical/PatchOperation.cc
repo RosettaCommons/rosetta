@@ -728,6 +728,28 @@ SetFormalCharge::name() const {
 	return "SetFormalCharge";
 }
 
+// SetNetFormalCharge ////////////////////////////////////////////////////////////
+/// @brief Constructor
+/// @details Note that this deliberately takes a signed int.
+SetNetFormalCharge::SetNetFormalCharge( signed int const charge_in ) :
+	charge_( charge_in )
+{}
+
+/// @return  true on failure
+bool
+SetNetFormalCharge::apply( ResidueType & rsd ) const
+{
+	rsd.net_formal_charge( charge_ );
+	return false;  // success always
+}
+
+/// @brief Return the name of this PatchOperation ("SetNetFormalCharge").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+std::string
+SetNetFormalCharge::name() const {
+	return "SetNetFormalCharge";
+}
+
 // SetAtomType ////////////////////////////////////////////////////////////////
 
 SetAtomType::SetAtomType(
@@ -2543,6 +2565,7 @@ patch_operation_from_patch_file_line(
 	Real charge, mean, sdev, radius;
 	Size chino;
 	SSize formal_charge;
+	signed int net_formal_charge;
 	l >> tag;
 	if ( tag == "ADD_ATOM" ) {
 		if ( line.size() < 25 ) {
@@ -2827,7 +2850,13 @@ patch_operation_from_patch_file_line(
 			return nullptr;
 		}
 		return PatchOperationOP( new SetFormalCharge( atom_name, formal_charge ) );
-
+	} else if ( tag == "SET_NET_FORMAL_CHARGE" ) {
+		l >> net_formal_charge;
+		if ( l.fail() ) {
+			utility_exit_with_message( "Failed to parse SET_NET_FORMAL_CHARGE patch operation." );
+			return nullptr;
+		}
+		return PatchOperationOP( new SetNetFormalCharge( net_formal_charge ) );
 	} else if ( tag == "SET_ATOMIC_CHARGE" ) {
 		l >> atom_name >> charge;
 
@@ -3807,6 +3836,27 @@ core::chemical::SetFormalCharge::load( Archive & arc ) {
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetFormalCharge );
 CEREAL_REGISTER_TYPE( core::chemical::SetFormalCharge )
 
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetNetFormalCharge::SetNetFormalCharge() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetNetFormalCharge::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( charge_ ) ); // signed int
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetNetFormalCharge::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( charge_ ); // signed int
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetNetFormalCharge );
+CEREAL_REGISTER_TYPE( core::chemical::SetNetFormalCharge )
 
 /// @brief Default constructor required by cereal to deserialize this class
 core::chemical::AddConnectDeleteChildProton::AddConnectDeleteChildProton() {}

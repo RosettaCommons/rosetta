@@ -46,7 +46,7 @@ bool atoms_interact(
 /// @brief Given two residues that may or may not be connected, determine which of the two, if any,
 /// is the lower one and which is the upper.
 /// @details Inputs are rsd1 and rsd2; outputs are rsd1_is_lo and rsd2_is_lo.  Both will be false if
-/// the residues aren't conventionally connected (i.e. the C of one connected to the N of the other).
+/// the residues aren't connected (s.t. the C of one connected to some connection of the other).
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void determine_lo_and_hi_residues(
 	core::pose::Pose const &pose,

@@ -153,6 +153,8 @@ ResidueType::ResidueType(
 	has_polymer_dependent_groups_(false),
 	atom_depends_on_lower_polymeric_connection_(),
 	atom_depends_on_upper_polymeric_connection_(),
+	has_nonpolymer_connection_dependent_groups_(false),
+	atom_depends_on_connection_(),
 	net_formal_charge_(0),
 	finalized_(false),
 	nondefault_(false)
@@ -299,6 +301,8 @@ ResidueType::operator=( ResidueType const & residue_type )
 	has_polymer_dependent_groups_ = residue_type.has_polymer_dependent_groups_;
 	atom_depends_on_lower_polymeric_connection_ = residue_type.atom_depends_on_lower_polymeric_connection_;
 	atom_depends_on_upper_polymeric_connection_ = residue_type.atom_depends_on_upper_polymeric_connection_;
+	has_nonpolymer_connection_dependent_groups_ = residue_type.has_nonpolymer_connection_dependent_groups_;
+	atom_depends_on_connection_ = residue_type.atom_depends_on_connection_;
 	net_formal_charge_ = residue_type.net_formal_charge_;
 	finalized_ = residue_type.finalized_;
 	defined_adducts_ = residue_type.defined_adducts_;
@@ -2365,6 +2369,15 @@ ResidueType::atom_depends_on_polymeric_connection( core::Size const atom_index )
 	return atom_depends_on_lower_polymeric_connection_[atom_index] || atom_depends_on_upper_polymeric_connection_[atom_index];
 }
 
+/// @brief Does an atom with a given index have an icoor that depends, directly or indirectly, on a particular connection ID?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::atom_depends_on_connection( core::Size const atom_index, core::Size const connection_id ) const {
+	debug_assert( atom_index > 0 && atom_index <= natoms() );
+	debug_assert( connection_id > 0 && connection_id <= n_possible_residue_connections() );
+	return atom_depends_on_connection_[connection_id][atom_index];
+}
+
 /// @brief Get the net formal charge on this residue type.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 signed long int
@@ -2418,13 +2431,6 @@ bool
 ResidueType::is_l_rna() const
 {
 	return properties_->has_property( L_RNA );
-}
-
-/// @brief Is this residue N-methylated?
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-bool
-ResidueType::is_n_methylated() const {
-	return properties_->has_property( N_METHYLATED );
 }
 
 bool
@@ -3709,6 +3715,7 @@ ResidueType::update_derived_data()
 	}
 
 	update_polymer_dependent_groups();
+	update_nonpolymer_dependent_groups();
 }
 
 /// @brief Determine which atoms are polymer bond-dependent.
@@ -3744,6 +3751,36 @@ ResidueType::update_polymer_dependent_groups() {
 			}
 		}
 		if ( nothing_changed ) break;
+	}
+}
+
+/// @brief Determine which atoms are nonpolymer bond-dependent.
+/// @details Should only be called from update_derived_data() function.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+ResidueType::update_nonpolymer_dependent_groups() {
+	core::Size const n_atom( natoms() );
+	has_nonpolymer_connection_dependent_groups_ = false;
+
+	atom_depends_on_connection_.clear();
+	atom_depends_on_connection_.resize( n_possible_residue_connections(), utility::vector1< bool >( n_atom, false ) );
+
+	bool nothing_changed(true);
+
+	// This logic scales with natoms^3, which isn't ideal, but it's only called once on ResidueType initialization.  Still, it prevents
+	// the necessity of implementing a recursive function, which is what I'm trying to avoid:
+	for ( core::Size j(1), jmax(n_possible_residue_connections()); j<=jmax; ++j ) {
+		for ( core::Size attempts(1); attempts<=n_atom; ++attempts ) { //The maximum number of iterations needed should be n_atom, though it will be much lower in most cases.
+			nothing_changed = true;
+			for ( core::Size i(1); i<=n_atom; ++i ) {
+				if ( icoor(i).depends_on_residue_connection(j) || icoor(i).depends_on_a_true_index( atom_depends_on_connection_[j] ) ) {
+					nothing_changed = false;
+					if ( !residue_connection_is_polymeric(j) ) has_nonpolymer_connection_dependent_groups_ = true;
+					atom_depends_on_connection_[j][i] = true;
+				}
+			}
+			if ( nothing_changed ) break;
+		}
 	}
 }
 
@@ -5125,6 +5162,8 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	arc( CEREAL_NVP( has_polymer_dependent_groups_ ) ); //bool
 	arc( CEREAL_NVP( atom_depends_on_lower_polymeric_connection_ ) ); //utility::vector1<bool>
 	arc( CEREAL_NVP( atom_depends_on_upper_polymeric_connection_ ) ); //utility::vector1<bool>
+	arc( CEREAL_NVP( has_nonpolymer_connection_dependent_groups_ ) ); //bool
+	arc( CEREAL_NVP( atom_depends_on_connection_ ) ); //utility::vector1< utility::vector1< bool > >
 	arc( CEREAL_NVP( net_formal_charge_ ) ); //core::Size
 	// EXEMPT finalized_
 	// ( will call finalization function on load )
@@ -5331,6 +5370,8 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( has_polymer_dependent_groups_ ); //bool
 	arc( atom_depends_on_lower_polymeric_connection_ ); //utility::vector1<bool>
 	arc( atom_depends_on_upper_polymeric_connection_ ); //utility::vector1<bool>
+	arc( has_nonpolymer_connection_dependent_groups_ ); //bool
+	arc( atom_depends_on_connection_ ); //utility::vector1< utility::vector1< bool > >
 	arc( net_formal_charge_ ); //core::Size
 	arc( defined_adducts_ ); // utility::vector1<Adduct>
 	arc( nondefault_ ); // _Bool

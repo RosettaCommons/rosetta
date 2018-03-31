@@ -53,7 +53,7 @@ public:
 	~RamaPrePro() override = default;
 
 	/// @brief Evaluate the rama score for this residue (res1) given the identity of the next (res_aa2).
-	/// @details This version only works for noncanonical or canonical residues with any number of mainchain
+	/// @details This version works for noncanonical or canonical residues with any number of mainchain
 	/// torsions.  If the next residue's identity is pro or d-pro, a different score table is used.  Note:
 	/// if return_derivs is true, the gradient vector is populated only.  If it is false, then only the
 	/// score_rama value is populated.
