@@ -327,4 +327,30 @@ public:
 
 	}
 
+	void test_output_path_handling_with_tag() {
+		core_init_with_additional_options( "-out::file::silent dummy -out::path some_dir3" );
+
+		auto outputter_tag = utility::tag::Tag::create( "<SilentFile filename=\"foo.out\"/>" );
+
+		SilentFilePoseOutputter outputter;
+		utility::options::OptionKeyList sf_outputter_options;
+		SilentFilePoseOutputter::list_options_read( sf_outputter_options );
+
+		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
+		dummy_input_source->input_tag( "1abc" );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		inner_job->input_source( dummy_input_source );
+		LarvalJob job( inner_job, 1, 1 );
+
+		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( sf_outputter_options );
+
+		JobOutputIndex output_index;
+
+		PoseOutputSpecificationOP output_spec = outputter.create_output_specification( job, output_index, *job_options, outputter_tag );
+		auto silent_output_spec( utility::pointer::dynamic_pointer_cast< SilentFilePoseOutputSpecification >( output_spec ));
+
+		TS_ASSERT_EQUALS( silent_output_spec->out_fname(), "some_dir3/foo.out" );
+
+	}
+
 };

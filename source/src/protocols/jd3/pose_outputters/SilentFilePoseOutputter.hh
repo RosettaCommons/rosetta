@@ -71,6 +71,12 @@ public:
 
 	void mark_job_as_having_started( LarvalJob const & job, utility::options::OptionCollection const & options ) const override;
 
+	std::string
+	filename_for_output_job(
+		utility::tag::TagCOP outputter_tag,
+		utility::options::OptionCollection const & job_options
+	) const;
+
 	/// @brief Create the PoseOutputSpecification for a particular job
 	PoseOutputSpecificationOP
 	create_output_specification(

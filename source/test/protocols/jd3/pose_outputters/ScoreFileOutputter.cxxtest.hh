@@ -263,6 +263,30 @@ public:
 
 	}
 
+	void test_output_path_handling_8() {
+		// no name given for out::file::scorefile
+		core_init_with_additional_options( "-out:path:all some_dir2" );
+
+		ScoreFileOutputter outputter;
+		utility::options::OptionKeyList pdb_outputter_options;
+		ScoreFileOutputter::list_options_read( pdb_outputter_options );
+
+		auto dummy_input_source = utility::pointer::make_shared< PoseInputSource >( "PDB" );
+		dummy_input_source->input_tag( "1abc" );
+		auto inner_job = utility::pointer::make_shared< InnerLarvalJob >( 1 );
+		inner_job->input_source( dummy_input_source );
+
+		utility::options::OptionCollectionOP job_options = basic::options::read_subset_of_global_option_collection( pdb_outputter_options );
+		utility::tag::TagCOP null_tag;
+
+		JobOutputIndex output_index;
+		// initialize the output index
+
+		utility::file::FileName output_name = outputter.filename_for_job( null_tag, *job_options, *inner_job );
+		TS_ASSERT_EQUALS( output_name(), "some_dir2/score.sc" );
+
+	}
+
 	void test_output_path_handling_priority_1() {
 		core_init_with_additional_options( "-out:file:scorefile dummy.scores -out:path:score some_dir3 -out:path:all some_dir4" );
 

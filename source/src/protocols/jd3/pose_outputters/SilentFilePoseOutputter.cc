@@ -87,17 +87,20 @@ SilentFilePoseOutputter::determine_job_tag(
 /// b/n ILJ and input source. So, let's just use the job_tag. What else can we do?
 std::string
 SilentFilePoseOutputter::outputter_for_job(
-	utility::tag::TagCOP sf_tag,
+	utility::tag::TagCOP outputter_tag,
 	utility::options::OptionCollection const & opts,
 	InnerLarvalJob const &
 ) const
 {
-	if ( sf_tag ) {
-		runtime_assert( sf_tag->hasOption( "filename" ));
-		return sf_tag->getOption< std::string >( "filename" );
-	} else {
-		return opts[ basic::options::OptionKeys::out::file::silent ];
-	}
+	//if ( outputter_tag ) {
+	// runtime_assert( outputter_tag->hasOption( "filename" ));
+	// return outputter_tag->getOption< std::string >( "filename" );
+	//} else {
+	// return opts[ basic::options::OptionKeys::out::file::silent ];
+	//}
+
+	return filename_for_output_job( outputter_tag, opts );
+
 }
 
 
@@ -131,29 +134,19 @@ SilentFilePoseOutputter::class_key() const
 	return keyname();
 }
 
-
-/// @brief Create the PoseOutputSpecification for a particular job
-PoseOutputSpecificationOP
-SilentFilePoseOutputter::create_output_specification(
-	LarvalJob const & job,
-	JobOutputIndex const & output_index,
-	utility::options::OptionCollection const & job_options,
-	utility::tag::TagCOP tag // possibly null-pointing tag pointer
-)
+std::string
+SilentFilePoseOutputter::filename_for_output_job(
+	utility::tag::TagCOP outputter_tag, // possibly null-pointing tag pointer
+	utility::options::OptionCollection const & job_options
+) const
 {
-	using namespace core::io::silent;
-	debug_assert( !tag || tag->getName() == keyname() ); // I expect this Tag to point to my data
 
-	core::io::silent::SilentFileOptions opts( job_options );
+	debug_assert( !outputter_tag || outputter_tag->getName() == keyname() ); // I expect this Tag to point to my data
+
 	utility::file::FileName fname_out;
-	core::Size buffer_limit(0);
-	std::string base_name; // may contain a desired extension; we'll search for the "."
-	if ( tag ) {
-		opts.read_from_tag( tag );
-		base_name = tag->getOption< std::string >( "filename" );
-		if ( tag->hasOption( "buffer_limit" ) ) {
-			buffer_limit = tag->getOption< core::Size >( "buffer_limit" );
-		}
+	std::string base_name; // may contain a desired extension; we'll search for a "."
+	if ( outputter_tag ) {
+		base_name = outputter_tag->getOption< std::string >( "filename" );
 	} else {
 		using namespace basic::options::OptionKeys;
 		base_name = job_options[ out::file::silent ]();
@@ -168,13 +161,13 @@ SilentFilePoseOutputter::create_output_specification(
 	}
 
 	// Priority: ask for the options in order:
-	// 1. The path specified in the tag,
+	// 1. The path specified in the outputter_tag,
 	// 2. The path specified in out::path::all <-- more general
 	// 3. The path specified in out::path::path <-- dunno if this is more or less general than out::path::all?
 
 	std::string base_path;
-	if ( tag && tag->hasOption( "path" ) ) {
-		base_path = tag->getOption< std::string >( "path" );
+	if ( outputter_tag && outputter_tag->hasOption( "path" ) ) {
+		base_path = outputter_tag->getOption< std::string >( "path" );
 	} else if ( job_options[ basic::options::OptionKeys::out::path::all ].user() ) {
 		base_path = job_options[ basic::options::OptionKeys::out::path::all ]();
 	} else if ( job_options[ basic::options::OptionKeys::out::path::path ].user() ) {
@@ -185,10 +178,35 @@ SilentFilePoseOutputter::create_output_specification(
 		fname_out.path( base_path + ( fname_out.path().empty() ? "" : ( base_path[ base_path.size() - 1 ] == '/' ? "" : "/" ) + fname_out.path() ) );
 	}
 
+	return fname_out;
+
+}
+
+
+/// @brief Create the PoseOutputSpecification for a particular job
+PoseOutputSpecificationOP
+SilentFilePoseOutputter::create_output_specification(
+	LarvalJob const & job,
+	JobOutputIndex const & output_index,
+	utility::options::OptionCollection const & job_options,
+	utility::tag::TagCOP outputter_tag // possibly null-pointing tag pointer
+)
+{
+	using namespace core::io::silent;
+	core::io::silent::SilentFileOptions opts( job_options );
+	core::Size buffer_limit(0);
+	if ( outputter_tag ) {
+		opts.read_from_tag( outputter_tag );
+		if ( outputter_tag->hasOption( "buffer_limit" ) ) {
+			buffer_limit = outputter_tag->getOption< core::Size >( "buffer_limit" );
+		}
+	}
+
 	SilentFilePoseOutputSpecificationOP sf_pos( new SilentFilePoseOutputSpecification );
 	sf_pos->sf_opts( opts );
-	sf_pos->out_fname( fname_out );
+	sf_pos->out_fname( filename_for_output_job( outputter_tag, job_options ) );
 	sf_pos->buffer_limit( buffer_limit );
+
 	// There should ultimately be a better way of communicating. Meantime,
 	// look for an option that's ubiquitous in stepwise runs but used little if at all
 	// elsewhere.

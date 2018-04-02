@@ -225,20 +225,14 @@ ScoreFileOutputter::filename_for_job(
 		// say that their score file should should be named with the .fasc extension
 		// then they can give a name for the file explicitly.
 
-		scorefile_name = "score.sc"; // default name "score.sc"
+		scorefile_name = "score"; // default name "score.sc"
 		std::ostringstream oss;
 
 		//prefix, suffix
 		oss << job_options[ out::prefix ]() << scorefile_name.base()
 			<< job_options[ out::suffix ]();
 		scorefile_name.base( oss.str() );
-		//path
-		if ( job_options[ out::path::score ].user() ) {
-			scorefile_name.path( job_options[ out::path::score ]().path() );
-		} else if ( job_options[ out::path::all ].user() ) {
-			scorefile_name.path( job_options[ out::path::all ]().path() + "/" + scorefile_name.path() );
-		}
-
+		scorefile_name.ext(".sc");
 	}
 
 	if ( scorefile_path_in_tag ) {

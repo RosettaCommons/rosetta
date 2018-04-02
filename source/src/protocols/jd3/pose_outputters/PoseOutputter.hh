@@ -69,7 +69,7 @@ public:
 	virtual
 	std::string
 	outputter_for_job(
-		utility::tag::TagCOP output_tag,
+		utility::tag::TagCOP outputter_tag,
 		utility::options::OptionCollection const & job_options,
 		InnerLarvalJob const & job
 	) const = 0;
@@ -99,7 +99,7 @@ public:
 		LarvalJob const & job,
 		JobOutputIndex const & output_index,
 		utility::options::OptionCollection const & options,
-		utility::tag::TagCOP tag // possibly null-pointing tag pointer
+		utility::tag::TagCOP outputter_tag // possibly null-pointing tag pointer
 	) = 0;
 
 };
