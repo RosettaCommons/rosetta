@@ -7,3 +7,6 @@
 [submodule "rosetta_scripts_scripts"]
 	path = rosetta_scripts_scripts
 	url = git@github.com:RosettaCommons/rosetta_scripts_scripts.git
+[submodule "source/external/msgpack/msgpack-c.upstream"]
+	path = source/external/msgpack/msgpack-c.upstream
+	url = git@github.com:msgpack/msgpack-c.git
