@@ -602,6 +602,9 @@ sources = {
 	],
 
 	# M ######################################################################
+	"pilot/maprahamian" : [
+		"burial_measure_centroid",
+	],
 	"pilot/mdsmith" : [
 		#"ligand_motifs",
 		#"motif_ligand_packer_design",

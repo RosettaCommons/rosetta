@@ -67,6 +67,7 @@
 #include <core/scoring/methods/ProClosureEnergyCreator.hh>
 #include <core/scoring/methods/BurialEnergyCreator.hh>
 #include <core/scoring/methods/Burial_v2EnergyCreator.hh>
+#include <core/scoring/methods/HRF_MSLabelingEnergyCreator.hh>
 #include <core/scoring/methods/RG_Energy_FastCreator.hh>
 #include <core/scoring/methods/RG_LocalEnergyCreator.hh>
 #include <core/scoring/methods/SA_EnergyCreator.hh>
@@ -431,6 +432,7 @@ static EnergyMethodRegistrator< scoring::methods::PeptideBondEnergyCreator > Pep
 static EnergyMethodRegistrator< scoring::methods::ProClosureEnergyCreator > ProClosureEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::BurialEnergyCreator > BurialCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::Burial_v2EnergyCreator > Burial_v2Creator_registrator;
+static EnergyMethodRegistrator< scoring::methods::HRF_MSLabelingEnergyCreator > HRF_MSLabelingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RG_Energy_FastCreator > RG_Energy_FastCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RG_LocalEnergyCreator > RG_LocalEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SA_EnergyCreator > SA_EnergyCreator_registrator;

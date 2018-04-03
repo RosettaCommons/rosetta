@@ -453,7 +453,7 @@ enum ScoreType {
 	burial_v2, // burial of a list of residues converted to score function.
 	burial, // informatic burial prediction
 	abego,  // informatic torsion-bin prediction
-
+	hrf_ms_labeling,
 	rnp_env,
 
 	// nucleotide resolution thermodynamics

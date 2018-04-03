@@ -625,6 +625,7 @@ sources = {
 		"FreeDOF_Options",
 		"GaussianOverlapEnergy",
 		"GenBornEnergy",
+		"HRF_MSLabelingEnergy",
 		"MultipoleElecEnergy",
 		"GoapEnergy",
 		"HybridVDW_Energy",
