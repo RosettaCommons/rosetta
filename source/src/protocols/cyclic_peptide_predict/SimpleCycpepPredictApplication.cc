@@ -2907,35 +2907,35 @@ SimpleCycpepPredictApplication::set_up_design_taskoperations(
 	D_resfile << "start" << std::endl;
 
 	for ( core::Size i=1; i<=nres; ++i ) {
-		signed long int orig_res( static_cast<signed long int>(i) - static_cast<signed long int>( cyclic_offset ) - 1 );
-		if ( orig_res < 1 ) orig_res += nres;
-		debug_assert( orig_res >= 1 && orig_res <= static_cast<signed long int>(nres) ); //Should be true.
-		L_empty_resfile << orig_res << " A EMPTY" << std::endl;
+		core::Size orig_res( i + cyclic_offset ) ;
+		if ( orig_res > nres ) orig_res -= nres;
+		debug_assert( orig_res >= 1 && orig_res <= nres ); //Should be true.
+		L_empty_resfile << i << " A EMPTY" << std::endl;
 		if ( allowed_canonicals_by_position_.count( static_cast<core::Size>(orig_res) ) == 1 ) {
 			if ( allowed_canonicals_by_position_.at( static_cast<core::Size>(orig_res) ).size() > 0 ) {
-				L_resfile << orig_res << " A PIKAA " << get_oneletter_codes( allowed_canonicals_by_position_.at( static_cast<core::Size>(orig_res) ) ) << std::endl;
+				L_resfile << i << " A PIKAA " << get_oneletter_codes( allowed_canonicals_by_position_.at( static_cast<core::Size>(orig_res) ) ) << std::endl;
 			} else {
-				L_resfile << orig_res << " A EMPTY" << std::endl;
+				L_resfile << i << " A EMPTY" << std::endl;
 			}
 		} else if ( allowed_canonicals_by_position_.count( 0 ) == 1 ) {
 			if ( allowed_canonicals_by_position_ .at( 0 ).size() > 0 ) {
-				L_resfile << orig_res << " A PIKAA " << get_oneletter_codes( allowed_canonicals_by_position_.at( 0 ) ) << std::endl;
+				L_resfile << i << " A PIKAA " << get_oneletter_codes( allowed_canonicals_by_position_.at( 0 ) ) << std::endl;
 			} else {
-				L_resfile << orig_res << " A EMPTY" << std::endl;
+				L_resfile << i << " A EMPTY" << std::endl;
 			}
 		} else {
-			L_resfile << orig_res << " A PIKAA ADEFHIKLNPQRSTVWY" << std::endl;
+			L_resfile << i << " A PIKAA ADEFHIKLNPQRSTVWY" << std::endl;
 		}
 		if ( allowed_noncanonicals_by_position_.count( static_cast<core::Size>(orig_res) ) == 1 ) {
 			if ( allowed_noncanonicals_by_position_.at( static_cast<core::Size>(orig_res) ).size() > 0 ) {
-				D_resfile << orig_res << " A " << get_nc_threeletter_codes( allowed_noncanonicals_by_position_.at( static_cast<core::Size>(orig_res) ) ) << std::endl;
+				D_resfile << i << " A " << get_nc_threeletter_codes( allowed_noncanonicals_by_position_.at( static_cast<core::Size>(orig_res) ) ) << std::endl;
 			}
 		} else if ( allowed_noncanonicals_by_position_.count( 0 ) == 1 ) {
 			if ( allowed_noncanonicals_by_position_.at( 0 ).size() > 0 ) {
-				D_resfile << orig_res << " A " << get_nc_threeletter_codes( allowed_noncanonicals_by_position_.at( 0 ) ) << std::endl;
+				D_resfile << i << " A " << get_nc_threeletter_codes( allowed_noncanonicals_by_position_.at( 0 ) ) << std::endl;
 			}
 		} else {
-			D_resfile << orig_res << " A NC DAL NC DAS NC DGU NC DPH NC DHI NC DIL NC DLY NC DLE NC DAN NC DPR NC DGN NC DAR NC DSE NC DTH NC DVA NC DTR NC DTY" << std::endl;
+			D_resfile << i << " A NC DAL NC DAS NC DGU NC DPH NC DHI NC DIL NC DLY NC DLE NC DAN NC DPR NC DGN NC DAR NC DSE NC DTH NC DVA NC DTR NC DTY" << std::endl;
 		}
 	}
 
