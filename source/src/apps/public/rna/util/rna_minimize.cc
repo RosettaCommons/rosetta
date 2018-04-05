@@ -18,6 +18,7 @@
 #include <core/id/AtomID.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -30,6 +31,8 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/rna/RNA_SecStruct.hh>
+#include <core/pose/rna/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <devel/init.hh>
@@ -42,6 +45,7 @@
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
+#include <utility/file/file_sys_util.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
@@ -81,6 +85,29 @@ using io::pdb::dump_pdb;
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 
+using namespace core::io::silent;
+using namespace core::pose::rna;
+
+/*
+* /////////////////////////////////////////////////////////////////
+std::map< std::string, bool >
+initialize_tag_is_done( std::string const & silent_file ) {
+
+std::map< std::string, bool > tag_is_done;
+utility::vector1< std::string > tags_done;
+SilentFileOptions opts;
+SilentFileData silent_file_data( opts );
+
+if ( utility::file::file_exists( silent_file ) ) {
+tags_done = silent_file_data.read_tags_fast( silent_file );
+for ( auto const & elem : tags_done ) {
+tag_is_done[ elem ] = true;
+}
+}
+
+return tag_is_done;
+}
+*/
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -92,7 +119,6 @@ rna_fullatom_minimize_test()
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
-	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::import_pose;
 	using namespace core::pose::full_model_info;
@@ -146,7 +172,16 @@ rna_fullatom_minimize_test()
 
 	// Silent file output setup
 	std::string const & silent_file = option[ out::file::silent  ]();
-	remove_silent_file_if_it_exists( silent_file );
+
+
+	// Only if -overwrite
+	if ( option[ out::overwrite ]() ) {
+		remove_silent_file_if_it_exists( silent_file );
+	}
+
+	std::map< std::string, bool > tag_is_done;
+	tag_is_done = initialize_tag_is_done( silent_file );
+
 	SilentFileOptions opts; // initialized from the command line
 	SilentFileData silent_file_data( opts );
 
@@ -166,6 +201,16 @@ rna_fullatom_minimize_test()
 		input->fill_pose( *pose, *rsd_set );
 		i++;
 
+		// tag -- get this FAST so we can skip if possible.
+		std::string tag = tag_from_pose( *pose );
+		Size pos = tag.find( ".pdb" );   // remove ".pdb"
+		if ( pos != std::string::npos ) tag.replace( pos, 4, "" );
+		tag += "_minimize";
+
+		if ( tag_is_done.find( tag ) != tag_is_done.end() && tag_is_done[ tag ] ) {
+			continue;
+		}
+
 		if ( !option[ in::file::silent ].user() ) {
 			cleanup( *pose );
 
@@ -176,8 +221,6 @@ rna_fullatom_minimize_test()
 			builder.set_options( option );
 			builder.initialize_further_from_options();
 			builder.build(); // should update input_poses[1] which is pose
-
-			//fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 		}
 
 		if ( option[OptionKeys::constraints::cst_fa_file].user() ) {
@@ -220,18 +263,25 @@ rna_fullatom_minimize_test()
 		}
 		rna_minimizer.set_atom_level_domain_map( atom_level_domain_map );
 
+		// Base pair constraints
+		if ( option[ OptionKeys::rna::denovo::secstruct ].user() || option[  OptionKeys::rna::denovo::secstruct_file ].user() ) {
+			// Require fasta
+			FullModelParametersOP full_model_parameters;
+			vector1< Size > cutpoint_open_in_full_model;
+			full_model_parameters = core::import_pose::get_sequence_information( option[ OptionKeys::in::file::fasta ].value()[1], cutpoint_open_in_full_model, false );
+
+			std::string sequence = full_model_parameters->full_sequence();
+			RNA_SecStruct secstruct( option[ OptionKeys::rna::denovo::secstruct ](), option[ OptionKeys::rna::denovo::secstruct_file ](), sequence );
+			auto pairings = secstruct.base_pairs();
+			core::pose::rna::setup_base_pair_constraints( *pose, pairings );
+		}
+
 		// graphics viewer.
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose->conformation(), "current", 400, 400 );
 
 		// do it
 		pose::Pose pose_init = *pose;
 		rna_minimizer.apply( *pose );
-
-		// tag
-		std::string tag = tag_from_pose( *pose );
-		Size pos = tag.find( ".pdb" );   // remove ".pdb"
-		if ( pos != std::string::npos ) tag.replace( pos, 4, "" );
-		tag += "_minimize";
 
 		// Do alignment to native
 		if ( native_exists ) {
