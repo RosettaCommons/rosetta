@@ -291,9 +291,7 @@ RotamerBoltzCalculator::init_task( core::pose::Pose const & pose, core::Size con
 	using namespace core::conformation;
 
 	// build rotamer set for current residue
-	Residue const & res = pose.residue( resi );
-	RotamerSetFactory rsf;
-	rotset_ = rsf.create_rotamer_set( res );
+	rotset_ = RotamerSetFactory::create_rotamer_set( pose );
 	rotset_->set_resid( resi );
 
 	TaskFactoryOP tf( new core::pack::task::TaskFactory() );
@@ -356,9 +354,7 @@ protocols::minimization_packing::MinMoverOP RotamerBoltzCalculator::init_minmove
 core::pack::rotamer_set::RotamerSetOP
 RotamerBoltzCalculator::create_rotamer_set( core::pose::Pose const & pose, core::Size const resi ) const
 {
-	core::conformation::Residue const & res = pose.residue( resi );
-	core::pack::rotamer_set::RotamerSetFactory rsf;
-	core::pack::rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( res );
+	core::pack::rotamer_set::RotamerSetOP rotset = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( pose );
 	rotset->set_resid( resi );
 
 	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );

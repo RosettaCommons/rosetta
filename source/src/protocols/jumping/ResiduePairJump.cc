@@ -420,8 +420,7 @@ ResiduePairJump::build_sidechain_rotamers()
 		ResiduePairJumpSingleOP rsd = residues_[which];
 
 		// create one residue pose and generate an empty rotset
-		core::pack::rotamer_set::RotamerSetFactory rsf;
-		core::pack::rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( miniPose_->residue(which) );
+		core::pack::rotamer_set::RotamerSetOP rotset = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( *miniPose_ );
 		rotset->set_resid(which);
 		// unless this residue needs to be fixed, build rotamers into this RotamerSet
 		if ( ! rsd->fixResidue() ) {

@@ -73,7 +73,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/conformation/Conformation.hh>

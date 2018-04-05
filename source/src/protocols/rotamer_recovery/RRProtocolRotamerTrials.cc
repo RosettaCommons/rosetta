@@ -102,7 +102,7 @@ RRProtocolRotamerTrials::run(
 			// if we're not asking for the input sidechains, then don't use them -- replace the input sidechain with a rotamer that will be sampled inside
 			// rotamer trials anyways
 			core::pack::rotamer_set::RotamerSetFactory rsf;
-			core::pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( pose.residue( ii ) ));
+			core::pack::rotamer_set::RotamerSetOP rotset( core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( pose ) );
 			rotset->set_resid( ii );
 			rotset->build_rotamers( pose, score_function, *one_res_task, packer_neighbor_graph );
 			if ( rotset->num_rotamers() > 0 ) {

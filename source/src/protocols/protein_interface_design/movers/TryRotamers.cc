@@ -145,8 +145,7 @@ TryRotamers::setup_rotamer_set( pose::Pose & pose, core::Size resnum )
 	restask.or_include_current( include_current_ );
 
 	restask.restrict_to_repacking();
-	RotamerSetFactory rsf;
-	rotset_ = rsf.create_rotamer_set( pose.residue( resnum ) );
+	rotset_ = RotamerSetFactory::create_rotamer_set( pose );
 
 	rotset_->set_resid( resnum );
 	rotset_->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );

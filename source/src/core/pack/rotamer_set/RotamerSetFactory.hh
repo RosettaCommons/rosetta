@@ -21,7 +21,7 @@
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 
 // Project Headers
-#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 // Utility headers
@@ -38,8 +38,9 @@ class RotamerSetFactory : public utility::pointer::ReferenceCount
 {
 public:
 	virtual ~RotamerSetFactory();
-	virtual RotamerSetOP create_rotamer_set( conformation::Residue const & );
 
+	/// @brief Create a generic RotamerSet object for the pose.
+	static RotamerSetOP create_rotamer_set( core::pose::Pose const & pose );
 };
 
 }

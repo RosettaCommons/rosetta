@@ -16,7 +16,6 @@
 
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
@@ -682,8 +681,7 @@ SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 {
 
 	RotamerSetCOP rotset_in = rotamer_set_for_residue( seqpos );
-	SymmetricRotamerSetFactory rsf;
-	RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( pose.residue( seqpos ) );
+	RotamerSetOP sym_rotamer_set = RotamerSetFactory::create_rotamer_set( pose );
 	sym_rotamer_set->set_resid(sympos);
 
 	auto const & SymmConf (

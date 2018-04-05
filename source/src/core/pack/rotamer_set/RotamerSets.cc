@@ -21,7 +21,6 @@
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
@@ -158,15 +157,9 @@ RotamerSets::build_rotamers(
 	utility::graph::GraphCOP packer_neighbor_graph
 )
 {
-	RotamerSetFactoryOP rsf;
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		rsf = RotamerSetFactoryOP( new symmetry::SymmetricRotamerSetFactory );
-	} else { //if not symmetric
-		rsf = RotamerSetFactoryOP( new RotamerSetFactory );
-	}
 	for ( uint ii = 1; ii <= nmoltenres_; ++ii ) {
 		uint ii_resid = moltenres_2_resid_[ ii ];
-		RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( ii_resid ) ));
+		RotamerSetOP rotset( RotamerSetFactory::create_rotamer_set( pose ) );
 		rotset->set_resid( ii_resid );
 		rotset->build_rotamers( pose, sfxn, *task_, packer_neighbor_graph );
 		set_of_rotamer_sets_[ ii ] = rotset;
@@ -212,7 +205,7 @@ RotamerSets::build_rotamers(
 				Size resid = moltenres_2_resid(ii);
 				if ( task_->rotamer_links()->get_template(resid) != resid ) {
 					RotamerSetCOP bufferset = rotamer_set_for_residue(task_->rotamer_links()->get_template(resid));
-					RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( resid ) ));
+					RotamerSetOP rotset( RotamerSetFactory::create_rotamer_set( pose ) );
 					rotset->set_resid( resid );
 					for ( auto const & itr : *bufferset ) {
 						conformation::ResidueOP cloneRes( new conformation::Residue(*itr->clone()) );
@@ -289,7 +282,7 @@ RotamerSets::build_rotamers(
 					continue;
 				}
 
-				RotamerSetOP smallset( rsf->create_rotamer_set( pose.residue( 1 ) )) ;
+				RotamerSetOP smallset( RotamerSetFactory::create_rotamer_set( pose ) ) ;
 
 				for ( auto const & itr : *bufferset ) { //go through each rotamer
 
@@ -390,13 +383,6 @@ RotamerSets::build_pwat_rotsets(
 	ResidueOP new_wat = ResidueOP( new Residue( *pwat ) );
 	ResidueOP vrt_wat = ResidueOP( new Residue( *vwat ) );
 
-	RotamerSetFactoryOP rsf;
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		rsf = RotamerSetFactoryOP( new symmetry::SymmetricRotamerSetFactory );
-	} else {
-		rsf = RotamerSetFactoryOP( new RotamerSetFactory );
-	}
-
 	// delete existing PWAT built on backbone for statistical-based solvation purposes
 	Size nres = pose.total_residue();
 	for ( Size i=nres; i>=1; --i ) {
@@ -415,7 +401,7 @@ RotamerSets::build_pwat_rotsets(
 
 		// build rotset for PWAT rotamers
 		nres = pose.total_residue();
-		RotamerSetOP rotset( rsf->create_rotamer_set( pose.residue( nres ) ));
+		RotamerSetOP rotset( RotamerSetFactory::create_rotamer_set( pose ) );
 		rotset->set_resid( nres );
 		rotset->build_pwat_rotamers( pose, nres, new_pwat_rotsets[i] );
 		++truncate_index;

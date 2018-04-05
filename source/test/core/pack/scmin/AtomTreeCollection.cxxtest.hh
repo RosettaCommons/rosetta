@@ -205,8 +205,7 @@ public:
 			task->nonconst_residue_task( ii ).restrict_to_repacking();
 		}
 
-		RotamerSetFactory rsf;
-		RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( 7 ) );
+		RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose );
 		rotset->set_resid( 7 );
 		utility::graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );
 		rotset->build_rotamers( pose, *scorefxn, *task, packer_neighbor_graph, true );

@@ -130,9 +130,6 @@ SymmetricRotamerSet_::compute_one_body_energies(
 	// }
 	PackerEnergyAdd( energies, temp_energies );
 
-	// define a factory
-	RotamerSetFactory rsf;
-
 	// We're going to iterate across the edges in the packer neighbor graph for all residues
 	// that are equivalent to this residue, and for each of them, figure out what residues
 	// in the asymmetric unit that are part of the background that this residue interacts with.
@@ -192,7 +189,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 				for ( int jj = 1; jj <= nrotamers; ++jj ) {
 					// make a new rotamer set that is going to be translated to the neighbor interation residue
 					conformation::ResidueOP sym_rsd( this->rotamer( jj )->clone() );
-					RotamerSetOP one_rotamer_set = rsf.create_rotamer_set( *sym_rsd );
+					RotamerSetOP one_rotamer_set( new SymmetricRotamerSet_ );
 					one_rotamer_set->set_resid( theresid ); // we know iiresid == theresid
 					one_rotamer_set->add_rotamer( *sym_rsd );
 					// place rotamer set at neighbor position
@@ -260,7 +257,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 					for ( int jj = 1; jj <= nrotamers; ++jj ) {
 						// make a new rotamer set that is going to be translated to the neighbor interation residue
 						conformation::ResidueOP sym_rsd( this->rotamer( jj )->clone() );
-						RotamerSetOP one_rotamer_set = rsf.create_rotamer_set( *sym_rsd );
+						RotamerSetOP one_rotamer_set( new SymmetricRotamerSet_ );
 						one_rotamer_set->set_resid( theresid ); // we know iiresid == theresid
 						one_rotamer_set->add_rotamer( *sym_rsd );
 						// place rotamer set at neighbor position
@@ -334,8 +331,7 @@ SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner(
 ) const
 {
 
-	RotamerSetFactory rsf;
-	RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( pose.residue( sympos ) );
+	RotamerSetOP sym_rotamer_set = RotamerSetFactory::create_rotamer_set( pose );
 	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
 

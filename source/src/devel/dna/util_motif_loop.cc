@@ -94,8 +94,7 @@ core::pack::rotamer_set::RotamerSetOP get_aa_rotset( std::string & AA)
 	utility::graph::GraphOP dummy_png = core::pack::create_packer_graph(rotamer_building_site, scorefxn, dummy_task);
 
 
-	RotamerSetFactory rsf;
-	RotamerSetOP rotset ( rsf.create_rotamer_set( rotamer_building_site.residue(1) ) );
+	RotamerSetOP rotset ( RotamerSetFactory::create_rotamer_set( rotamer_building_site ) );
 	rotset->set_resid( 1 );
 	rotset->build_rotamers(rotamer_building_site, scorefxn, *dummy_task, dummy_png);
 
@@ -139,8 +138,7 @@ std::map< std::string, core::pack::rotamer_set::RotamerSetOP >  build_all_aa_rot
 		utility::graph::GraphOP dummy_png = core::pack::create_packer_graph(rotamer_building_site, scorefxn, dummy_task);
 
 
-		RotamerSetFactory rsf;
-		RotamerSetOP rotset ( rsf.create_rotamer_set( rotamer_building_site.residue(1) ) );
+		RotamerSetOP rotset ( RotamerSetFactory::create_rotamer_set( rotamer_building_site ) );
 		rotset->set_resid( 1 );
 		rotset->build_rotamers(rotamer_building_site, scorefxn, *dummy_task, dummy_png);
 

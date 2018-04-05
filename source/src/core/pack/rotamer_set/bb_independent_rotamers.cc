@@ -55,8 +55,7 @@ bb_independent_rotamers(
 	dummy_task->nonconst_residue_task( 1 ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
 	utility::graph::GraphOP dummy_png = core::pack::create_packer_graph( dummy_pose, dummy_sfxn, dummy_task );
 
-	core::pack::rotamer_set::RotamerSetFactory rsf;
-	core::pack::rotamer_set::RotamerSetOP rotset( rsf.create_rotamer_set( dummy_pose.residue( 1 ) ) );
+	core::pack::rotamer_set::RotamerSetOP rotset( RotamerSetFactory::create_rotamer_set( dummy_pose ) ); // build_rotamers should be symmetry independent
 	rotset->set_resid( 1 );
 	rotset->build_rotamers( dummy_pose, dummy_sfxn, *dummy_task, dummy_png );
 

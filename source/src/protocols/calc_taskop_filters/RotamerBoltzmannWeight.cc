@@ -341,9 +341,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	/// build a rotamer set for resi while pruning clashes against a poly-alanine background
 	core::pose::Pose pose( const_pose );
 
-	Residue const & res = pose.residue( resi );
-	RotamerSetFactory rsf;
-	RotamerSetOP rotset = rsf.create_rotamer_set( res );
+	RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose );
 	rotset->set_resid( resi );
 	TaskFactoryOP tf( new core::pack::task::TaskFactory );
 	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ));

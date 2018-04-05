@@ -278,15 +278,13 @@ RTMin::rtmin(
 		/// Now, build rotamers, prep the nodes and edges of the minimization graph
 		/// and build the AtomTreeCollection for this residue;
 		Size iiresid = active_residues[ ii ];
-		conformation::Residue const & trial_res = pose.residue( iiresid );
 		scminmap->activate_residue_dofs( iiresid );
 
 		//pretend this is a repacking and only this residue is being repacked
 		//while all other residues are being held fixed.
 		input_task->temporarily_set_pack_residue( iiresid, true );
 
-		RotamerSetFactory rsf;
-		rotamer_set::RotamerSetOP iirotset = rsf.create_rotamer_set( trial_res );
+		rotamer_set::RotamerSetOP iirotset = RotamerSetFactory::create_rotamer_set( pose );
 		iirotset->set_resid( iiresid );
 		iirotset->build_rotamers( pose, scfxn, *input_task, packer_neighbor_graph );
 		debug_assert( iirotset->id_for_current_rotamer() != 0 );

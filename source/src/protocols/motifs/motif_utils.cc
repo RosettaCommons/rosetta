@@ -1149,8 +1149,7 @@ build_rotamers_lite(
 	using namespace core::pack;
 	using namespace core::pack::task;
 
-	RotamerSetFactory rsf;
-	RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( rotamer_build_position ) );
+	RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose );
 	rotset->set_resid( rotamer_build_position );
 
 	// Gather up the many things needed to build rotamers

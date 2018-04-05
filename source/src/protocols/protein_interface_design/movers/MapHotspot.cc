@@ -187,8 +187,7 @@ MapHotspot::create_rotamer_set( core::pose::Pose const & pose, core::Size const 
 	tf.push_back( restrict_to_rep_operation );
 	tf.push_back( init_from_commandline );
 	PackerTaskCOP ptask( tf.create_task_and_apply_taskoperations( pose ) );
-	RotamerSetFactory rsf;
-	RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( hotspot_resnum ) );
+	RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose );
 	rotset->set_resid( hotspot_resnum );
 	utility::graph::GraphOP packer_graph( new utility::graph::Graph( pose.size() ) );
 	rotset->build_rotamers( pose, *scorefxn, *ptask, packer_graph, false );

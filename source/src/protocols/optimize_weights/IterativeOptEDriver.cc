@@ -3657,9 +3657,7 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 
 		graph::GraphCOP packer_neighbor_graph(  pack::create_packer_graph( pose, scorefxn, single_residue_task ) );
 
-		RotamerSetFactory rsf;
-		RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( resi ) );
-		//  RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose.residue( resi ) );
+		RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose );
 
 		rotset->set_resid( resi );
 		rotset->build_rotamers( pose, scorefxn, *single_residue_task, packer_neighbor_graph );
@@ -3818,9 +3816,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 
 		graph::GraphCOP packer_neighbor_graph(  pack::create_packer_graph( pose, scorefxn, task ) );
 
-		RotamerSetFactory rsf;
-		RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( resi ) );
-		//  RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose.residue( resi ) );
+		RotamerSetOP rotset = RotamerSetFactory::create_rotamer_set( pose );
 
 		rotset->set_resid( resi );
 		rotset->build_rotamers( pose, scorefxn, *task, packer_neighbor_graph );

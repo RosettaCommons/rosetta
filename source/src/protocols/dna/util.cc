@@ -111,7 +111,7 @@ Real
 argrot_dna_dis2(
 	pose::Pose const & pose,
 	Size presid,
-	Residue const & pres,
+	Residue const & ,
 	Residue const & dres,
 	Real threshold,
 	bool base_only /* = false */
@@ -145,8 +145,7 @@ argrot_dna_dis2(
 	// unnecessary here, yet also required
 	utility::graph::GraphOP dummygraph( new utility::graph::Graph( pose.size() ) );
 
-	RotamerSetFactory rsf;
-	RotamerSetOP rotset( rsf.create_rotamer_set( pres ) );
+	RotamerSetOP rotset( RotamerSetFactory::create_rotamer_set( pose ) );
 	rotset->set_resid( presid );
 	rotset->build_rotamers( pose, *scrfxn, *ptask, dummygraph, false );
 

@@ -173,9 +173,7 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	ptask->temporarily_fix_everything();
 	ptask->temporarily_set_pack_residue( resnum_, true );
 	scorefxn_->setup_for_packing( pose, ptask->repacking_residues(), ptask->designing_residues() );
-	core::conformation::Residue const & res = pose.residue( resnum_ );
-	core::pack::rotamer_set::RotamerSetFactory rsf;
-	core::pack::rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( res );
+	core::pack::rotamer_set::RotamerSetOP rotset = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( pose );
 	rotset->set_resid( resnum_ );
 	utility::graph::GraphOP packer_graph = core::pack::create_packer_graph( pose, *scorefxn_, ptask );
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph );

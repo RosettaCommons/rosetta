@@ -292,8 +292,7 @@ MotifSearch::incorporate_motifs(
 		} else {
 			Size bp_rots( bp_best_rotamers.size() );
 			for ( Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
-				core::pack::rotamer_set::RotamerSetFactory rsf;
-				core::pack::rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( posecopy.residue((*ir)->seqpos()) );
+				core::pack::rotamer_set::RotamerSetOP rotset = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( posecopy );
 				for ( Size r(1); r <= bp_rots; ++r ) {
 					if ( bp_best_rotamers[r]->name3() == core::chemical::name_from_aa(core::chemical::AA(i)) ) {
 						rotset->add_rotamer( *((bp_best_rotamers)[r]) );

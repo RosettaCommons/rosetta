@@ -17,22 +17,10 @@
 // Package headers
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
-//#include <core/pack/rotamer_set/NucleicAcidRotamerSet.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
-
-// for symmetry
-#include <basic/options/option.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-
-#include <utility/exit.hh>
-
-// STL Headers
-#include <iostream>
-
-#include <utility/vector1.hh>
-
+#include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 
 namespace core {
 namespace pack {
@@ -41,15 +29,16 @@ namespace rotamer_set {
 RotamerSetFactory::~RotamerSetFactory() = default;
 
 RotamerSetOP
-RotamerSetFactory::create_rotamer_set( conformation::Residue const & /*res*/ )
-{
+RotamerSetFactory::create_rotamer_set( core::pose::Pose const & pose ) {
 
-	// RM: Basing this on the commandline setting seems bad - what if we're setting symmetry from within RosettaScripts or the like?
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		return RotamerSetOP( new symmetry::SymmetricRotamerSet_() );
+	} else { //if not symmetric
+		return RotamerSetOP( new RotamerSet_() );
 	}
-	return RotamerSetOP( new RotamerSet_() );
+
 }
+
 
 }
 }

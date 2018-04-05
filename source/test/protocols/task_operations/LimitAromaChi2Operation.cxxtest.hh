@@ -89,11 +89,10 @@ public: //
 	// ------------------------------------------ //
 	RotamerSetOP create_rotset( Size const resid, Pose const & pose, ScoreFunctionOP const scfxn, PackerTaskOP const task ) const
 	{
-		core::pack::rotamer_set::RotamerSetFactory rsf;
 		GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, *scfxn, task );
 
 		Residue res = pose.residue( resid );
-		RotamerSetOP rotset = rsf.create_rotamer_set( res );
+		RotamerSetOP rotset = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( pose );
 		rotset->set_resid( resid );
 		rotset->build_rotamers( pose, *scfxn, *task, packer_neighbor_graph );
 

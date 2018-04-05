@@ -209,9 +209,7 @@ ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 		score_fxn_->setup_for_packing( *mypose, bump_check_task->repacking_residues(), bump_check_task->designing_residues() );
 
 		// create the rotamer set for the given design residue
-		core::conformation::Residue const & design_res = mypose->residue( design_pos );
-		core::pack::rotamer_set::RotamerSetFactory rotamer_set_factory;
-		core::pack::rotamer_set::RotamerSetOP rotamer_set = rotamer_set_factory.create_rotamer_set( design_res );
+		core::pack::rotamer_set::RotamerSetOP rotamer_set = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( *mypose );
 		rotamer_set->set_resid( design_pos );
 		utility::graph::GraphOP packer_graph = core::pack::create_packer_graph( *mypose, *score_fxn_, bump_check_task );
 		rotamer_set->build_rotamers( *mypose, *score_fxn_, *bump_check_task, packer_graph );

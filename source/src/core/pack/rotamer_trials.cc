@@ -19,7 +19,6 @@
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSetFactory.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/make_symmetric_task.hh>
@@ -110,8 +109,6 @@ rotamer_trials(
 	// PairEnergy will update actcoords...
 	scfxn.setup_for_packing( pose, rottrial_task->repacking_residues(), rottrial_task->designing_residues() );
 
-	rotamer_set::RotamerSetFactory rsf;
-
 	//Energy last_energy( 0.0 );
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
 
@@ -123,13 +120,12 @@ rotamer_trials(
 		pose.update_residue_neighbors(); // will return if uptodate
 
 		int resid = residues_for_trials[ ii ];
-		conformation::Residue const & trial_res = pose.residue( resid );
 
 		//pretend this is a repacking and only this residue is being repacked
 		//while all other residues are being held fixed.
 		rottrial_task->temporarily_set_pack_residue( resid, true );
 
-		rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( trial_res );
+		rotamer_set::RotamerSetOP rotset = rotamer_set::RotamerSetFactory::create_rotamer_set( pose );
 		rotset->set_resid( resid );
 		rotset->build_rotamers( pose, scfxn, *rottrial_task, packer_neighbor_graph );
 
@@ -218,8 +214,6 @@ symmetric_rotamer_trials(
 	// PairEnergy will update actcoords...
 	scfxn.setup_for_packing( pose, rottrial_task->repacking_residues(), rottrial_task->designing_residues() );
 
-	rotamer_set::symmetry::SymmetricRotamerSetFactory rsf;
-
 	//Energy last_energy( 0.0 );
 	utility::graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scfxn, input_task );
 
@@ -230,13 +224,12 @@ symmetric_rotamer_trials(
 		pose.update_residue_neighbors(); // will return if uptodate
 
 		int resid = residues_for_trials[ ii ];
-		conformation::Residue const & trial_res = pose.residue( resid );
 
 		//pretend this is a repacking and only this residue is being repacked
 		//while all other residues are being held fixed.
 		rottrial_task->temporarily_set_pack_residue( resid, true );
 
-		rotamer_set::RotamerSetOP rotset = rsf.create_rotamer_set( trial_res );
+		rotamer_set::RotamerSetOP rotset = rotamer_set::RotamerSetFactory::create_rotamer_set( pose );
 		rotset->set_resid( resid );
 		rotset->initialize_pose_for_rotset_creation( pose );
 		rotset->build_rotamers( pose, scfxn, *rottrial_task, packer_neighbor_graph );

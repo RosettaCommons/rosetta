@@ -119,8 +119,7 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 	ptask_copy->nonconst_residue_task( seqpos_).or_ex4( true ); ptask_copy->nonconst_residue_task( seqpos_).or_ex4_sample_level( rot_explosion_sample );
 
 	this->disabled_ = true; //prevent infinite loop bc of packer task copy
-	core::pack::rotamer_set::RotamerSetFactory rsf;
-	core::pack::rotamer_set::RotamerSetOP extra_rotset( rsf.create_rotamer_set( pose.residue( seqpos_ ) ) ); //the residue isn't really used by the factory
+	core::pack::rotamer_set::RotamerSetOP extra_rotset( core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( pose ) );
 	extra_rotset->set_resid( seqpos_ );
 	extra_rotset->build_rotamers( pose, sfxn, *ptask_copy, packer_neighbor_graph );
 	this->disabled_ = false;

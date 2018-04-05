@@ -136,7 +136,6 @@ sources = {
 	],
 	"core/pack/rotamer_set/symmetry": [
 		"SymmetricRotamerSet_",
-		"SymmetricRotamerSetFactory",
 		"SymmetricRotamerSets",
 	],
 	"core/pack/rotamers": [

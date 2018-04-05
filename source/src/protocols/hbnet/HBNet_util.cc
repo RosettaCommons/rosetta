@@ -346,9 +346,6 @@ hbnet_symm_one_body_energies(
 		energies[ ii ] += static_cast< core::PackerEnergy > (sf.weights().dot( emap ))*(symm_info->score_multiply_factor());
 	}
 
-	// define a factory
-	core::pack::rotamer_set::RotamerSetFactory rsf;
-
 	//Detect self 2-body interactions and store in 1-body
 	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph.get_node( theresid )->const_edge_list_begin(),
@@ -366,12 +363,12 @@ hbnet_symm_one_body_energies(
 			for ( int jj = 1; jj <= nrotamers; ++jj ) {
 				// make a new rotamer set that is going to be translated to the neighbor interation residue
 				conformation::ResidueOP sym_rsd( rotset.rotamer( jj )->clone() );
-				core::pack::rotamer_set::RotamerSetOP one_rotamer_set = rsf.create_rotamer_set( *sym_rsd );
+				core::pack::rotamer_set::RotamerSetOP one_rotamer_set = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( pose );
 				one_rotamer_set->set_resid( theresid );
 				one_rotamer_set->add_rotamer( *sym_rsd );
 				// place rotamer set at neighbor position
 				//RotamerSetOP sym_rotset(core::pack::rotamer_set::symmetry::SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner( pose, sym_rsd, neighbor_id, one_rotamer_set ) );
-				core::pack::rotamer_set::RotamerSetOP sym_rotset = rsf.create_rotamer_set( *sym_rsd );
+				core::pack::rotamer_set::RotamerSetOP sym_rotset = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( pose );
 				for ( auto rot = one_rotamer_set->begin(), rot_end = one_rotamer_set->end(); rot != rot_end; ++rot ) {
 					core::conformation::Residue target_rsd( *sym_rsd );
 					target_rsd.orient_onto_residue( pose.residue( neighbor_id ) );
