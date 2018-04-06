@@ -193,7 +193,7 @@ AddConnect::apply( ResidueType & rsd ) const
 bool
 AddConnect::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const
 {
-	return rsd_type.has( atom ) && rsd_type.has( connect_atom_ ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( connect_atom_ );
+	return (atom == connect_atom_ ) && rsd_type.has( atom ) && rsd_type.has( connect_atom_ );
 }
 
 /// @brief Return the name of this PatchOperation ("AddConnect").
