@@ -2845,6 +2845,9 @@ SimpleCycpepPredictApplication::genkic_close(
 
 			if ( cyclization_type() == SCPA_n_to_c_amide_bond && i==1 && nres==anchor_res ) continue; //Can't perturb the anchor residue.
 			if ( i-1 == anchor_res ) continue; //Can't perturb the anchor residue.
+			if ( i == cyclization_point_end && ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide ) ) {
+				continue; //Can't perturb preceding bond if it's not in the loop.
+			}
 			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr || pose->residue_type(i).is_peptoid() ) {
 				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::sample_cis_peptide_bond );
 				genkic->add_value_to_perturber_value_list( sample_cis_pro_frequency() );
