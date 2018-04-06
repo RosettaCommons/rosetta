@@ -56,5 +56,6 @@ projects = {
 		"sqlite3",
 		"cifparse",
 		"libxml2",
+		"libzmq",
 	]
 }

@@ -867,6 +867,7 @@ sources = {
 		#"antibody",
 		#"ColorsDemo",
 		#"PyMOLDemo",
+		'hal',
 	],
 	"pilot/sevya" : [
 		#"msd",

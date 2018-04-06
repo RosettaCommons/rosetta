@@ -13,7 +13,6 @@
 /// @author Sergey Lyskov
 
 #include <devel/init.hh>
-#include <devel/init.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <basic/Tracer.hh>

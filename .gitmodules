@@ -10,3 +10,6 @@
 [submodule "source/external/msgpack/msgpack-c.upstream"]
 	path = source/external/msgpack/msgpack-c.upstream
 	url = git@github.com:msgpack/msgpack-c.git
+[submodule "source/external/libzmq"]
+	path = source/external/libzmq
+	url = git@github.com:RosettaCommons/libzmq.git

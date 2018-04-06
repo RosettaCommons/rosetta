@@ -1,0 +1,136 @@
+# -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+sources = {
+	"libzmq/src": [
+            'address.cpp',
+            'client.cpp',
+            'clock.cpp',
+            'ctx.cpp',
+            'curve_client.cpp',
+            'curve_mechanism_base.cpp',
+            'curve_server.cpp',
+            'dealer.cpp',
+            'decoder_allocators.cpp',
+            'devpoll.cpp',
+            'dgram.cpp',
+            'dish.cpp',
+            'dist.cpp',
+            'epoll.cpp',
+            'err.cpp',
+            'fq.cpp',
+            'gather.cpp',
+            'gssapi_client.cpp',
+            'gssapi_mechanism_base.cpp',
+            'gssapi_server.cpp',
+            'io_object.cpp',
+            'io_thread.cpp',
+            'ipc_address.cpp',
+            'ipc_connecter.cpp',
+            'ipc_listener.cpp',
+            'ip.cpp',
+            'kqueue.cpp',
+            'lb.cpp',
+            'mailbox.cpp',
+            'mailbox_safe.cpp',
+            'mechanism_base.cpp',
+            'mechanism.cpp',
+            'metadata.cpp',
+            'msg.cpp',
+            'mtrie.cpp',
+            'norm_engine.cpp',
+            'null_mechanism.cpp',
+            'object.cpp',
+            'options.cpp',
+            'own.cpp',
+            'pair.cpp',
+            'pgm_receiver.cpp',
+            'pgm_sender.cpp',
+            'pgm_socket.cpp',
+            'pipe.cpp',
+            'plain_client.cpp',
+            'plain_server.cpp',
+            'poll.cpp',
+            'poller_base.cpp',
+            'pollset.cpp',
+            'precompiled.cpp',
+            'proxy.cpp',
+            'pub.cpp',
+            'pull.cpp',
+            'push.cpp',
+            'radio.cpp',
+            'random.cpp',
+            'raw_decoder.cpp',
+            'raw_encoder.cpp',
+            'reaper.cpp',
+            'rep.cpp',
+            'req.cpp',
+            'router.cpp',
+            'scatter.cpp',
+            'select.cpp',
+            'server.cpp',
+            'session_base.cpp',
+            'signaler.cpp',
+            'socket_base.cpp',
+            'socket_poller.cpp',
+            'socks_connecter.cpp',
+            'socks.cpp',
+            'stream.cpp',
+            'stream_engine.cpp',
+            'sub.cpp',
+            'tcp_address.cpp',
+            'tcp_connecter.cpp',
+            'tcp.cpp',
+            'tcp_listener.cpp',
+            'thread.cpp',
+            'timers.cpp',
+            'tipc_address.cpp',
+            'tipc_connecter.cpp',
+            'tipc_listener.cpp',
+            'trie.cpp',
+            'udp_address.cpp',
+            'udp_engine.cpp',
+            'v1_decoder.cpp',
+            'v1_encoder.cpp',
+            'v2_decoder.cpp',
+            'v2_encoder.cpp',
+            'vmci_address.cpp',
+            'vmci_connecter.cpp',
+            'vmci.cpp',
+            'vmci_listener.cpp',
+            'xpub.cpp',
+            'xsub.cpp',
+            'zap_client.cpp',
+            'zmq.cpp',
+            'zmq_utils.cpp',
+
+            #'tweetnacl.c',
+	],
+}
+
+#"-Wl,--no-as-needed "
+#flags = [
+
+include_path = [
+]
+library_path = [
+]
+libraries = [
+    'pthread'
+]
+subprojects = [
+]
+defines = [
+]
+
+cxxflags = [
+    '-pthread'
+]
+
+only_with_extras = ['serialization']
