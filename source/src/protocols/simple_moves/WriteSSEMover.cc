@@ -16,6 +16,7 @@
 #include <protocols/simple_moves/WriteSSEMover.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 #include <protocols/simple_moves/WriteSSEMoverCreator.hh>
 //Project Headers
 #include <protocols/rosetta_scripts/util.hh>
@@ -37,7 +38,8 @@ using namespace core::scoring;
 WriteSSEMover::WriteSSEMover():
 	psipred_interface_(),
 	cmd_( std::string() ),
-	dssp_( false )
+	dssp_( false ),
+	write_phipsi_( false )
 {}
 
 WriteSSEMover::~WriteSSEMover() = default;
@@ -55,6 +57,20 @@ void WriteSSEMover::apply( core::pose::Pose &pose ) {
 		core::io::external::PsiPredResult const psipred_result = psipred_interface_->run_psipred( pose, dssp_ss );
 		core::pose::add_comment( pose, "PSIPRED", psipred_result.pred_ss );
 	}
+	if ( write_phipsi_ ) {
+		utility::vector1< core::Real > psi_angles;
+		utility::vector1< core::Real > phi_angles;
+		core::Size num_res = pose.size();
+		pose.conformation().detect_disulfides();
+		for ( core::Size pos = 1; pos <= num_res; ++pos ) {
+			if ( pose.residue(pos).is_protein() ) {
+				psi_angles.push_back( pose.psi( pos ) );
+				phi_angles.push_back( pose.phi( pos ) );
+			}
+		}
+		core::pose::add_comment( pose, "PHI", utility::join(phi_angles, ",") );
+		core::pose::add_comment( pose, "PSI", utility::join(psi_angles, ",") );
+	}
 }
 
 void WriteSSEMover::parse_my_tag(
@@ -66,6 +82,7 @@ void WriteSSEMover::parse_my_tag(
 {
 	cmd( tag->getOption< std::string >( "cmd", "" ) );
 	dssp( tag->getOption< bool >( "dssp", false ) );
+	write_phipsi( tag->getOption< bool >( "write_phipsi", false ) );
 }
 
 void WriteSSEMover::cmd( std::string const & cmd ) {
@@ -97,7 +114,8 @@ void WriteSSEMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default( "cmd", xs_string, "Path to PSIPRED. If not provided, psipred is not executed", "")
-		+ XMLSchemaAttribute::attribute_w_default( "dssp", xsct_rosetta_bool, "Set to true to get DSSP prediction (default false)", "false" );
+		+ XMLSchemaAttribute::attribute_w_default( "dssp", xsct_rosetta_bool, "Set to true to get DSSP prediction (default false)", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "write_phipsi", xsct_rosetta_bool, "When true, write phi-psi angles", "false" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Write PSIPRED and/or DSSP to silent file as REMARK or to the PDB with "

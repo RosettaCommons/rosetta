@@ -39,6 +39,7 @@ public:
 
 	void apply( core::pose::Pose & ) override;
 	void dssp( bool pick ) { dssp_ = pick; };
+	void write_phipsi( bool pick ) { write_phipsi_ = pick; };
 	void cmd( std::string const & cmd );
 
 	protocols::moves::MoverOP clone() const override {
@@ -66,6 +67,7 @@ private:
 	std::string cmd_;
 	/// @brief use dssp
 	bool dssp_;
+	bool write_phipsi_;
 
 };
 }
