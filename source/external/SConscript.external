@@ -60,6 +60,8 @@ elif os.path.exists( subsettings ):
             actual.sources += [ "%s/%s" % (package, source) ]
         else:
             actual.sources += [ "%s" % (source) ]
+  else:
+    actual.sources += [ "dummy.cc" ] # We need to have at least one source file in the library
 
   # Include paths.  Gives priority to user defined paths.
   actual.include_path = \
