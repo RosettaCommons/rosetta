@@ -117,7 +117,8 @@ SetupForSymmetryMover::SetupForSymmetryMover( utility::options::OptionCollection
 	symmdef_(),
 	refinable_lattice_was_set_( false ),
 	refinable_lattice_( false ),
-	keep_pdb_info_labels_( false )
+	keep_pdb_info_labels_( false ),
+	set_global_symmetry_at_parsetime_( true )
 {
 	using namespace basic::options;
 	if ( options[ OptionKeys::symmetry::symmetry_definition ].user() ) {
@@ -141,7 +142,8 @@ SetupForSymmetryMover::SetupForSymmetryMover(
 	symmdef_(std::move( symmdata )),
 	refinable_lattice_was_set_( false ),
 	refinable_lattice_( false ),
-	keep_pdb_info_labels_( false )
+	keep_pdb_info_labels_( false ),
+	set_global_symmetry_at_parsetime_( true )
 {
 	read_refinable_lattice( options );
 }
@@ -161,7 +163,8 @@ SetupForSymmetryMover::SetupForSymmetryMover(
 	symmdef_(),
 	refinable_lattice_was_set_( false ),
 	refinable_lattice_( false ),
-	keep_pdb_info_labels_( false )
+	keep_pdb_info_labels_( false ),
+	set_global_symmetry_at_parsetime_( true )
 {
 	process_symmdef_file(symmdef_file);
 	read_refinable_lattice( options );
@@ -292,6 +295,11 @@ void SetupForSymmetryMover::parse_my_tag(
 			"a 'symmetry_resource' tag but not both.");
 	}
 
+	//Tag option to set the symdef option globally during parse_my_tag.  Necessary for compatibility with many protocols.
+	if ( tag->hasOption("set_global_symmetry_at_parsetime") ) {
+		set_global_symmetry_at_parsetime_ = tag->getOption<bool>( "set_global_symmetry_at_parsetime" );
+	}
+
 	if ( tag->hasOption("definition") ) {
 		process_symmdef_file(tag->getOption<std::string>("definition"));
 
@@ -299,7 +307,16 @@ void SetupForSymmetryMover::parse_my_tag(
 		//     Setting global option flags to invalid values is even more dangerous!
 		// I don't like it, but for compatibility I'm going to set it to the correct filename
 		//option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
-		option[OptionKeys::symmetry::symmetry_definition].value( tag->getOption< std::string >( "definition" ) );
+		//BJY: Only set the symmetry_definition option if set_global_symmetry_at_parsetime is true (the default)
+		//This is necessary for compatibility, but can cause problems if symmetry changes during the protocol.
+		if ( set_global_symmetry_at_parsetime_ ) {
+			option[OptionKeys::symmetry::symmetry_definition].value( tag->getOption< std::string >( "definition" ) );
+			TR.Warning << "Symmetry is being set globally, which can cause conflicts with certain protocols, but is necessary for backwards compatibility." << std::endl;
+			TR.Warning << "If you are experiencing unexpected behaviour related to symmetry, try setting set_global_symmetry_at_parsetime=0 in <SetupForSymmetry>." << std::endl;
+		} else {
+			TR.Warning << "Symmetry is NOT being set globally.  While this is safer behaviour, it may cause problems with some protocols." << std::endl;
+			TR.Warning << "If you are receiving symmetry errors, try setting set_global_symmetry_at_parsetime=1 in <SetupForSymmetry>." << std::endl;
+		}
 	} else if ( tag->hasOption("symmetry_resource") ) {
 
 		std::string symdef_resource = tag->getOption<std::string>("symmetry_resource");
@@ -325,7 +342,16 @@ void SetupForSymmetryMover::parse_my_tag(
 		// in order for the proper type of ScoreFunction to be created and used, the
 		// option[symmetry_definition] flag has to be "on". This is so so sad. I fret
 		// over this regularly.
-		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+		//BJY: Only set the symmetry_definition option if set_global_symmetry_at_parsetime is true (the default)
+		//This is necessary for compatibility, but can cause problems if symmetry changes during the protocol.
+		if ( set_global_symmetry_at_parsetime_ ) {
+			option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+			TR.Warning << "Symmetry is being set globally, which can cause conflicts with certain protocols, but is necessary for backwards compatibility." << std::endl;
+			TR.Warning << "If you are experiencing unexpected behaviour related to symmetry, try setting set_global_symmetry_at_parsetime=0 in <SetupForSymmetry>." << std::endl;
+		} else {
+			TR.Warning << "Symmetry is NOT being set globally.  While this is safer behaviour, it may cause problems with some protocols." << std::endl;
+			TR.Warning << "If you are receiving symmetry errors, try setting set_global_symmetry_at_parsetime=1 in <SetupForSymmetry>." << std::endl;
+		}
 	} else if ( ! symdef_fname_from_options_system_.empty() ) {
 		process_symmdef_file( symdef_fname_from_options_system_ );
 	} else {
@@ -350,7 +376,8 @@ void SetupForSymmetryMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	attlist + XMLSchemaAttribute( "definition", xs_string , "The path and filename for a symmetry definition file. This is optional because you can also specify -symmetry:symmetry_definition {pathto/filename_symmetry_definition_file} on the command line." )
 		+ XMLSchemaAttribute::attribute_w_default( "preserve_datacache", xsct_rosetta_bool , "If true, the datacache from the input asymmetric pose will be copied into the new symmetric pose. If false, the pose datacache will be cleared. Default is false for historical reasons." , "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "keep_pdb_info_labels", xsct_rosetta_bool , "If true, keep PDB Info labels from input pose." , "0" )
-		+ XMLSchemaAttribute( "symmetry_resource", xs_string, "The name for symmetry definition object created by the ResourceManager; this Resource must be declared in the RESOURCES block at the top of the protocol XML file" );
+		+ XMLSchemaAttribute( "symmetry_resource", xs_string, "The name for symmetry definition object created by the ResourceManager; this Resource must be declared in the RESOURCES block at the top of the protocol XML file" )
+		+ XMLSchemaAttribute::attribute_w_default( "set_global_symmetry_at_parsetime", xsct_rosetta_bool, "Should the -symmetry_definition flag be set globally by this mover at parse time.  The default (true) maintains compatibility with all protocols, but can cause problems if symmetry is set or changed partway through a protocol.", "true" );
 	// At XSD XRW, we choose to purposefully not document "resource_description." -UN
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Given a symmetry definition file that describes configuration and scoring of a symmetric system, this mover 'symmetrizes' an asymmetric pose.", attlist );

@@ -120,6 +120,7 @@ private:
 	bool refinable_lattice_was_set_;
 	bool refinable_lattice_;
 	bool keep_pdb_info_labels_;
+	bool set_global_symmetry_at_parsetime_; //Flag to set if the symdef option should be set globally.
 };
 
 ///////////////
