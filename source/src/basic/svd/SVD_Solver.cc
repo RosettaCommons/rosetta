@@ -607,31 +607,39 @@ SVD_Solver::svdcmp(){
 	}
 	for ( k = N_; k >= 1; --k ) {
 		for ( its = 1; its <= 30; ++its ) {
+			// VKM, 9 April 2018: Previously, a goto statement was used to skip a block
+			// of code.  I've added the following boolean to allow the same block of code
+			// to be skipped in the same circumstances, to let me eliminate the goto:
+			bool skipahead(false);
 			for ( l = k; l >= 1; --l ) {
 				nm = l-1;
-				if ( (std::abs(cstyle_tmp_[l])+anorm) == anorm ) goto L2;
+				if ( (std::abs(cstyle_tmp_[l])+anorm) == anorm ) {
+					skipahead=true;
+					break;
+				}
 				if ( (std::abs(cstyle_w_[nm])+anorm) == anorm ) break;
 			}
-			c = 0.0;
-			s = 1.0;
-			for ( i = l; i <= k; ++i ) {
-				f = s*cstyle_tmp_[i];
-				cstyle_tmp_[i] *= c;
-				if ( (std::abs(f)+anorm) == anorm ) break;
-				g = cstyle_w_[i];
-				h = pythag(f, g);
-				cstyle_w_[i] = h;
-				h = 1.0/h;
-				c = (g*h);
-				s = -(f*h);
-				for ( j = 1; j <= M_; ++j ) {
-					y = cstyle_A_decomp_[j][nm];
-					z = cstyle_A_decomp_[j][i];
-					cstyle_A_decomp_[j][nm] = (y*c)+(z*s);
-					cstyle_A_decomp_[j][i] = -(y*s)+(z*c);
+			if ( !skipahead ) {
+				c = 0.0;
+				s = 1.0;
+				for ( i = l; i <= k; ++i ) {
+					f = s*cstyle_tmp_[i];
+					cstyle_tmp_[i] *= c;
+					if ( (std::abs(f)+anorm) == anorm ) break;
+					g = cstyle_w_[i];
+					h = pythag(f, g);
+					cstyle_w_[i] = h;
+					h = 1.0/h;
+					c = (g*h);
+					s = -(f*h);
+					for ( j = 1; j <= M_; ++j ) {
+						y = cstyle_A_decomp_[j][nm];
+						z = cstyle_A_decomp_[j][i];
+						cstyle_A_decomp_[j][nm] = (y*c)+(z*s);
+						cstyle_A_decomp_[j][i] = -(y*s)+(z*c);
+					}
 				}
 			}
-			L2:
 			z = cstyle_w_[k];
 			if ( l == k ) {
 				if ( z < 0.0 ) {

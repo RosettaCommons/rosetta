@@ -976,7 +976,7 @@ void lm_qrfac(int m, int n, double *a, int pivot, int *ipvt,
 	//
 	//
 	int i, j, k, kmax, minmn;
-	double ajnorm, sum, temp;
+	double temp;
 
 	// qrfac: compute initial column norms and initialize several arrays.
 
@@ -996,38 +996,32 @@ void lm_qrfac(int m, int n, double *a, int pivot, int *ipvt,
 
 	minmn = MIN(m, n);
 	for ( j = 0; j < minmn; j++ ) {
-		if ( !pivot ) {
-			goto pivot_ok;
-		}
-
-		//  bring the column of largest norm into the pivot position.
-
-		kmax = j;
-		for ( k = j + 1; k < n; k++ ) {
-			if ( rdiag[k] > rdiag[kmax] ) {
-				kmax = k;
+		if ( pivot ) {
+			//  bring the column of largest norm into the pivot position.
+			kmax = j;
+			for ( k = j + 1; k < n; k++ ) {
+				if ( rdiag[k] > rdiag[kmax] ) {
+					kmax = k;
+				}
+			}
+			if ( kmax != j ) {
+				for ( i = 0; i < m; i++ ) {
+					temp = a[j*m+i];
+					a[j*m+i] = a[kmax*m+i];
+					a[kmax*m+i] = temp;
+				}
+				rdiag[kmax] = rdiag[j];
+				wa[kmax] = wa[j];
+				k = ipvt[j];
+				ipvt[j] = ipvt[kmax];
+				ipvt[kmax] = k;
 			}
 		}
-		if ( kmax == j ) {
-			goto pivot_ok;
-		}
 
-		for ( i = 0; i < m; i++ ) {
-			temp = a[j*m+i];
-			a[j*m+i] = a[kmax*m+i];
-			a[kmax*m+i] = temp;
-		}
-		rdiag[kmax] = rdiag[j];
-		wa[kmax] = wa[j];
-		k = ipvt[j];
-		ipvt[j] = ipvt[kmax];
-		ipvt[kmax] = k;
-
-		pivot_ok:
 		//  compute the Householder transformation to reduce the
 		//  j-th column of a to a multiple of the j-th unit vector.
 
-		ajnorm = lm_enorm(m-j, &a[j*m+j]);
+		double ajnorm( lm_enorm(m-j, &a[j*m+j]) );
 		if ( ajnorm == 0. ) {
 			rdiag[j] = 0;
 			continue;
@@ -1045,7 +1039,7 @@ void lm_qrfac(int m, int n, double *a, int pivot, int *ipvt,
 		//  and update the norms.
 
 		for ( k = j + 1; k < n; k++ ) {
-			sum = 0;
+			double sum = 0;
 
 			for ( i = j; i < m; i++ ) {
 				sum += a[j*m+i] * a[k*m+i];
@@ -1140,7 +1134,7 @@ void lm_qrsolv(int n, double *r, int ldr, const int *ipvt, const double *diag,
 	//
 	//
 	int i, kk, j, k, nsing;
-	double qtbpj, sum, temp;
+	double qtbpj, temp;
 	double _sin, _cos, _tan, _cot; // local variables, not functions
 
 	// qrsolv: copy r and (q transpose)*b to preserve input and initialize s.
@@ -1164,55 +1158,53 @@ void lm_qrsolv(int n, double *r, int ldr, const int *ipvt, const double *diag,
 		// qrsolv: prepare the row of d to be eliminated, locating the
 		//   diagonal element using p from the qr factorization.
 
-		if ( diag[ipvt[j]] == 0. ) {
-			goto L90;
-		}
-		for ( k = j; k < n; k++ ) {
-			sdiag[k] = 0.;
-		}
-		sdiag[j] = diag[ipvt[j]];
-
-		//   qrsolv: the transformations to eliminate the row of d modify only
-		//   a single element of qT*b beyond the first n, which is initially 0.
-
-		qtbpj = 0.;
-		for ( k = j; k < n; k++ ) {
-
-			//  determine a Givens rotation which eliminates the
-			//  appropriate element in the current row of d.
-
-			if ( sdiag[k] == 0. ) {
-				continue;
+		if ( diag[ipvt[j]] != 0. ) {
+			for ( k = j; k < n; k++ ) {
+				sdiag[k] = 0.;
 			}
-			kk = k + ldr * k;
-			if ( fabs(r[kk]) < fabs(sdiag[k]) ) {
-				_cot = r[kk] / sdiag[k];
-				_sin = 1 / sqrt(1 + SQR(_cot));
-				_cos = _sin * _cot;
-			} else {
-				_tan = sdiag[k] / r[kk];
-				_cos = 1 / sqrt(1 + SQR(_tan));
-				_sin = _cos * _tan;
-			}
+			sdiag[j] = diag[ipvt[j]];
 
-			//  compute the modified diagonal element of r and
-			//  the modified element of ((q transpose)*b,0).
+			//   qrsolv: the transformations to eliminate the row of d modify only
+			//   a single element of qT*b beyond the first n, which is initially 0.
 
-			r[kk] = _cos * r[kk] + _sin * sdiag[k];
-			temp = _cos * wa[k] + _sin * qtbpj;
-			qtbpj = -_sin * wa[k] + _cos * qtbpj;
-			wa[k] = temp;
+			qtbpj = 0.;
+			for ( k = j; k < n; k++ ) {
 
-			//  accumulate the tranformation in the row of s.
+				//  determine a Givens rotation which eliminates the
+				//  appropriate element in the current row of d.
 
-			for ( i = k + 1; i < n; i++ ) {
-				temp = _cos * r[k * ldr + i] + _sin * sdiag[i];
-				sdiag[i] = -_sin * r[k * ldr + i] + _cos * sdiag[i];
-				r[k * ldr + i] = temp;
+				if ( sdiag[k] == 0. ) {
+					continue;
+				}
+				kk = k + ldr * k;
+				if ( fabs(r[kk]) < fabs(sdiag[k]) ) {
+					_cot = r[kk] / sdiag[k];
+					_sin = 1 / sqrt(1 + SQR(_cot));
+					_cos = _sin * _cot;
+				} else {
+					_tan = sdiag[k] / r[kk];
+					_cos = 1 / sqrt(1 + SQR(_tan));
+					_sin = _cos * _tan;
+				}
+
+				//  compute the modified diagonal element of r and
+				//  the modified element of ((q transpose)*b,0).
+
+				r[kk] = _cos * r[kk] + _sin * sdiag[k];
+				temp = _cos * wa[k] + _sin * qtbpj;
+				qtbpj = -_sin * wa[k] + _cos * qtbpj;
+				wa[k] = temp;
+
+				//  accumulate the tranformation in the row of s.
+
+				for ( i = k + 1; i < n; i++ ) {
+					temp = _cos * r[k * ldr + i] + _sin * sdiag[i];
+					sdiag[i] = -_sin * r[k * ldr + i] + _cos * sdiag[i];
+					r[k * ldr + i] = temp;
+				}
 			}
 		}
 
-		L90:
 		//  store the diagonal element of s and restore
 		//  the corresponding diagonal element of r.
 
@@ -1234,7 +1226,7 @@ void lm_qrsolv(int n, double *r, int ldr, const int *ipvt, const double *diag,
 	}
 
 	for ( j = nsing - 1; j >= 0; j-- ) {
-		sum = 0;
+		double sum = 0;
 		for ( i = j + 1; i < nsing; i++ ) {
 			sum += r[j * ldr + i] * wa[i];
 		}

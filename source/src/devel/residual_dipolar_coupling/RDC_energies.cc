@@ -355,31 +355,39 @@ void svdcmp(
 	}
 	for ( k = n; k >= 1; --k ) {
 		for ( its = 1; its <= 30; ++its ) {
+			// VKM, 9 April 2018: Previously, a goto statement was used to skip a block
+			// of code.  I've added the following boolean to allow the same block of code
+			// to be skipped in the same circumstances, to let me eliminate the goto:
+			bool skipahead(false);
 			for ( l = k; l >= 1; --l ) {
 				nm = l-1;
-				if ( (std::abs(rv1(l))+anorm) == anorm ) goto L2;
+				if ( (std::abs(rv1(l))+anorm) == anorm ) {
+					skipahead=true;
+					break;
+				}
 				if ( (std::abs(w(nm))+anorm) == anorm ) break;
 			}
-			c = 0.0;
-			s = 1.0;
-			for ( i = l; i <= k; ++i ) {
-				f = s*rv1(i);
-				rv1(i) *= c;
-				if ( (std::abs(f)+anorm) == anorm ) break;
-				g = w(i);
-				h = pythag(f,g);
-				w(i) = h;
-				h = 1.0/h;
-				c = (g*h);
-				s = -(f*h);
-				for ( j = 1; j <= m; ++j ) {
-					y = a(j,nm);
-					z = a(j,i);
-					a(j,nm) = (y*c)+(z*s);
-					a(j,i) = -(y*s)+(z*c);
+			if ( !skipahead ) {
+				c = 0.0;
+				s = 1.0;
+				for ( i = l; i <= k; ++i ) {
+					f = s*rv1(i);
+					rv1(i) *= c;
+					if ( (std::abs(f)+anorm) == anorm ) break;
+					g = w(i);
+					h = pythag(f,g);
+					w(i) = h;
+					h = 1.0/h;
+					c = (g*h);
+					s = -(f*h);
+					for ( j = 1; j <= m; ++j ) {
+						y = a(j,nm);
+						z = a(j,i);
+						a(j,nm) = (y*c)+(z*s);
+						a(j,i) = -(y*s)+(z*c);
+					}
 				}
 			}
-			L2:
 			z = w(k);
 			if ( l == k ) {
 				if ( z < 0.0 ) {

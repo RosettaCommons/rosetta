@@ -133,16 +133,13 @@ double errf(double x)
 	}
 
 	if ( x >= 0 ) {
-		if ( x < 8e-2 ) goto taylor;
-		return 1.0 - exp(mx2) * errfcx(x);
+		if ( x >= 8e-2 ) return 1.0 - exp(mx2) * errfcx(x);
 	} else { // x < 0
-		if ( x > -8e-2 ) goto taylor;
-		return exp(mx2) * errfcx(-x) - 1.0;
+		if ( x <= -8e-2 ) return exp(mx2) * errfcx(-x) - 1.0;
 	}
 
 	// Use Taylor series for small |x|, to avoid cancellation inaccuracy
 	//   erf(x) = 2/sqrt(pi) * x * (1 - x^2/3 + x^4/10 - x^6/42 + x^8/216 + ...)
-	taylor:
 	return x * (1.1283791670955125739
 		+ mx2 * (0.37612638903183752464
 		+ mx2 * (0.11283791670955125739
@@ -174,49 +171,53 @@ cmplx errf(cmplx z, double relerr)
 	// Handle positive and negative x via different formulas,
 	//  using the mirror symmetries of w, to avoid overflow/underflow
 	//  problems from multiplying exponentially large and small quantities.
+	bool do_taylor_erfi( false );
+	bool do_taylor(false);
 	if ( x >= 0 ) {
 		if ( x < 8e-2 ) {
 			if ( fabs(y) < 1e-2 ) {
-				goto taylor;
+				do_taylor = true;
 			} else if ( fabs(mIm_z2) < 5e-3 && x < 5e-3 ) {
-				goto taylor_erfi;
+				do_taylor_erfi = true;
 			}
 		}
-		// don't use complex exp function, since that will produce spurious NaN
-		// values when multiplying w in an overflow situation.
-		return 1.0 - exp(mRe_z2) *
-			(C(cos(mIm_z2), sin(mIm_z2)) * w(C(-y,x), relerr));
+		if ( !do_taylor && !do_taylor_erfi ) {
+			// don't use complex exp function, since that will produce spurious NaN
+			// values when multiplying w in an overflow situation.
+			return 1.0 - exp(mRe_z2) *
+				(C(cos(mIm_z2), sin(mIm_z2)) * w(C(-y,x), relerr));
+		}
 	} else { // x < 0
 		if ( x > -8e-2 ) { // duplicate from above to avoid fabs(x) call
 			if ( fabs(y) < 1e-2 ) {
-				goto taylor;
+				do_taylor = true;
 			} else if ( fabs(mIm_z2) < 5e-3 && x > -5e-3 ) {
-				goto taylor_erfi;
+				do_taylor_erfi = true;
 			}
 		} else if ( utility::isnan(x) ) {
 			return C(NaN, y == 0 ? 0 : NaN);
 		}
-		// don't use complex exp function, since that will produce spurious NaN
-		// values when multiplying w in an overflow situation. */
-		return exp(mRe_z2) *
-			(C(cos(mIm_z2), sin(mIm_z2))
-			* w(C(y,-x), relerr)) - 1.0;
+		if ( !(do_taylor || do_taylor_erfi) ) {
+			// don't use complex exp function, since that will produce spurious NaN
+			// values when multiplying w in an overflow situation. */
+			return exp(mRe_z2) *
+				(C(cos(mIm_z2), sin(mIm_z2))
+				* w(C(y,-x), relerr)) - 1.0;
+		}
 	}
+
+	debug_assert( do_taylor || do_taylor_erfi ); //Should be true.
 
 	// Use Taylor series for small |z|, to avoid cancellation inaccuracy
 	//   erf(z) = 2/sqrt(pi) * z * (1 - z^2/3 + z^4/10 - z^6/42 + z^8/216 + ...)
-	taylor:
-	{
+	if ( do_taylor ) {
 		cmplx mz2 = C(mRe_z2, mIm_z2); // -z^2
 		return z * (1.1283791670955125739
 			+ mz2 * (0.37612638903183752464
 			+ mz2 * (0.11283791670955125739
 			+ mz2 * (0.026866170645131251760
 			+ mz2 * 0.0052239776254421878422))));
-	}
-
-	taylor_erfi:
-	{
+	} else if ( do_taylor_erfi ) {
 		double x2 = x*x, y2 = y*y;
 		double expy2 = exp(y2);
 		return C
@@ -231,6 +232,11 @@ cmplx errf(cmplx z, double relerr)
 			- x2 * (0.56418958354775628695
 			+ 0.37612638903183752464*y2))));
 	}
+	// VKM 9 April 2018: The above is a mess of spaghetti code.  This point in the program should never be reached.
+	// To ensure this, I'm including this utility_exit so that future developers don't accidentally break the fragile
+	// mess above and allow the dummy return statement below to be executed.
+	utility_exit_with_message( "Program error: this point in the code should not ever be reached." );
+	return C(0,0); //To keep compiler happy.
 }
 
 // erfi(z) = -i erf(iz)
@@ -326,70 +332,77 @@ cmplx Dawson(cmplx z, double relerr) {
 	// Handle positive and negative x via different formulas,
 	// using the mirror symmetries of w, to avoid overflow/underflow
 	// problems from multiplying exponentially large and small quantities.
+	bool do_taylor(false), do_taylor_realaxis(false);
 	if ( y >= 0 ) {
 		if ( y < 5e-3 ) {
 			if ( fabs(x) < 5e-3 ) {
-				goto taylor;
+				do_taylor=true;
 			} else if ( fabs(mIm_z2) < 5e-3 ) {
-				goto taylor_realaxis;
+				do_taylor_realaxis=true;
 			}
 		}
-		cmplx res = cexp(mz2) - w(z, relerr);
-		return spi2 * C(-cimag(res), creal(res));
+		if ( !do_taylor && !do_taylor_realaxis ) {
+			cmplx res = cexp(mz2) - w(z, relerr);
+			return spi2 * C(-cimag(res), creal(res));
+		}
 	} else { // y < 0
 		if ( y > -5e-3 ) { // duplicate from above to avoid fabs(x) call
 			if ( fabs(x) < 5e-3 ) {
-				goto taylor;
+				do_taylor=true;
 			} else if ( fabs(mIm_z2) < 5e-3 ) {
-				goto taylor_realaxis;
+				do_taylor_realaxis=true;
 			}
 		} else if ( utility::isnan(y) ) {
 			return C(x == 0 ? 0 : NaN, NaN);
 		}
-		cmplx res = w(-z, relerr) - cexp(mz2);
-		return spi2 * C(-cimag(res), creal(res));
+		if ( !(do_taylor || do_taylor_realaxis) ) {
+			cmplx res = w(-z, relerr) - cexp(mz2);
+			return spi2 * C(-cimag(res), creal(res));
+		}
 	}
+
+	debug_assert( do_taylor || do_taylor_realaxis );
 
 	// Use Taylor series for small |z|, to avoid cancellation inaccuracy
 	//     dawson(z) = z - 2/3 z^3 + 4/15 z^5 + ...
-	taylor:
-	return z * (1.
-		+ mz2 * (0.6666666666666666666666666666666666666667
-		+ mz2 * 0.2666666666666666666666666666666666666667));
+	if ( do_taylor ) {
+		return z * (1.
+			+ mz2 * (0.6666666666666666666666666666666666666667
+			+ mz2 * 0.2666666666666666666666666666666666666667));
+	} else if ( do_taylor_realaxis ) {
 
-	//  for small |y| and small |xy|,
-	//  use Taylor series to avoid cancellation inaccuracy:
-	//   dawson(x + iy)
-	//   = D + y^2 (D + x - 2Dx^2)
-	//     + y^4 (D/2 + 5x/6 - 2Dx^2 - x^3/3 + 2Dx^4/3)
-	//   + iy [ (1-2Dx) + 2/3 y^2 (1 - 3Dx - x^2 + 2Dx^3)
-	//      + y^4/15 (4 - 15Dx - 9x^2 + 20Dx^3 + 2x^4 - 4Dx^5) ] + ...
-	//  where D = dawson(x)
-	//
-	//  However, for large |x|, 2Dx -> 1 which gives cancellation problems in
-	//  this series (many of the leading terms cancel).  So, for large |x|,
-	//  we need to substitute a continued-fraction expansion for D.
-	//
-	//   dawson(x) = 0.5 / (x-0.5/(x-1/(x-1.5/(x-2/(x-2.5/(x...))))))
-	//
-	//  The 6 terms shown here seems to be the minimum needed to be
-	//  accurate as soon as the simpler Taylor expansion above starts
-	//  breaking down.  Using this 6-term expansion, factoring out the
-	//  denominator, and simplifying with Maple, we obtain:
-	//
-	//  Re dawson(x + iy) * (-15 + 90x^2 - 60x^4 + 8x^6) / x
-	//   = 33 - 28x^2 + 4x^4 + y^2 (18 - 4x^2) + 4 y^4
-	//  Im dawson(x + iy) * (-15 + 90x^2 - 60x^4 + 8x^6) / y
-	//   = -15 + 24x^2 - 4x^4 + 2/3 y^2 (6x^2 - 15) - 4 y^4
-	//
-	//  Finally, for |x| > 5e7, we can use a simpler 1-term continued-fraction
-	//  expansion for the real part, and a 2-term expansion for the imaginary
-	//  part.  (This avoids overflow problems for huge |x|.)  This yields:
-	//
-	//  Re dawson(x + iy) = [1 + y^2 (1 + y^2/2 - (xy)^2/3)] / (2x)
-	//  Im dawson(x + iy) = y [ -1 - 2/3 y^2 + y^4/15 (2x^2 - 4) ] / (2x^2 - 1)
-	taylor_realaxis:
-	{
+		//  for small |y| and small |xy|,
+		//  use Taylor series to avoid cancellation inaccuracy:
+		//   dawson(x + iy)
+		//   = D + y^2 (D + x - 2Dx^2)
+		//     + y^4 (D/2 + 5x/6 - 2Dx^2 - x^3/3 + 2Dx^4/3)
+		//   + iy [ (1-2Dx) + 2/3 y^2 (1 - 3Dx - x^2 + 2Dx^3)
+		//      + y^4/15 (4 - 15Dx - 9x^2 + 20Dx^3 + 2x^4 - 4Dx^5) ] + ...
+		//  where D = dawson(x)
+		//
+		//  However, for large |x|, 2Dx -> 1 which gives cancellation problems in
+		//  this series (many of the leading terms cancel).  So, for large |x|,
+		//  we need to substitute a continued-fraction expansion for D.
+		//
+		//   dawson(x) = 0.5 / (x-0.5/(x-1/(x-1.5/(x-2/(x-2.5/(x...))))))
+		//
+		//  The 6 terms shown here seems to be the minimum needed to be
+		//  accurate as soon as the simpler Taylor expansion above starts
+		//  breaking down.  Using this 6-term expansion, factoring out the
+		//  denominator, and simplifying with Maple, we obtain:
+		//
+		//  Re dawson(x + iy) * (-15 + 90x^2 - 60x^4 + 8x^6) / x
+		//   = 33 - 28x^2 + 4x^4 + y^2 (18 - 4x^2) + 4 y^4
+		//  Im dawson(x + iy) * (-15 + 90x^2 - 60x^4 + 8x^6) / y
+		//   = -15 + 24x^2 - 4x^4 + 2/3 y^2 (6x^2 - 15) - 4 y^4
+		//
+		//  Finally, for |x| > 5e7, we can use a simpler 1-term continued-fraction
+		//  expansion for the real part, and a 2-term expansion for the imaginary
+		//  part.  (This avoids overflow problems for huge |x|.)  This yields:
+		//
+		//  Re dawson(x + iy) = [1 + y^2 (1 + y^2/2 - (xy)^2/3)] / (2x)
+		//  Im dawson(x + iy) = y [ -1 - 2/3 y^2 + y^4/15 (2x^2 - 4) ] / (2x^2 - 1)
+
 		double x2 = x*x;
 		if ( x2 > 1600 ) { // |x| > 40
 			double y2 = y*y;
@@ -423,6 +436,11 @@ cmplx Dawson(cmplx z, double relerr) {
 				- 0.26666666666666666667 * x2)))));
 		}
 	}
+	// VKM 9 April 2018: The above is a mess of spaghetti code.  This point in the program should never be reached.
+	// To ensure this, I'm including this utility_exit so that future developers don't accidentally break the fragile
+	// mess above and allow the dummy return statement below to be executed.
+	utility_exit_with_message( "Program error: this point in the code should not ever be reached." );
+	return C(0,0); //To keep compiler happy.
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -489,7 +507,7 @@ cmplx w(cmplx z, double relerr) {
 
 	cmplx ret = 0.; // return value
 
-	double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0, sum5 = 0;
+	double sum2 = 0, sum3 = 0, sum4 = 0, sum5 = 0;
 
 	if ( ya > 7 || (x > 6
 			&& (ya > 0.1 || (x > 8 && ya > 1e-10) || x > 28)) ) {
@@ -572,6 +590,7 @@ cmplx w(cmplx z, double relerr) {
 		//   speedups from using the special-case code with the precomputed
 		//   exponential, and the x < 5e-4 special case is needed for accuracy.
 
+		double sum1(0);
 		if ( relerr == DBL_EPSILON ) { // use precomputed exp(-a2*(n*n)) table
 			if ( x < 5e-4 ) { // compute sum4 and sum5 together as sum5-sum4
 				const double x2 = x*x;
@@ -680,6 +699,7 @@ cmplx w(cmplx z, double relerr) {
 		sum5 = a*n0 * sum3;
 		double exp1 = exp(4*a*dx), exp1dn = 1;
 		int dn;
+		bool skipahead(false);
 		for ( dn = 1; n0 - dn > 0; ++dn ) { // loop over n0-dn and n0+dn terms
 			double np = n0 + dn, nm = n0 - dn;
 			double tp = exp(-sqr(a*dn+dx));
@@ -688,17 +708,21 @@ cmplx w(cmplx z, double relerr) {
 			tm /= (a2*(nm*nm) + y*y);
 			sum3 += tp + tm;
 			sum5 += a * (np * tp + nm * tm);
-			if ( a * (np * tp + nm * tm) < relerr * sum5 ) goto finish;
+			if ( a * (np * tp + nm * tm) < relerr * sum5 ) {
+				skipahead=true;
+				break;
+			}
 		}
-		while ( true ) { // loop over n0+dn terms only (since n0-dn <= 0)
-			double np = n0 + dn++;
-			double tp = exp(-sqr(a*dn+dx)) / (a2*(np*np) + y*y);
-			sum3 += tp;
-			sum5 += a * np * tp;
-			if ( a * np * tp < relerr * sum5 ) goto finish;
+		if ( !skipahead ) {
+			while ( true ) { // loop over n0+dn terms only (since n0-dn <= 0)
+				double np = n0 + dn++;
+				double tp = exp(-sqr(a*dn+dx)) / (a2*(np*np) + y*y);
+				sum3 += tp;
+				sum5 += a * np * tp;
+				if ( a * np * tp < relerr * sum5 ) break;
+			}
 		}
 	}
-	finish:
 	return ret + C((0.5*c)*y*(sum2+sum3),
 		(0.5*c)*utility::copysign(sum5-sum4, creal(z)));
 }
