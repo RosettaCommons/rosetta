@@ -67,7 +67,7 @@ public:
 
 	void
 	set_prefix( std::string const & prefix );
-	
+
 	void
 	set_suffix( std::string const & suffix );
 

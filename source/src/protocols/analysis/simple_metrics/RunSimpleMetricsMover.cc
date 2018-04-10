@@ -144,13 +144,13 @@ void
 RunSimpleMetricsMover::set_prefix( std::string const & prefix ){
 	prefix_ = prefix;
 }
-	
+
 
 void
 RunSimpleMetricsMover::set_suffix( std::string const & suffix ){
 	suffix_ = suffix;
 }
-	
+
 void RunSimpleMetricsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
