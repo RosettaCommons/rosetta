@@ -11,8 +11,8 @@
 /// @brief  Factory class for the parser's DataLoader classes
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_DataLoaderFactory_hh
-#define INCLUDED_protocols_jd2_parser_DataLoaderFactory_hh
+#ifndef INCLUDED_protocols_parser_DataLoaderFactory_hh
+#define INCLUDED_protocols_parser_DataLoaderFactory_hh
 
 // Package Headers
 #include <protocols/parser/DataLoader.fwd.hh>

@@ -347,6 +347,13 @@ statement safely_prepare_statement(
 	return stmt; //there's no way this should happen
 }
 
+statement prepare_statement_no_catch(
+	string const & statement_string,
+	sessionOP db_session)
+{
+	return db_session->prepare(statement_string);
+}
+
 void
 safely_write_to_database(
 	statement & statement

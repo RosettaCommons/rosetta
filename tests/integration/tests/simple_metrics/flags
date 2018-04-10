@@ -1,0 +1,18 @@
+#Input
+-ignore_unrecognized_res
+-ignore_zero_occupancy false
+-load_PDB_components false
+
+#Output
+-pdb_comments
+-scorefile_format json
+
+#Minimization
+-nblist_autoupdate
+
+#Common
+-jd2:delete_old_poses
+-other_pose_to_scorefile
+
+-s 2r0l_1_1.pdb
+-in:file:native 2r0l_1_1.pdb

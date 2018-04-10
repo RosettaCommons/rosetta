@@ -11,8 +11,8 @@
 /// @brief  Creator class for the parser's DataLoader classes
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_DataLoaderCreator_HH
-#define INCLUDED_protocols_jd2_parser_DataLoaderCreator_HH
+#ifndef INCLUDED_protocols_parser_DataLoaderCreator_HH
+#define INCLUDED_protocols_parser_DataLoaderCreator_HH
 
 // Package headers
 #include <protocols/parser/DataLoader.fwd.hh>

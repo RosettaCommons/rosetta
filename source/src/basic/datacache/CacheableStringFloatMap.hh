@@ -46,13 +46,20 @@ class CacheableStringFloatMap : public CacheableData
 {
 public:
 	CacheableStringFloatMap();
+
 	~CacheableStringFloatMap() override;
-	CacheableDataOP clone() const override;
 
-	CacheableStringFloatMapOP shared_from_this();
+	CacheableDataOP
+	clone() const override;
 
-	virtual std::map< std::string, float > & map();
-	virtual const std::map< std::string, float > & map() const;
+	CacheableStringFloatMapOP
+	shared_from_this();
+
+	virtual std::map< std::string, float > &
+	map();
+
+	virtual const std::map< std::string, float > &
+	map() const;
 
 private:
 	std::map< std::string, float > map_;

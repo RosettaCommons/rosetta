@@ -731,7 +731,7 @@ has_severe_pep_bond_geom_issues(
 	// Conformation dependence of backbone geometry in proteins. Structure 17: 1316–1325.
 	//
 
-	TR << "checking peptide bond geometry: " << std::endl;
+	//TR << "checking peptide bond geometry: " << std::endl;
 	for ( core::Size i =  loop.start(); i <= loop.stop() - 1; ++i ) {
 		std::pair<bool, core::Size> checked = has_severe_pep_bond_geom_issues(
 			pose, i, check_bonds, check_angles, max_c_n_dis, allowed_ca_c_n_deviation, allowed_c_n_ca_deviation);

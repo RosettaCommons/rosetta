@@ -10,6 +10,22 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+
+	"protocols/analysis": [
+		"GlycanInfoMover",
+		"InterfaceAnalyzerMover",
+		"LoopAnalyzerMover",
+		"LoopAnalyzerFilter",
+		"PackStatMover",
+	],
+	"protocols/analysis/simple_metrics": [
+		"CompositeEnergyMetric",
+		"DihedralDistanceMetric",
+		"RunSimpleMetricsMover",
+		"RMSDMetric",
+		"TotalEnergyMetric",
+	],
+
 	"protocols/monte_carlo" : [
 		"ResetBaselineMover",
 		"GenericMonteCarloMover",
@@ -187,13 +203,6 @@ sources = {
 		"AlignmentCleanerTools",
 		"EvolutionaryDynamicsMover",
 		"NucleotideMutation",
-	],
-	"protocols/analysis": [
-		"GlycanInfoMover",
-		"LoopAnalyzerFilter",
-		"InterfaceAnalyzerMover",
-		"LoopAnalyzerMover",
-		"PackStatMover",
 	],
 	
 	"protocols/constraint_filters": [

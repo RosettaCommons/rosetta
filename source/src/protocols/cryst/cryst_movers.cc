@@ -88,6 +88,7 @@
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/util.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 using basic::Error;
@@ -948,13 +949,11 @@ void FitBfactorsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	AttributeList attlist;
 
 	//argument legality checker for "adp_strategy":
-	XMLSchemaRestriction adp_strategy_type;
-	adp_strategy_type.name("adp_strategy_type");
-	adp_strategy_type.base_type( xs_string );
-	adp_strategy_type.add_restriction( xsr_enumeration, "individual");
-	adp_strategy_type.add_restriction( xsr_enumeration, "group");
-	adp_strategy_type.add_restriction( xsr_enumeration, "randomize");
-	xsd.add_top_level_element( adp_strategy_type );
+	utility::vector1< std::string > restrictions;
+	restrictions.push_back("individual");
+	restrictions.push_back("group");
+	restrictions.push_back("randomize");
+	utility::tag::add_schema_restrictions_for_strings( xsd, "adp_strategy_type", restrictions);
 
 	attlist + XMLSchemaAttribute::attribute_w_default( "adp_strategy", "adp_strategy_type", "ADP (?) strategy.  Must be one of ('individual', 'group', 'randomize')", "individual" );
 

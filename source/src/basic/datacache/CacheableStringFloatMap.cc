@@ -30,13 +30,28 @@ namespace basic {
 namespace datacache {
 
 CacheableStringFloatMap::CacheableStringFloatMap() : CacheableData() {}
+
 CacheableStringFloatMap::~CacheableStringFloatMap() = default;
-CacheableDataOP CacheableStringFloatMap::clone() const { return CacheableDataOP( new CacheableStringFloatMap(*this) ); }
 
-CacheableStringFloatMapOP CacheableStringFloatMap::shared_from_this() { return utility::pointer::static_pointer_cast<CacheableStringFloatMap>( CacheableData::shared_from_this() ); }
+CacheableDataOP
+CacheableStringFloatMap::clone() const {
+	return CacheableDataOP( new CacheableStringFloatMap(*this) );
+}
 
-std::map< std::string, float > & CacheableStringFloatMap::map(){ return map_; }
-std::map< std::string, float > const & CacheableStringFloatMap::map() const { return map_; }
+CacheableStringFloatMapOP
+CacheableStringFloatMap::shared_from_this() {
+	return utility::pointer::static_pointer_cast<CacheableStringFloatMap>( CacheableData::shared_from_this() );
+}
+
+std::map< std::string, float > &
+CacheableStringFloatMap::map(){
+	return map_;
+}
+
+std::map< std::string, float > const &
+CacheableStringFloatMap::map() const {
+	return map_;
+}
 
 
 } // namespace datacache

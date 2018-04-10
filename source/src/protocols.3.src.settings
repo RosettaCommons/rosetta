@@ -414,6 +414,8 @@ sources = {
 	],
 
 	"protocols/simple_filters": [
+		"SimpleMetricFilter",
+
 		"BuriedUnsatHbondFilter",
 		
 		"AbinitioBaseFilter",

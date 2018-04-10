@@ -33,7 +33,6 @@
 #include <numeric/NumericTraits.hh>
 
 #include <cmath>
-#include <cmath>
 
 
 namespace protocols {

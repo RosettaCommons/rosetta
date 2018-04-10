@@ -11,8 +11,8 @@
 /// @brief
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
-#ifndef INCLUDED_protocols_jd2_parser_FragmentReader_hh
-#define INCLUDED_protocols_jd2_parser_FragmentReader_hh
+#ifndef INCLUDED_protocols_parser_FragmentReader_hh
+#define INCLUDED_protocols_parser_FragmentReader_hh
 
 // Unit Headers
 #include <protocols/parser/FragmentReader.fwd.hh>

@@ -26,6 +26,10 @@ sources = {
 	"analysis": [
 		"InterfaceDdGMoverTests",
 		"LoopAnalyzerMoverTests",
+
+	],
+	"analysis/simple_metrics":[
+		"SimpleMetricProtocolsTests",
 	],
 	"antibody": [
 		"AntibodyInfo",

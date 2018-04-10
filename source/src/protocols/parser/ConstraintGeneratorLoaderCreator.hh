@@ -11,8 +11,8 @@
 /// @brief  Creator classes for the default DataLoader classes, TaskOperationLoader and ScoreFunctionLoader
 /// @author Sharon Guffy (guffy@email.unc.edu)
 
-#ifndef INCLUDED_protocols_jd2_parser_ConstraintGeneratorLoaderCreator_hh
-#define INCLUDED_protocols_jd2_parser_ConstraintGeneratorLoaderCreator_hh
+#ifndef INCLUDED_protocols_parser_ConstraintGeneratorLoaderCreator_hh
+#define INCLUDED_protocols_parser_ConstraintGeneratorLoaderCreator_hh
 
 // Package headers
 #include <protocols/parser/DataLoaderCreator.hh>

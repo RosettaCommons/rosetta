@@ -27,6 +27,7 @@ static DataLoaderRegistrator< protocols::qsar::scoring_grid::ScoringGridLoaderCr
 static DataLoaderRegistrator< MonteCarloLoaderCreator > reg_MonteCarloLoaderCreator;
 static DataLoaderRegistrator< ResidueSelectorLoaderCreator > reg_ResidueSelectorLoaderCreator;
 static DataLoaderRegistrator< ConstraintGeneratorLoaderCreator > reg_ConstraintGeneratorLoaderCreator;
+static DataLoaderRegistrator< SimpleMetricLoaderCreator > reg_SimpleMetricLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::InterfaceBuilderLoaderCreator > reg_InterfaceBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::MoveMapBuilderLoaderCreator > reg_MoveMapBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::LigandAreaLoaderCreator > reg_LigandAreaLoaderCreator;

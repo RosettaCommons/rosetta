@@ -11,8 +11,8 @@
 /// @brief  Declartion of the XML parser's ScoreFunctionLoader class for adding named ScoreFunctions to the basic::datacache::DataMap
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_ScoreFunctionLoader_hh
-#define INCLUDED_protocols_jd2_parser_ScoreFunctionLoader_hh
+#ifndef INCLUDED_protocols_parser_ScoreFunctionLoader_hh
+#define INCLUDED_protocols_parser_ScoreFunctionLoader_hh
 
 // Package Headers
 #include <protocols/parser/DataLoader.hh>

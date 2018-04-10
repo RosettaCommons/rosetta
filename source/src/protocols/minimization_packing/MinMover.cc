@@ -33,6 +33,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
 #include <core/pose/Pose.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <core/select/movemap/util.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -385,8 +386,18 @@ void MinMover::parse_movemap_factory( TagCOP const tag, basic::datacache::DataMa
 {
 	using namespace core::select::movemap;
 
-	MoveMapFactoryOP mmf( new MoveMapFactory );
 
+	if ( tag->hasOption("movemap_factory") ) {
+		TR << "Found set MoveMap factory. Using this to define MoveMap." << std::endl;
+		if ( tag->hasOption("chi") || tag->hasOption("bb") ) {
+			throw CREATE_EXCEPTION( utility::excn::RosettaScriptsOptionError, "MinMover can accept either a MoveMapFactory OR bb/chi (with or without an old-style movemap.)");
+		}
+		MoveMapFactoryOP mmf = core::select::movemap::parse_movemap_factory( tag, data );
+		movemap_factory(mmf);
+		return;
+	}
+
+	MoveMapFactoryOP mmf( new MoveMapFactory );
 	if ( tag->hasOption("jump") ) {
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 		// string 'ALL' makes all jumps movable
@@ -402,6 +413,10 @@ void MinMover::parse_movemap_factory( TagCOP const tag, basic::datacache::DataMa
 				mmf->add_jump_action( mm_enable, jump_select );
 			}
 		}
+	}
+
+	if ( !(tag->hasOption("bb") && tag->hasOption("chi")) ) {
+		utility_exit_with_message("If not using a Movemap Factory, bb and chi options are required!");
 	}
 
 	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
@@ -525,8 +540,8 @@ MinMover::complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute::attribute_w_default( "bondangle",  xsct_rosetta_bool , "Minimize bond angles?", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "bondlength", xsct_rosetta_bool , "Minimize bond lengths?", "0" );
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "chi", xsct_rosetta_bool , "Minimize chi angles?" )
-		+ XMLSchemaAttribute::required_attribute( "bb",  xsct_rosetta_bool , "Minimize backbone torsion angles?" )
+		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool , "Minimize chi angles?" )
+		+ XMLSchemaAttribute( "bb",  xsct_rosetta_bool , "Minimize backbone torsion angles?" )
 		+ XMLSchemaAttribute::attribute_w_default( "omega", xsct_rosetta_bool , "Minimize omega torsions?", "true" );
 	//All of these are lists of task operations, but none use parse_task_operations
 	attributes
@@ -534,6 +549,15 @@ MinMover::complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute( "chi_task_operations", xsct_task_operation_comma_separated_list , "Task operations specifying residues for sidechain minimization" )
 		+ XMLSchemaAttribute( "bondangle_task_operations", xsct_task_operation_comma_separated_list , "Task operations specifying residues for bond angle minimization" )
 		+ XMLSchemaAttribute( "bondlength_task_operations", xsct_task_operation_comma_separated_list , "Task operation specifying residues for bond length minimization" );
+
+	core::select::movemap::attributes_for_parse_movemap_factory_default_attr_name( attributes,
+		"The name of the already-defined MoveMapFactory that will be used to alter the"
+		" default behavior of the MoveMap. By default, all backbone, chi, and jump DOFs"
+		" are allowed to change. A MoveMapFactory can be used to change which of those"
+		" DOFs are actually enabled. Be warned that combining a MoveMapFactory with"
+		" a MoveMap can result in unexpected behavior. " );
+
+
 	rosetta_scripts::attributes_for_parse_score_function( attributes );
 	XMLSchemaSimpleSubelementList subelements;
 	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelements );

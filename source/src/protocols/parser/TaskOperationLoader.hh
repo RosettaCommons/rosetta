@@ -11,8 +11,8 @@
 /// @brief  Declartion of the XML parser's TaskOperationLoader class
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_TaskOperationLoader_hh
-#define INCLUDED_protocols_jd2_parser_TaskOperationLoader_hh
+#ifndef INCLUDED_protocols_parser_TaskOperationLoader_hh
+#define INCLUDED_protocols_parser_TaskOperationLoader_hh
 
 // Package Headers
 #include <protocols/parser/DataLoader.hh>

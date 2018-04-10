@@ -11,8 +11,8 @@
 /// @brief  Declartion of the XML parser's ConstraintGeneratorLoader class for adding named ConstraintGenerators to the basic::datacache::DataMap
 /// @author Sharon Guffy (guffy@email.unc.edu)
 
-#ifndef INCLUDED_protocols_jd2_parser_ConstraintGeneratorLoader_hh
-#define INCLUDED_protocols_jd2_parser_ConstraintGeneratorLoader_hh
+#ifndef INCLUDED_protocols_parser_ConstraintGeneratorLoader_hh
+#define INCLUDED_protocols_parser_ConstraintGeneratorLoader_hh
 
 // Package Headers
 #include <protocols/parser/DataLoader.hh>

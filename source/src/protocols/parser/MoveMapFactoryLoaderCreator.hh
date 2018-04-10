@@ -11,8 +11,8 @@
 /// @brief  Creator class for the MoveMapFactory data loader
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_MoveMapFactoryLoaderCreator_hh
-#define INCLUDED_protocols_jd2_parser_MoveMapFactoryLoaderCreator_hh
+#ifndef INCLUDED_protocols_parser_MoveMapFactoryLoaderCreator_hh
+#define INCLUDED_protocols_parser_MoveMapFactoryLoaderCreator_hh
 
 // Package headers
 #include <protocols/parser/DataLoaderCreator.hh>

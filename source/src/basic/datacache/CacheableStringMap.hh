@@ -50,13 +50,17 @@ public:
 
 	~CacheableStringMap() override;
 
-	CacheableDataOP clone() const override;
+	CacheableDataOP
+	clone() const override;
 
-	virtual std::map< std::string, std::string > & map();
+	virtual std::map< std::string, std::string > &
+	map();
 
-	virtual const std::map< std::string, std::string > & map() const;
+	virtual const std::map< std::string, std::string > &
+	map() const;
 
-	CacheableStringMapOP shared_from_this();
+	CacheableStringMapOP
+	shared_from_this();
 
 private:
 

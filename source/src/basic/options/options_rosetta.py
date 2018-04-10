@@ -1667,7 +1667,7 @@ Options = Option_Group( '',
 			desc="Preserve c-beta positions during rotamer construction"
 			),
 		Option( 'flip_HNQ', 'Boolean',
-			desc="Consider flipping HIS, ASN, and GLN during hydrogen placement optimization"
+			desc="Consider flipping HIS, ASN, and GLN during hydrogen placement optimization (must turn off -no_optimizeH)"
 			),
 		Option( 'fix_his_tautomer','IntegerVector', desc='seqpos numbers of his residus whose tautomer should be fixed during repacking',
 			default=[]

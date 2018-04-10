@@ -82,6 +82,13 @@ safely_prepare_statement(
 	std::string const & statement_string,
 	utility::sql_database::sessionOP db_session);
 
+///@brief Do not catch the error - leave the catch for the code using it.
+/// Do not use this unless YOU are catching any erorrs (cppdb::error).
+cppdb::statement
+prepare_statement_no_catch(
+	std::string const & statement_string,
+	utility::sql_database::sessionOP db_session);
+
 void
 safely_write_to_database(
 	cppdb::statement & statement);

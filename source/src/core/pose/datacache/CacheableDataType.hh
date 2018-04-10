@@ -33,6 +33,7 @@ public:
 		JOBDIST_OUTPUT_TAG = 1, // a basic::datacache::CacheableString; Set by the jobdistributor
 		ARBITRARY_FLOAT_DATA, // a basic::datacache::CacheableStringFloatMap (basically a std::map<string,Real>)
 		ARBITRARY_STRING_DATA, // a basic::datacache::CacheableStringMap (basically a std::map<string,string>)
+		ARBITRARY_INTEGER_DATA, // a basic::datacache::CacheableStringIntegerMap (basically a std::map<string, int>)
 		STRING_MAP, // a basic::datacache::CacheableStringMap; string-based annotations about a Pose  (What's the distinction to ARBITRARY_STRING_DATA?)
 		SCORE_LINE_STRINGS, // a basic::datacache::CacheableStringMap; score entries composed of a pair< string, string > (What's the distinction to ARBITRARY_STRING_DATA?)
 		SCORE_MAP, // basic::datacache::DiagnosticData; (basically a std::map<string,Real> for scores) // ??? Need more info on usage (What's the distinction to ARBITRARY_FLOAT_DATA?)

@@ -18,6 +18,6 @@ namespace protocols {
 using multistage_rosetta_scripts::cluster::ClusterMetricRegistrator;
 
 static ClusterMetricRegistrator< multistage_rosetta_scripts::cluster::metrics::JumpMetricCreator > reg_JumpMetricCreator;
-static ClusterMetricRegistrator< multistage_rosetta_scripts::cluster::metrics::SequenceMetricCreator > reg_SequenceMetricCreator;
+static ClusterMetricRegistrator< multistage_rosetta_scripts::cluster::metrics::SequenceMetricCreator > reg_SequenceDistanceMetricCreator;
 
 } // namespace protocols

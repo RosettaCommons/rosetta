@@ -44,6 +44,7 @@
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
+#include <core/simple_metrics/SimpleMetricFactory.hh>
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
@@ -638,12 +639,14 @@ print_template_script() {
 		<< "\t</RESIDUE_SELECTORS>\n"
 		<< "\t<TASKOPERATIONS>\n"
 		<< "\t</TASKOPERATIONS>\n"
+		<< "\t<MOVE_MAP_FACTORIES>\n"
+		<< "\t</MOVE_MAP_FACTORIES>\n"
+		<< "\t<SIMPLE_METRICS>\n"
+		<< "\t</SIMPLE_METRICS>\n"
 		<< "\t<FILTERS>\n"
 		<< "\t</FILTERS>\n"
 		<< "\t<MOVERS>\n"
 		<< "\t</MOVERS>\n"
-		<< "\t<APPLY_TO_POSE>\n"
-		<< "\t</APPLY_TO_POSE>\n"
 		<< "\t<PROTOCOLS>\n"
 		<< "\t</PROTOCOLS>\n"
 		<< "\t<OUTPUT />\n"
@@ -720,6 +723,16 @@ print_information(
 		outstream << xsd.human_readable_summary( component_name, "rlto" );
 	}
 
+	// 6. Check Simple Metrics
+	core::simple_metrics::SimpleMetricFactory* metric_factory( core::simple_metrics::SimpleMetricFactory::get_instance() ); //Must be raw pointer; owning pointer does weird things with static singleton.
+	if ( metric_factory->has_type( component_name ) ) {
+		if ( !missing ) outstream << "\n";
+		missing = false;
+		outstream << "INFORMATION ABOUT SIMPLE METRIC \"" << component_name << "\":\n\n";
+		utility::tag::XMLSchemaDefinition xsd;
+		metric_factory->provide_xml_schema( component_name, xsd );
+		outstream << xsd.human_readable_summary( component_name, "simple_metric" );
+	}
 	return missing;
 }
 

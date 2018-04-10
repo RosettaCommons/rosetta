@@ -118,6 +118,12 @@ CDRResidueSelector::clone() const {
 }
 
 
+void
+CDRResidueSelector::set_cdr( CDRNameEnum cdr ){
+	cdrs_.clear();
+	cdrs_.resize(8, false);
+	cdrs_[ cdr ] = true;
+}
 
 void
 CDRResidueSelector::set_cdrs( utility::vector1< bool > cdrs ){
@@ -268,7 +274,7 @@ CDRResidueSelector::apply(
 		}
 	}
 
-
+	//std::cout << "CDR Residues: " << subset << std::endl;
 	return subset;
 
 

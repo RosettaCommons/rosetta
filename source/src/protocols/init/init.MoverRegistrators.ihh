@@ -41,7 +41,7 @@ static MoverRegistrator< abinitio::abscript::RigidChunkCMCreator > reg_RigidChun
 static MoverRegistrator< analysis::GlycanInfoMoverCreator > reg_GlycanInfoMoverCreator;
 static MoverRegistrator< analysis::InterfaceAnalyzerMoverCreator > reg_InterfaceAnalyzerMoverCreator;
 static MoverRegistrator< analysis::LoopAnalyzerMoverCreator > reg_LoopAnalyzerMoverCreator;
-
+static MoverRegistrator< analysis::simple_metrics::RunSimpleMetricsMoverCreator > reg_RunSimpleMetricsMoverCreator;
 static MoverRegistrator< antibody::AntibodyCDRGrafterCreator > reg_AntibodyCDRGrafterCreator;
 static MoverRegistrator< antibody::AntibodyNumberingConverterMoverCreator > reg_AntibodyNumberingConverterMoverCreator;
 

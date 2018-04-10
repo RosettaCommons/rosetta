@@ -57,6 +57,10 @@ public:
 
 public:
 
+	///@brief Set a single CDR to select
+	void
+	set_cdr( CDRNameEnum cdr );
+
 	void
 	set_cdrs( utility::vector1< bool > cdrs );
 

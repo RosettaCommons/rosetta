@@ -11,8 +11,8 @@
 /// @brief  Creator classes for the default DataLoader classes, TaskOperationLoader and ScoreFunctionLoader
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_ResidueSelectorLoaderCreator_hh
-#define INCLUDED_protocols_jd2_parser_ResidueSelectorLoaderCreator_hh
+#ifndef INCLUDED_protocols_parser_ResidueSelectorLoaderCreator_hh
+#define INCLUDED_protocols_parser_ResidueSelectorLoaderCreator_hh
 
 // Package headers
 #include <protocols/parser/DataLoaderCreator.hh>

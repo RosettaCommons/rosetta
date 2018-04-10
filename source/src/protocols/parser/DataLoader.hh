@@ -11,8 +11,8 @@
 /// @brief  Declartion of the XML parser's DataLoader class
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_DataLoader_hh
-#define INCLUDED_protocols_jd2_parser_DataLoader_hh
+#ifndef INCLUDED_protocols_parser_DataLoader_hh
+#define INCLUDED_protocols_parser_DataLoader_hh
 
 // Package Headers
 #include <basic/datacache/DataMap.fwd.hh>

@@ -11,8 +11,8 @@
 /// @brief  Declartion of the XML parser's MoveMapFactoryLoader class
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_MoveMapFactoryLoader_hh
-#define INCLUDED_protocols_jd2_parser_MoveMapFactoryLoader_hh
+#ifndef INCLUDED_protocols_parser_MoveMapFactoryLoader_hh
+#define INCLUDED_protocols_parser_MoveMapFactoryLoader_hh
 
 // Package Headers
 #include <protocols/parser/DataLoader.hh>

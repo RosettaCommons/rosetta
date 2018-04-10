@@ -56,7 +56,6 @@
 #include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/CalcInterNeighborGroup.hh>
-#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
 
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -1383,7 +1382,6 @@ void InterfaceAnalyzerMover::mut_to_gly( core::pose::Pose complex_pose, core::po
 	pose::Pose copy_separate( separated_pose );
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::task_operations;
 
 	//setupt task info
 	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( ( copy_complex ) ) );
@@ -1434,7 +1432,6 @@ core::pack::task::PackerTaskOP
 InterfaceAnalyzerMover::setup_task( core::pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using namespace protocols::task_operations;
 	//set up the task to match this calculation
 	//set up a packer task
 	TaskFactoryOP tf( new TaskFactory() );

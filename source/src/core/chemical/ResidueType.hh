@@ -734,6 +734,13 @@ public:
 			( atomno > nheavyatoms_ && atomno < first_sidechain_hydrogen_ ) );
 	}
 
+	bool
+	atom_is_sidechain( Size const atomno ) const
+	{
+		debug_assert( finalized_ );
+		debug_assert( atomno <= natoms() );
+		return all_sc_atoms_.has_value( atomno );
+	}
 	/// @brief quick lookup: is the atom with the given index a hydrogen or not?
 	/// Atoms are sorted so that heavy atoms come first and hydrogen atoms come last.
 	bool

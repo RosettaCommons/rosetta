@@ -1,0 +1,39 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<CDR name="L1" cdrs="L1"/>
+	</RESIDUE_SELECTORS>
+	<MOVE_MAP_FACTORIES>
+		<MoveMapFactory name="movemap_L1" bb="0" chi="0">
+			<Backbone residue_selector="L1" />
+			<Chi residue_selector="L1" />
+		</MoveMapFactory>
+	</MOVE_MAP_FACTORIES>
+	<SIMPLE_METRICS>
+		<RMSDMetric name="rmsd" rmsd_type="rmsd_protein_bb_heavy" residue_selector="L1" use_native="1"/>
+		<SasaMetric name="sasa" residue_selector="L1"/>
+		<SecondaryStructureMetric name="ss" residue_selector="L1" />
+		<TotalEnergyMetric name="total_energy" residue_selector="L1" use_native="0"/>
+		<CompositeEnergyMetric name="composite_energy" residue_selector="L1" use_native="0"/>
+	</SIMPLE_METRICS>
+	<MOVERS>
+		<MinMover name="min_mover" tolerance=".1" movemap_factory="movemap_L1"/> 
+	</MOVERS>
+	<FILTERS>
+		<SimpleMetricFilter name="sasa_filter" metric="sasa" cutoff="100" comparison_type="gt"/>
+		<SimpleMetricFilter name="delta_energy" metric="total_energy" cutoff="5" comparison_type="lt"/>
+		<SimpleMetricFilter name="composite_all" metric="composite_energy" cutoff="100" composite_action="all" comparison_type="lt"/>
+		<SimpleMetricFilter name="ss_filter" metric="ss" match="LLLLLLLLLLL"  comparison_type="ne"/>
+		<SimpleMetricFilter name="rmsd_filter" metric="rmsd" cutoff="0.5" comparison_type="lt" />
+
+	</FILTERS>
+	<PROTOCOLS>
+		<Add mover_name="min_mover" />
+		<Add filter_name="sasa_filter" />
+		<Add filter_name="delta_energy" />
+		<Add filter_name="composite_all" />
+		<Add filter_name="ss_filter" />
+		<Add filter_name="rmsd_filter" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

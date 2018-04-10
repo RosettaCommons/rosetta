@@ -350,6 +350,11 @@ public:  // Accessors /////////////////////////////////////////////////////////
 	std::map< std::string, float > const & pose_cache_float_data() const        { return pose_cache_float_data_; };
 	std::map< std::string, float >       & pose_cache_float_data()              { return pose_cache_float_data_; };
 
+	/// @brief Pose Cache - Integer Data
+	/// @details Each file outputter must figure out how to write this out in its output format.
+	std::map< std::string, int > const & pose_cache_integer_data() const        { return pose_cache_integer_data_; };
+	std::map< std::string, int >       & pose_cache_integer_data()              { return pose_cache_integer_data_; };
+
 	/// @brief A catch-all place to store additional data for output.
 	/// @details Each file outputter must figure out how to write this out in its output format.
 	std::string const & additional_string_output() const { return additional_string_output_; };
@@ -387,6 +392,7 @@ private:
 
 	std::map< std::string, std::string > pose_cache_string_data_;
 	std::map< std::string, float > pose_cache_float_data_; //JAB - was originally a float, keeping it a float.
+	std::map< std::string, int > pose_cache_integer_data_;
 
 	std::string additional_string_output_;
 };  // class StructFileRep

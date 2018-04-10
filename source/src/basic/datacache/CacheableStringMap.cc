@@ -33,20 +33,25 @@ CacheableStringMap::CacheableStringMap() : CacheableData() {}
 
 CacheableStringMap::~CacheableStringMap() = default;
 
-CacheableDataOP CacheableStringMap::clone() const {
+CacheableDataOP
+CacheableStringMap::clone() const {
 	return CacheableDataOP( new CacheableStringMap(*this) );
 }
 
-std::map< std::string, std::string > & CacheableStringMap::map() {
+std::map< std::string, std::string > &
+CacheableStringMap::map() {
 	return map_;
 }
 
-std::map< std::string, std::string > const & CacheableStringMap::map() const {
+std::map< std::string, std::string > const &
+CacheableStringMap::map() const {
 	return map_;
 }
 
-CacheableStringMapOP CacheableStringMap::shared_from_this()
-{ return utility::pointer::static_pointer_cast<CacheableStringMap>( CacheableData::shared_from_this() ); }
+CacheableStringMapOP
+CacheableStringMap::shared_from_this(){
+	return utility::pointer::static_pointer_cast<CacheableStringMap>( CacheableData::shared_from_this() );
+}
 
 
 } // namespace datacache

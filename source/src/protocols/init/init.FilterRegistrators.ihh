@@ -194,6 +194,7 @@ static FilterRegistrator< protocols::simple_filters::SaveResfileToDiskFilterCrea
 static FilterRegistrator< protocols::simple_filters::SequenceDistanceFilterCreator > reg_SequenceDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ShapeComplementarityFilterCreator > reg_ScFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SimpleHbondsToAtomFilterCreator > reg_SimpleHbondsToAtomFilterCreator;
+static FilterRegistrator< protocols::simple_filters::SimpleMetricFilterCreator > reg_SimpleMetricFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SSMotifFinderFilterCreator > reg_SSMotifFinderFilterCreator;
 static FilterRegistrator< protocols::simple_filters::StemFinderFilterCreator > reg_StemFinderFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SymmetricMotifFilterCreator > reg_SymmetricMotifFilterCreator;

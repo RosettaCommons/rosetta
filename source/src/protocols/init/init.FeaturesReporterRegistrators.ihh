@@ -20,13 +20,16 @@ using namespace protocols::features;
 static FeaturesReporterRegistrator< AtomAtomPairFeaturesCreator > AtomAtomPairFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< AtomTypesFeaturesCreator > AtomTypesFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< AtomInResidueAtomInResiduePairFeaturesCreator > AtomInResidueAtomInResiduePairFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< antibody::AntibodyFeaturesCreator > AntibodyFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< BetaTurnDetectionFeaturesCreator > BetaTurnDetectionFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< antibody::clusters::CDRClusterFeaturesCreator > CDRClusterFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ChargeChargeFeaturesCreator > ChargeChargeFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< DdGFeaturesCreator > DdGFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< GeometricSolvationFeaturesCreator > GeometricSolvationFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< HBondFeaturesCreator > HBondFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< HBondParameterFeaturesCreator > HBondParameterFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< HelixCapFeaturesCreator > HelixCapFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< InterfaceFeaturesCreator > InterfaceFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< JobDataFeaturesCreator > JobDataFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< LoopAnchorFeaturesCreator > LoopAnchorFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ModelFeaturesCreator > ModelFeaturesCreator_registrator;
@@ -58,6 +61,7 @@ static FeaturesReporterRegistrator< SaltBridgeFeaturesCreator > SaltBridgeFeatur
 static FeaturesReporterRegistrator< ScreeningFeaturesCreator > ScreeningFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ScoreTypeFeaturesCreator > ScoreTypeFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< SecondaryStructureSegmentFeaturesCreator > SecondaryStructureSegmentFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< SimpleMetricFeaturesCreator > SimpleMetricFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< SmotifFeaturesCreator > SmotifFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< StructureFeaturesCreator > StructureFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< StructureScoresFeaturesCreator > StructureScoresFeaturesCreator_registrator;
@@ -74,7 +78,7 @@ static FeaturesReporterRegistrator< strand_assembly::StrandBundleFeaturesCreator
 //static FeaturesReporterRegistrator< BatchFeaturesCreator > BatchFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ResidueGridScoresFeaturesCreator >  ResidueGridScoresFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< WaterFeaturesCreator >  WaterFeaturesCreator_registrator;
-static FeaturesReporterRegistrator< InterfaceFeaturesCreator > InterfaceFeaturesCreator_registrator;
-static FeaturesReporterRegistrator< protocols::antibody::clusters::CDRClusterFeaturesCreator > CDRClusterFeaturesCreator_registrator;
-static FeaturesReporterRegistrator< protocols::antibody::AntibodyFeaturesCreator > AntibodyFeaturesCreator_registrator;
+
+
+
 } //namespace protocols

@@ -90,6 +90,9 @@
 #include <protocols/init/init.ClusterMetricCreators.ihh>
 #include <protocols/init/init.ClusterMetricRegistrators.ihh>
 
+#include <protocols/init/init.SimpleMetricCreators.ihh>
+#include <protocols/init/init.SimpleMetricRegistrators.ihh>
+
 namespace protocols {
 namespace init {
 

@@ -11,8 +11,8 @@
 /// @brief  Declartion of the XML parser's JumpSelectorLoader class for adding named JumpSelectors to the basic::datacache::DataMap
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_JumpSelectorLoader_hh
-#define INCLUDED_protocols_jd2_parser_JumpSelectorLoader_hh
+#ifndef INCLUDED_protocols_parser_JumpSelectorLoader_hh
+#define INCLUDED_protocols_parser_JumpSelectorLoader_hh
 
 // Package Headers
 #include <protocols/parser/DataLoader.hh>

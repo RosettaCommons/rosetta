@@ -212,6 +212,10 @@ class GenerateRosettaTemplates(object):
                 if self.options.type == "jd3_standard":
                      print("\n   "+"This template is for a standard JD3 app, however, much more complex apps can be created.  See the docs for more.\n")
 
+            elif re.search("metric_", self.options.type):
+                print("\nSimple Metric Creator should be registered in (protocols.7) \n" \
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.SimpleMetricRegistrators.ihh and \n" \
+                      "   "+self.get_base_outdir()+"/"+"protocols/init/init.SimpleMetricCreators.ihh\n")
 
     ######## Replacement Functions#############
     def get_option(self, option_name, fail_on_none = True):
@@ -321,8 +325,9 @@ class GenerateGeneralTemplates(GenerateRosettaTemplates):
 
         required = parser.add_argument_group("Required")
         required.add_argument("--type",
-                            help = "The type of template you will be needing.",
+                            help = "The type of template you will be needing: "+", ".join(self.types),
                             required = True,
+                            metavar = "class_type",
                             choices = self.types)
 
         required.add_argument("--class_name", "-c",

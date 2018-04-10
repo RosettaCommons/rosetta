@@ -11,8 +11,8 @@
 /// @brief the basic idea of BluePrint is on the remodel Possu wrote in rosetta++.
 /// @author Nobuyasu Koga (nobuyasu@uw.edu)
 
-#ifndef INCLUDED_protocols_jd2_parser_BluePrint_HH
-#define INCLUDED_protocols_jd2_parser_BluePrint_HH
+#ifndef INCLUDED_protocols_parser_BluePrint_HH
+#define INCLUDED_protocols_parser_BluePrint_HH
 
 // Unit  header
 #include <protocols/parser/BluePrint.fwd.hh>

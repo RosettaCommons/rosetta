@@ -70,19 +70,9 @@ set_ss_from_phipsi(
 utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose, std::string const & filename );
 utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose );
 
-/// getters/setters for things in the Pose DataCache
-
-/// @brief return bool is T/F for whether the requested datum exists.  "value" is the data, pass-by-ref.
-bool getPoseExtraScore(
-	core::pose::Pose const & pose,
-	std::string const & name,
-	core::Real & value
-);
-
-/// @brief return value is ExtraScore if exist, runtime_assert if it doesn't exist
-Real getPoseExtraScore(
-	core::pose::Pose const & pose,
-	std::string const & name );
+///////////////////////////////////////////////////////////////////////////////
+//// Pose Extra Scores - held by DataCache, will be output into scorefile. ////
+///////////////////////////////////////////////////////////////////////////////
 
 /// @brief does this ExtraScore exist?
 bool
@@ -90,40 +80,97 @@ hasPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const & name );
 
+/// @brief does this (int) ExtraScore exist?
+bool
+hasPoseExtraScore_int(
+	core::pose::Pose const & pose,
+	std::string const & name );
 
-void clearPoseExtraScore(
-	core::pose::Pose & pose,
-	std::string const & name
-);
+/// @brief does this (string) ExtraScore exist?
 
-void clearPoseExtraScores(
-	core::pose::Pose & pose
+bool
+hasPoseExtraScore_str(
+	core::pose::Pose const & pose,
+	std::string const & name );
+
+
+/// @brief return value is ExtraScore if exist, runtime_assert if it doesn't exist
+Real
+getPoseExtraScore(
+	core::pose::Pose const & pose,
+	std::string const & name );
+
+/// @brief return bool is T/F for whether the requested datum exists.  "value" is the data, pass-by-ref.
+bool
+getPoseExtraScore(
+	core::pose::Pose const & pose,
+	std::string const & name,
+	core::Real & value
 );
 
 /// @brief return bool is T/F for whether the requested datum exists.  "value" is the data, pass-by-ref.
-bool getPoseExtraScore(
+bool
+getPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const & name,
 	std::string & value
 );
 
-/// @brief Set an extra float score in the pose that will be written out to the scorefile.
-void setPoseExtraScore(
+bool
+getPoseExtraScore(
+	core::pose::Pose const & pose,
+	std::string const & name,
+	int & value
+);
+
+
+
+///@brief Clear a specific data type from the arbitrary data cache in the pose.
+void
+clearPoseExtraScore(
+	core::pose::Pose & pose,
+	std::string const & name
+);
+
+///@brief Clear ALL PoseExtraScores
+void
+clearPoseExtraScores(
+	core::pose::Pose & pose
+);
+
+///@brief Set a core::Real in the pose datacache, that will be output as a score in the scorefile.
+void
+setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string const & name,
 	core::Real value
 );
 
-/// @brief Set an extra score in the pose that will be written out to the scorefile.
-void setPoseExtraScore(
+///@brief Set a string in the pose datacache, that will be output as a score in the scorefile.
+void
+setPoseExtraScore(
+
 	core::pose::Pose & pose,
 	std::string const & name,
 	std::string const & value
 );
 
+///@brief Set an integer in the pose datacache, that will be output as a score in the scorefile.
+void
+setPoseExtraScore_int(
+	core::pose::Pose & pose,
+	std::string const & name,
+	int value
+);
+
+//////////////////////////////////////////////////////////////
+//// Pose Comments - REQUIRE output options -pdb_comments ////
+//////////////////////////////////////////////////////////////
+
 /// @brief Adds a key-value pair to the STRING_MAP in the Pose DataCache. If
 /// there is no STRING_MAP in the DataCache, one is created.
-void add_comment(
+void
+add_comment(
 	core::pose::Pose & pose,
 	std::string const & key,
 	std::string const & val
@@ -133,7 +180,8 @@ void add_comment(
 /// given key. If an entry for the key exists, the value associated with the key
 /// is put into val, and this function returns true. Otherwise, this function
 /// returns false and val left unmodified.
-bool get_comment(
+bool
+get_comment(
 	core::pose::Pose const & pose,
 	std::string const & key,
 	std::string & val
@@ -141,32 +189,52 @@ bool get_comment(
 
 /// @brief Deletes the entry in the STRING_MAP associated with the
 /// given key.
-void delete_comment(
+void
+delete_comment(
 	core::pose::Pose & pose,
 	std::string const & key
 );
 
+/// @brief  Reads the comments from the pdb file and adds it into comments
+void
+read_comment_pdb(
+	std::string const &file_name,
+	core::pose::Pose  & pose
+);
+/// @brief  dumps pose+ comments to pdb file
+void
+dump_comment_pdb(
+	std::string const &file_name,
+	core::pose::Pose const& pose
+);
+
 /// @brief Gets a map< string, string > representing comments about the Pose in
 /// the form of key-value pairs.
-std::map< std::string, std::string > get_all_comments(
+std::map< std::string, std::string >
+get_all_comments(
 	core::pose::Pose const & pose
 );
 
-/// @brief Dumps a pdb with comments at end of file
 
+
+/////////////////
+//// Remarks ////
+/////////////////
 
 /// @brief Sets a PDB-style REMARK entry in the Pose.
 /// @details This is different from a comment in its interpretation by the
 /// silent-file output machinery. A REMARK is written on its own separate line
 /// in the output silent-file, while a comment is written as part of the Pose
 /// SCORE: lines.
-void add_score_line_string(
+void
+add_score_line_string(
 	core::pose::Pose & pose,
 	std::string const & key,
 	std::string const & val
 );
 
-bool get_score_line_string(
+bool
+get_score_line_string(
 	core::pose::Pose const & pose,
 	std::string const & key,
 	std::string & val
@@ -174,25 +242,22 @@ bool get_score_line_string(
 
 /// @brief Gets a map< string, string > representing score_line_strings about the Pose in
 /// the form of key-value pairs.
-std::map< std::string, std::string > get_all_score_line_strings(
+std::map< std::string, std::string >
+get_all_score_line_strings(
 	core::pose::Pose const & pose
 );
 
-/// @brief  Reads the comments from the pdb file and adds it into comments
-void read_comment_pdb(
-	std::string const &file_name,
-	core::pose::Pose  & pose
-);
-/// @brief  dumps pose+ comments to pdb file
-void dump_comment_pdb(
-	std::string const &file_name,
-	core::pose::Pose const& pose
-);
 
-std::string tag_from_pose( core::pose::Pose const & pose );
+
+std::string
+tag_from_pose( core::pose::Pose const & pose );
+
 /// @brief Returns a string giving the pose's tag if there is such a thing or "UnknownTag" otherwise.
-std::string extract_tag_from_pose( core::pose::Pose &pose );
-void tag_into_pose( core::pose::Pose & pose, std::string const & tag );
+std::string
+extract_tag_from_pose( core::pose::Pose &pose );
+
+void
+tag_into_pose( core::pose::Pose & pose, std::string const & tag );
 
 void
 set_output_res_and_chain( core::pose::Pose & extended_pose,

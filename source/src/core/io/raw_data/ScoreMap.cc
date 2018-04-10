@@ -30,6 +30,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
 #include <basic/datacache/CacheableStringFloatMap.hh>
+#include <basic/datacache/CacheableStringIntegerMap.hh>
 #include <basic/datacache/CacheableStringMap.hh>
 
 
@@ -157,6 +158,18 @@ ScoreMap::add_arbitrary_score_data_from_pose(
 			score_map[it.first] = it.second;
 		}
 	}
+
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA ) ) {
+		basic::datacache::CacheableStringIntegerMapCOP data
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringIntegerMap const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA ) );
+		debug_assert( data.get() != nullptr );
+
+		for ( auto const & it : data->map() ) {
+			score_map[it.first] = it.second;
+		}
+	}
+
 }
 
 

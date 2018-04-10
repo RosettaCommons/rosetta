@@ -1,0 +1,43 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<CDR name="L1" cdrs="L1"/>
+	</RESIDUE_SELECTORS>
+	<MOVE_MAP_FACTORIES>
+		<MoveMapFactory name="movemap_L1" bb="0" chi="0">
+			<Backbone residue_selector="L1" />
+			<Chi residue_selector="L1" />
+		</MoveMapFactory>
+	</MOVE_MAP_FACTORIES>
+	<SIMPLE_METRICS>
+		<RMSDMetric name="rmsd" rmsd_type="rmsd_protein_bb_heavy" residue_selector="L1" use_native="1"/>
+		<SasaMetric name="sasa" residue_selector="L1"/>
+		<DihedralDistanceMetric name="dihedral" residue_selector="L1" use_native="1"/>
+		<SelectedResiduesMetric name="selection" residue_selector="L1"/>
+		<SelectedResiduesPyMOLMetric name="pymol_selection" residue_selector="L1" />
+		<SequenceMetric name="sequence" residue_selector="L1" />
+		<SecondaryStructureMetric name="ss" residue_selector="L1" />
+		<TotalEnergyMetric name="total_energy" residue_selector="L1" />
+		<CompositeEnergyMetric name="composite_energy" residue_selector="L1" use_native="0"/>
+	</SIMPLE_METRICS>
+	<MOVERS>
+		<MinMover name="min_mover" movemap_factory="movemap_L1" tolerance=".1" /> 
+		<ReportToDB name="features_selections" database_name="testing_metrics.db" batch_description="testing">
+			<SimpleMetricFeatures prefix="L1" suffix="testing" table_name="selections" metrics="selection,pymol_selection,sequence,ss"/>
+		</ReportToDB>
+		<ReportToDB name="features1" database_name="testing_metrics.db" batch_description="testing">
+			<SimpleMetricFeatures prefix="pre" suffix="testing" metrics="sasa,total_energy,rmsd,dihedral,composite_energy"/>
+		</ReportToDB>
+		<ReportToDB name="features2" database_name="testing_metrics.db" batch_description="testing">
+			<SimpleMetricFeatures prefix="post" suffix="testing" metrics="sasa,total_energy,rmsd,dihedral,composite_energy"/>
+		</ReportToDB>
+
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name="features_selections"/>
+		<Add mover_name="features1"/>
+		<Add mover_name="min_mover"/>
+		<Add mover_name="features2"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

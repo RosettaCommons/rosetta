@@ -19,6 +19,7 @@
 #include <protocols/parser/ConstraintGeneratorLoaderCreator.hh>
 #include <protocols/parser/MoveMapFactoryLoaderCreator.hh>
 #include <protocols/parser/JumpSelectorLoaderCreator.hh>
+#include <protocols/parser/SimpleMetricLoaderCreator.hh>
 #include <protocols/loops/loops_definers/LoopsDefinerLoaderCreator.hh>
 #include <protocols/qsar/scoring_grid/ScoringGridLoaderCreator.hh>
 #include <protocols/ligand_docking/LigandDockingLoaderCreators.hh>

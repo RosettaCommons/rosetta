@@ -1,0 +1,34 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+/// @file   src/protocols/init/init.ResidueSelectorRegistrators.ihh
+/// @brief  Declare WidgetRegistrators as static (global) variables in this .cc file
+///         so that at load time, they will be initialized, and the Creator classes
+///         they register will be handed to the appropriate WidgetFactory.
+///         This is for ResidueSelectorRegistrators ONLY.
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+
+namespace protocols {
+
+using core::simple_metrics::SimpleMetricRegistrator;
+
+static SimpleMetricRegistrator< core::simple_metrics::metrics::SasaMetricCreator                   > reg_SasaMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::metrics::SecondaryStructureMetricCreator     > reg_SecondaryStructureMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResiduesPyMOLMetricCreator  > reg_SelectedResiduesPyMOLMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResiduesMetricCreator       > reg_SelectedResiduesMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::metrics::SequenceMetricCreator               > reg_SequenceMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::metrics::TimingProfileMetricCreator          > reg_TimingProfileMetricCreator;
+
+
+static SimpleMetricRegistrator< protocols::analysis::simple_metrics::CompositeEnergyMetricCreator  > reg_CompositeEnergyMetricCreator;
+static SimpleMetricRegistrator< protocols::analysis::simple_metrics::DihedralDistanceMetricCreator > reg_DihedralDistanceMetricCreator;
+static SimpleMetricRegistrator< protocols::analysis::simple_metrics::TotalEnergyMetricCreator      > reg_TotalEnergyMetricCreator;
+static SimpleMetricRegistrator< protocols::analysis::simple_metrics::RMSDMetricCreator             > reg_RMSDMetricCreator;
+
+} // namespace protocols

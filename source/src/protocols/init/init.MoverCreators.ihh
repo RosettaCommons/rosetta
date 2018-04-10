@@ -37,6 +37,8 @@
 #include <protocols/analysis/InterfaceAnalyzerMoverCreator.hh>
 #include <protocols/analysis/LoopAnalyzerMoverCreator.hh>
 
+#include <protocols/analysis/simple_metrics/RunSimpleMetricsMoverCreator.hh>
+
 #include <protocols/antibody/AntibodyCDRGrafterCreator.hh>
 #include <protocols/antibody/AntibodyNumberingConverterMoverCreator.hh>
 

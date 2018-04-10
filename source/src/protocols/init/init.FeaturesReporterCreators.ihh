@@ -17,13 +17,16 @@
 #include <protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.hh>
 #include <protocols/features/AtomAtomPairFeaturesCreator.hh>
 #include <protocols/features/AtomTypesFeaturesCreator.hh>
+#include <protocols/antibody/AntibodyFeaturesCreator.hh>
 #include <protocols/features/BetaTurnDetectionFeaturesCreator.hh>
 #include <protocols/features/ChargeChargeFeaturesCreator.hh>
+#include <protocols/antibody/clusters/CDRClusterFeaturesCreator.hh>
 #include <protocols/features/DdGFeaturesCreator.hh>
 #include <protocols/features/GeometricSolvationFeaturesCreator.hh>
 #include <protocols/features/HBondFeaturesCreator.hh>
 #include <protocols/features/HBondParameterFeaturesCreator.hh>
 #include <protocols/features/HelixCapFeaturesCreator.hh>
+#include <protocols/features/InterfaceFeaturesCreator.hh>
 #include <protocols/features/JobDataFeaturesCreator.hh>
 #include <protocols/features/LoopAnchorFeaturesCreator.hh>
 #include <protocols/features/ModelFeaturesCreator.hh>
@@ -59,6 +62,7 @@
 #include <protocols/features/StructureScoresFeaturesCreator.hh>
 #include <protocols/features/ScreeningFeaturesCreator.hh>
 #include <protocols/features/ScoreFunctionFeaturesCreator.hh>
+#include <protocols/features/SimpleMetricFeaturesCreator.hh>
 #include <protocols/features/TaskOperationFeaturesCreator.hh>
 #include <protocols/features/TotalScoreFeaturesCreator.hh>
 #include <protocols/features/TrajectoryMapFeaturesCreator.hh>
@@ -71,6 +75,5 @@
 //#include <protocols/features/strand_assembly/ReportAADistributionFromDBCreator.hh>
 #include <protocols/features/ResidueGridScoresFeaturesCreator.hh>
 #include <protocols/features/WaterFeaturesCreator.hh>
-#include <protocols/features/InterfaceFeaturesCreator.hh>
-#include <protocols/antibody/clusters/CDRClusterFeaturesCreator.hh>
-#include <protocols/antibody/AntibodyFeaturesCreator.hh>
+
+

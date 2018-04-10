@@ -112,6 +112,7 @@ sources = {
 	],
 	"utility/tag": [
 		"Tag",
+		"util",
 		"XMLSchemaGeneration",
 		"XMLSchemaValidation",
 	],

@@ -175,9 +175,29 @@ sources = {
 		"VDW_Grid",
 		"VDW_RepScreenInfo",
 	],
-    "core/pose/rna/secstruct_legacy": [
-        "RNA_SecStructLegacyInfo",
-    ],
+    	"core/pose/rna/secstruct_legacy": [
+        	"RNA_SecStructLegacyInfo",
+    	],
+  	"core/simple_metrics": [
+		"CompositeRealMetric",
+		"CompositeIntegerMetric",
+		"CompositeStringMetric",
+		"IntegerMetric",
+		"RealMetric",
+		"SimpleMetric",
+		"SimpleMetricFactory",
+		"StringMetric",
+		"util",
+		"test_classes",
+	],
+	"core/simple_metrics/metrics": [
+		"SasaMetric",
+		"SecondaryStructureMetric",
+		"SelectedResiduesMetric",
+		"SelectedResiduesPyMOLMetric",
+		"SequenceMetric",
+		"TimingProfileMetric",
+	],
 	"core/pose/symmetry": [
 		"util",
 	],

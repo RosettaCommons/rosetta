@@ -558,6 +558,9 @@ sources = {
 		"SequenceUtil",
 		"SequenceMotifUtilTests",
 	],
+	"simple_metrics" : [
+		"SimpleMetricTests",
+	],
 	"util" : [
 		#"ChainbreakUtil",
 		"MetricValueIO",
@@ -1061,5 +1064,6 @@ testinputfiles = [
 	"sequence/test.aln",
 	"sequence/test.general_aln",
 	"sequence/test.grishin_aln",
+	"simple_metrics/2r0l_1_1.pdb",
 	"util/2c9v_stripped.pdb"
 ]

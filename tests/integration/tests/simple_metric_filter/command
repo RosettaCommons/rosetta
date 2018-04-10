@@ -1,0 +1,8 @@
+cd %(workdir)s
+
+# Do the tests actually exist?
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+
+%(bin)s/glycan_relax.%(binext)s %(additional_flags)s @flags -database %(database)s \
+    -parser:protocol test_simple_metric_filter.xml -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true

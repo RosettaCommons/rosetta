@@ -177,6 +177,7 @@
 #include <protocols/simple_filters/SequenceDistanceFilterCreator.hh>
 #include <protocols/calc_taskop_filters/SigmoidFilterCreator.hh>
 #include <protocols/simple_filters/SimpleHbondsToAtomFilterCreator.hh>
+#include <protocols/simple_filters/SimpleMetricFilterCreator.hh>
 #include <protocols/simple_filters/ShapeComplementarityFilterCreator.hh>
 #include <protocols/simple_filters/SpanTopologyMatchPoseFilterCreator.hh>
 #include <protocols/simple_filters/TMsAACompFilterCreator.hh>
