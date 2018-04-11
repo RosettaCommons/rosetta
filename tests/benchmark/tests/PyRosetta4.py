@@ -12,7 +12,7 @@
 ## @brief  PyRosetta binding self tests
 ## @author Sergey Lyskov
 
-import os, os.path, json, commands, shutil, distutils.dir_util
+import os, os.path, json, shutil, distutils.dir_util
 import codecs
 
 import imp
@@ -39,7 +39,7 @@ def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     result.output = 'Running: {}\n'.format(result.command_line) + result.output + '\nPyRosetta build path: ' + result.pyrosetta_path + '\n'  # Making sure that exact command line used is stored
     r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
     # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-    json.dump({_ResultsKey_:r[_ResultsKey_], _StateKey_:r[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+    with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:r[_ResultsKey_], _StateKey_:r[_StateKey_]}, f, sort_keys=True, indent=2)
 
     return r
 
@@ -58,12 +58,12 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         if os.path.islink(result.pyrosetta_path + '/source/' + f): os.remove(result.pyrosetta_path + '/source/' + f)
     distutils.dir_util.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
 
-    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(result.output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(result.output)
 
     if result.exitcode:
         res_code = _S_build_failed_
         results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
     else:
 
@@ -78,7 +78,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
             output += o
 
         json_file = result.pyrosetta_path + '/build/.test.output/.test.results.json'
-        results = json.load( file(json_file) )
+        with open(json_file) as f: results = json.load(f)
 
         execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=result.pyrosetta_path, python=result.python), return_='tuple')
         extra_files = [f for f in os.listdir(result.pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
@@ -93,7 +93,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         results[_LogKey_] = output
 
         # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
     return results
 

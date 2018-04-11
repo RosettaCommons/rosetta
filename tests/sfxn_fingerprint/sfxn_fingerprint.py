@@ -8,6 +8,8 @@
 
 # For help, run with -h.  Requires Python 2.4+, like the unit tests.
 
+from __future__ import print_function
+
 import sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
@@ -129,7 +131,7 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
     (options, args) = parser.parse_args(args=argv)
 
     options.mini_home = path.abspath( options.mini_home )
-    print 'Using Rosetta source dir at:', options.mini_home
+    print( 'Using Rosetta source dir at:', options.mini_home )
 
 
     if options.digs > 0:
@@ -148,7 +150,7 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
         elif path.isdir( path.join( path.expanduser("~"), "rosetta_database") ):
             options.database = path.join( path.expanduser("~"), "rosetta_database")
         else:
-            print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
+            print( "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database )
             return 1
     # Normalize path before we change directories!
     options.database = path.abspath(options.database)
@@ -157,7 +159,7 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
     # Using argv[] here causes problems when people try to run the script as "python integration.py ..."
     #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
     if not path.isdir("scores"):
-        print "You must run this script from mini/tests/ScoreVersion/"
+        print( "You must run this script from mini/tests/ScoreVersion/" )
         return 2
 
     # If the "ref" directory doesn't exist, compute that;
@@ -218,13 +220,13 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
                     with file(fname, 'w') as f: f.write( data.replace(rosetta_dir, 'ROSETTA_MAIN') )
 
     # Analyze results
-    print
+    print()
 
     #if outdir == "ref":
     if rename_to_ref:
         os.renames('new', 'ref')
 
-        print "Just generated 'ref' results;  run again after making changes."
+        print( "Just generated 'ref' results;  run again after making changes." )
         #if options.daemon:
         #    print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests), 0)
 
@@ -233,7 +235,7 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
 
     else:
         if options.skip_comparison:
-            print 'Skipping comparison phase because command line option "--skip-comparison" was specified...'
+            print( 'Skipping comparison phase because command line option "--skip-comparison" was specified...' )
 
         else:
             diffs = 0
@@ -264,18 +266,18 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
                 results[test] = result
 
                 if result == 0:
-                    print "ok   %s" % test
+                    print( "ok   %s" % test )
                     full_log += "ok   %s\n" % test
                 else:
-                    print msg
+                    print( msg )
                     full_log += full_log_msg
 
                     diffs += 1
 
             if diffs:
-                print "%i test(s) failed.  Use 'diff' to compare results." % diffs
+                print( "%i test(s) failed.  Use 'diff' to compare results." % diffs )
             else:
-                print "All tests passed."
+                print( "All tests passed." )
 
             if options.yaml:
                 f = file(options.yaml, 'w')
@@ -350,11 +352,11 @@ class Worker:
                         #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
                         #print cmd; print
                         if self.host is None:
-                            print "Running %s on localhost ..." % test
+                            print( "Running %s on localhost ..." % test )
                             proc = subprocess.Popen(["bash",  cmd_line_sh], preexec_fn=os.setpgrp)
                         # Can't use cwd=workdir b/c it modifies *local* dir, not remote dir.
                         else:
-                            print "Running %s on %s ..." % (test, self.host)
+                            print( "Running %s on %s ..." % (test, self.host) )
                             # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile
                             # when executing specific remote commands.
                             # This causes problems with e.g. the custom Python install on the Whips.
@@ -370,12 +372,12 @@ class Worker:
                                 if retcode is not None: break
                                 time.sleep(1)
                             if retcode is None:
-                                print "*** Test %s exceeded the timeout and will be killed! [%s]\n" % (test, datetime.datetime.now())
+                                print( "*** Test %s exceeded the timeout and will be killed! [%s]\n" % (test, datetime.datetime.now()) )
                                 #os.kill(proc.pid, signal.SIGTERM)
                                 os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
                         if retcode != 0 and retcode is not None:
                             error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
-                            print error_string,
+                            print( error_string, end='')
 
                             # Writing error_string to a file, so integration test should fail for sure
                             file(path.join(workdir, ".test_did_not_run.log"), 'w').write(error_string)
@@ -383,11 +385,11 @@ class Worker:
 
                     finally: # inner try
                         percent = (100* (self.queue.TotalNumberOfTasks-self.queue.qsize())) / self.queue.TotalNumberOfTasks
-                        print "Finished %s in %i seconds\t [~%s test (%s%%) started, %s in queue]" % (test, time.time() - start, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize())
+                        print( "Finished %s in %i seconds\t [~%s test (%s%%) started, %s in queue]" % (test, time.time() - start, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize()) )
                         self.queue.task_done()
 
                 except Exception, e: # middle try
-                    print e
+                    print(e)
         except Empty: # outer try
             pass # we're done, just return
 

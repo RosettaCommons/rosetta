@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # :noTabs=true:
 
-import os, commands, stat
+import os, subprocess, stat
 import time as time_module
 
 
@@ -24,14 +24,15 @@ class HPC_Exception(Exception):
 def execute(message, commandline, return_=False, until_successes=False, tracer=lambda x:None, terminate_on_failure=True):
     tracer(message);  tracer(commandline)
     while True:
-        (res, output) = commands.getstatusoutput(commandline)
+        #(res, output) = commands.getstatusoutput(commandline)
+        (res, output) = subprocess.getstatusoutput(commandline)
         tracer(output)
 
         if res and until_successes: pass  # Thats right - redability COUNT!
         else: break
 
-        print "Error while executing %s: %s\n" % (message, output)
-        print "Sleeping 60s... then I will retry..."
+        print( "Error while executing %s: %s\n" % (message, output) )
+        print( "Sleeping 60s... then I will retry..." )
         time.sleep(60)
 
     if return_ == 'tuple': return(res, output)
@@ -51,12 +52,12 @@ def Sleep(time_, message, dict_={}):
     for i in range(time_, 0, -1):
         #print "Waiting for a new revision:%s... Sleeping...%d     \r" % (sc.revision, i),
         msg = message.format( **dict(dict_, time_left=i) )
-        print msg,
+        print( msg, end='' )
         len_ = max(len_, len(msg))
         sys.stdout.flush()
         time_module.sleep(1)
 
-    print ' '*len_ + '\r',  # erazing sleep message
+    print( ' '*len_ + '\r',  end='' ) # erazing sleep message
 
 
 # Abstract class for HPC job submission

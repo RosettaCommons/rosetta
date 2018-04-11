@@ -12,7 +12,7 @@
 ## @brief  Performace benchmark test
 ## @author Sergey Lyskov
 
-import os, os.path, json, commands, shutil, stat
+import os, os.path, json, shutil, stat
 
 import imp
 import codecs
@@ -65,7 +65,7 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
         results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output
 
         try:
-            json_results = json.load( file(json_results_file) ) #JSON handles unicode internally
+            with open(json_results_file) as f: json_results = json.load(f) #JSON handles unicode internally
             results[_ResultsKey_] = { _TestsKey_:{} }
 
             for t in json_results:

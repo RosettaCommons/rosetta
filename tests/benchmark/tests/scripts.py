@@ -60,7 +60,7 @@ def run_rosetta_scripts_test(name, rosetta_dir, working_dir, platform, config, h
 
             results = {_StateKey_ : json_results[_StateKey_],  _ResultsKey_ : { _TestsKey_: json_results['tests']},  _LogKey_ : output + '\n\nTest script log:\n' +json_results['log']}
 
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
         return results
 
 
@@ -94,7 +94,7 @@ def run_pyrosetta_test(rosetta_dir, working_dir, platform, config, hpc_driver=No
     if result.exitcode:
         res_code = _S_build_failed_
         results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
     else:
         TR('Creating PyRosetta package...')
@@ -136,7 +136,7 @@ def run_pyrosetta_test(rosetta_dir, working_dir, platform, config, hpc_driver=No
         else: res_code, sub_tests_results = _S_script_failed_, {}
 
         results = {_StateKey_ : res_code,  _ResultsKey_ : { _TestsKey_ : sub_tests_results },  _LogKey_ : output }
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
         # remove package and virtual-environament dir so they do not use space in Benchmark database
         if not debug:

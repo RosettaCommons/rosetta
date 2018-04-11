@@ -49,8 +49,8 @@ tests = dict(
 # def rollover():
 #     pass
 
-def get_tests():
-    return tests.keys()
+# def get_tests():
+#     return tests.keys()
 
 
 def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
@@ -81,7 +81,8 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     # re-running builds in case we got error - so we can get nice error message
     if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format( **vars() ) ), return_='tuple')
 
-    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write( u'Running: {}\n{}\n'.format(command_line, output) )
+    #codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write( u'Running: {}\n{}\n'.format(command_line, output) )
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write( 'Running: {}\n{}\n'.format(command_line, output) )
 
     res_code = _S_failed_ if res else _S_passed_
 
@@ -98,7 +99,7 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
 
     # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-    json.dump({_ResultsKey_:r[_ResultsKey_], _StateKey_:r[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+    with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:r[_ResultsKey_], _StateKey_:r[_StateKey_]}, f, sort_keys=True, indent=2)
 
     return r
 

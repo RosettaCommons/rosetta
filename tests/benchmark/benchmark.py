@@ -12,16 +12,16 @@
 ## @brief  Run arbitrary Rosetta testing script
 ## @author Sergey Lyskov
 
+from __future__ import print_function
 
-import os, os.path, sys, imp, shutil, json, platform, commands
+import os, os.path, sys, imp, shutil, json, platform
 import codecs
 
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 import argparse
 
-from tests import *  # Tests states and key names
+from tests import *  # execute, Tests states and key names
 from hpc_drivers import *
-
 
 # Calculating value of Platform dict
 Platform = {}
@@ -36,8 +36,6 @@ else:                                Platform['os'] = 'unknown'
 Platform['compiler'] = 'gcc' if Platform['os'] == 'linux' else 'clang'
 
 Platform['python'] = sys.executable
-
-def print_(x): print x
 
 
 def main(args):
@@ -78,10 +76,10 @@ def main(args):
     Options = parser.parse_args(args=args[1:])
 
     if any( [a.startswith('-') for a in Options.args] ) :
-        print '\nWARNING WARNING WARNING WARNING\n'
-        print '\tInterpreting', ' '.join(["'"+a+"'" for a in Options.args if a.startswith('-')]), 'as test name(s), rather than as option(s).'
-        print "\tTry moving it before any test name, if that's not what you want."
-        print '\nWARNING WARNING WARNING WARNING\n'
+        print( '\nWARNING WARNING WARNING WARNING\n' )
+        print( '\tInterpreting', ' '.join(["'"+a+"'" for a in Options.args if a.startswith('-')]), 'as test name(s), rather than as option(s).'  )
+        print( "\tTry moving it before any test name, if that's not what you want."  )
+        print( '\nWARNING WARNING WARNING WARNING\n'  )
 
     if Options.suffix: Options.suffix = '.' + Options.suffix
 
@@ -90,14 +88,15 @@ def main(args):
     #Platform['options'] = json.loads( Options.options ) if Options.options else {}
 
     if Options.memory: memory = Options.memory
-    elif Platform['os'] in ['linux', 'ubuntu']: memory = int(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
-    elif Platform['os'] == 'mac':   memory = int(commands.getoutput('sysctl -a | grep hw.memsize').split()[1]) / 1024 / 1024 / 1024
+    elif Platform['os'] in ['linux', 'ubuntu']: memory = int( execute('Getting memory info...', 'free -m', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split('\n')[1].split()[1]) / 1024
+    elif Platform['os'] == 'mac':   memory = int( execute('Getting memory info...', 'sysctl -a | grep hw.memsize', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split()[1]) / 1024 / 1024 / 1024
 
     Platform['compiler'] = Options.compiler
 
     if os.path.isfile(Options.config):
         Config = ConfigParser( dict(here=os.path.abspath('./') ) )
-        Config.readfp( file(Options.config) )
+
+        with open(Options.config) as f: Config.readfp(f)
 
     else:
         Config = ConfigParser()
@@ -151,26 +150,26 @@ def main(args):
 
             test = test_name
 
-        print 'Loading test from:', file_name
+        print( f'Loading test from: {file_name}' )
         test_suite = imp.load_source('test_suite', file_name)
 
         if Options.compare:
             working_dir_1 = os.path.abspath('./results/' + test + '.' + Options.compare[0])
-            res_1 = json.load( file(working_dir_1 + '/output.results.json') )["results"]
+            res_1 = json.load( open(working_dir_1 + '/output.results.json') )["results"]
 
             if Options.compare[1] == 'None': res_2, working_dir_2 = None, None
             else:
                 working_dir_2 = os.path.abspath('./results/' + test + '.' + Options.compare[1])
-                res_2 = json.load( file(working_dir_2 + '/output.results.json') )["results"]
+                res_2 = json.load( open(working_dir_2 + '/output.results.json') )["results"]
 
             res = test_suite.compare(test, res_1, working_dir_1, res_2, working_dir_2)
 
-            with file(working_dir_1+'/output.compare.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
+            with open(working_dir_1+'/output.compare.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
 
-            print('Comparison finished with results:\n{}'.format( json.dumps(res, sort_keys=True, indent=2) ) )
+            print( 'Comparison finished with results:\n{}'.format( json.dumps(res, sort_keys=True, indent=2) ) )
 
             if 'summary' in res: print('Summary section:\n{}'.format( json.dumps(res['summary'], sort_keys=True, indent=2) ) )
-            print 'Output this comparison saved to {0}/output.compare.json'.format(working_dir_1)
+            print( 'Output this comparison saved to {0}/output.compare.json'.format(working_dir_1) )
 
 
         else:
@@ -187,16 +186,16 @@ def main(args):
             else:
                 res = test_suite.run(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), config=config, hpc_driver=hpc_driver, verbose=True, debug=Options.debug)
 
-            if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
-            else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))
+            if res[_StateKey_] not in _S_Values_: print( 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_]) )
+            else: print( 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2)) )
 
-            print 'Output and log of this test saved to {0}/output.results.json and {0}/output.log'.format(working_dir)
+            print( 'Output and log of this test saved to {0}/output.results.json and {0}/output.log'.format(working_dir) )
 
             # Caution! Some of the strings in the result object may be unicode.
             with codecs.open(working_dir+'/output.log'.format(test), 'w', encoding='utf-8', errors='replace') as f: # Be robust to unicode in the log messages
                     f.write(res[_LogKey_])
             # Json by default serializes to an ascii-encoded format
-            with file(working_dir+'/output.results.json', 'w') as f: json.dump(res, f, sort_keys=True, encoding="utf-8", indent=2)
+            with open(working_dir+'/output.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
 
 
 if __name__ == "__main__": main(sys.argv)

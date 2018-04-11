@@ -61,7 +61,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
             # if os.path.isdir(files_location + '/' + d):
             #     shutil.copytree(os.path.abspath(files_location + '/' + d), working_dir + '/' + d)
 
-        tests = json.load( file(json_results_file) ) #JSON handles unicode internally
+        with open(json_results_file) as f: tests = json.load(f) #JSON handles unicode internally
 
         for t in tests: tests[t][_LogKey_]   = ''  #tests[t][_StateKey_] = _S_queued_for_comparison_
 

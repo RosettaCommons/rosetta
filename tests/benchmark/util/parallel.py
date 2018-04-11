@@ -15,7 +15,7 @@ from __future__ import print_function
 
 import sys, signal
 
-import os, commands, re, subprocess, time, json
+import os, re, subprocess, time, json
 from os import path
 from optparse import OptionParser
 

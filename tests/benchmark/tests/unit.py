@@ -12,7 +12,7 @@
 ## @brief  Rosetta/PyRosetta unit tests
 ## @author Sergey Lyskov
 
-import os, json, commands
+import os, json, functools
 import codecs
 
 import imp
@@ -86,7 +86,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
             results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including run.py output
             return results
 
-    json_results = json.load( file(json_results_file) ) #JSON handles unicode internally
+    with open(json_results_file) as f: json_results = json.load(f)  # JSON handles unicode internally
 
     #r = {}
     # for lib in json_results:
@@ -94,11 +94,11 @@ def run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     #     # u'∙'
     #     for t in json_results[lib]['ALL_TESTS']: r[ key.replace('.', '_') + '_' + t.replace(':', '_')] = _S_failed_ if t in json_results[lib]['FAILED_TESTS'] else _S_passed_
 
-    results[_StateKey_]   = reduce(lambda a, b: _S_passed_ if a==_S_passed_ and b==_S_passed_ else _S_failed_, [ json_results['tests'][t][_StateKey_] for t in json_results['tests'] ] )
+    results[_StateKey_]   = functools.reduce(lambda a, b: _S_passed_ if a==_S_passed_ and b==_S_passed_ else _S_failed_, [ json_results['tests'][t][_StateKey_] for t in json_results['tests'] ] )
     results[_LogKey_]     = output  # ommiting compilation log and only including unit tests output
     results[_ResultsKey_] = json_results
 
-    with file(working_dir+'/unit.json', 'w') as f: json.dump(json_results, f, sort_keys=True, indent=2)
+    with open(working_dir+'/unit.json', 'w') as f: json.dump(json_results, f, sort_keys=True, indent=2)
 
     return results
 

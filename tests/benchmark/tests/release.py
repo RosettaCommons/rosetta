@@ -12,7 +12,7 @@
 ## @brief  Rosetta and PyRosetta release scripts
 ## @author Sergey Lyskov
 
-import os, os.path, json, commands, shutil, tarfile, distutils.dir_util, datetime
+import os, os.path, json, shutil, tarfile, distutils.dir_util, datetime
 import codecs
 
 import imp
@@ -60,7 +60,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
     files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
     for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
     if files:
-        with file(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=files[-1]))
+        with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=files[-1]))
 
 
     # Creating git repository with binaries, only for named branches
@@ -179,14 +179,14 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
     for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
     if files:
-        with file(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr='rosetta.source', link=files[-1]))
+        with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr='rosetta.source', link=files[-1]))
 
     execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
 
     execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
     results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : '' }
-    json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+    with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
 
@@ -256,7 +256,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
     for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
     if files:
-        with file(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr='rosetta.binary', link=files[-1]))
+        with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr='rosetta.binary', link=files[-1]))
 
     execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
 
@@ -266,7 +266,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     #distutils.dir_util.copy_tree(source, prefix, update=False)
 
     results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : '' }
-    json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+    with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
 
@@ -313,12 +313,12 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
         if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
     distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
 
-    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(result.output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(result.output)
 
     if result.exitcode:
         res_code = _S_build_failed_
         results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
     else:
 
@@ -330,7 +330,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
         else: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=pyrosetta_path, python=result.python, jobs=jobs, gui_flag=gui_flag), return_='tuple')
 
         json_file = pyrosetta_path + '/build/.test.output/.test.results.json'
-        results = json.load( file(json_file) )
+        with open(json_file) as f: results = json.load(f)
 
         execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=pyrosetta_path, python=result.python), return_='tuple')
         extra_files = [f for f in os.listdir(pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
@@ -346,7 +346,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
         if results[_StateKey_] == 'failed':
             # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-            json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
         else:
 
             TR('Running PyRosetta4 release test: Build and Unit tests passged! Now creating package...')
@@ -361,7 +361,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
             res_code = _S_passed_
             results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-            json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
 
@@ -395,12 +395,12 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
         if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
     distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
 
-    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(output)
 
     if res:
         res_code = _S_build_failed_
         results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
     else:
         documentation_dir = os.path.abspath(working_dir+'/documentation')
@@ -410,7 +410,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
         if res:
             res_code = _S_build_failed_
             results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output+output2 }
-            json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
         else:
             release_path = '{release_dir}/PyRosetta4/documentation/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(release_dir=config['release_root'], branch=config['branch'], os=platform['os'], python_version=platform['python'][:3].replace('.', ''), **vars())
@@ -420,7 +420,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
 
             res_code = _S_passed_
             results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output+output2 }
-            json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
 
@@ -438,12 +438,12 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
     if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
     else: res, output = execute('Compiling...', command_line, return_='tuple', add_message_and_command_line_to_output=True)
 
-    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(output)
 
     if res:
         res_code = _S_build_failed_
         results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
     else:
         does_not_require_database = ''.split()  # bundle_gui
@@ -474,7 +474,7 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
 
         res_code = _S_passed_
         results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
 
@@ -502,4 +502,4 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
     elif test =='ui': return ui_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    else: raise BenchmarkError('Unknow PyRosetta test: {}!'.format(test))
+    else: raise BenchmarkError('Unknow release test: {}!'.format(test))

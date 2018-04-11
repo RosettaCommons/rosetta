@@ -12,7 +12,7 @@
 ## @brief  Benchmark tests which are intended for housekeeping purposes
 ## @author Rocco Moretti (rmorettiase@gmail.com)
 
-import os, os.path, json, commands, shutil, stat, glob
+import os, os.path, json, shutil, stat, glob
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
@@ -160,4 +160,3 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose=Fa
     '''
     if test == 'documentation': return run_documentation_update(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknown maintenace test: {}!'.format(test))
-

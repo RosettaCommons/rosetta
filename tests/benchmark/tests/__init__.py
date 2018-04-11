@@ -12,14 +12,14 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-
-import codecs, commands, urllib2, imp
-import  platform as  platform_module
+import sys, codecs, urllib.request, imp, subprocess  # urllib.error, urllib.parse,
+import platform as  platform_module
 
 # ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
 
-__all__ = ['_S_Values_', '_S_draft_', '_S_queued_', '_S_running_', '_S_passed_', '_S_failed_', '_S_build_failed_', '_S_script_failed_',
+__all__ = ['execute',
+           '_S_Values_', '_S_draft_', '_S_queued_', '_S_running_', '_S_passed_', '_S_failed_', '_S_build_failed_', '_S_script_failed_',
            '_StateKey_', '_ResultsKey_', '_LogKey_'
 ]
 
@@ -68,14 +68,14 @@ class NT:  # named tuple
 
 
 def Tracer(verbose=False):
-    def print_(x): print x
-    return print_ if verbose else lambda x: None
+    return print if verbose else lambda x: None
 
 
 def to_unicode(b):
     ''' Conver str to unicode and handle the errors. If argument is already in unicode - do nothing
     '''
-    return b if type(b) == unicode else unicode(b, 'utf-8', errors='replace')
+    #return b if type(b) == unicode else unicode(b, 'utf-8', errors='replace')
+    return b if type(b) == str else str(b, 'utf-8', errors='backslashreplace')
 
 
 def to_bytes(u):
@@ -84,6 +84,7 @@ def to_bytes(u):
     return u if type(u) == str else u.encode('utf-8', errors='replcae')
 
 
+''' Python-2 version
 def execute(message, commandline, return_=False, until_successes=False, terminate_on_failure=True, add_message_and_command_line_to_output=False):
     message, commandline = to_unicode(message), to_unicode(commandline)
 
@@ -102,8 +103,8 @@ def execute(message, commandline, return_=False, until_successes=False, terminat
         if res and until_successes: pass  # Thats right - redability COUNT!
         else: break
 
-        print "Error while executing %s: %s\n" % (message, output)
-        print "Sleeping 60s... then I will retry..."
+        print( "Error while executing %s: %s\n" % (message, output) )
+        print( "Sleeping 60s... then I will retry..." )
         time.sleep(60)
 
     if add_message_and_command_line_to_output: output = message + '\nCommand line: ' + commandline + '\n' + output
@@ -114,11 +115,47 @@ def execute(message, commandline, return_=False, until_successes=False, terminat
         TR("\nEncounter error while executing: " + commandline)
         if return_==True: return res
         else:
-            print("\nEncounter error while executing: " + commandline + '\n' + output);
+            print("\nEncounter error while executing: " + commandline + '\n' + output)
             raise BenchmarkError("\nEncounter error while executing: " + commandline + '\n' + output)
 
     if return_ == 'output': return output
     else: return res
+'''
+
+def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False, silence_output_on_errors=False, add_message_and_command_line_to_output=False):
+    if not silent: print(message);  print(command_line); sys.stdout.flush();
+    while True:
+
+        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, errors = p.communicate()
+
+        output = output + errors
+
+        output = output.decode(encoding='utf-8', errors='backslashreplace')
+
+        exit_code = p.returncode
+
+        if (exit_code  and  not silence_output_on_errors) or  not (silent or silence_output): print(output); sys.stdout.flush();
+
+        if exit_code and until_successes: pass  # Thats right - redability COUNT!
+        else: break
+
+        print( "Error while executing {}: {}\n".format(message, output) )
+        print("Sleeping 60s... then I will retry...")
+        sys.stdout.flush();
+        time.sleep(60)
+
+    if add_message_and_command_line_to_output: output = message + '\nCommand line: ' + command_line + '\n' + output
+
+    if return_ == 'tuple': return(exit_code, output)
+
+    if exit_code and terminate_on_failure:
+        print("\nEncounter error while executing: " + command_line)
+        if return_==True: return True
+        else: print("\nEncounter error while executing: " + command_line + '\n' + output); sys.exit(1)
+
+    if return_ == 'output': return output
+    else: return exit_code
 
 
 def parallel_execute(name, jobs, rosetta_dir, working_dir, cpu_count, time=16):
@@ -291,8 +328,8 @@ def get_path_to_python_executable(platform, config):
     python_sources = {
         '2.7' : 'https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz',
 
-        '3.5' : 'https://www.python.org/ftp/python/3.5.4/Python-3.5.4.tgz',
-        '3.6' : 'https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tgz',
+        '3.5' : 'https://www.python.org/ftp/python/3.5.5/Python-3.5.5.tgz',
+        '3.6' : 'https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -347,8 +384,9 @@ def get_path_to_python_executable(platform, config):
         build_dir = archive.rpartition('.tgz')[0]
         if os.path.isdir(build_dir): shutil.rmtree(build_dir)
 
-        with open(archive, 'w') as f:
-            response = urllib2.urlopen(url)
+        with open(archive, 'wb') as f:
+            #response = urllib2.urlopen(url)
+            response = urllib.request.urlopen(url)
             f.write( response.read() )
 
         execute('Unpacking {}'.format(archive), 'cd {build_prefix} && tar -xvzf {archive}'.format(**vars()) )

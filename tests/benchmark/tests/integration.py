@@ -14,7 +14,7 @@
 ## @author Rocco Moretti (Valgrind additions)
 ## @author Jared Adolf-Bryfogle( Demos/Tutorials additions)
 
-import os, os.path, shutil, re, commands, fnmatch
+import os, os.path, shutil, re, fnmatch
 from collections import defaultdict
 import json
 import codecs
@@ -25,24 +25,6 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 _api_version_ = '1.0'
 
 ignore_files = 'command.sh command.mpi.sh observers'.split()
-
-#tests = ['i']
-
-_TestSuite_ = True  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
-
-
-def set_up(): pass
-
-
-def tear_down(): pass
-
-
-#def rollover():
-#    a_commands.getoutput("cd main/tests/integration && ./accept-changes.sh" )
-
-
-def get_tests():
-    raise BenchmarkError('Integration Test script does not support get_tests!')
 
 
 def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
@@ -275,7 +257,7 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, config, hpc_dri
                 log = "Test script did not run correctly.\n\n"
             json_results['summary']['failed_tests'].append(test)
             if os.path.isfile(files_location+'/'+test+'/valgrind.out'):
-                log += codecs.open(files_location+'/'+test+'/valgrind.out', 'r', encoding='utf-8', errors='replace').read()
+                log += codecs.open(files_location+'/'+test+'/valgrind.out', 'r', encoding='utf-8', errors='backslashreplace').read()
         else:
             state = _S_passed_
         json_results['tests'][test] = {_StateKey_: state, _LogKey_: log }
@@ -380,7 +362,7 @@ def gather_pass_fail_results(files_path):
             log_files.sort(key=sort_natural)
             out_log = ""
             for log in log_files:
-                FILE = codecs.open(log, 'r', encoding='utf-8', errors='replace') # Be robust to unicode in the log file
+                FILE = codecs.open(log, 'r', encoding='utf-8', errors='backslashreplace') # Be robust to unicode in the log file
                 lines = FILE.readlines()
                 if lines:
                     out_log += "\n\nLogFile "+os.path.basename(log)+"\n"
