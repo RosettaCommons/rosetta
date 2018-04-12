@@ -258,12 +258,14 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
         o = execute('Getting list of branches where HEAD is present...', 'cd {} && git branch --contains HEAD && git branch -r --contains HEAD'.format(rosetta_dir), return_='output')
         branches = set()
         for line in o.split('\n'):
-            br = line.replace('*', '').split()[0]
-            if br.startswith('origin/'):
-                br = br[len('origin/'):]
-                #if br != 'master': branches.add(br)
-                branches.add(br)
-            #if br != 'HEAD': branches.add(br)
+            br = line.replace('*', '').split()
+            if br:
+                br = br[0]
+                if br.startswith('origin/'):
+                    br = br[len('origin/'):]
+                    #if br != 'master': branches.add(br)
+                    branches.add(br)
+                #if br != 'HEAD': branches.add(br)
 
         if 'master' in branches: branches = set( ['master'] )
 

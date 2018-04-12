@@ -152,7 +152,9 @@ def execute(message, command_line, return_='status', until_successes=False, term
     if exit_code and terminate_on_failure:
         print("\nEncounter error while executing: " + command_line)
         if return_==True: return True
-        else: print("\nEncounter error while executing: " + command_line + '\n' + output); sys.exit(1)
+        else:
+            print('\nEncounter error while executing: ' + command_line + '\n' + output);
+            raise BenchmarkError('\nEncounter error while executing: ' + command_line + '\n' + output)
 
     if return_ == 'output': return output
     else: return exit_code
