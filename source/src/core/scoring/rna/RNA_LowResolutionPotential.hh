@@ -356,7 +356,7 @@ private: // data
 	Real const base_stack_radius2_ = 16.0; // must always be the square
 	Distance const base_stack_z_fade_zone_ = 0.5;
 	Distance const base_stack_rho_fade_zone_ = 0.5;
-	
+
 	Real const axis_bin_width_ = 0.2;
 	Size const axis_num_bins_ = 11;
 
