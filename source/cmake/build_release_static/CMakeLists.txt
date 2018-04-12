@@ -27,38 +27,39 @@ ADD_DEFINITIONS(-DNDEBUG)
 ### THIS ORDER IS VERY IMPORTANT -> NEEDS TO BE REVERSE ORDER OF DEPENDENCY GRAPH
 SET(LINK_STATIC_LIBS 
     ${CMAKE_CURRENT_SOURCE_DIR}/libdevel.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.8.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.7.a
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.6.a
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_e.5.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_e.6.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_d.6.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_c.6.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.6.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.6.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_h.5.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_g.5.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_f.5.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_e.5.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_d.5.a
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_c.5.a 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_c.5.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.5.a
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.5.a    
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_h.4.a   
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_g.4.a    
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_f.4.a    
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_e.4.a    
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_d.4.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_c.4.a    
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.4.a    
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.4.a           
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.3.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.2.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.2.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.1.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.5.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.4.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.3.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.2.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.1.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libbasic.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libnumeric.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libutility.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libObjexxFCL.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a  
-    ${CMAKE_CURRENT_SOURCE_DIR}/libcifparse.a  
-    ${CMAKE_CURRENT_SOURCE_DIR}/liblibxml2.a  
-    -lz) 
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.5.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.4.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.3.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_b.2.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_a.2.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.1.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.5.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.4.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.3.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.2.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcore.1.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libbasic.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libnumeric.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libutility.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libObjexxFCL.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libcifparse.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/liblibxml2.a
+    -lz)
 
 # trailing static needed so mpicc actually uses static ompi libs
 #SET(TRAILING_STATIC "-Wl,-Bstatic -lgcc_eh")
@@ -93,11 +94,10 @@ FOREACH(BINARY ${BINARIES})
 	SET_TARGET_PROPERTIES(${BINARY_NAME} PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 	ADD_DEPENDENCIES(${BINARY_NAME} ObjexxFCL cifparse libxml2 utility numeric
 		basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
-		protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4
-		protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4
-		protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5
-		protocols.6 protocols.7 devel
-	)
+		protocols_b.2 protocols.3 protocols.4 protocols_a.5 protocols_b.5 protocols_c.5
+		protocols_d.5 protocols_e.5 protocols_f.5 protocols_g.5 protocols_h.5
+		protocols_a.6 protocols_b.6 protocols_c.6 protocols_d.6 protocols_e.6
+		protocols.7 protocols.8 devel)
 ENDFOREACH( BINARY )
 
 # TEMPLATE FOR ^^

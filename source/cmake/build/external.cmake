@@ -139,7 +139,7 @@ if( ${COMPILER} STREQUAL "gcc" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*4[.]
   set_target_properties(cppdb PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -fno-strict-aliasing -ldl" )
   set_target_properties(cppdb PROPERTIES LINK_FLAGS "${LINK_FLAGS} -Wl,--no-as-needed -ldl" )
 # "gcc, 5.x, 6.x"
-elseif( ${COMPILER} STREQUAL "gcc" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*[56][.]([0-9])*[.]([0-9])*" )
+elseif( ${COMPILER} STREQUAL "gcc" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*[567][.]([0-9])*[.]([0-9])*" )
   set_target_properties(cppdb PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -fno-strict-aliasing -ldl" )
   set_target_properties(cppdb PROPERTIES LINK_FLAGS "${LINK_FLAGS} -Wl,--no-as-needed -ldl" )
 else()

@@ -4,7 +4,7 @@ INCLUDE(../build/external_libraries.cmake)
 FOREACH(LIBRARY ${EXTERNAL_LIBRARIES})
 	INCLUDE(../build/external_${LIBRARY}.cmake)
 	ADD_LIBRARY(${LIBRARY} ${LINK_TYPE} ${${LIBRARY}_files})
-	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_DEFINITIONS ${${LIBRARY}_defines})
+	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_DEFINITIONS "${${LIBRARY}_defines}")
 	# Because CMAKE can't actually use CMAKE-formated lists...
 	STRING( REPLACE ";" " " linkflags_string "${${LIBRARY}_linkflags}" )
 	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES LINK_FLAGS "${linkflags_string}")
