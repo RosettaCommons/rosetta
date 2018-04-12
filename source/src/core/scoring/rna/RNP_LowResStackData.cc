@@ -67,11 +67,7 @@ namespace scoring {
 namespace rna {
 
 /// c-tor
-RNP_LowResStackData::RNP_LowResStackData():
-	max_aa_( 20 ),
-	max_base_( 4 ),
-	num_xbins_( 10 ),
-	num_ybins_( 10 )
+RNP_LowResStackData::RNP_LowResStackData()
 {
 
 	// initialize the first time that evaluate is called

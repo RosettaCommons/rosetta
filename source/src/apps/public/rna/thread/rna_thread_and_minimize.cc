@@ -255,11 +255,11 @@ my_main( void* )
 
 	core::pose::rna::virtualize_5prime_phosphates( pose );
 
-	std::string outfile( "threaded.pdb" );
-	if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ]();
+	//std::string outfile( "threaded.pdb" );
+	//if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ]();
 
-	std::cout << "Outputting: " << outfile << std::endl;
-	pose.dump_pdb( outfile );
+	//std::cout << "Outputting: " << outfile << std::endl;
+	//pose.dump_pdb( outfile );
 
 	exit( 0 );
 }

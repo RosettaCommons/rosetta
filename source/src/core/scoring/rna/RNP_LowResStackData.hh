@@ -65,10 +65,10 @@ public:
 
 private: // data
 
-	Size const max_aa_;
-	Size const max_base_;
-	Size const num_xbins_;
-	Size const num_ybins_;
+	Size const max_aa_ = 20;
+	Size const max_base_ = 4;
+	Size const num_xbins_ = 10;
+	Size const num_ybins_ = 10;
 
 	ObjexxFCL::FArray4D < Real > rnp_stack_xy_;
 

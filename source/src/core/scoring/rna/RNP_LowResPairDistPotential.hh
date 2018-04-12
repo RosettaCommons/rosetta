@@ -67,9 +67,9 @@ public:
 
 private: // data
 
-	Size const max_aa_;
-	Size const max_base_;
-	Size const num_dbins_;
+	Size const max_aa_ = 25;
+	Size const max_base_ = 8;
+	Size const num_dbins_ = 10;
 	bool use_actual_centroid_;
 	utility::vector1< std::string > RNA_atoms_;
 	utility::vector1< std::string > protein_atoms_;

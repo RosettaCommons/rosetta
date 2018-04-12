@@ -98,58 +98,7 @@ using namespace ObjexxFCL::format;
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 RNA_LowResolutionPotential::RNA_LowResolutionPotential():
-	parent( methods::EnergyMethodCreatorOP( new RNA_LowResolutionPotentialCreator ) ),
-	////////////////////////////////////////////
-	rna_basepair_radius_cutoff_( 8.0 ),
-	rna_basepair_stagger_cutoff_( 3.0 ),
-	rna_basepair_radius_cutoff2_( rna_basepair_radius_cutoff_ * rna_basepair_radius_cutoff_ ), // 64.0
-	basepair_xy_bin_width_( 2.0 ),
-	basepair_xy_num_bins_( 10 ),
-	basepair_xy_table_size_( 10 ),
-	basepair_xy_z_fade_zone_( 0.5 ),
-	////////////////////////////////////////////
-	base_stack_min_height_( 2.4 ),
-	base_stack_max_height_( 6.0 ),
-	base_stack_radius_( 4.0 ),
-	base_stack_radius2_( base_stack_radius_ * base_stack_radius_ ),
-	base_stack_z_fade_zone_( 0.5 ),
-	base_stack_rho_fade_zone_( 0.5 ),
-	////////////////////////////////////////////
-	axis_bin_width_( 0.2 ),
-	axis_num_bins_ ( 11  ),
-	////////////////////////////////////////////
-	stagger_num_bins_( 11 ),
-	stagger_bin_width_( 0.4 ),
-	stagger_distance_cutoff_( 2.0 ),
-	////////////////////////////////////////////
-	base_backbone_bin_width_( 1.0 ),
-	base_backbone_num_bins_( 16 ),
-	base_backbone_table_size_( 8 ),
-	base_backbone_distance_cutoff_ ( 12.0 ),
-	base_backbone_z_cutoff_ ( 2.0 ),
-	base_backbone_rho_cutoff_( 8.0 ),
-	base_backbone_atom_dist_cutoff_( 4.0 ),
-	base_backbone_z_fade_zone_( 0.25 ),
-	base_backbone_rho_fade_zone_( 0.5 ),
-	base_backbone_check_atom_neighbor_( false ), /*doesn't seem compatible with deriv*/
-	////////////////////////////////////////////
-	backbone_backbone_bin_width_( 0.25 ),
-	backbone_backbone_distance_cutoff_ ( 6.0 ),
-	backbone_backbone_num_bins_ ( 20 ),
-	////////////////////////////////////////////
-	rna_repulsive_max_penalty_( 8.0 ),
-	rna_repulsive_screen_scale_( 2.5 ),
-	rna_repulsive_distance_cutoff_( 8.0 ),
-	rna_repulse_all_( true ),
-	num_RNA_base_pair_orientations_( 2 ), /*parallel/anti*/
-	num_RNA_backbone_oxygen_atoms_( 6 ), /*backbone oxygens*/
-	num_RNA_res_types_( 4 ), /*a/c/g/u*/
-	o2prime_index_within_special_backbone_atoms_( 6 ),
-	o2p_index_within_special_backbone_atoms_( 2 ),
-	interpolate_( true ), //Turn this off to match Rosetta++, up to bug fixes; turn it on to allow correct derivative calculation.
-	fade_( true ), //Turn this off to match Rosetta++; needed to prevent hard boundaries in base pairing + stacking potentials.
-	rna_verbose_( false ),
-	more_precise_base_pair_classification_( false )
+	parent( methods::EnergyMethodCreatorOP( new RNA_LowResolutionPotentialCreator ) )
 {
 	// These don't *have* to be hard-wired numbers.
 	// if we're more clever about the file read-in.

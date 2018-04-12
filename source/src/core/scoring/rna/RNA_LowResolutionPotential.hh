@@ -342,62 +342,62 @@ private: // data
 	ObjexxFCL::FArray1D < Real > zeta_sugar_cutoff_precise_;
 
 	//Some parameters for scoring.
-	Distance const rna_basepair_radius_cutoff_;
-	Distance const rna_basepair_stagger_cutoff_;
-	Real const rna_basepair_radius_cutoff2_;
-	Distance const basepair_xy_bin_width_;
-	Size const basepair_xy_num_bins_;
-	Size const basepair_xy_table_size_;
-	Distance const basepair_xy_z_fade_zone_;
+	Distance const rna_basepair_radius_cutoff_ = 8.0;
+	Distance const rna_basepair_stagger_cutoff_ = 3.0;
+	Real const rna_basepair_radius_cutoff2_ = 64.0; // must always be the square
+	Distance const basepair_xy_bin_width_ = 2.0;
+	Size const basepair_xy_num_bins_ = 10;
+	Size const basepair_xy_table_size_ = 10;
+	Distance const basepair_xy_z_fade_zone_ = 0.5;
 
-	Distance const base_stack_min_height_;
-	Distance const base_stack_max_height_;
-	Distance const base_stack_radius_;
-	Real const base_stack_radius2_;
-	Distance const base_stack_z_fade_zone_;
-	Distance const base_stack_rho_fade_zone_;
+	Distance const base_stack_min_height_ = 2.4;
+	Distance const base_stack_max_height_ = 6.0;
+	Distance const base_stack_radius_ = 4.0;
+	Real const base_stack_radius2_ = 16.0; // must always be the square
+	Distance const base_stack_z_fade_zone_ = 0.5;
+	Distance const base_stack_rho_fade_zone_ = 0.5;
+	
+	Real const axis_bin_width_ = 0.2;
+	Size const axis_num_bins_ = 11;
 
-	Real const axis_bin_width_;
-	Size const axis_num_bins_;
+	Size const stagger_num_bins_ = 11;
+	Distance const stagger_bin_width_ = 0.4;
+	Distance const stagger_distance_cutoff_ = 2.0;
 
-	Size const stagger_num_bins_;
-	Distance const stagger_bin_width_;
-	Distance const stagger_distance_cutoff_;
+	Distance const base_backbone_bin_width_ = 1.0;
+	Size const base_backbone_num_bins_ = 16;
+	Size const base_backbone_table_size_ = 8;
 
-	Distance const base_backbone_bin_width_;
-	Size const base_backbone_num_bins_;
-	Size const base_backbone_table_size_;
+	Distance const base_backbone_distance_cutoff_ = 12.0;
+	Distance const base_backbone_z_cutoff_ = 2.0;
+	Distance const base_backbone_rho_cutoff_ = 8.0;
+	Distance const base_backbone_atom_dist_cutoff_ = 4.0;
+	Distance const base_backbone_z_fade_zone_ = 0.25;
+	Distance const base_backbone_rho_fade_zone_ = 0.5;
+	bool const base_backbone_check_atom_neighbor_ = false;
 
-	Distance const base_backbone_distance_cutoff_;
-	Distance const base_backbone_z_cutoff_;
-	Distance const base_backbone_rho_cutoff_;
-	Distance const base_backbone_atom_dist_cutoff_;
-	Distance const base_backbone_z_fade_zone_;
-	Distance const base_backbone_rho_fade_zone_;
-	bool const base_backbone_check_atom_neighbor_;
+	Real const backbone_backbone_bin_width_ = 0.25;
+	Real const backbone_backbone_distance_cutoff_ = 6.0;
+	Size const backbone_backbone_num_bins_ = 20;
 
-	Real const backbone_backbone_bin_width_;
-	Real const backbone_backbone_distance_cutoff_;
-	Size const backbone_backbone_num_bins_;
+	Real const rna_repulsive_max_penalty_ = 8.0;
+	Real const rna_repulsive_screen_scale_ = 2.5;
+	Real const rna_repulsive_distance_cutoff_ = 8.0;
+	bool const rna_repulse_all_ = true; // oh my god why was this a Real?
 
-	Real const rna_repulsive_max_penalty_;
-	Real const rna_repulsive_screen_scale_;
-	Real const rna_repulsive_distance_cutoff_;
-	Real const rna_repulse_all_;
+	Size const num_RNA_base_pair_orientations_ = 2; // parallel/anti
+	Size const num_RNA_backbone_oxygen_atoms_ = 6; // backbone oxygens
+	Size const num_RNA_res_types_ = 4; // acgu
 
-	Size const num_RNA_base_pair_orientations_;
-	Size const num_RNA_backbone_oxygen_atoms_;
-	Size const num_RNA_res_types_;
+	Size o2prime_index_within_special_backbone_atoms_ = 6;
+	Size o2p_index_within_special_backbone_atoms_ = 2;
 
-	Size o2prime_index_within_special_backbone_atoms_;
-	Size o2p_index_within_special_backbone_atoms_;
+	bool const interpolate_ = true; //Turn this off to match Rosetta++, up to bug fixes; turn it on to allow correct derivative calculation.
+	bool const fade_ = true; //Turn this off to match Rosetta++; needed to prevent hard boundaries in base pairing + stacking potentials.
 
-	bool const interpolate_;
-	bool const fade_;
+	bool const rna_verbose_ = false;
 
-	bool const rna_verbose_;
-
-	bool more_precise_base_pair_classification_;
+	bool more_precise_base_pair_classification_ = false;
 
 public:
 	// This must be public for PyRosetta.  It's quite silly.

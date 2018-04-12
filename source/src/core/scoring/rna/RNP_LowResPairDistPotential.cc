@@ -67,10 +67,7 @@ namespace scoring {
 namespace rna {
 
 /// c-tor
-RNP_LowResPairDistPotential::RNP_LowResPairDistPotential():
-	max_aa_( 25 ),
-	max_base_( 8 ),
-	num_dbins_( 10 )
+RNP_LowResPairDistPotential::RNP_LowResPairDistPotential()
 {
 
 	rnp_pair_dist_potential_.dimension( num_dbins_, max_base_, max_aa_ );
@@ -88,6 +85,7 @@ RNP_LowResPairDistPotential::initialize_rnp_pair_dist() {
 	//rnp_pair_dist_potential_.dimension( num_dbins_, max_base_, max_aa_ );
 	//rnp_pair_dist_potential_ = 0.0; // zero everything out
 
+	// AMW: Put this in energy method options?
 	use_actual_centroid_ = basic::options::option[ basic::options::OptionKeys::score::rna::FA_low_res_rnp_scoring ]();
 
 	std::string filename;
