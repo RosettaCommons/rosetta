@@ -46,6 +46,9 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
+#include <core/conformation/ResidueFactory.hh>
+//#include <core/pose/full_model_info/FullModelInfo.hh>
+
 // Protocols
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
@@ -55,6 +58,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <utility>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
@@ -74,6 +78,7 @@
 
 
 using namespace core;
+using namespace core::pose;
 
 static basic::Tracer TR( "protocols.rna.movers.RNAThreadAndMinimizeMover" );
 
@@ -145,6 +150,10 @@ void RNAThreadAndMinimizeMover::set_up_target_sequence( core::pose::Pose & pose 
 		seq_ = core::io::NomenclatureManager::annotated_sequence_from_modomics_oneletter_sequence( seq_ );
 	} else if ( input_sequence_type_ == "IUPAC" ) {
 		seq_ = core::io::NomenclatureManager::annotated_sequence_from_IUPAC_sequence( seq_ );
+	}
+
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		seq_ += 'X';
 	}
 
 	Size const alignment_length = core::pose::rna::remove_bracketed( seq_ ).size();
@@ -512,7 +521,9 @@ RNAThreadAndMinimizeMover::mutate_all_at_once( core::pose::Pose & pose ) {
 	std::cout << "Changed residues (without offset applied): " << make_tag_with_dashes( changed_pos ) << std::endl;
 	std::cout << "Changed residues (in residue numbering): "    << make_tag_with_dashes( changed_pos_working ) << std::endl;
 
-	core::pose::set_reasonable_fold_tree( pose );
+	if ( !basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		core::pose::set_reasonable_fold_tree( pose );
+	}
 
 	// OK, we have a vector of changed residues. Setup a MoveMap accordingly.
 	core::kinematics::MoveMapOP mm( mm_from_residues( pose, changed_pos, true ) );
@@ -528,21 +539,25 @@ RNAThreadAndMinimizeMover::mm_from_residues( core::pose::Pose const & pose, util
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_chi( false );
 	mm->set_bb( false );
+
+	// Only set the bb to move if we can be confident we won't end up elsewhere
+	bool const bb_setting = basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user();
+
 	if ( add_nearby ) {
 		// add additional changed pos - also add base pairing, maybe use slice mechanism
 		for ( Size ii = 1; ii <= changed_pos.size(); ++ii ) {
 			if ( changed_pos[ ii ] > 1 ) {
-				mm->set_bb( changed_pos[ ii ]-1, true );
+				mm->set_bb( changed_pos[ ii ]-1, bb_setting );
 				mm->set_chi( changed_pos[ ii ]-1, true );
 			}
 			if ( changed_pos[ ii ] < pose.total_residue() ) {
-				mm->set_bb( changed_pos[ ii ]+1, true );
+				mm->set_bb( changed_pos[ ii ]+1, bb_setting );
 				mm->set_chi( changed_pos[ ii ]+1, true );
 			}
 		}
 	}
 	for ( Size ii = 1; ii <= changed_pos.size(); ++ii ) {
-		mm->set_bb( changed_pos[ ii ], true );
+		mm->set_bb( changed_pos[ ii ], bb_setting );
 		mm->set_chi( changed_pos[ ii ], true );
 	}
 	return mm;
@@ -600,6 +615,40 @@ void
 RNAThreadAndMinimizeMover::apply( core::pose::Pose & pose )
 {
 	core::pose::Pose const starting_pose( pose );
+
+	// A nice strategy for keeping the input close w/o having to sequence-match
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		Size nres = pose.size();
+
+		// if already rooted on virtual residue , return
+		if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
+			TR.Warning << "add_virtual_res() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
+		} else if ( pose.residue_type( nres ).aa() == core::chemical::aa_vrt ) {
+			TR.Warning << "add_virtual_res() called but pose already has a VRT residue ... rerooting." << std::endl;
+			kinematics::FoldTree newF( pose.fold_tree() );
+			newF.reorder( nres );
+			pose.fold_tree( newF );
+		} else {
+
+			// attach virt res there
+			core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ) );
+
+			// OK, what we need is to save the PDBInfo, then add it back for every residue.
+			PDBInfo info = *pose.pdb_info();
+			pose.append_residue_by_jump( *new_res , nres );
+			pose.pdb_info()->copy( info, 1, nres, 1 );
+
+			// make the virt atom the root
+			kinematics::FoldTree newF( pose.fold_tree() );
+			newF.reorder( nres + 1 );
+			pose.fold_tree( newF );
+
+			//core::pose::full_model_info::FullModelInfoOP full_model_info( new core::pose::full_model_info::FullModelInfo( pose ) );
+			//set_full_model_info( pose, full_model_info );
+			// This is fine
+			pose.pdb_info()->obsolete( false );
+		}
+	}
 
 	// The target sequence needs a considerable amount of setup
 	// to reconcile input formats and potential sequence alignment

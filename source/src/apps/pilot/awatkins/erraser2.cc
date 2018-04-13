@@ -70,12 +70,106 @@ using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
+using namespace core::chemical;
+using namespace core::pose;
 using namespace core::scoring;
 using namespace protocols::rna::movers;
 using namespace core::pose::rna;
+using namespace utility::file;
+using namespace core::import_pose::pose_stream;
 
+OPT_KEY( Integer, rounds )
+OPT_KEY( Boolean, minimize_protein )
 
 static basic::Tracer TR( "apps.pilot.awatkins.erraser2" );
+
+
+
+
+std::string first_preminimized_namer( std::string const & s ) {
+	std::stringstream minimized_name;
+	minimized_name << s << "_preminimized_round_1.pdb";
+	return minimized_name.str();
+}
+std::string second_preminimized_namer( std::string const & s ) {
+	std::stringstream minimized_name;
+	minimized_name << s << "_preminimized_round_2.pdb";
+	return minimized_name.str();
+}
+std::string third_preminimized_namer( std::string const & s ) {
+	std::stringstream minimized_name;
+	minimized_name << s << "_preminimized_round_3.pdb";
+	return minimized_name.str();
+}
+std::string round_minimized_namer( std::string const & s, Size const ii ) {
+	std::stringstream minimized_name;
+	minimized_name << s << "_minimized_" << ii << ".pdb";
+	return minimized_name.str();
+}
+std::string round_resampled_namer( std::string const & s, Size const ii ) {
+	std::stringstream minimized_name;
+	minimized_name << s << "_resampled_" << ii << ".pdb";
+	return minimized_name.str();
+}
+
+
+void fill_input_poses( utility::vector1< PoseOP > & input_poses, std::string const & s ) {
+	TR << "Filling input pose from " << s << "..." << std::endl;
+
+	// setup residue types
+	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	PDBPoseInputStream input( s );
+	// iterate over input stream
+	PoseOP start_pose( new Pose );
+	input.fill_pose( *start_pose, *rsd_set );
+	input_poses.emplace_back( start_pose );
+}
+
+/// @details This function looks in the current working directory to see if
+/// there are any checkpoint files. (These are based off the name of
+/// option[ in::file::s ](). In fact, we have now abstracted those naming
+/// systems into functions. It sets the 'checkpoints_to_pass' counter to
+/// the number of checkpointing opportunities that can be crossed now that
+/// we have recovered a file with this type of name...
+void fill_input_poses_based_on_possible_checkpoints(
+	utility::vector1< PoseOP > & input_poses,
+	Size & checkpoints_to_pass
+) {
+
+	// Looks for 'latest possible' first.
+	for ( Size round = option[ rounds ].value(); round >= 1; --round ) {
+		if ( file_exists( round_resampled_namer( option[ in::file::s ]()[1], round ) ) ) {
+			fill_input_poses( input_poses, round_resampled_namer( option[ in::file::s ]()[1], round ) );
+			checkpoints_to_pass = 3 + 2 * round;
+			return;
+		}
+		if ( file_exists( round_minimized_namer( option[ in::file::s ]()[1], round ) ) ) {
+			fill_input_poses( input_poses, round_minimized_namer( option[ in::file::s ]()[1], round ) );
+			checkpoints_to_pass = 3 + 2 * round - 1;
+			return;
+		}
+	}
+
+	// This won't happen, probably -- it's been disabled down below.
+	if ( file_exists( third_preminimized_namer( option[ in::file::s ]()[1] ) ) ) {
+		fill_input_poses( input_poses, third_preminimized_namer( option[ in::file::s ]()[1] ) );
+		checkpoints_to_pass = 3;
+		return;
+	}
+	if ( file_exists( second_preminimized_namer( option[ in::file::s ]()[1] ) ) ) {
+		fill_input_poses( input_poses, second_preminimized_namer( option[ in::file::s ]()[1] ) );
+		checkpoints_to_pass = 2;
+		return;
+	}
+	if ( file_exists( first_preminimized_namer( option[ in::file::s ]()[1] ) ) ) {
+		fill_input_poses( input_poses, first_preminimized_namer( option[ in::file::s ]()[1] ) );
+		checkpoints_to_pass = 1;
+		return;
+	}
+
+	fill_input_poses( input_poses, option[ in::file::s ]()[1] );
+	checkpoints_to_pass = 0;
+}
 
 void resample_full_model( pose::Pose & start_pose, ScoreFunctionOP const & scorefxn,  utility::vector1< Size > const & definite_residues  );
 
@@ -158,8 +252,7 @@ erraser2_test()
 	using namespace core::pose::full_model_info;
 
 	// setup residue types
-	ResidueTypeSetCOP rsd_set;
-	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	// setup score function
 	core::scoring::ScoreFunctionOP scorefxn;
@@ -180,6 +273,7 @@ erraser2_test()
 
 	utility::vector1< Size > unconverged_res;
 
+	Size checkpoints_to_pass = 0;
 	if ( option[ in::file::s ]().size() > 1 ) {
 		// We interpret multiple provided files as an attempt to say "hey, I need to know which residues to rebuild!"
 		PDBPoseInputStream input( option[ in::file::s ]() );
@@ -202,10 +296,9 @@ erraser2_test()
 
 		unconverged_res = analyze_poses_for_convergence( to_be_analyzed );
 	} else {
-		PDBPoseInputStream input( option[ in::file::s ]() );
-		// iterate over input stream
-		input.fill_pose( *start_pose, *rsd_set );
-		input_poses.emplace_back( start_pose );
+
+		fill_input_poses_based_on_possible_checkpoints( input_poses, checkpoints_to_pass );
+
 	}
 
 	// setup poses
@@ -216,6 +309,7 @@ erraser2_test()
 	builder.set_options( option );
 	builder.initialize_further_from_options();
 	builder.build(); // hope this will update original_poses[ 1 ]
+	start_pose = input_poses[ 1 ];
 	(*scorefxn)(*start_pose);
 
 	// Need to switch after minimizer!
@@ -230,75 +324,68 @@ erraser2_test()
 
 	show_accuracy_report( *start_pose, "Start", 0/*, TR*/ );
 
-	core::Size const nrounds = 1;
+	core::Size const nrounds = option[ rounds ].value();
 
 	ErraserMinimizerMover erraser_minimizer;
 	erraser_minimizer.scorefxn( scorefxn );
 	erraser_minimizer.edens_scorefxn( scorefxn );
+	erraser_minimizer.minimize_protein( option[ minimize_protein ] );
 
-	{ // First pass: constrain P, initial FT
+	if ( checkpoints_to_pass < 1 ) { // First pass: constrain P, initial FT
 		TR << "First pass preminimization..." << std::endl;
-		std::stringstream minimized_name;
-		minimized_name << option[ in::file::s ]()[1] << "_preminimized_round_1.pdb";
 		//if ( !utility::file::file_exists( minimized_name.str() ) ) {
 		erraser_minimizer.constrain_phosphate( true );
 		erraser_minimizer.apply( *start_pose );
-		start_pose->dump_pdb( minimized_name.str() );
-		//}
+		start_pose->dump_pdb( first_preminimized_namer( option[ in::file::s ]()[1]  ) );
 	}
 
-	{ // Second pass: constrain P, fun FT
-		std::stringstream minimized_name;
-		minimized_name << option[ in::file::s ]()[1] << "_preminimized_round_2.pdb";
-		//if ( !utility::file::file_exists( minimized_name.str() ) ) {
-		start_pose->fold_tree( emm_ft ); // no-op if none specified
+	if ( checkpoints_to_pass < 2 ) { // Second pass: constrain P, fun FT
+		if ( emm_ft.nres() == start_pose->size() ) start_pose->fold_tree( emm_ft ); // no-op if none specified
 		erraser_minimizer.constrain_phosphate( true );
 		erraser_minimizer.apply( *start_pose );
-		start_pose->dump_pdb( minimized_name.str() );
-		start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
-		//}
+		start_pose->dump_pdb( second_preminimized_namer( option[ in::file::s ]()[1]  ) );
+		if ( resample_fold_tree.nres() == start_pose->size() ) start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
 	}
 
-	{ // First pass: no constrain P, fun FT
-		std::stringstream minimized_name;
-		minimized_name << option[ in::file::s ]()[1] << "_preminimized_round_3.pdb";
-		//if ( !utility::file::file_exists( minimized_name.str() ) ) {
-		start_pose->fold_tree( emm_ft ); // no-op if none specified
-		erraser_minimizer.constrain_phosphate( false );
-		erraser_minimizer.apply( *start_pose );
-		start_pose->dump_pdb( minimized_name.str() );
-		start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
-		//}
+	/*
+	* We only want this to be active when we are adapting models from other methods
+	* (like rna_denovo or coarse grained)
+	if ( checkpoints_to_pass < 3 ) { // First pass: no constrain P, fun FT
+	std::stringstream minimized_name;
+	minimized_name << option[ in::file::s ]()[1] << "_preminimized_round_3.pdb";
+	//if ( !utility::file::file_exists( minimized_name.str() ) ) {
+	start_pose->fold_tree( emm_ft ); // no-op if none specified
+	erraser_minimizer.constrain_phosphate( false );
+	erraser_minimizer.apply( *start_pose );
+	start_pose->dump_pdb( minimized_name.str() );
+	start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
+	//}
 	}
+	*/
 
 
-
-
-
+	// Each round eats up checkpoints 4,5; 6,7; 8,9: or, 3 + 2*ii - 1, 3 + 2*ii
 	for ( Size ii = 1; ii <= nrounds; ++ii ) {
-		std::stringstream filename_stream;
-		filename_stream << option[ in::file::s ]()[1] << "minimized_" << ii << ".pdb";
-		std::string const minimized_name = filename_stream.str();
-		filename_stream.str( "" );
-		filename_stream << option[ in::file::s ]()[1] << "resampled_" << ii << ".pdb";
-		std::string const resampled_name = filename_stream.str();
-
-		start_pose->fold_tree( emm_ft ); // no-op if none specified
-		erraser_minimizer.apply( *start_pose );
-		show_accuracy_report( *start_pose, "Minimized", ii/*, TR*/ );
-		start_pose->dump_pdb( minimized_name );
+		if ( checkpoints_to_pass < 3 + 2 * ii - 1 ) {
+			if ( emm_ft.nres() == start_pose->size() ) start_pose->fold_tree( emm_ft ); // no-op if none specified
+			erraser_minimizer.apply( *start_pose );
+			show_accuracy_report( *start_pose, "Minimized", ii/*, TR*/ );
+			start_pose->dump_pdb( round_minimized_namer( option[ in::file::s ]()[1], ii ) );
+		}
 
 		// Let's be REALLY SURE
 		//auto ft = start_pose.fold_tree();
 		//ft.reorder(start_pose.size());
 		//start_pose.fold_tree( ft );
-		start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
-		resample_full_model( *start_pose, scorefxn, unconverged_res );
-		show_accuracy_report( *start_pose, "Resampled", ii/*, TR*/ );
-		start_pose->dump_pdb( resampled_name );
+		if ( checkpoints_to_pass < 3 + 2 * ii ) {
+			if ( resample_fold_tree.nres() == start_pose->size() ) start_pose->fold_tree( resample_fold_tree ); // no-op if none specified
+			resample_full_model( *start_pose, scorefxn, unconverged_res );
+			show_accuracy_report( *start_pose, "Resampled", ii/*, TR*/ );
+			start_pose->dump_pdb( round_resampled_namer( option[ in::file::s ]()[1], ii ) );
+		}
 	}
 
-	start_pose->fold_tree( emm_ft ); // no-op if none specified
+	if ( emm_ft.nres() == start_pose->size() ) start_pose->fold_tree( emm_ft ); // no-op if none specified
 	erraser_minimizer.apply( *start_pose );
 	show_accuracy_report( *start_pose, "FINAL", 0/*, TR*/ );
 
@@ -307,28 +394,138 @@ erraser2_test()
 	start_pose->dump_pdb( filename_stream.str() );
 }
 
+bool atoms_have_bond_to_bonded_atoms( pose::Pose const & pose, Size const ai, Size const ii, Size const aj, Size const jj ) {
+	// Loop through atoms in both residues
+	// Accumulate set of atom IDs bonded to each atom.
+	// Check if there are bonds between any pairs.
+
+	utility::vector1< core::id::AtomID > bonded_to_ai, bonded_to_aj;
+
+	for ( Size ak = 1; ak <= pose.residue( ii ).natoms(); ++ak ) {
+		if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( ak, ii ) ) ) {
+			bonded_to_ai.emplace_back( ak, ii );
+		}
+		if (  pose.conformation().atoms_are_bonded( core::id::AtomID( aj, jj ), core::id::AtomID( ak, ii ) ) ) {
+			bonded_to_aj.emplace_back( ak, ii );
+		}
+	}
+	for ( Size ak = 1; ak <= pose.residue( jj ).natoms(); ++ak ) {
+		if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( ak, jj ) ) ) {
+			bonded_to_ai.emplace_back( ak, jj );
+		}
+		if ( pose.conformation().atoms_are_bonded( core::id::AtomID( aj, jj ), core::id::AtomID( ak, jj ) ) ) {
+			bonded_to_aj.emplace_back( ak, jj );
+		}
+	}
+
+	for ( auto const & b_to_ai : bonded_to_ai ) {
+		for ( auto const & b_to_aj : bonded_to_aj ) {
+			if ( pose.conformation().atoms_are_bonded( b_to_ai, b_to_aj ) ) return true;
+		}
+	}
+
+	return false;
+}
+
+bool atoms_have_mutual_bond_to_atom( pose::Pose const & pose, Size const ai, Size const ii, Size const aj, Size const jj ) {
+	// Loop through atoms in both residues
+	// Assumes no 1-atom polymeric residues. That's ok.
+	for ( Size ak = 1; ak <= pose.residue( ii ).natoms(); ++ak ) {
+		if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( ak, ii ) )
+				&& pose.conformation().atoms_are_bonded( core::id::AtomID( aj, jj ), core::id::AtomID( ak, ii ) ) ) return true;
+	}
+	for ( Size ak = 1; ak <= pose.residue( jj ).natoms(); ++ak ) {
+		if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( ak, jj ) )
+				&& pose.conformation().atoms_are_bonded( core::id::AtomID( aj, jj ), core::id::AtomID( ak, jj ) ) ) return true;
+	}
+
+	return false;
+}
+
+bool
+bump_check( pose::Pose const & pose, Size const ii ) {
+	for ( Size jj = 1; jj <= pose.size(); ++jj ) {
+		if ( jj == ii ) continue;
+		if ( jj == ii + 1 ) continue;
+		if ( jj == ii - 1 ) continue;
+
+		// If first atoms are more than 10A apart no clashes
+		if ( pose.residue( ii ).xyz( 1 ).distance_squared( pose.residue( jj ).xyz( 1 ) ) > 100 ) continue;
+
+		for ( Size ai = 1; ai <= pose.residue( ii ).natoms(); ++ai ) {
+			for ( Size aj = 1; aj <= pose.residue( jj ).natoms(); ++aj ) {
+				// If the two atoms are bonded ignore.
+				if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( aj, jj ) ) ) continue;
+				if ( atoms_have_mutual_bond_to_atom( pose, ai, ii, aj, jj ) ) continue;
+				if ( atoms_have_bond_to_bonded_atoms( pose, ai, ii, aj, jj ) ) continue;
+
+				Real ai_r = pose.residue_type( ii ).atom_type( ai ).lj_radius();
+				Real aj_r = pose.residue_type( jj ).atom_type( aj ).lj_radius();
+
+				if ( pose.residue( ii ).xyz( ai ).distance_squared( pose.residue( jj ).xyz( aj ) ) <
+						( aj_r + ai_r - 0.35 ) * ( aj_r + ai_r - 0.35 ) ) {
+					TR.Trace << "Bump check failed because residue " << ii << " atom " << pose.residue( ii ).atom_name( ai ) << " (lj_radius " << ai_r << ") is within "
+						<< ( aj_r + ai_r - 0.35 ) * ( aj_r + ai_r - 0.35 ) << " of residue " << jj << " atom " << pose.residue( jj ).atom_name( aj ) << " (lj_radius " << aj_r << ")" << std::endl;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 void resample_full_model( pose::Pose & start_pose, ScoreFunctionOP const & scorefxn, utility::vector1< Size > const & definite_residues ) {
 
+	/*// Remove any single-residue checkpoint indicators if present.
+	#include <glob.h>
+	glob_t *pglob;
+	glob("seq_rebuild_temp_*pdb", );
+	seq_rebuild_temp_A:14.pdb
+	utility::delete_file( aaa)
+	*/
 	RNA_SuiteName suite_namer;
 
 	// Rebuilds to be based on torsion score.
 	// (For now... later, do an actual PHENIX integration or something.)
 	std::set< Size > residues_to_rebuild( definite_residues.begin(), definite_residues.end() );
 	for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
+		if ( !option[ minimize_protein ].value() && start_pose.residue_type( ii ).is_protein() ) continue;
+
 		// This should pick up bad torsions
 		Real const torsion_score = start_pose.energies().residue_total_energies( ii )[ rna_torsion ];
-		TR.Trace << "Torsion score " << ii << " " << torsion_score << std::endl;
-		if ( torsion_score > 1.2 ) residues_to_rebuild.insert( ii );
+		if ( torsion_score > 1.2 ) {
+			TR << "Rebuilding residue " << ii <<" for a bad torsion score of " << torsion_score << std::endl;
+			residues_to_rebuild.insert( ii );
+		}
 
 		// Bad suites, if it hasn't been added already
+		// TODO: chain aware
 		auto suite_assignment = suite_namer.assign( start_pose, ii );
-		if ( suite_assignment.name == "!!" )  residues_to_rebuild.insert( ii );
+		if ( suite_assignment.name == "!!" ) {
+			TR << "Rebuilding residue " << ii << " with its neighbors as possible for a bad suite" << std::endl;
+			if ( ii > 1 ) {
+				residues_to_rebuild.insert( ii - 1 );
+			}
+			residues_to_rebuild.insert( ii );
+			if ( ii < start_pose.size() ) {
+				residues_to_rebuild.insert( ii + 1 );
+			}
+		}
 
 		// This should pick up bad bond lengths and angles.
 		// (If cart_bonded is on...)
 		Real const cart = start_pose.energies().residue_total_energies( ii )[ cart_bonded ];
-		TR.Trace << "Cart-bonded score " << ii << " " << cart << std::endl;
-		if ( cart > 12 ) residues_to_rebuild.insert( ii );
+		if ( cart > 2 ) {
+			TR << "Rebuilding residue " << ii <<" for a bad cart_bonded score of " << cart << std::endl;
+			residues_to_rebuild.insert( ii );
+		}
+
+
+		// Clashes
+		if ( bump_check( start_pose, ii ) ) {
+			TR << "Rebuilding residue " << ii <<" for a bad bump check" << std::endl;
+			residues_to_rebuild.insert( ii );
+		}
 
 		// Make sure bad glycosylation sites get picked up here. Need samplers.
 
@@ -365,16 +562,11 @@ void resample_full_model( pose::Pose & start_pose, ScoreFunctionOP const & score
 
 	// run StepWiseMasterMover::resample_full_model
 	mover::StepWiseMasterMover master_mover( scorefxn, options );
+	// This is essential for rmsd_screen apparently
+	master_mover.set_native_pose( pose::PoseCOP( new pose::Pose( start_pose ) ) );
+
 	//master_mover.resample_full_model( start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/ );
-	// debug -- residues with odd jump behavior in use case
-	residues_to_rebuild.erase(131);
 
-	TR << "Post deletion: " << std::endl;
-
-	// OK, what residues might these be? What might be connected?
-	for ( auto const elem : residues_to_rebuild ) {
-		TR << elem << ": " << " " << start_pose.pdb_info()->chain( elem ) << start_pose.pdb_info()->number( elem ) << " " << start_pose.residue_type( elem ).name() << std::endl;
-	}
 	//return;
 	master_mover.resample_full_model( start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/, utility::vector1< Size >( residues_to_rebuild.begin(), residues_to_rebuild.end() ) );
 	// DEBUG 82
@@ -418,6 +610,8 @@ main( int argc, char * argv [] )
 
 	try {
 
+		NEW_OPT( rounds, "Number of total rounds", 3 );
+		NEW_OPT( minimize_protein, "Minimize protein", false );
 		// help
 		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -in::file::silent <silent file>" << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;

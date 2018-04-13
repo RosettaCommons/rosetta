@@ -59,6 +59,8 @@ public:
 	void pyrimidine_flip_trial( Pose & pose );
 	void setup_fold_tree( Pose & pose );
 
+	void minimize_protein( bool const setting ) { minimize_protein_ = setting; }
+
 	void initialize_from_options( utility::options::OptionCollection const & options );
 
 	void apply( Pose & pose ) override;
@@ -140,6 +142,7 @@ private:
 	bool ready_set_only_;
 	bool skip_minimize_;
 	bool attempt_pyrimidine_flip_;
+	bool minimize_protein_ = true;
 	std::set< core::Size > fixed_res_list_;
 	utility::vector1< core::Size > cutpoint_list_;
 	std::string output_pdb_name_;

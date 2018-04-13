@@ -1,14 +1,10 @@
 -s 1Q9A_cut_ready_set.pdb
-# Now the Python layer takes care of this renaming
-# and ERRASER will name it 1Q9A_cut_ready_set_0001.pdb
-#-out_pdb 1Q9A_cut_ready_set_min.pdb
+-fasta 1Q9A_cut_ready_set.fasta
 -score::weights stepwise/rna/rna_hires_elec_dens 
 -score:rna_torsion_potential RNA09_based_2012_new 
 -rna:vary_geometry true 
--rna:erraser:fixed_res 1 4 
+-rna:erraser:fixed_res A:1 A:4 
 -edensity:mapfile 1Q9A_map.ccp4 
 -edensity:mapreso 2.0 
 -edensity:realign no
--scale_d 100
--scale_theta 10
 -set_weights cart_bonded 1.0

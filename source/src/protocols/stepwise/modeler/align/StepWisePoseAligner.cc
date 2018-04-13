@@ -496,6 +496,9 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 		d_primary = domain_map[ pose.fold_tree().root() ];
 	}
 
+	// Forcibly exclude any ligands from the 'root partition' because when they get resampled
+	// it will cause problems in superimpose_res_in_pose in the ERRASER context?
+
 	if ( d_primary > 0 ) {
 		if ( root_partition_res_.size() > 0 ) runtime_assert( root_partition_res_.has_value( pose.fold_tree().root() ) );
 	} else {
@@ -503,6 +506,7 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 		// must be drawn from root_partition (if that partition is defined)
 		for ( Size n = 1; n <= pose.size(); n++ ) {
 			if ( root_partition_res_.size() > 0 && !root_partition_res_.has_value( n ) ) continue;
+			if ( !pose.residue_type( n ).is_polymer() ) continue;
 			Size const d = domain_map[ n ];
 			//TR << "d         now " << d << std::endl;
 			if ( d > 0 && ( d_primary == 0 || d < d_primary ) ) d_primary = d;

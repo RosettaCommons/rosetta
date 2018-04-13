@@ -365,6 +365,9 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 	restype->finalize();
 
+	TR.Debug << "First sidechain atom: " << restype->name() << " " << restype->atom_name( restype->first_sidechain_atom() ) << std::endl;
+	TR.Debug << "Neighbor atom: " << restype->name() << " " << restype->atom_name( restype->nbr_atom() ) << std::endl;
+
 	//restype->show( TR, true );
 
 	return restype;

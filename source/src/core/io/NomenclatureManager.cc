@@ -163,8 +163,27 @@ std::string
 NomenclatureManager::annotated_sequence_from_modomics_oneletter_sequence( std::string const & seq )  {
 	std::string annotated_seq;
 	for ( char const c : seq ) {
-		if ( get_instance()->modomics_map().find( c ) == get_instance()->modomics_map().end() ) utility_exit_with_message( "A character in your provided modomics-style sequence was not recognized." );
-		annotated_seq += get_instance()->modomics_map().at( c );
+		// Don't translate ACGU in the annotated_seq style
+		if ( c == 'A' ) {
+			annotated_seq += "a";
+		} else if ( c == 'C' ) {
+			annotated_seq += "c";
+		} else if ( c == 'G' ) {
+			annotated_seq += "g";
+		} else if ( c == 'U' ) {
+			annotated_seq += "u";
+		} else if ( c == '#' ) {
+			// For some reason, this isn't making it into the map -- despite code to ensure that it will
+			// by only taking digraphs as commnets.
+			annotated_seq += "X[OMG]";
+		} else {
+			if ( get_instance()->modomics_map().find( c ) == get_instance()->modomics_map().end() ) {
+				TR.Error << "In sequence \"" << seq << "\", character \'" << c << "\' was not recognized." << std::endl;
+				utility_exit_with_message( "A character in your provided modomics-style sequence was not recognized." );
+			} else {
+				annotated_seq += "X[" + get_instance()->modomics_map().at( c ) + "]";
+			}
+		}
 	}
 	return annotated_seq;
 }
@@ -174,8 +193,11 @@ NomenclatureManager::annotated_sequence_from_IUPAC_sequence( std::string const &
 	std::string annotated_seq;
 	utility::vector1< std::string > parts = utility::string_split( seq, '_' );
 	for ( auto const & part : parts ) {
-		if ( get_instance()->iupac_map().find( part ) == get_instance()->iupac_map().end() ) utility_exit_with_message( "A character in your provided IUPAC-style sequence was not recognized." );
-		annotated_seq += get_instance()->iupac_map().at( part );
+		if ( get_instance()->iupac_map().find( part ) == get_instance()->iupac_map().end() ) {
+			TR.Error << "In sequence \"" << seq << "\", component\'" << part << "\' was not recognized." << std::endl;
+			utility_exit_with_message( "A character in your provided IUPAC-style sequence was not recognized." );
+		}
+		annotated_seq += "X[" + get_instance()->iupac_map().at( part ) + "]";
 	}
 	return annotated_seq;
 }

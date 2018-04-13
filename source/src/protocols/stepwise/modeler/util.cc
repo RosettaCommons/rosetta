@@ -1546,10 +1546,12 @@ get_all_working_moving_res( working_parameters::StepWiseWorkingParametersCOP wor
 ////////////////////////////////////////////////////////////////////////////////
 void
 virtualize_side_chains( pose::Pose & pose ) {
+	// AMW TODO: can someone tell me why this residue isn't a candidate for
+	// the VirtualProteinSideChain patch?
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).is_RNA() ) {
 			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, n );
-		} else if ( pose.residue_type( n ).is_protein() ) {
+		} else if ( pose.residue_type( n ).is_protein() && pose.residue_type( n ).base_name() != "SAH" ) {
 			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_SIDE_CHAIN, n );
 		}
 	}

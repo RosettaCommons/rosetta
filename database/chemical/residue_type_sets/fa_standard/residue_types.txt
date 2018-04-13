@@ -62,6 +62,7 @@ residue_types/nucleic/rna_nonnatural/4OC.params
 residue_types/nucleic/rna_nonnatural/5MC.params
 residue_types/nucleic/rna_nonnatural/5MU.params
 residue_types/nucleic/rna_nonnatural/BRU.params
+residue_types/nucleic/rna_nonnatural/5BU.params
 residue_types/nucleic/rna_nonnatural/7MG.params
 residue_types/nucleic/rna_nonnatural/G7M.params
 residue_types/nucleic/rna_nonnatural/7DA.params
@@ -190,7 +191,6 @@ residue_types/nucleic/rna_nonnatural/OMI.params
 # 4AC - 4-acetyl C
 # 50L - hard to describe simply. the normal purine bridge is two carbons. Rotate the five-carbon part of the base...
 # 50N - nitro para to C's carbonyl - makes it the enol, too
-# 5BU - 5-bromo U
 # 5CF - 5-fluoro C
 # 5FU - 5-fluoro U
 # 5HM - 5-hydroxymethyl-C

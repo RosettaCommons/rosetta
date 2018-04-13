@@ -195,6 +195,7 @@ private:
 	utility::vector1< core::pose::PoseOP > pose_list_;
 
 	bool rigid_body_modeler_;
+	bool moving_ligand_ = false;
 	core::Size reference_res_;
 	bool kic_modeler_;
 	bool protein_connection_; // should be able to deprecate soon

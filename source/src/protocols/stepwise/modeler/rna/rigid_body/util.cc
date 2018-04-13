@@ -109,8 +109,8 @@ initialize_xyz_parameters( Distance & max_distance,
 
 	// Wait, this really should depend on identities of bases. Hmm.
 	// Anyway will soon be replaced with a 'fixed' max_distance. -- rhiju, feb. 2014
-	Distance C5_centroid_dist = get_max_centroid_to_atom_distance( moving_rsd_at_origin_list, " C5'" );
-	Distance O5_centroid_dist = get_max_centroid_to_atom_distance( moving_rsd_at_origin_list, " O3'" );
+	Distance C5_centroid_dist = get_max_centroid_to_atom_distance( moving_rsd_at_origin_list, "C5'" );
+	Distance O5_centroid_dist = get_max_centroid_to_atom_distance( moving_rsd_at_origin_list, "O3'" );
 	Distance const Max_O3_to_C5_DIST = ( gap_size_to_anchor == 0 ) ? O3I_C5I_PLUS_ONE_MAX_DIST : O3I_C5I_PLUS_TWO_MAX_DIST;
 
 	// If not user specified, give theoretical maximum dist between the two base's centroid, +1 is to be lenient
@@ -119,6 +119,7 @@ initialize_xyz_parameters( Distance & max_distance,
 
 	centroid_bin_min = int(  - max_distance/STANDARD_CENTROID_BIN_SIZE );
 	centroid_bin_max = int( max_distance/STANDARD_CENTROID_BIN_SIZE ) - 1;
+	TR.Debug << "Centroid bins from  " << centroid_bin_min << " to " << centroid_bin_max << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////

@@ -407,7 +407,7 @@ FullModelParameters::conventional_to_full( int const res_num, char const chain, 
 	for ( Size n = 1; n <= conventional_numbering_.size() ; n++ ) {
 		//std::cout << " eval " << n << " " << conventional_numbering_[ n ] << " " << conventional_chains_[ n ] << " \"" << conventional_segids_[ n ] << "\"" << std::endl;
 		if ( res_num != conventional_numbering_[ n ] ) continue;
-		if ( chain != ' ' && conventional_chains_.  size() > 0 && conventional_chains_[ n ] != ' ' && chain != conventional_chains_[ n ] ) continue;
+		if ( chain != ' ' && conventional_chains_.size() > 0 && conventional_chains_[ n ] != ' ' && chain != conventional_chains_[ n ] ) continue;
 		if ( segid != "    " && conventional_segids_.size() > 0 && conventional_segids_[ n ] != "    " && segid != conventional_segids_[ n ] ) continue;
 		if ( found_match ) utility_exit_with_message( "ambiguous res_num & chain & segid "+ string_of(res_num)+" "+string_of(chain)+" "+segid );
 		res_num_in_full_numbering = n;

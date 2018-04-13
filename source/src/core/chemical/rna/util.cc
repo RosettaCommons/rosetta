@@ -1145,7 +1145,14 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 
 	// Really, AMW TODO don't call get_rna_base_centroid on non RNA.
 	// instead call something else!
-	if ( !rsd.is_polymer() ) return rsd.xyz(1);
+	if ( !rsd.is_polymer() ) {
+		Vector centroid( 0.0 );
+		for ( Size ii = 1; ii <= rsd.nheavyatoms(); ++ii ) {
+			centroid += rsd.xyz( ii );
+		}
+		return centroid / rsd.nheavyatoms();
+		//return rsd.xyz(1);
+	}
 
 	// Rats... what if it is a 'polymer residue' like protein but not
 	// in a polymer context?
@@ -1273,7 +1280,7 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 		// Hoogstein edge (e.g., major groove in a double helix).
 		std::string H_atom;
 		if ( res_type == na_rad || res_type == na_rgu || res_type == na_lra || res_type == na_lrg ) H_atom = "N7" ;
-		if ( !rsd.has( H_atom ) && rsd.name3() == "7DA" ) H_atom = "C7";
+		if ( !rsd.has( H_atom ) && ( rsd.name3() == "7DA" || rsd.name3() == "FA7" ) ) H_atom = "C7";
 		if ( res_type == na_rcy || res_type == na_ura || res_type == na_lrc || res_type == na_lur ) H_atom = "C5";
 		if ( res_type == na_ura && rsd.name3() == "PSU" ) H_atom = "N1"; // pseudoU is flipped
 		//std::cout << "WC_atom " << WC_atom << std::endl;

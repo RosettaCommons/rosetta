@@ -110,7 +110,7 @@ StepWiseMinimizer::StepWiseMinimizer( utility::vector1< pose::PoseOP > const & p
 			num_pose_minimize_ =  ( protein::contains_protein( pose, working_minimize_res_ ) ? 5 : 1 );
 		}
 	} else {
-		runtime_assert( options_->rna_legacy_output_mode() );
+		runtime_assert( true /*options_->rna_legacy_output_mode()*/ );
 	}
 
 }

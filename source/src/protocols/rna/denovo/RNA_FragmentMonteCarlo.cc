@@ -62,6 +62,10 @@
 #include <basic/Tracer.hh>
 #include <ctime>
 #include <utility/tools/make_vector.hh>
+#ifdef GL_GRAPHICS
+#include <protocols/viewer/ConformationViewer.hh>
+#include <protocols/viewer/viewers.hh>
+#endif
 
 static basic::Tracer TR( "protocols.rna.denovo.RNA_FragmentMonteCarlo" );
 
@@ -75,6 +79,13 @@ using namespace core::import_pose;
 using namespace core::import_pose::libraries;
 using utility::tools::make_vector1;
 using utility::vector1;
+
+#ifdef GL_GRAPHICS
+namespace protocols { namespace viewer { 
+	typedef std::map< int, ConformationViewerOP > ConformationViewers;
+	extern ConformationViewers conformation_viewers; 
+} }
+#endif
 
 namespace protocols {
 namespace rna {
@@ -249,6 +260,12 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		for ( Size r = 1; r <= rounds_; r++ ) {
 
 			if ( options_->verbose() ) TR << TR.Blue << "Beginning round " << r << " of " << rounds_ << TR.Reset << std::endl;
+
+#ifdef GL_GRAPHICS
+			for ( auto const & elem : protocols::viewer::conformation_viewers ) {
+				elem.second->set_center_vector( core::pose::get_center_of_mass( pose ) );
+			}
+#endif
 
 			if ( r == rounds_ && options_->close_loops() ) rna_denovo_master_mover_->set_close_loops( true );
 

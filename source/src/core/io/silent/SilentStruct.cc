@@ -426,23 +426,28 @@ SilentStruct::add_string_value(
 			}
 		} );
 
+	if ( replace ) return;
+
 	// add this energy if we haven't added it already
-	if ( !replace ) {
-		int width = std::max( 10, (int) scorename.length() + 3 );
-		SilentEnergy new_se( scorename, value, width );
-		if ( index == -1 || index >= int( silent_energies_.size() + 1 ) ) {
-			silent_energies_.push_back( new_se );
+	int width = std::max( 10, (int) scorename.length() + 3 );
+	SilentEnergy new_se( scorename, value, width );
+	if ( index == -1 || index >= int( silent_energies_.size() + 1 ) ) {
+		silent_energies_.push_back( new_se );
+	} else {
+		// insert adds *right before* the indicated index.
+		// So for positive indices, just what we need.
+		auto iter = silent_energies_.begin();
+		if ( index > 0 ) {
+			std::advance( iter, index - 1 );
 		} else {
-			// insert adds *right before* the indicated index.
-			// So for positive indices, just what we need.
-			auto iter = silent_energies_.begin();
-			if ( index > 0 ) {
-				std::advance( iter, index - 1 );
-			} else {
+			if ( index > int( -1 * silent_energies_.size() ) ) {
 				std::advance( iter, silent_energies_.size() + 1 + index );
+			} else {
+				// will be invalid, just punt and put at end
+				iter = silent_energies_.end();
 			}
-			silent_energies_.insert( iter, new_se );
 		}
+		silent_energies_.insert( iter, new_se );
 	}
 } // add_string_value
 

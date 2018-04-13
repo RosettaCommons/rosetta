@@ -693,9 +693,7 @@ Residue::orient_onto_residue( Residue const & src )
 				! rsd_type_.has( src.type().atom_name( nbr1 ) ) ||
 				! rsd_type_.has( src.type().atom_name( nbr2 ) )
 				) {
-			TR.Error << "Names for " << name() << ":" << std::endl;
 			rsd_type_.show_all_atom_names( TR.Error );
-			TR.Error << "Names for " << src.name() << ":" << std::endl;
 			src.type().show_all_atom_names( TR.Error );
 			utility_exit_with_message("Cannot orient residues " + name() + " and " + src.name() + " as they don't have the the appropriately matched atom names.");
 		}

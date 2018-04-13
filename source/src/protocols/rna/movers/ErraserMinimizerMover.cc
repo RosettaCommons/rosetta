@@ -37,6 +37,7 @@
 #include <core/sequence/Sequence.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <basic/Tracer.hh>
@@ -114,6 +115,11 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
+#include <core/import_pose/pose_stream/PoseInputStream.hh>
+#include <protocols/stepwise/monte_carlo/util.hh>
+
+
 static basic::Tracer TR( "protocols.rna.movers.ErraserMinimizerMover" );
 
 using namespace basic::options;
@@ -131,6 +137,7 @@ using namespace core::pose::rna;
 using namespace core::scoring;
 using namespace core::scoring::constraints;
 using namespace core::scoring::func;
+using namespace core::import_pose::pose_stream;
 using namespace numeric::conversions;
 using namespace protocols::stepwise::modeler::rna;
 using namespace protocols::moves;
@@ -183,7 +190,10 @@ void ErraserMinimizerMover::initialize_from_options( utility::options::OptionCol
 	ready_set_only_ =     options[ ready_set_only ].value();
 	skip_minimize_ =      options[ skip_minimize ].value();
 	attempt_pyrimidine_flip_ = options[ attempt_pyrimidine_flip ].value();
-	std::copy( options[ fixed_res ].value().begin(), options[ fixed_res ].value().end(), std::inserter( fixed_res_list_, fixed_res_list_.end() ) );
+
+	// We are converting this option to use resnum-chain notation so we can't do this absent a pose
+	//std::copy( options[ fixed_res ].value().begin(), options[ fixed_res ].value().end(), std::inserter( fixed_res_list_, fixed_res_list_.end() ) );
+
 	cutpoint_list_ = options[ full_model::cutpoint_open ].value();
 
 	if ( !ready_set_only_ ) {
@@ -257,10 +267,10 @@ ErraserMinimizerMover::vary_bond_geometry(
 	Size const nres( pose.size() );
 	TR << "Enter vary_bond_geometry....." << std::endl;
 
-	TR << "My impression of what residues should maybe move: " << std::endl;
-	TR << "[ ";
+	TR.Debug << "My impression of what residues should maybe move: " << std::endl;
+	TR.Debug << "[ ";
 	for ( auto const elem : chunk ) TR << elem << " ";
-	TR << "]" << std::endl;
+	TR.Debug << "]" << std::endl;
 	// First, set appropriate DOFs to move in the movemap, mm
 	for ( Size i = 1; i <= nres; ++i )  {
 
@@ -570,9 +580,7 @@ void clean_res_list ( std::set< Size > & res_list_new, utility::vector1< std::se
 	std::set< Size > clean_res_list_new;
 	for ( auto const & res_list : res_list_sliced ) {
 		std::set_difference( res_list_new.begin(), res_list_new.end(), res_list.begin(), res_list.end(), inserter(clean_res_list_new,clean_res_list_new.begin()) );
-		TR << "cleanres_list_new: [ ";
-		for ( auto const elem : clean_res_list_new ) TR << elem << " ";
-		TR << "]" << std::endl;
+		TR.Trace << "cleanres_list_new: " << clean_res_list_new << std::endl;
 		res_list_new = clean_res_list_new;
 		clean_res_list_new.clear();
 	}
@@ -773,6 +781,22 @@ ErraserMinimizerMover::apply(
 
 	if ( ready_set_only_ ) return;
 
+	// Put everything protein into the fixed res list if we aren't minimizing protein
+	if ( !minimize_protein_ ) {
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+			if ( pose.residue_type( ii ).is_protein() ) {
+				fixed_res_list_.insert( ii );
+			}
+		}
+	}
+
+
+	// ARGH DIRECT OPTIONS ACCESS
+	auto specified_fixed_res = option[ fixed_res ].resnum_and_chain();
+	auto fixed_res_in_pose_numbering = core::pose::full_model_info::const_full_model_info( pose ).full_model_parameters()->conventional_to_full( specified_fixed_res );
+	std::copy( fixed_res_in_pose_numbering.begin(), fixed_res_in_pose_numbering.end(), std::inserter( fixed_res_list_, fixed_res_list_.end() ) );
+
+
 	// If this pose 'comes with' a particularly opinionated FT, don't change it.
 	if ( pose.fold_tree().num_cutpoint() == 0 ) {
 		// Setup fold tree using user input or using Rhiju's function
@@ -792,11 +816,11 @@ ErraserMinimizerMover::apply(
 
 	// Output the sequence
 	std::string const & working_sequence = pose.sequence();
-	TR << "Pose sequence = " << working_sequence << std::endl;
+	TR.Debug << "Pose sequence = " << working_sequence << std::endl;
 
 	// Try flipping the pyrimidines
 	if ( attempt_pyrimidine_flip_ ) {
-		TR << "Do we have to flip pyrimidines?" << std::endl;
+		TR.Debug << "Do we have to flip pyrimidines?" << std::endl;
 		pyrimidine_flip_trial( pose );
 	}
 
@@ -810,33 +834,32 @@ ErraserMinimizerMover::apply(
 	// AMW TODO: read chunks from temp file if exists
 	identify_chunks( pose, chunks, virtual_res_pos );
 	Size const n_chunk = chunks.size();
-	TR << "Identified " << n_chunk << " chunks" << std::endl;
+	TR.Debug << "Identified " << n_chunk << " chunks" << std::endl;
 	for ( Size ii = 1; ii <= n_chunk; ++ii ) {
-		TR << "[";
-		for ( core::Size jj : chunks[ii] ) {
-			TR << " " << jj;
-		}
-		TR << "]" << std::endl;
+		TR.Trace << chunks[ii] << std::endl;
 	}
 
+	// Look through posisble files and replace with checkpointed pose.
+	// Relies on consistent/deterministic chunk assignments, of course.
 	Size first_chunk = 1;
+	std::string checkpoint_to_load = "";
 	for ( ; first_chunk <= n_chunk; ++first_chunk ) {
 		std::stringstream inname;
 		inname << "full_minimize_temp_" << first_chunk << ".out";
-		std::ifstream f( inname.str() );
-		if ( !f.good() ) break;
-		bool found_token = false;
-		while ( f.good() ) {
-			std::string tok;
-			f >> tok;
-			if ( tok == "DONE!" ) {
-				found_token = true;
-			}
-		}
-		if ( !found_token ) {
-			// this out is bad
-			//first_chunk--;
+		if ( utility::file::file_exists( inname.str() ) ) {
+			// Load from checkpoint
+			checkpoint_to_load = inname.str();
+		} else {
 			break;
+		}
+	}
+
+	// If we have found a checkpoint file, load it. first_chunk will be bigger than one.
+	if ( checkpoint_to_load != "" ) {
+		// Load in the checkpoint!
+		auto input = PoseInputStreamOP( new SilentFilePoseInputStream( checkpoint_to_load ) );
+		if ( input->has_another_pose() ) { // safe against bad files
+			input->fill_pose( pose );
 		}
 	}
 
@@ -862,7 +885,7 @@ ErraserMinimizerMover::apply(
 	for ( Size i = 1; i <= fold_tree.num_jump(); ++i ) {
 		Size const ustream   = fold_tree.upstream_jump_residue( i );
 		Size const dstream = fold_tree.downstream_jump_residue( i );
-		TR << "Considering jump number " << i << " from " << ustream << " to " << dstream << std::endl;
+		TR.Debug << "Considering jump number " << i << " from " << ustream << " to " << dstream << std::endl;
 		cut_lower.insert( ustream );
 		cut_upper.insert( dstream );
 
@@ -875,13 +898,13 @@ ErraserMinimizerMover::apply(
 				( pose.residue_type( dstream ).aa() == core::chemical::aa_h2o &&
 				pose.residue_type( ustream ).name() == "MG" ) ) continue;
 
-		TR << "not all virts..." << std::endl;
+		TR.Debug << "not all virts..." << std::endl;
 		if ( fixed_res_list_.empty() || ( fixed_res_list_.size() != 0 &&
 				fixed_res_list_.find( ustream ) == fixed_res_list_.end() &&
 				fixed_res_list_.find( dstream ) == fixed_res_list_.end() ) ) {
 			mm.set_jump( i, true );
 
-			TR << "not fixed_res! " << fixed_res_list_ << std::endl;
+			TR.Debug << "not fixed_res! " << fixed_res_list_ << std::endl;
 		}
 	}
 
@@ -889,11 +912,11 @@ ErraserMinimizerMover::apply(
 	if ( fixed_res_list_.size() != 0 ) {
 		scorefxn_->set_weight( coordinate_constraint, 10 );
 
-		TR << "fixed res: ";
+		TR.Debug << "fixed res: ";
 	}
 
 	for ( Size const fixed_res_num : fixed_res_list_ ) {
-		TR << fixed_res_num << " ";
+		TR.Debug << fixed_res_num << " ";
 
 		add_fixed_res_constraints( pose, fixed_res_num, virtual_res_pos );
 
@@ -913,7 +936,7 @@ ErraserMinimizerMover::apply(
 			allow_insert( fixed_res_num ) = true;
 		}
 	}
-	TR << std::endl;
+	TR.Debug << std::endl;
 
 	// Handle phosphate constraints
 	if ( constrain_phosphate_ ) {
@@ -946,10 +969,7 @@ ErraserMinimizerMover::apply(
 		// Don't retain those dirty constraints from chunk n-1 -- they don't
 		// matter, since those residues can't move!
 		pose.constraint_set( saved_cst_set );
-		std::stringstream outname;
-		outname << "full_minimize_temp_" << chunk_i << ".out";
-		std::ofstream out( outname.str() );
-		out << "Starting chunk " << chunk_i << "..." << std::endl;
+		TR << "Starting chunk " << chunk_i << "..." << std::endl;
 
 		// Constrain bonded atom sets to the starting geometry
 		kinematics::MoveMap chunk_mm( mm );
@@ -960,7 +980,7 @@ ErraserMinimizerMover::apply(
 		if ( n_chunk != 1 ) {
 			turn_off_for_chunks( chunk_mm, pose, chunks[chunk_i] );
 		}
-		protocols::stepwise::modeler::output_movemap( chunk_mm, pose );
+		protocols::stepwise::modeler::output_movemap( chunk_mm, pose, TR.Debug );
 		scorefxn_->show( TR, pose );
 		Real const score_before = ( ( *scorefxn_ )( pose ) );
 		Real const edens_score_before = ( ( *edens_scorefxn_ )( pose ) );
@@ -984,6 +1004,33 @@ ErraserMinimizerMover::apply(
 		Real const edens_score = ( ( *edens_scorefxn_ )( pose ) );
 		TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
 		TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
+		if ( score > score_before + 10 || edens_score > edens_score_before + 10 ) {
+			TR.Warning << "Minimization went wild! Restoring start pose." << std::endl;
+			pose = start_pose;
+		}
+
+		if ( vary_bond_geometry_ ) {
+			Pose const start_pose = pose;
+			CartesianMinimizer cart_minimizer;
+			float const cart_dummy_tol( 0.0001 );
+			Size const cart_min_iter = std::min( 5000, std::max( 2000, int( nres_moving * 24 ) ) );
+
+			TR << "Cart-minimize using dfpmin with use_nb_list=true .." << std::endl;
+			MinimizerOptions cart_min_options_dfpmin( "lbfgs_armijo_nonmonotone" /*option[ run::min_type ]*/, cart_dummy_tol, true, false, false );
+			cart_min_options_dfpmin.max_iter( cart_min_iter );
+			cart_minimizer.run( pose, chunk_mm, *scorefxn_, cart_min_options_dfpmin );
+
+			scorefxn_->show( TR, pose );
+			Real const score = ( ( *scorefxn_ )( pose ) );
+			Real const edens_score = ( ( *edens_scorefxn_ )( pose ) );
+			TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
+			TR << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
+			if ( score > score_before + 10 || edens_score > edens_score_before + 10 ) {
+				TR.Warning << "Minimization went wild! Restoring start pose." << std::endl;
+				pose = start_pose;
+			}
+		}
+
 		/*
 		if ( score > score_before + 5 || edens_score > edens_score_before * 0.9 ) {
 		TR << "current_score = " << score << ", start_score = " << score_before << std::endl;
@@ -1007,14 +1054,18 @@ ErraserMinimizerMover::apply(
 		}
 		*/
 		time_t chunk_end = time(nullptr);
-		out << "CPU time for chunk: " << (chunk_end-chunk_start) << " seconds." << std::endl;
-		out << "DONE!" << std::endl;
-		std::stringstream fn;
-		fn << "debug_chunk_" << chunk_i << ".pdb";
+		TR << "CPU time for chunk: " << (chunk_end-chunk_start) << " seconds." << std::endl;
+		//out << "DONE!" << std::endl;
+		//std::stringstream fn;
+		//fn << "debug_chunk_" << chunk_i << ".pdb";
 		pose.pdb_info()->obsolete( false );
 
-		pose.dump_pdb( fn.str() );
+		//pose.dump_pdb( fn.str() );
 
+		std::stringstream outname;
+		outname << "full_minimize_temp_" << chunk_i << ".out";
+		protocols::stepwise::monte_carlo::output_to_silent_file( "CHECKPOINT", outname.str(),
+			pose );
 		protocols::viewer::clear_conformation_viewers();
 	}
 	pose.pdb_info()->obsolete( false );

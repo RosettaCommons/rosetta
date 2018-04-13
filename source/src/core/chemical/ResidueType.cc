@@ -4637,6 +4637,7 @@ ResidueType::select_orient_atoms(
 	if ( first_sidechain_atom() == 1 || first_sidechain_atom() > natoms() || force_nbr_atom_orient() ) {
 		// If no backbone atoms (or all bb atoms), assume nbr_atom will be close to center-of-mass.
 		center = nbr_atom();
+
 		// If is hydrogen or too few neighbors, try trekking up the atom tree
 		while ( center > nheavyatoms() || bonded_neighbor(center).size() < 2 ) {
 			center = atom_base(center);

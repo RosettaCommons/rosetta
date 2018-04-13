@@ -7353,7 +7353,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option_Group('erraser',
 		    Option( 'rna_prot_erraser', 'Boolean', desc='Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.', default='false' ),
 				Option('constrain_P', 'Boolean', desc='constrain phosphate', default='false' ),
-				Option('fixed_res', 'IntegerVector', desc='optional: residues to be held fixed in minimizer', default=[] ),
+				Option('fixed_res', 'ResidueChainVector', desc='optional: residues to be held fixed in minimizer', default=[] ),
 				Option('ready_set_only', 'Boolean', desc='load in and output directly for reformatting the pdb', default='false' ),
 				Option('skip_minimize', 'Boolean', desc='output the pdb without minimization', default='false' ),
 				Option('attempt_pyrimidine_flip', 'Boolean', desc='try to flip pyrimidine by 180 degrees and pick the better energy conformer', default='false' ),

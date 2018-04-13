@@ -348,6 +348,12 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 				if ( working_atom_name == "H5''" ) { continue; }
 				if ( working_atom_name == "HO2'" ) { continue; }
 
+				// Skip block stack atoms
+				if ( working_atom_name == "RPB1" ) { continue; }
+				if ( working_atom_name == "RPB2" ) { continue; }
+				if ( working_atom_name == "RPA1" ) { continue; }
+				if ( working_atom_name == "RPA2" ) { continue; }
+
 				if ( working_rsd.is_virtual( working_at ) ) continue; //mainly to deal with "OVU1", "OVL1", "OVL2"
 
 				if ( VDW_rep_rsd.has( working_atom_name ) == false ) utility_exit_with_message( "VDW_rep_rsd does not have atom = " + working_atom_name + "!" );

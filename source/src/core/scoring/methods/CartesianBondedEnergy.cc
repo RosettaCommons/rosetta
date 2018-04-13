@@ -80,6 +80,8 @@
 
 #include <utility/vector1.hh>
 
+#include <ObjexxFCL/string.functions.hh>
+
 #include <core/pose/PDBInfo.hh>
 
 // cutoff for reporting outliers
@@ -189,6 +191,8 @@ std::string get_restag( core::chemical::ResidueType const & restype ) {
 		if ( rsdname.substr(0, rsdname.find(chemical::PATCH_LINKER)) == "DHIS_D" ) rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
 		else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
 		return rsdname;
+	} else if ( restype.is_RNA() && restype.na_analogue() != core::chemical::aa_unk && restype.na_analogue() != core::chemical::aa_unp ) {
+		return core::chemical::name_from_aa( restype.na_analogue() );
 	} else if ( restype.is_protein() || restype.is_NA() ) {
 		std::string rsdname = restype.name();
 		rsdname = rsdname.substr( 0, rsdname.find(chemical::PATCH_LINKER) );
@@ -1503,15 +1507,19 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 		CartBondedParametersCOP tor_params = b_it.second;
 
+		// Because of mmCIF files (and parameters taken from wild CIFs like the Chemical
+		// Components Database) we need to account for whitespace issues here.
+		// It seems like 'has' will pass in case of whitespace mismatches but get won't.
+
 		// Also skip if any atom does not exist
 		if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
 				!rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
 
 		ResidueCartBondedParameters::Size4 ids;
-		ids[1] = rsd_type.atom_index( tuple.get<1>() );
-		ids[2] = rsd_type.atom_index( tuple.get<2>() );
-		ids[3] = rsd_type.atom_index( tuple.get<3>() );
-		ids[4] = rsd_type.atom_index( tuple.get<4>() );
+		ids[1] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<1>() ) );
+		ids[2] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<2>() ) );
+		ids[3] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<3>() ) );
+		ids[4] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<4>() ) );
 
 		//TR << "Adding parameters for " << tuple.get<0>() << " - " << tuple.get<1>() << " " << tuple.get<2>() << " " << tuple.get<3>() << " " << tuple.get<4>() << std::endl;
 		imp_found_in_database = true;
@@ -1532,10 +1540,10 @@ IdealParametersDatabase::create_parameters_for_restype(
 			CartBondedParametersCOP tor_params = b_it.second;
 
 			ResidueCartBondedParameters::Size4 ids;
-			ids[1] = rsd_type.atom_index( tuple.get<1>() );
-			ids[2] = rsd_type.atom_index( tuple.get<2>() );
-			ids[3] = rsd_type.atom_index( tuple.get<3>() );
-			ids[4] = rsd_type.atom_index( tuple.get<4>() );
+			ids[1] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<1>() ) );
+			ids[2] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<2>() ) );
+			ids[3] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<3>() ) );
+			ids[4] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<4>() ) );
 
 			restype_params->add_improper_parameter( ids, tor_params );
 
@@ -1561,10 +1569,10 @@ IdealParametersDatabase::create_parameters_for_restype(
 			CartBondedParametersCOP tor_params = it2->second;
 
 			ResidueCartBondedParameters::Size4 ids;
-			ids[1] = rsd_type.atom_index( tuple.get<1>() );
-			ids[2] = rsd_type.atom_index( tuple.get<2>() );
-			ids[3] = rsd_type.atom_index( tuple.get<3>() );
-			ids[4] = rsd_type.atom_index( tuple.get<4>() );
+			ids[1] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<1>() ) );
+			ids[2] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<2>() ) );
+			ids[3] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<3>() ) );
+			ids[4] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<4>() ) );
 			restype_params->add_torsion_parameter( ids, tor_params );
 		}
 	}
@@ -1647,11 +1655,11 @@ IdealParametersDatabase::create_parameters_for_restype(
 			std::string atm1,atm2;
 			int rt1 = 0;
 			int rt2 = 0;
-			if ( i==1 ) { atm1="C";  atm2="N";  rt1 = -rsd_type.lower_connect_id(); rt2 = rsd_type.atom_index(" N  ");}
-			if ( i==2 ) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index(" N  "); rt2 = rsd_type.atom_index(" CA "); }
-			if ( i==3 ) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" CB "); }
-			if ( i==4 ) { atm1="CA"; atm2="C";  rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" C  "); }
-			if ( i==5 ) { atm1="C";  atm2="O";  rt1 = rsd_type.atom_index(" C  "); rt2 = rsd_type.atom_index(" O  "); }
+			if ( i==1 ) { atm1="C";  atm2="N";  rt1 = -rsd_type.lower_connect_id(); rt2 = rsd_type.atom_index("N");}
+			if ( i==2 ) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index("N"); rt2 = rsd_type.atom_index("CA"); }
+			if ( i==3 ) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index("CA"); rt2 = rsd_type.atom_index("CB"); }
+			if ( i==4 ) { atm1="CA"; atm2="C";  rt1 = rsd_type.atom_index("CA"); rt2 = rsd_type.atom_index("C"); }
+			if ( i==5 ) { atm1="C";  atm2="O";  rt1 = rsd_type.atom_index("C"); rt2 = rsd_type.atom_index("O"); }
 
 			ResidueCartBondedParameters::Size2 ids;
 			ids[1] = (core::Size)std::max(rt1,0);
@@ -1671,13 +1679,13 @@ IdealParametersDatabase::create_parameters_for_restype(
 			int rt1 = 0;
 			int rt2 = 0;
 			int rt3 = 0;
-			if ( i==1 ) { atm1="C";  atm2="N";  atm3="CA"; rt1=-rsd_type.lower_connect_id();  rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
-			if ( i==2 ) { atm1="N";  atm2="CA"; atm3="CB"; rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" CB "); }
-			if ( i==3 ) { atm1="N";  atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
-			if ( i==4 ) { atm1="CB"; atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" CB "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
-			if ( i==5 ) { atm1="CA"; atm2="C";  atm3="O";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=rsd_type.atom_index(" O  "); }
-			if ( i==6 ) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=-rsd_type.upper_connect_id(); }
-			if ( i==7 ) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=-rsd_type.upper_connect_id(); }
+			if ( i==1 ) { atm1="C";  atm2="N";  atm3="CA"; rt1=-rsd_type.lower_connect_id();  rt2=rsd_type.atom_index("N"); rt3=rsd_type.atom_index("CA");}
+			if ( i==2 ) { atm1="N";  atm2="CA"; atm3="CB"; rt1=rsd_type.atom_index("N"); rt2=rsd_type.atom_index("CA"); rt3=rsd_type.atom_index("CB"); }
+			if ( i==3 ) { atm1="N";  atm2="CA"; atm3="C";  rt1=rsd_type.atom_index("N"); rt2=rsd_type.atom_index("CA"); rt3=rsd_type.atom_index("C"); }
+			if ( i==4 ) { atm1="CB"; atm2="CA"; atm3="C";  rt1=rsd_type.atom_index("CB"); rt2=rsd_type.atom_index("CA"); rt3=rsd_type.atom_index("C"); }
+			if ( i==5 ) { atm1="CA"; atm2="C";  atm3="O";  rt1=rsd_type.atom_index("CA"); rt2=rsd_type.atom_index("C"); rt3=rsd_type.atom_index("O"); }
+			if ( i==6 ) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index("CA"); rt2=rsd_type.atom_index("C"); rt3=-rsd_type.upper_connect_id(); }
+			if ( i==7 ) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index("O"); rt2=rsd_type.atom_index("C"); rt3=-rsd_type.upper_connect_id(); }
 
 			ResidueCartBondedParameters::Size3 ids;
 			ids[1] = (core::Size)std::max(rt1,0); ids[2] = (core::Size)std::max(rt2,0); ids[3] = (core::Size)std::max(rt3,0);

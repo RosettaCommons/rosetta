@@ -207,8 +207,15 @@ StepWiseConnectionSampler::apply( core::pose::Pose & pose ){
 
 	StepWiseSampleAndScreen sample_and_screen( sampler_, screeners_ );
 	sample_and_screen.set_verbose( !options_->choose_random() || options_->integration_test_mode() || options_->verbose_sampler() );
-	sample_and_screen.set_max_ntries( get_max_ntries() );
-	sample_and_screen.set_num_random_samples( options_->num_random_samples() );
+	// Since get_max_ntries doesn't have access to the Pose, I modify it further here
+	// based on whether the residue in question is a ligand.
+	if ( moving_ligand_ ) {
+		sample_and_screen.set_max_ntries( get_max_ntries() * 10 );
+		sample_and_screen.set_num_random_samples( options_->num_random_samples() * 4 );
+	} else {
+		sample_and_screen.set_max_ntries( get_max_ntries() );
+		sample_and_screen.set_num_random_samples( options_->num_random_samples() );
+	}
 	sample_and_screen.run();
 
 	pose_list_ = clusterer_->pose_list(); // held in the last screener.
@@ -220,7 +227,12 @@ StepWiseConnectionSampler::apply( core::pose::Pose & pose ){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseConnectionSampler::initialize_useful_info( pose::Pose const & pose ){
-	rigid_body_modeler_ = ( toolbox::rigid_body::figure_out_reference_res_for_jump( pose, moving_res_ ) > 0 );
+	Size reference_res = toolbox::rigid_body::figure_out_reference_res_for_jump( pose, moving_res_ );
+	// Complicate the rigid body modeler logic. This works iff the moving_res is NOT bonded to its connections
+	// (i.e. JUMP_DOCK) but we need to manage to ignore cases where this is in fact the reference res for a ligand
+	// or vrt but the edge is 'written backwards'
+	rigid_body_modeler_ = reference_res > 0 && pose.aa( reference_res ) != core::chemical::aa_vrt;
+
 	figure_out_reference_res( pose );
 	protein_connection_ = is_protein( pose, moving_res_list_ ); // argh.
 	// sets up rna_cutpoints_closed_, five_prime_chain_break_res_, three_prime_chain_break_res_ and chainbreak_gaps_
@@ -258,7 +270,7 @@ StepWiseConnectionSampler::initialize_screeners( pose::Pose & pose )
 {
 	initialize_checkers( pose );
 	screeners_.clear();
-	if ( rigid_body_modeler_ ) initialize_residue_level_screeners( pose );
+	if ( rigid_body_modeler_ && pose.residue_type( moving_res_ ).is_polymer() ) initialize_residue_level_screeners( pose );
 	initialize_pose_level_screeners( pose );
 }
 
@@ -279,7 +291,7 @@ StepWiseConnectionSampler::initialize_residue_level_screeners( pose::Pose & pose
 
 	screeners_.push_back( StepWiseScreenerOP( new StubDistanceScreener( moving_res_base_stub_, rigid_body_rotamer_->reference_stub(), max_distance_squared_ ) ) );
 
-	if ( base_centroid_checker_ && !protein_connection_ && !pose.residue_type( moving_res_ ).is_carbohydrate() ) {
+	if ( base_centroid_checker_ && !protein_connection_ && !pose.residue_type( moving_res_ ).is_carbohydrate() &&  pose.residue_type( moving_res_ ).is_polymer() ) {
 		screeners_.push_back( StepWiseScreenerOP( new BaseCentroidScreener( base_centroid_checker_,
 			moving_res_base_stub_ ) ) );
 	}
@@ -294,7 +306,7 @@ StepWiseConnectionSampler::initialize_residue_level_screeners( pose::Pose & pose
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// clash checks
 	ResidueCOP screening_moving_rsd_at_origin = rigid_body_rotamer_->get_residue_at_origin( moving_res_ ).clone();
-	if ( VDW_bin_checker_ != nullptr && !protein_connection_ ) {
+	if ( VDW_bin_checker_ != nullptr && !protein_connection_ && pose.residue_type( moving_res_ ).is_polymer() ) {
 		screeners_.push_back( StepWiseScreenerOP( new VDW_BinScreener( VDW_bin_checker_, *virt_sugar_screening_pose_, moving_res_,
 			screening_moving_rsd_at_origin, moving_res_base_stub_ ) ) );
 	}
@@ -328,6 +340,8 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 			( options_->rmsd_screen() > 0.0 || options_->integration_test_mode() ) ) {
 		bool do_screen = ( ( options_->rmsd_screen() > 0.0 ) && !options_->integration_test_mode() ); // gets toggled to true in integration tests.
 		// not necessarily native -- just used for alignment & rmsd calcs.
+
+		// AMW: consider, here, expanding rmsd_screen for ligand sampling.
 		align_rmsd_screener = AlignRMSD_ScreenerOP( new AlignRMSD_Screener( *get_native_pose(), *screening_pose_,
 			working_parameters_->working_moving_partition_res() /*used to be working_parameters_->working_moving_res_list()*/,
 			options_->rmsd_screen(), do_screen ) );
@@ -416,7 +430,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	screeners_.push_back( StepWiseScreenerOP( new SampleApplier( pose ) ) );
 
 	if ( !tag_definition_ ) { // may have been defined above in residue level modeler.
-		tag_definition_ = screener::TagDefinitionOP( new TagDefinition( pose, screeners_[1], options_->sampler_include_torsion_value_in_tag(),
+		tag_definition_ = TagDefinitionOP( new TagDefinition( pose, screeners_[1], options_->sampler_include_torsion_value_in_tag(),
 			moving_res_, reference_res_, "" /* extra_tag_ */ ) );
 		screeners_.push_back( tag_definition_ );
 	}
@@ -599,7 +613,7 @@ StepWiseConnectionSampler::get_max_ntries() {
 
 /////////////////////////////////////////////////////////////////////////////////
 Size
-StepWiseConnectionSampler::get_num_pose_kept(){
+StepWiseConnectionSampler::get_num_pose_kept() {
 	Size num_pose_kept( 108 );
 	if ( options_->sampler_num_pose_kept() > 0 ) num_pose_kept = options_->sampler_num_pose_kept();
 	if ( !rigid_body_modeler_ && working_parameters_ && working_parameters_->sample_both_sugar_base_rotamer() ) num_pose_kept *= 4; //12;
@@ -643,6 +657,10 @@ StepWiseConnectionSampler::initialize_euler_angle_grid_parameters(){
 	value_range.set_euler_angle_bin_size( STANDARD_EULER_ANGLE_BIN_SIZE );
 	value_range.set_euler_z_bin_size( STANDARD_EULER_Z_BIN_SIZE );
 	value_range.set_centroid_bin_size( STANDARD_CENTROID_BIN_SIZE );
+	if ( options_->rmsd_screen() && moving_ligand_ ) {
+		TR << "Centroid bin size is " << STANDARD_CENTROID_BIN_SIZE * ( options_->rmsd_screen() /  1.8 ) / 8.0  << std::endl;
+		value_range.set_centroid_bin_size( STANDARD_CENTROID_BIN_SIZE * ( options_->rmsd_screen() /  1.8 ) / 8.0 );
+	}
 	if ( options_->integration_test_mode() ) { // use coarser search for speed
 		value_range.set_euler_angle_bin_size( STANDARD_EULER_ANGLE_BIN_SIZE * 4 );
 		value_range.set_centroid_bin_size( STANDARD_CENTROID_BIN_SIZE * 4);
@@ -653,6 +671,12 @@ StepWiseConnectionSampler::initialize_euler_angle_grid_parameters(){
 void
 StepWiseConnectionSampler::initialize_xyz_grid_parameters(){
 	Distance max_distance = options_->sampler_max_centroid_distance(); // if unspecified (0.0), will be replaced
+	// Reducing by 1.8 (rounding up sqrt(3))
+
+	if ( options_->rmsd_screen() && moving_ligand_  /*&& max_distance == 0.0*/ ) {
+		TR << "Max distance is now " << options_->rmsd_screen() / 1.8 << std::endl;
+		max_distance = options_->rmsd_screen() /  1.8;
+	}
 	if ( options_->tether_jump() && max_distance == 0.0 ) max_distance = 8.0;
 	int centroid_bin_min, centroid_bin_max;
 	initialize_xyz_parameters( max_distance, max_distance_squared_,
@@ -695,21 +719,23 @@ StepWiseConnectionSampler::get_moving_rsd_list() const {
 //////////////////////////////////////////////////////////////////////
 bool
 StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
+	if ( moving_res_ != 0 && !pose.residue_type( moving_res_ ).is_polymer() ) {
+		moving_ligand_ = true;
+	}
 	if ( rigid_body_modeler_ ) {
 		initialize_euler_angle_grid_parameters();
 		initialize_xyz_grid_parameters();
 		initialize_full_rigid_body_sampler();
+		if ( moving_ligand_ ) {
+			TR << "About to initialize ligand bond sampler" << std::endl;
+			sampler_ = initialize_ligand_bond_sampler( pose );
+		}
 	} else {
 		if ( protein_connection_ ) {
 			sampler_ = initialize_protein_bond_sampler( pose );
 		} else if ( moving_res_ != 0 && pose.residue_type( moving_res_ ).is_carbohydrate() ) {
 			TR << "Sampling carbohydrate" << std::endl;
 			sampler_ = initialize_carbohydrate_bond_sampler( pose );
-		} else if ( moving_res_ != 0 && !pose.residue_type( moving_res_ ).is_polymer() ) {
-			initialize_euler_angle_grid_parameters();
-			initialize_xyz_grid_parameters();
-			initialize_full_rigid_body_sampler();
-			sampler_ = initialize_ligand_bond_sampler( pose );
 		} else {
 			runtime_assert( moving_res_ == 0 || pose.residue_type( moving_res_ ).is_RNA() );
 			sampler_ = initialize_rna_bond_sampler( pose );
@@ -767,6 +793,8 @@ StepWiseConnectionSampler::initialize_ligand_bond_sampler( pose::Pose const & po
 
 	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
+	std::cout << "Setting up ligand sampler for " << pose.residue_type( moving_res_ ).name() << std::endl;
+	std::cout << "\t" << pose.residue_type( moving_res_ ) << std::endl;
 	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
 		StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
 		sampler->add_external_loop_rotamer( foo );

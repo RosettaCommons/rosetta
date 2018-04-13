@@ -1891,6 +1891,9 @@ virtualize_free_rna_moieties( pose::Pose & pose ){
 		}
 
 		// base and sugar are virtual.
+		if ( pose.residue_type( i ).has_variant_type( chemical::VIRTUAL_BASE ) ) {
+			remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_BASE, i );
+		}
 		add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, i );
 
 		// phosphate 5' to base

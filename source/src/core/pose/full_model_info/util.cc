@@ -402,7 +402,29 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 
 	if ( clean_seq.size() < pose.size() ) {
+		TR << "pose.size()      " << pose.size() << std::endl;
+		TR << "clean_seq.size() " << clean_seq.size() << std::endl;
+		TR << "clean_seq: " << clean_seq << std::endl;
+		TR << "pose seq: " << pose.annotated_sequence()<< std::endl;
 		TR << "sequence.size() << pose.size()" << std::endl;
+
+		// AMW TEMP DEBUG
+		for ( Size n = 1; n <= res_list.size(); ++n ) {
+			Size const res_num = res_list[ n ];
+			char sequence_char = clean_seq[ res_num   - 1 ];
+
+			if ( sequence_char != pose.residue_type( n ).name1() ) {
+				TR << res_list << std::endl;
+				TR << "no match at " << n << " conventional numbering: " << res_num << "  sequence: " << sequence_char << " pose sequence: " <<  pose.residue_type( n ).name1() << std::endl;
+				TR << "POSE SEQUENCE       " << pose.sequence() << std::endl;
+				TR << "FULL MODEL SEQUENCE " << sequence << std::endl;
+				TR << "CLEANED FM SEQUENCE " << clean_seq << std::endl;
+				TR << "Maybe pose pdbinfo will help? " << pose.pdb_info()->pose2pdb( n ) << std::endl;
+				TR << "Check that all your input PDBs have residues in the same order as in your fasta file!" << std::endl;
+				return false;
+			}
+		}
+
 		return false;
 	}
 

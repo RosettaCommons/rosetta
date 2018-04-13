@@ -263,8 +263,9 @@ ResampleMover::get_remodel_res( StepWiseMove const & swa_move, pose::Pose const 
 	Size remodel_res( 0 );
 	MoveElement const & move_element = swa_move.move_element();
 	for ( Size n = 1; n <= move_element.size(); n++ ) {
-		Size const & moving_res = full_to_sub( move_element[ n ], pose );
+		Size const moving_res = full_to_sub( move_element[ n ], pose );
 		Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
+		TR.Trace << "This moving res (move_element[" << n << "] == " << move_element[n] << ") " << moving_res << " has parent " << parent_res << std::endl;
 		if ( parent_res > 0 && sub_to_full( parent_res, pose ) == swa_move.attached_res() ) {
 			remodel_res = moving_res; break;
 		}
@@ -273,7 +274,8 @@ ResampleMover::get_remodel_res( StepWiseMove const & swa_move, pose::Pose const 
 	// we may have to reroot pose -- the attachment point might be 'downstream' of the moving element.
 	// the rerooting will actually occur later in the Modeler.
 	if ( remodel_res == 0 ) {
-		Size const & moving_res = full_to_sub( swa_move.attached_res(), pose );
+		Size const moving_res = full_to_sub( swa_move.attached_res(), pose );
+		TR.Trace << "Maybe the moving res " << moving_res  << " ( " << swa_move.attached_res() << " ) will work " << sub_to_full( pose.fold_tree().get_parent_residue( moving_res ), pose ) << std::endl;
 		if ( move_element.has_value( sub_to_full( pose.fold_tree().get_parent_residue( moving_res ), pose ) ) ) {
 			remodel_res = moving_res;
 		}

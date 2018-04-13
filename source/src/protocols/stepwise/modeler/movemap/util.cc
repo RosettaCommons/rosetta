@@ -90,7 +90,8 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	using namespace core::id;
 	Size const nres( pose.size() );
 	for ( Size n = 1; n <= nres; n++ ) {
-		if ( working_minimize_res.has_value( n ) ) atom_level_domain_map->set( n, true );
+		if ( working_minimize_res.has_value( n )
+				&& ( n != nres || pose.residue_type( nres ).aa() != core::chemical::aa_vrt ) ) atom_level_domain_map->set( n, true );
 		if ( !working_minimize_res.has_value( n ) ) atom_level_domain_map->set_fixed_if_moving( n );
 		if ( pose.residue_type( n ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 			atom_level_domain_map->set( NamedAtomID( "OVL1",  n), pose, true );

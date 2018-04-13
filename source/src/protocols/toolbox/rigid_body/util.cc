@@ -151,20 +151,19 @@ set_to_origin( pose::Pose & pose, Size const seq_num,
 	conformation::Residue const & rsd( pose.residue( seq_num ) );
 
 	// AMW: sometimes this gets called on protein. if so, use CA maybe... for now just don't transform
-	if ( rsd.is_RNA() ) {
-		numeric::xyzVector< Real > centroid = chemical::rna::get_rna_base_centroid( rsd, verbose );
-		numeric::xyzMatrix< Real > base_coordinate_matrix = chemical::rna::get_rna_base_coordinate_system( rsd, centroid );
-		numeric::xyzMatrix< Real > invert_coordinate_matrix = inverse( base_coordinate_matrix );
+	// WE NEED THIS to work for everything -- for ligand erraser.
+	// We have clauses in get_rna_base_centroid and get_rna_base_coordinate_system (TODO check latter)
+	// that help out.
+	numeric::xyzVector< Real > centroid = chemical::rna::get_rna_base_centroid( rsd, verbose );
+	numeric::xyzMatrix< Real > base_coordinate_matrix = chemical::rna::get_rna_base_coordinate_system( rsd, centroid );
+	numeric::xyzMatrix< Real > invert_coordinate_matrix = inverse( base_coordinate_matrix );
 
-		for ( Size const i : move_res_list ) {
-			for ( Size at = 1; at <= pose.residue_type( i ).natoms(); at++ ) {
-				id::AtomID const id( at, i );
-				pose.set_xyz( id, pose.xyz( id ) - centroid ); //I think the order here does matter. Translate centroid to origin.
-				pose.set_xyz( id, invert_coordinate_matrix * pose.xyz( id ) ); //I think the order here does matter. Rotate coordinate so that it equal to Rosetta internal reference frame
-			}
+	for ( Size const i : move_res_list ) {
+		for ( Size at = 1; at <= pose.residue_type( i ).natoms(); at++ ) {
+			id::AtomID const id( at, i );
+			pose.set_xyz( id, pose.xyz( id ) - centroid ); //I think the order here does matter. Translate centroid to origin.
+			pose.set_xyz( id, invert_coordinate_matrix * pose.xyz( id ) ); //I think the order here does matter. Rotate coordinate so that it equal to Rosetta internal reference frame
 		}
-	} else {
-		TR.Warning << "set_to_origin called on non-RNA residue; no action being taken." << std::endl;
 	}
 }
 

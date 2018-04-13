@@ -37,6 +37,12 @@
 #include <basic/Tracer.hh>
 #include <fstream>
 
+// Just for resample_full_model checkpointing -- gross, maybe should refactor later
+#include <utility/file/file_sys_util.hh>
+#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMasterMover" );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +65,9 @@ using namespace protocols::stepwise::monte_carlo::rna;
 using namespace protocols::stepwise::modeler;
 using namespace core::pose::full_model_info;
 using namespace protocols::magnesium;
+
+using namespace core::import_pose::pose_stream;
+using namespace core::chemical;
 
 namespace protocols {
 namespace stepwise {
@@ -350,7 +359,13 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 }
 
 void
-StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::Pose & output_pose, bool const checkpointing_breadcrumbs, utility::vector1< Size > const & residues_to_rebuild ) {
+StepWiseMasterMover::resample_full_model(
+	pose::Pose const & start_pose,
+	pose::Pose & output_pose,
+	bool const checkpointing_breadcrumbs,
+	utility::vector1< Size > const & residues_to_rebuild
+) {
+
 	// Generates a set of 'bad residues' based on DOFs and other criteria. Then, only rebuilds the ones also present in
 	// residues_to_rebuild.
 
@@ -360,10 +375,15 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 	initialize();
 
 	// AMW: This was the old, move selector dependent method.
-	//stepwise_move_selector_->figure_out_all_possible_moves( start_pose );
-	//for ( StepWiseMove const & stepwise_move : stepwise_move_selector_->swa_moves() ) {
-	// TR << "Possible Move: " << stepwise_move << "." << std::endl;
-	//}
+	auto & FMI = nonconst_full_model_info( output_pose );
+	FullModelParametersOP FMP = FMI.full_model_parameters()->clone();
+	FMP->set_parameter_as_res_list( SAMPLE, residues_to_rebuild );
+	FMI.set_full_model_parameters( FMP );
+
+	stepwise_move_selector_->figure_out_all_possible_moves( output_pose );
+	for ( StepWiseMove const & stepwise_move : stepwise_move_selector_->swa_moves() ) {
+		TR << "NOTE FOR POSTERITY: Possible Move: " << stepwise_move << "." << std::endl;
+	}
 
 	utility::vector1< StepWiseMove > stepwise_moves;//, internal_moves, terminal_moves;
 	//stepwise_move_selector_->get_resample_terminal_move_elements( output_pose, terminal_moves );
@@ -422,18 +442,47 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 		if ( ii > 1 ) TR.Trace << ii - 1 << " " << start_pose.residue( ii - 1 ).name() << std::endl;
 		TR.Trace << ii << " " << start_pose.residue( ii ).name() << std::endl;
 		if ( ii < start_pose.size() ) TR.Trace << ii + 1 << " " << start_pose.residue( ii + 1 ).name() << std::endl;
-		if ( !start_pose.residue( ii ).has_lower_connect() ) {
+		core::conformation::Residue const & ii_rsd = start_pose.residue( ii );
+
+		// Much as in the MoveSelector, here we should EVENTUALLY just be giving this whatever Attachments
+		// are defined by the bonds being actually made.
+
+		TR << start_pose.fold_tree() << std::endl;
+		if ( !ii_rsd.has_lower_connect()
+				|| ii_rsd.connection_incomplete( ii_rsd.type().lower_connect_id() )
+				|| ii_rsd.has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) {
+			// this talk could cause segfaults
+			TR << "No or messed up lower: " << ii_rsd.name() << std::endl;
+			TR << "----------------------" << std::endl;
+			//TR << ii << " conn partner at lower " << ii_rsd.type().lower_connect_atom() << " "
+			// << ii_rsd.residue_connection_partner( ii_rsd.type().lower_connect_atom() ) << std::endl;
+			//TR << ii << " conn partner at upper " << ii_rsd.type().upper_connect_atom() << " "
+			// << ii_rsd.residue_connection_partner( ii_rsd.type().upper_connect_atom() ) << std::endl;
 			// Doesn't have to be a lower terminus variant -- what matters is specifically lacking lower.
-			if ( start_pose.residue( ii ).is_carbohydrate() ) {
-				attachments.emplace_back( ii + 1, BOND_TO_NEXT );
-				stepwise_moves.emplace_back( move_element, attachments, RESAMPLE );
-			}
-		} else if ( !start_pose.residue( ii ).has_upper_connect() ) {
+			//if ( ii_rsd.is_carbohydrate() ) {
+			attachments.emplace_back( ii + 1, BOND_TO_NEXT );
+			stepwise_moves.emplace_back( move_element, attachments, RESAMPLE );
+			//}
+			TR << "Adding Move: " << stepwise_moves[ stepwise_moves.size() ] << "." << std::endl;
+		} else if ( !start_pose.residue( ii ).has_upper_connect()
+				|| ii_rsd.connection_incomplete( ii_rsd.type().upper_connect_id() )
+				|| ii_rsd.has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ) {
+
+			TR << "No or messed up upper: " << ii_rsd.name() << std::endl;
+			TR << "----------------------" << std::endl;
+			// this talk could cause segfaults
+			//TR << ii << " conn partner at lower " << ii_rsd.type().lower_connect_atom() << " "
+			// << ii_rsd.residue_connection_partner( ii_rsd.type().lower_connect_atom() ) << std::endl;
+			//TR << ii << " conn partner at upper " << ii_rsd.type().upper_connect_atom() << " "
+			// << ii_rsd.residue_connection_partner( ii_rsd.type().upper_connect_atom() ) << std::endl;
 			// Doesn't have to be a upper terminus variant -- what matters is specifically lacking upper.
-			if ( start_pose.residue( ii ).is_carbohydrate() ) {
-				attachments.emplace_back( ii - 1, BOND_TO_PREVIOUS );
-				stepwise_moves.emplace_back( move_element, attachments, RESAMPLE );
-			}
+			//if ( ii_rsd.is_carbohydrate() ) {
+			attachments.emplace_back( ii - 1, BOND_TO_PREVIOUS );
+			stepwise_moves.emplace_back( move_element, attachments, RESAMPLE );
+
+			//}
+			TR << "Adding Move: " << stepwise_moves[ stepwise_moves.size() ] << "." << std::endl;
+
 		} else {
 			attachments.emplace_back( ii - 1, BOND_TO_PREVIOUS );
 			attachments.emplace_back( ii + 1, BOND_TO_NEXT );
@@ -441,7 +490,6 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 			TR << "Adding Move: " << stepwise_moves[ stepwise_moves.size() ] << "." << std::endl;
 		}
 	}
-
 
 	// TODO: make this happen at the very end. Right now, do it first so we can see the cool effects.
 	// AMW: Don't support this yet.
@@ -455,18 +503,134 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 	// mg.apply( output_pose );
 	//}
 
+	// OK, let's see what checkpoint files exist. Load in the 'latest' one (with respect to
+	// the ordering of stepwise_moves, which should be constant across runs) and omit from
+	// checkpoint_revised_stepwise_moves any now-unnecessary moves.
+	std::string silent_to_load = "";
+	utility::vector1< StepWiseMove > checkpoint_revised_stepwise_moves;
+	if ( checkpointing_breadcrumbs ) {
+		for ( StepWiseMove const & stepwise_move : stepwise_moves ) {
+			std::string fn = name_from_move( stepwise_move, start_pose );
+			if ( utility::file::file_exists( fn ) ) {
+				// Don't need to redo this move. MAY want to load in this pose.
+				silent_to_load = fn;
+			} else {
+				checkpoint_revised_stepwise_moves.emplace_back( stepwise_move );
+			}
+		}
+	}
+
+	if ( silent_to_load != "" ) {
+		// Load silent into output_pose
+		ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		auto input = PoseInputStreamOP( new SilentFilePoseInputStream( silent_to_load ) );
+		input->fill_pose( output_pose, *rsd_set );
+	}
+
 	// do moves in serial
-	for ( StepWiseMove const & stepwise_move : stepwise_moves ) {
+	for ( StepWiseMove const & stepwise_move : checkpoint_revised_stepwise_moves ) {
 		TR.Debug << "Applying Move: " << stepwise_move << "." << std::endl;
+
+		// Some FoldTree magic: there is a chance that this residue is a jump to a
+		// NEW CHAIN. That is pretty cool, but it means that it's not possible to
+		// resample them.
+		// If this move has two connections, then we care because that means it's a RIL
+		if ( stepwise_move.attachments().size() == 2 ) {
+			bool connected_by_jump( false );
+
+			Size current_moving = stepwise_move.move_element()[ 1 ];
+			/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving, connected_by_jump );
+
+			/*if ( connected_by_jump ) {
+			// can't resample the residues that make up the jump between chains.
+			continue;
+			}*/
+
+			// old code to help with this
+			while ( connected_by_jump ) {
+				// Move it elsewhere
+				core::kinematics::FoldTree f = output_pose.fold_tree();
+				int const jump_nr = f.get_residue_edge( current_moving ).label();//f.get_jump_that_builds_residue( current_moving );
+				// if it's < 0 we have succeeded
+				if ( jump_nr < 0 ) break;
+
+				Size ref = f.upstream_jump_residue( jump_nr );
+				// Just try to offset by a residue?
+				// For very odd organizations of chains this can fail.
+				if ( current_moving > 3 ) {
+					f.slide_jump( jump_nr, ref, current_moving - 2 );
+				} else {
+					f.slide_jump( jump_nr, ref, current_moving + 2 );
+				}
+				output_pose.fold_tree( f );
+				TR << "III -- FT now: " << f << std::endl;
+				/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving, connected_by_jump );
+			}
+
+
+
+
+			if ( current_moving > 1 ) {
+				/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving - 1, connected_by_jump );
+
+				/*if ( connected_by_jump ) {
+				// can't resample the residues that make up the jump between chains.
+				continue;
+				}*/
+
+				// old code to help with this
+				while ( connected_by_jump ) {
+					// Move it elsewhere
+					core::kinematics::FoldTree f = output_pose.fold_tree();
+					int const jump_nr = f.get_residue_edge( current_moving - 1 ).label();//f.get_jump_that_builds_residue( current_moving );
+					// if it's < 0 we have succeeded
+					if ( jump_nr < 0 ) break;
+
+					Size ref = f.upstream_jump_residue( jump_nr );
+					// Just try to offset by a residue?
+					// For very odd organizations of chains this can fail.
+					if ( current_moving > 3 ) {
+						f.slide_jump( jump_nr, ref, current_moving - 3 );
+					} else {
+						f.slide_jump( jump_nr, ref, current_moving + 1 );
+					}
+					output_pose.fold_tree( f );
+					TR << "I-1 -- FT now: " << f << std::endl;
+					/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving - 1, connected_by_jump );
+				}
+			}
+		}
+
+		// Set up the FullModelInfo so that -- at THIS MOMENT -- the only known sampled residue
+		// is the move element. This keeps stuff locked down better and makes the RMSD calculation
+		// sane.
+		auto & FMI = nonconst_full_model_info( output_pose );
+		FullModelParametersOP FMP = FMI.full_model_parameters()->clone();
+		FMP->set_parameter_as_res_list( SAMPLE, stepwise_move.move_element() );
+		FMP->set_parameter_as_res_list( CALC_RMS, stepwise_move.move_element() );
+		FMI.set_full_model_parameters( FMP );
+
 		//continue;
 		apply( output_pose, stepwise_move, true /* figure_out_all_possible_moves */ );
 		scorefxn_->show( output_pose );
 		if ( checkpointing_breadcrumbs ) {
-			std::ofstream out( name_from_move( stepwise_move, start_pose ) );
-			out << "DONE!\n";
-			out.close();
+			//std::ofstream out( name_from_move( stepwise_move, start_pose ) );
+			protocols::stepwise::monte_carlo::output_to_silent_file( "CHECKPOINT", name_from_move( stepwise_move, start_pose ), output_pose );
+			//out << "DONE!\n";
+			//out.close();
 		}
 	}
+
+	// We have made it through process, so delete checkpoints.
+	if ( checkpointing_breadcrumbs ) {
+		for ( StepWiseMove const & stepwise_move : stepwise_moves ) {
+			std::string fn = name_from_move( stepwise_move, start_pose );
+			if ( utility::file::file_exists( fn ) ) {
+				utility::file::file_delete( fn );
+			}
+		}
+	}
+
 }
 
 /////////////////////////////////////////////////////////

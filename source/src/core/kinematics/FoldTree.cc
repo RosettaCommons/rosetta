@@ -292,18 +292,27 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 	}
 	runtime_assert( (core::Size)root() == original_root );
 
-	// AMW: root moved here...
+	TR.Debug << "slide_jump: second tree= " << *this << std::endl;
 
-	/// <
-	Edge const new_jump_edge( pos1, pos2, jump_number );
+	// If one of pos1 and pos2 is the old root then we MUST preserve it as 'start'
 	delete_edge( old_jump_edge );
-	if ( (core::Size)new_jump_edge.start() == original_root ) {
+
+	if ( pos2 == original_root ) {
+		Edge const new_jump_edge( pos2, pos1, jump_number );
 		prepend_edge( new_jump_edge ); // preserve root!
 	} else {
-		add_edge( new_jump_edge );
+		// pos1 was root or neither was root
+		Edge const new_jump_edge( pos1, pos2, jump_number );
+		if ( (core::Size)new_jump_edge.start() == original_root ) {
+			prepend_edge( new_jump_edge ); // preserve root!
+		} else {
+			add_edge( new_jump_edge );
+		}
 	}
+
 	delete_extra_vertices();
 	delete_self_edges();
+	TR.Debug << "slide_jump: proposed tree= " << *this << std::endl;
 
 	/// >
 	// AMW: This runtime_assert may fail in at least ONE case that is legitimate:
