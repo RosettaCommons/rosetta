@@ -352,8 +352,13 @@ get_base_pair_atoms(
 	atom_ids2.clear();
 
 	// Enable na_analogue once it is also kept track of by BasePair
-	AA const aa1 = rsd_type1.aa();// == aa_unk ? rsd_type1.na_analogue() : rsd_type1.aa();
-	AA const aa2 = rsd_type2.aa();// == aa_unk ? rsd_type2.na_analogue() : rsd_type2.aa();
+	//AA const aa1 = rsd_type1.aa();// == aa_unk ? rsd_type1.na_analogue() : rsd_type1.aa();
+	//AA const aa2 = rsd_type2.aa();// == aa_unk ? rsd_type2.na_analogue() : rsd_type2.aa();
+
+	// Enable base_analogue NOW and use PNA as an example
+	AA const aa1 = rsd_type1.aa() == aa_unk ? rsd_type1.base_analogue() : rsd_type1.aa();
+	AA const aa2 = rsd_type2.aa() == aa_unk ? rsd_type2.base_analogue() : rsd_type2.aa();
+
 	if ( edge1 == WATSON_CRICK && edge2 == WATSON_CRICK ) {
 		if ( orientation == CIS ) {
 			if ( aa1 == na_rad && aa2 == na_ura ) {

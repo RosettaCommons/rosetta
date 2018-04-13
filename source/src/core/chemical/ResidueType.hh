@@ -1882,7 +1882,15 @@ public:
 		backbone_aa_ = aa_from_name( type );
 	}
 
-	/// @brief NA to use for fragment sampling
+	/// @brief NA to use for base-specific generalization (can be more
+	/// forgiving than na_analogue for new NA backbones)
+	void
+	base_analogue( std::string const & type )
+	{
+		base_analogue_ = aa_from_name( type );
+	}
+
+	/// @brief NA to use for fragment sampling and some scoring purposes
 	void
 	na_analogue( std::string const & type )
 	{
@@ -2028,7 +2036,15 @@ public:
 		return backbone_aa_;
 	}
 
-	/// @brief Returns the nucleic acid type to be used for fragment sampling.
+	/// @brief Returns the nucleic acid type to be used for base features
+	AA const &
+	base_analogue() const
+	{
+		if ( base_analogue_ == aa_unp ) return aa_;
+		return base_analogue_;
+	}
+
+	/// @brief Returns the nucleic acid type to be used for fragment sampling/scoring.
 	AA const &
 	na_analogue() const
 	{
@@ -2692,7 +2708,9 @@ private:
 	// backbone_aa_ = the aa-type on which the backbone scoring (rama, p_aa_pp) will be based
 	// na_analogue_ = the aa-type for a nucleic acid (generally, canonical) that
 	// fragment sampling will use.
-	AA aa_, rotamer_aa_, backbone_aa_, na_analogue_;
+	// base_analogue_ = the aa-type for a nucleic acid for base-specific features
+	// like WC base pair atoms etc.
+	AA aa_, rotamer_aa_, backbone_aa_, na_analogue_, base_analogue_;
 
 	/// @brief Residue id for the base type (i.e. sans variants).
 	/// @details Does not accumulate VariantType names (e.g. "ALA").

@@ -5125,6 +5125,7 @@ core::chemical::ResidueType::save( Archive & arc ) const {
 	arc( CEREAL_NVP( rotamer_aa_ ) ); // enum core::chemical::AA
 	arc( CEREAL_NVP( backbone_aa_ ) ); // enum core::chemical::AA
 	arc( CEREAL_NVP( na_analogue_ ) ); // enum core::chemical::AA
+	arc( CEREAL_NVP( base_analogue_ ) ); // enum core::chemical::AA
 	arc( CEREAL_NVP( base_name_ ) ); // std::string
 	arc( CEREAL_NVP( base_type_cop_ ) ); // ResidueTypeCOP
 	arc( CEREAL_NVP( name_ ) ); // std::string
@@ -5333,6 +5334,7 @@ core::chemical::ResidueType::load( Archive & arc ) {
 	arc( rotamer_aa_ ); // enum core::chemical::AA
 	arc( backbone_aa_ ); // enum core::chemical::AA
 	arc( na_analogue_ ); // enum core::chemical::AA
+	arc( base_analogue_ ); // enum core::chemical::AA
 	arc( base_name_ ); // std::string
 	arc( base_type_cop_ ); // ResidueTypeCOP
 	arc( name_ ); // std::string

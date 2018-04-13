@@ -290,6 +290,11 @@ read_topology_file(
 /// tells Rosetta to use isoleucine's ramachandran map and p_aa_pp scoring for
 /// this noncanonical.
 ///
+/// BASE_ANALOGUE:
+/// Sets the "base_analogue" for a particular residue, which can be used
+/// for sidechain/base specific features. For example, peptide nucleic acid
+/// versions of RGU have a sidechain that works JUST LIKE RGU's.
+///
 /// NA_ANALOGUE:
 /// Sets the "na_analogue" for a particular residue, which can be used
 /// in fragment assembly. For example, it is a REALLY good first approximation
@@ -986,6 +991,9 @@ read_topology_file(
 		} else if ( tag == "NA_ANALOGUE" ) {
 			l >> tag;
 			rsd->na_analogue( tag );
+		} else if ( tag == "BASE_ANALOGUE" ) {
+			l >> tag;
+			rsd->base_analogue( tag );
 		} else if ( tag == "RAMA_PREPRO_FILENAME" ) {
 			l >> tag;
 			rsd->set_rama_prepro_map_file_name(tag, false);

@@ -1,0 +1,7 @@
+-s RAD.pdb
+-parser:protocol test2.xml
+-overwrite 
+-constraints:cst_file bpc.cst 
+-cst_fa_file bpc.cst 
+-set_weights base_pair_constraint 1.0 cart_bonded 1.0 hbond_sc 10.0 hbond_lr_bb 10.0 fa_rep 3
+

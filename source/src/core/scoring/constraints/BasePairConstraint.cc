@@ -228,7 +228,11 @@ BasePairConstraint::read_def(
 		//data.setstate( std::ios_base::failbit );
 		return;
 	}
-	if ( !pose.residue_type( res1_ ).is_RNA() || !pose.residue_type( res2_ ).is_RNA() ) {
+	// At one time this errored if the bases weren't RNA. Now, we will error only if they do not
+	// have a base_analogue.
+	using namespace core::chemical;
+	if ( ( !pose.residue_type( res1_ ).is_RNA() || !pose.residue_type( res2_ ).is_RNA() )
+			&& ( pose.residue_type( res1_ ).base_analogue() == aa_unp || pose.residue_type( res2_ ).base_analogue() == aa_unp ) ) {
 		tr.Warning  << "ignored constraint (requested residue numbers may not be RNA): " << "Total in Pose: " << pose.size() << " " << res1_ << " " << res2_ << std::endl;
 		// We can't set this. It nukes parent constraints that might just not be 'right yet'
 		//data.setstate( std::ios_base::failbit );
@@ -263,8 +267,14 @@ BasePairConstraint::init_subsidiary_constraints( core::pose::Pose const & pose )
 	Real const C1prime_distance_stddev( 1.0 ); //Hmm. Maybe try linear instead?
 	FuncOP const C1prime_distance_func( new HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
 
-	Size const atom1 = pose.residue_type( res1_ ).RNA_info().c1prime_atom_index();
-	Size const atom2 = pose.residue_type( res2_ ).RNA_info().c1prime_atom_index();
+	// Since we now support non-NA residues that have base_analogues, we can't
+	// assume RNA_info() -- so condition on that.
+	Size const atom1 = pose.residue_type( res1_ ).is_RNA() ?
+		pose.residue_type( res1_ ).RNA_info().c1prime_atom_index() :
+		pose.residue_type( res1_ ).atom_index( "CE2" ); // only PNA supported
+	Size const atom2 = pose.residue_type( res2_ ).is_RNA() ?
+		pose.residue_type( res2_ ).RNA_info().c1prime_atom_index() :
+		pose.residue_type( res2_ ).atom_index( "CE2" ); // ditto
 	constraints_.emplace_back( new AtomPairConstraint( id::AtomID( atom1, res1_ ), id::AtomID( atom2, res2_ ), C1prime_distance_func, base_pair_constraint ) );
 
 	utility::vector1< std::string > atom_ids1, atom_ids2;

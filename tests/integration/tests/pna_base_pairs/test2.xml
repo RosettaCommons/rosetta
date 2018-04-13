@@ -1,0 +1,136 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+
+		<PeptideStubMover name="build1" reset="true">
+			<Append resname="GPN:AcetylatedNtermProteinFull" />
+			<Append resname="CPN" />
+			<Append resname="GPN" />
+			<Append resname="CPN" />
+			<Append resname="GPN" />
+			<Append resname="CPN" />
+			<Append resname="GPN" />
+			<Append resname="GPN" />
+			<Append resname="APN" />
+			<Append resname="APN" />
+			<Append resname="APN" />
+			<Append resname="CPN" />
+			<Append resname="GPN" />
+			<Append resname="CPN" />
+			<Append resname="GPN" />
+			<Append resname="CPN" />
+			<Append resname="GPN" />
+			<Append resname="CPN:MethylatedCtermProteinFull" />
+		</PeptideStubMover>
+		
+		<SetTorsion name="tors1">
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="1" />
+				<Atom2 atom="C"   residue="1" />
+				<Atom3 atom="N"   residue="2" />
+				<Atom4 atom="CA"  residue="2" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="2" />
+				<Atom2 atom="C"   residue="2" />
+				<Atom3 atom="N"   residue="3" />
+				<Atom4 atom="CA"  residue="3" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="3" />
+				<Atom2 atom="C"   residue="3" />
+				<Atom3 atom="N"   residue="4" />
+				<Atom4 atom="CA"  residue="4" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="4" />
+				<Atom2 atom="C"   residue="4" />
+				<Atom3 atom="N"   residue="5" />
+				<Atom4 atom="CA"  residue="5" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="5" />
+				<Atom2 atom="C"   residue="5" />
+				<Atom3 atom="N"   residue="6" />
+				<Atom4 atom="CA"  residue="6" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="6" />
+				<Atom2 atom="C"   residue="6" />
+				<Atom3 atom="N"   residue="7" />
+				<Atom4 atom="CA"  residue="7" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="7" />
+				<Atom2 atom="C"   residue="7" />
+				<Atom3 atom="N"   residue="8" />
+				<Atom4 atom="CA"  residue="8" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="8" />
+				<Atom2 atom="C"   residue="8" />
+				<Atom3 atom="N"   residue="9" />
+				<Atom4 atom="CA"  residue="9" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="9" />
+				<Atom2 atom="C"   residue="9" />
+				<Atom3 atom="N"   residue="10" />
+				<Atom4 atom="CA"  residue="10" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="11" />
+				<Atom2 atom="C"   residue="11" />
+				<Atom3 atom="N"   residue="12" />
+				<Atom4 atom="CA"  residue="12" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="12" />
+				<Atom2 atom="C"   residue="12" />
+				<Atom3 atom="N"   residue="13" />
+				<Atom4 atom="CA"  residue="13" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="13" />
+				<Atom2 atom="C"   residue="13" />
+				<Atom3 atom="N"   residue="14" />
+				<Atom4 atom="CA"  residue="14" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="14" />
+				<Atom2 atom="C"   residue="14" />
+				<Atom3 atom="N"   residue="15" />
+				<Atom4 atom="CA"  residue="15" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="15" />
+				<Atom2 atom="C"   residue="15" />
+				<Atom3 atom="N"   residue="16" />
+				<Atom4 atom="CA"  residue="16" />
+			</Torsion>
+			<Torsion residue="pick_atoms" angle="180" >
+				<Atom1 atom="CD2" residue="17" />
+				<Atom2 atom="C"   residue="17" />
+				<Atom3 atom="N"   residue="18" />
+				<Atom4 atom="CA"  residue="18" />
+			</Torsion>
+		</SetTorsion>
+
+		<MinMover name="min" bb="true" chi="true" omega="false" />
+
+		<ConstraintSetMover name="csts1" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="build1" />
+		<Add mover="tors1" />
+		<Add mover="csts1" />
+		<Add mover="min" />
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>
