@@ -126,14 +126,13 @@ def execute(message, command_line, return_='status', until_successes=False, term
     if not silent: print(message);  print(command_line); sys.stdout.flush();
     while True:
 
-        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, errors = p.communicate()
+        # p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # output, errors = p.communicate()
+        # output = output + errors
+        # output = output.decode(encoding='utf-8', errors='backslashreplace')
+        # exit_code = p.returncode
 
-        output = output + errors
-
-        output = output.decode(encoding='utf-8', errors='backslashreplace')
-
-        exit_code = p.returncode
+        exit_code, output = subprocess.getstatusoutput(command_line)
 
         if (exit_code  and  not silence_output_on_errors) or  not (silent or silence_output): print(output); sys.stdout.flush();
 
@@ -317,7 +316,7 @@ def get_path_to_python_executable(platform, config):
     '''
     prefix = config['prefix']
     jobs = config['cpu_count']
-    compiler = 'clang' if platform['os'] == 'mac' else 'gcc'  # disregarding platform compiler setting and instead use default compiler for platform
+    compiler, cpp_compiler = ('clang', 'clang++') if platform['os'] == 'mac' else ('gcc', 'g++')  # disregarding platform compiler setting and instead use default compiler for platform
 
     python_version = platform.get('python', '3.6')
 
@@ -336,7 +335,7 @@ def get_path_to_python_executable(platform, config):
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
     extras = {
-        ('mac',) :          ('MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),
+        ('mac',) :          ('__PYVENV_LAUNCHER__="" MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),
         ('linux',  '2.7') : ('', '--enable-unicode=ucs4'),
         ('ubuntu', '2.7') : ('', '--enable-unicode=ucs4'),
     }
@@ -391,9 +390,14 @@ def get_path_to_python_executable(platform, config):
             response = urllib.request.urlopen(url)
             f.write( response.read() )
 
+        #execute('Execution environment:', 'env'.format(**vars()) )
+
         execute('Unpacking {}'.format(archive), 'cd {build_prefix} && tar -xvzf {archive}'.format(**vars()) )
 
-        execute('Building and installing...', 'cd {} && CC={compiler} {extra[0]} ./configure {extra[1]} --prefix={root} && make -j{jobs} && make install'.format(build_dir, **vars()) )
+        #execute('Building and installing...', 'cd {} && CC={compiler} CXX={cpp_compiler} {extra[0]} ./configure {extra[1]} --prefix={root} && {extra[0]} make -j{jobs} && {extra[0]} make install'.format(build_dir, **locals()) )
+        execute('Configuring...', 'cd {} && CC={compiler} CXX={cpp_compiler} {extra[0]} ./configure {extra[1]} --prefix={root}'.format(build_dir, **locals()) )
+        execute('Building...', 'cd {} && {extra[0]} make -j{jobs}'.format(build_dir, **locals()) )
+        execute('Installing...', 'cd {} && {extra[0]} make -j{jobs} install'.format(build_dir, **locals()) )
 
         shutil.rmtree(build_prefix)
 
