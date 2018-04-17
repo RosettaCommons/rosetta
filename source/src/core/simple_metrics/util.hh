@@ -42,18 +42,6 @@ xsd_simple_metric_type_definition_w_attributes(
 	std::string const & description,
 	utility::tag::AttributeList const & attributes);
 
-
-
-///@brief Determine the residue mapping by residue selector and the reference selector.
-/// If both are null, will get a map of all residues.
-std::map< core::Size, core::Size >
-get_residue_mapping_from_selectors(
-	select::residue_selector::ResidueSelectorCOP selector,
-	select::residue_selector::ResidueSelectorCOP selector_ref,
-	core::pose::Pose const & pose,
-	core::pose::Pose const & ref_pose
-);
-
 utility::vector1< SimpleMetricCOP >
 get_metrics_from_datamap_and_subtags(
 	utility::tag::TagCOP tag,

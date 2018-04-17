@@ -27,10 +27,6 @@ class TestStringMetric;
 typedef utility::pointer::shared_ptr< TestStringMetric > TestStringMetricOP;
 typedef utility::pointer::shared_ptr< TestStringMetric const > TestStringMetricCOP;
 
-class TestIntegerMetric;
-typedef utility::pointer::shared_ptr< TestIntegerMetric > TestIntegerMetricOP;
-typedef utility::pointer::shared_ptr< TestIntegerMetric const > TestIntegerMetricCOP;
-
 class TestRealMetric;
 typedef utility::pointer::shared_ptr< TestRealMetric > TestRealMetricOP;
 typedef utility::pointer::shared_ptr< TestRealMetric const > TestRealMetricCOP;
@@ -39,9 +35,6 @@ class TestCompositeStringMetric;
 typedef utility::pointer::shared_ptr< TestCompositeStringMetric > TestCompositeStringMetricOP;
 typedef utility::pointer::shared_ptr< TestCompositeStringMetric const > TestCompositeStringMetricCOP;
 
-class TestCompositeIntegerMetric;
-typedef utility::pointer::shared_ptr< TestCompositeIntegerMetric > TestCompositeIntegerMetricOP;
-typedef utility::pointer::shared_ptr< TestCompositeIntegerMetric const > TestCompositeIntegerMetricCOP;
 
 class TestCompositeRealMetric;
 typedef utility::pointer::shared_ptr< TestCompositeRealMetric > TestCompositeRealMetricOP;

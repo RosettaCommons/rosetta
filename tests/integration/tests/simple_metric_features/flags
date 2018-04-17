@@ -14,5 +14,9 @@
 -jd2:delete_old_poses
 -other_pose_to_scorefile
 
+#Antibody
+-input_ab_scheme AHo_Scheme
+-output_ab_scheme AHo_Scheme
+
 -s 2r0l_1_1.pdb
 -in:file:native 2r0l_1_1.pdb

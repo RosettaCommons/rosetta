@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   numeric/model_quality/rms.hh
+/// @file   numeric/model_quality/functions.hh
 /// @brief
 /// @author Jared Adolf-Bryfogle
 
@@ -17,13 +17,6 @@
 #define INCLUDED_numeric_model_quality_functions_HH
 
 #include <numeric/types.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray1A.hh>
-#include <ObjexxFCL/FArray2A.hh>
 
 #include <utility/vector1.hh>
 

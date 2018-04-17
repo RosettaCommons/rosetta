@@ -180,9 +180,7 @@ sources = {
     	],
   	"core/simple_metrics": [
 		"CompositeRealMetric",
-		"CompositeIntegerMetric",
 		"CompositeStringMetric",
-		"IntegerMetric",
 		"RealMetric",
 		"SimpleMetric",
 		"SimpleMetricFactory",

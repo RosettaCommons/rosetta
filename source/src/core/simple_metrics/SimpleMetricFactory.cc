@@ -68,7 +68,7 @@ SimpleMetricFactory::new_simple_metric(
 }
 
 
-/// @brief Get the XML schema for a given residue selector.
+/// @brief Get the XML schema for a given simple metric.
 /// @details Throws an error if the residue selector is unknown to Rosetta.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void

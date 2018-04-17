@@ -1107,7 +1107,6 @@ PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose)
 
 	std::map< std::string, std::string > string_data;
 	std::map< std::string, float >  float_data;
-	std::map< std::string, int > integer_data;
 	// ARBITRARY_STRING_DATA
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
 		basic::datacache::CacheableStringMapCOP data
@@ -1134,22 +1133,9 @@ PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose)
 		}
 	}
 
-	// ARBITRARY_INTEGER_DATA
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA ) ) {
-		basic::datacache::CacheableStringIntegerMapCOP data
-			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringIntegerMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA ) );
-		debug_assert( data.get() != nullptr );
-
-		for ( auto const & it : data->map() ) {
-			//TR << it->first << " " << it->second << std::endl;
-			integer_data [ it.first ] = it.second;
-		}
-	}
-
 	sfr_->pose_cache_string_data() = string_data;
 	sfr_->pose_cache_float_data() =  float_data;
-	sfr_->pose_cache_integer_data() = integer_data;
+
 }
 
 

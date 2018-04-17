@@ -18,10 +18,8 @@
 #include <core/simple_metrics/SimpleMetric.hh>
 #include <core/simple_metrics/RealMetric.hh>
 #include <core/simple_metrics/StringMetric.hh>
-#include <core/simple_metrics/IntegerMetric.hh>
 #include <core/simple_metrics/CompositeRealMetric.hh>
 #include <core/simple_metrics/CompositeStringMetric.hh>
-#include <core/simple_metrics/CompositeIntegerMetric.hh>
 #include <core/simple_metrics/util.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
@@ -267,48 +265,6 @@ SimpleMetricFilter::compare_metric(core::Real value) const {
 	return false;
 }
 
-bool
-SimpleMetricFilter::compare_metric(int value) const {
-	using namespace numeric;
-
-	int local_cutoff = int(cutoff_);
-	switch( type_ ){
-	case( bogus ) :
-		throw CREATE_EXCEPTION(utility::excn::BadInput, "A comparison_type must be set.  ");
-
-	case ( eq ) :
-		TR << value << " eq " << local_cutoff <<" ? "<< std::endl;
-		if ( value == local_cutoff ) return true;
-		break;
-
-	case ( ne ) :
-		TR << value << " ne " << local_cutoff <<" ? "<< std::endl;
-		if ( value != local_cutoff ) return true;
-		break;
-
-	case ( lt ) :
-		TR << value << " lt " << local_cutoff <<" ? "<< std::endl;
-		if ( value < local_cutoff ) return true;
-		break;
-
-	case ( gt ) :
-		TR << value << " gt " << local_cutoff <<" ? "<< std::endl;
-		if ( value > local_cutoff ) return true;
-		break;
-
-	case ( lt_or_eq ) :
-		TR << value << " lt_or_eq " << local_cutoff <<" ? "<< std::endl;
-		if ( value <= local_cutoff ) return true;
-		break;
-
-	case ( gt_or_eq ) :
-		TR << value << " gt_or_eq " << local_cutoff <<" ? "<< std::endl;
-		if ( value >= local_cutoff ) return true;
-		break;
-
-	}
-	return false;
-}
 
 bool
 SimpleMetricFilter::compare_metric( std::string const & value) const {
@@ -404,12 +360,6 @@ SimpleMetricFilter::apply( core::pose::Pose const & pose) const
 		bool pass = compare_metric( value );
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
-	} else if ( metric_->type() == "IntegerMetric" ) {
-		IntegerMetric const & r_metric = dynamic_cast<IntegerMetric const & >( *metric_ );
-		int value = r_metric.calculate(pose);
-		bool pass = compare_metric( value );
-		TR << "Filter passed: " << pass << std::endl;
-		return pass;
 
 	} else if ( metric_ ->type() == "CompositeRealMetric" ) {
 		CompositeRealMetric const & r_metric = dynamic_cast<CompositeRealMetric const & >( *metric_ );
@@ -417,12 +367,7 @@ SimpleMetricFilter::apply( core::pose::Pose const & pose) const
 		bool pass = compare_composites(values);
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
-	} else if ( metric_ ->type() == "CompositeIntegerMetric" ) {
-		CompositeIntegerMetric const & r_metric = dynamic_cast<CompositeIntegerMetric const & >( *metric_ );
-		std::map< std::string, int > values = r_metric.calculate( pose );
-		bool pass = compare_composites(values);
-		TR << "Filter passed: " << pass << std::endl;
-		return pass;
+		
 	} else if ( metric_->type() == "CompositeStringMetric" ) {
 		CompositeStringMetric const & r_metric = dynamic_cast<CompositeStringMetric const & >( *metric_ );
 		std::map< std::string, std::string > values = r_metric.calculate( pose );

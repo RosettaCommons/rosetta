@@ -85,42 +85,6 @@ public:
 
 	}
 
-	void test_integer_metric() {
-		TestIntegerMetricOP tester = TestIntegerMetricOP( new TestIntegerMetric());
-		filter.set_simple_metric( tester );
-		filter.set_cutoff(0);
-
-		filter.set_comparison_type( eq );
-		TS_ASSERT( ! filter.apply( pose ));
-
-		filter.set_comparison_type( ne );
-		TS_ASSERT( filter.apply( pose ));
-
-		filter.set_comparison_type( lt );
-		TS_ASSERT( ! filter.apply( pose ));
-
-		filter.set_comparison_type( gt );
-		TS_ASSERT( filter.apply( pose ));
-
-		filter.set_comparison_type( lt_or_eq );
-		TS_ASSERT( ! filter.apply( pose ));
-
-		filter.set_comparison_type( gt_or_eq );
-		TS_ASSERT( filter.apply( pose ));
-
-		filter.set_cutoff(1);
-		filter.set_comparison_type( eq );
-		TS_ASSERT( filter.apply( pose ));
-
-		filter.set_comparison_type( lt_or_eq);
-		TS_ASSERT( filter.apply( pose ));
-
-		filter.set_comparison_type( gt_or_eq );
-		TS_ASSERT( filter.apply( pose ));
-
-
-	}
-
 	void test_real_metric() {
 		TestRealMetricOP tester = TestRealMetricOP( new TestRealMetric());
 		filter.set_simple_metric( tester );
@@ -183,35 +147,6 @@ public:
 
 		filter.set_comparison_type(ne);
 		TS_ASSERT( ! filter.apply( pose ))
-
-	}
-
-	void test_composite_integer_metric() {
-		//data["i_data1"] = 1;
-		//data["i_data2"] = 2;
-
-		TestCompositeIntegerMetricOP tester = TestCompositeIntegerMetricOP( new TestCompositeIntegerMetric());
-		filter.set_simple_metric( tester );
-		filter.set_comparison_type( eq );
-
-		filter.set_cutoff(0);
-		filter.set_composite_action("any");
-
-		TS_ASSERT( ! filter.apply( pose ));
-
-		filter.set_comparison_type( lt );
-		TS_ASSERT( ! filter.apply( pose ))
-
-			filter.set_comparison_type( gt );
-		TS_ASSERT( filter.apply( pose ));
-
-		filter.set_composite_action("all");
-		TS_ASSERT( filter.apply( pose ));
-
-		filter.set_composite_action("i_data1");
-		TS_ASSERT (filter.apply( pose ));
-
-
 
 	}
 

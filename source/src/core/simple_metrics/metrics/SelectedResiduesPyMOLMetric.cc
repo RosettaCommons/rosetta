@@ -178,7 +178,7 @@ SelectedResiduesPyMOLMetric::calculate(const pose::Pose & pose) const {
 			}
 		}
 		subselection+=")";
-		TR << chain <<" " <<subselection << std::endl;
+		//TR << chain <<" " <<subselection << std::endl;
 		selection += subselection;
 	}
 	return selection;

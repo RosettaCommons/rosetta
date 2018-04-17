@@ -261,27 +261,6 @@ hasPoseExtraScore_str(
 	return (  data->map().find( name ) != data->map().end() );
 }
 
-bool
-hasPoseExtraScore_int(
-	core::pose::Pose const & pose,
-	std::string const & name )
-{
-	using basic::datacache::CacheableStringIntegerMap;
-	using basic::datacache::CacheableStringIntegerMapCOP;
-
-	// make sure that the pose has one of these.
-	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA ) ) {
-		return false;
-	}
-
-	CacheableStringIntegerMapCOP data
-		= utility::pointer::dynamic_pointer_cast< CacheableStringIntegerMap const >
-		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA ) );
-	debug_assert( data.get() != nullptr );
-
-	return (  data->map().find( name ) != data->map().end() );
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool getPoseExtraScore(
 	core::pose::Pose const & pose,
@@ -345,32 +324,6 @@ bool getPoseExtraScore(
 	return true;
 }
 
-bool getPoseExtraScore(
-	core::pose::Pose const & pose,
-	std::string const & name,
-	int & value
-) {
-	using basic::datacache::CacheableStringIntegerMap;
-	using basic::datacache::CacheableStringIntegerMapCOP;
-
-	// make sure that the pose has one of these.
-	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA ) ) {
-		return false;
-	}
-
-	CacheableStringIntegerMapCOP data
-		= utility::pointer::dynamic_pointer_cast< CacheableStringIntegerMap const >
-		( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA ) );
-	debug_assert( data.get() != nullptr );
-
-	auto it = data->map().find( name );
-	if ( it == data->map().end() ) {
-		return false;
-	}
-	value = it->second;
-	return true;
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void setPoseExtraScore(
 	core::pose::Pose & pose,
@@ -419,31 +372,6 @@ void setPoseExtraScore(
 	CacheableStringMapOP data
 		=  utility::pointer::dynamic_pointer_cast< CacheableStringMap >
 		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA) );
-
-	runtime_assert( data.get() != nullptr );
-	data->map()[name] = value;
-}
-
-void setPoseExtraScore_int(
-	core::pose::Pose & pose,
-	std::string const & name,
-	int value
-) {
-	using basic::datacache::CacheableStringIntegerMap;
-	using basic::datacache::CacheableStringIntegerMapOP;
-	using basic::datacache::DataCache_CacheableData;
-
-	// make sure that the pose has one of these.
-	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA ) ) {
-		pose.data().set(
-			core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA,
-			DataCache_CacheableData::DataOP( new CacheableStringIntegerMap() )
-		);
-	}
-
-	CacheableStringIntegerMapOP data
-		=  utility::pointer::dynamic_pointer_cast< CacheableStringIntegerMap >
-		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA) );
 
 	runtime_assert( data.get() != nullptr );
 	data->map()[name] = value;
@@ -511,14 +439,6 @@ void clearPoseExtraScores(
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA,
 			DataCache_CacheableData::DataOP( new CacheableStringFloatMap() )
-		);
-	}
-
-	{
-		using basic::datacache::CacheableStringIntegerMap;
-		pose.data().set(
-			core::pose::datacache::CacheableDataType::ARBITRARY_INTEGER_DATA,
-			DataCache_CacheableData::DataOP( new CacheableStringIntegerMap() )
 		);
 	}
 

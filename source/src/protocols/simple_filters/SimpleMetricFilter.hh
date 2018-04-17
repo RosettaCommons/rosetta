@@ -191,11 +191,6 @@ private:
 	bool
 	compare_metric( std::string const & value ) const ;
 
-	bool
-	compare_metric( int ) const;
-
-
-
 private:
 
 	core::simple_metrics::SimpleMetricCOP metric_ = nullptr;

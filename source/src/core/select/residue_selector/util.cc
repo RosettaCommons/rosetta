@@ -20,6 +20,8 @@
 #include <core/select/residue_selector/OrResidueSelector.hh>
 #include <core/select/residue_selector/AndResidueSelector.hh>
 #include <core/select/residue_selector/SelectorLogicParser.hh>
+#include <core/select/util.hh>
+#include <core/pose/Pose.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -51,6 +53,57 @@ namespace residue_selector {
 //  type( type_in ),
 //  required( required_in )
 // {}
+
+std::map< core::Size, core::Size >
+get_residue_mapping_from_selectors(
+	select::residue_selector::ResidueSelectorCOP residue_selector,
+	select::residue_selector::ResidueSelectorCOP residue_selector_ref,
+	core::pose::Pose const & pose,
+	core::pose::Pose const & ref_pose
+){
+
+	using namespace utility;
+
+	vector1< core::Size > selector_res;
+	vector1< core::Size > reference_res;
+
+	if ( residue_selector ) {
+		selector_res = get_residues_from_subset(residue_selector->apply( pose ));
+	}
+	if ( residue_selector_ref ) {
+		reference_res = get_residues_from_subset(residue_selector_ref->apply( ref_pose ));
+	}
+
+	//Fail if residue selector selections do not match.
+	if ( residue_selector && residue_selector_ref ) {
+		if ( selector_res.size() != reference_res.size() ) {
+			utility_exit_with_status("Both set residue selectors must select the same number of residues in order to run RMSD calculation!");
+		}
+	}
+
+	//Fail if only reference selector was set.
+	if ( residue_selector_ref && (! residue_selector) ) {
+		utility_exit_with_message("Cannot only set the reference residue selector! If they are both the same, please set the main selector!");
+	}
+
+	//Setup the main residue mapping we will use depending on what is set.
+	std::map< core::Size, core::Size > residue_map;
+	if ( residue_selector && residue_selector_ref ) {
+		for ( core::Size i = 1; i <= selector_res.size(); ++i ) {
+			residue_map[ selector_res[ i] ] = reference_res[ i ];
+		}
+	} else if ( residue_selector ) {
+		for ( core::Size res : selector_res ) {
+			residue_map[ res ] = res;
+		}
+	} else {
+		for ( core::Size res = 1; res <= pose.size(); ++res ) {
+			residue_map[ res ] = res;
+		}
+	}
+	return residue_map;
+}
+
 
 std::string
 complex_type_name_for_residue_selector( std::string const & rs_type )

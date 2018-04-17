@@ -11,8 +11,8 @@
 /// @brief Simple metrics for calculating and adding to pose
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_core_simple_metrics_metrics_test_classes_creators_hh
-#define INCLUDED_core_simple_metrics_metrics_test_classes_creators_hh
+#ifndef INCLUDED_core_simple_metrics_test_classes_creators_hh
+#define INCLUDED_core_simple_metrics_test_classes_creators_hh
 
 // Unit headers
 #include <core/simple_metrics/SimpleMetricCreator.hh>
@@ -25,22 +25,6 @@ namespace core {
 namespace simple_metrics {
 
 class TestStringMetricCreator : public core::simple_metrics::SimpleMetricCreator {
-public:
-
-
-	/// @brief Instantiate a particular SimpleMetric
-	virtual SimpleMetricOP
-	create_simple_metric() const override;
-
-	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
-	keyname() const override;
-
-	virtual void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
-};
-
-class TestIntegerMetricCreator : public core::simple_metrics::SimpleMetricCreator {
 public:
 
 
@@ -88,21 +72,6 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
-class TestCompositeIntegerMetricCreator : public core::simple_metrics::SimpleMetricCreator {
-public:
-
-
-	/// @brief Instantiate a particular SimpleMetric
-	virtual SimpleMetricOP
-	create_simple_metric() const override;
-
-	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
-	virtual std::string
-	keyname() const override;
-
-	virtual void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
-};
 
 class TestCompositeRealMetricCreator : public core::simple_metrics::SimpleMetricCreator {
 public:

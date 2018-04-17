@@ -80,12 +80,6 @@ hasPoseExtraScore(
 	core::pose::Pose const & pose,
 	std::string const & name );
 
-/// @brief does this (int) ExtraScore exist?
-bool
-hasPoseExtraScore_int(
-	core::pose::Pose const & pose,
-	std::string const & name );
-
 /// @brief does this (string) ExtraScore exist?
 
 bool
@@ -116,15 +110,6 @@ getPoseExtraScore(
 	std::string & value
 );
 
-bool
-getPoseExtraScore(
-	core::pose::Pose const & pose,
-	std::string const & name,
-	int & value
-);
-
-
-
 ///@brief Clear a specific data type from the arbitrary data cache in the pose.
 void
 clearPoseExtraScore(
@@ -153,14 +138,6 @@ setPoseExtraScore(
 	core::pose::Pose & pose,
 	std::string const & name,
 	std::string const & value
-);
-
-///@brief Set an integer in the pose datacache, that will be output as a score in the scorefile.
-void
-setPoseExtraScore_int(
-	core::pose::Pose & pose,
-	std::string const & name,
-	int value
 );
 
 //////////////////////////////////////////////////////////////

@@ -22,11 +22,9 @@
 // Project Headers
 #include <core/simple_metrics/StringMetric.hh>
 #include <core/simple_metrics/RealMetric.hh>
-#include <core/simple_metrics/IntegerMetric.hh>
 
 #include <core/simple_metrics/CompositeStringMetric.hh>
 #include <core/simple_metrics/CompositeRealMetric.hh>
-#include <core/simple_metrics/CompositeIntegerMetric.hh>
 
 #include <core/simple_metrics/test_classes.hh>
 
@@ -121,29 +119,6 @@ public:
 
 	}
 
-	void test_integer_metric() {
-		TestIntegerMetric tester = TestIntegerMetric();
-		TS_ASSERT( tester.calculate( pose ) == 1);
-		TS_ASSERT( tester.metric() == "SomeInteger");
-		TS_ASSERT( tester.type() == "IntegerMetric");
-		TS_ASSERT( tester.get_metric_names()[1] == "SomeInteger");
-
-		tester.apply( pose );
-		TS_ASSERT ( hasPoseExtraScore_int( pose, "SomeInteger" ) );
-
-		int value;
-		bool present = getPoseExtraScore( pose, "SomeInteger", value );
-		TS_ASSERT( present );
-		TS_ASSERT( value == 1 );
-
-		tester.apply( pose, "prefix_", "_suffix");
-		TS_ASSERT ( hasPoseExtraScore_int( pose, "prefix_SomeInteger_suffix" ) );
-		present = getPoseExtraScore( pose, "prefix_SomeInteger_suffix", value );
-		TS_ASSERT( present );
-		TS_ASSERT( value == 1 );
-
-	}
-
 	void test_composite_string_metric() {
 		TestCompositeStringMetric tester = TestCompositeStringMetric();
 		std::map< std::string, std::string > values = tester.calculate( pose );
@@ -202,38 +177,6 @@ public:
 
 			TS_ASSERT ( hasPoseExtraScore( pose, "prefix_"+name+"_SomeCompositeReal_suffix" ) );
 			present = getPoseExtraScore( pose, "prefix_"+name+"_SomeCompositeReal_suffix", value );
-			TS_ASSERT( present );
-			TS_ASSERT( value == values[name] );
-		}
-
-	}
-
-	void test_composite_integer_metric() {
-		TestCompositeIntegerMetric tester = TestCompositeIntegerMetric();
-		std::map< std::string, int > values = tester.calculate( pose );
-		utility::vector1< std::string > names = tester.get_metric_names();
-		TS_ASSERT(names.size() == 2);
-		TS_ASSERT( values["i_data1"] == 1);
-		TS_ASSERT( values["i_data2"] == 2);
-
-		TS_ASSERT( tester.metric() == "SomeCompositeInteger");
-		TS_ASSERT( tester.type() == "CompositeIntegerMetric");
-
-		tester.apply( pose );
-		tester.apply( pose, "prefix_", "_suffix");
-
-		for ( auto & name : names ) {
-
-			TS_ASSERT ( hasPoseExtraScore_int( pose, name+"_SomeCompositeInteger" ) );
-
-			int value;
-			bool present = getPoseExtraScore( pose, name+"_SomeCompositeInteger", value );
-			TS_ASSERT( present );
-			TS_ASSERT( value ==  values[name] );
-
-
-			TS_ASSERT ( hasPoseExtraScore_int( pose, "prefix_"+name+"_SomeCompositeInteger_suffix" ) );
-			present = getPoseExtraScore( pose, "prefix_"+name+"_SomeCompositeInteger_suffix", value );
 			TS_ASSERT( present );
 			TS_ASSERT( value == values[name] );
 		}

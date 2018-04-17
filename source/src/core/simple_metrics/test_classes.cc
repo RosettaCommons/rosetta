@@ -131,53 +131,6 @@ TestRealMetricCreator::create_simple_metric() const {
 
 }
 
-
-/////////////////////
-std::string
-TestIntegerMetric::name_static(){
-	return "TestIntegerMetric";
-}
-
-SimpleMetricOP
-TestIntegerMetric::clone() const {
-	return SimpleMetricOP(new TestIntegerMetric( *this ) );
-}
-
-void
-TestIntegerMetric::parse_my_tag(
-	utility::tag::TagCOP ,
-	basic::datacache::DataMap &   )
-{
-
-}
-
-void
-TestIntegerMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	using namespace utility::tag;
-	using namespace core::select::residue_selector;
-
-	AttributeList attlist;
-	xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
-		"Test class for IntegerMetrics", attlist);
-}
-
-void
-TestIntegerMetricCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
-	TestIntegerMetric::provide_xml_schema( xsd );
-}
-
-std::string
-TestIntegerMetricCreator::keyname() const {
-	return TestIntegerMetric::name_static();
-}
-
-SimpleMetricOP
-TestIntegerMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new TestIntegerMetric );
-
-}
-
-
 /////////////////////
 std::string
 TestCompositeStringMetric::name_static(){
@@ -222,53 +175,6 @@ TestCompositeStringMetricCreator::create_simple_metric() const {
 	return SimpleMetricOP( new TestCompositeStringMetric );
 
 }
-
-/////////////////////
-std::string
-TestCompositeIntegerMetric::name_static(){
-	return "TestCompositeIntegerMetric";
-}
-
-SimpleMetricOP
-TestCompositeIntegerMetric::clone() const {
-	return SimpleMetricOP(new TestCompositeIntegerMetric( *this ) );
-}
-
-void
-TestCompositeIntegerMetric::parse_my_tag(
-	utility::tag::TagCOP ,
-	basic::datacache::DataMap &   )
-{
-
-}
-
-void
-TestCompositeIntegerMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	using namespace utility::tag;
-	using namespace core::select::residue_selector;
-
-	AttributeList attlist;
-	xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
-		"Test class for IntegerMetrics", attlist);
-}
-
-void
-TestCompositeIntegerMetricCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
-	TestCompositeIntegerMetric::provide_xml_schema( xsd );
-}
-
-std::string
-TestCompositeIntegerMetricCreator::keyname() const {
-	return TestCompositeIntegerMetric::name_static();
-}
-
-SimpleMetricOP
-TestCompositeIntegerMetricCreator::create_simple_metric() const {
-	return SimpleMetricOP( new TestCompositeIntegerMetric );
-
-}
-
-
 
 /////////////////////
 std::string

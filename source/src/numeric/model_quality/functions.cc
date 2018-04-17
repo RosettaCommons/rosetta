@@ -7,10 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   numeric/model_quality/rms.hh
-/// @brief  RMS functions imported from rosetta++
-/// @author James Thompson
-/// @date   Wed Aug 22 12:10:37 2007
+/// @file   numeric/model_quality/functions.hh
+/// @brief  
+/// @author Jared Adolf-Bryfogle
 
 
 // Rosetta Headers
@@ -20,18 +19,9 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/NumericTraits.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
 #include <numeric/types.hh>
 
 #include <utility/vector1.hh>
-
-// ObjexxFCL libraries
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-
-// C++ libraries
-#include <complex>
 
 
 namespace numeric {

@@ -17,6 +17,7 @@
 // Core headers
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -27,10 +28,21 @@
 #include <string>
 #include <list>
 #include <algorithm>
+#include <map>
 
 namespace core {
 namespace select {
 namespace residue_selector {
+
+///@brief Determine the residue mapping by residue selector and the reference selector.
+/// If both are null, will get a map of all residues.
+std::map< core::Size, core::Size >
+get_residue_mapping_from_selectors(
+	select::residue_selector::ResidueSelectorCOP selector,
+	select::residue_selector::ResidueSelectorCOP selector_ref,
+	core::pose::Pose const & pose,
+	core::pose::Pose const & ref_pose
+);
 
 /// @brief Used to name the xs:complexType for a residue selector that is
 /// created with the "rs_type" tag-name.  Does so by prepending "rs_" and

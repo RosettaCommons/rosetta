@@ -17,10 +17,8 @@
 #include <core/simple_metrics/SimpleMetricFactory.hh>
 #include <core/simple_metrics/SimpleMetric.hh>
 #include <core/simple_metrics/RealMetric.hh>
-#include <core/simple_metrics/IntegerMetric.hh>
 #include <core/simple_metrics/StringMetric.hh>
 #include <core/simple_metrics/CompositeRealMetric.hh>
-#include <core/simple_metrics/CompositeIntegerMetric.hh>
 #include <core/simple_metrics/CompositeStringMetric.hh>
 #include <core/simple_metrics/util.hh>
 
@@ -246,7 +244,6 @@ SimpleMetricFeatures::report_features(
 
 		core::Real  real_value;
 		std::string string_value;
-		int         integer_value;
 
 		std::string data_type;
 
@@ -259,10 +256,6 @@ SimpleMetricFeatures::report_features(
 		MetricData(std::string r_value):
 			string_value(r_value),
 			data_type("string"){}
-
-		MetricData(int const r_value):
-			integer_value(r_value),
-			data_type("integer"){}
 
 	};
 
@@ -289,12 +282,6 @@ SimpleMetricFeatures::report_features(
 			MetricData new_data( value );
 			name_data_map[r_metric.metric() ] = new_data;
 			string_data[r_metric.metric() ] = value;
-		} else if ( metric_type == "IntegerMetric" ) {
-			IntegerMetric const & r_metric = dynamic_cast<IntegerMetric const & >( *metric );
-			int value = r_metric.calculate(pose);
-			MetricData new_data( value );
-			name_data_map[r_metric.metric() ] = new_data;
-			string_data[r_metric.metric() ] = value;
 		} else if ( metric_type == "CompositeRealMetric" ) {
 			CompositeRealMetric const & r_metric = dynamic_cast<CompositeRealMetric const & >( *metric );
 			std::map< std::string, core::Real > result = r_metric.calculate(pose);
@@ -309,13 +296,6 @@ SimpleMetricFeatures::report_features(
 				MetricData new_data( result_pair.second);
 				name_data_map[ result_pair.first ] = new_data;
 				string_data[ result_pair.first ] = result_pair.second;
-			}
-		} else if ( metric_type == "CompositeIntegerMetric" ) {
-			CompositeIntegerMetric const & r_metric = dynamic_cast<CompositeIntegerMetric const & >( *metric );
-			std::map< std::string, int > result = r_metric.calculate(pose);
-			for ( auto result_pair : result ) {
-				MetricData new_data( result_pair.second);
-				name_data_map[ result_pair.first ] = new_data;
 			}
 		} else {
 			utility_exit_with_message("Metric Type not understood! "+ metric_type);
@@ -364,10 +344,6 @@ catch (cppdb_error const & error){
 		//TR << data_pair.first << " " << data_pair.second.data_type << std::endl;
 		if ( data_pair.second.data_type == "real" ) {
 			core::Real value = data_pair.second.real_value;
-			stmt.bind(n, value);
-			//TR << data_pair.second.real_value << std::endl;
-		} else if ( data_pair.second.data_type == "integer" ) {
-			core::Real value = data_pair.second.integer_value;
 			stmt.bind(n, value);
 			//TR << data_pair.second.real_value << std::endl;
 		} else if ( data_pair.second.data_type == "string" ) {

@@ -16,10 +16,8 @@
 
 #include <core/simple_metrics/SimpleMetric.fwd.hh>
 #include <core/simple_metrics/RealMetric.hh>
-#include <core/simple_metrics/IntegerMetric.hh>
 #include <core/simple_metrics/StringMetric.hh>
 #include <core/simple_metrics/CompositeRealMetric.hh>
-#include <core/simple_metrics/CompositeIntegerMetric.hh>
 #include <core/simple_metrics/CompositeStringMetric.hh>
 
 #include <core/simple_metrics/test_classes.fwd.hh>
@@ -135,49 +133,6 @@ public:
 
 };
 
-class TestIntegerMetric : public IntegerMetric {
-
-public:
-
-	TestIntegerMetric():
-		IntegerMetric(){};
-
-	int
-	calculate(pose::Pose const &  ) const override{
-		return 1;
-	};
-
-	std::string
-	metric() const override {
-		return "SomeInteger";
-	};
-
-	std::string
-	name() const override{
-		return name_static();
-	};
-
-	static
-	std::string
-	name_static();
-
-	SimpleMetricOP
-	clone() const override;
-
-public:
-
-	TestIntegerMetric(TestIntegerMetric const & ) = default;
-
-	static
-	void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-
-	void
-	parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data ) override;
-
-};
 
 class TestCompositeStringMetric: public CompositeStringMetric {
 
@@ -286,62 +241,6 @@ public:
 		basic::datacache::DataMap & data ) override;
 
 };
-
-class TestCompositeIntegerMetric : public CompositeIntegerMetric {
-
-public:
-
-	TestCompositeIntegerMetric():
-		CompositeIntegerMetric(){};
-
-	std::map< std::string, int>
-	calculate(pose::Pose const & ) const override{
-		std::map< std::string, int > data;
-		data["i_data1"] = 1;
-		data["i_data2"] = 2;
-		return data;
-	};
-
-	std::string
-	metric() const override {
-		return "SomeCompositeInteger";
-	};
-
-	std::string
-	name() const override{
-		return name_static();
-	};
-
-	static
-	std::string
-	name_static();
-
-	SimpleMetricOP
-	clone() const override;
-
-public:
-
-	utility::vector1< std::string >
-	get_metric_names() const override{
-		utility::vector1< std::string > names;
-		names.push_back("i_data1");
-		names.push_back("i_data2");
-		return names;
-	}
-
-	TestCompositeIntegerMetric(TestCompositeIntegerMetric const & ) = default;
-
-	static
-	void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-
-	void
-	parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data ) override;
-
-};
-
 
 } //core
 } //simple_metrics
