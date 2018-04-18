@@ -132,20 +132,22 @@ def get_compiler_family():
     return 'unknown'
 
 
-def install_llvm_tool(name, source_location, prefix, debug, clean=True):
+def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
         Return absolute path to executable on success and terminate with error on failure
     '''
-    release = 'release_40'
-    prefix += '/llvm-4.0'
+    if not os.path.isdir(prefix_root): os.makedirs(prefix_root)
 
-    build_dir = prefix+'/build_' + release + '.' + Platform + '.' +_machine_name_ + ('.debug' if debug else '.release')
+    llvm_version='4.0.0'
+    prefix = prefix_root + '/llvm-' + llvm_version
+
+    build_dir = prefix+'/llvm-' + llvm_version + '.' + Platform + '.' +_machine_name_ + ('.debug' if debug else '.release')
 
     res, output = execute('Getting binder HEAD commit SHA1...', 'cd {} && git rev-parse HEAD'.format(source_location), return_='tuple', silent=True)
     if res: binder_head = 'unknown'
     else: binder_head = output.split('\n')[0]
 
-    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.0', binder = binder_head)
+    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.0', binder = binder_head, llvm_version=llvm_version)
     signature_file_name = build_dir + '/.signature.json'
 
     disk_signature = dict(config = 'unknown', binder = 'unknown')
@@ -153,23 +155,32 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
         with open(signature_file_name) as f: disk_signature = json.load(f)
 
     if signature == disk_signature:
-        print('LLVM:{} + Binder install is detected at {}, skipping LLVM installation Binder building procedures...\n'.format(release, build_dir))
+        print('LLVM:{} + Binder install is detected at {}, skipping LLVM installation Binder building procedures...\n'.format(llvm_version, build_dir))
 
     else:
         print('LLVM build detected, but config/binder version has changed, perfoming a clean rebuild...')
         if os.path.isdir(build_dir): shutil.rmtree(build_dir)
 
+        clang_path = "{prefix}/tools/clang".format(**locals())
+
+        if not os.path.isfile(prefix + '/CMakeLists.txt'): execute('Download LLVM source...', 'cd {prefix_root} && curl http://releases.llvm.org/{llvm_version}/llvm-{llvm_version}.src.tar.xz | tar -Jxo && mv llvm-{llvm_version}.src {prefix}'.format(**locals()) )
+
+        if not os.path.isdir(clang_path): execute('Download Clang source...', 'cd {prefix_root} && curl http://releases.llvm.org/{llvm_version}/cfe-{llvm_version}.src.tar.xz | tar -Jxo && mv cfe-{llvm_version}.src {clang_path}'.format(**locals()) )
+
+        if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
+
+
         # if signature['config'] != disk_signature['config']:
         #     print( 'LLVM build detected, but config version mismatched: was:"{}" current:"{}", perfoming a clean rebuild...'.format(disk_signature['config'], signature['config']) )
         #     if os.path.isdir(build_dir): shutil.rmtree(build_dir)
         # else: print( 'Binder build detected, but source version mismatched: was:{} current:{}, rebuilding...'.format(disk_signature['binder'], signature['binder']) )
-
+        '''
         git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
 
         #if os.path.isdir(prefix) and  (not os.path.isdir(prefix+'/.git')): shutil.rmtree(prefix)  # removing old style checkoiut
 
         if not os.path.isdir(prefix):
-            print( 'No LLVM:{} + Binder install is detected! Going to check out LLVM and install Binder. This procedure will require ~3Gb of free disk space and will only be needed to be done once...\n'.format(release) )
+            print( 'No LLVM:{} + Binder install is detected! Going to check out LLVM and install Binder. This procedure will require ~1Gb of free disk space and will only be needed to be done once...\n'.format(release) )
             os.makedirs(prefix)
 
         if not os.path.isdir(prefix+'/.git'): execute('Clonning llvm...', 'cd {} && git clone git@github.com:llvm-mirror/llvm.git .'.format(prefix) )
@@ -179,6 +190,7 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
         execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
 
         if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
+        '''
 
         tool_link_path = '{prefix}/tools/clang/tools/extra/{name}'.format(prefix=prefix, name=name)
         if os.path.islink(tool_link_path): os.unlink(tool_link_path)
@@ -190,14 +202,13 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
         if not os.path.isfile(cmake_lists):
             with open(cmake_lists, 'w') as f: f.write(tool_build_line + '\n')
 
-
         config = '-DCMAKE_BUILD_TYPE={build_type}'.format(build_type='Debug' if debug else 'Release')
         if Platform == "linux": config += ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'if Options.compiler == 'clang' else ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
 
         if not os.path.isdir(build_dir): os.makedirs(build_dir)
         execute(
             'Building tool: {}...'.format(name),
-            'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja {jobs}'.format(
+            'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja bin/binder clang {jobs}'.format( # we need to build Clang so lib/clang/<version>/include is also built
                 build_dir=build_dir, config=config,
                 jobs="-j{}".format(Options.jobs) if Options.jobs else "",
                 gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
