@@ -1,0 +1,11 @@
+-ignore_zero_occupancy false 
+-s relaxed_1ZDH.pdb
+-mutfile mutfile 
+-out_prefix ddG_ 
+-protein_pack_reps 1 
+-score:weights rnp_ddg 
+-relax_cutoff_dist 20.0 
+-Nreps 1 
+-min_jumps true 
+-move_backbone false 
+-restore_talaris_behavior

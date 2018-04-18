@@ -116,6 +116,9 @@ RNA_FullAtomStackingEnergyCreator::score_types_for_method() const {
 	sts.push_back( fa_stack_upper ); // just upper residue, used by free_base entropy estimator
 	sts.push_back( fa_stack_aro  );  // just component where occluding atom is aromatic.
 
+	sts.push_back( fa_stack_rna_protein );
+	sts.push_back( fa_stack_rna_protein_aro );
+
 	sts.push_back( fa_stack_ext );
 	sts.push_back( fa_stack_sol );
 	sts.push_back( fa_stack_lr  );
@@ -138,7 +141,8 @@ RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy( methods::EnergyMethodOpt
 	lr_prefactor_       ( option[ fa_stack_lr_prefactor ]()    /*-0.05*/ ), // water-mediated stacking
 	lr_stack_cutoff_    ( option[ fa_stack_lr_stack_cutoff ]() /*6.5*/   ), //
 	lr_dist_cutoff_     ( option[ fa_stack_lr_dist_cutoff ]()  /*7.5*/  ),//
-	base_base_only_( !options.fa_stack_base_all() /* !false --> true */ )
+	base_base_only_( !options.fa_stack_base_all() /* !false --> true */ ),
+	include_rna_prot_( option[ fa_stack_include_rna_protein ]() /*true */ ) // for fa_stack_rna_protein(_aro)
 {}
 
 /// copy c-tor
@@ -241,16 +245,29 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 	Real const score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, prefactor_, stack_cutoff_, dist_cutoff_ );
 	Real const score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, prefactor_, stack_cutoff_, dist_cutoff_ ) ;
 
-	emap[ fa_stack ]       += score1 + score2;
-	emap[ fa_stack_ext ]   += score1 + score2;
-	emap[ fa_stack_aro ]   += score_aro1 + score_aro2;
+	if ( (base_base_only_ && rsd1.is_RNA() && rsd2.is_RNA()) || !base_base_only_ ) {
+		emap[ fa_stack ]       += score1 + score2;
+		emap[ fa_stack_ext ]   += score1 + score2;
+		emap[ fa_stack_aro ]   += score_aro1 + score_aro2;
+	}
+
+	if ( include_rna_prot_ ) {
+		if ( (rsd1.is_RNA() && rsd2.is_protein()) || (rsd1.is_protein() && rsd2.is_RNA()) ) {
+			emap[ fa_stack_rna_protein ] += score1 + score2; // one of these will be 0
+			emap[ fa_stack_rna_protein_aro ] += score_aro1 + score_aro2; // one of these will be 0
+		}
+	}
 
 	if ( rsd1.seqpos() <= rsd2.seqpos() ) {
-		emap[ fa_stack_lower ]  += score1;
-		emap[ fa_stack_upper ]  += score2;
+		if ( (base_base_only_ && rsd1.is_RNA() && rsd2.is_RNA()) || !base_base_only_ ) {
+			emap[ fa_stack_lower ]  += score1;
+			emap[ fa_stack_upper ]  += score2;
+		}
 	} else {
-		emap[ fa_stack_lower ]  += score2;
-		emap[ fa_stack_upper ]  += score1;
+		if ( (base_base_only_ && rsd1.is_RNA() && rsd2.is_RNA()) || !base_base_only_ ) {
+			emap[ fa_stack_lower ]  += score2;
+			emap[ fa_stack_upper ]  += score1;
+		}
 	}
 
 	if ( sfxn.get_weight( fa_stack_sol ) != 0 || sfxn.get_weight( fa_stack_ext ) != 0 ) {
@@ -288,7 +305,10 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 	score_aro = 0.0;
 	Real score( 0.0 );
 	if ( !rsd1.is_RNA() ) return score;
-	if ( base_base_only_ && !rsd2.is_RNA() ) return score;
+	if ( base_base_only_ ) {
+		if ( !rsd2.is_protein() && !rsd2.is_RNA()  ) return score;
+		if ( rsd2.is_protein() && !include_rna_prot_ ) return score;
+	}
 
 	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
@@ -353,9 +373,17 @@ RNA_FullAtomStackingEnergy::check_base_base_OK(
 	if ( m == rsd1.first_sidechain_atom() ) return false;
 
 	if ( n > rsd2.nheavyatoms() ) return false;
-	if ( base_base_only_ && !rsd2.is_RNA() ) return false;
-	if ( base_base_only_ && n < rsd2.first_sidechain_atom() ) return false;
-	if ( base_base_only_ && n == rsd2.first_sidechain_atom() ) return false;  //2'-OH
+	//if ( base_base_only_ && !rsd2.is_RNA() ) return false;
+	//if ( base_base_only_ && n < rsd2.first_sidechain_atom() ) return false;
+	//if ( base_base_only_ && n == rsd2.first_sidechain_atom() ) return false;  //2'-OH
+	if ( base_base_only_ ) {
+		if ( !rsd2.is_protein() && !rsd2.is_RNA() ) return false;
+		if ( rsd2.is_protein() && !include_rna_prot_ ) return false;
+		if ( rsd2.is_RNA() ) {
+			if ( n < rsd2.first_sidechain_atom() ) return false;
+			if ( n == rsd2.first_sidechain_atom() ) return false;  //2'-OH
+		}
+	}
 
 	return true;
 }
@@ -376,10 +404,12 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	// following repeats some calculations but is conceptually simplest.
 	eval_atom_derivative(
 		atom_id, pose, domain_map, F1, F2,
-		weights[ fa_stack ] + weights[ fa_stack_ext ],
+		weights[ fa_stack ] + weights[ fa_stack_ext ] + weights[ fa_stack_rna_protein ],
+		//weights[ fa_stack ] + weights[ fa_stack_ext ],
 		weights[ fa_stack_lower ],
 		weights[ fa_stack_upper ],
-		weights[ fa_stack_aro ] /* aro -- legacy */,
+		weights[ fa_stack_aro ] + weights[ fa_stack_rna_protein_aro ],
+		//weights[ fa_stack_aro ] /* aro -- legacy */,
 		prefactor_, stack_cutoff_, dist_cutoff_ );
 
 	if ( sfxn.get_weight( fa_stack_sol ) != 0 || sfxn.get_weight( fa_stack_ext ) != 0 ) {
@@ -420,7 +450,9 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	conformation::Residue const & rsd1( pose.residue( i ) );
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 
-	if ( base_base_only_ && !rsd1.is_RNA() ) return;
+	if ( base_base_only_ && !rsd1.is_RNA() && !include_rna_prot_ ) return;
+	if ( base_base_only_ && include_rna_prot_ && !(rsd1.is_protein() || rsd1.is_RNA()) ) return;
+	//if ( base_base_only_ && !rsd1.is_RNA() ) return;
 	if ( m > rsd1.nheavyatoms() ) return;
 	if ( rsd1.is_virtual( m ) ) return;
 	if ( rsd1.is_repulsive( m ) ) return;
@@ -453,7 +485,13 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 		if ( pos1_fixed && domain_map( i ) == domain_map( j ) ) continue; //Fixed w.r.t. one another.
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
-		if ( base_base_only_ && !rsd2.is_RNA() ) continue;
+		//if ( base_base_only_ && !rsd2.is_RNA() ) continue;
+		if ( base_base_only_ ) {
+			if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) {
+				if ( !include_rna_prot_ ) continue;
+				if ( !((rsd1.is_RNA() && rsd2.is_protein()) || (rsd1.is_protein() && rsd2.is_RNA())) ) continue;
+			}
+		}
 
 		kinematics::Stub const & stub_j( base_stubs[j] );
 		Matrix const M_j ( stub_j.M );

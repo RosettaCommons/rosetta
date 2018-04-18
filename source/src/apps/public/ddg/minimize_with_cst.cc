@@ -136,6 +136,8 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 				core::Size atom_i;
 				if ( pose.residue(i).has( " CA " ) ) {
 					atom_i = pose.residue(i).atom_index(" CA ");
+				} else if ( pose.residue(i).is_RNA() && pose.residue(i).has(" P  ") ) {
+					atom_i = pose.residue(i).atom_index(" P  ");
 				} else {
 					atom_i = pose.residue(i).nbr_atom();
 				}
@@ -144,6 +146,8 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 					core::Size atom_j;
 					if ( pose.residue(j).has( " CA " ) ) {
 						atom_j = pose.residue(j).atom_index(" CA ");
+					} else if ( pose.residue(i).is_RNA() && pose.residue(i).has(" P  ") ) {
+						atom_j = pose.residue(i).atom_index(" P  ");
 					} else {
 						atom_j = pose.residue(j).nbr_atom();
 					}
@@ -156,6 +160,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 					}
 				}
 			}
+
 		}
 
 		s.set_weight(atom_pair_constraint, basic::options::option[OptionKeys::ddg::constraint_weight]());
@@ -194,6 +199,22 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string const & 
 		if ( basic::options::option[OptionKeys::ddg::sc_min_only]() ) {
 			minimizer_tol = 0.0001;
 			mm.set_bb(false);
+		} else if ( basic::options::option[OptionKeys::ddg::rna_all_prot_sc_min_only]() ) {
+			// Loop through the residues in the pose
+			// if the residue is protein, set_chi(true) and set_bb(false)
+			// if the residue is RNA, set_chi(true) and set_bb(true)
+			for ( core::Size i=1; i <= p.total_residue(); ++i ) {
+				if ( p.residue( i ).is_protein() ) {
+					mm.set_bb( i, false );
+					mm.set_chi( i, true );
+				} else if ( p.residue( i ).is_RNA() ) {
+					mm.set_bb( i, true);
+					mm.set_chi( i, true);
+				} else {
+					mm.set_bb( i, false );
+					mm.set_chi( i, false );
+				}
+			}
 		}
 		s.show(std::cout, p);
 		// This used to be higher, but then it couldn't respond to the adjustment
@@ -260,7 +281,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string const & 
 }
 
 void
-optimize_pose(pose::Pose & p, ScoreFunctionOP scorefxn,std::string const & output_tag){
+optimize_pose(pose::Pose & pose, ScoreFunctionOP scorefxn, std::string const & output_tag){
 	Real cst_tol;
 	if ( basic::options::option[OptionKeys::ddg::harmonic_ca_tether].user() ) {
 		cst_tol = basic::options::option[ OptionKeys::ddg::harmonic_ca_tether ]();
@@ -269,9 +290,10 @@ optimize_pose(pose::Pose & p, ScoreFunctionOP scorefxn,std::string const & outpu
 	}
 	if ( !basic::options::option[OptionKeys::ddg::no_constraints].user() || //flag not present
 			!basic::options::option[OptionKeys::ddg::no_constraints]() ) { //flag set to false
-		setup_ca_constraints(p,(*scorefxn),9.0,cst_tol);
+		core::Real cst_dist_cutoff = basic::options::option[OptionKeys::ddg::cst_dist_cutoff]();
+		setup_ca_constraints( pose, (*scorefxn), cst_dist_cutoff, cst_tol );
 	}
-	minimize_with_constraints(p, (*scorefxn),output_tag);
+	minimize_with_constraints( pose, (*scorefxn), output_tag);
 }
 
 bool

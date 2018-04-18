@@ -306,7 +306,7 @@ StepWiseMinimizer::let_neighboring_side_chains_minimize( core::kinematics::MoveM
 	using namespace core::scoring;
 	if ( options_->global_optimize() ) working_pack_res_ = get_all_residues( pose );
 	if ( working_pack_res_.size() == 0 ) {
-		working_pack_res_ = packer::figure_out_working_interface_res( pose, working_moving_res_ );
+		working_pack_res_ = packer::figure_out_working_interface_res( pose, working_moving_res_, options_->pack_protein_side_chains() );
 	}
 	for ( Size n = 1; n <= working_pack_res_.size(); n++ ) {
 		move_side_chain( mm, pose, working_pack_res_[n] );
@@ -321,7 +321,9 @@ StepWiseMinimizer::move_side_chain( core::kinematics::MoveMap & mm,
 	if ( mm.get_chi( j ) ) return;
 	if ( pose.residue(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) return;
 	if ( pose.residue(j).is_protein() ) {
-		mm.set_chi( j, true );
+		if ( options_->pack_protein_side_chains() ) {
+			mm.set_chi( j, true );
+		}
 	} else if ( pose.residue(j).is_RNA() ) {
 		mm.set( id::TorsionID( j, id::CHI, 4), true ); // 2'-OH.
 	}

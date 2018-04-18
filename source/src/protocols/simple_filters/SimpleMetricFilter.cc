@@ -367,7 +367,7 @@ SimpleMetricFilter::apply( core::pose::Pose const & pose) const
 		bool pass = compare_composites(values);
 		TR << "Filter passed: " << pass << std::endl;
 		return pass;
-		
+
 	} else if ( metric_->type() == "CompositeStringMetric" ) {
 		CompositeStringMetric const & r_metric = dynamic_cast<CompositeStringMetric const & >( *metric_ );
 		std::map< std::string, std::string > values = r_metric.calculate( pose );

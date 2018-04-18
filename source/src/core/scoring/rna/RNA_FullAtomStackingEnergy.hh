@@ -218,6 +218,7 @@ private:
 	Distance const lr_dist_cutoff_;
 
 	bool const base_base_only_;
+	bool const include_rna_prot_;
 
 };
 

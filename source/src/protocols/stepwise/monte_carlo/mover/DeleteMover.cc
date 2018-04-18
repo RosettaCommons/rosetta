@@ -146,7 +146,7 @@ DeleteMover::apply( core::pose::Pose & pose, utility::vector1< Size > const & re
 	// have at it!
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	utility::vector1< Size > const residues_to_delete = full_model_info.full_to_sub( residues_to_delete_in_full_model_numbering );
-	interface_res_ = full_model_info.sub_to_full( packer::figure_out_working_interface_res( pose, get_unique_connection_res( pose, residues_to_delete ) ) );
+	interface_res_ = full_model_info.sub_to_full( packer::figure_out_working_interface_res( pose, get_unique_connection_res( pose, residues_to_delete ), options_->pack_protein_side_chains() ) );
 
 	// do the slice.
 	PoseOP sliced_out_pose_op( new Pose );

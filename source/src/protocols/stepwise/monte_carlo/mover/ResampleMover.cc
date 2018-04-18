@@ -221,7 +221,7 @@ ResampleMover::apply( pose::Pose & pose,
 
 	if ( just_min_after_mutation ) {
 		stepwise_modeler_->set_moving_res_and_reset( 0 );
-		stepwise_modeler_->set_working_prepack_res( packer::figure_out_working_interface_res( pose, remodel_res ) );
+		stepwise_modeler_->set_working_prepack_res( packer::figure_out_working_interface_res( pose, remodel_res, options_->pack_protein_side_chains() ) );
 	} else {
 		stepwise_modeler_->set_moving_res_and_reset( remodel_res );
 		stepwise_modeler_->set_figure_out_prepack_res( true );

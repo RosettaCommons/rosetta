@@ -85,7 +85,8 @@ StepWisePacker::StepWisePacker( utility::vector1< Size > const & working_moving_
 	allow_virtual_o2prime_hydrogens_( false ),
 	pack_o2prime_hydrogens_( true ),
 	working_pack_res_was_inputted_( false ),
-	pack_all_side_chains_( false )
+	pack_all_side_chains_( false ),
+	pack_protein_side_chains_( true )
 {
 }
 
@@ -145,7 +146,7 @@ StepWisePacker::figure_out_neighbors( core::pose::Pose & pose /*not const becaus
 
 	working_pack_res_was_inputted_ = false;
 	( *scorefxn_ )( pose ); // currently needs to occur before interface_res determination.
-	working_pack_res_ = figure_out_working_interface_res( pose, working_moving_res_list_ );
+	working_pack_res_ = figure_out_working_interface_res( pose, working_moving_res_list_, pack_protein_side_chains_ );
 }
 
 //////////////////////////////////////////////////////////////////////////

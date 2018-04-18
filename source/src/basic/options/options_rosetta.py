@@ -1335,6 +1335,7 @@ Options = Option_Group( '',
     Option( 'put_intra_into_total','Boolean', desc="Put intra-residue terms inside hbond, geom_sol_fast, fa_atr. (Contributions will not show up in hbond_intra, fa_atr_intra_xover4.) Off for proteins by default.", default="false" ),
     Option( 'include_intra_res_protein','Boolean', desc="Include computation of intra-residue terms for proteins.", default="false" ),
     Option( 'fa_stack_base_base_only','Boolean', desc="Only calculate fa_stack for RNA base/base.", default="true" ),
+    Option( 'fa_stack_include_rna_protein','Boolean', desc="Calculate fa_stack for RNA/protein", default="true" ),
     Option( 'fa_stack_sol_prefactor','Real', desc="Strength of sol penalty in fa_stack_sol.", default="0.1" ),
     Option( 'fa_stack_sol_stack_cutoff','Real', desc="distances below this get full sol stack.", default="5.5" ),
     Option( 'fa_stack_sol_dist_cutoff' ,'Real', desc="distances below this get some sol stack.", default="6.5" ),
@@ -4839,6 +4840,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('interface_ddg','Integer',default='0', desc='Calculate ddGs across an interface? Uses jump # specified for determining interface.'),
 		Option('ens_variation', 'Real', default='0.5'),
 		Option('sc_min_only','Boolean',default='true'),
+		Option('rna_all_prot_sc_min_only','Boolean',default='false'),
 		Option('min_cst_weights','String',default='talaris2013'),
 		Option('opt_radius','Real',default='8.0'),
 		Option('output_dir','String',default='./'),
@@ -4857,6 +4859,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('debug_output', 'Boolean', default='false',desc='specify whether or not to write a whole bunch of debug statements to standard out'),
 		Option('dump_pdbs','Boolean',default='true',desc='specify whether or not to dump repacked wild-type and mutant pdbs'),
 		Option('weight_file', 'String', default='ddg.wts',desc='specifies the weight-files to be used in calculations'),
+		Option('cst_dist_cutoff', 'Real', default='9.0',desc='the cutoff distance for generating harmonic csts between residues'),
 #		Option('translate_by', 'Integer', desc='specify the distance in Angstrom that takes to move away when unbounded.  Should keep it around 100 when this protocol is used in conjunction with the Poisson-Boltzmann potential score-term.'),
 	), # -ddg
 
@@ -7528,6 +7531,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'output_cluster_size', 'Boolean', desc="Output cluster_size in StepWiseClusterer as an extra score in the pose", default='false' ),
 		Option( 'lores', 'Boolean', desc="Use coarse-grained energy function to sample; no minimize.", default='false' ),
 		Option( 'verbose_sampler', 'Boolean', desc="verbose output from StepWiseConnectionSampler sample-and-screen.", default='false' ),
+		Option( 'pack_protein_side_chains', 'Boolean', desc="allow neighboring protein side chains to be packed.", default='true' ),
 		Option( 'definitely_virtualize', 'IntegerVector', desc="definitely virtualize these residues (by seqpos)", default=[]),
 		Option( 'force_moving_res_for_erraser', 'Boolean', desc="For ERRASER resample moves, ENSURE that the appropriate residue is moving", default='false'),
 

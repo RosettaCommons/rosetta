@@ -77,6 +77,8 @@ public:
 
 	bool working_pack_res_was_inputted() const { return working_pack_res_was_inputted_; }
 
+	void set_pack_protein_side_chains( bool const & setting ){ pack_protein_side_chains_ = setting; }
+
 	void set_working_pack_res( utility::vector1< core::Size > const & setting ) { working_pack_res_ = setting; }
 	utility::vector1< core::Size > const & working_pack_res() const { return working_pack_res_; }
 	utility::vector1< core::Size > const & previous_working_pack_res() const { return previous_working_pack_res_; }
@@ -107,6 +109,7 @@ private:
 	utility::vector1< core::Size > previous_working_pack_res_; // cached of residues packed last time, used for reinstating side chains.
 	bool working_pack_res_was_inputted_;
 	bool pack_all_side_chains_;
+	bool pack_protein_side_chains_;
 
 };
 

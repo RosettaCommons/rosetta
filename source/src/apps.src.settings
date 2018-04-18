@@ -194,6 +194,9 @@ sources = {
 		"rna_score",
 		"nucleobase_sample_around",
 	],
+	"public/rnp_ddg": [
+		"rnp_ddg",
+	],
 	"public/fiber_diffraction": [
 		"FiberDiffractionFreeSet",
 	],

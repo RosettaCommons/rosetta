@@ -79,6 +79,7 @@ StepWiseProteinModelerOptions::initialize_variables(){
 	pack_weights_ = "";
 	expand_loop_takeoff_ = false;
 	skip_coord_constraints_ = false;
+	pack_protein_side_chains_ = true;
 }
 
 /// @brief clone the options
@@ -101,6 +102,7 @@ StepWiseProteinModelerOptions::initialize_from_command_line(){
 	filter_native_big_bins_ = option[ basic::options::OptionKeys::stepwise::protein::filter_native_big_bins ]();
 	allow_virtual_side_chains_ = option[ basic::options::OptionKeys::stepwise::protein::allow_virtual_side_chains ]();
 	prepack_ = option[ basic::options::OptionKeys::stepwise::protein::protein_prepack ]();
+	pack_protein_side_chains_ = option[ basic::options::OptionKeys::stepwise::pack_protein_side_chains ]();
 	centroid_output_ = option[ basic::options::OptionKeys::stepwise::protein::centroid_output ]();
 	centroid_screen_ = option[ basic::options::OptionKeys::stepwise::protein::centroid_screen ]();
 	centroid_score_diff_cut_ = option[ basic::options::OptionKeys::stepwise::protein::centroid_score_diff_cut ]();

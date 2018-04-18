@@ -79,6 +79,8 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	save_times_( false ),
 	use_precomputed_library_( true ),
 	minimize_after_delete_( true ),
+	force_submotif_without_intervening_bulge_( false ),
+	pack_protein_side_chains_( true ),
 	use_first_jump_for_submotif_( false ),
 	designing_with_noncanonicals_( false ),
 	checkpoint_( false ),
@@ -168,6 +170,8 @@ StepWiseMonteCarloOptions::initialize_from_options_collection( utility::options:
 	eval_base_pairs_ = options[ basic::options::OptionKeys::rna::evaluate_base_pairs ]();
 	superimpose_over_all_ = options[ basic::options::OptionKeys::stepwise::superimpose_over_all ]();
 	force_moving_res_for_erraser_ = options[ basic::options::OptionKeys::stepwise::force_moving_res_for_erraser ]();
+	force_submotif_without_intervening_bulge_ = option[ OptionKeys::stepwise::monte_carlo::force_submotif_without_intervening_bulge ]();
+	pack_protein_side_chains_ = option[ OptionKeys::stepwise::pack_protein_side_chains ]();
 
 	if ( test_all_moves_ ) {
 		set_num_random_samples( 0 );
@@ -275,6 +279,7 @@ StepWiseMonteCarloOptions::setup_modeler_options() const{
 	options->set_n_sample( n_sample() );
 	options->set_prepack( protein_prepack() );
 	options->set_expand_loop_takeoff( true );
+	options->set_pack_protein_side_chains( pack_protein_side_chains() );
 
 	// rna-specific
 	options->set_integration_test_mode( integration_test_mode() );

@@ -35,17 +35,20 @@ get_packer(
 
 utility::vector1< core::Size >
 figure_out_working_interface_res( core::pose::Pose const & pose,
-	utility::vector1< core::Size > const & working_moving_res );
+	utility::vector1< core::Size > const & working_moving_res,
+	bool const pack_protein_side_chains );
 
 utility::vector1< core::Size >
 figure_out_working_interface_res( core::pose::Pose const & pose,
-	core::Size const working_moving_res );
+	core::Size const working_moving_res,
+	bool const pack_protein_side_chains );
 
 void
 figure_out_working_interface_res( core::pose::Pose const & pose,
 	core::Size const working_moving_res,
 	utility::vector1< bool > & interface_res /* save work here */,
-	utility::vector1< utility::vector1< bool > > & checked_pair /* save work here */ );
+	utility::vector1< utility::vector1< bool > > & checked_pair /* save work here */,
+	bool const pack_protein_side_chains );
 
 } //packer
 } //modeler

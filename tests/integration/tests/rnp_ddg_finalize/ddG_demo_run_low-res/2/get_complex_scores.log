@@ -1,0 +1,50 @@
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: rnp_ddg
+core.scoring: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000   -1457.302   -1457.302
+ fa_rep                       0.550     340.746     187.410
+ fa_intra_rep                 0.005     844.805       4.224
+ lk_nonpolar                  0.275    -151.851     -41.759
+ fa_elec                      0.875    -176.608    -154.532
+ fa_elec_rna_phos_phos        1.870       0.695       1.300
+ pro_close                    1.250       1.706       2.133
+ rna_torsion                  1.100       9.331      10.264
+ suiteness_bonus              1.100      -8.262      -9.088
+ rna_sugar_close              0.902       1.586       1.430
+ fa_stack                     0.143    -160.618     -22.968
+ fa_stack_rna_protein         0.100     -24.107      -2.411
+ stack_elec                   0.836      -2.879      -2.407
+ geom_sol_fast                0.500     426.712     213.356
+ hbond_sr_bb                  1.170     -35.073     -41.035
+ hbond_lr_bb                  1.170     -56.892     -66.563
+ hbond_bb_sc                  1.170     -42.790     -50.064
+ hbond_sc                     1.100     -42.401     -46.641
+ dslf_fa13                    1.250       0.000       0.000
+ rama                         0.250     -86.916     -21.729
+ omega                        0.625      36.686      22.929
+ fa_dun                       0.700     392.070     274.449
+ p_aa_pp                      0.400    -123.469     -49.388
+ yhh_planarity                0.625       0.285       0.178
+ ref                          1.000     250.340     250.340
+ linear_chainbreak            5.500       0.000       0.000
+---------------------------------------------------
+ Total weighted score:                     -997.875
+apps.public.rnp_ddg.rnp_ddg: Trying to mutate u265 to g
+apps.public.rnp_ddg.rnp_ddg: You say wt is u and it is really u
+apps.public.rnp_ddg.rnp_ddg: Doing packing...
+apps.public.rnp_ddg.rnp_ddg: Finished packing!
+apps.public.rnp_ddg.rnp_ddg: Doing minimization...
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -3.82211 Finite Diff= 1.80622
+apps.public.rnp_ddg.rnp_ddg: Finished minimization!
+apps.public.rnp_ddg.rnp_ddg: Doing minimization...
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -3.84701 Finite Diff= 1.78692
+apps.public.rnp_ddg.rnp_ddg: Finished minimization!
+apps.public.rnp_ddg.rnp_ddg: Doing packing...
+apps.public.rnp_ddg.rnp_ddg: Finished packing!
+apps.public.rnp_ddg.rnp_ddg: Doing minimization...
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 3.8147e-08 Deriv= -3.81928 Finite Diff= 1.81227
+apps.public.rnp_ddg.rnp_ddg: Finished minimization!
+apps.public.rnp_ddg.rnp_ddg: Score of the complex: -995.952
+apps.public.rnp_ddg.rnp_ddg: Average of top 1 poses: -995.952

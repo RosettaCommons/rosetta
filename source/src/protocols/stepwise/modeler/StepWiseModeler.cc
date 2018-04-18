@@ -277,7 +277,7 @@ StepWiseModeler::initialize_working_parameters_and_root( pose::Pose & pose ){
 
 	if ( figure_out_prepack_res_ ) {
 		( *scorefxn_ )( pose ); // ideally would just be able to assemble a nbr list without going through scoring...
-		working_prepack_res_ = packer::figure_out_working_interface_res( pose, get_all_working_moving_res( working_parameters_ ) );
+		working_prepack_res_ = packer::figure_out_working_interface_res( pose, get_all_working_moving_res( working_parameters_ ), options_->pack_protein_side_chains() );
 	}
 
 	core::pose::fix_up_residue_type_variants( pose );

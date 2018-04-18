@@ -99,6 +99,9 @@ public:
 	void set_prepack( bool const & setting ){ prepack_ = setting; }
 	bool prepack() const{ return prepack_; }
 
+	void set_pack_protein_side_chains( bool const & setting ){ pack_protein_side_chains_ = setting; }
+	bool pack_protein_side_chains() const{ return pack_protein_side_chains_; }
+
 	void set_centroid_output( bool const & setting ){ centroid_output_ = setting; }
 	bool centroid_output() const{ return centroid_output_; }
 
@@ -155,6 +158,7 @@ private:
 	bool filter_native_big_bins_;
 	bool allow_virtual_side_chains_;
 	bool prepack_;
+	bool pack_protein_side_chains_;
 
 	bool centroid_output_;
 	bool centroid_screen_;

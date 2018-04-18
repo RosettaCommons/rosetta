@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   numeric/model_quality/functions.hh
-/// @brief  
+/// @brief
 /// @author Jared Adolf-Bryfogle
 
 

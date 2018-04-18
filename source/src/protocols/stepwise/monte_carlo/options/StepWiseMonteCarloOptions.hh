@@ -233,6 +233,9 @@ public:
 	bool force_moving_res_for_erraser() const { return force_moving_res_for_erraser_; }
 	void set_force_moving_res_for_erraser( bool const setting ) { force_moving_res_for_erraser_ = setting; }
 
+	bool const & pack_protein_side_chains() const { return pack_protein_side_chains_; }
+	void set_pack_protein_side_chains( bool const & setting ){ pack_protein_side_chains_ = setting; }
+
 private:
 
 	bool verbose_scores_;
@@ -275,6 +278,8 @@ private:
 	bool save_times_;
 	bool use_precomputed_library_;
 	bool minimize_after_delete_;
+	bool force_submotif_without_intervening_bulge_;
+	bool pack_protein_side_chains_;
 	bool use_first_jump_for_submotif_;
 	utility::vector1< std::string > exclude_submotifs_;
 	bool designing_with_noncanonicals_;

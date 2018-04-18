@@ -561,7 +561,9 @@ sources = {
 		"check_frag_rmsd",
 		"check_rnp_coarse",
 		"get_rmsd",
+		"score_rnp",
 		"score_rnp_lowres",
+		"setup_coord_csts",
 	],
 	"pilot/krishna" : [
 		#"pH_neighbor_pack",

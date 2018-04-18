@@ -1,0 +1,179 @@
+core.scoring: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000   -1456.754   -1456.754
+ fa_rep                       0.550     337.243     185.484
+ fa_intra_rep                 0.005     845.510       4.228
+ lk_nonpolar                  0.275    -151.879     -41.767
+ fa_elec                      0.875    -175.688    -153.727
+ fa_elec_rna_phos_phos        1.870       0.695       1.300
+ pro_close                    1.250       1.349       1.686
+ rna_torsion                  1.100       9.327      10.259
+ suiteness_bonus              1.100      -8.264      -9.090
+ rna_sugar_close              0.902       1.590       1.434
+ fa_stack                     0.143    -160.676     -22.977
+ fa_stack_rna_protein         0.100     -24.187      -2.419
+ stack_elec                   0.836      -2.774      -2.319
+ geom_sol_fast                0.500     426.258     213.129
+ hbond_sr_bb                  1.170     -35.063     -41.024
+ hbond_lr_bb                  1.170     -57.010     -66.702
+ hbond_bb_sc                  1.170     -42.861     -50.148
+ hbond_sc                     1.100     -42.340     -46.574
+ dslf_fa13                    1.250       0.000       0.000
+ rama                         0.250     -86.931     -21.733
+ omega                        0.625      36.684      22.928
+ fa_dun                       0.700     394.914     276.440
+ p_aa_pp                      0.400    -123.479     -49.392
+ yhh_planarity                0.625       0.312       0.195
+ ref                          1.000     250.340     250.340
+ linear_chainbreak            5.500       0.000       0.000
+---------------------------------------------------
+ Total weighted score:                     -997.202
+apps.public.rnp_ddg.rnp_ddg: Just running the wildtype structure...
+apps.public.rnp_ddg.rnp_ddg: Doing extra minimization and packing for the wildtype structure
+core.scoring: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000   -1456.754   -1456.754
+ fa_rep                       0.550     337.243     185.484
+ fa_intra_rep                 0.005     845.510       4.228
+ lk_nonpolar                  0.275    -151.879     -41.767
+ fa_elec                      0.875    -175.688    -153.727
+ fa_elec_rna_phos_phos        1.870       0.695       1.300
+ pro_close                    1.250       1.349       1.686
+ rna_torsion                  1.100       9.327      10.259
+ suiteness_bonus              1.100      -8.264      -9.090
+ rna_sugar_close              0.902       1.590       1.434
+ fa_stack                     0.143    -160.676     -22.977
+ fa_stack_rna_protein         0.100     -24.187      -2.419
+ stack_elec                   0.836      -2.774      -2.319
+ geom_sol_fast                0.500     426.258     213.129
+ hbond_sr_bb                  1.170     -35.063     -41.024
+ hbond_lr_bb                  1.170     -57.010     -66.702
+ hbond_bb_sc                  1.170     -42.861     -50.148
+ hbond_sc                     1.100     -42.340     -46.574
+ dslf_fa13                    1.250       0.000       0.000
+ rama                         0.250     -86.931     -21.733
+ omega                        0.625      36.684      22.928
+ fa_dun                       0.700     394.914     276.440
+ p_aa_pp                      0.400    -123.479     -49.392
+ yhh_planarity                0.625       0.312       0.195
+ ref                          1.000     250.340     250.340
+ linear_chainbreak            5.500       0.000       0.000
+---------------------------------------------------
+ Total weighted score:                     -997.202
+apps.public.rnp_ddg.rnp_ddg: Doing minimization...
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 7.62939e-08 Deriv= -1.61613 Finite Diff= 1.77304
+apps.public.rnp_ddg.rnp_ddg: Finished minimization!
+core.scoring: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000   -1457.727   -1457.727
+ fa_rep                       0.550     339.199     186.560
+ fa_intra_rep                 0.005     845.456       4.227
+ lk_nonpolar                  0.275    -152.052     -41.814
+ fa_elec                      0.875    -175.834    -153.855
+ fa_elec_rna_phos_phos        1.870       0.694       1.298
+ pro_close                    1.250       1.304       1.630
+ rna_torsion                  1.100       9.325      10.257
+ suiteness_bonus              1.100      -8.262      -9.088
+ rna_sugar_close              0.902       1.584       1.429
+ fa_stack                     0.143    -160.589     -22.964
+ fa_stack_rna_protein         0.100     -24.201      -2.420
+ stack_elec                   0.836      -2.764      -2.311
+ geom_sol_fast                0.500     426.387     213.194
+ hbond_sr_bb                  1.170     -35.076     -41.039
+ hbond_lr_bb                  1.170     -56.904     -66.578
+ hbond_bb_sc                  1.170     -42.901     -50.194
+ hbond_sc                     1.100     -42.356     -46.592
+ dslf_fa13                    1.250       0.000       0.000
+ rama                         0.250     -86.941     -21.735
+ omega                        0.625      36.691      22.932
+ fa_dun                       0.700     394.840     276.388
+ p_aa_pp                      0.400    -123.495     -49.398
+ yhh_planarity                0.625       0.312       0.195
+ ref                          1.000     250.340     250.340
+ linear_chainbreak            5.500       0.000       0.000
+---------------------------------------------------
+ Total weighted score:                     -997.265
+apps.public.rnp_ddg.rnp_ddg: Doing packing...
+core.pack.pack_rotamers: built 11330 rotamers at 271 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 20191432 bytes
+apps.public.rnp_ddg.rnp_ddg: Finished packing!
+core.scoring: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000   -1457.533   -1457.533
+ fa_rep                       0.550     341.137     187.625
+ fa_intra_rep                 0.005     844.723       4.224
+ lk_nonpolar                  0.275    -151.809     -41.747
+ fa_elec                      0.875    -176.451    -154.394
+ fa_elec_rna_phos_phos        1.870       0.694       1.298
+ pro_close                    1.250       1.733       2.166
+ rna_torsion                  1.100       9.325      10.257
+ suiteness_bonus              1.100      -8.262      -9.088
+ rna_sugar_close              0.902       1.584       1.429
+ fa_stack                     0.143    -160.589     -22.964
+ fa_stack_rna_protein         0.100     -24.121      -2.412
+ stack_elec                   0.836      -2.898      -2.422
+ geom_sol_fast                0.500     426.863     213.432
+ hbond_sr_bb                  1.170     -35.076     -41.039
+ hbond_lr_bb                  1.170     -56.904     -66.578
+ hbond_bb_sc                  1.170     -42.821     -50.101
+ hbond_sc                     1.100     -42.394     -46.633
+ dslf_fa13                    1.250       0.000       0.000
+ rama                         0.250     -86.941     -21.735
+ omega                        0.625      36.691      22.932
+ fa_dun                       0.700     391.931     274.352
+ p_aa_pp                      0.400    -123.495     -49.398
+ yhh_planarity                0.625       0.285       0.178
+ ref                          1.000     250.340     250.340
+ linear_chainbreak            5.500       0.000       0.000
+---------------------------------------------------
+ Total weighted score:                     -997.813
+apps.public.rnp_ddg.rnp_ddg: Doing minimization...
+core.optimization.LineMinimizer: [ ERROR ] Inaccurate G! step= 9.53674e-09 Deriv= -40.2332 Finite Diff= 27.9186
+apps.public.rnp_ddg.rnp_ddg: Finished minimization!
+core.scoring: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000   -1457.306   -1457.306
+ fa_rep                       0.550     340.756     187.416
+ fa_intra_rep                 0.005     844.723       4.224
+ lk_nonpolar                  0.275    -151.854     -41.760
+ fa_elec                      0.875    -176.620    -154.543
+ fa_elec_rna_phos_phos        1.870       0.694       1.298
+ pro_close                    1.250       1.732       2.164
+ rna_torsion                  1.100       9.325      10.257
+ suiteness_bonus              1.100      -8.262      -9.088
+ rna_sugar_close              0.902       1.584       1.429
+ fa_stack                     0.143    -160.616     -22.968
+ fa_stack_rna_protein         0.100     -24.107      -2.411
+ stack_elec                   0.836      -2.878      -2.406
+ geom_sol_fast                0.500     426.724     213.362
+ hbond_sr_bb                  1.170     -35.075     -41.038
+ hbond_lr_bb                  1.170     -56.887     -66.558
+ hbond_bb_sc                  1.170     -42.791     -50.066
+ hbond_sc                     1.100     -42.396     -46.635
+ dslf_fa13                    1.250       0.000       0.000
+ rama                         0.250     -86.944     -21.736
+ omega                        0.625      36.692      22.933
+ fa_dun                       0.700     391.930     274.351
+ p_aa_pp                      0.400    -123.495     -49.398
+ yhh_planarity                0.625       0.285       0.178
+ ref                          1.000     250.340     250.340
+ linear_chainbreak            5.500       0.000       0.000
+---------------------------------------------------
+ Total weighted score:                     -997.959
+apps.public.rnp_ddg.rnp_ddg: Score of the complex: -997.959
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.717194 0.629993 0.297894 -0.695112 0.677099 0.24157 -0.0495163 -0.380323 0.923527 16.0003 14.4033 23.4761  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.717194 0.629993 0.297894 -0.695112 0.677099 0.24157 -0.0495163 -0.380323 0.923527 -354 -53.1998 950.045  
+apps.public.rnp_ddg.rnp_ddg: Interaction energy of complex: -82.592
+apps.public.rnp_ddg.rnp_ddg: Score of the unbound: 0
+apps.public.rnp_ddg.rnp_ddg: ddG_bind is: -997.959

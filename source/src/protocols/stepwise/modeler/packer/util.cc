@@ -55,6 +55,7 @@ get_packer(
 	if ( !options->o2prime_legacy_mode() ) {
 		stepwise_packer->set_allow_virtual_o2prime_hydrogens( options->allow_virtual_o2prime_hydrogens() );
 	}
+	stepwise_packer->set_pack_protein_side_chains( options->pack_protein_side_chains() );
 	stepwise_packer->set_pack_all_side_chains( options->global_optimize() );
 	return stepwise_packer;
 }
@@ -65,21 +66,23 @@ get_packer(
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< core::Size >
 figure_out_working_interface_res( core::pose::Pose const & pose,
-	core::Size const working_moving_res ) {
-	return figure_out_working_interface_res( pose, utility::tools::make_vector1( working_moving_res ) );
+	core::Size const working_moving_res,
+	bool const pack_protein_side_chains ) {
+	return figure_out_working_interface_res( pose, utility::tools::make_vector1( working_moving_res ), pack_protein_side_chains );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 figure_out_working_interface_res( core::pose::Pose const & pose,
-	utility::vector1< Size > const & working_moving_res_list ){
+	utility::vector1< Size > const & working_moving_res_list,
+	bool const pack_protein_side_chains ){
 
 	utility::vector1< bool > at_interface( pose.size(), false );
 	// could make a map to vecs to save memory:
 	utility::vector1< utility::vector1< bool > > checked_pair( pose.size(), at_interface );
 
 	for ( Size const res : working_moving_res_list ) {
-		figure_out_working_interface_res( pose, res, at_interface, checked_pair );
+		figure_out_working_interface_res( pose, res, at_interface, checked_pair, pack_protein_side_chains );
 	}
 
 	utility::vector1< Size > interface_res;
@@ -115,7 +118,8 @@ void
 figure_out_working_interface_res( core::pose::Pose const & pose,
 	core::Size const working_moving_res,
 	utility::vector1< bool > & interface_res /* save work here */,
-	utility::vector1< utility::vector1< bool > > & checked_pair /* save work here */ ) {
+	utility::vector1< utility::vector1< bool > > & checked_pair /* save work here */,
+	bool const pack_protein_side_chains ) {
 
 	interface_res[ working_moving_res ] = true;
 
@@ -147,6 +151,19 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 			if ( pose.residue_type( i ).is_RNA() && pose.residue_type( j ) .is_RNA() ) {
 				if ( check_o2prime_contact( pose, i, j ) ) interface_res[ i ] = true;
 				if ( check_o2prime_contact( pose, j, i ) ) interface_res[ j ] = true;
+				// Sometimes might not want to pack any neighboring protein side chains (it's really slow!)
+			} else if ( !pack_protein_side_chains ) {
+				if ( !pose.residue_type( i ).is_protein() || i == working_moving_res ) {
+					interface_res[ i ] = true;
+				}
+				if ( !pose.residue_type( j ).is_protein() || j == working_moving_res ) {
+					interface_res[ j ] = true;
+				}
+				continue;
+				/////// Just for testing
+				//} else if ( pose.residue_type( i ).is_protein() || pose.residue_type( j ).is_protein() ) {
+				// continue;
+				////////////////////////
 			} else {
 				interface_res[ i ] = true;
 				interface_res[ j ] = true;

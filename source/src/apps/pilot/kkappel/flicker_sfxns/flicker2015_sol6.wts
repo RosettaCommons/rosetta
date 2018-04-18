@@ -1,0 +1,42 @@
+#two sets of ref weights...not truly relevant to rotamer recovery
+METHOD_WEIGHTS ref   1.16  2.70  0.33  0.19  1.63  0.83  1.56  1.24  0.35  0.90  0.66  0.11  1.02  0.03  0.02  0.63  0.73  1.29  1.91  1.51  0 0 0 0   4.14  3.58  2.82  3.76 #stepwise, 28 entries, 0's are DNA
+
+#Talaris weights used when non-zero weights in both talaris and stepwise
+fa_atr 1
+fa_rep 0.55
+fa_intra_rep 0.005
+pro_close 1.25
+hbond_sr_bb 1.17
+hbond_lr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc 1.1
+dslf_fa13 1.25
+rama 0.25
+omega 0.625
+fa_dun 0.7
+p_aa_pp 0.4
+yhh_planarity 0.625 #must investigate why this is in Talaris at all
+ref 1
+fa_stack  0.13 #planar stacking of aromatic groups, may need to be modified in presence of protein, this term currently checks whether the residues are both RNA, if not, then the score is just returned as 0
+
+#Solvation Options
+# Option 6
+lk_polar 1.0 #possible solvation replacement (?)
+
+# fa_elec options to try:
+# 3. fa_elec on for protein-protein and protein-RNA only NO_RNA_RNA_FA_ELEC
+fa_elec 0.875
+NO_RNA_RNA_FA_ELEC
+stack_elec 0.76 # Double check that this is only non-zero for RNA
+fa_elec_rna_phos_phos 1.7 # Turn this off if fa_elec is on for RNA (or reduce weight)
+rna_torsion  1.0 # Not found in stepwise (bug), unsure of weight, try 1.0?
+
+
+##misc - all of these are in stepwise, but would not be used for the protein-packing only experiment we describe, and are listed for completeness
+#loop_close        0 / 1.0
+#other_pose        0 / 1.0
+#free_suite        0 / 2.0
+#free_side_chain   0 / 1.0
+#linear_chainbreak 0 / 5.0
+#intermol          0 / 1.0
+atom_pair_constraint 1.0

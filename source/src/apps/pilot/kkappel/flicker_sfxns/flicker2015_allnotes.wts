@@ -1,0 +1,44 @@
+#two sets of ref weights...not truly relevant to rotamer recovery
+METHOD_WEIGHTS ref 0.773742 0.443793 -1.63002 -1.96094 0.61937 0.173326 0.388298 1.0806 -0.358574 0.761128 0.249477 -1.19118 -0.250485 -1.51717 -0.32436 0.165383 0.20134 0.979644 1.23413 0.162496 #talaris, 20 entries
+METHOD_WEIGHTS ref   1.16  2.70  0.33  0.19  1.63  0.83  1.56  1.24  0.35  0.90  0.66  0.11  1.02  0.03  0.02  0.63  0.73  1.29  1.91  1.51  0 0 0 0   4.14  3.58  2.82  3.76 #stepwise, 28 entries, 0's are DNA
+
+#Talaris weight / stepwise weight
+fa_atr 1 / 0.8
+fa_rep 0.55 / 0.44
+fa_intra_rep 0.005 / 0.004
+pro_close 1.25 / 1.0
+hbond 1.17 (from Talaris14 (combined))
+dslf_fa13 1.25 / 1.0
+rama 0.25 / 0.2
+omega 0.625 / 0.5 #Irrelevant for rotamer recovery, but should leave in
+fa_dun 0.7 / 0.56
+p_aa_pp 0.4 / 0.32
+yhh_planarity 0.625 / 0 #must investigate why this is in Talaris at all
+ref 1 #Irrelevant for rotamer recovery, but should leave in (fix weight at 1?)
+fa_stack      0 / 0.13 #planar stacking of aromatic groups, may need to be modified in presence of protein, this term currently checks whether the residues are both RNA, if not, then the score is just returned as 0
+
+#solvation terms to consider?
+fa_sol 0.9375 / 0 #Probably not wanted, try a replacement
+hbond 1.17 (from Talaris14 (combined))
+NO_HB_ENV_DEP #stepwise; req'd for geom_sol_fast
+geom_sol_fast 0 / 0.17 #these two a possible replacement pair; requires NO_HB_ENV_DEP
+lk_nonpolar   0 / 0.25 #pair with geom_sol_fast
+lk_ball ?? #possible solvation replacement
+pw_sho ?? #possible solvation replacement
+pw_sho_next_generation
+lk_polar ?? #possible solvation replacement (?)
+
+multipole_elec 0.2 (handles all of solvation AND electrostatics AND Hbond
+
+fa_elec 0.875 / 0 #Unsure if we will be using fa_elec
+stack_elec        0 / 0.76 #orthogonal to hbonding in nucleotide arrangement...irrelevant for protein packing, set to 0
+fa_elec_rna_phos_phos 0 / 1.7 #probably irrelevant to protein packing, set to 0
+
+
+#misc - all of these are in stepwise, but would not be used for the protein-packing only experiment we describe, and are listed for completeness
+loop_close        0 / 1.0
+other_pose        0 / 1.0
+free_suite        0 / 2.0
+free_side_chain   0 / 1.0
+linear_chainbreak 0 / 5.0
+intermol          0 / 1.0

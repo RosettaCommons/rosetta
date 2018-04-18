@@ -211,6 +211,8 @@ enum ScoreType {
 	fa_stack_ext,      // extended nucleobase stacking interaction = fa_stack + fa_stack_sol + fa_stack_lr
 	fa_stack_sol,      // penalty for displacing first layer of water stacked on nucleobase
 	fa_stack_lr,       // 'water-mediated' stacking
+	fa_stack_rna_protein,      // stacking interaction between RNA and protein residues ( implemented as above )
+	fa_stack_rna_protein_aro,  // stacking interaction between aromatic RNA and protein atoms ( implemented as above )
 
 	ss_contact_worst,  // SS with the fewest SS-SS contacts.
 	stack_elec,        // distance dependent dielectric between base atoms (attenuated parallel to plane)

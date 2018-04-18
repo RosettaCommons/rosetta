@@ -1,0 +1,50 @@
+#####
+# The version of rnp_ddg.wts that was used for initial testing. (differs only in the ref weights)
+#####
+# Modifications made to the P_overlap_reR-hbond_sc sfxn:
+# 1) NO_RNA_RNA_FA_ELEC # Do not calculate fa_elec between RNA-RNA
+# 2) geom_sol_fast 0.5 # Increase geom_sol_fast weight based on PUF structure prediction tests
+# 3) fa_stack_rna_protein 0.1 # Extra bonus for stacking interactions between RNA and protein residues
+
+METHOD_WEIGHTS ref   1.16  2.70  0.33  0.19  1.63  0.83  1.56  1.24  0.35  0.90  0.66  0.11  1.02  0.03  0.02  0.63  0.73  1.29  1.91  1.51  0 0 0 0   4.14  3.58  2.82  3.76 #stepwise, 28 entries, 0's are DNA, last 4 RNA: G A C U
+
+#Terms in both protein and RNA sfxns (protein wt #RNA wt)
+fa_atr 1.0 #0.21
+fa_rep 0.55 #0.20
+fa_intra_rep 0.005 #0.0029
+hbond_sc 1.1 #0.96
+hbond_bb_sc 1.17 #0.96
+ref 1.0 #1.0
+
+#Terms in protein sfxn only
+fa_elec 0.875
+pro_close 1.25
+hbond_sr_bb 1.17
+hbond_lr_bb 1.17
+dslf_fa13 1.25
+rama 0.25
+omega 0.625 
+fa_dun 0.7 
+p_aa_pp 0.4 
+yhh_planarity 0.625 
+#fa_sol 0.9375
+
+#Terms in RNA sfxn only
+#Multiply all RNA by 1.1
+fa_stack 0.143
+lk_nonpolar 0.275
+geom_sol_fast 0.5
+rna_torsion 1.1
+rna_sugar_close 0.902
+suiteness_bonus 1.1
+stack_elec 0.836
+fa_elec_rna_phos_phos 1.87
+NO_HB_ENV_DEP
+RNA_TORSION_POTENTIAL      RNA11_based_new
+RNA_SYN_G_POTENTIAL_BONUS  -1.65
+ENLARGE_H_LJ_WDEPTH
+
+NO_RNA_RNA_FA_ELEC
+
+fa_stack_rna_protein 0.1
+linear_chainbreak 5.5
