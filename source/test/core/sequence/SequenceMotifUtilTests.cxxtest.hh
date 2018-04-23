@@ -28,7 +28,7 @@
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
-
+#include <utility/string_util.hh>
 static basic::Tracer TR("SequenceMotifUtilTests");
 
 
@@ -51,13 +51,23 @@ public:
 		std::string motif = "N[^P][ST]VTR[%POLAR]";
 
 		utility::vector1< std::string > motifSP = core::sequence::split_sequence_motif( motif );
+		//std::cout << utility::to_string(motifSP) << std::endl;
 
-		TS_ASSERT_EQUALS( motifSP[1], "N+" );
+		TS_ASSERT_EQUALS( motifSP[1], "N" );
 		TS_ASSERT_EQUALS( motifSP[2], "^P");
 		TS_ASSERT_EQUALS( motifSP[3], "ST");
-		TS_ASSERT_EQUALS( motifSP[4], "+VTR+");
-		TS_ASSERT_EQUALS( motifSP[5], "%POLAR");
+		TS_ASSERT_EQUALS( motifSP[4], "V");
+		TS_ASSERT_EQUALS( motifSP[5], "T");
+		TS_ASSERT_EQUALS( motifSP[6], "R");
+		TS_ASSERT_EQUALS( motifSP[7], "%POLAR");
 
+		//Full Sequence test
+		motif = "N-T";
+
+		motifSP = core::sequence::split_sequence_motif( motif );
+		TS_ASSERT_EQUALS( motifSP[1], "N");
+		TS_ASSERT_EQUALS( motifSP[2], "-");
+		TS_ASSERT_EQUALS( motifSP[3], "T");
 	}
 
 

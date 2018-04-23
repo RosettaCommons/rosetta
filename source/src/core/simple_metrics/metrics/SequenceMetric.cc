@@ -140,7 +140,7 @@ SequenceMetric::calculate(const pose::Pose & pose ) const {
 	utility::vector1< core::Size > selection = select::get_residues_from_subset( subset );
 	//std::cout << "Selection"  << utility::to_string(selection);
 
-	for ( core::Size resnum = 1; resnum <= selection.size(); ++resnum ) {
+	for ( core::Size resnum : selection ) {
 		if ( three_letter_ ) {
 			std::string three = pose.residue_type( resnum ).name3();
 			if ( resnum != selection.size() ) {

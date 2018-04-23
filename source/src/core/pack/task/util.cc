@@ -73,19 +73,8 @@ vector1< vector1< ResfileCommandOP> >
 get_resfile_commands( std::string const & motif ){
 
 	vector1< vector1< ResfileCommandOP > > per_position_commands;
-	vector1< std::string > split_motif = split_sequence_motif(motif);
-	vector1< std::string > final_split_motif;
+	vector1< std::string > final_split_motif = split_sequence_motif(motif);
 
-	for ( std::string str : split_motif ) {
-		if ( contains(str, "+") ) {
-			std::string rem_str = remove_from_string(str, "+");
-			for ( char c : rem_str ) {
-				final_split_motif.push_back( to_string(c) );
-			}
-		} else {
-			final_split_motif.push_back(str);
-		}
-	}
 
 	TR.Debug << "Final Split Motif: " << utility::to_string(final_split_motif) << std::endl;
 	std::map< std::string, ResfileCommandOP > command_map = create_command_map();

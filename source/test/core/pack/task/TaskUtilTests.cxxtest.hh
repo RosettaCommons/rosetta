@@ -95,6 +95,26 @@ public:
 
 	}
 
+	void test_linear_sequence_motif_parsing() {
+
+		std::string motif = "N-T";
+
+		utility::vector1< utility::vector1< ResfileCommandOP > > commands = get_resfile_commands( motif );
+
+		TS_ASSERT_EQUALS( commands.size(), 3 );
+
+		//Make sure each position only has one command.
+		TS_ASSERT_EQUALS( commands[1].size(), 1 );
+		TS_ASSERT_EQUALS( commands[2].size(), 1 );
+		TS_ASSERT_EQUALS( commands[3].size(), 1 );
+
+		//Make sure each command is the correct type.
+		TS_ASSERT_EQUALS( commands[1][1]->get_name(), "PIKAA" );
+		TS_ASSERT_EQUALS( commands[2][1]->get_name(), "NATAA" );
+		TS_ASSERT_EQUALS( commands[3][1]->get_name(), "PIKAA" );
+
+	}
+
 
 
 

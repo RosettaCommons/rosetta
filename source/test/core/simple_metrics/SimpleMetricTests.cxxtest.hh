@@ -234,7 +234,7 @@ public:
 
 		SequenceMetric seq_metric = SequenceMetric( cdr_selector );
 		std::string seq = seq_metric.calculate( ab_pose );
-		std::string seq_correct = "DIQMTQSPSSL";
+		std::string seq_correct = "RASQDVSTAVA";
 		TS_ASSERT_EQUALS( seq, seq_correct);
 	}
 

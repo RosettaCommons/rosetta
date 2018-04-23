@@ -32,10 +32,30 @@
 namespace core {
 namespace sequence {
 
-///@brief Splits the sequence motif (Ex. N[^P][STN]) into strings of individual positions
-///  (which would result in [N+, ^P, STN])
-/// (Any string with + in it signifies that it does not come from the [] notation and can be accounted for as individual commands.
-///
+/*
+"  This is slightly similar to a regex, but not quite. We are not matching a sequence,\n"
+"   we are designing in a motif regardless of the current sequence, anywhere in a protein.\n"
+"\n"
+"   - Each letter corresponds to a position. Using [ ] indicates a more complicated expression for that position.\n"
+"   - An X indicates it can be anything, and that we are designing here.\n"
+"   - An AA Letter, like V, indicates that that position will be designed to a V.\n"
+"   - A - charactor indicates that that position stays with whatever it is currently.  We essentially skip this position.\n"
+"   - An expression like: [^PAV] indicates that we will design anything except Proline, Alanine, and Valine \n"
+"   - An expression like: [NTS] indicates that that position can be Asparigine, Threonine, or Serine and \n"
+"      only these will be enabled during the design.\n"
+"   - RESFILE commands are accepted as well. These require a % charactor in from of the whole expression.\n"
+"     For example [%POLAR] would set that position to only polar design.\n"
+"     This is exactly the same as a resfile line, so you can even do NC like so: \n"
+"      [%EMPTY NC R2 NC T6 NC OP5]\n"
+"\n"
+" EXAMPLE:\n"
+"  Glycosylation N-Linked motif design: N[^P][ST]\n"
+"\n";
+*/
+
+
+///@brief Splits the sequence motif (Ex. N[^P]-[STN]A) into strings of commands for individual positions
+/// Example: ["N", "^P", "-", "STN","A",] for the three positions specified
 utility::vector1<std::string>
 split_sequence_motif( std::string const & motif );
 

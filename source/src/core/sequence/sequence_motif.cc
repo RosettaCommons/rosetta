@@ -62,15 +62,14 @@ split_sequence_motif( std::string const & motif ){
 			ssplit.push_back(str);
 		}
 	}
-	return ssplit;
-}
 
-core::Size
-get_motif_length( std::string const & motif ){
-	vector1< std::string > split_motif = split_sequence_motif(motif);
+	//If nothing needs splitting, it is per-position.
+	if ( ssplit.size() == 1 ) {
+		ssplit[1] = "+"+ssplit[1]+"+";
+	}
+
 	vector1< std::string > final_split_motif;
-
-	for ( std::string str : split_motif ) {
+	for ( std::string str : ssplit ) {
 		if ( contains(str, "+") ) {
 			std::string rem_str = remove_from_string(str, "+");
 			for ( char c : rem_str ) {
@@ -80,6 +79,12 @@ get_motif_length( std::string const & motif ){
 			final_split_motif.push_back(str);
 		}
 	}
+	return final_split_motif;
+}
+
+core::Size
+get_motif_length( std::string const & motif ){
+	vector1< std::string > final_split_motif = split_sequence_motif(motif);
 	return final_split_motif.size();
 }
 
