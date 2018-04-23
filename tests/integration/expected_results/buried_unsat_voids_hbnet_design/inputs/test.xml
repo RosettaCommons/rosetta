@@ -1,0 +1,73 @@
+<ROSETTASCRIPTS>
+	# Design the core of a helical bundle, requiring
+	# very few voids in the core. 
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+		<ScoreFunction name="r15_mod" weights="ref2015_cst.wts" >
+			<Reweight scoretype="aa_composition" weight="1.0" />
+			<Reweight scoretype="voids_penalty" weight="1.0" />
+			<Reweight scoretype="hbnet" weight="0.2" />
+			<Set hbnet_bonus_function_ramping="logarithmic" />
+			<Reweight scoretype="buried_unsatisfied_penalty" weight="1.0" />
+			<Set buried_unsatisfied_penalty_burial_threshold="3" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer name="select_surf" select_core="false" select_boundary="false" select_surface="true" />
+		<Not name="select_not_surf" selector="select_surf" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<IncludeCurrent name="include_current" />
+		<OperateOnResidueSubset name="no_repack_surf" selector="select_surf" >
+			<PreventRepackingRLT />
+		</OperateOnResidueSubset>
+		<ReadResfile name="allowed_for_design" filename="inputs/design.resfile" selector="select_not_surf" />
+	</TASKOPERATIONS>
+	<FILTERS>
+		<CavityVolume name="cavity_volume" />
+	</FILTERS>
+	<MOVERS>
+		<BundleGridSampler name="bgs1" scorefxn="r15" nstruct_mode="true" reset="true" helix_length="12" use_degrees="true" max_samples="1" >
+			<Helix r0="8.0" omega0="-1.12" delta_omega0="0" delta_omega1="3.1818" invert="false" />
+			<Helix r0_copies_helix="1" pitch_from_helix="1" delta_omega0="90.0" delta_omega1_copies_helix="1" invert="true" />
+			<Helix r0_copies_helix="1" pitch_from_helix="1" delta_omega0="180.0" delta_omega1_copies_helix="1" invert="false" />
+			<Helix r0_copies_helix="1" pitch_from_helix="1" delta_omega0="270.0" delta_omega1_copies_helix="1" invert="true" />
+		</BundleGridSampler>
+
+
+		<AtomTree name="foldtree1" fold_tree_file="inputs/foldtree1.txt" />
+
+		<AddConstraintsToCurrentConformationMover name="add_csts" coord_dev="0.5" CA_only="false" bb_only="true" />
+
+		<AddCompositionConstraintMover name="add_comp_csts" filename="inputs/design.comp" selector="select_not_surf" />
+
+		<FastDesign name="design" scorefxn="r15_mod" repeats="1" task_operations="no_repack_surf,allowed_for_design,include_current" >
+			<MoveMap name="design_mm" >
+				<Span begin="1" end="48" bb="false" chi="true" />
+				<Jump number="1" setting="false" />
+				<Jump number="2" setting="false" />
+				<Jump number="3" setting="false" />
+			</MoveMap>
+		</FastDesign>
+		<FastDesign name="design2" scorefxn="r15_mod" repeats="1" task_operations="no_repack_surf,allowed_for_design,include_current" >
+			<MoveMap name="design_mm" >
+				<Span begin="1" end="48" bb="false" chi="true" />
+				<Jump number="1" setting="true" />
+				<Jump number="2" setting="true" />
+				<Jump number="3" setting="true" />
+			</MoveMap>
+		</FastDesign>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs1" />
+		<Add mover="foldtree1" />
+		<Add mover="add_csts" />
+		<Add mover="add_comp_csts" />
+		Add mover="design" />
+		<Add mover="design2" />
+		<Add filter="cavity_volume" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_mod" />
+</ROSETTASCRIPTS>

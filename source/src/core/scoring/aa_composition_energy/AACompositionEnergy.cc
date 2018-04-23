@@ -78,6 +78,7 @@ AACompositionEnergyCreator::score_types_for_method() const
 AACompositionEnergy::AACompositionEnergy ( core::scoring::methods::EnergyMethodOptions const &options ) :
 	parent1( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
 	parent2( ),
+	disabled_(false),
 	setup_helpers_(),
 	setup_helpers_for_packing_(),
 	setup_helper_masks_for_packing_()
@@ -92,6 +93,7 @@ AACompositionEnergy::AACompositionEnergy ( core::scoring::methods::EnergyMethodO
 AACompositionEnergy::AACompositionEnergy( AACompositionEnergy const &src ) :
 	parent1( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
 	parent2( src ),
+	disabled_( src.disabled_ ),
 	setup_helpers_(), //CLONE the helper data below; don't copy them.
 	setup_helpers_for_packing_(), //CLONE these below, too -- don't copy them.
 	setup_helper_masks_for_packing_(  src.setup_helper_masks_for_packing_ )
@@ -131,8 +133,14 @@ core::Size AACompositionEnergy::version() const
 
 /// @brief Actually calculate the total energy
 /// @details Called by the scoring machinery.
-void AACompositionEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const
-{
+void
+AACompositionEnergy::finalize_total_energy(
+	core::pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
+) const {
+	if ( disabled_ ) return; //Do nothing when this energy is disabled.
+
 	//Number of residues:
 	core::Size const nres( pose.size() );
 
@@ -164,6 +172,7 @@ AACompositionEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &resvect,
 	core::Size const /*substitution_position = 0*/
 ) const {
+	if ( disabled_ ) return 0.0; //Do nothing when disabled.
 	//for(core::Size i=1, imax=resvect.size(); i<=imax; ++i) { TR << i << ":\t" << resvect[i]->name() << "\t" << resvect[i]->seqpos() << std::endl; } //DELETE ME
 	return calculate_energy( resvect, setup_helpers_for_packing_, setup_helper_masks_for_packing_);
 }
@@ -178,6 +187,7 @@ AACompositionEnergy::calculate_energy(
 	utility::vector1< core::select::residue_selector::ResidueSubset > const &masks
 ) const
 {
+	if ( disabled_ ) return 0.0; //Do nothing when disabled.
 	runtime_assert( setup_helpers.size() == masks.size() ); //Should always be true.
 
 	core::Real outer_accumulator(0.0);
@@ -267,11 +277,13 @@ void AACompositionEnergy::report() const {
 ///
 void
 AACompositionEnergy::set_up_residuearrayannealableenergy_for_packing (
-	core::pose::Pose const &pose,
+	core::pose::Pose &pose,
 	core::pack::rotamer_set::RotamerSets const &/*rotamersets*/,
 	core::scoring::ScoreFunction const &/*sfxn*/
 ) {
 	if ( TR.Debug.visible() ) TR.Debug << "Setting up the AACompositionEnergy for packing." << std::endl;
+
+	disabled_ = false; //Enabled for packing.
 
 	get_helpers_from_pose( pose, setup_helpers_for_packing_, setup_helper_masks_for_packing_ );
 
@@ -290,6 +302,20 @@ AACompositionEnergy::set_up_residuearrayannealableenergy_for_packing (
 		TR.Debug.flush();
 	}
 	return;
+}
+
+/// @brief Disable this energy during minimization.
+void
+AACompositionEnergy::setup_for_minimizing( pose::Pose & /*pose*/, ScoreFunction const & /*sfxn*/, kinematics::MinimizerMapBase const & /*minmap*/ ) const {
+	TR << "Disabling AACompositionEnergy during minimization." << std::endl;
+	disabled_ = true;
+}
+
+/// @brief Re-enable this energy after minimization.
+void
+AACompositionEnergy::finalize_after_minimizing( pose::Pose & /*pose*/ ) const {
+	TR << "Re-enabling AACompositionEnergy following minimization." << std::endl;
+	disabled_ = false;
 }
 
 /// @brief Given a pose, pull out the AACompositionEnergySetup objects stored in SequenceConstraints in the pose and

@@ -1,0 +1,456 @@
+core.init: command: ROSETTA/main/source/bin/rosetta_scripts.default.linuxgccrelease @flags -database ROSETTA/main/database -testing:INTEGRATION_TEST
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch VirtualBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch N_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch C_methylamidated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch ser_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch thr_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch ShoveBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch LowerDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch UpperDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet centroid: Skipping patch VirtualDNAPhosphate as requested
+core.chemical.GlobalResidueTypeSet: Finished initializing centroid residue type set.  Created 62 residue types
+protocols.rosetta_scripts.RosettaScriptsParser: dock_design_filename=inputs/test.xml
+protocols.rosetta_scripts.RosettaScriptsParser: Generating XML Schema for rosetta_scripts...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Initializing schema validator...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Validating input script...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts"/>
+		<ScoreFunction name="r15_mod" weights="ref2015_cst.wts">
+			<Reweight scoretype="aa_composition" weight="1.0"/>
+			<Reweight scoretype="voids_penalty" weight="1.0"/>
+			<Reweight scoretype="hbnet" weight="0.2"/>
+			<Set hbnet_bonus_function_ramping="logarithmic"/>
+			<Reweight scoretype="buried_unsatisfied_penalty" weight="1.0"/>
+			<Set buried_unsatisfied_penalty_burial_threshold="3"/>
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer name="select_surf" select_boundary="false" select_core="false" select_surface="true"/>
+		<Not name="select_not_surf" selector="select_surf"/>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<IncludeCurrent name="include_current"/>
+		<OperateOnResidueSubset name="no_repack_surf" selector="select_surf">
+			<PreventRepackingRLT/>
+		</OperateOnResidueSubset>
+		<ReadResfile filename="inputs/design.resfile" name="allowed_for_design" selector="select_not_surf"/>
+	</TASKOPERATIONS>
+	<FILTERS>
+		<CavityVolume name="cavity_volume"/>
+	</FILTERS>
+	<MOVERS>
+		<BundleGridSampler helix_length="12" max_samples="1" name="bgs1" nstruct_mode="true" reset="true" scorefxn="r15" use_degrees="true">
+			<Helix delta_omega0="0" delta_omega1="3.1818" invert="false" omega0="-1.12" r0="8.0"/>
+			<Helix delta_omega0="90.0" delta_omega1_copies_helix="1" invert="true" pitch_from_helix="1" r0_copies_helix="1"/>
+			<Helix delta_omega0="180.0" delta_omega1_copies_helix="1" invert="false" pitch_from_helix="1" r0_copies_helix="1"/>
+			<Helix delta_omega0="270.0" delta_omega1_copies_helix="1" invert="true" pitch_from_helix="1" r0_copies_helix="1"/>
+		</BundleGridSampler>
+		<AtomTree fold_tree_file="inputs/foldtree1.txt" name="foldtree1"/>
+		<AddConstraintsToCurrentConformationMover CA_only="false" bb_only="true" coord_dev="0.5" name="add_csts"/>
+		<AddCompositionConstraintMover filename="inputs/design.comp" name="add_comp_csts" selector="select_not_surf"/>
+		<FastDesign name="design" repeats="1" scorefxn="r15_mod" task_operations="no_repack_surf,allowed_for_design,include_current">
+			<MoveMap name="design_mm">
+				<Span bb="false" begin="1" chi="true" end="48"/>
+				<Jump number="1" setting="false"/>
+				<Jump number="2" setting="false"/>
+				<Jump number="3" setting="false"/>
+			</MoveMap>
+		</FastDesign>
+		<FastDesign name="design2" repeats="1" scorefxn="r15_mod" task_operations="no_repack_surf,allowed_for_design,include_current">
+			<MoveMap name="design_mm">
+				<Span bb="false" begin="1" chi="true" end="48"/>
+				<Jump number="1" setting="true"/>
+				<Jump number="2" setting="true"/>
+				<Jump number="3" setting="true"/>
+			</MoveMap>
+		</FastDesign>
+	</MOVERS>
+	<APPLY_TO_POSE/>
+	<PROTOCOLS>
+		<Add mover="bgs1"/>
+		<Add mover="foldtree1"/>
+		<Add mover="add_csts"/>
+		<Add mover="add_comp_csts"/>
+		<Add mover="design2"/>
+		<Add filter="cavity_volume"/>
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_mod"/>
+</ROSETTASCRIPTS>
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/DonStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/AccStrength.csv
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch LowerDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch UpperDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch VirtualDNAPhosphate as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch ShoveBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch VirtualBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch N_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch C_methylamidated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch SpecialRotamer as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch Cterm_amidation as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case1 as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case2 as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch ser_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch thr_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch tyr_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch tyr_sulfated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_monomethylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_dimethylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_trimethylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch glu_carboxylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch cys_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch tyr_diiodinated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch MethylatedProteinCterm as requested
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/prepro.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.all.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.gly.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.pro.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.valile.txt
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+core.scoring.P_AA: shapovalov_lib::shap_p_aa_pp_smooth_level of 1( aka low_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/PairEPotential/pdb_pair_stats_fine
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+core.scoring.ramachandran: shapovalov_lib::shap_rama_smooth_level of 4( aka highest_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb
+protocols.jd2.parser.ScoreFunctionLoader: defined score function "r15" with weights "ref2015.wts"
+protocols.jd2.parser.ScoreFunctionLoader: defined score function "r15_mod" with weights "ref2015_cst.wts"
+protocols.jd2.parser.ScoreFunctionLoader:  setting r15_mod weight aa_composition to 1
+protocols.jd2.parser.ScoreFunctionLoader:  setting r15_mod weight voids_penalty to 1
+protocols.jd2.parser.ScoreFunctionLoader:  setting r15_mod weight hbnet to 0.2
+protocols.jd2.parser.ScoreFunctionLoader:  setting r15_mod weight buried_unsatisfied_penalty to 1
+core.select.residue_selector.LayerSelector: Setting LayerSelector to use sidechain neighbors to determine burial.
+core.select.residue_selector.LayerSelector: Set cutoffs for core and surface to 5.2 and 2, respectively, in LayerSelector.
+core.select.residue_selector.LayerSelector: Setting core=false boundary=false surface=true in LayerSelector.
+core.select.residue_selector.LayerSelector: Setting LayerSelector to use sidechain neighbors to determine burial.
+core.select.residue_selector.LayerSelector: Set cutoffs for core and surface to 5.2 and 2, respectively, in LayerSelector.
+core.pack.task.operation.TaskOperation: TaskOperation::parse_tag method called with no effect for Tag with type IncludeCurrent. Probably due to (un/mis)implemented virtual method in derived class.
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "include_current" of type IncludeCurrent
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "no_repack_surf" of type OperateOnResidueSubset
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "allowed_for_design" of type ReadResfile
+protocols.rosetta_scripts.RosettaScriptsParser: Defined filter named "cavity_volume" of type CavityVolume
+protocols.helical_bundle.BundleGridSampler: Parsing options for BundleGridSampler ("bgs1") mover.
+protocols.helical_bundle.BundleGridSampler: Setting maximum number of samples to 1.
+protocols.helical_bundle.BundleGridSampler: Setting mover to interpret angles in RosettaScripts as though they were specified in degrees.  Note that internally and in output, the mover uses radians.
+protocols.helical_bundle.MakeBundle: Default helix length set to 12.
+protocols.helical_bundle.BundleGridSampler: Setting reset mode to true.
+protocols.helical_bundle.BundleGridSampler: Setting nstruct mode to true.  This means that each job will sample a different set of Crick parameters.
+protocols.helical_bundle.BundleGridSampler: Setting nstruct repeats to 1.
+basic.io.database: Database file opened: protocol_data/crick_parameters/alpha_helix.crick_params
+protocols.helical_bundle.BundleGridSampler: Added a helix.
+protocols.helical_bundle.MakeBundle: 	Set delta_omega1 value (minor helix rotation) to 3.1818.
+protocols.helical_bundle.MakeBundle: 	Set invert value (should the helix be flipped?) to false.
+protocols.helical_bundle.BundleGridSampler: Setting the r0 value for helix 1 to 8.
+protocols.helical_bundle.BundleGridSampler: Setting the omega0 value for helix 1 to -1.12.
+protocols.helical_bundle.BundleGridSampler: Setting the delta_omega0 value for helix 1 to 0.
+protocols.helical_bundle.BundleGridSampler: Setting the delta_omega1 value for helix 1 to 3.1818.
+basic.io.database: Database file opened: protocol_data/crick_parameters/alpha_helix.crick_params
+protocols.helical_bundle.BundleGridSampler: Added a helix.
+protocols.helical_bundle.MakeBundle: 	Set invert value (should the helix be flipped?) to true.
+protocols.helical_bundle.BundleGridSampler: Setting r0 for helix 2 to copy the r0 value for helix 1.
+protocols.helical_bundle.BundleGridSampler: Setting omega0 for helix 2 to be set to match the pitch angle for helix 1.
+protocols.helical_bundle.BundleGridSampler: Setting the delta_omega0 value for helix 2 to 90.
+protocols.helical_bundle.BundleGridSampler: Setting delta_omega1 for helix 2 to copy the delta_omega1 value for helix 1.
+basic.io.database: Database file opened: protocol_data/crick_parameters/alpha_helix.crick_params
+protocols.helical_bundle.BundleGridSampler: Added a helix.
+protocols.helical_bundle.MakeBundle: 	Set invert value (should the helix be flipped?) to false.
+protocols.helical_bundle.BundleGridSampler: Setting r0 for helix 3 to copy the r0 value for helix 1.
+protocols.helical_bundle.BundleGridSampler: Setting omega0 for helix 3 to be set to match the pitch angle for helix 1.
+protocols.helical_bundle.BundleGridSampler: Setting the delta_omega0 value for helix 3 to 180.
+protocols.helical_bundle.BundleGridSampler: Setting delta_omega1 for helix 3 to copy the delta_omega1 value for helix 1.
+basic.io.database: Database file opened: protocol_data/crick_parameters/alpha_helix.crick_params
+protocols.helical_bundle.BundleGridSampler: Added a helix.
+protocols.helical_bundle.MakeBundle: 	Set invert value (should the helix be flipped?) to true.
+protocols.helical_bundle.BundleGridSampler: Setting r0 for helix 4 to copy the r0 value for helix 1.
+protocols.helical_bundle.BundleGridSampler: Setting omega0 for helix 4 to be set to match the pitch angle for helix 1.
+protocols.helical_bundle.BundleGridSampler: Setting the delta_omega0 value for helix 4 to 270.
+protocols.helical_bundle.BundleGridSampler: Setting delta_omega1 for helix 4 to copy the delta_omega1 value for helix 1.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "bgs1" of type BundleGridSampler
+protocols.protein_interface_design.movers.SetAtomTree: Read fold tree from file: FOLD_TREE  EDGE 6 1 -1  EDGE 6 12 -1  EDGE 6 18 1  EDGE 18 13 -1  EDGE 18 24 -1  EDGE 6 30 2  EDGE 30 25 -1  EDGE 30 36 -1  EDGE 6 42 3  EDGE 42 37 -1  EDGE 42 48 -1 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "foldtree1" of type AtomTree
+core.select.residue_selector.util: [ WARNING ] Selector name is empty!
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "add_csts" of type AddConstraintsToCurrentConformationMover
+protocols.aa_composition.AddCompositionConstraintMover: Set filename to inputs/design.comp.
+protocols.aa_composition.AddCompositionConstraintMover: Initialized AACompositionConstraint object from file inputs/design.comp.
+protocols.aa_composition.AddCompositionConstraintMover: Set selector name to select_not_surf.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "add_comp_csts" of type AddCompositionConstraintMover
+core.pack.task.xml_util: Object design reading the following task_operations: Adding the following task operations
+no_repack_surf allowed_for_design include_current 
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "design" of type FastDesign
+core.pack.task.xml_util: Object design2 reading the following task_operations: Adding the following task operations
+no_repack_surf allowed_for_design include_current 
+core.select.movemap.util: Found MoveMapFactory design_mm
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "design2" of type FastDesign
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following movers and filters
+protocols.rosetta_scripts.ParsedProtocol: added mover "bgs1" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "foldtree1" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "add_csts" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "add_comp_csts" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "design2" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "NULL_MOVER" with filter "cavity_volume"
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER BundleGridSampler - bgs1=======================
+protocols.helical_bundle.BundleGridSampler: Performing Crick parameter space grid sampling.
+protocols.helical_bundle.BundleGridSampler: A total of 1 grid points will be sampled.
+protocols.helical_bundle.BundleGridSampler: Creating BundleGridSamplerHelper object.
+protocols.helical_bundle.BundleGridSamplerHelper: Initializing samples.
+protocols.helical_bundle.BundleGridSamplerHelper: The following parameter values will be sampled:
+protocols.helical_bundle.BundleGridSamplerHelper: Helix	DoF	Parameter values
+protocols.helical_bundle.BundleGridSamplerHelper: 
+protocols.helical_bundle.BundleGridSampler: Grid point 1: attempting to build a helical bundle with the following parameters:
+protocols.helical_bundle.BundleGridSampler: Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+protocols.helical_bundle.BundleGridSampler: 1	8.0000	-0.0195	0.0000	0.0555	0.0000	0.0000	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 2	8.0000	-0.0195	1.5708	0.0555	0.0000	0.0000	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 3	8.0000	-0.0195	3.1416	0.0555	0.0000	0.0000	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 4	8.0000	-0.0195	4.7124	0.0555	0.0000	0.0000	0.0000	1.0000
+protocols.helical_bundle.BundleGridSampler: 
+protocols.helical_bundle.MakeBundle: Building a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.MakeBundleHelix: Building a helix in a helical bundle using the Crick equations.
+protocols.helical_bundle.BundleGridSampler: Bundle generated successfully.
+basic.io.database: Database file opened: scoring/score_functions/elec_cp_reps.dat
+core.scoring.elec.util: Read 40 countpair representative atoms
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib_fixes_enable option is true.
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib::shap_dun10_smooth_level of 1( aka lowest_smooth ) got activated.
+protocols.helical_bundle.BundleGridSampler: Energy is -20.7433.  This is the lowest encountered so far.
+protocols.helical_bundle.BundleGridSampler: Success!  Returning lowest-energy pose.
+protocols.helical_bundle.BundleGridSampler: Parameters yielding the lowest-energy bundle:
+Helix	r0	omega0	delta_omega0	delta_omega1	delta_t	z1_offset	z0_offset	epsilon
+1	8.0000	-0.0195	0.0000	0.0555	0.0000	0.0000	0.0000	1.0000
+2	8.0000	-0.0195	1.5708	0.0555	0.0000	0.0000	0.0000	1.0000
+3	8.0000	-0.0195	3.1416	0.0555	0.0000	0.0000	0.0000	1.0000
+4	8.0000	-0.0195	4.7124	0.0555	0.0000	0.0000	0.0000	1.0000
+
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER AtomTree - foldtree1=======================
+protocols.protein_interface_design.movers.SetAtomTree: Applying fold_tree: FOLD_TREE  EDGE 6 1 -1  EDGE 6 12 -1  EDGE 6 18 1  EDGE 18 13 -1  EDGE 18 24 -1  EDGE 6 30 2  EDGE 30 25 -1  EDGE 30 36 -1  EDGE 6 42 3  EDGE 42 37 -1  EDGE 42 48 -1 
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER AddConstraintsToCurrentConformationMover - add_csts=======================
+protocols.constraint_movers.AddConstraintsToCurrentConformationMover: Using SOG function
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER AddCompositionConstraintMover - add_comp_csts=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastDesign - design2=======================
+protocols.denovo_design.movers.FastDesign: #Packer_Task
+protocols.denovo_design.movers.FastDesign: 
+protocols.denovo_design.movers.FastDesign: resid	pack?	design?	allowed_aas
+protocols.denovo_design.movers.FastDesign: 1	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 2	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 3	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 4	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 5	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 6	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 7	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 8	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 9	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 10	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 11	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 12	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 13	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 14	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 15	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 16	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 17	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 18	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 19	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 20	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 21	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 22	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 23	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 24	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 25	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 26	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 27	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 28	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 29	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 30	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 31	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 32	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 33	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 34	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 35	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 36	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 37	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 38	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 39	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 40	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 41	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 42	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 43	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 44	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 45	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+protocols.denovo_design.movers.FastDesign: 46	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 47	FALSE	FALSE	
+protocols.denovo_design.movers.FastDesign: 48	TRUE	TRUE	ALA,ASP,GLU,GLY,ILE,LEU,GLN,ARG,VAL
+core.pack.pack_rotamers: built 1452 rotamers at 16 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 3474012 bytes
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-13.0469, -13.0469, -11.328] to [13.0469, 13.0469, 11.328].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-13.0469, -13.0469, -11.328] to [13.4531, 13.4531, 11.672].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 54x54x47 voxel grid.  (137052 voxels total).Computing voxel burial by method of sidechain neighbours...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 5315 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 5091 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
+core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
+core.pack.pack_rotamers: built 1264 rotamers at 16 positions.
+core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2679360 bytes
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-13.0583, -13.0759, -11.334] to [13.0469, 13.0494, 11.3489].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-13.0583, -13.0759, -11.334] to [13.4417, 13.4241, 11.666].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 54x54x47 voxel grid.  (137052 voxels total).Computing voxel burial by method of sidechain neighbours...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 5300 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 5081 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
+core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
+core.pack.pack_rotamers: built 1096 rotamers at 16 positions.
+core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 2031624 bytes
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-13.0455, -13.0895, -11.328] to [13.0469, 13.109, 11.3464].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-13.0455, -13.0895, -11.328] to [13.4545, 13.4105, 11.672].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 54x54x47 voxel grid.  (137052 voxels total).Computing voxel burial by method of sidechain neighbours...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 5222 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 5003 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
+core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
+core.pack.pack_rotamers: built 1053 rotamers at 16 positions.
+core.pack.interaction_graph.interaction_graph_factory: Clearing cached buried unsaturated hbond graph from the pose.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.interaction_graph.interaction_graph_factory: IG: 1881140 bytes
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Setting up BuriedUnsatPenalty energy method for packing.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Creating new BuriedUnsatPenaltyGraph and caching it in the pose.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Successfully set up BuriedUnsatPenalty energy method for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Setting up the VoidsPenaltyEnergy for packing.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Computing pose bounding box with padding of 1 Angstroms...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Done.  Bounding box is from [-13.0593, -13.0863, -11.328] to [13.0469, 13.077, 11.3547].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Setting up voxel grid...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Updated upper-right coordinates.  Bounding box is now [-13.0593, -13.0863, -11.328] to [13.4407, 13.4137, 11.672].
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Set up a 54x54x47 voxel grid.  (137052 voxels total).Computing voxel burial by method of sidechain neighbours...
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Pruning voxels for non-packable residues.  Total volume before pruning: 5288 cubic Angstroms.
+core.pack.voids_penalty_energy.VoidsPenaltyVoxelGrid: Total volume after pruning: 5066 cubic Angstroms.
+core.scoring.aa_composition_energy.AACompositionEnergy: Disabling AACompositionEnergy during minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Disabling HBNetEnergy during minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Disabling BuriedUnsatPenalty scoreterm during minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Disabling VoidsPenaltyEnergy during minimization.
+core.scoring.aa_composition_energy.AACompositionEnergy: Re-enabling AACompositionEnergy following minimization.
+core.pack.guidance_scoreterms.hbnet_energy.HBNetEnergy: Re-enabling HBNetEnergy following minimization.
+core.pack.guidance_scoreterms.buried_unsat_penalty.BuriedUnsatPenalty: Re-enabling BuriedUnsatPenalty scoreterm after minimization trajectory.
+core.pack.voids_penalty_energy.VoidsPenaltyEnergy: Re-enabling VoidsPenaltyEnergy after minimization.
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.denovo_design.movers.FastDesign: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000    -187.705    -187.705
+ fa_rep                       0.550      60.488      33.268
+ fa_sol                       1.000     140.181     140.181
+ fa_intra_rep                 0.005      83.890       0.419
+ fa_intra_sol_xover4          1.000       4.215       4.215
+ lk_ball_wtd                  1.000      -1.565      -1.565
+ fa_elec                      1.000     -47.356     -47.356
+ pro_close                    1.250       0.000       0.000
+ hbond_sr_bb                  1.000     -33.018     -33.018
+ hbond_lr_bb                  1.000       0.000       0.000
+ hbond_bb_sc                  1.000       0.000       0.000
+ hbond_sc                     1.000      -4.958      -4.958
+ dslf_fa13                    1.250       0.000       0.000
+ atom_pair_constraint         1.000       0.000       0.000
+ coordinate_constraint        1.000       6.854       6.854
+ angle_constraint             1.000       0.000       0.000
+ dihedral_constraint          1.000       0.000       0.000
+ metalbinding_constraint      1.000       0.000       0.000
+ omega                        0.400      -1.223      -0.489
+ fa_dun                       0.700      48.068      33.648
+ p_aa_pp                      0.600     -13.165      -7.899
+ yhh_planarity                0.625       0.000       0.000
+ ref                          1.000      53.559      53.559
+ chainbreak                   1.000       0.000       0.000
+ rama_prepro                  0.450      31.636      14.236
+ res_type_constraint          1.000       0.000       0.000
+ aa_composition               1.000       0.000       0.000
+ hbnet                        0.200      -2.773      -0.555
+ buried_unsatisfied_penalty     1.000     100.000     100.000
+ voids_penalty                1.000       0.000       0.000
+---------------------------------------------------
+ Total weighted score:                      102.836
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER cavity_volume=======================
+protocols.packstat: prune radius 1.6 1284 549 293 189 140 
+devel.denovo_design.calculators.CavityCalculator: HETATM   23  V   CAV Z  49      -2.056  -2.843   0.239  0.00  1.60
+devel.denovo_design.calculators.CavityCalculator: Cluster 1: volume=18.7867, surface_area=32.1699, surface_accessibility=0, center=-2.05646,-2.84321,0.238795
+devel.denovo_design.filters.CavityVolumeFilter: CavityCalculator returned 18.7867
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER cavity_volume=======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+devel.denovo_design.filters.CavityVolumeFilter: CavityCalculator returned 18.7867
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for cavity_volume==================
+devel.denovo_design.filters.CavityVolumeFilter: CavityCalculator returned 18.7867
+protocols.rosetta_scripts.ParsedProtocol.REPORT: Total Cavity Volume is:18.7867
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for cavity_volume==================
+protocols.jd2.JobDistributor: no more batches to process... 
+protocols.jd2.JobDistributor: [ WARNING ] The following options have been set, but have not yet been used:
+	-packing:linmem_ig 10
+
+protocols::checkpoint: Deleting checkpoints of FastRelax

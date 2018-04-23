@@ -103,7 +103,7 @@ public:
 
 	/// @brief Cache data from the pose in this EnergyMethod in anticipation of scoring.
 	///
-	void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose const &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
+	void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
 
 private:
 

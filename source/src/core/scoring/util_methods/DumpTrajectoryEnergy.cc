@@ -144,7 +144,7 @@ Packing
 ///
 void
 DumpTrajectoryEnergy::set_up_residuearrayannealableenergy_for_packing (
-	core::pose::Pose const &,
+	core::pose::Pose &,
 	core::pack::rotamer_set::RotamerSets const &,
 	core::scoring::ScoreFunction const &/*sfxn*/
 ) {

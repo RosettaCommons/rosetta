@@ -79,6 +79,21 @@ sources = {
 		"SingleResidueCenrotLibraryCreator",
 		"CenRotDunEnergy",
 	],
+	"core/pack/guidance_scoreterms/buried_unsat_penalty/" : [
+		"BuriedUnsatPenalty",
+	],
+	"core/pack/guidance_scoreterms/buried_unsat_penalty/graph/" : [
+		"BuriedUnsatPenaltyGraph",
+		"BuriedUnsatPenaltyGraphContainer",
+		"BuriedUnsatPenaltyGraphOptions",
+	],
+	"core/pack/guidance_scoreterms/hbnet_energy": [
+		"HBNetEnergy",
+	],
+	"core/pack/guidance_scoreterms/voids_penalty_energy": [
+		"VoidsPenaltyEnergy",
+		"VoidsPenaltyVoxelGrid",
+	],
 	"core/pack/hbonds": [
                 "HBondGraph_util",
                 "MCHBNetInteractionGraph",
@@ -193,10 +208,6 @@ sources = {
 	],
 	"core/pack/task/residue_selector" : [
 		"ClashBasedRepackShellSelector",
-	],
-	"core/pack/voids_penalty_energy": [
-		"VoidsPenaltyEnergy",
-		"VoidsPenaltyVoxelGrid",
 	],
 	"core/util": [
 		"ChainbreakUtil",

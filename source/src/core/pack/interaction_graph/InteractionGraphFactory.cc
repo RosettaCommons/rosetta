@@ -238,15 +238,15 @@ AnnealableGraphBaseOP
 InteractionGraphFactory::create_and_initialize_annealing_graph(
 	task::PackerTask const & packer_task,
 	rotamer_set::RotamerSets & rotsets,
-	pose::Pose const & pose,
+	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
 	utility::graph::GraphCOP packer_neighbor_graph)
 {
-	//using namespace scoring::annealing;
+	//Clear cached information in the pose that the ResidueArrayAnnealableEneriges use:
+	clear_cached_residuearrayannealableenergy_information(pose);
 
 	std::list< AnnealableGraphBaseOP > annealing_graphs;
 	annealing_graphs.push_back(create_and_initialize_two_body_interaction_graph(packer_task, rotsets, pose, scfxn, packer_neighbor_graph));
-
 
 	//TODO alexford This resolves target methods via dynamic cast of all activated WholeStructureMethods
 	// in the score function. This should likely be replaced with some sort of registration mechanism.
@@ -260,6 +260,18 @@ InteractionGraphFactory::create_and_initialize_annealing_graph(
 		return annealing_graphs.front();
 	} else {
 		return AnnealableGraphBaseOP(new MultiplexedAnnealableGraph(annealing_graphs));
+	}
+}
+
+/// @brief Clear specific types of cached information in the pose that the ResidueArrayAnnealableEneriges use.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+InteractionGraphFactory::clear_cached_residuearrayannealableenergy_information(
+	core::pose::Pose &pose
+) {
+	if ( pose.energies().data().has( core::scoring::EnergiesCacheableDataType::BURIED_UNSAT_HBOND_GRAPH ) ) {
+		T << "Clearing cached buried unsaturated hbond graph from the pose." << std::endl;
+		pose.energies().data().clear( core::scoring::EnergiesCacheableDataType::BURIED_UNSAT_HBOND_GRAPH );
 	}
 }
 

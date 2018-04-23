@@ -71,22 +71,32 @@ public:
 	/// pose, rotamer sets, packer task and score function. Initalizes
 	/// two-body interaction graph, as well as other annealable graphs
 	/// sepecified by the given score function and task.
-	///
+	/// @details
 	/// Call only valid after:
 	/// Pose has been scored by scorefxn.
 	/// Pose residue neighbors updated.
 	/// ScoreFunction setup for packing.
 	/// Rotamer sets built.
+	/// @note Pose is nonconst as there may still be data to cache in
+	/// the pose at this point.
 	static
 	AnnealableGraphBaseOP
 	create_and_initialize_annealing_graph(
 		task::PackerTask const & packer_task,
 		rotamer_set::RotamerSets & rotsets,
-		pose::Pose const & pose,
+		pose::Pose & pose,
 		scoring::ScoreFunction const & scfxn,
 		utility::graph::GraphCOP packer_neighbor_graph);
 
 private:
+
+	/// @brief Clear specific types of cached information in the pose that the ResidueArrayAnnealableEneriges use.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	static
+	void
+	clear_cached_residuearrayannealableenergy_information(
+		core::pose::Pose &pose
+	);
 
 	/// @brief Apply IGEdgeReweights to IG if specified in packer task.
 	static

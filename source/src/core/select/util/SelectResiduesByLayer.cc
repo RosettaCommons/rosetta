@@ -116,7 +116,8 @@ SelectResiduesByLayer::SelectResiduesByLayer(
 	dist_midpoint_(9.0),
 	rsd_neighbor_denominator_(1.0),
 	angle_shift_factor_(0.5),
-	angle_exponent_(2.0)
+	angle_exponent_(2.0),
+	dist_exponent_(1.0)
 {
 	initialize( 20.0, 40.0 );
 }

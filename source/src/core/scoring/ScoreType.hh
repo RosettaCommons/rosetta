@@ -631,6 +631,7 @@ enum ScoreType {
 	aa_composition, //A wholebody score term for penalizing deviation from a desired amino acid composition.
 	aspartimide_penalty, //A context-independent two-body score term for penalizing two-residue sequences likely to produce the aspartimide side-product during peptide synthesis.
 	hbnet, //A bonus for hydrogen-bonded networks, which ramps nonlinearly with the size of the network.  Fundamentally non-pairwise decomposable (but packer-compatbile due to Alex Ford's nice framework).
+	buried_unsatisfied_penalty, //A penalty for buried unsatisfied hydrogen bond donors or acceptors.  Fundamentally non-pairwise decomposible (but packer-compatible).
 	netcharge, //A penalty for deviating from a desired net charge in a pose or region selected by a ResidueSelector.
 	voids_penalty, //A packer-centric penalty for solutions in which the sum of the buried rotamer volumes differs greatly from the total buried volume to fill.
 

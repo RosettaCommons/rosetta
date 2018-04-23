@@ -133,7 +133,12 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	symmetric_gly_tables_(false),
 	loop_close_use_6D_potential_(false),
 	fa_stack_base_all_(false),
-
+	buried_unsatisfied_penalty_cone_angle_exponent_(2.0),
+	buried_unsatisfied_penalty_cone_angle_shift_factor_(0.25),
+	buried_unsatisfied_penalty_cone_dist_exponent_(1.0),
+	buried_unsatisfied_penalty_cone_dist_midpoint_(9.0),
+	buried_unsatisfied_penalty_burial_threshold_(5.0),
+	buried_unsatisfied_penalty_hbond_energy_threshold_(-0.25),
 	voids_penalty_energy_containing_cones_cutoff_(6),
 	voids_penalty_energy_cone_dotproduct_cutoff_(0.1),
 	voids_penalty_energy_cone_distance_cutoff_(8.0),
@@ -224,6 +229,12 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		symmetric_gly_tables_ = src.symmetric_gly_tables_;
 		loop_close_use_6D_potential_ = src.loop_close_use_6D_potential_;
 		fa_stack_base_all_ = src.fa_stack_base_all_;
+		buried_unsatisfied_penalty_cone_angle_exponent_ = src.buried_unsatisfied_penalty_cone_angle_exponent_;
+		buried_unsatisfied_penalty_cone_angle_shift_factor_ = src.buried_unsatisfied_penalty_cone_angle_shift_factor_;
+		buried_unsatisfied_penalty_cone_dist_exponent_ = src.buried_unsatisfied_penalty_cone_dist_exponent_;
+		buried_unsatisfied_penalty_cone_dist_midpoint_ = src.buried_unsatisfied_penalty_cone_dist_midpoint_;
+		buried_unsatisfied_penalty_burial_threshold_ = src.buried_unsatisfied_penalty_burial_threshold_;
+		buried_unsatisfied_penalty_hbond_energy_threshold_ = src.buried_unsatisfied_penalty_hbond_energy_threshold_;
 		voids_penalty_energy_containing_cones_cutoff_ = src.voids_penalty_energy_containing_cones_cutoff_;
 		voids_penalty_energy_cone_dotproduct_cutoff_ = src.voids_penalty_energy_cone_dotproduct_cutoff_;
 		voids_penalty_energy_cone_distance_cutoff_ = src.voids_penalty_energy_cone_distance_cutoff_;
@@ -281,6 +292,14 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	symmetric_gly_tables_ = options[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
 	loop_close_use_6D_potential_ = options[ basic::options::OptionKeys::score::loop_close::use_6D_potential ]();
 	fa_stack_base_all_ = !options[ basic::options::OptionKeys::score::fa_stack_base_base_only ]();
+
+	buried_unsatisfied_penalty_cone_angle_exponent_ = options[ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_angle_exponent ]();
+	buried_unsatisfied_penalty_cone_angle_shift_factor_ = options[ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_angle_shift_factor ]();
+	buried_unsatisfied_penalty_cone_dist_exponent_ = options[ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_dist_exponent ]();
+	buried_unsatisfied_penalty_cone_dist_midpoint_ = options[ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_dist_midpoint ]();
+	runtime_assert_string_msg( options[basic::options::OptionKeys::score::buried_unsatisfied_penalty_burial_threshold]() >= 0, "Error in EnergyMethodOptions::initialize_from_options(): The -score:buried_unsatisfied_penalty_burial_threshold flag must be set to a non-negative integer." );
+	buried_unsatisfied_penalty_burial_threshold_ = options[ basic::options::OptionKeys::score::buried_unsatisfied_penalty_burial_threshold ]();
+	buried_unsatisfied_penalty_hbond_energy_threshold_ = options[ basic::options::OptionKeys::score::buried_unsatisfied_penalty_hbond_energy_threshold ]();
 
 	runtime_assert_string_msg( options[basic::options::OptionKeys::score::voids_penalty_energy_containing_cones_cutoff]() >= 0, "Error in EnergyMethodOptions::initialize_from_options(): The -score:voids_penalty_energy_containing_cones_cutoff flag must be set to a non-negative integer." );
 	voids_penalty_energy_containing_cones_cutoff_ = options[basic::options::OptionKeys::score::voids_penalty_energy_containing_cones_cutoff]();
@@ -354,6 +373,12 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::fa_stack_base_base_only
 		+ basic::options::OptionKeys::score::use_gen_kirkwood
 		+ basic::options::OptionKeys::score::use_polarization
+		+ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_angle_exponent
+		+ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_angle_shift_factor
+		+ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_dist_exponent
+		+ basic::options::OptionKeys::score::buried_unsatisfied_penalty_cone_dist_midpoint
+		+ basic::options::OptionKeys::score::buried_unsatisfied_penalty_burial_threshold
+		+ basic::options::OptionKeys::score::buried_unsatisfied_penalty_hbond_energy_threshold
 		+ basic::options::OptionKeys::score::voids_penalty_energy_containing_cones_cutoff
 		+ basic::options::OptionKeys::score::voids_penalty_energy_cone_distance_cutoff
 		+ basic::options::OptionKeys::score::voids_penalty_energy_cone_dotproduct_cutoff
@@ -929,6 +954,104 @@ EnergyMethodOptions::fa_stack_base_all( bool const setting ) {
 	fa_stack_base_all_ = setting;
 }
 
+
+/// @brief Set the angle exponent for calculating burial by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+EnergyMethodOptions::buried_unsatisfied_penalty_cone_angle_exponent( core::Real const setting ) {
+	buried_unsatisfied_penalty_cone_angle_exponent_ = setting;
+}
+
+/// @brief Set the angle shift factor for calculating burial by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+EnergyMethodOptions::buried_unsatisfied_penalty_cone_angle_shift_factor( core::Real const setting ) {
+	buried_unsatisfied_penalty_cone_angle_shift_factor_ = setting;
+}
+
+/// @brief Set the distance exponent for calculating burial by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+EnergyMethodOptions::buried_unsatisfied_penalty_cone_dist_exponent( core::Real const setting ) {
+	buried_unsatisfied_penalty_cone_dist_exponent_ = setting;
+}
+
+/// @brief Set the distance midpoint for calculating burial by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+EnergyMethodOptions::buried_unsatisfied_penalty_cone_dist_midpoint( core::Real const setting ) {
+	buried_unsatisfied_penalty_cone_dist_midpoint_ = setting;
+}
+
+/// @brief Set the number of cones in which a point must lie to be considered "buried"
+/// by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+EnergyMethodOptions::buried_unsatisfied_penalty_burial_threshold( core::Real const setting ) {
+	buried_unsatisfied_penalty_burial_threshold_ = setting;
+}
+
+/// @brief Set the energy threshold above which a hydrogen bond is not counted.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+EnergyMethodOptions::buried_unsatisfied_penalty_hbond_energy_threshold( core::Real const setting ) {
+	buried_unsatisfied_penalty_hbond_energy_threshold_ = setting;
+}
+
+/// @brief Get the angle exponent for calculating burial by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::Real
+EnergyMethodOptions::buried_unsatisfied_penalty_cone_angle_exponent() const {
+	return buried_unsatisfied_penalty_cone_angle_exponent_;
+}
+
+/// @brief Get the angle shift factor for calculating burial by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::Real
+EnergyMethodOptions::buried_unsatisfied_penalty_cone_angle_shift_factor() const {
+	return buried_unsatisfied_penalty_cone_angle_shift_factor_;
+}
+
+/// @brief Get the distance exponent for calculating burial by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::Real
+EnergyMethodOptions::buried_unsatisfied_penalty_cone_dist_exponent() const {
+	return buried_unsatisfied_penalty_cone_dist_exponent_;
+}
+
+/// @brief Get the distance midpoint for calculating burial by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::Real
+EnergyMethodOptions::buried_unsatisfied_penalty_cone_dist_midpoint() const {
+	return buried_unsatisfied_penalty_cone_dist_midpoint_;
+}
+
+/// @brief Get the number of cones in which a point must lie to be considered "buried"
+/// by the method of sidechain neighbor cones.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::Real
+EnergyMethodOptions::buried_unsatisfied_penalty_burial_threshold() const {
+	return buried_unsatisfied_penalty_burial_threshold_;
+}
+
+/// @brief Get the energy threshold above which a hydrogen bond is not counted.
+/// @details Used by the BuriedUnsatPenalty energy.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::Real
+EnergyMethodOptions::buried_unsatisfied_penalty_hbond_energy_threshold() const {
+	return  buried_unsatisfied_penalty_hbond_energy_threshold_;
+}
 
 utility::vector1< core::Real > const &
 EnergyMethodOptions::get_density_sc_scale_byres() const {
@@ -1513,6 +1636,14 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( symmetric_gly_tables_ ) ); // _Bool
 	arc( CEREAL_NVP( loop_close_use_6D_potential_ ) ); // _Bool
 	arc( CEREAL_NVP( fa_stack_base_all_ ) ); // _Bool
+
+	arc( CEREAL_NVP( buried_unsatisfied_penalty_cone_angle_exponent_ ) );
+	arc( CEREAL_NVP( buried_unsatisfied_penalty_cone_angle_shift_factor_ ) );
+	arc( CEREAL_NVP( buried_unsatisfied_penalty_cone_dist_exponent_ ) );
+	arc( CEREAL_NVP( buried_unsatisfied_penalty_cone_dist_midpoint_ ) );
+	arc( CEREAL_NVP( buried_unsatisfied_penalty_burial_threshold_ ) );
+	arc( CEREAL_NVP( buried_unsatisfied_penalty_hbond_energy_threshold_ ) );
+
 	arc( CEREAL_NVP( voids_penalty_energy_containing_cones_cutoff_ ) ); // core::Size
 	arc( CEREAL_NVP( voids_penalty_energy_cone_distance_cutoff_ ) ); // core::Real
 	arc( CEREAL_NVP( voids_penalty_energy_cone_dotproduct_cutoff_ ) ); // core::Real
@@ -1588,6 +1719,14 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( symmetric_gly_tables_ ); // _Bool
 	arc( loop_close_use_6D_potential_ ); // _Bool
 	arc( fa_stack_base_all_ ); // _Bool
+
+	arc( buried_unsatisfied_penalty_cone_angle_exponent_ );
+	arc( buried_unsatisfied_penalty_cone_angle_shift_factor_ );
+	arc( buried_unsatisfied_penalty_cone_dist_exponent_ );
+	arc( buried_unsatisfied_penalty_cone_dist_midpoint_ );
+	arc( buried_unsatisfied_penalty_burial_threshold_ );
+	arc( buried_unsatisfied_penalty_hbond_energy_threshold_ );
+
 	arc( voids_penalty_energy_containing_cones_cutoff_ ); // core::Size
 	arc( voids_penalty_energy_cone_distance_cutoff_ ); // core::Real
 	arc( voids_penalty_energy_cone_dotproduct_cutoff_ ); // core::Real

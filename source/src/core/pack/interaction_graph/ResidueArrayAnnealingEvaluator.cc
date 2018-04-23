@@ -104,7 +104,7 @@ ResidueArrayAnnealingEvaluator::ResidueArrayAnnealingEvaluator( ResidueArrayAnne
 
 void ResidueArrayAnnealingEvaluator::initialize(
 	core::scoring::ScoreFunction const & score_function,
-	core::pose::Pose const & pose,
+	core::pose::Pose & pose,
 	core::pack::rotamer_set::RotamerSets & rotamer_sets,
 	utility::graph::GraphCOP )
 {
@@ -263,7 +263,7 @@ void ResidueArrayAnnealingEvaluator::set_consideration (
 
 	unset_information.push_back( std::pair< int, ResidueCOP>( node_resid, current_residues_.at(node_resid) ) );
 
-	current_residues_.at( node_resid ) = per_node_rotamer_sets_.at(node_ind)->rotamer(new_state);
+	current_residues_[ node_resid ] = per_node_rotamer_sets_.at(node_ind)->rotamer(new_state);
 
 	//If this is the symmetric case, we also need to update the symmetric nodes:
 	if ( is_symmetric_ ) {
@@ -271,7 +271,7 @@ void ResidueArrayAnnealingEvaluator::set_consideration (
 		utility::vector1 < core::Size > const & dependent_residues( dependent_residue_map_.at( node_ind ) );
 		for ( core::Size i=1, imax=dependent_nodes.size(); i<=imax; ++i ) {
 			unset_information.push_back( std::pair< int, ResidueCOP>( static_cast<int>( dependent_residues[i] ), current_residues_.at( dependent_residues[i] ) ) );
-			current_residues_.at( dependent_residues[i] ) = per_node_rotamer_sets_.at( dependent_nodes[i] )->rotamer(new_state);
+			current_residues_[ dependent_residues[i] ] = per_node_rotamer_sets_.at( dependent_nodes[i] )->rotamer(new_state);
 		}
 	}
 }
@@ -372,7 +372,7 @@ void ResidueArrayAnnealingEvaluator::consider_substitution(
 
 	considered_node_ = node_ind;
 	considered_state_ = new_state;
-	considered_energy_ = calculate_weighted_energy( current_residues_, considered_node_ );
+	considered_energy_ = calculate_weighted_energy( current_residues_, node_resid );
 
 	unset_consideration( unset_information );
 

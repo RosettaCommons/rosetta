@@ -233,7 +233,7 @@ void NetChargeEnergy::report() const {
 ///
 void
 NetChargeEnergy::set_up_residuearrayannealableenergy_for_packing (
-	core::pose::Pose const &pose,
+	core::pose::Pose &pose,
 	core::pack::rotamer_set::RotamerSets const &/*rotamersets*/,
 	core::scoring::ScoreFunction const &/*sfxn*/
 ) {

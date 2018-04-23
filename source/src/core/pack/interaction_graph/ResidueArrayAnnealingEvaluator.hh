@@ -64,9 +64,10 @@ public:
 	// AnneableGraph preparation.
 	// @remark Initialize extracts all ResidueArrayAnnealingEvaluator-compatible score types
 	// from the target score function and enables any with non-zero weights.
+	// @note The pose is nonconst to allow stuff to be cached inside of it.
 	void initialize(
 		core::scoring::ScoreFunction const & score_function,
-		core::pose::Pose const & pose,
+		core::pose::Pose & pose,
 		core::pack::rotamer_set::RotamerSets & rotamer_sets,
 		utility::graph::GraphCOP
 	);

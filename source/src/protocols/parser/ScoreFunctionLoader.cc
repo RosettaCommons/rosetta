@@ -135,6 +135,27 @@ void ScoreFunctionLoader::load_data(
 					}
 				}
 
+				//Options for buried_unsatisfied_penalty energy:
+				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_angle_exponent" ) ) {
+					emoptions.buried_unsatisfied_penalty_cone_angle_exponent( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_angle_exponent") );
+				}
+				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_angle_shift_factor" ) ) {
+					emoptions.buried_unsatisfied_penalty_cone_angle_shift_factor( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_angle_shift_factor") );
+				}
+				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_dist_exponent" ) ) {
+					emoptions.buried_unsatisfied_penalty_cone_dist_exponent( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_dist_exponent") );
+				}
+				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_cone_dist_midpoint" ) ) {
+					emoptions.buried_unsatisfied_penalty_cone_dist_midpoint( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_cone_dist_midpoint") );
+				}
+				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_burial_threshold" ) ) {
+					emoptions.buried_unsatisfied_penalty_burial_threshold( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_burial_threshold") );
+				}
+				if ( mod_tag->hasOption( "buried_unsatisfied_penalty_hbond_energy_threshold" ) ) {
+					emoptions.buried_unsatisfied_penalty_hbond_energy_threshold( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_hbond_energy_threshold") );
+				}
+
+				//Options for voids_penalty energy:
 				if ( mod_tag->hasOption("voids_penalty_energy_containing_cones_cutoff") ) {
 					emoptions.voids_penalty_energy_containing_cones_cutoff( mod_tag->getOption<core::Size>("voids_penalty_energy_containing_cones_cutoff") );
 				}
@@ -324,6 +345,13 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "pb_unbound_tag", xs_string , "XRW TO DO" )
 		+ XMLSchemaAttribute( "scale_sc_dens", xsct_real , "XRW TO DO" )
 		+ XMLSchemaAttribute( "scale_sc_dens_byres", xs_string , "XRW TO DO" )
+
+		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_angle_exponent", xsct_real, "The angle exponent for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
+		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_angle_shift_factor", xsct_real, "The angle shift factor for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
+		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_dist_exponent", xsct_real, "The distance exponent for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
+		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_dist_midpoint", xsct_real, "The distance midpoint for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
+		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_burial_threshold", xsct_real, "The number of cones in which a point must lie to be considered buried by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
+		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_hbond_energy_threshold", xsct_real, "The energy threshold above which a hydrogen bond is not counted, used by the BuriedUnsatPenalty energy." )
 
 		+ XMLSchemaAttribute( "voids_penalty_energy_containing_cones_cutoff", xsct_non_negative_integer, "The minimum number of sidechain cones in which a voxel must lie in order for that voxel to be considered to be buried.  Defaults to 6 cones." )
 		+ XMLSchemaAttribute( "voids_penalty_energy_voxel_size", xsct_real , "The voxel size (in Angstroms) used in the voids_penalty score term's calculation.  Default 0.5 Angstroms." )

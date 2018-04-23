@@ -19,6 +19,8 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/hbonds.hh>
+#include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
@@ -485,7 +487,7 @@ HBondSet::HBondSet( HBondOptions const & opts, Size const nres):
 	resize_bb_donor_acceptor_arrays( nres );
 }
 
-/// @brief convenience constructor. If you need more controlled
+/// @brief Convenience constructor. If you need more controlled
 ///construction please use one of the other constructors
 ///
 /// The pose must be non-const because the neighbor graph may need to
@@ -500,7 +502,7 @@ HBondSet::HBondSet(
 	setup_for_residue_pair_energies(pose, false, bb_only);
 }
 
-/// @brief convenience constructor. If you need more controlled
+/// @brief Convenience constructor. If you need more controlled
 ///construction please use one of the other constructors
 ///
 /// The pose must be non-const because the neighbor graph may need to
@@ -514,6 +516,37 @@ HBondSet::HBondSet(
 {
 	pose.update_residue_neighbors();
 	setup_for_residue_pair_energies(pose, false, bb_only);
+}
+
+/// @brief Convenience constructor: Find all the hbonds between two residues. BB only default.
+/// @details A bit inefficient, internally, since this creates an intermediate two-residue pose.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+HBondSet::HBondSet(
+	core::conformation::Residue const &res1,
+	core::conformation::Residue const &res2,
+	core::scoring::hbonds::HBondDatabase const &database
+) :
+	options_(HBondOptionsCOP( HBondOptionsOP( new HBondOptions() ) )),
+	atom_map_init_(false)
+{
+	core::scoring::hbonds::identify_hbonds_1way( database, res1, res2, 1, 1, false, false, false, false, false, *this );
+	core::scoring::hbonds::identify_hbonds_1way( database, res2, res1, 1, 1, false, false, false, false, false, *this );
+}
+
+/// @brief Convenience constructor: Find all the hbonds between two residues. BB only default.
+/// @details A bit inefficient, internally, since this creates an intermediate two-residue pose.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+HBondSet::HBondSet(
+	HBondOptions const & options,
+	core::conformation::Residue const &res1,
+	core::conformation::Residue const &res2,
+	core::scoring::hbonds::HBondDatabase const &database
+) :
+	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions(options) ) ) ),
+	atom_map_init_(false)
+{
+	core::scoring::hbonds::identify_hbonds_1way( database, res1, res2, 1, 1, false, false, false, false, false, *this );
+	core::scoring::hbonds::identify_hbonds_1way( database, res2, res1, 1, 1, false, false, false, false, false, *this );
 }
 
 

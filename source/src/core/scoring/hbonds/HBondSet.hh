@@ -24,6 +24,7 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
+#include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -297,17 +298,35 @@ public:
 	// Convenience Constructors - Use fill methods in hbond.hh for more options
 	//
 
-	/// @brief convenience constructor: Find all the hbonds in the pose. BB only default.
+	/// @brief Convenience constructor: Find all the hbonds in the pose. BB only default.
 	HBondSet(
 		pose::Pose & pose,
 		bool const bb_only = true);
 
-	/// @brief convenience constructor: Find all the hbonds in the pose. BB only default.
+	/// @brief Convenience constructor: Find all the hbonds in the pose. BB only default.
 	HBondSet(
 		HBondOptions const & options,
 		pose::Pose & pose,
 		bool const bb_only = true);
 
+	/// @brief Convenience constructor: Find all the hbonds between two residues. BB only default.
+	/// @details A bit inefficient, internally, since this creates an intermediate two-residue pose.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	HBondSet(
+		core::conformation::Residue const &res1,
+		core::conformation::Residue const &res2,
+		core::scoring::hbonds::HBondDatabase const &database
+	);
+
+	/// @brief Convenience constructor: Find all the hbonds between two residues. BB only default.
+	/// @details A bit inefficient, internally, since this creates an intermediate two-residue pose.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	HBondSet(
+		HBondOptions const & options,
+		core::conformation::Residue const &res1,
+		core::conformation::Residue const &res2,
+		core::scoring::hbonds::HBondDatabase const &database
+	);
 
 	////////////////////////////////////////////////////////////////////////////
 	// Copy Constructors

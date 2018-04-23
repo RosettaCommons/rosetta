@@ -103,7 +103,13 @@ public:
 
 	/// @brief Cache data from the pose in this EnergyMethod in anticipation of scoring.
 	///
-	void set_up_residuearrayannealableenergy_for_packing( core::pose::Pose const &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
+	void set_up_residuearrayannealableenergy_for_packing( core::pose::Pose &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
+
+	/// @brief Disable this energy during minimization.
+	void setup_for_minimizing( pose::Pose & pose, ScoreFunction const & sfxn, kinematics::MinimizerMapBase const & minmap ) const override;
+
+	/// @brief Re-enable this energy after minimization.
+	void finalize_after_minimizing( pose::Pose & pose ) const override;
 
 private:
 
@@ -137,6 +143,9 @@ private:
 	/******************
 	Private variables:
 	******************/
+
+	/// @brief Is this energy disabled (e.g. for minimization)?
+	mutable bool disabled_;
 
 	/// @brief The vector of helper objects that store all of the data for setting up this scoring function.
 	/// @details Initialized on scoreterm initialization.

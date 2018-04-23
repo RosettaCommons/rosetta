@@ -106,7 +106,7 @@ public:
 
 	/// @brief This is where the state_ moves to PACKING.
 	///
-	void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose const &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
+	void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
 
 	/// @brief Should be possible to dump the packer from here. Not implemented yet though
 	///

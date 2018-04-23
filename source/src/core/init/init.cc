@@ -34,12 +34,13 @@
 #include <core/init/score_function_corrections.hh>
 #include <core/scoring/aa_composition_energy/AACompositionEnergyCreator.hh>
 #include <core/scoring/aa_repeat_energy/AARepeatEnergyCreator.hh>
+#include <core/pack/guidance_scoreterms/buried_unsat_penalty/BuriedUnsatPenaltyCreator.hh>
 #include <core/scoring/constraints/ConstraintsEnergyCreator.hh>
 #include <core/scoring/disulfides/CentroidDisulfideEnergyCreator.hh>
 #include <core/scoring/disulfides/DisulfideMatchingEnergyCreator.hh>
 #include <core/scoring/disulfides/FullatomDisulfideEnergyCreator.hh>
 #include <core/scoring/etable/EtableEnergyCreator.hh>
-#include <core/scoring/hbnet_energy/HBNetEnergyCreator.hh>
+#include <core/pack/guidance_scoreterms/hbnet_energy/HBNetEnergyCreator.hh>
 #include <core/scoring/hbonds/HBondEnergyCreator.hh>
 #include <core/scoring/hbonds/NPDHBondEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
@@ -91,7 +92,7 @@
 
 #include <core/pack/dunbrack/DunbrackEnergyCreator.hh>
 #include <core/pack/dunbrack/cenrot/CenRotDunEnergyCreator.hh>
-#include <core/pack/voids_penalty_energy/VoidsPenaltyEnergyCreator.hh>
+#include <core/pack/guidance_scoreterms/voids_penalty_energy/VoidsPenaltyEnergyCreator.hh>
 
 // define this for compiling a slimmed down version of mini libraries lacking about 3/4s of the code
 // this is required for compiling a less memory hungry version of mini for Bluegene etc..
@@ -395,17 +396,17 @@ static basic::Tracer TR_random( "core.init.random" );
 using namespace scoring::methods;
 using namespace scoring::rna;
 
+static EnergyMethodRegistrator< scoring::aa_repeat_energy::AARepeatEnergyCreator > AARepeatEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::aa_composition_energy::AACompositionEnergyCreator > AACompositionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::constraints::ConstraintsEnergyCreator > ConstraintsEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::disulfides::CentroidDisulfideEnergyCreator > CentroidDisulfideEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::disulfides::DisulfideMatchingEnergyCreator > DisulfideMatchingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::disulfides::FullatomDisulfideEnergyCreator > FullatomDisulfideEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::etable::EtableEnergyCreator > EtableEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::etable::EtableClassicIntraEnergyCreator > EtableClassicIntraEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::hbnet_energy::HBNetEnergyCreator > HBNetEnergyCreator_registrator;
+static EnergyMethodRegistrator< pack::guidance_scoreterms::hbnet_energy::HBNetEnergyCreator > HBNetEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::NPDHBondEnergyCreator > NPDHBondEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::aa_repeat_energy::AARepeatEnergyCreator > AARepeatEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::aa_composition_energy::AACompositionEnergyCreator > AACompositionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::AspartimidePenaltyEnergyCreator > AspartimidePenaltyEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::BranchEnergyCreator > BranchEnergyCreator_registrator;
@@ -453,7 +454,8 @@ static EnergyMethodRegistrator< scoring::methods::RingClosureEnergyCreator > Rin
 static EnergyMethodRegistrator< carbohydrates::SugarBackboneEnergyCreator > SugarBackboneEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::util_methods::DumpTrajectoryEnergyCreator > DumpTrajectoryEnergy_registrator;
 static EnergyMethodRegistrator< scoring::netcharge_energy::NetChargeEnergyCreator > NetChargeEnergyCreator_registrator;
-static EnergyMethodRegistrator< pack::voids_penalty_energy::VoidsPenaltyEnergyCreator > VoidsPenaltyEnergyCreator_registrator;
+static EnergyMethodRegistrator< pack::guidance_scoreterms::buried_unsat_penalty::BuriedUnsatPenaltyCreator > BuriedUnsatPenaltyCreator_registrator;
+static EnergyMethodRegistrator< pack::guidance_scoreterms::voids_penalty_energy::VoidsPenaltyEnergyCreator > VoidsPenaltyEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< pack::dunbrack::DunbrackEnergyCreator > DunbrackEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::dunbrack::cenrot::CenRotDunEnergyCreator > CenRotDunEnergyCreator_registrator;

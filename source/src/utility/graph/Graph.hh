@@ -691,6 +691,9 @@ public:
 	Graph();
 
 	/// @brief num nodes ctor
+	/// @details Danger!  Danger!  The C++ standard prevents function overrides from being called from a
+	/// base class constructor.  If you use this constructor without subsequently calling set_num_nodes(),
+	/// you'll end up with a graph populated with utility::graph::Node nodes instead of derived nodes.
 	Graph(platform::Size num_nodes);
 
 	/// @brief copy ctor.  Must not be called by derived class copy ctors.

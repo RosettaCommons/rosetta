@@ -48,9 +48,11 @@ public:
 	/// @brief ResidueArrayAnnealableEnergy objects may optionally cache data within the EnergyMethod prior to a packer run.
 	/// This function is defined as doing nothing by default, but can be redefined on a per-EnergyMethod basis to cache whatever
 	/// data are necessary.
-	/// @details Note that this is strictly unidirectional: data can be cached FROM the Pose or ScoreFunction, not TO the Pose or ScoreFunction.
-	/// The method is nonconst to permit caching within the ResidueArrayAnnealableEnergy-derived EnergyMethod.
-	virtual void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose const &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn);
+	/// @details Note that this is generally intended so that data can be cached FROM the Pose or ScoreFunction, not TO the Pose or ScoreFunction.
+	/// There are exceptions, though: sometimes it is necessary to cache a large, reusable object within the Pose itself (e.g. in the datacache
+	/// of the Energies object in the Pose), and for that reason the pose is nonconst, here.
+	/// @note The method is nonconst to permit caching within the ResidueArrayAnnealableEnergy-derived EnergyMethod.
+	virtual void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn);
 
 	/// @brief What to do when a substitution that was considered is accepted.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

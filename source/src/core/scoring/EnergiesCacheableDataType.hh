@@ -42,11 +42,12 @@ enum Enum {
 	HBOND_TRIE_COLLECTION,
 	ELEC_TRIE_COLLECTION,
 	MM_LJ_TRIE_COLLECTION,
+	BURIED_UNSAT_HBOND_GRAPH,
 	// *** IMPORTANT ***
 	// The 'num_cacheable_data_types' below must be the last enum, and must
 	// always be set equal to the (last-1) enum.  If you append a new enum
 	// to the list, remember to change the value below!
-	num_cacheable_data_types = MM_LJ_TRIE_COLLECTION
+	num_cacheable_data_types = BURIED_UNSAT_HBOND_GRAPH
 };
 
 } // namespace EnergiesCacheableDataType

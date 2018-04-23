@@ -10,10 +10,12 @@
 /// @file core/select/util/burial_utilities.hh
 /// @brief Utilities for determining whether a point is within a cone.
 /// @author Gabe Rocklin (sidechain neighbour selection)
-/// @author Vikram K. Mulligan (vmullig@uw.edu -- moving this class to core and refactoring for noncanonicals)
+/// @author Vikram K. Mulligan (vmullig@uw.edu -- moving this class to core and refactoring for noncanonicals; added determine_whether_point_is_buried() function.)
 
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
+
+#include <core/pose/Pose.fwd.hh>
 
 #ifndef INCLUDED_core_select_util_burial_utilities_HH
 #define INCLUDED_core_select_util_burial_utilities_HH
@@ -51,6 +53,27 @@ inline core::Real calculate_point_in_cone(
 	}
 	return (dist_term * pow(angle_term, angle_exponent) );
 }
+
+/// @brief Given a point in 3D space, determine whether or not that point is buried by the method of sidechain neighbor cones.
+/// @note A crude distance cutoff metric is also used to make this calculation more efficient.
+/// @details Returns true for burial, false otherwise.
+/// @param[in] point_coordinates The 3D coordinates of the point in space.
+/// @param[in] pose The pose, for reference.
+/// @param[in] angle_exponent A value defining how rapidly the cone falls off in the angular direction.
+/// @param[in] angle_shift_factor A value that shifts the angluar falloff.
+/// @param[in] dist_exponent A value defining how rapidly the cone falls off with distance.
+/// @param[in] dist_midpoint A value defining the midpoint of the distance falloff.
+/// @param[in] burial_threshold The cutoff for considering a point to be buried.  Roughly, this is the number of cones that the point must be inside
+/// in order to consider it "buried".
+bool determine_whether_point_is_buried (
+	numeric::xyzVector<core::Real> const &point_coordinates,
+	core::pose::Pose const &pose,
+	core::Real const angle_exponent,
+	core::Real const angle_shift_factor,
+	core::Real const dist_exponent,
+	core::Real const dist_midpoint,
+	core::Real const burial_threshold
+);
 
 } //namespace util
 } //namespace select

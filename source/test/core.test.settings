@@ -188,6 +188,24 @@ sources = {
 		"RotamerConstraintDun2002",
 		"ValidateDunbrackBinaries",
 	],
+	"pack/guidance_scoreterms/buried_unsat_penalty/" : [
+		#"BuriedUnsatPenaltySymmetricTests",
+		"BuriedUnsatPenaltyTests",
+	],
+	"pack/guidance_scoreterms/buried_unsat_penalty/graph" : [
+		"BuriedUnsatPenaltyGraphTests",
+		#"BuriedUnsatPenaltyGraphSymmetricTests",
+	],
+	"pack/guidance_scoreterms/hbnet_energy" : [
+		"HBNetEnergyTests",
+	],
+	"pack/guidance_scoreterms/voids_penalty_energy" : [
+		"VoidsPenaltyEnergyTests",
+		"VoidsPenaltyEnergyTests_symm",
+		"VoidsPenaltyVoxelGridTests",
+		"VoidsPenaltyVoxelGridTests_rotamer_setup",
+		"VoidsPenaltyVoxelGridTests_rotamer_setup_2",
+	],
 	"pack/interaction_graph" : [
 		"InteractionGraphFactory",
 		"FASTERInteractionGraph",
@@ -234,13 +252,6 @@ sources = {
 		"SCMinMinimizerMap",
 		"SCMinMultifunc",
 		"rtmin_setup",
-	],
-	"pack/voids_penalty_energy" : [
-		"VoidsPenaltyEnergyTests",
-		"VoidsPenaltyEnergyTests_symm",
-		"VoidsPenaltyVoxelGridTests",
-		"VoidsPenaltyVoxelGridTests_rotamer_setup",
-		"VoidsPenaltyVoxelGridTests_rotamer_setup_2",
 	],
 	"pose" : [
 		"annotated_sequence",
@@ -436,9 +447,6 @@ sources = {
 	"scoring/geometric_solvation" : [
 		"GeometricSolEnergy",
 		"OccludedHbondSolEnergy",
-	],
-	"scoring/hbnet_energy" : [
-		"HBNetEnergyTests",
 	],
 	"scoring/hbonds" : [
 		"HBondDatabaseTest",
@@ -914,6 +922,15 @@ testinputfiles = [
 	"pack/SymmetricRotamerTrials.u",
 	"pack/dunbrack/dummy_type.params",
 	"pack/dunbrack/1UBQ_repack.pdb",
+	"pack/guidance_scoreterms/buried_unsat_penalty/C3.symm",
+	"pack/guidance_scoreterms/buried_unsat_penalty/graph/hbnet_testcase1.pdb",
+	"pack/guidance_scoreterms/buried_unsat_penalty/graph/hbnet_testcase1_symm.pdb",
+	"pack/guidance_scoreterms/buried_unsat_penalty/graph/hbnet_testcase2.pdb",
+	"pack/guidance_scoreterms/buried_unsat_penalty/graph/hbnet_testcase2_symm.pdb",
+	"pack/guidance_scoreterms/hbnet_energy/hbnet_energy_test1.pdb",
+	"pack/guidance_scoreterms/hbnet_energy/S4.symm",
+	"pack/guidance_scoreterms/voids_penalty_energy/1ubq.pdb",
+	"pack/guidance_scoreterms/voids_penalty_energy/d2.symm",
 	"pack/interaction_graph/resfile",
 	"pack/interaction_graph/fibril.silent",
 	"pack/rotamer_set/test_rotamer_sets.pdb",
@@ -939,8 +956,6 @@ testinputfiles = [
 	"pack/task/test_in.resfile",
 	"pack/task/operation/DisallowIfNonnativeTaskOperation.u",
 	"pack/task/operation/ReplicateTaskOperation.u",
-	"pack/voids_penalty_energy/1ubq.pdb",
-	"pack/voids_penalty_energy/d2.symm",
 	"pose/pdbinfo_test_in.pdb",
 	"pose/2WDQ__tr.pdb",
 	"pose/multichain.pdb",
@@ -981,8 +996,6 @@ testinputfiles = [
 	"scoring/fiber_diffraction/data/1ifp.mini.dat",
 	"scoring/fiber_diffraction/data/helix_denovo.sdef",
 	"scoring/func/GaussianFunc.u",
-	"scoring/hbnet_energy/hbnet_energy_test1.pdb",
-	"scoring/hbnet_energy/S4.symm",
 	"scoring/hbond_sr_bb.data",
 	"scoring/hbonds/1ubq_23_to_34.pdb",
 	"scoring/hbonds/bad_symm_hbonds.silent",

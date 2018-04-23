@@ -525,6 +525,68 @@ public:
 	bool fa_stack_base_all() const;
 	void fa_stack_base_all( bool const setting );
 
+	/// @brief Set the angle exponent for calculating burial by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void buried_unsatisfied_penalty_cone_angle_exponent( core::Real const setting );
+
+	/// @brief Set the angle shift factor for calculating burial by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void buried_unsatisfied_penalty_cone_angle_shift_factor( core::Real const setting );
+
+	/// @brief Set the distance exponent for calculating burial by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void buried_unsatisfied_penalty_cone_dist_exponent( core::Real const setting );
+
+	/// @brief Set the distance midpoint for calculating burial by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void buried_unsatisfied_penalty_cone_dist_midpoint( core::Real const setting );
+
+	/// @brief Set the number of cones in which a point must lie to be considered "buried"
+	/// by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void buried_unsatisfied_penalty_burial_threshold( core::Real const setting );
+
+	/// @brief Set the energy threshold above which a hydrogen bond is not counted.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void buried_unsatisfied_penalty_hbond_energy_threshold( core::Real const setting );
+
+	/// @brief Get the angle exponent for calculating burial by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::Real buried_unsatisfied_penalty_cone_angle_exponent() const;
+
+	/// @brief Get the angle shift factor for calculating burial by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::Real buried_unsatisfied_penalty_cone_angle_shift_factor() const;
+
+	/// @brief Get the distance exponent for calculating burial by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::Real buried_unsatisfied_penalty_cone_dist_exponent() const;
+
+	/// @brief Get the distance midpoint for calculating burial by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::Real buried_unsatisfied_penalty_cone_dist_midpoint() const;
+
+	/// @brief Get the number of cones in which a point must lie to be considered "buried"
+	/// by the method of sidechain neighbor cones.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::Real buried_unsatisfied_penalty_burial_threshold() const;
+
+	/// @brief Get the energy threshold above which a hydrogen bond is not counted.
+	/// @details Used by the BuriedUnsatPenalty energy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::Real buried_unsatisfied_penalty_hbond_energy_threshold() const;
+
 	utility::vector1< core::Real > const & get_density_sc_scale_byres() const;
 	void set_density_sc_scale_byres(core::Real newscscale);
 	void set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale);
@@ -715,6 +777,14 @@ private:
 	bool symmetric_gly_tables_;
 	bool loop_close_use_6D_potential_;
 	bool fa_stack_base_all_;
+
+	//Options for the BuriedUnsatPenalty energy:
+	core::Real buried_unsatisfied_penalty_cone_angle_exponent_;
+	core::Real buried_unsatisfied_penalty_cone_angle_shift_factor_;
+	core::Real buried_unsatisfied_penalty_cone_dist_exponent_;
+	core::Real buried_unsatisfied_penalty_cone_dist_midpoint_;
+	core::Real buried_unsatisfied_penalty_burial_threshold_;
+	core::Real buried_unsatisfied_penalty_hbond_energy_threshold_;
 
 	//Options for the VoidsPenaltyEnergy:
 	core::Size voids_penalty_energy_containing_cones_cutoff_;
