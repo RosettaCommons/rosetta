@@ -144,6 +144,11 @@ def list_external_files(path_to_mini, external_name):
 
         full_path = path_to_external + dir
 
+        if not os.path.exists(full_path) and 'only_with_extras' in settings_dict and settings_dict['only_with_extras']:
+            # This may be part of a submodule which isn't currently loaded, but isn't needed for the current only_with_extras build
+            # Don't crash (yet).
+            continue
+
         old_srcfiles = srcfiles
         srcfiles = []
         for srcfile in old_srcfiles:
@@ -225,8 +230,9 @@ def external_main(path_to_mini, argv, project_external_callback = None):
 
         project_path, project_files, other_settings = list_external_files(path_to_mini, external)
         if project_files:
-            project_external_callback(external, project_path, project_files, other_settings)
-            buildable_externals.append(external)
+            can_build = project_external_callback(external, project_path, project_files, other_settings)
+            if can_build:
+                buildable_externals.append(external)
 
     update_externals_list(buildable_externals)
 
