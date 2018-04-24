@@ -145,13 +145,8 @@ void BuriedUnsatPenalty::finalize_total_energy(
 	core::scoring::ScoreFunction const & /*sfxn*/,
 	core::scoring::EnergyMap & totals
 ) const {
-
 	if ( disabled_ ) return; //Do nothing during minimization trajectories.
-
-	runtime_assert_string_msg( !core::pose::symmetry::is_symmetric( pose ), "The buried_unsatisfied_penalty scoreterm is incompatible with symmetric poses at this time." );
-
 	totals[ core::scoring::buried_unsatisfied_penalty ] += calculate_penalty_once_from_scratch( pose );
-
 }
 
 /// @brief Calculate the total energy given a vector of const owning pointers to residues.
@@ -223,8 +218,6 @@ BuriedUnsatPenalty::set_up_residuearrayannealableenergy_for_packing (
 	core::scoring::ScoreFunction const & /*sfxn*/
 ) {
 	TR << "Setting up BuriedUnsatPenalty energy method for packing." << std::endl;
-
-	runtime_assert_string_msg( !core::pose::symmetry::is_symmetric( pose ), "The buried_unsatisfied_penalty scoreterm is incompatible with symmetric poses at this time." );
 
 	// Store information for symmetry:
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -343,6 +336,10 @@ BuriedUnsatPenalty::calculate_penalty_once_from_scratch(
 		oversat_acceptor_count *= symm_multiplier;
 		oversat_donor_count *= symm_multiplier;
 		oversat_acceptor_and_donor_count *= symm_multiplier;
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Computing penalty once from scratch.  Found unsat_acceptor=" << unsat_acceptor_count << " unsat_donor=" << unsat_donor_count << " unsat_acceptor_and_donor=" << unsat_acceptor_and_donor_count << " oversat_acceptor=" << oversat_acceptor_count << " oversat_donor=" << oversat_donor_count << " oversat_acceptor_and_donor=" << oversat_acceptor_and_donor_count << std::endl;
 	}
 
 	return compute_penalty( unsat_acceptor_count, unsat_donor_count, unsat_acceptor_and_donor_count, oversat_acceptor_count, oversat_donor_count, oversat_acceptor_and_donor_count );

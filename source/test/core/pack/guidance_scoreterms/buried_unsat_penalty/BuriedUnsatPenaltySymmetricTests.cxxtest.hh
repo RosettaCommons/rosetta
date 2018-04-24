@@ -115,30 +115,117 @@ public:
 		TS_ASSERT_DELTA( asymmpose.energies().total_energy(), EXPECTED_ENERGY, 1e-6 );
 		TS_ASSERT_DELTA( pose.energies().total_energy(), asymmpose.energies().total_energy(), 1e-6 );
 
-		pose.dump_pdb("BURIED_UNSAT_PENALTY_SYMMETRIC_SIMPLE_SCORING.pdb"); //DELETE ME
+		/*pose.dump_pdb("BURIED_UNSAT_PENALTY_SYMMETRIC_SIMPLE_SCORING.pdb"); //DELETE ME
 		{
-			//The following nonsense is just to dump out the groups:
-			core::scoring::methods::EnergyMethodOptions options;
-			core::pack::guidance_scoreterms::buried_unsat_penalty::BuriedUnsatPenalty scoreterm( options );
-			core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_(pose) );
-			for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
-				(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(i))).restrict_to_repacking();
-			}
-			task->request_symmetrize_by_intersection();
-			core::pack::task::PackerTaskOP symmtask( core::pack::make_new_symmetric_PackerTask_by_requested_method( pose, task ) );
-
-			core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets( utility::pointer::make_shared< core::pack::rotamer_set::symmetry::SymmetricRotamerSets >() );
-			rotsets->set_task( symmtask );
-			rotsets->initialize_pose_for_rotsets_creation(pose);
-			utility::graph::GraphOP packer_neighbor_graph( core::pack::create_packer_graph( pose, sfxn, symmtask ) );
-			rotsets->build_rotamers(pose, sfxn, packer_neighbor_graph);
-			rotsets->prepare_sets_for_packing(pose, sfxn);
-			scoreterm.set_up_residuearrayannealableenergy_for_packing( pose, *rotsets, sfxn );
-			scoreterm.provide_pymol_commands_to_show_groups( TR, pose );
-			TR.flush();
+		//The following nonsense is just to dump out the groups:
+		core::scoring::methods::EnergyMethodOptions options;
+		core::pack::guidance_scoreterms::buried_unsat_penalty::BuriedUnsatPenalty scoreterm( options );
+		core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_(pose) );
+		for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(i))).restrict_to_repacking();
 		}
+		task->request_symmetrize_by_intersection();
+		core::pack::task::PackerTaskOP symmtask( core::pack::make_new_symmetric_PackerTask_by_requested_method( pose, task ) );
+
+		core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets( utility::pointer::make_shared< core::pack::rotamer_set::symmetry::SymmetricRotamerSets >() );
+		rotsets->set_task( symmtask );
+		rotsets->initialize_pose_for_rotsets_creation(pose);
+		utility::graph::GraphOP packer_neighbor_graph( core::pack::create_packer_graph( pose, sfxn, symmtask ) );
+		rotsets->build_rotamers(pose, sfxn, packer_neighbor_graph);
+		rotsets->prepare_sets_for_packing(pose, sfxn);
+		scoreterm.set_up_residuearrayannealableenergy_for_packing( pose, *rotsets, sfxn );
+		scoreterm.provide_pymol_commands_to_show_groups( TR, pose );
+		TR.flush();
+		}*/
 
 		protocols::simple_moves::MutateResidue mutres( 54, "ASP" ); //Mutate a hydrogen bond-forming residue.
+		mutres.apply(pose);
+
+		protocols::simple_moves::MutateResidue mutres2( 129, "ASP" ); //Mutate the symmetry copies of the hydrogen bond-forming residue.
+		protocols::simple_moves::MutateResidue mutres3( 204, "ASP" ); //Mutate the symmetry copies of the hydrogen bond-forming residue.
+		mutres.apply(asymmpose);
+		mutres2.apply(asymmpose);
+		mutres3.apply(asymmpose);
+
+		// This should result in 9 more acceptors unsatisfied (2 in each asp, plus 1 in the adjacent his, times 3 symmetry subunits).
+		sfxn(pose); //Rescore
+		asymmsfxn(asymmpose); //Rescore
+		TS_ASSERT_DELTA( pose.energies().total_energy(), static_cast< core::Real >( std::pow( 18*5, 2 ) ), 1e-6 );
+		TS_ASSERT_DELTA( asymmpose.energies().total_energy(), static_cast< core::Real >( std::pow( 18*5, 2 ) ), 1e-6 );
+		TS_ASSERT_DELTA( pose.energies().total_energy(), asymmpose.energies().total_energy(), 1e-6 );
+	}
+
+	/// @brief Simple test: just score a smaller pose.
+	void test_simple_symmetric_scoring2(){
+		core::pose::Pose asymmpose;
+		core::import_pose::pose_from_file( asymmpose, "core/pack/guidance_scoreterms/buried_unsat_penalty/graph/hbnet_testcase2.pdb"  );
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, "core/pack/guidance_scoreterms/buried_unsat_penalty/graph/hbnet_testcase2_symm.pdb"  );
+		{ //Set up symmetry:
+			protocols::symmetry::SetupForSymmetryMover setupsymm;
+			setupsymm.process_symmdef_file( "core/pack/guidance_scoreterms/buried_unsat_penalty/C3.symm" );
+			setupsymm.apply(pose);
+		}
+
+		core::scoring::methods::EnergyMethodOptions options;
+		options.buried_unsatisfied_penalty_burial_threshold(1.0);
+		core::scoring::ScoreFunction asymmsfxn;
+		asymmsfxn.set_energy_method_options(options);
+		asymmsfxn.set_weight( core::scoring::buried_unsatisfied_penalty, 1.0 );
+
+		try {
+			asymmsfxn(asymmpose);
+		} catch( utility::excn::Exception & exception ) {
+			TR << "Exception caught in unit test: " << exception.msg() << std::endl;
+			TS_ASSERT(false);
+		} catch ( ... ) {
+			TR << "Unhandled exception caught in unit test!" << std::endl;
+			TS_ASSERT(false);
+		}
+
+		core::scoring::symmetry::SymmetricScoreFunction sfxn;
+		sfxn.set_energy_method_options(options);
+		sfxn.set_weight( core::scoring::buried_unsatisfied_penalty, 1.0 );
+
+		try {
+			sfxn(pose);
+		} catch( utility::excn::Exception & exception ) {
+			TR << "Exception caught in unit test: " << exception.msg() << std::endl;
+			TS_ASSERT(false);
+		} catch ( ... ) {
+			TR << "Unhandled exception caught in unit test!" << std::endl;
+			TS_ASSERT(false);
+		}
+
+		core::Real const EXPECTED_ENERGY( std::pow( 9*5, 2 ) ); //Nine unsats.
+		TS_ASSERT_DELTA( pose.energies().total_energy(), EXPECTED_ENERGY, 1e-6 );
+		TS_ASSERT_DELTA( asymmpose.energies().total_energy(), EXPECTED_ENERGY, 1e-6 );
+		TS_ASSERT_DELTA( pose.energies().total_energy(), asymmpose.energies().total_energy(), 1e-6 );
+
+		/*pose.dump_pdb("BURIED_UNSAT_PENALTY_SYMMETRIC_SIMPLE_SCORING2.pdb"); //DELETE ME
+		{
+		//The following nonsense is just to dump out the groups:
+		core::scoring::methods::EnergyMethodOptions options;
+		core::pack::guidance_scoreterms::buried_unsat_penalty::BuriedUnsatPenalty scoreterm( options );
+		core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_(pose) );
+		for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(i))).restrict_to_repacking();
+		}
+		task->request_symmetrize_by_intersection();
+		core::pack::task::PackerTaskOP symmtask( core::pack::make_new_symmetric_PackerTask_by_requested_method( pose, task ) );
+
+		core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets( utility::pointer::make_shared< core::pack::rotamer_set::symmetry::SymmetricRotamerSets >() );
+		rotsets->set_task( symmtask );
+		rotsets->initialize_pose_for_rotsets_creation(pose);
+		utility::graph::GraphOP packer_neighbor_graph( core::pack::create_packer_graph( pose, sfxn, symmtask ) );
+		rotsets->build_rotamers(pose, sfxn, packer_neighbor_graph);
+		rotsets->prepare_sets_for_packing(pose, sfxn);
+		scoreterm.set_up_residuearrayannealableenergy_for_packing( pose, *rotsets, sfxn );
+		scoreterm.provide_pymol_commands_to_show_groups( TR, pose );
+		TR.flush();
+		}*/
+
+		protocols::simple_moves::MutateResidue mutres( 2, "ASP" ); //Mutate a hydrogen bond-forming residue.
 		mutres.apply(pose);
 		// This should result in 6 acceptors unsatisfied.
 		sfxn(pose); //Rescore
@@ -244,8 +331,7 @@ public:
 		(utility::pointer::static_pointer_cast< core::pack::guidance_scoreterms::buried_unsat_penalty::graph::BuriedUnsatPenaltyGraphContainer const >( pose.energies().data().get_ptr( core::scoring::EnergiesCacheableDataType::BURIED_UNSAT_HBOND_GRAPH ) ))->graph()->provide_pymol_commands_to_show_groups( TR, pose );
 		TR.flush();
 
-		pose.dump_pdb( "BURIED_UNSAT_TESTPOSE_SYMM_PACKRESULT.pdb" ); //DELETE ME.
-
+		//pose.dump_pdb( "BURIED_UNSAT_TESTPOSE_SYMM_PACKRESULT.pdb" ); //DELETE ME.
 	}
 
 

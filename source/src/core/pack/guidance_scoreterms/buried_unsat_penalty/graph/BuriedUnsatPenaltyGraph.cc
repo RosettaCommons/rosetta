@@ -328,10 +328,10 @@ BuriedUnsatPenaltyNode::initialize_node(
 	}
 
 	//Detect intra-residue hydrogen bonds:
-	detect_intra_residue_hydrogen_bonds( *residue, hbond_database );
+	detect_intra_residue_hydrogen_bonds( *residue, hbond_database, new_stored_data );
 	//In the symmetric case, detect hydrogen bonds between this residue and its symmetry mates:
 	if ( is_symmetric ) {
-		detect_intra_residue_hydrogen_bonds_symmetric( residue_position, pose, symminfo, hbond_database, *hbond_options );
+		detect_intra_residue_hydrogen_bonds_symmetric( residue_position, residue, pose, symminfo, hbond_database, *hbond_options, new_stored_data );
 	}
 
 	donated_hbond_count_.resize( donor_acceptor_groups.size() );
@@ -467,10 +467,9 @@ BuriedUnsatPenaltyNode::is_buried(
 void
 BuriedUnsatPenaltyNode::detect_intra_residue_hydrogen_bonds(
 	core::conformation::Residue const &residue,
-	core::scoring::hbonds::HBondDatabase const &hbond_database
+	core::scoring::hbonds::HBondDatabase const &hbond_database,
+	BuriedUnsatPenaltyNodeDataOP new_stored_data
 ) {
-	BuriedUnsatPenaltyNodeDataOP new_stored_data( stored_data_->clone() );
-	stored_data_ = new_stored_data; //Nonconst to const.
 
 	//Initialize:
 	utility::vector1< BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup > const & donor_acceptor_groups( new_stored_data->donor_acceptor_groups() );
@@ -517,15 +516,15 @@ BuriedUnsatPenaltyNode::detect_intra_residue_hydrogen_bonds(
 void
 BuriedUnsatPenaltyNode::detect_intra_residue_hydrogen_bonds_symmetric(
 	core::Size const res_index,
+	core::conformation::ResidueCOP rotamer,
 	core::pose::Pose const &pose,
 	core::conformation::symmetry::SymmetryInfoCOP const symminfo,
 	core::scoring::hbonds::HBondDatabase const &hbond_database,
-	core::scoring::hbonds::HBondOptions const &hbond_options
+	core::scoring::hbonds::HBondOptions const &hbond_options,
+	BuriedUnsatPenaltyNodeDataOP new_stored_data
 ) {
 	runtime_assert( symminfo->bb_is_independent(res_index) );
-
-	BuriedUnsatPenaltyNodeDataOP new_stored_data( stored_data_->clone() );
-	stored_data_ = new_stored_data; //Nonconst to const.
+	bool const rotamer_matches_pose( rotamer == pose.conformation().residue_cop(res_index) );
 
 	utility::vector1< core::Size > &donor_acceptor_groups_equivalent_res_symmetry_copy_hbonds_accepted(new_stored_data->donor_acceptor_groups_equivalent_res_symmetry_copy_hbonds_accepted() );
 	utility::vector1< core::Size > &donor_acceptor_groups_equivalent_res_symmetry_copy_hbonds_donated(new_stored_data->donor_acceptor_groups_equivalent_res_symmetry_copy_hbonds_donated() );
@@ -535,12 +534,30 @@ BuriedUnsatPenaltyNode::detect_intra_residue_hydrogen_bonds_symmetric(
 	donor_acceptor_groups_equivalent_res_symmetry_copy_hbonds_accepted.resize( ngroups, 0 );
 	donor_acceptor_groups_equivalent_res_symmetry_copy_hbonds_donated.resize( ngroups, 0 );
 
-	core::conformation::Residue const &res1( pose.residue(res_index) );
+	// Get the symmetric conformation.  Note: no type-checking except in debug mode.
+	debug_assert( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::SymmetricConformation const >( pose.conformation_ptr() ) != nullptr );
+	core::conformation::symmetry::SymmetricConformationCOP symmconf( utility::pointer::static_pointer_cast< core::conformation::symmetry::SymmetricConformation const >( pose.conformation_ptr() ) );
+
+	// Get mirror symmetry info, if available.  Will be nullptr if not a mirror symmetric pose.
+	core::conformation::symmetry::MirrorSymmetricConformationCOP mirrorsymmconf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::MirrorSymmetricConformation const >( pose.conformation_ptr() ) /*Will be nullptr if this is symmetric but not mirror symmetric.*/ );
+
 	utility::vector1< core::Size > symm_copies( symminfo->bb_clones(res_index) );
 	for ( core::Size i(1), imax(symm_copies.size()); i<=imax; ++i ) {
 		core::Size const symm_copy( symm_copies[i] );
 		debug_assert ( symm_copy != res_index );
-		core::scoring::hbonds::HBondSet hbondset( hbond_options, res1, pose.residue(symm_copy), hbond_database );
+		core::conformation::ResidueCOP rotamer_copy(nullptr);
+		if ( rotamer_matches_pose ) {
+			rotamer_copy = pose.conformation().residue_cop( symm_copy );
+		} else {
+			core::conformation::ResidueOP rotamer_copy_nonconst = ( mirrorsymmconf != nullptr && mirrorsymmconf->res_is_mirrored( symm_copy ) ? rotamer->clone_flipping_chirality( *( symmconf->residue_type_set_for_conf( rotamer->type().mode() ) ) ) : rotamer->clone() );
+			for ( core::Size ia(1), iamax(rotamer_copy_nonconst->natoms()); ia<=iamax; ++ia ) {
+				rotamer_copy_nonconst->set_xyz(ia, symmconf->apply_transformation_norecompute( rotamer->xyz(ia), res_index, symm_copy ) );
+			}
+			rotamer_copy_nonconst->update_actcoord();
+			rotamer_copy_nonconst->seqpos(symm_copy); //for correct node indexing later
+			rotamer_copy = rotamer_copy_nonconst;
+		}
+		core::scoring::hbonds::HBondSet hbondset( hbond_options, *rotamer, *rotamer_copy, hbond_database );
 		if ( hbondset.nhbonds() > 0 ) {
 			for ( core::Size j(1), jmax( hbondset.nhbonds() ); j<=jmax; ++j ) {
 				core::scoring::hbonds::HBond const & curhbond( hbondset.hbond(j) );
@@ -551,7 +568,7 @@ BuriedUnsatPenaltyNode::detect_intra_residue_hydrogen_bonds_symmetric(
 				//means that it doesn't matter which residue index is the acceptor and which is the donor.
 				bool const acc_group_is_original( curhbond.acc_res() == res_index );
 				core::Size const acc_group( new_stored_data->group_heavyatom_index_to_group_index().at( curhbond.acc_atm() ) );
-				core::Size const don_group( new_stored_data->group_heavyatom_index_to_group_index().at( res1.icoor( curhbond.don_hatm() ).stub_atom1().atomno() ) );
+				core::Size const don_group( new_stored_data->group_heavyatom_index_to_group_index().at( rotamer->icoor( curhbond.don_hatm() ).stub_atom1().atomno() ) );
 				if ( acc_group_is_original ) {
 					++(new_stored_data->donor_acceptor_groups_equivalent_res_symmetry_copy_hbonds_accepted()[acc_group]);
 				} else {
@@ -881,6 +898,7 @@ BuriedUnsatPenaltyGraph::initialize_graph_for_packing(
 										}
 										newres->update_actcoord();
 									}
+									newres->seqpos(j); //for correct node indexing later
 									res2 = newres; //nonconst to const
 								} else {
 									core::conformation::ResidueOP newres( pose.conformation().residue_cop(jsymmindex)->clone() );
@@ -913,9 +931,14 @@ BuriedUnsatPenaltyGraph::initialize_graph_for_packing(
 											core::Size const acceptor_group_index( node1_is_acceptor ? node1->get_donor_acceptor_group_from_heavyatom_index(curhbond.acc_atm()) : node2->get_donor_acceptor_group_from_heavyatom_index(curhbond.acc_atm()) );
 											core::Size const don_hatm_parent( node1_is_acceptor ? res2->icoor( curhbond.don_hatm() ).stub_atom1().atomno() : res1.icoor( curhbond.don_hatm() ).stub_atom1().atomno() );
 											core::Size const donor_group_index( node1_is_acceptor ? node2->get_donor_acceptor_group_from_heavyatom_index(don_hatm_parent) : node1->get_donor_acceptor_group_from_heavyatom_index(don_hatm_parent) );
-											//TODO -- update the stored hbonds so that they can report which symmetry copies are involved.
 											newly_added_edge->add_hbond( lower_numbered_node_is_acceptor, acceptor_group_index, donor_group_index, curhbond.energy(), is_symmetric ? (jsymm < jsymmmax ? jsymm + 1 : 1) : 1, 1 );
-											TR.Debug << "Added hbond between position " << i << ", rotamer " << ii << " and position " << j << ", rotamer " << jj << "." << std::endl;
+											if ( TR.Debug.visible() ) {
+												TR.Debug << "Added hbond between position " << i << ", rotamer " << ii << " and position " << j << ", rotamer " << jj;
+												if ( is_symmetric ) {
+													TR.Debug << " symmcopy " << (jsymm < jsymmmax ? jsymm + 1 : 1);
+												}
+												TR.Debug << "." << std::endl;
+											}
 										}
 									} //Loop through all hydrogen bonds between pair
 								}
@@ -958,11 +981,15 @@ BuriedUnsatPenaltyGraph::compute_unsats_for_node(
 			if ( this_node_is_acceptor ) {
 				core::Size const acceptor_group_index( curhbond.acceptor_group() );
 				BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup const & acceptor_group( curnode.donor_acceptor_group(acceptor_group_index) );
-				if ( acceptor_group.is_counted() && ( curhbond.acceptor_symmetry_copy_index() == 1 ) ) curnode.increment_accepted_hbond_count_for_group(acceptor_group_index);
+				if ( curhbond.acceptor_symmetry_copy_index() == 1 || curhbond.donor_symmetry_copy_index() == 1 ) {
+					if ( acceptor_group.is_counted() ) curnode.increment_accepted_hbond_count_for_group(acceptor_group_index);
+				}
 			} else {
 				core::Size const donor_group_index( curhbond.donor_group() );
 				BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup const & donor_group( curnode.donor_acceptor_group(donor_group_index) );
-				if ( donor_group.is_counted() && ( curhbond.donor_symmetry_copy_index() == 1 ) ) curnode.increment_donated_hbond_count_for_group(donor_group_index);
+				if ( curhbond.donor_symmetry_copy_index() == 1 || curhbond.acceptor_symmetry_copy_index() == 1 ) {
+					if ( donor_group.is_counted() ) curnode.increment_donated_hbond_count_for_group(donor_group_index);
+				}
 			}
 		} //Loop through hbonds for this edge.
 	} //Loop through edges

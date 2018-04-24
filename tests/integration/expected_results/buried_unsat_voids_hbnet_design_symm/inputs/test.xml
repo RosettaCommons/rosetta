@@ -1,0 +1,82 @@
+<ROSETTASCRIPTS>
+	# Design the core of a helical bundle, requiring
+	# very few voids in the core. 
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" symmetric="true" />
+		<ScoreFunction name="r15_mod" weights="ref2015_cst.wts" symmetric="true" >
+			<Reweight scoretype="aa_composition" weight="1.0" />
+			<Reweight scoretype="voids_penalty" weight="1.0" />
+			<Reweight scoretype="hbnet" weight="0.2" />
+			<Set hbnet_bonus_function_ramping="logarithmic" />
+			<Reweight scoretype="buried_unsatisfied_penalty" weight="0.5" />
+			<Set buried_unsatisfied_penalty_burial_threshold="3" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer name="select_surf" select_core="false" select_boundary="false" select_surface="true" />
+		<Not name="select_not_surf" selector="select_surf" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<IncludeCurrent name="include_current" />
+		<OperateOnResidueSubset name="no_repack_surf" selector="select_surf" >
+			<PreventRepackingRLT />
+		</OperateOnResidueSubset>
+		<ReadResfile name="allowed_for_design" filename="inputs/design.resfile" selector="select_not_surf" />
+		<LimitAromaChi2 name="limit_aro" />
+		<ExtraRotamersGeneric name="extra_rots" ex1="false" ex2="false" ex1aro="true" ex2aro="false" extrachi_cutoff="10"/>
+	</TASKOPERATIONS>
+	<FILTERS>
+		<CavityVolume name="cavity_volume" />
+	</FILTERS>
+	<MOVERS>
+
+		<AtomTree name="foldtree1" fold_tree_file="inputs/foldtree1.txt" />
+
+		<SetupForSymmetry name="symm_c3" definition="inputs/C3.symm" />
+
+		<AddConstraintsToCurrentConformationMover name="add_csts" coord_dev="0.5" CA_only="false" bb_only="true" />
+
+		<AddCompositionConstraintMover name="add_comp_csts" filename="inputs/design.comp" selector="select_not_surf" />
+
+		<FastDesign name="design" scorefxn="r15_mod" repeats="1" task_operations="no_repack_surf,allowed_for_design,include_current,limit_aro,extra_rots" >
+			<MoveMap name="design_mm" >
+				<Span begin="1" end="72" bb="false" chi="true" />
+				<Jump number="1" setting="false" />
+				<Jump number="2" setting="false" />
+				<Jump number="3" setting="false" />
+				<Jump number="4" setting="false" />
+				<Jump number="5" setting="false" />
+				<Jump number="6" setting="false" />
+				<Jump number="7" setting="false" />
+				<Jump number="8" setting="false" />
+				<Jump number="9" setting="false" />
+			</MoveMap>
+		</FastDesign>
+		<FastDesign name="design2" scorefxn="r15_mod" repeats="1" task_operations="no_repack_surf,allowed_for_design,include_current,limit_aro,extra_rots" >
+			<MoveMap name="design_mm" >
+				<Span begin="1" end="72" bb="false" chi="true" />
+				<Jump number="1" setting="true" />
+				<Jump number="2" setting="true" />
+				<Jump number="3" setting="true" />
+				<Jump number="4" setting="true" />
+				<Jump number="5" setting="true" />
+				<Jump number="6" setting="true" />
+				<Jump number="7" setting="true" />
+				<Jump number="8" setting="true" />
+				<Jump number="9" setting="true" />
+			</MoveMap>
+		</FastDesign>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="foldtree1" />	
+		<Add mover="symm_c3" />
+		<Add mover="add_csts" />
+		<Add mover="add_comp_csts" />
+		<Add mover="design" />
+		<Add mover="design2" />
+		<Add filter="cavity_volume" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_mod" />
+</ROSETTASCRIPTS>

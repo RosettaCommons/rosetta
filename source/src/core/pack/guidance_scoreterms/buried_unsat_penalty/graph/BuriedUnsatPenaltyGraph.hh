@@ -418,13 +418,13 @@ private: //Private functions
 	/// @note This version is for the ASYMMETRIC and SYMMETRIC cases.  It only detects the intraresidue hbonds.  In the symmetric case,
 	/// the detect_intra_residue_hydrogen_bonds_symmetric() function should be called immediately after this to detect the interresidue hbonds
 	/// between this residue and its symmetry mates.
-	void detect_intra_residue_hydrogen_bonds( core::conformation::Residue const &residue, core::scoring::hbonds::HBondDatabase const &hbond_database );
+	void detect_intra_residue_hydrogen_bonds( core::conformation::Residue const &residue, core::scoring::hbonds::HBondDatabase const &hbond_database, BuriedUnsatPenaltyNodeDataOP new_stored_data );
 
 	/// @brief Given a residue, detect intramolecular hydrogen bonds.
 	/// @details Populates the donor_acceptor_groups_intrares_hbonds_donated_ and donor_acceptor_groups_intrares_hbonds_accepted_ lists.
 	/// @note This version is for the SYMMETRIC case.  It detects interresidue hbonds between this residue and its symmetry mates.  This should be
 	/// called after detect_intra_residue_hydrogen_bonds().
-	void detect_intra_residue_hydrogen_bonds_symmetric( core::Size const res_index, core::pose::Pose const &pose, core::conformation::symmetry::SymmetryInfoCOP const symminfo, core::scoring::hbonds::HBondDatabase const &hbond_database, core::scoring::hbonds::HBondOptions const &hbond_options );
+	void detect_intra_residue_hydrogen_bonds_symmetric( core::Size const res_index, core::conformation::ResidueCOP rotamer, core::pose::Pose const &pose, core::conformation::symmetry::SymmetryInfoCOP const symminfo, core::scoring::hbonds::HBondDatabase const &hbond_database, core::scoring::hbonds::HBondOptions const &hbond_options, BuriedUnsatPenaltyNodeDataOP new_stored_data );
 
 
 private:

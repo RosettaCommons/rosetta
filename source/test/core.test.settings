@@ -189,12 +189,12 @@ sources = {
 		"ValidateDunbrackBinaries",
 	],
 	"pack/guidance_scoreterms/buried_unsat_penalty/" : [
-		#"BuriedUnsatPenaltySymmetricTests",
+		"BuriedUnsatPenaltySymmetricTests",
 		"BuriedUnsatPenaltyTests",
 	],
 	"pack/guidance_scoreterms/buried_unsat_penalty/graph" : [
 		"BuriedUnsatPenaltyGraphTests",
-		#"BuriedUnsatPenaltyGraphSymmetricTests",
+		"BuriedUnsatPenaltyGraphSymmetricTests",
 	],
 	"pack/guidance_scoreterms/hbnet_energy" : [
 		"HBNetEnergyTests",
