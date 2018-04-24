@@ -16,6 +16,9 @@
 		<Layer name="select_surf" select_core="false" select_boundary="false" select_surface="true" />
 		<Not name="select_not_surf" selector="select_surf" />
 	</RESIDUE_SELECTORS>
+	<SIMPLE_METRICS>
+		<PolarGroupBurialPyMolStringMetric name="pymol_string" scorefxn="r15_mod" verbose="true" />
+	</SIMPLE_METRICS>
 	<TASKOPERATIONS>
 		<IncludeCurrent name="include_current" />
 		<OperateOnResidueSubset name="no_repack_surf" selector="select_surf" >
@@ -66,6 +69,7 @@
 				<Jump number="9" setting="true" />
 			</MoveMap>
 		</FastDesign>
+		<RunSimpleMetrics name="add_pymol_string" metrics="pymol_string" />
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
@@ -77,6 +81,7 @@
 		<Add mover="design" />
 		<Add mover="design2" />
 		<Add filter="cavity_volume" />
+		<Add mover="add_pymol_string" />
 	</PROTOCOLS>
 	<OUTPUT scorefxn="r15_mod" />
 </ROSETTASCRIPTS>

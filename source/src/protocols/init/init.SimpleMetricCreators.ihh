@@ -14,7 +14,6 @@
 //ConstraintGeneratorCreator #includes
 #include <core/simple_metrics/SimpleMetricRegistrator.hh>
 
-
 #include <core/simple_metrics/metrics/SasaMetricCreator.hh>
 #include <core/simple_metrics/metrics/SecondaryStructureMetricCreator.hh>
 #include <core/simple_metrics/metrics/SelectedResiduesMetricCreator.hh>
@@ -22,10 +21,9 @@
 #include <core/simple_metrics/metrics/SequenceMetricCreator.hh>
 #include <core/simple_metrics/metrics/TimingProfileMetricCreator.hh>
 
-
-
-
 #include <protocols/analysis/simple_metrics/CompositeEnergyMetricCreator.hh>
 #include <protocols/analysis/simple_metrics/DihedralDistanceMetricCreator.hh>
 #include <protocols/analysis/simple_metrics/RMSDMetricCreator.hh>
 #include <protocols/analysis/simple_metrics/TotalEnergyMetricCreator.hh>
+
+#include <protocols/analysis/burial_metrics/PolarGroupBurialPyMolStringMetricCreator.hh> //Added by VKM, 22 April 2018.

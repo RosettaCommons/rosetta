@@ -106,7 +106,7 @@ void
 }
 
 std::string
---class--::calculate(const pose::Pose & ) const {
+--class--::calculate(const core::pose::Pose & ) const {
 
 
 }

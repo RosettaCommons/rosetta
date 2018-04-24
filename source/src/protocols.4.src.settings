@@ -18,6 +18,9 @@ sources = {
 		"LoopAnalyzerFilter",
 		"PackStatMover",
 	],
+	"protocols/analysis/burial_metrics" : [
+		"PolarGroupBurialPyMolStringMetric",
+	],
 	"protocols/analysis/simple_metrics": [
 		"CompositeEnergyMetric",
 		"DihedralDistanceMetric",

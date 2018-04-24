@@ -31,4 +31,7 @@ static SimpleMetricRegistrator< protocols::analysis::simple_metrics::DihedralDis
 static SimpleMetricRegistrator< protocols::analysis::simple_metrics::TotalEnergyMetricCreator      > reg_TotalEnergyMetricCreator;
 static SimpleMetricRegistrator< protocols::analysis::simple_metrics::RMSDMetricCreator             > reg_RMSDMetricCreator;
 
+// Added by VKM, 22 Apr. 2018:
+static SimpleMetricRegistrator< protocols::analysis::burial_metrics::PolarGroupBurialPyMolStringMetricCreator > reg_PolarGroupBurialPyMolStringMetricCreator;
+
 } // namespace protocols
