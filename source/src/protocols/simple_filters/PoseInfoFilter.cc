@@ -65,7 +65,12 @@ PoseInfoFilter::report_sm( core::pose::Pose const & pose ) const
 void PoseInfoFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
 	out << "Pose Information: " << pose.size() << " residues " << std::endl;
-	pose.pdb_info()->show( out );
+	out << "Sequence: " << pose.annotated_sequence() << std::endl;
+	if ( pose.pdb_info() != nullptr ) {
+		pose.pdb_info()->show( out );
+	} else {
+		out << "<No PDB Info>" << std::endl;
+	}
 
 	out << pose.fold_tree(); // Has implicit internal std::endl;
 	pose.fold_tree().show( out );
