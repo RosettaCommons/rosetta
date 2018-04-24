@@ -399,6 +399,17 @@ public: //These functions are public, but are only intended to be called by Buri
 	/// @param[out] oversat_acceptor_and_donor_count The number of groups that are both donors and acceptors (e.g. hydroxyls) that are unsatisfied (i.e. have either too many donated hbonds or too many accepted hbonds).
 	void increment_counts(core::Size &unsat_acceptor_count, core::Size &unsat_donor_count, core::Size &unsat_acceptor_and_donor_count, core::Size &oversat_acceptor_count, core::Size &oversat_donor_count, core::Size &oversat_acceptor_and_donor_count ) const;
 
+	/// @brief After hydrogen bonds from edges have been counted, report the number of donor/acceptor groups in each of several categories.
+	/// @details The integer instances passed in are DECREMENTED appropriately by this function.  (So if there is an incoming count of 5 unsaturated acceptors, and
+	/// the current node accounts for 3 unsaturated acceptors, the unsat_acceptor_count will drop to 2).
+	/// @param[out] unsat_acceptor_count The number of acceptor (and not donor) groups that are unsatisfied.
+	/// @param[out] unsat_donor_count The number of donor (and not acceptor) groups that are unsatisfied.
+	/// @param[out] unsat_acceptor_and_donor_count The number of groups that are both donors and acceptors (e.g. hydroxyls) that are unsatisfied (i.e. lack either a donated hbond or an accepted hbond).
+	/// @param[out] oversat_acceptor_count The number of acceptor (and not donor) groups that are oversatisfied.
+	/// @param[out] oversat_donor_count The number of donor (and not acceptor) groups that are oversatisfied.  (This generally doesn't happen).
+	/// @param[out] oversat_acceptor_and_donor_count The number of groups that are both donors and acceptors (e.g. hydroxyls) that are unsatisfied (i.e. have either too many donated hbonds or too many accepted hbonds).
+	void decrement_counts(core::Size &unsat_acceptor_count, core::Size &unsat_donor_count, core::Size &unsat_acceptor_and_donor_count, core::Size &oversat_acceptor_count, core::Size &oversat_donor_count, core::Size &oversat_acceptor_and_donor_count ) const;
+
 	/// @brief Get the residue index (position in the pose) for this node.
 	inline core::Size residue_position() const { return stored_data_->residue_position(); }
 
@@ -557,8 +568,13 @@ public: //Public member functions
 
 	/// @brief Given this BuriedUnsatPenaltyGraph with some number of nodes, iterate through each node and update the
 	/// internally-stored counts for unsats and oversats based on the edges connected to that node.
-	/// @details Calls compute_unsats_for_node();
+	/// @details Calls compute_unsats_for_node().
 	void compute_unsats_all_nodes();
+
+	/// @brief Given two lists (one of changed nodes, one of their partners), update the internally-stored counts for unsats and oversats for
+	/// those nodes only.
+	/// @details calls compute_unsats_for_node().
+	void compute_unsats_changed_nodes( utility::vector1< core::Size > const & changed_node_indices, utility::vector1< core::Size > const & changed_node_partners );
 
 	/// @brief Given this BuriedUnsatPenaltyGraph with some number of nodes and the index of a node, update the
 	/// internally-stored counts for unsats and oversats based on the edges connected to that node.

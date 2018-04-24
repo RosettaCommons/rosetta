@@ -436,6 +436,68 @@ BuriedUnsatPenaltyNode::increment_counts(
 	} //Loop through all donor/acceptor groups
 }
 
+/// @brief After hydrogen bonds from edges have been counted, report the number of donor/acceptor groups in each of several categories.
+/// @details The integer instances passed in are DECREMENTED appropriately by this function.  (So if there is an incoming count of 5 unsaturated acceptors, and
+/// the current node accounts for 3 unsaturated acceptors, the unsat_acceptor_count will drop to 2).
+/// @param[out] unsat_acceptor_count The number of acceptor (and not donor) groups that are unsatisfied.
+/// @param[out] unsat_donor_count The number of donor (and not acceptor) groups that are unsatisfied.
+/// @param[out] unsat_acceptor_and_donor_count The number of groups that are both donors and acceptors (e.g. hydroxyls) that are unsatisfied (i.e. lack either a donated hbond or an accepted hbond).
+/// @param[out] oversat_acceptor_count The number of acceptor (and not donor) groups that are oversatisfied.
+/// @param[out] oversat_donor_count The number of donor (and not acceptor) groups that are oversatisfied.  (This generally doesn't happen).
+/// @param[out] oversat_acceptor_and_donor_count The number of groups that are both donors and acceptors (e.g. hydroxyls) that are unsatisfied (i.e. have either too many donated hbonds or too many accepted hbonds).
+void
+BuriedUnsatPenaltyNode::decrement_counts(
+	core::Size &unsat_acceptor_count,
+	core::Size &unsat_donor_count,
+	core::Size &unsat_acceptor_and_donor_count,
+	core::Size &oversat_acceptor_count,
+	core::Size &oversat_donor_count,
+	core::Size &oversat_acceptor_and_donor_count
+) const {
+	utility::vector1< BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup > const & donor_acceptor_groups( stored_data_->donor_acceptor_groups() );
+
+	for ( core::Size i(1), imax(donor_acceptor_groups.size()); i<=imax; ++i ) { //Loop through all donor/acceptor groups
+		BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup const & curgroup( donor_acceptor_groups[i] );
+		core::Size const donated_hbond_count( donated_hbond_count_[i] );
+		core::Size const accepted_hbond_count( accepted_hbond_count_[i] );
+		if ( !curgroup.is_counted() ) continue;
+		if ( curgroup.is_acceptor() ) {
+			if ( curgroup.is_donor() ) { //Acceptor AND donor
+				if ( donated_hbond_count == 0 && accepted_hbond_count == 0 ) {
+					runtime_assert( unsat_acceptor_and_donor_count > 0 );
+					--unsat_acceptor_and_donor_count;
+				}
+				if ( donated_hbond_count > curgroup.max_donated_hbond_count() || accepted_hbond_count > curgroup.max_accepted_hbond_count() ) {
+					runtime_assert( unsat_acceptor_and_donor_count > 0 );
+					--oversat_acceptor_and_donor_count;
+				}
+			} else { //Acceptor only, but NOT donor
+				if ( accepted_hbond_count == 0 ) {
+					runtime_assert( unsat_acceptor_count > 0 );
+					--unsat_acceptor_count;
+				}
+				if ( accepted_hbond_count > curgroup.max_accepted_hbond_count() ) {
+					runtime_assert( oversat_acceptor_count > 0 );
+					--oversat_acceptor_count;
+				}
+			}
+		} else {
+			if ( curgroup.is_donor() ) { //Donor only, but not acceptor
+				if ( donated_hbond_count == 0 ) {
+					runtime_assert( unsat_donor_count > 0 );
+					--unsat_donor_count;
+				}
+				if ( donated_hbond_count > curgroup.max_donated_hbond_count() ) {
+					runtime_assert( oversat_donor_count > 0 );
+					--oversat_donor_count;
+				}
+			} else {
+				utility_exit_with_message( "Error in BuriedUnsatPenaltyNode::increment_counts(): A hydrogen bond donor/acceptor group was encountered that was neither donor nor acceptor.  This should be impossilbe." );
+			}
+		}
+	} //Loop through all donor/acceptor groups
+}
+
 //////////////////////
 // Private functions
 //////////////////////
@@ -956,9 +1018,26 @@ BuriedUnsatPenaltyGraph::initialize_graph_for_packing(
 /// @brief Given this BuriedUnsatPenaltyGraph with some number of nodes, iterate through each node and update the
 /// internally-stored counts for unsats and oversats based on the edges connected to that node.
 /// @details Calls compute_unsats_for_node();
-void BuriedUnsatPenaltyGraph::compute_unsats_all_nodes() {
+void
+BuriedUnsatPenaltyGraph::compute_unsats_all_nodes() {
 	for ( core::Size i(1), imax( num_nodes() ); i<=imax; ++i ) {
 		compute_unsats_for_node( i );
+	}
+}
+
+/// @brief Given two lists (one of changed nodes, one of their partners), update the internally-stored counts for unsats and oversats for
+/// those nodes only.
+/// @details calls compute_unsats_for_node().
+void
+BuriedUnsatPenaltyGraph::compute_unsats_changed_nodes(
+	utility::vector1< core::Size > const & changed_node_indices,
+	utility::vector1< core::Size > const & changed_node_partners
+) {
+	for ( core::Size i(1), imax(changed_node_indices.size()); i<=imax; ++i ) {
+		compute_unsats_for_node( changed_node_indices[i] );
+	}
+	for ( core::Size j(1), jmax( changed_node_partners.size()); j<=jmax; ++j ) {
+		compute_unsats_for_node( changed_node_partners[j] );
 	}
 }
 
@@ -1005,6 +1084,7 @@ BuriedUnsatPenaltyGraph::copy_node_and_connected_edges(
 	BuriedUnsatPenaltyGraph const & other_graph,
 	core::Size const node_index_in_other_graph
 ) {
+	debug_assert( dynamic_cast< BuriedUnsatPenaltyNode * >( this->get_node( node_index_in_this_graph ) ) != nullptr );
 	BuriedUnsatPenaltyNode & this_node( *( static_cast< BuriedUnsatPenaltyNode * >( this->get_node( node_index_in_this_graph ) ) ) );
 	this_node.drop_all_edges(); //Delete all edges in the current node.
 
@@ -1020,6 +1100,7 @@ BuriedUnsatPenaltyGraph::copy_node_and_connected_edges(
 	}
 
 	utility::graph::Node const * other_node_raw( other_graph.get_node( node_index_in_other_graph ) );
+	debug_assert( dynamic_cast< BuriedUnsatPenaltyNode const * >( other_node_raw ) != nullptr );
 	BuriedUnsatPenaltyNode const & other_node( *( static_cast< BuriedUnsatPenaltyNode const * >( other_node_raw ) ) );
 	this_node.copy_from( other_node_raw );
 
@@ -1030,6 +1111,7 @@ BuriedUnsatPenaltyGraph::copy_node_and_connected_edges(
 	residuepos_rotamerindex_to_nodeindex_[ std::pair< core::Size, core::Size >( this_node.residue_position(), always_rotamer_one_ ? 1 : this_node.rotamer_index() ) ] = node_index_in_this_graph;
 
 	for ( utility::graph::EdgeListConstIterator it(other_node.const_edge_list_begin()); it!=other_node.const_edge_list_end(); ++it ) {
+		debug_assert( dynamic_cast< BuriedUnsatPenaltyEdge const * >( *it ) != nullptr );
 		BuriedUnsatPenaltyEdge const &curedge( *( static_cast< BuriedUnsatPenaltyEdge const * >( *it ) ) );
 		core::Size const second_node_index_in_other_graph( curedge.get_other_ind( node_index_in_other_graph ) ); //The index of the node to which this edge connects the node in the other graph.
 		core::conformation::ResidueCOP res_pointer( other_graph.nodeindex_to_residue_memory_address_.at(second_node_index_in_other_graph) ); //Get the memory address of the residue corresponding to that node.

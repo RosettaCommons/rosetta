@@ -141,6 +141,38 @@ private:
 	Private functions:
 	******************/
 
+	/// @brief Called from set_up_residuearrayannelableenergy_for_packing().  Initializes the graph structure representing the current state
+	/// during the packing trajectory.
+	void initialize_curstate_graph( core::pose::Pose const & pose );
+
+	/// @brief Initialize the graph structure representing the current state during the packing trajectory from a vector of residues.  Called from
+	/// the first step of calculate_energy().
+	void initialize_curstate_graph( utility::vector1< core::conformation::ResidueCOP > const &resvect );
+
+	/// @brief Given a list of changed node indices and a graph of the current state, determine which nodes share edges with the changed nodes, and add
+	/// their indices to a list of partners.
+	/// @details Don't add indices that are in the changed_node_indices list or already in the changed_node_partners list.
+	void add_to_list_of_partners_of_changed_nodes( graph::BuriedUnsatPenaltyGraphOP curstate_graph, utility::vector1< core::Size > const & changed_node_indices, utility::vector1< core::Size > & changed_node_partners ) const;
+
+	/// @brief Increment the counts based on the current state of the curstate_graph_ and the current changed_node_indices_ and changed_node_partners_ vectors.
+	void increment_counts(
+		core::Size & unsat_acceptor_count_lastconsidered,
+		core::Size & unsat_donor_count_lastconsidered,
+		core::Size & unsat_acceptor_and_donor_count_lastconsidered,
+		core::Size & oversat_acceptor_count_lastconsidered,
+		core::Size & oversat_donor_count_lastconsidered,
+		core::Size & oversat_acceptor_and_donor_count_lastconsidered
+	) const;
+
+	/// @brief Decrement the counts based on the current state of the curstate_graph_ and the current changed_node_indices_ and changed_node_partners_ vectors.
+	void decrement_counts(
+		core::Size & unsat_acceptor_count_lastconsidered,
+		core::Size & unsat_donor_count_lastconsidered,
+		core::Size & unsat_acceptor_and_donor_count_lastconsidered,
+		core::Size & oversat_acceptor_count_lastconsidered,
+		core::Size & oversat_donor_count_lastconsidered,
+		core::Size & oversat_acceptor_and_donor_count_lastconsidered
+	) const;
 
 	/******************
 	Private variables:
@@ -168,6 +200,40 @@ private:
 
 	/// @brief The number of symmetry copies.  Used for packing only.
 	core::Size num_symmetric_copies_;
+
+	/******************
+	Private variables used in packing:
+	******************/
+
+	/// @brief The graph representing the last accepted state during the packer trajectory.
+	mutable graph::BuriedUnsatPenaltyGraphOP curstate_graph_;
+
+	/// @brief The unsat acceptor counts last accepted.
+	mutable core::Size unsat_acceptor_count_lastaccepted_;
+
+	/// @brief The unsat donor counts last accepted.
+	mutable core::Size unsat_donor_count_lastaccepted_;
+
+	/// @brief The unsat acceptor and donor counts last accepted.
+	mutable core::Size unsat_acceptor_and_donor_count_lastaccepted_;
+
+	/// @brief The oversat acceptor counts last accepted.
+	mutable core::Size oversat_acceptor_count_lastaccepted_;
+
+	/// @brief The oversat donor counts last accepted.
+	mutable core::Size oversat_donor_count_lastaccepted_;
+
+	/// @brief The oversat acceptor and donor counts last accepted.
+	mutable core::Size oversat_acceptor_and_donor_count_lastaccepted_;
+
+	/// @brief The indices of nodes that have changed in the last step.
+	mutable utility::vector1< core::Size > changed_node_indices_;
+
+	/// @brief The hydrogen-bonded partners of nodes that have changed in the last step.
+	mutable utility::vector1< core::Size > changed_node_partners_;
+
+	/// @brief The new residue identities of those changed nodes.
+	mutable utility::vector1< core::conformation::ResidueCOP > new_residues_;
 
 }; //BuriedUnsatPenalty class
 
