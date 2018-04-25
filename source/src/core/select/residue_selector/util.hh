@@ -220,6 +220,9 @@ attributes_for_parse_residue_selector_logic_string(
 	std::string const & selector_logic_attribute_name = "selector_logic"
 );
 
+/// @brief test regex support
+bool regex_usable();
+
 }
 }
 }

@@ -556,6 +556,7 @@ sources = {
 		"ResidueSelectorFactory",
 		"NeighborhoodResidueSelector",
 		"SecondaryStructureSelector",
+		"ResidueInSequenceMotifSelectorTest",
 		"SelectorLogicParser",
 	],
 	"sequence" : [

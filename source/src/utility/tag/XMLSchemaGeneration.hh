@@ -141,6 +141,7 @@ char string_contains_gt_lt_or_ampersand(std::string const &s );
 enum XMLSchemaCommonType {
 	xsct_none,
 	xsct_int_cslist,
+	xsct_string_cslist,
 	xsct_int_wsslist,
 	xsct_nnegative_int_cslist,
 	xsct_nnegative_int_wsslist,

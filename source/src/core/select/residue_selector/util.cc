@@ -35,6 +35,7 @@
 #include <sstream>
 #include <algorithm>
 #include <iterator>
+#include <regex>
 
 static basic::Tracer TR( "core.select.residue_selector.util" );
 
@@ -53,6 +54,7 @@ namespace residue_selector {
 //  type( type_in ),
 //  required( required_in )
 // {}
+
 
 std::map< core::Size, core::Size >
 get_residue_mapping_from_selectors(
@@ -103,7 +105,6 @@ get_residue_mapping_from_selectors(
 	}
 	return residue_map;
 }
-
 
 std::string
 complex_type_name_for_residue_selector( std::string const & rs_type )
@@ -413,6 +414,14 @@ attributes_for_parse_residue_selector_logic_string(
 		" operators. As convnetional, ! (not) has the highest precedence, then AND, then OR."
 		" Parentheses may be used to group operations together." );
 }
+
+// This is only usable if the regex works.
+bool regex_usable() {
+	std::string s("is the regex code working?");
+	std::regex reg("regex");
+	return std::regex_search(s,reg); // Problematic GCC versions return false for everything
+}
+
 
 
 }

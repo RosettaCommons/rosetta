@@ -73,6 +73,14 @@ public:
 	virtual std::string keyname() const;
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
+
+class GlycanSequonsSelectorCreator : public ResidueSelectorCreator {
+public:
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+};
+
 class LayerSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
@@ -206,6 +214,14 @@ public:
 	virtual std::string keyname() const;
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
 };
+
+class ResidueInSequenceMotifSelectorCreator : public ResidueSelectorCreator {
+public:
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const;
+};
+
 
 } //namespace residue_selector
 } //namespace select

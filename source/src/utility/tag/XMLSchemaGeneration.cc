@@ -75,6 +75,7 @@ std::string name_for_common_type( XMLSchemaCommonType common_type )
 	case xsct_task_operation : return "task_operation";
 	case xsct_task_operation_comma_separated_list : return "task_operation_comma_separated_list";
 	case xsct_pose_cached_task_operation : return "pose_cached_task_operation";
+	case xsct_string_cslist : return "string_cslist";
 	case xsct_none :
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Error in requesting name for xsct_none;" );
 		break;
@@ -488,7 +489,14 @@ activate_common_simple_type(
 		to_list.base_type( xs_string );
 		to_list.add_restriction( xsr_pattern, "[ \t]*" + task_operation_name_pattern() + "([ \t]*,[ \t]*" + task_operation_name_pattern() + "[ \t]*)*" );
 		xsd.add_top_level_element( to_list );
+	} else if ( common_type == xsct_string_cslist ) {
+		XMLSchemaRestriction string_cslist;
+		string_cslist.name( name_for_common_type( common_type ) );
+		string_cslist.base_type( xs_string );
+		string_cslist.add_restriction( xsr_pattern, "[+]?.+(,[-+]?[0-9]+)*" );
+		xsd.add_top_level_element( string_cslist );
 	}
+
 	/* else if ( common_type == xsct_zero_or_one ) {
 	XMLSchemaRestriction zero_or_one;
 	zero_or_one.name( name_for_common_type( common_type ));
