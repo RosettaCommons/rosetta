@@ -155,6 +155,9 @@ private:
 	/// @brief How many candidates per position?
 	core::Size n_candidates_;
 
+	/// @brief Prints scores for all residues to the pdb.
+	bool print_out_info_to_pdb_;
+
 };
 }
 }

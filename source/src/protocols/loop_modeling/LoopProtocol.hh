@@ -256,6 +256,10 @@ public:
 	/// function.
 	void set_rama_term_ramping(bool value);
 
+	/// @brief Enable or disable ramping of constraints terms of the score
+	/// funciton.
+	void set_cst_term_ramping(bool value);
+
 	/// @brief Enable or disable temperature ramping in this simulation.
 	void set_temperature_ramping(bool value);
 
@@ -278,6 +282,12 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	static utility::tag::AttributeList
+	loop_protocol_attlist();
+
+	static
+	utility::tag::XMLSchemaComplexTypeGeneratorOP complex_type_generator_for_loop_protocol( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	friend class ::LoopModelerTests;
 
@@ -286,6 +296,7 @@ private:
 	utilities::LoopMoverGroupOP movers_, refiners_;
 	utilities::TrajectoryLoggerOP logger_;
 	protocols::moves::MonteCarloOP monte_carlo_;
+	core::scoring::EnergyMap original_sfxn_weights_;
 
 	Size sfxn_cycles_;
 	Size temp_cycles_;
@@ -293,6 +304,7 @@ private:
 
 	bool ramp_sfxn_rep_;
 	bool ramp_sfxn_rama_;
+	bool ramp_sfxn_cst_;
 	bool ramp_temp_;
 	bool scale_temp_cycles_;
 
@@ -301,6 +313,7 @@ private:
 	Real original_rama_weight_;
 	Real original_rama2b_weight_;
 	Real original_repulsive_weight_;
+	Real original_cst_weight_;
 
 	bool test_run_;
 };

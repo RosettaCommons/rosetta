@@ -18,9 +18,12 @@
 #include <numeric>      // std::accumulate
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
 #include <core/sequence/util.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
@@ -95,6 +98,7 @@ FragmentScoreFilter::parse_my_tag(
 	frags_scoring_config_ = tag->getOption< std::string >("frags_scoring_config");
 	n_frags_ = tag->getOption< core::Size >("n_frags",200);
 	n_candidates_ = tag->getOption< core::Size >("n_candidates",1000);
+	print_out_info_to_pdb_ = tag->getOption< bool >("print_to_pdb",false);
 
 }
 
@@ -518,6 +522,44 @@ core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 
 	core::Real result = get_result( scores );
 	TR.Debug << "Scores:" << scores << std::endl;
+
+
+	std::ostringstream oss;
+	if ( print_out_info_to_pdb_ ) {
+		std::string filter_name = this->name();
+		std::string user_name = this->get_user_defined_name();
+		oss << std::endl << filter_name << " " << user_name + ": " << std::endl;
+
+		core::Size index = 1 + start_res;
+		for ( core::Real score : scores ) {
+			core::conformation::Residue residue = pose_chain_OP->residue(index);
+			std::string restype = residue.name3();
+			std::string resnum = utility::to_string(index - start_res + start_res_);
+			std::string temp_str = "FragmentScoreFilter_metric " + restype + " " + resnum + " " + score_type_ + ": " + utility::to_string(score);
+			TR.Info << temp_str << std::endl;
+			oss << temp_str << std::endl;
+			++index;
+		}
+		runtime_assert( index == end_res );
+
+		core::Real min_score = *std::min_element( scores.begin(), scores.end() );
+		core::Size min_residue = std::distance( scores.begin(), std::min_element( scores.begin(), scores.end() ) ) + start_res_;
+
+		core::Real max_score = *std::max_element( scores.begin(), scores.end() );
+		core::Size max_residue = std::distance( scores.begin(), std::max_element( scores.begin(), scores.end() ) ) + start_res_;
+
+		core::Real average_score = std::accumulate( scores.begin(), scores.end(), 0.0 ) / scores.size();
+
+		oss << "FragmentScoreFilter_metric Max " << score_type_ << " res: " << utility::to_string(max_residue) << std::endl;
+		oss << "FragmentScoreFilter_metric Max " << score_type_ << " score: " << utility::to_string(max_score) << std::endl;
+		oss << "FragmentScoreFilter_metric Min " << score_type_ << " res: " << utility::to_string(min_residue) << std::endl;
+		oss << "FragmentScoreFilter_metric Min " << score_type_ << " score: " << utility::to_string(min_score) << std::endl;
+		oss << "FragmentScoreFilter_metric Avg " << score_type_ << " score: " << utility::to_string(average_score) << std::endl << std::endl;
+
+		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+		job->add_string( oss.str() );
+	}
+
 	return result;
 }
 
@@ -612,7 +654,8 @@ void FragmentScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		+ XMLSchemaAttribute::attribute_w_default("vall_path",xs_string,"Path to vall database.",dbpath + "/sampling/vall.jul19.2011.gz")
 		+ XMLSchemaAttribute("frags_scoring_config",xs_string,"Path to scoring config file (required).")
 		+ XMLSchemaAttribute::attribute_w_default("n_frags",xsct_non_negative_integer, "Number of fragments to be picked (default 200)", "200")
-		+ XMLSchemaAttribute::attribute_w_default("n_candidates", xsct_non_negative_integer, "Number of candidates per position (default 1000)","1000");
+		+ XMLSchemaAttribute::attribute_w_default("n_candidates", xsct_non_negative_integer, "Number of candidates per position (default 1000)","1000")
+		+ XMLSchemaAttribute::attribute_w_default("print_to_pdb", xs_boolean, "Prints scores for all residues analyzed to the pdb.", "false");
 
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 

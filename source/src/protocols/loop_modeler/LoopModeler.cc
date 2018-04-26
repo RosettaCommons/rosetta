@@ -160,7 +160,7 @@ void LoopModeler::parse_my_tag(
 	Pose const & pose
 ) {
 
-	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	loop_modeling::LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	loop_modeling::utilities::set_task_factory_from_tag(*this, tag, data);
 
 	// Parse the 'config' option.
@@ -584,10 +584,14 @@ void LoopModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	XMLSchemaSimpleSubelementList subelement_list;
 	// Create a complex type and get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
 	XMLSchemaComplexTypeGenerator ct_gen;
+
 	// Get LoopMover tag
 	LoopMover::define_composition_schema( xsd, ct_gen, subelement_list );
 
-	AttributeList subelement_attributes;
+	// Subelements for LoopProtocols
+
+
+	AttributeList subelement_attributes = loop_modeling::LoopProtocol::loop_protocol_attlist();
 	subelement_attributes + XMLSchemaAttribute("skip", xsct_rosetta_bool, "If \"skip\" is enabled, the corresponding step will be skipped");
 	subelement_list.add_simple_subelement("Build", subelement_attributes,
 		"Configure the build step. If \"skip\" is enabled, none of the loops will be rebuilt."
@@ -606,7 +610,9 @@ void LoopModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		.add_attributes( attlist  )
 		.set_subelements_repeatable( subelement_list )
 		.write_complex_type_to_schema( xsd );
+
 }
+
 
 std::string LoopModelerCreator::keyname() const {
 	return LoopModeler::mover_name();

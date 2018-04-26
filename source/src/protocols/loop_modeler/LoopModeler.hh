@@ -51,6 +51,7 @@ namespace loop_modeler {
 /// fact, no LoopMover does.)  This means that if a simulation breaks and
 /// nstruct > 1, the remaining simulations will probably break for weird
 /// reasons.
+
 class LoopModeler : public loop_modeling::LoopMover {
 
 public:

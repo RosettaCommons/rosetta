@@ -86,6 +86,7 @@ LoopProtocol::LoopProtocol() {
 	mover_cycles_ = 1;
 	ramp_sfxn_rep_ = false;
 	ramp_sfxn_rama_ = false;
+	ramp_sfxn_cst_ = false;
 	ramp_temp_ = true;
 	scale_temp_cycles_ = false;
 	initial_temp_ = 1.5;
@@ -113,6 +114,7 @@ void LoopProtocol::parse_my_tag(
 	mover_cycles_ = tag->getOption<Size>("mover_cycles", mover_cycles_);
 	ramp_sfxn_rama_ = tag->getOption<bool>("ramp_rama", ramp_sfxn_rama_);
 	ramp_sfxn_rep_ = tag->getOption<bool>("ramp_rep", ramp_sfxn_rep_);
+	ramp_sfxn_cst_ = tag->getOption<bool>("ramp_down_cst", ramp_sfxn_cst_);
 	ramp_temp_ = tag->getOption<bool>("ramp_temp", ramp_temp_);
 	initial_temp_ = tag->getOption<Real>("initial_temp", initial_temp_);
 	final_temp_ = tag->getOption<Real>("final_temp", final_temp_);
@@ -184,8 +186,18 @@ void LoopProtocol::parse_my_tag(
 void LoopProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
+	XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_generator_for_loop_protocol( xsd );
+	ct_gen->write_complex_type_to_schema( xsd );
+}
+
+utility::tag::AttributeList
+LoopProtocol::loop_protocol_attlist( ) {
+	using namespace utility::tag;
+
 	AttributeList attlist;
-	utilities::attributes_for_set_scorefxn_from_tag( attlist );
+
+	// Create a complex type and  get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
+
 	attlist
 		+ XMLSchemaAttribute("sfxn_cycles", xsct_non_negative_integer, "Number of iterations to make in the sfxn loop.")
 		+ XMLSchemaAttribute("mover_cycles", xsct_non_negative_integer, "The number of iterations to make in the mover loop")
@@ -195,9 +207,21 @@ void LoopProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute("ramp_rep", xsct_rosetta_bool,
 		"If enabled, the repulsive weight will start near zero and"
 		"will finish at whatever it was in the original score function")
+		+ XMLSchemaAttribute("ramp_down_cst", xsct_rosetta_bool, "If enabled, the constraint weight will start at whatever value in the scorefunction and end at 0.")
+		//+ XMLSchemaAttribute("ramp_down_cst_fast", xsct_rosetta_bool, "If enabled, the constraint weight will fluctuate between its starting value in the scorefunction and close to 0 along with temperature.")
 		+ XMLSchemaAttribute("ramp_temp", xsct_rosetta_bool, "Ramp the temperature during the temp loop.")
 		+ XMLSchemaAttribute("initial_temp", xsct_real, "Initial temperature. Ignored if temperature ramping is disabled.")
 		+ XMLSchemaAttribute("final_temp", xsct_real, "Final temperature. Ignored if temperature ramping is disabled.");
+	return attlist;
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+LoopProtocol::complex_type_generator_for_loop_protocol( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+
+	AttributeList attlist = loop_protocol_attlist();
+
 	// Restriction for temp_cycles
 	XMLSchemaRestriction restriction_type;
 	restriction_type.name( "begin_w_int" );
@@ -222,14 +246,14 @@ void LoopProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"Add a Monte Carlo score function evaluation"
 		"and acceptance check between any of your movers.");
 
-	// Create a complex type and  get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
-	XMLSchemaComplexTypeGenerator ct_gen;
-	LoopMover::define_composition_schema( xsd, ct_gen, subelement_list );
-	ct_gen.element_name( mover_name() )
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	LoopMover::define_composition_schema( xsd, *ct_gen, subelement_list );
+	ct_gen->element_name( mover_name() )
 		.description( "Optimizes a region of protein backbone using a simulated annealing MonteCarlo simulation." )
 		.add_attributes( attlist  )
-		.set_subelements_repeatable( subelement_list )
-		.write_complex_type_to_schema( xsd );
+		.set_subelements_repeatable( subelement_list );
+
+	return ct_gen;
 }
 
 bool LoopProtocol::do_apply(Pose & pose) {
@@ -266,6 +290,7 @@ void LoopProtocol::start_protocol(Pose & pose) {
 	using core::scoring::rama2b;
 	using core::scoring::constraints::add_fa_constraints_from_cmdline;
 	using core::scoring::constraints::add_constraints_from_cmdline;
+	using core::scoring::EnergyMap;
 
 	if ( movers_->empty() && refiners_->empty() ) {
 		utility_exit_with_message("Refusing to run LoopProtocol without any movers or refiners.");
@@ -294,6 +319,8 @@ void LoopProtocol::start_protocol(Pose & pose) {
 	original_rama_weight_ = 0;
 	original_rama2b_weight_ = standard_sfxn->get_weight(rama);
 
+	original_sfxn_weights_ = scorefxn->weights();
+
 	// Describe the protocol to the user.
 
 	vector1<string> algorithm_names;
@@ -305,6 +332,7 @@ void LoopProtocol::start_protocol(Pose & pose) {
 	TR << "mover_cycles:   " << get_mover_cycles() << endl;
 	TR << "ramp_sfxn_rep:  " << ramp_sfxn_rep_ << endl;
 	TR << "ramp_sfxn_rama: " << ramp_sfxn_rama_ << endl;
+	TR << "ramp_sfxn_cst:  " << ramp_sfxn_cst_ << endl;
 	TR << "ramp_temp:      " << ramp_temp_ << endl;
 	TR << "initial_temp:   " << initial_temp_ << endl;
 	TR << "final_temp:     " << final_temp_ << endl;
@@ -318,13 +346,11 @@ void LoopProtocol::start_protocol(Pose & pose) {
 }
 
 void LoopProtocol::ramp_score_function(Size iteration) {
-	using core::scoring::fa_rep;
-	using core::scoring::rama;
-	using core::scoring::rama2b;
-	using core::scoring::chainbreak;
+	using namespace core::scoring;
 
 	ScoreFunctionOP score_function = get_score_function();
 	Real ramp_factor = 1.0 / (get_sfxn_cycles() - iteration + 1);
+	Real ramp_factor_down = 1.0 - (1.0 / (get_sfxn_cycles() - iteration + 1) ) + (1.0 / (1.0 + get_sfxn_cycles() ) );
 
 	// Ramp the chainbreak score term.
 
@@ -335,6 +361,29 @@ void LoopProtocol::ramp_score_function(Size iteration) {
 	if ( ramp_sfxn_rep_ ) {
 		score_function->set_weight(
 			fa_rep, original_repulsive_weight_ * ramp_factor);
+	}
+
+	// Ramp constraint score terms.
+
+	if ( ramp_sfxn_cst_ ) {
+		utility::vector1 < core::scoring::ScoreType > constraint_list {
+			atom_pair_constraint,
+			base_pair_constraint,
+			coarse_chainbreak_constraint,
+			constant_constraint,
+			coordinate_constraint,
+			angle_constraint,
+			dihedral_constraint,
+			big_bin_constraint,
+			dunbrack_constraint,
+			site_constraint,
+			metalhash_constraint,
+			metalbinding_constraint
+			};
+		for ( utility::vector1< core::scoring::ScoreType >::iterator it = constraint_list.begin(); it != constraint_list.end(); ++ it ) {
+			score_function->set_weight(
+				*it, original_sfxn_weights_[*it] * ramp_factor_down);
+		}
 	}
 
 	// Ramp the rama and/or rama2b score terms.
@@ -466,6 +515,10 @@ void LoopProtocol::set_repulsive_term_ramping(bool value) {
 
 void LoopProtocol::set_rama_term_ramping(bool value) {
 	ramp_sfxn_rama_ = value;
+}
+
+void LoopProtocol::set_cst_term_ramping(bool value) {
+	ramp_sfxn_cst_ = value;
 }
 
 void LoopProtocol::set_temperature_ramping(bool value) {
