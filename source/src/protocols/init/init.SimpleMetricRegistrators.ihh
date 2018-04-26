@@ -21,6 +21,7 @@ using core::simple_metrics::SimpleMetricRegistrator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SasaMetricCreator                   > reg_SasaMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SecondaryStructureMetricCreator     > reg_SecondaryStructureMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResiduesPyMOLMetricCreator  > reg_SelectedResiduesPyMOLMetricCreator;
+static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResidueCountMetricCreator   > reg_SelectedResidueCountMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResiduesMetricCreator       > reg_SelectedResiduesMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SequenceMetricCreator               > reg_SequenceMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TimingProfileMetricCreator          > reg_TimingProfileMetricCreator;

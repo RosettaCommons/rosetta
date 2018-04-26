@@ -7,26 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file --path--/--class--.hh
-/// @brief --brief--
-/// @author --name-- (--email--)
+/// @file core/simple_metrics/metrics/SelectedResidueCountMetric.hh
+/// @brief A SimpleMetric that counts the number of residues in a residue selection.
+/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
-#ifndef INCLUDED_--path_underscore--_--class--_HH
-#define INCLUDED_--path_underscore--_--class--_HH
+#ifndef INCLUDED_core_simple_metrics_metrics_SelectedResidueCountMetric_HH
+#define INCLUDED_core_simple_metrics_metrics_SelectedResidueCountMetric_HH
 
-#include <--path--/--class--.fwd.hh>
+#include <core/simple_metrics/metrics/SelectedResidueCountMetric.fwd.hh>
 #include <core/simple_metrics/RealMetric.hh>
 
 // Core headers
 #include <core/types.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
---namespace--
+namespace core {
+namespace simple_metrics {
+namespace metrics {
 
-///@brief --brief--
-class --class-- : public core::simple_metrics::RealMetric{
+///@brief A SimpleMetric that counts the number of residues in a residue selection.
+class SelectedResidueCountMetric : public core::simple_metrics::RealMetric{
 
 public:
 
@@ -35,13 +38,13 @@ public:
 	/////////////////////
 
 	/// @brief Default constructor
-	--class--();
+	SelectedResidueCountMetric();
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
-	--class--( --class-- const & src );
+	SelectedResidueCountMetric( SelectedResidueCountMetric const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	~--class--() override;
+	~SelectedResidueCountMetric() override;
 
 	/////////////////////
 	/// Metric Methods ///
@@ -55,27 +58,27 @@ public:
 	/// @details Score is added through setExtraScorePose and is output
 	///            into the score tables/file at pose output.
 	//void
-	//apply( core::pose::Pose & pose, prefix="", suffix="" ) override;
-	
+	//apply( pose::Pose & pose, prefix="", suffix="" ) override;
+
 	///@brief Calculate the metric.
 	core::Real
 	calculate( core::pose::Pose const & pose ) const override;
-	
+
 public:
-	
+
 	///@brief Name of the class
 	std::string
 	name() const override;
-	
+
 	///@brief Name of the class for creator.
-	static 
-	std::string 
+	static
+	std::string
 	name_static();
 
 	///@brief Name of the metric
 	std::string
 	metric() const override;
-	
+
 public:
 
 	/// @brief called by parse_my_tag -- should not be used directly
@@ -83,20 +86,36 @@ public:
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data ) override;
-	
+
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	core::simple_metrics::SimpleMetricOP
 	clone() const override;
+
+	/// @brief Set the residue selector.
+	/// @details  Copies the input pointer; doesn't clone the object.
+	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );
+
+	/// @brief Remove the residue selector.
+	/// @details In the absence of a residue selector, this metric returns the number of residues in a pose.
+	void remove_residue_selector();
+
+private:
+
+	/// @brief A residue selector used for counting.
+	/// @details If left nullptr, the whole pose is counted.
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 };
 
---end_namespace--
+} //protocols
+} //analysis
+} //simple_metrics
 
 
 
-#endif //--path_underscore--_--class--_HH
+#endif //core_simple_metrics_metrics_SelectedResidueCountMetric_HH
 
 
 

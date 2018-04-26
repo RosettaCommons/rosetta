@@ -1,0 +1,24 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="res_selector" resnums="3,5,7-12" />
+	</RESIDUE_SELECTORS>
+	<SIMPLE_METRICS>
+		<SelectedResidueCountMetric name="selrescount" residue_selector="res_selector" />
+	</SIMPLE_METRICS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<RunSimpleMetrics name="add_metrics" metrics="selrescount" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="add_metrics" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15" />
+</ROSETTASCRIPTS>

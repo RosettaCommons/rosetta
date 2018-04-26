@@ -570,6 +570,9 @@ sources = {
 	"simple_metrics" : [
 		"SimpleMetricTests",
 	],
+	"simple_metrics/metrics" : [
+		"SelectedResidueCountMetricTests",
+	],
 	"util" : [
 		#"ChainbreakUtil",
 		"MetricValueIO",
@@ -1079,5 +1082,6 @@ testinputfiles = [
 	"sequence/test.general_aln",
 	"sequence/test.grishin_aln",
 	"simple_metrics/2r0l_1_1.pdb",
+	"simple_metrics/metrics/testpose.pdb",
 	"util/2c9v_stripped.pdb"
 ]

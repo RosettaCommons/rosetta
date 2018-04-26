@@ -191,6 +191,7 @@ sources = {
 	"core/simple_metrics/metrics": [
 		"SasaMetric",
 		"SecondaryStructureMetric",
+		"SelectedResidueCountMetric",
 		"SelectedResiduesMetric",
 		"SelectedResiduesPyMOLMetric",
 		"SequenceMetric",

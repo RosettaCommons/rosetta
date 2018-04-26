@@ -1,0 +1,122 @@
+core.init: command: ROSETTA/main/source/bin/rosetta_scripts.default.linuxgccdebug @flags -database ROSETTA/main/database -testing:INTEGRATION_TEST
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+protocols.jd2.PDBJobInputter: Instantiate PDBJobInputter
+protocols.jd2.PDBJobInputter: PDBJobInputter::fill_jobs
+protocols.jd2.PDBJobInputter: pushed inputs/testpose.pdb nstruct index 1
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from PDB inputs/testpose.pdb
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch LowerDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch UpperDNA as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch VirtualDNAPhosphate as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch ShoveBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch VirtualBB as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch N_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch C_methylamidated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch SpecialRotamer as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch Cterm_amidation as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case1 as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch pro_hydroxylated_case2 as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch ser_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch thr_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch tyr_phosphorylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch tyr_sulfated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_monomethylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_dimethylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_trimethylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch lys_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch glu_carboxylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch cys_acetylated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch tyr_diiodinated as requested
+core.chemical.GlobalResidueTypeSet: While generating GlobalResidueTypeSet fa_standard: Skipping patch MethylatedProteinCterm as requested
+core.import_pose.import_pose: File 'inputs/testpose.pdb' automatically determined to be of type PDB
+core.conformation.Conformation: Found disulfide between residues 36 46
+core.conformation.Conformation: current variant for 36 CYS
+core.conformation.Conformation: current variant for 46 CYS
+core.conformation.Conformation: current variant for 36 CYD
+core.conformation.Conformation: current variant for 46 CYD
+core.conformation.Conformation: Found disulfide between residues 88 93
+core.conformation.Conformation: current variant for 88 CYS
+core.conformation.Conformation: current variant for 93 CYS
+core.conformation.Conformation: current variant for 88 CYD
+core.conformation.Conformation: current variant for 93 CYD
+protocols.rosetta_scripts.RosettaScriptsParser: dock_design_filename=inputs/test.xml
+protocols.rosetta_scripts.RosettaScriptsParser: Generating XML Schema for rosetta_scripts...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Initializing schema validator...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Validating input script...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts"/>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="res_selector" resnums="3,5,7-12"/>
+	</RESIDUE_SELECTORS>
+	<SIMPLE_METRICS>
+		<SelectedResidueCountMetric name="selrescount" residue_selector="res_selector"/>
+	</SIMPLE_METRICS>
+	<TASKOPERATIONS/>
+	<FILTERS/>
+	<MOVERS>
+		<RunSimpleMetrics metrics="selrescount" name="add_metrics"/>
+	</MOVERS>
+	<APPLY_TO_POSE/>
+	<PROTOCOLS>
+		<Add mover="add_metrics"/>
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15"/>
+</ROSETTASCRIPTS>
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/DonStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/AccStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/prepro.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.all.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.gly.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.pro.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.valile.txt
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+core.scoring.P_AA: shapovalov_lib::shap_p_aa_pp_smooth_level of 1( aka low_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/PairEPotential/pdb_pair_stats_fine
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+core.scoring.ramachandran: shapovalov_lib::shap_rama_smooth_level of 4( aka highest_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb
+protocols.jd2.parser.ScoreFunctionLoader: defined score function "r15" with weights "ref2015.wts"
+core.select.residue_selector.util: Found residue selector res_selector
+core.simple_metrics.util: Added simple metric SelectedResidueCountMetric.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "add_metrics" of type RunSimpleMetrics
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following movers and filters
+protocols.rosetta_scripts.ParsedProtocol: added mover "add_metrics" with filter "true_filter"
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from saved copy inputs/testpose.pdb
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER RunSimpleMetrics - add_metrics=======================
+protocols.analysis.simple_metrics.RunSimpleMetricsMover: Running: SelectedResidueCountMetric - calculating selection_count
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+basic.io.database: Database file opened: scoring/score_functions/elec_cp_reps.dat
+core.scoring.elec.util: Read 40 countpair representative atoms
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib_fixes_enable option is true.
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib::shap_dun10_smooth_level of 1( aka lowest_smooth ) got activated.
+protocols.jd2.JobDistributor: no more batches to process... 

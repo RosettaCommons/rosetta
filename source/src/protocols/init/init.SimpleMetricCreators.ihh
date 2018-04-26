@@ -16,6 +16,7 @@
 
 #include <core/simple_metrics/metrics/SasaMetricCreator.hh>
 #include <core/simple_metrics/metrics/SecondaryStructureMetricCreator.hh>
+#include <core/simple_metrics/metrics/SelectedResidueCountMetricCreator.hh>
 #include <core/simple_metrics/metrics/SelectedResiduesMetricCreator.hh>
 #include <core/simple_metrics/metrics/SelectedResiduesPyMOLMetricCreator.hh>
 #include <core/simple_metrics/metrics/SequenceMetricCreator.hh>
