@@ -1,0 +1,6 @@
+-s input.pdb
+-parser:protocol convert.xml
+
+-auto_setup_metals
+
+-overwrite

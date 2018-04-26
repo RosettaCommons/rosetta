@@ -1,0 +1,27 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="centroid" weights="score4_smooth" >
+			<Reweight scoretype="metalbinding_constraint" weight="1" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<MOVE_MAP_FACTORIES>
+	</MOVE_MAP_FACTORIES>
+	<SIMPLE_METRICS>
+	</SIMPLE_METRICS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<SwitchResidueTypeSetMover name="switch_cen" set="centroid"/>
+		<ScoreMover name="score" scorefxn="centroid" />
+		<SwitchResidueTypeSetMover name="switch_fa" set="fa_standard"/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="switch_cen" />
+		<Add mover="score" />  Added to make sure that the centroid mode structure is at least somewhat sensible.
+		<Add mover="switch_fa" /> Will be scored on output.
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

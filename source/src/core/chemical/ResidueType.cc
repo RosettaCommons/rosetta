@@ -1103,7 +1103,6 @@ ResidueType::delete_atom( Size const index )
 	VD const vd = ordered_atoms_[index];
 	graph_.clear_vertex(vd);
 	graph_.remove_vertex(vd);
-
 }
 
 /// @brief Add an alias name for an atom.
@@ -2891,6 +2890,8 @@ ResidueType::add_metapatch_connect( std::string const & atom ) {
 	// We have to do this or connections get dropped--not all variants get put
 	// back in. This is worse than you think--because they DON'T get dropped by
 	// the metal!
+	debug_assert( has(atom) );
+
 	using namespace numeric::conversions;
 	std::string res_varname( atom + "-CONNECT" );
 	Size count=0;
