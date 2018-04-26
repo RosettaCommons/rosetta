@@ -439,7 +439,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 						tr.Trace << "skip prob: " << skip_rate*local_skip << " computed from, viols :" << cfunc.viols() << " - " << base_line << " base: "
 							<< basis << " times overall skip_rate " << skip_rate << std::endl;
 						if ( local_skip > 1.0 ) local_skip = 1.0;
-					} catch ( std::bad_cast ){};
+					} catch ( std::bad_cast & ){};
 				}
 				Real r = numeric::random::rg().uniform();
 				if ( r > skip_rate*local_skip ) { //keep constraint

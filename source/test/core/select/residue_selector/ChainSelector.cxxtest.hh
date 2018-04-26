@@ -178,7 +178,7 @@ public:
 		ResidueSelectorOP chain_rs( new ChainSelector );
 		try {
 			chain_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 			return;
@@ -202,7 +202,7 @@ public:
 		ResidueSelectorOP chain_rs( new ChainSelector );
 		try {
 			chain_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 			return;
@@ -241,7 +241,7 @@ public:
 		try {
 			chain_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected = "ChainSelector::parse_my_tag was not able to find the required option 'chains' in the input Tag"; // \nOption chains not found.\n
 			TS_ASSERT( e.msg().find(expected) != std::string::npos );
 		}

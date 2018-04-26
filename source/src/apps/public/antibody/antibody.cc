@@ -287,7 +287,7 @@ int antibody_main()
 			for(int i=0; i<n_templates; ++i) {
 				SCS_ResultSet r;
 				try { r = scs_results->get_result_set(i); }
-				catch(std::out_of_range e) { break; }
+				catch(std::out_of_range & e) { break; }
 
 				string const suffix = '-'+std::to_string(i);
 
@@ -372,7 +372,7 @@ int antibody_main()
 			return 1;
 		}
 	}
-	catch (Grafting_Base_Exception e) {
+	catch (Grafting_Base_Exception & e) {
 		std::cout << e << std::endl;
 	}
 

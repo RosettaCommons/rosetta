@@ -91,7 +91,7 @@ public:
 		// this should fail since the groups are the same
 		conn.set_motifs( "1LX-3EB-2LG-3EB-1LX,4LX,2LX-10HA-1LB-1LA", "" );
 		sd = StructureDataFactory::get_instance()->get_from_pose( input_pose );
-		TS_ASSERT_THROWS( conn.apply( sd, random_zero ), EXCN_ConnectionSetupFailed );
+		TS_ASSERT_THROWS( conn.apply( sd, random_zero ), EXCN_ConnectionSetupFailed & );
 	}
 
 	void test_staple_connection()

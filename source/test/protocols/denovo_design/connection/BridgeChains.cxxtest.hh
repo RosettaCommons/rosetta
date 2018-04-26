@@ -252,7 +252,7 @@ public:
 		conn.set_motifs( "1LE", "1" );
 		core::Real random = 0.2501;
 		StructureData sdcopy = *perm;
-		TS_ASSERT_THROWS( conn.architect().apply( sdcopy, random ), EXCN_ConnectionSetupFailed );
+		TS_ASSERT_THROWS( conn.architect().apply( sdcopy, random ), EXCN_ConnectionSetupFailed & );
 
 		// now set it up with a longer loop that will build
 		conn.set_motifs( "4LX", "3" );

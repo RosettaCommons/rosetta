@@ -355,7 +355,7 @@ public:
 			try{
 				parse_resfile_string(pose, *ptask, "dummy_filename", resfile.str() );
 				TS_FAIL("Didn't catch malformed range resid.");
-			} catch(ResfileReaderException) {}
+			} catch(ResfileReaderException &) {}
 		}
 		{
 			PackerTaskOP ptask = TaskFactory::create_packer_task(pose);
@@ -402,7 +402,7 @@ public:
 			try{
 				ResfileContents(pose, "dummy_filename", resfile);
 				TS_FAIL("Didn't catch bad chain and range resid.");
-			} catch(ResfileReaderException){
+			} catch(ResfileReaderException &){
 			}
 		}
 		{
@@ -410,42 +410,42 @@ public:
 			try{
 				ResfileContents(pose, "dummy_filename", resfile);
 				TS_FAIL("Didn't catch bad missing commands for single resid.");
-			} catch(ResfileReaderException){}
+			} catch(ResfileReaderException &){}
 		}
 		{
 			stringstream resfile; resfile << "START\n 3 - 4 _ ";
 			try{
 				ResfileContents(pose, "dummy_filename", resfile);
 				TS_FAIL("Didn't catch bad missing commands for range resid.");
-			} catch(ResfileReaderException){}
+			} catch(ResfileReaderException &){}
 		}
 		{
 			stringstream resfile; resfile << "START\n * _ ";
 			try{
 				ResfileContents(pose, "dummy_filename", resfile);
 				TS_FAIL("Didn't catch bad missing commands for chain resid.");
-			} catch(ResfileReaderException){}
+			} catch(ResfileReaderException &){}
 		}
 		{
 			stringstream resfile; resfile << "START\n3 - 2  _ NATAA";
 			try{
 				ResfileContents(pose, "dummy_filename", resfile);
 				TS_FAIL("Didn't catch that the start residue must come before the end residue in a range resid.");
-			} catch(ResfileReaderException){}
+			} catch(ResfileReaderException &){}
 		}
 		{
 			stringstream resfile; resfile << "START\n2 % NATAA";
 			try{
 				ResfileContents(pose, "dummy_fname", resfile);
 				TS_FAIL("Didn't catch that the chain identifier is not in [_A-Za-z].");
-			} catch(ResfileReaderException){}
+			} catch(ResfileReaderException &){}
 		}
 		{
 			stringstream resfile; resfile << "START\n2 __ NATAA";
 			try{
 				ResfileContents(pose, "dummy_filename", resfile);
 				TS_FAIL("Didn't catch that the chain must be just a single character.");
-			} catch(ResfileReaderException){}
+			} catch(ResfileReaderException &){}
 		}
 	}
 

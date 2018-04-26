@@ -107,7 +107,7 @@ public:
 		new_diff_rsd.set_xyz( 2, numeric::xyzVector< core::Real >( 2.0, 2.0, 2.0 ) );
 
 		TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, boost::bind( repres_apvect, &prot_pose, SEQPOS, new_diff_rsd, ap_vect ) ),
-			protocols::environment::EXCN_Env_Security_Exception );
+			protocols::environment::EXCN_Env_Security_Exception & );
 
 		for ( core::Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ) {
 			TS_ASSERT_LESS_THAN( ( prot_pose.residue( SEQPOS ).xyz( i ) - pose.residue( SEQPOS ).xyz( i ) ).length(), 1e-6 );
@@ -115,7 +115,7 @@ public:
 		}
 
 		TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, boost::bind( repres_bool, &prot_pose, SEQPOS, new_diff_rsd, true ) ),
-			protocols::environment::EXCN_Env_Security_Exception );
+			protocols::environment::EXCN_Env_Security_Exception & );
 		for ( core::Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ) {
 			TS_ASSERT_LESS_THAN( ( new_same_rsd.xyz( i ) - pose.residue( SEQPOS ).xyz( i ) ).length(), 1e-6 );
 			TS_ASSERT_EQUALS( prot_pose.fold_tree(), pose.fold_tree() );

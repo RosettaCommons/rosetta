@@ -57,7 +57,7 @@ public:
 		SecondaryStructureSelectorOP rs( new SecondaryStructureSelector );
 		try {
 			rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -110,7 +110,7 @@ public:
 		ResidueSelectorOP rs( new SecondaryStructureSelector );
 		try {
 			rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -159,7 +159,7 @@ public:
 		try {
 			name_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			// should fail with a message
 			TS_ASSERT( e.msg() != "" );
 		}
@@ -172,7 +172,7 @@ public:
 		try {
 			ResidueSubset subset = rs->apply( trpcage );
 			TS_ASSERT( false ); //parsing should fail!
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			// should fail with a message
 			TS_ASSERT( e.msg() != "" );
 		}
@@ -188,7 +188,7 @@ public:
 			ResidueSelectorOP name_rs( new SecondaryStructureSelector( names ) );
 			name_rs->apply( trpcage );
 			TS_ASSERT( false );
-		} catch (utility::excn::Exception e) {
+		} catch (utility::excn::Exception & e) {
 			TS_ASSERT( e.msg() != "" );
 		}
 	}

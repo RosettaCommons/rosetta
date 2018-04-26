@@ -78,7 +78,7 @@ public:
 		NumNeighborsSelectorOP nn_rs( new NumNeighborsSelector );
 		try {
 			nn_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 			return;
@@ -99,7 +99,7 @@ public:
 		NumNeighborsSelectorOP nn_rs( new NumNeighborsSelector );
 		try {
 			nn_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 			return;

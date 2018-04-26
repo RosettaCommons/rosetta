@@ -128,7 +128,8 @@ void MolecularSurfaceCalculator::Reset()
 	run_.dots[1].clear();
 
 	memset(&run_.results, 0, sizeof(run_.results));
-	memset(&run_.prevp, 0, sizeof(run_.prevp));
+	//memset(&run_.prevp, 0, sizeof(run_.prevp));
+	run_.prevp = 0;
 	run_.prevburied = 0;
 }
 

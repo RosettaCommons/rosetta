@@ -610,7 +610,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Po
 			core::Size global_position;
 			try {
 				global_position = sequence_number_resolver_->find_global_pose_number( pos );
-			} catch ( std::out_of_range ) {
+			} catch ( std::out_of_range const & ) {
 				std::ostringstream msg;
 				msg << "BBClaim at (" << pos.first << ", " << pos.second << ") claimed by " << bb_claim->owner().lock()->type()
 					<< " using label '" << bb_claim->owner().lock()->label() << "' is has an invalid label. The global sequence position"

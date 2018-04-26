@@ -57,7 +57,7 @@ public:
 		ResidueSelectorOP index_rs( new ResidueIndexSelector );
 		try {
 			index_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -86,7 +86,7 @@ public:
 		ResidueSelectorOP index_rs( new ResidueIndexSelector );
 		try {
 			index_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -117,7 +117,7 @@ public:
 		try {
 			index_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cerr << "Exception (fail_no_resnums): " << e.msg();
 			std::string expected_err = "Failed to access required option 'resnums' from ResidueIndexSelector::parse_my_tag."; // \nOption resnums not found.\n
 			TS_ASSERT( e.msg().find(expected_err) != std::string::npos );
@@ -136,7 +136,7 @@ public:
 		try {
 			index_rs->apply( trpcage );
 			TS_ASSERT( false );
-		} catch (utility::excn::Exception e) {
+		} catch (utility::excn::Exception & e) {
 			//std::cerr << "Exception (fail_index_out_of_range): '" << e.msg() << "'";
 			std::string expected_err = "Residue 21 not found in pose!";
 			TS_ASSERT( e.msg().find(expected_err) != std::string::npos );
@@ -166,7 +166,7 @@ public:
 		try {
 			index_rs->apply( trpcage );
 			TS_ASSERT( false );
-		} catch (utility::excn::Exception e) {
+		} catch (utility::excn::Exception & e) {
 			//std::cerr << "Exception (fail_chain_out_of_range): " << e.msg();
 			std::string expected_err = "Residue 0 not found in pose!\n";
 			TS_ASSERT( e.msg().find(expected_err) != std::string::npos );

@@ -294,7 +294,7 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
 	jumping::JumpSample jump_sample;
 	try{
 		jump_sample = calculate_jump_sample();
-	} catch( utility::excn::BadInput ){
+	} catch( utility::excn::BadInput & ){
 		std::stringstream ss;
 		ss << "Was not able to construct a valid jump sample in 10 attempts using ss_info file "
 			<< ss_info_file << ", pairing file " << pairing_file << " and " << n_sheets
@@ -331,7 +331,7 @@ void FragmentJumpCM::set_topology( std::string const& topol_filename ){
 	jumping::JumpSample jump_sample;
 	try{
 		jump_sample = calculate_jump_sample();
-	} catch( utility::excn::BadInput ){
+	} catch( utility::excn::BadInput & ){
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Was not able to construct a valid jump sample in 10 attempts using topology file "
 			+ topol_filename + "." );
 	}

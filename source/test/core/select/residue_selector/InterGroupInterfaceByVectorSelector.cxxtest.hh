@@ -147,7 +147,7 @@ public:
 		ResidueSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 			return;
@@ -181,7 +181,7 @@ public:
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cerr << "Exception!" << e.msg() << std::endl;
 			std::string expected_error = "InterGroupInterfaceByVectorSelector::parse_my_tag requires either grp1_selector or grp1_residues to be specified\n";
 			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
@@ -205,7 +205,7 @@ public:
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cerr << "Exception!" << e.msg() << std::endl;
 			std::string expected_error = "InterGroupInterfaceByVectorSelector::parse_my_tag requires either grp2_selector or grp2_residues to be specified\n";
 			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
@@ -226,7 +226,7 @@ public:
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			//  std::cerr << "Exception!" << e.msg() << std::endl;
 			std::string expected_error = "Failed to find ResidueSelector named 'bogus' from the Datamap from InterGroupInterfaceByVectorSelector::parse_my_tag"; //\nERROR: Could not find ResidueSelector and name bogus in Datamap\n
 			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );
@@ -248,7 +248,7 @@ public:
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			// std::cerr << "Exception!" << e.msg() << std::endl;
 			std::string expected_error = "InterGroupInterfaceByVectorSelector takes either two or zero subtags to specify residue groups!\n";
 			TS_ASSERT( e.msg().find(expected_error) != std::string::npos );

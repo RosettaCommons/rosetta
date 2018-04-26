@@ -56,7 +56,7 @@ public:
 
 		try {
 			jump_u_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -86,7 +86,7 @@ public:
 		try {
 			jump_u_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			// std::cerr << "Exception (fail_no_resnums): " << e.msg();
 			std::string expected_err = "Failed to access required option 'jump' from JumpUpstreamSelector::parse_my_tag."; // \nOption jump not found.\n
 			TS_ASSERT( e.msg().find(expected_err) != std::string::npos );

@@ -332,7 +332,7 @@ find_overlap(
 	//
 	Size end_val = ( use_average ) ? lkb_wats.size()-1 : lkb_wats.size();
 	for ( Size i=1; i <= end_val; ++i ) {
-		Vector closest_lkb;
+		Vector closest_lkb(0);
 		for ( Size ii=1; ii <= lkb_wats[i].size(); ++ii ) {
 
 			Real min_dist2 = 1e6;
@@ -384,7 +384,7 @@ find_overlap(
 	//
 	end_val = ( use_average ) ? bb_wats.size()-1 : bb_wats.size();
 	for ( Size i=1; i <= end_val; ++i ) {
-		Vector closest_bbwat;
+		Vector closest_bbwat(0);
 		for ( Size ii=1; ii <= bb_wats[i].size(); ++ii ) {
 
 			Real min_dist2 = 1e6;

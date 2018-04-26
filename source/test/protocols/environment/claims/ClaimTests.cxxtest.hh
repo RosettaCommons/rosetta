@@ -98,11 +98,11 @@ public:
 			if ( i != SEQPOS ) {
 				//std::cout << i << std::endl;
 				if ( i != 1 ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 				if ( i != prot_pose.size() ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 			}
 		}
@@ -150,11 +150,11 @@ public:
 			if ( i != SEQPOS1 && i != SEQPOS2 ) {
 				//std::cout << i << std::endl;
 				if ( i != 1 ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 				if ( i != prot_pose.size() ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 			}
 		}
@@ -202,11 +202,11 @@ public:
 			if ( i < SEQPOS_START || i > SEQPOS_END ) {
 				//std::cout << i << std::endl;
 				if ( i != 1 ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 				if ( i != prot_pose.size() ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 			}
 		}

@@ -67,7 +67,7 @@ public:
 			TR << "===THIS SHOULD NOT TRIGGER AN EXCEPTION===" << std::endl;
 			std::string substituted_contents;
 			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/permitted1.xml", substituted_contents, files_read_in, 0 );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
 			TS_ASSERT(false); //We shouldn't get here.
 		}
@@ -85,7 +85,7 @@ public:
 			TR << "===THIS SHOULD TRIGGER AN EXCEPTION===" << std::endl;
 			std::string substituted_contents;
 			parser.read_in_and_recursively_replace_includes( "protocols/rosetta_scripts/prohibited1.xml", substituted_contents, files_read_in, 0 );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			TR << "CAUGHT EXCEPTION [" << e.msg() << "]" << std::endl;
 			TR << "===THE ABOVE SHOULD HAVE TRIGGERED AN EXCEPTION===" << std::endl;
 

@@ -71,7 +71,7 @@ public:
 		ResidueSelectorOP or_rs( new OrResidueSelector );
 		try {
 			or_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -98,7 +98,7 @@ public:
 		try {
 			or_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected = "No ResidueSelectors given to the OrResidueSelector; OrResidueSelector requires at least one ResidueSelector as input\n";
 			TS_ASSERT( e.msg().find(expected) != std::string::npos );
 		}
@@ -118,7 +118,7 @@ public:
 		try {
 			or_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string expected = "Failed to find ResidueSelector named 'odd' from the Datamap from OrResidueSelector::parse_my_tag."; // \nERROR: Could not find ResidueSelector and name odd in Datamap\n
 			TS_ASSERT( e.msg().find(expected) != std::string::npos );
 		}
@@ -134,7 +134,7 @@ public:
 		ResidueSelectorOP or_rs( new OrResidueSelector );
 		try {
 			or_rs->parse_my_tag( tag, dm );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			TS_ASSERT( false );
 		}
 
@@ -157,7 +157,7 @@ public:
 		try {
 			and_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // parsing should fail here
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::string err_msg =  "No ResidueSelectorCreator with the name 'Bogus' has been registered with the ResidueSelectorFactory";
 			TS_ASSERT( e.msg().find(err_msg) != std::string::npos );
 		}

@@ -541,7 +541,7 @@ InterfaceDDGBindJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs )
 				int resid; char insertion_code;
 				try {
 					core::pose::parse_PDBnum_icode( resstring, jobfname, count_line, resid, insertion_code );
-				} catch (utility::excn::Exception e ) {
+				} catch (utility::excn::Exception & e ) {
 					throw CREATE_EXCEPTION(utility::excn::Exception,  "Could not interpret the string '" + resstring + "' as a residue identifier\n" + e.msg() );
 				}
 				input_mutation mutation;

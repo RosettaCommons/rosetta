@@ -204,14 +204,14 @@ RNA_PartitionEnergy::get_partition_score(
 		std::string cmd_result;
 		exec_cmd(command_line , cmd_result);
 		partition_score = stod( cmd_result );
-	} catch (const std::invalid_argument) {
+	} catch ( std::invalid_argument const & ) {
 		TR << "Command did not produce a real number:" << std::endl;
 		TR << command_line << std::endl;
 		try { // Try again once more.
 			std::string cmd_result;
 			exec_cmd(command_line , cmd_result);
 			partition_score = std::stod( cmd_result );
-		} catch (const std::invalid_argument) {
+		} catch ( std::invalid_argument const & ) {
 			TR << "Command did not produce a real number again." << std::endl;
 			partition_score = 0;
 		}

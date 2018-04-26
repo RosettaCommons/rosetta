@@ -50,14 +50,14 @@ public:
 		TS_ASSERT_EQUALS( fts.nres(), core::Size( 1 ) );
 
 		//Invalid insertion calls
-		TS_ASSERT_THROWS( fts.insert_cut( 0 ), core::environment::EXCN_FTSketchGraph );
-		TS_ASSERT_THROWS( fts.insert_cut( 1 ), core::environment::EXCN_FTSketchGraph );
-		TS_ASSERT_THROWS( fts.insert_jump( 1, 2 ), core::environment::EXCN_FTSketchGraph );
+		TS_ASSERT_THROWS( fts.insert_cut( 0 ), core::environment::EXCN_FTSketchGraph & );
+		TS_ASSERT_THROWS( fts.insert_cut( 1 ), core::environment::EXCN_FTSketchGraph & );
+		TS_ASSERT_THROWS( fts.insert_jump( 1, 2 ), core::environment::EXCN_FTSketchGraph & );
 
 		//Invalid property queries
 		TS_ASSERT( !fts.has_cut( 1 ) );
-		TS_ASSERT_THROWS( fts.has_cut( 0 ), core::environment::EXCN_FTSketchGraph );
-		TS_ASSERT_THROWS( fts.has_jump( 1, 2 ), core::environment::EXCN_FTSketchGraph );
+		TS_ASSERT_THROWS( fts.has_cut( 0 ), core::environment::EXCN_FTSketchGraph & );
+		TS_ASSERT_THROWS( fts.has_jump( 1, 2 ), core::environment::EXCN_FTSketchGraph & );
 
 		//Check rendering
 		core::kinematics::FoldTreeOP ft_out;
@@ -77,9 +77,9 @@ public:
 		TS_ASSERT_EQUALS( fts.nres(), core::Size( 10 ) );
 
 		//Invalid insertions
-		TS_ASSERT_THROWS( fts.insert_cut( 0 ), core::environment::EXCN_FTSketchGraph );
-		TS_ASSERT_THROWS( fts.insert_cut( 10 ), core::environment::EXCN_FTSketchGraph );
-		TS_ASSERT_THROWS( fts.insert_jump( 5, 11 ), core::environment::EXCN_FTSketchGraph );
+		TS_ASSERT_THROWS( fts.insert_cut( 0 ), core::environment::EXCN_FTSketchGraph & );
+		TS_ASSERT_THROWS( fts.insert_cut( 10 ), core::environment::EXCN_FTSketchGraph & );
+		TS_ASSERT_THROWS( fts.insert_jump( 5, 11 ), core::environment::EXCN_FTSketchGraph & );
 
 		//Check graph integrity
 		TS_ASSERT( !fts.has_cut( 1 ) );
@@ -110,7 +110,7 @@ public:
 		TS_ASSERT( !fts.has_jump( 4, 8 ) );
 
 		//Verify cannot build cyclic graph
-		TS_ASSERT_THROWS( fts.render(), core::environment::EXCN_FTSketchGraph );
+		TS_ASSERT_THROWS( fts.render(), core::environment::EXCN_FTSketchGraph & );
 
 		//Verify cycles are detected correctly.
 		utility::vector1< core::Size > cycle;
@@ -178,7 +178,7 @@ public:
 		//Unresolvable cycles throw instead of infinite-looping
 		utility::vector1< core::Size > bias( 20, 0 );
 		bias[ 13 ] = 1;
-		TS_ASSERT_THROWS( fts.remove_cycles( bias ), core::environment::EXCN_FTSketchGraph );
+		TS_ASSERT_THROWS( fts.remove_cycles( bias ), core::environment::EXCN_FTSketchGraph & );
 
 
 		//Resolvable cycle is resolvable

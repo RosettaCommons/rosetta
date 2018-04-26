@@ -63,7 +63,7 @@ public:
 		SelectorLogicParser parser;
 		try {
 			rs = parser.parse_string_to_residue_selector( dm, "res5 OR res10" );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -91,7 +91,7 @@ public:
 		SelectorLogicParser parser;
 		try {
 			rs = parser.parse_string_to_residue_selector( dm, "res5to15 AND res10to20" );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -119,7 +119,7 @@ public:
 		SelectorLogicParser parser;
 		try {
 			rs = parser.parse_string_to_residue_selector( dm, "res5to15 AND ! res10to20" );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -147,7 +147,7 @@ public:
 		SelectorLogicParser parser;
 		try {
 			rs = parser.parse_string_to_residue_selector( dm, "res5to15 OR ! res10to20" );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -177,7 +177,7 @@ public:
 		try {
 			// make sure that ! "sticks to" res5to15 and not to the OR of the two RSs.
 			rs = parser.parse_string_to_residue_selector( dm, "! res5to15 OR res10to20" );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
 			TS_ASSERT( false ); // this parsing should succeed
 		}
@@ -208,7 +208,7 @@ public:
 			set_throw_on_next_assertion_failure();
 			rs = parser.parse_string_to_residue_selector( dm, "! res5to15 OR res10to20" );
 			TS_ASSERT( false );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			//std::cerr << "Exception!" << e.msg() << std::endl;
 			std::string gold_standard1 =
 				"Failed to tokenize string logically combining ResidueSelectors.\n"

@@ -111,12 +111,12 @@ public:
 		{
 			core::pose::Pose protected1;
 			TS_ASSERT_THROWS_NOTHING( protected1 = env1.start( pose ) );
-			TS_ASSERT_THROWS( tier2_mover->apply( protected1 ), utility::excn::NullPointerError );
+			TS_ASSERT_THROWS( tier2_mover->apply( protected1 ), utility::excn::NullPointerError & );
 			TS_ASSERT_EQUALS( protected1.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ] );
 			{
 				core::pose::Pose protected2;
 				TS_ASSERT_THROWS_NOTHING( protected2 = env2.start( protected1 ) );
-				TS_ASSERT_THROWS( tier1_mover->apply( protected2 ), EXCN_Env_Security_Exception );
+				TS_ASSERT_THROWS( tier1_mover->apply( protected2 ), EXCN_Env_Security_Exception & );
 				TS_ASSERT_DELTA( protected2.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 0.001 );
 				TS_ASSERT_THROWS_NOTHING( tier2_mover->apply( protected2 ) );
 				TS_ASSERT_DELTA( protected2.phi( CLAIMED_RESID ), NEW_PHI, 0.001 );
@@ -124,7 +124,7 @@ public:
 			}
 			TS_ASSERT_DELTA( protected1.phi( CLAIMED_RESID ), NEW_PHI, 0.001 );
 			TS_ASSERT_THROWS_NOTHING( tier1_mover->apply( protected1) );
-			TS_ASSERT_THROWS( tier2_mover->apply( protected1 ), utility::excn::NullPointerError );
+			TS_ASSERT_THROWS( tier2_mover->apply( protected1 ), utility::excn::NullPointerError & );
 			TS_ASSERT_THROWS_NOTHING( final_pose = env1.end( protected1 ) );
 		}
 
@@ -166,15 +166,15 @@ public:
 			TS_ASSERT_EQUALS( protected_pose.size(), pose.size() );
 
 			// Verify no_claim_mover can't change anything -- it shouldn't have a passport for this environment (NullPointer excn)
-			TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose ), EXCN_Env_Security_Exception );
+			TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose ), EXCN_Env_Security_Exception & );
 			TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
 			// Verify no_lock_mover can't change anything -- protected_pose shouldn't have a passport on its unlock stack
-			TS_ASSERT_THROWS( allowed_mover->missing_unlock_apply( protected_pose ), EXCN_Env_Security_Exception );
+			TS_ASSERT_THROWS( allowed_mover->missing_unlock_apply( protected_pose ), EXCN_Env_Security_Exception & );
 			TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
 			// Verify that unregistered mover lacks a passport for protected_pose conformation
-			TS_ASSERT_THROWS( unreg_mover->apply( protected_pose ), utility::excn::NullPointerError );
+			TS_ASSERT_THROWS( unreg_mover->apply( protected_pose ), utility::excn::NullPointerError & );
 			TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
 			// Verify that allowed_mover can change it's claimed angle
@@ -188,8 +188,8 @@ public:
 			//Verify that duplicate mover *also* can make the change without throwing an error
 			TS_ASSERT_THROWS_NOTHING( duplicate_claim_mover->apply( protected_pose ) );
 			//Verify that allowed can't change 9 while claiming CLAIMED_RESID
-			TS_ASSERT_THROWS( allowed_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception );
-			TS_ASSERT_THROWS( duplicate_claim_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception );
+			TS_ASSERT_THROWS( allowed_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception & );
+			TS_ASSERT_THROWS( duplicate_claim_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception & );
 			TS_ASSERT_DELTA( protected_pose.phi( UNCLAIMED_RESID ), init_phis[ UNCLAIMED_RESID ], 1e-12 );
 
 			//Verify angles 1-9 are untouched in protected_pose
@@ -263,7 +263,7 @@ public:
 
 		core::pose::Pose protected_pose;
 		TS_ASSERT_THROWS_NOTHING( protected_pose = env.start( pose ) );
-		TS_ASSERT_THROWS( can_mover->apply( protected_pose ), EXCN_Env_Security_Exception );
+		TS_ASSERT_THROWS( can_mover->apply( protected_pose ), EXCN_Env_Security_Exception & );
 		TS_ASSERT_EQUALS( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ] );
 
 		TS_ASSERT_THROWS_NOTHING( exclusive_mover->apply( protected_pose ) );
@@ -288,7 +288,7 @@ public:
 		env.register_mover( must_mover );
 
 		core::pose::Pose protected_pose;
-		TS_ASSERT_THROWS( protected_pose = env.start( pose ), utility::excn::BadInput );
+		TS_ASSERT_THROWS( protected_pose = env.start( pose ), utility::excn::BadInput & );
 
 		TR <<  "End: test_torsion_must_exclusive_incompatibility"  << std::endl;
 	}
@@ -320,7 +320,7 @@ public:
 
 			env.register_mover( must_init_mover );
 			env.register_mover( must_init_mover2 );
-			TS_ASSERT_THROWS( protected_pose = env.start( pose ), utility::excn::BadInput );
+			TS_ASSERT_THROWS( protected_pose = env.start( pose ), utility::excn::BadInput & );
 		}
 
 		{ // MUST_INIT takes precedence over CAN_INIT and does not complain.

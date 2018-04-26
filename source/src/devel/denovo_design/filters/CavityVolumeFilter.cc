@@ -121,7 +121,7 @@ CavityVolumeFilter::parse_my_tag(
 		std::string const & selectorname = tag->getOption< std::string >( "selector" );
 		try {
 			selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from CavityVolumeFilter::parse_my_tag.\n";
 			error_msg << e.msg();

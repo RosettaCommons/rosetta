@@ -75,7 +75,7 @@ public:
 			protocols::simple_moves::DisulfideCyclizationViability existing_disulfide_maintained (inserter_edges_->determine_cyclization_viability(*test_shorter_pose_, N_TER, C_TER-1));
 			TS_ASSERT_EQUALS(existing_disulfide_maintained, protocols::simple_moves::DCV_ALREADY_CYCLIZED);
 		}
-catch (utility::excn::Exception e ) {
+catch (utility::excn::Exception & e ) {
 	std::cerr << "Raised exception: " << e.msg() << std::endl;
 	TS_ASSERT( false );
 }
@@ -91,7 +91,7 @@ catch (utility::excn::Exception e ) {
 			inserter_edges_->apply(*test_shorter_pose_);
 			TS_ASSERT_EQUALS(inserter_edges_->get_last_move_status(), protocols::moves::MS_SUCCESS);
 		}
-catch (utility::excn::Exception e ) {
+catch (utility::excn::Exception & e ) {
 	std::cerr << "Raised exception: " << e.msg() << std::endl;
 	TS_ASSERT( false );
 }
@@ -124,7 +124,7 @@ catch (utility::excn::Exception e ) {
 			TS_ASSERT_DELTA(mover->get_constraint_weight(), 0.1, 1e-6);
 		}
 
-catch (utility::excn::Exception e ) {
+catch (utility::excn::Exception & e ) {
 	std::cerr << "Raised exception: " << e.msg() << std::endl;
 	TS_ASSERT( false );
 }

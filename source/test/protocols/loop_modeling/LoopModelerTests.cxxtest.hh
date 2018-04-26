@@ -464,7 +464,7 @@ public:
 		// Case 3: Illegal value.
 
 		tag = "<LoopModeler> <Centroid temp_cycles=x/> </LoopModeler>";
-		TS_ASSERT_THROWS(parse_tag<LoopModeler>(tag), Exception);
+		TS_ASSERT_THROWS(parse_tag<LoopModeler>(tag), Exception &);
 	}
 
 	void test_custom_movers() { // {{{1
@@ -510,7 +510,7 @@ public:
 		// Can only use LoopMover subclasses within LoopModeler, not regular
 		// Movers.
 
-		TS_ASSERT_THROWS(parse_tag<LoopModeler>(tag), Exception);
+		TS_ASSERT_THROWS(parse_tag<LoopModeler>(tag), Exception &);
 	}
 
 	void test_custom_centroid_movers() { // {{{1

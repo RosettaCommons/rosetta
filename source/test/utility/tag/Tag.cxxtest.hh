@@ -37,7 +37,7 @@ public:
 		try {
 			utility::tag::TagCOP tags(utility::tag::Tag::create(in));
 			TS_ASSERT(false);
-		} catch (utility::excn::BadInput e ){
+		} catch (utility::excn::BadInput & e ){
 			std::stringstream expected_error;
 			if(col==0){
 				expected_error

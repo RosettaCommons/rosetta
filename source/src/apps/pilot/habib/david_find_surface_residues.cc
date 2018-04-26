@@ -199,7 +199,7 @@ main( int argc, char * argv [] )
 						}
 					}
 					for ( auto it2=surface.begin(); it2 != surface.end(); it2++ ) {
-						core::Size(pos2) = 0;
+						core::Size pos2 = 0;
 						for ( Size j = 1; j <= pose.size(); ++j ) {
 							std::ostringstream residuestream;
 							residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);

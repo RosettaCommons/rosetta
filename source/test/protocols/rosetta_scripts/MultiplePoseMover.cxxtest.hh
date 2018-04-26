@@ -233,7 +233,7 @@ public:
 			TS_ASSERT( tag3->getParent().lock() == tag2 );
 			TS_ASSERT( tag1->getParent().expired() );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -278,7 +278,7 @@ public:
 		try {
 			RosettaScriptsParser parser;
 			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -335,7 +335,7 @@ public:
 		try {
 			RosettaScriptsParser parser;
 			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -375,7 +375,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT_EQUALS( i, 5 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -414,7 +414,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT_EQUALS( i, 5 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -464,7 +464,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -520,7 +520,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 3 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -581,7 +581,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -635,7 +635,7 @@ public:
 			while ( mover->get_additional_output() ) ++i;
 			TS_ASSERT( i == 5 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -689,7 +689,7 @@ public:
 			TR << "i = " << i << std::endl;
 			TS_ASSERT( i == 5 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -921,7 +921,7 @@ public:
 
 			TS_ASSERT( i == 5 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -1015,7 +1015,7 @@ public:
 
 			TS_ASSERT( i == 50 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception:: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -1099,7 +1099,7 @@ public:
 
 			TS_ASSERT( i == 30 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception:: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
@@ -1168,7 +1168,7 @@ public:
 			TS_ASSERT( unique_poses == 1 );
 			TS_ASSERT( total_poses == 10 );
 
-		} catch (utility::excn::Exception e ) {
+		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Raised exception:: " << e.msg() << std::endl;
 			TS_ASSERT( false );
 		}
