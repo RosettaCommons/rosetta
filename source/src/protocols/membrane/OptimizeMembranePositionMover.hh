@@ -74,14 +74,14 @@ public:
 	/// @brief Create a Fresh Instance of this Mover
 	protocols::moves::MoverOP fresh_instance() const override;
 
-	/// @brief Pase Rosetta Scripts Options for this Mover
+	/// @brief Parse Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
-	) override;
+		utility::tag::TagCOP tag
+	);
+
+	///@brief Provide xml schema for RosettaScripts compatibility
+	static
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/////////////////////
 	/// Mover Methods ///
@@ -92,6 +92,28 @@ public:
 
 	/// @brief Flip the downstream partner in the membrane
 	void apply( core::pose::Pose & pose ) override;
+
+	/////////////////////
+	///  Get Methods  ///
+	/////////////////////
+
+	///@brief Get Scorefunction for this Mover
+	core::scoring::ScoreFunctionOP get_sfxn() const;
+
+	///@brief Get score_best for this Mover
+	core::Real get_score_best() const;
+
+	///@brief Get starting_z for this Mover
+	core::Real get_starting_z() const;
+
+	///@brief Get best_z for this Mover
+	core::Real get_best_z() const;
+
+	///@brief Get stepsize_z for this Mover
+	core::Real get_stepsize_z() const;
+
+	///@brief Get stepsize_angle for this Mover
+	core::Real get_stepsize_angle() const;
 
 private: // methods
 
@@ -130,6 +152,10 @@ private: // data
 	/// @brief Normal search
 	core::Real stepsize_angle_;
 	core::Vector best_normal_;
+
+	// Tell the compiler that we are not hiding the base
+	// function with the parse_my_tag written above
+	using protocols::moves::Mover::parse_my_tag;
 
 };
 

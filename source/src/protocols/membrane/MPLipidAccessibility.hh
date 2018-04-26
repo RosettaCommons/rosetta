@@ -72,11 +72,8 @@ public:
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void
 	parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose ) override;
+		utility::tag::TagCOP tag
+	);
 
 	//MPLipidAccessibility & operator=( MPLipidAccessibility const & src );
 
@@ -99,6 +96,24 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/////////////////////
+	/// Get Methods   ///
+	/////////////////////
+
+	/// @brief get angle cutoff
+	core::Real get_angle_cutoff() const;
+
+	/// @brief get slice width
+	core::Real get_slice_width() const;
+
+	/// @brief get shell radius
+	core::Real get_shell_radius() const;
+
+	/// @brief get dist cutoff
+	core::Real get_dist_cutoff() const;
+
+	/// @brief get tm_alpha
+	bool get_tm_alpha() const;
 
 private: // methods
 
@@ -138,6 +153,10 @@ private: // data
 	utility::vector1< utility::vector1< core::Vector > > ca_coord_, cb_coord_;
 	utility::vector1< core::Vector > slice_com_;
 	utility::vector1< core::Real > slice_zmin_;
+
+	// Tell the compiler that we are not hiding the base
+	// function with the parse_my_tag written above
+	using protocols::moves::Mover::parse_my_tag;
 
 };
 

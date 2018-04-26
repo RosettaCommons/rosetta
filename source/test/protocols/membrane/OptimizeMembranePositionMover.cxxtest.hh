@@ -35,6 +35,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -116,6 +117,22 @@ public: // test functions
 
 	}
 
+
+	void test_parse_my_tag_input() {
+		std::stringstream tag_ss("<OptimizeMembranePositionMover sfxn=\"mpframework_smooth_fa_2012.wts\" score_best=999001 starting_z=-5.3 stepsize_z=0.2 stepsize_angle=0.7/>");
+		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
+
+		OptimizeMembranePositionMoverOP xomp( new OptimizeMembranePositionMover() );
+		xomp->parse_my_tag( tag );
+
+		TS_ASSERT(xomp->get_sfxn() != nullptr);
+		TS_ASSERT_EQUALS(xomp->get_score_best(), 999001);
+		TS_ASSERT_EQUALS(xomp->get_starting_z(), -5.3);
+		TS_ASSERT_EQUALS(xomp->get_stepsize_z(), 0.2);
+		TS_ASSERT_EQUALS(xomp->get_stepsize_angle(), 0.7);
+
+		TS_ASSERT_EQUALS( xomp->get_starting_z(), xomp->get_best_z() );
+	}
 	////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Position equal within delta (helper method)

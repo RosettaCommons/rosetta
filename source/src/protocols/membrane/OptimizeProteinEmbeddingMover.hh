@@ -63,14 +63,15 @@ public:
 	/// @brief Create a Fresh Instance of this Mover
 	protocols::moves::MoverOP fresh_instance() const override;
 
-	/// @brief Pase Rosetta Scripts Options for this Mover
+	/// @brief Parse Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
-	) override;
+		utility::tag::TagCOP tag
+	);
+
+	/// @brief Provide xml schema for RosettaScripts compatibility
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/////////////////////
 	/// Mover Methods ///
@@ -90,6 +91,10 @@ private: // methods
 
 	/// @brief Register Options from Command Line
 	void register_options();
+
+	// Tell the compiler that we are not hiding the base
+	// function with the parse_my_tag written above
+	using protocols::moves::Mover::parse_my_tag;
 
 };
 

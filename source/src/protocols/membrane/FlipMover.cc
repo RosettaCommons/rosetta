@@ -51,9 +51,12 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <utility/string_util.hh>
 
 // C++ Headers
 #include <cstdlib>
+#include <string>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -155,17 +158,33 @@ FlipMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new FlipMover() );
 }
 
-/// @brief Pase Rosetta Scripts Options for this Mover
+/// @brief Parse Rosetta Scripts Options for this Mover
 void
 FlipMover::parse_my_tag(
-	utility::tag::TagCOP /*tag*/,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
+	utility::tag::TagCOP tag
 ) {
+	if ( tag->hasOption( "jump_num" ) ) {
+		jump_num_ = tag->getOption< core::Size >("jump_num", 1);
+	}
 
-	// TODO: implement this
+	if ( tag->hasOption( "axisx" ) || tag->hasOption( "axisy" ) || tag->hasOption( "axisz" ) ) {
+		int a1 = tag->getOption< core::Size >("axisx", 0);
+		int a2 = tag->getOption< core::Size >("axisy", 0);
+		int a3 = tag->getOption< core::Size >("axisz", 0);
+		axis_.assign( a1, a2, a3);
+	}
+
+	if ( tag->hasOption( "angle" ) ) {
+		angle_ = tag->getOption< core::Real >("angle", 0);
+	}
+
+	if ( tag->hasOption( "random_angle" ) ) {
+		random_angle_ = tag->getOption< bool >("random_angle", false);
+	}
+
+	if ( tag->hasOption( "max_angle_dev" ) ) {
+		max_angle_dev_ = tag->getOption< core::Real >("max_angle_dev", 0);
+	}
 
 }
 
@@ -316,6 +335,35 @@ void FlipMover::set_range( core::Real max_angle_dev ) {
 }
 
 /////////////////////
+/// Get Methods   ///
+/////////////////////
+
+/// @brief get jump num
+core::Size FlipMover::get_jump_num() const {
+	return jump_num_;
+}
+
+/// @brief get rotation axis
+core::Vector FlipMover::get_axis() const {
+	return axis_;
+}
+
+/// @brief get rotation angle
+core::Real FlipMover::get_angle() const {
+	return angle_;
+}
+
+/// @brief get random angle status
+bool FlipMover::get_random_angle() const {
+	return random_angle_;
+}
+
+/// @brief get maximum angle deviation from 180 degrees
+core::Real FlipMover::get_max_angle_dev() const {
+	return max_angle_dev_;
+}
+
+/////////////////////
 /// Setup Methods ///
 /////////////////////
 
@@ -350,11 +398,20 @@ std::string FlipMover::mover_name() {
 	return "FlipMover";
 }
 
+/// @brief Provide xml schema for RosettaScripts compatibility
 void FlipMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Flips pose in the membrane", attlist );
+	attlist + XMLSchemaAttribute( "jump_num", xsct_non_negative_integer, "Jump number")
+		+ XMLSchemaAttribute    ( "axisx", xs_integer, "Rotation axis x-coordinate")
+		+ XMLSchemaAttribute    ( "axisy", xs_integer, "Rotation axis y-coordinate")
+		+ XMLSchemaAttribute    ( "axisz", xs_integer, "Rotation axis z-coordinate")
+		+ XMLSchemaAttribute    ( "angle", xsct_real, "Rotation angle in degrees")
+		+ XMLSchemaAttribute    ( "random_angle", xsct_rosetta_bool, "Random flip angle between 135 and 225 degrees in the membrane")
+		+ XMLSchemaAttribute    ( "max_angle_dev", xsct_real, "Maximum angle deviation from 180 degrees");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Flips pose in the membrane", attlist);
 }
 
 std::string FlipMoverCreator::keyname() const {
@@ -370,8 +427,6 @@ void FlipMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 {
 	FlipMover::provide_xml_schema( xsd );
 }
-
-
 
 } // membrane
 } // protocols

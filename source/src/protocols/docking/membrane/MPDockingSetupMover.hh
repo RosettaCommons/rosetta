@@ -77,12 +77,24 @@ public: // methods
 
 	/// @brief Parse Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
-	) override;
+		utility::tag::TagCOP tag
+	);
+
+	/////////////////////
+	/// Get Methods   ///
+	/////////////////////
+
+	/// @brief get optimize1
+	bool get_optimize1() const;
+
+	/// @brief get optimize1
+	bool get_optimize2() const;
+
+	/// @brief get pose vector
+	utility::vector1< core::pose::PoseOP > get_poses() const;
+
+	/// @brief get spanfile vector
+	utility::vector1< std::string > get_spanfiles() const;
 
 	/////////////////////
 	/// Mover Methods ///
@@ -129,6 +141,10 @@ private: // data
 	// should the position of partner 1 or 2 be optimized in the membrane?
 	bool optimize1_;
 	bool optimize2_;
+
+	// Tell the compiler that we are not hiding the base
+	// function with the parse_my_tag written above
+	using protocols::moves::Mover::parse_my_tag;
 
 };
 

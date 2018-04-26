@@ -92,14 +92,16 @@ public:
 	/// @brief Create a Fresh Instance of this Mover
 	protocols::moves::MoverOP fresh_instance() const override;
 
-	/// @brief Pase Rosetta Scripts Options for this Mover
-	void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
-	) override;
+	/// @brief Parse Rosetta Scripts Options for this Mover
+	void
+	parse_my_tag(
+		utility::tag::TagCOP tag
+	);
+
+	/// @brief Provide xml schema for RosettaScripts compatibility
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/////////////////////
 	/// Mover Methods ///
@@ -125,9 +127,25 @@ public:
 	std::string
 	mover_name();
 
-	static
-	void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	/////////////////////
+	/// Get Methods   ///
+	/////////////////////
+
+	/// @brief get jump num
+	core::Size get_jump_num() const;
+
+	/// @brief get rotation axis
+	core::Vector get_axis() const;
+
+	/// @brief get rotation angle
+	core::Real get_angle() const;
+
+	/// @brief get random angle status
+	bool get_random_angle() const;
+
+	/// @brief get maximum angle deviation from 180 degrees
+	core::Real get_max_angle_dev() const;
+
 
 
 private: // methods
@@ -159,6 +177,10 @@ private: // data
 
 	/// @brief Maximum angle deviation from 180 degrees
 	core::Real max_angle_dev_;
+
+	// Tell the compiler that we are not hiding the base
+	// function with the parse_my_tag written above
+	using protocols::moves::Mover::parse_my_tag;
 };
 
 } // membrane

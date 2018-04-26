@@ -54,6 +54,10 @@
 // C++ Headers
 #include <cstdlib>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 static basic::Tracer TR( "protocols.membrane.TiltMover" );
 
 namespace protocols {
@@ -132,17 +136,23 @@ TiltMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new TiltMover() );
 }
 
-/// @brief Pase Rosetta Scripts Options for this Mover
+/// @brief Parse Rosetta Scripts Options for this Mover
 void
 TiltMover::parse_my_tag(
-	utility::tag::TagCOP /*tag*/,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
+	utility::tag::TagCOP tag
 ) {
 
-	// TODO: implement this
+	if ( tag->hasOption( "jump_num" ) ) {
+		jump_num_ = tag->getOption< core::Size >( "jump_num" );
+	}
+
+	if ( tag->hasOption( "random_angle" ) ) {
+		random_angle_ = tag->getOption< bool >( "random_angle" );
+	}
+
+	if ( tag->hasOption( "angle" ) ) {
+		angle_ = tag->getOption< int >( "angle" );
+	}
 
 }
 
@@ -164,6 +174,18 @@ TiltMoverCreator::mover_name() {
 	return "TiltMover";
 }
 
+/// @brief Provide xml schema for RosettaScripts compatibility
+void TiltMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "jump_num", xsct_non_negative_integer, "Jump number")
+		+ XMLSchemaAttribute( "random_angle", xsct_rosetta_bool, "Random tilt angle between -20 and 20 degrees")
+		+ XMLSchemaAttribute( "angle", xs_integer, "Rotation angle in degrees");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, TiltMoverCreator::mover_name(), "Tilts a protein in the membrane (Rosetta Scripts Hook)", attlist);
+}
+
 
 /////////////////////
 /// Mover Methods ///
@@ -173,6 +195,24 @@ TiltMoverCreator::mover_name() {
 std::string
 TiltMover::get_name() const {
 	return "TiltMover";
+}
+
+/// @brief Get the jump number for this Mover
+core::Size
+TiltMover::get_jump_num() const {
+	return jump_num_;
+}
+
+/// @brief Get the random angle for this Mover
+bool
+TiltMover::get_random_angle() const {
+	return random_angle_;
+}
+
+/// @brief Get the angle for this Mover
+int
+TiltMover::get_angle() const {
+	return angle_;
 }
 
 /// @brief Flip the downstream partner in the membrane

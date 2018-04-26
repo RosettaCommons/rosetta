@@ -129,7 +129,7 @@ VisualizeMembraneMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new VisualizeMembraneMover() );
 }
 
-/// @brief Pase Rosetta Scripts Options for this Mover
+/// @brief Parse Rosetta Scripts Options for this Mover
 void
 VisualizeMembraneMover::parse_my_tag(
 	utility::tag::TagCOP tag,

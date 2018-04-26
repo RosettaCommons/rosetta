@@ -27,6 +27,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -139,6 +140,23 @@ public: // test functions
 		TS_ASSERT_EQUALS( pose5.pdb_info()->bfactor( 392, 2 ), 0.0 );
 		TS_ASSERT_EQUALS( pose5.pdb_info()->bfactor( 5, 2 ), 0.0 );
 
+	}
+
+	/// @brief test parse_my_tag() read-in
+	void test_parse_my_tag_input() {
+		using namespace protocols::membrane;
+
+		std::stringstream tag_ss("<MPLipidAccessibility angle_cutoff=64.0 slice_width=9.0 shell_radius=5.0 dist_cutoff=9.0 tm_alpha=false />");
+		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
+
+		MPLipidAccessibilityOP xlip( new MPLipidAccessibility() );
+		xlip->parse_my_tag( tag );
+
+		TS_ASSERT_EQUALS(xlip->get_angle_cutoff(), 64.0);
+		TS_ASSERT_EQUALS(xlip->get_slice_width(), 9.0);
+		TS_ASSERT_EQUALS(xlip->get_shell_radius(), 5.0);
+		TS_ASSERT_EQUALS(xlip->get_dist_cutoff(), 9.0);
+		TS_ASSERT_EQUALS(xlip->get_tm_alpha(), false);
 	}
 
 };

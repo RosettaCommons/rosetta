@@ -53,6 +53,10 @@
 // C++ Headers
 #include <cstdlib>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 static basic::Tracer TR( "protocols.membrane.SpinAroundPartnerMover" );
 
 namespace protocols {
@@ -138,14 +142,28 @@ SpinAroundPartnerMover::fresh_instance() const {
 /// @brief Pase Rosetta Scripts Options for this Mover
 void
 SpinAroundPartnerMover::parse_my_tag(
-	utility::tag::TagCOP /*tag*/,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
+	utility::tag::TagCOP tag
 ) {
 
-	// TODO: implement this
+	if ( tag->hasOption("jump") ) {
+		jump_ = tag->getOption< core::Size >( "jump", 1 );
+	}
+
+	if ( tag->hasOption("rand_range") ) {
+		rand_range_ = tag->getOption< bool >( "rand_range", false );
+	}
+
+	if ( tag->hasOption("range") ) {
+		range_ = tag->getOption< core::Size >( "range", 25 );
+	}
+
+	if ( tag->hasOption("x") ) {
+		x_ = tag->getOption< core::Real >( "x", 0 );
+	}
+
+	if ( tag->hasOption("y") ) {
+		y_ = tag->getOption< core::Real >( "y", 0 );
+	}
 
 }
 
@@ -167,6 +185,19 @@ SpinAroundPartnerMoverCreator::mover_name() {
 	return "SpinAroundPartnerMover";
 }
 
+/// @brief Provide xml schema for RosettaScripts compatibility
+void SpinAroundPartnerMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "jump", xsct_non_negative_integer, "Jump number")
+		+ XMLSchemaAttribute( "rand_range", xsct_rosetta_bool, "Random range")
+		+ XMLSchemaAttribute( "range", xsct_non_negative_integer, "Sampling range for this mover")
+		+ XMLSchemaAttribute( "x", xsct_real, "X position for this mover")
+		+ XMLSchemaAttribute( "y", xsct_real, "Y position for this mover");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, SpinAroundPartnerMoverCreator::mover_name(), "Spins the downstream partner around the upstream partner", attlist);
+}
 
 /////////////////////
 /// Mover Methods ///
@@ -176,6 +207,36 @@ SpinAroundPartnerMoverCreator::mover_name() {
 std::string
 SpinAroundPartnerMover::get_name() const {
 	return "SpinAroundPartnerMover";
+}
+
+/// @brief Get the jump number for this Mover
+core::Size
+SpinAroundPartnerMover::get_jump() const {
+	return jump_;
+}
+
+/// @brief Get the random range for this Mover
+bool
+SpinAroundPartnerMover::get_rand_range() const {
+	return rand_range_;
+}
+
+/// @brief Get the sampling range for this Mover
+core::Size
+SpinAroundPartnerMover::get_range() const {
+	return range_;
+}
+
+/// @brief Get the x position for this Mover
+core::Real
+SpinAroundPartnerMover::get_x() const {
+	return x_;
+}
+
+/// @brief Get the y position for this Mover
+core::Real
+SpinAroundPartnerMover::get_y() const {
+	return y_;
 }
 
 /// @brief Set random range

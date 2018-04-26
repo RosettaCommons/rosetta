@@ -34,6 +34,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -126,6 +127,21 @@ public: // test functions
 		// compare after
 		TS_ASSERT( position_equal_within_delta( emb_down1->center(), cntr_after, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( emb_down1->normal(), norm_after, 0.001 ) );
+
+	}
+
+	void test_tiltmover_parse_my_tag_input() {
+		std::string tag_string = "<TiltMover jump_num=3 random_angle=true angle=-5/>";
+		std::stringstream ss( tag_string );
+		utility::tag::TagOP tag( new utility::tag::Tag() );
+		tag->read( ss );
+
+		TiltMoverOP xtilt( new TiltMover() );
+		xtilt->parse_my_tag( tag );
+
+		TS_ASSERT(xtilt->get_jump_num() == 3);
+		TS_ASSERT(xtilt->get_random_angle() == true);
+		TS_ASSERT(xtilt->get_angle() == -5);
 
 	}
 

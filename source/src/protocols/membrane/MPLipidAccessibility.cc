@@ -98,13 +98,27 @@ MPLipidAccessibility::show(std::ostream & output) const
 /// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
 MPLipidAccessibility::parse_my_tag(
-	utility::tag::TagCOP ,
-	basic::datacache::DataMap& ,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
-	core::pose::Pose const & )
-{
+	utility::tag::TagCOP tag
+) {
+	if ( tag->hasOption( "angle_cutoff" ) ) {
+		angle_cutoff_ = tag->getOption< core::Real >("angle_cutoff", 65.0);
+	}
 
+	if ( tag->hasOption( "slice_width" ) ) {
+		slice_width_ = tag->getOption< core::Real >("slice_width", 10.0);
+	}
+
+	if ( tag->hasOption( "shell_radius" ) ) {
+		shell_radius_ = tag->getOption< core::Real >("shell_radius", 6.0);
+	}
+
+	if ( tag->hasOption( "dist_cutoff" ) ) {
+		dist_cutoff_ = tag->getOption< core::Real >("dist_cutoff", 10.0);
+	}
+
+	if ( tag->hasOption( "tm_alpha" ) ) {
+		tm_alpha_ = tag->getOption< bool >("tm_alpha", true);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +134,35 @@ protocols::moves::MoverOP
 MPLipidAccessibility::clone() const
 {
 	return protocols::moves::MoverOP( new MPLipidAccessibility( *this ) );
+}
+
+/////////////////////
+/// Get Methods   ///
+/////////////////////
+
+/// @brief get angle cutoff
+core::Real MPLipidAccessibility::get_angle_cutoff() const {
+	return angle_cutoff_;
+}
+
+/// @brief get slice width
+core::Real MPLipidAccessibility::get_slice_width() const {
+	return slice_width_;
+}
+
+/// @brief get shell radius
+core::Real MPLipidAccessibility::get_shell_radius() const {
+	return shell_radius_;
+}
+
+/// @brief get dist cutoff
+core::Real MPLipidAccessibility::get_dist_cutoff() const {
+	return dist_cutoff_;
+}
+
+/// @brief get tm_alpha
+bool MPLipidAccessibility::get_tm_alpha() const {
+	return tm_alpha_;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -474,6 +517,12 @@ void MPLipidAccessibility::provide_xml_schema( utility::tag::XMLSchemaDefinition
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "angle_cutoff", xsct_real, "Angle cutoff")
+		+ XMLSchemaAttribute    ( "slice_width", xsct_real, "Slice width")
+		+ XMLSchemaAttribute    ( "shell_radius", xsct_real, "Shell radius")
+		+ XMLSchemaAttribute    ( "dist_cutoff", xsct_real, "Distance cutoff")
+		+ XMLSchemaAttribute    ( "tm_alpha", xsct_rosetta_bool, "tm_alpha");
+
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
 		"Mover that computes which residues are lipid accessible and puts that information "

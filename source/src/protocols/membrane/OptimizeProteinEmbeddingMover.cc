@@ -51,6 +51,10 @@
 // C++ Headers
 #include <cstdlib>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 static basic::Tracer TR( "protocols.membrane.OptimizeProteinEmbeddingMover" );
 
 namespace protocols {
@@ -86,18 +90,25 @@ OptimizeProteinEmbeddingMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new OptimizeProteinEmbeddingMover() );
 }
 
-/// @brief Pase Rosetta Scripts Options for this Mover
+/// @brief Parse Rosetta Scripts Options for this Mover
 void
 OptimizeProteinEmbeddingMover::parse_my_tag(
-	utility::tag::TagCOP /*tag*/,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
+	utility::tag::TagCOP tag
 ) {
+	//TODO: Implement this for options that may be added in the future
+	if ( tag->hasOption( "option" ) ) {
+		std::string st = tag->getOption< std::string >("option", "option_text");
+		//private_data_ = st;
+	}
+}
 
-	// TODO: implement this
+/// @brief Provide xml schema for RosettaScripts compatibility
+void OptimizeProteinEmbeddingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "option", xs_string, "Option");
 
+	protocols::moves::xsd_type_definition_w_attributes( xsd, OptimizeProteinEmbeddingMoverCreator::mover_name(), "Optimizes the protein embedding in the membrane", attlist);
 }
 
 /// @brief Create a new copy of this mover

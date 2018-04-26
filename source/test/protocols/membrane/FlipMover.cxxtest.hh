@@ -35,6 +35,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -319,6 +320,30 @@ public: // test functions
 
 		return true;
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	/// @brief test parse_my_tag() read-in
+	void test_flipmover_parse_my_tag_input() {
+		std::stringstream tag_ss("<FlipMover jump_num=3 axisx=1 axisy=0 axisz=1 angle=45.5 random_angle=true max_angle_dev=12.0/>");
+		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
+
+		FlipMoverOP xflip( new FlipMover() );
+		xflip->parse_my_tag( tag );
+
+		TS_ASSERT(xflip->get_jump_num() == 3);
+
+		numeric::xyzVector< int > v1 = xflip->get_axis();
+		TS_ASSERT_EQUALS(v1.x(), 1);
+		TS_ASSERT_EQUALS(v1.y(), 0);
+		TS_ASSERT_EQUALS(v1.z(), 1);
+
+		TS_ASSERT_EQUALS(xflip->get_angle(), 45.5);
+		TS_ASSERT_EQUALS(xflip->get_random_angle(), true);
+		TS_ASSERT_EQUALS(xflip->get_max_angle_dev(), 12.0);
+	}
+
+
 
 private: // data
 

@@ -36,6 +36,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -125,6 +126,21 @@ public: // test functions
 		// compare after
 		TS_ASSERT( position_equal_within_delta( emb_down1->center(), cntr_after, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( emb_down1->normal(), norm_after, 0.001 ) );
+
+	}
+
+	void test_spinaroundpartner_parse_my_tag_input() {
+		std::stringstream tag_ss( "<SpinAroundPartnerMover jump=3 rand_range=true range=75 x=30.3 y=35.6/>" );
+		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
+
+		SpinAroundPartnerMoverOP xspin( new SpinAroundPartnerMover() );
+		xspin->parse_my_tag( tag );
+
+		TS_ASSERT_EQUALS(xspin->get_jump(), 3);
+		TS_ASSERT_EQUALS(xspin->get_rand_range(), true);
+		TS_ASSERT_EQUALS(xspin->get_range(), 75);
+		TS_ASSERT_EQUALS(xspin->get_x(), 30.3);
+		TS_ASSERT_EQUALS(xspin->get_y(), 35.6);
 
 	}
 

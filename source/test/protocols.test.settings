@@ -128,6 +128,10 @@ sources = {
 		"SetupDockingFoldTree",
 	],
 
+	"docking/membrane" : [
+		"MPDockingSetupMoverTest",
+	],
+
 	"energy_based_clustering" : [
 		"EnergyBasedClusteringTests",
 		"EnergyBasedClusteringTests_alpha_aa",
@@ -411,6 +415,7 @@ sources = {
 		"MembraneUtil",
 		"MPLipidAccessibility",
 		"OptimizeMembranePositionMover",
+		"OptimizeProteinEmbeddingMoverTest",
 		"SetMembranePositionMover",
 		"SpinAroundPartnerMover",
 		"TiltMover",
@@ -506,6 +511,7 @@ sources = {
 
 	"relax/membrane" : [
 		"MPFastRelaxFoldTree",
+		"MPRangeRelaxMover",
 	],
 
 	"residue_selectors" : [

@@ -84,14 +84,15 @@ public:
 	/// @brief Create a Fresh Instance of this Mover
 	protocols::moves::MoverOP fresh_instance() const override;
 
-	/// @brief Pase Rosetta Scripts Options for this Mover
+	/// @brief Parse Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
-	) override;
+		utility::tag::TagCOP tag
+	);
+
+	/// @brief Provide xml schema for RosettaScripts compatibility
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/////////////////////
 	/// Mover Methods ///
@@ -99,6 +100,15 @@ public:
 
 	/// @brief Get the name of this Mover (TiltMover)
 	std::string get_name() const override;
+
+	/// @brief Get the jump number for this Mover
+	core::Size get_jump_num() const;
+
+	/// @brief Get the random angle for this Mover
+	bool get_random_angle() const;
+
+	/// @brief Get the angle for this Mover
+	int get_angle() const;
 
 	/// @brief Flip the downstream partner in the membrane
 	void apply( core::pose::Pose & pose ) override;
@@ -129,6 +139,10 @@ private: // data
 
 	/// @brief Random tilt angle between -20 and 20 degrees
 	bool random_angle_;
+
+	// Tell the compiler that we are not hiding the base
+	// function with the parse_my_tag written above
+	using protocols::moves::Mover::parse_my_tag;
 };
 
 } // membrane

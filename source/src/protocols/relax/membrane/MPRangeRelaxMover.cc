@@ -51,6 +51,10 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 // C++ Headers
 #include <cstdlib>
 
@@ -112,18 +116,50 @@ MPRangeRelaxMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new MPRangeRelaxMover() );
 }
 
-/// @brief Pase Rosetta Scripts Options for this Mover
+/// @brief Parse Rosetta Scripts Options for this Mover
 void
 MPRangeRelaxMover::parse_my_tag(
-	utility::tag::TagCOP /*tag*/,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
+	utility::tag::TagCOP tag
 ) {
 
-	// TODO: implement this
+	using namespace basic::options;
+	using namespace protocols::membrane;
 
+	if ( tag->hasOption( "native" ) ) {
+		std::string native_file = tag->getOption< std::string >("native", "protocols/relax/membrane/2mpn_tr_native.pdb");
+		native_ = core::import_pose::pose_from_file( native_file , core::import_pose::PDB_file);
+	}
+
+	if ( tag->hasOption( "sfxn" ) ) {
+		std::string sf = tag->getOption< std::string >("sfxn", "mpframework_smooth_fa_2012.wts");
+		sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( sf );
+	}
+
+	if ( tag->hasOption( "center_resnumber" ) ) {
+		center_resnumber_ = tag->getOption< core::Size >("center_resnumber", 0);
+	}
+
+	if ( tag->hasOption( "set_tm_helical" ) ) {
+		set_tm_helical_ = tag->getOption< bool >("set_tm_helical", false);
+	}
+
+	if ( tag->hasOption( "optmem" ) ) {
+		optmem_ = tag->getOption< bool >("optmem", false);
+	}
+
+}
+
+/// @brief Provide xml schema for RosettaScripts compatibility
+void MPRangeRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "native", xs_string, "Native")
+		+ XMLSchemaAttribute    ( "sxfn", xs_string, "Scorefunction")
+		+ XMLSchemaAttribute    ( "center_resnumber", xsct_non_negative_integer, "Center residue number")
+		+ XMLSchemaAttribute    ( "set_tm_helical", xsct_rosetta_bool, "Set helical secondary structure in TM region")
+		+ XMLSchemaAttribute    ( "moptmem", xsct_rosetta_bool, "Turn on to optimize membrane");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, "MPRangeRelaxMover", "Relaxes a membrane protein by relaxing in ranges", attlist);
 }
 
 /// @brief Create a new copy of this mover
@@ -217,6 +253,35 @@ void MPRangeRelaxMover::apply( Pose & pose ) {
 /// @brief Optimize membrane
 void MPRangeRelaxMover::optimize_membrane( bool yesno ) {
 	optmem_ = yesno;
+}
+
+/////////////////////
+///  Get Methods  ///
+/////////////////////
+
+/// @brief Get native
+core::pose::PoseOP MPRangeRelaxMover::get_native() const {
+	return native_;
+}
+
+/// @brief Get scorefxn
+core::scoring::ScoreFunctionOP MPRangeRelaxMover::get_sfxn() const {
+	return sfxn_;
+}
+
+/// @brief Get center residue number
+core::Size MPRangeRelaxMover::get_center_resnumber() const {
+	return center_resnumber_;
+}
+
+/// @brief Get yes/no for set helical secondary structure in TM region
+bool MPRangeRelaxMover::get_set_tm_helical() const {
+	return set_tm_helical_;
+}
+
+/// @brief Get yes/no for optimize membrane option
+bool MPRangeRelaxMover::get_optmem() const {
+	return optmem_;
 }
 
 /////////////////////

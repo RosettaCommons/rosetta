@@ -58,6 +58,10 @@
 // C++ Headers
 #include <cstdlib>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 static basic::Tracer TR( "protocols.membrane.OptimizeMembranePositionMover" );
 
 namespace protocols {
@@ -110,18 +114,51 @@ OptimizeMembranePositionMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new OptimizeMembranePositionMover() );
 }
 
-/// @brief Pase Rosetta Scripts Options for this Mover
+/// @brief Parse Rosetta Scripts Options for this Mover
 void
 OptimizeMembranePositionMover::parse_my_tag(
-	utility::tag::TagCOP /*tag*/,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
+	utility::tag::TagCOP tag
 ) {
+	using namespace core::scoring;
+	if ( tag->hasOption( "sfxn") ) {
+		// create scorefxn
+		sfxn_ = ScoreFunctionFactory::create_score_function( tag->getOption< std::string >("sfxn", "mpframework_smooth_fa_2012.wts" ) );
+	}
 
-	// TODO: implement this
+	// set best score
+	if ( tag->hasOption( "score_best") ) {
+		score_best_ = tag->getOption< core::Real >("score_best", 999999);
+	}
 
+	// starting z and angle and their stepsizes, this requires the protein to be
+	// transformed into membrane coordinates first!!!
+	if ( tag->hasOption( "starting_z") ) {
+		starting_z_ = tag->getOption< core::Real >("starting_z", -10.0);
+		best_z_ = starting_z_;
+	}
+
+	if ( tag->hasOption( "stepsize_z") ) {
+		stepsize_z_ = tag->getOption< core::Real >("stepsize_z", 0.1);
+	}
+
+	if ( tag->hasOption( "stepsize_angle") ) {
+		stepsize_angle_ = tag->getOption< core::Real >("stepsize_angle", 0.5);
+	}
+}
+
+/// @brief Provide xml schema for RosettaScripts compatibility
+void
+OptimizeMembranePositionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "sfxn", xs_string, "Scorefunction")
+		+ XMLSchemaAttribute    ( "score_best", xsct_real, "Best score for scorefunction")
+		+ XMLSchemaAttribute    ( "starting_z", xsct_real, "Center search starting z")
+		+ XMLSchemaAttribute    ( "stepsize_z", xsct_real, "Center search stepsize z")
+		+ XMLSchemaAttribute    ( "stepsize_angle", xsct_real, "Normal search stepsize angle")
+		;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, OptimizeMembranePositionMoverCreator::mover_name(), "Optimizes the membrane position given the high-res score function", attlist);
 }
 
 /// @brief Create a new copy of this mover
@@ -208,6 +245,41 @@ void OptimizeMembranePositionMover::apply( Pose & pose ) {
 	pose.fold_tree().show( TR );
 
 }// apply
+
+/////////////////////
+///  Get Methods  ///
+/////////////////////
+
+///@brief Get Scorefunction for this Mover
+core::scoring::ScoreFunctionOP OptimizeMembranePositionMover::get_sfxn() const {
+	return sfxn_;
+}
+
+///@brief Get score_best for this Mover
+core::Real OptimizeMembranePositionMover::get_score_best() const {
+	return score_best_;
+}
+
+///@brief Get starting_z for this Mover
+core::Real OptimizeMembranePositionMover::get_starting_z() const {
+	return starting_z_;
+}
+
+///@brief Get best_z for this Mover
+core::Real OptimizeMembranePositionMover::get_best_z() const {
+	return best_z_;
+}
+
+///@brief Get stepsize_z for this Mover
+core::Real OptimizeMembranePositionMover::get_stepsize_z() const {
+	return stepsize_z_;
+}
+
+///@brief Get stepsize_angle for this Mover
+core::Real OptimizeMembranePositionMover::get_stepsize_angle() const {
+	return stepsize_angle_;
+}
+
 
 /////////////////////
 /// Setup Methods ///

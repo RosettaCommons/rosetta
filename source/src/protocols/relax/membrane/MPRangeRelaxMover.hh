@@ -67,32 +67,52 @@ public:
 	///////////////////////////////
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const override;
 
-	/// @brief Pase Rosetta Scripts Options for this Mover
+	/// @brief Parse Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
+		utility::tag::TagCOP tag
 	);
+
+	/// @brief Provide xml schema for RosettaScripts compatibility
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (MPRangeRelaxMover)
-	virtual std::string get_name() const;
+	virtual std::string get_name() const override;
 
 	/// @brief Do a RangeRelax of a membrane protein
-	virtual void apply( Pose & pose );
+	virtual void apply( Pose & pose ) override;
 
 	/// @brief Optimize membrane
 	void optimize_membrane( bool yesno );
+
+	/////////////////////
+	///  Get Methods  ///
+	/////////////////////
+
+	/// @brief Get native
+	core::pose::PoseOP get_native() const;
+
+	/// @brief Get scorefxn
+	core::scoring::ScoreFunctionOP get_sfxn() const;
+
+	/// @brief Get center residue number
+	core::Size get_center_resnumber() const;
+
+	/// @brief Get yes/no for set helical secondary structure in TM region
+	bool get_set_tm_helical() const;
+
+	/// @brief Get yes/no for optimize membrane option
+	bool get_optmem() const;
 
 private: // methods
 
@@ -125,6 +145,10 @@ private: // data
 
 	/// @brief optimize membrane?
 	bool optmem_;
+
+	// Tell the compiler that we are not hiding the base
+	// function with the parse_my_tag written above
+	using protocols::moves::Mover::parse_my_tag;
 
 };
 

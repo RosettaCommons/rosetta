@@ -85,7 +85,7 @@ public:
 	/// @brief Create a Fresh Instance of this Mover
 	protocols::moves::MoverOP fresh_instance() const override;
 
-	/// @brief Pase Rosetta Scripts Options for this Mover
+	/// @brief Parse Rosetta Scripts Options for this Mover
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,

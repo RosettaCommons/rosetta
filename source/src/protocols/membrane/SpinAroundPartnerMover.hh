@@ -85,12 +85,11 @@ public:
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &
-	) override;
+		utility::tag::TagCOP tag
+	);
+
+	/// @brief Provide xml schema for RosettaScripts compatibility
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/////////////////////
 	/// Mover Methods ///
@@ -98,6 +97,21 @@ public:
 
 	/// @brief Get the name of this Mover (SpinAroundPartnerMover)
 	std::string get_name() const override;
+
+	/// @brief Get the jump number for this Mover
+	core::Size get_jump() const;
+
+	/// @brief Get the random range for this Mover
+	bool get_rand_range() const;
+
+	/// @brief Get the sampling range for this Mover
+	core::Size get_range() const;
+
+	/// @brief Get the x position for this Mover
+	core::Real get_x() const;
+
+	/// @brief Get the y position for this Mover
+	core::Real get_y() const;
 
 	/// @brief Flip the downstream partner in the membrane
 	void apply( core::pose::Pose & pose ) override;
@@ -137,6 +151,10 @@ private: // data
 	/// @brief Set x and y position
 	core::Real x_;
 	core::Real y_;
+
+	// Tell the compiler that we are not hiding the base
+	// function with the parse_my_tag written above
+	using protocols::moves::Mover::parse_my_tag;
 
 };
 

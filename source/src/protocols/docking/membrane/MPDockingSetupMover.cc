@@ -105,16 +105,69 @@ MPDockingSetupMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new MPDockingSetupMover() );
 }
 
-/// @brief Pase Rosetta Scripts Options for this Mover
+/// @brief Parse Rosetta Scripts Options for this Mover
 void
 MPDockingSetupMover::parse_my_tag(
-	utility::tag::TagCOP,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const &
-)
-{}
+	utility::tag::TagCOP tag
+) {
+	if ( tag->hasOption( "optimize1" ) ) {
+		optimize1_ = tag->getOption< bool >("optimize1", false);
+	}
+
+	if ( tag->hasOption( "optimize2" ) ) {
+		optimize2_ = tag->getOption< bool >("optimize2", false);
+	}
+
+	if ( tag->hasOption( "pose1" ) ) {
+		if ( !(tag->hasOption("pose2")) ) {
+			utility_exit_with_message("Please provide two PDB files with pose1=\"example.pdb\" and pose2=\"example2.pdb\"!");
+		}
+
+		// get filenames from option system
+		utility::vector1< std::string > pdbs;
+		pdbs.push_back( tag->getOption<std::string>("pose1", "protocols/membrane/1AFO_AB.pdb") );
+		pdbs.push_back( tag->getOption<std::string>("pose2", "protocols/membrane/1AFO_AB.pdb") );
+
+		// put poses into private vector
+		for ( Size i = 1; i <= pdbs.size(); ++i ) {
+			PoseOP pose = core::import_pose::pose_from_file( pdbs[i] , core::import_pose::PDB_file);
+			poses_.push_back( pose );
+		}
+	}
+
+	if ( tag->hasOption( "span1" ) ) {
+		if ( !(tag->hasOption("span2")) ) {
+			utility_exit_with_message("Please provide two spanfiles with span1=\"example.span\" and span2=\"example2.span\"!");
+		}
+
+		spanfiles_.push_back(tag->getOption<std::string>("span1", "protocols/membrane/geometry/1AFO_AB.span"));
+		spanfiles_.push_back(tag->getOption<std::string>("span2", "protocols/membrane/geometry/1AFO_AB.span"));
+	}
+}
+
+/////////////////////
+/// Get Methods   ///
+/////////////////////
+
+/// @brief get optimize1
+bool MPDockingSetupMover::get_optimize1() const {
+	return optimize1_;
+}
+
+/// @brief get optimize1
+bool MPDockingSetupMover::get_optimize2() const {
+	return optimize2_;
+}
+
+/// @brief get pose vector
+utility::vector1< core::pose::PoseOP > MPDockingSetupMover::get_poses() const {
+	return poses_;
+}
+
+/// @brief get spanfile vector
+utility::vector1< std::string > MPDockingSetupMover::get_spanfiles() const {
+	return spanfiles_;
+}
 
 /// @brief Create a new copy of this mover
 // XRW TEMP protocols::moves::MoverOP
@@ -352,6 +405,14 @@ void MPDockingSetupMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "optimize1", xsct_rosetta_bool, "Optimize partner 1?")
+		+ XMLSchemaAttribute    ( "optimize2", xsct_rosetta_bool, "Optimize partner 2?")
+		+ XMLSchemaAttribute    ( "pose1", xs_string, "File name for pose 1")
+		+ XMLSchemaAttribute    ( "pose2", xs_string, "File name for pose 2")
+		+ XMLSchemaAttribute    ( "span1", xs_string, "File name for spanfile 1")
+		+ XMLSchemaAttribute    ( "span2", xs_string, "File name for spanfile 2")
+		;
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Set up for membrane protein docking.", attlist );
 }
 
