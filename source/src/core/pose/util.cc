@@ -258,7 +258,7 @@ set_reasonable_fold_tree( pose::Pose & pose )
 			uint const jump_start( e.start() );
 
 			// Does this jump represent a direct (chemical) connection between the two residues?
-			if ( pose.residue( jump_stop ).is_bonded( jump_start ) ) {
+			if ( pose.residue( jump_stop ).is_bonded( jump_start ) && !pose.residue( jump_stop ).is_polymer() ) {
 				if ( TR.Trace.visible() ) {
 					TR.Trace << e << " was initially set as a Jump that matches a chemical connection." << endl;
 				}
