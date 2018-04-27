@@ -531,6 +531,19 @@ StepWiseMasterMover::resample_full_model(
 	for ( StepWiseMove const & stepwise_move : checkpoint_revised_stepwise_moves ) {
 		TR.Debug << "Applying Move: " << stepwise_move << "." << std::endl;
 
+		// First FoldTree magic: move root away from the residue being resampled!!!
+		Size restore_root = 0;
+		if ( output_pose.fold_tree().root() == stepwise_move.move_element()[ 1 ] ) {
+			auto f = output_pose.fold_tree();
+			restore_root = f.root();
+			if ( stepwise_move.move_element()[ 1 ] < output_pose.size() ) {
+				f.reorder(stepwise_move.move_element()[ 1 ]+1);
+			} else {
+				f.reorder(stepwise_move.move_element()[ 1 ]-1);
+			}
+			output_pose.fold_tree( f );
+		}
+
 		// Some FoldTree magic: there is a chance that this residue is a jump to a
 		// NEW CHAIN. That is pretty cool, but it means that it's not possible to
 		// resample them.
@@ -570,7 +583,7 @@ StepWiseMasterMover::resample_full_model(
 
 
 
-			if ( current_moving > 1 ) {
+			if ( current_moving > 1 && output_pose.fold_tree().root() != current_moving - 1 ) {
 				/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving - 1, connected_by_jump );
 
 				/*if ( connected_by_jump ) {
@@ -598,6 +611,12 @@ StepWiseMasterMover::resample_full_model(
 					TR << "I-1 -- FT now: " << f << std::endl;
 					/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving - 1, connected_by_jump );
 				}
+			}
+			// If we had to move root, put it back
+			if ( restore_root != 0 ) {
+				auto f = output_pose.fold_tree();
+				f.reorder(restore_root);
+				output_pose.fold_tree(f);
 			}
 		}
 

@@ -266,11 +266,11 @@ class erraser_option :
 
         if self.scoring_file == "" :
             if self.map_file == "" :
-                self.scoring_file = "stepwise/rna/rna_loop_hires_04092010 "
+                self.scoring_file = "stepwise/rna/rna_loop_hires_04092010"
             elif self.fcc2012_scoring_file is True:
-                self.scoring_file = "stepwise/rna/rna_hires_elec_dens_FCC2012 "
+                self.scoring_file = "stepwise/rna/rna_hires_elec_dens_FCC2012"
             else :
-                self.scoring_file = "stepwise/rna/rna_hires_elec_dens "
+                self.scoring_file = "stepwise/rna/rna_hires_elec_dens"
 
         if self.rosetta_bin != '' and self.rosetta_folder != '':
             error_exit("The options 'rosetta_folder' and 'rosetta_bin' are incompatible! Specify only one of them.")

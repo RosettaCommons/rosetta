@@ -59,6 +59,28 @@ def rosetta_bin_path(exe_file, rosetta_folder = "") :
     check_path_exist(exe_path)
     return exe_path
 
+def initialize_rna_tools(rosetta_folder = ""):
+    if rosetta_folder == "" :
+        rosetta_folder = expandvars("$ROSETTA")
+        if rosetta_folder == "$ROSETTA" :
+            error_exit("USER need to set environmental variable $ROSETTA and pointed it to the Rosetta folder!")
+    exe_folder = rosetta_folder + "/tools/rna_tools/"
+    print ['source', exe_folder+'INSTALL']
+    subprocess.Popen(['source', exe_folder+'INSTALL'], shell=False)
+    return
+
+def get_fasta(pdb_file, out_file, rosetta_folder = ""):
+    """
+    Gets the FASTA contents using pdb2fasta.py
+    Note that initialize_rna_tools has been called already
+    """
+
+    out_list = subprocess.check_output(['/usr/bin/python', expandvars("$ROSETTA")+'/tools/rna_tools/bin/pdb2fasta.py', pdb_file], shell=False).split('\n')
+    with open(out_file, 'w') as f:
+        for l in out_list:
+            f.write("{}\n".format(l))
+    return out_list
+
 #####################################################
 def rosetta_database_path(rosetta_folder = "") :
     """
@@ -84,6 +106,10 @@ def subprocess_call(command, out = sys.stdout, err = sys.stderr, is_append_file 
     Execute the given commands in /usr/bin/sh.
     Error exit if failed.
     """
+    print "COMMAND:", command #" ".join(command)
+    #print "initial LD_LIBRARY_PATH is ", expandvars("$LD_LIBRARY_PATH")
+    #os.environ["LD_LIBRARY_PATH"] = "/net/cci/amw579/local_gcc_build/bin/usr/local/lib64/:/net/cci/amw579/local_gcc_build/bin/usr/local/lib/:" + os.environ["LD_LIBRARY_PATH"]
+    #print "final LD_LIBRARY_PATH is ", expandvars("$LD_LIBRARY_PATH")
     out_channel = sys.stdout
     if type(out) is str :
         if is_append_file :
@@ -104,7 +130,10 @@ def subprocess_call(command, out = sys.stdout, err = sys.stderr, is_append_file 
 
     out_channel.flush()
     err_channel.flush()
-    subprocess.check_call(command, shell=True, stdout = out_channel, stderr = err_channel)
+    try:
+      subprocess.check_call(command, shell=False, stdout = out_channel, stderr = err_channel, env=os.environ)
+    except OSError, e:
+      print e
     out_channel.flush()
     err_channel.flush()
 ###################################################
@@ -143,7 +172,7 @@ def grep(pattern, input_file) :
     return out_lines
 ###################################################
 
-def remove(pattern) :
+def remove(pattern, ignore_errors=True) :
     """
     Remove files/folder that agree with the pattern.
     """
@@ -151,7 +180,7 @@ def remove(pattern) :
         if os.path.isfile(path):
             os.remove(path)
         elif os.path.isdir(path):
-            shutil.rmtree(path)
+            shutil.rmtree(path, ignore_errors=ignore_errors)
         else:
             error_exit("Not a file nor a dir!!!")
 ###################################################
@@ -200,38 +229,72 @@ def find_nearby_res(input_pdb, input_res, dist_cutoff, reload = True):
     """
     check_path_exist(input_pdb)
 
+    # If input_res is a list of int (as would be if called by SWA_rebuild)
+    # then we need old load_pdb_coord. Pray for homogeneity.
     try :
         coord_all
         coord_C1
         if reload:
-            [coord_all, coord_C1] = load_pdb_coord(input_pdb)
+            if not isinstance(input_res[0], str):#input_res[0]isinstance(input_res[0], (int,long)):
+                [coord_all, coord_C1] = load_pdb_coord_old(input_pdb)
+            else:
+                [coord_all, coord_C1] = load_pdb_coord(input_pdb)
     except :
-        [coord_all, coord_C1] = load_pdb_coord(input_pdb)
+        #if isinstance(input_res[0], (int,long)):
+        if not isinstance(input_res[0], str):#input_res[0]isinstance(input_res[0], (int,long)):
+            [coord_all, coord_C1] = load_pdb_coord_old(input_pdb)
+        else:
+            [coord_all, coord_C1] = load_pdb_coord(input_pdb)
 
     res_list = []
-    for i in input_res:
-        if not i in coord_all.keys(): #range(1, len(coord_all) + 1) :
-            print i
-            print coord_all.keys()
-            error_exit("Input residues outside the range of pdb residues!")
-        for j in coord_all.keys(): #range(1, len(coord_all) + 1) :
-            if (j in input_res or j in res_list) : continue
-            dist_C1 = compute_dist( coord_C1[i], coord_C1[j] )
-            if dist_C1 > dist_cutoff + 8:
-                continue
-            for coord_target_atom in coord_all[i] :
-                found_qualifying_atom = False
-                for coord_all_atom in coord_all[j] :
-                    dist = compute_dist( coord_target_atom, coord_all_atom)
-                    if dist < dist_cutoff:
-                        res_list.append(j)
-                        found_qualifying_atom = True
+    if isinstance(coord_all, dict):
+        for i in input_res:
+            if not i in coord_all.keys(): #range(1, len(coord_all) + 1) :
+                print i
+                print coord_all.keys()
+                error_exit("Input residues outside the range of pdb residues!")
+            for j in coord_all.keys(): #range(1, len(coord_all) + 1) :
+                if (j in input_res or j in res_list) : continue
+                dist_C1 = compute_dist( coord_C1[i], coord_C1[j] )
+                if dist_C1 > dist_cutoff + 8:
+                    continue
+                for coord_target_atom in coord_all[i] :
+                    found_qualifying_atom = False
+                    for coord_all_atom in coord_all[j] :
+                        dist = compute_dist( coord_target_atom, coord_all_atom)
+                        if dist < dist_cutoff:
+                            res_list.append(j)
+                            found_qualifying_atom = True
+                            break
+                    if found_qualifying_atom:
                         break
-                if found_qualifying_atom:
-                    break
 
-    res_list.sort()
-    return res_list
+        res_list.sort()
+        return res_list
+    else:
+        for i in input_res:
+            if not i in range(1, len(coord_all) + 1) :
+                print i
+                print coord_all.keys()
+                error_exit("Input residues outside the range of pdb residues!")
+            for j in range(1, len(coord_all) + 1) :
+                if (j in input_res or j in res_list) : continue
+                dist_C1 = compute_dist( coord_C1[i-1], coord_C1[j-1] )
+                if dist_C1 > dist_cutoff + 8:
+                    continue
+                for coord_target_atom in coord_all[i-1] :
+                    found_qualifying_atom = False
+                    for coord_all_atom in coord_all[j-1] :
+                        dist = compute_dist( coord_target_atom, coord_all_atom)
+                        if dist < dist_cutoff:
+                            res_list.append(j)
+                            found_qualifying_atom = True
+                            break
+                    if found_qualifying_atom:
+                        break
+
+        res_list.sort()
+        return res_list
 
 
 ################################################################
@@ -395,20 +458,22 @@ def rna_rosetta_ready_set( input_pdb, out_name, option, rosetta_bin = "", rosett
     Call Rosetta to read in a pdb and output the model right away.
     Can be used to ensure the file have the rosetta format for atom name, ordering and phosphate OP1/OP2.
     """
+    print "Looking to see if {} exists...".format(input_pdb)
     check_path_exist(input_pdb)
+    print "It must!"
 
-    command = rosetta_bin_path("erraser_minimizer", rosetta_bin)
-    command += " -database %s" % rosetta_database_path(rosetta_database)
-    command += " -s %s" % input_pdb
-    if ( rna_prot_erraser ) :
-        command += " -rna:rna_prot_erraser true -rna:corrected_geo true"
-    command += " -ready_set_only true"
-    command += " -ignore_unrecognized_res -inout:skip_connect_info true" # -ignore_waters"
-    command += " -in:guarantee_no_DNA %s " % str(option.guarantee_no_DNA).lower()
-    command += " -out:file:write_pdb_link_records true "
+    command = [rosetta_bin_path("erraser_minimizer", rosetta_bin)]
+    command.extend(["-database", rosetta_database_path(rosetta_database)])
+    command.extend(["-s", input_pdb])
+    if rna_prot_erraser:
+        command.extend(["-rna:rna_prot_erraser", "true", "-rna:corrected_geo", "true"])
+    command.extend(["-ready_set_only", "true"])
+    command.extend(["-ignore_unrecognized_res", "-inout:skip_connect_info", "true"]) # -ignore_waters"
+    command.extend(["-in:guarantee_no_DNA", str(option.guarantee_no_DNA).lower()])
+    command.extend(["-out:file:write_pdb_link_records", "true"])
 
     # calebgeniesse: output virtual phosphates here
-    command += " -output_virtual true"
+    command.extend(["-output_virtual", "true"])
     print "######Start submitting the Rosetta command for rna_rosetta_ready_set########"
     subprocess_call( command, sys.stdout, sys.stderr )
     move( input_pdb.replace(".pdb", "_0001.pdb") , out_name )
@@ -463,7 +528,7 @@ def extract_pdb( silent_file, output_folder_name, rosetta_bin = "",
         command += " -rna:rna_prot_erraser true -rna:corrected_geo true "
 
     print "######Start submitting the Rosetta command for extract_pdb##################"
-    subprocess_call( command, sys.stdout, sys.stderr )
+    subprocess_call( command.split(), sys.stdout, sys.stderr )
     print "######Rosetta section completed#############################################"
 
     ############## Reformat pdb files withoriginal naming conventions ############
@@ -634,11 +699,11 @@ def pdb_slice(input_pdb, out_name, segment) :
     """
     check_path_exist(input_pdb)
 
-    print "in pdb_slice", segment
+    print "in pdb_slice", segment, input_pdb, out_name
     kept_res = []
-    if type(segment) is list :
+    if isinstance(segment, list) :
         kept_res = segment
-    elif type(segment) is str :
+    elif isinstance(segment, str) :
         # AMW: we will want to make this also string-residue-compatible
         for elem in segment.split() :
             if '-' in elem :
@@ -667,7 +732,7 @@ def pdb_slice(input_pdb, out_name, segment) :
     # 2. Learn old_res <-> kept_res correspondence
     # 3. Output corresponding LINK records.
     old_kept_res = []
-    atomlines = ( line for line in open(input_pdb) if len(line) > 20 and line[0:4] == 'ATOM' ) #generator
+    atomlines = [ line for line in open(input_pdb) if len(line) > 20 and line[0:4] == 'ATOM' ]
     for line in atomlines:
         current_chn = line[21]
         current_res = int(line[22:26])
@@ -675,7 +740,10 @@ def pdb_slice(input_pdb, out_name, segment) :
             #old_res += 1
             previous_res = current_res
             previous_chn = current_chn
-            old_res = "%s:%d" % (previous_chn, previous_res)
+            if isinstance(kept_res[0], str):
+                old_res = "%s:%d" % (previous_chn, previous_res)
+            else:
+                old_res = previous_res
             if old_res in kept_res :
                 old_kept_res.append( current_res )
                 new_res += 1
@@ -684,21 +752,54 @@ def pdb_slice(input_pdb, out_name, segment) :
             new_atom += 1
             output.write('%s%7d%s%4d%s' % (line[0:4], new_atom, line[11:22], new_res, line[26:]) )
 
-    linklines = ( line for line in open(input_pdb) if line[0:4] == 'LINK' )
-    for line in linklines:
-        # if either residue is in kept_res, write it
-        # ^ no that could lead to LINKs to nonexistent res -- AND
-        first, second = line.split()[4], line.split()[8]
-        if first in old_kept_res and second in old_kept_res:
-            output.write(line)
-
-
     output.close()
     return kept_res
 #####################################
 def check_path_exist(path_name) :
     if not exists(path_name) :
         error_exit("Path %s does not exist!" % path_name)
+#####################################
+def load_pdb_coord_old(input_pdb) :
+    """
+    Load in the pdb and return the coordinates for each heavy atom in each residue.
+    Also return a list of C1' coordinates
+    AMW: old version that supports SWA_rebuild better.
+    """
+    check_path_exist(input_pdb)
+
+    current_chn = ''
+    current_res = ''
+    coord_all = []
+    coord_res = []
+    coord_C1 = []
+    for line in open(input_pdb) :
+        if len(line) < 22 :
+            continue
+        if line[0:4] != 'ATOM' :
+            continue
+        if line[13] == 'H' or line[12] == 'H' or line[77] == 'H':
+            continue
+        chn = line[21]
+        res = line[22:27]
+        crs = int(res.strip())
+
+        if res != current_res or chn != current_chn:
+            if current_res != '' :
+                coord_res.append(coord_cur)
+                coord_all.append(coord_res)
+            current_res = res
+            current_chn = chn
+            coord_res = []
+
+        coord_cur = [float(line[30:38]), float(line[38:46]), float(line[46:54])]
+        coord_res.append(coord_cur)
+        if line[13:16] == "C1'" or line[13:16] == 'CA ' :
+            coord_C1.append(coord_cur)
+    coord_all.append(coord_res)
+    if len(coord_C1) != len(coord_all) :
+        error_exit("Number of residues != number of C1'!!!")
+
+    return [coord_all, coord_C1]
 #####################################
 def load_pdb_coord(input_pdb) :
     """
@@ -1173,7 +1274,10 @@ def pdb2rosetta (input_pdb, out_name, alter_conform = 'A', PO_dist_cutoff = 2.0,
                 # also increment for NC residues.
                 if not is_current_het or ( res_name in protein_res_names or res_name in rna_names ):
                     res_no += 1
-                    orig_res = '%s:%s:%s' % (line[21], line[22:27], line[71:75])
+                    if line[71:75].strip() != '':
+                        orig_res = '%s:%s:%s' % (line[21], line[71:75].strip(), line[22:27])
+                    else:
+                        orig_res = '%s:%s' % (line[21], line[22:27])
                     orig_res = orig_res.replace(' ', '')
                     res_conversion_list.append(orig_res)
 
@@ -1242,6 +1346,8 @@ def res_num_convert(res_conversion_list, res_pdb):
     """
     Convert pdb residue number (A15, chainID + resnum) to Rosetta pdb numbering.
     """
+    #print res_pdb
+    #print res_conversion_list
     if res_pdb not in res_conversion_list:
         error_exit("The residue '%s' was not found in the model.  Please make sure " % res_pdb +
         "that you include both the chain ID and residue number, for example 'A15'." )

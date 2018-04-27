@@ -33,6 +33,9 @@ def erraser( option ):
     option.num_pose_kept_cluster = 10
     option.finalize()
 
+    # Set up environment - ensure that RNA_TOOLS is available.
+    #initialize_rna_tools()
+
     #####Temporary data output folder##################################
     base_dir = os.getcwd()
     temp_dir = '%s/%s_erraser_temp/' % (base_dir, basename(option.input_pdb).replace('.pdb', ''))
@@ -62,14 +65,20 @@ def erraser( option ):
     else :
         print 'minimize_0.pdb already exists... Skip the ready_set step.'
 
+    def coloned(res):
+        if res[0].isalpha():
+            if res[1] != ':':
+                return res[0]+':'+res[1:]
+        return res
+
     fixed_res_final = []
-    fixed_res_final.extend( [ res_num_convert(res_conversion_list, res) for res in option.fixed_res ] )
+    fixed_res_final.extend( [ res_num_convert(res_conversion_list, coloned(res)) for res in option.fixed_res ] )
     fixed_res_final.sort()
     cutpoint_res_final = []
-    cutpoint_res_final.extend( [ res_num_convert(res_conversion_list, res) for res in option.cutpoint ] )
+    cutpoint_res_final.extend( [ res_num_convert(res_conversion_list, coloned(res)) for res in option.cutpoint ] )
     cutpoint_res_final.sort()
     extra_res_final = []
-    extra_res_final.extend( [ res_num_convert(res_conversion_list, res) for res in option.extra_res ] )
+    extra_res_final.extend( [ res_num_convert(res_conversion_list, coloned(res)) for res in option.extra_res ] )
     extra_res_final.sort()
 
     print "fixed_res_final in Rosetta pdb file = %s" % fixed_res_final
@@ -261,6 +270,12 @@ def erraser_single_res( option ) :
     print '###################################'
     #####################################################
     os.chdir(temp_dir)
+    
+    def coloned(res):
+        if res[0].isalpha():
+            if res[1] != ':':
+                return res[0]+':'+res[1:]
+        return res
 
     regularized_input_pdb = basename(option.input_pdb).replace('.pdb', '_regularized.pdb')
     regularize_pdb(option.input_pdb, regularized_input_pdb)
@@ -269,7 +284,9 @@ def erraser_single_res( option ) :
     fixed_res_final.sort()
     option.fixed_res_rs = fixed_res_final
     option.cutpoint_rs = cutpoint_res_final
-    option.rebuild_res = res_num_convert(res_conversion_list, option.rebuild_res_pdb)
+    option.rebuild_res = res_num_convert(res_conversion_list, coloned(option.rebuild_res_pdb))
+    # rebuild_res_list is used by the 'modern app' resample_full_model
+    option.rebuild_res_list = [res_num_convert(res_conversion_list, coloned(option.rebuild_res_pdb))]
     rna_rosetta_ready_set('start.pdb', 'temp.pdb', option, option.rosetta_bin, option.rosetta_database)
 
     print 'Starting to rebuild residue %s' % option.rebuild_res_pdb
@@ -278,9 +295,11 @@ def erraser_single_res( option ) :
     SWA_option.input_pdb = 'temp.pdb'
     SWA_option.log_out = 'rebuild_%s.out' % option.rebuild_res_pdb
     SWA_rebuild_erraser( SWA_option )
+    #seq_rebuild_new( SWA_option, output_minimized_pose_list=True )
     
     # check success and copy final pdb
     rebuilt_pdbs = [
+        #'temp_seq_rebuild_temp/SEQ_REBUILD.pdb'
         './temp_pdb_res_%d/output_pdb/S_000000_merge.pdb' % option.rebuild_res,
         './temp_pdb_res_%d/output_pdb/S_000000.pdb' % option.rebuild_res,
     ]
@@ -321,6 +340,8 @@ def erraser_single_res( option ) :
 
         minimize_option = deepcopy(option)
 
+        sys.stdout = stdout
+        sys.stderr = stderr
         #Scores for other rebuilt models
         for i in xrange(option.num_pose_kept_cluster) :
             rebuilt_pdb = './temp_pdb_res_%d/output_pdb/S_%06d.pdb' % (option.rebuild_res, i)
@@ -337,7 +358,8 @@ def erraser_single_res( option ) :
                 minimize_option.log_out = './temp_pdb_res_%d/output_pdb/minimize_%d.out' % (option.rebuild_res, i)
                 erraser_minimize( minimize_option )
                 score = 0.0
-                min_out_lines = open(minimize_option.log_out).readlines()
+                min_out_lines = None
+                with open(minimize_option.log_out) as f: min_out_lines = f.readlines()
                 for j in xrange( len(min_out_lines) - 1, -1, -1) :
                     if "current_score =" in min_out_lines[j] or "Total weighted score:" in min_out_lines[j]:
                         score = float(min_out_lines[j].split()[-1])
@@ -376,24 +398,24 @@ def erraser_single_res( option ) :
 
         #Output scores
         out_score = open("../scores.out" ,'w')
-        for i in xrange(0, len(final_pdb_list) ) :
-            out_score.write("model_%d %.3f\n" % (i, final_pdb_list[i][0]) )
-            rosetta2phenix_merge_back(regularized_input_pdb, final_pdb_list[i][1], "FINAL_merge.pdb")
+        for i, final_pdb in enumerate(final_pdb_list):
+            out_score.write("model_%d %.3f\n" % (i, final_pdb[0]) )
+            rosetta2phenix_merge_back(regularized_input_pdb, final_pdb[1], "FINAL_merge.pdb")
             regularize_OP1_OP2('FINAL_merge.pdb',  "%s_%d.pdb" % (option.out_prefix, i))
         out_score.write("start_min %.3f\n" % native_score )
         rosetta2phenix_merge_back(regularized_input_pdb, native_merge_pdb, "FINAL_merge.pdb")
         regularize_OP1_OP2('FINAL_merge.pdb',  "%s_start_min.pdb" % option.out_prefix)
         out_score.close()
 
-    if not option.verbose :
-        remove('temp_pdb_res_%d' % option.rebuild_res)
+    #if not option.verbose :
+    #    remove('temp_pdb_res_%d' % option.rebuild_res)
 
     print '###################################'
 
     os.chdir(base_dir)
 
-    if not option.kept_temp_folder :
-        remove(temp_dir)
+    #if not option.kept_temp_folder :
+    #    remove(temp_dir)
 
     total_time=time.time()-start_time
     print '\n', "DONE!...Total time taken= %f seconds" % total_time
@@ -424,63 +446,71 @@ def erraser_minimize( option ) :
     start_time=time.time()
     option.finalize()
 
+    get_fasta(option.input_pdb, 'target.fasta')
+
     #######Folders and files paths###########################
     database_folder = rosetta_database_path(option.rosetta_database)
     rna_minimize_exe = rosetta_bin_path("erraser_minimizer", option.rosetta_bin)
 
     ####submit rosetta cmdline##############
-    command = rna_minimize_exe
-    command += " -database %s " % database_folder
-    command += " -s %s " % option.input_pdb
-    command += " -score:weights %s " % option.scoring_file
+    command = [rna_minimize_exe,
+        "-database", database_folder,
+        "-s", option.input_pdb,
+        "-fasta", 'target.fasta',
+        "-score:weights", option.scoring_file]
 
     if option.fcc2012_new_torsional_potential :
-        command += " -score:rna_torsion_potential FCC2012_RNA11_based_new "
+        command.extend(["-score:rna_torsion_potential", "FCC2012_RNA11_based_new"])
     elif option.new_torsional_potential :
-        command += " -score:rna_torsion_potential RNA11_based_new "
+        command.extend(["-score:rna_torsion_potential", "RNA11_based_new"])
 
-    command += " -rna::corrected_geo %s " % str(option.corrected_geo).lower()
-    command += " -rna::erraser::rna_prot_erraser %s " % str(option.rna_prot_erraser).lower()
-    command += " -rna::vary_geometry %s " % str(option.vary_geometry).lower()
-    command += " -constrain_P %s " % str(option.constrain_phosphate).lower()
-    command += " -attempt_pyrimidine_flip %s " % str(option.attempt_pyrimidine_flip).lower()
-    command += " -rna::erraser::skip_minimize %s " % str(option.skip_minimize).lower()
-    command += " -chemical:enlarge_H_lj %s " % str(option.enlarge_H_lj).lower()
-    command += " -in:guarantee_no_DNA %s " % str(option.guarantee_no_DNA).lower()
-    command += " -out:file:write_pdb_link_records true "
+    command.extend(["-rna::corrected_geo", str(option.corrected_geo).lower(),
+               "-rna::erraser::rna_prot_erraser", str(option.rna_prot_erraser).lower(),
+               "-rna::vary_geometry", str(option.vary_geometry).lower(),
+               "-constrain_P", str(option.constrain_phosphate).lower(),
+               "-attempt_pyrimidine_flip", str(option.attempt_pyrimidine_flip).lower(),
+               "-rna::erraser::skip_minimize", str(option.skip_minimize).lower(),
+               "-chemical:enlarge_H_lj", str(option.enlarge_H_lj).lower(),
+               "-in:guarantee_no_DNA", str(option.guarantee_no_DNA).lower(),
+               "-set_weights", "cart_bonded", "1.0",
+               "-out:file:write_pdb_link_records", "true"])
 
     #Rescue the minimization default before r53221
-    command += " -scale_d 100 "
-    command += " -scale_theta 10 "
+    command.extend(["-scale_d", "100", "-scale_theta", "10"])
 
     #Rescue 2012 defaults
     if option.o2prime_legacy_mode is True:
-        command += " -stepwise:rna:o2prime_legacy_mode %s " % str(option.o2prime_legacy_mode).lower()
+        command.extend(["-stepwise:rna:o2prime_legacy_mode", str(option.o2prime_legacy_mode).lower()])
     if option.use_2prime_OH_potential is False:
-        command += " -use_2prime_OH_potential %s " % str(option.use_2prime_OH_potential).lower()
+        command.extend(["-use_2prime_OH_potential", str(option.use_2prime_OH_potential).lower()])
 
     if len(option.fixed_res_rs) != 0 :
-        command += ' -rna:farna:erraser:fixed_res '
+        command.append("-rna::erraser:fixed_res")
         for i in option.fixed_res_rs :
-            command += '%d ' % i
+            command.append('%d' % i)
 
     if option.map_file != '' :
-        command += " -edensity:mapfile %s " % option.map_file
-        command += " -edensity:mapreso %s " % option.map_reso
-        command += " -edensity:realign no "
+         command.extend(["-edensity:mapfile", option.map_file,
+                   "-edensity:mapreso", option.map_reso,
+                   "-edensity:realign", "no"])
 
-    command += ' -graphics false '
+    command.extend(['-graphics', 'false'])
     # unless you want to spend 99% of your time writing 100M lines to file.
-    command += ' -skip_connect_info true '
+    command.extend(['-skip_connect_info', 'true'])
     
-    print "cmdline: %s" % command
+    print "cmdline: %s" % " ".join(command)
     print "#######Submit the Rosetta Command Line###############"
     subprocess_call(command, sys.stdout, sys.stderr)
     print "#####################################################"
    
     # move jd2 output to temp_rs_min 
     jd2_out = option.input_pdb.replace('.pdb', '_0001.pdb')
-    move( jd2_out, option.out_pdb )
+    print "moving", jd2_out, "to", option.out_pdb
+    try:
+        move( jd2_out, option.out_pdb )
+    except:
+        print "Bizarrely, couldn't do it. Copying input to output."
+        copy( option.input_pdb, option.out_pdb )
 
     #########################################
     total_time=time.time()-start_time
@@ -604,7 +634,7 @@ def rebuild_completed( file ):
     return False
 
 
-def seq_rebuild_new( option ) :
+def seq_rebuild_new( option, output_minimized_pose_list=False ) :
     
     rna_swa_test_exe = rosetta_bin_path("resample_full_model", option.rosetta_bin )
     stdout = sys.stdout
@@ -645,10 +675,11 @@ def seq_rebuild_new( option ) :
 
     #-sample_res R:20-21
     common_cmd= ""
-    common_cmd += "-sample_res "
-    for res in option.rebuild_res_list: 
-        if rebuild_completed("seq_rebuild_temp_%s.out" % res): continue
-        common_cmd += "%s " % res
+    if len(option.rebuild_res_list) > 0:
+        common_cmd += "-sample_res "
+        for res in option.rebuild_res_list: 
+            if rebuild_completed("seq_rebuild_temp_%s.out" % res): continue
+            common_cmd += "%s " % res
     
     # other options from SWA_rebuild
     #common_cmd += " -database %s " % database_folder
@@ -660,6 +691,7 @@ def seq_rebuild_new( option ) :
     common_cmd += " -stepwise::output_minimized_pose_list false "
     common_cmd += " -stepwise::monte_carlo::minimize_single_res_frequency 1.0 "
     common_cmd += " -stepwise::enumerate true "
+    common_cmd += " -output_minimized_pose_list {} ".format(output_minimized_pose_list)
 
     ### AMW: Things we may need to figure out how to handle in the new, stepwise framework
     ###
@@ -730,7 +762,8 @@ def seq_rebuild_new( option ) :
     #####################Create fasta file########################
     fasta_file=temp_dir + '/fasta'
     print "About to call pdb2fasta"
-
+    print "input pdb is", SWA_option.input_pdb
+    print "cwd is", os.getcwd()
     # This has no using_protein toggle
     #print ["pdb2fasta.py", SWA_option.input_pdb, ">", fasta_file ]
     with open( fasta_file, "w" ) as out:
@@ -805,7 +838,7 @@ def seq_rebuild_new( option ) :
         
     command = sampling_cmd + ' ' + specific_cmd + ' ' + common_cmd + cluster_args #+ with_clustering
     if option.verbose: print  '\n', command, '\n'
-    subprocess_call( command, 'seq_rebuild.out', 'seq_rebuild.err' )
+    subprocess_call( command.split(), 'seq_rebuild.out', 'seq_rebuild.err' )
     os.chdir( base_dir )
 
     # success reporting may go here
@@ -815,8 +848,8 @@ def seq_rebuild_new( option ) :
     copy("%s/SEQ_REBUILD.pdb" % temp_dir, option.out_pdb)
     os.chdir(base_dir)
 
-    if not option.kept_temp_folder:
-        remove(temp_dir)
+    #if not option.kept_temp_folder:
+    #    remove(temp_dir)
 
     print "All rebuilding moves completed sucessfully!!!!"
     print 'sucessful_res: %s' % sucessful_res
@@ -1017,17 +1050,23 @@ def SWA_rebuild_erraser( option ):
         rs = None
         if isinstance(option.rebuild_res, str):
             rs = int(option.rebuild_res[2:])
+            if rs != 1 and (rs - 1 not in option.cutpoint_rs) :
+                rebuilding_res.append( "%s:%d" % ( option.rebuild_res[0], rs - 1 ) )
+            if rs != get_total_res(native_pdb) and (rs not in option.cutpoint_rs) :
+                rebuilding_res.append( "%s:%d" % ( option.rebuild_res[0], rs + 1 ) )
         else:
             rs = option.rebuild_res
-        if rs != 1 and (not rs - 1 in option.cutpoint_rs) :
-            rebuilding_res.append( "%s:%d" % ( option.rebuild_res[0], rs - 1 ) )
-        if rs != get_total_res(native_pdb) and (not rs in option.cutpoint_rs) :
-            rebuilding_res.append( "%s:%d" % ( option.rebuild_res[0], rs + 1 ) )
+            if rs != 1: rebuilding_res.append( rs-1 )
+            if rs != get_total_res(native_pdb): rebuilding_res.append( rs+1 )
 
         res_sliced_all = pdb_slice_with_patching( native_pdb, native_pdb_final, rebuilding_res ) [0]
 
-        rebuild_res_final = "%s:%d" % (option.rebuild_res[0], res_sliced_all.index("%s:%d" % (option.rebuild_res[0], rs) ) + 1)
-        cutpoint_res_final = [ "%s:%d" % (option.rebuild_res[0], res_sliced_all.index(cutpoint) + 1) for cutpoint in option.cutpoint_rs if cutpoint in res_sliced_all ] 
+        if isinstance(option.rebuild_res, str):
+            rebuild_res_final = "%s:%d" % (option.rebuild_res[0], res_sliced_all.index("%s:%d" % (option.rebuild_res[0], rs) ) + 1)
+            cutpoint_res_final = [ "%s:%d" % (option.rebuild_res[0], res_sliced_all.index(cutpoint) + 1) for cutpoint in option.cutpoint_rs if cutpoint in res_sliced_all ] 
+        else:
+            rebuild_res_final = res_sliced_all.index(rs)+1
+            cutpoint_res_final = [ res_sliced_all.index(cutpoint) + 1 for cutpoint in option.cutpoint_rs if cutpoint in res_sliced_all]
 
     total_res = get_total_res(native_pdb_final)
 
@@ -1123,7 +1162,7 @@ def SWA_rebuild_erraser( option ):
         common_cmd += " -score:rna_torsion_potential RNA11_based_new "
 
     common_cmd += " -rna::corrected_geo %s " % str(option.corrected_geo).lower()
-    common_cmd += " -rna::rna_prot_erraser %s " % str(option.rna_prot_erraser).lower()
+    common_cmd += " -rna::erraser::rna_prot_erraser %s " % str(option.rna_prot_erraser).lower()
     common_cmd += " -chemical:enlarge_H_lj %s " % str(option.enlarge_H_lj).lower()
     common_cmd += ' -graphics false '
     common_cmd += " -in:guarantee_no_DNA %s " % str(option.guarantee_no_DNA).lower()
@@ -1167,26 +1206,37 @@ def SWA_rebuild_erraser( option ):
             remove(sampling_folder)
         os.mkdir(sampling_folder)
 
-        if option.is_append:
-            print '\n', "Rebuilding res %s by attaching to res %s" % (rebuild_res_final, "%s:%d" % (rebuild_res_final[0], int(rebuild_res_final[2])-1)),  '\n'
+        if isinstance(rebuild_res_final, str):
+            if option.is_append:
+                print '\n', "Rebuilding res %s by attaching to res %s" % (rebuild_res_final, "%s:%d" % (rebuild_res_final[0], int(rebuild_res_final[2])-1)),  '\n'
+            else:
+                print '\n', "Rebuilding res %s by attaching to res %s" % (rebuild_res_final, "%s:%d" % (rebuild_res_final[0], int(rebuild_res_final[2])+1)),  '\n'
         else:
-            print '\n', "Rebuilding res %s by attaching to res %s" % (rebuild_res_final, "%s:%d" % (rebuild_res_final[0], int(rebuild_res_final[2])+1)),  '\n'
+            if option.is_append:
+                print '\n', "Rebuilding res %d by attaching to res %d" % (rebuild_res_final, rebuild_res_final-1)
+            else:
+                print '\n', "Rebuilding res %d by attaching to res %d" % (rebuild_res_final, rebuild_res_final+1)
 
         os.chdir( sampling_folder )
 
         specific_cmd = ""
         #specific_cmd += " -sample_res %s " % rebuild_res_final
-        specific_cmd += " -sample_res %s " % (rebuild_res_final[2:])
-        if option.is_append :
-            #specific_cmd += " -cutpoint_closed %s " % rebuild_res_final
-            specific_cmd += " -cutpoint_closed %s " % (rebuild_res_final[2:])
-        else :
-            #specific_cmd += " -cutpoint_closed %s:%d " % (rebuild_res_final[0], int(rebuild_res_final[2])-1)
-            specific_cmd += " -cutpoint_closed %d " % (int(rebuild_res_final[2:])-1)
+        if isinstance(rebuild_res_final, str):
+            specific_cmd += " -sample_res %s " % (rebuild_res_final[2:])
+            if option.is_append :
+                specific_cmd += " -cutpoint_closed %s " % (rebuild_res_final[2:])
+            else :
+                specific_cmd += " -cutpoint_closed %d " % (int(rebuild_res_final[2:])-1)
+        else:
+            specific_cmd += " -sample_res %s " % (rebuild_res_final)
+            if option.is_append :
+                specific_cmd += " -cutpoint_closed %s " % rebuild_res_final
+            else :
+                specific_cmd += " -cutpoint_closed %s:%d " % (rebuild_res_final[0], int(rebuild_res_final[2])-1)
 
         command = sampling_cmd + ' ' + specific_cmd + ' ' + common_cmd
         if option.verbose: print  '\n', command, '\n'
-        subprocess_call( command, 'sampling_1.out', 'sampling_1.err' )
+        subprocess_call( command.split(), 'sampling_1.out', 'sampling_1.err' )
 
         os.chdir( base_dir )
 
@@ -1207,7 +1257,8 @@ def SWA_rebuild_erraser( option ):
 
         command = sampling_cmd + ' ' + specific_cmd + ' ' + common_cmd
         if option.verbose: print  '\n', command, '\n'
-        subprocess_call( command, 'sampling_1.out', 'sampling_1.err' )
+        print "calling from os.cwd()"
+        subprocess_call( command.split(), 'sampling_1.out', 'sampling_1.err' )
 
         os.chdir( base_dir)
 
@@ -1268,7 +1319,7 @@ def SWA_rebuild_erraser( option ):
 
             if exists(sampling_folder + '/blah.out'):
                 if(option.verbose): print '\n', command ,'\n'
-                subprocess_call( command, 'precluster.out', 'precluster.err' )
+                subprocess_call( command.split(), 'precluster.out', 'precluster.err' )
 
         with_clustering  = ""
         with_clustering += " -suite_cluster_radius %s " % option.cluster_RMSD
@@ -1280,7 +1331,7 @@ def SWA_rebuild_erraser( option ):
 
         if exists(sampling_folder + '/blah.out'):
             if option.verbose: print '\n', command ,'\n'
-            subprocess_call( command, 'cluster.out', 'cluster.err' )
+            subprocess_call( command.split(), 'cluster.out', 'cluster.err' )
 
         os.chdir(base_dir)
 
@@ -1297,8 +1348,10 @@ def SWA_rebuild_erraser( option ):
 
         if exists(cluster_filename):
             score_line = subprocess_out('head -n 2 %s ' % cluster_filename ) [1]
-            subprocess_call('echo "%s"' % score_line, '%s/output_pdb.txt' % main_folder)
-            subprocess_call("grep SCORE %s | sort -nk2" % cluster_filename, "%s/output_pdb.txt" % main_folder)
+            subprocess_call(['echo', '"%s"' % score_line], '%s/output_pdb.txt' % main_folder)
+            # Need to pipe the following through sort -nk2?
+            # actually, gratifyingly, this file is pre-sorted!
+            subprocess_call(["grep",  "SCORE",  cluster_filename], "%s/output_pdb.txt" % main_folder)
         else:
             output = open("%s/output_pdb.txt" % main_folder, 'w')
             output.write("No silent file is being output during rebuilding")
@@ -1325,6 +1378,7 @@ def SWA_rebuild_erraser( option ):
             remove(cluster_folder)
             remove(precluster_pdb_folder)
             if exists(cluster_filename):
+                pass
                 remove(cluster_filename)
 
     total_time=time.time()-start_time
