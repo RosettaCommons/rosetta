@@ -49,6 +49,7 @@ enum LongRangeEnergyType {
 	ramaprepro_lr,
 	aspartimide_penalty_lr,
 	rna_suite_lr,
+	tna_suite_lr,
 	rna_stub_coord_lr,
 	DFIRE,
 	sym_bonus_lr,

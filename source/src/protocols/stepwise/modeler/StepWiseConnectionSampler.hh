@@ -139,6 +139,9 @@ private:
 	initialize_rna_bond_sampler( core::pose::Pose const & pose );
 
 	sampler::StepWiseSamplerOP
+	initialize_tna_bond_sampler( core::pose::Pose const & pose );
+
+	sampler::StepWiseSamplerOP
 	initialize_ligand_bond_sampler( core::pose::Pose const & pose );
 
 	sampler::StepWiseSamplerOP

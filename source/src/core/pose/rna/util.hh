@@ -67,6 +67,9 @@ bool
 is_rna_chainbreak( Pose const & pose, Size const i );
 
 bool
+is_tna_chainbreak( Pose const & pose, Size const i );
+
+bool
 check_in_base_pair_list( core::pose::rna::BasePair const & base_pair /*from native*/,
 	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/);
 

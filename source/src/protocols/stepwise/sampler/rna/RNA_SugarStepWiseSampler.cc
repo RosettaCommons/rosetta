@@ -96,14 +96,25 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 				//Record the torsions in starting pose
 				utility::vector1 < core::id::TorsionID > saved_torsion_id;
 				utility::vector1 < Real > saved_torsions;
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ALPHA   );
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  BETA    );
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  GAMMA   );
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  EPSILON );
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ZETA    );
+				if ( pose.residue_type( rsd_id_ ).is_TNA() ) {
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ALPHA   );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  BETA    );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  DELTA   );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  EPSILON );
+				} else {
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ALPHA   );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  BETA    );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  GAMMA   );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  EPSILON );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ZETA    );
+				}
 				saved_torsion_id.emplace_back( rsd_id_,   id::CHI, 1       ); //CHI
 				saved_torsion_id.emplace_back( rsd_id_,   id::CHI, 4       ); //O2H
-				saved_torsion_id.emplace_back( rsd_id_-1, id::BB,  ZETA    );
+				if ( pose.residue_type( rsd_id_ - 1 ).is_TNA() ) {
+					saved_torsion_id.emplace_back( rsd_id_-1, id::BB,  EPSILON    );
+				} else {
+					saved_torsion_id.emplace_back( rsd_id_-1, id::BB,  ZETA    );
+				}
 				saved_torsion_id.emplace_back( rsd_id_+1, id::BB,  ALPHA   );
 
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
@@ -135,11 +146,18 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 				//Record the torsions in starting pose
 				utility::vector1 < core::id::TorsionID > saved_torsion_id;
 				utility::vector1 < Real > saved_torsions;
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ALPHA   );
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  BETA    );
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  GAMMA   );
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  EPSILON );
-				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ZETA    );
+				if ( pose.residue_type( rsd_id_ ).is_TNA() ) {
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ALPHA   );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  BETA    );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  DELTA   );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  EPSILON );
+				} else {
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ALPHA   );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  BETA    );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  GAMMA   );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  EPSILON );
+					saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ZETA    );
+				}
 				saved_torsion_id.emplace_back( rsd_id_,   id::CHI, 1       ); //CHI
 				saved_torsion_id.emplace_back( rsd_id_,   id::CHI, 4       ); //O2H
 				saved_torsion_id.emplace_back( rsd_id_-1, id::BB,  ZETA    );
@@ -175,7 +193,11 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 			nu2 = torsion_info.nu2_south();
 			nu1 = torsion_info.nu1_south();
 		}
-		pose.set_torsion( id::TorsionID( rsd_id_, id::BB,  4 ), delta );
+		if ( pose.residue_type( rsd_id_ ).is_TNA() ) {
+			pose.set_torsion( id::TorsionID( rsd_id_, id::BB,  3 ), delta );
+		} else {
+			pose.set_torsion( id::TorsionID( rsd_id_, id::BB,  4 ), delta );
+		}
 		pose.set_torsion( id::TorsionID( rsd_id_, id::CHI, 2 ), nu2 );
 		pose.set_torsion( id::TorsionID( rsd_id_, id::CHI, 3 ), nu1 );
 	}

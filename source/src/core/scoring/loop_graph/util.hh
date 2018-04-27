@@ -29,14 +29,14 @@ namespace scoring {
 namespace loop_graph {
 
 void
-get_loop_atom( core::Size const & res,
+get_loop_atom( core::Size const res,
 	core::pose::Pose const & pose,
 	id::AtomID & atom_id,
 	Vector & xyz,
 	bool const takeoff /* as opposed to landing */ );
 
 void
-get_loop_atom( core::Size const & res,
+get_loop_atom( core::Size const res,
 	core::pose::Pose const & pose,
 	std::string const & atom_name,
 	id::AtomID & atom_id,

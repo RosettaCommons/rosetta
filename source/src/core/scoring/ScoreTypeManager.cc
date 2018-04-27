@@ -478,6 +478,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_suite"] = rna_suite;
 	name2score_type_[ "rna_jr_suite"] = rna_jr_suite;
 	name2score_type_[ "suiteness_bonus"] = suiteness_bonus;
+	name2score_type_[ "tna_suite"] = tna_suite;
 	name2score_type_[ "rna_sugar_close"] = rna_sugar_close;
 	name2score_type_[ "rna_fa_atr_base"] = rna_fa_atr_base;
 	name2score_type_[ "rna_fa_rep_base"] = rna_fa_rep_base;

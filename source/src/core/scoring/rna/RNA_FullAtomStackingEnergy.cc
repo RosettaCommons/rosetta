@@ -304,9 +304,9 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 
 	score_aro = 0.0;
 	Real score( 0.0 );
-	if ( !rsd1.is_RNA() ) return score;
+	if ( !rsd1.is_RNA() && !rsd1.is_TNA() ) return score;
 	if ( base_base_only_ ) {
-		if ( !rsd2.is_protein() && !rsd2.is_RNA()  ) return score;
+		if ( !rsd2.is_protein() && !rsd2.is_RNA() && !rsd2.is_TNA() ) return score;
 		if ( rsd2.is_protein() && !include_rna_prot_ ) return score;
 	}
 
@@ -373,13 +373,10 @@ RNA_FullAtomStackingEnergy::check_base_base_OK(
 	if ( m == rsd1.first_sidechain_atom() ) return false;
 
 	if ( n > rsd2.nheavyatoms() ) return false;
-	//if ( base_base_only_ && !rsd2.is_RNA() ) return false;
-	//if ( base_base_only_ && n < rsd2.first_sidechain_atom() ) return false;
-	//if ( base_base_only_ && n == rsd2.first_sidechain_atom() ) return false;  //2'-OH
 	if ( base_base_only_ ) {
-		if ( !rsd2.is_protein() && !rsd2.is_RNA() ) return false;
+		if ( !rsd2.is_protein() && !rsd2.is_RNA() && !rsd2.is_TNA() ) return false;
 		if ( rsd2.is_protein() && !include_rna_prot_ ) return false;
-		if ( rsd2.is_RNA() ) {
+		if ( rsd2.is_RNA() || rsd2.is_TNA() ) {
 			if ( n < rsd2.first_sidechain_atom() ) return false;
 			if ( n == rsd2.first_sidechain_atom() ) return false;  //2'-OH
 		}
@@ -450,8 +447,8 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	conformation::Residue const & rsd1( pose.residue( i ) );
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 
-	if ( base_base_only_ && !rsd1.is_RNA() && !include_rna_prot_ ) return;
-	if ( base_base_only_ && include_rna_prot_ && !(rsd1.is_protein() || rsd1.is_RNA()) ) return;
+	if ( base_base_only_ && !rsd1.is_RNA() && !rsd1.is_TNA() && !include_rna_prot_ ) return;
+	if ( base_base_only_ && include_rna_prot_ && !(rsd1.is_protein() || rsd1.is_RNA() || rsd1.is_TNA() ) ) return;
 	//if ( base_base_only_ && !rsd1.is_RNA() ) return;
 	if ( m > rsd1.nheavyatoms() ) return;
 	if ( rsd1.is_virtual( m ) ) return;
@@ -487,9 +484,9 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 		conformation::Residue const & rsd2( pose.residue( j ) );
 		//if ( base_base_only_ && !rsd2.is_RNA() ) continue;
 		if ( base_base_only_ ) {
-			if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) {
+			if ( !rsd1.is_RNA() || !rsd2.is_RNA() || rsd2.is_TNA() ) {
 				if ( !include_rna_prot_ ) continue;
-				if ( !((rsd1.is_RNA() && rsd2.is_protein()) || (rsd1.is_protein() && rsd2.is_RNA())) ) continue;
+				if ( !(( ( rsd1.is_RNA() || rsd1.is_TNA() ) && rsd2.is_protein()) || (rsd1.is_protein() && ( rsd2.is_RNA() || rsd2.is_TNA() ) )) ) continue;
 			}
 		}
 
@@ -723,8 +720,8 @@ RNA_FullAtomStackingEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( !rsd1.is_RNA() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
-	if ( !rsd2.is_RNA() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	if ( !rsd1.is_RNA() && !rsd1.is_TNA() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	if ( !rsd2.is_RNA() && !rsd2.is_TNA() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
 	if ( rsd1.seqpos() == rsd2.seqpos() ) return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
 	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairAll ) );
 }

@@ -145,7 +145,16 @@ RNA_ChainClosableGeometryChecker::check_chain_closable_geometry( pose::Pose cons
 bool
 RNA_ChainClosableGeometryChecker::check_chain_closable_geometry( core::conformation::Residue const & five_prime_residue,
 	core::conformation::Residue const & three_prime_residue ) const {
-	return check_chain_closable_geometry( five_prime_residue.xyz( " O3'" ), three_prime_residue.xyz( " C5'" ) );
+
+	if ( five_prime_residue.is_TNA() && three_prime_residue.is_TNA() ) {
+		return check_chain_closable_geometry( five_prime_residue.xyz( " O2'" ), three_prime_residue.xyz( " C3'" ) );
+	} else if ( five_prime_residue.is_TNA() && !three_prime_residue.is_TNA() ) {
+		return check_chain_closable_geometry( five_prime_residue.xyz( " O2'" ), three_prime_residue.xyz( " C5'" ) );
+	} else if ( !five_prime_residue.is_TNA() && three_prime_residue.is_TNA() ) {
+		return check_chain_closable_geometry( five_prime_residue.xyz( " O3'" ), three_prime_residue.xyz( " C3'" ) );
+	} else { //if ( !five_prime_residue.is_TNA() && !three_prime_residue.is_TNA() ) {
+		return check_chain_closable_geometry( five_prime_residue.xyz( " O3'" ), three_prime_residue.xyz( " C5'" ) );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,14 +182,26 @@ RNA_ChainClosableGeometryChecker::check_chain_closable_geometry( core::Size cons
 
 	for ( ResidueCOP const & rsd_at_origin : rsd_at_origin_list ) {
 
-		std::string const moving_atom_name    = ( is_prepend ) ? " O3'" : " C5'";
-		std::string const reference_atom_name = ( is_prepend ) ? " C5'" : " O3'";
+		if ( rsd_at_origin->is_TNA() ) {
+			std::string const moving_atom_name    = ( is_prepend ) ? " O2'" : " C3'";
+			std::string const reference_atom_name = ( is_prepend ) ? " C3'" : " O2'";
 
-		numeric::xyzVector< core::Real > atom_coordinate;
-		toolbox::rigid_body::get_specific_atom_coordinate( moving_atom_name, atom_coordinate, *rsd_at_origin, moving_res_base_stub );
+			numeric::xyzVector< core::Real > atom_coordinate;
+			toolbox::rigid_body::get_specific_atom_coordinate( moving_atom_name, atom_coordinate, *rsd_at_origin, moving_res_base_stub );
 
-		if ( check_chain_closable_geometry( atom_coordinate, pose.residue( reference_res ).xyz( reference_atom_name ) ) ) {
-			return true;
+			if ( check_chain_closable_geometry( atom_coordinate, pose.residue( reference_res ).xyz( reference_atom_name ) ) ) {
+				return true;
+			}
+		} else {
+			std::string const moving_atom_name    = ( is_prepend ) ? " O3'" : " C5'";
+			std::string const reference_atom_name = ( is_prepend ) ? " C5'" : " O3'";
+
+			numeric::xyzVector< core::Real > atom_coordinate;
+			toolbox::rigid_body::get_specific_atom_coordinate( moving_atom_name, atom_coordinate, *rsd_at_origin, moving_res_base_stub );
+
+			if ( check_chain_closable_geometry( atom_coordinate, pose.residue( reference_res ).xyz( reference_atom_name ) ) ) {
+				return true;
+			}
 		}
 	}
 
@@ -201,10 +222,13 @@ RNA_ChainClosableGeometryChecker::check_chain_closable_geometry( core::Size cons
 bool
 RNA_ChainClosableGeometryChecker::check_chain_closable_geometry_strict( pose::Pose const & five_prime_pose, pose::Pose const & three_prime_pose ) const {
 
+	std::string o3p_equiv_atom = three_prime_pose.residue( three_prime_chain_break_res_ ).is_TNA() ? "O2'" : "O3'";
+	std::string c5p_equiv_atom = five_prime_pose.residue( five_prime_chain_break_res_ ).is_TNA() ? "C3'" : "C5'";
+
 	runtime_assert ( gap_size_ == 0 );
 
 	/////////// C5'-O3' screen //////////////////////////////////////////////////
-	Distance C5_O3_dist = ( three_prime_pose.residue( three_prime_chain_break_res_ ).xyz( "C5'" ) - five_prime_pose.residue( five_prime_chain_break_res_ ).xyz( "O3'" ) ).length();
+	Distance C5_O3_dist = ( three_prime_pose.residue( three_prime_chain_break_res_ ).xyz( c5p_equiv_atom ) - five_prime_pose.residue( five_prime_chain_break_res_ ).xyz( o3p_equiv_atom ) ).length();
 	static Distance const C5_O3_min( 2.866000 ), C5_O3_max( 3.968000 ), leniency_dist( 0.0 );
 
 	//  std::cout << "C5_O3_dist [new]  " << C5_O3_dist << " " << five_prime_chain_break_res_ << " " << three_prime_chain_break_res_ <<
@@ -219,7 +243,11 @@ RNA_ChainClosableGeometryChecker::check_chain_closable_geometry_strict( pose::Po
 	conformation::Residue const & three_prime_rsd = three_prime_pose.residue( three_prime_chain_break_res_ );
 	Distance C4_C3_min( 0.0 ), C4_C3_max( 0.0 );
 	get_C4_C3_distance_range( five_prime_rsd, three_prime_rsd, C4_C3_min, C4_C3_max );
-	Distance C4_C3_dist = ( three_prime_pose.residue( three_prime_chain_break_res_ ).xyz( " C4'" ) - five_prime_pose.residue( five_prime_chain_break_res_ ).xyz( " C3'" ) ).length();
+
+	std::string c4p_equiv_atom = three_prime_pose.residue( three_prime_chain_break_res_ ).is_TNA() ? "C2'" : "C4'";
+	std::string c3p_equiv_atom = five_prime_pose.residue( five_prime_chain_break_res_ ).is_TNA() ? "C2'" : "C3'";
+
+	Distance C4_C3_dist = ( three_prime_pose.residue( three_prime_chain_break_res_ ).xyz( c4p_equiv_atom ) - five_prime_pose.residue( five_prime_chain_break_res_ ).xyz( c3p_equiv_atom ) ).length();
 	if ( ( C4_C3_dist > ( C4_C3_max + leniency_dist ) ) || ( C4_C3_dist < ( C4_C3_min - leniency_dist ) ) ) return false;
 
 	return true;
@@ -241,6 +269,12 @@ RNA_ChainClosableGeometryChecker::get_C4_C3_distance_range( conformation::Residu
 	conformation::Residue const & three_prime_rsd,
 	Distance & C4_C3_dist_min,
 	Distance & C4_C3_dist_max ) const{
+
+	std::string o3p_equiv_atom = five_prime_rsd.is_TNA() ? "O2'" : "O3'";
+	std::string c3p_equiv_atom = five_prime_rsd.is_TNA() ? "C2'" : "C3'";
+	std::string c4p_equiv_atom = three_prime_rsd.is_TNA() ? "C2'" : "C4'";
+	std::string c5p_equiv_atom = three_prime_rsd.is_TNA() ? "C3'" : "C5'";
+
 
 	numeric::xyzVector< Real > start_vector = five_prime_rsd.xyz( " O3'" ) - five_prime_rsd.xyz( " C3'" );
 	numeric::xyzVector< Real > end_vector   = three_prime_rsd.xyz( " C4'" ) - three_prime_rsd.xyz( " C5'" );

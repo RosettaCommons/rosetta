@@ -175,9 +175,9 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 
 	using namespace core::scoring::constraints;
 
-	if ( !rsd.is_RNA() ) return;
+	if ( !rsd.is_RNA() && !rsd.is_TNA() ) return;
 
-	Size const & i( rsd.seqpos() );
+	Size const i( rsd.seqpos() );
 
 	// AMW TODO: indices for this stuff for NCNTs.
 
@@ -195,8 +195,8 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 
 	constraints::ConstraintOP dist_cst, angle1, angle2, angle3;
 	if ( use_phenix_sugar_close_ ) {
-		Real const & delta = numeric::principal_angle_degrees( rsd.mainchain_torsion( DELTA ) );
-		Real const & delta_cutoff = rna_fitted_torsion_info_->delta_cutoff();
+		Real const delta = numeric::principal_angle_degrees( rsd.mainchain_torsion( DELTA ) );
+		Real const delta_cutoff = rna_fitted_torsion_info_->delta_cutoff();
 		if ( delta < delta_cutoff ) { //NORTH
 			func::FuncOP f_dist_cst( new func::HarmonicFunc( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ ) );
 			dist_cst = constraints::ConstraintOP( new AtomPairConstraint( o4prime_id, c1prime_id, f_dist_cst, rna_sugar_close ) );

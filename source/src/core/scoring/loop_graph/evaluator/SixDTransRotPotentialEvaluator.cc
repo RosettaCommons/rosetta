@@ -71,15 +71,28 @@ SixDTransRotPotentialEvaluator::evaluate( pose::Pose const & pose )
 	Vector landing_xyz, landing_a_xyz, landing_b_xyz, landing_c_xyz;
 
 	// see, e.g., RNA_FragmentMonteCarlo output_jump_o3p_to_o5p mode for saving jump information.
-	get_loop_atom( takeoff_pos_, pose, " O3'", takeoff_atom_id_,  takeoff_xyz );
-	get_loop_atom( takeoff_pos_, pose, " O3'", takeoff_a_atom_id, takeoff_a_xyz );
-	get_loop_atom( takeoff_pos_, pose, " C3'", takeoff_b_atom_id, takeoff_b_xyz );
-	get_loop_atom( takeoff_pos_, pose, " C4'", takeoff_c_atom_id, takeoff_c_xyz );
-
-	get_loop_atom( landing_pos_, pose, " O5'", landing_atom_id_,  landing_xyz );
-	get_loop_atom( landing_pos_, pose, " C5'", landing_a_atom_id, landing_a_xyz );
-	get_loop_atom( landing_pos_, pose, " O5'", landing_b_atom_id, landing_b_xyz );
-	get_loop_atom( landing_pos_, pose, " C4'", landing_c_atom_id, landing_c_xyz );
+	if ( takeoff_pos_ > 0 && takeoff_pos_ <= pose.size() && pose.residue_type( takeoff_pos_ ).is_TNA() ) {
+		get_loop_atom( takeoff_pos_, pose, " O2'", takeoff_atom_id_,  takeoff_xyz );
+		get_loop_atom( takeoff_pos_, pose, " O2'", takeoff_a_atom_id, takeoff_a_xyz );
+		get_loop_atom( takeoff_pos_, pose, " C2'", takeoff_b_atom_id, takeoff_b_xyz );
+		get_loop_atom( takeoff_pos_, pose, " C3'", takeoff_c_atom_id, takeoff_c_xyz );
+	} else { // hoping for RNA
+		get_loop_atom( takeoff_pos_, pose, " O3'", takeoff_atom_id_,  takeoff_xyz );
+		get_loop_atom( takeoff_pos_, pose, " O3'", takeoff_a_atom_id, takeoff_a_xyz );
+		get_loop_atom( takeoff_pos_, pose, " C3'", takeoff_b_atom_id, takeoff_b_xyz );
+		get_loop_atom( takeoff_pos_, pose, " C4'", takeoff_c_atom_id, takeoff_c_xyz );
+	}
+	if ( landing_pos_ > 0 && landing_pos_ <= pose.size() &&  pose.residue_type( landing_pos_).is_TNA() ) {
+		get_loop_atom( landing_pos_, pose, " O3'", landing_atom_id_,  landing_xyz );
+		get_loop_atom( landing_pos_, pose, " O3'", landing_a_atom_id, landing_a_xyz );
+		get_loop_atom( landing_pos_, pose, " C3'", landing_b_atom_id, landing_b_xyz );
+		get_loop_atom( landing_pos_, pose, " C4'", landing_c_atom_id, landing_c_xyz );
+	} else { // RNA
+		get_loop_atom( landing_pos_, pose, " O5'", landing_atom_id_,  landing_xyz );
+		get_loop_atom( landing_pos_, pose, " C5'", landing_a_atom_id, landing_a_xyz );
+		get_loop_atom( landing_pos_, pose, " O5'", landing_b_atom_id, landing_b_xyz );
+		get_loop_atom( landing_pos_, pose, " C4'", landing_c_atom_id, landing_c_xyz );
+	}
 
 	// takeoff
 	Stub stub1( takeoff_xyz /* center */,

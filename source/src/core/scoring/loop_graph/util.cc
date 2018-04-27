@@ -40,7 +40,7 @@ namespace loop_graph {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
-get_loop_atom( Size const & res,
+get_loop_atom( Size const res,
 	core::pose::Pose const & pose,
 	id::AtomID & atom_id,
 	Vector & xyz,
@@ -50,7 +50,9 @@ get_loop_atom( Size const & res,
 	using namespace pose::full_model_info;
 	core::conformation::Residue const & rsd = get_residue( res, pose );
 	std::string atom_name;
-	if ( rsd.is_NA() ) {
+	if ( rsd.is_TNA() ) {
+		atom_name = takeoff ? " O2'" : " C3'";
+	} else if ( rsd.is_NA() ) {
 		atom_name = takeoff ? " O3'" : " C5'";
 	} else {
 		runtime_assert( rsd.is_protein() );
@@ -61,7 +63,7 @@ get_loop_atom( Size const & res,
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
-get_loop_atom( core::Size const & res,
+get_loop_atom( core::Size const res,
 	core::pose::Pose const & pose,
 	std::string const & atom_name,
 	id::AtomID & atom_id,

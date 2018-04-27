@@ -208,7 +208,7 @@ Size chi1_torsion_atom_index( chemical::ResidueType const & rsd ) {
 ///////////////////////////////////////////////////////////////////////////////
 // consider moving this to chemical/util.cc.
 std::string const default_jump_atom( chemical::ResidueType const & rsd ) {
-	if ( rsd.is_RNA() ) {
+	if ( rsd.is_RNA() || rsd.is_TNA() ) {
 		if ( !rsd.is_coarse() ) {
 			return chi1_torsion_atom( rsd );
 		} else {
@@ -356,8 +356,8 @@ get_base_pair_atoms(
 	//AA const aa2 = rsd_type2.aa();// == aa_unk ? rsd_type2.na_analogue() : rsd_type2.aa();
 
 	// Enable base_analogue NOW and use PNA as an example
-	AA const aa1 = rsd_type1.aa() == aa_unk ? rsd_type1.base_analogue() : rsd_type1.aa();
-	AA const aa2 = rsd_type2.aa() == aa_unk ? rsd_type2.base_analogue() : rsd_type2.aa();
+	AA const aa1 = ( rsd_type1.aa() == aa_unk || rsd_type1.aa() == aa_unp ) ? rsd_type1.base_analogue() : rsd_type1.aa();
+	AA const aa2 = ( rsd_type2.aa() == aa_unk || rsd_type2.aa() == aa_unp ) ? rsd_type2.base_analogue() : rsd_type2.aa();
 
 	if ( edge1 == WATSON_CRICK && edge2 == WATSON_CRICK ) {
 		if ( orientation == CIS ) {
@@ -1255,7 +1255,15 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 	} //if not RNA
 
 	AA res_type = rsd.aa();
-	if ( res_type == aa_unk || res_type == aa_unp ) res_type = rsd.type().na_analogue();
+	if ( res_type == aa_unk || res_type == aa_unp ) {
+		// Prioritize base_analogue
+		if ( rsd.type().base_analogue() != aa_unk &&
+				rsd.type().base_analogue() != aa_unp ) {
+			res_type = rsd.type().base_analogue();
+		} else {
+			res_type = rsd.type().na_analogue();
+		}
+	}
 	// convert DNA to RNA equivalent
 	if ( res_type == na_ade ) res_type = na_rad;
 	if ( res_type == na_cyt ) res_type = na_rcy;

@@ -42,7 +42,8 @@ public:
 	RNA_KIC_Sampler(
 		core::pose::PoseOP ref_pose,
 		core::Size const moving_suite,
-		core::Size const chainbreak_suite
+		core::Size const chainbreak_suite,
+		bool const is_TNA = false
 	);
 
 	~RNA_KIC_Sampler();
@@ -146,15 +147,17 @@ private:
 	core::chemical::rna::PuckerState pucker_state_;
 	core::chemical::rna::ChiState base_state_;
 	core::Size sample_nucleoside_;
-	core::Real bin_size_;
-	core::Size max_tries_;
-	bool verbose_, extra_epsilon_, extra_chi_, sample_all_chi_, skip_same_pucker_,
-		idealize_coord_, torsion_screen_, random_chain_closed_;
+	core::Real bin_size_ = 20;
+	core::Size max_tries_ = 100;
+	bool verbose_ = false, extra_epsilon_ = false, extra_chi_ = false, sample_all_chi_ = false, skip_same_pucker_ = false,
+		idealize_coord_ = false, torsion_screen_ = true, random_chain_closed_ = true;
 
 	StepWiseSamplerSizedCombOP bb_rotamer_;
 	RNA_KinematicCloserOP loop_closer_;
 	RNA_ChiStepWiseSamplerOP chi_rotamer_;
 	screener::RNA_TorsionScreenerOP screener_;
+
+	bool is_TNA_ = false;
 };
 
 } //rna

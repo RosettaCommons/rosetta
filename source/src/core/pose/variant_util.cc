@@ -263,6 +263,7 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 }
 
 // AMW TODO assume no foldtree perturbation
+// AMW TODO: support for TNA
 void
 correctly_add_2prime_connection_variants( pose::Pose & pose, Size const twoprime_res, Size const next_res ) {
 

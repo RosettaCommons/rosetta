@@ -1,0 +1,7 @@
+-s long.pdb
+-parser:protocol test2.xml
+-overwrite 
+-constraints:cst_file bpc.cst 
+-cst_fa_file bpc.cst 
+-score:weights ref2015_cart
+-set_weights base_pair_constraint 1.0

@@ -412,6 +412,9 @@ StepWisePoseAligner::update_superimpose_atom_id_map( pose::Pose const & pose ) {
 			std::string const atom_name = pose.residue_type( n ).atom_name( q );
 			if ( extra_suite_atoms_upper.find( atom_name ) != extra_suite_atoms_upper.end() ) continue; // never use phosphates to superimpose
 			if ( extra_suite_atoms_lower.find( atom_name ) != extra_suite_atoms_lower.end() ) continue; // never use carbonyl oxygens to superimpose
+
+			if ( pose.residue_type( n ).is_TNA() && atom_name == "O3'" ) continue; // essentially a suite_atoms_upper deal
+
 			if ( sample_sugar && core::chemical::rna::sugar_atoms.has_value( atom_name ) ) continue;
 
 			if ( mod_reference_pose_local_ ) {

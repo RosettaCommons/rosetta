@@ -206,20 +206,21 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 		utility::vector1< id::AtomID > atom_ids;
 		utility::vector1< Vector > f1s;
 		utility::vector1< Vector > f2s;
+		Real const deriv_i = degrees( deriv[i] );
 		if ( !get_f1_f2( torsion_ids[i], pose, atom_ids, f1s, f2s ) ) continue;
 		for ( Size j = 1; j <= atom_ids.size(); ++j ) {
 			if ( atom_ids[j].rsd() == rsdnum_lo ) {
 				// Not sure why the "degrees" is needed. But in practice it works
 				// correctly.
 				r_lo_derivs[ atom_ids[j].atomno() ].f1() +=
-					degrees( deriv[i] ) * f1s[j] * weight;
+					deriv_i * f1s[j] * weight;
 				r_lo_derivs[ atom_ids[j].atomno() ].f2() +=
-					degrees( deriv[i] ) * f2s[j] * weight;
+					deriv_i * f2s[j] * weight;
 			} else if ( atom_ids[j].rsd() == rsdnum_hi ) {
 				r_hi_derivs[ atom_ids[j].atomno() ].f1() +=
-					degrees( deriv[i] ) * f1s[j] * weight;
+					deriv_i * f1s[j] * weight;
 				r_hi_derivs[ atom_ids[j].atomno() ].f2() +=
-					degrees( deriv[i] ) * f2s[j] * weight;
+					deriv_i * f2s[j] * weight;
 			} else {
 				// Should not happen. Exit here just in case.
 				utility_exit_with_message("Invalid Torsion!!");

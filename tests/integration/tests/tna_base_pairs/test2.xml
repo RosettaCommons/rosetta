@@ -1,0 +1,22 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="ref" weights="ref2015_cart" >
+			<Reweight scoretype="base_pair_constraint" weight="1.0" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+
+		<MinMover name="min" bb="true" chi="true" omega="false" /> cartesian="true" bondangle="true" bondlength="true" />
+		<ConstraintSetMover name="csts1" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="csts1" />
+		<Add mover="min" />
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

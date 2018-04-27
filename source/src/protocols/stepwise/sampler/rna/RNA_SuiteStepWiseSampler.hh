@@ -38,7 +38,9 @@ public:
 		core::chemical::rna::PuckerState const pucker_state_lower, //WHATEVER, NORTH, SOUTH
 		core::chemical::rna::PuckerState const pucker_state_upper,
 		core::chemical::rna::ChiState const base_state_lower, //WHATEVER, ANTI, SYN, NONE
-		core::chemical::rna::ChiState const base_state_upper
+		core::chemical::rna::ChiState const base_state_upper,
+		bool tna_lower = false,
+		bool tna_upper = false
 	);
 
 	/// @brief Initialization wrapper
@@ -105,12 +107,13 @@ private:
 
 	core::Size const rsd_id_;
 	core::chemical::rna::ChiState base_state_lower_, base_state_upper_;
+	bool tna_lower_ = false, tna_upper_ = false;
 
-	bool sample_nucleoside_lower_, sample_nucleoside_upper_,
-		extra_epsilon_, extra_beta_, extra_chi_, sample_all_chi_,
-		skip_same_pucker_, idealize_coord_, fast_;
+	bool sample_nucleoside_lower_ = true, sample_nucleoside_upper_ = true,
+		extra_epsilon_ = false, extra_beta_ = false, extra_chi_ = false, sample_all_chi_ = false,
+		skip_same_pucker_ = true, idealize_coord_ = true, fast_ = false;
 
-	core::Real bin_size_;
+	core::Real bin_size_ = 20;
 
 	utility::vector1<core::chemical::rna::PuckerState> pucker_states_lower_, pucker_states_upper_;
 };

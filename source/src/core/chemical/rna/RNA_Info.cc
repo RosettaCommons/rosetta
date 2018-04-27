@@ -113,7 +113,11 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	} else {
 		op1_atom_index_ = residue_type->atom_index( "SP1" );
 	}
-	o5prime_index_  = residue_type->atom_index( "O5'" );
+	if ( residue_type->has( "O5'" ) ) {
+		o5prime_index_  = residue_type->atom_index( "O5'" );
+	} else {
+		o5prime_index_ = 0; // TNA
+	}
 	o3prime_index_  = residue_type->atom_index( "O3'" );
 
 	if ( residue_type->has( "O4'" ) ) {
@@ -125,8 +129,11 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	c2prime_index_ = residue_type->atom_index( "C2'" );
 	c4prime_index_ = residue_type->atom_index( "C4'" );
 	c3prime_index_ = residue_type->atom_index( "C3'" );
-	c5prime_index_ = residue_type->atom_index( "C5'" );
-
+	if ( residue_type->has( "C5'" ) ) {
+		c5prime_index_ = residue_type->atom_index( "C5'" );
+	} else {
+		o5prime_index_ = 0; // TNA
+	}
 	base_atom_list_.clear();
 
 	for ( Size i = 1; i <= residue_type->natoms(); i++ ) {
@@ -147,6 +154,7 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 		if ( i == op1_atom_index_ ) is_phosphate_atom = true;
 		if ( i == o5prime_index_  ) is_phosphate_atom = true;
 		if ( i == o3prime_index_  ) is_phosphate_atom = true;
+		if ( residue_type->is_TNA() && i == o2prime_index_ ) is_phosphate_atom = true;
 
 		is_phosphate_.push_back( is_phosphate_atom );
 

@@ -94,6 +94,7 @@
 #include <core/scoring/rna/RNA_AtomVDW.fwd.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
 #include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
+#include <core/scoring/rna/TNA_SuitePotential.fwd.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
 #include <core/scoring/rna/RNP_LowResPotential.fwd.hh>
 #include <core/scoring/rna/RNP_LowResPairDistPotential.fwd.hh>
@@ -342,6 +343,13 @@ public:
 	/// it is fundamentally NOT THREADSAFE.
 	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 	rna::RNA_SuitePotentialCOP get_rna_suite_potential( bool const & calculate_suiteness_bonus, std::string const & suiteness_bonus ) const;
+
+	/// @brief Get an instance of the TNA_SuitePotentialCOP scoring object, by const owning pointer.
+	/// @details Threadsafe and lazily loaded.
+	/// @note The RNA_SuitePotential caches pose-specific scoring data in the global instance of the TNA_SuitePotential object.  As such,
+	/// it is fundamentally NOT THREADSAFE. (but this can and will be easily corrected)
+	/// @author Andy Watkins (amw579@stanford.edu).
+	rna::TNA_SuitePotential const & get_tna_suite_potential() const;
 
 	/// @brief Get an instance of the SixDTransRotPotential scoring object, by const owning pointer.
 	/// @details Threadsafe and lazily loaded.
@@ -823,6 +831,12 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	static rna::RNA_SuitePotentialOP create_rna_suitepotential_instance( bool const & calculate_suiteness_bonus, std::string const & suiteness_bonus );
 
+	/// @brief Create an instance of the TNA_SuitePotential object, by owning pointer.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Andy Watkins (amw579@stanford.edu)
+	static rna::TNA_SuitePotentialOP create_tna_suitepotential_instance();
+
 	/// @brief Create an instance of the SixDTransRotPotential object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 	/// @note Not intended for use outside of ScoringManager.
@@ -1075,6 +1089,7 @@ private:
 	mutable std::mutex database_occ_sol_mutex_;
 	mutable std::mutex carbonhbond_mutex_;
 	mutable utility::thread::ReadWriteMutex rna_suite_mutex_;
+	mutable std::mutex tna_suite_mutex_;
 	mutable utility::thread::ReadWriteMutex loopclose_sixdtransrot_mutex_;
 	mutable std::mutex rna_lowres_mutex_;
 	mutable std::mutex rnp_lowres_mutex_;
@@ -1143,6 +1158,7 @@ private:
 	mutable std::atomic_bool database_occ_sol_bool_;
 	mutable std::atomic_bool carbonhbond_bool_;
 	//mutable std::atomic_bool rna_suite_bool_;
+	mutable std::atomic_bool tna_suite_bool_;
 	//mutable std::atomic_bool loopclose_sixdtransrot_bool_;
 	mutable std::atomic_bool rna_lowres_bool_;
 	mutable std::atomic_bool rnp_lowres_bool_;
@@ -1215,6 +1231,7 @@ private:
 	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;
 	mutable rna::data::RNA_DMS_LowResolutionPotentialOP rna_dms_low_resolution_potential_;
 	mutable std::map< std::pair< bool, std::string >, rna::RNA_SuitePotentialOP > rna_suite_potential_;
+	mutable rna::TNA_SuitePotentialOP tna_suite_potential_;
 	mutable std::map< std::string, loop_graph::evaluator::SixDTransRotPotentialOP > loop_close_six_d_potential_;
 	mutable P_AAOP p_aa_;
 	mutable P_AA_ssOP p_aa_ss_;

@@ -818,6 +818,8 @@ sources = {
 		"RNP_LowResStackData",
 		"RNP_LowResPairDistEnergy",
 		"RNP_LowResPairDistPotential",
+		"TNA_SuiteEnergy",
+		"TNA_SuitePotential",
 		"util",
 	],
 	"core/scoring/rna/chemical_shift" : [

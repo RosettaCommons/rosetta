@@ -53,6 +53,10 @@ setup_sampler( pose::Pose const & pose,
 	using namespace chemical::rna;
 	using namespace pose::rna;
 
+	// AMW: Hijacking this to set up a TNA sampler as well. Divergence
+	// should happen at lower level than this since so many of the concepts
+	// track perfectly.
+
 	/////Load in constants being used/////
 	utility::vector1<Size> const & working_moving_suite_list( working_parameters->working_moving_suite_list() );
 	utility::vector1<Size> const & syn_chi_res( working_parameters->working_force_syn_chi_res_list() );
@@ -127,7 +131,7 @@ setup_sampler( pose::Pose const & pose,
 
 		pose::PoseOP new_pose( new pose::Pose( pose ) ); //hard copy
 		RNA_KIC_SamplerOP sampler( new RNA_KIC_Sampler(
-			new_pose, moving_suite_, chainbreak_suite ) );
+			new_pose, moving_suite_, chainbreak_suite, new_pose->residue_type( moving_suite_ ).is_TNA() ) );
 		//  runtime_assert( (moving_suite_ == chainbreak_suite + 1) || (moving_suite_ == chainbreak_suite - 1) );
 		Size const which_nucleoside_to_sample = ( moving_suite_ < chainbreak_suite ) ? 2 : 1;
 		Size const sample_nucleoside_res = ( moving_suite_ < chainbreak_suite ) ? (moving_suite_ + 1) : moving_suite_;
@@ -154,7 +158,8 @@ setup_sampler( pose::Pose const & pose,
 	}
 
 	RNA_SuiteStepWiseSamplerOP sampler( new RNA_SuiteStepWiseSampler( moving_suite_,
-		pucker_state[1], pucker_state[2], base_state[1], base_state[2] ) );
+		pucker_state[1], pucker_state[2], base_state[1], base_state[2],
+		pose.residue_type( moving_suite_ ).is_TNA(), pose.residue_type( moving_suite_ + 1 ).is_TNA() ) );
 	sampler->set_skip_same_pucker( options->use_phenix_geo() );
 	sampler->set_idealize_coord( options->use_phenix_geo() );
 	sampler->set_sample_nucleoside_lower( sample_sugar[1] );

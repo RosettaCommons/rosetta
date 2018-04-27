@@ -1709,6 +1709,12 @@ public:
 	/// @brief is RNA?
 	bool is_RNA() const;
 
+	/// @brief is TNA?
+	bool is_TNA() const;
+
+	/// @brief is PNA?
+	bool is_PNA() const;
+
 	/// @brief is coarse?
 	bool is_coarse() const;
 

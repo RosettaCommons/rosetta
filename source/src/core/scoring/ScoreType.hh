@@ -202,6 +202,7 @@ enum ScoreType {
 	rna_suite,      // RNA suite torsional potential -- 0.0 at suite centers, specified in suite_torsion/ files
 	rna_jr_suite,    // RNA suite torsional potential based on distance to closest suite, hard-coded in RNA_SuiteName
 	suiteness_bonus,  // Energy bonuses for suites specified in a file; suite centers hard-coded in RNA_SuiteName
+	tna_suite,      // TNA suite-like torsional potential -- 0.0 at suite centers, specified in suite_torsion/ files
 	rna_sugar_close,   // constraints to keep RNA sugar closed, and with reasonably ideal geometry
 
 	fa_stack,          // extra nucleobase stacking interaction modeled as pairwise orientation-dependent atom-atom interactions

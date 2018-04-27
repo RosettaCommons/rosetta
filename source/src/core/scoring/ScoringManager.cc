@@ -61,6 +61,7 @@
 #include <core/scoring/rna/RNP_LowResStackData.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/scoring/rna/RNA_SuitePotential.hh>
+#include <core/scoring/rna/TNA_SuitePotential.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
 #include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.hh>
@@ -697,6 +698,19 @@ ScoringManager::get_rna_suite_potential( bool const & calculate_suiteness_bonus,
 	return rna::RNA_SuitePotentialCOP(
 		utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( rna_suite_mutex_ ), key, rna_suite_potential_ )
 	);
+}
+
+/// @brief Get an instance of the TNA_SuitePotential scoring object, by const owning pointer.
+/// @details Threadsafe and lazily loaded.
+/// @author Andy Watkins (amw579@stanford.edu)
+rna::TNA_SuitePotential const &
+ScoringManager::get_tna_suite_potential() const
+{
+	boost::function< rna::TNA_SuitePotentialOP () > creator( boost::bind( &ScoringManager::create_tna_suitepotential_instance ) );
+	//return rna::TNA_SuitePotentialCOP(
+	utility::thread::safely_create_load_once_object_by_OP( creator, tna_suite_potential_, SAFELY_PASS_MUTEX( tna_suite_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( tna_suite_bool_ ) );
+	//);
+	return *tna_suite_potential_;
 }
 
 /// @brief Get an instance of the SixDTransRotPotential scoring object, by const owning pointer.
@@ -1647,6 +1661,15 @@ ScoringManager::create_rna_suitepotential_instance(
 	std::string const & suiteness_bonus
 ) {
 	return rna::RNA_SuitePotentialOP( new rna::RNA_SuitePotential( calculate_suiteness_bonus, suiteness_bonus ) );
+}
+
+/// @brief Create an instance of the TNA_SuitePotential object, by owning pointer.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Andy Watkins (amw579@stanford.edu)
+rna::TNA_SuitePotentialOP
+ScoringManager::create_tna_suitepotential_instance() {
+	return rna::TNA_SuitePotentialOP( new rna::TNA_SuitePotential );
 }
 
 /// @brief Create an instance of the SixDTransRotPotential object, by owning pointer.

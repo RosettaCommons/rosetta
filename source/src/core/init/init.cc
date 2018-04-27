@@ -213,6 +213,7 @@
 #include <core/scoring/rna/RNA_SugarCloseEnergyCreator.hh>
 #include <core/scoring/rna/RNA_StubCoordinateEnergyCreator.hh>
 #include <core/scoring/rna/RNA_SuiteEnergyCreator.hh>
+#include <core/scoring/rna/TNA_SuiteEnergyCreator.hh>
 #include <core/scoring/rna/RNA_TorsionEnergyCreator.hh>
 #include <core/scoring/rna/RNA_VDW_EnergyCreator.hh>
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.hh>
@@ -585,6 +586,7 @@ static EnergyMethodRegistrator< scoring::rna::RNP_LowResStackEnergyCreator > RNP
 static EnergyMethodRegistrator< scoring::rna::RNA_StubCoordinateEnergyCreator > RNA_StubCoordinateEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_SugarCloseEnergyCreator > RNA_SugarCloseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_SuiteEnergyCreator > RNA_SuiteEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::rna::TNA_SuiteEnergyCreator > TNA_SuiteEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_TorsionEnergyCreator > RNA_TorsionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_VDW_EnergyCreator > RNA_VDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator > RNA_FullAtomVDW_BasePhosphateCreator_registrator;

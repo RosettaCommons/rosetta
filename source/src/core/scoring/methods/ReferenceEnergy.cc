@@ -100,8 +100,16 @@ ReferenceEnergy::residue_energy(
 		AA const & aa( rsd.aa() );
 		AA const aa2 ( is_d_aminoacid(aa) ? get_l_equivalent(aa) : aa);
 		if ( Size(aa2) > aa_weights_.size() ) return;
-		// Catch L-RNA
-		if ( aa2 == na_lra ) {
+
+		if ( rsd.type().base_analogue() == na_rad ) {
+			emap[ ref ] += aa_weights_[ na_rad ];
+		} else if ( rsd.type().base_analogue() == na_rcy ) {
+			emap[ ref ] += aa_weights_[ na_rcy ];
+		} else if ( rsd.type().base_analogue() == na_rgu ) {
+			emap[ ref ] += aa_weights_[ na_rgu ];
+		} else if ( rsd.type().base_analogue() == na_ura ) {
+			emap[ ref ] += aa_weights_[ na_ura ];
+		} else if ( aa2 == na_lra ) { // Catch L-RNA
 			emap[ ref ] += aa_weights_[ na_rad ];
 		} else if ( aa2 == na_lrc ) {
 			emap[ ref ] += aa_weights_[ na_rcy ];

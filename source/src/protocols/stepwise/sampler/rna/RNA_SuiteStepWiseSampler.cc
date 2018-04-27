@@ -45,22 +45,16 @@ RNA_SuiteStepWiseSampler::RNA_SuiteStepWiseSampler(
 	PuckerState const pucker_state_lower, //ANY_PUCKER, NORTH, SOUTH, NO_PUCKER
 	PuckerState const pucker_state_upper,
 	ChiState const base_state_lower, //ANY_CHI, ANTI, SYN, NO_CHI
-	ChiState const base_state_upper
+	ChiState const base_state_upper,
+	bool const tna_lower,
+	bool const tna_upper
 ):
 	StepWiseSamplerSizedAny(),
 	rsd_id_( rsd_id ),
 	base_state_lower_( base_state_lower ),
 	base_state_upper_( base_state_upper ),
-	sample_nucleoside_lower_( true ),
-	sample_nucleoside_upper_( true ),
-	extra_epsilon_( false ),
-	extra_beta_( false ),
-	extra_chi_( false ),
-	sample_all_chi_( false ),
-	skip_same_pucker_( true ),
-	idealize_coord_( true ),
-	fast_( false ),
-	bin_size_( 20 )
+	tna_lower_( tna_lower ),
+	tna_upper_( tna_upper )
 {
 	runtime_assert( pucker_state_lower <= 2 );
 	runtime_assert( pucker_state_upper <= 2 );
@@ -109,10 +103,13 @@ void RNA_SuiteStepWiseSampler::init_standard() {
 			//Join individual torsions combinatorially.
 			StepWiseSamplerSizedCombOP new_rotamer_agg( new StepWiseSamplerSizedComb );
 
-			/////Gamma rotamers///// (full torsion)
-			StepWiseSamplerOneTorsionOP gamma_rotamer( new StepWiseSamplerOneTorsion(
-				TorsionID( rsd_id_ + 1, BB, GAMMA ), full_torsions ) );
-			new_rotamer_agg->add_external_loop_rotamer( gamma_rotamer );
+			// Can't sample gamma if TNA (that's the ring torsion, not delta)
+			if ( !tna_upper_ ) {
+				/////Gamma rotamers///// (full torsion)
+				StepWiseSamplerOneTorsionOP gamma_rotamer( new StepWiseSamplerOneTorsion(
+					TorsionID( rsd_id_ + 1, BB, GAMMA ), full_torsions ) );
+				new_rotamer_agg->add_external_loop_rotamer( gamma_rotamer );
+			}
 
 			/////Beta rotamers/////
 			//default: 180 +- 100 deg
@@ -132,18 +129,30 @@ void RNA_SuiteStepWiseSampler::init_standard() {
 				TorsionID( rsd_id_ + 1, BB, ALPHA ), full_torsions ) );
 			new_rotamer_agg->add_external_loop_rotamer( alpha_rotamer );
 
-			/////Zeta rotamers///// (full torsion)
-			StepWiseSamplerOneTorsionOP zeta_rotamer( new StepWiseSamplerOneTorsion(
-				TorsionID( rsd_id_, BB, ZETA ), full_torsions ) );
-			new_rotamer_agg->add_external_loop_rotamer( zeta_rotamer );
+			if ( tna_lower_ ) {
+				// Same as below, but eps/delta not zeta/eps
+				StepWiseSamplerOneTorsionOP zeta_rotamer( new StepWiseSamplerOneTorsion(
+					TorsionID( rsd_id_, BB, EPSILON ), full_torsions ) );
+				new_rotamer_agg->add_external_loop_rotamer( zeta_rotamer );
 
-			/////Epsilon rotamers/////
-			//default: center +- 20 deg
-			//extra_epsilon: center +- 60 deg
-			TorsionList epsilon_torsions = get_epsilon_torsions( (pucker_state_lower == NORTH), extra_epsilon_, bin_size_ );
-			StepWiseSamplerOneTorsionOP epsilon_rotamer( new StepWiseSamplerOneTorsion(
-				TorsionID( rsd_id_, BB, EPSILON ), epsilon_torsions ) );
-			new_rotamer_agg->add_external_loop_rotamer( epsilon_rotamer );
+				TorsionList epsilon_torsions = get_epsilon_torsions( (pucker_state_lower == NORTH), extra_epsilon_, bin_size_ );
+				StepWiseSamplerOneTorsionOP epsilon_rotamer( new StepWiseSamplerOneTorsion(
+					TorsionID( rsd_id_, BB, DELTA ), epsilon_torsions ) );
+				new_rotamer_agg->add_external_loop_rotamer( epsilon_rotamer );
+			} else {
+				/////Zeta rotamers///// (full torsion)
+				StepWiseSamplerOneTorsionOP zeta_rotamer( new StepWiseSamplerOneTorsion(
+					TorsionID( rsd_id_, BB, ZETA ), full_torsions ) );
+				new_rotamer_agg->add_external_loop_rotamer( zeta_rotamer );
+
+				/////Epsilon rotamers/////
+				//default: center +- 20 deg
+				//extra_epsilon: center +- 60 deg
+				TorsionList epsilon_torsions = get_epsilon_torsions( (pucker_state_lower == NORTH), extra_epsilon_, bin_size_ );
+				StepWiseSamplerOneTorsionOP epsilon_rotamer( new StepWiseSamplerOneTorsion(
+					TorsionID( rsd_id_, BB, EPSILON ), epsilon_torsions ) );
+				new_rotamer_agg->add_external_loop_rotamer( epsilon_rotamer );
+			}
 
 			/////Nucleoside rotamers/////
 			if ( sample_nucleoside_lower_ ) {

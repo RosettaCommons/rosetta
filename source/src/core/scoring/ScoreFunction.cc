@@ -928,11 +928,9 @@ ScoreFunction::get_sub_score(
 
 	//////////////////////////////////////////////////
 	///  Context Independent Long Range 2Body methods
-
 	for ( auto const & ci_lr_2b_method : ci_lr_2b_methods_ ) {
 		LREnergyContainerCOP lrec = pose.energies().long_range_container( ci_lr_2b_method->long_range_type() );
 		if ( !lrec || lrec->empty() ) continue; // only score non-empty energies.
-
 		// Potentially O(N^2) operation...
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( ! residue_mask[ii] ) continue;

@@ -46,7 +46,8 @@ public:
 	RNA_KinematicCloser(
 		core::pose::Pose const & init_pose,
 		core::Size const moving_suite,
-		core::Size const chainbreak_suite
+		core::Size const chainbreak_suite,
+		bool const is_TNA_ = false
 	);
 
 	~RNA_KinematicCloser();
@@ -98,8 +99,8 @@ private:
 
 	core::pose::Pose const & init_pose_; // must specify
 	core::Size const moving_suite_, chainbreak_suite_;
-	bool verbose_;
-	core::Size nsol_;
+	bool verbose_ = false;
+	core::Size nsol_ = 0;
 
 	utility::vector1< core::id::NamedAtomID > atom_ids_, pivot_ids_;
 	utility::vector1< core::Real > offset_save_, all_jacobians_;
@@ -109,7 +110,8 @@ private:
 	utility::vector1< utility::fixedsizearray1< core::Real, 3 > > atoms_;
 	utility::vector1< core::Real > dt_ang_, db_len_, db_ang_;
 
-	bool calculate_jacobians_;
+	bool calculate_jacobians_ = false;
+	bool is_TNA_ = false;
 };
 
 

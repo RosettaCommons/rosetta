@@ -269,6 +269,11 @@ is_cutpoint_open( Pose const & pose, Size const i ) {
 }
 
 //////////////////////////////////////////////////////
+/// @brief Returns true if a position is an RNA chainbreak
+/// @details Returns true if i is greater than pose.size()
+/// or less than 1, which is almost certainly designed to
+/// account for the semantics of 'chainbreaks' for poses in 
+/// stepwise/FARFAR contexts.
 bool
 is_rna_chainbreak( Pose const & pose, Size const i ) {
 
@@ -286,6 +291,46 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 	Size atom_P       =    next_rsd.type().RNA_info().p_atom_index();
 	Real const dist2 =
 		( current_rsd.atom( atom_O3prime ).xyz() - next_rsd.atom( atom_P ).xyz() ).length_squared();
+
+	if ( dist2 > CHAINBREAK_CUTOFF2 ) {
+		TR.Debug << "Found chainbreak at residue "<< i << " .  O3'-P distance: " << sqrt( dist2 ) << std::endl;
+		return true;
+	}
+
+	if ( pose.pdb_info() ) {
+		if ( pose.pdb_info()->number( i ) + 1 != pose.pdb_info()->number( i+1 ) ) return true;
+		if ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) return true;
+	}
+
+	return false;
+}
+
+//////////////////////////////////////////////////////
+/// @brief Returns true if a position is an TNA chainbreak
+/// @details Returns true if i is greater than pose.size()
+/// or less than 1, which is almost certainly designed to
+/// account for the semantics of 'chainbreaks' for poses in 
+/// stepwise/FARFAR contexts.
+bool
+is_tna_chainbreak( Pose const & pose, Size const i ) {
+
+	// AMW TODO: for this and the above, change dependence on seqpos+1
+	// to one based on UPPER connectivity.
+
+	static Real const CHAINBREAK_CUTOFF2 ( 2.5 * 2.5 );
+
+	if ( i >= pose.size() ) return true;
+	if ( i < 1 ) return true;
+
+	conformation::Residue const & current_rsd( pose.residue( i   ) ) ;
+	conformation::Residue const &    next_rsd( pose.residue( i+1 ) ) ;
+	runtime_assert ( current_rsd.is_TNA() );
+	runtime_assert ( next_rsd.is_TNA() );
+
+	Size atom_O2prime = current_rsd.type().RNA_info().o2prime_index();
+	Size atom_P       =    next_rsd.type().RNA_info().p_atom_index();
+	Real const dist2 =
+		( current_rsd.atom( atom_O2prime ).xyz() - next_rsd.atom( atom_P ).xyz() ).length_squared();
 
 	if ( dist2 > CHAINBREAK_CUTOFF2 ) {
 		TR.Debug << "Found chainbreak at residue "<< i << " .  O3'-P distance: " << sqrt( dist2 ) << std::endl;
@@ -651,8 +696,10 @@ is_torsion_valid(
 	if ( rsd_3.has_variant_type( chemical::FIVEPRIME_CAP ) ) return false;
 	if ( rsd_4.has_variant_type( chemical::FIVEPRIME_CAP ) ) return false;
 
-	if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() ||
-			!rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;
+	if ( ( !rsd_1.is_RNA() || !rsd_2.is_RNA() ||
+			!rsd_3.is_RNA() || !rsd_4.is_RNA() ) &&
+			( !rsd_1.is_TNA() || !rsd_2.is_TNA() ||
+			!rsd_3.is_TNA() || !rsd_4.is_TNA() ) ) return false;
 
 	bool is_virtual_torsion = (
 		rsd_1.is_virtual( id1.atomno() ) ||
@@ -691,7 +738,7 @@ is_torsion_valid(
 
 	bool is_chain_break_torsion( false );
 
-	if ( inter_residue_torsion ) {
+	if ( inter_residue_torsion && pose.residue_type( id1.rsd() ).is_RNA() ) {
 		// Note that chain_break_torsion does not neccessarily have to be located
 		// at a cutpoint_open. For example, in RNA might contain multiple strands,
 		// but the user not have specified them as cutpoint_open
@@ -712,6 +759,11 @@ is_torsion_valid(
 		// Fragment Assembly and Stepwise Assembly where the chain is
 		// not yet closed.
 		is_chain_break_torsion = ( violate_max_O3_prime_to_P_bond_dist
+			&& !is_cutpoint_closed1 );
+	} else if ( pose.residue_type( id1.rsd() ).is_TNA() ) { // it's TNA
+		bool const violate_max_O2_prime_to_P_bond_dist =
+			pose::rna::is_tna_chainbreak( pose, id1.rsd() );
+		is_chain_break_torsion = ( violate_max_O2_prime_to_P_bond_dist
 			&& !is_cutpoint_closed1 );
 	}
 

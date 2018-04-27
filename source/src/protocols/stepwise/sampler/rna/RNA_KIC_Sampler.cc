@@ -48,7 +48,8 @@ namespace rna {
 RNA_KIC_Sampler::RNA_KIC_Sampler(
 	core::pose::PoseOP  ref_pose,
 	core::Size const moving_suite,
-	core::Size const chainbreak_suite
+	core::Size const chainbreak_suite,
+	bool const is_TNA
 ):
 	StepWiseSampler(),
 	ref_pose_(std::move( ref_pose )),
@@ -57,17 +58,8 @@ RNA_KIC_Sampler::RNA_KIC_Sampler(
 	pucker_state_( ANY_PUCKER ), // ANY_PUCKER, NORTH, SOUTH, NO_PUCKER
 	base_state_( ANY_CHI ), // ANY_CHI, ANTI, SYN, NO_CHI
 	sample_nucleoside_( moving_suite + 1 ), // default, may be replaced.
-	bin_size_( 20 ),
-	max_tries_( 100 ),
-	verbose_( false ),
-	extra_epsilon_( false ),
-	extra_chi_( false ),
-	sample_all_chi_( false ),
-	skip_same_pucker_( false ),
-	idealize_coord_( false ),
-	torsion_screen_( true ),
-	random_chain_closed_( true ),
-	screener_( screener::RNA_TorsionScreenerOP( new RNA_TorsionScreener ) )
+	screener_( screener::RNA_TorsionScreenerOP( new RNA_TorsionScreener ) ),
+	is_TNA_( is_TNA )
 {
 	StepWiseSampler::set_random( false );
 }
@@ -107,11 +99,12 @@ void RNA_KIC_Sampler::init() {
 	}
 	add_values_from_center( epsilon_torsions, center, max_range, bin_size_ );
 	StepWiseSamplerOneTorsionOP epsilon_rotamer( new StepWiseSamplerOneTorsion(
-		TorsionID( moving_suite_, BB, EPSILON ), epsilon_torsions ) );
+		TorsionID( moving_suite_, BB, is_TNA_ ? DELTA : EPSILON ), epsilon_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( epsilon_rotamer );
+
 	/////Zeta1 rotamers/////
 	StepWiseSamplerOneTorsionOP zeta_rotamer( new StepWiseSamplerOneTorsion(
-		TorsionID( moving_suite_, BB, ZETA ), full_torsions ) );
+		TorsionID( moving_suite_, BB, is_TNA_ ? EPSILON : ZETA ), full_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( zeta_rotamer );
 	/////Alpha1 rotamers/////
 	StepWiseSamplerOneTorsionOP alpha1_rotamer( new StepWiseSamplerOneTorsion(
@@ -133,7 +126,7 @@ void RNA_KIC_Sampler::init() {
 
 	////////// Loop Closer //////////
 	loop_closer_ = RNA_KinematicCloserOP( new RNA_KinematicCloser(
-		*ref_pose_, moving_suite_, chainbreak_suite_ ) );
+		*ref_pose_, moving_suite_, chainbreak_suite_, is_TNA_ ) );
 	loop_closer_->set_verbose( verbose_ );
 
 	////////// Chi StepWiseSampler //////////

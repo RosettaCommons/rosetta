@@ -127,6 +127,7 @@ ResidueType::ResidueType(
 	rotamer_aa_( aa_unk ),
 	backbone_aa_( aa_unk ),
 	na_analogue_( aa_unp ),
+	base_analogue_( aa_unp ),
 	base_name_(""),
 	base_type_cop_(), //Assumes that this is a base type by default.
 	name_(""),
@@ -256,6 +257,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	rotamer_aa_ = residue_type.rotamer_aa_;
 	backbone_aa_ = residue_type.backbone_aa_;
 	na_analogue_ = residue_type.na_analogue_;
+	base_analogue_ = residue_type.base_analogue_;
 	base_name_ = residue_type.base_name_;
 	base_type_cop_ = residue_type.base_type_cop_; //If the residue type that we're copying has a base type, copy the base type pointer, too.
 	runtime_assert( base_type_cop_.get() != this );
@@ -2451,6 +2453,18 @@ ResidueType::is_RNA() const
 }
 
 bool
+ResidueType::is_TNA() const
+{
+	return properties_->has_property( TNA );
+}
+
+bool
+ResidueType::is_PNA() const
+{
+	return properties_->has_property( PNA );
+}
+
+bool
 ResidueType::is_coarse() const
 {
 	return properties_->has_property( COARSE );
@@ -2459,7 +2473,7 @@ ResidueType::is_coarse() const
 bool
 ResidueType::is_NA() const
 {
-	return is_DNA() || is_RNA();
+	return is_DNA() || is_RNA() || is_TNA();
 }
 
 bool
@@ -3671,12 +3685,14 @@ ResidueType::update_derived_data()
 		}
 	}
 
-	if ( properties_->has_property( RNA ) ) { //reinitialize and RNA derived data.
+	// Add RNA_Info to TNA residues: most lookups still useful, and
+	// will cause simple zero-index crashes when inappropriate.
+	if ( properties_->has_property( RNA ) || properties_->has_property( TNA ) ) { //reinitialize and RNA derived data.
 		//Reinitialize rna_info_ object! This also make sure rna_info_ didn't inherit anything from the previous update!
 		//It appears that the rna_info_ is shared across multiple ResidueType object, if the rna_info_ is not reinitialized here!
 		rna_info_ = core::chemical::rna::RNA_InfoOP( new core::chemical::rna::RNA_Info );
 		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
-		if ( nchi() >= 4 ) {
+		if ( nchi() >= 4 || properties_->has_property( TNA ) ) {
 			// safety against hypothetical RNA RTs without 4 chi AND vs.
 			// premature finalize() calls.
 			rna_info_->rna_update_last_controlling_chi( get_self_weak_ptr(), last_controlling_chi_, atoms_last_controlled_by_chi_);

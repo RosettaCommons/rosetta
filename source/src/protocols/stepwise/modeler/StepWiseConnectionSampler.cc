@@ -392,11 +392,14 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 
 	// AMW: why no PCS for carbohydrate? don't care.
 	// AMW: also disable for DNA. Not QUITE sure why.
+	// AMW: ditto TNA. There is something up here. Maybe not necessary
+	// but just hard to get results in some integration tests, or something?
 	PartitionContactScreenerOP atr_rep_screener;
 	if ( options_->atr_rep_screen() && moving_res_list_.size() > 0 &&
 			( options_->atr_rep_screen_for_docking() || !rigid_body_modeler_ )
 			&& !pose.residue_type( moving_res_ ).is_carbohydrate()
 			&& !pose.residue_type( moving_res_ ).is_DNA()
+			&& !pose.residue_type( moving_res_ ).is_TNA()
 			&& !pose.residue_type( moving_res_ ).has_variant_type( core::chemical::DEOXY_O2PRIME ) ) {
 		atr_rep_screener = PartitionContactScreenerOP( new PartitionContactScreener( *screening_pose_, working_parameters_, use_loose_rep_cutoff, scorefxn_->energy_method_options() ) );
 		screeners_.push_back( atr_rep_screener );
@@ -736,6 +739,9 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 		} else if ( moving_res_ != 0 && pose.residue_type( moving_res_ ).is_carbohydrate() ) {
 			TR << "Sampling carbohydrate" << std::endl;
 			sampler_ = initialize_carbohydrate_bond_sampler( pose );
+		} else if ( moving_res_ != 0 && pose.residue_type( moving_res_ ).is_TNA() ) {
+			TR << "Sampling TNA" << std::endl;
+			sampler_ = initialize_tna_bond_sampler( pose );
 		} else {
 			runtime_assert( moving_res_ == 0 || pose.residue_type( moving_res_ ).is_RNA() );
 			sampler_ = initialize_rna_bond_sampler( pose );
@@ -768,6 +774,26 @@ StepWiseConnectionSampler::initialize_protein_bond_sampler( pose::Pose const & p
 //////////////////////////////////////////////////////////////////////
 sampler::StepWiseSamplerOP
 StepWiseConnectionSampler::initialize_rna_bond_sampler( pose::Pose const & pose ){
+	using namespace sampler;
+	if ( moving_res_list_.size() == 0 ) return nullptr;
+	sampler::StepWiseSamplerOP sampler_ = sampler::rna::setup_sampler( pose, options_,
+		working_parameters_, false /*build_pose_from_scratch_*/,
+		kic_modeler_, (rna_cutpoints_closed_.size() > 0) );
+	ResidueAlternativeStepWiseSamplerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
+	if ( rsd_alternatives_rotamer == nullptr ) return sampler_;
+
+	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
+	sampler->add_external_loop_rotamer( rsd_alternatives_rotamer );
+	sampler->add_external_loop_rotamer( sampler_ );
+	sampler->set_random( options_->choose_random() );
+	sampler->init();
+	return sampler;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+sampler::StepWiseSamplerOP
+StepWiseConnectionSampler::initialize_tna_bond_sampler( pose::Pose const & pose ){
 	using namespace sampler;
 	if ( moving_res_list_.size() == 0 ) return nullptr;
 	sampler::StepWiseSamplerOP sampler_ = sampler::rna::setup_sampler( pose, options_,

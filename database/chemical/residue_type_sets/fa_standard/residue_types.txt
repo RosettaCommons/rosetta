@@ -40,6 +40,12 @@ residue_types/nucleic/dna/GUA.params
 #residue_types/nucleic/dna/GNP.params
 #residue_types/nucleic/dna/GDP.params
 #residue_types/nucleic/dna/GTP.params
+
+residue_types/nucleic/tna/TRAD_n.params
+residue_types/nucleic/tna/TRCY_n.params
+residue_types/nucleic/tna/TRGU_n.params
+residue_types/nucleic/tna/TURA_n.params
+
 residue_types/nucleic/rna_phenix/RAD_n.params
 residue_types/nucleic/rna_phenix/RCY_n.params
 residue_types/nucleic/rna_phenix/RGU_n.params

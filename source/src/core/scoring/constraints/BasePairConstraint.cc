@@ -271,9 +271,13 @@ BasePairConstraint::init_subsidiary_constraints( core::pose::Pose const & pose )
 	// assume RNA_info() -- so condition on that.
 	Size const atom1 = pose.residue_type( res1_ ).is_RNA() ?
 		pose.residue_type( res1_ ).RNA_info().c1prime_atom_index() :
+		pose.residue_type( res1_ ).is_TNA() ?
+		pose.residue_type( res1_ ).atom_index( "C1'" ) :
 		pose.residue_type( res1_ ).atom_index( "CE2" ); // only PNA supported
 	Size const atom2 = pose.residue_type( res2_ ).is_RNA() ?
 		pose.residue_type( res2_ ).RNA_info().c1prime_atom_index() :
+		pose.residue_type( res2_ ).is_TNA() ?
+		pose.residue_type( res2_ ).atom_index( "C1'" ) :
 		pose.residue_type( res2_ ).atom_index( "CE2" ); // ditto
 	constraints_.emplace_back( new AtomPairConstraint( id::AtomID( atom1, res1_ ), id::AtomID( atom2, res2_ ), C1prime_distance_func, base_pair_constraint ) );
 

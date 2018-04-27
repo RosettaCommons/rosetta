@@ -622,7 +622,8 @@ check_good_cutpoint_neighbour(
 	runtime_assert_string_msg(
 		thistype.is_alpha_aa() || thistype.is_beta_aa() || thistype.is_gamma_aa() ||
 		thistype.is_sri() || thistype.has_property(core::chemical::TRIAZOLE_LINKER) ||
-		thistype.is_peptoid() || thistype.is_carbohydrate() || thistype.is_NA() || thistype.is_oligourea(),
+		thistype.is_peptoid() || thistype.is_carbohydrate() || thistype.is_NA() || thistype.is_oligourea()
+		|| thistype.has_property( chemical::TNA ) ,
 		"Error in core::conformation::check_good_cutpoint_neighbour(): The selected residue is neither an alpha-, beta-, or gamma-amino acid, nor a peptoid, nor a sugar, nor a nucleic acid, nor an oligourea.  Nevertheless, it has a cutpoint variant type.  This should not be possible."
 	);
 
@@ -642,7 +643,7 @@ check_good_cutpoint_neighbour(
 		);
 	} else {
 		runtime_assert_string_msg(
-			other_res.type().is_alpha_aa() || other_res.type().is_beta_aa() || other_res.type().is_gamma_aa() || other_res.type().is_peptoid() || other_res.type().is_oligourea(),
+			other_res.type().is_alpha_aa() || other_res.type().is_beta_aa() || other_res.type().is_gamma_aa() || other_res.type().is_peptoid() || other_res.type().is_oligourea() || other_res.type().has_property( chemical::TNA ),
 			"Error in core::conformation::check_good_cutpoint_neighbour(): The connected residue is neither a peptoid, nor an oligourea, nor an alpha-, beta-, or gamma-amino acid."
 		);
 	}
