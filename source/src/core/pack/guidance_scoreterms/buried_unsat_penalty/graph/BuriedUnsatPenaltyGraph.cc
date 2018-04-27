@@ -641,15 +641,41 @@ BuriedUnsatPenaltyNode::detect_intra_residue_hydrogen_bonds_symmetric(
 	}
 }
 
+/*******************************************************************************
+class BuriedUnsatPenaltyEdgeData
+*******************************************************************************/
+
+
+/// @brief Constructor.
+BuriedUnsatPenaltyEdgeData::BuriedUnsatPenaltyEdgeData() :
+	utility::pointer::ReferenceCount(),
+	hbonds_list_()
+{}
+
+/// @brief Initialize a newly-created edge data object.
+void
+BuriedUnsatPenaltyEdgeData::add_hbond(
+	bool const lower_numbered_node_is_acceptor,
+	core::Size const acceptor_group,
+	core::Size const donor_group,
+	core::Real const hbond_energy,
+	core::Size const lower_numbered_node_symmetry_copy_index,
+	core::Size const higher_numbered_node_symmetry_copy_index
+) {
+	hbonds_list_.emplace_back( BuriedUnsatPenaltyGraphHbond( lower_numbered_node_is_acceptor, donor_group, acceptor_group, hbond_energy, lower_numbered_node_symmetry_copy_index, higher_numbered_node_symmetry_copy_index ) );
+	runtime_assert( hbonds_list_[hbonds_list_.size()].acceptor_group() > 0 );
+	runtime_assert( hbonds_list_[hbonds_list_.size()].donor_group() > 0 );
+}
 
 /*******************************************************************************
 class BuriedUnsatPenaltyEdge
 *******************************************************************************/
 
 /// @brief Edge constructor.
+/// @details Note that edge_data_ starts out as nullptr; a BuriedUnsatPenaltyEdgeData object must be created and passed in before the edge can be used!
 BuriedUnsatPenaltyEdge::BuriedUnsatPenaltyEdge( utility::graph::Graph * owner, platform::Size const first_node_ind, platform::Size const second_node_ind ) :
 	utility::graph::Edge( owner, first_node_ind, second_node_ind ),
-	hbonds_list_()
+	edge_data_(nullptr)
 {}
 
 /// @brief Edge copy-like constructor.
@@ -658,7 +684,7 @@ BuriedUnsatPenaltyEdge::BuriedUnsatPenaltyEdge(
 	BuriedUnsatPenaltyEdge const &src
 ) :
 	utility::graph::Edge( owner, src.get_first_node_ind(), src.get_second_node_ind() ),
-	hbonds_list_(src.hbonds_list_)
+	edge_data_(src.edge_data_)
 {}
 
 /// @brief Destructor.
@@ -671,22 +697,17 @@ BuriedUnsatPenaltyEdge::copy_from(
 ) {
 	debug_assert( dynamic_cast< BuriedUnsatPenaltyEdge const * >( src ) != nullptr );
 	BuriedUnsatPenaltyEdge const &other( *( static_cast<BuriedUnsatPenaltyEdge const *>(src) ) );
-	hbonds_list_ = other.hbonds_list_;
+	edge_data_ = other.edge_data_;
 }
 
-/// @brief Initialize a newly-created edge.
+/// @brief Set the data object for this edge.
+/// @details Data object pointer is copied; object is NOT cloned.
 void
-BuriedUnsatPenaltyEdge::add_hbond(
-	bool const lower_numbered_node_is_acceptor,
-	core::Size const acceptor_group,
-	core::Size const donor_group,
-	core::Real const hbond_energy,
-	core::Size const lower_numbered_node_symmetry_copy_index,
-	core::Size const higher_numbered_node_symmetry_copy_index
+BuriedUnsatPenaltyEdge::set_edge_data(
+	BuriedUnsatPenaltyEdgeDataCOP edge_data_in
 ) {
-	hbonds_list_.emplace_back( BuriedUnsatPenaltyGraphHbond( lower_numbered_node_is_acceptor, donor_group, acceptor_group, hbond_energy, lower_numbered_node_symmetry_copy_index, higher_numbered_node_symmetry_copy_index ) );
-	runtime_assert( hbonds_list_[hbonds_list_.size()].acceptor_group() > 0 );
-	runtime_assert( hbonds_list_[hbonds_list_.size()].donor_group() > 0 );
+	debug_assert( edge_data_in != nullptr );
+	edge_data_ = edge_data_in;
 }
 
 
@@ -979,6 +1000,8 @@ BuriedUnsatPenaltyGraph::initialize_graph_for_packing(
 										:
 										add_edge(i, ii, j, jj)
 									);
+									BuriedUnsatPenaltyEdgeDataOP newly_added_edge_data( utility::pointer::make_shared< BuriedUnsatPenaltyEdgeData >() );
+									newly_added_edge->set_edge_data(newly_added_edge_data); // Can continue to access the data using the OP above; COP is now stored.
 									for ( core::Size ibond(1), ibondmax(hbondset.nhbonds()); ibond<=ibondmax; ++ibond ) {
 										core::scoring::hbonds::HBond const &curhbond( hbondset.hbond(ibond) );
 										if ( curhbond.energy() <= hbond_energy_threshold ) {
@@ -993,7 +1016,7 @@ BuriedUnsatPenaltyGraph::initialize_graph_for_packing(
 											core::Size const acceptor_group_index( node1_is_acceptor ? node1->get_donor_acceptor_group_from_heavyatom_index(curhbond.acc_atm()) : node2->get_donor_acceptor_group_from_heavyatom_index(curhbond.acc_atm()) );
 											core::Size const don_hatm_parent( node1_is_acceptor ? res2->icoor( curhbond.don_hatm() ).stub_atom1().atomno() : res1.icoor( curhbond.don_hatm() ).stub_atom1().atomno() );
 											core::Size const donor_group_index( node1_is_acceptor ? node2->get_donor_acceptor_group_from_heavyatom_index(don_hatm_parent) : node1->get_donor_acceptor_group_from_heavyatom_index(don_hatm_parent) );
-											newly_added_edge->add_hbond( lower_numbered_node_is_acceptor, acceptor_group_index, donor_group_index, curhbond.energy(), is_symmetric ? (jsymm < jsymmmax ? jsymm + 1 : 1) : 1, 1 );
+											newly_added_edge_data->add_hbond( lower_numbered_node_is_acceptor, acceptor_group_index, donor_group_index, curhbond.energy(), is_symmetric ? (jsymm < jsymmmax ? jsymm + 1 : 1) : 1, 1 );
 											if ( TR.Debug.visible() ) {
 												TR.Debug << "Added hbond between position " << i << ", rotamer " << ii << " and position " << j << ", rotamer " << jj;
 												if ( is_symmetric ) {

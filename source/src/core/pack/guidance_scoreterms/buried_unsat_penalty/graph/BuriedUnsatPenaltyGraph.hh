@@ -452,6 +452,41 @@ private:
 }; //BuriedUnsatPenaltyNode
 
 
+class BuriedUnsatPenaltyEdgeData : public utility::pointer::ReferenceCount {
+
+	friend class ::BuriedUnsatPenaltyGraphTests; //To allow unit tests to interrogate inner workings of this class.
+	friend class ::BuriedUnsatPenaltyGraphSymmetricTests; //To allow unit tests to interrogate inner workings of this class.
+	friend class ::BuriedUnsatPenaltyTests; //To allow unit tests to interrogate inner workings of this class.
+	friend class ::BuriedUnsatPenaltySymmetricTests; //To allow unit tests to interrogate inner workings of this class.
+
+public:
+
+	/// @brief Constructor.
+	BuriedUnsatPenaltyEdgeData();
+
+	/// @brief Copy constructor -- explicitly deleted.
+	BuriedUnsatPenaltyEdgeData( BuriedUnsatPenaltyEdgeData const & ) = delete;
+
+	/// @brief Destructor.
+	virtual ~BuriedUnsatPenaltyEdgeData() = default;
+
+public:
+
+	/// @brief Access the hbonds list (const access).
+	inline utility::vector1< BuriedUnsatPenaltyGraphHbond > const &hbonds_list() const { return hbonds_list_; }
+
+	/// @brief Add a hydrogen bond to a newly-created edge data object.
+	/// @details Note that acceptor_group and donor_group are group indices in the respective nodes, not atom indices in the respective residues.
+	/// @note The symmetry copy indices should both be 1 in the asymmetric case.
+	void add_hbond( bool const lower_numbered_node_is_acceptor, core::Size const acceptor_group, core::Size const donor_group, core::Real const hbond_energy, core::Size const lower_numbered_node_symmetry_copy_index, core::Size const higher_numbered_node_symmetry_copy_index);
+
+private:
+
+	/// @brief A list of all of the hydrogen bonds between two residues.
+	utility::vector1< BuriedUnsatPenaltyGraphHbond > hbonds_list_;
+
+};
+
 /// @brief Each BuriedUnsatPenaltyEdge represents a hydrogen bonding interaction between two residues, and stores
 /// information about (a) the number of hydrogen bonds, and (b) the atoms involved.
 class BuriedUnsatPenaltyEdge : public utility::graph::Edge {
@@ -483,24 +518,23 @@ public:
 	/// @brief Initialize this edge from another.
 	void copy_from( utility::graph::Edge const * src) override;
 
-	/// @brief Add a hydrogen bond to a newly-created edge.
-	/// @details Note that acceptor_group and donor_group are group indices in the respective nodes, not atom indices in the respective residues.
-	/// @note The symmetry copy indices should both be 1 in the asymmetric case.
-	void add_hbond( bool const lower_numbered_node_is_acceptor, core::Size const acceptor_group, core::Size const donor_group, core::Real const hbond_energy, core::Size const lower_numbered_node_symmetry_copy_index, core::Size const higher_numbered_node_symmetry_copy_index);
-
 	/// @brief Get the number of hbonds in this edge.
-	inline core::Size n_hbonds() const { return hbonds_list_.size(); }
+	inline core::Size n_hbonds() const { return edge_data_->hbonds_list().size(); }
 
 	/// @brief Access a particular hbond in this edge.
 	inline BuriedUnsatPenaltyGraphHbond const & hbond( core::Size const hbond_index ) const {
-		debug_assert( hbond_index > 0 && hbond_index <= hbonds_list_.size() );
-		return hbonds_list_[hbond_index];
+		debug_assert( hbond_index > 0 && hbond_index <= edge_data_->hbonds_list().size() );
+		return edge_data_->hbonds_list()[hbond_index];
 	}
+
+	/// @brief Set the data object for this edge.
+	/// @details Data object pointer is copied; object is NOT cloned.
+	void set_edge_data( BuriedUnsatPenaltyEdgeDataCOP edge_data_in );
 
 private:
 
-	/// @brief A list of all of the hydrogen bonds between two residues.
-	utility::vector1< BuriedUnsatPenaltyGraphHbond > hbonds_list_;
+	/// @brief A container for the hydrogen bond data, which can be shared with other edges.
+	BuriedUnsatPenaltyEdgeDataCOP edge_data_;
 
 }; //BuriedUnsatPenaltyEdge class
 

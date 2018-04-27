@@ -102,6 +102,11 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void commit_considered_substitution() override;
 
+	/// @brief The actual steps called when commit_considered_substitution() is called.
+	/// @details Pulled out into a const function so that I can call it from calculate_energy.
+	/// All vars changed are mutable.
+	void do_commit_steps() const;
+
 	/// @brief Get a summary of all loaded data.
 	///
 	void report() const;

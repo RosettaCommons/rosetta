@@ -232,6 +232,11 @@ BuriedUnsatPenalty::calculate_energy(
 	//...and subtract off the counts from the OLD state's changed nodes.
 	decrement_counts( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered );
 
+	//Small efficiency tweak: if more than one node was changed, we should commit the change, so that we're not
+	//needlessly updating many nodes each time.  This (many nodes changed) can happen with some annealer schedules
+	//that jump back to previous favourable states at certain points in the trajectory.
+	if ( new_residues_.size() > 1 ) do_commit_steps();
+
 	if ( symmetric_ ) {
 		return compute_penalty( unsat_acceptor_count_lastconsidered*num_symmetric_copies_, unsat_donor_count_lastconsidered*num_symmetric_copies_, unsat_acceptor_and_donor_count_lastconsidered*num_symmetric_copies_, oversat_acceptor_count_lastconsidered*num_symmetric_copies_, oversat_donor_count_lastconsidered*num_symmetric_copies_, oversat_acceptor_and_donor_count_lastconsidered*num_symmetric_copies_ );
 	}
@@ -243,6 +248,14 @@ BuriedUnsatPenalty::calculate_energy(
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
 BuriedUnsatPenalty::commit_considered_substitution() {
+	do_commit_steps();
+}
+
+/// @brief The actual steps called when commit_considered_substitution() is called.
+/// @details Pulled out into a const function so that I can call it from calculate_energy.
+/// All vars changed are mutable.
+void
+BuriedUnsatPenalty::do_commit_steps() const {
 	debug_assert( changed_node_indices_.size() == new_residues_.size() );
 
 	//Subtract off the counts from the OLD state's changed nodes.
@@ -257,10 +270,6 @@ BuriedUnsatPenalty::commit_considered_substitution() {
 
 	//Add the counts from the NEW state's changed nodes.
 	increment_counts( unsat_acceptor_count_lastaccepted_, unsat_donor_count_lastaccepted_, unsat_acceptor_and_donor_count_lastaccepted_, oversat_acceptor_count_lastaccepted_, oversat_donor_count_lastaccepted_, oversat_acceptor_and_donor_count_lastaccepted_ );
-
-	/*new_residues_.clear();
-	changed_node_indices_.clear();
-	changed_node_partners_.clear();*/
 }
 
 /// @brief Get a summary of all loaded data.

@@ -129,16 +129,16 @@ public:
 			for ( utility::graph::EdgeListConstIterator it( curnode.const_edge_list_begin() ); it != curnode.const_edge_list_end(); ++it ) {
 				BuriedUnsatPenaltyEdge const &curedge( static_cast< BuriedUnsatPenaltyEdge const & >( **it ) );
 				TR << ++count << "\t" << curedge.get_first_node_ind() << "\t" << curedge.get_second_node_ind() << "\t";
-				for ( core::Size j(1), jmax(curedge.hbonds_list_.size()); j<=jmax; ++j ) {
-					BuriedUnsatPenaltyGraphHbond const & curhbond( curedge.hbonds_list_[j] );
+				for ( core::Size j(1), jmax(curedge.edge_data_->hbonds_list_.size()); j<=jmax; ++j ) {
+					BuriedUnsatPenaltyGraphHbond const & curhbond( curedge.edge_data_->hbonds_list_[j] );
 					TR << curhbond.acceptor_group() << "[" << (curhbond.first_node_is_the_acceptor_ ? curedge.get_first_node_ind() : curedge.get_second_node_ind()) << "]-" << curhbond.donor_group() << "[" << (curhbond.first_node_is_the_acceptor_ ? curedge.get_second_node_ind() : curedge.get_first_node_ind()) << "]";
 					if ( j<jmax ) TR << ",";
 				}
 				TR << "\n";
 
 				//In this case, each hydrogen bond is to a unique residue:
-				TS_ASSERT( curedge.hbonds_list_.size() == 1 );
-				BuriedUnsatPenaltyGraphHbond const &curhbond( curedge.hbonds_list_[1] );
+				TS_ASSERT( curedge.edge_data_->hbonds_list_.size() == 1 );
+				BuriedUnsatPenaltyGraphHbond const &curhbond( curedge.edge_data_->hbonds_list_[1] );
 				core::Size const &acc_node_index( curhbond.first_node_is_the_acceptor() ? curedge.get_first_node_ind() : curedge.get_second_node_ind() );
 				core::Size const &don_node_index( curhbond.first_node_is_the_acceptor() ? curedge.get_second_node_ind() : curedge.get_first_node_ind() );
 				BuriedUnsatPenaltyNode const & acc_node( *(dynamic_cast<BuriedUnsatPenaltyNode const *>( graph.get_node(acc_node_index) ) ) );
@@ -221,16 +221,16 @@ public:
 			for ( utility::graph::EdgeListConstIterator it( curnode.const_edge_list_begin() ); it != curnode.const_edge_list_end(); ++it ) {
 				BuriedUnsatPenaltyEdge const &curedge( static_cast< BuriedUnsatPenaltyEdge const & >( **it ) );
 				TR << ++count << "\t" << curedge.get_first_node_ind() << "\t" << curedge.get_second_node_ind() << "\t";
-				for ( core::Size j(1), jmax(curedge.hbonds_list_.size()); j<=jmax; ++j ) {
-					BuriedUnsatPenaltyGraphHbond const & curhbond( curedge.hbonds_list_[j] );
+				for ( core::Size j(1), jmax(curedge.edge_data_->hbonds_list_.size()); j<=jmax; ++j ) {
+					BuriedUnsatPenaltyGraphHbond const & curhbond( curedge.edge_data_->hbonds_list_[j] );
 					TR << curhbond.acceptor_group() << "[" << (curhbond.first_node_is_the_acceptor_ ? curedge.get_first_node_ind() : curedge.get_second_node_ind()) << "]-" << curhbond.donor_group() << "[" << (curhbond.first_node_is_the_acceptor_ ? curedge.get_second_node_ind() : curedge.get_first_node_ind()) << "]";
 					if ( j<jmax ) TR << ",";
 				}
 				TR << "\n";
 
 				//In this case, each hydrogen bond is to a unique residue:
-				TS_ASSERT( curedge.hbonds_list_.size() == 1 );
-				BuriedUnsatPenaltyGraphHbond const &curhbond( curedge.hbonds_list_[1] );
+				TS_ASSERT( curedge.edge_data_->hbonds_list_.size() == 1 );
+				BuriedUnsatPenaltyGraphHbond const &curhbond( curedge.edge_data_->hbonds_list_[1] );
 				core::Size const &acc_node_index( curhbond.first_node_is_the_acceptor() ? curedge.get_first_node_ind() : curedge.get_second_node_ind() );
 				core::Size const &don_node_index( curhbond.first_node_is_the_acceptor() ? curedge.get_second_node_ind() : curedge.get_first_node_ind() );
 				BuriedUnsatPenaltyNode const & acc_node( *(dynamic_cast<BuriedUnsatPenaltyNode const *>( graph.get_node(acc_node_index) ) ) );

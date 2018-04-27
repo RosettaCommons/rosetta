@@ -34,6 +34,10 @@ class BuriedUnsatPenaltyNode;
 typedef utility::pointer::shared_ptr< BuriedUnsatPenaltyNode > BuriedUnsatPenaltyNodeOP;
 typedef utility::pointer::shared_ptr< BuriedUnsatPenaltyNode const > BuriedUnsatPenaltyNodeCOP;
 
+class BuriedUnsatPenaltyEdgeData;
+typedef utility::pointer::shared_ptr< BuriedUnsatPenaltyEdgeData > BuriedUnsatPenaltyEdgeDataOP;
+typedef utility::pointer::shared_ptr< BuriedUnsatPenaltyEdgeData const > BuriedUnsatPenaltyEdgeDataCOP;
+
 class BuriedUnsatPenaltyEdge;
 typedef utility::pointer::shared_ptr< BuriedUnsatPenaltyEdge > BuriedUnsatPenaltyEdgeOP;
 typedef utility::pointer::shared_ptr< BuriedUnsatPenaltyEdge const > BuriedUnsatPenaltyEdgeCOP;
