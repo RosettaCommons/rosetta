@@ -27,7 +27,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Bond.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <utility/graph/RingDetection.hh>
 
 #include <basic/Tracer.hh>
@@ -398,6 +397,7 @@ rosetta_recharge_fullatom( ResidueType & res ) {
 	}
 }
 
+/// @brief Make a (new) centroid version of the (fullatom) ResidueType passed in.
 ResidueTypeOP
 make_centroid( ResidueType const & res ) {
 
@@ -421,7 +421,6 @@ make_centroid( ResidueType const & res ) {
 		{"NH2O","Nbb" },
 		{"Nlys","Nbb" },
 		{"Narg","Nbb" },
-		{"NtrR","Nbb" },
 		{"Npro","Nbb" },
 		{"Nhis","OCbb"}, // No, this is not a typo (apparently) - it's an unprotonated hbond acceptor
 		{"OH"  ,"OCbb"},
@@ -432,7 +431,6 @@ make_centroid( ResidueType const & res ) {
 		{"Hapo",""    }, // Don't translate.
 		{"Haro",""    }, // Don't translate.
 		{"aroC","CAbb"},
-		{"CH0", "CAbb"},
 		{"CH1" ,"CAbb"},
 		{"CH2" ,"CAbb"},
 		{"CH3" ,"CAbb"},
@@ -482,48 +480,18 @@ make_centroid( ResidueType const & res ) {
 		centroid->delete_atom( to_delete[ jj ] );
 	}
 
-	// We may need to update the internal coordinates due to the missing hydrogens.
+	// We need to update the internal coordinates (to get rid of the missing hydrogens)
 	// The neighbor settings should be fine - they're based on heavy atoms
 	// Rotatable bonds should be fine - we shouldn't have rotatable bonds to apolar hydrogens
 	// TODO: Charges might be a little funky, but I don't think we use them in centroid mode.
 	if ( to_delete.size() ) {
-		bool icoor_okay( true );
-		// Check if we have any ICOOR that still depend on now-missing atoms.
-		VIter iter, iter_end;
-		for ( boost::tie(iter,iter_end) = res.atom_iterators(); iter != iter_end; ++iter ) {
-			AtomICoor const & icoor( res.icoor( *iter ) );
-			if ( ( icoor.stub_atom1().is_internal() && ! res.has( icoor.stub_atom1().vertex() ) ) ||
-					( icoor.stub_atom2().is_internal() && ! res.has( icoor.stub_atom2().vertex() ) ) ||
-					( icoor.stub_atom3().is_internal() && ! res.has( icoor.stub_atom3().vertex() ) ) ) {
-				icoor_okay = false;
-				break;
-			}
-		}
-		// Need to check connections, too.
-		// They *should* be based off of heavy atoms, but potentially not.
-		for ( core::Size cc(1); cc <= res.n_possible_residue_connections(); ++cc ) {
-			ResidueConnection const & connect( res.residue_connection(1) );
-			if ( ! res.has( connect.vertex() ) ) {
-				icoor_okay = false;
-				break;
-			}
-			AtomICoor const & icoor( connect.icoor() );
-			if ( ( icoor.stub_atom1().is_internal() && ! res.has( icoor.stub_atom1().vertex() ) ) ||
-					( icoor.stub_atom2().is_internal() && ! res.has( icoor.stub_atom2().vertex() ) ) ||
-					( icoor.stub_atom3().is_internal() && ! res.has( icoor.stub_atom3().vertex() ) ) ) {
-				icoor_okay = false;
-				break;
-			}
+		// Currently assign_internal_coordinates can't work with polymeric types.
+		if ( res.n_possible_residue_connections() != 0 ) {
+			TR.Warning << "Cannot automatically convert " << res.name() << " to centroid, as it is polymeric/has connections." << std::endl;
+			return nullptr;
 		}
 
-		if ( ! icoor_okay ) {
-			if ( res.n_possible_residue_connections() != 0 ) {
-				TR.Warning << "Cannot automatically convert " << res.name() << " to centroid, as it is polymeric/has connections and the geometry depends on now-missing atoms." << std::endl;
-				return nullptr;
-			}
-			// Fix up all the internal icoords.
-			centroid->assign_internal_coordinates();
-		}
+		centroid->assign_internal_coordinates();
 	}
 
 	centroid->finalize();
