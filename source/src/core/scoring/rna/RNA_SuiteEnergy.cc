@@ -139,11 +139,14 @@ RNA_SuiteEnergy::residue_pair_energy(
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
 
-	if ( scorefxn.has_nonzero_weight( rna_suite ) && rna_suite_potential_->eval_score( rsd1, rsd2, pose ) ) {
-		emap[ rna_suite ]       += rna_suite_potential_->get_score();
+	utility::fixedsizearray1< id::TorsionID, 7 > torsion_ids;
+	Real score;
+	utility::fixedsizearray1< Real, 7 > deriv;
+	if ( scorefxn.has_nonzero_weight( rna_suite ) && rna_suite_potential_->eval_score( rsd1, rsd2, pose, torsion_ids, score, deriv ) ) {
+		emap[ rna_suite ]       += score;
 	}
-	if ( scorefxn.has_nonzero_weight( suiteness_bonus ) && rna_suite_potential_for_suiteness_bonus_->eval_score( rsd1, rsd2, pose ) ) {
-		emap[ suiteness_bonus ] += rna_suite_potential_for_suiteness_bonus_->get_score();
+	if ( scorefxn.has_nonzero_weight( suiteness_bonus ) && rna_suite_potential_for_suiteness_bonus_->eval_score( rsd1, rsd2, pose, torsion_ids, score, deriv ) ) {
+		emap[ suiteness_bonus ] += score;
 	}
 }
 
@@ -186,11 +189,14 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	using namespace core::id;
 
 	if ( weight == 0.0 ) return;
-	if ( !rna_suite_potential->eval_score( rsd1, rsd2, pose ) ) return;
+	utility::fixedsizearray1<TorsionID, 7> torsion_ids;
+	Real score;
+	utility::fixedsizearray1< Real, 7 > deriv;
+	if ( !rna_suite_potential->eval_score( rsd1, rsd2, pose, torsion_ids, score, deriv ) ) return;
 
-	utility::fixedsizearray1<Real,7> const & deriv( rna_suite_potential->get_deriv() );
-	utility::vector1<TorsionID> const & torsion_ids(
-		rna_suite_potential->get_torsion_ids() );
+	//utility::fixedsizearray1<Real,7> const & deriv( rna_suite_potential->get_deriv() );
+	//utility::vector1<TorsionID> const & torsion_ids(
+	// rna_suite_potential->get_torsion_ids() );
 
 	conformation::Residue const & rsd_lo(
 		( rsd1.seqpos() < rsd2.seqpos() ) ? rsd1 : rsd2 );

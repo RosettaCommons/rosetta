@@ -2,7 +2,7 @@
 ## AMW: Based on N1 protonation patch, not yet optimized
 
 NAME Protonated_N3_Adenosine
-TYPES  PROTONATED_N3_ADENOSINE
+TYPES  PROTONATED_N3
 
 BEGIN_SELECTOR
 PROPERTY RNA

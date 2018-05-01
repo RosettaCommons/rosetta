@@ -60,6 +60,15 @@ public: // Creation
 		torsion_( 0 )
 	{};
 
+	/// @brief Zero-constructor (for fixedsizearray)
+	inline
+	constexpr
+	TorsionID( Size const /*ii*/ ) :
+		rsd_( 0 ),
+		type_( BB ),
+		torsion_( 0 )
+	{};
+
 	/// @brief Copy constructor
 	inline
 	TorsionID( TorsionID const & ) = default;

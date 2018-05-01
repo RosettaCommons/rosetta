@@ -1,0 +1,20 @@
+## This patch protonates the N3 atom of cytosine RNA nucleotide.
+
+NAME Protonated_N3_Cytosine
+TYPES  PROTONATED_N3
+
+BEGIN_SELECTOR
+PROPERTY RNA
+AA RCY
+END_SELECTOR
+
+
+BEGIN_CASE ### general case ###
+SET_ATOM_TYPE N3 Ntrp
+SET_ATOMIC_CHARGE N3 -0.34
+
+ADD_ATOM  H3  Hpol H   0.26
+ADD_BOND N3   H3
+SET_ICOOR H3   179.953379   62.478350    0.999437   N3    C2    N1  
+
+END_CASE

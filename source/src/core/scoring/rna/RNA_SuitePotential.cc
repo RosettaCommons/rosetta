@@ -21,6 +21,7 @@
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
+#include <core/id/TorsionID.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
@@ -78,8 +79,6 @@ RNA_SuitePotential::RNA_SuitePotential( bool const calculate_suiteness_bonus /* 
 	n_torsions_( 7 ),
 	inv_cov_( n_torsions_, n_torsions_ ),
 	offset_( 0.0 ),
-	score_( 0 ),
-	deriv_( 0 ),
 	calculate_suiteness_bonus_( calculate_suiteness_bonus )
 {
 	using namespace basic::options;
@@ -169,12 +168,11 @@ bool
 RNA_SuitePotential::eval_score(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose
+	pose::Pose const & pose,
+	utility::fixedsizearray1< id::TorsionID, 7 > & torsion_ids,
+	Real & score,
+	utility::fixedsizearray1< Real, 7 > & deriv
 ) const {
-#ifdef MULTI_THREADED
-	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
-#endif
-
 	using namespace core::chemical::rna;
 	using namespace core::pose::rna;
 	using namespace core::id;
@@ -183,8 +181,8 @@ RNA_SuitePotential::eval_score(
 	if ( rsd2.has_variant_type( REPLONLY ) ) return false;
 
 	// Default derivatives to 0
-	score_ = 0;
-	for ( Size i = 1; i <= n_torsions_; ++i ) deriv_[i] = 0;
+	score = 0;
+	for ( Size i = 1; i <= n_torsions_; ++i ) deriv[i] = 0;
 
 	// Only counts consecutive RNA residues.
 	if ( !rsd1.is_RNA() ) return false;
@@ -199,68 +197,62 @@ RNA_SuitePotential::eval_score(
 	}
 
 	// Find the suite torsions
-	torsion_ids_.clear();
-	torsion_ids_.emplace_back( rsdnum1, BB, DELTA );
-	torsion_ids_.emplace_back( rsdnum1, BB, EPSILON );
-	torsion_ids_.emplace_back( rsdnum1, BB, ZETA );
-	torsion_ids_.emplace_back( rsdnum2, BB, ALPHA );
-	torsion_ids_.emplace_back( rsdnum2, BB, BETA );
-	torsion_ids_.emplace_back( rsdnum2, BB, GAMMA );
-	torsion_ids_.emplace_back( rsdnum2, BB, DELTA );
+	torsion_ids[ 1 ] = TorsionID( rsdnum1, BB, DELTA );
+	torsion_ids[ 2 ] = TorsionID( rsdnum1, BB, EPSILON );
+	torsion_ids[ 3 ] = TorsionID( rsdnum1, BB, ZETA );
+	torsion_ids[ 4 ] = TorsionID( rsdnum2, BB, ALPHA );
+	torsion_ids[ 5 ] = TorsionID( rsdnum2, BB, BETA );
+	torsion_ids[ 6 ] = TorsionID( rsdnum2, BB, GAMMA );
+	torsion_ids[ 7 ] = TorsionID( rsdnum2, BB, DELTA );
 
 	utility::fixedsizearray1<Real, 7> torsions;
-	for ( Size i = 1; i <= torsion_ids_.size(); ++i ) {
+	for ( Size i = 1; i <= torsion_ids.size(); ++i ) {
 		// A suite must have all its torsions being valid
-		if ( !is_torsion_valid( pose, torsion_ids_[i] ) ) return false;
-		torsions[ i ] = pose.torsion( torsion_ids_[i] );
+		if ( !is_torsion_valid( pose, torsion_ids[i] ) ) return false;
+		torsions[ i ] = pose.torsion( torsion_ids[i] );
 	}
 
-	eval_score( torsions );
+	eval_score( torsions, score, deriv );
 	// TR << rsdnum1 << "--" << rsdnum2 << ": " << score_ << std::endl;
 	return true;
 }
 
 ////////////////////////////////////////////////////////
 void RNA_SuitePotential::eval_score(
-	utility::fixedsizearray1<Real, 7> const & torsions
+	utility::fixedsizearray1<Real, 7> const & torsions,
+	Real & score,
+	utility::fixedsizearray1<Real, 7> & deriv
 ) const {
-#ifdef MULTI_THREADED
-	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
-#endif
-
 	if ( calculate_suiteness_bonus_ ) {
-		eval_suiteness_bonus( torsions );
+		eval_suiteness_bonus( torsions, score, deriv );
 	} else {
-		eval_likelihood_potential( torsions );
+		eval_likelihood_potential( torsions, score, deriv );
 	}
 }
 
 ////////////////////////////////////////////////////////
 void RNA_SuitePotential::eval_suiteness_bonus(
-	utility::fixedsizearray1<Real, 7> const & torsions
+	utility::fixedsizearray1<Real, 7> const & torsions,
+	Real & score,
+	utility::fixedsizearray1<Real, 7> & deriv
 ) const {
-#ifdef MULTI_THREADED
-	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
-#endif
 
 	runtime_assert( rna_suite_name_ != nullptr );
-	pose::rna::RNA_SuiteAssignment assignment( rna_suite_name_->assign( torsions, deriv_ ) );
+	pose::rna::RNA_SuiteAssignment assignment( rna_suite_name_->assign( torsions, deriv ) );
 
 	if ( !tags_.has_value( assignment.name ) ) return; // outlier
 	Real const bonus_weight = weights_[ tags_.index( assignment.name ) ];
 
-	score_ = bonus_weight * assignment.suiteness;
-	for ( Size n = 1; n <= deriv_.size(); n++ ) deriv_[ n ] *= bonus_weight;
+	score = bonus_weight * assignment.suiteness;
+	for ( Size n = 1; n <= deriv.size(); n++ ) deriv[ n ] *= bonus_weight;
 }
 
 ////////////////////////////////////////////////////////
 void RNA_SuitePotential::eval_likelihood_potential(
-	utility::fixedsizearray1<Real, 7> const & torsions_in
+	utility::fixedsizearray1<Real, 7> const & torsions_in,
+	Real & score,
+	utility::fixedsizearray1<Real, 7> & deriv
 ) const {
-#ifdef MULTI_THREADED
-	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
-#endif
-
 	ublas::vector<Real> torsions( n_torsions_);
 	for ( Size n = 1; n <= n_torsions_; n++ ) {
 		torsions( n-1 ) = torsions_in[ n ]; // ublas vector starts with 0
@@ -284,7 +276,7 @@ void RNA_SuitePotential::eval_likelihood_potential(
 		//  TR << "comp: " << i << " " << weights_[i] << " " << unweight_likelihood[i] << std::endl;
 		weighted_sum_likelihood += weights_[i] * unweight_likelihood[i];
 	}
-	score_ = -log( weighted_sum_likelihood ) + offset_;
+	score = -log( weighted_sum_likelihood ) + offset_;
 
 	ublas::vector<Real> deriv_vec( n_torsions_ );
 	deriv_vec *= 0;  // Initialize to 0
@@ -294,7 +286,7 @@ void RNA_SuitePotential::eval_likelihood_potential(
 	}
 	deriv_vec /= weighted_sum_likelihood;
 	for ( Size i = 1; i <= deriv_vec.size(); ++i ) {
-		deriv_[i] = deriv_vec( i-1 ); // Convert to vector1
+		deriv[i] = deriv_vec( i-1 ); // Convert to vector1
 	}
 }
 
@@ -302,10 +294,6 @@ void RNA_SuitePotential::eval_likelihood_potential(
 void RNA_SuitePotential::regularize_torsions(
 	ublas::vector<Real> & torsions
 ) const {
-#ifdef MULTI_THREADED
-	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
-#endif
-
 	for ( Size i = 0; i != torsions.size(); ++i ) {
 		torsions(i) = numeric::principal_angle_degrees( torsions(i) );
 	}
@@ -317,10 +305,6 @@ void RNA_SuitePotential::regularize_torsions(
 // and offset_ variable if still not in use in 2015.
 void
 RNA_SuitePotential::figure_out_offset() {
-#ifdef MULTI_THREADED
-	utility_exit_with_message( "The RNA_SuitePotential caches pose-specific scoring data in the global instance of the object.  As such, it is fundamentally non-threadsafe, and cannot be used in a multi-threaded context.  Please contact Rhiju Das if you need to use this scoring term in a multi-threaded context." );
-#endif
-
 	Real max( 0 );
 	for ( Size i = 1; i <= weights_.size(); ++i ) {
 		if ( weights_[i] > max ) max = weights_[i];

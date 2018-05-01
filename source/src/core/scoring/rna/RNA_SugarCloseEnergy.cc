@@ -110,7 +110,6 @@ RNA_SugarCloseEnergy::clone() const
 	return methods::EnergyMethodOP( new RNA_SugarCloseEnergy );
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_SugarCloseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const

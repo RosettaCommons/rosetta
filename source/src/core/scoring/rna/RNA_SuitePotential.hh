@@ -50,27 +50,28 @@ public:
 	bool eval_score(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		pose::Pose const & pose
+		pose::Pose const & pose,
+		utility::fixedsizearray1< core::id::TorsionID, 7 > & torsion_ids,
+		Real & score,
+		utility::fixedsizearray1<Real, 7> & deriv
 	) const;
-
-	Real get_score() const { return score_; }
-
-	utility::fixedsizearray1<Real,7> get_deriv() const { return deriv_; }
-
-	utility::vector1<id::TorsionID> get_torsion_ids() const {
-		return torsion_ids_;
-	}
 
 private:
 
 	void eval_score(
-		utility::fixedsizearray1<Real, 7> const & torsions ) const;
+		utility::fixedsizearray1<Real, 7> const & torsions,
+		Real & score,
+		utility::fixedsizearray1<Real, 7> & deriv ) const;
 
 	void eval_suiteness_bonus(
-		utility::fixedsizearray1<Real, 7> const & torsions ) const;
+		utility::fixedsizearray1<Real, 7> const & torsions,
+		Real & score,
+		utility::fixedsizearray1<Real, 7> & deriv ) const;
 
 	void eval_likelihood_potential(
-		utility::fixedsizearray1<Real, 7> const & torsions ) const;
+		utility::fixedsizearray1<Real, 7> const & torsions,
+		Real & score,
+		utility::fixedsizearray1<Real, 7> & deriv ) const;
 
 	void regularize_torsions(
 		boost::numeric::ublas::vector<Real> & torsions ) const;
@@ -84,9 +85,6 @@ private:
 	utility::vector1<std::string> tags_;
 	boost::numeric::ublas::matrix<Real> inv_cov_;
 	Real offset_;
-	mutable Real score_;
-	mutable utility::fixedsizearray1<Real,7> deriv_;
-	mutable utility::vector1<id::TorsionID> torsion_ids_;
 	bool const calculate_suiteness_bonus_;
 	pose::rna::RNA_SuiteNameOP rna_suite_name_;
 };

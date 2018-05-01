@@ -89,6 +89,7 @@ patches/nucleic/rna/3prime_end_OH.txt
 patches/nucleic/rna/5prime_end_OH.txt
 patches/nucleic/rna/5prime_end_phosphate.txt
 patches/nucleic/rna/Protonated_N1_Adenosine.txt
+patches/nucleic/rna/Protonated_N3_Cytosine.txt
 patches/nucleic/rna/Protonated_N3_Adenosine.txt
 # patches/nucleic/rna/7deaza.txt # fails to build H7
 patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt

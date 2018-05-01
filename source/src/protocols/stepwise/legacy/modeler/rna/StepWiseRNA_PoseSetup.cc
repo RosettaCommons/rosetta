@@ -388,7 +388,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		variant_type_list.push_back( core::chemical::VIRTUAL_RNA_RESIDUE );
 		variant_type_list.push_back( core::chemical::BULGE );
 		variant_type_list.push_back( core::chemical::VIRTUAL_RIBOSE );
-		variant_type_list.push_back( core::chemical::PROTONATED_N1_ADENOSINE );
+		variant_type_list.push_back( core::chemical::PROTONATED_N1 );
 		variant_type_list.push_back( core::chemical::THREE_PRIME_END_OH );     //Fang's electron density code
 		variant_type_list.push_back( core::chemical::FIVE_PRIME_END_PHOSPHATE ); //Fang's electron density code
 		variant_type_list.push_back( core::chemical::FIVE_PRIME_END_OH );     //Fang's electron density code
@@ -453,10 +453,10 @@ StepWiseRNA_PoseSetup::do_checks_and_apply_protonated_H1_adenosine_variant( pose
 	std::map< Size, Size > & full_to_sub ){
 
 	if ( i > silent_files_in_.size() ) { // not a silent file, read in from pdb text file. May 04, 2011
-		//start_pose_with_variant does not have PROTONATED_N1_ADENOSINE variant type since the input_pdb does not have the variant type or loses the variant when imported into Rosetta.
-		runtime_assert( !start_pose_with_variant.residue( n ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ); //May 03, 2011
+		//start_pose_with_variant does not have PROTONATED_N1 variant type since the input_pdb does not have the variant type or loses the variant when imported into Rosetta.
+		runtime_assert( !start_pose_with_variant.residue( n ).has_variant_type( core::chemical::PROTONATED_N1 ) ); //May 03, 2011
 	} else { // from silent file -- may have information on variants.
-		if ( start_pose_with_variant.residue( n ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ) { //May 03, 2011
+		if ( start_pose_with_variant.residue( n ).has_variant_type( core::chemical::PROTONATED_N1 ) ) { //May 03, 2011
 			runtime_assert( start_pose_with_variant.residue( n ).aa() == core::chemical::na_rad );
 			runtime_assert( working_parameters_->protonated_H1_adenosine_list().has_value( input_res[n] ) );
 		}
@@ -811,18 +811,18 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == true but pose.residue( seq_num ).aa() != core::chemical::na_rad, seq_num = " + string_of( seq_num ) );
 			}
 
-			if ( ! pose.residue_type( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) &&
+			if ( ! pose.residue_type( seq_num ).has_variant_type( core::chemical::PROTONATED_N1 ) &&
 					! pose.residue_type( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 				print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP(
 					working_parameters_ ), "DEBUG working_parameters", TR.Debug );
 				utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == true but "
-					"residue doesn't either PROTONATED_N1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type, seq_num = " + string_of( seq_num ) );
+					"residue doesn't either PROTONATED_N1 or VIRTUAL_RNA_RESIDUE variant type, seq_num = " + string_of( seq_num ) );
 			}
-		} else if ( pose.residue_type( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ) {
+		} else if ( pose.residue_type( seq_num ).has_variant_type( core::chemical::PROTONATED_N1 ) ) {
 			print_WorkingParameters_info( stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ), "DEBUG working_parameters", TR.Error );
 			TR.Error << "seq_num = " << seq_num << std::endl;
 			TR.Error << "start_pose.residue( n ).aa() = " << name_from_aa( pose.residue_type( seq_num ).aa() ) << std::endl;
-			utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == false but pose.residue( seq_num ).has_variant_type( \"PROTONATED_N1_ADENOSINE\" ) ) == false" );
+			utility_exit_with_message( "working_protonated_H1_adenosine_list.has_value( seq_num ) == false but pose.residue( seq_num ).has_variant_type( \"PROTONATED_N1\" ) ) == false" );
 		}
 	}
 }

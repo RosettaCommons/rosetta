@@ -618,35 +618,35 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 
 		if ( protonated_H1_adenosine_list.has_value( seq_num ) ) {
 
-			runtime_assert( rebuild_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) );
+			runtime_assert( rebuild_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1 ) );
 
 			if ( has_virtual_rna_residue_variant_type( start_pose, seq_num ) ) {
 
-				if ( start_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ) {
+				if ( start_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1 ) ) {
 					utility_exit_with_message( "seq_num( " + string_of( seq_num ) + " ) of start_pose has "
-						"PROTONATED_N1_ADENOSINE variant type but is a virtual_residue!" );
+						"PROTONATED_N1 variant type but is a virtual_residue!" );
 				}
 
 				//This ensures that the Adenosine base have the same atom_list in the start and rebuild pose!
 				pose::remove_variant_type_from_pose_residue(
-					rebuild_pose, core::chemical::PROTONATED_N1_ADENOSINE, seq_num );
-				std::cout << "removing PROTONATED_N1_ADENOSINE from seq_num " << seq_num <<
+					rebuild_pose, core::chemical::PROTONATED_N1, seq_num );
+				std::cout << "removing PROTONATED_N1 from seq_num " << seq_num <<
 					" of rebuild_pose since this seq_num is a virtual_residue in start_pose!" << std::endl;
 
 			} else {
 
-				if ( ! start_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ) {
+				if ( ! start_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1 ) ) {
 					utility_exit_with_message( "seq_num( " + string_of( seq_num ) +" ) is in protonated_H1_adenosine_list "
-						"but start_pose does not have PROTONATED_N1_ADENOSINE variant type!" );
+						"but start_pose does not have PROTONATED_N1 variant type!" );
 				}
 
 			}
 
 		} else {
 
-			if ( rebuild_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1_ADENOSINE ) ) {
+			if ( rebuild_pose.residue( seq_num ).has_variant_type( core::chemical::PROTONATED_N1 ) ) {
 				utility_exit_with_message( "seq_num( " + string_of( seq_num ) + " ) is not in "
-					"protonated_H1_adenosine_list but rebuild_pose has PROTONATED_N1_ADENOSINE variant type!" );
+					"protonated_H1_adenosine_list but rebuild_pose has PROTONATED_N1 variant type!" );
 			}
 
 		}

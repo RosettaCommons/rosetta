@@ -1,7 +1,7 @@
 ## This patch protonates the H1 atom of adenosine RNA nucleotide.
 
 NAME Protonated_N1_Adenosine
-TYPES  PROTONATED_N1_ADENOSINE
+TYPES  PROTONATED_N1
 
 BEGIN_SELECTOR
 PROPERTY RNA

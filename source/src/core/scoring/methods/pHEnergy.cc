@@ -86,6 +86,7 @@ pHEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 ////////////////////////////////////////////////////////////////////////////
 
+// AMW TODO: support for RCY; separate support for N1/N3 RAD protonation
 // pH score
 void
 pHEnergy::residue_energy(
@@ -134,7 +135,7 @@ pHEnergy::residue_energy(
 	core::Real pH_score = 0;
 	switch ( rsd.type().aa() ) {
 	case na_rad :
-		pH_score = (rsd.type().has_variant_type( PROTONATED_N1_ADENOSINE )) ? score_prot : score_deprot;
+		pH_score = (rsd.type().has_variant_type( PROTONATED_N1)) ? score_prot : score_deprot;
 		break;
 
 	case aa_asp:

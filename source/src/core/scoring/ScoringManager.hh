@@ -339,8 +339,7 @@ public:
 
 	/// @brief Get an instance of the RNA_SuitePotentialCOP scoring object, by const owning pointer.
 	/// @details Threadsafe and lazily loaded.
-	/// @note The RNA_SuitePotential caches pose-specific scoring data in the global instance of the RNA_SuitePotential object.  As such,
-	/// it is fundamentally NOT THREADSAFE.
+	/// @note Targeted object is also threadsafe, to the best of my ability to tell.
 	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 	rna::RNA_SuitePotentialCOP get_rna_suite_potential( bool const & calculate_suiteness_bonus, std::string const & suiteness_bonus ) const;
 
