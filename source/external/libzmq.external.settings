@@ -133,4 +133,4 @@ cxxflags = [
     '-pthread'
 ]
 
-only_with_extras = ['serialization']
+only_with_extras = ['zeromq']

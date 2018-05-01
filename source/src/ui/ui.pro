@@ -5,7 +5,7 @@ CONFIG += object_parallel_to_source c++11 no_keywords
 TARGET = ui
 TEMPLATE = lib
 
-DEFINES += BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD UNUSUAL_ALLOCATOR_DECLARATION
+DEFINES += BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD UNUSUAL_ALLOCATOR_DECLARATION SERIALIZATION ZEROMQ
 
 INCLUDEPATH = $$PWD/../../src $$PWD/../../src/platform/macos
 
@@ -22,6 +22,7 @@ SOURCES += \
     ui_lib_test.cpp \
     config/config_dialog.cpp \
     config/util.cpp \
+    network/bowman.cpp \
     task/job_submit.cpp \
     task/job_view.cpp \
     task/file.cpp \
@@ -46,6 +47,7 @@ HEADERS  += \
     ui_lib_test.h \
     config/config_dialog.h \
     config/util.h \
+    network/bowman.h \
     task/job_submit.h \
     task/job_view.h \
     task/file.fwd.h \
@@ -89,6 +91,7 @@ FORMS    += \
 LIBS += \
         -L$$OUT_PWD/../rosetta/external         -lexternal \
         -L$$OUT_PWD/../rosetta/cifparse         -lcifparse \
+        -L$$OUT_PWD/../rosetta/libzmq           -llibzmq \
         -L$$OUT_PWD/../rosetta/libxml2          -llibxml2 -lz \
         -L$$OUT_PWD/../rosetta/ObjexxFCL        -lObjexxFCL \
         -L$$OUT_PWD/../rosetta/utility          -lutility \

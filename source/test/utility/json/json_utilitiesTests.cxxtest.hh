@@ -21,12 +21,12 @@
 // Core Headers
 
 // Utility, etc Headers
-#include <utility/json/json_utilities.hh>
+#include <utility/json_utilities.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("test.utility.json.json_utilitiesTests");
 
-using namespace utility::json;
+using namespace utility;
 
 class json_utilitiesTests : public CxxTest::TestSuite {
 
@@ -36,14 +36,15 @@ public:
 	std::string const missing_message ="JSON element missingname missing";
 	std::string const wrongtype_message ="JSON element thingname not of ";
 
-	void setUp(){
+	void setUp() {
 		core_init();
 	}
 
-	void tearDown(){
+	void tearDown() {
 	}
 
-	void test_bool(){
+	void test_bool() {
+		#if defined(_NLOHMANN_JSON_ENABLED_)
 
 		json const test_json({{thingname, true}});
 
@@ -80,9 +81,11 @@ public:
 		//TR << test2_json << std::endl;
 		//extract_boolean_from_json(test2_json, thingname, bool_check);
 
+		#endif //defined(_NLOHMANN_JSON_ENABLED_)
 	};
 
-	void test_number(){
+	void test_number() {
+		#if defined(_NLOHMANN_JSON_ENABLED_)
 
 		platform::Real const digits(867.5309);
 		json const test_json({{thingname, digits}});
@@ -121,9 +124,11 @@ public:
 		platform::Size const int_number_check(number_check); // then cast to Size
 		TS_ASSERT_EQUALS(int_digits, int_number_check);
 
+		#endif //defined(_NLOHMANN_JSON_ENABLED_)
 	};
 
-	void test_nonempty_string(){
+	void test_nonempty_string() {
+		#if defined(_NLOHMANN_JSON_ENABLED_)
 
 		std::string const digits("867.5309");
 		json const test_json({{thingname, digits}});
@@ -156,9 +161,11 @@ public:
 			TS_ASSERT_DIFFERS(message.find(wrongtype_message), std::string::npos); //check that the exception message contains the expected string
 		}
 
+		#endif //defined(_NLOHMANN_JSON_ENABLED_)
 	};
 
-	void test_nonempty_array(){
+	void test_nonempty_array() {
+		#if defined(_NLOHMANN_JSON_ENABLED_)
 
 		json const author_array({"by", "tommy", "tutone"});
 		json const test_json({{thingname, author_array}});
@@ -191,9 +198,11 @@ public:
 			TS_ASSERT_DIFFERS(message.find(wrongtype_message), std::string::npos); //check that the exception message contains the expected string
 		}
 
+		#endif //defined(_NLOHMANN_JSON_ENABLED_)
 	};
 
-	void test_nonempty_object(){
+	void test_nonempty_object() {
+		#if defined(_NLOHMANN_JSON_ENABLED_)
 
 		json const song_object({{"by", "tommy tutone"}, {"number", 867.5309}});
 		json const test_json({{thingname, song_object}});
@@ -226,7 +235,7 @@ public:
 			TS_ASSERT_DIFFERS(message.find(wrongtype_message), std::string::npos); //check that the exception message contains the expected string
 		}
 
+		#endif //defined(_NLOHMANN_JSON_ENABLED_)
 	};
-
 
 };

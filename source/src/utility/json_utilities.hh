@@ -15,6 +15,22 @@
 #ifndef INCLUDED_utility_json_json_utilities_HH
 #define INCLUDED_utility_json_json_utilities_HH
 
+#if defined(__clang__)
+    #if (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__) < 30400
+		#define _NLOHMANN_JSON_DISABLED_
+    #endif
+#elif defined(__GNUC__) && !(defined(__ICC) || defined(__INTEL_COMPILER))
+    #if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) < 40900
+        #define _NLOHMANN_JSON_DISABLED_
+    #endif
+#endif
+
+#if not defined(_NLOHMANN_JSON_DISABLED_)
+	#define _NLOHMANN_JSON_ENABLED_
+#endif
+
+#ifdef _NLOHMANN_JSON_ENABLED_
+
 // Unit headers
 #include <json.hpp> //external/include/json.hpp
 
@@ -27,12 +43,11 @@
 #include <string>
 
 namespace utility {
-namespace json {
 
 //NOTE: variables are typed nlohmann::json instead of just json to prevent collision with the namespace name
 
 /// @brief verifies that the element is present exactly once.  returns at all if true; throws utility_exist otherwise
-void verify_present_exactly_once( nlohmann::json const & json, std::string const & element_name );
+void verify_present_exactly_once_in_json( nlohmann::json const & json, std::string const & element_name );
 
 /// @brief utility function - verifies that a particular boolean is in the json exactly once
 void extract_boolean_from_json( nlohmann::json const & json, std::string const & bool_name, bool & return_bool );
@@ -50,6 +65,7 @@ void extract_nonempty_array_from_json( nlohmann::json const & json, std::string 
 void extract_nonempty_object_from_json( nlohmann::json const & json, std::string const & object_name, nlohmann::json & return_object );
 
 } //utility
-} //json
+
+#endif // ifdef _NLOHMANN_JSON_ENABLED_
 
 #endif //INCLUDED_utility_json_json_utilities_HH

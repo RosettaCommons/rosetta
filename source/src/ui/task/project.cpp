@@ -52,13 +52,15 @@ void Project::add_task(TaskSP const &task)
 	if( task->project_ ) task->project_->erase(task);
 
 	tasks_.push_back(task);
-    task->project_ = this;
+
+    //task->project_ = this;
+	assign_ownership(task);
 
 	task_model_.update_from_tasks(tasks_);
 
-	connect(task.get(), &Task::changed,       this, &Project::changed);
-	connect(task.get(), &Task::name_changed,  this, &Project::tasks_changed);
-	connect(task.get(), &Task::state_changed, this, &Project::tasks_changed);
+	//connect(task.get(), &Task::changed,       this, &Project::changed);
+	//connect(task.get(), &Task::name_changed,  this, &Project::tasks_changed);
+	//connect(task.get(), &Task::state_changed, this, &Project::tasks_changed);
 }
 
 
@@ -93,6 +95,7 @@ void Project::changed()
 
 void Project::tasks_changed()
 {
+	qDebug() << "Project::tasks_changed()";
 	task_model_.update_from_tasks(tasks_);
 }
 
@@ -111,7 +114,9 @@ void Project::assign_ownership(TaskSP const &task)
 {
 	assert( task->project_ == nullptr );
 	task->project_ = this;
-	connect(task.get(), &Task::changed, this, &Project::changed);
+	//connect(task.get(), &Task::changed, this, &Project::changed);
+	connect(task.get(), &Task::name_changed,  this, &Project::tasks_changed);
+	connect(task.get(), &Task::state_changed, this, &Project::tasks_changed);
 }
 
 TaskSP Project::task(int index)

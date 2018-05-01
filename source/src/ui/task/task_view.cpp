@@ -467,9 +467,25 @@ void open_file_viewer(std::pair<QString const, FileSP> const & name_and_file, Ta
 				//process->startDetached()
 			}
 		}
-	} else if( file_name.endsWith(".score") ) {
-		auto sfv = new viewers::ScoreFileView(name_and_file, task, nullptr);
-		sfv->show();
+	} else {
+		for(auto const & ending : {"score", ".sc", ".out", ".silent"} ) {
+			if( file_name.endsWith(ending) ) {
+				auto sfv = new viewers::ScoreFileView(name_and_file, task, nullptr);
+				sfv->show();
+				break;
+			}
+		}
+		for(auto const & contain : {".out."} ) {
+			if( file_name.contains(contain) ) {
+				auto sfv = new viewers::ScoreFileView(name_and_file, task, nullptr);
+				sfv->show();
+				break;
+			}
+		}
+
+		// if( file_name.endsWith(".score") or file_name.endsWith(".sc")  or  file_name.endsWith(".out")  or  file_name.endsWith(".silent") ) {
+		// auto sfv = new viewers::ScoreFileView(name_and_file, task, nullptr);
+		// sfv->show();
 	}
 }
 

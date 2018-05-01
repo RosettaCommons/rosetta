@@ -164,6 +164,7 @@ void ProjectView::on_action_new_project_triggered()
 {
 	project_ = std::unique_ptr<Project>(new Project);
 	ui->tasks->setModel( project_->model() );
+	raise();
 }
 
 
@@ -186,6 +187,7 @@ void ProjectView::on_action_open_project_triggered()
 		ui->tasks->setModel( project_->model() );
 
 		project_->file_name(file_name);
+		raise();
 	}
 }
 

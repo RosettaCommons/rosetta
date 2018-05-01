@@ -13,4 +13,5 @@
 devel_apps = [
     ('awatkins/rna_denovo', 'rna_denovo'),
     ('vmullig/bundle_gui',  'parametric_design'),
+    ('sergey/pose_viewer',  'pose_viewer'),
 ]

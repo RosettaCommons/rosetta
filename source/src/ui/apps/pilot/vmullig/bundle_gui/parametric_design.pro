@@ -58,6 +58,7 @@ LIBS += \
         -L$$OUT_PWD/../rosetta/utility          -lutility \
         -L$$OUT_PWD/../rosetta/ObjexxFCL        -lObjexxFCL \
         -L$$OUT_PWD/../rosetta/libxml2          -llibxml2 \
+        -L$$OUT_PWD/../rosetta/libzmq           -llibzmq \
         -L$$OUT_PWD/../rosetta/cifparse         -lcifparse \
         -L$$OUT_PWD/../rosetta/external         -lexternal \
         -lz

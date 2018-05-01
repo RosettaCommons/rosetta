@@ -19,6 +19,7 @@ sources = {
 		"heap",
 		"inline_file_provider",
 		"integer_mapping",
+		"json_utilities",
 		"LexicographicalIterator",
 		"mpi_util",
 		"SimulateMPI",
@@ -64,9 +65,6 @@ sources = {
 	"utility/libsvm":[
 		"Svm_rosetta",
 		"Svm",
-	],
-	"utility/json": [
-		"json_utilities",
 	],
 	"utility/json_spirit": [
 		"json_spirit_reader",

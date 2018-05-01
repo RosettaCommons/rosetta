@@ -1,11 +1,11 @@
-QT += core gui widgets opengl charts
+QT += core gui widgets
 
-CONFIG += object_parallel_to_source c++11 no_keywords
+CONFIG += object_parallel_to_source no_keywords c++11
 
-TARGET = rna_denovo
+TARGET = pose_viewer
 TEMPLATE = app
 
-DEFINES += BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD UNUSUAL_ALLOCATOR_DECLARATION
+DEFINES += BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD UNUSUAL_ALLOCATOR_DECLARATION SERIALIZATION ZEROMQ
 
 INCLUDEPATH = $$PWD/../../../../../../src $$PWD/../../../../../../src/platform/macos
 
@@ -22,9 +22,11 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp
 
+
 HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
+
 
 LIBS += \
         -L$$OUT_PWD/../ui                       -lui \
@@ -62,16 +64,3 @@ LIBS += \
         -L$$OUT_PWD/../rosetta/cifparse         -lcifparse \
         -L$$OUT_PWD/../rosetta/external         -lexternal \
         -lz
-
-macx {
-LIBS += \
-        -framework OpenGL \
-        -framework GLUT
-}
-
-unix:!macx {
-LIBS += \
-        -lglut \
-        -lGLU \
-        -lGL
-}

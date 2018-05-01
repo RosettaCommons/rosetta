@@ -29,6 +29,7 @@ FORMS    += mainwindow.ui
 LIBS += \
         -L$$OUT_PWD/../rosetta/external         -lexternal \
         -L$$OUT_PWD/../rosetta/cifparse         -lcifparse \
+        -L$$OUT_PWD/../rosetta/libzmq           -llibzmq \
         -L$$OUT_PWD/../rosetta/libxml2          -llibxml2 -lz \
         -L$$OUT_PWD/../rosetta/ObjexxFCL        -lObjexxFCL \
         -L$$OUT_PWD/../rosetta/utility          -lutility \

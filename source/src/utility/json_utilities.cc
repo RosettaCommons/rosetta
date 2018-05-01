@@ -12,7 +12,10 @@
 /// @author Steven Lewis (smlewi@gmail.com)
 
 // Unit headers
-#include <utility/json/json_utilities.hh>
+#include <utility/json_utilities.hh>
+
+
+#ifdef _NLOHMANN_JSON_ENABLED_
 
 // Core headers
 
@@ -20,10 +23,9 @@
 #include <utility/exit.hh>
 
 namespace utility {
-namespace json {
 
 /// @brief verifies that the element is present exactly once.  returns at all if true; throws utility_exist otherwise
-void verify_present_exactly_once( nlohmann::json const & json, std::string const & element_name ) {
+void verify_present_exactly_once_in_json( nlohmann::json const & json, std::string const & element_name ) {
 	if ( json.count(element_name) == 0 ) {
 		utility_exit_with_message("JSON element " + element_name + " missing");
 	} /*else if ( json.count(element_name) != 1 ) {
@@ -34,7 +36,7 @@ void verify_present_exactly_once( nlohmann::json const & json, std::string const
 /// @brief utility function - verifies that a particular boolean is in the json exactly once
 void extract_boolean_from_json( nlohmann::json const & json, std::string const & bool_name, bool & return_bool ){
 
-	verify_present_exactly_once( json, bool_name );
+	verify_present_exactly_once_in_json( json, bool_name );
 	if ( !json[bool_name].is_boolean() ) {
 		utility_exit_with_message("JSON element " + bool_name + " not of boolean type");
 	}
@@ -46,7 +48,7 @@ void extract_boolean_from_json( nlohmann::json const & json, std::string const &
 /// @brief utility function - verifies that a particular numeric value is in the json exactly once.  Note JSON spec does not discriminate float vs int; we use floating point here, and your ints will be ok.
 void extract_number_from_json( nlohmann::json const & json, std::string const & number_name, platform::Real & return_number ){
 
-	verify_present_exactly_once( json, number_name );
+	verify_present_exactly_once_in_json( json, number_name );
 	if ( !json[number_name].is_number() ) {
 		utility_exit_with_message("JSON element " + number_name + " not of number type");
 	}
@@ -58,7 +60,7 @@ void extract_number_from_json( nlohmann::json const & json, std::string const & 
 /// @brief utility function - verifies that a particular string is in the json exactly once, and is nonempty
 void extract_nonempty_string_from_json( nlohmann::json const & json, std::string const & string_name, std::string & return_string ){
 
-	verify_present_exactly_once(json, string_name);
+	verify_present_exactly_once_in_json(json, string_name);
 	if ( !json[string_name].is_string() ) {
 		utility_exit_with_message("JSON element " + string_name + " not of string type");
 	}
@@ -74,7 +76,7 @@ void extract_nonempty_string_from_json( nlohmann::json const & json, std::string
 /// @brief utility function - verifies that a particular json array is in the json exactly once, and is nonempty
 void extract_nonempty_array_from_json( nlohmann::json const & json, std::string const & array_name, nlohmann::json & return_array ){
 
-	verify_present_exactly_once(json, array_name);
+	verify_present_exactly_once_in_json(json, array_name);
 	if ( !json[array_name].is_array() ) {
 		utility_exit_with_message("JSON element " + array_name + " not of array type");
 	}
@@ -90,7 +92,7 @@ void extract_nonempty_array_from_json( nlohmann::json const & json, std::string 
 /// @brief utility function - verifies that a particular json object is in the json exactly once, and is nonempty
 void extract_nonempty_object_from_json( nlohmann::json const & json, std::string const & object_name, nlohmann::json & return_object ){
 
-	verify_present_exactly_once(json, object_name);
+	verify_present_exactly_once_in_json(json, object_name);
 	if ( !json[object_name].is_object() ) {
 		utility_exit_with_message("JSON element " + object_name + " not of object type");
 	}
@@ -104,4 +106,5 @@ void extract_nonempty_object_from_json( nlohmann::json const & json, std::string
 }
 
 } //utility
-} //json
+
+#endif // ifdef _NLOHMANN_JSON_ENABLED_

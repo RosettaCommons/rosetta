@@ -272,6 +272,9 @@ sources = {
 		"VectorPoseMover",
 		"WhileMover",
 	],
+	"protocols/network": [
+		"util",
+	],
 	"protocols/parser": [
 		"BluePrint",
 		"ConstraintGeneratorLoader",

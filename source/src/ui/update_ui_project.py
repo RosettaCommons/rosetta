@@ -45,7 +45,7 @@ def get_rosetta_include_directories():
 
 def get_defines():
     ''' return list of #defines '''
-    defines = 'BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD'  # MULTI_THREADED
+    defines = 'BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD SERIALIZATION ZEROMQ'  # MULTI_THREADED
     # moved to library_project_template if Platform == 'macos': defines += ' UNUSUAL_ALLOCATOR_DECLARATION'
     # moved to library_project_template  if Options.type in 'Release MinSizeRel': defines += ' NDEBUG'
     return defines.split()

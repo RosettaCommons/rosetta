@@ -1112,6 +1112,15 @@ settings = {
         },
     },
 
+    "gcc, zeromq" : {
+        "appends" : {
+            "defines" : [
+		"SERIALIZATION",
+		"ZEROMQ",
+            ],
+        },
+    },
+
     "gcc, apbs" : {
         "appends" : {
             "defines" : [ "LINK_APBS_LIB" ],
@@ -1464,6 +1473,16 @@ settings = {
             ],
         },
     },
+
+    "icc, zeromq" : {
+        "appends" : {
+            "defines" : [
+		"SERIALIZATION",
+		"ZEROMQ",
+            ],
+        },
+    },
+
 
     "icc, cxx11thread" : {
         "appends" : {
@@ -2151,6 +2170,18 @@ settings = {
         },
     },
 
+    "clang, zeromq" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [ "Wno-unused-function", ],
+            },
+            "defines" : [
+		"SERIALIZATION",
+		"ZEROMQ",
+            ],
+        },
+    },
+
 
     "clang, graphics" : {
         "appends" : {
@@ -2271,7 +2302,7 @@ settings = {
 		"#external/boinc/3rdParty/mac/ftgl-2.1.3~rc5/src/",
 		"#external/boinc/3rdParty/mac/freetype-2.6.2/include/",
 		"/System/Library/Frameworks/OpenGL.framework/Headers/",
-		"/System/Library/Frameworks/IOSurface.framework/Headers/", 
+		"/System/Library/Frameworks/IOSurface.framework/Headers/",
             ],
             "defines" : [
                 "MAC",

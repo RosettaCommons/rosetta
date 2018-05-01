@@ -191,11 +191,26 @@ def update_test_list(projects, test_path):
         out.close()
 
 def update_externals_list(projects):
-    out = open('build/external_libraries.cmake', 'w')
-    try:
-        out.write('SET( EXTERNAL_LIBRARIES ' + ' '.join( projects) + ')\n')
-    finally:
-        out.close()
+
+    with open('build/external_libraries.cmake', 'w') as out:
+
+        for project, other_settings in projects.items():
+            project_entry = \
+                'SET(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} %s)\n' % project
+
+            if other_settings.get("only_with_extras", False):
+                # Add ifdef guards around the external module definition to check
+                # for each required extra.
+                guard = ""
+                endguard = ""
+
+                for e in other_settings["only_with_extras"]:
+                    guard += 'if( ${EXTRAS} MATCHES "%s" )\n' % e
+                    endguard += 'endif()\n'
+
+                project_entry = "\n" + guard + project_entry + endguard + "\n"
+
+            out.write(project_entry)
 
 def test_main(path_to_source_dir, argv, project_test_callback = None):
 
@@ -221,7 +236,7 @@ def external_main(path_to_mini, argv, project_external_callback = None):
     if externals == [ "all" ]:
         externals = KNOWN_EXTERNAL
 
-        buildable_externals = []
+        buildable_externals = dict()
     for external in externals:
         print("Examining external" + external)
         if external not in KNOWN_EXTERNAL:
@@ -232,7 +247,7 @@ def external_main(path_to_mini, argv, project_external_callback = None):
         if project_files:
             can_build = project_external_callback(external, project_path, project_files, other_settings)
             if can_build:
-                buildable_externals.append(external)
+                buildable_externals[external] = other_settings
 
     update_externals_list(buildable_externals)
 

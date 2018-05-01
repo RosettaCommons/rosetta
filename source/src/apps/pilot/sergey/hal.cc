@@ -12,56 +12,63 @@
 /// @brief
 /// @author Sergey Lyskov
 
-#if defined(SERIALIZATION)
+#include <utility/json_utilities.hh>
+
+
+#if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
 
 #include <devel/init.hh>
 
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
-#include <libzmq/include/zmq.hpp>
+#include <utility/CSI_Sequence.hh>
+
+#include <protocols/network/util.hh>
+
+#include <json.hpp>
 
 #include <thread>
 #include <chrono>
 
+using std::string;
+using namespace utility;
+using namespace protocols::network;
+
 static basic::Tracer TR( "HAL" );
 
-auto const _bus_address_    = "inproc://bus";
-auto const _server_address_ = "ipc:///tmp/rosetta-ui";
-
 auto const _greetings_   = "READY PLAYER ONE";
-
-using ContextSP = std::shared_ptr<zmq::context_t>;
-using SocketUP  = std::unique_ptr<zmq::socket_t>;
-
-//  Receive ZeroMQ message as a string
-std::string receive_message(zmq::socket_t & socket)
-{
-	zmq::message_t message;
-	socket.recv(&message);
-
-	return std::string( static_cast<char*>( message.data() ), message.size() );
-}
-
-//  Send ZeroMQ message as string
-bool send_message(zmq::socket_t & socket, std::string const & string_message) {
-
-	zmq::message_t message( string_message.size() );
-	memcpy(message.data(), string_message.data(), string_message.size());
-
-	return socket.send(message);
-}
 
 
 SocketUP create_ui_socket(zmq::context_t & context)
 {
-	std::cout << "Connecting to UI server " << _server_address_ << "..." << std::endl;
+	//std::cout << "Connecting to UI server " << _server_address_ << "..." << std::endl;
 
 	SocketUP ui( new zmq::socket_t(context, ZMQ_DEALER) );
 	//socket.connect ("tcp://localhost:62055");
 	ui->connect(_server_address_);
 
 	return ui;
+}
+
+
+// receive specification or terminate if thats not possible
+std::string receive_specification(zmq::socket_t & bus)
+{
+	zmq::multipart_t message(bus);
+
+	if( message.size() == 2 ) {
+		string type = message.popstr();
+		if( type == _m_specification_ ) {
+			return message.popstr();
+		}
+		else std::cerr << "ERROR: first message from Rosetta should be specification! Instead received: " << type << std::endl;
+
+	}
+	std::cerr << "ERROR: first message from Rosetta should be specification! Terminating..." << std::endl;
+	std::exit(1);
+
+	return ""; // dummy, should never be reached
 }
 
 void hal_client(ContextSP context) // note: pass-by-value here is intentional
@@ -73,30 +80,77 @@ void hal_client(ContextSP context) // note: pass-by-value here is intentional
 
 	send_message(bus, _greetings_);
 
-	std::vector<zmq_pollitem_t> items = { {*ui, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } };
+	std::string specification = receive_specification(bus);
+	std::cout << "Got specification from Rosetta: " << nlohmann::json::from_msgpack(specification) << std::endl;
 
-	int const max_ping_count = 5;
+	auto create_pool = [&ui, &bus]() -> std::vector<zmq_pollitem_t> { return { {*ui, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } }; };
+
+	std::vector<zmq_pollitem_t> items = create_pool();  //{ {*ui, 0, ZMQ_POLLIN, 0 }, {bus, 0, ZMQ_POLLIN, 0 } };
+
+	int const max_ping_count = 10; // maximum number of pings we sent before re-creating a socket
 	int ping_count = max_ping_count;
-	while ( true ) {
-		zmq::poll( items, std::chrono::milliseconds(500) );
 
-		if ( items [0].revents & ZMQ_POLLIN ) { // messages from ui server
-			std::cout << "got message from ui: " << receive_message(*ui) << std::endl;
-			ping_count = max_ping_count;
+	auto const timeout = std::chrono::milliseconds(2500);
+	auto const ping_interval = std::chrono::milliseconds(500);
+	std::chrono::steady_clock::time_point last_ping_time = std::chrono::steady_clock::now() - ping_interval;
+
+	bool alive = false;
+	std::chrono::steady_clock::time_point time_point_of_ui_last_message = std::chrono::steady_clock::now();
+
+	while ( true ) {
+		if( zmq::poll( items, std::chrono::milliseconds(250) ) ) {
+			if ( items [0].revents & ZMQ_POLLIN ) { // messages from ui server
+				auto message = receive_message(*ui);
+				//std::cout << "got message from ui: " << message << std::endl;
+				time_point_of_ui_last_message = std::chrono::steady_clock::now();
+
+				if( not alive ) {
+					std::cout << CSI_bgGreen() << CSI_Black() << "Connection to UI front-end established!" << CSI_Reset() << std::endl;
+					alive = true;
+
+					// sending our specification to UI
+					send_message(*ui, _m_specification_, ZMQ_SNDMORE);
+					send_message(*ui, specification);
+				}
+				ping_count = max_ping_count;
+			}
+
+			if ( items [1].revents & ZMQ_POLLIN ) { // messages from main Rosetta thread
+				zmq::multipart_t message(bus);
+
+				if( message.size() == 2 ) {
+					string type = message.popstr();
+					std::cout << "got message from Rosetta:" << type << std::endl;
+				}
+
+			}
 		}
 
-		if ( items [1].revents & ZMQ_POLLIN ) { // messages from main Rosetta thread
+		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+		//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(now - time_point_of_ui_last_message).count()
+		//		  << " _:" << (now - time_point_of_ui_last_message > timeout) <<  std::endl;
+
+		if( alive  and  now - time_point_of_ui_last_message > timeout ) {
+			std::cout << CSI_bgRed() << CSI_Black() << "UI front-end disconnected due to timeout!" << CSI_Reset() << std::endl;
+			alive = false;
+			ping_count = 1; // force re-creation of socket
 		}
 
 		if ( --ping_count == 0 ) {
-			std::cout << "UI server seems to be dead, re-connecting..." << std::endl;
-
-			ui.release();
+			ui->setsockopt(ZMQ_LINGER, 0);
+			ui->close(); // ui.release();
 			ui = create_ui_socket(*context);
+
+			items = create_pool();
+
 			ping_count = max_ping_count;
 		}
-		send_message(*ui, "ping");
-		std::cout << ping_count;
+
+		if( now - last_ping_time > ping_interval ) {
+			//std::cout << "sending ping..." << std::endl;
+			send_message(*ui, _m_ping_);
+			last_ping_time = now;
+		}
 	}
 
 	//  Do 10 requests, waiting each time for a response
@@ -111,6 +165,19 @@ void hal_client(ContextSP context) // note: pass-by-value here is intentional
 	//     std::cout << "Received World " << request_nbr << std::endl;
 	// }
 }
+
+
+/// Generate HAL specification
+string specification()
+{
+	nlohmann::json j;
+	j["functions"] = { {"name", "test"}, {"arguments", {"int", "float"} } };
+
+	string r;
+	nlohmann::json::basic_json::to_msgpack(j, r);
+	return r;
+}
+
 
 void hal(int argc, char * argv [])
 {
@@ -127,6 +194,11 @@ void hal(int argc, char * argv [])
 	if ( greetings == _greetings_ ) {
 		std::cout << TR.bgRed << TR.Black << greetings << TR.Reset << std::endl;
 
+		{ // sending HAL specification
+			send_message(bus, _m_specification_, ZMQ_SNDMORE);
+			send_message(bus, specification() );
+		}
+
 		{
 			// std::cout << "sizeof(long) = " << sizeof(long) << std::endl;
 			// std::vector<char> v;
@@ -134,7 +206,8 @@ void hal(int argc, char * argv [])
 
 			TR << "Sleeping then restating..." << std::endl;
 			std::this_thread::sleep_for(std::chrono::seconds(1*1024));
-			execvp(argv[0], argv);
+			//std::this_thread::sleep_for(std::chrono::seconds(2));
+			//execvp(argv[0], argv);
 		}
 	} else {
 		utility_exit_with_message("Error: got unexpected greetings from server process, exiting...\nGreetings:" + greetings);
@@ -143,7 +216,7 @@ void hal(int argc, char * argv [])
 	client.join();
 }
 
-//int main(int, char * [] )
+
 int main(int argc, char * argv [])
 {
 
@@ -159,7 +232,7 @@ int main(int argc, char * argv [])
 
 }
 
-#else // !defined(SERIALIZATION)
+#else // ! ( defined(ZEROMQ) and  defined(_NLOHMANN_JSON_ENABLED_) )
 
 #include <utility/excn/Exceptions.hh>
 #include <devel/init.hh>
@@ -178,4 +251,4 @@ int main(int argc, char * argv [])
 	}
 }
 
-#endif // defined(SERIALIZATION)
+#endif // defined(ZEROMQ) and  defined(_NLOHMANN_JSON_ENABLED_)

@@ -393,7 +393,7 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release_bluegene" )
 	#list( APPEND mode
 	#		-g
 	#		-ggdb
-	#)	
+	#)
 endif()
 
 ###########################################################################
@@ -467,6 +467,7 @@ if( EXTRAS )
 		)
 	endif()
 
+
 	# "linux, graphics"
 	if( UNIX AND NOT APPLE AND ${EXTRAS} STREQUAL "graphics" )
 		list( APPEND defines
@@ -496,6 +497,40 @@ if( EXTRAS )
 				-Werror=ignored-qualifiers
 				-Werror=enum-compare
 		)
+	endif()
+
+
+	# serialization build
+	if( ${EXTRAS} MATCHES "serialization" )
+	    ADD_DEFINITIONS(-DSERIALIZATION)
+
+	    # list( REMOVE_ITEM warn
+	    # 	 -Werror
+    	    # 	 -Wunused-function
+	    # )
+
+	    list ( APPEND warn
+	    	# -Wno-deprecated
+	    	# -Wno-unused-variable
+	    	# -Wno-unused-parameter
+	    	# -Wno-type-limits
+    		-Wno-unused-function
+	    )
+
+
+	endif()
+
+	if( ${EXTRAS} MATCHES "zeromq" )
+	    ADD_DEFINITIONS(-DSERIALIZATION -DZEROMQ)
+
+	    list ( APPEND warn
+    		-Wno-unused-function
+	    )
+
+	    list( APPEND shlink
+		-lpthread
+	    )
+
 	endif()
 
 endif()

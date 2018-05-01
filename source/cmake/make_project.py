@@ -120,28 +120,6 @@ def project_external_callback(project, project_path, project_files, other_settin
     if 'link_flags' in other_settings:
         cmake_linkflags = ';'.join( other_settings['link_flags'] )
 
-    if 'only_with_extras' in other_settings:
-        # This logic could be extended to insert a check for the targeted
-        # externals within the generated cmake source file. There is a 
-        # limited convention for defining extras under "EXTRAS", however
-        # these aren't a one-to-one mapping of the other types of extras
-        # in the scons-based build.
-        #
-        # Supporting this feature would *likely* also require adjusting how
-        # external.cmake is generated so that the external is only included
-        # if the extra flag is included.
-        #
-        # The "more canonical" way of cmake-ifying your build extra is likely
-        # to add a cmake-specific build flag. See, for example, the external
-        # modules present under build/modules, which define cmake build variables
-        # to determine if a component is included.
-        print(
-            'project requests unsupported only_with_extras: %r, skipping.' %
-            other_settings["only_with_extras"])
-        return False
-
-    #print('making project files for ' + project + ' from ' + project_path)
-
     output = ''
     output += 'SET(' + project + '_files' + cmake_files + '\n)\n'
     output += 'SET(' + project + '_defines ' + cmake_defines + ')\n'
