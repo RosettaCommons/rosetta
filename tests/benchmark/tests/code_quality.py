@@ -250,6 +250,8 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
     state, results, output = _S_script_failed_, {}, ''
 
+    execute('Updating options, ResidueTypes and version info...', 'cd {}/source && ./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py'.format(rosetta_dir) )
+
     res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git diff --exit-code >/dev/null || git diff --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
     if res:
         state, output = _S_failed_, 'Working directory is not clean! `git status`:\n{}\nThis might be because you trying to beautify pull-request..., please try too schedule `beautify` test for a branch or SHA1...\n'.format( execute('Checking if there is local changes in main...', 'cd {} && git status'.format(rosetta_dir), return_='output') )
