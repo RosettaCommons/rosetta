@@ -24,6 +24,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace core {
 namespace pack {
@@ -103,6 +104,12 @@ public:
 	/// @brief Set an error threshold.
 	/// @details Must be implemented by derived classes.
 	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE ) = 0;
+
+	/// @brief Provide the opportunity for an AnnealableGraph to clean up cached data in the pose or inside itself after packing.
+	/// @details Base class function does nothing; may be overridden in derived classes.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual void clean_up_after_packing( core::pose::Pose & pose );
+
 };
 
 }

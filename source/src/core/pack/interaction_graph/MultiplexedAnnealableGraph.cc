@@ -200,6 +200,18 @@ void MultiplexedAnnealableGraph::set_errorfull_deltaE_threshold(core::PackerEner
 	}
 }
 
+/// @brief Provide the opportunity for an AnnealableGraph to clean up cached data in the pose or inside itself after packing.
+/// @details This version calls contained AnnealableGraph clean_up_after_packing() methods.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+MultiplexedAnnealableGraph::clean_up_after_packing(
+	core::pose::Pose & pose
+) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
+		subgraph->clean_up_after_packing(pose);
+	}
+}
+
 }
 }
 }

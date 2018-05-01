@@ -154,6 +154,8 @@ public:
 
 			TS_ASSERT_EQUALS( aa_count["ASP"] + aa_count["GLU"] - aa_count["LYS"], 3);
 		}
+
+		core::pack::pack_rotamers_cleanup( pose, symmetric_ig );
 	}
 
 };

@@ -444,7 +444,7 @@ GreenPacker::repack( core::pose::Pose & pose )
 	find_reference_and_current_rotamer_correspondence( pose );
 	compute_energies( pose );
 	run_sa( pose );
-	cleanup();
+	cleanup( pose );
 }
 
 
@@ -1112,8 +1112,10 @@ GreenPacker::run_sa(
 
 /// @details Free memory that is no longer needed
 void
-GreenPacker::cleanup()
+GreenPacker::cleanup( core::pose::Pose &pose )
 {
+	core::pack::pack_rotamers_cleanup( pose, current_ig_ );
+
 	current_task_.reset();
 	current_rotamer_sets_.reset();
 	current_rotamers_.clear();

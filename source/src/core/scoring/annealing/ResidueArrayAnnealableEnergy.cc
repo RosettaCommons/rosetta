@@ -46,6 +46,14 @@ ResidueArrayAnnealableEnergy::set_up_residuearrayannealableenergy_for_packing (
 	core::scoring::ScoreFunction const &/*sfxn*/
 ) {} //Does nothing unless implemented by a derived class.
 
+/// @brief Allows the ResidueArrayAnnealableEnergy to clean up cached data, either within the EnergyMethod or in the pose, after
+/// a packer run.
+/// @details Base class version does nothing; may be overridden by derived classes.
+void
+ResidueArrayAnnealableEnergy::clean_up_residuearrayannealableenergy_after_packing(
+	core::pose::Pose &//pose
+) {}
+
 /// @brief What to do when a substitution that was considered is accepted.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void

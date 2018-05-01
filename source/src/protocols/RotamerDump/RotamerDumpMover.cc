@@ -16,6 +16,7 @@
 
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -71,10 +72,15 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 
 	RotamerTracer << "built " << rotamer_sets->nrotamers() << " rotamers at " <<rotamer_sets->nmoltenres() <<" positions" <<std::endl;
 
-	core::pack::interaction_graph::InteractionGraphBaseOP ig =
+	core::pack::interaction_graph::AnnealableGraphBaseOP ig =
 		core::pack::interaction_graph::InteractionGraphFactory::create_and_initialize_two_body_interaction_graph(*packer_task,*rotamer_sets,pose,*score_function_, packer_neighbor_graph);
 
-	RotamerTracer << "IG: " <<ig->getTotalMemoryUsage() << " bytes"<<std::endl;
+	core::pack::interaction_graph::InteractionGraphBaseOP ig_igcast( utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::InteractionGraphBase >( ig ) );
+	if ( ig_igcast != nullptr ) {
+		RotamerTracer << "IG: " << ig_igcast->getTotalMemoryUsage() << " bytes" << std::endl;
+	} else {
+		RotamerTracer << "IG not of InteractionGraphBase type.  Could not determine memory usage." << std::endl;
+	}
 
 	std::list<std::string> job_data;
 
@@ -100,7 +106,7 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 }
 
 /// @details appends a line to the job in the form one_body num_items (resno, resn, rotno, energy) for each 1 body energy in the IG
-std::string RotamerDumpMover::get_onebody_energy_table(core::pack::interaction_graph::InteractionGraphBaseOP ig ,
+std::string RotamerDumpMover::get_onebody_energy_table(core::pack::interaction_graph::AnnealableGraphBaseOP ig ,
 	core::pack::rotamer_set::RotamerSetsOP rotamer_sets)
 {
 	std::string table_type("one_body");
@@ -108,14 +114,17 @@ std::string RotamerDumpMover::get_onebody_energy_table(core::pack::interaction_g
 	std::string data ="";
 	core::Size elements = 0;
 	//table.append(" "+utility::to_string<core::Size>(ig_size));
+
+	core::pack::interaction_graph::InteractionGraphBaseOP ig_igcast( utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::InteractionGraphBase >( ig ) );
+
 	for ( core::Size node_id = 1; node_id <= ig_size; ++node_id ) {
 		core::Size residue_id = rotamer_sets->moltenres_2_resid(node_id);
 		std::string residue_id_string = utility::to_string<core::Size>(residue_id);
 
 		core::Size node_states = ig->get_num_states_for_node(node_id);
 		for ( core::Size state_id = 1; state_id <= node_states; ++state_id ) {
-			float one_body_energy = ig->get_one_body_energy_for_node_state(node_id,state_id);
-			std::string one_body_energy_string = utility::to_string<float>(one_body_energy);
+			float one_body_energy = (ig_igcast != nullptr ? ig_igcast->get_one_body_energy_for_node_state(node_id,state_id) : 0.0 );
+			std::string one_body_energy_string = (ig_igcast != nullptr ? utility::to_string<float>(one_body_energy) : "INDETERMINATE" ) ;
 
 			core::pack::rotamer_set::RotamerSetOP rotamer_set(rotamer_sets->rotamer_set_for_moltenresidue(node_id));
 			core::conformation::ResidueCOP current_residue(rotamer_set->rotamer(state_id));
@@ -132,7 +141,7 @@ std::string RotamerDumpMover::get_onebody_energy_table(core::pack::interaction_g
 }
 
 /// @details appends a line to the job in the form two_body num_items (nres1,nrot1,resn1,nres2,nrot2,resn2,energy) for each 2 body energy in the IG
-std::string RotamerDumpMover::get_twobody_energy_table(core::pack::interaction_graph::InteractionGraphBaseOP ig,
+std::string RotamerDumpMover::get_twobody_energy_table(core::pack::interaction_graph::AnnealableGraphBaseOP ig,
 	core::pack::rotamer_set::RotamerSetsOP rotamer_sets)
 {
 	std::string table_type("two_body");
@@ -142,7 +151,7 @@ std::string RotamerDumpMover::get_twobody_energy_table(core::pack::interaction_g
 	core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraphOP p_ig =
 		utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
 
-	if ( !p_ig ) {
+	if ( p_ig == nullptr ) {
 		utility_exit_with_message("Interaction graph is not pre-computed");
 	}
 	core::Size ig_size = ig->get_num_nodes();
@@ -156,7 +165,7 @@ std::string RotamerDumpMover::get_twobody_energy_table(core::pack::interaction_g
 
 			core::Size const num_states_1(ig->get_num_states_for_node(node_1_id));
 			core::Size const num_states_2(ig->get_num_states_for_node(node_2_id));
-			if ( !ig->get_edge_exists(node_1_id,node_2_id) ) {
+			if ( !p_ig->get_edge_exists(node_1_id,node_2_id) ) {
 				continue;
 			}
 
@@ -223,7 +232,7 @@ std::string RotamerDumpMover::get_xyz_coord_table(core::pack::rotamer_set::Rotam
 }
 
 /// @details appends a line to the job in the form annealer_results num_items (nres,selected_nres, selected_resn) for each atom in the IG
-std::string RotamerDumpMover::get_annealer_pick_table(core::pack::interaction_graph::InteractionGraphBaseOP ig, core::pack::rotamer_set::RotamerSetsOP rotamer_sets,core::pose::Pose & pose , core::pack::task::PackerTaskCOP task)
+std::string RotamerDumpMover::get_annealer_pick_table(core::pack::interaction_graph::AnnealableGraphBaseOP ig, core::pack::rotamer_set::RotamerSetsOP rotamer_sets,core::pose::Pose & pose , core::pack::task::PackerTaskCOP task)
 {
 	std::string table_type("annealer_results");
 	std::string data = "";
@@ -251,6 +260,9 @@ std::string RotamerDumpMover::get_annealer_pick_table(core::pack::interaction_gr
 		data.append(" ("+residue_id_string+","+selected_rotamer_string+","+selected_residue_name+")");
 		elements++;
 	}
+
+	core::pack::pack_rotamers_cleanup( pose, ig );
+
 	return table_type+" "+utility::to_string<core::Size>(elements)+" "+data;
 }
 

@@ -111,9 +111,13 @@ public:
 	///
 	void report() const;
 
-	/// @brief Cache data from the pose in this EnergyMethod in anticipation of scoring.
+	/// @brief Cache data from the pose in this EnergyMethod in anticipation of packing.
 	///
 	void set_up_residuearrayannealableenergy_for_packing( core::pose::Pose &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
+
+	/// @brief Delete cached data from the pose and from this EnergyMethod after packing.
+	///
+	void clean_up_residuearrayannealableenergy_after_packing( core::pose::Pose &pose ) override;
 
 	/// @brief Disable this scoreterm during minimization trajectory.
 	void setup_for_minimizing( core::pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, core::kinematics::MinimizerMapBase const & minmap) const override;

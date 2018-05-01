@@ -44,6 +44,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 
 // basic headers
 #include <basic/options/option.hh>
@@ -176,6 +177,9 @@ PackRotamersMover::apply( Pose & pose )
 		}
 	}
 	if ( nloop_ > 1 ) pose = best_pose;
+
+	//Delete temporary data.
+	this->cleanup(pose);
 
 	//guaruntees proper scoring if this mover is used as a protocol (as in fixbb)
 	(*scorefxn_)(pose);
@@ -315,6 +319,17 @@ void PackRotamersMover::setup( Pose & pose )
 core::PackerEnergy PackRotamersMover::run( Pose & pose, utility::vector0< int > rot_to_pack ) const
 {
 	return pack_rotamers_run( pose, task_, rotamer_sets_, ig_, rot_to_pack );
+}
+
+/// @brief Clean up cached pose and mover data after the fact.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+PackRotamersMover::cleanup(
+	core::pose::Pose & pose
+) {
+	core::pack::pack_rotamers_cleanup( pose, ig_ );
+	ig_ = nullptr;
+	rotamer_sets_ = utility::pointer::make_shared< rotamer_set::RotamerSets >();
 }
 
 /// @brief note PackerTask's packable and designable residues as string info

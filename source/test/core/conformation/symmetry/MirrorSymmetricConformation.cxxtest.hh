@@ -222,6 +222,7 @@ public:
 			TS_ASSERT_EQUALS( dalacount, 5);
 			TS_ASSERT_EQUALS( alacount, 5);
 		}
+		core::pack::pack_rotamers_cleanup( pose, symmetric_ig );
 		//pose.dump_pdb("vmirrortemp2.pdb"); //DELETE ME
 	}
 

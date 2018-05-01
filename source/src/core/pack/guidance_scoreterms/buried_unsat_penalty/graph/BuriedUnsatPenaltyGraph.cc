@@ -468,7 +468,7 @@ BuriedUnsatPenaltyNode::decrement_counts(
 					--unsat_acceptor_and_donor_count;
 				}
 				if ( donated_hbond_count > curgroup.max_donated_hbond_count() || accepted_hbond_count > curgroup.max_accepted_hbond_count() ) {
-					runtime_assert( unsat_acceptor_and_donor_count > 0 );
+					runtime_assert( oversat_acceptor_and_donor_count > 0 );
 					--oversat_acceptor_and_donor_count;
 				}
 			} else { //Acceptor only, but NOT donor

@@ -94,6 +94,7 @@ pack_rotamers(
 
 	pack_rotamers_setup( pose, scfxn, task, rotsets, ig );
 	pack_rotamers_run( pose, task, rotsets, ig );
+	pack_rotamers_cleanup( pose, ig );
 
 	// rescore here to make the state of the Energies good.
 	scfxn( pose );
@@ -175,6 +176,7 @@ pack_rotamers_loop(
 		}
 	}
 	pose = best_pose;
+	pack_rotamers_cleanup( pose, ig );
 }
 
 // @details get rotamers, compute energies
@@ -305,6 +307,17 @@ pack_rotamers_run(
 	PROF_START( basic::SIMANNEALING );
 	annealer->run();
 	PROF_STOP( basic::SIMANNEALING );
+}
+
+/// @brief Provide the opportunity to clean up cached data from the pose or scorefunction after packing.
+/// @details This should be called after pack_rotamers_run.  It is called from the pack_rotamers() function.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+pack_rotamers_cleanup(
+	core::pose::Pose pose,
+	core::pack::interaction_graph::AnnealableGraphBaseOP annealable_graph
+) {
+	annealable_graph->clean_up_after_packing(pose);
 }
 
 } // namespace pack

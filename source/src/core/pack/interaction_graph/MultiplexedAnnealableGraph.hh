@@ -58,36 +58,36 @@ public:
 
 	/// @brief Get the number of nodes in the graph.
 	///
-	virtual int get_num_nodes() const;
+	int get_num_nodes() const override;
 
 	/// @brief Get the number of states for a given node.
 	/// @param[in] node The index of the node.
-	virtual int get_num_states_for_node(int node) const;
+	int get_num_states_for_node(int node) const override;
 
 	/// @brief Get the total number of states for all nodes in the graph.
 	///
-	virtual int get_num_total_states() const;
+	int get_num_total_states() const override;
 
 	/// @brief Utility signal.
 	///
-	virtual void prepare_for_simulated_annealing();
+	void prepare_for_simulated_annealing() override;
 
 	/// @brief State initialization.  Set all nodes to state zero.
 	///
-	virtual void blanket_assign_state_0();
+	void blanket_assign_state_0() override;
 
 	/// @brief Are any states unassigned?
 	///
-	virtual bool any_vertex_state_unassigned() const;
+	bool any_vertex_state_unassigned() const override;
 
 	/// @brief Explicit state modification: set node "node_ind" to state "new_state".
 	/// @param[in] node_ind The index of the node.
 	/// @param[in] new_state The index of the state to which we're setting the node.
-	virtual core::PackerEnergy set_state_for_node(int node_ind, int new_state);
+	core::PackerEnergy set_state_for_node(int node_ind, int new_state) override;
 
 	/// @brief Set the states for the entire network.
 	/// @param[in] node_states A Fortran-style 1-array of state indices for all nodes in the network.
-	virtual core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states);
+	core::PackerEnergy set_network_state( ObjexxFCL::FArray1_int & node_states) override;
 
 
 	/// @brief Consider a change in state at a particular node.
@@ -95,23 +95,29 @@ public:
 	/// @param[in] new_state The index of the state to which we're considering setting the node.
 	/// @param[out] delta_energy The computed change in energy that would result from the substitution.
 	/// @param[out] prev_energy_for_state The energy prior to the substituion, returned by this function.
-	virtual void consider_substitution(
+	void consider_substitution(
 		int node_ind,
 		int new_state,
 		core::PackerEnergy & delta_energy,
-		core::PackerEnergy & prev_energy_for_node);
+		core::PackerEnergy & prev_energy_for_node
+	) override;
 
 	/// @brief Accept the considered substitution.
 	///
-	virtual core::PackerEnergy commit_considered_substitution();
+	core::PackerEnergy commit_considered_substitution() override;
 
 	/// @brief Get the total energy from the current states of the nodes in the network.
 	///
-	virtual core::PackerEnergy get_energy_current_state_assignment();
+	core::PackerEnergy get_energy_current_state_assignment() override;
 
 	/// @brief Set error threshold.
 	/// @param[in] deltaE Error threshold value to set.
-	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE );
+	void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE ) override;
+
+	/// @brief Provide the opportunity for an AnnealableGraph to clean up cached data in the pose or inside itself after packing.
+	/// @details This version calls contained AnnealableGraph clean_up_after_packing() methods.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void clean_up_after_packing( core::pose::Pose & pose ) override;
 
 	/// @brief Container accessor
 	///

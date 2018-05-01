@@ -44,6 +44,15 @@ AnnealableGraphBase::AnnealableGraphBase( AnnealableGraphBase const &/*src*/ ) {
 ///
 AnnealableGraphBase::~AnnealableGraphBase() = default;
 
+/// @brief Provide the opportunity for an AnnealableGraph to clean up cached data in the pose or inside itself after packing.
+/// @details Base class function does nothing; may be overridden in derived classes.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+AnnealableGraphBase::clean_up_after_packing(
+	core::pose::Pose &//pose
+) {
+	//GNDN
+}
 
 } // namespace interaction_graph
 } // pack

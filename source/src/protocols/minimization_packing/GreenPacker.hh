@@ -260,7 +260,7 @@ private:
 	void initialize_internal_correspondence_data( Pose & pose );
 	void compute_energies( Pose & pose );
 	void run_sa( Pose & pose );
-	void cleanup();
+	void cleanup( core::pose::Pose &pose );
 
 	void add_precomputed_energies( Pose & pose, PrecomputedPairEnergiesInteractionGraphOP pig );
 	void compute_absent_energies( Pose & pose, PrecomputedPairEnergiesInteractionGraphOP pig );

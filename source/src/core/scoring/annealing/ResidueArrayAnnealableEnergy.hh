@@ -54,6 +54,11 @@ public:
 	/// @note The method is nonconst to permit caching within the ResidueArrayAnnealableEnergy-derived EnergyMethod.
 	virtual void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn);
 
+	/// @brief Allows the ResidueArrayAnnealableEnergy to clean up cached data, either within the EnergyMethod or in the pose, after
+	/// a packer run.
+	/// @details Base class version does nothing; may be overridden by derived classes.
+	virtual void clean_up_residuearrayannealableenergy_after_packing( core::pose::Pose &pose );
+
 	/// @brief What to do when a substitution that was considered is accepted.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	virtual void commit_considered_substitution();

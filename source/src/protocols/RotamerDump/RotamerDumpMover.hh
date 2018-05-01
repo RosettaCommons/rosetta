@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -38,14 +38,14 @@ public:
 
 private:
 	/// @brief dump the one body energy table
-	std::string get_onebody_energy_table(core::pack::interaction_graph::InteractionGraphBaseOP ig,core::pack::rotamer_set::RotamerSetsOP rotamer_sets);
+	std::string get_onebody_energy_table(core::pack::interaction_graph::AnnealableGraphBaseOP ig,core::pack::rotamer_set::RotamerSetsOP rotamer_sets);
 
 	/// @brief dump the two body energy table
-	std::string get_twobody_energy_table(core::pack::interaction_graph::InteractionGraphBaseOP ig,core::pack::rotamer_set::RotamerSetsOP rotamer_sets);
+	std::string get_twobody_energy_table(core::pack::interaction_graph::AnnealableGraphBaseOP ig,core::pack::rotamer_set::RotamerSetsOP rotamer_sets);
 	/// @brief dump the xyz coordinates of every atom in every rotamer
 	std::string get_xyz_coord_table(core::pack::rotamer_set::RotamerSetsOP rotamer_sets);
 	/// @brief return the interaction nodes selected by the annealer.  This function does not modify the pose.
-	std::string get_annealer_pick_table(core::pack::interaction_graph::InteractionGraphBaseOP ig, core::pack::rotamer_set::RotamerSetsOP rotamer_sets, core::pose::Pose & pose, core::pack::task::PackerTaskCOP task);
+	std::string get_annealer_pick_table(core::pack::interaction_graph::AnnealableGraphBaseOP ig, core::pack::rotamer_set::RotamerSetsOP rotamer_sets, core::pose::Pose & pose, core::pack::task::PackerTaskCOP task);
 
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP score_function_;

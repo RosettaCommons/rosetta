@@ -280,7 +280,7 @@ void BuriedUnsatPenalty::report() const {
 	TR.Debug << std::endl << "The BuriedUnsatPenalty object has no loaded data (aside from graphs that are generated and updated on-the-fly)." << std::endl;
 }
 
-/// @brief Cache data from the pose in this EnergyMethod in anticipation of scoring.
+/// @brief Cache data from the pose in this EnergyMethod in anticipation of packing.
 ///
 void
 BuriedUnsatPenalty::set_up_residuearrayannealableenergy_for_packing (
@@ -323,6 +323,25 @@ BuriedUnsatPenalty::set_up_residuearrayannealableenergy_for_packing (
 
 	TR << "Successfully set up BuriedUnsatPenalty energy method for packing." << std::endl;
 	TR.flush();
+}
+
+/// @brief Delete cached data from the pose and from this EnergyMethod after packing.
+///
+void
+BuriedUnsatPenalty::clean_up_residuearrayannealableenergy_after_packing(
+	core::pose::Pose &pose
+) {
+	if ( pose.energies().data().has( core::scoring::EnergiesCacheableDataType::BURIED_UNSAT_HBOND_GRAPH ) ) {
+		TR << "Clearing cached data from the pose after packing." << std::endl;
+		pose.energies().data().clear( core::scoring::EnergiesCacheableDataType::BURIED_UNSAT_HBOND_GRAPH );
+	}
+
+	TR << "Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing." << std::endl;
+	unsat_graph_ = nullptr;
+	curstate_graph_ = nullptr;
+	changed_node_indices_.clear();
+	changed_node_partners_.clear();
+	new_residues_.clear();
 }
 
 /// @brief Disable this scoreterm during minimization trajectory.

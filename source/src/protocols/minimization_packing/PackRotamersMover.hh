@@ -221,6 +221,11 @@ protected:
 		Pose & pose,
 		utility::vector0< int > rot_to_pack = utility::vector0< int >()
 	) const;
+
+	/// @brief Clean up cached pose and mover data after the fact.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	virtual void cleanup( core::pose::Pose & pose );
+
 	virtual void note_packertask_settings( Pose const & );
 
 private:

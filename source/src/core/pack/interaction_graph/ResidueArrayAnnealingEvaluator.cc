@@ -401,6 +401,18 @@ core::PackerEnergy ResidueArrayAnnealingEvaluator::get_energy_current_state_assi
 	return current_energy_;
 }
 
+/// @brief Provide the opportunity for an AnnealableGraph to clean up cached data in the pose or inside itself after packing.
+/// @details This version calls the clean_up_residuearrayannealableenergy_after_packing() function in the associated energy methods.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ResidueArrayAnnealingEvaluator::clean_up_after_packing(
+	core::pose::Pose & pose
+) {
+	for ( WeightedMethodPair &method : weighted_energy_methods_ ) {
+		method.second->clean_up_residuearrayannealableenergy_after_packing( pose );
+	}
+}
+
 core::Real ResidueArrayAnnealingEvaluator::calculate_weighted_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect, int const substitution_position ) {
 	core::Real result = 0;
 

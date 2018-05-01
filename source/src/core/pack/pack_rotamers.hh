@@ -121,6 +121,15 @@ pack_rotamers_run(
 	core::PackerEnergy & bestenergy
 );
 
+/// @brief Provide the opportunity to clean up cached data from the pose or scorefunction after packing.
+/// @details This should be called after pack_rotamers_run.  It is called from the pack_rotamers() function.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+pack_rotamers_cleanup(
+	core::pose::Pose pose,
+	core::pack::interaction_graph::AnnealableGraphBaseOP annealable_graph
+);
+
 } // namespace pack
 } // namespace core
 
