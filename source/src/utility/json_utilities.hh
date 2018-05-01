@@ -16,17 +16,17 @@
 #define INCLUDED_utility_json_json_utilities_HH
 
 #if defined(__clang__)
-    #if (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__) < 30400
-		#define _NLOHMANN_JSON_DISABLED_
-    #endif
+#if (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__) < 30400
+#define _NLOHMANN_JSON_DISABLED_
+#endif
 #elif defined(__GNUC__) && !(defined(__ICC) || defined(__INTEL_COMPILER))
-    #if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) < 40900
-        #define _NLOHMANN_JSON_DISABLED_
-    #endif
+#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) < 40900
+#define _NLOHMANN_JSON_DISABLED_
+#endif
 #endif
 
 #if not defined(_NLOHMANN_JSON_DISABLED_)
-	#define _NLOHMANN_JSON_ENABLED_
+#define _NLOHMANN_JSON_ENABLED_
 #endif
 
 #ifdef _NLOHMANN_JSON_ENABLED_

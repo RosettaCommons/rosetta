@@ -57,12 +57,11 @@ std::string receive_specification(zmq::socket_t & bus)
 {
 	zmq::multipart_t message(bus);
 
-	if( message.size() == 2 ) {
+	if ( message.size() == 2 ) {
 		string type = message.popstr();
-		if( type == _m_specification_ ) {
+		if ( type == _m_specification_ ) {
 			return message.popstr();
-		}
-		else std::cerr << "ERROR: first message from Rosetta should be specification! Instead received: " << type << std::endl;
+		} else std::cerr << "ERROR: first message from Rosetta should be specification! Instead received: " << type << std::endl;
 
 	}
 	std::cerr << "ERROR: first message from Rosetta should be specification! Terminating..." << std::endl;
@@ -98,13 +97,13 @@ void hal_client(ContextSP context) // note: pass-by-value here is intentional
 	std::chrono::steady_clock::time_point time_point_of_ui_last_message = std::chrono::steady_clock::now();
 
 	while ( true ) {
-		if( zmq::poll( items, std::chrono::milliseconds(250) ) ) {
+		if ( zmq::poll( items, std::chrono::milliseconds(250) ) ) {
 			if ( items [0].revents & ZMQ_POLLIN ) { // messages from ui server
 				auto message = receive_message(*ui);
 				//std::cout << "got message from ui: " << message << std::endl;
 				time_point_of_ui_last_message = std::chrono::steady_clock::now();
 
-				if( not alive ) {
+				if ( not alive ) {
 					std::cout << CSI_bgGreen() << CSI_Black() << "Connection to UI front-end established!" << CSI_Reset() << std::endl;
 					alive = true;
 
@@ -118,7 +117,7 @@ void hal_client(ContextSP context) // note: pass-by-value here is intentional
 			if ( items [1].revents & ZMQ_POLLIN ) { // messages from main Rosetta thread
 				zmq::multipart_t message(bus);
 
-				if( message.size() == 2 ) {
+				if ( message.size() == 2 ) {
 					string type = message.popstr();
 					std::cout << "got message from Rosetta:" << type << std::endl;
 				}
@@ -128,9 +127,9 @@ void hal_client(ContextSP context) // note: pass-by-value here is intentional
 
 		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 		//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(now - time_point_of_ui_last_message).count()
-		//		  << " _:" << (now - time_point_of_ui_last_message > timeout) <<  std::endl;
+		//    << " _:" << (now - time_point_of_ui_last_message > timeout) <<  std::endl;
 
-		if( alive  and  now - time_point_of_ui_last_message > timeout ) {
+		if ( alive  and  now - time_point_of_ui_last_message > timeout ) {
 			std::cout << CSI_bgRed() << CSI_Black() << "UI front-end disconnected due to timeout!" << CSI_Reset() << std::endl;
 			alive = false;
 			ping_count = 1; // force re-creation of socket
@@ -146,7 +145,7 @@ void hal_client(ContextSP context) // note: pass-by-value here is intentional
 			ping_count = max_ping_count;
 		}
 
-		if( now - last_ping_time > ping_interval ) {
+		if ( now - last_ping_time > ping_interval ) {
 			//std::cout << "sending ping..." << std::endl;
 			send_message(*ui, _m_ping_);
 			last_ping_time = now;
