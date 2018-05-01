@@ -457,7 +457,6 @@ DnaInterfacePacker::initialized() const
 	bool is_initialized(
 		score_function()
 		&& ( task() || task_factory() )
-		&& ig()
 		&& rotamer_sets()
 		&& dna_chains_
 		&& !reference_residue_types_.empty()

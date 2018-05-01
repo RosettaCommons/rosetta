@@ -22,11 +22,17 @@
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSetsFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/make_symmetric_task.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -89,7 +95,7 @@ PackRotamersMover::PackRotamersMover() :
 	task_(/* 0 */),
 	nloop_( 1 ), // temporary -- overwritten by the value on the command line
 	task_factory_(/* 0 */),
-	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
+	rotamer_sets_( nullptr ),
 	ig_(/* 0 */)
 {
 	initialize_from_options( basic::options::option );
@@ -103,7 +109,7 @@ PackRotamersMover::PackRotamersMover(
 	task_(/* 0 */),
 	nloop_( 1 ), // temporary -- overwritten by the value on the command line
 	task_factory_(/* 0 */),
-	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
+	rotamer_sets_( nullptr ),
 	ig_(/* 0 */)
 {
 	initialize_from_options( options );
@@ -115,7 +121,7 @@ PackRotamersMover::PackRotamersMover( std::string const & type_name ) :
 	task_(/* 0 */),
 	nloop_( 1 ), // temporary -- overwritten by the value on the command line
 	task_factory_(/* 0 */),
-	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
+	rotamer_sets_( nullptr ),
 	ig_(/* 0 */)
 {
 	initialize_from_options( basic::options::option );
@@ -132,7 +138,7 @@ PackRotamersMover::PackRotamersMover(
 	task_(std::move( task )),
 	nloop_( nloop ),
 	task_factory_(/* 0 */),
-	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
+	rotamer_sets_( nullptr ),
 	ig_(/* 0 */)
 {}
 
@@ -146,7 +152,7 @@ PackRotamersMover::PackRotamersMover( PackRotamersMover const & other ) :
 	task_ = other.task();
 	nloop_ = other.nloop();
 	task_factory_ = other.task_factory();
-	rotamer_sets_ = RotamerSetsOP( new rotamer_set::RotamerSets );
+	rotamer_sets_ = RotamerSetsOP( nullptr );
 	ig_.reset();
 }
 
@@ -290,14 +296,20 @@ void PackRotamersMover::setup( Pose & pose )
 	} else if ( task_ == nullptr ) {
 		TR.Warning << "undefined PackerTask -- creating a default one" << std::endl;
 		task_ = TaskFactory::create_packer_task( pose );
-	} else runtime_assert( task_is_valid( pose ) );
+	} else {
+		runtime_assert( task_is_valid( pose ) );
+	}
+
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		task_ = core::pack::make_symmetric_task( pose, task_ );
+	}
 	// in case PackerTask was not generated locally, verify compatibility with pose
 
 	note_packertask_settings( pose );
 
-	pack_rotamers_setup( pose, *scorefxn_, task_, rotamer_sets_, ig_ );
+	rotamer_sets_ = core::pack::rotamer_set::RotamerSetsFactory::create_rotamer_sets( pose );
 
-	//task_->show(TR);
+	pack_rotamers_setup( pose, *scorefxn_, task_, rotamer_sets_, ig_ );
 }
 
 core::PackerEnergy PackRotamersMover::run( Pose & pose, utility::vector0< int > rot_to_pack ) const
@@ -357,7 +369,6 @@ ScoreFunctionCOP PackRotamersMover::score_function() const { return scorefxn_; }
 PackerTaskCOP PackRotamersMover::task() const { return task_; }
 TaskFactoryCOP PackRotamersMover::task_factory() const { return task_factory_; }
 rotamer_set::RotamerSetsCOP PackRotamersMover::rotamer_sets() const { return rotamer_sets_; }
-interaction_graph::AnnealableGraphBaseCOP PackRotamersMover::ig() const { return ig_; }
 
 
 utility::tag::XMLSchemaComplexTypeGeneratorOP

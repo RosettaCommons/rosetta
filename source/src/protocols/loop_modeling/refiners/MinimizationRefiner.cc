@@ -24,7 +24,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 
 // C++ headers
 #include <iostream>
@@ -44,7 +43,6 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using protocols::minimization_packing::MinMover;
 using protocols::minimization_packing::MinMoverOP;
-using protocols::minimization_packing::symmetry::SymMinMover;
 
 // XRW TEMP protocols::moves::MoverOP MinimizationRefinerCreator::create_mover() const {
 // XRW TEMP  return protocols::moves::MoverOP( new MinimizationRefiner );
@@ -82,7 +80,7 @@ bool MinimizationRefiner::do_apply(Pose & pose) {
 	pose.update_residue_neighbors();
 
 	Loops const & loops = *get_loops();
-	MinMoverOP minimizer( is_symmetric(pose) ? new SymMinMover : new MinMover );
+	MinMoverOP minimizer( new MinMover );
 	ScoreFunctionCOP score_function = get_score_function();
 
 	// Set the move map according to the task factory

@@ -40,10 +40,8 @@
 #include <protocols/jd2/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <protocols/simple_filters/TaskAwareScoreTypeFilter.hh>

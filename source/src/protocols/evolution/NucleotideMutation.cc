@@ -19,9 +19,7 @@
 #include <protocols/evolution/NucleotideMutation.hh>
 #include <protocols/evolution/NucleotideMutationCreator.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -416,11 +414,7 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 			}
 			TR<<"Effectuating mutation of residue " << pose.residue( target_aa_no ).name3() << " " << target_aa_no <<" to ";
 			protocols::minimization_packing::PackRotamersMoverOP pack;
-			if ( core::pose::symmetry::is_symmetric( pose ) ) {
-				pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
-			} else {
-				pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
-			}
+			pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
 			pack->apply( pose );
 			TR << pose.residue( target_aa_no ).name3() << " in pose. " << std::endl;
 

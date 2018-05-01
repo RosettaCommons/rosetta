@@ -106,7 +106,6 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/symmetry/SetupNCSMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 #include <protocols/loop_grower/SheetSampler.hh>
 #include <protocols/loop_grower/DensSkeleton.hh>
@@ -1244,12 +1243,7 @@ LoopGrower::refine_cycle( core::pose::Pose & refinepose, core::pose::Pose & refi
 		pack_core->add_loop( protocols::loops::Loop( lower_min, upper_min ) );
 
 		protocols::minimization_packing::PackRotamersMoverOP pack_mover;
-		if ( core::pose::symmetry::is_symmetric( refinepose ) ) {
-			protocols::minimization_packing::PackRotamersMoverOP symmpack( new protocols::minimization_packing::symmetry::SymPackRotamersMover );
-			pack_mover = utility::pointer::dynamic_pointer_cast< protocols::minimization_packing::PackRotamersMover >(symmpack);
-		} else {
-			pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
-		}
+		pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
 		repackaround->set_loops(pack_core);
 		main_task_factory->push_back( repackaround );
 		main_task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::IncludeCurrent) );

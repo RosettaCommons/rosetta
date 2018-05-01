@@ -23,6 +23,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_trials.hh>
+#include <core/pack/make_symmetric_task.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -126,7 +128,13 @@ RotamerTrialsMover::apply( core::pose::Pose & pose )
 	if ( show_packer_task_ ) {
 		TR << *ptask;
 	}
-	core::pack::rotamer_trials( pose, *scorefxn_, ptask );
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		core::pack::task::PackerTaskOP symmetric_task( ptask->clone() );
+		core::pack::make_symmetric_task( pose, ptask );
+		core::pack::symmetric_rotamer_trials( pose, *scorefxn_, symmetric_task );
+	} else {
+		core::pack::rotamer_trials( pose, *scorefxn_, ptask );
+	}
 }
 
 // XRW TEMP std::string
@@ -285,7 +293,11 @@ EnergyCutRotamerTrialsMover::apply( core::pose::Pose & pose )
 	setup_energycut_task( pose, *mc_, *rottrial_task );
 	/// This call is dangerous.  If sequence or length has changed since task was created, it will crash.
 	/// Not a problem if you used a TaskFactory
-	core::pack::rotamer_trials( pose, *scorefxn(), rottrial_task );
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		core::pack::symmetric_rotamer_trials( pose, *scorefxn(), rottrial_task );
+	} else {
+		core::pack::rotamer_trials( pose, *scorefxn(), rottrial_task );
+	}
 }
 
 std::string

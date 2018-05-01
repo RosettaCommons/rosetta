@@ -18,7 +18,6 @@
 #include <core/select/residue_selector/util.hh>
 
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -51,7 +50,6 @@ namespace carbohydrates {
 using namespace core::kinematics;
 using namespace core::scoring;
 using namespace protocols::minimization_packing;
-using namespace protocols::minimization_packing::symmetry;
 
 /////////////////////
 /// Constructors  ///
@@ -91,13 +89,8 @@ GlycanTreeMinMover::GlycanTreeMinMover( GlycanTreeMinMover const & src ):
 		selector_ = src.selector_->clone();
 	}
 
-	//I don't have a pose to check its conformation for symmetry, so I must rely on the mover name here.
 	if ( src.min_mover_ ) {
-		if ( src.min_mover_->get_name() == "SymMinMover" ) {
-			min_mover_ = minimization_packing::symmetry::SymMinMoverOP( new minimization_packing::symmetry::SymMinMover( *src.min_mover_));
-		} else {
-			min_mover_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover( *src.min_mover_));
-		}
+		set_minmover( src.min_mover_ );
 	}
 }
 
@@ -246,11 +239,7 @@ GlycanTreeMinMover::apply( core::pose::Pose& pose){
 		//Make Symmetric or Non-symmetric versions of the MinMover.
 		ScoreFunctionCOP scorefxn = core::scoring::get_score_function();
 
-		if ( core::pose::symmetry::is_symmetric(pose) ) {
-			min_mover_ = SymMinMoverOP( new SymMinMover( mm->clone(), scorefxn, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
-		} else {
-			min_mover_ = MinMoverOP( new MinMover( mm->clone(), scorefxn, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
-		}
+		min_mover_ = MinMoverOP( new MinMover( mm->clone(), scorefxn, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
 	} else {
 
 		min_mover_->set_movemap( mm );

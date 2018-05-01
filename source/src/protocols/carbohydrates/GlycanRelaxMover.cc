@@ -50,12 +50,10 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/bb_sampler/SugarBBSampler.hh>
 #include <protocols/simple_moves/bb_sampler/SmallBBSampler.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <basic/Tracer.hh>
@@ -82,7 +80,6 @@ using namespace protocols::moves;
 using namespace protocols::simple_moves;
 using namespace protocols::simple_moves::bb_sampler;
 using namespace protocols::minimization_packing;
-using namespace protocols::minimization_packing::symmetry;
 
 using namespace core::pack::task;
 using namespace basic::options;
@@ -255,20 +252,11 @@ GlycanRelaxMover::GlycanRelaxMover( GlycanRelaxMover const & src ):
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
 
-	//I don't have a pose to check its conformation for symmetry, so I must rely on the mover name here.
 	if ( src.min_mover_ ) {
-		if ( src.min_mover_->get_name() == "SymMinMover" ) {
-			min_mover_ = minimization_packing::symmetry::SymMinMoverOP( new minimization_packing::symmetry::SymMinMover( *src.min_mover_));
-		} else {
-			min_mover_ = minimization_packing::MinMoverOP( new minimization_packing::MinMover( *src.min_mover_));
-		}
+		min_mover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( *src.min_mover_));
 	}
 	if ( src.packer_ ) {
-		if ( src.packer_->get_name() ==  "SymPackRotamersMover" ) {
-			packer_ = SymPackRotamersMoverOP( new SymPackRotamersMover( * src.packer_));
-		} else {
-			packer_ = PackRotamersMoverOP( new PackRotamersMover( * src.packer_));
-		}
+		packer_ = PackRotamersMoverOP( new PackRotamersMover( * src.packer_));
 	}
 
 	if ( src.linkage_mover_ ) linkage_mover_ = LinkageConformerMoverOP( new LinkageConformerMover( * src.linkage_mover_));
@@ -596,12 +584,7 @@ GlycanRelaxMover::setup_movers(
 	//////    //////
 	// Min Movers //
 	//////    //////
-	//Make Symmetric or Non-symmetric versions of the MinMover.
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		min_mover_ = SymMinMoverOP( new SymMinMover( min_mover_movemap->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
-	} else {
-		min_mover_ = MinMoverOP( new MinMover( min_mover_movemap->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
-	}
+	min_mover_ = MinMoverOP( new MinMover( min_mover_movemap->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true /* use_nblist*/ ) );
 
 	if ( cartmin_ ) {
 		min_mover_->min_type("lbfgs_armijo_nonmonotone");
@@ -638,13 +621,8 @@ GlycanRelaxMover::setup_packer(
 
 	//Setup pack rotamers mover, add it.
 	PackRotamersMoverOP tree_packer;
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		packer_     = SymPackRotamersMoverOP( new SymPackRotamersMover() );
-		tree_packer = SymPackRotamersMoverOP( new SymPackRotamersMover() );
-	} else {
-		packer_     = PackRotamersMoverOP( new PackRotamersMover() );
-		tree_packer = PackRotamersMoverOP( new PackRotamersMover() );
-	}
+	packer_     = PackRotamersMoverOP( new PackRotamersMover() );
+	tree_packer = PackRotamersMoverOP( new PackRotamersMover() );
 	packer_->score_function(scorefxn_);
 	tree_packer->score_function(scorefxn_);
 
@@ -671,7 +649,6 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	using namespace protocols::moves;
 	using namespace protocols::simple_moves;
 	using namespace core::kinematics;
-	using namespace protocols::minimization_packing::symmetry;
 
 	TR << "initializing objects " << std::endl;
 

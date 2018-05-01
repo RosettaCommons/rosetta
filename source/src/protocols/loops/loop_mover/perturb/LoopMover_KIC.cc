@@ -49,7 +49,6 @@
 #include <core/pose/symmetry/util.hh>
 
 //#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 
 
 #include <basic/Tracer.hh>
@@ -275,13 +274,9 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	bool use_nblist( false ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 
 	if ( use_cartmin ) runtime_assert( scorefxn()->get_weight( core::scoring::cart_bonded ) > 1e-3 ); // AS -- actually I'm not sure if this makes any sense in centroid... ask Frank?
-	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		min_mover = protocols::minimization_packing::MinMoverOP( new minimization_packing::symmetry::SymMinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check ) );
-		//min_mover = new minimization_packing::symmetry::SymMinMover();
-	} else {
-		min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check ) );
-		//min_mover = new protocols::minimization_packing::MinMover(); // version above doesn't work, but setting all one by one does.. try again with scorefxn() w/o the star though
-	}
+	min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check ) );
+	//min_mover = new protocols::minimization_packing::MinMover(); // version above doesn't work, but setting all one by one does.. try again with scorefxn() w/o the star though
+
 	/*
 	min_mover->movemap( mm_one_loop_OP );
 	min_mover->score_function( scorefxn() );

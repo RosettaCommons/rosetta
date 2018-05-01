@@ -34,7 +34,6 @@
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/task_operations/SeqprofConsensusOperation.hh>
 
@@ -136,13 +135,8 @@ ConsensusDesignMover::apply( core::pose::Pose & pose )
 		seqprof_constraints = pose.add_constraints( create_sequence_profile_constraints( pose, *task ) );
 	}
 
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		protocols::minimization_packing::symmetry::SymPackRotamersMover packer( sfxn_, task );
-		packer.apply( pose );
-	} else {
-		protocols::minimization_packing::PackRotamersMover packer( sfxn_, task );
-		packer.apply( pose );
-	}
+	protocols::minimization_packing::PackRotamersMover packer( sfxn_, task );
+	packer.apply( pose );
 
 	if ( use_seqprof_constraints_ ) {
 		if ( !pose.remove_constraints( seqprof_constraints ) ) utility_exit_with_message("Couldn't remove sequence profile constraints after ConsensusDesignMover packing step.");

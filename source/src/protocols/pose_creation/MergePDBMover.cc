@@ -89,8 +89,7 @@ static basic::Tracer TR( "protocols.pose_creation.MergePDBMover" );
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/superimpose.hh>
 #include <protocols/simple_moves/CopyRotamerMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/AddResidueLabelMover.hh>
 #include <utility/vector1.hh>
@@ -839,19 +838,14 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 
 			//pack
 			using namespace protocols::minimization_packing;
-			if ( pose_symmetric ) {
-				protocols::minimization_packing::symmetry::SymPackRotamersMover symm_packer = PackRotamersMover(packer);
-				symm_packer.apply(*overlaps_[kk].output_poseOP);
-			} else {
-				packer.apply(*overlaps_[kk].output_poseOP);
-			}
+			packer.apply(*overlaps_[kk].output_poseOP);
 			//minimize
 			if ( do_minimize_ ) {
 				if ( pose_symmetric ) {
 					kinematics::MoveMapOP mm_locOP( new core::kinematics::MoveMap() );
 					mm_locOP->set_jump( false ); mm_locOP->set_bb( false ); mm_locOP->set_chi( true );
-					protocols::minimization_packing::symmetry::SymMinMover symm_min_mover(mm_locOP,sfxn_,"lbfgs_armijo_nonmonotone",0.02,true);
-					symm_min_mover.apply(*overlaps_[kk].output_poseOP);
+					protocols::minimization_packing::MinMover min_mover(mm_locOP,sfxn_,"lbfgs_armijo_nonmonotone",0.02,true);
+					min_mover.apply(*overlaps_[kk].output_poseOP);
 				} else {
 					optimization::MinimizerOptions minopt( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
 					//minopt.max_iter( 25 );

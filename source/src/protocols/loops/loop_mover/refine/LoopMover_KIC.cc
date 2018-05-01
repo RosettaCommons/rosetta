@@ -50,7 +50,6 @@
 #include <core/pose/symmetry/util.hh>
 
 //#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -302,11 +301,7 @@ void LoopMover_Refine_KIC::apply(
 	core::Real dummy_tol( 0.001 );
 	bool use_nblist( true ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 	if ( use_cartmin ) runtime_assert( min_scorefxn->get_weight( core::scoring::cart_bonded ) > 1e-3 );
-	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		min_mover = protocols::minimization_packing::MinMoverOP( new minimization_packing::symmetry::SymMinMover() );
-	} else {
-		min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover() );
-	}
+	min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover() );
 	min_mover->score_function( min_scorefxn );
 	min_mover->min_type( min_type );
 	min_mover->tolerance( dummy_tol );

@@ -199,8 +199,10 @@ public:
 	///     PackRotamersMover
 	///     PackRotamersMover.task
 	TaskFactoryCOP task_factory() const;
+
+	/// @brief Returns the RotamerSets object being used for packing
+	/// @details - This is only valid after a call to setup or apply.
 	RotamerSetsCOP rotamer_sets() const;
-	AnnealableGraphBaseCOP ig() const;
 
 	//std::string get_name() const override { return mover_name(); }
 	static std::string mover_name();

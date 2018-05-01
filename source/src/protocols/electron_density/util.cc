@@ -29,9 +29,8 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
-
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -269,12 +268,12 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string const & align_i
 		if ( isSymm ) {
 			core::scoring::ScoreFunctionOP symmscorefxn_dens = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_dens );
 			core::pose::symmetry::make_symmetric_movemap( pose, *rbmm );
-			moves::MoverOP min_mover( new minimization_packing::symmetry::SymMinMover( rbmm, symmscorefxn_dens,  "lbfgs_armijo_nonmonotone", 1e-5, true ) );
+			moves::MoverOP min_mover( new minimization_packing::MinMover( rbmm, symmscorefxn_dens,  "lbfgs_armijo_nonmonotone", 1e-5, true ) );
 			min_mover->apply( pose );
 			symmscorefxn_dens->show( TR, pose ); TR<<std::endl;
 			dens_score = (*symmscorefxn_dens)( pose );
 		} else {
-			moves::MoverOP min_mover( new protocols::minimization_packing::MinMover( rbmm, scorefxn_dens, "lbfgs_armijo_nonmonotone", 1e-5, true ) );
+			moves::MoverOP min_mover( new minimization_packing::MinMover( rbmm, scorefxn_dens, "lbfgs_armijo_nonmonotone", 1e-5, true ) );
 			min_mover->apply( pose );
 			dens_score = (*scorefxn_dens)( pose );
 		}

@@ -48,7 +48,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -435,13 +434,15 @@ CartesianSampler::apply_frame(
 	if ( bbmove_ && nonsymm_fa_scorefxn->get_weight( core::scoring::coordinate_constraint ) == 0 ) {
 		nonsymm_fa_scorefxn->set_weight( core::scoring::coordinate_constraint , 1 );
 	}
-	core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-	main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
-	protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
-	pack_mover->task_factory( main_task_factory );
-	pack_mover->score_function( nonsymm_fa_scorefxn );
 
 	if ( selection_bias_ == "density" ) {
+		core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
+		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
+		pack_mover->task_factory( main_task_factory );
+		pack_mover->score_function( nonsymm_fa_scorefxn );
+
 		// scorefunctions
 		if ( nonsymm_fa_scorefxn->get_weight( core::scoring::elec_dens_fast ) == 0 ) {
 			nonsymm_fa_scorefxn->set_weight( core::scoring::elec_dens_fast , 20 );
@@ -538,13 +539,6 @@ CartesianSampler::apply_frame(
 
 		apply_transform( frag, preT, postT, R);
 
-		// set up packer
-		core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
-		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
-		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
-		pack_mover->task_factory( main_task_factory );
-		pack_mover->score_function( nonsymm_fa_scorefxn );
-
 		for ( Size i = 0; i < len; ++i ) {
 			bool dslf_i = ( pose.residue(start+i).aa() == chemical::aa_cys && pose.residue(start+i).has_variant_type( chemical::DISULFIDE ) );
 
@@ -561,14 +555,15 @@ CartesianSampler::apply_frame(
 
 		// if fullatom do a repack here
 		if ( fullatom_ ) {
-			if ( core::pose::symmetry::is_symmetric(pose) ) {
-				protocols::minimization_packing::PackRotamersMoverOP sympack_mover( new protocols::minimization_packing::symmetry::SymPackRotamersMover );
-				sympack_mover->task_factory( main_task_factory );
-				sympack_mover->score_function( fa_scorefxn_ );
-				sympack_mover->apply( pose );
-			} else {
-				pack_mover->apply( pose );
-			}
+			// set up packer
+			core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
+			main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+			protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
+			pack_mover->task_factory( main_task_factory );
+			pack_mover->score_function( fa_scorefxn_ ); // Note this doesn't contain the coordinate_constraint check.
+			debug_assert( !bbmove_ || nonsymm_fa_scorefxn->get_weight( core::scoring::coordinate_constraint ) != 0 );
+
+			pack_mover->apply( pose );
 		}
 	} else {
 		utility_exit_with_message("Unrecognized fragbias!");

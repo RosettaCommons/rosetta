@@ -46,7 +46,6 @@
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/viewer/viewers.hh>

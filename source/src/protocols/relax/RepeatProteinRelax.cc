@@ -36,7 +36,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 // headers likely needed for movers
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
@@ -332,8 +332,8 @@ RepeatProteinRelax::minimize_pose(
 {
 	kinematics::MoveMapOP movemap =  get_movemap();
 	bool const use_nblist( true ), deriv_check( true ), deriv_check_verbose( false );
-	protocols::minimization_packing::symmetry::SymMinMoverOP min_mover
-		( new protocols::minimization_packing::symmetry::SymMinMover(movemap, get_scorefxn(), min_type(), 1e-2,
+	protocols::minimization_packing::MinMoverOP min_mover
+		( new protocols::minimization_packing::MinMover(movemap, get_scorefxn(), min_type(), 1e-2,
 		use_nblist, deriv_check, deriv_check_verbose ) );
 	if ( cartesian_ ) {
 		min_mover->cartesian(true);

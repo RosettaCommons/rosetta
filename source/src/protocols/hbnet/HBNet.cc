@@ -100,7 +100,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
@@ -1202,10 +1201,8 @@ HBNet::minimize_network( Pose & pose, HBondNetStruct & network, bool residues_al
 	minimization_packing::MinMoverOP min_mover;
 	if ( symmetric_ ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
-		min_mover = pointer::make_shared< minimization_packing::symmetry::SymMinMover >( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.0001, true );
-	} else {
-		min_mover = pointer::make_shared< minimization_packing::MinMover >( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.0001, true );
 	}
+	min_mover = pointer::make_shared< minimization_packing::MinMover >( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.0001, true );
 	min_mover->apply(pose);
 	pose.update_residue_neighbors();
 

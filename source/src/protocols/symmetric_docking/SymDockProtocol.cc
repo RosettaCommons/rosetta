@@ -54,7 +54,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/util.hh>
 
@@ -587,7 +587,7 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 	//tf->push_back( new SymRestrictTaskForDocking( docking_score_pack_, true, 1000 ) );
 	tf->push_back( TaskOperationCOP( new RestrictToInterface( 1 ) ) );
 
-	protocols::minimization_packing::PackRotamersMoverOP dock_pack( new protocols::minimization_packing::symmetry::SymPackRotamersMover(docking_score_pack_) );
+	protocols::minimization_packing::PackRotamersMoverOP dock_pack( new protocols::minimization_packing::PackRotamersMover(docking_score_pack_) );
 	dock_pack->task_factory( tf );
 	dock_pack->apply( pose );
 

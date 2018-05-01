@@ -29,7 +29,7 @@
 #include <core/pose/symmetry/util.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -101,7 +101,7 @@ void SymSidechainMinMover::set_default_options()
 		movemap_->set_chi( true );
 	}
 	scorefxn_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
-	minmover_ = protocols::minimization_packing::MinMoverOP( new minimization_packing::symmetry::SymMinMover(movemap_, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
+	minmover_ = protocols::minimization_packing::MinMoverOP( new minimization_packing::MinMover(movemap_, scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  ) );
 }
 
 std::string

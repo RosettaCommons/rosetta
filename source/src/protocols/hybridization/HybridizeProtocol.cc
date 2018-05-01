@@ -129,7 +129,6 @@
 // symmetry
 #include <core/pose/symmetry/util.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -166,7 +165,7 @@
 //docking
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 
 #include <string>
 // XSD XRW Includes
@@ -1896,8 +1895,8 @@ HybridizeProtocol::do_intrastage_docking(core::pose::Pose & pose) {
 		mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( true );
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
-		protocols::minimization_packing::symmetry::SymMinMoverOP min_mover(
-			new protocols::minimization_packing::symmetry::SymMinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+		protocols::minimization_packing::MinMoverOP min_mover(
+			new protocols::minimization_packing::MinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		min_mover->apply(pose);
 	} else {
 		/////

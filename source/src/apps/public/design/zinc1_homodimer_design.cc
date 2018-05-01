@@ -45,9 +45,9 @@
 
 // Symmetry Headers
 #include <protocols/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/symmetry/util.hh>
 //Constraint Headers
@@ -318,19 +318,19 @@ public:
 		using namespace protocols::symmetry;
 
 		TR << "Generating sym rottrials mover..." << std::endl;
-		sym_rottrials_mover_ = new SymRotamerTrialsMover;
+		sym_rottrials_mover_ = new RotamerTrialsMover;
 		sym_rottrials_mover_->task_factory( taskfactory_ );
 		sym_rottrials_mover_->score_function( softrep_sym_scorefxn_ );
 
 		TR << "Generating sym pack mover..." << std::endl;
-		sym_pack_mover_ = new SymPackRotamersMover;
+		sym_pack_mover_ = new PackRotamersMover;
 		sym_pack_mover_->task_factory( taskfactory_ );
 		sym_pack_mover_->score_function( sym_scorefxn_ );
 
 		TR << "Generating softrep and score12 minmovers..." << std::endl;
-		softrep_min_mover_ = new SymMinMover( sc_move_map_, softrep_sym_scorefxn_ /*softrep + constraints*/, "lbfgs_armijo", 0.01, true );
-		sc_min_mover_ = new SymMinMover( sc_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
-		sc_bb_min_mover_ = new SymMinMover( sc_bb_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
+		softrep_min_mover_ = new MinMover( sc_move_map_, softrep_sym_scorefxn_ /*softrep + constraints*/, "lbfgs_armijo", 0.01, true );
+		sc_min_mover_ = new MinMover( sc_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
+		sc_bb_min_mover_ = new MinMover( sc_bb_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
 
 		interface_analyzer_ = new protocols::anchored_design::InterfaceAnalyzerMover( 2, false, centroid_scorefxn_for_ddG_calc_ );
 
@@ -496,11 +496,11 @@ private:
 	core::kinematics::MoveMapOP sc_move_map_;
 	core::kinematics::MoveMapOP sc_bb_move_map_;
 
-	protocols::minimization_packing::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
-	protocols::symmetry::SymRotamerTrialsMoverOP sym_rottrials_mover_;
-	protocols::minimization_packing::symmetry::SymMinMoverOP softrep_min_mover_;
-	protocols::minimization_packing::symmetry::SymMinMoverOP sc_min_mover_;
-	protocols::minimization_packing::symmetry::SymMinMoverOP sc_bb_min_mover_;
+	protocols::minimization_packing::PackRotamersMoverOP sym_pack_mover_;
+	protocols::RotamerTrialsMoverOP sym_rottrials_mover_;
+	protocols::minimization_packing::MinMoverOP softrep_min_mover_;
+	protocols::minimization_packing::MinMoverOP sc_min_mover_;
+	protocols::minimization_packing::MinMoverOP sc_bb_min_mover_;
 	protocols::moves::MonteCarloOP mc_;
 	protocols::anchored_design::InterfaceAnalyzerMoverOP interface_analyzer_;
 

@@ -104,7 +104,6 @@
 #include <core/pose/symmetry/util.hh>
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -999,20 +998,17 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				}
 			}
 
+			protocols::minimization_packing::PackRotamersMover pack1( fa_scorefxn_, taskstd );
+			pack1.apply( pose );
+
 			//fpd symmetrize this
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
-				minimization_packing::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
-				pack1.apply( pose );
-
 				core::optimization::symmetry::SymAtomTreeMinimizer mzr;
 				core::optimization::MinimizerOptions options("lbfgs_armijo_nonmonotone", 1e-5, true, false);
 				core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
 				mzr.run( pose, *mm, *fa_scorefxn_, options );
 			} else {
-				protocols::minimization_packing::PackRotamersMover pack1( fa_scorefxn_, taskstd );
-				pack1.apply( pose );
-
 				// quick SC minimization
 				core::optimization::AtomTreeMinimizer mzr;
 				core::optimization::MinimizerOptions options("lbfgs_armijo_nonmonotone", 1e-5, true, false);

@@ -34,15 +34,12 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/simple_filters/DeltaFilter.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
-#include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -243,16 +240,13 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 	}
 	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
 	protocols::minimization_packing::PackRotamersMoverOP pack;
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
-	} else {
-		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
-	}
+	pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
 	pack->apply( pose );
 	if ( rtmin() ) {
 		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			protocols::minimization_packing::symmetry::SymRotamerTrialsMover rt( scorefxn(), *mutate_residue );
+			// I'm not sure if RTMin is compatible with symmetry -- if not, we have to fall back on something that is.
+			protocols::minimization_packing::RotamerTrialsMover rt( scorefxn(), *mutate_residue );
 			rt.apply( pose );
 		} else {
 			protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin;

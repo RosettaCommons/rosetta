@@ -57,8 +57,8 @@
 //symmetry
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 //JD2
@@ -331,10 +331,10 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 	//  } //end the movemap creation
 
 
-	protocols::minimization_packing::symmetry::SymMinMoverOP sym_minmover( new protocols::minimization_packing::symmetry::SymMinMover(mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.001, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP sym_minmover( new protocols::minimization_packing::MinMover(mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.001, true /*use_nblist*/ ) );
 
 	task_design_ = tf_design_->create_task_and_apply_taskoperations( pose );
-	protocols::minimization_packing::symmetry::SymPackRotamersMoverOP sym_pack_design( new protocols::minimization_packing::symmetry::SymPackRotamersMover(scorefxn_, task_design_) );
+	protocols::minimization_packing::PackRotamersMoverOP sym_pack_design( new protocols::minimization_packing::PackRotamersMover(scorefxn_, task_design_) );
 
 	TR<< "Monomer total residues: "<< monomer_nres_ << " Repacked/Designed residues: "
 		<< task_design_->num_to_be_packed() / 2 << std::endl;
@@ -487,7 +487,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 		//fill task factory with these restrictions
 		tf_nataa->push_back( repack_op );
 		PackerTaskOP task_nataa = tf_nataa->create_task_and_apply_taskoperations( pose );
-		protocols::minimization_packing::symmetry::SymPackRotamersMoverOP sym_pack_nataa( new protocols::minimization_packing::symmetry::SymPackRotamersMover(scorefxn_, task_nataa) );
+		protocols::minimization_packing::PackRotamersMoverOP sym_pack_nataa( new protocols::minimization_packing::PackRotamersMover(scorefxn_, task_nataa) );
 		sym_pack_nataa->apply( pose );
 		TR << "Default SCORE after all NATAA repack: " << (*scorefxn_)(pose) << std::endl;
 		//JobDistributor::get_instance()->job_outputter()->other_pose( job_me, pose, "nataarepack_");
@@ -511,7 +511,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 	//final minimization step
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
-	protocols::minimization_packing::symmetry::SymMinMoverOP sym_minmover_final( new protocols::minimization_packing::symmetry::SymMinMover( mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP sym_minmover_final( new protocols::minimization_packing::MinMover( mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ ) );
 	sym_minmover_final->apply(pose);
 	TR << "Final minimization  SCORE:" <<  (* scorefxn_ )(pose) << std::endl;
 

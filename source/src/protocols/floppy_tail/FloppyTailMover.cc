@@ -53,10 +53,10 @@
 //movers
 #include <protocols/simple_moves/BackboneMover.hh> //SmallMover //Symmetry
 #include <protocols/simple_moves/FragmentMover.hh> //Symmtery
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh> //Symmetry
+#include <protocols/minimization_packing/MinMover.hh> //Symmetry
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh> //Symmetry
-#include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh> //Symmetry
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 #include <protocols/simple_moves/ReturnSidechainMover.hh> //Symmetry
 #include <protocols/minimization_packing/TaskAwareMinMover.hh> //Symmetry
@@ -238,7 +238,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		if ( !movemap_ ) { //setup MoveMap (input by user)
 			movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 			movemap_->init_from_file(option[in::file::movemap].value());
-			if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
+			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				core::pose::symmetry::make_symmetric_movemap( pose, *movemap_ );
 			}
 		}
@@ -273,8 +273,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) ); //store original fold tree; if we enter neither option below it stays valid
 
 	//Reordering the foldtree with symmetry does not work
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) { }
-	else {
+	if ( ! core::pose::symmetry::is_symmetric( pose ) ) {
 		if ( !((stop_ == pose.size()) || (start_ == 1)) || basic::options::option[ FloppyTail::force_linear_fold_tree].value() ) {
 			TR << "non-terminal or N-terminal (C-rooted) floppy section, using a linear fold tree to try to ensure downstream residues follow \nOld tree: " << pose.fold_tree();
 			foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_)) );
@@ -373,15 +372,8 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 
 	//iterate through all residues in the pose/movemap (if symmetric iterate through a single subunit)
 	//get subunit size via if statement and set via ternary
-	core::Size temp_nres = pose.size();
 
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
-		core::conformation::symmetry::SymmetricConformation SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation const &>( pose.conformation()) );
-		core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() ); //should really be const
-		temp_nres = symm_info->get_nres_subunit();
-	}
-
-	core::Size const nres = temp_nres;
+	core::Size const nres = core::pose::symmetry::get_nres_asymmetric_unit( pose ); // Robust to asymmetric poses
 
 	for ( core::Size i(1); i<=nres; ++i ) {
 		bool const this_state(movemap_->get_bb(i));
@@ -492,24 +484,13 @@ void FloppyTailMover::low_res( core::pose::Pose & pose ) {
 	}
 
 	/////////////////////////minimizer mover/////////////////////////////////////////
-	//using protocols::minimization_packing::symmetry::SymMinMoverOP;
-	//using protocols::minimization_packing::symmetry::SymMinMover;
 	protocols::minimization_packing::MinMoverOP min_mover_cen;
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
-		min_mover_cen = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::symmetry::SymMinMover(
-			movemap_,
-			centroid_scorefunction_,
-			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-			0.01,
-			true /*use_nblist*/ ) );
-	} else {
-		min_mover_cen = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
-			movemap_,
-			centroid_scorefunction_,
-			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-			0.01,
-			true /*use_nblist*/ ) );
-	}
+	min_mover_cen = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
+		movemap_,
+		centroid_scorefunction_,
+		basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+		0.01,
+		true /*use_nblist*/ ) );
 
 	/////////////////////////Monte Carlo//////////////////////////////////////////////////////////
 	//make the monte carlo object
@@ -581,38 +562,26 @@ void FloppyTailMover::high_res( core::pose::Pose & pose ){
 
 	/////////////////////////////generate full repack&minimize mover//////////////////////////////
 	protocols::minimization_packing::PackRotamersMoverOP pack_mover;
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover );
-	} else {
-		pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
-	}
+	pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover );
 
 	pack_mover->task_factory( task_factory_ );
 	pack_mover->score_function( fullatom_scorefunction_ );
 
 	protocols::minimization_packing::MinMoverOP min_mover_fa;
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		min_mover_fa = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::symmetry::SymMinMover(
-			movemap_,
-			fullatom_scorefunction_,
-			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-			0.01,
-			true /*use_nblist*/ ) );
-	} else {
-		min_mover_fa = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
-			movemap_,
-			fullatom_scorefunction_,
-			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-			0.01,
-			true /*use_nblist*/ ) );
-	}
+	min_mover_fa = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
+		movemap_,
+		fullatom_scorefunction_,
+		basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+		0.01,
+		true /*use_nblist*/ ) );
 
 
 	//definitely want sidechain minimization here
 	using protocols::minimization_packing::TaskAwareMinMoverOP;
 	using protocols::minimization_packing::TaskAwareMinMover;
 	protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover_fa;
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		// NOTE NOTE NOTE - The TaskAwareSymMinMover is *not* identical in behavior to the TaskAwareMinMover
 		TAmin_mover_fa = protocols::minimization_packing::TaskAwareMinMoverOP( new protocols::minimization_packing::symmetry::TaskAwareSymMinMover(min_mover_fa, task_factory_) );
 	} else {
 		TAmin_mover_fa = protocols::minimization_packing::TaskAwareMinMoverOP( new protocols::minimization_packing::TaskAwareMinMover(min_mover_fa, task_factory_) );
@@ -650,19 +619,11 @@ void FloppyTailMover::high_res( core::pose::Pose & pose ){
 	using protocols::minimization_packing::RotamerTrialsMoverOP;
 	using protocols::minimization_packing::EnergyCutRotamerTrialsMover;
 	protocols::minimization_packing::RotamerTrialsMoverOP rt_mover;
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
-		rt_mover = protocols::minimization_packing::RotamerTrialsMoverOP( new protocols::minimization_packing::symmetry::SymEnergyCutRotamerTrialsMover(
-			fullatom_scorefunction_,
-			task_factory_,
-			mc_fa,
-			0.01) );
-	} else {
-		rt_mover = protocols::minimization_packing::RotamerTrialsMoverOP( new protocols::minimization_packing::EnergyCutRotamerTrialsMover(
-			fullatom_scorefunction_,
-			task_factory_,
-			mc_fa,
-			0.01 /*energycut*/ ) );
-	}
+	rt_mover = protocols::minimization_packing::RotamerTrialsMoverOP( new protocols::minimization_packing::EnergyCutRotamerTrialsMover(
+		fullatom_scorefunction_,
+		task_factory_,
+		mc_fa,
+		0.01 /*energycut*/ ) );
 	/////////////////////////////////////////refine loop///////////////////////////////////////////
 	core::Size const refine_applies = option[ FloppyTail::refine_cycles ].value(); //default 5
 	core::Size const repack_cycles = option[ FloppyTail::refine_repack_cycles ].value();

@@ -32,7 +32,6 @@
 #include <protocols/simple_moves/DumpPdb.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmData.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <basic/options/option.hh>
@@ -216,11 +215,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		using namespace protocols::minimization_packing;
 		PackRotamersMoverOP prm;
 		RotamerTrialsMinMoverOP rtmin;
-		if ( core::pose::symmetry::is_symmetric( *copy_pose ) ) {
-			prm = PackRotamersMoverOP( new symmetry::SymPackRotamersMover( scorefxn(), pack ) );
-		} else {
-			prm = PackRotamersMoverOP( new PackRotamersMover( scorefxn(), pack ) );
-		}
+		prm = PackRotamersMoverOP( new PackRotamersMover( scorefxn(), pack ) );
 		prm->apply( *copy_pose );
 		if ( rtmin.get() ) {
 			rtmin = RotamerTrialsMinMoverOP( new RotamerTrialsMinMover( scorefxn(), *pack ) );

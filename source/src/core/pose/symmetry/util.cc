@@ -107,6 +107,18 @@ make_score_function_consistent_with_symmetric_state_of_pose(
 	}
 }
 
+/// @brief Convenience function for the number of residues in a subunit.
+/// Will return the total size for a asymmetric pose
+core::Size
+get_nres_asymmetric_unit( pose::Pose const & pose ) {
+	if ( is_symmetric( pose ) ) {
+		core::conformation::symmetry::SymmetricConformation conf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation const &>( pose.conformation()) );
+		return conf.Symmetry_Info()->get_nres_subunit();
+	} else {
+		return pose.size();
+	}
+}
+
 
 /// @details Attempts to grab the symmetry info if the pose is symmetric
 conformation::symmetry::SymmetryInfoCOP symmetry_info( pose::Pose const & pose )

@@ -28,9 +28,7 @@
 //protocols library (Movers)
 #include <protocols/minimization_packing/MinPackMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
@@ -108,11 +106,6 @@ main( int argc, char * argv [] )
 		//create the PackRotamersMover which will do the packing
 		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
 
-		// Use the symmetric packer if necessary
-		if ( option[ symmetry::symmetry_definition ].user() ) {
-			pack_mover = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover );
-		}
-
 		pack_mover->task_factory( main_task_factory );
 		pack_mover->score_function( score_fxn );
 
@@ -139,23 +132,13 @@ main( int argc, char * argv [] )
 		if ( option[ minimize_sidechains ] ) {
 			core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 			protocols::minimization_packing::MinMoverOP min_mover;
-			if ( option [ symmetry::symmetry_definition ].user() ) {
-				min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::symmetry::SymMinMover(
-					movemap,
-					score_fxn,
-					basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-					0.01,
-					true
-					) );
-			} else {
-				min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
-					movemap,
-					score_fxn,
-					basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-					0.01,
-					true
-					));
-			}
+			min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
+				movemap,
+				score_fxn,
+				basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+				0.01,
+				true
+				));
 			protocols::minimization_packing::TaskAwareMinMoverOP TAmin_mover( new protocols::minimization_packing::TaskAwareMinMover(min_mover, main_task_factory) );
 			seq_mover->add_mover( TAmin_mover );
 		} // end optional side chain minimization

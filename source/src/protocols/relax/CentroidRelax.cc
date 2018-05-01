@@ -34,8 +34,6 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -310,11 +308,7 @@ CentroidRelax::apply(Pose& pose){
 
 	//Initialize MinMover
 	MinMoverOP minmover;
-	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		minmover = MinMoverOP( new symmetry::SymMinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true ) );
-	} else {
-		minmover = MinMoverOP( new MinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true ) );
-	}
+	minmover = MinMoverOP( new MinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true ) );
 	if ( cartesian() ) {
 		minmover->cartesian( true );
 		minmover->min_type("lbfgs_armijo_nonmonotone");

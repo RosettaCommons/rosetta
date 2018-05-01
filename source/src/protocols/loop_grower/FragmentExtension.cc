@@ -45,7 +45,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>

@@ -177,12 +177,8 @@ void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 
 	//prep pose
 	core::pose::Pose pose;
-	//if symmetric, desymmetrize; otherwise just make a local copy
-	if ( !basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
-		pose = input_pose; //protecting input pose from our chainbreak changes (and its energies object)
-	} else {
-		core::pose::symmetry::extract_asymmetric_unit(input_pose, pose, false); //don't need VIRTs
-	}
+	// extract_asymmetric_unit() is robust to asymmetric poses
+	core::pose::symmetry::extract_asymmetric_unit(input_pose, pose, false); //don't need VIRTs
 
 	loops_->verify_against(pose);
 

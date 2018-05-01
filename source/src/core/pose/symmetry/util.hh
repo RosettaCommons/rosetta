@@ -47,6 +47,11 @@ is_symmetric( scoring::ScoreFunction const & scorefxn );
 bool
 is_symmetric( scoring::Energies const & energies );
 
+/// @brief Convenience function for the number of residues in a subunit.
+/// Will return the total size for an asymmetric pose
+core::Size
+get_nres_asymmetric_unit( pose::Pose const & pose );
+
 // This is a stopgap measure to refactoring SymmetricScoreFunction to
 // be interalized into the ScoreFunciton class to shield this logic
 // from the user.

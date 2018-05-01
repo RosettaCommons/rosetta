@@ -165,5 +165,35 @@ make_new_symmetric_PackerTask_by_requested_method(
 	return non_symmetric_task->clone();
 }
 
+/// @brief Make a task symmetric (Using the logic of PackRotamersMover)
+task::PackerTaskOP
+make_symmetric_task(
+	pose::Pose const & pose,
+	task::PackerTaskCOP task
+) {
+	using namespace core::conformation::symmetry;
+
+	if ( ! pose::symmetry::is_symmetric( pose ) ) {
+		return task->clone();
+	}
+	if ( task->symmetrize_by_union() || task->symmetrize_by_intersection() ) {
+		return make_new_symmetric_PackerTask_by_requested_method(pose,task);
+	} // new machinery
+
+	auto & SymmConf (
+		dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
+	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+
+	utility::vector1<bool> allow_repacked( pose.size(), false );
+	for ( Size res=1; res <= pose.size(); ++res ) {
+		if ( pose.residue(res).aa() != core::chemical::aa_vrt && symm_info->fa_is_independent(res) ) {
+			allow_repacked.at(res) = true;
+		}
+	}
+	task::PackerTaskOP new_task ( task->clone() );
+	new_task->restrict_to_residues( allow_repacked );
+	return new_task;
+}
+
 } // pack
 } // core

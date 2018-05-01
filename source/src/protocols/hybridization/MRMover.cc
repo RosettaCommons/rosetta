@@ -66,7 +66,6 @@
 #include <core/pose/symmetry/util.hh>
 
 
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/string_util.hh>
 
@@ -356,13 +355,8 @@ void MRMover::pack_missing_sidechains( Pose & pose ) {
 	core::pose::symmetry::make_residue_mask_symmetric( pose, needToRepack );
 	taskstd->restrict_to_residues(needToRepack);
 
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		protocols::minimization_packing::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
-		pack1.apply( pose );
-	} else {
-		protocols::minimization_packing::PackRotamersMover pack1( fa_scorefxn_, taskstd );
-		pack1.apply( pose );
-	}
+	protocols::minimization_packing::PackRotamersMover pack1( fa_scorefxn_, taskstd );
+	pack1.apply( pose );
 }
 
 

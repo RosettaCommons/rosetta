@@ -29,7 +29,6 @@
 #include <protocols/loops/loops_main.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -246,11 +245,6 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 	turn_off_packing.apply(pose, *task);
 
 	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover( scorefxn_, task, pack_rounds_ ) );
-	//Make a symmetric packer if pose is symmetric
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		TR << "Working on a symmetric pose.  Setting up the symmetric PackRotamersMover." << std::endl;
-		packer = protocols::minimization_packing::PackRotamersMoverOP( new minimization_packing::symmetry::SymPackRotamersMover( scorefxn_, task, pack_rounds_ ) );
-	}
 
 	packer->apply( pose );
 	TR << "Complete" <<std::endl;

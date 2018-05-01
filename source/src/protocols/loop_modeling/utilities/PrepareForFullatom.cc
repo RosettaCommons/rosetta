@@ -19,7 +19,6 @@
 #include <protocols/loops/util.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 
 // Core headers
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -72,7 +71,6 @@ using core::util::switch_to_residue_type_set;
 
 using protocols::minimization_packing::PackRotamersMover;
 using protocols::minimization_packing::PackRotamersMoverOP;
-using protocols::minimization_packing::symmetry::SymPackRotamersMover;
 // }}}1
 
 namespace protocols {
@@ -137,11 +135,7 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 	PackRotamersMoverOP packer;
 	ScoreFunctionCOP fa_score_function = get_score_function();
 
-	if ( is_symmetric(pose) ) {
-		packer = PackRotamersMoverOP( new SymPackRotamersMover(fa_score_function, task) );
-	} else {
-		packer = PackRotamersMoverOP( new PackRotamersMover(fa_score_function, task) );
-	}
+	packer = PackRotamersMoverOP( new PackRotamersMover(fa_score_function, task) );
 
 	packer->apply(pose);
 

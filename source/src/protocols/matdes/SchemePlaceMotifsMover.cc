@@ -30,7 +30,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 #include <protocols/matdes/MotifHitsRotamersOperation.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -159,8 +158,7 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 	ptask->append_rotamerset_operation(mot_rot)           ;
 	TR << *ptask << std::endl;
 	TR << "about to pack" << std::endl ;
-	if ( core::pose::symmetry::is_symmetric(pose) )  protocols::minimization_packing::symmetry::SymPackRotamersMover(scorefxn_, ptask).apply(pose)   ;
-	else protocols::minimization_packing::PackRotamersMover(scorefxn_, ptask).apply(pose)       ;
+	protocols::minimization_packing::PackRotamersMover(scorefxn_, ptask).apply(pose);
 	////////////////////////////////////////////////////////////////////////////
 	//////////////////////// add cloud constraints /////////////////////////////
 	////////////////////////////////////////////////////////////////////////////

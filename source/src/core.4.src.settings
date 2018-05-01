@@ -142,6 +142,7 @@ sources = {
 		"RotamerSetOperation",
 		"RotamerSets",
 		"RotamerSetsBase",
+		"RotamerSetsFactory",
 		"RotamerSubset",
 		"RotamerSubsets",
 		"UnboundRotamersOperation",

@@ -48,9 +48,7 @@
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
@@ -264,11 +262,7 @@ void ClassicRelax::set_tolerance( core::Real new_tolerance ){
 // sets up the default minimizer object with all the options
 void ClassicRelax::set_default_minimizer() {
 	// options for minimizer
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-		min_mover_ = protocols::minimization_packing::MinMoverOP( new minimization_packing::symmetry::SymMinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list ) );
-	} else {
-		min_mover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list ) );
-	}
+	min_mover_ = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list ) );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details At stage 1 we're only doing small and shear moves
@@ -417,11 +411,7 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 			local_tf->push_back(TaskOperationCOP( new protocols::task_operations::LimitAromaChi2Operation() ));
 		}
 
-		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new minimization_packing::symmetry::SymPackRotamersMover( get_scorefxn()) );
-		} else {
-			pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( get_scorefxn()) );
-		}
+		pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( get_scorefxn()) );
 		pack_full_repack_->task_factory(local_tf);
 
 		(*get_scorefxn())( pose );
@@ -477,11 +467,7 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 		}
 		(*get_scorefxn())( pose );
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies( pose ); // fix this
-		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			pack_rottrial_ = protocols::minimization_packing::RotamerTrialsMoverOP( new minimization_packing::symmetry::SymEnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut ) );
-		} else {
-			pack_rottrial_ = protocols::minimization_packing::RotamerTrialsMoverOP( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut ) );
-		}
+		pack_rottrial_ = protocols::minimization_packing::RotamerTrialsMoverOP( new protocols::minimization_packing::EnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut ) );
 	}
 
 }
@@ -515,11 +501,6 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	initialize_movemap( pose, *local_movemap );
 
-	// Make sure we only allow symmetrical degrees of freedom to move
-	// if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-	//  core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
-	// }
-
 	// remember the original pose before refinement kicks in, we'll need it later
 	core::pose::Pose prerefine_pose = pose;
 
@@ -531,7 +512,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	check_default_rottrial( pose, *local_movemap);
 
 	// Make sure we only allow symmetrical degrees of freedom to move
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
 	}
 

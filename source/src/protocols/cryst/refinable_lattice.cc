@@ -58,9 +58,9 @@
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
@@ -374,8 +374,8 @@ DockLatticeMover::min_lattice( core::pose::Pose & pose ) {
 
 	core::scoring::ScoreFunctionOP sf = core::scoring::ScoreFunctionFactory::create_score_function("score1");
 
-	protocols::minimization_packing::symmetry::SymMinMoverOP min(
-		new protocols::minimization_packing::symmetry::SymMinMover(mm, sf, "lbfgs_armijo", 0.01, true) );
+	protocols::minimization_packing::MinMoverOP min(
+		new protocols::minimization_packing::MinMover(mm, sf, "lbfgs_armijo", 0.01, true) );
 	min->apply(pose);
 
 	if ( restore_sc ) {
@@ -598,16 +598,16 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 			tf->push_back( TaskOperationCOP(new NoRepackDisulfides) );
 		}
 		tf->push_back( TaskOperationCOP(new RestrictToInterface( SUBjump_ ) ) );
-		protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::symmetry::SymPackRotamersMover( sf_ ) );
+		protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::PackRotamersMover( sf_ ) );
 		pack_interface_repack->task_factory(tf);
-		protocols::minimization_packing::RotamerTrialsMoverOP pack_interface_rtrials( new protocols::minimization_packing::symmetry::SymRotamerTrialsMover( sf_, tf ) );
+		protocols::minimization_packing::RotamerTrialsMoverOP pack_interface_rtrials( new protocols::minimization_packing::RotamerTrialsMover( sf_, tf ) );
 
 		// set up minimizer
 		core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
 		mm->set_jump(true); mm->set_chi(true); mm->set_bb(false);
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
-		protocols::minimization_packing::symmetry::SymMinMoverOP min(
-			new protocols::minimization_packing::symmetry::SymMinMover(mm, sf_, "lbfgs_armijo", 0.01, true) );
+		protocols::minimization_packing::MinMoverOP min(
+			new protocols::minimization_packing::MinMover(mm, sf_, "lbfgs_armijo", 0.01, true) );
 
 		init(pose); // find which are lattice jumps && which are dof jumps
 		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(pose, *sf_, 2.0 ) );

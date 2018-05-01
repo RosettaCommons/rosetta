@@ -174,8 +174,6 @@ endrepeat
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <utility/excn/Exceptions.hh>
 #include <protocols/task_operations/LimitAromaChi2Operation.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/md/CartesianMD.hh>
 #include <protocols/hydrate/Hydrate.hh>
 
@@ -526,11 +524,7 @@ void FastRelax::do_minimize(
 
 	//Why create a new min_mover every time we minimize?
 	protocols::minimization_packing::MinMoverOP min_mover;
-	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		min_mover = protocols::minimization_packing::MinMoverOP( new minimization_packing::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
-	} else {
-		min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
-	}
+	min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
 
 	min_mover->cartesian( cartesian() );
 	if ( max_iter() > 0 ) min_mover->max_iter( max_iter() );
@@ -670,11 +664,6 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	}
 
 	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack_( new protocols::minimization_packing::PackRotamersMover( local_scorefxn ) );
-
-	// If symmetric pose then create a symmetric rotamers mover
-	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new minimization_packing::symmetry::SymPackRotamersMover( local_scorefxn) );
-	}
 	pack_full_repack_->task_factory(local_tf);
 
 	(*local_scorefxn)( pose );
@@ -1299,9 +1288,6 @@ void FastRelax::batch_apply(
 		if ( i == 0 ) {
 			if ( get_task_factory() ) {
 				pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover() );
-				if ( core::pose::symmetry::is_symmetric( pose ) )  {
-					pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new minimization_packing::symmetry::SymPackRotamersMover() );
-				}
 				pack_full_repack_->score_function(local_scorefxn);
 				pack_full_repack_->task_factory(get_task_factory());
 			} else {
@@ -1318,9 +1304,6 @@ void FastRelax::batch_apply(
 				task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 				task_->or_include_current( true );
 				pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( local_scorefxn, task_ ) );
-				if ( core::pose::symmetry::is_symmetric( pose ) )  {
-					pack_full_repack_ = protocols::minimization_packing::PackRotamersMoverOP( new minimization_packing::symmetry::SymPackRotamersMover( local_scorefxn, task_ ) );
-				}
 			}
 
 			// Make sure we only allow symmetrical degrees of freedom to move

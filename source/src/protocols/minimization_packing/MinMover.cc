@@ -19,6 +19,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMinimizer.hh>
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
 // Project headers
 #include <core/id/TorsionID.hh>
@@ -32,6 +33,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/select/movemap/util.hh>
 
@@ -298,7 +300,12 @@ MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap & active_movemap
 void
 MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMap & active_movemap ) {
 	if ( !cartesian( ) ) {
-		AtomTreeMinimizer minimizer;
+		AtomTreeMinimizerOP minimizer;
+		if ( core::pose::symmetry::is_symmetric( pose ) ) {
+			minimizer = AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer() );
+		} else {
+			minimizer = AtomTreeMinimizerOP( new AtomTreeMinimizer() );
+		}
 		if ( !omega_ ) {
 			TR<<"shutting off omega dihedral angle minimization"<<std::endl;
 			for ( core::Size i = 1; i <= pose.size(); ++i ) {
@@ -307,7 +314,7 @@ MinMover::inner_run_minimizer( core::pose::Pose & pose, core::kinematics::MoveMa
 			}
 		}
 		score_before_minimization_ = (*scorefxn_)(pose);
-		score_after_minimization_ = minimizer.run( pose, active_movemap, *scorefxn_, *min_options_ );
+		score_after_minimization_ = minimizer->run( pose, active_movemap, *scorefxn_, *min_options_ );
 	} else {
 		CartesianMinimizer minimizer;
 		score_before_minimization_ = (*scorefxn_)(pose);
@@ -325,6 +332,9 @@ MinMover::apply(pose::Pose & pose) {
 
 	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
 
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		core::pose::symmetry::make_symmetric_movemap( pose, *active_movemap );
+	}
 	minimize( pose, *active_movemap );
 }
 

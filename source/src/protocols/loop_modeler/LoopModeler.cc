@@ -44,7 +44,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_filters/BuriedUnsatHbondFilter.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 
 // Core headers
 #include <core/chemical/ChemicalManager.fwd.hh>

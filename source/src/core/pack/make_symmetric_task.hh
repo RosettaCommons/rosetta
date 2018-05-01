@@ -39,6 +39,14 @@ make_new_symmetric_PackerTask_by_requested_method(
 	task::PackerTaskCOP non_symmetric_task
 );
 
+/// @brief Make a task symmetric (Using the logic of PackRotamersMover)
+/// @details This is robust to being passed a non-symmetric pose
+task::PackerTaskOP
+make_symmetric_task(
+	pose::Pose const & pose,
+	task::PackerTaskCOP task
+);
+
 } // pack
 } // core
 

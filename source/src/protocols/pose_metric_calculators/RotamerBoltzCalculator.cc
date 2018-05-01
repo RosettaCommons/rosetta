@@ -16,7 +16,6 @@
 #include <protocols/pose_metric_calculators/RotamerBoltzCalculator.hh>
 
 // Protocol Headers
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/toolbox/EnergyLandscapeEvaluator.hh>
 
 // Core Headers
@@ -341,13 +340,8 @@ protocols::minimization_packing::MinMoverOP RotamerBoltzCalculator::init_minmove
 	}
 
 	protocols::minimization_packing::MinMoverOP min_mover;
-	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::symmetry::SymMinMover(
-			mm, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
-	} else {
-		min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
-			mm, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
-	}
+	min_mover = protocols::minimization_packing::MinMoverOP( new protocols::minimization_packing::MinMover(
+		mm, scorefxn(), "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
 	return min_mover;
 }
 

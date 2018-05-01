@@ -39,7 +39,6 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/GreenPacker.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -324,10 +323,8 @@ PointMutationCalculator::mutate_and_relax(
 	protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		mutate_residue->request_symmetrize_by_union();
-		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
-	} else {
-		pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
 	}
+	pack = protocols::minimization_packing::PackRotamersMoverOP( new protocols::minimization_packing::PackRotamersMover( scorefxn(), mutate_residue ) );
 	pack->apply( pose );
 	if ( rtmin ) {
 		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
