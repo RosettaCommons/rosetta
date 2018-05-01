@@ -56,6 +56,7 @@
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/Jobs.hh>
 
+#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/parser/DataLoader.hh>
 #include <protocols/parser/DataLoaderFactory.hh>
 #include <protocols/parser/ResidueSelectorLoader.hh>
@@ -89,6 +90,7 @@ MRSJobQueen::MRSJobQueen() :
 	most_recent_pose_id_( 0, 0 )
 {
 	set_common_block_precedes_job_blocks( false );
+	rosetta_scripts::RosettaScriptsParser::register_factory_prototypes();
 }
 
 //Destructor

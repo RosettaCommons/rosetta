@@ -276,7 +276,7 @@ public:
 		std::string const & xml_text_for_top_level = ""
 	) const;
 
-	void register_factory_prototypes();
+	static void register_factory_prototypes();
 
 	void instantiate_filter(
 		utility::tag::TagCOP const & tag_ptr,
