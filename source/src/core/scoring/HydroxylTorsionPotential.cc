@@ -80,6 +80,8 @@ HydroxylTorsionPotential::read_database( std::string filename )
 		std::istringstream linestream(fileline);
 
 		linestream >> restag;
+		if ( restag.empty() || restag[0] == '#' ) { continue; } // Ignore comments
+
 		if ( !rsd_set->has_name3( restag ) ) continue;
 
 		linestream >> atm1 >> atm2 >> atm3 >> atm4
