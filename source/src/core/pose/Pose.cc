@@ -565,7 +565,7 @@ Pose::append_polymer_residue_after_seqpos(
 {
 	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::append_polymer_residue_after_seqpos( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later: may become unecessary
 	energies_->clear(); // TEMPORARY
-	conformation_->append_polymer_residue_after_seqpos( new_rsd, seqpos, build_ideal_geometry );
+	conformation_->safely_append_polymer_residue_after_seqpos( new_rsd, seqpos, build_ideal_geometry );
 	increment_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be incremented by 1 in all ReferencePose objects.
 }
 
@@ -578,7 +578,7 @@ Pose::prepend_polymer_residue_before_seqpos(
 {
 	PyAssert( (seqpos<=size()&&seqpos!=0), "Pose::prepend_polymer_residue_before_seqpos( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later:
 	energies_->clear(); // TEMPORARY
-	conformation_->prepend_polymer_residue_before_seqpos( new_rsd, seqpos, build_ideal_geometry );
+	conformation_->safely_prepend_polymer_residue_before_seqpos( new_rsd, seqpos, build_ideal_geometry );
 	increment_reference_pose_mapping_after_seqpos( seqpos-1 ); //All mappings in the new pose after seqpos-1 must be incremented by 1 in all ReferencePose objects.
 }
 

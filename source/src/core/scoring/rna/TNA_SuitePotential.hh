@@ -41,7 +41,7 @@ class TNA_SuitePotential : public utility::pointer::ReferenceCount {
 
 public:
 
-	/// @details This constructor reads in data from disk and should only 
+	/// @details This constructor reads in data from disk and should only
 	/// be called from the ScoringManager
 	TNA_SuitePotential();
 

@@ -1238,6 +1238,7 @@ Conformation::safely_prepend_polymer_residue_before_seqpos(
 	Size const seqpos,
 	bool const build_ideal_geometry // = false
 ) {
+	pre_nresidue_change();
 	core::conformation::remove_lower_terminus_type_from_conformation_residue( *this, seqpos );
 	Conformation::prepend_polymer_residue_before_seqpos( new_rsd, seqpos, build_ideal_geometry );
 }

@@ -128,7 +128,7 @@ resample_full_model_test()
 	options->set_erraser( true );
 	options->set_enumerate( true );
 	options->set_skip_deletions( true );
-	
+
 	// If sample_res is one long, we are in single res mode.
 	auto sample_res = const_full_model_info( seq_rebuild_pose ).full_model_parameters()->conventional_to_full( option[ full_model::sample_res ].resnum_and_chain() );
 	options->set_output_minimized_pose_list( sample_res.size() == 1 );

@@ -67,7 +67,7 @@ namespace rna {
 
 TNA_SuitePotential::~TNA_SuitePotential() = default;
 
-/// @details This constructor reads in data from disk and should only 
+/// @details This constructor reads in data from disk and should only
 /// be called from the ScoringManager
 TNA_SuitePotential::TNA_SuitePotential() // TODO move to in class init
 {

@@ -272,7 +272,7 @@ is_cutpoint_open( Pose const & pose, Size const i ) {
 /// @brief Returns true if a position is an RNA chainbreak
 /// @details Returns true if i is greater than pose.size()
 /// or less than 1, which is almost certainly designed to
-/// account for the semantics of 'chainbreaks' for poses in 
+/// account for the semantics of 'chainbreaks' for poses in
 /// stepwise/FARFAR contexts.
 bool
 is_rna_chainbreak( Pose const & pose, Size const i ) {
@@ -309,7 +309,7 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 /// @brief Returns true if a position is an TNA chainbreak
 /// @details Returns true if i is greater than pose.size()
 /// or less than 1, which is almost certainly designed to
-/// account for the semantics of 'chainbreaks' for poses in 
+/// account for the semantics of 'chainbreaks' for poses in
 /// stepwise/FARFAR contexts.
 bool
 is_tna_chainbreak( Pose const & pose, Size const i ) {
