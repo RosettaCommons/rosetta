@@ -116,10 +116,12 @@ BuriedUnsatPenalty::BuriedUnsatPenalty ( core::scoring::methods::EnergyMethodOpt
 	unsat_acceptor_and_donor_count_lastaccepted_(0),
 	oversat_acceptor_count_lastaccepted_(0),
 	oversat_donor_count_lastaccepted_(0),
-	oversat_acceptor_and_donor_count_lastaccepted_(0),
-	changed_node_indices_(),
-	changed_node_partners_(),
-	new_residues_()
+	oversat_acceptor_and_donor_count_lastaccepted_(0)
+#ifdef SLOW_BUNSAT_PENALTY_ACCURACY_CHECKS_ENABLED
+	,
+	temppose_(nullptr),
+	packer_step_(0)
+#endif
 {}
 
 /// @brief Default destructor.
@@ -172,104 +174,95 @@ BuriedUnsatPenalty::calculate_energy(
 
 	if ( disabled_ ) return 0.0; //Do nothing during minimization trajectories.
 
-	//Initialize counts:
-	core::Size unsat_acceptor_count_lastconsidered = unsat_acceptor_count_lastaccepted_;
-	core::Size unsat_donor_count_lastconsidered = unsat_donor_count_lastaccepted_;
-	core::Size unsat_acceptor_and_donor_count_lastconsidered = unsat_acceptor_and_donor_count_lastaccepted_;
-	core::Size oversat_acceptor_count_lastconsidered = oversat_acceptor_count_lastaccepted_;
-	core::Size oversat_donor_count_lastconsidered = oversat_donor_count_lastaccepted_;
-	core::Size oversat_acceptor_and_donor_count_lastconsidered = oversat_acceptor_and_donor_count_lastaccepted_;
-
 	debug_assert( ( !symmetric_ && resvect.size() == nres_ ) || ( symmetric_ && resvect.size() >= 2*nres_ ) );
 
 	//Let's make a list of the nodes that have changed:
-	changed_node_indices_.clear();
+	utility::vector1< core::Size > changed_node_indices;
 	utility::vector1< core::conformation::ResidueCOP > old_residues;
-	changed_node_indices_.reserve( nres_ );
+	changed_node_indices.reserve( nres_ );
 	old_residues.reserve( nres_ );
 	for ( core::Size i(1); i<=nres_; ++i ) {
 		core::conformation::ResidueCOP oldres( curstate_graph_->nodeindex_to_residue_memory_address(i) );
 		if ( resvect[i] != oldres ) {
 			old_residues.push_back( oldres );
-			changed_node_indices_.push_back(i);
+			changed_node_indices.push_back(i);
 		}
 	}
-	debug_assert( old_residues.size() == changed_node_indices_.size() );
+	debug_assert( old_residues.size() == changed_node_indices.size() );
 
 	//Let's store the new residues, in case we end up accepting this move.
-	new_residues_.clear();
-	new_residues_.reserve( changed_node_indices_.size() );
-	for ( core::Size i(1), imax(changed_node_indices_.size()); i<=imax; ++i ) {
-		new_residues_.push_back( resvect[changed_node_indices_[i]] );
+	utility::vector1< core::conformation::ResidueCOP> new_residues;
+	new_residues.reserve( changed_node_indices.size() );
+	for ( core::Size i(1), imax(changed_node_indices.size()); i<=imax; ++i ) {
+		new_residues.push_back( resvect[changed_node_indices[i]] );
 	}
-	debug_assert( new_residues_.size() == changed_node_indices_.size() );
+	debug_assert( new_residues.size() == changed_node_indices.size() );
 
 	//Make a list of the residues that are hydrogen-bonded to the residues that have changed:
-	changed_node_partners_.clear();
-	changed_node_partners_.reserve( nres_ );
-	add_to_list_of_partners_of_changed_nodes( curstate_graph_, changed_node_indices_, changed_node_partners_ );
+	utility::vector1< core::Size > changed_node_partners;
+	changed_node_partners.reserve( nres_ );
+	add_to_list_of_partners_of_changed_nodes( curstate_graph_, changed_node_indices, changed_node_partners );
 
 	//Swap the old residues out for the new:
-	for ( core::Size i(1), imax(changed_node_indices_.size()); i<=imax; ++i ) {
-		curstate_graph_->copy_node_and_connected_edges( changed_node_indices_[i], *unsat_graph_, unsat_graph_->get_node_index( resvect[changed_node_indices_[i]] ) );
+	utility::vector1< graph::BuriedUnsatPenaltyNodeDataCOP > old_data( changed_node_indices.size() );
+	for ( core::Size i(1), imax(changed_node_indices.size()); i<=imax; ++i ) {
+		debug_assert(dynamic_cast<graph::BuriedUnsatPenaltyNode const *>( curstate_graph_->get_node( changed_node_indices[i] ) ) != nullptr);
+		old_data[i] = (static_cast<graph::BuriedUnsatPenaltyNode const *>( curstate_graph_->get_node( changed_node_indices[i] ) ))->stored_data();
+		curstate_graph_->copy_node_and_connected_edges( changed_node_indices[i], *unsat_graph_, unsat_graph_->get_node_index( resvect[changed_node_indices[i]] ) );
 	}
 
 	//Add any residues that are now hydrogen bonded to the new residues to the list of node partners:
-	add_to_list_of_partners_of_changed_nodes( curstate_graph_, changed_node_indices_, changed_node_partners_ );
+	add_to_list_of_partners_of_changed_nodes( curstate_graph_, changed_node_indices, changed_node_partners );
 
-	//Compute unsats in the changed nodes only:
-	curstate_graph_->compute_unsats_changed_nodes( changed_node_indices_, changed_node_partners_);
+	//Subtract off the counts from the OLD state's changed nodes.  Note that the hbond counts have not yet been updated, so we're decrementing the OLD counts:
+	decrement_counts( unsat_acceptor_count_lastaccepted_, unsat_donor_count_lastaccepted_, unsat_acceptor_and_donor_count_lastaccepted_, oversat_acceptor_count_lastaccepted_, oversat_donor_count_lastaccepted_, oversat_acceptor_and_donor_count_lastaccepted_, old_data, changed_node_indices, changed_node_partners );
 
-	//Tally the number of unsats:
-	increment_counts( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered );
+	//Compute hbond counts in the changed nodes only:
+	curstate_graph_->compute_unsats_changed_nodes( changed_node_indices, changed_node_partners);
 
-	//Now we change back to the way we were...
-	for ( core::Size i(1), imax(changed_node_indices_.size()); i<=imax; ++i ) {
-		curstate_graph_->copy_node_and_connected_edges( changed_node_indices_[i], *unsat_graph_, unsat_graph_->get_node_index( old_residues[i] ) );
+	//Tally the NEW number of unsats (with the updated hbond counts) in the changed nodes:
+	increment_counts( unsat_acceptor_count_lastaccepted_, unsat_donor_count_lastaccepted_, unsat_acceptor_and_donor_count_lastaccepted_, oversat_acceptor_count_lastaccepted_, oversat_donor_count_lastaccepted_, oversat_acceptor_and_donor_count_lastaccepted_, changed_node_indices, changed_node_partners );
+
+#ifdef SLOW_BUNSAT_PENALTY_ACCURACY_CHECKS_ENABLED
+	++packer_step_;
+
+	for(core::Size i(1), imax(resvect.size()); i<=imax; ++i) {
+		temppose_->replace_residue(i, *resvect[i], false);
 	}
-	curstate_graph_->compute_unsats_changed_nodes( changed_node_indices_, changed_node_partners_ );
+	temppose_->update_residue_neighbors();
 
-	//...and subtract off the counts from the OLD state's changed nodes.
-	decrement_counts( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered );
+	//char outpdb[256];
+	//sprintf( outpdb, "PACKERSTEP_%04lu.pdb", packer_step_);
+	//temppose_->dump_pdb(std::string(outpdb));
 
-	//Small efficiency tweak: if more than one node was changed, we should commit the change, so that we're not
-	//needlessly updating many nodes each time.  This (many nodes changed) can happen with some annealer schedules
-	//that jump back to previous favourable states at certain points in the trajectory.
-	if ( new_residues_.size() > 1 ) do_commit_steps();
+	TR << "Step " << packer_step_ << ":\t" << temppose_->sequence() << std::endl;
+	TR << "Updating graph.  Found unsat_acceptor=" << unsat_acceptor_count_lastaccepted_ << " unsat_donor=" << unsat_donor_count_lastaccepted_ << " unsat_acceptor_and_donor=" << unsat_acceptor_and_donor_count_lastaccepted_ << " oversat_acceptor=" << oversat_acceptor_count_lastaccepted_ << " oversat_donor=" << oversat_donor_count_lastaccepted_ << " oversat_acceptor_and_donor=" << oversat_acceptor_and_donor_count_lastaccepted_ << std::endl;
 
+	core::Real returnval;
 	if ( symmetric_ ) {
-		return compute_penalty( unsat_acceptor_count_lastconsidered*num_symmetric_copies_, unsat_donor_count_lastconsidered*num_symmetric_copies_, unsat_acceptor_and_donor_count_lastconsidered*num_symmetric_copies_, oversat_acceptor_count_lastconsidered*num_symmetric_copies_, oversat_donor_count_lastconsidered*num_symmetric_copies_, oversat_acceptor_and_donor_count_lastconsidered*num_symmetric_copies_ );
+		returnval = compute_penalty( unsat_acceptor_count_lastaccepted_*num_symmetric_copies_, unsat_donor_count_lastaccepted_*num_symmetric_copies_, unsat_acceptor_and_donor_count_lastaccepted_*num_symmetric_copies_, oversat_acceptor_count_lastaccepted_*num_symmetric_copies_, oversat_donor_count_lastaccepted_*num_symmetric_copies_, oversat_acceptor_and_donor_count_lastaccepted_*num_symmetric_copies_ );
+	} else {
+		returnval = compute_penalty( unsat_acceptor_count_lastaccepted_, unsat_donor_count_lastaccepted_, unsat_acceptor_and_donor_count_lastaccepted_, oversat_acceptor_count_lastaccepted_, oversat_donor_count_lastaccepted_, oversat_acceptor_and_donor_count_lastaccepted_ );
+	}
+	core::Real const comparisonval( calculate_penalty_once_almost_from_scratch_using_reference_graph( resvect, *unsat_graph_, symmetric_ ? num_symmetric_copies_ : 1 ) );
+	if( returnval != comparisonval ) {
+		TR << TR.Red << "Returnval(" << returnval << ") != comparisonval(" << comparisonval << ")" << TR.Reset << std::endl;
+	}
+	return returnval;
+#else
+	if ( symmetric_ ) {
+		return compute_penalty( unsat_acceptor_count_lastaccepted_*num_symmetric_copies_, unsat_donor_count_lastaccepted_*num_symmetric_copies_, unsat_acceptor_and_donor_count_lastaccepted_*num_symmetric_copies_, oversat_acceptor_count_lastaccepted_*num_symmetric_copies_, oversat_donor_count_lastaccepted_*num_symmetric_copies_, oversat_acceptor_and_donor_count_lastaccepted_*num_symmetric_copies_ );
 	}
 
-	return compute_penalty( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered );
+	return compute_penalty( unsat_acceptor_count_lastaccepted_, unsat_donor_count_lastaccepted_, unsat_acceptor_and_donor_count_lastaccepted_, oversat_acceptor_count_lastaccepted_, oversat_donor_count_lastaccepted_, oversat_acceptor_and_donor_count_lastaccepted_ );
+#endif
 }
 
 /// @brief What to do when a substitution that was considered is accepted.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
 BuriedUnsatPenalty::commit_considered_substitution() {
-	do_commit_steps();
-}
-
-/// @brief The actual steps called when commit_considered_substitution() is called.
-/// @details Pulled out into a const function so that I can call it from calculate_energy.
-/// All vars changed are mutable.
-void
-BuriedUnsatPenalty::do_commit_steps() const {
-	debug_assert( changed_node_indices_.size() == new_residues_.size() );
-
-	//Subtract off the counts from the OLD state's changed nodes.
-	decrement_counts( unsat_acceptor_count_lastaccepted_, unsat_donor_count_lastaccepted_, unsat_acceptor_and_donor_count_lastaccepted_, oversat_acceptor_count_lastaccepted_, oversat_donor_count_lastaccepted_, oversat_acceptor_and_donor_count_lastaccepted_ );
-
-	//Swap the old residues out for the new:
-	for ( core::Size i(1), imax(changed_node_indices_.size()); i<=imax; ++i ) {
-		curstate_graph_->copy_node_and_connected_edges( changed_node_indices_[i], *unsat_graph_, unsat_graph_->get_node_index( new_residues_[i] ) );
-	}
-	//Compute unsats in the changed nodes only:
-	curstate_graph_->compute_unsats_changed_nodes( changed_node_indices_, changed_node_partners_);
-
-	//Add the counts from the NEW state's changed nodes.
-	increment_counts( unsat_acceptor_count_lastaccepted_, unsat_donor_count_lastaccepted_, unsat_acceptor_and_donor_count_lastaccepted_, oversat_acceptor_count_lastaccepted_, oversat_donor_count_lastaccepted_, oversat_acceptor_and_donor_count_lastaccepted_ );
+	//GNDN
 }
 
 /// @brief Get a summary of all loaded data.
@@ -289,6 +282,10 @@ BuriedUnsatPenalty::set_up_residuearrayannealableenergy_for_packing (
 	core::scoring::ScoreFunction const & /*sfxn*/
 ) {
 	TR << "Setting up BuriedUnsatPenalty energy method for packing." << std::endl;
+
+#ifdef SLOW_BUNSAT_PENALTY_ACCURACY_CHECKS_ENABLED
+	temppose_ = pose.clone();
+#endif
 
 	// Store information for symmetry:
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -339,9 +336,12 @@ BuriedUnsatPenalty::clean_up_residuearrayannealableenergy_after_packing(
 	TR << "Clearing cached data from the BuriedUnsatPenalty EnergyMethod after packing." << std::endl;
 	unsat_graph_ = nullptr;
 	curstate_graph_ = nullptr;
-	changed_node_indices_.clear();
-	changed_node_partners_.clear();
-	new_residues_.clear();
+
+#ifdef SLOW_BUNSAT_PENALTY_ACCURACY_CHECKS_ENABLED
+	temppose_ = nullptr;
+	packer_step_ = 0;
+#endif
+
 }
 
 /// @brief Disable this scoreterm during minimization trajectory.
@@ -380,6 +380,47 @@ BuriedUnsatPenalty::compute_penalty(
 	return static_cast< core::Real >( std::pow( 5 * ( unsat_acceptor_count + unsat_donor_count + unsat_acceptor_and_donor_count + oversat_acceptor_count + oversat_donor_count + oversat_acceptor_and_donor_count ), 2 ) );
 }
 
+/// @brief Given a residue vector, calculate the penalty energy using a reference graph.
+core::Real
+BuriedUnsatPenalty::calculate_penalty_once_almost_from_scratch_using_reference_graph(
+	utility::vector1< core::conformation::ResidueCOP > const & resvect,
+	graph::BuriedUnsatPenaltyGraph const &reference_graph,
+	core::Size const symm_multiplier
+) const {
+	graph::BuriedUnsatPenaltyGraph curstate_graph( resvect.size(), graph_options_, hbond_options_ );
+	for ( core::Size i(1), imax(resvect.size()); i<=imax; ++i ) {
+		curstate_graph.copy_node_and_connected_edges( i, reference_graph, reference_graph.get_node_index( resvect[i] ) );
+	}
+	curstate_graph.compute_unsats_all_nodes();
+	core::Size unsat_acceptor_count(0);
+	core::Size unsat_donor_count(0);
+	core::Size unsat_acceptor_and_donor_count(0); //The above two don't count hydroxyls, which must EITHER donate OR accept (though both is fine, too).
+	core::Size oversat_acceptor_count(0);
+	core::Size oversat_donor_count(0);
+	core::Size oversat_acceptor_and_donor_count(0); //Again, hydroxyls.
+	for ( core::Size i(1), imax(resvect.size()); i<=imax; ++i ) {
+		debug_assert( dynamic_cast<graph::BuriedUnsatPenaltyNode const *>( curstate_graph.get_node(i) ) != nullptr );
+		static_cast< graph::BuriedUnsatPenaltyNode const *>( curstate_graph.get_node(i) )->increment_counts( unsat_acceptor_count, unsat_donor_count, unsat_acceptor_and_donor_count, oversat_acceptor_count, oversat_donor_count, oversat_acceptor_and_donor_count );
+	}
+
+	if ( symm_multiplier != 1 ) {
+		unsat_acceptor_count *= symm_multiplier;
+		unsat_donor_count *= symm_multiplier;
+		unsat_acceptor_and_donor_count *= symm_multiplier;
+		oversat_acceptor_count *= symm_multiplier;
+		oversat_donor_count *= symm_multiplier;
+		oversat_acceptor_and_donor_count *= symm_multiplier;
+	}
+
+#ifdef SLOW_BUNSAT_PENALTY_ACCURACY_CHECKS_ENABLED
+	TR << "Computing penalty once from reference graph.  Found unsat_acceptor=" << unsat_acceptor_count << " unsat_donor=" << unsat_donor_count << " unsat_acceptor_and_donor=" << unsat_acceptor_and_donor_count << " oversat_acceptor=" << oversat_acceptor_count << " oversat_donor=" << oversat_donor_count << " oversat_acceptor_and_donor=" << oversat_acceptor_and_donor_count << std::endl;
+#else
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Computing penalty once from reference graph.  Found unsat_acceptor=" << unsat_acceptor_count << " unsat_donor=" << unsat_donor_count << " unsat_acceptor_and_donor=" << unsat_acceptor_and_donor_count << " oversat_acceptor=" << oversat_acceptor_count << " oversat_donor=" << oversat_donor_count << " oversat_acceptor_and_donor=" << oversat_acceptor_and_donor_count << std::endl;
+	}
+#endif
+	return compute_penalty( unsat_acceptor_count, unsat_donor_count, unsat_acceptor_and_donor_count, oversat_acceptor_count, oversat_donor_count, oversat_acceptor_and_donor_count );
+}
 
 /// @brief Given a pose, calculate the penalty energy.
 core::Real
@@ -431,9 +472,13 @@ BuriedUnsatPenalty::calculate_penalty_once_from_scratch(
 		oversat_acceptor_and_donor_count *= symm_multiplier;
 	}
 
+#ifdef SLOW_BUNSAT_PENALTY_ACCURACY_CHECKS_ENABLED
+	TR << "Computing penalty once from scratch.  Found unsat_acceptor=" << unsat_acceptor_count << " unsat_donor=" << unsat_donor_count << " unsat_acceptor_and_donor=" << unsat_acceptor_and_donor_count << " oversat_acceptor=" << oversat_acceptor_count << " oversat_donor=" << oversat_donor_count << " oversat_acceptor_and_donor=" << oversat_acceptor_and_donor_count << std::endl;
+#else
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Computing penalty once from scratch.  Found unsat_acceptor=" << unsat_acceptor_count << " unsat_donor=" << unsat_donor_count << " unsat_acceptor_and_donor=" << unsat_acceptor_and_donor_count << " oversat_acceptor=" << oversat_acceptor_count << " oversat_donor=" << oversat_donor_count << " oversat_acceptor_and_donor=" << oversat_acceptor_and_donor_count << std::endl;
 	}
+#endif
 
 	return compute_penalty( unsat_acceptor_count, unsat_donor_count, unsat_acceptor_and_donor_count, oversat_acceptor_count, oversat_donor_count, oversat_acceptor_and_donor_count );
 }
@@ -498,7 +543,7 @@ BuriedUnsatPenalty::initialize_curstate_graph(
 /// @details Don't add indices that are in the changed_node_indices list or already in the changed_node_partners list.
 void
 BuriedUnsatPenalty::add_to_list_of_partners_of_changed_nodes(
-	graph::BuriedUnsatPenaltyGraphOP curstate_graph,
+	graph::BuriedUnsatPenaltyGraphCOP curstate_graph,
 	utility::vector1< core::Size > const & changed_node_indices,
 	utility::vector1< core::Size > & changed_node_partners
 ) const {
@@ -516,7 +561,7 @@ BuriedUnsatPenalty::add_to_list_of_partners_of_changed_nodes(
 	}
 }
 
-/// @brief Increment the counts based on the current state of the curstate_graph_ and the current changed_node_indices_ and changed_node_partners_ vectors.
+/// @brief Increment the counts based on the current state of the curstate_graph_ and the current changed_node_indices and changed_node_partners vectors.
 void
 BuriedUnsatPenalty::increment_counts(
 	core::Size & unsat_acceptor_count_lastconsidered,
@@ -524,21 +569,23 @@ BuriedUnsatPenalty::increment_counts(
 	core::Size & unsat_acceptor_and_donor_count_lastconsidered,
 	core::Size & oversat_acceptor_count_lastconsidered,
 	core::Size & oversat_donor_count_lastconsidered,
-	core::Size & oversat_acceptor_and_donor_count_lastconsidered
+	core::Size & oversat_acceptor_and_donor_count_lastconsidered,
+	utility::vector1< core::Size > const & changed_node_indices,
+	utility::vector1< core::Size > const & changed_node_partners
 ) const {
-	for ( core::Size i(1), imax( changed_node_indices_.size() ); i<=imax; ++i ) {
-		debug_assert( dynamic_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_indices_[i]) ) != nullptr );
-		graph::BuriedUnsatPenaltyNode const &curnode( *(static_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_indices_[i]) ) ) );
+	for ( core::Size i(1), imax( changed_node_indices.size() ); i<=imax; ++i ) {
+		debug_assert( dynamic_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_indices[i]) ) != nullptr );
+		graph::BuriedUnsatPenaltyNode const &curnode( *(static_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_indices[i]) ) ) );
 		curnode.increment_counts( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered);
 	}
-	for ( core::Size i(1), imax( changed_node_partners_.size() ); i<=imax; ++i ) {
-		debug_assert( dynamic_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_partners_[i]) ) != nullptr );
-		graph::BuriedUnsatPenaltyNode const &curnode( *(static_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_partners_[i]) ) ) );
+	for ( core::Size i(1), imax( changed_node_partners.size() ); i<=imax; ++i ) {
+		debug_assert( dynamic_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_partners[i]) ) != nullptr );
+		graph::BuriedUnsatPenaltyNode const &curnode( *(static_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_partners[i]) ) ) );
 		curnode.increment_counts( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered);
 	}
 }
 
-/// @brief Decrement the counts based on the current state of the curstate_graph_ and the current changed_node_indices_ and changed_node_partners_ vectors.
+/// @brief Decrement the counts based on the current state of the curstate_graph_ and the current changed_node_indices and changed_node_partners vectors.
 void
 BuriedUnsatPenalty::decrement_counts(
 	core::Size & unsat_acceptor_count_lastconsidered,
@@ -546,17 +593,21 @@ BuriedUnsatPenalty::decrement_counts(
 	core::Size & unsat_acceptor_and_donor_count_lastconsidered,
 	core::Size & oversat_acceptor_count_lastconsidered,
 	core::Size & oversat_donor_count_lastconsidered,
-	core::Size & oversat_acceptor_and_donor_count_lastconsidered
+	core::Size & oversat_acceptor_and_donor_count_lastconsidered,
+	utility::vector1< graph::BuriedUnsatPenaltyNodeDataCOP > const &old_data,
+	utility::vector1< core::Size > const & changed_node_indices,
+	utility::vector1< core::Size > const & changed_node_partners
 ) const {
-	for ( core::Size i(1), imax( changed_node_indices_.size() ); i<=imax; ++i ) {
-		debug_assert( dynamic_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_indices_[i]) ) != nullptr );
-		graph::BuriedUnsatPenaltyNode const &curnode( *(static_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_indices_[i]) ) ) );
-		curnode.decrement_counts( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered);
+	debug_assert(old_data.size() == changed_node_indices.size());
+	for ( core::Size i(1), imax( changed_node_indices.size() ); i<=imax; ++i ) {
+		debug_assert( dynamic_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_indices[i]) ) != nullptr );
+		graph::BuriedUnsatPenaltyNode const &curnode( *(static_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_indices[i]) ) ) );
+		curnode.decrement_counts( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered, old_data[i]);
 	}
-	for ( core::Size i(1), imax( changed_node_partners_.size() ); i<=imax; ++i ) {
-		debug_assert( dynamic_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_partners_[i]) ) != nullptr );
-		graph::BuriedUnsatPenaltyNode const &curnode( *(static_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_partners_[i]) ) ) );
-		curnode.decrement_counts( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered);
+	for ( core::Size i(1), imax( changed_node_partners.size() ); i<=imax; ++i ) {
+		debug_assert( dynamic_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_partners[i]) ) != nullptr );
+		graph::BuriedUnsatPenaltyNode const &curnode( *(static_cast< graph::BuriedUnsatPenaltyNode const * >( curstate_graph_->get_node(changed_node_partners[i]) ) ) );
+		curnode.decrement_counts( unsat_acceptor_count_lastconsidered, unsat_donor_count_lastconsidered, unsat_acceptor_and_donor_count_lastconsidered, oversat_acceptor_count_lastconsidered, oversat_donor_count_lastconsidered, oversat_acceptor_and_donor_count_lastconsidered, curnode.stored_data());
 	}
 }
 

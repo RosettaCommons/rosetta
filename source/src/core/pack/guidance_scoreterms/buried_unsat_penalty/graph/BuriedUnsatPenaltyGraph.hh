@@ -408,7 +408,8 @@ public: //These functions are public, but are only intended to be called by Buri
 	/// @param[out] oversat_acceptor_count The number of acceptor (and not donor) groups that are oversatisfied.
 	/// @param[out] oversat_donor_count The number of donor (and not acceptor) groups that are oversatisfied.  (This generally doesn't happen).
 	/// @param[out] oversat_acceptor_and_donor_count The number of groups that are both donors and acceptors (e.g. hydroxyls) that are unsatisfied (i.e. have either too many donated hbonds or too many accepted hbonds).
-	void decrement_counts(core::Size &unsat_acceptor_count, core::Size &unsat_donor_count, core::Size &unsat_acceptor_and_donor_count, core::Size &oversat_acceptor_count, core::Size &oversat_donor_count, core::Size &oversat_acceptor_and_donor_count ) const;
+	/// @param[in] data The BuriedUnsatPenaltyNodeData to use.  Since this has often been replaced by the time this function is called, we need to pass it in separately.
+	void decrement_counts(core::Size &unsat_acceptor_count, core::Size &unsat_donor_count, core::Size &unsat_acceptor_and_donor_count, core::Size &oversat_acceptor_count, core::Size &oversat_donor_count, core::Size &oversat_acceptor_and_donor_count, graph::BuriedUnsatPenaltyNodeDataCOP data ) const;
 
 	/// @brief Get the residue index (position in the pose) for this node.
 	inline core::Size residue_position() const { return stored_data_->residue_position(); }
@@ -418,6 +419,9 @@ public: //These functions are public, but are only intended to be called by Buri
 
 	/// @brief Get the number of donor/acceptor groups.
 	inline core::Size num_donor_acceptor_groups() const { return stored_data_->donor_acceptor_groups().size(); }
+
+	/// @brief Const access to the stored data.
+	inline BuriedUnsatPenaltyNodeDataCOP stored_data() const { return stored_data_; }
 
 private: //Private functions
 

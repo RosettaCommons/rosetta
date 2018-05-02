@@ -53,6 +53,10 @@ namespace pack {
 namespace guidance_scoreterms {
 namespace buried_unsat_penalty {
 
+// Uncomment the following line to do a full recomputation at every step, to confirm correct decrementation.  This is SLOW and should
+// not be used for production runs:
+//#define SLOW_BUNSAT_PENALTY_ACCURACY_CHECKS_ENABLED
+
 /// @brief BuriedUnsatPenalty, an EnergyMethod that gives a penalty for buried unsatisfied hydrogen bond donors or acceptors.
 /// @details This class is derived from base class WholeStructureEnergy, which is meaningful only on entire structures.
 /// These EnergyMethods do all of their work in the "finalize_total_energy" section of scorefunction evaluation.
@@ -102,11 +106,6 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void commit_considered_substitution() override;
 
-	/// @brief The actual steps called when commit_considered_substitution() is called.
-	/// @details Pulled out into a const function so that I can call it from calculate_energy.
-	/// All vars changed are mutable.
-	void do_commit_steps() const;
-
 	/// @brief Get a summary of all loaded data.
 	///
 	void report() const;
@@ -133,6 +132,9 @@ public:
 
 	/// @brief Given the counts of various unsaturateds, return a penalty value.
 	core::Real compute_penalty( core::Size const unsat_acceptor_count, core::Size const unsat_donor_count, core::Size const unsat_acceptor_and_donor_count, core::Size const oversat_acceptor_count, core::Size const oversat_donor_count, core::Size const oversat_acceptor_and_donor_count ) const;
+
+	/// @brief Given a residue vector, calculate the penalty energy using a reference graph.
+	core::Real calculate_penalty_once_almost_from_scratch_using_reference_graph( utility::vector1< core::conformation::ResidueCOP > const & resvect, graph::BuriedUnsatPenaltyGraph const &reference_graph, core::Size const symm_multiplier ) const;
 
 	/// @brief Given a pose, calculate the penalty energy.
 	core::Real calculate_penalty_once_from_scratch( core::pose::Pose const &pose ) const;
@@ -161,7 +163,7 @@ private:
 	/// @brief Given a list of changed node indices and a graph of the current state, determine which nodes share edges with the changed nodes, and add
 	/// their indices to a list of partners.
 	/// @details Don't add indices that are in the changed_node_indices list or already in the changed_node_partners list.
-	void add_to_list_of_partners_of_changed_nodes( graph::BuriedUnsatPenaltyGraphOP curstate_graph, utility::vector1< core::Size > const & changed_node_indices, utility::vector1< core::Size > & changed_node_partners ) const;
+	void add_to_list_of_partners_of_changed_nodes( graph::BuriedUnsatPenaltyGraphCOP curstate_graph, utility::vector1< core::Size > const & changed_node_indices, utility::vector1< core::Size > & changed_node_partners ) const;
 
 	/// @brief Increment the counts based on the current state of the curstate_graph_ and the current changed_node_indices_ and changed_node_partners_ vectors.
 	void increment_counts(
@@ -170,7 +172,9 @@ private:
 		core::Size & unsat_acceptor_and_donor_count_lastconsidered,
 		core::Size & oversat_acceptor_count_lastconsidered,
 		core::Size & oversat_donor_count_lastconsidered,
-		core::Size & oversat_acceptor_and_donor_count_lastconsidered
+		core::Size & oversat_acceptor_and_donor_count_lastconsidered,
+		utility::vector1< core::Size > const & changed_node_indices,
+		utility::vector1< core::Size > const & changed_node_partners
 	) const;
 
 	/// @brief Decrement the counts based on the current state of the curstate_graph_ and the current changed_node_indices_ and changed_node_partners_ vectors.
@@ -180,7 +184,10 @@ private:
 		core::Size & unsat_acceptor_and_donor_count_lastconsidered,
 		core::Size & oversat_acceptor_count_lastconsidered,
 		core::Size & oversat_donor_count_lastconsidered,
-		core::Size & oversat_acceptor_and_donor_count_lastconsidered
+		core::Size & oversat_acceptor_and_donor_count_lastconsidered,
+		utility::vector1< graph::BuriedUnsatPenaltyNodeDataCOP > const &old_data,
+		utility::vector1< core::Size > const & changed_node_indices,
+		utility::vector1< core::Size > const & changed_node_partners
 	) const;
 
 	/******************
@@ -235,14 +242,13 @@ private:
 	/// @brief The oversat acceptor and donor counts last accepted.
 	mutable core::Size oversat_acceptor_and_donor_count_lastaccepted_;
 
-	/// @brief The indices of nodes that have changed in the last step.
-	mutable utility::vector1< core::Size > changed_node_indices_;
+#ifdef SLOW_BUNSAT_PENALTY_ACCURACY_CHECKS_ENABLED
+	/// @brief A copy of the pose, used for slow accuracy checks only.
+	core::pose::PoseOP temppose_;
 
-	/// @brief The hydrogen-bonded partners of nodes that have changed in the last step.
-	mutable utility::vector1< core::Size > changed_node_partners_;
-
-	/// @brief The new residue identities of those changed nodes.
-	mutable utility::vector1< core::conformation::ResidueCOP > new_residues_;
+	/// @brief A counter for the step in the packer trajectory
+	mutable core::Size packer_step_;
+#endif
 
 }; //BuriedUnsatPenalty class
 

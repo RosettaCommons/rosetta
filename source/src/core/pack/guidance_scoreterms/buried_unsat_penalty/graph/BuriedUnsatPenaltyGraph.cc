@@ -355,7 +355,6 @@ BuriedUnsatPenaltyNode::copy_from(
 ) {
 	BuriedUnsatPenaltyNode const &other( *(static_cast< BuriedUnsatPenaltyNode const * >(other_node)) );
 	stored_data_ = other.stored_data_; //Const from const
-	clear_hbond_counts();
 }
 
 /// @brief For every donor/acceptor group, reset the counts of hydrogen bonds to/from that group.
@@ -414,9 +413,9 @@ BuriedUnsatPenaltyNode::increment_counts(
 
 	for ( core::Size i(1), imax(donor_acceptor_groups.size()); i<=imax; ++i ) { //Loop through all donor/acceptor groups
 		BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup const & curgroup( donor_acceptor_groups[i] );
+		if ( !curgroup.is_counted() ) continue;
 		core::Size const donated_hbond_count( donated_hbond_count_[i] );
 		core::Size const accepted_hbond_count( accepted_hbond_count_[i] );
-		if ( !curgroup.is_counted() ) continue;
 		if ( curgroup.is_acceptor() ) {
 			if ( curgroup.is_donor() ) { //Acceptor AND donor
 				if ( donated_hbond_count == 0 && accepted_hbond_count == 0 ) ++unsat_acceptor_and_donor_count;
@@ -445,6 +444,7 @@ BuriedUnsatPenaltyNode::increment_counts(
 /// @param[out] oversat_acceptor_count The number of acceptor (and not donor) groups that are oversatisfied.
 /// @param[out] oversat_donor_count The number of donor (and not acceptor) groups that are oversatisfied.  (This generally doesn't happen).
 /// @param[out] oversat_acceptor_and_donor_count The number of groups that are both donors and acceptors (e.g. hydroxyls) that are unsatisfied (i.e. have either too many donated hbonds or too many accepted hbonds).
+/// @param[in] data The BuriedUnsatPenaltyNodeData to use.  Since this has often been replaced by the time this function is called, we need to pass it in separately.
 void
 BuriedUnsatPenaltyNode::decrement_counts(
 	core::Size &unsat_acceptor_count,
@@ -452,15 +452,18 @@ BuriedUnsatPenaltyNode::decrement_counts(
 	core::Size &unsat_acceptor_and_donor_count,
 	core::Size &oversat_acceptor_count,
 	core::Size &oversat_donor_count,
-	core::Size &oversat_acceptor_and_donor_count
+	core::Size &oversat_acceptor_and_donor_count,
+	graph::BuriedUnsatPenaltyNodeDataCOP data
 ) const {
-	utility::vector1< BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup > const & donor_acceptor_groups( stored_data_->donor_acceptor_groups() );
+	utility::vector1< BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup > const & donor_acceptor_groups( data->donor_acceptor_groups() );
+	debug_assert( donated_hbond_count_.size() == donor_acceptor_groups.size() );
+	debug_assert( accepted_hbond_count_.size() == donor_acceptor_groups.size() );
 
 	for ( core::Size i(1), imax(donor_acceptor_groups.size()); i<=imax; ++i ) { //Loop through all donor/acceptor groups
 		BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup const & curgroup( donor_acceptor_groups[i] );
+		if ( !curgroup.is_counted() ) continue;
 		core::Size const donated_hbond_count( donated_hbond_count_[i] );
 		core::Size const accepted_hbond_count( accepted_hbond_count_[i] );
-		if ( !curgroup.is_counted() ) continue;
 		if ( curgroup.is_acceptor() ) {
 			if ( curgroup.is_donor() ) { //Acceptor AND donor
 				if ( donated_hbond_count == 0 && accepted_hbond_count == 0 ) {
@@ -492,7 +495,7 @@ BuriedUnsatPenaltyNode::decrement_counts(
 					--oversat_donor_count;
 				}
 			} else {
-				utility_exit_with_message( "Error in BuriedUnsatPenaltyNode::increment_counts(): A hydrogen bond donor/acceptor group was encountered that was neither donor nor acceptor.  This should be impossilbe." );
+				utility_exit_with_message( "Error in BuriedUnsatPenaltyNode::decrement_counts(): A hydrogen bond donor/acceptor group was encountered that was neither donor nor acceptor.  This should be impossilbe." );
 			}
 		}
 	} //Loop through all donor/acceptor groups

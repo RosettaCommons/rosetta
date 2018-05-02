@@ -366,12 +366,12 @@ public:
 
 		core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_(pose));
 
-		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(1))).restrict_to_repacking();
-		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(3))).restrict_to_repacking();
-		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(4))).restrict_to_repacking();
-		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(6))).restrict_to_repacking();
-		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(7))).restrict_to_repacking();
-		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(9))).restrict_to_repacking();
+		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(1))).prevent_repacking();
+		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(3))).prevent_repacking();
+		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(4))).prevent_repacking();
+		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(6))).prevent_repacking();
+		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(7))).prevent_repacking();
+		(static_cast< core::pack::task::ResidueLevelTask_ & >(task->nonconst_residue_task(9))).prevent_repacking();
 
 		utility::vector1< bool > allowed_aas( core::chemical::num_canonical_aas, false );
 		allowed_aas[ core::chemical::aa_asn ] = true;
