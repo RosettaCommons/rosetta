@@ -87,7 +87,8 @@ rosetta_recharge_fullatom( ResidueType & res );
 /// Of particular note is that it makes no attempt to transfer things over into
 /// "Superatoms"
 ///
-/// Current limitation: it cannot convert a ResidueType which has connections.
+/// Current limitation: it cannot convert a ResidueType which has connections,
+/// if any of the ICOORs depend on deleted hydrogens.
 ///
 /// Assumes:
 ///   * Input ResidueType is complete and finalized

@@ -2459,7 +2459,7 @@ AddConnectDeleteChildProton::apply( ResidueType & rsd ) const {
 bool
 AddConnectDeleteChildProton::changes_connections_on( ResidueType const & rsd_type, std::string const & atom ) const
 {
-	return rsd_type.has( atom ) && rsd_type.has( atom_ ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( atom_ );
+	return rsd_type.has( atom_ ) && !rsd_type.atom( atom_ ).is_hydrogen() && rsd_type.has( atom ) && rsd_type.atom_index( atom ) == rsd_type.atom_index( atom_ );
 }
 
 /// @brief Return the name of this PatchOperation ("AddConnectDeleteChildProton").
