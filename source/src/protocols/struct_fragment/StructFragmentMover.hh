@@ -27,6 +27,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
@@ -163,7 +164,27 @@ public:
 	/// @brief Set the path to the vall file
 	void set_vall_file( std::string vall_file ) { vall_file_ = vall_file; };
 
+	/// @brief sets the secondary structure to be used for constraint generation
+	void set_secstruct( std::string const & ss );
 
+	/// @brief If true, and no secstruct is specified, DSSP will be used to determine the pose
+	///        secondary structure.  If false (and no secstruct is specified), the pose
+	///        secondary structure will be directly used.
+	/// @param[in] use_dssp Desired value
+	void
+	set_use_dssp( bool const use_dssp );
+
+protected:
+	// these functions are protected because I wanted a basic unit test for them
+
+	/// @brief returns secondary structure to be used in this constraint generator
+	/// @param[in]  pose  Input pose
+	/// @returns Secondary stucture of the pose according to the following rules:
+	///          1. secstruct_ if it is non-empty
+	///          2. DSSP secondary structure of the input pose if use_dssp_ is true
+	///          3. Pose secondary structure if use_dssp_ is false
+	std::string
+	get_secstruct( core::pose::Pose const & pose ) const;
 
 private:
 	protocols::frag_picker::FragmentPickerOP structPicker_;
@@ -181,6 +202,8 @@ private:
 	std::string vall_file_;      // path to vall file
 	core::fragment::FragSetOP smallF_;
 	core::fragment::FragSetOP largeF_;
+	bool use_dssp_;
+	std::string secstruct_;   // secondary structure specification
 
 
 	// default values
@@ -215,6 +238,8 @@ private:
 	/// @brief Default prefix for fragment output files
 	inline static std::string default_value_for_prefix() { return "structFrag"; };
 
+	/// @brief Default value for empty file
+	inline static std::string default_value_for_secstruct() { return std::string(); };
 
 	/// @brief evaluates which process to run
 	core::Size evaluate_job();

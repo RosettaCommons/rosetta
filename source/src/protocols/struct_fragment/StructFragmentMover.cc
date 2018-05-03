@@ -39,6 +39,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/moves/DsspMover.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 // Utility Headers
 #include <basic/database/open.hh>
@@ -78,7 +79,9 @@ StructFragmentMover::StructFragmentMover():
 	changed_frags_( false ),
 	frag_weight_file_( default_value_for_empty_file() ),
 	sequence_profile_( default_value_for_empty_file() ),
-	vall_file_( default_value_for_empty_file() )
+	vall_file_( default_value_for_empty_file() ),
+	use_dssp_( true ),
+	secstruct_( "" )
 {
 	structPicker_->n_candidates_ = default_value_for_n_candidates();
 	structPicker_->n_frags_      = default_value_for_n_frags();
@@ -240,14 +243,10 @@ cf::FragSetOP StructFragmentMover::steal_fragments_by_size( cp::Pose const & pos
 pfp::FragmentPickerOP StructFragmentMover::make_fragment_picker( cp::Pose pose, std::string vall_file_name ) {
 	core::Size num_res = pose.total_residue();
 
-	// get secondary structure
-	protocols::moves::DsspMover dssp;
-	dssp.apply( pose );
-
 	// get sequence and structure; DSSP has to be executed before the SS can be set
 	std::string sequence = pose.sequence();
 	TR.Debug << "SEQ: " << sequence << std::endl;
-	std::string structure = pose.secstruct();
+	std::string structure = get_secstruct( pose );
 	TR.Debug << "STR: " << structure << std::endl;
 
 	// get accessible surface area
@@ -424,6 +423,44 @@ StructFragmentMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new StructFragmentMover );
 }
 
+/// @brief returns secondary structure to be used in this constraint generator
+/// @param[in]  pose  Input pose
+/// @returns Pose secondary structure
+void
+StructFragmentMover::set_secstruct( std::string const & ss )
+{
+	secstruct_ = ss;
+}
+
+/// @brief If true, and no secstruct is specified, DSSP will be used to determine the pose
+///        secondary structure.  If false (and no secstruct is specified), the pose
+///        secondary structure will be directly used.
+/// @param[in] use_dssp Desired value
+void
+StructFragmentMover::set_use_dssp( bool const use_dssp )
+{
+	use_dssp_ = use_dssp;
+}
+
+/// @brief returns secondary structure to be used in this constraint generator
+/// @param[in]  pose  Input pose
+/// @returns Secondary stucture of the pose according to the following rules:
+///          1. secstruct_ if it is non-empty
+///          2. DSSP secondary structure of the input pose if use_dssp_ is true
+///          3. Pose secondary structure if use_dssp_ is false
+std::string
+StructFragmentMover::get_secstruct( core::pose::Pose const & pose ) const
+{
+	if ( !secstruct_.empty() ) return secstruct_;
+
+	if ( use_dssp_ ) {
+		core::scoring::dssp::Dssp dssp( pose );
+		return dssp.get_dssp_secstruct();
+	}
+
+	return pose.secstruct();
+}
+
 void
 StructFragmentMover::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -442,6 +479,8 @@ StructFragmentMover::parse_my_tag(
 	structPicker_->n_candidates_ = tag->getOption< core::Size >( "n_candidates", default_value_for_n_candidates() );
 	structPicker_->n_frags_      = tag->getOption< core::Size >( "n_frags", default_value_for_n_frags() );
 	structPicker_->prefix_       = tag->getOption< std::string >( "prefix", default_value_for_prefix() );
+	set_use_dssp( tag->getOption< bool >( "use_dssp", use_dssp_  ) );
+	set_secstruct( tag->getOption< std::string >( "secstruct", secstruct_ ) );
 
 	// -- Linked Attributes (depend of one another) -- //
 	small_frag_file_ = tag->getOption< std::string >( "small_frag_file", default_value_for_empty_file() );
@@ -488,8 +527,9 @@ void StructFragmentMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		+ XMLSchemaAttribute( "vall_file", xs_string, "Path to vall file (required when no fragment files are provided)" )
 		+ XMLSchemaAttribute::attribute_w_default( "n_candidates", xsct_non_negative_integer, "Set the number of candidates", utility::to_string( default_value_for_n_candidates() ) )
 		+ XMLSchemaAttribute::attribute_w_default( "n_frags", xsct_non_negative_integer, "Set the number of fragments", utility::to_string( default_value_for_n_frags() ) )
-		+ XMLSchemaAttribute::required_attribute( "prefix", xs_string, "Prefix of output files and the fragments stored in the DataMap." );
-
+		+ XMLSchemaAttribute::attribute_w_default( "prefix", xs_string, "Prefix of output files and the fragments stored in the DataMap.", default_value_for_prefix() )
+		+ XMLSchemaAttribute::attribute_w_default( "secstruct", xs_string, "Secondary structure", default_value_for_secstruct() )
+		+ XMLSchemaAttribute::attribute_w_default( "use_dssp", xsct_rosetta_bool, "Use DSSP to determine secondary structure?", "true" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Create fragments from a supplied pose.", attlist );
 }

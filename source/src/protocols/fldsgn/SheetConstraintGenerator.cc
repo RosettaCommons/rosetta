@@ -203,6 +203,7 @@ SheetConstraintGenerator::parse_tag(
 	}
 
 	set_secstruct( tag->getOption< std::string >( "secstruct", secstruct_ ) );
+	set_use_dssp( tag->getOption< bool >( "use_dssp", use_dssp_  ) );
 	set_strand_pairs( tag->getOption< std::string >( "spairs", spairs_ ) );
 	set_flat_bottom_constraints( tag->getOption< bool >( "flat_bottom_constraints", flat_bottom_constraints_ ) );
 	set_distance( tag->getOption< core::Real >( "dist", dist_ ) );
@@ -258,7 +259,7 @@ SheetConstraintGenerator::attributes_for_sheet_constraint_generator( utility::ta
 		+ XMLSchemaAttribute::attribute_w_default( "cacb_dihedral_tolerance", xsct_real, "Tolerance in Ca-Cb dihedral angle (in radians)", "0.9" )
 		+ XMLSchemaAttribute::attribute_w_default( "bb_dihedral_tolerance", xsct_real, "Tolerance in backbone dihedral angle constraint (in radians)", "0.52" )
 		+ XMLSchemaAttribute::attribute_w_default( "weight", xsct_real, "Weight to use for these constraints", "1.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "use_dssp", xsct_rosetta_bool, "Use DSSP to determine secondary structure?", "true" );
+		+ XMLSchemaAttribute::attribute_w_default( "use_dssp", xsct_rosetta_bool, "Use DSSP to determine secondary structure?", "false" );
 
 }
 
