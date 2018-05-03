@@ -45,6 +45,7 @@ _banned_headers_ +=' core/scoring/fiber_diffraction/FiberDiffractionKernelGpu.hh
 _banned_headers_ +=' basic/database/DatabaseSessionLoader.hh' # TEMP deprecated code from the old ResourceManager ...
 _banned_headers_ +=' basic/database/DatabaseSessionLoaderCreator.hh' # TEMP ... that could still be useful if slightly edited...
 _banned_headers_ +=' basic/database/DatabaseSessionOptions.hh' # TEMP ... and turned into a protocols::parser::DataLoader
+#_banned_headers_ +=' json.hpp'
 
 # Setting output to be printed in unicode regardless of terminal settings
 if sys.version_info[0] == 2: sys.stdout = codecs.getwriter('utf8')(sys.stdout)
