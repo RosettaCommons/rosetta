@@ -116,7 +116,15 @@ ChemicalManager::create_atom_type_set(
 	std::string const & tag
 ) const
 {
-	std::string const directory( basic::database::full_name( "chemical/atom_type_sets/"+tag+"/" ) );
+	// fd a flag can override the "fullatom" typeset
+	//   only changes the location of the input files, NOT the tag name in database (or overrides)
+	//   this is necessary if we want to change ATS w/o changing RTS
+	std::string tagmapped = tag;
+	if ( tag == "fa_standard" && basic::options::option[basic::options::OptionKeys::corrections::chemical::alternate_fullatom_ats].user() ) {
+		tagmapped = basic::options::option[basic::options::OptionKeys::corrections::chemical::alternate_fullatom_ats]();
+	}
+
+	std::string const directory( basic::database::full_name( "chemical/atom_type_sets/"+tagmapped+"/" ) );
 	AtomTypeSetOP new_set( new AtomTypeSet( directory ) );
 	// optionally add extra parameters from files given on the command line (see util.hh)
 	modify_atom_properties_from_command_line( tag, *new_set );

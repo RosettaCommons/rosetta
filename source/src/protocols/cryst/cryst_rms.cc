@@ -194,7 +194,7 @@ crystRMSfast (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy) {
 }
 
 core::Real
-crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy) {
+crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy, bool allatom) {
 	using namespace core;
 	using namespace core::scoring;
 	using namespace core::conformation::symmetry;
@@ -226,9 +226,17 @@ crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy) {
 		core::Size count=0;
 		for ( core::Size i=1; i<=nres_asu; ++i ) {
 			core::Size residx = (j-1)*nres_asu+i;
-			if ( pose_native.residue(residx).is_protein() ) {
-				coms_native[j] += pose_native.residue(residx).atom(2).xyz();
-				count++;
+			core::conformation::Residue const &rsd = pose_native.residue(residx);
+			if ( allatom ) {
+				for ( core::Size k=1; k<=rsd.nheavyatoms(); ++k ) {
+					coms_native[j] += rsd.atom(k).xyz();
+					count++;
+				}
+			} else {
+				if ( rsd.is_protein() ) {
+					coms_native[j] += rsd.atom(2).xyz();
+					count++;
+				}
 			}
 		}
 		coms_native[j] /= count;
@@ -239,27 +247,64 @@ crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy) {
 		core::Size count=0;
 		for ( core::Size i=1; i<=nres_asu; ++i ) {
 			core::Size residx = (j-1)*nres_asu+i;
-			if ( pose_decoy.residue(residx).is_protein() ) {
-				coms_decoy[j] += pose_decoy.residue(residx).atom(2).xyz();
-				count++;
+			core::conformation::Residue const &rsd = pose_decoy.residue(residx);
+			if ( allatom ) {
+				for ( core::Size k=1; k<=rsd.nheavyatoms(); ++k ) {
+					coms_decoy[j] += rsd.atom(k).xyz();
+					count++;
+				}
+			} else {
+				if ( rsd.is_protein() ) {
+					coms_decoy[j] += rsd.atom(2).xyz();
+					count++;
+				}
 			}
 		}
 		coms_decoy[j] /= count;
 	}
 
+	// get natoms in asu
+	core::Size nres_aln = 0;
+	if ( allatom ) {
+		for ( core::Size i=1; i<=nres_asu; ++i ) {
+			core::conformation::Residue const &rsd = pose_native.residue(i);
+			nres_aln += rsd.nheavyatoms();
+		}
+	} else {
+		for ( core::Size i=1; i<=nres_asu; ++i ) {
+			core::conformation::Residue const &rsd = pose_native.residue(i);
+			if ( rsd.is_protein() ) nres_aln++;
+		}
+	}
+
 	// 1B - get chainA->chainA transformation
 	numeric::xyzMatrix< core::Real > R;
 	{
-		ObjexxFCL::FArray2D< core::Real > init_coords( 3, nres_asu ), final_coords( 3, nres_asu );
-		ObjexxFCL::FArray1D< core::Real > ww( nres_asu, 1.0 );
+		ObjexxFCL::FArray2D< core::Real > init_coords( 3, nres_aln ), final_coords( 3, nres_aln );
+		ObjexxFCL::FArray1D< core::Real > ww( nres_aln, 1.0 );
 		ObjexxFCL::FArray2D< core::Real > uu( 3, 3, 0.0 );
 		numeric::Real ctx;
+		core::Size idx=1;
 		for ( core::Size i=1; i<=nres_asu; ++i ) {
-			if ( pose_decoy.residue(i).is_protein() ) {
-				Vector const &x_decoy = pose_decoy.residue(i).atom(2).xyz();
-				Vector const &x_native = pose_native.residue(i).atom(2).xyz();
-				init_coords(1,i) = x_decoy[0]; init_coords(2,i) = x_decoy[1]; init_coords(3,i) = x_decoy[2];
-				final_coords(1,i) = x_native[0]; final_coords(2,i) = x_native[1]; final_coords(3,i) = x_native[2];
+			if ( allatom ) {
+				if ( pose_decoy.residue(i).is_protein() ) {
+					Vector const &x_decoy = pose_decoy.residue(i).atom(2).xyz();
+					Vector const &x_native = pose_native.residue(i).atom(2).xyz();
+					init_coords(1,idx) = x_decoy[0]; init_coords(2,idx) = x_decoy[1]; init_coords(3,idx) = x_decoy[2];
+					final_coords(1,idx) = x_native[0]; final_coords(2,idx) = x_native[1]; final_coords(3,idx) = x_native[2];
+					idx++;
+				}
+			} else {
+				core::conformation::Residue const &rsd_n = pose_native.residue(i);
+				core::conformation::Residue const &rsd_d = pose_decoy.residue(i);
+				runtime_assert( rsd_n.nheavyatoms() == rsd_d.nheavyatoms() );
+				for ( core::Size k=1; k<=rsd_n.nheavyatoms(); ++k ) {
+					Vector const &x_decoy = rsd_d.atom(k).xyz();
+					Vector const &x_native = rsd_n.atom(k).xyz();
+					init_coords(1,idx) = x_decoy[0]; init_coords(2,idx) = x_decoy[1]; init_coords(3,idx) = x_decoy[2];
+					final_coords(1,idx) = x_native[0]; final_coords(2,idx) = x_native[1]; final_coords(3,idx) = x_native[2];
+					idx++;
+				}
 			}
 		}
 		numeric::model_quality::findUU( final_coords, init_coords, ww, nres_asu, uu, ctx );
@@ -287,22 +332,35 @@ crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy) {
 	// 3 construct corresponding CA arrays and compute RMS
 	float rms;
 	{
-		ObjexxFCL::FArray2D< core::Real > init_coords( 3, nsubunits_decoy*nres_asu ), final_coords( 3, nsubunits_decoy*nres_asu );
-
+		ObjexxFCL::FArray2D< core::Real > init_coords( 3, nsubunits_decoy*nres_aln ), final_coords( 3, nsubunits_decoy*nres_aln );
+		core::Size idx=1;
 		for ( core::Size j=1; j<=nsubunits_decoy; ++j ) {
+			core::Size resdecoy = (j-1)*nres_asu;
+			core::Size resnative = (map_decoy2native[j]-1)*nres_asu;
 			for ( core::Size i=1; i<=nres_asu; ++i ) {
-				core::Size resdecoy = (j-1)*nres_asu+i;
-				core::Size resnative = (map_decoy2native[j]-1)*nres_asu+i;
-				if ( pose_decoy.residue(resdecoy).is_protein() ) {
-					Vector const &x_decoy = pose_decoy.residue(resdecoy).atom(2).xyz();
-					Vector const &x_native = pose_native.residue(resnative).atom(2).xyz();
-					init_coords(1,resdecoy) = x_decoy[0]; init_coords(2,resdecoy) = x_decoy[1]; init_coords(3,resdecoy) = x_decoy[2];
-					final_coords(1,resdecoy) = x_native[0]; final_coords(2,resdecoy) = x_native[1]; final_coords(3,resdecoy) = x_native[2];
+				if ( allatom ) {
+					core::conformation::Residue const &rsd_n = pose_native.residue(resnative+i);
+					core::conformation::Residue const &rsd_d = pose_decoy.residue(resdecoy+i);
+					for ( core::Size k=1; k<=rsd_n.nheavyatoms(); ++k ) {
+						Vector const &x_decoy = rsd_d.atom(k).xyz();
+						Vector const &x_native = rsd_n.atom(k).xyz();
+						init_coords(1,idx) = x_decoy[0]; init_coords(2,idx) = x_decoy[1]; init_coords(3,idx) = x_decoy[2];
+						final_coords(1,idx) = x_native[0]; final_coords(2,idx) = x_native[1]; final_coords(3,idx) = x_native[2];
+						idx++;
+					}
+				} else {
+					if ( pose_decoy.residue(resdecoy).is_protein() ) {
+						Vector const &x_decoy = pose_decoy.residue(resdecoy+i).atom(2).xyz();
+						Vector const &x_native = pose_native.residue(resnative+i).atom(2).xyz();
+						init_coords(1,idx) = x_decoy[0]; init_coords(2,idx) = x_decoy[1]; init_coords(3,idx) = x_decoy[2];
+						final_coords(1,idx) = x_native[0]; final_coords(2,idx) = x_native[1]; final_coords(3,idx) = x_native[2];
+						idx++;
+					}
 				}
 			}
 		}
 
-		rms = numeric::model_quality::rms_wrapper( nsubunits_decoy*nres_asu, final_coords, init_coords );
+		rms = numeric::model_quality::rms_wrapper( nsubunits_decoy*nres_aln, final_coords, init_coords );
 	}
 
 	return rms;

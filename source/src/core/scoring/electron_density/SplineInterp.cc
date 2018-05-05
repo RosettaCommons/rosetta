@@ -268,7 +268,7 @@ void ConvertToInterpolationCoefficients (
 
 //////////////////////////////////
 
-int compute_coefficients3(double *data, int dims[3]) {
+int compute_coefficients3(double *data, int dims[3], bool mirrored) {
 	std::vector< double > line;
 	double Pole[2];
 	int NbPoles;
@@ -285,7 +285,7 @@ int compute_coefficients3(double *data, int dims[3]) {
 	for ( y = 0L; y < dims[1]; y++ ) {
 		for ( z = 0L; z < dims[2]; z++ ) {
 			get_line3(data, 0, y, z, &line[0], dims);
-			ConvertToInterpolationCoefficients(&line[0], dims[0], Pole, NbPoles, DBL_EPSILON, false);
+			ConvertToInterpolationCoefficients(&line[0], dims[0], Pole, NbPoles, DBL_EPSILON, mirrored);
 			put_line3(data, 0, y, z, &line[0], dims);
 		}
 	}
@@ -297,7 +297,7 @@ int compute_coefficients3(double *data, int dims[3]) {
 	for ( x = 0L; x < dims[0]; x++ ) {
 		for ( z = 0L; z < dims[2]; z++ ) {
 			get_line3(data, 1, x, z, &line[0], dims);
-			ConvertToInterpolationCoefficients(&line[0], dims[1], Pole, NbPoles, DBL_EPSILON, false);
+			ConvertToInterpolationCoefficients(&line[0], dims[1], Pole, NbPoles, DBL_EPSILON, mirrored);
 			put_line3(data, 1, x, z, &line[0], dims);
 		}
 	}
@@ -309,7 +309,7 @@ int compute_coefficients3(double *data, int dims[3]) {
 	for ( x = 0L; x < dims[0]; x++ ) {
 		for ( y = 0L; y < dims[1]; y++ ) {
 			get_line3(data, 2, x, y, &line[0], dims);
-			ConvertToInterpolationCoefficients(&line[0], dims[2], Pole, NbPoles, DBL_EPSILON, false);
+			ConvertToInterpolationCoefficients(&line[0], dims[2], Pole, NbPoles, DBL_EPSILON, mirrored);
 			put_line3(data, 2, x, y, &line[0], dims);
 		}
 	}
@@ -317,118 +317,13 @@ int compute_coefficients3(double *data, int dims[3]) {
 	return(0);
 }
 
-
-int grad3(double grad[3], const double *Bcoeff, const int dims[3], double X[3]) {
-	double wt[3][4];
-	double w;
-	double sum_k, sum_jk;
-	int idx[3][4];
-	int i,j,k, pt, dim, gradDim;
-
-	// compute interpolation indexes
-	for ( gradDim=0; gradDim<3; gradDim++ ) {
-		for ( dim=0; dim<3; dim++ ) {
-			pt = (int)floor(X[dim] - (3-1) / 2.0);
-			for ( i = 0L; i <= 3; i++ ) {
-				idx[dim][i] = pt++;
-			}
-
-			// compute the interpolation weights
-			if ( dim == gradDim ) {
-				w = X[dim] - (double)idx[dim][1];
-				wt[dim][3] = (1.0 / 2.0) * w * w;
-				wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
-				wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
-				wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
-			} else {
-				w = X[dim] - (double)idx[dim][1];
-				wt[dim][3] = (1.0 / 6.0) * w * w * w;
-				wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
-				wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
-				wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
-			}
-
-			// _periodic_ boundary conditions
-			for ( i = 0L; i <= 3; i++ ) {
-				if ( dims[dim] == 1 ) {
-					idx[dim][i] = 0;
-				} else {
-					idx[dim][i] = idx[dim][i] % dims[dim];
-				}
-				if ( idx[dim][i] < 0 ) {
-					idx[dim][i] += dims[dim];
-				}
-			}
-		}
-
-		grad[gradDim] = 0.0;
-		for ( i = 0; i <= 3; i++ ) {  // x
-			sum_jk = 0.0;
-			for ( j = 0; j <= 3; j++ ) {  // y
-				sum_k = 0.0;
-				for ( k = 0; k <= 3; k++ ) {  // z
-					sum_k += wt[2][k] * Bcoeff[idx[0][i]*dims[1]*dims[2] + idx[1][j]*dims[2] + idx[2][k]];
-				}
-				sum_jk += wt[1][j] * sum_k;
-			}
-			grad[gradDim] += wt[0][i] * sum_jk;
-		}
-	}
-
-	return(0);
+int grad3(double grad[3], const double *Bcoeff, const int dims[3], double X[3], bool mirrored) {
+	return grad3< double >( grad, Bcoeff, dims, X, mirrored );
 }
 
-
-double interp3(const double *Bcoeff, const int dims[3], double X[3]) {
-	double wt[3][4];
-	double value;
-	double sum_k;
-	int idx[3][4];
-	int i,j,k, dim;
-
-	// interpolation indexes
-	for ( dim=0; dim<3; dim++ ) {
-		auto pt = (int)floor(X[dim] - (3-1) / 2.0);
-		for ( i = 0L; i <= 3; i++ ) {
-			idx[dim][i] = pt++;
-		}
-
-		// interpolation weights
-		double w = X[dim] - (double)idx[dim][1];
-		wt[dim][3] = (1.0 / 6.0) * w * w * w;
-		wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
-		wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
-		wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
-
-		// _periodic_ boundary conditions
-		for ( i = 0L; i <= 3; i++ ) {
-			if ( dims[dim] == 1 ) {
-				idx[dim][i] = 0;
-			} else {
-				idx[dim][i] = idx[dim][i] % dims[dim];
-			}
-			if ( idx[dim][i] < 0 ) {
-				idx[dim][i] += dims[dim];
-			}
-		}
-	}
-
-	value = 0.0;
-	for ( i = 0; i <= 3; i++ ) {  // x
-		double sum_jk = 0.0;
-		for ( j = 0; j <= 3; j++ ) {  // y
-			sum_k = 0.0;
-			for ( k = 0; k <= 3; k++ ) {  // z
-				sum_k += wt[2][k] * Bcoeff[idx[0][i]*dims[1]*dims[2] + idx[1][j]*dims[2] + idx[2][k]];
-			}
-			sum_jk += wt[1][j] * sum_k;
-		}
-		value += wt[0][i] * sum_jk;
-	}
-
-	return(value);
+double interp3(const double *Bcoeff, const int dims[3], double X[3], bool mirrored) {
+	return interp3< double > ( Bcoeff, dims, X, mirrored );
 }
-
 
 int compute_coefficients4(double *data, int dims[4]) {
 	std::vector< double > line;

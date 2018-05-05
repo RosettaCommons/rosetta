@@ -74,6 +74,7 @@
 #include <core/scoring/dna/DirectReadoutPotential.fwd.hh>
 
 #include <core/scoring/facts/FACTSPotential.fwd.hh>
+#include <core/scoring/GenericBondedPotential.fwd.hh>
 
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.fwd.hh>
 
@@ -202,6 +203,10 @@ public:
 	/// fundamentally NOT THREADSAFE!!!  (Only the creation of this object is threadsafe).
 	/// @author Rewritten by Vikram K. Mulligan.
 	FACTSPotential const & get_FACTSPotential() const;
+
+	/// @brief Get an instance of the GenericBondedPotential scoring object, by const owning pointer.
+	/// @details Threadsafe and lazily loaded.
+	GenericBondedPotential const & get_GenericBondedPotential() const;
 
 	/// @brief Get an instance of the DNA_BasePotential scoring object, by const owning pointer.
 	/// @details Threadsafe and lazily loaded.
@@ -698,6 +703,12 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	static FACTSPotentialOP create_facts_potential_instance();
 
+	/// @brief Create an instance of the GenericBondedPotential object, by owning pointer.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	static GenericBondedPotentialOP create_generic_bonded_potential_instance();
+
 	/// @brief Create an instance of the FactsPotential object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 	/// @note Not intended for use outside of ScoringManager.
@@ -1068,6 +1079,7 @@ private:
 	mutable std::mutex multipole_elec_mutex_;
 	mutable std::mutex sasa_potential_mutex_;
 	mutable std::mutex facts_mutex_;
+	mutable std::mutex generic_bonded_mutex_;
 	mutable std::mutex dnabase_mutex_;
 	mutable std::mutex rama_mutex_;
 	mutable std::mutex rama2b_mutex_;
@@ -1137,6 +1149,7 @@ private:
 	mutable std::atomic_bool multipole_elec_bool_;
 	mutable std::atomic_bool sasa_potential_bool_;
 	mutable std::atomic_bool facts_bool_;
+	mutable std::atomic_bool generic_bonded_bool_;
 	mutable std::atomic_bool dnabase_bool_;
 	mutable std::atomic_bool rama_bool_;
 	mutable std::atomic_bool rama2b_bool_;
@@ -1240,6 +1253,7 @@ private:
 	mutable MultipoleElecPotentialOP multipole_elec_potential_;
 	mutable SASAPotentialOP sasa_potential_;
 	mutable FACTSPotentialOP facts_potential_;
+	mutable GenericBondedPotentialOP generic_bonded_potential_;
 	mutable disulfides::FullatomDisulfidePotentialOP fa_disulfide_potential_;
 	mutable disulfides::CentroidDisulfidePotentialOP cen_disulfide_potential_;
 	mutable disulfides::DisulfideMatchingPotentialOP disulfide_matching_potential_;

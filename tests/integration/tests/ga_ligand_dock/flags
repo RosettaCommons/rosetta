@@ -1,0 +1,6 @@
+-parser:protocol ga_ligdock.xml
+-s inputs/holo.pdb
+-gen_potential
+-crystal_refine
+-in::file::load_PDB_components false
+-extra_res_fa inputs/LG.params

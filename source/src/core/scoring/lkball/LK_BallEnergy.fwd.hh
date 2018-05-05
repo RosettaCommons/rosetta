@@ -17,25 +17,16 @@
 #define INCLUDED_core_scoring_methods_LK_BALLENERGY_FWD_HH
 
 // Unit Headers
-// #include <core/scoring/methods/LK_BallEnergy.fwd.hh>
-
-// // Package headers
-// #include <core/conformation/Atom.fwd.hh>
-// #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-// #include <core/scoring/etable/Etable.fwd.hh>
-// #include <core/scoring/ScoreFunction.fwd.hh>
-
-// // Project headers
-// #include <core/pose/Pose.fwd.hh>
-
-// // Utility headers
-// #include <utility/vector1.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
 namespace lkball {
 
 class LK_BallEnergy;
+
+typedef utility::pointer::shared_ptr< LK_BallEnergy > LK_BallEnergyOP;
+typedef utility::pointer::shared_ptr< LK_BallEnergy const > LK_BallEnergyCOP;
 
 class LK_Ball_RPE_Invoker;
 

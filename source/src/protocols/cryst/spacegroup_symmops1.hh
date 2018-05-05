@@ -41,6 +41,7 @@ void get_symmops_P121slashm1( utility::vector1<core::kinematics::RT> &rt_out, Ch
 void get_symmops_C12slashm1( utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc );
 void get_symmops_P12slashc1( utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc );
 void get_symmops_P121slashc1( utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc );
+void get_symmops_P121slashn1( utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc );
 void get_symmops_C12slashc1( utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc );
 void get_symmops_P222( utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc );
 void get_symmops_P2221( utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc );

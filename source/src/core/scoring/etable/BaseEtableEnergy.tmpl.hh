@@ -709,6 +709,7 @@ BaseEtableEnergy< Derived >::BaseEtableEnergy(
 	: etable_in.hydrogen_interaction_cutoff2() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
 	do_classic_intrares_( do_classic_intrares ),
+	count_pair_hybrid_( options.count_pair_hybrid() ),
 	put_intra_into_total_( options.put_intra_into_total() ),
 	exclude_intra_res_protein_( options.exclude_intra_res_protein() )
 {}
@@ -724,6 +725,7 @@ BaseEtableEnergy< Derived >::BaseEtableEnergy( BaseEtableEnergy< Derived > const
 	hydrogen_interaction_cutoff2_( src.hydrogen_interaction_cutoff2_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
 	do_classic_intrares_( src.do_classic_intrares_ ),
+	count_pair_hybrid_( src.count_pair_hybrid_ ),
 	put_intra_into_total_( src.put_intra_into_total_ ),
 	exclude_intra_res_protein_( src.exclude_intra_res_protein_ )
 {
@@ -1171,7 +1173,10 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 		}
 	} else if ( res1.seqpos() == res2.seqpos() ) {
 		// logic for controlling intra-residue count pair behavior goes here; for now, default to crossover 3
-		if ( do_classic_intrares_ ) {
+		bool is_ligand = res1.is_ligand();
+		if ( is_ligand && count_pair_hybrid_ ) {
+			return CP_CROSSOVER_3FULL;
+		} else if ( do_classic_intrares_ ) {
 			return CP_CROSSOVER_3; // used by EtableIntraClassicEnergy
 		} else {
 			return CP_CROSSOVER_4;

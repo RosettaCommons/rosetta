@@ -1,0 +1,236 @@
+NAME  ATOM LJ_RADIUS LJ_WDEPTH LK_DGFREE LK_LAMBDA LK_VOLUME
+CNH2     C  1.968297  0.094638  3.077030    3.5000 13.500000
+COO      C  1.916661  0.141799 -3.332648    3.5000 14.653000 
+CH0      C  2.011760  0.062642  1.409284    3.5000  8.998000
+CH1      C  2.011760  0.062642 -3.538387    3.5000 10.686000
+CH2      C  2.011760  0.062642 -1.854658    3.5000 18.331000
+CH3      C  2.011760  0.062642  7.292929    3.5000 25.855000
+aroC     C  2.016441  0.068775  1.797950    3.5000 16.704000 AROMATIC ORBITALS
+Ntrp     N  1.802452  0.161725 -8.413116    3.5000  9.522100 DONOR AROMATIC ORBITALS
+Nhis     N  1.802452  0.161725 -9.739606    3.5000  9.317700 ACCEPTOR AROMATIC RING_HYBRID ORBITALS
+NtrR     N  1.802452  0.161725 -5.158080    3.5000  9.779200 DONOR AROMATIC ORBITALS
+NH2O     N  1.802452  0.161725 -8.101638    3.5000 15.689000 DONOR
+Nlys     N  1.802452  0.161725-20.864641    3.5000 16.514000 DONOR 
+Narg     N  1.802452  0.161725 -8.968351    3.5000 15.717000 DONOR ORBITALS
+Npro     N  1.802452  0.161725 -0.984585    3.5000  3.718100 DONOR
+OH       O  1.542743  0.161947 -8.133520    3.5000 10.722000 ACCEPTOR SP3_HYBRID DONOR ORBITALS
+OW       O  1.542743  0.161947 -8.133520    3.5000 10.722000 ACCEPTOR SP3_HYBRID DONOR ORBITALS # duplicating the properties for OH for a water-only oxygen type
+ONH2     O  1.548662  0.182924 -6.591644    3.5000 10.102000 ACCEPTOR SP2_HYBRID ORBITALS
+OOC      O  1.492871  0.099873 -9.239832    3.5000  9.995600 ACCEPTOR SP2_HYBRID ORBITALS
+Oaro     O    1.5500    0.1591   -4.0000    3.5000   10.8000 ACCEPTOR AROMATIC RING_HYBRID ORBITALS # aromatic ring oxygen (e.g. furan) modeled on OH and Nhis (IWD)
+Oet2     O    1.5500    0.1591   -5.8500    3.5000   10.8000 ACCEPTOR SP2_HYBRID ORBITALS # copied from ONH2, for use in ethers (nucleic acid O5',O3')
+Oet3     O    1.5500    0.1591   -6.7000    3.5000   10.8000 ACCEPTOR SP3_HYBRID DONOR ORBITALS # copied from OH, for use in ethers (nucleic acid O4')
+S        S  1.975967  0.455970 -1.707229    3.5000 17.640000  
+SH1      S  1.975967  0.455970  3.291643    3.5000 23.240000  
+Nbb      N  1.802452  0.161725 -9.969494    3.5000 15.992000 DONOR
+CAbb     C  2.011760  0.062642  2.533791    3.5000 12.137000
+CObb     C  1.916661  0.141799  3.104248    3.5000 13.221000
+OCbb     O  1.540580  0.142417 -8.006829    3.5000 12.196000 ACCEPTOR SP2_HYBRID ORBITALS
+Phos     P    2.1500    0.5850  -24.0000    3.5000   34.8000
+Pbb      P    2.1500    0.5850  -24.0000    3.5000   34.8000 #currently a copy of Phos properties
+Hpol     H  0.901681  0.005000    0.0000    3.5000    0.0000 POLAR_HYDROGEN
+HS       H  0.363887  0.050836    0.0000    3.5000    0.0000 POLAR_HYDROGEN
+Hapo     H  1.421272  0.021808    0.0000    3.5000    0.0000
+Haro     H  1.374914  0.015909    0.0000    3.5000    0.0000
+HNbb     H  0.901681  0.005000    0.0000    3.5000    0.0000 POLAR_HYDROGEN
+Hwat     H    1.0000    0.0500    0.0000    3.5000    0.0000 POLAR_HYDROGEN
+Owat     O    1.5500    0.1591   -6.5000    3.5000   10.8000 ACCEPTOR DONOR SP3_HYBRID
+Opoint   O    1.5500    0.1591    0.0000    3.5000   10.8000
+HOH      O    1.4000    0.0500    0.0000    3.5000   10.8000 ACCEPTOR DONOR SP3_HYBRID
+Bsp2     B    1.9800    0.0340   -4.0000    3.5000    4.4000 #Boron -- first two parameters taken from AMBER; LK parameters from Nhis (wild guess). 
+F        F    1.6941    0.0750    0.8235    3.5000   11.5000 SP3_HYBRID  # radius/wdepth: taken from MM3 forcefield; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+Cl      CL    2.0496    0.2399    1.7445    3.5000   24.4000 SP3_HYBRID  # radius/wdepth: taken from MM3 forcefield; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+Br      BR    2.1971    0.3255   -0.0574    3.5000   35.5000 SP3_HYBRID  # radius/wdepth: taken from MM3 forcefield; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+I        I    2.3600    0.4240   -2.6588    3.5000   44.6000 SP3_HYBRID  # radius/wdepth: taken from MM3 forcefield; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+Zn2p    ZN    1.0900    0.2500   -5.0000    3.5000    5.4000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+Co2p    CO    1.5680    0.2500   -5.0000    3.5000   16.1483 SP3_HYBRID  # radius/wdepth: ion radius for zinc from CHARMM27 times the ratio of the van der Waals radii of Co to Zn; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+Cu2p    CU    1.0978    0.2500   -5.0000    3.5000    5.5419 SP3_HYBRID  # radius/wdepth: ion radius for zinc from CHARMM27 times the ratio of the van der Waals radii of Cu to Zn; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+Fe2p    FE    0.7800    0.0000   -5.0000    3.5000    2.0000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+Fe3p    FE    0.6500    0.0000   -5.0000    3.5000    1.2000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+Mg2p    MG    1.1850    0.0150   -5.0000    3.5000    7.0000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+Ca2p    CA    1.3670    0.1200    0.0000    2.0000   10.7000 SP3_HYBRID  # radius/wdepth: Marchard 1998 Proteins;CHARMM27, MacKerell 2004;kosta makrodimitris; LK vol wild guess 4/3 pi r^3; LK lambda ZAHN Phys.Chem.Chem.Phys.,2003,5,4004; kosta makrodimitris; LK dgfree HOP /HA; Lazaridis 1999 PROTEINS; kosta makrodimitris
+Pha      P    2.1500    0.5850   -4.0000    6.0000   37.9000 SP3_HYBRID # See comment below for the reference
+OPha     O    1.7000    0.1200   -6.0000    1.7000   10.8000 ACCEPTOR SP3_HYBRID # See comment below for the reference
+OHha     O    1.7700    0.1521   -6.7700    3.5000   22.1000 ACCEPTOR DONOR SP3_HYBRID # See comment below for the reference
+Hha      H    0.2245    0.0460    0.0000    3.5000    2.0000 POLAR_HYDROGEN # See comment below for the reference
+CO3      C    1.7000    0.0880   -2.1000    8.0000    8.3    SP2_HYBRID #@Robin 
+OC3      O    1.6000    0.1370  -10.0000    8.0000   10.8    ACCEPTOR   SP2_HYBRID #@Robin
+Si       Si   1.8532    0.4020    3.9000    2.2000   34.7    SP3_HYBRID #@Robin
+OSi      O    1.7766    0.0600   -3.9000    1.6000   20.4    ACCEPTOR   SP3_HYBRID #@Robin
+Oice     O    1.6000    0.1591   -6.7000    3.5000   14.3    ACCEPTOR   SP3_HYBRID #@Robin
+Hice     H    0.8000    0.0498    0.0000    3.500     2.0    POLAR_HYDROGEN #@Robin 
+Na1p    NA    1.3638    0.0469   -5.0000    3.5000   10.6000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+K1p      K    1.7638    0.0870   -5.0000    3.5000   23.0000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+###### The following atoms were added based on UFF (Rappe et al. 1992 JACS 114;10024) LJ parameters; LK dgfree wild guess; LK vol 4/3 pi r^3;
+###  Feel free to change/optimize
+He      HE    1.1810    0.0560   -5.0000    3.5000    5.8424  # UFF-based
+Li      LI    1.2255    0.0250   -5.0000    3.5000    6.2909  # UFF-based
+Be      BE    1.3725    0.0850   -5.0000    3.5000    7.8907  # UFF-based
+Ne      NE    1.6215    0.0420   -5.0000    3.5000   11.0134  # UFF-based
+Al      AL    2.2495    0.5050   -5.0000    3.5000   21.1963  # UFF-based
+Ar      AR    1.9340    0.1850   -5.0000    3.5000   15.6676  # UFF-based
+Sc      SC    1.6475    0.0190   -5.0000    3.5000   11.3694  # UFF-based
+Ti      TI    1.5875    0.0170   -5.0000    3.5000   10.5564  # UFF-based
+V       V     1.5720    0.0160   -5.0000    3.5000   10.3513  # UFF-based
+Cr      CR    1.5115    0.0150   -5.0000    3.5000    9.5698  # UFF-based
+Mn      MN    1.4805    0.0130   -5.0000    3.5000    9.1813  # UFF-based
+Ni      NI    1.4170    0.0150   -5.0000    3.5000    8.4106  # UFF-based
+Ga      GA    2.1915    0.4150   -5.0000    3.5000   20.1174  # UFF-based
+Ge      GE    2.1400    0.3790   -5.0000    3.5000   19.1830  # UFF-based
+As      AS    2.1150    0.3090   -5.0000    3.5000   18.7374  # UFF-based
+Se      SE    2.1025    0.2910   -5.0000    3.5000   18.5166  # UFF-based
+Kr      KR    2.0705    0.2200   -5.0000    3.5000   17.9572  # UFF-based
+Rb      RB    2.0570    0.0400   -5.0000    3.5000   17.7238  # UFF-based
+Sr      SR    1.8205    0.2350   -5.0000    3.5000   13.8826  # UFF-based
+Y       Y     1.6725    0.0720   -5.0000    3.5000   11.7171  # UFF-based
+Zr      ZR    1.5620    0.0690   -5.0000    3.5000   10.2200  # UFF-based
+Nb      NB    1.5825    0.0590   -5.0000    3.5000   10.4900  # UFF-based
+Mo      MO    1.5260    0.0560   -5.0000    3.5000    9.7543  # UFF-based
+Tc      TC    1.4990    0.0480   -5.0000    3.5000    9.4122  # UFF-based
+Ru      RU    1.4815    0.0560   -5.0000    3.5000    9.1937  # UFF-based
+Rh      RH    1.4645    0.0530   -5.0000    3.5000    8.9840  # UFF-based
+Pd      PD    1.4495    0.0480   -5.0000    3.5000    8.8009  # UFF-based
+Ag      AG    1.5740    0.0360   -5.0000    3.5000   10.3776  # UFF-based
+Cd      CD    1.4240    0.2280   -5.0000    3.5000    8.4939  # UFF-based
+In      IN    2.2315    0.5990   -5.0000    3.5000   20.8585  # UFF-based
+Sn      SN    2.1960    0.5670   -5.0000    3.5000   20.2001  # UFF-based
+Sb      SB    2.2100    0.4490   -5.0000    3.5000   20.4585  # UFF-based
+Te      TE    2.2350    0.3980   -5.0000    3.5000   20.9239  # UFF-based
+Xe      XE    2.2020    0.3320   -5.0000    3.5000   20.3106  # UFF-based
+Cs      CS    2.2585    0.0450   -5.0000    3.5000   21.3663  # UFF-based
+Ba      BA    1.8515    0.3640   -5.0000    3.5000   14.3594  # UFF-based
+La      LA    1.7610    0.0170   -5.0000    3.5000   12.9899  # UFF-based
+Ce      CE    1.7780    0.0130   -5.0000    3.5000   13.2420  # UFF-based
+Pr      PR    1.8030    0.0100   -5.0000    3.5000   13.6170  # UFF-based
+Nd      ND    1.7875    0.0100   -5.0000    3.5000   13.3838  # UFF-based
+Pm      PM    1.7735    0.0090   -5.0000    3.5000   13.1750  # UFF-based
+Sm      SM    1.7600    0.0080   -5.0000    3.5000   12.9752  # UFF-based
+Eu      EU    1.7465    0.0080   -5.0000    3.5000   12.7769  # UFF-based
+Gd      GD    1.6840    0.0090   -5.0000    3.5000   11.8788  # UFF-based
+Tb      TB    1.7255    0.0070   -5.0000    3.5000   12.4715  # UFF-based
+Dy      DY    1.7140    0.0070   -5.0000    3.5000   12.3058  # UFF-based
+Ho      HO    1.7045    0.0070   -5.0000    3.5000   12.1698  # UFF-based
+Er      ER    1.6955    0.0070   -5.0000    3.5000   12.0416  # UFF-based
+Tm      TM    1.6870    0.0060   -5.0000    3.5000   11.9212  # UFF-based
+Yb      YB    1.6775    0.2280   -5.0000    3.5000   11.7873  # UFF-based
+Lu      LU    1.8200    0.0410   -5.0000    3.5000   13.8749  # UFF-based
+Hf      HF    1.5705    0.0720   -5.0000    3.5000   10.3315  # UFF-based
+Ta      TA    1.5850    0.0810   -5.0000    3.5000   10.5232  # UFF-based
+W       W     1.5345    0.0670   -5.0000    3.5000    9.8633  # UFF-based
+Re      RE    1.4770    0.0660   -5.0000    3.5000    9.1380  # UFF-based
+Os      OS    1.5600    0.0370   -5.0000    3.5000   10.1938  # UFF-based
+Ir      IR    1.4200    0.0730   -5.0000    3.5000    8.4463  # UFF-based
+Pt      PT    1.3770    0.0800   -5.0000    3.5000    7.9425  # UFF-based
+Au      AU    1.6465    0.0390   -5.0000    3.5000   11.3557  # UFF-based
+Hg      HG    1.3525    0.3850   -5.0000    3.5000    7.6624  # UFF-based
+Tl      TL    2.1735    0.6800   -5.0000    3.5000   19.7883  # UFF-based
+Pb      PB    2.1485    0.6630   -5.0000    3.5000   19.3357  # UFF-based
+Bi      BI    2.1850    0.5180   -5.0000    3.5000   19.9982  # UFF-based
+Po      PO    2.3545    0.3250   -5.0000    3.5000   23.2213  # UFF-based
+At      AT    2.3750    0.2840   -5.0000    3.5000   23.6274  # UFF-based
+Rn      RN    2.3825    0.2480   -5.0000    3.5000   23.7769  # UFF-based
+Fr      FR    2.4500    0.0500   -5.0000    3.5000   25.1432  # UFF-based
+Ra      RA    1.8385    0.4040   -5.0000    3.5000   14.1585  # UFF-based
+Ac      AC    1.7390    0.0330   -5.0000    3.5000   12.6674  # UFF-based
+Th      TH    1.6980    0.0260   -5.0000    3.5000   12.0771  # UFF-based
+Pa      PA    1.7120    0.0220   -5.0000    3.5000   12.2771  # UFF-based
+U       U     1.6975    0.0220   -5.0000    3.5000   12.0700  # UFF-based
+Np      NP    1.7120    0.0190   -5.0000    3.5000   12.2771  # UFF-based
+Pu      PU    1.7120    0.0160   -5.0000    3.5000   12.2771  # UFF-based
+Am      AM    1.6905    0.0140   -5.0000    3.5000   11.9707  # UFF-based
+Cm      CM    1.6630    0.0130   -5.0000    3.5000   11.5844  # UFF-based
+Bk      BK    1.6695    0.0130   -5.0000    3.5000   11.6751  # UFF-based
+Cf      CF    1.6565    0.0130   -5.0000    3.5000   11.4940  # UFF-based
+Es      ES    1.6495    0.0120   -5.0000    3.5000   11.3971  # UFF-based
+Fm      FM    1.6430    0.0120   -5.0000    3.5000   11.3074  # UFF-based
+Md      MD    1.6370    0.0110   -5.0000    3.5000   11.2250  # UFF-based
+No      NO    1.6240    0.0110   -5.0000    3.5000   11.0474  # UFF-based
+Lr      LR    1.6180    0.0110   -5.0000    3.5000   10.9659  # UFF-based   
+##########
+### Rosetta-specific Non-real Atoms
+##########
+SUCK  	 Z    0.0000    0.0000    0.0000    3.5000    0.0000 # Sucks in other atoms
+REPL     Z    1.5000    0.0000    0.0000    3.5000    0.0000 REPULSIVE # occupies space so rosetta won't pack sidechains (repl = repulsive). used i.e. in enzyme design to mark alternative positions of atoms that move during the reation (in lieu of real multistate design). lj_radius value of 1.5 is arbitrary guess somewhere between a proton and a c atom, lk_lambda value necessary to prevent etable implementation from producing nan in deriv evaluation, but has no effect on fa_sol score
+REPLS    Z    1.5500    0.1500    0.0000    0.0000    0.0000 REPULSIVE # calculates only repulsive energy of atoms in disordered residues. 
+HREPS    Z    1.0000    0.0500    0.0000    0.0000    0.0000 REPULSIVE # calculates only repulsive energy of hydrogen atoms in disordered residues. 
+VIRT     X    0.0000    0.0000    0.0000    3.5000    0.0000 VIRTUAL
+MPct     X    0.0000    0.0000    0.0000    3.5000    0.0000 # membrane protein center param
+MPnm     X    0.0000    0.0000    0.0000    3.5000    0.0000 # membrane protein normal param
+MPdp     X    0.0000    0.0000    0.0000    3.5000    0.0000 # membrane protein depth param
+MPtk     X    0.0000    0.0000    0.0000    3.5000    0.0000 # membrane protein thickness param
+#
+# NAME copied from Rosetta++ aaproperties_pack.cc atom_type_name
+# LJ_RADIUS copied from Rosetta++ etable.cc fa_lj_radius_initializer
+# LJ_WDEPTH copied from Rosetta++ etable.cc fa_lj_wdepth_initializer
+# LK_DGFREE copied from Rosetta++ etable.cc fa_lk_dgfree_initializer
+# LK_LAMBDA copied from Rosetta++ etable.cc fa_lk_lambda_initializer
+# LK_VOLUME copied from Rosetta++ etable.cc fa_lk_volume_initializer
+# ACCEPTOR/DONOR copied from Rosetta++ etable.cc fa_acceptor_initializer / fa_donor_initializer
+# POLAR_HYDROGEN copied from Rosetta++ etable.cc fa_hbondH_initializer
+# xxx_HYBRID copied from Rosetta++ aaproperties_pack.cc hybridization
+#`
+# References for Pha, OPha, OHha, and Hha: radius/wdepth: taken from CHARMM27 for DNA, MacKerell2004; kosta makrodimitris; LK_dgfree Crystal Growth & Design,VOL4,No. 1, 2004, 123-133; David Masica;  LK lambda Lazaridis 1999; LK vol CHARMM27 for DNA, MacKerell 2004; kosta makrodimitris
+
+#########
+# Generic Atomtypes
+#########
+#NAME  ATOM LJ_RADIUS LJ_WDEPTH LK_DGFREE LK_LAMBDA LK_VOLUME
+CD        C    2.0122    0.0604    1.8171    3.5000   10.6860
+CD1       C    2.0122    0.0604    2.6774    3.5000   10.6860
+CD2       C    2.0122    0.0604    3.0997    3.5000   18.3310
+CDp       C    1.9063    0.0593    3.6708    3.5000   10.6860
+CR        C    1.9405    0.0827    0.9053    3.5000   16.7040 AROMATIC
+CRb       C    1.9405    0.0827    1.1312    3.5000   16.7040 # biaryl
+CRp       C    1.9910    0.0739    4.3021    3.5000   16.7040 AROMATIC
+CS        C    2.0118    0.0626    1.5107    3.5000    8.9980
+CS1       C    2.0118    0.0626   -1.0589    3.5000   10.6860
+CS2       C    2.0118    0.0626    2.2730    3.5000   18.3310
+CS3       C    2.0118    0.0626    4.6077    3.5000   25.8550
+CSp       C    1.9847    0.0628    2.0625    3.5000   10.6860
+CT        C    2.0067    0.0689    2.2256    3.5000   10.6860
+CTp       C    2.0067    0.0689    1.1683    3.5000   10.6860
+HC        H    1.4213    0.0218    0.0000    3.5000    0.0000
+HN        H    0.9472    0.0268    0.0000    3.5000    0.0000 POLAR_HYDROGEN
+HO        H    0.9472    0.0268    0.0000    3.5000    0.0000 POLAR_HYDROGEN
+HR        H    1.3727    0.0232    0.0000    3.5000    0.0000
+#HS        H    0.3765    0.0405    0.0000    3.5000    0.0000
+HG        H    0.9472    0.0268    0.0000    3.5000    0.0000
+Nad       N    1.7854    0.1497   -7.5397    3.5000   15.9920 DONOR
+Nad3      N    1.7854    0.1497   -2.9559    3.5000    3.7181
+#Nam       N    1.8028    0.1650   -5.0000    3.5000   16.5140 DONOR
+#Nam2      N    1.8028    0.1650  -10.1165    3.5000   16.5140 DONOR
+#Nam       N    1.8028    0.1650   -1.5000    3.5000   16.5140 DONOR # accidental before
+Nam       N    1.8028    0.1650  -10.6311    3.5000   16.5140 DONOR
+Nam2      N    1.8028    0.1650   -5.0000    3.5000   16.5140 DONOR
+Ngu1      N    1.7854    0.1497   -12.2724    3.5000   15.7170 DONOR
+Ngu2      N    1.7854    0.1497  -10.5510    3.5000    9.7792 DONOR
+Nim       N    1.7854    0.1497   -4.0017    3.5000    9.3177 ACCEPTOR SP2_HYBRID
+Nin       N    1.7854    0.1497  -11.4447    3.5000    9.3177 DONOR
+NG1       N    1.7854    0.1497  -11.2837    3.5000    9.5221
+NG2       N    1.7854    0.1497   -5.7768    3.5000    9.5221
+NG21      N    1.7854    0.1497   -8.8507    3.5000   12.0000 DONOR
+NG22      N    1.7854    0.1497   -8.2226    3.5000   15.7170 DONOR
+NG3       N    1.8028    0.1650  -24.6297    3.5000   16.5140
+NGb       N    1.7854    0.1497   -4.0775    3.5000    9.5221
+Oad       O    1.5591    0.1630   -7.8705    3.5000   10.1020 ACCEPTOR SP2_HYBRID
+Oal       O    1.5406    0.1633   -9.3925    3.5000   10.1020 ACCEPTOR SP2_HYBRID
+Oat       O    1.5421    0.1574  -10.6440    3.5000    9.9956 ACCEPTOR SP2_HYBRID
+Oet       O    1.5594    0.1658   -3.2776    3.5000   10.7220
+Ofu       O    1.6040    0.1799   -5.6830    3.5000   10.7220 AROMATIC
+Ohx       O    1.5706    0.1669   -4.5543    3.5000   10.7220 DONOR ACCEPTOR SP3_HYBRID
+Ont       O    1.55910   0.1630   -1.9203    3.5000   10.0000
+OG2       O    1.4929    0.0999   -7.0364    3.5000    9.9956 ACCEPTOR SP2_HYBRID
+OG3       O    1.5492    0.1576   -2.8347    3.5000   10.7220 ACCEPTOR SP3_HYBRID
+OG31      O    1.5492    0.1576   -3.0344    3.5000   10.7220 ACCEPTOR SP3_HYBRID
+Ssl       S    1.9893    0.3634   -2.6527    3.5000   17.6400
+Sth       S    1.9823    0.4573    2.8135    3.5000   23.2400
+SG2       S    1.9893    0.3634   -1.7596    3.5000   17.6400
+SG3       S    1.9893    0.3634   -2.3560    3.5000   17.6400
+SG5       S    1.9893    0.3634   -3.7549    3.5000   17.6400
+PG3       P    2.1592    0.5716   -3.8366    3.5000   34.8000
+PG5       P    2.1290    0.5838   -9.6272    3.5000   34.8000
+FR        F    1.6941    0.0800   -8.1683    3.5000   11.5000
+ClR       C    2.0496    0.2399   -0.5480    3.5000   24.4000
+BrR       B    2.1971    0.3255   -4.7137    3.5000   35.5000
+IR        I    0.0000    0.0000   -2.7290    3.5000   44.6000
+

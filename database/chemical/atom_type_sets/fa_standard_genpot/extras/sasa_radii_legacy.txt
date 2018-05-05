@@ -1,0 +1,213 @@
+NAME SASA_RADIUS_LEGACY
+CNH2      1.8900
+COO       1.8900
+CH0       2.1285
+CH1       2.1285
+CH2       2.0115
+CH3       1.9485
+aroC      1.6650
+Ntrp      1.4400
+Nhis      1.4400
+NtrR      1.4400
+NH2O      1.4400
+Nlys      1.4400
+Narg      1.4400
+Npro      1.4400
+OH        1.4400
+OW        1.4400
+ONH2      1.4400
+OOC       1.4400
+Oaro      1.4400
+Oet2      1.4400
+Oet3      1.4400
+S         1.7010
+SH1       1.7010
+Nbb       1.4400
+CAbb      2.1285
+CObb      1.8900
+OCbb      1.4400
+Phos      2.0425
+Pbb       2.0425  # copied from Phos
+Hpol      0.5400
+HS        0.5400
+Hapo      1.0800
+Haro      1.0800
+HNbb      0.5400
+Hwat      0.5400
+Owat      1.4400
+Opoint    1.4400
+HOH       1.4400
+Bsp2      1.6293  # modified from Nhis based on ratio of van der Waals radii
+F         1.7100  # taken from MM3 forcefield
+Cl        2.0700  # taken from MM3 forcefield
+Br        2.2200  # taken from MM3 forcefield
+I         2.3600  # taken from MM3 forcefield
+Zn2p      1.0900  # ion radius CHARMM27
+Co2p      1.5680  # modified from zinc based on ratio of van der Waals radii
+Cu2p      1.0978  # modified from zinc based on ratio of van der Waals radii
+Fe2p      0.7800  # ion radius CHARMM27
+Fe3p      0.6500  # ion radius CHARMM27
+Mg2p      1.1850  # ion radius CHARMM27
+Ca2p      1.2986  # ion radius CHARMM27,kosta makrodimitris(*0.95)
+Pha       2.0425  # ion radius CHARMM27,kosta makrodimitris(*0.95)
+OPha      1.6150  # ion radius CHARMM27,kosta makrodimitris(*0.95) 
+OHha      1.6815  # ion radius CHARMM27,kosta makrodimitris(*0.95)
+Hha       0.2133  # ion radius CHARMM27,kosta makrodimitris(*0.95)
+CO3       1.6150  # CO3 lj_rad*.95 #@Robin 
+OC3       1.5200  # O3C lj_rad*.95 #@Robin
+Si        2.0401  # Si in alpha Quartz #@Robin
+OSi       1.6625  # O in alpha Quartz #@Robin
+Oice      1.5200  # O in ice #@Robin
+Hice      0.7600  # H in ice #@Robin 
+Na1p      1.3638  # ion radius CHARMM27
+K1p       1.7638  # ion radius CHARMM27
+He        1.1810  # UFF LJ radius
+Li        1.2255  # UFF LJ radius 
+Be        1.3725  # UFF LJ radius 
+Ne        1.6215  # UFF LJ radius 
+Al        2.2495  # UFF LJ radius 
+Ar        1.9340  # UFF LJ radius
+Sc        1.6475  # UFF LJ radius 
+Ti        1.5875  # UFF LJ radius 
+V         1.5720  # UFF LJ radius
+Cr        1.5115  # UFF LJ radius 
+Mn        1.4805  # UFF LJ radius 
+Ni        1.4170  # UFF LJ radius
+Ga        2.1915  # UFF LJ radius 
+Ge        2.1400  # UFF LJ radius
+As        2.1150  # UFF LJ radius
+Se        2.1025  # UFF LJ radius 
+Kr        2.0705  # UFF LJ radius 
+Rb        2.0570  # UFF LJ radius
+Sr        1.8205  # UFF LJ radius 
+Y         1.6725  # UFF LJ radius 
+Zr        1.5620  # UFF LJ radius
+Nb        1.5825  # UFF LJ radius 
+Mo        1.5260  # UFF LJ radius
+Tc        1.4990  # UFF LJ radius
+Ru        1.4815  # UFF LJ radius 
+Rh        1.4645  # UFF LJ radius 
+Pd        1.4495  # UFF LJ radius 
+Ag        1.5740  # UFF LJ radius
+Cd        1.4240  # UFF LJ radius
+In        2.2315  # UFF LJ radius 
+Sn        2.1960  # UFF LJ radius
+Sb        2.2100  # UFF LJ radius
+Te        2.2350  # UFF LJ radius
+Xe        2.2020  # UFF LJ radius
+Cs        2.2585  # UFF LJ radius 
+Ba        1.8515  # UFF LJ radius 
+La        1.7610  # UFF LJ radius
+Ce        1.7780  # UFF LJ radius
+Pr        1.8030  # UFF LJ radius
+Nd        1.7875  # UFF LJ radius 
+Pm        1.7735  # UFF LJ radius 
+Sm        1.7600  # UFF LJ radius
+Eu        1.7465  # UFF LJ radius 
+Gd        1.6840  # UFF LJ radius
+Tb        1.7255  # UFF LJ radius 
+Dy        1.7140  # UFF LJ radius
+Ho        1.7045  # UFF LJ radius 
+Er        1.6955  # UFF LJ radius 
+Tm        1.6870  # UFF LJ radius
+Yb        1.6775  # UFF LJ radius 
+Lu        1.8200  # UFF LJ radius
+Hf        1.5705  # UFF LJ radius 
+Ta        1.5850  # UFF LJ radius
+W         1.5345  # UFF LJ radius 
+Re        1.4770  # UFF LJ radius
+Os        1.5600  # UFF LJ radius
+Ir        1.4200  # UFF LJ radius
+Pt        1.3770  # UFF LJ radius
+Au        1.6465  # UFF LJ radius 
+Hg        1.3525  # UFF LJ radius 
+Tl        2.1735  # UFF LJ radius 
+Pb        2.1485  # UFF LJ radius 
+Bi        2.1850  # UFF LJ radius
+Po        2.3545  # UFF LJ radius 
+At        2.3750  # UFF LJ radius
+Rn        2.3825  # UFF LJ radius 
+Fr        2.4500  # UFF LJ radius
+Ra        1.8385  # UFF LJ radius 
+Ac        1.7390  # UFF LJ radius
+Th        1.6980  # UFF LJ radius
+Pa        1.7120  # UFF LJ radius
+U         1.6975  # UFF LJ radius 
+Np        1.7120  # UFF LJ radius
+Pu        1.7120  # UFF LJ radius
+Am        1.6905  # UFF LJ radius 
+Cm        1.6630  # UFF LJ radius
+Bk        1.6695  # UFF LJ radius 
+Cf        1.6565  # UFF LJ radius 
+Es        1.6495  # UFF LJ radius 
+Fm        1.6430  # UFF LJ radius
+Md        1.6370  # UFF LJ radius
+No        1.6240  # UFF LJ radius
+Lr        1.6180  # UFF LJ radius
+SUCK      0.0000
+REPL      0.0000
+REPLS     0.0000
+HREPS     0.0000
+VIRT      0.0000
+MPct      0.0000
+MPnm      0.0000
+MPdp      0.0000
+MPtk      0.0000
+#
+# SASA_RADIUS copied from Rosetta++ fullatom_extra_props.cc (?)
+# 2/23/1014 - JAB - Radius was optimized for a no-longer-in-use scoreterm by Jerry Tsai, 2003: "An Improved Protein Decoy Set for Testing Energy Functions for Protein Structure Prediction".  Would not recommend for general use (JAB)
+#
+CD        1.6650
+CD1       1.6650
+CD2       1.6650
+CDp       1.8900
+CR        1.6650
+CRb       1.6650
+CRp       1.6650
+CS        2.1285
+CS1       2.1285
+CS2       2.0115
+CS3       1.9485
+CSp       2.1285
+CT        1.6650
+CTp       1.6650
+HC        1.0800
+HN        0.5400
+HO        0.5400
+HR        1.0800
+HG        1.0800
+Nad       1.4400
+Nad3      1.4400
+Nam       1.4400
+Nam2      1.4400
+Ngu1      1.4400
+Ngu2      1.4400
+Nim       1.4400
+Nin       1.4400
+NG1       1.4400
+NG2       1.4400
+NG21      1.4400
+NG22      1.4400
+NG3       1.4400
+NGb       1.4400
+Oad       1.4400
+Oal       1.4400
+Oat       1.4400
+Oet       1.4400
+Ofu       1.4400
+Ohx       1.4400
+Ont       1.4400
+OG2       1.4400
+OG3       1.4400
+OG31      1.4400
+Ssl       1.7010
+Sth       1.7010
+SG2       1.7010
+SG3       1.7010
+SG5       1.7010
+PG3       2.0425
+PG5       2.0425
+FR        1.7100  # taken from MM3 forcefield
+ClR       2.0700  # taken from MM3 forcefield
+BrR       2.2200  # taken from MM3 forcefield
+IR        2.3600  # taken from MM3 forcefield

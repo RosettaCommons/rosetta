@@ -147,6 +147,15 @@ void get_symmops_P121slashc1( utility::vector1<core::kinematics::RT> &rt_out, Ch
 	cc = CheshireCell( numeric::xyzVector<core::Real>( 0, 0, 0), numeric::xyzVector<core::Real>(0.5, 0.5, 0.5 ) );
 }
 
+void get_symmops_P121slashn1( utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc ) {
+	rt_out.resize(4);
+	rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows( 1,0,0, 0,1,0, 0,0,1 )  , numeric::xyzVector<core::Real>(0,0,0) );
+	rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows( -1,0,0, 0,1,0, 0,0,-1 )  , numeric::xyzVector<core::Real>(0.5,0.5,0.5) );
+	rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows( -1,0,0, 0,-1,0, 0,0,-1 )  , numeric::xyzVector<core::Real>(0,0,0) );
+	rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows( 1,0,0, 0,-1,0, 0,0,1 )  , numeric::xyzVector<core::Real>(0.5,0.5,0.5) );
+	cc = CheshireCell( numeric::xyzVector<core::Real>( 0, 0, 0), numeric::xyzVector<core::Real>(0.5, 0.5, 0.5 ) );
+}
+
 void get_symmops_C12slashc1( utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc ) {
 	rt_out.resize(8);
 	rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows( 1,0,0, 0,1,0, 0,0,1 )  , numeric::xyzVector<core::Real>(0,0,0) );

@@ -23,8 +23,6 @@
 #include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
 #include <core/scoring/trie/TrieCountPairBase.hh>
 
-#include <core/scoring/methods/GenBornEnergy.hh>
-#include <core/scoring/GenBornPotential.hh>
 #include <core/scoring/etable/count_pair/types.hh>
 
 // Package headers
@@ -309,17 +307,6 @@ public:
 		basic::datacache::BasicDataCache & residue_data_cache
 	) const override;
 
-	//bool
-	//requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const override;
-
-	//void
-	//setup_for_scoring_for_residue(
-	// conformation::Residue const & rsd,
-	// pose::Pose const &,// pose,
-	// ScoreFunction const & sfxn,
-	// ResSingleMinimizationData & resdata
-	//) const override;
-
 	bool
 	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const override;
 
@@ -401,12 +388,16 @@ public:
 		Size atom1_n_attached_waters,
 		Size atom2_n_attached_waters,
 		WaterCoords const & atom1_waters,
-		WaterCoords const & atom2_waters,
-		Real const & lk_desolvation_sum,
-		Real const & lkbr_wt,
-		Real const & lkbr_uncpl_wt
+		WaterCoords const & atom2_waters
 	) const;
 
+	Real
+	get_lkbr_fractional_contribution_noangle(
+		Size atom1_n_attached_waters,
+		Size atom2_n_attached_waters,
+		WaterCoords const & atom1_waters,
+		WaterCoords const & atom2_waters
+	) const;
 
 	Real
 	get_lkbr_fractional_contribution(
@@ -421,9 +412,6 @@ public:
 		Real & pointterm_lkbr,
 		Real & angleterm_lkbr,
 		Real & d_angleterm_lkbr_dr,
-		Real const & lk_desolvation_sum,
-		Real const & lkbr_wt,
-		Real const & lkbr_uncpl_wt,
 		bool compute_derivs=true
 	) const;
 
@@ -522,6 +510,15 @@ public:
 		return slim_etable_;
 	}
 
+	// get lkball parameters
+	inline core::Real get_ramp_width_A2() const { return ramp_width_A2_; }
+	inline core::Real get_overlap_width_A2() const { return overlap_width_A2_; }
+	inline core::Real get_multi_water_fade() const { return multi_water_fade_; }
+	inline core::Real get_lkbridge_angle_widthscale() const { return lkbridge_angle_widthscale_; }
+	inline core::Real get_overlap_target_len2() const { return overlap_target_len2_; }
+	inline core::Real get_overlap_gap2() const { return overlap_gap2_; }
+	inline core::Real get_d2_low( core::Size idx ) const { return d2_low_[idx]; }
+
 private:
 
 	lkbtrie::LKBRotamerTrieOP
@@ -553,7 +550,6 @@ private:
 		ScoreFunction const & sfxn
 	) const;
 
-
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 
@@ -582,11 +578,6 @@ private:
 	utility::vector1< bool > atom_type_is_charged_;
 
 	utility::vector1< Real > lk_ball_prefactor_;
-
-	// save bridging water positions
-	//bool save_bridging_waters_;
-	//mutable utility::vector1< ScoredBridgingWater > bridging_waters_; ///// WHOA! THIS DOES NOT BELONG HERE!
-
 
 public:
 	core::Size version() const override;

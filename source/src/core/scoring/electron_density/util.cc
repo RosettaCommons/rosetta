@@ -85,43 +85,75 @@ bool pose_has_nonzero_Bs( poseCoords const & pose ) {
 /// @brief spline interpolation with periodic boundaries
 core::Real interp_spline(
 	ObjexxFCL::FArray3D< double > & coeffs ,
-	numeric::xyzVector< core::Real > const & idxX ) {
+	numeric::xyzVector< core::Real > const & idxX,
+	bool mirrored
+) {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
-	core::Real retval = SplineInterp::interp3(&coeffs[0], dims, pt);
+	core::Real retval = SplineInterp::interp3(&coeffs[0], dims, pt, mirrored);
 	return retval;
 }
 
 /// @brief spline interpolation with periodic boundaries
 numeric::xyzVector<core::Real> interp_dspline(
 	ObjexxFCL::FArray3D< double > & coeffs ,
-	numeric::xyzVector< core::Real > const & idxX ) {
+	numeric::xyzVector< core::Real > const & idxX,
+	bool mirrored
+) {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
 	core::Real grad[3] = { 0,0,0 };
-	SplineInterp::grad3(&grad[0], &coeffs[0], dims, pt);
+	SplineInterp::grad3(&grad[0], &coeffs[0], dims, pt, mirrored);
+	return numeric::xyzVector<core::Real>(grad[2],grad[1],grad[0]);
+}
+
+/// @brief spline interpolation with periodic boundaries, single precision
+core::Real interp_spline(
+	ObjexxFCL::FArray3D< float > & coeffs ,
+	numeric::xyzVector< core::Real > const & idxX,
+	bool mirrored
+) {
+	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
+	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
+	core::Real retval = SplineInterp::interp3< float >(&coeffs[0], dims, pt, mirrored);
+	return retval;
+}
+
+/// @brief spline interpolation with periodic boundaries, single precision
+numeric::xyzVector<core::Real> interp_dspline(
+	ObjexxFCL::FArray3D< float > & coeffs ,
+	numeric::xyzVector< core::Real > const & idxX,
+	bool mirrored
+) {
+	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
+	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
+	core::Real grad[3] = { 0,0,0 };
+	SplineInterp::grad3< float >(&grad[0], &coeffs[0], dims, pt, mirrored);
 	return numeric::xyzVector<core::Real>(grad[2],grad[1],grad[0]);
 }
 
 void spline_coeffs(
 	ObjexxFCL::FArray3D< double > const & data ,
-	ObjexxFCL::FArray3D< double > & coeffs) {
+	ObjexxFCL::FArray3D< double > & coeffs,
+	bool mirrored
+) {
 	int dims[3] = { data.u3(), data.u2(), data.u1() };
 	coeffs = data;
-	SplineInterp::compute_coefficients3( const_cast<double*>(&coeffs[0]) , dims );  // external code wants nonconst even though array is unchanged
+	SplineInterp::compute_coefficients3( const_cast<double*>(&coeffs[0]) , dims, mirrored );  // external code wants nonconst even though array is unchanged
 }
 
 void spline_coeffs(
 	ObjexxFCL::FArray3D< float > const & data ,
-	ObjexxFCL::FArray3D< double > & coeffs) {
+	ObjexxFCL::FArray3D< double > & coeffs,
+	bool mirrored
+) {
 	int N = data.u3()*data.u2()*data.u1();
 	ObjexxFCL::FArray3D< double > data_d(data.u1(),data.u2(),data.u3()) ;
 	for ( int i=0; i<N; ++i ) {
 		data_d[i] = (double)data[i];
 	}
-	spline_coeffs( data_d, coeffs );
+	spline_coeffs( data_d, coeffs, mirrored );
 }
-
 
 void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, ObjexxFCL::FArray3D< std::complex<double> > const & mapA, ObjexxFCL::FArray3D< std::complex<double> > const & mapB) {
 	debug_assert(mapA.u1() == mapB.u1());

@@ -1,0 +1,24 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="relaxscore" weights="beta_cart">
+      <Reweight scoretype="gen_bonded" weight="1.0"/>
+    </ScoreFunction>
+  </SCOREFXNS>
+
+  <TASKOPERATIONS>
+  </TASKOPERATIONS>
+
+  <FILTERS>
+  </FILTERS>
+
+  <MOVERS>
+    <GALigandDock name="dock" scorefxn="relaxscore" padding="4.0" sc_edge_buffer="0" sidechains="aniso" grid_step="0.5" hashsize="8.0" subhash="3" nativepdb="inputs/holo.pdb" final_exact_minimize="sc" init_oversample="10"  rotprob="0.9" rotEcut="100" altcrossover="0"  exact="0">
+		<Stage repeats="4" npool="4" pmut="0.2" smoothing="0.375" rmsdthreshold="1.5" maxiter="50" pack_cycles="100" ramp_schedule="0.1,1.0"/>
+	</GALigandDock>
+  </MOVERS>
+
+  <PROTOCOLS>
+    <Add mover="dock"/>
+  </PROTOCOLS>
+  <OUTPUT scorefxn="relaxscore"/>
+</ROSETTASCRIPTS>

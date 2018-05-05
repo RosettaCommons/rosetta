@@ -750,6 +750,7 @@ protected:
 	Etable const & etable() const { return etable_; }
 
 	inline bool do_classic_intrares() const { return do_classic_intrares_; }
+	inline bool count_pair_hybrid() const { return count_pair_hybrid_; }
 	inline bool put_intra_into_total() const { return put_intra_into_total_; }
 
 private:
@@ -762,6 +763,7 @@ private:
 	// temporary hack -- make this configurable/cleaner, Phil
 	bool exclude_DNA_DNA_;
 	bool do_classic_intrares_;
+	bool count_pair_hybrid_;
 	bool put_intra_into_total_;
 	bool exclude_intra_res_protein_;
 };

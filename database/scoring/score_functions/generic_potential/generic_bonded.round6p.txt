@@ -1,0 +1,377 @@
+ATOM
+#Atomname TorsionAtomTypes1 2 3...
+CS     CS   C*    X
+CS1    CS   C*    X
+CS2    CS   C*    X
+CS3    CS   C*    X
+CD     CD   C*    X
+CD1    CD   C*    X
+CD2    CD   C*    X
+CR     CR   C*    X
+CRb    CR   C*    X
+CT     CT   C*    X
+CSp    CS   C*    X
+CDp    CD   C*    X
+CRp    CR   C*    X
+CTp    CT   C*    X
+HC     HC   H*    X
+HR     HR   H*    X
+HO     HO   H*    X
+HN     HN   H*    X
+HS     HS   H*    X
+HG     HG   H*    X
+Nam   NG3   N*    X
+Nam2  NG2   N*    X
+Nad   NG2   N*    X
+Nad3  NG2   N*    X
+Nin   NG2   N*    X
+Nim   NG2   N*    X
+Ngu1  NG2   N*    X
+Ngu2  NG2   N*    X
+NG3   NG3   N*    X
+NG2   NG2   N*    X
+NG21  NG2   N*    X
+NG22  NG2   N*    X
+NG1   NG1   N*    X
+NGb   NG2   N*    X
+Ohx   Ohx   O*    X
+Oet   OG3   O*    X
+Oal   OG2   O*    X
+Oad   Oad   O*    X
+Oat   Oat   O*    X
+Ofu   Ofu   O*    X
+Ont   OG2   O*    X
+OG2   OG2   O*    X
+OG3   OG3   O*    X
+OG31  OG3   O*    X
+Sth   Sth   S*    X
+Ssl   SG3   S*    X
+SG2   SG2   S*    X
+SG3   SG3   S*    X
+SG5   SG5   S*    X
+PG3   PG3   P*    X
+PG5   PG5   P*    X
+Br     Br    X
+I       I    X
+F       F    X
+Cl     Cl    X
+BrR   BrR    X
+IR     IR    X
+FR     FR    X
+ClR   ClR    X
+
+BOND
+
+ANGLE
+
+SPECIAL_TORSION
+#a1  a2  a3  a4  Ndat  K1     K2     K3      K4     K8      k_fit #comment
+X   CRb CRb   X    wc  0.000 -0.226  0.000  0.093   0.000  2 4 8
+X   NGb CRb   X    wc  0.000  0.187  0.000  0.116   0.000  2 4 8
+X   NGb NGb   X    wc  0.000  0.202  0.000  0.103   0.000  2 4 8
+#X   NGb CRb   X    wc  1.000  0.500  0.000 -1.000   1.000   2 4 8  
+#X   NGb NGb   X    wc  0.000  0.500  0.000 -1.000   1.000   2 4 8  #prefer 0/90
+
+#X   CR  SG5 OG2   n/a  0.000 -1.000  0.000  0.500   0.000   2 4    #GUESS #ring-sulfate; 0,60,120,180
+#X   CRb CRb   X    wc  0.000 -0.500  0.000 -0.250  -0.500   2 4 8
+#X   NGb CRb   X    wc  0.000  0.250  0.000  0.250  -0.500   2 4 8
+#X   NGb NGb   X    wc  0.000  0.250  0.000  0.250  -0.500   2 4 8
+#X   NGb CRb   X    wc  0.000  0.000  0.000  0.000  -1.000  2 4 8  #guess
+#X   NGb NGb   X    wc  0.000  0.000  0.000  0.000  -1.000  2 4 8  #guess
+
+TORSION
+#NOTE:
+# functional form: k*cos(nx), n=1,2,3
+# pre-fit values from OPLS; translated as: k'(n=1) = 0.5*k, k'(n=2) = -0.5*k, k'(n=3) = 0.5*k
+# pre-fit values from CHARMM; translated as: k'(n=1) = k, k'(n=3) = k, k'(n=2) = -k if phi=180.0 else =k
+#
+#Class a1  a2  a3  a4  Ndat  K1     K2     K3 k_fit #comment
+ 0   C*  CS  CS  C*   wc  0.000  0.000  0.077 3     #CHARMM  #fit
+ 0   CD  CS  CS  CD  122  0.435  0.039  0.070 1 2 3 #OPLS, alkane #fit
+ 0   CD  CS  CS  CR  144  0.435  0.039  0.070 1 2 3 #OPLS, alkane #fit
+ 0   CD  CS  CS   F  211  0.000  0.000  0.500 3     #GUESS
+ 0   CD  CS  CS  HC 1140  0.000  0.000  0.091 3     #OPLS, alkane
+ 0   CR  CS  CS  HC  517  0.000  0.000  0.091 3     #OPLS, alkane
+ 0   CS  CS  CS  CD  767  0.435  0.039  0.070 1 2 3 #OPLS, alkane
+ 0   CS  CS  CS  CR  279  0.435  0.039  0.070 1 2 3 #OPLS, alkane
+ 0   CS  CS  CS  CS 1880  0.435  0.039  0.070 1 2 3 #OPLS, alkane
+ 0   CS  CS  CS   F  103  0.000  0.000  0.500 3     #GUESS
+ 0   CS  CS  CS  HC 7791  0.000  0.000  0.091 3     #OPLS, alkane
+ 0   CS  CS  CS NG2  222  0.491  0.000  0.165 1 3   #OPLS, amide
+ 0   CS  CS  CS NG3  160  0.683  0.058  0.121 1 2 3 #OPLS, amine
+ 0   CS  CS  CS OG3  579  0.428  0.125  0.166 1 2 3 #OPLS, alcohol
+ 0   CS  CS  CS Ohx  227  0.428  0.125  0.166 1 2 3 #OPLS, alcohol
+ 0   CS  CS  CS SG3   51  0.655  0.155  0.065 1 2 3 #OPLS, sulfide
+ 0    F  CS  CS   X   wc  0.000  0.000  0.200 3     #GUESS
+ 0   HC  CS  CS  HC 2401  0.000  0.000  0.080 3     #OPLS, alkane #fit
+ 0   HC  CS  CS Ohx  310  0.000  0.000  0.117 3     #OPLS, alcohol #fit
+ 0   HC  CS  CS SG3   72  0.000  0.000  0.113 3     #OPLS, sulfide #fit
+ 0   HC  CS  CS   X   wc  0.000  0.000  0.077 3     #CHARMM #fit
+ 0  NG2  CS  CS  HC  588  0.000  0.000  0.116 3     #OPLS, amide #fit
+ 0  NG2  CS  CS   X   wc  0.000  0.000  0.100 3     #GUESS
+ 0  NG3  CS  CS  HC  364 -0.254  0.177  0.118 1 2 3 #OPLS, amine #fit
+ 0  NG3  CS  CS   X   wc  0.000  0.000  0.100 3     #GUESS
+ 0  OG3  CS  CS  HC 1132  0.000  0.000  0.117 3     #OPLS, alcohol #fit
+ 0  OG3  CS  CS   X   wc  0.000  0.000  0.100 3     #GUESS
+ 0    X  CS  CS   X   wc  0.000  0.000  0.100 3     #GUESS
+ 1   C*  CS  CD  CD   wc  0.000  0.000  0.500 1 2 3 #GUESS #fit
+ 1   C*  CS  CD  CR   wc  0.000  0.000  0.000 3     #GUESS #fit
+ 1   C*  CS  CD  C*   wc  0.000  0.000  0.500 3     #GUESS #fit
+ 1   CD  CS  CD  CD  156 -0.250  0.000 -0.650 1 3   #CHARMM, default
+ 1   CD  CS  CD OG2   93 -0.070 -0.307 -0.173 1 2 3 #OPLS, aldehyde #fit
+ 1   CD  CS  CD OG3   55 -0.089  0.041  0.123 1 2 3 #OPLS, alcohol #fit
+ 1   CS  CS  CD  CD  511 -0.250  0.000 -0.650 1 3   #CHARMM, default
+ 1   CS  CS  CD  CS  113 -0.250  0.000 -0.650 1 3   #CHARMM, default
+ 1   CS  CS  CD  HC  116  0.000  0.000  0.091 3     #OPLS, alkane #fit
+ 1   CS  CS  CD NG2  285  0.000  0.101 -0.034 1 2 3 #OPLS, amide
+ 1   CS  CS  CD Oad  164 -0.070 -0.307 -0.173 1 2 3 #OPLS, aldehyde
+ 1   CS  CS  CD OG2  453 -0.070 -0.307 -0.173 1 2 3 #OPLS, aldehyde
+ 1   CS  CS  CD OG3  221 -0.089  0.041  0.123 1 2 3 #OPLS, alcohol #fit
+ 1    F  CS  CD   X   wc  0.000  0.000 -0.150 3     #GUESS 
+ 1   HC  CS  CD  CD  678  0.000  0.000 -0.093 3     #OPLS, alkene #fit
+ 1   HC  CS  CD  CS  194  0.000  0.000  0.091 1 2 3 #OPLS, alkane #fit
+ 1   HC  CS  CD  HC   17  0.000  0.000  0.080 3     #OPLS, alkane #fit
+ 1   HC  CS  CD NG2  348  0.000  0.000  0.116 3     #OPLS, amide #fit
+ 1   HC  CS  CD OG2  409  0.000  0.000  0.150 1 2 3 #GUESS
+ 1   HC  CS  CD OG3  128  0.000  0.000  0.117 3     #OPLS, alcohol
+ 1   HC  CS  CD  O*   wc  0.000  0.000  0.200 3     #GUESS 
+ 1   HC  CS  CD   X   wc  0.000  0.000  0.100 3     #GUESS 
+ 1  NG2  CS  CD NG2   ??  0.000 -0.250  0.000 1 2 3 #GUESS
+ 1    X  CS  CD  CD   wc  0.000  0.000 -0.500 1 2 3 #GUESS 
+ 1    X  CS  CD  HC   wc  0.000  0.000  0.500 3     #GUESS 
+ 1    X  CS  CD NG2   wc  0.000  0.000 -0.500 3     #OPLS, peptide? missing?? let's put Ha-Ca-C-N for now
+ 1    X  CS  CD OG3   wc  0.000  0.000  0.500 3     #GUESS 
+ 1    X  CS  CD   X   wc  0.000 -0.100  0.000 1 2 3 #GUESS 
+ 2   CD  CS  CR  CR  201  0.000  0.000  0.000 3     #OPLS, ethylbenzene
+ 2   CR  CS  CR  CR  173  0.000 -0.100  0.000 2     #GUESS
+ 2   CS  CS  CR  CR  705  0.000  0.000  0.100 1 2 3 #OPLS, ethylbenzene
+ 2    F  CS  CR  CR  111  0.000  0.000  0.100 3     #GUESS
+ 2   HC  CS  CR  CR 1165  0.000  0.000 -0.150 3     #OPLS, ethylbenzene
+ 2   HC  CS  CR   X   wc  0.000  0.000 -0.100 3     #GUESS 
+ 2  NG2  CS  CR  CR  128  0.000  0.000 -0.100 1 2 3 #GUESS 
+ 2  NG3  CS  CR  CR   75  0.000  0.000  0.100 1 2 3 #GUESS 
+ 2  OG3  CS  CR  CR  129  0.428  0.125  0.166 1 2 3 #OPLS, alcohol
+ 2    X  CS  CR  CR   wc  0.200  0.050  0.100 1 2 3 #GUESS 
+ 2    X  CS  CR   X   wc  0.000  0.000  0.100 3     #GUESS 
+ 4   CS NG3  CS  CS  137  0.000  0.000  0.100 3     #GUESS
+ 4   CS NG3  CS  HC  445  0.000  0.000  0.100 3     #GUESS
+ 4   CS NG3  CS   X   wc  0.000  0.000  0.1000 3    #GUESS
+ 4   HN NG3  CS  CS   37  0.250  0.100  0.150 1 2 3 #GUESS
+ 4   HN NG3  CS  HC   36  0.000  0.000  0.250 3     #GUESS
+ 4    X NG3  CS   X   wc  0.000  0.000  0.250 3    #GUESS
+ 5   CD NG2  CS  CS  192  0.050  0.050  0.050 1 2 3 #GUESS
+ 5   CD NG2  CS  HC  413  0.000  0.000  0.000 1 2 3 #GUESS
+ 5   CD NG2  CS   X   wc  0.000  0.000  0.150 1 2 3 #GUESS 
+ 5   CR NG2  CS  HC  117  0.000  0.000  0.150 1 2 3 #GUESS 
+ 5   CS NG2  CS  CS   88  0.000  0.000  0.150 1 2 3 #GUESS 
+ 5   CS NG2  CS  HC  314  0.000  0.000  0.150 1 2 3 #GUESS
+ 5   HN NG2  CS  CS   66  0.000  0.000  0.000 1 2 3 #GUESS 
+ 5   HN NG2  CS  HC   49  0.000  0.000  0.000 1 2 3 #GUESS
+# 5  OG2 NG2  CS  CS   69  0.000  0.000  0.150 1 2 3 #GUESS #nostat
+ 5    X NG2  CS  HC   wc  0.000  0.000  0.150 1 2 3 #GUESS 
+ 5    X NG2  CS   X   wc  0.000  0.000  0.150 1 2 3 #GUESS 
+ 7   CS  CS SG3  CS   wc -0.231  0.141  0.169 1 2 3 #OPLS, C-C-S-C #fit
+ 7    X  CS SG3   X   wc  0.150  0.000  0.162 1 3   #OPLS, H-C-S-C #fit
+# 7    X  CS SG5   X   wc  0.000  0.000  0.162 3     #OPLS, H-C-S-C for now #nostat
+ 8   H*  CS  P*  C*   wc  0.000  0.000  0.250 1 2 3 #GUESS 
+ 8    X  CS PG3  C*   wc  0.000  0.000  0.250 1 2 3 #GUESS 
+ 8    X  CS PG3   X   wc  0.000  0.000  0.250 1 2 3 #GUESS 
+11   C*  CD  CD  CR   wc  0.150 -8.500  0.000 1 2   #CHARMM
+11   CD  CD  CD  CD  512  0.150 -8.500  0.000 1 2   #CHARMM
+11   CD  CD  CD  CR  189  0.150 -8.500  0.000 1 2   #CHARMM
+11   CD  CD  CD  HC  323  0.150 -8.500  0.000 1 2   #CHARMM
+11   CD  CD  CD NG2  404  0.150 -8.500  0.000 1 2   #GUESS
+#11   CD  CD  CD Ofu   72  0.150 -8.500  0.000 1 2   #GUESS #nostat
+11   CD  CD  CD OG2  270  0.150 -8.500  0.000 1 2   #GUESS
+11   CD  CD  CD OG3  138  0.150 -8.500  0.000 1 2   #GUESS
+11   CR  CD  CD  HC   96  0.150 -8.500  0.000 1 2   #CHARMM
+11   CR  CD  CD NG2  126  0.400 -9.000  0.000 1 2   #GUESS #fit
+11   CS  CD  CD  CD  298  0.150 -8.500  0.000 1 2   #CHARMM
+11   CS  CD  CD  CS  175  0.150 -8.500  0.000 1 2   #CHARMM
+11   CS  CD  CD  HC  186  0.000 -0.490  0.000 2     #CHARMM #fit
+11   CS  CD  CD NG2   78  0.400 -5.500  0.000 1 2   #GUESS
+11   CS  CD  CD OG2   72  0.150 -8.500  0.000 1 2   #GUESS
+11   HC  CD  CD  HC  112  0.000 -0.500  0.000 2     #CHARMM
+11   HC  CD  CD NG2  198  0.800 -5.500  0.000 1 2   #GUESS
+11   HC  CD  CD OG2   65  0.600 -5.500  0.000 1 2   #CHARMM
+11   HC  CD  CD   X   wc  0.550 -8.500  0.000 1 2   #CHARMM
+11  NG2  CD  CD NG2  120 -0.400 -5.500  0.000 1 2   #CHARMM
+11    X  CD  CD   X   wc  0.186 -6.662  0.000 1 2   #CHARMM #fit
+12   CD  CD  CR  CR  448  0.000 -5.296  0.000 2     #CHARMM #fit
+12   CR  CD  CR   X   wc  0.000 -3.000  0.000 2     #GUESS
+12   CS  CD  CR  CR  112  0.000 -6.200  0.000 2     #CHARMM
+12   HC  CD  CR   X   wc  0.000 -0.500  0.000 2     #CHARMM   
+12  NG2  CD  CR  CR  337  0.000 -6.200  0.000 2     #CHARMM
+12  Oad  CD  CR  CR   65  0.000 -6.200  0.000 2     #CHARMM 
+#12  Ofu  CD  CR  CR   52  0.000 -6.200  0.000 2     #CHARMM #nostat
+12  OG2  CD  CR  CR  330  0.000 -6.200  0.000 2     #CHARMM 
+12  OG3  CD  CR  CR   73  0.000 -3.000  0.000 2     #CHARMM 
+12    X  CD  CR   X   wc  0.000 -3.000  0.000 2     #CHARMM 
+15   CD NG2  CD  CD  128  0.700 -6.088  0.000 1 2   #OPLS, amide #fit
+15   CD NG2  CD  CR   74  0.700 -6.088  0.000 1 2   #OPLS, amide #fit
+15   CD NG2  CD  CS   94  0.700 -6.088  0.000 1 2   #OPLS, amide #fit
+15   CD NG2  CD NG2  108  0.000 -3.978  0.000 2     #OPLS, guanidinium
+15   CD NG2  CD Oad  138  0.000 -6.088  0.000 1 2   #OPLS, amide
+15   CD NG2  CD   X   wc  0.000 -3.500  0.000 2     #GUESS
+15   CR NG2  CD  CD   69  0.700 -6.088  0.000 1 2   #OPLS, amide #fit
+15   CR NG2  CD Oad  127  0.000 -6.088  0.000 1 2   #OPLS, amide
+15   CR NG2  CD   X   wc  0.000 -3.500  0.000 2     #GUESS
+15   CS NG2  CD  CS   78  0.000 -6.088  0.000 1 2   #OPLS, amide #fit
+15   CS NG2  CD Oad  280  0.000 -6.088  0.000 1 2   #OPLS, amide #fit
+15   CS NG2  CD   X   wc  0.000 -3.500  0.000 2     #GUESS
+15  NG2 NG2  CD Oad  178 -0.410 -2.428  0.000 1 2   #OPLS, amide; pref. to cis #fit
+15   HN NG2  CD Oad  178  1.000 -2.450  0.000 1 2   #OPLS, amide; pref. to trans #fit
+15   HN NG2  CD   X   wc  0.000 -3.500  0.000 2     #GUESS
+15  NG2 NG2  CD   X   wc  0.000 -3.500  0.000 2     #GUESS
+15    X NG2  CD Oad   wc  0.000 -2.450  0.000 2     #OPLS, amide #fit
+15    X NG2  CD   X   wc  0.000 -3.500  0.000 2     #GUESS
+16  OG2  CD OG3  C*   wc -1.775 -1.629  0.000 1 2   #GUESS #Ester; preference to cis over trans #fit
+#16  Oal  CD OG3  C*   wc -2.000 -1.000  0.000 1 2   #GUESS #Ester #nostat
+16    X  CD OG3  C*   wc  0.000  0.000  1.416 3     #GUESS #Ester; #fit
+17    X  CD SG3   X   wc  0.000 -1.000  0.000 2     #GUESS
+22   C*  CR  CR  C*   wc  0.000 -6.200  0.000 2     #CHARMM
+22   CD  CR  CR  CR  664 -0.005 -1.474  0.000 1 2   #CHARMM #fit
+22   CD  CR  CR  HR  487  0.016 -1.648  0.000 1 2   #CHARMM
+22   CD  CR  CR NG2  114  0.000 -3.000  0.000 1 2   #CHARMM
+22   CD  CR  CR  O*   wc  0.000 -3.000  0.000 2     #CHARMM
+22   CD  CR  CR   X   wc  0.000 -3.000  0.000 2     #CHARMM
+22   CR  CR  CR BrR  181  0.000 -3.000  0.000 1 2   #CHARMM
+22   CR  CR  CR ClR  231  0.000 -3.000  0.000 1 2   #CHARMM
+22   CR  CR  CR  CR 8839  0.000 -3.384  0.000 1 2   #CHARMM #fit
+22   CR  CR  CR  FR  353  0.000 -3.000  0.000 1 2   #CHARMM
+22   CR  CR  CR  HR 7692  0.206 -3.384  0.000 1 2   #CHARMM #fit
+22   CR  CR  CR NG2  946  0.036 -4.154  0.000 1 2   #CHARMM #fit
+#22   CR  CR  CR Ofu  139  0.000 -3.000  0.000 1 2   #CHARMM #nostat
+22   CR  CR  CR OG3  521  0.000 -6.200  0.000 1 2   #CHARMM
+22   CR  CR  CR Ohx   93  0.000 -3.000  0.000 1 2   #CHARMM
+22   CR  CR  CR SG3  126  0.000 -3.000  0.000 1 2   #CHARMM
+22   CR  CR  CR   X   wc  0.000 -3.000  0.000 2     #CHARMM
+22   CS  CR  CR  CR  814  0.046 -3.600  0.000 1 2   #CHARMM #fit
+22   CS  CR  CR  HR  759  0.052 -8.036  0.000 1 2   #CHARMM #fit
+22   CS  CR  CR NG2   90  0.002 -3.000  0.000 1 2   #CHARMM
+22   CS  CR  CR OG3   62  0.000 -3.000  0.000 1 2   #CHARMM
+22   FR  CR  CR  FR   82  0.000 -3.000  0.000 1 2   #CHARMM
+22   HR  CR  CR BrR  159  0.000 -3.000  0.000 1 2   #CHARMM
+22   HR  CR  CR ClR  155  0.000 -3.000  0.000 1 2   #CHARMM
+22   HR  CR  CR  FR  108  0.000 -3.000  0.000 1 2   #CHARMM
+22   HR  CR  CR  HR 2457  0.021 -3.000  0.000 1 2   #CHARMM
+22   HR  CR  CR   X   wc  0.000 -3.000  0.000 2     #CHARMM
+22  NG2  CR  CR  HR  527  0.182 -4.298  0.000 1 2   #CHARMM #fit
+22  NG2  CR  CR NG2   84  0.000 -3.000  0.000 1 2   #CHARMM
+22   O*  CR  CR  O*   wc  0.000 -3.000  0.000 2     #CHARMM
+#22  Ofu  CR  CR  HR   77  0.000 -3.000  0.000 1 2   #CHARMM #nostat
+22  OG3  CR  CR  HR  311  0.000 -3.000  0.000 1 2   #CHARMM
+22    X  CR  CR   X   wc  0.000 -3.000  0.000 2     #CHARMM
+24    X  CR NG3   X   wc  0.000  0.000  0.150 1 2 3 #GUESS #fit
+25   CD NG2  CR  CR  316  0.000 -0.150  0.000 1 2   #GUESS
+25   CR NG2  CR  CR  102  0.000 -2.000  0.000 1 2   #OPLS, guanidinium
+25   CS NG2  CR  CR  139  0.000 -2.000  0.000 1 2   #OPLS, guanidinium
+25   HN NG2  CR  CR   90  0.000 -2.000  0.000 1 2   #GUESS, histidine
+25  OG2 NG2  CR  CR  254  0.000 -2.000  0.000 1 2   #GUESS
+25    X NG2  CR  HR   wc  0.000 -4.000  0.000 1 2   #GUESS #fit
+25    X NG2  CR   X   wc  0.000 -2.000  0.000 1 2   #GUESS #fit
+26   CR  CR OG3  HO   wc  0.000 -1.000  0.000 2     #GUESS 
+27   CR  CR SG5 OG2  n/a  0.000 -1.679  0.000 2     #GUESS #ring-sulfate; 0,60,120,180 #fit
+27   CR  CR SG5  N*   wc  0.000  4.470  0.000 2     #GUESS #ring-sulfate; 90 degree #fit
+27    X  CR  S*   X   wc  0.000 -0.910  0.000 2     #GUESS #fit
+28   CR  CR PG3  CR  108  0.000  0.000  0.200 3     #GUESS
+28   CR  CR PG3   X   wc  0.000  0.000  0.200 3     #GUESS
+33    X  C*  C*   X   wc  0.000 -0.100  0.000 2     #GUESS
+33    X  CD  CT NG1   wc  0.000 -0.100  0.000 2     #GUESS should be straight
+33    X  CR  CT NG1   wc  0.000 -0.100  0.000 2     #GUESS #should be straight
+33    X  CS  CT NG1   wc  0.000  0.000  0.000 2     #GUESS #should be straight
+36   CD OG3  CS  CS  137  0.207  0.079  0.155 1 2 3 #OPLS, ether #fit
+36   CD OG3  CS  HC  291  0.000  0.000  0.181 3     #OPLS, ether #fit
+#36   CR  CR Ofu   X   wc  0.250 -0.250  0.000 1 2 3 #GUESS #fit #nostat
+36   CR OG3  CS  HC  315  0.150  0.000  0.190 1 3   #GUESS, ether #fit
+36   CS OG3  CR  CR  181  0.000 -2.198  0.000 2     #GUESS #fit #fit
+36   CS OG3  CS  CS  141  0.163  0.062  0.168 1 2 3 #OPLS, ether #fit
+36   CS OG3  CS  HC  125  0.000  0.000  0.190 3     #OPLS, ether #fit
+36   HO OG3  CS  CS   54 -0.089  0.043  0.123 1 2 3 #OPLS, alcohol #fit
+36   HO OG3  CD OG2   wc -2.000 -1.000  0.000 1 2   #acetic acid
+36   HO OG3  CD  C*   wc  0.000 -0.971  0.000 2     #acetic acid #fit
+36    X  CD  O*   X   wc  0.000 -1.000  0.000 2     #GUESS #fit
+36    X  C* OG3  HO   wc -0.089  0.043  0.123 1 2 3 #OPLS, alcohol #fit
+36    X  CR  O*   X   wc  0.000 -0.500  0.000 2 3   #GUESS #fit
+36    X  CS  O*   X   wc  0.000  0.000  0.235 3     #GUESS #fit
+36    X OG3  CD   X   wc  0.038 -0.342  0.015 1 2 3 #GUESS #fit
+37   C*  C*  S*  H*   wc -0.190  0.070  0.150 1 2 3 #OPLS  #thiol #fit
+37    X  C*  S*   X   wc  0.000  0.000  0.200 1 2 3 #GUESS 
+47    X NG3  S*   X   wc  0.000  0.000  0.500 1 2 3 #GUESS #fit
+49    X NG3 PG3   X   wc -0.400  0.000  0.150 1 2 3 #GUESS #fit
+55   CD NG2 NG2  CD   wc  0.732 -0.804  0.000 1 2   #GUESS # C=N\N=C #preference to trans #fit
+55   C* NG2 NG2  C*   wc  0.706 -0.855  0.000 1 2   #GUESS # C=N\N=C #preference to trans #fit
+55    X NG2 NG2   X   wc  0.000 -0.500  0.000 1 2   #GUESS
+56  OG2 NG2 OG3   X   wc  0.000  0.000  0.150 3     #GUESS #ext-nitro
+56   C* NG2  O*   X   wc  0.000 -0.500  0.077 1 2 3 #GUESS #fit
+57    X  N* SG5  O*   wc  0.000 -4.000  0.000 2     #GUESS # ring-sulfate, O=S(O,R)-N-R, 0~60/120~180
+57    X  N* SG5   X   wc  0.000  2.000  0.000 2     #GUESS # ring-sulfate, R-S(O,O)-N-R, 9
+57   CD NG2 SG5   X   wc  0.000  0.441  0.379 2 3   #GUESS #fit
+57   CR NG2 SG5   X   wc  0.000  0.115  0.248 2 3   #GUESS #fit
+57   CS NG2 SG5   X   wc  0.000  0.000  0.250 3     #GUESS #fit
+57   HN NG2 SG5   X   wc  0.000  0.000  0.250 3     #GUESS #fit
+57    X NG2  S*   X   wc  0.000  0.000  0.250 3     #GUESS
+58    X NG2 PG3   X   wc  0.000  0.000  0.250 3     #GUESS
+67    X OG3 SG3   X   wc  0.000  0.000  0.150 3     #GUESS #TODO
+67   C* OG3 SG5  O*   wc  0.000  0.000  0.150 3     #GUESS #SULFONATE #TODO
+67    X OG3 SG5   X   wc  0.000  0.000  0.150 3     #GUESS #SULFONATE-related TODO
+68    X OG3 PG3   X   wc  0.000  0.000  0.250 3     #GUESS
+77    X  S*  S*   X   wc  0.000  1.853  0.426 1 2 3 #OPLS, disulfide #fit
+88    X PG3 PG3   X   wc  0.000  0.000  0.500 3     #GUESS
+99    X  CD   X   X   wc  0.000  0.000  0.077 1 2 3 #GUESS #fit
+99    X  CT   X   X   wc  0.000 -3.000  0.000 3     #mostly should be straight?
+99    X NG3   X   X   wc  0.000  0.000  0.150 3     #GUESS
+99    X   X   X   X   wc  0.000  0.000  0.150 3     #GUESS
+
+IMPROPER
+#NOTE: first atom becomes the central, others bonded to center
+#atm1 atm2 atm3 atm4  k  delta
+CDp  Oal  CS   CS   80.0 0.0  #ketone
+CDp  Oal  CS1  CS   80.0 0.0  #ketone
+CDp  Oal  CS2  CS   80.0 0.0  #ketone
+CDp  Oal  CS3  CS   80.0 0.0  #ketone
+CDp  Oal  CS   CS1  80.0 0.0  #ketone
+CDp  Oal  CS1  CS1  80.0 0.0  #ketone
+CDp  Oal  CS2  CS1  80.0 0.0  #ketone
+CDp  Oal  CS3  CS1  80.0 0.0  #ketone
+CDp  Oal  CS   CS2  80.0 0.0  #ketone
+CDp  Oal  CS1  CS2  80.0 0.0  #ketone
+CDp  Oal  CS2  CS2  80.0 0.0  #ketone
+CDp  Oal  CS3  CS2  80.0 0.0  #ketone
+CDp  Oal  CS   CS3  80.0 0.0  #ketone
+CDp  Oal  CS1  CS3  80.0 0.0  #ketone
+CDp  Oal  CS2  CS3  80.0 0.0  #ketone
+CDp  Oal  CS3  CS3  80.0 0.0  #ketone
+CDp  Oal  CS   HC   80.0 0.0  #aldehyde
+CDp  Oal  CS1  HC   80.0 0.0  #aldehyde
+CDp  Oal  CS2  HC   80.0 0.0  #aldehyde
+CDp  Oal  CS3  HC   80.0 0.0  #aldehyde
+CDp  Oal  CS   Ohx  80.0 0.0  #carboxyl acid
+CDp  Oal  CS1  Ohx  80.0 0.0  #carboxyl acid
+CDp  Oal  CS2  Ohx  80.0 0.0  #carboxyl acid
+CDp  Oal  CS3  Ohx  80.0 0.0  #carboxyl acid
+CDp  Oal  CS   Oet  80.0 0.0  #acetyl
+CDp  Oal  CS1  Oet  80.0 0.0  #acetyl
+CDp  Oal  CS2  Oet  80.0 0.0  #acetyl
+CDp  Oal  CS3  Oet  80.0 0.0  #acetyl
+CDp  CS   Oat  Oat  80.0 0.0  #carboxylate
+CDp  CS1  Oat  Oat  80.0 0.0  #carboxylate
+CDp  CS2  Oat  Oat  80.0 0.0  #carboxylate
+CDp  CS3  Oat  Oat  80.0 0.0  #carboxylate
+Nad  CDp  CS   HN   80.0 0.0  #amide
+Nad  CDp  CS1  HN   80.0 0.0  #amide
+Nad  CDp  CS2  HN   80.0 0.0  #amide
+Nad  CDp  CS3  HN   80.0 0.0  #amide
+CDp  Oad  Nad  CS   80.0 0.0  #amide
+CDp  Oad  Nad  CS1  80.0 0.0  #amide
+CDp  Oad  Nad  CS2  80.0 0.0  #amide
+CDp  Oad  Nad  CS3  80.0 0.0  #amide
+CDp  Oad  Nad3 CS   80.0 0.0  #amide
+CDp  Oad  Nad3 CS1  80.0 0.0  #amide
+CDp  Oad  Nad3 CS2  80.0 0.0  #amide
+CDp  Oad  Nad3 CS3  80.0 0.0  #amide
+CDp  Oad  Nad  HC   80.0 0.0  #formamide
+CDp  Ngu1 Ngu1 Ngu1 80.0 0.0  #guanidinium
+CDp  Ngu1 Ngu1 Ngu2 80.0 0.0  #guanidinium
+CDp  Ngu1 Ngu2 Ngu2 80.0 0.0  #guanidinium
+CDp  Ngu2 Ngu2 Ngu2 80.0 0.0  #guanidinium

@@ -122,7 +122,7 @@ Spacegroup::set_spacegroup( std::string name_in) {
 	} else if (
 			name_ == "P121" || name_ == "P1211" || name_ == "C121" || name_ == "P1m1" || name_ == "P1c1" || name_ == "C1m1"
 			|| name_ == "C1c1" || name_ == "P12/m1" || name_ == "P121/m1" || name_ == "C12/m1" || name_ == "P12/c1"
-			|| name_ == "P121/c1" || name_ == "C12/c1"
+			|| name_ == "P121/c1" || name_ == "P121/n1" || name_ == "231" || name_ == "C12/c1"
 			) {
 		setting_ = MONOCLINIC;
 	} else if (
@@ -221,11 +221,11 @@ void Spacegroup::set_parameters(core::Real a_in, core::Real b_in, core::Real c_i
 	V_ = a_*b_*c_* sqrt(1-numeric::square(ca)-numeric::square(cb)-numeric::square(cg)+2*ca*cb*cg);
 
 	// report
-	if ( a_!=a_in || b_!=b_in || c_!=c_in || alpha_!=alpha_in || beta_!=beta_in || gamma_!=gamma_in ) {
-		TSG << "Overriding input crystal parameters ["
-			<< a_in << "," << b_in << "," << c_in << " , " << alpha_in << ","  << beta_in << ","  << gamma_in << "] "
-			<< "] with [ " << a_ << "," << b_ << "," << c_ << " , " << alpha_ << ","  << beta_ << ","  << gamma_ << " ]" << std::endl;
-	}
+	//if ( a_!=a_in || b_!=b_in || c_!=c_in || alpha_!=alpha_in || beta_!=beta_in || gamma_!=gamma_in ) {
+	TSG << "Overriding input crystal parameters [ "
+		<< a_in << "," << b_in << "," << c_in << " , " << alpha_in << ","  << beta_in << ","  << gamma_in << " ] "
+		<< "with [ " << a_ << "," << b_ << "," << c_ << " , " << alpha_ << ","  << beta_ << ","  << gamma_ << " ]" << std::endl;
+	//}
 }
 
 
@@ -247,6 +247,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, Che
 	if ( name_ == "C12/m1" ) { get_symmops_C12slashm1(rt_out, cc ); }
 	if ( name_ == "P12/c1" ) { get_symmops_P12slashc1(rt_out, cc ); }
 	if ( name_ == "P121/c1" ) { get_symmops_P121slashc1(rt_out, cc ); }
+	if ( name_ == "P121/n1" || name_ == "231" ) { get_symmops_P121slashn1(rt_out, cc ); }
 	if ( name_ == "C12/c1" ) { get_symmops_C12slashc1(rt_out, cc ); }
 	if ( name_ == "P222" ) { get_symmops_P222(rt_out, cc ); }
 	if ( name_ == "P2221" ) { get_symmops_P2221(rt_out, cc ); }
@@ -488,6 +489,7 @@ std::string Spacegroup::pdbname() const {
 	if ( name_ == "C12/m1" ) return "C 1 2/m 1";
 	if ( name_ == "P12/c1" ) return "P 1 2/c 1";
 	if ( name_ == "P121/c1" ) return "P 1 21/c 1";
+	if ( name_ == "P121/n1" || name_ == "231" ) return "P 1 21/n 1";
 	if ( name_ == "C12/c1" ) return "C 1 2/c 1";
 	if ( name_ == "P222" ) return "P 2 2 2";
 	if ( name_ == "P2221" ) return "P 2 2 21";

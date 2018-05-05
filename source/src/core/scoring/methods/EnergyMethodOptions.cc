@@ -110,6 +110,7 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	water_dielectric_( 78.3 ),
 	exclude_DNA_DNA_(true),
 	exclude_intra_res_protein_(true), // rosetta++ default
+	count_pair_hybrid_(false),
 	put_intra_into_total_(false ),
 	geom_sol_interres_path_distance_cutoff_( 0 ), // rosetta++ default -- should be 4.
 	geom_sol_intrares_path_distance_cutoff_( 7 ), // originally implemented for RNA base/phosphate.
@@ -203,6 +204,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		water_dielectric_ = src.water_dielectric_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		exclude_intra_res_protein_ = src.exclude_intra_res_protein_;
+		count_pair_hybrid_ = src.count_pair_hybrid_;
 		put_intra_into_total_ = src.put_intra_into_total_;
 		geom_sol_interres_path_distance_cutoff_ = src.geom_sol_interres_path_distance_cutoff_;
 		geom_sol_intrares_path_distance_cutoff_ = src.geom_sol_intrares_path_distance_cutoff_;
@@ -284,6 +286,7 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	water_dielectric_= options[ basic::options::OptionKeys::score::water_dielectric]();
 	exclude_DNA_DNA_ = options[ basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	exclude_intra_res_protein_ = !options[ basic::options::OptionKeys::score::include_intra_res_protein]();
+	count_pair_hybrid_ = options[ basic::options::OptionKeys::score::count_pair_hybrid]();
 	put_intra_into_total( options[ basic::options::OptionKeys::score::put_intra_into_total]() );
 	geom_sol_interres_path_distance_cutoff_ = options[ basic::options::OptionKeys::score::geom_sol_interres_path_distance_cutoff]();
 	geom_sol_intrares_path_distance_cutoff_ = options[ basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff]();
@@ -344,6 +347,7 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::edensity::sc_scaling
 		+ basic::options::OptionKeys::score::aa_composition_setup_file
 		+ basic::options::OptionKeys::score::aspartimide_penalty_value
+		+ basic::options::OptionKeys::score::count_pair_hybrid
 		+ basic::options::OptionKeys::score::elec_die
 		+ basic::options::OptionKeys::score::elec_group_file
 		+ basic::options::OptionKeys::score::elec_max_dis
@@ -696,6 +700,16 @@ void
 EnergyMethodOptions::exclude_intra_res_protein( bool const setting ) {
 	exclude_intra_res_protein_ = setting;
 	hbond_options_->exclude_intra_res_protein( setting );
+}
+
+bool
+EnergyMethodOptions::count_pair_hybrid() const {
+	return count_pair_hybrid_;
+}
+
+void
+EnergyMethodOptions::count_pair_hybrid( bool const setting) {
+	count_pair_hybrid_ = setting;
 }
 
 bool
@@ -1218,6 +1232,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.water_dielectric_ == b.water_dielectric_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_ ) &&
+		( a.count_pair_hybrid_ == b.count_pair_hybrid_ ) &&
 		( a.put_intra_into_total_ == b.put_intra_into_total_ ) &&
 		( a.geom_sol_interres_path_distance_cutoff_ == b.geom_sol_interres_path_distance_cutoff_ ) &&
 		( a.geom_sol_intrares_path_distance_cutoff_ == b.geom_sol_intrares_path_distance_cutoff_ ) &&
@@ -1329,6 +1344,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 		<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_intra_res_protein: "
 		<< (exclude_intra_res_protein_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: count_pair_hybrid: "
+		<< (count_pair_hybrid_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: put_intra_into_total: "
 		<< (put_intra_into_total_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: geom_sol_interres_path_distance_cutoff: "
@@ -1499,6 +1516,9 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_keys.push_back("exclude_intra_res_protein");
 	option_values.push_back(exclude_intra_res_protein_ ? "1" : "0");
 
+	option_keys.push_back("count_pair_hybrid");
+	option_values.push_back(count_pair_hybrid_ ? "1" : "0");
+
 	option_keys.push_back("put_intra_into_total");
 	option_values.push_back(put_intra_into_total_ ? "1" : "0");
 
@@ -1614,6 +1634,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( water_dielectric_ ) );
 	arc( CEREAL_NVP( exclude_DNA_DNA_ ) ); // _Bool
 	arc( CEREAL_NVP( exclude_intra_res_protein_ ) ); // _Bool
+	arc( CEREAL_NVP( count_pair_hybrid_ ) ); // _Bool
 	arc( CEREAL_NVP( put_intra_into_total_ ) ); // _Bool
 	arc( CEREAL_NVP( geom_sol_interres_path_distance_cutoff_ ) ); // core::Size
 	arc( CEREAL_NVP( geom_sol_intrares_path_distance_cutoff_ ) ); // core::Size
@@ -1697,6 +1718,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( water_dielectric_ );
 	arc( exclude_DNA_DNA_ ); // _Bool
 	arc( exclude_intra_res_protein_ ); // _Bool
+	arc( count_pair_hybrid_ ); // _Bool
 	arc( put_intra_into_total_ ); // _Bool
 	arc( geom_sol_interres_path_distance_cutoff_ ); // core::Size
 	arc( geom_sol_intrares_path_distance_cutoff_ ); // core::Size

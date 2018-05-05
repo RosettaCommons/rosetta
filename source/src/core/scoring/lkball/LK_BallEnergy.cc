@@ -360,16 +360,12 @@ evaluate_lk_ball_energy_for_atom_ranges(
 			// fpd - get lk_ball_bridge
 			if ( n_atom1_waters != 0 && n_atom2_waters != 0 ) {
 				Real lk_desolvation_sum = lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1;
-				core::Real lkbr_wt = sfxn.get_weight( core::scoring::lk_ball_bridge );
-				core::Real lkbr_uncpl_wt = sfxn.get_weight( core::scoring::lk_ball_bridge_uncpl );
 				core::Real lkbridge_frac = lk_ball.get_lkbr_fractional_contribution(
 					atom1_xyz, atom2_xyz,
 					n_atom1_waters, n_atom2_waters,
-					atom1_waters, atom2_waters,
-					lk_desolvation_sum,
-					lkbr_wt, lkbr_uncpl_wt );
+					atom1_waters, atom2_waters );
 
-				emap[ lk_ball_bridge ] += (lk_desolvation_of_atom1_by_atom2+lk_desolvation_of_atom2_by_atom1) * lkbridge_frac;
+				emap[ lk_ball_bridge ] += lk_desolvation_sum * lkbridge_frac;
 				emap[ lk_ball_bridge_uncpl ] += cp_weight * lkbridge_frac;
 			}
 		} // atom2
@@ -600,7 +596,6 @@ LK_BallEnergy::LK_BallEnergy( methods::EnergyMethodOptions const & options ):
 	multi_water_fade_  ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ]() ),
 	lkbridge_angle_widthscale_ ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ]() ),
 	overlap_gap2_ ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_gap ]() )
-	//save_bridging_waters_ (false)
 {
 	// overlap target length
 	core::Real cos_overlap_base_angle = -1.0/3.0;
@@ -652,7 +647,6 @@ LK_BallEnergy::LK_BallEnergy( LK_BallEnergy const & src ):
 	lkbridge_angle_widthscale_ ( src.lkbridge_angle_widthscale_ ),
 	overlap_target_len2_  ( src.overlap_target_len2_ ),
 	overlap_gap2_ ( src.overlap_gap2_ )
-	//save_bridging_waters_ (src.save_bridging_waters_)
 {
 	setup_d2_bounds();
 }
@@ -939,18 +933,46 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 	Size atom1_n_attached_waters,
 	Size atom2_n_attached_waters,
 	WaterCoords const & atom1_waters,
-	WaterCoords const & atom2_waters,
-	Real const & lk_desolvation_sum,
-	Real const & lkbr_wt,
-	Real const & lkbr_uncpl_wt
+	WaterCoords const & atom2_waters
 ) const {
 	WaterDerivVectors dweighted_water_ddi;
 	Real weighted_water_d2_delta(0.0), angleterm_lkbr(0.0), pointterm_lkbr(0.0), d_angleterm_lkbr_dr(0.0);
 	return get_lkbr_fractional_contribution(
 		atom1_base, atom2_base, atom1_n_attached_waters, atom2_n_attached_waters, atom1_waters, atom2_waters,
-		dweighted_water_ddi, weighted_water_d2_delta, pointterm_lkbr, angleterm_lkbr, d_angleterm_lkbr_dr, lk_desolvation_sum, lkbr_wt, lkbr_uncpl_wt, false);
+		dweighted_water_ddi, weighted_water_d2_delta, pointterm_lkbr, angleterm_lkbr, d_angleterm_lkbr_dr, false);
 }
 
+// get water-water bridging contribution
+// may want to split out deriv-computing and non-deriv computing version since it is a bit more expensive than in non-br lk case
+Real
+LK_BallEnergy::get_lkbr_fractional_contribution_noangle(
+	Size atom1_n_attached_waters,
+	Size atom2_n_attached_waters,
+	WaterCoords const & atom1_waters,
+	WaterCoords const & atom2_waters
+) const {
+	if ( atom1_n_attached_waters == 0 || atom2_n_attached_waters == 0 ) return 0.0;
+
+	// softmax of all water combinations
+	Real d2_delta, d2_delta_wt, weighted_d2_water_delta(0.0);
+	for ( Size idx1 = 1; idx1 <= atom1_n_attached_waters; ++idx1 ) {
+		for ( Size idx2 = 1; idx2 <= atom2_n_attached_waters; ++idx2 ) {
+			numeric::xyzVector< core::Real > delta_ij = atom1_waters[idx1] - atom2_waters[idx2];
+			d2_delta = delta_ij.length_squared() - overlap_gap2_;
+			d2_delta_wt = exp( -d2_delta/multi_water_fade_ );
+			weighted_d2_water_delta += d2_delta_wt;
+		}
+	}
+
+	weighted_d2_water_delta = -multi_water_fade_ * log( weighted_d2_water_delta );
+
+	Real frac( 0.0 );
+	if ( weighted_d2_water_delta < overlap_width_A2_ ) {
+		frac = ( weighted_d2_water_delta < 0.0 ? Real( 1.0 ) : eval_lk_fraction( weighted_d2_water_delta, overlap_width_A2_ ) );
+	}
+
+	return frac;
+}
 
 // get water-water bridging contribution
 // may want to split out deriv-computing and non-deriv computing version since it is a bit more expensive than in non-br lk case
@@ -967,20 +989,12 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 	Real & pointterm_lkbr,
 	Real & angleterm_lkbr,
 	Real & d_angleterm_lkbr_dr,
-	Real const & , //lk_desolvation_sum,
-	Real const & , //lkbr_wt,
-	Real const & , //lkbr_uncpl_wt,
 	bool compute_derivs /*=true*/
 ) const {
 	pointterm_lkbr = 0;
 	angleterm_lkbr = 0;
 	d_angleterm_lkbr_dr = 0;
 	weighted_d2_water_delta = 0.0;
-
-	//if ( compute_derivs ) {
-	// d_weighted_d2_d_di.clear();
-	// d_weighted_d2_d_di.resize( atom1_n_attached_waters, numeric::xyzVector<core::Real>(0.0,0.0,0.0) );
-	//}
 
 	if ( atom1_n_attached_waters == 0 || atom2_n_attached_waters == 0 ) return 0.0;
 
@@ -1021,6 +1035,9 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 		core::Real angle_overlap_A2 = lkbridge_angle_widthscale_ * overlap_width_A2_;
 		if ( base_atom_delta > angle_overlap_A2 ) {
 			frac = 0;
+			angleterm_lkbr = d_angleterm_lkbr_dr = 0;
+		} else if ( base_atom_delta < 0 ) {
+			frac = 1;
 			angleterm_lkbr = d_angleterm_lkbr_dr = 0;
 		} else {
 			angleterm_lkbr = eval_lk_fraction( base_atom_delta, angle_overlap_A2);
@@ -1541,8 +1558,8 @@ LK_BallEnergy::residue_pair_energy(
 		sfxn, emap);
 
 	CPCrossoverBehavior crossover = (rsd1.is_polymer_bonded(rsd2) && rsd2.is_polymer_bonded(rsd1))? CP_CROSSOVER_4 : CP_CROSSOVER_3;
-	CountPairFactory::create_count_pair_function_and_invoke( rsd1, rsd2, crossover, invoker );
 
+	CountPairFactory::create_count_pair_function_and_invoke( rsd1, rsd2, crossover, invoker );
 }
 
 
@@ -1739,10 +1756,10 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 	//utility::vector1< numeric::xyzVector<core::Real> > d_weighted_d2_d_di;
 	WaterDerivVectors d_weighted_d2_d_di;
 
-	Real lk_desolvation_sum = 0.0, lkbr_wt = 0.0, lkbr_uncpl_wt = 0.0;
-	Real const lkbr_fraction(
-		get_lkbr_fractional_contribution(
-		heavyatom1_xyz, atom2_xyz, atom1_n_waters, atom2_n_waters, atom1_waters, atom2_waters, d_weighted_d2_d_di, weighted_d2_water_delta, pointterm_lkbr, angleterm_lkbr, d_angleterm_lkbr_dr, lk_desolvation_sum, lkbr_wt, lkbr_uncpl_wt ) );
+	Real const lkbr_fraction( get_lkbr_fractional_contribution(
+		heavyatom1_xyz, atom2_xyz, atom1_n_waters, atom2_n_waters, atom1_waters, atom2_waters,
+		d_weighted_d2_d_di, weighted_d2_water_delta, pointterm_lkbr, angleterm_lkbr, d_angleterm_lkbr_dr
+		) );
 
 	// A: change in LK (used as a scalefactor) on _bridge but not _bridge_uncpl
 	if ( lk_ball_bridge_weight != 0 ) {
@@ -2021,7 +2038,9 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 
 		if ( d2 == Real(0.0) ) continue; // sanity check
 		if ( !use_lkbr_uncpl && d2 >= fasol_max_dis2_ ) continue;
-		if ( d2 >= lkb_max_dis2_ ) continue;
+		//if ( d2 >= lkb_max_dis2_ ) continue;
+
+		//std::cout << "deriv: " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
 
 		// fpd ... new version works at the heavyatom level
 		sum_deriv_contributions_for_heavyatom_pair(
@@ -2029,7 +2048,6 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	}
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 }
-
 
 //
 //fpd this function is only called during nblist auto update

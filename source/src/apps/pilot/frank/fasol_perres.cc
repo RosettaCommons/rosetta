@@ -137,6 +137,7 @@ public:
 			bur_type++;
 		}
 
+		// weights
 		core::Real weightS=sf->get_weight( core::scoring::fa_sol );
 		core::Real weightA=sf->get_weight( core::scoring::fa_atr );
 		core::Real weightR=sf->get_weight( core::scoring::fa_rep );
@@ -231,19 +232,15 @@ public:
 							if ( n_atom1_waters != 0 ) {
 								Real const fasol1_lkball =
 									fasol1 * lkb.get_lk_fractional_contribution( atom2_xyz, rsd2.atom(jatm).type(), n_atom1_waters, atom1_waters );
-								lk_ball_i += weight*weightLKb * ( atom1_wts[1] * fasol1 + atom1_wts[2] * fasol1_lkball );
-								lk_ball_i += weight*weightLKbw * ( fasol1_lkball );
+								lk_ball_i += weight*weightLKbw * ( atom1_wts[1] * fasol1 + atom1_wts[2] * fasol1_lkball );
+								lk_ball_i += weight*weightLKb * ( fasol1_lkball );
 								lk_ball_i += weight*weightLKbi * ( fasol1);
 
-								if ( n_atom2_waters == 0 ) {
-									Real lk_desolvation_sum = 0.0;
-									core::Real lkbr_wt = sf->get_weight( core::scoring::lk_ball_bridge );
-									core::Real lkbr_uncpl_wt = sf->get_weight( core::scoring::lk_ball_bridge_uncpl );
+								if ( n_atom2_waters != 0 ) {
 									core::Real fasol1_lkbridge = lkb.get_lkbr_fractional_contribution(
 										atom1_xyz, atom2_xyz,
 										n_atom1_waters, n_atom2_waters,
-										atom1_waters, atom2_waters,
-										lk_desolvation_sum, lkbr_wt, lkbr_uncpl_wt );
+										atom1_waters, atom2_waters );
 									lk_ball_i += 0.5 * weight * weightLKbr * (fasol1+fasol2) * fasol1_lkbridge;
 									lk_ball_i += 0.5 * weight * weightLKbru * fasol1_lkbridge;
 								}

@@ -1,0 +1,235 @@
+NAME   GB_RADIUS GB_SCALE_FACTOR
+CNH2      1.7000          0.7200
+COO       1.7000          0.7200
+CH0       1.7000          0.7200
+CH1       1.7000          0.7200
+CH2       1.7000          0.7200
+CH3       1.7000          0.7200
+aroC      1.7000          0.7200
+Ntrp      1.5500          0.7900
+Nhis      1.5500          0.7900
+NtrR      1.5500          0.7900
+NH2O      1.5500          0.7900
+Nlys      1.5500          0.7900
+Narg      1.5500          0.7900
+Npro      1.5500          0.7900
+OH        1.5000          0.8500
+OW        1.5000          0.8500
+ONH2      1.5000          0.8500
+OOC       1.5000          0.8500
+Oaro      1.5000          0.8500
+Oet2      1.5000          0.8500
+Oet3      1.5000          0.8500
+S         1.8000          0.9600
+SH1       1.8000          0.9600
+Nbb       1.5500          0.7900
+CAbb      1.7000          0.7200
+CObb      1.7000          0.7200
+OCbb      1.5000          0.8500
+Phos      2.1500          0.8600
+Pbb       2.1500          0.8600  #copied from Phos
+Hpol      1.3000          0.8500
+HS        1.3000          0.8500
+Hapo      1.3000          0.8500
+Haro      1.3000          0.8500
+HNbb      1.3000          0.8500
+Hwat      1.3000          0.8500
+Owat      1.5000          0.8500
+Opoint    1.5000          0.8500
+HOH       1.5000          0.8500
+Bsp2      1.7537          0.7900  # modified from Nhis based on ratio of van der Waals radii
+F         1.4700          0.8000
+Cl        1.7350          0.8000
+Br        1.9000          0.8000
+I         2.3600          0.8000
+Zn2p      1.0900          0.8000
+Co2p      1.5680          0.8000  # modified from zinc based on ratio of van der Waals radii
+Cu2p      1.0978          0.8000  # modified from zinc based on ratio of van der Waals radii
+Fe2p      0.7800          0.8000
+Fe3p      0.6500          0.8000
+Mg2p      1.7000          0.8000
+Ca2p      1.8170          0.8000
+Na1p      1.9920          0.8000
+K1p       1.8120          0.8000
+Au        1.2000          0.8500
+OP        1.4500          0.8500
+OHP       1.5500          0.8500
+HOP       0.1900          0.8500
+Pha       1.8500          0.8600
+OPha      1.4500          0.8500
+OHha      1.5500          0.8500
+Hha       0.1900          0.8500
+CO3       1.7000          0.8500 #@Robin No published scale/ current value obtained from rosetta++ 
+OC3       1.6000          0.8500 #@Robin
+Si        1.8500          0.8500 #@Robin
+OSi       1.5500          0.8500 #@Robin
+Oice      1.5000          0.8500 #@Robin
+Hice      1.2000          0.8500 #@Robin 
+CS1       1.7000          0.7200
+CS2       1.7000          0.7200
+CS5       1.7000          0.7200
+CS6       1.7000          0.7200
+He        1.1810          0.8250 # UFF LJ radius, scale random guess 
+Li        1.2255          0.8250 # UFF LJ radius, scale random guess 
+Be        1.3725          0.8250 # UFF LJ radius, scale random guess 
+Ne        1.6215          0.8250 # UFF LJ radius, scale random guess 
+Al        2.2495          0.8250 # UFF LJ radius, scale random guess 
+Ar        1.9340          0.8250 # UFF LJ radius, scale random guess
+Sc        1.6475          0.8250 # UFF LJ radius, scale random guess 
+Ti        1.5875          0.8250 # UFF LJ radius, scale random guess 
+V         1.5720          0.8250 # UFF LJ radius, scale random guess
+Cr        1.5115          0.8250 # UFF LJ radius, scale random guess 
+Mn        1.4805          0.8250 # UFF LJ radius, scale random guess 
+Ni        1.4170          0.8250 # UFF LJ radius, scale random guess
+Ga        2.1915          0.8250 # UFF LJ radius, scale random guess 
+Ge        2.1400          0.8250 # UFF LJ radius, scale random guess
+As        2.1150          0.8250 # UFF LJ radius, scale random guess
+Se        2.1025          0.8250 # UFF LJ radius, scale random guess 
+Kr        2.0705          0.8250 # UFF LJ radius, scale random guess 
+Rb        2.0570          0.8250 # UFF LJ radius, scale random guess
+Sr        1.8205          0.8250 # UFF LJ radius, scale random guess 
+Y         1.6725          0.8250 # UFF LJ radius, scale random guess 
+Zr        1.5620          0.8250 # UFF LJ radius, scale random guess
+Nb        1.5825          0.8250 # UFF LJ radius, scale random guess 
+Mo        1.5260          0.8250 # UFF LJ radius, scale random guess
+Tc        1.4990          0.8250 # UFF LJ radius, scale random guess
+Ru        1.4815          0.8250 # UFF LJ radius, scale random guess 
+Rh        1.4645          0.8250 # UFF LJ radius, scale random guess 
+Pd        1.4495          0.8250 # UFF LJ radius, scale random guess 
+Ag        1.5740          0.8250 # UFF LJ radius, scale random guess
+Cd        1.4240          0.8250 # UFF LJ radius, scale random guess
+In        2.2315          0.8250 # UFF LJ radius, scale random guess 
+Sn        2.1960          0.8250 # UFF LJ radius, scale random guess
+Sb        2.2100          0.8250 # UFF LJ radius, scale random guess
+Te        2.2350          0.8250 # UFF LJ radius, scale random guess
+Xe        2.2020          0.8250 # UFF LJ radius, scale random guess
+Cs        2.2585          0.8250 # UFF LJ radius, scale random guess 
+Ba        1.8515          0.8250 # UFF LJ radius, scale random guess 
+La        1.7610          0.8250 # UFF LJ radius, scale random guess
+Ce        1.7780          0.8250 # UFF LJ radius, scale random guess
+Pr        1.8030          0.8250 # UFF LJ radius, scale random guess
+Nd        1.7875          0.8250 # UFF LJ radius, scale random guess 
+Pm        1.7735          0.8250 # UFF LJ radius, scale random guess 
+Sm        1.7600          0.8250 # UFF LJ radius, scale random guess
+Eu        1.7465          0.8250 # UFF LJ radius, scale random guess 
+Gd        1.6840          0.8250 # UFF LJ radius, scale random guess
+Tb        1.7255          0.8250 # UFF LJ radius, scale random guess 
+Dy        1.7140          0.8250 # UFF LJ radius, scale random guess
+Ho        1.7045          0.8250 # UFF LJ radius, scale random guess 
+Er        1.6955          0.8250 # UFF LJ radius, scale random guess 
+Tm        1.6870          0.8250 # UFF LJ radius, scale random guess
+Yb        1.6775          0.8250 # UFF LJ radius, scale random guess 
+Lu        1.8200          0.8250 # UFF LJ radius, scale random guess
+Hf        1.5705          0.8250 # UFF LJ radius, scale random guess 
+Ta        1.5850          0.8250 # UFF LJ radius, scale random guess
+W         1.5345          0.8250 # UFF LJ radius, scale random guess 
+Re        1.4770          0.8250 # UFF LJ radius, scale random guess
+Os        1.5600          0.8250 # UFF LJ radius, scale random guess
+Ir        1.4200          0.8250 # UFF LJ radius, scale random guess
+Pt        1.3770          0.8250 # UFF LJ radius, scale random guess
+Au        1.6465          0.8250 # UFF LJ radius, scale random guess 
+Hg        1.3525          0.8250 # UFF LJ radius, scale random guess 
+Tl        2.1735          0.8250 # UFF LJ radius, scale random guess 
+Pb        2.1485          0.8250 # UFF LJ radius, scale random guess 
+Bi        2.1850          0.8250 # UFF LJ radius, scale random guess
+Po        2.3545          0.8250 # UFF LJ radius, scale random guess 
+At        2.3750          0.8250 # UFF LJ radius, scale random guess
+Rn        2.3825          0.8250 # UFF LJ radius, scale random guess 
+Fr        2.4500          0.8250 # UFF LJ radius, scale random guess
+Ra        1.8385          0.8250 # UFF LJ radius, scale random guess 
+Ac        1.7390          0.8250 # UFF LJ radius, scale random guess
+Th        1.6980          0.8250 # UFF LJ radius, scale random guess
+Pa        1.7120          0.8250 # UFF LJ radius, scale random guess
+U         1.6975          0.8250 # UFF LJ radius, scale random guess 
+Np        1.7120          0.8250 # UFF LJ radius, scale random guess
+Pu        1.7120          0.8250 # UFF LJ radius, scale random guess
+Am        1.6905          0.8250 # UFF LJ radius, scale random guess 
+Cm        1.6630          0.8250 # UFF LJ radius, scale random guess
+Bk        1.6695          0.8250 # UFF LJ radius, scale random guess 
+Cf        1.6565          0.8250 # UFF LJ radius, scale random guess 
+Es        1.6495          0.8250 # UFF LJ radius, scale random guess 
+Fm        1.6430          0.8250 # UFF LJ radius, scale random guess
+Md        1.6370          0.8250 # UFF LJ radius, scale random guess
+No        1.6240          0.8250 # UFF LJ radius, scale random guess
+Lr        1.6180          0.8250 # UFF LJ radius, scale random guess
+O5        1.5000          0.8500
+VOOC      0.0000          0.0000
+VCOO      0.0000          0.0000
+VOCN      0.0000          0.0000
+VNOC      0.0000          0.0000
+VCON      0.0000          0.0000
+VSOG      0.0000          0.0000
+VSCB      0.0000          0.0000
+VCSG      0.0000          0.0000
+VCCB      0.0000          0.0000
+VRNH      0.0000          0.0000
+VRNE      0.0000          0.0000
+VKNZ      0.0000          0.0000
+VKCE      0.0000          0.0000
+VHND      0.0000          0.0000
+VHNE      0.0000          0.0000
+VHCB      0.0000          0.0000
+VHPO      0.0000          0.0000
+SUCK  	  0.0000				  0.0000
+REPL      0.0000          0.0000
+REPLS     0.0000          0.0000
+HREPS     0.0000          0.0000
+VIRT      0.0000          0.0000
+MPct      0.0000          0.0000
+MPnm      0.0000          0.0000
+MPtk      0.0000          0.0000
+MPdp      0.0000          0.0000
+CD        1.7000          0.7200
+CD1       1.7000          0.7200
+CD2       1.7000          0.7200
+CDp       1.7000          0.7200
+CR        1.7000          0.7200
+CRb       1.7000          0.7200
+CRp       1.7000          0.7200
+CS        1.7000          0.7200
+CS1       1.7000          0.7200
+CS2       1.7000          0.7200
+CS3       1.7000          0.7200
+CSp       1.7000          0.7200
+CT        1.7000          0.7200
+CTp       1.7000          0.7200
+HC        1.3000          0.8500
+HN        1.3000          0.8500
+HO        1.3000          0.8500
+HR        1.3000          0.8500
+HG        1.3000          0.8500
+Nad       1.5500          0.7900
+Nad3      1.5500          0.7900
+Nam       1.5500          0.7900
+Nam2      1.5500          0.7900
+Ngu1      1.5500          0.7900
+Ngu2      1.5500          0.7900
+Nim       1.5500          0.7900
+Nin       1.5500          0.7900
+NG1       1.5500          0.7900
+NG2       1.5500          0.7900
+NG21      1.5500          0.7900
+NG22      1.5500          0.7900
+NG3       1.5500          0.7900
+NGb       1.5500          0.7900
+Oad       1.5000          0.8500
+Oal       1.5000          0.8500
+Oat       1.5000          0.8500
+Oet       1.5000          0.8500
+Ofu       1.5000          0.8500
+Ohx       1.5000          0.8500
+Ont       1.5000          0.8500
+OG2       1.5000          0.8500
+OG3       1.5000          0.8500
+OG31      1.5000          0.8500
+Ssl       1.8000          0.9600
+Sth       1.8000          0.9600
+SG2       1.8000          0.9600
+SG3       1.8000          0.9600
+SG5       1.8000          0.9600
+PG3       2.1500          0.8600
+PG5       2.1500          0.8600
+FR        1.4700          0.8000
+ClR       1.7350          0.8000
+BrR       1.9000          0.8000
+IR        2.3600          0.8000

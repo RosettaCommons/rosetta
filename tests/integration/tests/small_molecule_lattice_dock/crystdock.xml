@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <SCOREFXNS>
+        <ScoreFunction name="fullatom" weights="beta_liqsim.wts" symmetric="1">
+        </ScoreFunction>
+    </SCOREFXNS>
+    <MOVERS>
+		<DockLatticeMover name="crystdock" scorefxn="fullatom" trans_step="0.5" rot_step="1.5" chi_step="3" ncycles="10" randomize="0" perturb_chi="0" spacegroup="input" verbose="1" min="1" final_min="1"/>
+		<UpdateCrystInfo name="updatecrystinfo"/>
+    </MOVERS>
+    <PROTOCOLS>
+        <Add mover="crystdock"/>
+    </PROTOCOLS>
+</ROSETTASCRIPTS>

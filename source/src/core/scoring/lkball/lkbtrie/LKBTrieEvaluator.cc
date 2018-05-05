@@ -74,14 +74,12 @@ LKBTrieEvaluator::heavyatom_heavyatom_energy(
 	if ( at2.n_attached_waters() != 0 ) lk_ij += lk_desolvation_of_atom2_by_atom1;
 	core::Real lkbr_ij = lk_desolvation_of_atom1_by_atom2_lkb+lk_desolvation_of_atom2_by_atom1_lkb;
 
-	core::Real lkbridge_frac = 0.0, lkbr_wt = 0.0, lkbr_uncpl_wt = 0.0;
+	core::Real lkbridge_frac = 0.0;
 	if ( wt_lk_ball_bridge_ != 0.0 || wt_lk_ball_bridge_uncpl_ != 0.0 ) {
 		lkbridge_frac = lkb_.get_lkbr_fractional_contribution(
 			at1.atom().xyz(), at2.atom().xyz(),
 			at1.n_attached_waters(), at2.n_attached_waters(),
-			at1.waters(), at2.waters(),
-			lkbr_ij,
-			lkbr_wt, lkbr_uncpl_wt );
+			at1.waters(), at2.waters() );
 	}
 
 	core::Real score =

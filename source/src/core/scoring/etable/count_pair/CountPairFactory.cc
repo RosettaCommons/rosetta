@@ -24,6 +24,7 @@
 #include <core/scoring/etable/count_pair/CountPairGeneric.hh>
 
 #include <core/scoring/etable/count_pair/CountPairCrossover3.hh>
+#include <core/scoring/etable/count_pair/CountPairCrossover3full.hh>
 #include <core/scoring/etable/count_pair/CountPairCrossover4.hh>
 #include <core/scoring/etable/count_pair/CountPairCrossover34.hh>
 
@@ -69,6 +70,9 @@ CountPairFactory::create_count_pair_function(
 			case CP_CROSSOVER_3 :
 				cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover3 >( res1, res1connat, res2, res2connat ) );
 				break;
+			case CP_CROSSOVER_3FULL :
+				cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover3full >( res1, res1connat, res2, res2connat ) );
+				break;
 			case CP_CROSSOVER_4 :
 				cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover4 >( res1, res1connat, res2, res2connat ) );
 				break;
@@ -82,6 +86,7 @@ CountPairFactory::create_count_pair_function(
 			CountPairGenericOP gcpfxn( new CountPairGeneric( res1, res2 ) );
 			switch ( crossover ) {
 			case CP_CROSSOVER_3 :
+			case CP_CROSSOVER_3FULL :
 				gcpfxn->set_crossover( 3 );
 				break;
 			case CP_CROSSOVER_4 :
@@ -91,6 +96,7 @@ CountPairFactory::create_count_pair_function(
 				gcpfxn->set_crossover( 4 );
 				break;
 			}
+
 			cpfxn = gcpfxn;
 		}
 			break;
@@ -143,6 +149,11 @@ CountPairFactory::create_count_pair_function_and_invoke(
 				invoker.invoke( cpfxn );
 			}
 				break;
+			case CP_CROSSOVER_3FULL : {
+				CountPair1B< CountPairCrossover3full > cpfxn( res1, res1connat, res2, res2connat );
+				invoker.invoke( cpfxn );
+			}
+				break;
 			case CP_CROSSOVER_4 : {
 				CountPair1B< CountPairCrossover4 > cpfxn( res1, res1connat, res2, res2connat );
 				invoker.invoke( cpfxn );
@@ -158,7 +169,7 @@ CountPairFactory::create_count_pair_function_and_invoke(
 			break;
 		default : {
 			CountPairGeneric gcpfxn( res1, res2 );
-			gcpfxn.set_crossover( crossover == CP_CROSSOVER_3 ? 3 : 4 );
+			gcpfxn.set_crossover( (crossover == CP_CROSSOVER_3 || crossover == CP_CROSSOVER_3FULL) ? 3 : 4 );
 			invoker.invoke( gcpfxn );
 		}
 			break;
@@ -208,6 +219,9 @@ CountPairFactory::create_intrares_count_pair_function(
 	CountPairFunctionOP cpfxn;
 
 	switch ( crossover ) {
+	case CP_CROSSOVER_3FULL :
+		cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover3full >( res ) );
+		break;
 	case CP_CROSSOVER_3 :
 		cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover3 >( res ) );
 		break;

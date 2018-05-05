@@ -45,6 +45,7 @@ enum LongRangeEnergyType {
 	sasa_lr,
 	PB_elec_lr,
 	cart_bonded_lr,
+	gen_bonded_lr,
 	rama2b_lr,
 	ramaprepro_lr,
 	aspartimide_penalty_lr,

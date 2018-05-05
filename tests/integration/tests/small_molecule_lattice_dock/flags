@@ -1,0 +1,9 @@
+-s inputs/ZIPKOA.pdb
+-parser::protocol crystdock.xml
+-gen_potential
+-crystal_refine
+-in::file::load_PDB_components false
+-nstruct 1
+-out::prefix dock_
+-in::file::native inputs/ZIPKOA.pdb
+-extra_res_fa ZIPKOA.params

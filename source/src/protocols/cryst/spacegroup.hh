@@ -164,7 +164,7 @@ public:
 	}
 
 	numeric::xyzVector<core::Size>
-	get_nsubdivisions() {
+	get_nsubdivisions() const {
 		numeric::xyzVector<core::Size> retval(1,1,1);
 		for ( int i=1; i<=(int)nsymmops(); ++i ) {
 			numeric::xyzVector<core::Real> const &T = symmops_[i].get_translation();

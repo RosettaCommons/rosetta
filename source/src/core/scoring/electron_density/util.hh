@@ -91,17 +91,34 @@ core::Real interp_linear(
 /// @brief spline interpolation with periodic boundaries
 core::Real
 interp_spline( ObjexxFCL::FArray3D< double > & coeffs ,
-	numeric::xyzVector<core::Real> const & idxX );
+	numeric::xyzVector<core::Real> const & idxX,
+	bool mirrored=false
+);
 
 numeric::xyzVector<core::Real>
 interp_dspline( ObjexxFCL::FArray3D< double > & coeffs ,
-	numeric::xyzVector<core::Real> const & idxX );
+	numeric::xyzVector<core::Real> const & idxX,
+	bool mirrored=false
+);
 
 /// @brief precompute spline coefficients (float array => double coeffs)
-void spline_coeffs( ObjexxFCL::FArray3D< double > const &data, ObjexxFCL::FArray3D< double > & coeffs);
+void spline_coeffs( ObjexxFCL::FArray3D< double > const &data, ObjexxFCL::FArray3D< double > & coeffs, bool mirrored=false);
+
+/// @brief spline interpolation with periodic boundaries
+core::Real
+interp_spline( ObjexxFCL::FArray3D< float > & coeffs ,
+	numeric::xyzVector<core::Real> const & idxX,
+	bool mirrored=false
+);
+
+numeric::xyzVector<core::Real>
+interp_dspline( ObjexxFCL::FArray3D< float > & coeffs ,
+	numeric::xyzVector<core::Real> const & idxX,
+	bool mirrored=false
+);
 
 /// @brief precompute spline coefficients (double array => double coeffs)
-void spline_coeffs( ObjexxFCL::FArray3D< float > const &data, ObjexxFCL::FArray3D< double > & coeffs);
+void spline_coeffs( ObjexxFCL::FArray3D< float > const &data, ObjexxFCL::FArray3D< double > & coeffs, bool mirrored=false);
 
 void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, ObjexxFCL::FArray3D< std::complex<double> > const & mapA, ObjexxFCL::FArray3D< std::complex<double> > const & mapB);
 
@@ -133,7 +150,8 @@ template<class S, class T>
 void resample(
 	ObjexxFCL::FArray3D< S > const &density,
 	ObjexxFCL::FArray3D< T > &newDensity,
-	numeric::xyzVector< int > newDims ) {
+	numeric::xyzVector< int > newDims
+) {
 	if ( density.u1() == newDims[0] && density.u2() == newDims[1] && density.u3() == newDims[2] ) {
 		newDensity = density;
 		return;

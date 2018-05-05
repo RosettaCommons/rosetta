@@ -546,6 +546,13 @@ enum ScoreType {
 	cart_bonded_proper,   // cartesian bonded proper torsion
 	cart_bonded_improper, // cartesian bonded improper torsion
 
+	//fd  generic bonded potential
+	gen_bonded,
+	gen_bonded_bond,
+	gen_bonded_angle,
+	gen_bonded_torsion,
+	gen_bonded_improper,
+
 	//Neighbor Vector solvation approximation
 	neigh_vect,
 	neigh_count,

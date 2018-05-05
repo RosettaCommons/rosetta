@@ -1,0 +1,232 @@
+# These are the explicit vdw radii used by the Reduce program.  Specifically in the 
+#  reduce application file ElementInfo.cpp
+########################################################################################
+#########                                                                     ##########
+#########                                                                     ##########
+###################################### History #########################################
+# 2/23/2014 - JAB - Checked reduce radii to current program - all match except Hpol, Hapol and HNbb.
+#   This is being changed to fully match reduce explicit hydrogen radii set.  F, Cl, Br, and I
+#   are also being changed to match reduce radii.  All others are left as-is. 
+#   Note that this radii now becomes default for the new sasa machinery as decided at MiniRosettaCon2014
+###
+#// (From ElementInfo.cpp) Reduce radii derived from:
+#// For non-metals, explicit VDW radii from
+#// Gavezzotti, J. Am. Chem. Soc. (1983) 105, 5220-5225.
+#// or, if unavailable,
+#// Bondi, J. Phys. Chem. (1964), V68, N3, 441-451.
+#// Covalent and ionic radii from
+#// Advanced Inorganic Chemistry, Cotton & Wilkinson, 1962, p93.
+#
+########################################################################################
+########################################################################################
+NAME REDUCE_SASA_RADIUS
+CNH2      1.75
+COO       1.75
+CH0       1.75
+CH1       1.75
+CH2       1.75
+CH3       1.75
+aroC      1.75
+Ntrp      1.55
+Nhis      1.55
+NtrR      1.55
+NH2O      1.55
+Nlys      1.55
+Narg      1.55
+Npro      1.55
+OH        1.4
+OW        1.4
+ONH2      1.4
+OOC       1.4
+Oaro      1.4
+Oet2      1.4
+Oet3      1.4
+S         1.8
+SH1       1.8
+Nbb       1.55
+CAbb      1.75
+CObb      1.65
+OCbb      1.4
+Phos      1.8
+Pbb       1.8 #Copied from Phos (JAB 2/20/14)
+Hpol      1.0
+HS        1.0
+Hapo      1.17
+Haro      1.0
+HNbb      1.0
+Hwat      1.0
+Owat      1.4000
+Opoint    1.4000
+HOH       1.4000
+Bsp2      1.7537 # modified from Nhis based on ratio of van der Waals radii
+F         1.3
+Cl        1.77
+Br        1.95
+I         2.10
+Zn2p      1.0900  # ion radius CHARMM27
+Co2p      1.5680  # modified from zinc based on ratio of van der Waals radii
+Cu2p      1.0978  # modified from zinc based on ratio of van der Waals radii
+Fe2p      0.7800  # ion radius CHARMM27
+Fe3p      0.6500  # ion radius CHARMM27
+Mg2p      1.1850  # ion radius CHARMM27
+Ca2p      1.2986  # ion radius CHARMM27,kosta makrodimitris(*0.95)
+Na1p      1.3638  # ion radius CHARMM27
+K1p       1.7638  # ion radius CHARMM27
+Pha       0.585000 # P/ HA;   CHARMM27 for DNA, MacKerell 2004; kosta makrodimitris 11/2005 @Robin 
+OPha      0.120000 # OP/ HA;  CHARMM27 for DNA, MacKerell 2004; kosta makrodimitris 11/2005 @Robin
+OHha      0.152100 # OH/ HA;  CHARMM27 for DNA, MacKerell 2004; kosta makrodimitris 11/2005 @Robin
+Hha       0.046000 # HO/ HA;  CHARMM27 for DNA, MacKerell 2004; kosta makrodimitris 11/2005 @Robin
+CO3       0.179500 # CO3 Languimuir 1999, 15, 5141-5149 @Robin
+OC3       0.384500 # O3C Languimuir 1999, 15, 5141-5149 @Robin
+Si        0.000100 # Si J. Phys. Chem. B 2004, 108, 1255-1266 @Robin
+OSi       0.155400 # OH J. Phys. Chem. B 2004, 108, 1255-1266 @Robin
+Oice      0.159100 # O in ice @Robin
+Hice      0.049800 # H in ice @Robin  
+He        1.60
+Li        0.60
+Be        0.31
+Ne        1.60
+Al        0.50
+Ar        1.89
+Sc        0.68
+Ti        0.75
+V         0.79
+Cr        0.73
+Mn        0.80
+Ni        0.66
+Ga        0.53
+Ge        0.60
+As        2.00
+Se        1.90
+Br        1.95
+Kr        2.01
+Rb        1.48
+Sr        1.10
+Y         0.90
+Zr        0.77
+Nb        0.86
+Mo        0.93
+Tc        0.71
+Ru        0.82
+Rh        0.76
+Pd        1.05
+Ag        1.26
+Cd        0.91
+In        0.81
+Sn        0.71
+Sb        2.20
+Te        0.97
+I         2.10
+Xe        2.18
+Cs        1.69
+Ba        1.29
+La        1.03
+Ce        0.87
+Pr        1.11
+Nd        1.10
+Pm        1.15
+Sm        1.08
+Eu        1.31
+Gd        1.05
+Tb        1.05
+Dy        1.05
+Ho        1.04
+Er        1.03
+Tm        1.02
+Yb        1.14
+Lu        1.02
+Hf        0.85
+Ta        0.86
+W         0.66
+Re        0.77
+Os        0.78
+Ir        0.80
+Pt        0.63
+Au        1.10
+Hg        1.00
+Tl        1.44
+Pb        0.84
+Bi        1.17
+Po        0.99
+At        0.91
+Rn        2.50
+Fr        1.94
+Ra        1.62
+Ac        1.30
+Th        1.08
+Pa        1.10
+U         1.03
+Np        1.00
+Pu        1.00
+Am        1.00
+Cm        1.00
+Bk        1.00
+Cf        1.00
+Es        1.00
+Fm        1.00
+Md        1.00
+No        1.00
+Lr        1.00
+SUCK      0.0000
+REPL      0.0000
+REPLS 	  0.0000	
+HREPS     0.0000 
+VIRT      0.0000
+MPct	  0.0000
+MPnm	  0.0000
+MPdp	  0.0000
+MPtk      0.0000
+CD        1.75
+CD1       1.75
+CD2       1.75
+CDp       1.65
+CR        1.75
+CRb       1.75
+CRp       1.75
+CS        1.75
+CS1       1.75
+CS2       1.75
+CS3       1.75
+CSp       1.75
+CT        1.75
+CTp       1.75
+HC        1.17
+HN        1.0
+HO        1.0
+HR        1.0
+HG        1.17
+Nad       1.55
+Nad3      1.55
+Nam       1.55
+Nam2      1.55
+Ngu1      1.55
+Ngu2      1.55
+Nim       1.55
+Nin       1.55
+NG1       1.55
+NG2       1.55
+NG21      1.55
+NG22      1.55
+NG3       1.55
+NGb       1.55
+Oad       1.4
+Oal       1.4
+Oat       1.4
+Oet       1.4
+Ofu       1.4
+Ohx       1.4
+Ont       1.4
+OG2       1.4
+OG3       1.4
+OG31      1.4
+Ssl       1.8
+Sth       1.8
+SG2       1.8
+SG3       1.8
+SG5       1.8
+PG3       1.8
+PG5       1.8
+FR        1.3
+ClR       1.77
+BrR       1.95
+IR        2.10

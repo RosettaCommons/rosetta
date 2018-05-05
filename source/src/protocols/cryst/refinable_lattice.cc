@@ -12,109 +12,95 @@
 /// @details
 /// @author Frank DiMaio
 
-#include <protocols/cryst/refinable_lattice.hh>
 #include <protocols/cryst/refinable_lattice_creator.hh>
+#include <protocols/cryst/refinable_lattice.hh>
+
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
+#include <protocols/cryst/cryst_rms.hh>
+#include <protocols/cryst/spacegroup.hh>
 #include <protocols/cryst/util.hh>
 #include <protocols/cryst/wallpaper.hh>
-#include <protocols/cryst/spacegroup.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/relax/FastRelax.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_task_operations/RestrictToInterface.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/viewer/viewers.hh>
 
-#include <core/types.hh>
-
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
-
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
+#include <core/optimization/MinimizerOptions.hh>
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_task_operations/RestrictToInterface.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/pose/util.hh>
+#include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/types.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
+#include <numeric/model_quality/rms.hh>
+#include <numeric/random/random_xyz.hh>
+#include <numeric/random/random.hh>
+#include <numeric/xyzVector.hh>
 
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/viewer/viewers.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/relax/FastRelax.hh>
-
-
-
-#include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
-
-#include <core/scoring/constraints/util.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/DataMap.hh>
+#include <basic/options/after_opts.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
 
 #include <utility/excn/Exceptions.hh>
+#include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/vector1.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
-
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
-
-#include <utility/string_util.hh>
-#include <utility/tag/Tag.hh>
-#include <numeric/random/random.hh>
-#include <numeric/model_quality/rms.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/Tracer.hh>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
-// XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::Error;
@@ -122,7 +108,6 @@ using basic::Warning;
 
 #define DEG2RAD 0.0174532925199433
 #define RAD2DEG 57.295779513082323
-
 
 namespace protocols {
 namespace cryst {
@@ -137,37 +122,37 @@ using namespace scoring::symmetry;
 using namespace conformation;
 using namespace conformation::symmetry;
 
-//static int OUTCOUNTER=1;
+core::Real
+getMW(core::pose::Pose const & pose) {
+	static std::map<std::string,core::Real> MWLOOKUP;
+	if ( MWLOOKUP.size() == 0 ) {
+		MWLOOKUP["C"] = 12.011;
+		MWLOOKUP["F"] = 18.9984032;
+		MWLOOKUP["H"] = 1.00794;
+		MWLOOKUP["N"] = 14.00674;
+		MWLOOKUP["O"] = 15.9994;
+		MWLOOKUP["P"] = 30.973762;
+		MWLOOKUP["S"] = 32.066;
+		MWLOOKUP["F"] = 18.9984;
+		MWLOOKUP["CL"] = 35.453;
+		MWLOOKUP["BR"] = 79.904;
+		MWLOOKUP["I"] = 126.904;
+	}
 
-////////////////////////////////////////////////////
 
-// creators
-// XRW TEMP std::string
-// XRW TEMP UpdateCrystInfoCreator::keyname() const { return UpdateCrystInfo::mover_name(); }
+	core::Real mw=0.0;
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		core::conformation::Residue const &rsd = pose.residue(i);
+		for ( core::Size j=1; j<=rsd.natoms(); ++j ) {
+			core::chemical::AtomTypeSet const &ats = rsd.type().atom_type_set();
+			std::string elt = ats[rsd.atom(j).type()].element();
+			runtime_assert( MWLOOKUP.find(elt) != MWLOOKUP.end() );
+			mw += MWLOOKUP[elt];
+		}
+	}
+	return mw;
+}
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP UpdateCrystInfoCreator::create_mover() const { return protocols::moves::MoverOP(new UpdateCrystInfo); }
-
-// XRW TEMP std::string
-// XRW TEMP UpdateCrystInfo::mover_name() { return "UpdateCrystInfo"; }
-
-// XRW TEMP std::string
-// XRW TEMP DockLatticeMoverCreator::keyname() const { return DockLatticeMover::mover_name(); }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP DockLatticeMoverCreator::create_mover() const { return protocols::moves::MoverOP(new DockLatticeMover); }
-
-// XRW TEMP std::string
-// XRW TEMP DockLatticeMover::mover_name() { return "DockLatticeMover"; }
-
-// XRW TEMP std::string
-// XRW TEMP MakeLatticeMoverCreator::keyname() const { return MakeLatticeMover::mover_name(); }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP MakeLatticeMoverCreator::create_mover() const { return protocols::moves::MoverOP(new MakeLatticeMover); }
-
-// XRW TEMP std::string
-// XRW TEMP MakeLatticeMover::mover_name() { return "MakeLatticeMover"; }
 
 ////////////////////////////////////////////////////
 
@@ -189,14 +174,14 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 	}
 	runtime_assert( Ajump_!=0 &&  Bjump_!=0 ); // && Cjump_ != 0 );
 
-	Vector Axform = pose.jump(Ajump_).get_translation();
-	Vector Bxform = pose.jump(Bjump_).get_translation();
-	Vector Cxform(-1000,0,0);
+	numeric::xyzVector< core::Real > Axform = pose.jump(Ajump_).get_translation();
+	numeric::xyzVector< core::Real > Bxform = pose.jump(Bjump_).get_translation();
+	numeric::xyzVector< core::Real > Cxform(-1000,0,0);
 
 	if ( Cjump_ != 0 ) Cxform = pose.jump(Cjump_).get_translation();
 
-	Bxform = Vector( Bxform[1], Bxform[2], Bxform[0] );
-	Cxform = Vector( Cxform[2], Cxform[0], Cxform[1] );
+	Bxform = numeric::xyzVector< core::Real >( Bxform[1], Bxform[2], Bxform[0] );
+	Cxform = numeric::xyzVector< core::Real >( Cxform[2], Cxform[0], Cxform[1] );
 
 	io::CrystInfo ci = pose.pdb_info()->crystinfo();
 
@@ -224,9 +209,9 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 	ci.A(A); ci.B(B); ci.C(C);
 
 	if ( need_angles ) {
-		Axform = Vector(Axform[0], Axform[1], Axform[2]);
-		Bxform = Vector(Bxform[1], Bxform[2], Bxform[0]);
-		Cxform = Vector(-Cxform[2], Cxform[0], Cxform[1]);
+		Axform = numeric::xyzVector< core::Real >(Axform[0], Axform[1], Axform[2]);
+		Bxform = numeric::xyzVector< core::Real >(Bxform[1], Bxform[2], Bxform[0]);
+		Cxform = numeric::xyzVector< core::Real >(-Cxform[2], Cxform[0], Cxform[1]);
 		Real alpha = RAD2DEG*acos( Bxform.dot(Cxform) / (Bxform.length()*Cxform.length()) );
 		Real beta = RAD2DEG*acos( Axform.dot(Cxform) / (Axform.length()*Cxform.length()) );
 		Real gamma = RAD2DEG*acos( Axform.dot(Bxform) / (Axform.length()*Bxform.length()) );
@@ -234,8 +219,17 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 	}
 
 	// origin jump root should be at (0,0,0)
-	Vector k =  pose.residue( pose.fold_tree().jump_edge( SUBjump_ ).start() ).xyz("ORIG");
+	numeric::xyzVector< core::Real > k =  pose.residue( pose.fold_tree().jump_edge( SUBjump_ ).start() ).xyz("ORIG");
 	pose_asu.apply_transform_Rx_plus_v( numeric::xyzMatrix<Real>::identity(),-k );
+
+	// copy scores
+	if ( pose.data().has( ( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ) {
+		pose_asu.data().set(
+			core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA,
+			basic::datacache::DataCache_CacheableData::DataOP(
+			pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA) )
+		);
+	}
 
 	// now delete the VRT
 	pose = pose_asu;
@@ -290,52 +284,269 @@ void UpdateCrystInfoCreator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 DockLatticeMover::DockLatticeMover(core::scoring::ScoreFunctionOP sf_in) {
 	sf_ = sf_in->clone();
-	sf_vdw_ = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction() );
-	sf_vdw_->set_weight( core::scoring::vdw, 1.0 );
-
-	SUBjump_ = 0;
-	rot_mag_ = 0.5;
-	trans_mag_ = 0.2;
-	temp_ = 2.0;
-	ncycles_ = 400;
-	fullatom_ = false;
 }
 
 DockLatticeMover::DockLatticeMover() {
-	sf_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
-	sf_vdw_ = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction() );
-	sf_vdw_->set_weight( core::scoring::vdw, 1.0 );
-
-	SUBjump_ = 0;
-	rot_mag_ = 0.5;
-	trans_mag_ = 0.2;
-	temp_ = 2.0;
-	fullatom_ = false;
-	design_ = false;
+	sf_ = core::scoring::get_score_function();
+	set_defaults();
 }
 
 void
-DockLatticeMover::init(core::pose::Pose & pose) {
+DockLatticeMover::set_defaults() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	SUBjump_ = Ajump_ = Bjump_ = Cjump_ = 0; // will get updated in init(pose);
+	rot_mag_ = 5;
+	trans_mag_ = 1;
+	chi_mag_ = 10;
+	lattice_mag_ = 0; // will get updated in init(pose);
+	kT_ = 2.0;
+	ncycles_ = 1000;
+	contact_dist_ = 16.0;
+	init_score_cut_ = 0.0;
+
+	randomize_ = false;
+	min_ = false;
+	min_lattice_ = false;
+	final_min_ = false;
+	pack_ = false;
+	perturb_chi_ = false;
+	verbose_ = false;
+	recover_low_ = true;
+
+	if ( option[ in::file::native ].user() ) {
+		native_ = core::pose::PoseOP( new core::pose::Pose );
+		core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
+		MakeLatticeMover make_lattice;
+		make_lattice.set_refinable_lattice( true );
+		make_lattice.contact_dist( contact_dist_-1.0 ); //?
+	}
+}
+
+void
+DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_dist /*=1.0*/) {
+	// resolve spacegroup
+	io::CrystInfo ci = pose.pdb_info()->crystinfo();
+
+	// if a spacegroup is specified, override it
+	Spacegroup sg;
+	std::string sgname;
+
+	if ( spacegroup_.length() > 0 && spacegroup_ != "input" && spacegroup_ != "INPUT" ) {
+		if ( spacegroup_ == "random_chiral" ) {
+			utility::vector1< std::string > sg_picked( 5 );
+			sg_picked[1] = "P212121"; sg_picked[2] = "P1211"; sg_picked[3] = "C121"; sg_picked[4] = "P21212";
+			sg_picked[5] = ci.spacegroup();
+			Size irand = Size(5.0*numeric::random::uniform())+1;
+			sgname = sg_picked[irand];
+			sg.set_spacegroup( sgname );
+			//core::pose::add_score_line_string( pose, "Spacegrp", sgname );
+			TR << "Assigning random_chiral space group of: " << sgname << std::endl;
+
+		} else if ( spacegroup_ == "random_achiral" ) {
+			utility::vector1< std::string > sg_picked( 10 );
+			sg_picked[1] = "P121/c1"; sg_picked[2] = "P-1"; sg_picked[3] = "C12/c1";
+			sg_picked[4] = "Pbca"; sg_picked[5] = "Pna21"; sg_picked[6] = "C1c1";
+			sg_picked[7] = "Pbcn"; sg_picked[8] = "Pca21"; sg_picked[8] = "Pccn";
+			sg_picked[9] ="231"; sg_picked[10] = ci.spacegroup();
+
+			Size irand = Size(10.0*numeric::random::uniform())+1;
+			sgname = sg_picked[irand];
+
+			sg.set_spacegroup( sgname );
+			TR << "Assigning random_achiral space group of: " << sg_picked[irand] << std::endl;
+			//core::pose::add_score_line_string( pose, "Spacegrp", sgname );
+
+		} else {
+			sgname = spacegroup_;
+			sg.set_spacegroup(spacegroup_);
+		}
+		std::string fullSG = sg.pdbname();
+		if ( ci.spacegroup() != fullSG ) {
+			randomize_ = true;
+			ci.spacegroup(fullSG);
+		}
+	} else {
+		sg.set_spacegroup(ci.spacegroup());
+		sgname = ci.spacegroup();
+	}
+
+	// tgt: 50% solvent
+
+	// make a copy of sf_ to tweak with vdw rep
+	core::scoring::ScoreFunctionOP scorevdw (new core::scoring::symmetry::SymmetricScoreFunction());
+	scorevdw->set_weight( fa_atr, 1.0 );
+	scorevdw->set_weight( fa_rep, 0.2 );
+
+	// now make lattice
+	MakeLatticeMover make_lattice;
+	make_lattice.set_refinable_lattice( true );
+	make_lattice.contact_dist( scale_contact_dist*contact_dist_ );
+
+
+	bool good = false;
+	core::Size iter = 0;
+	core::Size scorecut_increment_step = 10;
+	core::Real scorecut_increment_size = 100.0;
+	core::Real init_score_cut_loc( init_score_cut_ );
+
+	while ( !good ) {
+		good = true;
+		if ( randomize_ ) {
+			// randomize volume
+			sg.set_parameters(1.0,1.0,1.0,90.0,90.0,90.0);
+			core::Real mw = getMW( pose );
+			core::Real tgtVol = 1.23/(0.65) * mw * sg.nsymmops();
+			core::Real volscale = sg.volume();
+			core::Real A = 0.2+0.8*numeric::random::rg().uniform();
+			core::Real B = 0.2+0.8*numeric::random::rg().uniform();
+			core::Real C = 0.2+0.8*numeric::random::rg().uniform();
+			core::Real alpha = 60+60*numeric::random::rg().uniform();
+			core::Real beta  = 60+60*numeric::random::rg().uniform();
+			core::Real gamma = 60+60*numeric::random::rg().uniform();
+			core::Real scale = std::pow( volscale*tgtVol/(A*B*C), 1.0/3.0);
+			ci.A(scale*A);
+			ci.B(scale*B);
+			ci.C(scale*C);
+			ci.alpha(alpha);
+			ci.beta(beta);
+			ci.gamma(gamma);
+			pose.pdb_info()->set_crystinfo(ci);
+
+			// randomize position
+			numeric::xyzVector< core::Real > x( numeric::random::random_normal() );
+			numeric::xyzVector< core::Real > ytmp;
+			do {
+				ytmp = numeric::random::random_normal();
+			} while ( x.cross( ytmp ).length_squared() < 0.1 );
+			numeric::xyzVector< core::Real > z( x.cross( ytmp ).normalized() ), y( z.cross(x) );
+			numeric::xyzMatrix< core::Real > const R( numeric::xyzMatrix< core::Real >::cols( x, y, z ) );
+			numeric::xyzVector< core::Real > const v(
+				scale*A*numeric::random::uniform(), scale*B*numeric::random::uniform(), scale*C*numeric::random::uniform());
+			pose.apply_transform_Rx_plus_v( R,v);
+
+			// chis?
+			if ( perturb_chi_ ) randomize_chis(pose);
+		}
+
+
+		make_lattice.apply( pose );
+
+		if ( randomize_ ) {
+			slide_lattice( pose );
+			core::Real vdwscore = 999;
+			if ( regenerate_lattice( pose ) ) {
+				//vdwscore = (*sf_)(pose);
+				vdwscore = (*scorevdw)(pose);
+				good = (vdwscore < init_score_cut_loc); //????
+				if ( !good ) {
+					protocols::cryst::UpdateCrystInfo update_cryst1;
+					update_cryst1.apply( pose );
+				}
+			} else {
+				good = false; //????
+			}
+
+			TR << "Attempt " << iter++ << " score = " << vdwscore << std::endl;
+		}
+
+		if ( iter%scorecut_increment_step == 0 ) {
+			init_score_cut_loc += scorecut_increment_size;
+			TR << "increase score cut, now " << init_score_cut_loc << std::endl;
+		}
+	}
+
+	core::Real scale = std::pow( make_lattice.symmops().size() , 1.0/3.0 );
+	numeric::xyzVector<core::Size> nsub = make_lattice.sg().get_nsubdivisions();
+	lattice_mag_ = scale * numeric::xyzVector<core::Real>(  1.0/nsub[0],1.0/nsub[1],1.0/nsub[2] );
+
+	// finally, some stuff we will need later
 	auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	symdofs_ = SymmConf.Symmetry_Info()->get_dofs();
 
-	core::pose::Pose pose_asu;
-	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
-
-	if ( pose.is_centroid() ) {
-		monomer_bump_ = 2*((*sf_vdw_)( pose_asu )); // * SymmConf.Symmetry_Info()->subunits();
-	}
-
-	// find lattice jumps
 	for ( Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
 		std::string jumpname = SymmConf.Symmetry_Info()->get_jump_name( i );
 		if ( jumpname == "SUB" ) SUBjump_=i;
+		if ( jumpname == "A" ) Ajump_=i;
+		if ( jumpname == "B" ) Bjump_=i;
+		if ( jumpname == "C" ) Cjump_=i;
 	}
 	runtime_assert( SUBjump_ != 0 );
+
+	// make sure put info of randomly selected SG
+	core::pose::add_score_line_string( pose, "Spacegrp", sgname );
 }
 
 void
-DockLatticeMover::perturb_trial( core::pose::Pose & pose ) {
+DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
+	core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
+	mm->set_jump(true); mm->set_chi(false); mm->set_bb(false);
+	core::pose::symmetry::make_symmetric_movemap( pose, *mm );
+	protocols::minimization_packing::MinMoverOP min_rb( new protocols::minimization_packing::MinMover(mm, sf_, "lbfgs_armijo", 0.01, true) );
+	min_rb->apply( pose );
+}
+
+void
+DockLatticeMover::perturb_lattice( core::pose::Pose & pose ) {
+	std::map< Size, SymDof >::iterator it, it_begin = symdofs_.begin(), it_end = symdofs_.end();
+
+	for ( it = it_begin; it != it_end; ++it ) {
+		if ( it->first == SUBjump_ ) continue;
+
+		core::Real mag = 0;
+		if ( it->first == Ajump_ ) mag = lattice_mag_[0];
+		if ( it->first == Bjump_ ) mag = lattice_mag_[1];
+		if ( it->first == Cjump_ ) mag = lattice_mag_[2];
+		runtime_assert( mag!=0 );
+
+		core::kinematics::Jump jump_i = pose.jump( it->first );
+		numeric::xyzVector< core::Real > transNorm = jump_i.get_translation().normalized();
+		numeric::xyzVector< core::Real > transdel (
+			mag * numeric::random::rg().gaussian() * transNorm[0],
+			mag * numeric::random::rg().gaussian() * transNorm[1],
+			mag * numeric::random::rg().gaussian() * transNorm[2]
+		);
+
+		jump_i.set_translation( jump_i.get_translation() - transdel );  // neg. direction expands lattice
+
+		pose.set_jump( it->first, jump_i );
+	}
+}
+
+void
+DockLatticeMover::randomize_chis( core::pose::Pose & pose ) {
+	core::Size nres = pose.total_residue();
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		SymmetricConformation & symm_conf( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		nres = symm_conf.Symmetry_Info()->num_independent_residues();
+	}
+
+	for ( core::Size i=1; i<=nres; ++i ) {
+		for ( core::Size j=1; j<=pose.residue(i).nchi(); ++j ) {
+			pose.set_chi( j, i, 360*numeric::random::rg().uniform() );
+		}
+	}
+}
+
+void
+DockLatticeMover::perturb_chis( core::pose::Pose & pose ) {
+	core::Size nres = pose.total_residue();
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		SymmetricConformation & symm_conf( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		nres = symm_conf.Symmetry_Info()->num_independent_residues();
+	}
+
+	for ( core::Size i=1; i<=nres; ++i ) {
+		for ( core::Size j=1; j<=pose.residue(i).nchi(); ++j ) {
+			core::Real mag = chi_mag_*numeric::random::rg().gaussian();
+			pose.set_chi( j, i, pose.chi( j, i) + mag );
+		}
+	}
+}
+
+void
+DockLatticeMover::perturb_rb( core::pose::Pose & pose ) {
 	std::map< Size, SymDof >::iterator it, it_begin = symdofs_.begin(), it_end = symdofs_.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		core::kinematics::Jump flexible_jump = pose.jump( it->first );
@@ -357,204 +568,83 @@ DockLatticeMover::perturb_trial( core::pose::Pose & pose ) {
 	}
 }
 
-void
-DockLatticeMover::min_lattice( core::pose::Pose & pose ) {
-	protocols::simple_moves::SwitchResidueTypeSetMover to_cen("centroid");
-	protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
-	protocols::simple_moves::ReturnSidechainMoverOP restore_sc;
+bool
+DockLatticeMover::regenerate_lattice( core::pose::Pose & pose ) {
+	protocols::cryst::UpdateCrystInfo update_cryst1;
+	protocols::cryst::MakeLatticeMover setup;
+	setup.contact_dist( contact_dist_ );
+	setup.set_refinable_lattice( true );
 
-	if ( pose.is_fullatom() ) {
-		restore_sc = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( pose ) );
-		to_cen.apply(pose);
+	update_cryst1.apply( pose );
+	io::CrystInfo ci = pose.pdb_info()->crystinfo();
+
+	// check if regeneration will mess things up
+	//if ( ci.A()<0.5 || ci.B()<0.5 || ci.C()<0.5 ) return false;
+	//if ( ci.alpha()<10 || ci.beta()<10 || ci.gamma()<10 ) return false;
+	//if ( ci.alpha()>170 || ci.beta()>170 || ci.gamma()>170 ) return false;
+	//if ( ci.A()>50.0 || ci.B()>50.0 || ci.C()>50.0 ) return false;
+	//if ( ci.A()*ci.B()*ci.C() > 20000.0 ) return false;
+
+	// fd unfortunately above checks are not general
+	// instead make sure that at least 10% of volume is occupied and no more than 200%
+	core::Real const deg2rad( 57.29577951308232 );
+	core::Real ca = cos(deg2rad*ci.alpha()), cb = cos(deg2rad*ci.beta()), cg = cos(deg2rad*ci.gamma());
+	core::Real volume = ci.A()*ci.B()*ci.C() * std::sqrt( 1-ca*ca-cb*cb-cg*cg+2*ca*cb*cg );
+
+	// monomeric structure at this point
+	core::Real MW = getMW( pose );
+	core::Real occ = 1.23*MW / volume;
+	if ( occ < 0.1 || occ > 2.0 ) {
+		TR << "Regenerated lattice fails occupancy check [occ=" << occ << "]: ";
+		TR << ci.A()<<","<<ci.B()<<","<<ci.C() <<" , "<< ci.alpha()<<","<<ci.beta()<<","<<ci.gamma()<< std::endl;
+		return false;
 	}
 
-	core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
-	mm->set_jump(true); mm->set_chi(false); mm->set_bb(false);
-	core::pose::symmetry::make_symmetric_movemap( pose, *mm );
+	// check valid
+	core::pose::Pose pose_tmp( pose );
+	//if ( !setup.check_valid( pose_tmp ) ) {
+	// return false;
+	//}
+	setup.apply( pose );
 
-	core::scoring::ScoreFunctionOP sf = core::scoring::ScoreFunctionFactory::create_score_function("score1");
 
-	protocols::minimization_packing::MinMoverOP min(
-		new protocols::minimization_packing::MinMover(mm, sf, "lbfgs_armijo", 0.01, true) );
-	min->apply(pose);
+	SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	symdofs_ = SymmConf.Symmetry_Info()->get_dofs();
 
-	if ( restore_sc ) {
-		to_fa.apply(pose);
-		restore_sc->apply(pose);
+	for ( Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
+		std::string jumpname = SymmConf.Symmetry_Info()->get_jump_name( i );
+		if ( jumpname == "SUB" ) SUBjump_=i;
+		if ( jumpname == "A" ) Ajump_=i;
+		if ( jumpname == "B" ) Bjump_=i;
+		if ( jumpname == "C" ) Cjump_=i;
+	}
+
+	return true;
+}
+
+void
+DockLatticeMover::repack( core::pose::Pose & pose, bool rottrials ) {
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+	using namespace protocols::simple_task_operations;
+
+	TaskFactoryOP tf (new TaskFactory);
+	tf->push_back( TaskOperationCOP(new InitializeFromCommandline) );
+	tf->push_back( TaskOperationCOP(new IncludeCurrent) );
+	tf->push_back( TaskOperationCOP(new RestrictToRepacking) );
+	tf->push_back( TaskOperationCOP(new NoRepackDisulfides) );
+	tf->push_back( TaskOperationCOP(new RestrictToInterface( SUBjump_ ) ) );
+
+	if ( rottrials ) {
+		protocols::minimization_packing::RotamerTrialsMoverOP pack_interface_rtrials( new protocols::minimization_packing::RotamerTrialsMover( sf_, tf ) );
+		pack_interface_rtrials->apply( pose );
+	} else {
+		protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::PackRotamersMover( sf_ ) );
+		pack_interface_repack->task_factory(tf);
+		pack_interface_repack->apply( pose );
 	}
 }
 
-
-void
-DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
-	Real min_step_size=0.25, max_step_size=1;  // keep max step small to stop subunits from jumping through one another
-	Real max_sub_step_size=0.5;  // keep max step small to stop subunits from jumping through one another
-	Real bump_threshold=1.0;
-	Size tries=0, max_tries=100;
-	Real score = (*sf_vdw_)( pose );
-
-	std::map< Size, SymDof >::iterator it, it_begin = symdofs_.begin(), it_end = symdofs_.end();
-	std::map< Size, Vector > step;
-	numeric::xyzVector< Real > substep;
-
-	std::map< Size, Vector > orig_trans;
-	for ( it = it_begin; it != it_end; ++it ) {
-		if ( it->first == SUBjump_ ) {
-			step[it->first]=Vector(0.5,0.5,0.5);
-		} else {
-			step[it->first]=Vector(-1.0,0.0,0.0);
-		}
-		orig_trans[it->first] = pose.jump( it->first ).get_translation();
-	}
-
-	//static int xx=1;
-	//pose.dump_pdb("slidepre"+utility::to_string(xx)+".pdb");
-
-	// 1 slide out
-	bool done = false;
-	while ( tries < max_tries && !done ) {
-		done = true;
-		for ( it = it_begin; it != it_end; ++it ) {
-			for ( int i = X_DOF; i <= Z_DOF; ++i ) {
-				if ( !it->second.allow_dof(i) ) continue;
-
-				core::Size ii = 0;
-				if ( i==X_DOF ) ii=0;
-				if ( i==Y_DOF ) ii=1;
-				if ( i==Z_DOF ) ii=2;
-
-				core::kinematics::Jump jump_i = pose.jump( it->first );
-				numeric::xyzVector<core::Real> T_curr = jump_i.get_translation();
-				numeric::xyzVector<core::Real> move_dir(0,0,0);
-				move_dir[ii] = step[it->first][ii];
-				if ( it->first == SUBjump_ ) {
-					numeric::xyzVector<core::Real> T_unit = T_curr; T_unit.normalize();
-					move_dir[ii] *= T_unit[ii];
-				}
-				core::Real score_old = (*sf_vdw_)( pose );
-				jump_i.set_translation( T_curr + move_dir );
-				pose.set_jump( it->first, jump_i );
-				score = (*sf_vdw_)( pose );
-
-				// if this move didnt change the vdw energy, reset
-				if ( std::fabs(score-score_old) < 1e-2 ) {
-					jump_i.set_translation( T_curr );
-					pose.set_jump( it->first, jump_i );
-				}
-
-				// if we are still above bump thresh, we are not done
-				if ( (score-monomer_bump_) > bump_threshold ) { // BUMP
-					done = false;
-				}
-
-				//std::cerr << "slide-out " << move_dir << " " << score-monomer_bump_ << std::endl;
-				//pose.dump_pdb("slideout"+utility::to_string(xx++)+".pdb");
-
-				tries++;
-			}
-		}
-	}
-
-	//pose.dump_pdb("slideout"+utility::to_string(xx)+".pdb");
-
-	if ( !done ) {
-		std::cerr << "slide-out fail after " << max_tries << " attempts" << std::endl;
-		//pose.dump_pdb("slidefail.pdb");
-		for ( it = it_begin; it != it_end; ++it ) {
-			core::kinematics::Jump jump_i = pose.jump( it->first );
-			jump_i.set_translation( orig_trans[it->first] );
-			pose.set_jump( it->first, jump_i );
-		}
-		return;
-	}
-
-	numeric::xyzVector<core::Real> T_unit = pose.jump(SUBjump_).get_translation();
-	T_unit.normalize();
-	step[SUBjump_] = T_unit;
-
-	// 2 slide in
-	tries=0;
-	done = false;
-	while ( tries < max_tries && !done ) {
-		done = true;
-		it_begin = symdofs_.begin();
-		it_end = symdofs_.end();
-		for ( it = it_begin; it != it_end; ++it ) {
-			//Size ndims=(it->first == SUBjump_)?3:1;
-
-			for ( int i = X_DOF; i <= Z_DOF; ++i ) {
-				if ( !it->second.allow_dof(i) ) continue;
-
-				core::Size ii = 0;
-				if ( i==X_DOF ) ii=0;
-				if ( i==Y_DOF ) ii=1;
-				if ( i==Z_DOF ) ii=2;
-
-				core::kinematics::Jump jump_i = pose.jump( it->first );
-				numeric::xyzVector<core::Real> T_curr = jump_i.get_translation();
-				numeric::xyzVector<core::Real> move_dir(0,0,0);
-				move_dir[ii] = step[it->first][ii];
-				//if (it->first == SUBjump_) {
-				// numeric::xyzVector<core::Real> T_unit = T_curr; T_unit.normalize();
-				// move_dir[ii] *= T_unit[ii];
-				//}
-				//core::Real score_old = (*sf_vdw_)( pose );
-				jump_i.set_translation( T_curr - move_dir );
-				pose.set_jump( it->first, jump_i );
-				score = (*sf_vdw_)( pose );
-
-				if ( (score-monomer_bump_) > bump_threshold ) { // BUMP
-					jump_i.set_translation( T_curr );
-					pose.set_jump( it->first, jump_i );
-					if ( std::fabs(step[it->first][ii]) > std::fabs(min_step_size+1e-4) ) {
-						done = false;
-						step[it->first][ii] /= 2.0; // take smaller steps
-					}
-				} else { // NO BUMP
-					done = false;
-					if ( it->first == SUBjump_ ) {
-						if ( std::fabs(step[it->first][ii]) < std::fabs(max_sub_step_size-1e-4) ) {
-							step[it->first][ii] *= 2.0;
-						}
-					} else {
-						if ( std::fabs(step[it->first][ii]) < std::fabs(max_step_size-1e-4) ) {
-							step[it->first][ii] *= 2.0;
-						}
-					}
-				}
-
-				//std::cerr << "slide-in " << move_dir << " " << score-monomer_bump_ << std::endl;
-				//pose.dump_pdb("slidein"+utility::to_string(xx++)+".pdb");
-
-				tries++;
-
-			}
-		}
-	}
-
-
-	if ( !done ) {
-		std::cerr << "slide-in fail after " << max_tries << " attempts" << std::endl;
-		for ( it = it_begin; it != it_end; ++it ) {
-			if ( it->first == SUBjump_ ) continue;
-			core::kinematics::Jump jump_i = pose.jump( it->first );
-			jump_i.set_translation( orig_trans[it->first] );
-			pose.set_jump( it->first, jump_i );
-		}
-	}
-
-}
-
-
-void
-DockLatticeMover::modify_lattice( core::pose::Pose & pose, core::Real mag ) {
-	std::map< Size, SymDof >::iterator it, it_begin = symdofs_.begin(), it_end = symdofs_.end();
-	for ( it = it_begin; it != it_end; ++it ) {
-		if ( it->first == SUBjump_ ) continue;
-		core::kinematics::Jump jump_i = pose.jump( it->first );
-		jump_i.set_translation( jump_i.get_translation() - mag*numeric::xyzVector<core::Real>(1,0,0) );  // neg. direction expands lattice
-	}
-}
 
 void
 DockLatticeMover::apply( core::pose::Pose & pose ) {
@@ -564,72 +654,137 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 	protocols::simple_moves::SwitchResidueTypeSetMover to_cen("centroid");
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
 
-	if ( !fullatom_ ) {
-		if ( pose.is_fullatom() ) to_cen.apply(pose);
-		init(pose); // find which are lattice jumps && which are dof jumps
-		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(pose, *sf_, temp_ ) );
+	// main loop!
+	std::string movetag;
 
-		for ( int i=1; i<(int)ncycles_; ++i ) {
-			if ( i%24 == 0 ) {
-				mc->show_scores();
-				mc->show_counters();
-			}
-			perturb_trial(pose);
-			if ( i%24 == 0 ) {
-				slide_lattice(pose);
-			}
-			//pose.dump_pdb("dock_"+utility::to_string( OUTCOUNTER++ )+".pdb");
-			mc->boltzmann( pose );
-		}
-		mc->recover_low( pose );
-		//to_fa.apply(pose);
-	} else {
-		if ( !pose.is_fullatom() ) to_fa.apply(pose);
+	// MC mover
+	bool good = false;
+	core::Size nfail( 0 );
+	std::string sgname("");
 
-		// set up packer
-		using namespace core::pack::task;
-		using namespace core::pack::task::operation;
-		using namespace protocols::simple_task_operations;
-		TaskFactoryOP tf (new TaskFactory);
-		tf->push_back( TaskOperationCOP(new InitializeFromCommandline) );
-		tf->push_back( TaskOperationCOP(new IncludeCurrent) );
-		if ( !design_ ) {
-			tf->push_back( TaskOperationCOP(new RestrictToRepacking) );
-			tf->push_back( TaskOperationCOP(new NoRepackDisulfides) );
-		}
-		tf->push_back( TaskOperationCOP(new RestrictToInterface( SUBjump_ ) ) );
-		protocols::minimization_packing::PackRotamersMoverOP pack_interface_repack( new protocols::minimization_packing::PackRotamersMover( sf_ ) );
-		pack_interface_repack->task_factory(tf);
-		protocols::minimization_packing::RotamerTrialsMoverOP pack_interface_rtrials( new protocols::minimization_packing::RotamerTrialsMover( sf_, tf ) );
+	core::Real contact_dist_scale = 1.0;
 
-		// set up minimizer
-		core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
-		mm->set_jump(true); mm->set_chi(true); mm->set_bb(false);
-		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
-		protocols::minimization_packing::MinMoverOP min(
-			new protocols::minimization_packing::MinMover(mm, sf_, "lbfgs_armijo", 0.01, true) );
+	while ( !good ) {
+		// randomize and symmetrize pose
+		initialize(pose, contact_dist_scale);
 
-		init(pose); // find which are lattice jumps && which are dof jumps
-		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(pose, *sf_, 2.0 ) );
-		for ( int i=1; i<(int)ncycles_; ++i ) {
-			if ( i%24 == 0 ) {
-				mc->show_scores();
-				mc->show_counters();
-			}
+		core::pose::get_score_line_string(pose, "Spacegrp", sgname );
+		//TR << "Spacegrp value? " << sgname << std::endl;
 
-			perturb_trial(pose);
+		// set up minimizers
+		core::kinematics::MoveMapOP mmrb(new core::kinematics::MoveMap);
+		mmrb->set_jump(true); mmrb->set_chi(false); mmrb->set_bb(false);
+		core::pose::symmetry::make_symmetric_movemap( pose, *mmrb );
+		protocols::minimization_packing::MinMoverOP min_rb
+			= protocols::minimization_packing::MinMoverOP ( new protocols::minimization_packing::MinMover(mmrb, sf_, "lbfgs_armijo", 0.01, true) );
 
-			if ( i%24 == 1 ) {
-				pack_interface_repack->apply( pose );
+		core::kinematics::MoveMapOP mmall(new core::kinematics::MoveMap);
+		mmall->set_jump(true); mmall->set_chi(true); mmall->set_bb(true);
+		core::pose::symmetry::make_symmetric_movemap( pose, *mmall );
+		protocols::minimization_packing::MinMoverOP min_all
+			= protocols::minimization_packing::MinMoverOP ( new protocols::minimization_packing::MinMover(mmall, sf_, "lbfgs_armijo", 0.01, true) );
+		min_all->max_iter(20);
+
+		core::Real temp = kT_ ;
+		protocols::cryst::UpdateCrystInfo update_cryst1;
+
+		(*sf_)(pose);
+		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(pose, *sf_, temp ) );
+
+		for ( int i=1; i<=(int)ncycles_; ++i ) {
+			if ( i % 10 == 0 ) {
+				perturb_lattice(pose);
+				movetag="lattice";
 			} else {
-				pack_interface_rtrials->apply( pose );
+				if ( perturb_chi_ && (i % 2)==0 ) {
+					perturb_chis(pose);
+					perturb_rb(pose);
+					movetag="chi+rb";
+				} else {
+					perturb_rb(pose);
+					movetag="rb";
+				}
 			}
 
-			min->apply(pose);
-			mc->boltzmann( pose );
+			if ( pack_ ) {
+				repack( pose, i % 10 == 0 );
+			}
+
+			if ( min_ ) {
+				min_all->apply(pose);
+			} else if ( min_lattice_ ) {
+				min_rb->apply(pose);
+			}
+
+			(*sf_)(pose);
+			mc->boltzmann( pose, movetag );
+
+			if ( verbose_ && i%10==0 ) {
+				mc->show_scores();
+				mc->show_counters();
+				// update_cryst1.report( pose );
+			}
 		}
-		mc->recover_low( pose );
+
+		if ( recover_low_ ) mc->recover_low( pose );
+
+		core::Real score_pre = (*sf_)(pose);
+
+		if ( !regenerate_lattice(pose) ) {
+			contact_dist_scale += 1.1;
+			TR << "Error regenerating lattice.  Increase contact dist by factor of " << contact_dist_scale << std::endl;
+			nfail++;
+			if ( nfail > 10 ) { // don't try more than 10 times
+				TR << "Terminate due to repeating failures in regenerate_lattices" << std::endl;
+				core::pose::setPoseExtraScore( pose, "crystScore", 0.0);
+				core::pose::setPoseExtraScore( pose, "crystRMS", 10.0);
+				return;
+			}
+
+		} else {
+			core::Real score_post = (*sf_)(pose);
+
+			good = (std::fabs( score_post-score_pre ) < 1);
+
+			TR << "After refinement score = " << score_pre << std::endl;
+			TR << "     after regen score = " << score_post << std::endl;
+
+			if ( !good ) {
+				TR << "Rerunning!" << std::endl;
+				update_cryst1.apply( pose );
+			} else if ( verbose_ ) {
+				core::Real RMS=-1.0;
+				if ( native_ ) {
+					io::CrystInfo cin = native_->pdb_info()->crystinfo();
+					TR << "native Xtal: " << cin.A() << " " << cin.B() << " " << cin.C() << std::endl;
+					RMS = crystRMS( pose, *native_, true);
+				}
+				TR << "           rms = " << RMS << std::endl;
+			}
+		}
 	}
+
+	if ( min_ || final_min_ ) {
+		core::kinematics::MoveMapOP mmall(new core::kinematics::MoveMap);
+		mmall->set_jump(true); mmall->set_chi(true); mmall->set_bb(true);
+		core::pose::symmetry::make_symmetric_movemap( pose, *mmall );
+		protocols::minimization_packing::MinMoverOP min_all = protocols::minimization_packing::MinMoverOP ( new
+			protocols::minimization_packing::MinMover(mmall, sf_, "lbfgs_armijo", 0.01, true) );
+		min_all->max_iter(20);
+
+		min_all->apply(pose);
+	}
+
+	core::Real RMS=-1.0;
+	if ( native_ ) {
+		RMS = crystRMS( pose, *native_, true);
+		core::Real score = (*sf_)(pose);
+		core::pose::setPoseExtraScore( pose, "crystScore", score);
+		core::pose::setPoseExtraScore( pose, "crystRMS", RMS);
+	}
+
+	TR << "adding score line Spacegrp: " << sgname << std::endl;
+	core::pose::add_score_line_string( pose, "Spacegrp", sgname );
 }
 
 
@@ -642,13 +797,6 @@ DockLatticeMover::parse_my_tag(
 	moves::Movers_map const & ,
 	core::pose::Pose const & /*pose*/ )
 {
-	fullatom_ = tag->getOption<bool>( "fullatom", true );
-	if ( fullatom_ ) {
-		sf_ = core::scoring::ScoreFunctionFactory::create_score_function("talaris2013");
-	} else {
-		sf_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
-	}
-
 	if ( tag->hasOption( "scorefxn" ) ) {
 		sf_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	}
@@ -659,10 +807,47 @@ DockLatticeMover::parse_my_tag(
 	if ( tag->hasOption( "trans_step" ) ) {
 		trans_mag_ = tag->getOption<core::Real>( "trans_step" );
 	}
+	if ( tag->hasOption( "kT" ) ) {
+		kT_ = tag->getOption<core::Real>( "kT" );
+	}
 	if ( tag->hasOption( "rot_step" ) ) {
 		rot_mag_ = tag->getOption<core::Real>( "rot_step" );
 	}
+	if ( tag->hasOption( "chi_step" ) ) {
+		chi_mag_ = tag->getOption<core::Real>( "chi_step" );
+	}
+	if ( tag->hasOption( "init_score_cut" ) ) {
+		init_score_cut_ = tag->getOption<core::Real>( "init_score_cut" );
+	}
 
+	if ( tag->hasOption( "spacegroup" ) ) {
+		spacegroup_ = tag->getOption<std::string>( "spacegroup" );
+	}
+	if ( tag->hasOption( "randomize" ) ) {
+		randomize_ = tag->getOption<bool>( "randomize" );
+	}
+	if ( tag->hasOption( "recover_low" ) ) {
+		recover_low_ = tag->getOption<bool>( "recover_low" );
+	}
+	if ( tag->hasOption( "perturb_chi" ) ) {
+		perturb_chi_ = tag->getOption<bool>( "perturb_chi" );
+	}
+
+	if ( tag->hasOption( "verbose" ) ) {
+		verbose_ = tag->getOption<bool>( "verbose" );
+	}
+
+	if ( tag->hasOption( "min" ) ) {
+		min_ = tag->getOption<bool>( "min" );
+	}
+
+	if ( tag->hasOption( "lattice_min" ) ) {
+		min_lattice_ = tag->getOption<bool>( "lattice_min" );
+	}
+
+	if ( tag->hasOption( "final_min" ) ) {
+		final_min_ = tag->getOption<bool>( "final_min" );
+	}
 
 }
 
@@ -681,7 +866,17 @@ void DockLatticeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	attlist + XMLSchemaAttribute::attribute_w_default( "fullatom" , xsct_rosetta_bool, "If fullatom=1 it does fullatom docking with repacks and min steps; if fullatom=0 you need to provide a centroid energy function (e.g. score4_smooth) and it will also add lattice slide moves.", "false" )
 		+ XMLSchemaAttribute( "ncycles" , xsct_non_negative_integer , "# of steps to run." )
 		+ XMLSchemaAttribute( "trans_step" , xsct_real, "Magnitude of translational perturbations." )
-		+ XMLSchemaAttribute( "rot_step" , xsct_real, "Magnitude of rotational perturbations." ) ;
+		+ XMLSchemaAttribute( "rot_step" , xsct_real, "Magnitude of rotational perturbations." )
+		+ XMLSchemaAttribute( "chi_step", xsct_real, "Magnitude of torsion angle perturbations." )
+		+ XMLSchemaAttribute( "kT" , xsct_real, "Simulation temperature" )
+		+ XMLSchemaAttribute( "randomize", xsct_rosetta_bool,"Use a random starting point?" )
+		+ XMLSchemaAttribute( "perturb_chi", xsct_rosetta_bool,"Do we also randomize the torsions?" )
+		+ XMLSchemaAttribute( "spacegroup", xs_string, "What spacegroup to run? Either a spacegroup name (no spaces or one of: input, random_chiral, or random_achiral)" )
+		+ XMLSchemaAttribute( "verbose", xsct_rosetta_bool,"Be verbose in output?" )
+		+ XMLSchemaAttribute( "init_score_cut", xsct_real,"the initial score cut to use for lattice generation" )
+		+ XMLSchemaAttribute( "recover_low", xsct_rosetta_bool,"Recover the low energy sampled conformation?" )
+		+ XMLSchemaAttribute( "min", xsct_rosetta_bool,"Minimize the lattice after each perturbation?" )
+		+ XMLSchemaAttribute( "final_min", xsct_rosetta_bool,"Minimize the lattice at the end of each simulation?" );
 
 	protocols::rosetta_scripts::attributes_for_parse_score_function ( attlist ) ;
 
@@ -705,6 +900,44 @@ void DockLatticeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 ////////////////////////////////////////////////////
 
+// bool
+// MakeLatticeMover::check_valid( core::pose::Pose & pose ) {
+//  // initialize sg_ from pose CRYST1 line
+//  //bool valid = true;
+//  io::CrystInfo ci = pose.pdb_info()->crystinfo();
+//  runtime_assert(ci.A()*ci.B()*ci.C() != 0);  // TODO: allow these to be randomized
+//
+//  sg_.set_spacegroup(ci.spacegroup());
+//  sg_.set_parameters(ci.A(),ci.B(),ci.C(), ci.alpha(), ci.beta(), ci.gamma());
+//
+//  // get principal axes
+//  numeric::xyzVector< core::Real > Ax, Bx, Cx;
+//  Ax = sg_.f2c()*numeric::xyzVector< core::Real >(1,0,0); Ax.normalize();
+//  Bx = sg_.f2c()*numeric::xyzVector< core::Real >(0,1,0); Bx.normalize();
+//  Cx = sg_.f2c()*numeric::xyzVector< core::Real >(0,0,1); Cx.normalize();
+//
+//  //Size rootres = place_near_origin( pose );
+//  place_near_origin( pose );
+//
+//  core::pose::Pose posebase;
+//  utility::vector1<Size> Ajumps, Bjumps, Cjumps, monomer_jumps, monomer_anchors;
+//  //Size base_monomer;
+//
+//  numeric::xyzVector< core::Real > max_extent(0,0,0);
+//  for ( Size i=1; i<= pose.size(); ++i ) {
+//   if ( !pose.residue(i).is_protein() ) continue;
+//   for ( Size j=1; j<=pose.residue(i).natoms(); ++j ) {
+//    numeric::xyzVector< core::Real > f_ij = sg_.c2f()*pose.residue(i).xyz(j);
+//    for ( int k=0; k<3; ++k ) max_extent[k] = std::max( std::fabs(f_ij[k]) , max_extent[k] );
+//   }
+//  }
+//  max_extent += sg_.c2f()*numeric::xyzVector< core::Real >(6,6,6);
+//
+//  if ( max_extent[0] > 1 || max_extent[1] > 1 || max_extent[2] > 1 ||
+//    max_extent[0] < 0 || max_extent[1] < 0 || max_extent[2] < 0 ) return false;
+//  return true;
+// }
+
 void
 MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	// initialize sg_ from pose CRYST1 line
@@ -715,10 +948,10 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	sg_.set_parameters(ci.A(),ci.B(),ci.C(), ci.alpha(), ci.beta(), ci.gamma());
 
 	// get principal axes
-	Vector Ax, Bx, Cx;
-	Ax = sg_.f2c()*Vector(1,0,0); Ax.normalize();
-	Bx = sg_.f2c()*Vector(0,1,0); Bx.normalize();
-	Cx = sg_.f2c()*Vector(0,0,1); Cx.normalize();
+	numeric::xyzVector< core::Real > Ax, Bx, Cx;
+	Ax = sg_.f2c()*numeric::xyzVector< core::Real >(1,0,0); Ax.normalize();
+	Bx = sg_.f2c()*numeric::xyzVector< core::Real >(0,1,0); Bx.normalize();
+	Cx = sg_.f2c()*numeric::xyzVector< core::Real >(0,0,1); Cx.normalize();
 
 	Size rootres = place_near_origin( pose );
 
@@ -726,15 +959,15 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	utility::vector1<Size> Ajumps, Bjumps, Cjumps, monomer_jumps, monomer_anchors;
 	Size base_monomer;
 
-	Vector max_extent(0,0,0);
+	numeric::xyzVector< core::Real > max_extent(0,0,0);
 	for ( Size i=1; i<= pose.size(); ++i ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 		for ( Size j=1; j<=pose.residue(i).natoms(); ++j ) {
-			Vector f_ij = sg_.c2f()*pose.residue(i).xyz(j);
+			numeric::xyzVector< core::Real > f_ij = sg_.c2f()*pose.residue(i).xyz(j);
 			for ( int k=0; k<3; ++k ) max_extent[k] = std::max( std::fabs(f_ij[k]) , max_extent[k] );
 		}
 	}
-	max_extent += sg_.c2f()*Vector(6,6,6);
+	max_extent += sg_.c2f()*numeric::xyzVector< core::Real >(6,6,6);
 
 	// in each direction, find closest symmcenter we are not considering
 	numeric::xyzVector< Size > grid = sg_.get_nsubdivisions();
@@ -815,16 +1048,18 @@ MakeLatticeMover::place_near_origin (
 	Size rootpos=0;
 	Size nres = pose.size();
 
-	Vector com(0,0,0);
+	numeric::xyzVector< core::Real > com(0,0,0);
 	for ( Size i=1; i<= nres; ++i ) {
-		com += pose.residue(i).xyz("CA");
+		core::conformation::Residue const &rsd = pose.residue(i);
+		com += rsd.atom(rsd.nbr_atom()).xyz();
 		if ( pose.residue(i).is_upper_terminus() ) break;
 	}
 	com /= nres;
 
 	Real mindis2(1e6);
 	for ( Size i=1; i<= nres; ++i ) {
-		Real const dis2( com.distance_squared(  pose.residue(i).xyz("CA") ) );
+		core::conformation::Residue const &rsd = pose.residue(i);
+		Real const dis2( com.distance_squared(  rsd.atom(rsd.nbr_atom()).xyz() ) );
 		if ( dis2 < mindis2 ) {
 			mindis2 = dis2;
 			rootpos = i;
@@ -834,11 +1069,11 @@ MakeLatticeMover::place_near_origin (
 
 	Size nsymm = sg_.nsymmops();
 	Size bestxform=0;
-	Vector bestoffset(0,0,0);
+	numeric::xyzVector< core::Real > bestoffset(0,0,0);
 	mindis2=1e6;
 	com = sg_.c2f()*com;
 	for ( Size i=1; i<=nsymm; ++i ) {
-		Vector foffset = sg_.symmop(i).get_rotation()*com + sg_.symmop(i).get_translation(), rfoffset;
+		numeric::xyzVector< core::Real > foffset = sg_.symmop(i).get_rotation()*com + sg_.symmop(i).get_translation(), rfoffset;
 		rfoffset[0] = min_mod( foffset[0], 1.0 );
 		rfoffset[1] = min_mod( foffset[1], 1.0 );
 		rfoffset[2] = min_mod( foffset[2], 1.0 );
@@ -870,30 +1105,45 @@ MakeLatticeMover::detect_connecting_subunits(
 	utility::vector1< numeric::xyzMatrix<core::Real> > new_allRs;
 	utility::vector1< numeric::xyzVector<core::Real> > new_allTs;
 
-
 	// get pose radius
 	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
 
-	Vector com(0,0,0);
-	Real radius = 0;
-	utility::vector1<Vector> monomer_cas(nres_monomer);
+	// as interaction centers, use:
+	// a) all protein CB's
+	// b) all ligand heavyatoms
+	core::Size nIntCtrs=0;
+	for ( Size i=1; i<= nres_monomer; ++i ) {
+		if ( monomer_pose.residue(i).is_protein() ) {
+			nIntCtrs++;
+		} else {
+			nIntCtrs += monomer_pose.residue(i).nheavyatoms();
+		}
+	}
 
-	Vector T0 = pose.residue(monomer_anchors[basesubunit]).xyz("ORIG");
+	utility::vector1<numeric::xyzVector< core::Real >> monomer_cas(nIntCtrs);
+
+	numeric::xyzVector< core::Real > T0 = pose.residue(monomer_anchors[basesubunit]).xyz("ORIG");
 	runtime_assert( T0.length() < 1e-6);
 
+	core::Size ctr=1;
 	for ( Size i=1; i<= nres_monomer; ++i ) {
-		Vector ca_i(0,0,0);
-		if ( pose.residue(i).is_protein() ) {
-			ca_i = monomer_pose.residue(i).xyz("CA");
-		} else {
-			// com
-			for ( Size j=1; j<= monomer_pose.residue(i).natoms(); ++j ) {
-				ca_i += monomer_pose.residue(i).xyz(j);
+		core::conformation::Residue const &rsd = monomer_pose.residue(i);
+		if ( rsd.is_protein() ) {
+			if ( rsd.aa() == core::chemical::aa_gly ) {
+				monomer_cas[ctr++] = rsd.xyz(2);  //CA
+			} else {
+				monomer_cas[ctr++] = rsd.xyz(5);  //CB
 			}
-			ca_i = ca_i/((core::Real)monomer_pose.residue(i).natoms());
+		} else {
+			for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+				monomer_cas[ctr++] = rsd.xyz(j);
+			}
 		}
-		monomer_cas[i] = ca_i;
-		radius = std::max( (ca_i).length_squared() , radius );
+	}
+
+	Real radius = 0;
+	for ( Size i=1; i<=nIntCtrs; ++i ) {
+		radius = std::max( monomer_cas[i].length_squared() , radius );
 	}
 	radius = sqrt(radius);
 
@@ -907,20 +1157,20 @@ MakeLatticeMover::detect_connecting_subunits(
 		if ( i==basesubunit ) continue;
 
 		// pass 1 check vrt-vrt dist to throw out very distant things
-		Vector T = pose.residue(monomer_anchors[i]).xyz("ORIG");
+		numeric::xyzVector< core::Real > T = pose.residue(monomer_anchors[i]).xyz("ORIG");
 		Real disVRT = T.length();
 		if ( disVRT>contact_dist_+2*radius ) continue;
 
 		// pass 2 check ca-ca dists
-		Vector X = pose.residue(monomer_anchors[i]).xyz("X") - T;
-		Vector Y = pose.residue(monomer_anchors[i]).xyz("Y") - T;
-		Vector Z = X.cross( Y );
+		numeric::xyzVector< core::Real > X = pose.residue(monomer_anchors[i]).xyz("X") - T;
+		numeric::xyzVector< core::Real > Y = pose.residue(monomer_anchors[i]).xyz("Y") - T;
+		numeric::xyzVector< core::Real > Z = X.cross( Y );
 
 		numeric::xyzMatrix<core::Real> R = numeric::xyzMatrix<core::Real>::cols(X,Y,Z);
 
 		bool contact=false;
-		for ( Size j=1; j<= nres_monomer && !contact; ++j ) {
-			Vector Ri = R*monomer_cas[j] + T;
+		for ( Size j=1; j<=nIntCtrs && !contact; ++j ) {
+			numeric::xyzVector< core::Real > Ri = R*monomer_cas[j] + T;
 			for ( Size k=1; k<= nres_monomer && !contact; ++k ) {
 				contact = ((Ri-monomer_cas[k]).length_squared() < contact_dist_*contact_dist_);
 			}
@@ -999,15 +1249,15 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	numeric::xyzVector< Size > grid = sg_.get_nsubdivisions();
 	numeric::xyzVector< Size > trans_dofs = sg_.get_trans_dofs();
 
-	Vector O, Ax, Bx, Cx, Ay, By, Cy;
+	numeric::xyzVector< core::Real > O, Ax, Bx, Cx, Ay, By, Cy;
 	if ( sg_.setting() == HEXAGONAL ) {
-		Ax = sg_.f2c()*Vector(1,0,0); Ax.normalize();
-		Bx = sg_.f2c()*Vector(0,1,0); Bx.normalize();
-		Cx = sg_.f2c()*Vector(0,0,1); Cx.normalize();
+		Ax = sg_.f2c()*numeric::xyzVector< core::Real >(1,0,0); Ax.normalize();
+		Bx = sg_.f2c()*numeric::xyzVector< core::Real >(0,1,0); Bx.normalize();
+		Cx = sg_.f2c()*numeric::xyzVector< core::Real >(0,0,1); Cx.normalize();
 	} else {
-		Ax = Vector(1,0,0); Ax.normalize();
-		Bx = Vector(0,1,0); Bx.normalize();
-		Cx = Vector(0,0,1); Cx.normalize();
+		Ax = numeric::xyzVector< core::Real >(1,0,0); Ax.normalize();
+		Bx = numeric::xyzVector< core::Real >(0,1,0); Bx.normalize();
+		Cx = numeric::xyzVector< core::Real >(0,0,1); Cx.normalize();
 	}
 
 	// we don't care where y is as long as it is perpendicular
@@ -1022,7 +1272,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 
 	// 1 expand A (j==k==1)
 	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
-		Vector fX( (Real)(i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], -EXTEND[1], -EXTEND[2] );
+		numeric::xyzVector< core::Real > fX( (Real)(i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], -EXTEND[1], -EXTEND[2] );
 		O = sg_.f2c()*fX;
 
 		// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
@@ -1045,7 +1295,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	// expand B (k==1)
 	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
 		for ( int j=2; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j ) {
-			Vector fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], -EXTEND[2] );
+			numeric::xyzVector< core::Real > fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], -EXTEND[2] );
 			O = sg_.f2c()*fX;
 
 			// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
@@ -1062,7 +1312,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
 		for ( int j=1; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j ) {
 			for ( int k=2; k<=(int)(nvrts_dim[2]*grid[2]+1); ++k ) {
-				Vector fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], (k-1-(Real)(EXTEND[2]*grid[2]))/(Real)grid[2] );
+				numeric::xyzVector< core::Real > fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], (k-1-(Real)(EXTEND[2]*grid[2]))/(Real)grid[2] );
 				O = sg_.f2c()*fX;
 
 				// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
@@ -1092,12 +1342,12 @@ MakeLatticeMover::build_lattice_of_virtuals(
 
 					if ( sg_.setting() == HEXAGONAL ) {
 						R_i_cart = sg_.f2c()*R_i*sg_.c2f();
-						Ax = R_i_cart*Vector(1,0,0); Ax.normalize();
-						Ay = R_i_cart*Vector(0,1,0); Ay.normalize();
+						Ax = R_i_cart*numeric::xyzVector< core::Real >(1,0,0); Ax.normalize();
+						Ay = R_i_cart*numeric::xyzVector< core::Real >(0,1,0); Ay.normalize();
 					} else {
 						R_i_cart = R_i;
-						Ax = R_i*Vector(1,0,0); Ax.normalize();
-						Ay = R_i*Vector(0,1,0); Ay.normalize();
+						Ax = R_i*numeric::xyzVector< core::Real >(1,0,0); Ax.normalize();
+						Ay = R_i*numeric::xyzVector< core::Real >(0,1,0); Ay.normalize();
 					}
 					ResidueOP vrt_z = make_vrt(O,Ax,Ay, (R_i_cart.det()<0));
 

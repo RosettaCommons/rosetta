@@ -1326,7 +1326,7 @@ Options = Option_Group( '',
 		Option( 'fa_max_dis', 'Real', desc='How far does the FA pair potential go out to ?', default='6.0', ),
 		Option( 'fa_Hatr', 'Boolean', desc='Turn on Lennard Jones attractive term for hydrogen atoms', default='true'),
 		Option( 'no_smooth_etables', 'Boolean',desc="Revert to old style etables" ),
-#		Option( 'etable_lr'     , 'Real',   desc="lowers energy well at 6.5A" ),
+		Option( 'count_pair_hybrid', 'Boolean', desc='Use standard count-pair for non-ligands and cp3 w/ full-weight 1-4 for ligands', default='false' ),
 		Option( 'no_lk_polar_desolvation', 'Boolean', desc="Disable the polar-desolvation component of the LK solvation model; effectively set dGfree for polar atoms to 0" ),
 		Option( 'lk_polar_without_proline_N' , 'Boolean', desc="Force class LK_PolarNonPolarEnergy to treat the N atom of proline as non-polar", default="false" ),
 		Option( 'input_etables' , 'String', desc="Read etables from files with given prefix" ),
@@ -1380,6 +1380,7 @@ Options = Option_Group( '',
 		Option( 'disulf_matching_probe', 'Real', desc="Size of probe to use in disulfide matching score", default='2.5'),
 		Option( 'bonded_params', 'RealVector', desc="Default spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]"),
 		Option( 'bonded_params_dir', 'String', desc="Spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]", default="scoring/score_functions/bondlength_bondangle"),
+		Option( 'gen_bonded_params_file', 'String', desc="Parameters for [length,angle,torsion,improper-torsion]", default="scoring/score_functions/generic_potential/generic_bonded.round6p.txt"),
 		Option( 'extra_improper_file', 'String', desc="Add extra parameters for improper torsions"),
 		Option( 'pro_close_planar_constraint', 'Real', desc="stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method", default='0.1' ),
 		Option( 'no_pro_close_ring_closure', 'Boolean', desc="The pro_close term holds the proline ring closed, but also has some inter-residue energy associated with the psi value of the preceding residue.  If this flag is set to 'true', the term ONLY does the torsional stuff -- it doesn't hold the ring closed.  For use with cart_bonded or ring_close.  False by default.", default='false'),
@@ -2292,21 +2293,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	# correction for testing ------------------------------------------------------------
 	Option_Group( 'corrections',
-		Option( 'beta', 'Boolean', desc='Use the most-recent (curr Nov 15) beta score function', default='false'),
-		Option( 'beta_cart', 'Boolean', desc='Use the most-recent (curr Nov 15) beta score function for nonideal optimization', default='false'),
+		Option( 'beta', 'Boolean', desc='Use the most-recent (curr Apr 2018) beta score function', default='false'),
+		Option( 'beta_cart', 'Boolean', desc='Use the most-recent (curr Apr 2018) beta score function for nonideal optimization', default='false'),
 		Option( 'beta_nov16', 'Boolean', desc='Use the November 2015 beta score function', default='false'),
 		Option( 'beta_nov16_cart', 'Boolean', desc='Use the November 2015 beta score function for nonideal optimization', default='false'),
-		#Option( 'beta_nov15', 'Boolean', desc='Use the November 2015 beta score function', default='false'),
-		#Option( 'beta_nov15_cart', 'Boolean', desc='Use the November 2015 beta score function for nonideal optimization', default='false'),
 		Option( 'beta_july15', 'Boolean', desc='Use the July 2015 beta  score function', default='false'),
 		Option( 'beta_july15_cart', 'Boolean', desc='Use the July 2015 beta score function for nonideal optimization', default='false'),
-		Option( 'beta_patch', 'Boolean', desc="Apply the extra patch to most-recent (curr Nov 15) beta_score_function.",default='false'),
-		#Option( 'beta_nov15_patch', 'Boolean', desc="Apply the extra patch to (curr Nov 15) beta_score_function. Adding (conservative) patches to correct some pathologies found in beta_nov15."
-		#				" Could be merged to beta_nov15 in the future when it turns out to work generally better"
-		#				" -score:weights beta_nov15_patch"
-		#				" -rama_prepro_steep"
-		#				" -eval_intrares_elec_ST_only",
-		#				default='false'),
+		Option( 'gen_potential', 'Boolean', desc='Use the April 2018 genralized potential', default='false'),
 		Option( 'newdna', 'Boolean', desc='Apply some dna-specific mods to chemical/scoring (for testing)',
 						default='false'),
 		Option( 'restore_talaris_behavior', 'Boolean', desc='Use talaris score function and residue_type_set', default='false'),
@@ -2400,7 +2393,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'icoor_05_2009', 'Boolean', desc="New set of idealized coordinates for full atom, 05-2009" ),
 			Option( 'parse_charge', 'Boolean', desc="Use PARSE charge set." ),
 			Option( 'expand_st_chi2sampling', 'Boolean', desc="Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves.  This flag can be used with any residue type set (including the pre-s fa_standard version, and with the fa_standard_05.2009_icoor version) but is unncessary for the talaris2013 version (currently named fa_standard) as the expanded SER and THR sampling is already encoded in .params files for these two residues", default="false"),
+			Option( 'alternate_fullatom_ats', 'String', desc='Specify an alternate directory for the fullatom atom type set' )
 		), #-corrections:chemical
+
+		Option_Group( 'genpotential',
+			Option( 'set_torsion_params', 'StringVector', desc="Modify generic_bonded_potential torsion parameters (the ones in generic_bonded.round6p.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -corrections:genpotential:set_torsion_params <atom-set1>:<atom_name1>:<atom_name2>:<atom_name3>:<atom_name4><param1>:<setting1>:<param2>:<setting2> ... For example: '-corrections:genpotential:set_torsion_params fa_standard:C*:CS:CS:C*:k1:0.0:k2:0.0:k3:0.077 fa_standard:CD:CS:CS:CD:k1:0.435:k2:0.039:k3:0.070' "),
+			Option( 'set_special_torsion_params', 'StringVector', desc="Modify generic_bonded_potential special torsion parameters (the ones in generic_bonded.round6p.txt) from the command line. Happens at time of scorefunction creation inside ChemicalManager.cc. Format is: -corrections:genpotential:set_special_torsion_params <atom-set1>:<atom_name1>:<atom_name2>:<atom_name3>:<atom_name4><param1>:<setting1>:<param2>:<setting2> ... For example: '-corrections:genpotential:set_special_torsion_params fa_standard:X:CRb:CRb:X:k1:0.000:k2:-0.226:k3:0.000:k4:0.093:k8:0.000 ' "),
+			#Option( 'set_improper_torsion_params', 'StringVector', desc = "Modify atom properties (the ones in <atom-set>/atom_properties.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -chemical:set_atom_properties <atom-set1>:<atom_name1>:<param1>:<setting1> <atom-set2>:<atom2>:<param2>:<setting2> ... For example: '-chemical:set_atom_properties fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' "),
+		), #-corrections:genpotential
 
 		Option( 'shapovalov_lib_fixes_enable', 'Boolean', desc='Apply new code by Maxim Shapovalov from Dunbrack Lab such as for reading/using dun, rama, prop libraries in new format and options for applying different bug fixes. False value will employ old libraries and old code.', default='true'),
 

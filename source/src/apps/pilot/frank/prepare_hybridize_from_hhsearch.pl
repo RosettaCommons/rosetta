@@ -163,8 +163,8 @@ if (defined $local) {
 	### fetch PDBS!!
 	################
 	foreach my $i (0..$nseqs-1) {
-		my $pdbid = $pdbids[$i];
-		my $folder_id = substr($pdbid,1,2);
+		my $pdbid = lc($pdbids[$i]);
+		my $folder_id = lc(substr($pdbid,1,2));
 	
 		#  e.g. ftp://ftp.wwpdb.org/pub/pdb/data/structures/divided/pdb/00/pdb100d.ent.gz
 		#print "cwd /pub/pdb/data/structures/divided/pdb/$folder_id/\n";
@@ -209,7 +209,7 @@ open (ALIOUT, ">alignments.filt") || die "Cannot open $hhrfile.";
 foreach my $i (0..$nseqs-1) {
 	next if (defined $seqs_to_skip{$i});
 
-	my $pdbid = $pdbids[$i];
+	my $pdbid = lc($pdbids[$i]);
 	my $chainid = $chainids[$i];
 	my $template = $templates[$i];
 	my $target = $targets[$i];

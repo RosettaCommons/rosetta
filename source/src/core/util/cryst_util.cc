@@ -104,11 +104,11 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		}
 
 		// compute gradients using both scorefunctions
+		(*rosetta_scorefxn)(pose);  // score pose first
 		SymMinimizerMap min_map( pose, semisym_move_map, symm_info, !old_sym_min );
 		Multivec vars( min_map.nangles() ), dEros_dvars, dExtal_dvars;
 		min_map.copy_dofs_from_pose( pose, vars );
 
-		(*rosetta_scorefxn)(pose);  // score pose first
 		rosetta_scorefxn->setup_for_minimizing( pose, min_map );
 		SymAtomTreeMultifunc f_ros( pose, min_map, *rosetta_scorefxn, false, false );
 		f_ros.dfunc( vars, dEros_dvars );

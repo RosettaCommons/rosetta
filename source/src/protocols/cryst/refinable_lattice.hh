@@ -111,45 +111,66 @@ public:
 
 class DockLatticeMover : public protocols::moves::Mover {
 private:
-	core::scoring::ScoreFunctionOP sf_, sf_vdw_;
+	core::scoring::ScoreFunctionOP sf_;
 
 	std::map< core::Size, core::conformation::symmetry::SymDof > symdofs_;
-	core::Size SUBjump_;  // jump ids, may not correspond to dofs
-	core::Real rot_mag_, trans_mag_;
-	core::Real temp_;
+	core::Size SUBjump_,Ajump_,Bjump_,Cjump_;
+
+	core::Real rot_mag_, trans_mag_, chi_mag_, kT_, contact_dist_;
+	core::Real init_score_cut_;
+	numeric::xyzVector< core::Real > lattice_mag_;
 	core::Size ncycles_;
-	core::Real monomer_bump_;
-	bool fullatom_, design_;
+
+	std::string spacegroup_;
+	bool randomize_;
+	bool min_, min_lattice_, final_min_, pack_, perturb_chi_;
+
+	bool verbose_;
+	bool recover_low_;
+
+	core::pose::PoseOP native_;
 
 public:
 	DockLatticeMover();
 	DockLatticeMover(core::scoring::ScoreFunctionOP sf_cen_in);
 
 	void
-	init(core::pose::Pose & pose);
+	set_defaults();
+
+	// randomize, build initial lattice
+	void
+	initialize(core::pose::Pose & pose, core::Real contact_dist_scale=1.0);
 
 	void
-	perturb_trial( core::pose::Pose & pose );
+	randomize_chis( core::pose::Pose & pose );
 
+	// perturbation movers
+	void
+	perturb_rb( core::pose::Pose & pose );
+	void
+	perturb_chis( core::pose::Pose & pose );
+	void
+	perturb_lattice( core::pose::Pose & pose );
+
+	// repack
+	void
+	repack( core::pose::Pose & pose, bool rottrials=false );
+
+	// slide into contact
 	void
 	slide_lattice( core::pose::Pose & pose );
 
-	void
-	min_lattice( core::pose::Pose & pose );
-
-	void
-	modify_lattice( core::pose::Pose & pose, core::Real mag );
+	// regenerate symmetry
+	bool
+	regenerate_lattice( core::pose::Pose & pose );
 
 	void apply( core::pose::Pose & pose ) override;
 
 	void set_rot_mag(core::Real rot_mag_in) { rot_mag_=rot_mag_in;}
 	void set_trans_mag(core::Real trans_mag_in) { trans_mag_=trans_mag_in;}
 	void set_ncycles(core::Size ncycles_in) { ncycles_=ncycles_in;}
-	void set_fullatom(bool val) { fullatom_=val; }
 	void set_scorefunction(core::scoring::ScoreFunctionOP sf_new) { sf_=sf_new->clone(); }
-	void set_design(bool val) { design_=val; }
-
-	void set_temp(core::Real val) { temp_=val; }
+	void set_temp(core::Real val) { kT_=val; }
 
 
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new DockLatticeMover(*this)); }
@@ -258,6 +279,7 @@ public:
 	);
 
 
+	//bool check_valid( core::pose::Pose & pose );
 	void apply( core::pose::Pose & pose ) override;
 
 

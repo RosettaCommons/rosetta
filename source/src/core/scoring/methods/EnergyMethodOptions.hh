@@ -350,6 +350,12 @@ public:
 	void
 	exclude_intra_res_protein( bool const setting );
 
+	bool
+	count_pair_hybrid() const;
+
+	void
+	count_pair_hybrid( bool const setting );
+
 
 	bool
 	put_intra_into_total() const;
@@ -757,6 +763,7 @@ private:
 	core::Real water_dielectric_;
 	bool exclude_DNA_DNA_;
 	bool exclude_intra_res_protein_;
+	bool count_pair_hybrid_;
 	bool put_intra_into_total_;
 	core::Size geom_sol_interres_path_distance_cutoff_;
 	core::Size geom_sol_intrares_path_distance_cutoff_;

@@ -1,0 +1,8 @@
+-in:file:silent ./../../data/genpot/structures.out
+-in:file:silent_struct_type binary
+-in:file:fullatom
+-extra_res_fa ./../../data/genpot/*.params
+-gen_potential
+-crystal_refine
+-in::file::load_PDB_components false
+-out:nooutput

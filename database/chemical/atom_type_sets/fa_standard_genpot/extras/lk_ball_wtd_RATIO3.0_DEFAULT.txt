@@ -1,0 +1,16 @@
+NAME   LK_BALL_ATOM_WEIGHT_RATIO3.0_DEFAULT   LK_BALL_ISO_ATOM_WEIGHT_RATIO3.0_DEFAULT
+****     0.000     0.000 ## generic
+NH2O     1.075    -0.462  ## ratio= 3.00   q3ratio= 0.430
+Narg     1.111    -0.444  ## ratio= 3.00   q3ratio= 0.400
+Nhis     1.190    -0.405  ## ratio= 3.00   q3ratio= 0.340
+Nlys     0.926    -0.537  ## ratio= 3.00   q3ratio= 0.580
+NtpH     1.250    -0.375  ## ratio= 3.00   q3ratio= 0.300
+NtpR     1.220    -0.390  ## ratio= 3.00   q3ratio= 0.320
+Ntrp     1.250    -0.375  ## ratio= 3.00   q3ratio= 0.300
+  OH     0.855    -0.573  ## ratio= 3.00   q3ratio= 0.670
+  OW     0.855    -0.573  ## ratio= 3.00   q3ratio= 0.670
+ OHY     0.840    -0.580  ## ratio= 3.00   q3ratio= 0.690
+ONH2     1.010    -0.495  ## ratio= 3.00   q3ratio= 0.490
+OCbb     1.010    -0.495  ## stolen from ONH2
+ OOC     1.064    -0.468  ## ratio= 3.00   q3ratio= 0.440
+### ARGS: setup_lkb_atom_weights.py tmp.lke_stats.tmp86.v2.log.rosetta_stats --by_ratio --ratio 3 --use_q3ratio --tag_suffix _DEFAULT

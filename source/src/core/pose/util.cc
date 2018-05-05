@@ -358,7 +358,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 
 	// check for terminal ligands
 	int last_peptide_res = nres;
-	while ( !pose.residue( last_peptide_res ).is_polymer() ) last_peptide_res--;
+	while ( last_peptide_res > 1 && !pose.residue( last_peptide_res ).is_polymer() ) last_peptide_res--;
 
 	// try to avoid putting the vrt too close to termini
 	int i_min = 1;

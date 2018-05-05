@@ -47,6 +47,7 @@
 #include <core/scoring/SASAPotential.hh>
 #include <core/scoring/VdWTinkerPotential.hh>
 #include <core/scoring/facts/FACTSPotential.hh>
+#include <core/scoring/GenericBondedPotential.hh>
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.hh>
@@ -144,6 +145,7 @@ ScoringManager::ScoringManager() :
 	multipole_elec_mutex_(),
 	sasa_potential_mutex_(),
 	facts_mutex_(),
+	generic_bonded_mutex_(),
 	dnabase_mutex_(),
 	rama_mutex_(),
 	rama2b_mutex_(),
@@ -209,6 +211,7 @@ ScoringManager::ScoringManager() :
 	multipole_elec_bool_(false),
 	sasa_potential_bool_(false),
 	facts_bool_(false),
+	generic_bonded_bool_(false),
 	dnabase_bool_(false),
 	rama_bool_(false),
 	rama2b_bool_(false),
@@ -445,6 +448,14 @@ ScoringManager::get_FACTSPotential() const
 	boost::function< FACTSPotentialOP () > creator( boost::bind( &ScoringManager::create_facts_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, facts_potential_, SAFELY_PASS_MUTEX(facts_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(facts_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *facts_potential_;
+}
+
+GenericBondedPotential const &
+ScoringManager::get_GenericBondedPotential() const
+{
+	boost::function< GenericBondedPotentialOP () > creator( boost::bind( &ScoringManager::create_generic_bonded_potential_instance ) );
+	utility::thread::safely_create_load_once_object_by_OP( creator, generic_bonded_potential_, SAFELY_PASS_MUTEX(generic_bonded_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(generic_bonded_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
+	return *generic_bonded_potential_;
 }
 
 /// @brief Get an instance of the P_AA scoring object.
@@ -1456,6 +1467,14 @@ ScoringManager::create_sasa_potential_instance() {
 FACTSPotentialOP
 ScoringManager::create_facts_potential_instance() {
 	return FACTSPotentialOP( new FACTSPotential );
+}
+
+/// @brief Create an instance of the GenericBondedPotential object, by owning pointer.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+GenericBondedPotentialOP
+ScoringManager::create_generic_bonded_potential_instance() {
+	return GenericBondedPotentialOP( new GenericBondedPotential );
 }
 
 /// @brief Create an instance of the FactsPotential object, by owning pointer.

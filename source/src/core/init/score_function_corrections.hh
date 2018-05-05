@@ -43,17 +43,17 @@ void init_correct_correction( utility::options::OptionCollection & options );
 /// @brief Initialize the -shapovalov_lib_fixes_enable correction
 void init_shapovalov_lib_fixes_enable_correction( utility::options::OptionCollection & options );
 
+/// @brief Initialize the -pre_beta_nov15 etable
+void init_pre_beta_nov15_etable( utility::options::OptionCollection & options );
+
 /// @brief Initialize the _most recent_ beta score function (-beta)
 void init_beta_correction( utility::options::OptionCollection & options );
 
 /// @brief Initialize the -beta_july15 score function
 void init_beta_july15_correction( utility::options::OptionCollection & options );
 
-/// @brief Initialize the -beta_nov15 score function; no longer valid
-//void init_beta_nov15_correction( utility::options::OptionCollection & options );
-
 /// @brief Initialize the -beta_nov16 score function
-void init_beta_nov16_correction( utility::options::OptionCollection & options );
+void init_beta_nov16_correction( utility::options::OptionCollection & options, bool setweight=true );
 
 /// @brief Initialize the crystal refinement correction
 void init_crystal_refinement_correction( utility::options::OptionCollection & options );
@@ -70,6 +70,10 @@ void init_spades_score_function_correction( utility::options::OptionCollection &
 
 /// @brief Initialize the latest and greatest score function parameters
 void init_score_function_corrections( utility::options::OptionCollection & options );
+
+/// @brief Initialize new atom types for Rosetta generic potential
+void
+init_gen_potential_settings(utility::options::OptionCollection & options );
 
 /// @brief  Apply some DNA-specific mods that are still in testing phase; only
 /// if -corrections::newdna present

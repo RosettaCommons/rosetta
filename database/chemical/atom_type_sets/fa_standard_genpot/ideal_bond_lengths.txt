@@ -1,0 +1,57 @@
+ATOM1 BOND_ANGLE TORSION_ANGLE BOND_LENGTH ATOM2
+#bond lengths were determined by averaging bondds between atoms found in
+#residue params files. All bonds not in params were assigned 1.54 and
+#commented
+aroC aroC 1.390073 
+aroC CAbb 1.529832 
+aroC CH2 1.502305 
+aroC Narg 1.347289 
+aroC Nhis 1.347566 
+aroC Ntrp 1.355759 
+aroC Hapo 1.090034 
+aroC OH 1.375964 
+CAbb Nbb 1.458001 
+CAbb Npro 1.458002 
+CAbb CH2 1.528310 
+CAbb CH1 1.539935 
+CAbb CH3 1.521736 
+CAbb CObb 1.523258 
+CAbb Hapo 1.090538 
+CAbb VIRT 1.528861 
+CH1 CH1 1.540000 #not from params files
+CH1 CH2 1.534033 
+CH1 CH3 1.521414 
+CH1 Hapo 1.089952 
+CH1 OH 1.433545 
+CH1 COO 1.540000 #not from params file
+CH2 CH2 1.513119 
+CH2 CH3 1.511680 
+CH2 CNH2 1.510196 
+CH2 COO 1.513075 
+CH2 Hapo 1.091006 
+CH2 Narg 1.454067 
+CH2 Nlys 1.488108 
+CH2 S 1.807563 
+CH2 VIRT 1.475400 
+CH2 OH 1.401192 
+CH3 CH3 1.540000 #not from params files
+CH3 S 1.790388 
+CH3 Hapo 1.089956 
+CNH2 CH1 1.540000 #not from params
+CNH2 NH2O 1.318376 
+CNH2 ONH2 1.235282 #I think this one may be messed up 
+Hapo S 1.329369 
+Hpol Narg 1.010267 
+Hpol NH2O 1.000251 
+Hpol Nlys 1.010212 
+Hpol Ntrp 1.006739 
+Hpol OH 0.960237 
+Hpol OW 0.960237 
+Nbb HNbb 1.010000 
+OCbb CObb 1.231015 
+OOC COO 1.208033 
+S S 1.540000 #not from params
+OOC OOC 1.540000 #not from params
+COO COO 1.540000 #not from params
+VIRT S 1.329369 
+VIRT VIRT 1.569086 

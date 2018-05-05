@@ -1,0 +1,5 @@
+NAME           LK_LAMBDA_LK_LAMBDAS35
+DEFAULT				 LK_LAMBDA
+Nlys					 3.5 ## all were 6.0
+Narg					 3.5
+OOC						 3.5

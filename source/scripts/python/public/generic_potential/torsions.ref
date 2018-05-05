@@ -1,0 +1,349 @@
+#NOTE:
+# functional form: k*cos(nx), n=1,2,3
+# OPLS params are translated as: k'(n=1) = 0.5*k, k'(n=2) = -0.5*k, k'(n=3) = 0.5*k
+# CHARMM params are translated as: k'(n=1) = k, k'(n=3) = k, k'(n=2) = -k if phi=180.0 else =k
+#
+# STARTS ALIPHATIC
+## CLASS 00 X-CS-CS-X 00
+  CS  CS  CS  HC 7791  0.000  0.000  0.183 3     #OPLS, alkane
+  CD  CS  CS  HC 1140  0.000  0.000  0.183 3     #OPLS, alkane
+  HC  CS  CS  HC 2401  0.000  0.000  0.159 3     #OPLS, alkane
+  CS  CS  CS  CS 1880  0.870  0.078  0.139 1 2 3 #OPLS, alkane
+  CS  CS  CS  CR  279  0.870  0.078  0.139 1 2 3 #OPLS, alkane
+  CS  CS  CS  CD  767  0.870  0.078  0.139 1 2 3 #OPLS, alkane
+  CD  CS  CS  CR  144  0.870  0.078  0.139 1 2 3 #OPLS, alkane
+  CD  CS  CS  CD  122  0.870  0.078  0.139 1 2 3 #OPLS, alkane
+  CR  CS  CS  HC  517  0.000  0.000  0.183 3     #OPLS, alkane
+ NG2  CS  CS  HC  588  0.000  0.000  0.232 3     #OPLS, amide
+ NG3  CS  CS  HC  364 -0.507  0.354  0.237 1 2 3 #OPLS, amine
+  CS  CS  CS NG2  222  0.982  0.000  0.330 1 3   #OPLS, amide
+  CS  CS  CS NG3  160  1.366  0.115  0.243 1 2 3 #OPLS, amine
+  CS  CS  CS SG3   51  1.310  0.310  0.129 1 2 3 #OPLS, sulfide
+  HC  CS  CS SG3   72  0.000  0.000  0.226 3     #OPLS, sulfide
+  HC  CS  CS Ohx  310  0.000  0.000  0.234 3     #OPLS, alcohol
+  CS  CS  CS Ohx  227  0.856  0.250  0.332 1 2 3 #OPLS, alcohol
+  CS  CS  CS OG3  579  0.856  0.250  0.332 1 2 3 #OPLS, alcohol
+ OG3  CS  CS  HC 1132  0.000  0.000  0.234 3     #OPLS, alcohol
+  CS  CS  CS   F  103  0.000  0.000  1.000 3     #GUESS
+  CD  CS  CS   F  211  0.000  0.000  1.000 3     #GUESS
+#wildcards
+  C*  CS  CS  C*   wc  0.000  0.000  0.155 3     #CHARMM 
+  HC  CS  CS   X   wc  0.000  0.000  0.155 3     #CHARMM
+   F  CS  CS   X   wc  0.000  0.000  0.400 3     #GUESS
+ OG3  CS  CS   X   wc  0.000  0.000  0.200 3     #GUESS
+ NG2  CS  CS   X   wc  0.000  0.000  0.200 3     #GUESS
+ NG3  CS  CS   X   wc  0.000  0.000  0.200 3     #GUESS
+   X  CS  CS   X   wc  0.000  0.000  0.200 3     #GUESS
+# C*  CS  CS  Cl   wc  0.000  0.000  0.155 3     #MERGED
+# Cl  CS  CS   X   wc  0.000  0.000  0.155 3     #MERGED
+
+## CLASS 01 X-CS-CD-X 01
+  CS  CS  CD  CD  511 -0.500  0.000 -1.300 1 3   #CHARMM, default
+  CD  CS  CD  CD  156 -0.500  0.000 -1.300 1 3   #CHARMM, default
+  CS  CS  CD  CS  113 -0.500  0.000 -1.300 1 3   #CHARMM, default
+  CS  CS  CD  HC  116  0.000  0.000  0.183 3     #OPLS, alkane
+  HC  CS  CD  HC   17  0.000  0.000  0.159 3     #OPLS, alkane
+  HC  CS  CD  CS  194  0.000  0.000  0.183 1 2 3 #OPLS, alkane
+  HC  CS  CD  CD  678  0.000  0.000 -0.186 3     #OPLS, alkene
+  HC  CS  CD OG3  128  0.000  0.000  0.234 3     #OPLS, alcohol
+  CS  CS  CD OG3  221 -0.178  0.082  0.246 1 2 3 #OPLS, alcohol #fit
+  CD  CS  CD OG3   55 -0.178  0.082  0.246 1 2 3 #OPLS, alcohol
+  CD  CS  CD OG2   93 -0.139 -0.614 -0.347 1 2 3 #OPLS, aldehyde
+  CS  CS  CD OG2  453 -0.139 -0.614 -0.347 1 2 3 #OPLS, aldehyde
+  CS  CS  CD Oad  164  0.139  0.614  0.347 1 2 3 #OPLS, aldehyde
+  CS  CS  CD NG2  285  0.000  0.201 -0.068 1 2 3 #OPLS, amide
+  HC  CS  CD OG2  409  0.000  0.000  0.300 1 2 3 #GUESS
+  HC  CS  CD NG2  348  0.000  0.000  0.232 3     #OPLS, amide
+ NG2  CS  CD NG2   ??  0.000 -0.500  0.000 1 2 3 #GUESS
+#peptide versions
+# CS  CS  CD NG2  285  1.625  0.201 -0.068 1 2 3 #OPLS, amide
+#NG2  CS  CD NG2   ??  0.908 -0.611  0.790 1 2 3 #OPLS, peptide psi
+# CS  CS  CD NG2  285  0.422 -0.481  0.351 1 2 3 #OPLS, peptide psi1
+#wildcards
+  HC  CS  CD  O*   wc  0.000  0.000  0.400 3     #GUESS #fit
+  C*  CS  CD  CR   wc  0.000  0.000  0.000 3     #GUESS #fit
+  C*  CS  CD  CD   wc  0.000  0.000  1.000 1 2 3 #GUESS #fit
+  C*  CS  CD  C*   wc  0.000  0.000  1.000 3     #GUESS #fit
+   X  CS  CD  CD   wc  0.000  0.000 -1.000 1 2 3 #GUESS #fit
+   X  CS  CD OG3   wc  0.000  0.000  1.000 3     #GUESS #fit
+   X  CS  CD NG2   wc  0.000  0.000 -1.000 3     #OPLS, peptide? missing?? let's put Ha-Ca-C-N for now
+   X  CS  CD  HC   wc  0.000  0.000  1.000 3     #GUESS #fit
+  HC  CS  CD   X   wc  0.000  0.000  0.200 3     #GUESS #fit
+   F  CS  CD   X   wc  0.000  0.000 -0.300 3     #GUESS #fit
+   X  CS  CD   X   wc  0.000 -0.200  0.000 1 2 3 #GUESS #fit
+# Cl  CS  CD   X   wc  0.000  0.000  0.155 3 #merge with X-CS-CD-X
+
+## CLASS 02 X-CS-CR-X 02
+  HC  CS  CR  CR 1165  0.000  0.000 -0.300 3     #OPLS, ethylbenzene
+  CS  CS  CR  CR  705  0.000  0.000  0.200 1 2 3 #OPLS, ethylbenzene
+  CD  CS  CR  CR  201  0.000  0.000  0.000 3     #OPLS, ethylbenzene
+  CR  CS  CR  CR  173  0.000 -0.200  0.000 2     #GUESS
+ OG3  CS  CR  CR  129  0.856  0.250  0.332 1 2 3 #OPLS, alcohol
+ NG2  CS  CR  CR  128  0.000  0.000 -0.200 1 2 3 #GUESS #fit
+ NG3  CS  CR  CR   75  0.000  0.000  0.200 1 2 3 #GUESS #fit
+  F   CS  CR  CR  111  0.000  0.000  0.200 3     #GUESS
+#wildcards
+   X  CS  CR  CR   wc  0.400  0.100  0.200 1 2 3 #GUESS #fit
+  HC  CS  CR   X   wc  0.000  0.000 -0.200 3     #GUESS #fit
+   X  CS  CR   X   wc  0.000  0.000  0.200 3     #GUESS #fit
+
+## CLASS 11 X-CD-CD-X 11 
+  CS  CD  CD  CS  175  0.150 -8.500  0.000 1 2   #CHARMM, default
+  CS  CD  CD  CD  298  0.150 -8.500  0.000 1 2   #CHARMM
+  CD  CD  CD  CD  512  0.150 -8.500  0.000 1 2   #CHARMM
+  CD  CD  CD  CR  189  0.150 -8.500  0.000 1 2   #CHARMM
+  CD  CD  CD  HC  323  0.150 -8.500  0.000 1 2   #CHARMM
+  CR  CD  CD  HC   96  0.150 -8.500  0.000 1 2   #CHARMM
+  CS  CD  CD  HC  186  0.000 -1.000  0.000 2     #CHARMM
+  HC  CD  CD  HC  112  0.000 -1.000  0.000 2     #CHARMM
+  CS  CD  CD NG2   78  0.400 -5.500  0.000 1 2   #GUESS
+  CS  CD  CD OG2   72  0.150 -8.500  0.000 1 2   #GUESS
+  CD  CD  CD NG2  404  0.150 -8.500  0.000 1 2   #GUESS
+  CD  CD  CD OG2  270  0.150 -8.500  0.000 1 2   #GUESS
+  CD  CD  CD OG3  138  0.150 -8.500  0.000 1 2   #GUESS
+  CD  CD  CD Ofu   72  0.150 -8.500  0.000 1 2   #GUESS
+  CR  CD  CD NG2  126  0.400 -5.500  0.000 1 2   #GUESS
+  HC  CD  CD NG2  198  0.800 -5.500  0.000 1 2   #GUESS
+ NG2  CD  CD NG2  120 -0.400 -5.500  0.000 1 2   #CHARMM
+  HC  CD  CD OG2   65  0.600 -5.500  0.000 1 2   #CHARMM
+#wildcards
+  C*  CD  CD  CR   wc  0.150 -8.500  0.000 1 2   #CHARMM
+  HC  CD  CD   X   wc  0.550 -8.500  0.000 1 2   #CHARMM
+   X  CD  CD   X   wc  0.150 -8.500  0.000 1 2   #CHARMM
+
+## CLASS 12 X-CD-CR-X 12
+  CD  CD  CR  CR  448  0.000 -3.100  0.000 2     #CHARMM, default
+  CS  CD  CR  CR  112  0.000 -3.100  0.000 2     #CHARMM
+ NG2  CD  CR  CR  337  0.000 -3.100  0.000 2     #CHARMM
+ OG2  CD  CR  CR  330  0.000 -3.100  0.000 2     #CHARMM 
+ OG3  CD  CR  CR   73  0.000 -3.100  0.000 2     #CHARMM 
+ Ofu  CD  CR  CR   52  0.000 -3.100  0.000 2     #CHARMM 
+ Oad  CD  CR  CR   65  0.000 -3.100  0.000 2     #CHARMM 
+#wildcards
+  HC  CD  CR   X   wc  0.000 -1.000  0.000 2     #CHARMM   
+  CR  CD  CR   X   wc  0.000 -1.000  0.000 2     #GUESS
+   X  CD  CR   X   wc  0.000 -3.000  0.000 2     #CHARMM 
+
+## CLASS 03 X-CS-CD-X 03
+
+## CLASS 22 X-CR-CR-X 22 
+  CR  CR  CR  CR 8839  0.000 -3.500  0.000 1 2  #CHARMM
+  CS  CR  CR  CR  814  0.000 -3.100  0.000 1 2  #CHARMM
+  CD  CR  CR  CR  664  0.000 -3.100  0.000 1 2  #CHARMM
+  CR  CR  CR NG2  946  0.000 -2.800  0.000 1 2  #CHARMM
+  CR  CR  CR OG3  521  0.000 -3.100  0.000 1 2  #CHARMM
+  CR  CR  CR Ofu  139  0.000 -3.000  0.000 1 2  #CHARMM
+  CR  CR  CR SG3  126  0.000 -3.000  0.000 1 2  #CHARMM
+  CD  CR  CR NG2  114  0.000 -3.000  0.000 1 2  #CHARMM
+  CR  CR  CR Ohx   93  0.000 -3.000  0.000 1 2  #CHARMM
+  CS  CR  CR NG2   90  0.000 -3.000  0.000 1 2  #CHARMM
+  CS  CR  CR OG3   62  0.000 -3.000  0.000 1 2  #CHARMM
+ NG2  CR  CR NG2   84  0.000 -3.000  0.000 1 2  #CHARMM
+ Ofu  CR  CR  HR   77  0.000 -3.000  0.000 1 2  #CHARMM
+  CR  CR  CR  HR 7692  0.000 -3.100  0.000 1 2  #CHARMM
+  CS  CR  CR  HR  759  0.000 -4.200  0.000 1 2  #CHARMM
+  CD  CR  CR  HR  487  0.000 -3.000  0.000 1 2  #CHARMM
+ NG2  CR  CR  HR  527  0.000 -4.000  0.000 1 2  #CHARMM
+ OG3  CR  CR  HR  311  0.000 -3.000  0.000 1 2  #CHARMM
+  HR  CR  CR  HR 2457  0.000 -2.500  0.000 1 2  #CHARMM
+  CR  CR  CR  FR  353  0.000 -3.000  0.000 1 2  #CHARMM
+  FR  CR  CR  FR   82  0.000 -3.000  0.000 1 2  #CHARMM
+  CR  CR  CR BrR  181  0.000 -3.000  0.000 1 2  #CHARMM
+  CR  CR  CR ClR  231  0.000 -3.000  0.000 1 2  #CHARMM
+  HR  CR  CR  FR  108  0.000 -3.000  0.000 1 2  #CHARMM
+  HR  CR  CR BrR  159  0.000 -3.000  0.000 1 2  #CHARMM
+  HR  CR  CR ClR  155  0.000 -3.000  0.000 1 2  #CHARMM
+#wildcards
+  C*  CR  CR  C*   wc  0.000 -3.100  0.000 2    #CHARMM
+  CD  CR  CR  O*   wc  0.000 -3.000  0.000 2    #CHARMM
+  O*  CR  CR  O*   wc  0.000 -3.000  0.000 2    #CHARMM
+  CR  CR  CR   X   wc  0.000 -3.000  0.000 2    #CHARMM
+  CD  CR  CR   X   wc  0.000 -3.000  0.000 2    #CHARMM
+  HR  CR  CR   X   wc  0.000 -3.000  0.000 2    #CHARMM
+   X  CR  CR   X   wc  0.000 -3.000  0.000 2    #CHARMM
+
+## CLASS 33 X-C*-C*-X 33
+   X  CS  CT NG1   wc  0.000  0.000  0.000 2    #GUESS #should be straight
+   X  CR  CT NG1   wc  0.000 -0.200  0.000 2    #GUESS #should be straight
+   X  CD  CT NG1   wc  0.000 -0.200  0.000 2    #GUESS should be straight
+#wildcards
+   X  C*  C*   X   wc  0.000 -0.200  0.000 2    #GUESS
+
+# ENDS ALIPHATIC
+
+## CLASS 04 X-CS-NG3-X 04
+  CS NG3  CS  HC  445  0.000  0.000  0.500 3     #GUESS
+  CS NG3  CS  CS  137  0.000  0.000  1.000 3     #GUESS
+  HN NG3  CS  HC   36  0.000  0.000  0.500 3     #GUESS
+  HN NG3  CS  CS   37  0.500  0.200  0.300 1 2 3 #GUESS
+#wildcards
+  CS NG3  CS   X   wc  0.000  0.000  1.000 3    #GUESS
+   X NG3  CS   X   wc  0.000  0.000  0.500 3    #GUESS
+
+## CLASS 05 X-CS-NG2-X 05
+  HN NG2  CS  HC   49  0.000  0.000  0.000 1 2 3 #GUESS
+  CD NG2  CS  CS  192  0.100  0.100  0.100 1 2 3 #GUESS
+  HN NG2  CS  CS   66  0.000  0.000  0.000 1 2 3 #GUESS #fit
+  CD NG2  CS  HC  413  0.000  0.000  0.000 1 2 3 #GUESS
+  CS NG2  CS  HC  314  0.000  0.000  0.300 1 2 3 #GUESS
+  CR NG2  CS  HC  117  0.000  0.000  0.300 1 2 3 #GUESS #fit
+  CS NG2  CS  CS   88  0.000  0.000  0.300 1 2 3 #GUESS #fit
+ OG2 NG2  CS  CS   69  0.000  0.000  0.300 1 2 3 #GUESS #fit
+#wildcards
+  X  NG2  CS  HC   wc  0.000  0.000  0.300 1 2 3 #GUESS #fit
+  CD NG2  CS   X   wc  0.000  0.000  0.300 1 2 3 #GUESS #fit
+  X  NG2  CS   X   wc  0.000  0.000  0.300 1 2 3 #GUESS #fit
+
+## CLASS 07 X-CS-S*-X 07
+  CS  CS SG3  CS   wc -0.462  0.283  0.338 1 2 3 #OPLS, C-C-S-C
+   X  CS SG3   X   wc  0.300  0.000  0.324 1 3   #OPLS, H-C-S-C
+   X  CS SG5   X   wc  0.000  0.000  0.324 3     #OPLS, H-C-S-C for now
+
+## CLASS 08 X-CS-P*-X 28
+  H*  CS  P*  C*   wc  0.000  0.000  0.500 1 2 3 #GUESS #fit
+  X   CS  PG3 C*   wc  0.000  0.000  0.500 1 2 3 #GUESS #fit
+  X   CS  PG3 X    wc  0.000  0.000  0.500 1 2 3 #GUESS #fit
+
+## CLASS 14 X-CD-NG3-X 14
+#  X   CD  NG3 CS  wc  0.000  0.000  0.155 #merged to 99
+#  X   CD  NG3  X  wc  0.000  0.000  0.155 #merged to 99
+
+## CLASS 15 X-CD-NG2-X 15
+  CS NG2  CD Oad  280  0.000 -3.045  0.000  1 2   #OPLS, amide
+  CD NG2  CD Oad  138  0.000 -3.045  0.000  1 2   #OPLS, amide
+  CR NG2  CD Oad  127  0.000 -3.045  0.000  1 2   #OPLS, amide
+  HN NG2  CD Oad  178  0.000 -2.450  0.000  1 2   #OPLS, amide
+  CS NG2  CD  CS   78  0.000 -3.045  0.000  1 2   #OPLS, amide #fit
+  CD NG2  CD  CD  128  1.400 -3.045  0.000  1 2   #OPLS, amide #fit
+  CD NG2  CD  CR   74  1.400 -3.045  0.000  1 2   #OPLS, amide #fit
+  CD NG2  CD  CS   94  1.400 -3.045  0.000  1 2   #OPLS, amide #fit
+  CR NG2  CD  CD   69  1.400 -3.045  0.000  1 2   #OPLS, amide #fit
+  CD NG2  CD NG2  108  0.000 -3.978  0.000  2     #OPLS, guanidinium
+#wildcards
+   X NG2  CD Oad   wc  0.000 -2.450  0.000  2     #OPLS, amide
+ NG2 NG2  CD   X   wc  0.000 -3.500  0.000  2     #GUESS
+  HN NG2  CD   X   wc  0.000 -3.500  0.000  2     #GUESS
+  CS NG2  CD   X   wc  0.000 -3.500  0.000  2     #GUESS
+  CD NG2  CD   X   wc  0.000 -3.500  0.000  2     #GUESS
+  CR NG2  CD   X   wc  0.000 -3.500  0.000  2     #GUESS
+   X NG2  CD   X   wc  0.000 -3.500  0.000  2     #GUESS
+#  X NG2  CD  HC   wc  0.000  0.000  0.000  #merged
+
+## CLASS 17 X-CD-S*-X 17
+   X  CD SG3   X   wc  0.000 -2.000  0.000  2     #GUESS
+#  X  CD SG5   X   wc  0.000  0.000  0.155 # to 99 X-CD-X-X
+
+## CLASS 18 X-CD-S*-X 18
+#  X  CD PG3   X   wc  0.000  0.000  0.155 # to 99 X-CD-X-X
+
+## CLASS 24 X-CR-NG3-X 24
+   X  CR NG3  X    wc  0.000  0.000  0.300  1 2 3  #GUESS #fit
+#  X  CR NG3 C*    wc  0.000  0.000  0.155 #merged
+
+## CLASS 25 X-CR-NG2-X 25
+  CS NG2  CR  CR  139  0.000 -1.978  0.000  1 2   #OPLS, guanidinium
+  CD NG2  CR  CR  316  0.000 -0.300  0.000  1 2   #GUESS
+  CR NG2  CR  CR  102  0.000 -1.978  0.000  1 2   #OPLS, guanidinium
+ OG2 NG2  CR  CR  254  0.000 -2.000  0.000  1 2   #GUESS
+  HN NG2  CR  CR   90  0.000 -2.000  0.000  1 2   #GUESS, histidine
+#wildcards
+   X NG2  CR  HR   wc  0.000 -4.000  0.000  1 2   #GUESS #fit
+   X NG2  CR   X   wc  0.000 -2.000  0.000  1 2   #GUESS #fit
+
+## CLASS 27 X-CR-S*-X 27
+  X   CR  S*   X   wc  0.000  0.200  0.200  2 3   #GUESS #fit
+# C*  CR  S*   X   wc  0.000  0.000  0.155        #merged
+
+## CLASS 28 X-CR-P*-X 28
+  CR  CR PG3  CR  108  0.000  0.000  0.400  3     #GUESS
+  CR  CR PG3   X   wc  0.000  0.000  0.400  3     #GUESS
+
+## CLASS 34 X-C*-NG3-X 34
+#  X  CT  NG3  X   wc  0.000  0.000  0.155 #to 99
+
+## CLASS 35 X-C*-NG2-X 35
+#  X  CT  NG2  X   wc  0.000  0.000  0.155 #to 99
+
+## CLASS 36 X-C*-O*-X 36
+  HO OG3  CR  CR  181  0.000  1.682  0.000 2     #OPLS, phenol
+  HO OG3  CS  CS   54 -0.178  0.087  0.246 1 2 3 #OPLS, alcohol
+  CS OG3  CS  HC  125  0.000  0.000  0.380 3     #OPLS, ether
+  CS OG3  CS  CS   50  0.325  0.125  0.335 1 2 3 #OPLS, ether
+  CS OG3  CS  CS  141  0.325  0.125  0.335 1 2 3 #OPLS, ether
+  CD OG3  CS  CS  137  0.325  0.125  0.335 1 2 3 #OPLS, ether
+  CS OG3  CR  CR  181  0.000 -0.500  0.000 1 2   #GUESS #fit
+  CR OG3  CS  HC  315  0.300  0.000  0.380 1 3   #GUESS, ether
+  CD OG3  CS  HC  291  0.000  0.000  0.380 3     #OPLS, ether
+  CR  CR Ofu   X   wc  0.500 -0.500  0.000 1 2 3 #GUESS #fit
+   X OG3  CD   X   wc  0.000 -1.000  0.000 1 2 3 #GUESS #fit
+   X  C* OG3  HO   wc -0.178  0.087  0.246 1 2 3 #OPLS, alcohol
+   X  CD  O*   X   wc  0.000 -2.000  0.000 2     #GUESS #fit
+   X  CR  O*   X   wc  0.000 -1.000  0.000 2 3   #GUESS #fit
+   X  CS  O*   X   wc  0.000  0.000  0.500 3     #GUESS #fit
+# O*  C*  O*   X   wc  0.000  0.000  0.500 1 2 3 #GUESS
+# CR  CR Ohx  HO   21  #OPLS
+# HC  CS Ohx  HO   15  #OPLS
+# CS  CD Ohx  HO    1  #OPLS
+#OG3  CS OG3  CS   31  #OPLS
+#OG2  CD Ohx  HO   24  #OPLS
+
+## CLASS 37 X-C*-S*-X 37
+#   X  C* SG2   X  wc  0.000  0.000  0.155  #count=0
+#   X  C* SG3   X  wc  0.000  0.000  0.155  #count=0
+#   X  C* SG5   X  wc  0.000  0.000  0.155  #count=0
+#  C*  C*  S*   X  wc  0.000  0.000  0.155  #merged
+#  H*  C*  S*   X  wc  0.000  0.000  0.155  #merged
+    X  C*  S*   X  wc  0.000  0.000  0.400 1 2 3 #GUESS 
+
+## CLASS 44 X-NG3-NG3-X 44
+#   X NG3 NG3  C*  wc  0.000  0.000  0.155       # to 99
+
+## CLASS 45 X-NG3-NG2-X 45
+#   X NG3 NG2  C*  wc  0.000  0.000  0.155       # to 99
+#  C* NG3 NG2  X   wc  0.000  0.000  0.155       # to 99
+#   X NG3 NG2  X   wc  0.000  0.000  0.155       # to 99
+
+## CLASS 46 X-NG3-O*-X 46
+#  C* NG3 OG3   X  wc  0.000  0.000  0.155       #to 99 X-NG3-X-X
+
+## CLASS 47 X-NG3-S*-X 47
+    X NG3  S*  X   wc  0.000  0.000  1.000 1 2 3 #GUESS #fit
+#   X NG3  S*  C*  wc  0.000  0.000  0.000       #merged
+#  C* NG3  S*  X   wc  0.000  0.000  0.000       #merged
+
+## CLASS 49 X-NG3-P*-X 49
+   X NG3 PG3   X   wc -0.800  0.000  0.300 1 2 3 #GUESS #fit
+
+## CLASS 55 X-NG2-NG2-X 55
+   X NG2 NG2   X   wc  0.000 -1.000  0.000 1 2   #GUESS
+# CD NG2 NG2   X   wc  0.000  0.000  0.300       #merged
+
+## CLASS 56 X-NG2-O*-X 56
+  C* NG2 O*    X   wc  0.000 -1.000  0.155 1 2 3 #GUESS #fit
+
+## CLASS 57 X-NG2-S*-X 57
+  CS NG2 SG5   X   wc  0.000  0.000  0.500 3     #GUESS #fit
+  CD NG2 SG5   X   wc  0.000  0.000  0.500 3     #GUESS #fit
+  HN NG2 SG5   X   wc  0.000  0.000  0.500 3     #GUESS #fit
+  X  NG2 S*    X   wc  0.000  0.000  0.500 3     #GUESS
+
+## CLASS 58 X-NG2-P*-X 58
+   X NG2 PG3   X   wc  0.000  0.000  0.500 3     #GUESS
+
+## CLASS 68 X-O*-P*-X 68
+   X OG3 PG3   X   wc  0.000  0.000  0.500 3     #GUESS
+
+## CLASS 77 X-S*-S*-X 77
+   X  S*  S*    X  wc  0.000  3.707  0.852 1 2 3 #OPLS, disulfide
+
+## CLASS 88 X-P*-P*-X 88
+   X PG3 PG3    X  wc  0.000  0.000  1.000 3     #GUESS
+
+## CLASS 99 X-X-X-X
+   X  CD    X   X  wc  0.000  0.000  0.155 1 2 3 #GUESS #fit
+   X  CT    X   X  wc  0.000 -3.000  0.000 3     #mostly should be straight?
+#  X  NG1   X   X  wc  0.000  0.000  0.300       #merged
+   X  NG3   X   X  wc  0.000  0.000  0.300 3     #GUESS
+   X   X    X   X  wc  0.000  0.000  0.300 3     #GUESS
+
+#############################################################

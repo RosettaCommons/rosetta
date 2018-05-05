@@ -222,6 +222,7 @@ FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
 	exclude_monomer_( options.exclude_monomer_fa_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
 	eval_intrares_ST_only_( options.eval_intrares_elec_ST_only() ),
+	count_pair_hybrid_( options.count_pair_hybrid() ),
 	cp_rep_map_( new CountPairRepMap ),
 	nres_monomer_( 0 )
 {
@@ -238,6 +239,7 @@ FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
 	eval_intrares_ST_only_( src.eval_intrares_ST_only_ ),
+	count_pair_hybrid_( src.count_pair_hybrid_ ),
 	cp_rep_map_( new CountPairRepMap ), //Do not copy the cp_rep_map_.  This is scratch space, and should exist on a per-instance basis.
 	nres_monomer_( 0 )
 {
@@ -552,7 +554,10 @@ FA_ElecEnergy::eval_intrares_energy(
 
 	// assuming only a single bond right now -- generalizing to arbitrary topologies
 	// also assuming crossover of 4, should be closest (?) to classic rosetta
-	CountPairFunctionOP cpfxn =
+	bool const is_ligand( rsd.is_ligand() );
+	bool intra_xover3 = (is_ligand && count_pair_hybrid_);
+	CountPairFunctionOP cpfxn = intra_xover3 ?
+		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_3FULL ) :
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
 	Real d2;
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
@@ -802,7 +807,10 @@ FA_ElecEnergy::eval_intrares_derivatives(
 			rsd.aa() == chemical::aa_dse || rsd.aa() == chemical::aa_dth )
 			) return;
 
-	CountPairFunctionOP cpfxn =
+	bool const is_ligand( rsd.is_ligand() );
+	bool intra_xover3 = (is_ligand && count_pair_hybrid_);
+	CountPairFunctionOP cpfxn = intra_xover3 ?
+		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_3FULL ) :
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
 
 	Size iN=0, iHG=0, iOG=0;
@@ -1374,7 +1382,12 @@ FA_ElecEnergy::get_intrares_countpair(
 ) const
 {
 	using namespace etable::count_pair;
-	etable::count_pair::CountPairFunctionCOP reg_cpfxn = CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_4 );
+
+	bool const is_ligand( res.is_ligand() );
+	bool intra_xover3 = (is_ligand && count_pair_hybrid_);
+	CountPairFunctionOP reg_cpfxn = intra_xover3 ?
+		CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_3FULL ) :
+		CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_4 );
 	if ( use_cp_rep_ ) {
 		return etable::count_pair::CountPairFunctionCOP( new CountPairRepresentative( *this, res, res, reg_cpfxn ));
 	} else {

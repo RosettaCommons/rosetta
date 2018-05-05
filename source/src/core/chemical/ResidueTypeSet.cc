@@ -701,6 +701,8 @@ ResidueTypeSet::get_mirrored_type(
 ) const {
 	if ( original_rsd->is_achiral_backbone() ) return original_rsd;
 
+	if ( original_rsd->is_ligand() ) return original_rsd; // fd
+
 	runtime_assert_string_msg( original_rsd->is_d_aa() || original_rsd->is_l_aa(), "Error in core::chemical::ResidueTypeSet::get_mirror_type(): The residue type must be achiral, or must have the D_AA or L_AA property." );
 
 	if ( original_rsd->is_d_aa() ) return get_l_equivalent(original_rsd);

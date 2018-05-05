@@ -522,6 +522,7 @@ private:
 	bool exclude_DNA_DNA_;
 
 	bool eval_intrares_ST_only_; // hpark: intrares_elec for ST hydroxyl only
+	bool count_pair_hybrid_;
 
 	//fpd: countpair representative atoms
 	bool use_cp_rep_;

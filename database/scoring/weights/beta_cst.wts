@@ -26,6 +26,7 @@ fa_dun_rot 0.76
 fa_dun_dev 0.69
 fa_dun_semi 0.78
 hxl_tors 1.0
+gen_bonded 1.0
 ref 1
 chainbreak 1.0
 coordinate_constraint 1.0

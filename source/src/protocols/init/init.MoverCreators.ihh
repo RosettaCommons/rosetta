@@ -261,6 +261,8 @@
 #include <protocols/ligand_docking/TranslateCreator.hh>
 #include <protocols/ligand_docking/WriteLigandMolFileCreator.hh>
 
+#include <protocols/ligand_docking/GALigandDock/GALigandDockCreator.hh>
+
 #include <protocols/loop_build/LoopmodelWrapperCreator.hh>
 #include <protocols/loop_build/LoopMover_SlidingWindowCreator.hh>
 

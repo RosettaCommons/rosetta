@@ -96,6 +96,14 @@ sources = {
 		"util",
 		"WriteLigandMolFile",
 	],
+	"protocols/ligand_docking/GALigandDock": [
+		"LigandConformer",
+		"GriddedAtomTreeMultifunc",
+		"GridScorer",
+		"GAOptimizer",
+		"GALigandDock",
+		"RotamerData",
+	],
 	"protocols/ligand_docking/ligand_options": [
 		"Interface",
 		"interface_distance_functions",

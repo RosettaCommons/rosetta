@@ -217,6 +217,7 @@ sources = {
 		"EnergyMap",
 		"EnvPairPotential",
 		"GenBornPotential",
+		"GenericBondedPotential",
 		"HydroxylTorsionPotential",
 		"MultipoleElecPotential",
 		"SASAPotential",
@@ -423,6 +424,7 @@ sources = {
 	"core/scoring/etable/count_pair": [
 		"CountPairAll",
 		"CountPairCrossover3",
+		"CountPairCrossover3full",
 		"CountPairCrossover4",
 		"CountPairCrossover34",
 		"CountPairFactory",
@@ -641,6 +643,7 @@ sources = {
 		"FreeDOF_Options",
 		"GaussianOverlapEnergy",
 		"GenBornEnergy",
+		"GenericBondedEnergy",
 		"HRF_MSLabelingEnergy",
 		"MultipoleElecEnergy",
 		"GoapEnergy",

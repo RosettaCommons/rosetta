@@ -25,7 +25,7 @@ core::Real
 crystRMSfast (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy);
 
 core::Real
-crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy);
+crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy, bool allatom=false);
 
 }
 }
