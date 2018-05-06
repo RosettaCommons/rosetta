@@ -517,7 +517,9 @@ fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const 
 	} else {
 		// can happen after additions
 		if ( pose.residue_type( res ).is_RNA() &&
-				!pose.residue_type( res ).has_variant_type( FIVE_PRIME_PHOSPHATE ) ) {
+				!pose.residue_type( res ).has_variant_type( FIVE_PRIME_PHOSPHATE ) &&
+				!pose.residue_type( res ).has_variant_type( core::chemical::FIVEPRIME_CAP ) &&
+				!pose.residue_type( res ).has_variant_type( FIVE_PRIME_PACKABLE_TRIPHOSPHATE ) ) {
 			add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, res );
 		}
 

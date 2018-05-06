@@ -1075,7 +1075,10 @@ ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  co
 
 		if ( actually_check_nucleic_acid_virtual_phosphates ) {
 			if ( rsd_type->is_DNA() && !rsd_type->has_variant_type( VIRTUAL_DNA_PHOSPHATE ) ) continue;
-			if ( rsd_type->is_RNA() && !rsd_type->has_variant_type( VIRTUAL_PHOSPHATE ) ) continue;
+
+			// triphosphate termination does not require virtual phosphates!
+			if ( rsd_type->is_RNA() && !rsd_type->has_variant_type( VIRTUAL_PHOSPHATE )
+					&& !rsd_type->has_variant_type( FIVE_PRIME_PACKABLE_TRIPHOSPHATE ) ) continue;
 		}
 
 		filtered_rsd_types.push_back( rsd_type );

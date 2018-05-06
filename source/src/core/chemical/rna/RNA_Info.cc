@@ -282,6 +282,10 @@ RNA_Info::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
 	utility::vector1< Size > const & chi_order = figure_out_chi_order();
 
 	for ( Size ii = nchi; ii >= 1; --ii ) {
+
+		// This doesn't matter SO much and can break some residues.
+		if ( ii > chi_order.size() ) continue;
+
 		/// Note children of atom 3 of chi_ii as being controlled by chi ii.
 		if ( residue_type->chi_atoms( ii ).size() == 0 ) continue;
 		Size const iiat3 = residue_type->chi_atoms( ii )[ 3 ]; // atom 3

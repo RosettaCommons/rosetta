@@ -246,7 +246,9 @@ virtualize_5prime_phosphates( pose::Pose & pose ){
 				!pose.residue_type( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
 				!pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_UPPER )
 				) ) {
-			if ( pose.residue_type(i).is_RNA() && !pose.residue_type(i).has_variant_type( chemical::FIVEPRIME_CAP ) ) {
+			if ( pose.residue_type(i).is_RNA()
+					&& !pose.residue_type(i).has_variant_type( chemical::FIVEPRIME_CAP )
+					&& !pose.residue_type(i).has_variant_type( chemical::FIVE_PRIME_PACKABLE_TRIPHOSPHATE ) ) {
 				pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i );
 			}
 		}
