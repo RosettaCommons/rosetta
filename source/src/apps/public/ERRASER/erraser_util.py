@@ -48,14 +48,19 @@ def rosetta_bin_path(exe_file, rosetta_folder = "") :
     if not exists(exe_folder) : #Otherwise, assume the input folder name is bin path
         exe_folder = rosetta_folder
     check_path_exist(exe_folder)
-    # AMW: check for the "no extension" symlink (cmake) first
-    name_extensions = [ ".linuxgccrelease", ".linuxclangrelease", "", ".macosgccrelease", ".macosclangrelease",
+    name_extensions = [ ".python.linuxgccrelease", ".linuxgccrelease", ".linuxclangrelease", "", ".macosgccrelease", ".macosclangrelease",
                        "failed_to_find_Rosetta_path"] #this makes a better error message if pathing fails
     exe_path = ""
     for name in name_extensions :
         exe_path = exe_folder + exe_file + name
         if exists(exe_path) :
             break
+
+    if not exists(exe_path):
+        # last chance: glob anything in the build directory.
+        bins = glob(exe_folder + exe_file + '.*')[0]
+        if len(bins) > 0:
+            exe_path = bins[0]
     check_path_exist(exe_path)
     return exe_path
 
