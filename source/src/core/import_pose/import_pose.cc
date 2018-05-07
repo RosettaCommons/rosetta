@@ -371,8 +371,11 @@ pose_from_file(
 		CifParserOP cifParser( new CifParser( cifFile.get() ) );
 		cifParser->ParseString( contents_of_file, diagnostics );
 		io::StructFileRepOP sfr ( io::mmcif::create_sfr_from_cif_file_op( cifFile, options ) );
+		// We need to get rid of the cif parser IMMEDIATELY because of the arcanity in
+		// the library that there can only be one at once... even though you can only have one per
+		// file.
+		cifParser.reset();
 		build_pose( sfr, pose, residue_set, options );
-
 	}
 }
 

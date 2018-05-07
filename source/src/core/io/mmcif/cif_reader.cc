@@ -111,6 +111,7 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 
 	bool read_pdb_header = options.read_pdb_header();
 
+	TR.Debug << "Reading structure from CIF block " << cifFile->GetFirstBlockName() << std::endl;
 	Block& block = cifFile->GetBlock( cifFile->GetFirstBlockName() );
 
 	// "header information", i.e., is from the Title Section of the PDB file.
@@ -275,8 +276,11 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 		for ( Size i = 0; i <= atom_site.GetLastRowIndex(); ++i ) {
 			AtomInformation ai;
 
-			std::string temp_model = atom_site( i, "pdbx_PDB_model_num" );
-			temp_model = ObjexxFCL::strip_whitespace( temp_model );
+			std::string temp_model = last_model;
+			if ( atom_site.IsColumnPresent("pdbx_PDB_model_num") ) {
+				temp_model = atom_site( i, "pdbx_PDB_model_num" );
+				temp_model = ObjexxFCL::strip_whitespace( temp_model );
+			}
 
 			// PUT OBEY ENDMDL RECOGNITION HERE!!!!!!!
 			if ( last_model != "" && last_model != temp_model ) {
@@ -308,34 +312,51 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				}
 			}
 
-			bool is_het = (atom_site( i, "group_PDB" ) == "HETATM" );
+			bool is_het = (atom_site.IsColumnPresent("group_PDB") && atom_site( i, "group_PDB" ) == "HETATM" );
 			if ( is_het && options.read_only_ATOM_entries() ) continue;
 
 			ai.isHet = is_het;
-			ai.serial = atoi( atom_site( i, "id" ).c_str() );
-			ai.name = atom_site( i, "auth_atom_id" );
+			ai.serial = atoi( atom_site( i, "id" ).c_str() ); // Mandatory
+			if ( atom_site.IsColumnPresent("auth_atom_id") ) {
+				ai.name = atom_site( i, "auth_atom_id" );
+			} else if ( atom_site.IsColumnPresent("label_atom_id") ) {
+				ai.name = atom_site( i, "label_atom_id");
+			}
 			ai.altLoc = 0;
-			if ( atom_site( i, "label_alt_id" ).size() > 0 ) {
+			if ( atom_site( i, "label_alt_id" ).size() > 0 ) { // Mandatory
 				ai.altLoc = atom_site( i, "label_alt_id" )[ 0 ];
 			}
 
-			ai.resName = atom_site( i, "auth_comp_id" );
-			ai.chainID = ' ';
-			if ( atom_site( i, "auth_asym_id" ).size() > 0 ) ai.chainID = atom_site( i, "auth_asym_id" )[0];
-			if ( options.new_chain_order() ) {
-				if ( atom_site( i, "auth_asym_id" ).size() > 0 ) {
-					char chainid = atom_site( i, "auth_asym_id" )[0];
-					if ( chain_to_idx.find(chainid) == chain_to_idx.end() ) {
-						chain_to_idx[chainid] = chain_to_idx.size()+1;
-						TR << "found new chain " << chainid << " " << chain_to_idx.size() << std::endl;
-					}
-					ai.chainID = modelchain_to_chain[std::pair<Size, Size>(modelidx, chain_to_idx[chainid])];
-				}
+			if ( atom_site.IsColumnPresent("auth_comp_id") ) {
+				ai.resName = atom_site( i, "auth_comp_id" );
+			} else {
+				ai.resName = atom_site( i, "label_comp_id"); // Mandatory
 			}
 
-			ai.resSeq = atoi( atom_site( i, "auth_seq_id" ).c_str() );
+			ai.chainID = ' ';
+			if ( atom_site.IsColumnPresent("auth_asym_id") && atom_site( i, "auth_asym_id" ).size() > 0 ) {
+				ai.chainID = atom_site( i, "auth_asym_id" )[0];
+			} else if ( atom_site( i, "label_asym_id" ).size() > 0 ) {
+				ai.chainID = atom_site( i, "label_asym_id" )[0]; // Mandatory
+			}
+			if ( options.new_chain_order() ) {
+				char chainid = ai.chainID;
+				if ( chain_to_idx.find(chainid) == chain_to_idx.end() ) {
+					chain_to_idx[chainid] = chain_to_idx.size()+1;
+					TR << "found new chain " << chainid << " " << chain_to_idx.size() << std::endl;
+				}
+				ai.chainID = modelchain_to_chain[std::pair<Size, Size>(modelidx, chain_to_idx[chainid])];
+			}
+
+			if ( atom_site.IsColumnPresent("auth_seq_id") ) {
+				ai.resSeq = atoi( atom_site( i, "auth_seq_id" ).c_str() );
+			} else {
+				ai.resSeq = atoi( atom_site( i, "label_seq_id" ).c_str() ); // Mandatory
+			}
 			ai.iCode = ' ';
-			if ( atom_site( i, "pdbx_PDB_ins_code" ).size() > 0 && atom_site( i, "pdbx_PDB_ins_code" )[0] != '?' ) ai.iCode = atom_site( i, "pdbx_PDB_ins_code" )[0];
+			if ( atom_site.IsColumnPresent("pdbx_PDB_ins_code") && atom_site( i, "pdbx_PDB_ins_code" ).size() > 0 && atom_site( i, "pdbx_PDB_ins_code" )[0] != '?' ) {
+				ai.iCode = atom_site( i, "pdbx_PDB_ins_code" )[0];
+			}
 
 			// how can you check properly if something will successfully convert to a number !?!?!?
 			bool force_no_occupancy = false;
@@ -360,16 +381,18 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 
 			// check that the occupancy column actually exists. If it doesn't, assume full occupancy.
 			// otherwise read it.
-			if ( atom_site( i, "occupancy" ) == "      " ) {
+			if ( ! atom_site.IsColumnPresent("occupancy") || atom_site( i, "occupancy" ) == "      " ) {
 				ai.occupancy = 1.0;
 			} else {
 				ai.occupancy = atof( atom_site( i, "occupancy" ).c_str() );
 			}
 			if ( force_no_occupancy ) ai.occupancy = -1.0;
 
-			ai.temperature = atof( atom_site( i, "B_iso_or_equiv" ).c_str() );
+			if ( atom_site.IsColumnPresent("B_iso_or_equiv") ) {
+				ai.temperature = atof( atom_site( i, "B_iso_or_equiv" ).c_str() );
+			}
 			ai.segmentID = "    ";
-			ai.element = atom_site( i, "type_symbol" );
+			ai.element = atom_site( i, "type_symbol" ); // Mandatory
 			ai.terCount = 0;
 
 			atom_chain_map[ai.chainID].push_back(ai);
@@ -377,8 +400,17 @@ StructFileRepOP create_sfr_from_cif_file_op( CifFileOP cifFile, StructFileReader
 				chain_list.push_back( ai.chainID );
 			}
 		}
+	} else {
+		TR.Warning << "atom_site table apparently not present in mmCIF file - Structure will not have coordinates!" << std::endl;
+		std::vector<std::string> table_names;
+		block.GetTableNames(table_names);
+		TR.Warning << " Tables present:";
+		for ( std::string const & table: table_names ) {
+			TR.Warning << " " << table;
+		}
+		TR.Warning << std::endl;
+		TR.Warning << " Note that the final table in the cif file may not be recognized - adding a dummy entry (like `_citation.title  \"\"`) to the end of the file may help." << std::endl;
 	}
-
 
 	for ( char i : chain_list ) { // std::vector
 		sfr->chains().push_back( atom_chain_map.find( i )->second );

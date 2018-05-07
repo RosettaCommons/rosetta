@@ -1,0 +1,15 @@
+cd %(workdir)s
+
+# making script terminate with error after any command that return non zero exit code
+set -e
+
+cp 1qys_pymol.cif 1qys_pymol_mod.cif
+echo '_citation.title  ""' >> 1qys_pymol_mod.cif
+
+[ -x %(bin)s/score_jd2.%(binext)s ] || exit 1
+%(bin)s/score_jd2.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+

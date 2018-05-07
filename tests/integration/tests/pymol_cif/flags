@@ -1,0 +1,2 @@
+-s 1qys_pymol.cif 1qys_pymol_mod.cif
+-out:pdb
