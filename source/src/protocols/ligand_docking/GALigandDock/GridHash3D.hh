@@ -22,6 +22,11 @@
 
 #include <unordered_map>
 
+
+#if defined(B0)  // work around B0 define in termios.h on Mac
+	#undef B0
+#endif
+
 namespace protocols {
 namespace ligand_docking {
 namespace ga_ligand_dock {

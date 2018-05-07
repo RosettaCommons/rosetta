@@ -148,7 +148,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     if res: binder_head = 'unknown'
     else: binder_head = output.split('\n')[0]
 
-    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.0', binder = binder_head, llvm_version=llvm_version)
+    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.0', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
     signature_file_name = build_dir + '/.signature.json'
 
     disk_signature = dict(config = 'unknown', binder = 'unknown')
@@ -156,7 +156,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
         with open(signature_file_name) as f: disk_signature = json.load(f)
 
     if signature == disk_signature:
-        print('LLVM:{} + Binder install is detected at {}, skipping LLVM installation Binder building procedures...\n'.format(llvm_version, build_dir))
+        print('LLVM:{} + Binder install is detected at {}, skipping LLVM installation and Binder building procedures...\n'.format(llvm_version, build_dir))
 
     else:
         print('LLVM build detected, but config/binder version has changed, perfoming a clean rebuild...')
