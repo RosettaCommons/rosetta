@@ -88,12 +88,12 @@ def parse_clangSA_exclusions( exclusion_list, verbose ):
 
 def parse_clangSA_plist_file( filename, root_dir, exclusions, verbose ):
     issues = {}
-    with open(filename) as f:
+    with open(filename,'rb') as f: # readPlist needs binary-formatted files
         try:
             plist = plistlib.readPlist(f)
         except:
             Tracer(verbose)("Issue parsing plist file: "+filename+"- ignoring.")
-            return issues
+            return issues, None
 
     files = plist.get('files',[])
     clang_version = plist.get('clang_version',None)
@@ -151,12 +151,16 @@ def run_clang_analysis_test(rosetta_dir, working_dir, platform, config, hpc_driv
         exclusions = parse_clangSA_exclusions( "{}/tests/benchmark/util/clangSA_exclusions.txt".format(rosetta_dir), verbose )
 
         issues = {}
+        unable_to_parse_plist = []
         clang_version = set()
         for filename in glob.glob('{}/*.plist'.format(outdir)):
             file_issues, file_version = parse_clangSA_plist_file(filename, os.path.join(rosetta_dir,'source'), exclusions, verbose)
             for k in file_issues:
                 issues.setdefault(k,[]).extend(file_issues[k])
-            clang_version.add( file_version )
+            if file_version is None:
+                unable_to_parse_plist.append( filename )
+            else:
+                clang_version.add( file_version )
         clang_version = '//'.join( [v for v in clang_version if v is not None] )
 
     finally:
@@ -168,6 +172,9 @@ def run_clang_analysis_test(rosetta_dir, working_dir, platform, config, hpc_driv
     json_results = dict(tests={}, summary=dict(total=[], failed=[], failed_tests=[]))
     problem_log = []
     historical_log = []
+    for filename in unable_to_parse_plist:
+        problem_log.append("Cannot parse plist file " + filename)
+        json_results['summary']['failed_tests'].append(filename)
     for f, l, m in sorted(issues.keys()):
         # Update the modification date on files with problems, so they show up on the next run.
         # (If we do this multiple times per file, it's not an issue.)
@@ -190,7 +197,6 @@ def run_clang_analysis_test(rosetta_dir, working_dir, platform, config, hpc_driv
 
         if state == _S_failed_ and f not in json_results['summary']['failed_tests']:
             json_results['summary']['failed_tests'].append(f)
-
     issues_log = ""
     if len(problem_log):
         issues_log += '\nProblems found:\n\n'
