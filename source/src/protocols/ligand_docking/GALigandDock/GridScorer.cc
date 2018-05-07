@@ -131,12 +131,12 @@ get_hbond_score_weighted (
 	numeric::xyzVector<core::Real> const &H,
 	numeric::xyzVector<core::Real> const &A,
 	numeric::xyzVector<core::Real> const &B,
-	numeric::xyzVector<core::Real> const &B0
+	numeric::xyzVector<core::Real> const &B_0
 ) {
 	core::Real energy=0;
 	core::scoring::hbonds::hb_energy_deriv(
 		*database, hbopt, hbt,
-		D,H,A,B,B0,
+		D,H,A,B,B_0,
 		energy, false, core::scoring::hbonds::DUMMY_DERIVS
 	);
 	if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {
@@ -357,7 +357,7 @@ GridScorer::calculate_grid(
 			core::Size b0num = resB.abase2( *anum  );
 			acc_b.A = resB.xyz( *anum );
 			acc_b.B = resB.xyz( bnum );
-			acc_b.B0 = resB.xyz( b0num );
+			acc_b.B_0 = resB.xyz( b0num );
 			acc_b.acctype = core::scoring::hbonds::get_hb_acc_chem_type( *anum, resB );
 			hbacceptors_.add_point( acc_b );
 		}
@@ -1034,7 +1034,7 @@ GridScorer::get_1b_energy(
 	// 2 hbond
 	utility::vector1<hbDon> hbdon_neighborlist;
 	utility::vector1<hbAcc> hbacc_neighborlist;
-	numeric::xyzVector<core::Real> D,H,A,B,B0;
+	numeric::xyzVector<core::Real> D,H,A,B,B_0;
 	core::scoring::hbonds::HBondOptions const & hbopt = sf->energy_method_options().hbond_options();
 
 	core::Real maxHbdis = 4.2;
@@ -1046,7 +1046,7 @@ GridScorer::get_1b_energy(
 		core::Size b0num = res_i.abase2( *anum );
 		A = res_i.xyz( *anum );
 		B = res_i.xyz( bnum );
-		B0 = res_i.xyz( b0num );
+		B_0 = res_i.xyz( b0num );
 
 		core::scoring::hbonds::HBEvalTuple hbt;
 		hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_i ));
@@ -1056,8 +1056,8 @@ GridScorer::get_1b_energy(
 			H = hbdon_neighborlist[i].H;
 			hbt.don_type( hbdon_neighborlist[i].dontype );
 			if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
-			//score_grid.energy_ += get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B0 );
-			score_grid.hbond_wtd_ += get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B0 );
+			//score_grid.energy_ += get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B_0 );
+			score_grid.hbond_wtd_ += get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B_0 );
 		}
 	}
 	for ( auto hnum=res_i.Hpos_polar().begin(),hnume=res_i.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
@@ -1074,12 +1074,12 @@ GridScorer::get_1b_energy(
 		for ( core::Size i=1; i<=hbacc_neighborlist.size(); ++i ) {
 			A = hbacc_neighborlist[i].A;
 			B = hbacc_neighborlist[i].B;
-			B0 = hbacc_neighborlist[i].B0;
+			B_0 = hbacc_neighborlist[i].B_0;
 			hbt.acc_type( hbacc_neighborlist[i].acctype );
 
 			if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
-			//score_grid.energy_ += get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B0 );
-			score_grid.hbond_wtd_ += get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B0 );
+			//score_grid.energy_ += get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B_0 );
+			score_grid.hbond_wtd_ += get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B_0 );
 		}
 	}
 
@@ -1124,7 +1124,7 @@ GridScorer::get_2b_energy(
 
 	utility::vector1<hbDon> hbdon_neighborlist;
 	utility::vector1<hbAcc> hbacc_neighborlist;
-	numeric::xyzVector<core::Real> D,H,A,B,B0;
+	numeric::xyzVector<core::Real> D,H,A,B,B_0;
 	core::scoring::hbonds::HBondOptions const & hbopt = sf->energy_method_options().hbond_options();
 
 	//core::Real maxHbdis = 4.2; unused variable
@@ -1191,7 +1191,7 @@ GridScorer::get_2b_energy(
 		core::Size b0num = res_i.abase2( *anum );
 		A = res_i.xyz( *anum );
 		B = res_i.xyz( bnum );
-		B0 = res_i.xyz( b0num );
+		B_0 = res_i.xyz( b0num );
 
 		core::scoring::hbonds::HBEvalTuple hbt;
 		hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_i ));
@@ -1203,7 +1203,7 @@ GridScorer::get_2b_energy(
 			D = res_j.xyz( dnum );
 			hbt.don_type( core::scoring::hbonds::get_hb_don_chem_type( dnum, res_j ) );
 			if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
-			core::Real hbe = get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B0 );
+			core::Real hbe = get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B_0 );
 			//score_grid.energy_ += hbe;
 			score_grid.hbond_wtd_ += hbe;
 		}
@@ -1217,7 +1217,7 @@ GridScorer::get_2b_energy(
 		core::Size b0num = res_j.abase2( *anum );
 		A = res_j.xyz( *anum );
 		B = res_j.xyz( bnum );
-		B0 = res_j.xyz( b0num );
+		B_0 = res_j.xyz( b0num );
 
 		core::scoring::hbonds::HBEvalTuple hbt;
 		hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_j ));
@@ -1229,7 +1229,7 @@ GridScorer::get_2b_energy(
 			D = res_i.xyz( dnum );
 			hbt.don_type( core::scoring::hbonds::get_hb_don_chem_type( dnum, res_i ) );
 			if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
-			core::Real hbe = get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B0 );
+			core::Real hbe = get_hbond_score_weighted( sf, hb_database_, hbopt, hbt, D,H,A,B,B_0 );
 			//score_grid.energy_ += hbe;
 			score_grid.hbond_wtd_ += hbe;
 		}
@@ -1432,7 +1432,7 @@ GridScorer::derivatives(
 	// 2 hbond derivs
 	utility::vector1<hbDon> hbdon_neighborlist;
 	utility::vector1<hbAcc> hbacc_neighborlist;
-	numeric::xyzVector<core::Real> D,H,A,B,B0;
+	numeric::xyzVector<core::Real> D,H,A,B,B_0;
 
 	core::scoring::methods::EnergyMethodOptions const &e_opts = sfxn_->energy_method_options();
 	core::scoring::hbonds::HBondOptions const & hbopt = e_opts.hbond_options();
@@ -1454,7 +1454,7 @@ GridScorer::derivatives(
 			core::Size b0num = res_i.abase2( *anum );
 			A = res_i.xyz( *anum );
 			B = res_i.xyz( bnum );
-			B0 = res_i.xyz( b0num );
+			B_0 = res_i.xyz( b0num );
 
 			core::scoring::hbonds::HBEvalTuple hbt;
 			hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_i ));
@@ -1469,7 +1469,7 @@ GridScorer::derivatives(
 				core::Real energy=0;
 				core::scoring::hbonds::hb_energy_deriv(
 					*database, hbopt, hbt,
-					D,H,A,B,B0,
+					D,H,A,B,B_0,
 					energy, true, dhb_dxs
 				);
 				if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {
@@ -1502,7 +1502,7 @@ GridScorer::derivatives(
 			for ( core::Size i=1; i<=hbacc_neighborlist.size(); ++i ) {
 				A = hbacc_neighborlist[i].A;
 				B = hbacc_neighborlist[i].B;
-				B0 = hbacc_neighborlist[i].B0;
+				B_0 = hbacc_neighborlist[i].B_0;
 				hbt.acc_type( hbacc_neighborlist[i].acctype );
 
 				if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
@@ -1510,7 +1510,7 @@ GridScorer::derivatives(
 				core::Real energy=0;
 				core::scoring::hbonds::hb_energy_deriv(
 					*database, hbopt, hbt,
-					D,H,A,B,B0,
+					D,H,A,B,B_0,
 					energy, true, dhb_dxs
 				);
 				if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {
@@ -1619,7 +1619,7 @@ GridScorer::derivatives(
 					core::Size b0num = res_i.abase2( *anum );
 					A = res_i.xyz( *anum );
 					B = res_i.xyz( bnum );
-					B0 = res_i.xyz( b0num );
+					B_0 = res_i.xyz( b0num );
 
 					core::scoring::hbonds::HBEvalTuple hbt;
 					hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_i ));
@@ -1635,7 +1635,7 @@ GridScorer::derivatives(
 						core::Real energy=0;
 						core::scoring::hbonds::hb_energy_deriv(
 							*database, hbopt, hbt,
-							D,H,A,B,B0,
+							D,H,A,B,B_0,
 							energy, true, dhb_dxs
 						);
 						if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {
@@ -1664,7 +1664,7 @@ GridScorer::derivatives(
 					core::Size b0num = res_j.abase2( *anum );
 					A = res_j.xyz( *anum );
 					B = res_j.xyz( bnum );
-					B0 = res_j.xyz( b0num );
+					B_0 = res_j.xyz( b0num );
 
 					core::scoring::hbonds::HBEvalTuple hbt;
 					hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_j ));
@@ -1680,7 +1680,7 @@ GridScorer::derivatives(
 						core::Real energy=0;
 						core::scoring::hbonds::hb_energy_deriv(
 							*database, hbopt, hbt,
-							D,H,A,B,B0,
+							D,H,A,B,B_0,
 							energy, true, dhb_dxs
 						);
 						if ( energy<core::scoring::hbonds::MAX_HB_ENERGY ) {

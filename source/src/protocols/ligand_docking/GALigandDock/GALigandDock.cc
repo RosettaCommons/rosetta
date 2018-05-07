@@ -182,7 +182,7 @@ GALigandDock::apply( pose::Pose & pose ) {
 		TR << "idx: " << idx[1] << "," << idx[2] << "," << idx[3] << std::endl;
 		for ( core::Size i=1; i<=3; ++i ) {
 			eigvalS[i-1] = eigval[idx[i]];
-			eigvecS.col(i-1, eigvec.col(idx[i]));
+			eigvecS.col(i, eigvec.col(idx[i]+1));  // .col is 1-indexed (for some reason)
 		}
 
 		TR << "eigenvals = " << "[ " << eigvalS[0] << "," << eigvalS[1] << "," << eigvalS[2] << " ]" << std::endl;

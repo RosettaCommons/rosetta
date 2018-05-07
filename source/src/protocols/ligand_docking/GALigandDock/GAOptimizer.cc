@@ -34,8 +34,9 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/lkball/LK_BallEnergy.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <basic/options/option.hh> // HACK
+#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <chrono>
 
@@ -94,8 +95,10 @@ GAOptimizer::run( LigandConformers & genes ) {
 
 			std::chrono::duration<double> pack_time, min_time;
 			scorefxn_->report_and_reset_timers( pack_time, min_time );
-			TR << "Stage " << i << " pre-refine pack/min time = "
-				<< pack_time.count() << "s / " << min_time.count() << "s" << std::endl;
+			if (! basic::options::option[ basic::options::OptionKeys::run::no_prof_info_in_silentout ]()) {
+				TR << "Stage " << i << " pre-refine pack/min time = "
+					<< pack_time.count() << "s / " << min_time.count() << "s" << std::endl;
+			}
 		}
 
 		for ( core::Size j = 1; j <= stage_i.repeats; ++j ) {
@@ -109,8 +112,10 @@ GAOptimizer::run( LigandConformers & genes ) {
 
 			std::chrono::duration<double> pack_time, min_time;
 			scorefxn_->report_and_reset_timers( pack_time, min_time );
-			TR << "Stage " << i << " iter " << j << " pack/min time = "
-				<< pack_time.count() << "s / " << min_time.count() << "s" << std::endl;
+			if (! basic::options::option[ basic::options::OptionKeys::run::no_prof_info_in_silentout ]()) {
+				TR << "Stage " << i << " iter " << j << " pack/min time = "
+					<< pack_time.count() << "s / " << min_time.count() << "s" << std::endl;
+			}
 		}
 	}
 

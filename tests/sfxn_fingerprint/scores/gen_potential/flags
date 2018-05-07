@@ -1,7 +1,7 @@
 -in:file:silent ./../../data/genpot/structures.out
 -in:file:silent_struct_type binary
 -in:file:fullatom
--extra_res_fa ./../../data/genpot/*.params
+-extra_res_fa ./../../data/genpot/1afk.params ./../../data/genpot/1j4r.params ./../../data/genpot/1qhc.params ./../../data/genpot/2bt9.params ./../../data/genpot/3d78.params ./../../data/genpot/3qxv.params ./../../data/genpot/1fv0.params ./../../data/genpot/1o0n.params ./../../data/genpot/2ans.params ./../../data/genpot/2xog.params ./../../data/genpot/3qxt.params ./../../data/genpot/3s8n.params
 -gen_potential
 -crystal_refine
 -in::file::load_PDB_components false

@@ -527,9 +527,9 @@ class MoleculeClass:
             print('Atom_Aro: ', [self.atms[atm].name for atm in self.atms_aro])
             print('Rings: ', [[self.atms[atm].name for atm in ring] for ring in self.rings])
             if len(self.biaryl_rings) > 0 :
-                print('BiarylRings:', self.biaryl_rings, ' BiarylAxes: ', end=' ') 
+                print('BiarylRings:', self.biaryl_rings, ' BiarylAxes: ') 
                 for a1,a2 in self.biaryl_pivots:
-                    print((self.atms[a1].name,self.atms[a2].name), end=' ')
+                    print((self.atms[a1].name,self.atms[a2].name))
                 print()
 
         ###### hydrogens

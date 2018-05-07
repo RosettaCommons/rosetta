@@ -30,7 +30,7 @@ cd %(workdir)s
 
 [ -x %(minidir)s/scripts/python/public/generic_potential/mol2genparams.py ] || exit 1
 %(python)s %(minidir)s/scripts/python/public/generic_potential/mol2genparams.py \
-	-s inputs/ZIPKOA.mol2 > log
+	-s inputs/ZIPKOA.mol2 2>&1 > log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

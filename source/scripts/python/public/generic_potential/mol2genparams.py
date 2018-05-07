@@ -1,10 +1,13 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python3
+from __future__ import print_function
+
 import sys,os
 
 from Types import *
 from Molecule import MoleculeClass
 from AtomTypeClassifier import AtomTypeClassifier
 from TorsionAssigner import TorsionAssigner
+
 
 MYFILE = os.path.abspath(__file__)
 direc = MYFILE.replace('mol2genparams.py','')

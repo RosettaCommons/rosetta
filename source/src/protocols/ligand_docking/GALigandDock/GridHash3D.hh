@@ -55,7 +55,7 @@ struct hbAcc {
 	numeric::xyzVector<core::Real>
 	nbr_atom() { return A; }
 
-	numeric::xyzVector< core::Real > A,B,B0;
+	numeric::xyzVector< core::Real > A,B,B_0;
 	core::scoring::hbonds::HBAccChemType acctype;
 };
 
