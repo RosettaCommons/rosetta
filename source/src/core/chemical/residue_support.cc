@@ -486,7 +486,7 @@ make_centroid( ResidueType const & res ) {
 	// The neighbor settings should be fine - they're based on heavy atoms
 	// Rotatable bonds should be fine - we shouldn't have rotatable bonds to apolar hydrogens
 	// TODO: Charges might be a little funky, but I don't think we use them in centroid mode.
-	if ( to_delete.size() ) {
+	if ( ! to_delete.empty() ) {
 		// Check if we have any rotatable bonds defined in terms of missing atoms
 		for ( core::Size ii(1); ii <= centroid->nchi(); ++ii ) {
 			for ( VD vd: centroid->chi_atom_vds(ii) ) {
@@ -500,27 +500,35 @@ make_centroid( ResidueType const & res ) {
 		bool icoor_okay( true );
 		// Check if we have any ICOOR that still depend on now-missing atoms.
 		VIter iter, iter_end;
-		for ( boost::tie(iter,iter_end) = res.atom_iterators(); iter != iter_end; ++iter ) {
-			AtomICoor const & icoor( res.icoor( *iter ) );
-			if ( ( icoor.stub_atom1().is_internal() && ! res.has( icoor.stub_atom1().vertex() ) ) ||
-					( icoor.stub_atom2().is_internal() && ! res.has( icoor.stub_atom2().vertex() ) ) ||
-					( icoor.stub_atom3().is_internal() && ! res.has( icoor.stub_atom3().vertex() ) ) ) {
+		for ( boost::tie(iter,iter_end) = centroid->atom_iterators(); iter != iter_end; ++iter ) {
+			AtomICoor const & icoor( centroid->icoor( *iter ) );
+			if ( ( icoor.stub_atom1().is_internal() && ! centroid->has( icoor.stub_atom1().vertex() ) ) ||
+					( icoor.stub_atom2().is_internal() && ! centroid->has( icoor.stub_atom2().vertex() ) ) ||
+					( icoor.stub_atom3().is_internal() && ! centroid->has( icoor.stub_atom3().vertex() ) ) ) {
 				icoor_okay = false;
 				break;
 			}
+			for ( core::Size ii(1); ii <= 3; ++ ii ) {
+				ICoorAtomID const & stub_atom( icoor.stub_atom( ii ) );
+				if ( stub_atom.type() == ICoorAtomID::INTERNAL && ! centroid->has( stub_atom.vertex() ) ) {
+					icoor_okay = false;
+					break;
+				}
+			}
+			if ( ! icoor_okay ) { break; }
 		}
 		// Need to check connections, too.
 		// They *should* be based off of heavy atoms, but potentially not.
-		for ( core::Size cc(1); cc <= res.n_possible_residue_connections(); ++cc ) {
-			ResidueConnection const & connect( res.residue_connection(1) );
-			if ( ! res.has( connect.vertex() ) ) {
+		for ( core::Size cc(1); cc <= centroid->n_possible_residue_connections(); ++cc ) {
+			ResidueConnection const & connect( centroid->residue_connection(1) );
+			if ( ! centroid->has( connect.vertex() ) ) {
 				icoor_okay = false;
 				break;
 			}
 			AtomICoor const & icoor( connect.icoor() );
-			if ( ( icoor.stub_atom1().is_internal() && ! res.has( icoor.stub_atom1().vertex() ) ) ||
-					( icoor.stub_atom2().is_internal() && ! res.has( icoor.stub_atom2().vertex() ) ) ||
-					( icoor.stub_atom3().is_internal() && ! res.has( icoor.stub_atom3().vertex() ) ) ) {
+			if ( ( icoor.stub_atom1().is_internal() && ! centroid->has( icoor.stub_atom1().vertex() ) ) ||
+					( icoor.stub_atom2().is_internal() && ! centroid->has( icoor.stub_atom2().vertex() ) ) ||
+					( icoor.stub_atom3().is_internal() && ! centroid->has( icoor.stub_atom3().vertex() ) ) ) {
 				icoor_okay = false;
 				break;
 			}
@@ -532,6 +540,7 @@ make_centroid( ResidueType const & res ) {
 				return nullptr;
 			}
 			// Fix up all the internal icoords.
+			TR.Debug << "Reassiging internal coordinates due to missing atoms." << std::endl;
 			centroid->assign_internal_coordinates();
 		}
 	}
