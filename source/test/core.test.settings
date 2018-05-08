@@ -112,6 +112,7 @@ sources = {
 	],
 	"io" : [
 		"alt_codes_io",
+		"chains_62",
 		"HeaderInformationTests",
 		"NomenclatureManagerTests",
 		"PDB_IO",
