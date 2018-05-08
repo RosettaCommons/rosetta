@@ -15,7 +15,7 @@ def main():
     check_inputs(args)
     if len(args.relaxpdbs) != 0:
         relaxpdbs(args)
-    if args.dumpbeam == None and len(args.lpsfiles) == 0:
+    elif args.dumpbeam == None and len(args.lpsfiles) == 0:
         run_segment(args)
     if args.dumpbeam != None:
         dump_beam(args,args.dumpbeam)
