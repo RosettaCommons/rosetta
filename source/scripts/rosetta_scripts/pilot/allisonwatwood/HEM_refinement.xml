@@ -1,0 +1,101 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="constrain_metal_cart" weights="beta_nov15_cart">
+      <Reweight scoretype="metalbinding_constraint" weight="10.0" />
+    </ScoreFunction>
+    <ScoreFunction name="constrain_metal" weights="beta_nov15">
+      <Reweight scoretype="metalbinding_constraint" weight="10.0" />
+      <Reweight scoretype="res_type_constraint" weight="1.0" />
+    </ScoreFunction>
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+    <ResidueName name="select_hem" residue_name3="HEM" />
+    <ResidueName name="select_his" residue_name3="HIS"/>
+    <LigandMetalContactSelector name="hem_contacts" residue_selector="select_hem" /> 
+    <StoredResidueSubset name="res_subset" subset_name="hem_subset"/>
+    <Or name="binding_site" selectors="select_hem,res_subset" />
+    <SecondaryStructure name="loops" overlap="1" include_terminal_loops="false" ss="L" use_dssp="true" />
+    <Neighborhood name="hem_neighbors" distance="10" selector="select_hem" include_focus_in_subset="false"/>
+    <Layer name="core" select_core="true" use_sidechain_neighbors="true"/>
+    <Layer name="boundary" select_boundary="true" use_sidechain_neighbors="true"/>
+    <Layer name="surface" select_surface="true" use_sidechain_neighbors="true"/>
+    <Not name="not_loops" selector="loops"/>
+    <Not name="not_hem_neighbors" selector="hem_neighbors"/>
+    <And name="core_hem" selectors="core,not_loops,hem_neighbors"/>
+    <And name="core_not_hem" selectors="core,not_loops,not_hem_neighbors"/>
+    <And name="boundary_hem" selectors="boundary,not_loops,hem_neighbors"/>
+    <And name="boundary_not_hem" selectors="boundary,not_loops,not_hem_neighbors"/>
+    <And name="surface_hem" selectors="surface,not_loops,hem_neighbors"/>
+    <And name="surface_not_hem" selectors="surface,not_loops,not_hem_neighbors"/>
+  </RESIDUE_SELECTORS>
+  <TASKOPERATIONS>
+    <OperateOnResidueSubset name="donotrepackbinders" selector="binding_site" >
+      <PreventRepackingRLT/>
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="core_hem_to" selector="core_hem">
+      <RestrictAbsentCanonicalAASRLT aas="AFGILVWY"/>
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="core_not_hem_to" selector="core_not_hem">
+      <RestrictAbsentCanonicalAASRLT aas="AFILVWY"/>
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="boundary_hem_to" selector="boundary_hem">
+      <RestrictAbsentCanonicalAASRLT aas="ADEGIKLNQRSTVWY"/>
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="boundary_not_hem_to" selector="boundary_not_hem">
+      <RestrictAbsentCanonicalAASRLT aas="ADEIKLNQRSTVWY"/>
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="surface_hem_to" selector="surface_hem">
+      <RestrictAbsentCanonicalAASRLT aas="ADEGIKLNQRSTVWY"/>
+    </OperateOnResidueSubset>
+    <OperateOnResidueSubset name="surface_not_hem_to" selector="surface_not_hem">
+      <RestrictAbsentCanonicalAASRLT aas="DEHKNQRST"/>
+    </OperateOnResidueSubset>
+    <InitializeFromCommandline name="init"/>
+    <RestrictAbsentCanonicalAAS name="nocyshis" keep_aas="ADEFGIKLMNPQRSTVWY" />
+    <IncludeCurrent name="current" />
+    <LayerDesign name="layerdesign" layer="core_boundary_surface_Nterm_Cterm" use_sidechain_neighbors="false" />
+  </TASKOPERATIONS>
+  <FILTERS>
+    <SecondaryStructureHasResidue name="require_core" confidence="1" /> Defaults will ensure hydrophobic residues in each helix
+    <EnergyPerResidue name="epr" scorefxn="constrain_metal" whole_protein="1" bb_bb="1" confidence="1"/>
+    <FragmentLookupFilter name="faulty_fragments" lookup_name="source_fragments_4_mer" store_path="/nas02/home/a/l/alliwat/netscr/heme_sewing/backbone_profiler_database_06032014"  lookup_mode="first" chain="1" threshold="0" confidence="1" />
+    <PackStat name="pstat" threshold="0.60" repeats="1" confidence="0" />
+    <SSPrediction name="sspred" threshold="0.35" use_svm="1" use_probability="1" mismatch_probability="1" confidence="1" />
+    <CavityVolume name="cavvol"/>
+    <BuriedUnsatHbonds name="bunsat" scorefxn="constrain_metal" cutoff="5" confidence="1" />
+    <NeighborType name="neighbor_filter" not_in_this_chain="false"  chain="1" residue_selector="select_hem" distance="10" confidence="1">
+      <Neighbor type="HIS"/>
+    </NeighborType>
+    <ResidueCount name="res_count" residue_types="HIS,HIS_D" min_residue_count="1" max_residue_count="2"/>
+    <ResidueCount name="total_res" />
+  </FILTERS>
+  <MOVERS>
+    <StoreResidueSubset name="store" subset_name="hem_subset" residue_selector="hem_contacts"/>
+    <MutateResidue name="his_change" residue_selector="select_his" new_res="HIS_D" preserve_atom_coords="true"/>    
+    <AddConstraints name="constrain_loop_identities" >
+      <ResidueTypeConstraintGenerator name="loop_csts" residue_selector="loops" favor_native_bonus="1.0" />
+      <MetalContactsConstraintGenerator name="metal_const" ligand_selector="select_hem" ligand_atom_name="FE" contact_selector="select_his" score_against_internal_contacts="true"/>
+    </AddConstraints>
+    <MinMover name="cartesian_min" scorefxn="constrain_metal_cart" chi="false" bb="false" omega="false" jump="ALL" cartesian="true" bondangle="true" bondlength="true" tolerance="0.001" max_iter="1000" />
+    <FastDesign name="relax" scorefxn="constrain_metal" disable_design="false" repeats="3" task_operations="init,nocyshis,current,donotrepackbinders,core_hem_to,core_not_hem_to,boundary_hem_to,boundary_not_hem_to,surface_hem_to,surface_not_hem_to" min_type="lbfgs_armijo_nonmonotone" ramp_down_constraints="false" />
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add mover_name="store"/>
+    <Add mover_name="his_change"/>
+    <Add mover_name="constrain_loop_identities" />
+    <Add mover_name="cartesian_min" /> This is ONLY being used to fix bad bond lengths/angles at chimerization points (no torsion angle minimization before design)
+    <Add mover_name="relax"/> FastDesign gives better tracer output for design
+    <Add filter_name="res_count"/>
+    <Add filter_name="total_res"/>
+    <Add filter_name="require_core"/>
+    <Add filter_name="epr"/>
+    <Add filter_name="faulty_fragments"/>
+    <Add filter_name="pstat"/>
+    <Add filter_name="cavvol"/>
+    <Add filter_name="bunsat"/>
+    <Add filter_name="sspred"/>
+  </PROTOCOLS>
+  <OUTPUT scorefxn="constrain_metal" />
+</ROSETTASCRIPTS>

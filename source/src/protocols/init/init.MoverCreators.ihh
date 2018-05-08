@@ -241,6 +241,17 @@
 #include <protocols/kinematic_closure/KicMoverCreator.hh>
 
 // L //////////////////////////////////////////////////////////////////////////
+
+#include <protocols/legacy_sewing/sampling/LegacyAppendAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyGivenPathAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyGreedyAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyMonteCarloAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAssemblyConstraintsMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAddStartnodeFragmentsCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyAssemblyConstraintsMover.hh>
+#include <protocols/legacy_sewing/sampling/LegacyRepeatAssemblyMoverCreator.hh>
+#include <protocols/legacy_sewing/sampling/LegacyEnumerateAssemblyMoverCreator.hh>
+
 #include <protocols/ligand_docking/AddHydrogensCreator.hh>
 #include <protocols/ligand_docking/CompoundTranslateCreator.hh>
 #include <protocols/ligand_docking/ComputeLigandRDFCreator.hh>
@@ -451,15 +462,10 @@
 #include <protocols/seeded_abinitio/SwapSegmentCreator.hh>
 #include <protocols/seeded_abinitio/SegmentHybridizerCreator.hh>
 
-#include <protocols/legacy_sewing/sampling/LegacyAppendAssemblyMoverCreator.hh>
-#include <protocols/legacy_sewing/sampling/LegacyGivenPathAssemblyMoverCreator.hh>
-#include <protocols/legacy_sewing/sampling/LegacyGreedyAssemblyMoverCreator.hh>
-#include <protocols/legacy_sewing/sampling/LegacyMonteCarloAssemblyMoverCreator.hh>
-#include <protocols/legacy_sewing/sampling/LegacyAssemblyConstraintsMoverCreator.hh>
-#include <protocols/legacy_sewing/sampling/LegacyAddStartnodeFragmentsCreator.hh>
-#include <protocols/legacy_sewing/sampling/LegacyAssemblyConstraintsMover.hh>
-#include <protocols/legacy_sewing/sampling/LegacyRepeatAssemblyMoverCreator.hh>
-#include <protocols/legacy_sewing/sampling/LegacyEnumerateAssemblyMoverCreator.hh>
+
+#include <protocols/sewing/movers/AssemblyMoverCreator.hh>
+#include <protocols/sewing/movers/AppendAssemblyMoverCreator.hh>
+#include <protocols/sewing/movers/LigandBindingAssemblyMoverCreator.hh>
 
 #include <protocols/minimization_packing/BoltzmannRotamerMoverCreator.hh>
 #include <protocols/minimization_packing/MinMoverCreator.hh>

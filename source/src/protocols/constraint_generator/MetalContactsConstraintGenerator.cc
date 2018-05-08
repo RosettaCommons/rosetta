@@ -27,6 +27,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <core/id/AtomID.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -211,11 +213,11 @@ MetalContactsConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::da
 core::scoring::constraints::ConstraintCOPs
 MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 {
-	core::chemical::AtomTypeSetCAP atom_types_;
+	core::chemical::AtomTypeSetCAP atom_types;
 	if ( pose.is_fullatom() ) {
-		atom_types_ = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+		atom_types = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
 	} else {
-		atom_types_ = core::chemical::ChemicalManager::get_instance()->atom_type_set("centroid");
+		atom_types = core::chemical::ChemicalManager::get_instance()->atom_type_set("centroid");
 	}
 	core::scoring::constraints::ConstraintCOPs csts;
 	//Get ligand resnum
@@ -283,7 +285,7 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 		utility::vector1< core::Size > bonded_atoms = pose.residue( ligand_resnum ).bonded_neighbor( pose.residue( ligand_resnum ).atom_index( ligand_atom_name_ ) );
 		//Add all these to already_added_contacts so we'll have constraints against them
 		for ( core::Size atno: bonded_atoms ) {
-			if ( ( *atom_types_.lock() )[ pose.residue( ligand_resnum ).atom( atno ).type() ].atom_type_name() == "VIRT"  ) {
+			if ( ( *atom_types.lock() )[ pose.residue( ligand_resnum ).atom( atno ).type() ].atom_type_name() == "VIRT"  ) {
 				continue;
 			}
 			if ( atno == pose.residue( ligand_resnum ).atom_index( ligand_atom_name_ ) ) {
@@ -356,10 +358,12 @@ MetalContactsConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	//For each contact:
 	for ( core::id::AtomID contact: metal_contact_ids ) {
 
-		if ( ( *atom_types_.lock() )[ pose.residue( contact.rsd() ).atom( contact.atomno() ).type() ].atom_type_name() == "VIRT"  ) {
+		if ( ( *atom_types.lock() )[ pose.residue( contact.rsd() ).atom( contact.atomno() ).type() ].atom_type_name() == "VIRT"  ) {
 			continue;
 		}
-
+		if ( contact.rsd() == metal_atom_id.rsd() && contact.atomno() == metal_atom_id.atomno() ) {
+			continue;
+		}
 
 		//Skip any contacts that aren't included in contact_resnums (unless it's empty)
 		if ( contact_resnums.size() != 0 && contact_resnums.find( contact.rsd() ) == contact_resnums.end() ) {

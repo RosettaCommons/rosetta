@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+  </SCOREFXNS>
+  <FILTERS>
+  </FILTERS>
+  <MOVERS>
+    <AppendAssemblyMover name=assemble min_segments=7 max_segments=9 cycles=10000 />
+      Use option keep_model_residues to specify residues that will not be mutated.
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+	<Add mover_name=assemble />
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

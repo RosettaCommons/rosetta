@@ -324,6 +324,9 @@ sources = {
 		"perturb_structure", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"fasol_perres", # /* Frank Dimaio,Documentation Location,Demo Location */
 	],
+	"pilot/frankdt" : [
+		#"segment_file_generator", # /* Minnie Langlois, Documentation Location, Demo Locatoin */
+	],
 
 	# G ######################################################################
 	"pilot/gideonla" : [
@@ -334,7 +337,14 @@ sources = {
 		#"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */
 		#"AbInitio_MPI",
 	],
-
+	"pilot/guffysl" : [
+	       # "heme_binding",
+	#	"heme_replace",
+	#	"metal_site_finder",
+	#        "zinc_statistic_generator",
+	#        "generate_starting_zinc_sites",
+  	#        "backside_hbond_finder",
+	],
 	# H ######################################################################
 		"pilot/habib" : [
 		"david_find_contacts",
@@ -895,7 +905,7 @@ sources = {
 		#"metropolis_hastings"
 	],
 	"pilot/tjacobs" : [
-                "ModelTrimmer",
+                #"ModelTrimmer",
         ],
 	"pilot/tseng" : [
 		#"tseng_minimize", # /* ????,Documentation Location,Demo Location */

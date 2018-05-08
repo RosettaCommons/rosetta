@@ -1,0 +1,10 @@
+-database /nas02/home/a/l/alliwat/Rosetta/main/database
+-extra_res HEM.fa.params
+-parser
+  -protocol /nas02/home/a/l/alliwat/Rosetta/main/source/scripts/rosetta_scripts/pilot/allisonwatwood/HEM_refinement.xml
+-linmem_ig 10
+-detect_disulf false
+-limit_aroma_chi2
+-ex1
+-ex2
+

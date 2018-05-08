@@ -231,6 +231,8 @@ Assembly::create_chimera_segment(
 	SewSegment chimera;
 	chimera.model_id_ = CHIMERA_SEGMENT;
 	chimera.chimera_ = true;
+	chimera.parent_segments_.push_back( std::make_pair( reference_segment.model_id_, reference_segment.segment_id_ ) );
+	chimera.parent_segments_.push_back( std::make_pair( mobile_segment.model_id_, mobile_segment.segment_id_ ) );
 	if ( reference_segment.dssp_ != mobile_segment.dssp_ ) {
 		//utility_exit_with_message("Mobile and reference segments have different dssp codes!");
 		//A match between two segments with different DSSP codes tends to happen quite often when matching beta-strands, so

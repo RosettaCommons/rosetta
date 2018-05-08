@@ -1,0 +1,1 @@
+NOTE: This directory contains unit tests for legacy sewing that were not being compiled. I'm not sure if they are functional or not, but they predate the merge of legacy_sewing (as sewing) into master, so they are probably obsolete.

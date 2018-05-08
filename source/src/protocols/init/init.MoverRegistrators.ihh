@@ -255,6 +255,15 @@ static MoverRegistrator< idealize::IdealizeMoverCreator > reg_IdealizeMoverCreat
 static MoverRegistrator< kinematic_closure::KicMoverCreator > reg_KicMoverCreator;
 
 // L //////////////////////////////////////////////////////////////////////////
+static MoverRegistrator< legacy_sewing::LegacyAppendAssemblyMoverCreator > reg_LegacyAppendAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyGivenPathAssemblyMoverCreator > reg_LegacyGivenPathAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyGreedyAssemblyMoverCreator > reg_LegacyGreedyAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyMonteCarloAssemblyMoverCreator > reg_LegacyMonteCarloAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyAssemblyConstraintsMoverCreator > reg_LegacyAssemblyConstraintsMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyAddStartnodeFragmentsCreator > reg_LegacyAddStartnodeFragmentsCreator;
+static MoverRegistrator< legacy_sewing::LegacyRepeatAssemblyMoverCreator > reg_LegacyRepeatAssemblyMoverCreator;
+static MoverRegistrator< legacy_sewing::LegacyEnumerateAssemblyMoverCreator > reg_LegacyEnumerateAssemblyMoverCreator;
+
 static MoverRegistrator< ligand_docking::AddHydrogensCreator > reg_AddHydrogensCreator;
 static MoverRegistrator< ligand_docking::CompoundTranslateCreator > reg_CompoundTranslateCreator;
 static MoverRegistrator< ligand_docking::ComputeLigandRDFCreator >  reg_ComputeLigandRDFCreator;
@@ -465,14 +474,10 @@ static MoverRegistrator< seeded_abinitio::SeedSetupMoverCreator > SeedSetupMover
 static MoverRegistrator< seeded_abinitio::SwapSegmentCreator > SwapSegmentCreator;
 static MoverRegistrator< seeded_abinitio::SegmentHybridizerCreator > SegmentHybridizerCreator;
 
-static MoverRegistrator< legacy_sewing::LegacyAppendAssemblyMoverCreator > reg_LegacyAppendAssemblyMoverCreator;
-static MoverRegistrator< legacy_sewing::LegacyGivenPathAssemblyMoverCreator > reg_LegacyGivenPathAssemblyMoverCreator;
-static MoverRegistrator< legacy_sewing::LegacyGreedyAssemblyMoverCreator > reg_LegacyGreedyAssemblyMoverCreator;
-static MoverRegistrator< legacy_sewing::LegacyMonteCarloAssemblyMoverCreator > reg_LegacyMonteCarloAssemblyMoverCreator;
-static MoverRegistrator< legacy_sewing::LegacyAssemblyConstraintsMoverCreator > reg_LegacyAssemblyConstraintsMoverCreator;
-static MoverRegistrator< legacy_sewing::LegacyAddStartnodeFragmentsCreator > reg_LegacyAddStartnodeFragmentsCreator;
-static MoverRegistrator< legacy_sewing::LegacyRepeatAssemblyMoverCreator > reg_LegacyRepeatAssemblyMoverCreator;
-static MoverRegistrator< legacy_sewing::LegacyEnumerateAssemblyMoverCreator > reg_LegacyEnumerateAssemblyMoverCreator;
+static MoverRegistrator< sewing::movers::AssemblyMoverCreator > reg_AssemblyMoverCreator;
+static MoverRegistrator< sewing::movers::AppendAssemblyMoverCreator > reg_AppendAssemblyMoverCreator;
+static MoverRegistrator< sewing::movers::LigandBindingAssemblyMoverCreator > reg_LigandBindingAssemblyMoverCreator;
+
 
 static MoverRegistrator< minimization_packing::BoltzmannRotamerMoverCreator > reg_BoltzmannRotamerMoverCreator;
 static MoverRegistrator< minimization_packing::MinMoverCreator > reg_MinMoverCreator;

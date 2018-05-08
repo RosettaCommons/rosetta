@@ -1,0 +1,64 @@
+-database /nas02/home/g/u/guffy/Rosetta/main/database
+#-resource_definition_files resources.xml
+-ignore_unrecognized_res
+#-overwrite
+-score:weights talaris2013_cart
+#-mpi_tracer_to_file tracer
+-use_input_sc
+-linmem_ig 10
+-parser:protocol /nas02/home/g/u/guffy/Rosetta/main/source/scripts/rosetta_scripts/pilot/guffysl/ca_assembly.xml
+-detect_disulf false
+
+#These will change with each run###############
+#-sewing:keep_model_residues 13 14 15 16 17 18 19 20 21 22 23 24
+#-sewing:pose_segment_starts 2 12 22
+#-sewing:pose_segment_ends 11 21 27
+####################
+-sewing:num_segments_to_match 1
+-sewing:match_segments 1 3
+-sewing:min_hash_score 20
+#Indicates a 20 atom overlap
+-sewing:max_clash_score 0
+
+-sewing:num_edges_to_follow 1
+-sewing:base_native_bonus 1
+-sewing:neighbor_cutoff 16
+-sewing:skip_refinement true
+-sewing:skip_filters false
+
+#-sewing:model_file_name /home/tjacobs2/PROJECTS/sewing2/segment_nodes/model_generation/hashing/2014_10_alpha.models
+#-sewing:score_file_name /home/tjacobs2/PROJECTS/sewing2/segment_nodes/model_generation/hashing/2014_10_alpha_min10.scores.all
+-sewing:model_file_name /nas02/home/g/u/guffy/scr/ca_sewing_test/5resmaxL_18resminH_helical_smotifs_20150924_SLG_wiggins.models
+-sewing:score_file_name /nas02/home/g/u/guffy/scr/ca_sewing_test/20atoms_5resmaxL_18resminH_helical_smotifs_20150924_SLG.edge.bin
+
+#NEW OPTION TEST
+-sewing:calcium_motif_score_weight 1.0
+
+
+
+-relax:constrain_relax_to_start_coords #Is this flag even relevant?
+-relax:default_repeats 3  #Again, relevance?
+-mute core.chemical core.io core.conformation core.pose devel.sewing.SewGraph
+#-constant_seed
+-out:level 500
+
+-mh
+  -match
+    -ss1 true
+    -ss2 true
+    -aa1 false
+    -aa2 false
+  -score
+    -use_ss1 true
+    -use_ss2 true
+    -use_aa1 false
+    -use_aa2 false
+  -path
+    -motifs /nas02/home/g/u/guffy/scr/ca_sewing_test/xsmax_bb_ss_AILV_resl0.8_msc0.3/xsmax_bb_ss_AILV_resl0.8_msc0.3.rpm.bin.gz
+    -scores_BB_BB /nas02/home/g/u/guffy/scr/ca_sewing_test/xsmax_bb_ss_AILV_resl0.8_msc0.3/xsmax_bb_ss_AILV_resl0.8_msc0.3
+    #-motifs /home/tjacobs2/PROJECTS/datasets/motifhash_data/xsmax_bb_ss_AILV_resl0.8_msc0.3/xsmax_bb_ss_AILV_resl0.8_msc0.3.rpm.bin.gz
+    #-scores_BB_BB /home/tjacobs2/PROJECTS/datasets/motifhash_data/xsmax_bb_ss_AILV_resl0.8_msc0.3/xsmax_bb_ss_AILV_resl0.8_msc0.3	
+  -gen_reverse_motifs_on_load false
+  -dump
+    -max_rms 0.4
+    -max_per_res 20

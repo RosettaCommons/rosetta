@@ -1,0 +1,67 @@
+<ROSETTASCRIPTS>
+  <RESIDUE_SELECTORS>
+    <ResidueName name=select_ca residue_name3=" CA" />
+    <Bonded name=around_ca selector=select_ca />
+  </RESIDUE_SELECTORS>
+  <TASKOPERATIONS>
+    <OperateOnResidueSubset name="donotrepackbinders" selector=around_ca >
+      <PreventRepackingRLT />
+    </OperateOnResidueSubset>
+    <InitializeFromCommandline name=init />
+    <RestrictAbsentCanonicalAAS name=nocys keep_aas="ADEFGHIKLMNPQRSTVWY" />
+    <IncludeCurrent name=current />
+    <RestrictToRepacking name=no_design />
+  </TASKOPERATIONS>
+  <SCOREFXNS>
+    Need an asymmetric score function with constraints (for initial repack),
+    a symmetric score function with constraints (for symmdock), and (if we do
+    design) a low repulsive weight symmetric score function with constraints
+    <initial_repack weights=talaris2014 symmetric=0>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </initial_repack>
+    <symm_docking_with_constraints weights=docking symmetric=1>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </symm_docking_with_constraints>
+    <soft_symm_with_constraints weights=soft_rep_design symmetric=1>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </soft_symm_with_constraints>
+    <symm_no_constraints weights=talaris2014 symmetric=1 />
+    <symm_with_constraints weights=talaris2014 symmetric=1>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </symm_with_constraints>
+    <symm_centroid_with_constraints weights=interchain_cen symmetric=1>
+      <Reweight scoretype=atom_pair_constraint weight=1.0 />
+      <Reweight scoretype=angle_constraint weight=1.0 />
+    </symm_centroid_with_constraints>
+  </SCOREFXNS>
+  <MOVERS>
+    First, do a (non-symmetric) repack of the whole structure
+    <PackRotamersMover name=prepack scorefxn=initial_repack task_operations=no_design,donotrepackbinders,init,current />
+    Then we'll make the symmetry partner
+    <SetupForSymmetry name=make_symmetric definition="C2_Z.sym" />
+    Now we'll actually do our docking
+    Check on the default low- and high-res scorefunctions for symdock, because I'll want to add constraints to them to use them
+    Default low res = interchain_cen
+    Default high res = docking; also check out the docking_min patch
+    <ConstraintSet name=constrain add_constraints=true cst_file=%%constraintfile%% />
+    <SymDockProtocol name=symdock docking_score_low=symm_centroid_with_constraints docking_score_high=symm_docking_with_constraints task_operations=donotrepackbinders,init,current,nocys sc_min=1 local_refine=0 fullatom=1 />
+    <SymMinMover name=symmin scorefxn=symm_with_constraints bb=1 chi=1 jump=ALL />
+    <SymPackRotamersMover name=sympack scorefxn=soft_symm_with_constraints task_operations=donotrepackbinders,init,current,nocys />
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add mover_name=prepack />
+    <Add mover_name=make_symmetric />
+    <Add mover_name=constrain />
+    <Add mover_name=symdock />
+    <Add mover_name=symmin />
+    <Add mover_name=sympack />
+    <Add mover_name=symmin />
+  </PROTOCOLS>
+  <OUTPUT scorefxn=symm_no_constraints />
+</ROSETTASCRIPTS>

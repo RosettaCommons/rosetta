@@ -32,6 +32,7 @@
 // C++ headers
 #include <utility/assert.hh>
 
+static basic::Tracer TR( "core.select.residue_selector.BondedResidueSelector" );
 
 namespace core {
 namespace select {
@@ -88,6 +89,7 @@ BondedResidueSelector::apply( core::pose::Pose const & pose ) const
 			utility::vector1< core::id::AtomID > bonded_atoms = pose.conformation().bonded_neighbor_all_res( core::id::AtomID( atomnum, it ) );
 			//This will probably end up being redundant, but we're just changing a boolean value, so that's okay
 			for ( core::Size i = 1; i <= bonded_atoms.size(); ++i ) {
+				TR << "Selecting residue " << bonded_atoms[ i ].rsd() << std::endl;
 				subset[ bonded_atoms[ i ].rsd() ] = true;
 			}
 		}
