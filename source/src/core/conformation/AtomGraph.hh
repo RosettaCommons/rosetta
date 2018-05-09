@@ -27,14 +27,14 @@ namespace conformation {
 void
 atom_graph_from_conformation(
 	Conformation const & conformation,
-	AtomGraph & pg
+	AtomGraphOP pg
 );
 
 /// @brief create a pointgraph which consists of 1 node for every atom, plus 1 additional node which will be added as the last node.  The index of the additional node is returned
 platform::Size
 annotated_atom_graph_from_conformation(
 	Conformation const & conformation,
-	AtomGraph & pg,
+	AtomGraphOP pg,
 	PointPosition const & additional_point
 
 );

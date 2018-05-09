@@ -7434,7 +7434,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 								Option('disregard_num_segment_matches','Boolean', desc="if true, disregard num_segment_matches"),
 								Option('do_not_remove_connection_inconsistencies','Boolean', desc="if true, do not remove_connection_inconsistencies"),
-								Option('score_between_opposite_terminal_segments','Boolean', desc="if true, score_between_opposite_terminal_segments like 1-5 or 5-1",default='true'),
+								Option('score_between_opposite_terminal_segments','Boolean', desc="if true, score_between_opposite_terminal_segments like 1-5 or 5-1"),
 								Option('num_models_to_dump','Integer', desc="Used for ModelDumper. How many random models should be dumped?"),
 								Option('models_to_dump','IntegerVector', desc="Used for ModelDumper for specifying model ids you want to dump"),
 								Option('min_hash_score','Integer', desc="Minimum number of overlapping atoms per segment", default='10'),
@@ -7447,7 +7447,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 								Option('num_procs','Integer', desc="Number of processors to split up hashing with"),
 								Option('rank','Integer', desc="The processor rank for this process"),
 								Option('hash_tag_only_terminal_Es','Boolean', desc="hash_tag_only_terminal_Es",default='false'),
-##								Option('recursive_depth','Integer', desc="How many nodes deep to score alignments for (e.g. 2 would store alignments for the input node and all connected nodes)", default='2' ),
+
             ##Base AssemblyMover options
             Option('assembly_type','String', desc="Type of Assembly class to generate", default='continuous'),
             Option('num_edges_to_follow','Integer',desc="Maximum number of edges on graph to follow"),
@@ -7472,29 +7472,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             Option('keep_source_segments', 'Boolean', desc="Keep the source segments rather than the target segments. For use with append", default='false'),
             Option('partner_pdb', 'File', desc="A PDB that is not part of the Assembly, but will be used for clash checking"),
             Option('keep_model_residues', 'IntegerVector', desc="A list of residues from the input pose that will not be designed (but are repacked)"),
-				    Option('output_alignments_to_file', 'Boolean', desc="Write alignments of input pose and edge file to an alignment file?", default='true'),
+
             ##LoopHashAssemblyMover options
             Option('min_lh_fragments','Integer', desc="Minimium number of LoopHash fragments necessary for each designed loop", default='10'),
             Option('skip_loop_generation','Boolean', desc="Should you skip generation of loops", default='false'),
-					  ##Calcium site options
-						Option('calcium_motif_score_weight','Real', desc="Sets weight of motif score variant that promotes packing on both sides of an input model", default='0.0'),
+
 						##ExhaustiveAssemblyMover options
 						Option('max_ss_num','Integer', desc="max_ss_num so either 3 (smotif) or 5 (5-ss_models)", default='5'),
 						Option('dump_every_model','Boolean', desc="dump_every_model", default='false'),
-	), # -legacy_sewing 
-  Option_Group( 'sewing',
-						Option('edge_file_name', 'String', desc="Name of SEWING edge file (new format)"),
-						Option('model_file_name','File', desc="Filename for segment file (creation or reading) for new SEWING"),
-						Option('match_segments','IntegerVector', desc="Segment scored by the hasher"),
-            Option('pose_segment_starts','IntegerVector', desc="Segment begin indices"),
-            Option('pose_segment_ends','IntegerVector', desc="Segment end indices"),
-						Option('recursive_depth', 'Integer', desc="How many layers of edges from the current node to generate? E.g. a recursive depth of 2 would generate edges from the starting model and to all models with edges to that model.", default='2'),
-						Option('min_hash_score','Integer', desc="Minimum number of overlapping atoms per segment", default='10'),
-						Option('max_clash_score','Integer', desc="Maximum number of atoms found in the same bin, but not from superimposed fragments",default='0'),
-						Option('box_length','Integer', desc="Neighborhood lookup box size, 3 for 27 boxes, 4 for 64 boxes etc",default='3'),
-						Option('score_between_opposite_terminal_segments','Boolean', desc="if true, score_between_opposite_terminal_segments like 1-5 or 5-1",default='true'),
-				),
-
+	), # -legacy_sewing
 
 	Option_Group( 'SSrbrelax',
 #		Option( 'input_pdb','File', desc='input pdb file', default='input_pdb' ),

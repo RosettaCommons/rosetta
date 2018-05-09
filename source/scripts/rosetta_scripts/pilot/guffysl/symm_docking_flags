@@ -1,7 +1,0 @@
--database /Users/Sharon/Rosetta/main/database
--ex1
--ex2
--parser:protocol symm_docking.xml
-#-parser:script_vars constraintfile="test.cst"
--in:auto_setup_metals
--in:metals_detection_LJ_multiplier 1.3

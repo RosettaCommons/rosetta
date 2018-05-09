@@ -9,15 +9,20 @@ ROTAMERS BASIC
 ATOM CA   Ca2p  Ca2p 2.00
 ATOM  V1  VIRT  VIRT 0.00
 ATOM  V2  VIRT  VIRT 0.00
+ATOM  V3  VIRT  VIRT 0.00
+ATOM  V4  VIRT  VIRT 0.00
 BOND CA    V1
 BOND CA    V2
+BOND CA    V3
+BOND CA    V4
 CHARGE CA FORMAL +2
 NET_FORMAL_CHARGE +2
 NBR_ATOM CA
 NBR_RADIUS 5.0
-# Calcium is *not* tetrahedral--in proteins, its coord varies from ~6-8 atoms, or 2 ions
-# This file was changed to match properties from the centroid params file
-# Ideal bond length is 2.4 angstroms
+# tetrahedral geometry with 2.2 distance from center to vertex
+# chirality is defined so that viewing from V1 to CU, V2-V3-V4 are in clockwise direction.
 ICOOR_INTERNAL   CA      0.000000    0.000000    0.000000  CA     V1    V2
-ICOOR_INTERNAL   V1      0.000000  180.000000    2.400000  CA     V1    V2
-ICOOR_INTERNAL   V2      0.000000   62.060678    2.400000  CA     V1    V2
+ICOOR_INTERNAL    V1     0.000000    0.000000    2.200000  CA     V1    V2
+ICOOR_INTERNAL    V2     0.000000   70.500000    2.200000  CA     V1    V2
+ICOOR_INTERNAL    V3   120.000000   70.500000    2.200000  CA     V1    V2
+ICOOR_INTERNAL    V4  -120.000000   70.500000    2.200000  CA     V1    V2

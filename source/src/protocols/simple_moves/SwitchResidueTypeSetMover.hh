@@ -77,7 +77,6 @@ public:
 
 private:
 	std::string type_set_tag_;
-	bool allow_sloppy_match_;
 };
 
 std::ostream &operator<< (std::ostream &os, SwitchResidueTypeSetMover const &mover);

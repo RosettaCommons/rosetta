@@ -25,7 +25,6 @@
 
 static basic::Tracer TR( "devel.denovo_design.ConnectJumps" );
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace devel {
@@ -37,7 +36,6 @@ namespace denovo_design {
 // XRW TEMP {
 // XRW TEMP  return ConnectJumps::mover_name();
 // XRW TEMP }
-
 
 // XRW TEMP protocols::moves::MoverOP
 // XRW TEMP ConnectJumpsCreator::create_mover() const {

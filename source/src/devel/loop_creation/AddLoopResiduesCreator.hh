@@ -22,6 +22,7 @@
 
 namespace devel {
 namespace loop_creation {
+
 class AddLoopResiduesCreator : public protocols::moves::MoverCreator
 {
 public:

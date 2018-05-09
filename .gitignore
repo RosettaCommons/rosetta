@@ -26,4 +26,3 @@ tests/sfxn_fingerprint/new/
 .idea
 .beaut
 database/scoring/**/potential.bin.gz
-source/.version.json

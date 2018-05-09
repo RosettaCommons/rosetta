@@ -19,8 +19,6 @@ external/DAlpahBall/DAlphaBall.*
 /src/core/chemical/ResidueProperty_mappings.cc
 /src/core/chemical/VariantType.hh
 /src/core/chemical/VariantType_mappings.cc
-/src/python/bindings
-/src/python/packaged_bindings
 /tools/build/user.settings
 /tools/build/user.options
 /tools/build/site.settings

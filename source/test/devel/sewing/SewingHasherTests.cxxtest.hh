@@ -18,7 +18,6 @@
 
 // Unit headers
 #include <devel/sewing/hashing/Hasher.hh>
-#include <devel/sewing/util/io.hh>
 #include <test/core/init_util.hh>
 
 // Basic headers
@@ -76,21 +75,6 @@ public:
 	}
 
 	void test_scoring() {
-	}
-
-	void test_model_file_IO() {
-		core_init_with_additional_options("-sewing:model_file_name test_model_file -database_name devel/sewing/inputs/smotifs.db3 -score_file_name test_score_file");
-		generate_model_file("test_model_file");
-		std::pair< core::Size,std::map<int, Model> > model_return = read_model_file("test_model_file");
-		generate_model_file("test_model_file_2");
-		std::pair< core::Size,std::map<int, Model> > model_return_2 = read_model_file("test_model_file_2");
-		TS_ASSERT(model_return.first != model_return_2.first);//does versioning work?
-		TS_ASSERT(model_return.second.size() == model_return_2.second.size()); // do we get the same sizes of things out when we read the same input?
-		TS_ASSERT(model_return.second[1].pose_number(5) == 3);// is the model file right?
-		TS_ASSERT(model_return.second[2].pose_number(15) == 4);
-		TS_ASSERT(model_return.second[3].pose_number(40) == 6);
-		generate_score_file(model_return,10);
-
 	}
 
 	void test_serialization() {

@@ -124,56 +124,6 @@ sources = {
 		"VIP_Report",
 		"VIP_Utils",
 	],
-
-	"protocols/sewing/movers": [
-		"AssemblyMover",
-		"AppendAssemblyMover",
-	        "LigandBindingAssemblyMover",
-	],
-	"protocols/sewing/data_storage": [
-		"SmartSewingResidue",
-		"SmartSegment",
-	        "LigandSegment",
-	        "LigandResidue",
-		"SmartAssembly",
-	        "HashedSmartAssembly",
-		"Basis",
-	],
-	"protocols/sewing/scoring": [
-		"LigandAssemblyScorer",
-	        "AssemblyScorerFactory",
-	        "LigandScorer",
-	        "MotifScorer",
-	        "TopNMotifScorer",
-	        "InterModelMotifScorer",
-	        "PartnerMotifScorer",
-	        "SubsetPartnerMotifScorer",
-	        "SegmentContactOrderScorer",
-	        "TerminusMotifScorer",
-	        "IntraDesignTerminusMotifScorer",
-	        "StartingNodeMotifScorer",
-	],
-	"protocols/sewing/requirements": [
-		"LigandAssemblyRequirement",
-	        "AssemblyRequirementFactory",
-	        "ClashRequirement",
-	        "KeepLigandContactsRequirement",
-	        "LigandClashRequirement",
-	        "DsspSpecificLengthRequirement",
-	        "LengthInResiduesRequirement",
-	        "SizeInSegmentsRequirement",
-	        "NonTerminalStartingSegmentRequirement",
-	],
-	"protocols/sewing/hashing": [
-		"ModelFileReader",
-		"Hasher",
-		"EdgeMapGenerator",
-		"AlignmentGenerator",
-		"BasisMapGenerator",
-		"AlignmentFileGeneratorMover",
-	        "LigandBindingResPlacer",
-	],
-
 }
 include_path = [
 ]

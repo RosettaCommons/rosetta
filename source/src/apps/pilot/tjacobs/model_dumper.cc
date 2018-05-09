@@ -15,11 +15,11 @@
 
 //Package headers
 #include <devel/init.hh>
-#include <protocols/legacy_sewing/hashing/Hasher.hh>
-#include <protocols/legacy_sewing/conformation/Model.hh>
-#include <protocols/legacy_sewing/conformation/ContinuousAssembly.hh>
-#include <protocols/legacy_sewing/conformation/DisembodiedAssembly.hh>
-#include <protocols/legacy_sewing/util/io.hh>
+#include <protocols/sewing/hashing/Hasher.hh>
+#include <protocols/sewing/conformation/Model.hh>
+#include <protocols/sewing/conformation/ContinuousAssembly.hh>
+#include <protocols/sewing/conformation/DisembodiedAssembly.hh>
+#include <protocols/sewing/util/io.hh>
 
 //Protocol headers
 #include <core/pose/util.hh>
@@ -43,18 +43,19 @@ int
 main( int argc, char * argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace protocols::legacy_sewing;
+	using namespace protocols::sewing;
 
 	// initialize core and read options
 	devel::init(argc, argv);
-	std::string model_file_name = option[legacy_sewing::model_file_name];
-	core::Size num_models_to_dump = option[legacy_sewing::num_models_to_dump].def(10);
-	std::map< int, Model > models = read_model_file(model_file_name).second;
+	std::string model_file_name = option[sewing::model_file_name];
+	core::Size num_models_to_dump = option[sewing::num_models_to_dump].def(10);
+
+	std::map< int, Model > models = read_model_file(model_file_name);
 	TR << "Done reading " << models.size() << " models from file: " << model_file_name << std::endl;
 
-	if ( !option[legacy_sewing::score_file_name].user() ) {
-		if ( option[legacy_sewing::models_to_dump].user() ) {
-			utility::vector1<core::Size> model_ids = option[legacy_sewing::models_to_dump].value();
+	if ( !option[sewing::score_file_name].user() ) {
+		if ( option[sewing::models_to_dump].user() ) {
+			utility::vector1<core::Size> model_ids = option[sewing::models_to_dump].value();
 			for ( core::Size i=1; i<=model_ids.size(); ++i ) {
 				if ( models.find(model_ids[i]) == models.end() ) {
 					utility_exit_with_message("Couldn't find model with id: " + utility::to_string(model_ids[i]));
@@ -74,15 +75,15 @@ main( int argc, char * argv [] ) {
 			}
 		}
 	} else {
-		std::string score_file_name = option[legacy_sewing::score_file_name];
+		std::string score_file_name = option[sewing::score_file_name];
 		TR << "Done reading scores from file: " << score_file_name << std::endl;
 
 		SewGraphOP graph;
 		AssemblyOP two_model_assembly;
-		if ( option[ legacy_sewing::assembly_type ].value() == "discontinuous" ) {
+		if ( option[ sewing::assembly_type ].value() == "discontinuous" ) {
 			graph = SewGraphOP(new SewGraph(models, 2));
 			two_model_assembly = AssemblyOP(new DisembodiedAssembly());
-		} else if ( option[ legacy_sewing::assembly_type ].value() == "continuous" ) {
+		} else if ( option[ sewing::assembly_type ].value() == "continuous" ) {
 			graph = SewGraphOP(new SewGraph(models, 1));
 			two_model_assembly = AssemblyOP(new ContinuousAssembly());
 		}
