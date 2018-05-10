@@ -95,7 +95,7 @@ GAOptimizer::run( LigandConformers & genes ) {
 
 			std::chrono::duration<double> pack_time, min_time;
 			scorefxn_->report_and_reset_timers( pack_time, min_time );
-			if (! basic::options::option[ basic::options::OptionKeys::run::no_prof_info_in_silentout ]()) {
+			if ( ! basic::options::option[ basic::options::OptionKeys::run::no_prof_info_in_silentout ]() ) {
 				TR << "Stage " << i << " pre-refine pack/min time = "
 					<< pack_time.count() << "s / " << min_time.count() << "s" << std::endl;
 			}
@@ -112,7 +112,7 @@ GAOptimizer::run( LigandConformers & genes ) {
 
 			std::chrono::duration<double> pack_time, min_time;
 			scorefxn_->report_and_reset_timers( pack_time, min_time );
-			if (! basic::options::option[ basic::options::OptionKeys::run::no_prof_info_in_silentout ]()) {
+			if ( ! basic::options::option[ basic::options::OptionKeys::run::no_prof_info_in_silentout ]() ) {
 				TR << "Stage " << i << " iter " << j << " pack/min time = "
 					<< pack_time.count() << "s / " << min_time.count() << "s" << std::endl;
 			}

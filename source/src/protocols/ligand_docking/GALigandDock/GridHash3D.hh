@@ -24,7 +24,7 @@
 
 
 #if defined(B0)  // work around B0 define in termios.h on Mac
-	#undef B0
+#undef B0
 #endif
 
 namespace protocols {
