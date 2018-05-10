@@ -269,10 +269,10 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 
 	// for the sake of naming consistency (JRJ)
 	// get prefix, append _prepack.pdb, output
-	std::string basename = utility::file::file_basename(pose.pdb_info()->name());
-	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
-	to_fullatom.apply( pose ); // go high res
-	pose.dump_pdb( basename + ".prepack.pdb" );
+	//std::string basename = utility::file::file_basename(pose.pdb_info()->name());
+	//protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
+	//to_fullatom.apply( pose ); // go high res
+	//pose.dump_pdb( basename + ".prepack.pdb" ); //SSRB:Taking out .prepack.pdb because JD2 already handles the output
 }
 
 // XRW TEMP std::string DockingPrepackProtocol::get_name() const {

@@ -186,6 +186,7 @@ void TrialMover::apply( pose::Pose & pose )
 	/// test if MC accepts or rejects it
 	bool accepted_move = mc_->boltzmann( pose, mover_->type() );
 
+
 	if ( keep_stats_type() == all_stats ) {
 		stats_.add_score( mc_->total_score_of_last_considered_pose() );
 	}

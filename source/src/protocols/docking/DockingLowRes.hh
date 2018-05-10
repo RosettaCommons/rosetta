@@ -12,6 +12,9 @@
 /// @details
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
+/// @author Modified by Jacob Corn
+/// @author Modified by Daisuke Kuroda
+/// @author Modified by Shourya S. Roy Burman
 
 
 #ifndef INCLUDED_protocols_docking_DockingLowRes_hh
@@ -31,6 +34,9 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
+#include <protocols/moves/TrialMover.fwd.hh>
+#include <protocols/moves/PyMOLMover.fwd.hh>
+
 
 #include <string>
 
@@ -79,6 +85,8 @@ public:
 	void set_default();
 	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 
+	void sync_magnitudes_with_flags();
+
 	/// @brief Instantiates non-primitive members based on the value of the primitive members
 	void sync_objects_with_flags();
 
@@ -91,26 +99,46 @@ public:
 	/// @brief Perform a cycle of rigid-body Monte Carlo moves
 	void rigid_body_trial( core::pose::Pose & pose );
 
+	/// @brief Option getters - added by SSRB
+	core::Real get_trans_magnitude();
+	core::Real get_rot_magnitude();
+	core::Real get_accept_rate();
+	core::Size get_inner_cycles();
+	core::Size get_outer_cycles();
+	core::Real get_temperature();
+	protocols::moves::TrialMoverOP get_rb_trial();
+	protocols::moves::SequenceMoverOP get_rb_seq();
+	protocols::rigid::RigidBodyPerturbNoCenterMoverOP get_rb_mover();
+	DockJumps get_movable_jumps();
+	core::scoring::ScoreFunctionCOP get_scorefxn();
+	protocols::moves::PyMOLMoverOP get_pymol_mover();
+	bool get_view_in_pymol();
+	virtual core::Size get_current_conformer_ensemble1(); //this function is only here because a derived class requires it to be defined. It's a blank function!
+	virtual core::Size get_current_conformer_ensemble2();
+
+
 	// option setters
 	void set_inner_cycles( core::Size inner_cycles ) { inner_cycles_=inner_cycles; }
 	void set_outer_cycles( core::Size outer_cycles ) { outer_cycles_=outer_cycles; }
 
-	void set_trans_magnitude( core::Real trans_magnitude);
-	void set_rot_magnitude( core::Real rot_magnitude);
+	void set_trans_magnitude( core::Real trans_magnitude );
+	void set_rot_magnitude( core::Real rot_magnitude );
+
+	void set_rb_trial( protocols::moves::TrialMoverOP rb_trial_in );
+
+	void reset_rb_trial_counters();
+	void calc_accept_rate();
 
 	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, const DockingLowRes & dp );
 
+
 	bool flags_and_objects_are_in_sync_;
 	bool first_apply_with_current_setup_;
 
-	// Add by dK
-	// docking
-	DockJumps movable_jumps_;
+	virtual void lowres_inner_cycle( core::pose::Pose & pose );
 
-	// Add by DK
-	protocols::moves::SequenceMoverOP docking_lowres_protocol_;
-	core::scoring::ScoreFunctionCOP scorefxn_;
+	void pymol_color_change( core::pose::Pose & pose );
 
 protected:
 	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
@@ -121,15 +149,28 @@ private:
 	//core::scoring::ScoreFunctionCOP scorefxn_;
 	core::kinematics::MoveMapOP movemap_;
 	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
+	protocols::moves::SequenceMoverOP rb_seq_;
+	protocols::moves::TrialMoverOP rb_trial_;
 	protocols::moves::MonteCarloOP mc_;
 
-	// Comment out by DK
-	// docking
-	//DockJumps movable_jumps_;
-	core::Real trans_magnitude_, rot_magnitude_, accept_rate_;
-	core::Size inner_cycles_, outer_cycles_; //rb_jump_
+
+	core::Real trans_magnitude_, rot_magnitude_;
+	core::Real accept_rate_, num_rb_trials_, num_rb_accepted_; // can't use members of Trial Mover as they would also collect information from ConformerSwitch movers in Ensemble Dock - SSRB
+	core::Size inner_cycles_, outer_cycles_;
 	bool chi_, bb_, nb_list_;
 	core::Real temperature_;
+
+	// Add by dK
+	// docking
+	DockJumps movable_jumps_;
+
+	// Add by DK
+	core::scoring::ScoreFunctionCOP scorefxn_;
+
+	// Added by SSRB
+	protocols::moves::PyMOLMoverOP pymol_mover_;
+	// Boolean determines if pymol mover should be switched on
+	bool view_in_pymol_;
 
 	/// @brief Sets up the instance of DockingLowRes and initializes all members based on values passed in at construction
 	///  or via the command line.

@@ -64,7 +64,8 @@ namespace docking {
 ConformerSwitchMover::ConformerSwitchMover() :
 	moves::Mover(),
 	random_conformer_(false),
-	temperature_(0.8)
+	temperature_(0.8),
+	specific_conformer_(0)
 {
 	moves::Mover::type( "ConformerSwitchMover" );
 }
@@ -94,7 +95,8 @@ ConformerSwitchMover::ConformerSwitchMover(
 ) :
 	moves::Mover(),
 	random_conformer_( random_conformer ),
-	temperature_(0.8)
+	temperature_(0.8),
+	specific_conformer_(0)
 {
 	ensemble_ = ensemble;
 
@@ -104,6 +106,15 @@ ConformerSwitchMover::ConformerSwitchMover(
 void ConformerSwitchMover::set_temperature( core::Real temp_in )
 {
 	temperature_ = temp_in;
+}
+
+void ConformerSwitchMover::set_specific_conformer( core::Size conformer_num_in )
+{
+	specific_conformer_ = conformer_num_in;
+}
+
+protocols::docking::DockingEnsembleOP ConformerSwitchMover::get_ensemble(){
+	return ensemble_;
 }
 
 void ConformerSwitchMover::apply( core::pose::Pose & pose )
@@ -121,6 +132,8 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 		for ( Size i = 1; i <= ensemble_->size(); i++ ) {
 			if ( (rand_num >= prob_table_[i]) ) conf_num++;
 		}
+	} else if ( specific_conformer_ != 0 ) {  // if specific_conformer_ is zero then a conformer is chosen at random
+		conf_num = specific_conformer_;
 	} else {
 		conf_num = numeric::random::rg().random_range( 1, ensemble_->size() );
 	}

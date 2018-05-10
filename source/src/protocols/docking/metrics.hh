@@ -58,8 +58,11 @@ core::Real calc_P1rmsd( const core::pose::Pose & pose, const core::pose::Pose & 
 ///    backbone relax
 core::Real calc_P2rmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, DockJumps const movable_jumps);
 
-/// @brief Calculates the all-atom RMSD of all residues within 5A of the interface at superposition along those same atoms
+/// @brief Calculates the all-atom RMSD of all residues within 10A of the interface at superposition along those same atoms
 core::Real calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );
+
+/// @brief Calculates the backbone RMSD of all residues within 8A of the interface at superposition along those same atoms
+core::Real calc_Irmsd_legacy( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );
 
 /// @brief calcluates the CA-atom RMSD of all residues within 5A of the interface at superposition along those same atoms
 core::Real calc_CA_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );
@@ -80,6 +83,9 @@ core::Real calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_
 
 // @brief Determines if two residues are in contact within a supplied cutoff distance
 bool calc_res_contact( core::conformation::ResidueOP rsd1, core::conformation::ResidueOP rsd2, core::Real dist_cutoff);
+
+// @brief Determines the CAPRI criterion. 3 is high, 2 is medium, 1 is acceptable, 0 is inscorrect
+core::Size calc_CAPRI_rank( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );
 
 }// docking
 }// protocols

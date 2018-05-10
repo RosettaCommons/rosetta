@@ -60,3 +60,6 @@ Nlys     N    1.7500    0.2384  -20.0000    6.0000   11.2000 DONOR
 Npro     N    1.7500    0.2384   -1.5500    3.5000    0.0000 DONOR
 Fe3p    FE    0.6500    0.0000   -5.0000    3.5000    1.2000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3
 
+#I        I    2.3600    0.4240   -3.0000    3.5000   44.6000 SP3_HYBRID  # radius/wdepth: taken from MM3 forcefield; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+
+

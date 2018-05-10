@@ -76,14 +76,15 @@ public:
 	);
 
 	// @brief recover sidechains for a conformer
-	void recover_conformer_sidechains( core::pose::Pose & pose );
+	void recover_and_pack_conformer_sidechains( core::pose::Pose & pose );
 
 	// @brief calculate reference energies for prepacking
 	void calculate_lowres_ref_energy( core::pose::Pose & pose );
 	void calculate_highres_ref_energy( core::Size conf_num );
+	void calculate_highres_ref_energy( core::pose::Pose & pose, std::string partner_num );
 
 	// @brief update pdblist file with reference energies
-	void update_pdblist_file();
+	void update_pdblist_file( std::string partner_num );
 
 	void set_packer( protocols::moves::SequenceMoverOP packer );
 

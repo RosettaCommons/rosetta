@@ -23,6 +23,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
+
 // ObjexxFCL Headers
 
 // C++ Headers
@@ -60,6 +63,10 @@ DockingLowResFilter::DockingLowResFilter() :
 	fewclashes->set_score_type( interchain_vdw );
 	fewclashes->set_unweighted( true );
 	fewclashes->set_cutoff(1.0); // no more than 1.0 clash (low-res bump score)
+	if ( basic::options::option[ basic::options::OptionKeys::docking::docking_low_res_score ]()=="motif_dock_score" ) {
+		fewclashes->set_cutoff(5.0);
+		TR << "setting clash filter to 5.0" << std::endl;
+	}
 
 	filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
 	filters_->add_filter( hascontacts );
@@ -106,7 +113,7 @@ DockingLowResFilter::report( std::ostream & out, core::pose::Pose const & pose )
 DockingHighResFilter::DockingHighResFilter( ) : Filter()
 {
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
-	scorefunction_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
+	scorefunction_ = core::scoring::get_score_function();
 	score_margin_ = 0.0;
 	scorefilter_ = protocols::score_filters::ScoreCutoffFilterOP( new protocols::score_filters::ScoreCutoffFilter() );
 	scorefilter_->set_score_type( core::scoring::total_score );

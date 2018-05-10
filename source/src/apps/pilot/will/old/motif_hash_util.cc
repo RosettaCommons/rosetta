@@ -172,7 +172,7 @@ Size sicdock_thread_num(){
 #else
 	return 1;
 #endif
-}
+
 
 
 char dssp_reduced(char const & c){
@@ -183,7 +183,7 @@ char dssp_reduced(char const & c){
 	} else return 'L';
 }
 
-void print_motifs(std::ostream & out){
+inline void print_motifs(std::ostream & out){
 	using namespace basic::options::OptionKeys;
 	ResPairMotifs motifs;
 	load_motifs( option[mh::print_motifs](), motifs );
@@ -192,7 +192,7 @@ void print_motifs(std::ostream & out){
 	}
 }
 
-void remove_duplicates(){
+inline void remove_duplicates(){
 	using namespace basic::options::OptionKeys;
 	ResPairMotifs motifs;
 	load_motifs( option[mh::remove_duplicates](), motifs );
@@ -209,7 +209,7 @@ void remove_duplicates(){
 
 }
 
-void merge_motifs(){
+inline void merge_motifs(){
 	using namespace basic::options::OptionKeys;
 	if ( ! basic::options::option[basic::options::OptionKeys::mh::motif_out_file].user() ) {
 		utility_exit_with_message("must sepcify name for merged file -motif_out_file");
@@ -245,14 +245,14 @@ void merge_scores(){
 	vector1<string> const & fnames ( option[mh::merge_scores]() );
 	string          const & outfile( option[mh::motif_out_file ]()+".xh.bin.gz" );
 
-	XformScore *xs;
+	core::scoring::motif::XformScoreOP xs( new XformScore(option[mh::harvest::hash_cart_resl](), option[mh::harvest::hash_angle_resl]()));
 	XformScore::read_binary(xs,fnames);
 	xs->prune_small_bins(option[mh::harvest::min_bin_val]());
 	cout << *xs << endl;
 	xs->write_binary(outfile);
 }
 
-void dump_motif_pdbs(){
+inline void dump_motif_pdbs(){
 	using namespace basic::options::OptionKeys;
 
 	TR << "dump_motif_pdbs: read motifs" << endl;
@@ -314,7 +314,7 @@ void dump_motif_pdbs(){
 
 template<class T> T sqr(T const & x){ return x*x; }
 
-void harvest_scores(){
+inline void harvest_scores(){
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring::motif;
 	using core::scoring::motif::aa_trustworthiness;
@@ -372,6 +372,7 @@ void harvest_scores(){
 
 		// find correct score to contribute to, create if necessary
 		XformScoreMap::iterator xscoreiter = xscoremap[sicdock_thread_num()].find(key1);
+
 		if ( xscoreiter==xscoremap[sicdock_thread_num()].end() ) {
 			xscoremap[sicdock_thread_num()][key1] = new XformScore(option[mh::harvest::hash_cart_resl](),option[mh::harvest::hash_angle_resl]());
 			xscoreiter = xscoremap[sicdock_thread_num()].find(key1);
@@ -514,15 +515,16 @@ void harvest_scores(){
 	TR << "harvest_scores done" << endl;
 }
 
-void print_scores(){
+inline void print_scores(){
 	using namespace basic::options::OptionKeys;
-	XformScore *xh = NULL;
+	//XformScore *xh = NULL;
+	core::scoring::motif::XformScoreOP xh( new XformScore(option[mh::harvest::hash_cart_resl](), option[mh::harvest::hash_angle_resl]()));
 	XformScore::read_binary(xh,option[mh::print_scores]());
 	TR << *xh << endl;
 	xh->print_scores(cout);
 }
 
-void dump_matching_motifs(){
+inline void dump_matching_motifs(){
 	using namespace basic::options::OptionKeys;
 	using core::scoring::motif::MotifHashCAP;
 	using core::scoring::motif::MotifHits;
@@ -565,7 +567,7 @@ void dump_matching_motifs(){
 	}
 }
 
-Real get_etable_score_for_atoms(
+inline Real get_etable_score_for_atoms(
 	core::scoring::etable::Etable const & etable,
 	core::pose::Pose const & pose1, utility::vector1<core::id::AtomID> const & aids1,
 	core::pose::Pose const & /*pose2*/, utility::vector1<core::id::AtomID> const & aids2
@@ -586,7 +588,7 @@ Real get_etable_score_for_atoms(
 	return sc;
 }
 
-bool harvest_motifs_one(
+inline bool harvest_motifs_one(
 	ResPairMotifs & motifs,
 	string const & tag0,
 	Pose const & pose,
@@ -817,7 +819,7 @@ bool harvest_motifs_one(
 	return true;
 }
 
-bool harvest_motifs_frag(
+inline bool harvest_motifs_frag(
 	ResPairMotifs & motifs,
 	string const & tag0,
 	Pose const & pose,
@@ -860,7 +862,7 @@ bool harvest_motifs_frag(
 	return true;
 }
 
-Real harvest_time_refine(Pose & pose, core::scoring::ScoreFunction const & sf, std::string const & fname){
+inline Real harvest_time_refine(Pose & pose, core::scoring::ScoreFunction const & sf, std::string const & fname){
 	using namespace protocols;
 	using namespace core;
 	using namespace core::scoring;
@@ -885,7 +887,7 @@ Real harvest_time_refine(Pose & pose, core::scoring::ScoreFunction const & sf, s
 	sfcart->set_weight(coordinate_constraint,1.0);
 	// sfcart->set_weight(pro_close,10.0);
 	// sfcart->set_weight(fa_rep,0.8);
-	core::kinematics::MoveMapOP mmap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP mmap(new core::kinematics::MoveMap);
 	mmap->set_chi(true);
 	mmap->set_bb(true);
 	mmap->set_jump(true);
@@ -929,7 +931,7 @@ Real harvest_time_refine(Pose & pose, core::scoring::ScoreFunction const & sf, s
 	return allrms;
 }
 
-void harvest_motifs(){
+inline void harvest_motifs(){
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring;
 	using namespace ObjexxFCL::format;
@@ -1061,7 +1063,7 @@ void harvest_motifs(){
 			TR << "appending " << motifs.size() << " motifs to " << motif_out_file+".rpm.bin.gz" << endl;
 			if ( !write_motifs_binary(allout,motifs) ) utility_exit_with_message("error writing to file "+motif_out_file+".rpm.bin.gz");
 		} else {
-			std::string outfile = option[out::file::o]()+"/"+tag.substr(1,2)+"/"+tag+".rpm.bin.gz";
+			std::string outfile = option[out::file::o]()+"/"/*+tag.substr(1,2)+"/"*/+tag+".rpm.bin.gz";
 			TR << "dumping " << motifs.size() << " motifs to " << outfile << endl;
 			write_motifs_binary(outfile,motifs);
 			if ( !utility::file::file_exists(outfile) ) utility_exit_with_message("couldn't make file "+outfile);

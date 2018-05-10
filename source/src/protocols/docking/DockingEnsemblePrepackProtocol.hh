@@ -56,6 +56,9 @@ public:
 	/// @brief Ensures all members of either ensemble are compatible with one another
 	void check_ensemble_member_compatibility();
 
+	void move_away( core::pose::Pose & pose );
+	void move_back( core::pose::Pose & pose );
+
 	void apply( core::pose::Pose & ) override;
 
 	std::string get_name() const override;

@@ -28,6 +28,8 @@
 
 #include <protocols/docking/ConformerSwitchMover.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/moves/TrialMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
@@ -61,7 +63,12 @@ public:
 		DockJumps const movable_jumps
 	);
 
+	void ensemble_defaults();
+
 	protocols::moves::MoverOP clone() const override;
+	// accessors
+	core::Size get_current_conformer_ensemble1() override;
+	core::Size get_current_conformer_ensemble2() override;
 
 	void show( std::ostream & out=std::cout ) const override;
 
@@ -69,13 +76,49 @@ public:
 	void set_ensemble1( DockingEnsembleOP ensemble1 );
 	void set_ensemble2( DockingEnsembleOP ensemble2 );
 
+	void lowres_inner_cycle( core::pose::Pose & pose ) override;
+
+	void adaptive_inner_cycle( core::pose::Pose & pose );
+	void try_all_conformers( core::pose::Pose & pose );
+
+	void initialize_movers();
+
+	void calc_ensemble_accept_rate_();
+
+	void reset_ensemble_trial_counters();
+
+
 protected:
 	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
+
 	void finalize_setup( core::pose::Pose & pose) override; // Comment out by DK
 
 private:
 	protocols::docking::ConformerSwitchMoverOP ensemble1_mover_;
 	protocols::docking::ConformerSwitchMoverOP ensemble2_mover_;
+	core::Size current_outer_cycle_;
+	core::Real accept_rate_ens1_;
+	core::Real num_trials_ens1_;
+	core::Real num_accepted_ens1_;
+	core::Real accept_rate_ens2_;
+	core::Real num_trials_ens2_;
+	core::Real num_accepted_ens2_;
+
+	core::Real rb_trial_wt_;
+	core::Real ens1_trial_wt_;
+	core::Real ens2_trial_wt_;
+
+	// Added by SSRB
+	protocols::moves::SequenceMoverOP ensemble1_seq_;
+	protocols::moves::SequenceMoverOP ensemble2_seq_;
+	protocols::moves::TrialMoverOP ensemble1_trial_;
+	protocols::moves::TrialMoverOP ensemble2_trial_;
+	core::Size current_conformer_ensemble1_;
+	core::Size current_conformer_ensemble2_;
+
+	void ensemble1_trial( core::pose::Pose & pose );
+	void ensemble2_trial( core::pose::Pose & pose );
+
 };
 
 } // docking

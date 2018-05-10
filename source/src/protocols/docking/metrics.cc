@@ -267,11 +267,51 @@ calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 		//  native_docking_pose.update_residue_neighbors();
 
 		protocols::scoring::Interface interface( rb_jump );
-		interface.distance( 8.0 );
+		interface.distance( 10.0 );
 		interface.calculate( native_docking_pose );
 		ObjexxFCL::FArray1D_bool is_interface ( pose.size(), false );
 
 		for ( Size i = 1; i <= pose.size(); ++i ) {
+			if ( interface.is_interface( i ) ) is_interface( i ) = true;
+		}
+
+		using namespace core::scoring;
+		Irmsd += core::scoring::rmsd_with_super_subset( native_docking_pose, pose, is_interface, is_heavyatom );
+	}
+	return Irmsd;
+}
+
+core::Real
+calc_Irmsd_legacy( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ) {
+	using namespace scoring;
+	Real Irmsd( 0 );
+
+	for ( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
+		core::Size const rb_jump = *it;
+		if ( !pose.is_fullatom() || !native_pose.is_fullatom() ) {
+			TR << "Irmsd calc called with non-fullatom pose!!!" << std::endl;
+			return 0.0;
+		}
+
+		core::pose::Pose native_docking_pose = native_pose;
+		using namespace kinematics;
+		FoldTree ft( pose.fold_tree() );
+		native_docking_pose.fold_tree(ft);
+
+		// score to set up interface object
+		// scoring only happened here to update the residue neighbors
+		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
+		( *scorefxn )( native_docking_pose );
+		//  dock_scorefxn->show( TR );
+
+		//  native_docking_pose.update_residue_neighbors();
+
+		protocols::scoring::Interface interface( rb_jump );
+		interface.distance( 8.0 );
+		interface.calculate( native_docking_pose );
+		ObjexxFCL::FArray1D_bool is_interface ( pose.total_residue(), false );
+
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 			if ( interface.is_interface( i ) ) is_interface( i ) = true;
 		}
 
@@ -281,6 +321,7 @@ calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 	}
 	return Irmsd;
 }
+
 
 core::Real
 calc_CA_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ) {
@@ -647,6 +688,31 @@ bool calc_res_contact(
 	}
 	TR.Debug << "return false " << dist2 << std::endl;
 	return false;
+}
+
+core::Size calc_CAPRI_rank(
+	const core::pose::Pose & pose,
+	const core::pose::Pose & native_pose,
+	const core::scoring::ScoreFunctionCOP dock_scorefxn,
+	DockJumps const movable_jumps
+)
+{
+	core::Real Irmsd = calc_Irmsd_legacy( pose, native_pose, dock_scorefxn, movable_jumps );
+	core::Real Lrmsd = calc_Lrmsd( pose, native_pose, movable_jumps );
+	core::Real Fnat = calc_Fnat( pose, native_pose, dock_scorefxn, movable_jumps );
+
+	if ( (Fnat >= 0.5 ) && ( Lrmsd <= 1 || Irmsd <= 1 ) ) {
+		return 3; // high quality
+	} else if ( (Fnat >= 0.5 && Lrmsd > 1 && Irmsd > 1) || (Fnat >= 0.3 && (Lrmsd <= 5 || Irmsd <= 2)) ) {
+		return 2; // medium quality
+	} else if ( (Fnat >= 0.3 && Lrmsd > 5 && Irmsd > 2) || (Fnat >= 0.1 && (Lrmsd <= 10 || Irmsd <= 4)) ) {
+		return 1; // acceptable quality
+	} else if ( (Fnat < 0.1) || (Lrmsd > 10 && Irmsd > 4) ) {
+		return 0; // incorrect structure
+	} else {
+		return -1; // should never be reached
+	}
+
 }
 
 }//docking

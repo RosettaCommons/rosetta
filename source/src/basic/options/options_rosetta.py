@@ -5034,6 +5034,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Run only low resolution docking, skip high resolution docking',
 			default='false'
 			),
+		Option('docking_low_res_score', 'String',
+			short='low resolution docking score',
+			desc='Define low resolution docking score function.',
+			default='interchain_cen'
+			),
 		Option('randomize1', 'Boolean',
 			short='Randomize the first docking partner.',
 			desc='Randomize the first docking partner.',
@@ -5243,7 +5248,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='The magnitude of the rotational perturbation during lowres in docking.',
 			default='5.0'
 			),
-
+		Option('enable_pymol_viewer', 'Boolean',
+			short='See conformer switch moves in PyMOL.',
+			desc='See conformer switch moves in PyMOL. Color changes when switch is accepted.',
+			default='false'
+			),
 
 		###################################################################################
 		# ligand options ( part of docking )--------------------------------------

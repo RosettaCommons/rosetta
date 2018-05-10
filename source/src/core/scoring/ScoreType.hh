@@ -320,6 +320,9 @@ enum ScoreType {
 	facts_solv,
 	facts_sasa,
 
+	//docking motif score
+	motif_dock,
+
 	// low-resolution pointwater
 	pointwater,
 

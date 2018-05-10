@@ -22,9 +22,12 @@
 #include <protocols/docking/SidechainMinMover.hh>
 
 // Project headers
+#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/subpose_manipulation_util.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -32,6 +35,7 @@
 
 #include <protocols/docking/ConformerSwitchMover.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/relax/FastRelax.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
@@ -50,6 +54,7 @@
 
 //Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <protocols/jd2/JobDistributor.fwd.hh>
 
 
 using namespace protocols::moves;
@@ -322,83 +327,136 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 
 }
 
+void DockingEnsemblePrepackProtocol::move_away( core::pose::Pose & pose )
+{
+	for ( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
+
+		rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
+
+		translate_away->step_size( trans_magnitude_ );
+		translate_away->apply(pose);
+	}
+}
+
+void DockingEnsemblePrepackProtocol::move_back( core::pose::Pose & pose )
+{
+	for ( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
+
+		rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
+
+		translate_back->step_size( trans_magnitude_ );
+		translate_back->trans_axis().negate();
+		translate_back->apply(pose);
+	}
+}
+
 void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 {
 	finalize_setup(pose);
 	check_ensemble_member_compatibility();
 	protocols::docking::ConformerSwitchMoverOP switch_mover;
+	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
 	core::pose::Pose starting_pose;
+	core::pose::PoseOP partner1( new core::pose::Pose() );
+	core::pose::PoseOP partner2( new core::pose::Pose() );
+
+	starting_pose = pose;
+
+	move_away( pose );
+
+	ensemble1_->set_packer( pack_operations_ );
+	ensemble2_->set_packer( pack_operations_ );
+
+	// This splits the pose along the movable jump and adds it as the first member of the ensemble.
+	core::pose::partition_pose_by_jump( pose, movable_jumps()[1], *partner1, *partner2 );
+
+	// SSRB: This is an inelegant solution to the problem that partition_pose_by_jump messes up the residue numbering.
+	// To get scoring to work, we dump the pose and read it back in.
+	partner1->dump_pdb( "partner1_temp.pdb" );
+	partner2->dump_pdb( "partner2_temp.pdb" );
+
+	core::import_pose::pose_from_file( *partner1, "partner1_temp.pdb" , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( *partner2, "partner2_temp.pdb" , core::import_pose::PDB_file);
+
+	remove( "partner1_temp.pdb" );
+	remove( "partner2_temp.pdb" );
+
+	// It is necessary to relax the input pose as else the score comparison is really poor
+	protocols::relax::FastRelaxOP start_struc_relax( new protocols::relax::FastRelax( scorefxn_pack(), 1 ) ); //Just one cycle to save time
+	start_struc_relax->set_task_factory( task_factory()->clone() );
+	start_struc_relax->constrain_relax_to_start_coords( true );
+
+	start_struc_relax->apply( *partner1 );
+	start_struc_relax->apply( *partner2 );
+
+	ensemble1_->calculate_highres_ref_energy( *partner1, "partner1" );
+	ensemble2_->calculate_highres_ref_energy( *partner2, "partner2" );
+
+	to_centroid.apply( pose );
+
+	ensemble1_->calculate_lowres_ref_energy( pose );
+	ensemble2_->calculate_lowres_ref_energy( pose );
+	to_fullatom.apply( pose ); // required for score function reset
+
+	move_back( pose );
 
 	starting_pose = pose;
 
 	switch_mover = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble1_ ) );
 	for ( Size i=1; i<=ensemble1_->size(); ++i ) {
-		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+
 		to_centroid.apply( pose );
 		switch_mover->switch_conformer( pose, i );
 
-		//Move each partners away from the others
-		for ( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
-			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
-			translate_away->step_size( trans_magnitude_ );
-			translate_away->apply(pose);
-		}
-		ensemble1_->calculate_lowres_ref_energy( pose );
-		//bringing the packed structures together
-		for (  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(pose, *jump) );
-			translate_back->step_size( trans_magnitude_ );
-			translate_back->trans_axis().negate();
-			translate_back->apply(pose);
-		}
+		move_away( pose );
 
-		ensemble1_->set_packer( pack_operations_ );
+		ensemble1_->calculate_lowres_ref_energy( pose );
+
+		move_back( pose );
+
+		//ensemble1_->set_packer( pack_operations_ );
 
 		ensemble1_->calculate_highres_ref_energy( i ); // also does the dump_pdb
 	}
-	ensemble1_->update_pdblist_file();
+	ensemble1_->update_pdblist_file( "partner1" );
 
 	// reset to starting pose
 	pose = starting_pose;
 	switch_mover = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble2_ ) );
 	for ( Size i=1; i<=ensemble2_->size(); ++i ) {
-		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
-		to_centroid.apply( pose );
 
+		to_centroid.apply( pose );
 		switch_mover->switch_conformer( pose, i );
 
-		//Move each partners away from the others
-		for ( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
-			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
-			translate_away->step_size( trans_magnitude_ );
-			translate_away->apply(pose);
-		}
-		ensemble2_->calculate_lowres_ref_energy( pose );
-		//bringing the packed structures together
-		for (  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(pose, *jump) );
-			translate_back->step_size( trans_magnitude_ );
-			translate_back->trans_axis().negate();
-			translate_back->apply(pose);
-		}
+		move_away( pose );
 
-		ensemble2_->set_packer( pack_operations_ );
+		ensemble2_->calculate_lowres_ref_energy( pose );
+
+		move_back( pose );
+
+		//ensemble2_->set_packer( pack_operations_ );
 
 		ensemble2_->calculate_highres_ref_energy( i ); // also does the dump_pdb
 	}
-	ensemble2_->update_pdblist_file();
+	ensemble2_->update_pdblist_file( "partner2" );
+
+	// reset to starting pose
+	pose = starting_pose;
+	move_away( pose );
+	pack_operations_->apply( pose );
+	move_back( pose );
 
 	// for the sake of naming consistency (JRJ)
 	// get prefix, append _prepack.pdb, output
-	std::string basename = utility::file::file_basename(pose.pdb_info()->name());
-	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
-	to_fullatom.apply( pose ); // go high res
-	pose.dump_pdb( basename + ".prepack.pdb" );
+	( *scorefxn_pack() )( pose );
+	//to_fullatom.apply( pose ); // go high res
+	//pose.dump_pdb( basename + ".prepack.pdb" ); //SSRB:Taking out .prepack.pdb because JD2 already handles the output
 }
 
 std::string DockingEnsemblePrepackProtocol::get_name() const {
 	return "DockingEnsemblePrepackProtocol";
 }
 
-}
-}
+}//docking
+}//protocols

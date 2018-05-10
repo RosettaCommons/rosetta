@@ -1009,6 +1009,7 @@ residue_types/terminal/BZA.params
 
 ## Extras
 residue_types/extra/C.params
+#residue_types/extra/2-iodophenol.params
 
 ## Peptide nucleic acids
 residue_types/pna/APN.params
@@ -1020,5 +1021,5 @@ residue_types/pna/UPN.params
 ## Coenzymes
 residue_types/coenzymes/flavin_oxidized.params
 residue_types/coenzymes/flavin_reduced.params
+#residue_types/coenzymes/flavin_mononucleotide.params
 residue_types/coenzymes/UDP.params
-

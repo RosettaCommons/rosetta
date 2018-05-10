@@ -122,3 +122,9 @@ residue_types/lipids/sphingosine.params
 residue_types/lipids/linoleate.params
 ### Synthetic Adducts
 residue_types/lipids/ONonOMe.params
+
+### Coenzymes
+#residue_types/coenzymes/flavin_mononucleotide.params
+
+### Extra
+#residue_types/extra/2-iodophenol.params

@@ -75,7 +75,10 @@ public:
 
 	void set_random_confomer( bool rand ) { random_conformer_ = rand; }
 	core::Real get_temperature() const {return temperature_;}
+	protocols::docking::DockingEnsembleOP get_ensemble();
 	bool use_random_conformer() const {return random_conformer_;}
+
+	void set_specific_conformer( core::Size conformer_num_in );
 
 	std::string
 	get_name() const override;
@@ -98,6 +101,9 @@ private:
 	utility::vector1< core::Real > prob_table_;
 	protocols::docking::DockingEnsembleOP ensemble_;
 	protocols::docking::DockingLowResFilterOP lowres_filter_;
+
+	core::Size specific_conformer_; //Added by SSRB
+
 }; //mover
 
 std::ostream &operator<< (std::ostream &os, ConformerSwitchMover const &mover);

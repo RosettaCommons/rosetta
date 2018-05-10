@@ -422,7 +422,9 @@ Real ResPairMotif::score() const{
 	case SC_BB :
 		return 0.75*fa_atr() + 0.50*fa_atr_sc_bb() + 0.00*fa_atr_bb() + 1.00*hb_sc() + 0.00*hb_bb_sc() + 0.00*hb_bb();
 	case BB_BB :
-		return 0.75*fa_atr() + 0.50*fa_atr_sc_bb() + 0.25*fa_atr_bb() + 1.00*hb_sc() + 0.00*hb_bb_sc() + 0.00*hb_bb();
+		//return 0.75*fa_atr() + 0.50*fa_atr_sc_bb() + 0.25*fa_atr_bb() + 1.00*hb_sc() + 0.00*hb_bb_sc() + 0.00*hb_bb();
+		return 1.00*fa_atr() + 0.00*fa_atr_sc_bb() + 0.00*fa_atr_bb() + 0.00*hb_sc() + 0.00*hb_bb_sc() + 0.00*hb_bb();
+		//return 1.00*fa_atr() + 0.00*fa_atr_sc_bb() + 0.00*fa_atr_bb() + 0.00*hb_sc() + 0.00*hb_bb_sc() + 0.00*hb_bb();
 	case SC_PH:
 	case SC_PO :
 		return 0.00*fa_atr() + 0.75*fa_atr_sc_bb() + 0.00*fa_atr_bb() + 0.00*hb_sc() + 1.00*hb_bb_sc() + 0.00*hb_bb();

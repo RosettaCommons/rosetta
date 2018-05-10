@@ -309,6 +309,9 @@ private:
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();
 
+	/// @brief Verifies ensembles are prepacked to prevent seg faults
+	bool is_ensemble_prepacked( std::string ensemble_filename );
+
 	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
 	void finalize_setup( core::pose::Pose & pose );
 

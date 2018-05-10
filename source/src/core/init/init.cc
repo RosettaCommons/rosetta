@@ -181,6 +181,7 @@
 #include <core/scoring/methods/CenRotPairEnergyCreator.hh>
 #include <core/scoring/methods/CenRotEnvEnergyCreator.hh>
 #include <core/scoring/methods/CenHBEnergyCreator.hh>
+#include <core/scoring/methods/MotifDockEnergyCreator.hh>
 #include <core/scoring/methods/SuckerEnergyCreator.hh>
 #include <core/scoring/methods/GaussianOverlapEnergyCreator.hh>
 #include <core/scoring/methods/YHHPlanarityEnergyCreator.hh>
@@ -558,6 +559,7 @@ static EnergyMethodRegistrator< scoring::methods::ChemicalShiftAnisotropyEnergyC
 static EnergyMethodRegistrator< scoring::methods::DipolarCouplingEnergyCreator > DipolarCouplingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ResidualDipolarCouplingEnergyCreator > ResidualDipolarCouplingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ResidualDipolarCouplingEnergy_RohlCreator > ResidualDipolarCouplingEnergy_RohlCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::MotifDockEnergyCreator > MotifDockEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SuckerEnergyCreator > SuckerEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GaussianOverlapEnergyCreator > GaussianOverlapEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::YHHPlanarityEnergyCreator > YYHPlanarityEnergyCreator_registrator;

@@ -669,6 +669,7 @@ sources = {
 		"MMLJEnergyInter",
 		"MMLJEnergyIntra",
 		"MMTorsionEnergy",
+		"MotifDockEnergy",
 		"RingClosureEnergy",
 		"NMerRefEnergy",
 		"NMerPSSMEnergy",

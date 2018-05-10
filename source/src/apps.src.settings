@@ -249,6 +249,9 @@ sources = {
 	"public/membrane_abinitio": [
 		"membrane_abinitio2",
 	],
+	"public/motif_dock": [
+		"make_motif_tables",
+	],
 	"public/motif_tools": [
 		"extract_motifs",
 		"incorporate_motifs",

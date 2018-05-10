@@ -13,7 +13,7 @@
 /// @author Monica Berrondo
 /// @author Sid Chaudhury
 /// @author Jeff Gray
-/// @author Modified by Daisuke Kuroda
+/// @author Modified by Daisuke Kuroda, Shourya S. Roy Burman
 
 // Unit Headers
 #include <protocols/docking/DockingProtocol.hh>
@@ -37,6 +37,9 @@
 
 #include <core/pose/Pose.hh>
 
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <protocols/simple_task_operations/InterfaceTaskOperation.hh>
 
 #include <core/scoring/Energies.hh>
@@ -51,6 +54,7 @@
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 #include <basic/datacache/DataMap.hh>
@@ -63,6 +67,8 @@
 #include <utility/file/FileName.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+#include <utility/io/util.hh>
+#include <utility/io/izstream.hh>
 
 #include <core/types.hh>
 #include <basic/prof.hh>
@@ -168,7 +174,9 @@ void DockingProtocol::init(
 	}
 
 	// correctly set up the score functions from either passed in values or defaults
-	if ( docking_score_low == nullptr ) {
+	if ( option[ basic::options::OptionKeys::docking::docking_low_res_score ].user() ) {
+		docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( option[ basic::options::OptionKeys::docking::docking_low_res_score ]() );
+	} else if ( docking_score_low == nullptr ) {
 		//docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 		docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen",
 			basic::options::option[ basic::options::OptionKeys::score::patch ]()
@@ -179,9 +187,9 @@ void DockingProtocol::init(
 	}
 
 	if ( docking_score_high == nullptr ) {
-		docking_scorefxn_high_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
-		docking_scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ;
-		docking_scorefxn_output_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
+		docking_scorefxn_high_ = core::scoring::get_score_function();
+		docking_scorefxn_pack_ = core::scoring::get_score_function();
+		docking_scorefxn_output_ = core::scoring::get_score_function();
 	} else {
 		docking_scorefxn_high_ = docking_score_high;
 		docking_scorefxn_pack_ = docking_score_high;
@@ -480,6 +488,28 @@ DockingProtocol::register_options()
 	constraint_movers::ConstraintSetMover::register_options();
 }
 
+bool
+DockingProtocol::is_ensemble_prepacked( std::string ensemble_filename )
+{
+	utility::io::izstream file( ensemble_filename );
+	std::string line;
+	core::Size pdb_count( 0 );
+	core::Size data_count( 0 );
+
+	//read file names
+	while ( utility::io::getline(file, line) ) {
+		if ( line.find("pdb") != std::string::npos ) {
+			++ pdb_count;
+		} else ++ data_count;
+	}
+
+	// 2 times the number of score entries compared to the number of files
+	if ( data_count == 2 * pdb_count ) {
+		return true;
+	} else return false;
+
+}
+
 void
 DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring pose during apply
 {
@@ -502,6 +532,12 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	// if an ensemble file is defined for either partner, both partners must be defined
 	if ( ensemble1_filename_ != "" || ensemble2_filename_ != "" ) {
 		if ( ensemble1_filename_ == "" || ensemble2_filename_ == "" ) utility_exit_with_message( "Must define ensemble file for both partners");
+
+		// SSRB: Verifies ensembles are prepacked to prevent seg faults
+		bool ensemble1_prepacked ( is_ensemble_prepacked( ensemble1_filename_ ) );
+		bool ensemble2_prepacked ( is_ensemble_prepacked( ensemble2_filename_ ) );
+		if ( ! (ensemble1_prepacked && ensemble2_prepacked) ) utility_exit_with_message( "The ensembles must be prepacked using the docking_prepack_protocol executable to run EnsembleDock!");
+
 		runtime_assert( movable_jumps_.size() == 1 ); // ensemble mode is only allowed for traditional docking
 		core::Size const rb_jump = movable_jumps_[1];
 		Size start_res(1), end_res(1), cutpoint(pose.fold_tree().cutpoint_by_jump( rb_jump ));
@@ -964,8 +1000,8 @@ DockingProtocol::apply( pose::Pose & pose )
 
 		// add scores to jd2 output
 		if ( reporting_ ) {
-			if ( ensemble1_ ) protocols::jd2::add_string_real_pair_to_current_job("conf_num1", ensemble1_->get_current_confnum() );
-			if ( ensemble2_ ) protocols::jd2::add_string_real_pair_to_current_job("conf_num2", ensemble2_->get_current_confnum() );
+			if ( ensemble1_ ) protocols::jd2::add_string_real_pair_to_current_job("conf_num1", docking_lowres_mover_->get_current_conformer_ensemble1() );
+			if ( ensemble2_ ) protocols::jd2::add_string_real_pair_to_current_job("conf_num2", docking_lowres_mover_->get_current_conformer_ensemble2() );
 			if ( get_native_pose() ) {
 				// calculate and store the rms no matter which mode was used
 				protocols::jd2::add_string_real_pair_to_current_job("rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ));
@@ -1004,12 +1040,28 @@ DockingProtocol::apply( pose::Pose & pose )
 				jd2::write_score_tracer( pose, "Docking_recovered_sidechains" );
 			} else {
 				if ( ensemble1_ ) {
-					ensemble1_->recover_conformer_sidechains( pose );
+					ensemble1_->recover_and_pack_conformer_sidechains( pose );
 				}
 				if ( ensemble2_ ) {
-					ensemble2_->recover_conformer_sidechains( pose );
+					ensemble2_->recover_and_pack_conformer_sidechains( pose );
 				}
 			}
+
+			TR << "Score before repack:" << std::endl;
+			docking_scorefxn_high_->show( TR, pose );
+
+
+			// SSRB: A repack was necessary as high fa_rep was being observed after side chain recovery
+			core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
+			local_tf->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
+			local_tf->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+			local_tf->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::NoRepackDisulfides) );
+			protocols::minimization_packing::PackRotamersMoverOP conformer_full_repack( new protocols::minimization_packing::PackRotamersMover( docking_scorefxn_high_ ) );
+			conformer_full_repack->task_factory( local_tf );
+			conformer_full_repack->apply( pose );
+			TR << "Score after repack:" << std::endl;
+			docking_scorefxn_high_->show( TR, pose );
+
 		}
 		docking_highres_mover_->apply( pose );
 		( * docking_scorefxn_output_ )( pose );
@@ -1032,7 +1084,9 @@ DockingProtocol::apply( pose::Pose & pose )
 			protocols::jd2::add_string_real_pair_to_current_job("I_sc", calc_interaction_energy( pose, docking_scorefxn_output_, movable_jumps_ ) );
 			if ( get_native_pose() ) {
 				protocols::jd2::add_string_real_pair_to_current_job("Irms", calc_Irmsd(pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
+				protocols::jd2::add_string_real_pair_to_current_job("Irms_leg", calc_Irmsd_legacy(pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
 				protocols::jd2::add_string_real_pair_to_current_job("Fnat", calc_Fnat( pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_ ));
+				protocols::jd2::add_string_real_pair_to_current_job("CAPRI_rank", calc_CAPRI_rank( pose, *get_native_pose(), docking_scorefxn_output_, movable_jumps_));
 			}
 
 			// pose.energies().show_total_headers( std::cout );

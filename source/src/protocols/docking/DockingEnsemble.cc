@@ -10,6 +10,7 @@
 /// @file DockingEnsemble.cc
 /// @brief container class for ensemble docking information to be used with ConformerSwitchMover
 /// @author Monica Berrondo
+/// @author Modified by Shourya S. Roy Burman
 
 #include <protocols/docking/DockingEnsemble.hh>
 
@@ -20,17 +21,21 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 
 // Random number generator
 #include <numeric/random/random.hh>
 //
 #include <string>
+#include <sys/stat.h>
 
 #include <basic/Tracer.hh>
 
@@ -74,8 +79,8 @@ DockingEnsemble::DockingEnsemble(
 	ensemble_file_path_(ensemble_file_path),
 	partner_(partner)
 {
-	// initialize current conf_num to zero
-	conf_num_ = 0;
+	// initialize current conf_num to one
+	conf_num_ = 1;
 
 	scorefxn_low_ = scorefxn_low;
 	scorefxn_high_ = scorefxn_high;
@@ -122,23 +127,26 @@ void DockingEnsemble::load_ensemble()
 	}
 
 	ensemble_list_ = core::import_pose::poses_from_files( pdb_filenames_ , core::import_pose::PDB_file);
-	ensemble_list_cen_ = core::import_pose::poses_from_files( pdb_filenames_ , core::import_pose::PDB_file); // Add by DK
+	//ensemble_list_cen_ = core::import_pose::poses_from_files( pdb_filenames_ , core::import_pose::PDB_file); // Add by DK
+	ensemble_list_cen_.resize( ensemble_list_.size() );
 
 	//Add by DK
-	for ( Size i = 1; i <= ensemble_list_cen_.size(); i++ ) {
+	for ( Size i = 1; i <= ensemble_list_.size(); i++ ) {
+		ensemble_list_cen_[i] = *( ensemble_list_[i].clone() );
 		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( ensemble_list_cen_[i] );
 	}
 }
 
-void DockingEnsemble::recover_conformer_sidechains( core::pose::Pose & pose )
+void DockingEnsemble::recover_and_pack_conformer_sidechains( core::pose::Pose & pose )
 {
 	using namespace core::pose::datacache;
 	core::pose::Pose recover_pose = ensemble_list_[conf_num_];
 	protocols::simple_moves::ReturnSidechainMoverOP recover_mover( new protocols::simple_moves::ReturnSidechainMover( recover_pose, start_res_, end_res_ ) );
 	recover_mover->apply( pose );
+	TR << "Recovered side chains from conformer number: " << conf_num_ << std::endl;
 
-	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache
+	//make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache
 	if ( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ) {
 		using namespace basic::datacache;
 		pose.data().set(
@@ -176,19 +184,60 @@ void DockingEnsemble::calculate_highres_ref_energy( core::Size conf_num )
 	TR << "score_high: " << score_high << std::endl;
 	highres_reference_energies_.push_back( score_high );
 
-	std::string filename( pdb_filenames_[highres_reference_energies_.size()] + ".ppk" );
+	std::string filename( pdb_filenames_[highres_reference_energies_.size() - 1] + ".ppk" );
 	TR << "filename: " << filename << std::endl;
 	conformer.dump_pdb( filename );
-	pdb_filenames_[highres_reference_energies_.size()] = filename;
-	TR << "filename in array: " << pdb_filenames_[highres_reference_energies_.size()] << std::endl;
+	pdb_filenames_[highres_reference_energies_.size() - 1] = filename;
+	TR << "filename in array: " << pdb_filenames_[highres_reference_energies_.size() - 1] << std::endl;
 }
 
-void DockingEnsemble::update_pdblist_file()
+
+void DockingEnsemble::calculate_highres_ref_energy( core::pose::Pose & pose, std::string partner_num )
+{
+
+	pack_operations_->apply( pose );
+
+	core::Real score_high = ( *scorefxn_high_ )( pose );
+	TR << "score_high: " << score_high << std::endl;
+	highres_reference_energies_.push_back( score_high );
+
+	std::size_t found( pdb_filenames_[1].find_last_of("/\\") );
+	std::string path( pdb_filenames_[1].substr(0,found) );
+
+	// all of this needs to be done to ensure that the prepacked starting structure is written
+	const char * path_test = path.c_str ();
+	std::string filename;
+	struct stat buf;
+	stat(path_test, &buf);
+	if ( S_ISDIR(buf.st_mode) ) {
+		filename = path + "/" + partner_num + "_starting_conf.pdb.ppk";
+	} else if ( S_ISREG(buf.st_mode) ) {
+		filename = partner_num + "_starting_conf.pdb.ppk";
+	}
+	TR << "filename: " << filename << std::endl;
+	pose.dump_pdb( filename );
+}
+
+void DockingEnsemble::update_pdblist_file( std::string partner_num )
 {
 	utility::io::ozstream data;
 	data.open( ensemble_file_path_ );
 
 	// write out new filenames
+	std::size_t found( pdb_filenames_[1].find_last_of("/\\") );
+	std::string path( pdb_filenames_[1].substr(0,found) );
+
+	// all of this needs to be done to ensure that the prepacked starting structure is written
+	const char * path_test = path.c_str ();
+	std::string filename;
+	struct stat buf;
+	stat(path_test, &buf);
+	if ( S_ISDIR(buf.st_mode) ) {
+		filename = path + "/" + partner_num + "_starting_conf.pdb.ppk";
+	} else if ( S_ISREG(buf.st_mode) ) {
+		filename = partner_num + "_starting_conf.pdb.ppk";
+	}
+	data << filename << '\n';
 	core::Size conf = 1;
 	while ( conf <= pdb_filenames_.size() ) {
 		data << pdb_filenames_[conf] << '\n';
@@ -207,14 +256,14 @@ void DockingEnsemble::update_pdblist_file()
 
 	// write out centroid reference energies
 	conf = 1;
-	while ( conf <= pdb_filenames_.size() ) {
+	while ( conf <= lowres_reference_energies_.size() ) {
 		data << lowres_reference_energies_[conf] << '\n';
 		++conf;
 	}
 
 	// write out fullatom reference energies
 	conf = 1;
-	while ( conf <= pdb_filenames_.size() ) {
+	while ( conf <= highres_reference_energies_.size() ) {
 		data << highres_reference_energies_[conf] << '\n';
 		++conf;
 	}

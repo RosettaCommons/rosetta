@@ -671,6 +671,7 @@ sources = {
 	],
 	"pilot/nmarze" : [
 		#"packing_angle",
+		"motif_dock",
 	],
 	"pilot/nobuyasu" : [
 		#"flxbb", # /* Nobuyasu,Documentation Location,Demo Location */
