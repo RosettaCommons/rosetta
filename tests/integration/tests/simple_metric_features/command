@@ -6,3 +6,10 @@ cd %(workdir)s
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
     -parser:protocol test_simple_metric_features.xml -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+if type -P sqlite3 &>/dev/null; then
+   sqlite3 testing_metrics.db < dump.sql | egrep -vf ../../ignore_list  > testing_metrics.db.dump 
+else
+   echo "Please install the sqlite3 command line application to correctly run this test." > log_db_output
+fi
+rm -rf testing_metrics.db

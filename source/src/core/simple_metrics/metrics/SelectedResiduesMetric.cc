@@ -164,9 +164,9 @@ SelectedResiduesMetric::calculate(const pose::Pose & pose) const {
 			std::string icode = utility::to_string( pose.pdb_info()->icode(resnum));
 
 			if ( icode == utility::to_string(' ') ) {
-				output += chain+num;
+				output += num+chain;
 			} else {
-				output += chain+num+":"+icode;
+				output += num+chain+":"+icode;
 			}
 
 			if ( i != selected.size() ) {

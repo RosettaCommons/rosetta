@@ -192,7 +192,7 @@ public:
 		//SelectedResidues
 		SelectedResiduesMetric selected_residues = SelectedResiduesMetric( cdr_selector );
 		std::string pdb_nums = selected_residues.calculate( ab_pose );
-		std::string pdb_nums_correct = "L24,L25,L26,L27,L28,L29,L38,L39,L40,L41,L42";
+		std::string pdb_nums_correct = "24L,25L,26L,27L,28L,29L,38L,39L,40L,41L,42L";
 		TS_ASSERT_EQUALS( pdb_nums, pdb_nums_correct);
 
 		selected_residues.set_output_in_rosetta_num( true );

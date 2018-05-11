@@ -1,0 +1,16 @@
+cd %(workdir)s
+
+# Do the tests actually exist?
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -s 1ahw_crystal_antigen.pdb -use_input_sc -ex1 -ex2 -parser:protocol loop_grafter.xml \
+    -parser:script_vars source=1ahw_model_antigen.pdb loop_start=82G loop_end=91G insert_start=82G  insert_end=91G -database %(database)s \
+    -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > log
+    
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -s 1ahw_m.pdb -use_input_sc -ex1 -ex2 -parser:protocol loop_grafter.xml \
+    -parser:script_vars source=1ahw_model_antigen.pdb loop_start=82G loop_end=91G insert_start=82G  insert_end=91G -database %(database)s \
+    -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true

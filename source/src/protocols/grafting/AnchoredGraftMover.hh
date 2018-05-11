@@ -303,14 +303,14 @@ private:
 	bool skip_sampling_;//Option to skip the small mover sampling step.
 	bool test_control_mode_;//TESTING ONLY  Set to randomize the flexible residues before trying to graft.
 
-	core::kinematics::MoveMapOP movemap_;
-	core::kinematics::MoveMapCOP scaffold_movemap_;
-	core::kinematics::MoveMapCOP insert_movemap_;
-	core::select::movemap::MoveMapFactoryCOP scaffold_movemap_factory_;
-	core::select::movemap::MoveMapFactoryCOP insert_movemap_factory_;
+	core::kinematics::MoveMapOP movemap_ = nullptr;
+	core::kinematics::MoveMapCOP scaffold_movemap_ = nullptr;
+	core::kinematics::MoveMapCOP insert_movemap_ = nullptr;
+	core::select::movemap::MoveMapFactoryCOP scaffold_movemap_factory_ = nullptr;
+	core::select::movemap::MoveMapFactoryCOP insert_movemap_factory_ = nullptr;
 
-	core::scoring::ScoreFunctionOP cen_scorefxn_;
-	core::scoring::ScoreFunctionOP fa_scorefxn_;
+	core::scoring::ScoreFunctionOP cen_scorefxn_ = nullptr;
+	core::scoring::ScoreFunctionOP fa_scorefxn_ = nullptr;
 
 	bool use_default_movemap_; //Instructs setup_movemap_and_regions what to do.
 	core::Size Nter_scaffold_flexibility_;
@@ -331,7 +331,7 @@ private:
 	std::string scaffold_end_;
 	bool idealize_insert_;
 
-	protocols::loops::LoopsOP loops_;
+	protocols::loops::LoopsOP loops_ = nullptr;
 
 }; //Class AnchoredGraftMover
 

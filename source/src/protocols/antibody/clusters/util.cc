@@ -58,7 +58,7 @@ add_cluster_comments_to_pose(core::pose::Pose& pose, AntibodyInfoCOP ab_info){
 			core::pose::add_comment(pose, "REMARK "+ab_info->get_CDR_name(cdr)+" POSTGRAFT_OR_ORIGINAL_CLUSTER ", output);
 			core::pose::setPoseExtraScore(pose, "cdr_cluster_ID_"+ab_info->get_CDR_name(cdr), ab_info->get_cluster_name(result->cluster()));
 			core::pose::setPoseExtraScore(pose, "cdr_cluster_DIS_"+ab_info->get_CDR_name(cdr), result->normalized_distance_in_degrees());
-			core::pose::setPoseExtraScore(pose, "cdr_cluster_LEN_"+ab_info->get_CDR_name(cdr), ab_info->get_CDR_length(cdr) );
+			core::pose::setPoseExtraScore(pose, "cdr_cluster_LEN_"+ab_info->get_CDR_name(cdr), ab_info->get_CDR_length(cdr, pose) );
 		}
 
 		CDRClusterCOP result = ab_info->get_CDR_cluster(cdr);
@@ -66,7 +66,7 @@ add_cluster_comments_to_pose(core::pose::Pose& pose, AntibodyInfoCOP ab_info){
 		core::pose::add_comment(pose, "REMARK "+ab_info->get_CDR_name(cdr), output);
 		core::pose::setPoseExtraScore(pose, "cdr_cluster_ID_"+ab_info->get_CDR_name(cdr), ab_info->get_cluster_name(result->cluster()));
 		core::pose::setPoseExtraScore(pose, "cdr_cluster_DIS_"+ab_info->get_CDR_name(cdr), result->normalized_distance_in_degrees());
-		core::pose::setPoseExtraScore(pose, "cdr_cluster_LEN_"+ab_info->get_CDR_name(cdr), ab_info->get_CDR_length(cdr) );
+		core::pose::setPoseExtraScore(pose, "cdr_cluster_LEN_"+ab_info->get_CDR_name(cdr), ab_info->get_CDR_length(cdr, pose) );
 	}
 }
 

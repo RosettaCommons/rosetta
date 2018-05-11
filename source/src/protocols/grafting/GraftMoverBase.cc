@@ -108,19 +108,7 @@ GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mov
 
 
 /// @brief copy ctor
-GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
-	Mover(src),
-	start_(src.start_),
-	end_(src.end_),
-	original_end_(src.original_end_),
-	insertion_length_(src.insertion_length_),
-	Nter_overhang_length_(src.Nter_overhang_length_),
-	Cter_overhang_length_(src.Cter_overhang_length_),
-	copy_pdbinfo_(src.copy_pdbinfo_)
-
-{
-	if ( src.piece_ ) piece_ = piece_->clone();
-}
+GraftMoverBase::GraftMoverBase( GraftMoverBase const & ) = default;
 
 
 // Destructor
@@ -137,23 +125,23 @@ GraftMoverBase::set_piece(Pose const & piece, Size Nter_overhang_length, Size Ct
 }
 
 Pose
-GraftMoverBase::insert_piece(Pose const & pose){
+GraftMoverBase::insert_piece(Pose const & pose, Pose & piece){
 
 	//Delete overhang if necessary.
-	insertion_length_ = piece_->size()-Cter_overhang_length_-Nter_overhang_length_;
-	delete_overhang_residues(*piece_, Nter_overhang_length_, Cter_overhang_length_);
+	insertion_length_ = piece.size()-Cter_overhang_length_-Nter_overhang_length_;
+	delete_overhang_residues(piece, Nter_overhang_length_, Cter_overhang_length_);
 
 	//piece_->dump_pdb("cdr_pose.pdb");
 	//strip termini variants from insert if necessary
-	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::LOWER_TERMINUS_VARIANT, 1);
-	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::UPPER_TERMINUS_VARIANT, insertion_length_);
+	core::pose::remove_variant_type_from_pose_residue(piece, core::chemical::LOWER_TERMINUS_VARIANT, 1);
+	core::pose::remove_variant_type_from_pose_residue(piece, core::chemical::UPPER_TERMINUS_VARIANT, insertion_length_);
 
 	//Delete residues for pose.
 	Pose final_pose(pose);
 	delete_region(final_pose, start_+1, end_-1);
 
 	//final_pose.dump_pdb("deleted_scaffold_pose.pdb");
-	final_pose = insert_pose_into_pose(final_pose, *piece_, start_, start_+1, copy_pdbinfo_);
+	final_pose = insert_pose_into_pose(final_pose, piece, start_, start_+1, copy_pdbinfo_);
 
 	//Update end residue number.
 	end_ = start_+insertion_length_+1;
@@ -215,8 +203,8 @@ Size GraftMoverBase::Cter_overhang_length(){return Cter_overhang_length_;}
 void GraftMoverBase::Cter_overhang_length(core::Size overhang){
 	Cter_overhang_length_ = overhang;
 }
-PoseOP GraftMoverBase::piece(){return piece_;}
-void GraftMoverBase::piece(PoseOP piece){piece_ = piece;}
+PoseCOP GraftMoverBase::piece(){return piece_;}
+void GraftMoverBase::piece(PoseCOP piece){piece_ = piece;}
 
 }  // namespace grafting
 }  // namespace protocols

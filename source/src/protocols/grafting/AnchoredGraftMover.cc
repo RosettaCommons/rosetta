@@ -143,8 +143,11 @@ AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
 	stop_at_closure_(src.stop_at_closure_),
 	final_repack_(src.final_repack_),
 	neighbor_dis_(src.neighbor_dis_),
+	scaffold_start_( src.scaffold_start_),
+	scaffold_end_( src.scaffold_end_),
 	idealize_insert_(src.idealize_insert_)
 {
+
 	if ( src.movemap_ ) movemap_ = src.movemap_->clone();
 	if ( src.scaffold_movemap_ ) scaffold_movemap_ = src.scaffold_movemap_->clone();
 	if ( src.insert_movemap_ ) insert_movemap_ = src.insert_movemap_->clone();
@@ -158,13 +161,6 @@ AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
 
 void
 AnchoredGraftMover::set_defaults(){
-	cen_scorefxn_ = nullptr;
-	fa_scorefxn_ = nullptr;
-	movemap_ = nullptr;
-	scaffold_movemap_ =nullptr;
-	insert_movemap_ = nullptr;
-	scaffold_movemap_factory_ = nullptr;
-	insert_movemap_factory_ = nullptr;
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
 
 	idealize_insert(false);
@@ -220,8 +216,8 @@ AnchoredGraftMover::parse_my_tag(
 	Nter_overhang_length(tag->getOption<core::Size>("Nter_overhang", Nter_overhang_length()));
 	Cter_overhang_length(tag->getOption<core::Size>("Cter_overhang", Cter_overhang_length()));
 
-	scaffold_start_ = core::pose::get_resnum_string(tag, "start_");
-	scaffold_end_ = core::pose::get_resnum_string(tag, "end_");
+	scaffold_start_ = tag->getOption<std::string>("start_");
+	scaffold_end_ = tag->getOption<std::string>("end_");
 
 	piece(protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name"));
 
@@ -569,7 +565,9 @@ AnchoredGraftMover::apply(Pose & pose){
 		set_insert_region(scaffold_start, scaffold_end);
 	}
 
-	Pose combined = insert_piece(pose);
+	Pose local_piece = *piece();
+	Pose combined = insert_piece(pose, local_piece);
+
 	setup_movemap_and_regions(pose);
 	core::kinematics::FoldTree original_ft = combined.fold_tree();
 	//Setup for the remodeling
@@ -763,7 +761,7 @@ AnchoredGraftMover::complex_type_generator_for_anchored_graft_mover( utility::ta
 		+ XMLSchemaAttribute( "cen_scorefxn", xs_string, "Centroid score function to use" )
 		+ XMLSchemaAttribute( "fa_scorefxn", xs_string, "Full atom score function to use" );
 
-	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist, "spm_reference_name" );
 	XMLSchemaSimpleSubelementList movemaps;
 	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, movemaps ); //we can just call this once and set that you need 2 or 0
 

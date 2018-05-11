@@ -1,0 +1,29 @@
+<!-- 
+    Graft loop passed by flags onto input pose.
+    99% of this script is juggling poses in memory due to how RS works.
+
+    Author: Jeliazko Jeliazkov + Jared Adolf-Bryfogle
+-->
+<ROSETTASCRIPTS>
+
+    <MOVERS>
+		<!-- store input pose in "current" -->
+        <SavePoseMover name="save_current" restore_pose="0" reference_name="current"/>
+		<!-- save loop to graft in "loop" -->
+        <SavePoseMover name="save_loop" restore_pose="0" reference_name="loop"/>
+		<!-- restore saved input pose, "current" -->
+        <SavePoseMover name="restore_current" restore_pose="1" reference_name="current"/>
+        <SavePoseMover name="restore_source" restore_pose="1" reference_name="source" pdb_file="%%source%%"/>
+        <KeepRegionMover name="extract_loop" start_pdb_num="%%loop_start%%" end_pdb_num="%%loop_end%%" nter_overhang="2" cter_overhang="2"/>
+        <CCDEndsGraftMover name="graft_loop" start_="%%insert_start%%" end_="%%insert_end%%" spm_reference_name="loop" copy_pdbinfo="1" scaffold_flex_Nter="2" scaffold_flex_Cter="2" insert_flex_Nter="2" insert_flex_Cter="2" Nter_overhang="2" Cter_overhang="2" stop_at_closure="0"/>
+    </MOVERS>
+    <PROTOCOLS>
+        <Add mover_name="save_current" />
+        <Add mover_name="restore_source"/>
+        <Add mover_name="extract_loop" />
+        <Add mover_name="save_loop" />
+        <Add mover_name="restore_current" />
+        <Add mover_name="graft_loop" />
+    </PROTOCOLS>
+</ROSETTASCRIPTS>
+

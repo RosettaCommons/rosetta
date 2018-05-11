@@ -87,7 +87,7 @@ protected:
 	/// Recommended use is within apply method.
 	///
 	core::pose::Pose
-	insert_piece(core::pose::Pose const & pose);
+	insert_piece(core::pose::Pose const & pose, core::pose::Pose & piece);
 
 protected:
 	///Setters and accessors of private data
@@ -103,13 +103,13 @@ protected:
 	core::Size Cter_overhang_length();
 	void Cter_overhang_length(core::Size overhang);
 
-	core::pose::PoseOP piece();
-	void piece(core::pose::PoseOP piece);
+	core::pose::PoseCOP piece();
+	void piece(core::pose::PoseCOP piece);
 
 private:
 
-	//Reference of the pose piece.  Should be changed to local copy, but I'm not sure how to do that.
-	core::pose::PoseOP piece_;
+	/// @brief COP of the set pose.  This is to have better support of the SavePoseMover in RosettaScripts
+	core::pose::PoseCOP piece_ = nullptr;
 
 	/// @brief Residue insertion will start from
 	core::Size start_;

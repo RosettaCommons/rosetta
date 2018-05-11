@@ -388,7 +388,7 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	if ( scorefxn_ ) {
 		glycan_relax.set_scorefunction( scorefxn_ );
 	}
-	glycan_relax.set_refine( false );
+	glycan_relax.set_refine( true );
 
 	if ( ! refine_ ) {
 		glycan_relax.randomize_glycan_torsions(pose, starting_subset);
@@ -451,6 +451,8 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 
 	trees_to_model_ = tree_subset.size();
 
+	TR << "Ntrees to model " << utility::to_string(trees_to_model_) << std::endl;
+
 	core::Real starting_score = scorefxn_->score( pose );
 	TR << "Starting Score: " << starting_score << std::endl;
 
@@ -459,6 +461,7 @@ GlycanTreeRelax::apply( core::pose::Pose & pose){
 	MonteCarloOP mc = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, 1.0) );
 	mc->set_last_accepted_pose(pose);
 
+	completed_quenches_ = 0;
 	while ( ! is_quenched() ) {
 
 		if ( quench_mode_ ) {

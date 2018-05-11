@@ -92,7 +92,8 @@ CCDEndsGraftMover::CCDEndsGraftMover(
 	copy_pdbinfo(copy_pdb_info);
 }
 
-CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover& /*src*/) = default;
+CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover & ) = default;
+
 
 CCDEndsGraftMover::~CCDEndsGraftMover() = default;
 
@@ -160,8 +161,8 @@ CCDEndsGraftMover::apply(Pose & pose){
 	using protocols::moves::MonteCarlo;
 	using protocols::moves::MonteCarloOP;
 
-	//TR <<"Beginning of anchored graft mover" <<std::endl;
 	//pose.constraint_set()->show(TR);
+
 
 	if ( !scaffold_start().empty() && ! scaffold_end().empty() ) {
 		core::Size scaff_start = core::pose::parse_resnum(scaffold_start(), pose);
@@ -171,10 +172,11 @@ CCDEndsGraftMover::apply(Pose & pose){
 
 	TR << "Start: " << start() << " End: " << end() << " NterO: "<<Nter_overhang_length() <<" CterO: " << Cter_overhang_length()<<std::endl;
 
-	protocols::grafting::superimpose_overhangs_heavy(pose, *piece(), true, start(), end(), Nter_overhang_length(), Cter_overhang_length() );
+	Pose local_piece = *piece();
+	protocols::grafting::superimpose_overhangs_heavy(pose, local_piece, true, start(), end(), Nter_overhang_length(), Cter_overhang_length() );
 
 
-	Pose combined = insert_piece(pose);
+	Pose combined = insert_piece(pose, local_piece);
 
 	setup_movemap_and_regions(pose);
 

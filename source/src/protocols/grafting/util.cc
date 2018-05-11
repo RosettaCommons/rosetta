@@ -23,6 +23,7 @@
 #include <core/pose/variant_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/conformation/Conformation.hh>
@@ -230,8 +231,10 @@ insert_pose_into_pose(
 	}
 
 	//Set a fold tree.
-	core::kinematics::FoldTree new_tree = core::kinematics::remodel_fold_tree_to_account_for_insertion(original_scaffold_tree, insert_point, insert_length);
-	combined.fold_tree(new_tree);
+	core::pose::set_reasonable_fold_tree(combined); //JAB - this is here to be robust against FT-errors for odd poses and many chains.
+
+	//core::kinematics::FoldTree new_tree = core::kinematics::remodel_fold_tree_to_account_for_insertion(original_scaffold_tree, insert_point, insert_length);
+	//combined.fold_tree(new_tree);
 
 	if ( copy_pdbinfo && insert_pose.pdb_info() && scaffold_pose.pdb_info() ) {
 		//TR << "Start PDBInfo size: " << combined.pdb_info()->nres() << std::endl;
