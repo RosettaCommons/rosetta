@@ -203,8 +203,12 @@ private:
 	/// @brief Is a value in a vector?
 	bool is_in_list( core::Size val, utility::vector1 <core::Size> const & vect ) const;
 
-	///  @brief Is a given cyclization type a lariat type (i.e. one where a side-chain connects to backbone)?
+	/// @brief Is a given cyclization type a lariat type (i.e. one where a side-chain connects to backbone)?
 	bool is_lariat_type( SCPA_cyclization_type const type_in ) const;
+
+	/// @brief Can a position's backbone be randomized?
+	/// @details Returns false for disulfide or isopeptide positions, true otherwise.
+	bool position_backbone_is_randomizable( core::Size const res_index ) const;
 
 	/// @brief Check that the loop formed is long enough.
 	void check_loop_length( utility::vector1< std::string > const &resnames ) const;

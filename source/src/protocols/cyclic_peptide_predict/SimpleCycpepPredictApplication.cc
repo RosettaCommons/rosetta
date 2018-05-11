@@ -1290,6 +1290,22 @@ SimpleCycpepPredictApplication::is_lariat_type(
 	return false;
 }
 
+/// @brief Can a position's backbone be randomized?
+/// @details Returns false for disulfide or isopeptide positions, true otherwise.
+bool
+SimpleCycpepPredictApplication::position_backbone_is_randomizable(
+	core::Size const res_index
+) const {
+	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide ) {
+		if ( res_index == 1 || res_index == sequence_length() ) return false;
+	} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat && res_index == sequence_length() ) {
+		return false;
+	} else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && res_index == 1 ) {
+		return false;
+	}
+	return true;
+}
+
 /// @brief Check that the loop formed is long enough.
 void
 SimpleCycpepPredictApplication::check_loop_length(
@@ -2778,21 +2794,23 @@ SimpleCycpepPredictApplication::genkic_close(
 					genkic->add_value_to_perturber_value_list( user_set_dihedral_perturbation_ );
 				}
 			} else { //If this position is not set, randomize it.
-				if ( custom_rama_table_defined( res_in_original ) ) { //If there is a custom rama table defined for sampling at this position, use it.
-					runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in SimpleCycpepPredictApplication: the use of custom old-style Ramachandran maps is limited to alpha-amino acids." );
-					genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
-					genkic->add_residue_to_perturber_residue_list(i);
-					genkic->set_perturber_custom_rama_table( rama_table_type_by_res( res_in_original ) );
-				} else {
-					if ( use_rama_prepro_for_sampling() && default_rama_table_type() == core::scoring::unknown_ramatable_type ) {
-						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_backbone_by_rama_prepro );
-						genkic->add_residue_to_perturber_residue_list(i);
-					} else {
-						runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in SimpleCycpepPredictApplication: the use of old-style Ramachandran maps is limited to alpha-amino acids." );
+				if ( position_backbone_is_randomizable( i ) ) {
+					if ( custom_rama_table_defined( res_in_original ) ) { //If there is a custom rama table defined for sampling at this position, use it.
+						runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in SimpleCycpepPredictApplication: the use of custom old-style Ramachandran maps is limited to alpha-amino acids." );
 						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
 						genkic->add_residue_to_perturber_residue_list(i);
-						if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
-							genkic->set_perturber_custom_rama_table( default_rama_table_type() );
+						genkic->set_perturber_custom_rama_table( rama_table_type_by_res( res_in_original ) );
+					} else {
+						if ( use_rama_prepro_for_sampling() && default_rama_table_type() == core::scoring::unknown_ramatable_type ) {
+							genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_backbone_by_rama_prepro );
+							genkic->add_residue_to_perturber_residue_list(i);
+						} else {
+							runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa(), "Error in SimpleCycpepPredictApplication: the use of old-style Ramachandran maps is limited to alpha-amino acids." );
+							genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
+							genkic->add_residue_to_perturber_residue_list(i);
+							if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
+								genkic->set_perturber_custom_rama_table( default_rama_table_type() );
+							}
 						}
 					}
 				}
